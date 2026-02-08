@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #0a0a0a;
+  --color-bg-secondary: #111111;
+  --color-bg-card: #161616;
+  --color-bg-card-hover: #1a1a1a;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a0a0a0;
+  --color-text-muted: #666666;
+  --color-accent: #22c55e;
+  --color-accent-hover: #16a34a;
+  --color-border: #222222;
+  --color-border-hover: #333333;
+}
+
+@theme inline {
+  --color-oxy-bg: var(--color-bg);
+  --color-oxy-bg-secondary: var(--color-bg-secondary);
+  --color-oxy-card: var(--color-bg-card);
+  --color-oxy-card-hover: var(--color-bg-card-hover);
+  --color-oxy-text: var(--color-text-primary);
+  --color-oxy-text-secondary: var(--color-text-secondary);
+  --color-oxy-text-muted: var(--color-text-muted);
+  --color-oxy-accent: var(--color-accent);
+  --color-oxy-accent-hover: var(--color-accent-hover);
+  --color-oxy-border: var(--color-border);
+  --color-oxy-border-hover: var(--color-border-hover);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scroll-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 40s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 40s linear infinite;
+}
+
+.animate-scroll-left:hover,
+.animate-scroll-right:hover {
+  animation-play-state: paused;
+}
+
+.carousel-mask {
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
