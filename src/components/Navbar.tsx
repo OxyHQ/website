@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
+import { IMAGES } from "@/lib/data";
 
 const navLinks = [
   { label: "Who we are", href: "/company" },
@@ -15,36 +17,46 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/5">
-      <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold tracking-tight">
-          Oxy
-        </Link>
-
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-8">
+      <div className="mx-auto max-w-7xl px-6 py-4 flex items-center">
+        {/* Left: Nav links */}
+        <nav className="hidden md:flex items-center gap-8 flex-1">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className="text-sm text-white/60 hover:text-white transition-colors"
+              className="text-xs uppercase tracking-widest text-white/60 hover:text-white transition-colors"
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden md:block">
+        {/* Center: Logo */}
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src={IMAGES.oxyLogo}
+            alt="Oxy"
+            width={32}
+            height={32}
+            className="rounded-lg"
+          />
+          <span className="text-xl font-bold tracking-tight uppercase">Oxy</span>
+        </Link>
+
+        {/* Right: CTA */}
+        <div className="hidden md:flex items-center justify-end flex-1">
           <Link
             href="/join"
-            className="inline-flex items-center px-5 py-2 rounded-full bg-white text-black text-sm font-medium hover:bg-white/90 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white text-black text-xs uppercase tracking-wider font-medium hover:bg-white/90 transition-colors"
           >
             Get involved
+            <ArrowRight size={14} />
           </Link>
         </div>
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden text-white"
+          className="md:hidden text-white ml-auto"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -59,7 +71,7 @@ export default function Navbar() {
             <Link
               key={link.label}
               href={link.href}
-              className="block text-white/60 hover:text-white transition-colors"
+              className="block text-sm uppercase tracking-wider text-white/60 hover:text-white transition-colors"
               onClick={() => setMobileOpen(false)}
             >
               {link.label}
@@ -67,10 +79,11 @@ export default function Navbar() {
           ))}
           <Link
             href="/join"
-            className="inline-flex items-center px-5 py-2 rounded-full bg-white text-black text-sm font-medium"
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white text-black text-xs uppercase tracking-wider font-medium"
             onClick={() => setMobileOpen(false)}
           >
             Get involved
+            <ArrowRight size={14} />
           </Link>
         </div>
       )}
