@@ -20,7 +20,7 @@ export default function IntegrationsSection() {
           {['Claude', 'ChatGPT', 'Slack', 'Gmail', 'Calendar', 'Salesforce'].map((name) => (
             <div
               key={name}
-              className="flex h-14 items-center justify-center rounded-xl border border-subtle-stroke bg-secondary-background px-6 text-sm font-medium text-tertiary-foreground transition-colors hover:border-black-500 hover:text-secondary-foreground"
+              className="flex h-14 items-center justify-center rounded-xl border border-subtle-stroke bg-secondary-background px-6 text-sm font-medium text-tertiary-foreground transition-colors hover:border-default-stroke hover:text-secondary-foreground"
             >
               {name}
             </div>

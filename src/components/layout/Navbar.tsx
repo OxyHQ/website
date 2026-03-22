@@ -7,6 +7,7 @@ import {
 } from '../../data/content'
 import NavDropdownItem from '../ui/NavDropdownItem'
 import Button from '../ui/Button'
+import ThemeToggle from '../ui/ThemeToggle'
 import Container from './Container'
 
 /* ─── SVG Icons ─── */
@@ -65,7 +66,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
             <li key={i} className="contents">
               <a
                 href={link.href}
-                className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-[10px] border border-transparent px-2.5 text-sm text-primary-foreground transition-colors duration-300 hover:bg-black-400"
+                className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-[10px] border border-transparent px-2.5 text-sm text-primary-foreground transition-colors duration-300 hover:bg-surface"
               >
                 {link.label}
               </a>
@@ -239,7 +240,7 @@ export default function Navbar() {
 
       {/* ─── Banner ─── */}
       {bannerVisible && (
-        <div className="isolate flex w-full items-center justify-center bg-black-200">
+        <div className="isolate flex w-full items-center justify-center bg-surface-subtle">
           <Container>
             <div className="relative flex h-10 items-center justify-center">
               <a href="#" className="group flex items-center gap-1.5 text-[13px] leading-5 text-primary-foreground">
@@ -276,10 +277,10 @@ export default function Navbar() {
                     <li key={dd.label}>
                       <button
                         ref={(el) => { triggerRefs.current[dd.label] = el }}
-                        className="group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 hover:bg-black-400 hover:text-white-100"
+                        className="group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 hover:bg-surface hover:text-primary-foreground"
                         style={{
-                          background: activeDropdown === dd.label ? 'var(--color-black-400)' : undefined,
-                          color: activeDropdown === dd.label ? 'var(--color-white-100)' : 'var(--color-white-900)',
+                          background: activeDropdown === dd.label ? 'var(--color-surface)' : undefined,
+                          color: activeDropdown === dd.label ? 'var(--color-primary-foreground)' : 'var(--color-tertiary-foreground)',
                         }}
                         onMouseEnter={() => openDropdown(dd.label)}
                         aria-expanded={activeDropdown === dd.label}
@@ -293,7 +294,7 @@ export default function Navbar() {
                     <li key={link.label}>
                       <a
                         href={link.href}
-                        className="inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] text-white-900 transition-colors duration-300 hover:bg-black-400 hover:text-white-100"
+                        className="inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] text-tertiary-foreground transition-colors duration-300 hover:bg-surface hover:text-primary-foreground"
                         onMouseEnter={scheduleClose}
                       >
                         {link.label}
@@ -355,7 +356,7 @@ export default function Navbar() {
 
             {/* Mobile hamburger */}
             <button
-              className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-white-500 lg:hidden"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-tertiary-foreground lg:hidden"
               aria-label="Open menu"
               aria-expanded={mobileOpen}
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -372,7 +373,8 @@ export default function Navbar() {
             </button>
 
             {/* Desktop buttons */}
-            <div className="hidden gap-x-2.5 lg:flex">
+            <div className="hidden items-center gap-x-2.5 lg:flex">
+              <ThemeToggle />
               <Button variant="outline" size="sm" href="#">Sign in</Button>
               <Button variant="primary" size="sm" href="#">Start for free</Button>
             </div>
@@ -418,6 +420,10 @@ export default function Navbar() {
                 </a>
               ))}
               <hr className="my-2 border-subtle-stroke" />
+              <div className="flex items-center justify-between px-4 py-2">
+                <span className="text-sm text-tertiary-foreground">Theme</span>
+                <ThemeToggle />
+              </div>
               <div className="flex flex-col gap-2 px-4 pt-2">
                 <Button variant="outline" size="md" href="#" className="w-full">Sign in</Button>
                 <Button variant="primary" size="md" href="#" className="w-full">Start for free</Button>

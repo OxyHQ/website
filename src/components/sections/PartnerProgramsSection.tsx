@@ -91,7 +91,7 @@ export default function PartnerProgramsSection() {
                 </h2>
                 <p className="absolute inset-x-0 bottom-0 col-[2/-2] row-[3/7] text-balance text-heading-responsive-sm max-lg:col-[1/-1]">
                   <span>{program.title}</span>{' '}
-                  <span className="font-medium text-black-800">
+                  <span className="font-medium text-default-stroke">
                     {program.description}
                   </span>
                 </p>

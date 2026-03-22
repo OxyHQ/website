@@ -88,7 +88,7 @@ function GridCard({
       <svg
         width="100%"
         height="1"
-        className="absolute inset-x-0 top-0 text-black-400"
+        className="absolute inset-x-0 top-0 text-surface"
         style={{ gridRow: 1 }}
       >
         <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
@@ -98,7 +98,7 @@ function GridCard({
       <svg
         width="100%"
         height="1"
-        className="absolute inset-x-0 bottom-0 text-black-400"
+        className="absolute inset-x-0 bottom-0 text-surface"
         style={{ gridRow: 1 }}
       >
         <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
@@ -108,7 +108,7 @@ function GridCard({
       <svg
         width="1"
         height="100%"
-        className="absolute inset-y-0 left-0 text-black-400"
+        className="absolute inset-y-0 left-0 text-surface"
         style={{ gridColumn: 1 }}
       >
         <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
@@ -118,7 +118,7 @@ function GridCard({
       <svg
         width="1"
         height="100%"
-        className="absolute inset-y-0 right-0 text-black-400"
+        className="absolute inset-y-0 right-0 text-surface"
         style={{ gridColumn: 1 }}
       >
         <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
@@ -216,7 +216,7 @@ export default function UniversalContextSection() {
             {contextCards.map((card, i) => (
               <div
                 key={i}
-                className="flex items-start gap-4 rounded-lg border border-black-400 bg-primary-background p-5"
+                className="flex items-start gap-4 rounded-lg border border-surface bg-primary-background p-5"
               >
                 <div className="size-5 shrink-0 text-primary-foreground">
                   <CardIcon iconType={card.iconType} />

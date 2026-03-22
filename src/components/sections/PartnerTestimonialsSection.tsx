@@ -69,14 +69,6 @@ function FeatureIcon() {
   )
 }
 
-function PersonPlaceholder({ name }: { name: string }) {
-  const initials = name.split(' ').map((n) => n[0]).join('')
-  return (
-    <div className="flex max-h-60 min-h-full min-w-full max-w-60 items-center justify-center rounded-2xl bg-surface-subtle max-xl:max-h-50 max-xl:max-w-50">
-      <span className="text-4xl font-semibold text-accent-foreground">{initials}</span>
-    </div>
-  )
-}
 
 export default function PartnerTestimonialsSection() {
   const [activeIndex, setActiveIndex] = useState(2)
@@ -119,11 +111,15 @@ export default function PartnerTestimonialsSection() {
                         }}
                       >
                         <div className="flex items-center justify-center">
-                          <div
-                            className="transition-transform duration-400 ease-in-out group-hover:scale-[1.01] group-hover:duration-150"
-                          >
-                            <PersonPlaceholder name={partner.name} />
-                          </div>
+                          <img
+                            alt={partner.name}
+                            loading="lazy"
+                            width="900"
+                            height="1100"
+                            decoding="async"
+                            className="max-h-60 min-h-full min-w-full max-w-60 object-contain transition-transform duration-400 ease-in-out group-hover:scale-[1.01] group-hover:duration-150 max-xl:max-h-50 max-xl:max-w-50"
+                            src={partner.image}
+                          />
                         </div>
                       </div>
 
@@ -167,7 +163,7 @@ export default function PartnerTestimonialsSection() {
                           <svg
                             width="100%"
                             height="1"
-                            className="absolute inset-x-0 top-0 col-[1/-1] row-[3/3] text-white-600 transition-[filter,opacity] duration-400 ease-out"
+                            className="absolute inset-x-0 top-0 col-[1/-1] row-[3/3] text-weak-stroke transition-[filter,opacity] duration-400 ease-out"
                             style={{
                               filter: isActive ? 'blur(0px)' : 'blur(4px)',
                               opacity: isActive ? 1 : 0,
@@ -179,7 +175,7 @@ export default function PartnerTestimonialsSection() {
                             />
                           </svg>
                           <p
-                            className="absolute left-1/2 top-1/2 col-[1/4] row-[3/3] flex w-fit -translate-x-1/2 -translate-y-1/2 items-center justify-evenly overflow-hidden whitespace-nowrap text-center text-sm font-semibold text-black-800 transition-[filter,opacity] duration-400 ease-out"
+                            className="absolute left-1/2 top-1/2 col-[1/4] row-[3/3] flex w-fit -translate-x-1/2 -translate-y-1/2 items-center justify-evenly overflow-hidden whitespace-nowrap text-center text-sm font-semibold text-default-stroke transition-[filter,opacity] duration-400 ease-out"
                             style={{
                               filter: isActive ? 'blur(0px)' : 'blur(4px)',
                               opacity: isActive ? 1 : 0,
@@ -197,7 +193,7 @@ export default function PartnerTestimonialsSection() {
                             {partner.favoriteFeatures.map((feature) => (
                               <div key={feature} className="flex w-fit shrink-0 items-center gap-1.5">
                                 <FeatureIcon />
-                                <p className="truncate text-sm text-black-800">{feature}</p>
+                                <p className="truncate text-sm text-default-stroke">{feature}</p>
                               </div>
                             ))}
                           </div>
@@ -245,7 +241,15 @@ export default function PartnerTestimonialsSection() {
                             opacity: isActive ? 1 : 0,
                           }}
                         >
-                          <PersonPlaceholder name={partner.name} />
+                          <img
+                            alt={partner.name}
+                            loading="lazy"
+                            width="900"
+                            height="1100"
+                            decoding="async"
+                            className="size-full object-contain"
+                            src={partner.image}
+                          />
                         </div>
 
                         {/* Quote + name */}

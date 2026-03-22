@@ -29,24 +29,24 @@
   --color-blue-450: #538bf3;
   --color-blue-500: #266df0;
 
-  /* Semantic Colors — dark mode */
-  --color-primary-background: #101113;
-  --color-secondary-background: #1c1d1f;
-  --color-surface: #2e3238;
-  --color-surface-subtle: #232529;
-  --color-subtle-stroke: #2e3238;
-  --color-default-stroke: #6f7988;
-  --color-primary-foreground: #fff;
-  --color-secondary-foreground: #edeff3;
-  --color-tertiary-foreground: #b5bdc9;
-  --color-accent-foreground: #6f7988;
-  --color-caption-foreground: #a4adba;
-  --color-link-foreground: #709ff5;
-  --color-disabled-foreground: #d3d8df;
-  --color-weak-stroke: #232529;
-  --color-muted-strong-background: #2e3238;
-  --color-secondary: var(--color-secondary-foreground);
-  --color-tertiary: var(--color-tertiary-foreground);
+  /* Semantic Colors — resolved via CSS custom properties for theme switching */
+  --color-primary-background: var(--sem-primary-background);
+  --color-secondary-background: var(--sem-secondary-background);
+  --color-surface: var(--sem-surface);
+  --color-surface-subtle: var(--sem-surface-subtle);
+  --color-subtle-stroke: var(--sem-subtle-stroke);
+  --color-default-stroke: var(--sem-default-stroke);
+  --color-primary-foreground: var(--sem-primary-foreground);
+  --color-secondary-foreground: var(--sem-secondary-foreground);
+  --color-tertiary-foreground: var(--sem-tertiary-foreground);
+  --color-accent-foreground: var(--sem-accent-foreground);
+  --color-caption-foreground: var(--sem-caption-foreground);
+  --color-link-foreground: var(--sem-link-foreground);
+  --color-disabled-foreground: var(--sem-disabled-foreground);
+  --color-weak-stroke: var(--sem-weak-stroke);
+  --color-muted-strong-background: var(--sem-muted-strong-background);
+  --color-secondary: var(--sem-secondary-foreground);
+  --color-tertiary: var(--sem-tertiary-foreground);
 
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -79,6 +79,47 @@
   --container-3xl: 64rem;
   --container-4xl: 72rem;
   --container-5xl: 80rem;
+
+  /* Easing */
+  --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Light theme (default) */
+:root {
+  --sem-primary-background: #fff;
+  --sem-secondary-background: #fafafb;
+  --sem-surface: #edeff3;
+  --sem-surface-subtle: #f3f4f6;
+  --sem-subtle-stroke: #e4e7ec;
+  --sem-default-stroke: #8f99a8;
+  --sem-primary-foreground: #101113;
+  --sem-secondary-foreground: #1c1d1f;
+  --sem-tertiary-foreground: #505967;
+  --sem-accent-foreground: #6f7988;
+  --sem-caption-foreground: #6f7988;
+  --sem-link-foreground: #266df0;
+  --sem-disabled-foreground: #383e47;
+  --sem-weak-stroke: #dee2e7;
+  --sem-muted-strong-background: #edeff3;
+}
+
+/* Dark theme */
+.dark {
+  --sem-primary-background: #101113;
+  --sem-secondary-background: #1c1d1f;
+  --sem-surface: #2e3238;
+  --sem-surface-subtle: #232529;
+  --sem-subtle-stroke: #2e3238;
+  --sem-default-stroke: #6f7988;
+  --sem-primary-foreground: #fff;
+  --sem-secondary-foreground: #edeff3;
+  --sem-tertiary-foreground: #b5bdc9;
+  --sem-accent-foreground: #6f7988;
+  --sem-caption-foreground: #a4adba;
+  --sem-link-foreground: #709ff5;
+  --sem-disabled-foreground: #d3d8df;
+  --sem-weak-stroke: #232529;
+  --sem-muted-strong-background: #2e3238;
 }
 
 /* Base styles */
@@ -182,38 +223,38 @@ body {
 
 /* Button variants */
 .button-primary {
-  background: radial-gradient(at center -10%, var(--color-black-400), var(--color-black-400));
-  border-color: rgba(80, 89, 103, 0.5);
-  color: var(--color-white-400);
+  background: radial-gradient(at center -10%, var(--color-surface), var(--color-surface));
+  border-color: var(--color-default-stroke);
+  color: var(--color-secondary-foreground);
   transition: all 0.3s ease-in-out;
 }
 .button-primary:hover {
-  background: radial-gradient(at center -10%, var(--color-black-500), var(--color-black-400));
-  border-color: var(--color-black-600);
-  color: var(--color-white-100);
+  background: radial-gradient(at center -10%, var(--color-muted-strong-background), var(--color-surface));
+  border-color: var(--color-accent-foreground);
+  color: var(--color-primary-foreground);
 }
 
 .button-outline {
-  background: var(--color-black-50);
-  border-color: var(--color-black-400);
-  color: var(--color-white-400);
+  background: var(--color-primary-background);
+  border-color: var(--color-surface);
+  color: var(--color-secondary-foreground);
   transition: all 0.3s ease-in-out;
 }
 .button-outline:hover {
-  background: var(--color-black-100);
-  border-color: var(--color-black-500);
-  color: var(--color-white-400);
+  background: var(--color-secondary-background);
+  border-color: var(--color-default-stroke);
+  color: var(--color-secondary-foreground);
 }
 
 .button-ghost {
   background: transparent;
   border-color: transparent;
-  color: var(--color-white-900);
+  color: var(--color-tertiary-foreground);
   transition: all 0.3s ease-in-out;
 }
 .button-ghost:hover {
-  background: var(--color-black-400);
-  color: var(--color-white-100);
+  background: var(--color-surface);
+  color: var(--color-primary-foreground);
 }
 
 /* ─── Animations ─── */

@@ -8,7 +8,7 @@ export default function NavDropdownItem({ item }: NavDropdownItemProps) {
   return (
     <a
       href={item.href}
-      className="group flex w-full items-center justify-start gap-x-3 rounded-xl border border-transparent p-2 transition-colors duration-300 hover:bg-black-400"
+      className="group flex w-full items-center justify-start gap-x-3 rounded-xl border border-transparent p-2 transition-colors duration-300 hover:bg-surface"
     >
       {/* Icon placeholder with grid pattern */}
       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-none border-0">

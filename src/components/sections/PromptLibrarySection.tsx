@@ -25,7 +25,7 @@ function getIcon(iconType: PromptLibraryCard['iconType']) {
 
 function PromptCard({ card }: { card: PromptLibraryCard }) {
   return (
-    <div className="w-64 shrink-0 rounded-xl border border-black-100/5 backdrop-blur-xs">
+    <div className="w-64 shrink-0 rounded-xl border border-subtle-stroke/5 backdrop-blur-xs">
       <div className="flex flex-col overflow-hidden rounded-[calc(12px-1px)] bg-white-100 shadow-attio-4">
         <div className="flex flex-col gap-2 p-3">
           <div className="size-5 text-[#505155]">{getIcon(card.iconType)}</div>

@@ -339,41 +339,67 @@ export const footerColumns: FooterColumn[] = [
   {
     title: 'Platform',
     links: [
-      { label: 'Ask Oxy', href: '#' },
-      { label: 'AI Features', href: '#' },
-      { label: 'Data & Syncing', href: '#' },
-      { label: 'Automations', href: '#' },
-      { label: 'Reporting', href: '#' },
+      { label: 'Refer a team', href: '#', isNew: true },
       { label: 'Changelog', href: '#' },
+      { label: 'Gmail extension', href: '#', isExternal: true },
+      { label: 'iOS app', href: '#', isExternal: true },
+      { label: 'Android app', href: '#', isExternal: true },
       { label: 'Security', href: '#' },
     ],
   },
   {
     title: 'Company',
     links: [
-      { label: 'About', href: '#' },
+      { label: 'Customers', href: '#' },
+      { label: 'Announcements', href: '#' },
+      { label: 'Engineering blog', href: '#', isNew: true },
       { label: 'Careers', href: '#' },
-      { label: 'Blog', href: '#' },
-      { label: 'Press', href: '#' },
-      { label: 'Partners', href: '#' },
+      { label: 'Manifesto', href: '#' },
+      { label: 'Become a partner', href: '#' },
+    ],
+  },
+  {
+    title: 'Import from',
+    links: [
+      { label: 'Salesforce', href: '#' },
+      { label: 'Hubspot', href: '#' },
+      { label: 'Pipedrive', href: '#' },
+      { label: 'Zoho', href: '#' },
+      { label: 'Excel', href: '#' },
+      { label: 'CSV', href: '#' },
+    ],
+  },
+  {
+    title: 'Oxy for',
+    links: [
+      { label: 'Startups', href: '#' },
+      { label: 'Deal flow', href: '#' },
+    ],
+  },
+  {
+    title: 'Apps',
+    links: [
+      { label: 'Gmail', href: '#' },
+      { label: 'Outlook', href: '#' },
+      { label: 'Segment', href: '#' },
+      { label: 'Mailchimp', href: '#' },
+      { label: 'Slack', href: '#' },
+      { label: 'Outreach', href: '#' },
+      { label: 'Mixmax', href: '#' },
+      { label: 'Typeform', href: '#' },
+      { label: 'Zapier', href: '#' },
     ],
   },
   {
     title: 'Resources',
     links: [
-      { label: 'Help Center', href: '#' },
-      { label: 'Academy', href: '#' },
-      { label: 'Developer Docs', href: '#', isExternal: true },
-      { label: 'Status', href: '#', isExternal: true },
+      { label: 'Startup program', href: '#' },
+      { label: 'Help center', href: '#' },
+      { label: 'Automation templates', href: '#' },
+      { label: 'Developers', href: '#', isExternal: true },
+      { label: 'System status', href: '#', isExternal: true },
+      { label: 'Hire an expert', href: '#' },
       { label: 'Downloads', href: '#' },
-    ],
-  },
-  {
-    title: 'Legal',
-    links: [
-      { label: 'Privacy Policy', href: '#' },
-      { label: 'Terms of Service', href: '#' },
-      { label: 'GDPR', href: '#' },
     ],
   },
 ]
@@ -421,33 +447,37 @@ export interface PartnerTestimonial {
   role: string
   partnerType: string
   quote: string
+  image: string
   favoriteFeatures?: string[]
 }
 
 export const partnerTestimonials: PartnerTestimonial[] = [
   {
-    name: 'Giacomo Caranese',
-    role: 'Co-founder, novlini',
-    partnerType: 'Expert Partners',
-    quote:
-      'Oxy connects me with teams that value speed, structure, and scale. Building flexible, high-impact systems on such a powerful product is a pleasure.',
-    favoriteFeatures: ['Email & calendar sync', 'API', 'Mobile app'],
-  },
-  {
-    name: 'Riya Grover',
+    name: 'Alejandra Ruiz',
     role: 'Co-founder & CEO, Sequence',
     partnerType: 'App Partners',
+    image: '/partners/alejandra.avif',
     quote:
       'The developer platform makes it incredibly easy to build integrations that our customers love. The API is well-designed and the docs are excellent.',
     favoriteFeatures: ['Developer Platform', 'REST API', 'Webhooks'],
   },
   {
-    name: 'Daniel Hull',
+    name: 'Desiree Chen',
     role: 'Founder, 80x',
     partnerType: 'Creator Partners',
+    image: '/partners/desiree.avif',
     quote:
       'Creating content around Oxy has been a natural fit. The product is so well-built that the stories practically write themselves.',
     favoriteFeatures: ['Reporting', 'Workflows', 'Data model'],
+  },
+  {
+    name: 'Ton Caranese',
+    role: 'Co-founder, novlini',
+    partnerType: 'Expert Partners',
+    image: '/partners/ton.avif',
+    quote:
+      'Oxy connects me with teams that value speed, structure, and scale. Building flexible, high-impact systems on such a powerful product is a pleasure.',
+    favoriteFeatures: ['Email & calendar sync', 'API', 'Mobile app'],
   },
 ]
 
