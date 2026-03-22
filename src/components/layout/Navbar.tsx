@@ -8,6 +8,7 @@ import {
 import NavDropdownItem from '../ui/NavDropdownItem'
 import Button from '../ui/Button'
 import ThemeToggle from '../ui/ThemeToggle'
+import Logo from '../ui/Logo'
 import Container from './Container'
 
 /* ─── SVG Icons ─── */
@@ -267,7 +268,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between">
             <div className="flex grow items-center gap-x-9">
               <a href="/" className="-mx-1.5 rounded-xl px-1.5" aria-label="Oxy homepage">
-                <span className="mb-1 block text-xl font-bold tracking-tight text-primary-foreground">Oxy</span>
+                <Logo className="h-6" />
               </a>
 
               {/* Desktop nav */}

@@ -4,7 +4,10 @@ import { hero } from '../../data/content'
 import Button from '../ui/Button'
 
 const cardShadow =
-  '0px 0px 0px 1px rgba(28,40,64,0.04), 0px 9px 4px 0px rgba(127,135,144,0.01), 0px 5px 3px 0px rgba(127,135,144,0.05), 0px 2px 2px 0px rgba(127,135,144,0.09), 0px 1px 1px 0px rgba(127,135,144,0.1)'
+  'rgba(28, 40, 64, 0.04) 0px 0px 0px 1px, rgba(127, 135, 144, 0.01) 0px 9px 4px 0px, rgba(127, 135, 144, 0.05) 0px 5px 3px 0px, rgba(127, 135, 144, 0.09) 0px 2px 2px 0px, rgba(127, 135, 144, 0.1) 0px 1px 1px 0px'
+
+const responseShadow =
+  'rgba(28, 40, 64, 0.04) 0px 0px 0px 1px, rgba(127, 135, 144, 0.01) 0px 9px 4px 0px, rgba(127, 135, 144, 0.05) 0px 5px 3px 0px, rgba(127, 135, 144, 0.09) 0px 2px 2px 0px, rgba(127, 135, 144, 0.1) 0px 1px 1px 0px, rgb(255, 255, 255) 0px 0px 24px 20px'
 
 export default function HeroSection() {
   const fullText = 'Ask anything'
@@ -114,18 +117,127 @@ export default function HeroSection() {
                 <div
                   className="relative z-1 mt-1.5 max-h-64 origin-center overflow-y-hidden rounded-lg p-2.5 backdrop-blur-xs md:mt-2 md:max-h-76 md:rounded-xl md:p-3.5 bg-white-100/90"
                   style={{
-                    boxShadow: 'rgba(28, 40, 64, 0.04) 0px 0px 0px 1px, rgba(127, 135, 144, 0.01) 0px 9px 4px 0px, rgba(127, 135, 144, 0.05) 0px 5px 3px 0px, rgba(127, 135, 144, 0.09) 0px 2px 2px 0px, rgba(127, 135, 144, 0.1) 0px 1px 1px 0px, rgb(255, 255, 255) 0px 0px 24px 20px',
+                    boxShadow: responseShadow,
                     opacity: showResponse ? 1 : 0,
                     transform: showResponse ? 'none' : 'scale(0.95)',
                     transition: 'opacity 700ms ease-out, transform 700ms ease-out',
                   }}
                 >
-                  <div
-                    className="flex max-w-80 flex-col overflow-hidden rounded-lg md:rounded-xl bg-white-100"
-                    style={{ boxShadow: 'rgba(28, 40, 64, 0.04) 0px 0px 0px 1px, rgba(127, 135, 144, 0.01) 0px 9px 4px 0px, rgba(127, 135, 144, 0.05) 0px 5px 3px 0px, rgba(127, 135, 144, 0.09) 0px 2px 2px 0px, rgba(127, 135, 144, 0.1) 0px 1px 1px 0px' }}
-                  >
-                    <div className="p-3 md:p-4">
-                      <p className="text-xs text-[rgba(0,0,0,0.4)] leading-4">Here's your meeting brief for the call with Greenleaf Inc. today at 2PM...</p>
+                  <div className="flex flex-col gap-2.5">
+                    {/* Meeting card */}
+                    <div
+                      className="flex max-w-80 flex-col overflow-hidden rounded-lg md:rounded-xl bg-white-100"
+                      style={{ boxShadow: cardShadow }}
+                    >
+                      {/* Green status bar */}
+                      <div className="h-1 w-full bg-[#2da64e]" />
+
+                      {/* Meeting details */}
+                      <div className="flex flex-col gap-2.5 p-3 md:p-3.5">
+                        {/* Title row */}
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-[13px] font-semibold leading-[18px] text-white-900 md:text-sm">
+                              Greenleaf Onboarding
+                            </span>
+                            <span className="text-[11px] leading-4 text-[rgba(0,0,0,0.4)] md:text-xs">
+                              Dec 12, 10:40 – 11:40 AM
+                            </span>
+                          </div>
+                          {/* Video icon + duration */}
+                          <div className="flex items-center gap-1.5">
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="text-[rgba(0,0,0,0.3)]">
+                              <path d="M2 4.5C2 3.67157 2.67157 3 3.5 3H9.5C10.3284 3 11 3.67157 11 4.5V11.5C11 12.3284 10.3284 13 9.5 13H3.5C2.67157 13 2 12.3284 2 11.5V4.5Z" fill="currentColor" />
+                              <path d="M12 5.5L14.4 3.7C14.5657 3.57574 14.8 3.69249 14.8 3.9V12.1C14.8 12.3075 14.5657 12.4243 14.4 12.3L12 10.5V5.5Z" fill="currentColor" />
+                            </svg>
+                            <span className="text-[11px] leading-4 text-[rgba(0,0,0,0.35)] md:text-xs">22 min</span>
+                          </div>
+                        </div>
+
+                        {/* Avatar stack */}
+                        <div className="flex items-center -space-x-1.5">
+                          <div className="size-5 rounded-full border-[1.5px] border-white bg-[#6366f1] md:size-6" />
+                          <div className="size-5 rounded-full border-[1.5px] border-white bg-[#f59e0b] md:size-6" />
+                        </div>
+                      </div>
+
+                      {/* Divider */}
+                      <div className="h-px bg-[rgba(0,0,0,0.05)]" />
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-between px-3 py-2 md:px-3.5 md:py-2.5">
+                        <div className="flex items-center gap-1.5">
+                          {/* Clock icon */}
+                          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" className="text-[rgba(0,0,0,0.3)]">
+                            <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.5" />
+                            <path d="M8 5V8L10 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                          <span className="text-[11px] leading-4 text-[rgba(0,0,0,0.4)] md:text-xs">
+                            Starts in 6 mins
+                          </span>
+                        </div>
+                        <button className="rounded-md bg-[#266df0] px-2.5 py-1 text-[11px] font-medium leading-4 text-white md:text-xs">
+                          Join meeting
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Suggested follow-up tasks */}
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-[11px] font-medium leading-4 text-[rgba(0,0,0,0.35)] md:text-xs">
+                        Suggested follow-up tasks:
+                      </span>
+
+                      {/* Task card 1 */}
+                      <div
+                        className="flex flex-col gap-3 rounded-lg py-2 pr-2 pl-2.5 md:rounded-xl md:py-2 md:pr-2 md:pl-2.5 bg-white-100"
+                        style={{ boxShadow: cardShadow }}
+                      >
+                        <div className="flex items-start gap-2">
+                          <div className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border border-[rgba(0,0,0,0.12)]">
+                            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" className="text-[rgba(0,0,0,0.25)]">
+                              <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </div>
+                          <span className="text-[12px] leading-4 text-[rgba(0,0,0,0.55)] md:text-[13px] md:leading-[18px]">
+                            Send onboarding checklist to Greenleaf team
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Task card 2 */}
+                      <div
+                        className="flex flex-col gap-3 rounded-lg py-2 pr-2 pl-2.5 md:rounded-xl md:py-2 md:pr-2 md:pl-2.5 bg-white-100"
+                        style={{ boxShadow: cardShadow }}
+                      >
+                        <div className="flex items-start gap-2">
+                          <div className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border border-[rgba(0,0,0,0.12)]">
+                            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" className="text-[rgba(0,0,0,0.25)]">
+                              <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </div>
+                          <span className="text-[12px] leading-4 text-[rgba(0,0,0,0.55)] md:text-[13px] md:leading-[18px]">
+                            Schedule follow-up sync for next week
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Task card 3 */}
+                      <div
+                        className="flex flex-col gap-3 rounded-lg py-2 pr-2 pl-2.5 md:rounded-xl md:py-2 md:pr-2 md:pl-2.5 bg-white-100"
+                        style={{ boxShadow: cardShadow }}
+                      >
+                        <div className="flex items-start gap-2">
+                          <div className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border border-[rgba(0,0,0,0.12)]">
+                            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" className="text-[rgba(0,0,0,0.25)]">
+                              <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </div>
+                          <span className="text-[12px] leading-4 text-[rgba(0,0,0,0.55)] md:text-[13px] md:leading-[18px]">
+                            Share meeting notes with stakeholders
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

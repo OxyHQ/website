@@ -1,4 +1,5 @@
 import { footerColumns } from '../../data/content'
+import Logo from '../ui/Logo'
 
 /* ─── SVG Icons ─── */
 function ExternalArrow() {
@@ -61,7 +62,7 @@ export default function Footer() {
           {/* Logo column */}
           <div className="col-[1/2] max-lg:col-[1/3] max-md:col-[1/4] max-xs:col-[1/5]">
             <a className="-m-1.5 inline-block w-[calc(100%+12px)] rounded-lg p-1.5" aria-label="Oxy homepage" href="/">
-              <span className="text-xl font-bold tracking-tight text-primary-foreground dark:text-white-200">Oxy</span>
+              <Logo className="h-6" />
             </a>
           </div>
 

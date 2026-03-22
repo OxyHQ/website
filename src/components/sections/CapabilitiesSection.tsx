@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { capabilityTabs } from '../../data/content'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
-import DotPattern from '../ui/DotPattern'
 
 function ChatMockup() {
   return (
@@ -263,6 +262,21 @@ function ProductMockup({ mockupType }: { mockupType: 'chat' | 'pipeline' | 'meet
   }
 }
 
+function TickMarks() {
+  const ticks = Array.from({ length: 30 })
+  return (
+    <div className="mask-x-from-96% relative flex w-full justify-center overflow-hidden">
+      <div className="flex min-w-[200vw] max-w-[200vw] items-end justify-center gap-3">
+        {ticks.map((_, i) => (
+          <svg key={i} width="1" height="100%" className="text-subtle-stroke h-2 shrink-0">
+            <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
+          </svg>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function CapabilitiesSection() {
   const ref = useScrollReveal()
   const [activeTabIndex, setActiveTabIndex] = useState(0)
@@ -305,34 +319,51 @@ export default function CapabilitiesSection() {
                 ))}
               </div>
             </div>
+
+            {/* Tick marks */}
+            <TickMarks />
           </div>
 
           {/* Split-panel card */}
           <div className="grid grid-cols-12 pb-10">
             <div
-              className="relative col-[2/-2] flex w-full border border-subtle-stroke max-xl:col-[2/-2] max-lg:col-span-full max-lg:aspect-video max-lg:border-x-0 max-md:aspect-5/4 max-lg:aspect-square! scroll-reveal"
+              className="relative col-[2/-2] max-lg:col-span-full flex w-full border border-subtle-stroke max-lg:aspect-video max-lg:border-x-0 max-md:aspect-5/4 max-lg:aspect-square! scroll-reveal"
               style={{ transitionDelay: '200ms' }}
             >
               {/* Left half — title + description */}
               <div className="relative my-px bg-white-100 w-1/2 max-lg:hidden">
                 {/* Vertical separator SVG */}
-                <svg className="absolute top-0 right-0 bottom-0 h-full text-subtle-stroke" width="1" height="100%">
+                <svg width="1" height="100%" className="text-subtle-stroke absolute inset-y-0 right-0">
                   <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
                 </svg>
 
-                <div className="flex h-full flex-col justify-end p-10">
-                  <h3 className="mb-3 font-display text-2xl font-semibold text-black-0">
-                    {activePanel.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-black-600">
-                    {activePanel.description}
-                  </p>
+                <div className="absolute top-12 left-10 flex items-center gap-2 max-xl:top-12 max-xl:left-7.5" style={{ filter: 'blur(0px)', opacity: 1, transform: 'none' }}>
+                  <div className="flex flex-col gap-3">
+                    <h3 className="max-w-[20em] text-balance pr-6 font-display font-semibold text-2xl">
+                      {activePanel.title}
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="absolute inset-x-10 bottom-10 max-xl:inset-x-7.5 max-xl:bottom-7.5">
+                  <div className="absolute bottom-0 flex max-w-sm flex-col text-balance text-tertiary-foreground" style={{ filter: 'blur(0px)', opacity: 1, transform: 'none' }}>
+                    <p className="text-balance pr-6 text-accent-foreground text-sm">
+                      {activePanel.description}
+                    </p>
+                  </div>
                 </div>
               </div>
 
               {/* Right half — product mockup */}
               <div className="relative flex overflow-hidden bg-secondary-background max-lg:aspect-video max-lg:w-full max-lg:justify-center max-md:aspect-square aspect-square! aspect-square w-1/2">
-                <DotPattern id="capabilities-dots" />
+                <svg width="100%" height="100%" className="text-muted-strong-background mask-[radial-gradient(circle,transparent_00%,black_100%)] absolute inset-0">
+                  <defs>
+                    <pattern id="capabilities-dots" width="10" height="10" patternUnits="userSpaceOnUse">
+                      <rect x="5.5" y="5.5" width="1" height="1" fill="currentColor" />
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#capabilities-dots)" />
+                </svg>
 
                 <div className="relative z-10 flex w-full flex-col justify-center">
                   <ProductMockup mockupType={activePanel.mockupType} />
