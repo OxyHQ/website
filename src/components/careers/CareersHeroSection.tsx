@@ -87,12 +87,9 @@ export default function CareersHeroSection() {
             </p>
 
             <div className="mt-7 flex w-auto items-center gap-x-3 gap-y-4 max-lg:flex-col">
-              <a
-                href="#open-positions"
-                className="inline-flex items-center justify-center rounded-full bg-primary-foreground px-5 py-2.5 text-sm font-semibold text-primary-background transition-colors hover:bg-primary-foreground/90"
-              >
+              <button className="relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-9 gap-x-1.5 rounded-[10px] px-3 text-sm max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base button-primary">
                 Join the team
-              </a>
+              </button>
 
               {/* Avatar stack */}
               <div className="group flex">
@@ -108,11 +105,13 @@ export default function CareersHeroSection() {
                   </div>
                 ))}
                 {/* Count badge */}
-                <div className="relative size-[36px] rounded-full border border-subtle-stroke lg:size-7">
-                  <div className="flex h-full w-full items-center justify-center rounded-full bg-[#FBFBFB] text-[#75777C]">
+                <div className="relative size-[36px] rounded-full border border-subtle-stroke lg:size-7 transition-transform duration-150 ease-out hover:z-10 lg:hover:scale-[1.12]">
+                  <div className="h-full w-full rounded-full">
+                    <div className="flex h-full w-full items-center justify-center rounded-full bg-[#FBFBFB] text-[#75777C]">
                     <span className="lg:text-[10px] lg:leading-[14px] text-[12px] tabular-nums leading-[16px] tracking-tighter">
                       +127
                     </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -121,8 +120,9 @@ export default function CareersHeroSection() {
         </div>
 
         {/* Right — squircle staircase grid (desktop only) */}
-        <div className="col-[2/-1] row-1 hidden lg:flex">
-          <div className="flex w-full justify-end items-end">
+        <div className="col-[2/-1] row-1 hidden flex-col overflow-x-clip pt-36 pb-16 lg:flex">
+          <div className="min-h-[392px] lg:min-h-[504px]">
+            <div className="flex justify-end" style={{ minHeight: 504 }}>
             {columns.map((column, colIndex) => (
               <div
                 key={colIndex}
@@ -166,6 +166,7 @@ export default function CareersHeroSection() {
                 })}
               </div>
             ))}
+            </div>
           </div>
         </div>
       </div>
