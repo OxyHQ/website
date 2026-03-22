@@ -1,11 +1,74 @@
+import { useState, useMemo } from 'react'
 import { careersHero } from '../../data/careers'
 
 const avatarColors = ['#266DF0', '#9162F9', '#FD9038']
 
+const teamMembers = [
+  { name: 'Alex', flag: '\u{1F1EC}\u{1F1E7}', dept: 'Marketing' },
+  { name: 'Sofia', flag: '\u{1F1F8}\u{1F1EA}', dept: 'Engineering' },
+  { name: 'James', flag: '\u{1F1EC}\u{1F1E7}', dept: 'Design' },
+  { name: 'Maria', flag: '\u{1F1EA}\u{1F1F8}', dept: 'Product' },
+  { name: 'David', flag: '\u{1F1FA}\u{1F1F8}', dept: 'Sales' },
+  { name: 'Emma', flag: '\u{1F1EC}\u{1F1E7}', dept: 'Engineering' },
+  { name: 'Lucas', flag: '\u{1F1E9}\u{1F1EA}', dept: 'Engineering' },
+  { name: 'Priya', flag: '\u{1F1EE}\u{1F1F3}', dept: 'Product' },
+]
+
+/** Deterministic pseudo-random from a seed */
+function seededRandom(seed: number) {
+  const x = Math.sin(seed + 1) * 10000
+  return x - Math.floor(x)
+}
+
+interface SquircleCell {
+  id: string
+  col: number
+  row: number
+  memberIndex: number | null
+}
+
+function buildGrid(): SquircleCell[] {
+  const cols = 22
+  const cells: SquircleCell[] = []
+  let memberSlot = 0
+
+  for (let c = 0; c < cols; c++) {
+    // Each column has 4-6 rows, determined by seed
+    const rowCount = 4 + Math.floor(seededRandom(c * 7) * 3) // 4, 5, or 6
+    for (let r = 0; r < rowCount; r++) {
+      const id = `${c}-${r}`
+      // ~12% of cells get a team member hover card
+      const hasMember = seededRandom(c * 31 + r * 17) > 0.88
+      cells.push({
+        id,
+        col: c,
+        row: r,
+        memberIndex: hasMember ? memberSlot++ % teamMembers.length : null,
+      })
+    }
+  }
+  return cells
+}
+
 export default function CareersHeroSection() {
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
+
+  const grid = useMemo(() => buildGrid(), [])
+
+  // Group cells by column
+  const columns = useMemo(() => {
+    const map = new Map<number, SquircleCell[]>()
+    for (const cell of grid) {
+      if (!map.has(cell.col)) map.set(cell.col, [])
+      map.get(cell.col)!.push(cell)
+    }
+    return Array.from(map.entries()).sort(([a], [b]) => a - b)
+  }, [grid])
+
   return (
     <section className="container relative max-lg:overflow-hidden">
       <div className="relative grid w-full grid-cols-12 gap-x-6 lg:border-subtle-stroke lg:border-x">
+        {/* Left content — unchanged */}
         <div className="relative col-span-full row-1 lg:col-[2/-2]">
           <header
             className="flex w-full flex-col max-xl:pt-25 max-lg:pt-20 max-lg:items-center py-36 pb-48 max-lg:pb-20"
@@ -55,6 +118,62 @@ export default function CareersHeroSection() {
               </div>
             </div>
           </header>
+        </div>
+
+        {/* Right — squircle grid (desktop only) */}
+        <div className="col-[2/-1] row-1 hidden flex-col overflow-x-clip pt-36 pb-16 lg:flex">
+          <div className="min-h-[392px] lg:min-h-[504px]">
+            <div className="flex justify-end" style={{ minHeight: 504 }}>
+              {columns.map(([colIndex, cells]) => (
+                <div
+                  key={colIndex}
+                  className="flex flex-col-reverse"
+                  style={{ flex: '0 0 24px' }}
+                >
+                  {cells.map((cell) => {
+                    const member =
+                      cell.memberIndex !== null
+                        ? teamMembers[cell.memberIndex]
+                        : null
+                    const isHovered = hoveredId === cell.id
+
+                    return (
+                      <div
+                        key={cell.id}
+                        className="px-px"
+                        style={{ height: 24, width: 24 }}
+                        onMouseEnter={() =>
+                          member && setHoveredId(cell.id)
+                        }
+                        onMouseLeave={() =>
+                          member && setHoveredId(null)
+                        }
+                      >
+                        <div className="relative size-[22px]">
+                          <div
+                            className={`relative size-[22px] rounded-md z-[1] before:absolute before:-inset-px transition-colors duration-150 ${
+                              isHovered
+                                ? 'bg-white-500'
+                                : 'bg-white-700'
+                            } ${member ? 'cursor-pointer' : ''}`}
+                          />
+
+                          {/* Hover card */}
+                          {isHovered && member && (
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 whitespace-nowrap rounded-lg bg-primary-background px-3 py-2 shadow-lg border border-subtle-stroke">
+                              <div className="flex items-center justify-center gap-1 text-secondary-foreground text-sm">
+                                {member.name} {member.flag} {member.dept}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
