@@ -9,7 +9,7 @@ import CTASection from '../components/sections/CTASection'
 
 export default function AskPage() {
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-[var(--color-primary-bg)]">
+    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-primary-background">
       <Navbar />
       <main>
         <HeroSection />

@@ -1,9 +1,10 @@
+import type React from 'react'
 import { hero } from '../../data/content'
 import Button from '../ui/Button'
 
 export default function HeroSection() {
   return (
-    <section className="flex min-h-[calc(100svh-var(--site-header-height))] flex-col bg-gradient-to-b from-[var(--color-primary-bg)] to-[var(--color-secondary-bg)]">
+    <section className="flex min-h-[calc(100svh-var(--site-header-height))] flex-col bg-gradient-to-b from-primary-background to-secondary-background">
       {/* Main content area with background glow */}
       <div className="relative flex flex-1 flex-col overflow-hidden">
         {/* Radial glow */}
@@ -11,7 +12,7 @@ export default function HeroSection() {
           className="pointer-events-none absolute inset-0 overflow-hidden"
           aria-hidden="true"
         >
-          <div className="absolute left-1/2 top-1/4 h-[500px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-blue-500)]/[0.07] blur-[120px]" />
+          <div className="absolute left-1/2 top-1/4 h-[500px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/[0.07] blur-[120px]" />
         </div>
 
         {/* Content in 12-col grid */}
@@ -19,16 +20,14 @@ export default function HeroSection() {
           <div className="col-[2/-2] flex flex-col items-center justify-center pb-12">
             <div className="pointer-events-auto">
               {/* Header with staggered animations */}
-              <header className="flex w-full flex-col items-center pt-20 pb-15 lg:pt-25 xl:pt-30">
+              <header className="flex w-full flex-col items-center pt-20 pb-15 lg:pt-25 xl:pt-30" style={{ '--animate-delay': '0ms' } as React.CSSProperties}>
                 <h1
-                  className="text-heading-responsive-lg max-w-[15em] text-balance text-center animate-fade-in-up"
-                  style={{ animationDelay: '200ms' }}
+                  className="text-heading-responsive-lg max-w-[15em] text-balance text-center fade-in-from-bottom-1 animate-in fill-mode-both transition-[opacity,translate,transform] delay-[calc(var(--animate-delay)+200ms)] duration-1000 ease-in-out will-change-[translate,transform]"
                 >
                   {hero.title}
                 </h1>
                 <p
-                  className="mt-4 max-w-xl text-balance text-center text-lg text-[var(--color-secondary-fg)] lg:text-xl animate-fade-in-up"
-                  style={{ animationDelay: '300ms' }}
+                  className="mt-4 max-w-xl text-balance text-center text-lg text-secondary-foreground lg:text-xl fade-in-from-bottom-1 animate-in fill-mode-both transition-[opacity,translate,transform] delay-[calc(var(--animate-delay)+300ms)] duration-1000 ease-in-out will-change-[translate,transform]"
                 >
                   {hero.subtitle}
                 </p>
@@ -43,19 +42,19 @@ export default function HeroSection() {
               <div aria-hidden="true" className="relative w-full">
                 {/* White input bar */}
                 <div
-                  className="relative z-10 flex items-center justify-between rounded-xl bg-[var(--color-white-100)] pl-4 backdrop-blur-[2px]"
+                  className="relative z-10 flex items-center justify-between rounded-xl bg-white-100 pl-4 backdrop-blur-[2px]"
                   style={{
                     boxShadow:
                       '0 0 0 1px rgba(28,40,64,0.04), 0 9px 4px rgba(127,135,144,0.01), 0 5px 3px rgba(127,135,144,0.05), 0 2px 2px rgba(127,135,144,0.09), 0 1px 1px rgba(127,135,144,0.1)',
                   }}
                 >
-                  <span className="min-w-0 flex-1 text-[15px] font-medium leading-5 text-[var(--color-white-900)]/40">
+                  <span className="min-w-0 flex-1 text-[15px] font-medium leading-5 text-white-900/40">
                     Ask anything.
                   </span>
                   <div className="relative flex shrink-0 justify-end overflow-hidden p-[9px]">
                     {/* Blue send button */}
                     <div
-                      className="flex size-8 items-center justify-center rounded-[9px] border border-black/10 bg-[#266df0] text-[var(--color-white-100)]"
+                      className="flex size-8 items-center justify-center rounded-[9px] border border-black/10 bg-[#266df0] text-white-100"
                       style={{
                         boxShadow:
                           '0 2px 4px -2px rgba(15,107,233,0.12), 0 3px 6px -2px rgba(15,107,233,0.08)',
@@ -78,7 +77,7 @@ export default function HeroSection() {
                   </div>
                 </div>
                 {/* Empty response area suggesting chat */}
-                <div className="mt-2 h-64 rounded-xl bg-[var(--color-white-100)]/5 md:h-76" />
+                <div className="mt-2 h-64 rounded-xl bg-white-100/5 md:h-76" />
               </div>
             </div>
           </div>
@@ -86,7 +85,7 @@ export default function HeroSection() {
       </div>
 
       {/* Separator line */}
-      <svg width="100%" height="1" className="text-[var(--color-subtle-stroke)]">
+      <svg width="100%" height="1" className="text-subtle-stroke">
         <line
           x1="0"
           y1="0.5"
@@ -101,7 +100,7 @@ export default function HeroSection() {
       <div className="mx-auto w-full max-w-[1200px] px-6">
         <div className="grid w-full grid-cols-12">
           <div className="col-[2/-2] flex flex-col items-center justify-between gap-6 py-12 max-md:pb-10 max-md:pt-15 lg:flex-row lg:gap-0">
-            <p className="max-w-md text-center text-lg text-[var(--color-secondary-fg)] lg:text-left">
+            <p className="max-w-md text-center text-lg text-secondary-foreground lg:text-left">
               Engineered for performance. Unified by design. Powered by
               Universal Context.
             </p>

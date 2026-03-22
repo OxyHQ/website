@@ -13,7 +13,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   return (
     <div
-      className={`rounded-xl bg-primary-bg shadow-attio-product-e1 ${className}`}
+      className={`rounded-xl bg-primary-background shadow-attio-product-e1 ${className}`}
       style={
         animated
           ? {

@@ -27,8 +27,8 @@ function getIcon(iconType: PromptLibraryCard['iconType']) {
 
 function PromptCard({ card }: { card: PromptLibraryCard }) {
   return (
-    <div className="w-64 shrink-0 rounded-xl border border-[var(--color-black-100)]/5 backdrop-blur-xs">
-      <div className="flex flex-col overflow-hidden rounded-[calc(12px-1px)] bg-[var(--color-white-100)] shadow-attio-4">
+    <div className="w-64 shrink-0 rounded-xl border border-black-100/5 backdrop-blur-xs">
+      <div className="flex flex-col overflow-hidden rounded-[calc(12px-1px)] bg-white-100 shadow-attio-4">
         <div className="flex flex-col gap-2 p-3">
           <div className="size-5 text-[#505155]">{getIcon(card.iconType)}</div>
           <div className="flex h-13 flex-col gap-0.5 pr-9">
@@ -38,7 +38,7 @@ function PromptCard({ card }: { card: PromptLibraryCard }) {
         </div>
         <div className="flex items-center justify-between px-3 pb-2.5">
           <div className="flex items-center gap-1.5">
-            <div className="relative size-4 overflow-hidden rounded-[30%] border border-[rgba(0,0,0,0.05)] bg-[var(--color-blue-500)] flex items-center justify-center">
+            <div className="relative size-4 overflow-hidden rounded-[30%] border border-[rgba(0,0,0,0.05)] bg-blue-500 flex items-center justify-center">
               <span className="text-white text-[8px] font-bold">O</span>
             </div>
             <span className="font-medium text-[#505155] text-xs leading-4">Oxy</span>
@@ -57,15 +57,15 @@ export default function PromptLibrarySection() {
   const row3 = [...promptLibraryCards.slice(3, 6), ...promptLibraryCards.slice(0, 3)]
 
   return (
-    <section className="bg-[var(--color-primary-bg)]">
+    <section className="bg-primary-background">
       <Container>
-        <div className="border-x border-[var(--color-subtle-stroke)] px-6 lg:px-10">
+        <div className="border-x border-subtle-stroke px-6 lg:px-10">
           <div ref={ref} className="py-20 lg:py-32">
             <div className="scroll-reveal flex flex-col items-center text-center">
-              <h2 className="text-heading-responsive-md text-balance text-[var(--color-primary-fg)]">
+              <h2 className="text-heading-responsive-md text-balance text-primary-foreground">
                 From one expert to everyone.
               </h2>
-              <p className="mt-4 max-w-xl text-xl text-[var(--color-tertiary-fg)]">
+              <p className="mt-4 max-w-xl text-xl text-tertiary-foreground">
                 Best practice becomes standard practice with the prompt library.
               </p>
             </div>

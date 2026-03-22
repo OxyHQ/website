@@ -20,7 +20,7 @@ export default function Section({
     <section className={className} id={id}>
       <Container className={containerClassName}>
         {withBorders ? (
-          <div className="border-x border-[var(--color-subtle-stroke)] px-6 lg:px-10">
+          <div className="border-x border-subtle-stroke px-6 lg:px-10">
             {children}
           </div>
         ) : (

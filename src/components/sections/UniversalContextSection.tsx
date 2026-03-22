@@ -70,16 +70,16 @@ function GridCard({
   iconType: string
 }) {
   return (
-    <div className="relative grid grid-cols-1 grid-rows-1 bg-[var(--color-primary-bg)]">
+    <div className="relative grid grid-cols-1 grid-rows-1 bg-primary-background">
       {/* Card content */}
       <div className="flex flex-col justify-between gap-3 p-6" style={{ gridColumn: 1, gridRow: 1 }}>
-        <div className="size-5 text-[var(--color-primary-fg)]">
+        <div className="size-5 text-primary-foreground">
           <CardIcon iconType={iconType} />
         </div>
         <div>
-          <p className="text-balance text-base text-[var(--color-primary-fg)] max-2xl:text-sm">
+          <p className="text-balance text-base text-primary-foreground max-2xl:text-sm">
             {title}
-            <span className="text-[var(--color-accent-fg)]"> {subtitle}</span>
+            <span className="text-accent-foreground"> {subtitle}</span>
           </p>
         </div>
       </div>
@@ -88,7 +88,7 @@ function GridCard({
       <svg
         width="100%"
         height="1"
-        className="absolute inset-x-0 top-0 text-[var(--color-black-400)]"
+        className="absolute inset-x-0 top-0 text-black-400"
         style={{ gridRow: 1 }}
       >
         <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
@@ -98,7 +98,7 @@ function GridCard({
       <svg
         width="100%"
         height="1"
-        className="absolute inset-x-0 bottom-0 text-[var(--color-black-400)]"
+        className="absolute inset-x-0 bottom-0 text-black-400"
         style={{ gridRow: 1 }}
       >
         <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
@@ -108,7 +108,7 @@ function GridCard({
       <svg
         width="1"
         height="100%"
-        className="absolute inset-y-0 left-0 text-[var(--color-black-400)]"
+        className="absolute inset-y-0 left-0 text-black-400"
         style={{ gridColumn: 1 }}
       >
         <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
@@ -118,7 +118,7 @@ function GridCard({
       <svg
         width="1"
         height="100%"
-        className="absolute inset-y-0 right-0 text-[var(--color-black-400)]"
+        className="absolute inset-y-0 right-0 text-black-400"
         style={{ gridColumn: 1 }}
       >
         <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
@@ -126,19 +126,19 @@ function GridCard({
 
       {/* Corner dots */}
       <div
-        className="absolute top-0 left-0 size-1 -translate-x-1/2 -translate-y-1/2 bg-[var(--color-default-stroke)]"
+        className="absolute top-0 left-0 size-1 -translate-x-1/2 -translate-y-1/2 bg-default-stroke"
         style={{ gridColumn: 1, gridRow: 1 }}
       />
       <div
-        className="absolute bottom-0 left-0 size-1 -translate-x-1/2 translate-y-1/2 bg-[var(--color-default-stroke)]"
+        className="absolute bottom-0 left-0 size-1 -translate-x-1/2 translate-y-1/2 bg-default-stroke"
         style={{ gridColumn: 1, gridRow: 1 }}
       />
       <div
-        className="absolute top-0 right-0 size-1 translate-x-1/2 -translate-y-1/2 bg-[var(--color-default-stroke)]"
+        className="absolute top-0 right-0 size-1 translate-x-1/2 -translate-y-1/2 bg-default-stroke"
         style={{ gridColumn: 1, gridRow: 1 }}
       />
       <div
-        className="absolute right-0 bottom-0 size-1 translate-x-1/2 translate-y-1/2 bg-[var(--color-default-stroke)]"
+        className="absolute right-0 bottom-0 size-1 translate-x-1/2 translate-y-1/2 bg-default-stroke"
         style={{ gridColumn: 1, gridRow: 1 }}
       />
     </div>
@@ -149,7 +149,7 @@ export default function UniversalContextSection() {
   const ref = useScrollReveal()
 
   return (
-    <section className="dark relative flex min-h-svh flex-col justify-center overflow-hidden bg-[var(--color-primary-bg)]">
+    <section className="dark relative flex min-h-svh flex-col justify-center overflow-hidden bg-primary-background">
       {/* Background gradient glow */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[60%]" aria-hidden="true">
         <div
@@ -164,12 +164,12 @@ export default function UniversalContextSection() {
       <Container className="pt-92 pb-20">
         <div ref={ref} className="flex flex-col items-center">
           {/* "Powered by" label */}
-          <p className="text-sm tracking-wide text-[var(--color-tertiary-fg)] scroll-reveal">
+          <p className="text-sm tracking-wide text-tertiary-foreground scroll-reveal">
             Powered by
           </p>
 
           {/* Heading */}
-          <h2 className="text-heading-responsive-lg relative mt-4 text-center text-[var(--color-primary-fg)] scroll-reveal">
+          <h2 className="text-heading-responsive-lg relative mt-4 text-center text-primary-foreground scroll-reveal">
             Universal Context
             <sup className="ml-0.5 text-[0.3em] font-bold tracking-tight align-super">TM</sup>
           </h2>
@@ -209,14 +209,14 @@ export default function UniversalContextSection() {
             {contextCards.map((card, i) => (
               <div
                 key={i}
-                className="flex items-start gap-4 rounded-lg border border-[var(--color-black-400)] bg-[var(--color-primary-bg)] p-5"
+                className="flex items-start gap-4 rounded-lg border border-black-400 bg-primary-background p-5"
               >
-                <div className="size-5 shrink-0 text-[var(--color-primary-fg)]">
+                <div className="size-5 shrink-0 text-primary-foreground">
                   <CardIcon iconType={card.iconType} />
                 </div>
-                <p className="text-sm text-[var(--color-primary-fg)]">
+                <p className="text-sm text-primary-foreground">
                   {card.title}
-                  <span className="text-[var(--color-accent-fg)]"> {card.subtitle}</span>
+                  <span className="text-accent-foreground"> {card.subtitle}</span>
                 </p>
               </div>
             ))}

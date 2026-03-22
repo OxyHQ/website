@@ -9,26 +9,26 @@ export default function UseCasesSection() {
   const ref = useScrollReveal()
 
   return (
-    <section className="bg-[var(--color-primary-bg)]">
+    <section className="bg-primary-background">
       <Container>
-        <div className="border-x border-[var(--color-subtle-stroke)]">
+        <div className="border-x border-subtle-stroke">
           {/* Top grid decoration */}
           <div aria-hidden="true" className="grid h-8 w-full grid-cols-12 overflow-hidden">
             <div className="col-[2/-2] flex justify-between">
-              <svg width="1" height="100%" className="text-[var(--color-subtle-stroke)]">
+              <svg width="1" height="100%" className="text-subtle-stroke">
                 <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
               </svg>
-              <svg width="1" height="100%" className="text-[var(--color-subtle-stroke)]">
+              <svg width="1" height="100%" className="text-subtle-stroke">
                 <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
               </svg>
-              <svg width="1" height="100%" className="text-[var(--color-subtle-stroke)]">
+              <svg width="1" height="100%" className="text-subtle-stroke">
                 <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
               </svg>
             </div>
           </div>
 
           {/* Horizontal line */}
-          <svg width="100%" height="1" className="text-[var(--color-subtle-stroke)]">
+          <svg width="100%" height="1" className="text-subtle-stroke">
             <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
           </svg>
 
@@ -36,20 +36,20 @@ export default function UseCasesSection() {
           <div ref={ref} className="relative grid grid-cols-12">
             {/* Left dashed border */}
             <div aria-hidden="true" className="absolute top-0 bottom-0 max-lg:hidden" style={{ left: 'calc(100% / 12)' }}>
-              <svg width="1" height="100%" className="text-[var(--color-subtle-stroke)]">
+              <svg width="1" height="100%" className="text-subtle-stroke">
                 <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
               </svg>
             </div>
 
             {/* Right dashed border */}
             <div aria-hidden="true" className="absolute top-0 bottom-0 max-lg:hidden" style={{ left: 'calc(11 * 100% / 12)' }}>
-              <svg width="1" height="100%" className="text-[var(--color-subtle-stroke)]">
+              <svg width="1" height="100%" className="text-subtle-stroke">
                 <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
               </svg>
             </div>
 
             <div className="col-[2/-2] flex flex-col items-center py-20 lg:py-32">
-              <h2 className="text-heading-responsive-sm text-balance text-center text-[var(--color-primary-fg)] scroll-reveal">
+              <h2 className="text-heading-responsive-sm text-balance text-center text-primary-foreground scroll-reveal">
                 Intelligence built for how you work and what you do.
               </h2>
 
@@ -61,8 +61,8 @@ export default function UseCasesSection() {
                     onClick={() => setActiveTab(i)}
                     className={`cursor-pointer rounded-[10px] border px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                       activeTab === i
-                        ? 'border-[var(--color-blue-400)]/40 bg-[var(--color-surface-subtle)] text-[var(--color-primary-fg)]'
-                        : 'border-transparent text-[var(--color-tertiary-fg)] hover:text-[var(--color-secondary-fg)]'
+                        ? 'border-blue-400/40 bg-surface-subtle text-primary-foreground'
+                        : 'border-transparent text-tertiary-foreground hover:text-secondary-foreground'
                     }`}
                   >
                     {uc.role}
@@ -75,12 +75,12 @@ export default function UseCasesSection() {
                 {useCases[activeTab].items.map((item, i) => (
                   <div
                     key={i}
-                    className="flex items-start gap-3 rounded-xl border border-[var(--color-subtle-stroke)] bg-[var(--color-secondary-bg)] p-5"
+                    className="flex items-start gap-3 rounded-xl border border-subtle-stroke bg-secondary-background p-5"
                   >
-                    <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-blue-500)]/10 text-xs font-semibold text-[var(--color-blue-400)]">
+                    <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-xs font-semibold text-blue-400">
                       {i + 1}
                     </div>
-                    <p className="text-sm leading-relaxed text-[var(--color-secondary-fg)]">{item}</p>
+                    <p className="text-sm leading-relaxed text-secondary-foreground">{item}</p>
                   </div>
                 ))}
               </div>
@@ -99,7 +99,7 @@ export default function UseCasesSection() {
               <DotPattern id="use-cases-dots" />
             </div>
             <div
-              className="absolute inset-0 bg-gradient-to-b from-[var(--color-primary-bg)] to-[var(--color-secondary-bg)]"
+              className="absolute inset-0 bg-gradient-to-b from-primary-background to-secondary-background"
               style={{ opacity: 0.6 }}
             />
           </div>

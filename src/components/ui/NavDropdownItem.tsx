@@ -8,13 +8,13 @@ export default function NavDropdownItem({ item }: NavDropdownItemProps) {
   return (
     <a
       href={item.href}
-      className="group flex w-full items-center justify-start gap-x-3 rounded-xl border border-transparent p-2 transition-colors duration-300 hover:bg-[var(--color-black-400)]"
+      className="group flex w-full items-center justify-start gap-x-3 rounded-xl border border-transparent p-2 transition-colors duration-300 hover:bg-black-400"
     >
       {/* Icon placeholder with grid pattern */}
       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-none border-0">
         <svg width="40" height="40" fill="none" className="absolute inset-0">
           <g
-            className="stroke-[var(--color-black-500)]/40 transition-colors duration-150 group-hover:stroke-[var(--color-black-500)]/70"
+            className="stroke-black-500/40 transition-colors duration-150 group-hover:stroke-black-500/70"
             strokeWidth=".7"
             strokeMiterlimit="10"
           >
@@ -22,14 +22,14 @@ export default function NavDropdownItem({ item }: NavDropdownItemProps) {
             <path d="M35 0v40M5 0v40M0 5h40M0 35h40" />
           </g>
         </svg>
-        <div className="isolate flex h-10 w-10 items-center justify-center text-sm font-semibold text-[var(--color-blue-400)]">
+        <div className="isolate flex h-10 w-10 items-center justify-center text-sm font-semibold text-blue-400">
           {item.title.charAt(0)}
         </div>
       </div>
 
       {/* Text content */}
       <div className="flex w-full min-w-0 flex-col pr-2">
-        <div className="flex w-full items-baseline justify-between gap-1.5 text-[var(--color-primary-fg)]">
+        <div className="flex w-full items-baseline justify-between gap-1.5 text-primary-foreground">
           <span className="truncate text-sm">{item.title}</span>
           {/* Arrow icon — shows on hover */}
           <svg
@@ -37,7 +37,7 @@ export default function NavDropdownItem({ item }: NavDropdownItemProps) {
             height="12"
             viewBox="0 0 12 12"
             fill="none"
-            className="relative shrink-0 -translate-x-0.5 text-[var(--color-secondary-fg)] opacity-0 transition-[opacity,translate] duration-300 ease-in-out group-hover:translate-x-0 group-hover:opacity-100"
+            className="relative shrink-0 -translate-x-0.5 text-secondary-foreground opacity-0 transition-[opacity,translate] duration-300 ease-in-out group-hover:translate-x-0 group-hover:opacity-100"
           >
             <path
               fillRule="evenodd"
@@ -47,7 +47,7 @@ export default function NavDropdownItem({ item }: NavDropdownItemProps) {
             />
           </svg>
         </div>
-        <p className="truncate text-sm text-[var(--color-accent-fg)]">{item.description}</p>
+        <p className="truncate text-sm text-accent-foreground">{item.description}</p>
       </div>
     </a>
   )

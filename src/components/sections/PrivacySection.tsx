@@ -7,7 +7,7 @@ export default function PrivacySection() {
   const ref = useScrollReveal()
 
   return (
-    <section className="bg-[var(--color-primary-bg)]">
+    <section className="bg-primary-background">
       <Section containerClassName="py-20 lg:py-32" withBorders>
         <div ref={ref}>
           <div className="scroll-reveal">
@@ -18,10 +18,10 @@ export default function PrivacySection() {
             {privacyPoints.map((point, i) => (
               <li
                 key={i}
-                className="flex items-start gap-4 rounded-xl border border-[var(--color-subtle-stroke)] bg-[var(--color-secondary-bg)] p-5 scroll-reveal"
+                className="flex items-start gap-4 rounded-xl border border-subtle-stroke bg-secondary-background p-5 scroll-reveal"
               >
                 <svg
-                  className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-blue-400)]"
+                  className="mt-0.5 h-5 w-5 shrink-0 text-blue-400"
                   viewBox="0 0 20 20"
                   fill="none"
                 >
@@ -33,7 +33,7 @@ export default function PrivacySection() {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <p className="text-sm leading-relaxed text-[var(--color-secondary-fg)]">
+                <p className="text-sm leading-relaxed text-secondary-foreground">
                   {point.text}
                 </p>
               </li>

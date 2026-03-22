@@ -8,8 +8,8 @@ function ChatMockup() {
     <div className="flex flex-col gap-4 px-6 py-8 max-lg:px-4 max-lg:py-6">
       {/* User message */}
       <div className="flex justify-end">
-        <div className="mb-1 flex items-center rounded-xl bg-[var(--color-surface)] px-3.5 py-2">
-          <span className="max-w-[17em] text-pretty text-sm text-[var(--color-primary-fg)]">
+        <div className="mb-1 flex items-center rounded-xl bg-surface px-3.5 py-2">
+          <span className="max-w-[17em] text-pretty text-sm text-primary-foreground">
             update this deal pls
           </span>
         </div>
@@ -20,15 +20,15 @@ function ChatMockup() {
         {/* Record link */}
         <div className="flex h-5.5 items-center px-0.75 scroll-reveal">
           <div className="flex items-center gap-1.25">
-            <div className="flex size-4 items-center justify-center rounded-[5px] border border-[var(--color-subtle-stroke)] bg-[var(--color-surface-subtle)]">
+            <div className="flex size-4 items-center justify-center rounded-[5px] border border-subtle-stroke bg-surface-subtle">
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                <rect x="1" y="1" width="3.5" height="3.5" rx="0.75" fill="var(--color-accent-fg)" />
-                <rect x="5.5" y="1" width="3.5" height="3.5" rx="0.75" fill="var(--color-accent-fg)" opacity="0.5" />
-                <rect x="1" y="5.5" width="3.5" height="3.5" rx="0.75" fill="var(--color-accent-fg)" opacity="0.5" />
-                <rect x="5.5" y="5.5" width="3.5" height="3.5" rx="0.75" fill="var(--color-accent-fg)" opacity="0.3" />
+                <rect x="1" y="1" width="3.5" height="3.5" rx="0.75" fill="var(--color-accent-foreground)" />
+                <rect x="5.5" y="1" width="3.5" height="3.5" rx="0.75" fill="var(--color-accent-foreground)" opacity="0.5" />
+                <rect x="1" y="5.5" width="3.5" height="3.5" rx="0.75" fill="var(--color-accent-foreground)" opacity="0.5" />
+                <rect x="5.5" y="5.5" width="3.5" height="3.5" rx="0.75" fill="var(--color-accent-foreground)" opacity="0.3" />
               </svg>
             </div>
-            <span className="text-sm font-medium text-[var(--color-primary-fg)] underline decoration-[var(--color-subtle-stroke)]">
+            <span className="text-sm font-medium text-primary-foreground underline decoration-subtle-stroke">
               Basepoint // Greenleaf
             </span>
           </div>
@@ -36,16 +36,16 @@ function ChatMockup() {
 
         {/* Deal update card */}
         <div className="scroll-reveal" style={{ transitionDelay: '150ms' }}>
-          <div className="flex flex-col rounded-xl bg-[var(--color-primary-bg)] shadow-attio-product-e1">
+          <div className="flex flex-col rounded-xl bg-primary-background shadow-attio-product-e1">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1 px-3 pt-2.5 pb-0.5">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M2 6l3 3 5-5" stroke="var(--color-accent-fg)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M2 6l3 3 5-5" stroke="var(--color-accent-foreground)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                <span className="text-xs text-[var(--color-accent-fg)]">Update Deal Stage</span>
+                <span className="text-xs text-accent-foreground">Update Deal Stage</span>
               </div>
               <div className="flex items-center px-2 pt-2">
-                <div className="flex h-5 min-w-5 items-center gap-0.75 rounded-md bg-[var(--color-primary-bg)] pr-1.5 pl-1 shadow-attio-product-e1">
+                <div className="flex h-5 min-w-5 items-center gap-0.75 rounded-md bg-primary-background pr-1.5 pl-1 shadow-attio-product-e1">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M2.5 6l2.5 2.5 4.5-5" stroke="var(--color-blue-400)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -54,12 +54,12 @@ function ChatMockup() {
             </div>
             <div className="px-3 pb-2.5">
               <div className="grid grid-cols-[auto_1fr] items-center gap-x-1.5 gap-y-1">
-                <span className="text-xs text-[var(--color-accent-fg)]">Stage</span>
-                <span className="text-xs text-[var(--color-primary-fg)]">Negotiation &rarr; Closed Won</span>
-                <span className="text-xs text-[var(--color-accent-fg)]">Value</span>
-                <span className="text-xs text-[var(--color-primary-fg)]">$128,000</span>
-                <span className="text-xs text-[var(--color-accent-fg)]">Close date</span>
-                <span className="text-xs text-[var(--color-primary-fg)]">Mar 22, 2026</span>
+                <span className="text-xs text-accent-foreground">Stage</span>
+                <span className="text-xs text-primary-foreground">Negotiation &rarr; Closed Won</span>
+                <span className="text-xs text-accent-foreground">Value</span>
+                <span className="text-xs text-primary-foreground">$128,000</span>
+                <span className="text-xs text-accent-foreground">Close date</span>
+                <span className="text-xs text-primary-foreground">Mar 22, 2026</span>
               </div>
             </div>
           </div>
@@ -67,20 +67,20 @@ function ChatMockup() {
 
         {/* Notification card */}
         <div className="scroll-reveal" style={{ transitionDelay: '300ms' }}>
-          <div className="flex flex-col rounded-xl bg-[var(--color-primary-bg)] shadow-attio-product-e1">
+          <div className="flex flex-col rounded-xl bg-primary-background shadow-attio-product-e1">
             <div className="flex items-center gap-1 px-3 pt-2.5 pb-0.5">
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path d="M6 1v4l2.5 1.5" stroke="var(--color-accent-fg)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="6" cy="6" r="4.5" stroke="var(--color-accent-fg)" strokeWidth="1.2" />
+                <path d="M6 1v4l2.5 1.5" stroke="var(--color-accent-foreground)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="6" cy="6" r="4.5" stroke="var(--color-accent-foreground)" strokeWidth="1.2" />
               </svg>
-              <span className="text-xs text-[var(--color-accent-fg)]">Create Follow-up Task</span>
+              <span className="text-xs text-accent-foreground">Create Follow-up Task</span>
             </div>
             <div className="px-3 pb-2.5">
               <div className="grid grid-cols-[auto_1fr] items-center gap-x-1.5 gap-y-1">
-                <span className="text-xs text-[var(--color-accent-fg)]">Task</span>
-                <span className="text-xs text-[var(--color-primary-fg)]">Send contract to legal</span>
-                <span className="text-xs text-[var(--color-accent-fg)]">Due</span>
-                <span className="text-xs text-[var(--color-primary-fg)]">Tomorrow, 9:00 AM</span>
+                <span className="text-xs text-accent-foreground">Task</span>
+                <span className="text-xs text-primary-foreground">Send contract to legal</span>
+                <span className="text-xs text-accent-foreground">Due</span>
+                <span className="text-xs text-primary-foreground">Tomorrow, 9:00 AM</span>
               </div>
             </div>
           </div>
@@ -89,12 +89,12 @@ function ChatMockup() {
         {/* Status message */}
         <div className="scroll-reveal" style={{ transitionDelay: '450ms' }}>
           <div className="flex items-center gap-1.5 px-1">
-            <div className="flex size-4 items-center justify-center rounded-full bg-[var(--color-blue-500)]">
+            <div className="flex size-4 items-center justify-center rounded-full bg-blue-500">
               <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
                 <path d="M1.5 4l1.75 1.75 3.25-3.5" stroke="white" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <span className="text-xs text-[var(--color-accent-fg)]">Deal updated and task created</span>
+            <span className="text-xs text-accent-foreground">Deal updated and task created</span>
           </div>
         </div>
       </div>
@@ -104,7 +104,7 @@ function ChatMockup() {
 
 function PipelineMockup() {
   const stages = [
-    { name: 'Discovery', count: 4, color: 'var(--color-accent-fg)' },
+    { name: 'Discovery', count: 4, color: 'var(--color-accent-foreground)' },
     { name: 'Proposal', count: 7, color: 'var(--color-blue-400)' },
     { name: 'Negotiation', count: 3, color: 'var(--color-blue-450)' },
     { name: 'Closed Won', count: 12, color: 'var(--color-blue-500)' },
@@ -115,17 +115,17 @@ function PipelineMockup() {
       {stages.map((stage, i) => (
         <div
           key={stage.name}
-          className="scroll-reveal flex items-center justify-between rounded-xl bg-[var(--color-primary-bg)] px-3.5 py-2.5 shadow-attio-product-e1"
+          className="scroll-reveal flex items-center justify-between rounded-xl bg-primary-background px-3.5 py-2.5 shadow-attio-product-e1"
           style={{ transitionDelay: `${i * 120}ms` }}
         >
           <div className="flex items-center gap-2">
             <div className="size-2 rounded-full" style={{ backgroundColor: stage.color }} />
-            <span className="text-sm font-medium text-[var(--color-primary-fg)]">{stage.name}</span>
+            <span className="text-sm font-medium text-primary-foreground">{stage.name}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[var(--color-accent-fg)]">{stage.count} deals</span>
+            <span className="text-xs text-accent-foreground">{stage.count} deals</span>
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M4.5 3l3 3-3 3" stroke="var(--color-accent-fg)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M4.5 3l3 3-3 3" stroke="var(--color-accent-foreground)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
         </div>
@@ -138,54 +138,54 @@ function MeetingMockup() {
   return (
     <div className="flex flex-col gap-3 px-6 py-8 max-lg:px-4 max-lg:py-6">
       {/* Meeting header */}
-      <div className="scroll-reveal rounded-xl bg-[var(--color-primary-bg)] px-3.5 py-3 shadow-attio-product-e1">
+      <div className="scroll-reveal rounded-xl bg-primary-background px-3.5 py-3 shadow-attio-product-e1">
         <div className="mb-2 flex items-center gap-2">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <rect x="1" y="2.5" width="12" height="10" rx="1.5" stroke="var(--color-accent-fg)" strokeWidth="1.2" />
-            <path d="M1 5.5h12" stroke="var(--color-accent-fg)" strokeWidth="1.2" />
-            <path d="M4 1v2.5M10 1v2.5" stroke="var(--color-accent-fg)" strokeWidth="1.2" strokeLinecap="round" />
+            <rect x="1" y="2.5" width="12" height="10" rx="1.5" stroke="var(--color-accent-foreground)" strokeWidth="1.2" />
+            <path d="M1 5.5h12" stroke="var(--color-accent-foreground)" strokeWidth="1.2" />
+            <path d="M4 1v2.5M10 1v2.5" stroke="var(--color-accent-foreground)" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
-          <span className="text-xs font-medium text-[var(--color-primary-fg)]">QBR - Greenleaf Inc.</span>
-          <span className="ml-auto text-xs text-[var(--color-accent-fg)]">Today, 2:00 PM</span>
+          <span className="text-xs font-medium text-primary-foreground">QBR - Greenleaf Inc.</span>
+          <span className="ml-auto text-xs text-accent-foreground">Today, 2:00 PM</span>
         </div>
         <div className="grid grid-cols-[auto_1fr] items-start gap-x-1.5 gap-y-1">
-          <span className="text-xs text-[var(--color-accent-fg)]">Account</span>
-          <span className="text-xs text-[var(--color-primary-fg)]">Greenleaf Inc. &middot; Enterprise</span>
-          <span className="text-xs text-[var(--color-accent-fg)]">Health</span>
-          <span className="text-xs text-[var(--color-primary-fg)]">Good &middot; NPS 72</span>
+          <span className="text-xs text-accent-foreground">Account</span>
+          <span className="text-xs text-primary-foreground">Greenleaf Inc. &middot; Enterprise</span>
+          <span className="text-xs text-accent-foreground">Health</span>
+          <span className="text-xs text-primary-foreground">Good &middot; NPS 72</span>
         </div>
       </div>
 
       {/* Prep items */}
-      <div className="scroll-reveal rounded-xl bg-[var(--color-primary-bg)] px-3.5 py-3 shadow-attio-product-e1" style={{ transitionDelay: '150ms' }}>
-        <span className="mb-1.5 block text-xs text-[var(--color-accent-fg)]">Talking Points</span>
+      <div className="scroll-reveal rounded-xl bg-primary-background px-3.5 py-3 shadow-attio-product-e1" style={{ transitionDelay: '150ms' }}>
+        <span className="mb-1.5 block text-xs text-accent-foreground">Talking Points</span>
         <ul className="flex flex-col gap-1">
           <li className="flex items-start gap-1.5">
-            <div className="mt-1.5 size-1 shrink-0 rounded-full bg-[var(--color-blue-400)]" />
-            <span className="text-xs text-[var(--color-primary-fg)]">Discuss Q1 usage increase (+34%)</span>
+            <div className="mt-1.5 size-1 shrink-0 rounded-full bg-blue-400" />
+            <span className="text-xs text-primary-foreground">Discuss Q1 usage increase (+34%)</span>
           </li>
           <li className="flex items-start gap-1.5">
-            <div className="mt-1.5 size-1 shrink-0 rounded-full bg-[var(--color-blue-400)]" />
-            <span className="text-xs text-[var(--color-primary-fg)]">Review expansion to analytics tier</span>
+            <div className="mt-1.5 size-1 shrink-0 rounded-full bg-blue-400" />
+            <span className="text-xs text-primary-foreground">Review expansion to analytics tier</span>
           </li>
           <li className="flex items-start gap-1.5">
-            <div className="mt-1.5 size-1 shrink-0 rounded-full bg-[var(--color-blue-400)]" />
-            <span className="text-xs text-[var(--color-primary-fg)]">Address open support tickets (2 pending)</span>
+            <div className="mt-1.5 size-1 shrink-0 rounded-full bg-blue-400" />
+            <span className="text-xs text-primary-foreground">Address open support tickets (2 pending)</span>
           </li>
         </ul>
       </div>
 
       {/* Recent activity */}
-      <div className="scroll-reveal rounded-xl bg-[var(--color-primary-bg)] px-3.5 py-3 shadow-attio-product-e1" style={{ transitionDelay: '300ms' }}>
-        <span className="mb-1.5 block text-xs text-[var(--color-accent-fg)]">Recent Activity</span>
+      <div className="scroll-reveal rounded-xl bg-primary-background px-3.5 py-3 shadow-attio-product-e1" style={{ transitionDelay: '300ms' }}>
+        <span className="mb-1.5 block text-xs text-accent-foreground">Recent Activity</span>
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-[var(--color-primary-fg)]">Email: Renewal terms sent</span>
-            <span className="text-xs text-[var(--color-accent-fg)]">2d ago</span>
+            <span className="text-xs text-primary-foreground">Email: Renewal terms sent</span>
+            <span className="text-xs text-accent-foreground">2d ago</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-xs text-[var(--color-primary-fg)]">Call: Technical review</span>
-            <span className="text-xs text-[var(--color-accent-fg)]">5d ago</span>
+            <span className="text-xs text-primary-foreground">Call: Technical review</span>
+            <span className="text-xs text-accent-foreground">5d ago</span>
           </div>
         </div>
       </div>
@@ -197,53 +197,53 @@ function CallMockup() {
   return (
     <div className="flex flex-col gap-3 px-6 py-8 max-lg:px-4 max-lg:py-6">
       {/* Call header */}
-      <div className="scroll-reveal rounded-xl bg-[var(--color-primary-bg)] px-3.5 py-3 shadow-attio-product-e1">
+      <div className="scroll-reveal rounded-xl bg-primary-background px-3.5 py-3 shadow-attio-product-e1">
         <div className="mb-2 flex items-center gap-2">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path d="M8.5 1.5C10.5 2 12 3.5 12.5 5.5M8.5 3.5C9.5 3.8 10.2 4.5 10.5 5.5" stroke="var(--color-blue-400)" strokeWidth="1.2" strokeLinecap="round" />
-            <path d="M2 3.5C2 2.95 2.45 2.5 3 2.5h1.5l1 2.5-1.25.75a7.5 7.5 0 003.5 3.5L8.5 8l2.5 1v1.5c0 .55-.45 1-1 1A9.5 9.5 0 012 3.5z" stroke="var(--color-accent-fg)" strokeWidth="1.2" strokeLinejoin="round" />
+            <path d="M2 3.5C2 2.95 2.45 2.5 3 2.5h1.5l1 2.5-1.25.75a7.5 7.5 0 003.5 3.5L8.5 8l2.5 1v1.5c0 .55-.45 1-1 1A9.5 9.5 0 012 3.5z" stroke="var(--color-accent-foreground)" strokeWidth="1.2" strokeLinejoin="round" />
           </svg>
-          <span className="text-xs font-medium text-[var(--color-primary-fg)]">Discovery Call - Acme Corp</span>
-          <span className="ml-auto text-xs text-[var(--color-accent-fg)]">32 min</span>
+          <span className="text-xs font-medium text-primary-foreground">Discovery Call - Acme Corp</span>
+          <span className="ml-auto text-xs text-accent-foreground">32 min</span>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
-            <div className="size-1.5 rounded-full bg-[var(--color-blue-400)]" />
-            <span className="text-xs text-[var(--color-accent-fg)]">Transcribed</span>
+            <div className="size-1.5 rounded-full bg-blue-400" />
+            <span className="text-xs text-accent-foreground">Transcribed</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="size-1.5 rounded-full bg-[var(--color-blue-500)]" />
-            <span className="text-xs text-[var(--color-accent-fg)]">Analyzed</span>
+            <div className="size-1.5 rounded-full bg-blue-500" />
+            <span className="text-xs text-accent-foreground">Analyzed</span>
           </div>
         </div>
       </div>
 
       {/* Key moments */}
-      <div className="scroll-reveal rounded-xl bg-[var(--color-primary-bg)] px-3.5 py-3 shadow-attio-product-e1" style={{ transitionDelay: '150ms' }}>
-        <span className="mb-1.5 block text-xs text-[var(--color-accent-fg)]">Key Moments</span>
+      <div className="scroll-reveal rounded-xl bg-primary-background px-3.5 py-3 shadow-attio-product-e1" style={{ transitionDelay: '150ms' }}>
+        <span className="mb-1.5 block text-xs text-accent-foreground">Key Moments</span>
         <div className="flex flex-col gap-1.5">
           <div className="flex items-start gap-2">
-            <span className="shrink-0 text-xs text-[var(--color-blue-400)]">4:12</span>
-            <span className="text-xs text-[var(--color-primary-fg)]">Budget confirmed: $150k-200k range</span>
+            <span className="shrink-0 text-xs text-blue-400">4:12</span>
+            <span className="text-xs text-primary-foreground">Budget confirmed: $150k-200k range</span>
           </div>
           <div className="flex items-start gap-2">
-            <span className="shrink-0 text-xs text-[var(--color-blue-400)]">12:30</span>
-            <span className="text-xs text-[var(--color-primary-fg)]">Blocker: need SSO integration by Q2</span>
+            <span className="shrink-0 text-xs text-blue-400">12:30</span>
+            <span className="text-xs text-primary-foreground">Blocker: need SSO integration by Q2</span>
           </div>
           <div className="flex items-start gap-2">
-            <span className="shrink-0 text-xs text-[var(--color-blue-400)]">28:45</span>
-            <span className="text-xs text-[var(--color-primary-fg)]">Next step: send proposal by Friday</span>
+            <span className="shrink-0 text-xs text-blue-400">28:45</span>
+            <span className="text-xs text-primary-foreground">Next step: send proposal by Friday</span>
           </div>
         </div>
       </div>
 
       {/* Signals */}
-      <div className="scroll-reveal rounded-xl bg-[var(--color-primary-bg)] px-3.5 py-3 shadow-attio-product-e1" style={{ transitionDelay: '300ms' }}>
-        <span className="mb-1.5 block text-xs text-[var(--color-accent-fg)]">Buying Signals</span>
+      <div className="scroll-reveal rounded-xl bg-primary-background px-3.5 py-3 shadow-attio-product-e1" style={{ transitionDelay: '300ms' }}>
+        <span className="mb-1.5 block text-xs text-accent-foreground">Buying Signals</span>
         <div className="flex flex-wrap gap-1.5">
-          <span className="rounded-md bg-[var(--color-surface-subtle)] px-2 py-0.5 text-xs text-[var(--color-primary-fg)]">Budget confirmed</span>
-          <span className="rounded-md bg-[var(--color-surface-subtle)] px-2 py-0.5 text-xs text-[var(--color-primary-fg)]">Decision maker present</span>
-          <span className="rounded-md bg-[var(--color-surface-subtle)] px-2 py-0.5 text-xs text-[var(--color-primary-fg)]">Timeline: Q2</span>
+          <span className="rounded-md bg-surface-subtle px-2 py-0.5 text-xs text-primary-foreground">Budget confirmed</span>
+          <span className="rounded-md bg-surface-subtle px-2 py-0.5 text-xs text-primary-foreground">Decision maker present</span>
+          <span className="rounded-md bg-surface-subtle px-2 py-0.5 text-xs text-primary-foreground">Timeline: Q2</span>
         </div>
       </div>
     </div>
@@ -271,15 +271,15 @@ export default function CapabilitiesSection() {
   const activePanel = activeTab.panels[0]
 
   return (
-    <section className="bg-[var(--color-primary-bg)]">
+    <section className="bg-primary-background">
       <div className="container flex flex-1 flex-col">
         <div
           ref={ref}
-          className="flex w-full flex-1 flex-col border-x border-[var(--color-subtle-stroke)]"
+          className="flex w-full flex-1 flex-col border-x border-subtle-stroke"
         >
           {/* Header */}
           <div className="grid grid-cols-12 justify-items-center pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15">
-            <div className="col-[2/-2] max-w-[20em] text-pretty text-center">
+            <div className="col-[2/-2] max-w-[20em] text-pretty text-center mix-blend-multiply dark:mix-blend-screen">
               <h2 className="text-heading-responsive-sm scroll-reveal">
                 Simply powerful customer intelligence.
               </h2>
@@ -291,11 +291,11 @@ export default function CapabilitiesSection() {
             {/* Mask fade edges for mobile scroll */}
             <div
               className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 lg:hidden"
-              style={{ background: 'linear-gradient(to right, var(--color-primary-bg), transparent)' }}
+              style={{ background: 'linear-gradient(to right, var(--color-primary-background), transparent)' }}
             />
             <div
               className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 lg:hidden"
-              style={{ background: 'linear-gradient(to left, var(--color-primary-bg), transparent)' }}
+              style={{ background: 'linear-gradient(to left, var(--color-primary-background), transparent)' }}
             />
 
             <div className="flex items-center justify-center gap-1 overflow-x-auto px-4 pb-8 max-lg:justify-start max-lg:px-2">
@@ -307,8 +307,8 @@ export default function CapabilitiesSection() {
                   onClick={() => setActiveTabIndex(i)}
                   className={`shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                     i === activeTabIndex
-                      ? 'bg-[var(--color-surface)] text-[var(--color-secondary-fg)]'
-                      : 'text-[var(--color-caption-fg)] hover:text-[var(--color-secondary-fg)]'
+                      ? 'bg-surface text-secondary-foreground'
+                      : 'text-caption-foreground hover:text-secondary-foreground'
                   }`}
                 >
                   {tab.role}
@@ -320,26 +320,26 @@ export default function CapabilitiesSection() {
           {/* Split-panel card */}
           <div className="grid grid-cols-12">
             <div
-              className="col-[2/-2] flex w-full border border-[var(--color-subtle-stroke)] max-lg:col-span-full scroll-reveal"
+              className="col-[2/-2] flex w-full border border-subtle-stroke max-lg:col-span-full scroll-reveal"
               style={{ transitionDelay: '200ms' }}
             >
               {/* Left half — title + description */}
-              <div className="relative w-1/2 bg-[var(--color-white-100)] max-lg:hidden">
+              <div className="relative w-1/2 bg-white-100 max-lg:hidden">
                 {/* Vertical separator */}
-                <div className="absolute top-0 right-0 bottom-0 w-px bg-[var(--color-subtle-stroke)]" />
+                <div className="absolute top-0 right-0 bottom-0 w-px bg-subtle-stroke" />
 
                 <div className="flex h-full flex-col justify-end p-10">
-                  <h3 className="mb-3 font-display text-2xl font-semibold text-[var(--color-black-0)]">
+                  <h3 className="mb-3 font-display text-2xl font-semibold text-black-0">
                     {activePanel.title}
                   </h3>
-                  <p className="text-sm leading-relaxed text-[var(--color-black-600)]">
+                  <p className="text-sm leading-relaxed text-black-600">
                     {activePanel.description}
                   </p>
                 </div>
               </div>
 
               {/* Right half — product mockup */}
-              <div className="relative flex w-1/2 overflow-hidden bg-[var(--color-secondary-bg)] max-lg:w-full max-lg:aspect-square">
+              <div className="relative flex w-1/2 overflow-hidden bg-secondary-background max-lg:w-full max-lg:aspect-square">
                 <DotPattern id="capabilities-dots" />
 
                 <div className="relative z-10 flex w-full flex-col justify-center">

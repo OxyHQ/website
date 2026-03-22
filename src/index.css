@@ -30,18 +30,23 @@
   --color-blue-500: #266df0;
 
   /* Semantic Colors — dark mode */
-  --color-primary-bg: #101113;
-  --color-secondary-bg: #1c1d1f;
+  --color-primary-background: #101113;
+  --color-secondary-background: #1c1d1f;
   --color-surface: #2e3238;
   --color-surface-subtle: #232529;
   --color-subtle-stroke: #2e3238;
   --color-default-stroke: #6f7988;
-  --color-primary-fg: #fff;
-  --color-secondary-fg: #edeff3;
-  --color-tertiary-fg: #b5bdc9;
-  --color-accent-fg: #6f7988;
-  --color-caption-fg: #a4adba;
-  --color-link: #709ff5;
+  --color-primary-foreground: #fff;
+  --color-secondary-foreground: #edeff3;
+  --color-tertiary-foreground: #b5bdc9;
+  --color-accent-foreground: #6f7988;
+  --color-caption-foreground: #a4adba;
+  --color-link-foreground: #709ff5;
+  --color-disabled-foreground: #d3d8df;
+  --color-weak-stroke: #232529;
+  --color-muted-strong-background: #2e3238;
+  --color-secondary: var(--color-secondary-foreground);
+  --color-tertiary: var(--color-tertiary-foreground);
 
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -84,8 +89,8 @@ html {
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background-color: var(--color-primary-bg);
-  color: var(--color-primary-fg);
+  background-color: var(--color-primary-background);
+  color: var(--color-primary-foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -229,6 +234,24 @@ body {
   animation: fade-in-up 1s ease-in-out both;
 }
 
+/* Attio-style enter animations */
+.fade-in-from-bottom-1 {
+  --tw-enter-translate-y: 4px;
+  --tw-enter-opacity: 0;
+}
+.animate-in {
+  animation: enter 0.15s ease both;
+}
+@keyframes enter {
+  from {
+    opacity: var(--tw-enter-opacity, 1);
+    transform: translateY(var(--tw-enter-translate-y, 0));
+  }
+}
+.fill-mode-both {
+  animation-fill-mode: both;
+}
+
 /* Dropdown panel — initial open (no direction) */
 @keyframes dropdown-fade-in {
   from { opacity: 0; }
@@ -280,13 +303,13 @@ body {
   opacity: 0;
   transform: translateY(10px);
   filter: blur(1px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out, filter 0.8s ease-out;
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out, filter 0.6s ease-out;
 }
 
 .scroll-reveal.revealed {
   opacity: 1;
-  transform: translateY(0);
-  filter: blur(0);
+  transform: none;
+  filter: blur(0px);
 }
 
 /* Staggered children — apply to parent, children get delays */
