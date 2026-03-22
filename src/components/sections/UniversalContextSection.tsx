@@ -172,8 +172,13 @@ export default function UniversalContextSection() {
 
           {/* Heading */}
           <h2 className="relative w-fit text-heading-responsive-lg text-primary-foreground scroll-reveal">
-            Universal Context
-            <sup className="ml-0.5 text-[0.3em] font-bold tracking-tight align-super">TM</sup>
+            Universal{' '}
+            <span className="relative whitespace-nowrap">
+              Context
+              <span className="absolute inline-block origin-bottom-left -translate-y-3/5 scale-[0.28] pl-[0.15em] font-bold tracking-tight">
+                TM
+              </span>
+            </span>
           </h2>
 
           {/* 5-card grid — desktop (xl+) */}

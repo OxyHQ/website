@@ -58,9 +58,16 @@ export interface NavDropdown {
   sidePanel?: NavSidePanel
 }
 
+export interface FooterLink {
+  label: string
+  href: string
+  isExternal?: boolean
+  isNew?: boolean
+}
+
 export interface FooterColumn {
   title: string
-  links: NavItem[]
+  links: FooterLink[]
 }
 
 // Navigation — Dropdowns
@@ -337,7 +344,8 @@ export const footerColumns: FooterColumn[] = [
       { label: 'Data & Syncing', href: '#' },
       { label: 'Automations', href: '#' },
       { label: 'Reporting', href: '#' },
-      { label: 'Collaboration', href: '#' },
+      { label: 'Changelog', href: '#' },
+      { label: 'Security', href: '#' },
     ],
   },
   {
@@ -347,6 +355,7 @@ export const footerColumns: FooterColumn[] = [
       { label: 'Careers', href: '#' },
       { label: 'Blog', href: '#' },
       { label: 'Press', href: '#' },
+      { label: 'Partners', href: '#' },
     ],
   },
   {
@@ -354,10 +363,9 @@ export const footerColumns: FooterColumn[] = [
     links: [
       { label: 'Help Center', href: '#' },
       { label: 'Academy', href: '#' },
-      { label: 'Developer Docs', href: '#' },
-      { label: 'Partners', href: '#' },
-      { label: 'Changelog', href: '#' },
-      { label: 'Status', href: '#' },
+      { label: 'Developer Docs', href: '#', isExternal: true },
+      { label: 'Status', href: '#', isExternal: true },
+      { label: 'Downloads', href: '#' },
     ],
   },
   {
@@ -365,9 +373,116 @@ export const footerColumns: FooterColumn[] = [
     links: [
       { label: 'Privacy Policy', href: '#' },
       { label: 'Terms of Service', href: '#' },
-      { label: 'Security', href: '#' },
       { label: 'GDPR', href: '#' },
     ],
+  },
+]
+
+// Partner Programs
+export interface PartnerProgram {
+  number: string
+  label: string
+  title: string
+  description: string
+  ctaText: string
+  ctaHref: string
+}
+
+export const partnerPrograms: PartnerProgram[] = [
+  {
+    number: '01',
+    label: 'App partners',
+    title: 'App partners.',
+    description: 'Build apps that power the next era of CRM.',
+    ctaText: 'Become an App Partner',
+    ctaHref: '#',
+  },
+  {
+    number: '02',
+    label: 'Creator partners',
+    title: 'Creator partners.',
+    description: 'Build your brand, grow your audience.',
+    ctaText: 'Become a Creator Partner',
+    ctaHref: '#',
+  },
+  {
+    number: '03',
+    label: 'Expert partners',
+    title: 'Expert partners.',
+    description: 'Help GTM teams build, scale and grow.',
+    ctaText: 'Become an Expert Partner',
+    ctaHref: '#',
+  },
+]
+
+// Partner Testimonials
+export interface PartnerTestimonial {
+  name: string
+  role: string
+  partnerType: string
+  quote: string
+  favoriteFeatures?: string[]
+}
+
+export const partnerTestimonials: PartnerTestimonial[] = [
+  {
+    name: 'Giacomo Caranese',
+    role: 'Co-founder, novlini',
+    partnerType: 'Expert Partners',
+    quote:
+      'Oxy connects me with teams that value speed, structure, and scale. Building flexible, high-impact systems on such a powerful product is a pleasure.',
+    favoriteFeatures: ['Email & calendar sync', 'API', 'Mobile app'],
+  },
+  {
+    name: 'Riya Grover',
+    role: 'Co-founder & CEO, Sequence',
+    partnerType: 'App Partners',
+    quote:
+      'The developer platform makes it incredibly easy to build integrations that our customers love. The API is well-designed and the docs are excellent.',
+    favoriteFeatures: ['Developer Platform', 'REST API', 'Webhooks'],
+  },
+  {
+    name: 'Daniel Hull',
+    role: 'Founder, 80x',
+    partnerType: 'Creator Partners',
+    quote:
+      'Creating content around Oxy has been a natural fit. The product is so well-built that the stories practically write themselves.',
+    favoriteFeatures: ['Reporting', 'Workflows', 'Data model'],
+  },
+]
+
+// Keep Up To Date Cards
+export interface KeepUpToDateCard {
+  title: string
+  description: string
+  href: string
+  iconType: 'linkedin' | 'x' | 'blog' | 'changelog'
+}
+
+export const keepUpToDateCards: KeepUpToDateCard[] = [
+  {
+    title: 'LinkedIn',
+    description: 'Keep up to date with what the team is building.',
+    href: '#',
+    iconType: 'linkedin',
+  },
+  {
+    title: 'X',
+    description: 'Stay in the loop with what we\'re working on.',
+    href: '#',
+    iconType: 'x',
+  },
+  {
+    title: 'Blog',
+    description: 'Be the first to get new Oxy updates.',
+    href: '#',
+    iconType: 'blog',
+  },
+  {
+    title: 'Changelog',
+    description: 'Stay on top of all releases and new features.',
+    href: '#',
+    iconType: 'changelog',
   },
 ]
 

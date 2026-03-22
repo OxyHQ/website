@@ -288,45 +288,37 @@ export default function CapabilitiesSection() {
 
           {/* Tab navigation */}
           <div className="relative scroll-reveal" style={{ transitionDelay: '100ms' }}>
-            {/* Mask fade edges for mobile scroll */}
-            <div
-              className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 lg:hidden"
-              style={{ background: 'linear-gradient(to right, var(--color-primary-background), transparent)' }}
-            />
-            <div
-              className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 lg:hidden"
-              style={{ background: 'linear-gradient(to left, var(--color-primary-background), transparent)' }}
-            />
-
-            <div className="flex items-center justify-center gap-1 overflow-x-auto px-4 pb-8 max-lg:justify-start max-lg:px-2">
-              {capabilityTabs.map((tab, i) => (
-                <button
-                  key={tab.role}
-                  role="tab"
-                  aria-selected={i === activeTabIndex}
-                  onClick={() => setActiveTabIndex(i)}
-                  className={`shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                    i === activeTabIndex
-                      ? 'bg-surface text-secondary-foreground'
-                      : 'text-caption-foreground hover:text-secondary-foreground'
-                  }`}
-                >
-                  {tab.role}
-                </button>
-              ))}
+            <div className="mask-x-from-80% relative flex w-full justify-center overflow-hidden">
+              <div className="flex cursor-grab items-center justify-center gap-8 active:cursor-grabbing">
+                {capabilityTabs.map((tab, i) => (
+                  <button
+                    key={tab.role}
+                    role="tab"
+                    aria-selected={i === activeTabIndex}
+                    onClick={() => setActiveTabIndex(i)}
+                    className={`shrink-0 cursor-pointer select-none whitespace-nowrap pb-4 text-center text-sm transition-colors duration-300 ${
+                      i === activeTabIndex ? 'text-secondary' : 'text-caption-foreground'
+                    }`}
+                  >
+                    {tab.role}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Split-panel card */}
           <div className="grid grid-cols-12 pb-10">
             <div
-              className="relative col-[2/-2] max-lg:col-span-full flex w-full border border-subtle-stroke scroll-reveal"
+              className="relative col-[2/-2] flex w-full border border-subtle-stroke max-xl:col-[2/-2] max-lg:col-span-full max-lg:aspect-video max-lg:border-x-0 max-md:aspect-5/4 max-lg:aspect-square! scroll-reveal"
               style={{ transitionDelay: '200ms' }}
             >
               {/* Left half — title + description */}
-              <div className="relative w-1/2 bg-white-100 max-lg:hidden">
-                {/* Vertical separator */}
-                <div className="absolute top-0 right-0 bottom-0 w-px bg-subtle-stroke" />
+              <div className="relative my-px bg-white-100 w-1/2 max-lg:hidden">
+                {/* Vertical separator SVG */}
+                <svg className="absolute top-0 right-0 bottom-0 h-full text-subtle-stroke" width="1" height="100%">
+                  <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
+                </svg>
 
                 <div className="flex h-full flex-col justify-end p-10">
                   <h3 className="mb-3 font-display text-2xl font-semibold text-black-0">
@@ -339,7 +331,7 @@ export default function CapabilitiesSection() {
               </div>
 
               {/* Right half — product mockup */}
-              <div className="relative flex w-1/2 overflow-hidden bg-secondary-background max-lg:w-full max-lg:aspect-square">
+              <div className="relative flex overflow-hidden bg-secondary-background max-lg:aspect-video max-lg:w-full max-lg:justify-center max-md:aspect-square aspect-square! aspect-square w-1/2">
                 <DotPattern id="capabilities-dots" />
 
                 <div className="relative z-10 flex w-full flex-col justify-center">
