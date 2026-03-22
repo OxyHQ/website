@@ -1,11 +1,12 @@
-import { useScrollReveal } from '../../hooks/useScrollReveal'
-
 export default function JoinTeamSection() {
-  const ref = useScrollReveal()
-
-  // Generate placeholder avatar circles
-  const avatarColors = ['#6366f1','#f59e0b','#10b981','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316',
-    '#3b82f6','#84cc16','#e11d48','#06b6d4','#a855f7','#22c55e','#eab308','#0ea5e9']
+  // Generate 27x5 = 135 avatar bubbles
+  const cols = 27
+  const rows = 5
+  const bubbles = Array.from({ length: cols * rows }, (_, i) => {
+    const col = i % cols
+    const row = Math.floor(i / cols)
+    return { col, row, key: i }
+  })
 
   return (
     <section className="container">
@@ -22,7 +23,6 @@ export default function JoinTeamSection() {
           </div>
         </div>
 
-        {/* Header */}
         <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center !pb-20">
           <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-center col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
             <h2 className="text-pretty inline">Join a team of builders.</h2>{' '}
@@ -32,29 +32,28 @@ export default function JoinTeamSection() {
           </div>
         </header>
 
-        {/* Avatar bubbles grid */}
-        <div ref={ref} className="relative grid w-full grid-cols-12">
+        <div className="relative grid w-full grid-cols-12">
           <div className="relative col-[2/-2] pb-24">
-            <div className="flex flex-col items-center justify-center">
-              <div className="relative mb-8 overflow-hidden" style={{ height: 160, width: 864, maskImage: 'linear-gradient(to right, transparent 0%, white 10%, white 90%, transparent 100%)' }}>
-                {/* Grid of small avatar circles */}
-                <div className="grid grid-cols-[repeat(27,32px)] gap-[2px]" style={{ width: 'max-content' }}>
-                  {Array.from({ length: 135 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="size-8 overflow-hidden rounded-full scroll-reveal"
-                      style={{
-                        backgroundColor: avatarColors[i % avatarColors.length] + '20',
-                        transitionDelay: `${(i % 27) * 20}ms`,
-                      }}
-                    >
-                      <div
-                        className="h-full w-full rounded-full"
-                        style={{ backgroundColor: avatarColors[i % avatarColors.length] + '30' }}
-                      />
-                    </div>
-                  ))}
-                </div>
+            <div className="flex flex-col items-center justify-center bg-white">
+              {/* Avatar bubble grid */}
+              <div
+                className="relative mb-8 [mask-image:linear-gradient(to_right,transparent_0%,white_10%,white_90%,transparent_100%)] max-lg:pointer-events-none"
+                style={{ height: 160, width: 864 }}
+              >
+                {bubbles.map(({ col, row, key }) => (
+                  <div
+                    key={key}
+                    className="absolute overflow-hidden rounded-full bg-white-700 after:absolute after:inset-0 after:z-1 after:mix-blend-hard-light after:rounded-full after:bg-linear-to-tl after:from-[#a4adba] after:to-[#e4e7ec] after:opacity-0 after:transition after:duration-300 after:ease-out"
+                    style={{
+                      height: 32,
+                      width: 32,
+                      left: col * 32,
+                      top: row * 32,
+                      opacity: 0.2,
+                      transform: 'translateX(-50%) translateY(-50%) scale(0.8)',
+                    }}
+                  />
+                ))}
               </div>
             </div>
           </div>

@@ -1,13 +1,6 @@
 import { careersHero } from '../../data/careers'
 
-const avatarColors = [
-  'border-blue-400 bg-blue-200',
-  'border-green-400 bg-green-200',
-  'border-yellow-400 bg-yellow-200',
-  'border-pink-400 bg-pink-200',
-  'border-purple-400 bg-purple-200',
-  'border-orange-400 bg-orange-200',
-]
+const avatarColors = ['#266DF0', '#9162F9', '#FD9038']
 
 export default function CareersHeroSection() {
   return (
@@ -18,33 +11,19 @@ export default function CareersHeroSection() {
             className="flex w-full flex-col max-xl:pt-25 max-lg:pt-20 max-lg:items-center py-36 pb-48 max-lg:pb-20"
             style={{ '--animate-delay': '0ms', '--animate-delay-mobile': '0ms' } as React.CSSProperties}
           >
-            <div
-              className="fade-in-from-bottom-1 animate-in fill-mode-both"
-              style={{ animationDelay: 'var(--animate-delay)' }}
-            >
-              <span className="inline-block w-fit rounded-[13px] border border-weak-stroke bg-primary-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-secondary-foreground mb-6">
-                {careersHero.badge}
-              </span>
+            <div className="inline-block w-fit rounded-[13px] border border-weak-stroke bg-primary-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-secondary-foreground mb-6">
+              <h1>{careersHero.badge}</h1>
             </div>
 
-            <h2
-              className="fade-in-from-bottom-1 animate-in fill-mode-both text-heading-responsive-lg max-lg:text-center"
-              style={{ animationDelay: 'var(--animate-delay)' }}
-            >
+            <h2 className="max-w-[15em] text-balance text-heading-responsive-lg max-lg:text-center">
               {careersHero.title}
             </h2>
 
-            <p
-              className="fade-in-from-bottom-1 animate-in fill-mode-both mt-6 max-w-[32em] text-pretty text-lg text-secondary-foreground max-lg:text-center lg:text-xl"
-              style={{ animationDelay: 'calc(var(--animate-delay) + 80ms)' }}
-            >
+            <p className="mt-4 max-w-xl text-balance text-lg text-secondary-foreground lg:text-xl max-lg:text-center">
               {careersHero.subtitle}
             </p>
 
-            <div
-              className="fade-in-from-bottom-1 animate-in fill-mode-both mt-10 flex items-center gap-4 max-lg:flex-col"
-              style={{ animationDelay: 'calc(var(--animate-delay) + 160ms)' }}
-            >
+            <div className="mt-7 flex w-auto items-center gap-x-3 gap-y-4 max-lg:flex-col">
               <a
                 href="#open-positions"
                 className="inline-flex items-center justify-center rounded-full bg-primary-foreground px-5 py-2.5 text-sm font-semibold text-primary-background transition-colors hover:bg-primary-foreground/90"
@@ -52,13 +31,27 @@ export default function CareersHeroSection() {
                 Join the team
               </a>
 
-              <div className="flex items-center">
+              {/* Avatar stack */}
+              <div className="group flex">
                 {avatarColors.map((color, i) => (
                   <div
                     key={i}
-                    className={`-mr-2 size-8 rounded-full border-2 ${color}`}
-                  />
+                    className="relative -mr-2 size-[36px] rounded-full border lg:size-7 lg:group-hover:mr-0.5 transition-all duration-150 ease-out lg:hover:z-10 lg:hover:scale-[1.12]"
+                    style={{ borderColor: color, transitionDelay: `${i * 25}ms` }}
+                  >
+                    <div className="h-full w-full overflow-hidden rounded-full border border-white-100">
+                      <div className="h-full w-full rounded-full" style={{ backgroundColor: color, opacity: 0.3 }} />
+                    </div>
+                  </div>
                 ))}
+                {/* Count badge */}
+                <div className="relative size-[36px] rounded-full border border-subtle-stroke lg:size-7">
+                  <div className="flex h-full w-full items-center justify-center rounded-full bg-[#FBFBFB] text-[#75777C]">
+                    <span className="lg:text-[10px] lg:leading-[14px] text-[12px] tabular-nums leading-[16px] tracking-tighter">
+                      +127
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </header>

@@ -1,5 +1,3 @@
-import Button from '../ui/Button'
-
 export default function RightRoleSection() {
   return (
     <section className="w-full bg-white-200">
@@ -20,7 +18,7 @@ export default function RightRoleSection() {
             </div>
           </div>
 
-          {/* Content */}
+          {/* Content grid */}
           <div className="grid grid-cols-12">
             <div className="col-[2/8] grid grid-cols-6 flex-col justify-center gap-y-7 py-24 max-lg:col-[2/-2]">
               <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-start col-[1/-2]">
@@ -31,16 +29,19 @@ export default function RightRoleSection() {
               </div>
 
               {/* Email form */}
-              <div className="col-span-full grid min-h-16 w-full max-w-sm items-start md:grid-cols-[1fr_min-content] gap-2">
+              <form className="flex-col gap-2 col-span-full grid min-h-16 w-full max-w-sm items-start md:grid-cols-[1fr_min-content]">
                 <input
-                  className="block w-full rounded-[10px] bg-primary-background p-[10px_13px] outline-hidden transition-all duration-300 ease-out text-secondary-foreground placeholder:text-accent-foreground border border-default-stroke hover:border-greyscale-light-08 hover:shadow-[0px_1px_4px_rgba(56,62,71,0.1)] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-300 placeholder:max-w-full placeholder:text-base placeholder-shown:truncate h-10!"
+                  className="block w-full rounded-[10px] bg-primary-background p-[10px_13px] outline-hidden transition-all duration-300 ease-out text-secondary-foreground placeholder:text-accent-foreground border border-default-stroke hover:border-greyscale-light-08 hover:shadow-[0px_1px_4px_rgba(56,62,71,0.1)] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-300 placeholder:max-w-full placeholder:text-base placeholder-shown:truncate"
                   type="email"
                   placeholder="Your email address"
                 />
-                <Button variant="primary" size="md" className="h-10!">
+                <button
+                  className="button-primary inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 h-11.5 gap-x-2 rounded-xl px-3.5 text-base button-primary relative"
+                  type="submit"
+                >
                   Subscribe
-                </Button>
-              </div>
+                </button>
+              </form>
             </div>
           </div>
         </div>

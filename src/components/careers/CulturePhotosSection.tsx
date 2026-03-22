@@ -22,24 +22,20 @@ export default function CulturePhotosSection() {
               <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
             </svg>
 
-            {/* Photo grid: 3 columns of gradient placeholder boxes */}
-            <div className="grid grid-cols-3 gap-4">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div
-                  key={i}
-                  className="aspect-[4/3] rounded-xl bg-gradient-to-br from-white-300 to-white-500 border border-subtle-stroke overflow-hidden"
-                >
-                  <img
-                    src={`/placeholder-culture-${i}.jpg`}
-                    alt=""
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none'
-                    }}
-                  />
-                </div>
-              ))}
+            {/* Video/photo area */}
+            <div className="relative grid aspect-video w-full overflow-hidden rounded-2xl bg-black-0">
+              <div className="flex items-center justify-center text-accent-foreground text-sm">
+                <img
+                  src="/placeholder-culture-video.jpg"
+                  alt=""
+                  className="size-full object-cover"
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.parentElement!.innerHTML =
+                      '<span class="text-accent-foreground">Culture video placeholder</span>'
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>

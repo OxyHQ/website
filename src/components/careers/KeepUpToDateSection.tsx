@@ -22,19 +22,21 @@ export default function KeepUpToDateSection() {
                 href={card.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-subtle-stroke p-6 pt-5.5 transition-colors duration-400 ease-in-out hover:border-white-800 hover:duration-150"
+                className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-subtle-stroke p-6 pt-5.5 transition-colors duration-400 ease-in-out hover:border-white-800 hover:duration-150 active:border-white-800 active:duration-50"
               >
-                <div className="pointer-events-none absolute inset-0 bg-secondary-background opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50" />
+                <div className="pointer-events-none absolute inset-0 bg-secondary-background opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
                 <div className="relative flex items-center justify-between">
                   {/* Icon placeholder */}
-                  <div className="size-5 text-primary-foreground">{card.title[0]}</div>
-                  {/* Hover arrow */}
+                  <div className="size-5 font-bold text-primary-foreground">
+                    {card.title.slice(0, 2)}
+                  </div>
+                  {/* Arrow */}
                   <svg
                     width="14"
                     height="14"
                     viewBox="0 0 14 14"
                     fill="none"
-                    className="relative shrink-0 text-secondary-foreground opacity-0 -translate-x-0.25 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150 -rotate-45"
+                    className="relative shrink-0 text-secondary-foreground opacity-0 -translate-x-0.25 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150 group-active:translate-0 group-active:opacity-100 group-active:duration-50 -rotate-45"
                   >
                     <path
                       stroke="currentColor"
@@ -53,7 +55,6 @@ export default function KeepUpToDateSection() {
             ))}
           </div>
         </div>
-        {/* Bottom padding */}
         <div className="h-20" />
       </div>
     </section>

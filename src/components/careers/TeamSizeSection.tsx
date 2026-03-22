@@ -1,7 +1,10 @@
-import { useScrollReveal } from '../../hooks/useScrollReveal'
-
 export default function TeamSizeSection() {
-  const ref = useScrollReveal()
+  const photos = [
+    { span: 'col-span-4 lg:col-span-3', src: '/placeholder-team-1.jpg' },
+    { span: 'col-span-6 lg:col-span-4', src: '/placeholder-team-2.jpg' },
+    { span: 'col-span-6 lg:col-span-3', src: '/placeholder-team-3.jpg' },
+    { span: 'col-span-4 lg:col-span-4', src: '/placeholder-team-4.jpg' },
+  ]
 
   return (
     <section className="container">
@@ -10,7 +13,7 @@ export default function TeamSizeSection() {
           <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
         </svg>
 
-        <div ref={ref} className="relative grid grid-cols-12 gap-y-15 py-20">
+        <div className="relative grid grid-cols-12 gap-y-15 py-20">
           {/* Dot pattern background */}
           <svg width="100%" height="100%" className="text-muted-strong-background absolute inset-0">
             <defs>
@@ -21,26 +24,24 @@ export default function TeamSizeSection() {
             <rect width="100%" height="100%" fill="url(#team-dots)" />
           </svg>
 
-          {/* Text */}
-          <div className="relative col-[2/-2] flex max-w-md flex-col gap-y-3 md:col-[2/9] scroll-reveal">
-            <h2 className="text-balance text-secondary-foreground text-heading-responsive-md">130+ team members.</h2>
+          <div className="relative col-[2/-2] flex max-w-md flex-col gap-y-3 md:col-[2/9]">
+            <h2 className="text-balance text-secondary-foreground">130+ team members.</h2>
             <p className="text-balance text-accent-foreground">Building from our HQ in London, and across Europe and the US.</p>
           </div>
 
-          {/* Photo grid */}
           <div className="relative col-[2/-2] grid grid-cols-10 gap-2.5 md:gap-3 lg:grid-cols-10">
-            {[
-              { span: 'col-span-4 lg:col-span-3', aspect: 'h-40 md:h-48 lg:h-64 xl:h-80' },
-              { span: 'col-span-6 lg:col-span-4', aspect: 'h-40 md:h-48 lg:h-64 xl:h-80' },
-              { span: 'col-span-6 lg:col-span-3', aspect: 'h-40 md:h-48 lg:h-64 xl:h-80' },
-            ].map((photo, i) => (
+            {photos.map((photo, i) => (
               <div
                 key={i}
-                className={`${photo.span} flex ${photo.aspect} w-full origin-center items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-white-300 to-white-500 border border-subtle-stroke scroll-reveal`}
-                style={{ transitionDelay: `${i * 150}ms` }}
+                className={`${photo.span} flex h-40 w-full origin-center items-center justify-center overflow-hidden rounded-xl object-cover md:h-48 lg:h-64 xl:h-80`}
               >
-                <img src={`/placeholder-team-${i + 1}.jpg`} alt="" className="size-full object-cover" loading="lazy"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }} />
+                <img
+                  src={photo.src}
+                  alt=""
+                  className="size-full object-cover"
+                  loading="lazy"
+                  onError={(e) => { e.currentTarget.style.display = 'none' }}
+                />
               </div>
             ))}
           </div>

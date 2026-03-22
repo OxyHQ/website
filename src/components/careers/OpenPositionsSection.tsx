@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { jobListings } from '../../data/careers'
-import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 export default function OpenPositionsSection() {
   const [activeLocation, setActiveLocation] = useState('All locations')
-  const ref = useScrollReveal()
   const locations = ['All locations', 'Europe', 'United Kingdom', 'United States']
 
   const filteredJobs = activeLocation === 'All locations'
@@ -14,7 +12,6 @@ export default function OpenPositionsSection() {
   return (
     <section className="container" id="open-positions">
       <div className="flex flex-col overflow-hidden border-subtle-stroke border-x">
-        {/* Header */}
         <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
           <div className="flex max-w-lg flex-col gap-4 max-lg:gap-3 text-center col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
             <h2 className="text-pretty text-heading-responsive-md">Open positions.</h2>
@@ -23,16 +20,16 @@ export default function OpenPositionsSection() {
         </header>
 
         {/* Location filter tabs */}
-        <div ref={ref} className="relative grid grid-cols-12 pb-5">
-          <div className="relative col-[2/-2] flex gap-2 max-lg:grid max-lg:grid-cols-2 justify-center max-lg:gap-1.5">
+        <div className="relative grid grid-cols-12 pb-5">
+          <div className="relative col-[2/-2] flex gap-2 max-lg:grid max-lg:grid-cols-2 justify-center max-lg:gap-1.5 max-lg:flex-wrap">
             {locations.map(loc => (
               <button
                 key={loc}
                 onClick={() => setActiveLocation(loc)}
-                className={`inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 h-8 gap-x-1.5 rounded-[10px] px-2.5 text-xs button-outline !border-subtle-stroke !text-tertiary-foreground !text-sm hover:!border-subtle-stroke hover:!bg-secondary-background ${
-                  activeLocation === loc ? '!bg-surface-subtle pointer-events-none' : ''
-                }`}
                 data-active={activeLocation === loc ? 'true' : 'false'}
+                className={`inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-8 gap-x-1.5 rounded-[10px] px-2.5 text-xs button-outline !border-subtle-stroke !text-tertiary-foreground !text-sm hover:!border-subtle-stroke hover:!bg-secondary-background data-[active='true']:!border-strong-stroke data-[active='false']:!text-tertiary-foreground lg:!text-secondary-foreground lg:text-sm${
+                  activeLocation === loc ? ' pointer-events-none pr-2!' : ''
+                }`}
               >
                 {loc}
               </button>
@@ -50,10 +47,13 @@ export default function OpenPositionsSection() {
           </svg>
         </div>
 
-        {/* Job listings */}
+        {/* Job listings area */}
         <div className="relative grid grid-cols-12">
           {/* Diagonal stripe background */}
-          <div className="size-full text-surface-subtle absolute inset-0" style={{ backgroundImage: 'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)' }} />
+          <div
+            className="size-full text-surface-subtle absolute inset-0"
+            style={{ backgroundImage: 'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)' }}
+          />
 
           {/* Top dashed line */}
           <svg width="100%" height="1" className="text-subtle-stroke absolute top-0 col-span-full">
