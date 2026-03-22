@@ -370,3 +370,85 @@ export const footerColumns: FooterColumn[] = [
     ],
   },
 ]
+
+// Capability Tabs
+export interface CapabilityTab {
+  role: string
+  panels: {
+    title: string
+    description: string
+    mockupType: 'chat' | 'meeting' | 'call' | 'pipeline'
+  }[]
+}
+
+export const capabilityTabs: CapabilityTab[] = [
+  {
+    role: 'Sales',
+    panels: [
+      { title: 'Win faster when every call is perfectly prepped.', description: 'Prepare for meetings, update deals, and review pipeline.', mockupType: 'chat' },
+      { title: 'Close deals with AI-powered follow-ups.', description: 'Draft emails, update records, and create tasks automatically.', mockupType: 'pipeline' },
+    ],
+  },
+  {
+    role: 'Customer Success',
+    panels: [
+      { title: 'Know every account inside and out.', description: 'Full context on health, history, and expansion signals.', mockupType: 'meeting' },
+      { title: 'Spot churn risk before it happens.', description: 'Surface patterns across engagement and usage data.', mockupType: 'call' },
+    ],
+  },
+  {
+    role: 'Marketing',
+    panels: [
+      { title: 'Turn signals into pipeline.', description: 'Identify and act on buying intent across your CRM.', mockupType: 'chat' },
+    ],
+  },
+  {
+    role: 'Founders',
+    panels: [
+      { title: 'Your CRM, your way.', description: 'Build workflows that match how you actually sell.', mockupType: 'pipeline' },
+    ],
+  },
+  {
+    role: 'Revenue Operations',
+    panels: [
+      { title: 'Pipeline intelligence at scale.', description: 'Surface insights and patterns across your entire customer base.', mockupType: 'meeting' },
+    ],
+  },
+]
+
+// Universal Context Cards
+export interface ContextCard {
+  title: string
+  subtitle: string
+  iconType: 'database' | 'brain' | 'search' | 'globe' | 'shield'
+}
+
+export const contextCards: ContextCard[] = [
+  { title: 'Grounded in your context', subtitle: 'like emails, calls, and product usage.', iconType: 'database' },
+  { title: 'Understand patterns', subtitle: 'across customer signals, not just individual flares.', iconType: 'brain' },
+  { title: 'Semantic search', subtitle: 'that understands intent, not just keywords.', iconType: 'search' },
+  { title: 'Multi-language support', subtitle: 'ask in one language, get answers from another.', iconType: 'globe' },
+  { title: 'Respects permissions', subtitle: 'everyone sees only what they should.', iconType: 'shield' },
+]
+
+// Prompt Library Cards
+export interface PromptLibraryCard {
+  title: string
+  description: string
+  iconType: 'calendar' | 'briefcase' | 'phone' | 'mail' | 'chart' | 'sparkle' | 'search' | 'users'
+}
+
+export const promptLibraryCards: PromptLibraryCard[] = [
+  { title: 'Daily brief', description: 'Prepare for your day with a daily briefing of your meetings.', iconType: 'calendar' },
+  { title: 'Account brief', description: 'Get a full account brief before any call.', iconType: 'briefcase' },
+  { title: 'Call Intelligence', description: 'Summarize calls and extract key moments.', iconType: 'phone' },
+  { title: 'Draft follow-up', description: 'Draft a follow-up email after a meeting.', iconType: 'mail' },
+  { title: 'Pipeline review', description: 'Surface pipeline insights and emerging patterns.', iconType: 'chart' },
+  { title: 'Feature requests', description: 'Find customers who requested a specific feature.', iconType: 'sparkle' },
+  { title: 'Web research', description: 'Run deep web research on any company.', iconType: 'search' },
+  { title: 'Transition brief', description: 'Build transition briefs for handoffs between teams.', iconType: 'users' },
+  { title: 'Objection prep', description: 'Prepare targeted responses to anticipated objections.', iconType: 'sparkle' },
+  { title: 'Update deal', description: 'Update deal records based on recorded calls.', iconType: 'briefcase' },
+  { title: 'Engagement trends', description: 'Summarize product engagement and usage trends.', iconType: 'chart' },
+  { title: 'Churn signals', description: 'Identify early signs of expansion or churn risk.', iconType: 'search' },
+]

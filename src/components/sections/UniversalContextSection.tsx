@@ -1,59 +1,228 @@
-import { universalContext } from '../../data/content'
+import { contextCards } from '../../data/content'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
-import Section from '../layout/Section'
+import Container from '../layout/Container'
+
+function CardIcon({ iconType }: { iconType: string }) {
+  const props = {
+    width: 20,
+    height: 20,
+    viewBox: '0 0 20 20',
+    fill: 'none' as const,
+    stroke: 'currentColor',
+    strokeWidth: 1.5,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+  }
+
+  switch (iconType) {
+    case 'database':
+      return (
+        <svg {...props}>
+          <ellipse cx="10" cy="5" rx="6" ry="2.5" />
+          <path d="M4 5v10c0 1.38 2.69 2.5 6 2.5s6-1.12 6-2.5V5" />
+          <path d="M4 10c0 1.38 2.69 2.5 6 2.5s6-1.12 6-2.5" />
+        </svg>
+      )
+    case 'brain':
+      return (
+        <svg {...props}>
+          <path d="M10 2.5a4 4 0 0 0-4 4c0 1.2.5 2.2 1.3 3L10 17.5l2.7-8a4 4 0 0 0 1.3-3 4 4 0 0 0-4-4Z" />
+          <circle cx="8.5" cy="7" r="0.75" fill="currentColor" stroke="none" />
+          <circle cx="11.5" cy="7" r="0.75" fill="currentColor" stroke="none" />
+          <path d="M7 9.5c.8.8 2 1.2 3 1.2s2.2-.4 3-1.2" />
+        </svg>
+      )
+    case 'search':
+      return (
+        <svg {...props}>
+          <circle cx="8.5" cy="8.5" r="5" />
+          <path d="M12.5 12.5 17 17" />
+        </svg>
+      )
+    case 'globe':
+      return (
+        <svg {...props}>
+          <circle cx="10" cy="10" r="7" />
+          <path d="M3 10h14" />
+          <path d="M10 3c-2.5 2.5-2.5 11.5 0 14" />
+          <path d="M10 3c2.5 2.5 2.5 11.5 0 14" />
+        </svg>
+      )
+    case 'shield':
+      return (
+        <svg {...props}>
+          <path d="M10 2 3.5 5.5v4c0 4.5 3 8 6.5 9 3.5-1 6.5-4.5 6.5-9v-4Z" />
+          <path d="m7.5 10 1.75 1.75L12.5 8" />
+        </svg>
+      )
+    default:
+      return null
+  }
+}
+
+function GridCard({
+  title,
+  subtitle,
+  iconType,
+}: {
+  title: string
+  subtitle: string
+  iconType: string
+}) {
+  return (
+    <div className="relative grid grid-cols-1 grid-rows-1 bg-[var(--color-primary-bg)]">
+      {/* Card content */}
+      <div className="flex flex-col justify-between gap-3 p-6" style={{ gridColumn: 1, gridRow: 1 }}>
+        <div className="size-5 text-[var(--color-primary-fg)]">
+          <CardIcon iconType={iconType} />
+        </div>
+        <div>
+          <p className="text-balance text-base text-[var(--color-primary-fg)] max-2xl:text-sm">
+            {title}
+            <span className="text-[var(--color-accent-fg)]"> {subtitle}</span>
+          </p>
+        </div>
+      </div>
+
+      {/* Top border */}
+      <svg
+        width="100%"
+        height="1"
+        className="absolute inset-x-0 top-0 text-[var(--color-black-400)]"
+        style={{ gridRow: 1 }}
+      >
+        <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
+      </svg>
+
+      {/* Bottom border */}
+      <svg
+        width="100%"
+        height="1"
+        className="absolute inset-x-0 bottom-0 text-[var(--color-black-400)]"
+        style={{ gridRow: 1 }}
+      >
+        <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
+      </svg>
+
+      {/* Left border */}
+      <svg
+        width="1"
+        height="100%"
+        className="absolute inset-y-0 left-0 text-[var(--color-black-400)]"
+        style={{ gridColumn: 1 }}
+      >
+        <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
+      </svg>
+
+      {/* Right border */}
+      <svg
+        width="1"
+        height="100%"
+        className="absolute inset-y-0 right-0 text-[var(--color-black-400)]"
+        style={{ gridColumn: 1 }}
+      >
+        <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
+      </svg>
+
+      {/* Corner dots */}
+      <div
+        className="absolute top-0 left-0 size-1 -translate-x-1/2 -translate-y-1/2 bg-[var(--color-default-stroke)]"
+        style={{ gridColumn: 1, gridRow: 1 }}
+      />
+      <div
+        className="absolute bottom-0 left-0 size-1 -translate-x-1/2 translate-y-1/2 bg-[var(--color-default-stroke)]"
+        style={{ gridColumn: 1, gridRow: 1 }}
+      />
+      <div
+        className="absolute top-0 right-0 size-1 translate-x-1/2 -translate-y-1/2 bg-[var(--color-default-stroke)]"
+        style={{ gridColumn: 1, gridRow: 1 }}
+      />
+      <div
+        className="absolute right-0 bottom-0 size-1 translate-x-1/2 translate-y-1/2 bg-[var(--color-default-stroke)]"
+        style={{ gridColumn: 1, gridRow: 1 }}
+      />
+    </div>
+  )
+}
 
 export default function UniversalContextSection() {
   const ref = useScrollReveal()
 
   return (
-    <section className="relative bg-[var(--color-primary-bg)]">
-      {/* Background glow */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[60%] overflow-hidden" aria-hidden="true">
-        <div className="absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 -translate-y-1/4 rounded-full bg-[var(--color-blue-500)]/[0.06] blur-[100px]" />
+    <section className="dark relative flex min-h-svh flex-col justify-center overflow-hidden bg-[var(--color-primary-bg)]">
+      {/* Background gradient glow */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[60%]" aria-hidden="true">
+        <div
+          className="absolute inset-x-0 top-0 h-[500px]"
+          style={{
+            background:
+              'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(99, 132, 255, 0.08) 0%, transparent 100%)',
+          }}
+        />
       </div>
 
-      <Section containerClassName="py-20 lg:py-32" withBorders>
+      <Container className="pt-92 pb-20">
         <div ref={ref} className="flex flex-col items-center">
-          {/* Heading */}
-          <h2 className="text-heading-responsive-lg relative text-center text-[var(--color-primary-fg)] scroll-reveal">
-            {universalContext.title}
-            {universalContext.trademark && (
-              <span className="absolute inline-block origin-bottom-left -translate-y-3/5 scale-[0.28] pl-[0.15em] font-bold tracking-tight">
-                TM
-              </span>
-            )}
-          </h2>
-          <p className="mt-4 text-lg text-[var(--color-tertiary-fg)] scroll-reveal" style={{ transitionDelay: '100ms' }}>
-            {universalContext.subtitle}
+          {/* "Powered by" label */}
+          <p className="text-sm tracking-wide text-[var(--color-tertiary-fg)] scroll-reveal">
+            Powered by
           </p>
 
-          {/* Points */}
-          <ul className="mt-16 flex max-w-3xl flex-col gap-6 scroll-reveal-stagger">
-            {universalContext.points.map((point, i) => (
-              <li key={i} className="flex items-start gap-4 scroll-reveal">
-                <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--color-subtle-stroke)] bg-[var(--color-surface-subtle)]">
-                  <svg
-                    className="h-3.5 w-3.5 text-[var(--color-blue-400)]"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                  >
-                    <path
-                      d="M13.5 4.5L6.5 11.5L3 8"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+          {/* Heading */}
+          <h2 className="text-heading-responsive-lg relative mt-4 text-center text-[var(--color-primary-fg)] scroll-reveal">
+            Universal Context
+            <sup className="ml-0.5 text-[0.3em] font-bold tracking-tight align-super">TM</sup>
+          </h2>
+
+          {/* 5-card grid — desktop (xl+) */}
+          <div
+            className="mt-16 w-full max-xl:hidden scroll-reveal"
+            style={{ transitionDelay: '200ms' }}
+          >
+            <div className="grid grid-cols-12">
+              <div
+                className="col-[2/-2]"
+                style={{ aspectRatio: '5/1' }}
+              >
+                <div
+                  className="grid h-full"
+                  style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}
+                >
+                  {contextCards.map((card, i) => (
+                    <GridCard
+                      key={i}
+                      title={card.title}
+                      subtitle={card.subtitle}
+                      iconType={card.iconType}
                     />
-                  </svg>
+                  ))}
                 </div>
-                <span className="text-base leading-relaxed text-[var(--color-secondary-fg)]">
-                  {point}
-                </span>
-              </li>
+              </div>
+            </div>
+          </div>
+
+          {/* Stacked list — mobile/tablet (<xl) */}
+          <div
+            className="mt-16 flex w-full max-w-md flex-col gap-4 xl:hidden scroll-reveal"
+            style={{ transitionDelay: '200ms' }}
+          >
+            {contextCards.map((card, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-4 rounded-lg border border-[var(--color-black-400)] bg-[var(--color-primary-bg)] p-5"
+              >
+                <div className="size-5 shrink-0 text-[var(--color-primary-fg)]">
+                  <CardIcon iconType={card.iconType} />
+                </div>
+                <p className="text-sm text-[var(--color-primary-fg)]">
+                  {card.title}
+                  <span className="text-[var(--color-accent-fg)]"> {card.subtitle}</span>
+                </p>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
-      </Section>
+      </Container>
     </section>
   )
 }
