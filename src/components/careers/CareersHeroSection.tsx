@@ -3,15 +3,77 @@ import { careersHero } from '../../data/careers'
 
 const avatarColors = ['#266DF0', '#9162F9', '#FD9038']
 
-const teamMembers = [
-  { name: 'Alex', flag: '\u{1F1EC}\u{1F1E7}', dept: 'Marketing' },
-  { name: 'Sofia', flag: '\u{1F1F8}\u{1F1EA}', dept: 'Engineering' },
-  { name: 'James', flag: '\u{1F1EC}\u{1F1E7}', dept: 'Design' },
-  { name: 'Maria', flag: '\u{1F1EA}\u{1F1F8}', dept: 'Product' },
-  { name: 'David', flag: '\u{1F1FA}\u{1F1F8}', dept: 'Sales' },
-  { name: 'Emma', flag: '\u{1F1EC}\u{1F1E7}', dept: 'Engineering' },
-  { name: 'Lucas', flag: '\u{1F1E9}\u{1F1EA}', dept: 'Engineering' },
-  { name: 'Priya', flag: '\u{1F1EE}\u{1F1F3}', dept: 'Product' },
+interface HoverCard {
+  title: string
+  description: string
+  tags: { label: string; bg: string; border: string; color: string }[]
+}
+
+const hoverCards: HoverCard[] = [
+  {
+    title: 'View contributing data',
+    description: 'Added the ability for users to view contributing data for Insight reports, so they can drill-down into underlying records or segments.',
+    tags: [
+      { label: 'Design', bg: 'rgb(255,243,204)', border: 'rgb(255,210,105)', color: 'rgb(82,56,23)' },
+      { label: 'Enhancement', bg: 'rgb(245,240,255)', border: 'rgb(216,196,255)', color: 'rgb(69,41,125)' },
+    ],
+  },
+  {
+    title: 'Automated lead scoring',
+    description: 'Deploy AI-powered lead scoring that automatically evaluates and prioritizes leads based on engagement signals and fit criteria.',
+    tags: [
+      { label: 'Feature', bg: 'rgb(229,238,255)', border: 'rgb(194,214,255)', color: 'rgb(43,62,109)' },
+      { label: 'AI', bg: 'rgb(224,252,237)', border: 'rgb(167,242,207)', color: 'rgb(36,74,58)' },
+    ],
+  },
+  {
+    title: 'Real-time pipeline sync',
+    description: 'Sync pipeline data in real-time across all connected tools, ensuring your team always has the latest information.',
+    tags: [
+      { label: 'Engineering', bg: 'rgb(229,238,255)', border: 'rgb(194,214,255)', color: 'rgb(43,62,109)' },
+      { label: 'Data', bg: 'rgb(245,240,255)', border: 'rgb(216,196,255)', color: 'rgb(69,41,125)' },
+    ],
+  },
+  {
+    title: 'Custom workflow builder',
+    description: 'Build complex automation workflows with a visual builder that supports branching, conditions, and integrations.',
+    tags: [
+      { label: 'Product', bg: 'rgb(255,243,204)', border: 'rgb(255,210,105)', color: 'rgb(82,56,23)' },
+      { label: 'Feature', bg: 'rgb(229,238,255)', border: 'rgb(194,214,255)', color: 'rgb(43,62,109)' },
+    ],
+  },
+  {
+    title: 'Multi-language support',
+    description: 'Full internationalization support across the platform, enabling teams worldwide to work in their preferred language.',
+    tags: [
+      { label: 'Enhancement', bg: 'rgb(245,240,255)', border: 'rgb(216,196,255)', color: 'rgb(69,41,125)' },
+      { label: 'Reports', bg: 'rgb(224,252,237)', border: 'rgb(167,242,207)', color: 'rgb(36,74,58)' },
+    ],
+  },
+  {
+    title: 'Advanced reporting engine',
+    description: 'Create real-time, detailed reports that scale with your data. Visualize, customize, and get deep insights in seconds.',
+    tags: [
+      { label: 'Design', bg: 'rgb(255,243,204)', border: 'rgb(255,210,105)', color: 'rgb(82,56,23)' },
+      { label: 'Reports', bg: 'rgb(224,252,237)', border: 'rgb(167,242,207)', color: 'rgb(36,74,58)' },
+    ],
+  },
+  {
+    title: 'Call intelligence insights',
+    description: 'AI automatically picks up buying signals, blockers, and feature requests during calls — not days later.',
+    tags: [
+      { label: 'AI', bg: 'rgb(224,252,237)', border: 'rgb(167,242,207)', color: 'rgb(36,74,58)' },
+      { label: 'Feature', bg: 'rgb(229,238,255)', border: 'rgb(194,214,255)', color: 'rgb(43,62,109)' },
+    ],
+  },
+  {
+    title: 'Flexible data model',
+    description: 'Build custom objects, attributes, and relationships that perfectly mirror how your business actually works.',
+    tags: [
+      { label: 'Engineering', bg: 'rgb(229,238,255)', border: 'rgb(194,214,255)', color: 'rgb(43,62,109)' },
+      { label: 'Product', bg: 'rgb(255,243,204)', border: 'rgb(255,210,105)', color: 'rgb(82,56,23)' },
+    ],
+  },
 ]
 
 /** Deterministic pseudo-random from a seed */
@@ -34,7 +96,7 @@ const columnDefs: [number, boolean][] = [
 
 interface SquircleCell {
   id: string
-  memberIndex: number | null
+  cardIndex: number | null
 }
 
 interface Column {
@@ -50,10 +112,10 @@ function buildGrid(): Column[] {
     for (let r = 0; r < numSquircles; r++) {
       const id = `${colIndex}-${r}`
       // ~15% of visible cells get a team member hover card
-      const hasMember = !isHidden && seededRandom(colIndex * 31 + r * 17) > 0.85
+      const hasCard = !isHidden && seededRandom(colIndex * 31 + r * 17) > 0.85
       cells.push({
         id,
-        memberIndex: hasMember ? memberSlot++ % teamMembers.length : null,
+        cardIndex: hasCard ? memberSlot++ % hoverCards.length : null,
       })
     }
     return { cells, hidden: isHidden }
@@ -130,33 +192,53 @@ export default function CareersHeroSection() {
                 style={{ flex: '0 0 24px' }}
               >
                 {column.cells.map((cell) => {
-                  const member =
-                    cell.memberIndex !== null
-                      ? teamMembers[cell.memberIndex]
+                  const card =
+                    cell.cardIndex !== null
+                      ? hoverCards[cell.cardIndex]
                       : null
                   const isHovered = hoveredId === cell.id
 
                   return (
                     <div
                       key={cell.id}
+                      className="px"
                       style={{ height: 24, width: 24, opacity: 1, transform: 'none' }}
                     >
                       <div className="relative size-[22px]">
                         <div
-                          onMouseEnter={() => member && setHoveredId(cell.id)}
-                          onMouseLeave={() => member && setHoveredId(null)}
+                          onMouseEnter={() => card && setHoveredId(cell.id)}
+                          onMouseLeave={() => card && setHoveredId(null)}
                           className={`relative size-[22px] rounded-md z-[1] before:absolute before:-inset-px transition-colors duration-150 ${
-                            isHovered
-                              ? 'bg-white-500'
-                              : 'bg-white-700'
-                          } ${member ? 'cursor-pointer hover:bg-white-500' : ''}`}
+                            isHovered ? 'bg-white-500' : 'bg-white-700'
+                          } ${card ? 'cursor-pointer hover:bg-white-500' : ''}`}
                         />
 
-                        {/* Hover tooltip */}
-                        {isHovered && member && (
-                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 whitespace-nowrap rounded-xl bg-primary-background border border-subtle-stroke px-3 py-2 shadow-lg">
-                            <div className="flex items-center justify-center gap-1 text-secondary-foreground text-sm">
-                              {member.name} {member.flag} {member.dept}
+                        {/* Hover card popover */}
+                        {isHovered && card && (
+                          <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 z-[101] mb-2 w-[280px] rounded-xl bg-primary-background p-2.5 shadow-[0px_0px_0px_1px_rgba(28,40,64,0.05),_0px_4px_8px_-4px_rgba(28,40,64,0.12),_0px_4px_12px_-2px_rgba(28,40,64,0.16)]">
+                            <div className="flex w-full flex-col gap-0.5">
+                              {/* Image placeholder */}
+                              <div className="relative mb-2 w-full">
+                                <div className="aspect-video w-full rounded-lg bg-gradient-to-br from-white-300 to-white-500" />
+                                <div className="absolute inset-0 rounded-lg ring-1 ring-default-stroke/40 ring-inset" />
+                              </div>
+                              <p className="font-semibold text-primary-foreground text-sm">{card.title}</p>
+                              <p className="text-sm text-tertiary-foreground leading-tight">{card.description}</p>
+                              <div className="mt-2 flex flex-wrap gap-1">
+                                {card.tags.map((tag) => (
+                                  <span
+                                    key={tag.label}
+                                    className="inline-block rounded-lg border px-1.5 py-0.5 text-xs"
+                                    style={{
+                                      backgroundColor: tag.bg,
+                                      borderColor: tag.border,
+                                      color: tag.color,
+                                    }}
+                                  >
+                                    {tag.label}
+                                  </span>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         )}
