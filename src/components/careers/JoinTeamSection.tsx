@@ -1,13 +1,25 @@
-export default function JoinTeamSection() {
-  // Generate 27x5 = 135 avatar bubbles
-  const cols = 27
-  const rows = 5
-  const bubbles = Array.from({ length: cols * rows }, (_, i) => {
-    const col = i % cols
-    const row = Math.floor(i / cols)
-    return { col, row, key: i }
-  })
+// Seeded random for deterministic opacity values
+function seededRandom(seed: number) {
+  const x = Math.sin(seed + 1) * 10000
+  return x - Math.floor(x)
+}
 
+const COLS = 27
+const ROWS = 5
+
+const bubbles = Array.from({ length: COLS * ROWS }, (_, i) => {
+  const col = i % COLS
+  const row = Math.floor(i / COLS)
+  const opacity = 0.15 + seededRandom(i) * 0.2 // 0.15–0.35
+  return {
+    key: i,
+    left: col * 32 + 16,
+    top: row * 32 + 16,
+    opacity,
+  }
+})
+
+export default function JoinTeamSection() {
   return (
     <section className="container">
       <div className="relative border-subtle-stroke border-x">
@@ -40,16 +52,16 @@ export default function JoinTeamSection() {
                 className="relative mb-8 [mask-image:linear-gradient(to_right,transparent_0%,white_10%,white_90%,transparent_100%)] max-lg:pointer-events-none"
                 style={{ height: 160, width: 864 }}
               >
-                {bubbles.map(({ col, row, key }) => (
+                {bubbles.map(({ key, left, top, opacity }) => (
                   <div
                     key={key}
                     className="absolute overflow-hidden rounded-full bg-white-700 after:absolute after:inset-0 after:z-1 after:mix-blend-hard-light after:rounded-full after:bg-linear-to-tl after:from-[#a4adba] after:to-[#e4e7ec] after:opacity-0 after:transition after:duration-300 after:ease-out"
                     style={{
                       height: 32,
                       width: 32,
-                      left: col * 32,
-                      top: row * 32,
-                      opacity: 0.2,
+                      left,
+                      top,
+                      opacity,
                       transform: 'translateX(-50%) translateY(-50%) scale(0.8)',
                     }}
                   />

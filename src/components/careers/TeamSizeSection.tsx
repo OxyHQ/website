@@ -1,11 +1,27 @@
-export default function TeamSizeSection() {
-  const photos = [
-    { span: 'col-span-4 lg:col-span-3', src: '/placeholder-team-1.jpg' },
-    { span: 'col-span-6 lg:col-span-4', src: '/placeholder-team-2.jpg' },
-    { span: 'col-span-6 lg:col-span-3', src: '/placeholder-team-3.jpg' },
-    { span: 'col-span-4 lg:col-span-4', src: '/placeholder-team-4.jpg' },
-  ]
+const photos = [
+  {
+    span: 'col-span-4 lg:col-span-3',
+    src: '/placeholder-team-1.jpg',
+    gradient: 'from-slate-200 to-slate-300',
+  },
+  {
+    span: 'col-span-6 lg:col-span-4',
+    src: '/placeholder-team-2.jpg',
+    gradient: 'from-zinc-200 to-zinc-300',
+  },
+  {
+    span: 'col-span-6 lg:col-span-3',
+    src: '/placeholder-team-3.jpg',
+    gradient: 'from-gray-200 to-gray-300',
+  },
+  {
+    span: 'col-span-4 lg:col-span-4',
+    src: '/placeholder-team-4.jpg',
+    gradient: 'from-stone-200 to-stone-300',
+  },
+]
 
+export default function TeamSizeSection() {
   return (
     <section className="container">
       <div className="flex flex-col items-center overflow-hidden border-subtle-stroke border-x">
@@ -34,13 +50,17 @@ export default function TeamSizeSection() {
               <div
                 key={i}
                 className={`${photo.span} flex h-40 w-full origin-center items-center justify-center overflow-hidden rounded-xl object-cover md:h-48 lg:h-64 xl:h-80`}
+                style={{ filter: 'blur(0px)', opacity: 1, transform: 'none' }}
               >
+                <div className={`size-full bg-gradient-to-br ${photo.gradient} absolute inset-0`} />
                 <img
                   src={photo.src}
                   alt=""
-                  className="size-full object-cover"
+                  className="size-full object-cover relative"
                   loading="lazy"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                  }}
                 />
               </div>
             ))}

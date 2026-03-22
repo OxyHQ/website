@@ -1,13 +1,48 @@
-import { useState } from 'react'
-import { jobListings } from '../../data/careers'
+import { useState, useMemo } from 'react'
+import { jobDepartments } from '../../data/careers'
+
+function DashedLine() {
+  return (
+    <svg width="100%" height="1" className="text-subtle-stroke">
+      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function SolidLine() {
+  return (
+    <svg width="100%" height="1" className="text-subtle-stroke">
+      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
+    </svg>
+  )
+}
 
 export default function OpenPositionsSection() {
   const [activeLocation, setActiveLocation] = useState('All locations')
   const locations = ['All locations', 'Europe', 'United Kingdom', 'United States']
 
-  const filteredJobs = activeLocation === 'All locations'
-    ? jobListings
-    : jobListings.filter(j => j.location.includes(activeLocation === 'United Kingdom' ? 'UK' : activeLocation === 'United States' ? 'US' : activeLocation))
+  const filteredDepartments = useMemo(() => {
+    if (activeLocation === 'All locations') return jobDepartments
+
+    return jobDepartments
+      .map(dept => ({
+        ...dept,
+        jobs: dept.jobs.filter(job => {
+          const loc = job.location.toLowerCase()
+          switch (activeLocation) {
+            case 'Europe':
+              return loc.includes('europe') || loc.includes('poland') || loc.includes('portugal') || loc.includes('ireland') || loc.includes('germany')
+            case 'United Kingdom':
+              return loc.includes('london') || loc.includes('united kingdom')
+            case 'United States':
+              return loc.includes('united states') || loc.includes('new york') || loc.includes('san francisco')
+            default:
+              return true
+          }
+        }),
+      }))
+      .filter(dept => dept.jobs.length > 0)
+  }, [activeLocation])
 
   return (
     <section className="container" id="open-positions">
@@ -62,39 +97,59 @@ export default function OpenPositionsSection() {
 
           <div className="relative col-[2/-2] bg-white-100 max-xl:col-[1/-1] xl:border-subtle-stroke xl:border-x">
             <div className="relative flex flex-col pb-18">
-              {/* Solid top line */}
-              <svg width="100%" height="1" className="text-subtle-stroke relative">
-                <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-              </svg>
+              {filteredDepartments.map((dept) => (
+                <div key={dept.id}>
+                  {/* Solid line above department header */}
+                  <SolidLine />
 
-              {/* Column headers */}
-              <div className="relative grid grid-cols-12 bg-surface-subtle py-5 xl:grid-cols-10">
-                <div className="col-[2/-2] flex gap-1">
-                  <span className="flex-1 text-overline text-caption-foreground">Role</span>
-                  <span className="w-32 text-overline text-caption-foreground max-lg:hidden">Department</span>
-                  <span className="w-32 text-overline text-caption-foreground max-lg:hidden">Location</span>
-                  <span className="w-24 text-overline text-caption-foreground max-lg:hidden">Type</span>
-                </div>
-              </div>
-
-              {/* Job rows */}
-              {filteredJobs.map((job, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="group relative grid grid-cols-12 border-t border-subtle-stroke py-5 transition-colors hover:bg-secondary-background xl:grid-cols-10"
-                >
-                  <div className="col-[2/-2] flex gap-1 items-center">
-                    <span className="flex-1 font-medium text-sm text-primary-foreground group-hover:text-blue-500 transition-colors">{job.title}</span>
-                    <span className="w-32 text-sm text-accent-foreground max-lg:hidden">{job.department}</span>
-                    <span className="w-32 text-sm text-accent-foreground max-lg:hidden">{job.location}</span>
-                    <span className="w-24 text-sm text-accent-foreground max-lg:hidden">{job.type}</span>
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
-                      className="shrink-0 text-accent-foreground transition-[translate,opacity] duration-300 group-hover:translate-x-0.5 group-hover:text-primary-foreground">
-                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
-                    </svg>
+                  {/* Department header */}
+                  <div className="relative grid grid-cols-12 bg-surface-subtle py-5 xl:grid-cols-10">
+                    <div className="col-[2/-2] flex items-baseline gap-2">
+                      <h3 className="font-display text-xl xl:text-2xl" id={dept.id}>{dept.name}</h3>
+                      <p className="align-super text-accent-foreground text-overline">[{String(dept.jobs.length).padStart(2, '0')}]</p>
+                    </div>
                   </div>
-                </a>
+
+                  {/* Solid line below department header */}
+                  <SolidLine />
+
+                  {/* Job rows */}
+                  {dept.jobs.map((job, jobIndex) => (
+                    <div key={`${dept.id}-${jobIndex}`}>
+                      <a
+                        className="group relative grid grid-cols-12 items-baseline gap-y-1 py-4 md:gap-y-[5px] md:py-4.5 lg:py-5 xl:grid-cols-10 *:mix-blend-multiply"
+                        href={job.href}
+                      >
+                        {/* Hover overlay */}
+                        <div className="pointer-events-none absolute inset-0 bg-secondary-background opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
+                        {/* Row number */}
+                        <p className="relative col-[2/-2] row-1 mb-0.5 text-caption-foreground text-xs tabular-nums tracking-tight! md:col-1 md:row-1 md:mb-0 md:justify-self-center xl:text-sm">
+                          {String(jobIndex + 1).padStart(2, '0')}
+                        </p>
+                        {/* Job title */}
+                        <h4 className="relative col-[2/-2] row-2 overflow-hidden text-ellipsis whitespace-nowrap pr-6 text-sm md:row-1 lg:col-[2/6] lg:text-base">
+                          {job.title}
+                        </h4>
+                        {/* Location */}
+                        <p className="relative col-[2/-3] row-3 text-accent-foreground text-sm max-md:line-clamp-2 md:truncate md:col-[2/-2] md:row-2 lg:col-[7/-2] lg:row-1 lg:text-base xl:col-[7/-2]">
+                          {job.location}
+                        </p>
+                        {/* Arrow */}
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 14 14"
+                          fill="none"
+                          className="col-11 row-3 self-center justify-self-end text-accent-foreground transition-[translate,color] duration-400 ease-in-out group-hover:translate-x-0.5 group-hover:duration-150 group-active:translate-x-0.5 group-active:duration-50 md:row-2 lg:col-12 lg:row-1 lg:justify-self-center xl:col-[-2/-1]"
+                        >
+                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
+                        </svg>
+                      </a>
+                      {/* Dashed separator between rows (and after last row) */}
+                      <DashedLine />
+                    </div>
+                  ))}
+                </div>
               ))}
             </div>
           </div>
