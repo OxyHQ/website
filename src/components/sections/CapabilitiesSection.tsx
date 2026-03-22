@@ -275,16 +275,16 @@ export default function CapabilitiesSection() {
       <div className="container flex flex-1 flex-col">
         <div
           ref={ref}
-          className="flex w-full flex-1 flex-col border-x border-subtle-stroke"
+          className="flex w-full flex-1 flex-col border-subtle-stroke border-x"
         >
           {/* Header */}
-          <div className="grid grid-cols-12 justify-items-center pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15">
-            <div className="col-[2/-2] max-w-[20em] text-pretty text-center mix-blend-multiply dark:mix-blend-screen">
-              <h2 className="text-heading-responsive-sm scroll-reveal">
+          <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
+            <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-center col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
+              <h2 className="text-pretty inline">
                 Simply powerful customer intelligence.
               </h2>
             </div>
-          </div>
+          </header>
 
           {/* Tab navigation */}
           <div className="relative scroll-reveal" style={{ transitionDelay: '100ms' }}>
@@ -318,9 +318,9 @@ export default function CapabilitiesSection() {
           </div>
 
           {/* Split-panel card */}
-          <div className="grid grid-cols-12">
+          <div className="grid grid-cols-12 pb-10">
             <div
-              className="col-[2/-2] flex w-full border border-subtle-stroke max-lg:col-span-full scroll-reveal"
+              className="relative col-[2/-2] max-lg:col-span-full flex w-full border border-subtle-stroke scroll-reveal"
               style={{ transitionDelay: '200ms' }}
             >
               {/* Left half — title + description */}

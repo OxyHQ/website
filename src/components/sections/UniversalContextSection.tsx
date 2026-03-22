@@ -1,6 +1,6 @@
 import { contextCards } from '../../data/content'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
-import Container from '../layout/Container'
+
 
 function CardIcon({ iconType }: { iconType: string }) {
   const props = {
@@ -161,15 +161,17 @@ export default function UniversalContextSection() {
         />
       </div>
 
-      <Container className="pt-92 pb-20">
-        <div ref={ref} className="flex flex-col items-center">
+      <header className="relative flex flex-col gap-3 pt-92 text-center">
+        <div className="container">
+          <div className="grid grid-cols-12">
+            <div ref={ref} className="col-[2/-2] flex flex-col items-center gap-3">
           {/* "Powered by" label */}
-          <p className="text-sm tracking-wide text-tertiary-foreground scroll-reveal">
+          <p className="text-disabled-foreground text-lg scroll-reveal">
             Powered by
           </p>
 
           {/* Heading */}
-          <h2 className="text-heading-responsive-lg relative mt-4 text-center text-primary-foreground scroll-reveal">
+          <h2 className="relative w-fit text-heading-responsive-lg text-primary-foreground scroll-reveal">
             Universal Context
             <sup className="ml-0.5 text-[0.3em] font-bold tracking-tight align-super">TM</sup>
           </h2>
@@ -221,8 +223,10 @@ export default function UniversalContextSection() {
               </div>
             ))}
           </div>
+            </div>
+          </div>
         </div>
-      </Container>
+      </header>
     </section>
   )
 }

@@ -1,7 +1,5 @@
 import { promptLibraryCards } from '../../data/content'
 import type { PromptLibraryCard } from '../../data/content'
-import { useScrollReveal } from '../../hooks/useScrollReveal'
-import Container from '../layout/Container'
 
 function getIcon(iconType: PromptLibraryCard['iconType']) {
   const props = { width: 20, height: 20, viewBox: '0 0 20 20', fill: 'none' as const, stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
@@ -50,52 +48,46 @@ function PromptCard({ card }: { card: PromptLibraryCard }) {
 }
 
 export default function PromptLibrarySection() {
-  const ref = useScrollReveal()
-
   const row1 = promptLibraryCards.slice(0, 6)
   const row2 = promptLibraryCards.slice(6, 12)
   const row3 = [...promptLibraryCards.slice(3, 6), ...promptLibraryCards.slice(0, 3)]
 
   return (
-    <section className="bg-primary-background">
-      <Container>
-        <div className="border-x border-subtle-stroke px-6 lg:px-10">
-          <div ref={ref} className="py-20 lg:py-32">
-            <div className="scroll-reveal flex flex-col items-center text-center">
-              <h2 className="text-heading-responsive-md text-balance text-primary-foreground">
-                From one expert to everyone.
-              </h2>
-              <p className="mt-4 max-w-xl text-xl text-tertiary-foreground">
-                Best practice becomes standard practice with the prompt library.
-              </p>
+    <section>
+      <div className="container flex flex-1 flex-col">
+        <div className="flex w-full flex-1 flex-col border-subtle-stroke border-x">
+          <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
+            <div className="col-[2/-2] max-w-lg text-center">
+              <h2 className="text-pretty text-heading-responsive-md">From one expert to everyone.</h2>
+              <p className="text-pretty text-tertiary text-xl">Best practice becomes standard practice with the prompt library.</p>
             </div>
-          </div>
+          </header>
         </div>
-      </Container>
+      </div>
 
       <div className="flex flex-col items-center overflow-hidden py-16 relative">
-        <div className="flex flex-col gap-y-5">
+        <div className="flex flex-col gap-y-5 max-lg:scale-80 max-md:scale-70">
           {/* Row 1: scrolls left */}
-          <div className="relative">
-            <div className="flex animate-marquee-left" style={{ gap: 24 }}>
-              {row1.map((card, i) => <PromptCard key={`r1a-${i}`} card={card} />)}
-              {row1.map((card, i) => <PromptCard key={`r1b-${i}`} card={card} />)}
+          <div className="relative overflow-hidden">
+            <div className="flex w-max animate-marquee-left gap-6">
+              {row1.map((card, i) => <PromptCard key={`a-${i}`} card={card} />)}
+              {row1.map((card, i) => <PromptCard key={`b-${i}`} card={card} />)}
             </div>
           </div>
 
           {/* Row 2: scrolls right */}
-          <div className="relative">
-            <div className="flex animate-marquee-right" style={{ gap: 24 }}>
-              {row2.map((card, i) => <PromptCard key={`r2a-${i}`} card={card} />)}
-              {row2.map((card, i) => <PromptCard key={`r2b-${i}`} card={card} />)}
+          <div className="relative overflow-hidden">
+            <div className="flex w-max animate-marquee-right gap-6">
+              {row2.map((card, i) => <PromptCard key={`a-${i}`} card={card} />)}
+              {row2.map((card, i) => <PromptCard key={`b-${i}`} card={card} />)}
             </div>
           </div>
 
           {/* Row 3: scrolls left */}
-          <div className="relative">
-            <div className="flex animate-marquee-left" style={{ gap: 24 }}>
-              {row3.map((card, i) => <PromptCard key={`r3a-${i}`} card={card} />)}
-              {row3.map((card, i) => <PromptCard key={`r3b-${i}`} card={card} />)}
+          <div className="relative overflow-hidden">
+            <div className="flex w-max animate-marquee-left gap-6">
+              {row3.map((card, i) => <PromptCard key={`a-${i}`} card={card} />)}
+              {row3.map((card, i) => <PromptCard key={`b-${i}`} card={card} />)}
             </div>
           </div>
         </div>
