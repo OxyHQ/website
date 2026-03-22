@@ -82,16 +82,17 @@ function seededRandom(seed: number) {
   return x - Math.floor(x)
 }
 
-// Column definitions: [numSquircles, isHidden]
-const columnDefs: [number, boolean][] = [
-  [1, true], [1, true], [1, true], [1, true], [1, true],
-  [1, true], [1, true], [1, true], [1, true], [1, true],
-  [1, false], [1, false], [1, false], [1, false], [1, false],
-  [2, false], [2, false], [2, false], [2, false], [2, false],
-  [3, false], [3, false], [3, false], [3, false],
-  [4, false], [4, false],
-  [5, false], [5, false], [5, false],
-  [6, false], [6, false], [7, false], [7, false], [8, false],
+// Exact column counts from original: 53 columns, 268 total squircles
+const columnCounts = [
+  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  2,2,2,2,2,2,2,2,
+  3,3,3,3,3,3,
+  4,4,4,4,
+  5,5,5,5,
+  6,6,
+  7,7,
+  8,8,
+  9,10,11,12,13,14,15,17,19,21,
 ]
 
 interface SquircleCell {
@@ -101,24 +102,23 @@ interface SquircleCell {
 
 interface Column {
   cells: SquircleCell[]
-  hidden: boolean
 }
 
 function buildGrid(): Column[] {
-  let memberSlot = 0
+  let cardSlot = 0
 
-  return columnDefs.map(([numSquircles, isHidden], colIndex) => {
+  return columnCounts.map((numSquircles, colIndex) => {
     const cells: SquircleCell[] = []
     for (let r = 0; r < numSquircles; r++) {
       const id = `${colIndex}-${r}`
-      // ~15% of visible cells get a team member hover card
-      const hasCard = !isHidden && seededRandom(colIndex * 31 + r * 17) > 0.85
+      // ~12% of cells get a hover card
+      const hasCard = seededRandom(colIndex * 31 + r * 17) > 0.88
       cells.push({
         id,
-        cardIndex: hasCard ? memberSlot++ % hoverCards.length : null,
+        cardIndex: hasCard ? cardSlot++ % hoverCards.length : null,
       })
     }
-    return { cells, hidden: isHidden }
+    return { cells }
   })
 }
 
@@ -188,7 +188,7 @@ export default function CareersHeroSection() {
             {columns.map((column, colIndex) => (
               <div
                 key={colIndex}
-                className={`flex flex-col-reverse${column.hidden ? ' hidden' : ''}`}
+                className="flex flex-col-reverse"
                 style={{ flex: '0 0 24px' }}
               >
                 {column.cells.map((cell) => {
