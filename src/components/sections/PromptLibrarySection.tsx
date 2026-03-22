@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react'
 import { promptLibraryCards } from '../../data/content'
 import type { PromptLibraryCard } from '../../data/content'
 
@@ -25,16 +26,16 @@ function getIcon(iconType: PromptLibraryCard['iconType']) {
 
 function PromptCard({ card }: { card: PromptLibraryCard }) {
   return (
-    <div className="w-64 shrink-0 rounded-xl border border-subtle-stroke/5 backdrop-blur-xs">
-      <div className="flex flex-col overflow-hidden rounded-[calc(12px-1px)] bg-white-100 shadow-attio-4">
-        <div className="flex flex-col gap-2 p-3">
+    <div className="group relative w-64 shrink-0 rounded-[10px] border border-weak-stroke bg-white-100 p-[7px] shadow-[0px_2px_3px_-2px_rgba(28,40,64,0.10),0px_4px_6px_-2px_rgba(28,40,64,0.04)] lg:rounded-xl lg:p-[11px]">
+      <div className="pointer-events-none select-none">
+        <div className="flex flex-col gap-2">
           <div className="size-5 text-[#505155]">{getIcon(card.iconType)}</div>
           <div className="flex h-13 flex-col gap-0.5 pr-9">
             <p className="truncate font-medium text-[#242629] text-sm leading-5 tracking-[-0.14px]">{card.title}</p>
             <p className="line-clamp-2 text-[rgba(0,0,0,0.4)] text-xs leading-4">{card.description}</p>
           </div>
         </div>
-        <div className="flex items-center justify-between px-3 pb-2.5">
+        <div className="mt-2 flex items-center border-[#EDEFF3] border-t pt-2">
           <div className="flex items-center gap-1.5">
             <div className="relative size-4 overflow-hidden rounded-[30%] border border-[rgba(0,0,0,0.05)] bg-blue-500 flex items-center justify-center">
               <span className="text-white text-[8px] font-bold">O</span>
@@ -47,7 +48,52 @@ function PromptCard({ card }: { card: PromptLibraryCard }) {
   )
 }
 
+const GAP = 24 // gap-6 = 24px
+
+function MarqueeRow({ cards, direction, duration = 30 }: { cards: PromptLibraryCard[]; direction: 'left' | 'right'; duration?: number }) {
+  const trackRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+
+    // Measure the width of one set of cards (first half of children)
+    const childCount = cards.length
+    let setWidth = 0
+    for (let i = 0; i < childCount; i++) {
+      const child = track.children[i] as HTMLElement
+      if (child) {
+        setWidth += child.offsetWidth + GAP
+      }
+    }
+
+    // Set the animation using the measured width
+    const translateDist = setWidth
+    const keyframes = direction === 'left'
+      ? [{ transform: 'translateX(0)' }, { transform: `translateX(-${translateDist}px)` }]
+      : [{ transform: `translateX(-${translateDist}px)` }, { transform: 'translateX(0)' }]
+
+    const animation = track.animate(keyframes, {
+      duration: duration * 1000,
+      iterations: Infinity,
+      easing: 'linear',
+    })
+
+    return () => animation.cancel()
+  }, [cards.length, direction, duration])
+
+  return (
+    <div>
+      <div ref={trackRef} className="flex w-max" style={{ gap: `${GAP}px` }}>
+        {cards.map((card, i) => <PromptCard key={`a-${i}`} card={card} />)}
+        {cards.map((card, i) => <PromptCard key={`b-${i}`} card={card} />)}
+      </div>
+    </div>
+  )
+}
+
 export default function PromptLibrarySection() {
+  // Create 3 rows with different card arrangements
   const row1 = promptLibraryCards.slice(0, 6)
   const row2 = promptLibraryCards.slice(6, 12)
   const row3 = [...promptLibraryCards.slice(3, 6), ...promptLibraryCards.slice(0, 3)]
@@ -66,30 +112,10 @@ export default function PromptLibrarySection() {
       </div>
 
       <div className="flex flex-col items-center overflow-hidden py-16 relative">
-        <div className="flex flex-col gap-y-5 max-lg:scale-80 max-md:scale-70">
-          {/* Row 1: scrolls left */}
-          <div className="relative overflow-hidden">
-            <div className="flex w-max animate-marquee-left gap-6">
-              {row1.map((card, i) => <PromptCard key={`a-${i}`} card={card} />)}
-              {row1.map((card, i) => <PromptCard key={`b-${i}`} card={card} />)}
-            </div>
-          </div>
-
-          {/* Row 2: scrolls right */}
-          <div className="relative overflow-hidden">
-            <div className="flex w-max animate-marquee-right gap-6">
-              {row2.map((card, i) => <PromptCard key={`a-${i}`} card={card} />)}
-              {row2.map((card, i) => <PromptCard key={`b-${i}`} card={card} />)}
-            </div>
-          </div>
-
-          {/* Row 3: scrolls left */}
-          <div className="relative overflow-hidden">
-            <div className="flex w-max animate-marquee-left gap-6">
-              {row3.map((card, i) => <PromptCard key={`a-${i}`} card={card} />)}
-              {row3.map((card, i) => <PromptCard key={`b-${i}`} card={card} />)}
-            </div>
-          </div>
+        <div className="flex w-full flex-col gap-y-5 max-lg:scale-80 max-md:scale-70">
+          <MarqueeRow cards={row1} direction="left" duration={35} />
+          <MarqueeRow cards={row2} direction="right" duration={30} />
+          <MarqueeRow cards={row3} direction="left" duration={32} />
         </div>
       </div>
     </section>

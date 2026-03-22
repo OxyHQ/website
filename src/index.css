@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@fontsource-variable/inter";
 
 @theme {
   /* Color Palette — extracted from Attio's design system */
@@ -49,8 +50,8 @@
   --color-tertiary: var(--sem-tertiary-foreground);
 
   /* Typography */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
 
   /* Heading sizes */
   --text-heading-xs: 1.75rem;
@@ -462,21 +463,6 @@ body {
   letter-spacing: -0.01em;
 }
 
-/* Marquee animation for prompt library */
-@keyframes marquee-left {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-@keyframes marquee-right {
-  from { transform: translateX(-50%); }
-  to { transform: translateX(0); }
-}
-.animate-marquee-left {
-  animation: marquee-left 30s linear infinite;
-}
-.animate-marquee-right {
-  animation: marquee-right 30s linear infinite;
-}
 
 /* Footer link hover underline */
 .attio-group-hover-underline {

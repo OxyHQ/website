@@ -51,7 +51,7 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="relative flex min-h-[40svh] w-full flex-col justify-between bg-primary-background dark:bg-black-0 dark">
+    <footer className="relative flex min-h-[40svh] w-full flex-col justify-between bg-primary-background">
       {/* Top border line */}
       <svg width="100%" height="1" className="text-subtle-stroke">
         <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
@@ -97,7 +97,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="w-full bg-secondary-background dark:bg-primary-background">
+      <div className="w-full bg-secondary-background">
         <div className="container">
           <div className="flex flex-wrap items-center justify-between gap-6 px-px py-10">
             {/* Social icons */}
@@ -118,7 +118,7 @@ export default function Footer() {
 
             {/* Copyright & legal links */}
             <div className="flex flex-wrap items-center gap-4 font-normal text-caption-foreground text-xs">
-              <p>&copy; {new Date().getFullYear()} Oxy. All rights reserved.</p>
+              <p>Made with 💚 in the 🌎 by Oxy.</p>
               <div className="flex flex-wrap items-center gap-x-6">
                 <a className="-mx-1 rounded-lg p-1 transition-colors duration-400 ease-in-out hover:text-tertiary-foreground hover:duration-150 active:text-secondary-foreground active:duration-50" href="#">Terms &amp; Conditions</a>
                 <a className="-mx-1 rounded-lg p-1 transition-colors duration-400 ease-in-out hover:text-tertiary-foreground hover:duration-150 active:text-secondary-foreground active:duration-50" href="#">Privacy Policy</a>
