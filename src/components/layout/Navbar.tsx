@@ -112,21 +112,35 @@ export default function Navbar() {
     setHasMeasured(true)
   }, [])
 
-  // Compute viewport left position whenever activeDropdown changes
+  // Compute viewport left so dropdown is centered under the active trigger,
+  // clamped to stay within the Container (max-width safe area).
+  const containerRef = useRef<HTMLElement>(null)
+
   useLayoutEffect(() => {
     if (!activeDropdown) return
     const trigger = triggerRefs.current[activeDropdown]
     const navArea = navAreaRef.current
+    const container = containerRef.current
     const size = panelSizes[activeDropdown]
-    if (!trigger || !navArea || !size) return
+    if (!trigger || !navArea || !size || !container) return
 
     const navRect = navArea.getBoundingClientRect()
+    const containerRect = container.getBoundingClientRect()
     const triggerRect = trigger.getBoundingClientRect()
+
+    // Trigger center relative to navArea (since viewport is positioned inside navArea)
     const triggerCenter = triggerRect.left + triggerRect.width / 2 - navRect.left
 
-    // Center viewport under trigger, clamp to not overflow
+    // Ideal: center dropdown under trigger
     let left = triggerCenter - size.w / 2
-    left = Math.max(0, Math.min(left, navRect.width - size.w))
+
+    // Clamp within the Container bounds (relative to navArea)
+    const containerLeft = containerRect.left - navRect.left
+    const containerRight = containerRect.right - navRect.left
+    const minLeft = containerLeft
+    const maxLeft = containerRight - size.w
+    left = Math.max(minLeft, Math.min(left, maxLeft))
+
     setVpLeft(left)
   }, [activeDropdown, panelSizes])
 
@@ -248,7 +262,7 @@ export default function Navbar() {
 
       {/* ─── Main nav ─── */}
       <Container>
-        <nav className="pt-2 pb-[7px] lg:pt-4 lg:pb-[15px]">
+        <nav ref={containerRef} className="pt-2 pb-[7px] lg:pt-4 lg:pb-[15px]">
           <div className="flex items-center justify-between">
             <div className="flex grow items-center gap-x-9">
               <a href="/" className="-mx-1.5 rounded-xl px-1.5" aria-label="Oxy homepage">
