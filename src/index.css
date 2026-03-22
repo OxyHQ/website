@@ -136,6 +136,33 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Container — match Attio's breakpoints and add centering + padding */
+.container {
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+@media (max-width: 374px) {
+  .container { padding-inline: 16px; }
+}
+@media (min-width: 375px) {
+  .container { max-width: 375px; }
+}
+@media (min-width: 576px) {
+  .container { max-width: 576px; }
+}
+@media (min-width: 768px) {
+  .container { max-width: 768px; }
+}
+@media (min-width: 992px) {
+  .container { max-width: 992px; }
+}
+@media (min-width: 1200px) {
+  .container { max-width: 1200px; }
+}
+@media (min-width: 1536px) {
+  .container { max-width: 1536px; }
+}
+
 /* Heading utilities */
 .text-heading-xs {
   font-family: var(--font-display);
