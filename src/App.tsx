@@ -77,7 +77,7 @@ function PublicRoutes() {
       <Route path="landing3" element={<Landing3 />} />
       <Route path="partners" element={<PartnersPage />} />
       <Route path="company/careers" element={<CareersPage />} />
-      <Route path="careers/:slug" element={<CareerDetailPage />} />
+      <Route path="company/careers/:slug" element={<CareerDetailPage />} />
       <Route path="pricing" element={<PricingPage />} />
       <Route path="newsroom" element={<NewsroomPage />} />
       <Route path="help" element={<HelpPage />} />

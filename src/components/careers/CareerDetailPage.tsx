@@ -233,7 +233,7 @@ export default function CareerDetailContent() {
   for (const dept of jobDepartments) {
     for (const j of dept.jobs) {
       positionNumber++
-      if (j.href === `/careers/${slug}`) {
+      if (j.href === `/company/careers/${slug}`) {
         found = true
         break
       }
