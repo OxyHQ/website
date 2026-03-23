@@ -73,11 +73,30 @@ export function useNewsroomPosts(params?: { category?: string; featured?: boolea
   })
 }
 
+interface NewsroomPost {
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  coverImage?: string
+  oxyUserId: string
+  tags: string[]
+  category: string
+  featured: boolean
+  status: string
+  metaTitle?: string
+  metaDescription?: string
+  ogImage?: string
+  publishedAt: string
+  createdAt: string
+  updatedAt: string
+}
+
 export function useNewsroomPost(slug: string) {
   const locale = useSafeLocale()
   return useQuery({
     queryKey: ['newsroom', slug, locale],
-    queryFn: () => apiFetch(`/newsroom/${slug}`, { locale }),
+    queryFn: () => apiFetch<NewsroomPost>(`/newsroom/${slug}`, { locale }),
     enabled: !!slug,
   })
 }
