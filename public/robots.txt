@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /landing2
+Disallow: /landing3
+
+Sitemap: https://oxy.so/sitemap.xml

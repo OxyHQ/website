@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { footerColumns } from '../../data/content'
 import Logo from '../ui/Logo'
 
@@ -61,9 +62,9 @@ export default function Footer() {
         <div className="grid grid-cols-12 gap-y-12 px-px pt-20 pb-12">
           {/* Logo column */}
           <div className="col-[1/2] max-lg:col-[1/3] max-md:col-[1/4] max-xs:col-[1/5]">
-            <a className="-m-1.5 inline-block w-[calc(100%+12px)] rounded-lg p-1.5" aria-label="Oxy homepage" href="/">
+            <Link className="-m-1.5 inline-block w-[calc(100%+12px)] rounded-lg p-1.5" aria-label="Oxy homepage" to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               <Logo className="h-6" />
-            </a>
+            </Link>
           </div>
 
           {/* Footer columns using CSS multi-column layout */}
@@ -76,17 +77,29 @@ export default function Footer() {
                 <ul className="flex flex-col">
                   {column.links.map((link) => (
                     <li key={link.label}>
-                      <a
-                        href={link.href}
-                        {...(link.isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                        className="group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-tertiary-foreground transition-[color] duration-150 ease-out hover:text-secondary-foreground focus-visible:text-secondary-foreground active:text-primary-foreground active:duration-50"
-                      >
-                        <span className="attio-group-hover-underline group-hover:duration-150">{link.label}</span>
-                        {link.isNew && (
-                          <div className="ml-1.5 rounded-[10px] bg-blue-450 px-1.5 py-1 font-normal text-[10px] text-white-100 leading-[7px] tracking-normal">New</div>
-                        )}
-                        {link.isExternal && <ExternalArrow />}
-                      </a>
+                      {link.href.startsWith('/') ? (
+                        <Link
+                          to={link.href}
+                          className="group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-tertiary-foreground transition-[color] duration-150 ease-out hover:text-secondary-foreground focus-visible:text-secondary-foreground active:text-primary-foreground active:duration-50"
+                        >
+                          <span className="attio-group-hover-underline group-hover:duration-150">{link.label}</span>
+                          {link.isNew && (
+                            <div className="ml-1.5 rounded-[10px] bg-blue-450 px-1.5 py-1 font-normal text-[10px] text-white-100 leading-[7px] tracking-normal">New</div>
+                          )}
+                        </Link>
+                      ) : (
+                        <a
+                          href={link.href}
+                          {...(link.isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                          className="group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-tertiary-foreground transition-[color] duration-150 ease-out hover:text-secondary-foreground focus-visible:text-secondary-foreground active:text-primary-foreground active:duration-50"
+                        >
+                          <span className="attio-group-hover-underline group-hover:duration-150">{link.label}</span>
+                          {link.isNew && (
+                            <div className="ml-1.5 rounded-[10px] bg-blue-450 px-1.5 py-1 font-normal text-[10px] text-white-100 leading-[7px] tracking-normal">New</div>
+                          )}
+                          {link.isExternal && <ExternalArrow />}
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>

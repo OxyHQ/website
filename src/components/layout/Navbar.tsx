@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react'
+import { Link } from 'react-router-dom'
 import {
   platformDropdown,
   resourcesDropdown,
@@ -65,12 +66,21 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
           </li>
           {dropdown.sidePanel.links.map((link, i) => (
             <li key={i} className="contents">
-              <a
-                href={link.href}
-                className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-[10px] border border-transparent px-2.5 text-sm text-primary-foreground transition-colors duration-300 hover:bg-surface"
-              >
-                {link.label}
-              </a>
+              {link.href.startsWith('/') ? (
+                <Link
+                  to={link.href}
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-[10px] border border-transparent px-2.5 text-sm text-primary-foreground transition-colors duration-300 hover:bg-surface"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  href={link.href}
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-[10px] border border-transparent px-2.5 text-sm text-primary-foreground transition-colors duration-300 hover:bg-surface"
+                >
+                  {link.label}
+                </a>
+              )}
             </li>
           ))}
         </ul>
@@ -268,9 +278,9 @@ export default function Navbar() {
         <nav ref={containerRef} className="pt-2 pb-[7px] lg:pt-4 lg:pb-[15px]">
           <div className="flex items-center justify-between">
             <div className="flex grow items-center gap-x-9">
-              <a href="/" className="-mx-1.5 rounded-xl px-1.5" aria-label="Oxy homepage">
+              <Link to="/" className="-mx-1.5 rounded-xl px-1.5" aria-label="Oxy homepage" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
                 <Logo className="h-6" />
-              </a>
+              </Link>
 
               {/* Desktop nav */}
               <div ref={navAreaRef} className="relative z-10" onMouseLeave={scheduleClose}>
@@ -294,13 +304,23 @@ export default function Navbar() {
                   ))}
                   {simpleNavLinks.map((link) => (
                     <li key={link.label}>
-                      <a
-                        href={link.href}
-                        className="inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] text-tertiary-foreground transition-colors duration-300 hover:bg-surface hover:text-primary-foreground"
-                        onMouseEnter={scheduleClose}
-                      >
-                        {link.label}
-                      </a>
+                      {link.href.startsWith('/') ? (
+                        <Link
+                          to={link.href}
+                          className="inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] text-tertiary-foreground transition-colors duration-300 hover:bg-surface hover:text-primary-foreground"
+                          onMouseEnter={scheduleClose}
+                        >
+                          {link.label}
+                        </Link>
+                      ) : (
+                        <a
+                          href={link.href}
+                          className="inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] text-tertiary-foreground transition-colors duration-300 hover:bg-surface hover:text-primary-foreground"
+                          onMouseEnter={scheduleClose}
+                        >
+                          {link.label}
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -402,24 +422,42 @@ export default function Navbar() {
                     <div className="flex flex-col gap-1 pb-2 pl-4">
                       {dd.sections.map((s) =>
                         s.items.map((item) => (
-                          <a key={item.title} href={item.href} className="rounded-xl px-4 py-2 text-sm text-tertiary-foreground transition-colors hover:bg-surface-subtle hover:text-secondary-foreground" onClick={() => setMobileOpen(false)}>
-                            {item.title}
-                          </a>
+                          item.href.startsWith('/') ? (
+                            <Link key={item.title} to={item.href} className="rounded-xl px-4 py-2 text-sm text-tertiary-foreground transition-colors hover:bg-surface-subtle hover:text-secondary-foreground" onClick={() => setMobileOpen(false)}>
+                              {item.title}
+                            </Link>
+                          ) : (
+                            <a key={item.title} href={item.href} className="rounded-xl px-4 py-2 text-sm text-tertiary-foreground transition-colors hover:bg-surface-subtle hover:text-secondary-foreground" onClick={() => setMobileOpen(false)}>
+                              {item.title}
+                            </a>
+                          )
                         ))
                       )}
                       {dd.sidePanel?.links.map((link) => (
-                        <a key={link.label} href={link.href} className="rounded-xl px-4 py-2 text-sm text-tertiary-foreground transition-colors hover:bg-surface-subtle hover:text-secondary-foreground" onClick={() => setMobileOpen(false)}>
-                          {link.label}
-                        </a>
+                        link.href.startsWith('/') ? (
+                          <Link key={link.label} to={link.href} className="rounded-xl px-4 py-2 text-sm text-tertiary-foreground transition-colors hover:bg-surface-subtle hover:text-secondary-foreground" onClick={() => setMobileOpen(false)}>
+                            {link.label}
+                          </Link>
+                        ) : (
+                          <a key={link.label} href={link.href} className="rounded-xl px-4 py-2 text-sm text-tertiary-foreground transition-colors hover:bg-surface-subtle hover:text-secondary-foreground" onClick={() => setMobileOpen(false)}>
+                            {link.label}
+                          </a>
+                        )
                       ))}
                     </div>
                   )}
                 </div>
               ))}
               {simpleNavLinks.map((link) => (
-                <a key={link.label} href={link.href} className="rounded-xl px-4 py-3 text-base text-secondary-foreground transition-colors hover:bg-surface-subtle" onClick={() => setMobileOpen(false)}>
-                  {link.label}
-                </a>
+                link.href.startsWith('/') ? (
+                  <Link key={link.label} to={link.href} className="rounded-xl px-4 py-3 text-base text-secondary-foreground transition-colors hover:bg-surface-subtle" onClick={() => setMobileOpen(false)}>
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a key={link.label} href={link.href} className="rounded-xl px-4 py-3 text-base text-secondary-foreground transition-colors hover:bg-surface-subtle" onClick={() => setMobileOpen(false)}>
+                    {link.label}
+                  </a>
+                )
               ))}
               <hr className="my-2 border-subtle-stroke" />
               <div className="flex items-center justify-between px-4 py-2">

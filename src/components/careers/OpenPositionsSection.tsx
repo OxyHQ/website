@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { jobDepartments } from '../../data/careers'
 
 function DashedLine() {
@@ -116,9 +117,9 @@ export default function OpenPositionsSection() {
                   {/* Job rows */}
                   {dept.jobs.map((job, jobIndex) => (
                     <div key={`${dept.id}-${jobIndex}`}>
-                      <a
+                      <Link
                         className="group relative grid grid-cols-12 items-baseline gap-y-1 py-4 md:gap-y-[5px] md:py-4.5 lg:py-5 xl:grid-cols-10 *:mix-blend-multiply"
-                        href={job.href}
+                        to={job.href}
                       >
                         {/* Hover overlay */}
                         <div className="pointer-events-none absolute inset-0 bg-secondary-background opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
@@ -144,7 +145,7 @@ export default function OpenPositionsSection() {
                         >
                           <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
                         </svg>
-                      </a>
+                      </Link>
                       {/* Dashed separator between rows (and after last row) */}
                       <DashedLine />
                     </div>

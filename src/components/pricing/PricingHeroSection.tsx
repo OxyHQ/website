@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { pricingPlans } from '../../data/pricing'
 
 export default function PricingHeroSection() {
@@ -141,6 +142,15 @@ export default function PricingHeroSection() {
                       </svg>
                     </button>
                   </>
+                ) : plan.ctaHref.startsWith('/') ? (
+                  <Link
+                    to={plan.ctaHref}
+                    className={`relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 h-9 gap-x-1.5 rounded-[10px] px-3 text-sm max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base ${
+                      plan.highlighted ? 'button-primary' : 'button-outline'
+                    }`}
+                  >
+                    {plan.cta}
+                  </Link>
                 ) : (
                   <a
                     href={plan.ctaHref}

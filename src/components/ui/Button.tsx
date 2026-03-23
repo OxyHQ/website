@@ -1,4 +1,5 @@
 import type { ReactNode, AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react'
+import { Link } from 'react-router-dom'
 
 type Variant = 'primary' | 'outline' | 'ghost'
 type Size = 'sm' | 'md'
@@ -36,8 +37,16 @@ export default function Button({
   const classes = `${base} button-${variant} ${sizeClasses[size]} ${className}`
 
   if ('href' in props && props.href) {
+    const { href, ...rest } = props as AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }
+    if (href.startsWith('/')) {
+      return (
+        <Link className={classes} to={href} {...(rest as any)}>
+          {children}
+        </Link>
+      )
+    }
     return (
-      <a className={classes} {...(props as AnchorHTMLAttributes<HTMLAnchorElement>)}>
+      <a className={classes} href={href} {...rest}>
         {children}
       </a>
     )

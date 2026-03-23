@@ -152,7 +152,7 @@ export const resourcesDropdown: NavDropdown = {
 
 export const simpleNavLinks: NavItem[] = [
   { label: 'Customers', href: '#' },
-  { label: 'Pricing', href: '#pricing' },
+  { label: 'Pricing', href: '/pricing' },
 ]
 
 // Hero

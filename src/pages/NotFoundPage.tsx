@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
+import SEO from '../components/SEO'
 
 function DashedLine({ solid = false }: { solid?: boolean }) {
   return (
@@ -21,6 +22,12 @@ function DashedLine({ solid = false }: { solid?: boolean }) {
 export default function NotFoundPage() {
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-primary-background">
+      <SEO
+        title="Page Not Found"
+        description="The page you're looking for doesn't exist."
+        canonicalPath="/404"
+        noIndex
+      />
       <Navbar />
       <main className="flex-1">
         <div className="container border-x border-subtle-stroke">

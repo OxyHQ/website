@@ -1,15 +1,15 @@
+import { Link } from 'react-router-dom'
 import type { NavDropdownItem as NavDropdownItemType } from '../../data/content'
 
 interface NavDropdownItemProps {
   item: NavDropdownItemType
 }
 
-export default function NavDropdownItem({ item }: NavDropdownItemProps) {
+const linkClass = "group flex w-full items-center justify-start gap-x-3 rounded-xl border border-transparent p-2 transition-colors duration-300 hover:bg-surface"
+
+function ItemContent({ item }: { item: NavDropdownItemType }) {
   return (
-    <a
-      href={item.href}
-      className="group flex w-full items-center justify-start gap-x-3 rounded-xl border border-transparent p-2 transition-colors duration-300 hover:bg-surface"
-    >
+    <>
       {/* Icon placeholder with grid pattern */}
       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-none border-0">
         <svg width="40" height="40" fill="none" className="absolute inset-0">
@@ -49,6 +49,22 @@ export default function NavDropdownItem({ item }: NavDropdownItemProps) {
         </div>
         <p className="truncate text-sm text-accent-foreground">{item.description}</p>
       </div>
+    </>
+  )
+}
+
+export default function NavDropdownItem({ item }: NavDropdownItemProps) {
+  if (item.href.startsWith('/')) {
+    return (
+      <Link to={item.href} className={linkClass}>
+        <ItemContent item={item} />
+      </Link>
+    )
+  }
+
+  return (
+    <a href={item.href} className={linkClass}>
+      <ItemContent item={item} />
     </a>
   )
 }

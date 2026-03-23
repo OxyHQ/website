@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import AskPage from './pages/AskPage'
 import Landing2 from './pages/Landing2'
 import Landing3 from './pages/Landing3'
@@ -7,10 +8,20 @@ import CareersPage from './pages/CareersPage'
 import PricingPage from './pages/PricingPage'
 import NewsroomPage from './pages/NewsroomPage'
 import NotFoundPage from './pages/NotFoundPage'
+import HelpPage from './pages/HelpPage'
+
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+  return null
+}
 
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<AskPage />} />
         <Route path="/landing2" element={<Landing2 />} />
@@ -19,6 +30,7 @@ export default function App() {
         <Route path="/company/careers" element={<CareersPage />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/newsroom" element={<NewsroomPage />} />
+        <Route path="/help" element={<HelpPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

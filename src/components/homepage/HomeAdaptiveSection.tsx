@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 const tabs = ['Scale-ups', 'SaaS startups', 'SMBs', 'Investors']
@@ -49,12 +50,12 @@ export default function HomeAdaptiveSection() {
                 other way around. Your business model — perfectly reflected in your CRM.
               </p>
             </div>
-            <a
-              href="#"
+            <Link
+              to="#"
               className="scroll-reveal button-outline mt-7 inline-flex h-9 items-center gap-1.5 rounded-[10px] border px-3 text-sm transition-colors duration-300"
             >
               Explore our data model
-            </a>
+            </Link>
           </div>
 
           {/* Tabs + product mockup area */}
