@@ -121,18 +121,22 @@ export default function ArticleGridSection() {
 
   return (
     <section className="mx-auto w-full max-w-[1200px] px-5 md:px-8">
-      {/* ── Filter / sort toolbar ── */}
+      {/* ── Filter / sort toolbar ──
+       * Original: flex flex-col @lg:flex-row @lg:items-center @lg:justify-between
+       * hr: border-primary-4 mb-3xs mt-md border-t-1 @lg:hidden
+       * buttons: !rounded, gap-sm, text-cta
+       */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
         <div />
-        <hr className="mb-2 mt-4 border-t border-subtle-stroke lg:hidden" />
-        <div className="flex flex-row items-center justify-between gap-4 lg:justify-normal">
-          <div className="flex flex-row items-center gap-4">
+        <hr className="mb-1 mt-4 border-t border-subtle-stroke lg:hidden" />
+        <div className="flex flex-row items-center justify-between gap-5 lg:justify-normal">
+          <div className="flex flex-row items-center gap-5">
             {/* Filter dropdown */}
             <div ref={filterRef} className="relative">
               <button
                 type="button"
                 onClick={() => { setFilterOpen(!filterOpen); setSortOpen(false) }}
-                className="flex h-10 cursor-pointer items-center justify-start gap-[0.3em] whitespace-nowrap rounded-md px-0 text-sm font-medium text-primary-foreground transition-colors duration-200 hover:text-caption-foreground"
+                className="flex h-10 cursor-pointer items-center justify-start gap-[0.3em] whitespace-nowrap rounded px-0 text-sm font-medium text-primary-foreground transition-colors duration-200 hover:text-caption-foreground"
               >
                 <FilterIcon />
                 <span className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -186,7 +190,7 @@ export default function ArticleGridSection() {
               <button
                 type="button"
                 onClick={() => { setSortOpen(!sortOpen); setFilterOpen(false) }}
-                className="flex h-10 cursor-pointer items-center justify-start gap-[0.3em] whitespace-nowrap rounded-md px-0 text-sm font-medium text-primary-foreground transition-colors duration-200 hover:text-caption-foreground"
+                className="flex h-10 cursor-pointer items-center justify-start gap-[0.3em] whitespace-nowrap rounded px-0 text-sm font-medium text-primary-foreground transition-colors duration-200 hover:text-caption-foreground"
               >
                 <ChevronDown className={`transition-transform duration-200 ${sortOpen ? 'rotate-180' : ''}`} />
                 <span className="overflow-hidden text-ellipsis whitespace-nowrap">

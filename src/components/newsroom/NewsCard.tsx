@@ -11,32 +11,42 @@ function formatDate(dateStr: string): string {
 }
 
 /* ─────────────────────────────────────────────────
- * Featured card — left sticky column, 4:5 image
- * Original: text-h2 title, text-meta category/date
+ * Featured card — left sticky column
+ * Original: 4:5 aspect, rounded-md, hover scale-[1.0125]
+ * Title: text-h2, Meta: text-meta
  * ─────────────────────────────────────────────── */
 export function NewsCardFeatured({ article }: { article: NewsArticle }) {
   return (
     <Link to={`/newsroom/${article.slug}`} className="group relative block">
-      {/* Image — 4:5 like original */}
-      <div className="relative w-full overflow-hidden rounded-md bg-surface-subtle">
-        <div className="relative w-full" style={{ aspectRatio: '4 / 5' }}>
-          <img
-            src={article.imageUrl}
-            alt={article.title}
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-[1.0125]"
-          />
+      <div className="group relative">
+        {/* Placeholder bg behind image */}
+        <div
+          className="absolute top-0 w-full rounded-md bg-surface"
+          style={{ aspectRatio: '4 / 5' }}
+        />
+        {/* Image wrapper */}
+        <div className="relative mx-auto w-full overflow-hidden rounded-md transition-opacity duration-300 [&_img]:translate-y-0 [&_img]:scale-100 [&_img]:transition-transform [&_img]:duration-300 group-hover:[&_img]:scale-[1.0125]">
+          <div className="relative w-full" style={{ aspectRatio: '4 / 5' }}>
+            <div className="h-full w-full">
+              <img
+                src={article.imageUrl}
+                alt={article.title}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover object-center"
+              />
+            </div>
+          </div>
         </div>
       </div>
-      {/* Text */}
-      <div className="mt-5 flex flex-col gap-1">
-        <div className="text-heading-responsive-md text-primary-foreground">
+      {/* Text — text-h2 title + text-meta category/date */}
+      <div className="mt-4 flex flex-col gap-1 md:mt-5">
+        <div className="text-heading-responsive-md text-primary-foreground md:pe-10">
           {article.title}
         </div>
-        <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm text-caption-foreground">
+        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm text-caption-foreground md:pe-6">
           <span>{article.category}</span>
-          <span className="flex flex-wrap items-center gap-x-2">
+          <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
             <time className="whitespace-nowrap text-caption-foreground" dateTime={article.date}>
               {formatDate(article.date)}
             </time>
@@ -49,32 +59,39 @@ export function NewsCardFeatured({ article }: { article: NewsArticle }) {
 
 /* ─────────────────────────────────────────────────
  * Grid / sidebar card — 1:1 image
- * Original: aspect-ratio 1/1, text-h5 title, text-meta
- * hover scale-[1.025]
+ * Original: aspect 1/1, rounded-md, hover scale-[1.025]
+ * Title: text-h5, Meta: text-meta
  * ─────────────────────────────────────────────── */
 export function NewsCardGrid({ article }: { article: NewsArticle }) {
   return (
     <Link to={`/newsroom/${article.slug}`} className="group relative">
-      {/* Image — 1:1 */}
-      <div className="relative w-full overflow-hidden rounded-md bg-surface-subtle">
-        <div className="relative w-full" style={{ aspectRatio: '1 / 1' }}>
-          <img
-            src={article.imageUrl}
-            alt={article.title}
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-[1.025]"
-          />
+      <div className="group relative">
+        <div
+          className="absolute top-0 w-full rounded-md bg-surface"
+          style={{ aspectRatio: '1 / 1' }}
+        />
+        <div className="relative mx-auto w-full overflow-hidden rounded-md transition-opacity duration-300 [&_img]:translate-y-0 [&_img]:scale-100 [&_img]:transition-transform [&_img]:duration-300 group-hover:[&_img]:scale-[1.025]">
+          <div className="relative w-full" style={{ aspectRatio: '1 / 1' }}>
+            <div className="h-full w-full">
+              <img
+                src={article.imageUrl}
+                alt={article.title}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover object-center"
+              />
+            </div>
+          </div>
         </div>
       </div>
       {/* Text */}
-      <div className="mt-3 flex flex-col gap-0.5">
+      <div className="mt-2 flex flex-col gap-0.5 md:mt-3">
         <h3 className="text-base font-semibold leading-snug tracking-[-0.01em] text-primary-foreground">
           {article.title}
         </h3>
-        <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-caption-foreground">
+        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-caption-foreground">
           <span>{article.category}</span>
-          <span className="flex flex-wrap items-center gap-x-2">
+          <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
             <time className="whitespace-nowrap" dateTime={article.date}>
               {formatDate(article.date)}
             </time>
@@ -86,32 +103,38 @@ export function NewsCardGrid({ article }: { article: NewsArticle }) {
 }
 
 /* ─────────────────────────────────────────────────
- * Carousel card — same as grid card, used in
- * horizontal scrolling sections
+ * Carousel card — 1:1 image, same structure as grid card
+ * Used in horizontal scrolling sections
  * ─────────────────────────────────────────────── */
 export function NewsCardCarousel({ article }: { article: NewsArticle }) {
   return (
     <Link to={`/newsroom/${article.slug}`} className="group relative block">
-      {/* Image — 1:1 */}
-      <div className="relative w-full overflow-hidden rounded-md bg-surface-subtle">
-        <div className="relative w-full" style={{ aspectRatio: '1 / 1' }}>
-          <img
-            src={article.imageUrl}
-            alt={article.title}
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-[1.025]"
-          />
+      <div className="group relative">
+        <div
+          className="absolute top-0 w-full rounded-md bg-surface"
+          style={{ aspectRatio: '1 / 1' }}
+        />
+        <div className="relative mx-auto w-full overflow-hidden rounded-md transition-opacity duration-300 [&_img]:translate-y-0 [&_img]:scale-100 [&_img]:transition-transform [&_img]:duration-300 group-hover:[&_img]:scale-[1.025]">
+          <div className="relative w-full" style={{ aspectRatio: '1 / 1' }}>
+            <div className="h-full w-full">
+              <img
+                src={article.imageUrl}
+                alt={article.title}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover object-center"
+              />
+            </div>
+          </div>
         </div>
       </div>
-      {/* Text */}
-      <div className="mt-3 flex flex-col gap-0.5">
-        <h3 className="text-base font-semibold leading-snug tracking-[-0.01em] text-primary-foreground">
+      <div className="mt-2 flex flex-col gap-0.5 md:mt-3">
+        <h3 className="text-base font-semibold leading-snug tracking-[-0.01em] text-primary-foreground md:pe-6">
           {article.title}
         </h3>
-        <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-caption-foreground">
+        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-caption-foreground">
           <span>{article.category}</span>
-          <span className="flex flex-wrap items-center gap-x-2">
+          <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
             <time className="whitespace-nowrap" dateTime={article.date}>
               {formatDate(article.date)}
             </time>
@@ -123,42 +146,50 @@ export function NewsCardCarousel({ article }: { article: NewsArticle }) {
 }
 
 /* ─────────────────────────────────────────────────
- * Recent-news row card — 2-col grid, image+text side by side
- * Original: max-w-container grid grid-cols-1 gap-sm @lg:grid-cols-2
+ * Row card — "Recent news" 2-col grid
+ * Original: group flex w-full items-center overflow-hidden
+ * Image: relative aspect-square flex-[0_0_7.5rem] md:flex-[0_0_11.563rem]
+ * Text: ps-xs @lg:ps-md, title mb-2xs text-h5
+ * Hover: scale-[1.04]
  * ─────────────────────────────────────────────── */
 export function NewsCardRow({ article }: { article: NewsArticle }) {
   return (
     <Link
       to={`/newsroom/${article.slug}`}
-      className="group flex w-full items-start gap-5"
+      className="group flex w-full items-center overflow-hidden"
     >
-      {/* Image — 1:1 thumbnail */}
-      <div className="w-36 shrink-0 overflow-hidden rounded-md bg-surface-subtle md:w-44">
-        <div className="relative w-full" style={{ aspectRatio: '1 / 1' }}>
-          <img
-            src={article.imageUrl}
-            alt={article.title}
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-[1.025]"
+      {/* Image — fixed width square thumbnail */}
+      <div className="relative flex-[0_0_7.5rem] overflow-hidden md:flex-[0_0_11.563rem]">
+        <div className="group relative">
+          <div
+            className="absolute top-0 w-full rounded-md bg-surface"
+            style={{ aspectRatio: '1 / 1' }}
           />
+          <div className="relative w-full overflow-hidden rounded-md [&_img]:translate-y-0 [&_img]:scale-100 [&_img]:transition-transform [&_img]:duration-300 group-hover:[&_img]:scale-[1.04]">
+            <div className="relative aspect-square w-full">
+              <img
+                src={article.imageUrl}
+                alt={article.title}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover object-center"
+              />
+            </div>
+          </div>
         </div>
       </div>
-      {/* Text */}
-      <div className="flex flex-col gap-0.5 pt-0.5">
-        <h3 className="text-base font-semibold leading-snug tracking-[-0.01em] text-primary-foreground md:text-lg">
+      {/* Text — ps-xs on mobile, ps-md on lg */}
+      <div className="flex flex-auto flex-col ps-3 lg:ps-5">
+        <div className="mb-1 text-base font-semibold leading-snug tracking-[-0.01em] text-primary-foreground">
           {article.title}
-        </h3>
-        <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-caption-foreground">
+        </div>
+        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-caption-foreground">
           <span>{article.category}</span>
-          <span className="flex flex-wrap items-center gap-x-2">
+          <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
             <time className="whitespace-nowrap" dateTime={article.date}>
               {formatDate(article.date)}
             </time>
           </span>
-        </p>
-        <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-tertiary-foreground">
-          {article.description}
         </p>
       </div>
     </Link>

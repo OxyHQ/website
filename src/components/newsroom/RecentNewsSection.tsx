@@ -15,7 +15,8 @@ export default function RecentNewsSection() {
         linkText="View more"
       />
 
-      <div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-2">
+      {/* Original: max-w-container grid w-full grid-cols-1 gap-sm @lg:grid-cols-2 */}
+      <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
         {recentNewsArticles.map((article) => (
           <NewsCardRow key={article.id} article={article} />
         ))}

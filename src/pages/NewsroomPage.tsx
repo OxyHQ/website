@@ -33,7 +33,8 @@ export default function NewsroomPage() {
       />
       <Navbar />
 
-      <main className="flex flex-col gap-14 pb-20 md:gap-20 md:pb-28">
+      {/* Original sections wrapper: flex flex-col mt-xl gap-2xl @md:gap-3xl */}
+      <main className="flex flex-col gap-12 pb-20 md:gap-16 md:pb-28">
         {/* 1 + 2. Hero + featured grid */}
         <NewsroomHeroSection />
 

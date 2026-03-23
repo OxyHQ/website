@@ -6,6 +6,7 @@ interface SectionHeaderProps {
   linkText?: string
 }
 
+/* ─── Arrow icon for "View all" links ─── */
 function ArrowRight() {
   return (
     <svg
@@ -26,6 +27,12 @@ function ArrowRight() {
   )
 }
 
+/* ──────────────────────────────────────────────────
+ * Section header — title + "View all" link
+ * Original: max-w-container mb-md flex items-baseline justify-between
+ * Title: text-h4 text-primary-100
+ * Link: text-button variant
+ * ────────────────────────────────────────────── */
 export default function SectionHeader({
   title,
   href,
@@ -33,13 +40,15 @@ export default function SectionHeader({
 }: SectionHeaderProps) {
   return (
     <div className="mb-6 flex items-baseline justify-between">
-      <h2 className="text-xl font-semibold tracking-[-0.01em] text-primary-foreground">
-        {title}
-      </h2>
+      <div>
+        <h2 className="text-xl font-semibold tracking-[-0.01em] text-primary-foreground">
+          {title}
+        </h2>
+      </div>
       {href.startsWith('/') ? (
         <Link
           to={href}
-          className="group flex items-center gap-1 text-sm font-medium text-tertiary-foreground transition-colors duration-200 hover:text-primary-foreground"
+          className="group flex min-h-0 items-center gap-1 text-sm font-medium text-tertiary-foreground transition-colors duration-200 hover:text-primary-foreground"
         >
           {linkText}
           <ArrowRight />
@@ -47,7 +56,7 @@ export default function SectionHeader({
       ) : (
         <a
           href={href}
-          className="group flex items-center gap-1 text-sm font-medium text-tertiary-foreground transition-colors duration-200 hover:text-primary-foreground"
+          className="group flex min-h-0 items-center gap-1 text-sm font-medium text-tertiary-foreground transition-colors duration-200 hover:text-primary-foreground"
         >
           {linkText}
           <ArrowRight />

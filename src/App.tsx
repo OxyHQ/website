@@ -9,6 +9,7 @@ import PricingPage from './pages/PricingPage'
 import NewsroomPage from './pages/NewsroomPage'
 import NotFoundPage from './pages/NotFoundPage'
 import HelpPage from './pages/HelpPage'
+import ChangelogPage from './pages/ChangelogPage'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/newsroom" element={<NewsroomPage />} />
         <Route path="/help" element={<HelpPage />} />
+        <Route path="/changelog" element={<ChangelogPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
