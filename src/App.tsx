@@ -11,6 +11,7 @@ import BlogPage from './pages/BlogPage'
 import NotFoundPage from './pages/NotFoundPage'
 import HelpPage from './pages/HelpPage'
 import ChangelogPage from './pages/ChangelogPage'
+import DocsPage from './pages/DocsPage'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/newsroom" element={<NewsroomPage />} />
         <Route path="/help" element={<HelpPage />} />
         <Route path="/changelog" element={<ChangelogPage />} />
+        <Route path="/developers/docs" element={<DocsPage />} />
         <Route path="/company/news" element={<BlogPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

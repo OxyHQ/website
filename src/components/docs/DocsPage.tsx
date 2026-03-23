@@ -1,0 +1,326 @@
+import { useLocation } from 'react-router-dom'
+import { docsSidebar, docsCards } from '../../data/docs'
+import type { DocsCard } from '../../data/docs'
+
+function SearchIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-search min-w-4 flex-none text-gray-400 group-hover/search:text-gray-200">
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
+  )
+}
+
+function MoonIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-moon h-4 w-4 text-gray-500 group-hover:text-gray-300">
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+    </svg>
+  )
+}
+
+function CardIcon({ icon }: { icon: DocsCard['icon'] }) {
+  if (icon === 'react') {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-[#818cf8]">
+        <circle cx="12" cy="12" r="2.5" />
+        <ellipse cx="12" cy="12" rx="10" ry="4" />
+        <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" />
+        <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" />
+      </svg>
+    )
+  }
+  if (icon === 'server') {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-[#818cf8]">
+        <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+        <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+        <line x1="6" x2="6.01" y1="6" y2="6" />
+        <line x1="6" x2="6.01" y1="18" y2="18" />
+      </svg>
+    )
+  }
+  // sparkles
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-[#818cf8]">
+      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+      <path d="M20 3v4" />
+      <path d="M22 5h-4" />
+      <path d="M4 17v2" />
+      <path d="M5 18H3" />
+    </svg>
+  )
+}
+
+function DocsNavbar() {
+  return (
+    <div className="z-30 fixed lg:sticky top-0 w-full">
+      <div className="absolute w-full h-full backdrop-blur flex-none transition-colors duration-500 border-b border-gray-300/[0.06] bg-[#0f1117]/75" />
+      <div className="max-w-8xl mx-auto relative">
+        <div className="flex items-center lg:px-12 h-16 min-w-0 mx-4 lg:mx-0">
+          <div className="h-full relative flex-1 flex items-center gap-x-4 min-w-0 border-b border-gray-300/[0.06]">
+            {/* Logo */}
+            <div className="flex-1 flex items-center gap-x-4">
+              <a href="/developers/docs" className="select-none">
+                <span className="text-xl font-bold text-white">Oxy Docs</span>
+              </a>
+            </div>
+
+            {/* Search bar (desktop) */}
+            <div className="relative hidden lg:flex items-center flex-1 z-20 gap-2.5">
+              <button
+                type="button"
+                className="group/search flex pointer-events-auto rounded-xl w-full items-center text-sm leading-6 h-9 pl-3.5 pr-3 text-white/50 bg-[#0f1117] brightness-[1.1] ring-1 hover:brightness-[1.25] ring-gray-600/30 hover:ring-gray-500/30 justify-between truncate gap-2"
+              >
+                <div className="flex items-center gap-2">
+                  <SearchIcon />
+                  <div className="truncate min-w-0">Search...</div>
+                </div>
+                <span className="flex-none text-xs font-semibold">Ctrl K</span>
+              </button>
+            </div>
+
+            {/* Dark mode toggle */}
+            <div className="flex-1 relative hidden lg:flex items-center ml-auto justify-end space-x-4">
+              <button className="group p-2 flex items-center justify-center" aria-label="Toggle dark mode">
+                <MoonIcon />
+              </button>
+            </div>
+
+            {/* Mobile icons */}
+            <div className="flex lg:hidden items-center gap-3">
+              <button type="button" className="text-gray-400 w-8 h-8 flex items-center justify-center hover:text-gray-300" aria-label="Open search">
+                <SearchIcon />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Tab navigation */}
+        <div className="hidden lg:flex px-12 h-12">
+          <div className="h-full flex text-sm gap-x-6">
+            <a className="group relative h-full gap-2 flex items-center font-medium text-gray-200 [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]" href="/developers/docs">
+              Overview
+              <div className="absolute bottom-0 h-[1.5px] w-full left-0 bg-[#818cf8]" />
+            </a>
+            <a className="group relative h-full gap-2 flex items-center font-medium text-gray-400 hover:text-gray-300" href="#">
+              App SDK
+              <div className="absolute bottom-0 h-[1.5px] w-full left-0 group-hover:bg-gray-700" />
+            </a>
+            <a className="group relative h-full gap-2 flex items-center font-medium text-gray-400 hover:text-gray-300" href="#">
+              REST API
+              <div className="absolute bottom-0 h-[1.5px] w-full left-0 group-hover:bg-gray-700" />
+            </a>
+            <a className="group relative h-full gap-2 flex items-center font-medium text-gray-400 hover:text-gray-300" href="#">
+              MCP
+              <div className="absolute bottom-0 h-[1.5px] w-full left-0 group-hover:bg-gray-700" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function DocsSidebar() {
+  const location = useLocation()
+
+  return (
+    <div
+      id="sidebar"
+      className="fixed z-20 lg:z-auto top-[7rem] bottom-0 left-[max(0px,calc(50%-40rem))] right-auto w-[19.5rem] pl-6 lg:pl-12 overflow-y-auto overflow-x-hidden lg:block hidden"
+    >
+      <div className="relative lg:text-sm lg:leading-6 py-10">
+        {docsSidebar.map((section, sectionIdx) => (
+          <div key={section.title} className={sectionIdx === 0 ? '' : 'mt-8'}>
+            <h5 className="mb-3.5 lg:mb-2.5 font-semibold text-gray-200 pl-4">
+              {section.title}
+            </h5>
+            <ul className="space-y-px">
+              {section.items.map((item) => {
+                const isActive = location.pathname === item.href
+                return (
+                  <li key={item.label}>
+                    <a
+                      className={
+                        isActive
+                          ? 'group flex items-start pr-3 py-1.5 cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl w-full outline-offset-[-1px] bg-[#818cf8]/10 text-[#818cf8] [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]'
+                          : 'group flex items-start pr-3 py-1.5 cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-gray-200/5 text-gray-400 hover:text-gray-300'
+                      }
+                      style={{ paddingLeft: '1rem' }}
+                      href={item.href}
+                    >
+                      <div className="flex-1 flex items-start space-x-2.5">
+                        <div className="break-words [word-break:break-word]">{item.label}</div>
+                      </div>
+                    </a>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function DocsFooter() {
+  return (
+    <footer className="flex gap-12 justify-between pt-10 border-t border-gray-800/50 pb-28">
+      <div className="flex gap-6 flex-wrap">
+        <a href="https://x.com" target="_blank" rel="noreferrer" className="h-fit">
+          <span className="sr-only">X / Twitter</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-gray-500 hover:text-gray-400">
+            <path d="M4 4l11.733 16h4.267l-11.733 -16h-4.267z" />
+            <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
+          </svg>
+        </a>
+        <a href="/" className="h-fit">
+          <span className="sr-only">Website</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-gray-500 hover:text-gray-400">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+            <path d="M2 12h20" />
+          </svg>
+        </a>
+      </div>
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-gray-500">&copy; {new Date().getFullYear()} Oxy</span>
+      </div>
+    </footer>
+  )
+}
+
+export default function DocsPage() {
+  return (
+    <div className="relative antialiased text-gray-400">
+      <div className="max-lg:contents lg:flex lg:w-full">
+        <div className="max-lg:contents lg:flex-1 lg:min-w-0 lg:overflow-x-clip">
+          {/* Top navbar */}
+          <DocsNavbar />
+
+          {/* Background */}
+          <span className="fixed inset-0 bg-[#0f1117] -z-10 pointer-events-none" />
+
+          <div className="max-w-8xl mx-auto relative px-4 lg:px-8">
+            {/* Sidebar */}
+            <DocsSidebar />
+
+            {/* Main content */}
+            <div className="flex flex-row-reverse gap-12 box-border w-full pt-40 lg:pt-10">
+              {/* Table of contents placeholder (right side) */}
+              <div className="hidden xl:flex self-start sticky xl:flex-col max-w-[28rem] z-[21] h-[calc(100vh-9.5rem)] top-[calc(9.5rem)]">
+                <div className="z-10 hidden xl:flex box-border max-h-full pl-10 w-[19rem]" />
+              </div>
+
+              {/* Content area */}
+              <div className="relative grow box-border flex-col w-full mx-auto px-1 lg:pl-[23.7rem] lg:-ml-12 xl:w-[calc(100%-28rem)]">
+                {/* Header */}
+                <header className="relative leading-none">
+                  <div className="mt-0.5 space-y-2.5">
+                    <div className="h-5 text-[#818cf8] text-sm font-semibold">Get started</div>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center relative gap-2 min-w-0">
+                      <h1 className="text-2xl sm:text-3xl text-gray-200 tracking-tight [overflow-wrap:anywhere] font-bold break-all">
+                        Overview
+                      </h1>
+                    </div>
+                  </div>
+                  <div className="mt-2 text-lg text-gray-400">
+                    <p>Start building Oxy Apps</p>
+                  </div>
+                </header>
+
+                {/* Content */}
+                <div className="relative mt-8 mb-14 prose prose-invert [contain:inline-size] isolate">
+                  <p className="text-gray-400 leading-7">
+                    Oxy is a revolutionary CRM platform which is highly customisable, incredibly powerful and
+                    data-driven. In these guides, you can find everything you need to build powerful integrations,
+                    automations and data pipelines on top of Oxy.
+                  </p>
+                  <p className="text-gray-400 leading-7 mt-4">
+                    Our docs cover guides, examples, references and code to help you build apps and share them with
+                    Oxy's customers or for your own workspace.
+                  </p>
+                  <p className="text-gray-400 leading-7 mt-4">
+                    The Oxy Developer Platform consists of three parts:
+                  </p>
+
+                  {/* Cards */}
+                  <div className="mt-4 space-y-2 not-prose">
+                    {docsCards.map((card) => (
+                      <div
+                        key={card.title}
+                        className="card block font-normal group relative ring-2 ring-transparent rounded-2xl bg-[#0f1117] border border-white/10 overflow-hidden w-full cursor-pointer hover:!border-[#818cf8]"
+                        tabIndex={0}
+                        role="link"
+                      >
+                        <div className="px-6 py-5 relative">
+                          <a href={card.href} tabIndex={-1} aria-hidden="true" style={{ display: 'contents', color: 'inherit', textDecoration: 'none' }}>
+                            <div className="h-6 w-6 text-gray-100">
+                              <CardIcon icon={card.icon} />
+                            </div>
+                            <div className="w-full">
+                              <h2 className="font-semibold text-base text-white mt-4">
+                                {card.title}
+                              </h2>
+                              <div className="mt-1 font-normal text-base leading-6 text-gray-400">
+                                <p>{card.description}</p>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className="text-gray-400 leading-7 mt-4">
+                    You can use both the App SDK and REST API in your app to build rich experiences.
+                  </p>
+                </div>
+
+                {/* Feedback */}
+                <div className="pb-16 w-full flex flex-col gap-y-8">
+                  <div className="flex flex-row flex-wrap gap-4 items-center justify-between">
+                    <p className="inline-block text-sm text-gray-400 whitespace-nowrap">Was this page helpful?</p>
+                    <div className="flex flex-wrap flex-grow gap-3 items-center justify-between">
+                      <div className="flex gap-3 items-center">
+                        <button className="px-3.5 py-2 flex flex-row gap-3 items-center rounded-xl text-gray-400 hover:text-gray-300 border border-white/10 hover:border-gray-500">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                            <path d="M7 10v12" />
+                            <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z" />
+                          </svg>
+                          <small className="text-sm font-normal leading-4">Yes</small>
+                        </button>
+                        <button className="px-3.5 py-2 flex flex-row gap-3 items-center rounded-xl text-gray-400 hover:text-gray-300 border border-white/10 hover:border-gray-500">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                            <path d="M17 14V2" />
+                            <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z" />
+                          </svg>
+                          <small className="text-sm font-normal leading-4">No</small>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pagination */}
+                <div className="px-0.5 flex items-center text-sm font-semibold text-gray-200">
+                  <a className="flex items-center ml-auto space-x-3 group" href="#">
+                    <span className="group-hover:text-white">Quickstart</span>
+                    <svg viewBox="0 0 3 6" className="rotate-180 h-1.5 stroke-gray-400 overflow-visible group-hover:stroke-gray-300">
+                      <path d="M3 0L0 3L3 6" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </a>
+                </div>
+
+                {/* Footer */}
+                <DocsFooter />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
