@@ -124,7 +124,6 @@ function FrostButton({
 export default function AIPage() {
   const [activeTab, setActiveTab] = useState(0)
   const sectionRefs = useRef<(HTMLElement | null)[]>([])
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
   const ctaRef = useScrollReveal()
   const featuresRef = useScrollReveal()
 
@@ -143,11 +142,8 @@ export default function AIPage() {
 
   // Left panel stays visible — no parallax fade
 
-  // IntersectionObserver for scroll-snap demo sections
+  // IntersectionObserver for demo sections (uses viewport as root)
   useEffect(() => {
-    const container = scrollContainerRef.current
-    if (!container) return
-
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -157,7 +153,7 @@ export default function AIPage() {
           }
         }
       },
-      { root: container, threshold: 0.5 }
+      { threshold: 0.5 }
     )
 
     sectionRefs.current.forEach((el) => el && observer.observe(el))
@@ -167,7 +163,7 @@ export default function AIPage() {
   return (
     <div className="text-foreground">
       {/* ── 1. Hero — Split Layout ── */}
-      <div className="container relative z-0 mx-auto flex w-full flex-col overflow-clip lg:flex-row lg:h-[calc(100vh-var(--site-header-height,64px))]">
+      <div className="container relative z-0 mx-auto flex w-full flex-col overflow-clip lg:flex-row">
         {/* Layer 1: Gradient */}
         <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-[#4867AF] via-[#9CAFB8] via-[62%] to-[#C49577]" />
 
@@ -262,8 +258,7 @@ export default function AIPage() {
 
         {/* Right content area — demo screens */}
         <div
-          ref={scrollContainerRef}
-          className="relative z-10 grow bg-black/10 overflow-y-auto snap-y snap-mandatory lg:h-full"
+          className="relative z-10 grow bg-black/10"
         >
           {/* SVG pattern border on left edge */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
