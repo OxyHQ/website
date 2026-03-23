@@ -5,47 +5,30 @@ import { geoMercator } from "d3-geo";
 import dottedMapData from "../../data/dashboard/dotted-map-data.json";
 import { regionMarkers, topCountries, countryRequests } from "../../data/dashboard/country-data";
 
-const countryColors: Record<string, string> = {
-  US: "#1e40af",
-  DE: "#FFCE00",
-  GB: "#2563eb",
-  IN: "#f59e0b",
-  BR: "#FF0000",
-  SG: "#f59e0b",
-  JP: "#dc143c",
-  FR: "#1d4ed8",
-  CA: "#b91c1c",
-  SE: "#2563eb",
-  AU: "#3b82f6",
-  KR: "#3b82f6",
-  NL: "#ea580c",
-  CN: "#991b1b",
-  RU: "#FF0000",
-  MX: "#15803d",
-  ES: "#b91c1c",
-  IT: "#15803d",
-  PL: "#dc2626",
-  TR: "#b91c1c",
-  ID: "#1e40af",
-  TH: "#15803d",
-  VN: "#991b1b",
-  PH: "#15803d",
-  EG: "#1e40af",
-  NG: "#2563eb",
-  PK: "#FFCE00",
-  BD: "#991b1b",
-  AR: "#f59e0b",
-  CO: "#FF0000",
-  ZA: "#15803d",
-  SA: "#FFCE00",
-  MY: "#991b1b",
-  CL: "#991b1b",
-  PE: "#1e40af",
-  AE: "#f59e0b",
-};
+// All 11 Bloom preset hex colors
+const BLOOM_COLORS = [
+  '#005c67', // teal
+  '#1D9BF0', // blue
+  '#10B981', // green
+  '#F59E0B', // amber
+  '#EF4444', // red
+  '#8B5CF6', // purple
+  '#EC4899', // pink
+  '#0EA5E9', // sky
+  '#F97316', // orange
+  '#14B8A6', // mint
+  '#c46ede', // oxy
+];
+
+// Assign Bloom colors to countries in rotation
+const countryKeys = Object.keys(countryRequests);
+const countryColors: Record<string, string> = {};
+countryKeys.forEach((code, i) => {
+  countryColors[code] = BLOOM_COLORS[i % BLOOM_COLORS.length];
+});
 
 const getCountryColor = (iso2: string): string => {
-  return countryColors[iso2] || "#666666";
+  return countryColors[iso2] || BLOOM_COLORS[0];
 };
 
 const top10Countries = new Set(
@@ -67,7 +50,7 @@ const getDotsToShow = (iso2: string): number => {
 };
 
 const StaticPixel = memo(({ x, y }: { x: number; y: number }) => (
-  <rect x={x} y={y} width={3} height={3} className="fill-[var(--ds-gray-400)]" fillOpacity={0.5} />
+  <rect x={x} y={y} width={3} height={3} fill="var(--muted-foreground)" fillOpacity={0.3} />
 ));
 StaticPixel.displayName = "StaticPixel";
 
@@ -151,7 +134,8 @@ const EdgeMarker = memo(
           data-edge={marker.id}
           data-lat={marker.coordinates[1]}
           data-lng={marker.coordinates[0]}
-          className="fill-[var(--ds-gray-1000)] stroke-[var(--ds-background-100)]"
+          fill="var(--foreground)"
+          stroke="var(--background)"
           strokeWidth={1}
           strokeOpacity={0.5}
           style={{ paintOrder: "stroke" }}
@@ -186,7 +170,6 @@ export default function DottedMap({ width = 1000, height = 560, activeCountries 
     [width, height]
   );
 
-  // Build a set of active location names from live data for enhanced map activity
   const liveActiveSet = useMemo(() => {
     if (!activeCountries || activeCountries.length === 0) return null;
     return new Set(activeCountries.map((c) => c.location?.toUpperCase()));
@@ -207,7 +190,6 @@ export default function DottedMap({ width = 1000, height = 560, activeCountries 
       ([countryCode, cities]) => {
         const dotsToShow = getDotsToShow(countryCode);
         const color = getCountryColor(countryCode);
-        // If we have live data, use it to determine top countries; otherwise fall back to static
         const isTop10 = liveActiveSet
           ? liveActiveSet.has(countryCode)
           : top10Countries.has(countryCode);
@@ -220,7 +202,6 @@ export default function DottedMap({ width = 1000, height = 560, activeCountries 
           if (x < 0 || x > width || y < 0 || y > height) return;
 
           const key = `${countryCode}-${city.cityDistanceRank}`;
-          // Countries with live activity get more animated dots
           const liveBoost = isTop10 && liveActiveSet ? dotsToShow + 10 : dotsToShow;
           const isAnimated = city.cityDistanceRank < liveBoost;
 
@@ -252,7 +233,7 @@ export default function DottedMap({ width = 1000, height = 560, activeCountries 
     <div className="relative w-full">
       <svg
         viewBox={`0 0 ${width} ${height}`}
-        className="w-full h-auto bg-[var(--ds-background-100)]"
+        className="w-full h-auto bg-background"
       >
         <g>
           {staticPixels.map((p) => (
@@ -310,7 +291,7 @@ export default function DottedMap({ width = 1000, height = 560, activeCountries 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 5 }}
               transition={{ duration: 0.15 }}
-              className="absolute pointer-events-none z-10 bg-[var(--ds-background-200)] border border-[var(--ds-gray-200)] rounded px-2.5 py-1.5 text-xs font-mono shadow-lg whitespace-nowrap"
+              className="absolute pointer-events-none z-10 bg-surface border border-border rounded px-2.5 py-1.5 text-xs font-mono shadow-lg whitespace-nowrap"
               style={{
                 left: `${(coords[0] / width) * 100}%`,
                 top: `${(coords[1] / height) * 100}%`,
@@ -318,10 +299,10 @@ export default function DottedMap({ width = 1000, height = 560, activeCountries 
               }}
             >
               <div className="flex items-center gap-1.5">
-                <span className="text-[var(--ds-gray-1000)]">▲</span>
-                <span className="text-[var(--ds-gray-1000)] font-medium">{hoveredMarker.id}</span>
-                <span className="text-[var(--ds-gray-500)]">·</span>
-                <span className="text-[var(--ds-gray-900)]">{hoveredMarker.name}</span>
+                <span className="text-foreground">▲</span>
+                <span className="text-foreground font-medium">{hoveredMarker.id}</span>
+                <span className="text-muted-foreground">·</span>
+                <span className="text-muted-foreground">{hoveredMarker.name}</span>
               </div>
             </motion.div>
           );

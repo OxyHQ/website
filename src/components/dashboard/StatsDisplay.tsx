@@ -8,7 +8,6 @@ function useAnimatedNumber(baseValue: number, incrementRatePerSecond: number) {
   const [displayRate, setDisplayRate] = useState(incrementRatePerSecond);
   const lastBaseRef = useRef(baseValue);
 
-  // When new real data arrives, only jump forward (never backward)
   useEffect(() => {
     if (baseValue > lastBaseRef.current) {
       setValue((current) => Math.max(current, baseValue));
@@ -71,7 +70,7 @@ function PixelGridTransition({
     for (let n = 0; n < total; n++) {
       const row = Math.floor(n / gridSize);
       const col = n % gridSize;
-      const color = Math.random() > 0.85 ? "var(--ds-blue-800, #0070f3)" : "var(--ds-gray-200, #333)";
+      const color = Math.random() > 0.85 ? "var(--primary)" : "var(--border)";
       result.push({ id: n, row, col, color });
     }
     return result;
@@ -190,9 +189,9 @@ function StatCard({
   const { value } = useAnimatedNumber(baseValue || 0, incrementRate || 0);
 
   const statsContent = (
-    <div className="bg-gray-alpha-100 p-4 md:p-6 w-full min-h-[120px] h-full">
+    <div className="bg-surface p-4 md:p-6 w-full min-h-[120px] h-full">
       <div className="space-y-2">
-        <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-gray-1000 pr-6">
+        <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-foreground pr-6">
           {title}
         </h2>
         {baseValue !== undefined && (
@@ -206,12 +205,12 @@ function StatCard({
   );
 
   const infoContentView = (
-    <div className="bg-gray-alpha-100 p-4 md:p-6 w-full h-full overflow-y-auto flex flex-col gap-y-2">
+    <div className="bg-surface p-4 md:p-6 w-full h-full overflow-y-auto flex flex-col gap-y-2">
       {href ? (
         <a
           href={href}
           tabIndex={showInfo ? 0 : -1}
-          className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-gray-1000 hover:underline underline-offset-2 inline-flex gap-x-0.5 items-center w-fit shrink-0"
+          className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-foreground hover:underline underline-offset-2 inline-flex gap-x-0.5 items-center w-fit shrink-0"
         >
           {title}
           <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
@@ -219,11 +218,11 @@ function StatCard({
           </svg>
         </a>
       ) : (
-        <span className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-gray-1000 shrink-0">
+        <span className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-foreground shrink-0">
           {title}
         </span>
       )}
-      <span className="tracking-tight text-sm text-gray-900 leading-relaxed line-clamp-6">
+      <span className="tracking-tight text-sm text-muted-foreground leading-relaxed line-clamp-6">
         {infoContent}
       </span>
     </div>
@@ -245,7 +244,7 @@ function StatCard({
             aria-label={`Learn more about ${title}`}
             type="button"
             onClick={() => setShowInfo(!showInfo)}
-            className="p-1 m-0 bg-transparent text-gray-alpha-600 md:text-gray-900 border-none md:border md:border-solid border-gray-alpha-400 hover:text-gray-1000 hover:bg-gray-alpha-200 transition-colors duration-150 flex items-center justify-center outline-none focus-visible:ring cursor-pointer"
+            className="p-1 m-0 bg-transparent text-muted-foreground border-none md:border md:border-solid border-border hover:text-foreground hover:bg-accent transition-colors duration-150 flex items-center justify-center outline-none focus-visible:ring cursor-pointer"
           >
             <InfoIcon />
           </button>
@@ -260,15 +259,15 @@ function MetricRow({ label, baseValue, incrementRate, showRate = false }: { labe
 
   return (
     <li className="flex flex-wrap items-center justify-between gap-x-3">
-      <h3 className="m-0 font-mono font-normal text-sm text-gray-900 uppercase">
+      <h3 className="m-0 font-mono font-normal text-sm text-muted-foreground uppercase">
         {label}
       </h3>
       <div className="flex items-center gap-3 md:gap-4 text-right">
-        <div className="text-gray-1000 text-sm font-mono tabular-nums">
+        <div className="text-foreground text-sm font-mono tabular-nums">
           {formatNumber(value)}
         </div>
         {showRate && (
-          <div className="w-16 text-gray-900 text-right text-sm font-mono tabular-nums">
+          <div className="w-16 text-muted-foreground text-right text-sm font-mono tabular-nums">
             <span>{formatNumber(rate)}</span>
             <span aria-label="per second">/s</span>
           </div>
@@ -283,13 +282,13 @@ export function TotalRequests({ stats }: { stats: PlatformStats }) {
 
   return (
     <div className="space-y-2">
-      <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-gray-900">
+      <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-muted-foreground">
         Total Users
       </h2>
       <div className="text-4xl md:text-5xl tracking-normal font-mono tabular-nums">
         {formatNumber(value)}
       </div>
-      <div className="text-sm text-gray-900 font-mono tabular-nums">
+      <div className="text-sm text-muted-foreground font-mono tabular-nums">
         {formatNumber(rate)}/s
       </div>
     </div>
@@ -298,25 +297,21 @@ export function TotalRequests({ stats }: { stats: PlatformStats }) {
 
 function LocationRow({ location, count, incrementRate }: { location: string; count: number; incrementRate: number }) {
   const { value, rate } = useAnimatedNumber(count, incrementRate);
-  const color = "#2563eb";
 
   return (
     <li className="flex items-center w-full md:w-fit justify-between md:justify-start">
       <span aria-hidden="true" className="inline-block translate-y-[-2px] translate-x-[2px]">
-        <span style={{ color, opacity: 1 }}>■</span>
+        <span className="text-primary" style={{ opacity: 1 }}>■</span>
       </span>
       <div className="text-left">
-        <h3
-          className="inline-block my-0 font-medium text-[16px]"
-          style={{ color }}
-        >
+        <h3 className="inline-block my-0 font-medium text-[16px] text-primary">
           &nbsp;{location}
         </h3>
       </div>
       <div className="w-[16ch] text-right">
         <span className="inline-flex tabular-nums">{formatNumber(value)}</span>
       </div>
-      <div className="w-[10ch] ml-auto text-right text-gray-900">
+      <div className="w-[10ch] ml-auto text-right text-muted-foreground">
         <span>{formatNumber(rate)}</span>
         <span className="lowercase" aria-label="per second">/s</span>
       </div>
@@ -327,7 +322,7 @@ function LocationRow({ location, count, incrementRate }: { location: string; cou
 export function TopCountries({ stats }: { stats: PlatformStats }) {
   return (
     <div className="space-y-2">
-      <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-gray-900">
+      <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-muted-foreground">
         Top Locations by Sessions
       </h2>
       <ul className="list-none pl-0 space-y-1">
@@ -341,7 +336,7 @@ export function TopCountries({ stats }: { stats: PlatformStats }) {
             />
           ))
         ) : (
-          <li className="text-sm text-gray-900 font-mono">No location data yet</li>
+          <li className="text-sm text-muted-foreground font-mono">No location data yet</li>
         )}
       </ul>
     </div>
@@ -356,7 +351,7 @@ export function RegionCount({ stats }: { stats: PlatformStats }) {
       </span>
       <div className="text-left">
         <span className="inline-block my-0 font-medium text-[16px]">&nbsp;{stats.regions || 0}</span>
-        <span className="font-medium text-[16px] text-gray-900 tracking-tight">&nbsp;Active Regions</span>
+        <span className="font-medium text-[16px] text-muted-foreground tracking-tight">&nbsp;Active Regions</span>
       </div>
     </div>
   );
@@ -437,7 +432,7 @@ export function StatsGrid({ stats }: { stats: PlatformStats }) {
           infoContent="Total files uploaded and managed across the Oxy platform including avatars, attachments, and media."
           className="flex-1"
         >
-          <p className="text-gray-900 text-sm font-mono mt-1">Files stored</p>
+          <p className="text-muted-foreground text-sm font-mono mt-1">Files stored</p>
         </StatCard>
       </div>
     </div>

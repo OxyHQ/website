@@ -13,7 +13,7 @@ export default function DashboardPage() {
   const { data: stats } = usePlatformStats();
 
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background" data-dashboard>
+    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <Navbar />
       <main>
         <div className="container font-mono relative overflow-hidden flex flex-col md:block pt-12 md:pt-16">
