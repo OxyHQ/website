@@ -15,6 +15,7 @@ import { Job } from './models/Job.js'
 import { SiteSettings } from './models/SiteSettings.js'
 import { Page } from './models/Page.js'
 import { NewsroomPost } from './models/NewsroomPost.js'
+import TrackedRepo from './models/TrackedRepo.js'
 
 async function seed() {
   await mongoose.connect(config.mongoUri)
@@ -198,6 +199,19 @@ async function seed() {
     { title: 'Workflow automations v2', content: 'Major update to the workflow engine.', tags: ['automations', 'release'], date: new Date('2026-03-10'), items: ['Conditional branching', 'Multi-step sequences', 'Webhook triggers'] },
   ])
   console.log('Seeded changelog')
+
+  // ── Tracked Repos (sample) ──
+  await TrackedRepo.deleteMany({})
+  await TrackedRepo.create([
+    {
+      owner: 'vercel',
+      repo: 'next.js',
+      displayName: 'Next.js',
+      defaultTags: [{ label: 'Framework', color: 'rgb(38, 109, 240)' }],
+      active: true,
+    },
+  ])
+  console.log('Seeded tracked repos')
 
   // ── Jobs (sample) ──
   await Job.insertMany([

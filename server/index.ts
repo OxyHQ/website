@@ -10,6 +10,7 @@ import newsroomRouter from './routes/newsroom.js'
 import pricingRouter from './routes/pricing.js'
 import testimonialsRouter from './routes/testimonials.js'
 import changelogRouter from './routes/changelog.js'
+import { startSyncInterval } from './services/githubSync.js'
 import jobsRouter from './routes/jobs.js'
 import settingsRouter from './routes/settings.js'
 import mcpTokensRouter from './routes/mcp-tokens.js'
@@ -37,6 +38,8 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }))
 async function start() {
   await mongoose.connect(config.mongoUri)
   console.log('Connected to MongoDB')
+
+  startSyncInterval()
 
   app.listen(config.port, () => {
     console.log(`Server running on http://localhost:${config.port}`)

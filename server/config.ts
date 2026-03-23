@@ -7,4 +7,5 @@ export const config = {
   oxyApiBase: process.env.OXY_API_BASE || 'https://api.oxy.so',
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   adminUsernames: ['oxy', 'nate'],
+  githubToken: process.env.GITHUB_TOKEN || '',
 }

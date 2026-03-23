@@ -91,10 +91,42 @@ export function useTestimonials() {
 }
 
 // ── Changelog ──
-export function useChangelog() {
+interface ChangelogResponse {
+  entries: Array<{
+    _id: string
+    title: string
+    content: string
+    tags: string[]
+    date: string
+    tagName?: string
+    repoOwner?: string
+    repoName?: string
+    repoDisplayName?: string
+    htmlUrl?: string
+  }>
+  total: number
+  page: number
+  pages: number
+  repos: Array<{ owner: string; repo: string; displayName: string }>
+}
+
+export function useChangelog(params?: { repo?: string; page?: number; limit?: number }) {
+  const searchParams = new URLSearchParams()
+  if (params?.repo) searchParams.set('repo', params.repo)
+  if (params?.page) searchParams.set('page', String(params.page))
+  if (params?.limit) searchParams.set('limit', String(params.limit))
+  const qs = searchParams.toString()
+
   return useQuery({
-    queryKey: ['changelog'],
-    queryFn: () => apiFetch<any[]>('/changelog'),
+    queryKey: ['changelog', params],
+    queryFn: () => apiFetch<ChangelogResponse>(`/changelog${qs ? `?${qs}` : ''}`),
+  })
+}
+
+export function useTrackedRepos() {
+  return useQuery({
+    queryKey: ['changelog-repos'],
+    queryFn: () => apiFetch<Array<{ _id: string; owner: string; repo: string; displayName: string; lastSyncAt: string | null; active: boolean }>>('/changelog/repos'),
   })
 }
 
@@ -115,10 +147,12 @@ export function useSiteSettings() {
 }
 
 // ── MCP Tokens ──
-export function useMcpTokens() {
+export function useMcpTokens(enabled = true) {
   return useQuery({
     queryKey: ['mcp-tokens'],
     queryFn: () => apiFetch<any[]>('/mcp-tokens'),
+    enabled,
+    retry: false,
   })
 }
 

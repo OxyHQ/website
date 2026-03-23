@@ -1,6 +1,20 @@
+import { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { useChangelog, useTrackedRepos } from '../../api/hooks'
 import { changelogData } from '../../data/changelog'
 
 export default function ChangelogContent() {
+  const [selectedRepo, setSelectedRepo] = useState<string | undefined>(undefined)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const { data, isError } = useChangelog({ repo: selectedRepo, page: currentPage, limit: 10 })
+  const { data: repos } = useTrackedRepos()
+
+  // Determine whether to use API data or fall back to static
+  const useStaticFallback = isError || (!data && !selectedRepo)
+  const entries = data?.entries
+
   return (
     <>
       {/* Hero Section */}
@@ -74,12 +88,118 @@ export default function ChangelogContent() {
         <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
       </svg>
 
+      {/* Repo filter bar */}
+      {repos && repos.length > 0 && (
+        <div className="container">
+          <div className="flex flex-wrap gap-2 py-6 border-b border-subtle-stroke">
+            <button
+              onClick={() => { setSelectedRepo(undefined); setCurrentPage(1) }}
+              className={`inline-flex items-center rounded-[10px] px-3 py-1.5 text-sm transition-colors ${
+                !selectedRepo
+                  ? 'bg-primary-foreground text-primary-background'
+                  : 'text-tertiary-foreground hover:text-secondary-foreground border border-subtle-stroke'
+              }`}
+            >
+              All
+            </button>
+            {repos.map((r) => (
+              <button
+                key={`${r.owner}/${r.repo}`}
+                onClick={() => { setSelectedRepo(`${r.owner}/${r.repo}`); setCurrentPage(1) }}
+                className={`inline-flex items-center rounded-[10px] px-3 py-1.5 text-sm transition-colors ${
+                  selectedRepo === `${r.owner}/${r.repo}`
+                    ? 'bg-primary-foreground text-primary-background'
+                    : 'text-tertiary-foreground hover:text-secondary-foreground border border-subtle-stroke'
+                }`}
+              >
+                {r.displayName}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Article List */}
       <div className="container pb-[60px] lg:pb-[90px]">
         <div className="border-x border-border">
           <div className="grid grid-cols-12">
             <div className="col-[2/-2]">
-              {changelogData.map((group) =>
+              {/* API-powered entries */}
+              {entries && entries.length > 0 && entries.map((entry) => (
+                <article
+                  key={entry._id}
+                  className="relative grid border-border border-b py-[60px] lg:grid-cols-[1fr_minmax(0,600px)_1fr] lg:py-[90px]"
+                >
+                  {/* Sticky date - desktop */}
+                  <time className="sticky top-32 hidden text-nowrap text-muted-foreground text-sm lg:flex">
+                    {new Date(entry.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </time>
+
+                  {/* Tags row */}
+                  <aside className="flex flex-wrap gap-x-[18px] gap-y-1 lg:col-start-2 lg:gap-x-5">
+                    {entry.tags.map((tag) => (
+                      <div key={tag} className="flex items-center gap-x-1.5">
+                        <div
+                          className="h-3 w-3 rounded-full"
+                          style={{ backgroundColor: tagColor(tag) }}
+                        />
+                        <div className="text-muted-foreground text-xs lg:text-sm">
+                          {tag}
+                        </div>
+                      </div>
+                    ))}
+                    {entry.repoDisplayName && (
+                      <div className="flex items-center gap-x-1.5">
+                        <div className="text-muted-foreground text-xs lg:text-sm">
+                          {entry.repoDisplayName}
+                        </div>
+                      </div>
+                    )}
+                  </aside>
+
+                  {/* Content */}
+                  <div className="mt-6 lg:col-start-2">
+                    <div className="flex items-center gap-2">
+                      <h2
+                        className="font-semibold text-foreground text-xl lg:font-semibold lg:text-2xl"
+                        id={entry._id}
+                      >
+                        {entry.title}
+                      </h2>
+                      {entry.tagName && (
+                        <span className="inline-flex items-center rounded-lg border border-subtle-stroke bg-secondary-background px-2 py-0.5 text-xs text-tertiary-foreground">
+                          {entry.tagName}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="font-normal leading-6.5 mt-5 text-muted-foreground prose prose-sm max-w-none prose-headings:text-foreground prose-a:text-[var(--color-blue-500)] prose-code:text-foreground prose-code:bg-secondary-background prose-code:px-1 prose-code:rounded-md prose-li:marker:text-muted-foreground">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {entry.content}
+                      </ReactMarkdown>
+                    </div>
+
+                    {entry.htmlUrl && (
+                      <a
+                        href={entry.htmlUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                      >
+                        View on GitHub &rarr;
+                      </a>
+                    )}
+
+                    {/* Mobile date */}
+                    <time className="mt-5 text-muted-foreground text-xs lg:hidden" aria-hidden="true">
+                      {new Date(entry.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    </time>
+                  </div>
+                </article>
+              ))}
+
+              {/* Static fallback when API has no data */}
+              {useStaticFallback && (!entries || entries.length === 0) && changelogData.map((group) =>
                 group.entries.map((entry) => (
                   <article
                     key={entry.id}
@@ -164,6 +284,43 @@ export default function ChangelogContent() {
           </div>
         </div>
       </div>
+
+      {/* Pagination */}
+      {data && data.pages > 1 && (
+        <div className="flex items-center justify-center gap-2 py-10">
+          <button
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage <= 1}
+            className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-secondary-foreground disabled:opacity-40"
+          >
+            Previous
+          </button>
+          <span className="text-sm text-tertiary-foreground">
+            Page {currentPage} of {data.pages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(p => Math.min(data.pages, p + 1))}
+            disabled={currentPage >= data.pages}
+            className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-secondary-foreground disabled:opacity-40"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </>
   )
+}
+
+/** Map tag name strings to colors for API entries */
+function tagColor(tag: string): string {
+  const colors: Record<string, string> = {
+    Feature: 'rgb(38, 109, 240)',
+    Enhancement: 'rgb(125, 96, 255)',
+    Design: 'rgb(255, 201, 90)',
+    Fix: 'rgb(34, 197, 94)',
+    Reports: 'rgb(34, 197, 94)',
+    'Bug Fix': 'rgb(34, 197, 94)',
+    Breaking: 'rgb(239, 68, 68)',
+  }
+  return colors[tag] || 'rgb(156, 163, 175)'
 }

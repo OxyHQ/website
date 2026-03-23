@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { useChangelog } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
+import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 
 export default function ChangelogAdmin() {
   const { data, refetch } = useChangelog()
   const [editing, setEditing] = useState<any | null>(null)
   const [saving, setSaving] = useState(false)
-  const entries = data ?? []
+  const entries = (data && 'entries' in data ? data.entries : Array.isArray(data) ? data : []) as any[]
 
   const save = async () => {
     if (!editing) return
@@ -24,7 +25,7 @@ export default function ChangelogAdmin() {
   if (editing) {
     return (
       <div>
-        <button onClick={() => setEditing(null)} className="mb-4 text-sm text-muted-foreground hover:text-foreground">&larr; Back</button>
+        <div className="mb-4"><Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back</Button></div>
         <h2 className="text-xl font-semibold text-foreground">{editing._id ? 'Edit Entry' : 'New Entry'}</h2>
         <div className="mt-6 flex flex-col gap-4">
           <label className="flex flex-col gap-1.5"><span className="text-sm font-medium text-foreground">Title</span><input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" /></label>
@@ -33,8 +34,8 @@ export default function ChangelogAdmin() {
           <label className="flex flex-col gap-1.5"><span className="text-sm font-medium text-foreground">Tags (comma-separated)</span><input value={(editing.tags ?? []).join(', ')} onChange={(e) => setEditing({ ...editing, tags: e.target.value.split(',').map((t: string) => t.trim()).filter(Boolean) })} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" /></label>
           <label className="flex flex-col gap-1.5"><span className="text-sm font-medium text-foreground">Items (one per line)</span><textarea value={(editing.items ?? []).join('\n')} onChange={(e) => setEditing({ ...editing, items: e.target.value.split('\n').filter(Boolean) })} rows={4} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary font-mono" /></label>
           <div className="flex gap-3">
-            <button onClick={save} disabled={saving} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">{saving ? 'Saving...' : 'Save'}</button>
-            <button onClick={() => setEditing(null)} className="rounded-lg border border-border px-4 py-2 text-sm text-foreground hover:bg-muted">Cancel</button>
+            <PrimaryButton onPress={save} disabled={saving}>{saving ? 'Saving...' : 'Save'}</PrimaryButton>
+            <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>
           </div>
         </div>
       </div>
@@ -45,7 +46,7 @@ export default function ChangelogAdmin() {
     <div>
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-foreground">Changelog</h2>
-        <button onClick={() => setEditing({ title: '', content: '', tags: [], date: new Date().toISOString(), items: [] })} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">New entry</button>
+        <PrimaryButton onPress={() => setEditing({ title: '', content: '', tags: [], date: new Date().toISOString(), items: [] })}>New entry</PrimaryButton>
       </div>
       <div className="mt-6 flex flex-col gap-2">
         {entries.map((e: any) => (
