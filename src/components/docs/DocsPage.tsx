@@ -38,13 +38,8 @@ function DocsSidebar() {
   const location = useLocation()
 
   return (
-    <div
-      id="sidebar"
-      className="z-20 hidden lg:block fixed bottom-0 right-auto w-[18rem] left-[max(0px,calc(50%-600px))]"
-      style={{ top: 'calc(var(--site-header-height, 64px) + 48px)' }}
-    >
-      <div className="absolute inset-0 z-10 overflow-auto pr-8 pb-10 pl-6">
-        <div className="relative lg:text-sm lg:leading-6 py-10">
+    <aside className="hidden lg:block w-[19.5rem] shrink-0 border-r border-gray-300/[0.06]">
+      <div className="sticky top-[var(--site-header-height,64px)] h-[calc(100vh-var(--site-header-height,64px))] overflow-y-auto relative lg:text-sm lg:leading-6 py-10 pl-6 pr-6">
           {docsSidebar.map((section, sectionIdx) => (
             <div key={section.title} className={sectionIdx === 0 ? '' : 'mt-8'}>
               <h5 className="mb-3.5 lg:mb-2.5 font-semibold text-gray-200 pl-4">
@@ -73,9 +68,8 @@ function DocsSidebar() {
               </ul>
             </div>
           ))}
-        </div>
       </div>
-    </div>
+    </aside>
   )
 }
 
@@ -105,12 +99,12 @@ export default function DocsPage() {
         </div>
       </div>
 
-      {/* Sidebar (fixed, aligned to container left edge) */}
-      <DocsSidebar />
+      {/* Sidebar + Content layout */}
+      <div className="container flex">
+        <DocsSidebar />
 
-      {/* Main content - padded to clear fixed sidebar */}
-      <div className="container">
-        <div className="relative grow box-border flex-col w-full py-10 lg:pl-[19.5rem]">
+        {/* Main content */}
+        <div className="relative grow box-border flex-col w-full py-10 px-6 lg:px-12 min-w-0">
           {/* Header */}
           <header className="relative leading-none">
             <div className="mt-0.5 space-y-2.5">
