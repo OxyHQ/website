@@ -3,7 +3,6 @@ import { useJobs } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Switch } from '@oxyhq/bloom/switch'
-import { Badge } from '@oxyhq/bloom/badge'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
@@ -71,7 +70,7 @@ export default function JobsAdmin() {
   }
 
   const addBlock = (blockType: 'paragraph' | 'heading' | 'list') => {
-    const desc = [...(editing.description ?? [])]
+    const desc = [...(Array.isArray(editing.description) ? editing.description : [])]
     if (blockType === 'list') {
       desc.push({ type: 'list', items: [''] })
     } else {
@@ -81,7 +80,7 @@ export default function JobsAdmin() {
   }
 
   const updateBlock = (idx: number, value: any) => {
-    const desc = [...(editing.description ?? [])]
+    const desc = [...(Array.isArray(editing.description) ? editing.description : [])]
     desc[idx] = { ...desc[idx], ...value }
     setEditing({ ...editing, description: desc })
   }
@@ -146,7 +145,7 @@ export default function JobsAdmin() {
             <Label>Description</Label>
             <p className="mb-3 text-xs text-muted-foreground">Build the job description using content blocks.</p>
             <div className="flex flex-col gap-3">
-              {(editing.description ?? []).map((block: DescriptionBlock, idx: number) => (
+              {(Array.isArray(editing.description) ? editing.description : []).map((block: DescriptionBlock, idx: number) => (
                 <div key={idx} className="rounded-lg border border-border p-3">
                   <div className="mb-2 flex items-center justify-between">
                     <span className="rounded bg-muted px-2 py-0.5 text-xs font-medium">{block.type}</span>
@@ -243,15 +242,18 @@ export default function JobsAdmin() {
               {j.slug && <span className="ml-2 font-mono text-xs text-muted-foreground">/{j.slug}</span>}
             </div>
             <div className="flex items-center gap-2">
+              {j.slug && (
+                <a href={`/careers/${j.slug}`} target="_blank" rel="noopener noreferrer" className="rounded-md px-2 py-1 text-xs text-muted-foreground hover:text-foreground">View</a>
+              )}
               {isDefault ? (
                 <>
-                  <Button variant="ghost" size="small" onPress={() => setEditing({ ...j })}>Edit</Button>
+                  <Button variant="ghost" size="small" onPress={() => setEditing({ ...j, description: Array.isArray(j.description) ? j.description : [] })}>Edit</Button>
                   <Button variant="ghost" size="small" onPress={() => deleteJob(j._id)}>Delete</Button>
                 </>
               ) : (
                 <Button variant="ghost" size="small" onPress={() => setTranslatingJob(j)}>Translate</Button>
               )}
-              <Badge color={j.active ? 'success' : 'default'}>{j.active ? 'Active' : 'Inactive'}</Badge>
+              <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${j.active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-muted text-muted-foreground'}`}>{j.active ? 'Active' : 'Inactive'}</span>
             </div>
           </div>
         ))}

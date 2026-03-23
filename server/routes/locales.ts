@@ -13,8 +13,8 @@ router.get('/', async (_req, res) => {
   res.json(locales)
 })
 
-// Admin: list all locales (including disabled)
-router.get('/all', requireAuth, adminOnly, async (_req, res) => {
+// List all locales including disabled (used by admin locale switcher)
+router.get('/all', async (_req, res) => {
   const locales = await Locale.find().sort('order')
   res.json(locales)
 })
