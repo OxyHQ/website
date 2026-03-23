@@ -60,7 +60,7 @@ function CopyPageMenu() {
   return (
     <div ref={menuRef} className="relative items-center shrink-0 min-w-[156px] justify-end ml-auto sm:flex hidden" id="page-context-menu">
       <button
-        className="rounded-l-xl px-3 text-secondary-foreground py-1.5 border border-subtle-stroke bg-primary-background hover:bg-surface-subtle border-r-0"
+        className="rounded-l-xl px-3 text-gray-300 py-1.5 border border-white/[0.07] bg-[#191b1f] hover:bg-gray-200/5 border-r-0"
         aria-label="Copy page"
         onClick={copyPage}
       >
@@ -73,7 +73,7 @@ function CopyPageMenu() {
         </div>
       </button>
       <button
-        className="group disabled:pointer-events-none [&>span]:line-clamp-1 overflow-hidden flex items-center py-0.5 gap-1 text-sm text-tertiary-foreground hover:text-secondary-foreground rounded-none rounded-r-xl border px-3 border-subtle-stroke aspect-square bg-primary-background hover:bg-surface-subtle"
+        className="group disabled:pointer-events-none [&>span]:line-clamp-1 overflow-hidden flex items-center py-0.5 gap-1 text-sm text-white/50 group-hover:text-white/70 rounded-none rounded-r-xl border px-3 border-white/[0.07] aspect-square bg-[#191b1f] hover:bg-gray-200/5"
         aria-label="More actions"
         type="button"
         aria-haspopup="menu"
@@ -81,51 +81,51 @@ function CopyPageMenu() {
         data-state={open ? 'open' : 'closed'}
         onClick={() => setOpen(!open)}
       >
-        <svg width="8" height="24" viewBox="0 -9 3 24" className="transition-transform text-accent-foreground overflow-visible group-hover:text-secondary-foreground rotate-90">
+        <svg width="8" height="24" viewBox="0 -9 3 24" className="transition-transform text-gray-600 overflow-visible group-hover:text-gray-400 rotate-90">
           <path d="M0 0L3 3L0 6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 z-50 min-w-[180px] rounded-xl border border-subtle-stroke bg-primary-background shadow-[0px_4px_12px_rgba(0,0,0,0.08),0px_1px_4px_rgba(0,0,0,0.04)] py-1">
+        <div className="absolute right-0 top-full mt-1 z-50 min-w-[180px] rounded-xl border border-white/[0.07] bg-[#191b1f] shadow-[0px_4px_16px_rgba(0,0,0,0.4),0px_1px_4px_rgba(0,0,0,0.3)] py-1">
           <button
-            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-secondary-foreground hover:bg-surface-subtle rounded-lg mx-1 mr-1"
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-300 hover:bg-gray-200/5 rounded-lg mx-1"
             style={{ width: 'calc(100% - 8px)' }}
             onClick={() => {
               navigator.clipboard.writeText(window.location.href)
               setOpen(false)
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-tertiary-foreground">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-gray-500">
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
             </svg>
             Copy link
           </button>
           <button
-            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-secondary-foreground hover:bg-surface-subtle rounded-lg mx-1 mr-1"
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-300 hover:bg-gray-200/5 rounded-lg mx-1"
             style={{ width: 'calc(100% - 8px)' }}
             onClick={() => {
               copyPage()
               setOpen(false)
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-tertiary-foreground">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-gray-500">
               <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
               <polyline points="14 2 14 8 20 8" />
             </svg>
             Copy as Markdown
           </button>
-          <div className="my-1 mx-3 h-px bg-subtle-stroke" />
+          <div className="my-1 mx-3 h-px bg-white/[0.07]" />
           <button
-            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-secondary-foreground hover:bg-surface-subtle rounded-lg mx-1 mr-1"
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-300 hover:bg-gray-200/5 rounded-lg mx-1"
             style={{ width: 'calc(100% - 8px)' }}
             onClick={() => {
               window.open(window.location.href, '_blank')
               setOpen(false)
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-tertiary-foreground">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-gray-500">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
               <polyline points="15 3 21 3 21 9" />
               <line x1="10" y1="14" x2="21" y2="3" />
