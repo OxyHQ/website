@@ -128,7 +128,7 @@ export default function ArticleGridSection() {
        */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
         <div />
-        <hr className="mb-1 mt-4 border-t border-subtle-stroke lg:hidden" />
+        <hr className="mb-1 mt-4 border-t border-border lg:hidden" />
         <div className="flex flex-row items-center justify-between gap-5 lg:justify-normal">
           <div className="flex flex-row items-center gap-5">
             {/* Filter dropdown */}
@@ -136,34 +136,34 @@ export default function ArticleGridSection() {
               <button
                 type="button"
                 onClick={() => { setFilterOpen(!filterOpen); setSortOpen(false) }}
-                className="flex h-10 cursor-pointer items-center justify-start gap-[0.3em] whitespace-nowrap rounded px-0 text-sm font-medium text-primary-foreground transition-colors duration-200 hover:text-caption-foreground"
+                className="flex h-10 cursor-pointer items-center justify-start gap-[0.3em] whitespace-nowrap rounded px-0 text-sm font-medium text-foreground transition-colors duration-200 hover:text-muted-foreground"
               >
                 <FilterIcon />
                 <span className="overflow-hidden text-ellipsis whitespace-nowrap">
                   Filter
                 </span>
                 {activeFilters.length > 0 && (
-                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-surface px-1.5 text-xs font-semibold text-primary-foreground">
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-surface px-1.5 text-xs font-semibold text-foreground">
                     {activeFilters.length}
                   </span>
                 )}
               </button>
 
               {filterOpen && (
-                <div className="absolute left-0 top-full z-50 mt-1 w-52 rounded-xl border border-subtle-stroke bg-primary-background py-1 shadow-lg">
+                <div className="absolute left-0 top-full z-50 mt-1 w-52 rounded-xl border border-border bg-background py-1 shadow-lg">
                   {filterCategories.map((cat) => {
                     const isActive = activeFilters.includes(cat)
                     return (
                       <button
                         key={cat}
                         onClick={() => toggleFilter(cat)}
-                        className="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-sm transition-colors duration-150 hover:bg-surface-subtle"
+                        className="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-sm transition-colors duration-150 hover:bg-surface"
                       >
-                        <span className={isActive ? 'text-primary-foreground' : 'text-tertiary-foreground'}>
+                        <span className={isActive ? 'text-foreground' : 'text-muted-foreground'}>
                           {cat}
                         </span>
                         {isActive && (
-                          <span className="text-primary-foreground">
+                          <span className="text-foreground">
                             <CheckIcon />
                           </span>
                         )}
@@ -172,10 +172,10 @@ export default function ArticleGridSection() {
                   })}
                   {activeFilters.length > 0 && (
                     <>
-                      <div className="my-1 h-px bg-subtle-stroke" />
+                      <div className="my-1 h-px bg-border" />
                       <button
                         onClick={clearFilters}
-                        className="flex w-full cursor-pointer items-center px-3 py-2 text-sm text-caption-foreground transition-colors duration-150 hover:bg-surface-subtle hover:text-primary-foreground"
+                        className="flex w-full cursor-pointer items-center px-3 py-2 text-sm text-muted-foreground transition-colors duration-150 hover:bg-surface hover:text-foreground"
                       >
                         Clear all
                       </button>
@@ -190,7 +190,7 @@ export default function ArticleGridSection() {
               <button
                 type="button"
                 onClick={() => { setSortOpen(!sortOpen); setFilterOpen(false) }}
-                className="flex h-10 cursor-pointer items-center justify-start gap-[0.3em] whitespace-nowrap rounded px-0 text-sm font-medium text-primary-foreground transition-colors duration-200 hover:text-caption-foreground"
+                className="flex h-10 cursor-pointer items-center justify-start gap-[0.3em] whitespace-nowrap rounded px-0 text-sm font-medium text-foreground transition-colors duration-200 hover:text-muted-foreground"
               >
                 <ChevronDown className={`transition-transform duration-200 ${sortOpen ? 'rotate-180' : ''}`} />
                 <span className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -199,18 +199,18 @@ export default function ArticleGridSection() {
               </button>
 
               {sortOpen && (
-                <div className="absolute left-0 top-full z-50 mt-1 w-40 rounded-xl border border-subtle-stroke bg-primary-background py-1 shadow-lg">
+                <div className="absolute left-0 top-full z-50 mt-1 w-40 rounded-xl border border-border bg-background py-1 shadow-lg">
                   {(Object.keys(sortLabels) as SortOption[]).map((opt) => (
                     <button
                       key={opt}
                       onClick={() => { setSortBy(opt); setSortOpen(false); setVisibleCount(6) }}
-                      className="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-sm transition-colors duration-150 hover:bg-surface-subtle"
+                      className="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-sm transition-colors duration-150 hover:bg-surface"
                     >
-                      <span className={sortBy === opt ? 'text-primary-foreground' : 'text-tertiary-foreground'}>
+                      <span className={sortBy === opt ? 'text-foreground' : 'text-muted-foreground'}>
                         {sortLabels[opt]}
                       </span>
                       {sortBy === opt && (
-                        <span className="text-primary-foreground">
+                        <span className="text-foreground">
                           <CheckIcon />
                         </span>
                       )}
@@ -230,7 +230,7 @@ export default function ArticleGridSection() {
             <button
               key={cat}
               onClick={() => toggleFilter(cat)}
-              className="flex cursor-pointer items-center gap-1.5 rounded-full bg-surface-subtle px-3 py-1 text-xs font-medium text-primary-foreground transition-colors duration-150 hover:bg-surface"
+              className="flex cursor-pointer items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-xs font-medium text-foreground transition-colors duration-150 hover:bg-surface"
             >
               {cat}
               <CloseIcon />
@@ -238,7 +238,7 @@ export default function ArticleGridSection() {
           ))}
           <button
             onClick={clearFilters}
-            className="cursor-pointer px-1 text-xs font-medium text-caption-foreground transition-colors duration-150 hover:text-primary-foreground"
+            className="cursor-pointer px-1 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:text-foreground"
           >
             Clear all
           </button>
@@ -255,12 +255,12 @@ export default function ArticleGridSection() {
       {/* ── Empty state ── */}
       {sorted.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <p className="text-lg font-medium text-tertiary-foreground">
+          <p className="text-lg font-medium text-muted-foreground">
             No articles match your filters
           </p>
           <button
             onClick={clearFilters}
-            className="mt-3 cursor-pointer text-sm font-medium text-link-foreground transition-colors duration-150 hover:underline"
+            className="mt-3 cursor-pointer text-sm font-medium text-primary transition-colors duration-150 hover:underline"
           >
             Clear filters
           </button>
@@ -272,7 +272,7 @@ export default function ArticleGridSection() {
         <div className="mt-12 flex justify-center">
           <button
             onClick={() => setVisibleCount((c) => c + 3)}
-            className="flex h-10 cursor-pointer items-center justify-center gap-[0.3em] whitespace-nowrap rounded-[2.5rem] bg-surface-subtle px-5 text-sm font-medium text-primary-foreground transition-colors duration-200 hover:bg-surface"
+            className="flex h-10 cursor-pointer items-center justify-center gap-[0.3em] whitespace-nowrap rounded-[2.5rem] bg-surface px-5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-surface"
           >
             Load more
           </button>

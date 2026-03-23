@@ -8,7 +8,7 @@ export default function DotPattern({ className = '', id = 'dot-pattern' }: DotPa
     <svg
       width="100%"
       height="100%"
-      className={`text-default-stroke absolute inset-0 ${className}`}
+      className={`text-input absolute inset-0 ${className}`}
       style={{
         mask: 'radial-gradient(circle, transparent 0%, black 100%)',
         WebkitMask: 'radial-gradient(circle, transparent 0%, black 100%)',

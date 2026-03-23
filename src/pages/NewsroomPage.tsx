@@ -25,7 +25,7 @@ import {
  * ────────────────────────────────────────────── */
 export default function NewsroomPage() {
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-primary-background">
+    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
         title="Newsroom"
         description="The latest news, product announcements, research, and stories from Oxy — the AI-powered CRM platform for go-to-market teams."

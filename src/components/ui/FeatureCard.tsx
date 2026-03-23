@@ -6,20 +6,20 @@ interface FeatureCardProps {
 
 export default function FeatureCard({ capability }: FeatureCardProps) {
   return (
-    <div className="flex flex-col gap-5 border-b border-subtle-stroke p-6 last:border-b-0 lg:border-b-0 lg:border-r lg:p-8 lg:last:border-r-0">
+    <div className="flex flex-col gap-5 border-b border-border p-6 last:border-b-0 lg:border-b-0 lg:border-r lg:p-8 lg:last:border-r-0">
       <div>
-        <h3 className="text-heading-responsive-sm text-primary-foreground">
+        <h3 className="text-heading-responsive-sm text-foreground">
           {capability.title}
         </h3>
-        <p className="mt-2 text-base text-tertiary-foreground">
+        <p className="mt-2 text-base text-muted-foreground">
           {capability.description}
         </p>
       </div>
       <ul className="flex flex-col gap-3">
         {capability.features.map((feature, i) => (
-          <li key={i} className="flex items-start gap-2.5 text-sm text-secondary-foreground">
+          <li key={i} className="flex items-start gap-2.5 text-sm text-foreground">
             <svg
-              className="mt-0.5 h-4 w-4 shrink-0 text-blue-400"
+              className="mt-0.5 h-4 w-4 shrink-0 text-primary"
               viewBox="0 0 16 16"
               fill="none"
             >

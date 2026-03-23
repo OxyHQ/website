@@ -19,12 +19,12 @@ export default function PartnersPage() {
       <main>
         <PartnersHeroSection />
         <div className="contents">
-          <HorizontalLine className="w-full text-subtle-stroke" />
+          <HorizontalLine className="w-full text-border" />
         </div>
         <PartnerProgramsSection />
         <PartnerTestimonialsSection />
         <div className="contents">
-          <HorizontalLine className="w-full text-subtle-stroke" />
+          <HorizontalLine className="w-full text-border" />
         </div>
         <KeepUpToDateSection />
       </main>

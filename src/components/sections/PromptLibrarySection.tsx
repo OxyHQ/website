@@ -26,21 +26,21 @@ function getIcon(iconType: PromptLibraryCard['iconType']) {
 
 function PromptCard({ card }: { card: PromptLibraryCard }) {
   return (
-    <div className="group relative w-64 shrink-0 rounded-[10px] border border-weak-stroke bg-white-100 p-[7px] shadow-[0px_2px_3px_-2px_rgba(28,40,64,0.10),0px_4px_6px_-2px_rgba(28,40,64,0.04)] lg:rounded-xl lg:p-[11px]">
+    <div className="group relative w-64 shrink-0 rounded-[10px] border border-border bg-surface p-[7px] shadow-[0px_2px_3px_-2px_rgba(0,0,0,0.10),0px_4px_6px_-2px_rgba(0,0,0,0.04)] lg:rounded-xl lg:p-[11px]">
       <div className="pointer-events-none select-none">
         <div className="flex flex-col gap-2">
-          <div className="size-5 text-[#505155]">{getIcon(card.iconType)}</div>
+          <div className="size-5 text-muted-foreground">{getIcon(card.iconType)}</div>
           <div className="flex h-13 flex-col gap-0.5 pr-9">
-            <p className="truncate font-medium text-[#242629] text-sm leading-5 tracking-[-0.14px]">{card.title}</p>
-            <p className="line-clamp-2 text-[rgba(0,0,0,0.4)] text-xs leading-4">{card.description}</p>
+            <p className="truncate font-medium text-foreground text-sm leading-5 tracking-[-0.14px]">{card.title}</p>
+            <p className="line-clamp-2 text-foreground/40 text-xs leading-4">{card.description}</p>
           </div>
         </div>
-        <div className="mt-2 flex items-center border-[#EDEFF3] border-t pt-2">
+        <div className="mt-2 flex items-center border-border border-t pt-2">
           <div className="flex items-center gap-1.5">
-            <div className="relative size-4 overflow-hidden rounded-[30%] border border-[rgba(0,0,0,0.05)] bg-blue-500 flex items-center justify-center">
+            <div className="relative size-4 overflow-hidden rounded-[30%] border border-foreground/5 bg-primary flex items-center justify-center">
               <span className="text-white text-[8px] font-bold">O</span>
             </div>
-            <span className="font-medium text-[#505155] text-xs leading-4">Oxy</span>
+            <span className="font-medium text-muted-foreground text-xs leading-4">Oxy</span>
           </div>
         </div>
       </div>
@@ -101,7 +101,7 @@ export default function PromptLibrarySection() {
   return (
     <section>
       <div className="container flex flex-1 flex-col">
-        <div className="flex w-full flex-1 flex-col border-subtle-stroke border-x">
+        <div className="flex w-full flex-1 flex-col border-border border-x">
           <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
             <div className="col-[2/-2] max-w-lg text-center">
               <h2 className="text-pretty text-heading-responsive-md">From one expert to everyone.</h2>

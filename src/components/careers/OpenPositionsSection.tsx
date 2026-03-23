@@ -4,7 +4,7 @@ import { jobDepartments } from '../../data/careers'
 
 function DashedLine() {
   return (
-    <svg width="100%" height="1" className="text-subtle-stroke">
+    <svg width="100%" height="1" className="text-border">
       <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
     </svg>
   )
@@ -12,7 +12,7 @@ function DashedLine() {
 
 function SolidLine() {
   return (
-    <svg width="100%" height="1" className="text-subtle-stroke">
+    <svg width="100%" height="1" className="text-border">
       <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
     </svg>
   )
@@ -47,7 +47,7 @@ export default function OpenPositionsSection() {
 
   return (
     <section className="container" id="open-positions">
-      <div className="flex flex-col overflow-hidden border-subtle-stroke border-x">
+      <div className="flex flex-col overflow-hidden border-border border-x">
         <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
           <div className="flex max-w-lg flex-col gap-4 max-lg:gap-3 text-center col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
             <h2 className="text-pretty text-heading-responsive-md">Open positions.</h2>
@@ -63,7 +63,7 @@ export default function OpenPositionsSection() {
                 key={loc}
                 onClick={() => setActiveLocation(loc)}
                 data-active={activeLocation === loc ? 'true' : 'false'}
-                className={`inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-8 gap-x-1.5 rounded-[10px] px-2.5 text-xs button-outline !border-subtle-stroke !text-tertiary-foreground !text-sm hover:!border-subtle-stroke hover:!bg-secondary-background data-[active='true']:!border-strong-stroke data-[active='false']:!text-tertiary-foreground lg:!text-secondary-foreground lg:text-sm${
+                className={`inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-8 gap-x-1.5 rounded-[10px] px-2.5 text-xs button-outline !border-border !text-muted-foreground !text-sm hover:!border-border hover:!bg-surface data-[active='true']:!border-strong-stroke data-[active='false']:!text-muted-foreground lg:!text-foreground lg:text-sm${
                   activeLocation === loc ? ' pointer-events-none pr-2!' : ''
                 }`}
               >
@@ -75,10 +75,10 @@ export default function OpenPositionsSection() {
 
         {/* Dashed line decorations */}
         <div className="relative grid h-5 grid-cols-12 max-lg:hidden">
-          <svg width="1" height="100%" className="text-subtle-stroke col-2">
+          <svg width="1" height="100%" className="text-border col-2">
             <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
           </svg>
-          <svg width="1" height="100%" className="text-subtle-stroke col-[-3] justify-self-end">
+          <svg width="1" height="100%" className="text-border col-[-3] justify-self-end">
             <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
           </svg>
         </div>
@@ -87,16 +87,16 @@ export default function OpenPositionsSection() {
         <div className="relative grid grid-cols-12">
           {/* Diagonal stripe background */}
           <div
-            className="size-full text-surface-subtle absolute inset-0"
+            className="size-full text-surface absolute inset-0"
             style={{ backgroundImage: 'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)' }}
           />
 
           {/* Top dashed line */}
-          <svg width="100%" height="1" className="text-subtle-stroke absolute top-0 col-span-full">
+          <svg width="100%" height="1" className="text-border absolute top-0 col-span-full">
             <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
           </svg>
 
-          <div className="relative col-[2/-2] bg-white-100 max-xl:col-[1/-1] xl:border-subtle-stroke xl:border-x">
+          <div className="relative col-[2/-2] bg-background max-xl:col-[1/-1] xl:border-border xl:border-x">
             <div className="relative flex flex-col pb-18">
               {filteredDepartments.map((dept) => (
                 <div key={dept.id}>
@@ -104,10 +104,10 @@ export default function OpenPositionsSection() {
                   <SolidLine />
 
                   {/* Department header */}
-                  <div className="relative grid grid-cols-12 bg-surface-subtle py-5 xl:grid-cols-10">
+                  <div className="relative grid grid-cols-12 bg-surface py-5 xl:grid-cols-10">
                     <div className="col-[2/-2] flex items-baseline gap-2">
                       <h3 className="font-display text-xl xl:text-2xl" id={dept.id}>{dept.name}</h3>
-                      <p className="align-super text-accent-foreground text-overline">[{String(dept.jobs.length).padStart(2, '0')}]</p>
+                      <p className="align-super text-muted-foreground text-overline">[{String(dept.jobs.length).padStart(2, '0')}]</p>
                     </div>
                   </div>
 
@@ -122,9 +122,9 @@ export default function OpenPositionsSection() {
                         to={job.href}
                       >
                         {/* Hover overlay */}
-                        <div className="pointer-events-none absolute inset-0 bg-secondary-background opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
+                        <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
                         {/* Row number */}
-                        <p className="relative col-[2/-2] row-1 mb-0.5 text-caption-foreground text-xs tabular-nums tracking-tight! md:col-1 md:row-1 md:mb-0 md:justify-self-center xl:text-sm">
+                        <p className="relative col-[2/-2] row-1 mb-0.5 text-muted-foreground text-xs tabular-nums tracking-tight! md:col-1 md:row-1 md:mb-0 md:justify-self-center xl:text-sm">
                           {String(jobIndex + 1).padStart(2, '0')}
                         </p>
                         {/* Job title */}
@@ -132,7 +132,7 @@ export default function OpenPositionsSection() {
                           {job.title}
                         </h4>
                         {/* Location */}
-                        <p className="relative col-[2/-3] row-3 text-accent-foreground text-sm max-md:line-clamp-2 md:truncate md:col-[2/-2] md:row-2 lg:col-[7/-2] lg:row-1 lg:text-base xl:col-[7/-2]">
+                        <p className="relative col-[2/-3] row-3 text-muted-foreground text-sm max-md:line-clamp-2 md:truncate md:col-[2/-2] md:row-2 lg:col-[7/-2] lg:row-1 lg:text-base xl:col-[7/-2]">
                           {job.location}
                         </p>
                         {/* Arrow */}
@@ -141,7 +141,7 @@ export default function OpenPositionsSection() {
                           height="14"
                           viewBox="0 0 14 14"
                           fill="none"
-                          className="col-11 row-3 self-center justify-self-end text-accent-foreground transition-[translate,color] duration-400 ease-in-out group-hover:translate-x-0.5 group-hover:duration-150 group-active:translate-x-0.5 group-active:duration-50 md:row-2 lg:col-12 lg:row-1 lg:justify-self-center xl:col-[-2/-1]"
+                          className="col-11 row-3 self-center justify-self-end text-muted-foreground transition-[translate,color] duration-400 ease-in-out group-hover:translate-x-0.5 group-hover:duration-150 group-active:translate-x-0.5 group-active:duration-50 md:row-2 lg:col-12 lg:row-1 lg:justify-self-center xl:col-[-2/-1]"
                         >
                           <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
                         </svg>

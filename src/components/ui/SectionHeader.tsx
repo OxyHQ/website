@@ -23,11 +23,11 @@ export default function SectionHeader({
   return (
     <header className={`flex w-full flex-col ${alignment} ${className}`}>
       {badge && <Badge className="mb-4">{badge}</Badge>}
-      <h2 className={`${headingClass} text-pretty text-primary-foreground`}>
+      <h2 className={`${headingClass} text-pretty text-foreground`}>
         {title}
       </h2>
       {subtitle && (
-        <p className="mt-4 max-w-2xl text-pretty text-lg text-tertiary-foreground">
+        <p className="mt-4 max-w-2xl text-pretty text-lg text-muted-foreground">
           {subtitle}
         </p>
       )}

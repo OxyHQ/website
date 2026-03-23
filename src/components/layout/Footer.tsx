@@ -5,7 +5,7 @@ import Logo from '../ui/Logo'
 /* ─── SVG Icons ─── */
 function ExternalArrow() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="ml-0.5 -rotate-45 text-caption-foreground transition-colors duration-200 ease-in-out-cubic group-hover:text-secondary-foreground group-hover:delay-50 group-focus:text-secondary-foreground group-focus:delay-50 group-active:text-primary-foreground group-active:duration-50">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="ml-0.5 -rotate-45 text-muted-foreground transition-colors duration-200 ease-in-out-cubic group-hover:text-foreground group-hover:delay-50 group-focus:text-foreground group-focus:delay-50 group-active:text-foreground group-active:duration-50">
       <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
     </svg>
   )
@@ -52,50 +52,41 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="relative flex min-h-[40svh] w-full flex-col justify-between bg-primary-background">
+    <footer className="relative flex w-full flex-col justify-between bg-background">
       {/* Top border line */}
-      <svg width="100%" height="1" className="text-subtle-stroke">
+      <svg width="100%" height="1" className="text-border">
         <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
       </svg>
 
       <div className="container flex-1">
-        <div className="grid grid-cols-12 gap-y-12 px-px pt-20 pb-12">
-          {/* Logo column */}
-          <div className="col-[1/2] max-lg:col-[1/3] max-md:col-[1/4] max-xs:col-[1/5]">
-            <Link className="-m-1.5 inline-block w-[calc(100%+12px)] rounded-lg p-1.5" aria-label="Oxy homepage" to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-              <Logo className="h-6" />
-            </Link>
-          </div>
-
-          {/* Footer columns using CSS multi-column layout */}
-          <div className="col-[5/-1] columns-4 gap-0 max-xl:col-[4/-1] max-xl:columns-3 max-lg:col-[1/-1] max-lg:columns-2 max-xs:columns-1">
+        <div className="px-px pt-10 pb-4">
+          {/* Footer columns using CSS multi-column layout — full width */}
+          <div className="columns-4 gap-0 max-xl:columns-3 max-lg:columns-2 max-xs:columns-1">
             {footerColumns.map((column) => (
-              <div key={column.title} className="break-inside-avoid pb-7">
-                <span className="text-caption-foreground text-sm">
-                  <h2 className="py-1 text-caption-foreground text-sm">{column.title}</h2>
-                </span>
+              <div key={column.title} className="break-inside-avoid pb-5">
+                <h2 className="py-1 text-foreground text-sm font-medium">{column.title}</h2>
                 <ul className="flex flex-col">
                   {column.links.map((link) => (
                     <li key={link.label}>
                       {link.href.startsWith('/') ? (
                         <Link
                           to={link.href}
-                          className="group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-tertiary-foreground transition-[color] duration-150 ease-out hover:text-secondary-foreground focus-visible:text-secondary-foreground active:text-primary-foreground active:duration-50"
+                          className="group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-muted-foreground transition-[color] duration-150 ease-out hover:text-foreground focus-visible:text-foreground active:text-foreground active:duration-50"
                         >
                           <span className="attio-group-hover-underline group-hover:duration-150">{link.label}</span>
                           {link.isNew && (
-                            <div className="ml-1.5 rounded-[10px] bg-blue-450 px-1.5 py-1 font-normal text-[10px] text-white-100 leading-[7px] tracking-normal">New</div>
+                            <div className="ml-1.5 rounded-[10px] bg-primary px-1.5 py-1 font-normal text-[10px] text-primary-foreground leading-[7px] tracking-normal">New</div>
                           )}
                         </Link>
                       ) : (
                         <a
                           href={link.href}
                           {...(link.isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                          className="group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-tertiary-foreground transition-[color] duration-150 ease-out hover:text-secondary-foreground focus-visible:text-secondary-foreground active:text-primary-foreground active:duration-50"
+                          className="group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-muted-foreground transition-[color] duration-150 ease-out hover:text-foreground focus-visible:text-foreground active:text-foreground active:duration-50"
                         >
                           <span className="attio-group-hover-underline group-hover:duration-150">{link.label}</span>
                           {link.isNew && (
-                            <div className="ml-1.5 rounded-[10px] bg-blue-450 px-1.5 py-1 font-normal text-[10px] text-white-100 leading-[7px] tracking-normal">New</div>
+                            <div className="ml-1.5 rounded-[10px] bg-primary px-1.5 py-1 font-normal text-[10px] text-primary-foreground leading-[7px] tracking-normal">New</div>
                           )}
                           {link.isExternal && <ExternalArrow />}
                         </a>
@@ -110,34 +101,51 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="w-full bg-secondary-background">
+      <div className="w-full">
         <div className="container">
-          <div className="flex flex-wrap items-center justify-between gap-6 px-px py-10">
-            {/* Social icons */}
-            <div className="-ml-1 flex items-center gap-1">
+          {/* Divider */}
+          <svg width="100%" height="1" className="text-border">
+            <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
+          </svg>
+
+          {/* Logo + Social row */}
+          <div className="flex flex-wrap items-center justify-between gap-6 px-px pt-4 pb-4">
+            <div className="flex flex-col gap-3">
+              <Link className="-m-1.5 inline-block w-fit rounded-lg p-1.5" aria-label="Oxy homepage" to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                <Logo className="h-11" />
+              </Link>
+              <p className="max-w-lg text-sm text-muted-foreground">Oxy is the AI-native CRM that deeply understands your business. Search, update, and create across your entire workspace just by asking — powered by Universal Context, a unified intelligence layer built into every interaction.</p>
+            </div>
+            <div className="flex items-center gap-3">
               {socialLinks.map(({ label, icon: Icon, href }) => (
                 <a
                   key={label}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex size-7 shrink-0 items-center justify-center rounded-lg text-caption-foreground transition-colors duration-400 ease-in-out hover:text-tertiary-foreground hover:duration-150 active:text-secondary-foreground active:duration-50"
+                  className="group flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-400 ease-in-out hover:text-foreground hover:duration-150 active:text-foreground active:duration-50"
                   aria-label={`Oxy on ${label}`}
                 >
                   <Icon />
                 </a>
               ))}
             </div>
+          </div>
 
-            {/* Copyright & legal links */}
-            <div className="flex flex-wrap items-center gap-4 font-normal text-caption-foreground text-xs">
-              <p>Made with 💚 in the 🌎 by Oxy.</p>
-              <div className="flex flex-wrap items-center gap-x-6">
-                <a className="-mx-1 rounded-lg p-1 transition-colors duration-400 ease-in-out hover:text-tertiary-foreground hover:duration-150 active:text-secondary-foreground active:duration-50" href="#">Terms &amp; Conditions</a>
-                <a className="-mx-1 rounded-lg p-1 transition-colors duration-400 ease-in-out hover:text-tertiary-foreground hover:duration-150 active:text-secondary-foreground active:duration-50" href="#">Privacy Policy</a>
-                <a className="-mx-1 rounded-lg p-1 transition-colors duration-400 ease-in-out hover:text-tertiary-foreground hover:duration-150 active:text-secondary-foreground active:duration-50" href="#">LLMs</a>
-              </div>
-            </div>
+          {/* Legal links grid */}
+          <div className="grid grid-cols-4 gap-x-6 gap-y-2 px-px pb-6 font-normal text-muted-foreground text-sm max-lg:grid-cols-3 max-md:grid-cols-2">
+            <a className="transition-colors duration-150 hover:text-foreground" href="#">Legal</a>
+            <a className="transition-colors duration-150 hover:text-foreground" href="#">Privacy Policy</a>
+            <a className="transition-colors duration-150 hover:text-foreground" href="#">Cookie Policy</a>
+            <a className="transition-colors duration-150 hover:text-foreground" href="#">Accessibility</a>
+            <a className="transition-colors duration-150 hover:text-foreground" href="#">Terms &amp; Conditions</a>
+            <a className="transition-colors duration-150 hover:text-foreground" href="#">LLMs</a>
+            <Link className="transition-colors duration-150 hover:text-foreground" to="/settings">Settings</Link>
+          </div>
+
+          {/* Copyright */}
+          <div className="px-px pb-4 font-normal text-muted-foreground text-xs">
+            <p>Made with 💚 in the 🌎 by Oxy.</p>
           </div>
         </div>
       </div>

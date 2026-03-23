@@ -11,12 +11,12 @@ export default function PricingFaqSection() {
   return (
     <section className="">
       <div className="container">
-        <div className="border-subtle-stroke grid grid-cols-12 gap-x-6 pt-20 lg:pt-32 xl:pt-44 pb-16 lg:pb-24 xl:pb-32">
+        <div className="border-border grid grid-cols-12 gap-x-6 pt-20 lg:pt-32 xl:pt-44 pb-16 lg:pb-24 xl:pb-32">
           <div className="col-span-12 xl:col-start-2 xl:col-end-12">
             <div className="space-y-4 lg:space-y-6 mx-auto max-w-2xl">
               <h2
                 id="faq"
-                className="pr-6 text-heading-responsive-md text-secondary-foreground"
+                className="pr-6 text-heading-responsive-md text-foreground"
               >
                 Frequently asked questions.
               </h2>
@@ -29,14 +29,14 @@ export default function PricingFaqSection() {
                       key={index}
                       data-state={isOpen ? 'open' : 'closed'}
                       data-orientation="vertical"
-                      className="relative border-weak-stroke border-b py-7 text-base"
+                      className="relative border-border border-b py-7 text-base"
                     >
                       <h3 data-orientation="vertical" data-state={isOpen ? 'open' : 'closed'}>
                         <button
                           onClick={() => toggle(index)}
                           className="group -mx-2 -my-1.5 flex w-[calc(100%+12px)] cursor-pointer items-start justify-between gap-x-6 rounded-xl px-2 py-1.5 text-left outline-hidden focus-visible:ring-3"
                         >
-                          <span className="font-semibold text-secondary-foreground">
+                          <span className="font-semibold text-foreground">
                             {item.question}
                           </span>
                           <svg
@@ -44,7 +44,7 @@ export default function PricingFaqSection() {
                             height="12"
                             strokeWidth="1.5"
                             stroke="currentColor"
-                            className="mt-1.25 shrink-0 text-white-900 transition-colors duration-400 ease-in-out group-hover:text-black-800 group-hover:duration-150 group-active:text-black-800 group-active:duration-50 group-data-open:text-black-800"
+                            className="mt-1.25 shrink-0 text-muted-foreground transition-colors duration-400 ease-in-out group-hover:text-foreground group-hover:duration-150 group-active:text-foreground group-active:duration-50 group-data-open:text-foreground"
                           >
                             <line x1="0" y1="0.75" x2="20%" y2="0.75" />
                             <line x1="0.75" y1="0" x2="0.75" y2="100%" />
@@ -77,7 +77,7 @@ export default function PricingFaqSection() {
                       >
                         <div style={{ overflow: 'hidden' }}>
                           <div className="pt-3 pb-1">
-                            <p className="text-tertiary-foreground">
+                            <p className="text-muted-foreground">
                               {item.answer}
                             </p>
                           </div>

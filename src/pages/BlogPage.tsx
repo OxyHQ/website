@@ -6,11 +6,11 @@ import BlogLatestSection from '../components/blog/BlogLatestSection'
 
 export default function BlogPage() {
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-primary-background">
+    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <Navbar />
       <main>
         <div className="container">
-          <div className="border-subtle-stroke border-x">
+          <div className="border-border border-x">
             <BlogFeaturedSection />
             <BlogGridSection />
           </div>

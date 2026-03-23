@@ -44,11 +44,11 @@ export default function DocsContent() {
       {/* Header */}
       <header id="header" className="relative leading-none">
         <div className="mt-0.5 space-y-2.5">
-          <div className="eyebrow h-5 text-[#818cf8] text-sm font-semibold">Get started</div>
+          <div className="eyebrow h-5 text-primary text-sm font-semibold">Get started</div>
           <div className="flex flex-col sm:flex-row items-start sm:items-center relative gap-2 min-w-0">
             <h1
               id="page-title"
-              className="text-2xl sm:text-3xl text-gray-200 tracking-tight [overflow-wrap:anywhere] font-bold break-all"
+              className="text-2xl sm:text-3xl text-foreground tracking-tight [overflow-wrap:anywhere] font-bold break-all"
             >
               Overview
             </h1>
@@ -75,7 +75,7 @@ export default function DocsContent() {
         {docsCards.map((card) => (
           <div
             key={card.title}
-            className="card block font-normal group relative my-2 ring-2 ring-transparent rounded-2xl bg-[#0f1117] border border-white/10 overflow-hidden w-full cursor-pointer hover:!border-[#818cf8]"
+            className="card block font-normal group relative my-2 ring-2 ring-transparent rounded-2xl bg-background border border-white/10 overflow-hidden w-full cursor-pointer hover:!border-primary"
             tabIndex={0}
             role="link"
           >
@@ -86,14 +86,14 @@ export default function DocsContent() {
                 aria-hidden="true"
                 style={{ display: 'contents', color: 'inherit', textDecoration: 'none' }}
               >
-                <div className="h-6 w-6 text-gray-100">
+                <div className="h-6 w-6 text-foreground">
                   <CardIcon icon={card.icon} />
                 </div>
                 <div className="w-full">
                   <h2 className="not-prose font-semibold text-base text-white mt-4">
                     {card.title}
                   </h2>
-                  <div className="prose mt-1 font-normal text-base leading-6 text-gray-400">
+                  <div className="prose mt-1 font-normal text-base leading-6 text-muted-foreground">
                     <p>{card.description}</p>
                   </div>
                 </div>
@@ -108,17 +108,17 @@ export default function DocsContent() {
       {/* Footer */}
       <footer
         id="footer"
-        className="flex gap-12 justify-between pt-10 border-t border-gray-800/50 sm:flex pb-28"
+        className="flex gap-12 justify-between pt-10 border-t border-border sm:flex pb-28"
       >
         <div></div>
         <a
           href="#"
-          className="group flex items-center gap-3 text-base font-semibold text-gray-300 hover:text-gray-100"
+          className="group flex items-center gap-3 text-base font-semibold text-foreground hover:text-foreground"
         >
           Quickstart
           <svg
             viewBox="0 0 3 6"
-            className="overflow-visible w-auto h-1.5 text-gray-600 group-hover:text-gray-300"
+            className="overflow-visible w-auto h-1.5 text-muted-foreground group-hover:text-foreground"
           >
             <path
               d="M0 0L3 3L0 6"

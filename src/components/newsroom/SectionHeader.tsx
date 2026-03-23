@@ -41,14 +41,14 @@ export default function SectionHeader({
   return (
     <div className="mb-6 flex items-baseline justify-between">
       <div>
-        <h2 className="text-xl font-semibold tracking-[-0.01em] text-primary-foreground">
+        <h2 className="text-xl font-semibold tracking-[-0.01em] text-foreground">
           {title}
         </h2>
       </div>
       {href.startsWith('/') ? (
         <Link
           to={href}
-          className="group flex min-h-0 items-center gap-1 text-sm font-medium text-tertiary-foreground transition-colors duration-200 hover:text-primary-foreground"
+          className="group flex min-h-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
         >
           {linkText}
           <ArrowRight />
@@ -56,7 +56,7 @@ export default function SectionHeader({
       ) : (
         <a
           href={href}
-          className="group flex min-h-0 items-center gap-1 text-sm font-medium text-tertiary-foreground transition-colors duration-200 hover:text-primary-foreground"
+          className="group flex min-h-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
         >
           {linkText}
           <ArrowRight />

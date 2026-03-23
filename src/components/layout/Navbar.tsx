@@ -34,7 +34,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
       >
         {dropdown.sections.flatMap((section, si) => [
           <li key={`heading-${si}`} className="contents">
-            <p className={`mt-3 mb-1 inline-block px-4 text-[10px] font-semibold uppercase tracking-wider text-caption-foreground ${isPlatform ? 'col-span-2' : ''}`}>
+            <p className={`mt-3 mb-1 inline-block px-4 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground ${isPlatform ? 'col-span-2' : ''}`}>
               {section.heading}
             </p>
           </li>,
@@ -48,11 +48,11 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
 
       {dropdown.sidePanel && (
         <ul className="relative flex w-48 shrink-0 flex-col gap-1.5 p-4 pt-3">
-          <svg width="1" height="100%" className="absolute inset-y-0 left-0 text-primary-foreground/20">
+          <svg width="1" height="100%" className="absolute inset-y-0 left-0 text-foreground/20">
             <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
           </svg>
           <li className="contents">
-            <p className="mt-3 mb-0.5 inline-block px-2.5 text-[10px] font-semibold uppercase tracking-wider text-caption-foreground">
+            <p className="mt-3 mb-0.5 inline-block px-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               {dropdown.sidePanel.heading}
             </p>
           </li>
@@ -61,14 +61,14 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
               {link.href.startsWith('/') ? (
                 <Link
                   to={link.href}
-                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-[10px] border border-transparent px-2.5 text-sm text-primary-foreground transition-colors duration-300 hover:bg-surface"
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-[10px] border border-transparent px-2.5 text-sm text-foreground transition-colors duration-300 hover:bg-surface"
                 >
                   {link.label}
                 </Link>
               ) : (
                 <a
                   href={link.href}
-                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-[10px] border border-transparent px-2.5 text-sm text-primary-foreground transition-colors duration-300 hover:bg-surface"
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-[10px] border border-transparent px-2.5 text-sm text-foreground transition-colors duration-300 hover:bg-surface"
                 >
                   {link.label}
                 </a>
@@ -224,12 +224,12 @@ export default function Navbar() {
       {bannerVisible && (
         <div
           className="site-banner dark isolate flex h-(--site-header-banner-visible-height) w-full items-center justify-center bg-(--color-banner-background)"
-          style={{ boxShadow: '0px 1px 2px 0px oklch(0 0 0 / 0.01), 0px 2px 4px -1px oklch(0 0 0 / 0.02), 0px 4px 8px -2px oklch(0 0 0 / 0.03)' }}
+          style={{ boxShadow: '0px 1px 2px 0px rgba(0,0,0,0.01), 0px 2px 4px -1px rgba(0,0,0,0.02), 0px 4px 8px -2px rgba(0,0,0,0.03)' }}
         >
           <div className="container flex h-full items-center justify-center">
             <div className="relative flex size-full items-stretch justify-center px-12 max-md:justify-start max-md:pl-0">
               <a
-                className="group relative flex size-full items-center justify-center gap-1.5 text-primary-foreground max-md:justify-start"
+                className="group relative flex size-full items-center justify-center gap-1.5 text-foreground max-md:justify-start"
                 href="/"
               >
                 <span className="attio-group-hover-underline relative truncate text-[13px]/5">
@@ -240,11 +240,11 @@ export default function Navbar() {
                 </svg>
               </a>
               <button
-                className="inline-flex cursor-pointer items-center justify-center text-nowrap border text-base transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default size-8 rounded-[10px] button-outline !bg-transparent !border-transparent dark absolute top-1/2 right-0 -translate-y-1/2 hover:!border-tertiary-foreground"
+                className="inline-flex cursor-pointer items-center justify-center text-nowrap border text-base transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default size-8 rounded-[10px] button-outline !bg-transparent !border-transparent dark absolute top-1/2 right-0 -translate-y-1/2 hover:!border-muted-foreground"
                 aria-label="Dismiss banner"
                 onClick={() => setBannerVisible(false)}
               >
-                <svg className="dark:text-white-500 text-tertiary-foreground" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" fill="none">
+                <svg className="text-muted-foreground" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" fill="none">
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="m12.5 5.5-7 7m7 0-7-7" />
                 </svg>
               </button>
@@ -253,7 +253,7 @@ export default function Navbar() {
         </div>
       )}
 
-    <header className="sticky top-0 z-50 border-b border-subtle-stroke bg-primary-background transition-colors duration-300">
+    <header className="sticky top-0 z-50 border-b border-border bg-background transition-colors duration-300">
       <div className="absolute inset-0 -z-10 backdrop-blur-md" />
 
       {/* ─── Hidden measurement panels (off-screen, unstyled, for measuring natural size) ─── */}
@@ -291,10 +291,10 @@ export default function Navbar() {
                     <li key={dd.label}>
                       <button
                         ref={(el) => { triggerRefs.current[dd.label] = el }}
-                        className="group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 hover:bg-surface hover:text-primary-foreground"
+                        className="group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 hover:bg-surface hover:text-foreground"
                         style={{
                           background: activeDropdown === dd.label ? 'var(--color-surface)' : undefined,
-                          color: activeDropdown === dd.label ? 'var(--color-primary-foreground)' : 'var(--color-tertiary-foreground)',
+                          color: activeDropdown === dd.label ? 'var(--color-foreground)' : 'var(--color-muted-foreground)',
                         }}
                         onMouseEnter={() => openDropdown(dd.label)}
                         aria-expanded={activeDropdown === dd.label}
@@ -309,7 +309,7 @@ export default function Navbar() {
                       {link.href.startsWith('/') ? (
                         <Link
                           to={link.href}
-                          className="inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] text-tertiary-foreground transition-colors duration-300 hover:bg-surface hover:text-primary-foreground"
+                          className="inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] text-muted-foreground transition-colors duration-300 hover:bg-surface hover:text-foreground"
                           onMouseEnter={scheduleClose}
                         >
                           {link.label}
@@ -317,7 +317,7 @@ export default function Navbar() {
                       ) : (
                         <a
                           href={link.href}
-                          className="inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] text-tertiary-foreground transition-colors duration-300 hover:bg-surface hover:text-primary-foreground"
+                          className="inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] text-muted-foreground transition-colors duration-300 hover:bg-surface hover:text-foreground"
                           onMouseEnter={scheduleClose}
                         >
                           {link.label}
@@ -341,7 +341,7 @@ export default function Navbar() {
                     onMouseLeave={scheduleClose}
                   >
                     <div
-                      className="overflow-hidden rounded-xl border border-subtle-stroke bg-primary-background shadow-lg"
+                      className="overflow-hidden rounded-xl border border-border bg-background shadow-lg"
                       style={{
                         width: activeSize ? activeSize.w : 0,
                         height: activeSize ? activeSize.h : 0,
@@ -380,7 +380,7 @@ export default function Navbar() {
 
             {/* Mobile hamburger */}
             <button
-              className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-tertiary-foreground lg:hidden"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-muted-foreground lg:hidden"
               aria-label="Open menu"
               aria-expanded={mobileOpen}
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -408,13 +408,13 @@ export default function Navbar() {
 
       {/* ─── Mobile drawer ─── */}
       {mobileOpen && (
-        <div className="border-t border-subtle-stroke bg-primary-background lg:hidden">
+        <div className="border-t border-border bg-background lg:hidden">
           <Container>
             <div className="flex flex-col gap-1 py-4">
               {dropdowns.map((dd) => (
                 <div key={dd.label}>
                   <button
-                    className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-base text-secondary-foreground transition-colors hover:bg-surface-subtle"
+                    className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-surface"
                     onClick={() => setMobileAccordion(mobileAccordion === dd.label ? null : dd.label)}
                   >
                     {dd.label}
@@ -425,11 +425,11 @@ export default function Navbar() {
                       {dd.sections.map((s) =>
                         s.items.map((item) => (
                           item.href.startsWith('/') ? (
-                            <Link key={item.title} to={item.href} className="rounded-xl px-4 py-2 text-sm text-tertiary-foreground transition-colors hover:bg-surface-subtle hover:text-secondary-foreground" onClick={() => setMobileOpen(false)}>
+                            <Link key={item.title} to={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground" onClick={() => setMobileOpen(false)}>
                               {item.title}
                             </Link>
                           ) : (
-                            <a key={item.title} href={item.href} className="rounded-xl px-4 py-2 text-sm text-tertiary-foreground transition-colors hover:bg-surface-subtle hover:text-secondary-foreground" onClick={() => setMobileOpen(false)}>
+                            <a key={item.title} href={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground" onClick={() => setMobileOpen(false)}>
                               {item.title}
                             </a>
                           )
@@ -437,11 +437,11 @@ export default function Navbar() {
                       )}
                       {dd.sidePanel?.links.map((link) => (
                         link.href.startsWith('/') ? (
-                          <Link key={link.label} to={link.href} className="rounded-xl px-4 py-2 text-sm text-tertiary-foreground transition-colors hover:bg-surface-subtle hover:text-secondary-foreground" onClick={() => setMobileOpen(false)}>
+                          <Link key={link.label} to={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground" onClick={() => setMobileOpen(false)}>
                             {link.label}
                           </Link>
                         ) : (
-                          <a key={link.label} href={link.href} className="rounded-xl px-4 py-2 text-sm text-tertiary-foreground transition-colors hover:bg-surface-subtle hover:text-secondary-foreground" onClick={() => setMobileOpen(false)}>
+                          <a key={link.label} href={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground" onClick={() => setMobileOpen(false)}>
                             {link.label}
                           </a>
                         )
@@ -452,18 +452,18 @@ export default function Navbar() {
               ))}
               {simpleNavLinks.map((link) => (
                 link.href.startsWith('/') ? (
-                  <Link key={link.label} to={link.href} className="rounded-xl px-4 py-3 text-base text-secondary-foreground transition-colors hover:bg-surface-subtle" onClick={() => setMobileOpen(false)}>
+                  <Link key={link.label} to={link.href} className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-surface" onClick={() => setMobileOpen(false)}>
                     {link.label}
                   </Link>
                 ) : (
-                  <a key={link.label} href={link.href} className="rounded-xl px-4 py-3 text-base text-secondary-foreground transition-colors hover:bg-surface-subtle" onClick={() => setMobileOpen(false)}>
+                  <a key={link.label} href={link.href} className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-surface" onClick={() => setMobileOpen(false)}>
                     {link.label}
                   </a>
                 )
               ))}
-              <hr className="my-2 border-subtle-stroke" />
+              <hr className="my-2 border-border" />
               <div className="flex items-center justify-between px-4 py-2">
-                <span className="text-sm text-tertiary-foreground">Theme</span>
+                <span className="text-sm text-muted-foreground">Theme</span>
                 <ThemeToggle />
               </div>
               <div className="flex flex-col gap-2 px-4 pt-2">

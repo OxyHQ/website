@@ -13,11 +13,11 @@ function DocsSidebar() {
   const location = useLocation()
 
   return (
-    <aside className="hidden lg:block w-[19.5rem] shrink-0 border-r border-subtle-stroke">
+    <aside className="hidden lg:block w-[19.5rem] shrink-0 border-r border-border">
       <div className="sticky top-[calc(var(--site-header-height,64px)+48px)] h-[calc(100vh-var(--site-header-height,64px)-48px)] overflow-y-auto relative text-sm leading-6 pt-6 pb-10 pl-6 pr-6">
         {docsSidebar.map((section, sectionIdx) => (
           <div key={section.title} className={sectionIdx === 0 ? '' : 'mt-8'}>
-            <h5 className="mb-2.5 font-semibold text-secondary-foreground pl-4">
+            <h5 className="mb-2.5 font-semibold text-foreground pl-4">
               {section.title}
             </h5>
             <ul className="space-y-px">
@@ -28,8 +28,8 @@ function DocsSidebar() {
                     <a
                       className={
                         isActive
-                          ? 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl w-full outline-offset-[-1px] bg-[var(--color-blue-500)]/10 text-[var(--color-blue-500)] [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]'
-                          : 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-secondary-background text-tertiary-foreground hover:text-secondary-foreground'
+                          ? 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl w-full outline-offset-[-1px] bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]'
+                          : 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-surface text-muted-foreground hover:text-foreground'
                       }
                       href={item.href}
                     >
@@ -53,21 +53,21 @@ export default function DocsIntroPage() {
   return (
     <div className="relative antialiased">
       {/* Docs sub-navbar with tabs - sticky below main navbar */}
-      <div className="sticky top-[var(--site-header-height,64px)] z-40 border-b border-subtle-stroke bg-primary-background">
+      <div className="sticky top-[var(--site-header-height,64px)] z-40 border-b border-border bg-background">
         <div className="container">
           <div className="hidden lg:flex h-12 lg:pl-[19.5rem]">
             <div className="h-full flex text-sm gap-x-6">
-              <a className="group relative h-full gap-2 flex items-center font-medium text-secondary-foreground [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]" href="/developers/docs">
+              <a className="group relative h-full gap-2 flex items-center font-medium text-foreground [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]" href="/developers/docs">
                 Overview
-                <div className="absolute bottom-0 h-[1.5px] w-full left-0 bg-[var(--color-blue-500)]" />
+                <div className="absolute bottom-0 h-[1.5px] w-full left-0 bg-primary" />
               </a>
-              <a className="group relative h-full gap-2 flex items-center font-medium text-tertiary-foreground hover:text-secondary-foreground" href="#">
+              <a className="group relative h-full gap-2 flex items-center font-medium text-muted-foreground hover:text-foreground" href="#">
                 App SDK
               </a>
-              <a className="group relative h-full gap-2 flex items-center font-medium text-tertiary-foreground hover:text-secondary-foreground" href="#">
+              <a className="group relative h-full gap-2 flex items-center font-medium text-muted-foreground hover:text-foreground" href="#">
                 REST API
               </a>
-              <a className="group relative h-full gap-2 flex items-center font-medium text-tertiary-foreground hover:text-secondary-foreground" href="#">
+              <a className="group relative h-full gap-2 flex items-center font-medium text-muted-foreground hover:text-foreground" href="#">
                 MCP
               </a>
             </div>
@@ -103,10 +103,10 @@ export default function DocsIntroPage() {
 
           {/* Hero content */}
           <div className="relative z-10 px-4 py-16 lg:py-48 lg:pb-24 max-w-3xl mx-auto">
-            <h1 className="block text-4xl font-medium text-center text-zinc-50 tracking-tight">
+            <h1 className="block text-4xl font-medium text-center text-foreground tracking-tight">
               Documentation
             </h1>
-            <div className="max-w-xl mx-auto px-4 mt-4 text-lg text-center text-zinc-500">
+            <div className="max-w-xl mx-auto px-4 mt-4 text-lg text-center text-foreground0">
               Meet the next generation of documentation. AI-native, beautiful out-of-the-box, and
               built for developers and teams.
             </div>
@@ -125,7 +125,7 @@ export default function DocsIntroPage() {
                     alt={card.title}
                     className="rounded pointer-events-none group-hover:scale-105 transition-all duration-100 hidden dark:block"
                   />
-                  <h3 className="mt-5 text-zinc-50 font-medium">{card.title}</h3>
+                  <h3 className="mt-5 text-foreground font-medium">{card.title}</h3>
                   <span className="mt-1.5">{card.description}</span>
                 </a>
               ))}

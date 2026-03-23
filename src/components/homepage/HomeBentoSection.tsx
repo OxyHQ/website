@@ -18,7 +18,7 @@ export default function HomeBentoSection() {
             <div className="flex items-center justify-between px-5 text-overline">
               <h2 className="flex gap-x-[6px]">
                 <span>[01]</span>
-                <span className="text-black-800">Powerful platform</span>
+                <span className="text-muted-foreground">Powerful platform</span>
               </h2>
               <span>/ item 1 ⋮ 4</span>
             </div>
@@ -26,7 +26,7 @@ export default function HomeBentoSection() {
             <svg
               width="100%"
               height="1"
-              className="text-subtle-stroke mt-5 h-px w-full"
+              className="text-border mt-5 h-px w-full"
             >
               <line
                 x1="0"
@@ -44,7 +44,7 @@ export default function HomeBentoSection() {
           <div className="container relative w-full lg:grid lg:grid-cols-12 lg:gap-x-6 lg:px-0">
             <div className="col-span-10 col-start-2 max-w-[28em] text-balance pt-20 pb-16 text-heading-sm lg:pt-[120px]">
               <h3 className="inline">
-                <span className="font-semibold text-primary-foreground">
+                <span className="font-semibold text-foreground">
                   GTM at full speed.
                 </span>
               </h3>
@@ -57,7 +57,7 @@ export default function HomeBentoSection() {
             <svg
               width="100%"
               height="1"
-              className="text-subtle-stroke absolute top-0 left-1/2 w-screen -translate-x-1/2 lg:inset-x-0 lg:w-full lg:translate-x-0"
+              className="text-border absolute top-0 left-1/2 w-screen -translate-x-1/2 lg:inset-x-0 lg:w-full lg:translate-x-0"
             >
               <line
                 x1="0"
@@ -72,7 +72,7 @@ export default function HomeBentoSection() {
 
             {/* Grid container — 2x2 bento layout */}
             <div
-              className="relative grid w-full gap-px bg-[#E4E7EC] p-px pb-0 col-span-10 col-start-2"
+              className="relative grid w-full gap-px bg-border p-px pb-0 col-span-10 col-start-2"
               style={{
                 gridTemplateColumns: 'repeat(2, 1fr)',
                 gridTemplateRows: 'auto auto',
@@ -81,12 +81,12 @@ export default function HomeBentoSection() {
               {bentoCards.map((card, i) => (
                 <div
                   key={i}
-                  className="scroll-reveal flex w-full flex-col items-start bg-primary-background px-[30px] pt-[30px] pb-[22px] lg:px-[36px] lg:pt-[32px] lg:pb-[24px]"
+                  className="scroll-reveal flex w-full flex-col items-start bg-background px-[30px] pt-[30px] pb-[22px] lg:px-[36px] lg:pt-[32px] lg:pb-[24px]"
                 >
                   <h2 className="mb-[8px] font-display font-semibold! text-lg xl:py-[2px] xl:text-xl">
                     {card.title}
                   </h2>
-                  <p className="mb-[12px] text-accent-foreground">
+                  <p className="mb-[12px] text-muted-foreground">
                     {card.description}
                   </p>
                   {card.href.startsWith('/') ? (
@@ -112,7 +112,7 @@ export default function HomeBentoSection() {
                   )}
 
                   {/* Product mockup placeholder */}
-                  <div className="mt-6 w-full aspect-video rounded-lg bg-gradient-to-br from-[#F3F4F6] to-[#E4E7EC] border border-subtle-stroke overflow-hidden">
+                  <div className="mt-6 w-full aspect-video rounded-lg bg-gradient-to-br from-surface to-border border border-border overflow-hidden">
                     <img
                       src={`/placeholder-bento-${i + 1}.png`}
                       alt={card.title}

@@ -36,5 +36,5 @@ export function VerticalLine({
 }
 
 export function CornerDot({ className = '' }: { className?: string }) {
-  return <div className={`size-1 bg-default-stroke ${className}`} />;
+  return <div className={`size-1 bg-input ${className}`} />;
 }

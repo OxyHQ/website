@@ -6,7 +6,7 @@ export default function IntegrationsSection() {
   const ref = useScrollReveal()
 
   return (
-    <Section className="bg-primary-background" containerClassName="py-20 lg:py-32" withBorders>
+    <Section className="bg-background" containerClassName="py-20 lg:py-32" withBorders>
       <div ref={ref}>
         <div className="scroll-reveal">
           <SectionHeader
@@ -20,7 +20,7 @@ export default function IntegrationsSection() {
           {['Claude', 'ChatGPT', 'Slack', 'Gmail', 'Calendar', 'Salesforce'].map((name) => (
             <div
               key={name}
-              className="flex h-14 items-center justify-center rounded-xl border border-subtle-stroke bg-secondary-background px-6 text-sm font-medium text-tertiary-foreground transition-colors hover:border-default-stroke hover:text-secondary-foreground"
+              className="flex h-14 items-center justify-center rounded-xl border border-border bg-surface px-6 text-sm font-medium text-muted-foreground transition-colors hover:border-input hover:text-foreground"
             >
               {name}
             </div>

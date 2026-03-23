@@ -52,7 +52,7 @@ function ArrowIcon() {
       height="14"
       viewBox="0 0 14 14"
       fill="none"
-      className="relative -translate-x-0.5 -rotate-45 shrink-0 text-secondary-foreground opacity-0 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150"
+      className="relative -translate-x-0.5 -rotate-45 shrink-0 text-foreground opacity-0 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150"
     >
       <path
         stroke="currentColor"
@@ -68,14 +68,14 @@ function ArrowIcon() {
 export default function KeepUpToDateSection() {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6">
-      <div className="border-x border-subtle-stroke">
+      <div className="border-x border-border">
         {/* Header */}
         <header className="grid grid-cols-12 justify-items-start pb-15 pt-40 max-xl:pb-16 max-xl:pt-30 max-lg:pb-15 max-lg:pt-25">
           <div className="col-[2/-2] flex max-w-xl flex-col gap-4 text-start max-lg:gap-3">
             <h2 className="text-pretty text-heading-responsive-md">
               Keep up to date.
             </h2>
-            <p className="text-pretty text-xl text-tertiary-foreground">
+            <p className="text-pretty text-xl text-muted-foreground">
               Get the latest updates on what we&apos;re building.
             </p>
           </div>
@@ -88,10 +88,10 @@ export default function KeepUpToDateSection() {
               <a
                 key={card.title}
                 href={card.href}
-                className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-subtle-stroke p-6 pt-5.5 transition-colors duration-400 ease-in-out hover:border-default-stroke hover:duration-150"
+                className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-border p-6 pt-5.5 transition-colors duration-400 ease-in-out hover:border-input hover:duration-150"
               >
                 {/* Hover background */}
-                <div className="pointer-events-none absolute inset-0 bg-secondary-background opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50" />
+                <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50" />
 
                 {/* Icon + arrow */}
                 <div className="relative flex items-center justify-between">
@@ -101,10 +101,10 @@ export default function KeepUpToDateSection() {
 
                 {/* Text */}
                 <div className="relative flex flex-col gap-1">
-                  <h3 className="font-semibold text-secondary-foreground">
+                  <h3 className="font-semibold text-foreground">
                     {card.title}
                   </h3>
-                  <p className="text-balance text-sm text-tertiary-foreground">
+                  <p className="text-balance text-sm text-muted-foreground">
                     {card.description}
                   </p>
                 </div>

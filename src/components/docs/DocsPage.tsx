@@ -6,7 +6,7 @@ import type { DocsCard } from '../../data/docs'
 function CardIcon({ icon }: { icon: DocsCard['icon'] }) {
   if (icon === 'react') {
     return (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-[var(--color-blue-500)]">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-primary">
         <circle cx="12" cy="12" r="2.5" />
         <ellipse cx="12" cy="12" rx="10" ry="4" />
         <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" />
@@ -16,7 +16,7 @@ function CardIcon({ icon }: { icon: DocsCard['icon'] }) {
   }
   if (icon === 'server') {
     return (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-[var(--color-blue-500)]">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-primary">
         <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
         <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
         <line x1="6" x2="6.01" y1="6" y2="6" />
@@ -25,7 +25,7 @@ function CardIcon({ icon }: { icon: DocsCard['icon'] }) {
     )
   }
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-[var(--color-blue-500)]">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-primary">
       <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
       <path d="M20 3v4" />
       <path d="M22 5h-4" />
@@ -60,7 +60,7 @@ function CopyPageMenu() {
   return (
     <div ref={menuRef} className="relative items-center shrink-0 min-w-[156px] justify-end ml-auto sm:flex hidden" id="page-context-menu">
       <button
-        className="rounded-l-xl px-3 text-gray-300 py-1.5 border border-white/[0.07] bg-[#191b1f] hover:bg-gray-200/5 border-r-0"
+        className="rounded-l-xl px-3 text-foreground py-1.5 border border-border bg-surface hover:bg-surface border-r-0"
         aria-label="Copy page"
         onClick={copyPage}
       >
@@ -73,7 +73,7 @@ function CopyPageMenu() {
         </div>
       </button>
       <button
-        className="group disabled:pointer-events-none [&>span]:line-clamp-1 overflow-hidden flex items-center py-0.5 gap-1 text-sm text-white/50 group-hover:text-white/70 rounded-none rounded-r-xl border px-3 border-white/[0.07] aspect-square bg-[#191b1f] hover:bg-gray-200/5"
+        className="group disabled:pointer-events-none [&>span]:line-clamp-1 overflow-hidden flex items-center py-0.5 gap-1 text-sm text-white/50 group-hover:text-white/70 rounded-none rounded-r-xl border px-3 border-border aspect-square bg-surface hover:bg-surface"
         aria-label="More actions"
         type="button"
         aria-haspopup="menu"
@@ -81,36 +81,36 @@ function CopyPageMenu() {
         data-state={open ? 'open' : 'closed'}
         onClick={() => setOpen(!open)}
       >
-        <svg width="8" height="24" viewBox="0 -9 3 24" className="transition-transform text-gray-600 overflow-visible group-hover:text-gray-400 rotate-90">
+        <svg width="8" height="24" viewBox="0 -9 3 24" className="transition-transform text-muted-foreground overflow-visible group-hover:text-foreground rotate-90">
           <path d="M0 0L3 3L0 6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 z-50 min-w-[180px] rounded-xl border border-white/[0.07] bg-[#191b1f] shadow-[0px_4px_16px_rgba(0,0,0,0.4),0px_1px_4px_rgba(0,0,0,0.3)] py-1">
+        <div className="absolute right-0 top-full mt-1 z-50 min-w-[180px] rounded-xl border border-border bg-surface shadow-[0px_4px_16px_rgba(0,0,0,0.4),0px_1px_4px_rgba(0,0,0,0.3)] py-1">
           <button
-            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-300 hover:bg-gray-200/5 rounded-lg mx-1"
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-surface rounded-lg mx-1"
             style={{ width: 'calc(100% - 8px)' }}
             onClick={() => {
               navigator.clipboard.writeText(window.location.href)
               setOpen(false)
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-gray-500">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-muted-foreground">
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
             </svg>
             Copy link
           </button>
           <button
-            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-300 hover:bg-gray-200/5 rounded-lg mx-1"
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-surface rounded-lg mx-1"
             style={{ width: 'calc(100% - 8px)' }}
             onClick={() => {
               copyPage()
               setOpen(false)
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-gray-500">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-muted-foreground">
               <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
               <polyline points="14 2 14 8 20 8" />
             </svg>
@@ -118,14 +118,14 @@ function CopyPageMenu() {
           </button>
           <div className="my-1 mx-3 h-px bg-white/[0.07]" />
           <button
-            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-300 hover:bg-gray-200/5 rounded-lg mx-1"
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-surface rounded-lg mx-1"
             style={{ width: 'calc(100% - 8px)' }}
             onClick={() => {
               window.open(window.location.href, '_blank')
               setOpen(false)
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-gray-500">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-muted-foreground">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
               <polyline points="15 3 21 3 21 9" />
               <line x1="10" y1="14" x2="21" y2="3" />
@@ -142,11 +142,11 @@ function DocsSidebar() {
   const location = useLocation()
 
   return (
-    <aside className="hidden lg:block w-[19.5rem] shrink-0 border-r border-subtle-stroke">
+    <aside className="hidden lg:block w-[19.5rem] shrink-0 border-r border-border">
       <div className="sticky top-[calc(var(--site-header-height,64px)+48px)] h-[calc(100vh-var(--site-header-height,64px)-48px)] overflow-y-auto relative text-sm leading-6 pt-6 pb-10 pl-6 pr-6">
           {docsSidebar.map((section, sectionIdx) => (
             <div key={section.title} className={sectionIdx === 0 ? '' : 'mt-8'}>
-              <h5 className="mb-2.5 font-semibold text-secondary-foreground pl-4">
+              <h5 className="mb-2.5 font-semibold text-foreground pl-4">
                 {section.title}
               </h5>
               <ul className="space-y-px">
@@ -157,8 +157,8 @@ function DocsSidebar() {
                       <a
                         className={
                           isActive
-                            ? 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl w-full outline-offset-[-1px] bg-[var(--color-blue-500)]/10 text-[var(--color-blue-500)] [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]'
-                            : 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-secondary-background text-tertiary-foreground hover:text-secondary-foreground'
+                            ? 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl w-full outline-offset-[-1px] bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]'
+                            : 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-surface text-muted-foreground hover:text-foreground'
                         }
                         href={item.href}
                       >
@@ -181,21 +181,21 @@ export default function DocsPage() {
   return (
     <div className="relative antialiased">
       {/* Docs sub-navbar with tabs - sticky below main navbar */}
-      <div className="sticky top-[var(--site-header-height,64px)] z-40 border-b border-subtle-stroke bg-primary-background">
+      <div className="sticky top-[var(--site-header-height,64px)] z-40 border-b border-border bg-background">
         <div className="container">
           <div className="hidden lg:flex h-12 lg:pl-[19.5rem]">
             <div className="h-full flex text-sm gap-x-6">
-              <a className="group relative h-full gap-2 flex items-center font-medium text-secondary-foreground [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]" href="/developers/docs">
+              <a className="group relative h-full gap-2 flex items-center font-medium text-foreground [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]" href="/developers/docs">
                 Overview
-                <div className="absolute bottom-0 h-[1.5px] w-full left-0 bg-[var(--color-blue-500)]" />
+                <div className="absolute bottom-0 h-[1.5px] w-full left-0 bg-primary" />
               </a>
-              <a className="group relative h-full gap-2 flex items-center font-medium text-tertiary-foreground hover:text-secondary-foreground" href="#">
+              <a className="group relative h-full gap-2 flex items-center font-medium text-muted-foreground hover:text-foreground" href="#">
                 App SDK
               </a>
-              <a className="group relative h-full gap-2 flex items-center font-medium text-tertiary-foreground hover:text-secondary-foreground" href="#">
+              <a className="group relative h-full gap-2 flex items-center font-medium text-muted-foreground hover:text-foreground" href="#">
                 REST API
               </a>
-              <a className="group relative h-full gap-2 flex items-center font-medium text-tertiary-foreground hover:text-secondary-foreground" href="#">
+              <a className="group relative h-full gap-2 flex items-center font-medium text-muted-foreground hover:text-foreground" href="#">
                 MCP
               </a>
             </div>
@@ -212,31 +212,31 @@ export default function DocsPage() {
           {/* Header */}
           <header className="relative leading-none">
             <div className="mt-0.5 space-y-2.5">
-              <div className="h-5 text-[var(--color-blue-500)] text-sm font-semibold">Get started</div>
+              <div className="h-5 text-primary text-sm font-semibold">Get started</div>
               <div className="flex flex-col sm:flex-row items-start sm:items-center relative gap-2 min-w-0">
-                <h1 className="text-2xl sm:text-3xl text-secondary-foreground tracking-tight [overflow-wrap:anywhere] font-bold break-all">
+                <h1 className="text-2xl sm:text-3xl text-foreground tracking-tight [overflow-wrap:anywhere] font-bold break-all">
                   Overview
                 </h1>
                 <CopyPageMenu />
               </div>
             </div>
-            <div className="mt-2 text-lg text-tertiary-foreground">
+            <div className="mt-2 text-lg text-muted-foreground">
               <p>Start building Oxy Apps</p>
             </div>
           </header>
 
           {/* Content */}
           <div className="relative mt-8 mb-14 [contain:inline-size] isolate max-w-3xl" data-docs-content>
-            <p className="text-tertiary-foreground leading-7">
+            <p className="text-muted-foreground leading-7">
               Oxy is a revolutionary CRM platform which is highly customisable, incredibly powerful and
               data-driven. In these guides, you can find everything you need to build powerful integrations,
               automations and data pipelines on top of Oxy.
             </p>
-            <p className="text-tertiary-foreground leading-7 mt-4">
+            <p className="text-muted-foreground leading-7 mt-4">
               Our docs cover guides, examples, references and code to help you build apps and share them with
               Oxy's customers or for your own workspace.
             </p>
-            <p className="text-tertiary-foreground leading-7 mt-4">
+            <p className="text-muted-foreground leading-7 mt-4">
               The Oxy Developer Platform consists of three parts:
             </p>
 
@@ -245,20 +245,20 @@ export default function DocsPage() {
               {docsCards.map((card) => (
                 <div
                   key={card.title}
-                  className="card block font-normal group relative ring-2 ring-transparent rounded-2xl bg-secondary-background border border-subtle-stroke overflow-hidden w-full cursor-pointer hover:!border-[var(--color-blue-500)]"
+                  className="card block font-normal group relative ring-2 ring-transparent rounded-2xl bg-surface border border-border overflow-hidden w-full cursor-pointer hover:!border-primary"
                   tabIndex={0}
                   role="link"
                 >
                   <div className="px-6 py-5 relative">
                     <a href={card.href} tabIndex={-1} aria-hidden="true" style={{ display: 'contents', color: 'inherit', textDecoration: 'none' }}>
-                      <div className="h-6 w-6 text-gray-100">
+                      <div className="h-6 w-6 text-foreground">
                         <CardIcon icon={card.icon} />
                       </div>
                       <div className="w-full">
-                        <h2 className="font-semibold text-base text-primary-foreground mt-4">
+                        <h2 className="font-semibold text-base text-foreground mt-4">
                           {card.title}
                         </h2>
-                        <div className="mt-1 font-normal text-base leading-6 text-tertiary-foreground">
+                        <div className="mt-1 font-normal text-base leading-6 text-muted-foreground">
                           <p>{card.description}</p>
                         </div>
                       </div>
@@ -268,7 +268,7 @@ export default function DocsPage() {
               ))}
             </div>
 
-            <p className="text-tertiary-foreground leading-7 mt-4">
+            <p className="text-muted-foreground leading-7 mt-4">
               You can use both the App SDK and REST API in your app to build rich experiences.
             </p>
           </div>
@@ -276,17 +276,17 @@ export default function DocsPage() {
           {/* Feedback */}
           <div className="pb-16 w-full flex flex-col gap-y-8 max-w-3xl">
             <div className="flex flex-row flex-wrap gap-4 items-center justify-between">
-              <p className="inline-block text-sm text-tertiary-foreground whitespace-nowrap">Was this page helpful?</p>
+              <p className="inline-block text-sm text-muted-foreground whitespace-nowrap">Was this page helpful?</p>
               <div className="flex flex-wrap flex-grow gap-3 items-center justify-between">
                 <div className="flex gap-3 items-center">
-                  <button className="px-3.5 py-2 flex flex-row gap-3 items-center rounded-xl text-tertiary-foreground hover:text-secondary-foreground border border-subtle-stroke hover:border-default-stroke">
+                  <button className="px-3.5 py-2 flex flex-row gap-3 items-center rounded-xl text-muted-foreground hover:text-foreground border border-border hover:border-input">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
                       <path d="M7 10v12" />
                       <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z" />
                     </svg>
                     <small className="text-sm font-normal leading-4">Yes</small>
                   </button>
-                  <button className="px-3.5 py-2 flex flex-row gap-3 items-center rounded-xl text-tertiary-foreground hover:text-secondary-foreground border border-subtle-stroke hover:border-default-stroke">
+                  <button className="px-3.5 py-2 flex flex-row gap-3 items-center rounded-xl text-muted-foreground hover:text-foreground border border-border hover:border-input">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
                       <path d="M17 14V2" />
                       <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z" />
@@ -299,10 +299,10 @@ export default function DocsPage() {
           </div>
 
           {/* Pagination */}
-          <div className="px-0.5 flex items-center text-sm font-semibold text-secondary-foreground pb-16 border-t border-subtle-stroke pt-10 max-w-3xl">
+          <div className="px-0.5 flex items-center text-sm font-semibold text-foreground pb-16 border-t border-border pt-10 max-w-3xl">
             <a className="flex items-center ml-auto space-x-3 group" href="#">
-              <span className="group-hover:text-primary-foreground">Quickstart</span>
-              <svg viewBox="0 0 3 6" className="h-1.5 stroke-gray-400 overflow-visible group-hover:stroke-gray-300">
+              <span className="group-hover:text-foreground">Quickstart</span>
+              <svg viewBox="0 0 3 6" className="h-1.5 stroke-muted-foreground overflow-visible group-hover:stroke-foreground">
                 <path d="M0 0L3 3L0 6" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </a>

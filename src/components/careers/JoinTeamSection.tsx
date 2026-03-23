@@ -22,14 +22,14 @@ const bubbles = Array.from({ length: COLS * ROWS }, (_, i) => {
 export default function JoinTeamSection() {
   return (
     <section className="container">
-      <div className="relative border-subtle-stroke border-x">
+      <div className="relative border-border border-x">
         {/* Background dashed grid lines */}
         <div className="absolute inset-0 grid grid-cols-12 max-lg:hidden">
           <div className="col-[2/-2] flex justify-between">
-            <svg width="1" height="100%" className="text-subtle-stroke">
+            <svg width="1" height="100%" className="text-border">
               <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
             </svg>
-            <svg width="1" height="100%" className="text-subtle-stroke">
+            <svg width="1" height="100%" className="text-border">
               <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
             </svg>
           </div>
@@ -38,7 +38,7 @@ export default function JoinTeamSection() {
         <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center !pb-20">
           <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-center col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
             <h2 className="text-pretty inline">Join a team of builders.</h2>{' '}
-            <p className="inline text-pretty font-medium text-black-800">
+            <p className="inline text-pretty font-medium text-muted-foreground">
               We're looking for highly ambitious and talented people to help us drive real change.
             </p>
           </div>
@@ -55,7 +55,7 @@ export default function JoinTeamSection() {
                 {bubbles.map(({ key, left, top, opacity }) => (
                   <div
                     key={key}
-                    className="absolute overflow-hidden rounded-full bg-white-700 after:absolute after:inset-0 after:z-1 after:mix-blend-hard-light after:rounded-full after:bg-linear-to-tl after:from-[#a4adba] after:to-[#e4e7ec] after:opacity-0 after:transition after:duration-300 after:ease-out"
+                    className="absolute overflow-hidden rounded-full bg-muted after:absolute after:inset-0 after:z-1 after:mix-blend-hard-light after:rounded-full after:bg-linear-to-tl after:from-muted-foreground after:to-border after:opacity-0 after:transition after:duration-300 after:ease-out"
                     style={{
                       height: 32,
                       width: 32,

@@ -42,11 +42,11 @@ function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const showGrid = item.showGrid !== false
 
   return (
-    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-[13px] border border-subtle-stroke md:rounded-none md:border-0">
+    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-[13px] border border-border md:rounded-none md:border-0">
       {showGrid && (
         <svg width="40" height="40" fill="none" className="absolute inset-0">
           <g
-            className="transition-colors duration-150 ease-out stroke-white-700/40 group-hover:stroke-white-700/70 dark:stroke-black-500/40 dark:group-hover:stroke-black-500/70"
+            className="transition-colors duration-150 ease-out stroke-border/40 group-hover:stroke-border/70 dark:stroke-muted/40 dark:group-hover:stroke-muted/70"
             strokeWidth=".7"
             strokeMiterlimit="10"
           >
@@ -56,9 +56,9 @@ function ItemIcon({ item }: { item: NavDropdownItemType }) {
         </svg>
       )}
       {IconComponent ? (
-        <IconComponent className="nav-icon isolate size-10 text-tertiary-foreground" />
+        <IconComponent className="nav-icon isolate size-10 text-muted-foreground" />
       ) : (
-        <div className="isolate flex h-10 w-10 items-center justify-center text-sm font-semibold text-blue-400">
+        <div className="isolate flex h-10 w-10 items-center justify-center text-sm font-semibold text-primary">
           {item.title.charAt(0)}
         </div>
       )}
@@ -73,7 +73,7 @@ function ItemContent({ item }: { item: NavDropdownItemType }) {
 
       {/* Text content */}
       <div className="flex w-full min-w-0 flex-col pr-2">
-        <div className="flex w-full items-baseline justify-between gap-1.5 text-primary-foreground">
+        <div className="flex w-full items-baseline justify-between gap-1.5 text-foreground">
           <span className="truncate text-sm">{item.title}</span>
           {/* Arrow icon — shows on hover */}
           <svg
@@ -81,7 +81,7 @@ function ItemContent({ item }: { item: NavDropdownItemType }) {
             height="12"
             viewBox="0 0 12 12"
             fill="none"
-            className="relative shrink-0 text-secondary-foreground opacity-0 max-lg:hidden -translate-x-0.25 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-300 group-active:translate-0 group-active:opacity-100 group-active:duration-50"
+            className="relative shrink-0 text-foreground opacity-0 max-lg:hidden -translate-x-0.25 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-300 group-active:translate-0 group-active:opacity-100 group-active:duration-50"
           >
             <path
               fillRule="evenodd"
@@ -91,7 +91,7 @@ function ItemContent({ item }: { item: NavDropdownItemType }) {
             />
           </svg>
         </div>
-        <p className="truncate text-sm text-accent-foreground">{item.description}</p>
+        <p className="truncate text-sm text-muted-foreground">{item.description}</p>
       </div>
     </>
   )

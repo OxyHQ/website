@@ -28,7 +28,7 @@ export default function NewsroomHeroSection() {
     <section className="mx-auto w-full max-w-[1200px] px-5 pt-[5rem] md:px-8 md:pt-10">
       {/* ── Title ── */}
       <div className="flex flex-col gap-1">
-        <h1 className="shrink-0 text-heading-responsive-lg text-primary-foreground">
+        <h1 className="shrink-0 text-heading-responsive-lg text-foreground">
           Recent news
         </h1>
       </div>
@@ -51,8 +51,8 @@ export default function NewsroomHeroSection() {
                     onClick={() => setActiveCategory(cat)}
                     className={`cursor-pointer whitespace-nowrap rounded-sm transition-colors duration-200 ${
                       activeCategory === cat
-                        ? 'text-primary-foreground'
-                        : 'text-caption-foreground hover:text-tertiary-foreground'
+                        ? 'text-foreground'
+                        : 'text-muted-foreground hover:text-muted-foreground'
                     }`}
                   >
                     {cat}

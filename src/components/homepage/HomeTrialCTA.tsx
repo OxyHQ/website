@@ -5,9 +5,9 @@ export default function HomeTrialCTA() {
   const sectionRef = useScrollReveal()
 
   return (
-    <section ref={sectionRef} className="bg-primary-background">
+    <section ref={sectionRef} className="bg-background">
       <div className="container">
-        <div className="border-subtle-stroke border-x">
+        <div className="border-border border-x">
           <div className="grid grid-cols-12 py-20 lg:py-32">
             <div className="scroll-reveal col-[2/-2] flex flex-col items-center justify-between gap-8 lg:col-[2/7] lg:flex-col lg:items-start">
               <h2 className="text-center text-heading-responsive-md lg:text-left">

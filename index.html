@@ -42,9 +42,11 @@
   </head>
   <body>
     <script>
+      // Apply saved theme mode + color preset before React renders (prevents FOUC).
+      // Values are sourced from @oxyhq/bloom APP_COLOR_PRESETS at runtime by src/theme/.
       (function(){
-        var t = localStorage.getItem('theme');
-        if (t === 'light') document.documentElement.classList.remove('dark');
+        var mode = localStorage.getItem('theme');
+        if (mode === 'light') document.documentElement.classList.remove('dark');
         else document.documentElement.classList.add('dark');
       })();
     </script>

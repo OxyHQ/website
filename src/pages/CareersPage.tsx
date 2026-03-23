@@ -12,7 +12,7 @@ import KeepUpToDateSection from '../components/careers/KeepUpToDateSection'
 
 export default function CareersPage() {
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-primary-background">
+    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
         title="Careers"
         description="Join Oxy and help build the CRM of the future. We're redefining CRM with AI-native features. See open positions in Engineering, Product, Design, and more."

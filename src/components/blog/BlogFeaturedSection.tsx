@@ -12,18 +12,18 @@ export default function BlogFeaturedSection() {
       </div>
 
       {/* Dashed separator */}
-      <svg width="100%" height="1" className="text-subtle-stroke max-lg:hidden">
+      <svg width="100%" height="1" className="text-border max-lg:hidden">
         <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
       </svg>
 
       {/* Featured article link */}
       <a className="group relative block" href={`/blog/${article.slug}`}>
         {/* Hover overlay */}
-        <div className="pointer-events-none absolute inset-0 bg-secondary-background opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
+        <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
 
         {/* Mobile layout */}
         <div className="contents lg:hidden">
-          <svg width="100%" height="1" className="text-subtle-stroke relative">
+          <svg width="100%" height="1" className="text-border relative">
             <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
           </svg>
           <img
@@ -33,7 +33,7 @@ export default function BlogFeaturedSection() {
             className="relative aspect-video w-full"
             src="/images/blog-cover-ask-oxy.png"
           />
-          <svg width="100%" height="1" className="text-subtle-stroke relative">
+          <svg width="100%" height="1" className="text-border relative">
             <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
           </svg>
         </div>
@@ -48,12 +48,12 @@ export default function BlogFeaturedSection() {
             <h2 className="relative text-balance text-heading-responsive-lg mt-8">
               <span className="attio-group-hover-underline">{article.title}</span>
             </h2>
-            <p className="mt-5 line-clamp-3 max-w-[28em] text-pretty text-accent-foreground text-sm">
+            <p className="mt-5 line-clamp-3 max-w-[28em] text-pretty text-muted-foreground text-sm">
               {article.excerpt}
             </p>
             <div className="mt-5 text-sm">
-              <p className="whitespace-nowrap text-caption-foreground max-sm:mt-0.5 lg:max-xl:mt-0.5">
-                <span className="text-tertiary-foreground">{article.author}</span>{' '}
+              <p className="whitespace-nowrap text-muted-foreground max-sm:mt-0.5 lg:max-xl:mt-0.5">
+                <span className="text-muted-foreground">{article.author}</span>{' '}
                 <br className="sm:max-lg:hidden xl:hidden" />
                 <span>{article.authorRole}</span>
               </p>
@@ -73,8 +73,8 @@ export default function BlogFeaturedSection() {
                 <span className="attio-group-hover-underline">{article.title}</span>
               </h2>
               <div className="text-end max-xl:text-sm [text-box-edge:text_alphabetic] [text-box-trim:trim-end]">
-                <p className="whitespace-nowrap text-caption-foreground max-sm:mt-0.5 lg:max-xl:mt-0.5">
-                  <span className="text-tertiary-foreground">{article.author}</span>{' '}
+                <p className="whitespace-nowrap text-muted-foreground max-sm:mt-0.5 lg:max-xl:mt-0.5">
+                  <span className="text-muted-foreground">{article.author}</span>{' '}
                   <br className="sm:max-lg:hidden xl:hidden" />
                   <span>{article.authorRole}</span>
                 </p>
@@ -83,7 +83,7 @@ export default function BlogFeaturedSection() {
           </div>
 
           {/* Solid separator */}
-          <svg width="100%" height="1" className="text-subtle-stroke relative">
+          <svg width="100%" height="1" className="text-border relative">
             <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
           </svg>
         </div>
@@ -93,10 +93,10 @@ export default function BlogFeaturedSection() {
           <div className="relative grid grid-cols-12">
             <div aria-hidden="true" className="grid h-40 w-full overflow-hidden max-xl:h-30 max-lg:h-25 !h-auto absolute -top-5 bottom-0 grid-cols-24">
               <div className="col-[2/-2] flex justify-between">
-                <svg width="1" height="100%" className="text-subtle-stroke">
+                <svg width="1" height="100%" className="text-border">
                   <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
                 </svg>
-                <svg width="1" height="100%" className="text-subtle-stroke">
+                <svg width="1" height="100%" className="text-border">
                   <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
                 </svg>
               </div>
@@ -116,15 +116,15 @@ export default function BlogFeaturedSection() {
 
       {/* Bottom spacing with dashed vertical lines (desktop only) */}
       <div className="contents max-lg:hidden">
-        <svg width="100%" height="1" className="text-subtle-stroke relative">
+        <svg width="100%" height="1" className="text-border relative">
           <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
         </svg>
         <div aria-hidden="true" className="grid h-40 w-full overflow-hidden max-xl:h-30 max-lg:h-25 !h-25 relative grid-cols-24">
           <div className="col-[2/-2] flex justify-between">
-            <svg width="1" height="100%" className="text-subtle-stroke">
+            <svg width="1" height="100%" className="text-border">
               <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
             </svg>
-            <svg width="1" height="100%" className="text-subtle-stroke">
+            <svg width="1" height="100%" className="text-border">
               <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
             </svg>
           </div>

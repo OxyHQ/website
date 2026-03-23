@@ -18,14 +18,14 @@ export default function HomeAdaptiveSection() {
             <div className="flex items-center justify-between px-5 text-overline">
               <h2 className="flex gap-x-[6px]">
                 <span>[02]</span>
-                <span className="text-black-800">Adaptive model</span>
+                <span className="text-muted-foreground">Adaptive model</span>
               </h2>
               <span>/ data &harr; business</span>
             </div>
             <svg
               width="100%"
               height="1"
-              className="text-subtle-stroke mt-5 h-px w-full"
+              className="text-border mt-5 h-px w-full"
             >
               <line
                 x1="0"
@@ -40,12 +40,12 @@ export default function HomeAdaptiveSection() {
           </div>
 
           {/* Content */}
-          <div className="pt-20 lg:flex lg:flex-col lg:items-center lg:border-subtle-stroke lg:border-x lg:pt-[120px]">
+          <div className="pt-20 lg:flex lg:flex-col lg:items-center lg:border-border lg:border-x lg:pt-[120px]">
             <div className="scroll-reveal max-w-[880px] text-heading-sm lg:text-center px-6 lg:px-0">
-              <h3 className="inline font-semibold text-primary-foreground">
+              <h3 className="inline font-semibold text-foreground">
                 A seismic shift in CRM flexibility.{' '}
               </h3>
-              <p className="inline font-medium text-black-800">
+              <p className="inline font-medium text-muted-foreground">
                 Oxy's powerful data model adapts to how your business works, not the
                 other way around. Your business model — perfectly reflected in your CRM.
               </p>
@@ -60,14 +60,14 @@ export default function HomeAdaptiveSection() {
 
           {/* Tabs + product mockup area */}
           <div className="lg:container">
-            <div className="lg:border-subtle-stroke lg:border-x">
+            <div className="lg:border-border lg:border-x">
               {/* Tab buttons */}
               <div className="scrollbar-none flex gap-x-1.5 overflow-scroll py-5 pt-20 pb-4 lg:pt-[120px] justify-center">
                 {tabs.map((tab, i) => (
                   <button
                     key={tab}
-                    className={`button-outline inline-flex h-8 items-center gap-1.5 rounded-[10px] border border-subtle-stroke px-2.5 text-sm text-tertiary-foreground transition-colors duration-300 hover:bg-secondary-background ${
-                      i === 0 ? 'bg-surface-subtle pointer-events-none' : ''
+                    className={`button-outline inline-flex h-8 items-center gap-1.5 rounded-[10px] border border-border px-2.5 text-sm text-muted-foreground transition-colors duration-300 hover:bg-surface ${
+                      i === 0 ? 'bg-surface pointer-events-none' : ''
                     }`}
                   >
                     {tab}
@@ -77,7 +77,7 @@ export default function HomeAdaptiveSection() {
 
               {/* Product mockup placeholder */}
               <div className="scroll-reveal relative py-12">
-                <div className="mx-auto max-w-3xl aspect-[16/10] rounded-xl bg-gradient-to-br from-[#F3F4F6] to-[#E4E7EC] border border-subtle-stroke overflow-hidden">
+                <div className="mx-auto max-w-3xl aspect-[16/10] rounded-xl bg-gradient-to-br from-surface to-border border border-border overflow-hidden">
                   <img
                     src="/placeholder-adaptive.png"
                     alt="Data model"

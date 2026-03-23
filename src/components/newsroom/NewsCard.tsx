@@ -41,13 +41,13 @@ export function NewsCardFeatured({ article }: { article: NewsArticle }) {
       </div>
       {/* Text — text-h2 title + text-meta category/date */}
       <div className="mt-4 flex flex-col gap-1 md:mt-5">
-        <div className="text-heading-responsive-md text-primary-foreground md:pe-10">
+        <div className="text-heading-responsive-md text-foreground md:pe-10">
           {article.title}
         </div>
-        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm text-caption-foreground md:pe-6">
+        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm text-muted-foreground md:pe-6">
           <span>{article.category}</span>
           <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
-            <time className="whitespace-nowrap text-caption-foreground" dateTime={article.date}>
+            <time className="whitespace-nowrap text-muted-foreground" dateTime={article.date}>
               {formatDate(article.date)}
             </time>
           </span>
@@ -86,10 +86,10 @@ export function NewsCardGrid({ article }: { article: NewsArticle }) {
       </div>
       {/* Text */}
       <div className="mt-2 flex flex-col gap-0.5 md:mt-3">
-        <h3 className="text-base font-semibold leading-snug tracking-[-0.01em] text-primary-foreground">
+        <h3 className="text-base font-semibold leading-snug tracking-[-0.01em] text-foreground">
           {article.title}
         </h3>
-        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-caption-foreground">
+        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
           <span>{article.category}</span>
           <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
             <time className="whitespace-nowrap" dateTime={article.date}>
@@ -129,10 +129,10 @@ export function NewsCardCarousel({ article }: { article: NewsArticle }) {
         </div>
       </div>
       <div className="mt-2 flex flex-col gap-0.5 md:mt-3">
-        <h3 className="text-base font-semibold leading-snug tracking-[-0.01em] text-primary-foreground md:pe-6">
+        <h3 className="text-base font-semibold leading-snug tracking-[-0.01em] text-foreground md:pe-6">
           {article.title}
         </h3>
-        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-caption-foreground">
+        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
           <span>{article.category}</span>
           <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
             <time className="whitespace-nowrap" dateTime={article.date}>
@@ -180,10 +180,10 @@ export function NewsCardRow({ article }: { article: NewsArticle }) {
       </div>
       {/* Text — ps-xs on mobile, ps-md on lg */}
       <div className="flex flex-auto flex-col ps-3 lg:ps-5">
-        <div className="mb-1 text-base font-semibold leading-snug tracking-[-0.01em] text-primary-foreground">
+        <div className="mb-1 text-base font-semibold leading-snug tracking-[-0.01em] text-foreground">
           {article.title}
         </div>
-        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-caption-foreground">
+        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
           <span>{article.category}</span>
           <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
             <time className="whitespace-nowrap" dateTime={article.date}>

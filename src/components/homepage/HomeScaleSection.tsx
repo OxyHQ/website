@@ -30,14 +30,14 @@ export default function HomeScaleSection() {
             <div className="flex items-center justify-between px-5 text-overline">
               <h2 className="flex gap-x-[6px]">
                 <span>[04]</span>
-                <span className="text-black-800">Built for scale</span>
+                <span className="text-muted-foreground">Built for scale</span>
               </h2>
               <span>/ growth + security</span>
             </div>
             <svg
               width="100%"
               height="1"
-              className="text-subtle-stroke mt-5 h-px w-full"
+              className="text-border mt-5 h-px w-full"
             >
               <line
                 x1="0"
@@ -53,12 +53,12 @@ export default function HomeScaleSection() {
 
           {/* Content */}
           <div className="container">
-            <div className="border-subtle-stroke lg:border-x py-20 lg:py-32">
+            <div className="border-border lg:border-x py-20 lg:py-32">
               <div className="scroll-reveal text-center">
-                <h3 className="text-heading-sm font-semibold text-primary-foreground">
+                <h3 className="text-heading-sm font-semibold text-foreground">
                   Trusted by thousands of companies worldwide.
                 </h3>
-                <p className="mt-4 text-lg text-accent-foreground">
+                <p className="mt-4 text-lg text-muted-foreground">
                   From startups to enterprises, teams trust Oxy to manage their most
                   important relationships.
                 </p>
@@ -69,7 +69,7 @@ export default function HomeScaleSection() {
                 {logos.map((name) => (
                   <div
                     key={name}
-                    className="flex h-12 items-center justify-center rounded-lg border border-subtle-stroke bg-secondary-background text-sm font-medium text-accent-foreground"
+                    className="flex h-12 items-center justify-center rounded-lg border border-border bg-surface text-sm font-medium text-muted-foreground"
                   >
                     {name}
                   </div>

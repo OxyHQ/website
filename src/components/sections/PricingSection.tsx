@@ -9,7 +9,7 @@ export default function PricingSection() {
 
   return (
     <Section
-      className="bg-primary-background"
+      className="bg-background"
       containerClassName="py-20 lg:py-32"
       withBorders
       id="pricing"

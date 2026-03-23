@@ -16,14 +16,14 @@ export default function HomeEnrichmentSection() {
             <div className="flex items-center justify-between px-5 text-overline">
               <h2 className="flex gap-x-[6px]">
                 <span>[03]</span>
-                <span className="text-black-800">Data enrichment</span>
+                <span className="text-muted-foreground">Data enrichment</span>
               </h2>
               <span>/ speed 1:1</span>
             </div>
             <svg
               width="100%"
               height="1"
-              className="text-subtle-stroke mt-5 h-px w-full"
+              className="text-border mt-5 h-px w-full"
             >
               <line
                 x1="0"
@@ -38,12 +38,12 @@ export default function HomeEnrichmentSection() {
           </div>
 
           {/* Content */}
-          <div className="pt-20 lg:flex lg:flex-col lg:items-center lg:border-subtle-stroke lg:border-x lg:pt-[120px]">
+          <div className="pt-20 lg:flex lg:flex-col lg:items-center lg:border-border lg:border-x lg:pt-[120px]">
             <div className="scroll-reveal max-w-[880px] text-heading-sm lg:text-center px-6 lg:px-0">
-              <h3 className="inline font-semibold text-primary-foreground">
+              <h3 className="inline font-semibold text-foreground">
                 Build fast.{' '}
               </h3>
-              <p className="inline font-medium text-black-800">
+              <p className="inline font-medium text-muted-foreground">
                 Forget months of setup. Oxy syncs immediately with your email and
                 calendar, building a powerful CRM right before your eyes.
               </p>
@@ -57,9 +57,9 @@ export default function HomeEnrichmentSection() {
 
           {/* Product mockup area */}
           <div className="lg:container">
-            <div className="lg:border-subtle-stroke lg:border-x">
+            <div className="lg:border-border lg:border-x">
               <div className="scroll-reveal relative py-12 pt-20 lg:pt-[120px]">
-                <div className="mx-auto max-w-3xl aspect-[16/10] rounded-xl bg-gradient-to-br from-[#F3F4F6] to-[#E4E7EC] border border-subtle-stroke overflow-hidden">
+                <div className="mx-auto max-w-3xl aspect-[16/10] rounded-xl bg-gradient-to-br from-surface to-border border border-border overflow-hidden">
                   <img
                     src="/placeholder-enrichment.png"
                     alt="Data enrichment"

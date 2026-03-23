@@ -5,7 +5,7 @@ import SEO from '../components/SEO'
 
 function DashedLine({ solid = false }: { solid?: boolean }) {
   return (
-    <svg width="100%" height="1" className="text-subtle-stroke col-span-full">
+    <svg width="100%" height="1" className="text-border col-span-full">
       <line
         x1="0"
         y1="0.5"
@@ -21,7 +21,7 @@ function DashedLine({ solid = false }: { solid?: boolean }) {
 
 export default function NotFoundPage() {
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-primary-background">
+    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
         title="Page Not Found"
         description="The page you're looking for doesn't exist."
@@ -30,7 +30,7 @@ export default function NotFoundPage() {
       />
       <Navbar />
       <main className="flex-1">
-        <div className="container border-x border-subtle-stroke">
+        <div className="container border-x border-border">
           <div className="flex h-full flex-col pt-[var(--site-header-height)]">
             <div className="grid grid-cols-12 overflow-hidden">
               {/* Status line */}
@@ -43,7 +43,7 @@ export default function NotFoundPage() {
               {/* Main heading */}
               <div className="col-[2/-2] pt-20 pb-15 lg:pt-30 lg:pb-20">
                 <h1 className="text-heading-responsive-lg">Page not found.</h1>
-                <p className="pt-6 text-secondary-foreground lg:text-xl">
+                <p className="pt-6 text-foreground lg:text-xl">
                   This page does not exist.
                 </p>
               </div>
@@ -52,12 +52,12 @@ export default function NotFoundPage() {
 
               {/* CTA section */}
               <div className="col-[2/-2] py-15 lg:py-20">
-                <p className="max-w-xs text-balance text-secondary-foreground">
+                <p className="max-w-xs text-balance text-foreground">
                   Oxy is AI-native data infrastructure
                   <br className="max-xs:hidden" />
                   for the modern enterprise.
                 </p>
-                <p className="max-w-md text-pretty pt-5 text-tertiary-foreground">
+                <p className="max-w-md text-pretty pt-5 text-muted-foreground">
                   <Link
                     to="/"
                     className="underline decoration-2 decoration-white-500 underline-offset-2 transition-all duration-700 hover:brightness-75 hover:duration-300 active:brightness-50 active:duration-0"

@@ -70,16 +70,16 @@ function GridCard({
   iconType: string
 }) {
   return (
-    <div className="relative grid grid-cols-1 grid-rows-1 bg-primary-background">
+    <div className="relative grid grid-cols-1 grid-rows-1 bg-background">
       {/* Card content */}
       <div className="flex flex-col justify-between gap-3 p-6" style={{ gridColumn: 1, gridRow: 1 }}>
-        <div className="size-5 text-primary-foreground">
+        <div className="size-5 text-foreground">
           <CardIcon iconType={iconType} />
         </div>
         <div>
-          <p className="text-balance text-base text-primary-foreground max-2xl:text-sm">
+          <p className="text-balance text-base text-foreground max-2xl:text-sm">
             {title}
-            <span className="text-accent-foreground"> {subtitle}</span>
+            <span className="text-muted-foreground"> {subtitle}</span>
           </p>
         </div>
       </div>
@@ -126,19 +126,19 @@ function GridCard({
 
       {/* Corner dots */}
       <div
-        className="absolute top-0 left-0 size-1 -translate-x-1/2 -translate-y-1/2 bg-default-stroke"
+        className="absolute top-0 left-0 size-1 -translate-x-1/2 -translate-y-1/2 bg-input"
         style={{ gridColumn: 1, gridRow: 1 }}
       />
       <div
-        className="absolute bottom-0 left-0 size-1 -translate-x-1/2 translate-y-1/2 bg-default-stroke"
+        className="absolute bottom-0 left-0 size-1 -translate-x-1/2 translate-y-1/2 bg-input"
         style={{ gridColumn: 1, gridRow: 1 }}
       />
       <div
-        className="absolute top-0 right-0 size-1 translate-x-1/2 -translate-y-1/2 bg-default-stroke"
+        className="absolute top-0 right-0 size-1 translate-x-1/2 -translate-y-1/2 bg-input"
         style={{ gridColumn: 1, gridRow: 1 }}
       />
       <div
-        className="absolute right-0 bottom-0 size-1 translate-x-1/2 translate-y-1/2 bg-default-stroke"
+        className="absolute right-0 bottom-0 size-1 translate-x-1/2 translate-y-1/2 bg-input"
         style={{ gridColumn: 1, gridRow: 1 }}
       />
     </div>
@@ -149,14 +149,14 @@ export default function UniversalContextSection() {
   const ref = useScrollReveal()
 
   return (
-    <section className="dark relative flex min-h-svh flex-col justify-center overflow-hidden bg-primary-background">
+    <section className="dark relative flex min-h-svh flex-col justify-center overflow-hidden bg-background">
       {/* Background gradient glow */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[60%]" aria-hidden="true">
         <div
           className="absolute inset-x-0 top-0 h-[500px]"
           style={{
             background:
-              'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(99, 132, 255, 0.08) 0%, transparent 100%)',
+              'radial-gradient(ellipse 60% 50% at 50% 0%, color-mix(in srgb, var(--color-primary) 8%, transparent) 0%, transparent 100%)',
           }}
         />
       </div>
@@ -166,12 +166,12 @@ export default function UniversalContextSection() {
           <div className="grid grid-cols-12">
             <div ref={ref} className="col-[2/-2] flex flex-col items-center gap-3">
           {/* "Powered by" label */}
-          <p className="text-disabled-foreground text-lg scroll-reveal">
+          <p className="text-muted-foreground text-lg scroll-reveal">
             Powered by
           </p>
 
           {/* Heading */}
-          <h2 className="relative w-fit text-heading-responsive-lg text-primary-foreground scroll-reveal">
+          <h2 className="relative w-fit text-heading-responsive-lg text-foreground scroll-reveal">
             Universal{' '}
             <span className="relative whitespace-nowrap">
               Context
@@ -216,14 +216,14 @@ export default function UniversalContextSection() {
             {contextCards.map((card, i) => (
               <div
                 key={i}
-                className="flex items-start gap-4 rounded-lg border border-surface bg-primary-background p-5"
+                className="flex items-start gap-4 rounded-lg border border-surface bg-background p-5"
               >
-                <div className="size-5 shrink-0 text-primary-foreground">
+                <div className="size-5 shrink-0 text-foreground">
                   <CardIcon iconType={card.iconType} />
                 </div>
-                <p className="text-sm text-primary-foreground">
+                <p className="text-sm text-foreground">
                   {card.title}
-                  <span className="text-accent-foreground"> {card.subtitle}</span>
+                  <span className="text-muted-foreground"> {card.subtitle}</span>
                 </p>
               </div>
             ))}

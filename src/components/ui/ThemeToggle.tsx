@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { setMode, getSavedMode } from '../../theme'
 
 function SunIcon() {
   return (
@@ -25,24 +26,18 @@ function MoonIcon() {
 }
 
 export default function ThemeToggle() {
-  const [isDark, setIsDark] = useState(() => {
-    return document.documentElement.classList.contains('dark')
-  })
+  const [isDark, setIsDark] = useState(() => getSavedMode() === 'dark')
 
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
-    }
-  }, [isDark])
+  const toggle = () => {
+    const next = isDark ? 'light' : 'dark'
+    setMode(next)
+    setIsDark(!isDark)
+  }
 
   return (
     <button
-      onClick={() => setIsDark(!isDark)}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-tertiary-foreground transition-colors duration-200 hover:bg-surface hover:text-primary-foreground"
+      onClick={toggle}
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-muted-foreground transition-colors duration-200 hover:bg-surface hover:text-foreground"
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       {isDark ? <SunIcon /> : <MoonIcon />}

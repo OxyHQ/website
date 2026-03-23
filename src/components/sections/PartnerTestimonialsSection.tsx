@@ -79,11 +79,11 @@ export default function PartnerTestimonialsSection() {
 
   return (
     <>
-      <HorizontalLine className="w-full text-subtle-stroke" />
+      <HorizontalLine className="w-full text-border" />
 
-      <div className="bg-secondary-background">
+      <div className="bg-surface">
         <div className="mx-auto w-full max-w-[1200px] px-6">
-          <div className="border-x border-subtle-stroke">
+          <div className="border-x border-border">
 
             {/* ── Desktop layout ── */}
             <div className="grid overflow-hidden max-lg:hidden" style={{ gridTemplateColumns: 'repeat(24, minmax(0, 1fr))' }}>
@@ -96,8 +96,8 @@ export default function PartnerTestimonialsSection() {
                     style={{
                       gridColumn: isActive ? 'span 18' : 'span 3',
                       backgroundColor: isActive
-                        ? 'var(--color-primary-background)'
-                        : 'var(--color-secondary-background)',
+                        ? 'var(--color-background)'
+                        : 'var(--color-surface)',
                     }}
                     onClick={() => handleClick(index)}
                   >
@@ -163,7 +163,7 @@ export default function PartnerTestimonialsSection() {
                           <svg
                             width="100%"
                             height="1"
-                            className="absolute inset-x-0 top-0 col-[1/-1] row-[3/3] text-weak-stroke transition-[filter,opacity] duration-400 ease-out"
+                            className="absolute inset-x-0 top-0 col-[1/-1] row-[3/3] text-border transition-[filter,opacity] duration-400 ease-out"
                             style={{
                               filter: isActive ? 'blur(0px)' : 'blur(4px)',
                               opacity: isActive ? 1 : 0,
@@ -175,7 +175,7 @@ export default function PartnerTestimonialsSection() {
                             />
                           </svg>
                           <p
-                            className="absolute left-1/2 top-1/2 col-[1/4] row-[3/3] flex w-fit -translate-x-1/2 -translate-y-1/2 items-center justify-evenly overflow-hidden whitespace-nowrap text-center text-sm font-semibold text-default-stroke transition-[filter,opacity] duration-400 ease-out"
+                            className="absolute left-1/2 top-1/2 col-[1/4] row-[3/3] flex w-fit -translate-x-1/2 -translate-y-1/2 items-center justify-evenly overflow-hidden whitespace-nowrap text-center text-sm font-semibold text-input transition-[filter,opacity] duration-400 ease-out"
                             style={{
                               filter: isActive ? 'blur(0px)' : 'blur(4px)',
                               opacity: isActive ? 1 : 0,
@@ -193,7 +193,7 @@ export default function PartnerTestimonialsSection() {
                             {partner.favoriteFeatures.map((feature) => (
                               <div key={feature} className="flex w-fit shrink-0 items-center gap-1.5">
                                 <FeatureIcon />
-                                <p className="truncate text-sm text-default-stroke">{feature}</p>
+                                <p className="truncate text-sm text-input">{feature}</p>
                               </div>
                             ))}
                           </div>
@@ -205,7 +205,7 @@ export default function PartnerTestimonialsSection() {
                     <div
                       className={`absolute inset-y-0 left-0 -translate-x-1/2 ${index === 0 ? 'hidden' : ''}`}
                     >
-                      <svg width="1" height="100%" className="h-full text-[#7D87A533] backdrop-blur">
+                      <svg width="1" height="100%" className="h-full text-muted-foreground/20 backdrop-blur">
                         <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
                       </svg>
                     </div>
@@ -215,7 +215,7 @@ export default function PartnerTestimonialsSection() {
             </div>
 
             {/* ── Mobile layout ── */}
-            <div className="flex flex-col items-stretch divide-y divide-subtle-stroke lg:hidden">
+            <div className="flex flex-col items-stretch divide-y divide-border lg:hidden">
               {partnerTestimonials.map((partner, index) => {
                 const isActive = index === activeIndex
                 return (
@@ -224,8 +224,8 @@ export default function PartnerTestimonialsSection() {
                     className="relative cursor-pointer overflow-hidden transition-all duration-500 ease-in-out"
                     style={{
                       backgroundColor: isActive
-                        ? 'var(--color-primary-background)'
-                        : 'var(--color-secondary-background)',
+                        ? 'var(--color-background)'
+                        : 'var(--color-surface)',
                       maxHeight: isActive ? '600px' : '60px',
                     }}
                     onClick={() => handleClick(index)}
@@ -257,7 +257,7 @@ export default function PartnerTestimonialsSection() {
                           <div className="flex w-full flex-col gap-6">
                             <AnimatedQuote text={partner.quote} active={isActive} />
                             <p
-                              className="truncate text-sm text-secondary-foreground transition-[filter,opacity] duration-500 ease-out"
+                              className="truncate text-sm text-foreground transition-[filter,opacity] duration-500 ease-out"
                               style={{
                                 filter: isActive ? 'blur(0px)' : 'blur(1px)',
                                 opacity: isActive ? 1 : 0,
@@ -273,7 +273,7 @@ export default function PartnerTestimonialsSection() {
 
                     {/* Bottom bar with label + expand icon */}
                     <div className="absolute inset-x-0 bottom-0 grid h-15 w-full grid-cols-12 items-center text-overline">
-                      <div className="col-[2/-2] flex w-full items-center justify-between transition-colors duration-400 ease-in-out hover:text-primary-foreground hover:duration-150">
+                      <div className="col-[2/-2] flex w-full items-center justify-between transition-colors duration-400 ease-in-out hover:text-foreground hover:duration-150">
                         <p>{partner.partnerType}</p>
                         <ExpandIcon expanded={isActive} />
                       </div>
