@@ -1,0 +1,106 @@
+/* OxyOS theme — citrus palette derived from hero image.
+ * Must override both --variable (Bloom tokens) AND --color-variable
+ * (Tailwind @theme aliases) because @theme resolves var(--background)
+ * at :root scope where the JS inline style wins. */
+.oxyos-theme {
+  /* Bloom tokens */
+  --background: #0b0f0a;
+  --foreground: #e6ede4;
+  --surface: #111a0f;
+  --surface-foreground: #e6ede4;
+  --popover: #111a0f;
+  --popover-foreground: #e6ede4;
+  --primary: #8cc63f;
+  --primary-foreground: #0b0f0a;
+  --secondary: #152010;
+  --secondary-foreground: #e6ede4;
+  --muted: #152010;
+  --muted-foreground: #7d9a72;
+  --accent: #152010;
+  --accent-foreground: #e6ede4;
+  --destructive: hsl(0 84% 60%);
+  --border: rgba(140,198,63,0.12);
+  --input: rgba(140,198,63,0.15);
+  --ring: #8cc63f;
+  --sidebar: #0f160d;
+
+  /* Tailwind @theme aliases — these are what utility classes actually read */
+  --color-background: #0b0f0a;
+  --color-foreground: #e6ede4;
+  --color-primary: #8cc63f;
+  --color-primary-foreground: #0b0f0a;
+  --color-primary-background: #0b0f0a;
+  --color-secondary: #152010;
+  --color-secondary-foreground: #e6ede4;
+  --color-muted: #152010;
+  --color-muted-foreground: #7d9a72;
+  --color-accent: #152010;
+  --color-accent-foreground: #e6ede4;
+  --color-destructive: hsl(0 84% 60%);
+  --color-surface: #111a0f;
+  --color-surface-foreground: #e6ede4;
+  --color-border: rgba(140,198,63,0.12);
+  --color-input: rgba(140,198,63,0.15);
+  --color-ring: #8cc63f;
+  --color-popover: #111a0f;
+  --color-popover-foreground: #e6ede4;
+  --color-sidebar: #0f160d;
+
+  /* Banner */
+  --color-banner-background: #8cc63f;
+
+  /* cursor-theme color vars */
+  --color-theme-bg: #0b0f0a;
+  --color-theme-text: #e6ede4;
+  --color-theme-text-sec: #7d9a72;
+  --color-theme-card: #111a0f;
+  --color-theme-card-hex: #0f160d;
+  --color-theme-card-hover-hex: #172014;
+  --color-theme-border-02: rgba(180,210,60,0.10);
+  --color-theme-accent: #8cc63f;
+  --color-theme-product-chrome: #141e12;
+  --color-theme-product-editor: #111a0f;
+}
+
+/* Buttons */
+.oxyos-theme .btn {
+  background: #8cc63f;
+  color: #0b0f0a;
+}
+.oxyos-theme .btn:hover {
+  opacity: 0.9;
+}
+
+.oxyos-theme .btn--secondary {
+  background: transparent;
+  color: var(--color-theme-text);
+  border: 1px solid rgba(140,198,63,0.25);
+}
+.oxyos-theme .btn--secondary:hover {
+  background: rgba(140,198,63,0.08);
+}
+
+.oxyos-theme .btn-tertiary {
+  color: #8cc63f;
+}
+.oxyos-theme .btn-tertiary:hover {
+  color: #a4d65a;
+}
+
+.oxyos-theme .btn-text {
+  color: #8cc63f;
+}
+.oxyos-theme .btn-text:hover {
+  color: #a4d65a;
+}
+
+/* Card border tint */
+.oxyos-theme .card {
+  border-color: rgba(140,198,63,0.08);
+}
+.oxyos-theme .card-border {
+  border-color: rgba(140,198,63,0.10);
+}
+.oxyos-theme .media-border-container {
+  border-color: rgba(140,198,63,0.10);
+}

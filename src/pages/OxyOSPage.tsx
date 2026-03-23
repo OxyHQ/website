@@ -1,0 +1,17 @@
+import Navbar from '../components/layout/Navbar'
+import Footer from '../components/layout/Footer'
+import OxyOSContent from '../components/oxyos/OxyOSPage'
+
+export default function OxyOSPage() {
+  return (
+    <div className="oxyos-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-[#0b0f0a]">
+      <Navbar />
+      <main className="flex-1">
+        <div className="cursor-theme">
+          <OxyOSContent />
+        </div>
+      </main>
+      <Footer />
+    </div>
+  )
+}
