@@ -621,12 +621,24 @@ export function mountMcp(app: express.Express) {
   })
 
   app.get('/mcp', async (req, res) => {
-    const sessionId = req.headers['mcp-session-id'] as string | undefined
-    if (!sessionId || !transports.has(sessionId)) {
-      res.status(400).json({ error: 'Invalid or missing session ID' })
+    const token = (req.query.token as string) || req.headers.authorization?.replace('Bearer ', '')
+    if (!token || !(await validateToken(token))) {
+      res.status(401).json({ error: 'Invalid or expired token' })
       return
     }
-    await transports.get(sessionId)!.handleRequest(req, res)
+
+    const sessionId = req.headers['mcp-session-id'] as string | undefined
+    if (sessionId && transports.has(sessionId)) {
+      await transports.get(sessionId)!.handleRequest(req, res)
+      return
+    }
+
+    // No session yet — create one (some clients initialize via GET)
+    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID() })
+    transports.set(transport.sessionId!, transport)
+    transport.onclose = () => { transports.delete(transport.sessionId!) }
+    await server.connect(transport)
+    await transport.handleRequest(req, res)
   })
 
   app.delete('/mcp', async (req, res) => {
