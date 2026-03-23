@@ -612,35 +612,42 @@ async function validateToken(token: string): Promise<boolean> {
 export function mountMcp(app: express.Express) {
   const transports = new Map<string, StreamableHTTPServerTransport>()
 
-  async function getOrCreateSession(req: express.Request, res: express.Response): Promise<StreamableHTTPServerTransport | null> {
+  app.post('/mcp', async (req, res) => {
     const token = (req.query.token as string) || req.headers.authorization?.replace('Bearer ', '')
     if (!token || !(await validateToken(token))) {
       res.status(401).json({ error: 'Invalid or expired token' })
-      return null
+      return
     }
 
     const sessionId = req.headers['mcp-session-id'] as string | undefined
+
+    // Existing session
     if (sessionId && transports.has(sessionId)) {
-      return transports.get(sessionId)!
+      await transports.get(sessionId)!.handleRequest(req, res)
+      return
     }
 
-    // New session — create fresh server + transport
+    // New session (initialize request)
     const mcpServer = createMcpServer()
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID() })
-    transports.set(transport.sessionId!, transport)
-    transport.onclose = () => { transports.delete(transport.sessionId!) }
+    transport.onclose = () => {
+      if (transport.sessionId) transports.delete(transport.sessionId)
+    }
     await mcpServer.connect(transport)
-    return transport
-  }
-
-  app.post('/mcp', async (req, res) => {
-    const transport = await getOrCreateSession(req, res)
-    if (transport) await transport.handleRequest(req, res)
+    await transport.handleRequest(req, res)
+    // Store after handleRequest so sessionId is set
+    if (transport.sessionId) {
+      transports.set(transport.sessionId, transport)
+    }
   })
 
   app.get('/mcp', async (req, res) => {
-    const transport = await getOrCreateSession(req, res)
-    if (transport) await transport.handleRequest(req, res)
+    const sessionId = req.headers['mcp-session-id'] as string | undefined
+    if (sessionId && transports.has(sessionId)) {
+      await transports.get(sessionId)!.handleRequest(req, res)
+      return
+    }
+    res.status(400).json({ error: 'No active session. Send initialize first via POST.' })
   })
 
   app.delete('/mcp', async (req, res) => {
