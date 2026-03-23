@@ -466,6 +466,15 @@ body {
 .scroll-reveal-stagger > .scroll-reveal:nth-child(5) { transition-delay: 320ms; }
 .scroll-reveal-stagger > .scroll-reveal:nth-child(6) { transition-delay: 400ms; }
 
+/* Hide scrollbar but keep scroll functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Banner slide down */
 @keyframes slide-down {
   from {

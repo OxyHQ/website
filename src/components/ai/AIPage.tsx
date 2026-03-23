@@ -1,5 +1,17 @@
 import { useState } from 'react'
 import { aiHero, aiDemoTabs, aiFeatureCards } from '../../data/ai'
+import { useScrollReveal } from '../../hooks/useScrollReveal'
+import MorningBriefingMockup from './MorningBriefingMockup'
+
+/* ───────────────────────── Placeholder Mockup ───────────────────────── */
+
+function PlaceholderMockup({ label }: { label: string }) {
+  return (
+    <div className="flex h-full items-center justify-center rounded-2xl border border-foreground/10 bg-[#1a1a1c] p-8 text-foreground/50">
+      {label} demo
+    </div>
+  )
+}
 
 /* ───────────────────────── Icon components ───────────────────────── */
 
@@ -78,36 +90,55 @@ function FrostButton({
   children,
   className = '',
   href,
+  style,
 }: {
   children: React.ReactNode
   className?: string
   href?: string
+  style?: React.CSSProperties
 }) {
-  const classes = `inline-flex items-center gap-1.5 rounded-full border border-foreground/20 bg-foreground/5 px-4 py-2 text-lg font-medium text-foreground backdrop-blur-sm transition hover:bg-foreground/10 ${className}`
+  const classes = `inline-flex items-center gap-1.5 rounded-full border border-foreground/20 bg-foreground/5 px-4 py-2 text-lg font-medium text-foreground backdrop-blur-sm transition-shadow shadow-[0px_0px_7px_1px_rgba(255,255,255,0.1)_inset] hover:shadow-[0px_0px_8px_1px_rgba(255,255,255,0.15)_inset] ${className}`
 
   if (href) {
     return (
-      <a href={href} className={classes}>
+      <a href={href} className={classes} style={style}>
         {children}
       </a>
     )
   }
   return (
-    <button type="button" className={classes}>
+    <button type="button" className={classes} style={style}>
       {children}
     </button>
   )
+}
+
+/* ───────────────────────── Demo Content Map ───────────────────────── */
+
+const demoContent: Record<number, React.ReactNode> = {
+  0: <MorningBriefingMockup />,
+  1: <PlaceholderMockup label="Catch Up" />,
+  2: <PlaceholderMockup label="Action Plan" />,
+  3: <PlaceholderMockup label="Deep Work" />,
+  4: <PlaceholderMockup label="Inbox" />,
+  5: <PlaceholderMockup label="Meeting Prep" />,
+  6: <PlaceholderMockup label="Daily Recap" />,
 }
 
 /* ───────────────────────── Main Page ───────────────────────── */
 
 export default function AIPage() {
   const [activeTab, setActiveTab] = useState(0)
+  const ctaRef = useScrollReveal()
+  const featuresRef = useScrollReveal()
 
   return (
     <div className="text-foreground">
       {/* ── 1. Hero — Split Layout ── */}
       <div className="relative z-0 mx-auto flex min-h-screen w-full max-w-[100rem] flex-col overflow-clip lg:flex-row">
+        {/* Hero gradient background */}
+        <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-[#4867AF] via-[#9CAFB8] via-[62%] to-[#C49577]" />
+
         {/* Left sticky panel */}
         <div className="relative overflow-hidden lg:pointer-events-none lg:sticky lg:inset-0 lg:z-40 lg:flex lg:px-0 lg:max-h-screen lg:max-w-[32rem] mt-12 shrink-0 max-lg:snap-start lg:mt-0 lg:min-h-0 lg:border-r border-border">
           <div className="relative flex w-full lg:pointer-events-auto lg:min-w-[32rem] lg:overflow-y-auto lg:overflow-x-hidden lg:pl-6">
@@ -154,7 +185,7 @@ export default function AIPage() {
                           type="button"
                           onClick={() => setActiveTab(i)}
                           className={`text-base transition-colors duration-200 flex items-center justify-between text-foreground select-none w-full rounded-[10px] p-2 ${
-                            activeTab === i ? 'bg-foreground/5' : ''
+                            activeTab === i ? 'bg-foreground/5 ring-1 ring-inset ring-[#73A7FF]' : ''
                           }`}
                         >
                           <div className="flex items-center">
@@ -163,7 +194,7 @@ export default function AIPage() {
                             )}
                             {tab.label}
                           </div>
-                          <span className="font-mono font-medium text-foreground/75">
+                          <span className="font-mono font-medium text-foreground/75 mix-blend-plus-lighter">
                             {tab.number}
                           </span>
                         </button>
@@ -211,22 +242,10 @@ export default function AIPage() {
                 {aiDemoTabs[activeTab]?.label ?? 'Morning Briefing'}
               </h3>
 
-              {/* Demo preview placeholder */}
+              {/* Demo preview — switch content based on activeTab */}
               <div className="mt-8 flex flex-1 items-start justify-center px-4">
                 <div className="w-full max-w-2xl">
-                  {/* Morning briefing demo image */}
-                  {activeTab === 0 && (
-                    <img
-                      alt="Morning Briefing"
-                      src="/ai/morning-briefing.png"
-                      className="w-full h-auto rounded-2xl select-none"
-                    />
-                  )}
-                  {activeTab !== 0 && (
-                    <div className="flex h-64 items-center justify-center rounded-2xl border border-foreground/10 bg-foreground/5 text-foreground/50">
-                      {aiDemoTabs[activeTab]?.label} preview
-                    </div>
-                  )}
+                  {demoContent[activeTab] ?? <PlaceholderMockup label={aiDemoTabs[activeTab]?.label ?? 'Unknown'} />}
                 </div>
               </div>
             </div>
@@ -235,60 +254,41 @@ export default function AIPage() {
       </div>
 
       {/* ── 2. "Your smartest coworker starts today" CTA ── */}
-      <div className="relative h-full w-full p-3 sm:p-5 md:p-7">
-        <div className="relative overflow-hidden w-full rounded-t-[24px] flex flex-col items-center justify-center gap-4 px-4 pt-12">
-          {/* Background shader area */}
-          <div className="pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-br from-[#4867AF]/20 via-transparent to-[#C49577]/20" />
-
-          <div className="relative z-20 flex flex-col items-center gap-6 w-full max-w-xs text-center sm:max-w-sm">
-            <div className="flex flex-col gap-3">
-              <h5 className="text-xs uppercase tracking-widest text-foreground/50">
-                Get Started
-              </h5>
-              <h2 className="text-[40px] font-medium text-foreground sm:text-[50px] sm:leading-[56px]">
-                Your smartest coworker starts today.
-              </h2>
-              <p className="px-4 text-[18px] leading-6 text-foreground/50">
-                Connect your tools. Oxy AI starts working in under a minute.
-              </p>
-            </div>
-
-            <FrostButton className="text-[18px] gap-1.5 px-4 py-2" href="#">
-              Get started today
-              <ArrowIcon className="mt-0.5 size-4" />
-            </FrostButton>
-          </div>
-
-          {/* CTA background images */}
-          <div className="relative z-10 mt-2 w-full md:-mt-12">
-            <div className="relative hidden w-full select-none overflow-hidden md:block md:aspect-[2772/962]">
-              <img
-                alt="CTA Background"
-                src="/ai/cta-desktop-bg.png"
-                className="w-full h-auto object-cover object-bottom"
-              />
-            </div>
-            <img
-              alt="CTA Background"
-              src="/ai/cta-mobile-bg.png"
-              className="mx-auto w-[50vh] max-w-[80vw] select-none md:hidden"
-            />
-          </div>
+      <section ref={ctaRef} className="flex flex-col items-center px-6 py-16 text-center md:py-28">
+        <h5 className="scroll-reveal text-xs uppercase tracking-widest text-foreground/50">Get Started</h5>
+        <h2 className="scroll-reveal mt-3 text-[40px] font-medium text-foreground sm:text-[50px] sm:leading-[56px]" style={{ transitionDelay: '100ms' }}>
+          Your smartest coworker starts today.
+        </h2>
+        <p className="scroll-reveal mt-3 text-[18px] leading-6 text-foreground/50" style={{ transitionDelay: '200ms' }}>
+          Connect your tools. Oxy AI starts working in under a minute.
+        </p>
+        <div className="scroll-reveal mt-6" style={{ transitionDelay: '300ms' }}>
+          <FrostButton className="text-[18px] gap-1.5 px-4 py-2" href="#">
+            Get started today
+            <ArrowIcon className="mt-0.5 size-4" />
+          </FrostButton>
         </div>
-      </div>
+        {/* CTA background images */}
+        <div className="scroll-reveal relative mt-8 w-full" style={{ transitionDelay: '400ms' }}>
+          <div className="relative hidden w-full select-none overflow-hidden md:block md:aspect-[2772/962]">
+            <img alt="CTA Background" src="/ai/cta-desktop-bg.png" className="w-full h-auto object-cover object-bottom" />
+          </div>
+          <img alt="CTA Background" src="/ai/cta-mobile-bg.png" className="mx-auto w-[50vh] max-w-[80vw] select-none md:hidden" />
+        </div>
+      </section>
 
       {/* ── 3. "Built for real work" — Horizontal Scroll Feature Cards ── */}
       <div
+        ref={featuresRef}
         id="features"
         className="pl-0 pt-12 sm:pt-14 md:pb-4 md:pl-14 lg:pb-14 flex flex-col md:flex-row pb-0"
       >
         {/* Left: heading + CTA */}
-        <div className="flex shrink-0 flex-col gap-2 py-8 pl-4 pr-20 sm:pl-6 md:max-w-xs md:pl-0">
-          <h5 className="text-xs uppercase tracking-widest text-foreground/50">Features</h5>
-          <h2 className="text-5xl font-medium text-foreground">
+        <div className="shrink-0 px-6 pb-8 md:w-80 md:px-14 md:pb-0 flex flex-col">
+          <h2 className="scroll-reveal text-5xl font-medium text-foreground">
             Built for real work.
           </h2>
-          <div className="mt-6 md:mt-auto">
+          <div className="scroll-reveal mt-6 md:mt-auto" style={{ transitionDelay: '100ms' }}>
             <FrostButton className="w-fit gap-1.5 px-3 py-2 text-sm font-medium" href="#">
               Get Started
               <ArrowIcon className="mt-0.5 size-3" />
@@ -298,45 +298,22 @@ export default function AIPage() {
 
         {/* Right: horizontal scroll cards */}
         <div className="relative w-full min-w-0 flex-1">
-          <div className="overflow-x-auto overflow-y-hidden">
+          <div className="overflow-x-auto overflow-y-hidden hide-scrollbar">
             <div className="flex w-full items-center gap-4">
               {aiFeatureCards.map((card, i) => (
                 <div
                   key={card.title}
-                  className={`relative shrink-0 overflow-hidden p-8 h-[520px] w-96 rounded-[32px] flex flex-col gap-1 ${
-                    i === 0 ? 'ml-4 sm:ml-6 md:ml-0' : ''
-                  }`}
+                  className={`scroll-reveal relative shrink-0 overflow-hidden p-8 h-[520px] w-96 rounded-[32px] flex flex-col gap-1 bg-gradient-to-b ${card.gradient ?? 'from-foreground/5 to-foreground/10'} ${i === 0 ? 'ml-4 sm:ml-6 md:ml-0' : ''}`}
+                  style={{ transitionDelay: `${i * 100}ms` }}
                 >
-                  {/* Card background gradient */}
-                  <div className="pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-br from-foreground/5 to-foreground/10" />
-
-                  {/* Card title */}
-                  <div className="absolute z-10">
-                    <p className="text-[32px] font-semibold text-foreground">
-                      {card.title}
-                    </p>
-                  </div>
-
-                  {/* Card subtitle */}
-                  <p className="absolute top-20 z-10 font-medium text-foreground/50">
-                    {card.subtitle}
-                  </p>
-
-                  {/* Card image or content */}
-                  {card.image ? (
+                  <p className="text-[32px] font-semibold text-foreground">{card.title}</p>
+                  <p className="text-sm text-foreground/50">{card.subtitle}</p>
+                  {card.image && (
                     <img
                       alt={card.title}
                       src={`/ai/${card.image}`}
-                      className={`${
-                        card.title === 'Integrations'
-                          ? 'absolute bottom-0 left-0 h-auto max-h-[380px] w-full select-none object-contain'
-                          : 'mt-auto h-auto max-h-[330px] w-full select-none object-contain'
-                      }`}
+                      className="mt-auto h-auto max-h-[330px] w-full select-none object-contain"
                     />
-                  ) : (
-                    <div className="mt-auto flex h-48 items-center justify-center rounded-2xl border border-foreground/10 bg-foreground/5 text-foreground/30 text-sm">
-                      {card.title} preview
-                    </div>
                   )}
                 </div>
               ))}

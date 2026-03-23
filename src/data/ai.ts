@@ -24,16 +24,19 @@ export const aiFeatureCards = [
     title: 'Search',
     subtitle: 'Search everything, instantly.',
     image: null,
+    gradient: 'from-[#1a1a2e] to-[#16213e]',
   },
   {
     title: 'Everywhere',
     subtitle: 'Always a message away.',
     image: 'feature-otg.png',
+    gradient: 'from-[#1a1a2e] to-[#0f3460]',
   },
   {
     title: 'Integrations',
     subtitle: 'Plugs into your entire stack.',
     image: 'feature-integrations.png',
+    gradient: 'from-[#1a1a2e] to-[#1a1a3e]',
   },
 ]
 
