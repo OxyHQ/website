@@ -287,6 +287,11 @@ body {
   color: var(--color-primary-foreground);
 }
 
+/* Nav icon theming — set --icon-fill so SVGs use page background for shape fills */
+.nav-icon {
+  --icon-fill: var(--sem-primary-background);
+}
+
 /* ─── Animations ─── */
 
 /* Hero fade-in from bottom (matches Attio's enter keyframe) */

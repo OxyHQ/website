@@ -40,6 +40,8 @@ export interface NavDropdownItem {
   title: string
   description: string
   href: string
+  icon?: string
+  showGrid?: boolean
 }
 
 export interface NavDropdownSection {
@@ -78,30 +80,30 @@ export const platformDropdown: NavDropdown = {
       heading: 'CRM Platform',
       items: [
         { title: 'Ask Oxy', description: 'Search and create with AI', href: '#' },
-        { title: 'AI', description: 'Native to your CRM', href: '#' },
-        { title: 'Data model', description: 'Sync and enrich your data', href: '#' },
-        { title: 'Productivity & collaboration', description: 'Context for your team operations', href: '#' },
+        { title: 'AI', description: 'Native to your CRM', href: '#', icon: 'ai' },
+        { title: 'Data model', description: 'Sync and enrich your data', href: '#', icon: 'data' },
+        { title: 'Productivity & collaboration', description: 'Context for your team operations', href: '#', icon: 'collaboration' },
       ],
     },
     {
       heading: 'Automations',
       items: [
-        { title: 'Workflows', description: 'Automate any process', href: '#' },
-        { title: 'Sequences', description: 'Personalized outreach', href: '#' },
+        { title: 'Workflows', description: 'Automate any process', href: '#', icon: 'automations' },
+        { title: 'Sequences', description: 'Personalized outreach', href: '#', icon: 'sequences' },
       ],
     },
     {
       heading: 'Insights',
       items: [
-        { title: 'Call Intelligence', description: 'Record and analyze meetings', href: '#' },
-        { title: 'Reporting', description: 'Insights in real time', href: '#' },
+        { title: 'Call Intelligence', description: 'Record and analyze meetings', href: '#', icon: 'call-intelligence' },
+        { title: 'Reporting', description: 'Insights in real time', href: '#', icon: 'reporting' },
       ],
     },
     {
       heading: 'Ecosystem',
       items: [
-        { title: 'Developer Platform', description: 'Build on Oxy', href: '#' },
-        { title: 'Apps', description: 'Extend with integrations', href: '#' },
+        { title: 'Developer Platform', description: 'Build on Oxy', href: '#', icon: 'developers' },
+        { title: 'Apps', description: 'Extend with integrations', href: '#', icon: 'apps' },
       ],
     },
   ],
@@ -122,20 +124,20 @@ export const resourcesDropdown: NavDropdown = {
     {
       heading: 'Support',
       items: [
-        { title: 'Help center', description: "Learn more about Oxy's features", href: '#' },
-        { title: 'Academy', description: 'Essential Oxy features explained', href: '#' },
+        { title: 'Help center', description: "Learn more about Oxy's features", href: '#', icon: 'help-center' },
+        { title: 'Academy', description: 'Essential Oxy features explained', href: '#', icon: 'academy' },
       ],
     },
     {
       heading: 'Developers',
       items: [
-        { title: 'Developer docs', description: 'Start building Oxy apps', href: '#' },
+        { title: 'Developer docs', description: 'Start building Oxy apps', href: '#', icon: 'developers' },
       ],
     },
     {
       heading: 'Partners',
       items: [
-        { title: 'Partner programs', description: 'Developers, creators, consultants', href: '#' },
+        { title: 'Partner programs', description: 'Developers, creators, consultants', href: '#', icon: 'partners' },
       ],
     },
   ],
