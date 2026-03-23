@@ -18,6 +18,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
+    include: ['react-simple-maps', 'prop-types', 'd3-geo', 'topojson-client'],
     exclude: ['@react-native-async-storage/async-storage'],
   },
   server: {

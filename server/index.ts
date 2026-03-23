@@ -48,6 +48,18 @@ app.use('/api/translations', translationsRouter)
 // Sitemap
 app.use('/', sitemapRouter)
 
+// Platform stats — proxy to Oxy API
+app.get('/api/platform-stats', async (_req, res) => {
+  try {
+    const resp = await fetch(`${config.oxyApiBase}/platform-stats`)
+    if (!resp.ok) throw new Error(`Oxy API returned ${resp.status}`)
+    res.json(await resp.json())
+  } catch (error) {
+    console.error('Platform stats proxy error:', error)
+    res.status(502).json({ error: 'Failed to fetch platform stats' })
+  }
+})
+
 // Health check
 app.get('/api/health', (_req, res) => res.json({ ok: true }))
 

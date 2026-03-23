@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from './client'
 import { useCurrentLocale } from '../contexts/LocaleContext'
@@ -221,4 +222,87 @@ export function useRevokeMcpToken() {
     mutationFn: (id: string) => apiFetch(`/mcp-tokens/${id}`, { method: 'DELETE' }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['mcp-tokens'] }),
   })
+}
+
+// ── Platform Stats (Dashboard) ──
+export interface PlatformStats {
+  totalUsers: number
+  activeSessions: number
+  totalMessages: number
+  totalNotifications: number
+  totalFiles: number
+  totalTransactions: number
+  totalDeveloperApps: number
+  totalFollows: number
+  aiModels: number
+  topCountries: Array<{ location: string; count: number }>
+  regions: number
+  timestamp: string
+}
+
+const DEFAULT_PLATFORM_STATS: PlatformStats = {
+  totalUsers: 0,
+  activeSessions: 0,
+  totalMessages: 0,
+  totalNotifications: 0,
+  totalFiles: 0,
+  totalTransactions: 0,
+  totalDeveloperApps: 0,
+  totalFollows: 0,
+  aiModels: 4,
+  topCountries: [],
+  regions: 0,
+  timestamp: new Date().toISOString(),
+}
+
+const OXY_API = 'https://api.oxy.so'
+
+export function usePlatformStats() {
+  const [data, setData] = useState<PlatformStats>(DEFAULT_PLATFORM_STATS)
+  const [isConnected, setIsConnected] = useState(false)
+
+  useEffect(() => {
+    let es: EventSource | null = null
+    let fallbackTimeout: ReturnType<typeof setTimeout> | null = null
+
+    try {
+      es = new EventSource(`${OXY_API}/platform-stats/stream`)
+
+      es.onmessage = (event) => {
+        try {
+          const parsed = JSON.parse(event.data) as PlatformStats
+          setData(parsed)
+          setIsConnected(true)
+        } catch { /* ignore parse errors */ }
+      }
+
+      es.onerror = () => {
+        setIsConnected(false)
+        // If SSE fails, fall back to a single REST fetch
+        if (es) {
+          es.close()
+          es = null
+        }
+        fallbackTimeout = setTimeout(async () => {
+          try {
+            const resp = await fetch(`${OXY_API}/platform-stats`)
+            if (resp.ok) setData(await resp.json())
+          } catch { /* ignore */ }
+        }, 1000)
+      }
+    } catch {
+      // EventSource not supported — REST fallback
+      fetch(`${OXY_API}/platform-stats`)
+        .then((r) => r.json())
+        .then(setData)
+        .catch(() => {})
+    }
+
+    return () => {
+      if (es) es.close()
+      if (fallbackTimeout) clearTimeout(fallbackTimeout)
+    }
+  }, [])
+
+  return { data, isConnected }
 }
