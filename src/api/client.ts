@@ -25,12 +25,9 @@ export async function apiFetch<T>(path: string, options?: RequestInit & { locale
 }
 
 function getAuthToken(): string | null {
-  // @oxyhq/auth stores the token — we read it from the auth store
   try {
-    const raw = localStorage.getItem('oxy-auth')
-    if (!raw) return null
-    const parsed = JSON.parse(raw)
-    return parsed?.state?.token ?? parsed?.token ?? null
+    // @oxyhq/auth stores the access token directly under this key
+    return localStorage.getItem('oxy_access_token')
   } catch {
     return null
   }
