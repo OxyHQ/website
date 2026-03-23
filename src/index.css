@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@fontsource-variable/inter";
+@import './styles/cursor-theme.css';
 
 @theme {
   /* Neutral palette (used for specific non-semantic styling) */
