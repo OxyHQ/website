@@ -79,7 +79,7 @@ export default function DocsPage() {
       {/* Docs sub-navbar with tabs - sticky below main navbar */}
       <div className="sticky top-[var(--site-header-height,64px)] z-40 border-b border-gray-300/[0.06] bg-[#0f1117]">
         <div className="container">
-          <div className="hidden lg:flex h-12">
+          <div className="hidden lg:flex h-12 lg:pl-[19.5rem]">
             <div className="h-full flex text-sm gap-x-6">
               <a className="group relative h-full gap-2 flex items-center font-medium text-gray-200 [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]" href="/developers/docs">
                 Overview
