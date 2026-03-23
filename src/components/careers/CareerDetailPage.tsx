@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { useJob } from '../../api/hooks'
 import { jobDepartments, jobDetails, type DescriptionBlock } from '../../data/careers'
 
 function DashedLineH() {
   return (
-    <svg width="100%" height="1" className="text-subtle-stroke">
+    <svg width="100%" height="1" className="text-border">
       <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
     </svg>
   )
@@ -12,7 +13,7 @@ function DashedLineH() {
 
 function SolidLineH() {
   return (
-    <svg width="100%" height="1" className="text-subtle-stroke">
+    <svg width="100%" height="1" className="text-border">
       <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
     </svg>
   )
@@ -20,7 +21,7 @@ function SolidLineH() {
 
 function DashedLineV({ className = '' }: { className?: string }) {
   return (
-    <svg width="1" height="100%" className={`text-subtle-stroke ${className}`}>
+    <svg width="1" height="100%" className={`text-border ${className}`}>
       <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
     </svg>
   )
@@ -28,7 +29,7 @@ function DashedLineV({ className = '' }: { className?: string }) {
 
 function SolidLineV({ className = '' }: { className?: string }) {
   return (
-    <svg width="1" height="100%" className={`text-subtle-stroke ${className}`}>
+    <svg width="1" height="100%" className={`text-border ${className}`}>
       <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
     </svg>
   )
@@ -56,7 +57,7 @@ function DescriptionContent({ blocks }: { blocks: DescriptionBlock[] }) {
         }
         if (block.type === 'list') {
           return (
-            <ul key={i} className="not-first:mt-1.5 list-[square] pl-3.5 marker:text-caption-foreground">
+            <ul key={i} className="not-first:mt-1.5 list-[square] pl-3.5 marker:text-muted-foreground">
               {block.items.map((item, j) => (
                 <li key={j} className="pt-1 pl-1.5 first:pt-1.5 [&:not(:has(ul,li))]:pb-1.5">
                   <p className="not-first:mt-[13px] text-pretty text-secondary-foreground leading-[26px]">{item}</p>
@@ -72,7 +73,7 @@ function DescriptionContent({ blocks }: { blocks: DescriptionBlock[] }) {
 }
 
 const inputClasses =
-  'block w-full rounded-[10px] bg-primary-background p-[10px_13px] outline-hidden transition-all duration-300 ease-out text-secondary-foreground placeholder:text-accent-foreground border border-default-stroke hover:border-greyscale-light-08 hover:shadow-[0px_1px_4px_rgba(56,62,71,0.1)] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-300'
+  'block w-full rounded-[10px] bg-background p-[10px_13px] outline-hidden transition-all duration-300 ease-out text-secondary-foreground placeholder:text-muted-foreground border border-border hover:border-border hover:shadow-[0px_1px_4px_rgba(56,62,71,0.1)] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-300'
 
 function ApplicationForm() {
   const [formData, setFormData] = useState({
@@ -87,7 +88,6 @@ function ApplicationForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Form submission would be handled here
   }
 
   return (
@@ -137,7 +137,7 @@ function ApplicationForm() {
 
       <div>
         <label className="mb-1.5 block text-sm font-medium text-secondary-foreground">
-          Phone <span className="text-tertiary-foreground text-xs">(optional)</span>
+          Phone <span className="text-muted-foreground text-xs">(optional)</span>
         </label>
         <input
           type="tel"
@@ -156,14 +156,14 @@ function ApplicationForm() {
           type="file"
           required
           accept=".pdf,.doc,.docx"
-          className={`${inputClasses} file:mr-3 file:rounded-lg file:border-0 file:bg-secondary-background file:px-3 file:py-1 file:text-sm file:font-medium file:text-secondary-foreground cursor-pointer`}
+          className={`${inputClasses} file:mr-3 file:rounded-lg file:border-0 file:bg-surface file:px-3 file:py-1 file:text-sm file:font-medium file:text-secondary-foreground cursor-pointer`}
           onChange={(e) => setFormData({ ...formData, resume: e.target.files?.[0] ?? null })}
         />
       </div>
 
       <div>
         <label className="mb-1.5 block text-sm font-medium text-secondary-foreground">
-          LinkedIn URL <span className="text-tertiary-foreground text-xs">(optional)</span>
+          LinkedIn URL <span className="text-muted-foreground text-xs">(optional)</span>
         </label>
         <input
           type="url"
@@ -176,7 +176,7 @@ function ApplicationForm() {
 
       <div>
         <label className="mb-1.5 block text-sm font-medium text-secondary-foreground">
-          Cover letter <span className="text-tertiary-foreground text-xs">(optional)</span>
+          Cover letter <span className="text-muted-foreground text-xs">(optional)</span>
         </label>
         <textarea
           rows={5}
@@ -203,13 +203,13 @@ function NotFoundView() {
       <div className="grid grid-cols-12 py-20">
         <div className="col-[2/-2]">
           <h1 className="text-heading-responsive-lg">Position not found.</h1>
-          <p className="pt-6 text-tertiary-foreground text-xl">
+          <p className="pt-6 text-muted-foreground text-xl">
             This job posting doesn&apos;t exist or may have been removed.
           </p>
           <p className="pt-8">
             <Link
               to="/company/careers"
-              className="underline decoration-2 decoration-white-500 underline-offset-2 transition-all duration-700 hover:brightness-75 hover:duration-300 active:brightness-50 active:duration-0 text-secondary-foreground"
+              className="underline decoration-2 decoration-border underline-offset-2 transition-all duration-700 hover:brightness-75 hover:duration-300 active:brightness-50 active:duration-0 text-secondary-foreground"
             >
               View all open positions
             </Link>
@@ -222,8 +222,10 @@ function NotFoundView() {
 
 export default function CareerDetailContent() {
   const { slug } = useParams<{ slug: string }>()
+  const { data: apiJob, isLoading } = useJob(slug ?? '')
 
-  const job = jobDetails.find((j) => j.slug === slug)
+  // Use API data if available, fall back to static data
+  const job = apiJob ?? jobDetails.find((j) => j.slug === slug)
 
   // Find the position number within the total job listing
   let positionNumber = 0
@@ -240,20 +242,24 @@ export default function CareerDetailContent() {
   }
   if (!found) positionNumber = 0
 
+  if (isLoading) return null
+
   if (!job) {
     return <NotFoundView />
   }
+
+  const engagement = (job as any).engagement ?? job.type ?? 'Full-time'
 
   return (
     <article>
       {/* Breadcrumb aside */}
       <aside className="relative grid h-28 grid-cols-12 items-end pb-5">
         <DashedLineV className="absolute col-[-2] max-lg:hidden" />
-        <p className="col-2 whitespace-nowrap text-overline">
-          <Link className="transition-colors hover:text-accent-foreground" to="/company/careers">Careers</Link>{' '}
-          / <span className="text-black-800">{job.department}</span>
+        <p className="col-2 whitespace-nowrap text-xs uppercase tracking-wider text-muted-foreground">
+          <Link className="transition-colors hover:text-foreground" to="/company/careers">Careers</Link>{' '}
+          / <span className="text-muted-foreground">{job.department}</span>
         </p>
-        <p className="col-[-2] justify-self-center whitespace-nowrap text-overline max-lg:col-[-3] max-lg:justify-self-end">
+        <p className="col-[-2] justify-self-center whitespace-nowrap text-xs uppercase tracking-wider text-muted-foreground max-lg:col-[-3] max-lg:justify-self-end">
           [OP {positionNumber.toString().padStart(2, '0')}]
         </p>
       </aside>
@@ -263,7 +269,7 @@ export default function CareerDetailContent() {
       {/* Header */}
       <header className="relative grid grid-cols-12 py-15 max-xl:pb-16">
         <DashedLineV className="absolute col-[-2] max-lg:hidden" />
-        <svg width="100%" height="100%" className="text-muted-strong-background absolute col-[-2] max-lg:hidden">
+        <svg width="100%" height="100%" className="text-surface absolute col-[-2] max-lg:hidden">
           <defs>
             <pattern id="_S_1_" width="10" height="10" patternUnits="userSpaceOnUse">
               <rect x="5.5" y="5.5" width="1" height="1" fill="currentColor" />
@@ -274,17 +280,17 @@ export default function CareerDetailContent() {
         <h1 className="col-[2/-2] max-w-[24ch] text-balance pb-7 font-semibold text-heading-responsive-lg">{job.title}</h1>
         <p className="col-[2/-2] max-w-[48ch] text-balance pb-10 text-xl">{job.subtitle}</p>
         <div className="col-[2/-2] flex flex-col gap-2 max-lg:pb-5 lg:col-[2/6] xl:col-[2/5] xl:pr-8">
-          <h3 className="text-overline">Location</h3>
-          <p className="text-balance text-sm text-tertiary-foreground">{job.location}</p>
+          <h3 className="text-xs uppercase tracking-wider text-muted-foreground">Location</h3>
+          <p className="text-balance text-sm text-muted-foreground">{job.location}</p>
         </div>
         <div className="col-[2/-2] flex flex-col gap-2 lg:col-[6/12] xl:col-[5/12]">
-          <h3 className="text-overline">Compensation</h3>
-          <p className="text-sm text-tertiary-foreground">{job.compensation}</p>
+          <h3 className="text-xs uppercase tracking-wider text-muted-foreground">Compensation</h3>
+          <p className="text-sm text-muted-foreground">{job.compensation}</p>
         </div>
       </header>
 
       {/* Decorative separator */}
-      <svg width="100%" height="1" className="text-subtle-stroke max-xl:hidden">
+      <svg width="100%" height="1" className="text-border max-xl:hidden">
         <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
       </svg>
       <div className="relative grid h-12 grid-cols-12 max-xl:hidden">
@@ -300,23 +306,23 @@ export default function CareerDetailContent() {
         <DashedLineV className="absolute col-[-2] hidden lg:block xl:hidden" />
 
         {/* Left sticky sidebar (desktop only) */}
-        <aside className="relative col-[1/4] bg-secondary-background py-22 max-xl:hidden">
+        <aside className="relative col-[1/4] bg-surface py-22 max-xl:hidden">
           <div className="sticky top-[calc(var(--site-header-height)+48px)] flex flex-col gap-4 px-9">
             <div className="mb-2">
               <h2 className="text-balance font-semibold text-lg text-secondary-foreground">{job.title}</h2>
-              <p className="mt-1 text-balance text-sm text-tertiary-foreground">{job.subtitle}</p>
+              <p className="mt-1 text-balance text-sm text-muted-foreground">{job.subtitle}</p>
             </div>
             <div>
               <h3 className="font-semibold text-secondary-foreground">Location</h3>
-              <p className="mt-1 text-balance text-sm text-tertiary-foreground">{job.location}</p>
+              <p className="mt-1 text-balance text-sm text-muted-foreground">{job.location}</p>
             </div>
             <div>
               <h3 className="font-semibold text-secondary-foreground">Engagement Type</h3>
-              <p className="mt-1 text-balance text-sm text-tertiary-foreground">{job.engagement}</p>
+              <p className="mt-1 text-balance text-sm text-muted-foreground">{engagement}</p>
             </div>
             <div>
               <h3 className="font-semibold text-secondary-foreground">Compensation</h3>
-              <p className="mt-1 text-sm text-tertiary-foreground">{job.compensation}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{job.compensation}</p>
             </div>
             <div className="mt-3">
               <a
@@ -337,8 +343,8 @@ export default function CareerDetailContent() {
 
           {/* Apply form */}
           <div id="apply-form" className="mt-24 w-full max-w-xl" style={{ scrollMarginTop: 'calc(var(--site-header-height) + 48px)' }}>
-            <h2 className="text-heading-sm text-primary-foreground">Apply for this position</h2>
-            <div className="min-h-12 lg:rounded-3xl lg:border lg:border-subtle-stroke lg:px-6 lg:pt-1.5 mt-6">
+            <h2 className="text-heading-sm text-foreground">Apply for this position</h2>
+            <div className="min-h-12 lg:rounded-3xl lg:border lg:border-border lg:px-6 lg:pt-1.5 mt-6">
               <ApplicationForm />
             </div>
           </div>

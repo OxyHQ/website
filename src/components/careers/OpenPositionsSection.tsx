@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { jobDepartments } from '../../data/careers'
+import { useJobs } from '../../api/hooks'
+import { jobDepartments as staticDepartments } from '../../data/careers'
 
 function DashedLine() {
   return (
@@ -18,14 +19,44 @@ function SolidLine() {
   )
 }
 
+interface DepartmentGroup {
+  name: string
+  id: string
+  jobs: { title: string; location: string; href: string }[]
+}
+
+function groupJobsByDepartment(jobs: any[]): DepartmentGroup[] {
+  const deptMap = new Map<string, DepartmentGroup>()
+  for (const job of jobs) {
+    const dept = job.department || 'Other'
+    const id = dept.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    if (!deptMap.has(dept)) {
+      deptMap.set(dept, { name: dept, id, jobs: [] })
+    }
+    if (!job.slug) continue
+    deptMap.get(dept)!.jobs.push({
+      title: job.title,
+      location: job.location,
+      href: `/careers/${job.slug}`,
+    })
+  }
+  return Array.from(deptMap.values())
+}
+
 export default function OpenPositionsSection() {
+  const { data: apiJobs } = useJobs()
   const [activeLocation, setActiveLocation] = useState('All locations')
   const locations = ['All locations', 'Europe', 'United Kingdom', 'United States']
 
-  const filteredDepartments = useMemo(() => {
-    if (activeLocation === 'All locations') return jobDepartments
+  const departments = useMemo(() => {
+    if (apiJobs && apiJobs.length > 0) return groupJobsByDepartment(apiJobs)
+    return staticDepartments
+  }, [apiJobs])
 
-    return jobDepartments
+  const filteredDepartments = useMemo(() => {
+    if (activeLocation === 'All locations') return departments
+
+    return departments
       .map(dept => ({
         ...dept,
         jobs: dept.jobs.filter(job => {
@@ -43,7 +74,7 @@ export default function OpenPositionsSection() {
         }),
       }))
       .filter(dept => dept.jobs.length > 0)
-  }, [activeLocation])
+  }, [activeLocation, departments])
 
   return (
     <section className="container" id="open-positions">
@@ -51,7 +82,7 @@ export default function OpenPositionsSection() {
         <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
           <div className="flex max-w-lg flex-col gap-4 max-lg:gap-3 text-center col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
             <h2 className="text-pretty text-heading-responsive-md">Open positions.</h2>
-            <p className="text-pretty text-tertiary text-xl">If you want to share our mission of building the definitive CRM, we'd love to hear from you.</p>
+            <p className="text-pretty text-muted-foreground text-xl">If you want to share our mission of building the definitive CRM, we'd love to hear from you.</p>
           </div>
         </header>
 
@@ -63,7 +94,7 @@ export default function OpenPositionsSection() {
                 key={loc}
                 onClick={() => setActiveLocation(loc)}
                 data-active={activeLocation === loc ? 'true' : 'false'}
-                className={`inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-8 gap-x-1.5 rounded-[10px] px-2.5 text-xs button-outline !border-border !text-muted-foreground !text-sm hover:!border-border hover:!bg-surface data-[active='true']:!border-strong-stroke data-[active='false']:!text-muted-foreground lg:!text-foreground lg:text-sm${
+                className={`inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-8 gap-x-1.5 rounded-[10px] px-2.5 text-xs button-outline !border-border !text-muted-foreground !text-sm hover:!border-border hover:!bg-surface data-[active='true']:!border-foreground/30 data-[active='false']:!text-muted-foreground lg:!text-foreground lg:text-sm${
                   activeLocation === loc ? ' pointer-events-none pr-2!' : ''
                 }`}
               >
@@ -107,7 +138,7 @@ export default function OpenPositionsSection() {
                   <div className="relative grid grid-cols-12 bg-surface py-5 xl:grid-cols-10">
                     <div className="col-[2/-2] flex items-baseline gap-2">
                       <h3 className="font-display text-xl xl:text-2xl" id={dept.id}>{dept.name}</h3>
-                      <p className="align-super text-muted-foreground text-overline">[{String(dept.jobs.length).padStart(2, '0')}]</p>
+                      <p className="align-super text-muted-foreground text-xs uppercase tracking-wider">[{String(dept.jobs.length).padStart(2, '0')}]</p>
                     </div>
                   </div>
 

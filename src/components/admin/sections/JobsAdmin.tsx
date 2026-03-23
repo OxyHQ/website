@@ -10,6 +10,24 @@ import { Label } from '../../ui/shadcn/label'
 import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 
+type DescriptionBlock =
+  | { type: 'paragraph'; text: string }
+  | { type: 'heading'; text: string }
+  | { type: 'list'; items: string[] }
+
+const emptyJob = () => ({
+  title: '',
+  slug: '',
+  subtitle: '',
+  department: '',
+  location: 'Remote',
+  type: 'Full-time',
+  compensation: '',
+  description: [] as DescriptionBlock[],
+  active: true,
+  order: 0,
+})
+
 export default function JobsAdmin() {
   const { data, refetch } = useJobs()
   const { data: locales } = useLocales()
@@ -25,14 +43,52 @@ export default function JobsAdmin() {
   const save = async () => {
     if (!editing) return
     setSaving(true)
-    if (editing._id) {
-      await apiFetch(`/jobs/${editing._id}`, { method: 'PUT', body: JSON.stringify(editing) })
-    } else {
-      await apiFetch('/jobs', { method: 'POST', body: JSON.stringify(editing) })
+    try {
+      if (editing._id) {
+        await apiFetch(`/jobs/${editing._id}`, { method: 'PUT', body: JSON.stringify(editing) })
+      } else {
+        await apiFetch('/jobs', { method: 'POST', body: JSON.stringify(editing) })
+      }
+      await refetch()
+      setEditing(null)
+    } finally {
+      setSaving(false)
     }
+  }
+
+  const deleteJob = async (id: string) => {
+    if (!confirm('Delete this job?')) return
+    await apiFetch(`/jobs/${id}`, { method: 'DELETE' })
     await refetch()
-    setSaving(false)
-    setEditing(null)
+  }
+
+  const autoSlug = (title: string, location: string) => {
+    return `${title} ${location}`
+      .toLowerCase()
+      .replace(/[\[\]()]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+  }
+
+  const addBlock = (blockType: 'paragraph' | 'heading' | 'list') => {
+    const desc = [...(editing.description ?? [])]
+    if (blockType === 'list') {
+      desc.push({ type: 'list', items: [''] })
+    } else {
+      desc.push({ type: blockType, text: '' })
+    }
+    setEditing({ ...editing, description: desc })
+  }
+
+  const updateBlock = (idx: number, value: any) => {
+    const desc = [...(editing.description ?? [])]
+    desc[idx] = { ...desc[idx], ...value }
+    setEditing({ ...editing, description: desc })
+  }
+
+  const removeBlock = (idx: number) => {
+    const desc = (editing.description ?? []).filter((_: any, i: number) => i !== idx)
+    setEditing({ ...editing, description: desc })
   }
 
   if (editing) {
@@ -41,11 +97,87 @@ export default function JobsAdmin() {
         <div className="mb-4"><Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back</Button></div>
         <h2 className="text-xl font-semibold text-foreground">{editing._id ? 'Edit Job' : 'New Job'}</h2>
         <div className="mt-6 flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5"><Label>Title</Label><Input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} /></div>
-          <div className="flex flex-col gap-1.5"><Label>Department</Label><Input value={editing.department} onChange={(e) => setEditing({ ...editing, department: e.target.value })} /></div>
-          <div className="flex flex-col gap-1.5"><Label>Location</Label><Input value={editing.location} onChange={(e) => setEditing({ ...editing, location: e.target.value })} /></div>
-          <div className="flex flex-col gap-1.5"><Label>Type</Label><Input value={editing.type} onChange={(e) => setEditing({ ...editing, type: e.target.value })} /></div>
-          <div className="flex flex-col gap-1.5"><Label>Description</Label><Textarea value={editing.description} onChange={(e) => setEditing({ ...editing, description: e.target.value })} rows={4} /></div>
+          <div className="flex flex-col gap-1.5">
+            <Label>Title</Label>
+            <Input
+              value={editing.title}
+              onChange={(e) => {
+                const title = e.target.value
+                const updates: any = { title }
+                if (!editing._id) updates.slug = autoSlug(title, editing.location)
+                setEditing({ ...editing, ...updates })
+              }}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>Slug</Label>
+            <Input value={editing.slug} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} className="font-mono" />
+            <p className="text-xs text-muted-foreground">Auto-generated from title + location. Must be unique.</p>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>Subtitle</Label>
+            <Input value={editing.subtitle} onChange={(e) => setEditing({ ...editing, subtitle: e.target.value })} placeholder="Short tagline for the role" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <Label>Department</Label>
+              <Input value={editing.department} onChange={(e) => setEditing({ ...editing, department: e.target.value })} />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label>Location</Label>
+              <Input
+                value={editing.location}
+                onChange={(e) => {
+                  const location = e.target.value
+                  const updates: any = { location }
+                  if (!editing._id) updates.slug = autoSlug(editing.title, location)
+                  setEditing({ ...editing, ...updates })
+                }}
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5"><Label>Type</Label><Input value={editing.type} onChange={(e) => setEditing({ ...editing, type: e.target.value })} /></div>
+            <div className="flex flex-col gap-1.5"><Label>Compensation</Label><Input value={editing.compensation} onChange={(e) => setEditing({ ...editing, compensation: e.target.value })} placeholder="e.g. $80K – $120K · Offers Equity" /></div>
+          </div>
+
+          {/* Description blocks editor */}
+          <div className="mt-2">
+            <Label>Description</Label>
+            <p className="mb-3 text-xs text-muted-foreground">Build the job description using content blocks.</p>
+            <div className="flex flex-col gap-3">
+              {(editing.description ?? []).map((block: DescriptionBlock, idx: number) => (
+                <div key={idx} className="rounded-lg border border-border p-3">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="rounded bg-muted px-2 py-0.5 text-xs font-medium">{block.type}</span>
+                    <Button variant="ghost" size="small" onPress={() => removeBlock(idx)}>Remove</Button>
+                  </div>
+                  {block.type === 'list' ? (
+                    <Textarea
+                      value={block.items.join('\n')}
+                      onChange={(e) => updateBlock(idx, { items: e.target.value.split('\n') })}
+                      placeholder="One item per line"
+                      rows={4}
+                      className="font-mono text-sm"
+                    />
+                  ) : (
+                    <Textarea
+                      value={block.text}
+                      onChange={(e) => updateBlock(idx, { text: e.target.value })}
+                      placeholder={block.type === 'heading' ? 'Section heading' : 'Paragraph text (HTML allowed)'}
+                      rows={block.type === 'heading' ? 1 : 3}
+                    />
+                  )}
+                </div>
+              ))}
+              <div className="flex gap-2">
+                <Button variant="ghost" size="small" onPress={() => addBlock('paragraph')}>+ Paragraph</Button>
+                <Button variant="ghost" size="small" onPress={() => addBlock('heading')}>+ Heading</Button>
+                <Button variant="ghost" size="small" onPress={() => addBlock('list')}>+ List</Button>
+              </div>
+            </div>
+          </div>
+
           <div className="flex items-center gap-2"><Switch value={editing.active} onValueChange={(val) => setEditing({ ...editing, active: val })} /><Label>Active</Label></div>
           <div className="flex gap-3">
             <PrimaryButton onPress={save} disabled={saving}>{saving ? 'Saving...' : 'Save'}</PrimaryButton>
@@ -72,10 +204,11 @@ export default function JobsAdmin() {
             originalFields={translatingJob}
             translatableFields={[
               { key: 'title', label: 'Title', type: 'text' },
+              { key: 'subtitle', label: 'Subtitle', type: 'text' },
               { key: 'department', label: 'Department', type: 'text' },
               { key: 'location', label: 'Location', type: 'text' },
               { key: 'type', label: 'Type', type: 'text' },
-              { key: 'description', label: 'Description', type: 'textarea' },
+              { key: 'compensation', label: 'Compensation', type: 'text' },
             ]}
           />
         </div>
@@ -87,9 +220,11 @@ export default function JobsAdmin() {
     <div>
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-foreground">Jobs</h2>
-        {isDefault && (
-          <PrimaryButton onPress={() => setEditing({ title: '', department: '', location: 'Remote', type: 'Full-time', description: '', active: true })}>New job</PrimaryButton>
-        )}
+        <div className="flex items-center gap-2">
+          {isDefault && (
+            <PrimaryButton onPress={() => setEditing(emptyJob())}>New job</PrimaryButton>
+          )}
+        </div>
       </div>
 
       <div className="mt-4">
@@ -98,17 +233,27 @@ export default function JobsAdmin() {
 
       <div className="mt-6 flex flex-col gap-2">
         {jobs.map((j: any) => (
-          <button
+          <div
             key={j._id}
-            onClick={() => isDefault ? setEditing({ ...j }) : setTranslatingJob(j)}
-            className="flex items-center justify-between rounded-lg border border-border px-4 py-3 text-left transition-colors hover:bg-muted/50"
+            className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition-colors hover:bg-muted/50"
           >
-            <div><span className="text-sm font-medium text-foreground">{j.title}</span><span className="ml-2 text-xs text-muted-foreground">{j.department} &middot; {j.location}</span></div>
+            <div>
+              <span className="text-sm font-medium text-foreground">{j.title}</span>
+              <span className="ml-2 text-xs text-muted-foreground">{j.department} &middot; {j.location}</span>
+              {j.slug && <span className="ml-2 font-mono text-xs text-muted-foreground">/{j.slug}</span>}
+            </div>
             <div className="flex items-center gap-2">
-              {!isDefault && <span className="text-xs text-muted-foreground">Translate</span>}
+              {isDefault ? (
+                <>
+                  <Button variant="ghost" size="small" onPress={() => setEditing({ ...j })}>Edit</Button>
+                  <Button variant="ghost" size="small" onPress={() => deleteJob(j._id)}>Delete</Button>
+                </>
+              ) : (
+                <Button variant="ghost" size="small" onPress={() => setTranslatingJob(j)}>Translate</Button>
+              )}
               <Badge color={j.active ? 'success' : 'default'}>{j.active ? 'Active' : 'Inactive'}</Badge>
             </div>
-          </button>
+          </div>
         ))}
         {jobs.length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">No jobs yet.</p>}
       </div>

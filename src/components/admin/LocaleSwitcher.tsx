@@ -14,6 +14,8 @@ export function useLocales() {
   return useQuery({
     queryKey: ['locales-all'],
     queryFn: () => apiFetch<Locale[]>('/locales/all'),
+    retry: 1,
+    staleTime: 300_000,
   })
 }
 

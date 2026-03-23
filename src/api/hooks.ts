@@ -156,6 +156,15 @@ export function useJobs() {
   })
 }
 
+export function useJob(slug: string) {
+  const locale = useSafeLocale()
+  return useQuery({
+    queryKey: ['job', slug, locale],
+    queryFn: () => apiFetch<any>(`/jobs/${slug}`, { locale }),
+    enabled: !!slug,
+  })
+}
+
 // ── Site Settings ──
 export function useSiteSettings() {
   const locale = useSafeLocale()
