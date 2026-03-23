@@ -7,6 +7,7 @@ import PartnersPage from './pages/PartnersPage'
 import CareersPage from './pages/CareersPage'
 import PricingPage from './pages/PricingPage'
 import NewsroomPage from './pages/NewsroomPage'
+import BlogPage from './pages/BlogPage'
 import NotFoundPage from './pages/NotFoundPage'
 import HelpPage from './pages/HelpPage'
 import ChangelogPage from './pages/ChangelogPage'
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/newsroom" element={<NewsroomPage />} />
         <Route path="/help" element={<HelpPage />} />
         <Route path="/changelog" element={<ChangelogPage />} />
+        <Route path="/company/news" element={<BlogPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

@@ -1,0 +1,135 @@
+import { featuredArticle } from '../../data/blog'
+
+export default function BlogFeaturedSection() {
+  const article = featuredArticle
+
+  return (
+    <div>
+      {/* Top spacer */}
+      <div aria-hidden="true" className="grid h-40 w-full grid-cols-12 overflow-hidden max-xl:h-30 max-lg:h-25 !h-28 max-md:!h-15 max-lg:!h-20">
+        <div className="col-[2/-2] flex justify-between">
+        </div>
+      </div>
+
+      {/* Dashed separator */}
+      <svg width="100%" height="1" className="text-subtle-stroke max-lg:hidden">
+        <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
+      </svg>
+
+      {/* Featured article link */}
+      <a className="group relative block" href={`/blog/${article.slug}`}>
+        {/* Hover overlay */}
+        <div className="pointer-events-none absolute inset-0 bg-secondary-background opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
+
+        {/* Mobile layout */}
+        <div className="contents lg:hidden">
+          <svg width="100%" height="1" className="text-subtle-stroke relative">
+            <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
+          </svg>
+          <img
+            alt=""
+            width="1161"
+            height="652"
+            className="relative aspect-video w-full"
+            src="/images/blog-cover-ask-oxy.png"
+          />
+          <svg width="100%" height="1" className="text-subtle-stroke relative">
+            <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
+          </svg>
+        </div>
+
+        {/* Mobile text content */}
+        <div className="relative grid grid-cols-12 py-11 lg:hidden">
+          <div className="col-[2/-2]">
+            <div className="flex justify-between gap-8">
+              <p className="text-overline">[{article.category}]</p>
+              <p className="text-overline">{article.date}</p>
+            </div>
+            <h2 className="relative text-balance text-heading-responsive-lg mt-8">
+              <span className="attio-group-hover-underline">{article.title}</span>
+            </h2>
+            <p className="mt-5 line-clamp-3 max-w-[28em] text-pretty text-accent-foreground text-sm">
+              {article.excerpt}
+            </p>
+            <div className="mt-5 text-sm">
+              <p className="whitespace-nowrap text-caption-foreground max-sm:mt-0.5 lg:max-xl:mt-0.5">
+                <span className="text-tertiary-foreground">{article.author}</span>{' '}
+                <br className="sm:max-lg:hidden xl:hidden" />
+                <span>{article.authorRole}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop layout */}
+        <div className="group contents max-lg:hidden">
+          <div className="relative grid grid-cols-24 gap-y-8 pt-8 pb-12">
+            <p className="text-overline col-[1/3] justify-self-center max-xl:hidden">{article.date}</p>
+            <p className="text-overline col-[3/10]">[{article.category}]</p>
+            <p className="text-overline col-[21/23] justify-self-end max-xl:hidden">{article.readTime}</p>
+            <p className="text-overline col-[21/23] justify-self-end xl:hidden">{article.date}</p>
+            <div className="col-[3/-3] flex items-end justify-between gap-8">
+              <h2 className="relative text-balance text-heading-responsive-lg [text-box-edge:text_alphabetic] [text-box-trim:trim-end]">
+                <span className="attio-group-hover-underline">{article.title}</span>
+              </h2>
+              <div className="text-end max-xl:text-sm [text-box-edge:text_alphabetic] [text-box-trim:trim-end]">
+                <p className="whitespace-nowrap text-caption-foreground max-sm:mt-0.5 lg:max-xl:mt-0.5">
+                  <span className="text-tertiary-foreground">{article.author}</span>{' '}
+                  <br className="sm:max-lg:hidden xl:hidden" />
+                  <span>{article.authorRole}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Solid separator */}
+          <svg width="100%" height="1" className="text-subtle-stroke relative">
+            <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
+          </svg>
+        </div>
+
+        {/* Desktop image with dashed vertical lines */}
+        <div className="contents max-lg:hidden">
+          <div className="relative grid grid-cols-12">
+            <div aria-hidden="true" className="grid h-40 w-full overflow-hidden max-xl:h-30 max-lg:h-25 !h-auto absolute -top-5 bottom-0 grid-cols-24">
+              <div className="col-[2/-2] flex justify-between">
+                <svg width="1" height="100%" className="text-subtle-stroke">
+                  <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
+                </svg>
+                <svg width="1" height="100%" className="text-subtle-stroke">
+                  <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
+                </svg>
+              </div>
+            </div>
+            <div className="col-[2/-2]">
+              <img
+                alt=""
+                width="1161"
+                height="652"
+                className="aspect-video w-full"
+                src="/images/blog-cover-ask-oxy.png"
+              />
+            </div>
+          </div>
+        </div>
+      </a>
+
+      {/* Bottom spacing with dashed vertical lines (desktop only) */}
+      <div className="contents max-lg:hidden">
+        <svg width="100%" height="1" className="text-subtle-stroke relative">
+          <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
+        </svg>
+        <div aria-hidden="true" className="grid h-40 w-full overflow-hidden max-xl:h-30 max-lg:h-25 !h-25 relative grid-cols-24">
+          <div className="col-[2/-2] flex justify-between">
+            <svg width="1" height="100%" className="text-subtle-stroke">
+              <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
+            </svg>
+            <svg width="1" height="100%" className="text-subtle-stroke">
+              <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
