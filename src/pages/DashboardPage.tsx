@@ -16,7 +16,7 @@ export default function DashboardPage() {
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <Navbar />
       <main>
-        <div className="container font-mono relative overflow-hidden flex flex-col md:block pt-12 md:pt-16">
+        <div className="container font-mono relative overflow-hidden flex flex-col md:block">
           <div className="w-full space-y-1.5 mt-1 mb-12">
           <div className="flex flex-col min-[961px]:hidden">
             <header className="flex flex-col items-start font-mono text-sm uppercase gap-2 mb-6">
