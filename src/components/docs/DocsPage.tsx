@@ -113,6 +113,22 @@ export default function DocsPage() {
                 <h1 className="text-2xl sm:text-3xl text-secondary-foreground tracking-tight [overflow-wrap:anywhere] font-bold break-all">
                   Overview
                 </h1>
+                <div className="items-center shrink-0 min-w-[156px] justify-end ml-auto sm:flex hidden">
+                  <button className="rounded-l-xl px-3 text-secondary-foreground py-1.5 border border-subtle-stroke bg-primary-background hover:bg-secondary-background border-r-0">
+                    <div className="flex items-center gap-2 text-sm text-center font-medium">
+                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-4">
+                        <path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span>Copy page</span>
+                    </div>
+                  </button>
+                  <button className="group flex items-center py-1.5 gap-1 text-sm text-tertiary-foreground hover:text-secondary-foreground rounded-none rounded-r-xl border px-3 border-subtle-stroke aspect-square bg-primary-background hover:bg-secondary-background" aria-label="More actions">
+                    <svg width="8" height="24" viewBox="0 -9 3 24" className="transition-transform text-accent-foreground overflow-visible group-hover:text-secondary-foreground rotate-90">
+                      <path d="M0 0L3 3L0 6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
             <div className="mt-2 text-lg text-tertiary-foreground">
