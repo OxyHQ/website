@@ -1,20 +1,20 @@
+import type { OxyServices } from '@oxyhq/core'
+
 const API_BASE = '/api'
 
-/** Set by the app root to provide access to oxyServices.getAccessToken() */
-let tokenGetter: (() => string | null) | null = null
+let _oxyServices: OxyServices | null = null
 
-export function setTokenGetter(getter: () => string | null) {
-  tokenGetter = getter
+export function initApiClient(oxyServices: OxyServices) {
+  _oxyServices = oxyServices
 }
 
 export async function apiFetch<T>(path: string, options?: RequestInit & { locale?: string }): Promise<T> {
-  const token = tokenGetter?.() ?? null
+  const token = _oxyServices?.getAccessToken() ?? null
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   }
 
-  // Append locale query param if provided
   let url = `${API_BASE}${path}`
   if (options?.locale) {
     const separator = url.includes('?') ? '&' : '?'
