@@ -26,6 +26,10 @@ function createMcpServer() {
   const server = new McpServer({
     name: 'oxy-website',
     version: '1.0.0',
+  }, {
+    capabilities: {
+      tools: {},
+    },
   })
   registerTools(server)
   return server
