@@ -18,6 +18,8 @@ import NewsroomPage from './pages/NewsroomPage'
 import BlogPage from './pages/BlogPage'
 import CodeaPage from './pages/CodeaPage'
 import CodexExtensionPage from './pages/CodexExtensionPage'
+import OxyOSPage from './pages/OxyOSPage'
+import CareerDetailPage from './pages/CareerDetailPage'
 import NotFoundPage from './pages/NotFoundPage'
 import HelpPage from './pages/HelpPage'
 import ChangelogPage from './pages/ChangelogPage'
@@ -74,6 +76,7 @@ function PublicRoutes() {
       <Route path="landing3" element={<Landing3 />} />
       <Route path="partners" element={<PartnersPage />} />
       <Route path="company/careers" element={<CareersPage />} />
+      <Route path="careers/:slug" element={<CareerDetailPage />} />
       <Route path="pricing" element={<PricingPage />} />
       <Route path="newsroom" element={<NewsroomPage />} />
       <Route path="help" element={<HelpPage />} />
@@ -83,6 +86,7 @@ function PublicRoutes() {
       <Route path="company/news" element={<BlogPage />} />
       <Route path="codea" element={<CodeaPage />} />
       <Route path="codea/extension" element={<CodexExtensionPage />} />
+      <Route path="os" element={<OxyOSPage />} />
       <Route path="settings" element={<SettingsPage />} />
     </>
   )
