@@ -233,7 +233,7 @@ export default function DottedMap({ width = 1000, height = 560, activeCountries 
     <div className="relative w-full">
       <svg
         viewBox={`0 0 ${width} ${height}`}
-        className="w-full h-auto bg-background"
+        className="w-full h-auto max-h-[50dvh] bg-background"
       >
         <g>
           {staticPixels.map((p) => (

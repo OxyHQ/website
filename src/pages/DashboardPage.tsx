@@ -29,7 +29,7 @@ export default function DashboardPage() {
 
           {/* Map + summary stats — takes available space */}
           <div className="relative flex-1 min-h-0">
-            <div className="pointer-events-none w-full h-full flex items-center justify-center max-w-4xl mx-auto">
+            <div className="pointer-events-none w-full h-full flex items-center justify-center">
               <MapContainer activeCountries={stats.topCountries} />
             </div>
 
