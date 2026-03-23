@@ -302,8 +302,8 @@ export function RegionCount({ stats }: { stats: PlatformStats }) {
 
 export function StatsGrid({ stats }: { stats: PlatformStats }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1.5">
-      <div className="flex flex-col gap-1.5">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="flex flex-col gap-3">
         <StatCard
           title="Active Sessions"
           value={stats.activeSessions}
@@ -321,7 +321,7 @@ export function StatsGrid({ stats }: { stats: PlatformStats }) {
         </StatCard>
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-3">
         <StatCard
           title="Messages"
           value={stats.totalMessages}
@@ -336,7 +336,7 @@ export function StatsGrid({ stats }: { stats: PlatformStats }) {
         </StatCard>
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-3">
         <StatCard
           title="Platform Activity"
           infoContent="Transactions and developer integrations across the Oxy platform."
