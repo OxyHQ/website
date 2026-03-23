@@ -78,8 +78,8 @@ export default function DocsPage() {
     <div className="relative antialiased text-gray-400">
       {/* Docs sub-navbar with tabs */}
       <div className="border-b border-gray-300/[0.06]">
-        <div className="max-w-8xl mx-auto">
-          <div className="hidden lg:flex px-12 h-12">
+        <div className="container">
+          <div className="hidden lg:flex h-12">
             <div className="h-full flex text-sm gap-x-6">
               <a className="group relative h-full gap-2 flex items-center font-medium text-gray-200 [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]" href="/developers/docs">
                 Overview
@@ -100,7 +100,7 @@ export default function DocsPage() {
       </div>
 
       {/* Sidebar + Content layout */}
-      <div className="max-w-8xl mx-auto flex">
+      <div className="container flex">
         <DocsSidebar />
 
         {/* Main content */}
