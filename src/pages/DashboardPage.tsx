@@ -18,26 +18,26 @@ export default function DashboardPage() {
       <main>
         <div className="container font-mono">
           {/* Hero: map behind, stats on top — fills viewport height */}
-          <div className="relative h-[calc(100dvh-var(--site-header-height))] overflow-hidden">
-            {/* Map layer — fills the entire hero, centered */}
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
-              <div className="w-full h-full flex items-center justify-center">
+          <div className="relative min-h-[calc(100dvh-var(--site-header-height))]">
+            {/* Header */}
+            <header className="flex flex-col items-start font-mono text-sm uppercase gap-2 pt-6 mb-4">
+              <p className="text-foreground font-mono my-0 whitespace-nowrap">
+                Oxy Platform{" "}
+                <span className="block font-mono text-muted-foreground">
+                  [Live Dashboard]
+                </span>
+              </p>
+            </header>
+
+            {/* Stats + Map side by side on desktop, stacked on mobile */}
+            <div className="relative">
+              {/* Map — right-aligned, stats overlap on left */}
+              <div className="pointer-events-none w-full">
                 <MapContainer activeCountries={stats.topCountries} />
               </div>
-            </div>
 
-            {/* Stats overlay */}
-            <div className="absolute inset-0 z-10 flex flex-col justify-between pt-6 pb-6">
-              <header className="flex flex-col items-start font-mono text-sm uppercase gap-2">
-                <p className="text-foreground font-mono my-0 whitespace-nowrap">
-                  Oxy Platform{" "}
-                  <span className="block font-mono text-muted-foreground">
-                    [Live Dashboard]
-                  </span>
-                </p>
-              </header>
-
-              <div className="mt-auto">
+              {/* Stats overlay — bottom-left on top of map */}
+              <div className="min-[961px]:absolute min-[961px]:bottom-0 min-[961px]:left-0 z-10 pb-4">
                 <div className="flex flex-col gap-y-4">
                   <TotalRequests stats={stats} />
                   <TopCountries stats={stats} />
