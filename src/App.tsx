@@ -23,6 +23,7 @@ import CodexExtensionPage from './pages/CodexExtensionPage'
 import OxyOSPage from './pages/OxyOSPage'
 import CareerDetailPage from './pages/CareerDetailPage'
 import NotFoundPage from './pages/NotFoundPage'
+import AIPage from './pages/AIPage'
 import HelpPage from './pages/HelpPage'
 import ChangelogPage from './pages/ChangelogPage'
 import DocsPage from './pages/DocsPage'
@@ -89,6 +90,7 @@ function PublicRoutes() {
       <Route path="company/news" element={<BlogPage />} />
       <Route path="codea" element={<CodeaPage />} />
       <Route path="codea/extension" element={<CodexExtensionPage />} />
+      <Route path="ai" element={<AIPage />} />
       <Route path="os" element={<OxyOSPage />} />
       <Route path="settings" element={<SettingsPage />} />
     </>
