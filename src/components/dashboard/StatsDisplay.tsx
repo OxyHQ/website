@@ -1,39 +1,7 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatNumber } from "../../data/dashboard/country-data";
 import type { PlatformStats } from "../../api/hooks";
-
-function useAnimatedNumber(baseValue: number, incrementRatePerSecond: number) {
-  const [value, setValue] = useState(baseValue);
-  const [displayRate, setDisplayRate] = useState(incrementRatePerSecond);
-  const lastBaseRef = useRef(baseValue);
-
-  useEffect(() => {
-    if (baseValue > lastBaseRef.current) {
-      setValue((current) => Math.max(current, baseValue));
-    }
-    lastBaseRef.current = baseValue;
-  }, [baseValue]);
-
-  useEffect(() => {
-    if (incrementRatePerSecond <= 0) return;
-    const updatesPerSecond = 20;
-    const baseIncrement = incrementRatePerSecond / updatesPerSecond;
-
-    const interval = setInterval(() => {
-      const variation = 0.7 + Math.random() * 0.6;
-      const increment = Math.max(1, Math.floor(baseIncrement * variation));
-      setValue((v) => v + increment);
-
-      const rateVariation = 0.85 + Math.random() * 0.3;
-      setDisplayRate(Math.floor(incrementRatePerSecond * rateVariation));
-    }, 1000 / updatesPerSecond);
-
-    return () => clearInterval(interval);
-  }, [incrementRatePerSecond]);
-
-  return { value, rate: displayRate };
-}
 
 function InfoIcon() {
   return (
@@ -170,23 +138,20 @@ function PixelGridTransition({
 
 function StatCard({
   title,
-  baseValue,
-  incrementRate,
+  value,
   children,
   infoContent,
   href,
   className,
 }: {
   title: string;
-  baseValue?: number;
-  incrementRate?: number;
+  value?: number;
   children?: React.ReactNode;
   infoContent?: string;
   href?: string;
   className?: string;
 }) {
   const [showInfo, setShowInfo] = useState(false);
-  const { value } = useAnimatedNumber(baseValue || 0, incrementRate || 0);
 
   const statsContent = (
     <div className="bg-surface p-4 md:p-6 w-full min-h-[120px] h-full">
@@ -194,7 +159,7 @@ function StatCard({
         <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-foreground pr-6">
           {title}
         </h2>
-        {baseValue !== undefined && (
+        {value !== undefined && (
           <div className="text-3xl md:text-4xl tracking-normal font-mono tabular-nums">
             {formatNumber(value)}
           </div>
@@ -254,50 +219,33 @@ function StatCard({
   );
 }
 
-function MetricRow({ label, baseValue, incrementRate, showRate = false }: { label: string; baseValue: number; incrementRate: number; showRate?: boolean }) {
-  const { value, rate } = useAnimatedNumber(baseValue, incrementRate);
-
+function MetricRow({ label, value }: { label: string; value: number }) {
   return (
     <li className="flex flex-wrap items-center justify-between gap-x-3">
       <h3 className="m-0 font-mono font-normal text-sm text-muted-foreground uppercase">
         {label}
       </h3>
-      <div className="flex items-center gap-3 md:gap-4 text-right">
-        <div className="text-foreground text-sm font-mono tabular-nums">
-          {formatNumber(value)}
-        </div>
-        {showRate && (
-          <div className="w-16 text-muted-foreground text-right text-sm font-mono tabular-nums">
-            <span>{formatNumber(rate)}</span>
-            <span aria-label="per second">/s</span>
-          </div>
-        )}
+      <div className="text-foreground text-sm font-mono tabular-nums">
+        {formatNumber(value)}
       </div>
     </li>
   );
 }
 
 export function TotalRequests({ stats }: { stats: PlatformStats }) {
-  const { value, rate } = useAnimatedNumber(stats.totalUsers, 1);
-
   return (
     <div className="space-y-2">
       <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-muted-foreground">
         Total Users
       </h2>
       <div className="text-4xl md:text-5xl tracking-normal font-mono tabular-nums">
-        {formatNumber(value)}
-      </div>
-      <div className="text-sm text-muted-foreground font-mono tabular-nums">
-        {formatNumber(rate)}/s
+        {formatNumber(stats.totalUsers)}
       </div>
     </div>
   );
 }
 
-function LocationRow({ location, count, incrementRate }: { location: string; count: number; incrementRate: number }) {
-  const { value, rate } = useAnimatedNumber(count, incrementRate);
-
+function LocationRow({ location, count }: { location: string; count: number }) {
   return (
     <li className="flex items-center w-full md:w-fit justify-between md:justify-start">
       <span aria-hidden="true" className="inline-block translate-y-[-2px] translate-x-[2px]">
@@ -309,11 +257,7 @@ function LocationRow({ location, count, incrementRate }: { location: string; cou
         </h3>
       </div>
       <div className="w-[16ch] text-right">
-        <span className="inline-flex tabular-nums">{formatNumber(value)}</span>
-      </div>
-      <div className="w-[10ch] ml-auto text-right text-muted-foreground">
-        <span>{formatNumber(rate)}</span>
-        <span className="lowercase" aria-label="per second">/s</span>
+        <span className="inline-flex tabular-nums">{formatNumber(count)}</span>
       </div>
     </li>
   );
@@ -327,12 +271,11 @@ export function TopCountries({ stats }: { stats: PlatformStats }) {
       </h2>
       <ul className="list-none pl-0 space-y-1">
         {stats.topCountries.length > 0 ? (
-          stats.topCountries.map((entry, index) => (
+          stats.topCountries.map((entry) => (
             <LocationRow
               key={entry.location}
               location={entry.location}
               count={entry.count}
-              incrementRate={Math.max(1, Math.floor(entry.count / (10 + index * 5)))}
             />
           ))
         ) : (
@@ -363,8 +306,7 @@ export function StatsGrid({ stats }: { stats: PlatformStats }) {
       <div className="flex flex-col gap-1.5">
         <StatCard
           title="Active Sessions"
-          baseValue={stats.activeSessions}
-          incrementRate={1}
+          value={stats.activeSessions}
           infoContent="The number of currently active user sessions across all platforms and devices."
           className="flex-1"
         />
@@ -374,7 +316,7 @@ export function StatsGrid({ stats }: { stats: PlatformStats }) {
           className="flex-1"
         >
           <ul className="space-y-1 list-none pl-0 mt-2">
-            <MetricRow label="Models" baseValue={stats.aiModels} incrementRate={0} />
+            <MetricRow label="Models" value={stats.aiModels} />
           </ul>
         </StatCard>
       </div>
@@ -382,30 +324,14 @@ export function StatsGrid({ stats }: { stats: PlatformStats }) {
       <div className="flex flex-col gap-1.5">
         <StatCard
           title="Messages"
-          baseValue={stats.totalMessages}
-          incrementRate={1}
+          value={stats.totalMessages}
           infoContent="Total email messages processed by the Oxy platform, including sent, received, and synced messages."
           className="flex-1"
         >
           <ul className="space-y-1 list-none pl-0 mt-4">
-            <MetricRow
-              label="Notifications"
-              baseValue={stats.totalNotifications}
-              incrementRate={1}
-              showRate
-            />
-            <MetricRow
-              label="Files stored"
-              baseValue={stats.totalFiles}
-              incrementRate={1}
-              showRate
-            />
-            <MetricRow
-              label="Follows"
-              baseValue={stats.totalFollows}
-              incrementRate={1}
-              showRate
-            />
+            <MetricRow label="Notifications" value={stats.totalNotifications} />
+            <MetricRow label="Files stored" value={stats.totalFiles} />
+            <MetricRow label="Follows" value={stats.totalFollows} />
           </ul>
         </StatCard>
       </div>
@@ -417,18 +343,13 @@ export function StatsGrid({ stats }: { stats: PlatformStats }) {
           className="flex-1"
         >
           <ul className="space-y-1 list-none pl-0 mt-2">
-            <MetricRow label="Transactions" baseValue={stats.totalTransactions} incrementRate={1} />
-            <MetricRow
-              label="Developer Apps"
-              baseValue={stats.totalDeveloperApps}
-              incrementRate={0}
-            />
+            <MetricRow label="Transactions" value={stats.totalTransactions} />
+            <MetricRow label="Developer Apps" value={stats.totalDeveloperApps} />
           </ul>
         </StatCard>
         <StatCard
           title="File Storage"
-          baseValue={stats.totalFiles}
-          incrementRate={1}
+          value={stats.totalFiles}
           infoContent="Total files uploaded and managed across the Oxy platform including avatars, attachments, and media."
           className="flex-1"
         >
