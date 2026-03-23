@@ -18,14 +18,16 @@ export default function DashboardPage() {
       <main>
         <div className="container font-mono">
           {/* Hero: map behind, stats on top — fills viewport height */}
-          <div className="relative h-[calc(100dvh-var(--site-header-height))]">
+          <div className="relative h-[calc(100dvh-var(--site-header-height))] overflow-hidden">
             {/* Map layer — fills the entire hero, centered */}
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-              <MapContainer activeCountries={stats.topCountries} />
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
+              <div className="w-full h-full flex items-center justify-center">
+                <MapContainer activeCountries={stats.topCountries} />
+              </div>
             </div>
 
             {/* Stats overlay */}
-            <div className="relative z-10 flex flex-col justify-between h-full pt-6 pb-6">
+            <div className="absolute inset-0 z-10 flex flex-col justify-between pt-6 pb-6">
               <header className="flex flex-col items-start font-mono text-sm uppercase gap-2">
                 <p className="text-foreground font-mono my-0 whitespace-nowrap">
                   Oxy Platform{" "}
