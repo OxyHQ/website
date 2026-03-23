@@ -1,6 +1,9 @@
 import IDEDemoMockup from './IDEDemoMockup'
 import MissionControlMockup from './MissionControlMockup'
-import SlackDemoMockup from './SlackDemoMockup'
+// SlackDemoMockup available at './SlackDemoMockup' for future use
+import CodeEditorMockup from './CodeEditorMockup'
+import BackgroundTasksMockup from './BackgroundTasksMockup'
+import TeamDashboardMockup from './TeamDashboardMockup'
 
 const logos = ['Cisco', 'Scale', 'Notion', 'Cognition', 'Anduril']
 
@@ -99,12 +102,9 @@ export default function CodexExtensionContent() {
                 <div className="h-full w-full rounded-lg overflow-hidden">
                   {i === 0 && <IDEDemoMockup />}
                   {i === 1 && <MissionControlMockup />}
-                  {i === 2 && <SlackDemoMockup />}
-                  {i > 2 && (
-                    <div className="h-full w-full bg-secondary aspect-video flex items-center justify-center text-muted-foreground text-sm rounded-lg">
-                      Feature preview
-                    </div>
-                  )}
+                  {i === 2 && <CodeEditorMockup />}
+                  {i === 3 && <BackgroundTasksMockup />}
+                  {i === 4 && <TeamDashboardMockup />}
                 </div>
               </div>
             </div>
