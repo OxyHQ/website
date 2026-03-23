@@ -1,4 +1,6 @@
 import IDEDemoMockup from './IDEDemoMockup'
+import MissionControlMockup from './MissionControlMockup'
+import SlackDemoMockup from './SlackDemoMockup'
 
 const logos = ['Cisco', 'Scale', 'Notion', 'Cognition', 'Anduril']
 
@@ -94,8 +96,15 @@ export default function CodexExtensionContent() {
                 <div className="text-muted-foreground text-[clamp(1rem,0.9rem+0.3vw,1.125rem)] leading-relaxed mt-5 md:max-w-[350px]">{f.description}</div>
               </div>
               <div className={`relative w-full md:max-w-none md:flex-[0_0_72%] lg:h-[520px] ${i % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
-                <div className="h-full w-full rounded-lg bg-secondary aspect-video flex items-center justify-center text-muted-foreground text-sm">
-                  Feature preview
+                <div className="h-full w-full rounded-lg overflow-hidden">
+                  {i === 0 && <IDEDemoMockup />}
+                  {i === 1 && <MissionControlMockup />}
+                  {i === 2 && <SlackDemoMockup />}
+                  {i > 2 && (
+                    <div className="h-full w-full bg-secondary aspect-video flex items-center justify-center text-muted-foreground text-sm rounded-lg">
+                      Feature preview
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
