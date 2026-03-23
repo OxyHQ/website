@@ -1,17 +1,52 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { aiHero, aiDemoTabs, aiFeatureCards } from '../../data/ai'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
-import MorningBriefingMockup from './MorningBriefingMockup'
+import AnimatedLineGrid from './AnimatedLineGrid'
 
-/* ───────────────────────── Placeholder Mockup ───────────────────────── */
+/* ───────────────────────── Tab Videos Map ───────────────────────── */
 
-function PlaceholderMockup({ label }: { label: string }) {
+const tabVideos: Record<number, string> = {
+  0: '/ai/morning-briefing-start.mp4',
+  1: '/ai/catch-up.mp4',
+  2: '/ai/todo.mp4',
+  3: '/ai/todo-assign-ai.mp4',
+  4: '/ai/managed-inbox.mp4',
+  5: '/ai/meeting.mp4',
+  6: '/ai/evening-briefing.mp4',
+}
+
+/* ───────────────────────── Demo Video Component ───────────────────────── */
+
+function DemoVideo({ src, poster }: { src: string; poster?: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    // Reset and play when src changes
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0
+      videoRef.current.play().catch(() => {})
+    }
+  }, [src])
+
   return (
-    <div className="flex h-full items-center justify-center rounded-2xl border border-foreground/10 bg-[#1a1a1c] p-8 text-foreground/50">
-      {label} demo
+    <div className="flex h-full items-center justify-center overflow-hidden rounded-2xl">
+      <video
+        ref={videoRef}
+        key={src}
+        src={src}
+        className="h-full w-full rounded-t-[19px] object-cover"
+        autoPlay
+        loop
+        muted
+        playsInline
+        poster={poster}
+      />
     </div>
   )
 }
+
+/* ───────────────────────── Placeholder Mockup ───────────────────────── */
+
 
 /* ───────────────────────── Icon components ───────────────────────── */
 
@@ -113,17 +148,6 @@ function FrostButton({
   )
 }
 
-/* ───────────────────────── Demo Content Map ───────────────────────── */
-
-const demoContent: Record<number, React.ReactNode> = {
-  0: <MorningBriefingMockup />,
-  1: <PlaceholderMockup label="Catch Up" />,
-  2: <PlaceholderMockup label="Action Plan" />,
-  3: <PlaceholderMockup label="Deep Work" />,
-  4: <PlaceholderMockup label="Inbox" />,
-  5: <PlaceholderMockup label="Meeting Prep" />,
-  6: <PlaceholderMockup label="Daily Recap" />,
-}
 
 /* ───────────────────────── Main Page ───────────────────────── */
 
@@ -132,18 +156,62 @@ export default function AIPage() {
   const ctaRef = useScrollReveal()
   const featuresRef = useScrollReveal()
 
+  // Sun halo scroll effect
+  useEffect(() => {
+    function handleScroll() {
+      const halo = document.getElementById('sun-halo-layer')
+      if (halo) {
+        const opacity = Math.min(1, window.scrollY / 500)
+        halo.style.opacity = String(opacity)
+      }
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Hero parallax scroll effect
+  useEffect(() => {
+    function handleScroll() {
+      const y = window.scrollY
+      const hero = document.getElementById('ai-hero-content')
+      if (hero) {
+        hero.style.transform = `translateY(${y * 0.15}px)`
+        hero.style.opacity = String(Math.max(0, 1 - y / 600))
+      }
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
     <div className="text-foreground">
       {/* ── 1. Hero — Split Layout ── */}
       <div className="relative z-0 mx-auto flex min-h-screen w-full max-w-[100rem] flex-col overflow-clip lg:flex-row">
-        {/* Hero gradient background */}
+        {/* Layer 1: Gradient */}
         <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-[#4867AF] via-[#9CAFB8] via-[62%] to-[#C49577]" />
+
+        {/* Layer 2: Shadow texture (darkens via color-burn) */}
+        <div className="pointer-events-none absolute inset-0 z-[1]" style={{ mixBlendMode: 'color-burn' }}>
+          <img src="/ai/shadow-bg.png" alt="" className="h-full w-full object-cover" />
+        </div>
+
+        {/* Layer 3: Sun halo (lightens via screen, fades in on scroll) */}
+        <div
+          className="pointer-events-none absolute inset-0 z-[2] transition-opacity duration-500"
+          style={{ mixBlendMode: 'screen', opacity: 0 }}
+          id="sun-halo-layer"
+        >
+          <img src="/ai/sun-halo.png" alt="" className="h-full w-full object-cover" />
+        </div>
+
+        {/* Layer 4: Animated line grid */}
+        <AnimatedLineGrid />
 
         {/* Left sticky panel */}
         <div className="relative overflow-hidden lg:pointer-events-none lg:sticky lg:inset-0 lg:z-40 lg:flex lg:px-0 lg:max-h-screen lg:max-w-[32rem] mt-12 shrink-0 max-lg:snap-start lg:mt-0 lg:min-h-0 lg:border-r border-border">
           <div className="relative flex w-full lg:pointer-events-auto lg:min-w-[32rem] lg:overflow-y-auto lg:overflow-x-hidden lg:pl-6">
             <div className="mx-auto max-w-lg lg:mx-0 lg:flex lg:w-[32rem] lg:max-w-none lg:flex-col px-8 sm:px-0 lg:px-4">
-              <div className="pb-8 pt-16 lg:flex lg:h-full lg:flex-col lg:pr-10">
+              <div id="ai-hero-content" className="pb-8 pt-16 lg:flex lg:h-full lg:flex-col lg:pr-10">
                 {/* Badge */}
                 <h6 className="text-base text-foreground">{aiHero.badge}</h6>
 
@@ -242,10 +310,10 @@ export default function AIPage() {
                 {aiDemoTabs[activeTab]?.label ?? 'Morning Briefing'}
               </h3>
 
-              {/* Demo preview — switch content based on activeTab */}
-              <div className="mt-8 flex flex-1 items-start justify-center px-4">
-                <div className="w-full max-w-2xl">
-                  {demoContent[activeTab] ?? <PlaceholderMockup label={aiDemoTabs[activeTab]?.label ?? 'Unknown'} />}
+              {/* Demo preview — video content with static fallback */}
+              <div className="flex min-h-screen items-center justify-center p-8">
+                <div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-foreground/10 bg-[#1a1a1c] shadow-xl">
+                  <DemoVideo src={tabVideos[activeTab] || '/ai/morning-briefing-start.mp4'} />
                 </div>
               </div>
             </div>
