@@ -104,13 +104,10 @@ export default function App() {
             <BrowserRouter>
               <ScrollToTop />
               <Routes>
-                {/* Admin routes — no locale prefix */}
+                {/* Admin routes — outside locale system */}
                 <Route path="/admin/*" element={<AdminPage />} />
 
-                {/* Public routes with locale support */}
-                <Route path="/:locale" element={<LocaleLayout />}>
-                  {PublicRoutes()}
-                </Route>
+                {/* Public routes — default locale (no prefix) */}
                 <Route path="/" element={<LocaleLayout />}>
                   {PublicRoutes()}
                   <Route path="*" element={<NotFoundPage />} />

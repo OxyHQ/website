@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { apiFetch } from '../api/client'
 
@@ -28,7 +28,6 @@ export function useLocaleContext() {
 }
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const { locale: localeParam } = useParams<{ locale?: string }>()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -36,24 +35,31 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     queryKey: ['public-locales'],
     queryFn: () => apiFetch<Array<{ code: string; name: string; nativeName: string; isDefault: boolean }>>('/locales'),
     staleTime: 300_000,
+    retry: 1,
   })
 
   const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
   const enabledCodes = useMemo(() => new Set(locales?.map(l => l.code) ?? []), [locales])
 
-  // Determine current locale from URL param
-  const locale = localeParam && enabledCodes.has(localeParam) ? localeParam : defaultLocale
+  // Detect locale from first path segment (e.g., /es/pricing → "es")
+  const pathSegments = location.pathname.split('/').filter(Boolean)
+  const firstSegment = pathSegments[0]
+  const detectedLocale = firstSegment && enabledCodes.has(firstSegment) ? firstSegment : null
+
+  const locale = detectedLocale ?? defaultLocale
   const isDefaultLocale = locale === defaultLocale
 
   const setLocale = (code: string) => {
-    const pathWithoutLocale = localeParam && enabledCodes.has(localeParam)
-      ? location.pathname.replace(`/${localeParam}`, '') || '/'
+    // Strip current locale prefix from path
+    const pathWithoutLocale = detectedLocale
+      ? '/' + pathSegments.slice(1).join('/')
       : location.pathname
 
     if (code === defaultLocale) {
       navigate(pathWithoutLocale + location.search)
     } else {
-      navigate(`/${code}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}${location.search}`)
+      const cleanPath = pathWithoutLocale === '/' ? '' : pathWithoutLocale
+      navigate(`/${code}${cleanPath}${location.search}`)
     }
   }
 
