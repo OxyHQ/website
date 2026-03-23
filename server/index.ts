@@ -24,6 +24,10 @@ app.use(cors({
   origin: config.corsOrigin ? config.corsOrigin.split(',') : true,
   credentials: true,
 }))
+
+// MCP must be mounted before express.json() — it needs raw body
+mountMcp(app)
+
 app.use(express.json({ limit: '5mb' }))
 
 // API routes
@@ -39,9 +43,6 @@ app.use('/api/settings', settingsRouter)
 app.use('/api/mcp-tokens', mcpTokensRouter)
 app.use('/api/locales', localesRouter)
 app.use('/api/translations', translationsRouter)
-
-// MCP (Model Context Protocol) SSE endpoint
-mountMcp(app)
 
 // Health check
 app.get('/api/health', (_req, res) => res.json({ ok: true }))
