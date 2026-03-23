@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { aiHero, aiDemoTabs, aiFeatureCards } from '../../data/ai'
 
+/* ───────────────────────── Icon components ───────────────────────── */
+
 function SparkleIcon({ className }: { className?: string }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 0 12 12" fill="currentColor" className={className}>
@@ -55,6 +57,14 @@ function ShieldIcon({ className }: { className?: string }) {
   )
 }
 
+function ArrowIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 11 11" fill="none">
+      <path d="M0.587891 5.84207V4.55407H8.39989L4.49389 0.914067L5.37589 0.0180664L10.3879 4.79207V5.56207L5.37589 10.3501L4.49389 9.45407L8.37189 5.84207H0.587891Z" fill="currentColor" />
+    </svg>
+  )
+}
+
 const iconMap: Record<string, React.FC<{ className?: string }>> = {
   sparkle: SparkleIcon,
   clock: ClockIcon,
@@ -62,16 +72,45 @@ const iconMap: Record<string, React.FC<{ className?: string }>> = {
   shield: ShieldIcon,
 }
 
+/* ───────────────────────── Frost Button ───────────────────────── */
+
+function FrostButton({
+  children,
+  className = '',
+  href,
+}: {
+  children: React.ReactNode
+  className?: string
+  href?: string
+}) {
+  const classes = `inline-flex items-center gap-1.5 rounded-full border border-foreground/20 bg-foreground/5 px-4 py-2 text-lg font-medium text-foreground backdrop-blur-sm transition hover:bg-foreground/10 ${className}`
+
+  if (href) {
+    return (
+      <a href={href} className={classes}>
+        {children}
+      </a>
+    )
+  }
+  return (
+    <button type="button" className={classes}>
+      {children}
+    </button>
+  )
+}
+
+/* ───────────────────────── Main Page ───────────────────────── */
+
 export default function AIPage() {
   const [activeTab, setActiveTab] = useState(0)
 
   return (
-    <div className="bg-[#0a0a0a] text-foreground">
+    <div className="text-foreground">
       {/* ── 1. Hero — Split Layout ── */}
       <div className="relative z-0 mx-auto flex min-h-screen w-full max-w-[100rem] flex-col overflow-clip lg:flex-row">
         {/* Left sticky panel */}
-        <div className="relative overflow-hidden lg:sticky lg:inset-0 lg:z-40 lg:flex lg:max-h-screen lg:max-w-[32rem] mt-12 shrink-0 max-lg:snap-start lg:mt-0 lg:min-h-0 lg:border-r border-border">
-          <div className="relative flex w-full lg:min-w-[32rem] lg:overflow-y-auto lg:pl-6">
+        <div className="relative overflow-hidden lg:pointer-events-none lg:sticky lg:inset-0 lg:z-40 lg:flex lg:px-0 lg:max-h-screen lg:max-w-[32rem] mt-12 shrink-0 max-lg:snap-start lg:mt-0 lg:min-h-0 lg:border-r border-border">
+          <div className="relative flex w-full lg:pointer-events-auto lg:min-w-[32rem] lg:overflow-y-auto lg:overflow-x-hidden lg:pl-6">
             <div className="mx-auto max-w-lg lg:mx-0 lg:flex lg:w-[32rem] lg:max-w-none lg:flex-col px-8 sm:px-0 lg:px-4">
               <div className="pb-8 pt-16 lg:flex lg:h-full lg:flex-col lg:pr-10">
                 {/* Badge */}
@@ -95,46 +134,36 @@ export default function AIPage() {
                   })}
                 </div>
 
-                {/* CTA buttons */}
-                <div className="mt-8 flex flex-wrap items-center gap-3">
-                  <a
-                    className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:opacity-90"
-                    href="#"
-                  >
-                    Get started free &rarr;
-                  </a>
-                  <a
-                    className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-medium text-foreground transition hover:bg-secondary"
-                    href="#"
-                  >
-                    Watch demo
-                  </a>
+                {/* CTA button */}
+                <div className="mb-4 mt-4 w-fit">
+                  <FrostButton className="gap-1.5 px-3 py-2 text-sm" href="#">
+                    Get Started
+                    <ArrowIcon className="size-3" />
+                  </FrostButton>
                 </div>
 
                 {/* Demo navigation tabs (desktop only) */}
                 <div className="mt-auto max-lg:hidden">
-                  <h6 className="mb-4 text-lg font-bold text-foreground">
+                  <h6 className="mb-4 text-[18px] font-bold text-foreground">
                     What Oxy AI handles for you
                   </h6>
-                  <ul className="flex flex-col items-start">
+                  <ul className="flex flex-col items-start max-h-80 overflow-y-auto">
                     {aiDemoTabs.map((tab, i) => (
                       <li key={tab.label} className="w-full">
                         <button
                           type="button"
                           onClick={() => setActiveTab(i)}
-                          className={`flex w-full items-center justify-between rounded-[10px] p-2 text-base transition-colors ${
-                            activeTab === i
-                              ? 'bg-secondary'
-                              : 'hover:bg-secondary/50'
+                          className={`text-base transition-colors duration-200 flex items-center justify-between text-foreground select-none w-full rounded-[10px] p-2 ${
+                            activeTab === i ? 'bg-foreground/5' : ''
                           }`}
                         >
                           <div className="flex items-center">
                             {activeTab === i && (
-                              <div className="mr-1.5 h-5 w-[3px] rounded-[2px] bg-[var(--color-blue-500)]" />
+                              <div className="h-5 w-[3px] rounded-[2px] bg-[#73A7FF] mr-1.5" />
                             )}
                             {tab.label}
                           </div>
-                          <span className="font-medium text-muted-foreground">
+                          <span className="font-mono font-medium text-foreground/75">
                             {tab.number}
                           </span>
                         </button>
@@ -147,13 +176,58 @@ export default function AIPage() {
           </div>
         </div>
 
-        {/* Right content area */}
-        <div className="relative flex-1 overflow-hidden">
-          {/* Product demo placeholder */}
-          <div className="flex min-h-screen items-center justify-center bg-secondary p-8">
-            <div className="w-full max-w-2xl rounded-2xl bg-background border border-border p-6 shadow-xl">
-              <div className="text-center text-muted-foreground">
-                Product demo preview
+        {/* Right content area — demo screens */}
+        <div className="relative min-h-screen flex-1 overflow-hidden">
+          {/* Background gradient overlay */}
+          <div className="pointer-events-none absolute inset-0 overflow-clip">
+            <div className="absolute inset-0 h-full w-full bg-gradient-to-b from-[#4867AF] via-[#9CAFB8] to-[#C49577] via-62% opacity-30" />
+          </div>
+
+          {/* Demo content area */}
+          <div className="relative isolate min-h-screen overscroll-none">
+            {/* Mobile tab bar */}
+            <div className="block lg:hidden sticky top-0 z-50 bg-transparent backdrop-blur-md px-5 pt-8">
+              <p className="text-sm font-bold uppercase tracking-wide text-foreground/50">
+                {aiDemoTabs[activeTab]
+                  ? `Budapest - 08:00 - ${aiDemoTabs[activeTab].label}`
+                  : ''}
+              </p>
+            </div>
+
+            {/* Desktop sticky header */}
+            <div className="hidden lg:block sticky top-0 z-50">
+              <div className="relative px-5 py-4">
+                <p className="text-sm font-bold uppercase tracking-wide text-foreground/50">
+                  {aiDemoTabs[activeTab]
+                    ? `Budapest - 08:00 - ${aiDemoTabs[activeTab].label}`
+                    : ''}
+                </p>
+              </div>
+            </div>
+
+            {/* Demo section title */}
+            <div className="relative flex flex-col pl-5 min-h-screen">
+              <h3 className="text-4xl font-medium text-foreground">
+                {aiDemoTabs[activeTab]?.label ?? 'Morning Briefing'}
+              </h3>
+
+              {/* Demo preview placeholder */}
+              <div className="mt-8 flex flex-1 items-start justify-center px-4">
+                <div className="w-full max-w-2xl">
+                  {/* Morning briefing demo image */}
+                  {activeTab === 0 && (
+                    <img
+                      alt="Morning Briefing"
+                      src="/ai/morning-briefing.png"
+                      className="w-full h-auto rounded-2xl select-none"
+                    />
+                  )}
+                  {activeTab !== 0 && (
+                    <div className="flex h-64 items-center justify-center rounded-2xl border border-foreground/10 bg-foreground/5 text-foreground/50">
+                      {aiDemoTabs[activeTab]?.label} preview
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -161,67 +235,118 @@ export default function AIPage() {
       </div>
 
       {/* ── 2. "Your smartest coworker starts today" CTA ── */}
-      <section className="flex flex-col items-center px-6 py-20 text-center md:py-32">
-        <h5 className="text-xs uppercase tracking-widest text-muted-foreground">
-          Get Started
-        </h5>
-        <h2 className="mt-3 text-[40px] font-medium text-foreground sm:text-[50px] sm:leading-[56px]">
-          Your smartest coworker starts today.
-        </h2>
-        <p className="mt-3 text-lg text-muted-foreground">
-          Connect your tools. Oxy AI starts working in under a minute.
-        </p>
-        <a
-          className="mt-8 inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-lg font-medium text-foreground transition hover:bg-secondary"
-          href="#"
-        >
-          Get started today &rarr;
-        </a>
-        {/* CTA background image placeholder */}
-        <div className="relative mt-8 w-full max-w-4xl">
-          <div className="aspect-[2772/962] rounded-2xl bg-gradient-to-b from-secondary to-background" />
-        </div>
-      </section>
+      <div className="relative h-full w-full p-3 sm:p-5 md:p-7">
+        <div className="relative overflow-hidden w-full rounded-t-[24px] flex flex-col items-center justify-center gap-4 px-4 pt-12">
+          {/* Background shader area */}
+          <div className="pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-br from-[#4867AF]/20 via-transparent to-[#C49577]/20" />
 
-      {/* ── 3. "Built for real work" — Horizontal Scroll Feature Cards ── */}
-      <section className="py-12 md:py-14" id="features">
-        <div className="flex flex-col md:flex-row">
-          {/* Left: heading */}
-          <div className="shrink-0 px-6 pb-8 md:w-80 md:px-14 md:pb-0">
-            <h2 className="text-5xl font-medium text-foreground">
-              Built for real work.
-            </h2>
-            <a
-              className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-2 text-sm font-medium text-foreground"
-              href="#"
-            >
-              Get Started &rarr;
-            </a>
+          <div className="relative z-20 flex flex-col items-center gap-6 w-full max-w-xs text-center sm:max-w-sm">
+            <div className="flex flex-col gap-3">
+              <h5 className="text-xs uppercase tracking-widest text-foreground/50">
+                Get Started
+              </h5>
+              <h2 className="text-[40px] font-medium text-foreground sm:text-[50px] sm:leading-[56px]">
+                Your smartest coworker starts today.
+              </h2>
+              <p className="px-4 text-[18px] leading-6 text-foreground/50">
+                Connect your tools. Oxy AI starts working in under a minute.
+              </p>
+            </div>
+
+            <FrostButton className="text-[18px] gap-1.5 px-4 py-2" href="#">
+              Get started today
+              <ArrowIcon className="mt-0.5 size-4" />
+            </FrostButton>
           </div>
 
-          {/* Right: horizontal scroll cards */}
-          <div className="flex-1 overflow-x-auto">
-            <div className="flex w-full items-center gap-4 px-4 sm:px-6 md:px-0">
-              {aiFeatureCards.map((card) => (
+          {/* CTA background images */}
+          <div className="relative z-10 mt-2 w-full md:-mt-12">
+            <div className="relative hidden w-full select-none overflow-hidden md:block md:aspect-[2772/962]">
+              <img
+                alt="CTA Background"
+                src="/ai/cta-desktop-bg.png"
+                className="w-full h-auto object-cover object-bottom"
+              />
+            </div>
+            <img
+              alt="CTA Background"
+              src="/ai/cta-mobile-bg.png"
+              className="mx-auto w-[50vh] max-w-[80vw] select-none md:hidden"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ── 3. "Built for real work" — Horizontal Scroll Feature Cards ── */}
+      <div
+        id="features"
+        className="pl-0 pt-12 sm:pt-14 md:pb-4 md:pl-14 lg:pb-14 flex flex-col md:flex-row pb-0"
+      >
+        {/* Left: heading + CTA */}
+        <div className="flex shrink-0 flex-col gap-2 py-8 pl-4 pr-20 sm:pl-6 md:max-w-xs md:pl-0">
+          <h5 className="text-xs uppercase tracking-widest text-foreground/50">Features</h5>
+          <h2 className="text-5xl font-medium text-foreground">
+            Built for real work.
+          </h2>
+          <div className="mt-6 md:mt-auto">
+            <FrostButton className="w-fit gap-1.5 px-3 py-2 text-sm font-medium" href="#">
+              Get Started
+              <ArrowIcon className="mt-0.5 size-3" />
+            </FrostButton>
+          </div>
+        </div>
+
+        {/* Right: horizontal scroll cards */}
+        <div className="relative w-full min-w-0 flex-1">
+          <div className="overflow-x-auto overflow-y-hidden">
+            <div className="flex w-full items-center gap-4">
+              {aiFeatureCards.map((card, i) => (
                 <div
                   key={card.title}
-                  className={`relative shrink-0 overflow-hidden p-8 h-[520px] w-96 rounded-[32px] flex flex-col gap-1 bg-gradient-to-b ${card.gradient}`}
+                  className={`relative shrink-0 overflow-hidden p-8 h-[520px] w-96 rounded-[32px] flex flex-col gap-1 ${
+                    i === 0 ? 'ml-4 sm:ml-6 md:ml-0' : ''
+                  }`}
                 >
-                  <p className="max-w-36 text-sm font-semibold leading-4 text-foreground">
-                    {card.title}
-                  </p>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {card.description}
-                  </p>
-                  <div className="mt-auto flex h-64 items-center justify-center rounded-2xl bg-background/50 text-muted-foreground text-xs">
-                    Feature preview
+                  {/* Card background gradient */}
+                  <div className="pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-br from-foreground/5 to-foreground/10" />
+
+                  {/* Card title */}
+                  <div className="absolute z-10">
+                    <p className="text-[32px] font-semibold text-foreground">
+                      {card.title}
+                    </p>
                   </div>
+
+                  {/* Card subtitle */}
+                  <p className="absolute top-20 z-10 font-medium text-foreground/50">
+                    {card.subtitle}
+                  </p>
+
+                  {/* Card image or content */}
+                  {card.image ? (
+                    <img
+                      alt={card.title}
+                      src={`/ai/${card.image}`}
+                      className={`${
+                        card.title === 'Integrations'
+                          ? 'absolute bottom-0 left-0 h-auto max-h-[380px] w-full select-none object-contain'
+                          : 'mt-auto h-auto max-h-[330px] w-full select-none object-contain'
+                      }`}
+                    />
+                  ) : (
+                    <div className="mt-auto flex h-48 items-center justify-center rounded-2xl border border-foreground/10 bg-foreground/5 text-foreground/30 text-sm">
+                      {card.title} preview
+                    </div>
+                  )}
                 </div>
               ))}
+
+              {/* Trailing spacer to match original */}
+              <div className="h-[520px] w-3 shrink-0" />
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   )
 }

@@ -12,16 +12,29 @@ export const aiHero = {
 export const aiDemoTabs = [
   { label: 'Morning Briefing', number: '01' },
   { label: 'Catch Up', number: '02' },
-  { label: 'Calendar Prep', number: '03' },
-  { label: 'Smart Compose', number: '04' },
-  { label: 'Action Items', number: '05' },
+  { label: 'Action Plan', number: '03' },
+  { label: 'Deep Work', number: '04' },
+  { label: 'Inbox', number: '05' },
+  { label: 'Meeting Prep', number: '06' },
+  { label: 'Daily Recap', number: '07' },
 ]
 
 export const aiFeatureCards = [
-  { title: 'Smart Email', description: 'Draft, summarize, and manage your inbox with AI that understands context.', gradient: 'from-blue-500/20 to-purple-500/20' },
-  { title: 'Meeting Prep', description: 'Get briefed before every meeting with relevant context from your tools.', gradient: 'from-purple-500/20 to-pink-500/20' },
-  { title: 'On the Go', description: 'Access your AI assistant anywhere — mobile, desktop, or browser.', gradient: 'from-green-500/20 to-blue-500/20' },
-  { title: 'Integrations', description: 'Connect 30+ apps. Google, Slack, Linear, Notion, and more.', gradient: 'from-amber-500/20 to-red-500/20' },
+  {
+    title: 'Search',
+    subtitle: 'Search everything, instantly.',
+    image: null,
+  },
+  {
+    title: 'Everywhere',
+    subtitle: 'Always a message away.',
+    image: 'feature-otg.png',
+  },
+  {
+    title: 'Integrations',
+    subtitle: 'Plugs into your entire stack.',
+    image: 'feature-integrations.png',
+  },
 ]
 
 export const aiFooterLinks = [
