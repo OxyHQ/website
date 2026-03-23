@@ -1,6 +1,7 @@
 export interface DocsSidebarItem {
   label: string;
   href: string;
+  expandable?: boolean;
   children?: DocsSidebarItem[];
 }
 
@@ -12,41 +13,24 @@ export interface DocsSidebarSection {
 export const docsSidebar: DocsSidebarSection[] = [
   {
     title: 'Get started',
+    items: [{ label: 'Overview', href: '/developers/docs' }],
+  },
+  {
+    title: 'Core concepts',
     items: [
-      { label: 'Overview', href: '/developers/docs' },
-      { label: 'Quickstart', href: '#' },
-      { label: 'Development', href: '#' },
-      { label: 'Authentication', href: '#' },
+      { label: 'Objects and lists', href: '#' },
+      { label: 'Users and workspaces', href: '#' },
+      { label: 'Standard objects', href: '#', expandable: true },
+      { label: 'Attribute types', href: '#', expandable: true },
     ],
   },
   {
-    title: 'App SDK',
+    title: 'Further reading',
     items: [
-      { label: 'Creating an app', href: '#' },
-      { label: 'UI components', href: '#' },
-      { label: 'Server functions', href: '#' },
-      { label: 'Publishing', href: '#' },
-    ],
-  },
-  {
-    title: 'REST API',
-    items: [
-      { label: 'Overview', href: '#' },
-      { label: 'Objects', href: '#' },
-      { label: 'Records', href: '#' },
-      { label: 'Lists', href: '#' },
-      { label: 'Attributes', href: '#' },
-      { label: 'Notes', href: '#' },
-      { label: 'Tasks', href: '#' },
-      { label: 'Webhooks', href: '#' },
-    ],
-  },
-  {
-    title: 'MCP',
-    items: [
-      { label: 'Overview', href: '#' },
-      { label: 'Configuration', href: '#' },
-      { label: 'Tools reference', href: '#' },
+      { label: 'Actors', href: '#' },
+      { label: 'Slugs and IDs', href: '#' },
+      { label: 'Default values', href: '#' },
+      { label: 'Archiving vs deleting', href: '#' },
     ],
   },
 ];
@@ -62,14 +46,14 @@ export const docsCards: DocsCard[] = [
   {
     title: 'App SDK',
     description:
-      'Build Typescript React applications within the Oxy interface and run server functions with access to our REST API.',
+      'This allows developers to embed Typescript React applications within the Oxy interface and run server functions with access to our REST API.',
     href: '#',
     icon: 'react',
   },
   {
     title: 'REST API',
     description:
-      'Build apps that read and write information to and from Oxy workspaces. Subscribe to events in realtime using webhooks.',
+      'This allows developers to build apps that read and write information to and from Oxy workspaces. You can also subscribe to events in realtime using webhooks.',
     href: '#',
     icon: 'server',
   },
@@ -80,4 +64,16 @@ export const docsCards: DocsCard[] = [
     href: '#',
     icon: 'sparkles',
   },
+];
+
+export const docsTopLinks = [
+  { label: 'Developer dashboard', icon: 'terminal' as const },
+  { label: 'Support', icon: 'headset' as const },
+];
+
+export const docsTabs = [
+  { label: 'Overview', href: '/developers/docs', active: true },
+  { label: 'App SDK', href: '#', badge: 'Alpha' },
+  { label: 'REST API', href: '#' },
+  { label: 'MCP', href: '#' },
 ];
