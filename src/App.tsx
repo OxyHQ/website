@@ -16,6 +16,7 @@ import PricingPage from './pages/PricingPage'
 import NewsroomPage from './pages/NewsroomPage'
 import BlogPage from './pages/BlogPage'
 import CodeaPage from './pages/CodeaPage'
+import CodexExtensionPage from './pages/CodexExtensionPage'
 import NotFoundPage from './pages/NotFoundPage'
 import HelpPage from './pages/HelpPage'
 import ChangelogPage from './pages/ChangelogPage'
@@ -80,6 +81,7 @@ export default function App() {
                 <Route path="/developers/docs/overview" element={<DocsPage />} />
                 <Route path="/company/news" element={<BlogPage />} />
                 <Route path="/codea" element={<CodeaPage />} />
+                <Route path="/codea/extension" element={<CodexExtensionPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/admin/*" element={<AdminPage />} />
                 <Route path="*" element={<NotFoundPage />} />
