@@ -1,5 +1,4 @@
 import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
 import AIPageContent from '../components/ai/AIPage'
 
 export default function AIPage() {
@@ -9,7 +8,6 @@ export default function AIPage() {
       <main className="flex-1">
         <AIPageContent />
       </main>
-      <Footer />
     </div>
   )
 }
