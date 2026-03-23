@@ -83,7 +83,12 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
 }
 
 /* ─── Main Navbar ─── */
-export default function Navbar() {
+interface NavbarProps {
+  /** Extra elements rendered before Sign in / Start for free on desktop, and before auth buttons on mobile */
+  rightActions?: React.ReactNode
+}
+
+export default function Navbar({ rightActions }: NavbarProps = {}) {
   const { user, isAuthenticated, signIn, signOut } = useAuth()
   const { data: navigationData } = useNavigation()
   const dropdowns: NavDropdown[] = useMemo(() => navigationData ?? [], [navigationData])
@@ -416,6 +421,7 @@ export default function Navbar() {
             {/* Desktop buttons */}
             <div className="hidden items-center gap-x-2.5 lg:flex">
               <ThemeToggle />
+              {rightActions}
               {isAuthenticated ? (
                 <div className="relative" ref={avatarMenuRef}>
                   <button onClick={() => setAvatarMenuOpen((o) => !o)} className="cursor-pointer">
@@ -553,6 +559,7 @@ export default function Navbar() {
                   </>
                 ) : (
                   <>
+                    {rightActions && <div className="flex flex-col gap-2">{rightActions}</div>}
                     <Button variant="outline" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Sign in</Button>
                     <Button variant="primary" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Start for free</Button>
                   </>
