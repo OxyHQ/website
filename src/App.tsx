@@ -35,7 +35,7 @@ export default function App() {
         <Route path="/newsroom" element={<NewsroomPage />} />
         <Route path="/help" element={<HelpPage />} />
         <Route path="/changelog" element={<ChangelogPage />} />
-        <Route path="/developers/docs" element={<DocsPage />} />
+        <Route path="/developers/docs/overview" element={<DocsPage />} />
         <Route path="/company/news" element={<BlogPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
