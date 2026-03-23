@@ -230,7 +230,7 @@ export default function DottedMap({ width = 1000, height = 560, activeCountries 
   );
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-fit mx-auto max-h-[50dvh]">
       <svg
         viewBox={`0 0 ${width} ${height}`}
         className="w-full h-auto max-h-[50dvh] bg-background"
