@@ -1,5 +1,5 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js'
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import express from 'express'
 import mongoose from 'mongoose'
 import crypto from 'node:crypto'
@@ -584,8 +584,6 @@ server.tool('delete_translation', 'Delete a translation for a document', {
 
 // ── Mount on Express app ────────────────────────────────────────────────────
 
-const transports: Record<string, SSEServerTransport> = {}
-
 async function validateToken(token: string): Promise<boolean> {
   const tokenHash = crypto.createHash('sha256').update(token).digest('hex')
   const mcpToken = await McpToken.findOne({
@@ -600,24 +598,44 @@ async function validateToken(token: string): Promise<boolean> {
 }
 
 export function mountMcp(app: express.Express) {
-  app.get('/mcp', async (req, res) => {
-    // Auth via query param ?token= or Bearer header
+  const transports = new Map<string, StreamableHTTPServerTransport>()
+
+  app.post('/mcp', async (req, res) => {
     const token = (req.query.token as string) || req.headers.authorization?.replace('Bearer ', '')
     if (!token || !(await validateToken(token))) {
       res.status(401).json({ error: 'Invalid or expired token' })
       return
     }
 
-    const transport = new SSEServerTransport('/mcp/messages', res)
-    transports[transport.sessionId] = transport
-    res.on('close', () => { delete transports[transport.sessionId] })
+    const sessionId = req.headers['mcp-session-id'] as string | undefined
+    if (sessionId && transports.has(sessionId)) {
+      await transports.get(sessionId)!.handleRequest(req, res)
+      return
+    }
+
+    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID() })
+    transports.set(transport.sessionId!, transport)
+    transport.onclose = () => { transports.delete(transport.sessionId!) }
     await server.connect(transport)
+    await transport.handleRequest(req, res)
   })
 
-  app.post('/mcp/messages', async (req, res) => {
-    const sessionId = req.query.sessionId as string
-    const transport = transports[sessionId]
-    if (!transport) { res.status(400).json({ error: 'Unknown session' }); return }
-    await transport.handlePostMessage(req, res)
+  app.get('/mcp', async (req, res) => {
+    const sessionId = req.headers['mcp-session-id'] as string | undefined
+    if (!sessionId || !transports.has(sessionId)) {
+      res.status(400).json({ error: 'Invalid or missing session ID' })
+      return
+    }
+    await transports.get(sessionId)!.handleRequest(req, res)
+  })
+
+  app.delete('/mcp', async (req, res) => {
+    const sessionId = req.headers['mcp-session-id'] as string | undefined
+    if (sessionId && transports.has(sessionId)) {
+      await transports.get(sessionId)!.handleRequest(req, res)
+      transports.delete(sessionId)
+    } else {
+      res.status(400).json({ error: 'Invalid session' })
+    }
   })
 }
