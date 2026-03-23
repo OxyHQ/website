@@ -12,6 +12,7 @@ import Button from '../ui/Button'
 import ThemeToggle from '../ui/ThemeToggle'
 import Logo from '../ui/Logo'
 import Container from './Container'
+import LocalePicker from '../ui/LocalePicker'
 
 /* ─── SVG Icons ─── */
 function ChevronDown({ className = '' }: { className?: string }) {
@@ -420,6 +421,7 @@ export default function Navbar({ rightActions }: NavbarProps = {}) {
 
             {/* Desktop buttons */}
             <div className="hidden items-center gap-x-2.5 lg:flex">
+              <LocalePicker />
               <ThemeToggle />
               {rightActions}
               {isAuthenticated ? (
@@ -530,6 +532,10 @@ export default function Navbar({ rightActions }: NavbarProps = {}) {
                 )
               ))}
               <hr className="my-2 border-border" />
+              <div className="flex items-center justify-between px-4 py-2">
+                <span className="text-sm text-muted-foreground">Language</span>
+                <LocalePicker />
+              </div>
               <div className="flex items-center justify-between px-4 py-2">
                 <span className="text-sm text-muted-foreground">Theme</span>
                 <ThemeToggle />
