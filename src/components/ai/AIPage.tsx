@@ -159,7 +159,7 @@ export default function AIPage() {
   // Sun halo scroll effect
   useEffect(() => {
     function handleScroll() {
-      const halo = document.getElementById('sun-halo-layer')
+      const halo = document.getElementById('glow-effect')
       if (halo) {
         const opacity = Math.min(1, window.scrollY / 500)
         halo.style.opacity = String(opacity)
@@ -195,14 +195,16 @@ export default function AIPage() {
           <img src="/ai/shadow-bg.png" alt="" className="h-full w-full object-cover" />
         </div>
 
-        {/* Layer 3: Sun halo (lightens via screen, fades in on scroll) */}
+        {/* Layer 3: CSS glow effect (fades in on scroll) */}
         <div
-          className="pointer-events-none absolute inset-0 z-[2] transition-opacity duration-500"
-          style={{ mixBlendMode: 'screen', opacity: 0 }}
-          id="sun-halo-layer"
-        >
-          <img src="/ai/sun-halo.png" alt="" className="h-full w-full object-cover" />
-        </div>
+          className="pointer-events-none absolute h-screen w-[12rem] rounded-full right-[40rem] top-0 rotate-45 opacity-0 transition-opacity duration-300 ease-in-out z-[2]"
+          id="glow-effect"
+          style={{
+            background: 'rgb(255, 255, 255)',
+            boxShadow: 'rgb(255, 255, 255) 0px 6.719px 50.393px 0px inset',
+            filter: 'blur(200px)',
+          }}
+        />
 
         {/* Layer 4: Animated line grid */}
         <AnimatedLineGrid />
@@ -276,21 +278,37 @@ export default function AIPage() {
         </div>
 
         {/* Right content area — demo screens */}
-        <div className="relative min-h-screen flex-1 overflow-hidden">
-          {/* Background gradient overlay */}
-          <div className="pointer-events-none absolute inset-0 overflow-clip">
-            <div className="absolute inset-0 h-full w-full bg-gradient-to-b from-[#4867AF] via-[#9CAFB8] to-[#C49577] via-62% opacity-30" />
+        <div className="relative z-10 grow bg-black/10">
+          {/* SVG pattern border on left edge */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <svg className="absolute top-0 z-10 h-full w-2 px-1.5 pt-1 box-content border-r border-white/10" aria-hidden="true">
+              <defs>
+                <pattern id="hero-pattern" width="8" height="16" patternUnits="userSpaceOnUse">
+                  <path d="M0 0H16M0" className="stroke-white/50" fill="none" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#hero-pattern)" />
+            </svg>
+            <div className="fixed top-0 z-50 h-20 w-5 bg-gradient-to-b from-[#4867AF] to-[#4867AF]/0" style={{ left: '512px', opacity: 1 }} />
           </div>
 
           {/* Demo content area */}
           <div className="relative isolate min-h-screen overscroll-none">
             {/* Mobile tab bar */}
-            <div className="block lg:hidden sticky top-0 z-50 bg-transparent backdrop-blur-md px-5 pt-8">
+            <div className="ml-5 w-[calc(100%-20px)] pt-8 block lg:hidden sticky top-0 z-50 bg-transparent backdrop-blur-md">
               <p className="text-sm font-bold uppercase tracking-wide text-foreground/50">
                 {aiDemoTabs[activeTab]
                   ? `Budapest - 08:00 - ${aiDemoTabs[activeTab].label}`
                   : ''}
               </p>
+              <div className="relative mt-4 h-[0.5px] w-full" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.5) 100%)' }}>
+                <div className="absolute -top-1 left-0 flex items-center gap-1">
+                  <div className="size-2.5 rounded-full bg-white/5 flex items-center justify-center">
+                    <div className="size-1 rounded-full bg-white" />
+                  </div>
+                  <div className="h-[0.5px] w-4 bg-white" />
+                </div>
+              </div>
             </div>
 
             {/* Desktop sticky header */}
@@ -304,15 +322,19 @@ export default function AIPage() {
               </div>
             </div>
 
-            {/* Demo section title */}
-            <div className="relative flex flex-col pl-5 min-h-screen">
-              <h3 className="text-4xl font-medium text-foreground">
-                {aiDemoTabs[activeTab]?.label ?? 'Morning Briefing'}
-              </h3>
-
-              {/* Demo preview — video content with static fallback */}
-              <div className="flex min-h-screen items-center justify-center p-8">
-                <div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-foreground/10 bg-[#1a1a1c] shadow-xl">
+            {/* Demo section */}
+            <div id={aiDemoTabs[activeTab]?.label.toLowerCase().replace(/\s+/g, '-')} className="relative flex flex-col pl-5 snap-start scroll-mt-[68px] h-screen min-h-screen">
+              <div className="relative overflow-y-hidden mx-auto flex h-full w-full flex-col pl-10 pt-10">
+                <div className="mb-7 flex flex-col gap-1.5">
+                  <h3 className="heading-3xl font-geist text-4xl font-medium text-white">
+                    {aiDemoTabs[activeTab]?.label ?? 'Morning Briefing'}
+                  </h3>
+                  <p className="body-lg pr-10 font-geist text-base text-white/70">
+                    {aiDemoTabs[activeTab]?.description ?? 'Your AI assistant prepares your daily briefing.'}
+                  </p>
+                </div>
+                {/* Video */}
+                <div className="flex-1 overflow-hidden">
                   <DemoVideo src={tabVideos[activeTab] || '/ai/morning-briefing-start.mp4'} />
                 </div>
               </div>

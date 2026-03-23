@@ -10,13 +10,13 @@ export const aiHero = {
 }
 
 export const aiDemoTabs = [
-  { label: 'Morning Briefing', number: '01' },
-  { label: 'Catch Up', number: '02' },
-  { label: 'Action Plan', number: '03' },
-  { label: 'Deep Work', number: '04' },
-  { label: 'Inbox', number: '05' },
-  { label: 'Meeting Prep', number: '06' },
-  { label: 'Daily Recap', number: '07' },
+  { label: 'Morning Briefing', number: '01', description: 'Overnight updates collated and ready for your review.' },
+  { label: 'Catch Up', number: '02', description: 'Get up to speed on what you missed while away.' },
+  { label: 'Action Plan', number: '03', description: 'AI-generated priorities for your day ahead.' },
+  { label: 'Deep Work', number: '04', description: 'Focus mode that blocks distractions automatically.' },
+  { label: 'Inbox', number: '05', description: 'Smart inbox that drafts replies and triages messages.' },
+  { label: 'Meeting Prep', number: '06', description: 'Context and talking points prepared before every meeting.' },
+  { label: 'Daily Recap', number: '07', description: 'Summary of accomplishments and tomorrow\'s preview.' },
 ]
 
 export const aiFeatureCards = [
