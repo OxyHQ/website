@@ -15,36 +15,6 @@ const tabVideos: Record<number, string> = {
   6: '/ai/evening-briefing.mp4',
 }
 
-/* ───────────────────────── Demo Video Component ───────────────────────── */
-
-function DemoVideo({ src, poster }: { src: string; poster?: string }) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    // Reset and play when src changes
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0
-      videoRef.current.play().catch(() => {})
-    }
-  }, [src])
-
-  return (
-    <div className="flex h-full items-center justify-center overflow-hidden rounded-2xl">
-      <video
-        ref={videoRef}
-        key={src}
-        src={src}
-        className="h-full w-full rounded-t-[19px] object-cover"
-        autoPlay
-        loop
-        muted
-        playsInline
-        poster={poster}
-      />
-    </div>
-  )
-}
-
 /* ───────────────────────── Placeholder Mockup ───────────────────────── */
 
 
@@ -153,6 +123,8 @@ function FrostButton({
 
 export default function AIPage() {
   const [activeTab, setActiveTab] = useState(0)
+  const sectionRefs = useRef<(HTMLElement | null)[]>([])
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
   const ctaRef = useScrollReveal()
   const featuresRef = useScrollReveal()
 
@@ -181,6 +153,27 @@ export default function AIPage() {
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // IntersectionObserver for scroll-snap demo sections
+  useEffect(() => {
+    const container = scrollContainerRef.current
+    if (!container) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const idx = sectionRefs.current.indexOf(entry.target as HTMLElement)
+            if (idx >= 0) setActiveTab(idx)
+          }
+        }
+      },
+      { root: container, threshold: 0.5 }
+    )
+
+    sectionRefs.current.forEach((el) => el && observer.observe(el))
+    return () => observer.disconnect()
   }, [])
 
   return (
@@ -253,7 +246,9 @@ export default function AIPage() {
                       <li key={tab.label} className="w-full">
                         <button
                           type="button"
-                          onClick={() => setActiveTab(i)}
+                          onClick={() => {
+                            sectionRefs.current[i]?.scrollIntoView({ behavior: 'smooth' })
+                          }}
                           className={`text-base transition-colors duration-200 flex items-center justify-between text-white select-none w-full rounded-[10px] p-2 ${
                             activeTab === i ? 'bg-black/5 ring-inset ring-[#73A7FF]' : 'ring-inset ring-[#73A7FF]'
                           }`}
@@ -278,7 +273,10 @@ export default function AIPage() {
         </div>
 
         {/* Right content area — demo screens */}
-        <div className="relative z-10 grow bg-black/10">
+        <div
+          ref={scrollContainerRef}
+          className="relative z-10 grow bg-black/10 overflow-y-auto snap-y snap-mandatory"
+        >
           {/* SVG pattern border on left edge */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
             <svg className="absolute top-0 z-10 h-full w-2 px-1.5 pt-1 box-content border-r border-white/10" aria-hidden="true">
@@ -292,54 +290,36 @@ export default function AIPage() {
             <div className="fixed top-0 z-50 h-20 w-5 bg-gradient-to-b from-[#4867AF] to-[#4867AF]/0" style={{ left: '512px', opacity: 1 }} />
           </div>
 
-          {/* Demo content area */}
-          <div className="relative isolate min-h-screen overscroll-none">
-            {/* Mobile tab bar */}
-            <div className="ml-5 w-[calc(100%-20px)] pt-8 block lg:hidden sticky top-0 z-50 bg-transparent backdrop-blur-md">
-              <p className="text-sm font-bold uppercase tracking-wide text-foreground/50">
-                {aiDemoTabs[activeTab]
-                  ? `Budapest - 08:00 - ${aiDemoTabs[activeTab].label}`
-                  : ''}
-              </p>
-              <div className="relative mt-4 h-[0.5px] w-full" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.5) 100%)' }}>
-                <div className="absolute -top-1 left-0 flex items-center gap-1">
-                  <div className="size-2.5 rounded-full bg-white/5 flex items-center justify-center">
-                    <div className="size-1 rounded-full bg-white" />
-                  </div>
-                  <div className="h-[0.5px] w-4 bg-white" />
-                </div>
-              </div>
-            </div>
-
-            {/* Desktop sticky header */}
-            <div className="hidden lg:block sticky top-0 z-50">
-              <div className="relative px-5 py-4">
-                <p className="text-sm font-bold uppercase tracking-wide text-foreground/50">
-                  {aiDemoTabs[activeTab]
-                    ? `Budapest - 08:00 - ${aiDemoTabs[activeTab].label}`
-                    : ''}
-                </p>
-              </div>
-            </div>
-
-            {/* Demo section */}
-            <div id={aiDemoTabs[activeTab]?.label.toLowerCase().replace(/\s+/g, '-')} className="relative flex flex-col pl-5 snap-start scroll-mt-[68px] h-screen min-h-screen">
+          {/* All demo sections */}
+          {aiDemoTabs.map((tab, i) => (
+            <div
+              key={tab.label}
+              id={`demo-${tab.label.toLowerCase().replace(/\s+/g, '-')}`}
+              className="snap-start scroll-mt-[68px] h-screen min-h-screen relative flex flex-col pl-5"
+              ref={(el) => { sectionRefs.current[i] = el }}
+            >
               <div className="relative overflow-y-hidden mx-auto flex h-full w-full flex-col pl-10 pt-10">
                 <div className="mb-7 flex flex-col gap-1.5">
                   <h3 className="heading-3xl font-geist text-4xl font-medium text-white">
-                    {aiDemoTabs[activeTab]?.label ?? 'Morning Briefing'}
+                    {tab.label}
                   </h3>
                   <p className="body-lg pr-10 font-geist text-base text-white/70">
-                    {aiDemoTabs[activeTab]?.description ?? 'Your AI assistant prepares your daily briefing.'}
+                    {tab.description}
                   </p>
                 </div>
-                {/* Video */}
-                <div className="flex-1 overflow-hidden">
-                  <DemoVideo src={tabVideos[activeTab] || '/ai/morning-briefing-start.mp4'} />
+                <div className="flex-1 overflow-hidden rounded-t-[19px]">
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    src={tabVideos[i]}
+                    className="h-full w-full object-cover rounded-t-[19px]"
+                  />
                 </div>
               </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
