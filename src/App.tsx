@@ -4,6 +4,7 @@ import Landing2 from './pages/Landing2'
 import Landing3 from './pages/Landing3'
 import PartnersPage from './pages/PartnersPage'
 import CareersPage from './pages/CareersPage'
+import PricingPage from './pages/PricingPage'
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="/landing3" element={<Landing3 />} />
         <Route path="/partners" element={<PartnersPage />} />
         <Route path="/company/careers" element={<CareersPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
       </Routes>
     </BrowserRouter>
   )

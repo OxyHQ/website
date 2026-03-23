@@ -1,0 +1,17 @@
+import Navbar from '../components/layout/Navbar'
+import Footer from '../components/layout/Footer'
+import PricingHeroSection from '../components/pricing/PricingHeroSection'
+import PricingFaqSection from '../components/pricing/PricingFaqSection'
+
+export default function PricingPage() {
+  return (
+    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-primary-background">
+      <Navbar />
+      <main>
+        <PricingHeroSection />
+        <PricingFaqSection />
+      </main>
+      <Footer />
+    </div>
+  )
+}
