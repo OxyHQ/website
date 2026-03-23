@@ -22,7 +22,7 @@ jobs:
 
       - run: npm run build
         env:
-          VITE_API_URL: https://api.website.oxy.so
+          VITE_API_URL: https://website-api.oxy.so
 
       - uses: cloudflare/wrangler-action@v3
         with:
