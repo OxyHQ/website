@@ -340,10 +340,11 @@ server.tool('replace_testimonials', 'Replace all testimonials', {
 
 // ── Changelog ───────────────────────────────────────────────────────────────
 
-server.tool('list_changelog', 'List changelog entries with optional repo filter and pagination', {
+server.tool('list_changelog', 'List changelog entries with optional repo filter, search, and pagination. Returns entries sorted by date descending.', {
   repo: z.string().optional().describe('Filter by repo, e.g. "owner/name" or just "name"'),
-  limit: z.number().optional(),
-  page: z.number().optional(),
+  search: z.string().optional().describe('Search entries by title or content text'),
+  limit: z.number().optional().describe('Results per page (default 20)'),
+  page: z.number().optional().describe('Page number (default 1)'),
 }, async (params) => {
   try {
     const page = params.page ?? 1
@@ -358,6 +359,10 @@ server.tool('list_changelog', 'List changelog entries with optional repo filter 
         filter.repoName = params.repo
       }
     }
+    if (params.search) {
+      const regex = { $regex: params.search, $options: 'i' }
+      filter.$or = [{ title: regex }, { content: regex }]
+    }
     const [entries, total] = await Promise.all([
       ChangelogEntry.find(filter).sort('-date').skip((page - 1) * limit).limit(limit),
       ChangelogEntry.countDocuments(filter),
@@ -366,13 +371,13 @@ server.tool('list_changelog', 'List changelog entries with optional repo filter 
   } catch (e) { return err(e) }
 })
 
-server.tool('create_changelog_entry', 'Create a new changelog entry', {
-  title: z.string(),
-  content: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-  date: z.string(),
-  items: z.array(z.string()).optional(),
-  media: z.string().optional(),
+server.tool('create_changelog_entry', 'Create a new manual changelog entry.', {
+  title: z.string().describe('Entry title/headline'),
+  content: z.string().optional().describe('Full entry body in Markdown'),
+  tags: z.array(z.string()).optional().describe('Tags like ["Feature", "Enhancement", "Fix", "Design"]'),
+  date: z.string().describe('Entry date as ISO string, e.g. "2026-03-20"'),
+  items: z.array(z.string()).optional().describe('Bullet-point items for the entry'),
+  media: z.string().optional().describe('URL for an image or video to display with the entry'),
 }, async (params) => {
   try {
     const entry = await ChangelogEntry.create({ ...params, date: new Date(params.date) })
@@ -380,14 +385,14 @@ server.tool('create_changelog_entry', 'Create a new changelog entry', {
   } catch (e) { return err(e) }
 })
 
-server.tool('update_changelog_entry', 'Update a changelog entry by ID', {
-  id: z.string(),
-  title: z.string().optional(),
-  content: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-  date: z.string().optional(),
-  items: z.array(z.string()).optional(),
-  media: z.string().optional(),
+server.tool('update_changelog_entry', 'Update a changelog entry by ID. Only provided fields are changed.', {
+  id: z.string().describe('The _id of the changelog entry'),
+  title: z.string().optional().describe('Entry title'),
+  content: z.string().optional().describe('Entry body in Markdown'),
+  tags: z.array(z.string()).optional().describe('Tags for the entry'),
+  date: z.string().optional().describe('Entry date as ISO string'),
+  items: z.array(z.string()).optional().describe('Bullet-point items'),
+  media: z.string().optional().describe('Media URL'),
 }, async ({ id, ...updates }) => {
   try {
     if (updates.date) (updates as any).date = new Date(updates.date)
@@ -397,7 +402,9 @@ server.tool('update_changelog_entry', 'Update a changelog entry by ID', {
   } catch (e) { return err(e) }
 })
 
-server.tool('delete_changelog_entry', 'Delete a changelog entry by ID', { id: z.string() }, async ({ id }) => {
+server.tool('delete_changelog_entry', 'Permanently delete a changelog entry by ID.', {
+  id: z.string().describe('The _id of the changelog entry to delete'),
+}, async ({ id }) => {
   try {
     const entry = await ChangelogEntry.findByIdAndDelete(id)
     if (!entry) return err('Changelog entry not found')
@@ -407,19 +414,19 @@ server.tool('delete_changelog_entry', 'Delete a changelog entry by ID', { id: z.
 
 // ── Tracked Repos (GitHub Sync) ─────────────────────────────────────────────
 
-server.tool('list_tracked_repos', 'List tracked GitHub repos for changelog sync', {}, async () => {
+server.tool('list_tracked_repos', 'List GitHub repos tracked for automatic changelog sync. Shows sync status and configuration.', {}, async () => {
   try {
     const repos = await TrackedRepo.find().sort('displayName')
     return ok(repos)
   } catch (e) { return err(e) }
 })
 
-server.tool('add_tracked_repo', 'Add a GitHub repo to track for changelog releases', {
-  owner: z.string(),
-  repo: z.string(),
-  displayName: z.string().optional(),
-  defaultTags: z.array(z.object({ label: z.string(), color: z.string() })).optional(),
-  active: z.boolean().optional(),
+server.tool('add_tracked_repo', 'Add a GitHub repo to track. New releases will be automatically synced as changelog entries.', {
+  owner: z.string().describe('GitHub repo owner, e.g. "OxyHQ"'),
+  repo: z.string().describe('GitHub repo name, e.g. "Oxy"'),
+  displayName: z.string().optional().describe('Display name shown in the changelog. Defaults to "owner/repo".'),
+  defaultTags: z.array(z.object({ label: z.string(), color: z.string() })).optional().describe('Default tags applied to synced entries'),
+  active: z.boolean().optional().describe('Whether sync is active. Defaults to true.'),
 }, async (params) => {
   try {
     const tracked = await TrackedRepo.create({
@@ -432,7 +439,9 @@ server.tool('add_tracked_repo', 'Add a GitHub repo to track for changelog releas
   } catch (e) { return err(e) }
 })
 
-server.tool('remove_tracked_repo', 'Remove a tracked GitHub repo', { id: z.string() }, async ({ id }) => {
+server.tool('remove_tracked_repo', 'Remove a tracked GitHub repo. Does not delete existing changelog entries from that repo.', {
+  id: z.string().describe('The _id of the tracked repo to remove'),
+}, async ({ id }) => {
   try {
     const tracked = await TrackedRepo.findByIdAndDelete(id)
     if (!tracked) return err('Tracked repo not found')
@@ -440,14 +449,16 @@ server.tool('remove_tracked_repo', 'Remove a tracked GitHub repo', { id: z.strin
   } catch (e) { return err(e) }
 })
 
-server.tool('sync_repo', 'Manually sync a single tracked repo', { id: z.string() }, async ({ id }) => {
+server.tool('sync_repo', 'Manually trigger a sync for a single tracked repo. Fetches new GitHub releases and creates changelog entries.', {
+  id: z.string().describe('The _id of the tracked repo to sync'),
+}, async ({ id }) => {
   try {
     const count = await syncSingleRepo(id)
     return ok({ synced: count })
   } catch (e) { return err(e) }
 })
 
-server.tool('sync_all_repos', 'Manually sync all active tracked repos', {}, async () => {
+server.tool('sync_all_repos', 'Manually trigger a sync for all active tracked repos.', {}, async () => {
   try {
     await syncAllRepos()
     return ok({ ok: true, message: 'Sync complete' })
@@ -456,32 +467,44 @@ server.tool('sync_all_repos', 'Manually sync all active tracked repos', {}, asyn
 
 // ── Jobs ────────────────────────────────────────────────────────────────────
 
-server.tool('list_jobs', 'List job listings', {
-  active: z.boolean().optional(),
+const descriptionBlockSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('paragraph'), text: z.string() }),
+  z.object({ type: z.literal('heading'), text: z.string() }),
+  z.object({ type: z.literal('list'), items: z.array(z.string()) }),
+])
+
+server.tool('list_jobs', 'List job listings on the careers page. By default returns only active jobs.', {
+  active: z.boolean().optional().describe('Filter by active status. Defaults to true (only active). Set false to include inactive.'),
 }, async (params) => {
   try {
     const filter: Record<string, unknown> = {}
     if (params.active !== false) filter.active = true
-    const jobs = await Job.find(filter).sort('department')
+    const jobs = await Job.find(filter).sort('order department')
     return ok(jobs)
   } catch (e) { return err(e) }
 })
 
-server.tool('get_job', 'Get a job listing by ID', { id: z.string() }, async ({ id }) => {
+server.tool('get_job', 'Get a single job listing by its URL slug.', {
+  slug: z.string().describe('The URL slug of the job listing'),
+}, async ({ slug }) => {
   try {
-    const job = await Job.findById(id)
+    const job = await Job.findOne({ slug })
     if (!job) return err('Job not found')
     return ok(job)
   } catch (e) { return err(e) }
 })
 
-server.tool('create_job', 'Create a new job listing', {
-  title: z.string(),
-  department: z.string(),
-  location: z.string().optional(),
-  type: z.string().optional(),
-  description: z.string().optional(),
-  active: z.boolean().optional(),
+server.tool('create_job', 'Create a new job listing. Slug is auto-generated from title + location if not provided.', {
+  title: z.string().describe('Job title, e.g. "Senior Frontend Engineer"'),
+  department: z.string().describe('Department, e.g. "Engineering", "Design", "Sales"'),
+  slug: z.string().optional().describe('URL slug. Auto-generated from title + location if omitted.'),
+  subtitle: z.string().optional().describe('Short tagline for the role'),
+  location: z.string().optional().describe('Job location, e.g. "Remote", "New York", "London"'),
+  type: z.string().optional().describe('Employment type, e.g. "Full-time", "Part-time", "Contract"'),
+  compensation: z.string().optional().describe('Compensation range, e.g. "$80K – $120K · Offers Equity"'),
+  description: z.array(descriptionBlockSchema).optional().describe('Job description as content blocks (paragraph, heading, or list)'),
+  active: z.boolean().optional().describe('Whether the job is visible on the careers page. Defaults to true.'),
+  order: z.number().optional().describe('Display order (lower = first). Defaults to 0.'),
 }, async (params) => {
   try {
     const job = await Job.create(params)
@@ -489,19 +512,32 @@ server.tool('create_job', 'Create a new job listing', {
   } catch (e) { return err(e) }
 })
 
-server.tool('update_job', 'Update a job listing by ID', {
-  id: z.string(),
-  title: z.string().optional(),
-  department: z.string().optional(),
-  location: z.string().optional(),
-  type: z.string().optional(),
-  description: z.string().optional(),
-  active: z.boolean().optional(),
-}, async ({ id, ...updates }) => {
+server.tool('update_job', 'Update an existing job listing by slug. Only provided fields are changed.', {
+  slug: z.string().describe('Current slug of the job to update'),
+  title: z.string().optional().describe('Job title'),
+  department: z.string().optional().describe('Department'),
+  subtitle: z.string().optional().describe('Short tagline for the role'),
+  location: z.string().optional().describe('Job location'),
+  type: z.string().optional().describe('Employment type'),
+  compensation: z.string().optional().describe('Compensation range'),
+  description: z.array(descriptionBlockSchema).optional().describe('Job description as content blocks'),
+  active: z.boolean().optional().describe('Whether the job is visible'),
+  order: z.number().optional().describe('Display order'),
+}, async ({ slug, ...updates }) => {
   try {
-    const job = await Job.findByIdAndUpdate(id, updates, { new: true })
+    const job = await Job.findOneAndUpdate({ slug }, updates, { new: true })
     if (!job) return err('Job not found')
     return ok(job)
+  } catch (e) { return err(e) }
+})
+
+server.tool('delete_job', 'Permanently delete a job listing by slug.', {
+  slug: z.string().describe('The URL slug of the job to delete'),
+}, async ({ slug }) => {
+  try {
+    const job = await Job.findOneAndDelete({ slug })
+    if (!job) return err('Job not found')
+    return ok({ deleted: true, slug })
   } catch (e) { return err(e) }
 })
 
@@ -532,20 +568,21 @@ server.tool('update_settings', 'Update site settings', {
 
 // ── Locales ─────────────────────────────────────────────────────────────────
 
-server.tool('list_locales', 'List all locales (enabled and disabled)', {}, async () => {
+server.tool('list_locales', 'List all locales (both enabled and disabled). Locales control which languages the site supports.', {}, async () => {
   try {
     const locales = await Locale.find().sort('order')
     return ok(locales)
   } catch (e) { return err(e) }
 })
 
-server.tool('create_locale', 'Create a new locale', {
-  code: z.string().describe('e.g. "en", "es", "fr"'),
-  name: z.string().describe('English name, e.g. "Spanish"'),
-  nativeName: z.string().describe('Native name, e.g. "Español"'),
-  isDefault: z.boolean().optional(),
-  enabled: z.boolean().optional(),
-  order: z.number().optional(),
+server.tool('create_locale', 'Create a new locale for the site. Translations can then be added for this locale.', {
+  code: z.string().describe('BCP-47 language code, e.g. "en-US", "es-ES", "ca-ES", "fr-FR", "ja-JP"'),
+  slug: z.string().optional().describe('URL slug for this locale. Auto-generated from code if omitted (e.g. "en-us").'),
+  name: z.string().describe('English name of the language, e.g. "Spanish"'),
+  nativeName: z.string().describe('Name in the native language, e.g. "Español"'),
+  isDefault: z.boolean().optional().describe('Set as the default locale. Only one locale can be default.'),
+  enabled: z.boolean().optional().describe('Whether this locale is active on the site. Defaults to true.'),
+  order: z.number().optional().describe('Display order in locale switcher (lower = first)'),
 }, async (params) => {
   try {
     if (params.isDefault) {
@@ -556,13 +593,14 @@ server.tool('create_locale', 'Create a new locale', {
   } catch (e) { return err(e) }
 })
 
-server.tool('update_locale', 'Update a locale by code', {
-  code: z.string(),
-  name: z.string().optional(),
-  nativeName: z.string().optional(),
-  isDefault: z.boolean().optional(),
-  enabled: z.boolean().optional(),
-  order: z.number().optional(),
+server.tool('update_locale', 'Update a locale by its code. Only provided fields are changed.', {
+  code: z.string().describe('The locale code to update, e.g. "es-ES"'),
+  slug: z.string().optional().describe('URL slug for this locale'),
+  name: z.string().optional().describe('English name'),
+  nativeName: z.string().optional().describe('Native name'),
+  isDefault: z.boolean().optional().describe('Set as default locale'),
+  enabled: z.boolean().optional().describe('Enable or disable this locale'),
+  order: z.number().optional().describe('Display order'),
 }, async ({ code, ...updates }) => {
   try {
     if (updates.isDefault) {
@@ -574,7 +612,9 @@ server.tool('update_locale', 'Update a locale by code', {
   } catch (e) { return err(e) }
 })
 
-server.tool('delete_locale', 'Delete a locale and its translations', { code: z.string() }, async ({ code }) => {
+server.tool('delete_locale', 'Delete a locale and all its translations. Cannot delete the default locale.', {
+  code: z.string().describe('The locale code to delete, e.g. "es"'),
+}, async ({ code }) => {
   try {
     const locale = await Locale.findOne({ code })
     if (!locale) return err('Locale not found')
@@ -589,9 +629,13 @@ server.tool('delete_locale', 'Delete a locale and its translations', { code: z.s
 
 const TRANSLATABLE_COLLECTIONS = ['navigation', 'footer', 'pricing', 'testimonials', 'settings', 'pages', 'newsroom', 'jobs']
 
-server.tool('get_translations', 'Get all translations for a collection and locale', {
-  collection: z.string().describe(`One of: ${TRANSLATABLE_COLLECTIONS.join(', ')}`),
-  locale: z.string().describe('Locale code, e.g. "es"'),
+server.tool('list_translation_collections', 'List all collections that support translations.', {}, async () => {
+  return ok(TRANSLATABLE_COLLECTIONS)
+})
+
+server.tool('get_translations', 'Get all translations for a collection in a specific locale. Returns an array of translated documents.', {
+  collection: z.string().describe(`Collection to query. One of: ${TRANSLATABLE_COLLECTIONS.join(', ')}`),
+  locale: z.string().describe('Locale code, e.g. "es", "fr", "ja"'),
 }, async ({ collection, locale }) => {
   try {
     const translations = await Translation.find({ collection, locale })
@@ -599,10 +643,10 @@ server.tool('get_translations', 'Get all translations for a collection and local
   } catch (e) { return err(e) }
 })
 
-server.tool('get_translation', 'Get translation for a specific document', {
-  collection: z.string(),
-  documentId: z.string(),
-  locale: z.string(),
+server.tool('get_translation', 'Get the translation for a specific document in a collection.', {
+  collection: z.string().describe(`Collection name. One of: ${TRANSLATABLE_COLLECTIONS.join(', ')}`),
+  documentId: z.string().describe('The _id of the original document being translated'),
+  locale: z.string().describe('Locale code, e.g. "es"'),
 }, async ({ collection, documentId, locale }) => {
   try {
     const translation = await Translation.findOne({ collection, documentId, locale })
@@ -611,11 +655,11 @@ server.tool('get_translation', 'Get translation for a specific document', {
   } catch (e) { return err(e) }
 })
 
-server.tool('upsert_translation', 'Create or update a translation for a document', {
-  collection: z.string().describe(`One of: ${TRANSLATABLE_COLLECTIONS.join(', ')}`),
-  documentId: z.string(),
-  locale: z.string(),
-  fields: z.record(z.any()).describe('Translated field overrides, e.g. { "title": "Hola" }'),
+server.tool('upsert_translation', 'Create or update a translation. The fields object contains key-value overrides that replace the original document fields for the given locale.', {
+  collection: z.string().describe(`Collection name. One of: ${TRANSLATABLE_COLLECTIONS.join(', ')}`),
+  documentId: z.string().describe('The _id of the original document being translated'),
+  locale: z.string().describe('Locale code, e.g. "es"'),
+  fields: z.record(z.string(), z.any()).describe('Key-value field overrides. e.g. { "title": "Hola", "excerpt": "Resumen..." }. Only include fields that differ from the original.'),
 }, async ({ collection, documentId, locale, fields }) => {
   try {
     const translation = await Translation.findOneAndUpdate(
@@ -627,15 +671,51 @@ server.tool('upsert_translation', 'Create or update a translation for a document
   } catch (e) { return err(e) }
 })
 
-server.tool('delete_translation', 'Delete a translation for a document', {
-  collection: z.string(),
-  documentId: z.string(),
-  locale: z.string(),
+server.tool('delete_translation', 'Delete a translation for a specific document and locale.', {
+  collection: z.string().describe('Collection name'),
+  documentId: z.string().describe('The _id of the document'),
+  locale: z.string().describe('Locale code'),
 }, async ({ collection, documentId, locale }) => {
   try {
     const translation = await Translation.findOneAndDelete({ collection, documentId, locale })
     if (!translation) return err('Translation not found')
     return ok({ deleted: true })
+  } catch (e) { return err(e) }
+})
+
+// ── MCP Tokens ───────────────────────────────────────────────────────────────
+
+server.tool('list_mcp_tokens', 'List all MCP API tokens. Token hashes are never exposed. Shows name, creator, usage, and expiry info.', {}, async () => {
+  try {
+    const tokens = await McpToken.find({}, 'name createdBy createdAt lastUsedAt expiresAt revoked').sort('-createdAt')
+    return ok(tokens)
+  } catch (e) { return err(e) }
+})
+
+server.tool('create_mcp_token', 'Create a new MCP API token. The raw token is returned only once — save it securely.', {
+  name: z.string().describe('A descriptive name for this token, e.g. "Claude Desktop" or "CI/CD"'),
+  expiresAt: z.string().optional().describe('Expiry date as ISO string. Omit for no expiration.'),
+}, async (params) => {
+  try {
+    const rawToken = crypto.randomBytes(32).toString('hex')
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex')
+    const token = await McpToken.create({
+      name: params.name,
+      tokenHash,
+      createdBy: 'mcp-admin',
+      expiresAt: params.expiresAt ? new Date(params.expiresAt) : undefined,
+    })
+    return ok({ _id: token._id, name: token.name, token: rawToken, createdAt: token.createdAt, expiresAt: token.expiresAt })
+  } catch (e) { return err(e) }
+})
+
+server.tool('revoke_mcp_token', 'Revoke an MCP API token. The token will immediately stop working.', {
+  id: z.string().describe('The _id of the token to revoke'),
+}, async ({ id }) => {
+  try {
+    const token = await McpToken.findByIdAndUpdate(id, { revoked: true }, { new: true })
+    if (!token) return err('Token not found')
+    return ok({ revoked: true, id })
   } catch (e) { return err(e) }
 })
 

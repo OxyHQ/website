@@ -7,6 +7,8 @@ export interface IMcpToken extends Document {
   lastUsedAt?: Date
   expiresAt?: Date
   revoked: boolean
+  createdAt: Date
+  updatedAt: Date
 }
 
 const mcpTokenSchema = new Schema<IMcpToken>(

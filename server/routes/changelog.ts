@@ -67,6 +67,13 @@ router.put('/:id', requireAuth, adminOnly, async (req, res) => {
   res.json(entry)
 })
 
+// DELETE /:id  — delete changelog entry (admin)
+router.delete('/:id', requireAuth, adminOnly, async (req, res) => {
+  const entry = await ChangelogEntry.findByIdAndDelete(req.params.id)
+  if (!entry) return res.status(404).json({ error: 'Entry not found' })
+  res.json({ ok: true })
+})
+
 // ── Tracked Repos ──
 
 // GET /repos  — list tracked repos
@@ -98,7 +105,7 @@ router.delete('/repos/:id', requireAuth, adminOnly, async (req, res) => {
 // POST /repos/:id/sync  — manual sync single repo (admin)
 router.post('/repos/:id/sync', requireAuth, adminOnly, async (req, res) => {
   try {
-    const count = await syncSingleRepo(req.params.id)
+    const count = await syncSingleRepo(req.params.id as string)
     res.json({ ok: true, synced: count })
   } catch (err: any) {
     res.status(400).json({ error: err.message })
