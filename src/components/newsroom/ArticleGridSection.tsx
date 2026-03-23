@@ -114,8 +114,8 @@ export default function ArticleGridSection() {
 
   // Sort articles
   const sorted = [...filtered].sort((a, b) => {
-    const da = new Date(a.date).getTime()
-    const db = new Date(b.date).getTime()
+    const da = new Date(a.publishedAt).getTime()
+    const db = new Date(b.publishedAt).getTime()
     return sortBy === 'newest' ? db - da : da - db
   })
 
@@ -251,7 +251,7 @@ export default function ArticleGridSection() {
       {/* ── Article grid ── */}
       <div className="mt-6 grid grid-cols-1 gap-x-4 gap-y-10 sm:grid-cols-2 md:grid-cols-3">
         {visible.map((article) => (
-          <NewsCardGrid key={article.id} article={article} />
+          <NewsCardGrid key={article._id} article={article} />
         ))}
       </div>
 

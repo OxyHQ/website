@@ -152,18 +152,26 @@ server.tool('update_footer', 'Update footer content', {
 
 // ── Newsroom ────────────────────────────────────────────────────────────────
 
-server.tool('list_posts', 'List newsroom posts with optional filtering', {
-  category: z.string().optional(),
-  tag: z.string().optional(),
-  featured: z.boolean().optional(),
-  limit: z.number().optional(),
-  page: z.number().optional(),
+server.tool('list_posts', 'List newsroom posts with optional filtering by category, tag, featured status, and publication status. Returns paginated results sorted by publishedAt descending.', {
+  category: z.string().optional().describe('Filter by category. Common: Company, Research, Product, Safety, Engineering, Security'),
+  tag: z.string().optional().describe('Filter by tag'),
+  featured: z.boolean().optional().describe('Filter to only featured posts'),
+  status: z.enum(['draft', 'published']).optional().describe('Filter by publication status. Omit to return all posts.'),
+  search: z.string().optional().describe('Search posts by title or excerpt text'),
+  limit: z.number().optional().describe('Results per page (default 20)'),
+  page: z.number().optional().describe('Page number (default 1)'),
 }, async (params) => {
   try {
     const filter: Record<string, unknown> = {}
     if (params.category) filter.category = params.category
     if (params.tag) filter.tags = params.tag
     if (params.featured) filter.featured = true
+    if (params.status) filter.status = params.status
+
+    if (params.search) {
+      const regex = { $regex: params.search, $options: 'i' }
+      filter.$or = [{ title: regex }, { excerpt: regex }]
+    }
 
     const limit = params.limit ?? 20
     const page = params.page ?? 1
@@ -177,7 +185,9 @@ server.tool('list_posts', 'List newsroom posts with optional filtering', {
   } catch (e) { return err(e) }
 })
 
-server.tool('get_post', 'Get a newsroom post by slug', { slug: z.string() }, async ({ slug }) => {
+server.tool('get_post', 'Get a single newsroom post by its URL slug. Returns full post content including markdown body.', {
+  slug: z.string().describe('The URL slug of the post'),
+}, async ({ slug }) => {
   try {
     const post = await NewsroomPost.findOne({ slug })
     if (!post) return err('Post not found')
@@ -185,52 +195,89 @@ server.tool('get_post', 'Get a newsroom post by slug', { slug: z.string() }, asy
   } catch (e) { return err(e) }
 })
 
-server.tool('create_post', 'Create a new newsroom post', {
-  title: z.string(),
-  slug: z.string(),
-  excerpt: z.string().optional(),
-  content: z.string().optional(),
-  coverImage: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-  category: z.string().optional(),
-  featured: z.boolean().optional(),
-  publishedAt: z.string().optional(),
+function generateSlug(title: string): string {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
+server.tool('create_post', 'Create a new newsroom post. If slug is not provided, it is auto-generated from the title.', {
+  title: z.string().describe('Post headline'),
+  slug: z.string().optional().describe('URL slug. Auto-generated from title if omitted. Must be unique and URL-safe.'),
+  excerpt: z.string().optional().describe('Short summary for cards/listings (1-2 sentences)'),
+  content: z.string().optional().describe('Full post body in Markdown'),
+  coverImage: z.string().optional().describe('URL for cover/hero image'),
+  tags: z.array(z.string()).optional().describe('Tags for categorization, e.g. ["ai", "product-update"]'),
+  category: z.string().optional().describe('Post category. Common: Company, Research, Product, Safety, Engineering, Security'),
+  featured: z.boolean().optional().describe('Whether this post appears in the featured/hero section'),
+  status: z.enum(['draft', 'published']).optional().describe('Publication status. Defaults to published.'),
+  oxyUserId: z.string().optional().describe('Oxy user ID of the author'),
+  metaTitle: z.string().optional().describe('SEO title override. Falls back to post title if not set.'),
+  metaDescription: z.string().optional().describe('SEO meta description. Falls back to excerpt if not set.'),
+  ogImage: z.string().optional().describe('Open Graph image URL. Falls back to coverImage if not set.'),
+  publishedAt: z.string().optional().describe('Publication date as ISO string (e.g. "2026-03-20"). Defaults to now.'),
 }, async (params) => {
   try {
+    let slug = params.slug || generateSlug(params.title)
+    // Check uniqueness, append suffix on collision
+    const existing = await NewsroomPost.findOne({ slug })
+    if (existing) {
+      slug = `${slug}-${Date.now().toString(36)}`
+    }
     const post = await NewsroomPost.create({
       ...params,
+      slug,
       publishedAt: params.publishedAt ? new Date(params.publishedAt) : new Date(),
-      authorId: 'mcp-admin',
-      authorUsername: 'mcp',
+      oxyUserId: params.oxyUserId || 'mcp-admin',
     })
     return ok(post)
   } catch (e) { return err(e) }
 })
 
-server.tool('update_post', 'Update a newsroom post by slug', {
-  slug: z.string(),
-  title: z.string().optional(),
-  excerpt: z.string().optional(),
-  content: z.string().optional(),
-  coverImage: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-  category: z.string().optional(),
-  featured: z.boolean().optional(),
-  publishedAt: z.string().optional(),
-}, async ({ slug, ...updates }) => {
+server.tool('update_post', 'Update an existing newsroom post by slug. Only the fields you provide will be changed; omitted fields remain unchanged.', {
+  slug: z.string().describe('Current slug of the post to update'),
+  newSlug: z.string().optional().describe('New slug to replace the current one. Must be unique.'),
+  title: z.string().optional().describe('Post headline'),
+  excerpt: z.string().optional().describe('Short summary for cards/listings (1-2 sentences)'),
+  content: z.string().optional().describe('Full post body in Markdown'),
+  coverImage: z.string().optional().describe('URL for cover/hero image'),
+  tags: z.array(z.string()).optional().describe('Tags for categorization'),
+  category: z.string().optional().describe('Post category'),
+  featured: z.boolean().optional().describe('Whether this post appears in the featured/hero section'),
+  status: z.enum(['draft', 'published']).optional().describe('Publication status'),
+  oxyUserId: z.string().optional().describe('Oxy user ID of the author'),
+  metaTitle: z.string().optional().describe('SEO title override'),
+  metaDescription: z.string().optional().describe('SEO meta description'),
+  ogImage: z.string().optional().describe('Open Graph image URL'),
+  publishedAt: z.string().optional().describe('Publication date as ISO string'),
+}, async ({ slug, newSlug, ...updates }) => {
   try {
     if (updates.publishedAt) (updates as any).publishedAt = new Date(updates.publishedAt)
+    if (newSlug) (updates as any).slug = newSlug
     const post = await NewsroomPost.findOneAndUpdate({ slug }, updates, { new: true })
     if (!post) return err('Post not found')
     return ok(post)
   } catch (e) { return err(e) }
 })
 
-server.tool('delete_post', 'Delete a newsroom post by slug', { slug: z.string() }, async ({ slug }) => {
+server.tool('delete_post', 'Permanently delete a newsroom post by slug. This action cannot be undone.', {
+  slug: z.string().describe('The URL slug of the post to delete'),
+}, async ({ slug }) => {
   try {
     const post = await NewsroomPost.findOneAndDelete({ slug })
     if (!post) return err('Post not found')
     return ok({ deleted: true, slug })
+  } catch (e) { return err(e) }
+})
+
+server.tool('search_posts', 'Search newsroom posts by title or excerpt text. Returns posts matching the search query.', {
+  query: z.string().describe('Search text to match against post titles and excerpts'),
+  limit: z.number().optional().describe('Maximum results to return (default 10)'),
+}, async (params) => {
+  try {
+    const regex = { $regex: params.query, $options: 'i' }
+    const posts = await NewsroomPost.find({
+      $or: [{ title: regex }, { excerpt: regex }],
+    }).sort('-publishedAt').limit(params.limit ?? 10)
+    return ok(posts)
   } catch (e) { return err(e) }
 })
 

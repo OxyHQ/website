@@ -16,6 +16,7 @@ import PartnersPage from './pages/PartnersPage'
 import CareersPage from './pages/CareersPage'
 import PricingPage from './pages/PricingPage'
 import NewsroomPage from './pages/NewsroomPage'
+import NewsroomPostPage from './pages/NewsroomPostPage'
 import BlogPage from './pages/BlogPage'
 import CodeaPage from './pages/CodeaPage'
 import CodexExtensionPage from './pages/CodexExtensionPage'
@@ -80,6 +81,7 @@ function PublicRoutes() {
       <Route path="company/careers/:slug" element={<CareerDetailPage />} />
       <Route path="pricing" element={<PricingPage />} />
       <Route path="newsroom" element={<NewsroomPage />} />
+      <Route path="newsroom/:slug" element={<NewsroomPostPage />} />
       <Route path="help" element={<HelpPage />} />
       <Route path="changelog" element={<ChangelogPage />} />
       <Route path="developers/docs" element={<DocsIntroPage />} />

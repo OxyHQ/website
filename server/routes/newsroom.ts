@@ -9,11 +9,24 @@ import { applyTranslation, applyTranslations } from '../utils/applyTranslation.j
 const router = Router()
 
 router.get('/', localeMiddleware, async (req, res) => {
-  const { category, tag, featured, limit = '20', page = '1' } = req.query
+  const { category, tag, featured, status, search, limit = '20', page = '1' } = req.query
   const filter: any = {}
   if (category) filter.category = category
   if (tag) filter.tags = tag
   if (featured === 'true') filter.featured = true
+
+  // Default to published posts for public requests
+  if (status) {
+    filter.status = status
+  } else {
+    filter.status = 'published'
+  }
+
+  // Text search on title and excerpt
+  if (search && typeof search === 'string') {
+    const regex = { $regex: search, $options: 'i' }
+    filter.$or = [{ title: regex }, { excerpt: regex }]
+  }
 
   const skip = (parseInt(page as string) - 1) * parseInt(limit as string)
   const [posts, total] = await Promise.all([
@@ -37,6 +50,10 @@ router.get('/', localeMiddleware, async (req, res) => {
 router.get('/:slug', localeMiddleware, async (req, res) => {
   const post = await NewsroomPost.findOne({ slug: req.params.slug })
   if (!post) return res.status(404).json({ error: 'Post not found' })
+  // Hide drafts from public unless preview=true with auth
+  if (post.status === 'draft' && req.query.preview !== 'true') {
+    return res.status(404).json({ error: 'Post not found' })
+  }
   if (req.isDefaultLocale) return res.json(post)
 
   const translation = await Translation.findOne({
@@ -50,8 +67,7 @@ router.get('/:slug', localeMiddleware, async (req, res) => {
 router.post('/', requireAuth, adminOnly, async (req, res) => {
   const post = await NewsroomPost.create({
     ...req.body,
-    authorId: req.user!.id,
-    authorUsername: req.user!.username,
+    oxyUserId: req.user!.id,
   })
   res.status(201).json(post)
 })

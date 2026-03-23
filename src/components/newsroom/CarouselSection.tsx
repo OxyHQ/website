@@ -1,11 +1,11 @@
-import type { NewsArticle } from '../../data/newsroom'
+import type { NewsroomPost } from '../../data/newsroom'
 import { NewsCardCarousel } from './NewsCard'
 import SectionHeader from './SectionHeader'
 
 interface CarouselSectionProps {
   title: string
   href: string
-  articles: NewsArticle[]
+  articles: NewsroomPost[]
   linkText?: string
 }
 
@@ -39,7 +39,7 @@ export default function CarouselSection({
           <div className="grid min-w-[56rem] flex-none grid-cols-3 gap-4 px-5 pe-5 md:min-w-[unset] md:gap-5 md:px-8 lg:px-0">
             {articles.map((article) => (
               <div
-                key={article.id}
+                key={article._id}
                 className="relative mb-4 min-w-[calc(100%/3)] snap-start ps-0 last:me-0 md:mb-0"
               >
                 <NewsCardCarousel article={article} />

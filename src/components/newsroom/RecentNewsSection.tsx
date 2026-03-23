@@ -20,7 +20,7 @@ export default function RecentNewsSection() {
       {/* Original: max-w-container grid w-full grid-cols-1 gap-sm @lg:grid-cols-2 */}
       <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
         {recentNewsArticles.map((article) => (
-          <NewsCardRow key={article.id} article={article} />
+          <NewsCardRow key={article._id} article={article} />
         ))}
       </div>
     </section>

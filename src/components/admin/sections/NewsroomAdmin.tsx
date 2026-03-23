@@ -31,7 +31,11 @@ export default function NewsroomAdmin() {
     tags: [] as string[],
     category: 'General',
     featured: false,
+    status: 'published' as const,
     coverImage: '',
+    metaTitle: '',
+    metaDescription: '',
+    ogImage: '',
   })
 
   const save = async () => {
@@ -67,7 +71,19 @@ export default function NewsroomAdmin() {
           <Field label="Cover Image URL" value={editing.coverImage ?? ''} onChange={(v) => setEditing({ ...editing, coverImage: v })} />
           <Field label="Category" value={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} />
           <Field label="Tags (comma-separated)" value={(editing.tags ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t: string) => t.trim()).filter(Boolean) })} />
-          <div className="flex items-center gap-2"><Switch value={editing.featured} onValueChange={(val) => setEditing({ ...editing, featured: val })} /><Label>Featured</Label></div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2"><Switch value={editing.featured} onValueChange={(val) => setEditing({ ...editing, featured: val })} /><Label>Featured</Label></div>
+            <div className="flex items-center gap-2"><Switch value={editing.status === 'published'} onValueChange={(val) => setEditing({ ...editing, status: val ? 'published' : 'draft' })} /><Label>{editing.status === 'published' ? 'Published' : 'Draft'}</Label></div>
+          </div>
+
+          <div className="mt-4 border-t border-border pt-4">
+            <h3 className="mb-3 text-sm font-medium text-muted-foreground">SEO</h3>
+            <div className="flex flex-col gap-4">
+              <Field label="Meta Title (optional)" value={editing.metaTitle ?? ''} onChange={(v) => setEditing({ ...editing, metaTitle: v })} />
+              <Field label="Meta Description (optional)" value={editing.metaDescription ?? ''} onChange={(v) => setEditing({ ...editing, metaDescription: v })} textarea />
+              <Field label="OG Image URL (optional)" value={editing.ogImage ?? ''} onChange={(v) => setEditing({ ...editing, ogImage: v })} />
+            </div>
+          </div>
 
           <div className="mt-2 flex gap-3">
             <PrimaryButton onPress={save} disabled={saving}>
@@ -130,9 +146,10 @@ export default function NewsroomAdmin() {
               <div className="flex items-center gap-2">
                 <span className="truncate text-sm font-medium text-foreground">{post.title}</span>
                 {post.featured && <Badge color="primary">Featured</Badge>}
+                {post.status === 'draft' && <Badge color="warning">Draft</Badge>}
               </div>
               <div className="mt-0.5 text-xs text-muted-foreground">
-                @{post.authorUsername} &middot; {new Date(post.publishedAt).toLocaleDateString()}
+                {new Date(post.publishedAt).toLocaleDateString()}
               </div>
             </div>
             <div className="flex items-center gap-2">

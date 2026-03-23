@@ -2,8 +2,15 @@ import { useState, useMemo } from 'react'
 import { useNewsroomPosts } from '../../api/hooks'
 import { blogCategories } from '../../data/blog'
 
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr)
+  const month = d.toLocaleDateString('en-US', { month: 'short' })
+  const year = d.getFullYear().toString().slice(-2)
+  return `${month} '${year}`
+}
+
 export default function BlogLatestSection() {
-  const { data } = useNewsroomPosts()
+  const { data } = useNewsroomPosts({ category: 'Company' })
   const allArticles = data?.posts ?? []
   const [activeCategory, setActiveCategory] = useState('All articles')
 
@@ -72,14 +79,14 @@ export default function BlogLatestSection() {
               {/* Article list */}
               <div className="relative isolate max-lg:col-[1/-1] col-[9/-1] max-xl:col-[7/-1]">
                 {filteredArticles.map((article, index) => (
-                  <div key={article.slug} className="relative z-10 bg-surface" style={{ opacity: 1 }}>
+                  <div key={article._id || article.slug} className="relative z-10 bg-surface" style={{ opacity: 1 }}>
                     <a
                       className="group relative grid grid-cols-16 items-baseline py-7 max-lg:grid-cols-12 transition-[opacity,filter,background-color] duration-500 ease-in-out"
-                      href={`/blog/${article.slug}`}
+                      href={`/newsroom/${article.slug}`}
                     >
                       <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50 bg-surface" />
                       <h3 className="relative col-[2/10] text-balance text-lg max-lg:pt-6">{article.title}</h3>
-                      <p className="relative col-[11/13] text-overline max-lg:col-[-6/-2] max-lg:row-1 max-lg:justify-self-end">{article.date}</p>
+                      <p className="relative col-[11/13] text-overline max-lg:col-[-6/-2] max-lg:row-1 max-lg:justify-self-end">{formatDate(article.publishedAt)}</p>
                       <p className="relative col-[13/15] truncate text-overline max-lg:col-[2/6] max-lg:row-1">[{article.category}]</p>
                       {/* Arrow icon */}
                       <svg

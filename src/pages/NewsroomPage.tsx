@@ -5,6 +5,7 @@ import NewsroomHeroSection from '../components/newsroom/NewsroomHeroSection'
 import ArticleGridSection from '../components/newsroom/ArticleGridSection'
 import RecentNewsSection from '../components/newsroom/RecentNewsSection'
 import CarouselSection from '../components/newsroom/CarouselSection'
+import { useNewsroomPosts } from '../api/hooks'
 import {
   storiesArticles,
   researchArticles,
@@ -24,6 +25,14 @@ import {
  * 7. "Oxy for business" — 3-col horizontal carousel
  * ────────────────────────────────────────────── */
 export default function NewsroomPage() {
+  const { data: storiesData } = useNewsroomPosts({ category: 'Company', limit: 3 })
+  const { data: researchData } = useNewsroomPosts({ category: 'Research', limit: 3 })
+  const { data: businessData } = useNewsroomPosts({ category: 'Engineering', limit: 3 })
+
+  const stories = storiesData?.posts ?? storiesArticles
+  const research = researchData?.posts ?? researchArticles
+  const business = businessData?.posts ?? businessArticles
+
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
@@ -48,21 +57,21 @@ export default function NewsroomPage() {
         <CarouselSection
           title="Stories"
           href="/newsroom"
-          articles={storiesArticles}
+          articles={stories}
         />
 
         {/* 6. Latest research carousel */}
         <CarouselSection
           title="Latest research"
           href="/newsroom"
-          articles={researchArticles}
+          articles={research}
         />
 
         {/* 7. Oxy for business carousel */}
         <CarouselSection
           title="Oxy for business"
           href="/newsroom"
-          articles={businessArticles}
+          articles={business}
         />
       </main>
 

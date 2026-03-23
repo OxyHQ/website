@@ -4,9 +4,11 @@ import { useCurrentLocale } from '../contexts/LocaleContext'
 
 // Static data imports — used as placeholderData so the site works without backend
 import { platformDropdown, resourcesDropdown, footerColumns as staticFooterColumns, testimonials as staticTestimonials, pricingTiers as staticPricingTiers } from '../data/content'
+import { allPlaceholderPosts } from '../data/newsroom'
 
 const staticNavigation = [platformDropdown, resourcesDropdown]
 const staticFooter = { columns: staticFooterColumns, socialLinks: [], copyright: 'Made with love by Oxy.' }
+const staticNewsroom = { posts: allPlaceholderPosts, total: allPlaceholderPosts.length, page: 1, pages: 1 }
 
 // Helper: safely get locale (returns undefined outside LocaleProvider)
 function useSafeLocale(): string | undefined {
@@ -67,6 +69,7 @@ export function useNewsroomPosts(params?: { category?: string; featured?: boolea
   return useQuery({
     queryKey: ['newsroom', params, locale],
     queryFn: () => apiFetch<{ posts: any[]; total: number; page: number; pages: number }>(`/newsroom${qs ? `?${qs}` : ''}`, { locale }),
+    placeholderData: staticNewsroom,
   })
 }
 

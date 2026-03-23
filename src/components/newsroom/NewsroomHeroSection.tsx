@@ -78,14 +78,14 @@ export default function NewsroomHeroSection() {
         {/* Right — sidebar cards (desktop: stacked 1-col, hidden on mobile) */}
         <div className="hidden gap-x-1 gap-y-8 lg:grid lg:grid-cols-1 lg:px-0">
           {sidebarArticles.map((article) => (
-            <NewsCardGrid key={article.id} article={article} />
+            <NewsCardGrid key={article._id} article={article} />
           ))}
         </div>
 
         {/* Mobile/tablet fallback — sidebar cards in row */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-3 lg:hidden">
           {sidebarArticles.map((article) => (
-            <NewsCardGrid key={article.id} article={article} />
+            <NewsCardGrid key={article._id} article={article} />
           ))}
         </div>
       </div>
