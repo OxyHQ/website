@@ -208,15 +208,15 @@ export default function AIPage() {
         <AnimatedLineGrid />
 
         {/* Left sticky panel */}
-        <div className="relative overflow-hidden lg:pointer-events-none lg:sticky lg:inset-0 lg:z-40 lg:flex lg:px-0 lg:max-h-screen lg:max-w-[32rem] mt-12 shrink-0 max-lg:snap-start lg:mt-0 lg:min-h-0 lg:border-r border-border">
+        <div className="relative overflow-hidden lg:pointer-events-none lg:sticky lg:inset-0 lg:z-40 lg:flex lg:px-0 lg:max-h-screen lg:max-w-[32rem] mt-12 shrink-0 max-lg:snap-start lg:mt-0 lg:min-h-0 lg:border-r-[0.5px] lg:border-black/10">
           <div className="relative flex w-full lg:pointer-events-auto lg:min-w-[32rem] lg:overflow-y-auto lg:overflow-x-hidden lg:pl-6">
             <div className="mx-auto max-w-lg lg:mx-0 lg:flex lg:w-[32rem] lg:max-w-none lg:flex-col px-8 sm:px-0 lg:px-4">
               <div id="ai-hero-content" className="pb-8 pt-16 lg:flex lg:h-full lg:flex-col lg:pr-10">
                 {/* Badge */}
-                <h6 className="text-base text-foreground">{aiHero.badge}</h6>
+                <h6 className="body-lg text-base text-white">{aiHero.badge}</h6>
 
                 {/* Title */}
-                <h1 className="mt-4 max-w-80 text-4xl font-medium text-foreground sm:max-w-none sm:text-5xl">
+                <h1 className="body-md font-geist mt-4 max-w-80 text-4xl font-medium text-white sm:max-w-none sm:text-5xl">
                   {aiHero.title}
                 </h1>
 
@@ -226,8 +226,8 @@ export default function AIPage() {
                     const Icon = iconMap[f.icon] ?? SparkleIcon
                     return (
                       <div key={f.text} className="flex items-start gap-2">
-                        <Icon className="mt-0.5 size-4 shrink-0 text-foreground" />
-                        <p className="text-sm text-foreground">{f.text}</p>
+                        <Icon className="mt-0.5 size-4 shrink-0 text-white" />
+                        <p className="body-lg text-sm text-white">{f.text}</p>
                       </div>
                     )
                   })}
@@ -243,17 +243,17 @@ export default function AIPage() {
 
                 {/* Demo navigation tabs (desktop only) */}
                 <div className="mt-auto max-lg:hidden">
-                  <h6 className="mb-4 text-[18px] font-bold text-foreground">
+                  <h6 className="heading-md mb-4 text-[18px] font-bold text-white">
                     What Oxy AI handles for you
                   </h6>
-                  <ul className="flex flex-col items-start max-h-80 overflow-y-auto">
+                  <ul className="flex flex-col items-start max-h-80 overflow-y-auto hide-scrollbar">
                     {aiDemoTabs.map((tab, i) => (
                       <li key={tab.label} className="w-full">
                         <button
                           type="button"
                           onClick={() => setActiveTab(i)}
-                          className={`text-base transition-colors duration-200 flex items-center justify-between text-foreground select-none w-full rounded-[10px] p-2 ${
-                            activeTab === i ? 'bg-foreground/5 ring-1 ring-inset ring-[#73A7FF]' : ''
+                          className={`text-base transition-colors duration-200 flex items-center justify-between text-white select-none w-full rounded-[10px] p-2 ${
+                            activeTab === i ? 'bg-black/5 ring-inset ring-[#73A7FF]' : 'ring-inset ring-[#73A7FF]'
                           }`}
                         >
                           <div className="flex items-center">
@@ -262,7 +262,7 @@ export default function AIPage() {
                             )}
                             {tab.label}
                           </div>
-                          <span className="font-mono font-medium text-foreground/75 mix-blend-plus-lighter">
+                          <span className="font-mono font-medium text-white/75 mix-blend-plus-lighter">
                             {tab.number}
                           </span>
                         </button>
@@ -286,7 +286,7 @@ export default function AIPage() {
           <div className="relative isolate min-h-screen overscroll-none">
             {/* Mobile tab bar */}
             <div className="block lg:hidden sticky top-0 z-50 bg-transparent backdrop-blur-md px-5 pt-8">
-              <p className="text-sm font-bold uppercase tracking-wide text-foreground/50">
+              <p className="text-sm font-bold uppercase tracking-wide text-white/50">
                 {aiDemoTabs[activeTab]
                   ? `Budapest - 08:00 - ${aiDemoTabs[activeTab].label}`
                   : ''}
@@ -296,7 +296,7 @@ export default function AIPage() {
             {/* Desktop sticky header */}
             <div className="hidden lg:block sticky top-0 z-50">
               <div className="relative px-5 py-4">
-                <p className="text-sm font-bold uppercase tracking-wide text-foreground/50">
+                <p className="text-sm font-bold uppercase tracking-wide text-white/50">
                   {aiDemoTabs[activeTab]
                     ? `Budapest - 08:00 - ${aiDemoTabs[activeTab].label}`
                     : ''}
@@ -306,7 +306,7 @@ export default function AIPage() {
 
             {/* Demo section title */}
             <div className="relative flex flex-col pl-5 min-h-screen">
-              <h3 className="text-4xl font-medium text-foreground">
+              <h3 className="text-4xl font-medium text-white">
                 {aiDemoTabs[activeTab]?.label ?? 'Morning Briefing'}
               </h3>
 
@@ -323,11 +323,11 @@ export default function AIPage() {
 
       {/* ── 2. "Your smartest coworker starts today" CTA ── */}
       <section ref={ctaRef} className="flex flex-col items-center px-6 py-16 text-center md:py-28">
-        <h5 className="scroll-reveal text-xs uppercase tracking-widest text-foreground/50">Get Started</h5>
-        <h2 className="scroll-reveal mt-3 text-[40px] font-medium text-foreground sm:text-[50px] sm:leading-[56px]" style={{ transitionDelay: '100ms' }}>
+        <h5 className="scroll-reveal heading-md uppercase tracking-widest opacity-50 text-foreground">Get Started</h5>
+        <h2 className="scroll-reveal heading-3xl mt-3 text-[40px] font-medium text-foreground sm:text-[50px] sm:leading-[56px]" style={{ transitionDelay: '100ms' }}>
           Your smartest coworker starts today.
         </h2>
-        <p className="scroll-reveal mt-3 text-[18px] leading-6 text-foreground/50" style={{ transitionDelay: '200ms' }}>
+        <p className="scroll-reveal body-md mt-3 text-[18px] leading-6 opacity-50 text-foreground" style={{ transitionDelay: '200ms' }}>
           Connect your tools. Oxy AI starts working in under a minute.
         </p>
         <div className="scroll-reveal mt-6" style={{ transitionDelay: '300ms' }}>
@@ -349,10 +349,10 @@ export default function AIPage() {
       <div
         ref={featuresRef}
         id="features"
-        className="pl-0 pt-12 sm:pt-14 md:pb-4 md:pl-14 lg:pb-14 flex flex-col md:flex-row pb-0"
+        className="font-geist pl-0 pt-12 sm:pt-14 md:pb-4 md:pl-14 lg:pb-14 flex flex-col md:flex-row pb-0"
       >
         {/* Left: heading + CTA */}
-        <div className="shrink-0 px-6 pb-8 md:w-80 md:px-14 md:pb-0 flex flex-col">
+        <div className="flex shrink-0 flex-col gap-2 py-8 pl-4 pr-20 text-black sm:pl-6 md:max-w-xs md:pl-0">
           <h2 className="scroll-reveal text-5xl font-medium text-foreground">
             Built for real work.
           </h2>
@@ -374,7 +374,7 @@ export default function AIPage() {
                   className={`scroll-reveal relative shrink-0 overflow-hidden p-8 h-[520px] w-96 rounded-[32px] flex flex-col gap-1 bg-gradient-to-b ${card.gradient ?? 'from-foreground/5 to-foreground/10'} ${i === 0 ? 'ml-4 sm:ml-6 md:ml-0' : ''}`}
                   style={{ transitionDelay: `${i * 100}ms` }}
                 >
-                  <p className="text-[32px] font-semibold text-foreground">{card.title}</p>
+                  <p className="heading-3xl text-[32px] font-semibold text-white">{card.title}</p>
                   <p className="text-sm text-foreground/50">{card.subtitle}</p>
                   {card.image && (
                     <img

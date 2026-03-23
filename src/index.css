@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/geist-mono";
 @import './styles/cursor-theme.css';
 @import './styles/oxyos-theme.css';
 
@@ -54,6 +55,7 @@
   /* Typography */
   --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
   --font-display: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono Variable', 'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
   /* Heading sizes */
   --text-heading-xs: 1.75rem;
@@ -137,6 +139,120 @@
   --input: hsl(277 10% 23%);
   --ring: hsl(277 66% 56%);
   --sidebar: hsl(277 30% 8%);
+}
+
+/* ─── Dashboard (BFCM) Design System Variables ─── */
+:root {
+  --ds-background-100: #ffffff;
+  --ds-background-200: #fafafa;
+  --ds-gray-100: #f5f5f5;
+  --ds-gray-200: #e5e5e5;
+  --ds-gray-300: #d4d4d4;
+  --ds-gray-400: #a3a3a3;
+  --ds-gray-500: #737373;
+  --ds-gray-600: #525252;
+  --ds-gray-700: #404040;
+  --ds-gray-800: #262626;
+  --ds-gray-900: #737373;
+  --ds-gray-1000: #0a0a0a;
+  --ds-gray-alpha-100: rgba(0, 0, 0, 0.05);
+  --ds-gray-alpha-200: rgba(0, 0, 0, 0.1);
+  --ds-gray-alpha-400: rgba(0, 0, 0, 0.2);
+  --ds-gray-alpha-600: rgba(0, 0, 0, 0.4);
+  --ds-blue-500: #3b82f6;
+  --ds-blue-600: #2563eb;
+  --ds-blue-700: #1d4ed8;
+  --ds-blue-800: #1e40af;
+  --ds-blue-900: #0066ff;
+  --ds-red-600: #dc2626;
+  --ds-red-700: #b91c1c;
+  --ds-red-800: #991b1b;
+  --ds-red-900: #dc143c;
+  --ds-green-600: #16a34a;
+  --ds-green-700: #15803d;
+  --ds-amber-800: #f59e0b;
+  --ds-orange-600: #ea580c;
+}
+
+.dark {
+  --ds-background-100: #000000;
+  --ds-background-200: #171717;
+  --ds-gray-100: #262626;
+  --ds-gray-200: #333333;
+  --ds-gray-300: #404040;
+  --ds-gray-400: #525252;
+  --ds-gray-500: #737373;
+  --ds-gray-600: #a3a3a3;
+  --ds-gray-700: #d4d4d4;
+  --ds-gray-800: #e5e5e5;
+  --ds-gray-900: #a1a1aa;
+  --ds-gray-1000: #fafafa;
+  --ds-gray-alpha-100: rgba(255, 255, 255, 0.05);
+  --ds-gray-alpha-200: rgba(255, 255, 255, 0.1);
+  --ds-gray-alpha-400: rgba(255, 255, 255, 0.2);
+  --ds-gray-alpha-600: rgba(255, 255, 255, 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --ds-background-100: #000000;
+    --ds-background-200: #171717;
+    --ds-gray-100: #262626;
+    --ds-gray-200: #333333;
+    --ds-gray-300: #404040;
+    --ds-gray-400: #525252;
+    --ds-gray-500: #737373;
+    --ds-gray-600: #a3a3a3;
+    --ds-gray-700: #d4d4d4;
+    --ds-gray-800: #e5e5e5;
+    --ds-gray-900: #a1a1aa;
+    --ds-gray-1000: #fafafa;
+    --ds-gray-alpha-100: rgba(255, 255, 255, 0.05);
+    --ds-gray-alpha-200: rgba(255, 255, 255, 0.1);
+    --ds-gray-alpha-400: rgba(255, 255, 255, 0.2);
+    --ds-gray-alpha-600: rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* Dashboard scoped styles — override Tailwind defaults inside [data-dashboard] */
+[data-dashboard] {
+  background: var(--ds-background-100);
+  color: var(--ds-gray-1000);
+}
+
+[data-dashboard] .bg-gray-alpha-100 {
+  background-color: var(--ds-gray-alpha-100);
+}
+[data-dashboard] .text-gray-900 {
+  color: var(--ds-gray-900);
+}
+[data-dashboard] .text-gray-1000 {
+  color: var(--ds-gray-1000);
+}
+[data-dashboard] .text-gray-alpha-600 {
+  color: var(--ds-gray-alpha-600);
+}
+[data-dashboard] .hover\:text-gray-1000:hover {
+  color: var(--ds-gray-1000);
+}
+[data-dashboard] .hover\:bg-gray-alpha-200:hover {
+  background-color: var(--ds-gray-alpha-200);
+}
+[data-dashboard] .border-gray-alpha-400 {
+  border-color: var(--ds-gray-alpha-400);
+}
+[data-dashboard] .md\:text-gray-900 {
+  color: var(--ds-gray-900);
+}
+.rsm-svg {
+  width: 100%;
+  height: auto;
+}
+.rsm-geographies path {
+  transition: fill 0.15s ease;
+}
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Base styles */
@@ -474,6 +590,36 @@ body {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Dimension-style typography */
+.body-lg { font-size: 1rem; line-height: 1.5; }
+.body-md { font-size: 0.9375rem; line-height: 1.5; }
+.body-base { font-size: 0.875rem; line-height: 1.5; }
+.heading-3xl { font-size: clamp(2rem, 1.5rem + 2.5vw, 3.5rem); line-height: 1.05; letter-spacing: -0.02em; }
+.heading-xl { font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem); line-height: 1.2; }
+.heading-md { font-size: 1.125rem; line-height: 1.3; }
+
+/* Frost border glass effect */
+.frost-border {
+  position: relative;
+  isolation: isolate;
+  border: var(--borderWidth, 1px) solid transparent;
+  background: var(--background, rgba(255,255,255,0.05));
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.frost-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 15% 0%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 50%);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.3;
+  transition: opacity 0.2s;
+}
+.frost-border:hover::before { opacity: 0.5; }
 
 /* Banner slide down */
 @keyframes slide-down {
