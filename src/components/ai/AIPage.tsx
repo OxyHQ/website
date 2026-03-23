@@ -186,7 +186,7 @@ export default function AIPage() {
   return (
     <div className="text-foreground">
       {/* ── 1. Hero — Split Layout ── */}
-      <div className="relative z-0 mx-auto flex min-h-screen w-full max-w-[100rem] flex-col overflow-clip lg:flex-row">
+      <div className="container relative z-0 mx-auto flex min-h-screen w-full flex-col overflow-clip lg:flex-row">
         {/* Layer 1: Gradient */}
         <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-[#4867AF] via-[#9CAFB8] via-[62%] to-[#C49577]" />
 
@@ -344,7 +344,7 @@ export default function AIPage() {
       </div>
 
       {/* ── 2. "Your smartest coworker starts today" CTA ── */}
-      <section ref={ctaRef} className="flex flex-col items-center px-6 py-16 text-center md:py-28">
+      <section ref={ctaRef} className="container flex flex-col items-center px-6 py-16 text-center md:py-28">
         <h5 className="scroll-reveal heading-md uppercase tracking-widest opacity-50 text-foreground">Get Started</h5>
         <h2 className="scroll-reveal heading-3xl mt-3 text-[40px] font-medium text-foreground sm:text-[50px] sm:leading-[56px]" style={{ transitionDelay: '100ms' }}>
           Your smartest coworker starts today.
@@ -371,7 +371,7 @@ export default function AIPage() {
       <div
         ref={featuresRef}
         id="features"
-        className="font-geist pl-0 pt-12 sm:pt-14 md:pb-4 md:pl-14 lg:pb-14 flex flex-col md:flex-row pb-0"
+        className="container font-geist pl-0 pt-12 sm:pt-14 md:pb-4 md:pl-14 lg:pb-14 flex flex-col md:flex-row pb-0"
       >
         {/* Left: heading + CTA */}
         <div className="flex shrink-0 flex-col gap-2 py-8 pl-4 pr-20 text-black sm:pl-6 md:max-w-xs md:pl-0">
