@@ -113,8 +113,15 @@ export default function DocsPage() {
                 <h1 className="text-2xl sm:text-3xl text-secondary-foreground tracking-tight [overflow-wrap:anywhere] font-bold break-all">
                   Overview
                 </h1>
-                <div className="items-center shrink-0 min-w-[156px] justify-end ml-auto sm:flex hidden">
-                  <button className="rounded-l-xl px-3 text-secondary-foreground py-1.5 border border-subtle-stroke bg-primary-background hover:bg-secondary-background border-r-0">
+                <div id="page-context-menu" className="items-center shrink-0 min-w-[156px] justify-end ml-auto sm:flex hidden">
+                  <button
+                    className="rounded-l-xl px-3 text-secondary-foreground py-1.5 border border-subtle-stroke bg-primary-background hover:bg-surface-subtle border-r-0"
+                    aria-label="Copy page"
+                    onClick={() => {
+                      const content = document.querySelector('[data-docs-content]')?.textContent
+                      if (content) navigator.clipboard.writeText(content)
+                    }}
+                  >
                     <div className="flex items-center gap-2 text-sm text-center font-medium">
                       <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-4">
                         <path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -123,7 +130,13 @@ export default function DocsPage() {
                       <span>Copy page</span>
                     </div>
                   </button>
-                  <button className="group flex items-center py-1.5 gap-1 text-sm text-tertiary-foreground hover:text-secondary-foreground rounded-none rounded-r-xl border px-3 border-subtle-stroke aspect-square bg-primary-background hover:bg-secondary-background" aria-label="More actions">
+                  <button
+                    className="group disabled:pointer-events-none [&>span]:line-clamp-1 overflow-hidden flex items-center py-0.5 gap-1 text-sm text-tertiary-foreground group-hover:text-secondary-foreground rounded-none rounded-r-xl border px-3 border-subtle-stroke aspect-square bg-primary-background hover:bg-surface-subtle"
+                    aria-label="More actions"
+                    type="button"
+                    aria-haspopup="menu"
+                    aria-expanded="false"
+                  >
                     <svg width="8" height="24" viewBox="0 -9 3 24" className="transition-transform text-accent-foreground overflow-visible group-hover:text-secondary-foreground rotate-90">
                       <path d="M0 0L3 3L0 6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                     </svg>
@@ -137,7 +150,7 @@ export default function DocsPage() {
           </header>
 
           {/* Content */}
-          <div className="relative mt-8 mb-14 [contain:inline-size] isolate max-w-3xl">
+          <div className="relative mt-8 mb-14 [contain:inline-size] isolate max-w-3xl" data-docs-content>
             <p className="text-tertiary-foreground leading-7">
               Oxy is a revolutionary CRM platform which is highly customisable, incredibly powerful and
               data-driven. In these guides, you can find everything you need to build powerful integrations,
