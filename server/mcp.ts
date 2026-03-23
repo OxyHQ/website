@@ -22,10 +22,14 @@ import { Translation } from './models/Translation.js'
 import TrackedRepo from './models/TrackedRepo.js'
 import { syncAllRepos, syncSingleRepo } from './services/githubSync.js'
 
-const server = new McpServer({
-  name: 'oxy-website',
-  version: '1.0.0',
-})
+function createMcpServer() {
+  const server = new McpServer({
+    name: 'oxy-website',
+    version: '1.0.0',
+  })
+  registerTools(server)
+  return server
+}
 
 // ── Helper ──────────────────────────────────────────────────────────────────
 
@@ -36,6 +40,8 @@ function ok(data: unknown) {
 function err(e: unknown) {
   return { content: [{ type: 'text' as const, text: String(e) }], isError: true as const }
 }
+
+function registerTools(server: McpServer) {
 
 // ── Pages ───────────────────────────────────────────────────────────────────
 
@@ -582,6 +588,8 @@ server.tool('delete_translation', 'Delete a translation for a document', {
   } catch (e) { return err(e) }
 })
 
+} // end registerTools
+
 // ── Mount on Express app ────────────────────────────────────────────────────
 
 async function validateToken(token: string): Promise<boolean> {
@@ -600,45 +608,35 @@ async function validateToken(token: string): Promise<boolean> {
 export function mountMcp(app: express.Express) {
   const transports = new Map<string, StreamableHTTPServerTransport>()
 
-  app.post('/mcp', async (req, res) => {
+  async function getOrCreateSession(req: express.Request, res: express.Response): Promise<StreamableHTTPServerTransport | null> {
     const token = (req.query.token as string) || req.headers.authorization?.replace('Bearer ', '')
     if (!token || !(await validateToken(token))) {
       res.status(401).json({ error: 'Invalid or expired token' })
-      return
+      return null
     }
 
     const sessionId = req.headers['mcp-session-id'] as string | undefined
     if (sessionId && transports.has(sessionId)) {
-      await transports.get(sessionId)!.handleRequest(req, res)
-      return
+      return transports.get(sessionId)!
     }
 
+    // New session — create fresh server + transport
+    const mcpServer = createMcpServer()
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID() })
     transports.set(transport.sessionId!, transport)
     transport.onclose = () => { transports.delete(transport.sessionId!) }
-    await server.connect(transport)
-    await transport.handleRequest(req, res)
+    await mcpServer.connect(transport)
+    return transport
+  }
+
+  app.post('/mcp', async (req, res) => {
+    const transport = await getOrCreateSession(req, res)
+    if (transport) await transport.handleRequest(req, res)
   })
 
   app.get('/mcp', async (req, res) => {
-    const token = (req.query.token as string) || req.headers.authorization?.replace('Bearer ', '')
-    if (!token || !(await validateToken(token))) {
-      res.status(401).json({ error: 'Invalid or expired token' })
-      return
-    }
-
-    const sessionId = req.headers['mcp-session-id'] as string | undefined
-    if (sessionId && transports.has(sessionId)) {
-      await transports.get(sessionId)!.handleRequest(req, res)
-      return
-    }
-
-    // No session yet — create one (some clients initialize via GET)
-    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID() })
-    transports.set(transport.sessionId!, transport)
-    transport.onclose = () => { transports.delete(transport.sessionId!) }
-    await server.connect(transport)
-    await transport.handleRequest(req, res)
+    const transport = await getOrCreateSession(req, res)
+    if (transport) await transport.handleRequest(req, res)
   })
 
   app.delete('/mcp', async (req, res) => {
