@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { WebOxyProvider, useAuth } from '@oxyhq/auth'
+import { WebOxyProvider, useAuth, useWebOxy } from '@oxyhq/auth'
 import { BloomThemeProvider } from '@oxyhq/bloom/theme'
+import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
 import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppColorName } from './theme'
 import { LocaleProvider } from './contexts/LocaleContext'
 import { setTokenGetter } from './api/client'
@@ -40,10 +41,24 @@ function ScrollToTop() {
   return null
 }
 
-function ApiAuthSetup({ children }: { children: React.ReactNode }) {
+function AppSetup({ children }: { children: React.ReactNode }) {
   const { authManager } = useAuth()
+  const { oxyServices } = useWebOxy()
+
+  // Set API client auth token getter (same pattern as console)
   setTokenGetter(() => authManager.getAccessToken())
-  return <>{children}</>
+
+  // Resolve Bloom image file IDs to download URLs
+  const resolveImage = useCallback(
+    (fileId: string): string | undefined => {
+      if (!fileId) return undefined
+      if (fileId.startsWith('http')) return fileId
+      return oxyServices.getFileDownloadUrl(fileId, 'thumb')
+    },
+    [oxyServices],
+  )
+
+  return <ImageResolverProvider value={resolveImage}>{children}</ImageResolverProvider>
 }
 
 function LocaleLayout() {
@@ -85,7 +100,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <WebOxyProvider baseURL={OXY_API} onAuthStateChange={(user) => applyUserColor(user?.color)}>
-        <ApiAuthSetup>
+        <AppSetup>
           <BloomThemeProvider mode={mode} colorPreset={preset}>
             <BrowserRouter>
               <ScrollToTop />
@@ -99,7 +114,7 @@ export default function App() {
               <FixedPromptInput />
             </BrowserRouter>
           </BloomThemeProvider>
-        </ApiAuthSetup>
+        </AppSetup>
       </WebOxyProvider>
     </QueryClientProvider>
   )
