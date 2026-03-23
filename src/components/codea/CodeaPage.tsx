@@ -6,7 +6,6 @@ import {
   frontierCards,
   changelogEntries,
   highlights,
-  footerColumns,
 } from '../../data/codea'
 
 export default function CodeaPage() {
@@ -328,44 +327,7 @@ export default function CodeaPage() {
         </div>
       </section>
 
-      {/* ── 10. Footer ── */}
-      <footer className="pt-v3 pb-v3 md:pb-g3 px-g2 bg-theme-card-hex relative">
-        <div className="mb-v4.5 container">
-          <nav>
-            <div className="gap-x-g1 gap-y-v2 grid grid-cols-2 md:grid-cols-5">
-              {footerColumns.map((col) => (
-                <div key={col.title}>
-                  <h3 className="type-base md:type-sm text-theme-text-sec pb-v2.5/12">{col.title}</h3>
-                  <ul className="space-y-0">
-                    {col.links.map((link) => (
-                      <li key={link.label}>
-                        <a
-                          className="type-base md:type-sm py-v2.5/12 footer-link inline-block hover:text-theme-text group"
-                          href={link.href}
-                          {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                        >
-                          {link.label}
-                          {link.external && (
-                            <span className="inline-block opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                              &nbsp;&nearr;
-                            </span>
-                          )}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </nav>
-        </div>
-        <div className="gap-v2 container flex flex-col items-start justify-between md:flex-row md:items-center">
-          <div className="text-theme-text-sec flex items-center gap-g1.5">
-            <small className="type-base md:type-sm">&copy; 2026 Oxy, Inc.</small>
-            <small className="type-base md:type-sm">SOC 2 Certified</small>
-          </div>
-        </div>
-      </footer>
+      {/* Footer handled by shared Footer component in page wrapper */}
     </div>
   )
 }
