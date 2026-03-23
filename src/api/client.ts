@@ -1,15 +1,15 @@
-import type { OxyServices } from '@oxyhq/core'
-
 const API_BASE = '/api'
 
-let _oxyServices: OxyServices | null = null
-
-export function initApiClient(oxyServices: OxyServices) {
-  _oxyServices = oxyServices
+function getAuthToken(): string | null {
+  try {
+    return localStorage.getItem('oxy_access_token')
+  } catch {
+    return null
+  }
 }
 
 export async function apiFetch<T>(path: string, options?: RequestInit & { locale?: string }): Promise<T> {
-  const token = _oxyServices?.getAccessToken() ?? null
+  const token = getAuthToken()
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
