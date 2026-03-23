@@ -1,11 +1,7 @@
 import { useState } from 'react'
 import { NewsCardFeatured, NewsCardGrid } from './NewsCard'
-import {
-  featuredArticle,
-  sidebarArticles,
-  newsCategories,
-  type NewsCategory,
-} from '../../data/newsroom'
+import { useNewsroomPosts } from '../../api/hooks'
+import { newsCategories, type NewsCategory } from '../../data/newsroom'
 
 /* ──────────────────────────────────────────────────
  * Hero section
@@ -22,6 +18,10 @@ import {
  *           right: gap-y-xl gap-x-2xs col-span-1 hidden @lg:grid (sidebar 1:1)
  * ────────────────────────────────────────────── */
 export default function NewsroomHeroSection() {
+  const { data: featuredData } = useNewsroomPosts({ featured: true, limit: 1 })
+  const featuredArticle = featuredData?.posts?.[0] ?? null
+  const { data: sidebarData } = useNewsroomPosts({ limit: 5 })
+  const sidebarArticles = sidebarData?.posts?.slice(1) ?? []
   const [activeCategory, setActiveCategory] = useState<NewsCategory>('Company')
 
   return (
@@ -72,7 +72,7 @@ export default function NewsroomHeroSection() {
       <div className="mt-8 grid w-full grid-cols-1 gap-4 md:mt-12 lg:grid-cols-4">
         {/* Left — featured card (sticky on desktop) */}
         <div className="mb-4 self-start lg:sticky lg:top-[80px] lg:col-span-3 lg:mb-0">
-          <NewsCardFeatured article={featuredArticle} />
+          {featuredArticle && <NewsCardFeatured article={featuredArticle} />}
         </div>
 
         {/* Right — sidebar cards (desktop: stacked 1-col, hidden on mobile) */}

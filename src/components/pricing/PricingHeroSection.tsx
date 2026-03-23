@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { pricingPlans } from '../../data/pricing'
+import { usePricing } from '../../api/hooks'
 
 export default function PricingHeroSection() {
+  const { data: pricingPlans = [] } = usePricing()
   const [isAnnual, setIsAnnual] = useState(true)
 
   return (
@@ -113,7 +114,7 @@ export default function PricingHeroSection() {
                 </div>
                 <div className="mt-5 font-semibold text-foreground text-sm lg:mt-8">{plan.description}</div>
                 <ul className="mt-2.5 flex flex-col gap-y-2.5">
-                  {plan.features.map((feature) => (
+                  {plan.features.map((feature: string) => (
                     <li key={feature} className="flex items-start gap-2">
                       <div className="mt-px h-[18px] w-[18px] shrink-0 rounded-md bg-surface p-0.5 text-muted-foreground">
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

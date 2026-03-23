@@ -1,10 +1,11 @@
-import { pricingTiers } from '../../data/content'
+import { usePricing } from '../../api/hooks'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 import Section from '../layout/Section'
 import SectionHeader from '../ui/SectionHeader'
 import PricingCard from '../ui/PricingCard'
 
 export default function PricingSection() {
+  const { data: pricingTiers = [] } = usePricing()
   const ref = useScrollReveal()
 
   return (

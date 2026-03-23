@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { NewsCardGrid } from './NewsCard'
-import { gridArticles, newsCategories } from '../../data/newsroom'
+import { useNewsroomPosts } from '../../api/hooks'
+import { newsCategories } from '../../data/newsroom'
 
 /* ─── Filter icon SVG ─── */
 function FilterIcon() {
@@ -68,6 +69,8 @@ const sortLabels: Record<SortOption, string> = {
 const filterCategories = newsCategories.filter((c) => c !== 'All')
 
 export default function ArticleGridSection() {
+  const { data } = useNewsroomPosts()
+  const gridArticles = data?.posts ?? []
   const [visibleCount, setVisibleCount] = useState(6)
   const [filterOpen, setFilterOpen] = useState(false)
   const [sortOpen, setSortOpen] = useState(false)

@@ -1,6 +1,8 @@
-import { gridArticles } from '../../data/blog'
+import { useNewsroomPosts } from '../../api/hooks'
 
 export default function BlogGridSection() {
+  const { data } = useNewsroomPosts({ limit: 6 })
+  const gridArticles = data?.posts ?? []
   return (
     <div>
       <div

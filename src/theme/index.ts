@@ -11,10 +11,11 @@
 import {
   APP_COLOR_PRESETS,
   APP_COLOR_NAMES,
+  hexToAppColorName,
   type AppColorName,
 } from '@oxyhq/bloom/theme'
 
-export { APP_COLOR_PRESETS, APP_COLOR_NAMES }
+export { APP_COLOR_PRESETS, APP_COLOR_NAMES, hexToAppColorName }
 export type { AppColorName }
 
 export type ThemeMode = 'light' | 'dark'
@@ -65,6 +66,17 @@ export function applyPreset(preset: AppColorName, mode: ThemeMode) {
     // Bloom stores bare HSL values like "277 66% 56%"
     // We wrap in hsl() for CSS consumption
     root.style.setProperty(key, `hsl(${value})`)
+  }
+}
+
+/**
+ * Apply user's color as the theme preset (like Mention does).
+ * Called when auth state changes. Falls back to saved preset if no user color.
+ */
+export function applyUserColor(userColorHex?: string | null) {
+  if (userColorHex) {
+    const presetName = hexToAppColorName(userColorHex)
+    setColorPreset(presetName)
   }
 }
 

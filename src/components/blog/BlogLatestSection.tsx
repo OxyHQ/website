@@ -1,13 +1,16 @@
 import { useState, useMemo } from 'react'
-import { allArticles, blogCategories } from '../../data/blog'
+import { useNewsroomPosts } from '../../api/hooks'
+import { blogCategories } from '../../data/blog'
 
 export default function BlogLatestSection() {
+  const { data } = useNewsroomPosts()
+  const allArticles = data?.posts ?? []
   const [activeCategory, setActiveCategory] = useState('All articles')
 
   const filteredArticles = useMemo(() => {
     if (activeCategory === 'All articles') return allArticles
-    return allArticles.filter((a) => a.category === activeCategory)
-  }, [activeCategory])
+    return allArticles.filter((a: any) => a.category === activeCategory)
+  }, [activeCategory, allArticles])
 
   return (
     <>

@@ -1,8 +1,9 @@
-import { testimonials } from '../../data/content'
+import { useTestimonials } from '../../api/hooks'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 import TestimonialCard from '../ui/TestimonialCard'
 
 export default function TestimonialsSection() {
+  const { data: testimonials = [] } = useTestimonials()
   const ref = useScrollReveal()
 
   return (

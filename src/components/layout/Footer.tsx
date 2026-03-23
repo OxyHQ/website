@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { footerColumns } from '../../data/content'
+import { useFooter } from '../../api/hooks'
 import Logo from '../ui/Logo'
 
 /* ─── SVG Icons ─── */
@@ -51,6 +51,8 @@ const socialLinks = [
 ]
 
 export default function Footer() {
+  const { data: footerData } = useFooter()
+  const footerColumns = footerData?.columns ?? []
   return (
     <footer className="relative flex w-full flex-col justify-between bg-background">
       {/* Top border line */}
@@ -62,11 +64,11 @@ export default function Footer() {
         <div className="px-px pt-10 pb-4">
           {/* Footer columns using CSS multi-column layout — full width */}
           <div className="columns-4 gap-0 max-xl:columns-3 max-lg:columns-2 max-xs:columns-1">
-            {footerColumns.map((column) => (
+            {footerColumns.map((column: any) => (
               <div key={column.title} className="break-inside-avoid pb-5">
                 <h2 className="py-1 text-foreground text-sm font-medium">{column.title}</h2>
                 <ul className="flex flex-col">
-                  {column.links.map((link) => (
+                  {column.links.map((link: any) => (
                     <li key={link.label}>
                       {link.href.startsWith('/') ? (
                         <Link

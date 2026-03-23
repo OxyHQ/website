@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { pricingPlans, featureCategories } from '../../data/pricing'
+import { usePricing } from '../../api/hooks'
+import { featureCategories } from '../../data/pricing'
 
 const CheckIcon = () => (
   <span className="flex h-5 items-center">
@@ -38,6 +39,7 @@ function FeatureValue({ value }: { value: string; isProColumn?: boolean }) {
 }
 
 export default function PricingStickyTable() {
+  const { data: pricingPlans = [] } = usePricing()
   const [isAnnual, setIsAnnual] = useState(true)
 
   return (

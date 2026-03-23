@@ -1,11 +1,12 @@
-import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react'
+import { useState, useRef, useEffect, useCallback, useLayoutEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '@oxyhq/auth'
+import { Avatar } from '@oxyhq/bloom/avatar'
 import {
-  platformDropdown,
-  resourcesDropdown,
   simpleNavLinks,
   type NavDropdown,
 } from '../../data/content'
+import { useNavigation } from '../../api/hooks'
 import NavDropdownItem from '../ui/NavDropdownItem'
 import Button from '../ui/Button'
 import ThemeToggle from '../ui/ThemeToggle'
@@ -32,7 +33,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
           isPlatform ? 'grid w-[720px] grid-cols-2 gap-x-3 max-xl:w-[576px]' : 'flex w-96'
         }`}
       >
-        {dropdown.sections.flatMap((section, si) => [
+        {(dropdown.sections ?? [{ heading: '', items: (dropdown as any).items ?? [] }]).flatMap((section, si) => [
           <li key={`heading-${si}`} className="contents">
             <p className={`mt-3 mb-1 inline-block px-4 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground ${isPlatform ? 'col-span-2' : ''}`}>
               {section.heading}
@@ -82,12 +83,15 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
 }
 
 /* ─── Main Navbar ─── */
-const dropdowns: NavDropdown[] = [platformDropdown, resourcesDropdown]
-const dropdownLabels = dropdowns.map((d) => d.label)
-
 export default function Navbar() {
+  const { user, isAuthenticated, signIn, signOut } = useAuth()
+  const { data: navigationData } = useNavigation()
+  const dropdowns: NavDropdown[] = useMemo(() => navigationData ?? [], [navigationData])
+  const dropdownLabels = useMemo(() => dropdowns.map((d) => d.label), [dropdowns])
+
   const [mobileOpen, setMobileOpen] = useState(false)
   const [bannerVisible, setBannerVisible] = useState(true)
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [prevDropdown, setPrevDropdown] = useState<string | null>(null)
   const [direction, setDirection] = useState<'left' | 'right' | null>(null)
@@ -99,6 +103,19 @@ export default function Navbar() {
   const [hasMeasured, setHasMeasured] = useState(false)
 
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const avatarMenuRef = useRef<HTMLDivElement>(null)
+
+  // Close avatar menu on click outside
+  useEffect(() => {
+    if (!avatarMenuOpen) return
+    function handleClick(e: MouseEvent) {
+      if (avatarMenuRef.current && !avatarMenuRef.current.contains(e.target as Node)) {
+        setAvatarMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [avatarMenuOpen])
   const measureRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({})
   const navAreaRef = useRef<HTMLDivElement>(null)
@@ -114,7 +131,7 @@ export default function Navbar() {
     }
     setPanelSizes(sizes)
     setHasMeasured(true)
-  }, [])
+  }, [dropdowns])
 
   // Compute viewport left so dropdown is centered under the active trigger,
   // clamped to stay within the Container (max-width safe area).
@@ -399,8 +416,53 @@ export default function Navbar() {
             {/* Desktop buttons */}
             <div className="hidden items-center gap-x-2.5 lg:flex">
               <ThemeToggle />
-              <Button variant="outline" size="sm" href="#">Sign in</Button>
-              <Button variant="primary" size="sm" href="#">Start for free</Button>
+              {isAuthenticated ? (
+                <div className="relative" ref={avatarMenuRef}>
+                  <button onClick={() => setAvatarMenuOpen((o) => !o)} className="cursor-pointer">
+                    <Avatar
+                      source={user?.avatar}
+                      size={32}
+                      placeholderColor={user?.color}
+                    />
+                  </button>
+                  {avatarMenuOpen && (
+                    <div className="absolute right-0 top-full mt-2 z-50 w-56 rounded-xl border border-border bg-background p-1.5 shadow-lg">
+                      <div className="flex items-center gap-3 px-3 py-2.5">
+                        <Avatar source={user?.avatar} size={36} placeholderColor={user?.color} />
+                        <div className="min-w-0">
+                          <div className="truncate text-sm font-medium text-foreground">{user?.name?.first ?? user?.username}</div>
+                          <div className="truncate text-xs text-muted-foreground">@{user?.username}</div>
+                        </div>
+                      </div>
+                      <div className="my-1 h-px bg-border" />
+                      {['oxy', 'nate'].includes(user?.username ?? '') && (
+                        <Link to="/admin" onClick={() => setAvatarMenuOpen(false)} className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-surface">
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 4.5h12M2 8h12M2 11.5h8" /></svg>
+                          Admin
+                        </Link>
+                      )}
+                      <Link to="/settings" onClick={() => setAvatarMenuOpen(false)} className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-surface">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="8" r="3" /><path d="M12.7 10.1a1 1 0 00.2 1.1l.03.03a1.22 1.22 0 11-1.72 1.72l-.03-.03a1 1 0 00-1.1-.2 1 1 0 00-.61.92v.09a1.22 1.22 0 11-2.44 0v-.05a1 1 0 00-.65-.91 1 1 0 00-1.1.2l-.03.03a1.22 1.22 0 11-1.72-1.72l.03-.03a1 1 0 00.2-1.1 1 1 0 00-.92-.61h-.09a1.22 1.22 0 110-2.44h.05a1 1 0 00.91-.65 1 1 0 00-.2-1.1l-.03-.03A1.22 1.22 0 114.97 3.5l.03.03a1 1 0 001.1.2h.05a1 1 0 00.61-.92v-.09a1.22 1.22 0 112.44 0v.05a1 1 0 00.65.91 1 1 0 001.1-.2l.03-.03a1.22 1.22 0 111.72 1.72l-.03.03a1 1 0 00-.2 1.1v.05a1 1 0 00.92.61h.09a1.22 1.22 0 010 2.44h-.05a1 1 0 00-.91.65z" /></svg>
+                        Settings
+                      </Link>
+                      <a href="https://accounts.oxy.so" target="_blank" rel="noopener noreferrer" onClick={() => setAvatarMenuOpen(false)} className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-surface">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 14v-1.33A2.67 2.67 0 009.33 10H6.67A2.67 2.67 0 004 12.67V14M8 7.33A2.67 2.67 0 108 2a2.67 2.67 0 000 5.33z" /></svg>
+                        Manage account
+                      </a>
+                      <div className="my-1 h-px bg-border" />
+                      <button onClick={() => { signOut(); setAvatarMenuOpen(false) }} className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-surface">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 14H3.33A1.33 1.33 0 012 12.67V3.33A1.33 1.33 0 013.33 2H6M10.67 11.33L14 8l-3.33-3.33M14 8H6" /></svg>
+                        Sign out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <Button variant="outline" size="sm" onClick={() => signIn()}>Sign in</Button>
+                  <Button variant="primary" size="sm" onClick={() => signIn()}>Start for free</Button>
+                </>
+              )}
             </div>
           </div>
         </nav>
@@ -467,8 +529,34 @@ export default function Navbar() {
                 <ThemeToggle />
               </div>
               <div className="flex flex-col gap-2 px-4 pt-2">
-                <Button variant="outline" size="md" href="#" className="w-full">Sign in</Button>
-                <Button variant="primary" size="md" href="#" className="w-full">Start for free</Button>
+                {isAuthenticated ? (
+                  <>
+                    <div className="flex items-center gap-3 px-2 py-2">
+                      <Avatar source={user?.avatar} size={36} placeholderColor={user?.color} />
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium text-foreground">{user?.name?.first ?? user?.username}</div>
+                        <div className="truncate text-xs text-muted-foreground">@{user?.username}</div>
+                      </div>
+                    </div>
+                    {['oxy', 'nate'].includes(user?.username ?? '') && (
+                      <Link to="/admin" onClick={() => setMobileOpen(false)} className="rounded-xl px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface">
+                        Admin
+                      </Link>
+                    )}
+                    <Link to="/settings" onClick={() => setMobileOpen(false)} className="rounded-xl px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface">
+                      Settings
+                    </Link>
+                    <a href="https://accounts.oxy.so" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)} className="rounded-xl px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface">
+                      Manage account
+                    </a>
+                    <Button variant="outline" size="md" onClick={() => { signOut(); setMobileOpen(false) }} className="w-full">Sign out</Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Sign in</Button>
+                    <Button variant="primary" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Start for free</Button>
+                  </>
+                )}
               </div>
             </div>
           </Container>

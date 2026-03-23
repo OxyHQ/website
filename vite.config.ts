@@ -1,4 +1,3 @@
-import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
@@ -15,7 +14,15 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      'react-native': resolve(__dirname, 'src/stubs/react-native.ts'),
+      'react-native': 'react-native-web',
+    },
+  },
+  optimizeDeps: {
+    exclude: ['@react-native-async-storage/async-storage'],
+  },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:4000',
     },
   },
 })

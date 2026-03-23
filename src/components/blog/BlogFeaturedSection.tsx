@@ -1,7 +1,10 @@
-import { featuredArticle } from '../../data/blog'
+import { useNewsroomPosts } from '../../api/hooks'
 
 export default function BlogFeaturedSection() {
-  const article = featuredArticle
+  const { data } = useNewsroomPosts({ featured: true, limit: 1 })
+  const article = data?.posts?.[0] ?? null
+
+  if (!article) return null
 
   return (
     <div>
