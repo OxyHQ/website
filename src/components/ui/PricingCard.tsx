@@ -1,8 +1,8 @@
-import type { PricingTier } from '../../data/content'
+import type { PricingPlan } from '../../data/pricing'
 import Button from './Button'
 
 interface PricingCardProps {
-  tier: PricingTier
+  tier: PricingPlan
 }
 
 export default function PricingCard({ tier }: PricingCardProps) {

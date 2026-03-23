@@ -4,7 +4,8 @@ import { apiFetch } from './client'
 import { useCurrentLocale } from '../contexts/LocaleContext'
 
 // Static data imports — used as placeholderData so the site works without backend
-import { platformDropdown, resourcesDropdown, footerColumns as staticFooterColumns, testimonials as staticTestimonials, pricingTiers as staticPricingTiers } from '../data/content'
+import { platformDropdown, resourcesDropdown, footerColumns as staticFooterColumns, testimonials as staticTestimonials } from '../data/content'
+import { pricingPlans as staticPricingPlans } from '../data/pricing'
 import { allPlaceholderPosts } from '../data/newsroom'
 
 const staticNavigation = [platformDropdown, resourcesDropdown]
@@ -116,7 +117,7 @@ export function usePricing() {
   return useQuery({
     queryKey: ['pricing', locale],
     queryFn: () => apiFetch<any[]>('/pricing', { locale }),
-    placeholderData: staticPricingTiers,
+    placeholderData: staticPricingPlans,
   })
 }
 

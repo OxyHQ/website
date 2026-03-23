@@ -178,9 +178,9 @@ async function seed() {
 
   // ── Pricing (exact copy) ──
   await PricingPlan.insertMany([
-    { name: 'Free', price: { monthly: 0, annual: 0 }, description: '500 credits per seat / month', features: ['500 credits per seat / month'], cta: 'Get started', highlighted: false, order: 0 },
-    { name: 'Pro', price: { monthly: 0, annual: 0 }, description: '1,000 credits per seat / month', features: ['1,000 credits per seat / month'], cta: 'Get started', highlighted: true, order: 1 },
-    { name: 'Enterprise', price: { monthly: 0, annual: 0 }, description: '2,500 credits per seat / month', features: ['2,500 credits per seat / month'], cta: 'Contact sales', highlighted: false, order: 2 },
+    { name: 'Free', price: { monthly: 0, annual: 0 }, description: '500 credits per seat / month', features: ['500 credits per seat / month'], cta: 'Get started', ctaHref: '/signup', highlighted: false, order: 0 },
+    { name: 'Pro', price: { monthly: 0, annual: 0 }, description: '1,000 credits per seat / month', features: ['1,000 credits per seat / month'], cta: 'Get started', ctaHref: '/signup', highlighted: true, order: 1 },
+    { name: 'Enterprise', price: { monthly: 0, annual: 0 }, description: '2,500 credits per seat / month', features: ['2,500 credits per seat / month'], cta: 'Contact sales', ctaHref: '/contact', highlighted: false, order: 2 },
   ])
   console.log('Seeded pricing')
 
