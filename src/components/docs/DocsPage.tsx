@@ -38,38 +38,44 @@ function DocsSidebar() {
   const location = useLocation()
 
   return (
-    <aside className="hidden lg:block w-[19.5rem] shrink-0 border-r border-gray-300/[0.06]">
-      <div className="sticky top-[var(--site-header-height,64px)] h-[calc(100vh-var(--site-header-height,64px))] overflow-y-auto relative lg:text-sm lg:leading-6 py-10 pl-6 pr-6">
-        {docsSidebar.map((section, sectionIdx) => (
-          <div key={section.title} className={sectionIdx === 0 ? '' : 'mt-8'}>
-            <h5 className="mb-3.5 lg:mb-2.5 font-semibold text-gray-200 pl-4">
-              {section.title}
-            </h5>
-            <ul className="space-y-px">
-              {section.items.map((item) => {
-                const isActive = location.pathname === item.href
-                return (
-                  <li key={item.label}>
-                    <a
-                      className={
-                        isActive
-                          ? 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl w-full outline-offset-[-1px] bg-[#818cf8]/10 text-[#818cf8] [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]'
-                          : 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-gray-200/5 text-gray-400 hover:text-gray-300'
-                      }
-                      href={item.href}
-                    >
-                      <div className="flex-1 flex items-start space-x-2.5">
-                        <div className="break-words [word-break:break-word]">{item.label}</div>
-                      </div>
-                    </a>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-        ))}
+    <div
+      id="sidebar"
+      className="z-20 hidden lg:block fixed bottom-0 right-auto w-[18rem] left-[max(0px,calc(50%-600px))]"
+      style={{ top: 'calc(var(--site-header-height, 64px) + 48px)' }}
+    >
+      <div className="absolute inset-0 z-10 overflow-auto pr-8 pb-10 pl-6">
+        <div className="relative lg:text-sm lg:leading-6 py-10">
+          {docsSidebar.map((section, sectionIdx) => (
+            <div key={section.title} className={sectionIdx === 0 ? '' : 'mt-8'}>
+              <h5 className="mb-3.5 lg:mb-2.5 font-semibold text-gray-200 pl-4">
+                {section.title}
+              </h5>
+              <ul className="space-y-px">
+                {section.items.map((item) => {
+                  const isActive = location.pathname === item.href
+                  return (
+                    <li key={item.label}>
+                      <a
+                        className={
+                          isActive
+                            ? 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl w-full outline-offset-[-1px] bg-[#818cf8]/10 text-[#818cf8] [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]'
+                            : 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-gray-200/5 text-gray-400 hover:text-gray-300'
+                        }
+                        href={item.href}
+                      >
+                        <div className="flex-1 flex items-start space-x-2.5">
+                          <div className="break-words [word-break:break-word]">{item.label}</div>
+                        </div>
+                      </a>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
-    </aside>
+    </div>
   )
 }
 
@@ -99,12 +105,12 @@ export default function DocsPage() {
         </div>
       </div>
 
-      {/* Sidebar + Content layout */}
-      <div className="container flex">
-        <DocsSidebar />
+      {/* Sidebar (fixed, aligned to container left edge) */}
+      <DocsSidebar />
 
-        {/* Main content */}
-        <div className="relative grow box-border flex-col w-full mx-auto px-6 lg:px-12 py-10 min-w-0">
+      {/* Main content - padded to clear fixed sidebar */}
+      <div className="container">
+        <div className="relative grow box-border flex-col w-full py-10 lg:pl-[19.5rem]">
           {/* Header */}
           <header className="relative leading-none">
             <div className="mt-0.5 space-y-2.5">
