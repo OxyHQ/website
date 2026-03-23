@@ -1,13 +1,23 @@
 import { Router } from 'express'
 import { PricingPlan } from '../models/PricingPlan.js'
+import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
+import { localeMiddleware } from '../middleware/locale.js'
+import { applyTranslations } from '../utils/applyTranslation.js'
 
 const router = Router()
 
-router.get('/', async (_req, res) => {
+router.get('/', localeMiddleware, async (req, res) => {
   const plans = await PricingPlan.find().sort('order')
-  res.json(plans)
+  if (req.isDefaultLocale) return res.json(plans)
+
+  const translations = await Translation.find({
+    locale: req.locale,
+    collection: 'pricing',
+    documentId: { $in: plans.map(p => p._id.toString()) },
+  })
+  res.json(applyTranslations(plans.map(p => p.toJSON()), translations))
 })
 
 router.put('/', requireAuth, adminOnly, async (req, res) => {

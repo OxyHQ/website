@@ -1,3 +1,5 @@
+import IDEDemoMockup from './IDEDemoMockup'
+
 const logos = ['Cisco', 'Scale', 'Notion', 'Cognition', 'Anduril']
 
 const features = [
@@ -56,11 +58,9 @@ export default function CodexExtensionContent() {
           </div>
         </div>
 
-        {/* IDE Demo placeholder */}
-        <div className="relative mx-auto h-[480px] w-full max-w-[1180px] overflow-hidden rounded-xl px-6 sm:h-[500px] lg:h-[720px] lg:shadow-xl">
-          <div className="h-full w-full overflow-clip rounded-md bg-secondary flex items-center justify-center text-muted-foreground text-sm">
-            IDE Demo Preview
-          </div>
+        {/* IDE Demo */}
+        <div className="relative mx-auto h-[480px] w-full max-w-[1180px] overflow-hidden rounded-xl px-6 sm:h-[500px] lg:h-[720px]">
+          <IDEDemoMockup />
         </div>
       </section>
 

@@ -1,13 +1,23 @@
 import { Router } from 'express'
 import { Job } from '../models/Job.js'
+import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
+import { localeMiddleware } from '../middleware/locale.js'
+import { applyTranslations } from '../utils/applyTranslation.js'
 
 const router = Router()
 
-router.get('/', async (_req, res) => {
+router.get('/', localeMiddleware, async (req, res) => {
   const jobs = await Job.find({ active: true }).sort('department')
-  res.json(jobs)
+  if (req.isDefaultLocale) return res.json(jobs)
+
+  const translations = await Translation.find({
+    locale: req.locale,
+    collection: 'jobs',
+    documentId: { $in: jobs.map(j => j._id.toString()) },
+  })
+  res.json(applyTranslations(jobs.map(j => j.toJSON()), translations))
 })
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {

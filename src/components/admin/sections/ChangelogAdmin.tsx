@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { useChangelog } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
+import { Input } from '../../ui/shadcn/input'
+import { Textarea } from '../../ui/shadcn/textarea'
+import { Label } from '../../ui/shadcn/label'
 
 export default function ChangelogAdmin() {
   const { data, refetch } = useChangelog()
@@ -28,11 +31,11 @@ export default function ChangelogAdmin() {
         <div className="mb-4"><Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back</Button></div>
         <h2 className="text-xl font-semibold text-foreground">{editing._id ? 'Edit Entry' : 'New Entry'}</h2>
         <div className="mt-6 flex flex-col gap-4">
-          <label className="flex flex-col gap-1.5"><span className="text-sm font-medium text-foreground">Title</span><input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" /></label>
-          <label className="flex flex-col gap-1.5"><span className="text-sm font-medium text-foreground">Date</span><input type="date" value={editing.date?.slice(0, 10) ?? ''} onChange={(e) => setEditing({ ...editing, date: e.target.value })} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" /></label>
-          <label className="flex flex-col gap-1.5"><span className="text-sm font-medium text-foreground">Content</span><textarea value={editing.content} onChange={(e) => setEditing({ ...editing, content: e.target.value })} rows={4} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" /></label>
-          <label className="flex flex-col gap-1.5"><span className="text-sm font-medium text-foreground">Tags (comma-separated)</span><input value={(editing.tags ?? []).join(', ')} onChange={(e) => setEditing({ ...editing, tags: e.target.value.split(',').map((t: string) => t.trim()).filter(Boolean) })} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" /></label>
-          <label className="flex flex-col gap-1.5"><span className="text-sm font-medium text-foreground">Items (one per line)</span><textarea value={(editing.items ?? []).join('\n')} onChange={(e) => setEditing({ ...editing, items: e.target.value.split('\n').filter(Boolean) })} rows={4} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary font-mono" /></label>
+          <div className="flex flex-col gap-1.5"><Label>Title</Label><Input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} /></div>
+          <div className="flex flex-col gap-1.5"><Label>Date</Label><Input type="date" value={editing.date?.slice(0, 10) ?? ''} onChange={(e) => setEditing({ ...editing, date: e.target.value })} /></div>
+          <div className="flex flex-col gap-1.5"><Label>Content</Label><Textarea value={editing.content} onChange={(e) => setEditing({ ...editing, content: e.target.value })} rows={4} /></div>
+          <div className="flex flex-col gap-1.5"><Label>Tags (comma-separated)</Label><Input value={(editing.tags ?? []).join(', ')} onChange={(e) => setEditing({ ...editing, tags: e.target.value.split(',').map((t: string) => t.trim()).filter(Boolean) })} /></div>
+          <div className="flex flex-col gap-1.5"><Label>Items (one per line)</Label><Textarea value={(editing.items ?? []).join('\n')} onChange={(e) => setEditing({ ...editing, items: e.target.value.split('\n').filter(Boolean) })} rows={4} className="font-mono" /></div>
           <div className="flex gap-3">
             <PrimaryButton onPress={save} disabled={saving}>{saving ? 'Saving...' : 'Save'}</PrimaryButton>
             <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>

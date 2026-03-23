@@ -1,5 +1,9 @@
 import { useState } from 'react'
 import { useMcpTokens, useCreateMcpToken, useRevokeMcpToken } from '../../../api/hooks'
+import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
+import { Badge } from '@oxyhq/bloom/badge'
+import { Input } from '../../ui/shadcn/input'
+import { Label } from '../../ui/shadcn/label'
 
 export default function McpTokensAdmin() {
   const { data, isLoading } = useMcpTokens()
@@ -51,9 +55,9 @@ export default function McpTokensAdmin() {
           <p className="mt-1 text-sm text-muted-foreground">Generate tokens for MCP server access</p>
         </div>
         {!showCreate && (
-          <button onClick={() => setShowCreate(true)} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
+          <PrimaryButton onPress={() => setShowCreate(true)}>
             Generate token
-          </button>
+          </PrimaryButton>
         )}
       </div>
 
@@ -64,13 +68,13 @@ export default function McpTokensAdmin() {
           <p className="mt-1 text-xs text-muted-foreground">Copy this token now. It won't be shown again.</p>
           <div className="mt-3 flex items-center gap-2">
             <code className="flex-1 overflow-x-auto rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground">{newToken}</code>
-            <button onClick={handleCopy} className="shrink-0 rounded-lg border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-muted">
+            <SecondaryButton size="small" onPress={handleCopy}>
               {copied ? 'Copied!' : 'Copy'}
-            </button>
+            </SecondaryButton>
           </div>
-          <button onClick={handleDismissToken} className="mt-3 text-xs text-muted-foreground hover:text-foreground">
+          <div className="mt-3"><Button variant="ghost" size="small" onPress={handleDismissToken}>
             I've saved the token, dismiss
-          </button>
+          </Button></div>
         </div>
       )}
 
@@ -79,37 +83,31 @@ export default function McpTokensAdmin() {
         <div className="mt-6 rounded-lg border border-border p-4">
           <h3 className="text-sm font-medium text-foreground">New token</h3>
           <div className="mt-4 flex flex-col gap-3">
-            <label className="flex flex-col gap-1.5">
-              <span className="text-sm text-foreground">Name</span>
-              <input
+            <div className="flex flex-col gap-1.5">
+              <Label>Name</Label>
+              <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Claude Web App"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
               />
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-sm text-foreground">Expires in (days)</span>
-              <input
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label>Expires in (days)</Label>
+              <Input
                 value={expiresIn}
                 onChange={(e) => setExpiresIn(e.target.value)}
                 placeholder="Leave empty for no expiration"
                 type="number"
                 min="1"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
               />
-            </label>
+            </div>
             <div className="flex gap-3">
-              <button
-                onClick={handleCreate}
-                disabled={!name.trim() || createMutation.isPending}
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
-              >
+              <PrimaryButton onPress={handleCreate} disabled={!name.trim() || createMutation.isPending}>
                 {createMutation.isPending ? 'Generating...' : 'Generate'}
-              </button>
-              <button onClick={() => setShowCreate(false)} className="rounded-lg border border-border px-4 py-2 text-sm text-foreground hover:bg-muted">
+              </PrimaryButton>
+              <SecondaryButton onPress={() => setShowCreate(false)}>
                 Cancel
-              </button>
+              </SecondaryButton>
             </div>
           </div>
         </div>
@@ -126,12 +124,12 @@ export default function McpTokensAdmin() {
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-foreground">{t.name}</span>
-                {t.revoked && <span className="rounded bg-red-500/10 px-1.5 py-0.5 text-xs text-red-500">Revoked</span>}
+                {t.revoked && <Badge color="error">Revoked</Badge>}
                 {!t.revoked && t.expiresAt && new Date(t.expiresAt) < new Date() && (
-                  <span className="rounded bg-yellow-500/10 px-1.5 py-0.5 text-xs text-yellow-600">Expired</span>
+                  <Badge color="warning">Expired</Badge>
                 )}
                 {!t.revoked && (!t.expiresAt || new Date(t.expiresAt) >= new Date()) && (
-                  <span className="rounded bg-green-500/10 px-1.5 py-0.5 text-xs text-green-600">Active</span>
+                  <Badge color="success">Active</Badge>
                 )}
               </div>
               <div className="mt-1 flex gap-3 text-xs text-muted-foreground">
@@ -142,13 +140,9 @@ export default function McpTokensAdmin() {
               </div>
             </div>
             {!t.revoked && (
-              <button
-                onClick={() => revokeMutation.mutate(t._id)}
-                disabled={revokeMutation.isPending}
-                className="shrink-0 rounded-lg border border-red-300 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-800 dark:hover:bg-red-900/20"
-              >
+              <Button variant="secondary" size="small" onPress={() => revokeMutation.mutate(t._id)} disabled={revokeMutation.isPending}>
                 Revoke
-              </button>
+              </Button>
             )}
           </div>
         ))}

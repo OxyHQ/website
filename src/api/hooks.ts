@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from './client'
+import { useCurrentLocale } from '../contexts/LocaleContext'
 
 // Static data imports — used as placeholderData so the site works without backend
 import { platformDropdown, resourcesDropdown, footerColumns as staticFooterColumns, testimonials as staticTestimonials, pricingTiers as staticPricingTiers } from '../data/content'
@@ -7,11 +8,21 @@ import { platformDropdown, resourcesDropdown, footerColumns as staticFooterColum
 const staticNavigation = [platformDropdown, resourcesDropdown]
 const staticFooter = { columns: staticFooterColumns, socialLinks: [], copyright: 'Made with love by Oxy.' }
 
+// Helper: safely get locale (returns undefined outside LocaleProvider)
+function useSafeLocale(): string | undefined {
+  try {
+    return useCurrentLocale()
+  } catch {
+    return undefined
+  }
+}
+
 // ── Pages ──
 export function usePage(slug: string) {
+  const locale = useSafeLocale()
   return useQuery({
-    queryKey: ['page', slug],
-    queryFn: () => apiFetch(`/pages/${slug}`),
+    queryKey: ['page', slug, locale],
+    queryFn: () => apiFetch(`/pages/${slug}`, { locale }),
   })
 }
 
@@ -25,24 +36,27 @@ export function useUpdatePage(slug: string) {
 
 // ── Navigation ──
 export function useNavigation() {
+  const locale = useSafeLocale()
   return useQuery({
-    queryKey: ['navigation'],
-    queryFn: () => apiFetch<any[]>('/navigation'),
+    queryKey: ['navigation', locale],
+    queryFn: () => apiFetch<any[]>('/navigation', { locale }),
     placeholderData: staticNavigation,
   })
 }
 
 // ── Footer ──
 export function useFooter() {
+  const locale = useSafeLocale()
   return useQuery({
-    queryKey: ['footer'],
-    queryFn: () => apiFetch<{ columns: any[]; socialLinks: any[]; copyright: string }>('/footer'),
+    queryKey: ['footer', locale],
+    queryFn: () => apiFetch<{ columns: any[]; socialLinks: any[]; copyright: string }>('/footer', { locale }),
     placeholderData: staticFooter,
   })
 }
 
 // ── Newsroom ──
 export function useNewsroomPosts(params?: { category?: string; featured?: boolean; limit?: number; page?: number }) {
+  const locale = useSafeLocale()
   const searchParams = new URLSearchParams()
   if (params?.category) searchParams.set('category', params.category)
   if (params?.featured) searchParams.set('featured', 'true')
@@ -51,15 +65,16 @@ export function useNewsroomPosts(params?: { category?: string; featured?: boolea
   const qs = searchParams.toString()
 
   return useQuery({
-    queryKey: ['newsroom', params],
-    queryFn: () => apiFetch<{ posts: any[]; total: number; page: number; pages: number }>(`/newsroom${qs ? `?${qs}` : ''}`),
+    queryKey: ['newsroom', params, locale],
+    queryFn: () => apiFetch<{ posts: any[]; total: number; page: number; pages: number }>(`/newsroom${qs ? `?${qs}` : ''}`, { locale }),
   })
 }
 
 export function useNewsroomPost(slug: string) {
+  const locale = useSafeLocale()
   return useQuery({
-    queryKey: ['newsroom', slug],
-    queryFn: () => apiFetch(`/newsroom/${slug}`),
+    queryKey: ['newsroom', slug, locale],
+    queryFn: () => apiFetch(`/newsroom/${slug}`, { locale }),
     enabled: !!slug,
   })
 }
@@ -74,18 +89,20 @@ export function useCreateNewsroomPost() {
 
 // ── Pricing ──
 export function usePricing() {
+  const locale = useSafeLocale()
   return useQuery({
-    queryKey: ['pricing'],
-    queryFn: () => apiFetch<any[]>('/pricing'),
+    queryKey: ['pricing', locale],
+    queryFn: () => apiFetch<any[]>('/pricing', { locale }),
     placeholderData: staticPricingTiers,
   })
 }
 
 // ── Testimonials ──
 export function useTestimonials() {
+  const locale = useSafeLocale()
   return useQuery({
-    queryKey: ['testimonials'],
-    queryFn: () => apiFetch<any[]>('/testimonials'),
+    queryKey: ['testimonials', locale],
+    queryFn: () => apiFetch<any[]>('/testimonials', { locale }),
     placeholderData: staticTestimonials,
   })
 }
@@ -132,17 +149,19 @@ export function useTrackedRepos() {
 
 // ── Jobs ──
 export function useJobs() {
+  const locale = useSafeLocale()
   return useQuery({
-    queryKey: ['jobs'],
-    queryFn: () => apiFetch<any[]>('/jobs'),
+    queryKey: ['jobs', locale],
+    queryFn: () => apiFetch<any[]>('/jobs', { locale }),
   })
 }
 
 // ── Site Settings ──
 export function useSiteSettings() {
+  const locale = useSafeLocale()
   return useQuery({
-    queryKey: ['settings'],
-    queryFn: () => apiFetch('/settings'),
+    queryKey: ['settings', locale],
+    queryFn: () => apiFetch('/settings', { locale }),
   })
 }
 

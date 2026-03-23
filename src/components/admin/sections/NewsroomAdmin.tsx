@@ -1,14 +1,27 @@
 import { useState } from 'react'
 import { useNewsroomPosts, useCreateNewsroomPost } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
+import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
+import { Switch } from '@oxyhq/bloom/switch'
+import { Badge } from '@oxyhq/bloom/badge'
+import { Input } from '../../ui/shadcn/input'
+import { Textarea } from '../../ui/shadcn/textarea'
+import { Label } from '../../ui/shadcn/label'
+import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
+import { TranslationFields } from '../TranslationEditor'
 
 export default function NewsroomAdmin() {
   const { data, refetch } = useNewsroomPosts({ limit: 50 })
+  const { data: locales } = useLocales()
   const createPost = useCreateNewsroomPost()
   const [editing, setEditing] = useState<any | null>(null)
   const [saving, setSaving] = useState(false)
+  const [activeLocale, setActiveLocale] = useState('')
+  const [translatingPost, setTranslatingPost] = useState<any | null>(null)
 
+  const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
   const posts = data?.posts ?? []
+  const isDefault = !activeLocale || activeLocale === defaultLocale
 
   const emptyPost = () => ({
     title: '',
@@ -43,7 +56,7 @@ export default function NewsroomAdmin() {
   if (editing) {
     return (
       <div>
-        <button onClick={() => setEditing(null)} className="mb-4 text-sm text-muted-foreground hover:text-foreground">&larr; Back to list</button>
+        <div className="mb-4"><Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back to list</Button></div>
         <h2 className="text-xl font-semibold text-foreground">{editing._id ? 'Edit Post' : 'New Post'}</h2>
 
         <div className="mt-6 flex flex-col gap-4">
@@ -54,17 +67,39 @@ export default function NewsroomAdmin() {
           <Field label="Cover Image URL" value={editing.coverImage ?? ''} onChange={(v) => setEditing({ ...editing, coverImage: v })} />
           <Field label="Category" value={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} />
           <Field label="Tags (comma-separated)" value={(editing.tags ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t: string) => t.trim()).filter(Boolean) })} />
-          <label className="flex items-center gap-2 text-sm text-foreground">
-            <input type="checkbox" checked={editing.featured} onChange={(e) => setEditing({ ...editing, featured: e.target.checked })} className="size-4 rounded border-border" />
-            Featured
-          </label>
+          <div className="flex items-center gap-2"><Switch value={editing.featured} onValueChange={(val) => setEditing({ ...editing, featured: val })} /><Label>Featured</Label></div>
 
           <div className="mt-2 flex gap-3">
-            <button onClick={save} disabled={saving} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50">
+            <PrimaryButton onPress={save} disabled={saving}>
               {saving ? 'Saving...' : editing._id ? 'Update' : 'Publish'}
-            </button>
-            <button onClick={() => setEditing(null)} className="rounded-lg border border-border px-4 py-2 text-sm text-foreground transition-colors hover:bg-muted">Cancel</button>
+            </PrimaryButton>
+            <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>
           </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (translatingPost && !isDefault) {
+    return (
+      <div>
+        <div className="mb-4"><Button variant="ghost" size="small" onPress={() => setTranslatingPost(null)}>&larr; Back</Button></div>
+        <h2 className="text-xl font-semibold text-foreground">Translate: {translatingPost.title}</h2>
+        <div className="mt-4">
+          <LocaleSwitcher activeLocale={activeLocale} onLocaleChange={setActiveLocale} />
+        </div>
+        <div className="mt-6">
+          <TranslationFields
+            collection="newsroom"
+            documentId={translatingPost._id}
+            locale={activeLocale}
+            originalFields={translatingPost}
+            translatableFields={[
+              { key: 'title', label: 'Title', type: 'text' },
+              { key: 'excerpt', label: 'Excerpt', type: 'textarea' },
+              { key: 'content', label: 'Content (Markdown)', type: 'textarea' },
+            ]}
+          />
         </div>
       </div>
     )
@@ -77,9 +112,15 @@ export default function NewsroomAdmin() {
           <h2 className="text-xl font-semibold text-foreground">Newsroom</h2>
           <p className="mt-1 text-sm text-muted-foreground">{posts.length} posts</p>
         </div>
-        <button onClick={() => setEditing(emptyPost())} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90">
-          New post
-        </button>
+        {isDefault && (
+          <PrimaryButton onPress={() => setEditing(emptyPost())}>
+            New post
+          </PrimaryButton>
+        )}
+      </div>
+
+      <div className="mt-4">
+        <LocaleSwitcher activeLocale={activeLocale} onLocaleChange={setActiveLocale} />
       </div>
 
       <div className="mt-6 flex flex-col gap-2">
@@ -88,15 +129,21 @@ export default function NewsroomAdmin() {
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span className="truncate text-sm font-medium text-foreground">{post.title}</span>
-                {post.featured && <span className="rounded bg-primary/10 px-1.5 py-0.5 text-xs text-primary">Featured</span>}
+                {post.featured && <Badge color="primary">Featured</Badge>}
               </div>
               <div className="mt-0.5 text-xs text-muted-foreground">
                 @{post.authorUsername} &middot; {new Date(post.publishedAt).toLocaleDateString()}
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={() => setEditing({ ...post })} className="text-sm text-primary hover:underline">Edit</button>
-              <button onClick={() => deletePost(post.slug)} className="text-sm text-destructive hover:underline">Delete</button>
+              {isDefault ? (
+                <>
+                  <Button variant="ghost" size="small" onPress={() => setEditing({ ...post })}>Edit</Button>
+                  <Button variant="ghost" size="small" onPress={() => deletePost(post.slug)}>Delete</Button>
+                </>
+              ) : (
+                <Button variant="ghost" size="small" onPress={() => setTranslatingPost(post)}>Translate</Button>
+              )}
             </div>
           </div>
         ))}
@@ -107,11 +154,10 @@ export default function NewsroomAdmin() {
 }
 
 function Field({ label, value, onChange, textarea, rows }: { label: string; value: string; onChange: (v: string) => void; textarea?: boolean; rows?: number }) {
-  const cls = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-ring"
   return (
-    <label className="flex flex-col gap-1.5">
-      <span className="text-sm font-medium text-foreground">{label}</span>
-      {textarea ? <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={rows ?? 3} className={cls} /> : <input value={value} onChange={(e) => onChange(e.target.value)} className={cls} />}
-    </label>
+    <div className="flex flex-col gap-1.5">
+      <Label>{label}</Label>
+      {textarea ? <Textarea value={value} onChange={(e) => onChange(e.target.value)} rows={rows ?? 3} /> : <Input value={value} onChange={(e) => onChange(e.target.value)} />}
+    </div>
   )
 }

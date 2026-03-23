@@ -1,15 +1,27 @@
 import { useState, useEffect } from 'react'
 import { useNavigation } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
+import { Button, PrimaryButton } from '@oxyhq/bloom/button'
+import { Divider } from '@oxyhq/bloom/divider'
+import { Input } from '../../ui/shadcn/input'
+import { Label } from '../../ui/shadcn/label'
+import { IconPicker } from '../../ui/shadcn/icon-picker'
+import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
+import { BatchTranslationEditor } from '../TranslationEditor'
 
 export default function NavigationAdmin() {
   const { data, refetch } = useNavigation()
+  const { data: locales } = useLocales()
   const [dropdowns, setDropdowns] = useState<any[]>([])
   const [saving, setSaving] = useState(false)
+  const [activeLocale, setActiveLocale] = useState('')
+
+  const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
 
   useEffect(() => {
     if (!data) return
     const normalized = (data as any[]).map((dd: any) => ({
+      ...dd,
       label: dd.label ?? '',
       order: dd.order ?? 0,
       items: dd.items ?? dd.sections?.flatMap((s: any) =>
@@ -19,6 +31,10 @@ export default function NavigationAdmin() {
     }))
     setDropdowns(normalized)
   }, [data])
+
+  useEffect(() => {
+    if (defaultLocale && !activeLocale) setActiveLocale(defaultLocale)
+  }, [defaultLocale, activeLocale])
 
   const save = async () => {
     setSaving(true)
@@ -60,13 +76,8 @@ export default function NavigationAdmin() {
     setDropdowns(next)
   }
 
-  const addSidePanel = (di: number) => {
-    updateDropdown(di, 'sidePanel', { heading: '', links: [] })
-  }
-
-  const removeSidePanel = (di: number) => {
-    updateDropdown(di, 'sidePanel', null)
-  }
+  const addSidePanel = (di: number) => updateDropdown(di, 'sidePanel', { heading: '', links: [] })
+  const removeSidePanel = (di: number) => updateDropdown(di, 'sidePanel', null)
 
   const updateSidePanelHeading = (di: number, value: string) => {
     const next = [...dropdowns]
@@ -94,6 +105,8 @@ export default function NavigationAdmin() {
     setDropdowns(next)
   }
 
+  const isDefault = !activeLocale || activeLocale === defaultLocale
+
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -101,94 +114,191 @@ export default function NavigationAdmin() {
           <h2 className="text-xl font-semibold text-foreground">Navigation</h2>
           <p className="mt-1 text-sm text-muted-foreground">Edit dropdown menus in the main navbar.</p>
         </div>
-        <button onClick={addDropdown} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
-          Add menu
-        </button>
+        {isDefault && <PrimaryButton onPress={addDropdown}>Add menu</PrimaryButton>}
       </div>
 
-      <div className="mt-6 flex flex-col gap-6">
-        {dropdowns.map((dropdown, di) => (
-          <div key={di} className="rounded-xl border border-border p-5">
-            {/* Dropdown header */}
-            <div className="flex items-center justify-between">
-              <input
-                value={dropdown.label}
-                onChange={(e) => updateDropdown(di, 'label', e.target.value)}
-                className="text-lg font-semibold text-foreground bg-transparent border-none outline-none"
-                placeholder="Menu label"
-              />
-              <button onClick={() => removeDropdown(di)} className="text-xs text-destructive hover:underline">Remove menu</button>
-            </div>
+      <div className="mt-4">
+        <LocaleSwitcher activeLocale={activeLocale} onLocaleChange={setActiveLocale} />
+      </div>
 
-            {/* Items */}
-            <div className="mt-4">
-              <h4 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Items</h4>
-              <div className="flex flex-col gap-2">
-                {(dropdown.items ?? []).map((item: any, ii: number) => (
-                  <div key={ii} className="rounded-lg border border-border p-3">
-                    <div className="grid grid-cols-2 gap-2">
-                      <label className="flex flex-col gap-1">
-                        <span className="text-xs text-muted-foreground">Title</span>
-                        <input value={item.title} onChange={(e) => updateItem(di, ii, 'title', e.target.value)} className="rounded border border-border bg-background px-2 py-1 text-sm outline-none focus:border-primary" />
-                      </label>
-                      <label className="flex flex-col gap-1">
-                        <span className="text-xs text-muted-foreground">Path</span>
-                        <input value={item.href} onChange={(e) => updateItem(di, ii, 'href', e.target.value)} className="rounded border border-border bg-background px-2 py-1 text-sm font-mono outline-none focus:border-primary" />
-                      </label>
-                      <label className="flex flex-col gap-1">
-                        <span className="text-xs text-muted-foreground">Description</span>
-                        <input value={item.description} onChange={(e) => updateItem(di, ii, 'description', e.target.value)} className="rounded border border-border bg-background px-2 py-1 text-sm outline-none focus:border-primary" />
-                      </label>
-                      <label className="flex flex-col gap-1">
-                        <span className="text-xs text-muted-foreground">Icon key</span>
-                        <input value={item.icon ?? ''} onChange={(e) => updateItem(di, ii, 'icon', e.target.value)} className="rounded border border-border bg-background px-2 py-1 text-sm font-mono outline-none focus:border-primary" />
-                      </label>
-                      <label className="flex flex-col gap-1">
-                        <span className="text-xs text-muted-foreground">Section heading</span>
-                        <input value={item.section ?? ''} onChange={(e) => updateItem(di, ii, 'section', e.target.value)} className="rounded border border-border bg-background px-2 py-1 text-sm outline-none focus:border-primary" />
-                      </label>
-                    </div>
-                    <button onClick={() => removeItem(di, ii)} className="mt-2 text-xs text-destructive hover:underline">Remove</button>
+      {!isDefault ? (
+        <div className="mt-6">
+          <BatchTranslationEditor
+            collection="navigation"
+            locale={activeLocale}
+            documents={dropdowns.filter(d => d._id)}
+            renderItem={({ doc, fields, updateField }) => (
+              <div className="rounded-xl border border-border p-5">
+                <h3 className="mb-3 text-sm font-medium text-foreground">Menu: {doc.label}</h3>
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-1.5">
+                    <Label>Label</Label>
+                    <Input value={fields.label ?? ''} onChange={(e) => updateField('label', e.target.value)} placeholder={doc.label} />
                   </div>
-                ))}
-                <button onClick={() => addItem(di)} className="self-start text-sm text-primary hover:underline">+ Add item</button>
-              </div>
-            </div>
-
-            {/* Side panel */}
-            <div className="mt-4">
-              <h4 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Side Panel</h4>
-              {dropdown.sidePanel ? (
-                <div className="rounded-lg border border-border p-3">
-                  <div className="flex items-center justify-between">
-                    <label className="flex flex-col gap-1 flex-1">
-                      <span className="text-xs text-muted-foreground">Heading</span>
-                      <input value={dropdown.sidePanel.heading} onChange={(e) => updateSidePanelHeading(di, e.target.value)} className="rounded border border-border bg-background px-2 py-1 text-sm outline-none focus:border-primary" />
-                    </label>
-                    <button onClick={() => removeSidePanel(di)} className="ml-3 text-xs text-destructive hover:underline">Remove</button>
-                  </div>
-                  <div className="mt-2 flex flex-col gap-1.5">
-                    {(dropdown.sidePanel.links ?? []).map((link: any, li: number) => (
-                      <div key={li} className="flex items-center gap-2">
-                        <input value={link.label} onChange={(e) => updateSidePanelLink(di, li, 'label', e.target.value)} placeholder="Label" className="flex-1 rounded border border-border bg-background px-2 py-1 text-sm outline-none focus:border-primary" />
-                        <input value={link.href} onChange={(e) => updateSidePanelLink(di, li, 'href', e.target.value)} placeholder="/path" className="flex-1 rounded border border-border bg-background px-2 py-1 text-sm font-mono outline-none focus:border-primary" />
-                        <button onClick={() => removeSidePanelLink(di, li)} className="text-xs text-destructive hover:underline">x</button>
+                  {(doc.items ?? []).map((item: any, ii: number) => (
+                    <div key={ii} className="rounded-lg border border-border/50 p-3">
+                      <p className="mb-2 text-xs text-muted-foreground">Item: {item.title}</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="flex flex-col gap-1">
+                          <Label className="text-xs">Title</Label>
+                          <Input
+                            value={(fields.items?.[ii]?.title) ?? ''}
+                            onChange={(e) => {
+                              const items = [...(fields.items ?? [])]
+                              while (items.length <= ii) items.push({})
+                              items[ii] = { ...items[ii], title: e.target.value }
+                              updateField('items', items)
+                            }}
+                            placeholder={item.title}
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <Label className="text-xs">Description</Label>
+                          <Input
+                            value={(fields.items?.[ii]?.description) ?? ''}
+                            onChange={(e) => {
+                              const items = [...(fields.items ?? [])]
+                              while (items.length <= ii) items.push({})
+                              items[ii] = { ...items[ii], description: e.target.value }
+                              updateField('items', items)
+                            }}
+                            placeholder={item.description}
+                          />
+                        </div>
                       </div>
-                    ))}
-                    <button onClick={() => addSidePanelLink(di)} className="self-start text-sm text-primary hover:underline">+ Add link</button>
+                    </div>
+                  ))}
+                  {doc.sidePanel && (
+                    <div className="rounded-lg border border-border/50 p-3">
+                      <p className="mb-2 text-xs text-muted-foreground">Side Panel</p>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-1">
+                          <Label className="text-xs">Heading</Label>
+                          <Input
+                            value={fields.sidePanel?.heading ?? ''}
+                            onChange={(e) => updateField('sidePanel', { ...fields.sidePanel, heading: e.target.value })}
+                            placeholder={doc.sidePanel.heading}
+                          />
+                        </div>
+                        {(doc.sidePanel.links ?? []).map((link: any, li: number) => (
+                          <div key={li} className="flex flex-col gap-1">
+                            <Label className="text-xs">Link: {link.label}</Label>
+                            <Input
+                              value={(fields.sidePanel?.links?.[li]?.label) ?? ''}
+                              onChange={(e) => {
+                                const links = [...(fields.sidePanel?.links ?? [])]
+                                while (links.length <= li) links.push({})
+                                links[li] = { ...links[li], label: e.target.value }
+                                updateField('sidePanel', { ...fields.sidePanel, links })
+                              }}
+                              placeholder={link.label}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          />
+        </div>
+      ) : (
+        <div className="mt-6 flex flex-col gap-6">
+          {dropdowns.map((dropdown, di) => (
+            <div key={di} className="rounded-xl border border-border p-5">
+              <div className="flex items-center justify-between">
+                <Input
+                  value={dropdown.label}
+                  onChange={(e) => updateDropdown(di, 'label', e.target.value)}
+                  className="max-w-xs text-lg font-semibold border-none shadow-none px-0 focus-visible:ring-0"
+                  placeholder="Menu label"
+                />
+                <Button variant="ghost" size="small" onPress={() => removeDropdown(di)}>Remove menu</Button>
+              </div>
+
+              <Divider />
+
+              {/* Items */}
+              <div className="mt-4">
+                <h4 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">Items</h4>
+                <div className="flex flex-col gap-3">
+                  {(dropdown.items ?? []).map((item: any, ii: number) => (
+                    <div key={ii} className="rounded-lg border border-border p-4">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="flex flex-col gap-1.5">
+                          <Label>Title</Label>
+                          <Input value={item.title} onChange={(e) => updateItem(di, ii, 'title', e.target.value)} />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <Label>Path</Label>
+                          <Input value={item.href} onChange={(e) => updateItem(di, ii, 'href', e.target.value)} className="font-mono" />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <Label>Description</Label>
+                          <Input value={item.description} onChange={(e) => updateItem(di, ii, 'description', e.target.value)} />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <Label>Section heading</Label>
+                          <Input value={item.section ?? ''} onChange={(e) => updateItem(di, ii, 'section', e.target.value)} />
+                        </div>
+                        <div className="flex flex-col gap-1.5 col-span-2">
+                          <Label>Icon</Label>
+                          <IconPicker value={item.icon ?? ''} onChange={(v) => updateItem(di, ii, 'icon', v)} />
+                        </div>
+                      </div>
+                      <div className="mt-3">
+                        <Button variant="ghost" size="small" onPress={() => removeItem(di, ii)}>Remove item</Button>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="self-start">
+                    <Button variant="ghost" size="small" onPress={() => addItem(di)}>+ Add item</Button>
                   </div>
                 </div>
-              ) : (
-                <button onClick={() => addSidePanel(di)} className="text-sm text-primary hover:underline">+ Add side panel</button>
-              )}
-            </div>
-          </div>
-        ))}
+              </div>
 
-        <button onClick={save} disabled={saving} className="self-start rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50">
-          {saving ? 'Saving...' : 'Save changes'}
-        </button>
-      </div>
+              <Divider />
+
+              {/* Side panel */}
+              <div className="mt-4">
+                <h4 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">Side Panel</h4>
+                {dropdown.sidePanel ? (
+                  <div className="rounded-lg border border-border p-4">
+                    <div className="flex items-end gap-3">
+                      <div className="flex flex-col gap-1.5 flex-1">
+                        <Label>Heading</Label>
+                        <Input value={dropdown.sidePanel.heading} onChange={(e) => updateSidePanelHeading(di, e.target.value)} />
+                      </div>
+                      <Button variant="ghost" size="small" onPress={() => removeSidePanel(di)}>Remove</Button>
+                    </div>
+                    <div className="mt-3 flex flex-col gap-2">
+                      {(dropdown.sidePanel.links ?? []).map((link: any, li: number) => (
+                        <div key={li} className="flex items-center gap-2">
+                          <Input value={link.label} onChange={(e) => updateSidePanelLink(di, li, 'label', e.target.value)} placeholder="Label" className="flex-1" />
+                          <Input value={link.href} onChange={(e) => updateSidePanelLink(di, li, 'href', e.target.value)} placeholder="/path" className="flex-1 font-mono" />
+                          <Button variant="ghost" size="small" onPress={() => removeSidePanelLink(di, li)}>x</Button>
+                        </div>
+                      ))}
+                      <div className="self-start">
+                        <Button variant="ghost" size="small" onPress={() => addSidePanelLink(di)}>+ Add link</Button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <Button variant="ghost" size="small" onPress={() => addSidePanel(di)}>+ Add side panel</Button>
+                )}
+              </div>
+            </div>
+          ))}
+
+          <div className="self-start">
+            <PrimaryButton onPress={save} disabled={saving}>
+              {saving ? 'Saving...' : 'Save changes'}
+            </PrimaryButton>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

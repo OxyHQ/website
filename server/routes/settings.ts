@@ -1,13 +1,24 @@
 import { Router } from 'express'
 import { SiteSettings } from '../models/SiteSettings.js'
+import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
+import { localeMiddleware } from '../middleware/locale.js'
+import { applyTranslation } from '../utils/applyTranslation.js'
 
 const router = Router()
 
-router.get('/', async (_req, res) => {
+router.get('/', localeMiddleware, async (req, res) => {
   const settings = await SiteSettings.findOne()
-  res.json(settings ?? { siteTitle: 'Oxy', siteDescription: '', ogImage: '' })
+  const data = settings?.toJSON() ?? { siteTitle: 'Oxy', siteDescription: '', ogImage: '' }
+  if (req.isDefaultLocale || !settings) return res.json(data)
+
+  const translation = await Translation.findOne({
+    locale: req.locale,
+    collection: 'settings',
+    documentId: settings._id.toString(),
+  })
+  res.json(applyTranslation(data, translation))
 })
 
 router.put('/', requireAuth, adminOnly, async (req, res) => {

@@ -14,6 +14,8 @@ import { startSyncInterval } from './services/githubSync.js'
 import jobsRouter from './routes/jobs.js'
 import settingsRouter from './routes/settings.js'
 import mcpTokensRouter from './routes/mcp-tokens.js'
+import localesRouter from './routes/locales.js'
+import translationsRouter from './routes/translations.js'
 
 const app = express()
 
@@ -31,6 +33,8 @@ app.use('/api/changelog', changelogRouter)
 app.use('/api/jobs', jobsRouter)
 app.use('/api/settings', settingsRouter)
 app.use('/api/mcp-tokens', mcpTokensRouter)
+app.use('/api/locales', localesRouter)
+app.use('/api/translations', translationsRouter)
 
 // Health check
 app.get('/api/health', (_req, res) => res.json({ ok: true }))

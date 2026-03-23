@@ -11,6 +11,7 @@ import TestimonialsAdmin from '../components/admin/sections/TestimonialsAdmin'
 import ChangelogAdmin from '../components/admin/sections/ChangelogAdmin'
 import JobsAdmin from '../components/admin/sections/JobsAdmin'
 import McpTokensAdmin from '../components/admin/sections/McpTokensAdmin'
+import LocalesAdmin from '../components/admin/sections/LocalesAdmin'
 import NotFoundPage from './NotFoundPage'
 
 export default function AdminPage() {
@@ -33,6 +34,7 @@ export default function AdminPage() {
       <Route path="testimonials" element={<AdminLayout><TestimonialsAdmin /></AdminLayout>} />
       <Route path="changelog" element={<AdminLayout><ChangelogAdmin /></AdminLayout>} />
       <Route path="jobs" element={<AdminLayout><JobsAdmin /></AdminLayout>} />
+      <Route path="locales" element={<AdminLayout><LocalesAdmin /></AdminLayout>} />
       <Route path="mcp-tokens" element={<AdminLayout><McpTokensAdmin /></AdminLayout>} />
       <Route path="*" element={<Navigate to="settings" replace />} />
     </Routes>

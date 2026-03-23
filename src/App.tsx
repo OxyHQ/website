@@ -1,10 +1,11 @@
 import { useEffect, useState, useCallback, type ReactNode } from 'react'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WebOxyProvider, useWebOxy } from '@oxyhq/auth'
 import { BloomThemeProvider } from '@oxyhq/bloom/theme'
 import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
 import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppColorName } from './theme'
+import { LocaleProvider } from './contexts/LocaleContext'
 
 import AdminPage from './pages/AdminPage'
 import AskPage from './pages/AskPage'
@@ -56,6 +57,37 @@ function OxyImageResolver({ children }: { children: ReactNode }) {
   return <ImageResolverProvider value={resolve}>{children}</ImageResolverProvider>
 }
 
+function LocaleLayout() {
+  return (
+    <LocaleProvider>
+      <Outlet />
+    </LocaleProvider>
+  )
+}
+
+/** Public routes that support locale prefix */
+function PublicRoutes() {
+  return (
+    <>
+      <Route index element={<AskPage />} />
+      <Route path="landing2" element={<Landing2 />} />
+      <Route path="landing3" element={<Landing3 />} />
+      <Route path="partners" element={<PartnersPage />} />
+      <Route path="company/careers" element={<CareersPage />} />
+      <Route path="pricing" element={<PricingPage />} />
+      <Route path="newsroom" element={<NewsroomPage />} />
+      <Route path="help" element={<HelpPage />} />
+      <Route path="changelog" element={<ChangelogPage />} />
+      <Route path="developers/docs" element={<DocsIntroPage />} />
+      <Route path="developers/docs/overview" element={<DocsPage />} />
+      <Route path="company/news" element={<BlogPage />} />
+      <Route path="codea" element={<CodeaPage />} />
+      <Route path="codea/extension" element={<CodexExtensionPage />} />
+      <Route path="settings" element={<SettingsPage />} />
+    </>
+  )
+}
+
 export default function App() {
   const [mode] = useState<ThemeMode>(getSavedMode)
   const [preset] = useState<AppColorName>(getSavedPreset)
@@ -68,23 +100,17 @@ export default function App() {
             <BrowserRouter>
               <ScrollToTop />
               <Routes>
-                <Route path="/" element={<AskPage />} />
-                <Route path="/landing2" element={<Landing2 />} />
-                <Route path="/landing3" element={<Landing3 />} />
-                <Route path="/partners" element={<PartnersPage />} />
-                <Route path="/company/careers" element={<CareersPage />} />
-                <Route path="/pricing" element={<PricingPage />} />
-                <Route path="/newsroom" element={<NewsroomPage />} />
-                <Route path="/help" element={<HelpPage />} />
-                <Route path="/changelog" element={<ChangelogPage />} />
-                <Route path="/developers/docs" element={<DocsIntroPage />} />
-                <Route path="/developers/docs/overview" element={<DocsPage />} />
-                <Route path="/company/news" element={<BlogPage />} />
-                <Route path="/codea" element={<CodeaPage />} />
-                <Route path="/codea/extension" element={<CodexExtensionPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
+                {/* Admin routes — no locale prefix */}
                 <Route path="/admin/*" element={<AdminPage />} />
-                <Route path="*" element={<NotFoundPage />} />
+
+                {/* Public routes with locale support */}
+                <Route path="/:locale" element={<LocaleLayout />}>
+                  {PublicRoutes()}
+                </Route>
+                <Route path="/" element={<LocaleLayout />}>
+                  {PublicRoutes()}
+                  <Route path="*" element={<NotFoundPage />} />
+                </Route>
               </Routes>
               <FixedPromptInput />
             </BrowserRouter>
