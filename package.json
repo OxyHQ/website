@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "server": "tsx server/index.ts",
     "build:server": "tsc -p tsconfig.server.json",
-    "start:server": "node server/dist/index.js",
+    "start:server": "tsx server/index.ts",
     "seed": "tsx server/seed.ts",
     "mcp": "tsx server/mcp.ts"
   },
