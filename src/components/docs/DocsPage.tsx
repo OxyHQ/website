@@ -76,8 +76,8 @@ function DocsSidebar() {
 export default function DocsPage() {
   return (
     <div className="relative antialiased text-gray-400">
-      {/* Docs sub-navbar with tabs */}
-      <div className="border-b border-gray-300/[0.06]">
+      {/* Docs sub-navbar with tabs - sticky below main navbar */}
+      <div className="sticky top-[var(--site-header-height,64px)] z-40 border-b border-gray-300/[0.06] bg-[#0f1117]">
         <div className="container">
           <div className="hidden lg:flex h-12">
             <div className="h-full flex text-sm gap-x-6">
