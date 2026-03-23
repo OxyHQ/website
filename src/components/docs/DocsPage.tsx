@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { docsSidebar, docsCards } from '../../data/docs'
 import type { DocsCard } from '../../data/docs'
@@ -31,6 +32,109 @@ function CardIcon({ icon }: { icon: DocsCard['icon'] }) {
       <path d="M4 17v2" />
       <path d="M5 18H3" />
     </svg>
+  )
+}
+
+function CopyPageMenu() {
+  const [open, setOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setOpen(false)
+    }
+    if (open) document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [open])
+
+  function copyPage() {
+    const content = document.querySelector('[data-docs-content]')?.textContent
+    if (content) {
+      navigator.clipboard.writeText(content)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
+  return (
+    <div ref={menuRef} className="relative items-center shrink-0 min-w-[156px] justify-end ml-auto sm:flex hidden" id="page-context-menu">
+      <button
+        className="rounded-l-xl px-3 text-secondary-foreground py-1.5 border border-subtle-stroke bg-primary-background hover:bg-surface-subtle border-r-0"
+        aria-label="Copy page"
+        onClick={copyPage}
+      >
+        <div className="flex items-center gap-2 text-sm text-center font-medium">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-4">
+            <path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span>{copied ? 'Copied!' : 'Copy page'}</span>
+        </div>
+      </button>
+      <button
+        className="group disabled:pointer-events-none [&>span]:line-clamp-1 overflow-hidden flex items-center py-0.5 gap-1 text-sm text-tertiary-foreground hover:text-secondary-foreground rounded-none rounded-r-xl border px-3 border-subtle-stroke aspect-square bg-primary-background hover:bg-surface-subtle"
+        aria-label="More actions"
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        data-state={open ? 'open' : 'closed'}
+        onClick={() => setOpen(!open)}
+      >
+        <svg width="8" height="24" viewBox="0 -9 3 24" className="transition-transform text-accent-foreground overflow-visible group-hover:text-secondary-foreground rotate-90">
+          <path d="M0 0L3 3L0 6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-1 z-50 min-w-[180px] rounded-xl border border-subtle-stroke bg-primary-background shadow-[0px_4px_12px_rgba(0,0,0,0.08),0px_1px_4px_rgba(0,0,0,0.04)] py-1">
+          <button
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-secondary-foreground hover:bg-surface-subtle rounded-lg mx-1 mr-1"
+            style={{ width: 'calc(100% - 8px)' }}
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href)
+              setOpen(false)
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-tertiary-foreground">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
+            Copy link
+          </button>
+          <button
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-secondary-foreground hover:bg-surface-subtle rounded-lg mx-1 mr-1"
+            style={{ width: 'calc(100% - 8px)' }}
+            onClick={() => {
+              copyPage()
+              setOpen(false)
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-tertiary-foreground">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
+            Copy as Markdown
+          </button>
+          <div className="my-1 mx-3 h-px bg-subtle-stroke" />
+          <button
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-secondary-foreground hover:bg-surface-subtle rounded-lg mx-1 mr-1"
+            style={{ width: 'calc(100% - 8px)' }}
+            onClick={() => {
+              window.open(window.location.href, '_blank')
+              setOpen(false)
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-tertiary-foreground">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+            Open in new tab
+          </button>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -113,35 +217,7 @@ export default function DocsPage() {
                 <h1 className="text-2xl sm:text-3xl text-secondary-foreground tracking-tight [overflow-wrap:anywhere] font-bold break-all">
                   Overview
                 </h1>
-                <div id="page-context-menu" className="items-center shrink-0 min-w-[156px] justify-end ml-auto sm:flex hidden">
-                  <button
-                    className="rounded-l-xl px-3 text-secondary-foreground py-1.5 border border-subtle-stroke bg-primary-background hover:bg-surface-subtle border-r-0"
-                    aria-label="Copy page"
-                    onClick={() => {
-                      const content = document.querySelector('[data-docs-content]')?.textContent
-                      if (content) navigator.clipboard.writeText(content)
-                    }}
-                  >
-                    <div className="flex items-center gap-2 text-sm text-center font-medium">
-                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-4">
-                        <path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        <path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                      <span>Copy page</span>
-                    </div>
-                  </button>
-                  <button
-                    className="group disabled:pointer-events-none [&>span]:line-clamp-1 overflow-hidden flex items-center py-0.5 gap-1 text-sm text-tertiary-foreground group-hover:text-secondary-foreground rounded-none rounded-r-xl border px-3 border-subtle-stroke aspect-square bg-primary-background hover:bg-surface-subtle"
-                    aria-label="More actions"
-                    type="button"
-                    aria-haspopup="menu"
-                    aria-expanded="false"
-                  >
-                    <svg width="8" height="24" viewBox="0 -9 3 24" className="transition-transform text-accent-foreground overflow-visible group-hover:text-secondary-foreground rotate-90">
-                      <path d="M0 0L3 3L0 6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                  </button>
-                </div>
+                <CopyPageMenu />
               </div>
             </div>
             <div className="mt-2 text-lg text-tertiary-foreground">
