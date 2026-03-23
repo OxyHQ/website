@@ -50,7 +50,7 @@ router.get('/:slug', localeMiddleware, async (req, res) => {
 router.post('/', requireAuth, adminOnly, async (req, res) => {
   const post = await NewsroomPost.create({
     ...req.body,
-    authorId: req.user!._id,
+    authorId: req.user!.id,
     authorUsername: req.user!.username,
   })
   res.status(201).json(post)

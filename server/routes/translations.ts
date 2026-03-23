@@ -18,7 +18,7 @@ function validateCollection(collection: string) {
 // Get all translations for a collection + locale
 router.get('/:collection', async (req, res) => {
   const { collection } = req.params
-  const locale = req.query.locale as string
+  const locale = String(req.query.locale)
   if (!locale) return res.status(400).json({ error: 'locale query parameter is required' })
   if (!validateCollection(collection)) return res.status(400).json({ error: 'Invalid collection' })
 
@@ -29,7 +29,7 @@ router.get('/:collection', async (req, res) => {
 // Get translation for a specific document
 router.get('/:collection/:documentId', async (req, res) => {
   const { collection, documentId } = req.params
-  const locale = req.query.locale as string
+  const locale = String(req.query.locale)
   if (!locale) return res.status(400).json({ error: 'locale query parameter is required' })
   if (!validateCollection(collection)) return res.status(400).json({ error: 'Invalid collection' })
 
@@ -41,7 +41,7 @@ router.get('/:collection/:documentId', async (req, res) => {
 // Admin: upsert translation for a specific document
 router.put('/:collection/:documentId', requireAuth, adminOnly, async (req, res) => {
   const { collection, documentId } = req.params
-  const locale = req.query.locale as string
+  const locale = String(req.query.locale)
   if (!locale) return res.status(400).json({ error: 'locale query parameter is required' })
   if (!validateCollection(collection)) return res.status(400).json({ error: 'Invalid collection' })
 
@@ -59,7 +59,7 @@ router.put('/:collection/:documentId', requireAuth, adminOnly, async (req, res) 
 // Admin: delete translation
 router.delete('/:collection/:documentId', requireAuth, adminOnly, async (req, res) => {
   const { collection, documentId } = req.params
-  const locale = req.query.locale as string
+  const locale = String(req.query.locale)
   if (!locale) return res.status(400).json({ error: 'locale query parameter is required' })
   if (!validateCollection(collection)) return res.status(400).json({ error: 'Invalid collection' })
 

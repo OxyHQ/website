@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose'
 
-export interface ITranslation extends Document {
+export interface ITranslation {
   locale: string
   collection: string
   documentId: string
