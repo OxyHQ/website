@@ -37,7 +37,7 @@ export default function DashboardPage() {
             </section>
 
             <div className="w-full flex justify-center pointer-events-none">
-              <div className="w-full max-w-[125dvh] mx-auto">
+              <div className="w-full md:max-w-[125dvh] mx-auto">
                 <MapContainer activeCountries={stats.topCountries} />
               </div>
             </div>
@@ -61,7 +61,7 @@ export default function DashboardPage() {
               <RegionCount stats={stats} />
             </section>
 
-            <div className="w-full h-full pointer-events-none max-lg:scale-[1.5] max-lg:-translate-y-16 max-lg:translate-x-[-20%] max-w-[125dvh]">
+            <div className="w-full h-full pointer-events-none max-lg:scale-[1.5] max-lg:-translate-y-16 max-lg:translate-x-[-20%] md:max-w-[125dvh]">
               <MapContainer activeCountries={stats.topCountries} />
             </div>
           </div>
