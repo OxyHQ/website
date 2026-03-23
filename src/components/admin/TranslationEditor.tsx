@@ -79,7 +79,7 @@ export function TranslationFields({
 
       {translatableFields.map((field) => {
         const originalValue = getVal(originalFields, field.key)
-        const translatedValue = getVal(fields, field.key) ?? ''
+        const translatedValue = String(getVal(fields, field.key) ?? '')
 
         return (
           <div key={field.key} className="flex flex-col gap-1.5">
