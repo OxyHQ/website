@@ -219,8 +219,11 @@ export default function Navbar() {
   const easing = 'cubic-bezier(0.65,0,0.35,1)'
 
   return (
-    <>
-      {/* ─── Banner (scrolls away) ─── */}
+    <div className="sticky top-0 z-50">
+    <header className="border-subtle-stroke border-b bg-primary-background/95 transition-colors duration-250">
+      <div className="absolute inset-0 -z-10 backdrop-blur-md" />
+
+      {/* ─── Banner ─── */}
       {bannerVisible && (
         <div
           className="site-banner dark isolate flex h-(--site-header-banner-visible-height) w-full items-center justify-center bg-(--color-banner-background)"
@@ -252,9 +255,6 @@ export default function Navbar() {
           </div>
         </div>
       )}
-
-    <header className="sticky top-0 z-50 border-b border-subtle-stroke bg-primary-background transition-colors duration-300">
-      <div className="absolute inset-0 -z-10 backdrop-blur-md" />
 
       {/* ─── Hidden measurement panels (off-screen, unstyled, for measuring natural size) ─── */}
       <div
@@ -475,6 +475,6 @@ export default function Navbar() {
         </div>
       )}
     </header>
-    </>
+    </div>
   )
 }

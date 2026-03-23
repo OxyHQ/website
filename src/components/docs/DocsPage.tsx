@@ -38,8 +38,8 @@ function DocsSidebar() {
   const location = useLocation()
 
   return (
-    <aside className="hidden lg:block w-[19.5rem] shrink-0 border-r border-gray-300/[0.06] overflow-y-auto">
-      <div className="relative lg:text-sm lg:leading-6 py-10 pl-6 pr-6">
+    <aside className="hidden lg:block w-[19.5rem] shrink-0 border-r border-gray-300/[0.06]">
+      <div className="sticky top-[var(--site-header-height,64px)] h-[calc(100vh-var(--site-header-height,64px))] overflow-y-auto relative lg:text-sm lg:leading-6 py-10 pl-6 pr-6">
         {docsSidebar.map((section, sectionIdx) => (
           <div key={section.title} className={sectionIdx === 0 ? '' : 'mt-8'}>
             <h5 className="mb-3.5 lg:mb-2.5 font-semibold text-gray-200 pl-4">
