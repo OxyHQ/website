@@ -1,6 +1,7 @@
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import PricingHeroSection from '../components/pricing/PricingHeroSection'
+import PricingCompareSection from '../components/pricing/PricingCompareSection'
 import PricingFaqSection from '../components/pricing/PricingFaqSection'
 
 export default function PricingPage() {
@@ -9,6 +10,7 @@ export default function PricingPage() {
       <Navbar />
       <main>
         <PricingHeroSection />
+        <PricingCompareSection />
         <PricingFaqSection />
       </main>
       <Footer />

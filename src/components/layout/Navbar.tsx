@@ -217,6 +217,30 @@ export default function Navbar() {
   const easing = 'cubic-bezier(0.65,0,0.35,1)'
 
   return (
+    <>
+      {/* ─── Banner (scrolls away) ─── */}
+      {bannerVisible && (
+        <div className="isolate z-50 flex w-full items-center justify-center border-b border-subtle-stroke bg-surface-subtle">
+          <Container>
+            <div className="relative flex h-10 items-center justify-center">
+              <a href="#" className="group flex items-center gap-1.5 text-[13px] leading-5 text-primary-foreground">
+                <span>Ask more from CRM. Ask Oxy.</span>
+                <ArrowRight />
+              </a>
+              <button
+                className="absolute right-0 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-[10px] text-tertiary-foreground transition-colors hover:text-primary-foreground"
+                aria-label="Dismiss banner"
+                onClick={() => setBannerVisible(false)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" fill="none">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="m12.5 5.5-7 7m7 0-7-7" />
+                </svg>
+              </button>
+            </div>
+          </Container>
+        </div>
+      )}
+
     <header className="sticky top-0 z-50 border-b border-subtle-stroke bg-primary-background transition-colors duration-300">
       <div className="absolute inset-0 -z-10 backdrop-blur-md" />
 
@@ -238,29 +262,6 @@ export default function Navbar() {
           </div>
         ))}
       </div>
-
-      {/* ─── Banner ─── */}
-      {bannerVisible && (
-        <div className="isolate flex w-full items-center justify-center bg-surface-subtle">
-          <Container>
-            <div className="relative flex h-10 items-center justify-center">
-              <a href="#" className="group flex items-center gap-1.5 text-[13px] leading-5 text-primary-foreground">
-                <span>Ask more from CRM. Ask Oxy.</span>
-                <ArrowRight />
-              </a>
-              <button
-                className="absolute right-0 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-[10px] text-tertiary-foreground transition-colors hover:text-primary-foreground"
-                aria-label="Dismiss banner"
-                onClick={() => setBannerVisible(false)}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" fill="none">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="m12.5 5.5-7 7m7 0-7-7" />
-                </svg>
-              </button>
-            </div>
-          </Container>
-        </div>
-      )}
 
       {/* ─── Main nav ─── */}
       <Container>
@@ -434,5 +435,6 @@ export default function Navbar() {
         </div>
       )}
     </header>
+    </>
   )
 }
