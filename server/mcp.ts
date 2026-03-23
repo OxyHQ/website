@@ -17,6 +17,10 @@ import { ChangelogEntry } from './models/ChangelogEntry.js'
 import { Job } from './models/Job.js'
 import { SiteSettings } from './models/SiteSettings.js'
 import { McpToken } from './models/McpToken.js'
+import { Locale } from './models/Locale.js'
+import { Translation } from './models/Translation.js'
+import TrackedRepo from './models/TrackedRepo.js'
+import { syncAllRepos, syncSingleRepo } from './services/githubSync.js'
 
 const server = new McpServer({
   name: 'oxy-website',
@@ -279,10 +283,29 @@ server.tool('replace_testimonials', 'Replace all testimonials', {
 
 // ── Changelog ───────────────────────────────────────────────────────────────
 
-server.tool('list_changelog', 'List all changelog entries', {}, async () => {
+server.tool('list_changelog', 'List changelog entries with optional repo filter and pagination', {
+  repo: z.string().optional().describe('Filter by repo, e.g. "owner/name" or just "name"'),
+  limit: z.number().optional(),
+  page: z.number().optional(),
+}, async (params) => {
   try {
-    const entries = await ChangelogEntry.find().sort('-date')
-    return ok(entries)
+    const page = params.page ?? 1
+    const limit = params.limit ?? 20
+    const filter: Record<string, unknown> = {}
+    if (params.repo) {
+      const parts = params.repo.split('/')
+      if (parts.length === 2) {
+        filter.repoOwner = parts[0]
+        filter.repoName = parts[1]
+      } else {
+        filter.repoName = params.repo
+      }
+    }
+    const [entries, total] = await Promise.all([
+      ChangelogEntry.find(filter).sort('-date').skip((page - 1) * limit).limit(limit),
+      ChangelogEntry.countDocuments(filter),
+    ])
+    return ok({ entries, total, page, pages: Math.ceil(total / limit) })
   } catch (e) { return err(e) }
 })
 
@@ -322,6 +345,55 @@ server.tool('delete_changelog_entry', 'Delete a changelog entry by ID', { id: z.
     const entry = await ChangelogEntry.findByIdAndDelete(id)
     if (!entry) return err('Changelog entry not found')
     return ok({ deleted: true, id })
+  } catch (e) { return err(e) }
+})
+
+// ── Tracked Repos (GitHub Sync) ─────────────────────────────────────────────
+
+server.tool('list_tracked_repos', 'List tracked GitHub repos for changelog sync', {}, async () => {
+  try {
+    const repos = await TrackedRepo.find().sort('displayName')
+    return ok(repos)
+  } catch (e) { return err(e) }
+})
+
+server.tool('add_tracked_repo', 'Add a GitHub repo to track for changelog releases', {
+  owner: z.string(),
+  repo: z.string(),
+  displayName: z.string().optional(),
+  defaultTags: z.array(z.object({ label: z.string(), color: z.string() })).optional(),
+  active: z.boolean().optional(),
+}, async (params) => {
+  try {
+    const tracked = await TrackedRepo.create({
+      ...params,
+      displayName: params.displayName || `${params.owner}/${params.repo}`,
+      defaultTags: params.defaultTags || [],
+      active: params.active !== false,
+    })
+    return ok(tracked)
+  } catch (e) { return err(e) }
+})
+
+server.tool('remove_tracked_repo', 'Remove a tracked GitHub repo', { id: z.string() }, async ({ id }) => {
+  try {
+    const tracked = await TrackedRepo.findByIdAndDelete(id)
+    if (!tracked) return err('Tracked repo not found')
+    return ok({ deleted: true, id })
+  } catch (e) { return err(e) }
+})
+
+server.tool('sync_repo', 'Manually sync a single tracked repo', { id: z.string() }, async ({ id }) => {
+  try {
+    const count = await syncSingleRepo(id)
+    return ok({ synced: count })
+  } catch (e) { return err(e) }
+})
+
+server.tool('sync_all_repos', 'Manually sync all active tracked repos', {}, async () => {
+  try {
+    await syncAllRepos()
+    return ok({ ok: true, message: 'Sync complete' })
   } catch (e) { return err(e) }
 })
 
@@ -398,6 +470,115 @@ server.tool('update_settings', 'Update site settings', {
   try {
     const settings = await SiteSettings.findOneAndUpdate({}, params, { new: true, upsert: true })
     return ok(settings)
+  } catch (e) { return err(e) }
+})
+
+// ── Locales ─────────────────────────────────────────────────────────────────
+
+server.tool('list_locales', 'List all locales (enabled and disabled)', {}, async () => {
+  try {
+    const locales = await Locale.find().sort('order')
+    return ok(locales)
+  } catch (e) { return err(e) }
+})
+
+server.tool('create_locale', 'Create a new locale', {
+  code: z.string().describe('e.g. "en", "es", "fr"'),
+  name: z.string().describe('English name, e.g. "Spanish"'),
+  nativeName: z.string().describe('Native name, e.g. "Español"'),
+  isDefault: z.boolean().optional(),
+  enabled: z.boolean().optional(),
+  order: z.number().optional(),
+}, async (params) => {
+  try {
+    if (params.isDefault) {
+      await Locale.updateMany({}, { isDefault: false })
+    }
+    const locale = await Locale.create(params)
+    return ok(locale)
+  } catch (e) { return err(e) }
+})
+
+server.tool('update_locale', 'Update a locale by code', {
+  code: z.string(),
+  name: z.string().optional(),
+  nativeName: z.string().optional(),
+  isDefault: z.boolean().optional(),
+  enabled: z.boolean().optional(),
+  order: z.number().optional(),
+}, async ({ code, ...updates }) => {
+  try {
+    if (updates.isDefault) {
+      await Locale.updateMany({}, { isDefault: false })
+    }
+    const locale = await Locale.findOneAndUpdate({ code }, updates, { new: true })
+    if (!locale) return err('Locale not found')
+    return ok(locale)
+  } catch (e) { return err(e) }
+})
+
+server.tool('delete_locale', 'Delete a locale and its translations', { code: z.string() }, async ({ code }) => {
+  try {
+    const locale = await Locale.findOne({ code })
+    if (!locale) return err('Locale not found')
+    if (locale.isDefault) return err('Cannot delete the default locale')
+    await Locale.deleteOne({ code })
+    const { deletedCount } = await Translation.deleteMany({ locale: code })
+    return ok({ deleted: true, code, translationsRemoved: deletedCount })
+  } catch (e) { return err(e) }
+})
+
+// ── Translations ────────────────────────────────────────────────────────────
+
+const TRANSLATABLE_COLLECTIONS = ['navigation', 'footer', 'pricing', 'testimonials', 'settings', 'pages', 'newsroom', 'jobs']
+
+server.tool('get_translations', 'Get all translations for a collection and locale', {
+  collection: z.string().describe(`One of: ${TRANSLATABLE_COLLECTIONS.join(', ')}`),
+  locale: z.string().describe('Locale code, e.g. "es"'),
+}, async ({ collection, locale }) => {
+  try {
+    const translations = await Translation.find({ collection, locale })
+    return ok(translations)
+  } catch (e) { return err(e) }
+})
+
+server.tool('get_translation', 'Get translation for a specific document', {
+  collection: z.string(),
+  documentId: z.string(),
+  locale: z.string(),
+}, async ({ collection, documentId, locale }) => {
+  try {
+    const translation = await Translation.findOne({ collection, documentId, locale })
+    if (!translation) return err('Translation not found')
+    return ok(translation)
+  } catch (e) { return err(e) }
+})
+
+server.tool('upsert_translation', 'Create or update a translation for a document', {
+  collection: z.string().describe(`One of: ${TRANSLATABLE_COLLECTIONS.join(', ')}`),
+  documentId: z.string(),
+  locale: z.string(),
+  fields: z.record(z.any()).describe('Translated field overrides, e.g. { "title": "Hola" }'),
+}, async ({ collection, documentId, locale, fields }) => {
+  try {
+    const translation = await Translation.findOneAndUpdate(
+      { collection, documentId, locale },
+      { fields },
+      { new: true, upsert: true },
+    )
+    return ok(translation)
+  } catch (e) { return err(e) }
+})
+
+server.tool('delete_translation', 'Delete a translation for a document', {
+  collection: z.string(),
+  documentId: z.string(),
+  locale: z.string(),
+}, async ({ collection, documentId, locale }) => {
+  try {
+    const translation = await Translation.findOneAndDelete({ collection, documentId, locale })
+    if (!translation) return err('Translation not found')
+    return ok({ deleted: true })
   } catch (e) { return err(e) }
 })
 
