@@ -13,10 +13,11 @@ export default function DashboardPage() {
   const { data: stats } = usePlatformStats();
 
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip" data-dashboard>
+    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background" data-dashboard>
       <Navbar />
-      <main className="font-mono max-w-[min(100vw,1600px)] mx-auto relative overflow-hidden md:rounded-md flex flex-col md:block px-6 pt-12 md:pt-16">
-        <div className="w-full max-w-[1600px] space-y-1.5 mx-auto mt-1 mb-12">
+      <main>
+        <div className="container font-mono relative overflow-hidden flex flex-col md:block pt-12 md:pt-16">
+          <div className="w-full space-y-1.5 mt-1 mb-12">
           <div className="flex flex-col min-[961px]:hidden">
             <header className="flex flex-col items-start font-mono text-sm uppercase gap-2 mb-6">
               <p className="text-gray-1000 font-mono my-0 whitespace-nowrap">
@@ -66,6 +67,7 @@ export default function DashboardPage() {
           <section className="mt-8">
             <StatsGrid stats={stats} />
           </section>
+          </div>
         </div>
       </main>
       <Footer />
