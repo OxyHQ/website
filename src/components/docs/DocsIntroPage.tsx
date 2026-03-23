@@ -2,10 +2,10 @@ import { useLocation } from 'react-router-dom'
 import { docsSidebar } from '../../data/docs'
 
 const introCards = [
-  { title: 'Quickstart', description: 'Deploy your first docs site in minutes with our step-by-step guide', href: '#', gradient: 'from-purple-500/20 to-blue-500/20' },
-  { title: 'CLI installation', description: 'Install the CLI to preview and develop your docs locally', href: '#', gradient: 'from-cyan-500/20 to-emerald-500/20' },
-  { title: 'Web editor', description: 'Make quick updates and manage content with our browser-based editor', href: '#', gradient: 'from-amber-500/20 to-orange-500/20' },
-  { title: 'Components', description: 'Build rich, interactive documentation with our ready-to-use components', href: '#', gradient: 'from-pink-500/20 to-rose-500/20' },
+  { title: 'Quickstart', description: 'Deploy your first docs site in minutes with our step-by-step guide', href: '#', image: 'rocket', gradient: 'from-purple-500/20 to-blue-500/20' },
+  { title: 'CLI installation', description: 'Install the CLI to preview and develop your docs locally', href: '#', image: 'cli', gradient: 'from-cyan-500/20 to-emerald-500/20' },
+  { title: 'Web editor', description: 'Make quick updates and manage content with our browser-based editor', href: '#', image: 'editor', gradient: 'from-amber-500/20 to-orange-500/20' },
+  { title: 'Components', description: 'Build rich, interactive documentation with our ready-to-use components', href: '#', image: 'components', gradient: 'from-pink-500/20 to-rose-500/20' },
 ]
 
 /* ─── Sidebar (same as overview page) ─── */
@@ -106,9 +106,18 @@ export default function DocsIntroPage() {
               {introCards.map((card) => (
                 <a key={card.title} className="group cursor-pointer pb-8" href={card.href}>
                   <div
-                    className={`rounded-lg overflow-hidden bg-gradient-to-br ${card.gradient} aspect-[356/212] flex items-center justify-center group-hover:scale-105 transition-all duration-100 border border-subtle-stroke`}
+                    className={`rounded-lg overflow-hidden bg-gradient-to-br ${card.gradient} aspect-[356/212] group-hover:scale-105 transition-all duration-100 border border-subtle-stroke`}
                   >
-                    <span className="text-tertiary-foreground text-sm">{card.title}</span>
+                    <img
+                      src={`/docs/${card.image}.png`}
+                      alt={card.title}
+                      className="block dark:hidden pointer-events-none w-full h-full object-cover"
+                    />
+                    <img
+                      src={`/docs/${card.image}-dark.png`}
+                      alt={card.title}
+                      className="hidden dark:block pointer-events-none w-full h-full object-cover"
+                    />
                   </div>
                   <h3 className="mt-5 text-primary-foreground font-medium">{card.title}</h3>
                   <span className="mt-1.5 block text-tertiary-foreground text-sm">{card.description}</span>
