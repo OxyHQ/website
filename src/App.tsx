@@ -6,6 +6,7 @@ import { BloomThemeProvider } from '@oxyhq/bloom/theme'
 import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
 import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppColorName } from './theme'
 import { LocaleProvider } from './contexts/LocaleContext'
+import { setTokenGetter } from './api/client'
 
 import AdminPage from './pages/AdminPage'
 import AskPage from './pages/AskPage'
@@ -44,8 +45,12 @@ function ScrollToTop() {
  * Bridges @oxyhq/auth's OxyServices to Bloom's ImageResolverProvider.
  * Must be rendered inside WebOxyProvider so useWebOxy() is available.
  */
-function OxyImageResolver({ children }: { children: ReactNode }) {
+function OxyBridge({ children }: { children: ReactNode }) {
   const { oxyServices } = useWebOxy()
+
+  useEffect(() => {
+    setTokenGetter(() => oxyServices.getAccessToken() ?? null)
+  }, [oxyServices])
 
   const resolve = useCallback(
     (fileId: string): string | undefined => {
@@ -99,7 +104,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <WebOxyProvider baseURL={OXY_API} onAuthStateChange={(user) => applyUserColor(user?.color)}>
-        <OxyImageResolver>
+        <OxyBridge>
           <BloomThemeProvider mode={mode} colorPreset={preset}>
             <BrowserRouter>
               <ScrollToTop />
@@ -116,7 +121,7 @@ export default function App() {
               <FixedPromptInput />
             </BrowserRouter>
           </BloomThemeProvider>
-        </OxyImageResolver>
+        </OxyBridge>
       </WebOxyProvider>
     </QueryClientProvider>
   )

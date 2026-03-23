@@ -1,7 +1,14 @@
 const API_BASE = '/api'
 
+/** Set by the app root to provide access to oxyServices.getAccessToken() */
+let tokenGetter: (() => string | null) | null = null
+
+export function setTokenGetter(getter: () => string | null) {
+  tokenGetter = getter
+}
+
 export async function apiFetch<T>(path: string, options?: RequestInit & { locale?: string }): Promise<T> {
-  const token = getAuthToken()
+  const token = tokenGetter?.() ?? null
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -22,13 +29,4 @@ export async function apiFetch<T>(path: string, options?: RequestInit & { locale
     throw new Error(body.error || `API error ${res.status}`)
   }
   return res.json()
-}
-
-function getAuthToken(): string | null {
-  try {
-    // @oxyhq/auth stores the access token directly under this key
-    return localStorage.getItem('oxy_access_token')
-  } catch {
-    return null
-  }
 }
