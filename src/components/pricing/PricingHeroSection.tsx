@@ -80,10 +80,10 @@ export default function PricingHeroSection() {
               className={`flex flex-col justify-between rounded-3xl border border-solid px-[23px] pt-[21px] pb-[23px] ${
                 plan.highlighted
                   ? 'border-blue-300 shadow-[0px_0px_0px_4px_rgba(83,139,243,0.10),0px_1px_2px_-1px_rgba(28,40,64,0.10),0px_2px_4px_0px_rgba(28,40,64,0.06)]'
-                  : 'border-subtle-stroke'
+                  : 'border-subtle-stroke shadow-[0px_1px_2px_-1px_rgba(28,_40,_64,_0.08),_0px_2px_4px_0px_rgba(28,_40,_64,_0.04)]'
               }`}
             >
-              <div>
+              <div className="flex flex-col">
                 <header className="text-secondary-foreground text-xl">{plan.name}</header>
                 <div className="mt-4 lg:mt-8">
                   <div className="flex items-start gap-2">
@@ -108,6 +108,16 @@ export default function PricingHeroSection() {
                     )}
                   </div>
                 </div>
+                <div className="mt-5 flex flex-col items-stretch lg:mt-8">
+                  <a
+                    href={plan.ctaHref}
+                    className={`relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 h-9 gap-x-1.5 rounded-[10px] px-3 text-sm max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base ${
+                      plan.highlighted ? 'button-primary' : 'button-outline'
+                    }`}
+                  >
+                    {plan.cta}
+                  </a>
+                </div>
                 <div className="mt-5 font-semibold text-secondary-foreground text-sm lg:mt-8">{plan.description}</div>
                 <ul className="mt-2.5 flex flex-col gap-y-2.5">
                   {plan.features.map((feature) => (
@@ -122,17 +132,16 @@ export default function PricingHeroSection() {
                   ))}
                 </ul>
               </div>
-              <a
-                href={plan.ctaHref}
-                className={`mt-8 relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 h-9 gap-x-1.5 rounded-[10px] px-3 text-sm max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base ${
-                  plan.highlighted ? 'button-primary' : 'button-outline'
-                }`}
-              >
-                {plan.cta}
-              </a>
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Logo bar */}
+      <div className="mt-10 flex items-center justify-center gap-6 lg:gap-10 opacity-50">
+        {['Railway', 'Public', 'Wordsmith', 'Plain', 'Passionfroot'].map(name => (
+          <span key={name} className="text-sm font-medium text-accent-foreground">{name}</span>
+        ))}
       </div>
 
       {/* Bottom spacing */}
