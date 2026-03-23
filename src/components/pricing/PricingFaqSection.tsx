@@ -28,12 +28,13 @@ export default function PricingFaqSection() {
                     <div
                       key={index}
                       data-state={isOpen ? 'open' : 'closed'}
+                      data-orientation="vertical"
                       className="relative border-weak-stroke border-b py-7 text-base"
                     >
-                      <h3>
+                      <h3 data-orientation="vertical" data-state={isOpen ? 'open' : 'closed'}>
                         <button
                           onClick={() => toggle(index)}
-                          className="group -mx-2 -my-1.5 flex w-[calc(100%+12px)] cursor-pointer items-start justify-between gap-x-6 rounded-xl px-2 py-1.5 text-left outline-hidden"
+                          className="group -mx-2 -my-1.5 flex w-[calc(100%+12px)] cursor-pointer items-start justify-between gap-x-6 rounded-xl px-2 py-1.5 text-left outline-hidden focus-visible:ring-3"
                         >
                           <span className="font-semibold text-secondary-foreground">
                             {item.question}
@@ -43,7 +44,7 @@ export default function PricingFaqSection() {
                             height="12"
                             strokeWidth="1.5"
                             stroke="currentColor"
-                            className="mt-1.25 shrink-0 text-white-900 transition-colors duration-400 ease-in-out group-hover:text-black-800"
+                            className="mt-1.25 shrink-0 text-white-900 transition-colors duration-400 ease-in-out group-hover:text-black-800 group-hover:duration-150 group-active:text-black-800 group-active:duration-50 group-data-open:text-black-800"
                           >
                             <line x1="0" y1="0.75" x2="20%" y2="0.75" />
                             <line x1="0.75" y1="0" x2="0.75" y2="100%" />
@@ -54,7 +55,7 @@ export default function PricingFaqSection() {
                               y1="2.4"
                               x2="50%"
                               y2="9.6"
-                              className="origin-center transition-transform"
+                              className="origin-center transition-scale ease-in-out"
                               style={{
                                 transitionDuration: '0.4s',
                                 transform: isOpen ? 'scaleY(0)' : 'scaleY(1)',

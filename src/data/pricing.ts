@@ -15,7 +15,7 @@ export const pricingPlans: PricingPlan[] = [
     description: 'For individuals getting started',
     cta: 'Start for free',
     ctaHref: '#',
-    features: ['Up to 3 seats', '500 AI credits/seat/mo', 'Standard objects & lists', 'Basic reporting'],
+    features: ['Real-time contact syncing', 'Automatic data enrichment', 'Up to 3 seats'],
   },
   {
     name: 'Plus',
@@ -23,7 +23,7 @@ export const pricingPlans: PricingPlan[] = [
     description: 'For small teams collaborating',
     cta: 'Continue with Plus',
     ctaHref: '#',
-    features: ['Unlimited seats', '1,000 AI credits/seat/mo', 'Custom objects & attributes', 'Automations', 'Advanced enrichment'],
+    features: ['Private lists', 'Enhanced email sending', 'No seat limits'],
   },
   {
     name: 'Pro',
@@ -32,15 +32,15 @@ export const pricingPlans: PricingPlan[] = [
     cta: 'Continue with Pro',
     ctaHref: '#',
     highlighted: true,
-    features: ['Call Intelligence & sequences', '2,500 AI credits/seat/mo', 'Advanced reporting', 'Sandbox environment', 'API access'],
+    features: ['Call Intelligence & sequences', 'Advanced permissions', 'Priority support'],
   },
   {
     name: 'Enterprise',
     price: null,
-    description: 'For organizations with advanced needs',
-    cta: 'Contact sales',
+    description: 'For enterprises needing control',
+    cta: 'Talk to sales',
     ctaHref: '#',
-    features: ['Custom AI credits', 'SAML SSO', 'Audit logs', 'Custom roles & permissions', 'Dedicated support', 'SLA'],
+    features: ['Unlimited objects', 'Unlimited teams', 'Advanced security & admin'],
   },
 ]
 
@@ -65,7 +65,7 @@ export const featureCategories: FeatureCategory[] = [
     features: [
       { name: 'Seat credits', values: ['100 per user/mo', '500 per user/mo', '1,000 per user/mo', '2,500 per user/mo'] },
       { name: 'Workspace credits', values: ['250 per workspace/mo', '1,500 per workspace/mo', '10,000 per workspace/mo', 'Custom'] },
-      { name: 'Add workspace credits', values: ['—', '$0.10 per credit', '$0.08 per credit', 'Custom'] },
+      { name: 'Add workspace credits', values: ['\u00A0', '\u00A0', '\u00A0', '\u00A0'] },
     ],
   },
   {
@@ -149,8 +149,8 @@ export const featureCategories: FeatureCategory[] = [
 export const faqItems: FaqItem[] = [
   { question: 'Which plan is right for me?', answer: 'The Free plan is perfect for individuals getting started. Plus is ideal for small teams, Pro for growing teams that need advanced features like Call Intelligence, and Enterprise for organizations with specific security and compliance needs.' },
   { question: 'Does Oxy have a free trial?', answer: 'Yes! All paid plans come with a 14-day free trial of Pro. No credit card required. You can explore all Pro features before making a decision.' },
-  { question: 'How does billing work?', answer: 'You can choose monthly or annual billing. Annual billing saves you 20% compared to monthly. You can upgrade, downgrade, or cancel at any time.' },
-  { question: 'What are AI credits?', answer: 'AI credits power Ask Oxy and other AI features. Each plan includes a set number of credits per seat per month. Credits reset monthly and do not roll over.' },
-  { question: 'Can I change plans later?', answer: 'Absolutely. You can upgrade or downgrade your plan at any time. When upgrading, you get immediate access to new features. When downgrading, changes take effect at the end of your billing period.' },
-  { question: 'What payment methods do you accept?', answer: 'We accept all major credit cards (Visa, Mastercard, American Express) and can arrange invoice-based billing for Enterprise plans.' },
+  { question: 'Is Oxy free to use?', answer: 'Yes, Oxy has a free plan that includes real-time contact syncing, automatic data enrichment, and up to 3 seats. No credit card required to get started.' },
+  { question: 'How do credits work?', answer: 'Credits power AI features across the platform. Each plan includes seat credits (per user) and workspace credits (shared). Credits reset monthly and do not roll over. You can purchase additional workspace credits on paid plans.' },
+  { question: 'Do you offer discounts?', answer: 'Yes! Annual billing saves you 20% compared to monthly. We also offer special pricing for startups and nonprofits. Contact our sales team for details.' },
+  { question: 'What are my payment options?', answer: 'We accept all major credit cards (Visa, Mastercard, American Express) and can arrange invoice-based billing for Enterprise plans.' },
 ]

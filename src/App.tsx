@@ -5,6 +5,8 @@ import Landing3 from './pages/Landing3'
 import PartnersPage from './pages/PartnersPage'
 import CareersPage from './pages/CareersPage'
 import PricingPage from './pages/PricingPage'
+import NewsroomPage from './pages/NewsroomPage'
+import NotFoundPage from './pages/NotFoundPage'
 
 export default function App() {
   return (
@@ -16,6 +18,8 @@ export default function App() {
         <Route path="/partners" element={<PartnersPage />} />
         <Route path="/company/careers" element={<CareersPage />} />
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/newsroom" element={<NewsroomPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   )

@@ -86,7 +86,7 @@ export interface SocialCard {
 }
 
 export const socialCards: SocialCard[] = [
-  { title: 'LinkedIn', description: 'Keep up to date with what the team is building.', href: '#', iconType: 'linkedin' },
+  { title: 'LinkedIn', description: 'Keep up to date with what the team is building.', href: 'https://www.linkedin.com/company/oxyhq/', iconType: 'linkedin' },
   { title: 'X', description: 'Follow us for product updates and announcements.', href: '#', iconType: 'x' },
   { title: 'Dribbble', description: 'See our latest design work and explorations.', href: '#', iconType: 'dribbble' },
   { title: 'YouTube', description: 'Watch product demos and behind-the-scenes.', href: '#', iconType: 'youtube' },

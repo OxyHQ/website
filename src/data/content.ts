@@ -504,7 +504,7 @@ export const keepUpToDateCards: KeepUpToDateCard[] = [
   {
     title: 'LinkedIn',
     description: 'Keep up to date with what the team is building.',
-    href: '#',
+    href: 'https://www.linkedin.com/company/oxyhq/',
     iconType: 'linkedin',
   },
   {

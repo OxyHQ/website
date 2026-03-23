@@ -43,7 +43,7 @@ function YouTubeIcon() {
 }
 
 const socialLinks = [
-  { label: 'LinkedIn', icon: LinkedInIcon, href: '#' },
+  { label: 'LinkedIn', icon: LinkedInIcon, href: 'https://www.linkedin.com/company/oxyhq/' },
   { label: 'X', icon: XIcon, href: '#' },
   { label: 'Dribbble', icon: DribbbleIcon, href: '#' },
   { label: 'YouTube', icon: YouTubeIcon, href: '#' },

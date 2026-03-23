@@ -20,7 +20,7 @@ export default function PricingHeroSection() {
             <div className="relative grid grid-cols-[1fr_1fr] gap-x-0.5">
               {/* Sliding indicator */}
               <div
-                className="absolute top-0 left-0 h-full w-[calc((100%-2px)/2)] rounded-[10px] bg-primary-background transition-transform duration-500 ease-in-out shadow-[0px_4px_4px_-2px_rgba(24,39,75,0.06),0px_2px_4px_-2px_rgba(24,39,75,0.02),0px_0px_2px_0px_#E0E0E0]"
+                className="absolute top-0 left-0 h-full w-[calc((100%-2px)/2)] rounded-[10px] bg-primary-background transition-transform duration-500 ease-in-out shadow-[0px_4px_4px_-2px_rgba(24,_39,_75,_0.06),_0px_2px_4px_-2px_rgba(24,_39,_75,_0.02),0px_0px_2px_0px_#E0E0E0]"
                 style={{ transform: isAnnual ? 'translateX(calc(100% + 2px))' : 'translateX(0)' }}
               />
               <button
@@ -43,20 +43,19 @@ export default function PricingHeroSection() {
       {/* Pricing cards grid */}
       <div className="relative grid grid-cols-12 gap-x-6 mt-10 lg:mt-20">
         {/* Decorative horizontal gradient lines */}
-        <div className="bg-[linear-gradient(to_left,rgba(237,239,243,0)_0%,#CAD0D9_6.52%,#CAD0D9_93.22%,rgba(237,239,243,0)_100%)] absolute -top-3 left-0 hidden h-px w-full -translate-y-1/2 lg:block" />
-        <div className="bg-[linear-gradient(to_left,rgba(237,239,243,0)_0%,#CAD0D9_6.52%,#CAD0D9_93.22%,rgba(237,239,243,0)_100%)] absolute -bottom-3 left-0 hidden h-px w-full translate-y-1/2 lg:block" />
+        <div className="pricing-cards-grid-line bg-[linear-gradient(to_left,_rgba(237,_239,_243,_0.00)_0%,_#CAD0D9_6.52%,_#CAD0D9_93.22%,_rgba(237,_239,_243,_0.00)_100%)] absolute -top-3 left-0 hidden h-px w-full -translate-y-1/2 lg:block" />
+        <div className="pricing-cards-grid-line bg-[linear-gradient(to_left,_rgba(237,_239,_243,_0.00)_0%,_#CAD0D9_6.52%,_#CAD0D9_93.22%,_rgba(237,_239,_243,_0.00)_100%)] absolute -bottom-3 left-0 hidden h-px w-full translate-y-1/2 [animation-delay:450ms]! lg:block" />
 
         <div className="relative isolate col-span-12 grid grid-cols-1 gap-6 lg:grid-cols-4 xl:col-span-10 xl:col-start-2">
           {/* Decorative vertical gradient lines */}
-          {[1, 2, 3, 4].map((col) => (
+          {[1, 2, 3, 4].map((col, idx) => (
             <div
               key={`vline-${col}`}
-              className="bg-[linear-gradient(to_bottom,rgba(237,239,243,0)_0%,#CAD0D9_10.87%,#CAD0D9_89.55%,rgba(237,239,243,0)_100%)] absolute top-[-50px] -left-3 hidden h-[calc(100%+100px)] w-px -translate-x-1/2 lg:block"
-              style={{ gridColumn: col }}
+              className={`pricing-cards-grid-line-vertical bg-[linear-gradient(to_bottom,_rgba(237,_239,_243,_0.00)_0%,_#CAD0D9_10.87%,_#CAD0D9_89.55%,_rgba(237,_239,_243,_0.00)_100%)] absolute top-[-50px] -left-3 col-start-${col} hidden h-[calc(100%+100px)] w-px -translate-x-1/2 ${idx > 0 ? `[animation-delay:${idx * 150}ms]!` : ''} lg:block`}
             />
           ))}
           {/* Right edge line */}
-          <div className="bg-[linear-gradient(to_bottom,rgba(237,239,243,0)_0%,#CAD0D9_10.87%,#CAD0D9_89.55%,rgba(237,239,243,0)_100%)] absolute top-[-50px] -right-3 col-start-5 hidden h-[calc(100%+100px)] w-px translate-x-1/2 lg:block" />
+          <div className="pricing-cards-grid-line-vertical bg-[linear-gradient(to_bottom,_rgba(237,_239,_243,_0.00)_0%,_#CAD0D9_10.87%,_#CAD0D9_89.55%,_rgba(237,_239,_243,_0.00)_100%)] absolute top-[-50px] -right-3 col-start-5 hidden h-[calc(100%+100px)] w-px translate-x-1/2 [animation-delay:600ms]! lg:block" />
 
           {/* Corner crosshairs (4 corners) */}
           {[
@@ -79,7 +78,7 @@ export default function PricingHeroSection() {
               key={plan.name}
               className={`flex flex-col justify-between rounded-3xl border border-solid px-[23px] pt-[21px] pb-[23px] ${
                 plan.highlighted
-                  ? 'border-blue-300 shadow-[0px_0px_0px_4px_rgba(83,139,243,0.10),0px_1px_2px_-1px_rgba(28,40,64,0.10),0px_2px_4px_0px_rgba(28,40,64,0.06)]'
+                  ? 'border-blue-300 shadow-[0px_0px_0px_4px_rgba(83,_139,_243,_0.10),_0px_1px_2px_-1px_rgba(28,_40,_64,_0.10),_0px_2px_4px_0px_rgba(28,_40,_64,_0.06)]'
                   : 'border-subtle-stroke shadow-[0px_1px_2px_-1px_rgba(28,_40,_64,_0.08),_0px_2px_4px_0px_rgba(28,_40,_64,_0.04)]'
               }`}
             >
@@ -88,35 +87,28 @@ export default function PricingHeroSection() {
                 <div className="mt-4 lg:mt-8">
                   <div className="flex items-start gap-2">
                     <div className="inline-block overflow-y-hidden text-heading-md">
-                      <span>$</span>
-                      <span>{plan.price ? (isAnnual ? plan.price.annual : plan.price.monthly) : ''}</span>
+                      {plan.price ? (
+                        <>
+                          <span>$</span>
+                          <span>{isAnnual ? plan.price.annual : plan.price.monthly}</span>
+                        </>
+                      ) : (
+                        <span>Custom</span>
+                      )}
                     </div>
                     {plan.price && plan.price.annual < plan.price.monthly && isAnnual && (
                       <div className="rounded-lg border border-blue-200 bg-blue-100 px-[7px] py-[3px] text-center text-blue-450 text-xs mt-[6px]">
                         Save 20%
                       </div>
                     )}
-                    {!plan.price && (
-                      <div className="text-heading-md">Custom</div>
-                    )}
                   </div>
                   <div className="mt-0.5 text-accent-foreground text-xs">
                     {plan.price ? (
                       <span>Per user/month, billed {isAnnual ? 'annually' : 'monthly'}</span>
                     ) : (
-                      <span>Talk to us for pricing</span>
+                      <span>Billed annually</span>
                     )}
                   </div>
-                </div>
-                <div className="mt-5 flex flex-col items-stretch lg:mt-8">
-                  <a
-                    href={plan.ctaHref}
-                    className={`relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 h-9 gap-x-1.5 rounded-[10px] px-3 text-sm max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base ${
-                      plan.highlighted ? 'button-primary' : 'button-outline'
-                    }`}
-                  >
-                    {plan.cta}
-                  </a>
                 </div>
                 <div className="mt-5 font-semibold text-secondary-foreground text-sm lg:mt-8">{plan.description}</div>
                 <ul className="mt-2.5 flex flex-col gap-y-2.5">
@@ -132,20 +124,55 @@ export default function PricingHeroSection() {
                   ))}
                 </ul>
               </div>
+              <div className="mt-5 flex flex-col items-stretch lg:mt-8">
+                {plan.price === null ? (
+                  <>
+                    <button
+                      className="relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 h-9 gap-x-1.5 rounded-[10px] px-3 text-sm max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base button-outline max-md:hidden"
+                    >
+                      {plan.cta}
+                    </button>
+                    <button
+                      className="relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 h-9 gap-x-1.5 rounded-[10px] px-3 text-sm max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base button-ghost group self-center md:hidden"
+                    >
+                      <span>{plan.cta}</span>
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="relative transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50">
+                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
+                      </svg>
+                    </button>
+                  </>
+                ) : (
+                  <a
+                    href={plan.ctaHref}
+                    className={`relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 h-9 gap-x-1.5 rounded-[10px] px-3 text-sm max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base ${
+                      plan.highlighted ? 'button-primary' : 'button-outline'
+                    }`}
+                  >
+                    {plan.cta}
+                  </a>
+                )}
+              </div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Logo bar */}
-      <div className="mt-10 flex items-center justify-center gap-6 lg:gap-10 opacity-50">
-        {['Railway', 'Public', 'Wordsmith', 'Plain', 'Passionfroot'].map(name => (
-          <span key={name} className="text-sm font-medium text-accent-foreground">{name}</span>
-        ))}
+      <div className="mt-16">
+        <div className="container">
+          <div className="">
+            <div className="grid grid-cols-12 justify-items-center py-25">
+              <div className="col-[2/-2]">
+                <div className="grid max-w-7xl grid-cols-6 gap-x-8 gap-y-4.5 max-xl:grid-cols-4 max-xl:gap-y-5 max-lg:gap-x-5 max-lg:gap-y-3 max-md:grid-cols-3 max-md:gap-x-4 max-md:gap-y-2 max-md:[&>*:nth-child(1n+10)]:hidden">
+                  {['Railway', 'Public', 'Wordsmith', 'Plain', 'Passionfroot'].map(name => (
+                    <span key={name} className="size-full h-12 object-contain max-xl:h-10 text-sm font-medium text-accent-foreground flex items-center justify-center">{name}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-      {/* Bottom spacing */}
-      <div className="h-20 lg:h-32" />
     </div>
   )
 }
