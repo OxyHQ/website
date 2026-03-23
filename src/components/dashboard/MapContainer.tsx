@@ -10,7 +10,7 @@ export default function MapContainer({ activeCountries }: MapContainerProps) {
   return (
     <Suspense
       fallback={
-        <div className="w-full h-[560px] bg-[var(--ds-background-100)] animate-pulse rounded-md" />
+        <div className="w-full h-[560px] bg-background animate-pulse rounded-md" />
       }
     >
       <DottedMap activeCountries={activeCountries} />

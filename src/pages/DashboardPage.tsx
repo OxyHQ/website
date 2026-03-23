@@ -19,10 +19,10 @@ export default function DashboardPage() {
         <div className="container font-mono relative overflow-hidden flex flex-col md:block">
           <div className="w-full space-y-1.5 mt-1 mb-12">
           <div className="flex flex-col min-[961px]:hidden">
-            <header className="flex flex-col items-start font-mono text-sm uppercase gap-2 mb-6">
-              <p className="text-gray-1000 font-mono my-0 whitespace-nowrap">
+            <header className="flex flex-col items-start font-mono text-sm uppercase gap-2 pt-6 mb-6">
+              <p className="text-foreground font-mono my-0 whitespace-nowrap">
                 Oxy Platform{" "}
-                <span className="block font-mono text-gray-900">
+                <span className="block font-mono text-muted-foreground">
                   [Live Dashboard]
                 </span>
               </p>
@@ -42,10 +42,10 @@ export default function DashboardPage() {
           </div>
 
           <div className="relative hidden min-[961px]:flex flex-row max-lg:items-end lg:items-center lg:justify-between">
-            <header className="flex flex-col items-start font-mono text-sm xl:text-base uppercase gap-2 max-lg:mb-8 mb-auto">
-              <p className="text-gray-1000 font-mono my-0 whitespace-nowrap">
+            <header className="flex flex-col items-start font-mono text-sm xl:text-base uppercase gap-2 pt-6 max-lg:mb-8 mb-auto">
+              <p className="text-foreground font-mono my-0 whitespace-nowrap">
                 Oxy Platform{" "}
-                <span className="block font-mono text-gray-900">
+                <span className="block font-mono text-muted-foreground">
                   [Live Dashboard]
                 </span>
               </p>
