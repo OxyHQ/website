@@ -43,7 +43,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Stats grid — always visible, pinned to bottom */}
-          <section className="shrink-0 pt-16 pb-6">
+          <section className="shrink-0 pt-8 pb-6">
             <StatsGrid stats={stats} />
           </section>
         </div>

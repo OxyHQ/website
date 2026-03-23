@@ -154,7 +154,7 @@ function StatCard({
   const [showInfo, setShowInfo] = useState(false);
 
   const statsContent = (
-    <div className="bg-surface/50 backdrop-blur-sm p-4 md:p-6 w-full h-full flex flex-col justify-end">
+    <div className="bg-surface p-4 md:p-6 w-full min-h-[120px] h-full">
       <div className="space-y-2">
         <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-foreground pr-6">
           {title}
@@ -170,7 +170,7 @@ function StatCard({
   );
 
   const infoContentView = (
-    <div className="bg-surface/50 backdrop-blur-sm p-4 md:p-6 w-full h-full overflow-y-auto flex flex-col gap-y-2">
+    <div className="bg-surface p-4 md:p-6 w-full h-full overflow-y-auto flex flex-col gap-y-2">
       {href ? (
         <a
           href={href}
