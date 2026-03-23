@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useJob } from '../../api/hooks'
 import { jobDepartments, jobDetails, type DescriptionBlock } from '../../data/careers'
+import SEO from '../SEO'
+import StructuredData from '../StructuredData'
 
 function DashedLineH() {
   return (
@@ -245,13 +247,46 @@ export default function CareerDetailContent() {
   if (isLoading) return null
 
   if (!job) {
-    return <NotFoundView />
+    return (
+      <>
+        <SEO
+          title="Position Not Found"
+          description="This job posting doesn't exist or may have been removed."
+          canonicalPath={`/company/careers/${slug}`}
+          noIndex
+        />
+        <NotFoundView />
+      </>
+    )
   }
 
   const engagement = (job as any).engagement ?? job.type ?? 'Full-time'
 
   return (
     <article>
+      <SEO
+        title={`${job.title} — ${job.department}`}
+        description={job.subtitle || `Join Oxy as ${job.title}. ${job.location}. ${engagement}.`}
+        canonicalPath={`/company/careers/${slug}`}
+      />
+      <StructuredData data={{
+        '@context': 'https://schema.org',
+        '@type': 'JobPosting',
+        title: job.title,
+        description: job.subtitle,
+        datePosted: (job as any).createdAt || new Date().toISOString(),
+        employmentType: engagement === 'Full-time' ? 'FULL_TIME' : engagement === 'Part-time' ? 'PART_TIME' : 'CONTRACTOR',
+        jobLocation: {
+          '@type': 'Place',
+          address: job.location,
+        },
+        hiringOrganization: {
+          '@type': 'Organization',
+          name: 'Oxy',
+          sameAs: 'https://oxy.so',
+          logo: 'https://oxy.so/favicon.svg',
+        },
+      }} />
       {/* Breadcrumb aside */}
       <aside className="relative grid h-28 grid-cols-12 items-end pb-5">
         <DashedLineV className="absolute col-[-2] max-lg:hidden" />

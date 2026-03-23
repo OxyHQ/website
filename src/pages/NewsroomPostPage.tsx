@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
+import StructuredData from '../components/StructuredData'
 import { useNewsroomPost, useNewsroomPosts } from '../api/hooks'
 import { NewsCardGrid } from '../components/newsroom/NewsCard'
 
@@ -67,7 +68,25 @@ export default function NewsroomPostPage() {
         canonicalPath={`/newsroom/${post.slug}`}
         ogImage={post.ogImage || post.coverImage}
         ogType="article"
+        publishedTime={post.publishedAt}
+        modifiedTime={post.updatedAt}
       />
+      <StructuredData data={{
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: post.title,
+        description: post.excerpt,
+        image: post.coverImage || 'https://oxy.so/og-default.png',
+        datePublished: post.publishedAt,
+        dateModified: post.updatedAt || post.publishedAt,
+        author: { '@type': 'Organization', name: 'Oxy', url: 'https://oxy.so' },
+        publisher: {
+          '@type': 'Organization',
+          name: 'Oxy',
+          logo: { '@type': 'ImageObject', url: 'https://oxy.so/favicon.svg' },
+        },
+        mainEntityOfPage: { '@type': 'WebPage', '@id': `https://oxy.so/newsroom/${post.slug}` },
+      }} />
       <Navbar />
 
       <main className="pb-20 md:pb-28">

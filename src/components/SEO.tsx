@@ -7,6 +7,9 @@ interface SEOProps {
   ogImage?: string
   ogType?: string
   noIndex?: boolean
+  publishedTime?: string
+  modifiedTime?: string
+  author?: string
 }
 
 const SITE_URL = 'https://oxy.so'
@@ -19,6 +22,9 @@ export default function SEO({
   ogImage,
   ogType = 'website',
   noIndex = false,
+  publishedTime,
+  modifiedTime,
+  author,
 }: SEOProps) {
   const fullTitle = canonicalPath === '/' ? title : `${title} | Oxy`
   const canonicalUrl = `${SITE_URL}${canonicalPath}`
@@ -29,6 +35,7 @@ export default function SEO({
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonicalUrl} />
+      <meta name="theme-color" content="#0a0a0b" />
 
       {/* Open Graph */}
       <meta property="og:title" content={fullTitle} />
@@ -37,9 +44,15 @@ export default function SEO({
       <meta property="og:image" content={image} />
       <meta property="og:type" content={ogType} />
       <meta property="og:site_name" content="Oxy" />
+      <meta property="og:locale" content="en_US" />
+
+      {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+      {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+      {author && <meta property="article:author" content={author} />}
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content="@oxyhqinc" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
