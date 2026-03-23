@@ -23,7 +23,7 @@ export async function optionalAuth(req: Request, _res: Response, next: NextFunct
   if (!token) return next()
 
   try {
-    const res = await fetch(`${config.oxyApiBase}/api/auth/me`, {
+    const res = await fetch(`${config.oxyApiBase}/api/users/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     if (res.ok) {
@@ -43,7 +43,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
   if (!token) return res.status(401).json({ error: 'Authentication required' })
 
   try {
-    const response = await fetch(`${config.oxyApiBase}/api/auth/me`, {
+    const response = await fetch(`${config.oxyApiBase}/api/users/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     if (!response.ok) return res.status(401).json({ error: 'Invalid session' })
