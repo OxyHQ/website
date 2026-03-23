@@ -15,9 +15,9 @@
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
     "@modelcontextprotocol/sdk": "^1.27.1",
-    "@oxyhq/auth": "^2.0.2",
+    "@oxyhq/auth": "^2.0.3",
     "@oxyhq/bloom": "^0.1.17",
-    "@oxyhq/core": "^1.11.6",
+    "@oxyhq/core": "^1.11.7",
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tooltip": "^1.2.8",
