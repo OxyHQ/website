@@ -420,60 +420,7 @@ export default function AIPage() {
         </div>
       </div>
 
-      {/* ── Footer ── */}
-      <div className="snap-start rounded-t-[40px] bg-white">
-        <div className="relative h-full w-full p-3 sm:p-5 md:p-7">
-          <div className="relative overflow-hidden w-full rounded-t-[24px]">
-            {/* Grid of footer columns */}
-            <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3">
-              {/* Column 1: Menu */}
-              <div className="relative grow self-stretch flex flex-col gap-4 px-6 py-6 sm:pb-12 sm:pt-11 border-black/10 xs:border-r-[1.5px] border-b-[1.5px] lg:border-b-0">
-                <p className="heading-3xl text-3xl font-medium sm:text-[40px] sm:leading-[48px] tracking-[-0.035em] text-black">Menu</p>
-                <ul className="flex flex-col gap-4 sm:gap-5">
-                  <li><a className="text-gray-700/70 transition-colors hover:underline" href="/pricing">Pricing</a></li>
-                  <li><a className="text-gray-700/70 transition-colors hover:underline" href="#">Login</a></li>
-                </ul>
-                {/* Corner dot decoration */}
-                <div className="absolute -right-[4.5px] -top-[4.5px] size-2 rounded-full bg-[#e1e1e1] hidden items-center justify-center lg:flex">
-                  <div className="size-[3.5px] rounded-full bg-black/10" />
-                </div>
-              </div>
-
-              {/* Column 2: Legal */}
-              <div className="relative grow self-stretch flex flex-col gap-4 px-6 py-6 sm:pb-12 sm:pt-11 border-black/10 xs:border-r-[1.5px] border-b-[1.5px] lg:border-b-0">
-                <p className="heading-3xl text-3xl font-medium sm:text-[40px] sm:leading-[48px] tracking-[-0.035em] text-black">Legal</p>
-                <ul className="flex flex-col gap-4 sm:gap-5">
-                  <li><a className="text-gray-700/70 transition-colors hover:underline" href="#">Terms of Service</a></li>
-                  <li><a className="text-gray-700/70 transition-colors hover:underline" href="#">Privacy Policy</a></li>
-                </ul>
-                <div className="absolute -right-[4.5px] -top-[4.5px] size-2 rounded-full bg-[#e1e1e1] hidden items-center justify-center lg:flex">
-                  <div className="size-[3.5px] rounded-full bg-black/10" />
-                </div>
-              </div>
-
-              {/* Column 3: Connect */}
-              <div className="relative grow self-stretch flex flex-col gap-4 px-6 py-6 sm:pb-12 sm:pt-11 border-black/10 border-b-[1.5px] lg:border-b-0">
-                <p className="heading-3xl text-3xl font-medium sm:text-[40px] sm:leading-[48px] tracking-[-0.035em] text-black">Connect</p>
-                <ul className="flex flex-col gap-4 sm:gap-5">
-                  <li><a className="text-gray-700/70 transition-colors hover:underline" href="#">X (Twitter)</a></li>
-                  <li><a className="text-gray-700/70 transition-colors hover:underline" href="#">LinkedIn</a></li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Bottom bar */}
-            <div className="flex items-center justify-between border-t border-black/10 px-6 py-6">
-              <p className="text-sm text-gray-500">&copy; 2026 Oxy, Inc. All rights reserved.</p>
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-500">Built with care</span>
-              </div>
-            </div>
-
-            {/* Background glow effect */}
-            <div className="pointer-events-none absolute -bottom-40 h-80 w-full" style={{ background: 'radial-gradient(50% 50%, rgb(107, 98, 242) 0%, rgb(255, 255, 255) 100%)', mixBlendMode: 'soft-light', filter: 'blur(60.55px)' }} />
-          </div>
-        </div>
-      </div>
+      {/* Footer handled by shared Footer in page wrapper */}
     </div>
   )
 }
