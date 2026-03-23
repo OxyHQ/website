@@ -230,7 +230,7 @@ export default function DottedMap({ width = 1000, height = 560, activeCountries 
   );
 
   return (
-    <div className="relative w-fit mx-auto max-h-[50dvh]">
+    <div className="relative w-full">
       <svg
         viewBox={`0 0 ${width} ${height}`}
         className="w-full h-auto max-h-[50dvh] bg-background"
@@ -255,7 +255,7 @@ export default function DottedMap({ width = 1000, height = 560, activeCountries 
         </g>
       </svg>
 
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <ComposableMap
           projection="geoMercator"
           projectionConfig={{
@@ -265,7 +265,7 @@ export default function DottedMap({ width = 1000, height = 560, activeCountries 
           }}
           width={width}
           height={height}
-          style={{ width: "100%", height: "auto" }}
+          style={{ width: "100%", height: "100%", maxHeight: "50dvh" }}
         >
           <Geographies geography="https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json">
             {() => null}
