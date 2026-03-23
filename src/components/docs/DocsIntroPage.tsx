@@ -82,21 +82,27 @@ export default function DocsIntroPage() {
         {/* Main content */}
         <div className="relative grow box-border flex-col w-full py-10 px-6 lg:px-12 min-w-0">
           {/* Background image */}
-          <div className="absolute -top-14 left-0 right-0 opacity-80 pointer-events-none">
+          <div className="absolute -top-14 left-0 right-0 opacity-80">
+            <img
+              src="/docs/background-light.svg"
+              alt=""
+              className="object-contain block dark:hidden pointer-events-none w-full h-auto"
+              style={{ aspectRatio: '1152 / 388' }}
+            />
             <img
               src="/docs/background-dark.svg"
-              className="object-contain w-full h-auto"
-              style={{ aspectRatio: '1152/388' }}
               alt=""
+              className="object-contain hidden dark:block pointer-events-none w-full h-auto"
+              style={{ aspectRatio: '1152 / 388' }}
             />
           </div>
 
           {/* Hero content */}
-          <div className="relative z-10 py-16 lg:py-32 lg:pb-16 max-w-3xl mx-auto">
-            <h1 className="block text-4xl font-medium text-center text-primary-foreground tracking-tight">
+          <div className="relative z-10 px-4 py-16 lg:py-48 lg:pb-24 max-w-3xl mx-auto">
+            <h1 className="block text-4xl font-medium text-center text-zinc-50 tracking-tight">
               Documentation
             </h1>
-            <div className="max-w-xl mx-auto px-4 mt-4 text-lg text-center text-tertiary-foreground">
+            <div className="max-w-xl mx-auto px-4 mt-4 text-lg text-center text-zinc-500">
               Meet the next generation of documentation. AI-native, beautiful out-of-the-box, and
               built for developers and teams.
             </div>
@@ -105,22 +111,18 @@ export default function DocsIntroPage() {
             <div className="px-6 lg:px-0 mt-12 lg:mt-24 grid sm:grid-cols-2 gap-x-6 gap-y-4">
               {introCards.map((card) => (
                 <a key={card.title} className="group cursor-pointer pb-8" href={card.href}>
-                  <div
-                    className={`rounded-lg overflow-hidden bg-gradient-to-br ${card.gradient} aspect-[356/212] group-hover:scale-105 transition-all duration-100 border border-subtle-stroke`}
-                  >
-                    <img
-                      src={`/docs/${card.image}.png`}
-                      alt={card.title}
-                      className="block dark:hidden pointer-events-none w-full h-full object-cover"
-                    />
-                    <img
-                      src={`/docs/${card.image}-dark.png`}
-                      alt={card.title}
-                      className="hidden dark:block pointer-events-none w-full h-full object-cover"
-                    />
-                  </div>
-                  <h3 className="mt-5 text-primary-foreground font-medium">{card.title}</h3>
-                  <span className="mt-1.5 block text-tertiary-foreground text-sm">{card.description}</span>
+                  <img
+                    src={`/docs/${card.image}.png`}
+                    alt={card.title}
+                    className="rounded block dark:hidden pointer-events-none group-hover:scale-105 transition-all duration-100"
+                  />
+                  <img
+                    src={`/docs/${card.image}-dark.png`}
+                    alt={card.title}
+                    className="rounded pointer-events-none group-hover:scale-105 transition-all duration-100 hidden dark:block"
+                  />
+                  <h3 className="mt-5 text-zinc-50 font-medium">{card.title}</h3>
+                  <span className="mt-1.5">{card.description}</span>
                 </a>
               ))}
             </div>
