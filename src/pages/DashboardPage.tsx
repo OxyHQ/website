@@ -15,8 +15,8 @@ export default function DashboardPage() {
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <Navbar />
-      <main className="flex-1 snap-y snap-mandatory overflow-y-auto" style={{ height: 'calc(100dvh - var(--site-header-height))' }}>
-        <div className="container font-mono flex flex-col min-h-[calc(100dvh-var(--site-header-height))] snap-start">
+      <main className="flex-1">
+        <div className="container font-mono flex flex-col min-h-[calc(100dvh-var(--site-header-height))]">
           {/* Header */}
           <header className="flex flex-col items-start font-mono text-sm uppercase gap-2 pt-6 mb-4 shrink-0">
             <p className="text-foreground font-mono my-0 whitespace-nowrap">
@@ -43,7 +43,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Stats grid — always visible, pinned to bottom */}
-          <section className="shrink-0 pt-8 pb-6">
+          <section className="shrink-0 pt-16 pb-6">
             <StatsGrid stats={stats} />
           </section>
         </div>
