@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { WebOxyProvider } from '@oxyhq/auth'
+import { WebOxyProvider, useAuth } from '@oxyhq/auth'
 import { BloomThemeProvider } from '@oxyhq/bloom/theme'
 import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppColorName } from './theme'
 import { LocaleProvider } from './contexts/LocaleContext'
+import { setTokenGetter } from './api/client'
 
 import AdminPage from './pages/AdminPage'
 import AskPage from './pages/AskPage'
@@ -37,6 +38,12 @@ function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => { window.scrollTo(0, 0) }, [pathname])
   return null
+}
+
+function ApiAuthSetup({ children }: { children: React.ReactNode }) {
+  const { authManager } = useAuth()
+  setTokenGetter(() => authManager.getAccessToken())
+  return <>{children}</>
 }
 
 function LocaleLayout() {
@@ -78,7 +85,8 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <WebOxyProvider baseURL={OXY_API} onAuthStateChange={(user) => applyUserColor(user?.color)}>
-        <BloomThemeProvider mode={mode} colorPreset={preset}>
+        <ApiAuthSetup>
+          <BloomThemeProvider mode={mode} colorPreset={preset}>
             <BrowserRouter>
               <ScrollToTop />
               <Routes>
@@ -91,6 +99,7 @@ export default function App() {
               <FixedPromptInput />
             </BrowserRouter>
           </BloomThemeProvider>
+        </ApiAuthSetup>
       </WebOxyProvider>
     </QueryClientProvider>
   )

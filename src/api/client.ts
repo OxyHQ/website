@@ -1,15 +1,13 @@
 const API_BASE = '/api'
 
-function getAuthToken(): string | null {
-  try {
-    return localStorage.getItem('oxy_access_token')
-  } catch {
-    return null
-  }
+let getAccessToken: (() => Promise<string | null>) | null = null
+
+export function setTokenGetter(getter: () => Promise<string | null>) {
+  getAccessToken = getter
 }
 
 export async function apiFetch<T>(path: string, options?: RequestInit & { locale?: string }): Promise<T> {
-  const token = getAuthToken()
+  const token = getAccessToken ? await getAccessToken() : null
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
