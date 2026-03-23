@@ -68,7 +68,7 @@ export default function BlogLatestSection() {
 
               {/* Article list */}
               <div className="relative isolate max-lg:col-[1/-1] col-[9/-1] max-xl:col-[7/-1]">
-                {filteredArticles.map((article) => (
+                {filteredArticles.map((article, index) => (
                   <div key={article.slug} className="relative z-10 bg-secondary-background" style={{ opacity: 1 }}>
                     <a
                       className="group relative grid grid-cols-16 items-baseline py-7 max-lg:grid-cols-12 transition-[opacity,filter,background-color] duration-500 ease-in-out"
@@ -99,11 +99,26 @@ export default function BlogLatestSection() {
                       </p>
                     </a>
                     {/* Dashed separator between articles */}
-                    <svg width="100%" height="1" className="text-subtle-stroke">
+                    <svg width="100%" height="1" className={`text-subtle-stroke${index === filteredArticles.length - 1 ? ' hidden' : ''}`}>
                       <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
                     </svg>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Bottom decoration */}
+            <div aria-hidden="true" className="grid w-full overflow-hidden max-xl:h-30 max-lg:h-25 h-25 grid-cols-24">
+              <div className="col-[2/-2] flex justify-between">
+                <svg width="1" height="100%" className="text-subtle-stroke invisible">
+                  <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
+                </svg>
+                <svg width="1" height="100%" className="text-subtle-stroke">
+                  <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
+                </svg>
+                <svg width="1" height="100%" className="text-subtle-stroke invisible">
+                  <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
+                </svg>
               </div>
             </div>
           </div>
