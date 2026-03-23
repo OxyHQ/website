@@ -2,22 +2,6 @@ import { useLocation } from 'react-router-dom'
 import { docsSidebar, docsCards } from '../../data/docs'
 import type { DocsCard } from '../../data/docs'
 
-function SearchIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-search min-w-4 flex-none text-gray-400 group-hover/search:text-gray-200">
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-    </svg>
-  )
-}
-
-function MoonIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-moon h-4 w-4 text-gray-500 group-hover:text-gray-300">
-      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-    </svg>
-  )
-}
 
 function CardIcon({ icon }: { icon: DocsCard['icon'] }) {
   if (icon === 'react') {
@@ -52,75 +36,6 @@ function CardIcon({ icon }: { icon: DocsCard['icon'] }) {
   )
 }
 
-function DocsNavbar() {
-  return (
-    <div className="z-30 fixed lg:sticky top-0 w-full">
-      <div className="absolute w-full h-full backdrop-blur flex-none transition-colors duration-500 border-b border-gray-300/[0.06] bg-[#0f1117]/75" />
-      <div className="max-w-8xl mx-auto relative">
-        <div className="flex items-center lg:px-12 h-16 min-w-0 mx-4 lg:mx-0">
-          <div className="h-full relative flex-1 flex items-center gap-x-4 min-w-0 border-b border-gray-300/[0.06]">
-            {/* Logo */}
-            <div className="flex-1 flex items-center gap-x-4">
-              <a href="/developers/docs" className="select-none">
-                <span className="text-xl font-bold text-white">Oxy Docs</span>
-              </a>
-            </div>
-
-            {/* Search bar (desktop) */}
-            <div className="relative hidden lg:flex items-center flex-1 z-20 gap-2.5">
-              <button
-                type="button"
-                className="group/search flex pointer-events-auto rounded-xl w-full items-center text-sm leading-6 h-9 pl-3.5 pr-3 text-white/50 bg-[#0f1117] brightness-[1.1] ring-1 hover:brightness-[1.25] ring-gray-600/30 hover:ring-gray-500/30 justify-between truncate gap-2"
-              >
-                <div className="flex items-center gap-2">
-                  <SearchIcon />
-                  <div className="truncate min-w-0">Search...</div>
-                </div>
-                <span className="flex-none text-xs font-semibold">Ctrl K</span>
-              </button>
-            </div>
-
-            {/* Dark mode toggle */}
-            <div className="flex-1 relative hidden lg:flex items-center ml-auto justify-end space-x-4">
-              <button className="group p-2 flex items-center justify-center" aria-label="Toggle dark mode">
-                <MoonIcon />
-              </button>
-            </div>
-
-            {/* Mobile icons */}
-            <div className="flex lg:hidden items-center gap-3">
-              <button type="button" className="text-gray-400 w-8 h-8 flex items-center justify-center hover:text-gray-300" aria-label="Open search">
-                <SearchIcon />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Tab navigation */}
-        <div className="hidden lg:flex px-12 h-12">
-          <div className="h-full flex text-sm gap-x-6">
-            <a className="group relative h-full gap-2 flex items-center font-medium text-gray-200 [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]" href="/developers/docs">
-              Overview
-              <div className="absolute bottom-0 h-[1.5px] w-full left-0 bg-[#818cf8]" />
-            </a>
-            <a className="group relative h-full gap-2 flex items-center font-medium text-gray-400 hover:text-gray-300" href="#">
-              App SDK
-              <div className="absolute bottom-0 h-[1.5px] w-full left-0 group-hover:bg-gray-700" />
-            </a>
-            <a className="group relative h-full gap-2 flex items-center font-medium text-gray-400 hover:text-gray-300" href="#">
-              REST API
-              <div className="absolute bottom-0 h-[1.5px] w-full left-0 group-hover:bg-gray-700" />
-            </a>
-            <a className="group relative h-full gap-2 flex items-center font-medium text-gray-400 hover:text-gray-300" href="#">
-              MCP
-              <div className="absolute bottom-0 h-[1.5px] w-full left-0 group-hover:bg-gray-700" />
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 function DocsSidebar() {
   const location = useLocation()
@@ -165,43 +80,34 @@ function DocsSidebar() {
   )
 }
 
-function DocsFooter() {
-  return (
-    <footer className="flex gap-12 justify-between pt-10 border-t border-gray-800/50 pb-28">
-      <div className="flex gap-6 flex-wrap">
-        <a href="https://x.com" target="_blank" rel="noreferrer" className="h-fit">
-          <span className="sr-only">X / Twitter</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-gray-500 hover:text-gray-400">
-            <path d="M4 4l11.733 16h4.267l-11.733 -16h-4.267z" />
-            <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
-          </svg>
-        </a>
-        <a href="/" className="h-fit">
-          <span className="sr-only">Website</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-gray-500 hover:text-gray-400">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-            <path d="M2 12h20" />
-          </svg>
-        </a>
-      </div>
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-500">&copy; {new Date().getFullYear()} Oxy</span>
-      </div>
-    </footer>
-  )
-}
 
 export default function DocsPage() {
   return (
     <div className="relative antialiased text-gray-400">
       <div className="max-lg:contents lg:flex lg:w-full">
         <div className="max-lg:contents lg:flex-1 lg:min-w-0 lg:overflow-x-clip">
-          {/* Top navbar */}
-          <DocsNavbar />
-
-          {/* Background */}
-          <span className="fixed inset-0 bg-[#0f1117] -z-10 pointer-events-none" />
+          {/* Docs sub-navbar with tabs */}
+          <div className="border-b border-gray-300/[0.06]">
+            <div className="max-w-8xl mx-auto">
+              <div className="hidden lg:flex px-12 h-12">
+                <div className="h-full flex text-sm gap-x-6">
+                  <a className="group relative h-full gap-2 flex items-center font-medium text-gray-200 [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]" href="/developers/docs">
+                    Overview
+                    <div className="absolute bottom-0 h-[1.5px] w-full left-0 bg-[#818cf8]" />
+                  </a>
+                  <a className="group relative h-full gap-2 flex items-center font-medium text-gray-400 hover:text-gray-300" href="#">
+                    App SDK
+                  </a>
+                  <a className="group relative h-full gap-2 flex items-center font-medium text-gray-400 hover:text-gray-300" href="#">
+                    REST API
+                  </a>
+                  <a className="group relative h-full gap-2 flex items-center font-medium text-gray-400 hover:text-gray-300" href="#">
+                    MCP
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div className="max-w-8xl mx-auto relative px-4 lg:px-8">
             {/* Sidebar */}
@@ -314,8 +220,7 @@ export default function DocsPage() {
                   </a>
                 </div>
 
-                {/* Footer */}
-                <DocsFooter />
+                {/* Page footer handled by shared Footer */}
               </div>
             </div>
           </div>
