@@ -141,19 +141,7 @@ export default function AIPage() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Hero parallax scroll effect
-  useEffect(() => {
-    function handleScroll() {
-      const y = window.scrollY
-      const hero = document.getElementById('ai-hero-content')
-      if (hero) {
-        hero.style.transform = `translateY(${y * 0.15}px)`
-        hero.style.opacity = String(Math.max(0, 1 - y / 600))
-      }
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  // Left panel stays visible — no parallax fade
 
   // IntersectionObserver for scroll-snap demo sections
   useEffect(() => {
@@ -179,7 +167,7 @@ export default function AIPage() {
   return (
     <div className="text-foreground">
       {/* ── 1. Hero — Split Layout ── */}
-      <div className="container relative z-0 mx-auto flex min-h-screen w-full flex-col overflow-clip lg:flex-row">
+      <div className="container relative z-0 mx-auto flex w-full flex-col overflow-clip lg:flex-row lg:h-[calc(100vh-var(--site-header-height,64px))]">
         {/* Layer 1: Gradient */}
         <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-[#4867AF] via-[#9CAFB8] via-[62%] to-[#C49577]" />
 
@@ -206,7 +194,7 @@ export default function AIPage() {
         <div className="relative overflow-hidden lg:pointer-events-none lg:sticky lg:inset-0 lg:z-40 lg:flex lg:px-0 lg:max-h-screen lg:max-w-[32rem] mt-12 shrink-0 max-lg:snap-start lg:mt-0 lg:min-h-0 lg:border-r-[0.5px] lg:border-black/10">
           <div className="relative flex w-full lg:pointer-events-auto lg:min-w-[32rem] lg:overflow-y-auto lg:overflow-x-hidden lg:pl-6">
             <div className="mx-auto max-w-lg lg:mx-0 lg:flex lg:w-[32rem] lg:max-w-none lg:flex-col px-8 sm:px-0 lg:px-4">
-              <div id="ai-hero-content" className="pb-8 pt-16 lg:flex lg:h-full lg:flex-col lg:pr-10">
+              <div className="pb-8 pt-16 lg:flex lg:h-full lg:flex-col lg:pr-10">
                 {/* Badge */}
                 <h6 className="body-lg text-base text-white">{aiHero.badge}</h6>
 
@@ -275,7 +263,7 @@ export default function AIPage() {
         {/* Right content area — demo screens */}
         <div
           ref={scrollContainerRef}
-          className="relative z-10 grow bg-black/10 overflow-y-auto snap-y snap-mandatory"
+          className="relative z-10 grow bg-black/10 overflow-y-auto snap-y snap-mandatory lg:h-full"
         >
           {/* SVG pattern border on left edge */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
