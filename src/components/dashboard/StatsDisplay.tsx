@@ -154,8 +154,8 @@ function StatCard({
   const [showInfo, setShowInfo] = useState(false);
 
   const statsContent = (
-    <div className="bg-surface/50 backdrop-blur-sm p-4 md:p-6 w-full min-h-[120px] h-full">
-      <div className="space-y-2">
+    <div className="bg-surface/50 backdrop-blur-sm p-4 md:p-6 w-full min-h-[180px] h-full">
+      <div className="space-y-2 pt-12 md:pt-16">
         <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-foreground pr-6">
           {title}
         </h2>
