@@ -223,7 +223,7 @@ export default function Navbar() {
       {/* ─── Banner (scrolls away) ─── */}
       {bannerVisible && (
         <div
-          className="site-banner isolate flex h-(--site-header-banner-visible-height) w-full items-center justify-center bg-(--color-banner-background)"
+          className="site-banner dark isolate flex h-(--site-header-banner-visible-height) w-full items-center justify-center bg-(--color-banner-background)"
           style={{ boxShadow: '0px 1px 2px 0px oklch(0 0 0 / 0.01), 0px 2px 4px -1px oklch(0 0 0 / 0.02), 0px 4px 8px -2px oklch(0 0 0 / 0.03)' }}
         >
           <div className="container flex h-full items-center justify-center">
@@ -240,11 +240,11 @@ export default function Navbar() {
                 </svg>
               </a>
               <button
-                className="inline-flex cursor-pointer items-center justify-center text-nowrap border text-base transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default size-8 rounded-[10px] button-outline !bg-transparent !border-transparent absolute top-1/2 right-0 -translate-y-1/2 hover:!border-tertiary-foreground"
+                className="inline-flex cursor-pointer items-center justify-center text-nowrap border text-base transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default size-8 rounded-[10px] button-outline !bg-transparent !border-transparent dark absolute top-1/2 right-0 -translate-y-1/2 hover:!border-tertiary-foreground"
                 aria-label="Dismiss banner"
                 onClick={() => setBannerVisible(false)}
               >
-                <svg className="text-tertiary-foreground" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" fill="none">
+                <svg className="dark:text-white-500 text-tertiary-foreground" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" fill="none">
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="m12.5 5.5-7 7m7 0-7-7" />
                 </svg>
               </button>

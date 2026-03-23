@@ -68,7 +68,7 @@
   /* Spacing */
   --site-header-height: 64px;
   --site-header-banner-visible-height: 40px;
-  --color-banner-background: var(--sem-secondary-background);
+  --color-banner-background: #1C1D1F;
 
   /* Container */
   --container-3xs: 20rem;
