@@ -18,11 +18,11 @@ export default function PricingCard({ tier }: PricingCardProps) {
         {tier.name}
       </h3>
       <p className="mt-3 text-heading-md text-foreground">
-        {tier.credits}
+        {tier.price ? `$${tier.price.monthly}` : 'Custom'}
       </p>
-      <p className="mt-1 text-sm text-muted-foreground">{tier.creditLabel}</p>
+      <p className="mt-1 text-sm text-muted-foreground">{tier.description}</p>
       <Button variant={tier.highlighted ? 'primary' : 'outline'} size="md" className="mt-6 w-full">
-        Get started
+        {tier.cta}
       </Button>
     </div>
   )

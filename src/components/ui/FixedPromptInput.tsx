@@ -62,7 +62,7 @@ export default function FixedPromptInput() {
 
   // Hide on certain paths
   const { pathname } = useLocation()
-  const HIDDEN_PREFIXES = ['/company', '/developers', '/settings', '/help', '/changelog', '/admin']
+  const HIDDEN_PREFIXES = ['/company', '/developers', '/settings', '/help', '/changelog', '/admin', '/dashboard']
   const hiddenByRoute = HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'))
 
   // Hide when footer is in view so we don't overlay it

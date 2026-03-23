@@ -22,8 +22,11 @@ export interface Prompt {
 
 export interface PricingTier {
   name: string
-  credits: string
-  creditLabel: string
+  description: string
+  price: { monthly: number; annual: number } | null
+  features: string[]
+  cta: string
+  ctaHref: string
   highlighted?: boolean
 }
 
@@ -320,19 +323,36 @@ export const privacyPoints: PrivacyPoint[] = [
 export const pricingTiers: PricingTier[] = [
   {
     name: 'Free',
-    credits: '500',
-    creditLabel: 'credits per seat / month',
+    description: 'For individuals getting started',
+    price: { monthly: 0, annual: 0 },
+    features: ['500 credits per month', 'Up to 3 integrations', 'Community support'],
+    cta: 'Get started',
+    ctaHref: '/signup',
   },
   {
     name: 'Pro',
-    credits: '1,000',
-    creditLabel: 'credits per seat / month',
+    description: 'For professionals and small teams',
+    price: { monthly: 25, annual: 20 },
+    features: ['1,000 credits per month', 'Unlimited integrations', 'Priority support', 'Advanced analytics'],
+    cta: 'Get started',
+    ctaHref: '/signup',
     highlighted: true,
   },
   {
+    name: 'Business',
+    description: 'For growing organizations',
+    price: { monthly: 50, annual: 40 },
+    features: ['2,500 credits per month', 'Unlimited integrations', 'Dedicated support', 'Advanced analytics', 'Custom workflows'],
+    cta: 'Get started',
+    ctaHref: '/signup',
+  },
+  {
     name: 'Enterprise',
-    credits: '2,500',
-    creditLabel: 'credits per seat / month',
+    description: 'For large-scale deployments',
+    price: null,
+    features: ['Unlimited credits', 'Unlimited integrations', 'Dedicated account manager', 'Custom SLA', 'SSO & SAML', 'On-premise option'],
+    cta: 'Talk to sales',
+    ctaHref: '/contact',
   },
 ]
 
