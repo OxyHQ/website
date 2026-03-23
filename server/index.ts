@@ -16,6 +16,7 @@ import settingsRouter from './routes/settings.js'
 import mcpTokensRouter from './routes/mcp-tokens.js'
 import localesRouter from './routes/locales.js'
 import translationsRouter from './routes/translations.js'
+import { mountMcp } from './mcp.js'
 
 const app = express()
 
@@ -35,6 +36,9 @@ app.use('/api/settings', settingsRouter)
 app.use('/api/mcp-tokens', mcpTokensRouter)
 app.use('/api/locales', localesRouter)
 app.use('/api/translations', translationsRouter)
+
+// MCP (Model Context Protocol) SSE endpoint
+mountMcp(app)
 
 // Health check
 app.get('/api/health', (_req, res) => res.json({ ok: true }))

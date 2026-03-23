@@ -582,59 +582,42 @@ server.tool('delete_translation', 'Delete a translation for a document', {
   } catch (e) { return err(e) }
 })
 
-// ── Start Server ────────────────────────────────────────────────────────────
+// ── Mount on Express app ────────────────────────────────────────────────────
 
-const mcpPort = parseInt(process.env.MCP_PORT || '4001', 10)
-const app = express()
 const transports: Record<string, SSEServerTransport> = {}
 
-app.get('/sse', async (req, res) => {
-  // Validate Bearer token
-  const authHeader = req.headers.authorization
-  if (!authHeader?.startsWith('Bearer ')) {
-    res.status(401).json({ error: 'Bearer token required' })
-    return
-  }
-
-  const rawToken = authHeader.slice(7)
-  const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex')
-
+async function validateToken(token: string): Promise<boolean> {
+  const tokenHash = crypto.createHash('sha256').update(token).digest('hex')
   const mcpToken = await McpToken.findOne({
     tokenHash,
     revoked: false,
     $or: [{ expiresAt: null }, { expiresAt: { $gt: new Date() } }],
   })
-
-  if (!mcpToken) {
-    res.status(401).json({ error: 'Invalid or expired token' })
-    return
-  }
-
-  // Update last used timestamp
+  if (!mcpToken) return false
   mcpToken.lastUsedAt = new Date()
   await mcpToken.save()
-
-  const transport = new SSEServerTransport('/messages', res)
-  transports[transport.sessionId] = transport
-  res.on('close', () => { delete transports[transport.sessionId] })
-  await server.connect(transport)
-})
-
-app.post('/messages', async (req, res) => {
-  const sessionId = req.query.sessionId as string
-  const transport = transports[sessionId]
-  if (!transport) { res.status(400).json({ error: 'Unknown session' }); return }
-  await transport.handlePostMessage(req, res)
-})
-
-async function start() {
-  await mongoose.connect(config.mongoUri)
-  console.log('Connected to MongoDB')
-
-  app.listen(mcpPort, () => {
-    console.log(`MCP server running on http://localhost:${mcpPort}`)
-    console.log(`SSE endpoint: http://localhost:${mcpPort}/sse`)
-  })
+  return true
 }
 
-start().catch(console.error)
+export function mountMcp(app: express.Express) {
+  app.get('/mcp', async (req, res) => {
+    // Auth via query param ?token= or Bearer header
+    const token = (req.query.token as string) || req.headers.authorization?.replace('Bearer ', '')
+    if (!token || !(await validateToken(token))) {
+      res.status(401).json({ error: 'Invalid or expired token' })
+      return
+    }
+
+    const transport = new SSEServerTransport('/mcp/messages', res)
+    transports[transport.sessionId] = transport
+    res.on('close', () => { delete transports[transport.sessionId] })
+    await server.connect(transport)
+  })
+
+  app.post('/mcp/messages', async (req, res) => {
+    const sessionId = req.query.sessionId as string
+    const transport = transports[sessionId]
+    if (!transport) { res.status(400).json({ error: 'Unknown session' }); return }
+    await transport.handlePostMessage(req, res)
+  })
+}
