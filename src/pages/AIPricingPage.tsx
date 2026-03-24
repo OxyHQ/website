@@ -30,7 +30,7 @@ export default function AIPricingPage() {
       <main>
         {/* Hero + Cards */}
         <div className="overflow-x-hidden">
-          <div className="container mx-auto">
+          <div className="mx-auto max-w-5xl px-4 sm:px-8">
             {/* Hero */}
             <section className="mt-24 mb-8 lg:mb-0">
               <h1 className="text-5xl xl:text-6xl text-balance">
@@ -117,7 +117,7 @@ export default function AIPricingPage() {
 
         {/* Comparison Table */}
         <div className="overflow-x-clip bg-background">
-          <div className="container mx-auto flex flex-col gap-12">
+          <div className="mx-auto max-w-5xl px-4 sm:px-8 flex flex-col gap-12">
             <div className="w-full text-lg">
               {/* Sticky header */}
               <div className="flex sticky top-14 gap-3 bg-background border-b border-border z-10">
