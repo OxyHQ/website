@@ -26,6 +26,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import AIPage from './pages/AIPage'
 import DashboardPage from './pages/DashboardPage'
 import InitiativePage from './pages/InitiativePage'
+import AIPricingPage from './pages/AIPricingPage'
 import HelpPage from './pages/HelpPage'
 import ChangelogPage from './pages/ChangelogPage'
 import DocsPage from './pages/DocsPage'
@@ -93,6 +94,7 @@ function PublicRoutes() {
       <Route path="codea" element={<CodeaPage />} />
       <Route path="codea/extension" element={<CodexExtensionPage />} />
       <Route path="ai" element={<AIPage />} />
+      <Route path="ai/pricing" element={<AIPricingPage />} />
       <Route path="dashboard" element={<DashboardPage />} />
       <Route path="initiative" element={<InitiativePage />} />
       <Route path="os" element={<OxyOSPage />} />
