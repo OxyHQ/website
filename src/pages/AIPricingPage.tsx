@@ -42,7 +42,7 @@ export default function AIPricingPage() {
             <section className="mb-6 flex md:mt-12 md:mb-10 lg:mt-12 lg:mb-15">
               <div id="pricing-plans" className="flex flex-col gap-2 lg:flex-row w-full">
                 {/* Left sidebar (desktop only) */}
-                <div className="hidden lg:flex lg:w-[220px] xl:w-[260px] shrink-0 flex-col pt-[148px] xl:pt-[162px] mt-1 pr-3">
+                <div className="hidden lg:flex flex-1 flex-col pt-[148px] xl:pt-[162px] mt-1 pr-3">
                   <div className="pb-6 text-2xl">Start building for free</div>
                   <div className="flex-1">
                     {sidebarLabels.map((label) => (
