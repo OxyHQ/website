@@ -141,6 +141,13 @@
   --sidebar: hsl(277 30% 8%);
 }
 
+/* Initiative page heading */
+.text-heading-xlarge {
+  font-size: clamp(28px, 4.5vw, 52px);
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+}
+
 /* Dashboard map utilities */
 .rsm-svg {
   width: 100%;
