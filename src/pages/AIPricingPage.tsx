@@ -137,43 +137,42 @@ export default function AIPricingPage() {
 
                     return (
                       <div key={plan.id} className="flex flex-1 min-w-[160px]">
-                        <div className={`relative flex flex-1 flex-col rounded-2xl p-4 xl:p-6 ${style.bg}`}>
-                          <div className="size-6 flex items-center mb-4">
-                            <div className={`${style.dot} size-5 rounded-full`} />
+                        <div className={`relative flex flex-1 flex-col rounded-2xl p-3 xl:p-4 ${style.bg}`}>
+                          <div className="size-4 flex items-center mb-2">
+                            <div className={`${style.dot} size-3 rounded-full`} />
                           </div>
-                          <h2 className="text-2xl font-normal normal-case">{plan.name}</h2>
-                          <p className="mb-6 xl:text-lg text-base opacity-50">
-                            {plan.isFree ? 'For everyone' : plan.isFeatured ? 'Most popular' : `${plan.creditsLabel}`}
+                          <h2 className="text-lg font-normal normal-case">{plan.name}</h2>
+                          <p className="mb-3 text-sm opacity-50">
+                            {plan.isFree ? 'For everyone' : plan.isFeatured ? 'Most popular' : plan.creditsLabel}
                           </p>
-                          <div className="pb-6 text-3xl xl:text-4xl font-normal">
+                          <div className="pb-3 text-2xl xl:text-3xl font-normal">
                             {plan.isFree ? 'Free' : formatPrice(price)}
-                            {!plan.isFree && <span className="text-lg xl:text-xl"> /mo</span>}
+                            {!plan.isFree && <span className="text-sm"> /mo</span>}
                           </div>
                           <div className="flex-1">
-                            {/* Feature summary rows */}
                             {credits && (
-                              <div className={`flex items-center justify-between flex-none mt-2 pt-2 text-lg xl:text-xl border-t ${style.border}`}>
-                                <div className="flex items-center gap-2 font-normal text-pretty leading-tight">{credits}</div>
+                              <div className={`flex items-center justify-between flex-none mt-1 pt-1 text-sm border-t ${style.border}`}>
+                                <div className="flex items-center gap-1 font-normal text-pretty leading-tight">{credits}</div>
                               </div>
                             )}
                             {models && (
-                              <div className={`flex items-center justify-between flex-none mt-2 pt-2 text-lg xl:text-xl border-t ${style.border}`}>
-                                <div className="flex items-center gap-2 font-normal text-pretty leading-tight">{models.items.length} AI models</div>
+                              <div className={`flex items-center justify-between flex-none mt-1 pt-1 text-sm border-t ${style.border}`}>
+                                <div className="flex items-center gap-1 font-normal text-pretty leading-tight">{models.items.length} AI models</div>
                               </div>
                             )}
                             {channels && (
-                              <div className={`flex items-center justify-between flex-none mt-2 pt-2 text-lg xl:text-xl border-t ${style.border}`}>
-                                <div className="flex items-center gap-2 font-normal text-pretty leading-tight">{channels.items.length} channels</div>
+                              <div className={`flex items-center justify-between flex-none mt-1 pt-1 text-sm border-t ${style.border}`}>
+                                <div className="flex items-center gap-1 font-normal text-pretty leading-tight">{channels.items.length} channels</div>
                               </div>
                             )}
                             {limits && (
-                              <div className={`flex items-center justify-between flex-none mt-2 pt-2 text-lg xl:text-xl border-t ${style.border}`}>
-                                <div className="flex items-center gap-2 font-normal text-pretty leading-tight">{limits.items[0]?.label}</div>
+                              <div className={`flex items-center justify-between flex-none mt-1 pt-1 text-sm border-t ${style.border}`}>
+                                <div className="flex items-center gap-1 font-normal text-pretty leading-tight">{limits.items[0]?.label}</div>
                               </div>
                             )}
                           </div>
                           <a
-                            className={`inline-flex flex-none items-center justify-center cursor-pointer font-medium px-4 py-2 mt-9 w-fit h-9 rounded-[2rem] hover:rounded-none transition-all duration-200 text-base xl:text-lg ${style.cta}`}
+                            className={`inline-flex flex-none items-center justify-center cursor-pointer font-medium px-3 py-1.5 mt-5 w-fit h-8 rounded-[2rem] hover:rounded-none transition-all duration-200 text-sm ${style.cta}`}
                             href={plan.isFree ? '/signup' : `/signup?plan=${plan.id}`}
                           >
                             {plan.isFree ? 'Get started' : plan.isFeatured ? `Get ${plan.name}` : 'Upgrade'}
