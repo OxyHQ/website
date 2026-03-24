@@ -11,7 +11,7 @@ const router = Router()
 router.get('/', localeMiddleware, async (req, res) => {
   const { category, tag, featured, status, search, limit = '20', page = '1' } = req.query
   const filter: any = {}
-  if (category) filter.category = category
+  if (category) filter.categories = category
   if (tag) filter.tags = tag
   if (featured === 'true') filter.featured = true
 
@@ -25,7 +25,7 @@ router.get('/', localeMiddleware, async (req, res) => {
   // Text search on title and excerpt
   if (search && typeof search === 'string') {
     const regex = { $regex: search, $options: 'i' }
-    filter.$or = [{ title: regex }, { excerpt: regex }]
+    filter.$or = [{ title: regex }, { resume: regex }]
   }
 
   const skip = (parseInt(page as string) - 1) * parseInt(limit as string)

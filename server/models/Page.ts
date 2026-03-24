@@ -14,6 +14,7 @@ export interface IPage extends Document {
   title: string
   description: string
   sections: ISection[]
+  promptPhrases: string[]
 }
 
 const SectionSchema = new Schema<ISection>({
@@ -30,6 +31,7 @@ const PageSchema = new Schema<IPage>({
   title: { type: String, required: true },
   description: { type: String, default: '' },
   sections: [SectionSchema],
+  promptPhrases: { type: [String], default: [] },
 }, { timestamps: true })
 
 export const Page = mongoose.model<IPage>('Page', PageSchema)

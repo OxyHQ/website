@@ -38,6 +38,17 @@ export function useUpdatePage(slug: string) {
   })
 }
 
+export function usePromptPhrases(slug: string, enabled = true) {
+  const locale = useSafeLocale()
+  return useQuery({
+    queryKey: ['promptPhrases', slug, locale],
+    queryFn: () => apiFetch<string[]>(`/pages/${slug}/prompt-phrases`, { locale }),
+    placeholderData: [],
+    enabled,
+    staleTime: Infinity,
+  })
+}
+
 // ── Navigation ──
 export function useNavigation() {
   const locale = useSafeLocale()

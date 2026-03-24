@@ -78,6 +78,7 @@ server.tool('upsert_page', 'Create or update a page', {
   title: z.string(),
   description: z.string().optional(),
   sections: z.array(sectionSchema).optional(),
+  promptPhrases: z.array(z.string()).optional(),
 }, async (params) => {
   try {
     const page = await Page.findOneAndUpdate({ slug: params.slug }, params, { new: true, upsert: true })
@@ -153,24 +154,24 @@ server.tool('update_footer', 'Update footer content', {
 // ── Newsroom ────────────────────────────────────────────────────────────────
 
 server.tool('list_posts', 'List newsroom posts with optional filtering by category, tag, featured status, and publication status. Returns paginated results sorted by publishedAt descending.', {
-  category: z.string().optional().describe('Filter by category. Common: Company, Research, Product, Safety, Engineering, Security'),
+  category: z.string().optional().describe('Filter by category. Posts whose categories array contains this value. Common: Company, Research, Product, Safety, Engineering, Security'),
   tag: z.string().optional().describe('Filter by tag'),
   featured: z.boolean().optional().describe('Filter to only featured posts'),
   status: z.enum(['draft', 'published']).optional().describe('Filter by publication status. Omit to return all posts.'),
-  search: z.string().optional().describe('Search posts by title or excerpt text'),
+  search: z.string().optional().describe('Search posts by title or resume text'),
   limit: z.number().optional().describe('Results per page (default 20)'),
   page: z.number().optional().describe('Page number (default 1)'),
 }, async (params) => {
   try {
     const filter: Record<string, unknown> = {}
-    if (params.category) filter.category = params.category
+    if (params.category) filter.categories = params.category
     if (params.tag) filter.tags = params.tag
     if (params.featured) filter.featured = true
     if (params.status) filter.status = params.status
 
     if (params.search) {
       const regex = { $regex: params.search, $options: 'i' }
-      filter.$or = [{ title: regex }, { excerpt: regex }]
+      filter.$or = [{ title: regex }, { resume: regex }]
     }
 
     const limit = params.limit ?? 20
@@ -202,16 +203,20 @@ function generateSlug(title: string): string {
 server.tool('create_post', 'Create a new newsroom post. If slug is not provided, it is auto-generated from the title.', {
   title: z.string().describe('Post headline'),
   slug: z.string().optional().describe('URL slug. Auto-generated from title if omitted. Must be unique and URL-safe.'),
-  excerpt: z.string().optional().describe('Short summary for cards/listings (1-2 sentences)'),
+  resume: z.string().optional().describe('Short summary for cards/listings (1-2 sentences)'),
+  description: z.string().optional().describe('Longer description of the post'),
   content: z.string().optional().describe('Full post body in Markdown'),
   coverImage: z.string().optional().describe('URL for cover/hero image'),
+  imageAlt: z.string().optional().describe('Alt text for the cover image'),
   tags: z.array(z.string()).optional().describe('Tags for categorization, e.g. ["ai", "product-update"]'),
-  category: z.string().optional().describe('Post category. Common: Company, Research, Product, Safety, Engineering, Security'),
+  categories: z.array(z.string()).optional().describe('Post categories. Common: Company, Research, Product, Safety, Engineering, Security'),
   featured: z.boolean().optional().describe('Whether this post appears in the featured/hero section'),
+  colorPrimary: z.string().optional().describe('Primary color for post theming (hex or CSS color)'),
+  colorSecondary: z.string().optional().describe('Secondary color for post theming (hex or CSS color)'),
+  dark: z.boolean().optional().describe('Whether the post uses dark mode styling'),
   status: z.enum(['draft', 'published']).optional().describe('Publication status. Defaults to published.'),
   oxyUserId: z.string().optional().describe('Oxy user ID of the author'),
   metaTitle: z.string().optional().describe('SEO title override. Falls back to post title if not set.'),
-  metaDescription: z.string().optional().describe('SEO meta description. Falls back to excerpt if not set.'),
   ogImage: z.string().optional().describe('Open Graph image URL. Falls back to coverImage if not set.'),
   publishedAt: z.string().optional().describe('Publication date as ISO string (e.g. "2026-03-20"). Defaults to now.'),
 }, async (params) => {
@@ -236,16 +241,20 @@ server.tool('update_post', 'Update an existing newsroom post by slug. Only the f
   slug: z.string().describe('Current slug of the post to update'),
   newSlug: z.string().optional().describe('New slug to replace the current one. Must be unique.'),
   title: z.string().optional().describe('Post headline'),
-  excerpt: z.string().optional().describe('Short summary for cards/listings (1-2 sentences)'),
+  resume: z.string().optional().describe('Short summary for cards/listings (1-2 sentences)'),
+  description: z.string().optional().describe('Longer description of the post'),
   content: z.string().optional().describe('Full post body in Markdown'),
   coverImage: z.string().optional().describe('URL for cover/hero image'),
+  imageAlt: z.string().optional().describe('Alt text for the cover image'),
   tags: z.array(z.string()).optional().describe('Tags for categorization'),
-  category: z.string().optional().describe('Post category'),
+  categories: z.array(z.string()).optional().describe('Post categories'),
   featured: z.boolean().optional().describe('Whether this post appears in the featured/hero section'),
+  colorPrimary: z.string().optional().describe('Primary color for post theming (hex or CSS color)'),
+  colorSecondary: z.string().optional().describe('Secondary color for post theming (hex or CSS color)'),
+  dark: z.boolean().optional().describe('Whether the post uses dark mode styling'),
   status: z.enum(['draft', 'published']).optional().describe('Publication status'),
   oxyUserId: z.string().optional().describe('Oxy user ID of the author'),
   metaTitle: z.string().optional().describe('SEO title override'),
-  metaDescription: z.string().optional().describe('SEO meta description'),
   ogImage: z.string().optional().describe('Open Graph image URL'),
   publishedAt: z.string().optional().describe('Publication date as ISO string'),
 }, async ({ slug, newSlug, ...updates }) => {
@@ -268,14 +277,14 @@ server.tool('delete_post', 'Permanently delete a newsroom post by slug. This act
   } catch (e) { return err(e) }
 })
 
-server.tool('search_posts', 'Search newsroom posts by title or excerpt text. Returns posts matching the search query.', {
-  query: z.string().describe('Search text to match against post titles and excerpts'),
+server.tool('search_posts', 'Search newsroom posts by title or resume text. Returns posts matching the search query.', {
+  query: z.string().describe('Search text to match against post titles and resumes'),
   limit: z.number().optional().describe('Maximum results to return (default 10)'),
 }, async (params) => {
   try {
     const regex = { $regex: params.query, $options: 'i' }
     const posts = await NewsroomPost.find({
-      $or: [{ title: regex }, { excerpt: regex }],
+      $or: [{ title: regex }, { resume: regex }],
     }).sort('-publishedAt').limit(params.limit ?? 10)
     return ok(posts)
   } catch (e) { return err(e) }

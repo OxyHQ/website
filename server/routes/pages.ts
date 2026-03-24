@@ -21,6 +21,20 @@ router.get('/:slug', localeMiddleware, async (req, res) => {
   res.json(applyTranslation(page.toJSON(), translation))
 })
 
+router.get('/:slug/prompt-phrases', localeMiddleware, async (req, res) => {
+  const page = await Page.findOne({ slug: req.params.slug })
+  if (!page) return res.json([])
+  if (req.isDefaultLocale) return res.json(page.promptPhrases ?? [])
+
+  const translation = await Translation.findOne({
+    locale: req.locale,
+    collection: 'pages',
+    documentId: page._id.toString(),
+  })
+  const merged = applyTranslation(page.toJSON(), translation)
+  res.json(merged.promptPhrases ?? [])
+})
+
 router.put('/:slug', requireAuth, adminOnly, async (req, res) => {
   const page = await Page.findOneAndUpdate(
     { slug: req.params.slug },

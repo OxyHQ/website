@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { usePage, useUpdatePage } from '../../../api/hooks'
 
-const PAGE_SLUGS = ['home', 'pricing', 'partners', 'help']
+const PAGE_SLUGS = ['home', 'pricing', 'partners', 'help', 'ai', 'codea', 'os', 'newsroom']
 
 export default function PagesAdmin() {
   const [activeSlug, setActiveSlug] = useState<string | null>(null)
@@ -59,6 +59,39 @@ function PageEditor({ slug }: { slug: string }) {
       <div className="mt-6 flex flex-col gap-4">
         <label className="flex flex-col gap-1.5"><span className="text-sm font-medium text-foreground">Title</span><input value={form.title ?? ''} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" /></label>
         <label className="flex flex-col gap-1.5"><span className="text-sm font-medium text-foreground">Description</span><textarea value={form.description ?? ''} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" /></label>
+
+        <h3 className="mt-4 text-sm font-semibold text-foreground">Prompt Phrases</h3>
+        <p className="text-xs text-muted-foreground">Rotating placeholder text shown in the prompt input on this page.</p>
+        {(() => {
+          const phrases: string[] = form.promptPhrases ?? []
+          const setPhrases = (next: string[]) => setForm({ ...form, promptPhrases: next })
+          return (
+            <div className="flex flex-col gap-2">
+              {phrases.map((phrase: string, i: number) => (
+                <div key={i} className="flex items-center gap-2">
+                  <input
+                    value={phrase}
+                    onChange={(e) => { const next = [...phrases]; next[i] = e.target.value; setPhrases(next) }}
+                    className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
+                    placeholder="Enter a prompt phrase…"
+                  />
+                  <button
+                    onClick={() => { const next = [...phrases]; next.splice(i, 1); setPhrases(next) }}
+                    className="text-xs text-muted-foreground hover:text-destructive"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={() => setPhrases([...phrases, ''])}
+                className="self-start text-xs text-primary hover:underline"
+              >
+                + Add phrase
+              </button>
+            </div>
+          )
+        })()}
 
         <h3 className="mt-4 text-sm font-semibold text-foreground">Sections</h3>
         {(form.sections ?? []).map((section: any, i: number) => (
