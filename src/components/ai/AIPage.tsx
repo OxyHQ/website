@@ -490,13 +490,15 @@ export default function AIPage() {
               style={{ transitionDelay: `${i * 100}ms` }}
             >
               <div className={`pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-br ${card.gradient ?? 'from-foreground/5 to-foreground/10'}`} />
-              <p className="relative z-10 heading-3xl text-[32px] font-semibold text-white">{card.title}</p>
-              <p className="relative z-10 heading-xl text-sm font-medium text-white opacity-50 mix-blend-plus-lighter">{card.subtitle}</p>
+              {/* Title + subtitle on top */}
+              <p className="relative z-20 heading-3xl text-[32px] font-semibold text-white">{card.title}</p>
+              <p className="relative z-20 heading-xl text-sm font-medium text-white opacity-50 mix-blend-plus-lighter">{card.subtitle}</p>
+              {/* Image behind text, anchored to bottom */}
               {card.image && (
                 <img
                   alt={card.title}
                   src={`/ai/${card.image}`}
-                  className="absolute bottom-0 left-0 z-10 h-auto max-h-[380px] w-full select-none object-contain"
+                  className="absolute bottom-0 left-0 z-[5] h-auto max-h-[380px] w-full select-none object-contain"
                 />
               )}
             </div>
