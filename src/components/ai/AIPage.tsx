@@ -142,29 +142,9 @@ export default function AIPage() {
 
   // Left panel stays visible — no parallax fade
 
-  // IntersectionObserver for demo sections (uses viewport as root)
+  // Combined: track active section + fade out sections behind
+  // Uses offsetTop since sticky sections can't rely on IntersectionObserver
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const idx = sectionRefs.current.indexOf(entry.target as HTMLElement)
-            if (idx >= 0) setActiveTab(idx)
-          }
-        }
-      },
-      { threshold: 0.5 }
-    )
-
-    sectionRefs.current.forEach((el) => el && observer.observe(el))
-    return () => observer.disconnect()
-  }, [])
-
-  // Fade out sections behind the active one
-  // Since sections are sticky, we compare their offsetTop to scrollY
-  // to determine which is "on top" and fade the rest
-  useEffect(() => {
-    // Cache the original offsetTop of each section
     const offsets: number[] = []
 
     function cacheOffsets() {
@@ -179,7 +159,7 @@ export default function AIPage() {
       const scrollY = window.scrollY
       const sections = sectionRefs.current
 
-      // Find which section is currently "active" (most recently scrolled past)
+      // Find current section based on scroll position
       let currentIdx = 0
       for (let i = 0; i < offsets.length; i++) {
         if (offsets[i] !== undefined && scrollY >= offsets[i] - 200) {
@@ -187,18 +167,19 @@ export default function AIPage() {
         }
       }
 
+      // Update active tab
+      setActiveTab(currentIdx)
+
+      // Apply fade/scale to sections
       for (let i = 0; i < sections.length; i++) {
         const el = sections[i]
         if (!el) continue
 
         if (i < currentIdx) {
-          // Behind the current section — fade out
           el.style.opacity = '0'
           el.style.transform = 'scale(0.95)'
           el.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out'
         } else if (i === currentIdx) {
-          // Current section — fully visible
-          // Calculate partial fade as next section approaches
           const nextOffset = offsets[i + 1]
           if (nextOffset !== undefined) {
             const distToNext = nextOffset - scrollY
@@ -219,7 +200,6 @@ export default function AIPage() {
             el.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out'
           }
         } else {
-          // Below current — fully visible (hasn't been reached yet)
           el.style.opacity = '1'
           el.style.transform = 'scale(1)'
           el.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out'
@@ -227,7 +207,6 @@ export default function AIPage() {
       }
     }
 
-    // Cache offsets after layout
     requestAnimationFrame(cacheOffsets)
     window.addEventListener('scroll', handleScroll, { passive: true })
     window.addEventListener('resize', cacheOffsets)
@@ -269,15 +248,15 @@ export default function AIPage() {
       <div className="container relative z-10 mx-auto flex w-full flex-col overflow-clip lg:flex-row">
 
         {/* Left sticky panel */}
-        <div className="relative overflow-hidden lg:pointer-events-none lg:sticky lg:inset-0 lg:z-40 lg:flex lg:px-0 lg:max-h-screen lg:max-w-[32rem] mt-12 shrink-0 max-lg:snap-start lg:mt-0 lg:min-h-0 lg:border-r-[0.5px] lg:border-black/10">
+        <div className="relative overflow-hidden lg:pointer-events-none lg:sticky lg:top-[var(--site-header-height,64px)] lg:z-40 lg:flex lg:px-0 lg:max-h-[calc(100vh-var(--site-header-height,64px))] lg:max-w-[32rem] mt-12 shrink-0 max-lg:snap-start lg:mt-0 lg:min-h-0 lg:border-r-[0.5px] lg:border-black/10">
           <div className="relative flex w-full lg:pointer-events-auto lg:min-w-[32rem] lg:overflow-y-auto lg:overflow-x-hidden lg:pl-6">
             <div className="mx-auto max-w-lg lg:mx-0 lg:flex lg:w-[32rem] lg:max-w-none lg:flex-col px-8 sm:px-0 lg:px-4">
               <div className="pb-8 pt-16 lg:flex lg:h-full lg:flex-col lg:pr-10">
                 {/* Badge */}
-                <h6 className="body-lg text-base text-white">{aiHero.badge}</h6>
+                <h6 className="text-lg font-medium text-white">{aiHero.badge}</h6>
 
                 {/* Title */}
-                <h1 className="body-md font-geist mt-4 max-w-80 text-4xl font-medium text-white sm:max-w-none sm:text-5xl">
+                <h1 className="font-geist mt-4 max-w-80 text-4xl font-medium text-white sm:max-w-none sm:text-[42px] lg:text-5xl leading-[1.1]">
                   {aiHero.title}
                 </h1>
 
@@ -342,6 +321,8 @@ export default function AIPage() {
         <div
           className="relative z-10 grow bg-black/10"
         >
+          {/* Right edge gradient fade mask */}
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-30 w-24 bg-gradient-to-l from-black/40 to-transparent" />
           {/* SVG pattern border on left edge */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
             <svg className="absolute top-0 z-10 h-full w-2 px-1.5 pt-1 box-content border-r border-white/10" aria-hidden="true">
@@ -352,7 +333,6 @@ export default function AIPage() {
               </defs>
               <rect width="100%" height="100%" fill="url(#hero-pattern)" />
             </svg>
-            <div className="fixed top-0 z-50 h-20 w-5 bg-gradient-to-b from-[#4867AF] to-[#4867AF]/0" style={{ left: '512px', opacity: 1 }} />
           </div>
 
           {/* All demo sections — content starts at ~40% from top, sticky to viewport top */}
@@ -360,7 +340,7 @@ export default function AIPage() {
             <div
               key={tab.label}
               id={`demo-${tab.label.toLowerCase().replace(/\s+/g, '-')}`}
-              className="sticky top-0 scroll-mt-[68px] h-screen min-h-screen relative flex flex-col pl-5 mb-[20vh]"
+              className="sticky top-[var(--site-header-height,64px)] scroll-mt-[68px] h-[calc(100vh-var(--site-header-height,64px))] min-h-[calc(100vh-var(--site-header-height,64px))] relative flex flex-col pl-5 mb-[20vh]"
               ref={(el) => { sectionRefs.current[i] = el }}
             >
               <div className="relative overflow-y-hidden mx-auto flex h-full w-full flex-col pl-10 pt-[20vh]">
