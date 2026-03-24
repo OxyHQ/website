@@ -328,8 +328,8 @@ export default function AIPage() {
         <div
           className="relative z-10 grow bg-black/10"
           style={{
-            maskImage: 'linear-gradient(to bottom, black 0%, black 70%, transparent 100%), linear-gradient(to right, black 0%, black 85%, transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 70%, transparent 100%), linear-gradient(to right, black 0%, black 85%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, black 0%, black 80%, transparent 100%), linear-gradient(to right, black 0%, black 85%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 80%, transparent 100%), linear-gradient(to right, black 0%, black 85%, transparent 100%)',
             maskComposite: 'intersect',
             WebkitMaskComposite: 'destination-in',
           }}
@@ -403,7 +403,7 @@ export default function AIPage() {
             <div
               key={tab.label}
               id={`demo-${tab.label.toLowerCase().replace(/\s+/g, '-')}`}
-              className="sticky top-[calc(var(--site-header-height,64px)+68px)] scroll-mt-[132px] h-[calc(100vh-var(--site-header-height,64px)-68px)] min-h-[calc(100vh-var(--site-header-height,64px)-68px)] relative flex flex-col pl-5 mb-[20vh]"
+              className="sticky top-[calc(var(--site-header-height,64px)+68px)] scroll-mt-[132px] h-[calc(100vh-var(--site-header-height,64px)-68px)] min-h-[calc(100vh-var(--site-header-height,64px)-68px)] relative flex flex-col pl-5"
               ref={(el) => { sectionRefs.current[i] = el }}
             >
               <div className="relative mx-auto flex h-full w-full flex-col pl-10 pt-10 pb-0">
