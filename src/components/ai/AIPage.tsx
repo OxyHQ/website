@@ -158,15 +158,6 @@ export default function AIPage() {
 
       const scrollY = window.scrollY
 
-      // Animate magnetic center lines — wider based on scroll speed/position
-      const lines = document.querySelectorAll('.magnetic-line')
-      lines.forEach((line) => {
-        const weight = parseFloat((line as HTMLElement).dataset.centerWeight || '0')
-        const pulse = Math.sin(scrollY * 0.01) * 0.5 + 0.5
-        const width = 3 + pulse * weight * 15
-        ;(line as HTMLElement).style.width = `${width}px`
-      })
-
       const sections = sectionRefs.current
 
       // Find current section based on scroll position
@@ -255,7 +246,7 @@ export default function AIPage() {
       </div>
 
       {/* ── 1. Hero — Split Layout ── */}
-      <div className="container relative z-10 mx-auto flex w-full flex-col overflow-clip lg:flex-row">
+      <div className="relative z-10 mx-auto flex w-full flex-col overflow-clip lg:flex-row">
 
         {/* Left sticky panel */}
         <div className="relative overflow-hidden lg:pointer-events-none lg:sticky lg:top-[var(--site-header-height,64px)] lg:z-40 lg:flex lg:px-0 lg:max-h-[calc(100vh-var(--site-header-height,64px))] lg:max-w-[32rem] mt-12 shrink-0 max-lg:snap-start lg:mt-0 lg:min-h-0 lg:border-r-[0.5px] lg:border-black/10">
@@ -345,32 +336,55 @@ export default function AIPage() {
             </svg>
           </div>
 
-          {/* 5 animated center lines — get wider on scroll */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-20" aria-hidden="true">
-            {[-2, -1, 0, 1, 2].map((offset) => {
-              const centerWeight = 1 - Math.abs(offset) / 3
-              return (
-                <div
-                  key={offset}
-                  className="magnetic-line absolute left-0 h-[0.5px] bg-white/40"
-                  data-center-weight={centerWeight}
-                  style={{
-                    top: `calc(50% + ${offset * 16}px)`,
-                    width: '3px',
-                    transition: 'width 0.2s ease-out',
-                  }}
-                />
-              )
-            })}
-          </div>
-
           {/* Right edge gradient fade */}
           <div className="pointer-events-none absolute inset-y-0 right-0 z-30 w-24 bg-gradient-to-l from-black/40 to-transparent" />
 
           {/* Bottom gradient fade */}
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-32 bg-gradient-to-t from-black/60 to-transparent" />
 
-          {/* All demo sections — content starts at ~40% from top, sticky to viewport top */}
+          {/* Sticky section header with dot/line — desktop */}
+          <div className="hidden lg:block sticky top-[var(--site-header-height,64px)] z-50">
+            <div className="absolute inset-0 left-5 bg-gradient-to-b from-[#4867AF] to-[#48649c]" style={{ opacity: 1 }} />
+            <div className="ml-5 w-[calc(100%-20px)] pt-8 relative">
+              <p className="text-sm pl-5 font-bold uppercase tracking-wide text-white/50 mix-blend-plus-lighter">
+                {`Budapest - 08:00 - ${aiDemoTabs[activeTab]?.label ?? 'Morning Briefing'}`}
+              </p>
+              {/* Gradient line with dot */}
+              <div
+                className="relative mt-4 h-[0.5px] w-full"
+                style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.5) 100%)' }}
+              >
+                {/* Dot */}
+                <div className="absolute -left-[4.5px] -top-[5px] z-50 flex items-center justify-center size-2.5 bg-white/5 rounded-full">
+                  <div className="size-1 rounded-full bg-white" />
+                </div>
+                {/* Connecting dash */}
+                <div className="absolute -left-[14px] -top-[5px] z-50 flex items-center justify-center h-2.5">
+                  <div className="h-[0.5px] w-4 bg-white" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sticky section header — mobile */}
+          <div className="ml-5 w-[calc(100%-20px)] pt-8 block lg:hidden sticky top-[var(--site-header-height,64px)] z-50 bg-transparent backdrop-blur-md">
+            <p className="text-sm pl-5 font-bold uppercase tracking-wide text-white/50 mix-blend-plus-lighter">
+              {`Budapest - 08:00 - ${aiDemoTabs[activeTab]?.label ?? 'Morning Briefing'}`}
+            </p>
+            <div
+              className="relative mt-4 h-[0.5px] w-full"
+              style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.5) 100%)' }}
+            >
+              <div className="absolute -left-[4.5px] -top-[5px] z-50 flex items-center justify-center size-2.5 bg-white/5 rounded-full">
+                <div className="size-1 rounded-full bg-white" />
+              </div>
+              <div className="absolute -left-[14px] -top-[5px] z-50 flex items-center justify-center h-2.5">
+                <div className="h-[0.5px] w-4 bg-white" />
+              </div>
+            </div>
+          </div>
+
+          {/* All demo sections */}
           {aiDemoTabs.map((tab, i) => (
             <div
               key={tab.label}
@@ -378,7 +392,7 @@ export default function AIPage() {
               className="sticky top-[var(--site-header-height,64px)] scroll-mt-[68px] h-[calc(100vh-var(--site-header-height,64px))] min-h-[calc(100vh-var(--site-header-height,64px))] relative flex flex-col pl-5 mb-[20vh]"
               ref={(el) => { sectionRefs.current[i] = el }}
             >
-              <div className="relative overflow-y-hidden mx-auto flex h-full w-full flex-col pl-10 pt-[20vh]">
+              <div className="relative overflow-y-hidden mx-auto flex h-full w-full flex-col pl-10 pt-10">
                 <div className="mb-7 flex flex-col gap-1.5">
                   <h3 className="heading-3xl font-geist text-4xl font-medium text-white">
                     {tab.label}
