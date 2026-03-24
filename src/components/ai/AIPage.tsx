@@ -15,6 +15,17 @@ const tabVideos: Record<number, string> = {
   6: '/ai/evening-briefing.mp4',
 }
 
+// Per-section background gradients (from, via, to)
+const sectionGradients: Record<number, [string, string, string]> = {
+  0: ['#4867AF', '#9CAFB8', '#C49577'], // Morning Briefing — blue/teal/warm
+  1: ['#3D5A8F', '#7A9BA8', '#B8926E'], // Catch Up — deeper blue
+  2: ['#5C4B8A', '#9B8FBB', '#C4A088'], // Action Plan — purple tint
+  3: ['#2D4A6F', '#6B8FA0', '#A08B70'], // Deep Work — deep navy
+  4: ['#4A6B8A', '#8BAAB8', '#C4A577'], // Inbox — steel blue
+  5: ['#3B5E7A', '#7FA0B0', '#B89870'], // Meeting Prep — muted blue
+  6: ['#2E3D5F', '#6A7D90', '#9B8565'], // Daily Recap — evening warm
+}
+
 /* ───────────────────────── Placeholder Mockup ───────────────────────── */
 
 
@@ -222,8 +233,13 @@ export default function AIPage() {
     <div className="text-foreground">
       {/* ── Fixed background layers (stay in place while content scrolls) ── */}
       <div className="fixed inset-0 z-[-1] pointer-events-none">
-        {/* Layer 1: Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#4867AF] via-[#9CAFB8] via-[62%] to-[#C49577]" />
+        {/* Layer 1: Gradient — transitions per active section */}
+        <div
+          className="absolute inset-0 transition-all duration-1000 ease-in-out"
+          style={{
+            background: `linear-gradient(to bottom, ${sectionGradients[activeTab]?.[0] ?? '#4867AF'}, ${sectionGradients[activeTab]?.[1] ?? '#9CAFB8'} 62%, ${sectionGradients[activeTab]?.[2] ?? '#C49577'})`,
+          }}
+        />
 
         {/* Layer 2: Shadow texture (darkens via color-burn) */}
         <div className="absolute inset-0" style={{ mixBlendMode: 'color-burn' }}>
@@ -392,7 +408,7 @@ export default function AIPage() {
               className="sticky top-[var(--site-header-height,64px)] scroll-mt-[68px] h-[calc(100vh-var(--site-header-height,64px))] min-h-[calc(100vh-var(--site-header-height,64px))] relative flex flex-col pl-5 mb-[20vh]"
               ref={(el) => { sectionRefs.current[i] = el }}
             >
-              <div className="relative overflow-y-hidden mx-auto flex h-full w-full flex-col pl-10 pt-10">
+              <div className="relative overflow-y-hidden mx-auto flex h-full w-full flex-col pl-10 pt-20">
                 <div className="mb-7 flex flex-col gap-1.5">
                   <h3 className="heading-3xl font-geist text-4xl font-medium text-white">
                     {tab.label}
