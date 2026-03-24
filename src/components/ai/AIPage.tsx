@@ -333,7 +333,7 @@ export default function AIPage() {
             <svg className="absolute top-0 z-10 h-full w-2 px-1.5 pt-1 box-content border-r border-white/10" aria-hidden="true">
               <defs>
                 <pattern id="hero-pattern" width="8" height="16" patternUnits="userSpaceOnUse">
-                  <path d="M0 0H16M0" className="stroke-white/50" fill="none" />
+                  <path d="M0 0H16" className="stroke-white/50" fill="none" />
                 </pattern>
               </defs>
               <rect width="100%" height="100%" fill="url(#hero-pattern)" />

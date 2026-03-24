@@ -27,6 +27,7 @@ export function usePage(slug: string) {
   return useQuery({
     queryKey: ['page', slug, locale],
     queryFn: () => apiFetch(`/pages/${slug}`, { locale }),
+    retry: false,
   })
 }
 
@@ -45,6 +46,7 @@ export function usePromptPhrases(slug: string, enabled = true) {
     queryFn: () => apiFetch<string[]>(`/pages/${slug}/prompt-phrases`, { locale }),
     placeholderData: [],
     enabled,
+    retry: false,
     staleTime: Infinity,
   })
 }
