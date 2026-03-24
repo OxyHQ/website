@@ -415,14 +415,14 @@ export default function AIPage() {
                     {tab.description}
                   </p>
                 </div>
-                <div className="flex-1 flex items-end overflow-hidden rounded-t-[19px]">
+                <div className="relative flex-1 overflow-hidden rounded-t-[19px]">
                   <video
                     autoPlay
                     loop
                     muted
                     playsInline
                     src={tabVideos[i]}
-                    className="w-full object-cover object-bottom rounded-t-[19px]"
+                    className="absolute bottom-0 left-0 w-full rounded-t-[19px]"
                   />
                 </div>
               </div>
