@@ -182,39 +182,23 @@ export default function AIPage() {
       // Update active tab
       setActiveTab(currentIdx)
 
-      // Apply fade/scale to sections
+      // Fade IN sections as they arrive — sections never fade OUT
+      // Current + all above: visible (opacity 1, no transform)
+      // Below current: hidden (opacity 0, translateY 50px), ready to fade in
       for (let i = 0; i < sections.length; i++) {
         const el = sections[i]
         if (!el) continue
 
-        if (i < currentIdx) {
-          el.style.opacity = '0'
-          el.style.transform = 'scale(0.95)'
-          el.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out'
-        } else if (i === currentIdx) {
-          const nextOffset = offsets[i + 1]
-          if (nextOffset !== undefined) {
-            const distToNext = nextOffset - scrollY
-            const fadeStart = window.innerHeight * 0.5
-            if (distToNext < fadeStart) {
-              const progress = 1 - distToNext / fadeStart
-              el.style.opacity = String(Math.max(0, 1 - progress))
-              el.style.transform = `scale(${1 - progress * 0.05})`
-              el.style.transition = 'none'
-            } else {
-              el.style.opacity = '1'
-              el.style.transform = 'scale(1)'
-              el.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out'
-            }
-          } else {
-            el.style.opacity = '1'
-            el.style.transform = 'scale(1)'
-            el.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out'
-          }
-        } else {
+        if (i <= currentIdx) {
+          // Visible — already scrolled to or currently active
           el.style.opacity = '1'
-          el.style.transform = 'scale(1)'
-          el.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out'
+          el.style.transform = 'none'
+          el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out'
+        } else {
+          // Below — hidden, will fade in when scrolled to
+          el.style.opacity = '0'
+          el.style.transform = 'translateY(50px)'
+          el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out'
         }
       }
     }
