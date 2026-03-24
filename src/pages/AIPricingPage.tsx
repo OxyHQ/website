@@ -113,21 +113,20 @@ export default function AIPricingPage() {
             {/* Pricing Cards */}
             <section className="mb-6 flex md:mt-12 md:mb-10 lg:mt-12 lg:mb-15">
               <div id="pricing-plans" className="flex flex-col gap-2 lg:flex-row w-full">
-                {/* Left sidebar (desktop only) */}
-                <div className="hidden lg:flex flex-1 flex-col pt-[148px] xl:pt-[162px] mt-1 pr-3">
-                  <div className="pb-6 text-2xl">Start building for free</div>
+                {/* Left sidebar (desktop only) — same flex-1 as each card column */}
+                <div className="hidden lg:flex flex-1 flex-col pt-[100px] xl:pt-[116px] mt-1 pr-3">
+                  <div className="pb-4 text-xl">Start building for free</div>
                   <div className="flex-1">
                     {sidebarLabels.map((label) => (
-                      <div key={label} className="flex items-center justify-between flex-none mt-2 pt-2 text-xl border-t border-muted-foreground/30">
-                        <div className="flex items-center gap-2 font-normal xl:text-xl text-lg text-pretty text-muted-foreground">{label}</div>
+                      <div key={label} className="flex items-center justify-between flex-none mt-1 pt-1 text-sm border-t border-muted-foreground/30">
+                        <div className="flex items-center gap-1 font-normal text-pretty text-muted-foreground">{label}</div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* All plan cards */}
-                <div className="flex flex-1 gap-2 overflow-x-auto lg:overflow-visible">
-                  {plans.map((plan, index) => {
+                {/* All plan cards — each card is flex-1, same as sidebar and table columns */}
+                {plans.map((plan, index) => {
                     const style = getCardStyle(index, plans.length, plan.isFeatured)
                     const price = billing === 'monthly' ? plan.monthlyPrice : Math.round(plan.annualPrice / 12)
                     const credits = plan.features.find((f) => f.category === 'Credits')?.items[0]?.label || plan.creditsLabel
@@ -181,7 +180,6 @@ export default function AIPricingPage() {
                       </div>
                     )
                   })}
-                </div>
               </div>
             </section>
           </div>
