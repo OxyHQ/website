@@ -182,20 +182,26 @@ export default function AIPage() {
       // Update active tab
       setActiveTab(currentIdx)
 
-      // Fade IN sections as they arrive — sections never fade OUT
-      // Current + all above: visible (opacity 1, no transform)
-      // Below current: hidden (opacity 0, translateY 50px), ready to fade in
+      // Three states:
+      // Past sections: fade out + slide up (gone)
+      // Current section: fully visible
+      // Future sections: hidden below (ready to fade in from bottom)
       for (let i = 0; i < sections.length; i++) {
         const el = sections[i]
         if (!el) continue
 
-        if (i <= currentIdx) {
-          // Visible — already scrolled to or currently active
+        if (i < currentIdx) {
+          // Past — fade out and slide up
+          el.style.opacity = '0'
+          el.style.transform = 'translateY(-30px)'
+          el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out'
+        } else if (i === currentIdx) {
+          // Current — fully visible
           el.style.opacity = '1'
           el.style.transform = 'none'
           el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out'
         } else {
-          // Below — hidden, will fade in when scrolled to
+          // Future — hidden, will fade in from below
           el.style.opacity = '0'
           el.style.transform = 'translateY(50px)'
           el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out'
