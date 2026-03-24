@@ -112,9 +112,9 @@ export default function AIPricingPage() {
 
             {/* Pricing Cards */}
             <section className="mb-6 flex md:mt-12 md:mb-10 lg:mt-12 lg:mb-15">
-              <div id="pricing-plans" className="flex flex-col gap-3 lg:flex-row w-full">
-                {/* Left sidebar (desktop only) — same flex-1 as each card column */}
-                <div className="hidden lg:flex flex-1 flex-col pt-[100px] xl:pt-[116px] mt-1 pr-3">
+              <div id="pricing-plans" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 w-full">
+                {/* Left sidebar (desktop only) — same column as table label */}
+                <div className="hidden lg:flex flex-col pt-[100px] xl:pt-[116px] mt-1 pr-3 col-span-1">
                   <div className="pb-4 text-xl">Start building for free</div>
                   <div className="flex-1">
                     {sidebarLabels.map((label) => (
