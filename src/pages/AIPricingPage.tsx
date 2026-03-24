@@ -112,7 +112,7 @@ export default function AIPricingPage() {
 
             {/* Pricing Cards */}
             <section className="mb-6 flex md:mt-12 md:mb-10 lg:mt-12 lg:mb-15">
-              <div id="pricing-plans" className="flex flex-col gap-2 lg:flex-row w-full">
+              <div id="pricing-plans" className="flex flex-col gap-3 lg:flex-row w-full">
                 {/* Left sidebar (desktop only) — same flex-1 as each card column */}
                 <div className="hidden lg:flex flex-1 flex-col pt-[100px] xl:pt-[116px] mt-1 pr-3">
                   <div className="pb-4 text-xl">Start building for free</div>
@@ -135,8 +135,7 @@ export default function AIPricingPage() {
                     const limits = plan.features.find((f) => f.category === 'Limits')
 
                     return (
-                      <div key={plan.id} className="flex flex-1 min-w-[160px]">
-                        <div className={`relative flex flex-1 flex-col rounded-2xl p-3 xl:p-4 ${style.bg}`}>
+                      <div key={plan.id} className={`relative flex flex-1 flex-col rounded-2xl p-3 xl:p-4 ${style.bg}`}>
                           <div className="size-4 flex items-center mb-2">
                             <div className={`${style.dot} size-3 rounded-full`} />
                           </div>
@@ -176,7 +175,6 @@ export default function AIPricingPage() {
                           >
                             {plan.isFree ? 'Get started' : plan.isFeatured ? `Get ${plan.name}` : 'Upgrade'}
                           </a>
-                        </div>
                       </div>
                     )
                   })}
