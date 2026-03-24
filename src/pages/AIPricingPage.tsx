@@ -29,8 +29,8 @@ export default function AIPricingPage() {
       <Navbar />
       <main>
         {/* Hero + Cards */}
-        <div className="overflow-x-hidden px-4 font-display sm:px-8">
-          <div className="mx-auto max-w-landing">
+        <div className="overflow-x-hidden">
+          <div className="container mx-auto">
             {/* Hero */}
             <section className="mt-24 mb-8 lg:mb-0">
               <h1 className="text-5xl xl:text-6xl text-balance">
@@ -40,13 +40,13 @@ export default function AIPricingPage() {
 
             {/* Pricing Cards */}
             <section className="mb-6 flex md:mt-12 md:mb-10 lg:mt-12 lg:mb-15">
-              <div id="pricing-plans" className="flex flex-col gap-2 lg:flex-row ">
+              <div id="pricing-plans" className="flex flex-col gap-2 lg:flex-row w-full">
                 {/* Left sidebar (desktop only) */}
                 <div className="hidden lg:flex flex-1 flex-col pt-[148px] xl:pt-[162px] mt-1 pr-3">
                   <div className="pb-6 text-2xl">Start building for free</div>
                   <div className="flex-1">
                     {sidebarLabels.map((label) => (
-                      <div key={label} className="flex items-center justify-between flex-none mt-2 pt-2 font-display text-xl border-t border-gray-500/30">
+                      <div key={label} className="flex items-center justify-between flex-none mt-2 pt-2 font-sans text-xl border-t border-gray-500/30">
                         <div className="flex items-center gap-2 font-normal xl:text-xl text-lg text-pretty text-gray-500">{label}</div>
                       </div>
                     ))}
@@ -60,18 +60,18 @@ export default function AIPricingPage() {
                     <div className="size-6 flex items-center mb-4">
                       <div className="bg-brand-green size-5 rounded-full" />
                     </div>
-                    <h2 className="font-display text-2xl font-normal normal-case">{plans[0].name}</h2>
-                    <p className="mb-6 font-display xl:text-xl text-lg opacity-50">{plans[0].tagline}</p>
-                    <div className="pb-6 font-display text-4xl font-normal">{plans[0].price}<span className="text-xl"> {plans[0].priceNote}</span></div>
+                    <h2 className="font-sans text-2xl font-normal normal-case">{plans[0].name}</h2>
+                    <p className="mb-6 font-sans xl:text-xl text-lg opacity-50">{plans[0].tagline}</p>
+                    <div className="pb-6 font-sans text-4xl font-normal">{plans[0].price}<span className="text-xl"> {plans[0].priceNote}</span></div>
                     <div className="flex-1">
                       {plans[0].features.map((f) => (
-                        <div key={f.label} className="flex items-center justify-between flex-none mt-2 pt-2 font-display text-xl border-t border-brand-green/20">
+                        <div key={f.label} className="flex items-center justify-between flex-none mt-2 pt-2 font-sans text-xl border-t border-brand-green/20">
                           <div className="flex items-center gap-2 font-normal xl:text-xl text-lg text-pretty leading-tight">{f.label}</div>
-                          {f.extra && <div className="font-display xl:text-xl text-lg text-brand-green">{f.extra}</div>}
+                          {f.extra && <div className="font-sans xl:text-xl text-lg text-brand-green">{f.extra}</div>}
                         </div>
                       ))}
                     </div>
-                    <a className="inline-flex flex-none items-center justify-center cursor-pointer font-medium px-4 py-2 mt-9 w-fit h-9 rounded-4xl hover:rounded-none transition-all duration-200 hover:bg-white bg-white font-display text-base xl:text-lg text-black" href={plans[0].ctaHref}>{plans[0].cta}</a>
+                    <a className="inline-flex flex-none items-center justify-center cursor-pointer font-medium px-4 py-2 mt-9 w-fit h-9 rounded-[2rem] hover:rounded-none transition-all duration-200 hover:bg-white bg-white font-sans text-base xl:text-lg text-black" href={plans[0].ctaHref}>{plans[0].cta}</a>
                   </div>
 
                   {/* Pro */}
@@ -80,18 +80,18 @@ export default function AIPricingPage() {
                       <div className="size-6 flex items-center mb-4">
                         <div className="bg-brand-pink size-5" />
                       </div>
-                      <h2 className="font-display text-2xl font-normal normal-case">{plans[1].name}</h2>
-                      <p className="mb-6 font-display xl:text-xl text-lg opacity-50">{plans[1].tagline}</p>
-                      <div className="pb-6 font-display text-4xl font-normal">{plans[1].price}<span className="text-xl"> {plans[1].priceNote}</span></div>
+                      <h2 className="font-sans text-2xl font-normal normal-case">{plans[1].name}</h2>
+                      <p className="mb-6 font-sans xl:text-xl text-lg opacity-50">{plans[1].tagline}</p>
+                      <div className="pb-6 font-sans text-4xl font-normal">{plans[1].price}<span className="text-xl"> {plans[1].priceNote}</span></div>
                       <div className="flex-1">
                         {plans[1].features.map((f) => (
-                          <div key={f.label} className="flex items-center justify-between flex-none mt-2 pt-2 font-display text-xl border-t border-brand-pink/20">
+                          <div key={f.label} className="flex items-center justify-between flex-none mt-2 pt-2 font-sans text-xl border-t border-brand-pink/20">
                             <div className="flex items-center gap-2 font-normal xl:text-xl text-lg text-pretty">{f.label}</div>
-                            {f.extra && <div className="font-display xl:text-xl text-lg text-brand-pink">{f.extra}</div>}
+                            {f.extra && <div className="font-sans xl:text-xl text-lg text-brand-pink">{f.extra}</div>}
                           </div>
                         ))}
                       </div>
-                      <a className="inline-flex flex-none items-center justify-center cursor-pointer font-medium px-4 py-2 mt-9 w-fit h-9 rounded-4xl bg-white hover:rounded-none transition-all duration-200 hover:bg-white font-display text-base xl:text-lg text-black" href={plans[1].ctaHref}>{plans[1].cta}</a>
+                      <a className="inline-flex flex-none items-center justify-center cursor-pointer font-medium px-4 py-2 mt-9 w-fit h-9 rounded-[2rem] bg-white hover:rounded-none transition-all duration-200 hover:bg-white font-sans text-base xl:text-lg text-black" href={plans[1].ctaHref}>{plans[1].cta}</a>
                     </div>
                   </div>
 
@@ -99,11 +99,11 @@ export default function AIPricingPage() {
                   <div className="flex flex-1">
                     <div className="relative flex flex-1 flex-col items-start rounded-2xl p-4 xl:p-8 bg-brand-blue text-white">
                       <StarIcon />
-                      <h2 className="font-display text-2xl font-normal normal-case">{plans[2].name}</h2>
-                      <p className="mb-6 font-display xl:text-xl text-lg opacity-50">{plans[2].tagline}</p>
-                      <div className="pb-6 font-display text-4xl font-normal">{plans[2].price}</div>
-                      <div className="flex-1 text-pretty font-display xl:text-xl text-lg leading-tight">{plans[2].description}</div>
-                      <a className="inline-flex flex-none items-center justify-center cursor-pointer font-medium px-4 py-2 mt-9 h-9 rounded-4xl bg-white hover:rounded-none transition-all duration-200 font-display text-base xl:text-lg text-black hover:bg-white" href={plans[2].ctaHref}>{plans[2].cta}</a>
+                      <h2 className="font-sans text-2xl font-normal normal-case">{plans[2].name}</h2>
+                      <p className="mb-6 font-sans xl:text-xl text-lg opacity-50">{plans[2].tagline}</p>
+                      <div className="pb-6 font-sans text-4xl font-normal">{plans[2].price}</div>
+                      <div className="flex-1 text-pretty font-sans xl:text-xl text-lg leading-tight">{plans[2].description}</div>
+                      <a className="inline-flex flex-none items-center justify-center cursor-pointer font-medium px-4 py-2 mt-9 h-9 rounded-[2rem] bg-white hover:rounded-none transition-all duration-200 font-sans text-base xl:text-lg text-black hover:bg-white" href={plans[2].ctaHref}>{plans[2].cta}</a>
                     </div>
                   </div>
                 </div>
@@ -111,13 +111,13 @@ export default function AIPricingPage() {
             </section>
 
             {/* Trusted by */}
-            <div className="mb-6 font-suisse text-xs tracking-wider uppercase text-gray-600">Trusted by the best AI teams</div>
+            <div className="mb-6 font-sans text-xs tracking-wider uppercase text-gray-600">Trusted by the best AI teams</div>
           </div>
         </div>
 
         {/* Comparison Table */}
-        <div className="overflow-x-clip bg-background px-4 font-display sm:px-8">
-          <div className="mx-auto flex max-w-landing flex-col gap-12">
+        <div className="overflow-x-clip bg-background">
+          <div className="container mx-auto flex flex-col gap-12">
             <div className="w-full text-lg">
               {/* Sticky header */}
               <div className="flex sticky top-14 gap-3 bg-background border-b border-border z-10">

@@ -99,8 +99,6 @@
   --color-brand-blue2: #60a5fa;
   --color-brand-concrete: #6b7280;
 
-  /* Landing max-width */
-  --container-landing: 80rem;
 }
 
 /*
@@ -159,12 +157,6 @@
   line-height: 1.2;
   letter-spacing: -0.04em;
 }
-
-/* AI Pricing utilities */
-.max-w-landing { max-width: 80rem; }
-.rounded-4xl { border-radius: 2rem; }
-.font-display { font-family: var(--font-sans); }
-.font-suisse { font-family: var(--font-sans); }
 
 /* Dashboard map utilities */
 .rsm-svg {
