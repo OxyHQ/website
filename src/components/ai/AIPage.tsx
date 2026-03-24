@@ -406,8 +406,8 @@ export default function AIPage() {
               className="sticky top-[calc(var(--site-header-height,64px)+68px)] scroll-mt-[132px] h-[calc(100vh-var(--site-header-height,64px)-68px)] min-h-[calc(100vh-var(--site-header-height,64px)-68px)] relative flex flex-col pl-5 mb-[20vh]"
               ref={(el) => { sectionRefs.current[i] = el }}
             >
-              <div className="relative overflow-y-hidden mx-auto flex h-full w-full flex-col pl-10 pt-10">
-                <div className="mb-7 flex flex-col gap-1.5">
+              <div className="relative mx-auto flex h-full w-full flex-col pl-10 pt-10 pb-0">
+                <div className="shrink-0 mb-10 flex flex-col gap-1.5">
                   <h3 className="heading-3xl font-geist text-4xl font-medium text-white">
                     {tab.label}
                   </h3>
@@ -415,14 +415,14 @@ export default function AIPage() {
                     {tab.description}
                   </p>
                 </div>
-                <div className="relative flex-1 overflow-hidden rounded-t-[19px]">
+                <div className="flex-1 min-h-0 overflow-hidden rounded-t-[19px]">
                   <video
                     autoPlay
                     loop
                     muted
                     playsInline
                     src={tabVideos[i]}
-                    className="absolute bottom-0 left-0 w-full rounded-t-[19px]"
+                    className="h-full w-full object-cover object-top rounded-t-[19px]"
                   />
                 </div>
               </div>
