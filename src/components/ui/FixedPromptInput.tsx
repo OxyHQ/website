@@ -1,8 +1,9 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 import { PromptInput } from '@oxyhq/bloom/prompt-input'
+import { usePromptPhrases } from '../../api/hooks'
 
-const PHRASES = [
+const DEFAULT_PHRASES = [
   'Ask Alia anything about Oxy',
   'What can Oxy do for my team?',
   'How does Oxy use AI?',
@@ -17,12 +18,21 @@ const TYPING_SPEED = 50
 const PAUSE_AFTER_TYPED = 2000
 const PAUSE_AFTER_ERASED = 400
 
-function useRotatingPlaceholder() {
+const HIDDEN_PREFIXES = ['/company', '/developers', '/settings', '/help', '/changelog', '/admin', '/dashboard', '/initiative']
+
+function slugFromPathname(pathname: string): string {
+  const stripped = pathname.replace(/^\/+|\/+$/g, '')
+  if (!stripped) return 'home'
+  return stripped.split('/')[0]
+}
+
+function useRotatingPlaceholder(phrases: string[]) {
   const [text, setText] = useState('')
   const [phraseIndex, setPhraseIndex] = useState(0)
 
   useEffect(() => {
-    const phrase = PHRASES[phraseIndex]
+    if (phrases.length === 0) return
+    const phrase = phrases[phraseIndex % phrases.length]
     let i = 0
     let erasing = false
     let timer: number
@@ -40,7 +50,7 @@ function useRotatingPlaceholder() {
         i--
         setText(phrase.slice(0, i))
         if (i <= 0) {
-          setPhraseIndex((prev) => (prev + 1) % PHRASES.length)
+          setPhraseIndex((prev) => (prev + 1) % phrases.length)
           return
         }
       }
@@ -49,7 +59,7 @@ function useRotatingPlaceholder() {
 
     timer = window.setTimeout(tick, PAUSE_AFTER_ERASED)
     return () => clearTimeout(timer)
-  }, [phraseIndex])
+  }, [phraseIndex, phrases])
 
   return text
 }
@@ -58,12 +68,18 @@ export default function FixedPromptInput() {
   const [value, setValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [hidden, setHidden] = useState(false)
-  const placeholder = useRotatingPlaceholder()
 
-  // Hide on certain paths
   const { pathname } = useLocation()
-  const HIDDEN_PREFIXES = ['/company', '/developers', '/settings', '/help', '/changelog', '/admin', '/dashboard']
   const hiddenByRoute = HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'))
+
+  const slug = slugFromPathname(pathname)
+  const { data: fetchedPhrases } = usePromptPhrases(slug, !hiddenByRoute)
+  const phrases = useMemo(
+    () => (fetchedPhrases && fetchedPhrases.length > 0 ? fetchedPhrases : DEFAULT_PHRASES),
+    [fetchedPhrases],
+  )
+
+  const placeholder = useRotatingPlaceholder(phrases)
 
   // Hide when footer is in view so we don't overlay it
   useEffect(() => {

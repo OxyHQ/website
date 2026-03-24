@@ -87,9 +87,11 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
 interface NavbarProps {
   /** Extra elements rendered before Sign in / Start for free on desktop, and before auth buttons on mobile */
   rightActions?: React.ReactNode
+  /** Make navbar fully transparent with no border */
+  transparent?: boolean
 }
 
-export default function Navbar({ rightActions }: NavbarProps = {}) {
+export default function Navbar({ rightActions, transparent }: NavbarProps = {}) {
   const { user, isAuthenticated, signIn, signOut } = useAuth()
   const { data: navigationData } = useNavigation()
   const dropdowns: NavDropdown[] = useMemo(() => navigationData ?? [], [navigationData])
@@ -276,7 +278,7 @@ export default function Navbar({ rightActions }: NavbarProps = {}) {
         </div>
       )}
 
-    <header className="sticky top-0 z-50 border-b border-border bg-background transition-colors duration-300">
+    <header className={`sticky top-0 z-50 transition-colors duration-300 ${transparent ? 'bg-transparent border-b border-transparent' : 'bg-background border-b border-border'}`}>
       <div className="absolute inset-0 -z-10 backdrop-blur-md" />
 
       {/* ─── Hidden measurement panels (off-screen, unstyled, for measuring natural size) ─── */}

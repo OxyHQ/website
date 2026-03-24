@@ -152,10 +152,10 @@ export const ManifestoSection: React.FC<ManifestoSectionProps> = ({ imagePaths =
         </div>
         <div className="pointer-events-none absolute inset-0 mx-auto flex h-screen w-full flex-col items-center justify-center">
           <h2 className="text-heading-xlarge font-regular text-center text-white mix-blend-difference">
-            Image by image.
+            The Oxy Initiative.
           </h2>
           <h2 className="text-heading-xlarge font-regular text-center text-white mix-blend-difference">
-            Day by day.
+            Building the future, together.
           </h2>
         </div>
       </div>
