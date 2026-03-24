@@ -327,12 +327,6 @@ export default function AIPage() {
         {/* Right content area — demo screens, fades to transparent at bottom */}
         <div
           className="relative z-10 grow bg-black/10"
-          style={{
-            maskImage: 'linear-gradient(to bottom, black 0%, black 80%, transparent 100%), linear-gradient(to right, black 0%, black 85%, transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 80%, transparent 100%), linear-gradient(to right, black 0%, black 85%, transparent 100%)',
-            maskComposite: 'intersect',
-            WebkitMaskComposite: 'destination-in',
-          }}
         >
           {/* SVG pattern border on left edge */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -441,16 +435,16 @@ export default function AIPage() {
             {/* Content */}
             <div className="relative z-20 flex flex-col items-center gap-6 w-full max-w-xs text-center sm:max-w-sm">
               <div className="flex flex-col gap-3">
-                <h5 className="scroll-reveal heading-md uppercase tracking-widest opacity-50 text-foreground">Get Started</h5>
-                <h2 className="scroll-reveal heading-3xl text-[40px] font-medium text-foreground sm:text-[50px] sm:leading-[56px]" style={{ transitionDelay: '100ms' }}>
+                <h5 className="scroll-reveal heading-md uppercase tracking-widest text-primary-foreground/50">Get Started</h5>
+                <h2 className="scroll-reveal heading-3xl text-[40px] font-medium text-primary-foreground sm:text-[50px] sm:leading-[56px]" style={{ transitionDelay: '100ms' }}>
                   Your smartest coworker starts today.
                 </h2>
-                <p className="scroll-reveal body-md px-4 text-[18px] leading-6 opacity-50 text-foreground" style={{ transitionDelay: '200ms' }}>
+                <p className="scroll-reveal body-md px-4 text-[18px] leading-6 text-primary-foreground/50" style={{ transitionDelay: '200ms' }}>
                   Connect your tools. Oxy AI starts working in under a minute.
                 </p>
               </div>
               <div className="scroll-reveal" style={{ transitionDelay: '300ms' }}>
-                <button className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-[18px] font-medium text-foreground transition hover:bg-secondary">
+                <button className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-[18px] font-medium text-primary-foreground transition hover:bg-secondary">
                   Get started today
                   <ArrowIcon className="mt-0.5 size-4" />
                 </button>
