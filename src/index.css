@@ -90,14 +90,6 @@
   /* Easing */
   --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* Brand colors (AI pricing page) */
-  --color-brand-forest: #1a4a3a;
-  --color-brand-green: #22c55e;
-  --color-brand-rose: #9f1239;
-  --color-brand-pink: #ec4899;
-  --color-brand-blue: #2563eb;
-  --color-brand-blue2: #60a5fa;
-  --color-brand-concrete: #6b7280;
 
 }
 
