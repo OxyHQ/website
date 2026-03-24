@@ -11,24 +11,10 @@ interface APIPlan {
   isFree: boolean; features: FeatureCategory[]; sortOrder: number
 }
 
-interface CardPlan {
-  name: string; tagline: string; price: string; priceNote?: string
-  features: Array<{ label: string; extra?: string }>
-  description?: string; cta: string; ctaHref: string
-}
-
 function formatPrice(cents: number) {
   if (cents === 0) return '$0'
   const d = cents / 100
   return `$${d % 1 === 0 ? d : d.toFixed(2)}`
-}
-
-function StarIcon() {
-  return (
-    <svg width="38" height="38" viewBox="0 0 38 38" fill="none" className="size-6 text-background/60 mb-4">
-      <path d="M21.542 4.61914C21.542 10.9992 26.6555 16.1726 32.9609 16.1729H38V20.666H32.9609C26.6556 20.6662 21.5421 25.8397 21.542 32.2197V38H16.4668V32.2197C16.4667 25.8396 11.3534 20.666 5.04785 20.666H0V16.1729H5.04785C11.3535 16.1729 16.4668 10.9994 16.4668 4.61933V0H21.542V4.61914Z" fill="currentColor" />
-    </svg>
-  )
 }
 
 function CellValue({ value }: { value: string }) {
@@ -43,75 +29,14 @@ function CellValue({ value }: { value: string }) {
   )
 }
 
-function buildCards(plans: APIPlan[], billing: 'monthly' | 'annual'): [CardPlan, CardPlan, CardPlan] {
-  const free = plans.find((p) => p.isFree) || plans[0]
-  const pro = plans.find((p) => p.isFeatured) || plans[2]
-  const top = plans[plans.length - 1]
-
-  const price = (p: APIPlan) => billing === 'monthly' ? p.monthlyPrice : Math.round(p.annualPrice / 12)
-
-  const creditsFeature = (p: APIPlan) => {
-    const c = p.features.find((f) => f.category === 'Credits')
-    return c?.items[0]?.label || p.creditsLabel
-  }
-  const modelsCount = (p: APIPlan) => {
-    const m = p.features.find((f) => f.category === 'Models')
-    return m ? `${m.items.length} AI models` : ''
-  }
-  const limitsFeature = (p: APIPlan) => {
-    const l = p.features.find((f) => f.category === 'Limits')
-    return l?.items[0]?.label || ''
-  }
-  const channelsCount = (p: APIPlan) => {
-    const ch = p.features.find((f) => f.category === 'Channels')
-    return ch ? `${ch.items.length} channels` : ''
-  }
-
-  return [
-    {
-      name: free.name,
-      tagline: 'For everyone',
-      price: formatPrice(price(free)),
-      priceNote: free.isFree ? undefined : '/ month',
-      features: [
-        { label: creditsFeature(free) },
-        { label: modelsCount(free) },
-        { label: channelsCount(free) },
-        { label: limitsFeature(free) },
-      ].filter((f) => f.label),
-      cta: 'Get started',
-      ctaHref: '/signup',
-    },
-    {
-      name: pro.name,
-      tagline: 'Most popular',
-      price: formatPrice(price(pro)),
-      priceNote: '/ month',
-      features: [
-        { label: creditsFeature(pro) },
-        { label: modelsCount(pro) },
-        { label: channelsCount(pro) },
-        { label: limitsFeature(pro) },
-      ].filter((f) => f.label),
-      cta: 'Get Pro',
-      ctaHref: '/signup?plan=pro',
-    },
-    {
-      name: top.name,
-      tagline: 'For power users',
-      price: formatPrice(price(top)),
-      priceNote: '/ month',
-      description: `${creditsFeature(top)}. ${modelsCount(top)}, ${channelsCount(top)}, and ${limitsFeature(top)}.`,
-      features: [],
-      cta: 'Get ' + top.name,
-      ctaHref: `/signup?plan=${top.id}`,
-    },
-  ]
+function getCardStyle(index: number, total: number, isFeatured: boolean) {
+  if (isFeatured) return { bg: 'bg-primary text-primary-foreground', dot: 'bg-primary-foreground', border: 'border-primary-foreground/20', accent: 'text-primary-foreground/70', cta: 'bg-primary-foreground text-primary' }
+  if (index === total - 1) return { bg: 'bg-foreground text-background', dot: 'bg-background/60', border: 'border-background/20', accent: 'text-background/70', cta: 'bg-background text-foreground' }
+  return { bg: 'bg-secondary text-secondary-foreground', dot: 'bg-primary', border: 'border-primary/20', accent: 'text-primary', cta: 'bg-primary text-primary-foreground hover:bg-primary/90' }
 }
 
 function buildComparison(plans: APIPlan[]) {
   const allCategories = [...new Map(plans.flatMap((p) => p.features).map((f) => [f.category, f])).values()]
-
   return allCategories.map((cat) => {
     const allItems = new Map<string, FeatureItem>()
     plans.forEach((plan) => {
@@ -119,35 +44,33 @@ function buildComparison(plans: APIPlan[]) {
         if (!allItems.has(item.label)) allItems.set(item.label, item)
       })
     })
-
-    const rows = [...allItems.values()].map((item) => ({
-      label: item.label,
-      values: plans.map((plan) => {
-        const has = plan.features.find((f) => f.category === cat.category)?.items.some((i) => i.label === item.label)
-        return has ? '✓' : '—'
-      }),
-    }))
-
-    return { title: cat.category, rows }
+    return {
+      title: cat.category,
+      rows: [...allItems.values()].map((item) => ({
+        label: item.label,
+        values: plans.map((plan) =>
+          plan.features.find((f) => f.category === cat.category)?.items.some((i) => i.label === item.label) ? '✓' : '—'
+        ),
+      })),
+    }
   })
 }
 
 export default function AIPricingPage() {
-  const [apiPlans, setApiPlans] = useState<APIPlan[]>([])
+  const [plans, setPlans] = useState<APIPlan[]>([])
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
 
   useEffect(() => {
     fetch('https://api.alia.onl/billing/plans?product=alia')
       .then((r) => r.json())
-      .then((data) => setApiPlans(data.plans?.sort((a: APIPlan, b: APIPlan) => a.sortOrder - b.sortOrder) || []))
+      .then((data) => setPlans(data.plans?.sort((a: APIPlan, b: APIPlan) => a.sortOrder - b.sortOrder) || []))
       .catch(() => {})
   }, [])
 
-  const cards = apiPlans.length >= 3 ? buildCards(apiPlans, billing) : null
-  const comparison = apiPlans.length > 0 ? buildComparison(apiPlans) : []
+  const comparison = plans.length > 0 ? buildComparison(plans) : []
   const sidebarLabels = ['Credits', 'Models', 'Channels', 'Limits']
 
-  if (!cards) return (
+  if (plans.length === 0) return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
       <div className="flex-1 flex items-center justify-center text-muted-foreground">Loading plans...</div>
@@ -202,59 +125,63 @@ export default function AIPricingPage() {
                   </div>
                 </div>
 
-                {/* Cards */}
-                <div className="flex flex-1 gap-2">
-                  {/* Card 1 — Starter */}
-                  <div className="relative flex flex-1 flex-col rounded-2xl p-4 xl:p-8 bg-secondary text-secondary-foreground">
-                    <div className="size-6 flex items-center mb-4">
-                      <div className="bg-primary size-5 rounded-full" />
-                    </div>
-                    <h2 className="text-2xl font-normal normal-case">{cards[0].name}</h2>
-                    <p className="mb-6 xl:text-xl text-lg opacity-50">{cards[0].tagline}</p>
-                    <div className="pb-6 text-4xl font-normal">{cards[0].price}{cards[0].priceNote && <span className="text-xl"> {cards[0].priceNote}</span>}</div>
-                    <div className="flex-1">
-                      {cards[0].features.map((f) => (
-                        <div key={f.label} className="flex items-center justify-between flex-none mt-2 pt-2 text-xl border-t border-primary/20">
-                          <div className="flex items-center gap-2 font-normal xl:text-xl text-lg text-pretty leading-tight">{f.label}</div>
-                          {f.extra && <div className="xl:text-xl text-lg text-primary">{f.extra}</div>}
-                        </div>
-                      ))}
-                    </div>
-                    <a className="inline-flex flex-none items-center justify-center cursor-pointer font-medium px-4 py-2 mt-9 w-fit h-9 rounded-[2rem] hover:rounded-none transition-all duration-200 bg-primary text-primary-foreground hover:bg-primary/90 text-base xl:text-lg" href={cards[0].ctaHref}>{cards[0].cta}</a>
-                  </div>
+                {/* All plan cards */}
+                <div className="flex flex-1 gap-2 overflow-x-auto lg:overflow-visible">
+                  {plans.map((plan, index) => {
+                    const style = getCardStyle(index, plans.length, plan.isFeatured)
+                    const price = billing === 'monthly' ? plan.monthlyPrice : Math.round(plan.annualPrice / 12)
+                    const credits = plan.features.find((f) => f.category === 'Credits')?.items[0]?.label || plan.creditsLabel
+                    const models = plan.features.find((f) => f.category === 'Models')
+                    const channels = plan.features.find((f) => f.category === 'Channels')
+                    const limits = plan.features.find((f) => f.category === 'Limits')
 
-                  {/* Card 2 — Pro */}
-                  <div className="flex flex-1">
-                    <div className="relative flex flex-1 flex-col rounded-2xl p-4 xl:p-8 bg-primary text-primary-foreground">
-                      <div className="size-6 flex items-center mb-4">
-                        <div className="bg-primary-foreground size-5 rounded-full" />
-                      </div>
-                      <h2 className="text-2xl font-normal normal-case">{cards[1].name}</h2>
-                      <p className="mb-6 xl:text-xl text-lg opacity-50">{cards[1].tagline}</p>
-                      <div className="pb-6 text-4xl font-normal">{cards[1].price}<span className="text-xl"> {cards[1].priceNote}</span></div>
-                      <div className="flex-1">
-                        {cards[1].features.map((f) => (
-                          <div key={f.label} className="flex items-center justify-between flex-none mt-2 pt-2 text-xl border-t border-primary-foreground/20">
-                            <div className="flex items-center gap-2 font-normal xl:text-xl text-lg text-pretty">{f.label}</div>
-                            {f.extra && <div className="xl:text-xl text-lg text-primary-foreground/70">{f.extra}</div>}
+                    return (
+                      <div key={plan.id} className="flex flex-1 min-w-[160px]">
+                        <div className={`relative flex flex-1 flex-col rounded-2xl p-4 xl:p-6 ${style.bg}`}>
+                          <div className="size-6 flex items-center mb-4">
+                            <div className={`${style.dot} size-5 rounded-full`} />
                           </div>
-                        ))}
+                          <h2 className="text-2xl font-normal normal-case">{plan.name}</h2>
+                          <p className="mb-6 xl:text-lg text-base opacity-50">
+                            {plan.isFree ? 'For everyone' : plan.isFeatured ? 'Most popular' : `${plan.creditsLabel}`}
+                          </p>
+                          <div className="pb-6 text-3xl xl:text-4xl font-normal">
+                            {plan.isFree ? 'Free' : formatPrice(price)}
+                            {!plan.isFree && <span className="text-lg xl:text-xl"> /mo</span>}
+                          </div>
+                          <div className="flex-1">
+                            {/* Feature summary rows */}
+                            {credits && (
+                              <div className={`flex items-center justify-between flex-none mt-2 pt-2 text-lg xl:text-xl border-t ${style.border}`}>
+                                <div className="flex items-center gap-2 font-normal text-pretty leading-tight">{credits}</div>
+                              </div>
+                            )}
+                            {models && (
+                              <div className={`flex items-center justify-between flex-none mt-2 pt-2 text-lg xl:text-xl border-t ${style.border}`}>
+                                <div className="flex items-center gap-2 font-normal text-pretty leading-tight">{models.items.length} AI models</div>
+                              </div>
+                            )}
+                            {channels && (
+                              <div className={`flex items-center justify-between flex-none mt-2 pt-2 text-lg xl:text-xl border-t ${style.border}`}>
+                                <div className="flex items-center gap-2 font-normal text-pretty leading-tight">{channels.items.length} channels</div>
+                              </div>
+                            )}
+                            {limits && (
+                              <div className={`flex items-center justify-between flex-none mt-2 pt-2 text-lg xl:text-xl border-t ${style.border}`}>
+                                <div className="flex items-center gap-2 font-normal text-pretty leading-tight">{limits.items[0]?.label}</div>
+                              </div>
+                            )}
+                          </div>
+                          <a
+                            className={`inline-flex flex-none items-center justify-center cursor-pointer font-medium px-4 py-2 mt-9 w-fit h-9 rounded-[2rem] hover:rounded-none transition-all duration-200 text-base xl:text-lg ${style.cta}`}
+                            href={plan.isFree ? '/signup' : `/signup?plan=${plan.id}`}
+                          >
+                            {plan.isFree ? 'Get started' : plan.isFeatured ? `Get ${plan.name}` : 'Upgrade'}
+                          </a>
+                        </div>
                       </div>
-                      <a className="inline-flex flex-none items-center justify-center cursor-pointer font-medium px-4 py-2 mt-9 w-fit h-9 rounded-[2rem] bg-primary-foreground hover:rounded-none transition-all duration-200 text-primary text-base xl:text-lg" href={cards[1].ctaHref}>{cards[1].cta}</a>
-                    </div>
-                  </div>
-
-                  {/* Card 3 — Top tier */}
-                  <div className="flex flex-1">
-                    <div className="relative flex flex-1 flex-col items-start rounded-2xl p-4 xl:p-8 bg-foreground text-background">
-                      <StarIcon />
-                      <h2 className="text-2xl font-normal normal-case">{cards[2].name}</h2>
-                      <p className="mb-6 xl:text-xl text-lg opacity-50">{cards[2].tagline}</p>
-                      <div className="pb-6 text-4xl font-normal">{cards[2].price}<span className="text-xl"> {cards[2].priceNote}</span></div>
-                      <div className="flex-1 text-pretty xl:text-xl text-lg leading-tight">{cards[2].description}</div>
-                      <a className="inline-flex flex-none items-center justify-center cursor-pointer font-medium px-4 py-2 mt-9 h-9 rounded-[2rem] bg-background hover:rounded-none transition-all duration-200 text-foreground text-base xl:text-lg" href={cards[2].ctaHref}>{cards[2].cta}</a>
-                    </div>
-                  </div>
+                    )
+                  })}
                 </div>
               </div>
             </section>
@@ -268,7 +195,7 @@ export default function AIPricingPage() {
               {/* Sticky header */}
               <div className="flex sticky top-14 gap-3 bg-background border-b border-border z-10">
                 <div className="flex-1 hidden md:block" />
-                {apiPlans.map((plan) => (
+                {plans.map((plan) => (
                   <div key={plan.id} className="flex-1 pt-2 pb-3 flex flex-col items-start gap-1">
                     <div className="font-semibold flex items-center gap-2">
                       <span className={`size-2.5 flex-none rounded-full ${plan.isFeatured ? 'bg-primary' : 'bg-muted-foreground'}`} />
@@ -280,7 +207,7 @@ export default function AIPricingPage() {
                       }`}
                       href={plan.isFree ? '/signup' : `/signup?plan=${plan.id}`}
                     >
-                      {plan.isFree ? 'Sign up' : plan.isFeatured ? 'Get Pro' : 'Upgrade'}
+                      {plan.isFree ? 'Sign up' : plan.isFeatured ? `Get ${plan.name}` : 'Upgrade'}
                     </a>
                   </div>
                 ))}
