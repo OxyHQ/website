@@ -157,6 +157,16 @@ export default function AIPage() {
       if (offsets.length === 0) cacheOffsets()
 
       const scrollY = window.scrollY
+
+      // Animate magnetic center lines — wider based on scroll speed/position
+      const lines = document.querySelectorAll('.magnetic-line')
+      lines.forEach((line) => {
+        const weight = parseFloat((line as HTMLElement).dataset.centerWeight || '0')
+        const pulse = Math.sin(scrollY * 0.01) * 0.5 + 0.5
+        const width = 3 + pulse * weight * 15
+        ;(line as HTMLElement).style.width = `${width}px`
+      })
+
       const sections = sectionRefs.current
 
       // Find current section based on scroll position
@@ -334,6 +344,31 @@ export default function AIPage() {
               <rect width="100%" height="100%" fill="url(#hero-pattern)" />
             </svg>
           </div>
+
+          {/* 5 animated center lines — get wider on scroll */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-20" aria-hidden="true">
+            {[-2, -1, 0, 1, 2].map((offset) => {
+              const centerWeight = 1 - Math.abs(offset) / 3
+              return (
+                <div
+                  key={offset}
+                  className="magnetic-line absolute left-0 h-[0.5px] bg-white/40"
+                  data-center-weight={centerWeight}
+                  style={{
+                    top: `calc(50% + ${offset * 16}px)`,
+                    width: '3px',
+                    transition: 'width 0.2s ease-out',
+                  }}
+                />
+              )
+            })}
+          </div>
+
+          {/* Right edge gradient fade */}
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-30 w-24 bg-gradient-to-l from-black/40 to-transparent" />
+
+          {/* Bottom gradient fade */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-32 bg-gradient-to-t from-black/60 to-transparent" />
 
           {/* All demo sections — content starts at ~40% from top, sticky to viewport top */}
           {aiDemoTabs.map((tab, i) => (
