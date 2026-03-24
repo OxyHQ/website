@@ -462,56 +462,45 @@ export default function AIPage() {
         </div>
       </div>
 
-      {/* ── 3. "Built for real work" — Horizontal Scroll Feature Cards ── */}
+      {/* ── 3. "Built for real work" — Section IS the scroll container ── */}
       <div
         ref={featuresRef}
         id="features"
-        className="font-geist pl-0 pt-12 sm:pt-14 md:pb-4 md:pl-14 lg:pb-14 flex flex-col md:flex-row pb-0"
+        className="font-geist pt-12 sm:pt-14 md:pb-4 lg:pb-14 pb-0 overflow-x-auto hide-scrollbar"
       >
-        {/* Left: heading + CTA */}
-        <div className="flex shrink-0 flex-col gap-2 py-8 pl-4 pr-20 text-black sm:pl-6 md:max-w-xs md:pl-0">
-          <h2 className="scroll-reveal text-5xl font-medium text-foreground">
-            Built for real work.
-          </h2>
-          <div className="scroll-reveal mt-6 md:mt-auto" style={{ transitionDelay: '100ms' }}>
-            <FrostButton className="w-fit gap-1.5 px-3 py-2 text-sm font-medium" href="#">
-              Get Started
-              <ArrowIcon className="mt-0.5 size-3" />
-            </FrostButton>
-          </div>
-        </div>
-
-        {/* Right: horizontal scroll cards */}
-        <div className="relative w-full min-w-0 flex-1">
-          <div className="overflow-x-auto overflow-y-hidden hide-scrollbar">
-            <div className="flex w-full items-center gap-4">
-              {aiFeatureCards.map((card, i) => (
-                <div
-                  key={card.title}
-                  className={`scroll-reveal relative shrink-0 overflow-hidden p-8 h-[520px] w-96 rounded-[32px] flex flex-col gap-1 ${i === 0 ? 'ml-4 sm:ml-6 md:ml-0' : ''}`}
-                  style={{ transitionDelay: `${i * 100}ms` }}
-                >
-                  {/* Shader/gradient background */}
-                  <div className={`pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-br ${card.gradient ?? 'from-foreground/5 to-foreground/10'}`} />
-
-                  {/* Content */}
-                  <p className="relative z-10 heading-3xl text-[32px] font-semibold text-white">{card.title}</p>
-                  <p className="relative z-10 heading-xl text-sm font-medium text-white opacity-50 mix-blend-plus-lighter">{card.subtitle}</p>
-
-                  {card.image && (
-                    <img
-                      alt={card.title}
-                      src={`/ai/${card.image}`}
-                      className="relative z-10 mt-auto h-auto max-h-[330px] w-full select-none object-contain"
-                    />
-                  )}
-                </div>
-              ))}
-
-              {/* Trailing spacer to match original */}
-              <div className="h-[520px] w-3 shrink-0" />
+        <div className="flex w-max items-start gap-4 pl-4 pr-8 sm:pl-6 md:pl-14">
+          {/* Left: heading + CTA (sticky on scroll) */}
+          <div className="flex shrink-0 flex-col gap-2 py-8 pr-10 md:max-w-xs md:sticky md:left-14">
+            <h2 className="scroll-reveal text-5xl font-medium text-foreground">
+              Built for real work.
+            </h2>
+            <div className="scroll-reveal mt-6" style={{ transitionDelay: '100ms' }}>
+              <FrostButton className="w-fit gap-1.5 px-3 py-2 text-sm font-medium" href="#">
+                Get Started
+                <ArrowIcon className="mt-0.5 size-3" />
+              </FrostButton>
             </div>
           </div>
+
+          {/* Cards */}
+          {aiFeatureCards.map((card, i) => (
+            <div
+              key={card.title}
+              className="scroll-reveal relative shrink-0 overflow-hidden p-8 h-[520px] w-96 rounded-[32px] flex flex-col gap-1"
+              style={{ transitionDelay: `${i * 100}ms` }}
+            >
+              <div className={`pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-br ${card.gradient ?? 'from-foreground/5 to-foreground/10'}`} />
+              <p className="relative z-10 heading-3xl text-[32px] font-semibold text-white">{card.title}</p>
+              <p className="relative z-10 heading-xl text-sm font-medium text-white opacity-50 mix-blend-plus-lighter">{card.subtitle}</p>
+              {card.image && (
+                <img
+                  alt={card.title}
+                  src={`/ai/${card.image}`}
+                  className="absolute bottom-0 left-0 z-10 h-auto max-h-[380px] w-full select-none object-contain"
+                />
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
