@@ -160,21 +160,54 @@ export default function AIPage() {
     return () => observer.disconnect()
   }, [])
 
+  // Fade out sections as next one scrolls over them
+  useEffect(() => {
+    function handleScroll() {
+      const sections = sectionRefs.current
+      for (let i = 0; i < sections.length; i++) {
+        const el = sections[i]
+        if (!el) continue
+        const rect = el.getBoundingClientRect()
+        const vh = window.innerHeight
+
+        // Section is above viewport — fully faded
+        if (rect.bottom < vh * 0.3) {
+          el.style.opacity = '0'
+          el.style.transition = 'opacity 0.3s ease-out'
+        }
+        // Section is partially scrolled out — fade proportionally
+        else if (rect.top < 0) {
+          const progress = Math.abs(rect.top) / rect.height
+          el.style.opacity = String(Math.max(0, 1 - progress * 1.5))
+          el.style.transition = 'opacity 0.1s ease-out'
+        }
+        // Section is visible — full opacity
+        else {
+          el.style.opacity = '1'
+          el.style.transition = 'opacity 0.3s ease-out'
+        }
+      }
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
     <div className="text-foreground">
-      {/* ── 1. Hero — Split Layout ── */}
-      <div className="container relative z-0 mx-auto flex w-full flex-col overflow-clip lg:flex-row">
+      {/* ── Fixed background layers (stay in place while content scrolls) ── */}
+      <div className="fixed inset-0 z-[-1] pointer-events-none">
         {/* Layer 1: Gradient */}
-        <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-[#4867AF] via-[#9CAFB8] via-[62%] to-[#C49577]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#4867AF] via-[#9CAFB8] via-[62%] to-[#C49577]" />
 
         {/* Layer 2: Shadow texture (darkens via color-burn) */}
-        <div className="pointer-events-none absolute inset-0 z-[1]" style={{ mixBlendMode: 'color-burn' }}>
+        <div className="absolute inset-0" style={{ mixBlendMode: 'color-burn' }}>
           <img src="/ai/shadow-bg.png" alt="" className="h-full w-full object-cover" />
         </div>
 
         {/* Layer 3: CSS glow effect (fades in on scroll) */}
         <div
-          className="pointer-events-none absolute h-screen w-[12rem] rounded-full right-[40rem] top-0 rotate-45 opacity-0 transition-opacity duration-300 ease-in-out z-[2]"
+          className="absolute h-screen w-[12rem] rounded-full right-[40rem] top-0 rotate-45 opacity-0 transition-opacity duration-300 ease-in-out"
           id="glow-effect"
           style={{
             background: 'rgb(255, 255, 255)',
@@ -185,6 +218,10 @@ export default function AIPage() {
 
         {/* Layer 4: Animated line grid */}
         <AnimatedLineGrid />
+      </div>
+
+      {/* ── 1. Hero — Split Layout ── */}
+      <div className="container relative z-10 mx-auto flex w-full flex-col overflow-clip lg:flex-row">
 
         {/* Left sticky panel */}
         <div className="relative overflow-hidden lg:pointer-events-none lg:sticky lg:inset-0 lg:z-40 lg:flex lg:px-0 lg:max-h-screen lg:max-w-[32rem] mt-12 shrink-0 max-lg:snap-start lg:mt-0 lg:min-h-0 lg:border-r-[0.5px] lg:border-black/10">
@@ -273,15 +310,15 @@ export default function AIPage() {
             <div className="fixed top-0 z-50 h-20 w-5 bg-gradient-to-b from-[#4867AF] to-[#4867AF]/0" style={{ left: '512px', opacity: 1 }} />
           </div>
 
-          {/* All demo sections */}
+          {/* All demo sections — content starts at ~40% from top, sticky to viewport top */}
           {aiDemoTabs.map((tab, i) => (
             <div
               key={tab.label}
               id={`demo-${tab.label.toLowerCase().replace(/\s+/g, '-')}`}
-              className="snap-start scroll-mt-[68px] h-screen min-h-screen relative flex flex-col pl-5"
+              className="sticky top-0 scroll-mt-[68px] h-screen min-h-screen relative flex flex-col pl-5 mb-[20vh]"
               ref={(el) => { sectionRefs.current[i] = el }}
             >
-              <div className="relative overflow-y-hidden mx-auto flex h-full w-full flex-col pl-10 pt-10">
+              <div className="relative overflow-y-hidden mx-auto flex h-full w-full flex-col pl-10 pt-[20vh]">
                 <div className="mb-7 flex flex-col gap-1.5">
                   <h3 className="heading-3xl font-geist text-4xl font-medium text-white">
                     {tab.label}
