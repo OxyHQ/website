@@ -324,12 +324,16 @@ export default function AIPage() {
           </div>
         </div>
 
-        {/* Right content area — demo screens */}
+        {/* Right content area — demo screens, fades to transparent at bottom */}
         <div
           className="relative z-10 grow bg-black/10"
+          style={{
+            maskImage: 'linear-gradient(to bottom, black 0%, black 70%, transparent 100%), linear-gradient(to right, black 0%, black 85%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 70%, transparent 100%), linear-gradient(to right, black 0%, black 85%, transparent 100%)',
+            maskComposite: 'intersect',
+            WebkitMaskComposite: 'destination-in',
+          }}
         >
-          {/* Right edge gradient fade mask */}
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-30 w-24 bg-gradient-to-l from-black/40 to-transparent" />
           {/* SVG pattern border on left edge */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
             <svg className="absolute top-0 z-10 h-full w-2 px-1.5 pt-1 box-content border-r border-white/10" aria-hidden="true">
@@ -345,8 +349,6 @@ export default function AIPage() {
           {/* Right edge gradient fade */}
           <div className="pointer-events-none absolute inset-y-0 right-0 z-30 w-24 bg-gradient-to-l from-black/40 to-transparent" />
 
-          {/* Bottom gradient fade */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-32 bg-gradient-to-t from-black/60 to-transparent" />
 
           {/* Sticky section header with dot/line — desktop */}
           <div className="hidden lg:block sticky top-[var(--site-header-height,64px)] z-50">
@@ -413,14 +415,14 @@ export default function AIPage() {
                     {tab.description}
                   </p>
                 </div>
-                <div className="flex-1 overflow-hidden rounded-t-[19px]">
+                <div className="flex-1 flex items-end overflow-hidden rounded-t-[19px]">
                   <video
                     autoPlay
                     loop
                     muted
                     playsInline
                     src={tabVideos[i]}
-                    className="h-full w-full object-cover rounded-t-[19px]"
+                    className="w-full object-cover object-bottom rounded-t-[19px]"
                   />
                 </div>
               </div>
