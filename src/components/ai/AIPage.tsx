@@ -432,28 +432,41 @@ export default function AIPage() {
       </div>
 
       {/* ── 2. "Your smartest coworker starts today" CTA ── */}
-      <section ref={ctaRef} className="container flex flex-col items-center px-6 py-16 text-center md:py-28">
-        <h5 className="scroll-reveal heading-md uppercase tracking-widest opacity-50 text-foreground">Get Started</h5>
-        <h2 className="scroll-reveal heading-3xl mt-3 text-[40px] font-medium text-foreground sm:text-[50px] sm:leading-[56px]" style={{ transitionDelay: '100ms' }}>
-          Your smartest coworker starts today.
-        </h2>
-        <p className="scroll-reveal body-md mt-3 text-[18px] leading-6 opacity-50 text-foreground" style={{ transitionDelay: '200ms' }}>
-          Connect your tools. Oxy AI starts working in under a minute.
-        </p>
-        <div className="scroll-reveal mt-6" style={{ transitionDelay: '300ms' }}>
-          <FrostButton className="text-[18px] gap-1.5 px-4 py-2" href="#">
-            Get started today
-            <ArrowIcon className="mt-0.5 size-4" />
-          </FrostButton>
-        </div>
-        {/* CTA background images */}
-        <div className="scroll-reveal relative mt-8 w-full" style={{ transitionDelay: '400ms' }}>
-          <div className="relative hidden w-full select-none overflow-hidden md:block md:aspect-[2772/962]">
-            <img alt="CTA Background" src="/ai/cta-desktop-bg.png" className="w-full h-auto object-cover object-bottom" />
+      <div ref={ctaRef} className="relative z-10 snap-start rounded-t-[40px] bg-white divide-y divide-black/10">
+        <div className="relative h-full w-full p-3 sm:p-5 md:p-7">
+          <div className="relative overflow-hidden w-full rounded-t-[24px] flex flex-col items-center justify-center gap-4 px-4 pt-12">
+            {/* Shader bg placeholder — subtle gradient */}
+            <div className="pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-b from-gray-50 to-white" />
+
+            {/* Content */}
+            <div className="relative z-20 flex flex-col items-center gap-6 w-full max-w-xs text-center sm:max-w-sm">
+              <div className="flex flex-col gap-3">
+                <h5 className="scroll-reveal heading-md uppercase tracking-widest opacity-50 text-black">Get Started</h5>
+                <h2 className="scroll-reveal heading-3xl text-[40px] font-medium text-black sm:text-[50px] sm:leading-[56px]" style={{ transitionDelay: '100ms' }}>
+                  Your smartest coworker starts today.
+                </h2>
+                <p className="scroll-reveal body-md px-4 text-[18px] leading-6 opacity-50 text-black" style={{ transitionDelay: '200ms' }}>
+                  Connect your tools. Oxy AI starts working in under a minute.
+                </p>
+              </div>
+              <div className="scroll-reveal" style={{ transitionDelay: '300ms' }}>
+                <button className="inline-flex items-center gap-1.5 rounded-full border border-black/20 bg-white px-4 py-2 text-[18px] font-medium text-black transition hover:bg-gray-100">
+                  Get started today
+                  <ArrowIcon className="mt-0.5 size-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* CTA background images */}
+            <div className="scroll-reveal relative z-10 mt-2 w-full md:-mt-12" style={{ transitionDelay: '400ms' }}>
+              <div className="relative hidden w-full select-none overflow-hidden md:block md:aspect-[2772/962]">
+                <img alt="CTA Background" src="/ai/cta-desktop-bg.png" className="absolute inset-0 h-full w-full object-cover object-bottom" />
+              </div>
+              <img alt="CTA Background" src="/ai/cta-mobile-bg.png" className="mx-auto w-[50vh] max-w-[80vw] select-none md:hidden" />
+            </div>
           </div>
-          <img alt="CTA Background" src="/ai/cta-mobile-bg.png" className="mx-auto w-[50vh] max-w-[80vw] select-none md:hidden" />
         </div>
-      </section>
+      </div>
 
       {/* ── 3. "Built for real work" — Horizontal Scroll Feature Cards ── */}
       <div
