@@ -466,11 +466,11 @@ export default function AIPage() {
       <div
         ref={featuresRef}
         id="features"
-        className="font-geist pt-12 sm:pt-14 md:pb-4 lg:pb-14 pb-0 overflow-x-auto hide-scrollbar"
+        className="font-geist pt-12 sm:pt-14 md:pb-4 lg:pb-14 pb-0 md:overflow-x-auto hide-scrollbar"
       >
-        <div className="flex w-max items-start gap-4 pl-4 pr-8 sm:pl-6 md:pl-14">
-          {/* Left: heading + CTA (sticky on scroll) */}
-          <div className="flex shrink-0 flex-col gap-2 py-8 pr-10 md:max-w-xs md:sticky md:left-14">
+        <div className="flex flex-col gap-4 px-4 sm:px-6 md:flex-row md:w-max md:items-start md:px-0 md:pl-14 md:pr-8">
+          {/* Left: heading + CTA (scrolls with cards) */}
+          <div className="flex shrink-0 flex-col gap-2 py-8 pr-10 w-72 sm:w-80 md:w-[280px]">
             <h2 className="scroll-reveal text-5xl font-medium text-foreground">
               Built for real work.
             </h2>
@@ -486,7 +486,7 @@ export default function AIPage() {
           {aiFeatureCards.map((card, i) => (
             <div
               key={card.title}
-              className="scroll-reveal relative shrink-0 overflow-hidden p-8 h-[520px] w-96 rounded-[32px] flex flex-col gap-1"
+              className="scroll-reveal relative overflow-hidden p-8 h-[400px] md:h-[520px] w-full md:w-96 md:shrink-0 rounded-[32px] flex flex-col gap-1"
               style={{ transitionDelay: `${i * 100}ms` }}
             >
               <div className={`pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-br ${card.gradient ?? 'from-foreground/5 to-foreground/10'}`} />
