@@ -411,10 +411,10 @@ export default function AIPage() {
             <div
               key={tab.label}
               id={`demo-${tab.label.toLowerCase().replace(/\s+/g, '-')}`}
-              className="sticky top-[var(--site-header-height,64px)] scroll-mt-[68px] h-[calc(100vh-var(--site-header-height,64px))] min-h-[calc(100vh-var(--site-header-height,64px))] relative flex flex-col pl-5 mb-[20vh]"
+              className="sticky top-[calc(var(--site-header-height,64px)+68px)] scroll-mt-[132px] h-[calc(100vh-var(--site-header-height,64px)-68px)] min-h-[calc(100vh-var(--site-header-height,64px)-68px)] relative flex flex-col pl-5 mb-[20vh]"
               ref={(el) => { sectionRefs.current[i] = el }}
             >
-              <div className="relative overflow-y-hidden mx-auto flex h-full w-full flex-col pl-10 pt-20">
+              <div className="relative overflow-y-hidden mx-auto flex h-full w-full flex-col pl-10 pt-10">
                 <div className="mb-7 flex flex-col gap-1.5">
                   <h3 className="heading-3xl font-geist text-4xl font-medium text-white">
                     {tab.label}
