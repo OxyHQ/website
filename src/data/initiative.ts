@@ -1,18 +1,22 @@
 export const imagePaths = [
-  'https://cdn.cosmos.so/a2e11417-13f0-4c08-b632-fedb2824ca32?format=jpeg',
-  'https://cdn.cosmos.so/2f1942b7-70e4-4ec7-b852-269b46942ac8?format=jpeg',
-  'https://cdn.cosmos.so/a986b1fd-9f4d-438b-844c-c254968f3359?format=jpeg',
-  'https://cdn.cosmos.so/e7ece2bd-6e95-40ef-b415-27103ab860f0?format=jpeg',
-  'https://cdn.cosmos.so/f9786598-347f-488d-b97a-1090e998774d?format=jpeg',
-  'https://cdn.cosmos.so/b77a3354-bf13-4377-af21-4e1b715d0791?format=jpeg',
-  'https://cdn.cosmos.so/50521f29-de89-4253-881e-f939a5ddb421?format=jpeg',
-  'https://cdn.cosmos.so/a1025a65-b0e5-4d56-949f-0650e592ef0b?format=jpeg',
-  'https://cdn.cosmos.so/4e3633d4-e365-47b6-aa6c-12e5239a5678?format=jpeg',
-  'https://cdn.cosmos.so/b77c2101-dfa4-4e7a-920b-8e7b2d1935b4?format=jpeg',
-  'https://cdn.cosmos.so/6500bce2-3f3e-4e40-8480-72ebc382e53b?format=jpeg',
-  'https://cdn.cosmos.so/8d0e96e5-62e9-414d-a0cc-1c387b7c17b7?format=jpeg',
-  'https://cdn.cosmos.so/c5c2f6c7-3af7-4c04-975e-649a6d60282e?format=jpeg',
-  'https://cdn.cosmos.so/9ab0da5d-94d7-4835-b853-1ccb04c762b4?format=jpeg',
-  'https://cdn.cosmos.so/1773832d-1b0a-47b3-a603-78c33bf5e35e?format=jpeg',
-  'https://cdn.cosmos.so/d7ca4f38-fb21-4bd8-9cdc-2010e80b6cc6?format=jpeg',
+  // People helping & volunteering
+  'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400&q=80', // volunteers hands together
+  'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=400&q=80', // community volunteering
+  'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=400&q=80', // charity donation boxes
+  'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&q=80', // helping children
+  // People happy & together
+  'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=80', // group of friends laughing
+  'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=400&q=80', // diverse team celebrating
+  'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400&q=80', // people holding hands
+  'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&q=80', // happy family outdoors
+  // Construction & building
+  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&q=80', // construction workers building
+  'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=400&q=80', // construction site crane
+  'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=400&q=80', // architectural blueprint hands
+  'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&q=80', // modern building looking up
+  // Education & learning
+  'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&q=80', // books and apple
+  'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&q=80', // children in classroom
+  'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400&q=80', // teacher with students
+  'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=400&q=80', // graduates throwing caps
 ];
