@@ -360,7 +360,13 @@ export default function AIPage() {
 
           {/* Sticky section header with dot/line — desktop */}
           <div className="hidden lg:block sticky top-[var(--site-header-height,64px)] z-50">
-            <div className="absolute inset-0 left-5 bg-gradient-to-b from-[#4867AF] to-[#48649c]" style={{ opacity: 1 }} />
+            <div
+              className="absolute inset-0 left-5 transition-all duration-1000 ease-in-out"
+              style={{
+                background: `linear-gradient(to bottom, ${sectionGradients[activeTab]?.[0] ?? '#4867AF'}, ${sectionGradients[activeTab]?.[1] ?? '#48649c'})`,
+                opacity: 1,
+              }}
+            />
             <div className="ml-5 w-[calc(100%-20px)] pt-8 relative">
               <p className="text-sm pl-5 font-bold uppercase tracking-wide text-white/50 mix-blend-plus-lighter">
                 {`Budapest - 08:00 - ${aiDemoTabs[activeTab]?.label ?? 'Morning Briefing'}`}
