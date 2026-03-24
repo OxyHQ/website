@@ -160,37 +160,82 @@ export default function AIPage() {
     return () => observer.disconnect()
   }, [])
 
-  // Fade out sections as next one scrolls over them
+  // Fade out sections behind the active one
+  // Since sections are sticky, we compare their offsetTop to scrollY
+  // to determine which is "on top" and fade the rest
   useEffect(() => {
+    // Cache the original offsetTop of each section
+    const offsets: number[] = []
+
+    function cacheOffsets() {
+      sectionRefs.current.forEach((el, i) => {
+        if (el) offsets[i] = el.offsetTop
+      })
+    }
+
     function handleScroll() {
+      if (offsets.length === 0) cacheOffsets()
+
+      const scrollY = window.scrollY
       const sections = sectionRefs.current
+
+      // Find which section is currently "active" (most recently scrolled past)
+      let currentIdx = 0
+      for (let i = 0; i < offsets.length; i++) {
+        if (offsets[i] !== undefined && scrollY >= offsets[i] - 200) {
+          currentIdx = i
+        }
+      }
+
       for (let i = 0; i < sections.length; i++) {
         const el = sections[i]
         if (!el) continue
-        const rect = el.getBoundingClientRect()
-        const vh = window.innerHeight
 
-        // Section is above viewport — fully faded
-        if (rect.bottom < vh * 0.3) {
+        if (i < currentIdx) {
+          // Behind the current section — fade out
           el.style.opacity = '0'
-          el.style.transition = 'opacity 0.3s ease-out'
-        }
-        // Section is partially scrolled out — fade proportionally
-        else if (rect.top < 0) {
-          const progress = Math.abs(rect.top) / rect.height
-          el.style.opacity = String(Math.max(0, 1 - progress * 1.5))
-          el.style.transition = 'opacity 0.1s ease-out'
-        }
-        // Section is visible — full opacity
-        else {
+          el.style.transform = 'scale(0.95)'
+          el.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out'
+        } else if (i === currentIdx) {
+          // Current section — fully visible
+          // Calculate partial fade as next section approaches
+          const nextOffset = offsets[i + 1]
+          if (nextOffset !== undefined) {
+            const distToNext = nextOffset - scrollY
+            const fadeStart = window.innerHeight * 0.5
+            if (distToNext < fadeStart) {
+              const progress = 1 - distToNext / fadeStart
+              el.style.opacity = String(Math.max(0, 1 - progress))
+              el.style.transform = `scale(${1 - progress * 0.05})`
+              el.style.transition = 'none'
+            } else {
+              el.style.opacity = '1'
+              el.style.transform = 'scale(1)'
+              el.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out'
+            }
+          } else {
+            el.style.opacity = '1'
+            el.style.transform = 'scale(1)'
+            el.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out'
+          }
+        } else {
+          // Below current — fully visible (hasn't been reached yet)
           el.style.opacity = '1'
-          el.style.transition = 'opacity 0.3s ease-out'
+          el.style.transform = 'scale(1)'
+          el.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out'
         }
       }
     }
+
+    // Cache offsets after layout
+    requestAnimationFrame(cacheOffsets)
     window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', cacheOffsets)
     handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', cacheOffsets)
+    }
   }, [])
 
   return (
