@@ -24,7 +24,7 @@ const featureCards = [
 
 const logoPartners = ['Openbox', 'Pipewire', 'systemd', 'GRUB', 'Mesa', 'Linux', 'GTK', 'X11']
 
-const newFeatures = [
+const newFeatures: Array<{ title: string; description: string; link?: { label: string; href: string } }> = [
   {
     title: 'Trixie base',
     description: 'Built on the latest stable foundation with modern packages and long-term security support.',
@@ -63,7 +63,7 @@ const testimonials = [
   { quote: 'The new shelf panel feels like ChromeOS but lighter. Love the quick settings.', author: 'Priya K.', role: 'UX Designer' },
 ]
 
-const faqItems = [
+const faqItems: Array<{ question: string; answer: string; code?: string; answerEnd?: string; link?: { label: string; href: string } }> = [
   {
     question: 'What are the login credentials for the live image?',
     answer: "The username and password are both 'live' without the quotes.",
