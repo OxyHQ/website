@@ -77,9 +77,9 @@ function LocaleLayout() {
 function PublicRoutes() {
   return (
     <>
-      <Route index element={<AskPage />} />
-      <Route path="landing2" element={<Landing2 />} />
-      <Route path="landing3" element={<Landing3 />} />
+      <Route index element={<Landing3 />} />
+      {/* <Route path="landing2" element={<Landing2 />} /> */}
+      {/* <Route path="landing3" element={<AskPage />} /> */}
       <Route path="partners" element={<PartnersPage />} />
       <Route path="company/careers" element={<CareersPage />} />
       <Route path="company/careers/:slug" element={<CareerDetailPage />} />
