@@ -466,10 +466,16 @@ const TEAM_TABS = [
   },
 ]
 
-function TypewriterText({ texts }: { texts: string[] }) {
+function TypewriterText({ texts, resetKey }: { texts: string[]; resetKey: number }) {
   const [textIdx, setTextIdx] = useState(0)
   const [charIdx, setCharIdx] = useState(0)
   const [deleting, setDeleting] = useState(false)
+
+  useEffect(() => {
+    setTextIdx(0)
+    setCharIdx(0)
+    setDeleting(false)
+  }, [resetKey])
 
   useEffect(() => {
     const text = texts[textIdx]
@@ -492,58 +498,70 @@ function TypewriterText({ texts }: { texts: string[] }) {
   }, [charIdx, deleting, textIdx, texts])
 
   return (
-    <span className="text-white">
+    <span className="typewrap">
       {texts[textIdx].slice(0, charIdx)}
-      <span className="animate-pulse">|</span>
     </span>
   )
 }
 
 function TeamsSection() {
-  const [active, setActive] = useState(0)
-  const tab = TEAM_TABS[active]
+  const [activeId, setActiveId] = useState(TEAM_TABS[0].id)
+  const [resetKey, setResetKey] = useState(0)
+  const tab = TEAM_TABS.find((t) => t.id === activeId) ?? TEAM_TABS[0]
+
+  const handleTabClick = useCallback((id: string) => {
+    setActiveId(id)
+    setResetKey((k) => k + 1)
+  }, [])
 
   return (
-    <section className="py-20">
-      <div className="mx-auto grid max-w-6xl gap-12 px-8 md:grid-cols-2">
-        {/* Left - Video/Image with prompt */}
-        <div className="relative overflow-hidden rounded-2xl bg-black">
-          <img
-            src={tab.thumb}
-            alt={tab.label}
-            className="w-full"
-          />
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-6 pt-16">
-            <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
-              <TypewriterText texts={tab.prompts} />
-            </div>
+    <section className="reduced-padding">
+      <div className="columns side-by-side-tabs">
+        <div className="gc gc-6">
+          <div className="tabs tabs-fade">
+            {TEAM_TABS.map((t) => (
+              <div key={t.id} className={`tab${t.id === activeId ? ' active' : ''}`} data-tab={t.id}>
+                <div className="media-with-prompt">
+                  <div className="media rounded-l" style={{ aspectRatio: '181 / 145' }}>
+                    <img src={t.thumb} alt={t.label} />
+                  </div>
+                  <div className="prompt-overlay">
+                    <div className="prompt-box-bg" />
+                    <div className="prompt-box-blur" />
+                    <div className="typewrite white">
+                      {t.id === activeId && <TypewriterText texts={t.prompts} resetKey={resetKey} />}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-
-        {/* Right - Tabs */}
-        <div className="flex flex-col justify-between">
-          <div>
-            <p className="mb-4 text-sm font-semibold text-red-500">Every team gets smarter with Sana</p>
-            <nav className="flex flex-col gap-2">
-              {TEAM_TABS.map((t, i) => (
-                <button
+        <div className="gc gc-5" style={{ '--start': 8 } as React.CSSProperties}>
+          <div className="top">
+            <p className="red margin-s"><strong>Every team gets smarter with Sana</strong></p>
+            <div className="tabs-nav no-default teams-tabs-nav">
+              {TEAM_TABS.map((t) => (
+                <a
                   key={t.id}
-                  onClick={() => setActive(i)}
-                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-left text-lg font-semibold transition ${i === active ? 'text-black' : 'text-black/30 hover:text-black/50'}`}
+                  className={`h3${t.id === activeId ? ' active' : ''}`}
+                  data-tab={t.id}
+                  onClick={() => handleTabClick(t.id)}
                 >
-                  <span className="text-base">&rarr;</span> {t.label}
-                </button>
+                  <span>&rarr;</span> {t.label}
+                </a>
               ))}
-            </nav>
+            </div>
           </div>
-          <div className="mt-8">
-            <p className="max-w-md text-base text-black/60">{tab.desc}</p>
-            <a
-              href="/book-intro"
-              className="mt-6 inline-flex items-center rounded-full bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-black/80"
-            >
-              Book an intro
-            </a>
+          <div className="bottom flow">
+            <div className="tabs">
+              {TEAM_TABS.map((t) => (
+                <div key={t.id} className={`tab${t.id === activeId ? ' active' : ''}`} data-tab={t.id}>
+                  <p className="fade-8" style={{ maxWidth: '49rem' }}>{t.desc}</p>
+                </div>
+              ))}
+            </div>
+            <a href="#book-intro" className="btn bg-black white">Book an intro</a>
           </div>
         </div>
       </div>
