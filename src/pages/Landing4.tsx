@@ -582,44 +582,47 @@ const PARTNERSHIP_ITEMS = [
   'Community, events, and resources',
 ]
 
+function CheckCircleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="currentColor">
+      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+    </svg>
+  )
+}
+
+function CheckIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className ?? 'inline-icon'} viewBox="0 0 20 20" fill="currentColor">
+      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+    </svg>
+  )
+}
+
 function PartnershipSection() {
   return (
-    <section className="py-20">
-      <div className="mx-auto max-w-6xl px-8">
-        <div className="mb-12 text-center">
-          <p className="text-sm font-semibold uppercase tracking-wider text-blue-500">Enterprise partnership services</p>
-          <h2 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">Driving AI adoption together</h2>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-black/60">
-            AI is revolutionizing work in real time. Our partnership-led approach helps your organization become truly AI-first.
-          </p>
+    <section>
+      <div className="columns margin-m">
+        <div className="gc gc-12 text-c">
+          <p className="eyebrow blue"><strong>Enterprise partnership services</strong></p>
+          <h2 className="margin-s">Driving AI adoption together</h2>
+          <p className="fade-8" style={{ maxWidth: '50rem' }}>AI is revolutionizing work in real time. Our partnership-led approach helps your organization become truly AI-first.</p>
         </div>
-        <div className="grid gap-8 md:grid-cols-2">
-          <div className="overflow-hidden rounded-2xl">
-            <img
-              src={`${IMG}/agents-partnerships.webp`}
-              alt="Enterprise partnerships"
-              className="h-full w-full object-cover"
-              style={{ objectPosition: '50% 30%' }}
-            />
+      </div>
+      <div className="columns">
+        <div className="gc gc-6">
+          <div className="media autofit-height landscape rounded-l">
+            <img src={`${IMG}/agents-partnerships.webp`} alt="Agents partnerships" style={{ objectPosition: '50% 30%' }} />
           </div>
-          <div className="flex flex-col gap-4">
+        </div>
+        <div className="gc gc-6">
+          <div className="partnership-services">
             {PARTNERSHIP_ITEMS.map((item) => (
-              <div
-                key={item}
-                className="flex items-center gap-3 rounded-xl border border-black/5 px-5 py-4"
-              >
-                <svg className="h-5 w-5 shrink-0 text-black/40" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span className="font-medium">{item}</span>
+              <div key={item} className="partnership-service">
+                <CheckCircleIcon className="inline-icon fade-4" />
+                {item}
               </div>
             ))}
-            <a
-              href="/book-intro"
-              className="mt-2 flex items-center justify-center gap-3 rounded-xl bg-black px-5 py-4 font-medium text-white transition hover:bg-black/80"
-            >
-              Book an intro
-            </a>
+            <a href="#book-intro" className="bg-black white partnership-service">Book an intro</a>
           </div>
         </div>
       </div>
@@ -662,57 +665,51 @@ const SECURITY_ITEMS = [
 
 function IntegrationsSecuritySection() {
   return (
-    <section className="py-20">
-      <div className="mx-auto max-w-6xl px-8">
-        <div className="mb-12 text-center">
-          <h2 className="text-4xl font-semibold tracking-tight md:text-5xl" style={{ maxWidth: '50rem', margin: '0 auto' }}>
-            Enterprise-grade integrations and security
-          </h2>
-          <p className="mx-auto mt-4 max-w-md text-lg text-black/60">
-            Sana connects with 100+ applications and unifies your company's data securely.
-          </p>
+    <section>
+      <div className="columns margin-m">
+        <div className="gc gc-12 text-c">
+          <h2 className="margin-s" style={{ maxWidth: '50rem' }}>Enterprise-grade integrations and security</h2>
+          <p className="fade-8" style={{ maxWidth: '35rem' }}>Sana connects with 100+ applications and unifies your company's data securely.</p>
         </div>
-
-        {/* Integrations Card */}
-        <div className="mb-6 rounded-2xl border border-black/5 bg-white p-8">
-          <div className="grid gap-8 md:grid-cols-[1fr_2fr]">
-            <p className="text-base font-semibold">Connect your daily tools automatically</p>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-              {INTEGRATIONS.map((item) => (
-                <div key={item.name} className="flex items-center gap-2 text-sm">
-                  <img src={`${IMG}/${item.icon}`} alt={item.name} width={20} height={20} className="h-5 w-5" />
-                  <span>{item.name}</span>
+      </div>
+      <div className="columns">
+        <div className="gc gc-12">
+          <div className="integrations-card-wrapper">
+            <div className="columns">
+              <div className="gc gc-4"><p><strong>Connect your daily tools automatically</strong></p></div>
+              <div className="gc gc-7">
+                <div className="integrations-list type-small">
+                  {INTEGRATIONS.map((item) => (
+                    <div key={item.name} className="integrations-list-item">
+                      <div className="integrations-list-item-icon">
+                        <img src={`${IMG}/${item.icon}`} width={20} height={20} alt={`${item.name} icon`} />
+                      </div>
+                      <span>{item.name}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
+            <a className="btn" style={{ background: 'rgba(0,0,0,0.05)' }} href="#integrations">See full integrations list</a>
           </div>
-          <a
-            href="/integrations"
-            className="mt-6 inline-flex items-center rounded-full bg-black/5 px-5 py-2.5 text-sm font-medium transition hover:bg-black/10"
-          >
-            See full integrations list
-          </a>
-        </div>
-
-        {/* Security Card */}
-        <div className="rounded-2xl border border-black/5 bg-white p-8">
-          <div className="grid gap-8 md:grid-cols-[1fr_2fr]">
-            <p className="text-base font-semibold">Security you can stand by</p>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-              {SECURITY_ITEMS.map((item) => (
-                <div key={item.name} className="flex items-center gap-2 text-sm">
-                  <img src={`${IMG}/${item.icon}`} alt="" width={16} height={16} className="h-4 w-4" />
-                  <span>{item.name}</span>
+          <div className="integrations-card-wrapper">
+            <div className="columns">
+              <div className="gc gc-4"><p><strong>Security you can stand by</strong></p></div>
+              <div className="gc gc-7">
+                <div className="integrations-list type-small">
+                  {SECURITY_ITEMS.map((item) => (
+                    <div key={item.name} className="integrations-list-item">
+                      <div className="integrations-list-item-icon">
+                        <img src={`${IMG}/${item.icon}`} width={20} height={20} alt={`${item.name} icon`} />
+                      </div>
+                      <span>{item.name}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
+            <a className="btn" style={{ background: 'rgba(0,0,0,0.05)' }} href="#security">Read more about privacy</a>
           </div>
-          <a
-            href="/security"
-            className="mt-6 inline-flex items-center rounded-full bg-black/5 px-5 py-2.5 text-sm font-medium transition hover:bg-black/10"
-          >
-            Read more about privacy
-          </a>
         </div>
       </div>
     </section>
@@ -724,15 +721,8 @@ function IntegrationsSecuritySection() {
 /* ------------------------------------------------------------------ */
 function BannerSection() {
   return (
-    <div className="mx-auto max-w-6xl px-8 py-4">
-      <div className="overflow-hidden rounded-2xl">
-        <img
-          src={`${IMG}/agents-banner-01.webp`}
-          alt="Agents banner"
-          className="w-full object-cover"
-          style={{ objectPosition: '40% 50%' }}
-        />
-      </div>
+    <div className="media banner margin-s">
+      <img src={`${IMG}/agents-banner-01.webp`} alt="Agents banner" style={{ objectPosition: '40% 50%' }} />
     </div>
   )
 }
@@ -742,36 +732,22 @@ function BannerSection() {
 /* ------------------------------------------------------------------ */
 function IOSAppSection() {
   return (
-    <section className="py-20">
-      <div className="mx-auto max-w-6xl px-8 text-center">
-        <p className="text-sm font-semibold uppercase tracking-wider text-blue-500">Agents iOS app</p>
-        <h2 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">A polymath in your pocket</h2>
-        <div className="mx-auto mt-8 max-w-3xl">
-          <img
-            src={`${IMG}/agents-ios-app.webp`}
-            alt="Agents iOS app"
-            className="w-full"
-          />
+    <section>
+      <div className="columns margin-m">
+        <div className="gc gc-12 text-c">
+          <p className="eyebrow blue"><strong>Agents iOS app</strong></p>
+          <h2 className="margin-s">A polymath in your pocket</h2>
         </div>
-        <p className="mx-auto mt-8 max-w-2xl text-sm text-black/60">
-          Connect all your work apps to get instant answers to anything and solve hours of complex tasks in seconds. Missed a meeting? No problem. The recap is just a tap away. Built on any LLM you want. Now available on iOS.
-        </p>
-        <a
-          href="https://apps.apple.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-6 inline-block"
-        >
-          <div className="inline-flex items-center gap-2 rounded-lg bg-black px-5 py-3 text-white">
-            <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-            </svg>
-            <div className="text-left">
-              <div className="text-[10px] leading-tight">Download on the</div>
-              <div className="text-base font-semibold leading-tight">App Store</div>
-            </div>
+      </div>
+      <div className="columns">
+        <div className="gc gc-8 text-c" style={{ '--start': 3 } as React.CSSProperties}>
+          <div className="media natural margin-s">
+            <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" />
           </div>
-        </a>
+          <p className="type-small margin-s" style={{ maxWidth: '53rem' }}>
+            <span className="fade">Connect all your work apps to get instant answers to anything and solve hours of complex tasks in seconds. Missed a meeting? No problem. The recap is just a tap away. Built on any LLM you want.</span> Now available on iOS.
+          </p>
+        </div>
       </div>
     </section>
   )
@@ -784,21 +760,19 @@ const TRUSTED_LOGOS = ['strava', 'polestar', 'merck', 'apollo.io', 'robinhood', 
 
 function TrustedBySection() {
   return (
-    <section className="bg-[#f5f0e8] py-20">
-      <div className="mx-auto max-w-6xl px-8">
-        <h3 className="mb-12 max-w-3xl text-3xl font-semibold md:text-4xl">
-          Sana is trusted by leading<br className="hidden md:block" /> enterprises across industries
-        </h3>
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 md:grid-cols-8">
-          {TRUSTED_LOGOS.map((logo) => (
-            <div key={logo} className="flex items-center justify-center">
-              <img
-                src={`${IMG}/${logo}.svg`}
-                alt={logo}
-                className="h-auto max-h-8 w-full max-w-full object-contain"
-              />
-            </div>
-          ))}
+    <section className="bg-sand" style={{ paddingBlockEnd: '5rem' }}>
+      <div className="columns">
+        <div className="gc gc-12">
+          <h3 className="margin-l" style={{ maxWidth: '72rem' }}>
+            Sana is trusted by leading <br className="hide-small" />enterprises across industries
+          </h3>
+          <div className="static-logos" style={{ '--numLogos': 8, '--numLogosMobile': 2 } as React.CSSProperties}>
+            {TRUSTED_LOGOS.map((logo) => (
+              <div key={logo} className="static-logo">
+                <img src={`${IMG}/${logo}.svg`} alt={logo} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -861,33 +835,34 @@ const PLANS = [
 
 function PricingSection() {
   return (
-    <section className="py-20">
-      <div className="mx-auto max-w-6xl px-8">
-        <h2 className="mb-12 text-center text-4xl font-semibold tracking-tight md:text-5xl">Pricing</h2>
-        <div className="grid gap-8 md:grid-cols-3">
-          {PLANS.map((plan) => (
-            <div key={plan.name} className="flex flex-col rounded-2xl border border-black/5 p-8">
-              <p className="text-2xl font-semibold">{plan.name}</p>
-              <p className="mt-3 font-semibold">{plan.price}</p>
-              <a
-                href={plan.ctaHref}
-                className={`mt-4 inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium transition ${plan.ctaStyle}`}
-              >
-                {plan.cta}
-              </a>
-              <hr className="my-6 border-black/10" />
-              <ul className="flex flex-col gap-3">
-                {plan.features.map((f, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-black/70">
-                    <svg className="mt-0.5 h-4 w-4 shrink-0 text-black/40" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {f}
-                  </li>
-                ))}
-              </ul>
+    <section>
+      <div className="columns">
+        <div className="gc gc-12">
+          <h2 className="margin-l" style={{ textAlign: 'center' }}>Pricing</h2>
+          <div className="margin-xl">
+            <div className="flex-cols" style={{ '--vertical': '6rem' } as React.CSSProperties}>
+              {PLANS.map((plan) => (
+                <div key={plan.name} className="flex-col">
+                  <p className="h3" style={{ marginBottom: '1.2rem' }}>{plan.name}</p>
+                  <p className="margin-s"><strong>{plan.price}</strong></p>
+                  {plan.name === 'Enterprise' ? (
+                    <a className="btn bg-black white" href="#book-intro">{plan.cta}</a>
+                  ) : (
+                    <a className="btn" style={{ background: 'rgba(0,0,0,0.05)' }} href={plan.ctaHref}>{plan.cta}</a>
+                  )}
+                  <hr />
+                  <ul className="checklist">
+                    {plan.features.map((f, i) => (
+                      <li key={i}>
+                        <CheckIcon />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>
