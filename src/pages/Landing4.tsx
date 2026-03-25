@@ -287,6 +287,11 @@ function FeaturesSection() {
   )
 }
 
+/* ------------------------------------------------------------------ */
+/*  ROI Stats                                                          */
+/* ------------------------------------------------------------------ */
+const STATS = [
+  { label: 'Fintech scale-up', value: '10 hours', desc: 'saved per week, per\u00a0employee' },
   { label: 'Global law firm', value: '62%', desc: 'prep time saved' },
   { label: 'Leading manufacturer', value: '95%', desc: 'faster product answers' },
   { label: 'Mining manufacturer', value: '50%', desc: 'time saved in R&D' },
