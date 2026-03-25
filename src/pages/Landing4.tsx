@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
+import '../styles/sana-landing.css'
 
 const IMG = '/images/landing'
 
@@ -12,49 +13,53 @@ const ROTATING_WORDS = ['Deep research', 'Sales prep', 'Customer support', 'Cont
 
 function HeroSection() {
   const [wordIdx, setWordIdx] = useState(0)
-  const [visible, setVisible] = useState(true)
+  const [animating, setAnimating] = useState(true)
 
   useEffect(() => {
     const id = setInterval(() => {
-      setVisible(false)
+      setAnimating(false)
       setTimeout(() => {
         setWordIdx((i) => (i + 1) % ROTATING_WORDS.length)
-        setVisible(true)
-      }, 400)
+        setAnimating(true)
+      }, 300)
     }, 3000)
     return () => clearInterval(id)
   }, [])
 
   return (
-    <section className="relative overflow-hidden">
-      <div className="relative z-10 flex flex-col items-center px-8 pt-32 pb-12 text-center">
-        <h1 className="text-5xl leading-tight font-semibold tracking-tight text-black md:text-7xl md:leading-[1.1]">
-          <span
-            className={`inline-block transition-all duration-400 ${visible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}`}
-          >
-            {ROTATING_WORDS[wordIdx]}
-          </span>
-          <br />
-          done with&nbsp;AI
-        </h1>
-        <p className="mt-6 max-w-xl text-lg text-black/70">
-          Accelerate work with AI agents that collaborate, automate, and think alongside your teams.
-        </p>
-        <a
-          href="/book-intro"
-          className="mt-8 inline-flex items-center rounded-full bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-black/80"
-        >
-          Book an intro
-        </a>
+    <div className="page-hero">
+      <div className="hero-content">
+        <div className="top">
+          <div className="columns">
+            <div className="gc text-c">
+              <h1>
+                <span className="text-rotator show">
+                  <span
+                    className={animating ? 'animated fadeIn' : 'animated'}
+                    style={{ display: 'inline-block' }}
+                  >
+                    {' '}{ROTATING_WORDS[wordIdx]}
+                  </span>
+                </span>
+                <br />
+                done with&nbsp;AI
+              </h1>
+            </div>
+          </div>
+        </div>
+        <div className="bottom">
+          <div className="columns">
+            <div className="gc text-c flow">
+              <p>Accelerate work with AI agents that collaborate, automate, and think alongside your teams.</p>
+              <a href="#book-intro" className="btn bg-black white">Book an intro</a>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="relative mx-auto max-w-7xl px-8">
-        <img
-          src={`${IMG}/AgentsHero.webp`}
-          alt="AI Agents hero"
-          className="w-full rounded-xl"
-        />
+      <div className="hero-bg">
+        <img src={`${IMG}/AgentsHero.webp`} alt="AI Agents hero" />
       </div>
-    </section>
+    </div>
   )
 }
 
@@ -68,43 +73,59 @@ const ALL_LOGOS = [
 ]
 
 function PartnerLogos() {
-  const [logos, setLogos] = useState(ALL_LOGOS.slice(0, 7))
+  const initialLogos = ALL_LOGOS.slice(0, 7)
+  const [visibleLogos, setVisibleLogos] = useState<string[]>(initialLogos)
+  const [hiddenSlot, setHiddenSlot] = useState<number | null>(null)
+  const availablePoolRef = useRef<string[]>([...ALL_LOGOS.slice(7)])
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setLogos((prev) => {
-        const shown = new Set(prev)
-        const pool = ALL_LOGOS.filter((l) => !shown.has(l))
-        if (pool.length === 0) return prev
+  const swapLogo = useCallback(() => {
+    const slotIndex = Math.floor(Math.random() * visibleLogos.length)
+    setHiddenSlot(slotIndex)
+    setTimeout(() => {
+      setVisibleLogos((prev) => {
         const next = [...prev]
-        const swapIdx = Math.floor(Math.random() * next.length)
-        const newLogo = pool[Math.floor(Math.random() * pool.length)]
-        next[swapIdx] = newLogo
+        const currentLogo = next[slotIndex]
+        if (availablePoolRef.current.length === 0) {
+          availablePoolRef.current = [...ALL_LOGOS.slice(7)]
+        }
+        const poolIndex = Math.floor(Math.random() * availablePoolRef.current.length)
+        const newLogo = availablePoolRef.current[poolIndex]
+        availablePoolRef.current.splice(poolIndex, 1)
+        availablePoolRef.current.push(currentLogo)
+        next[slotIndex] = newLogo
         return next
       })
-    }, 2000)
-    return () => clearInterval(id)
-  }, [])
+      setHiddenSlot(null)
+    }, 400)
+  }, [visibleLogos.length])
+
+  useEffect(() => {
+    const interval = setInterval(swapLogo, 2000)
+    return () => clearInterval(interval)
+  }, [swapLogo])
 
   return (
-    <section className="py-8">
-      <div className="mx-auto grid max-w-6xl grid-cols-3 gap-8 px-8 md:grid-cols-7">
-        {logos.map((logo) => (
-          <div
-            key={logo}
-            className="flex h-16 items-center justify-center transition-opacity duration-1000 md:h-24"
-          >
-            <img
-              src={`${IMG}/${logo}.svg`}
-              alt={logo}
-              className="h-auto max-h-full w-full max-w-full object-contain"
-              width={224}
-              height={90}
-            />
+    <div className="partners">
+      <div className="columns">
+        <div className="gc">
+          <div className="partner-logo-grid" id="partner-grid">
+            {visibleLogos.map((logo, index) => (
+              <div className={`slot${hiddenSlot === index ? ' hidden' : ''}`} key={index}>
+                <div className="logo" data-logo={logo}>
+                  <img
+                    src={`${IMG}/${logo}.svg`}
+                    alt={logo.charAt(0).toUpperCase() + logo.slice(1)}
+                    width={224}
+                    height={90}
+                    decoding="async"
+                  />
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
-    </section>
+    </div>
   )
 }
 
@@ -113,21 +134,16 @@ function PartnerLogos() {
 /* ------------------------------------------------------------------ */
 function AllInOneSection() {
   return (
-    <section className="py-20">
-      <div className="mx-auto max-w-3xl px-8 text-center">
-        <h2 className="text-4xl font-semibold tracking-tight md:text-5xl">
-          Your all-in-one<br className="hidden md:block" />
-          AI platform for real work
-        </h2>
-        <p className="mx-auto mt-4 max-w-xl text-lg text-black/60">
-          A seamless, beautiful way to bring AI into your company's apps, knowledge, and culture.
-        </p>
-        <a
-          href="/book-intro"
-          className="mt-8 inline-flex items-center rounded-full bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-black/80"
-        >
-          Book an intro
-        </a>
+    <section>
+      <div className="columns">
+        <div className="gc text-c flow">
+          <h2>
+            Your all-in-one<br className="hide-small" />
+            AI platform for real work
+          </h2>
+          <p style={{ maxWidth: '44rem' }}>A seamless, beautiful way to bring AI into your company&apos;s apps, knowledge, and culture.</p>
+          <a href="#book-intro" className="btn bg-black white">Book an intro</a>
+        </div>
       </div>
     </section>
   )
@@ -906,7 +922,7 @@ function PricingSection() {
 /* ------------------------------------------------------------------ */
 export default function Landing4() {
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-white">
+    <div className="sana-landing" style={{ fontFamily: 'inherit', background: '#fff' }}>
       <SEO
         title="Oxy \u2014 Build expert AI agents in minutes"
         description="One platform for creating expert AI agents grounded in your company's knowledge. No coding required. Connect all your data quickly and securely."
