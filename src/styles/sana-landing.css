@@ -761,6 +761,13 @@
   align-items: center;
   justify-content: center;
 }
+.sana-landing .integrations-list-item-icon img {
+  width: auto;
+  height: auto;
+  max-width: 2rem;
+  max-height: 2rem;
+  object-fit: contain;
+}
 
 /* ============ STATIC LOGOS ============ */
 .sana-landing .static-logos {
