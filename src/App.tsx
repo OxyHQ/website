@@ -11,7 +11,8 @@ import { setTokenGetter } from './api/client'
 import AdminPage from './pages/AdminPage'
 // import AskPage from './pages/AskPage'
 // import Landing2 from './pages/Landing2'
-import Landing3 from './pages/Landing3'
+// import Landing3 from './pages/Landing3'
+import Landing4 from './pages/Landing4'
 import PartnersPage from './pages/PartnersPage'
 import CareersPage from './pages/CareersPage'
 import PricingPage from './pages/PricingPage'
@@ -77,7 +78,7 @@ function LocaleLayout() {
 function PublicRoutes() {
   return (
     <>
-      <Route index element={<Landing3 />} />
+      <Route index element={<Landing4 />} />
       {/* <Route path="landing2" element={<Landing2 />} /> */}
       {/* <Route path="landing3" element={<AskPage />} /> */}
       <Route path="partners" element={<PartnersPage />} />
