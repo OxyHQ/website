@@ -7,45 +7,43 @@ const featureCards = [
     layout: 'left' as const,
   },
   {
-    title: 'ARM64 ready',
-    description: 'First-class support for Snapdragon X Elite and Plus laptops. Qualcomm firmware tools, Mesa Freedreno GPU drivers, and EFI boot — all included.',
-    cta: 'See supported hardware \u2192',
-    ctaHref: '#hardware',
+    title: 'ChromeOS-style shelf',
+    description: 'A custom bottom dock with app launcher, pinned icons with running indicators, and a quick settings panel. Built from scratch with Python and GTK3.',
+    cta: 'View on GitHub \u2192',
+    ctaHref: 'https://github.com/OxyHQ/OxyOS-shelf',
     layout: 'right' as const,
   },
   {
-    title: 'Debian at the core',
-    description: 'Built on Debian Trixie (13) with access to the entire Debian package ecosystem. Stable, secure, and well-documented.',
-    cta: 'Debian 13 release notes \u2197',
-    ctaHref: 'https://www.debian.org/releases/trixie/release-notes/',
+    title: 'Rock-solid foundation',
+    description: 'Access to a vast package ecosystem. Stable, secure, and well-documented. Thousands of packages available out of the box.',
+    cta: 'Browse packages \u2192',
+    ctaHref: 'https://github.com/OxyHQ/OxyOS',
     layout: 'left' as const,
   },
 ]
 
-const logoPartners = ['Debian', 'Openbox', 'Pipewire', 'Wayland', 'systemd', 'GRUB', 'Mesa', 'Linux']
+const logoPartners = ['Openbox', 'Pipewire', 'systemd', 'GRUB', 'Mesa', 'Linux', 'GTK', 'X11']
 
 const newFeatures = [
   {
-    title: 'Debian 13 base',
-    description: 'Built on Debian Trixie with access to the full Debian package ecosystem.',
-    link: { label: 'Release notes \u2197', href: 'https://www.debian.org/releases/trixie/release-notes/' },
+    title: 'Trixie base',
+    description: 'Built on the latest stable foundation with modern packages and long-term security support.',
   },
   {
     title: 'Linux 6.18',
-    description: 'Latest stable Linux kernel with full Snapdragon X support.',
+    description: 'Latest stable Linux kernel with broad hardware support.',
   },
   {
     title: 'Pipewire Support',
     description: 'A modern audio daemon replacing PulseAudio, with better performance and lower latency.',
-    link: { label: 'Learn more \u2197', href: 'https://wiki.debian.org/PipeWire' },
   },
   {
     title: 'Power Profiles',
     description: 'Easily switch between performance and power saving modes right from the Openbox menu using powerprofilesctl.',
   },
   {
-    title: 'ARM64 / Snapdragon X',
-    description: 'Native support for ARM64 laptops including Snapdragon X Elite/Plus devices. Includes Qualcomm firmware tools, Mesa Freedreno GPU drivers, and EFI boot.',
+    title: 'OxyOS Shelf',
+    description: 'A custom ChromeOS-style dock with app launcher, pinned apps, system tray, and quick settings panel.',
   },
 ]
 
@@ -58,11 +56,11 @@ const screenshots = [
 
 const testimonials = [
   { quote: 'Finally a distro that respects my hardware. Boots in under 10 seconds on my ThinkPad.', author: 'Alex R.', role: 'Systems Engineer' },
-  { quote: 'OxyOS on Snapdragon X is surprisingly smooth. The ARM64 support is legit.', author: 'Priya K.', role: 'Hardware Reviewer' },
   { quote: 'I switched from Arch to OxyOS. Less time configuring, more time working.', author: 'Marcus T.', role: 'Backend Developer' },
-  { quote: 'The Openbox setup is clean and snappy. Exactly what a lightweight distro should be.', author: 'Sarah L.', role: 'DevOps Engineer', hidden: true },
-  { quote: 'Running this on a 10 year old laptop and it flies. Debian base means rock solid stability.', author: 'David M.', role: 'IT Admin', hidden: true },
-  { quote: 'Pipewire out of the box was the cherry on top. Audio just works.', author: 'Yuki N.', role: 'Music Producer' },
+  { quote: 'The Openbox setup is clean and snappy. Exactly what a lightweight distro should be.', author: 'Sarah L.', role: 'DevOps Engineer' },
+  { quote: 'Running this on a 10 year old laptop and it flies. Rock solid stability.', author: 'David M.', role: 'IT Admin', hidden: true },
+  { quote: 'Pipewire out of the box was the cherry on top. Audio just works.', author: 'Yuki N.', role: 'Music Producer', hidden: true },
+  { quote: 'The new shelf panel feels like ChromeOS but lighter. Love the quick settings.', author: 'Priya K.', role: 'UX Designer' },
 ]
 
 const faqItems = [
@@ -72,22 +70,16 @@ const faqItems = [
   },
   {
     question: 'What happened to the i686 (32-bit) image?',
-    answer: 'Debian has dropped support for the i686 architecture as a first class architecture. While it is still possible to run a 32-bit userland on a 64-bit kernel, we will no longer produce a 32-bit image.',
+    answer: 'The upstream base has dropped i686 as a first-class architecture. We only produce 64-bit (amd64) images.',
   },
   {
     question: 'Will you still be supporting older OxyOS releases?',
-    answer: "Debian continues to issue security updates for ~1 year after a new 'stable' is released. While the older OxyOS releases won't be getting any new updates from us, the repos will continue to be available for at least the next year as well.",
+    answer: "The upstream base continues to issue security updates for ~1 year after a new stable release. While older OxyOS releases won't get new updates from us, the repos will remain available.",
   },
   {
     question: 'Where are the direct downloads?',
-    answer: 'All older images are still available via GitHub Releases on the image source repo.',
+    answer: 'All images are available on our downloads page and via GitHub Releases.',
     link: { label: 'GitHub Releases \u2192', href: 'https://github.com/OxyHQ/OxyOS/releases' },
-  },
-  {
-    question: 'Does OxyOS work on Snapdragon X laptops?',
-    answer: 'Yes! Download the ARM64 ISO and boot from USB with Secure Boot disabled. After booting, run',
-    code: 'sudo oxyos-qcom-firmware',
-    answerEnd: 'to extract GPU firmware from your Windows partition for full graphics support.',
   },
 ]
 
@@ -96,13 +88,7 @@ const hardwareCards = [
     title: 'x86_64 / amd64',
     description: 'Standard desktop and laptop PCs with Intel or AMD processors. Full hardware support out of the box.',
     specs: ['Intel Core / AMD Ryzen', 'BIOS and UEFI boot', 'Full GPU support (Intel, AMD, NVIDIA)'],
-    download: { label: 'Download amd64', href: 'https://downloads.os.oxy.so/oxyos-1.8.2-amd64.iso' },
-  },
-  {
-    title: 'ARM64 / Snapdragon X',
-    description: 'ARM-based laptops including Snapdragon X Elite and Plus devices. Qualcomm firmware tools included.',
-    specs: ['Snapdragon X Elite / Plus', 'UEFI boot (EFI only)', 'Mesa Freedreno GPU drivers'],
-    download: { label: 'Download arm64', href: 'https://downloads.os.oxy.so/oxyos-1.8.2-arm64.iso' },
+    download: { label: 'Download ISO', href: 'https://os.oxy.so/downloads/oxyos-1.0-amd64.iso' },
   },
   {
     title: 'Minimum Requirements',
@@ -112,9 +98,9 @@ const hardwareCards = [
 ]
 
 const highlights = [
-  { title: 'OxyOS 1.8.2 released with ARM64 support', description: 'Native Snapdragon X support lands in OxyOS with full GPU drivers and firmware tools.', category: 'release', date: 'Mar 2026', href: 'https://github.com/OxyHQ/OxyOS/releases' },
+  { title: 'OxyOS Ozone released', description: 'New ChromeOS-style shelf, full OxyOS branding, custom package repo, and refreshed desktop experience.', category: 'release', date: 'Mar 2026', href: 'https://github.com/OxyHQ/OxyOS/releases' },
+  { title: 'OxyOS Shelf built from scratch', description: 'A custom bottom dock with app launcher, pinned icons, system tray, and quick settings panel.', category: 'feature', date: 'Mar 2026', href: 'https://github.com/OxyHQ/OxyOS-shelf' },
   { title: 'Pipewire replaces PulseAudio', description: 'Lower latency, better Bluetooth support, and seamless audio switching out of the box.', category: 'feature', date: 'Feb 2026', href: '#' },
-  { title: 'Debian Trixie base upgrade', description: 'OxyOS now builds on Debian 13, bringing thousands of updated packages and improved security.', category: 'update', date: 'Jan 2026', href: '#' },
   { title: 'Power profiles integration', description: 'Switch between performance and battery saving modes directly from your Openbox menu.', category: 'feature', date: 'Dec 2025', href: '#' },
 ]
 
@@ -129,13 +115,13 @@ export default function OxyOSContent() {
               A minimal Linux distro, built to stay out of your way.
             </h1>
             <p className="type-base text-theme-text-sec text-pretty mb-v1">
-              OxyOS is a lightweight desktop Linux project. Still small, still fast, built on Debian Trixie. Now available for x86_64 and ARM64 (Snapdragon X).
+              OxyOS is a lightweight desktop Linux project. Still small, still fast.
             </p>
             <div className="flex justify-start gap-x-g1 items-center">
               <div>
                 <div className="hidden items-center md:flex">
-                  <a className="btn" href="https://downloads.os.oxy.so/oxyos-1.8.2-amd64.iso">
-                    Download ISO (amd64)
+                  <a className="btn" href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">
+                    Download ISO
                     <div aria-hidden="true" className="btn-icon">
                       <span aria-hidden="true">&#x2913;</span>
                     </div>
@@ -149,14 +135,6 @@ export default function OxyOSContent() {
                     </div>
                   </a>
                 </div>
-              </div>
-              <div className="hidden md:block">
-                <a className="btn btn--secondary" href="https://downloads.os.oxy.so/oxyos-1.8.2-arm64.iso">
-                  ARM64 ISO
-                  <div aria-hidden="true" className="btn-icon">
-                    <span aria-hidden="true">&rarr;</span>
-                  </div>
-                </a>
               </div>
             </div>
           </div>
@@ -348,19 +326,13 @@ export default function OxyOSContent() {
                 <div className="w-full max-w-prose lg:justify-self-start">
                   <div className="type-base">
                     <h3 className="type-base md:type-md text-pretty">
-                      Runs everywhere. From decade-old ThinkPads to the latest Snapdragon X laptops.
+                      Runs everywhere. From decade-old ThinkPads to the latest hardware.
                     </h3>
                   </div>
                   <div className="mt-v1">
                     <div className="flex justify-start gap-x-g1 items-center flex-wrap">
-                      <a className="btn" href="https://downloads.os.oxy.so/oxyos-1.8.2-amd64.iso">
-                        Download amd64
-                        <div aria-hidden="true" className="btn-icon">
-                          <span aria-hidden="true">&#x2913;</span>
-                        </div>
-                      </a>
-                      <a className="btn btn--secondary" href="https://downloads.os.oxy.so/oxyos-1.8.2-arm64.iso">
-                        Download arm64
+                      <a className="btn" href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">
+                        Download ISO
                         <div aria-hidden="true" className="btn-icon">
                           <span aria-hidden="true">&#x2913;</span>
                         </div>
@@ -506,8 +478,8 @@ export default function OxyOSContent() {
             <div className="flex justify-center gap-x-g1 items-center flex-wrap">
               <div>
                 <div className="hidden items-center md:flex">
-                  <a className="btn" href="https://downloads.os.oxy.so/oxyos-1.8.2-amd64.iso">
-                    Download ISO (amd64)
+                  <a className="btn" href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">
+                    Download ISO
                     <div aria-hidden="true" className="btn-icon">
                       <span aria-hidden="true">&#x2913;</span>
                     </div>
@@ -521,14 +493,6 @@ export default function OxyOSContent() {
                     </div>
                   </a>
                 </div>
-              </div>
-              <div className="hidden md:block">
-                <a className="btn btn--secondary" href="https://downloads.os.oxy.so/oxyos-1.8.2-arm64.iso">
-                  ARM64 ISO
-                  <div aria-hidden="true" className="btn-icon">
-                    <span aria-hidden="true">&rarr;</span>
-                  </div>
-                </a>
               </div>
             </div>
           </div>
