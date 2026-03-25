@@ -1,1 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?><Error><Code>AccessDenied</Code><Message></Message><BucketName>sana-labs</BucketName><RequestId>tx00000a7a42ad6f763204b-0069c352bb-ce3211ba-ams3c</RequestId><HostId>ce3211ba-ams3c-ams3-zg03</HostId></Error>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_574_2983)">
+<g clip-path="url(#clip1_574_2983)">
+<g clip-path="url(#clip2_574_2983)">
+<path d="M46.5283 22.6406L25.8875 2.00003L23.8875 0L8.34967 15.5378L1.24455 22.6406C0.889654 22.9974 0.69043 23.4801 0.69043 23.9833C0.69043 24.4865 0.889654 24.9692 1.24455 25.3259L15.4398 39.521L23.8875 47.9666L39.4232 32.4288L39.6652 32.189L46.5283 25.3366C46.7062 25.1601 46.8474 24.9501 46.9437 24.7187C47.04 24.4874 47.0896 24.2392 47.0896 23.9886C47.0896 23.738 47.04 23.4899 46.9437 23.2586C46.8474 23.0272 46.7062 22.8172 46.5283 22.6406ZM23.8875 31.0754L16.7953 23.9833L23.8875 16.891L30.9776 23.9833L23.8875 31.0754Z" fill="#2684FF"/>
+<path d="M23.8958 16.9082C21.6653 14.6783 20.4079 11.6563 20.3983 8.50228C20.3887 5.34833 21.6275 2.31872 23.8443 0.0751953L8.32617 15.587L16.7715 24.0324L23.8958 16.9082Z" fill="url(#paint0_linear_574_2983)"/>
+<path d="M31.0047 23.9814L23.8955 31.0929C26.1344 33.3324 27.3921 36.3695 27.3921 39.5362C27.3921 42.703 26.1344 45.7402 23.8955 47.9797L39.4566 32.427L31.0047 23.9814Z" fill="url(#paint1_linear_574_2983)"/>
+</g>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_574_2983" x1="22.6259" y1="9.7326" x2="12.7223" y2="19.6341" gradientUnits="userSpaceOnUse">
+<stop offset="0.18" stop-color="#0052CC"/>
+<stop offset="1" stop-color="#2684FF"/>
+</linearGradient>
+<linearGradient id="paint1_linear_574_2983" x1="1807.98" y1="2082.31" x2="2819.26" y2="2737.9" gradientUnits="userSpaceOnUse">
+<stop offset="0.18" stop-color="#0052CC"/>
+<stop offset="1" stop-color="#2684FF"/>
+</linearGradient>
+<clipPath id="clip0_574_2983">
+<rect width="48" height="48" fill="white"/>
+</clipPath>
+<clipPath id="clip1_574_2983">
+<rect width="48" height="48" fill="white"/>
+</clipPath>
+<clipPath id="clip2_574_2983">
+<rect width="48" height="48" fill="white"/>
+</clipPath>
+</defs>
+</svg>

@@ -1,1 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?><Error><Code>AccessDenied</Code><Message></Message><BucketName>sana-labs</BucketName><RequestId>tx00000f80cd8fa46c2b87b-0069c352b9-ce321507-ams3c</RequestId><HostId>ce321507-ams3c-ams3-zg03</HostId></Error>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_574_3042)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M24.5047 3.0032C12.7895 2.936 3.09994 12.52 3.00074 24.28C2.94954 30.504 5.54155 36.1264 9.71434 40.0752C11.2343 41.512 13.5799 41.6496 15.2279 40.3664C17.6599 38.4656 20.7863 37.336 24.3799 37.336C27.9735 37.336 31.0967 38.4688 33.5319 40.3664C35.1927 41.6624 37.5479 41.496 39.0775 40.0432C43.1927 36.1328 45.7623 30.5936 45.7623 24.4592C45.7623 12.6512 36.2551 3.0672 24.5079 3M24.3831 35.1888C18.0375 35.1888 13.6951 30.4112 13.6951 24.5008C13.6951 18.5904 18.0375 13.7296 24.3831 13.7296C30.7287 13.7296 35.0711 18.5872 35.0711 24.5008C35.0711 30.4144 30.7319 35.1888 24.3831 35.1888Z" fill="#62D84E"/>
+</g>
+<defs>
+<clipPath id="clip0_574_3042">
+<rect width="48" height="48" fill="white"/>
+</clipPath>
+</defs>
+</svg>
