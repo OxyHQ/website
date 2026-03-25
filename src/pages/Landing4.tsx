@@ -258,7 +258,7 @@ function FeaturesSection() {
 /*  ROI Stats                                                          */
 /* ------------------------------------------------------------------ */
 const STATS = [
-  { label: 'Fintech scale-up', value: '10 hours', desc: 'saved per week, per employee' },
+  { label: 'Fintech scale-up', value: '10 hours', desc: 'saved per week, per\u00a0employee' },
   { label: 'Global law firm', value: '62%', desc: 'prep time saved' },
   { label: 'Leading manufacturer', value: '95%', desc: 'faster product answers' },
   { label: 'Mining manufacturer', value: '50%', desc: 'time saved in R&D' },
@@ -268,16 +268,22 @@ const STATS = [
 
 function StatsSection() {
   return (
-    <section className="py-20">
-      <div className="mx-auto max-w-6xl px-8">
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-6">
-          {STATS.map((s) => (
-            <div key={s.label} className="rounded-2xl border border-black/5 bg-white p-6">
-              <p className="text-xs font-semibold uppercase tracking-wider text-black/40">{s.label}</p>
-              <p className="mt-3 text-3xl font-semibold tracking-tight">{s.value}</p>
-              <p className="mt-1 text-sm text-black/60">{s.desc}</p>
-            </div>
-          ))}
+    <section>
+      <div className="columns">
+        <div className="gc gc-12 margin-s">
+          <div className="roi-stats">
+            {STATS.map((s) => (
+              <div key={s.label} className="roi-stat">
+                <div className="top">
+                  <p className="type-small"><strong>{s.label}</strong></p>
+                </div>
+                <div className="bottom">
+                  <p className="h2">{s.value}</p>
+                  <p>{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -347,41 +353,32 @@ const TESTIMONIALS = [
 ]
 
 function TestimonialsSection() {
-  const scrollRef = useRef<HTMLDivElement>(null)
-
   return (
-    <section className="py-20">
-      <div className="mx-auto max-w-[90rem] px-8">
-        <div
-          ref={scrollRef}
-          className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 scrollbar-hide"
-          style={{ scrollbarWidth: 'none' }}
-        >
-          {TESTIMONIALS.map((t, i) => (
-            <div
-              key={i}
-              className={`relative flex min-w-[320px] max-w-[420px] shrink-0 snap-start flex-col justify-between overflow-hidden rounded-2xl p-8 md:min-w-[380px] ${t.light ? 'text-white' : 'text-black'}`}
-              style={{ aspectRatio: '3/4' }}
-            >
-              <img
-                src={t.bg}
-                alt=""
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <div className="relative z-10 flex h-full flex-col justify-between">
-                <p className="text-base leading-relaxed font-medium md:text-lg">
-                  &ldquo;{t.quote}&rdquo;
+    <div className="gc gc-12">
+      <div
+        className="image-card-slider"
+        style={{ display: 'flex', gap: '1rem', overflowX: 'auto', scrollSnapType: 'x mandatory', scrollbarWidth: 'none' }}
+      >
+        {TESTIMONIALS.map((t, i) => (
+          <div key={i} className="slide" style={{ flex: '0 0 auto', scrollSnapAlign: 'start' }}>
+            <div className={`image-card${t.light ? ' white' : ''}`}>
+              <div className="top">
+                <p>&ldquo;{t.quote}&rdquo;</p>
+              </div>
+              <div className="bottom">
+                <p className="small">
+                  <span className="fade">{t.role}</span><br />
+                  {t.company}
                 </p>
-                <div className="mt-6">
-                  <p className={`text-sm ${t.light ? 'text-white/60' : 'text-black/60'}`}>{t.role}</p>
-                  <p className="text-sm font-medium">{t.company}</p>
-                </div>
+              </div>
+              <div className="bg">
+                <img src={t.bg} alt="" />
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
-    </section>
+    </div>
   )
 }
 
@@ -390,28 +387,30 @@ function TestimonialsSection() {
 /* ------------------------------------------------------------------ */
 function ModelAgnosticSection() {
   return (
-    <section className="py-12">
-      <div className="mx-auto max-w-6xl px-8">
-        <div className="relative overflow-hidden rounded-3xl">
-          <img
-            src={`${IMG}/agents-model-agnostic.webp`}
-            alt="Model agnostic"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <div className="relative z-10 grid items-center gap-8 p-8 md:grid-cols-2 md:p-16">
-            <div>
-              <img
-                src={`${IMG}/model-agnostic-popover.svg`}
-                alt="Model selector"
-                className="w-full max-w-sm"
-              />
+    <section className="reduced-padding">
+      <div className="columns">
+        <div className="gc">
+          <div className="model-agnostic-wrap">
+            <div className="columns model-agnostic-content">
+              <div className="gc gc-6 model-agnostic-image">
+                <img src={`${IMG}/model-agnostic-popover.svg`} alt="Model selector" />
+              </div>
+              <div className="gc gc-4 model-agnostic-text hide-small" style={{ '--start': 8 } as React.CSSProperties}>
+                <p className="eyebrow"><strong>Model agnostic</strong></p>
+                <p className="h3" style={{ maxWidth: '42rem' }}>
+                  Only use the AI models that work best for you. With Sana, you can choose and switch between leading models as you need.
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-black/60">Model agnostic</p>
-              <p className="mt-2 text-2xl font-semibold leading-snug md:text-3xl" style={{ maxWidth: '42rem' }}>
-                Only use the AI models that work best for you. With Sana, you can choose and switch between leading models as you need.
-              </p>
+            <div className="bg">
+              <img src={`${IMG}/agents-model-agnostic.webp`} alt="Model agnostic" />
             </div>
+          </div>
+          <div className="text-content show-small" style={{ paddingInline: '1.2rem' }}>
+            <p className="eyebrow"><strong>Model agnostic</strong></p>
+            <p className="h3" style={{ maxWidth: '42rem' }}>
+              Only use the AI models that work best for you. With Sana, you can choose and switch between leading models as you need.
+            </p>
           </div>
         </div>
       </div>
