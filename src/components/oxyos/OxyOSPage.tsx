@@ -7,7 +7,7 @@ const featureCards = [
     layout: 'left' as const,
   },
   {
-    title: 'ChromeOS-style shelf',
+    title: 'Modern desktop shelf',
     description: 'A custom bottom dock with app launcher, pinned icons with running indicators, and a quick settings panel. Built from scratch with Python and GTK3.',
     cta: 'View on GitHub \u2192',
     ctaHref: 'https://github.com/OxyHQ/OxyOS-shelf',
@@ -43,7 +43,7 @@ const newFeatures: Array<{ title: string; description: string; link?: { label: s
   },
   {
     title: 'OxyOS Shelf',
-    description: 'A custom ChromeOS-style dock with app launcher, pinned apps, system tray, and quick settings panel.',
+    description: 'A custom dock with app launcher, pinned apps, system tray, and quick settings panel.',
   },
 ]
 
@@ -60,7 +60,7 @@ const testimonials = [
   { quote: 'The Openbox setup is clean and snappy. Exactly what a lightweight distro should be.', author: 'Sarah L.', role: 'DevOps Engineer' },
   { quote: 'Running this on a 10 year old laptop and it flies. Rock solid stability.', author: 'David M.', role: 'IT Admin', hidden: true },
   { quote: 'Pipewire out of the box was the cherry on top. Audio just works.', author: 'Yuki N.', role: 'Music Producer', hidden: true },
-  { quote: 'The new shelf panel feels like ChromeOS but lighter. Love the quick settings.', author: 'Priya K.', role: 'UX Designer' },
+  { quote: 'The shelf panel is clean and intuitive. Love the quick settings.', author: 'Priya K.', role: 'UX Designer' },
 ]
 
 const faqItems: Array<{ question: string; answer: string; code?: string; answerEnd?: string; link?: { label: string; href: string } }> = [
@@ -98,7 +98,7 @@ const hardwareCards = [
 ]
 
 const highlights = [
-  { title: 'OxyOS Ozone released', description: 'New ChromeOS-style shelf, full OxyOS branding, custom package repo, and refreshed desktop experience.', category: 'release', date: 'Mar 2026', href: 'https://github.com/OxyHQ/OxyOS/releases' },
+  { title: 'OxyOS Ozone released', description: 'New desktop shelf, full OxyOS branding, custom package repo, and refreshed desktop experience.', category: 'release', date: 'Mar 2026', href: 'https://github.com/OxyHQ/OxyOS/releases' },
   { title: 'OxyOS Shelf built from scratch', description: 'A custom bottom dock with app launcher, pinned icons, system tray, and quick settings panel.', category: 'feature', date: 'Mar 2026', href: 'https://github.com/OxyHQ/OxyOS-shelf' },
   { title: 'Pipewire replaces PulseAudio', description: 'Lower latency, better Bluetooth support, and seamless audio switching out of the box.', category: 'feature', date: 'Feb 2026', href: '#' },
   { title: 'Power profiles integration', description: 'Switch between performance and battery saving modes directly from your Openbox menu.', category: 'feature', date: 'Dec 2025', href: '#' },
