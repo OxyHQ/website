@@ -5,6 +5,8 @@ const featureCards = [
     cta: 'Learn more about Openbox \u2192',
     ctaHref: 'http://openbox.org/',
     layout: 'left' as const,
+    image: '/images/oxyos/control-center.jpg',
+    imageAlt: 'OxyOS control center panel',
   },
   {
     title: 'Modern desktop shelf',
@@ -12,6 +14,8 @@ const featureCards = [
     cta: 'View on GitHub \u2192',
     ctaHref: 'https://github.com/OxyHQ/OxyOS-shelf',
     layout: 'right' as const,
+    image: '/images/oxyos/notifications.jpg',
+    imageAlt: 'OxyOS notifications panel',
   },
   {
     title: 'Rock-solid foundation',
@@ -19,6 +23,8 @@ const featureCards = [
     cta: 'Browse packages \u2192',
     ctaHref: 'https://github.com/OxyHQ/OxyOS',
     layout: 'left' as const,
+    image: '/images/oxyos/os-desktop.jpg',
+    imageAlt: 'OxyOS desktop environment',
   },
 ]
 
@@ -141,7 +147,7 @@ export default function OxyOSContent() {
           <div className="media-border-container relative aspect-[16/10] bg-theme-card overflow-hidden">
             <img
               alt="OxyOS desktop screenshot"
-              src="/images/oxyos/hero.png"
+              src="/images/oxyos/os-desktop.jpg"
               className="w-full h-full object-cover"
             />
           </div>
@@ -222,7 +228,15 @@ export default function OxyOSContent() {
                         : 'lg:col-start-9 lg:col-end-25'
                     }`}
                   >
-                    <div className="media-border-container relative aspect-[4/3] bg-theme-card" />
+                    <div className="media-border-container relative aspect-[4/3] bg-theme-card overflow-hidden">
+                      {feature.image && (
+                        <img
+                          alt={feature.imageAlt}
+                          src={feature.image}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -346,7 +360,13 @@ export default function OxyOSContent() {
             <div className="grid-cursor p-g1.75 col-span-full row-span-full gap-y-0 max-lg:grid-rows-subgrid pointer-events-none">
               <div className="col-span-full row-start-1 row-end-2 grid lg:row-start-1 lg:row-end-2 lg:items-center lg:col-start-1 lg:col-end-9 lg:pl-g0.25 lg:pr-g3" />
               <div className="max-lg:pt-v1 col-span-full row-start-2 row-end-3 grid cursor-default items-end lg:row-start-2 lg:row-end-3 lg:items-center lg:col-start-9 lg:col-end-25">
-                <div className="media-border-container relative aspect-video bg-theme-card" />
+                <div className="media-border-container relative aspect-video bg-theme-card overflow-hidden">
+                  <img
+                    alt="OxyOS running on desktop hardware"
+                    src="/images/oxyos/os-desktop.jpg"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               </div>
             </div>
           </div>
