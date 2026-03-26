@@ -5,7 +5,7 @@ import OxyOSContent from '../components/oxyos/OxyOSPage'
 
 export default function OxyOSPage() {
   return (
-    <div className="oxyos-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-[#0b0f0a]">
+    <div className="oxyos-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-[#0c0c14]">
       <SEO
         title="OxyOS — Lightweight Desktop Linux"
         description="OxyOS is a lightweight desktop Linux project. Still small, still fast. A minimal Openbox desktop with a ChromeOS-style shelf."
