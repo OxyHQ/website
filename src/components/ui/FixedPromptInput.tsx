@@ -67,7 +67,8 @@ function useRotatingPlaceholder(phrases: string[]) {
 export default function FixedPromptInput() {
   const [value, setValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [hidden, setHidden] = useState(false)
+  const [hiddenByFooter, setHiddenByFooter] = useState(false)
+  const [hiddenByHero, setHiddenByHero] = useState(false)
 
   const { pathname } = useLocation()
   const hiddenByRoute = HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'))
@@ -81,20 +82,34 @@ export default function FixedPromptInput() {
 
   const placeholder = useRotatingPlaceholder(phrases)
 
-  // Hide when footer is in view so we don't overlay it
+  // Hide when footer or hero is in view
   useEffect(() => {
-    // Small delay so the new page's footer is in the DOM
+    const observers: IntersectionObserver[] = []
     const t = setTimeout(() => {
       const footer = document.querySelector('footer')
-      if (!footer) return
-      const observer = new IntersectionObserver(
-        ([entry]) => setHidden(entry.isIntersecting),
-        { threshold: 0 },
-      )
-      observer.observe(footer)
-      return () => observer.disconnect()
+      if (footer) {
+        const footerObs = new IntersectionObserver(
+          ([entry]) => setHiddenByFooter(entry.isIntersecting),
+          { threshold: 0 },
+        )
+        footerObs.observe(footer)
+        observers.push(footerObs)
+      }
+
+      const hero = document.querySelector('.page-hero')
+      if (hero) {
+        const heroObs = new IntersectionObserver(
+          ([entry]) => setHiddenByHero(entry.isIntersecting),
+          { threshold: 0 },
+        )
+        heroObs.observe(hero)
+        observers.push(heroObs)
+      }
     }, 100)
-    return () => clearTimeout(t)
+    return () => {
+      clearTimeout(t)
+      observers.forEach((obs) => obs.disconnect())
+    }
   }, [pathname])
 
   const handleSubmit = useCallback(() => {
@@ -109,7 +124,7 @@ export default function FixedPromptInput() {
   }, [value, isLoading])
 
   return (
-    <div className={`pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-5 transition-all duration-300 ${hidden || hiddenByRoute ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'}`}>
+    <div className={`pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-5 transition-all duration-300 ${hiddenByFooter || hiddenByHero || hiddenByRoute ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'}`}>
       {/* Gradient fade */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
 
