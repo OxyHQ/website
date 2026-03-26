@@ -118,14 +118,14 @@ export default function OxyOSContent() {
       {/* ── 1. Hero ── */}
       <section className="page-hero section bg-theme-bg text-theme-text">
         <div className="container">
-          <div className="text-left mb-v2.5 max-w-prose">
+          <div className="text-center mx-auto mb-v2.5 max-w-prose-medium-wide">
             <h1 className="type-xl sm:type-2xl text-balance mb-v1">
               A minimal Linux distro, built to stay out of your way.
             </h1>
             <p className="type-base text-theme-text-sec text-pretty mb-v1">
               OxyOS is a lightweight desktop Linux project. Still small, still fast.
             </p>
-            <div className="flex justify-start gap-x-g1 items-center">
+            <div className="flex justify-center gap-x-g1 items-center">
               <div className="hidden md:block">
                 <Button href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">
                   Download ISO
