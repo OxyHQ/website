@@ -1,9 +1,12 @@
 /* OxyOS theme — purple/violet palette derived from OxyOS desktop UI.
- * Must override both --variable (Bloom tokens) AND --color-variable
- * (Tailwind @theme aliases) because @theme resolves var(--background)
- * at :root scope where the JS inline style wins. */
+ *
+ * Three variable groups serve different consumers:
+ * - Bloom tokens (--background, --primary, …) → shared components (Navbar, Footer)
+ * - Tailwind @theme aliases (--color-background, …) → Tailwind utility classes
+ * - cursor-theme vars (--color-theme-bg, …) → .cursor-theme layout utilities
+ */
 .oxyos-theme {
-  /* Bloom tokens */
+  /* ── Bloom tokens ── */
   --background: #0c0c14;
   --foreground: #e6e6f0;
   --surface: #151520;
@@ -11,7 +14,7 @@
   --popover: #151520;
   --popover-foreground: #e6e6f0;
   --primary: #8b6fc0;
-  --primary-foreground: #0c0c14;
+  --primary-foreground: #ffffff;
   --secondary: #1a1a28;
   --secondary-foreground: #e6e6f0;
   --muted: #1a1a28;
@@ -19,16 +22,16 @@
   --accent: #1a1a28;
   --accent-foreground: #e6e6f0;
   --destructive: hsl(0 84% 60%);
-  --border: rgba(139,111,192,0.12);
-  --input: rgba(139,111,192,0.15);
+  --border: rgba(139, 111, 192, 0.12);
+  --input: rgba(139, 111, 192, 0.15);
   --ring: #8b6fc0;
   --sidebar: #101018;
 
-  /* Tailwind @theme aliases — these are what utility classes actually read */
+  /* ── Tailwind @theme aliases ── */
   --color-background: #0c0c14;
   --color-foreground: #e6e6f0;
   --color-primary: #8b6fc0;
-  --color-primary-foreground: #0c0c14;
+  --color-primary-foreground: #ffffff;
   --color-primary-background: #0c0c14;
   --color-secondary: #1a1a28;
   --color-secondary-foreground: #e6e6f0;
@@ -39,70 +42,66 @@
   --color-destructive: hsl(0 84% 60%);
   --color-surface: #151520;
   --color-surface-foreground: #e6e6f0;
-  --color-border: rgba(139,111,192,0.12);
-  --color-input: rgba(139,111,192,0.15);
+  --color-border: rgba(139, 111, 192, 0.12);
+  --color-input: rgba(139, 111, 192, 0.15);
   --color-ring: #8b6fc0;
   --color-popover: #151520;
   --color-popover-foreground: #e6e6f0;
   --color-sidebar: #101018;
-
-  /* Banner */
   --color-banner-background: #8b6fc0;
 
-  /* cursor-theme color vars */
+  /* ── cursor-theme color vars ── */
   --color-theme-bg: #0c0c14;
   --color-theme-text: #e6e6f0;
   --color-theme-text-sec: #8585a0;
   --color-theme-card: #151520;
   --color-theme-card-hex: #121220;
   --color-theme-card-hover-hex: #1c1c30;
-  --color-theme-border-02: rgba(139,111,192,0.10);
+  --color-theme-border-02: rgba(139, 111, 192, 0.10);
   --color-theme-accent: #8b6fc0;
   --color-theme-product-chrome: #13131e;
   --color-theme-product-editor: #151520;
 }
 
-/* Buttons */
-.oxyos-theme .btn {
+/* ── Button variant overrides (pill shape + purple accent) ── */
+.oxyos-theme .button-primary {
   background: #8b6fc0;
+  border-color: #8b6fc0;
   color: #ffffff;
   border-radius: 9999px;
 }
-.oxyos-theme .btn:hover {
-  opacity: 0.9;
+.oxyos-theme .button-primary:hover {
+  background: #7a5eb3;
+  border-color: #7a5eb3;
+  color: #ffffff;
 }
 
-.oxyos-theme .btn--secondary {
-  background: transparent;
+.oxyos-theme .button-outline {
+  border-color: rgba(139, 111, 192, 0.25);
   color: var(--color-theme-text);
-  border: 1px solid rgba(139,111,192,0.25);
   border-radius: 9999px;
 }
-.oxyos-theme .btn--secondary:hover {
-  background: rgba(139,111,192,0.08);
+.oxyos-theme .button-outline:hover {
+  background: rgba(139, 111, 192, 0.08);
+  border-color: rgba(139, 111, 192, 0.4);
 }
 
-.oxyos-theme .btn-tertiary {
+.oxyos-theme .button-ghost {
   color: #a48bd4;
+  border-radius: 9999px;
 }
-.oxyos-theme .btn-tertiary:hover {
+.oxyos-theme .button-ghost:hover {
+  background: rgba(139, 111, 192, 0.08);
   color: #bda4e6;
 }
 
-.oxyos-theme .btn-text {
-  color: #a48bd4;
-}
-.oxyos-theme .btn-text:hover {
-  color: #bda4e6;
-}
-
-/* Card border tint */
+/* ── Card / media border tint ── */
 .oxyos-theme .card {
-  border-color: rgba(139,111,192,0.08);
+  border-color: rgba(139, 111, 192, 0.08);
 }
 .oxyos-theme .card-border {
-  border-color: rgba(139,111,192,0.10);
+  border-color: rgba(139, 111, 192, 0.10);
 }
 .oxyos-theme .media-border-container {
-  border-color: rgba(139,111,192,0.10);
+  border-color: rgba(139, 111, 192, 0.10);
 }
