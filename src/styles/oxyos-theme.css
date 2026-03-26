@@ -66,6 +66,7 @@
 .oxyos-theme .btn {
   background: #8b6fc0;
   color: #ffffff;
+  border-radius: 9999px;
 }
 .oxyos-theme .btn:hover {
   opacity: 0.9;
@@ -75,6 +76,7 @@
   background: transparent;
   color: var(--color-theme-text);
   border: 1px solid rgba(139,111,192,0.25);
+  border-radius: 9999px;
 }
 .oxyos-theme .btn--secondary:hover {
   background: rgba(139,111,192,0.08);
