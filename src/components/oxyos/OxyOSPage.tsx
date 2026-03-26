@@ -1,3 +1,5 @@
+import Button from '../ui/Button'
+
 const featureCards = [
   {
     title: 'Lightweight by design',
@@ -114,7 +116,7 @@ export default function OxyOSContent() {
   return (
     <div className="cursor-theme oxyos-theme">
       {/* ── 1. Hero ── */}
-      <section className="section bg-theme-bg text-theme-text">
+      <section className="page-hero section bg-theme-bg text-theme-text">
         <div className="container">
           <div className="text-left mb-v2.5 max-w-prose">
             <h1 className="type-xl sm:type-2xl text-balance mb-v1">
@@ -124,23 +126,15 @@ export default function OxyOSContent() {
               OxyOS is a lightweight desktop Linux project. Still small, still fast.
             </p>
             <div className="flex justify-start gap-x-g1 items-center">
-              <div>
-                <div className="hidden items-center md:flex">
-                  <a className="btn" href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">
-                    Download ISO
-                    <div aria-hidden="true" className="btn-icon">
-                      <span aria-hidden="true">&#x2913;</span>
-                    </div>
-                  </a>
-                </div>
-                <div className="flex items-center md:hidden">
-                  <a className="btn" href="https://github.com/OxyHQ/OxyOS/releases">
-                    All Downloads
-                    <div aria-hidden="true" className="btn-icon">
-                      <span aria-hidden="true">&rarr;</span>
-                    </div>
-                  </a>
-                </div>
+              <div className="hidden md:block">
+                <Button href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">
+                  Download ISO
+                </Button>
+              </div>
+              <div className="block md:hidden">
+                <Button href="https://github.com/OxyHQ/OxyOS/releases">
+                  All Downloads
+                </Button>
               </div>
             </div>
           </div>
@@ -199,7 +193,7 @@ export default function OxyOSContent() {
                         </div>
                       </div>
                       <div className="mt-v8/12">
-                        <span className="btn-tertiary">{feature.cta}</span>
+                        <Button variant="ghost">{feature.cta}</Button>
                       </div>
                     </div>
                   </div>
@@ -296,14 +290,9 @@ export default function OxyOSContent() {
                     </div>
                     {f.link && (
                       <div className="mt-auto pt-v8/12">
-                        <a
-                          className="btn-tertiary"
-                          href={f.link.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
+                        <Button variant="ghost" href={f.link.href}>
                           {f.link.label}
-                        </a>
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -344,14 +333,9 @@ export default function OxyOSContent() {
                     </h3>
                   </div>
                   <div className="mt-v1">
-                    <div className="flex justify-start gap-x-g1 items-center flex-wrap">
-                      <a className="btn" href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">
-                        Download ISO
-                        <div aria-hidden="true" className="btn-icon">
-                          <span aria-hidden="true">&#x2913;</span>
-                        </div>
-                      </a>
-                    </div>
+                    <Button href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">
+                      Download ISO
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -392,12 +376,9 @@ export default function OxyOSContent() {
                     </ul>
                     {card.download && (
                       <div className="mt-auto pt-v8/12">
-                        <a className="btn" href={card.download.href}>
+                        <Button href={card.download.href}>
                           {card.download.label}
-                          <div aria-hidden="true" className="btn-icon">
-                            <span aria-hidden="true">&#x2913;</span>
-                          </div>
-                        </a>
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -416,9 +397,9 @@ export default function OxyOSContent() {
               <h2 className="type-md-lg text-balance mb-v1">Frequently asked questions</h2>
               <p className="type-base text-theme-text-sec mb-v1 lg:mb-0">
                 Can&apos;t find the answer you&apos;re looking for? Reach out on our{' '}
-                <a href="https://github.com/OxyHQ/OxyOS/issues" className="btn-tertiary">
+                <Button variant="ghost" href="https://github.com/OxyHQ/OxyOS/issues">
                   GitHub issues
-                </a>.
+                </Button>.
               </p>
             </div>
             <div className="col-span-full md:col-start-7 md:col-end-25 lg:col-start-9 lg:col-end-25 xl:col-start-7 xl:col-end-19">
@@ -437,14 +418,9 @@ export default function OxyOSContent() {
                       {item.link && (
                         <>
                           {' '}
-                          <a
-                            href={item.link.href}
-                            className="btn-tertiary"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
+                          <Button variant="ghost" href={item.link.href}>
                             {item.link.label}
-                          </a>
+                          </Button>
                         </>
                       )}
                     </div>
@@ -480,9 +456,11 @@ export default function OxyOSContent() {
                   </a>
                 </article>
               ))}
-              <a className="btn-text mt-v1 inline-flex" href="https://github.com/OxyHQ/OxyOS/releases">
-                View all releases &rarr;
-              </a>
+              <div className="mt-v1">
+                <Button variant="ghost" href="https://github.com/OxyHQ/OxyOS/releases">
+                  View all releases &rarr;
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -496,23 +474,15 @@ export default function OxyOSContent() {
               Try OxyOS now.
             </h2>
             <div className="flex justify-center gap-x-g1 items-center flex-wrap">
-              <div>
-                <div className="hidden items-center md:flex">
-                  <a className="btn" href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">
-                    Download ISO
-                    <div aria-hidden="true" className="btn-icon">
-                      <span aria-hidden="true">&#x2913;</span>
-                    </div>
-                  </a>
-                </div>
-                <div className="flex items-center md:hidden">
-                  <a className="btn" href="https://github.com/OxyHQ/OxyOS/releases">
-                    All Downloads
-                    <div aria-hidden="true" className="btn-icon">
-                      <span aria-hidden="true">&rarr;</span>
-                    </div>
-                  </a>
-                </div>
+              <div className="hidden md:block">
+                <Button href="https://os.oxy.so/downloads/oxyos-1.0-amd64.iso">
+                  Download ISO
+                </Button>
+              </div>
+              <div className="block md:hidden">
+                <Button href="https://github.com/OxyHQ/OxyOS/releases">
+                  All Downloads
+                </Button>
               </div>
             </div>
           </div>
