@@ -3,6 +3,7 @@
 @import "@fontsource-variable/geist-mono";
 @import './styles/cursor-theme.css';
 @import './styles/oxyos-theme.css';
+@import './styles/tnp-theme.css';
 
 @theme {
   /* Neutral palette (used for specific non-semantic styling) */

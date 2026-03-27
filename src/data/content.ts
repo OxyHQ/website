@@ -104,6 +104,7 @@ export const platformDropdown: NavDropdown = {
       items: [
         { title: 'Developer Platform', description: 'Build on Oxy', href: '#', icon: 'developers' },
         { title: 'Apps', description: 'Extend with integrations', href: '#', icon: 'apps' },
+        { title: 'TNP', description: 'The Network Protocol', href: '/tnp' },
       ],
     },
   ],
@@ -388,6 +389,7 @@ export const footerColumns: FooterColumn[] = [
   {
     title: 'Apps',
     links: [
+      { label: 'TNP', href: '/tnp' },
       { label: 'Oxy OS', href: 'https://os.oxy.so' },
       { label: 'Accounts', href: 'https://accounts.oxy.so/' },
       { label: 'Marketplace', href: '#' },

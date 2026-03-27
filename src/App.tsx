@@ -22,6 +22,8 @@ import BlogPage from './pages/BlogPage'
 import CodeaPage from './pages/CodeaPage'
 import CodexExtensionPage from './pages/CodexExtensionPage'
 import OxyOSPage from './pages/OxyOSPage'
+import TNPPage from './pages/TNPPage'
+import TNPInstallPage from './pages/TNPInstallPage'
 import CareerDetailPage from './pages/CareerDetailPage'
 import NotFoundPage from './pages/NotFoundPage'
 import AIPage from './pages/AIPage'
@@ -99,6 +101,8 @@ function PublicRoutes() {
       <Route path="dashboard" element={<DashboardPage />} />
       <Route path="initiative" element={<InitiativePage />} />
       <Route path="os" element={<OxyOSPage />} />
+      <Route path="tnp" element={<TNPPage />} />
+      <Route path="tnp/install" element={<TNPInstallPage />} />
       <Route path="settings" element={<SettingsPage />} />
     </>
   )

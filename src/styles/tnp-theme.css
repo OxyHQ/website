@@ -1,0 +1,181 @@
+/* TNP theme — dark emerald palette inspired by xAI's design language.
+ *
+ * Three variable groups serve different consumers:
+ * - Bloom tokens (--background, --primary, …) → shared components (Navbar, Footer)
+ * - Tailwind @theme aliases (--color-background, …) → Tailwind utility classes
+ * - cursor-theme vars (--color-theme-bg, …) → .cursor-theme layout utilities
+ */
+.tnp-theme {
+  /* ── Bloom tokens ── */
+  --background: #09090b;
+  --foreground: #e8e8e6;
+  --surface: #111113;
+  --surface-foreground: #e8e8e6;
+  --popover: #111113;
+  --popover-foreground: #e8e8e6;
+  --primary: #10b981;
+  --primary-foreground: #ffffff;
+  --secondary: #18181b;
+  --secondary-foreground: #e8e8e6;
+  --muted: #18181b;
+  --muted-foreground: #71717a;
+  --accent: #18181b;
+  --accent-foreground: #e8e8e6;
+  --destructive: hsl(0 84% 60%);
+  --border: rgba(16, 185, 129, 0.12);
+  --input: rgba(16, 185, 129, 0.15);
+  --ring: #10b981;
+  --sidebar: #0c0c0e;
+
+  /* ── Tailwind @theme aliases ── */
+  --color-background: #09090b;
+  --color-foreground: #e8e8e6;
+  --color-primary: #10b981;
+  --color-primary-foreground: #ffffff;
+  --color-primary-background: #09090b;
+  --color-secondary: #18181b;
+  --color-secondary-foreground: #e8e8e6;
+  --color-muted: #18181b;
+  --color-muted-foreground: #71717a;
+  --color-accent: #18181b;
+  --color-accent-foreground: #e8e8e6;
+  --color-destructive: hsl(0 84% 60%);
+  --color-surface: #111113;
+  --color-surface-foreground: #e8e8e6;
+  --color-border: rgba(16, 185, 129, 0.12);
+  --color-input: rgba(16, 185, 129, 0.15);
+  --color-ring: #10b981;
+  --color-popover: #111113;
+  --color-popover-foreground: #e8e8e6;
+  --color-sidebar: #0c0c0e;
+  --color-banner-background: #10b981;
+
+  /* ── cursor-theme color vars ── */
+  --color-theme-bg: #09090b;
+  --color-theme-text: #e8e8e6;
+  --color-theme-text-sec: #71717a;
+  --color-theme-card: #111113;
+  --color-theme-card-hex: #0f0f11;
+  --color-theme-card-hover-hex: #1a1a1e;
+  --color-theme-border-02: rgba(16, 185, 129, 0.10);
+  --color-theme-accent: #10b981;
+  --color-theme-product-chrome: #0d0d0f;
+  --color-theme-product-editor: #111113;
+}
+
+/* ── Button variant overrides (pill shape + emerald accent) ── */
+.tnp-theme .button-primary {
+  background: #10b981;
+  border-color: #10b981;
+  color: #ffffff;
+  border-radius: 9999px;
+}
+.tnp-theme .button-primary:hover {
+  background: #0d9668;
+  border-color: #0d9668;
+  color: #ffffff;
+}
+
+.tnp-theme .button-outline {
+  border-color: rgba(16, 185, 129, 0.25);
+  color: var(--color-theme-text);
+  border-radius: 9999px;
+}
+.tnp-theme .button-outline:hover {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.tnp-theme .button-ghost {
+  color: #34d399;
+  border-radius: 9999px;
+}
+.tnp-theme .button-ghost:hover {
+  background: rgba(16, 185, 129, 0.08);
+  color: #6ee7b7;
+}
+
+/* ── Card / media border tint ── */
+.tnp-theme .card {
+  border-color: rgba(16, 185, 129, 0.08);
+}
+.tnp-theme .card-border {
+  border-color: rgba(16, 185, 129, 0.10);
+}
+.tnp-theme .media-border-container {
+  border-color: rgba(16, 185, 129, 0.10);
+}
+
+/* ── xAI-inspired utilities ── */
+
+/* Mono tag: bracketed section labels */
+.tnp-theme .mono-tag {
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-theme-text-sec);
+}
+
+/* Gradient text for hero headings */
+.tnp-theme .gradient-text {
+  background: linear-gradient(to right, #10b981, #6ee7b7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Corner dot hover effect for product cards */
+.tnp-theme .card-corner-dots {
+  position: relative;
+}
+.tnp-theme .card-corner-dots::before,
+.tnp-theme .card-corner-dots::after,
+.tnp-theme .card-corner-dots > .corner-bl::before,
+.tnp-theme .card-corner-dots > .corner-br::before {
+  content: '';
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: #10b981;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+}
+.tnp-theme .card-corner-dots::before {
+  top: -0.25rem;
+  left: -0.25rem;
+}
+.tnp-theme .card-corner-dots::after {
+  top: -0.25rem;
+  right: -0.25rem;
+}
+.tnp-theme .card-corner-dots > .corner-bl::before {
+  bottom: -0.25rem;
+  left: -0.25rem;
+  top: auto;
+}
+.tnp-theme .card-corner-dots > .corner-br::before {
+  bottom: -0.25rem;
+  right: -0.25rem;
+  top: auto;
+  left: auto;
+}
+.tnp-theme .group:hover .card-corner-dots::before,
+.tnp-theme .group:hover .card-corner-dots::after,
+.tnp-theme .group:hover .card-corner-dots > .corner-bl::before,
+.tnp-theme .group:hover .card-corner-dots > .corner-br::before {
+  opacity: 1;
+}
+
+/* Code block styling */
+.tnp-theme .code-block {
+  background: #0f0f11;
+  border: 1px solid rgba(16, 185, 129, 0.12);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-size: 0.875rem;
+  color: #6ee7b7;
+  overflow-x: auto;
+}
