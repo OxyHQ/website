@@ -230,6 +230,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
   const scrolled = scrollY > 50
   const bannerHeight = 40 // matches --site-header-banner-visible-height
   const bannerOffset = bannerVisible ? Math.max(0, bannerHeight - scrollY) : 0
+  const isTransparent = transparent && !scrolled && !isOpen
 
   return (
     <>
@@ -270,7 +271,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
       )}
 
     <header
-      className={`fixed left-0 right-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${transparent && !scrolled && !isOpen ? 'bg-transparent border-b border-transparent' : 'bg-background/80 border-b border-border backdrop-blur-md'}`}
+      className={`fixed left-0 right-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-background/80 border-b border-border backdrop-blur-md'}`}
       style={{ top: bannerOffset }}
     >
 
@@ -312,7 +313,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                         className="group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 hover:bg-surface hover:text-foreground"
                         style={{
                           background: activeDropdown === dd.label ? 'var(--color-surface)' : undefined,
-                          color: activeDropdown === dd.label ? 'var(--color-foreground)' : 'var(--color-muted-foreground)',
+                          color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
                         }}
                         onMouseEnter={() => openDropdown(dd.label)}
                         aria-expanded={activeDropdown === dd.label}
@@ -327,7 +328,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                       {link.href.startsWith('/') ? (
                         <Link
                           to={link.href}
-                          className="inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] text-muted-foreground transition-colors duration-300 hover:bg-surface hover:text-foreground"
+                          className={`inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 hover:bg-surface hover:text-foreground ${isTransparent ? 'text-white/80 hover:text-white' : 'text-muted-foreground'}`}
                           onMouseEnter={scheduleClose}
                         >
                           {link.label}
@@ -335,7 +336,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                       ) : (
                         <a
                           href={link.href}
-                          className="inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] text-muted-foreground transition-colors duration-300 hover:bg-surface hover:text-foreground"
+                          className={`inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 hover:bg-surface hover:text-foreground ${isTransparent ? 'text-white/80 hover:text-white' : 'text-muted-foreground'}`}
                           onMouseEnter={scheduleClose}
                         >
                           {link.label}
