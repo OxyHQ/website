@@ -166,13 +166,13 @@ const FAIRCOIN_STATS = [
 function FairCoinFace() {
   const [runs, setRuns] = useState(() => FAIRCOIN_STATS.map(() => 0))
   return (
-    <div className="grid h-full w-full grid-cols-[1fr_1fr_auto] overflow-hidden bg-[#166534]" style={{ borderRadius: '9999px 20px 20px 9999px' }}>
+    <div className="grid h-full w-full grid-cols-[1fr_1fr_auto] bg-[#166534]" style={{ borderRadius: '9999px 20px 20px 9999px' }}>
       {/* Col 1: title + buttons */}
-      <div className="flex flex-col items-end justify-center gap-3 pl-10 py-4 pr-3 lg:pl-14 lg:py-5 lg:pr-4">
-        <h3 className="text-right text-5xl font-extrabold uppercase tracking-wider text-white">
+      <div className="flex flex-col justify-center gap-3 pl-10 py-4 pr-3 lg:pl-14 lg:py-5 lg:pr-4">
+        <h3 className="text-5xl font-extrabold uppercase tracking-wider text-white">
           FairCoin <span className="font-normal italic text-green-200">Today</span>
         </h3>
-        <div className="flex flex-wrap justify-end gap-2">
+        <div className="flex flex-wrap gap-2">
           <a href="https://buy.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full bg-green-400 px-4 py-1.5 text-sm font-bold text-green-900">
             Buy
           </a>
@@ -233,7 +233,7 @@ export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   // Static card — no rotation
   if (slot.faces.length <= 1) {
     return (
-      <div className={`overflow-hidden cursor-pointer ${radiusClass} ${sizeClass}`} style={radiusStyle}>
+      <div className={`${slot.roundedLeft ? '' : 'overflow-hidden'} cursor-pointer ${radiusClass} ${sizeClass}`} style={radiusStyle}>
         <CardFace card={slot.faces[0]} />
       </div>
     )
