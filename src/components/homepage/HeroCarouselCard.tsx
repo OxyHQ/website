@@ -188,7 +188,7 @@ function FairCoinFace() {
       <div className="flex items-center py-4 px-3 lg:py-5 lg:px-4">
         <div className="flex w-full flex-col gap-1.5 lg:gap-2">
           {FAIRCOIN_STATS.map((stat, i) => (
-            <div key={stat.label} className="cursor-pointer rounded-full bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5" onClick={() => setRuns(r => r.map((v, j) => j === i ? v + 1 : v))}>
+            <div key={stat.label} className="cursor-pointer select-none rounded-full bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5" onClick={() => setRuns(r => r.map((v, j) => j === i ? v + 1 : v))}>
               <div className="flex items-center gap-2">
                 <stat.Icon size={16} className="text-green-400" weight="bold" />
                 <div>
