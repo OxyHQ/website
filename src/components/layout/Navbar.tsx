@@ -64,14 +64,14 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
               {link.href.startsWith('/') ? (
                 <Link
                   to={link.href}
-                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-[10px] border border-transparent px-2.5 text-sm text-foreground transition-colors duration-300 hover:bg-surface"
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-full border border-transparent px-2.5 text-sm text-foreground transition-colors duration-300 hover:bg-surface"
                 >
                   {link.label}
                 </Link>
               ) : (
                 <a
                   href={link.href}
-                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-[10px] border border-transparent px-2.5 text-sm text-foreground transition-colors duration-300 hover:bg-surface"
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-full border border-transparent px-2.5 text-sm text-foreground transition-colors duration-300 hover:bg-surface"
                 >
                   {link.label}
                 </a>
@@ -257,7 +257,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                 </svg>
               </Link>
               <button
-                className="inline-flex cursor-pointer items-center justify-center text-nowrap border text-base transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default size-8 rounded-[10px] button-outline !bg-transparent !border-transparent dark absolute top-1/2 right-0 -translate-y-1/2 hover:!border-muted-foreground"
+                className="inline-flex cursor-pointer items-center justify-center text-nowrap border text-base transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default size-8 rounded-full button-outline !bg-transparent !border-transparent dark absolute top-1/2 right-0 -translate-y-1/2 hover:!border-muted-foreground"
                 aria-label="Dismiss banner"
                 onClick={() => setBannerVisible(false)}
               >
@@ -310,7 +310,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                     <li key={dd.label}>
                       <button
                         ref={(el) => { triggerRefs.current[dd.label] = el }}
-                        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'hover:bg-white/10 hover:text-white' : 'hover:bg-surface hover:text-foreground'}`}
+                        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'hover:bg-white/10 hover:text-white' : 'hover:bg-surface hover:text-foreground'}`}
                         style={{
                           background: activeDropdown === dd.label ? 'var(--color-surface)' : undefined,
                           color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
@@ -328,7 +328,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                       {link.href.startsWith('/') ? (
                                 <Link
                           to={link.href}
-                          className={`inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-surface hover:text-foreground'}`}
+                          className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-surface hover:text-foreground'}`}
                           onMouseEnter={scheduleClose}
                         >
                           {link.label}
@@ -336,7 +336,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                       ) : (
                         <a
                           href={link.href}
-                          className={`inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-surface hover:text-foreground'}`}
+                          className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-surface hover:text-foreground'}`}
                           onMouseEnter={scheduleClose}
                         >
                           {link.label}
@@ -357,7 +357,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                 </button>
               )}
               <button
-                className={`inline-flex h-9 w-9 items-center justify-center rounded-[10px] ${isTransparent ? 'text-white' : 'text-muted-foreground'}`}
+                className={`inline-flex h-9 w-9 items-center justify-center rounded-full ${isTransparent ? 'text-white' : 'text-muted-foreground'}`}
                 aria-label="Open menu"
                 aria-expanded={mobileOpen}
                 onClick={() => setMobileOpen(!mobileOpen)}
