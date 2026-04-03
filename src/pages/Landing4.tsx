@@ -116,7 +116,7 @@ function PartnerLogos() {
 /* ------------------------------------------------------------------ */
 function AllInOneSection() {
   return (
-    <section className="py-10 max-[950px]:py-6">
+    <section className="pt-20 max-[950px]:pt-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full text-center space-y-[1em]">
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none">
@@ -343,7 +343,7 @@ function StatsAndTestimonialsSection() {
     : 2
 
   return (
-    <section className="overflow-hidden py-10 max-[950px]:py-6">
+    <section className="overflow-hidden pt-20 max-[950px]:pt-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full mb-5">
           <div className="flex gap-6 my-6 overflow-x-auto">
@@ -510,7 +510,7 @@ const TESTIMONIALS = [
 /* ------------------------------------------------------------------ */
 function ModelAgnosticSection() {
   return (
-    <section className="py-8">
+    <section className="pt-8">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full">
           <div className="model-agnostic-wrap relative max-[950px]:mb-8">
@@ -637,7 +637,7 @@ function TeamsSection() {
   }, [])
 
   return (
-    <section className="py-8">
+    <section className="pt-8">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 side-by-side-tabs">
         <div className="col-span-6 max-[950px]:col-span-full">
           <div className="tabs tabs-fade">
@@ -725,7 +725,7 @@ function TickIcon({ className }: { className?: string }) {
 
 function PartnershipSection() {
   return (
-    <section className="py-10 max-[950px]:py-6">
+    <section className="pt-20 max-[950px]:pt-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
         <div className="col-span-full text-center">
           <p className="mb-6 text-oxy-blue"><strong>Enterprise partnership services</strong></p>
@@ -790,7 +790,7 @@ const SECURITY_ITEMS = [
 
 function IntegrationsSecuritySection() {
   return (
-    <section className="py-10 max-[950px]:py-6">
+    <section className="pt-20 max-[950px]:pt-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
         <div className="col-span-full text-center">
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5 max-w-[500px] mx-auto">Enterprise-grade integrations and security</h2>
@@ -857,7 +857,7 @@ function BannerSection() {
 /* ------------------------------------------------------------------ */
 function IOSAppSection() {
   return (
-    <section className="py-10 max-[950px]:py-6">
+    <section className="pt-20 max-[950px]:pt-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
         <div className="col-span-full text-center">
           <p className="mb-6 text-oxy-blue"><strong>Agents iOS app</strong></p>
@@ -920,7 +920,7 @@ const TRUSTED_LOGOS = ['strava', 'polestar', 'merck', 'apollo.io', 'robinhood', 
 
 function TrustedBySection() {
   return (
-    <section className="bg-sand py-10 pb-[50px]">
+    <section className="bg-sand pt-20 pb-[50px]">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full">
           <h3 className="text-[22px] leading-[1.2] font-[450] mb-10 max-w-[720px]">
@@ -992,7 +992,7 @@ const PLANS = [
 
 function PricingSection() {
   return (
-    <section className="py-10 max-[950px]:py-6">
+    <section className="pt-20 max-[950px]:pt-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full">
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-10 text-center">Pricing</h2>
