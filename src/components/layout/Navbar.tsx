@@ -107,7 +107,6 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
 
   // Cached panel sizes (measured once on mount from hidden off-screen panels)
   const [panelSizes, setPanelSizes] = useState<Record<string, { w: number; h: number }>>({})
-  const [navAreaLeft, setNavAreaLeft] = useState(0)
   const [hasMeasured, setHasMeasured] = useState(false)
 
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -127,17 +126,6 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
   const measureRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({})
   const navAreaRef = useRef<HTMLDivElement>(null)
-
-  // Track navArea's left offset from viewport for full-width dropdown positioning
-  useLayoutEffect(() => {
-    function update() {
-      const el = navAreaRef.current
-      if (el) setNavAreaLeft(el.getBoundingClientRect().left)
-    }
-    update()
-    window.addEventListener('resize', update)
-    return () => window.removeEventListener('resize', update)
-  }, [])
 
   // Measure all panels once on mount
   useLayoutEffect(() => {
@@ -331,54 +319,6 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                   ))}
                 </ul>
 
-                {/* ─── Shared Viewport ─── */}
-                {hasMeasured && (
-                  <div
-                    className="absolute top-full z-50 flex w-screen justify-center border-b border-border bg-background/80 pt-2 pb-2 backdrop-blur-md"
-                    style={{
-                      left: -navAreaLeft,
-                      pointerEvents: isOpen ? 'auto' : 'none',
-                      opacity: isOpen ? 1 : 0,
-                      transition: `opacity ${isOpen ? '0.15s' : '0.12s'} ease-out`,
-                    }}
-                    onMouseEnter={cancelClose}
-                    onMouseLeave={scheduleClose}
-                  >
-                    <div
-                      className="overflow-hidden rounded-xl border border-border bg-background shadow-lg"
-                      style={{
-                        width: activeSize ? activeSize.w : 0,
-                        height: activeSize ? activeSize.h : 0,
-                        transition: `width 0.2s ${easing}, height 0.2s ${easing}`,
-                      }}
-                    >
-                      <div className="relative">
-                        {dropdowns.map((dd) => {
-                          const isActive = dd.label === activeDropdown
-                          const isExiting = dd.label === prevDropdown
-                          const show = isActive || isExiting
-
-                          return (
-                            <div
-                              key={dd.label}
-                              className={getAnimClass(dd.label)}
-                              style={{
-                                position: isActive ? 'relative' : 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: panelSizes[dd.label]?.w,
-                                visibility: show ? 'visible' : 'hidden',
-                                pointerEvents: isActive ? 'auto' : 'none',
-                              }}
-                            >
-                              <DropdownContent dropdown={dd} />
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -456,6 +396,56 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
           </div>
         </nav>
       </Container>
+
+      {/* ─── Shared Dropdown Viewport ─── */}
+      {hasMeasured && (
+        <div
+          className="flex w-full justify-center border-t border-border pb-3 pt-3"
+          style={{
+            pointerEvents: isOpen ? 'auto' : 'none',
+            opacity: isOpen ? 1 : 0,
+            maxHeight: isOpen && activeSize ? activeSize.h + 24 : 0,
+            overflow: 'hidden',
+            transition: `opacity ${isOpen ? '0.15s' : '0.12s'} ease-out, max-height 0.2s ${easing}`,
+          }}
+          onMouseEnter={cancelClose}
+          onMouseLeave={scheduleClose}
+        >
+          <div
+            className="overflow-hidden rounded-xl border border-border bg-background shadow-lg"
+            style={{
+              width: activeSize ? activeSize.w : 0,
+              height: activeSize ? activeSize.h : 0,
+              transition: `width 0.2s ${easing}, height 0.2s ${easing}`,
+            }}
+          >
+            <div className="relative">
+              {dropdowns.map((dd) => {
+                const isActive = dd.label === activeDropdown
+                const isExiting = dd.label === prevDropdown
+                const show = isActive || isExiting
+
+                return (
+                  <div
+                    key={dd.label}
+                    className={getAnimClass(dd.label)}
+                    style={{
+                      position: isActive ? 'relative' : 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: panelSizes[dd.label]?.w,
+                      visibility: show ? 'visible' : 'hidden',
+                      pointerEvents: isActive ? 'auto' : 'none',
+                    }}
+                  >
+                    <DropdownContent dropdown={dd} />
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ─── Mobile drawer ─── */}
       {mobileOpen && (
