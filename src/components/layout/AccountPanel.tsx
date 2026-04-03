@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
-import Lottie from 'lottie-react'
+import { useLottie } from 'lottie-react'
 import { useAccountPanel } from '../../contexts/AccountPanelContext'
 import { ADMIN_USERNAMES } from '../../constants'
 import welcomeAnimation from '../../assets/lottie/welcomeheader_background.json'
@@ -58,6 +58,7 @@ export default function AccountPanel() {
   }, [isOpen, close])
 
   const displayName = [user?.name?.first, user?.name?.last].filter(Boolean).join(' ') || user?.username || ''
+  const { View: LottieView } = useLottie({ animationData: welcomeAnimation, loop: true, autoplay: true }, { width: '100%', height: '100%', position: 'absolute' as const, top: 0, left: 0 })
 
   return (
     <>
@@ -84,12 +85,7 @@ export default function AccountPanel() {
           {/* ─── Profile header with animated background ─── */}
           <div className="flex flex-col items-center pb-5 pt-1">
             <div className="relative flex h-[100px] w-[600px] max-w-full items-center justify-center overflow-hidden">
-              <Lottie
-                animationData={welcomeAnimation}
-                loop
-                autoplay
-                className="absolute inset-0 h-full w-full"
-              />
+              {LottieView}
               <div className="relative z-10">
                 <Avatar source={user?.avatar} size={100} placeholderColor={user?.color} />
               </div>
