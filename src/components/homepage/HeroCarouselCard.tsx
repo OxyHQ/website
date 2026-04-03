@@ -49,11 +49,11 @@ function CardFace({ card }: { card: HeroCard }) {
     case 'brand':
       if (card.variant === 'oxy') {
         return (
-          <div className="flex h-full w-full items-center justify-center bg-black p-4">
+          <div className="h-full w-full bg-black">
             <img
               src="/images/landing/oxy3d.png"
               alt="Oxy"
-              className="h-full w-full object-contain"
+              className="h-full w-full object-cover"
               loading="lazy"
               decoding="async"
             />
