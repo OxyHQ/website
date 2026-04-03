@@ -106,8 +106,8 @@ export default function AccountPanel() {
           </div>
 
           {/* ─── Quick actions (horizontal scroll chips) ─── */}
-          <div className="px-4 pb-4">
-            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <div className="pb-4">
+            <div className="flex gap-1.5 overflow-x-auto px-4 pb-1 scrollbar-none">
               {quickActions.map((a) => (
                 <Link key={a.label} to={a.href} className={chipClass}>
                   <div className="flex h-7 w-7 items-center justify-center rounded-full" style={{ backgroundColor: a.bg }}>
