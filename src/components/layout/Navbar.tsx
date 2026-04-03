@@ -400,7 +400,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
       {/* ─── Shared Dropdown Viewport ─── */}
       {hasMeasured && (
         <div
-          className="flex w-full justify-center pb-3 pt-3"
+          className={`flex w-full justify-center ${isOpen ? 'pb-3 pt-3' : ''}`}
           style={{
             pointerEvents: isOpen ? 'auto' : 'none',
             opacity: isOpen ? 1 : 0,
