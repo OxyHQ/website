@@ -416,8 +416,8 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
         >
           <div
             className="overflow-hidden rounded-xl border border-border backdrop-blur-md"
-            style={{ backgroundColor: 'color-mix(in srgb, var(--color-background) 80%, transparent)' }}
             style={{
+              backgroundColor: 'color-mix(in srgb, var(--color-background) 80%, transparent)',
               width: activeSize ? activeSize.w : 0,
               height: activeSize ? activeSize.h : 0,
               transition: `width 0.2s ${easing}, height 0.2s ${easing}`,
