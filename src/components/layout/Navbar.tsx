@@ -241,7 +241,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                 href="/"
               >
                 <span className="attio-group-hover-underline relative truncate text-[13px]/5">
-                  Ask more from CRM. Ask Oxy.
+                  Alia. Think better, together.
                 </span>
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50">
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
