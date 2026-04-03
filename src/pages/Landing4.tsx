@@ -505,9 +505,9 @@ function ModelAgnosticSection() {
                 <img src={`${IMG}/model-agnostic-popover.svg`} alt="Model selector" />
               </div>
               <div className="col-span-4 max-[950px]:hidden col-start-8 z-10 text-white">
-                <p className="mb-6"><strong>Model agnostic</strong></p>
+                <p className="mb-6"><strong>Independent Ecosystem</strong></p>
                 <p className="text-[22px] leading-[1.2] font-[450] max-w-[420px]">
-                  Only use the AI models that work best for you. With Oxy, you can choose and switch between leading models as you need.
+                  Radically transparent, fiercely human. No ads. No data selling. No venture capital strings. Just purpose-driven tools designed for real-world impact.
                 </p>
               </div>
             </div>
@@ -516,9 +516,9 @@ function ModelAgnosticSection() {
             </div>
           </div>
           <div className="hidden max-[950px]:block px-3">
-            <p className="mb-6"><strong>Model agnostic</strong></p>
+            <p className="mb-6"><strong>Independent Ecosystem</strong></p>
             <p className="text-[22px] leading-[1.2] font-[450] max-w-[420px]">
-              Only use the AI models that work best for you. With Oxy, you can choose and switch between leading models as you need.
+              Radically transparent, fiercely human. No ads. No data selling. No venture capital strings. Just purpose-driven tools designed for real-world impact.
             </p>
           </div>
         </div>
@@ -532,46 +532,32 @@ function ModelAgnosticSection() {
 /* ------------------------------------------------------------------ */
 const TEAM_TABS = [
   {
-    id: 'sales-teams',
-    label: 'Sales teams',
-    desc: 'Optimize every stage of the deal lifecycle with AI that helps you prep for calls, answers your RFPs, and updates your CRM.',
+    id: 'mention',
+    label: 'Mention',
+    desc: 'A social network built on respect. No algorithms designed to addict. No data harvested for ads. Just genuine human connection.',
     thumb: `${IMG}/video-thumb-sales-teams.webp`,
-    prompts: ['Create a proposal doc with Acme and share with Julie Hoefler', 'Summarize the BANCT criteria for today\'s Acme call', 'Put your answers to the Acme RFP into a table'],
+    prompts: ['What\'s trending in my community?', 'Show me posts from people I follow', 'Find conversations about sustainability'],
   },
   {
-    id: 'customer-support',
-    label: 'Customer support',
-    desc: 'Increase customer satisfaction at scale with AI that assigns tickets, answers product questions, and analyzes all your support calls.',
+    id: 'horizon',
+    label: 'Horizon',
+    desc: 'A global platform where communities collaborate on what matters. From local initiatives to worldwide movements.',
     thumb: `${IMG}/video-thumb-customer-support.webp`,
-    prompts: ['What are some similar products? Add a comparison table', 'How do I explain today\'s authentication errors more simply', 'Give me feedback on yesterday\'s support call with Acme'],
+    prompts: ['Find local initiatives near me', 'Connect with communities worldwide', 'Start a collaborative project'],
   },
   {
-    id: 'in-house-ops',
-    label: 'In-house operations',
-    desc: 'Drive efficiency with AI that answers company FAQs, drafts contracts, and automates manual reporting.',
+    id: 'faircoin',
+    label: 'FairCoin',
+    desc: 'Cryptocurrency designed for sustainability, not speculation. Powering ethical commerce and local economies worldwide.',
     thumb: `${IMG}/video-thumb-in-house-ops.webp`,
-    prompts: ['Outline the Q3 board deck based on Q2 actuals', 'Analyze the latest 20 interviews for unconscious bias', 'Flag any missing terms in the draft contract for Acme'],
+    prompts: ['What is the current exchange rate?', 'Find stores accepting FairCoin', 'Track my transaction history'],
   },
   {
-    id: 'financial-services',
-    label: 'Financial services',
-    desc: 'AI that augments everything from deal prospecting and due diligence to performance reports and investor comms.',
+    id: 'homiio',
+    label: 'Homiio',
+    desc: 'Technology that makes affordable housing accessible. Connecting people with homes they can actually afford.',
     thumb: `${IMG}/video-thumb-financial-services.webp`,
-    prompts: ['Complete the Acme DDQ based on the latest data in SAP', 'Summarize Acme\'s consolidated statement of operations', 'Generate the Q4 investor memo in line with our template'],
-  },
-  {
-    id: 'industrial-companies',
-    label: 'Industrial companies',
-    desc: 'Accelerate everything from RFP processes to support times with AI that understands your complex product data.',
-    thumb: `${IMG}/video-thumb-industrial-companies.webp`,
-    prompts: ['Give me all spare parts for product PF6000', 'What battery should our latest power-resist device have', 'How do we fix the problem on this customer\'s locking kit'],
-  },
-  {
-    id: 'law-firms',
-    label: 'Law firms',
-    desc: 'AI that analyzes case outcomes, highlights liabilities, drafts contracts, and more to increase efficiency.',
-    thumb: `${IMG}/video-thumb-law-firms.webp`,
-    prompts: ['Create a table based on the acme-term-sheet.pdf', 'Flag any missing terms in the contract for Acme Inc.', 'Find me all relevant docs for today\'s dispute meeting'],
+    prompts: ['Find affordable housing near me', 'Check my application status', 'Compare neighborhood amenities'],
   },
 ]
 
@@ -647,7 +633,7 @@ function TeamsSection() {
         </div>
         <div className="col-span-5 col-start-8 max-[950px]:col-span-full max-[950px]:col-start-1 flex flex-col gap-12 justify-between">
           <div>
-            <p className="text-primary mb-5"><strong>Every team gets smarter with Oxy</strong></p>
+            <p className="text-primary mb-5"><strong>Explore the Oxy Ecosystem</strong></p>
             <div className="teams-tabs-nav flex flex-col [&>a]:cursor-pointer">
               {TEAM_TABS.map((t) => (
                 <a
@@ -669,7 +655,7 @@ function TeamsSection() {
                 </div>
               ))}
             </div>
-            <a href="#book-intro" className={`${BTN} bg-primary text-primary-foreground`}>Book an intro</a>
+            <a href="/technologies" className={`${BTN} bg-primary text-primary-foreground`}>Learn More</a>
           </div>
         </div>
       </div>
