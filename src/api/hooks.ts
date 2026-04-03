@@ -8,7 +8,7 @@ import { platformDropdown, resourcesDropdown, ecosystemDropdown, footerColumns a
 import { pricingPlans as staticPricingPlans } from '../data/pricing'
 import { allPlaceholderPosts } from '../data/newsroom'
 
-const staticNavigation = [platformDropdown, resourcesDropdown, ecosystemDropdown]
+const staticNavigation = [platformDropdown, ecosystemDropdown, resourcesDropdown]
 const staticFooter = { columns: staticFooterColumns, socialLinks: [], copyright: 'Made with love by Oxy.' }
 const staticNewsroom = { posts: allPlaceholderPosts, total: allPlaceholderPosts.length, page: 1, pages: 1 }
 
