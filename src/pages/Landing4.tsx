@@ -667,13 +667,13 @@ function TeamsSection() {
 /*  Enterprise Partnership Services                                    */
 /* ------------------------------------------------------------------ */
 const PARTNERSHIP_ITEMS = [
-  'Dedicated deployment lead',
-  'Complete implementation support',
-  'Tailored onboarding',
-  'Priority support',
-  'AI strategy and consulting',
-  'Change management model',
-  'Community, events, and resources',
+  'Contribute to open-source projects',
+  'Join our developer community',
+  'Report bugs and suggest features',
+  'Translate Oxy for your language',
+  'Write documentation and tutorials',
+  'Volunteer for community initiatives',
+  'Spread the word',
 ]
 
 {/* tick-filled-white from SVG icon */}
@@ -700,9 +700,9 @@ function PartnershipSection() {
     <section className="py-10 max-[950px]:py-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
         <div className="col-span-full text-center">
-          <p className="mb-6 text-primary"><strong>Enterprise partnership services</strong></p>
-          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">Driving AI adoption together</h2>
-          <p className="opacity-80 max-w-[500px] mx-auto">AI is revolutionizing work in real time. Our partnership-led approach helps your organization become truly AI-first.</p>
+          <p className="mb-6 text-primary"><strong>Join the mission</strong></p>
+          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">Build the future with us</h2>
+          <p className="opacity-80 max-w-[500px] mx-auto">Whether you&apos;re a developer, designer, activist, or dreamer — there&apos;s a place for you in the Oxy ecosystem.</p>
         </div>
       </div>
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
@@ -719,7 +719,7 @@ function PartnershipSection() {
                 {item}
               </div>
             ))}
-            <a href="#book-intro" className="bg-primary text-primary-foreground p-5 px-6 rounded-3xl flex flex-col gap-[26px] justify-end transition-opacity duration-400 hover:opacity-60">Book an intro</a>
+            <a href="/get-involved" className="bg-primary text-primary-foreground p-5 px-6 rounded-3xl flex flex-col gap-[26px] justify-end transition-opacity duration-400 hover:opacity-60">Get Involved</a>
           </div>
         </div>
       </div>
@@ -731,33 +731,33 @@ function PartnershipSection() {
 /*  Integrations & Security                                            */
 /* ------------------------------------------------------------------ */
 const INTEGRATIONS = [
-  { name: 'Google Meet', icon: 'google-meet.svg' },
-  { name: 'Google Drive', icon: 'google-drive.svg' },
-  { name: 'Google Calendar', icon: 'google-calendar.svg' },
-  { name: 'Dropbox', icon: 'dropbox.svg' },
-  { name: 'Confluence', icon: 'confluence.svg' },
-  { name: 'Jira', icon: 'jira.svg' },
-  { name: 'Service Now', icon: 'servicenow.svg' },
-  { name: 'Salesforce', icon: 'salesforce.svg' },
-  { name: 'Microsoft Teams', icon: 'teams.svg' },
-  { name: 'Microsoft Sharepoint', icon: 'sharepoint.svg' },
-  { name: 'Workday', icon: 'workday.svg' },
-  { name: 'Slack', icon: 'slack.svg' },
+  { name: 'API Documentation', icon: 'google-meet.svg' },
+  { name: 'GitHub Repositories', icon: 'google-drive.svg' },
+  { name: 'SDK & Libraries', icon: 'google-calendar.svg' },
+  { name: 'Developer Blog', icon: 'dropbox.svg' },
+  { name: 'Community Forum', icon: 'confluence.svg' },
+  { name: 'Bug Tracker', icon: 'jira.svg' },
+  { name: 'Changelog', icon: 'servicenow.svg' },
+  { name: 'Status Page', icon: 'salesforce.svg' },
+  { name: 'Developer Discord', icon: 'teams.svg' },
+  { name: 'Code Examples', icon: 'sharepoint.svg' },
+  { name: 'Video Tutorials', icon: 'workday.svg' },
+  { name: 'Newsletter', icon: 'slack.svg' },
 ]
 
 const SECURITY_ITEMS = [
-  { name: 'Custom user roles', icon: 'agents-security-icons-01.svg', size: 16 },
-  { name: 'Encryption', icon: 'agents-security-icons-02.svg', size: 16 },
-  { name: 'Flexible groups', icon: 'agents-security-icons-03.svg', size: 16 },
-  { name: 'User provisioning', icon: 'agents-security-icons-04.svg', size: 16 },
-  { name: 'SOC 2 Type 2', icon: 'agents-security-icons-05.svg', size: 20 },
-  { name: 'GDPR compliant', icon: 'agents-security-icons-06.svg', size: 25 },
-  { name: 'ISO 27001', icon: 'agents-security-icons-07.svg', size: 23 },
-  { name: 'SAML single sign-on', icon: 'agents-security-icons-08.svg', size: 16 },
-  { name: 'Advanced permissions', icon: 'agents-security-icons-09.svg', size: 16 },
-  { name: 'Domain verification', icon: 'agents-security-icons-10.svg', size: 16 },
-  { name: 'Regional deploys', icon: 'agents-security-icons-11.svg', size: 16 },
-  { name: 'Audit logging', icon: 'agents-security-icons-12.svg', size: 16 },
+  { name: 'Help Center', icon: 'agents-security-icons-01.svg', size: 16 },
+  { name: 'Community Guidelines', icon: 'agents-security-icons-02.svg', size: 16 },
+  { name: 'Privacy Policy', icon: 'agents-security-icons-03.svg', size: 16 },
+  { name: 'Terms of Service', icon: 'agents-security-icons-04.svg', size: 16 },
+  { name: 'Transparency Center', icon: 'agents-security-icons-05.svg', size: 20 },
+  { name: 'Accessibility', icon: 'agents-security-icons-06.svg', size: 25 },
+  { name: 'Data Protection', icon: 'agents-security-icons-07.svg', size: 23 },
+  { name: 'Cookie Policy', icon: 'agents-security-icons-08.svg', size: 16 },
+  { name: 'Content Policy', icon: 'agents-security-icons-09.svg', size: 16 },
+  { name: 'Safety Center', icon: 'agents-security-icons-10.svg', size: 16 },
+  { name: 'Report Abuse', icon: 'agents-security-icons-11.svg', size: 16 },
+  { name: 'Contact Us', icon: 'agents-security-icons-12.svg', size: 16 },
 ]
 
 function IntegrationsSecuritySection() {
@@ -765,15 +765,15 @@ function IntegrationsSecuritySection() {
     <section className="py-10 max-[950px]:py-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
         <div className="col-span-full text-center">
-          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5 max-w-[500px] mx-auto">Enterprise-grade integrations and security</h2>
-          <p className="opacity-80 max-w-[350px] mx-auto">Oxy connects with 100+ applications and unifies your company&apos;s data securely.</p>
+          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5 max-w-[500px] mx-auto">Everything you need, all in one place</h2>
+          <p className="opacity-80 max-w-[350px] mx-auto">Explore our documentation, contribute to our codebase, and connect with the community.</p>
         </div>
       </div>
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full">
           <div className="relative p-8 rounded-3xl bg-foreground/[0.03]">
             <div className="grid grid-cols-12 gap-6">
-              <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Connect your daily tools automatically</strong></p></div>
+              <div className="col-span-4 max-[950px]:col-span-full"><p><strong>For Developers</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
                 <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-sm leading-4 tracking-wide font-[450]">
                   {INTEGRATIONS.map((item) => (
@@ -787,11 +787,11 @@ function IntegrationsSecuritySection() {
                 </div>
               </div>
             </div>
-            <a className={`${BTN} bg-foreground/5 max-[950px]:static absolute bottom-8 left-8`} href="#integrations">See full integrations list</a>
+            <a className={`${BTN} bg-foreground/5 max-[950px]:static absolute bottom-8 left-8`} href="/docs">Explore Developer Hub</a>
           </div>
           <div className="relative p-8 rounded-3xl bg-foreground/[0.03] mt-4">
             <div className="grid grid-cols-12 gap-6">
-              <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Security you can stand by</strong></p></div>
+              <div className="col-span-4 max-[950px]:col-span-full"><p><strong>For Everyone</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
                 <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-sm leading-4 tracking-wide font-[450]">
                   {SECURITY_ITEMS.map((item) => (
@@ -805,7 +805,7 @@ function IntegrationsSecuritySection() {
                 </div>
               </div>
             </div>
-            <a className={`${BTN} bg-foreground/5 max-[950px]:static absolute bottom-8 left-8`} href="#security">Read more about privacy</a>
+            <a className={`${BTN} bg-foreground/5 max-[950px]:static absolute bottom-8 left-8`} href="/help">Visit Help Center</a>
           </div>
         </div>
       </div>
@@ -832,8 +832,8 @@ function IOSAppSection() {
     <section className="py-10 max-[950px]:py-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
         <div className="col-span-full text-center">
-          <p className="mb-6 text-primary"><strong>Agents iOS app</strong></p>
-          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">A polymath in your pocket</h2>
+          <p className="mb-6 text-primary"><strong>Oxy Services</strong></p>
+          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">Technology with purpose</h2>
         </div>
       </div>
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
@@ -842,7 +842,7 @@ function IOSAppSection() {
             <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" className="w-full h-auto object-contain" />
           </div>
           <p className="text-[13px] leading-4 tracking-wide font-[450] mb-5 max-w-[530px] mx-auto">
-            <span className="opacity-60">Connect all your work apps to get instant answers to anything and solve hours of complex tasks in seconds. Missed a meeting? No problem. The recap is just a tap away. Built on any LLM you want.</span> Now available on iOS.
+            <span className="opacity-60">Connect all your tools, access open-source AI, and join a global community building technology for good. Every product we create is designed to serve people, not exploit them.</span> Free and open source.
           </p>
           <a href="#" target="_blank" rel="noopener noreferrer">
             <svg width="144" height="48" viewBox="0 0 144 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -896,7 +896,7 @@ function TrustedBySection() {
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full">
           <h3 className="text-[22px] leading-[1.2] font-[450] mb-10 max-w-[720px]">
-            Oxy is trusted by leading <br className="max-[950px]:hidden" />enterprises across industries
+            Built by the community, for the community.
           </h3>
           <div className="grid grid-cols-8 max-[950px]:grid-cols-2 gap-x-5 items-center">
             {TRUSTED_LOGOS.map((logo) => (
@@ -916,48 +916,48 @@ function TrustedBySection() {
 /* ------------------------------------------------------------------ */
 const PLANS = [
   {
-    name: 'Enterprise',
-    price: 'Custom pricing',
-    cta: 'Book an intro',
-    ctaHref: '/book-intro',
+    name: 'Community',
+    price: 'Free forever',
+    cta: 'Get Started',
+    ctaHref: '/',
     features: [
-      'Unlimited members per workspace and documents per integration',
-      'Enterprise integrations',
-      'Domain verification, SAML-based SSO, and SCIM',
-      'Extended range of LLMs',
-      'Analytics dashboard to measure impact',
-      'Dedicated success team, priority support, and SLA',
-      'API access for building your own integrations',
+      'Access to all Oxy platforms',
+      'Open-source codebase',
+      'Community support',
+      'Basic API access',
+      'Public documentation',
+      'Bug reporting and feature requests',
+      'Community forum access',
     ],
   },
   {
-    name: 'Team',
-    price: '$30 per user / month',
-    cta: 'Sign up',
-    ctaHref: '/',
+    name: 'Contributor',
+    price: 'Free',
+    cta: 'Join Us',
+    ctaHref: '/get-involved',
     features: [
-      'Unlimited queries and meeting recordings',
-      'Up to 50 members per workspace',
-      'Our most popular integrations incl. Asana, Gmail, Outlook email, Zendesk, and more.',
-      'OpenAI and Claude model selection',
-      'Enterprise data processing agreement',
-      '10,000 documents per integration',
-      'Priority in email and chat support',
+      'Everything in Community',
+      'Early access to new features',
+      'Direct developer support',
+      'Extended API access',
+      'Contributor badge',
+      'Private developer channels',
+      'Priority bug fixes',
     ],
   },
   {
-    name: 'Free',
-    price: '$0',
-    cta: 'Try it free',
-    ctaHref: '/',
+    name: 'Organization',
+    price: 'Custom',
+    cta: 'Contact Us',
+    ctaHref: '/contact',
     features: [
-      '10 meetings per month \u2014 invite members for more',
-      'Up to 5 members per workspace',
-      'Unlimited assistants and prompt templates',
-      'Meeting integrations with Calendar, Drive, Meet, Teams, and Zoom',
-      'Data integrations with Confluence, Google Drive, OneDrive, Notion, and Sharepoint',
-      '1,000 documents per integration',
-      'Help center support',
+      'Everything in Contributor',
+      'Custom deployments',
+      'Dedicated support team',
+      'SLA guarantees',
+      'Custom integrations',
+      'On-premise hosting option',
+      'Training and onboarding',
     ],
   },
 ]
@@ -967,15 +967,15 @@ function PricingSection() {
     <section className="py-10 max-[950px]:py-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full">
-          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-10 text-center">Pricing</h2>
+          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-10 text-center">Plans for Everyone</h2>
           <div className="mb-20">
             <div className="flex gap-[18px] max-[950px]:flex-col" style={{ rowGap: '6rem' }}>
               {PLANS.map((plan) => (
                 <div key={plan.name} className="flex-1">
                   <p className="text-[22px] leading-[1.2] font-[450] mb-3">{plan.name}</p>
                   <p className="mb-5"><strong>{plan.price}</strong></p>
-                  {plan.name === 'Enterprise' ? (
-                    <a className={`${BTN} bg-primary text-primary-foreground`} href="#book-intro">{plan.cta}</a>
+                  {plan.name === 'Organization' ? (
+                    <a className={`${BTN} bg-primary text-primary-foreground`} href={plan.ctaHref}>{plan.cta}</a>
                   ) : (
                     <a className={`${BTN} bg-foreground/5`} href={plan.ctaHref} target="_blank" rel="noopener noreferrer">{plan.cta}</a>
                   )}
