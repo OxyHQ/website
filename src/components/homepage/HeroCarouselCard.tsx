@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import type { CarouselSlot, HeroCard } from '../../data/heroCarousel'
 
 const sizeClasses: Record<string, string> = {
@@ -184,11 +184,14 @@ export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   )
 }
 
-/* ─── Rotating Card ───
- * Always animates forward: current card rotates up and out,
- * next card rotates in from below. After transition, we instantly
- * (no transition) reset to show the new current card statically,
- * ready for the next flip.
+/* ─── 3D Cube Card (DeSandro pattern) ───
+ * Scene (hero-cube-slot): perspective + overflow:clip
+ * Cube (hero-cube-inner): preserve-3d, translateZ(-halfH), rotates on X
+ * Faces: positioned with rotateX + translateZ(halfH)
+ *
+ * The CONTAINER rotates, not individual faces. Both faces are always
+ * mounted in 3D space. After rotation completes, we snap-reset and
+ * advance the index.
  */
 function CubeCard({ sizeClass, faces, interval }: {
   sizeClass: string
@@ -196,26 +199,35 @@ function CubeCard({ sizeClass, faces, interval }: {
   interval: number
 }) {
   const [current, setCurrent] = useState(0)
-  // phase: 'idle' = showing current, 'flipping' = animating to next
-  const [phase, setPhase] = useState<'idle' | 'flipping'>('idle')
+  const [rotated, setRotated] = useState(false)
   const slotRef = useRef<HTMLDivElement>(null)
+  const cubeRef = useRef<HTMLDivElement>(null)
+  const [halfH, setHalfH] = useState(100)
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
   const next = (current + 1) % faces.length
 
+  // Measure height for translateZ
+  useLayoutEffect(() => {
+    if (slotRef.current) {
+      setHalfH(slotRef.current.offsetHeight / 2)
+    }
+  }, [])
+
   useEffect(() => {
     const id = setInterval(() => {
-      setPhase('flipping')
+      // Rotate the cube to show bottom face
+      setRotated(true)
+
+      // After transition, snap-reset
       timeoutRef.current = setTimeout(() => {
-        // Disable transitions for instant reset
         const el = slotRef.current
         if (el) el.classList.add('no-transition')
         setCurrent(c => (c + 1) % faces.length)
-        setPhase('idle')
-        // Re-enable transitions on next frame
+        setRotated(false)
         requestAnimationFrame(() => {
           if (el) el.classList.remove('no-transition')
         })
-      }, 700)
+      }, 750)
     }, interval)
     return () => {
       clearInterval(id)
@@ -225,28 +237,29 @@ function CubeCard({ sizeClass, faces, interval }: {
 
   return (
     <div ref={slotRef} className={`hero-cube-slot ${sizeClass}`}>
-      {/* Current face — slides up and rotates away */}
       <div
-        className="hero-cube-face hero-cube-current"
+        ref={cubeRef}
+        className="hero-cube-inner"
         style={{
-          transform: phase === 'flipping'
-            ? 'translateY(-100%) rotateX(90deg)'
-            : 'translateY(0) rotateX(0deg)',
+          transform: rotated
+            ? `translateZ(${-halfH}px) rotateX(-90deg)`
+            : `translateZ(${-halfH}px)`,
         }}
       >
-        <CardFace card={faces[current]} />
-      </div>
-      {/* Next face — slides in from below */}
-      <div
-        className="hero-cube-face hero-cube-next"
-        style={{
-          transform: phase === 'flipping'
-            ? 'translateY(0) rotateX(0deg)'
-            : 'translateY(100%) rotateX(-90deg)',
-          visibility: phase === 'idle' ? 'hidden' : 'visible',
-        }}
-      >
-        <CardFace card={faces[next]} />
+        {/* Front face */}
+        <div
+          className="hero-cube-face"
+          style={{ transform: `rotateX(0deg) translateZ(${halfH}px)` }}
+        >
+          <CardFace card={faces[current]} />
+        </div>
+        {/* Bottom face — becomes visible when cube rotates -90deg */}
+        <div
+          className="hero-cube-face"
+          style={{ transform: `rotateX(90deg) translateZ(${halfH}px)` }}
+        >
+          <CardFace card={faces[next]} />
+        </div>
       </div>
     </div>
   )

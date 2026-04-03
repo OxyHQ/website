@@ -405,27 +405,33 @@
 .oxy-landing .hero-card-4x2,
 .oxy-landing .hero-cube-slot.hero-card-4x2 { grid-row: span 2; grid-column: span 4; }
 
-/* Rotating card */
+/* 3D Cube card rotation (DeSandro pattern)
+ * Scene: perspective + overflow:clip (clip does NOT flatten preserve-3d, hidden DOES)
+ * Cube:  preserve-3d + translateZ(-halfH) to keep front face at Z=0
+ * Faces: positioned with rotateX + translateZ(halfH) */
 .oxy-landing .hero-cube-slot {
   position: relative;
-  border-radius: 2rem;
-  overflow: hidden;
   cursor: pointer;
+  perspective: 800px;
+  overflow: clip;
+  border-radius: 2rem;
+}
+.oxy-landing .hero-cube-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .oxy-landing .hero-cube-face {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.oxy-landing .hero-cube-current {
-  transform-origin: center bottom;
-}
-.oxy-landing .hero-cube-next {
-  transform-origin: center top;
+  backface-visibility: hidden;
+  border-radius: 2rem;
 }
 /* Instant reset — no animation when snapping back */
-.oxy-landing .hero-cube-slot.no-transition .hero-cube-face {
+.oxy-landing .hero-cube-slot.no-transition .hero-cube-inner {
   transition: none !important;
 }
 
