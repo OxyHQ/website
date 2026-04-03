@@ -14,7 +14,6 @@ import Logo from '../ui/Logo'
 import Container from './Container'
 import LocalePicker from '../ui/LocalePicker'
 import { useAccountPanel } from '../../contexts/AccountPanelContext'
-import { ADMIN_USERNAMES } from '../../constants'
 
 /* ─── SVG Icons ─── */
 function ChevronDown({ className = '' }: { className?: string }) {
