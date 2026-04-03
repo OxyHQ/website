@@ -109,6 +109,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
 
   // Cached panel sizes (measured once on mount from hidden off-screen panels)
   const [panelSizes, setPanelSizes] = useState<Record<string, { w: number; h: number }>>({})
+  const [dropdownLeft, setDropdownLeft] = useState(0)
   const [hasMeasured, setHasMeasured] = useState(false)
 
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -129,6 +130,13 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
     setHasMeasured(true)
   }, [dropdowns])
 
+  // Align dropdown left edge with active trigger button
+  useLayoutEffect(() => {
+    if (!activeDropdown) return
+    const trigger = triggerRefs.current[activeDropdown]
+    if (!trigger) return
+    setDropdownLeft(trigger.getBoundingClientRect().left)
+  }, [activeDropdown])
 
   const openDropdown = useCallback(
     (label: string) => {
@@ -392,13 +400,14 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
       {/* ─── Shared Dropdown Viewport ─── */}
       {hasMeasured && (
         <div
-          className={`flex w-full justify-center ${isOpen ? 'pb-3 pt-3' : ''}`}
+          className={`flex w-full ${isOpen ? 'pb-3 pt-3' : ''}`}
           style={{
+            paddingLeft: dropdownLeft,
             pointerEvents: isOpen ? 'auto' : 'none',
             opacity: isOpen ? 1 : 0,
             maxHeight: isOpen && activeSize ? activeSize.h + 24 : 0,
             overflow: 'hidden',
-            transition: `opacity ${isOpen ? '0.15s' : '0.12s'} ease-out, max-height 0.2s ${easing}`,
+            transition: `opacity ${isOpen ? '0.15s' : '0.12s'} ease-out, max-height 0.2s ${easing}, padding-left 0.2s ${easing}`,
           }}
           onMouseEnter={cancelClose}
           onMouseLeave={scheduleClose}
