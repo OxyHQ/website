@@ -933,7 +933,7 @@ export default function Landing4() {
         description="One platform for creating expert AI agents grounded in your company's knowledge. No coding required. Connect all your data quickly and securely."
         canonicalPath="/"
       />
-      <Navbar />
+      <Navbar transparent />
       <main className="oxy-landing">
         <HeroSection />
         <PartnerLogos />

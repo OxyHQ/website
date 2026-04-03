@@ -97,6 +97,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
   const dropdowns: NavDropdown[] = useMemo(() => navigationData ?? [], [navigationData])
   const dropdownLabels = useMemo(() => dropdowns.map((d) => d.label), [dropdowns])
 
+  const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [bannerVisible, setBannerVisible] = useState(true)
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false)
@@ -188,6 +189,15 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
     return () => window.removeEventListener('keydown', handler)
   }, [closeAll])
 
+  // Track scroll position for transparent navbar
+  useEffect(() => {
+    if (!transparent) return
+    const onScroll = () => setScrolled(window.scrollY > 50)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [transparent])
+
   // Clear prev after exit animation finishes
   useEffect(() => {
     if (prevDropdown) {
@@ -246,7 +256,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
         </div>
       )}
 
-    <header className={`sticky top-0 z-50 transition-colors duration-300 backdrop-blur-md ${transparent ? 'bg-transparent border-b border-transparent' : 'bg-background/80 border-b border-border'}`}>
+    <header className={`sticky top-0 z-50 transition-colors duration-300 backdrop-blur-md ${transparent && !scrolled ? 'bg-transparent border-b border-transparent' : 'bg-background/80 border-b border-border'}`}>
 
       {/* ─── Hidden measurement panels (off-screen, unstyled, for measuring natural size) ─── */}
       <div
@@ -269,7 +279,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
 
       {/* ─── Main nav ─── */}
       <Container>
-        <nav className="pt-2 pb-[7px] lg:pt-4 lg:pb-[15px]">
+        <nav className="pt-2 pb-[7px] lg:pt-2.5 lg:pb-2">
           <div className="flex items-center justify-between">
             <div className="flex grow items-center gap-x-9">
               <Link to="/" className="-mx-1.5 rounded-xl px-1.5" aria-label="Oxy homepage" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
