@@ -86,9 +86,9 @@ function PartnerLogos() {
   }, [swapLogo])
 
   return (
-    <div className="partners">
-      <div className="columns">
-        <div className="gc">
+    <div className="py-5">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+        <div className="col-span-full">
           <div className="partner-logo-grid" id="partner-grid">
             {visibleLogos.map((logo, index) => (
               <div className={`slot${hiddenSlot === index ? ' hidden' : ''}`} key={index}>
@@ -115,15 +115,15 @@ function PartnerLogos() {
 /* ------------------------------------------------------------------ */
 function AllInOneSection() {
   return (
-    <section>
-      <div className="columns">
-        <div className="gc text-c flow">
-          <h2>
-            Your all-in-one<br className="hide-small" />
+    <section className="py-10 max-[950px]:py-6">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+        <div className="col-span-full text-center space-y-[1em]">
+          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none">
+            Your all-in-one<br className="max-[950px]:hidden" />
             AI platform for real work
           </h2>
-          <p style={{ maxWidth: '44rem' }}>A seamless, beautiful way to bring AI into your company&apos;s apps, knowledge, and culture.</p>
-          <a href="#book-intro" className="btn bg-black white">Book an intro</a>
+          <p className="max-w-[440px] mx-auto">A seamless, beautiful way to bring AI into your company&apos;s apps, knowledge, and culture.</p>
+          <a href="#book-intro" className="btn bg-black text-white">Book an intro</a>
         </div>
       </div>
     </section>
@@ -215,7 +215,7 @@ function FeaturesSection() {
   }
 
   return (
-    <section className="no-padding">
+    <section className="py-0">
       <div className="agents-features-section">
         <div className="agents-features-bg">
           <img
@@ -231,7 +231,7 @@ function FeaturesSection() {
             style={{ objectPosition: '50% 50%' }}
           />
         </div>
-        <div className="agents-features-content white">
+        <div className="agents-features-content text-white">
           <div className="agents-features-tabs-nav tabs-nav">
             {FEATURE_TABS.map((t, i) => (
               <a
@@ -342,24 +342,24 @@ function StatsAndTestimonialsSection() {
     : 2
 
   return (
-    <section>
-      <div className="columns">
-        <div className="gc gc-12 margin-s">
+    <section className="py-10 max-[950px]:py-6">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+        <div className="col-span-full mb-5">
           <div className="roi-stats">
             {STATS.map((s) => (
               <div key={s.label} className="roi-stat">
-                <div className="top">
-                  <p className="type-small"><strong>{s.label}</strong></p>
+                <div>
+                  <p className="text-[13px] leading-4 tracking-wide font-[450] opacity-80 mb-[34px]"><strong>{s.label}</strong></p>
                 </div>
-                <div className="bottom">
-                  <p className="h2">{s.value}</p>
-                  <p>{s.desc}</p>
+                <div>
+                  <p className="font-serif text-[40px] leading-[1.07] mb-[9px]">{s.value}</p>
+                  <p className="max-w-[210px]">{s.desc}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <div className="gc gc-12">
+        <div className="col-span-full">
           <Swiper
             modules={[Autoplay, Pagination]}
             onSwiper={(s) => { swiperRef.current = s }}
@@ -384,18 +384,18 @@ function StatsAndTestimonialsSection() {
           >
             {TESTIMONIALS.map((t, i) => (
               <SwiperSlide key={i}>
-                <div className={`image-card${t.light ? ' white' : ''}`}>
-                  <div className="top">
-                    <p>&ldquo;{t.quote}&rdquo;</p>
+                <div className={`relative overflow-hidden rounded-3xl flex flex-col justify-between gap-12 p-8 aspect-[4/5] max-[950px]:aspect-[4/6] ${t.light ? 'text-white' : ''}`}>
+                  <div className="relative z-10">
+                    <p className="text-base leading-[1.4]">&ldquo;{t.quote}&rdquo;</p>
                   </div>
-                  <div className="bottom">
-                    <p className="small">
-                      <span className="fade">{t.role}</span><br />
+                  <div className="relative z-10">
+                    <p className="text-sm">
+                      <span className="opacity-60">{t.role}</span><br />
                       {t.company}
                     </p>
                   </div>
-                  <div className="bg">
-                    <img src={t.bg} alt="" />
+                  <div className="absolute inset-0 z-0">
+                    <img src={t.bg} alt="" className="w-full h-full object-cover" />
                   </div>
                 </div>
               </SwiperSlide>
@@ -509,17 +509,17 @@ const TESTIMONIALS = [
 /* ------------------------------------------------------------------ */
 function ModelAgnosticSection() {
   return (
-    <section className="reduced-padding">
-      <div className="columns">
-        <div className="gc">
+    <section className="py-8">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+        <div className="col-span-full">
           <div className="model-agnostic-wrap">
-            <div className="columns model-agnostic-content">
-              <div className="gc gc-6 model-agnostic-image">
+            <div className="grid grid-cols-12 gap-6 model-agnostic-content">
+              <div className="col-span-6 max-[950px]:col-span-full model-agnostic-image">
                 <img src={`${IMG}/model-agnostic-popover.svg`} alt="Model selector" />
               </div>
-              <div className="gc gc-4 model-agnostic-text hide-small" style={{ '--start': 8 } as React.CSSProperties}>
-                <p className="eyebrow"><strong>Model agnostic</strong></p>
-                <p className="h3" style={{ maxWidth: '42rem' }}>
+              <div className="col-span-4 max-[950px]:hidden col-start-8 model-agnostic-text text-white">
+                <p className="mb-6"><strong>Model agnostic</strong></p>
+                <p className="text-[22px] leading-[1.2] font-[450] max-w-[420px]">
                   Only use the AI models that work best for you. With Oxy, you can choose and switch between leading models as you need.
                 </p>
               </div>
@@ -528,9 +528,9 @@ function ModelAgnosticSection() {
               <img src={`${IMG}/agents-model-agnostic.webp`} alt="Model agnostic" />
             </div>
           </div>
-          <div className="text-content show-small" style={{ paddingInline: '1.2rem' }}>
-            <p className="eyebrow"><strong>Model agnostic</strong></p>
-            <p className="h3" style={{ maxWidth: '42rem' }}>
+          <div className="hidden max-[950px]:block px-3">
+            <p className="mb-6"><strong>Model agnostic</strong></p>
+            <p className="text-[22px] leading-[1.2] font-[450] max-w-[420px]">
               Only use the AI models that work best for you. With Oxy, you can choose and switch between leading models as you need.
             </p>
           </div>
@@ -636,20 +636,20 @@ function TeamsSection() {
   }, [])
 
   return (
-    <section className="reduced-padding">
-      <div className="columns side-by-side-tabs">
-        <div className="gc gc-6">
+    <section className="py-8">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 side-by-side-tabs">
+        <div className="col-span-6 max-[950px]:col-span-full">
           <div className="tabs tabs-fade">
             {TEAM_TABS.map((t) => (
               <div key={t.id} className={`tab${t.id === activeId ? ' active' : ''}`} data-tab={t.id}>
                 <div className="media-with-prompt">
-                  <div className="media rounded-l" style={{ aspectRatio: '181 / 145' }}>
-                    <img src={t.thumb} alt={t.label} />
+                  <div className="media rounded-3xl overflow-hidden" style={{ aspectRatio: '181 / 145' }}>
+                    <img src={t.thumb} alt={t.label} className="w-full h-full object-cover" />
                   </div>
                   <div className="prompt-overlay">
                     <div className="prompt-box-bg" />
                     <div className="prompt-box-blur" />
-                    <div className="typewrite white">
+                    <div className="typewrite text-white">
                       {t.id === activeId && <TypewriterText texts={t.prompts} resetKey={resetKey} />}
                     </div>
                   </div>
@@ -658,14 +658,14 @@ function TeamsSection() {
             ))}
           </div>
         </div>
-        <div className="gc gc-5" style={{ '--start': 8 } as React.CSSProperties}>
-          <div className="top">
-            <p className="red margin-s"><strong>Every team gets smarter with Oxy</strong></p>
+        <div className="col-span-5 col-start-8 max-[950px]:col-span-full max-[950px]:col-start-1">
+          <div>
+            <p className="text-oxy-red mb-5"><strong>Every team gets smarter with Oxy</strong></p>
             <div className="tabs-nav no-default teams-tabs-nav">
               {TEAM_TABS.map((t) => (
                 <a
                   key={t.id}
-                  className={`h3${t.id === activeId ? ' active' : ''}`}
+                  className={`text-[22px] leading-[1.2] font-[450]${t.id === activeId ? ' active' : ''}`}
                   data-tab={t.id}
                   onClick={() => handleTabClick(t.id)}
                 >
@@ -674,15 +674,15 @@ function TeamsSection() {
               ))}
             </div>
           </div>
-          <div className="bottom flow">
+          <div className="space-y-[1em]">
             <div className="tabs">
               {TEAM_TABS.map((t) => (
                 <div key={t.id} className={`tab${t.id === activeId ? ' active' : ''}`} data-tab={t.id}>
-                  <p className="fade-8" style={{ maxWidth: '49rem' }}>{t.desc}</p>
+                  <p className="opacity-80 max-w-[490px]">{t.desc}</p>
                 </div>
               ))}
             </div>
-            <a href="#book-intro" className="btn bg-black white">Book an intro</a>
+            <a href="#book-intro" className="btn bg-black text-white">Book an intro</a>
           </div>
         </div>
       </div>
@@ -724,29 +724,29 @@ function TickIcon({ className }: { className?: string }) {
 
 function PartnershipSection() {
   return (
-    <section>
-      <div className="columns margin-m">
-        <div className="gc gc-12 text-c">
-          <p className="eyebrow blue"><strong>Enterprise partnership services</strong></p>
-          <h2 className="margin-s">Driving AI adoption together</h2>
-          <p className="fade-8" style={{ maxWidth: '50rem' }}>AI is revolutionizing work in real time. Our partnership-led approach helps your organization become truly AI-first.</p>
+    <section className="py-10 max-[950px]:py-6">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
+        <div className="col-span-full text-center">
+          <p className="mb-6 text-oxy-blue"><strong>Enterprise partnership services</strong></p>
+          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">Driving AI adoption together</h2>
+          <p className="opacity-80 max-w-[500px] mx-auto">AI is revolutionizing work in real time. Our partnership-led approach helps your organization become truly AI-first.</p>
         </div>
       </div>
-      <div className="columns">
-        <div className="gc gc-6">
-          <div className="media autofit-height landscape rounded-l">
-            <img src={`${IMG}/agents-partnerships.webp`} alt="Agents partnerships" style={{ objectPosition: '50% 30%' }} />
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+        <div className="col-span-6 max-[950px]:col-span-full">
+          <div className="min-[951px]:h-full overflow-hidden rounded-3xl">
+            <img src={`${IMG}/agents-partnerships.webp`} alt="Agents partnerships" className="w-full h-full object-cover" style={{ objectPosition: '50% 30%' }} />
           </div>
         </div>
-        <div className="gc gc-6">
+        <div className="col-span-6 max-[950px]:col-span-full">
           <div className="partnership-services">
             {PARTNERSHIP_ITEMS.map((item) => (
               <div key={item} className="partnership-service">
-                <TickFilledIcon className="inline-icon fade-4" />
+                <TickFilledIcon className="inline-icon opacity-40" />
                 {item}
               </div>
             ))}
-            <a href="#book-intro" className="bg-black white partnership-service">Book an intro</a>
+            <a href="#book-intro" className="bg-black text-white partnership-service">Book an intro</a>
           </div>
         </div>
       </div>
@@ -789,20 +789,20 @@ const SECURITY_ITEMS = [
 
 function IntegrationsSecuritySection() {
   return (
-    <section>
-      <div className="columns margin-m">
-        <div className="gc gc-12 text-c">
-          <h2 className="margin-s" style={{ maxWidth: '50rem' }}>Enterprise-grade integrations and security</h2>
-          <p className="fade-8" style={{ maxWidth: '35rem' }}>Oxy connects with 100+ applications and unifies your company's data securely.</p>
+    <section className="py-10 max-[950px]:py-6">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
+        <div className="col-span-full text-center">
+          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5 max-w-[500px] mx-auto">Enterprise-grade integrations and security</h2>
+          <p className="opacity-80 max-w-[350px] mx-auto">Oxy connects with 100+ applications and unifies your company&apos;s data securely.</p>
         </div>
       </div>
-      <div className="columns">
-        <div className="gc gc-12">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+        <div className="col-span-full">
           <div className="integrations-card-wrapper">
-            <div className="columns">
-              <div className="gc gc-4"><p><strong>Connect your daily tools automatically</strong></p></div>
-              <div className="gc gc-7">
-                <div className="integrations-list type-small">
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Connect your daily tools automatically</strong></p></div>
+              <div className="col-span-7 max-[950px]:col-span-full">
+                <div className="integrations-list text-[13px] leading-4 tracking-wide font-[450]">
                   {INTEGRATIONS.map((item) => (
                     <div key={item.name} className="integrations-list-item">
                       <div className="integrations-list-item-icon">
@@ -817,10 +817,10 @@ function IntegrationsSecuritySection() {
             <a className="btn" style={{ background: 'rgba(0,0,0,0.05)' }} href="#integrations">See full integrations list</a>
           </div>
           <div className="integrations-card-wrapper">
-            <div className="columns">
-              <div className="gc gc-4"><p><strong>Security you can stand by</strong></p></div>
-              <div className="gc gc-7">
-                <div className="integrations-list type-small">
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Security you can stand by</strong></p></div>
+              <div className="col-span-7 max-[950px]:col-span-full">
+                <div className="integrations-list text-[13px] leading-4 tracking-wide font-[450]">
                   {SECURITY_ITEMS.map((item) => (
                     <div key={item.name} className="integrations-list-item">
                       <div className="integrations-list-item-icon">
@@ -845,8 +845,8 @@ function IntegrationsSecuritySection() {
 /* ------------------------------------------------------------------ */
 function BannerSection() {
   return (
-    <div className="media banner margin-s">
-      <img src={`${IMG}/agents-banner-01.webp`} alt="Agents banner" style={{ objectPosition: '40% 50%' }} />
+    <div className="aspect-[36/19] max-[950px]:aspect-[4/5] overflow-hidden mb-5">
+      <img src={`${IMG}/agents-banner-01.webp`} alt="Agents banner" className="w-full h-full object-cover" style={{ objectPosition: '40% 50%' }} />
     </div>
   )
 }
@@ -856,20 +856,20 @@ function BannerSection() {
 /* ------------------------------------------------------------------ */
 function IOSAppSection() {
   return (
-    <section>
-      <div className="columns margin-m">
-        <div className="gc gc-12 text-c">
-          <p className="eyebrow blue"><strong>Agents iOS app</strong></p>
-          <h2 className="margin-s">A polymath in your pocket</h2>
+    <section className="py-10 max-[950px]:py-6">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
+        <div className="col-span-full text-center">
+          <p className="mb-6 text-oxy-blue"><strong>Agents iOS app</strong></p>
+          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">A polymath in your pocket</h2>
         </div>
       </div>
-      <div className="columns">
-        <div className="gc gc-8 text-c" style={{ '--start': 3 } as React.CSSProperties}>
-          <div className="media natural margin-s">
-            <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" />
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+        <div className="col-span-8 col-start-3 max-[950px]:col-span-full max-[950px]:col-start-1 text-center">
+          <div className="mb-5">
+            <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" className="w-full h-auto object-contain" />
           </div>
-          <p className="type-small margin-s" style={{ maxWidth: '53rem' }}>
-            <span className="fade">Connect all your work apps to get instant answers to anything and solve hours of complex tasks in seconds. Missed a meeting? No problem. The recap is just a tap away. Built on any LLM you want.</span> Now available on iOS.
+          <p className="text-[13px] leading-4 tracking-wide font-[450] mb-5 max-w-[530px] mx-auto">
+            <span className="opacity-60">Connect all your work apps to get instant answers to anything and solve hours of complex tasks in seconds. Missed a meeting? No problem. The recap is just a tap away. Built on any LLM you want.</span> Now available on iOS.
           </p>
           <a href="#" target="_blank" rel="noopener noreferrer">
             <svg width="144" height="48" viewBox="0 0 144 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -919,11 +919,11 @@ const TRUSTED_LOGOS = ['strava', 'polestar', 'merck', 'apollo.io', 'robinhood', 
 
 function TrustedBySection() {
   return (
-    <section className="bg-sand" style={{ paddingBlockEnd: '5rem' }}>
-      <div className="columns">
-        <div className="gc gc-12">
-          <h3 className="margin-l" style={{ maxWidth: '72rem' }}>
-            Oxy is trusted by leading <br className="hide-small" />enterprises across industries
+    <section className="bg-sand py-10 pb-[50px]">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+        <div className="col-span-full">
+          <h3 className="text-[22px] leading-[1.2] font-[450] mb-10 max-w-[720px]">
+            Oxy is trusted by leading <br className="max-[950px]:hidden" />enterprises across industries
           </h3>
           <div className="static-logos" style={{ '--numLogos': 8, '--numLogosMobile': 2 } as React.CSSProperties}>
             {TRUSTED_LOGOS.map((logo) => (
@@ -991,22 +991,20 @@ const PLANS = [
 
 function PricingSection() {
   return (
-    <section>
-      <div className="columns">
-        <div className="gc gc-12">
-          <h2 className="margin-l" style={{ textAlign: 'center' }}>Pricing</h2>
-          <div className="margin-xl">
+    <section className="py-10 max-[950px]:py-6">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+        <div className="col-span-full">
+          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-10 text-center">Pricing</h2>
+          <div className="mb-20">
             <div className="flex-cols" style={{ '--vertical': '6rem' } as React.CSSProperties}>
               {PLANS.map((plan) => (
                 <div key={plan.name} className="flex-col">
-                  <p className="h3" style={{ marginBottom: '1.2rem' }}>{plan.name}</p>
-                  <p className="margin-s"><strong>{plan.price}</strong></p>
+                  <p className="text-[22px] leading-[1.2] font-[450] mb-3">{plan.name}</p>
+                  <p className="mb-5"><strong>{plan.price}</strong></p>
                   {plan.name === 'Enterprise' ? (
-                    <a className="btn bg-black white" href="#book-intro">{plan.cta}</a>
-                  ) : plan.name === 'Team' ? (
-                    <a className="btn" style={{ background: 'rgb(0, 0, 0, 0.05)' }} href={plan.ctaHref} target="_blank" rel="noopener noreferrer">{plan.cta}</a>
+                    <a className="btn bg-black text-white" href="#book-intro">{plan.cta}</a>
                   ) : (
-                    <a className="btn" style={{ backgroundColor: 'rgb(0, 0, 0, 0.05)' }} href={plan.ctaHref} target="_blank" rel="noopener noreferrer">{plan.cta}</a>
+                    <a className="btn" style={{ background: 'rgb(0, 0, 0, 0.05)' }} href={plan.ctaHref} target="_blank" rel="noopener noreferrer">{plan.cta}</a>
                   )}
                   <hr />
                   <ul className="checklist">

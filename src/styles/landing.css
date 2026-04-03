@@ -1,31 +1,12 @@
-/* Landing Page — scoped styles
-   All rules are scoped under .oxy-landing to avoid conflicts */
+/* Landing Page — scoped overrides (Tailwind handles layout/typography) */
 
 .oxy-landing {
-  --black: #000000;
-  --blackish: #0a0a0a;
-  --white: #ffffff;
-  --sand: #f6f5f4;
-  --blue: #0057f3;
-  --red: #fa0019;
   --easeOut: cubic-bezier(0.16, 1, 0.3, 1);
   --easeInOut: cubic-bezier(0.83, 0, 0.17, 1);
-
-  font-size: 10px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-@media screen and (max-width: 370px) {
-  .oxy-landing { font-size: 2.6vw; }
-}
-
-.oxy-landing *,
-.oxy-landing *:after,
-.oxy-landing *:before {
-  box-sizing: border-box;
-}
-/* Low-specificity position:relative so Swiper's own rules can override */
 :where(.oxy-landing) *,
 :where(.oxy-landing) *:after,
 :where(.oxy-landing) *:before {
@@ -42,113 +23,11 @@
   max-width: 100%;
 }
 
-/* ============ TYPOGRAPHY ============ */
-
-.oxy-landing p,
-.oxy-landing body,
-.oxy-landing ul li,
-.oxy-landing ol li,
-.oxy-landing .p {
-  font-family: inherit;
-  font-size: 1.6rem;
-  line-height: 140%;
-  letter-spacing: -0.01em;
-  font-weight: 400;
-}
-
-.oxy-landing h1,
-.oxy-landing .h1 {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 7.2rem;
-  font-weight: 400;
-  line-height: 100%;
-  letter-spacing: -0.01em;
-}
-@media screen and (max-width: 950px) {
-  .oxy-landing h1,
-  .oxy-landing .h1 { font-size: 4.4rem; }
-}
-
-.oxy-landing h2,
-.oxy-landing .h2 {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 4rem;
-  line-height: 107%;
-  letter-spacing: -0.005em;
-  font-weight: 400;
-}
-@media screen and (max-width: 950px) {
-  .oxy-landing h2,
-  .oxy-landing .h2 {
-    font-size: 3.4rem;
-    line-height: 100%;
-    letter-spacing: -0.01em;
-  }
-}
-
-.oxy-landing h3,
-.oxy-landing .h3 {
-  font-family: inherit;
-  font-size: 2.2rem;
-  line-height: 120%;
-  letter-spacing: 0;
-  font-weight: 450;
-}
-
-.oxy-landing h4,
-.oxy-landing .h4 {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 2.8rem;
-  line-height: 115%;
-  letter-spacing: 0;
-  font-weight: 400;
-}
-
-.oxy-landing .type-small {
-  font-size: 1.3rem;
-  line-height: 1.6rem;
-  letter-spacing: 0.02em;
-  font-weight: 450;
-}
-
-.oxy-landing .eyebrow {
-  margin-bottom: 2.4rem;
-}
+/* Typography and utilities are now handled by Tailwind classes */
 
 .oxy-landing strong {
   font-weight: 600;
 }
-
-/* ============ COLORS ============ */
-.oxy-landing .bg-black { background-color: var(--black) !important; }
-.oxy-landing .bg-sand { background-color: var(--sand) !important; }
-.oxy-landing .bg-white { background-color: var(--white) !important; }
-.oxy-landing .white { color: var(--white) !important; }
-.oxy-landing .black { color: var(--black) !important; }
-.oxy-landing .blue { color: var(--blue) !important; }
-.oxy-landing .red { color: var(--red) !important; }
-.oxy-landing .fade,
-.oxy-landing .fade-6 { opacity: 0.6; }
-.oxy-landing .fade-8 { opacity: 0.8; }
-.oxy-landing .fade-5 { opacity: 0.5; }
-.oxy-landing .fade-4 { opacity: 0.4; }
-
-/* ============ UTILITIES ============ */
-.oxy-landing .text-c { text-align: center; }
-.oxy-landing .text-c * { margin-inline: auto; }
-.oxy-landing .flow > * + * { margin-block-start: var(--flow-space, 1em); }
-
-.oxy-landing .hide-small { display: initial; }
-.oxy-landing .show-small { display: none; }
-@media all and (max-width: 950px) {
-  .oxy-landing .hide-small { display: none !important; }
-  .oxy-landing .show-small { display: block !important; }
-}
-
-.oxy-landing .margin-s { margin-bottom: 2rem !important; }
-.oxy-landing .margin-m { margin-bottom: 3rem !important; }
-.oxy-landing .margin-l { margin-bottom: 4rem !important; }
-.oxy-landing .margin-xl { margin-bottom: 8rem !important; }
 
 /* ============ BUTTONS ============ */
 .oxy-landing .btn {
@@ -156,110 +35,32 @@
   outline: 0;
   appearance: none;
   cursor: pointer;
-  font-size: 1.6rem;
+  font-size: 16px;
   line-height: 140%;
   transition: 0.2s ease;
   display: inline-flex;
   position: relative;
-  padding: 1rem 1.6rem 0.7rem;
-  max-height: 3.8rem;
-  border-radius: 3.2rem;
+  padding: 10px 16px 7px;
+  max-height: 38px;
+  border-radius: 32px;
   font-weight: 450;
   font-family: inherit;
 }
 .oxy-landing .btn:hover { opacity: 0.6; }
 
-/* ============ GRID — COLUMNS ============ */
-.oxy-landing .columns {
-  --page-margin-total: 3.2rem;
-  --gutter: 2rem;
-  --grid-cols: 12;
-  max-width: calc(143.2rem + (var(--page-margin-total) * 2));
-  margin-inline: auto;
-  padding-inline: var(--page-margin-total);
-  display: grid;
-  column-gap: var(--gutter);
-  row-gap: 2.4rem;
-  grid-template-columns: repeat(var(--grid-cols), calc((100% - (var(--gutter) * (var(--grid-cols) - 1))) / var(--grid-cols)));
-}
-@media all and (max-width: 950px) {
-  .oxy-landing .columns { --page-margin-total: 2.4rem; }
-}
-.oxy-landing .columns.no-gutter { --gutter: 0px; row-gap: 0; }
-.oxy-landing .columns .gc .columns { padding-inline: 0; }
-
-.oxy-landing .gc { grid-column: var(--start, auto) / span var(--span, var(--grid-cols)); }
-.oxy-landing .gc-1  { --span: 1; }
-.oxy-landing .gc-2  { --span: 2; }
-.oxy-landing .gc-3  { --span: 3; }
-.oxy-landing .gc-4  { --span: 4; }
-.oxy-landing .gc-5  { --span: 5; }
-.oxy-landing .gc-6  { --span: 6; }
-.oxy-landing .gc-7  { --span: 7; }
-.oxy-landing .gc-8  { --span: 8; }
-.oxy-landing .gc-9  { --span: 9; }
-.oxy-landing .gc-10 { --span: 10; }
-.oxy-landing .gc-11 { --span: 11; }
-.oxy-landing .gc-12 { --span: 12; }
-
-@media all and (max-width: 950px) {
-  .oxy-landing .gc-1, .oxy-landing .gc-2, .oxy-landing .gc-3,
-  .oxy-landing .gc-4, .oxy-landing .gc-5, .oxy-landing .gc-6,
-  .oxy-landing .gc-7, .oxy-landing .gc-8, .oxy-landing .gc-9,
-  .oxy-landing .gc-10, .oxy-landing .gc-11, .oxy-landing .gc-12 {
-    --span: 12;
-  }
-  .oxy-landing div[class*="gc-"]:not([class*="gc-s-"]) {
-    --start: 1 !important;
-  }
-}
-
-/* ============ SECTIONS ============ */
-.oxy-landing section {
-  padding-block: 4rem;
-}
-.oxy-landing section.no-padding {
-  padding-block: 0;
-}
-.oxy-landing section.reduced-padding {
-  padding-block: 3.2rem;
-}
-@media all and (max-width: 950px) {
-  .oxy-landing section { padding-block: 2.4rem; }
-}
+/* Grid and sections are now Tailwind classes */
 
 /* ============ HERO ============ */
-.oxy-landing .page-hero {
-  height: calc(100vh - 10rem);
-  height: calc(100svh - 10rem);
-  position: relative;
-  display: grid;
-  grid-template-columns: 100%;
-  grid-template-rows: 100%;
-}
-.oxy-landing .page-hero .hero-bg,
-.oxy-landing .page-hero .hero-content {
-  grid-row: 1;
-  grid-column: 1;
-}
-.oxy-landing .page-hero .hero-bg {
-  overflow: hidden;
-}
-.oxy-landing .page-hero .hero-bg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 .oxy-landing .page-hero .hero-content {
   z-index: 5;
   display: flex;
   flex-direction: column;
-  row-gap: 6.4rem;
+  row-gap: 64px;
   justify-content: space-between;
-  padding-block: 8rem 3.2rem;
+  padding-block: 80px 32px;
 }
 .oxy-landing .page-hero .hero-content p {
-  max-width: 43rem;
+  max-width: 430px;
 }
 .oxy-landing .page-hero .hero-content .text-rotator {
   display: none;
@@ -315,36 +116,36 @@
   flex: 1;
   display: flex;
   align-items: flex-end;
-  padding-block: 10rem 2rem;
-  padding-inline: 4rem;
+  padding-block: 100px 20px;
+  padding-inline: 40px;
   color: var(--white);
 }
 .oxy-landing .hero-oxy-content h1 {
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 3.2rem;
+  font-size: 32px;
   font-weight: 400;
   line-height: 120%;
   letter-spacing: -0.01em;
-  max-width: 48rem;
+  max-width: 480px;
   color: var(--white);
 }
 .oxy-landing .hero-oxy-subtitle {
-  font-size: 1rem;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-top: 1.2rem;
+  margin-top: 12px;
   opacity: 0.7;
   color: var(--white);
 }
 
 @media screen and (max-width: 950px) {
   .oxy-landing .hero-oxy-content {
-    padding-inline: 2rem;
-    padding-block: 8rem 2rem;
+    padding-inline: 20px;
+    padding-block: 80px 20px;
   }
   .oxy-landing .hero-oxy-content h1 {
-    font-size: 2.4rem;
+    font-size: 24px;
     max-width: 100%;
   }
 }
@@ -353,7 +154,7 @@
 .oxy-landing .hero-carousel-outer {
   position: relative;
   z-index: 10;
-  padding-block: 1rem;
+  padding-block: 10px;
 }
 .oxy-landing .hero-carousel-track {
   display: flex;
@@ -366,15 +167,15 @@
   grid-template-rows: repeat(2, 200px);
   grid-auto-flow: column dense;
   grid-auto-columns: 200px;
-  gap: 1rem;
-  padding-inline: 0.5rem;
+  gap: 10px;
+  padding-inline: 5px;
 }
 
 @media screen and (max-width: 950px) {
   .oxy-landing .hero-carousel-grid {
     grid-template-rows: repeat(2, 150px);
     grid-auto-columns: 150px;
-    gap: 0.8rem;
+    gap: 8px;
   }
 }
 
@@ -382,13 +183,13 @@
   .oxy-landing .hero-carousel-grid {
     grid-template-rows: repeat(2, 120px);
     grid-auto-columns: 120px;
-    gap: 0.6rem;
+    gap: 6px;
   }
 }
 
 /* Card base */
 .oxy-landing .hero-card {
-  border-radius: 2rem;
+  border-radius: 20px;
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.3s ease;
@@ -423,18 +224,18 @@
 
 /* ============ PARTNER LOGOS ============ */
 .oxy-landing .partners {
-  padding-block: 2rem;
+  padding-block: 20px;
 }
 .oxy-landing .partner-logo-grid {
   display: grid;
-  column-gap: 2rem;
+  column-gap: 20px;
   grid-template-columns: repeat(7, 1fr);
 }
 .oxy-landing .partner-logo-grid .slot {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 10rem;
+  height: 100px;
   transition: opacity 1s ease;
 }
 .oxy-landing .partner-logo-grid .slot.hidden { opacity: 0; }
@@ -452,10 +253,10 @@
   max-width: 100%;
   max-height: 100%;
 }
-.oxy-landing .partner-logo-grid img { max-height: 6.6rem; }
+.oxy-landing .partner-logo-grid img { max-height: 66px; }
 @media (max-width: 950px) {
   .oxy-landing .partner-logo-grid { grid-template-columns: repeat(3, 1fr); }
-  .oxy-landing .partner-logo-grid .slot { height: 6rem; }
+  .oxy-landing .partner-logo-grid .slot { height: 60px; }
   .oxy-landing .partner-logo-grid .slot:nth-child(n + 4) { display: none; }
 }
 
@@ -483,25 +284,25 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  max-width: 151.2rem;
+  max-width: 1512px;
   left: 50%;
   transform: translate(-50%, 0);
 }
 .oxy-landing .agents-features-content {
   text-align: center;
-  padding-block-start: 5.6rem;
+  padding-block-start: 56px;
 }
 .oxy-landing .agents-features-tabs-nav {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.8rem;
-  margin-block-end: 3.2rem;
+  gap: 8px;
+  margin-block-end: 32px;
 }
 .oxy-landing .agents-features-tabs-nav a {
-  padding: 0.9rem 1.6rem 0.5rem;
-  border-radius: 3.2rem;
+  padding: 9px 16px 5px;
+  border-radius: 32px;
   overflow: hidden;
   transition: background-color 0.4s var(--easeOut), color 0.4s var(--easeOut);
   cursor: pointer;
@@ -521,7 +322,7 @@
 .oxy-landing .agents-features-tabs-nav a > *:not(.timer) { z-index: 2; }
 .oxy-landing .agents-features-tabs-nav a.active:has(.timer) {
   background: rgb(255 255 255 / 0.7);
-  backdrop-filter: blur(1rem);
+  backdrop-filter: blur(10px);
   color: var(--black);
 }
 .oxy-landing .agents-features-tabs-nav a.active:not(:has(.timer)) {
@@ -539,10 +340,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3.8rem;
-  height: 3.8rem;
+  width: 38px;
+  height: 38px;
   padding: 0;
-  border-radius: 3.8rem;
+  border-radius: 38px;
 }
 .oxy-landing .agents-features-tabs-nav a.toggle-autoplay svg {
   position: absolute;
@@ -556,15 +357,15 @@
 
 /* Feature tab UI */
 .oxy-landing .agent-features-tab-ui {
-  margin-block-start: 5.2rem;
-  margin-block-end: 6.5rem;
+  margin-block-start: 52px;
+  margin-block-end: 65px;
   container-type: inline-size;
-  max-width: 120rem;
-  width: calc(100% - 18rem);
+  max-width: 1200px;
+  width: calc(100% - 180px);
   margin-inline: auto;
 }
 @media all and (max-width: 950px) {
-  .oxy-landing .agent-features-tab-ui { width: calc(100% - 4rem); }
+  .oxy-landing .agent-features-tab-ui { width: calc(100% - 40px); }
 }
 .oxy-landing .agent-features-tab-ui .screen {
   width: 100%;
@@ -622,30 +423,30 @@
 /* ============ ROI STATS ============ */
 .oxy-landing section:has(.roi-stats) { overflow: hidden; }
 .oxy-landing .roi-stats {
-  margin-block: 2.4rem;
+  margin-block: 24px;
   display: flex;
-  row-gap: 2.4rem;
+  row-gap: 24px;
 }
 .oxy-landing .roi-stat {
-  flex: 1 1 23rem;
-  min-width: 23rem;
-  padding-inline: 2.4rem;
+  flex: 1 1 230px;
+  min-width: 230px;
+  padding-inline: 24px;
 }
 @media all and (max-width: 1460px) {
-  .oxy-landing .roi-stat { flex: none; width: 25rem; }
+  .oxy-landing .roi-stat { flex: none; width: 250px; }
 }
 @media all and (max-width: 950px) {
-  .oxy-landing .roi-stat { width: 15rem; }
+  .oxy-landing .roi-stat { width: 150px; }
 }
 .oxy-landing .roi-stat:not(:last-child) {
   border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 .oxy-landing .roi-stat .type-small {
   opacity: 0.8;
-  margin-bottom: 3.4rem;
+  margin-bottom: 34px;
 }
-.oxy-landing .roi-stat .h2 { margin-bottom: 0.9rem; }
-.oxy-landing .roi-stat p { max-width: 21rem; }
+.oxy-landing .roi-stat .h2 { margin-bottom: 9px; }
+.oxy-landing .roi-stat p { max-width: 210px; }
 
 /* ============ IMAGE CARD SLIDER (Swiper) ============ */
 .oxy-landing .image-card-slider .swiper-slide {
@@ -654,17 +455,17 @@
 
 .oxy-landing .image-card {
   overflow: hidden;
-  border-radius: 2.4rem;
+  border-radius: 24px;
   aspect-ratio: 4 / 5;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  row-gap: 4.8rem;
-  padding: 3.2rem 2.7rem;
+  row-gap: 48px;
+  padding: 32px 27px;
   color: var(--white);
 }
 @media all and (max-width: 950px) {
-  .oxy-landing .image-card { padding: 3.2rem; aspect-ratio: 4 / 6; }
+  .oxy-landing .image-card { padding: 32px; aspect-ratio: 4 / 6; }
 }
 .oxy-landing .image-card > *:not(.bg) { z-index: 5; }
 .oxy-landing .image-card .bg {
@@ -680,28 +481,28 @@
   height: 100%;
   object-fit: cover;
 }
-.oxy-landing .image-card .small { font-size: 1.4rem; }
+.oxy-landing .image-card .small { font-size: 14px; }
 
 /* Slider UI — dots and play/pause */
 .oxy-landing .image-card-slider-ui-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.6rem;
-  margin-top: 2.4rem;
+  gap: 16px;
+  margin-top: 24px;
 }
 .oxy-landing .image-card-slider-dots {
   display: flex;
-  gap: 0.8rem;
+  gap: 8px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 .oxy-landing .image-card-slider-dots .dot {
-  width: 4rem;
-  height: 0.3rem;
+  width: 40px;
+  height: 3px;
   background: rgba(10, 10, 10, 0.15);
-  border-radius: 0.2rem;
+  border-radius: 2px;
   cursor: pointer;
   overflow: hidden;
 }
@@ -711,15 +512,15 @@
 .oxy-landing .image-card-slider-dots .dot .timer {
   height: 100%;
   background: var(--blackish, #0a0a0a);
-  border-radius: 0.2rem;
+  border-radius: 2px;
   transition: width 0.05s linear;
 }
 .oxy-landing .toggle-autoplay {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 24px;
+  height: 24px;
   border: none;
   background: none;
   cursor: pointer;
@@ -735,7 +536,7 @@
 /* ============ MODEL AGNOSTIC ============ */
 .oxy-landing .model-agnostic-wrap { position: relative; }
 @media all and (max-width: 950px) {
-  .oxy-landing .model-agnostic-wrap { margin-bottom: 3.2rem; }
+  .oxy-landing .model-agnostic-wrap { margin-bottom: 32px; }
 }
 .oxy-landing .model-agnostic-wrap > *:not(.bg) { z-index: 10; }
 .oxy-landing .model-agnostic-wrap .bg {
@@ -745,7 +546,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border-radius: 2.4rem;
+  border-radius: 24px;
   z-index: 1;
 }
 .oxy-landing .model-agnostic-wrap .bg:before {
@@ -765,7 +566,7 @@
   object-fit: cover;
 }
 .oxy-landing .model-agnostic-wrap .model-agnostic-image {
-  padding-block: 8.5rem 7rem;
+  padding-block: 85px 70px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -777,7 +578,7 @@
 .oxy-landing .side-by-side-tabs > .gc {
   display: flex;
   flex-direction: column;
-  row-gap: 4.8rem;
+  row-gap: 48px;
   justify-content: space-between;
 }
 .oxy-landing .teams-tabs-nav {
@@ -809,7 +610,7 @@
 }
 .oxy-landing .media-with-prompt .prompt-overlay {
   place-self: end center;
-  margin-block-end: 4rem;
+  margin-block-end: 40px;
   width: 85%;
   container-type: size;
   aspect-ratio: 615 / 112;
@@ -827,7 +628,7 @@
   display: block;
   width: 100%;
   height: 58%;
-  border-radius: 6.4rem;
+  border-radius: 64px;
   border: 1px solid rgb(255 255 255 / 0.08);
   background: rgb(255 255 255 / 0.01);
   position: absolute;
@@ -843,8 +644,8 @@
   z-index: 1;
   width: calc(100% - 2px);
   height: calc(58% - 2px);
-  border-radius: 6.4rem;
-  backdrop-filter: blur(10rem);
+  border-radius: 64px;
+  backdrop-filter: blur(100px);
 }
 
 /* Typewriter cursor */
@@ -870,7 +671,7 @@
   object-fit: cover;
 }
 .oxy-landing .media.rounded-l,
-.oxy-landing .rounded-l { overflow: hidden; border-radius: 2.4rem; }
+.oxy-landing .rounded-l { overflow: hidden; border-radius: 24px; }
 .oxy-landing .media.natural { aspect-ratio: unset; }
 .oxy-landing .media.natural img { height: auto; object-fit: contain; }
 @media all and (min-width: 951px) {
@@ -885,18 +686,18 @@
 .oxy-landing .partnership-services {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 2.4rem;
+  gap: 24px;
 }
 @media all and (max-width: 650px) {
   .oxy-landing .partnership-services { grid-template-columns: 100%; }
 }
 .oxy-landing .partnership-service {
-  padding: 2rem 2.4rem;
-  border-radius: 2.4rem;
+  padding: 20px 24px;
+  border-radius: 24px;
   background: rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  row-gap: 2.6rem;
+  row-gap: 26px;
 }
 .oxy-landing a.partnership-service {
   justify-content: flex-end;
@@ -906,16 +707,16 @@
 
 /* ============ INTEGRATIONS ============ */
 .oxy-landing .integrations-card-wrapper {
-  padding: 3.2rem;
-  border-radius: 2.4rem;
+  padding: 32px;
+  border-radius: 24px;
   background: rgba(0, 0, 0, 0.03);
 }
 .oxy-landing .integrations-card-wrapper .columns { padding-inline: 0; }
-.oxy-landing .integrations-card-wrapper + .integrations-card-wrapper { margin-top: 1.6rem; }
+.oxy-landing .integrations-card-wrapper + .integrations-card-wrapper { margin-top: 16px; }
 .oxy-landing .integrations-card-wrapper .btn {
   position: absolute;
-  bottom: 3.2rem;
-  left: 3.2rem;
+  bottom: 32px;
+  left: 32px;
 }
 @media all and (max-width: 950px) {
   .oxy-landing .integrations-card-wrapper .btn { position: static; }
@@ -924,23 +725,23 @@
 @media all and (max-width: 950px) {
   .oxy-landing .integrations-list {
     columns: auto;
-    max-height: 35rem;
+    max-height: 350px;
     overflow: hidden;
   }
 }
-.oxy-landing .integrations-list-item + .integrations-list-item { margin-top: 1.2rem; }
+.oxy-landing .integrations-list-item + .integrations-list-item { margin-top: 12px; }
 .oxy-landing .integrations-list-item:has(.integrations-list-item-icon) {
   display: grid;
-  grid-template-columns: 4rem 1fr;
+  grid-template-columns: 40px 1fr;
   align-items: center;
-  column-gap: 1.4rem;
+  column-gap: 14px;
 }
 .oxy-landing .integrations-list-item-icon {
-  width: 4rem;
-  height: 4rem;
+  width: 40px;
+  height: 40px;
   background: linear-gradient(0deg, #fff, #fff), #fff;
   box-shadow: 0px 0px 0px 0.44px rgba(0,0,0,0.05), 0px 0.88px 1.75px rgba(0,0,0,0.08);
-  border-radius: 1.4rem;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -948,8 +749,8 @@
 .oxy-landing .integrations-list-item-icon img {
   width: auto;
   height: auto;
-  max-width: 2rem;
-  max-height: 2rem;
+  max-width: 20px;
+  max-height: 20px;
   object-fit: contain;
 }
 
@@ -957,7 +758,7 @@
 .oxy-landing .static-logos {
   display: grid;
   grid-template-columns: repeat(var(--numLogos, 6), 1fr);
-  column-gap: 2rem;
+  column-gap: 20px;
   align-items: center;
 }
 .oxy-landing .static-logos .static-logo {
@@ -965,7 +766,7 @@
   justify-content: center;
   align-items: center;
 }
-.oxy-landing .static-logos img { max-height: 6.6rem; width: auto; }
+.oxy-landing .static-logos img { max-height: 66px; width: auto; }
 @media all and (max-width: 950px) {
   .oxy-landing .static-logos { grid-template-columns: repeat(var(--numLogosMobile, 2), 1fr); }
 }
@@ -973,7 +774,7 @@
 /* ============ PRICING ============ */
 .oxy-landing .flex-cols {
   display: flex;
-  gap: var(--vertical, 1.8rem) var(--gutter, 1.8rem);
+  gap: var(--vertical, 18px) var(--gutter, 18px);
 }
 .oxy-landing .flex-cols .flex-col { flex: 1; }
 @media all and (max-width: 950px) {
@@ -982,7 +783,7 @@
 .oxy-landing hr {
   border: 0;
   border-top: 1px solid rgba(0, 0, 0, 0.07);
-  margin-block: 2.4rem;
+  margin-block: 24px;
 }
 .oxy-landing ul.checklist {
   list-style: none;
@@ -991,11 +792,11 @@
 }
 .oxy-landing ul.checklist li {
   display: grid;
-  grid-template-columns: 2.4rem 1fr;
-  gap: 0.8rem;
+  grid-template-columns: 24px 1fr;
+  gap: 8px;
   align-items: start;
-  margin-bottom: 1.2rem;
-  font-size: 1.6rem;
+  margin-bottom: 12px;
+  font-size: 16px;
   line-height: 140%;
 }
 .oxy-landing .inline-icon {
@@ -1006,10 +807,10 @@
   stroke: currentColor;
   fill: currentColor;
 }
-.oxy-landing ul.checklist li .inline-icon { font-size: 1.6rem; }
+.oxy-landing ul.checklist li .inline-icon { font-size: 16px; }
 
 /* ============ NO-DEFAULT TAB NAV ============ */
 .oxy-landing .tabs-nav.no-default a { cursor: pointer; }
 
 /* ============ TEXT CONTENT HELPER ============ */
-.oxy-landing .text-content { margin-block-start: 1.6rem; }
+.oxy-landing .text-content { margin-block-start: 16px; }
