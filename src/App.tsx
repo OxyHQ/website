@@ -37,7 +37,6 @@ import DocsIntroPage from './pages/DocsIntroPage'
 import SettingsPage from './pages/SettingsPage'
 import FixedPromptInput from './components/ui/FixedPromptInput'
 import { AccountPanelProvider } from './contexts/AccountPanelContext'
-import AccountPanel from './components/layout/AccountPanel'
 import AppShell from './components/layout/AppShell'
 
 const OXY_API = 'https://api.oxy.so'
