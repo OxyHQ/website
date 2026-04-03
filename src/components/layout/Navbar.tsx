@@ -107,7 +107,6 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
 
   // Cached panel sizes (measured once on mount from hidden off-screen panels)
   const [panelSizes, setPanelSizes] = useState<Record<string, { w: number; h: number }>>({})
-  const [vpLeft, setVpLeft] = useState(0)
   const [hasMeasured, setHasMeasured] = useState(false)
 
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -141,37 +140,6 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
     setHasMeasured(true)
   }, [dropdowns])
 
-  // Compute viewport left so dropdown is centered under the active trigger,
-  // clamped to stay within the Container (max-width safe area).
-  const containerRef = useRef<HTMLElement>(null)
-
-  useLayoutEffect(() => {
-    if (!activeDropdown) return
-    const trigger = triggerRefs.current[activeDropdown]
-    const navArea = navAreaRef.current
-    const container = containerRef.current
-    const size = panelSizes[activeDropdown]
-    if (!trigger || !navArea || !size || !container) return
-
-    const navRect = navArea.getBoundingClientRect()
-    const containerRect = container.getBoundingClientRect()
-    const triggerRect = trigger.getBoundingClientRect()
-
-    // Trigger center relative to navArea (since viewport is positioned inside navArea)
-    const triggerCenter = triggerRect.left + triggerRect.width / 2 - navRect.left
-
-    // Ideal: center dropdown under trigger
-    let left = triggerCenter - size.w / 2
-
-    // Clamp within the Container bounds (relative to navArea)
-    const containerLeft = containerRect.left - navRect.left
-    const containerRight = containerRect.right - navRect.left
-    const minLeft = containerLeft
-    const maxLeft = containerRight - size.w
-    left = Math.max(minLeft, Math.min(left, maxLeft))
-
-    setVpLeft(left)
-  }, [activeDropdown, panelSizes])
 
   const openDropdown = useCallback(
     (label: string) => {
@@ -302,7 +270,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
 
       {/* ─── Main nav ─── */}
       <Container>
-        <nav ref={containerRef} className="pt-2 pb-[7px] lg:pt-4 lg:pb-[15px]">
+        <nav className="pt-2 pb-[7px] lg:pt-4 lg:pb-[15px]">
           <div className="flex items-center justify-between">
             <div className="flex grow items-center gap-x-9">
               <Link to="/" className="-mx-1.5 rounded-xl px-1.5" aria-label="Oxy homepage" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
@@ -355,12 +323,11 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                 {/* ─── Shared Viewport ─── */}
                 {hasMeasured && (
                   <div
-                    className="absolute top-full z-50 pt-2"
+                    className="absolute top-full left-1/2 z-50 flex w-screen -translate-x-1/2 justify-center pt-2"
                     style={{
-                      left: vpLeft,
                       pointerEvents: isOpen ? 'auto' : 'none',
                       opacity: isOpen ? 1 : 0,
-                      transition: `left 0.2s ${easing}, opacity ${isOpen ? '0.15s' : '0.12s'} ease-out`,
+                      transition: `opacity ${isOpen ? '0.15s' : '0.12s'} ease-out`,
                     }}
                     onMouseEnter={cancelClose}
                     onMouseLeave={scheduleClose}
