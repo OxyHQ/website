@@ -375,7 +375,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
             </div>
 
             {/* Desktop buttons */}
-            <div className={`hidden items-center gap-x-2.5 lg:flex ${isTransparent ? 'text-white' : ''}`}>
+            <div className={`hidden items-center gap-x-2.5 lg:flex ${isTransparent ? '[&_button]:!text-white/80 [&_button:hover]:!text-white [&_a]:!text-white/80 [&_a:hover]:!text-white [&_svg]:!text-white/80' : ''}`}>
               <LocalePicker />
               <ThemeToggle />
               {rightActions}
