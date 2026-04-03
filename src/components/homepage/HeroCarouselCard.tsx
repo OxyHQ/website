@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useLayoutEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { CarouselSlot, HeroCard } from '../../data/heroCarousel'
 
 const sizeClasses: Record<string, string> = {
@@ -184,14 +184,11 @@ export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   )
 }
 
-/* ─── 3D Cube Card ───
- * The grid cell itself is the cube perspective container.
- * A rotating inner div holds two faces positioned in 3D space.
- * The entire card — border-radius, content, everything — rotates as one unit.
- *
- * Geometry (vertical rotation, top→front):
- *   Front face:  translateZ(halfHeight)             — visible at rotateX(0)
- *   Top face:    rotateX(90deg) translateZ(halfHeight)  — visible at rotateX(-90deg)
+/* ─── Rotating Card ───
+ * The grid cell is the container. Current card slides out upward while
+ * next card slides in from below, with a 3D rotateX to give depth.
+ * Everything stays within the card's natural bounds — no translateZ,
+ * no size distortion.
  */
 function CubeCard({ sizeClass, faces, interval }: {
   sizeClass: string
@@ -199,31 +196,17 @@ function CubeCard({ sizeClass, faces, interval }: {
   interval: number
 }) {
   const [current, setCurrent] = useState(0)
-  const [angle, setAngle] = useState(0)
-  const cubeRef = useRef<HTMLDivElement>(null)
-  const [halfH, setHalfH] = useState(100)
+  const [isFlipping, setIsFlipping] = useState(false)
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
   const next = (current + 1) % faces.length
 
-  useLayoutEffect(() => {
-    if (cubeRef.current) {
-      setHalfH(cubeRef.current.offsetHeight / 2)
-    }
-  }, [])
-
   useEffect(() => {
     const id = setInterval(() => {
-      setAngle(-90)
+      setIsFlipping(true)
       timeoutRef.current = setTimeout(() => {
         setCurrent(c => (c + 1) % faces.length)
-        if (cubeRef.current) cubeRef.current.style.transition = 'none'
-        setAngle(0)
-        requestAnimationFrame(() => {
-          if (cubeRef.current) {
-            cubeRef.current.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)'
-          }
-        })
-      }, 800)
+        setIsFlipping(false)
+      }, 700)
     }, interval)
     return () => {
       clearInterval(id)
@@ -233,28 +216,35 @@ function CubeCard({ sizeClass, faces, interval }: {
 
   return (
     <div className={`hero-cube-slot ${sizeClass}`}>
+      {/* Current face — slides out upward with rotation */}
       <div
-        ref={cubeRef}
-        className="hero-cube-inner"
+        className="hero-cube-face"
         style={{
-          transform: `translateZ(${-halfH}px) rotateX(${angle}deg)`,
-          transition: 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+          transform: isFlipping
+            ? 'translateY(-100%) rotateX(90deg)'
+            : 'translateY(0) rotateX(0deg)',
+          opacity: isFlipping ? 0 : 1,
+          transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.7s ease',
+          transformOrigin: 'center bottom',
+          zIndex: isFlipping ? 1 : 2,
         }}
       >
-        {/* Front face — the card you see normally */}
-        <div
-          className="hero-cube-face"
-          style={{ transform: `translateZ(${halfH}px)` }}
-        >
-          <CardFace card={faces[current]} />
-        </div>
-        {/* Top face — rotates into view when cube flips */}
-        <div
-          className="hero-cube-face"
-          style={{ transform: `rotateX(90deg) translateZ(${halfH}px)` }}
-        >
-          <CardFace card={faces[next]} />
-        </div>
+        <CardFace card={faces[current]} />
+      </div>
+      {/* Next face — slides in from below with rotation */}
+      <div
+        className="hero-cube-face"
+        style={{
+          transform: isFlipping
+            ? 'translateY(0) rotateX(0deg)'
+            : 'translateY(100%) rotateX(-90deg)',
+          opacity: isFlipping ? 1 : 0,
+          transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.7s ease',
+          transformOrigin: 'center top',
+          zIndex: isFlipping ? 2 : 1,
+        }}
+      >
+        <CardFace card={faces[next]} />
       </div>
     </div>
   )
