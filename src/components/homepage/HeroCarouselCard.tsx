@@ -185,10 +185,10 @@ export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
 }
 
 /* ─── Rotating Card ───
- * The grid cell is the container. Current card slides out upward while
- * next card slides in from below, with a 3D rotateX to give depth.
- * Everything stays within the card's natural bounds — no translateZ,
- * no size distortion.
+ * Always animates forward: current card rotates up and out,
+ * next card rotates in from below. After transition, we instantly
+ * (no transition) reset to show the new current card statically,
+ * ready for the next flip.
  */
 function CubeCard({ sizeClass, faces, interval }: {
   sizeClass: string
@@ -196,16 +196,25 @@ function CubeCard({ sizeClass, faces, interval }: {
   interval: number
 }) {
   const [current, setCurrent] = useState(0)
-  const [isFlipping, setIsFlipping] = useState(false)
+  // phase: 'idle' = showing current, 'flipping' = animating to next
+  const [phase, setPhase] = useState<'idle' | 'flipping'>('idle')
+  const slotRef = useRef<HTMLDivElement>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
   const next = (current + 1) % faces.length
 
   useEffect(() => {
     const id = setInterval(() => {
-      setIsFlipping(true)
+      setPhase('flipping')
       timeoutRef.current = setTimeout(() => {
+        // Disable transitions for instant reset
+        const el = slotRef.current
+        if (el) el.classList.add('no-transition')
         setCurrent(c => (c + 1) % faces.length)
-        setIsFlipping(false)
+        setPhase('idle')
+        // Re-enable transitions on next frame
+        requestAnimationFrame(() => {
+          if (el) el.classList.remove('no-transition')
+        })
       }, 700)
     }, interval)
     return () => {
@@ -215,33 +224,27 @@ function CubeCard({ sizeClass, faces, interval }: {
   }, [faces.length, interval])
 
   return (
-    <div className={`hero-cube-slot ${sizeClass}`}>
-      {/* Current face — slides out upward with rotation */}
+    <div ref={slotRef} className={`hero-cube-slot ${sizeClass}`}>
+      {/* Current face */}
       <div
-        className="hero-cube-face"
+        className="hero-cube-face hero-cube-current"
         style={{
-          transform: isFlipping
-            ? 'translateY(-100%) rotateX(90deg)'
+          transform: phase === 'flipping'
+            ? 'translateY(-100%) rotateX(45deg)'
             : 'translateY(0) rotateX(0deg)',
-          opacity: isFlipping ? 0 : 1,
-          transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.7s ease',
-          transformOrigin: 'center bottom',
-          zIndex: isFlipping ? 1 : 2,
+          opacity: phase === 'flipping' ? 0 : 1,
         }}
       >
         <CardFace card={faces[current]} />
       </div>
-      {/* Next face — slides in from below with rotation */}
+      {/* Next face — always enters from below */}
       <div
-        className="hero-cube-face"
+        className="hero-cube-face hero-cube-next"
         style={{
-          transform: isFlipping
+          transform: phase === 'flipping'
             ? 'translateY(0) rotateX(0deg)'
-            : 'translateY(100%) rotateX(-90deg)',
-          opacity: isFlipping ? 1 : 0,
-          transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.7s ease',
-          transformOrigin: 'center top',
-          zIndex: isFlipping ? 2 : 1,
+            : 'translateY(100%) rotateX(-45deg)',
+          opacity: phase === 'flipping' ? 1 : 0,
         }}
       >
         <CardFace card={faces[next]} />
