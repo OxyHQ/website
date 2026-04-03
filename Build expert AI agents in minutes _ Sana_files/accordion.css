@@ -1,0 +1,146 @@
+.accordion .left {
+  max-width: calc((100% - 2rem) / 2);
+  position: static;
+}
+
+.accordion .left.padding-right-l {
+  padding-right: 13rem;
+}
+
+@media all and (max-width: 950px) {
+  .accordion .left {
+    max-width: 100%;
+  }
+  .accordion .left.padding-right-l {
+    padding-right: 0;
+  }
+}
+
+.accordion .accordion-rows,
+.accordion .accordion-rows .accordion-row {
+  position: static;
+}
+
+.accordion .accordion-rows {
+  margin-top: 7rem;
+}
+
+@media all and (max-width: 950px) {
+  .accordion .accordion-rows {
+    margin-top: 4rem;
+  }
+}
+
+.accordion .accordion-rows .accordion-row .accordion-row-content .top {
+  padding-inline-start: 2.2rem;
+  position: relative;
+  color: rgba(255, 255, 255, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-block: 0.8rem;
+  font-size: 2.2rem;
+  line-height: 1.5em;
+  letter-spacing: -0.004em;
+  transition: color 0.3s var(--easeOut);
+}
+
+@media all and (max-width: 950px) {
+  .accordion .accordion-rows .accordion-row .accordion-row-content .top {
+    font-size: 2rem;
+  }
+}
+
+@media (hover: hover) {
+  .accordion .accordion-rows .accordion-row:not(.active) .accordion-row-content .top:hover {
+    color: rgba(255, 255, 255, 1);
+    border-bottom-color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+  }
+  .accordion .accordion-rows .accordion-row:not(.active) .accordion-row-content .top:hover:before {
+    background-color: var(--red);
+    opacity: 1;
+  }
+}
+
+.accordion .accordion-rows .accordion-row .accordion-row-content .top:before {
+  content: "";
+  display: block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--red);
+  opacity: 0.6;
+  position: absolute;
+  top: 45%;
+  left: 0;
+  transform: translateY(-50%);
+  transition: background-color 0.3s var(--easeOut);
+}
+
+.accordion .accordion-rows .accordion-row.active .accordion-row-content .top {
+  color: rgba(255, 255, 255, 1);
+  border-bottom-color: rgba(255, 255, 255, 0.6);
+}
+
+.accordion .accordion-rows .accordion-row.active .accordion-row-content .top:before {
+  background-color: var(--red);
+  opacity: 1;
+}
+
+.accordion .accordion-rows .accordion-row .accordion-row-content .bottom {
+  padding-inline-start: 2.2rem;
+  padding-block-start: 1.6rem;
+  padding-block-end: 4.8rem;
+  opacity: 0.7;
+  font-size: 1.8rem;
+  line-height: 1.5em;
+  letter-spacing: 0.01em;
+  display: none;
+}
+
+@media all and (max-width: 950px) {
+  .accordion .accordion-rows .accordion-row .accordion-row-content .bottom {
+    padding-inline-start: 0rem;
+    font-size: 1.6rem;
+    line-height: 140%;
+    font-variation-settings: "opsz" 20, "wght" 400;
+    padding-block-end: 2.6rem;
+  }
+}
+
+.accordion .accordion-rows .accordion-row .accordion-row-media {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: 0.3s var(--easeOut);
+  display: block;
+}
+
+.accordion .accordion-rows .accordion-row .accordion-row-media .media {
+  max-width: 43rem;
+  margin-inline: auto;
+}
+
+.accordion .accordion-rows .accordion-row.active .accordion-row-media {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+@media all and (min-width: 949px) {
+  .accordion .accordion-rows .accordion-row .accordion-row-media {
+    position: absolute;
+    right: 0;
+    width: calc((100% - 2rem) / 2);
+    top: 0;
+  }
+}
+
+@media all and (max-width: 950px) {
+  .accordion .accordion-rows .accordion-row .accordion-row-media {
+    padding-block-end: 2.6rem;
+    transition: 1s var(--easeOut);
+    position: absolute;
+  }
+  .accordion .accordion-rows .accordion-row.active .accordion-row-media {
+    position: static;
+  }
+}

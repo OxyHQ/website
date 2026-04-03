@@ -26,18 +26,19 @@ function ChevronDown({ className = '' }: { className?: string }) {
 
 /* ─── Dropdown Content Panel ─── */
 function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
-  const isPlatform = dropdown.label === 'Platform'
+  const itemCount = dropdown.sections.reduce((n, s) => n + s.items.length, 0)
+  const useGrid = itemCount > 6
 
   return (
     <div className="flex w-max">
       <ul
         className={`relative shrink-0 flex-col gap-1 p-4 pt-3 ${
-          isPlatform ? 'grid w-[720px] grid-cols-2 gap-x-3 max-xl:w-[576px]' : 'flex w-96'
+          useGrid ? 'grid w-[720px] grid-cols-2 gap-x-3 max-xl:w-[576px]' : 'flex w-96'
         }`}
       >
         {dropdown.sections.flatMap((section, si) => [
           <li key={`heading-${si}`} className="contents">
-            <p className={`mt-3 mb-1 inline-block px-4 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground ${isPlatform ? 'col-span-2' : ''}`}>
+            <p className={`mt-3 mb-1 inline-block px-4 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground ${useGrid ? 'col-span-2' : ''}`}>
               {section.heading}
             </p>
           </li>,

@@ -153,6 +153,52 @@ export const resourcesDropdown: NavDropdown = {
   },
 }
 
+export const ecosystemDropdown: NavDropdown = {
+  label: 'Ecosystem',
+  sections: [
+    {
+      heading: 'Social & Communication',
+      items: [
+        { title: 'Mention', description: 'Social network with Fediverse federation', href: 'https://oxy.so/mention' },
+        { title: 'Alia', description: 'AI assistant with voice, canvas & workflows', href: 'https://alia.onl' },
+        { title: 'Inbox', description: 'Unified messaging by Oxy', href: 'https://inbox.oxy.so' },
+        { title: 'Shh', description: 'Private & anonymous messaging', href: 'https://shh.oxy.so' },
+      ],
+    },
+    {
+      heading: 'Finance & Commerce',
+      items: [
+        { title: 'FairCoin', description: 'Sustainable cryptocurrency for local commerce', href: 'https://fairco.in' },
+        { title: 'FairCoin Wallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet' },
+        { title: 'FairCoin Explorer', description: 'Browse the FairCoin blockchain', href: 'https://explorer.fairco.in' },
+        { title: 'Marketplace', description: 'Buy and sell on Oxy', href: 'https://oxy.so/marketplace' },
+      ],
+    },
+    {
+      heading: 'Apps',
+      items: [
+        { title: 'Homiio', description: 'Real estate platform', href: 'https://homiio.com' },
+        { title: 'Horizon', description: 'Explore the horizon', href: 'https://oxy.so/horizon' },
+        { title: 'Moovo', description: 'Move smarter', href: 'https://oxy.so/moovo' },
+      ],
+    },
+    {
+      heading: 'Infrastructure',
+      items: [
+        { title: 'TNP', description: 'The Network Protocol', href: 'https://tnp.network' },
+      ],
+    },
+  ],
+  sidePanel: {
+    heading: 'Developers',
+    links: [
+      { label: 'Developer docs', href: '#' },
+      { label: 'API reference', href: '#' },
+      { label: 'Build an app', href: '#' },
+    ],
+  },
+}
+
 export const simpleNavLinks: NavItem[] = [
   { label: 'Customers', href: '#' },
   { label: 'Pricing', href: '/pricing' },

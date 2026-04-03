@@ -4,11 +4,11 @@ import { apiFetch } from './client'
 import { useCurrentLocale } from '../contexts/LocaleContext'
 
 // Static data imports — used as placeholderData so the site works without backend
-import { platformDropdown, resourcesDropdown, footerColumns as staticFooterColumns, testimonials as staticTestimonials } from '../data/content'
+import { platformDropdown, resourcesDropdown, ecosystemDropdown, footerColumns as staticFooterColumns, testimonials as staticTestimonials } from '../data/content'
 import { pricingPlans as staticPricingPlans } from '../data/pricing'
 import { allPlaceholderPosts } from '../data/newsroom'
 
-const staticNavigation = [platformDropdown, resourcesDropdown]
+const staticNavigation = [platformDropdown, resourcesDropdown, ecosystemDropdown]
 const staticFooter = { columns: staticFooterColumns, socialLinks: [], copyright: 'Made with love by Oxy.' }
 const staticNewsroom = { posts: allPlaceholderPosts, total: allPlaceholderPosts.length, page: 1, pages: 1 }
 
