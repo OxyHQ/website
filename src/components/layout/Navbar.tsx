@@ -335,7 +335,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                 {/* ─── Shared Viewport ─── */}
                 {hasMeasured && (
                   <div
-                    className="absolute top-full z-50 flex w-screen justify-center border-b border-border bg-background pt-2 pb-2"
+                    className="absolute top-full z-50 flex w-screen justify-center border-b border-border bg-background/80 pt-2 pb-2 backdrop-blur-md"
                     style={{
                       left: -navAreaLeft,
                       pointerEvents: isOpen ? 'auto' : 'none',
@@ -346,7 +346,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                     onMouseLeave={scheduleClose}
                   >
                     <div
-                      className="overflow-hidden rounded-xl border border-border bg-background shadow-lg"
+                      className="overflow-hidden"
                       style={{
                         width: activeSize ? activeSize.w : 0,
                         height: activeSize ? activeSize.h : 0,
