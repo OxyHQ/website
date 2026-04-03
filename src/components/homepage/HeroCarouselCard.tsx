@@ -3,7 +3,7 @@ import type { CardSize, CarouselSlot, HeroCard } from '../../data/heroCarousel'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCube, Autoplay } from 'swiper/modules'
 import { StarFour, PlugsConnected, Unite, Cpu } from '@phosphor-icons/react'
-import CountUp from 'react-countup'
+import { default as CountUp } from 'react-countup'
 import 'swiper/css'
 import 'swiper/css/effect-cube'
 
