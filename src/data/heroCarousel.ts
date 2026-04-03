@@ -157,6 +157,7 @@ export const heroCarouselSlots: CarouselSlot[] = [
   // FairCoin dashboard — static large
   {
     size: '5x2',
+    rounded: true,
     faces: [{ type: 'faircoin' }],
   },
   // Photo
