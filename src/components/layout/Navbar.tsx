@@ -238,7 +238,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
             <div className="relative flex size-full items-stretch justify-center px-12 max-md:justify-start max-md:pl-0">
               <a
                 className="group relative flex size-full items-center justify-center gap-1.5 text-foreground max-md:justify-start"
-                href="/"
+                href="/ai"
               >
                 <span className="attio-group-hover-underline relative truncate text-[13px]/5">
                   Alia. Think better, together.
