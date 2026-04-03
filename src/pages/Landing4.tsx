@@ -344,7 +344,7 @@ function StatsAndTestimonialsSection() {
     : 2
 
   return (
-    <section className="overflow-hidden py-10 max-[950px]:py-6">
+    <section className="py-10 max-[950px]:py-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full mb-5">
           <Swiper

@@ -5,6 +5,7 @@
   --easeInOut: cubic-bezier(0.83, 0, 0.17, 1);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
 }
 
 
@@ -330,7 +331,12 @@
   }
 }
 
-/* ============ IMAGE CARD SLIDER UI — dots and play/pause ============ */
+/* ============ IMAGE CARD SLIDER ============ */
+.oxy-landing .image-card-slider.swiper {
+  overflow: visible;
+}
+
+/* Dots and play/pause */
 .oxy-landing .image-card-slider-ui-wrapper {
   margin-block-start: 63px;
   display: flex;
