@@ -141,9 +141,9 @@ function FairCoinFace() {
           <button className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-green-900">
             Buy
           </button>
-          <button className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white">
+          <a href="https://explorer.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white">
             Explorer
-          </button>
+          </a>
           <button className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white">
             Learn more
           </button>
