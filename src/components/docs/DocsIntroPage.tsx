@@ -1,5 +1,6 @@
-import { useLocation, Link } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { docsSidebar } from '../../data/docs'
+import DocsSubNav from './DocsSubNav'
 
 const introCards = [
   { title: 'Quickstart', description: 'Deploy your first docs site in minutes with our step-by-step guide', href: '#', image: 'rocket' },
@@ -52,28 +53,7 @@ function DocsSidebar() {
 export default function DocsIntroPage() {
   return (
     <div className="relative antialiased">
-      {/* Docs sub-navbar with tabs - sticky below main navbar */}
-      <div className="sticky top-[var(--site-header-height,64px)] z-40 border-b border-border bg-background">
-        <div className="container">
-          <div className="hidden lg:flex h-12 lg:pl-[19.5rem]">
-            <div className="h-full flex text-sm gap-x-6">
-              <Link className="group relative h-full gap-2 flex items-center font-medium text-foreground [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]" to="/developers/docs">
-                Overview
-                <div className="absolute bottom-0 h-[1.5px] w-full left-0 bg-primary" />
-              </Link>
-              <a className="group relative h-full gap-2 flex items-center font-medium text-muted-foreground hover:text-foreground" href="#">
-                App SDK
-              </a>
-              <a className="group relative h-full gap-2 flex items-center font-medium text-muted-foreground hover:text-foreground" href="#">
-                REST API
-              </a>
-              <a className="group relative h-full gap-2 flex items-center font-medium text-muted-foreground hover:text-foreground" href="#">
-                MCP
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+      <DocsSubNav />
 
       {/* Sidebar + Content layout */}
       <div className="container flex">
