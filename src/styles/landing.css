@@ -345,6 +345,7 @@
   width: fit-content;
 }
 .oxy-landing .image-card-slider-dots .dot {
+  position: relative;
   width: 6px;
   height: 6px;
   margin: 0 4.5px;
@@ -383,6 +384,7 @@
   width: 100% !important;
 }
 .oxy-landing .toggle-autoplay {
+  position: relative;
   background: color-mix(in srgb, var(--foreground) 5%, transparent);
   border-radius: 34px;
   width: 34px;
