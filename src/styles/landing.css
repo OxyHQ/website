@@ -408,15 +408,16 @@
 /* Rotating card — same size as static cards, 3D cube rotation */
 .oxy-landing .hero-cube-slot {
   position: relative;
+  border-radius: 2rem;
+  overflow: hidden;
   cursor: pointer;
-  perspective: 600px;
-  clip-path: inset(0 round 2rem);
+  perspective: 800px;
 }
 .oxy-landing .hero-cube-face {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  backface-visibility: hidden;
+  border-radius: 2rem;
   transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
 }
 .oxy-landing .hero-cube-current {
