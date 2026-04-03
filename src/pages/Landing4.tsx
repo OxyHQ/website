@@ -398,17 +398,20 @@ function StatsAndTestimonialsSection() {
             {TESTIMONIALS.map((t, i) => (
               <SwiperSlide key={i} style={{ height: 'auto' }}>
                 <div
-                  className={`overflow-hidden rounded-3xl flex flex-col justify-between gap-12 px-7 py-8 max-[950px]:p-8 aspect-[4/5] max-[950px]:aspect-[4/6] bg-cover bg-center ${t.light ? 'text-white' : 'text-foreground/80'}`}
+                  className={`relative overflow-hidden rounded-3xl aspect-[4/5] max-[950px]:aspect-[4/6] bg-cover bg-center ${t.light ? 'text-white' : 'text-foreground/80'}`}
                   style={{ backgroundImage: `url(${t.bg})` }}
                 >
-                  <div>
-                    <p className="text-base leading-relaxed tracking-tight">&ldquo;{t.quote}&rdquo;</p>
-                  </div>
-                  <div>
-                    <p className="text-sm leading-relaxed">
-                      <span className="opacity-60">{t.role}</span><br />
-                      {t.company}
-                    </p>
+                  <div className="absolute inset-0 bg-black/10" />
+                  <div className="relative z-10 flex flex-col justify-between gap-12 px-7 py-8 max-[950px]:p-8 h-full">
+                    <div>
+                      <p className="text-base leading-relaxed tracking-tight">&ldquo;{t.quote}&rdquo;</p>
+                    </div>
+                    <div>
+                      <p className="text-sm leading-relaxed">
+                        <span className="opacity-60">{t.role}</span><br />
+                        {t.company}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </SwiperSlide>
