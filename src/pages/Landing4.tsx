@@ -87,7 +87,7 @@ function PartnerLogos() {
 
   return (
     <div className="py-5">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+      <div className="grid grid-cols-12 gap-x-5 gap-y-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-6">
         <div className="col-span-full">
           <div className="grid grid-cols-7 gap-x-5 max-[950px]:grid-cols-3" id="partner-grid">
             {visibleLogos.map((logo, index) => (
@@ -117,7 +117,7 @@ function PartnerLogos() {
 function AllInOneSection() {
   return (
     <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+      <div className="grid grid-cols-12 gap-x-5 gap-y-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-6">
         <div className="col-span-full text-center space-y-[1em]">
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none">
             Your all-in-one<br className="max-[950px]:hidden" />
@@ -344,7 +344,7 @@ function StatsAndTestimonialsSection() {
 
   return (
     <section className="overflow-hidden py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+      <div className="grid grid-cols-12 gap-x-5 gap-y-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-6">
         <div className="col-span-full mb-5">
           <div className="flex gap-6 my-6 overflow-x-auto">
             {STATS.map((s, i) => (
@@ -511,10 +511,10 @@ const TESTIMONIALS = [
 function ModelAgnosticSection() {
   return (
     <section className="py-8">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+      <div className="grid grid-cols-12 gap-x-5 gap-y-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-6">
         <div className="col-span-full">
           <div className="model-agnostic-wrap relative max-[950px]:mb-8">
-            <div className="grid grid-cols-12 gap-6 items-center">
+            <div className="grid grid-cols-12 gap-x-5 gap-y-6 items-center">
               <div className="col-span-6 max-[950px]:col-span-full z-10 flex items-center justify-center py-[85px] pb-[70px]">
                 <img src={`${IMG}/model-agnostic-popover.svg`} alt="Model selector" />
               </div>
@@ -638,7 +638,7 @@ function TeamsSection() {
 
   return (
     <section className="py-8">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 side-by-side-tabs">
+      <div className="grid grid-cols-12 gap-x-5 gap-y-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-6 side-by-side-tabs">
         <div className="col-span-6 max-[950px]:col-span-full">
           <div className="tabs tabs-fade">
             {TEAM_TABS.map((t) => (
@@ -726,21 +726,21 @@ function TickIcon({ className }: { className?: string }) {
 function PartnershipSection() {
   return (
     <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
+      <div className="grid grid-cols-12 gap-x-5 gap-y-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-6 mb-8">
         <div className="col-span-full text-center">
           <p className="mb-6 text-oxy-blue"><strong>Enterprise partnership services</strong></p>
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">Driving AI adoption together</h2>
           <p className="opacity-80 max-w-[500px] mx-auto">AI is revolutionizing work in real time. Our partnership-led approach helps your organization become truly AI-first.</p>
         </div>
       </div>
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+      <div className="grid grid-cols-12 gap-x-5 gap-y-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-6">
         <div className="col-span-6 max-[950px]:col-span-full">
           <div className="min-[951px]:h-full overflow-hidden rounded-3xl">
             <img src={`${IMG}/agents-partnerships.webp`} alt="Agents partnerships" className="w-full h-full object-cover" style={{ objectPosition: '50% 30%' }} />
           </div>
         </div>
         <div className="col-span-6 max-[950px]:col-span-full">
-          <div className="grid grid-cols-2 max-[650px]:grid-cols-1 gap-6">
+          <div className="grid grid-cols-2 max-[650px]:grid-cols-1 gap-x-5 gap-y-6">
             {PARTNERSHIP_ITEMS.map((item) => (
               <div key={item} className="p-5 px-6 rounded-3xl bg-black/5 flex flex-col gap-[26px]">
                 <TickFilledIcon className="inline-block w-[1em] h-[1em] fill-current stroke-current stroke-0 opacity-40" />
@@ -791,16 +791,16 @@ const SECURITY_ITEMS = [
 function IntegrationsSecuritySection() {
   return (
     <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
+      <div className="grid grid-cols-12 gap-x-5 gap-y-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-6 mb-8">
         <div className="col-span-full text-center">
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5 max-w-[500px] mx-auto">Enterprise-grade integrations and security</h2>
           <p className="opacity-80 max-w-[350px] mx-auto">Oxy connects with 100+ applications and unifies your company&apos;s data securely.</p>
         </div>
       </div>
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+      <div className="grid grid-cols-12 gap-x-5 gap-y-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-6">
         <div className="col-span-full">
           <div className="p-8 rounded-3xl bg-black/[0.03]">
-            <div className="grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-12 gap-x-5 gap-y-6">
               <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Connect your daily tools automatically</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
                 <div className="integrations-list text-[13px] leading-4 tracking-wide font-[450]">
@@ -818,7 +818,7 @@ function IntegrationsSecuritySection() {
             <a className="btn max-[950px]:static absolute bottom-8 left-8" style={{ background: 'rgba(0,0,0,0.05)' }} href="#integrations">See full integrations list</a>
           </div>
           <div className="p-8 rounded-3xl bg-black/[0.03] mt-4">
-            <div className="grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-12 gap-x-5 gap-y-6">
               <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Security you can stand by</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
                 <div className="integrations-list text-[13px] leading-4 tracking-wide font-[450]">
@@ -858,13 +858,13 @@ function BannerSection() {
 function IOSAppSection() {
   return (
     <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
+      <div className="grid grid-cols-12 gap-x-5 gap-y-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-6 mb-8">
         <div className="col-span-full text-center">
           <p className="mb-6 text-oxy-blue"><strong>Agents iOS app</strong></p>
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">A polymath in your pocket</h2>
         </div>
       </div>
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+      <div className="grid grid-cols-12 gap-x-5 gap-y-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-6">
         <div className="col-span-8 col-start-3 max-[950px]:col-span-full max-[950px]:col-start-1 text-center">
           <div className="mb-5">
             <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" className="w-full h-auto object-contain" />
@@ -921,7 +921,7 @@ const TRUSTED_LOGOS = ['strava', 'polestar', 'merck', 'apollo.io', 'robinhood', 
 function TrustedBySection() {
   return (
     <section className="bg-sand py-10 pb-[50px]">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+      <div className="grid grid-cols-12 gap-x-5 gap-y-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-6">
         <div className="col-span-full">
           <h3 className="text-[22px] leading-[1.2] font-[450] mb-10 max-w-[720px]">
             Oxy is trusted by leading <br className="max-[950px]:hidden" />enterprises across industries
@@ -993,7 +993,7 @@ const PLANS = [
 function PricingSection() {
   return (
     <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
+      <div className="grid grid-cols-12 gap-x-5 gap-y-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-6">
         <div className="col-span-full">
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-10 text-center">Pricing</h2>
           <div className="mb-20">
