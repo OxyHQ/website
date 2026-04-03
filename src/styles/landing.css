@@ -380,53 +380,92 @@
 
 /* ============ IMAGE CARD SLIDER UI — dots and play/pause ============ */
 .oxy-landing .image-card-slider-ui-wrapper {
+  margin-block-start: 63px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 16px;
-  margin-top: 24px;
+}
+@media all and (max-width: 950px) {
+  .oxy-landing .image-card-slider-ui-wrapper {
+    margin-block-start: 38px;
+  }
 }
 .oxy-landing .image-card-slider-dots {
   display: flex;
-  gap: 8px;
+  align-items: center;
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 8px 20px 9px;
+  background: rgb(0 0 0 / 0.05);
+  min-height: 34px;
+  border-radius: 34px;
+  width: fit-content;
 }
 .oxy-landing .image-card-slider-dots .dot {
-  width: 40px;
-  height: 3px;
-  background: rgba(10, 10, 10, 0.15);
-  border-radius: 2px;
+  width: 6px;
+  height: 6px;
+  margin: 0 4.5px;
+  opacity: 1;
+  background: rgb(0 0 0 / 0.1);
+  border-radius: 8px;
   cursor: pointer;
   overflow: hidden;
+  transition:
+    width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .oxy-landing .image-card-slider-dots .dot.is-selected {
-  background: rgba(10, 10, 10, 0.15);
+  width: 80px;
 }
 .oxy-landing .image-card-slider-dots .dot .timer {
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100%;
-  background: var(--blackish, #0a0a0a);
-  border-radius: 2px;
-  transition: width 0.05s linear;
+  background: #0a0a0a;
+  display: none;
+  z-index: 1;
+}
+.oxy-landing .image-card-slider-dots .dot.is-selected .timer {
+  display: block;
+}
+.oxy-landing .image-card-slider-dots .dot:not(.is-selected):hover {
+  background-color: #0a0a0a;
+}
+.oxy-landing .image-card-slider-dots .dot:focus {
+  box-shadow: none;
+}
+.oxy-landing .image-card-slider-ui-wrapper:has(.toggle-autoplay.paused) .dot.is-selected .timer {
+  transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100% !important;
 }
 .oxy-landing .toggle-autoplay {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: none;
-  background: none;
+  background: rgb(0 0 0 / 0.05);
+  border-radius: 34px;
+  width: 34px;
+  height: 34px;
+  outline: 0;
+  border: 0;
   cursor: pointer;
-  color: var(--blackish, #0a0a0a);
-  opacity: 0.5;
 }
-.oxy-landing .toggle-autoplay:hover { opacity: 1; }
-.oxy-landing .toggle-autoplay .play { display: none; }
-.oxy-landing .toggle-autoplay .pause { display: block; }
-.oxy-landing .toggle-autoplay.paused .play { display: block; }
-.oxy-landing .toggle-autoplay.paused .pause { display: none; }
+.oxy-landing .toggle-autoplay:hover {
+  background: rgb(0 0 0 / 0.1);
+}
+.oxy-landing .toggle-autoplay svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+}
+.oxy-landing .toggle-autoplay.paused svg.pause,
+.oxy-landing .toggle-autoplay:not(.paused) svg.play {
+  opacity: 0;
+}
+.oxy-landing .toggle-autoplay:not(.paused) svg.pause {
+  opacity: 1;
+}
 
 /* ============ MODEL AGNOSTIC ============ */
 .oxy-landing .model-agnostic-bg:before {

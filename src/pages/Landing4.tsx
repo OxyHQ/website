@@ -385,18 +385,18 @@ function StatsAndTestimonialsSection() {
           >
             {TESTIMONIALS.map((t, i) => (
               <SwiperSlide key={i} style={{ height: 'auto' }}>
-                <div className={`relative overflow-hidden rounded-3xl flex flex-col justify-between gap-12 p-8 aspect-[4/5] max-[950px]:aspect-[4/6] ${t.light ? 'text-white' : ''}`}>
+                <div className={`relative overflow-hidden rounded-3xl flex flex-col justify-between gap-12 px-7 py-8 max-[950px]:p-8 aspect-[4/5] max-[950px]:aspect-[4/6] ${t.light ? 'text-white' : 'text-black/80'}`}>
                   <div className="relative z-10">
-                    <p className="text-base leading-[1.4]">&ldquo;{t.quote}&rdquo;</p>
+                    <p className="text-base leading-relaxed tracking-tight">&ldquo;{t.quote}&rdquo;</p>
                   </div>
                   <div className="relative z-10">
-                    <p className="text-sm">
+                    <p className="text-sm leading-relaxed">
                       <span className="opacity-60">{t.role}</span><br />
                       {t.company}
                     </p>
                   </div>
                   <div className="absolute inset-0 z-0">
-                    <img src={t.bg} alt="" className="w-full h-full object-cover" />
+                    <img src={t.bg} alt="" className="size-full object-cover" />
                   </div>
                 </div>
               </SwiperSlide>
