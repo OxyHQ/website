@@ -1,5 +1,8 @@
-import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import type { CarouselSlot, HeroCard } from '../../data/heroCarousel'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { EffectCube, Autoplay } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/effect-cube'
 
 const sizeClasses: Record<string, string> = {
   '1x1': 'hero-card-1x1',
@@ -188,83 +191,37 @@ export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   )
 }
 
-/* ─── 3D Cube Card (DeSandro pattern) ───
- * Scene (hero-cube-slot): perspective + overflow:clip
- * Cube (hero-cube-inner): preserve-3d, translateZ(-halfH), rotates on X
- * Faces: positioned with rotateX + translateZ(halfH)
- *
- * The CONTAINER rotates, not individual faces. Both faces are always
- * mounted in 3D space. After rotation completes, we snap-reset and
- * advance the index.
- */
+/* ─── 3D Cube Card — powered by Swiper.js ─── */
 function CubeCard({ sizeClass, faces, interval }: {
   sizeClass: string
   faces: HeroCard[]
   interval: number
 }) {
-  const [current, setCurrent] = useState(0)
-  const [rotated, setRotated] = useState(false)
-  const slotRef = useRef<HTMLDivElement>(null)
-  const cubeRef = useRef<HTMLDivElement>(null)
-  const [halfH, setHalfH] = useState(100)
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
-  const next = (current + 1) % faces.length
-
-  // Measure height for translateZ
-  useLayoutEffect(() => {
-    if (slotRef.current) {
-      setHalfH(slotRef.current.offsetHeight / 2)
-    }
-  }, [])
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      // Rotate the cube to show bottom face
-      setRotated(true)
-
-      // After transition, snap-reset
-      timeoutRef.current = setTimeout(() => {
-        const el = slotRef.current
-        if (el) el.classList.add('no-transition')
-        setCurrent(c => (c + 1) % faces.length)
-        setRotated(false)
-        requestAnimationFrame(() => {
-          if (el) el.classList.remove('no-transition')
-        })
-      }, 750)
-    }, interval)
-    return () => {
-      clearInterval(id)
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    }
-  }, [faces.length, interval])
-
   return (
-    <div ref={slotRef} className={`hero-cube-slot ${sizeClass}`}>
-      <div
-        ref={cubeRef}
-        className="hero-cube-inner"
-        style={{
-          transform: rotated
-            ? `translateZ(${-halfH}px) rotateX(-90deg)`
-            : `translateZ(${-halfH}px)`,
+    <div className={`hero-cube-slot ${sizeClass}`}>
+      <Swiper
+        modules={[EffectCube, Autoplay]}
+        effect="cube"
+        direction="vertical"
+        loop
+        allowTouchMove={false}
+        speed={800}
+        autoplay={{
+          delay: interval,
+          disableOnInteraction: false,
         }}
+        cubeEffect={{
+          shadow: false,
+          slideShadows: false,
+        }}
+        className="hero-cube-swiper"
       >
-        {/* Front face */}
-        <div
-          className="hero-cube-face"
-          style={{ transform: `rotateX(0deg) translateZ(${halfH}px)` }}
-        >
-          <CardFace card={faces[current]} />
-        </div>
-        {/* Bottom face — becomes visible when cube rotates -90deg */}
-        <div
-          className="hero-cube-face"
-          style={{ transform: `rotateX(90deg) translateZ(${halfH}px)` }}
-        >
-          <CardFace card={faces[next]} />
-        </div>
-      </div>
+        {faces.map((face, i) => (
+          <SwiperSlide key={i}>
+            <CardFace card={face} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </div>
   )
 }

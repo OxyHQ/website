@@ -410,33 +410,23 @@
  * Scene: perspective + overflow:clip (clip does NOT flatten preserve-3d, hidden DOES)
  * Cube:  preserve-3d + translateZ(-halfH) to keep front face at Z=0
  * Faces: positioned with rotateX + translateZ(halfH) */
+/* Swiper cube card */
 .oxy-landing .hero-cube-slot {
   position: relative;
   cursor: pointer;
-  perspective: 1600px;
 }
-.oxy-landing .hero-cube-inner {
-  position: relative;
+.oxy-landing .hero-cube-swiper {
   width: 100%;
   height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.oxy-landing .hero-cube-face {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
   border-radius: 2rem;
 }
-.oxy-landing .hero-cube-face > * {
+.oxy-landing .hero-cube-swiper .swiper-slide {
   border-radius: 2rem;
   overflow: hidden;
+}
+.oxy-landing .hero-cube-swiper .swiper-slide > * {
   width: 100%;
   height: 100%;
-}
-/* Instant reset — no animation when snapping back */
-.oxy-landing .hero-cube-slot.no-transition .hero-cube-inner {
-  transition: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
