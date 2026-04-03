@@ -1,15 +1,15 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
-import type { HeroCarouselCard } from '../../data/heroCarousel'
-import HeroCarouselCardRenderer from './HeroCarouselCard'
+import type { CarouselSlot } from '../../data/heroCarousel'
+import CarouselSlotRenderer from './HeroCarouselCard'
 
 interface HeroCarouselProps {
-  cards: HeroCarouselCard[]
+  slots: CarouselSlot[]
 }
 
 const NORMAL_SPEED = 0.5   // px per frame (~30px/s at 60fps)
 const SLOW_SPEED = 0.1     // px per frame on hover
 
-export default function HeroCarousel({ cards }: HeroCarouselProps) {
+export default function HeroCarousel({ slots }: HeroCarouselProps) {
   const trackRef = useRef<HTMLDivElement>(null)
   const posRef = useRef(0)
   const speedRef = useRef(NORMAL_SPEED)
@@ -55,13 +55,13 @@ export default function HeroCarousel({ cards }: HeroCarouselProps) {
     >
       <div className="hero-carousel-track" ref={trackRef}>
         <div className="hero-carousel-grid">
-          {cards.map((card, i) => (
-            <HeroCarouselCardRenderer key={i} card={card} />
+          {slots.map((slot, i) => (
+            <CarouselSlotRenderer key={i} slot={slot} />
           ))}
         </div>
         <div className="hero-carousel-grid" aria-hidden="true">
-          {cards.map((card, i) => (
-            <HeroCarouselCardRenderer key={`dup-${i}`} card={card} />
+          {slots.map((slot, i) => (
+            <CarouselSlotRenderer key={`dup-${i}`} slot={slot} />
           ))}
         </div>
       </div>

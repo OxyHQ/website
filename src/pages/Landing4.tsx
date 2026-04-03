@@ -3,7 +3,7 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HeroCarousel from '../components/homepage/HeroCarousel'
-import { heroCarouselCards } from '../data/heroCarousel'
+import { heroCarouselSlots } from '../data/heroCarousel'
 import '../styles/sana-landing.css'
 
 const IMG = '/images/landing'
@@ -16,7 +16,7 @@ function HeroSection() {
     <div className="hero-oxy">
       {/* Background image */}
       <div className="hero-oxy-bg">
-        <img src={`${IMG}/AgentsHero.webp`} alt="" />
+        <img src={`${IMG}/hero-bg.avif`} alt="" />
         <div className="hero-oxy-overlay" />
       </div>
 
@@ -34,7 +34,7 @@ function HeroSection() {
       </div>
 
       {/* Infinite carousel grid */}
-      <HeroCarousel cards={heroCarouselCards} />
+      <HeroCarousel slots={heroCarouselSlots} />
     </div>
   )
 }
