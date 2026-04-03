@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 import { PromptInput } from '@oxyhq/bloom/prompt-input'
 import { usePromptPhrases } from '../../api/hooks'
-import { useAccountPanel } from '../../contexts/AccountPanelContext'
 
 const DEFAULT_PHRASES = [
   'Ask Alia anything about Oxy',
@@ -70,7 +69,6 @@ export default function FixedPromptInput() {
   const [isLoading, setIsLoading] = useState(false)
   const [hiddenByFooter, setHiddenByFooter] = useState(false)
   const [hiddenByHero, setHiddenByHero] = useState(false)
-  const { isOpen: panelOpen } = useAccountPanel()
 
   const { pathname } = useLocation()
   const hiddenByRoute = HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'))
@@ -126,10 +124,7 @@ export default function FixedPromptInput() {
   }, [value, isLoading])
 
   return (
-    <div
-      className={`pointer-events-none fixed bottom-0 left-0 z-40 flex justify-center px-4 pb-5 transition-all duration-300 ${hiddenByFooter || hiddenByHero || hiddenByRoute ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'}`}
-      style={{ right: panelOpen ? 400 : 0 }}
-    >
+    <div className={`pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-5 transition-all duration-300 ${hiddenByFooter || hiddenByHero || hiddenByRoute ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'}`}>
       {/* Gradient fade */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
 
