@@ -26,71 +26,13 @@
 
 
 /* ============ HERO ============ */
-.oxy-landing .hero-oxy {
-  position: relative;
-  min-height: 100vh;
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.oxy-landing .hero-oxy-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  overflow: hidden;
-  transform: translateZ(0); /* Force own compositing layer to prevent repaint flicker */
-}
-.oxy-landing .hero-oxy-bg img,
-.oxy-landing .hero-oxy-bg video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
 .oxy-landing .hero-oxy-overlay {
-  position: absolute;
-  inset: 0;
   background: linear-gradient(
     180deg,
     transparent 0%,
     color-mix(in srgb, var(--background) 40%, transparent) 50%,
     var(--background) 100%
   );
-}
-.oxy-landing .hero-oxy-content {
-  position: relative;
-  z-index: 5;
-  flex: 1;
-  display: flex;
-  align-items: flex-end;
-  padding: 100px 40px 20px;
-  color: var(--foreground);
-}
-.oxy-landing .hero-oxy-content h1 {
-  font-family: 'Ember Modern', Georgia, 'Times New Roman', serif;
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  max-width: 480px;
-}
-.oxy-landing .hero-oxy-subtitle {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-top: 12px;
-  opacity: 0.7;
-}
-@media screen and (max-width: 950px) {
-  .oxy-landing .hero-oxy-content {
-    padding: 80px 20px 20px;
-  }
-  .oxy-landing .hero-oxy-content h1 {
-    font-size: 24px;
-    max-width: 100%;
-  }
 }
 
 /* Carousel container */
@@ -134,10 +76,11 @@
   border-radius: 20px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s ease;
 }
-.oxy-landing .hero-card:hover {
-  transform: scale(1.02);
+
+/* Fully circular card override */
+.oxy-landing .hero-card-rounded {
+  border-radius: 50%;
 }
 
 /* Card size variants */
@@ -150,6 +93,8 @@
 /* Swiper cube card */
 .oxy-landing .hero-cube-slot {
   position: relative;
+  border-radius: 20px;
+  overflow: hidden;
 }
 .oxy-landing .hero-cube-swiper {
   width: 100%;

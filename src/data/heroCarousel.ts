@@ -41,6 +41,8 @@ export interface CarouselSlot {
   faces: HeroCard[]
   /** Rotation interval in ms (only matters if faces.length > 1) */
   rotateInterval?: number
+  /** If true, renders the card as a full circle */
+  rounded?: boolean
 }
 
 export const heroCarouselSlots: CarouselSlot[] = [
@@ -187,10 +189,11 @@ export const heroCarouselSlots: CarouselSlot[] = [
   // Fill below values (2x1 leaves 2 cells in row 2)
   {
     size: '1x1',
+    rounded: true,
     faces: [
       {
         type: 'photo',
-        image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=400&fit=crop',
+        image: '/images/landing/4lffisf9oaY443RqgB8sCKLHJc.avif',
         alt: 'Team member',
       },
     ],

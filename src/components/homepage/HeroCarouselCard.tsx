@@ -27,7 +27,7 @@ function CardFace({ card }: { card: HeroCard }) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-purple-900/30" />
           <div className="absolute bottom-0 left-0 right-0 p-3 lg:p-4">
-            <span className="mb-0.5 block text-[9px] font-bold uppercase tracking-wider text-purple-200 lg:text-[10px]">
+            <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-purple-200 lg:text-[11px]">
               {card.category}
             </span>
             <p className="text-xs font-bold leading-tight text-white lg:text-sm">
@@ -46,7 +46,7 @@ function CardFace({ card }: { card: HeroCard }) {
           <span className="mb-2 inline-block rounded-full bg-white/20 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white lg:text-[10px]">
             {card.department}
           </span>
-          <p className="text-base font-extrabold leading-tight text-white lg:text-xl">
+          <p className="text-sm font-extrabold leading-tight text-white lg:text-base">
             {card.jobTitle}
           </p>
         </Link>
@@ -147,7 +147,7 @@ function FairCoinFace() {
             <div key={stat.label} className="rounded-xl bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5">
               <div className="flex items-center gap-1">
                 <span className="text-[8px] text-green-400">{stat.icon}</span>
-                <span className="text-[8px] font-semibold uppercase tracking-wider text-green-300 lg:text-[9px]">
+                <span className="text-[9px] font-semibold uppercase tracking-wider text-green-300 lg:text-[10px]">
                   {stat.label}
                 </span>
               </div>
@@ -184,11 +184,12 @@ function FairCoinFace() {
 
 export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   const sizeClass = sizeClasses[slot.size]
+  const roundedClass = slot.rounded ? ' hero-card-rounded' : ''
 
   // Static card — no rotation
   if (slot.faces.length <= 1) {
     return (
-      <div className={`hero-card ${sizeClass}`}>
+      <div className={`hero-card ${sizeClass}${roundedClass}`}>
         <CardFace card={slot.faces[0]} />
       </div>
     )
@@ -197,7 +198,7 @@ export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   // Rotating card — the entire grid cell IS the cube
   return (
     <CubeCard
-      sizeClass={sizeClass}
+      sizeClass={`${sizeClass}${roundedClass}`}
       faces={slot.faces}
       interval={slot.rotateInterval ?? 4000}
     />
