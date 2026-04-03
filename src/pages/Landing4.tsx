@@ -18,21 +18,21 @@ const IMG = '/images/landing'
 /* ------------------------------------------------------------------ */
 function HeroSection() {
   return (
-    <div className="hero-oxy">
+    <div className="relative min-h-svh flex flex-col overflow-hidden">
       {/* Background image */}
-      <div className="hero-oxy-bg">
-        <img src={`${IMG}/hero-bg.avif`} alt="" />
-        <div className="hero-oxy-overlay" />
+      <div className="absolute inset-0 z-[1] overflow-hidden">
+        <img src={`${IMG}/hero-bg.avif`} alt="" className="w-full h-full object-cover object-center" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/25 to-black/50" />
       </div>
 
       {/* Text overlay */}
-      <div className="hero-oxy-content">
+      <div className="relative z-[5] flex-1 flex items-end px-10 pt-[100px] pb-5 max-[950px]:px-5 max-[950px]:pt-20 text-white">
         <div>
-          <h1>
+          <h1 className="font-serif text-[32px] leading-[1.2] tracking-tight max-w-[480px] max-[950px]:text-2xl max-[950px]:max-w-full">
             Creating a future where technology empowers individuals
             to live connected, fulfilling, and sustainable lives.
           </h1>
-          <p className="hero-oxy-subtitle">
+          <p className="text-[11px] font-medium tracking-[0.12em] uppercase mt-3 opacity-70">
             Built by people who believe in change. Ethical, open, and deeply human.
           </p>
         </div>
