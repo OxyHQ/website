@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 import { docsSidebar, docsCards } from '../../data/docs'
 import type { DocsCard } from '../../data/docs'
 
@@ -185,10 +185,10 @@ export default function DocsPage() {
         <div className="container">
           <div className="hidden lg:flex h-12 lg:pl-[19.5rem]">
             <div className="h-full flex text-sm gap-x-6">
-              <a className="group relative h-full gap-2 flex items-center font-medium text-foreground [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]" href="/developers/docs">
+              <Link className="group relative h-full gap-2 flex items-center font-medium text-foreground [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]" to="/developers/docs">
                 Overview
                 <div className="absolute bottom-0 h-[1.5px] w-full left-0 bg-primary" />
-              </a>
+              </Link>
               <a className="group relative h-full gap-2 flex items-center font-medium text-muted-foreground hover:text-foreground" href="#">
                 App SDK
               </a>
