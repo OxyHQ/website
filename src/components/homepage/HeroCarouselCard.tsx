@@ -1,8 +1,8 @@
 import type { CarouselSlot, HeroCard } from '../../data/heroCarousel'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCube, Autoplay } from 'swiper/modules'
-import 'swiper/swiper.css'
-import 'swiper/modules/effect-cube.css'
+import 'swiper/css'
+import 'swiper/css/effect-cube'
 
 const sizeClasses: Record<string, string> = {
   '1x1': 'hero-card-1x1',

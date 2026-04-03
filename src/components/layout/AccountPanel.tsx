@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import { useAccountPanel } from '../../contexts/AccountPanelContext'
+import { ADMIN_USERNAMES } from '../../constants'
 import Button from '../ui/Button'
 
 export default function AccountPanel() {
@@ -64,7 +65,7 @@ export default function AccountPanel() {
 
           {/* Navigation */}
           <nav className="flex flex-1 flex-col gap-1 p-4">
-            {['oxy', 'nate'].includes(user?.username ?? '') && (
+            {ADMIN_USERNAMES.includes(user?.username ?? '') && (
               <Link
                 to="/admin"
                 className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm text-foreground transition-colors hover:bg-surface"

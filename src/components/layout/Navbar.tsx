@@ -14,6 +14,7 @@ import Logo from '../ui/Logo'
 import Container from './Container'
 import LocalePicker from '../ui/LocalePicker'
 import { useAccountPanel } from '../../contexts/AccountPanelContext'
+import { ADMIN_USERNAMES } from '../../constants'
 
 /* ─── SVG Icons ─── */
 function ChevronDown({ className = '' }: { className?: string }) {
@@ -93,7 +94,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ rightActions, transparent }: NavbarProps = {}) {
-  const { user, isAuthenticated, signIn, signOut } = useAuth()
+  const { user, isAuthenticated, signIn } = useAuth()
   const accountPanel = useAccountPanel()
   const { data: navigationData } = useNavigation()
   const dropdowns: NavDropdown[] = useMemo(() => navigationData ?? [], [navigationData])
@@ -180,12 +181,19 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
     }
   }, [closeAll])
 
-  // Track scroll position for transparent navbar + banner
+  // Track scroll position for transparent navbar + banner (rAF-throttled)
   useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY)
+    let raf = 0
+    const onScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => setScrollY(window.scrollY))
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      cancelAnimationFrame(raf)
+    }
   }, [])
 
   // Clear prev after exit animation finishes
@@ -333,23 +341,30 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
               </div>
             </div>
 
-            {/* Mobile hamburger */}
-            <button
-              className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-muted-foreground lg:hidden"
-              aria-label="Open menu"
-              aria-expanded={mobileOpen}
-              onClick={() => setMobileOpen(!mobileOpen)}
-            >
-              {mobileOpen ? (
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="24" height="24" fill="none">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="m12.5 5.5-7 7m7 0-7-7" />
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="24" height="24" fill="none">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="M15 6H3M15 12H3" />
-                </svg>
+            {/* Mobile controls */}
+            <div className="flex items-center gap-x-2 lg:hidden">
+              {isAuthenticated && (
+                <button onClick={accountPanel.toggle} className="cursor-pointer">
+                  <Avatar source={user?.avatar} size={28} placeholderColor={user?.color} />
+                </button>
               )}
-            </button>
+              <button
+                className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-muted-foreground"
+                aria-label="Open menu"
+                aria-expanded={mobileOpen}
+                onClick={() => setMobileOpen(!mobileOpen)}
+              >
+                {mobileOpen ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="24" height="24" fill="none">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="m12.5 5.5-7 7m7 0-7-7" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="24" height="24" fill="none">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="M15 6H3M15 12H3" />
+                  </svg>
+                )}
+              </button>
+            </div>
 
             {/* Desktop buttons */}
             <div className="hidden items-center gap-x-2.5 lg:flex">
@@ -489,37 +504,13 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                 <span className="text-sm text-muted-foreground">Theme</span>
                 <ThemeToggle />
               </div>
-              <div className="flex flex-col gap-2 px-4 pt-2">
-                {isAuthenticated ? (
-                  <>
-                    <div className="flex items-center gap-3 px-2 py-2">
-                      <Avatar source={user?.avatar} size={36} placeholderColor={user?.color} />
-                      <div className="min-w-0">
-                        <div className="truncate text-sm font-medium text-foreground">{user?.name?.first ?? user?.username}</div>
-                        <div className="truncate text-xs text-muted-foreground">@{user?.username}</div>
-                      </div>
-                    </div>
-                    {['oxy', 'nate'].includes(user?.username ?? '') && (
-                      <Link to="/admin" onClick={() => setMobileOpen(false)} className="rounded-xl px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface">
-                        Admin
-                      </Link>
-                    )}
-                    <Link to="/settings" onClick={() => setMobileOpen(false)} className="rounded-xl px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface">
-                      Settings
-                    </Link>
-                    <a href="https://accounts.oxy.so" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)} className="rounded-xl px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-surface">
-                      Manage account
-                    </a>
-                    <Button variant="outline" size="md" onClick={() => { signOut(); setMobileOpen(false) }} className="w-full">Sign out</Button>
-                  </>
-                ) : (
-                  <>
-                    {rightActions && <div className="flex flex-col gap-2">{rightActions}</div>}
-                    <Button variant="outline" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Sign in</Button>
-                    <Button variant="primary" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Start for free</Button>
-                  </>
-                )}
-              </div>
+              {!isAuthenticated && (
+                <div className="flex flex-col gap-2 px-4 pt-2">
+                  {rightActions && <div className="flex flex-col gap-2">{rightActions}</div>}
+                  <Button variant="outline" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Sign in</Button>
+                  <Button variant="primary" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Start for free</Button>
+                </div>
+              )}
             </div>
           </Container>
         </div>

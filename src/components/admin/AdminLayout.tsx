@@ -32,7 +32,7 @@ import {
   ArrowLeft,
 } from 'lucide-react'
 
-export const ADMIN_USERNAMES = ['oxy', 'nate']
+export { ADMIN_USERNAMES } from '../../constants'
 
 interface AdminSection {
   id: string

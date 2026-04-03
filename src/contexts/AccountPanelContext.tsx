@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react'
 
 interface AccountPanelContextValue {
   isOpen: boolean
@@ -20,8 +20,10 @@ export function AccountPanelProvider({ children }: { children: ReactNode }) {
   const close = useCallback(() => setIsOpen(false), [])
   const toggle = useCallback(() => setIsOpen((o) => !o), [])
 
+  const value = useMemo(() => ({ isOpen, open, close, toggle }), [isOpen, open, close, toggle])
+
   return (
-    <AccountPanelContext.Provider value={{ isOpen, open, close, toggle }}>
+    <AccountPanelContext.Provider value={value}>
       {children}
     </AccountPanelContext.Provider>
   )
