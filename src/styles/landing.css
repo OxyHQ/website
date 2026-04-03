@@ -405,21 +405,19 @@
 .oxy-landing .hero-card-4x2,
 .oxy-landing .hero-cube-slot.hero-card-4x2 { grid-row: span 2; grid-column: span 4; }
 
-/* Rotating card — same size as static cards, animation stays within bounds */
+/* Rotating card — same size as static cards, 3D cube rotation */
 .oxy-landing .hero-cube-slot {
   position: relative;
-  border-radius: 2rem;
-  overflow: hidden;
   cursor: pointer;
-  perspective: 800px;
+  perspective: 600px;
+  clip-path: inset(0 round 2rem);
 }
 .oxy-landing .hero-cube-face {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  border-radius: 2rem;
+  backface-visibility: hidden;
   transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
-  transform-origin: center center;
 }
 .oxy-landing .hero-cube-current {
   transform-origin: center bottom;
