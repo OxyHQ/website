@@ -171,13 +171,13 @@ function FairCoinFace() {
           loading="lazy"
           decoding="async"
         />
-        <div className="flex flex-1 flex-col justify-center p-2.5 lg:p-3">
-          <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-green-400 lg:text-[11px]">
-            Apr 3, 2026
-          </span>
+        <div className="flex flex-1 flex-col p-2.5 lg:p-3">
           <p className="text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
             Empowering local stores with FairCoin: a sustainable solution
           </p>
+          <span className="mt-1 block text-[10px] font-bold uppercase tracking-wider text-green-400 lg:text-[11px]">
+            Apr 3, 2026
+          </span>
         </div>
       </div>
     </div>
