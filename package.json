@@ -21,6 +21,7 @@
     "@oxyhq/auth": "^2.0.3",
     "@oxyhq/bloom": "^0.1.25",
     "@oxyhq/core": "^1.11.9",
+    "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tooltip": "^1.2.8",
