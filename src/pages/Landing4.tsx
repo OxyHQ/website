@@ -294,7 +294,7 @@ const STATS = [
   { label: 'Leading manufacturer', value: '95%', desc: 'faster product answers' },
   { label: 'Mining manufacturer', value: '50%', desc: 'time saved in R&D' },
   { label: 'Renewable energy company', value: '66%', desc: 'time saved in R&D' },
-  { label: 'Industrial leader', value: '2\u00d7', desc: 'more customer service issues resolved' },
+  { label: 'Industrial leader', value: '2\u00d7', desc: 'more customer service issues\u00a0resolved' },
 ]
 
 function StatsAndTestimonialsSection() {
