@@ -1,11 +1,44 @@
+import { useRef, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { CardSize, CarouselSlot, HeroCard } from '../../data/heroCarousel'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCube, Autoplay } from 'swiper/modules'
 import { StarFour, PlugsConnected, Unite, Cpu } from '@phosphor-icons/react'
-import { default as CountUp } from 'react-countup'
 import 'swiper/css'
 import 'swiper/css/effect-cube'
+
+function useCountUp(end: number, decimals: number, duration = 2000) {
+  const [value, setValue] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return
+      observer.disconnect()
+      const start = performance.now()
+      const tick = (now: number) => {
+        const t = Math.min((now - start) / duration, 1)
+        const ease = 1 - Math.pow(1 - t, 3)
+        setValue(parseFloat((ease * end).toFixed(decimals)))
+        if (t < 1) requestAnimationFrame(tick)
+      }
+      requestAnimationFrame(tick)
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [end, decimals, duration])
+  return { value, ref }
+}
+
+function AnimatedStat({ end, decimals }: { end: number; decimals: number }) {
+  const { value, ref } = useCountUp(end, decimals)
+  return (
+    <span ref={ref}>
+      {decimals > 0 ? value.toFixed(decimals) : value.toLocaleString()}
+    </span>
+  )
+}
 
 const sizeClasses: Record<CardSize, string> = {
   '1x1': 'row-span-1 col-span-1',
@@ -162,7 +195,7 @@ function FairCoinFace() {
                     {stat.label}
                   </span>
                   <span className="block text-xl font-bold text-white lg:text-2xl">
-                    <CountUp end={stat.end} decimals={stat.decimals} separator="," duration={2} enableScrollSpy scrollSpyOnce />
+                    <AnimatedStat end={stat.end} decimals={stat.decimals} />
                   </span>
                 </div>
               </div>

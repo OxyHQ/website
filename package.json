@@ -44,7 +44,6 @@
     "mongoose": "^9.3.1",
     "prop-types": "^15.8.1",
     "react": "^19.2.4",
-    "react-countup": "^6.5.3",
     "react-dom": "^19.2.4",
     "react-helmet-async": "^3.0.0",
     "react-markdown": "^10.1.0",
