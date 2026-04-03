@@ -320,6 +320,16 @@
 .oxy-landing .tabs.agents-features-tabs .tab { visibility: visible; opacity: 0; }
 .oxy-landing .tabs.agents-features-tabs .tab.active { opacity: 1; }
 
+/* ============ ROI STATS SWIPER ============ */
+.oxy-landing .roi-stats-swiper {
+  overflow: visible !important;
+}
+@media all and (min-width: 1461px) {
+  .oxy-landing .roi-stats-swiper .swiper-wrapper {
+    justify-content: flex-start;
+  }
+}
+
 /* ============ IMAGE CARD SLIDER UI — dots and play/pause ============ */
 .oxy-landing .image-card-slider-ui-wrapper {
   margin-block-start: 63px;

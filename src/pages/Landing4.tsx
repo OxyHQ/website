@@ -95,7 +95,7 @@ function PartnerLogos() {
               <div className={`flex items-center justify-center h-[100px] transition-opacity duration-1000 max-[950px]:h-[60px] max-[950px]:[&:nth-child(n+4)]:hidden${hiddenSlot === index ? ' opacity-0' : ''}`} key={index}>
                 <div className="flex items-center justify-center w-full h-full" data-logo={logo}>
                   <img
-                    className="w-full h-auto object-contain max-w-full max-h-full [max-height:66px]"
+                    className="w-full h-auto object-contain max-w-full max-h-full [max-height:66px] dark:invert"
                     src={`${IMG}/${logo}.svg`}
                     alt={logo.charAt(0).toUpperCase() + logo.slice(1)}
                     width={224}
@@ -347,19 +347,30 @@ function StatsAndTestimonialsSection() {
     <section className="overflow-hidden py-10 max-[950px]:py-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full mb-5">
-          <div className="flex gap-6 my-6 overflow-x-auto">
+          <Swiper
+            modules={[Autoplay]}
+            slidesPerView="auto"
+            spaceBetween={0}
+            grabCursor
+            className="roi-stats-swiper my-6"
+            breakpoints={{
+              1460: { slidesPerView: STATS.length, spaceBetween: 0 },
+            }}
+          >
             {STATS.map((s, i) => (
-              <div key={s.label} className={`flex-1 min-w-[230px] px-6 max-[1460px]:flex-none max-[1460px]:w-[250px] max-[950px]:w-[150px]${i < STATS.length - 1 ? ' border-r border-foreground/10' : ''}`}>
-                <div>
-                  <p className="text-[13px] leading-4 tracking-wide font-[450] opacity-80 mb-[34px]"><strong>{s.label}</strong></p>
+              <SwiperSlide key={s.label} className="!w-auto">
+                <div className={`min-w-[230px] px-6 max-[1460px]:min-w-[250px] max-[950px]:min-w-[150px]${i < STATS.length - 1 ? ' border-r border-foreground/10' : ''}`}>
+                  <div>
+                    <p className="text-sm leading-4 tracking-wide font-[450] opacity-80 mb-[34px]"><strong>{s.label}</strong></p>
+                  </div>
+                  <div>
+                    <p className="font-serif text-[40px] leading-[1.07] mb-[9px]">{s.value}</p>
+                    <p className="max-w-[210px]">{s.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-serif text-[40px] leading-[1.07] mb-[9px]">{s.value}</p>
-                  <p className="max-w-[210px]">{s.desc}</p>
-                </div>
-              </div>
+              </SwiperSlide>
             ))}
-          </div>
+          </Swiper>
         </div>
         <div className="col-span-full">
           <Swiper
@@ -800,11 +811,11 @@ function IntegrationsSecuritySection() {
       </div>
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full">
-          <div className="p-8 rounded-3xl bg-foreground/[0.03]">
+          <div className="relative p-8 rounded-3xl bg-foreground/[0.03]">
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Connect your daily tools automatically</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
-                <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-[13px] leading-4 tracking-wide font-[450]">
+                <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-sm leading-4 tracking-wide font-[450]">
                   {INTEGRATIONS.map((item) => (
                     <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+&]:mt-3">
                       <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
@@ -818,11 +829,11 @@ function IntegrationsSecuritySection() {
             </div>
             <a className={`${BTN} bg-foreground/5 max-[950px]:static absolute bottom-8 left-8`} href="#integrations">See full integrations list</a>
           </div>
-          <div className="p-8 rounded-3xl bg-foreground/[0.03] mt-4">
+          <div className="relative p-8 rounded-3xl bg-foreground/[0.03] mt-4">
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Security you can stand by</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
-                <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-[13px] leading-4 tracking-wide font-[450]">
+                <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-sm leading-4 tracking-wide font-[450]">
                   {SECURITY_ITEMS.map((item) => (
                     <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+&]:mt-3">
                       <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
@@ -930,7 +941,7 @@ function TrustedBySection() {
           <div className="grid grid-cols-8 max-[950px]:grid-cols-2 gap-x-5 items-center">
             {TRUSTED_LOGOS.map((logo) => (
               <div key={logo} className="flex justify-center items-center">
-                <img src={`${IMG}/${logo}.svg`} alt={logo} className="max-h-[66px] w-auto" />
+                <img src={`${IMG}/${logo}.svg`} alt={logo} className="max-h-[66px] w-auto dark:invert" />
               </div>
             ))}
           </div>
