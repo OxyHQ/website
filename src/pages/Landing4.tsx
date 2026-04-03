@@ -89,11 +89,12 @@ function PartnerLogos() {
     <div className="py-5">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full">
-          <div className="partner-logo-grid" id="partner-grid">
+          <div className="grid grid-cols-7 gap-x-5 max-[950px]:grid-cols-3" id="partner-grid">
             {visibleLogos.map((logo, index) => (
-              <div className={`slot${hiddenSlot === index ? ' hidden' : ''}`} key={index}>
-                <div className="logo" data-logo={logo}>
+              <div className={`flex items-center justify-center h-[100px] transition-opacity duration-1000 max-[950px]:h-[60px] max-[950px]:[&:nth-child(n+4)]:hidden${hiddenSlot === index ? ' opacity-0' : ''}`} key={index}>
+                <div className="flex items-center justify-center w-full h-full" data-logo={logo}>
                   <img
+                    className="w-full h-auto object-contain max-w-full max-h-full [max-height:66px]"
                     src={`${IMG}/${logo}.svg`}
                     alt={logo.charAt(0).toUpperCase() + logo.slice(1)}
                     width={224}
@@ -342,12 +343,12 @@ function StatsAndTestimonialsSection() {
     : 2
 
   return (
-    <section className="py-10 max-[950px]:py-6">
+    <section className="overflow-hidden py-10 max-[950px]:py-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full mb-5">
-          <div className="roi-stats">
-            {STATS.map((s) => (
-              <div key={s.label} className="roi-stat">
+          <div className="flex gap-6 my-6 overflow-x-auto">
+            {STATS.map((s, i) => (
+              <div key={s.label} className={`flex-1 min-w-[230px] px-6 max-[1460px]:flex-none max-[1460px]:w-[250px] max-[950px]:w-[150px]${i < STATS.length - 1 ? ' border-r border-black/10' : ''}`}>
                 <div>
                   <p className="text-[13px] leading-4 tracking-wide font-[450] opacity-80 mb-[34px]"><strong>{s.label}</strong></p>
                 </div>
@@ -383,7 +384,7 @@ function StatsAndTestimonialsSection() {
             className="image-card-slider"
           >
             {TESTIMONIALS.map((t, i) => (
-              <SwiperSlide key={i}>
+              <SwiperSlide key={i} style={{ height: 'auto' }}>
                 <div className={`relative overflow-hidden rounded-3xl flex flex-col justify-between gap-12 p-8 aspect-[4/5] max-[950px]:aspect-[4/6] ${t.light ? 'text-white' : ''}`}>
                   <div className="relative z-10">
                     <p className="text-base leading-[1.4]">&ldquo;{t.quote}&rdquo;</p>
@@ -512,20 +513,20 @@ function ModelAgnosticSection() {
     <section className="py-8">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full">
-          <div className="model-agnostic-wrap">
-            <div className="grid grid-cols-12 gap-6 model-agnostic-content">
-              <div className="col-span-6 max-[950px]:col-span-full model-agnostic-image">
+          <div className="model-agnostic-wrap relative max-[950px]:mb-8">
+            <div className="grid grid-cols-12 gap-6 items-center">
+              <div className="col-span-6 max-[950px]:col-span-full z-10 flex items-center justify-center py-[85px] pb-[70px]">
                 <img src={`${IMG}/model-agnostic-popover.svg`} alt="Model selector" />
               </div>
-              <div className="col-span-4 max-[950px]:hidden col-start-8 model-agnostic-text text-white">
+              <div className="col-span-4 max-[950px]:hidden col-start-8 z-10 text-white">
                 <p className="mb-6"><strong>Model agnostic</strong></p>
                 <p className="text-[22px] leading-[1.2] font-[450] max-w-[420px]">
                   Only use the AI models that work best for you. With Oxy, you can choose and switch between leading models as you need.
                 </p>
               </div>
             </div>
-            <div className="bg">
-              <img src={`${IMG}/agents-model-agnostic.webp`} alt="Model agnostic" />
+            <div className="model-agnostic-bg absolute inset-0 overflow-hidden rounded-3xl z-[1]">
+              <img src={`${IMG}/agents-model-agnostic.webp`} alt="Model agnostic" className="w-full h-full object-cover" />
             </div>
           </div>
           <div className="hidden max-[950px]:block px-3">
