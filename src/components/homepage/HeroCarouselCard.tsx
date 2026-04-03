@@ -113,8 +113,8 @@ function CardFace({ card }: { card: HeroCard }) {
     case 'values':
       return (
         <div className="flex h-full w-full flex-col justify-center bg-[#fafaf9] p-4 lg:p-5">
-          <h4 className="text-xl font-bold text-gray-900 lg:text-2xl">{card.heading}</h4>
-          <p className="mt-1 text-sm leading-relaxed text-gray-600 lg:text-base">{card.body}</p>
+          <h4 className="text-2xl font-bold text-gray-900 lg:text-3xl">{card.heading}</h4>
+          <p className="mt-1 text-base leading-relaxed text-gray-600 lg:text-lg">{card.body}</p>
         </div>
       )
   }
