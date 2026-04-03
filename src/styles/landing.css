@@ -29,24 +29,6 @@
   font-weight: 600;
 }
 
-/* ============ BUTTONS ============ */
-.oxy-landing .btn {
-  border: 0;
-  outline: 0;
-  appearance: none;
-  cursor: pointer;
-  font-size: 16px;
-  line-height: 140%;
-  transition: 0.2s ease;
-  display: inline-flex;
-  position: relative;
-  padding: 10px 16px 7px;
-  max-height: 38px;
-  border-radius: 32px;
-  font-weight: 450;
-  font-family: inherit;
-}
-.oxy-landing .btn:hover { opacity: 0.6; }
 
 /* Grid and sections are now Tailwind classes */
 
@@ -569,22 +551,11 @@
 
 /* ============ PARTNERSHIP ============ */
 
-/* ============ INTEGRATIONS ============ */
-.oxy-landing .integrations-list { columns: 3; }
-@media all and (max-width: 950px) {
-  .oxy-landing .integrations-list {
-    columns: auto;
-    max-height: 350px;
-    overflow: hidden;
-  }
-}
 
 /* ============ STATIC LOGOS ============ */
 
 /* ============ PRICING ============ */
 
-/* ============ NO-DEFAULT TAB NAV ============ */
-.oxy-landing .tabs-nav.no-default a { cursor: pointer; }
 
 /* ============ TEXT CONTENT HELPER ============ */
 .oxy-landing .text-content { margin-block-start: 16px; }

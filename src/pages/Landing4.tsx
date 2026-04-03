@@ -124,7 +124,7 @@ function AllInOneSection() {
             AI platform for real work
           </h2>
           <p className="max-w-[440px] mx-auto">A seamless, beautiful way to bring AI into your company&apos;s apps, knowledge, and culture.</p>
-          <a href="#book-intro" className="btn bg-foreground text-background">Book an intro</a>
+          <a href="#book-intro" className="inline-flex cursor-pointer text-base leading-relaxed font-[450] rounded-full px-4 pt-2.5 pb-[7px] max-h-[38px] transition-opacity duration-200 hover:opacity-60 bg-foreground text-background">Book an intro</a>
         </div>
       </div>
     </section>
@@ -662,7 +662,7 @@ function TeamsSection() {
         <div className="col-span-5 col-start-8 max-[950px]:col-span-full max-[950px]:col-start-1 flex flex-col gap-12 justify-between">
           <div>
             <p className="text-oxy-red mb-5"><strong>Every team gets smarter with Oxy</strong></p>
-            <div className="tabs-nav no-default teams-tabs-nav flex flex-col">
+            <div className="teams-tabs-nav flex flex-col [&>a]:cursor-pointer">
               {TEAM_TABS.map((t) => (
                 <a
                   key={t.id}
@@ -683,7 +683,7 @@ function TeamsSection() {
                 </div>
               ))}
             </div>
-            <a href="#book-intro" className="btn bg-foreground text-background">Book an intro</a>
+            <a href="#book-intro" className="inline-flex cursor-pointer text-base leading-relaxed font-[450] rounded-full px-4 pt-2.5 pb-[7px] max-h-[38px] transition-opacity duration-200 hover:opacity-60 bg-foreground text-background">Book an intro</a>
           </div>
         </div>
       </div>
@@ -803,9 +803,9 @@ function IntegrationsSecuritySection() {
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Connect your daily tools automatically</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
-                <div className="integrations-list text-[13px] leading-4 tracking-wide font-[450]">
+                <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-[13px] leading-4 tracking-wide font-[450]">
                   {INTEGRATIONS.map((item) => (
-                    <div key={item.name} className="integrations-list-item grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+.integrations-list-item]:mt-3">
+                    <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+.integrations-list-item]:mt-3">
                       <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
                         <img src={`${IMG}/${item.icon}`} width={20} height={20} alt={`${item.name} icon`} className="w-auto h-auto max-w-5 max-h-5 object-contain" />
                       </div>
@@ -815,15 +815,15 @@ function IntegrationsSecuritySection() {
                 </div>
               </div>
             </div>
-            <a className="btn max-[950px]:static absolute bottom-8 left-8" style={{ background: 'color-mix(in srgb, var(--foreground) 5%, transparent)' }} href="#integrations">See full integrations list</a>
+            <a className="inline-flex cursor-pointer text-base leading-relaxed font-[450] rounded-full px-4 pt-2.5 pb-[7px] max-h-[38px] transition-opacity duration-200 hover:opacity-60 bg-foreground/5 max-[950px]:static absolute bottom-8 left-8" href="#integrations">See full integrations list</a>
           </div>
           <div className="p-8 rounded-3xl bg-foreground/[0.03] mt-4">
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Security you can stand by</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
-                <div className="integrations-list text-[13px] leading-4 tracking-wide font-[450]">
+                <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-[13px] leading-4 tracking-wide font-[450]">
                   {SECURITY_ITEMS.map((item) => (
-                    <div key={item.name} className="integrations-list-item grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+.integrations-list-item]:mt-3">
+                    <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+.integrations-list-item]:mt-3">
                       <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
                         <img src={`${IMG}/${item.icon}`} width={item.size} height={item.size} alt="security icon" className="w-auto h-auto max-w-5 max-h-5 object-contain" />
                       </div>
@@ -833,7 +833,7 @@ function IntegrationsSecuritySection() {
                 </div>
               </div>
             </div>
-            <a className="btn max-[950px]:static absolute bottom-8 left-8" style={{ background: 'color-mix(in srgb, var(--foreground) 5%, transparent)' }} href="#security">Read more about privacy</a>
+            <a className="inline-flex cursor-pointer text-base leading-relaxed font-[450] rounded-full px-4 pt-2.5 pb-[7px] max-h-[38px] transition-opacity duration-200 hover:opacity-60 bg-foreground/5 max-[950px]:static absolute bottom-8 left-8" href="#security">Read more about privacy</a>
           </div>
         </div>
       </div>
@@ -1003,9 +1003,9 @@ function PricingSection() {
                   <p className="text-[22px] leading-[1.2] font-[450] mb-3">{plan.name}</p>
                   <p className="mb-5"><strong>{plan.price}</strong></p>
                   {plan.name === 'Enterprise' ? (
-                    <a className="btn bg-foreground text-background" href="#book-intro">{plan.cta}</a>
+                    <a className="inline-flex cursor-pointer text-base leading-relaxed font-[450] rounded-full px-4 pt-2.5 pb-[7px] max-h-[38px] transition-opacity duration-200 hover:opacity-60 bg-foreground text-background" href="#book-intro">{plan.cta}</a>
                   ) : (
-                    <a className="btn" style={{ background: 'color-mix(in srgb, var(--foreground) 5%, transparent)' }} href={plan.ctaHref} target="_blank" rel="noopener noreferrer">{plan.cta}</a>
+                    <a className="inline-flex cursor-pointer text-base leading-relaxed font-[450] rounded-full px-4 pt-2.5 pb-[7px] max-h-[38px] transition-opacity duration-200 hover:opacity-60 bg-foreground/5" href={plan.ctaHref} target="_blank" rel="noopener noreferrer">{plan.cta}</a>
                   )}
                   <hr className="border-0 border-t border-black/[0.07] my-6" />
                   <ul className="list-none p-0 m-0">
