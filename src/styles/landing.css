@@ -25,36 +25,7 @@
 }
 
 
-/* Grid and sections are now Tailwind classes */
-
 /* ============ HERO ============ */
-.oxy-landing .page-hero .hero-content {
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  row-gap: 64px;
-  justify-content: space-between;
-  padding-block: 80px 32px;
-}
-.oxy-landing .page-hero .hero-content p {
-  max-width: 430px;
-}
-.oxy-landing .page-hero .hero-content .text-rotator {
-  display: none;
-}
-.oxy-landing .page-hero .hero-content .text-rotator.show {
-  display: inline-block;
-}
-.oxy-landing .text-rotator .fadeIn {
-  opacity: 0;
-  animation: oxyFadeIn 1.2s var(--easeOut) forwards;
-}
-@keyframes oxyFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* ============ OXY HERO ============ */
 .oxy-landing .hero-oxy {
   position: relative;
   min-height: 100vh;
@@ -254,7 +225,7 @@
   display: none;
   z-index: 1;
 }
-.oxy-landing .agents-features-tabs-nav a > *:not(.timer) { z-index: 2; }
+.oxy-landing .agents-features-tabs-nav a > *:not(.timer) { position: relative; z-index: 2; }
 .oxy-landing .agents-features-tabs-nav a.active:has(.timer) {
   background: rgb(255 255 255 / 0.7);
   backdrop-filter: blur(10px);
