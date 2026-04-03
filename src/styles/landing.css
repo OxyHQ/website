@@ -347,7 +347,8 @@
 .oxy-landing .hero-carousel-outer {
   position: relative;
   z-index: 10;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   padding-block: 1rem;
 }
 
