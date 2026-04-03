@@ -11,6 +11,7 @@ export type HeroCard =
       type: 'careers'
       jobTitle: string
       department: string
+      slug?: string
     }
   | {
       type: 'brand'

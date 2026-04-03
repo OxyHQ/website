@@ -1,5 +1,6 @@
-import { useRef, useEffect, useCallback, useState } from 'react'
+import { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 import type { CarouselSlot } from '../../data/heroCarousel'
+import { useJobs } from '../../api/hooks'
 import CarouselSlotRenderer from './HeroCarouselCard'
 
 interface HeroCarouselProps {
@@ -10,6 +11,25 @@ const NORMAL_SPEED = 0.5   // px per frame (~30px/s at 60fps)
 const SLOW_SPEED = 0.1     // px per frame on hover
 
 export default function HeroCarousel({ slots }: HeroCarouselProps) {
+  const { data: jobs } = useJobs()
+
+  // Replace static careers faces with real job data when available
+  const resolvedSlots = useMemo(() => {
+    if (!jobs?.length) return slots
+    return slots.map(slot => {
+      const hasCareers = slot.faces.some(f => f.type === 'careers')
+      if (!hasCareers) return slot
+      return {
+        ...slot,
+        faces: jobs.map((job: { title: string; slug: string; department?: string }) => ({
+          type: 'careers' as const,
+          jobTitle: job.title,
+          department: job.department ?? 'Careers',
+          slug: job.slug,
+        })),
+      }
+    })
+  }, [slots, jobs])
   const trackRef = useRef<HTMLDivElement>(null)
   const posRef = useRef(0)
   const speedRef = useRef(NORMAL_SPEED)
@@ -55,12 +75,12 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     >
       <div className="hero-carousel-track" ref={trackRef}>
         <div className="hero-carousel-grid">
-          {slots.map((slot, i) => (
+          {resolvedSlots.map((slot, i) => (
             <CarouselSlotRenderer key={i} slot={slot} />
           ))}
         </div>
         <div className="hero-carousel-grid" aria-hidden="true">
-          {slots.map((slot, i) => (
+          {resolvedSlots.map((slot, i) => (
             <CarouselSlotRenderer key={`dup-${i}`} slot={slot} />
           ))}
         </div>

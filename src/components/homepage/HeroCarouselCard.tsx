@@ -1,4 +1,5 @@
 import { useRef, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import type { CarouselSlot, HeroCard } from '../../data/heroCarousel'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import type SwiperType from 'swiper'
@@ -41,14 +42,17 @@ function CardFace({ card }: { card: HeroCard }) {
 
     case 'careers':
       return (
-        <div className="flex h-full w-full flex-col items-start justify-end bg-[#3b82f6] p-4 lg:p-5">
+        <Link
+          to={card.slug ? `/careers/${card.slug}` : '/careers'}
+          className="flex h-full w-full flex-col items-start justify-end bg-[#3b82f6] p-4 lg:p-5"
+        >
           <span className="mb-2 inline-block rounded-full bg-white/20 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white lg:text-[10px]">
             {card.department}
           </span>
           <p className="text-base font-extrabold leading-tight text-white lg:text-xl">
             {card.jobTitle}
           </p>
-        </div>
+        </Link>
       )
 
     case 'brand':
