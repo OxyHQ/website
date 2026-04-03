@@ -425,9 +425,14 @@
 .oxy-landing .hero-cube-face {
   position: absolute;
   inset: 0;
-  overflow: hidden;
   backface-visibility: hidden;
   border-radius: 2rem;
+}
+.oxy-landing .hero-cube-face > * {
+  border-radius: 2rem;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
 }
 /* Instant reset — no animation when snapping back */
 .oxy-landing .hero-cube-slot.no-transition .hero-cube-inner {
