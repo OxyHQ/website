@@ -136,31 +136,33 @@ function FairCoinFace() {
         <div className="mb-auto flex h-8 w-8 items-center justify-center rounded-full bg-[#14532d] lg:h-10 lg:w-10">
           <span className="text-sm font-black text-green-300 lg:text-base">EF</span>
         </div>
-        <h3 className="mb-3 text-5xl font-extrabold uppercase tracking-wider text-white">
-          FairCoin <span className="font-normal italic text-green-200">Today</span>
-        </h3>
-        <div className="my-auto grid grid-cols-2 gap-1.5 lg:gap-2">
-          {FAIRCOIN_STATS.map((stat) => (
-            <div key={stat.label} className="rounded-2xl bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5">
-              <div className="flex items-center gap-2">
-                <stat.Icon size={16} className="text-green-400" weight="bold" />
-                <div>
-                  <span className="block text-[9px] font-semibold uppercase tracking-wider text-green-300 lg:text-[10px]">
-                    {stat.label}
-                  </span>
-                  <span className="block text-xl font-bold text-white lg:text-2xl">{stat.value}</span>
+        <div className="my-auto flex flex-col gap-3 lg:gap-4">
+          <h3 className="text-5xl font-extrabold uppercase tracking-wider text-white">
+            FairCoin <span className="font-normal italic text-green-200">Today</span>
+          </h3>
+          <div className="grid grid-cols-2 gap-1.5 lg:gap-2">
+            {FAIRCOIN_STATS.map((stat) => (
+              <div key={stat.label} className="rounded-full bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5">
+                <div className="flex items-center gap-2">
+                  <stat.Icon size={16} className="text-green-400" weight="bold" />
+                  <div>
+                    <span className="block text-[9px] font-semibold uppercase tracking-wider text-green-300 lg:text-[10px]">
+                      {stat.label}
+                    </span>
+                    <span className="block text-xl font-bold text-white lg:text-2xl">{stat.value}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-3 flex gap-2 lg:mt-4">
-          <button className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-green-900">
-            Buy
-          </button>
-          <button className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white">
-            Learn more
-          </button>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <button className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-green-900">
+              Buy
+            </button>
+            <button className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white">
+              Learn more
+            </button>
+          </div>
         </div>
       </div>
       <div className="m-2.5 flex w-[28%] flex-col rounded-2xl bg-[#14532d] lg:m-3">
