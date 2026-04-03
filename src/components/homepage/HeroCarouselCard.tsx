@@ -3,6 +3,7 @@ import type { CardSize, CarouselSlot, HeroCard } from '../../data/heroCarousel'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCube, Autoplay } from 'swiper/modules'
 import { StarFour, PlugsConnected, Unite, Cpu } from '@phosphor-icons/react'
+import CountUp from 'react-countup'
 import 'swiper/css'
 import 'swiper/css/effect-cube'
 
@@ -123,10 +124,10 @@ function CardFace({ card }: { card: HeroCard }) {
 const FAIRCOIN_STORE_IMAGE = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=500&fit=crop'
 
 const FAIRCOIN_STATS = [
-  { label: 'Current Blocks', value: '842,391', Icon: StarFour },
-  { label: 'Network (KH/s)', value: '1,247', Icon: PlugsConnected },
-  { label: 'Active Peers', value: '3,891', Icon: Unite },
-  { label: 'Difficulty', value: '0.0024', Icon: Cpu },
+  { label: 'Current Blocks', end: 842391, decimals: 0, Icon: StarFour },
+  { label: 'Network (KH/s)', end: 1247, decimals: 0, Icon: PlugsConnected },
+  { label: 'Active Peers', end: 3891, decimals: 0, Icon: Unite },
+  { label: 'Difficulty', end: 0.0024, decimals: 4, Icon: Cpu },
 ]
 
 function FairCoinFace() {
@@ -138,13 +139,13 @@ function FairCoinFace() {
           FairCoin <span className="font-normal italic text-green-200">Today</span>
         </h3>
         <div className="flex flex-wrap gap-2">
-          <a href="https://buy.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-green-900">
+          <a href="https://buy.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full bg-green-400 px-4 py-1.5 text-sm font-bold text-green-900">
             Buy
           </a>
-          <a href="https://explorer.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white">
+          <a href="https://explorer.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-bold text-white">
             Explorer
           </a>
-          <a href="https://fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white">
+          <a href="https://fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-bold text-white">
             Learn more
           </a>
         </div>
@@ -160,7 +161,9 @@ function FairCoinFace() {
                   <span className="block text-[9px] font-semibold uppercase tracking-wider text-green-300 lg:text-[10px]">
                     {stat.label}
                   </span>
-                  <span className="block text-xl font-bold text-white lg:text-2xl">{stat.value}</span>
+                  <span className="block text-xl font-bold text-white lg:text-2xl">
+                    <CountUp end={stat.end} decimals={stat.decimals} separator="," duration={2} enableScrollSpy scrollSpyOnce />
+                  </span>
                 </div>
               </div>
             </div>
