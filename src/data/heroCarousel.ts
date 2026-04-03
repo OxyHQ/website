@@ -174,7 +174,7 @@ export const heroCarouselSlots: CarouselSlot[] = [
   },
   // Values — 5 values
   {
-    size: '2x1',
+    size: '1x1',
     rotateInterval: 3500,
     faces: [
       { type: 'values', heading: 'Human-first design', body: 'Tools that empower people, not manipulate them.' },
@@ -195,9 +195,20 @@ export const heroCarouselSlots: CarouselSlot[] = [
       },
     ],
   },
-  // Newsroom — 5 posts
+  // Photo — fill gap
   {
-    size: '2x1',
+    size: '1x1',
+    faces: [
+      {
+        type: 'photo',
+        image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=400&h=400&fit=crop',
+        alt: 'Workshop',
+      },
+    ],
+  },
+  // Newsroom
+  {
+    size: '1x1',
     rotateInterval: 5000,
     faces: [
       {
@@ -229,6 +240,17 @@ export const heroCarouselSlots: CarouselSlot[] = [
         title: 'Introducing Codea: AI-Powered Development',
         image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=400&fit=crop',
         category: 'Product',
+      },
+    ],
+  },
+  // Photo — pair with last newsroom
+  {
+    size: '1x1',
+    faces: [
+      {
+        type: 'photo',
+        image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=400&fit=crop',
+        alt: 'Team meeting',
       },
     ],
   },
