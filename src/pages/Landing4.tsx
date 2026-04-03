@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
+import HeroCarousel from '../components/homepage/HeroCarousel'
+import { heroCarouselCards } from '../data/heroCarousel'
 import '../styles/sana-landing.css'
 
 const IMG = '/images/landing'
@@ -9,56 +11,30 @@ const IMG = '/images/landing'
 /* ------------------------------------------------------------------ */
 /*  Hero                                                               */
 /* ------------------------------------------------------------------ */
-const ROTATING_WORDS = ['Deep research', 'Sales prep', 'Customer support', 'Contract review', 'Data analysis']
-
 function HeroSection() {
-  const [wordIdx, setWordIdx] = useState(0)
-  const [animating, setAnimating] = useState(true)
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setAnimating(false)
-      setTimeout(() => {
-        setWordIdx((i) => (i + 1) % ROTATING_WORDS.length)
-        setAnimating(true)
-      }, 300)
-    }, 3000)
-    return () => clearInterval(id)
-  }, [])
-
   return (
-    <div className="page-hero">
-      <div className="hero-content">
-        <div className="top">
-          <div className="columns">
-            <div className="gc text-c">
-              <h1>
-                <span className="text-rotator show">
-                  <span
-                    className={animating ? 'animated fadeIn' : 'animated'}
-                    style={{ display: 'inline-block' }}
-                  >
-                    {' '}{ROTATING_WORDS[wordIdx]}
-                  </span>
-                </span>
-                <br />
-                done with&nbsp;AI
-              </h1>
-            </div>
-          </div>
-        </div>
-        <div className="bottom">
-          <div className="columns">
-            <div className="gc text-c flow">
-              <p>Accelerate work with AI agents that collaborate, automate, and think alongside your teams.</p>
-              <a href="#book-intro" className="btn bg-black white">Book an intro</a>
-            </div>
-          </div>
+    <div className="hero-oxy">
+      {/* Background image */}
+      <div className="hero-oxy-bg">
+        <img src={`${IMG}/AgentsHero.webp`} alt="" />
+        <div className="hero-oxy-overlay" />
+      </div>
+
+      {/* Text overlay */}
+      <div className="hero-oxy-content">
+        <div>
+          <h1>
+            Creating a future where technology empowers individuals
+            to live connected, fulfilling, and sustainable lives.
+          </h1>
+          <p className="hero-oxy-subtitle">
+            Built by people who believe in change. Ethical, open, and deeply human.
+          </p>
         </div>
       </div>
-      <div className="hero-bg">
-        <img src={`${IMG}/AgentsHero.webp`} alt="AI Agents hero" />
-      </div>
+
+      {/* Infinite carousel grid */}
+      <HeroCarousel cards={heroCarouselCards} />
     </div>
   )
 }
