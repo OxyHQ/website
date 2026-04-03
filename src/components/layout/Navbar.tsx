@@ -258,8 +258,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
         </div>
       )}
 
-    <header className={`sticky top-0 z-50 transition-colors duration-300 ${transparent ? 'bg-transparent border-b border-transparent' : 'bg-background border-b border-border'}`}>
-      <div className="absolute inset-0 -z-10 backdrop-blur-md" />
+    <header className={`sticky top-0 z-50 transition-colors duration-300 backdrop-blur-md ${transparent ? 'bg-transparent border-b border-transparent' : 'bg-background/80 border-b border-border'}`}>
 
       {/* ─── Hidden measurement panels (off-screen, unstyled, for measuring natural size) ─── */}
       <div
@@ -346,7 +345,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                     onMouseLeave={scheduleClose}
                   >
                     <div
-                      className="overflow-hidden"
+                      className="overflow-hidden rounded-xl border border-border bg-background shadow-lg"
                       style={{
                         width: activeSize ? activeSize.w : 0,
                         height: activeSize ? activeSize.h : 0,
