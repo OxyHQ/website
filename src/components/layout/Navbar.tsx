@@ -98,6 +98,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
   const dropdownLabels = useMemo(() => dropdowns.map((d) => d.label), [dropdowns])
 
   const [scrolled, setScrolled] = useState(false)
+  const [bannerHidden, setBannerHidden] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [bannerVisible, setBannerVisible] = useState(true)
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false)
@@ -189,14 +190,17 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
     return () => window.removeEventListener('keydown', handler)
   }, [closeAll])
 
-  // Track scroll position for transparent navbar
+  // Track scroll position for transparent navbar + banner hide
   useEffect(() => {
-    if (!transparent) return
-    const onScroll = () => setScrolled(window.scrollY > 50)
+    const onScroll = () => {
+      const y = window.scrollY
+      setScrolled(y > 50)
+      setBannerHidden(y > 10)
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [transparent])
+  }, [])
 
   // Clear prev after exit animation finishes
   useEffect(() => {
@@ -223,11 +227,14 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
 
   return (
     <>
-      {/* ─── Banner (scrolls away) ─── */}
+      {/* ─── Banner ─── */}
       {bannerVisible && (
         <div
-          className="site-banner dark isolate flex h-(--site-header-banner-visible-height) w-full items-center justify-center bg-(--color-banner-background)"
-          style={{ boxShadow: '0px 1px 2px 0px rgba(0,0,0,0.01), 0px 2px 4px -1px rgba(0,0,0,0.02), 0px 4px 8px -2px rgba(0,0,0,0.03)' }}
+          className="site-banner dark fixed top-0 left-0 right-0 z-50 flex h-(--site-header-banner-visible-height) w-full items-center justify-center bg-(--color-banner-background) transition-transform duration-300"
+          style={{
+            boxShadow: '0px 1px 2px 0px rgba(0,0,0,0.01), 0px 2px 4px -1px rgba(0,0,0,0.02), 0px 4px 8px -2px rgba(0,0,0,0.03)',
+            transform: bannerHidden ? 'translateY(-100%)' : 'translateY(0)',
+          }}
         >
           <div className="container flex h-full items-center justify-center">
             <div className="relative flex size-full items-stretch justify-center px-12 max-md:justify-start max-md:pl-0">
@@ -256,7 +263,10 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
         </div>
       )}
 
-    <header className={`sticky top-0 z-50 transition-colors duration-300 backdrop-blur-md ${transparent && !scrolled ? 'bg-transparent border-b border-transparent' : 'bg-background/80 border-b border-border'}`}>
+    <header
+      className={`fixed left-0 right-0 z-50 transition-all duration-300 ${transparent && !scrolled && !isOpen ? 'bg-transparent border-b border-transparent' : 'bg-background/80 border-b border-border backdrop-blur-md'}`}
+      style={{ top: bannerVisible && !bannerHidden ? 'var(--site-header-banner-visible-height)' : 0 }}
+    >
 
       {/* ─── Hidden measurement panels (off-screen, unstyled, for measuring natural size) ─── */}
       <div
@@ -557,6 +567,9 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
         </div>
       )}
     </header>
+
+    {/* Spacer to offset fixed navbar height (not needed when transparent/overlaying hero) */}
+    {!transparent && <div className="h-[calc(var(--site-header-banner-visible-height)+49px)] lg:h-[calc(var(--site-header-banner-visible-height)+53px)]" />}
     </>
   )
 }
