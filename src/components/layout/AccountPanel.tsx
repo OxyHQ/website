@@ -29,17 +29,17 @@ function Chevron() {
 
 /* ─── Quick‑action data ─── */
 const quickActions = [
-  { label: 'Personal Info', href: '/settings', stroke: '#34A853', bg: '#e6f4ea', d: 'M13.5 15.75v-1.5a3 3 0 00-3-3h-3a3 3 0 00-3 3v1.5M9 8.25a3 3 0 100-6 3 3 0 000 6z' },
-  { label: 'Security', href: '/settings', stroke: '#4285F4', bg: '#e8f0fe', d: 'M9 1.5L3 4.5v4.5c0 4.14 2.56 7.01 6 7.5 3.44-.49 6-3.36 6-7.5V4.5L9 1.5z' },
-  { label: 'Devices', href: '/settings', stroke: '#4285F4', bg: '#e8f0fe', d: 'M2.25 3.75h13.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H2.25a.75.75 0 01-.75-.75v-7.5a.75.75 0 01.75-.75zM6.75 15h4.5M9 12.75v2.25' },
-  { label: 'Data & Privacy', href: '/settings', stroke: '#9C27B0', bg: '#f3e8fd', d: 'M9 2.25v13.5M2.25 9h13.5M3.75 3.75h10.5a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5v-7.5a1.5 1.5 0 011.5-1.5z' },
-  { label: 'Sharing', href: '/settings', stroke: '#EA4335', bg: '#fce8e6', d: 'M12 6.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM12 15.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM6 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM7.95 10.2l2.1 1.8M10.05 5.7l-2.1 1.8' },
-  { label: 'Payments', href: '/settings', stroke: '#FBBC04', bg: '#fef7e0', d: 'M2.25 6.75h13.5M2.25 5.25a1.5 1.5 0 011.5-1.5h10.5a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5v-7.5z' },
+  { label: 'Personal Info', href: 'https://accounts.oxy.so', stroke: '#34A853', bg: '#e6f4ea', d: 'M13.5 15.75v-1.5a3 3 0 00-3-3h-3a3 3 0 00-3 3v1.5M9 8.25a3 3 0 100-6 3 3 0 000 6z' },
+  { label: 'Security', href: 'https://accounts.oxy.so', stroke: '#4285F4', bg: '#e8f0fe', d: 'M9 1.5L3 4.5v4.5c0 4.14 2.56 7.01 6 7.5 3.44-.49 6-3.36 6-7.5V4.5L9 1.5z' },
+  { label: 'Devices', href: 'https://accounts.oxy.so', stroke: '#4285F4', bg: '#e8f0fe', d: 'M2.25 3.75h13.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H2.25a.75.75 0 01-.75-.75v-7.5a.75.75 0 01.75-.75zM6.75 15h4.5M9 12.75v2.25' },
+  { label: 'Data & Privacy', href: 'https://accounts.oxy.so', stroke: '#9C27B0', bg: '#f3e8fd', d: 'M9 2.25v13.5M2.25 9h13.5M3.75 3.75h10.5a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5v-7.5a1.5 1.5 0 011.5-1.5z' },
+  { label: 'Sharing', href: 'https://accounts.oxy.so', stroke: '#EA4335', bg: '#fce8e6', d: 'M12 6.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM12 15.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM6 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM7.95 10.2l2.1 1.8M10.05 5.7l-2.1 1.8' },
+  { label: 'Payments', href: 'https://accounts.oxy.so', stroke: '#FBBC04', bg: '#fef7e0', d: 'M2.25 6.75h13.5M2.25 5.25a1.5 1.5 0 011.5-1.5h10.5a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5v-7.5z' },
 ]
 
 /* ─── Grouped menu items ─── */
 const menuItems = [
-  { label: 'Settings', href: '/settings', stroke: '#4285F4', bg: '#e8f0fe', d: 'M8 10a2 2 0 100-4 2 2 0 000 4zM12.7 10.1a1 1 0 00.2 1.1l.03.03a1.22 1.22 0 11-1.72 1.72l-.03-.03a1 1 0 00-1.1-.2 1 1 0 00-.61.92v.09a1.22 1.22 0 11-2.44 0v-.05a1 1 0 00-.65-.91 1 1 0 00-1.1.2l-.03.03a1.22 1.22 0 11-1.72-1.72l.03-.03a1 1 0 00.2-1.1 1 1 0 00-.92-.61h-.09a1.22 1.22 0 110-2.44h.05a1 1 0 00.91-.65 1 1 0 00-.2-1.1l-.03-.03A1.22 1.22 0 114.97 3.5l.03.03a1 1 0 001.1.2h.05a1 1 0 00.61-.92v-.09a1.22 1.22 0 112.44 0v.05a1 1 0 00.65.91 1 1 0 001.1-.2l.03-.03a1.22 1.22 0 111.72 1.72l-.03.03a1 1 0 00-.2 1.1v.05a1 1 0 00.92.61h.09a1.22 1.22 0 010 2.44h-.05a1 1 0 00-.91.65z' },
+  { label: 'Settings', href: '/settings', external: false, stroke: '#4285F4', bg: '#e8f0fe', d: 'M8 10a2 2 0 100-4 2 2 0 000 4zM12.7 10.1a1 1 0 00.2 1.1l.03.03a1.22 1.22 0 11-1.72 1.72l-.03-.03a1 1 0 00-1.1-.2 1 1 0 00-.61.92v.09a1.22 1.22 0 11-2.44 0v-.05a1 1 0 00-.65-.91 1 1 0 00-1.1.2l-.03.03a1.22 1.22 0 11-1.72-1.72l.03-.03a1 1 0 00.2-1.1 1 1 0 00-.92-.61h-.09a1.22 1.22 0 110-2.44h.05a1 1 0 00.91-.65 1 1 0 00-.2-1.1l-.03-.03A1.22 1.22 0 114.97 3.5l.03.03a1 1 0 001.1.2h.05a1 1 0 00.61-.92v-.09a1.22 1.22 0 112.44 0v.05a1 1 0 00.65.91 1 1 0 001.1-.2l.03-.03a1.22 1.22 0 111.72 1.72l-.03.03a1 1 0 00-.2 1.1v.05a1 1 0 00.92.61h.09a1.22 1.22 0 010 2.44h-.05a1 1 0 00-.91.65z' },
   { label: 'Manage account', href: 'https://accounts.oxy.so', external: true, stroke: '#34A853', bg: '#e6f4ea', d: 'M12 14v-1.33A2.67 2.67 0 009.33 10H6.67A2.67 2.67 0 004 12.67V14M8 7.33A2.67 2.67 0 108 2a2.67 2.67 0 000 5.33z' },
 ]
 
@@ -101,12 +101,12 @@ export default function AccountPanel() {
           <div className="pb-4">
             <div className="flex gap-1.5 overflow-x-auto px-4 pb-1 scrollbar-none">
               {quickActions.map((a) => (
-                <Link key={a.label} to={a.href} className={chipClass}>
+                <a key={a.label} href={a.href} target="_blank" rel="noopener noreferrer" className={chipClass}>
                   <div className="flex h-7 w-7 items-center justify-center rounded-full" style={{ backgroundColor: a.bg }}>
                     <svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke={a.stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={a.d} /></svg>
                   </div>
                   <span className="whitespace-nowrap">{a.label}</span>
-                </Link>
+                </a>
               ))}
             </div>
           </div>
