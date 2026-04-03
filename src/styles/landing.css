@@ -24,13 +24,12 @@
 .oxy-landing *:after,
 .oxy-landing *:before {
   box-sizing: border-box;
-  position: relative;
 }
-/* Swiper cube needs static positioning to preserve 3D context */
-.oxy-landing .hero-cube-swiper *,
-.oxy-landing .hero-cube-swiper *:after,
-.oxy-landing .hero-cube-swiper *:before {
-  position: static;
+/* Low-specificity position:relative so Swiper's own rules can override */
+:where(.oxy-landing) *,
+:where(.oxy-landing) *:after,
+:where(.oxy-landing) *:before {
+  position: relative;
 }
 
 .oxy-landing a {
@@ -649,9 +648,6 @@
 .oxy-landing .roi-stat p { max-width: 21rem; }
 
 /* ============ IMAGE CARD SLIDER (Swiper) ============ */
-.oxy-landing .image-card-slider {
-  overflow: visible !important;
-}
 .oxy-landing .image-card-slider .swiper-slide {
   height: auto;
 }
@@ -670,7 +666,7 @@
 @media all and (max-width: 950px) {
   .oxy-landing .image-card { padding: 3.2rem; aspect-ratio: 4 / 6; }
 }
-.oxy-landing .image-card > *:not(.bg) { z-index: 5; position: relative; }
+.oxy-landing .image-card > *:not(.bg) { z-index: 5; }
 .oxy-landing .image-card .bg {
   width: 100%;
   height: 100%;
