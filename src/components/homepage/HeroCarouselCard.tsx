@@ -43,7 +43,7 @@ function CardFace({ card }: { card: HeroCard }) {
     case 'careers':
       return (
         <Link
-          to={card.slug ? `/careers/${card.slug}` : '/careers'}
+          to={card.slug ? `/company/careers/${card.slug}` : '/company/careers'}
           className="flex h-full w-full flex-col items-start justify-end bg-[#3b82f6] p-4 lg:p-5"
         >
           <span className="mb-2 inline-block rounded-full bg-white/20 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white lg:text-[10px]">
