@@ -13,29 +13,33 @@ const IMG = '/images/landing'
 /* ------------------------------------------------------------------ */
 function HeroSection() {
   return (
-    <div className="hero-oxy">
-      {/* Background image */}
-      <div className="hero-oxy-bg">
-        <img src={`${IMG}/hero-bg.avif`} alt="" />
-        <div className="hero-oxy-overlay" />
-      </div>
+    <>
+      <div className="hero-oxy">
+        {/* Background image */}
+        <div className="hero-oxy-bg">
+          <img src={`${IMG}/hero-bg.avif`} alt="" />
+          <div className="hero-oxy-overlay" />
+        </div>
 
-      {/* Text overlay */}
-      <div className="hero-oxy-content">
-        <div>
-          <h1>
-            Creating a future where technology empowers individuals
-            to live connected, fulfilling, and sustainable lives.
-          </h1>
-          <p className="hero-oxy-subtitle">
-            Built by people who believe in change. Ethical, open, and deeply human.
-          </p>
+        {/* Text overlay */}
+        <div className="hero-oxy-content">
+          <div>
+            <h1>
+              Creating a future where technology empowers individuals
+              to live connected, fulfilling, and sustainable lives.
+            </h1>
+            <p className="hero-oxy-subtitle">
+              Built by people who believe in change. Ethical, open, and deeply human.
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Infinite carousel grid */}
-      <HeroCarousel slots={heroCarouselSlots} />
-    </div>
+      {/* Carousel lives outside hero-oxy so no ancestor clips 3D */}
+      <div className="hero-carousel-wrapper">
+        <HeroCarousel slots={heroCarouselSlots} />
+      </div>
+    </>
   )
 }
 
