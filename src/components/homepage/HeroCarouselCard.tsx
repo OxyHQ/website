@@ -225,26 +225,25 @@ function CubeCard({ sizeClass, faces, interval }: {
 
   return (
     <div ref={slotRef} className={`hero-cube-slot ${sizeClass}`}>
-      {/* Current face — slides up and rotates backward */}
+      {/* Current face — hinges at top edge, rotates backward into screen */}
       <div
         className="hero-cube-face hero-cube-current"
         style={{
           transform: phase === 'flipping'
-            ? 'translateY(-100%) rotateX(90deg)'
-            : 'translateY(0) rotateX(0deg)',
+            ? 'rotateX(-90deg)'
+            : 'rotateX(0deg)',
           zIndex: 2,
         }}
       >
         <CardFace card={faces[current]} />
       </div>
-      {/* Next face — hidden until flip, then slides in from below */}
+      {/* Next face — hinges at bottom edge, rotates up into view */}
       <div
         className="hero-cube-face hero-cube-next"
         style={{
           transform: phase === 'flipping'
-            ? 'translateY(0) rotateX(0deg)'
-            : 'translateY(100%) rotateX(-90deg)',
-          visibility: phase === 'flipping' ? 'visible' : 'hidden',
+            ? 'rotateX(0deg)'
+            : 'rotateX(90deg)',
           zIndex: 1,
         }}
       >

@@ -405,9 +405,11 @@
 .oxy-landing .hero-card-4x2,
 .oxy-landing .hero-cube-slot.hero-card-4x2 { grid-row: span 2; grid-column: span 4; }
 
-/* Rotating card — each face looks like its own card */
+/* Rotating card — cube hinge rotation */
 .oxy-landing .hero-cube-slot {
   position: relative;
+  border-radius: 2rem;
+  overflow: hidden;
   cursor: pointer;
   perspective: 800px;
 }
@@ -415,14 +417,15 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  border-radius: 2rem;
   transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
+/* Current face hinges at its top edge — rotates backward like a flap */
 .oxy-landing .hero-cube-current {
-  transform-origin: center bottom;
+  transform-origin: 50% 0%;
 }
+/* Next face hinges at its bottom edge — rotates in from below */
 .oxy-landing .hero-cube-next {
-  transform-origin: center top;
+  transform-origin: 50% 100%;
 }
 /* Instant reset — no animation when snapping back */
 .oxy-landing .hero-cube-slot.no-transition .hero-cube-face {
