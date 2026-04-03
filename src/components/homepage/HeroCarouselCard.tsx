@@ -219,14 +219,15 @@ function CubeCard({ sizeClass, faces, interval }: {
 }) {
   const [current, setCurrent] = useState(0)
   const [flipped, setFlipped] = useState(false)
+  const slotRef = useRef<HTMLDivElement>(null)
   const cubeRef = useRef<HTMLDivElement>(null)
   const [halfH, setHalfH] = useState(100)
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
   const next = (current + 1) % faces.length
 
   useLayoutEffect(() => {
-    if (cubeRef.current) {
-      setHalfH(cubeRef.current.offsetHeight / 2)
+    if (slotRef.current) {
+      setHalfH(slotRef.current.offsetHeight / 2)
     }
   }, [])
 
@@ -250,7 +251,7 @@ function CubeCard({ sizeClass, faces, interval }: {
   }, [faces.length, interval])
 
   return (
-    <div className={`hero-cube-slot ${sizeClass}`}>
+    <div ref={slotRef} className={`hero-cube-slot ${sizeClass}`}>
       <div
         ref={cubeRef}
         className="hero-cube"

@@ -403,22 +403,25 @@
 .oxy-landing .hero-card-4x2,
 .oxy-landing .hero-cube-slot.hero-card-4x2 { grid-row: span 2; grid-column: span 4; }
 
-/* 3D Cube card (pure CSS) */
+/* 3D Cube card (pure CSS, CodePen pattern) */
 .oxy-landing .hero-cube-slot {
   perspective: 1000px;
 }
 .oxy-landing .hero-cube {
+  position: relative;
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.6s ease-in-out;
+  transition: transform 0.5s ease-in-out;
 }
 .oxy-landing .hero-cube-front,
 .oxy-landing .hero-cube-bottom {
   position: absolute;
-  inset: 0;
+  width: 100%;
+  height: 100%;
   border-radius: 2rem;
   overflow: hidden;
+  backface-visibility: hidden;
 }
 .oxy-landing .hero-cube-front > *,
 .oxy-landing .hero-cube-bottom > * {
