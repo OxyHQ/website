@@ -1,5 +1,7 @@
+import { useRef, useCallback } from 'react'
 import type { CarouselSlot, HeroCard } from '../../data/heroCarousel'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import type SwiperType from 'swiper'
 import { EffectCube, Autoplay } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/effect-cube'
@@ -197,8 +199,18 @@ function CubeCard({ sizeClass, faces, interval }: {
   faces: HeroCard[]
   interval: number
 }) {
+  const slotRef = useRef<HTMLDivElement>(null)
+
+  const onTransitionStart = useCallback((swiper: SwiperType) => {
+    swiper.el.classList.add('is-rotating')
+  }, [])
+
+  const onTransitionEnd = useCallback((swiper: SwiperType) => {
+    swiper.el.classList.remove('is-rotating')
+  }, [])
+
   return (
-    <div className={`hero-cube-slot ${sizeClass}`}>
+    <div ref={slotRef} className={`hero-cube-slot ${sizeClass}`}>
       <Swiper
         modules={[EffectCube, Autoplay]}
         effect="cube"
@@ -214,6 +226,8 @@ function CubeCard({ sizeClass, faces, interval }: {
           shadow: false,
           slideShadows: false,
         }}
+        onSlideChangeTransitionStart={onTransitionStart}
+        onSlideChangeTransitionEnd={onTransitionEnd}
         className="hero-cube-swiper"
       >
         {faces.map((face, i) => (
