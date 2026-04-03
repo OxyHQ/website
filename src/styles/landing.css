@@ -406,33 +406,22 @@
 .oxy-landing .hero-card-4x2,
 .oxy-landing .hero-cube-slot.hero-card-4x2 { grid-row: span 2; grid-column: span 4; }
 
-/* 3D Cube card rotation (DeSandro pattern)
- * Scene: perspective + overflow:clip (clip does NOT flatten preserve-3d, hidden DOES)
- * Cube:  preserve-3d + translateZ(-halfH) to keep front face at Z=0
- * Faces: positioned with rotateX + translateZ(halfH) */
 /* Swiper cube card */
 .oxy-landing .hero-cube-slot {
   position: relative;
-  cursor: pointer;
 }
 .oxy-landing .hero-cube-swiper {
   width: 100%;
   height: 100%;
-  overflow: visible !important;
-}
-.oxy-landing .hero-cube-swiper .swiper-wrapper {
-  overflow: visible !important;
+  border-radius: 2rem;
 }
 .oxy-landing .hero-cube-swiper .swiper-slide {
   border-radius: 2rem;
-  backface-visibility: hidden;
-  overflow: visible !important;
+  overflow: hidden;
 }
 .oxy-landing .hero-cube-swiper .swiper-slide > * {
   width: 100%;
   height: 100%;
-  border-radius: 2rem;
-  overflow: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
