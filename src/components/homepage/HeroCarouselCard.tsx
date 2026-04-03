@@ -121,7 +121,7 @@ function CardFace({ card }: { card: HeroCard }) {
   }
 }
 
-const FAIRCOIN_STORE_IMAGE = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=500&fit=crop'
+const FAIRCOIN_STORE_IMAGE = '/images/landing/faircoin-store.png'
 
 const FAIRCOIN_STATS = [
   { label: 'Current Blocks', end: 842391, decimals: 0, Icon: StarFour },
