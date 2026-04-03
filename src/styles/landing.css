@@ -422,10 +422,10 @@
   width: 100%;
   height: 100%;
 }
-.oxy-landing .hero-cube-swiper .swiper-wrapper {
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+.oxy-landing .hero-cube-swiper {
+  transition: scale 0.4s ease;
 }
-.oxy-landing .hero-cube-swiper.is-rotating .swiper-wrapper {
+.oxy-landing .hero-cube-swiper.is-rotating {
   scale: 0.85;
 }
 
