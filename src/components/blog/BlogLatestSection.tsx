@@ -46,7 +46,7 @@ export default function BlogLatestSection() {
             {/* Content: sidebar + article list */}
             <div className="relative grid grid-cols-24 max-lg:grid-cols-12">
               {/* Category sidebar */}
-              <div className="scrollbar-none relative py-12 max-lg:col-[1/-1] max-lg:overflow-x-scroll max-lg:px-[8.3333333333%] max-lg:py-6 col-[2/9] max-xl:col-[2/7]">
+              <div className="hide-scrollbar relative py-12 max-lg:col-[1/-1] max-lg:overflow-x-scroll max-lg:px-[8.3333333333%] max-lg:py-6 col-[2/9] max-xl:col-[2/7]">
                 <ul className="-mx-3.25 flex w-full flex-col gap-0.5 max-lg:flex-row">
                   {blogCategories.map((cat) => {
                     const isActive = activeCategory === cat.label

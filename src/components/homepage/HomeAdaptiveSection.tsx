@@ -62,7 +62,7 @@ export default function HomeAdaptiveSection() {
           <div className="lg:container">
             <div className="lg:border-border lg:border-x">
               {/* Tab buttons */}
-              <div className="scrollbar-none flex gap-x-1.5 overflow-scroll py-5 pt-20 pb-4 lg:pt-[120px] justify-center">
+              <div className="hide-scrollbar flex gap-x-1.5 overflow-scroll py-5 pt-20 pb-4 lg:pt-[120px] justify-center">
                 {tabs.map((tab, i) => (
                   <button
                     key={tab}

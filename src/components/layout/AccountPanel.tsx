@@ -7,9 +7,24 @@ import { useAccountPanel } from '../../contexts/AccountPanelContext'
 import { ADMIN_USERNAMES } from '../../constants'
 import welcomeAnimation from '../../assets/lottie/welcomeheader_background.json'
 
+function AvatarWithAnimation({ avatarSource, avatarColor, size }: { avatarSource?: string; avatarColor?: string; size: number }) {
+  const { View: LottieView } = useLottie(
+    { animationData: welcomeAnimation, loop: true, autoplay: true },
+    { width: '100%', height: '100%', position: 'absolute' as const, top: 0, left: 0 },
+  )
+  return (
+    <div className="relative flex h-[100px] w-[600px] max-w-full items-center justify-center overflow-hidden">
+      {LottieView}
+      <div className="relative z-10">
+        <Avatar source={avatarSource} size={size} placeholderColor={avatarColor} />
+      </div>
+    </div>
+  )
+}
+
 /* ─── Shared styles ─── */
 const chipClass = 'flex shrink-0 items-center gap-1.5 rounded-full border border-border px-2 py-1.5 text-[13px] font-medium text-foreground transition-colors hover:bg-surface'
-const groupItemClass = 'flex w-full items-center gap-3 px-4 py-3 text-[14px] text-foreground transition-colors hover:bg-surface first:rounded-t-xl last:rounded-b-xl'
+const groupItemClass = 'flex w-full items-center gap-3 px-4 py-3 text-[14px] text-foreground transition-colors hover:bg-surface'
 
 function IconCircle({ children, bg }: { children: React.ReactNode; bg: string }) {
   return (
@@ -58,7 +73,6 @@ export default function AccountPanel() {
   }, [isOpen, close])
 
   const displayName = [user?.name?.first, user?.name?.last].filter(Boolean).join(' ') || user?.username || ''
-  const { View: LottieView } = useLottie({ animationData: welcomeAnimation, loop: true, autoplay: true }, { width: '100%', height: '100%', position: 'absolute' as const, top: 0, left: 0 })
 
   return (
     <>
@@ -84,12 +98,10 @@ export default function AccountPanel() {
 
           {/* ─── Profile header with animated background ─── */}
           <div className="flex flex-col items-center pb-5 pt-1">
-            <div className="relative flex h-[100px] w-[600px] max-w-full items-center justify-center overflow-hidden">
-              {LottieView}
-              <div className="relative z-10">
-                <Avatar source={user?.avatar} size={100} placeholderColor={user?.color} />
-              </div>
-            </div>
+            {isOpen
+              ? <AvatarWithAnimation avatarSource={user?.avatar} avatarColor={user?.color} size={100} />
+              : <Avatar source={user?.avatar} size={100} placeholderColor={user?.color} />
+            }
             <div className="mt-3 text-center">
               <div className="text-xl font-semibold text-foreground">{displayName}</div>
               {user?.username && <div className="mt-0.5 text-sm text-muted-foreground">@{user.username}</div>}
@@ -99,7 +111,7 @@ export default function AccountPanel() {
 
           {/* ─── Quick actions (horizontal scroll chips) ─── */}
           <div className="pb-4">
-            <div className="flex gap-1.5 overflow-x-auto px-4 pb-1 scrollbar-none">
+            <div className="flex gap-1.5 overflow-x-auto px-4 pb-1 hide-scrollbar">
               {quickActions.map((a) => (
                 <a key={a.label} href={a.href} target="_blank" rel="noopener noreferrer" className={chipClass}>
                   <div className="flex h-7 w-7 items-center justify-center rounded-full" style={{ backgroundColor: a.bg }}>
@@ -178,10 +190,6 @@ export default function AccountPanel() {
         </div>
       </div>
 
-      <style>{`
-        .scrollbar-none::-webkit-scrollbar { display: none; }
-        .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
     </>
   )
 }
