@@ -2,8 +2,10 @@ import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
+import Lottie from 'lottie-react'
 import { useAccountPanel } from '../../contexts/AccountPanelContext'
 import { ADMIN_USERNAMES } from '../../constants'
+import welcomeAnimation from '../../assets/lottie/welcomeheader_background.json'
 
 /* ─── Shared styles ─── */
 const chipClass = 'flex shrink-0 items-center gap-1.5 rounded-full border border-border px-2 py-1.5 text-[13px] font-medium text-foreground transition-colors hover:bg-surface'
@@ -81,19 +83,15 @@ export default function AccountPanel() {
 
           {/* ─── Profile header with animated background ─── */}
           <div className="flex flex-col items-center pb-5 pt-1">
-            {/* Animation container — avatar fills its full height, like the accounts app */}
-            <div className="relative flex h-[64px] w-[200px] items-center justify-center overflow-hidden rounded-full">
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: 'linear-gradient(135deg, #4285F4, #34A853, #FBBC04, #EA4335, #9C27B0, #4285F4)',
-                  backgroundSize: '300% 300%',
-                  animation: 'avatar-bg 8s ease infinite',
-                  opacity: 0.4,
-                }}
+            <div className="relative flex h-[100px] w-[600px] max-w-full items-center justify-center overflow-hidden">
+              <Lottie
+                animationData={welcomeAnimation}
+                loop
+                autoplay
+                className="absolute inset-0 h-full w-full"
               />
               <div className="relative z-10">
-                <Avatar source={user?.avatar} size={56} placeholderColor={user?.color} />
+                <Avatar source={user?.avatar} size={100} placeholderColor={user?.color} />
               </div>
             </div>
             <div className="mt-3 text-center">
@@ -184,13 +182,7 @@ export default function AccountPanel() {
         </div>
       </div>
 
-      {/* Animation keyframes */}
       <style>{`
-        @keyframes avatar-bg {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
