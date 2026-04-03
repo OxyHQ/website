@@ -131,8 +131,8 @@ const FAIRCOIN_STATS = [
 
 function FairCoinFace() {
   return (
-    <div className="flex h-full w-full rounded-full bg-[#166534]">
-      <div className="flex flex-1 flex-col p-4 lg:p-5">
+    <div className="flex h-full w-full rounded-l-full rounded-r-[20px] bg-[#166534]">
+      <div className="flex flex-1 flex-col pl-10 pr-4 py-4 lg:pl-14 lg:pr-5 lg:py-5">
         <div className="mb-auto flex h-8 w-8 items-center justify-center rounded-full bg-[#14532d] lg:h-10 lg:w-10">
           <span className="text-sm font-black text-green-300 lg:text-base">EF</span>
         </div>
@@ -165,7 +165,7 @@ function FairCoinFace() {
           </div>
         </div>
       </div>
-      <div className="m-2.5 flex w-[28%] flex-col overflow-hidden rounded-2xl bg-[#14532d] lg:m-3">
+      <div className="m-2.5 flex w-[35%] flex-col overflow-hidden rounded-2xl bg-[#14532d] lg:m-3">
         <img
           src={FAIRCOIN_STORE_IMAGE}
           alt="Local store"
@@ -188,7 +188,7 @@ function FairCoinFace() {
 
 export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   const sizeClass = sizeClasses[slot.size]
-  const radius = slot.rounded ? 'rounded-full' : 'rounded-[20px]'
+  const radius = slot.rounded ? 'rounded-full' : slot.roundedLeft ? 'rounded-l-full rounded-r-[20px]' : 'rounded-[20px]'
   // Static card — no rotation
   if (slot.faces.length <= 1) {
     return (

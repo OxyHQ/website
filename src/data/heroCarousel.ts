@@ -43,6 +43,8 @@ export interface CarouselSlot {
   rotateInterval?: number
   /** If true, renders the card as a full pill/circle */
   rounded?: boolean
+  /** If true, only the left side is fully rounded */
+  roundedLeft?: boolean
 }
 
 export const heroCarouselSlots: CarouselSlot[] = [
@@ -157,7 +159,7 @@ export const heroCarouselSlots: CarouselSlot[] = [
   // FairCoin dashboard — static large
   {
     size: '5x2',
-    rounded: true,
+    roundedLeft: true,
     faces: [{ type: 'faircoin' }],
   },
   // Photo
