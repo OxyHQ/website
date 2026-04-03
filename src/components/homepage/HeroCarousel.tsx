@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState, useMemo } from 'react'
+import { useRef, useEffect, useCallback, useMemo } from 'react'
 import type { CarouselSlot } from '../../data/heroCarousel'
 import { useJobs } from '../../api/hooks'
 import CarouselSlotRenderer from './HeroCarouselCard'
@@ -30,12 +30,12 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
       }
     })
   }, [slots, jobs])
+
   const trackRef = useRef<HTMLDivElement>(null)
   const posRef = useRef(0)
   const speedRef = useRef(NORMAL_SPEED)
   const targetSpeedRef = useRef(NORMAL_SPEED)
   const rafRef = useRef<number>(0)
-  const [, setMounted] = useState(false)
 
   const animate = useCallback(() => {
     const track = trackRef.current
@@ -54,7 +54,8 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
   }, [])
 
   useEffect(() => {
-    setMounted(true)
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion) return
     rafRef.current = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(rafRef.current)
   }, [animate])

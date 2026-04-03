@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
-import type { CarouselSlot, HeroCard } from '../../data/heroCarousel'
+import type { CardSize, CarouselSlot, HeroCard } from '../../data/heroCarousel'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCube, Autoplay } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/effect-cube'
 
-const sizeClasses: Record<string, string> = {
+const sizeClasses: Record<CardSize, string> = {
   '1x1': 'hero-card-1x1',
   '2x1': 'hero-card-2x1',
   '1x2': 'hero-card-1x2',
@@ -13,7 +13,6 @@ const sizeClasses: Record<string, string> = {
   '4x2': 'hero-card-4x2',
 }
 
-/* ─── Single card face renderer ─── */
 function CardFace({ card }: { card: HeroCard }) {
   switch (card.type) {
     case 'newsroom':
@@ -86,15 +85,13 @@ function CardFace({ card }: { card: HeroCard }) {
 
     case 'photo':
       return (
-        <div className="h-full w-full">
-          <img
-            src={card.image}
-            alt={card.alt}
-            className="h-full w-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
+        <img
+          src={card.image}
+          alt={card.alt}
+          className="h-full w-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
       )
 
     case 'faircoin':
@@ -102,16 +99,14 @@ function CardFace({ card }: { card: HeroCard }) {
 
     case 'video':
       return (
-        <div className="h-full w-full">
-          <video
-            src={card.src}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="h-full w-full object-cover"
-          />
-        </div>
+        <video
+          src={card.src}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="h-full w-full object-cover"
+        />
       )
 
     case 'values':
@@ -124,15 +119,16 @@ function CardFace({ card }: { card: HeroCard }) {
   }
 }
 
-/* ─── FairCoin dashboard face ─── */
-function FairCoinFace() {
-  const stats = [
-    { label: 'Current Blocks', value: '842,391', icon: '\u2191' },
-    { label: 'Network (KH/s)', value: '1,247', icon: '\u26A1' },
-    { label: 'Active Peers', value: '3,891', icon: '\u25CF' },
-    { label: 'Difficulty', value: '0.0024', icon: '\u25C6' },
-  ]
+const FAIRCOIN_STORE_IMAGE = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=500&fit=crop'
 
+const FAIRCOIN_STATS = [
+  { label: 'Current Blocks', value: '842,391', icon: '\u2191' },
+  { label: 'Network (KH/s)', value: '1,247', icon: '\u26A1' },
+  { label: 'Active Peers', value: '3,891', icon: '\u25CF' },
+  { label: 'Difficulty', value: '0.0024', icon: '\u25C6' },
+]
+
+function FairCoinFace() {
   return (
     <div className="flex h-full w-full overflow-hidden bg-[#166534]">
       <div className="flex flex-1 flex-col p-4 lg:p-5">
@@ -147,7 +143,7 @@ function FairCoinFace() {
           </h3>
         </div>
         <div className="grid grid-cols-2 gap-1.5 lg:gap-2">
-          {stats.map((stat) => (
+          {FAIRCOIN_STATS.map((stat) => (
             <div key={stat.label} className="rounded-xl bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5">
               <div className="flex items-center gap-1">
                 <span className="text-[8px] text-green-400">{stat.icon}</span>
@@ -170,7 +166,7 @@ function FairCoinFace() {
       </div>
       <div className="m-2.5 flex w-[38%] flex-col overflow-hidden rounded-2xl bg-[#14532d] lg:m-3">
         <img
-          src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=500&fit=crop"
+          src={FAIRCOIN_STORE_IMAGE}
           alt="Local store"
           className="h-3/5 w-full object-cover"
           loading="lazy"
@@ -186,9 +182,8 @@ function FairCoinFace() {
   )
 }
 
-/* ─── Carousel Slot — renders one grid cell ─── */
 export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
-  const sizeClass = sizeClasses[slot.size] ?? 'hero-card-1x1'
+  const sizeClass = sizeClasses[slot.size]
 
   // Static card — no rotation
   if (slot.faces.length <= 1) {
@@ -209,7 +204,6 @@ export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   )
 }
 
-/* ─── 3D Cube Card — Swiper.js ─── */
 function CubeCard({ sizeClass, faces, interval }: {
   sizeClass: string
   faces: HeroCard[]

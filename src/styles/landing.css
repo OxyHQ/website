@@ -391,17 +391,12 @@
   transform: scale(1.02);
 }
 
-/* Card size variants — shared between static cards and cube cards */
-.oxy-landing .hero-card-1x1,
-.oxy-landing .hero-cube-slot.hero-card-1x1 { grid-row: span 1; grid-column: span 1; }
-.oxy-landing .hero-card-2x1,
-.oxy-landing .hero-cube-slot.hero-card-2x1 { grid-row: span 1; grid-column: span 2; }
-.oxy-landing .hero-card-1x2,
-.oxy-landing .hero-cube-slot.hero-card-1x2 { grid-row: span 2; grid-column: span 2; }
-.oxy-landing .hero-card-2x2,
-.oxy-landing .hero-cube-slot.hero-card-2x2 { grid-row: span 2; grid-column: span 2; }
-.oxy-landing .hero-card-4x2,
-.oxy-landing .hero-cube-slot.hero-card-4x2 { grid-row: span 2; grid-column: span 4; }
+/* Card size variants */
+.oxy-landing .hero-card-1x1 { grid-row: span 1; grid-column: span 1; }
+.oxy-landing .hero-card-2x1 { grid-row: span 1; grid-column: span 2; }
+.oxy-landing .hero-card-1x2 { grid-row: span 2; grid-column: span 2; }
+.oxy-landing .hero-card-2x2 { grid-row: span 2; grid-column: span 2; }
+.oxy-landing .hero-card-4x2 { grid-row: span 2; grid-column: span 4; }
 
 /* Swiper cube card */
 .oxy-landing .hero-cube-slot {
@@ -425,11 +420,6 @@
   overflow: hidden;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .oxy-landing .hero-carousel-track {
-    animation-play-state: paused;
-  }
-}
 
 /* ============ PARTNER LOGOS ============ */
 .oxy-landing .partners {
