@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import type { CarouselSlot, HeroCard } from '../../data/heroCarousel'
 
 const sizeClasses: Record<string, string> = {
@@ -181,21 +180,50 @@ export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   )
 }
 
-/* ─── 3D Cube rotation — the entire card rotates to reveal the next face ─── */
+/* ─── Real 3D Cube rotation ───
+ * The wrapper has perspective. Inside, a "cube" div has preserve-3d and rotates.
+ * Two faces are positioned in 3D space:
+ *   - Front face: translateZ(halfHeight)  — visible at rotateX(0)
+ *   - Top face:   rotateX(90deg) translateZ(halfHeight) — visible at container rotateX(-90deg)
+ * On each tick the container animates rotateX from 0 → -90deg, then snaps back with new content.
+ */
 function CubeRotatingCard({ faces, interval }: { faces: HeroCard[]; interval: number }) {
   const [current, setCurrent] = useState(0)
-  const [isRotating, setIsRotating] = useState(false)
-  const next = (current + 1) % faces.length
+  const [angle, setAngle] = useState(0)
+  const cubeRef = useRef<HTMLDivElement>(null)
+  const [halfH, setHalfH] = useState(100)
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
+  const next = (current + 1) % faces.length
+
+  // Measure actual element height to position cube faces
+  useLayoutEffect(() => {
+    if (cubeRef.current) {
+      setHalfH(cubeRef.current.offsetHeight / 2)
+    }
+  }, [])
 
   useEffect(() => {
     const id = setInterval(() => {
-      setIsRotating(true)
+      // Rotate to -90deg to show the top face
+      setAngle(-90)
+
+      // After transition completes, snap: advance index, reset angle instantly
       timeoutRef.current = setTimeout(() => {
         setCurrent(c => (c + 1) % faces.length)
-        setIsRotating(false)
-      }, 700)
+        // Temporarily disable transition for the snap-back
+        if (cubeRef.current) {
+          cubeRef.current.style.transition = 'none'
+        }
+        setAngle(0)
+        // Re-enable transition on next frame
+        requestAnimationFrame(() => {
+          if (cubeRef.current) {
+            cubeRef.current.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)'
+          }
+        })
+      }, 800)
     }, interval)
+
     return () => {
       clearInterval(id)
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
@@ -203,32 +231,30 @@ function CubeRotatingCard({ faces, interval }: { faces: HeroCard[]; interval: nu
   }, [faces.length, interval])
 
   return (
-    <div className="cube-rotator">
-      {/* Current face — rotates backward and away */}
-      <motion.div
-        className="cube-face"
-        animate={{
-          rotateX: isRotating ? -90 : 0,
-          opacity: isRotating ? 0 : 1,
+    <div className="cube-perspective">
+      <div
+        ref={cubeRef}
+        className="cube-inner"
+        style={{
+          transform: `rotateX(${angle}deg)`,
+          transition: 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
-        transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-        style={{ transformOrigin: 'center bottom' }}
       >
-        <CardFace card={faces[current]} />
-      </motion.div>
-
-      {/* Next face — rotates in from above */}
-      <motion.div
-        className="cube-face"
-        animate={{
-          rotateX: isRotating ? 0 : 90,
-          opacity: isRotating ? 1 : 0,
-        }}
-        transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-        style={{ transformOrigin: 'center top' }}
-      >
-        <CardFace card={faces[next]} />
-      </motion.div>
+        {/* Front face */}
+        <div
+          className="cube-face"
+          style={{ transform: `translateZ(${halfH}px)` }}
+        >
+          <CardFace card={faces[current]} />
+        </div>
+        {/* Top face — pre-rotated 90deg so it appears when cube rotates -90deg */}
+        <div
+          className="cube-face"
+          style={{ transform: `rotateX(90deg) translateZ(${halfH}px)` }}
+        >
+          <CardFace card={faces[next]} />
+        </div>
+      </div>
     </div>
   )
 }
