@@ -246,8 +246,8 @@ function CubeCard({ sizeClass, faces, interval }: {
         className="hero-cube-inner"
         style={{
           transform: rotated
-            ? `translateZ(${-halfH}px) rotateX(-90deg)`
-            : `translateZ(${-halfH}px)`,
+            ? `translateZ(${-halfH}px) scale(0.72) rotateX(-90deg)`
+            : `translateZ(${-halfH}px) scale(1)`,
         }}
       >
         {/* Front face */}
