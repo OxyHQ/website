@@ -20,9 +20,9 @@ const BTN = 'inline-flex items-center cursor-pointer text-base leading-relaxed f
 function HeroSection() {
   return (
     <div className="hero-oxy">
-      {/* Background image — fixed behind everything */}
+      {/* Background video */}
       <div className="hero-oxy-bg">
-        <img src={`${IMG}/hero-bg.avif`} alt="" />
+        <video src={`${IMG}/hero-background.mp4`} autoPlay loop muted playsInline />
         <div className="hero-oxy-overlay" />
       </div>
 
@@ -751,7 +751,7 @@ function PartnershipSection() {
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-6 max-[950px]:col-span-full">
           <div className="min-[951px]:h-full overflow-hidden rounded-3xl">
-            <img src={`${IMG}/agents-partnerships.webp`} alt="Agents partnerships" className="w-full h-full object-cover" style={{ objectPosition: '50% 30%' }} />
+            <img src={`${IMG}/partnerships-banner.avif`} alt="Partnerships" className="w-full h-full object-cover" style={{ objectPosition: '50% 30%' }} />
           </div>
         </div>
         <div className="col-span-6 max-[950px]:col-span-full">
@@ -862,7 +862,7 @@ function IntegrationsSecuritySection() {
 function BannerSection() {
   return (
     <div className="aspect-[36/19] max-[950px]:aspect-[4/5] overflow-hidden mb-5">
-      <img src={`${IMG}/agents-banner-01.webp`} alt="Agents banner" className="w-full h-full object-cover" style={{ objectPosition: '40% 50%' }} />
+      <img src={`${IMG}/team-banner.jpg`} alt="Team banner" className="w-full h-full object-cover" style={{ objectPosition: '40% 50%' }} />
     </div>
   )
 }
