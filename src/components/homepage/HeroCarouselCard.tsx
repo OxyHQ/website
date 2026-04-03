@@ -148,7 +148,7 @@ function FairCoinFace() {
       </div>
       {/* Col 2: stats grid */}
       <div className="flex items-center py-4 px-3 lg:py-5 lg:px-4">
-        <div className="grid w-full grid-cols-2 gap-1.5 lg:gap-2">
+        <div className="flex w-full flex-col gap-1.5 lg:gap-2">
           {FAIRCOIN_STATS.map((stat) => (
             <div key={stat.label} className="rounded-full bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5">
               <div className="flex items-center gap-2">
