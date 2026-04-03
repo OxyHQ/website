@@ -53,6 +53,7 @@
   grid-auto-columns: 200px;
   gap: 10px;
   padding-inline: 5px;
+  --pill-r: 205px; /* (2×200+10)/2 — exact half-height so border-radius overflow-reduction doesn't kill the 20px right corners */
 }
 
 @media screen and (max-width: 950px) {
@@ -60,6 +61,7 @@
     grid-template-rows: repeat(2, 150px);
     grid-auto-columns: 150px;
     gap: 8px;
+    --pill-r: 154px; /* (2×150+8)/2 */
   }
 }
 
@@ -68,7 +70,12 @@
     grid-template-rows: repeat(2, 120px);
     grid-auto-columns: 120px;
     gap: 6px;
+    --pill-r: 123px; /* (2×120+6)/2 */
   }
+}
+
+.oxy-landing .hero-card-pill-left {
+  border-radius: var(--pill-r) 20px 20px var(--pill-r);
 }
 
 /* Swiper cube card */
