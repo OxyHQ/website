@@ -9,7 +9,7 @@ import 'swiper/css/effect-cube'
 const sizeClasses: Record<CardSize, string> = {
   '1x1': 'row-span-1 col-span-1',
   '2x1': 'row-span-1 col-span-2',
-  '1x2': 'row-span-2 col-span-2',
+  '1x2': 'row-span-2 col-span-1',
   '2x2': 'row-span-2 col-span-2',
   '4x2': 'row-span-2 col-span-4',
   '5x2': 'row-span-2 col-span-5',
@@ -120,8 +120,6 @@ function CardFace({ card }: { card: HeroCard }) {
   }
 }
 
-const FAIRCOIN_STORE_IMAGE = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=500&fit=crop'
-
 const FAIRCOIN_STATS = [
   { label: 'Current Blocks', value: '842,391', Icon: StarFour },
   { label: 'Network (KH/s)', value: '1,247', Icon: PlugsConnected },
@@ -161,23 +159,6 @@ function FairCoinFace() {
           <button className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white">
             Learn more
           </button>
-        </div>
-      </div>
-      <div className="m-2.5 flex w-[22%] flex-col rounded-2xl bg-[#14532d] lg:m-3">
-        <img
-          src={FAIRCOIN_STORE_IMAGE}
-          alt="Local store"
-          className="h-3/5 w-full object-cover"
-          loading="lazy"
-          decoding="async"
-        />
-        <div className="flex flex-1 flex-col justify-center p-3 lg:p-4">
-          <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-green-400 lg:text-[11px]">
-            Apr 3, 2026
-          </span>
-          <p className="text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
-            Empowering local stores with FairCoin: a sustainable solution
-          </p>
         </div>
       </div>
     </div>

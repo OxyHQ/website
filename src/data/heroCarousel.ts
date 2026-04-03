@@ -1,4 +1,4 @@
-export type CardSize = '1x1' | '2x1' | '1x2' | '2x2' | '4x2'
+export type CardSize = '1x1' | '2x1' | '1x2' | '2x2' | '4x2' | '5x2'
 
 export type HeroCard =
   | {
@@ -41,14 +41,14 @@ export interface CarouselSlot {
   faces: HeroCard[]
   /** Rotation interval in ms (only matters if faces.length > 1) */
   rotateInterval?: number
-  /** If true, renders the card as a full circle */
+  /** If true, renders the card as a full pill/circle */
   rounded?: boolean
 }
 
 export const heroCarouselSlots: CarouselSlot[] = [
   // Newsroom — 5 posts
   {
-    size: '1x2',
+    size: '2x2',
     rotateInterval: 4000,
     faces: [
       {
@@ -120,6 +120,7 @@ export const heroCarouselSlots: CarouselSlot[] = [
   // Oxy brand — static
   {
     size: '1x1',
+    rounded: true,
     faces: [{ type: 'brand', variant: 'oxy' }],
   },
   // Newsroom — 4 posts
@@ -156,12 +157,20 @@ export const heroCarouselSlots: CarouselSlot[] = [
   // FairCoin dashboard — static large
   {
     size: '4x2',
+    rounded: true,
     faces: [{ type: 'faircoin' }],
   },
-  // Fair brand — static
+  // FairCoin news — extracted from FairCoin card
   {
     size: '1x2',
-    faces: [{ type: 'brand', variant: 'fair' }],
+    faces: [
+      {
+        type: 'newsroom',
+        title: 'Empowering local stores with FairCoin: a sustainable solution',
+        image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=500&fit=crop',
+        category: 'FairCoin',
+      },
+    ],
   },
   // Photo
   {

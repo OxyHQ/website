@@ -7,8 +7,8 @@ interface HeroCarouselProps {
   slots: CarouselSlot[]
 }
 
-const NORMAL_SPEED = 0.5   // px per frame (~30px/s at 60fps)
-const SLOW_SPEED = 0.1     // px per frame on hover
+const NORMAL_SPEED = 1.2   // px per frame (~72px/s at 60fps)
+const SLOW_SPEED = 0.2     // px per frame on hover
 
 export default function HeroCarousel({ slots }: HeroCarouselProps) {
   const { data: jobs } = useJobs()
