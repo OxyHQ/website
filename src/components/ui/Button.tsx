@@ -20,8 +20,8 @@ type ButtonAsLink = ButtonBaseProps &
 type ButtonProps = ButtonAsButton | ButtonAsLink
 
 const sizeClasses: Record<Size, string> = {
-  sm: 'h-8 gap-x-1.5 rounded-[10px] px-3 text-sm',
-  md: 'h-9 gap-x-1.5 rounded-[10px] px-4 text-[15px]',
+  sm: 'h-8 gap-x-1.5 rounded-full px-3 text-sm',
+  md: 'h-9 gap-x-1.5 rounded-full px-4 text-[15px]',
 }
 
 export default function Button({

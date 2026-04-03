@@ -166,7 +166,7 @@ const FAIRCOIN_STATS = [
 function FairCoinFace() {
   const [runs, setRuns] = useState(() => FAIRCOIN_STATS.map(() => 0))
   return (
-    <div className="grid h-full w-full grid-cols-[1fr_1fr_auto] bg-[#166534]" style={{ borderRadius: '9999px 20px 20px 9999px' }}>
+    <div className="grid h-full w-full overflow-hidden grid-cols-[1fr_1fr_auto] bg-[#166534]" style={{ borderRadius: '9999px 20px 20px 9999px' }}>
       {/* Col 1: title + buttons */}
       <div className="flex flex-col justify-center gap-3 pl-10 py-4 pr-3 lg:pl-14 lg:py-5 lg:pr-4">
         <h3 className="text-5xl font-extrabold uppercase tracking-wider text-white">

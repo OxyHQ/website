@@ -316,26 +316,26 @@ body {
 
 /* Button variants */
 .button-primary {
-  background: radial-gradient(at center -10%, var(--color-surface), var(--color-surface));
-  border-color: var(--color-input);
-  color: var(--color-foreground);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-foreground);
   transition: all 0.3s ease-in-out;
 }
 .button-primary:hover {
-  background: radial-gradient(at center -10%, var(--color-muted), var(--color-surface));
-  border-color: var(--color-muted-foreground);
-  color: var(--color-foreground);
+  background: color-mix(in srgb, var(--color-primary) 88%, black);
+  border-color: color-mix(in srgb, var(--color-primary) 88%, black);
+  color: var(--color-primary-foreground);
 }
 
 .button-outline {
-  background: var(--color-background);
-  border-color: var(--color-surface);
+  background: transparent;
+  border-color: var(--color-input);
   color: var(--color-foreground);
   transition: all 0.3s ease-in-out;
 }
 .button-outline:hover {
   background: var(--color-surface);
-  border-color: var(--color-input);
+  border-color: var(--color-muted-foreground);
   color: var(--color-foreground);
 }
 
