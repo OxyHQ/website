@@ -310,7 +310,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                     <li key={dd.label}>
                       <button
                         ref={(el) => { triggerRefs.current[dd.label] = el }}
-                        className="group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 hover:bg-surface hover:text-foreground"
+                        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'hover:bg-white/10 hover:text-white' : 'hover:bg-surface hover:text-foreground'}`}
                         style={{
                           background: activeDropdown === dd.label ? 'var(--color-surface)' : undefined,
                           color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
@@ -326,9 +326,9 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                   {simpleNavLinks.map((link) => (
                     <li key={link.label}>
                       {link.href.startsWith('/') ? (
-                        <Link
+                                <Link
                           to={link.href}
-                          className={`inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 hover:bg-surface hover:text-foreground ${isTransparent ? 'text-white/80 hover:text-white' : 'text-muted-foreground'}`}
+                          className={`inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-surface hover:text-foreground'}`}
                           onMouseEnter={scheduleClose}
                         >
                           {link.label}
@@ -336,7 +336,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                       ) : (
                         <a
                           href={link.href}
-                          className={`inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 hover:bg-surface hover:text-foreground ${isTransparent ? 'text-white/80 hover:text-white' : 'text-muted-foreground'}`}
+                          className={`inline-flex h-9 items-center justify-center rounded-[10px] border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-surface hover:text-foreground'}`}
                           onMouseEnter={scheduleClose}
                         >
                           {link.label}
@@ -357,7 +357,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                 </button>
               )}
               <button
-                className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-muted-foreground"
+                className={`inline-flex h-9 w-9 items-center justify-center rounded-[10px] ${isTransparent ? 'text-white' : 'text-muted-foreground'}`}
                 aria-label="Open menu"
                 aria-expanded={mobileOpen}
                 onClick={() => setMobileOpen(!mobileOpen)}
@@ -375,7 +375,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
             </div>
 
             {/* Desktop buttons */}
-            <div className="hidden items-center gap-x-2.5 lg:flex">
+            <div className={`hidden items-center gap-x-2.5 lg:flex ${isTransparent ? 'text-white' : ''}`}>
               <LocalePicker />
               <ThemeToggle />
               {rightActions}
