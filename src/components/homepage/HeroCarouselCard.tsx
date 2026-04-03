@@ -172,7 +172,7 @@ function FairCoinFace() {
           decoding="async"
         />
         <div className="flex flex-1 items-center p-2.5 lg:p-3">
-          <p className="text-[10px] font-semibold leading-snug text-green-100 lg:text-[11px]">
+          <p className="text-base font-semibold leading-snug text-green-100 lg:text-lg">
             Empowering local stores with FairCoin: a sustainable solution
           </p>
         </div>
