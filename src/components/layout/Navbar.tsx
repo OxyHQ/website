@@ -107,6 +107,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
 
   // Cached panel sizes (measured once on mount from hidden off-screen panels)
   const [panelSizes, setPanelSizes] = useState<Record<string, { w: number; h: number }>>({})
+  const [navAreaLeft, setNavAreaLeft] = useState(0)
   const [hasMeasured, setHasMeasured] = useState(false)
 
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -126,6 +127,17 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
   const measureRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({})
   const navAreaRef = useRef<HTMLDivElement>(null)
+
+  // Track navArea's left offset from viewport for full-width dropdown positioning
+  useLayoutEffect(() => {
+    function update() {
+      const el = navAreaRef.current
+      if (el) setNavAreaLeft(el.getBoundingClientRect().left)
+    }
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
 
   // Measure all panels once on mount
   useLayoutEffect(() => {
@@ -323,8 +335,9 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                 {/* ─── Shared Viewport ─── */}
                 {hasMeasured && (
                   <div
-                    className="absolute top-full left-1/2 z-50 flex w-screen -translate-x-1/2 justify-center pt-2"
+                    className="absolute top-full z-50 flex w-screen justify-center border-b border-border bg-background pt-2 pb-2"
                     style={{
+                      left: -navAreaLeft,
                       pointerEvents: isOpen ? 'auto' : 'none',
                       opacity: isOpen ? 1 : 0,
                       transition: `opacity ${isOpen ? '0.15s' : '0.12s'} ease-out`,

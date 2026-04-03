@@ -4,7 +4,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HeroCarousel from '../components/homepage/HeroCarousel'
 import { heroCarouselSlots } from '../data/heroCarousel'
-import '../styles/sana-landing.css'
+import '../styles/landing.css'
 
 const IMG = '/images/landing'
 
@@ -349,49 +349,49 @@ const TESTIMONIALS = [
     light: true,
   },
   {
-    quote: 'If we removed Sana Agents, there would be a revolt.',
+    quote: 'If we removed Oxy Agents, there would be a revolt.',
     role: 'Managing Director',
     company: 'Global private equity firm',
     bg: `${IMG}/agents-quote-bg-02.webp`,
     light: false,
   },
   {
-    quote: 'With Sana, our sales prep is now 10x quicker. Instead of spending hours gathering data manually, our team can instantly access the research insights they need\u2014freeing them to focus on designing more meaningful, strategic client conversations.',
+    quote: 'With Oxy, our sales prep is now 10x quicker. Instead of spending hours gathering data manually, our team can instantly access the research insights they need\u2014freeing them to focus on designing more meaningful, strategic client conversations.',
     role: 'Product Operations Lead',
     company: 'International research and analytics firm',
     bg: `${IMG}/agents-quote-bg-03.webp`,
     light: true,
   },
   {
-    quote: 'We\u2019re leveraging our AI agents to find and compare product information, build sales arguments, support R&D, and much more. We see real operational efficiency, and Sana has already provided us with a quick payback.',
+    quote: 'We\u2019re leveraging our AI agents to find and compare product information, build sales arguments, support R&D, and much more. We see real operational efficiency, and Oxy has already provided us with a quick payback.',
     role: 'CEO',
     company: 'Global industrial automation company',
     bg: `${IMG}/agents-quote-bg-04.webp`,
     light: true,
   },
   {
-    quote: 'Sana gives us control over the AI, allowing us to choose the material it accesses and tailor its parameters to our specific needs.',
+    quote: 'Oxy gives us control over the AI, allowing us to choose the material it accesses and tailor its parameters to our specific needs.',
     role: 'Executive Vice President',
     company: 'Global medical technology provider',
     bg: `${IMG}/agents-quote-bg-05.webp`,
     light: true,
   },
   {
-    quote: 'With Sana Agents, even colleagues who aren\u2019t tech-savvy can leverage AI in their everyday work. It\u2019s empowered everyone, not just the experts.',
+    quote: 'With Oxy Agents, even colleagues who aren\u2019t tech-savvy can leverage AI in their everyday work. It\u2019s empowered everyone, not just the experts.',
     role: 'Head of Digitalization',
     company: 'Major real estate group',
     bg: `${IMG}/agents-quote-bg-06.webp`,
     light: true,
   },
   {
-    quote: 'With Sana, we\u2019re creating assistants to accelerate everything from deal analysis to portfolio reviews, transforming the way our investment teams operate.',
+    quote: 'With Oxy, we\u2019re creating assistants to accelerate everything from deal analysis to portfolio reviews, transforming the way our investment teams operate.',
     role: 'Chief Digital Officer',
     company: 'Leading private equity firm',
     bg: `${IMG}/agents-quote-bg-07.webp`,
     light: true,
   },
   {
-    quote: 'Asking Sana in Slack for someone\u2019s actions from the last meeting, or our definition of retention\u2014it\u2019s a game-changer.',
+    quote: 'Asking Oxy in Slack for someone\u2019s actions from the last meeting, or our definition of retention\u2014it\u2019s a game-changer.',
     role: 'CTO',
     company: 'Leading mobility startup',
     bg: `${IMG}/agents-quote-bg-08.webp`,
@@ -415,7 +415,7 @@ function ModelAgnosticSection() {
               <div className="gc gc-4 model-agnostic-text hide-small" style={{ '--start': 8 } as React.CSSProperties}>
                 <p className="eyebrow"><strong>Model agnostic</strong></p>
                 <p className="h3" style={{ maxWidth: '42rem' }}>
-                  Only use the AI models that work best for you. With Sana, you can choose and switch between leading models as you need.
+                  Only use the AI models that work best for you. With Oxy, you can choose and switch between leading models as you need.
                 </p>
               </div>
             </div>
@@ -426,7 +426,7 @@ function ModelAgnosticSection() {
           <div className="text-content show-small" style={{ paddingInline: '1.2rem' }}>
             <p className="eyebrow"><strong>Model agnostic</strong></p>
             <p className="h3" style={{ maxWidth: '42rem' }}>
-              Only use the AI models that work best for you. With Sana, you can choose and switch between leading models as you need.
+              Only use the AI models that work best for you. With Oxy, you can choose and switch between leading models as you need.
             </p>
           </div>
         </div>
@@ -555,7 +555,7 @@ function TeamsSection() {
         </div>
         <div className="gc gc-5" style={{ '--start': 8 } as React.CSSProperties}>
           <div className="top">
-            <p className="red margin-s"><strong>Every team gets smarter with Sana</strong></p>
+            <p className="red margin-s"><strong>Every team gets smarter with Oxy</strong></p>
             <div className="tabs-nav no-default teams-tabs-nav">
               {TEAM_TABS.map((t) => (
                 <a
@@ -598,7 +598,7 @@ const PARTNERSHIP_ITEMS = [
   'Community, events, and resources',
 ]
 
-{/* tick-filled-white from original Sana SVG sprite */}
+{/* tick-filled-white from SVG icon */}
 function TickFilledIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 32 32" fill="currentColor">
@@ -608,7 +608,7 @@ function TickFilledIcon({ className }: { className?: string }) {
   )
 }
 
-{/* tick (check-badge) from original Sana SVG sprite */}
+{/* tick (check-badge) from SVG icon */}
 function TickIcon({ className }: { className?: string }) {
   return (
     <svg className={className ?? 'inline-icon'} viewBox="0 0 32 32" fill="currentColor">
@@ -688,7 +688,7 @@ function IntegrationsSecuritySection() {
       <div className="columns margin-m">
         <div className="gc gc-12 text-c">
           <h2 className="margin-s" style={{ maxWidth: '50rem' }}>Enterprise-grade integrations and security</h2>
-          <p className="fade-8" style={{ maxWidth: '35rem' }}>Sana connects with 100+ applications and unifies your company's data securely.</p>
+          <p className="fade-8" style={{ maxWidth: '35rem' }}>Oxy connects with 100+ applications and unifies your company's data securely.</p>
         </div>
       </div>
       <div className="columns">
@@ -766,7 +766,7 @@ function IOSAppSection() {
           <p className="type-small margin-s" style={{ maxWidth: '53rem' }}>
             <span className="fade">Connect all your work apps to get instant answers to anything and solve hours of complex tasks in seconds. Missed a meeting? No problem. The recap is just a tap away. Built on any LLM you want.</span> Now available on iOS.
           </p>
-          <a href="https://apps.apple.com/se/app/sana/id1211652260?l=en-GB" target="_blank" rel="noopener noreferrer">
+          <a href="#" target="_blank" rel="noopener noreferrer">
             <svg width="144" height="48" viewBox="0 0 144 48" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g clipPath="url(#clip0_appstore)">
                 <path d="M11.4414 0.600586H132.595L133.459 0.602539C133.821 0.604857 134.192 0.611296 134.56 0.617188H134.562C135.335 0.625791 136.106 0.693368 136.868 0.820312V0.821289C137.604 0.946475 138.317 1.17951 138.984 1.51465V1.51562C140.233 2.15679 141.263 3.15013 141.95 4.36914L142.083 4.61621C142.416 5.27974 142.647 5.98987 142.768 6.72266L142.769 6.72559C142.897 7.48906 142.968 8.26106 142.982 9.03516V9.03613C142.987 9.39958 142.987 9.76527 142.987 10.1338V10.1465C142.996 10.5736 142.997 11.0029 142.997 11.4434V36.5576C142.997 37.0017 142.996 37.429 142.987 37.8574V37.8701C142.987 38.2431 142.987 38.6006 142.982 38.9688C142.968 39.7432 142.897 40.5155 142.769 41.2793L142.768 41.2822C142.647 42.0171 142.416 42.7295 142.081 43.3945C141.742 44.0528 141.302 44.654 140.776 45.1758L140.773 45.1787C140.317 45.6394 139.798 46.0335 139.232 46.3496L138.987 46.4805C138.32 46.8171 137.607 47.0531 136.871 47.1807C136.108 47.3069 135.335 47.3751 134.562 47.3848H134.556C134.194 47.3928 133.823 47.3975 133.463 47.3975H133.459C133.03 47.3998 132.593 47.4004 132.162 47.4004H11.4414C11.0012 47.4004 10.5677 47.3998 10.1309 47.3975H10.1279C9.76567 47.3975 9.40538 47.3928 9.03809 47.3848H9.0332C8.25741 47.3745 7.48337 47.3064 6.71777 47.1807C5.98468 47.0541 5.27449 46.8186 4.61133 46.4814L4.61035 46.4805C3.94879 46.1451 3.34548 45.7054 2.82324 45.1787L2.81836 45.1738C2.2919 44.6544 1.85276 44.0533 1.51855 43.3936V43.3926C1.18124 42.7283 0.94718 42.0162 0.825195 41.2812V41.2793L0.739258 40.7051C0.689903 40.3215 0.65627 39.9361 0.636719 39.5498L0.618164 38.9697V38.959L0.599609 37.8613V10.1426C0.605641 9.7642 0.607202 9.40927 0.618164 9.04688V9.03516C0.627348 8.2611 0.696751 7.48897 0.825195 6.72559V6.72461C0.947519 5.98978 1.18144 5.27758 1.51855 4.61328V4.6123C1.85322 3.94969 2.29239 3.34513 2.81934 2.82227L2.82129 2.82129C3.3463 2.29614 3.95047 1.85621 4.61133 1.51758C5.27464 1.18123 5.98458 0.94585 6.71777 0.821289L6.71875 0.822266C7.48363 0.69558 8.25698 0.627289 9.03223 0.618164H9.03516C9.40856 0.612256 9.76829 0.604914 10.1318 0.602539L10.1309 0.601562C10.5678 0.599173 11.0012 0.600586 11.4414 0.600586Z" stroke="#0A0A0A" strokeWidth="1.2" />
@@ -818,7 +818,7 @@ function TrustedBySection() {
       <div className="columns">
         <div className="gc gc-12">
           <h3 className="margin-l" style={{ maxWidth: '72rem' }}>
-            Sana is trusted by leading <br className="hide-small" />enterprises across industries
+            Oxy is trusted by leading <br className="hide-small" />enterprises across industries
           </h3>
           <div className="static-logos" style={{ '--numLogos': 8, '--numLogosMobile': 2 } as React.CSSProperties}>
             {TRUSTED_LOGOS.map((logo) => (
@@ -934,7 +934,7 @@ export default function Landing4() {
         canonicalPath="/"
       />
       <Navbar />
-      <main className="sana-landing">
+      <main className="oxy-landing">
         <HeroSection />
         <PartnerLogos />
         <AllInOneSection />

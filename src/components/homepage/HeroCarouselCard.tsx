@@ -174,7 +174,7 @@ export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   }
 
   return (
-    <div className={`hero-card ${sizeClass}`}>
+    <div className={`hero-card has-cube ${sizeClass}`}>
       <CubeRotatingCard faces={slot.faces} interval={slot.rotateInterval ?? 4000} />
     </div>
   )
