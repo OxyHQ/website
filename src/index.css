@@ -53,9 +53,15 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-sidebar: var(--sidebar);
 
+  /* Landing page colors */
+  --color-sand: #f6f5f4;
+  --color-oxy-blue: #0057f3;
+  --color-oxy-red: #fa0019;
+
   /* Typography */
   --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
   --font-display: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: Georgia, 'Times New Roman', serif;
   --font-mono: 'Geist Mono Variable', 'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
   /* Heading sizes */
