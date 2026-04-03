@@ -415,7 +415,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
           onMouseLeave={scheduleClose}
         >
           <div
-            className="overflow-hidden rounded-xl border border-border bg-background/80 shadow-lg backdrop-blur-xl"
+            className="overflow-hidden rounded-xl border border-border bg-background/80 backdrop-blur-md"
             style={{
               width: activeSize ? activeSize.w : 0,
               height: activeSize ? activeSize.h : 0,
