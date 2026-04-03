@@ -39,6 +39,7 @@
   inset: 0;
   z-index: 1;
   overflow: hidden;
+  transform: translateZ(0); /* Force own compositing layer to prevent repaint flicker */
 }
 .oxy-landing .hero-oxy-bg img {
   width: 100%;
@@ -100,7 +101,6 @@
 .oxy-landing .hero-carousel-track {
   display: flex;
   width: max-content;
-  will-change: transform;
 }
 
 .oxy-landing .hero-carousel-grid {
