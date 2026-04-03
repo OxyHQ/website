@@ -920,7 +920,7 @@ const TRUSTED_LOGOS = ['strava', 'polestar', 'merck', 'apollo.io', 'robinhood', 
 
 function TrustedBySection() {
   return (
-    <section className="bg-sand py-10 pb-[50px]">
+    <section className="bg-sand text-black py-10 pb-[50px]">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full">
           <h3 className="text-[22px] leading-[1.2] font-[450] mb-10 max-w-[720px]">
