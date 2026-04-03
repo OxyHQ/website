@@ -168,7 +168,7 @@ function FairCoinFace() {
   return (
     <div className="grid h-full w-full grid-cols-[1fr_1fr_auto] [border-radius:9999px_20px_20px_9999px] bg-[#166534]">
       {/* Col 1: title + buttons */}
-      <div className="flex flex-col justify-center gap-3 pl-10 py-4 pr-3 lg:pl-14 lg:py-5 lg:pr-4">
+      <div className="flex flex-col items-end justify-center gap-3 pl-10 py-4 pr-3 lg:pl-14 lg:py-5 lg:pr-4">
         <h3 className="text-5xl font-extrabold uppercase tracking-wider text-white">
           FairCoin <span className="font-normal italic text-green-200">Today</span>
         </h3>
