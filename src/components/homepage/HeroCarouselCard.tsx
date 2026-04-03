@@ -246,7 +246,7 @@ function CubeCard({ sizeClass, faces, interval }: {
         className="hero-cube-inner"
         style={{
           transform: rotated
-            ? `translateZ(${-halfH}px) scale(0.92) rotateX(-90deg)`
+            ? `translateZ(${-halfH}px) rotateX(-90deg)`
             : `translateZ(${-halfH}px)`,
         }}
       >

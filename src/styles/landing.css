@@ -414,6 +414,7 @@
   position: relative;
   cursor: pointer;
   perspective: 800px;
+  overflow: clip;
 }
 .oxy-landing .hero-cube-inner {
   position: relative;
