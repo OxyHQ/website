@@ -161,10 +161,10 @@ const FEATURE_TABS = [
     thumb: `${IMG}/video-thumb-act.webp`,
   },
   {
-    id: 'oxyai',
-    label: 'Oxy AI',
+    id: 'alia',
+    label: 'Alia',
     heading: 'Intelligence with integrity.<br>AI for good.',
-    thumb: `${IMG}/agents_carousel_search.webp`,
+    thumb: '/images/screenshots/alia-app.png',
   },
 ]
 
