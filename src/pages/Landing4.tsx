@@ -350,7 +350,7 @@ function StatsAndTestimonialsSection() {
             {STATS.map((s, i) => (
               <div key={s.label} className={`flex-1 min-w-[230px] px-6 max-[1460px]:flex-none max-[1460px]:w-[250px] max-[950px]:w-[150px]${i < STATS.length - 1 ? ' border-r border-black/10' : ''}`}>
                 <div>
-                  <p className="text-[13px] leading-4 tracking-wide font-[450] opacity-80 mb-[34px]"><strong>{s.label}</strong></p>
+                  <p className="text-sm leading-4 tracking-wide font-[450] opacity-80 mb-[34px]"><strong>{s.label}</strong></p>
                 </div>
                 <div>
                   <p className="font-serif text-[40px] leading-[1.07] mb-[9px]">{s.value}</p>
@@ -385,7 +385,7 @@ function StatsAndTestimonialsSection() {
           >
             {TESTIMONIALS.map((t, i) => (
               <SwiperSlide key={i} style={{ height: 'auto' }}>
-                <div className={`relative overflow-hidden rounded-3xl flex flex-col justify-between gap-12 p-8 aspect-[4/5] max-[950px]:aspect-[4/6] ${t.light ? 'text-white' : ''}`}>
+                <div className={`relative overflow-hidden rounded-3xl flex flex-col justify-between gap-12 px-[27px] py-8 aspect-[4/5] max-[950px]:aspect-[4/6] ${t.light ? 'text-white' : ''}`}>
                   <div className="relative z-10">
                     <p className="text-base leading-[1.4]">&ldquo;{t.quote}&rdquo;</p>
                   </div>
@@ -726,7 +726,7 @@ function TickIcon({ className }: { className?: string }) {
 function PartnershipSection() {
   return (
     <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-[30px]">
         <div className="col-span-full text-center">
           <p className="mb-6 text-oxy-blue"><strong>Enterprise partnership services</strong></p>
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">Driving AI adoption together</h2>
@@ -791,7 +791,7 @@ const SECURITY_ITEMS = [
 function IntegrationsSecuritySection() {
   return (
     <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-[30px]">
         <div className="col-span-full text-center">
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5 max-w-[500px] mx-auto">Enterprise-grade integrations and security</h2>
           <p className="opacity-80 max-w-[350px] mx-auto">Oxy connects with 100+ applications and unifies your company&apos;s data securely.</p>
@@ -803,7 +803,7 @@ function IntegrationsSecuritySection() {
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Connect your daily tools automatically</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
-                <div className="integrations-list text-[13px] leading-4 tracking-wide font-[450]">
+                <div className="integrations-list text-sm leading-4 tracking-wide font-[450]">
                   {INTEGRATIONS.map((item) => (
                     <div key={item.name} className="integrations-list-item grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+.integrations-list-item]:mt-3">
                       <div className="w-10 h-10 bg-white rounded-[14px] flex items-center justify-center shadow-[0_0_0_0.44px_rgba(0,0,0,0.05),0_0.88px_1.75px_rgba(0,0,0,0.08)]">
@@ -821,7 +821,7 @@ function IntegrationsSecuritySection() {
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Security you can stand by</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
-                <div className="integrations-list text-[13px] leading-4 tracking-wide font-[450]">
+                <div className="integrations-list text-sm leading-4 tracking-wide font-[450]">
                   {SECURITY_ITEMS.map((item) => (
                     <div key={item.name} className="integrations-list-item grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+.integrations-list-item]:mt-3">
                       <div className="w-10 h-10 bg-white rounded-[14px] flex items-center justify-center shadow-[0_0_0_0.44px_rgba(0,0,0,0.05),0_0.88px_1.75px_rgba(0,0,0,0.08)]">
@@ -858,7 +858,7 @@ function BannerSection() {
 function IOSAppSection() {
   return (
     <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
+      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-[30px]">
         <div className="col-span-full text-center">
           <p className="mb-6 text-oxy-blue"><strong>Agents iOS app</strong></p>
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">A polymath in your pocket</h2>
@@ -869,7 +869,7 @@ function IOSAppSection() {
           <div className="mb-5">
             <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" className="w-full h-auto object-contain" />
           </div>
-          <p className="text-[13px] leading-4 tracking-wide font-[450] mb-5 max-w-[530px] mx-auto">
+          <p className="text-sm leading-4 tracking-wide font-[450] mb-5 max-w-[530px] mx-auto">
             <span className="opacity-60">Connect all your work apps to get instant answers to anything and solve hours of complex tasks in seconds. Missed a meeting? No problem. The recap is just a tap away. Built on any LLM you want.</span> Now available on iOS.
           </p>
           <a href="#" target="_blank" rel="noopener noreferrer">
