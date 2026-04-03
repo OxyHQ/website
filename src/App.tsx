@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WebOxyProvider, useAuth, useWebOxy } from '@oxyhq/auth'
@@ -8,36 +8,37 @@ import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppC
 import { LocaleProvider } from './contexts/LocaleContext'
 import { setTokenGetter } from './api/client'
 
-import AdminPage from './pages/AdminPage'
 // import AskPage from './pages/AskPage'
 // import Landing2 from './pages/Landing2'
 // import Landing3 from './pages/Landing3'
 import Landing4 from './pages/Landing4'
-import PartnersPage from './pages/PartnersPage'
-import CareersPage from './pages/CareersPage'
-import PricingPage from './pages/PricingPage'
-import NewsroomPage from './pages/NewsroomPage'
-import NewsroomPostPage from './pages/NewsroomPostPage'
-import BlogPage from './pages/BlogPage'
-import CodeaPage from './pages/CodeaPage'
-import CodexExtensionPage from './pages/CodexExtensionPage'
-import OxyOSPage from './pages/OxyOSPage'
-import TNPPage from './pages/TNPPage'
-import TNPInstallPage from './pages/TNPInstallPage'
-import CareerDetailPage from './pages/CareerDetailPage'
-import NotFoundPage from './pages/NotFoundPage'
-import AIPage from './pages/AIPage'
-import DashboardPage from './pages/DashboardPage'
-import InitiativePage from './pages/InitiativePage'
-import AIPricingPage from './pages/AIPricingPage'
-import HelpPage from './pages/HelpPage'
-import ChangelogPage from './pages/ChangelogPage'
-import DocsPage from './pages/DocsPage'
-import DocsIntroPage from './pages/DocsIntroPage'
-import SettingsPage from './pages/SettingsPage'
 import FixedPromptInput from './components/ui/FixedPromptInput'
 import { AccountPanelProvider } from './contexts/AccountPanelContext'
 import AccountPanel from './components/layout/AccountPanel'
+
+const AdminPage = lazy(() => import('./pages/AdminPage'))
+const PartnersPage = lazy(() => import('./pages/PartnersPage'))
+const CareersPage = lazy(() => import('./pages/CareersPage'))
+const PricingPage = lazy(() => import('./pages/PricingPage'))
+const NewsroomPage = lazy(() => import('./pages/NewsroomPage'))
+const NewsroomPostPage = lazy(() => import('./pages/NewsroomPostPage'))
+const BlogPage = lazy(() => import('./pages/BlogPage'))
+const CodeaPage = lazy(() => import('./pages/CodeaPage'))
+const CodexExtensionPage = lazy(() => import('./pages/CodexExtensionPage'))
+const OxyOSPage = lazy(() => import('./pages/OxyOSPage'))
+const TNPPage = lazy(() => import('./pages/TNPPage'))
+const TNPInstallPage = lazy(() => import('./pages/TNPInstallPage'))
+const CareerDetailPage = lazy(() => import('./pages/CareerDetailPage'))
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
+const AIPage = lazy(() => import('./pages/AIPage'))
+const DashboardPage = lazy(() => import('./pages/DashboardPage'))
+const InitiativePage = lazy(() => import('./pages/InitiativePage'))
+const AIPricingPage = lazy(() => import('./pages/AIPricingPage'))
+const HelpPage = lazy(() => import('./pages/HelpPage'))
+const ChangelogPage = lazy(() => import('./pages/ChangelogPage'))
+const DocsPage = lazy(() => import('./pages/DocsPage'))
+const DocsIntroPage = lazy(() => import('./pages/DocsIntroPage'))
+const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 
 const OXY_API = 'https://api.oxy.so'
 
@@ -122,13 +123,15 @@ export default function App() {
             <BrowserRouter>
               <AccountPanelProvider>
                 <ScrollToTop />
-                <Routes>
-                  <Route path="/admin/*" element={<AdminPage />} />
-                  <Route path="/" element={<LocaleLayout />}>
-                    {PublicRoutes()}
-                    <Route path="*" element={<NotFoundPage />} />
-                  </Route>
-                </Routes>
+                <Suspense fallback={null}>
+                  <Routes>
+                    <Route path="/admin/*" element={<AdminPage />} />
+                    <Route path="/" element={<LocaleLayout />}>
+                      {PublicRoutes()}
+                      <Route path="*" element={<NotFoundPage />} />
+                    </Route>
+                  </Routes>
+                </Suspense>
                 <FixedPromptInput />
                 <AccountPanel />
               </AccountPanelProvider>
