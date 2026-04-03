@@ -77,7 +77,7 @@ function CardFace({ card }: { card: HeroCard }) {
       return (
         <Link
           to={card.slug ? `/company/careers/${card.slug}` : '/company/careers'}
-          className="flex h-full w-full flex-col items-start justify-end bg-[#3b82f6] p-4 lg:p-5"
+          className="flex h-full w-full flex-col items-start justify-end bg-primary p-4 lg:p-5"
         >
           <span className="mb-2 inline-block rounded-full bg-white/20 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white lg:text-[10px]">
             {card.department}
@@ -166,7 +166,7 @@ const FAIRCOIN_STATS = [
 function FairCoinFace() {
   const [runs, setRuns] = useState(() => FAIRCOIN_STATS.map(() => 0))
   return (
-    <div className="grid h-full w-full grid-cols-[1fr_1fr_auto] [border-radius:9999px_20px_20px_9999px] bg-[#166534]">
+    <div className="grid h-full w-full grid-cols-[1fr_1fr_auto] bg-[#166534]" style={{ borderRadius: '9999px 20px 20px 9999px' }}>
       {/* Col 1: title + buttons */}
       <div className="flex flex-col items-end justify-center gap-3 pl-10 py-4 pr-3 lg:pl-14 lg:py-5 lg:pr-4">
         <h3 className="text-5xl font-extrabold uppercase tracking-wider text-white">
@@ -228,11 +228,12 @@ function FairCoinFace() {
 
 export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   const sizeClass = sizeClasses[slot.size]
-  const radius = slot.rounded ? 'rounded-full' : slot.roundedLeft ? '[border-radius:9999px_20px_20px_9999px]' : 'rounded-[20px]'
+  const radiusClass = slot.rounded ? 'rounded-full' : slot.roundedLeft ? '' : 'rounded-[20px]'
+  const radiusStyle = slot.roundedLeft ? { borderRadius: '9999px 20px 20px 9999px' } : undefined
   // Static card — no rotation
   if (slot.faces.length <= 1) {
     return (
-      <div className={`overflow-hidden cursor-pointer ${radius} ${sizeClass}`}>
+      <div className={`overflow-hidden cursor-pointer ${radiusClass} ${sizeClass}`} style={radiusStyle}>
         <CardFace card={slot.faces[0]} />
       </div>
     )
