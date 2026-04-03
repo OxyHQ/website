@@ -174,7 +174,7 @@ export const heroCarouselSlots: CarouselSlot[] = [
   },
   // Values — 5 values
   {
-    size: '1x1',
+    size: '2x1',
     rotateInterval: 3500,
     faces: [
       { type: 'values', heading: 'Human-first design', body: 'Tools that empower people, not manipulate them.' },
@@ -184,7 +184,7 @@ export const heroCarouselSlots: CarouselSlot[] = [
       { type: 'values', heading: 'Built for everyone', body: 'Technology should be accessible, inclusive, and equitable.' },
     ],
   },
-  // Photo
+  // Fill below values (2x1 leaves 2 cells in row 2)
   {
     size: '1x1',
     faces: [
@@ -195,7 +195,6 @@ export const heroCarouselSlots: CarouselSlot[] = [
       },
     ],
   },
-  // Photo — fill gap
   {
     size: '1x1',
     faces: [
@@ -208,7 +207,7 @@ export const heroCarouselSlots: CarouselSlot[] = [
   },
   // Newsroom
   {
-    size: '1x1',
+    size: '2x1',
     rotateInterval: 5000,
     faces: [
       {
@@ -243,7 +242,7 @@ export const heroCarouselSlots: CarouselSlot[] = [
       },
     ],
   },
-  // Photo — pair with last newsroom
+  // Fill below newsroom (2x1 leaves 2 cells in row 2)
   {
     size: '1x1',
     faces: [
@@ -252,6 +251,14 @@ export const heroCarouselSlots: CarouselSlot[] = [
         image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=400&fit=crop',
         alt: 'Team meeting',
       },
+    ],
+  },
+  {
+    size: '1x1',
+    rotateInterval: 4000,
+    faces: [
+      { type: 'careers', jobTitle: 'Community Manager', department: 'Careers' },
+      { type: 'careers', jobTitle: 'Backend Engineer', department: 'Careers' },
     ],
   },
 ]
