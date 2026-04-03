@@ -643,27 +643,13 @@
 .oxy-landing .roi-stat .h2 { margin-bottom: 0.9rem; }
 .oxy-landing .roi-stat p { max-width: 21rem; }
 
-/* ============ IMAGE CARD SLIDER ============ */
+/* ============ IMAGE CARD SLIDER (Swiper) ============ */
 .oxy-landing .image-card-slider {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  gap: 2.4rem;
+  overflow: visible !important;
 }
-.oxy-landing .image-card-slider::-webkit-scrollbar { display: none; }
-.oxy-landing .image-card-slider .slide {
-  flex: 0 0 calc((100% - 7.2rem) / 4);
-  scroll-snap-align: start;
+.oxy-landing .image-card-slider .swiper-slide {
+  height: auto;
 }
-@media all and (max-width: 1400px) {
-  .oxy-landing .image-card-slider .slide { flex: 0 0 calc((100% - 4.8rem) / 3); }
-}
-@media all and (max-width: 950px) {
-  .oxy-landing .image-card-slider .slide { flex: 0 0 85%; }
-}
-.oxy-landing section:has(.image-card-slider) { overflow: hidden; }
 
 .oxy-landing .image-card {
   overflow: hidden;
@@ -678,7 +664,7 @@
 @media all and (max-width: 950px) {
   .oxy-landing .image-card { padding: 3.2rem; aspect-ratio: 4 / 6; }
 }
-.oxy-landing .image-card > *:not(.bg) { z-index: 5; }
+.oxy-landing .image-card > *:not(.bg) { z-index: 5; position: relative; }
 .oxy-landing .image-card .bg {
   width: 100%;
   height: 100%;
@@ -693,6 +679,56 @@
   object-fit: cover;
 }
 .oxy-landing .image-card .small { font-size: 1.4rem; }
+
+/* Slider UI — dots and play/pause */
+.oxy-landing .image-card-slider-ui-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.6rem;
+  margin-top: 2.4rem;
+}
+.oxy-landing .image-card-slider-dots {
+  display: flex;
+  gap: 0.8rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.oxy-landing .image-card-slider-dots .dot {
+  width: 4rem;
+  height: 0.3rem;
+  background: rgba(10, 10, 10, 0.15);
+  border-radius: 0.2rem;
+  cursor: pointer;
+  overflow: hidden;
+}
+.oxy-landing .image-card-slider-dots .dot.is-selected {
+  background: rgba(10, 10, 10, 0.15);
+}
+.oxy-landing .image-card-slider-dots .dot .timer {
+  height: 100%;
+  background: var(--blackish, #0a0a0a);
+  border-radius: 0.2rem;
+  transition: width 0.05s linear;
+}
+.oxy-landing .toggle-autoplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--blackish, #0a0a0a);
+  opacity: 0.5;
+}
+.oxy-landing .toggle-autoplay:hover { opacity: 1; }
+.oxy-landing .toggle-autoplay .play { display: none; }
+.oxy-landing .toggle-autoplay .pause { display: block; }
+.oxy-landing .toggle-autoplay.paused .play { display: block; }
+.oxy-landing .toggle-autoplay.paused .pause { display: none; }
 
 /* ============ MODEL AGNOSTIC ============ */
 .oxy-landing .model-agnostic-wrap { position: relative; }

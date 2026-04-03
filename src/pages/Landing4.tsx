@@ -4,6 +4,11 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HeroCarousel from '../components/homepage/HeroCarousel'
 import { heroCarouselSlots } from '../data/heroCarousel'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Autoplay, Pagination } from 'swiper/modules'
+import type SwiperType from 'swiper'
+import 'swiper/css'
+import 'swiper/css/pagination'
 import '../styles/landing.css'
 
 const IMG = '/images/landing'
@@ -292,6 +297,50 @@ const STATS = [
 ]
 
 function StatsAndTestimonialsSection() {
+  const swiperRef = useRef<SwiperType>(null)
+  const [playing, setPlaying] = useState(true)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [progress, setProgress] = useState(0)
+  const progressRef = useRef<ReturnType<typeof setInterval>>(null)
+  const AUTO_DELAY = 5000
+
+  const startProgress = useCallback(() => {
+    if (progressRef.current) clearInterval(progressRef.current)
+    const start = Date.now()
+    setProgress(0)
+    progressRef.current = setInterval(() => {
+      const elapsed = Date.now() - start
+      setProgress(Math.min((elapsed / AUTO_DELAY) * 100, 100))
+    }, 50)
+  }, [])
+
+  const stopProgress = useCallback(() => {
+    if (progressRef.current) clearInterval(progressRef.current)
+    setProgress(0)
+  }, [])
+
+  useEffect(() => {
+    return () => { if (progressRef.current) clearInterval(progressRef.current) }
+  }, [])
+
+  const toggleAutoplay = () => {
+    const swiper = swiperRef.current
+    if (!swiper) return
+    if (playing) {
+      swiper.autoplay.stop()
+      stopProgress()
+    } else {
+      swiper.autoplay.start()
+      startProgress()
+    }
+    setPlaying(p => !p)
+  }
+
+  // Total number of "pages" (groups) — Swiper handles this via snapGrid
+  const totalPages = swiperRef.current
+    ? Math.ceil(TESTIMONIALS.length / (swiperRef.current.params.slidesPerView as number || 4))
+    : 2
+
   return (
     <section>
       <div className="columns">
@@ -311,9 +360,30 @@ function StatsAndTestimonialsSection() {
           </div>
         </div>
         <div className="gc gc-12">
-          <div className="image-card-slider">
+          <Swiper
+            modules={[Autoplay, Pagination]}
+            onSwiper={(s) => { swiperRef.current = s }}
+            slidesPerView={4}
+            spaceBetween={24}
+            autoplay={{
+              delay: AUTO_DELAY,
+              disableOnInteraction: false,
+            }}
+            onSlideChange={(s) => {
+              setActiveIndex(s.realIndex)
+              startProgress()
+            }}
+            onAutoplayStart={() => startProgress()}
+            breakpoints={{
+              0: { slidesPerView: 1.15, spaceBetween: 12 },
+              640: { slidesPerView: 2, spaceBetween: 16 },
+              950: { slidesPerView: 3, spaceBetween: 20 },
+              1400: { slidesPerView: 4, spaceBetween: 24 },
+            }}
+            className="image-card-slider"
+          >
             {TESTIMONIALS.map((t, i) => (
-              <div key={i} className="slide">
+              <SwiperSlide key={i}>
                 <div className={`image-card${t.light ? ' white' : ''}`}>
                   <div className="top">
                     <p>&ldquo;{t.quote}&rdquo;</p>
@@ -328,8 +398,43 @@ function StatsAndTestimonialsSection() {
                     <img src={t.bg} alt="" />
                   </div>
                 </div>
-              </div>
+              </SwiperSlide>
             ))}
+          </Swiper>
+          <div className="image-card-slider-ui-wrapper">
+            <ol className="image-card-slider-dots">
+              {Array.from({ length: totalPages }).map((_, i) => (
+                <li
+                  key={i}
+                  className={`dot${Math.floor(activeIndex / (swiperRef.current?.params.slidesPerView as number || 4)) === i ? ' is-selected' : ''}`}
+                  onClick={() => {
+                    const perView = swiperRef.current?.params.slidesPerView as number || 4
+                    swiperRef.current?.slideTo(i * perView)
+                  }}
+                >
+                  <div
+                    className="timer"
+                    style={{
+                      width: Math.floor(activeIndex / (swiperRef.current?.params.slidesPerView as number || 4)) === i && playing
+                        ? `${progress}%`
+                        : '0%',
+                    }}
+                  />
+                </li>
+              ))}
+            </ol>
+            <button
+              className={`toggle-autoplay${playing ? '' : ' paused'}`}
+              onClick={toggleAutoplay}
+              aria-label={playing ? 'Pause autoplay' : 'Play autoplay'}
+            >
+              <svg width="8" height="12" className="pause" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.895 12C0.595 12 0.369 11.916 0.219 11.747C0.073 11.579 0 11.326 0 10.988V1.005C0 0.672 0.075 0.422 0.225 0.253C0.376 0.084 0.599 0 0.895 0H2.366C2.658 0 2.88 0.082 3.03 0.246C3.184 0.41 3.261 0.663 3.261 1.005V10.988C3.261 11.326 3.184 11.579 3.03 11.747C2.88 11.916 2.658 12 2.366 12H0.895ZM5.64 12C5.34 12 5.114 11.916 4.964 11.747C4.814 11.579 4.739 11.326 4.739 10.988V1.005C4.739 0.672 4.814 0.422 4.964 0.253C5.114 0.084 5.34 0 5.64 0H7.099C7.399 0 7.624 0.082 7.775 0.246C7.925 0.41 8 0.663 8 1.005V10.988C8 11.326 7.925 11.579 7.775 11.747C7.624 11.916 7.399 12 7.099 12H5.64Z" fill="currentColor"/>
+              </svg>
+              <svg width="10" height="11" className="play" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 9.968V1.032C0 0.681 0.09 0.422 0.271 0.253C0.452 0.084 0.668 0 0.917 0C1.141 0 1.365 0.061 1.589 0.184L9.218 4.551C9.494 4.707 9.692 4.854 9.813 4.994C9.938 5.133 10 5.302 10 5.5C10 5.694 9.938 5.863 9.813 6.006C9.692 6.146 9.494 6.293 9.218 6.449L1.589 10.817C1.365 10.939 1.141 11 0.917 11C0.668 11 0.452 10.914 0.271 10.741C0.09 10.572 0 10.314 0 9.968Z" fill="currentColor"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
