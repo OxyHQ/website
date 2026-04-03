@@ -142,6 +142,9 @@ function FairCoinFace() {
             Buy
           </button>
           <button className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white">
+            Explorer
+          </button>
+          <button className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white">
             Learn more
           </button>
         </div>
