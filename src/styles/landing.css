@@ -409,6 +409,7 @@
 .oxy-landing .hero-cube-slot {
   perspective: 1200px;
   cursor: pointer;
+  clip-path: inset(0 round 2rem);
 }
 .oxy-landing .hero-cube-inner {
   position: relative;

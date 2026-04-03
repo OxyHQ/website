@@ -237,7 +237,7 @@ function CubeCard({ sizeClass, faces, interval }: {
         ref={cubeRef}
         className="hero-cube-inner"
         style={{
-          transform: `rotateX(${angle}deg)`,
+          transform: `translateZ(${-halfH}px) rotateX(${angle}deg)`,
           transition: 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
