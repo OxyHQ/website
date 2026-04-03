@@ -225,14 +225,13 @@ function CubeCard({ sizeClass, faces, interval }: {
 
   return (
     <div ref={slotRef} className={`hero-cube-slot ${sizeClass}`}>
-      {/* Current face — slides up and rotates backward */}
+      {/* Current face — slides up and rotates backward, stays visible most of the way */}
       <div
         className="hero-cube-face hero-cube-current"
         style={{
           transform: phase === 'flipping'
             ? 'translateY(-100%) rotateX(90deg)'
             : 'translateY(0) rotateX(0deg)',
-          opacity: phase === 'flipping' ? 0 : 1,
         }}
       >
         <CardFace card={faces[current]} />
@@ -244,7 +243,6 @@ function CubeCard({ sizeClass, faces, interval }: {
           transform: phase === 'flipping'
             ? 'translateY(0) rotateX(0deg)'
             : 'translateY(100%) rotateX(-90deg)',
-          opacity: phase === 'flipping' ? 1 : 0,
         }}
       >
         <CardFace card={faces[next]} />
