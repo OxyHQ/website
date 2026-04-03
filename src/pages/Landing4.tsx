@@ -290,12 +290,11 @@ function FeaturesSection() {
 /*  ROI Stats                                                          */
 /* ------------------------------------------------------------------ */
 const STATS = [
-  { label: 'Fintech scale-up', value: '10 hours', desc: 'saved per week, per\u00a0employee' },
-  { label: 'Global law firm', value: '62%', desc: 'prep time saved' },
-  { label: 'Leading manufacturer', value: '95%', desc: 'faster product answers' },
-  { label: 'Mining manufacturer', value: '50%', desc: 'time saved in R&D' },
-  { label: 'Renewable energy company', value: '66%', desc: 'time saved in R&D' },
-  { label: 'Industrial leader', value: '2\u00d7', desc: 'more customer service issues resolved' },
+  { label: 'Open Source', value: '100%', desc: 'of our code is public' },
+  { label: 'Community', value: '50K+', desc: 'developers and contributors' },
+  { label: 'Products', value: '6', desc: 'platforms serving real needs' },
+  { label: 'Data Sold', value: '$0', desc: 'we never sell user data' },
+  { label: 'Countries', value: '120+', desc: 'communities worldwide' },
 ]
 
 function StatsAndTestimonialsSection() {
@@ -463,59 +462,31 @@ function StatsAndTestimonialsSection() {
 /* ------------------------------------------------------------------ */
 const TESTIMONIALS = [
   {
-    quote: 'All of a sudden, a valuation memo that our CFO previously spent almost a\u00a0week preparing was completed within three or four hours.',
-    role: 'Chief Sustainability Officer',
-    company: 'Leading renewable energy company',
+    quote: 'We design tools that empower people, not manipulate them. Every decision starts with the question: does this serve the user?',
+    role: 'Human-first Design',
+    company: 'Core Value',
     bg: `${IMG}/agents-quote-bg-01.webp`,
     light: true,
   },
   {
-    quote: 'If we removed Oxy Agents, there would be a revolt.',
-    role: 'Managing Director',
-    company: 'Global private equity firm',
+    quote: 'No ads, no data brokers, no hidden monetization. Your information belongs to you \u2014 period.',
+    role: 'Your Data Stays Yours',
+    company: 'Core Value',
     bg: `${IMG}/agents-quote-bg-02.webp`,
     light: false,
   },
   {
-    quote: 'With Oxy, our sales prep is now 10x quicker. Instead of spending hours gathering data manually, our team can instantly access the research insights they need\u2014freeing them to focus on designing more meaningful, strategic client conversations.',
-    role: 'Product Operations Lead',
-    company: 'International research and analytics firm',
+    quote: 'Every product we ship is built to advance justice, inclusion, or sustainability. If it doesn\u2019t move the needle on what matters, we don\u2019t build it.',
+    role: 'AI with a Purpose',
+    company: 'Core Value',
     bg: `${IMG}/agents-quote-bg-03.webp`,
     light: true,
   },
   {
-    quote: 'We\u2019re leveraging our AI agents to find and compare product information, build sales arguments, support R&D, and much more. We see real operational efficiency, and Oxy has already provided us with a quick payback.',
-    role: 'CEO',
-    company: 'Global industrial automation company',
+    quote: 'Every Oxy tool is open source. We believe transparency isn\u2019t optional \u2014 it\u2019s the foundation of trust.',
+    role: 'Open by Default',
+    company: 'Core Value',
     bg: `${IMG}/agents-quote-bg-04.webp`,
-    light: true,
-  },
-  {
-    quote: 'Oxy gives us control over the AI, allowing us to choose the material it accesses and tailor its parameters to our specific needs.',
-    role: 'Executive Vice President',
-    company: 'Global medical technology provider',
-    bg: `${IMG}/agents-quote-bg-05.webp`,
-    light: true,
-  },
-  {
-    quote: 'With Oxy Agents, even colleagues who aren\u2019t tech-savvy can leverage AI in their everyday work. It\u2019s empowered everyone, not just the experts.',
-    role: 'Head of Digitalization',
-    company: 'Major real estate group',
-    bg: `${IMG}/agents-quote-bg-06.webp`,
-    light: true,
-  },
-  {
-    quote: 'With Oxy, we\u2019re creating assistants to accelerate everything from deal analysis to portfolio reviews, transforming the way our investment teams operate.',
-    role: 'Chief Digital Officer',
-    company: 'Leading private equity firm',
-    bg: `${IMG}/agents-quote-bg-07.webp`,
-    light: true,
-  },
-  {
-    quote: 'Asking Oxy in Slack for someone\u2019s actions from the last meeting, or our definition of retention\u2014it\u2019s a game-changer.',
-    role: 'CTO',
-    company: 'Leading mobility startup',
-    bg: `${IMG}/agents-quote-bg-08.webp`,
     light: true,
   },
 ]
