@@ -56,8 +56,20 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (prefersReducedMotion) return
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(rafRef.current)
+      } else {
+        rafRef.current = requestAnimationFrame(animate)
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
     rafRef.current = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(rafRef.current)
+    return () => {
+      cancelAnimationFrame(rafRef.current)
+      document.removeEventListener('visibilitychange', handleVisibility)
+    }
   }, [animate])
 
   const handleMouseEnter = useCallback(() => {

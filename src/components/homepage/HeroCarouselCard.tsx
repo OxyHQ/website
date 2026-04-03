@@ -6,11 +6,11 @@ import 'swiper/css'
 import 'swiper/css/effect-cube'
 
 const sizeClasses: Record<CardSize, string> = {
-  '1x1': 'hero-card-1x1',
-  '2x1': 'hero-card-2x1',
-  '1x2': 'hero-card-1x2',
-  '2x2': 'hero-card-2x2',
-  '4x2': 'hero-card-4x2',
+  '1x1': 'row-span-1 col-span-1',
+  '2x1': 'row-span-1 col-span-2',
+  '1x2': 'row-span-2 col-span-2',
+  '2x2': 'row-span-2 col-span-2',
+  '4x2': 'row-span-2 col-span-4',
 }
 
 function CardFace({ card }: { card: HeroCard }) {
@@ -30,7 +30,7 @@ function CardFace({ card }: { card: HeroCard }) {
             <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-purple-200 lg:text-[11px]">
               {card.category}
             </span>
-            <p className="text-xs font-bold leading-tight text-white lg:text-sm">
+            <p className="text-xl font-bold leading-tight text-white lg:text-2xl">
               {card.title}
             </p>
           </div>
@@ -46,7 +46,7 @@ function CardFace({ card }: { card: HeroCard }) {
           <span className="mb-2 inline-block rounded-full bg-white/20 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white lg:text-[10px]">
             {card.department}
           </span>
-          <p className="text-sm font-extrabold leading-tight text-white lg:text-base">
+          <p className="text-2xl font-extrabold leading-tight text-white lg:text-3xl">
             {card.jobTitle}
           </p>
         </Link>
@@ -55,19 +55,17 @@ function CardFace({ card }: { card: HeroCard }) {
     case 'brand':
       if (card.variant === 'oxy') {
         return (
-          <div className="h-full w-full bg-black">
-            <img
-              src="/images/landing/oxy3d.png"
-              alt="Oxy"
-              className="h-full w-full object-cover"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
+          <img
+            src="/images/landing/oxy3d.png"
+            alt="Oxy"
+            className="h-full w-full object-cover bg-black"
+            loading="lazy"
+            decoding="async"
+          />
         )
       }
       return (
-        <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#166534]">
+        <div className="relative flex h-full w-full items-center justify-center bg-[#166534]">
           <div className="absolute inset-[-50%] flex flex-col justify-center gap-0.5 opacity-40" style={{ transform: 'rotate(-15deg)' }}>
             {Array.from({ length: 16 }).map((_, i) => (
               <div
@@ -105,6 +103,7 @@ function CardFace({ card }: { card: HeroCard }) {
           loop
           muted
           playsInline
+          preload="none"
           className="h-full w-full object-cover"
         />
       )
@@ -130,41 +129,39 @@ const FAIRCOIN_STATS = [
 
 function FairCoinFace() {
   return (
-    <div className="flex h-full w-full overflow-hidden bg-[#166534]">
+    <div className="flex h-full w-full bg-[#166534]">
       <div className="flex flex-1 flex-col p-4 lg:p-5">
-        <div className="mb-auto flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#14532d] lg:h-10 lg:w-10">
-            <span className="text-sm font-black text-green-300 lg:text-base">EF</span>
-          </div>
+        <div className="mb-auto flex h-8 w-8 items-center justify-center rounded-full bg-[#14532d] lg:h-10 lg:w-10">
+          <span className="text-sm font-black text-green-300 lg:text-base">EF</span>
         </div>
-        <div className="mb-3">
-          <h3 className="text-sm font-extrabold uppercase tracking-wider text-white lg:text-base">
-            FairCoin <span className="font-normal italic text-green-200">Today</span>
-          </h3>
-        </div>
+        <h3 className="mb-3 text-5xl font-extrabold uppercase tracking-wider text-white">
+          FairCoin <span className="font-normal italic text-green-200">Today</span>
+        </h3>
         <div className="grid grid-cols-2 gap-1.5 lg:gap-2">
           {FAIRCOIN_STATS.map((stat) => (
             <div key={stat.label} className="rounded-xl bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5">
-              <div className="flex items-center gap-1">
-                <span className="text-[8px] text-green-400">{stat.icon}</span>
-                <span className="text-[9px] font-semibold uppercase tracking-wider text-green-300 lg:text-[10px]">
-                  {stat.label}
-                </span>
+              <div className="flex items-center gap-2">
+                <span className="text-base text-green-400">{stat.icon}</span>
+                <div>
+                  <span className="block text-[9px] font-semibold uppercase tracking-wider text-green-300 lg:text-[10px]">
+                    {stat.label}
+                  </span>
+                  <span className="block text-xl font-bold text-white lg:text-2xl">{stat.value}</span>
+                </div>
               </div>
-              <span className="mt-0.5 block text-sm font-bold text-white lg:text-base">{stat.value}</span>
             </div>
           ))}
         </div>
         <div className="mt-3 flex gap-2 lg:mt-4">
-          <button className="rounded-full bg-white px-4 py-1.5 text-[10px] font-bold text-green-900 lg:text-xs">
+          <button className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-green-900">
             Buy
           </button>
-          <button className="rounded-full border border-white/30 px-4 py-1.5 text-[10px] font-bold text-white lg:text-xs">
+          <button className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white">
             Learn more
           </button>
         </div>
       </div>
-      <div className="m-2.5 flex w-[38%] flex-col overflow-hidden rounded-2xl bg-[#14532d] lg:m-3">
+      <div className="m-2.5 flex w-[38%] flex-col rounded-2xl bg-[#14532d] lg:m-3">
         <img
           src={FAIRCOIN_STORE_IMAGE}
           alt="Local store"
@@ -172,8 +169,11 @@ function FairCoinFace() {
           loading="lazy"
           decoding="async"
         />
-        <div className="flex flex-1 items-center p-2.5 lg:p-3">
-          <p className="text-[10px] font-semibold leading-snug text-green-100 lg:text-[11px]">
+        <div className="flex flex-1 flex-col justify-center p-3 lg:p-4">
+          <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-green-400 lg:text-[11px]">
+            Apr 3, 2026
+          </span>
+          <p className="text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
             Empowering local stores with FairCoin: a sustainable solution
           </p>
         </div>
@@ -184,12 +184,13 @@ function FairCoinFace() {
 
 export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   const sizeClass = sizeClasses[slot.size]
-  const roundedClass = slot.rounded ? ' hero-card-rounded' : ''
+  const radius = slot.rounded ? 'rounded-full' : 'rounded-[20px]'
+  const padding = slot.rounded ? 'px-5' : ''
 
   // Static card — no rotation
   if (slot.faces.length <= 1) {
     return (
-      <div className={`hero-card ${sizeClass}${roundedClass}`}>
+      <div className={`cursor-pointer ${radius} ${padding} ${sizeClass}`.trimEnd()}>
         <CardFace card={slot.faces[0]} />
       </div>
     )
@@ -198,7 +199,7 @@ export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   // Rotating card — the entire grid cell IS the cube
   return (
     <CubeCard
-      sizeClass={`${sizeClass}${roundedClass}`}
+      sizeClass={`${radius} ${sizeClass}`}
       faces={slot.faces}
       interval={slot.rotateInterval ?? 4000}
     />
@@ -211,7 +212,7 @@ function CubeCard({ sizeClass, faces, interval }: {
   interval: number
 }) {
   return (
-    <div className={`hero-cube-slot ${sizeClass}`}>
+    <div className={`relative ${sizeClass}`}>
       <Swiper
         modules={[EffectCube, Autoplay]}
         effect="cube"

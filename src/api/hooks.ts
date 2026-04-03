@@ -190,6 +190,7 @@ export function useJobs() {
   return useQuery({
     queryKey: ['jobs', locale],
     queryFn: () => apiFetch<any[]>('/jobs', { locale }),
+    staleTime: 5 * 60 * 1000,
   })
 }
 
