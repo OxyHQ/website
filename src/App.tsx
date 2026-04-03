@@ -36,6 +36,9 @@ import DocsPage from './pages/DocsPage'
 import DocsIntroPage from './pages/DocsIntroPage'
 import SettingsPage from './pages/SettingsPage'
 import FixedPromptInput from './components/ui/FixedPromptInput'
+import { AccountPanelProvider } from './contexts/AccountPanelContext'
+import AccountPanel from './components/layout/AccountPanel'
+import AppShell from './components/layout/AppShell'
 
 const OXY_API = 'https://api.oxy.so'
 
@@ -118,15 +121,19 @@ export default function App() {
         <AppSetup>
           <BloomThemeProvider mode={mode} colorPreset={preset}>
             <BrowserRouter>
-              <ScrollToTop />
-              <Routes>
-                <Route path="/admin/*" element={<AdminPage />} />
-                <Route path="/" element={<LocaleLayout />}>
-                  {PublicRoutes()}
-                  <Route path="*" element={<NotFoundPage />} />
-                </Route>
-              </Routes>
-              <FixedPromptInput />
+              <AccountPanelProvider>
+                <ScrollToTop />
+                <AppShell>
+                  <Routes>
+                    <Route path="/admin/*" element={<AdminPage />} />
+                    <Route path="/" element={<LocaleLayout />}>
+                      {PublicRoutes()}
+                      <Route path="*" element={<NotFoundPage />} />
+                    </Route>
+                  </Routes>
+                  <FixedPromptInput />
+                </AppShell>
+              </AccountPanelProvider>
             </BrowserRouter>
           </BloomThemeProvider>
         </AppSetup>
