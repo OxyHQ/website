@@ -277,13 +277,13 @@
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .oxy-landing .hero-oxy-bg {
   position: absolute;
   inset: 0;
   z-index: 1;
+  overflow: hidden;
 }
 .oxy-landing .hero-oxy-bg img {
   width: 100%;
