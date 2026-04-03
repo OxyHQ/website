@@ -279,7 +279,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
 
       {/* ─── Main nav ─── */}
       <Container>
-        <nav className="pt-2 pb-[7px] lg:pt-2.5 lg:pb-2">
+        <nav className="py-2 lg:py-2.5">
           <div className="flex items-center justify-between">
             <div className="flex grow items-center gap-x-9">
               <Link to="/" className="-mx-1.5 rounded-xl px-1.5" aria-label="Oxy homepage" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
