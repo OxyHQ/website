@@ -661,7 +661,7 @@ function TeamsSection() {
         </div>
         <div className="col-span-5 col-start-8 max-[950px]:col-span-full max-[950px]:col-start-1 flex flex-col gap-12 justify-between">
           <div>
-            <p className="text-oxy-red mb-5"><strong>Every team gets smarter with Oxy</strong></p>
+            <p className="text-primary mb-5"><strong>Every team gets smarter with Oxy</strong></p>
             <div className="teams-tabs-nav flex flex-col [&>a]:cursor-pointer">
               {TEAM_TABS.map((t) => (
                 <a
@@ -728,7 +728,7 @@ function PartnershipSection() {
     <section className="py-10 max-[950px]:py-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
         <div className="col-span-full text-center">
-          <p className="mb-6 text-oxy-blue"><strong>Enterprise partnership services</strong></p>
+          <p className="mb-6 text-primary"><strong>Enterprise partnership services</strong></p>
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">Driving AI adoption together</h2>
           <p className="opacity-80 max-w-[500px] mx-auto">AI is revolutionizing work in real time. Our partnership-led approach helps your organization become truly AI-first.</p>
         </div>
@@ -860,7 +860,7 @@ function IOSAppSection() {
     <section className="py-10 max-[950px]:py-6">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
         <div className="col-span-full text-center">
-          <p className="mb-6 text-oxy-blue"><strong>Agents iOS app</strong></p>
+          <p className="mb-6 text-primary"><strong>Agents iOS app</strong></p>
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">A polymath in your pocket</h2>
         </div>
       </div>
