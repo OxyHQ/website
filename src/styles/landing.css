@@ -52,9 +52,9 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.1) 0%,
-    rgba(0, 0, 0, 0.25) 40%,
-    rgba(0, 0, 0, 0.5) 100%
+    color-mix(in srgb, var(--foreground) 10%, transparent) 0%,
+    color-mix(in srgb, var(--foreground) 25%, transparent) 40%,
+    color-mix(in srgb, var(--foreground) 50%, transparent) 100%
   );
 }
 .oxy-landing .hero-oxy-content {
@@ -64,7 +64,7 @@
   display: flex;
   align-items: flex-end;
   padding: 100px 40px 20px;
-  color: #fff;
+  color: var(--background);
 }
 .oxy-landing .hero-oxy-content h1 {
   font-family: Georgia, 'Times New Roman', serif;
