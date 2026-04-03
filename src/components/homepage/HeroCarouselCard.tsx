@@ -132,7 +132,7 @@ const FAIRCOIN_STATS = [
 function FairCoinFace() {
   return (
     <div className="flex h-full w-full bg-[#166534]">
-      <div className="flex flex-1 flex-col px-36 py-12 lg:px-44 lg:py-14">
+      <div className="flex flex-1 flex-col p-4 lg:p-5">
         <div className="mb-auto flex h-8 w-8 items-center justify-center rounded-full bg-[#14532d] lg:h-10 lg:w-10">
           <span className="text-sm font-black text-green-300 lg:text-base">EF</span>
         </div>
