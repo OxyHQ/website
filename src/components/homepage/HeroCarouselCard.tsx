@@ -165,7 +165,7 @@ function FairCoinFace() {
           </div>
         </div>
       </div>
-      <div className="m-2.5 flex w-[28%] flex-col rounded-2xl bg-[#14532d] lg:m-3">
+      <div className="m-2.5 flex w-[28%] flex-col overflow-hidden rounded-2xl bg-[#14532d] lg:m-3">
         <img
           src={FAIRCOIN_STORE_IMAGE}
           alt="Local store"
