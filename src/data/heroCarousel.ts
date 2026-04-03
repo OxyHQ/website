@@ -30,6 +30,10 @@ export type HeroCard =
       heading: string
       body: string
     }
+  | {
+      type: 'video'
+      src: string
+    }
 
 /** A slot in the carousel grid. Has a size and one or more card faces that rotate. */
 export interface CarouselSlot {
@@ -101,14 +105,13 @@ export const heroCarouselSlots: CarouselSlot[] = [
       { type: 'careers', jobTitle: 'Marketing Lead', department: 'Careers' },
     ],
   },
-  // Large photo
+  // Large video
   {
     size: '2x2',
     faces: [
       {
-        type: 'photo',
-        image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&h=800&fit=crop',
-        alt: 'Technology event',
+        type: 'video',
+        src: '/images/landing/hero-video.mp4',
       },
     ],
   },
