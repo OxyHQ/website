@@ -65,14 +65,14 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
               {link.href.startsWith('/') ? (
                 <Link
                   to={link.href}
-                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-full border border-transparent px-2.5 text-sm text-foreground transition-colors duration-300 hover:bg-surface"
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-full border border-transparent px-2.5 text-sm text-foreground transition-colors duration-300 hover:bg-foreground/5"
                 >
                   {link.label}
                 </Link>
               ) : (
                 <a
                   href={link.href}
-                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-full border border-transparent px-2.5 text-sm text-foreground transition-colors duration-300 hover:bg-surface"
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-full border border-transparent px-2.5 text-sm text-foreground transition-colors duration-300 hover:bg-foreground/5"
                 >
                   {link.label}
                 </a>
@@ -311,9 +311,9 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                     <li key={dd.label}>
                       <button
                         ref={(el) => { triggerRefs.current[dd.label] = el }}
-                        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'hover:bg-white/10 hover:text-white' : 'hover:bg-surface hover:text-foreground'}`}
+                        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`}
                         style={{
-                          background: activeDropdown === dd.label ? 'var(--color-surface)' : undefined,
+                          background: activeDropdown === dd.label ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
                           color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
                         }}
                         onMouseEnter={() => openDropdown(dd.label)}
@@ -329,7 +329,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                       {link.href.startsWith('/') ? (
                                 <Link
                           to={link.href}
-                          className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-surface hover:text-foreground'}`}
+                          className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
                           onMouseEnter={scheduleClose}
                         >
                           {link.label}
@@ -337,7 +337,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                       ) : (
                         <a
                           href={link.href}
-                          className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-surface hover:text-foreground'}`}
+                          className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
                           onMouseEnter={scheduleClose}
                         >
                           {link.label}
@@ -458,7 +458,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
               {dropdowns.map((dd) => (
                 <div key={dd.label}>
                   <button
-                    className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-surface"
+                    className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
                     onClick={() => setMobileAccordion(mobileAccordion === dd.label ? null : dd.label)}
                   >
                     {dd.label}
@@ -469,11 +469,11 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                       {dd.sections.map((s) =>
                         s.items.map((item) => (
                           item.href.startsWith('/') ? (
-                            <Link key={item.title} to={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                            <Link key={item.title} to={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
                               {item.title}
                             </Link>
                           ) : (
-                            <a key={item.title} href={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                            <a key={item.title} href={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
                               {item.title}
                             </a>
                           )
@@ -481,11 +481,11 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                       )}
                       {dd.sidePanel?.links.map((link) => (
                         link.href.startsWith('/') ? (
-                          <Link key={link.label} to={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                          <Link key={link.label} to={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
                             {link.label}
                           </Link>
                         ) : (
-                          <a key={link.label} href={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                          <a key={link.label} href={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
                             {link.label}
                           </a>
                         )
@@ -496,11 +496,11 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
               ))}
               {simpleNavLinks.map((link) => (
                 link.href.startsWith('/') ? (
-                  <Link key={link.label} to={link.href} className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-surface" onClick={() => setMobileOpen(false)}>
+                  <Link key={link.label} to={link.href} className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5" onClick={() => setMobileOpen(false)}>
                     {link.label}
                   </Link>
                 ) : (
-                  <a key={link.label} href={link.href} className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-surface" onClick={() => setMobileOpen(false)}>
+                  <a key={link.label} href={link.href} className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5" onClick={() => setMobileOpen(false)}>
                     {link.label}
                   </a>
                 )
