@@ -121,11 +121,11 @@ function AllInOneSection() {
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full text-center space-y-[1em]">
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none">
-            Your all-in-one<br className="max-[950px]:hidden" />
-            AI platform for real work
+            Build for everyone,<br className="max-[950px]:hidden" />
+            not just yourself.
           </h2>
-          <p className="max-w-[440px] mx-auto">A seamless, beautiful way to bring AI into your company&apos;s apps, knowledge, and culture.</p>
-          <a href="#book-intro" className={`${BTN} bg-primary text-primary-foreground`}>Book an intro</a>
+          <p className="max-w-[440px] mx-auto">Oxy exists because we believe technology should serve humanity, not exploit it. Through community-driven projects and open-source tools, we prove that helping people and building sustainable systems aren&apos;t competing goals.</p>
+          <a href="/technologies" className={`${BTN} bg-primary text-primary-foreground`}>Explore the Ecosystem</a>
         </div>
       </div>
     </section>
