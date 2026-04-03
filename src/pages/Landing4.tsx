@@ -12,7 +12,7 @@ import '../styles/landing.css'
 
 const IMG = '/images/landing'
 
-const BTN = 'inline-flex cursor-pointer text-base leading-relaxed font-[450] rounded-full px-4 pt-2.5 pb-[7px] max-h-[38px] transition-opacity duration-200 hover:opacity-60'
+const BTN = 'inline-flex items-center cursor-pointer text-base leading-relaxed font-[450] rounded-full px-4 py-2 max-h-[38px] transition-opacity duration-200 hover:opacity-60'
 
 /* ------------------------------------------------------------------ */
 /*  Hero                                                               */
@@ -125,7 +125,7 @@ function AllInOneSection() {
             AI platform for real work
           </h2>
           <p className="max-w-[440px] mx-auto">A seamless, beautiful way to bring AI into your company&apos;s apps, knowledge, and culture.</p>
-          <a href="#book-intro" className={`${BTN} bg-foreground text-background`}>Book an intro</a>
+          <a href="#book-intro" className={`${BTN} bg-primary text-primary-foreground`}>Book an intro</a>
         </div>
       </div>
     </section>
@@ -684,7 +684,7 @@ function TeamsSection() {
                 </div>
               ))}
             </div>
-            <a href="#book-intro" className={`${BTN} bg-foreground text-background`}>Book an intro</a>
+            <a href="#book-intro" className={`${BTN} bg-primary text-primary-foreground`}>Book an intro</a>
           </div>
         </div>
       </div>
@@ -748,7 +748,7 @@ function PartnershipSection() {
                 {item}
               </div>
             ))}
-            <a href="#book-intro" className="bg-foreground text-background p-5 px-6 rounded-3xl flex flex-col gap-[26px] justify-end transition-opacity duration-400 hover:opacity-60">Book an intro</a>
+            <a href="#book-intro" className="bg-primary text-primary-foreground p-5 px-6 rounded-3xl flex flex-col gap-[26px] justify-end transition-opacity duration-400 hover:opacity-60">Book an intro</a>
           </div>
         </div>
       </div>
@@ -808,7 +808,7 @@ function IntegrationsSecuritySection() {
                   {INTEGRATIONS.map((item) => (
                     <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+&]:mt-3">
                       <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
-                        <img src={`${IMG}/${item.icon}`} width={20} height={20} alt={`${item.name} icon`} className="w-auto h-auto max-w-5 max-h-5 object-contain" />
+                        <img src={`${IMG}/${item.icon}`} width={20} height={20} alt={`${item.name} icon`} className="w-auto h-auto max-w-5 max-h-5 object-contain dark:invert" />
                       </div>
                       <span>{item.name}</span>
                     </div>
@@ -826,7 +826,7 @@ function IntegrationsSecuritySection() {
                   {SECURITY_ITEMS.map((item) => (
                     <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+&]:mt-3">
                       <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
-                        <img src={`${IMG}/${item.icon}`} width={item.size} height={item.size} alt="security icon" className="w-auto h-auto max-w-5 max-h-5 object-contain" />
+                        <img src={`${IMG}/${item.icon}`} width={item.size} height={item.size} alt="security icon" className="w-auto h-auto max-w-5 max-h-5 object-contain dark:invert" />
                       </div>
                       <span>{item.name}</span>
                     </div>
@@ -1004,7 +1004,7 @@ function PricingSection() {
                   <p className="text-[22px] leading-[1.2] font-[450] mb-3">{plan.name}</p>
                   <p className="mb-5"><strong>{plan.price}</strong></p>
                   {plan.name === 'Enterprise' ? (
-                    <a className={`${BTN} bg-foreground text-background`} href="#book-intro">{plan.cta}</a>
+                    <a className={`${BTN} bg-primary text-primary-foreground`} href="#book-intro">{plan.cta}</a>
                   ) : (
                     <a className={`${BTN} bg-foreground/5`} href={plan.ctaHref} target="_blank" rel="noopener noreferrer">{plan.cta}</a>
                   )}
