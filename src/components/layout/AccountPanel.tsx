@@ -82,7 +82,7 @@ export default function AccountPanel() {
           {/* ─── Profile header with animated background ─── */}
           <div className="flex flex-col items-center px-6 pb-5 pt-1">
             {/* Animated gradient behind avatar */}
-            <div className="relative flex h-[100px] w-full items-center justify-center overflow-hidden rounded-2xl">
+            <div className="relative flex h-[72px] w-[260px] items-center justify-center overflow-hidden rounded-2xl">
               <div
                 className="absolute inset-0"
                 style={{
@@ -95,7 +95,7 @@ export default function AccountPanel() {
                 background: 'radial-gradient(circle at 30% 50%, rgba(255,255,255,0.4), transparent 60%), radial-gradient(circle at 70% 50%, rgba(255,255,255,0.3), transparent 50%)',
               }} />
               <div className="relative z-10">
-                <Avatar source={user?.avatar} size={80} placeholderColor={user?.color} />
+                <Avatar source={user?.avatar} size={56} placeholderColor={user?.color} />
               </div>
             </div>
             <div className="mt-4 text-center">
