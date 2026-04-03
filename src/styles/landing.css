@@ -7,11 +7,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-:where(.oxy-landing) *,
-:where(.oxy-landing) *:after,
-:where(.oxy-landing) *:before {
-  position: relative;
-}
 
 .oxy-landing a {
   color: inherit;
