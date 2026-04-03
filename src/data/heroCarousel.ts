@@ -48,7 +48,7 @@ export interface CarouselSlot {
 export const heroCarouselSlots: CarouselSlot[] = [
   // Newsroom — 5 posts
   {
-    size: '2x2',
+    size: '1x2',
     rotateInterval: 4000,
     faces: [
       {
@@ -156,21 +156,8 @@ export const heroCarouselSlots: CarouselSlot[] = [
   },
   // FairCoin dashboard — static large
   {
-    size: '4x2',
-    rounded: true,
+    size: '5x2',
     faces: [{ type: 'faircoin' }],
-  },
-  // FairCoin news — extracted from FairCoin card
-  {
-    size: '1x2',
-    faces: [
-      {
-        type: 'newsroom',
-        title: 'Empowering local stores with FairCoin: a sustainable solution',
-        image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=500&fit=crop',
-        category: 'FairCoin',
-      },
-    ],
   },
   // Photo
   {
