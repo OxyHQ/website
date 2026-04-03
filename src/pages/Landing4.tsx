@@ -19,21 +19,24 @@ const BTN = 'inline-flex items-center cursor-pointer text-base leading-relaxed f
 /* ------------------------------------------------------------------ */
 function HeroSection() {
   return (
-    <div className="hero-oxy">
+    <div className="relative min-h-svh flex flex-col [overflow-x:clip]">
       {/* Background video */}
-      <div className="hero-oxy-bg">
-        <video src={`${IMG}/hero-background.mp4`} autoPlay loop muted playsInline />
-        <div className="hero-oxy-overlay" />
+      <div className="absolute inset-0 z-[1] overflow-hidden [transform:translateZ(0)]">
+        <video autoPlay loop muted playsInline preload="auto" className="size-full object-cover object-center">
+          <source src={`${IMG}/hero-background.webm`} type="video/webm" />
+          <source src={`${IMG}/hero-background.mp4`} type="video/mp4" />
+        </video>
+        <div className="hero-oxy-overlay absolute inset-0" />
       </div>
 
       {/* Text overlay */}
-      <div className="hero-oxy-content">
+      <div className="relative z-[5] flex-1 flex items-end px-10 pt-[100px] pb-5 max-[950px]:px-5 max-[950px]:pt-20 text-foreground">
         <div>
-          <h1>
+          <h1 className="font-serif text-[40px] font-bold leading-[1.2] tracking-tight max-w-[540px] max-[950px]:text-[28px] max-[950px]:max-w-full">
             Creating a future where technology empowers individuals
             to live connected, fulfilling, and sustainable lives.
           </h1>
-          <p className="hero-oxy-subtitle">
+          <p className="text-[13px] font-medium tracking-[0.12em] uppercase mt-3 opacity-70">
             Built by people who believe in change. Ethical, open, and deeply human.
           </p>
         </div>
@@ -54,21 +57,24 @@ const ALL_LOGOS = [
   'electrolux', 'swile', 'truecaller', 'kearney', 'foodora', 'hinge',
 ]
 
+// The number of logo slots shown at once — constant for the lifetime of the page.
+const LOGO_VISIBLE_COUNT = 7
+
 function PartnerLogos() {
-  const initialLogos = ALL_LOGOS.slice(0, 7)
-  const [visibleLogos, setVisibleLogos] = useState<string[]>(initialLogos)
+  const [visibleLogos, setVisibleLogos] = useState<string[]>(ALL_LOGOS.slice(0, LOGO_VISIBLE_COUNT))
   const [hiddenSlot, setHiddenSlot] = useState<number | null>(null)
-  const availablePoolRef = useRef<string[]>([...ALL_LOGOS.slice(7)])
+  const availablePoolRef = useRef<string[]>([...ALL_LOGOS.slice(LOGO_VISIBLE_COUNT)])
 
   const swapLogo = useCallback(() => {
-    const slotIndex = Math.floor(Math.random() * visibleLogos.length)
+    // Choose the slot before the fade-out so the index is stable across the timeout.
+    const slotIndex = Math.floor(Math.random() * LOGO_VISIBLE_COUNT)
     setHiddenSlot(slotIndex)
     setTimeout(() => {
       setVisibleLogos((prev) => {
         const next = [...prev]
         const currentLogo = next[slotIndex]
         if (availablePoolRef.current.length === 0) {
-          availablePoolRef.current = [...ALL_LOGOS.slice(7)]
+          availablePoolRef.current = [...ALL_LOGOS.slice(LOGO_VISIBLE_COUNT)]
         }
         const poolIndex = Math.floor(Math.random() * availablePoolRef.current.length)
         const newLogo = availablePoolRef.current[poolIndex]
@@ -79,7 +85,7 @@ function PartnerLogos() {
       })
       setHiddenSlot(null)
     }, 400)
-  }, [visibleLogos.length])
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(swapLogo, 2000)
@@ -100,6 +106,7 @@ function PartnerLogos() {
                     alt={logo.charAt(0).toUpperCase() + logo.slice(1)}
                     width={224}
                     height={90}
+                    loading="lazy"
                     decoding="async"
                   />
                 </div>
@@ -194,7 +201,7 @@ function FeaturesSection() {
       if (pct >= 100) {
         setActive((prev) => (prev + 1) % FEATURE_TABS.length)
       }
-    }, 50)
+    }, 200)
   }, [stopTimer])
 
   useEffect(() => {
@@ -224,6 +231,8 @@ function FeaturesSection() {
             src={`${IMG}/agents-features-bg.webp`}
             alt="Agents features bg"
             style={{ objectPosition: '50% 0%' }}
+            loading="lazy"
+            decoding="async"
           />
         </div>
         <div className="agents-features-icons">
@@ -231,6 +240,8 @@ function FeaturesSection() {
             src={`${IMG}/agents-features-icons.svg`}
             alt="Agents features icons"
             style={{ objectPosition: '50% 50%' }}
+            loading="lazy"
+            decoding="async"
           />
         </div>
         <div className="agents-features-content text-white text-center pt-[56px]">
@@ -271,9 +282,9 @@ function FeaturesSection() {
                 <h2 dangerouslySetInnerHTML={{ __html: t.heading }} />
                 <div className="agent-features-tab-ui">
                   <div className="screen">
-                    <img src={`${IMG}/browser.svg`} alt="Browser UI" className="screen-frame" />
+                    <img src={`${IMG}/browser.svg`} alt="Browser UI" className="screen-frame" loading="lazy" decoding="async" />
                     <div className="screen-content">
-                      <img src={t.thumb} alt={t.label} />
+                      <img src={t.thumb} alt={t.label} loading="lazy" decoding="async" />
                     </div>
                   </div>
                 </div>
@@ -312,7 +323,7 @@ function StatsAndTestimonialsSection() {
     progressRef.current = setInterval(() => {
       const elapsed = Date.now() - start
       setProgress(Math.min((elapsed / AUTO_DELAY) * 100, 100))
-    }, 50)
+    }, 200)
   }, [])
 
   const stopProgress = useCallback(() => {
@@ -397,9 +408,9 @@ function StatsAndTestimonialsSection() {
             {TESTIMONIALS.map((t, i) => (
               <SwiperSlide key={i} style={{ height: 'auto' }}>
                 <div
-                  className={`relative overflow-hidden rounded-3xl aspect-[4/5] max-[950px]:aspect-[4/6] bg-cover bg-center ${t.light ? 'text-white' : 'text-foreground/80'}`}
-                  style={{ backgroundImage: `url(${t.bg})` }}
+                  className={`relative overflow-hidden rounded-3xl aspect-[4/5] max-[950px]:aspect-[4/6] ${t.light ? 'text-white' : 'text-foreground/80'}`}
                 >
+                  <img src={t.bg} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" loading="eager" decoding="async" />
                   <div className="absolute inset-0 bg-black/10" />
                   <div className="relative z-10 flex flex-col justify-between gap-12 px-7 py-8 max-[950px]:p-8 h-full">
                     <div>
@@ -502,7 +513,7 @@ function ModelAgnosticSection() {
           <div className="model-agnostic-wrap relative max-[950px]:mb-8">
             <div className="grid grid-cols-12 gap-6 items-center">
               <div className="col-span-6 max-[950px]:col-span-full z-10 flex items-center justify-center py-[85px] pb-[70px]">
-                <img src={`${IMG}/model-agnostic-popover.svg`} alt="Model selector" />
+                <img src={`${IMG}/model-agnostic-popover.svg`} alt="Model selector" loading="lazy" decoding="async" />
               </div>
               <div className="col-span-4 max-[950px]:hidden col-start-8 z-10 text-white">
                 <p className="mb-6"><strong>Independent Ecosystem</strong></p>
@@ -512,7 +523,7 @@ function ModelAgnosticSection() {
               </div>
             </div>
             <div className="model-agnostic-bg absolute inset-0 overflow-hidden rounded-3xl z-[1]">
-              <img src={`${IMG}/agents-model-agnostic.webp`} alt="Model agnostic" className="w-full h-full object-cover" />
+              <img src={`${IMG}/agents-model-agnostic.webp`} alt="Model agnostic" className="w-full h-full object-cover" loading="lazy" decoding="async" />
             </div>
           </div>
           <div className="hidden max-[950px]:block px-3">
@@ -617,7 +628,7 @@ function TeamsSection() {
               <div key={t.id} className={`tab${t.id === activeId ? ' active' : ''}`} data-tab={t.id}>
                 <div className="media-with-prompt">
                   <div className="media rounded-3xl overflow-hidden" style={{ aspectRatio: '181 / 145' }}>
-                    <img src={t.thumb} alt={t.label} className="w-full h-full object-cover" />
+                    <img src={t.thumb} alt={t.label} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   </div>
                   <div className="prompt-overlay">
                     <div className="prompt-box-bg" />
@@ -708,7 +719,7 @@ function PartnershipSection() {
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-6 max-[950px]:col-span-full">
           <div className="min-[951px]:h-full overflow-hidden rounded-3xl">
-            <img src={`${IMG}/partnerships-banner.avif`} alt="Partnerships" className="w-full h-full object-cover" style={{ objectPosition: '50% 30%' }} />
+            <img src={`${IMG}/partnerships-banner.avif`} alt="Partnerships" className="w-full h-full object-cover" style={{ objectPosition: '50% 30%' }} loading="lazy" decoding="async" />
           </div>
         </div>
         <div className="col-span-6 max-[950px]:col-span-full">
@@ -779,7 +790,7 @@ function IntegrationsSecuritySection() {
                   {INTEGRATIONS.map((item) => (
                     <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+&]:mt-3">
                       <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
-                        <img src={`${IMG}/${item.icon}`} width={20} height={20} alt={`${item.name} icon`} className="w-auto h-auto max-w-5 max-h-5 object-contain dark:invert" />
+                        <img src={`${IMG}/${item.icon}`} width={20} height={20} alt={`${item.name} icon`} className="w-auto h-auto max-w-5 max-h-5 object-contain dark:invert" loading="lazy" decoding="async" />
                       </div>
                       <span>{item.name}</span>
                     </div>
@@ -797,7 +808,7 @@ function IntegrationsSecuritySection() {
                   {SECURITY_ITEMS.map((item) => (
                     <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+&]:mt-3">
                       <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
-                        <img src={`${IMG}/${item.icon}`} width={item.size} height={item.size} alt="security icon" className="w-auto h-auto max-w-5 max-h-5 object-contain dark:invert" />
+                        <img src={`${IMG}/${item.icon}`} width={item.size} height={item.size} alt="security icon" className="w-auto h-auto max-w-5 max-h-5 object-contain dark:invert" loading="lazy" decoding="async" />
                       </div>
                       <span>{item.name}</span>
                     </div>
@@ -819,7 +830,7 @@ function IntegrationsSecuritySection() {
 function BannerSection() {
   return (
     <div className="aspect-[36/19] max-[950px]:aspect-[4/5] overflow-hidden mb-5">
-      <img src={`${IMG}/team-banner.jpg`} alt="Team banner" className="w-full h-full object-cover" style={{ objectPosition: '40% 50%' }} />
+      <img src={`${IMG}/team-banner.jpg`} alt="Team banner" className="w-full h-full object-cover" style={{ objectPosition: '40% 50%' }} loading="lazy" decoding="async" />
     </div>
   )
 }
@@ -839,7 +850,7 @@ function IOSAppSection() {
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-8 col-start-3 max-[950px]:col-span-full max-[950px]:col-start-1 text-center">
           <div className="mb-5">
-            <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" className="w-full h-auto object-contain" />
+            <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" className="w-full h-auto object-contain" loading="lazy" decoding="async" />
           </div>
           <p className="text-[13px] leading-4 tracking-wide font-[450] mb-5 max-w-[530px] mx-auto">
             <span className="opacity-60">Connect all your tools, access open-source AI, and join a global community building technology for good. Every product we create is designed to serve people, not exploit them.</span> Free and open source.
@@ -901,7 +912,7 @@ function TrustedBySection() {
           <div className="grid grid-cols-8 max-[950px]:grid-cols-2 gap-x-5 items-center">
             {TRUSTED_LOGOS.map((logo) => (
               <div key={logo} className="flex justify-center items-center">
-                <img src={`${IMG}/${logo}.svg`} alt={logo} className="max-h-[66px] w-auto dark:invert" />
+                <img src={`${IMG}/${logo}.svg`} alt={logo} className="max-h-[66px] w-auto dark:invert" loading="lazy" decoding="async" />
               </div>
             ))}
           </div>
