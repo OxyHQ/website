@@ -124,7 +124,7 @@ function AllInOneSection() {
             AI platform for real work
           </h2>
           <p className="max-w-[440px] mx-auto">A seamless, beautiful way to bring AI into your company&apos;s apps, knowledge, and culture.</p>
-          <a href="#book-intro" className="btn bg-black text-white">Book an intro</a>
+          <a href="#book-intro" className="btn bg-foreground text-background">Book an intro</a>
         </div>
       </div>
     </section>
@@ -348,7 +348,7 @@ function StatsAndTestimonialsSection() {
         <div className="col-span-full mb-5">
           <div className="flex gap-6 my-6 overflow-x-auto">
             {STATS.map((s, i) => (
-              <div key={s.label} className={`flex-1 min-w-[230px] px-6 max-[1460px]:flex-none max-[1460px]:w-[250px] max-[950px]:w-[150px]${i < STATS.length - 1 ? ' border-r border-black/10' : ''}`}>
+              <div key={s.label} className={`flex-1 min-w-[230px] px-6 max-[1460px]:flex-none max-[1460px]:w-[250px] max-[950px]:w-[150px]${i < STATS.length - 1 ? ' border-r border-foreground/10' : ''}`}>
                 <div>
                   <p className="text-[13px] leading-4 tracking-wide font-[450] opacity-80 mb-[34px]"><strong>{s.label}</strong></p>
                 </div>
@@ -386,7 +386,7 @@ function StatsAndTestimonialsSection() {
             {TESTIMONIALS.map((t, i) => (
               <SwiperSlide key={i} style={{ height: 'auto' }}>
                 <div
-                  className={`overflow-hidden rounded-3xl flex flex-col justify-between gap-12 px-7 py-8 max-[950px]:p-8 aspect-[4/5] max-[950px]:aspect-[4/6] bg-cover bg-center ${t.light ? 'text-white' : 'text-black/80'}`}
+                  className={`overflow-hidden rounded-3xl flex flex-col justify-between gap-12 px-7 py-8 max-[950px]:p-8 aspect-[4/5] max-[950px]:aspect-[4/6] bg-cover bg-center ${t.light ? 'text-white' : 'text-foreground/80'}`}
                   style={{ backgroundImage: `url(${t.bg})` }}
                 >
                   <div>
@@ -683,7 +683,7 @@ function TeamsSection() {
                 </div>
               ))}
             </div>
-            <a href="#book-intro" className="btn bg-black text-white">Book an intro</a>
+            <a href="#book-intro" className="btn bg-foreground text-background">Book an intro</a>
           </div>
         </div>
       </div>
@@ -742,12 +742,12 @@ function PartnershipSection() {
         <div className="col-span-6 max-[950px]:col-span-full">
           <div className="grid grid-cols-2 max-[650px]:grid-cols-1 gap-6">
             {PARTNERSHIP_ITEMS.map((item) => (
-              <div key={item} className="p-5 px-6 rounded-3xl bg-black/5 flex flex-col gap-[26px]">
+              <div key={item} className="p-5 px-6 rounded-3xl bg-foreground/5 flex flex-col gap-[26px]">
                 <TickFilledIcon className="inline-block w-[1em] h-[1em] fill-current stroke-current stroke-0 opacity-40" />
                 {item}
               </div>
             ))}
-            <a href="#book-intro" className="bg-black text-white p-5 px-6 rounded-3xl flex flex-col gap-[26px] justify-end transition-opacity duration-400 hover:opacity-60">Book an intro</a>
+            <a href="#book-intro" className="bg-foreground text-background p-5 px-6 rounded-3xl flex flex-col gap-[26px] justify-end transition-opacity duration-400 hover:opacity-60">Book an intro</a>
           </div>
         </div>
       </div>
@@ -799,14 +799,14 @@ function IntegrationsSecuritySection() {
       </div>
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full">
-          <div className="p-8 rounded-3xl bg-black/[0.03]">
+          <div className="p-8 rounded-3xl bg-foreground/[0.03]">
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Connect your daily tools automatically</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
                 <div className="integrations-list text-[13px] leading-4 tracking-wide font-[450]">
                   {INTEGRATIONS.map((item) => (
                     <div key={item.name} className="integrations-list-item grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+.integrations-list-item]:mt-3">
-                      <div className="w-10 h-10 bg-white rounded-[14px] flex items-center justify-center shadow-[0_0_0_0.44px_rgba(0,0,0,0.05),0_0.88px_1.75px_rgba(0,0,0,0.08)]">
+                      <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
                         <img src={`${IMG}/${item.icon}`} width={20} height={20} alt={`${item.name} icon`} className="w-auto h-auto max-w-5 max-h-5 object-contain" />
                       </div>
                       <span>{item.name}</span>
@@ -815,16 +815,16 @@ function IntegrationsSecuritySection() {
                 </div>
               </div>
             </div>
-            <a className="btn max-[950px]:static absolute bottom-8 left-8" style={{ background: 'rgba(0,0,0,0.05)' }} href="#integrations">See full integrations list</a>
+            <a className="btn max-[950px]:static absolute bottom-8 left-8" style={{ background: 'color-mix(in srgb, var(--foreground) 5%, transparent)' }} href="#integrations">See full integrations list</a>
           </div>
-          <div className="p-8 rounded-3xl bg-black/[0.03] mt-4">
+          <div className="p-8 rounded-3xl bg-foreground/[0.03] mt-4">
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Security you can stand by</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
                 <div className="integrations-list text-[13px] leading-4 tracking-wide font-[450]">
                   {SECURITY_ITEMS.map((item) => (
                     <div key={item.name} className="integrations-list-item grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+.integrations-list-item]:mt-3">
-                      <div className="w-10 h-10 bg-white rounded-[14px] flex items-center justify-center shadow-[0_0_0_0.44px_rgba(0,0,0,0.05),0_0.88px_1.75px_rgba(0,0,0,0.08)]">
+                      <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
                         <img src={`${IMG}/${item.icon}`} width={item.size} height={item.size} alt="security icon" className="w-auto h-auto max-w-5 max-h-5 object-contain" />
                       </div>
                       <span>{item.name}</span>
@@ -833,7 +833,7 @@ function IntegrationsSecuritySection() {
                 </div>
               </div>
             </div>
-            <a className="btn max-[950px]:static absolute bottom-8 left-8" style={{ background: 'rgba(0,0,0,0.05)' }} href="#security">Read more about privacy</a>
+            <a className="btn max-[950px]:static absolute bottom-8 left-8" style={{ background: 'color-mix(in srgb, var(--foreground) 5%, transparent)' }} href="#security">Read more about privacy</a>
           </div>
         </div>
       </div>
@@ -920,7 +920,7 @@ const TRUSTED_LOGOS = ['strava', 'polestar', 'merck', 'apollo.io', 'robinhood', 
 
 function TrustedBySection() {
   return (
-    <section className="bg-sand text-black py-10 pb-[50px]">
+    <section className="bg-surface text-foreground py-10 pb-[50px]">
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full">
           <h3 className="text-[22px] leading-[1.2] font-[450] mb-10 max-w-[720px]">
@@ -1003,9 +1003,9 @@ function PricingSection() {
                   <p className="text-[22px] leading-[1.2] font-[450] mb-3">{plan.name}</p>
                   <p className="mb-5"><strong>{plan.price}</strong></p>
                   {plan.name === 'Enterprise' ? (
-                    <a className="btn bg-black text-white" href="#book-intro">{plan.cta}</a>
+                    <a className="btn bg-foreground text-background" href="#book-intro">{plan.cta}</a>
                   ) : (
-                    <a className="btn" style={{ background: 'rgb(0, 0, 0, 0.05)' }} href={plan.ctaHref} target="_blank" rel="noopener noreferrer">{plan.cta}</a>
+                    <a className="btn" style={{ background: 'color-mix(in srgb, var(--foreground) 5%, transparent)' }} href={plan.ctaHref} target="_blank" rel="noopener noreferrer">{plan.cta}</a>
                   )}
                   <hr className="border-0 border-t border-black/[0.07] my-6" />
                   <ul className="list-none p-0 m-0">
