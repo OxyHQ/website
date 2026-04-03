@@ -413,8 +413,7 @@
 .oxy-landing .hero-cube-slot {
   position: relative;
   cursor: pointer;
-  perspective: 800px;
-  overflow: clip;
+  perspective: 1600px;
 }
 .oxy-landing .hero-cube-inner {
   position: relative;
