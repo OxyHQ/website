@@ -35,7 +35,7 @@ interface NavDropdownItemProps {
   item: NavDropdownItemType
 }
 
-const linkClass = "group relative flex w-full items-center justify-start gap-x-3 rounded-xl border border-transparent p-2 transition-colors duration-300 hover:bg-surface h-fit before:absolute before:-top-0.75 before:-right-1.75 before:-bottom-0.75 before:-left-1.75"
+const linkClass = "group relative flex w-full items-center justify-start gap-x-3 rounded-xl border border-transparent p-2 transition-colors duration-300 hover:bg-foreground/5 h-fit before:absolute before:-top-0.75 before:-right-1.75 before:-bottom-0.75 before:-left-1.75"
 
 function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const IconComponent = item.icon ? iconMap[item.icon] : null
