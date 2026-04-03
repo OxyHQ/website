@@ -164,6 +164,7 @@ const FAIRCOIN_STATS = [
 ]
 
 function FairCoinFace() {
+  const [runs, setRuns] = useState(() => FAIRCOIN_STATS.map(() => 0))
   return (
     <div className="grid h-full w-full grid-cols-[1fr_1fr_auto] [border-radius:9999px_20px_20px_9999px] bg-[#166534]">
       {/* Col 1: title + buttons */}
@@ -186,8 +187,8 @@ function FairCoinFace() {
       {/* Col 2: stats grid */}
       <div className="flex items-center py-4 px-3 lg:py-5 lg:px-4">
         <div className="flex w-full flex-col gap-1.5 lg:gap-2">
-          {FAIRCOIN_STATS.map((stat) => (
-            <div key={stat.label} className="rounded-full bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5">
+          {FAIRCOIN_STATS.map((stat, i) => (
+            <div key={stat.label} className="cursor-pointer rounded-full bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5" onClick={() => setRuns(r => r.map((v, j) => j === i ? v + 1 : v))}>
               <div className="flex items-center gap-2">
                 <stat.Icon size={16} className="text-green-400" weight="bold" />
                 <div>
@@ -195,7 +196,7 @@ function FairCoinFace() {
                     {stat.label}
                   </span>
                   <span className="block text-xl font-bold text-white lg:text-2xl">
-                    <AnimatedStat end={stat.end} decimals={stat.decimals} />
+                    <AnimatedStat key={runs[i]} end={stat.end} decimals={stat.decimals} />
                   </span>
                 </div>
               </div>
