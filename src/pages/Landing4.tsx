@@ -137,33 +137,33 @@ function AllInOneSection() {
 /* ------------------------------------------------------------------ */
 const FEATURE_TABS = [
   {
-    id: 'automate',
-    label: 'Automate',
-    heading: 'Run complex,<br>multi-step processes.',
+    id: 'mention',
+    label: 'Mention',
+    heading: 'Connect authentically.<br>Share what matters.',
     thumb: `${IMG}/video-thumb-automate.webp`,
   },
   {
-    id: 'create',
-    label: 'Create',
-    heading: 'Generate collaborative<br>content in any format',
+    id: 'horizon',
+    label: 'Horizon',
+    heading: 'See the bigger picture.<br>Build together.',
     thumb: `${IMG}/video-thumb-create.webp`,
   },
   {
-    id: 'analyze',
-    label: 'Analyze',
-    heading: 'Turn data into live<br>dashboards and reports',
+    id: 'faircoin',
+    label: 'FairCoin',
+    heading: 'Currency that cares.<br>Commerce that\'s fair.',
     thumb: `${IMG}/video-thumb-analyze.webp`,
   },
   {
-    id: 'act',
-    label: 'Act',
-    heading: 'Take instant actions<br>across your tools',
+    id: 'homiio',
+    label: 'Homiio',
+    heading: 'Home for everyone.<br>Affordable by design.',
     thumb: `${IMG}/video-thumb-act.webp`,
   },
   {
-    id: 'find',
-    label: 'Find',
-    heading: 'All the latest company<br>docs and data',
+    id: 'oxyai',
+    label: 'Oxy AI',
+    heading: 'Intelligence with integrity.<br>AI for good.',
     thumb: `${IMG}/agents_carousel_search.webp`,
   },
 ]
