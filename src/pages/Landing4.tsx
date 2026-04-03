@@ -361,7 +361,7 @@ function StatsAndTestimonialsSection() {
         </div>
         <div className="col-span-full">
           <Swiper
-            modules={[Autoplay, Pagination]}
+            modules={[Autoplay]}
             onSwiper={(s) => { swiperRef.current = s }}
             slidesPerView={4}
             spaceBetween={24}
