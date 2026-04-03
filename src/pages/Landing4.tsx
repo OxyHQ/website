@@ -232,7 +232,7 @@ function FeaturesSection() {
             style={{ objectPosition: '50% 50%' }}
           />
         </div>
-        <div className="agents-features-content text-white">
+        <div className="agents-features-content text-white text-center pt-[56px]">
           <div className="agents-features-tabs-nav tabs-nav">
             {FEATURE_TABS.map((t, i) => (
               <a
@@ -659,18 +659,18 @@ function TeamsSection() {
             ))}
           </div>
         </div>
-        <div className="col-span-5 col-start-8 max-[950px]:col-span-full max-[950px]:col-start-1">
+        <div className="col-span-5 col-start-8 max-[950px]:col-span-full max-[950px]:col-start-1 flex flex-col gap-12 justify-between">
           <div>
             <p className="text-oxy-red mb-5"><strong>Every team gets smarter with Oxy</strong></p>
-            <div className="tabs-nav no-default teams-tabs-nav">
+            <div className="tabs-nav no-default teams-tabs-nav flex flex-col">
               {TEAM_TABS.map((t) => (
                 <a
                   key={t.id}
-                  className={`text-[22px] leading-[1.2] font-[450]${t.id === activeId ? ' active' : ''}`}
+                  className={`text-[22px] leading-[1.2] font-[450] flex items-center justify-start gap-[0.3em] cursor-pointer${t.id === activeId ? ' opacity-100' : ' opacity-30'}`}
                   data-tab={t.id}
                   onClick={() => handleTabClick(t.id)}
                 >
-                  <span>&rarr;</span> {t.label}
+                  <span className={t.id === activeId ? 'inline' : 'hidden'}>&rarr;</span> {t.label}
                 </a>
               ))}
             </div>
@@ -740,14 +740,14 @@ function PartnershipSection() {
           </div>
         </div>
         <div className="col-span-6 max-[950px]:col-span-full">
-          <div className="partnership-services">
+          <div className="grid grid-cols-2 max-[650px]:grid-cols-1 gap-6">
             {PARTNERSHIP_ITEMS.map((item) => (
-              <div key={item} className="partnership-service">
-                <TickFilledIcon className="inline-icon opacity-40" />
+              <div key={item} className="p-5 px-6 rounded-3xl bg-black/5 flex flex-col gap-[26px]">
+                <TickFilledIcon className="inline-block w-[1em] h-[1em] fill-current stroke-current stroke-0 opacity-40" />
                 {item}
               </div>
             ))}
-            <a href="#book-intro" className="bg-black text-white partnership-service">Book an intro</a>
+            <a href="#book-intro" className="bg-black text-white p-5 px-6 rounded-3xl flex flex-col gap-[26px] justify-end transition-opacity duration-400 hover:opacity-60">Book an intro</a>
           </div>
         </div>
       </div>
@@ -799,15 +799,15 @@ function IntegrationsSecuritySection() {
       </div>
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-full">
-          <div className="integrations-card-wrapper">
+          <div className="p-8 rounded-3xl bg-black/[0.03]">
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Connect your daily tools automatically</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
                 <div className="integrations-list text-[13px] leading-4 tracking-wide font-[450]">
                   {INTEGRATIONS.map((item) => (
-                    <div key={item.name} className="integrations-list-item">
-                      <div className="integrations-list-item-icon">
-                        <img src={`${IMG}/${item.icon}`} width={20} height={20} alt={`${item.name} icon`} />
+                    <div key={item.name} className="integrations-list-item grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+.integrations-list-item]:mt-3">
+                      <div className="w-10 h-10 bg-white rounded-[14px] flex items-center justify-center shadow-[0_0_0_0.44px_rgba(0,0,0,0.05),0_0.88px_1.75px_rgba(0,0,0,0.08)]">
+                        <img src={`${IMG}/${item.icon}`} width={20} height={20} alt={`${item.name} icon`} className="w-auto h-auto max-w-5 max-h-5 object-contain" />
                       </div>
                       <span>{item.name}</span>
                     </div>
@@ -815,17 +815,17 @@ function IntegrationsSecuritySection() {
                 </div>
               </div>
             </div>
-            <a className="btn" style={{ background: 'rgba(0,0,0,0.05)' }} href="#integrations">See full integrations list</a>
+            <a className="btn max-[950px]:static absolute bottom-8 left-8" style={{ background: 'rgba(0,0,0,0.05)' }} href="#integrations">See full integrations list</a>
           </div>
-          <div className="integrations-card-wrapper">
+          <div className="p-8 rounded-3xl bg-black/[0.03] mt-4">
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-4 max-[950px]:col-span-full"><p><strong>Security you can stand by</strong></p></div>
               <div className="col-span-7 max-[950px]:col-span-full">
                 <div className="integrations-list text-[13px] leading-4 tracking-wide font-[450]">
                   {SECURITY_ITEMS.map((item) => (
-                    <div key={item.name} className="integrations-list-item">
-                      <div className="integrations-list-item-icon">
-                        <img src={`${IMG}/${item.icon}`} width={item.size} height={item.size} alt="security icon" />
+                    <div key={item.name} className="integrations-list-item grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+.integrations-list-item]:mt-3">
+                      <div className="w-10 h-10 bg-white rounded-[14px] flex items-center justify-center shadow-[0_0_0_0.44px_rgba(0,0,0,0.05),0_0.88px_1.75px_rgba(0,0,0,0.08)]">
+                        <img src={`${IMG}/${item.icon}`} width={item.size} height={item.size} alt="security icon" className="w-auto h-auto max-w-5 max-h-5 object-contain" />
                       </div>
                       <span>{item.name}</span>
                     </div>
@@ -833,7 +833,7 @@ function IntegrationsSecuritySection() {
                 </div>
               </div>
             </div>
-            <a className="btn" style={{ background: 'rgba(0,0,0,0.05)' }} href="#security">Read more about privacy</a>
+            <a className="btn max-[950px]:static absolute bottom-8 left-8" style={{ background: 'rgba(0,0,0,0.05)' }} href="#security">Read more about privacy</a>
           </div>
         </div>
       </div>
