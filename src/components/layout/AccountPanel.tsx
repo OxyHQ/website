@@ -29,12 +29,12 @@ function Chevron() {
 
 /* ─── Quick‑action data ─── */
 const quickActions = [
-  { label: 'Personal Info', href: 'https://accounts.oxy.so', stroke: '#34A853', bg: '#e6f4ea', d: 'M13.5 15.75v-1.5a3 3 0 00-3-3h-3a3 3 0 00-3 3v1.5M9 8.25a3 3 0 100-6 3 3 0 000 6z' },
-  { label: 'Security', href: 'https://accounts.oxy.so', stroke: '#4285F4', bg: '#e8f0fe', d: 'M9 1.5L3 4.5v4.5c0 4.14 2.56 7.01 6 7.5 3.44-.49 6-3.36 6-7.5V4.5L9 1.5z' },
-  { label: 'Devices', href: 'https://accounts.oxy.so', stroke: '#4285F4', bg: '#e8f0fe', d: 'M2.25 3.75h13.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H2.25a.75.75 0 01-.75-.75v-7.5a.75.75 0 01.75-.75zM6.75 15h4.5M9 12.75v2.25' },
-  { label: 'Data & Privacy', href: 'https://accounts.oxy.so', stroke: '#9C27B0', bg: '#f3e8fd', d: 'M9 2.25v13.5M2.25 9h13.5M3.75 3.75h10.5a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5v-7.5a1.5 1.5 0 011.5-1.5z' },
-  { label: 'Sharing', href: 'https://accounts.oxy.so', stroke: '#EA4335', bg: '#fce8e6', d: 'M12 6.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM12 15.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM6 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM7.95 10.2l2.1 1.8M10.05 5.7l-2.1 1.8' },
-  { label: 'Payments', href: 'https://accounts.oxy.so', stroke: '#FBBC04', bg: '#fef7e0', d: 'M2.25 6.75h13.5M2.25 5.25a1.5 1.5 0 011.5-1.5h10.5a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5v-7.5z' },
+  { label: 'Personal Info', href: 'https://accounts.oxy.so/personal-info', stroke: '#34A853', bg: '#e6f4ea', d: 'M13.5 15.75v-1.5a3 3 0 00-3-3h-3a3 3 0 00-3 3v1.5M9 8.25a3 3 0 100-6 3 3 0 000 6z' },
+  { label: 'Security', href: 'https://accounts.oxy.so/security', stroke: '#4285F4', bg: '#e8f0fe', d: 'M9 1.5L3 4.5v4.5c0 4.14 2.56 7.01 6 7.5 3.44-.49 6-3.36 6-7.5V4.5L9 1.5z' },
+  { label: 'Devices', href: 'https://accounts.oxy.so/devices', stroke: '#4285F4', bg: '#e8f0fe', d: 'M2.25 3.75h13.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H2.25a.75.75 0 01-.75-.75v-7.5a.75.75 0 01.75-.75zM6.75 15h4.5M9 12.75v2.25' },
+  { label: 'Data & Privacy', href: 'https://accounts.oxy.so/data', stroke: '#9C27B0', bg: '#f3e8fd', d: 'M9 2.25v13.5M2.25 9h13.5M3.75 3.75h10.5a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5v-7.5a1.5 1.5 0 011.5-1.5z' },
+  { label: 'Sharing', href: 'https://accounts.oxy.so/sharing', stroke: '#EA4335', bg: '#fce8e6', d: 'M12 6.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM12 15.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM6 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM7.95 10.2l2.1 1.8M10.05 5.7l-2.1 1.8' },
+  { label: 'Payments', href: 'https://accounts.oxy.so/payments', stroke: '#FBBC04', bg: '#fef7e0', d: 'M2.25 6.75h13.5M2.25 5.25a1.5 1.5 0 011.5-1.5h10.5a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5v-7.5z' },
 ]
 
 /* ─── Grouped menu items ─── */
