@@ -272,8 +272,11 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
       )}
 
     <header
-      className={`fixed left-0 right-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${isTransparent ? 'bg-transparent border-b border-transparent' : 'bg-background/80 border-b border-border backdrop-blur-md'}`}
-      style={{ top: bannerOffset }}
+      className={`fixed left-0 right-0 z-50 transition-[border-color,backdrop-filter] duration-300 ${isTransparent ? 'border-b border-transparent' : 'border-b border-border backdrop-blur-md'}`}
+      style={{
+        top: bannerOffset,
+        background: isTransparent ? 'transparent' : 'color-mix(in srgb, var(--background) 80%, transparent)',
+      }}
     >
 
       {/* ─── Hidden measurement panels (off-screen, unstyled, for measuring natural size) ─── */}
@@ -415,8 +418,9 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
           onMouseLeave={scheduleClose}
         >
           <div
-            className="overflow-hidden rounded-xl border border-border backdrop-blur-md [background:color-mix(in_srgb,var(--background)_80%,transparent)]"
+            className="overflow-hidden rounded-xl border border-border backdrop-blur-md"
             style={{
+              background: 'color-mix(in srgb, var(--background) 80%, transparent)',
               width: activeSize ? activeSize.w : 0,
               height: activeSize ? activeSize.h : 0,
               transition: `width 0.2s ${easing}, height 0.2s ${easing}`,
