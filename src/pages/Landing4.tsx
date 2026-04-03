@@ -717,7 +717,7 @@ function TickFilledIcon({ className }: { className?: string }) {
 {/* tick (check-badge) from SVG icon */}
 function TickIcon({ className }: { className?: string }) {
   return (
-    <svg className={className ?? 'inline-icon'} viewBox="0 0 32 32" fill="currentColor">
+    <svg className={className ?? 'inline-block w-[1em] h-[1em] fill-current stroke-current stroke-0'} viewBox="0 0 32 32" fill="currentColor">
       <path d="M7.732 27.587c-1.196 0-2.079-0.285-2.65-0.857s-0.857-1.455-0.857-2.65v-2.892c0-0.268-0.089-0.495-0.268-0.683l-2.048-2.061c-0.848-0.839-1.272-1.66-1.272-2.463s0.424-1.629 1.272-2.476l2.048-2.061c0.178-0.187 0.268-0.411 0.268-0.669v-2.905c0-1.205 0.286-2.088 0.857-2.65 0.571-0.571 1.455-0.857 2.65-0.857h2.905c0.268 0 0.491-0.089 0.669-0.268l2.061-2.048c0.848-0.848 1.673-1.272 2.476-1.272 0.803-0.009 1.624 0.415 2.463 1.272l2.061 2.048c0.187 0.178 0.415 0.268 0.683 0.268h2.891c1.205 0 2.088 0.29 2.65 0.87 0.571 0.571 0.857 1.45 0.857 2.637v2.905c0 0.259 0.094 0.482 0.281 0.669l2.048 2.061c0.839 0.848 1.258 1.673 1.258 2.476 0.009 0.803-0.41 1.624-1.258 2.463l-2.048 2.061c-0.188 0.187-0.281 0.415-0.281 0.683v2.892c0 1.205-0.286 2.088-0.857 2.65-0.571 0.571-1.455 0.857-2.65 0.857h-2.891c-0.268 0-0.495 0.094-0.683 0.281l-2.061 2.048c-0.839 0.839-1.66 1.258-2.463 1.258-0.803 0.009-1.629-0.411-2.476-1.258l-2.061-2.048c-0.178-0.187-0.402-0.281-0.669-0.281h-2.905zM14.345 22.514c0.232 0 0.442-0.054 0.629-0.161s0.352-0.268 0.495-0.482l6.292-9.919c0.080-0.134 0.156-0.277 0.228-0.428s0.107-0.303 0.107-0.455c0-0.312-0.116-0.558-0.348-0.736-0.232-0.187-0.491-0.281-0.776-0.281-0.393 0-0.714 0.205-0.964 0.616l-5.716 9.183-2.717-3.507c-0.17-0.223-0.335-0.375-0.495-0.455-0.152-0.080-0.326-0.12-0.522-0.12-0.303 0-0.558 0.112-0.763 0.335-0.205 0.214-0.308 0.473-0.308 0.776 0 0.152 0.027 0.303 0.080 0.455 0.062 0.143 0.143 0.281 0.241 0.415l3.36 4.123c0.178 0.232 0.361 0.397 0.549 0.495s0.397 0.147 0.629 0.147z" />
     </svg>
   )
@@ -926,10 +926,10 @@ function TrustedBySection() {
           <h3 className="text-[22px] leading-[1.2] font-[450] mb-10 max-w-[720px]">
             Oxy is trusted by leading <br className="max-[950px]:hidden" />enterprises across industries
           </h3>
-          <div className="static-logos" style={{ '--numLogos': 8, '--numLogosMobile': 2 } as React.CSSProperties}>
+          <div className="grid grid-cols-8 max-[950px]:grid-cols-2 gap-x-5 items-center">
             {TRUSTED_LOGOS.map((logo) => (
-              <div key={logo} className="static-logo">
-                <img src={`${IMG}/${logo}.svg`} alt={logo} />
+              <div key={logo} className="flex justify-center items-center">
+                <img src={`${IMG}/${logo}.svg`} alt={logo} className="max-h-[66px] w-auto" />
               </div>
             ))}
           </div>
@@ -997,9 +997,9 @@ function PricingSection() {
         <div className="col-span-full">
           <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-10 text-center">Pricing</h2>
           <div className="mb-20">
-            <div className="flex-cols" style={{ '--vertical': '6rem' } as React.CSSProperties}>
+            <div className="flex gap-[18px] max-[950px]:flex-col" style={{ rowGap: '6rem' }}>
               {PLANS.map((plan) => (
-                <div key={plan.name} className="flex-col">
+                <div key={plan.name} className="flex-1">
                   <p className="text-[22px] leading-[1.2] font-[450] mb-3">{plan.name}</p>
                   <p className="mb-5"><strong>{plan.price}</strong></p>
                   {plan.name === 'Enterprise' ? (
@@ -1007,11 +1007,11 @@ function PricingSection() {
                   ) : (
                     <a className="btn" style={{ background: 'rgb(0, 0, 0, 0.05)' }} href={plan.ctaHref} target="_blank" rel="noopener noreferrer">{plan.cta}</a>
                   )}
-                  <hr />
-                  <ul className="checklist">
+                  <hr className="border-0 border-t border-black/[0.07] my-6" />
+                  <ul className="list-none p-0 m-0">
                     {plan.features.map((f, i) => (
-                      <li key={i}>
-                        <TickIcon />
+                      <li key={i} className="grid grid-cols-[24px_1fr] gap-2 items-start mb-3 text-base leading-[1.4]">
+                        <TickIcon className="inline-block w-[1em] h-[1em] fill-current stroke-current stroke-0 text-base" />
                         {f}
                       </li>
                     ))}
