@@ -80,22 +80,20 @@ export default function AccountPanel() {
           </div>
 
           {/* ─── Profile header with animated background ─── */}
-          <div className="relative flex flex-col items-center pb-5 pt-1">
-            {/* Animated gradient — full width, ambient */}
-            <div className="relative flex h-[100px] w-full items-center justify-center overflow-hidden">
+          <div className="flex flex-col items-center pb-5 pt-1">
+            {/* Animation container — avatar fills its full height, like the accounts app */}
+            <div className="relative flex h-[80px] w-full max-w-[480px] items-center justify-center overflow-hidden">
               <div
-                className="absolute inset-0 opacity-60"
+                className="absolute inset-0"
                 style={{
                   background: 'linear-gradient(135deg, #4285F4, #34A853, #FBBC04, #EA4335, #9C27B0, #4285F4)',
                   backgroundSize: '300% 300%',
                   animation: 'avatar-bg 8s ease infinite',
+                  opacity: 0.5,
                 }}
               />
-              <div className="absolute inset-0" style={{
-                background: 'radial-gradient(circle at 50% 100%, var(--color-background) 0%, transparent 70%)',
-              }} />
               <div className="relative z-10">
-                <Avatar source={user?.avatar} size={64} placeholderColor={user?.color} />
+                <Avatar source={user?.avatar} size={80} placeholderColor={user?.color} />
               </div>
             </div>
             <div className="mt-3 text-center">
