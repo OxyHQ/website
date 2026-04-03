@@ -161,10 +161,11 @@ function FairCoinFace() {
   )
 }
 
-/* ─── Carousel Slot — renders one grid cell, optionally with 3D cube rotation ─── */
+/* ─── Carousel Slot — renders one grid cell ─── */
 export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   const sizeClass = sizeClasses[slot.size] ?? 'hero-card-1x1'
 
+  // Static card — no rotation
   if (slot.faces.length <= 1) {
     return (
       <div className={`hero-card ${sizeClass}`}>
@@ -173,21 +174,30 @@ export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
     )
   }
 
+  // Rotating card — the entire grid cell IS the cube
   return (
-    <div className={`hero-card has-cube ${sizeClass}`}>
-      <CubeRotatingCard faces={slot.faces} interval={slot.rotateInterval ?? 4000} />
-    </div>
+    <CubeCard
+      sizeClass={sizeClass}
+      faces={slot.faces}
+      interval={slot.rotateInterval ?? 4000}
+    />
   )
 }
 
-/* ─── Real 3D Cube rotation ───
- * The wrapper has perspective. Inside, a "cube" div has preserve-3d and rotates.
- * Two faces are positioned in 3D space:
- *   - Front face: translateZ(halfHeight)  — visible at rotateX(0)
- *   - Top face:   rotateX(90deg) translateZ(halfHeight) — visible at container rotateX(-90deg)
- * On each tick the container animates rotateX from 0 → -90deg, then snaps back with new content.
+/* ─── 3D Cube Card ───
+ * The grid cell itself is the cube perspective container.
+ * A rotating inner div holds two faces positioned in 3D space.
+ * The entire card — border-radius, content, everything — rotates as one unit.
+ *
+ * Geometry (vertical rotation, top→front):
+ *   Front face:  translateZ(halfHeight)             — visible at rotateX(0)
+ *   Top face:    rotateX(90deg) translateZ(halfHeight)  — visible at rotateX(-90deg)
  */
-function CubeRotatingCard({ faces, interval }: { faces: HeroCard[]; interval: number }) {
+function CubeCard({ sizeClass, faces, interval }: {
+  sizeClass: string
+  faces: HeroCard[]
+  interval: number
+}) {
   const [current, setCurrent] = useState(0)
   const [angle, setAngle] = useState(0)
   const cubeRef = useRef<HTMLDivElement>(null)
@@ -195,7 +205,6 @@ function CubeRotatingCard({ faces, interval }: { faces: HeroCard[]; interval: nu
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
   const next = (current + 1) % faces.length
 
-  // Measure actual element height to position cube faces
   useLayoutEffect(() => {
     if (cubeRef.current) {
       setHalfH(cubeRef.current.offsetHeight / 2)
@@ -204,18 +213,11 @@ function CubeRotatingCard({ faces, interval }: { faces: HeroCard[]; interval: nu
 
   useEffect(() => {
     const id = setInterval(() => {
-      // Rotate to -90deg to show the top face
       setAngle(-90)
-
-      // After transition completes, snap: advance index, reset angle instantly
       timeoutRef.current = setTimeout(() => {
         setCurrent(c => (c + 1) % faces.length)
-        // Temporarily disable transition for the snap-back
-        if (cubeRef.current) {
-          cubeRef.current.style.transition = 'none'
-        }
+        if (cubeRef.current) cubeRef.current.style.transition = 'none'
         setAngle(0)
-        // Re-enable transition on next frame
         requestAnimationFrame(() => {
           if (cubeRef.current) {
             cubeRef.current.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)'
@@ -223,7 +225,6 @@ function CubeRotatingCard({ faces, interval }: { faces: HeroCard[]; interval: nu
         })
       }, 800)
     }, interval)
-
     return () => {
       clearInterval(id)
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
@@ -231,25 +232,25 @@ function CubeRotatingCard({ faces, interval }: { faces: HeroCard[]; interval: nu
   }, [faces.length, interval])
 
   return (
-    <div className="cube-perspective">
+    <div className={`hero-cube-slot ${sizeClass}`}>
       <div
         ref={cubeRef}
-        className="cube-inner"
+        className="hero-cube-inner"
         style={{
           transform: `rotateX(${angle}deg)`,
           transition: 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
-        {/* Front face */}
+        {/* Front face — the card you see normally */}
         <div
-          className="cube-face"
+          className="hero-cube-face"
           style={{ transform: `translateZ(${halfH}px)` }}
         >
           <CardFace card={faces[current]} />
         </div>
-        {/* Top face — pre-rotated 90deg so it appears when cube rotates -90deg */}
+        {/* Top face — rotates into view when cube flips */}
         <div
-          className="cube-face"
+          className="hero-cube-face"
           style={{ transform: `rotateX(90deg) translateZ(${halfH}px)` }}
         >
           <CardFace card={faces[next]} />

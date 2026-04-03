@@ -389,36 +389,34 @@
   cursor: pointer;
   transition: transform 0.3s ease;
 }
-/* Cards with cube rotation: clip-path clips without flattening 3D context */
-.oxy-landing .hero-card.has-cube {
-  overflow: visible;
-  clip-path: inset(0 round 2rem);
-  transform-style: preserve-3d;
-}
 .oxy-landing .hero-card:hover {
   transform: scale(1.02);
 }
 
-/* Card size variants */
-.oxy-landing .hero-card-1x1 { grid-row: span 1; grid-column: span 1; }
-.oxy-landing .hero-card-2x1 { grid-row: span 1; grid-column: span 2; }
-.oxy-landing .hero-card-1x2 { grid-row: span 2; grid-column: span 1; }
-.oxy-landing .hero-card-2x2 { grid-row: span 2; grid-column: span 2; }
-.oxy-landing .hero-card-4x2 { grid-row: span 2; grid-column: span 4; }
+/* Card size variants — shared between static cards and cube cards */
+.oxy-landing .hero-card-1x1,
+.oxy-landing .hero-cube-slot.hero-card-1x1 { grid-row: span 1; grid-column: span 1; }
+.oxy-landing .hero-card-2x1,
+.oxy-landing .hero-cube-slot.hero-card-2x1 { grid-row: span 1; grid-column: span 2; }
+.oxy-landing .hero-card-1x2,
+.oxy-landing .hero-cube-slot.hero-card-1x2 { grid-row: span 2; grid-column: span 1; }
+.oxy-landing .hero-card-2x2,
+.oxy-landing .hero-cube-slot.hero-card-2x2 { grid-row: span 2; grid-column: span 2; }
+.oxy-landing .hero-card-4x2,
+.oxy-landing .hero-cube-slot.hero-card-4x2 { grid-row: span 2; grid-column: span 4; }
 
-/* 3D Cube rotator */
-.oxy-landing .cube-perspective {
-  width: 100%;
-  height: 100%;
+/* 3D Cube card — the grid cell itself is the perspective container */
+.oxy-landing .hero-cube-slot {
   perspective: 1200px;
+  cursor: pointer;
 }
-.oxy-landing .cube-inner {
+.oxy-landing .hero-cube-inner {
   position: relative;
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
 }
-.oxy-landing .cube-face {
+.oxy-landing .hero-cube-face {
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
