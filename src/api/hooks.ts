@@ -52,11 +52,37 @@ export function usePromptPhrases(slug: string, enabled = true) {
 }
 
 // ── Navigation ──
+
+// The DB stores items flat with a `section` string per item; the NavDropdown
+// type expects grouped `sections[]`. Normalize API responses to that shape.
+function normalizeNavItem(dd: any) {
+  if (Array.isArray(dd.sections)) return dd // already in correct format
+  const sectionOrder: string[] = []
+  const sectionMap: Record<string, any[]> = {}
+  for (const item of (dd.items ?? [])) {
+    const heading: string = item.section ?? ''
+    if (!sectionMap[heading]) {
+      sectionMap[heading] = []
+      sectionOrder.push(heading)
+    }
+    const { section: _s, ...rest } = item
+    sectionMap[heading].push(rest)
+  }
+  return {
+    label: dd.label,
+    sections: sectionOrder.map((h) => ({ heading: h, items: sectionMap[h] })),
+    sidePanel: dd.sidePanel,
+  }
+}
+
 export function useNavigation() {
   const locale = useSafeLocale()
   return useQuery({
     queryKey: ['navigation', locale],
-    queryFn: () => apiFetch<any[]>('/navigation', { locale }),
+    queryFn: async () => {
+      const raw = await apiFetch<any[]>('/navigation', { locale })
+      return raw.map(normalizeNavItem)
+    },
     placeholderData: staticNavigation,
   })
 }

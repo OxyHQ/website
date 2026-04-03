@@ -26,7 +26,7 @@ function ChevronDown({ className = '' }: { className?: string }) {
 
 /* ─── Dropdown Content Panel ─── */
 function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
-  const itemCount = dropdown.sections.reduce((n, s) => n + s.items.length, 0)
+  const itemCount = (dropdown.sections ?? []).reduce((n, s) => n + (s.items?.length ?? 0), 0)
   const useGrid = itemCount > 6
 
   return (
@@ -423,6 +423,8 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
               width: activeSize ? activeSize.w : 0,
               height: activeSize ? activeSize.h : 0,
               transition: `width 0.2s ${easing}, height 0.2s ${easing}`,
+              background: 'color-mix(in srgb, var(--background) 85%, transparent)',
+              backdropFilter: 'blur(12px)',
             }}
           >
             <div className="relative">
