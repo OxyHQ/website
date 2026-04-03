@@ -139,9 +139,9 @@ function FairCoinFace() {
         <h3 className="mb-3 text-5xl font-extrabold uppercase tracking-wider text-white">
           FairCoin <span className="font-normal italic text-green-200">Today</span>
         </h3>
-        <div className="grid grid-cols-2 gap-1.5 lg:gap-2">
+        <div className="my-auto grid grid-cols-2 gap-1.5 lg:gap-2">
           {FAIRCOIN_STATS.map((stat) => (
-            <div key={stat.label} className="rounded-xl bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5">
+            <div key={stat.label} className="rounded-2xl bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5">
               <div className="flex items-center gap-2">
                 <stat.Icon size={16} className="text-green-400" weight="bold" />
                 <div>
