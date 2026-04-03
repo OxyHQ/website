@@ -80,25 +80,25 @@ export default function AccountPanel() {
           </div>
 
           {/* ─── Profile header with animated background ─── */}
-          <div className="flex flex-col items-center px-6 pb-5 pt-1">
-            {/* Animated gradient behind avatar */}
-            <div className="relative flex h-[72px] w-[260px] items-center justify-center overflow-hidden rounded-2xl">
+          <div className="relative flex flex-col items-center pb-5 pt-1">
+            {/* Animated gradient — full width, ambient */}
+            <div className="relative flex h-[100px] w-full items-center justify-center overflow-hidden">
               <div
-                className="absolute inset-0"
+                className="absolute inset-0 opacity-60"
                 style={{
                   background: 'linear-gradient(135deg, #4285F4, #34A853, #FBBC04, #EA4335, #9C27B0, #4285F4)',
                   backgroundSize: '300% 300%',
                   animation: 'avatar-bg 8s ease infinite',
                 }}
               />
-              <div className="absolute inset-0 opacity-30" style={{
-                background: 'radial-gradient(circle at 30% 50%, rgba(255,255,255,0.4), transparent 60%), radial-gradient(circle at 70% 50%, rgba(255,255,255,0.3), transparent 50%)',
+              <div className="absolute inset-0" style={{
+                background: 'radial-gradient(circle at 50% 100%, var(--color-background) 0%, transparent 70%)',
               }} />
               <div className="relative z-10">
-                <Avatar source={user?.avatar} size={56} placeholderColor={user?.color} />
+                <Avatar source={user?.avatar} size={64} placeholderColor={user?.color} />
               </div>
             </div>
-            <div className="mt-4 text-center">
+            <div className="mt-3 text-center">
               <div className="text-xl font-semibold text-foreground">{displayName}</div>
               {user?.username && <div className="mt-0.5 text-sm text-muted-foreground">@{user.username}</div>}
               <div className="mt-1 text-[13px] text-muted-foreground">Manage your Oxy account</div>
