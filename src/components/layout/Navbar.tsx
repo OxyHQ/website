@@ -221,8 +221,9 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
       {/* ─── Banner ─── */}
       {bannerVisible && (
         <div
-          className="site-banner dark fixed top-0 left-0 right-0 z-[51] flex h-(--site-header-banner-visible-height) w-full items-center justify-center bg-(--color-banner-background)"
+          className="site-banner dark fixed top-0 left-0 z-[51] flex h-(--site-header-banner-visible-height) items-center justify-center bg-(--color-banner-background) transition-[right] duration-300 ease-out"
           style={{
+            right: accountPanel.isOpen ? 400 : 0,
             boxShadow: '0px 1px 2px 0px rgba(0,0,0,0.01), 0px 2px 4px -1px rgba(0,0,0,0.02), 0px 4px 8px -2px rgba(0,0,0,0.03)',
             transform: `translateY(${-Math.min(scrollY, bannerHeight)}px)`,
           }}
@@ -255,8 +256,8 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
       )}
 
     <header
-      className={`fixed left-0 right-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${transparent && !scrolled && !isOpen ? 'bg-transparent border-b border-transparent' : 'bg-background/80 border-b border-border backdrop-blur-md'}`}
-      style={{ top: bannerOffset }}
+      className={`fixed left-0 z-50 transition-[background-color,border-color,backdrop-filter,right] duration-300 ${transparent && !scrolled && !isOpen ? 'bg-transparent border-b border-transparent' : 'bg-background/80 border-b border-border backdrop-blur-md'}`}
+      style={{ top: bannerOffset, right: accountPanel.isOpen ? 400 : 0 }}
     >
 
       {/* ─── Hidden measurement panels (off-screen, unstyled, for measuring natural size) ─── */}
