@@ -242,7 +242,7 @@ export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   // Rotating card — the entire grid cell IS the cube
   return (
     <CubeCard
-      sizeClass={`${radius} ${sizeClass}`}
+      sizeClass={`${radiusClass} ${sizeClass}`}
       faces={slot.faces}
       interval={slot.rotateInterval ?? 4000}
     />
