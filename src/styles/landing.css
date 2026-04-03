@@ -24,6 +24,13 @@
 .oxy-landing *:after,
 .oxy-landing *:before {
   box-sizing: border-box;
+  position: relative;
+}
+/* Swiper cube needs static positioning to preserve 3D context */
+.oxy-landing .hero-cube-swiper *,
+.oxy-landing .hero-cube-swiper *:after,
+.oxy-landing .hero-cube-swiper *:before {
+  position: static;
 }
 
 .oxy-landing a {
@@ -398,11 +405,9 @@
 .oxy-landing .hero-card-2x2 { grid-row: span 2; grid-column: span 2; }
 .oxy-landing .hero-card-4x2 { grid-row: span 2; grid-column: span 4; }
 
-/* Swiper cube card — the slot acts as a rounded viewport for the 3D cube */
+/* Swiper cube card */
 .oxy-landing .hero-cube-slot {
   position: relative;
-  border-radius: 2rem;
-  overflow: hidden;
 }
 .oxy-landing .hero-cube-swiper {
   width: 100%;
@@ -660,6 +665,7 @@
   justify-content: space-between;
   row-gap: 4.8rem;
   padding: 3.2rem 2.7rem;
+  color: var(--white);
 }
 @media all and (max-width: 950px) {
   .oxy-landing .image-card { padding: 3.2rem; aspect-ratio: 4 / 6; }
