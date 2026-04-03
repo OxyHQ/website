@@ -277,7 +277,8 @@
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .oxy-landing .hero-oxy-bg {
@@ -346,8 +347,6 @@
 .oxy-landing .hero-carousel-outer {
   position: relative;
   z-index: 10;
-  overflow-x: clip;
-  overflow-y: visible;
   padding-block: 1rem;
 }
 
