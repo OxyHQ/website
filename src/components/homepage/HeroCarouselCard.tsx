@@ -134,9 +134,19 @@ function FairCoinFace() {
     <div className="flex h-full w-full rounded-l-full rounded-r-[20px] bg-[#166534]">
       <div className="flex flex-1 flex-col pl-10 pr-4 py-4 lg:pl-14 lg:pr-5 lg:py-5">
         <div className="my-auto flex flex-col gap-3 lg:gap-4">
-          <h3 className="text-5xl font-extrabold uppercase tracking-wider text-white">
-            FairCoin <span className="font-normal italic text-green-200">Today</span>
-          </h3>
+          <div className="flex items-center justify-between gap-4">
+            <h3 className="text-2xl font-extrabold uppercase tracking-wider text-white">
+              FairCoin <span className="font-normal italic text-green-200">Today</span>
+            </h3>
+            <div className="flex shrink-0 gap-2">
+              <button className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-green-900">
+                Buy
+              </button>
+              <button className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white">
+                Learn more
+              </button>
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-1.5 lg:gap-2">
             {FAIRCOIN_STATS.map((stat) => (
               <div key={stat.label} className="rounded-full bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5">
@@ -151,14 +161,6 @@ function FairCoinFace() {
                 </div>
               </div>
             ))}
-          </div>
-          <div className="flex justify-end gap-2">
-            <button className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-green-900">
-              Buy
-            </button>
-            <button className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white">
-              Learn more
-            </button>
           </div>
         </div>
       </div>
