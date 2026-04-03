@@ -535,14 +535,14 @@ const TEAM_TABS = [
     id: 'mention',
     label: 'Mention',
     desc: 'A social network built on respect. No algorithms designed to addict. No data harvested for ads. Just genuine human connection.',
-    thumb: '/images/screenshots/mention-app.png',
+    thumb: `${IMG}/video-thumb-sales-teams.webp`,
     prompts: ['What\'s trending in my community?', 'Show me posts from people I follow', 'Find conversations about sustainability'],
   },
   {
     id: 'inbox',
     label: 'Inbox',
     desc: 'All your messages in one place. A unified inbox that keeps you connected across all Oxy platforms.',
-    thumb: '/images/screenshots/inbox-app.png',
+    thumb: `${IMG}/video-thumb-customer-support.webp`,
     prompts: ['Show unread messages', 'Search my conversations', 'Filter by platform'],
   },
   {
