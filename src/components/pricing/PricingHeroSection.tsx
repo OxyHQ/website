@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { usePricing } from '../../api/hooks'
+import Button from '../ui/Button'
 
 export default function PricingHeroSection() {
   const { data: pricingPlans = [] } = usePricing()
@@ -26,13 +27,13 @@ export default function PricingHeroSection() {
               />
               <button
                 onClick={() => setIsAnnual(false)}
-                className={`isolate rounded-[10px] px-5 py-2 text-sm transition-colors duration-500 ease-in-out cursor-pointer ${!isAnnual ? 'text-black-400' : 'text-black-700'}`}
+                className={`isolate rounded-[10px] px-5 py-2 text-sm transition-colors duration-500 ease-in-out cursor-pointer ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}
               >
                 Monthly
               </button>
               <button
                 onClick={() => setIsAnnual(true)}
-                className={`isolate rounded-[10px] px-5 py-2 text-sm transition-colors duration-500 ease-in-out cursor-pointer ${isAnnual ? 'text-black-400' : 'text-black-700'}`}
+                className={`isolate rounded-[10px] px-5 py-2 text-sm transition-colors duration-500 ease-in-out cursor-pointer ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}
               >
                 Annual
               </button>
@@ -44,19 +45,19 @@ export default function PricingHeroSection() {
       {/* Pricing cards grid */}
       <div className="relative grid grid-cols-12 gap-x-6 mt-10 lg:mt-20">
         {/* Decorative horizontal gradient lines */}
-        <div className="pricing-cards-grid-line bg-[linear-gradient(to_left,_rgba(237,_239,_243,_0.00)_0%,_#CAD0D9_6.52%,_#CAD0D9_93.22%,_rgba(237,_239,_243,_0.00)_100%)] absolute -top-3 left-0 hidden h-px w-full -translate-y-1/2 lg:block" />
-        <div className="pricing-cards-grid-line bg-[linear-gradient(to_left,_rgba(237,_239,_243,_0.00)_0%,_#CAD0D9_6.52%,_#CAD0D9_93.22%,_rgba(237,_239,_243,_0.00)_100%)] absolute -bottom-3 left-0 hidden h-px w-full translate-y-1/2 [animation-delay:450ms]! lg:block" />
+        <div className="pricing-cards-grid-line bg-[linear-gradient(to_left,_transparent_0%,_var(--color-subtle-stroke)_6.52%,_var(--color-subtle-stroke)_93.22%,_transparent_100%)] absolute -top-3 left-0 hidden h-px w-full -translate-y-1/2 lg:block" />
+        <div className="pricing-cards-grid-line bg-[linear-gradient(to_left,_transparent_0%,_var(--color-subtle-stroke)_6.52%,_var(--color-subtle-stroke)_93.22%,_transparent_100%)] absolute -bottom-3 left-0 hidden h-px w-full translate-y-1/2 [animation-delay:450ms]! lg:block" />
 
         <div className="relative isolate col-span-12 grid grid-cols-1 gap-6 lg:grid-cols-4 xl:col-span-10 xl:col-start-2">
           {/* Decorative vertical gradient lines */}
           {[1, 2, 3, 4].map((col, idx) => (
             <div
               key={`vline-${col}`}
-              className={`pricing-cards-grid-line-vertical bg-[linear-gradient(to_bottom,_rgba(237,_239,_243,_0.00)_0%,_#CAD0D9_10.87%,_#CAD0D9_89.55%,_rgba(237,_239,_243,_0.00)_100%)] absolute top-[-50px] -left-3 col-start-${col} hidden h-[calc(100%+100px)] w-px -translate-x-1/2 ${idx > 0 ? `[animation-delay:${idx * 150}ms]!` : ''} lg:block`}
+              className={`pricing-cards-grid-line-vertical bg-[linear-gradient(to_bottom,_transparent_0%,_var(--color-subtle-stroke)_10.87%,_var(--color-subtle-stroke)_89.55%,_transparent_100%)] absolute top-[-50px] -left-3 col-start-${col} hidden h-[calc(100%+100px)] w-px -translate-x-1/2 ${idx > 0 ? `[animation-delay:${idx * 150}ms]!` : ''} lg:block`}
             />
           ))}
           {/* Right edge line */}
-          <div className="pricing-cards-grid-line-vertical bg-[linear-gradient(to_bottom,_rgba(237,_239,_243,_0.00)_0%,_#CAD0D9_10.87%,_#CAD0D9_89.55%,_rgba(237,_239,_243,_0.00)_100%)] absolute top-[-50px] -right-3 col-start-5 hidden h-[calc(100%+100px)] w-px translate-x-1/2 [animation-delay:600ms]! lg:block" />
+          <div className="pricing-cards-grid-line-vertical bg-[linear-gradient(to_bottom,_transparent_0%,_var(--color-subtle-stroke)_10.87%,_var(--color-subtle-stroke)_89.55%,_transparent_100%)] absolute top-[-50px] -right-3 col-start-5 hidden h-[calc(100%+100px)] w-px translate-x-1/2 [animation-delay:600ms]! lg:block" />
 
           {/* Corner crosshairs (4 corners) */}
           {[
@@ -74,7 +75,7 @@ export default function PricingHeroSection() {
           ))}
 
           {/* 4 Pricing cards */}
-          {pricingPlans.map((plan: any) => (
+          {pricingPlans.map((plan) => (
             <div
               key={plan.name}
               className={`flex flex-col justify-between rounded-3xl border border-solid px-[23px] pt-[21px] pb-[23px] ${
@@ -128,29 +129,25 @@ export default function PricingHeroSection() {
               <div className="mt-5 flex flex-col items-stretch lg:mt-8">
                 {plan.price === null ? (
                   <>
-                    <button
-                      className="relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 h-9 gap-x-1.5 rounded-[10px] px-3 text-sm max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base button-outline max-md:hidden"
-                    >
+                    <Button variant="outline" size="md" responsive className="max-md:hidden">
                       {plan.cta}
-                    </button>
-                    <button
-                      className="relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 h-9 gap-x-1.5 rounded-[10px] px-3 text-sm max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base button-ghost group self-center md:hidden"
-                    >
+                    </Button>
+                    <Button variant="ghost" size="md" responsive className="group self-center md:hidden">
                       <span>{plan.cta}</span>
                       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="relative transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50">
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
                       </svg>
-                    </button>
+                    </Button>
                   </>
                 ) : (
-                  <a
+                  <Button
+                    variant={plan.highlighted ? 'primary' : 'outline'}
+                    size="md"
+                    responsive
                     href={plan.ctaHref}
-                    className={`relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 h-9 gap-x-1.5 rounded-[10px] px-3 text-sm max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base ${
-                      plan.highlighted ? 'button-primary' : 'button-outline'
-                    }`}
                   >
                     {plan.cta}
-                  </a>
+                  </Button>
                 )}
               </div>
             </div>

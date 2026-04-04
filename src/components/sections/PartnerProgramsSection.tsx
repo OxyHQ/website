@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
 import { partnerPrograms } from '../../data/content'
+import Button from '../ui/Button'
 import { HorizontalLine, VerticalLine } from '../ui/GridDecoration'
 
 function ProgramIllustration({ index }: { index: number }) {
@@ -94,21 +94,15 @@ export default function PartnerProgramsSection() {
                     {program.description}
                   </span>
                 </p>
-                {program.ctaHref.startsWith('/') ? (
-                  <Link
-                    className="relative col-[2/-2] row-8 inline-flex w-fit cursor-pointer items-center justify-center text-nowrap rounded-[10px] border px-3 text-sm transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default button-outline h-9 gap-x-1.5 max-lg:absolute max-lg:bottom-0 max-lg:col-[1/-1] max-lg:row-[8/9] max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base"
-                    to={program.ctaHref}
-                  >
-                    {program.ctaText}
-                  </Link>
-                ) : (
-                  <a
-                    className="relative col-[2/-2] row-8 inline-flex w-fit cursor-pointer items-center justify-center text-nowrap rounded-[10px] border px-3 text-sm transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default button-outline h-9 gap-x-1.5 max-lg:absolute max-lg:bottom-0 max-lg:col-[1/-1] max-lg:row-[8/9] max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base"
-                    href={program.ctaHref}
-                  >
-                    {program.ctaText}
-                  </a>
-                )}
+                <Button
+                  variant="outline"
+                  size="md"
+                  responsive
+                  href={program.ctaHref}
+                  className="relative col-[2/-2] row-8 w-fit max-lg:absolute max-lg:bottom-0 max-lg:col-[1/-1] max-lg:row-[8/9]"
+                >
+                  {program.ctaText}
+                </Button>
               </div>
 
               {/* Right illustration area */}

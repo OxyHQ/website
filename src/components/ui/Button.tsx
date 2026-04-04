@@ -7,6 +7,8 @@ type Size = 'sm' | 'md' | 'lg'
 interface ButtonBaseProps {
   variant?: Variant
   size?: Size
+  /** Upgrade to lg size on mobile (max-lg breakpoint) */
+  responsive?: boolean
   children: ReactNode
   className?: string
 }
@@ -28,6 +30,7 @@ const sizeClasses: Record<Size, string> = {
 export default function Button({
   variant = 'primary',
   size = 'md',
+  responsive = false,
   children,
   className = '',
   ...props
@@ -35,7 +38,13 @@ export default function Button({
   const base =
     'inline-flex cursor-pointer items-center justify-center text-nowrap border font-medium transition-colors duration-300 ease-in-out hover:duration-150 active:duration-50 disabled:pointer-events-none disabled:cursor-default select-none'
 
-  const classes = `${base} button-${variant} ${sizeClasses[size]} ${className}`
+  const classes = [
+    base,
+    `button-${variant}`,
+    sizeClasses[size],
+    responsive && 'max-lg:h-11.5 max-lg:gap-x-2 max-lg:px-3.5 max-lg:text-base',
+    className,
+  ].filter(Boolean).join(' ')
 
   if ('href' in props && props.href) {
     const { href, ...rest } = props as ButtonAsLink

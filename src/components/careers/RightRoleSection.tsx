@@ -1,3 +1,5 @@
+import Button from '../ui/Button'
+
 export default function RightRoleSection() {
   return (
     <section className="w-full bg-surface">
@@ -35,12 +37,9 @@ export default function RightRoleSection() {
                   type="email"
                   placeholder="Your email address"
                 />
-                <button
-                  className="button-primary inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 h-11.5 gap-x-2 rounded-xl px-3.5 text-base button-primary relative"
-                  type="submit"
-                >
+                <Button type="submit" variant="primary" size="lg">
                   Subscribe
-                </button>
+                </Button>
               </form>
             </div>
           </div>

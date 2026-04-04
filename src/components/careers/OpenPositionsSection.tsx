@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { useJobs } from '../../api/hooks'
+import Button from '../ui/Button'
+import { useJobs, type Job } from '../../api/hooks'
 import { jobDepartments as staticDepartments } from '../../data/careers'
 
 function DashedLine() {
@@ -25,7 +26,7 @@ interface DepartmentGroup {
   jobs: { title: string; location: string; href: string }[]
 }
 
-function groupJobsByDepartment(jobs: any[]): DepartmentGroup[] {
+function groupJobsByDepartment(jobs: Job[]): DepartmentGroup[] {
   const deptMap = new Map<string, DepartmentGroup>()
   for (const job of jobs) {
     const dept = job.department || 'Other'
@@ -90,16 +91,16 @@ export default function OpenPositionsSection() {
         <div className="relative grid grid-cols-12 pb-5">
           <div className="relative col-[2/-2] flex gap-2 max-lg:grid max-lg:grid-cols-2 justify-center max-lg:gap-1.5 max-lg:flex-wrap">
             {locations.map(loc => (
-              <button
+              <Button
                 key={loc}
+                variant="outline"
+                size="sm"
                 onClick={() => setActiveLocation(loc)}
                 data-active={activeLocation === loc ? 'true' : 'false'}
-                className={`inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-8 gap-x-1.5 rounded-[10px] px-2.5 text-xs button-outline !border-border !text-muted-foreground !text-sm hover:!border-border hover:!bg-surface data-[active='true']:!border-foreground/30 data-[active='false']:!text-muted-foreground lg:!text-foreground lg:text-sm${
-                  activeLocation === loc ? ' pointer-events-none pr-2!' : ''
-                }`}
+                className={`data-[active='true']:border-foreground/30${activeLocation === loc ? ' pointer-events-none' : ''}`}
               >
                 {loc}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

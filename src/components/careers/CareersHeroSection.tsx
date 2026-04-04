@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { careersHero } from '../../data/careers'
+import Button from '../ui/Button'
 
 const avatarColors = ['var(--color-primary)', 'var(--color-accent)', 'var(--color-destructive, #FD9038)']
 
@@ -131,9 +132,9 @@ export default function CareersHeroSection() {
             </p>
 
             <div className="mt-7 flex w-auto items-center gap-x-3 gap-y-4 max-lg:flex-col">
-              <button className="relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-9 gap-x-1.5 rounded-[10px] px-3 text-sm max-lg:h-11.5 max-lg:gap-x-2 max-lg:rounded-xl max-lg:px-3.5 max-lg:text-base button-primary">
+              <Button variant="primary" size="md" responsive>
                 Join the team
-              </button>
+              </Button>
 
               {/* Avatar stack */}
               <div className="group flex">

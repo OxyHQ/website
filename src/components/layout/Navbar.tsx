@@ -247,7 +247,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
           <div className="container flex h-full items-center justify-center">
             <div className="relative flex size-full items-stretch justify-center px-12 max-md:justify-start max-md:pl-0">
               <Link
-                className="group relative flex size-full items-center justify-center gap-1.5 text-foreground max-md:justify-start"
+                className="group relative flex size-full items-center justify-center gap-1.5 text-white max-md:justify-start"
                 to="/ai"
               >
                 <span className="attio-group-hover-underline relative truncate text-[13px]/5">
@@ -262,7 +262,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                 aria-label="Dismiss banner"
                 onClick={() => setBannerVisible(false)}
               >
-                <svg className="text-muted-foreground" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" fill="none">
+                <svg className="text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" fill="none">
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="m12.5 5.5-7 7m7 0-7-7" />
                 </svg>
               </button>
@@ -380,10 +380,10 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
 
             {/* Desktop buttons */}
             <div className="hidden items-center gap-x-2.5 lg:flex">
-              <div className={isTransparent ? '[&_button]:!text-white/80 [&_button:hover]:!text-white [&_a]:!text-white/80 [&_a:hover]:!text-white [&_svg]:!text-white/80' : ''}>
+              <div className={isTransparent ? '[&_button]:!bg-white/10 [&_button]:!text-white/80 [&_button:hover]:!bg-white/20 [&_button:hover]:!text-white [&_a]:!text-white/80 [&_a:hover]:!text-white [&_svg]:!text-white/80' : ''}>
                 <LocalePicker />
               </div>
-              <div className={isTransparent ? '[&_button]:!text-white/80 [&_button:hover]:!text-white [&_svg]:!text-white/80' : ''}>
+              <div className={isTransparent ? '[&_button]:!bg-white/10 [&_button]:!text-white/80 [&_button:hover]:!bg-white/20 [&_button:hover]:!text-white [&_svg]:!text-white/80' : ''}>
                 <ThemeToggle />
               </div>
               {rightActions}
@@ -397,7 +397,14 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                 </button>
               ) : (
                 <>
-                  <Button variant="outline" size="sm" onClick={() => signIn()}>Sign in</Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => signIn()}
+                    className={isTransparent ? '!bg-white/10 !border-transparent !text-white hover:!bg-white/20' : ''}
+                  >
+                    Sign in
+                  </Button>
                   <Button variant="primary" size="sm" onClick={() => signIn()}>Start for free</Button>
                 </>
               )}

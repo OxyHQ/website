@@ -37,10 +37,15 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-muted-foreground transition-colors duration-200 hover:bg-surface hover:text-foreground"
+      className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-foreground/8 text-foreground transition-colors duration-200 hover:bg-foreground/14"
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
-      {isDark ? <SunIcon /> : <MoonIcon />}
+      <span
+        key={String(isDark)}
+        style={{ display: 'flex', animation: 'theme-icon-in 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both' }}
+      >
+        {isDark ? <SunIcon /> : <MoonIcon />}
+      </span>
     </button>
   )
 }

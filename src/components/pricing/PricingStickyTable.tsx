@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { usePricing } from '../../api/hooks'
+import Button from '../ui/Button'
 import { featureCategories } from '../../data/pricing'
 
 const CheckIcon = () => (
@@ -61,13 +62,13 @@ export default function PricingStickyTable() {
                       />
                       <button
                         onClick={() => setIsAnnual(false)}
-                        className={`isolate rounded-[10px] px-5 py-2 text-sm transition-colors duration-500 ease-in-out cursor-pointer ${!isAnnual ? 'text-black-400' : 'text-black-700'}`}
+                        className={`isolate rounded-[10px] px-5 py-2 text-sm transition-colors duration-500 ease-in-out cursor-pointer ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}
                       >
                         Monthly
                       </button>
                       <button
                         onClick={() => setIsAnnual(true)}
-                        className={`isolate rounded-[10px] px-5 py-2 text-sm transition-colors duration-500 ease-in-out cursor-pointer ${isAnnual ? 'text-black-400' : 'text-black-700'}`}
+                        className={`isolate rounded-[10px] px-5 py-2 text-sm transition-colors duration-500 ease-in-out cursor-pointer ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}
                       >
                         Annual
                       </button>
@@ -76,7 +77,7 @@ export default function PricingStickyTable() {
                 </div>
 
                 {/* 4 plan columns */}
-                {pricingPlans.map((plan: any) => (
+                {pricingPlans.map((plan) => (
                   <div key={plan.name}>
                     <div className="flex items-center gap-x-2">
                       <h3 className="text-2xl text-secondary-foreground">{plan.name}</h3>
@@ -103,20 +104,11 @@ export default function PricingStickyTable() {
                     </div>
                     <div className="mt-4 flex flex-col items-stretch">
                       {plan.price === null ? (
-                        <button
-                          className="relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 h-9 gap-x-1.5 rounded-[10px] px-3 text-sm button-outline"
-                        >
-                          {plan.cta}
-                        </button>
+                        <Button variant="outline" size="md">{plan.cta}</Button>
                       ) : (
-                        <a
-                          href={plan.ctaHref}
-                          className={`relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 h-9 gap-x-1.5 rounded-[10px] px-3 text-sm ${
-                            plan.highlighted ? 'button-primary' : 'button-outline'
-                          }`}
-                        >
+                        <Button variant={plan.highlighted ? 'primary' : 'outline'} size="md" href={plan.ctaHref}>
                           {plan.cta}
-                        </a>
+                        </Button>
                       )}
                     </div>
                   </div>

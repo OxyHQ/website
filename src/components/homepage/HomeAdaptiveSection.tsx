@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
+import Button from '../ui/Button'
 
 const tabs = ['Scale-ups', 'SaaS startups', 'SMBs', 'Investors']
 
@@ -50,12 +50,9 @@ export default function HomeAdaptiveSection() {
                 other way around. Your business model — perfectly reflected in your CRM.
               </p>
             </div>
-            <Link
-              to="#"
-              className="scroll-reveal button-outline mt-7 inline-flex h-9 items-center gap-1.5 rounded-[10px] border px-3 text-sm transition-colors duration-300"
-            >
+            <Button variant="outline" size="md" href="#" className="scroll-reveal mt-7">
               Explore our data model
-            </Link>
+            </Button>
           </div>
 
           {/* Tabs + product mockup area */}
@@ -64,14 +61,14 @@ export default function HomeAdaptiveSection() {
               {/* Tab buttons */}
               <div className="hide-scrollbar flex gap-x-1.5 overflow-scroll py-5 pt-20 pb-4 lg:pt-[120px] justify-center">
                 {tabs.map((tab, i) => (
-                  <button
+                  <Button
                     key={tab}
-                    className={`button-outline inline-flex h-8 items-center gap-1.5 rounded-[10px] border border-border px-2.5 text-sm text-muted-foreground transition-colors duration-300 hover:bg-surface ${
-                      i === 0 ? 'bg-surface pointer-events-none' : ''
-                    }`}
+                    variant="outline"
+                    size="sm"
+                    className={i === 0 ? 'pointer-events-none' : ''}
                   >
                     {tab}
-                  </button>
+                  </Button>
                 ))}
               </div>
 

@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@keyframes theme-icon-in {
+  from {
+    transform: rotate(-90deg) scale(0.4);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @font-face {
@@ -71,6 +82,18 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-sidebar: var(--sidebar);
+
+  /* Extended semantic tokens — alias Bloom vars so they respond to the JS theme system.
+   * Used by pricing, careers, and other pages that don't apply a product-specific theme class.
+   * Product themes (.oxyos-theme, .tnp-theme) override these with their own values. */
+  --color-primary-background: var(--background);
+  --color-secondary-background: var(--surface);
+  --color-surface-subtle: var(--muted);
+  --color-tertiary-foreground: var(--muted-foreground);
+  --color-caption-foreground: var(--muted-foreground);
+  --color-subtle-stroke: var(--border);
+  --color-muted-strong-background: var(--border);
+  --color-blue-450: #3977e8;
 
   /* Landing page colors */
   --color-sand: #f6f5f4;
@@ -315,39 +338,41 @@ body {
 }
 
 /* Button variants */
-.button-primary {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-primary-foreground);
-  transition: all 0.3s ease-in-out;
-}
-.button-primary:hover {
-  background: color-mix(in srgb, var(--color-primary) 88%, black);
-  border-color: color-mix(in srgb, var(--color-primary) 88%, black);
-  color: var(--color-primary-foreground);
-}
+@layer components {
+  .button-primary {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+    transition: all 0.3s ease-in-out;
+  }
+  .button-primary:hover {
+    background: color-mix(in srgb, var(--color-primary) 88%, black);
+    border-color: color-mix(in srgb, var(--color-primary) 88%, black);
+    color: white;
+  }
 
-.button-outline {
-  background: transparent;
-  border-color: var(--color-input);
-  color: var(--color-foreground);
-  transition: all 0.3s ease-in-out;
-}
-.button-outline:hover {
-  background: var(--color-surface);
-  border-color: var(--color-muted-foreground);
-  color: var(--color-foreground);
-}
+  .button-outline {
+    background: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+    border-color: transparent;
+    color: var(--color-foreground);
+    transition: all 0.3s ease-in-out;
+  }
+  .button-outline:hover {
+    background: color-mix(in srgb, var(--color-foreground) 14%, transparent);
+    border-color: transparent;
+    color: var(--color-foreground);
+  }
 
-.button-ghost {
-  background: transparent;
-  border-color: transparent;
-  color: var(--color-muted-foreground);
-  transition: all 0.3s ease-in-out;
-}
-.button-ghost:hover {
-  background: var(--color-surface);
-  color: var(--color-foreground);
+  .button-ghost {
+    background: transparent;
+    border-color: transparent;
+    color: var(--color-muted-foreground);
+    transition: all 0.3s ease-in-out;
+  }
+  .button-ghost:hover {
+    background: var(--color-surface);
+    color: var(--color-foreground);
+  }
 }
 
 /* Nav icon theming — set --icon-fill so SVGs use page background for shape fills */
