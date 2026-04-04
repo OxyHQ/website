@@ -1,23 +1,7 @@
-import { Link } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
-
-function DashedLine({ solid = false }: { solid?: boolean }) {
-  return (
-    <svg width="100%" height="1" className="text-border col-span-full">
-      <line
-        x1="0"
-        y1="0.5"
-        x2="100%"
-        y2="0.5"
-        stroke="currentColor"
-        {...(!solid && { strokeDasharray: '4 6', strokeLinecap: 'round' as const })}
-        {...(solid && { strokeLinecap: 'round' as const })}
-      />
-    </svg>
-  )
-}
+import Button from '../components/ui/Button'
 
 export default function NotFoundPage() {
   return (
@@ -29,43 +13,34 @@ export default function NotFoundPage() {
         noIndex
       />
       <Navbar />
-      <main className="flex-1">
+      <main className="flex flex-1 items-center pt-[var(--site-header-height)]">
         <div className="container border-x border-border">
-          <div className="flex h-full flex-col pt-[var(--site-header-height)]">
-            <div className="grid grid-cols-12 overflow-hidden">
-              {/* Status line */}
-              <div className="col-[2/-2] py-5">
-                <p className="text-overline">/ Status: 404</p>
+          <div className="grid grid-cols-12 items-center py-12 lg:py-16">
+            {/* Text */}
+            <div className="col-span-full flex flex-col items-center text-center lg:col-[2/8] lg:items-start lg:text-left">
+              <p className="text-overline text-muted-foreground">/ Status: 404</p>
+              <h1 className="mt-3 text-heading-responsive-lg">Page not found.</h1>
+              <p className="mt-3 max-w-sm text-pretty text-muted-foreground">
+                The page you're looking for doesn't exist or has been moved.
+              </p>
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5 lg:justify-start">
+                <Button variant="primary" size="md" href="/">
+                  Go to homepage
+                </Button>
+                <Button variant="outline" size="md" href="/help">
+                  Visit help center
+                </Button>
               </div>
+            </div>
 
-              <DashedLine />
-
-              {/* Main heading */}
-              <div className="col-[2/-2] pt-20 pb-15 lg:pt-30 lg:pb-20">
-                <h1 className="text-heading-responsive-lg">Page not found.</h1>
-                <p className="pt-6 text-foreground lg:text-xl">
-                  This page does not exist.
-                </p>
-              </div>
-
-              <DashedLine solid />
-
-              {/* CTA section */}
-              <div className="col-[2/-2] py-15 lg:py-20">
-                <p className="max-w-xs text-balance text-foreground">
-                  Oxy is AI-native data infrastructure
-                  <br className="max-xs:hidden" />
-                  for the modern enterprise.
-                </p>
-                <p className="max-w-md text-pretty pt-5 text-muted-foreground">
-                  <Link
-                    to="/"
-                    className="underline decoration-2 decoration-white-500 underline-offset-2 transition-all duration-700 hover:brightness-75 hover:duration-300 active:brightness-50 active:duration-0"
-                  >
-                    Go to homepage
-                  </Link>
-                </p>
-              </div>
+            {/* Illustration */}
+            <div className="col-span-full mt-10 flex justify-center lg:col-[8/-2] lg:mt-0 lg:justify-end">
+              <img
+                src="/images/404.png"
+                alt="Retro computer showing a 404 error"
+                className="w-52 select-none lg:w-68 xl:w-80"
+                draggable={false}
+              />
             </div>
           </div>
         </div>
