@@ -8,12 +8,9 @@ import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppC
 import { LocaleProvider } from './contexts/LocaleContext'
 import { setTokenGetter } from './api/client'
 
-// import AskPage from './pages/AskPage'
-// import Landing2 from './pages/Landing2'
-// import Landing3 from './pages/Landing3'
+import Landing4 from './pages/Landing4'
 import { AccountPanelProvider } from './contexts/AccountPanelContext'
 
-const Landing4 = lazy(() => import('./pages/Landing4'))
 const FixedPromptInput = lazy(() => import('./components/ui/FixedPromptInput'))
 const AccountPanel = lazy(() => import('./components/layout/AccountPanel'))
 
@@ -85,8 +82,6 @@ function PublicRoutes() {
   return (
     <>
       <Route index element={<Landing4 />} />
-      {/* <Route path="landing2" element={<Landing2 />} /> */}
-      {/* <Route path="landing3" element={<AskPage />} /> */}
       <Route path="partners" element={<PartnersPage />} />
       <Route path="company/careers" element={<CareersPage />} />
       <Route path="company/careers/:slug" element={<CareerDetailPage />} />
@@ -132,9 +127,9 @@ export default function App() {
                       <Route path="*" element={<NotFoundPage />} />
                     </Route>
                   </Routes>
+                  <FixedPromptInput />
+                  <AccountPanel />
                 </Suspense>
-                <FixedPromptInput />
-                <AccountPanel />
               </AccountPanelProvider>
             </BrowserRouter>
           </BloomThemeProvider>

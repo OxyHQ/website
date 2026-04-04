@@ -97,8 +97,8 @@ function CardFace({ card }: { card: HeroCard }) {
             src="/images/landing/oxy3d.png"
             alt="Oxy"
             className="h-full w-full object-cover bg-black"
-            width={400}
-            height={400}
+            width={512}
+            height={341}
             loading="lazy"
             decoding="async"
           />

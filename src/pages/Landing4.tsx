@@ -523,7 +523,7 @@ function ModelAgnosticSection() {
               </div>
             </div>
             <div className="model-agnostic-bg absolute inset-0 overflow-hidden rounded-3xl z-[1]">
-              <img src={`${IMG}/agents-model-agnostic.webp`} alt="Model agnostic" className="w-full h-full object-cover" width={1440} height={900} loading="lazy" decoding="async" />
+              <img src={`${IMG}/agents-model-agnostic.webp`} alt="Model agnostic" className="w-full h-full object-cover" width={2400} height={1800} loading="lazy" decoding="async" />
             </div>
           </div>
           <div className="hidden max-[950px]:block px-3">
@@ -830,7 +830,7 @@ function IntegrationsSecuritySection() {
 function BannerSection() {
   return (
     <div className="aspect-[36/19] max-[950px]:aspect-[4/5] overflow-hidden mb-5">
-      <img src={`${IMG}/team-banner.jpg`} alt="Team banner" className="w-full h-full object-cover" style={{ objectPosition: '40% 50%' }} width={1920} height={1013} loading="lazy" decoding="async" />
+      <img src={`${IMG}/team-banner.jpg`} alt="Team banner" className="w-full h-full object-cover" style={{ objectPosition: '40% 50%' }} width={5260} height={3507} loading="lazy" decoding="async" />
     </div>
   )
 }
@@ -850,7 +850,7 @@ function IOSAppSection() {
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-8 col-start-3 max-[950px]:col-span-full max-[950px]:col-start-1 text-center">
           <div className="mb-5">
-            <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" className="w-full h-auto object-contain" width={1200} height={800} loading="lazy" decoding="async" />
+            <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" className="w-full h-auto object-contain" width={1902} height={1330} loading="lazy" decoding="async" />
           </div>
           <p className="text-[13px] leading-4 tracking-wide font-[450] mb-5 max-w-[530px] mx-auto">
             <span className="opacity-60">Connect all your tools, access open-source AI, and join a global community building technology for good. Every product we create is designed to serve people, not exploit them.</span> Free and open source.

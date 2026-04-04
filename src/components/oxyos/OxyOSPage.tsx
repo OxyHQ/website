@@ -143,8 +143,8 @@ export default function OxyOSContent() {
               alt="OxyOS desktop screenshot"
               src="/images/oxyos/os-desktop.jpg"
               className="w-full h-full object-cover"
-              width={1920}
-              height={1200}
+              width={1280}
+              height={853}
               loading="eager"
               decoding="async"
             />

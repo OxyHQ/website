@@ -415,7 +415,7 @@ export default function AIPage() {
                     loop
                     muted
                     playsInline
-                    preload="none"
+                    preload="metadata"
                     src={tabVideos[i]}
                     className="h-full w-full object-cover object-top rounded-t-[19px]"
                   />
@@ -455,9 +455,9 @@ export default function AIPage() {
             {/* CTA background images */}
             <div className="scroll-reveal relative z-10 mt-2 w-full md:-mt-12" style={{ transitionDelay: '400ms' }}>
               <div className="relative hidden w-full select-none overflow-hidden md:block md:aspect-[2772/962]">
-                <img alt="CTA Background" src="/ai/cta-desktop-bg.png" className="absolute inset-0 h-full w-full object-cover object-bottom" width={2772} height={962} loading="lazy" decoding="async" />
+                <img alt="CTA Background" src="/ai/cta-desktop-bg.png" className="absolute inset-0 h-full w-full object-cover object-bottom" width={4158} height={1848} loading="lazy" decoding="async" />
               </div>
-              <img alt="CTA Background" src="/ai/cta-mobile-bg.png" className="mx-auto w-[50vh] max-w-[80vw] select-none md:hidden" width={800} height={600} loading="lazy" decoding="async" />
+              <img alt="CTA Background" src="/ai/cta-mobile-bg.png" className="mx-auto w-[50vh] max-w-[80vw] select-none md:hidden" width={564} height={529} loading="lazy" decoding="async" />
             </div>
           </div>
         </div>
