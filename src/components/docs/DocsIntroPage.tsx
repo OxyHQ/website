@@ -70,6 +70,8 @@ export default function DocsIntroPage() {
               width={1152}
               height={388}
               style={{ aspectRatio: '1152 / 388' }}
+              loading="eager"
+              decoding="async"
             />
             <img
               src="/docs/background-dark.svg"
@@ -78,6 +80,8 @@ export default function DocsIntroPage() {
               width={1152}
               height={388}
               style={{ aspectRatio: '1152 / 388' }}
+              loading="eager"
+              decoding="async"
             />
           </div>
 
@@ -99,11 +103,19 @@ export default function DocsIntroPage() {
                     src={`/docs/${card.image}.png`}
                     alt={card.title}
                     className="rounded block dark:hidden pointer-events-none group-hover:scale-105 transition-all duration-100"
+                    width={560}
+                    height={320}
+                    loading="lazy"
+                    decoding="async"
                   />
                   <img
                     src={`/docs/${card.image}-dark.png`}
                     alt={card.title}
                     className="rounded pointer-events-none group-hover:scale-105 transition-all duration-100 hidden dark:block"
+                    width={560}
+                    height={320}
+                    loading="lazy"
+                    decoding="async"
                   />
                   <h3 className="mt-5 text-foreground font-medium">{card.title}</h3>
                   <span className="mt-1.5">{card.description}</span>

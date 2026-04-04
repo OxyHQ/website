@@ -143,6 +143,10 @@ export default function NewsroomPostPage() {
               alt={post.title}
               className="w-full rounded-lg object-cover"
               style={{ aspectRatio: '16 / 9' }}
+              width={1600}
+              height={900}
+              loading="eager"
+              decoding="async"
             />
           </div>
         )}

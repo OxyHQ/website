@@ -48,6 +48,8 @@ export default function BlogFeaturedSection() {
             height="652"
             className="relative aspect-video w-full"
             src={article.coverImage || '/images/blog-cover-ask-oxy.png'}
+            loading="lazy"
+            decoding="async"
           />
           <svg width="100%" height="1" className="text-border relative">
             <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
@@ -120,6 +122,8 @@ export default function BlogFeaturedSection() {
                 height="652"
                 className="aspect-video w-full"
                 src={article.coverImage || '/images/blog-cover-ask-oxy.png'}
+                loading="lazy"
+                decoding="async"
               />
             </div>
           </div>

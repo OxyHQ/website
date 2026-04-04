@@ -11,10 +11,11 @@ import { setTokenGetter } from './api/client'
 // import AskPage from './pages/AskPage'
 // import Landing2 from './pages/Landing2'
 // import Landing3 from './pages/Landing3'
-import Landing4 from './pages/Landing4'
-import FixedPromptInput from './components/ui/FixedPromptInput'
 import { AccountPanelProvider } from './contexts/AccountPanelContext'
-import AccountPanel from './components/layout/AccountPanel'
+
+const Landing4 = lazy(() => import('./pages/Landing4'))
+const FixedPromptInput = lazy(() => import('./components/ui/FixedPromptInput'))
+const AccountPanel = lazy(() => import('./components/layout/AccountPanel'))
 
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 const PartnersPage = lazy(() => import('./pages/PartnersPage'))

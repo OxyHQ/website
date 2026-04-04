@@ -33,6 +33,8 @@ export function NewsCardFeatured({ article }: { article: NewsroomPost }) {
                 alt={article.title}
                 loading="lazy"
                 decoding="async"
+                width={800}
+                height={800}
                 className="absolute inset-0 h-full w-full object-cover object-center"
               />
             </div>
@@ -78,6 +80,8 @@ export function NewsCardGrid({ article }: { article: NewsroomPost }) {
                 alt={article.title}
                 loading="lazy"
                 decoding="async"
+                width={800}
+                height={800}
                 className="absolute inset-0 h-full w-full object-cover object-center"
               />
             </div>
@@ -122,6 +126,8 @@ export function NewsCardCarousel({ article }: { article: NewsroomPost }) {
                 alt={article.title}
                 loading="lazy"
                 decoding="async"
+                width={800}
+                height={800}
                 className="absolute inset-0 h-full w-full object-cover object-center"
               />
             </div>
@@ -172,6 +178,8 @@ export function NewsCardRow({ article }: { article: NewsroomPost }) {
                 alt={article.title}
                 loading="lazy"
                 decoding="async"
+                width={800}
+                height={800}
                 className="absolute inset-0 h-full w-full object-cover object-center"
               />
             </div>

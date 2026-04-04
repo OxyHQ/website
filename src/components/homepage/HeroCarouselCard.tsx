@@ -58,6 +58,8 @@ function CardFace({ card }: { card: HeroCard }) {
             src={card.image}
             alt={card.title}
             className="absolute inset-0 h-full w-full object-cover"
+            width={800}
+            height={600}
             loading="lazy"
             decoding="async"
           />
@@ -95,6 +97,8 @@ function CardFace({ card }: { card: HeroCard }) {
             src="/images/landing/oxy3d.png"
             alt="Oxy"
             className="h-full w-full object-cover bg-black"
+            width={400}
+            height={400}
             loading="lazy"
             decoding="async"
           />
@@ -123,6 +127,8 @@ function CardFace({ card }: { card: HeroCard }) {
           src={card.image}
           alt={card.alt}
           className="h-full w-full object-cover"
+          width={800}
+          height={600}
           loading="lazy"
           decoding="async"
         />
@@ -210,6 +216,8 @@ function FairCoinFace() {
           src={FAIRCOIN_STORE_IMAGE}
           alt="Local store"
           className="h-3/5 w-full object-cover"
+          width={600}
+          height={400}
           loading="lazy"
           decoding="async"
         />

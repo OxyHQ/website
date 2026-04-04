@@ -143,6 +143,10 @@ export default function OxyOSContent() {
               alt="OxyOS desktop screenshot"
               src="/images/oxyos/os-desktop.jpg"
               className="w-full h-full object-cover"
+              width={1920}
+              height={1200}
+              loading="eager"
+              decoding="async"
             />
           </div>
         </div>
@@ -228,6 +232,10 @@ export default function OxyOSContent() {
                           alt={feature.imageAlt}
                           src={feature.image}
                           className="w-full h-full object-cover"
+                          width={1280}
+                          height={960}
+                          loading="lazy"
+                          decoding="async"
                         />
                       )}
                     </div>
@@ -311,7 +319,7 @@ export default function OxyOSContent() {
               <div key={src} className="flex flex-col">
                 <div className="card stack pb-g2 grow-1">
                   <div className="media-border-container relative bg-theme-card overflow-hidden">
-                    <img alt={`OxyOS screenshot ${i + 1}`} src={src} className="w-full h-auto" />
+                    <img alt={`OxyOS screenshot ${i + 1}`} src={src} className="w-full h-auto" width={1920} height={1080} loading="lazy" decoding="async" />
                   </div>
                 </div>
               </div>
@@ -349,6 +357,10 @@ export default function OxyOSContent() {
                     alt="OxyOS running on desktop hardware"
                     src="/images/oxyos/os-desktop.jpg"
                     className="w-full h-full object-cover"
+                    width={1920}
+                    height={1200}
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
               </div>

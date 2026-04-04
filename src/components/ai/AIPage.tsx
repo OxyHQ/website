@@ -233,7 +233,7 @@ export default function AIPage() {
 
         {/* Layer 2: Shadow texture (darkens via color-burn) */}
         <div className="absolute inset-0" style={{ mixBlendMode: 'color-burn' }}>
-          <img src="/ai/shadow-bg.png" alt="" className="h-full w-full object-cover" />
+          <img src="/ai/shadow-bg.png" alt="" className="h-full w-full object-cover" width={1920} height={1080} loading="eager" decoding="async" />
         </div>
 
         {/* Layer 3: CSS glow effect (fades in on scroll) */}
@@ -415,6 +415,7 @@ export default function AIPage() {
                     loop
                     muted
                     playsInline
+                    preload="none"
                     src={tabVideos[i]}
                     className="h-full w-full object-cover object-top rounded-t-[19px]"
                   />
@@ -454,9 +455,9 @@ export default function AIPage() {
             {/* CTA background images */}
             <div className="scroll-reveal relative z-10 mt-2 w-full md:-mt-12" style={{ transitionDelay: '400ms' }}>
               <div className="relative hidden w-full select-none overflow-hidden md:block md:aspect-[2772/962]">
-                <img alt="CTA Background" src="/ai/cta-desktop-bg.png" className="absolute inset-0 h-full w-full object-cover object-bottom" />
+                <img alt="CTA Background" src="/ai/cta-desktop-bg.png" className="absolute inset-0 h-full w-full object-cover object-bottom" width={2772} height={962} loading="lazy" decoding="async" />
               </div>
-              <img alt="CTA Background" src="/ai/cta-mobile-bg.png" className="mx-auto w-[50vh] max-w-[80vw] select-none md:hidden" />
+              <img alt="CTA Background" src="/ai/cta-mobile-bg.png" className="mx-auto w-[50vh] max-w-[80vw] select-none md:hidden" width={800} height={600} loading="lazy" decoding="async" />
             </div>
           </div>
         </div>
@@ -499,6 +500,10 @@ export default function AIPage() {
                   alt={card.title}
                   src={`/ai/${card.image}`}
                   className="absolute bottom-0 left-0 z-[5] h-auto max-h-[380px] w-full select-none object-contain"
+                  width={768}
+                  height={380}
+                  loading="lazy"
+                  decoding="async"
                 />
               )}
             </div>

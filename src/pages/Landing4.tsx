@@ -22,7 +22,7 @@ function HeroSection() {
     <div className="page-hero relative min-h-svh flex flex-col [overflow-x:clip]">
       {/* Background video */}
       <div className="absolute inset-0 z-[1] overflow-hidden [transform:translateZ(0)]">
-        <video autoPlay loop muted playsInline preload="auto" className="size-full object-cover object-center">
+        <video autoPlay loop muted playsInline preload="metadata" poster={`${IMG}/hero-bg.avif`} className="size-full object-cover object-center">
           <source src={`${IMG}/hero-background.webm`} type="video/webm" />
           <source src={`${IMG}/hero-background.mp4`} type="video/mp4" />
         </video>
@@ -282,9 +282,9 @@ function FeaturesSection() {
                 <h2 dangerouslySetInnerHTML={{ __html: t.heading }} />
                 <div className="agent-features-tab-ui">
                   <div className="screen">
-                    <img src={`${IMG}/browser.svg`} alt="Browser UI" className="screen-frame" loading="lazy" decoding="async" />
+                    <img src={`${IMG}/browser.svg`} alt="Browser UI" className="screen-frame" width={1200} height={800} loading="lazy" decoding="async" />
                     <div className="screen-content">
-                      <img src={t.thumb} alt={t.label} loading="lazy" decoding="async" />
+                      <img src={t.thumb} alt={t.label} width={1200} height={800} loading="lazy" decoding="async" />
                     </div>
                   </div>
                 </div>
@@ -410,7 +410,7 @@ function StatsAndTestimonialsSection() {
                 <div
                   className={`relative overflow-hidden rounded-3xl aspect-[4/5] max-[950px]:aspect-[4/6] ${t.light ? 'text-white' : 'text-foreground/80'}`}
                 >
-                  <img src={t.bg} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" loading="eager" decoding="async" />
+                  <img src={t.bg} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" width={800} height={1000} loading="eager" decoding="async" />
                   <div className="absolute inset-0 bg-black/10" />
                   <div className="relative z-10 flex flex-col justify-between gap-12 px-7 py-8 max-[950px]:p-8 h-full">
                     <div>
@@ -513,7 +513,7 @@ function ModelAgnosticSection() {
           <div className="model-agnostic-wrap relative max-[950px]:mb-8">
             <div className="grid grid-cols-12 gap-6 items-center">
               <div className="col-span-6 max-[950px]:col-span-full z-10 flex items-center justify-center py-[85px] pb-[70px]">
-                <img src={`${IMG}/model-agnostic-popover.svg`} alt="Model selector" loading="lazy" decoding="async" />
+                <img src={`${IMG}/model-agnostic-popover.svg`} alt="Model selector" width={600} height={400} loading="lazy" decoding="async" />
               </div>
               <div className="col-span-4 max-[950px]:hidden col-start-8 z-10 text-white">
                 <p className="mb-6"><strong>Independent Ecosystem</strong></p>
@@ -523,7 +523,7 @@ function ModelAgnosticSection() {
               </div>
             </div>
             <div className="model-agnostic-bg absolute inset-0 overflow-hidden rounded-3xl z-[1]">
-              <img src={`${IMG}/agents-model-agnostic.webp`} alt="Model agnostic" className="w-full h-full object-cover" loading="lazy" decoding="async" />
+              <img src={`${IMG}/agents-model-agnostic.webp`} alt="Model agnostic" className="w-full h-full object-cover" width={1440} height={900} loading="lazy" decoding="async" />
             </div>
           </div>
           <div className="hidden max-[950px]:block px-3">
@@ -628,7 +628,7 @@ function TeamsSection() {
               <div key={t.id} className={`tab${t.id === activeId ? ' active' : ''}`} data-tab={t.id}>
                 <div className="media-with-prompt">
                   <div className="media rounded-3xl overflow-hidden" style={{ aspectRatio: '181 / 145' }}>
-                    <img src={t.thumb} alt={t.label} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                    <img src={t.thumb} alt={t.label} className="w-full h-full object-cover" width={1200} height={800} loading="lazy" decoding="async" />
                   </div>
                   <div className="prompt-overlay">
                     <div className="prompt-box-bg" />
@@ -719,7 +719,7 @@ function PartnershipSection() {
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-6 max-[950px]:col-span-full">
           <div className="min-[951px]:h-full overflow-hidden rounded-3xl">
-            <img src={`${IMG}/partnerships-banner.avif`} alt="Partnerships" className="w-full h-full object-cover" style={{ objectPosition: '50% 30%' }} loading="lazy" decoding="async" />
+            <img src={`${IMG}/partnerships-banner.avif`} alt="Partnerships" className="w-full h-full object-cover" style={{ objectPosition: '50% 30%' }} width={1440} height={900} loading="lazy" decoding="async" />
           </div>
         </div>
         <div className="col-span-6 max-[950px]:col-span-full">
@@ -830,7 +830,7 @@ function IntegrationsSecuritySection() {
 function BannerSection() {
   return (
     <div className="aspect-[36/19] max-[950px]:aspect-[4/5] overflow-hidden mb-5">
-      <img src={`${IMG}/team-banner.jpg`} alt="Team banner" className="w-full h-full object-cover" style={{ objectPosition: '40% 50%' }} loading="lazy" decoding="async" />
+      <img src={`${IMG}/team-banner.jpg`} alt="Team banner" className="w-full h-full object-cover" style={{ objectPosition: '40% 50%' }} width={1920} height={1013} loading="lazy" decoding="async" />
     </div>
   )
 }
@@ -850,7 +850,7 @@ function IOSAppSection() {
       <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
         <div className="col-span-8 col-start-3 max-[950px]:col-span-full max-[950px]:col-start-1 text-center">
           <div className="mb-5">
-            <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" className="w-full h-auto object-contain" loading="lazy" decoding="async" />
+            <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" className="w-full h-auto object-contain" width={1200} height={800} loading="lazy" decoding="async" />
           </div>
           <p className="text-[13px] leading-4 tracking-wide font-[450] mb-5 max-w-[530px] mx-auto">
             <span className="opacity-60">Connect all your tools, access open-source AI, and join a global community building technology for good. Every product we create is designed to serve people, not exploit them.</span> Free and open source.
@@ -912,7 +912,7 @@ function TrustedBySection() {
           <div className="grid grid-cols-8 max-[950px]:grid-cols-2 gap-x-5 items-center">
             {TRUSTED_LOGOS.map((logo) => (
               <div key={logo} className="flex justify-center items-center">
-                <img src={`${IMG}/${logo}.svg`} alt={logo} className="max-h-[66px] w-auto dark:invert" loading="lazy" decoding="async" />
+                <img src={`${IMG}/${logo}.svg`} alt={logo} className="max-h-[66px] w-auto dark:invert" width={224} height={66} loading="lazy" decoding="async" />
               </div>
             ))}
           </div>
