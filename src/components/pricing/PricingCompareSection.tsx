@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { usePricing } from '../../api/hooks'
-import { featureCategories } from '../../data/pricing'
+import { featureCategories, type PricingPlan } from '../../data/pricing'
 
 const CheckIcon = () => (
   <span className="flex h-5 items-center">
@@ -27,7 +27,7 @@ function renderValue(val: string) {
 function MobileFeatureRow({ feature }: { feature: { name: string; values: [string, string, string, string] } }) {
   const [isOpen, setIsOpen] = useState(true)
   const { data: pricingPlans = [] } = usePricing()
-  const planNames = pricingPlans.map((p: any) => p.name)
+  const planNames = pricingPlans.map((p: PricingPlan) => p.name)
 
   return (
     <div data-state={isOpen ? 'open' : 'closed'}>

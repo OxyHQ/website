@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNewsroomPosts, useCreateNewsroomPost } from '../../../api/hooks'
+import { type NewsroomPost } from '../../../data/newsroom'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Switch } from '@oxyhq/bloom/switch'
@@ -14,10 +15,10 @@ export default function NewsroomAdmin() {
   const { data, refetch } = useNewsroomPosts({ limit: 50 })
   const { data: locales } = useLocales()
   const createPost = useCreateNewsroomPost()
-  const [editing, setEditing] = useState<any | null>(null)
+  const [editing, setEditing] = useState<NewsroomPost | null>(null)
   const [saving, setSaving] = useState(false)
   const [activeLocale, setActiveLocale] = useState('')
-  const [translatingPost, setTranslatingPost] = useState<any | null>(null)
+  const [translatingPost, setTranslatingPost] = useState<NewsroomPost | null>(null)
 
   const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
   const posts = data?.posts ?? []
@@ -140,7 +141,7 @@ export default function NewsroomAdmin() {
       </div>
 
       <div className="mt-6 flex flex-col gap-2">
-        {posts.map((post: any) => (
+        {posts.map((post) => (
           <div key={post._id} className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition-colors hover:bg-muted/50">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
