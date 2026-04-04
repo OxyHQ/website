@@ -19,7 +19,7 @@ const BTN = 'inline-flex items-center cursor-pointer text-base leading-relaxed f
 /* ------------------------------------------------------------------ */
 function HeroSection() {
   return (
-    <div className="relative min-h-svh flex flex-col [overflow-x:clip]">
+    <div className="page-hero relative min-h-svh flex flex-col [overflow-x:clip]">
       {/* Background video */}
       <div className="absolute inset-0 z-[1] overflow-hidden [transform:translateZ(0)]">
         <video autoPlay loop muted playsInline preload="auto" className="size-full object-cover object-center">
