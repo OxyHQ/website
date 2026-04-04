@@ -2,7 +2,7 @@ import type { ReactNode, AnchorHTMLAttributes, ButtonHTMLAttributes } from 'reac
 import { Link } from 'react-router-dom'
 
 type Variant = 'primary' | 'outline' | 'ghost'
-type Size = 'sm' | 'md'
+type Size = 'sm' | 'md' | 'lg'
 
 interface ButtonBaseProps {
   variant?: Variant
@@ -22,6 +22,7 @@ type ButtonProps = ButtonAsButton | ButtonAsLink
 const sizeClasses: Record<Size, string> = {
   sm: 'h-8 gap-x-1.5 rounded-full px-3 text-sm',
   md: 'h-9 gap-x-1.5 rounded-full px-4 text-[15px]',
+  lg: 'h-11.5 gap-x-2 rounded-full px-5 text-base',
 }
 
 export default function Button({
@@ -37,10 +38,10 @@ export default function Button({
   const classes = `${base} button-${variant} ${sizeClasses[size]} ${className}`
 
   if ('href' in props && props.href) {
-    const { href, ...rest } = props as AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }
+    const { href, ...rest } = props as ButtonAsLink
     if (href.startsWith('/')) {
       return (
-        <Link className={classes} to={href} {...(rest as any)}>
+        <Link className={classes} to={href} {...rest}>
           {children}
         </Link>
       )

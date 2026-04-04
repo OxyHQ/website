@@ -39,6 +39,7 @@ export default function NotFoundPage() {
                 src="/images/404.png"
                 alt="Retro computer showing a 404 error"
                 className="w-52 select-none lg:w-68 xl:w-80"
+                loading="lazy"
                 draggable={false}
               />
             </div>
