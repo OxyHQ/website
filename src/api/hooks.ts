@@ -4,7 +4,7 @@ import { apiFetch } from './client'
 import { useCurrentLocale } from '../contexts/LocaleContext'
 
 // Static data imports — used as placeholderData so the site works without backend
-import { platformDropdown, resourcesDropdown, ecosystemDropdown, footerColumns as staticFooterColumns, testimonials as staticTestimonials, type Testimonial, type FooterColumn, type NavDropdownItem } from '../data/content'
+import { platformDropdown, resourcesDropdown, ecosystemDropdown, footerColumns as staticFooterColumns, testimonials as staticTestimonials, type Testimonial, type FooterColumn, type NavDropdown, type NavDropdownItem, type NavDropdownSection, type NavSidePanel } from '../data/content'
 import { pricingPlans as staticPricingPlans, type PricingPlan } from '../data/pricing'
 import { allPlaceholderPosts, type NewsroomPost } from '../data/newsroom'
 import { type DescriptionBlock } from '../data/careers'
@@ -35,7 +35,7 @@ export function usePage(slug: string) {
 export function useUpdatePage(slug: string) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: any) => apiFetch(`/pages/${slug}`, { method: 'PUT', body: JSON.stringify(data) }),
+    mutationFn: (data: Record<string, unknown>) => apiFetch(`/pages/${slug}`, { method: 'PUT', body: JSON.stringify(data) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['page', slug] }),
   })
 }
@@ -54,10 +54,22 @@ export function usePromptPhrases(slug: string, enabled = true) {
 
 // ── Navigation ──
 
+interface RawNavDropdown {
+  _id?: string
+  label: string
+  order?: number
+  sections?: NavDropdownSection[]
+  items?: Array<NavDropdownItem & { section?: string }>
+  sidePanel?: NavSidePanel
+}
+
 // The DB stores items flat with a `section` string per item; the NavDropdown
 // type expects grouped `sections[]`. Normalize API responses to that shape.
-function normalizeNavItem(dd: any) {
-  if (Array.isArray(dd.sections)) return dd // already in correct format
+// _id and order are passed through for the admin editor.
+function normalizeNavItem(dd: RawNavDropdown): NavDropdown & { _id?: string; order?: number } {
+  if (Array.isArray(dd.sections)) {
+    return { _id: dd._id, order: dd.order, label: dd.label, sections: dd.sections, sidePanel: dd.sidePanel }
+  }
   const sectionOrder: string[] = []
   const sectionMap: Record<string, NavDropdownItem[]> = {}
   for (const item of (dd.items ?? [])) {
@@ -70,6 +82,8 @@ function normalizeNavItem(dd: any) {
     sectionMap[heading].push(rest)
   }
   return {
+    _id: dd._id,
+    order: dd.order,
     label: dd.label,
     sections: sectionOrder.map((h) => ({ heading: h, items: sectionMap[h] })),
     sidePanel: dd.sidePanel,
@@ -81,7 +95,7 @@ export function useNavigation() {
   return useQuery({
     queryKey: ['navigation', locale],
     queryFn: async () => {
-      const raw = await apiFetch<any[]>('/navigation', { locale })
+      const raw = await apiFetch<RawNavDropdown[]>('/navigation', { locale })
       return raw.map(normalizeNavItem)
     },
     placeholderData: staticNavigation,

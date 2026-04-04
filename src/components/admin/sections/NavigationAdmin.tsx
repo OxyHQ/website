@@ -41,9 +41,9 @@ export default function NavigationAdmin() {
       ...dd,
       label: dd.label ?? '',
       order: dd.order ?? 0,
-      items: dd.items ?? dd.sections?.flatMap((s: NavDropdownSection) =>
-        (s.items ?? []).map((item: NavDropdownItem) => ({ ...item, section: (item as AdminNavItem).section || s.heading || '' }))
-      ) ?? [],
+      items: (dd.sections ?? []).flatMap((s: NavDropdownSection) =>
+        (s.items ?? []).map((item: NavDropdownItem) => ({ ...item, section: s.heading || '' }))
+      ),
       sidePanel: dd.sidePanel ?? null,
     }))
     setDropdowns(normalized)
