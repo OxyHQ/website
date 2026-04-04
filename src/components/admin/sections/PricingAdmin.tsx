@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { usePricing } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
+import { type PricingPlan } from '../../../data/pricing'
 import { PrimaryButton } from '@oxyhq/bloom/button'
 import { Switch } from '@oxyhq/bloom/switch'
 import { Input } from '../../ui/shadcn/input'
@@ -12,7 +13,7 @@ import { BatchTranslationEditor } from '../TranslationEditor'
 export default function PricingAdmin() {
   const { data, refetch } = usePricing()
   const { data: locales } = useLocales()
-  const [plans, setPlans] = useState<any[]>([])
+  const [plans, setPlans] = useState<PricingPlan[]>([])
   const [saving, setSaving] = useState(false)
   const [activeLocale, setActiveLocale] = useState('')
 
@@ -31,13 +32,14 @@ export default function PricingAdmin() {
     setSaving(false)
   }
 
-  const update = (idx: number, field: string, value: any) => {
+  const update = (idx: number, field: string, value: unknown) => {
     const next = [...plans]
     if (field.includes('.')) {
       const [parent, child] = field.split('.')
-      next[idx] = { ...next[idx], [parent]: { ...next[idx][parent], [child]: value } }
+      const planRecord = next[idx] as unknown as Record<string, unknown>
+      next[idx] = { ...next[idx], [parent]: { ...(planRecord[parent] as Record<string, unknown>), [child]: value } } as PricingPlan
     } else {
-      next[idx] = { ...next[idx], [field]: value }
+      next[idx] = { ...next[idx], [field]: value } as PricingPlan
     }
     setPlans(next)
   }
@@ -58,7 +60,7 @@ export default function PricingAdmin() {
           <BatchTranslationEditor
             collection="pricing"
             locale={activeLocale}
-            documents={plans.filter(p => p._id)}
+            documents={plans.filter((p): p is PricingPlan & { _id: string } => !!p._id)}
             renderItem={({ doc, fields, updateField }) => (
               <div className="rounded-xl border border-border p-4">
                 <h3 className="mb-3 text-sm font-medium text-foreground">Plan: {doc.name}</h3>
@@ -96,7 +98,7 @@ export default function PricingAdmin() {
             <div key={i} className="rounded-xl border border-border p-4">
               <div className="flex items-center gap-3">
                 <Input value={plan.name} onChange={(e) => update(i, 'name', e.target.value)} className="text-lg font-medium text-foreground bg-transparent border-none outline-none shadow-none" />
-                <div className="flex items-center gap-2"><Switch value={plan.highlighted} onValueChange={(val) => update(i, 'highlighted', val)} /><Label>Highlighted</Label></div>
+                <div className="flex items-center gap-2"><Switch value={plan.highlighted ?? false} onValueChange={(val) => update(i, 'highlighted', val)} /><Label>Highlighted</Label></div>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1"><Label className="text-xs text-muted-foreground">Monthly ($)</Label><Input type="number" value={plan.price?.monthly ?? 0} onChange={(e) => update(i, 'price.monthly', +e.target.value)} /></div>

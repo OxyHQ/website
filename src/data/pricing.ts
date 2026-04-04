@@ -1,4 +1,5 @@
 export interface PricingPlan {
+  _id?: string
   name: string
   price: { monthly: number; annual: number } | null // null = custom
   description: string

@@ -127,7 +127,7 @@ export function useNewsroomPost(slug: string) {
 export function useCreateNewsroomPost() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: Omit<NewsroomPost, '_id' | 'createdAt' | 'updatedAt'>) =>
+    mutationFn: (data: NewsroomPost) =>
       apiFetch<NewsroomPost>('/newsroom', { method: 'POST', body: JSON.stringify(data) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['newsroom'] }),
   })
@@ -207,9 +207,11 @@ export interface Job {
   location: string
   type?: string
   engagement?: string
-  createdAt?: string
   compensation?: string
   description?: DescriptionBlock[]
+  active?: boolean
+  order?: number
+  createdAt?: string
 }
 
 export function useJobs() {

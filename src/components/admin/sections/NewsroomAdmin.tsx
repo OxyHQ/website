@@ -24,19 +24,19 @@ export default function NewsroomAdmin() {
   const posts = data?.posts ?? []
   const isDefault = !activeLocale || activeLocale === defaultLocale
 
-  const emptyPost = () => ({
+  const emptyPost = (): NewsroomPost => ({
     title: '',
     slug: '',
     excerpt: '',
     content: '',
-    tags: [] as string[],
+    tags: [],
     category: 'General',
     featured: false,
-    status: 'published' as const,
-    coverImage: '',
-    metaTitle: '',
-    metaDescription: '',
-    ogImage: '',
+    status: 'published',
+    oxyUserId: '',
+    publishedAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   })
 
   const save = async () => {
@@ -108,7 +108,7 @@ export default function NewsroomAdmin() {
         <div className="mt-6">
           <TranslationFields
             collection="newsroom"
-            documentId={translatingPost._id}
+            documentId={translatingPost._id ?? ''}
             locale={activeLocale}
             originalFields={translatingPost}
             translatableFields={[

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../../api/client'
-import { useLocales } from '../LocaleSwitcher'
+import { useLocales, type Locale } from '../LocaleSwitcher'
 import { PrimaryButton } from '@oxyhq/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Label } from '../../ui/shadcn/label'
@@ -50,7 +50,7 @@ export default function LocalesAdmin() {
     await refetch()
   }
 
-  const startEdit = (locale: any) => {
+  const startEdit = (locale: Locale) => {
     setForm({ code: locale.code, name: locale.name, nativeName: locale.nativeName, isDefault: locale.isDefault, enabled: locale.enabled })
     setEditingCode(locale.code)
     setAdding(true)

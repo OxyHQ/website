@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiFetch } from '../../api/client'
 
-interface Locale {
+export interface Locale {
   _id: string
   code: string
   name: string

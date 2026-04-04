@@ -14,7 +14,21 @@ type DescriptionBlock =
   | { type: 'heading'; text: string }
   | { type: 'list'; items: string[] }
 
-const emptyJob = () => ({
+interface AdminJob {
+  _id?: string
+  title: string
+  slug: string
+  subtitle?: string
+  department: string
+  location: string
+  type?: string
+  compensation?: string
+  description?: DescriptionBlock[]
+  active?: boolean
+  order?: number
+}
+
+const emptyJob = (): AdminJob => ({
   title: '',
   slug: '',
   subtitle: '',
@@ -30,10 +44,10 @@ const emptyJob = () => ({
 export default function JobsAdmin() {
   const { data, refetch } = useJobs()
   const { data: locales } = useLocales()
-  const [editing, setEditing] = useState<any | null>(null)
+  const [editing, setEditing] = useState<AdminJob | null>(null)
   const [saving, setSaving] = useState(false)
   const [activeLocale, setActiveLocale] = useState('')
-  const [translatingJob, setTranslatingJob] = useState<any | null>(null)
+  const [translatingJob, setTranslatingJob] = useState<AdminJob | null>(null)
 
   const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
   const jobs = data ?? []
@@ -70,6 +84,7 @@ export default function JobsAdmin() {
   }
 
   const addBlock = (blockType: 'paragraph' | 'heading' | 'list') => {
+    if (!editing) return
     const desc = [...(Array.isArray(editing.description) ? editing.description : [])]
     if (blockType === 'list') {
       desc.push({ type: 'list', items: [''] })
@@ -79,14 +94,16 @@ export default function JobsAdmin() {
     setEditing({ ...editing, description: desc })
   }
 
-  const updateBlock = (idx: number, value: any) => {
+  const updateBlock = (idx: number, value: Partial<{ text: string; items: string[] }>) => {
+    if (!editing) return
     const desc = [...(Array.isArray(editing.description) ? editing.description : [])]
     desc[idx] = { ...desc[idx], ...value }
     setEditing({ ...editing, description: desc })
   }
 
   const removeBlock = (idx: number) => {
-    const desc = (editing.description ?? []).filter((_: any, i: number) => i !== idx)
+    if (!editing) return
+    const desc = (editing.description ?? []).filter((_, i) => i !== idx)
     setEditing({ ...editing, description: desc })
   }
 
@@ -102,7 +119,7 @@ export default function JobsAdmin() {
               value={editing.title}
               onChange={(e) => {
                 const title = e.target.value
-                const updates: any = { title }
+                const updates: Partial<AdminJob> = { title }
                 if (!editing._id) updates.slug = autoSlug(title, editing.location)
                 setEditing({ ...editing, ...updates })
               }}
@@ -177,7 +194,7 @@ export default function JobsAdmin() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2"><Switch value={editing.active} onValueChange={(val) => setEditing({ ...editing, active: val })} /><Label>Active</Label></div>
+          <div className="flex items-center gap-2"><Switch value={editing.active ?? true} onValueChange={(val) => setEditing({ ...editing, active: val })} /><Label>Active</Label></div>
           <div className="flex gap-3">
             <PrimaryButton onPress={save} disabled={saving}>{saving ? 'Saving...' : 'Save'}</PrimaryButton>
             <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>
@@ -198,7 +215,7 @@ export default function JobsAdmin() {
         <div className="mt-6">
           <TranslationFields
             collection="jobs"
-            documentId={translatingJob._id}
+            documentId={translatingJob._id ?? ''}
             locale={activeLocale}
             originalFields={translatingJob}
             translatableFields={[
@@ -231,7 +248,7 @@ export default function JobsAdmin() {
       </div>
 
       <div className="mt-6 flex flex-col gap-2">
-        {jobs.map((j: any) => (
+        {jobs.map((j) => (
           <div
             key={j._id}
             className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition-colors hover:bg-muted/50"
@@ -248,7 +265,7 @@ export default function JobsAdmin() {
               {isDefault ? (
                 <>
                   <Button variant="ghost" size="small" onPress={() => setEditing({ ...j, description: Array.isArray(j.description) ? j.description : [] })}>Edit</Button>
-                  <Button variant="ghost" size="small" onPress={() => deleteJob(j._id)}>Delete</Button>
+                  {j._id && <Button variant="ghost" size="small" onPress={() => deleteJob(j._id!)}>Delete</Button>}
                 </>
               ) : (
                 <Button variant="ghost" size="small" onPress={() => setTranslatingJob(j)}>Translate</Button>

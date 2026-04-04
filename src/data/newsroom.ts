@@ -1,11 +1,12 @@
 export interface NewsroomPost {
-  _id: string
+  _id?: string
   slug: string
   title: string
   excerpt: string
   content: string
   coverImage?: string
   oxyUserId: string
+  authorUsername?: string
   tags: string[]
   category: string
   featured: boolean
@@ -16,7 +17,6 @@ export interface NewsroomPost {
   publishedAt: string
   createdAt: string
   updatedAt: string
-  authorUsername?: string
 }
 
 export const newsCategories = [
