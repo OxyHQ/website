@@ -6,6 +6,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import StructuredData from '../components/StructuredData'
 import { useNewsroomPost, useNewsroomPosts } from '../api/hooks'
+import { type NewsroomPost } from '../data/newsroom'
 import { NewsCardGrid } from '../components/newsroom/NewsCard'
 
 function formatDate(dateStr: string): string {
@@ -30,7 +31,7 @@ export default function NewsroomPostPage() {
   )
 
   const relatedPosts = (relatedData?.posts ?? []).filter(
-    (p: any) => p.slug !== slug,
+    (p: NewsroomPost) => p.slug !== slug,
   ).slice(0, 3)
 
   if (isLoading) {
@@ -160,7 +161,7 @@ export default function NewsroomPostPage() {
               Related articles
             </h2>
             <div className="grid grid-cols-1 gap-x-4 gap-y-10 sm:grid-cols-2 md:grid-cols-3">
-              {relatedPosts.map((p: any) => (
+              {relatedPosts.map((p) => (
                 <NewsCardGrid key={p._id || p.slug} article={p} />
               ))}
             </div>

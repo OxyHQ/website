@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useFooter } from '../../api/hooks'
 import Logo from '../ui/Logo'
+import { type FooterColumn, type FooterLink } from '../../data/content'
 
 /* ─── SVG Icons ─── */
 function ExternalArrow() {
@@ -64,11 +65,11 @@ export default function Footer() {
         <div className="px-px pt-10 pb-4">
           {/* Footer columns using CSS multi-column layout — full width */}
           <div className="columns-4 gap-0 max-xl:columns-3 max-lg:columns-2 max-xs:columns-1">
-            {footerColumns.map((column: any) => (
+            {footerColumns.map((column: FooterColumn) => (
               <div key={column.title} className="break-inside-avoid pb-5">
                 <h2 className="py-1 text-foreground text-sm font-medium">{column.title}</h2>
                 <ul className="flex flex-col">
-                  {column.links.map((link: any) => (
+                  {column.links.map((link: FooterLink) => (
                     <li key={link.label}>
                       {link.href.startsWith('/') ? (
                         <Link
