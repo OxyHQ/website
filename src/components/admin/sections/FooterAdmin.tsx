@@ -6,11 +6,19 @@ import { Input } from '../../ui/shadcn/input'
 import { Label } from '../../ui/shadcn/label'
 import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { TranslationJsonEditor } from '../TranslationEditor'
+import { type FooterColumn } from '../../../data/content'
+
+interface FooterForm {
+  _id?: string
+  columns: FooterColumn[]
+  socialLinks: unknown[]
+  copyright: string
+}
 
 export default function FooterAdmin() {
   const { data, refetch } = useFooter()
   const { data: locales } = useLocales()
-  const [form, setForm] = useState<any>({ columns: [], socialLinks: [], copyright: '' })
+  const [form, setForm] = useState<FooterForm>({ columns: [], socialLinks: [], copyright: '' })
   const [saving, setSaving] = useState(false)
   const [activeLocale, setActiveLocale] = useState('')
 
@@ -46,7 +54,7 @@ export default function FooterAdmin() {
 
   const removeLink = (colIdx: number, linkIdx: number) => {
     const next = { ...form, columns: [...form.columns] }
-    next.columns[colIdx] = { ...next.columns[colIdx], links: next.columns[colIdx].links.filter((_: any, i: number) => i !== linkIdx) }
+    next.columns[colIdx] = { ...next.columns[colIdx], links: next.columns[colIdx].links.filter((_, i) => i !== linkIdx) }
     setForm(next)
   }
 
@@ -81,7 +89,7 @@ export default function FooterAdmin() {
                   <Input value={fields.copyright ?? ''} onChange={(e) => setFields({ ...fields, copyright: e.target.value })} placeholder={form.copyright} />
                 </div>
 
-                {form.columns.map((col: any, ci: number) => (
+                {form.columns.map((col, ci) => (
                   <div key={ci} className="rounded-xl border border-border p-4">
                     <p className="mb-2 text-xs text-muted-foreground">Column: {col.title}</p>
                     <div className="flex flex-col gap-1.5">
@@ -98,7 +106,7 @@ export default function FooterAdmin() {
                       />
                     </div>
                     <div className="mt-2 flex flex-col gap-2">
-                      {col.links.map((link: any, li: number) => (
+                      {col.links.map((link, li) => (
                         <div key={li} className="flex flex-col gap-1">
                           <Label className="text-xs">Link: {link.label}</Label>
                           <Input
@@ -136,11 +144,11 @@ export default function FooterAdmin() {
             <Input value={form.copyright} onChange={(e) => setForm({ ...form, copyright: e.target.value })} />
           </div>
 
-          {form.columns.map((col: any, ci: number) => (
+          {form.columns.map((col, ci) => (
             <div key={ci} className="rounded-xl border border-border p-4">
               <Input value={col.title} onChange={(e) => { const next = { ...form, columns: [...form.columns] }; next.columns[ci] = { ...col, title: e.target.value }; setForm(next) }} className="text-sm font-medium text-foreground bg-transparent border-none outline-none w-full shadow-none" />
               <div className="mt-2 flex flex-col gap-2">
-                {col.links.map((link: any, li: number) => (
+                {col.links.map((link, li) => (
                   <div key={li} className="flex items-center gap-2">
                     <Input value={link.label} onChange={(e) => updateLink(ci, li, 'label', e.target.value)} placeholder="Label" className="flex-1 bg-transparent border-none text-sm text-foreground outline-none shadow-none" />
                     <Input value={link.href} onChange={(e) => updateLink(ci, li, 'href', e.target.value)} placeholder="/path" className="flex-1 bg-transparent border-none text-xs text-muted-foreground outline-none font-mono shadow-none" />

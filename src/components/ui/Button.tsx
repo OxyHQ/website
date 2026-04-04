@@ -7,7 +7,7 @@ type Size = 'sm' | 'md' | 'lg'
 interface ButtonBaseProps {
   variant?: Variant
   size?: Size
-  /** Upgrade to lg size on mobile (max-lg breakpoint) */
+  /** Use a taller, touch-friendly size below the lg breakpoint */
   responsive?: boolean
   children: ReactNode
   className?: string

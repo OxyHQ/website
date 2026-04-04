@@ -50,7 +50,7 @@ export interface NavDropdownSection {
 }
 
 export interface NavSidePanel {
-  heading: string
+  heading?: string
   links: NavItem[]
 }
 

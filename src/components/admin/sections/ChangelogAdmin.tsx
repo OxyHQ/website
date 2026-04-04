@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useChangelog } from '../../../api/hooks'
+import { useChangelog, type ChangelogEntry } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Badge } from '@oxyhq/bloom/badge'
@@ -9,7 +9,7 @@ import { Label } from '../../ui/shadcn/label'
 
 export default function ChangelogAdmin() {
   const { data, refetch } = useChangelog()
-  const [editing, setEditing] = useState<any | null>(null)
+  const [editing, setEditing] = useState<ChangelogEntry | null>(null)
   const [saving, setSaving] = useState(false)
   const entries = data?.entries ?? []
 
@@ -65,7 +65,7 @@ export default function ChangelogAdmin() {
         <PrimaryButton onPress={() => setEditing({ title: '', content: '', tags: [], date: new Date().toISOString(), items: [], media: '' })}>New entry</PrimaryButton>
       </div>
       <div className="mt-6 flex flex-col gap-2">
-        {entries.map((e: any) => (
+        {entries.map((e) => (
           <div key={e._id} className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition-colors hover:bg-muted/50">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
@@ -80,7 +80,7 @@ export default function ChangelogAdmin() {
             </div>
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="small" onPress={() => setEditing({ ...e })}>Edit</Button>
-              <Button variant="ghost" size="small" onPress={() => deleteEntry(e._id)}>Delete</Button>
+              <Button variant="ghost" size="small" onPress={() => e._id && deleteEntry(e._id)}>Delete</Button>
             </div>
           </div>
         ))}

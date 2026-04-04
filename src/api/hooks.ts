@@ -4,9 +4,10 @@ import { apiFetch } from './client'
 import { useCurrentLocale } from '../contexts/LocaleContext'
 
 // Static data imports — used as placeholderData so the site works without backend
-import { platformDropdown, resourcesDropdown, ecosystemDropdown, footerColumns as staticFooterColumns, testimonials as staticTestimonials } from '../data/content'
-import { pricingPlans as staticPricingPlans } from '../data/pricing'
-import { allPlaceholderPosts } from '../data/newsroom'
+import { platformDropdown, resourcesDropdown, ecosystemDropdown, footerColumns as staticFooterColumns, testimonials as staticTestimonials, type Testimonial, type FooterColumn, type NavDropdownItem } from '../data/content'
+import { pricingPlans as staticPricingPlans, type PricingPlan } from '../data/pricing'
+import { allPlaceholderPosts, type NewsroomPost } from '../data/newsroom'
+import { type DescriptionBlock } from '../data/careers'
 
 const staticNavigation = [platformDropdown, ecosystemDropdown, resourcesDropdown]
 const staticFooter = { columns: staticFooterColumns, socialLinks: [], copyright: 'Made with love by Oxy.' }
@@ -58,7 +59,7 @@ export function usePromptPhrases(slug: string, enabled = true) {
 function normalizeNavItem(dd: any) {
   if (Array.isArray(dd.sections)) return dd // already in correct format
   const sectionOrder: string[] = []
-  const sectionMap: Record<string, any[]> = {}
+  const sectionMap: Record<string, NavDropdownItem[]> = {}
   for (const item of (dd.items ?? [])) {
     const heading: string = item.section ?? ''
     if (!sectionMap[heading]) {
@@ -92,7 +93,7 @@ export function useFooter() {
   const locale = useSafeLocale()
   return useQuery({
     queryKey: ['footer', locale],
-    queryFn: () => apiFetch<{ _id?: string; columns: any[]; socialLinks: any[]; copyright: string }>('/footer', { locale }),
+    queryFn: () => apiFetch<{ _id?: string; columns: FooterColumn[]; socialLinks: unknown[]; copyright: string }>('/footer', { locale }),
     placeholderData: staticFooter,
   })
 }
@@ -109,28 +110,9 @@ export function useNewsroomPosts(params?: { category?: string; featured?: boolea
 
   return useQuery({
     queryKey: ['newsroom', params, locale],
-    queryFn: () => apiFetch<{ posts: any[]; total: number; page: number; pages: number }>(`/newsroom${qs ? `?${qs}` : ''}`, { locale }),
+    queryFn: () => apiFetch<{ posts: NewsroomPost[]; total: number; page: number; pages: number }>(`/newsroom${qs ? `?${qs}` : ''}`, { locale }),
     placeholderData: staticNewsroom,
   })
-}
-
-interface NewsroomPost {
-  title: string
-  slug: string
-  excerpt: string
-  content: string
-  coverImage?: string
-  oxyUserId: string
-  tags: string[]
-  category: string
-  featured: boolean
-  status: string
-  metaTitle?: string
-  metaDescription?: string
-  ogImage?: string
-  publishedAt: string
-  createdAt: string
-  updatedAt: string
 }
 
 export function useNewsroomPost(slug: string) {
@@ -145,7 +127,8 @@ export function useNewsroomPost(slug: string) {
 export function useCreateNewsroomPost() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: any) => apiFetch('/newsroom', { method: 'POST', body: JSON.stringify(data) }),
+    mutationFn: (data: Omit<NewsroomPost, '_id' | 'createdAt' | 'updatedAt'>) =>
+      apiFetch<NewsroomPost>('/newsroom', { method: 'POST', body: JSON.stringify(data) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['newsroom'] }),
   })
 }
@@ -155,7 +138,7 @@ export function usePricing() {
   const locale = useSafeLocale()
   return useQuery({
     queryKey: ['pricing', locale],
-    queryFn: () => apiFetch<any[]>('/pricing', { locale }),
+    queryFn: () => apiFetch<PricingPlan[]>('/pricing', { locale }),
     placeholderData: staticPricingPlans,
   })
 }
@@ -165,25 +148,29 @@ export function useTestimonials() {
   const locale = useSafeLocale()
   return useQuery({
     queryKey: ['testimonials', locale],
-    queryFn: () => apiFetch<any[]>('/testimonials', { locale }),
+    queryFn: () => apiFetch<Testimonial[]>('/testimonials', { locale }),
     placeholderData: staticTestimonials,
   })
 }
 
 // ── Changelog ──
+export interface ChangelogEntry {
+  _id?: string
+  title: string
+  content: string
+  tags: string[]
+  date: string
+  items?: string[]
+  media?: string
+  tagName?: string
+  repoOwner?: string
+  repoName?: string
+  repoDisplayName?: string
+  htmlUrl?: string
+}
+
 interface ChangelogResponse {
-  entries: Array<{
-    _id: string
-    title: string
-    content: string
-    tags: string[]
-    date: string
-    tagName?: string
-    repoOwner?: string
-    repoName?: string
-    repoDisplayName?: string
-    htmlUrl?: string
-  }>
+  entries: ChangelogEntry[]
   total: number
   page: number
   pages: number
@@ -211,11 +198,25 @@ export function useTrackedRepos() {
 }
 
 // ── Jobs ──
+export interface Job {
+  _id?: string
+  slug: string
+  title: string
+  department: string
+  subtitle?: string
+  location: string
+  type?: string
+  engagement?: string
+  createdAt?: string
+  compensation?: string
+  description?: DescriptionBlock[]
+}
+
 export function useJobs() {
   const locale = useSafeLocale()
   return useQuery({
     queryKey: ['jobs', locale],
-    queryFn: () => apiFetch<any[]>('/jobs', { locale }),
+    queryFn: () => apiFetch<Job[]>('/jobs', { locale }),
     staleTime: 5 * 60 * 1000,
   })
 }
@@ -224,7 +225,7 @@ export function useJob(slug: string) {
   const locale = useSafeLocale()
   return useQuery({
     queryKey: ['job', slug, locale],
-    queryFn: () => apiFetch<any>(`/jobs/${slug}`, { locale }),
+    queryFn: () => apiFetch<Job>(`/jobs/${slug}`, { locale }),
     enabled: !!slug,
   })
 }
@@ -247,10 +248,20 @@ export function useSiteSettings() {
 }
 
 // ── MCP Tokens ──
+export interface McpToken {
+  _id: string
+  name: string
+  createdBy: string
+  createdAt: string
+  lastUsedAt: string | null
+  expiresAt: string | null
+  revoked: boolean
+}
+
 export function useMcpTokens(enabled = true) {
   return useQuery({
     queryKey: ['mcp-tokens'],
-    queryFn: () => apiFetch<any[]>('/mcp-tokens'),
+    queryFn: () => apiFetch<McpToken[]>('/mcp-tokens'),
     enabled,
     retry: false,
   })

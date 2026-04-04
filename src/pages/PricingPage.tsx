@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -8,6 +9,8 @@ import PricingCompareSection from '../components/pricing/PricingCompareSection'
 import PricingFaqSection from '../components/pricing/PricingFaqSection'
 
 export default function PricingPage() {
+  const [isAnnual, setIsAnnual] = useState(true)
+
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-primary-background">
       <SEO
@@ -30,8 +33,8 @@ export default function PricingPage() {
       }} />
       <Navbar />
       <main>
-        <PricingHeroSection />
-        <PricingStickyTable />
+        <PricingHeroSection isAnnual={isAnnual} onToggle={setIsAnnual} />
+        <PricingStickyTable isAnnual={isAnnual} onToggle={setIsAnnual} />
         <PricingCompareSection />
         <PricingFaqSection />
       </main>

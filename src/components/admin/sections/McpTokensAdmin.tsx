@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useMcpTokens, useCreateMcpToken, useRevokeMcpToken } from '../../../api/hooks'
+import { useMcpTokens, useCreateMcpToken, useRevokeMcpToken, type McpToken } from '../../../api/hooks'
 import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Badge } from '@oxyhq/bloom/badge'
 import { Input } from '../../ui/shadcn/input'
@@ -119,7 +119,7 @@ export default function McpTokensAdmin() {
         {!isLoading && tokens.length === 0 && (
           <p className="py-8 text-center text-sm text-muted-foreground">No tokens yet. Generate one to connect your MCP client.</p>
         )}
-        {tokens.map((t: any) => (
+        {tokens.map((t: McpToken) => (
           <div key={t._id} className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">

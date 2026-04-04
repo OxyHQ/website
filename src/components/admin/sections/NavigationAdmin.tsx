@@ -8,11 +8,28 @@ import { Label } from '../../ui/shadcn/label'
 import { IconPicker } from '../../ui/shadcn/icon-picker'
 import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { BatchTranslationEditor } from '../TranslationEditor'
+import { type NavItem, type NavDropdownSection, type NavDropdownItem, type NavSidePanel } from '../../../data/content'
+
+interface AdminNavItem {
+  title: string
+  description: string
+  href: string
+  icon?: string
+  section?: string
+}
+
+interface AdminNavDropdown {
+  _id?: string
+  label: string
+  order: number
+  items: AdminNavItem[]
+  sidePanel: NavSidePanel | null
+}
 
 export default function NavigationAdmin() {
   const { data, refetch } = useNavigation()
   const { data: locales } = useLocales()
-  const [dropdowns, setDropdowns] = useState<any[]>([])
+  const [dropdowns, setDropdowns] = useState<AdminNavDropdown[]>([])
   const [saving, setSaving] = useState(false)
   const [activeLocale, setActiveLocale] = useState('')
 
@@ -24,8 +41,8 @@ export default function NavigationAdmin() {
       ...dd,
       label: dd.label ?? '',
       order: dd.order ?? 0,
-      items: dd.items ?? dd.sections?.flatMap((s: any) =>
-        (s.items ?? []).map((item: any) => ({ ...item, section: item.section || s.heading || '' }))
+      items: dd.items ?? dd.sections?.flatMap((s: NavDropdownSection) =>
+        (s.items ?? []).map((item: NavDropdownItem) => ({ ...item, section: (item as AdminNavItem).section || s.heading || '' }))
       ) ?? [],
       sidePanel: dd.sidePanel ?? null,
     }))
@@ -51,7 +68,7 @@ export default function NavigationAdmin() {
     setDropdowns(dropdowns.filter((_, i) => i !== idx))
   }
 
-  const updateDropdown = (idx: number, field: string, value: any) => {
+  const updateDropdown = <K extends keyof AdminNavDropdown>(idx: number, field: K, value: AdminNavDropdown[K]) => {
     const next = [...dropdowns]
     next[idx] = { ...next[idx], [field]: value }
     setDropdowns(next)
@@ -72,7 +89,7 @@ export default function NavigationAdmin() {
 
   const removeItem = (di: number, ii: number) => {
     const next = [...dropdowns]
-    next[di] = { ...next[di], items: next[di].items.filter((_: any, i: number) => i !== ii) }
+    next[di] = { ...next[di], items: next[di].items.filter((_, i) => i !== ii) }
     setDropdowns(next)
   }
 
@@ -81,27 +98,31 @@ export default function NavigationAdmin() {
 
   const updateSidePanelHeading = (di: number, value: string) => {
     const next = [...dropdowns]
-    next[di] = { ...next[di], sidePanel: { ...next[di].sidePanel, heading: value } }
+    const sp = next[di].sidePanel!
+    next[di] = { ...next[di], sidePanel: { ...sp, heading: value } }
     setDropdowns(next)
   }
 
   const addSidePanelLink = (di: number) => {
     const next = [...dropdowns]
-    next[di] = { ...next[di], sidePanel: { ...next[di].sidePanel, links: [...(next[di].sidePanel?.links ?? []), { label: '', href: '/' }] } }
+    const sp = next[di].sidePanel!
+    next[di] = { ...next[di], sidePanel: { ...sp, links: [...sp.links, { label: '', href: '/' }] } }
     setDropdowns(next)
   }
 
   const updateSidePanelLink = (di: number, li: number, field: string, value: string) => {
     const next = [...dropdowns]
-    const links = [...next[di].sidePanel.links]
+    const sp = next[di].sidePanel!
+    const links = [...sp.links]
     links[li] = { ...links[li], [field]: value }
-    next[di] = { ...next[di], sidePanel: { ...next[di].sidePanel, links } }
+    next[di] = { ...next[di], sidePanel: { ...sp, links } }
     setDropdowns(next)
   }
 
   const removeSidePanelLink = (di: number, li: number) => {
     const next = [...dropdowns]
-    next[di] = { ...next[di], sidePanel: { ...next[di].sidePanel, links: next[di].sidePanel.links.filter((_: any, i: number) => i !== li) } }
+    const sp = next[di].sidePanel!
+    next[di] = { ...next[di], sidePanel: { ...sp, links: sp.links.filter((_, i) => i !== li) } }
     setDropdowns(next)
   }
 
@@ -126,7 +147,7 @@ export default function NavigationAdmin() {
           <BatchTranslationEditor
             collection="navigation"
             locale={activeLocale}
-            documents={dropdowns.filter(d => d._id)}
+            documents={dropdowns.filter((d): d is AdminNavDropdown & { _id: string } => !!d._id)}
             renderItem={({ doc, fields, updateField }) => (
               <div className="rounded-xl border border-border p-5">
                 <h3 className="mb-3 text-sm font-medium text-foreground">Menu: {doc.label}</h3>
@@ -135,7 +156,7 @@ export default function NavigationAdmin() {
                     <Label>Label</Label>
                     <Input value={fields.label ?? ''} onChange={(e) => updateField('label', e.target.value)} placeholder={doc.label} />
                   </div>
-                  {(doc.items ?? []).map((item: any, ii: number) => (
+                  {(doc.items ?? []).map((item: AdminNavItem, ii: number) => (
                     <div key={ii} className="rounded-lg border border-border/50 p-3">
                       <p className="mb-2 text-xs text-muted-foreground">Item: {item.title}</p>
                       <div className="grid grid-cols-2 gap-2">
@@ -180,7 +201,7 @@ export default function NavigationAdmin() {
                             placeholder={doc.sidePanel.heading}
                           />
                         </div>
-                        {(doc.sidePanel.links ?? []).map((link: any, li: number) => (
+                        {(doc.sidePanel.links ?? []).map((link: NavItem, li: number) => (
                           <div key={li} className="flex flex-col gap-1">
                             <Label className="text-xs">Link: {link.label}</Label>
                             <Input
@@ -223,7 +244,7 @@ export default function NavigationAdmin() {
               <div className="mt-4">
                 <h4 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">Items</h4>
                 <div className="flex flex-col gap-3">
-                  {(dropdown.items ?? []).map((item: any, ii: number) => (
+                  {(dropdown.items ?? []).map((item, ii) => (
                     <div key={ii} className="rounded-lg border border-border p-4">
                       <div className="grid grid-cols-2 gap-3">
                         <div className="flex flex-col gap-1.5">
@@ -273,7 +294,7 @@ export default function NavigationAdmin() {
                       <Button variant="ghost" size="small" onPress={() => removeSidePanel(di)}>Remove</Button>
                     </div>
                     <div className="mt-3 flex flex-col gap-2">
-                      {(dropdown.sidePanel.links ?? []).map((link: any, li: number) => (
+                      {(dropdown.sidePanel.links ?? []).map((link, li) => (
                         <div key={li} className="flex items-center gap-2">
                           <Input value={link.label} onChange={(e) => updateSidePanelLink(di, li, 'label', e.target.value)} placeholder="Label" className="flex-1" />
                           <Input value={link.href} onChange={(e) => updateSidePanelLink(di, li, 'href', e.target.value)} placeholder="/path" className="flex-1 font-mono" />

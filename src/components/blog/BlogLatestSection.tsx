@@ -16,7 +16,7 @@ export default function BlogLatestSection() {
 
   const filteredArticles = useMemo(() => {
     if (activeCategory === 'All articles') return allArticles
-    return allArticles.filter((a: any) => a.category === activeCategory)
+    return allArticles.filter((a) => a.category === activeCategory)
   }, [activeCategory, allArticles])
 
   return (

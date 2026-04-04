@@ -42,7 +42,7 @@ export default function ThemeToggle() {
     >
       <span
         key={String(isDark)}
-        style={{ display: 'flex', animation: 'theme-icon-in 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both' }}
+        className="flex animate-theme-icon-in"
       >
         {isDark ? <SunIcon /> : <MoonIcon />}
       </span>

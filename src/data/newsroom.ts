@@ -16,6 +16,7 @@ export interface NewsroomPost {
   publishedAt: string
   createdAt: string
   updatedAt: string
+  authorUsername?: string
 }
 
 export const newsCategories = [

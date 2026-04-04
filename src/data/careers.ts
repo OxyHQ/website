@@ -92,6 +92,8 @@ export interface JobDetail {
   compensation: string
   engagement: string
   description: DescriptionBlock[]
+  type?: string
+  createdAt?: string
 }
 
 export const jobDetails: JobDetail[] = [

@@ -13,6 +13,7 @@ export default defineConfig({
     babel({ presets: [reactCompilerPreset()] })
   ],
   resolve: {
+    tsconfigPaths: true,
     alias: {
       'react-native': 'react-native-web',
     },
@@ -22,6 +23,7 @@ export default defineConfig({
     exclude: ['@react-native-async-storage/async-storage'],
   },
   server: {
+    forwardConsole: true,
     proxy: {
       '/api': 'http://localhost:4000',
     },
