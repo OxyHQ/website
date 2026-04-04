@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useJobs } from '../../../api/hooks'
+import { useJobs, type Job } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Switch } from '@oxyhq/bloom/switch'
@@ -8,27 +8,9 @@ import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
 import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
+import { type DescriptionBlock } from '../../../data/careers'
 
-type DescriptionBlock =
-  | { type: 'paragraph'; text: string }
-  | { type: 'heading'; text: string }
-  | { type: 'list'; items: string[] }
-
-interface AdminJob {
-  _id?: string
-  title: string
-  slug: string
-  subtitle?: string
-  department: string
-  location: string
-  type?: string
-  compensation?: string
-  description?: DescriptionBlock[]
-  active?: boolean
-  order?: number
-}
-
-const emptyJob = (): AdminJob => ({
+const emptyJob = (): Job => ({
   title: '',
   slug: '',
   subtitle: '',
@@ -44,10 +26,10 @@ const emptyJob = (): AdminJob => ({
 export default function JobsAdmin() {
   const { data, refetch } = useJobs()
   const { data: locales } = useLocales()
-  const [editing, setEditing] = useState<AdminJob | null>(null)
+  const [editing, setEditing] = useState<Job | null>(null)
   const [saving, setSaving] = useState(false)
   const [activeLocale, setActiveLocale] = useState('')
-  const [translatingJob, setTranslatingJob] = useState<AdminJob | null>(null)
+  const [translatingJob, setTranslatingJob] = useState<Job | null>(null)
 
   const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
   const jobs = data ?? []
@@ -119,7 +101,7 @@ export default function JobsAdmin() {
               value={editing.title}
               onChange={(e) => {
                 const title = e.target.value
-                const updates: Partial<AdminJob> = { title }
+                const updates: Partial<Job> = { title }
                 if (!editing._id) updates.slug = autoSlug(title, editing.location)
                 setEditing({ ...editing, ...updates })
               }}
