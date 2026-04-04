@@ -3,6 +3,7 @@ import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 import svgr from 'vite-plugin-svgr'
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -10,7 +11,23 @@ export default defineConfig({
     tailwindcss(),
     svgr(),
     react(),
-    babel({ presets: [reactCompilerPreset()] })
+    babel({ presets: [reactCompilerPreset()] }),
+    ViteImageOptimizer({
+      jpg: { quality: 80, progressive: true },
+      jpeg: { quality: 80, progressive: true },
+      png: { quality: 80, effort: 4 },
+      webp: { quality: 80, effort: 4 },
+      avif: { quality: 65, effort: 4 },
+      svg: {
+        plugins: [
+          'preset-default',
+          'sortAttrs',
+          'removeEmptyAttrs',
+        ],
+      },
+      includePublic: true,
+      logStats: true,
+    }),
   ],
   resolve: {
     tsconfigPaths: true,
