@@ -20,7 +20,7 @@ export default function NavigationAdmin() {
 
   useEffect(() => {
     if (!data) return
-    const normalized = (data as any[]).map((dd: any) => ({
+    const normalized = (data ?? []).map((dd) => ({
       ...dd,
       label: dd.label ?? '',
       order: dd.order ?? 0,

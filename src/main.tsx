@@ -1,6 +1,6 @@
 // Polyfill: some libraries (react-native-web animated) expect Node's `global`
-if (typeof globalThis !== 'undefined' && typeof (globalThis as any).global === 'undefined') {
-  ;(globalThis as any).global = globalThis
+if (typeof globalThis !== 'undefined' && typeof (globalThis as Record<string, unknown>).global === 'undefined') {
+  ;(globalThis as Record<string, unknown>).global = globalThis
 }
 
 import { StrictMode } from 'react'

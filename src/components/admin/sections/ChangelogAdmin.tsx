@@ -11,7 +11,7 @@ export default function ChangelogAdmin() {
   const { data, refetch } = useChangelog()
   const [editing, setEditing] = useState<any | null>(null)
   const [saving, setSaving] = useState(false)
-  const entries = (data && 'entries' in data ? data.entries : Array.isArray(data) ? data : []) as any[]
+  const entries = data?.entries ?? []
 
   const save = async () => {
     if (!editing) return

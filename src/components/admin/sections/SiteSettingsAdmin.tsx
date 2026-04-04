@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useSiteSettings } from '../../../api/hooks'
+import { useSiteSettings, type SiteSettings } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { PrimaryButton } from '@oxyhq/bloom/button'
 import { Switch } from '@oxyhq/bloom/switch'
@@ -12,14 +12,14 @@ import { TranslationFields } from '../TranslationEditor'
 export default function SiteSettingsAdmin() {
   const { data, refetch } = useSiteSettings()
   const { data: locales } = useLocales()
-  const [form, setForm] = useState({ siteTitle: '', siteDescription: '', ogImage: '', banner: { text: '', href: '', visible: false } })
+  const [form, setForm] = useState<SiteSettings>({ siteTitle: '', siteDescription: '', ogImage: '', banner: { text: '', href: '', visible: false } })
   const [saving, setSaving] = useState(false)
   const [activeLocale, setActiveLocale] = useState('')
 
   const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
 
   useEffect(() => {
-    if (data) setForm(data as any)
+    if (data) setForm(data)
   }, [data])
 
   useEffect(() => {
@@ -69,9 +69,9 @@ export default function SiteSettingsAdmin() {
         <div className="mt-6">
           <TranslationFields
             collection="settings"
-            documentId={(data as any)?._id ?? ''}
+            documentId={data?._id ?? ''}
             locale={activeLocale}
-            originalFields={data as any ?? {}}
+            originalFields={data ?? {}}
             translatableFields={[
               { key: 'siteTitle', label: 'Site Title', type: 'text' },
               { key: 'siteDescription', label: 'Site Description', type: 'textarea' },

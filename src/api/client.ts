@@ -19,7 +19,7 @@ export async function apiFetch<T>(path: string, options?: RequestInit & { locale
     url += `${separator}locale=${options.locale}`
   }
 
-  const { locale: _, ...fetchOptions } = options ?? {} as any
+  const { locale: _, ...fetchOptions } = options ?? ({} as RequestInit & { locale?: string })
 
   const res = await fetch(url, { ...fetchOptions, headers })
   if (!res.ok) {

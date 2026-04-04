@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import Button from '../ui/Button'
 import { useJob } from '../../api/hooks'
 import { jobDepartments, jobDetails, type DescriptionBlock } from '../../data/careers'
 import SEO from '../SEO'
@@ -189,12 +190,9 @@ function ApplicationForm() {
         />
       </div>
 
-      <button
-        type="submit"
-        className="relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-9 gap-x-1.5 rounded-[10px] px-4 text-sm font-medium button-primary"
-      >
+      <Button type="submit" variant="primary" size="md">
         Submit application
-      </button>
+      </Button>
     </form>
   )
 }
@@ -260,7 +258,7 @@ export default function CareerDetailContent() {
     )
   }
 
-  const engagement = (job as any).engagement ?? job.type ?? 'Full-time'
+  const engagement = job.engagement ?? job.type ?? 'Full-time'
 
   return (
     <article>
@@ -274,7 +272,7 @@ export default function CareerDetailContent() {
         '@type': 'JobPosting',
         title: job.title,
         description: job.subtitle,
-        datePosted: (job as any).createdAt || new Date().toISOString(),
+        datePosted: job.createdAt || new Date().toISOString(),
         employmentType: engagement === 'Full-time' ? 'FULL_TIME' : engagement === 'Part-time' ? 'PART_TIME' : 'CONTRACTOR',
         jobLocation: {
           '@type': 'Place',
@@ -360,12 +358,9 @@ export default function CareerDetailContent() {
               <p className="mt-1 text-sm text-muted-foreground">{job.compensation}</p>
             </div>
             <div className="mt-3">
-              <a
-                href="#apply-form"
-                className="relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-9 gap-x-1.5 rounded-[10px] px-3 text-sm has-[>svg:last-child,>img:last-child]:pr-2 has-[>svg:first-child,>img:first-child]:pl-2 button-primary"
-              >
+              <Button variant="primary" size="md" href="#apply-form">
                 Apply now
-              </a>
+              </Button>
             </div>
           </div>
         </aside>

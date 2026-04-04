@@ -92,7 +92,7 @@ export function useFooter() {
   const locale = useSafeLocale()
   return useQuery({
     queryKey: ['footer', locale],
-    queryFn: () => apiFetch<{ columns: any[]; socialLinks: any[]; copyright: string }>('/footer', { locale }),
+    queryFn: () => apiFetch<{ _id?: string; columns: any[]; socialLinks: any[]; copyright: string }>('/footer', { locale }),
     placeholderData: staticFooter,
   })
 }
@@ -230,11 +230,19 @@ export function useJob(slug: string) {
 }
 
 // ── Site Settings ──
+export interface SiteSettings {
+  _id?: string
+  siteTitle: string
+  siteDescription: string
+  ogImage: string
+  banner: { text: string; href: string; visible: boolean }
+}
+
 export function useSiteSettings() {
   const locale = useSafeLocale()
   return useQuery({
     queryKey: ['settings', locale],
-    queryFn: () => apiFetch('/settings', { locale }),
+    queryFn: () => apiFetch<SiteSettings>('/settings', { locale }),
   })
 }
 
@@ -252,7 +260,7 @@ export function useCreateMcpToken() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (data: { name: string; expiresAt?: string }) =>
-      apiFetch('/mcp-tokens', { method: 'POST', body: JSON.stringify(data) }),
+      apiFetch<{ token: string }>('/mcp-tokens', { method: 'POST', body: JSON.stringify(data) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['mcp-tokens'] }),
   })
 }

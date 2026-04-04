@@ -65,7 +65,7 @@ export default function FooterAdmin() {
         <div className="mt-6">
           <TranslationJsonEditor
             collection="footer"
-            documentId={(data as any)?._id ?? ''}
+            documentId={data?._id ?? ''}
             locale={activeLocale}
           >
             {({ fields, setFields, save: saveTranslation, saving: savingTranslation }) => (

@@ -27,7 +27,7 @@ export default function McpTokensAdmin() {
       expiresAt = d.toISOString()
     }
     const result = await createMutation.mutateAsync({ name: name.trim(), expiresAt })
-    setNewToken((result as any).token)
+    setNewToken(result.token)
     setName('')
     setExpiresIn('')
   }

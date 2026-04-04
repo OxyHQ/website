@@ -33,7 +33,7 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
     return ALL_ICONS.filter(([name]) => name.toLowerCase().includes(q)).slice(0, 60)
   }, [search])
 
-  const SelectedIcon = value ? (LucideIcons as any)[fromKebab(value)] : null
+  const SelectedIcon = value ? (LucideIcons as Record<string, LucideIcons.LucideIcon>)[fromKebab(value)] : null
 
   return (
     <div className={cn('relative', className)}>
