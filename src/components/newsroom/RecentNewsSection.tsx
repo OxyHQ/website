@@ -6,7 +6,13 @@ import { useNewsroomPosts } from '../../api/hooks'
  * "Recent news" section — 2-col grid with row cards
  * Original: max-w-container grid w-full grid-cols-1 gap-sm @lg:grid-cols-2
  * ────────────────────────────────────────────── */
-export default function RecentNewsSection() {
+interface RecentNewsSectionProps {
+  title?: string
+  linkText?: string
+  viewAllText?: string
+}
+
+export default function RecentNewsSection({ title = 'Recent news', linkText = 'View more' }: RecentNewsSectionProps) {
   const { data, isPending } = useNewsroomPosts({ limit: 5 })
   const recentNewsArticles = data?.posts ?? []
 
@@ -15,9 +21,9 @@ export default function RecentNewsSection() {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-5 md:px-8">
       <SectionHeader
-        title="Recent news"
+        title={title}
         href="/newsroom"
-        linkText="View more"
+        linkText={linkText}
       />
 
       <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">

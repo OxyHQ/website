@@ -61,14 +61,23 @@ function CloseIcon() {
 
 type SortOption = 'newest' | 'oldest'
 
-const sortLabels: Record<SortOption, string> = {
-  newest: 'Newest',
-  oldest: 'Oldest',
+interface ArticleGridUI {
+  filter?: string
+  newest?: string
+  oldest?: string
+  loadMore?: string
+  clearAll?: string
+  noResults?: string
+  clearFilters?: string
 }
 
 const filterCategories = newsCategories.filter((c) => c !== 'All')
 
-export default function ArticleGridSection() {
+export default function ArticleGridSection({ ui = {} }: { ui?: ArticleGridUI }) {
+  const sortLabels: Record<SortOption, string> = {
+    newest: ui.newest ?? 'Newest',
+    oldest: ui.oldest ?? 'Oldest',
+  }
   const { data } = useNewsroomPosts()
   const gridArticles = data?.posts ?? []
   const [visibleCount, setVisibleCount] = useState(6)
@@ -143,7 +152,7 @@ export default function ArticleGridSection() {
               >
                 <FilterIcon />
                 <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                  Filter
+                  {ui.filter ?? 'Filter'}
                 </span>
                 {activeFilters.length > 0 && (
                   <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-surface px-1.5 text-xs font-semibold text-foreground">
@@ -180,7 +189,7 @@ export default function ArticleGridSection() {
                         onClick={clearFilters}
                         className="flex w-full cursor-pointer items-center px-3 py-2 text-sm text-muted-foreground transition-colors duration-150 hover:bg-surface hover:text-foreground"
                       >
-                        Clear all
+                        {ui.clearAll ?? 'Clear all'}
                       </button>
                     </>
                   )}
@@ -243,7 +252,7 @@ export default function ArticleGridSection() {
             onClick={clearFilters}
             className="cursor-pointer px-1 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:text-foreground"
           >
-            Clear all
+            {ui.clearAll ?? 'Clear all'}
           </button>
         </div>
       )}
@@ -259,13 +268,13 @@ export default function ArticleGridSection() {
       {sorted.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <p className="text-lg font-medium text-muted-foreground">
-            No articles match your filters
+            {ui.noResults ?? 'No articles match your filters'}
           </p>
           <button
             onClick={clearFilters}
             className="mt-3 cursor-pointer text-sm font-medium text-primary transition-colors duration-150 hover:underline"
           >
-            Clear filters
+            {ui.clearFilters ?? 'Clear filters'}
           </button>
         </div>
       )}
@@ -277,7 +286,7 @@ export default function ArticleGridSection() {
             onClick={() => setVisibleCount((c) => c + 3)}
             className="flex h-10 cursor-pointer items-center justify-center gap-[0.3em] whitespace-nowrap rounded-[2.5rem] bg-surface px-5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-surface"
           >
-            Load more
+            {ui.loadMore ?? 'Load more'}
           </button>
         </div>
       )}

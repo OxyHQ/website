@@ -17,7 +17,7 @@ import { newsCategories, type NewsCategory } from '../../data/newsroom'
  *           left: @lg:sticky @lg:col-span-3 (featured 4:5)
  *           right: gap-y-xl gap-x-2xs col-span-1 hidden @lg:grid (sidebar 1:1)
  * ────────────────────────────────────────────── */
-export default function NewsroomHeroSection() {
+export default function NewsroomHeroSection({ title = 'Newsroom' }: { title?: string }) {
   const { data: featuredData, isPending: featuredPending } = useNewsroomPosts({ featured: true, limit: 1 })
   const featuredArticle = featuredData?.posts?.[0] ?? null
   const { data: sidebarData, isPending: sidebarPending } = useNewsroomPosts({ limit: 5 })
@@ -30,7 +30,7 @@ export default function NewsroomHeroSection() {
       {/* ── Title ── */}
       <div className="flex flex-col gap-1">
         <h1 className="shrink-0 text-heading-responsive-lg text-foreground">
-          Newsroom
+          {title}
         </h1>
       </div>
 

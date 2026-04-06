@@ -10,11 +10,29 @@ import { type DescriptionBlock } from '../data/careers'
 
 
 // ── Pages ──
+export interface PageSection {
+  type: string
+  heading?: string
+  subheading?: string
+  content?: string
+  items?: Array<{ key: string; value: string }>
+  order: number
+}
+
+export interface PageData {
+  _id: string
+  slug: string
+  title: string
+  description: string
+  sections: PageSection[]
+  promptPhrases: string[]
+}
+
 export function usePage(slug: string) {
   const locale = useCurrentLocale()
   return useQuery({
     queryKey: ['page', slug, locale],
-    queryFn: () => apiFetch(`/pages/${slug}`, { locale }),
+    queryFn: () => apiFetch<PageData>(`/pages/${slug}`, { locale }),
     retry: false,
   })
 }
