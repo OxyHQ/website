@@ -21,6 +21,7 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
       title: post.title,
       image: post.coverImage ?? '',
       category: post.category,
+      slug: post.slug,
     }))
 
     const careerFaces = (jobs ?? []).map((job: { title: string; slug: string; department?: string }) => ({
