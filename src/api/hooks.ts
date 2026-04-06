@@ -3,15 +3,10 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tansta
 import { apiFetch } from './client'
 import { useCurrentLocale } from '../contexts/LocaleContext'
 
-// Static data imports — used as placeholderData so the site works without backend
-import { platformDropdown, resourcesDropdown, ecosystemDropdown, footerColumns as staticFooterColumns, testimonials as staticTestimonials, type Testimonial, type FooterColumn, type NavDropdown, type NavDropdownItem, type NavDropdownSection, type NavSidePanel } from '../data/content'
-import { pricingPlans as staticPricingPlans, type PricingPlan } from '../data/pricing'
-import { allPlaceholderPosts, type NewsroomPost } from '../data/newsroom'
+import { type Testimonial, type FooterColumn, type NavDropdown, type NavDropdownItem, type NavDropdownSection, type NavSidePanel } from '../data/content'
+import { type PricingPlan } from '../data/pricing'
+import { type NewsroomPost } from '../data/newsroom'
 import { type DescriptionBlock } from '../data/careers'
-
-const staticNavigation = [platformDropdown, ecosystemDropdown, resourcesDropdown]
-const staticFooter = { columns: staticFooterColumns, socialLinks: [], copyright: 'Made with love by Oxy.' }
-const staticNewsroom = { posts: allPlaceholderPosts, total: allPlaceholderPosts.length, page: 1, pages: 1 }
 
 
 // ── Pages ──
@@ -92,7 +87,6 @@ export function useNavigation() {
       const raw = await apiFetch<RawNavDropdown[]>('/navigation', { locale })
       return raw.map(normalizeNavItem)
     },
-    initialData: staticNavigation,
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
   })
@@ -104,7 +98,6 @@ export function useFooter() {
   return useQuery({
     queryKey: ['footer', locale],
     queryFn: () => apiFetch<{ _id?: string; columns: FooterColumn[]; socialLinks: unknown[]; copyright: string }>('/footer', { locale }),
-    initialData: staticFooter,
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
   })
@@ -123,7 +116,6 @@ export function useNewsroomPosts(params?: { category?: string; featured?: boolea
   return useQuery({
     queryKey: ['newsroom', params, locale],
     queryFn: () => apiFetch<{ posts: NewsroomPost[]; total: number; page: number; pages: number }>(`/newsroom${qs ? `?${qs}` : ''}`, { locale }),
-    initialData: staticNewsroom,
     placeholderData: keepPreviousData,
   })
 }
@@ -152,7 +144,6 @@ export function usePricing() {
   return useQuery({
     queryKey: ['pricing', locale],
     queryFn: () => apiFetch<PricingPlan[]>('/pricing', { locale }),
-    initialData: staticPricingPlans,
     staleTime: 2 * 60_000,
     placeholderData: keepPreviousData,
   })
@@ -164,7 +155,6 @@ export function useTestimonials() {
   return useQuery({
     queryKey: ['testimonials', locale],
     queryFn: () => apiFetch<Testimonial[]>('/testimonials', { locale }),
-    initialData: staticTestimonials,
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
   })
@@ -236,7 +226,6 @@ export function useJobs() {
   return useQuery({
     queryKey: ['jobs', locale],
     queryFn: () => apiFetch<Job[]>('/jobs', { locale }),
-    initialData: [],
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
   })
@@ -260,19 +249,11 @@ export interface SiteSettings {
   banner: { text: string; href: string; visible: boolean }
 }
 
-const DEFAULT_SITE_SETTINGS: SiteSettings = {
-  siteTitle: 'Oxy',
-  siteDescription: 'The everything app for work',
-  ogImage: '',
-  banner: { text: 'Alia. Think better, together.', href: '/ai', visible: true },
-}
-
 export function useSiteSettings() {
   const locale = useCurrentLocale()
   return useQuery({
     queryKey: ['settings', locale],
     queryFn: () => apiFetch<SiteSettings>('/settings', { locale }),
-    initialData: DEFAULT_SITE_SETTINGS,
     staleTime: 2 * 60_000,
     placeholderData: keepPreviousData,
   })

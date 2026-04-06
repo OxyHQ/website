@@ -9,42 +9,6 @@ export interface PricingPlan {
   features: string[]
 }
 
-export const pricingPlans: PricingPlan[] = [
-  {
-    name: 'Free',
-    price: { monthly: 0, annual: 0 },
-    description: 'For individuals getting started',
-    cta: 'Start for free',
-    ctaHref: '#',
-    features: ['Real-time contact syncing', 'Automatic data enrichment', 'Up to 3 seats'],
-  },
-  {
-    name: 'Plus',
-    price: { monthly: 36, annual: 29 },
-    description: 'For small teams collaborating',
-    cta: 'Continue with Plus',
-    ctaHref: '#',
-    features: ['Private lists', 'Enhanced email sending', 'No seat limits'],
-  },
-  {
-    name: 'Pro',
-    price: { monthly: 86, annual: 69 },
-    description: 'For growing teams scaling up',
-    cta: 'Continue with Pro',
-    ctaHref: '#',
-    highlighted: true,
-    features: ['Call Intelligence & sequences', 'Advanced permissions', 'Priority support'],
-  },
-  {
-    name: 'Enterprise',
-    price: null,
-    description: 'For enterprises needing control',
-    cta: 'Talk to sales',
-    ctaHref: '#',
-    features: ['Unlimited objects', 'Unlimited teams', 'Advanced security & admin'],
-  },
-]
-
 export interface FaqItem {
   question: string
   answer: string

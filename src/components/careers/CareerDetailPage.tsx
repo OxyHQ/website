@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import Button from '../ui/Button'
 import { useJob } from '../../api/hooks'
-import { jobDepartments, jobDetails, type DescriptionBlock } from '../../data/careers'
+import { type DescriptionBlock } from '../../data/careers'
 import SEO from '../SEO'
 import StructuredData from '../StructuredData'
 
@@ -222,27 +222,24 @@ function NotFoundView() {
 
 export default function CareerDetailContent() {
   const { slug } = useParams<{ slug: string }>()
-  const { data: apiJob, isLoading } = useJob(slug ?? '')
+  const { data: job, isPending } = useJob(slug ?? '')
 
-  // Use API data if available, fall back to static data
-  const job = apiJob ?? jobDetails.find((j) => j.slug === slug)
-
-  // Find the position number within the total job listing
-  let positionNumber = 0
-  let found = false
-  for (const dept of jobDepartments) {
-    for (const j of dept.jobs) {
-      positionNumber++
-      if (j.href === `/company/careers/${slug}`) {
-        found = true
-        break
-      }
-    }
-    if (found) break
+  if (isPending) {
+    return (
+      <div className="container py-40">
+        <div className="mx-auto max-w-2xl space-y-6">
+          <div className="h-8 w-48 animate-pulse rounded-lg bg-surface" />
+          <div className="h-12 w-full animate-pulse rounded-lg bg-surface" />
+          <div className="h-6 w-64 animate-pulse rounded-lg bg-surface" />
+          <div className="mt-10 space-y-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-4 w-full animate-pulse rounded bg-surface" />
+            ))}
+          </div>
+        </div>
+      </div>
+    )
   }
-  if (!found) positionNumber = 0
-
-  if (isLoading) return null
 
   if (!job) {
     return (
@@ -293,7 +290,7 @@ export default function CareerDetailContent() {
           / <span className="text-muted-foreground">{job.department}</span>
         </p>
         <p className="col-[-2] justify-self-center whitespace-nowrap text-xs uppercase tracking-wider text-muted-foreground max-lg:col-[-3] max-lg:justify-self-end">
-          [OP {positionNumber.toString().padStart(2, '0')}]
+          {job.department}
         </p>
       </aside>
 

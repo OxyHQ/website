@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import Button from '../ui/Button'
 import { useJobs, type Job } from '../../api/hooks'
-import { jobDepartments as staticDepartments } from '../../data/careers'
 
 function DashedLine() {
   return (
@@ -45,13 +44,13 @@ function groupJobsByDepartment(jobs: Job[]): DepartmentGroup[] {
 }
 
 export default function OpenPositionsSection() {
-  const { data: apiJobs } = useJobs()
+  const { data: apiJobs, isPending } = useJobs()
   const [activeLocation, setActiveLocation] = useState('All locations')
   const locations = ['All locations', 'Europe', 'United Kingdom', 'United States']
 
   const departments = useMemo(() => {
-    if (apiJobs && apiJobs.length > 0) return groupJobsByDepartment(apiJobs)
-    return staticDepartments
+    if (!apiJobs || apiJobs.length === 0) return []
+    return groupJobsByDepartment(apiJobs)
   }, [apiJobs])
 
   const filteredDepartments = useMemo(() => {
@@ -130,6 +129,19 @@ export default function OpenPositionsSection() {
 
           <div className="relative col-[2/-2] bg-background max-xl:col-[1/-1] xl:border-border xl:border-x">
             <div className="relative flex flex-col pb-18">
+              {isPending && (
+                <div className="flex flex-col gap-4 py-16 px-8">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-14 animate-pulse rounded-lg bg-surface" />
+                  ))}
+                </div>
+              )}
+              {!isPending && filteredDepartments.length === 0 && (
+                <div className="py-20 text-center text-muted-foreground">
+                  <p className="text-lg">No open positions right now.</p>
+                  <p className="mt-2 text-sm">Check back soon or follow us for updates.</p>
+                </div>
+              )}
               {filteredDepartments.map((dept) => (
                 <div key={dept.id}>
                   {/* Solid line above department header */}

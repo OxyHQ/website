@@ -2,17 +2,14 @@ import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useChangelog, useTrackedRepos } from '../../api/hooks'
-import { changelogData } from '../../data/changelog'
 
 export default function ChangelogContent() {
   const [selectedRepo, setSelectedRepo] = useState<string | undefined>(undefined)
   const [currentPage, setCurrentPage] = useState(1)
 
-  const { data, isError } = useChangelog({ repo: selectedRepo, page: currentPage, limit: 10 })
+  const { data, isPending, isError } = useChangelog({ repo: selectedRepo, page: currentPage, limit: 10 })
   const { data: repos } = useTrackedRepos()
 
-  // Determine whether to use API data or fall back to static
-  const useStaticFallback = isError || (!data && !selectedRepo)
   const entries = data?.entries
 
   return (
@@ -124,7 +121,39 @@ export default function ChangelogContent() {
         <div className="border-x border-border">
           <div className="grid grid-cols-12">
             <div className="col-[2/-2]">
-              {/* API-powered entries */}
+              {/* Loading state */}
+              {isPending && (
+                <div className="space-y-12 py-16">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="space-y-4">
+                      <div className="h-4 w-32 animate-pulse rounded bg-surface" />
+                      <div className="h-7 w-3/4 animate-pulse rounded-lg bg-surface" />
+                      <div className="space-y-2">
+                        <div className="h-4 w-full animate-pulse rounded bg-surface" />
+                        <div className="h-4 w-5/6 animate-pulse rounded bg-surface" />
+                        <div className="h-4 w-2/3 animate-pulse rounded bg-surface" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Error state */}
+              {isError && !isPending && (
+                <div className="py-20 text-center text-muted-foreground">
+                  <p className="text-lg">Failed to load changelog.</p>
+                  <p className="mt-2 text-sm">Please try again later.</p>
+                </div>
+              )}
+
+              {/* Empty state */}
+              {!isPending && !isError && (!entries || entries.length === 0) && (
+                <div className="py-20 text-center text-muted-foreground">
+                  <p className="text-lg">No changelog entries yet.</p>
+                </div>
+              )}
+
+              {/* Entries */}
               {entries && entries.length > 0 && entries.map((entry) => (
                 <article
                   key={entry._id}
@@ -198,88 +227,6 @@ export default function ChangelogContent() {
                 </article>
               ))}
 
-              {/* Static fallback when API has no data */}
-              {useStaticFallback && (!entries || entries.length === 0) && changelogData.map((group) =>
-                group.entries.map((entry) => (
-                  <article
-                    key={entry.id}
-                    className="relative grid border-border border-b py-[60px] lg:grid-cols-[1fr_minmax(0,600px)_1fr] lg:py-[90px]"
-                  >
-                    {/* Sticky date - desktop */}
-                    <time className="sticky top-32 hidden text-nowrap text-muted-foreground text-sm lg:flex">
-                      {entry.date}
-                    </time>
-
-                    {/* Tags row */}
-                    <aside className="flex flex-wrap gap-x-[18px] gap-y-1 lg:col-start-2 lg:gap-x-5">
-                      {entry.tags.map((tag) => (
-                        <div key={tag.label} className="flex items-center gap-x-1.5">
-                          <div
-                            className="h-3 w-3 rounded-full"
-                            style={{ backgroundColor: tag.color }}
-                          />
-                          <div className="text-muted-foreground text-xs lg:text-sm">
-                            {tag.label}
-                          </div>
-                        </div>
-                      ))}
-                    </aside>
-
-                    {/* Content */}
-                    <div className="mt-6 lg:col-start-2">
-                      <h2
-                        className="font-semibold text-foreground text-xl lg:font-semibold lg:text-2xl"
-                        id={entry.id}
-                      >
-                        {entry.title}
-                      </h2>
-                      <div className="font-normal leading-6.5 mt-5 text-muted-foreground">
-                        <div>
-                          {entry.content.map((paragraph, pIndex) => (
-                            <p
-                              key={pIndex}
-                              className="not-first:mt-5 text-pretty [h4+&:not(:first-child)]:mt-2.5 [p+&:not(:first-child)]:mt-5"
-                              dangerouslySetInnerHTML={{ __html: paragraph }}
-                            />
-                          ))}
-                          {entry.listItems && (
-                            <ul className="not-first:mt-1.5 list-[square] pl-3.5 marker:text-muted-foreground">
-                              {entry.listItems.map((item, liIndex) => (
-                                <li
-                                  key={liIndex}
-                                  className="pt-1 pl-1.5 first:pt-1.5 [&:not(:has(ul,li))]:pb-1.5"
-                                >
-                                  <p
-                                    className="not-first:mt-5 text-pretty [h4+&:not(:first-child)]:mt-2.5 [p+&:not(:first-child)]:mt-5"
-                                    dangerouslySetInnerHTML={{ __html: item }}
-                                  />
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Mobile date */}
-                      <time className="mt-5 text-muted-foreground text-xs lg:hidden" aria-hidden="true">
-                        {entry.date}
-                      </time>
-
-                      {/* Media placeholder */}
-                      {entry.mediaType && (
-                        <figure className="mt-10">
-                          <div
-                            className="rounded-3xl border border-border overflow-hidden bg-surface flex items-center justify-center text-muted-foreground text-sm"
-                            style={{ aspectRatio: entry.mediaAspect || '1.25 / 1' }}
-                          >
-                            Media placeholder
-                          </div>
-                        </figure>
-                      )}
-                    </div>
-                  </article>
-                ))
-              )}
             </div>
           </div>
         </div>

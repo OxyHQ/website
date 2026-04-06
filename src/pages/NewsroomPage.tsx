@@ -6,11 +6,6 @@ import ArticleGridSection from '../components/newsroom/ArticleGridSection'
 import RecentNewsSection from '../components/newsroom/RecentNewsSection'
 import CarouselSection from '../components/newsroom/CarouselSection'
 import { useNewsroomPosts } from '../api/hooks'
-import {
-  storiesArticles,
-  researchArticles,
-  businessArticles,
-} from '../data/newsroom'
 
 /* ──────────────────────────────────────────────────
  * /newsroom — cloned from OpenAI company-announcements
@@ -29,9 +24,9 @@ export default function NewsroomPage() {
   const { data: researchData } = useNewsroomPosts({ category: 'Research', limit: 3 })
   const { data: businessData } = useNewsroomPosts({ category: 'Engineering', limit: 3 })
 
-  const stories = storiesData?.posts ?? storiesArticles
-  const research = researchData?.posts ?? researchArticles
-  const business = businessData?.posts ?? businessArticles
+  const stories = storiesData?.posts ?? []
+  const research = researchData?.posts ?? []
+  const business = businessData?.posts ?? []
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
