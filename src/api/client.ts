@@ -1,4 +1,4 @@
-const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api'
+export const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api'
 
 let getAccessToken: (() => Promise<string | null>) | null = null
 
@@ -12,10 +12,10 @@ export async function getAuthHeaders(): Promise<Record<string, string>> {
 }
 
 export async function apiFetch<T>(path: string, options?: RequestInit & { locale?: string }): Promise<T> {
-  const token = getAccessToken ? await getAccessToken() : null
+  const authHeaders = await getAuthHeaders()
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...authHeaders,
   }
 
   let url = `${API_BASE}${path}`

@@ -121,7 +121,6 @@ export default function ChangelogContent() {
         <div className="border-x border-border">
           <div className="grid grid-cols-12">
             <div className="col-[2/-2]">
-              {/* Loading state */}
               {isPending && (
                 <div className="space-y-12 py-16">
                   {[1, 2, 3].map((i) => (
@@ -138,7 +137,6 @@ export default function ChangelogContent() {
                 </div>
               )}
 
-              {/* Error state */}
               {isError && !isPending && (
                 <div className="py-20 text-center text-muted-foreground">
                   <p className="text-lg">Failed to load changelog.</p>
@@ -146,14 +144,12 @@ export default function ChangelogContent() {
                 </div>
               )}
 
-              {/* Empty state */}
               {!isPending && !isError && (!entries || entries.length === 0) && (
                 <div className="py-20 text-center text-muted-foreground">
                   <p className="text-lg">No changelog entries yet.</p>
                 </div>
               )}
 
-              {/* Entries */}
               {entries && entries.length > 0 && entries.map((entry) => (
                 <article
                   key={entry._id}

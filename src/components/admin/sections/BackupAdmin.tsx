@@ -1,8 +1,6 @@
 import { useState, useRef } from 'react'
 import { PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
-import { getAuthHeaders } from '../../../api/client'
-
-const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api'
+import { API_BASE, getAuthHeaders } from '../../../api/client'
 
 interface ImportResult {
   success: boolean

@@ -75,27 +75,23 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     }
   }, [animate])
 
-  // Wheel: add scroll delta on top of the auto-animation (no pause needed)
+  // Wheel on the carousel element: add scroll delta on top of auto-animation
   useEffect(() => {
     const outer = outerRef.current
     if (!outer) return
 
     const handleWheel = (e: WheelEvent) => {
-      const rect = outer.getBoundingClientRect()
-      if (rect.bottom <= 0 || rect.top >= window.innerHeight) return
-
       const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
       const delta = isHorizontal ? e.deltaX : e.deltaY
       if (Math.abs(delta) < 1) return
 
-      // Only capture horizontal scroll; vertical scroll moves the page normally
       if (isHorizontal) e.preventDefault()
 
       posRef.current -= delta
     }
 
-    window.addEventListener('wheel', handleWheel, { passive: false })
-    return () => window.removeEventListener('wheel', handleWheel)
+    outer.addEventListener('wheel', handleWheel, { passive: false })
+    return () => outer.removeEventListener('wheel', handleWheel)
   }, [])
 
   const handleMouseEnter = useCallback(() => {
