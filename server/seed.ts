@@ -66,7 +66,7 @@ async function seed() {
         heading: 'Company',
         links: [
           { label: 'Changelog', href: '/changelog' },
-          { label: 'Announcements', href: '/newsroom' },
+          { label: 'Newsroom', href: '/newsroom' },
           { label: 'Engineering blog', href: '/company/news' },
           { label: 'Careers', href: '/company/careers' },
         ],
@@ -125,7 +125,7 @@ async function seed() {
           { label: 'Transparency Center', href: '#' },
           { label: 'Community Guidelines', href: '#' },
           { label: 'Manifesto', href: '#' },
-          { label: 'Announcements', href: '/newsroom' },
+          { label: 'Newsroom', href: '/newsroom' },
           { label: 'Engineering blog', href: '/company/news', isNew: true },
           { label: 'Become a partner', href: '/partners' },
         ],
