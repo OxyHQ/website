@@ -9,7 +9,7 @@ interface HeroCarouselProps {
 
 const NORMAL_SPEED = 1.2   // px per frame (~72px/s at 60fps)
 const SLOW_SPEED = 0.2     // px per frame on hover
-const RESUME_DELAY = 2000  // ms after last manual scroll before auto resumes
+const RESUME_DELAY = 150  // ms after last scroll event before auto resumes
 
 export default function HeroCarousel({ slots }: HeroCarouselProps) {
   const { data: jobs } = useJobs()
@@ -80,6 +80,8 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     }
   }, [animate])
 
+  const outerRef = useRef<HTMLDivElement>(null)
+
   const scheduleResume = useCallback(() => {
     if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
     resumeTimerRef.current = setTimeout(() => {
@@ -87,18 +89,32 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     }, RESUME_DELAY)
   }, [])
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
-    const delta = isHorizontal ? e.deltaX : e.deltaY
-    if (Math.abs(delta) < 1) return
+  // Listen to wheel events on the window so vertical page scroll also drives the carousel
+  useEffect(() => {
+    const outer = outerRef.current
+    if (!outer) return
 
-    // Horizontal scroll: capture exclusively for the carousel
-    // Vertical scroll: let the page scroll normally AND move the carousel
-    if (isHorizontal) e.preventDefault()
+    const handleWheel = (e: WheelEvent) => {
+      // Check if the carousel is in the viewport
+      const rect = outer.getBoundingClientRect()
+      const inView = rect.bottom > 0 && rect.top < window.innerHeight
+      if (!inView) return
 
-    manualScrolling.current = true
-    posRef.current -= delta
-    scheduleResume()
+      const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
+      const delta = isHorizontal ? e.deltaX : e.deltaY
+      if (Math.abs(delta) < 1) return
+
+      // Horizontal scroll on the carousel: capture exclusively
+      if (isHorizontal) e.preventDefault()
+
+      // Vertical scroll: page scrolls normally AND carousel moves
+      manualScrolling.current = true
+      posRef.current -= delta
+      scheduleResume()
+    }
+
+    window.addEventListener('wheel', handleWheel, { passive: false })
+    return () => window.removeEventListener('wheel', handleWheel)
   }, [scheduleResume])
 
   const handleMouseEnter = useCallback(() => {
@@ -113,10 +129,10 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
 
   return (
     <div
+      ref={outerRef}
       className="hero-carousel-outer"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onWheel={handleWheel}
     >
       <div className="hero-carousel-track" ref={trackRef}>
         <div className="hero-carousel-grid">
