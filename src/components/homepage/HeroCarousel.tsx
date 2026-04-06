@@ -15,40 +15,34 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
   const { data: newsroomData } = useNewsroomPosts({ limit: 20 })
   const posts = newsroomData?.posts
 
-  // Replace static faces with real CMS data when available
   const resolvedSlots = useMemo(() => {
-    let newsroomIndex = 0
+    const newsroomFaces = (posts ?? []).map(post => ({
+      type: 'newsroom' as const,
+      title: post.title,
+      image: post.coverImage ?? '',
+      category: post.category,
+    }))
+
+    const careerFaces = (jobs ?? []).map((job: { title: string; slug: string; department?: string }) => ({
+      type: 'careers' as const,
+      jobTitle: job.title,
+      department: job.department ?? 'Careers',
+      slug: job.slug,
+    }))
+
+    let newsroomOffset = 0
 
     return slots.map(slot => {
-      const hasNewsroom = slot.faces.some(f => f.type === 'newsroom')
-      const hasCareers = slot.faces.some(f => f.type === 'careers')
+      const firstFaceType = slot.faces[0]?.type
 
-      if (hasNewsroom && posts?.length) {
-        const count = slot.faces.length
-        const slicedPosts = posts.slice(newsroomIndex, newsroomIndex + count)
-        newsroomIndex += count
-        if (slicedPosts.length === 0) return slot
-        return {
-          ...slot,
-          faces: slicedPosts.map(post => ({
-            type: 'newsroom' as const,
-            title: post.title,
-            image: post.coverImage ?? '',
-            category: post.category,
-          })),
-        }
+      if (firstFaceType === 'newsroom' && newsroomFaces.length > 0) {
+        const chunk = newsroomFaces.slice(newsroomOffset, newsroomOffset + slot.faces.length)
+        newsroomOffset += slot.faces.length
+        return chunk.length > 0 ? { ...slot, faces: chunk } : slot
       }
 
-      if (hasCareers && jobs?.length) {
-        return {
-          ...slot,
-          faces: jobs.map((job: { title: string; slug: string; department?: string }) => ({
-            type: 'careers' as const,
-            jobTitle: job.title,
-            department: job.department ?? 'Careers',
-            slug: job.slug,
-          })),
-        }
+      if (firstFaceType === 'careers' && careerFaces.length > 0) {
+        return { ...slot, faces: careerFaces }
       }
 
       return slot
@@ -57,21 +51,18 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
 
   const outerRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
-  const posRef = useRef(-1) // start slightly negative to avoid wrap on first frame
+  const posRef = useRef(0)
   const speedRef = useRef(NORMAL_SPEED)
   const targetSpeedRef = useRef(NORMAL_SPEED)
   const rafRef = useRef<number>(0)
 
-  // Animation loop — always runs, combines auto speed + any manual offset
   const animate = useCallback(() => {
     const track = trackRef.current
     if (!track) return
 
-    // Smoothly interpolate speed toward target (hover slow / normal)
     speedRef.current += (targetSpeedRef.current - speedRef.current) * 0.05
     posRef.current -= speedRef.current
 
-    // Infinite wrap: two identical grids side by side
     const halfWidth = track.scrollWidth / 2
     if (halfWidth > 0) {
       if (posRef.current <= -halfWidth) posRef.current += halfWidth
@@ -82,7 +73,6 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     rafRef.current = requestAnimationFrame(animate)
   }, [])
 
-  // Start/stop on mount and visibility change
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
@@ -99,7 +89,6 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     }
   }, [animate])
 
-  // Wheel on the carousel element: add scroll delta on top of auto-animation
   useEffect(() => {
     const outer = outerRef.current
     if (!outer) return

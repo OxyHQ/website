@@ -388,7 +388,7 @@ async function seed() {
       resume: 'We are thrilled to announce our Series B funding round, led by Sequoia Capital, to expand our team and product.',
       description: 'Company announcement about the Series B funding round.',
       content: '<p>Today we are announcing a $50M Series B round led by Sequoia Capital with participation from existing investors. This funding will accelerate our mission to make CRM intelligent, intuitive, and accessible to every go-to-market team.</p>',
-      coverImage: 'https://images.unsplash.com/photo-1553729459-uj3e46b3-baj2?w=1200&h=630&fit=crop',
+      coverImage: 'https://images.unsplash.com/photo-1553729459-ade9a7b3b02e?w=1200&h=630&fit=crop',
       imageAlt: 'Team celebration in modern office',
       oxyUserId: 'seed-admin',
       tags: ['funding', 'company-news'],
