@@ -46,7 +46,7 @@ function YouTubeIcon() {
 
 const socialLinks = [
   { label: 'LinkedIn', icon: LinkedInIcon, href: 'https://www.linkedin.com/company/oxyhq/' },
-  { label: 'X', icon: XIcon, href: '#' },
+  { label: 'X', icon: XIcon, href: 'https://x.com/oxyhqinc' },
   { label: 'Dribbble', icon: DribbbleIcon, href: '#' },
   { label: 'YouTube', icon: YouTubeIcon, href: '#' },
 ]
@@ -137,12 +137,12 @@ export default function Footer() {
 
           {/* Legal links grid */}
           <div className="grid grid-cols-4 gap-x-6 gap-y-2 px-px pb-6 font-normal text-muted-foreground text-sm max-lg:grid-cols-3 max-md:grid-cols-2">
-            <a className="transition-colors duration-150 hover:text-foreground" href="#">Legal</a>
-            <a className="transition-colors duration-150 hover:text-foreground" href="#">Privacy Policy</a>
-            <a className="transition-colors duration-150 hover:text-foreground" href="#">Cookie Policy</a>
-            <a className="transition-colors duration-150 hover:text-foreground" href="#">Accessibility</a>
-            <a className="transition-colors duration-150 hover:text-foreground" href="#">Terms &amp; Conditions</a>
-            <a className="transition-colors duration-150 hover:text-foreground" href="#">LLMs</a>
+            <Link className="transition-colors duration-150 hover:text-foreground" to="/legal">Legal</Link>
+            <Link className="transition-colors duration-150 hover:text-foreground" to="/legal/privacy">Privacy Policy</Link>
+            <Link className="transition-colors duration-150 hover:text-foreground" to="/legal/cookies">Cookie Policy</Link>
+            <Link className="transition-colors duration-150 hover:text-foreground" to="/legal/accessibility">Accessibility</Link>
+            <Link className="transition-colors duration-150 hover:text-foreground" to="/legal/terms">Terms &amp; Conditions</Link>
+            <Link className="transition-colors duration-150 hover:text-foreground" to="/legal/llms">LLMs</Link>
             <Link className="transition-colors duration-150 hover:text-foreground" to="/settings">Settings</Link>
           </div>
 

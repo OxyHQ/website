@@ -37,6 +37,7 @@ const ChangelogPage = lazy(() => import('./pages/ChangelogPage'))
 const DocsPage = lazy(() => import('./pages/DocsPage'))
 const DocsIntroPage = lazy(() => import('./pages/DocsIntroPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
+const LegalPage = lazy(() => import('./pages/LegalPage'))
 
 const OXY_API = 'https://api.oxy.so'
 
@@ -103,6 +104,8 @@ function PublicRoutes() {
       <Route path="tnp" element={<TNPPage />} />
       <Route path="tnp/install" element={<TNPInstallPage />} />
       <Route path="settings" element={<SettingsPage />} />
+      <Route path="legal" element={<LegalPage />} />
+      <Route path="legal/:section" element={<LegalPage />} />
     </>
   )
 }
