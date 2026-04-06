@@ -142,13 +142,13 @@ function FairCoinFace() {
           FairCoin <span className="font-normal italic text-green-200">Today</span>
         </h3>
         <div className="flex flex-wrap gap-2">
-          <a href="https://buy.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full bg-primary px-4 py-1.5 text-sm font-bold text-primary-foreground">
+          <a href="https://buy.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-[#166534]">
             Buy
           </a>
-          <a href="https://explorer.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-border bg-secondary px-4 py-1.5 text-sm font-bold text-secondary-foreground">
+          <a href="https://explorer.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white hover:bg-white/10">
             Explorer
           </a>
-          <a href="https://fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-border bg-secondary px-4 py-1.5 text-sm font-bold text-secondary-foreground">
+          <a href="https://fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white hover:bg-white/10">
             Learn more
           </a>
         </div>
