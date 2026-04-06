@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { apiFetch } from './client'
 import { useCurrentLocale } from '../contexts/LocaleContext'
 
@@ -13,18 +13,10 @@ const staticNavigation = [platformDropdown, ecosystemDropdown, resourcesDropdown
 const staticFooter = { columns: staticFooterColumns, socialLinks: [], copyright: 'Made with love by Oxy.' }
 const staticNewsroom = { posts: allPlaceholderPosts, total: allPlaceholderPosts.length, page: 1, pages: 1 }
 
-// Helper: safely get locale (returns undefined outside LocaleProvider)
-function useSafeLocale(): string | undefined {
-  try {
-    return useCurrentLocale()
-  } catch {
-    return undefined
-  }
-}
 
 // ── Pages ──
 export function usePage(slug: string) {
-  const locale = useSafeLocale()
+  const locale = useCurrentLocale()
   return useQuery({
     queryKey: ['page', slug, locale],
     queryFn: () => apiFetch(`/pages/${slug}`, { locale }),
@@ -41,7 +33,7 @@ export function useUpdatePage(slug: string) {
 }
 
 export function usePromptPhrases(slug: string, enabled = true) {
-  const locale = useSafeLocale()
+  const locale = useCurrentLocale()
   return useQuery({
     queryKey: ['promptPhrases', slug, locale],
     queryFn: () => apiFetch<string[]>(`/pages/${slug}/prompt-phrases`, { locale }),
@@ -63,10 +55,12 @@ interface RawNavDropdown {
   sidePanel?: NavSidePanel
 }
 
+export type NavigationItem = NavDropdown & { _id?: string; order?: number }
+
 // The DB stores items flat with a `section` string per item; the NavDropdown
 // type expects grouped `sections[]`. Normalize API responses to that shape.
 // _id and order are passed through for the admin editor.
-function normalizeNavItem(dd: RawNavDropdown): NavDropdown & { _id?: string; order?: number } {
+function normalizeNavItem(dd: RawNavDropdown): NavigationItem {
   if (Array.isArray(dd.sections)) {
     return { _id: dd._id, order: dd.order, label: dd.label, sections: dd.sections, sidePanel: dd.sidePanel }
   }
@@ -91,30 +85,34 @@ function normalizeNavItem(dd: RawNavDropdown): NavDropdown & { _id?: string; ord
 }
 
 export function useNavigation() {
-  const locale = useSafeLocale()
-  return useQuery({
+  const locale = useCurrentLocale()
+  return useQuery<NavigationItem[]>({
     queryKey: ['navigation', locale],
     queryFn: async () => {
       const raw = await apiFetch<RawNavDropdown[]>('/navigation', { locale })
       return raw.map(normalizeNavItem)
     },
-    placeholderData: staticNavigation,
+    initialData: staticNavigation,
+    staleTime: 5 * 60_000,
+    placeholderData: keepPreviousData,
   })
 }
 
 // ── Footer ──
 export function useFooter() {
-  const locale = useSafeLocale()
+  const locale = useCurrentLocale()
   return useQuery({
     queryKey: ['footer', locale],
     queryFn: () => apiFetch<{ _id?: string; columns: FooterColumn[]; socialLinks: unknown[]; copyright: string }>('/footer', { locale }),
-    placeholderData: staticFooter,
+    initialData: staticFooter,
+    staleTime: 5 * 60_000,
+    placeholderData: keepPreviousData,
   })
 }
 
 // ── Newsroom ──
 export function useNewsroomPosts(params?: { category?: string; featured?: boolean; limit?: number; page?: number }) {
-  const locale = useSafeLocale()
+  const locale = useCurrentLocale()
   const searchParams = new URLSearchParams()
   if (params?.category) searchParams.set('category', params.category)
   if (params?.featured) searchParams.set('featured', 'true')
@@ -125,12 +123,13 @@ export function useNewsroomPosts(params?: { category?: string; featured?: boolea
   return useQuery({
     queryKey: ['newsroom', params, locale],
     queryFn: () => apiFetch<{ posts: NewsroomPost[]; total: number; page: number; pages: number }>(`/newsroom${qs ? `?${qs}` : ''}`, { locale }),
-    placeholderData: staticNewsroom,
+    initialData: staticNewsroom,
+    placeholderData: keepPreviousData,
   })
 }
 
 export function useNewsroomPost(slug: string) {
-  const locale = useSafeLocale()
+  const locale = useCurrentLocale()
   return useQuery({
     queryKey: ['newsroom', slug, locale],
     queryFn: () => apiFetch<NewsroomPost>(`/newsroom/${slug}`, { locale }),
@@ -149,21 +148,25 @@ export function useCreateNewsroomPost() {
 
 // ── Pricing ──
 export function usePricing() {
-  const locale = useSafeLocale()
+  const locale = useCurrentLocale()
   return useQuery({
     queryKey: ['pricing', locale],
     queryFn: () => apiFetch<PricingPlan[]>('/pricing', { locale }),
-    placeholderData: staticPricingPlans,
+    initialData: staticPricingPlans,
+    staleTime: 2 * 60_000,
+    placeholderData: keepPreviousData,
   })
 }
 
 // ── Testimonials ──
 export function useTestimonials() {
-  const locale = useSafeLocale()
+  const locale = useCurrentLocale()
   return useQuery({
     queryKey: ['testimonials', locale],
     queryFn: () => apiFetch<Testimonial[]>('/testimonials', { locale }),
-    placeholderData: staticTestimonials,
+    initialData: staticTestimonials,
+    staleTime: 5 * 60_000,
+    placeholderData: keepPreviousData,
   })
 }
 
@@ -229,16 +232,18 @@ export interface Job {
 }
 
 export function useJobs() {
-  const locale = useSafeLocale()
+  const locale = useCurrentLocale()
   return useQuery({
     queryKey: ['jobs', locale],
     queryFn: () => apiFetch<Job[]>('/jobs', { locale }),
-    staleTime: 5 * 60 * 1000,
+    initialData: [],
+    staleTime: 5 * 60_000,
+    placeholderData: keepPreviousData,
   })
 }
 
 export function useJob(slug: string) {
-  const locale = useSafeLocale()
+  const locale = useCurrentLocale()
   return useQuery({
     queryKey: ['job', slug, locale],
     queryFn: () => apiFetch<Job>(`/jobs/${slug}`, { locale }),
@@ -255,11 +260,21 @@ export interface SiteSettings {
   banner: { text: string; href: string; visible: boolean }
 }
 
+const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  siteTitle: 'Oxy',
+  siteDescription: 'The everything app for work',
+  ogImage: '',
+  banner: { text: 'Alia. Think better, together.', href: '/ai', visible: true },
+}
+
 export function useSiteSettings() {
-  const locale = useSafeLocale()
+  const locale = useCurrentLocale()
   return useQuery({
     queryKey: ['settings', locale],
     queryFn: () => apiFetch<SiteSettings>('/settings', { locale }),
+    initialData: DEFAULT_SITE_SETTINGS,
+    staleTime: 2 * 60_000,
+    placeholderData: keepPreviousData,
   })
 }
 

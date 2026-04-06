@@ -119,7 +119,7 @@ export default function App() {
             <BrowserRouter>
               <AccountPanelProvider>
                 <ScrollToTop />
-                <Suspense fallback={null}>
+                <Suspense fallback={<div className="min-h-screen" />}>
                   <Routes>
                     <Route path="/admin/*" element={<AdminPage />} />
                     <Route path="/" element={<LocaleLayout />}>
