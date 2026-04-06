@@ -68,7 +68,7 @@ function NewsroomFace({ card, size }: { card: Extract<HeroCard, { type: 'newsroo
 function CareersFace({ card, size }: { card: Extract<HeroCard, { type: 'careers' }>; size: CardSize }) {
   const large = isLargeSlot(size)
   return (
-    <Link to={card.slug ? `/company/careers/${card.slug}` : '/company/careers'} className={`flex h-full w-full flex-col items-start justify-end bg-primary ${large ? 'p-5 lg:p-6' : 'p-4 lg:p-5'}`}>
+    <Link to={card.slug ? `/company/careers/${card.slug}` : '/company/careers'} className={`flex h-full w-full flex-col items-start justify-end bg-primary ${large ? 'p-5 lg:p-6' : 'p-4 lg:p-5'}`} style={{ color: 'white' }}>
       <span className="mb-2 inline-block max-w-full truncate rounded-full bg-white/20 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white lg:text-[10px]">{card.department}</span>
       <p className={`line-clamp-3 font-extrabold leading-tight text-white ${large ? 'text-2xl lg:text-3xl' : 'text-xl lg:text-2xl'}`}>{card.jobTitle}</p>
     </Link>
