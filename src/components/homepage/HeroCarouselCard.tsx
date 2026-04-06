@@ -145,10 +145,10 @@ function FairCoinFace() {
           <a href="https://buy.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-[#166534]">
             Buy
           </a>
-          <a href="https://explorer.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white hover:bg-white/10">
+          <a href="https://explorer.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold hover:bg-white/10" style={{ color: 'white' }}>
             Explorer
           </a>
-          <a href="https://fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white hover:bg-white/10">
+          <a href="https://fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold hover:bg-white/10" style={{ color: 'white' }}>
             Learn more
           </a>
         </div>
