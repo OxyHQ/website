@@ -21,6 +21,7 @@ import { Locale } from './models/Locale.js'
 import { Translation } from './models/Translation.js'
 import TrackedRepo from './models/TrackedRepo.js'
 import { syncAllRepos, syncSingleRepo } from './services/githubSync.js'
+import { uploadToSpaces } from './services/s3.js'
 
 function createMcpServer() {
   const server = new McpServer({
@@ -733,6 +734,25 @@ server.tool('revoke_mcp_token', 'Revoke an MCP API token. The token will immedia
     const token = await McpToken.findByIdAndUpdate(id, { revoked: true }, { new: true })
     if (!token) return err('Token not found')
     return ok({ revoked: true, id })
+  } catch (e) { return err(e) }
+})
+
+// ── Upload ──────────────────────────────────────────────────────────────────
+
+server.tool('upload_image', 'Download an image from a URL and upload it to DigitalOcean Spaces. Returns the public CDN URL.', {
+  url: z.string().describe('Source URL of the image to download'),
+  filename: z.string().optional().describe('Desired filename (without path). Auto-derived from URL if omitted.'),
+  folder: z.string().optional().describe('Subfolder within oxy-website/ on Spaces (e.g. "newsroom"). Defaults to "images".'),
+}, async (params) => {
+  try {
+    const resp = await fetch(params.url)
+    if (!resp.ok) return err(`Failed to download: ${resp.status}`)
+    const buffer = Buffer.from(await resp.arrayBuffer())
+    const contentType = resp.headers.get('content-type') || 'application/octet-stream'
+    const filename = params.filename || new URL(params.url).pathname.split('/').pop() || 'image'
+    const subfolder = params.folder || 'images'
+    const cdnUrl = await uploadToSpaces(buffer, filename, contentType, `oxy-website/${subfolder}`)
+    return ok({ url: cdnUrl, size: buffer.length, contentType })
   } catch (e) { return err(e) }
 })
 
