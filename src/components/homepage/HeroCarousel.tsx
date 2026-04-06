@@ -88,11 +88,14 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
   }, [])
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
-    // Use horizontal scroll (deltaX) or vertical scroll (deltaY) for horizontal movement
-    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
+    const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
+    const delta = isHorizontal ? e.deltaX : e.deltaY
     if (Math.abs(delta) < 1) return
 
-    e.preventDefault()
+    // Horizontal scroll: capture exclusively for the carousel
+    // Vertical scroll: let the page scroll normally AND move the carousel
+    if (isHorizontal) e.preventDefault()
+
     manualScrolling.current = true
     posRef.current -= delta
     scheduleResume()
