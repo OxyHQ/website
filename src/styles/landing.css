@@ -9,10 +9,12 @@
 }
 
 
-.oxy-landing a {
-  color: inherit;
-  text-decoration: none;
-  cursor: pointer;
+@layer base {
+  .oxy-landing a {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
 }
 
 .oxy-landing img {
