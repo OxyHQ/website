@@ -365,7 +365,14 @@ export default function CareerDetailContent() {
         {/* Right content area */}
         <div className="col-[5/-2] max-w-prose pt-22 pb-32 max-xl:col-[2/-2] max-xl:pt-18">
           <div className="max-w-prose font-normal">
-            <DescriptionContent blocks={job.description ?? []} />
+            {Array.isArray(job.description) ? (
+              <DescriptionContent blocks={job.description} />
+            ) : typeof job.description === 'string' && job.description ? (
+              <div
+                className="prose prose-neutral dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: job.description }}
+              />
+            ) : null}
           </div>
 
           {/* Apply form */}
