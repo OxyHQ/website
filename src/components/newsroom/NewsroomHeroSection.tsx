@@ -30,7 +30,7 @@ export default function NewsroomHeroSection() {
       {/* ── Title ── */}
       <div className="flex flex-col gap-1">
         <h1 className="shrink-0 text-heading-responsive-lg text-foreground">
-          Recent news
+          Newsroom
         </h1>
       </div>
 
