@@ -263,4 +263,15 @@ export const heroCarouselSlots: CarouselSlot[] = [
       { type: 'careers', jobTitle: 'Backend Engineer', department: 'Careers' },
     ],
   },
+  // Extra slot to fill the grid evenly (2 rows must be fully occupied)
+  {
+    size: '1x1',
+    faces: [
+      {
+        type: 'photo',
+        image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=400&fit=crop',
+        alt: 'Team working',
+      },
+    ],
+  },
 ]
