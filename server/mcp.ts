@@ -146,8 +146,16 @@ server.tool('update_footer', 'Update footer content', {
   copyright: z.string().optional(),
 }, async (params) => {
   try {
-    const footer = await Footer.findOneAndUpdate({}, params, { new: true, upsert: true })
-    return ok(footer)
+    const footer = await Footer.findOne()
+    if (footer) {
+      if (params.columns !== undefined) footer.columns = params.columns as InstanceType<typeof Footer>['columns']
+      if (params.socialLinks !== undefined) footer.socialLinks = params.socialLinks as InstanceType<typeof Footer>['socialLinks']
+      if (params.copyright !== undefined) footer.copyright = params.copyright
+      await footer.save()
+      return ok(footer)
+    }
+    const created = await Footer.create(params)
+    return ok(created)
   } catch (e) { return err(e) }
 })
 
