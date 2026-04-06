@@ -94,6 +94,9 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     if (!outer) return
 
     const handleWheel = (e: WheelEvent) => {
+      const rect = outer.getBoundingClientRect()
+      if (rect.bottom <= 0 || rect.top >= window.innerHeight) return
+
       const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
       const delta = isHorizontal ? e.deltaX : e.deltaY
       if (Math.abs(delta) < 1) return
@@ -103,8 +106,8 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
       posRef.current -= delta
     }
 
-    outer.addEventListener('wheel', handleWheel, { passive: false })
-    return () => outer.removeEventListener('wheel', handleWheel)
+    window.addEventListener('wheel', handleWheel, { passive: false })
+    return () => window.removeEventListener('wheel', handleWheel)
   }, [])
 
   const handleMouseEnter = useCallback(() => {
