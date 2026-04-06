@@ -59,7 +59,7 @@ function NewsroomFace({ card, size }: { card: Extract<HeroCard, { type: 'newsroo
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-purple-900/30" />
       <div className={`absolute bottom-0 left-0 right-0 ${large ? 'p-4 lg:p-5' : 'p-2.5 lg:p-3'}`}>
         <span className={`mb-0.5 block truncate font-bold uppercase tracking-wider text-purple-200 ${large ? 'text-[10px] lg:text-xs' : 'text-[9px] lg:text-[10px]'}`}>{card.category}</span>
-        <p className={`line-clamp-4 font-bold leading-snug text-white ${large ? 'text-base lg:text-lg' : 'text-sm lg:text-base'}`}>{card.title}</p>
+        <p className={`line-clamp-4 font-bold leading-snug text-white ${large ? 'text-lg lg:text-xl' : 'text-sm lg:text-base'}`}>{card.title}</p>
       </div>
     </div>
   )
