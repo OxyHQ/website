@@ -18,11 +18,12 @@ import { newsCategories, type NewsCategory } from '../../data/newsroom'
  *           right: gap-y-xl gap-x-2xs col-span-1 hidden @lg:grid (sidebar 1:1)
  * ────────────────────────────────────────────── */
 export default function NewsroomHeroSection() {
-  const { data: featuredData } = useNewsroomPosts({ featured: true, limit: 1 })
+  const { data: featuredData, isPending: featuredPending } = useNewsroomPosts({ featured: true, limit: 1 })
   const featuredArticle = featuredData?.posts?.[0] ?? null
-  const { data: sidebarData } = useNewsroomPosts({ limit: 5 })
+  const { data: sidebarData, isPending: sidebarPending } = useNewsroomPosts({ limit: 5 })
   const sidebarArticles = sidebarData?.posts?.slice(1) ?? []
   const [activeCategory, setActiveCategory] = useState<NewsCategory>('Company')
+  const isLoading = featuredPending || sidebarPending
 
   return (
     <section className="mx-auto w-full max-w-[1200px] px-5 pt-[5rem] md:px-8 md:pt-10">
@@ -72,11 +73,15 @@ export default function NewsroomHeroSection() {
       <div className="mt-8 grid w-full grid-cols-1 gap-4 md:mt-12 lg:grid-cols-4">
         {/* Left — featured card (sticky on desktop) */}
         <div className="mb-4 self-start lg:sticky lg:top-[80px] lg:col-span-3 lg:mb-0">
-          {featuredArticle && <NewsCardFeatured article={featuredArticle} />}
+          {isLoading && <div className="aspect-[4/5] animate-pulse rounded-2xl bg-surface" />}
+          {!isLoading && featuredArticle && <NewsCardFeatured article={featuredArticle} />}
         </div>
 
         {/* Right — sidebar cards (desktop: stacked 1-col, hidden on mobile) */}
         <div className="hidden gap-x-1 gap-y-8 lg:grid lg:grid-cols-1 lg:px-0">
+          {isLoading && [1, 2, 3].map((i) => (
+            <div key={i} className="aspect-square animate-pulse rounded-2xl bg-surface" />
+          ))}
           {sidebarArticles.map((article) => (
             <NewsCardGrid key={article._id} article={article} />
           ))}
@@ -84,6 +89,9 @@ export default function NewsroomHeroSection() {
 
         {/* Mobile/tablet fallback — sidebar cards in row */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-3 lg:hidden">
+          {isLoading && [1, 2, 3].map((i) => (
+            <div key={i} className="aspect-square animate-pulse rounded-2xl bg-surface" />
+          ))}
           {sidebarArticles.map((article) => (
             <NewsCardGrid key={article._id} article={article} />
           ))}

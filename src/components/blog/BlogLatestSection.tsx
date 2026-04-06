@@ -10,7 +10,7 @@ function formatDate(dateStr: string): string {
 }
 
 export default function BlogLatestSection() {
-  const { data } = useNewsroomPosts({ category: 'Company' })
+  const { data, isPending } = useNewsroomPosts({ category: 'Company' })
   const allArticles = data?.posts ?? []
   const [activeCategory, setActiveCategory] = useState('All articles')
 
@@ -78,6 +78,16 @@ export default function BlogLatestSection() {
 
               {/* Article list */}
               <div className="relative isolate max-lg:col-[1/-1] col-[9/-1] max-xl:col-[7/-1]">
+                {isPending && (
+                  <div className="space-y-6 py-7">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="space-y-2 px-[6.25%]">
+                        <div className="h-5 w-3/4 animate-pulse rounded bg-background" />
+                        <div className="h-4 w-1/2 animate-pulse rounded bg-background" />
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {filteredArticles.map((article, index) => (
                   <div key={article._id || article.slug} className="relative z-10 bg-surface" style={{ opacity: 1 }}>
                     <a

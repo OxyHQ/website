@@ -24,6 +24,8 @@ export default function CarouselSection({
   articles,
   linkText,
 }: CarouselSectionProps) {
+  if (articles.length === 0) return null
+
   return (
     <section className="w-full">
       {/* Header inside container */}
