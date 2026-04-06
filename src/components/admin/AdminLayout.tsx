@@ -29,6 +29,7 @@ import {
   Briefcase,
   KeyRound,
   Languages,
+  HardDriveDownload,
   ArrowLeft,
 } from 'lucide-react'
 
@@ -53,6 +54,7 @@ const sections: AdminSection[] = [
   { id: 'jobs', label: 'Jobs', icon: <Briefcase className="size-4" />, group: 'Content' },
   { id: 'locales', label: 'Locales', icon: <Languages className="size-4" />, group: 'Configuration' },
   { id: 'mcp-tokens', label: 'API Tokens', icon: <KeyRound className="size-4" />, group: 'Developer' },
+  { id: 'backup', label: 'Backup', icon: <HardDriveDownload className="size-4" />, group: 'Developer' },
 ]
 
 const groups = [...new Set(sections.map((s) => s.group))]

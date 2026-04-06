@@ -17,6 +17,7 @@ import mcpTokensRouter from './routes/mcp-tokens.js'
 import localesRouter from './routes/locales.js'
 import translationsRouter from './routes/translations.js'
 import sitemapRouter from './routes/sitemap.js'
+import backupRouter from './routes/backup.js'
 import { mountMcp } from './mcp.js'
 
 const app = express()
@@ -44,6 +45,7 @@ app.use('/api/settings', settingsRouter)
 app.use('/api/mcp-tokens', mcpTokensRouter)
 app.use('/api/locales', localesRouter)
 app.use('/api/translations', translationsRouter)
+app.use('/api/backup', backupRouter)
 
 // Sitemap
 app.use('/', sitemapRouter)

@@ -6,6 +6,11 @@ export function setTokenGetter(getter: () => Promise<string | null>) {
   getAccessToken = getter
 }
 
+export async function getAuthHeaders(): Promise<Record<string, string>> {
+  const token = getAccessToken ? await getAccessToken() : null
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
 export async function apiFetch<T>(path: string, options?: RequestInit & { locale?: string }): Promise<T> {
   const token = getAccessToken ? await getAccessToken() : null
   const headers: Record<string, string> = {
