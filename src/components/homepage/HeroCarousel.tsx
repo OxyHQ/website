@@ -51,8 +51,10 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     }
 
     const halfWidth = track.scrollWidth / 2
-    if (Math.abs(posRef.current) >= halfWidth) {
+    if (posRef.current <= -halfWidth) {
       posRef.current += halfWidth
+    } else if (posRef.current >= 0) {
+      posRef.current -= halfWidth
     }
     track.style.transform = `translateX(${posRef.current}px)`
     rafRef.current = requestAnimationFrame(animate)
