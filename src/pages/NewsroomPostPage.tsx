@@ -152,7 +152,7 @@ export default function NewsroomPostPage() {
         )}
 
         {/* Markdown content */}
-        <article className="prose prose-neutral dark:prose-invert mx-auto mt-10 max-w-[720px] px-5 md:px-8">
+        <article className="prose prose-neutral dark:prose-invert mx-auto mt-10 max-w-[720px] px-5 md:px-8 prose-headings:font-semibold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:mb-4 prose-h2:text-2xl prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-xl prose-h4:mt-6 prose-h4:mb-2 prose-h5:mt-4 prose-p:leading-[1.8] prose-p:text-secondary-foreground prose-li:text-secondary-foreground prose-li:leading-[1.8] prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground prose-blockquote:border-primary/30 prose-blockquote:text-muted-foreground prose-blockquote:not-italic prose-img:rounded-lg prose-hr:border-border prose-code:rounded prose-code:bg-surface prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:before:content-none prose-code:after:content-none prose-pre:bg-surface prose-pre:border prose-pre:border-border">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {post.content}
           </ReactMarkdown>
