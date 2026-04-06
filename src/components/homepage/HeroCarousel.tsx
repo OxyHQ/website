@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback, useMemo } from 'react'
 import type { CarouselSlot } from '../../data/heroCarousel'
-import { useJobs } from '../../api/hooks'
+import { useJobs, useNewsroomPosts } from '../../api/hooks'
 import CarouselSlotRenderer from './HeroCarouselCard'
 
 interface HeroCarouselProps {
@@ -12,24 +12,48 @@ const SLOW_SPEED = 0.2     // px per frame on hover
 
 export default function HeroCarousel({ slots }: HeroCarouselProps) {
   const { data: jobs } = useJobs()
+  const { data: newsroomData } = useNewsroomPosts({ limit: 20 })
+  const posts = newsroomData?.posts
 
-  // Replace static careers faces with real job data when available
+  // Replace static faces with real CMS data when available
   const resolvedSlots = useMemo(() => {
-    if (!jobs?.length) return slots
+    let newsroomIndex = 0
+
     return slots.map(slot => {
+      const hasNewsroom = slot.faces.some(f => f.type === 'newsroom')
       const hasCareers = slot.faces.some(f => f.type === 'careers')
-      if (!hasCareers) return slot
-      return {
-        ...slot,
-        faces: jobs.map((job: { title: string; slug: string; department?: string }) => ({
-          type: 'careers' as const,
-          jobTitle: job.title,
-          department: job.department ?? 'Careers',
-          slug: job.slug,
-        })),
+
+      if (hasNewsroom && posts?.length) {
+        const count = slot.faces.length
+        const slicedPosts = posts.slice(newsroomIndex, newsroomIndex + count)
+        newsroomIndex += count
+        if (slicedPosts.length === 0) return slot
+        return {
+          ...slot,
+          faces: slicedPosts.map(post => ({
+            type: 'newsroom' as const,
+            title: post.title,
+            image: post.coverImage ?? '',
+            category: post.category,
+          })),
+        }
       }
+
+      if (hasCareers && jobs?.length) {
+        return {
+          ...slot,
+          faces: jobs.map((job: { title: string; slug: string; department?: string }) => ({
+            type: 'careers' as const,
+            jobTitle: job.title,
+            department: job.department ?? 'Careers',
+            slug: job.slug,
+          })),
+        }
+      }
+
+      return slot
     })
-  }, [slots, jobs])
+  }, [slots, jobs, posts])
 
   const outerRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
