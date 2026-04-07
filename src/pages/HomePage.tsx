@@ -545,9 +545,16 @@ const TEAM_TABS = [
   {
     id: 'mention',
     label: 'Mention',
-    desc: 'A social network built on respect. No algorithms designed to addict. No data harvested for ads. Just genuine human connection.',
+    desc: 'A social network built on respect. No algorithms designed to addict. No data harvested for ads. Just genuine human connection, powered by the fediverse.',
     thumb: `${IMG}/video-thumb-sales-teams.webp`,
     prompts: ['What\'s trending in my community?', 'Show me posts from people I follow', 'Find conversations about sustainability'],
+  },
+  {
+    id: 'allo',
+    label: 'Allo',
+    desc: 'End-to-end encrypted messaging designed for privacy. Group chats, voice, and media sharing — without compromising your data.',
+    thumb: `${IMG}/video-thumb-customer-support.webp`,
+    prompts: ['Start a secure group chat', 'Send an encrypted message', 'Share files privately'],
   },
   {
     id: 'inbox',
@@ -555,6 +562,34 @@ const TEAM_TABS = [
     desc: 'All your messages in one place. A unified inbox that keeps you connected across all Oxy platforms.',
     thumb: `${IMG}/video-thumb-customer-support.webp`,
     prompts: ['Show unread messages', 'Search my conversations', 'Filter by platform'],
+  },
+  {
+    id: 'codea',
+    label: 'Codea',
+    desc: 'A modern code editor built for developers. Write, run, and collaborate on code directly in your browser with AI assistance.',
+    thumb: `${IMG}/video-thumb-in-house-ops.webp`,
+    prompts: ['Create a new project', 'Run my code', 'Explain this function'],
+  },
+  {
+    id: 'oxy-ai',
+    label: 'Oxy AI',
+    desc: 'Intelligent AI models that understand your context. Search, create, and automate across the entire Oxy ecosystem.',
+    thumb: `${IMG}/video-thumb-sales-teams.webp`,
+    prompts: ['Summarize my recent activity', 'Draft a response to this message', 'Analyze this dataset'],
+  },
+  {
+    id: 'tnp',
+    label: 'TNP',
+    desc: 'The New Protocol — an alternative namespace system giving you true ownership of your digital identity. Your name, your rules.',
+    thumb: `${IMG}/video-thumb-in-house-ops.webp`,
+    prompts: ['Register a new name', 'Look up a TNP address', 'Configure my namespace'],
+  },
+  {
+    id: 'oxy-os',
+    label: 'Oxy OS',
+    desc: 'An operating system designed around privacy and user freedom. Your computer, your data — no telemetry, no tracking.',
+    thumb: `${IMG}/video-thumb-financial-services.webp`,
+    prompts: ['Install an application', 'Check system updates', 'Configure privacy settings'],
   },
   {
     id: 'faircoin',
