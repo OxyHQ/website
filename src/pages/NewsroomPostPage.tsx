@@ -117,7 +117,7 @@ export default function NewsroomPostPage() {
             <span>&middot;</span>
             <span>{readTime(post.content)}</span>
           </div>
-          {post.oxyUserId && (
+          {post.oxyUserId && !post.oxyUserId.startsWith('seed-') && !post.oxyUserId.startsWith('mcp-') && (
             <div className="mt-3">
               <ArticleAuthors userIds={[post.oxyUserId]} />
             </div>
