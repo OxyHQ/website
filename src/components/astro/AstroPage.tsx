@@ -301,12 +301,12 @@ export default function AstroPageContent() {
       {/* Content */}
       <div className="relative z-10 transition-colors duration-500">
         {/* ── Hero ── */}
-        <section className="page-hero relative w-full pt-v3 sm:pt-v4">
+        <section className="relative mt-10 w-full sm:mt-20">
           <div className="pointer-events-none absolute bottom-0 z-[-1] h-[500px] w-full bg-gradient-to-b from-transparent to-background" />
 
-          <div className="container flex flex-col items-center gap-8 md:gap-12">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-12 flex-col items-center gap-8 md:gap-12">
             {/* Title block */}
-            <div className="relative flex flex-col items-center selection:bg-transparent">
+            <div className="relative col-span-12 row-start-1 flex flex-col items-center px-4 selection:bg-transparent md:px-6">
               {/* Blue glow */}
               <div
                 aria-hidden="true"
@@ -314,7 +314,7 @@ export default function AstroPageContent() {
               />
 
               {/* App icon */}
-              <div className="mb-v1 h-[80px] w-[80px]">
+              <div className="mb-4 h-[80px] w-[80px] md:mb-6">
                 <div className="mx-auto h-full w-full overflow-hidden rounded-[24%]">
                   <img
                     alt="Astro icon"
@@ -326,26 +326,26 @@ export default function AstroPageContent() {
                 </div>
               </div>
 
-              <h1 className="type-xl sm:type-2xl text-center font-bold text-white">
+              <h1 className="text-center text-5xl font-bold text-white md:text-6xl">
                 Astro
               </h1>
 
               <button
                 onClick={openDownload}
-                className="mt-v1 inline-flex cursor-pointer items-center justify-center rounded-full bg-white/20 px-6 py-3 type-base font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+                className="mt-4 inline-flex cursor-pointer items-center justify-center rounded-full bg-white/20 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30 md:mt-6"
               >
                 Download Astro
               </button>
 
-              <p className="mt-v8/12 type-sm text-center text-white/60">
+              <p className="mt-2 text-center text-sm text-white/60">
                 Available on macOS, Windows, and Linux
               </p>
             </div>
 
             {/* Video */}
-            <div className="w-full max-w-4xl select-none">
+            <div className="col-span-12 col-start-1 select-none px-6 md:col-span-10 md:col-start-2 md:px-0 xl:col-span-8 xl:col-start-3">
               <div className="drop-shadow-[0_20px_50px_color-mix(in_srgb,var(--color-primary)_40%,transparent)]">
-                <div className="media-border-container relative mx-auto aspect-video h-full w-full">
+                <div className="relative mx-auto aspect-video h-full w-full overflow-hidden rounded-2xl border border-border">
                   <iframe
                     src="https://player.vimeo.com/video/1129227761?h=94755e8733&badge=0&autopause=0&player_id=0&app_id=58479&controls=1&muted=1"
                     allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
@@ -357,8 +357,8 @@ export default function AstroPageContent() {
             </div>
 
             {/* Tagline */}
-            <div className="max-w-prose-medium-wide">
-              <p className="type-md-lg text-center font-semibold text-theme-text text-balance">
+            <div className="col-span-12 col-start-1 w-full px-6 lg:col-span-6 lg:col-start-4 lg:px-0">
+              <p className="text-center text-2xl font-semibold text-foreground text-balance md:text-3xl">
                 Browse the web with AI by your side for instant answers, smarter
                 suggestions, and help with tasks — all with privacy settings you
                 control.
@@ -432,15 +432,15 @@ export default function AstroPageContent() {
         </section>
 
         {/* ── Bottom CTA ── */}
-        <section className="section section--headline relative">
-          <div className="container text-center mx-auto max-w-prose-medium-wide">
-            <div className="relative flex flex-col items-center selection:bg-transparent">
+        <section className="relative mt-10 w-full sm:mt-20">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-12 flex-col items-center gap-8 md:gap-12">
+            <div className="relative col-span-12 row-start-1 flex flex-col items-center px-4 selection:bg-transparent md:px-6">
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_var(--color-primary)_0%,_color-mix(in_srgb,var(--color-primary)_30%,transparent)_35%,_transparent_70%)] sm:w-[1000px]"
               />
 
-              <div className="mb-v1 h-[80px] w-[80px]">
+              <div className="mb-4 h-[80px] w-[80px] md:mb-6">
                 <div className="mx-auto h-full w-full overflow-hidden rounded-[24%]">
                   <img
                     alt="Astro icon"
@@ -452,23 +452,26 @@ export default function AstroPageContent() {
                 </div>
               </div>
 
-              <h2 className="type-xl sm:type-2xl text-center font-bold text-white text-balance mb-v1">
+              <h2 className="text-center text-4xl font-bold text-white md:text-5xl">
                 Download Astro
               </h2>
 
               <button
                 onClick={openDownload}
-                className="inline-flex cursor-pointer items-center justify-center rounded-full bg-white/20 px-6 py-3 type-base font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+                className="mt-4 inline-flex cursor-pointer items-center justify-center rounded-full bg-white/20 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30 md:mt-6"
               >
                 Download Astro
               </button>
 
-              <p className="mt-v8/12 type-sm text-center text-white/60">
+              <p className="mt-2 text-center text-sm text-white/60">
                 Available on macOS, Windows, and Linux
               </p>
             </div>
           </div>
         </section>
+
+        {/* Bottom spacing */}
+        <div className="h-32" />
       </div>
     </div>
   )
