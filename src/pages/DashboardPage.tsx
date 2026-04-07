@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Maximize2, Minimize2 } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import MapContainer from "../components/dashboard/MapContainer";
@@ -10,27 +11,6 @@ import {
 } from "../components/dashboard/StatsDisplay";
 import Logo from "../components/ui/Logo";
 import { usePlatformStats } from "../api/hooks";
-
-function FullscreenIcon({ isFullscreen }: { isFullscreen: boolean }) {
-  if (isFullscreen) {
-    return (
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="6 2 6 6 2 6" />
-        <polyline points="10 14 10 10 14 10" />
-        <polyline points="14 6 10 6 10 2" />
-        <polyline points="2 10 6 10 6 14" />
-      </svg>
-    );
-  }
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="2 6 2 2 6 2" />
-      <polyline points="14 10 14 14 10 14" />
-      <polyline points="10 2 14 2 14 6" />
-      <polyline points="6 14 2 14 2 10" />
-    </svg>
-  );
-}
 
 export default function DashboardPage() {
   const { data: stats } = usePlatformStats();
@@ -45,20 +25,19 @@ export default function DashboardPage() {
     return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
   }, []);
 
-  const toggleFullscreen = useCallback(() => {
+  function toggleFullscreen() {
     if (document.fullscreenElement) {
       document.exitFullscreen();
     } else {
       dashboardRef.current?.requestFullscreen();
     }
-  }, []);
+  }
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       {!isFullscreen && <Navbar />}
       <main className="flex-1">
         <div ref={dashboardRef} className={`container font-mono flex flex-col bg-background ${isFullscreen ? "min-h-screen px-8" : "min-h-[calc(100dvh-var(--site-header-height))]"}`}>
-          {/* Header */}
           <header className="relative flex items-center justify-between font-mono text-sm uppercase gap-2 pt-6 mb-4 shrink-0">
             <p className="text-foreground font-mono my-0 whitespace-nowrap">
               Oxy Platform{" "}
@@ -77,11 +56,10 @@ export default function DashboardPage() {
               aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
               className="p-2 m-0 bg-transparent text-muted-foreground border border-solid border-border hover:text-foreground hover:bg-accent transition-colors duration-150 flex items-center justify-center outline-none focus-visible:ring cursor-pointer rounded-md"
             >
-              <FullscreenIcon isFullscreen={isFullscreen} />
+              {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
             </button>
           </header>
 
-          {/* Map + summary stats — takes available space */}
           <div className="relative flex-1 min-h-0">
             <div className="pointer-events-none w-full h-full flex items-center justify-center">
               <MapContainer activeCountries={stats.topCountries} />
@@ -96,7 +74,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Stats grid — always visible, pinned to bottom */}
           <section className="shrink-0 pt-8 pb-6">
             <StatsGrid stats={stats} />
           </section>
