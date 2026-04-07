@@ -9,11 +9,12 @@ import { applyTranslation, applyTranslations } from '../utils/applyTranslation.j
 const router = Router()
 
 router.get('/', localeMiddleware, async (req, res) => {
-  const { category, tag, featured, status, search, limit = '20', page = '1' } = req.query
-  const filter: any = {}
+  const { category, tag, featured, status, search, author, limit = '20', page = '1' } = req.query
+  const filter: Record<string, unknown> = {}
   if (category) filter.categories = category
   if (tag) filter.tags = tag
   if (featured === 'true') filter.featured = true
+  if (author) filter.oxyUserId = author
 
   // Default to published posts for public requests
   if (status) {

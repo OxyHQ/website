@@ -1,15 +1,17 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MessageCircle, Lock } from 'lucide-react'
-import { useUserActivity, useUserProfile } from '../../api/hooks'
+import { MessageCircle, FileText, Lock } from 'lucide-react'
+import { useUserActivity, useUserProfile, useNewsroomPosts } from '../../api/hooks'
 
 interface ProfileActivityProps {
   username: string
+  userId?: string
 }
 
-type TabType = 'comments' | 'likes'
+type TabType = 'posts' | 'comments' | 'likes'
 
 const TABS: Array<{ value: TabType; label: string }> = [
+  { value: 'posts', label: 'Articles' },
   { value: 'comments', label: 'Comments' },
   { value: 'likes', label: 'Likes' },
 ]
@@ -37,12 +39,9 @@ function formatRelativeTime(dateString: string): string {
   return 'now'
 }
 
-function ActivityItem({ type, data, createdAt }: { type: string; data: unknown; createdAt: string }) {
+function CommentItem({ data, createdAt }: { data: unknown; createdAt: string }) {
   const item = data as ActivityItemData
-
-  const preview = type === 'comment'
-    ? (item.body ?? '').slice(0, 200) + ((item.body?.length ?? 0) > 200 ? '...' : '')
-    : ''
+  const preview = (item.body ?? '').slice(0, 200) + ((item.body?.length ?? 0) > 200 ? '...' : '')
 
   const href = item.targetType && item.targetId
     ? `/${item.targetType === 'newsroom' ? 'newsroom' : 'changelog'}/${item.targetId}`
@@ -55,9 +54,7 @@ function ActivityItem({ type, data, createdAt }: { type: string; data: unknown; 
         <div className="min-w-0 flex-1">
           <p className="text-[15px] leading-relaxed text-foreground">{preview || 'No content'}</p>
           <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
-            {item.targetType && (
-              <span className="capitalize">{item.targetType}</span>
-            )}
+            {item.targetType && <span className="capitalize">{item.targetType}</span>}
             <span>{formatRelativeTime(createdAt)}</span>
           </div>
         </div>
@@ -69,10 +66,31 @@ function ActivityItem({ type, data, createdAt }: { type: string; data: unknown; 
   return content
 }
 
-export default function ProfileActivity({ username }: ProfileActivityProps) {
-  const [activeTab, setActiveTab] = useState<TabType>('comments')
+function PostItem({ post }: { post: { slug: string; title: string; resume?: string; coverImage?: string; publishedAt: string } }) {
+  return (
+    <Link to={`/newsroom/${post.slug}`} className="block border-b border-border px-1 py-4 transition-colors hover:bg-surface/50">
+      <div className="flex items-start gap-3">
+        <FileText size={16} className="mt-0.5 shrink-0 text-muted-foreground" />
+        <div className="min-w-0 flex-1">
+          <p className="text-[15px] font-medium text-foreground">{post.title}</p>
+          {post.resume && (
+            <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{post.resume}</p>
+          )}
+          <p className="mt-1 text-xs text-muted-foreground">{formatRelativeTime(post.publishedAt)}</p>
+        </div>
+        {post.coverImage && (
+          <img src={post.coverImage} alt="" className="h-16 w-24 shrink-0 rounded-lg object-cover" />
+        )}
+      </div>
+    </Link>
+  )
+}
+
+export default function ProfileActivity({ username, userId }: ProfileActivityProps) {
+  const [activeTab, setActiveTab] = useState<TabType>('posts')
   const { data: profile } = useUserProfile(username)
-  const { data: activityData, isLoading } = useUserActivity(username, { type: activeTab })
+  const { data: activityData, isLoading: activityLoading } = useUserActivity(username, { type: activeTab === 'posts' ? undefined : activeTab })
+  const { data: postsData, isPending: postsLoading } = useNewsroomPosts({ author: userId, limit: 20 })
 
   if (profile && profile.stats === null) {
     return (
@@ -82,6 +100,9 @@ export default function ProfileActivity({ username }: ProfileActivityProps) {
       </div>
     )
   }
+
+  const isLoading = activeTab === 'posts' ? postsLoading : activityLoading
+  const posts = postsData?.posts ?? []
 
   return (
     <div>
@@ -104,7 +125,7 @@ export default function ProfileActivity({ username }: ProfileActivityProps) {
         ))}
       </div>
 
-      {/* Activity list */}
+      {/* Content */}
       <div>
         {isLoading ? (
           <div>
@@ -121,12 +142,21 @@ export default function ProfileActivity({ username }: ProfileActivityProps) {
               </div>
             ))}
           </div>
+        ) : activeTab === 'posts' ? (
+          posts.length > 0 ? (
+            <div>
+              {posts.map((post) => (
+                <PostItem key={post.slug} post={post} />
+              ))}
+            </div>
+          ) : (
+            <p className="py-12 text-center text-sm text-muted-foreground">No articles yet</p>
+          )
         ) : activityData && activityData.items.length > 0 ? (
           <div>
             {activityData.items.map((item, index) => (
-              <ActivityItem
+              <CommentItem
                 key={`${item.type}-${item.createdAt}-${index}`}
-                type={item.type}
                 data={item.data}
                 createdAt={item.createdAt}
               />

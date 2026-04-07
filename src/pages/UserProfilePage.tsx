@@ -12,25 +12,48 @@ import { useUserProfile } from '../api/hooks'
 function ProfileSkeleton() {
   return (
     <div>
-      {/* Avatar + name row */}
-      <div className="flex items-center gap-4">
-        <div className="h-16 w-16 shrink-0 animate-pulse rounded-full bg-surface" />
-        <div className="flex-1 space-y-2">
-          <div className="h-6 w-36 animate-pulse rounded bg-surface" />
-          <div className="h-4 w-24 animate-pulse rounded bg-surface" />
-        </div>
+      {/* Avatar + button row */}
+      <div className="flex items-center justify-between">
+        <div className="h-20 w-20 animate-pulse rounded-full bg-surface" />
+        <div className="h-9 w-28 animate-pulse rounded-full bg-surface" />
+      </div>
+      {/* Name */}
+      <div className="mt-2 space-y-1.5">
+        <div className="h-6 w-40 animate-pulse rounded bg-surface" />
+        <div className="h-4 w-28 animate-pulse rounded bg-surface" />
       </div>
       {/* Bio */}
-      <div className="mt-4 space-y-2">
+      <div className="mt-3 space-y-1.5">
         <div className="h-4 w-full animate-pulse rounded bg-surface" />
-        <div className="h-4 w-3/4 animate-pulse rounded bg-surface" />
+        <div className="h-4 w-2/3 animate-pulse rounded bg-surface" />
       </div>
+      {/* Joined */}
+      <div className="mt-3 h-4 w-24 animate-pulse rounded bg-surface" />
       {/* Stats */}
-      <div className="mt-5 flex gap-5 border-t border-border pt-5">
+      <div className="mt-3 flex gap-4">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="space-y-1">
-            <div className="h-6 w-8 animate-pulse rounded bg-surface" />
-            <div className="h-3 w-14 animate-pulse rounded bg-surface" />
+          <div key={i} className="h-4 w-20 animate-pulse rounded bg-surface" />
+        ))}
+      </div>
+      {/* Tabs */}
+      <div className="mt-5 flex border-b border-border">
+        {[0, 1].map((i) => (
+          <div key={i} className="flex-1 py-3.5">
+            <div className="mx-auto h-4 w-20 animate-pulse rounded bg-surface" />
+          </div>
+        ))}
+      </div>
+      {/* Activity items */}
+      <div>
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="border-b border-border px-1 py-4">
+            <div className="flex gap-3">
+              <div className="h-4 w-4 shrink-0 animate-pulse rounded bg-surface" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-full animate-pulse rounded bg-surface" />
+                <div className="h-3 w-24 animate-pulse rounded bg-surface" />
+              </div>
+            </div>
           </div>
         ))}
       </div>
@@ -94,7 +117,7 @@ export default function UserProfilePage() {
                   />
                 )}
 
-                <ProfileActivity username={username} />
+                <ProfileActivity username={username} userId={profile.user._id} />
               </div>
             )}
           </div>
