@@ -264,7 +264,7 @@ function FeatureSection({
               height={40}
               loading="lazy"
             />
-            <p className="type-md max-w-4/5 font-semibold text-theme-text text-pretty md:max-w-full">
+            <p className="type-base md:type-md-lg max-w-4/5 font-semibold text-theme-text text-pretty md:max-w-full">
               {description}
             </p>
           </div>
