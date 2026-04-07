@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { apiFetch } from './client'
 import { useCurrentLocale } from '../contexts/LocaleContext'
@@ -348,9 +348,51 @@ const DEFAULT_PLATFORM_STATS: PlatformStats = {
 
 const OXY_API = 'https://api.oxy.so'
 
+export interface ActivityEvent {
+  countryCode: string
+  delta: number
+  timestamp: number
+}
+
+const MAX_ACTIVITY_EVENTS = 15
+
 export function usePlatformStats() {
   const [data, setData] = useState<PlatformStats>(DEFAULT_PLATFORM_STATS)
   const [isConnected, setIsConnected] = useState(false)
+  const [activityEvents, setActivityEvents] = useState<ActivityEvent[]>([])
+  const prevCountriesRef = useRef<Map<string, number>>(new Map())
+
+  const handleNewData = useCallback((parsed: PlatformStats) => {
+    setData(parsed)
+    setIsConnected(true)
+
+    // Delta detection: compare new topCountries with previous snapshot
+    const prev = prevCountriesRef.current
+    const newEvents: ActivityEvent[] = []
+    const now = Date.now()
+
+    for (const entry of parsed.topCountries) {
+      const code = entry.location?.toUpperCase()
+      if (!code) continue
+      const prevCount = prev.get(code) ?? 0
+      const delta = entry.count - prevCount
+      if (delta > 0 && prevCount > 0) {
+        newEvents.push({ countryCode: code, delta, timestamp: now + newEvents.length })
+      }
+    }
+
+    if (newEvents.length > 0) {
+      setActivityEvents(current => [...current, ...newEvents].slice(-MAX_ACTIVITY_EVENTS))
+    }
+
+    // Update prev snapshot
+    const nextMap = new Map<string, number>()
+    for (const entry of parsed.topCountries) {
+      const code = entry.location?.toUpperCase()
+      if (code) nextMap.set(code, entry.count)
+    }
+    prevCountriesRef.current = nextMap
+  }, [])
 
   useEffect(() => {
     let es: EventSource | null = null
@@ -361,15 +403,12 @@ export function usePlatformStats() {
 
       es.onmessage = (event) => {
         try {
-          const parsed = JSON.parse(event.data) as PlatformStats
-          setData(parsed)
-          setIsConnected(true)
+          handleNewData(JSON.parse(event.data) as PlatformStats)
         } catch { /* ignore parse errors */ }
       }
 
       es.onerror = () => {
         setIsConnected(false)
-        // If SSE fails, fall back to a single REST fetch
         if (es) {
           es.close()
           es = null
@@ -377,15 +416,14 @@ export function usePlatformStats() {
         fallbackTimeout = setTimeout(async () => {
           try {
             const resp = await fetch(`${OXY_API}/platform-stats`)
-            if (resp.ok) setData(await resp.json())
+            if (resp.ok) handleNewData(await resp.json())
           } catch { /* ignore */ }
         }, 1000)
       }
     } catch {
-      // EventSource not supported — REST fallback
       fetch(`${OXY_API}/platform-stats`)
         .then((r) => r.json())
-        .then(setData)
+        .then(handleNewData)
         .catch(() => {})
     }
 
@@ -393,9 +431,27 @@ export function usePlatformStats() {
       if (es) es.close()
       if (fallbackTimeout) clearTimeout(fallbackTimeout)
     }
-  }, [])
+  }, [handleNewData])
 
-  return { data, isConnected }
+  return { data, isConnected, activityEvents }
+}
+
+// ── Infrastructure Status ──
+export interface InfraStatusNode {
+  region: string
+  status: 'online' | 'degraded' | 'offline'
+  droplets: number
+  apps: number
+  dbs: number
+}
+
+export function useInfraStatus() {
+  return useQuery<{ nodes: InfraStatusNode[] }>({
+    queryKey: ['infra-status'],
+    queryFn: () => apiFetch('/infra-status'),
+    refetchInterval: 60_000,
+    staleTime: 55_000,
+  })
 }
 
 // ── Comments ──

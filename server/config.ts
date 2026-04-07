@@ -8,6 +8,7 @@ export const config = {
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   adminUsernames: ['oxy', 'nate'],
   githubToken: process.env.GITHUB_TOKEN || '',
+  doApiToken: process.env.DO_API_TOKEN || '',
   s3: {
     endpoint: process.env.AWS_ENDPOINT_URL || 'https://ams3.digitaloceanspaces.com',
     region: process.env.AWS_REGION || 'ams3',

@@ -9,11 +9,13 @@ import {
   RegionCount,
   StatsGrid,
 } from "../components/dashboard/StatsDisplay";
+import InfraOverlay from "../components/dashboard/InfraOverlay";
 import Logo from "../components/ui/Logo";
-import { usePlatformStats } from "../api/hooks";
+import { usePlatformStats, useInfraStatus } from "../api/hooks";
 
 export default function DashboardPage() {
-  const { data: stats } = usePlatformStats();
+  const { data: stats, activityEvents } = usePlatformStats();
+  const { data: infraData } = useInfraStatus();
   const dashboardRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -62,7 +64,11 @@ export default function DashboardPage() {
 
           <div className="relative flex-1 min-h-0">
             <div className="pointer-events-none w-full h-full flex items-center justify-center">
-              <MapContainer activeCountries={stats.topCountries} />
+              <MapContainer
+                activeCountries={stats.topCountries}
+                infraStatus={infraData?.nodes}
+                activityEvents={activityEvents}
+              />
             </div>
 
             <div className="min-[961px]:absolute min-[961px]:bottom-0 min-[961px]:left-0 z-10 pb-2">
@@ -71,6 +77,10 @@ export default function DashboardPage() {
                 <TopCountries stats={stats} />
               </div>
               <RegionCount stats={stats} />
+            </div>
+
+            <div className="min-[961px]:absolute min-[961px]:bottom-0 min-[961px]:right-0 z-10 pb-2">
+              <InfraOverlay nodes={infraData?.nodes} />
             </div>
           </div>
 
