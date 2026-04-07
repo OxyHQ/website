@@ -16,12 +16,19 @@ const PLATFORM_META: Record<Platform, { label: string; fileHint: string }> = {
   linux: { label: 'Linux', fileHint: '.deb' },
 }
 
-function detectPlatform(): Platform {
+const DIALOG_EXIT_MS = 250
+
+const CURRENT_PLATFORM: Platform = (() => {
+  if (typeof navigator === 'undefined') return 'linux'
   const ua = navigator.userAgent.toLowerCase()
   if (ua.includes('mac')) return 'macos'
   if (ua.includes('win')) return 'windows'
   return 'linux'
-}
+})()
+
+const OTHER_PLATFORMS = (['macos', 'windows', 'linux'] as Platform[]).filter(
+  (p) => p !== CURRENT_PLATFORM,
+)
 
 function PlatformIcon({ platform, className }: { platform: Platform; className?: string }) {
   if (platform === 'macos') {
@@ -46,25 +53,17 @@ function PlatformIcon({ platform, className }: { platform: Platform; className?:
 }
 
 function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [visible, setVisible] = useState(false)
   const [closing, setClosing] = useState(false)
-  const current = detectPlatform()
-  const others = (['macos', 'windows', 'linux'] as Platform[]).filter((p) => p !== current)
 
   const handleClose = useCallback(() => {
     setClosing(true)
     setTimeout(() => {
       setClosing(false)
-      setVisible(false)
       onClose()
-    }, 250)
+    }, DIALOG_EXIT_MS)
   }, [onClose])
 
-  if (open && !visible && !closing) {
-    setVisible(true)
-  }
-
-  if (!visible) return null
+  if (!open && !closing) return null
 
   return (
     <div
@@ -96,21 +95,21 @@ function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void 
             <img alt="Astro" src={`${IMAGES}/icon.png`} width={512} height={512} />
           </div>
           <h2 className="astro-stagger-in text-xl font-bold text-neutral-900 dark:text-white" style={{ animationDelay: '200ms' }}>
-            Download Astro for {PLATFORM_META[current].label}
+            Download Astro for {PLATFORM_META[CURRENT_PLATFORM].label}
           </h2>
           <p className="astro-stagger-in mt-1 text-sm text-neutral-500 dark:text-neutral-400" style={{ animationDelay: '260ms' }}>
-            {PLATFORM_META[current].fileHint} &middot; Free
+            {PLATFORM_META[CURRENT_PLATFORM].fileHint} &middot; Free
           </p>
         </div>
 
         {/* Primary download */}
         <a
-          href={DOWNLOAD_LINKS[current]}
+          href={DOWNLOAD_LINKS[CURRENT_PLATFORM]}
           className="astro-stagger-in mt-6 flex w-full items-center justify-center gap-2.5 rounded-full bg-blue-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-600"
           style={{ animationDelay: '340ms' }}
         >
-          <PlatformIcon platform={current} className="h-5 w-5" />
-          Download for {PLATFORM_META[current].label}
+          <PlatformIcon platform={CURRENT_PLATFORM} className="h-5 w-5" />
+          Download for {PLATFORM_META[CURRENT_PLATFORM].label}
         </a>
 
         {/* Other platforms */}
@@ -119,7 +118,7 @@ function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void 
             Other platforms
           </p>
           <div className="flex justify-center gap-3">
-            {others.map((p, i) => (
+            {OTHER_PLATFORMS.map((p, i) => (
               <a
                 key={p}
                 href={DOWNLOAD_LINKS[p]}

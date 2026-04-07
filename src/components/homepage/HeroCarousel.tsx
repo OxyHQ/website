@@ -83,10 +83,13 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     let visible = false
 
     const start = () => {
-      if (!visible || document.hidden) return
+      if (!visible || document.hidden || rafRef.current !== 0) return
       rafRef.current = requestAnimationFrame(animate)
     }
-    const stop = () => cancelAnimationFrame(rafRef.current)
+    const stop = () => {
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = 0
+    }
 
     const io = new IntersectionObserver(
       ([entry]) => {
