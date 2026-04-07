@@ -105,7 +105,12 @@ export default function AccountPanel() {
             <div className="mt-3 text-center">
               <div className="text-xl font-semibold text-foreground">{displayName}</div>
               {user?.username && <div className="mt-0.5 text-sm text-muted-foreground">@{user.username}</div>}
-              <a href="https://accounts.oxy.so" target="_blank" rel="noopener noreferrer" className="mt-2 inline-block rounded-full border border-border px-4 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-surface hover:text-foreground">Manage your Oxy account</a>
+              <div className="mt-2 flex gap-2">
+                {user?.username && (
+                  <Link to={`/u/${user.username}`} className="inline-block rounded-full border border-border px-4 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-surface hover:text-foreground">View profile</Link>
+                )}
+                <a href="https://accounts.oxy.so" target="_blank" rel="noopener noreferrer" className="inline-block rounded-full border border-border px-4 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-surface hover:text-foreground">Manage account</a>
+              </div>
             </div>
           </div>
 
