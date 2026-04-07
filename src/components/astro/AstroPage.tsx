@@ -76,12 +76,12 @@ function FeatureSection({
   const isLeft = imagePosition === 'left'
 
   return (
-    <section className="overflow-x-clip bg-white pt-24 md:pt-36">
+    <section className="overflow-x-clip bg-background pt-24 md:pt-36">
       <div className="mx-auto w-full max-w-7xl">
         <div className="grid grid-cols-12 gap-y-8 md:gap-y-12 lg:gap-y-16">
           {/* Title */}
           <div className="col-span-12 flex flex-col items-center justify-center gap-4">
-            <h2 className="z-1 max-w-2xl px-6 text-center text-3xl font-bold text-balance sm:w-2/3 sm:px-0 md:text-4xl">
+            <h2 className="z-1 max-w-2xl px-6 text-center text-3xl font-bold text-foreground text-balance sm:w-2/3 sm:px-0 md:text-4xl">
               {title}
             </h2>
           </div>
@@ -120,7 +120,7 @@ function FeatureSection({
               height={40}
               loading="lazy"
             />
-            <p className="max-w-4/5 text-lg font-semibold text-pretty md:max-w-full">
+            <p className="max-w-4/5 text-lg font-semibold text-foreground text-pretty md:max-w-full">
               {description}
             </p>
           </div>
@@ -134,7 +134,7 @@ export default function AstroPageContent() {
   return (
     <div className="relative">
       {/* Background */}
-      <div className="fixed inset-0 bg-[#78C6F0]">
+      <div className="fixed inset-0 bg-primary">
         <div className="fixed inset-0 overflow-hidden opacity-100 transition-opacity duration-[450ms] ease-linear">
           <div className="fixed inset-0">
             <img
@@ -154,7 +154,7 @@ export default function AstroPageContent() {
       <div className="relative z-10 transition-colors duration-500">
         {/* ── Hero ── */}
         <section className="relative mt-10 w-full sm:mt-20">
-          <div className="pointer-events-none absolute bottom-0 z-[-1] h-[500px] w-full bg-gradient-to-b from-transparent to-white" />
+          <div className="pointer-events-none absolute bottom-0 z-[-1] h-[500px] w-full bg-gradient-to-b from-transparent to-background" />
 
           <div className="mx-auto grid w-full max-w-7xl grid-cols-12 flex-col items-center gap-8 md:gap-12">
             {/* Title block */}
@@ -162,7 +162,7 @@ export default function AstroPageContent() {
               {/* Blue glow */}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_#4999E4_0%,_rgba(0,150,230,0.3)_35%,_rgba(73,153,228,0)_70%)] sm:w-[1000px]"
+                className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_var(--color-primary)_0%,_color-mix(in_srgb,var(--color-primary)_30%,transparent)_35%,_transparent_70%)] sm:w-[1000px]"
               />
 
               {/* App icon */}
@@ -196,8 +196,8 @@ export default function AstroPageContent() {
 
             {/* Video */}
             <div className="col-span-12 col-start-1 select-none px-6 md:col-span-10 md:col-start-2 md:px-0 xl:col-span-8 xl:col-start-3">
-              <div className="drop-shadow-[0_20px_50px_rgba(190,210,233,0.75)]">
-                <div className="relative mx-auto aspect-video h-full w-full overflow-hidden rounded-2xl border border-gray-200">
+              <div className="drop-shadow-[0_20px_50px_color-mix(in_srgb,var(--color-primary)_40%,transparent)]">
+                <div className="relative mx-auto aspect-video h-full w-full overflow-hidden rounded-2xl border border-border">
                   <iframe
                     src="https://player.vimeo.com/video/1129227761?h=94755e8733&badge=0&autopause=0&player_id=0&app_id=58479&controls=1&muted=1"
                     allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
@@ -210,7 +210,7 @@ export default function AstroPageContent() {
 
             {/* Tagline */}
             <div className="col-span-12 col-start-1 w-full px-6 lg:col-span-6 lg:col-start-4 lg:px-0">
-              <p className="text-center text-2xl font-semibold text-balance md:text-3xl">
+              <p className="text-center text-2xl font-semibold text-foreground text-balance md:text-3xl">
                 Browse the web with AI by your side for instant answers, smarter
                 suggestions, and help with tasks — all with privacy settings you
                 control.
@@ -225,7 +225,7 @@ export default function AstroPageContent() {
         ))}
 
         {/* ── Privacy Section ── */}
-        <section className="overflow-x-clip bg-white pt-24 md:pt-36">
+        <section className="overflow-x-clip bg-background pt-24 md:pt-36">
           <div className="mx-auto w-full max-w-7xl">
             <div className="grid grid-cols-12 gap-y-2 md:gap-y-4">
               <div className="col-span-12 flex flex-col items-center justify-center gap-4">
@@ -239,12 +239,12 @@ export default function AstroPageContent() {
                     loading="lazy"
                   />
                 </div>
-                <h2 className="z-1 max-w-2xl px-6 text-center text-3xl font-bold text-balance sm:w-2/3 sm:px-0 md:text-4xl">
+                <h2 className="z-1 max-w-2xl px-6 text-center text-3xl font-bold text-foreground text-balance sm:w-2/3 sm:px-0 md:text-4xl">
                   You&apos;re in control
                 </h2>
               </div>
               <div className="col-span-12 flex items-center justify-center px-6 md:col-span-6 md:col-start-4 md:px-0">
-                <p className="max-w-4/5 text-center text-lg font-semibold text-balance md:max-w-full">
+                <p className="max-w-4/5 text-center text-lg font-semibold text-foreground text-balance md:max-w-full">
                   You decide which sites Astro can see, clear your browsing
                   history, use incognito, and manage browser memories anytime.
                 </p>
@@ -255,12 +255,12 @@ export default function AstroPageContent() {
 
         {/* ── More Features ── */}
         <section className="relative w-full">
-          <h2 className="mx-auto bg-white px-16 pt-24 text-center text-2xl font-semibold md:px-24 md:pt-36 md:text-3xl">
+          <h2 className="mx-auto bg-background px-16 pt-24 text-center text-2xl font-semibold text-foreground md:px-24 md:pt-36 md:text-3xl">
             More features
           </h2>
 
           <div className="relative selection:bg-transparent">
-            <div className="pointer-events-none absolute inset-x-0 -bottom-[50px] top-0 z-[-1] bg-[linear-gradient(180deg,white_0%,white_calc(100%-325px),transparent_100%)]" />
+            <div className="pointer-events-none absolute inset-x-0 -bottom-[50px] top-0 z-[-1] bg-[linear-gradient(180deg,var(--color-background)_0%,var(--color-background)_calc(100%-325px),transparent_100%)]" />
 
             <div className="mx-auto flex max-w-7xl flex-col gap-16 px-6 pb-44 pt-8 sm:px-16 md:flex-row md:gap-4 md:px-8">
               {moreFeatures.map((feature) => (
@@ -268,7 +268,7 @@ export default function AstroPageContent() {
                   key={feature.title}
                   className="flex flex-1 flex-col items-center gap-4 md:gap-6"
                 >
-                  <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+                  <div className="overflow-hidden rounded-2xl border border-border bg-background">
                     <img
                       alt={feature.title}
                       src={feature.image}
@@ -278,10 +278,10 @@ export default function AstroPageContent() {
                       loading="lazy"
                     />
                   </div>
-                  <h3 className="text-center text-lg font-semibold">
+                  <h3 className="text-center text-lg font-semibold text-foreground">
                     {feature.title}
                   </h3>
-                  <p className="text-center text-sm">{feature.description}</p>
+                  <p className="text-center text-sm text-muted-foreground">{feature.description}</p>
                 </div>
               ))}
             </div>
@@ -294,7 +294,7 @@ export default function AstroPageContent() {
             <div className="relative col-span-12 row-start-1 flex flex-col items-center px-4 selection:bg-transparent md:px-6">
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_#4999E4_0%,_rgba(0,150,230,0.3)_35%,_rgba(73,153,228,0)_70%)] sm:w-[1000px]"
+                className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_var(--color-primary)_0%,_color-mix(in_srgb,var(--color-primary)_30%,transparent)_35%,_transparent_70%)] sm:w-[1000px]"
               />
 
               <div className="mb-4 h-[80px] w-[80px] md:mb-6">
