@@ -186,11 +186,11 @@ export default function AstroPageContent() {
                 className="mt-4 inline-flex items-center justify-center rounded-full bg-white/20 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30 md:mt-6"
                 href="#"
               >
-                Download for macOS*
+                Download Astro
               </a>
 
               <p className="mt-2 text-center text-sm text-white/60">
-                Currently only available on macOS
+                Available on macOS, Windows, and Linux
               </p>
             </div>
 
@@ -317,11 +317,11 @@ export default function AstroPageContent() {
                 className="mt-4 inline-flex items-center justify-center rounded-full bg-white/20 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30 md:mt-6"
                 href="#"
               >
-                Download for macOS*
+                Download Astro
               </a>
 
               <p className="mt-2 text-center text-sm text-white/60">
-                Currently only available on macOS
+                Available on macOS, Windows, and Linux
               </p>
             </div>
           </div>
