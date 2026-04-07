@@ -18,7 +18,7 @@ const TYPING_SPEED = 50
 const PAUSE_AFTER_TYPED = 2000
 const PAUSE_AFTER_ERASED = 400
 
-const HIDDEN_PREFIXES = ['/company', '/developers', '/settings', '/help', '/changelog', '/admin', '/dashboard', '/initiative']
+const HIDDEN_PREFIXES = ['/company', '/developers', '/settings', '/help', '/changelog', '/admin', '/dashboard', '/initiative', '/astro']
 
 function slugFromPathname(pathname: string): string {
   const stripped = pathname.replace(/^\/+|\/+$/g, '')
