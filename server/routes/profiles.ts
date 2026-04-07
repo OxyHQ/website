@@ -20,6 +20,54 @@ async function getOxy() {
   return oxy
 }
 
+// Get basic user info by ID (for article author display)
+// MUST be before /:username to avoid Express matching "id" as a username
+router.get('/id/:userId', async (req, res) => {
+  try {
+    const client = await getOxy()
+    const oxyUser = await (client as Record<string, Function>).getUserById(req.params.userId) as Record<string, unknown>
+    res.json({
+      _id: oxyUser._id ?? oxyUser.id,
+      username: oxyUser.username,
+      name: oxyUser.name,
+      avatar: oxyUser.avatar,
+      color: oxyUser.color,
+    })
+  } catch {
+    return res.status(404).json({ error: 'User not found' })
+  }
+})
+
+// Update own profile
+// MUST be before /:username to avoid Express matching "me" as a username
+router.put('/me', requireAuth, async (req, res) => {
+  const { bio, showActivity } = req.body
+
+  try {
+    const update: Record<string, unknown> = {}
+    if (bio !== undefined) {
+      if (typeof bio !== 'string' || bio.length > 280) {
+        return res.status(400).json({ error: 'Bio must be 280 characters or less' })
+      }
+      update.bio = bio
+    }
+    if (showActivity !== undefined) {
+      update.showActivity = !!showActivity
+    }
+
+    const profile = await UserProfileExtra.findOneAndUpdate(
+      { userId: req.user.id },
+      { ...update, userId: req.user.id, username: req.user.username },
+      { upsert: true, new: true },
+    )
+
+    res.json(profile.toJSON())
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    res.status(500).json({ error: `Failed to update profile: ${message}` })
+  }
+})
+
 // Get public profile
 router.get('/:username', optionalAuth, async (req, res) => {
   const { username } = req.params
@@ -69,52 +117,6 @@ router.get('/:username', optionalAuth, async (req, res) => {
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     res.status(500).json({ error: `Failed to load profile: ${message}` })
-  }
-})
-
-// Get basic user info by ID (for article author display)
-router.get('/id/:userId', async (req, res) => {
-  try {
-    const client = await getOxy()
-    const oxyUser = await (client as Record<string, Function>).getUserById(req.params.userId) as Record<string, unknown>
-    res.json({
-      _id: oxyUser._id ?? oxyUser.id,
-      username: oxyUser.username,
-      name: oxyUser.name,
-      avatar: oxyUser.avatar,
-      color: oxyUser.color,
-    })
-  } catch {
-    return res.status(404).json({ error: 'User not found' })
-  }
-})
-
-// Update own profile
-router.put('/me', requireAuth, async (req, res) => {
-  const { bio, showActivity } = req.body
-
-  try {
-    const update: Record<string, unknown> = {}
-    if (bio !== undefined) {
-      if (typeof bio !== 'string' || bio.length > 280) {
-        return res.status(400).json({ error: 'Bio must be 280 characters or less' })
-      }
-      update.bio = bio
-    }
-    if (showActivity !== undefined) {
-      update.showActivity = !!showActivity
-    }
-
-    const profile = await UserProfileExtra.findOneAndUpdate(
-      { userId: req.user.id },
-      { ...update, userId: req.user.id, username: req.user.username },
-      { upsert: true, new: true },
-    )
-
-    res.json(profile.toJSON())
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    res.status(500).json({ error: `Failed to update profile: ${message}` })
   }
 })
 
