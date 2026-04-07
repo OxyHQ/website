@@ -77,15 +77,36 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    rafRef.current = requestAnimationFrame(animate)
+    const outer = outerRef.current
+    if (!outer) return
+
+    let visible = false
+
+    const start = () => {
+      if (!visible || document.hidden) return
+      rafRef.current = requestAnimationFrame(animate)
+    }
+    const stop = () => cancelAnimationFrame(rafRef.current)
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting
+        if (visible) start()
+        else stop()
+      },
+      { threshold: 0 },
+    )
+    io.observe(outer)
 
     const handleVisibility = () => {
-      if (document.hidden) cancelAnimationFrame(rafRef.current)
-      else rafRef.current = requestAnimationFrame(animate)
+      if (document.hidden) stop()
+      else start()
     }
     document.addEventListener('visibilitychange', handleVisibility)
+
     return () => {
-      cancelAnimationFrame(rafRef.current)
+      stop()
+      io.disconnect()
       document.removeEventListener('visibilitychange', handleVisibility)
     }
   }, [animate])

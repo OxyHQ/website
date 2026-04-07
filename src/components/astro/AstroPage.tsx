@@ -212,9 +212,7 @@ function FeatureSection({
   title,
   description,
   image,
-  eyebrow,
   imageAlt,
-  eyebrowAlt,
   imagePosition,
 }: (typeof features)[number]) {
   const isLeft = imagePosition === 'left'
