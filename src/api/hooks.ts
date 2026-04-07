@@ -491,7 +491,7 @@ export interface UserProfileData {
   bio: string
   showActivity: boolean
   badges: Array<{ badgeId: string; awardedAt: string }>
-  stats: { comments: number; likes: number; votes: number; featureRequests: number } | null
+  stats: { comments: number; likes: number; votes: number } | null
 }
 
 export function useUserProfile(username: string) {
