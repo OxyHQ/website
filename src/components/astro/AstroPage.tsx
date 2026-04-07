@@ -225,7 +225,7 @@ function FeatureSection({
         <div className="grid grid-cols-12 gap-y-8 md:gap-y-12 lg:gap-y-16">
           {/* Title */}
           <div className="col-span-12 flex flex-col items-center justify-center gap-4">
-            <h2 className="type-lg z-1 max-w-2xl px-6 text-center font-bold text-theme-text text-balance sm:w-2/3 sm:px-0">
+            <h2 className="type-md-lg z-1 max-w-2xl px-6 text-center font-bold text-theme-text text-balance sm:w-2/3 sm:px-0">
               {title}
             </h2>
           </div>
@@ -350,7 +350,7 @@ export default function AstroPageContent() {
 
             {/* Tagline */}
             <div className="col-span-12 col-start-1 w-full px-6 lg:col-span-6 lg:col-start-4 lg:px-0">
-              <p className="type-lg text-center font-semibold text-foreground text-balance">
+              <p className="type-md-lg text-center font-semibold text-foreground text-balance">
                 Browse the web with AI by your side for instant answers, smarter
                 suggestions, and help with tasks — all with privacy settings you
                 control.
