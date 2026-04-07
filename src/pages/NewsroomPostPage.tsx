@@ -8,6 +8,9 @@ import StructuredData from '../components/StructuredData'
 import { useNewsroomPost, useNewsroomPosts } from '../api/hooks'
 import { type NewsroomPost } from '../data/newsroom'
 import { NewsCardGrid } from '../components/newsroom/NewsCard'
+import LikeButton from '../components/social/LikeButton'
+import DiscussOnMention from '../components/social/DiscussOnMention'
+import CommentSection from '../components/social/CommentSection'
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-US', {
@@ -157,6 +160,17 @@ export default function NewsroomPostPage() {
             {post.content}
           </ReactMarkdown>
         </article>
+
+        {/* Like + social actions */}
+        <div className="mx-auto mt-10 max-w-[720px] px-5 md:px-8 flex items-center gap-3">
+          <LikeButton targetType="newsroom" targetId={post.slug} />
+          <DiscussOnMention title={post.title} url={`https://oxy.so/newsroom/${post.slug}`} />
+        </div>
+
+        {/* Comments */}
+        <div className="mx-auto max-w-[720px] px-5 md:px-8">
+          <CommentSection targetType="newsroom" targetId={post.slug} />
+        </div>
 
         {/* Related posts */}
         {relatedPosts.length > 0 && (

@@ -396,3 +396,167 @@ export function usePlatformStats() {
 
   return { data, isConnected }
 }
+
+// ── Comments ──
+export interface CommentData {
+  _id: string
+  targetType: string
+  targetId: string
+  parentId: string | null
+  userId: string
+  username: string
+  body: string
+  status: string
+  editedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export function useComments(targetType: string, targetId: string) {
+  return useQuery({
+    queryKey: ['comments', targetType, targetId],
+    queryFn: () => apiFetch<CommentData[]>(`/comments?targetType=${encodeURIComponent(targetType)}&targetId=${encodeURIComponent(targetId)}`),
+    staleTime: 30_000,
+    enabled: !!targetId,
+  })
+}
+
+export function useCreateComment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (params: { targetType: string; targetId: string; body: string; parentId?: string }) =>
+      apiFetch<CommentData>('/comments', { method: 'POST', body: JSON.stringify(params) }),
+    onSuccess: (_data, params) => {
+      queryClient.invalidateQueries({ queryKey: ['comments', params.targetType, params.targetId] })
+    },
+  })
+}
+
+export function useEditComment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (params: { id: string; body: string; targetType: string; targetId: string }) =>
+      apiFetch<CommentData>(`/comments/${params.id}`, { method: 'PUT', body: JSON.stringify({ body: params.body }) }),
+    onSuccess: (_data, params) => {
+      queryClient.invalidateQueries({ queryKey: ['comments', params.targetType, params.targetId] })
+    },
+  })
+}
+
+export function useDeleteComment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (params: { id: string; targetType: string; targetId: string }) =>
+      apiFetch<{ success: boolean }>(`/comments/${params.id}`, { method: 'DELETE' }),
+    onSuccess: (_data, params) => {
+      queryClient.invalidateQueries({ queryKey: ['comments', params.targetType, params.targetId] })
+    },
+  })
+}
+
+export function useModerateComment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (params: { id: string; status: string; targetType: string; targetId: string }) =>
+      apiFetch<CommentData>(`/comments/${params.id}/moderate`, { method: 'PUT', body: JSON.stringify({ status: params.status }) }),
+    onSuccess: (_data, params) => {
+      queryClient.invalidateQueries({ queryKey: ['comments', params.targetType, params.targetId] })
+    },
+  })
+}
+
+// ── Likes ──
+interface LikeData {
+  count: number
+  liked: boolean
+}
+
+export function useLikes(targetType: string, targetId: string) {
+  return useQuery({
+    queryKey: ['likes', targetType, targetId],
+    queryFn: () => apiFetch<LikeData>(`/likes?targetType=${encodeURIComponent(targetType)}&targetId=${encodeURIComponent(targetId)}`),
+    staleTime: 30_000,
+    enabled: !!targetId,
+  })
+}
+
+// ── User Profiles ──
+export interface UserProfileData {
+  user: {
+    username: string
+    name: { first?: string; last?: string }
+    avatar?: string
+    color?: string
+  }
+  bio: string
+  showActivity: boolean
+  badges: Array<{ badgeId: string; awardedAt: string }>
+  stats: { comments: number; likes: number; votes: number; featureRequests: number } | null
+}
+
+export function useUserProfile(username: string) {
+  return useQuery({
+    queryKey: ['profile', username],
+    queryFn: () => apiFetch<UserProfileData>(`/profiles/${username}`),
+    enabled: !!username,
+  })
+}
+
+export function useUpdateMyProfile() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { bio?: string; showActivity?: boolean }) =>
+      apiFetch('/profiles/me', { method: 'PUT', body: JSON.stringify(data) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] })
+    },
+  })
+}
+
+interface ActivityResponse {
+  items: Array<{ type: string; data: unknown; createdAt: string }>
+  total: number
+}
+
+export function useUserActivity(username: string, params?: { page?: number; type?: string }) {
+  const qs = new URLSearchParams()
+  if (params?.page) qs.set('page', String(params.page))
+  if (params?.type) qs.set('type', params.type)
+  const query = qs.toString()
+  return useQuery({
+    queryKey: ['profile-activity', username, params],
+    queryFn: () => apiFetch<ActivityResponse>(`/profiles/${username}/activity${query ? `?${query}` : ''}`),
+    enabled: !!username,
+  })
+}
+
+export function useToggleLike() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (params: { targetType: string; targetId: string }) =>
+      apiFetch<LikeData>('/likes/toggle', {
+        method: 'POST',
+        body: JSON.stringify(params),
+      }),
+    onMutate: async (params) => {
+      const key = ['likes', params.targetType, params.targetId]
+      await queryClient.cancelQueries({ queryKey: key })
+      const previous = queryClient.getQueryData<LikeData>(key)
+      if (previous) {
+        queryClient.setQueryData<LikeData>(key, {
+          count: previous.liked ? previous.count - 1 : previous.count + 1,
+          liked: !previous.liked,
+        })
+      }
+      return { previous, key }
+    },
+    onError: (_err, _params, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(context.key, context.previous)
+      }
+    },
+    onSettled: (_data, _err, params) => {
+      queryClient.invalidateQueries({ queryKey: ['likes', params.targetType, params.targetId] })
+    },
+  })
+}
