@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react'
 import { CalendarDays } from 'lucide-react'
-import { useAuth } from '@oxyhq/auth'
-import { useWebOxy } from '@oxyhq/auth'
+import { useAuth, useWebOxy } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { UserProfileData } from '../../api/hooks'
@@ -16,7 +15,7 @@ interface ProfileHeaderProps {
 export default function ProfileHeader({ profile, isOwnProfile, onEditBio }: ProfileHeaderProps) {
   const { user, bio, badges, stats } = profile
   const displayName = [user.name.first, user.name.last].filter(Boolean).join(' ') || user.username
-  const displayBio = bio || user.bio
+  const displayBio = bio
 
   return (
     <div>
@@ -67,17 +66,21 @@ export default function ProfileHeader({ profile, isOwnProfile, onEditBio }: Prof
       {/* Stats row - Twitter style */}
       {stats && (
         <div className="mt-3 flex gap-4 text-[15px]">
-          <span className="hover:underline">
+          <span>
+            <span className="font-bold text-foreground">{stats.following}</span>{' '}
+            <span className="text-muted-foreground">Following</span>
+          </span>
+          <span>
+            <span className="font-bold text-foreground">{stats.followers}</span>{' '}
+            <span className="text-muted-foreground">Followers</span>
+          </span>
+          <span>
             <span className="font-bold text-foreground">{stats.comments}</span>{' '}
             <span className="text-muted-foreground">Comments</span>
           </span>
-          <span className="hover:underline">
+          <span>
             <span className="font-bold text-foreground">{stats.likes}</span>{' '}
             <span className="text-muted-foreground">Likes</span>
-          </span>
-          <span className="hover:underline">
-            <span className="font-bold text-foreground">{stats.votes}</span>{' '}
-            <span className="text-muted-foreground">Votes</span>
           </span>
         </div>
       )}

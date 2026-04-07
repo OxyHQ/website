@@ -87,11 +87,9 @@ export default function FeatureBoardPage() {
               status={status}
               category={category}
               sort={sort}
-              mine={false}
               onChangeStatus={(v) => { setStatus(v); setPage(1) }}
               onChangeCategory={(v) => { setCategory(v); setPage(1) }}
               onChangeSort={(v) => { setSort(v); setPage(1) }}
-              onChangeMine={() => {}}
             />
           </div>
 

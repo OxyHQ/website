@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { UserBadge } from '../models/UserBadge.js'
 import { BADGE_DEFINITIONS, BADGE_IDS } from '../data/badges.js'
 import { requireAuth } from '../middleware/auth.js'
+import { toErrorMessage } from '../utils/errorMessage.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { checkAndAwardBadges } from '../services/badgeService.js'
 
@@ -31,7 +32,7 @@ router.post('/award', requireAuth, adminOnly, async (req, res) => {
     )
     res.status(201).json(badge.toJSON())
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to award badge: ${message}` })
   }
 })
@@ -46,7 +47,7 @@ router.delete('/:userId/:badgeId', requireAuth, adminOnly, async (req, res) => {
     if (!result) return res.status(404).json({ error: 'Badge not found' })
     res.json({ success: true })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to revoke badge: ${message}` })
   }
 })
@@ -63,7 +64,7 @@ router.post('/check/:userId', requireAuth, adminOnly, async (req, res) => {
     const badges = await UserBadge.find({ userId }).sort('-awardedAt')
     res.json(badges.map(b => ({ badgeId: b.badgeId, awardedAt: b.awardedAt })))
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to check badges: ${message}` })
   }
 })

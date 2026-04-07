@@ -2,10 +2,14 @@ import { Router } from 'express'
 import { Comment } from '../models/Comment.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
+import { config } from '../config.js'
+import { COMMENTABLE_TARGET_TYPES } from '../constants/social.js'
+import { toErrorMessage } from '../utils/errorMessage.js'
+import { parsePagination } from '../utils/parsePagination.js'
 
 const router = Router()
 
-const VALID_TARGET_TYPES = ['newsroom', 'changelog', 'feature_request']
+const VALID_TARGET_TYPES = COMMENTABLE_TARGET_TYPES as readonly string[]
 const MAX_BODY_LENGTH = 2000
 const RATE_LIMIT_MS = 10_000
 const EDIT_WINDOW_MS = 15 * 60 * 1000
@@ -56,7 +60,7 @@ router.get('/', optionalAuth, async (req, res) => {
 
     res.json(result)
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to fetch comments: ${message}` })
   }
 })
@@ -118,7 +122,7 @@ router.post('/', requireAuth, async (req, res) => {
 
     res.status(201).json(comment)
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to create comment: ${message}` })
   }
 })
@@ -154,7 +158,7 @@ router.put('/:id', requireAuth, async (req, res) => {
 
     res.json(comment)
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to edit comment: ${message}` })
   }
 })
@@ -172,8 +176,6 @@ router.delete('/:id', requireAuth, async (req, res) => {
 
     // Allow the comment author or an admin to delete
     const isAuthor = comment.userId === user.id
-    // Inline admin check: import config to check admin list
-    const { config } = await import('../config.js')
     const isAdmin = config.adminUsernames.includes(user.username)
 
     if (!isAuthor && !isAdmin) {
@@ -185,7 +187,7 @@ router.delete('/:id', requireAuth, async (req, res) => {
 
     res.json({ success: true })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to delete comment: ${message}` })
   }
 })
@@ -211,7 +213,7 @@ router.put('/:id/moderate', requireAuth, adminOnly, async (req, res) => {
 
     res.json(comment)
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to moderate comment: ${message}` })
   }
 })
@@ -222,9 +224,7 @@ router.put('/:id/moderate', requireAuth, adminOnly, async (req, res) => {
 router.get('/admin/queue', requireAuth, adminOnly, async (req, res) => {
   const { page = '1', limit = '20', status } = req.query
 
-  const pageNum = Math.max(1, parseInt(page as string) || 1)
-  const limitNum = Math.min(100, Math.max(1, parseInt(limit as string) || 20))
-  const skip = (pageNum - 1) * limitNum
+  const { pageNum, limitNum, skip } = parsePagination(page, limit, 100)
 
   const filter: Record<string, string> = {}
   if (status && typeof status === 'string') {
@@ -244,7 +244,7 @@ router.get('/admin/queue', requireAuth, adminOnly, async (req, res) => {
       pages: Math.ceil(total / limitNum),
     })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to fetch admin queue: ${message}` })
   }
 })
@@ -255,9 +255,7 @@ router.get('/admin/queue', requireAuth, adminOnly, async (req, res) => {
 router.get('/user/:username', async (req, res) => {
   const { page = '1', limit = '20' } = req.query
 
-  const pageNum = Math.max(1, parseInt(page as string) || 1)
-  const limitNum = Math.min(100, Math.max(1, parseInt(limit as string) || 20))
-  const skip = (pageNum - 1) * limitNum
+  const { pageNum, limitNum, skip } = parsePagination(page, limit, 100)
 
   try {
     const filter = { username: req.params.username, status: 'visible' }
@@ -273,7 +271,7 @@ router.get('/user/:username', async (req, res) => {
       pages: Math.ceil(total / limitNum),
     })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to fetch user comments: ${message}` })
   }
 })

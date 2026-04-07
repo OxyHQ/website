@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../../api/client'
-import type { FeatureRequestData } from '../../../api/hooks'
+import type { FeatureListResponse } from '../../../api/hooks'
 
 const STATUS_COLORS: Record<string, string> = {
   open: 'bg-zinc-500/10 text-zinc-400',
@@ -10,13 +10,6 @@ const STATUS_COLORS: Record<string, string> = {
   in_progress: 'bg-amber-500/10 text-amber-500',
   completed: 'bg-green-500/10 text-green-500',
   declined: 'bg-red-500/10 text-red-500',
-}
-
-interface FeatureListResponse {
-  items: FeatureRequestData[]
-  total: number
-  page: number
-  pages: number
 }
 
 export default function FeaturesAdmin() {

@@ -4,20 +4,30 @@ import { UserBadge } from '../models/UserBadge.js'
 import { Comment } from '../models/Comment.js'
 import { Like } from '../models/Like.js'
 import { Vote } from '../models/Vote.js'
+import { NewsroomPost } from '../models/NewsroomPost.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { config } from '../config.js'
+import { toErrorMessage } from '../utils/errorMessage.js'
+import { parsePagination } from '../utils/parsePagination.js'
 
 const router = Router()
 
-// Lazy-init OxyServices to handle ESM/CJS interop
-let oxy: { getProfileByUsername(username: string): Promise<Record<string, unknown>> }
-async function getOxy() {
-  if (!oxy) {
-    const mod = await import('@oxyhq/core')
-    const OxyServices = mod.OxyServices || mod.default
-    oxy = new OxyServices({ baseURL: config.oxyApiBase })
+interface OxyClient {
+  getProfileByUsername(username: string): Promise<Record<string, unknown>>
+  getUserById(userId: string): Promise<Record<string, unknown>>
+  getUserFollowers(userId: string): Promise<{ total: number }>
+  getUserFollowing(userId: string): Promise<{ total: number }>
+}
+
+let oxyPromise: Promise<OxyClient> | null = null
+function getOxy(): Promise<OxyClient> {
+  if (!oxyPromise) {
+    oxyPromise = import('@oxyhq/core').then(mod => {
+      const OxyServices = mod.OxyServices ?? mod.default
+      return new OxyServices({ baseURL: config.oxyApiBase }) as OxyClient
+    })
   }
-  return oxy
+  return oxyPromise
 }
 
 // Get basic user info by ID (for article author display)
@@ -25,7 +35,7 @@ async function getOxy() {
 router.get('/id/:userId', async (req, res) => {
   try {
     const client = await getOxy()
-    const oxyUser = await (client as Record<string, Function>).getUserById(req.params.userId) as Record<string, unknown>
+    const oxyUser = await client.getUserById(req.params.userId)
     res.json({
       _id: oxyUser._id ?? oxyUser.id,
       username: oxyUser.username,
@@ -63,8 +73,7 @@ router.put('/me', requireAuth, async (req, res) => {
 
     res.json(profile.toJSON())
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    res.status(500).json({ error: `Failed to update profile: ${message}` })
+    res.status(500).json({ error: `Failed to update profile: ${toErrorMessage(err)}` })
   }
 })
 
@@ -76,7 +85,7 @@ router.get('/:username', optionalAuth, async (req, res) => {
     let oxyUser: Record<string, unknown>
     try {
       const client = await getOxy()
-      oxyUser = await client.getProfileByUsername(username) as Record<string, unknown>
+      oxyUser = await client.getProfileByUsername(username)
     } catch {
       return res.status(404).json({ error: 'User not found' })
     }
@@ -89,15 +98,19 @@ router.get('/:username', optionalAuth, async (req, res) => {
     const isSelf = req.user?.username === username
     const showActivity = profileExtra?.showActivity !== false
 
+    const userId = (oxyUser._id ?? oxyUser.id) as string
     let stats = null
     if (showActivity || isSelf) {
-      const userId = oxyUser._id ?? oxyUser.id
-      const [comments, likes, votes] = await Promise.all([
+      const client = await getOxy()
+      const [comments, likes, votes, articles, followers, following] = await Promise.all([
         Comment.countDocuments({ userId, status: 'visible' }),
         Like.countDocuments({ userId }),
         Vote.countDocuments({ userId }),
+        NewsroomPost.countDocuments({ oxyUserId: userId, status: 'published' }),
+        client.getUserFollowers(userId).then(r => r.total).catch(() => 0),
+        client.getUserFollowing(userId).then(r => r.total).catch(() => 0),
       ])
-      stats = { comments, likes, votes }
+      stats = { comments, likes, votes, articles, followers, following }
     }
 
     res.json({
@@ -107,28 +120,24 @@ router.get('/:username', optionalAuth, async (req, res) => {
         name: oxyUser.name,
         avatar: oxyUser.avatar,
         color: oxyUser.color,
-        bio: oxyUser.bio,
       },
-      bio: profileExtra?.bio ?? '',
+      bio: profileExtra?.bio || (oxyUser.bio as string) || '',
       showActivity: profileExtra?.showActivity !== false,
       badges: badges.map(b => ({ badgeId: b.badgeId, awardedAt: b.awardedAt })),
       stats,
     })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    res.status(500).json({ error: `Failed to load profile: ${message}` })
+    res.status(500).json({ error: `Failed to load profile: ${toErrorMessage(err)}` })
   }
 })
 
 // Get user activity feed
 router.get('/:username/activity', async (req, res) => {
   const { username } = req.params
-  const { page = '1', limit = '20', type } = req.query
+  const { page, limit, type } = req.query
 
   try {
-    const pageNum = Math.max(1, parseInt(page as string, 10) || 1)
-    const limitNum = Math.min(50, Math.max(1, parseInt(limit as string, 10) || 20))
-    const skip = (pageNum - 1) * limitNum
+    const { pageNum: _page, limitNum, skip } = parsePagination(page, limit)
 
     const profileExtra = await UserProfileExtra.findOne({ username })
     if (profileExtra?.showActivity === false) {
@@ -146,12 +155,10 @@ router.get('/:username/activity', async (req, res) => {
     }
 
     activities.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    const sliced = activities.slice(0, limitNum)
 
-    res.json({ items: sliced, total: sliced.length })
+    res.json({ items: activities, total: activities.length })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    res.status(500).json({ error: `Failed to load activity: ${message}` })
+    res.status(500).json({ error: `Failed to load activity: ${toErrorMessage(err)}` })
   }
 })
 
@@ -161,8 +168,7 @@ router.get('/:username/badges', async (req, res) => {
     const badges = await UserBadge.find({ username: req.params.username }).sort('-awardedAt')
     res.json(badges.map(b => ({ badgeId: b.badgeId, awardedAt: b.awardedAt })))
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    res.status(500).json({ error: `Failed to load badges: ${message}` })
+    res.status(500).json({ error: `Failed to load badges: ${toErrorMessage(err)}` })
   }
 })
 

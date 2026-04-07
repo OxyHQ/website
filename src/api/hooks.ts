@@ -489,12 +489,11 @@ export interface UserProfileData {
     name: { first?: string; last?: string }
     avatar?: string
     color?: string
-    bio?: string
   }
   bio: string
   showActivity: boolean
   badges: Array<{ badgeId: string; awardedAt: string }>
-  stats: { comments: number; likes: number; votes: number } | null
+  stats: { comments: number; likes: number; votes: number; articles: number; followers: number; following: number } | null
 }
 
 export function useUserById(userId: string) {
@@ -598,7 +597,7 @@ export interface FeatureRequestData {
   updatedAt: string
 }
 
-interface FeatureListResponse {
+export interface FeatureListResponse {
   items: FeatureRequestData[]
   total: number
   page: number

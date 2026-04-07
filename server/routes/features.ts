@@ -3,6 +3,8 @@ import { Vote } from '../models/Vote.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { config } from '../config.js'
 import { checkAndAwardBadges } from '../services/badgeService.js'
+import { toErrorMessage } from '../utils/errorMessage.js'
+import { parsePagination } from '../utils/parsePagination.js'
 
 const router = Router()
 
@@ -64,6 +66,14 @@ async function fetchAllIssues(): Promise<GitHubIssue[]> {
     const url = `https://api.github.com/search/issues?q=org:${GITHUB_ORG}+label:${FEATURE_LABEL}+is:issue&sort=reactions-%2B1&order=desc&per_page=${perPage}&page=${page}`
     const resp = await fetch(url, { headers: githubHeaders() })
 
+    if (resp.status === 429 || resp.status === 403) {
+      if (issueCache) {
+        issueCache.expires = Date.now() + CACHE_TTL * 2
+        return issueCache.issues
+      }
+      throw new Error(`GitHub rate limit hit: ${resp.status}`)
+    }
+
     if (!resp.ok) {
       const body = await resp.text()
       throw new Error(`GitHub API error ${resp.status}: ${body}`)
@@ -123,7 +133,7 @@ router.get('/', optionalAuth, async (req, res) => {
       issues = issues.filter(i => deriveCategory(i.labels).toLowerCase() === category.toLowerCase())
     }
 
-    // Get local vote counts for all visible issues
+    // Get local vote counts + user votes in a single query
     const issueKeys = issues.map(i => {
       const { owner, repo } = parseRepoFromUrl(i.repository_url)
       return `${owner}/${repo}#${i.number}`
@@ -131,15 +141,12 @@ router.get('/', optionalAuth, async (req, res) => {
 
     const votes = await Vote.find({ featureRequestId: { $in: issueKeys } })
     const voteCounts = new Map<string, number>()
+    const userVotedSet = new Set<string>()
     for (const v of votes) {
       voteCounts.set(v.featureRequestId, (voteCounts.get(v.featureRequestId) ?? 0) + 1)
-    }
-
-    // Check which the current user has voted on
-    let userVotedSet = new Set<string>()
-    if (req.user) {
-      const userVotes = await Vote.find({ featureRequestId: { $in: issueKeys }, userId: req.user.id })
-      userVotedSet = new Set(userVotes.map(v => v.featureRequestId))
+      if (req.user && v.userId === req.user.id) {
+        userVotedSet.add(v.featureRequestId)
+      }
     }
 
     // Map to response format
@@ -184,8 +191,7 @@ router.get('/', optionalAuth, async (req, res) => {
     }
 
     // Paginate
-    const pageNum = Math.max(1, parseInt(page as string, 10) || 1)
-    const limitNum = Math.min(50, Math.max(1, parseInt(limit as string, 10) || 20))
+    const { pageNum, limitNum } = parsePagination(page, limit)
     const total = items.length
     items = items.slice((pageNum - 1) * limitNum, pageNum * limitNum)
 
@@ -196,7 +202,7 @@ router.get('/', optionalAuth, async (req, res) => {
       pages: Math.ceil(total / limitNum),
     })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to fetch features: ${message}` })
   }
 })
@@ -246,7 +252,7 @@ router.get('/:owner/:repo/:number', optionalAuth, async (req, res) => {
       updatedAt: issue.updated_at,
     })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to fetch feature: ${message}` })
   }
 })
@@ -270,7 +276,7 @@ router.post('/:owner/:repo/:number/vote', requireAuth, async (req, res) => {
 
     res.json({ localVotes: localVoteCount, userVoted: !existing })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to toggle vote: ${message}` })
   }
 })

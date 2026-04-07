@@ -1,5 +1,3 @@
-import { useAuth } from '@oxyhq/auth'
-
 const STATUS_OPTIONS = [
   { value: '', label: 'All' },
   { value: 'open', label: 'Open' },
@@ -21,25 +19,19 @@ interface FeatureFiltersProps {
   status: string
   category: string
   sort: string
-  mine: boolean
   onChangeStatus: (value: string) => void
   onChangeCategory: (value: string) => void
   onChangeSort: (value: string) => void
-  onChangeMine: (value: boolean) => void
 }
 
 export default function FeatureFilters({
   status,
   category,
   sort,
-  mine,
   onChangeStatus,
   onChangeCategory,
   onChangeSort,
-  onChangeMine,
 }: FeatureFiltersProps) {
-  const { isAuthenticated } = useAuth()
-
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
       {/* Status tabs */}
@@ -60,7 +52,6 @@ export default function FeatureFilters({
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        {/* Category dropdown */}
         <select
           value={category}
           onChange={(e) => onChangeCategory(e.target.value)}
@@ -68,38 +59,19 @@ export default function FeatureFilters({
         >
           <option value="">All Categories</option>
           {CATEGORY_OPTIONS.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
+            <option key={cat} value={cat}>{cat}</option>
           ))}
         </select>
 
-        {/* Sort dropdown */}
         <select
           value={sort}
           onChange={(e) => onChangeSort(e.target.value)}
           className="rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground"
         >
           {SORT_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
-
-        {/* My requests toggle */}
-        {isAuthenticated && (
-          <button
-            onClick={() => onChangeMine(!mine)}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-              mine
-                ? 'bg-primary-foreground text-primary-background'
-                : 'text-muted-foreground hover:text-foreground border border-border'
-            }`}
-          >
-            My requests
-          </button>
-        )}
       </div>
     </div>
   )

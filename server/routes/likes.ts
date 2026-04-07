@@ -1,6 +1,8 @@
 import { Router } from 'express'
 import { Like } from '../models/Like.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
+import { LIKEABLE_TARGET_TYPES } from '../constants/social.js'
+import { toErrorMessage } from '../utils/errorMessage.js'
 
 const router = Router()
 
@@ -22,7 +24,7 @@ router.get('/', optionalAuth, async (req, res) => {
 
     res.json({ count, liked: existing !== null })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to fetch likes: ${message}` })
   }
 })
@@ -34,9 +36,8 @@ router.post('/toggle', requireAuth, async (req, res) => {
     return res.status(400).json({ error: 'targetType and targetId are required' })
   }
 
-  const validTypes = ['newsroom', 'changelog']
-  if (!validTypes.includes(targetType)) {
-    return res.status(400).json({ error: `targetType must be one of: ${validTypes.join(', ')}` })
+  if (!LIKEABLE_TARGET_TYPES.includes(targetType)) {
+    return res.status(400).json({ error: `targetType must be one of: ${LIKEABLE_TARGET_TYPES.join(', ')}` })
   }
 
   try {
@@ -50,7 +51,7 @@ router.post('/toggle', requireAuth, async (req, res) => {
     const count = await Like.countDocuments({ targetType, targetId })
     res.json({ count, liked: !existing })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
+    const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to toggle like: ${message}` })
   }
 })
