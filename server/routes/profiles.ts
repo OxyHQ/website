@@ -4,7 +4,6 @@ import { UserBadge } from '../models/UserBadge.js'
 import { Comment } from '../models/Comment.js'
 import { Like } from '../models/Like.js'
 import { Vote } from '../models/Vote.js'
-import { FeatureRequest } from '../models/FeatureRequest.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { config } from '../config.js'
 
@@ -50,13 +49,12 @@ router.get('/:username', optionalAuth, async (req, res) => {
     let stats = null
     if (showActivity || isSelf) {
       const userId = (oxyUser as Record<string, unknown>)._id as string
-      const [comments, likes, votes, featureRequests] = await Promise.all([
+      const [comments, likes, votes] = await Promise.all([
         Comment.countDocuments({ userId, status: 'visible' }),
         Like.countDocuments({ userId }),
         Vote.countDocuments({ userId }),
-        FeatureRequest.countDocuments({ userId }),
       ])
-      stats = { comments, likes, votes, featureRequests }
+      stats = { comments, likes, votes }
     }
 
     res.json({
@@ -130,14 +128,6 @@ router.get('/:username/activity', async (req, res) => {
         .skip(skip)
         .limit(limitNum)
       comments.forEach(c => activities.push({ type: 'comment', data: c.toJSON(), createdAt: c.createdAt }))
-    }
-
-    if (!type || type === 'features') {
-      const features = await FeatureRequest.find({ username })
-        .sort('-createdAt')
-        .skip(skip)
-        .limit(limitNum)
-      features.forEach(f => activities.push({ type: 'feature_request', data: f.toJSON(), createdAt: f.createdAt }))
     }
 
     // Sort combined activities by date
