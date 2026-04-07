@@ -9,6 +9,7 @@ export interface INewsroomPost extends Document {
   coverImage?: string
   imageAlt?: string
   oxyUserId: string
+  authorUsername: string
   tags: string[]
   categories: string[]
   featured: boolean
@@ -32,6 +33,7 @@ const NewsroomPostSchema = new Schema<INewsroomPost>({
   coverImage: String,
   imageAlt: String,
   oxyUserId: { type: String, required: true },
+  authorUsername: { type: String, default: '' },
   tags: [String],
   categories: { type: [String], default: [] },
   featured: { type: Boolean, default: false },

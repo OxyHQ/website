@@ -11,6 +11,7 @@ import { NewsCardGrid } from '../components/newsroom/NewsCard'
 import LikeButton from '../components/social/LikeButton'
 import DiscussOnMention from '../components/social/DiscussOnMention'
 import CommentSection from '../components/social/CommentSection'
+import ArticleAuthors from '../components/social/ArticleAuthor'
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-US', {
@@ -116,6 +117,11 @@ export default function NewsroomPostPage() {
             <span>&middot;</span>
             <span>{readTime(post.content)}</span>
           </div>
+          {post.oxyUserId && (
+            <div className="mt-3">
+              <ArticleAuthors userIds={[post.oxyUserId]} />
+            </div>
+          )}
           <h1 className="mt-4 text-heading-responsive-lg text-foreground">
             {post.title}
           </h1>

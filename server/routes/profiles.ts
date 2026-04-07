@@ -72,6 +72,23 @@ router.get('/:username', optionalAuth, async (req, res) => {
   }
 })
 
+// Get basic user info by ID (for article author display)
+router.get('/id/:userId', async (req, res) => {
+  try {
+    const client = await getOxy()
+    const oxyUser = await (client as Record<string, Function>).getUserById(req.params.userId) as Record<string, unknown>
+    res.json({
+      _id: oxyUser._id ?? oxyUser.id,
+      username: oxyUser.username,
+      name: oxyUser.name,
+      avatar: oxyUser.avatar,
+      color: oxyUser.color,
+    })
+  } catch {
+    return res.status(404).json({ error: 'User not found' })
+  }
+})
+
 // Update own profile
 router.put('/me', requireAuth, async (req, res) => {
   const { bio, showActivity } = req.body

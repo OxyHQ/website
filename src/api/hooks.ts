@@ -497,6 +497,15 @@ export interface UserProfileData {
   stats: { comments: number; likes: number; votes: number } | null
 }
 
+export function useUserById(userId: string) {
+  return useQuery({
+    queryKey: ['user-by-id', userId],
+    queryFn: () => apiFetch<{ _id: string; username: string; name: { first?: string; last?: string }; avatar?: string; color?: string }>(`/profiles/id/${userId}`),
+    enabled: !!userId,
+    staleTime: 5 * 60_000,
+  })
+}
+
 export function useUserProfile(username: string) {
   return useQuery({
     queryKey: ['profile', username],
