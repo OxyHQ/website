@@ -9,24 +9,15 @@ import { config } from '../config.js'
 
 const router = Router()
 
-// In-memory cache for Oxy user data (5 minute TTL)
-const userCache = new Map<string, { data: Record<string, unknown>; expires: number }>()
-const CACHE_TTL = 5 * 60 * 1000
-
-async function fetchOxyUser(username: string): Promise<Record<string, unknown> | null> {
-  const cached = userCache.get(username)
-  if (cached && cached.expires > Date.now()) return cached.data
-
-  try {
-    const resp = await fetch(`${config.oxyApiBase}/api/users/username/${username}`)
-    if (!resp.ok) return null
-    const body = await resp.json()
-    const data = body.data ?? body
-    userCache.set(username, { data, expires: Date.now() + CACHE_TTL })
-    return data
-  } catch {
-    return null
+// Lazy-init OxyServices to handle ESM/CJS interop
+let oxy: { getProfileByUsername(username: string): Promise<Record<string, unknown>> }
+async function getOxy() {
+  if (!oxy) {
+    const mod = await import('@oxyhq/core')
+    const OxyServices = mod.OxyServices || mod.default
+    oxy = new OxyServices({ baseURL: config.oxyApiBase })
   }
+  return oxy
 }
 
 // Get public profile
@@ -34,21 +25,25 @@ router.get('/:username', optionalAuth, async (req, res) => {
   const { username } = req.params
 
   try {
-    const [oxyUser, profileExtra, badges] = await Promise.all([
-      fetchOxyUser(username),
+    let oxyUser: Record<string, unknown>
+    try {
+      const client = await getOxy()
+      oxyUser = await client.getProfileByUsername(username) as Record<string, unknown>
+    } catch {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    const [profileExtra, badges] = await Promise.all([
       UserProfileExtra.findOne({ username }),
       UserBadge.find({ username }).sort('-awardedAt'),
     ])
 
-    if (!oxyUser) return res.status(404).json({ error: 'User not found' })
-
     const isSelf = req.user?.username === username
     const showActivity = profileExtra?.showActivity !== false
 
-    // Activity stats (only if public or self)
     let stats = null
     if (showActivity || isSelf) {
-      const userId = (oxyUser as Record<string, unknown>)._id as string
+      const userId = oxyUser._id ?? oxyUser.id
       const [comments, likes, votes] = await Promise.all([
         Comment.countDocuments({ userId, status: 'visible' }),
         Like.countDocuments({ userId }),
@@ -59,10 +54,10 @@ router.get('/:username', optionalAuth, async (req, res) => {
 
     res.json({
       user: {
-        username: (oxyUser as Record<string, unknown>).username,
-        name: (oxyUser as Record<string, unknown>).name,
-        avatar: (oxyUser as Record<string, unknown>).avatar,
-        color: (oxyUser as Record<string, unknown>).color,
+        username: oxyUser.username,
+        name: oxyUser.name,
+        avatar: oxyUser.avatar,
+        color: oxyUser.color,
       },
       bio: profileExtra?.bio ?? '',
       showActivity: profileExtra?.showActivity !== false,
@@ -114,7 +109,6 @@ router.get('/:username/activity', async (req, res) => {
     const limitNum = Math.min(50, Math.max(1, parseInt(limit as string, 10) || 20))
     const skip = (pageNum - 1) * limitNum
 
-    // Check privacy
     const profileExtra = await UserProfileExtra.findOne({ username })
     if (profileExtra?.showActivity === false) {
       return res.json({ items: [], total: 0 })
@@ -130,7 +124,6 @@ router.get('/:username/activity', async (req, res) => {
       comments.forEach(c => activities.push({ type: 'comment', data: c.toJSON(), createdAt: c.createdAt }))
     }
 
-    // Sort combined activities by date
     activities.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     const sliced = activities.slice(0, limitNum)
 
