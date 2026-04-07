@@ -8,6 +8,7 @@ import {
   RegionCount,
   StatsGrid,
 } from "../components/dashboard/StatsDisplay";
+import Logo from "../components/ui/Logo";
 import { usePlatformStats } from "../api/hooks";
 
 function FullscreenIcon({ isFullscreen }: { isFullscreen: boolean }) {
@@ -58,13 +59,18 @@ export default function DashboardPage() {
       <main className="flex-1">
         <div ref={dashboardRef} className={`container font-mono flex flex-col bg-background ${isFullscreen ? "min-h-screen px-8" : "min-h-[calc(100dvh-var(--site-header-height))]"}`}>
           {/* Header */}
-          <header className="flex items-center justify-between font-mono text-sm uppercase gap-2 pt-6 mb-4 shrink-0">
+          <header className="relative flex items-center justify-between font-mono text-sm uppercase gap-2 pt-6 mb-4 shrink-0">
             <p className="text-foreground font-mono my-0 whitespace-nowrap">
               Oxy Platform{" "}
               <span className="block font-mono text-muted-foreground">
                 [Live Dashboard]
               </span>
             </p>
+            {isFullscreen && (
+              <div className="absolute top-6 left-1/2 -translate-x-1/2">
+                <Logo className="h-6" />
+              </div>
+            )}
             <button
               type="button"
               onClick={toggleFullscreen}
