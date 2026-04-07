@@ -256,14 +256,6 @@ function FeatureSection({
               isLeft ? 'md:col-start-8' : 'md:col-start-1'
             }`}
           >
-            <img
-              alt={eyebrowAlt}
-              src={eyebrow}
-              className="mx-auto md:mx-0"
-              width={120}
-              height={40}
-              loading="lazy"
-            />
             <p className="type-md-lg max-w-4/5 font-semibold text-theme-text text-pretty md:max-w-full">
               {description}
             </p>
