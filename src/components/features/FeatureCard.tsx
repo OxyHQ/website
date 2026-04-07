@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom'
-import { ChevronUp, MessageSquare } from 'lucide-react'
+import { ChevronUp, MessageSquare, ExternalLink } from 'lucide-react'
 import FeatureStatusBadge from './FeatureStatusBadge'
 import type { FeatureRequestData } from '../../api/hooks'
 
@@ -20,7 +19,7 @@ export default function FeatureCard({ feature, onVote }: FeatureCardProps) {
       <div className="flex flex-col items-center gap-1">
         <button
           onClick={onVote}
-          className={`flex h-10 w-10 items-center justify-center rounded-lg border transition-colors ${
+          className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border transition-colors ${
             feature.userVoted
               ? 'border-primary bg-primary/10 text-primary'
               : 'border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground'
@@ -30,19 +29,22 @@ export default function FeatureCard({ feature, onVote }: FeatureCardProps) {
           <ChevronUp className="h-5 w-5" />
         </button>
         <span className={`text-sm font-semibold ${feature.userVoted ? 'text-primary' : 'text-muted-foreground'}`}>
-          {feature.voteCount}
+          {feature.totalVotes}
         </span>
       </div>
 
       {/* Content column */}
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <Link
-            to={`/features/${feature.slug}`}
-            className="font-semibold text-foreground hover:underline"
+          <a
+            href={feature.htmlUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 font-semibold text-foreground hover:underline"
           >
             {feature.title}
-          </Link>
+            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+          </a>
           <FeatureStatusBadge status={feature.status} />
         </div>
 
@@ -58,7 +60,13 @@ export default function FeatureCard({ feature, onVote }: FeatureCardProps) {
             <MessageSquare className="h-3.5 w-3.5" />
             {feature.commentCount}
           </span>
-          <span>by {feature.username}</span>
+          <span className="rounded-full bg-surface px-2 py-0.5">
+            {feature.repoName}
+          </span>
+          <span>
+            <img src={feature.authorAvatar} alt="" className="mr-1 inline h-4 w-4 rounded-full" />
+            {feature.author}
+          </span>
           <span>{new Date(feature.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
         </div>
       </div>

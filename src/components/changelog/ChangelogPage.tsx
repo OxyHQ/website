@@ -2,6 +2,7 @@ import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useChangelog, useTrackedRepos } from '../../api/hooks'
+import LikeButton from '../social/LikeButton'
 
 export default function ChangelogContent() {
   const [selectedRepo, setSelectedRepo] = useState<string | undefined>(undefined)
@@ -219,6 +220,10 @@ export default function ChangelogContent() {
                     <time className="mt-5 text-muted-foreground text-xs lg:hidden" aria-hidden="true">
                       {new Date(entry.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </time>
+
+                    <div className="mt-5">
+                      <LikeButton targetType="changelog" targetId={entry._id ?? ''} />
+                    </div>
                   </div>
                 </article>
               ))}

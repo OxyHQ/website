@@ -13,6 +13,9 @@ import JobsAdmin from '../components/admin/sections/JobsAdmin'
 import McpTokensAdmin from '../components/admin/sections/McpTokensAdmin'
 import LocalesAdmin from '../components/admin/sections/LocalesAdmin'
 import BackupAdmin from '../components/admin/sections/BackupAdmin'
+import CommentsAdmin from '../components/admin/sections/CommentsAdmin'
+import FeaturesAdmin from '../components/admin/sections/FeaturesAdmin'
+import BadgesAdmin from '../components/admin/sections/BadgesAdmin'
 import NotFoundPage from './NotFoundPage'
 
 export default function AdminPage() {
@@ -38,6 +41,9 @@ export default function AdminPage() {
       <Route path="locales" element={<AdminLayout><LocalesAdmin /></AdminLayout>} />
       <Route path="mcp-tokens" element={<AdminLayout><McpTokensAdmin /></AdminLayout>} />
       <Route path="backup" element={<AdminLayout><BackupAdmin /></AdminLayout>} />
+      <Route path="comments" element={<AdminLayout><CommentsAdmin /></AdminLayout>} />
+      <Route path="features" element={<AdminLayout><FeaturesAdmin /></AdminLayout>} />
+      <Route path="badges" element={<AdminLayout><BadgesAdmin /></AdminLayout>} />
       <Route path="*" element={<Navigate to="settings" replace />} />
     </Routes>
   )

@@ -1,48 +1,34 @@
 import { useState } from 'react'
 import { useAuth } from '@oxyhq/auth'
-import { Plus, X } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import FeatureCard from '../components/features/FeatureCard'
 import FeatureFilters from '../components/features/FeatureFilters'
-import FeatureForm from '../components/features/FeatureForm'
-import { useFeatureRequests, useToggleFeatureVote } from '../api/hooks'
+import { useFeatureRequests, useToggleFeatureVote, type FeatureRequestData } from '../api/hooks'
 
 export default function FeatureBoardPage() {
-  const { isAuthenticated, signIn } = useAuth()
-
   const [status, setStatus] = useState('')
   const [category, setCategory] = useState('')
   const [sort, setSort] = useState('votes')
-  const [mine, setMine] = useState(false)
   const [page, setPage] = useState(1)
-  const [showForm, setShowForm] = useState(false)
 
   const { data, isPending, isError } = useFeatureRequests({
     status: status || undefined,
     category: category || undefined,
     sort,
     page,
-    mine: mine || undefined,
   })
 
   const features = data?.items ?? []
   const totalPages = data?.pages ?? 1
 
-  function handleSuggest() {
-    if (!isAuthenticated) {
-      signIn()
-      return
-    }
-    setShowForm(true)
-  }
-
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
         title="Feature Board"
-        description="Suggest and vote on features you'd like to see in Oxy products."
+        description="Vote on features you'd like to see in Oxy products. Powered by GitHub Issues."
         canonicalPath="/features"
       />
       <Navbar />
@@ -53,11 +39,7 @@ export default function FeatureBoardPage() {
           <div className="container relative">
             <div className="relative isolate border-x border-border">
               <div className="absolute bottom-0 left-0 z-10 h-[200px] w-full bg-[linear-gradient(to_bottom,transparent,var(--color-border))]" aria-hidden="true" />
-              <svg
-                width="100%"
-                height="100%"
-                className="mask-t-to-50% absolute inset-0 text-muted"
-              >
+              <svg width="100%" height="100%" className="mask-t-to-50% absolute inset-0 text-muted">
                 <defs>
                   <pattern id="feature-hero-dots" width="10" height="10" patternUnits="userSpaceOnUse">
                     <rect x="5.5" y="5.5" width="1" height="1" fill="currentColor" />
@@ -76,15 +58,17 @@ export default function FeatureBoardPage() {
                       Shape the future of Oxy
                     </h2>
                     <p className="mt-4 max-w-xl text-balance text-center text-lg text-muted-foreground lg:text-xl">
-                      Suggest and vote on features you&apos;d like to see.
+                      Vote on features from across the Oxy ecosystem. Proposals are tracked on GitHub.
                     </p>
-                    <button
-                      onClick={handleSuggest}
+                    <a
+                      href="https://github.com/oxyhq"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                     >
-                      <Plus className="h-4 w-4" />
-                      Suggest a Feature
-                    </button>
+                      <ExternalLink className="h-4 w-4" />
+                      Suggest a Feature on GitHub
+                    </a>
                   </header>
                 </div>
               </div>
@@ -92,50 +76,25 @@ export default function FeatureBoardPage() {
           </div>
         </section>
 
-        {/* Separator */}
         <svg width="100%" height="1" className="w-full text-border">
           <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
         </svg>
 
         {/* Content */}
         <div className="container pb-20 pt-8 lg:pb-28">
-          {/* Modal overlay for form */}
-          {showForm && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-              <div className="relative w-full max-w-lg rounded-2xl border border-border bg-background p-6 shadow-xl">
-                <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-foreground">Suggest a Feature</h3>
-                  <button
-                    onClick={() => setShowForm(false)}
-                    className="rounded-lg p-1 text-muted-foreground transition-colors hover:text-foreground"
-                    aria-label="Close"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-                <FeatureForm
-                  onSuccess={() => setShowForm(false)}
-                  onCancel={() => setShowForm(false)}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Filters */}
           <div className="mb-6">
             <FeatureFilters
               status={status}
               category={category}
               sort={sort}
-              mine={mine}
+              mine={false}
               onChangeStatus={(v) => { setStatus(v); setPage(1) }}
               onChangeCategory={(v) => { setCategory(v); setPage(1) }}
               onChangeSort={(v) => { setSort(v); setPage(1) }}
-              onChangeMine={(v) => { setMine(v); setPage(1) }}
+              onChangeMine={() => {}}
             />
           </div>
 
-          {/* Feature list */}
           <div className="space-y-3">
             {isPending && (
               <div className="space-y-3">
@@ -165,16 +124,15 @@ export default function FeatureBoardPage() {
             {!isPending && !isError && features.length === 0 && (
               <div className="py-20 text-center text-muted-foreground">
                 <p className="text-lg">No feature requests yet.</p>
-                <p className="mt-2 text-sm">Be the first to suggest a feature.</p>
+                <p className="mt-2 text-sm">Be the first to suggest a feature on GitHub.</p>
               </div>
             )}
 
             {features.map((feature) => (
-              <FeatureCardWithVote key={feature._id} feature={feature} />
+              <FeatureCardWithVote key={feature.id} feature={feature} />
             ))}
           </div>
 
-          {/* Pagination */}
           {totalPages > 1 && (
             <div className="mt-8 flex items-center justify-center gap-2">
               <button
@@ -204,10 +162,9 @@ export default function FeatureBoardPage() {
   )
 }
 
-/** Wrapper to create a per-card vote mutation bound to the feature's slug */
-function FeatureCardWithVote({ feature }: { feature: import('../api/hooks').FeatureRequestData }) {
+function FeatureCardWithVote({ feature }: { feature: FeatureRequestData }) {
   const { isAuthenticated, signIn } = useAuth()
-  const toggleVote = useToggleFeatureVote(feature.slug)
+  const toggleVote = useToggleFeatureVote(feature.owner, feature.repoName, feature.number)
 
   function handleVote() {
     if (!isAuthenticated) {

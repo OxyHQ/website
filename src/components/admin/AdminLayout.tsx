@@ -31,6 +31,9 @@ import {
   Languages,
   HardDriveDownload,
   ArrowLeft,
+  MessageSquare,
+  Lightbulb,
+  Award,
 } from 'lucide-react'
 
 export { ADMIN_USERNAMES } from '../../constants'
@@ -55,6 +58,9 @@ const sections: AdminSection[] = [
   { id: 'locales', label: 'Locales', icon: <Languages className="size-4" />, group: 'Configuration' },
   { id: 'mcp-tokens', label: 'API Tokens', icon: <KeyRound className="size-4" />, group: 'Developer' },
   { id: 'backup', label: 'Backup', icon: <HardDriveDownload className="size-4" />, group: 'Developer' },
+  { id: 'comments', label: 'Comments', icon: <MessageSquare className="size-4" />, group: 'Community' },
+  { id: 'features', label: 'Feature Board', icon: <Lightbulb className="size-4" />, group: 'Community' },
+  { id: 'badges', label: 'Badges', icon: <Award className="size-4" />, group: 'Community' },
 ]
 
 const groups = [...new Set(sections.map((s) => s.group))]

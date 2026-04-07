@@ -561,23 +561,29 @@ export function useToggleLike() {
   })
 }
 
-// ── Feature Requests ──
+// ── Feature Requests (GitHub-backed) ──
 export interface FeatureRequestData {
-  _id: string
+  id: number
+  number: number
   title: string
   description: string
-  slug: string
-  userId: string
-  username: string
+  htmlUrl: string
+  state: string
   status: string
   category: string
-  voteCount: number
+  labels: Array<{ name: string; color: string }>
+  author: string
+  authorAvatar: string
+  githubReactions: number
+  localVotes: number
+  totalVotes: number
   commentCount: number
-  adminNote?: string
-  statusChangedAt: string
+  repo: string
+  owner: string
+  repoName: string
+  userVoted: boolean
   createdAt: string
   updatedAt: string
-  userVoted: boolean
 }
 
 interface FeatureListResponse {
@@ -587,59 +593,35 @@ interface FeatureListResponse {
   pages: number
 }
 
-export function useFeatureRequests(params?: { status?: string; category?: string; sort?: string; page?: number; mine?: boolean }) {
+export function useFeatureRequests(params?: { status?: string; category?: string; sort?: string; page?: number }) {
   const qs = new URLSearchParams()
   if (params?.status) qs.set('status', params.status)
   if (params?.category) qs.set('category', params.category)
   if (params?.sort) qs.set('sort', params.sort)
   if (params?.page) qs.set('page', String(params.page))
-  if (params?.mine) qs.set('mine', 'true')
   const query = qs.toString()
   return useQuery({
     queryKey: ['features', params],
     queryFn: () => apiFetch<FeatureListResponse>(`/features${query ? `?${query}` : ''}`),
-    staleTime: 30_000,
+    staleTime: 60_000,
   })
 }
 
-export function useFeatureRequest(slug: string) {
+export function useFeatureDetail(owner: string, repo: string, number: number) {
   return useQuery({
-    queryKey: ['feature', slug],
-    queryFn: () => apiFetch<FeatureRequestData>(`/features/${slug}`),
-    enabled: !!slug,
+    queryKey: ['feature', owner, repo, number],
+    queryFn: () => apiFetch<FeatureRequestData>(`/features/${owner}/${repo}/${number}`),
+    enabled: !!owner && !!repo && number > 0,
   })
 }
 
-export function useCreateFeatureRequest() {
+export function useToggleFeatureVote(owner: string, repo: string, number: number) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: { title: string; description?: string; category?: string }) =>
-      apiFetch<FeatureRequestData>('/features', { method: 'POST', body: JSON.stringify(data) }),
+    mutationFn: () => apiFetch<{ localVotes: number; userVoted: boolean }>(`/features/${owner}/${repo}/${number}/vote`, { method: 'POST' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['features'] })
-    },
-  })
-}
-
-export function useToggleFeatureVote(slug: string) {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: () => apiFetch<{ voteCount: number; userVoted: boolean }>(`/features/${slug}/vote`, { method: 'POST' }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['features'] })
-      queryClient.invalidateQueries({ queryKey: ['feature', slug] })
-    },
-  })
-}
-
-export function useUpdateFeatureStatus(slug: string) {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: (data: { status: string; adminNote?: string }) =>
-      apiFetch<FeatureRequestData>(`/features/${slug}/status`, { method: 'PUT', body: JSON.stringify(data) }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['features'] })
-      queryClient.invalidateQueries({ queryKey: ['feature', slug] })
+      queryClient.invalidateQueries({ queryKey: ['feature', owner, repo, number] })
     },
   })
 }

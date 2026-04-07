@@ -12,14 +12,14 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
       </blockquote>
       <div className="mt-6 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface text-sm font-semibold text-muted-foreground">
-          {testimonial.name.charAt(0)}
+          {testimonial.name?.charAt(0) ?? '?'}
         </div>
         <div>
           <p className="text-sm font-medium text-foreground">
-            {testimonial.name}
+            {testimonial.name ?? 'Anonymous'}
           </p>
           <p className="text-sm text-muted-foreground">
-            {testimonial.role}, {testimonial.company}
+            {[testimonial.role, testimonial.company].filter(Boolean).join(', ')}
           </p>
         </div>
       </div>

@@ -19,6 +19,11 @@ import translationsRouter from './routes/translations.js'
 import sitemapRouter from './routes/sitemap.js'
 import backupRouter from './routes/backup.js'
 import uploadRouter from './routes/upload.js'
+import likesRouter from './routes/likes.js'
+import commentsRouter from './routes/comments.js'
+import featuresRouter from './routes/features.js'
+import profilesRouter from './routes/profiles.js'
+import badgesRouter from './routes/badges.js'
 import { mountMcp } from './mcp.js'
 
 const app = express()
@@ -48,6 +53,13 @@ app.use('/api/locales', localesRouter)
 app.use('/api/translations', translationsRouter)
 app.use('/api/backup', backupRouter)
 app.use('/api/upload', uploadRouter)
+
+// Social features
+app.use('/api/likes', likesRouter)
+app.use('/api/comments', commentsRouter)
+app.use('/api/features', featuresRouter)
+app.use('/api/profiles', profilesRouter)
+app.use('/api/badges', badgesRouter)
 
 // Sitemap
 app.use('/', sitemapRouter)

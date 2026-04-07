@@ -41,7 +41,6 @@ const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
 const UserProfilePage = lazy(() => import('./pages/UserProfilePage'))
 const FeatureBoardPage = lazy(() => import('./pages/FeatureBoardPage'))
-const FeatureDetailPage = lazy(() => import('./pages/FeatureDetailPage'))
 
 const OXY_API = 'https://api.oxy.so'
 
@@ -113,7 +112,6 @@ function PublicRoutes() {
       <Route path="legal/:section" element={<LegalPage />} />
       <Route path="u/:username" element={<UserProfilePage />} />
       <Route path="features" element={<FeatureBoardPage />} />
-      <Route path="features/:slug" element={<FeatureDetailPage />} />
     </>
   )
 }
