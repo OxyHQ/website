@@ -343,7 +343,7 @@ async function seed() {
       content: '<p>Today we are launching Ask Oxy, a new AI-powered interface that fundamentally changes how you interact with your CRM. Instead of clicking through menus and filters, you simply ask.</p><p>Ask Oxy understands context from your emails, meetings, and deal history to surface exactly what you need — before you even know you need it.</p>',
       coverImage: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=630&fit=crop',
       imageAlt: 'Abstract AI visualization',
-      oxyUserId: 'seed-admin',
+
       tags: ['ai', 'product-launch', 'crm'],
       categories: ['Product'],
       featured: true,
@@ -358,7 +358,7 @@ async function seed() {
       content: '<p>When your CRM holds millions of records across contacts, deals, emails, and calls, search latency matters. In this post we share how we built our search pipeline to consistently return results in under 100 milliseconds.</p>',
       coverImage: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=630&fit=crop',
       imageAlt: 'Server room with blue lighting',
-      oxyUserId: 'seed-admin',
+
       tags: ['engineering', 'performance', 'search'],
       categories: ['Engineering'],
       featured: false,
@@ -373,7 +373,7 @@ async function seed() {
       content: '<p>As AI becomes central to how businesses operate, we believe companies building AI products have a responsibility to ensure those systems are safe, fair, and transparent. This post outlines the principles and practices that guide AI development at Oxy.</p>',
       coverImage: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&h=630&fit=crop',
       imageAlt: 'Human and AI collaboration concept',
-      oxyUserId: 'seed-admin',
+
       tags: ['ai', 'ethics', 'safety'],
       categories: ['Safety'],
       featured: false,
@@ -388,7 +388,7 @@ async function seed() {
       content: '<p>Today we are announcing a $50M Series B round led by Sequoia Capital with participation from existing investors. This funding will accelerate our mission to make CRM intelligent, intuitive, and accessible to every go-to-market team.</p>',
       coverImage: 'https://images.unsplash.com/photo-1553729459-ade9a7b3b02e?w=1200&h=630&fit=crop',
       imageAlt: 'Team celebration in modern office',
-      oxyUserId: 'seed-admin',
+
       tags: ['funding', 'company-news'],
       categories: ['Company'],
       featured: false,
@@ -403,7 +403,7 @@ async function seed() {
       content: '<p>One of the hardest problems in applying LLMs to enterprise software is translating ambiguous natural language into precise, structured queries. In this post we present our findings on constrained decoding techniques that improve query accuracy by 34%.</p>',
       coverImage: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=1200&h=630&fit=crop',
       imageAlt: 'Mathematical formulas on a whiteboard',
-      oxyUserId: 'seed-admin',
+
       tags: ['ai', 'research', 'llm'],
       categories: ['Research'],
       featured: false,
@@ -418,7 +418,7 @@ async function seed() {
       content: '<p>Security is foundational to everything we build. We are proud to announce that Oxy has successfully completed a SOC 2 Type II audit, independently verifying our controls for data security, availability, and confidentiality.</p>',
       coverImage: 'https://images.unsplash.com/photo-1563986768609-322da13575f2?w=1200&h=630&fit=crop',
       imageAlt: 'Security shield and lock concept',
-      oxyUserId: 'seed-admin',
+
       tags: ['security', 'compliance', 'enterprise'],
       categories: ['Security'],
       featured: false,
@@ -433,7 +433,7 @@ async function seed() {
       content: '<p>Workflow Automations v2 is here. This release introduces conditional branching, enabling you to build sophisticated automation trees that respond to real-time signals from your pipeline. Combined with webhook triggers and multi-step sequences, your team can automate virtually any repeatable process.</p>',
       coverImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=630&fit=crop',
       imageAlt: 'Dashboard with workflow automation interface',
-      oxyUserId: 'seed-admin',
+
       tags: ['automations', 'product-update'],
       categories: ['Product'],
       featured: false,
@@ -448,7 +448,7 @@ async function seed() {
       content: '<p>We are honored to be recognized as a Leader in the G2 Spring 2026 Grid Report for CRM. This recognition reflects the trust our customers place in Oxy and the hard work of our entire team to deliver a product people love.</p>',
       coverImage: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1200&h=630&fit=crop',
       imageAlt: 'Award trophy on a modern desk',
-      oxyUserId: 'seed-admin',
+
       tags: ['awards', 'company-news'],
       categories: ['Company'],
       featured: false,
@@ -463,7 +463,7 @@ async function seed() {
       content: '<p>Last quarter, we migrated our primary CRM datastore — over 2TB of live customer data — to a new storage layer without a single second of downtime. This post walks through the dual-write strategy, verification pipeline, and cutover process that made it possible.</p>',
       coverImage: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=1200&h=630&fit=crop',
       imageAlt: 'Data center infrastructure',
-      oxyUserId: 'seed-admin',
+
       tags: ['engineering', 'infrastructure', 'migration'],
       categories: ['Engineering'],
       featured: false,
@@ -478,7 +478,7 @@ async function seed() {
       content: '<p>As AI features become core to enterprise products, prompt injection attacks present a real security risk. In this post we detail the multi-layered defense strategy Oxy employs — from input sanitization and output validation to adversarial testing and monitoring — to keep our customers safe.</p>',
       coverImage: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&h=630&fit=crop',
       imageAlt: 'Cybersecurity concept with digital shield',
-      oxyUserId: 'seed-admin',
+
       tags: ['security', 'ai', 'research'],
       categories: ['Research'],
       featured: false,

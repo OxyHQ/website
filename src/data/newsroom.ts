@@ -5,7 +5,7 @@ export interface NewsroomPost {
   excerpt: string
   content: string
   coverImage?: string
-  oxyUserId: string
+  oxyUserId?: string
   authorUsername?: string
   tags: string[]
   category: string

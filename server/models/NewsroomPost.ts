@@ -8,8 +8,8 @@ export interface INewsroomPost extends Document {
   content: string
   coverImage?: string
   imageAlt?: string
-  oxyUserId: string
-  authorUsername: string
+  oxyUserId?: string
+  authorUsername?: string
   tags: string[]
   categories: string[]
   featured: boolean
@@ -32,8 +32,8 @@ const NewsroomPostSchema = new Schema<INewsroomPost>({
   content: { type: String, default: '' },
   coverImage: String,
   imageAlt: String,
-  oxyUserId: { type: String, required: true },
-  authorUsername: { type: String, default: '' },
+  oxyUserId: String,
+  authorUsername: String,
   tags: [String],
   categories: { type: [String], default: [] },
   featured: { type: Boolean, default: false },
