@@ -134,7 +134,7 @@ export default function AstroPageContent() {
   return (
     <div className="relative">
       {/* Background */}
-      <div className="fixed inset-0 bg-primary">
+      <div className="fixed inset-0 bg-sky-400">
         <div className="fixed inset-0 overflow-hidden opacity-100 transition-opacity duration-[450ms] ease-linear">
           <div className="fixed inset-0">
             <img
@@ -162,7 +162,7 @@ export default function AstroPageContent() {
               {/* Blue glow */}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_var(--color-primary)_0%,_color-mix(in_srgb,var(--color-primary)_30%,transparent)_35%,_transparent_70%)] sm:w-[1000px]"
+                className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_var(--color-blue-500)_0%,_color-mix(in_srgb,var(--color-blue-500)_30%,transparent)_35%,_transparent_70%)] sm:w-[1000px]"
               />
 
               {/* App icon */}
@@ -196,7 +196,7 @@ export default function AstroPageContent() {
 
             {/* Video */}
             <div className="col-span-12 col-start-1 select-none px-6 md:col-span-10 md:col-start-2 md:px-0 xl:col-span-8 xl:col-start-3">
-              <div className="drop-shadow-[0_20px_50px_color-mix(in_srgb,var(--color-primary)_40%,transparent)]">
+              <div className="drop-shadow-[0_20px_50px_color-mix(in_srgb,var(--color-blue-300)_75%,transparent)]">
                 <div className="relative mx-auto aspect-video h-full w-full overflow-hidden rounded-2xl border border-border">
                   <iframe
                     src="https://player.vimeo.com/video/1129227761?h=94755e8733&badge=0&autopause=0&player_id=0&app_id=58479&controls=1&muted=1"
@@ -294,7 +294,7 @@ export default function AstroPageContent() {
             <div className="relative col-span-12 row-start-1 flex flex-col items-center px-4 selection:bg-transparent md:px-6">
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_var(--color-primary)_0%,_color-mix(in_srgb,var(--color-primary)_30%,transparent)_35%,_transparent_70%)] sm:w-[1000px]"
+                className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_var(--color-blue-500)_0%,_color-mix(in_srgb,var(--color-blue-500)_30%,transparent)_35%,_transparent_70%)] sm:w-[1000px]"
               />
 
               <div className="mb-4 h-[80px] w-[80px] md:mb-6">
