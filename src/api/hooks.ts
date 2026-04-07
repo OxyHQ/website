@@ -560,3 +560,86 @@ export function useToggleLike() {
     },
   })
 }
+
+// ── Feature Requests ──
+export interface FeatureRequestData {
+  _id: string
+  title: string
+  description: string
+  slug: string
+  userId: string
+  username: string
+  status: string
+  category: string
+  voteCount: number
+  commentCount: number
+  adminNote?: string
+  statusChangedAt: string
+  createdAt: string
+  updatedAt: string
+  userVoted: boolean
+}
+
+interface FeatureListResponse {
+  items: FeatureRequestData[]
+  total: number
+  page: number
+  pages: number
+}
+
+export function useFeatureRequests(params?: { status?: string; category?: string; sort?: string; page?: number; mine?: boolean }) {
+  const qs = new URLSearchParams()
+  if (params?.status) qs.set('status', params.status)
+  if (params?.category) qs.set('category', params.category)
+  if (params?.sort) qs.set('sort', params.sort)
+  if (params?.page) qs.set('page', String(params.page))
+  if (params?.mine) qs.set('mine', 'true')
+  const query = qs.toString()
+  return useQuery({
+    queryKey: ['features', params],
+    queryFn: () => apiFetch<FeatureListResponse>(`/features${query ? `?${query}` : ''}`),
+    staleTime: 30_000,
+  })
+}
+
+export function useFeatureRequest(slug: string) {
+  return useQuery({
+    queryKey: ['feature', slug],
+    queryFn: () => apiFetch<FeatureRequestData>(`/features/${slug}`),
+    enabled: !!slug,
+  })
+}
+
+export function useCreateFeatureRequest() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { title: string; description?: string; category?: string }) =>
+      apiFetch<FeatureRequestData>('/features', { method: 'POST', body: JSON.stringify(data) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['features'] })
+    },
+  })
+}
+
+export function useToggleFeatureVote(slug: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: () => apiFetch<{ voteCount: number; userVoted: boolean }>(`/features/${slug}/vote`, { method: 'POST' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['features'] })
+      queryClient.invalidateQueries({ queryKey: ['feature', slug] })
+    },
+  })
+}
+
+export function useUpdateFeatureStatus(slug: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { status: string; adminNote?: string }) =>
+      apiFetch<FeatureRequestData>(`/features/${slug}/status`, { method: 'PUT', body: JSON.stringify(data) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['features'] })
+      queryClient.invalidateQueries({ queryKey: ['feature', slug] })
+    },
+  })
+}

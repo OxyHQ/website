@@ -8,7 +8,8 @@ import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppC
 import { LocaleProvider } from './contexts/LocaleContext'
 import { setTokenGetter } from './api/client'
 
-import Landing4 from './pages/Landing4'
+import HomePage from './pages/HomePage'
+const Landing3 = lazy(() => import('./pages/Landing3'))
 import { AccountPanelProvider } from './contexts/AccountPanelContext'
 
 const FixedPromptInput = lazy(() => import('./components/ui/FixedPromptInput'))
@@ -38,6 +39,9 @@ const DocsPage = lazy(() => import('./pages/DocsPage'))
 const DocsIntroPage = lazy(() => import('./pages/DocsIntroPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
+const UserProfilePage = lazy(() => import('./pages/UserProfilePage'))
+const FeatureBoardPage = lazy(() => import('./pages/FeatureBoardPage'))
+const FeatureDetailPage = lazy(() => import('./pages/FeatureDetailPage'))
 
 const OXY_API = 'https://api.oxy.so'
 
@@ -82,7 +86,8 @@ function LocaleLayout() {
 function PublicRoutes() {
   return (
     <>
-      <Route index element={<Landing4 />} />
+      <Route index element={<HomePage />} />
+      <Route path="landing3" element={<Landing3 />} />
       <Route path="partners" element={<PartnersPage />} />
       <Route path="company/careers" element={<CareersPage />} />
       <Route path="company/careers/:slug" element={<CareerDetailPage />} />
@@ -106,6 +111,9 @@ function PublicRoutes() {
       <Route path="settings" element={<SettingsPage />} />
       <Route path="legal" element={<LegalPage />} />
       <Route path="legal/:section" element={<LegalPage />} />
+      <Route path="u/:username" element={<UserProfilePage />} />
+      <Route path="features" element={<FeatureBoardPage />} />
+      <Route path="features/:slug" element={<FeatureDetailPage />} />
     </>
   )
 }
