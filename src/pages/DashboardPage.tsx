@@ -68,7 +68,7 @@ export default function DashboardPage() {
             </p>
             {isFullscreen && (
               <div className="absolute top-6 left-1/2 -translate-x-1/2">
-                <Logo className="h-6" />
+                <Logo className="h-8" />
               </div>
             )}
             <button
