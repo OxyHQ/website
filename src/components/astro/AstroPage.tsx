@@ -220,12 +220,12 @@ function FeatureSection({
   const isLeft = imagePosition === 'left'
 
   return (
-    <section className="overflow-x-clip bg-background pt-24 md:pt-36">
-      <div className="mx-auto w-full max-w-7xl">
+    <section className="section bg-theme-bg text-theme-text overflow-x-clip">
+      <div className="container">
         <div className="grid grid-cols-12 gap-y-8 md:gap-y-12 lg:gap-y-16">
           {/* Title */}
           <div className="col-span-12 flex flex-col items-center justify-center gap-4">
-            <h2 className="z-1 max-w-2xl px-6 text-center text-3xl font-bold text-foreground text-balance sm:w-2/3 sm:px-0 md:text-4xl">
+            <h2 className="type-md-lg z-1 max-w-2xl px-6 text-center font-bold text-theme-text text-balance sm:w-2/3 sm:px-0">
               {title}
             </h2>
           </div>
@@ -264,7 +264,7 @@ function FeatureSection({
               height={40}
               loading="lazy"
             />
-            <p className="max-w-4/5 text-lg font-semibold text-foreground text-pretty md:max-w-full">
+            <p className="type-base max-w-4/5 font-semibold text-theme-text text-pretty md:max-w-full">
               {description}
             </p>
           </div>
@@ -301,12 +301,12 @@ export default function AstroPageContent() {
       {/* Content */}
       <div className="relative z-10 transition-colors duration-500">
         {/* ── Hero ── */}
-        <section className="relative mt-10 w-full sm:mt-20">
+        <section className="page-hero relative w-full pt-v3 sm:pt-v4">
           <div className="pointer-events-none absolute bottom-0 z-[-1] h-[500px] w-full bg-gradient-to-b from-transparent to-background" />
 
-          <div className="mx-auto grid w-full max-w-7xl grid-cols-12 flex-col items-center gap-8 md:gap-12">
+          <div className="container flex flex-col items-center gap-8 md:gap-12">
             {/* Title block */}
-            <div className="relative col-span-12 row-start-1 flex flex-col items-center px-4 selection:bg-transparent md:px-6">
+            <div className="relative flex flex-col items-center selection:bg-transparent">
               {/* Blue glow */}
               <div
                 aria-hidden="true"
@@ -314,7 +314,7 @@ export default function AstroPageContent() {
               />
 
               {/* App icon */}
-              <div className="mb-4 h-[80px] w-[80px] md:mb-6">
+              <div className="mb-v1 h-[80px] w-[80px]">
                 <div className="mx-auto h-full w-full overflow-hidden rounded-[24%]">
                   <img
                     alt="Astro icon"
@@ -326,26 +326,26 @@ export default function AstroPageContent() {
                 </div>
               </div>
 
-              <h1 className="text-center text-5xl font-bold text-white md:text-6xl">
+              <h1 className="type-xl sm:type-2xl text-center font-bold text-white">
                 Astro
               </h1>
 
               <button
                 onClick={openDownload}
-                className="mt-4 inline-flex cursor-pointer items-center justify-center rounded-full bg-white/20 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30 md:mt-6"
+                className="mt-v1 inline-flex cursor-pointer items-center justify-center rounded-full bg-white/20 px-6 py-3 type-base font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30"
               >
                 Download Astro
               </button>
 
-              <p className="mt-2 text-center text-sm text-white/60">
+              <p className="mt-v8/12 type-sm text-center text-white/60">
                 Available on macOS, Windows, and Linux
               </p>
             </div>
 
             {/* Video */}
-            <div className="col-span-12 col-start-1 select-none px-6 md:col-span-10 md:col-start-2 md:px-0 xl:col-span-8 xl:col-start-3">
+            <div className="w-full max-w-4xl select-none">
               <div className="drop-shadow-[0_20px_50px_color-mix(in_srgb,var(--color-primary)_40%,transparent)]">
-                <div className="relative mx-auto aspect-video h-full w-full overflow-hidden rounded-2xl border border-border">
+                <div className="media-border-container relative mx-auto aspect-video h-full w-full">
                   <iframe
                     src="https://player.vimeo.com/video/1129227761?h=94755e8733&badge=0&autopause=0&player_id=0&app_id=58479&controls=1&muted=1"
                     allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
@@ -357,8 +357,8 @@ export default function AstroPageContent() {
             </div>
 
             {/* Tagline */}
-            <div className="col-span-12 col-start-1 w-full px-6 lg:col-span-6 lg:col-start-4 lg:px-0">
-              <p className="text-center text-2xl font-semibold text-foreground text-balance md:text-3xl">
+            <div className="max-w-prose-medium-wide">
+              <p className="type-md-lg text-center font-semibold text-theme-text text-balance">
                 Browse the web with AI by your side for instant answers, smarter
                 suggestions, and help with tasks — all with privacy settings you
                 control.
@@ -373,79 +373,74 @@ export default function AstroPageContent() {
         ))}
 
         {/* ── Privacy Section ── */}
-        <section className="overflow-x-clip bg-background pt-24 md:pt-36">
-          <div className="mx-auto w-full max-w-7xl">
-            <div className="grid grid-cols-12 gap-y-2 md:gap-y-4">
-              <div className="col-span-12 flex flex-col items-center justify-center gap-4">
-                <div className="max-w-xl px-4">
-                  <img
-                    alt="Privacy"
-                    src={`${IMAGES}/privacy.svg`}
-                    className="mx-auto"
-                    width={488}
-                    height={170}
-                    loading="lazy"
-                  />
-                </div>
-                <h2 className="z-1 max-w-2xl px-6 text-center text-3xl font-bold text-foreground text-balance sm:w-2/3 sm:px-0 md:text-4xl">
-                  You&apos;re in control
-                </h2>
+        <section className="section bg-theme-bg text-theme-text overflow-x-clip">
+          <div className="container">
+            <div className="text-center mx-auto max-w-prose-medium-wide">
+              <div className="max-w-xl mx-auto mb-v1 px-4">
+                <img
+                  alt="Privacy"
+                  src={`${IMAGES}/privacy.svg`}
+                  className="mx-auto"
+                  width={488}
+                  height={170}
+                  loading="lazy"
+                />
               </div>
-              <div className="col-span-12 flex items-center justify-center px-6 md:col-span-6 md:col-start-4 md:px-0">
-                <p className="max-w-4/5 text-center text-lg font-semibold text-foreground text-balance md:max-w-full">
-                  You decide which sites Astro can see, clear your browsing
-                  history, use incognito, and manage browser memories anytime.
-                </p>
-              </div>
+              <h2 className="type-md-lg font-bold text-theme-text text-balance mb-v1">
+                You&apos;re in control
+              </h2>
+              <p className="type-base text-theme-text-sec text-pretty">
+                You decide which sites Astro can see, clear your browsing
+                history, use incognito, and manage browser memories anytime.
+              </p>
             </div>
           </div>
         </section>
 
         {/* ── More Features ── */}
-        <section className="relative w-full">
-          <h2 className="mx-auto bg-background px-16 pt-24 text-center text-2xl font-semibold text-foreground md:px-24 md:pt-36 md:text-3xl">
-            More features
-          </h2>
+        <section className="section bg-theme-bg text-theme-text relative">
+          <div className="container">
+            <h2 className="type-md-lg text-center font-semibold text-theme-text mb-v2">
+              More features
+            </h2>
 
-          <div className="relative selection:bg-transparent">
-            <div className="pointer-events-none absolute inset-x-0 -bottom-[50px] top-0 z-[-1] bg-[linear-gradient(180deg,var(--color-background)_0%,var(--color-background)_calc(100%-325px),transparent_100%)]" />
+            <div className="relative selection:bg-transparent">
+              <div className="pointer-events-none absolute inset-x-0 -bottom-[50px] top-0 z-[-1] bg-[linear-gradient(180deg,var(--color-background)_0%,var(--color-background)_calc(100%-325px),transparent_100%)]" />
 
-            <div className="mx-auto flex max-w-7xl flex-col gap-16 px-6 pb-44 pt-8 sm:px-16 md:flex-row md:gap-4 md:px-8">
-              {moreFeatures.map((feature) => (
-                <div
-                  key={feature.title}
-                  className="flex flex-1 flex-col items-center gap-4 md:gap-6"
-                >
-                  <div className="overflow-hidden rounded-2xl border border-border bg-background">
-                    <img
-                      alt={feature.title}
-                      src={feature.image}
-                      className="mx-auto"
-                      width={1130}
-                      height={634}
-                      loading="lazy"
-                    />
+              <div className="grid grid-cols-1 gap-g1 md:grid-cols-3 items-stretch">
+                {moreFeatures.map((feature) => (
+                  <div key={feature.title} className="card flex flex-col items-center gap-g1">
+                    <div className="media-border-container w-full overflow-hidden">
+                      <img
+                        alt={feature.title}
+                        src={feature.image}
+                        className="mx-auto w-full"
+                        width={1130}
+                        height={634}
+                        loading="lazy"
+                      />
+                    </div>
+                    <h3 className="type-base text-center font-semibold text-theme-text">
+                      {feature.title}
+                    </h3>
+                    <p className="type-sm text-center text-theme-text-sec">{feature.description}</p>
                   </div>
-                  <h3 className="text-center text-lg font-semibold text-foreground">
-                    {feature.title}
-                  </h3>
-                  <p className="text-center text-sm text-muted-foreground">{feature.description}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
         {/* ── Bottom CTA ── */}
-        <section className="relative mt-10 w-full sm:mt-20">
-          <div className="mx-auto grid w-full max-w-7xl grid-cols-12 flex-col items-center gap-8 md:gap-12">
-            <div className="relative col-span-12 row-start-1 flex flex-col items-center px-4 selection:bg-transparent md:px-6">
+        <section className="section section--headline relative">
+          <div className="container text-center mx-auto max-w-prose-medium-wide">
+            <div className="relative flex flex-col items-center selection:bg-transparent">
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_var(--color-primary)_0%,_color-mix(in_srgb,var(--color-primary)_30%,transparent)_35%,_transparent_70%)] sm:w-[1000px]"
               />
 
-              <div className="mb-4 h-[80px] w-[80px] md:mb-6">
+              <div className="mb-v1 h-[80px] w-[80px]">
                 <div className="mx-auto h-full w-full overflow-hidden rounded-[24%]">
                   <img
                     alt="Astro icon"
@@ -457,26 +452,23 @@ export default function AstroPageContent() {
                 </div>
               </div>
 
-              <h2 className="text-center text-4xl font-bold text-white md:text-5xl">
+              <h2 className="type-xl sm:type-2xl text-center font-bold text-white text-balance mb-v1">
                 Download Astro
               </h2>
 
               <button
                 onClick={openDownload}
-                className="mt-4 inline-flex cursor-pointer items-center justify-center rounded-full bg-white/20 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30 md:mt-6"
+                className="inline-flex cursor-pointer items-center justify-center rounded-full bg-white/20 px-6 py-3 type-base font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30"
               >
                 Download Astro
               </button>
 
-              <p className="mt-2 text-center text-sm text-white/60">
+              <p className="mt-v8/12 type-sm text-center text-white/60">
                 Available on macOS, Windows, and Linux
               </p>
             </div>
           </div>
         </section>
-
-        {/* Bottom spacing */}
-        <div className="h-32" />
       </div>
     </div>
   )

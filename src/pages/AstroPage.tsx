@@ -5,7 +5,7 @@ import AstroPageContent from '../components/astro/AstroPage'
 
 export default function AstroPage() {
   return (
-    <div className="astro-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
+    <div className="cursor-theme astro-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
         title="Astro — AI Browser"
         description="Browse the web with AI by your side. Astro gives you instant answers, smarter suggestions, and help with tasks — all with privacy you control."

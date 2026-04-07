@@ -49,4 +49,16 @@
   --color-popover-foreground: hsl(0 0% 93%);
   --color-sidebar: hsl(205 30% 8%);
   --color-banner-background: #1d9bf0;
+
+  /* ── cursor-theme color overrides ── */
+  --color-theme-bg: hsl(205 50% 5%);
+  --color-theme-text: hsl(0 0% 93%);
+  --color-theme-text-sec: hsl(0 0% 70%);
+  --color-theme-card: hsl(205 25% 12%);
+  --color-theme-card-hex: hsl(205 25% 10%);
+  --color-theme-card-hover-hex: hsl(205 20% 15%);
+  --color-theme-border-02: rgba(29, 155, 240, 0.10);
+  --color-theme-accent: #1d9bf0;
+  --color-theme-product-chrome: hsl(205 30% 8%);
+  --color-theme-product-editor: hsl(205 25% 12%);
 }
