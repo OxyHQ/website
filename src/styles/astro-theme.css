@@ -3,10 +3,70 @@
  * Three variable groups serve different consumers:
  * - Bloom tokens (--background, --primary, ...) -> shared components (Navbar, Footer)
  * - Tailwind @theme aliases (--color-background, ...) -> Tailwind utility classes
- * - Extended semantic tokens -> page-level utilities
+ * - cursor-theme color vars -> layout utilities
+ *
+ * Light and dark variants so the mode toggle keeps working.
  */
+
+/* ── Light mode ── */
 .astro-theme {
-  /* ── Bloom tokens ── */
+  --background: hsl(0 0% 99%);
+  --foreground: hsl(0 0% 12%);
+  --surface: hsl(205 10% 97%);
+  --surface-foreground: hsl(0 0% 12%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(0 0% 12%);
+  --primary: #1d9bf0;
+  --primary-foreground: #ffffff;
+  --secondary: hsl(205 8% 95%);
+  --secondary-foreground: hsl(0 0% 12%);
+  --muted: hsl(205 8% 95%);
+  --muted-foreground: hsl(205 5% 42%);
+  --accent: hsl(205 8% 95%);
+  --accent-foreground: hsl(0 0% 12%);
+  --destructive: hsl(0 84% 60%);
+  --border: hsl(205 8% 88%);
+  --input: hsl(205 8% 88%);
+  --ring: #1d9bf0;
+  --sidebar: hsl(205 10% 97%);
+
+  --color-background: hsl(0 0% 99%);
+  --color-foreground: hsl(0 0% 12%);
+  --color-primary: #1d9bf0;
+  --color-primary-foreground: #ffffff;
+  --color-primary-background: hsl(0 0% 99%);
+  --color-secondary: hsl(205 8% 95%);
+  --color-secondary-foreground: hsl(0 0% 12%);
+  --color-muted: hsl(205 8% 95%);
+  --color-muted-foreground: hsl(205 5% 42%);
+  --color-accent: hsl(205 8% 95%);
+  --color-accent-foreground: hsl(0 0% 12%);
+  --color-destructive: hsl(0 84% 60%);
+  --color-surface: hsl(205 10% 97%);
+  --color-surface-foreground: hsl(0 0% 12%);
+  --color-border: hsl(205 8% 88%);
+  --color-input: hsl(205 8% 88%);
+  --color-ring: #1d9bf0;
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(0 0% 12%);
+  --color-sidebar: hsl(205 10% 97%);
+  --color-banner-background: #1d9bf0;
+
+  --color-theme-bg: hsl(0 0% 99%);
+  --color-theme-text: hsl(0 0% 12%);
+  --color-theme-text-sec: hsl(205 5% 42%);
+  --color-theme-card: hsl(205 10% 97%);
+  --color-theme-card-hex: hsl(205 8% 95%);
+  --color-theme-card-hover-hex: hsl(205 8% 92%);
+  --color-theme-border-02: hsl(205 8% 88%);
+  --color-theme-accent: #1d9bf0;
+  --color-theme-product-chrome: hsl(205 10% 97%);
+  --color-theme-product-editor: hsl(205 10% 97%);
+}
+
+/* ── Dark mode ── */
+:is(.dark, .dark *) .astro-theme,
+.astro-theme:is(.dark, .dark *) {
   --background: hsl(205 50% 5%);
   --foreground: hsl(0 0% 93%);
   --surface: hsl(205 20% 18%);
@@ -27,7 +87,6 @@
   --ring: #1d9bf0;
   --sidebar: hsl(205 30% 8%);
 
-  /* ── Tailwind @theme aliases ── */
   --color-background: hsl(205 50% 5%);
   --color-foreground: hsl(0 0% 93%);
   --color-primary: #1d9bf0;
@@ -50,7 +109,6 @@
   --color-sidebar: hsl(205 30% 8%);
   --color-banner-background: #1d9bf0;
 
-  /* ── cursor-theme color overrides ── */
   --color-theme-bg: hsl(205 50% 5%);
   --color-theme-text: hsl(0 0% 93%);
   --color-theme-text-sec: hsl(0 0% 70%);
