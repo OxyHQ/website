@@ -483,10 +483,12 @@ export function useLikes(targetType: string, targetId: string) {
 // ── User Profiles ──
 export interface UserProfileData {
   user: {
+    _id: string
     username: string
     name: { first?: string; last?: string }
     avatar?: string
     color?: string
+    bio?: string
   }
   bio: string
   showActivity: boolean

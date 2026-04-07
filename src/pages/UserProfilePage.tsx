@@ -72,7 +72,7 @@ export default function UserProfilePage() {
 
       <main className="flex flex-1 flex-col pt-[var(--site-header-height)]">
         <div className="container border-x border-border">
-          <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:py-16">
+          <div className="mx-auto max-w-[720px] px-5 py-12 md:px-8">
             {isLoading ? (
               <ProfileSkeleton />
             ) : isError || !profile ? (

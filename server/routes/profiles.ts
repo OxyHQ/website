@@ -54,10 +54,12 @@ router.get('/:username', optionalAuth, async (req, res) => {
 
     res.json({
       user: {
+        _id: oxyUser._id ?? oxyUser.id,
         username: oxyUser.username,
         name: oxyUser.name,
         avatar: oxyUser.avatar,
         color: oxyUser.color,
+        bio: oxyUser.bio,
       },
       bio: profileExtra?.bio ?? '',
       showActivity: profileExtra?.showActivity !== false,
