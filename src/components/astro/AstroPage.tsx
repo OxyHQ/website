@@ -264,7 +264,7 @@ function FeatureSection({
               height={40}
               loading="lazy"
             />
-            <p className="type-base md:type-md max-w-4/5 font-semibold text-theme-text text-pretty md:max-w-full">
+            <p className="type-md max-w-4/5 font-semibold text-theme-text text-pretty md:max-w-full">
               {description}
             </p>
           </div>
@@ -358,7 +358,7 @@ export default function AstroPageContent() {
 
             {/* Tagline */}
             <div className="col-span-12 col-start-1 w-full px-6 lg:col-span-6 lg:col-start-4 lg:px-0">
-              <p className="type-md-lg text-center font-semibold text-foreground text-balance">
+              <p className="type-lg text-center font-semibold text-foreground text-balance">
                 Browse the web with AI by your side for instant answers, smarter
                 suggestions, and help with tasks — all with privacy settings you
                 control.
@@ -389,7 +389,7 @@ export default function AstroPageContent() {
               <h2 className="type-lg font-bold text-theme-text text-balance mb-v1">
                 You&apos;re in control
               </h2>
-              <p className="type-base md:type-md text-theme-text-sec text-pretty">
+              <p className="type-md text-theme-text-sec text-pretty">
                 You decide which sites Astro can see, clear your browsing
                 history, use incognito, and manage browser memories anytime.
               </p>
