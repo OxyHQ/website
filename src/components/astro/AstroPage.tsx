@@ -1,4 +1,130 @@
+import { useState, useCallback } from 'react'
+
 const IMAGES = '/images/astro'
+
+type Platform = 'macos' | 'windows' | 'linux'
+
+const DOWNLOAD_LINKS: Record<Platform, string> = {
+  macos: '#',
+  windows: '#',
+  linux: '#',
+}
+
+const PLATFORM_META: Record<Platform, { label: string; fileHint: string }> = {
+  macos: { label: 'macOS', fileHint: '.dmg' },
+  windows: { label: 'Windows', fileHint: '.exe' },
+  linux: { label: 'Linux', fileHint: '.deb' },
+}
+
+function detectPlatform(): Platform {
+  const ua = navigator.userAgent.toLowerCase()
+  if (ua.includes('mac')) return 'macos'
+  if (ua.includes('win')) return 'windows'
+  return 'linux'
+}
+
+function PlatformIcon({ platform, className }: { platform: Platform; className?: string }) {
+  if (platform === 'macos') {
+    return (
+      <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+      </svg>
+    )
+  }
+  if (platform === 'windows') {
+    return (
+      <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+        <path d="M3 12V6.75l6-1.32v6.48L3 12zm17-9v8.75l-10 .08V5.21L20 3zM3 13l6 .09v6.81l-6-1.15V13zm17 .25V22l-10-1.91V13.1l10 .15z" />
+      </svg>
+    )
+  }
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.368 1.884 1.43.199.023.395-.049.543-.16.646-.484 1.342-.83 2.346-.016.32.26.659.288 1.028.098.359-.187.705-.634.966-1.214.09-.199.09-.398.132-.598.077-.399.159-.797.237-1.126.236-1.048.365-1.883.29-2.758-.077-.873-.535-1.667-.766-2.552a7.04 7.04 0 01-.27-2.407c.024-1.357.116-2.77-.199-4.065-.308-1.256-.891-2.263-2.224-2.39-1.016-.098-1.898.503-2.596 1.07-.466-.266-.91-.512-1.245-.698a18.816 18.816 0 01-1.803-1.187l-.003-.002a9.828 9.828 0 01-1.375-1.209c-.6-.639-.96-1.297-1.05-2.163C12.85.667 12.68.01 12.504 0z" />
+    </svg>
+  )
+}
+
+function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const current = detectPlatform()
+  const others = (['macos', 'windows', 'linux'] as Platform[]).filter((p) => p !== current)
+
+  if (!open) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+      {/* Dialog */}
+      <div
+        className="relative w-full max-w-md animate-in zoom-in-95 fade-in rounded-2xl bg-white p-8 shadow-2xl dark:bg-neutral-900"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close */}
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 rounded-full p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M5 5l10 10M15 5L5 15" />
+          </svg>
+        </button>
+
+        {/* Icon + Title */}
+        <div className="flex flex-col items-center">
+          <div className="mb-4 h-16 w-16 overflow-hidden rounded-[24%]">
+            <img alt="Astro" src={`${IMAGES}/icon.png`} width={512} height={512} />
+          </div>
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">
+            Download Astro for {PLATFORM_META[current].label}
+          </h2>
+          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+            {PLATFORM_META[current].fileHint} &middot; Free
+          </p>
+        </div>
+
+        {/* Primary download */}
+        <a
+          href={DOWNLOAD_LINKS[current]}
+          className="mt-6 flex w-full items-center justify-center gap-2.5 rounded-full bg-blue-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-600"
+        >
+          <PlatformIcon platform={current} className="h-5 w-5" />
+          Download for {PLATFORM_META[current].label}
+        </a>
+
+        {/* Other platforms */}
+        <div className="mt-6 border-t border-neutral-200 pt-5 dark:border-neutral-700">
+          <p className="mb-3 text-center text-xs font-medium text-neutral-400 uppercase tracking-wider dark:text-neutral-500">
+            Other platforms
+          </p>
+          <div className="flex justify-center gap-3">
+            {others.map((p) => (
+              <a
+                key={p}
+                href={DOWNLOAD_LINKS[p]}
+                className="flex items-center gap-2 rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+              >
+                <PlatformIcon platform={p} className="h-4 w-4" />
+                {PLATFORM_META[p].label}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <p className="mt-5 text-center text-[11px] text-neutral-400 leading-relaxed dark:text-neutral-500">
+          By downloading, you agree to the Astro{' '}
+          <a href="/terms" className="underline hover:text-neutral-600 dark:hover:text-neutral-300">Terms of Service</a>
+          {' '}and{' '}
+          <a href="/privacy" className="underline hover:text-neutral-600 dark:hover:text-neutral-300">Privacy Policy</a>.
+        </p>
+      </div>
+    </div>
+  )
+}
 
 const features = [
   {
@@ -131,8 +257,12 @@ function FeatureSection({
 }
 
 export default function AstroPageContent() {
+  const [downloadOpen, setDownloadOpen] = useState(false)
+  const openDownload = useCallback(() => setDownloadOpen(true), [])
+
   return (
     <div className="relative">
+      <DownloadDialog open={downloadOpen} onClose={() => setDownloadOpen(false)} />
       {/* Background */}
       <div className="fixed inset-0 bg-sky-400">
         <div className="fixed inset-0 overflow-hidden opacity-100 transition-opacity duration-[450ms] ease-linear">
@@ -182,12 +312,12 @@ export default function AstroPageContent() {
                 Astro
               </h1>
 
-              <a
-                className="mt-4 inline-flex items-center justify-center rounded-full bg-white/20 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30 md:mt-6"
-                href="#"
+              <button
+                onClick={openDownload}
+                className="mt-4 inline-flex cursor-pointer items-center justify-center rounded-full bg-white/20 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30 md:mt-6"
               >
                 Download Astro
-              </a>
+              </button>
 
               <p className="mt-2 text-center text-sm text-white/60">
                 Available on macOS, Windows, and Linux
@@ -313,12 +443,12 @@ export default function AstroPageContent() {
                 Download Astro
               </h2>
 
-              <a
-                className="mt-4 inline-flex items-center justify-center rounded-full bg-white/20 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30 md:mt-6"
-                href="#"
+              <button
+                onClick={openDownload}
+                className="mt-4 inline-flex cursor-pointer items-center justify-center rounded-full bg-white/20 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30 md:mt-6"
               >
                 Download Astro
-              </a>
+              </button>
 
               <p className="mt-2 text-center text-sm text-white/60">
                 Available on macOS, Windows, and Linux
