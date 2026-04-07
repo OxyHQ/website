@@ -47,7 +47,7 @@ export function NewsCardFeatured({ article }: { article: NewsroomPost }) {
           {article.title}
         </div>
         <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm text-muted-foreground md:pe-6">
-          <span>{article.category}</span>
+          <span>{article.categories[0]}</span>
           <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
             <time className="whitespace-nowrap text-muted-foreground" dateTime={article.publishedAt}>
               {formatDate(article.publishedAt)}
@@ -94,7 +94,7 @@ export function NewsCardGrid({ article }: { article: NewsroomPost }) {
           {article.title}
         </h3>
         <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
-          <span>{article.category}</span>
+          <span>{article.categories[0]}</span>
           <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
             <time className="whitespace-nowrap" dateTime={article.publishedAt}>
               {formatDate(article.publishedAt)}
@@ -139,7 +139,7 @@ export function NewsCardCarousel({ article }: { article: NewsroomPost }) {
           {article.title}
         </h3>
         <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
-          <span>{article.category}</span>
+          <span>{article.categories[0]}</span>
           <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
             <time className="whitespace-nowrap" dateTime={article.publishedAt}>
               {formatDate(article.publishedAt)}
@@ -192,7 +192,7 @@ export function NewsCardRow({ article }: { article: NewsroomPost }) {
           {article.title}
         </div>
         <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
-          <span>{article.category}</span>
+          <span>{article.categories[0]}</span>
           <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
             <time className="whitespace-nowrap" dateTime={article.publishedAt}>
               {formatDate(article.publishedAt)}

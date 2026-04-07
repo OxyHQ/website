@@ -5,6 +5,8 @@ import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
 import { applyTranslation, applyTranslations } from '../utils/applyTranslation.js'
+import { toErrorMessage } from '../utils/errorMessage.js'
+import { parsePagination } from '../utils/parsePagination.js'
 
 const router = Router()
 
@@ -29,9 +31,9 @@ router.get('/', localeMiddleware, async (req, res) => {
     filter.$or = [{ title: regex }, { resume: regex }]
   }
 
-  const skip = (parseInt(page as string) - 1) * parseInt(limit as string)
+  const { pageNum, limitNum, skip } = parsePagination(page, limit)
   const [posts, total] = await Promise.all([
-    NewsroomPost.find(filter).sort('-publishedAt').skip(skip).limit(parseInt(limit as string)),
+    NewsroomPost.find(filter).sort('-publishedAt').skip(skip).limit(limitNum),
     NewsroomPost.countDocuments(filter),
   ])
 
@@ -45,7 +47,7 @@ router.get('/', localeMiddleware, async (req, res) => {
     result = applyTranslations(result, translations)
   }
 
-  res.json({ posts: result, total, page: parseInt(page as string), pages: Math.ceil(total / parseInt(limit as string)) })
+  res.json({ posts: result, total, page: pageNum, pages: Math.ceil(total / limitNum) })
 })
 
 router.get('/:slug', localeMiddleware, async (req, res) => {
@@ -66,23 +68,38 @@ router.get('/:slug', localeMiddleware, async (req, res) => {
 })
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {
-  const post = await NewsroomPost.create({
-    ...req.body,
-    oxyUserId: req.user!.id,
-  })
-  res.status(201).json(post)
+  const user = req.user
+  if (!user) return res.status(401).json({ error: 'Authentication required' })
+
+  try {
+    const post = await NewsroomPost.create({
+      ...req.body,
+      oxyUserId: user.id,
+    })
+    res.status(201).json(post)
+  } catch (err) {
+    res.status(500).json({ error: `Failed to create post: ${toErrorMessage(err)}` })
+  }
 })
 
 router.put('/:slug', requireAuth, adminOnly, async (req, res) => {
-  const post = await NewsroomPost.findOneAndUpdate({ slug: req.params.slug }, req.body, { new: true })
-  if (!post) return res.status(404).json({ error: 'Post not found' })
-  res.json(post)
+  try {
+    const post = await NewsroomPost.findOneAndUpdate({ slug: req.params.slug }, req.body, { new: true })
+    if (!post) return res.status(404).json({ error: 'Post not found' })
+    res.json(post)
+  } catch (err) {
+    res.status(500).json({ error: `Failed to update post: ${toErrorMessage(err)}` })
+  }
 })
 
 router.delete('/:slug', requireAuth, adminOnly, async (req, res) => {
-  const post = await NewsroomPost.findOneAndDelete({ slug: req.params.slug })
-  if (!post) return res.status(404).json({ error: 'Post not found' })
-  res.json({ ok: true })
+  try {
+    const post = await NewsroomPost.findOneAndDelete({ slug: req.params.slug })
+    if (!post) return res.status(404).json({ error: 'Post not found' })
+    res.json({ ok: true })
+  } catch (err) {
+    res.status(500).json({ error: `Failed to delete post: ${toErrorMessage(err)}` })
+  }
 })
 
 export default router

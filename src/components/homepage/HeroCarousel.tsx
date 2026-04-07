@@ -20,7 +20,7 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
       type: 'newsroom' as const,
       title: post.title,
       image: post.coverImage ?? '',
-      category: post.category,
+      category: post.categories[0],
       slug: post.slug,
     }))
 

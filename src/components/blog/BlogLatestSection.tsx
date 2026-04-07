@@ -16,7 +16,7 @@ export default function BlogLatestSection() {
 
   const filteredArticles = useMemo(() => {
     if (activeCategory === 'All articles') return allArticles
-    return allArticles.filter((a) => a.category === activeCategory)
+    return allArticles.filter((a) => a.categories.includes(activeCategory))
   }, [activeCategory, allArticles])
 
   return (
@@ -97,7 +97,7 @@ export default function BlogLatestSection() {
                       <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50 bg-surface" />
                       <h3 className="relative col-[2/10] text-balance text-lg max-lg:pt-6">{article.title}</h3>
                       <p className="relative col-[11/13] text-overline max-lg:col-[-6/-2] max-lg:row-1 max-lg:justify-self-end">{formatDate(article.publishedAt)}</p>
-                      <p className="relative col-[13/15] truncate text-overline max-lg:col-[2/6] max-lg:row-1">[{article.category}]</p>
+                      <p className="relative col-[13/15] truncate text-overline max-lg:col-[2/6] max-lg:row-1">[{article.categories[0]}]</p>
                       {/* Arrow icon */}
                       <svg
                         width="14"
@@ -115,7 +115,7 @@ export default function BlogLatestSection() {
                         />
                       </svg>
                       <p className="relative col-[2/-2] line-clamp-2 max-w-[28em] text-pretty pt-2 text-muted-foreground text-sm max-xl:text-sm">
-                        {article.excerpt}
+                        {article.resume}
                       </p>
                     </a>
                     {/* Dashed separator between articles */}

@@ -7,6 +7,7 @@ import SEO from '../components/SEO'
 import StructuredData from '../components/StructuredData'
 import { useNewsroomPost, useNewsroomPosts } from '../api/hooks'
 import { type NewsroomPost } from '../data/newsroom'
+import { readTime } from '../lib/userUtils'
 import { NewsCardGrid } from '../components/newsroom/NewsCard'
 import LikeButton from '../components/social/LikeButton'
 import DiscussOnMention from '../components/social/DiscussOnMention'
@@ -21,17 +22,11 @@ function formatDate(dateStr: string): string {
   })
 }
 
-function readTime(content?: string): string {
-  if (!content) return '1 min read'
-  const words = content.trim().split(/\s+/).length
-  return `${Math.max(1, Math.round(words / 200))} min read`
-}
-
 export default function NewsroomPostPage() {
   const { slug } = useParams<{ slug: string }>()
   const { data: post, isLoading } = useNewsroomPost(slug!)
   const { data: relatedData } = useNewsroomPosts(
-    post ? { category: post.category, limit: 4 } : undefined,
+    post ? { category: post.categories[0], limit: 4 } : undefined,
   )
 
   const relatedPosts = (relatedData?.posts ?? []).filter(
@@ -69,7 +64,7 @@ export default function NewsroomPostPage() {
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
         title={post.metaTitle || post.title}
-        description={post.metaDescription || post.excerpt}
+        description={post.description || post.resume}
         canonicalPath={`/newsroom/${post.slug}`}
         ogImage={post.ogImage || post.coverImage}
         ogType="article"
@@ -80,7 +75,7 @@ export default function NewsroomPostPage() {
         '@context': 'https://schema.org',
         '@type': 'Article',
         headline: post.title,
-        description: post.excerpt,
+        description: post.resume,
         image: post.coverImage || 'https://oxy.so/og-default.png',
         datePublished: post.publishedAt,
         dateModified: post.updatedAt || post.publishedAt,
@@ -111,7 +106,7 @@ export default function NewsroomPostPage() {
         {/* Article header */}
         <header className="mx-auto max-w-[720px] px-5 pt-8 md:px-8">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-            <span>{post.category}</span>
+            <span>{post.categories[0]}</span>
             <span>&middot;</span>
             <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
             <span>&middot;</span>
@@ -125,9 +120,9 @@ export default function NewsroomPostPage() {
           <h1 className="mt-4 text-heading-responsive-lg text-foreground">
             {post.title}
           </h1>
-          {post.excerpt && (
+          {post.resume && (
             <p className="mt-4 text-lg text-muted-foreground">
-              {post.excerpt}
+              {post.resume}
             </p>
           )}
           {post.tags && post.tags.length > 0 && (

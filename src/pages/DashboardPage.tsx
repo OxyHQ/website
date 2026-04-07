@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import MapContainer from "../components/dashboard/MapContainer";
@@ -9,22 +10,69 @@ import {
 } from "../components/dashboard/StatsDisplay";
 import { usePlatformStats } from "../api/hooks";
 
+function FullscreenIcon({ isFullscreen }: { isFullscreen: boolean }) {
+  if (isFullscreen) {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="6 2 6 6 2 6" />
+        <polyline points="10 14 10 10 14 10" />
+        <polyline points="14 6 10 6 10 2" />
+        <polyline points="2 10 6 10 6 14" />
+      </svg>
+    );
+  }
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="2 6 2 2 6 2" />
+      <polyline points="14 10 14 14 10 14" />
+      <polyline points="10 2 14 2 14 6" />
+      <polyline points="6 14 2 14 2 10" />
+    </svg>
+  );
+}
+
 export default function DashboardPage() {
   const { data: stats } = usePlatformStats();
+  const dashboardRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    function onFullscreenChange() {
+      setIsFullscreen(document.fullscreenElement !== null);
+    }
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      dashboardRef.current?.requestFullscreen();
+    }
+  }, []);
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
-      <Navbar />
+      {!isFullscreen && <Navbar />}
       <main className="flex-1">
-        <div className="container font-mono flex flex-col min-h-[calc(100dvh-var(--site-header-height))]">
+        <div ref={dashboardRef} className={`container font-mono flex flex-col bg-background ${isFullscreen ? "min-h-screen px-8" : "min-h-[calc(100dvh-var(--site-header-height))]"}`}>
           {/* Header */}
-          <header className="flex flex-col items-start font-mono text-sm uppercase gap-2 pt-6 mb-4 shrink-0">
+          <header className="flex items-center justify-between font-mono text-sm uppercase gap-2 pt-6 mb-4 shrink-0">
             <p className="text-foreground font-mono my-0 whitespace-nowrap">
               Oxy Platform{" "}
               <span className="block font-mono text-muted-foreground">
                 [Live Dashboard]
               </span>
             </p>
+            <button
+              type="button"
+              onClick={toggleFullscreen}
+              aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+              className="p-2 m-0 bg-transparent text-muted-foreground border border-solid border-border hover:text-foreground hover:bg-accent transition-colors duration-150 flex items-center justify-center outline-none focus-visible:ring cursor-pointer rounded-md"
+            >
+              <FullscreenIcon isFullscreen={isFullscreen} />
+            </button>
           </header>
 
           {/* Map + summary stats — takes available space */}
@@ -48,7 +96,7 @@ export default function DashboardPage() {
           </section>
         </div>
       </main>
-      <Footer />
+      {!isFullscreen && <Footer />}
     </div>
   );
 }

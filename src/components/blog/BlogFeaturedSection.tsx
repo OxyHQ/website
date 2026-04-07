@@ -1,16 +1,11 @@
 import { useNewsroomPosts } from '../../api/hooks'
+import { readTime } from '../../lib/userUtils'
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr)
   const month = d.toLocaleDateString('en-US', { month: 'short' })
   const year = d.getFullYear().toString().slice(-2)
   return `${month} '${year}`
-}
-
-function readTime(content?: string): string {
-  if (!content) return '1 min read'
-  const words = content.trim().split(/\s+/).length
-  return `${Math.max(1, Math.round(words / 200))} min read`
 }
 
 export default function BlogFeaturedSection() {
@@ -60,14 +55,14 @@ export default function BlogFeaturedSection() {
         <div className="relative grid grid-cols-12 py-11 lg:hidden">
           <div className="col-[2/-2]">
             <div className="flex justify-between gap-8">
-              <p className="text-overline">[{article.category}]</p>
+              <p className="text-overline">[{article.categories[0]}]</p>
               <p className="text-overline">{formatDate(article.publishedAt)}</p>
             </div>
             <h2 className="relative text-balance text-heading-responsive-lg mt-8">
               <span className="attio-group-hover-underline">{article.title}</span>
             </h2>
             <p className="mt-5 line-clamp-3 max-w-[28em] text-pretty text-muted-foreground text-sm">
-              {article.excerpt}
+              {article.resume}
             </p>
             <div className="mt-5 text-sm">
               <p className="whitespace-nowrap text-muted-foreground max-sm:mt-0.5 lg:max-xl:mt-0.5">
@@ -81,7 +76,7 @@ export default function BlogFeaturedSection() {
         <div className="group contents max-lg:hidden">
           <div className="relative grid grid-cols-24 gap-y-8 pt-8 pb-12">
             <p className="text-overline col-[1/3] justify-self-center max-xl:hidden">{formatDate(article.publishedAt)}</p>
-            <p className="text-overline col-[3/10]">[{article.category}]</p>
+            <p className="text-overline col-[3/10]">[{article.categories[0]}]</p>
             <p className="text-overline col-[21/23] justify-self-end max-xl:hidden">{readTime(article.content)}</p>
             <p className="text-overline col-[21/23] justify-self-end xl:hidden">{formatDate(article.publishedAt)}</p>
             <div className="col-[3/-3] flex items-end justify-between gap-8">

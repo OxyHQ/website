@@ -26,14 +26,14 @@ export default function BlogGridSection() {
             <div className="relative col-[2/-2] flex size-full flex-col justify-between">
               <div>
                 <div className="flex justify-between">
-                  <p className="text-overline">[{article.category}]</p>
+                  <p className="text-overline">[{article.categories[0]}]</p>
                   <time className="text-overline">{formatDate(article.publishedAt)}</time>
                 </div>
                 <h3 className="relative mt-8 w-fit text-balance font-semibold text-2xl">
                   <span className="attio-group-hover-underline">{article.title}</span>
                 </h3>
                 <p className="mt-4 line-clamp-2 max-w-[28em] text-pretty text-muted-foreground text-sm max-lg:line-clamp-3">
-                  {article.excerpt}
+                  {article.resume}
                 </p>
               </div>
               <div className="mt-5">

@@ -4,6 +4,7 @@ import { useAuth, useWebOxy } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { UserProfileData } from '../../api/hooks'
+import { formatDisplayName } from '../../lib/userUtils'
 import ProfileBadges from './ProfileBadges'
 
 interface ProfileHeaderProps {
@@ -14,7 +15,7 @@ interface ProfileHeaderProps {
 
 export default function ProfileHeader({ profile, isOwnProfile, onEditBio }: ProfileHeaderProps) {
   const { user, bio, badges, stats } = profile
-  const displayName = [user.name.first, user.name.last].filter(Boolean).join(' ') || user.username
+  const displayName = formatDisplayName(user.name, user.username)
   const displayBio = bio
 
   return (
@@ -82,6 +83,12 @@ export default function ProfileHeader({ profile, isOwnProfile, onEditBio }: Prof
             <span className="font-bold text-foreground">{stats.likes}</span>{' '}
             <span className="text-muted-foreground">Likes</span>
           </span>
+          {stats.articles > 0 && (
+            <span>
+              <span className="font-bold text-foreground">{stats.articles}</span>{' '}
+              <span className="text-muted-foreground">Articles</span>
+            </span>
+          )}
         </div>
       )}
     </div>

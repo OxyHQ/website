@@ -510,6 +510,7 @@ export function useUserProfile(username: string) {
     queryKey: ['profile', username],
     queryFn: () => apiFetch<UserProfileData>(`/profiles/${username}`),
     enabled: !!username,
+    staleTime: 5 * 60_000,
   })
 }
 
@@ -538,6 +539,7 @@ export function useUserActivity(username: string, params?: { page?: number; type
     queryKey: ['profile-activity', username, params],
     queryFn: () => apiFetch<ActivityResponse>(`/profiles/${username}/activity${query ? `?${query}` : ''}`),
     enabled: !!username,
+    staleTime: 5 * 60_000,
   })
 }
 

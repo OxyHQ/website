@@ -8,6 +8,7 @@ import ProfileHeader from '../components/profile/ProfileHeader'
 import ProfileActivity from '../components/profile/ProfileActivity'
 import ProfileEditForm from '../components/profile/ProfileEditForm'
 import { useUserProfile } from '../api/hooks'
+import { formatDisplayName } from '../lib/userUtils'
 
 function ProfileSkeleton() {
   return (
@@ -81,7 +82,7 @@ export default function UserProfilePage() {
   const isOwnProfile = Boolean(authUser?.username && authUser.username === profile?.user.username)
 
   const displayName = profile
-    ? [profile.user.name.first, profile.user.name.last].filter(Boolean).join(' ') || profile.user.username
+    ? formatDisplayName(profile.user.name, profile.user.username)
     : username
 
   return (

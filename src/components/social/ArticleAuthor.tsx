@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import { useUserById } from '../../api/hooks'
+import { formatDisplayName } from '../../lib/userUtils'
 
 interface ArticleAuthorsProps {
   userIds: string[]
@@ -11,7 +12,7 @@ function AuthorChip({ userId }: { userId: string }) {
 
   if (!user) return null
 
-  const displayName = [user.name.first, user.name.last].filter(Boolean).join(' ') || user.username
+  const displayName = formatDisplayName(user.name, user.username)
 
   return (
     <Link to={`/u/${user.username}`} className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-80">

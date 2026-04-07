@@ -27,10 +27,10 @@ export default function NewsroomAdmin() {
   const emptyPost = (): NewsroomPost => ({
     title: '',
     slug: '',
-    excerpt: '',
+    resume: '',
     content: '',
     tags: [],
-    category: 'General',
+    categories: ['General'],
     featured: false,
     status: 'published',
     oxyUserId: '',
@@ -67,10 +67,10 @@ export default function NewsroomAdmin() {
         <div className="mt-6 flex flex-col gap-4">
           <Field label="Title" value={editing.title} onChange={(v) => setEditing({ ...editing, title: v, ...(!editing._id ? { slug: v.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '') } : {}) })} />
           <Field label="Slug" value={editing.slug} onChange={(v) => setEditing({ ...editing, slug: v })} />
-          <Field label="Excerpt" value={editing.excerpt} onChange={(v) => setEditing({ ...editing, excerpt: v })} textarea />
+          <Field label="Resume" value={editing.resume} onChange={(v) => setEditing({ ...editing, resume: v })} textarea />
           <Field label="Content (Markdown)" value={editing.content} onChange={(v) => setEditing({ ...editing, content: v })} textarea rows={12} />
           <Field label="Cover Image URL" value={editing.coverImage ?? ''} onChange={(v) => setEditing({ ...editing, coverImage: v })} />
-          <Field label="Category" value={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} />
+          <Field label="Categories (comma-separated)" value={(editing.categories ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, categories: v.split(',').map((c: string) => c.trim()).filter(Boolean) })} />
           <Field label="Tags (comma-separated)" value={(editing.tags ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t: string) => t.trim()).filter(Boolean) })} />
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2"><Switch value={editing.featured} onValueChange={(val) => setEditing({ ...editing, featured: val })} /><Label>Featured</Label></div>
@@ -113,7 +113,7 @@ export default function NewsroomAdmin() {
             originalFields={translatingPost}
             translatableFields={[
               { key: 'title', label: 'Title', type: 'text' },
-              { key: 'excerpt', label: 'Excerpt', type: 'textarea' },
+              { key: 'resume', label: 'Resume', type: 'textarea' },
               { key: 'content', label: 'Content (Markdown)', type: 'textarea' },
             ]}
           />

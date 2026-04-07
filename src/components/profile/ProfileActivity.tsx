@@ -39,8 +39,8 @@ function formatRelativeTime(dateString: string): string {
   return 'now'
 }
 
-function CommentItem({ data, createdAt }: { data: unknown; createdAt: string }) {
-  const item = data as ActivityItemData
+function CommentItem({ data, createdAt }: { data: ActivityItemData; createdAt: string }) {
+  const item = data
   const preview = (item.body ?? '').slice(0, 200) + ((item.body?.length ?? 0) > 200 ? '...' : '')
 
   const href = item.targetType && item.targetId
@@ -128,7 +128,7 @@ export default function ProfileActivity({ username, userId }: ProfileActivityPro
       {/* Content */}
       <div>
         {isLoading ? (
-          <div>
+          <>
             {[0, 1, 2].map((i) => (
               <div key={i} className="border-b border-border px-1 py-4">
                 <div className="flex gap-3">
@@ -141,27 +141,27 @@ export default function ProfileActivity({ username, userId }: ProfileActivityPro
                 </div>
               </div>
             ))}
-          </div>
+          </>
         ) : activeTab === 'posts' ? (
           posts.length > 0 ? (
-            <div>
+            <>
               {posts.map((post) => (
                 <PostItem key={post.slug} post={post} />
               ))}
-            </div>
+            </>
           ) : (
             <p className="py-12 text-center text-sm text-muted-foreground">No articles yet</p>
           )
         ) : activityData && activityData.items.length > 0 ? (
-          <div>
+          <>
             {activityData.items.map((item, index) => (
               <CommentItem
                 key={`${item.type}-${item.createdAt}-${index}`}
-                data={item.data}
+                data={item.data as ActivityItemData}
                 createdAt={item.createdAt}
               />
             ))}
-          </div>
+          </>
         ) : (
           <p className="py-12 text-center text-sm text-muted-foreground">
             No {activeTab} yet

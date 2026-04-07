@@ -4,6 +4,7 @@ import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { config } from '../config.js'
 import { COMMENTABLE_TARGET_TYPES } from '../constants/social.js'
+import { checkAndAwardBadges } from '../services/badgeService.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
 
@@ -119,6 +120,8 @@ router.post('/', requireAuth, async (req, res) => {
       userId: user.id,
       username: user.username,
     })
+
+    checkAndAwardBadges(user.id, user.username).catch(() => {})
 
     res.status(201).json(comment)
   } catch (err) {

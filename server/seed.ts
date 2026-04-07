@@ -22,7 +22,7 @@ async function seed() {
   console.log('Connected to MongoDB')
 
   // ── Drop all collections (full reset) ──
-  const collections = [Navigation, Footer, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost]
+  const collections = [Navigation, Footer, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, TrackedRepo]
   await Promise.all(collections.map((m) => m.deleteMany({})))
   console.log('Cleared all collections')
 
@@ -226,7 +226,6 @@ async function seed() {
   console.log('Seeded changelog')
 
   // ── Tracked Repos (sample) ──
-  await TrackedRepo.deleteMany({})
   await TrackedRepo.create([
     {
       owner: 'vercel',

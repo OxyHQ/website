@@ -119,7 +119,7 @@ export default function ArticleGridSection({ ui = {} }: { ui?: ArticleGridUI }) 
   const filtered =
     activeFilters.length === 0
       ? gridArticles
-      : gridArticles.filter((a) => activeFilters.includes(a.category))
+      : gridArticles.filter((a) => a.categories.some((c) => activeFilters.includes(c)))
 
   // Sort articles
   const sorted = [...filtered].sort((a, b) => {

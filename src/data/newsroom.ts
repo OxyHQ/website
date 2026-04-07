@@ -2,14 +2,19 @@ export interface NewsroomPost {
   _id?: string
   slug: string
   title: string
-  excerpt: string
+  resume: string
+  description?: string
   content: string
   coverImage?: string
+  imageAlt?: string
   oxyUserId?: string
   authorUsername?: string
   tags: string[]
-  category: string
+  categories: string[]
   featured: boolean
+  colorPrimary?: string
+  colorSecondary?: string
+  dark?: boolean
   status: 'draft' | 'published'
   metaTitle?: string
   metaDescription?: string
