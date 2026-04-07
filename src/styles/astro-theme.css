@@ -1,0 +1,52 @@
+/* Astro theme — blue palette based on Bloom "blue" preset (#1D9BF0).
+ *
+ * Three variable groups serve different consumers:
+ * - Bloom tokens (--background, --primary, ...) -> shared components (Navbar, Footer)
+ * - Tailwind @theme aliases (--color-background, ...) -> Tailwind utility classes
+ * - Extended semantic tokens -> page-level utilities
+ */
+.astro-theme {
+  /* ── Bloom tokens ── */
+  --background: hsl(205 50% 5%);
+  --foreground: hsl(0 0% 93%);
+  --surface: hsl(205 20% 18%);
+  --surface-foreground: hsl(0 0% 93%);
+  --popover: hsl(205 20% 18%);
+  --popover-foreground: hsl(0 0% 93%);
+  --primary: #1d9bf0;
+  --primary-foreground: #ffffff;
+  --secondary: hsl(205 20% 18%);
+  --secondary-foreground: hsl(0 0% 93%);
+  --muted: hsl(205 18% 20%);
+  --muted-foreground: hsl(0 0% 70%);
+  --accent: hsl(205 18% 20%);
+  --accent-foreground: hsl(0 0% 93%);
+  --destructive: hsl(0 84% 60%);
+  --border: rgba(29, 155, 240, 0.12);
+  --input: rgba(29, 155, 240, 0.15);
+  --ring: #1d9bf0;
+  --sidebar: hsl(205 30% 8%);
+
+  /* ── Tailwind @theme aliases ── */
+  --color-background: hsl(205 50% 5%);
+  --color-foreground: hsl(0 0% 93%);
+  --color-primary: #1d9bf0;
+  --color-primary-foreground: #ffffff;
+  --color-primary-background: hsl(205 50% 5%);
+  --color-secondary: hsl(205 20% 18%);
+  --color-secondary-foreground: hsl(0 0% 93%);
+  --color-muted: hsl(205 18% 20%);
+  --color-muted-foreground: hsl(0 0% 70%);
+  --color-accent: hsl(205 18% 20%);
+  --color-accent-foreground: hsl(0 0% 93%);
+  --color-destructive: hsl(0 84% 60%);
+  --color-surface: hsl(205 20% 18%);
+  --color-surface-foreground: hsl(0 0% 93%);
+  --color-border: rgba(29, 155, 240, 0.12);
+  --color-input: rgba(29, 155, 240, 0.15);
+  --color-ring: #1d9bf0;
+  --color-popover: hsl(205 20% 18%);
+  --color-popover-foreground: hsl(0 0% 93%);
+  --color-sidebar: hsl(205 30% 8%);
+  --color-banner-background: #1d9bf0;
+}

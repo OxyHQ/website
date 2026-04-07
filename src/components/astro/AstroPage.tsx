@@ -46,28 +46,44 @@ function PlatformIcon({ platform, className }: { platform: Platform; className?:
 }
 
 function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [visible, setVisible] = useState(false)
+  const [closing, setClosing] = useState(false)
   const current = detectPlatform()
   const others = (['macos', 'windows', 'linux'] as Platform[]).filter((p) => p !== current)
 
-  if (!open) return null
+  const handleClose = useCallback(() => {
+    setClosing(true)
+    setTimeout(() => {
+      setClosing(false)
+      setVisible(false)
+      onClose()
+    }, 250)
+  }, [onClose])
+
+  if (open && !visible && !closing) {
+    setVisible(true)
+  }
+
+  if (!visible) return null
 
   return (
     <div
       className="fixed inset-0 z-[60] flex items-center justify-center p-4"
-      onClick={onClose}
+      onClick={handleClose}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className={`absolute inset-0 bg-black/60 ${closing ? 'astro-backdrop-out' : 'astro-backdrop-in'}`} />
 
       {/* Dialog */}
       <div
-        className="relative w-full max-w-md animate-in zoom-in-95 fade-in rounded-2xl bg-white p-8 shadow-2xl dark:bg-neutral-900"
+        className={`relative w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl dark:bg-neutral-900 ${closing ? 'astro-dialog-out' : 'astro-dialog-in'}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close */}
         <button
-          onClick={onClose}
-          className="absolute right-4 top-4 rounded-full p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+          onClick={handleClose}
+          className="astro-stagger-in absolute right-4 top-4 rounded-full p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+          style={{ animationDelay: '250ms' }}
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M5 5l10 10M15 5L5 15" />
@@ -76,13 +92,13 @@ function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void 
 
         {/* Icon + Title */}
         <div className="flex flex-col items-center">
-          <div className="mb-4 h-16 w-16 overflow-hidden rounded-[24%]">
+          <div className="astro-stagger-in mb-4 h-16 w-16 overflow-hidden rounded-[24%]" style={{ animationDelay: '120ms' }}>
             <img alt="Astro" src={`${IMAGES}/icon.png`} width={512} height={512} />
           </div>
-          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">
+          <h2 className="astro-stagger-in text-xl font-bold text-neutral-900 dark:text-white" style={{ animationDelay: '200ms' }}>
             Download Astro for {PLATFORM_META[current].label}
           </h2>
-          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+          <p className="astro-stagger-in mt-1 text-sm text-neutral-500 dark:text-neutral-400" style={{ animationDelay: '260ms' }}>
             {PLATFORM_META[current].fileHint} &middot; Free
           </p>
         </div>
@@ -90,23 +106,25 @@ function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void 
         {/* Primary download */}
         <a
           href={DOWNLOAD_LINKS[current]}
-          className="mt-6 flex w-full items-center justify-center gap-2.5 rounded-full bg-blue-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-600"
+          className="astro-stagger-in mt-6 flex w-full items-center justify-center gap-2.5 rounded-full bg-blue-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-600"
+          style={{ animationDelay: '340ms' }}
         >
           <PlatformIcon platform={current} className="h-5 w-5" />
           Download for {PLATFORM_META[current].label}
         </a>
 
         {/* Other platforms */}
-        <div className="mt-6 border-t border-neutral-200 pt-5 dark:border-neutral-700">
+        <div className="astro-stagger-in mt-6 border-t border-neutral-200 pt-5 dark:border-neutral-700" style={{ animationDelay: '420ms' }}>
           <p className="mb-3 text-center text-xs font-medium text-neutral-400 uppercase tracking-wider dark:text-neutral-500">
             Other platforms
           </p>
           <div className="flex justify-center gap-3">
-            {others.map((p) => (
+            {others.map((p, i) => (
               <a
                 key={p}
                 href={DOWNLOAD_LINKS[p]}
-                className="flex items-center gap-2 rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                className="astro-stagger-in flex items-center gap-2 rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                style={{ animationDelay: `${480 + i * 60}ms` }}
               >
                 <PlatformIcon platform={p} className="h-4 w-4" />
                 {PLATFORM_META[p].label}
@@ -115,7 +133,7 @@ function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void 
           </div>
         </div>
 
-        <p className="mt-5 text-center text-[11px] text-neutral-400 leading-relaxed dark:text-neutral-500">
+        <p className="astro-stagger-in mt-5 text-center text-[11px] text-neutral-400 leading-relaxed dark:text-neutral-500" style={{ animationDelay: '580ms' }}>
           By downloading, you agree to the Astro{' '}
           <a href="/terms" className="underline hover:text-neutral-600 dark:hover:text-neutral-300">Terms of Service</a>
           {' '}and{' '}
@@ -264,7 +282,7 @@ export default function AstroPageContent() {
     <div className="relative">
       <DownloadDialog open={downloadOpen} onClose={() => setDownloadOpen(false)} />
       {/* Background */}
-      <div className="fixed inset-0 bg-sky-400">
+      <div className="fixed inset-0 bg-primary">
         <div className="fixed inset-0 overflow-hidden opacity-100 transition-opacity duration-[450ms] ease-linear">
           <div className="fixed inset-0">
             <img
@@ -292,7 +310,7 @@ export default function AstroPageContent() {
               {/* Blue glow */}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_var(--color-blue-500)_0%,_color-mix(in_srgb,var(--color-blue-500)_30%,transparent)_35%,_transparent_70%)] sm:w-[1000px]"
+                className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_var(--color-primary)_0%,_color-mix(in_srgb,var(--color-primary)_30%,transparent)_35%,_transparent_70%)] sm:w-[1000px]"
               />
 
               {/* App icon */}
@@ -326,7 +344,7 @@ export default function AstroPageContent() {
 
             {/* Video */}
             <div className="col-span-12 col-start-1 select-none px-6 md:col-span-10 md:col-start-2 md:px-0 xl:col-span-8 xl:col-start-3">
-              <div className="drop-shadow-[0_20px_50px_color-mix(in_srgb,var(--color-blue-300)_75%,transparent)]">
+              <div className="drop-shadow-[0_20px_50px_color-mix(in_srgb,var(--color-primary)_40%,transparent)]">
                 <div className="relative mx-auto aspect-video h-full w-full overflow-hidden rounded-2xl border border-border">
                   <iframe
                     src="https://player.vimeo.com/video/1129227761?h=94755e8733&badge=0&autopause=0&player_id=0&app_id=58479&controls=1&muted=1"
@@ -424,7 +442,7 @@ export default function AstroPageContent() {
             <div className="relative col-span-12 row-start-1 flex flex-col items-center px-4 selection:bg-transparent md:px-6">
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_var(--color-blue-500)_0%,_color-mix(in_srgb,var(--color-blue-500)_30%,transparent)_35%,_transparent_70%)] sm:w-[1000px]"
+                className="pointer-events-none absolute -z-10 h-[350px] w-[700px] translate-y-[20px] transform bg-[radial-gradient(ellipse_at_center,_var(--color-primary)_0%,_color-mix(in_srgb,var(--color-primary)_30%,transparent)_35%,_transparent_70%)] sm:w-[1000px]"
               />
 
               <div className="mb-4 h-[80px] w-[80px] md:mb-6">
