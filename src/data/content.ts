@@ -73,77 +73,78 @@ export interface FooterColumn {
 }
 
 export const simpleNavLinks: NavItem[] = [
-  { label: 'Customers', href: '#' },
+  { label: 'Products', href: '/products' },
   { label: 'Pricing', href: '/pricing' },
 ]
 
 // Hero
 export const hero = {
-  title: 'Ask Oxy.',
-  subtitle: 'Search, update, and create with AI.',
+  title: 'Discover Oxy.',
+  subtitle: 'Open-source tools for a better future.',
   description:
-    'Search, update, and create across your entire CRM just by asking. Powered by Universal Context — a unified intelligence layer native to Oxy — Ask Oxy deeply understands your business and gives you what you need the moment you ask.',
+    'Oxy is an ethical technology ecosystem built on open-source principles. From social connection to AI assistance, Oxy provides privacy-first tools that respect your data, empower communities, and put people before profit.',
 }
 
 // Universal Context
 export const universalContext = {
-  title: 'Universal Context',
-  trademark: true,
-  subtitle: 'The Intelligence Layer Behind Ask Oxy',
+  title: 'Connected Ecosystem',
+  trademark: false,
+  subtitle: 'A Unified Approach to Ethical Technology',
   points: [
-    'Semantically indexes everything in your CRM as one interconnected whole',
-    'Unifies records, emails, calls, notes, product data, warehouse syncs, connected tools, and web search',
-    'Understands each customer relationship as a whole — not as separate data sources',
-    'Enables multi-language querying: ask in one language, get answers from content in another',
-    'Powers every Ask Oxy response with genuine, deep business context',
+    'Privacy-first architecture ensures your data stays yours — no surveillance, no selling',
+    'Fully open-source so anyone can inspect, contribute, and build with confidence',
+    'Seamless interoperability across Oxy products — social, AI, and developer tools work as one',
+    'Community-driven development shaped by the people who use it, not corporate interests',
+    'Built on open standards to connect with the broader ecosystem, not lock you in',
   ],
 }
 
 // Capabilities
 export const capabilities: Capability[] = [
   {
-    title: 'Search, Update & Create',
+    title: 'Social Connection',
     description:
-      'Ask natural language questions and get instant, accurate answers from your CRM.',
+      'Stay connected with the people and communities that matter through Mention, Oxy\'s open social platform.',
     features: [
-      'Ask natural language questions and get instant, accurate answers from your CRM',
-      'Create and update records, tasks, and deals through conversation',
-      'Draft emails and follow-ups on demand',
-      'Run deep web research on any company to capture key information',
-      'Surface pain points, requested features, and emerging patterns from thousands of interactions in seconds',
+      'Share thoughts, media, and conversations in a space free from algorithmic manipulation',
+      'Build and join communities around shared interests with full moderation control',
+      'Follow topics and people across the fediverse with ActivityPub interoperability',
+      'Own your social graph — export your data and connections at any time',
+      'Chronological, transparent feeds with no hidden ranking or promoted content',
     ],
   },
   {
-    title: 'Meeting Intelligence',
+    title: 'AI Assistance',
     description:
-      'Get a daily briefing of your meetings and what you need to know.',
+      'Oxy AI puts powerful, privacy-respecting artificial intelligence at your fingertips.',
     features: [
-      'Get a daily briefing of your meetings and what you need to know',
-      'Prepare comprehensive account briefs before any call: full account research, conversation history, recent touchpoints, and suggested talking points',
-      'Cut meeting prep to seconds — no more hunting through emails or notes',
-      'Arrive at every meeting with full context and suggested talking points',
+      'Get intelligent answers, summaries, and creative help without sacrificing your privacy',
+      'Run AI models locally or through Oxy\'s privacy-first cloud infrastructure',
+      'Open-source models you can inspect, fine-tune, and self-host',
+      'Context-aware assistance that works across the Oxy ecosystem',
+      'No data harvesting — your conversations are never used to train models',
     ],
   },
   {
-    title: 'Call Intelligence',
+    title: 'Privacy & Security',
     description:
-      'Every call is automatically recorded, transcribed, and synced to your CRM in real time.',
+      'Security and transparency are built into every layer of the Oxy ecosystem.',
     features: [
-      'Every call is automatically recorded, transcribed, and synced to your CRM in real time',
-      'AI picks up buying signals, blockers, and feature requests during the call — not days later',
-      'Instantly summarize calls and extract key moments',
-      'Surface insights from thousands of recorded conversations in seconds',
+      'End-to-end encryption for private messages and sensitive data',
+      'Zero-knowledge architecture — Oxy cannot access your personal content',
+      'Regular third-party security audits with publicly available reports',
+      'Granular privacy controls so you decide exactly what to share and with whom',
     ],
   },
   {
-    title: 'Post-Call Automation',
+    title: 'Developer Tools',
     description:
-      'Draft personalized follow-up emails immediately after a call ends.',
+      'Build on top of Oxy with open APIs, SDKs, and a thriving developer community.',
     features: [
-      'Draft personalized follow-up emails immediately after a call ends',
-      'Update deal records and pipeline stages automatically based on call content',
-      'Create next steps and tasks without manual data entry',
-      'Build transition briefs for handoffs between AEs and CSMs',
+      'Well-documented REST and GraphQL APIs for every Oxy product',
+      'Open-source SDKs for popular languages and frameworks',
+      'Plugin and extension system to customize and extend Oxy products',
+      'Self-hosting support with Docker, Kubernetes, and bare-metal guides',
     ],
   },
 ]
@@ -151,69 +152,69 @@ export const capabilities: Capability[] = [
 // Use Cases
 export const useCases: UseCase[] = [
   {
-    role: 'Sales',
+    role: 'Developers',
     items: [
-      'Prepare for every call with a full account brief in under 30 seconds',
-      'Surface objections and prepare targeted responses before a meeting',
-      'Automatically update deal records based on recorded calls',
-      'Find customers who requested a specific feature and draft individualized outreach',
+      'Build and ship apps on top of Oxy\'s open APIs and SDKs',
+      'Contribute to the open-source codebase and shape the roadmap',
+      'Self-host Oxy products with full control over your infrastructure',
+      'Create plugins, integrations, and extensions for the ecosystem',
     ],
   },
   {
-    role: 'Customer Success',
+    role: 'Communities',
     items: [
-      'Arrive at onboarding and QBRs with full context on account health and history',
-      'Identify early signs of expansion opportunity or churn risk',
-      'Create transition briefs from prior conversations, sales context, and product usage',
-      'Summarize product engagement and usage trends for any account',
+      'Create safe, moderated spaces for discussion and collaboration',
+      'Connect members across platforms through open federation standards',
+      'Organize events, share resources, and grow together without ads or algorithmic interference',
+      'Maintain full ownership and portability of community data',
     ],
   },
   {
-    role: 'Revenue Operations',
+    role: 'Organizations',
     items: [
-      'Surface pipeline insights and emerging patterns across your entire customer base',
-      'Extract product feedback from call recordings at scale',
-      'Get instant answers across your full CRM data without writing queries',
+      'Deploy privacy-respecting tools across your team with centralized administration',
+      'Replace surveillance-based software with ethical, transparent alternatives',
+      'Meet compliance and data-residency requirements with self-hosted deployments',
     ],
   },
 ]
 
 // Prompt Library
 export const prompts: Prompt[] = [
-  { text: 'Extract product feedback from a call recording' },
-  { text: 'Prepare targeted responses to anticipated objections before your next call' },
-  { text: 'Draft a follow-up email to keep the conversation rolling after a meeting' },
-  { text: 'Find customers who requested a specific feature and draft individualized emails' },
-  { text: 'Automatically update a deal record based on a recorded call' },
-  { text: 'Summarize product engagement and usage trends for a workspace' },
+  { text: 'Summarize the latest discussions in my community feed' },
+  { text: 'Draft a post announcing our new open-source project' },
+  { text: 'Help me write a privacy policy for my Oxy-powered app' },
+  { text: 'Generate API documentation for my plugin endpoints' },
+  { text: 'Explain the differences between self-hosted and cloud deployment' },
+  { text: 'Create a contributor guide for our open-source repository' },
 ]
 
 // Privacy
 export const privacyPoints: PrivacyPoint[] = [
-  { text: 'Every answer is sourced from your actual CRM records and customer knowledge' },
-  { text: 'Ask Oxy respects your existing workspace permissions — everyone sees only what they\'re supposed to' },
-  { text: 'You are always in command and empowered to approve, modify, or reject any suggestion' },
-  { text: 'Customer data is never used to train any AI models' },
-  { text: 'Ask Oxy conversations are private to you and not visible to other workspace members' },
+  { text: 'Your data is stored securely and never sold to third parties or advertisers' },
+  { text: 'You control your own privacy settings — choose exactly what is visible and to whom' },
+  { text: 'You are always in command and empowered to export, modify, or delete your data at any time' },
+  { text: 'Personal data is never used to train AI models without your explicit consent' },
+  { text: 'All Oxy products are open-source, so privacy claims are independently verifiable' },
 ]
 
 // Pricing
 export const pricingTiers: PricingTier[] = [
   {
-    name: 'Free',
+    name: 'Community',
     credits: '500',
-    creditLabel: 'credits per seat / month',
+    creditLabel: 'credits / month',
   },
   {
-    name: 'Pro',
+    name: 'Contributor',
     credits: '1,000',
-    creditLabel: 'credits per seat / month',
+    creditLabel: 'credits / month',
     highlighted: true,
   },
   {
-    name: 'Enterprise',
+    name: 'Organization',
     credits: '2,500',
-    creditLabel: 'credits per seat / month',
+    creditLabel: 'credits / month',
   },
 ]
 
@@ -230,26 +231,26 @@ export interface PartnerProgram {
 export const partnerPrograms: PartnerProgram[] = [
   {
     number: '01',
-    label: 'App partners',
-    title: 'App partners.',
-    description: 'Build apps that power the next era of CRM.',
-    ctaText: 'Become an App Partner',
+    label: 'Open Source Partners',
+    title: 'Open Source Partners.',
+    description: 'Build and maintain open-source projects that extend the Oxy ecosystem.',
+    ctaText: 'Become an Open Source Partner',
     ctaHref: '#',
   },
   {
     number: '02',
-    label: 'Creator partners',
-    title: 'Creator partners.',
-    description: 'Build your brand, grow your audience.',
-    ctaText: 'Become a Creator Partner',
+    label: 'Community Partners',
+    title: 'Community Partners.',
+    description: 'Grow vibrant communities and champion ethical technology.',
+    ctaText: 'Become a Community Partner',
     ctaHref: '#',
   },
   {
     number: '03',
-    label: 'Expert partners',
-    title: 'Expert partners.',
-    description: 'Help GTM teams build, scale and grow.',
-    ctaText: 'Become an Expert Partner',
+    label: 'Education Partners',
+    title: 'Education Partners.',
+    description: 'Bring open-source tools and digital literacy into classrooms and workshops.',
+    ctaText: 'Become an Education Partner',
     ctaHref: '#',
   },
 ]
@@ -264,35 +265,7 @@ export interface PartnerTestimonial {
   favoriteFeatures?: string[]
 }
 
-export const partnerTestimonials: PartnerTestimonial[] = [
-  {
-    name: 'Alejandra Ruiz',
-    role: 'Co-founder & CEO, Sequence',
-    partnerType: 'App Partners',
-    image: '/partners/alejandra.avif',
-    quote:
-      'The developer platform makes it incredibly easy to build integrations that our customers love. The API is well-designed and the docs are excellent.',
-    favoriteFeatures: ['Developer Platform', 'REST API', 'Webhooks'],
-  },
-  {
-    name: 'Desiree Chen',
-    role: 'Founder, 80x',
-    partnerType: 'Creator Partners',
-    image: '/partners/desiree.avif',
-    quote:
-      'Creating content around Oxy has been a natural fit. The product is so well-built that the stories practically write themselves.',
-    favoriteFeatures: ['Reporting', 'Workflows', 'Data model'],
-  },
-  {
-    name: 'Ton Caranese',
-    role: 'Co-founder, novlini',
-    partnerType: 'Expert Partners',
-    image: '/partners/ton.avif',
-    quote:
-      'Oxy connects me with teams that value speed, structure, and scale. Building flexible, high-impact systems on such a powerful product is a pleasure.',
-    favoriteFeatures: ['Email & calendar sync', 'API', 'Mobile app'],
-  },
-]
+export const partnerTestimonials: PartnerTestimonial[] = []
 
 // Keep Up To Date Cards
 export interface KeepUpToDateCard {
@@ -312,19 +285,19 @@ export const keepUpToDateCards: KeepUpToDateCard[] = [
   {
     title: 'X',
     description: 'Stay in the loop with what we\'re working on.',
-    href: '#',
+    href: 'https://x.com/oxyhqinc',
     iconType: 'x',
   },
   {
     title: 'Blog',
     description: 'Be the first to get new Oxy updates.',
-    href: '#',
+    href: '/company/news',
     iconType: 'blog',
   },
   {
     title: 'Changelog',
     description: 'Stay on top of all releases and new features.',
-    href: '#',
+    href: '/changelog',
     iconType: 'changelog',
   },
 ]
@@ -341,35 +314,29 @@ export interface CapabilityTab {
 
 export const capabilityTabs: CapabilityTab[] = [
   {
-    role: 'Sales',
+    role: 'Developers',
     panels: [
-      { title: 'Win faster when every call is perfectly prepped.', description: 'Prepare for meetings, update deals, and review pipeline.', mockupType: 'chat' },
-      { title: 'Close deals with AI-powered follow-ups.', description: 'Draft emails, update records, and create tasks automatically.', mockupType: 'pipeline' },
+      { title: 'Ship faster with open APIs and SDKs.', description: 'Build integrations, plugins, and apps on a well-documented platform.', mockupType: 'chat' },
+      { title: 'Self-host with confidence.', description: 'Deploy on your own infrastructure with Docker, Kubernetes, or bare-metal guides.', mockupType: 'pipeline' },
     ],
   },
   {
-    role: 'Customer Success',
+    role: 'Creators',
     panels: [
-      { title: 'Know every account inside and out.', description: 'Full context on health, history, and expansion signals.', mockupType: 'meeting' },
-      { title: 'Spot churn risk before it happens.', description: 'Surface patterns across engagement and usage data.', mockupType: 'call' },
+      { title: 'Own your audience, not the algorithm.', description: 'Publish and share content without ads, tracking, or algorithmic suppression.', mockupType: 'meeting' },
+      { title: 'AI-powered creative tools.', description: 'Draft, edit, and brainstorm with Oxy AI — your data stays private.', mockupType: 'call' },
     ],
   },
   {
-    role: 'Marketing',
+    role: 'Communities',
     panels: [
-      { title: 'Turn signals into pipeline.', description: 'Identify and act on buying intent across your CRM.', mockupType: 'chat' },
+      { title: 'Build spaces people actually trust.', description: 'Create moderated, ad-free communities with full data portability.', mockupType: 'chat' },
     ],
   },
   {
-    role: 'Founders',
+    role: 'Organizations',
     panels: [
-      { title: 'Your CRM, your way.', description: 'Build workflows that match how you actually sell.', mockupType: 'pipeline' },
-    ],
-  },
-  {
-    role: 'Revenue Operations',
-    panels: [
-      { title: 'Pipeline intelligence at scale.', description: 'Surface insights and patterns across your entire customer base.', mockupType: 'meeting' },
+      { title: 'Ethical tools for modern teams.', description: 'Replace surveillance-based software with transparent, privacy-first alternatives.', mockupType: 'pipeline' },
     ],
   },
 ]
@@ -382,11 +349,11 @@ export interface ContextCard {
 }
 
 export const contextCards: ContextCard[] = [
-  { title: 'Grounded in your context', subtitle: 'like emails, calls, and product usage.', iconType: 'database' },
-  { title: 'Understand patterns', subtitle: 'across customer signals, not just individual flares.', iconType: 'brain' },
-  { title: 'Semantic search', subtitle: 'that understands intent, not just keywords.', iconType: 'search' },
-  { title: 'Multi-language support', subtitle: 'ask in one language, get answers from another.', iconType: 'globe' },
-  { title: 'Respects permissions', subtitle: 'everyone sees only what they should.', iconType: 'shield' },
+  { title: 'Grounded in privacy', subtitle: 'your data is encrypted and never sold.', iconType: 'shield' },
+  { title: 'Open-source transparency', subtitle: 'every line of code is publicly auditable.', iconType: 'database' },
+  { title: 'Intelligent assistance', subtitle: 'AI that helps without harvesting your data.', iconType: 'brain' },
+  { title: 'Federated by design', subtitle: 'connect across platforms with open standards.', iconType: 'globe' },
+  { title: 'Ecosystem search', subtitle: 'find what you need across all Oxy products.', iconType: 'search' },
 ]
 
 // Prompt Library Cards
@@ -397,16 +364,16 @@ export interface PromptLibraryCard {
 }
 
 export const promptLibraryCards: PromptLibraryCard[] = [
-  { title: 'Daily brief', description: 'Prepare for your day with a daily briefing of your meetings.', iconType: 'calendar' },
-  { title: 'Account brief', description: 'Get a full account brief before any call.', iconType: 'briefcase' },
-  { title: 'Call Intelligence', description: 'Summarize calls and extract key moments.', iconType: 'phone' },
-  { title: 'Draft follow-up', description: 'Draft a follow-up email after a meeting.', iconType: 'mail' },
-  { title: 'Pipeline review', description: 'Surface pipeline insights and emerging patterns.', iconType: 'chart' },
-  { title: 'Feature requests', description: 'Find customers who requested a specific feature.', iconType: 'sparkle' },
-  { title: 'Web research', description: 'Run deep web research on any company.', iconType: 'search' },
-  { title: 'Transition brief', description: 'Build transition briefs for handoffs between teams.', iconType: 'users' },
-  { title: 'Objection prep', description: 'Prepare targeted responses to anticipated objections.', iconType: 'sparkle' },
-  { title: 'Update deal', description: 'Update deal records based on recorded calls.', iconType: 'briefcase' },
-  { title: 'Engagement trends', description: 'Summarize product engagement and usage trends.', iconType: 'chart' },
-  { title: 'Churn signals', description: 'Identify early signs of expansion or churn risk.', iconType: 'search' },
+  { title: 'Community digest', description: 'Get a summary of recent discussions and trending topics.', iconType: 'calendar' },
+  { title: 'Project overview', description: 'Generate a status report for your open-source project.', iconType: 'briefcase' },
+  { title: 'Content creation', description: 'Draft posts, articles, and announcements with AI assistance.', iconType: 'sparkle' },
+  { title: 'Draft outreach', description: 'Write a message to engage contributors or community members.', iconType: 'mail' },
+  { title: 'Usage analytics', description: 'Understand how your community or app is growing.', iconType: 'chart' },
+  { title: 'Plugin ideas', description: 'Brainstorm extensions and integrations for the Oxy ecosystem.', iconType: 'sparkle' },
+  { title: 'Documentation', description: 'Generate API docs, guides, and contributor instructions.', iconType: 'search' },
+  { title: 'Onboarding guide', description: 'Create a welcome flow for new community members.', iconType: 'users' },
+  { title: 'Privacy review', description: 'Audit your app or community settings for best practices.', iconType: 'briefcase' },
+  { title: 'Migration plan', description: 'Plan a move from a proprietary platform to Oxy.', iconType: 'chart' },
+  { title: 'Release notes', description: 'Draft changelog entries for your latest updates.', iconType: 'calendar' },
+  { title: 'Contributor guide', description: 'Create contribution guidelines for your open-source repo.', iconType: 'users' },
 ]
