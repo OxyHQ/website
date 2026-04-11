@@ -9,7 +9,6 @@ import { LocaleProvider } from './contexts/LocaleContext'
 import { setTokenGetter } from './api/client'
 
 import HomePage from './pages/HomePage'
-const Landing3 = lazy(() => import('./pages/Landing3'))
 import { AccountPanelProvider } from './contexts/AccountPanelContext'
 
 const FixedPromptInput = lazy(() => import('./components/ui/FixedPromptInput'))
@@ -87,7 +86,6 @@ function PublicRoutes() {
   return (
     <>
       <Route index element={<HomePage />} />
-      <Route path="landing3" element={<Landing3 />} />
       <Route path="partners" element={<PartnersPage />} />
       <Route path="company/careers" element={<CareersPage />} />
       <Route path="company/careers/:slug" element={<CareerDetailPage />} />

@@ -1,13 +1,13 @@
 export const homeHero = {
-  title: 'Customer relationship magic.',
-  subtitle: 'Oxy is the AI CRM for GTM.',
+  title: 'Build what matters.',
+  subtitle: 'Oxy is the platform for developers and teams.',
 }
 
 export const homeSectionLabels = [
-  { number: '01', title: 'Powerful platform', detail: '/ item 1 \u22ee 4' },
-  { number: '02', title: 'Adaptive model', detail: '/ data \u2194 business' },
-  { number: '03', title: 'Data enrichment', detail: '/ speed 1:1' },
-  { number: '04', title: 'Built for scale', detail: '/ growth + security' },
+  { number: '01', title: 'Developer tools', detail: '/ Codea · AI coding' },
+  { number: '02', title: 'Cloud platform', detail: '/ infra · services' },
+  { number: '03', title: 'AI-native', detail: '/ agents · models' },
+  { number: '04', title: 'Built for scale', detail: '/ security + speed' },
 ]
 
 export interface BentoCard {
@@ -19,43 +19,43 @@ export interface BentoCard {
 
 export const bentoCards: BentoCard[] = [
   {
-    title: 'Automate everything',
-    description: "You're in control. Automate even the most complex business processes with our powerful, intelligent automation engine.",
-    cta: 'Explore automations',
-    href: '#',
+    title: 'Code with AI',
+    description: 'Codea is a professional AI-powered code editor that helps you write, review, and ship code faster.',
+    cta: 'Explore Codea',
+    href: '/codea',
   },
   {
-    title: 'Deploy AI',
-    description: 'Search and create with Ask Oxy, connect your stack with MCP, or put agents to work on complex tasks like prospecting and lead scoring.',
+    title: 'Deploy AI agents',
+    description: 'Search and create with Ask Oxy, connect your stack with MCP, or put agents to work on complex tasks.',
     cta: 'Explore AI',
-    href: '#',
+    href: '/ai',
   },
   {
-    title: 'Connect any type of data',
-    description: 'Sync product data, billing data, and everything in between, for a real-time single source of truth for your business.',
-    cta: 'Explore data',
+    title: 'Connect your data',
+    description: 'Integrate any data source for a real-time single source of truth across your organisation.',
+    cta: 'Explore integrations',
     href: '#',
   },
   {
     title: 'Powerful reporting',
-    description: 'Create real-time, detailed reports that scale with your data. Visualize, customize, and get deep insights in seconds \u2014 not hours.',
+    description: 'Create real-time, detailed reports that scale with your data. Visualise, customise, and get deep insights in seconds.',
     cta: 'Explore reporting',
     href: '#',
   },
 ]
 
 export const adaptiveSection = {
-  heading: ['A', 'seismic', 'shift', 'in', 'CRM', 'flexibility.'],
-  description: "Oxy's powerful data model adapts to how your business works, not the other way around. Your business model \u2014 perfectly reflected in your CRM.",
-  cta: 'Explore our data model',
+  heading: ['A', 'platform', 'that', 'adapts', 'to', 'you.'],
+  description: "Oxy's flexible architecture adapts to how your team works, not the other way around.",
+  cta: 'Explore the platform',
 }
 
 export const enrichmentSection = {
   heading: ['Build', 'fast.'],
-  description: "Forget months of setup. Oxy syncs immediately with your email and calendar, building a powerful CRM right before your eyes.",
+  description: 'Forget months of setup. Oxy gets you productive immediately with sensible defaults and powerful customisation.',
 }
 
 export const finalCTA = {
-  line1: 'The CRM behind',
-  line2: 'thousands of companies.',
+  line1: 'The platform behind',
+  line2: 'thousands of teams.',
 }
