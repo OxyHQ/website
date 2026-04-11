@@ -7,32 +7,30 @@ export interface CodeaFeature {
   layout?: 'left' | 'right'
 }
 
-export const heroTitle = 'Built to make you extraordinarily productive, Codea is the best way to code with AI.'
+export const heroTitle = 'The open-source AI code editor that runs anywhere — in your browser, on your machine, on your terms.'
 
-export const logoCompanies = [
-  'Stripe', 'OpenAI', 'Linear', 'Datadog', 'Nvidia', 'Figma', 'Ramp', 'Adobe'
-]
+export const logoCompanies: string[] = []
 
 export const features: CodeaFeature[] = [
   {
-    title: 'Agents turn ideas into code',
-    description: 'Accelerate development by handing off tasks to Codea, while you focus on making decisions.',
-    cta: 'Learn about agentic development \u2192',
-    ctaHref: '#',
+    title: 'AI-powered editing, built in',
+    description: 'Codea pairs you with an AI assistant that understands your project context, suggests completions, and helps you refactor — all without leaving the editor.',
+    cta: 'See how AI editing works \u2192',
+    ctaHref: '/developers/docs/codea',
     layout: 'left',
   },
   {
-    title: 'In every tool, at every step',
-    description: 'Codea reviews your PRs in GitHub, collaborates in Slack, and runs in your terminal.',
-    cta: 'Learn about Codea\u2019s surfaces \u2192',
-    ctaHref: '#',
+    title: 'Code from any browser',
+    description: 'No downloads, no installs. Open Codea in your browser and start writing code instantly with a full-featured editing experience backed by the cloud.',
+    cta: 'Try Codea in your browser \u2192',
+    ctaHref: '/developers/docs/codea',
     layout: 'left',
   },
   {
-    title: 'Magically accurate autocomplete',
-    description: 'Our specialized Tab model predicts your next action with striking speed and precision.',
-    cta: 'Learn about Tab \u2192',
-    ctaHref: '#',
+    title: 'Open source, open development',
+    description: 'Codea is fully open source. Inspect the code, contribute features, run it on your own infrastructure, or extend it with plugins — the editor is yours.',
+    cta: 'View the source on GitHub \u2192',
+    ctaHref: 'https://github.com/OxyHQ/Codea',
     layout: 'right',
   },
 ]
@@ -44,41 +42,7 @@ export interface Testimonial {
   hidden?: boolean // hidden on mobile, shown md+
 }
 
-export const testimonials: Testimonial[] = [
-  {
-    quote: '"It was night and day from one batch to another, adoption went from single digits to over 80%. It just spread like wildfire, all the best builders were using Codea."',
-    author: 'Diana Hu',
-    role: 'General Partner, Y Combinator',
-  },
-  {
-    quote: '"My favorite enterprise AI service is Codea. Every one of our engineers, some 40,000, are now assisted by AI and our productivity has gone up incredibly."',
-    author: 'Jensen Huang',
-    role: 'President & CEO, NVIDIA',
-  },
-  {
-    quote: '"The best LLM applications have an autonomy slider: you control how much independence to give the AI. In Codea, you can do Tab completion, Cmd+K for targeted edits, or you can let it rip with the full autonomy agentic version."',
-    author: 'Andrej Karpathy',
-    role: 'CEO, Eureka Labs',
-  },
-  {
-    quote: '"Codea quickly grew from hundreds to thousands of extremely enthusiastic engineers. We spend more on R&D and software creation than any other undertaking, and there\'s significant economic outcomes when making that process more efficient."',
-    author: 'Patrick Collison',
-    role: 'Co-Founder & CEO, Stripe',
-    hidden: true,
-  },
-  {
-    quote: '"The most useful AI tool that I currently pay for, hands down, is Codea. It\'s fast, autocompletes when and where you need it to, handles brackets properly, sensible keyboard shortcuts... everything is well put together."',
-    author: 'shadcn',
-    role: 'Creator of shadcn/ui',
-    hidden: true,
-  },
-  {
-    quote: '"It\'s definitely becoming more fun to be a programmer. We are at the 1% of what\'s possible, and it\'s in interactive experiences like Codea where frontier models shine brightest."',
-    author: 'Greg Brockman',
-    role: 'President, OpenAI',
-    hidden: true,
-  },
-]
+export const testimonials: Testimonial[] = []
 
 export interface FrontierCard {
   title: string
@@ -90,24 +54,23 @@ export interface FrontierCard {
 
 export const frontierCards: FrontierCard[] = [
   {
-    title: 'Use the best model for every task',
-    description: 'Choose between every cutting-edge model from OpenAI, Anthropic, Gemini, xAI, and Codea.',
-    cta: 'Explore models',
-    ctaHref: '#',
+    title: 'Open source from day one',
+    description: 'Codea is built in the open. Read every line of code, audit the AI integration, self-host on your own servers, and contribute back to the project.',
+    cta: 'View on GitHub',
+    ctaHref: 'https://github.com/OxyHQ/Codea',
     external: true,
   },
   {
-    title: 'Complete codebase understanding',
-    description: 'Codea learns how your codebase works, no matter the scale or complexity.',
-    cta: 'Learn about codebase indexing',
-    ctaHref: '#',
-    external: true,
+    title: 'Browser-native development',
+    description: 'Get a full development environment in any modern browser — with file management, terminal access, and real-time collaboration, no setup required.',
+    cta: 'Learn more',
+    ctaHref: '/developers/docs/codea',
   },
   {
-    title: 'Develop enduring software',
-    description: 'Trusted by over half of the Fortune 500 to accelerate development, securely and at scale.',
-    cta: 'Explore enterprise',
-    ctaHref: '#',
+    title: 'AI that fits your workflow',
+    description: 'Inline completions, chat-driven refactors, and context-aware suggestions that adapt to your codebase. Use the AI when it helps, ignore it when it doesn\u2019t.',
+    cta: 'Explore AI features',
+    ctaHref: '/developers/docs/codea',
   },
 ]
 
@@ -117,12 +80,7 @@ export interface ChangelogEntry {
   href: string
 }
 
-export const changelogEntries: ChangelogEntry[] = [
-  { date: 'Mar 19, 2026', title: 'Composer 2', href: '#' },
-  { date: 'Mar 11, 2026', title: 'New Plugins on the Codea Marketplace', href: '#' },
-  { date: 'Mar 5, 2026', title: 'Automations', href: '#' },
-  { date: 'Mar 4, 2026', title: 'Codea in JetBrains IDEs', href: '#' },
-]
+export const changelogEntries: ChangelogEntry[] = []
 
 export interface HighlightArticle {
   title: string
@@ -132,35 +90,9 @@ export interface HighlightArticle {
   href: string
 }
 
-export const highlights: HighlightArticle[] = [
-  {
-    title: 'Towards self-driving codebases',
-    description: 'We\u2019re making a part of our multi-agent research harness available to try today in preview.',
-    category: 'Research',
-    date: 'Feb 5, 2026',
-    href: '#',
-  },
-  {
-    title: 'Salesforce ships higher-quality code across 20,000 developers with Codea',
-    description: 'Over 90% of developers at Salesforce now use Codea, driving double-digit improvements in cycle time, PR velocity, and code quality.',
-    category: 'Customers',
-    date: 'Jan 21, 2026',
-    href: '#',
-  },
-  {
-    title: 'Best practices for coding with agents',
-    description: 'A comprehensive guide to working with coding agents, from starting with plans to managing context, customizing workflows, and reviewing code.',
-    category: 'Product',
-    date: 'Jan 9, 2026',
-    href: '#',
-  },
-]
+export const highlights: HighlightArticle[] = []
 
-export const pressQuotes = [
-  { quote: 'Codea is the future of programming.', source: 'TechCrunch' },
-  { quote: 'The AI code editor everyone is talking about.', source: 'The Verge' },
-  { quote: 'A leap forward in developer productivity.', source: 'Wired' },
-]
+export const pressQuotes: { quote: string; source: string }[] = []
 
 export interface FooterColumn {
   title: string
@@ -171,55 +103,39 @@ export const footerColumns: FooterColumn[] = [
   {
     title: 'Product',
     links: [
-      { label: 'Agents', href: '#' },
-      { label: 'Enterprise', href: '#' },
-      { label: 'Pricing', href: '#' },
-      { label: 'Code Review', href: '#' },
-      { label: 'Tab', href: '#' },
-      { label: 'CLI', href: '#' },
-      { label: 'Cloud Agents', href: '#' },
-      { label: 'Marketplace', href: '#', external: true },
+      { label: 'Codea Editor', href: '/developers/docs/codea' },
+      { label: 'Oxy Platform', href: '/developers/docs' },
+      { label: 'Pricing', href: '/pricing' },
     ],
   },
   {
     title: 'Resources',
     links: [
-      { label: 'Download', href: '#' },
-      { label: 'Changelog', href: '#' },
-      { label: 'Docs', href: '#' },
-      { label: 'Learn', href: '#', external: true },
-      { label: 'Forum', href: '#', external: true },
-      { label: 'Help', href: '#', external: true },
-      { label: 'Workshops', href: '#' },
-      { label: 'Status', href: '#', external: true },
+      { label: 'Documentation', href: '/developers/docs' },
+      { label: 'Changelog', href: '/changelog' },
+      { label: 'Help', href: '/help' },
+      { label: 'GitHub', href: 'https://github.com/OxyHQ', external: true },
     ],
   },
   {
     title: 'Company',
     links: [
-      { label: 'Careers', href: '#' },
-      { label: 'Blog', href: '#' },
-      { label: 'Community', href: '#' },
-      { label: 'Students', href: '#' },
-      { label: 'Brand', href: '#' },
-      { label: 'Future', href: '#' },
+      { label: 'Blog', href: '/blog' },
+      { label: 'Careers', href: '/careers' },
     ],
   },
   {
     title: 'Legal',
     links: [
-      { label: 'Terms of Service', href: '#' },
-      { label: 'Privacy Policy', href: '#' },
-      { label: 'Data Use', href: '#' },
-      { label: 'Security', href: '#' },
+      { label: 'Terms of Service', href: '/legal/terms' },
+      { label: 'Privacy Policy', href: '/legal/privacy' },
     ],
   },
   {
     title: 'Connect',
     links: [
-      { label: 'X', href: '#', external: true },
-      { label: 'LinkedIn', href: '#', external: true },
-      { label: 'YouTube', href: '#', external: true },
+      { label: 'GitHub', href: 'https://github.com/OxyHQ', external: true },
+      { label: 'X', href: 'https://x.com/OxyHQ', external: true },
     ],
   },
 ]
