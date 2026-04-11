@@ -15,7 +15,7 @@ router.get('/', localeMiddleware, async (req, res) => {
 
   const translation = await Translation.findOne({
     locale: req.locale,
-    collection: 'footer',
+    collectionName: 'footer',
     documentId: footer._id.toString(),
   })
   res.json(applyTranslation(data, translation))

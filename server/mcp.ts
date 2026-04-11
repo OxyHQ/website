@@ -135,7 +135,7 @@ server.tool('get_footer', 'Get footer content', {}, async () => {
 const footerLinkSchema = z.object({
   label: z.string(),
   href: z.string(),
-  isNew: z.boolean().optional(),
+  isNewBadge: z.boolean().optional(),
   isExternal: z.boolean().optional(),
 })
 const footerColumnSchema = z.object({ title: z.string(), links: z.array(footerLinkSchema) })
@@ -656,7 +656,7 @@ server.tool('get_translations', 'Get all translations for a collection in a spec
   locale: z.string().describe('Locale code, e.g. "es", "fr", "ja"'),
 }, async ({ collection, locale }) => {
   try {
-    const translations = await Translation.find({ collection, locale })
+    const translations = await Translation.find({ collectionName: collection, locale })
     return ok(translations)
   } catch (e) { return err(e) }
 })
@@ -667,7 +667,7 @@ server.tool('get_translation', 'Get the translation for a specific document in a
   locale: z.string().describe('Locale code, e.g. "es"'),
 }, async ({ collection, documentId, locale }) => {
   try {
-    const translation = await Translation.findOne({ collection, documentId, locale })
+    const translation = await Translation.findOne({ collectionName: collection, documentId, locale })
     if (!translation) return err('Translation not found')
     return ok(translation)
   } catch (e) { return err(e) }
@@ -681,8 +681,8 @@ server.tool('upsert_translation', 'Create or update a translation. The fields ob
 }, async ({ collection, documentId, locale, fields }) => {
   try {
     const translation = await Translation.findOneAndUpdate(
-      { collection, documentId, locale },
-      { fields },
+      { collectionName: collection, documentId, locale },
+      { collectionName: collection, fields },
       { new: true, upsert: true },
     )
     return ok(translation)
@@ -695,7 +695,7 @@ server.tool('delete_translation', 'Delete a translation for a specific document 
   locale: z.string().describe('Locale code'),
 }, async ({ collection, documentId, locale }) => {
   try {
-    const translation = await Translation.findOneAndDelete({ collection, documentId, locale })
+    const translation = await Translation.findOneAndDelete({ collectionName: collection, documentId, locale })
     if (!translation) return err('Translation not found')
     return ok({ deleted: true })
   } catch (e) { return err(e) }

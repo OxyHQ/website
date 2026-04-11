@@ -14,7 +14,7 @@ router.get('/', localeMiddleware, async (req, res) => {
 
   const translations = await Translation.find({
     locale: req.locale,
-    collection: 'testimonials',
+    collectionName: 'testimonials',
     documentId: { $in: items.map(i => i._id.toString()) },
   })
   res.json(applyTranslations(items.map(i => i.toJSON()), translations))

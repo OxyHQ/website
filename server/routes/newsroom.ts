@@ -41,7 +41,7 @@ router.get('/', localeMiddleware, async (req, res) => {
   if (!req.isDefaultLocale) {
     const translations = await Translation.find({
       locale: req.locale,
-      collection: 'newsroom',
+      collectionName: 'newsroom',
       documentId: { $in: posts.map(p => p._id.toString()) },
     })
     result = applyTranslations(result, translations)

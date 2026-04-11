@@ -64,7 +64,7 @@ export interface FooterLink {
   label: string
   href: string
   isExternal?: boolean
-  isNew?: boolean
+  isNewBadge?: boolean
 }
 
 export interface FooterColumn {

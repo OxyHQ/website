@@ -3,7 +3,16 @@ import { useFooter } from '../../api/hooks'
 import Logo from '../ui/Logo'
 import { type FooterColumn, type FooterLink } from '../../data/content'
 
-/* ─── SVG Icons ─── */
+/* ─── Shared small components ─── */
+
+function Divider() {
+  return (
+    <svg width="100%" height="1" className="text-border">
+      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 function ExternalArrow() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="ml-0.5 -rotate-45 text-muted-foreground transition-colors duration-200 ease-in-out-cubic group-hover:text-foreground group-hover:delay-50 group-focus:text-foreground group-focus:delay-50 group-active:text-foreground group-active:duration-50">
@@ -11,6 +20,16 @@ function ExternalArrow() {
     </svg>
   )
 }
+
+function NewBadge() {
+  return (
+    <div className="ml-1.5 rounded-[10px] bg-primary px-1.5 py-1 font-normal text-[10px] text-primary-foreground leading-[7px] tracking-normal">
+      New
+    </div>
+  )
+}
+
+/* ─── SVG Social Icons ─── */
 
 function LinkedInIcon() {
   return (
@@ -44,26 +63,66 @@ function YouTubeIcon() {
   )
 }
 
-const socialLinks = [
+/* ─── Data ─── */
+
+const SOCIAL_LINKS = [
   { label: 'LinkedIn', icon: LinkedInIcon, href: 'https://www.linkedin.com/company/oxyhq/' },
   { label: 'X', icon: XIcon, href: 'https://x.com/oxyhqinc' },
   { label: 'Dribbble', icon: DribbbleIcon, href: '#' },
   { label: 'YouTube', icon: YouTubeIcon, href: '#' },
-]
+] as const
+
+const LEGAL_LINKS = [
+  { label: 'Legal', to: '/legal' },
+  { label: 'Privacy Policy', to: '/legal/privacy' },
+  { label: 'Cookie Policy', to: '/legal/cookies' },
+  { label: 'Accessibility', to: '/legal/accessibility' },
+  { label: 'Terms & Conditions', to: '/legal/terms' },
+  { label: 'LLMs', to: '/legal/llms' },
+  { label: 'Settings', to: '/settings' },
+] as const
+
+/* ─── Footer link (handles internal/external, badge, arrow) ─── */
+
+const LINK_CLASS = 'group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-muted-foreground transition-[color] duration-150 ease-out hover:text-foreground focus-visible:text-foreground active:text-foreground active:duration-50'
+
+function FooterLinkItem({ link }: { link: FooterLink }) {
+  const content = (
+    <>
+      <span className="attio-group-hover-underline group-hover:duration-150">{link.label}</span>
+      {link.isNewBadge && <NewBadge />}
+      {link.isExternal && <ExternalArrow />}
+    </>
+  )
+
+  if (link.href.startsWith('/')) {
+    return <Link to={link.href} className={LINK_CLASS}>{content}</Link>
+  }
+
+  return (
+    <a
+      href={link.href}
+      {...(link.isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      className={LINK_CLASS}
+    >
+      {content}
+    </a>
+  )
+}
+
+/* ─── Main component ─── */
 
 export default function Footer() {
   const { data: footerData } = useFooter()
   const footerColumns = footerData?.columns ?? []
+
   return (
     <footer className="relative flex w-full flex-col justify-between bg-background">
-      {/* Top border line */}
-      <svg width="100%" height="1" className="text-border">
-        <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-      </svg>
+      <Divider />
 
+      {/* Columns */}
       <div className="container flex-1">
         <div className="px-px pt-10 pb-4">
-          {/* Footer columns using CSS multi-column layout — full width */}
           <div className="columns-4 gap-0 max-xl:columns-3 max-lg:columns-2 max-xs:columns-1">
             {footerColumns.map((column: FooterColumn) => (
               <div key={column.title} className="break-inside-avoid pb-5">
@@ -71,29 +130,7 @@ export default function Footer() {
                 <ul className="flex flex-col">
                   {column.links.map((link: FooterLink) => (
                     <li key={link.label}>
-                      {link.href.startsWith('/') ? (
-                        <Link
-                          to={link.href}
-                          className="group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-muted-foreground transition-[color] duration-150 ease-out hover:text-foreground focus-visible:text-foreground active:text-foreground active:duration-50"
-                        >
-                          <span className="attio-group-hover-underline group-hover:duration-150">{link.label}</span>
-                          {link.isNew && (
-                            <div className="ml-1.5 rounded-[10px] bg-primary px-1.5 py-1 font-normal text-[10px] text-primary-foreground leading-[7px] tracking-normal">New</div>
-                          )}
-                        </Link>
-                      ) : (
-                        <a
-                          href={link.href}
-                          {...(link.isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                          className="group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-muted-foreground transition-[color] duration-150 ease-out hover:text-foreground focus-visible:text-foreground active:text-foreground active:duration-50"
-                        >
-                          <span className="attio-group-hover-underline group-hover:duration-150">{link.label}</span>
-                          {link.isNew && (
-                            <div className="ml-1.5 rounded-[10px] bg-primary px-1.5 py-1 font-normal text-[10px] text-primary-foreground leading-[7px] tracking-normal">New</div>
-                          )}
-                          {link.isExternal && <ExternalArrow />}
-                        </a>
-                      )}
+                      <FooterLinkItem link={link} />
                     </li>
                   ))}
                 </ul>
@@ -106,10 +143,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="w-full">
         <div className="container">
-          {/* Divider */}
-          <svg width="100%" height="1" className="text-border">
-            <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-          </svg>
+          <Divider />
 
           {/* Logo + Social row */}
           <div className="flex flex-wrap items-center justify-between gap-6 px-px pt-4 pb-4">
@@ -120,7 +154,7 @@ export default function Footer() {
               <p className="max-w-lg text-sm text-muted-foreground">Oxy is the AI-native CRM that deeply understands your business. Search, update, and create across your entire workspace just by asking — powered by Universal Context, a unified intelligence layer built into every interaction.</p>
             </div>
             <div className="flex items-center gap-3">
-              {socialLinks.map(({ label, icon: Icon, href }) => (
+              {SOCIAL_LINKS.map(({ label, icon: Icon, href }) => (
                 <a
                   key={label}
                   href={href}
@@ -135,15 +169,11 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Legal links grid */}
+          {/* Legal links */}
           <div className="grid grid-cols-4 gap-x-6 gap-y-2 px-px pb-6 font-normal text-muted-foreground text-sm max-lg:grid-cols-3 max-md:grid-cols-2">
-            <Link className="transition-colors duration-150 hover:text-foreground" to="/legal">Legal</Link>
-            <Link className="transition-colors duration-150 hover:text-foreground" to="/legal/privacy">Privacy Policy</Link>
-            <Link className="transition-colors duration-150 hover:text-foreground" to="/legal/cookies">Cookie Policy</Link>
-            <Link className="transition-colors duration-150 hover:text-foreground" to="/legal/accessibility">Accessibility</Link>
-            <Link className="transition-colors duration-150 hover:text-foreground" to="/legal/terms">Terms &amp; Conditions</Link>
-            <Link className="transition-colors duration-150 hover:text-foreground" to="/legal/llms">LLMs</Link>
-            <Link className="transition-colors duration-150 hover:text-foreground" to="/settings">Settings</Link>
+            {LEGAL_LINKS.map(({ label, to }) => (
+              <Link key={to} className="transition-colors duration-150 hover:text-foreground" to={to}>{label}</Link>
+            ))}
           </div>
 
           {/* Copyright */}

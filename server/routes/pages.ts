@@ -15,7 +15,7 @@ router.get('/:slug', localeMiddleware, async (req, res) => {
 
   const translation = await Translation.findOne({
     locale: req.locale,
-    collection: 'pages',
+    collectionName: 'pages',
     documentId: page._id.toString(),
   })
   res.json(applyTranslation(page.toJSON(), translation))
@@ -28,7 +28,7 @@ router.get('/:slug/prompt-phrases', localeMiddleware, async (req, res) => {
 
   const translation = await Translation.findOne({
     locale: req.locale,
-    collection: 'pages',
+    collectionName: 'pages',
     documentId: page._id.toString(),
   })
   const merged = applyTranslation(page.toJSON(), translation)

@@ -3,7 +3,7 @@ import mongoose, { Schema, type Document } from 'mongoose'
 export interface IFooterLink {
   label: string
   href: string
-  isNew?: boolean
+  isNewBadge?: boolean
   isExternal?: boolean
 }
 
@@ -27,7 +27,7 @@ export interface IFooter extends Document {
 const FooterLinkSchema = new Schema<IFooterLink>({
   label: { type: String, required: true },
   href: { type: String, required: true },
-  isNew: Boolean,
+  isNewBadge: Boolean,
   isExternal: Boolean,
 }, { _id: false })
 

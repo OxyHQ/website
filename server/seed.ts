@@ -108,7 +108,7 @@ async function seed() {
       {
         title: 'Platform',
         links: [
-          { label: 'Refer a team', href: '#', isNew: true },
+          { label: 'Refer a team', href: '#', isNewBadge: true },
           { label: 'Changelog', href: '/changelog' },
           { label: 'iOS app', href: '#', isExternal: true },
           { label: 'Android app', href: '#', isExternal: true },
@@ -126,7 +126,7 @@ async function seed() {
           { label: 'Community Guidelines', href: '#' },
           { label: 'Manifesto', href: '#' },
           { label: 'Newsroom', href: '/newsroom' },
-          { label: 'Engineering blog', href: '/company/news', isNew: true },
+          { label: 'Engineering blog', href: '/company/news', isNewBadge: true },
           { label: 'Become a partner', href: '/partners' },
         ],
       },
