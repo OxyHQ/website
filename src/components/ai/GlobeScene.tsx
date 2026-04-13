@@ -91,9 +91,13 @@ export default function GlobeScene({ className }: { className?: string }) {
     <div ref={wrapperRef} className={`text-foreground ${className ?? ''}`}>
       <Canvas
         camera={{ position: [0, 0, 4.5], fov: 45 }}
-        dpr={[1, 2]}
-        gl={{ antialias: true, alpha: true }}
+        dpr={[1, 1.5]}
+        gl={{ antialias: true, alpha: true, powerPreference: 'low-power' }}
         style={{ touchAction: 'none', cursor: 'auto' }}
+        onCreated={({ gl }) => {
+          const canvas = gl.domElement
+          canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault() })
+        }}
       >
         <ambientLight intensity={0.5} />
         <Globe color={dotColor} />

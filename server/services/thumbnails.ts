@@ -1,4 +1,3 @@
-import sharp from 'sharp'
 import { uploadToSpaces } from './s3.js'
 
 interface ThumbnailResult {
@@ -6,6 +5,8 @@ interface ThumbnailResult {
   height?: number
   thumbnails: { sm: string; md: string; lg: string }
 }
+
+const EMPTY_THUMBS: ThumbnailResult = { thumbnails: { sm: '', md: '', lg: '' } }
 
 const SIZES = [
   { name: 'sm' as const, width: 200 },
@@ -15,8 +16,7 @@ const SIZES = [
 
 /**
  * Detect image dimensions and generate thumbnail variants.
- * Returns the original dimensions + CDN URLs for each thumbnail size.
- * For non-image files, returns empty thumbnails.
+ * Falls back gracefully if sharp is unavailable (e.g. missing native bindings).
  */
 export async function processImage(
   buffer: Buffer,
@@ -24,39 +24,48 @@ export async function processImage(
   mimeType: string,
   folder: string,
 ): Promise<ThumbnailResult> {
-  const isImage = mimeType.startsWith('image/')
-  if (!isImage) return { thumbnails: { sm: '', md: '', lg: '' } }
+  if (!mimeType.startsWith('image/')) return EMPTY_THUMBS
 
-  // Detect dimensions
-  const metadata = await sharp(buffer).metadata()
-  const width = metadata.width
-  const height = metadata.height
-
-  // Generate thumbnails
-  const thumbs: Record<string, string> = {}
-  for (const size of SIZES) {
-    // Skip if original is smaller than target
-    if (width && width <= size.width) {
-      thumbs[size.name] = '' // will fall back to original
-      continue
-    }
-
-    const resized = await sharp(buffer)
-      .resize(size.width, undefined, { fit: 'inside', withoutEnlargement: true })
-      .jpeg({ quality: 80, progressive: true })
-      .toBuffer()
-
-    const thumbName = originalName.replace(/\.[^.]+$/, `-${size.name}.jpg`)
-    thumbs[size.name] = await uploadToSpaces(resized, thumbName, 'image/jpeg', `${folder}/thumbs`)
+  let sharp: typeof import('sharp') | null = null
+  try {
+    sharp = (await import('sharp')).default
+  } catch {
+    console.warn('sharp not available, skipping thumbnail generation')
+    return EMPTY_THUMBS
   }
 
-  return {
-    width,
-    height,
-    thumbnails: {
-      sm: thumbs.sm || '',
-      md: thumbs.md || '',
-      lg: thumbs.lg || '',
-    },
+  try {
+    const metadata = await sharp(buffer).metadata()
+    const width = metadata.width
+    const height = metadata.height
+
+    const thumbs: Record<string, string> = {}
+    for (const size of SIZES) {
+      if (width && width <= size.width) {
+        thumbs[size.name] = ''
+        continue
+      }
+
+      const resized = await sharp(buffer)
+        .resize(size.width, undefined, { fit: 'inside', withoutEnlargement: true })
+        .jpeg({ quality: 80, progressive: true })
+        .toBuffer()
+
+      const thumbName = originalName.replace(/\.[^.]+$/, `-${size.name}.jpg`)
+      thumbs[size.name] = await uploadToSpaces(resized, thumbName, 'image/jpeg', `${folder}/thumbs`)
+    }
+
+    return {
+      width,
+      height,
+      thumbnails: {
+        sm: thumbs.sm || '',
+        md: thumbs.md || '',
+        lg: thumbs.lg || '',
+      },
+    }
+  } catch (err) {
+    console.warn('Thumbnail generation failed:', err)
+    return EMPTY_THUMBS
   }
 }
