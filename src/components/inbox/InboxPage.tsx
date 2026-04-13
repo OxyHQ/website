@@ -1,29 +1,29 @@
 import { useState, useEffect, useRef } from 'react'
-import { aiHero, aiDemoTabs, aiFeatureCards } from '../../data/ai'
+import { inboxHero, inboxDemoTabs, inboxFeatureCards } from '../../data/inbox'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 import AnimatedLineGrid from './AnimatedLineGrid'
 
 /* ───────────────────────── Tab Videos Map ───────────────────────── */
 
 const tabVideos: Record<number, string> = {
-  0: '/ai/morning-briefing-start.mp4',
-  1: '/ai/catch-up.mp4',
+  0: '/ai/managed-inbox.mp4',
+  1: '/ai/morning-briefing-start.mp4',
   2: '/ai/todo.mp4',
-  3: '/ai/todo-assign-ai.mp4',
-  4: '/ai/managed-inbox.mp4',
-  5: '/ai/meeting.mp4',
+  3: '/ai/catch-up.mp4',
+  4: '/ai/morning-briefing-results.mp4',
+  5: '/ai/todo-assign-ai.mp4',
   6: '/ai/evening-briefing.mp4',
 }
 
 // Per-section background gradients (from, via, to)
 const sectionGradients: Record<number, [string, string, string]> = {
-  0: ['#4867AF', '#9CAFB8', '#C49577'], // Morning Briefing — blue/teal/warm
-  1: ['#3D5A8F', '#7A9BA8', '#B8926E'], // Catch Up — deeper blue
-  2: ['#5C4B8A', '#9B8FBB', '#C4A088'], // Action Plan — purple tint
-  3: ['#2D4A6F', '#6B8FA0', '#A08B70'], // Deep Work — deep navy
-  4: ['#4A6B8A', '#8BAAB8', '#C4A577'], // Inbox — steel blue
-  5: ['#3B5E7A', '#7FA0B0', '#B89870'], // Meeting Prep — muted blue
-  6: ['#2E3D5F', '#6A7D90', '#9B8565'], // Daily Recap — evening warm
+  0: ['#4867AF', '#9CAFB8', '#C49577'], // Unified Inbox — blue/teal/warm
+  1: ['#3D5A8F', '#7A9BA8', '#B8926E'], // Smart Triage — deeper blue
+  2: ['#5C4B8A', '#9B8FBB', '#C4A088'], // Quick Replies — purple tint
+  3: ['#2D4A6F', '#6B8FA0', '#A08B70'], // Threads — deep navy
+  4: ['#4A6B8A', '#8BAAB8', '#C4A577'], // Universal Search — steel blue
+  5: ['#3B5E7A', '#7FA0B0', '#B89870'], // Filters & Labels — muted blue
+  6: ['#2E3D5F', '#6A7D90', '#9B8565'], // End-to-End Encryption — evening warm
 }
 
 /* ───────────────────────── Placeholder Mockup ───────────────────────── */
@@ -132,7 +132,7 @@ function FrostButton({
 
 /* ───────────────────────── Main Page ───────────────────────── */
 
-export default function AIPage() {
+export default function InboxPage() {
   const [activeTab, setActiveTab] = useState(0)
   const sectionRefs = useRef<(HTMLElement | null)[]>([])
   const ctaRef = useScrollReveal()
@@ -260,16 +260,16 @@ export default function AIPage() {
             <div className="mx-auto max-w-lg lg:mx-0 lg:flex lg:w-[32rem] lg:max-w-none lg:flex-col px-8 sm:px-0 lg:px-4">
               <div className="pb-8 pt-16 lg:flex lg:h-full lg:flex-col lg:pr-10">
                 {/* Badge */}
-                <h6 className="text-lg font-medium text-white">{aiHero.badge}</h6>
+                <h6 className="text-lg font-medium text-white">{inboxHero.badge}</h6>
 
                 {/* Title */}
                 <h1 className="font-geist mt-4 max-w-80 text-4xl font-medium text-white sm:max-w-none sm:text-[42px] lg:text-5xl leading-[1.1]">
-                  {aiHero.title}
+                  {inboxHero.title}
                 </h1>
 
                 {/* Feature list with icons */}
                 <div className="mt-6 flex flex-col gap-3">
-                  {aiHero.features.map((f) => {
+                  {inboxHero.features.map((f) => {
                     const Icon = iconMap[f.icon] ?? SparkleIcon
                     return (
                       <div key={f.text} className="flex items-start gap-2">
@@ -291,10 +291,10 @@ export default function AIPage() {
                 {/* Demo navigation tabs (desktop only) */}
                 <div className="mt-auto max-lg:hidden">
                   <h6 className="heading-md mb-4 text-[18px] font-bold text-white">
-                    What Oxy AI handles for you
+                    What Oxy Inbox brings together
                   </h6>
                   <ul className="flex flex-col items-start max-h-80 overflow-y-auto hide-scrollbar">
-                    {aiDemoTabs.map((tab, i) => (
+                    {inboxDemoTabs.map((tab, i) => (
                       <li key={tab.label} className="w-full">
                         <button
                           type="button"
@@ -355,7 +355,7 @@ export default function AIPage() {
             />
             <div className="ml-5 w-[calc(100%-20px)] pt-8 relative">
               <p className="text-sm pl-5 font-bold uppercase tracking-wide text-white/50 mix-blend-plus-lighter">
-                {`Budapest - 08:00 - ${aiDemoTabs[activeTab]?.label ?? 'Morning Briefing'}`}
+                {`Budapest - 08:00 - ${inboxDemoTabs[activeTab]?.label ?? 'Unified Inbox'}`}
               </p>
               {/* Gradient line with dot */}
               <div
@@ -377,7 +377,7 @@ export default function AIPage() {
           {/* Sticky section header — mobile */}
           <div className="ml-5 w-[calc(100%-20px)] pt-8 block lg:hidden sticky top-[var(--site-header-height,64px)] z-50 bg-transparent backdrop-blur-md">
             <p className="text-sm pl-5 font-bold uppercase tracking-wide text-white/50 mix-blend-plus-lighter">
-              {`Budapest - 08:00 - ${aiDemoTabs[activeTab]?.label ?? 'Morning Briefing'}`}
+              {`Budapest - 08:00 - ${inboxDemoTabs[activeTab]?.label ?? 'Unified Inbox'}`}
             </p>
             <div
               className="relative mt-4 h-[0.5px] w-full"
@@ -393,7 +393,7 @@ export default function AIPage() {
           </div>
 
           {/* All demo sections */}
-          {aiDemoTabs.map((tab, i) => (
+          {inboxDemoTabs.map((tab, i) => (
             <div
               key={tab.label}
               id={`demo-${tab.label.toLowerCase().replace(/\s+/g, '-')}`}
@@ -426,7 +426,7 @@ export default function AIPage() {
         </div>
       </div>
 
-      {/* ── 2. "Your smartest coworker starts today" CTA ── */}
+      {/* ── 2. "One inbox. Every channel. Starts today" CTA ── */}
       <div ref={ctaRef} className="relative z-10 snap-start rounded-t-[40px] bg-background divide-y divide-border">
         <div className="relative h-full w-full p-3 sm:p-5 md:p-7">
           <div className="relative overflow-hidden w-full rounded-t-[24px] flex flex-col items-center justify-center gap-4 px-4 pt-12">
@@ -438,10 +438,10 @@ export default function AIPage() {
               <div className="flex flex-col gap-3">
                 <h5 className="scroll-reveal heading-md uppercase tracking-widest text-primary-foreground/50">Get Started</h5>
                 <h2 className="scroll-reveal heading-3xl text-[40px] font-medium text-primary-foreground sm:text-[50px] sm:leading-[56px]" style={{ transitionDelay: '100ms' }}>
-                  Your smartest coworker starts today.
+                  One inbox. Every channel. Starts today.
                 </h2>
                 <p className="scroll-reveal body-md px-4 text-[18px] leading-6 text-primary-foreground/50" style={{ transitionDelay: '200ms' }}>
-                  Connect your tools. Oxy AI starts working in under a minute.
+                  Connect your accounts. Oxy Inbox unifies them in under a minute.
                 </p>
               </div>
               <div className="scroll-reveal" style={{ transitionDelay: '300ms' }}>
@@ -463,7 +463,7 @@ export default function AIPage() {
         </div>
       </div>
 
-      {/* ── 3. "Built for real work" — Section IS the scroll container ── */}
+      {/* ── 3. "Built for messages that matter" — Section IS the scroll container ── */}
       <div
         ref={featuresRef}
         id="features"
@@ -473,7 +473,7 @@ export default function AIPage() {
           {/* Left: heading + CTA (scrolls with cards) */}
           <div className="flex shrink-0 flex-col gap-2 py-8 pr-10 w-72 sm:w-80 md:w-[280px]">
             <h2 className="scroll-reveal text-5xl font-medium text-foreground">
-              Built for real work.
+              Built for messages that matter.
             </h2>
             <div className="scroll-reveal mt-6" style={{ transitionDelay: '100ms' }}>
               <FrostButton className="w-fit gap-1.5 px-3 py-2 text-sm font-medium" href="#">
@@ -484,7 +484,7 @@ export default function AIPage() {
           </div>
 
           {/* Cards */}
-          {aiFeatureCards.map((card, i) => (
+          {inboxFeatureCards.map((card, i) => (
             <div
               key={card.title}
               className="scroll-reveal relative overflow-hidden p-8 h-[400px] md:h-[520px] w-full md:w-96 md:shrink-0 rounded-[32px] flex flex-col gap-1"

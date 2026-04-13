@@ -28,7 +28,7 @@ const TNPPage = lazy(() => import('./pages/TNPPage'))
 const TNPInstallPage = lazy(() => import('./pages/TNPInstallPage'))
 const CareerDetailPage = lazy(() => import('./pages/CareerDetailPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
-const AIPage = lazy(() => import('./pages/AIPage'))
+const InboxPage = lazy(() => import('./pages/InboxPage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const InitiativePage = lazy(() => import('./pages/InitiativePage'))
 const AIPricingPage = lazy(() => import('./pages/AIPricingPage'))
@@ -99,7 +99,7 @@ function PublicRoutes() {
       <Route path="company/news" element={<BlogPage />} />
       <Route path="codea" element={<CodeaPage />} />
       <Route path="codea/extension" element={<CodexExtensionPage />} />
-      <Route path="ai" element={<AIPage />} />
+      <Route path="inbox" element={<InboxPage />} />
       <Route path="ai/pricing" element={<AIPricingPage />} />
       <Route path="dashboard" element={<DashboardPage />} />
       <Route path="initiative" element={<InitiativePage />} />

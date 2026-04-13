@@ -25,10 +25,10 @@ export const bentoCards: BentoCard[] = [
     href: '/codea',
   },
   {
-    title: 'Deploy AI agents',
-    description: 'Search and create with Ask Oxy, connect your stack with MCP, or put agents to work on complex tasks.',
-    cta: 'Explore AI',
-    href: '/ai',
+    title: 'All your messages',
+    description: 'Oxy Inbox unifies email, chat, and federated messages in one calm place. Smart triage surfaces what matters.',
+    cta: 'Explore Inbox',
+    href: '/inbox',
   },
   {
     title: 'Connect your data',
