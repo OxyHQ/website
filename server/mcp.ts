@@ -20,8 +20,11 @@ import { McpToken } from './models/McpToken.js'
 import { Locale } from './models/Locale.js'
 import { Translation } from './models/Translation.js'
 import TrackedRepo from './models/TrackedRepo.js'
+import { TeamMember } from './models/TeamMember.js'
+import { Media } from './models/Media.js'
 import { syncAllRepos, syncSingleRepo } from './services/githubSync.js'
-import { uploadToSpaces } from './services/s3.js'
+import { deleteFromSpaces, uploadToSpaces } from './services/s3.js'
+import { processImage } from './services/thumbnails.js'
 
 function createMcpServer() {
   const server = new McpServer({
@@ -188,7 +191,7 @@ server.tool('list_posts', 'List newsroom posts with optional filtering by catego
     const skip = (page - 1) * limit
 
     const [posts, total] = await Promise.all([
-      NewsroomPost.find(filter).sort('-publishedAt').skip(skip).limit(limit),
+      NewsroomPost.find(filter).populate('coverImage ogImage').sort('-publishedAt').skip(skip).limit(limit),
       NewsroomPost.countDocuments(filter),
     ])
     return ok({ posts, total, page, pages: Math.ceil(total / limit) })
@@ -199,7 +202,7 @@ server.tool('get_post', 'Get a single newsroom post by its URL slug. Returns ful
   slug: z.string().describe('The URL slug of the post'),
 }, async ({ slug }) => {
   try {
-    const post = await NewsroomPost.findOne({ slug })
+    const post = await NewsroomPost.findOne({ slug }).populate('coverImage ogImage')
     if (!post) return err('Post not found')
     return ok(post)
   } catch (e) { return err(e) }
@@ -215,7 +218,7 @@ server.tool('create_post', 'Create a new newsroom post. If slug is not provided,
   resume: z.string().optional().describe('Short summary for cards/listings (1-2 sentences)'),
   description: z.string().optional().describe('Longer description of the post'),
   content: z.string().optional().describe('Full post body in Markdown'),
-  coverImage: z.string().optional().describe('URL for cover/hero image'),
+  coverImage: z.string().optional().describe('Media document ID for the cover/hero image'),
   imageAlt: z.string().optional().describe('Alt text for the cover image'),
   tags: z.array(z.string()).optional().describe('Tags for categorization, e.g. ["ai", "product-update"]'),
   categories: z.array(z.string()).optional().describe('Post categories. Common: Company, Research, Product, Safety, Engineering, Security'),
@@ -226,7 +229,7 @@ server.tool('create_post', 'Create a new newsroom post. If slug is not provided,
   status: z.enum(['draft', 'published']).optional().describe('Publication status. Defaults to published.'),
   oxyUserId: z.string().optional().describe('Oxy user ID of the author'),
   metaTitle: z.string().optional().describe('SEO title override. Falls back to post title if not set.'),
-  ogImage: z.string().optional().describe('Open Graph image URL. Falls back to coverImage if not set.'),
+  ogImage: z.string().optional().describe('Media document ID for the Open Graph image. Falls back to coverImage if not set.'),
   publishedAt: z.string().optional().describe('Publication date as ISO string (e.g. "2026-03-20"). Defaults to now.'),
 }, async (params) => {
   try {
@@ -253,7 +256,7 @@ server.tool('update_post', 'Update an existing newsroom post by slug. Only the f
   resume: z.string().optional().describe('Short summary for cards/listings (1-2 sentences)'),
   description: z.string().optional().describe('Longer description of the post'),
   content: z.string().optional().describe('Full post body in Markdown'),
-  coverImage: z.string().optional().describe('URL for cover/hero image'),
+  coverImage: z.string().optional().describe('Media document ID for the cover/hero image'),
   imageAlt: z.string().optional().describe('Alt text for the cover image'),
   tags: z.array(z.string()).optional().describe('Tags for categorization'),
   categories: z.array(z.string()).optional().describe('Post categories'),
@@ -264,7 +267,7 @@ server.tool('update_post', 'Update an existing newsroom post by slug. Only the f
   status: z.enum(['draft', 'published']).optional().describe('Publication status'),
   oxyUserId: z.string().optional().describe('Oxy user ID of the author'),
   metaTitle: z.string().optional().describe('SEO title override'),
-  ogImage: z.string().optional().describe('Open Graph image URL'),
+  ogImage: z.string().optional().describe('Media document ID for the Open Graph image'),
   publishedAt: z.string().optional().describe('Publication date as ISO string'),
 }, async ({ slug, newSlug, ...updates }) => {
   try {
@@ -382,7 +385,7 @@ server.tool('list_changelog', 'List changelog entries with optional repo filter,
       filter.$or = [{ title: regex }, { content: regex }]
     }
     const [entries, total] = await Promise.all([
-      ChangelogEntry.find(filter).sort('-date').skip((page - 1) * limit).limit(limit),
+      ChangelogEntry.find(filter).populate('media').sort('-date').skip((page - 1) * limit).limit(limit),
       ChangelogEntry.countDocuments(filter),
     ])
     return ok({ entries, total, page, pages: Math.ceil(total / limit) })
@@ -395,7 +398,7 @@ server.tool('create_changelog_entry', 'Create a new manual changelog entry.', {
   tags: z.array(z.string()).optional().describe('Tags like ["Feature", "Enhancement", "Fix", "Design"]'),
   date: z.string().describe('Entry date as ISO string, e.g. "2026-03-20"'),
   items: z.array(z.string()).optional().describe('Bullet-point items for the entry'),
-  media: z.string().optional().describe('URL for an image or video to display with the entry'),
+  media: z.string().optional().describe('Media document ID for an image or video to display with the entry'),
 }, async (params) => {
   try {
     const entry = await ChangelogEntry.create({ ...params, date: new Date(params.date) })
@@ -410,7 +413,7 @@ server.tool('update_changelog_entry', 'Update a changelog entry by ID. Only prov
   tags: z.array(z.string()).optional().describe('Tags for the entry'),
   date: z.string().optional().describe('Entry date as ISO string'),
   items: z.array(z.string()).optional().describe('Bullet-point items'),
-  media: z.string().optional().describe('Media URL'),
+  media: z.string().optional().describe('Media document ID for an image or video'),
 }, async ({ id, ...updates }) => {
   try {
     if (updates.date) (updates as any).date = new Date(updates.date)
@@ -556,6 +559,149 @@ server.tool('delete_job', 'Permanently delete a job listing by slug.', {
     const job = await Job.findOneAndDelete({ slug })
     if (!job) return err('Job not found')
     return ok({ deleted: true, slug })
+  } catch (e) { return err(e) }
+})
+
+// ── Team Members ────────────────────────────────────────────────────────────
+
+server.tool('list_team_members', 'List team members. Returns active members by default.', {
+  active: z.boolean().optional().describe('Filter by active status. Defaults to true.'),
+}, async (params) => {
+  try {
+    const filter: Record<string, unknown> = {}
+    if (params.active !== false) filter.active = true
+    const members = await TeamMember.find(filter).populate('avatar').sort('order name')
+    return ok(members)
+  } catch (e) { return err(e) }
+})
+
+server.tool('get_team_member', 'Get a team member by slug.', {
+  slug: z.string().describe('The URL slug of the team member'),
+}, async ({ slug }) => {
+  try {
+    const member = await TeamMember.findOne({ slug }).populate('avatar')
+    if (!member) return err('Team member not found')
+    return ok(member)
+  } catch (e) { return err(e) }
+})
+
+server.tool('create_team_member', 'Create a new team member.', {
+  name: z.string().describe('Full name'),
+  slug: z.string().optional().describe('URL slug. Auto-generated from name if omitted.'),
+  role: z.string().describe('Job title/role'),
+  department: z.string().optional().describe('Department, e.g. "Engineering", "Design"'),
+  bio: z.string().optional().describe('Short biography'),
+  avatar: z.string().optional().describe('Media document ID for the avatar image'),
+  order: z.number().optional().describe('Display order (lower = first)'),
+  active: z.boolean().optional().describe('Whether this member is shown. Defaults to true.'),
+  socials: z.object({
+    linkedin: z.string().optional(),
+    twitter: z.string().optional(),
+    github: z.string().optional(),
+    website: z.string().optional(),
+  }).optional().describe('Social media links'),
+}, async (params) => {
+  try {
+    const member = await TeamMember.create(params)
+    return ok(member)
+  } catch (e) { return err(e) }
+})
+
+server.tool('update_team_member', 'Update a team member by slug.', {
+  slug: z.string().describe('Current slug of the member to update'),
+  name: z.string().optional(),
+  role: z.string().optional(),
+  department: z.string().optional(),
+  bio: z.string().optional(),
+  avatar: z.string().optional().describe('Media document ID'),
+  order: z.number().optional(),
+  active: z.boolean().optional(),
+  socials: z.object({
+    linkedin: z.string().optional(),
+    twitter: z.string().optional(),
+    github: z.string().optional(),
+    website: z.string().optional(),
+  }).optional(),
+}, async ({ slug, ...updates }) => {
+  try {
+    const member = await TeamMember.findOneAndUpdate({ slug }, updates, { new: true })
+    if (!member) return err('Team member not found')
+    return ok(member)
+  } catch (e) { return err(e) }
+})
+
+server.tool('delete_team_member', 'Delete a team member by slug.', {
+  slug: z.string().describe('The slug of the team member to delete'),
+}, async ({ slug }) => {
+  try {
+    const member = await TeamMember.findOneAndDelete({ slug })
+    if (!member) return err('Team member not found')
+    return ok({ deleted: true, slug })
+  } catch (e) { return err(e) }
+})
+
+// ── Media ───────────────────────────────────────────────────────────────────
+
+server.tool('list_media', 'List media files with optional search and type filter. Returns paginated results.', {
+  search: z.string().optional().describe('Search by filename or alt text'),
+  type: z.enum(['image', 'video', 'document']).optional().describe('Filter by MIME type category'),
+  tag: z.string().optional().describe('Filter by tag'),
+  folder: z.string().optional().describe('Filter by folder'),
+  limit: z.number().optional().describe('Results per page (default 20)'),
+  page: z.number().optional().describe('Page number (default 1)'),
+}, async (params) => {
+  try {
+    const filter: Record<string, unknown> = {}
+    if (params.search) filter.$text = { $search: params.search }
+    if (params.type === 'image') filter.mimeType = { $regex: /^image\// }
+    else if (params.type === 'video') filter.mimeType = { $regex: /^video\// }
+    else if (params.type === 'document') filter.mimeType = { $nin: [/^image\//, /^video\//] }
+    if (params.tag) filter.tags = params.tag
+    if (params.folder) filter.folder = params.folder
+
+    const limit = params.limit ?? 20
+    const page = params.page ?? 1
+    const [items, total] = await Promise.all([
+      Media.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
+      Media.countDocuments(filter),
+    ])
+    return ok({ items, total, page, pages: Math.ceil(total / limit) })
+  } catch (e) { return err(e) }
+})
+
+server.tool('get_media', 'Get a single media item by ID.', {
+  id: z.string().describe('The _id of the media item'),
+}, async ({ id }) => {
+  try {
+    const media = await Media.findById(id)
+    if (!media) return err('Media not found')
+    return ok(media)
+  } catch (e) { return err(e) }
+})
+
+server.tool('update_media', 'Update media metadata (alt text, tags, folder).', {
+  id: z.string().describe('The _id of the media item'),
+  alt: z.string().optional().describe('Alt text for the image'),
+  tags: z.array(z.string()).optional().describe('Tags for organization'),
+  folder: z.string().optional().describe('Logical folder name'),
+}, async ({ id, ...updates }) => {
+  try {
+    const media = await Media.findByIdAndUpdate(id, updates, { new: true })
+    if (!media) return err('Media not found')
+    return ok(media)
+  } catch (e) { return err(e) }
+})
+
+server.tool('delete_media', 'Delete a media item from S3 and the database.', {
+  id: z.string().describe('The _id of the media item to delete'),
+}, async ({ id }) => {
+  try {
+    const media = await Media.findById(id)
+    if (!media) return err('Media not found')
+    const keys = [media.key, ...[media.thumbnails?.sm, media.thumbnails?.md, media.thumbnails?.lg].filter(Boolean).map(u => { try { return new URL(u!).pathname.slice(1) } catch { return '' } }).filter(Boolean)]
+    await Promise.allSettled(keys.map(k => deleteFromSpaces(k)))
+    await media.deleteOne()
+    return ok({ deleted: true, id })
   } catch (e) { return err(e) }
 })
 
@@ -739,10 +885,12 @@ server.tool('revoke_mcp_token', 'Revoke an MCP API token. The token will immedia
 
 // ── Upload ──────────────────────────────────────────────────────────────────
 
-server.tool('upload_image', 'Download an image from a URL and upload it to DigitalOcean Spaces. Returns the public CDN URL.', {
+server.tool('upload_image', 'Download an image from a URL, upload it to S3, generate thumbnails, and create a Media document. Returns the full Media object.', {
   url: z.string().describe('Source URL of the image to download'),
-  filename: z.string().optional().describe('Desired filename (without path). Auto-derived from URL if omitted.'),
-  folder: z.string().optional().describe('Subfolder within oxy-website/ on Spaces (e.g. "newsroom"). Defaults to "images".'),
+  filename: z.string().optional().describe('Desired filename. Auto-derived from URL if omitted.'),
+  folder: z.string().optional().describe('Subfolder within oxy-website/ (e.g. "newsroom"). Defaults to "images".'),
+  alt: z.string().optional().describe('Alt text for the image'),
+  tags: z.array(z.string()).optional().describe('Tags for organization'),
 }, async (params) => {
   try {
     const resp = await fetch(params.url)
@@ -751,8 +899,33 @@ server.tool('upload_image', 'Download an image from a URL and upload it to Digit
     const contentType = resp.headers.get('content-type') || 'application/octet-stream'
     const filename = params.filename || new URL(params.url).pathname.split('/').pop() || 'image'
     const subfolder = params.folder || 'images'
-    const cdnUrl = await uploadToSpaces(buffer, filename, contentType, `oxy-website/${subfolder}`)
-    return ok({ url: cdnUrl, size: buffer.length, contentType })
+    const folder = `oxy-website/${subfolder}`
+
+    const cdnUrl = await uploadToSpaces(buffer, filename, contentType, folder)
+    const key = new URL(cdnUrl).pathname.slice(1)
+
+    let width: number | undefined
+    let height: number | undefined
+    let thumbnails = { sm: '', md: '', lg: '' }
+    try {
+      const result = await processImage(buffer, filename, contentType, folder)
+      width = result.width
+      height = result.height
+      thumbnails = result.thumbnails
+    } catch (e) {
+      // Thumbnail generation is optional
+    }
+
+    const media = await Media.create({
+      url: cdnUrl, thumbnails, filename, key,
+      mimeType: contentType, size: buffer.length,
+      width, height,
+      alt: params.alt || '',
+      tags: params.tags || [],
+      folder: subfolder,
+      uploadedBy: 'mcp',
+    })
+    return ok(media)
   } catch (e) { return err(e) }
 })
 
