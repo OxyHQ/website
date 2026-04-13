@@ -147,8 +147,18 @@ export default function CompanyPage() {
           </div>
         </section>
 
-        {/* ═══ Testimonials (full-bleed carousel — intentionally breaks border flow) ═══ */}
+        {/* ═══ Testimonials (from CMS) — full-bleed carousel, borders resume after ═══ */}
+        <section className="container">
+          <div className="border-border border-x">
+            <DashedHLine />
+          </div>
+        </section>
         <TestimonialsSection />
+        <section className="container">
+          <div className="border-border border-x">
+            <DashedHLine />
+          </div>
+        </section>
 
         {/* ═══ Latest News ═══ */}
         {articles.length > 0 && (

@@ -82,37 +82,45 @@ export default function ChangelogContent() {
       </section>
 
       {/* Separator */}
-      <svg width="100%" height="1" className="w-full text-border">
-        <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-      </svg>
+      <div className="container">
+        <div className="border-x border-border">
+          <svg width="100%" height="1" className="w-full text-border">
+            <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
+          </svg>
+        </div>
+      </div>
 
       {/* Repo filter bar */}
       {repos && repos.length > 0 && (
         <div className="container">
-          <div className="flex flex-wrap gap-2 py-6 border-b border-subtle-stroke">
-            <button
-              onClick={() => { setSelectedRepo(undefined); setCurrentPage(1) }}
-              className={`inline-flex items-center rounded-[10px] px-3 py-1.5 text-sm transition-colors ${
-                !selectedRepo
-                  ? 'bg-primary-foreground text-primary-background'
-                  : 'text-tertiary-foreground hover:text-secondary-foreground border border-subtle-stroke'
-              }`}
-            >
-              All
-            </button>
-            {repos.map((r) => (
-              <button
-                key={`${r.owner}/${r.repo}`}
-                onClick={() => { setSelectedRepo(`${r.owner}/${r.repo}`); setCurrentPage(1) }}
-                className={`inline-flex items-center rounded-[10px] px-3 py-1.5 text-sm transition-colors ${
-                  selectedRepo === `${r.owner}/${r.repo}`
-                    ? 'bg-primary-foreground text-primary-background'
-                    : 'text-tertiary-foreground hover:text-secondary-foreground border border-subtle-stroke'
-                }`}
-              >
-                {r.displayName}
-              </button>
-            ))}
+          <div className="border-x border-border">
+            <div className="grid grid-cols-12">
+              <div className="col-[2/-2] flex flex-wrap gap-2 py-6">
+                <button
+                  onClick={() => { setSelectedRepo(undefined); setCurrentPage(1) }}
+                  className={`inline-flex items-center rounded-[10px] px-3 py-1.5 text-sm transition-colors ${
+                    !selectedRepo
+                      ? 'bg-primary-foreground text-primary-background'
+                      : 'text-tertiary-foreground hover:text-secondary-foreground border border-subtle-stroke'
+                  }`}
+                >
+                  All
+                </button>
+                {repos.map((r) => (
+                  <button
+                    key={`${r.owner}/${r.repo}`}
+                    onClick={() => { setSelectedRepo(`${r.owner}/${r.repo}`); setCurrentPage(1) }}
+                    className={`inline-flex items-center rounded-[10px] px-3 py-1.5 text-sm transition-colors ${
+                      selectedRepo === `${r.owner}/${r.repo}`
+                        ? 'bg-primary-foreground text-primary-background'
+                        : 'text-tertiary-foreground hover:text-secondary-foreground border border-subtle-stroke'
+                    }`}
+                  >
+                    {r.displayName}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -235,24 +243,30 @@ export default function ChangelogContent() {
 
       {/* Pagination */}
       {data && data.pages > 1 && (
-        <div className="flex items-center justify-center gap-2 py-10">
-          <button
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage <= 1}
-            className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-secondary-foreground disabled:opacity-40"
-          >
-            Previous
-          </button>
-          <span className="text-sm text-tertiary-foreground">
-            Page {currentPage} of {data.pages}
-          </span>
-          <button
-            onClick={() => setCurrentPage(p => Math.min(data.pages, p + 1))}
-            disabled={currentPage >= data.pages}
-            className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-secondary-foreground disabled:opacity-40"
-          >
-            Next
-          </button>
+        <div className="container">
+          <div className="border-x border-border">
+            <div className="grid grid-cols-12">
+              <div className="col-[2/-2] flex items-center justify-center gap-2 py-10">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage <= 1}
+                  className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-secondary-foreground disabled:opacity-40"
+                >
+                  Previous
+                </button>
+                <span className="text-sm text-tertiary-foreground">
+                  Page {currentPage} of {data.pages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(data.pages, p + 1))}
+                  disabled={currentPage >= data.pages}
+                  className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-secondary-foreground disabled:opacity-40"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </>

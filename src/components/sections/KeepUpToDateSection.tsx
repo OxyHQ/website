@@ -67,7 +67,7 @@ function ArrowIcon() {
 
 export default function KeepUpToDateSection() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6">
+    <section className="container">
       <div className="border-x border-border">
         {/* Header */}
         <header className="grid grid-cols-12 justify-items-start pb-15 pt-40 max-xl:pb-16 max-xl:pt-30 max-lg:pb-15 max-lg:pt-25">
