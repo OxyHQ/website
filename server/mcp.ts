@@ -52,6 +52,45 @@ function err(e: unknown) {
 
 function registerTools(server: McpServer) {
 
+// ── Diagnostics ─────────────────────────────────────────────────────────────
+
+server.tool('debug_upload_test', 'Test each step of the upload pipeline and report what fails. Use this to diagnose upload_image failures.', {
+  url: z.string().describe('URL to test downloading'),
+}, async ({ url }) => {
+  const steps: string[] = []
+  try {
+    steps.push('1. Starting fetch...')
+    const resp = await fetch(url)
+    steps.push(`2. Fetch done: status=${resp.status}, content-type=${resp.headers.get('content-type')}`)
+    
+    const buffer = Buffer.from(await resp.arrayBuffer())
+    steps.push(`3. Buffer: ${buffer.length} bytes`)
+    
+    steps.push('4. Testing S3 upload...')
+    const cdnUrl = await uploadToSpaces(buffer, 'debug-test.jpg', 'image/jpeg', 'oxy-website/debug')
+    steps.push(`5. S3 upload OK: ${cdnUrl}`)
+    
+    steps.push('6. Testing Media.create...')
+    const media = await Media.create({
+      url: cdnUrl, thumbnails: { sm: '', md: '', lg: '' },
+      filename: 'debug-test.jpg', key: new URL(cdnUrl).pathname.slice(1),
+      mimeType: 'image/jpeg', size: buffer.length,
+      alt: '', tags: ['debug'], folder: 'debug', uploadedBy: 'mcp',
+    })
+    steps.push(`7. Media created: ${media._id}`)
+    
+    // Cleanup
+    await Media.findByIdAndDelete(media._id)
+    steps.push('8. Cleanup done')
+    
+    return ok({ success: true, steps })
+  } catch (e) {
+    const msg = e instanceof Error ? `${e.message}\n${e.stack}` : String(e)
+    steps.push(`FAILED: ${msg}`)
+    return ok({ success: false, steps })
+  }
+})
+
 // ── Pages ───────────────────────────────────────────────────────────────────
 
 server.tool('list_pages', 'List all page slugs', {}, async () => {
