@@ -297,7 +297,8 @@ export function useMedia(params?: { search?: string; type?: string; tag?: string
   return useQuery<{ items: MediaItem[]; total: number; page: number; pages: number }>({
     queryKey: ['media', qs],
     queryFn: () => apiFetch(`/media?${qs}`),
-    staleTime: 30_000,
+    staleTime: 60_000,
+    retry: false,
   })
 }
 
@@ -306,6 +307,7 @@ export function useMediaItem(id: string) {
     queryKey: ['media', id],
     queryFn: () => apiFetch(`/media/${id}`),
     enabled: !!id,
+    retry: false,
   })
 }
 
