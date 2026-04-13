@@ -13,6 +13,24 @@ const s3 = new S3Client({
   forcePathStyle: false,
 })
 
+const MIME_EXT: Record<string, string> = {
+  'image/jpeg': '.jpg',
+  'image/jpg': '.jpg',
+  'image/png': '.png',
+  'image/gif': '.gif',
+  'image/webp': '.webp',
+  'image/avif': '.avif',
+  'image/svg+xml': '.svg',
+  'image/bmp': '.bmp',
+  'image/tiff': '.tiff',
+  'image/x-icon': '.ico',
+}
+
+function extFromMime(contentType: string): string {
+  const base = contentType.split(';')[0].trim().toLowerCase()
+  return MIME_EXT[base] || ''
+}
+
 /**
  * Upload a buffer to DigitalOcean Spaces.
  * Returns the public CDN URL.
@@ -23,9 +41,11 @@ export async function uploadToSpaces(
   contentType: string,
   folder = 'oxy-website/images',
 ): Promise<string> {
-  const ext = path.extname(originalName) || '.bin'
+  const urlExt = path.extname(originalName)
+  const ext = urlExt || extFromMime(contentType) || '.bin'
   const hash = crypto.createHash('md5').update(buffer).digest('hex').slice(0, 8)
-  const safeName = path.basename(originalName, ext).replace(/[^a-z0-9_-]/gi, '-').slice(0, 60)
+  const baseName = urlExt ? path.basename(originalName, urlExt) : originalName
+  const safeName = (baseName.replace(/[^a-z0-9_-]/gi, '-').slice(0, 60)) || 'image'
   const key = `${folder}/${safeName}-${hash}${ext}`
 
   await s3.send(new PutObjectCommand({

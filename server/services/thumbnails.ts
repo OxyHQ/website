@@ -51,7 +51,8 @@ export async function processImage(
         .jpeg({ quality: 80, progressive: true })
         .toBuffer()
 
-      const thumbName = originalName.replace(/\.[^.]+$/, `-${size.name}.jpg`)
+      const base = originalName.replace(/\.[^.]+$/, '') || 'image'
+      const thumbName = `${base}-${size.name}.jpg`
       thumbs[size.name] = await uploadToSpaces(resized, thumbName, 'image/jpeg', `${folder}/thumbs`)
     }
 
