@@ -17,6 +17,15 @@ function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' })
 }
 
+/** Reusable dashed horizontal SVG line spanning the full border-x width */
+function DashedHLine() {
+  return (
+    <svg width="100%" height="1" className="text-border">
+      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 export default function CompanyPage() {
   const { data: newsData } = useNewsroomPosts({ featured: true, limit: 3 })
   const articles = newsData?.posts ?? []
@@ -53,6 +62,9 @@ export default function CompanyPage() {
                 </div>
               </div>
             </header>
+
+            {/* Dashed separator */}
+            <DashedHLine />
           </div>
         </section>
 
@@ -72,6 +84,9 @@ export default function CompanyPage() {
                 </div>
               </div>
             </div>
+
+            {/* Dashed separator */}
+            <DashedHLine />
           </div>
         </section>
 
@@ -81,15 +96,16 @@ export default function CompanyPage() {
             <div className="grid grid-cols-12">
               <div className="col-[2/-2] py-20 max-lg:py-16">
                 <div className="mx-auto max-w-3xl text-center">
-                  <h2 className="text-balance text-heading-responsive-sm">
-                    {companyMission.heading}
+                  <h2 className="text-pretty text-heading-responsive-sm">
+                    <span className="inline">{companyMission.heading}.</span>{' '}
+                    <span className="inline font-medium text-muted-foreground">{companyMission.description}</span>
                   </h2>
-                  <p className="mt-6 text-pretty text-lg leading-relaxed text-muted-foreground">
-                    {companyMission.description}
-                  </p>
                 </div>
               </div>
             </div>
+
+            {/* Dashed separator */}
+            <DashedHLine />
           </div>
         </section>
 
@@ -111,13 +127,13 @@ export default function CompanyPage() {
           </div>
         </section>
 
-        {/* ═══ Values (reused from Careers) ═══ */}
+        {/* ═══ Values (reused from Careers — has its own container + border-x) ═══ */}
         <ValuesSection />
 
-        {/* ═══ Team (reused from Careers) ═══ */}
+        {/* ═══ Team (reused from Careers — has its own container + border-x) ═══ */}
         <TeamSizeSection />
 
-        {/* ═══ AI for Research (reused from AI page) ═══ */}
+        {/* ═══ AI for Research ═══ */}
         <section className="container">
           <div className="border-border border-x">
             <div className="grid grid-cols-12">
@@ -125,10 +141,13 @@ export default function CompanyPage() {
                 <AIResearchSection />
               </div>
             </div>
+
+            {/* Dashed separator */}
+            <DashedHLine />
           </div>
         </section>
 
-        {/* ═══ Testimonials (from CMS) ═══ */}
+        {/* ═══ Testimonials (full-bleed carousel — intentionally breaks border flow) ═══ */}
         <TestimonialsSection />
 
         {/* ═══ Latest News ═══ */}
@@ -168,6 +187,9 @@ export default function CompanyPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Dashed separator */}
+              <DashedHLine />
             </div>
           </section>
         )}
@@ -196,6 +218,9 @@ export default function CompanyPage() {
                 </div>
               </div>
             </div>
+
+            {/* Dashed separator */}
+            <DashedHLine />
           </div>
         </section>
 
@@ -219,7 +244,7 @@ export default function CompanyPage() {
           </div>
         </section>
 
-        {/* ═══ Keep Up To Date (reused) ═══ */}
+        {/* ═══ Keep Up To Date (reused — has its own container + border-x) ═══ */}
         <KeepUpToDateSection />
       </main>
       <Footer />
