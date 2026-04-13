@@ -6,7 +6,7 @@ export interface INewsroomPost extends Document {
   resume: string
   description: string
   content: string
-  coverImage: Types.ObjectId | null
+  coverImage: Types.ObjectId
   imageAlt?: string
   oxyUserId?: string
   authorUsername?: string
@@ -30,7 +30,7 @@ const NewsroomPostSchema = new Schema<INewsroomPost>({
   resume: { type: String, default: '' },
   description: { type: String, default: '' },
   content: { type: String, default: '' },
-  coverImage: { type: Schema.Types.ObjectId, ref: 'Media', default: null },
+  coverImage: { type: Schema.Types.ObjectId, ref: 'Media', required: true },
   imageAlt: String,
   oxyUserId: String,
   authorUsername: String,

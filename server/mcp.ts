@@ -46,7 +46,8 @@ function ok(data: unknown) {
 }
 
 function err(e: unknown) {
-  return { content: [{ type: 'text' as const, text: String(e) }], isError: true as const }
+  const msg = e instanceof Error ? `${e.message}\n${e.stack}` : String(e)
+  return { content: [{ type: 'text' as const, text: msg }], isError: true as const }
 }
 
 function registerTools(server: McpServer) {
@@ -218,7 +219,7 @@ server.tool('create_post', 'Create a new newsroom post. If slug is not provided,
   resume: z.string().optional().describe('Short summary for cards/listings (1-2 sentences)'),
   description: z.string().optional().describe('Longer description of the post'),
   content: z.string().optional().describe('Full post body in Markdown'),
-  coverImage: z.string().optional().describe('Media document ID for the cover/hero image'),
+  coverImage: z.string().describe('Media document ID for the cover/hero image (required)'),
   imageAlt: z.string().optional().describe('Alt text for the cover image'),
   tags: z.array(z.string()).optional().describe('Tags for categorization, e.g. ["ai", "product-update"]'),
   categories: z.array(z.string()).optional().describe('Post categories. Common: Company, Research, Product, Safety, Engineering, Security'),
@@ -245,7 +246,8 @@ server.tool('create_post', 'Create a new newsroom post. If slug is not provided,
       publishedAt: params.publishedAt ? new Date(params.publishedAt) : new Date(),
       oxyUserId: params.oxyUserId || 'mcp-admin',
     })
-    return ok(post)
+    const populated = await NewsroomPost.findById(post._id).populate('coverImage ogImage')
+    return ok(populated)
   } catch (e) { return err(e) }
 })
 
@@ -273,7 +275,10 @@ server.tool('update_post', 'Update an existing newsroom post by slug. Only the f
   try {
     if (updates.publishedAt) (updates as any).publishedAt = new Date(updates.publishedAt)
     if (newSlug) (updates as any).slug = newSlug
-    const post = await NewsroomPost.findOneAndUpdate({ slug }, updates, { new: true })
+    // Cast string IDs to ObjectId for media fields
+    if (updates.coverImage) (updates as any).coverImage = new mongoose.Types.ObjectId(updates.coverImage)
+    if (updates.ogImage) (updates as any).ogImage = new mongoose.Types.ObjectId(updates.ogImage)
+    const post = await NewsroomPost.findOneAndUpdate({ slug }, updates, { new: true }).populate('coverImage ogImage')
     if (!post) return err('Post not found')
     return ok(post)
   } catch (e) { return err(e) }
@@ -926,6 +931,142 @@ server.tool('upload_image', 'Download an image from a URL, upload it to S3, gene
       uploadedBy: 'mcp',
     })
     return ok(media)
+  } catch (e) { return err(e) }
+})
+
+server.tool('upload_and_set_post_cover', 'Download an image from URL, upload to S3, create Media document, and set it as the coverImage on a newsroom post. All in one step.', {
+  postSlug: z.string().describe('Slug of the post to update'),
+  imageUrl: z.string().describe('Source URL of the image to download'),
+  filename: z.string().optional().describe('Desired filename. Auto-derived from URL if omitted.'),
+  alt: z.string().optional().describe('Alt text for the image'),
+}, async (params) => {
+  try {
+    // 1. Download
+    const resp = await fetch(params.imageUrl)
+    if (!resp.ok) return err(`Failed to download image: HTTP ${resp.status}`)
+    const buffer = Buffer.from(await resp.arrayBuffer())
+    const contentType = resp.headers.get('content-type') || 'image/jpeg'
+    const filename = params.filename || new URL(params.imageUrl).pathname.split('/').pop() || 'cover.jpg'
+
+    // 2. Upload to S3
+    const cdnUrl = await uploadToSpaces(buffer, filename, contentType, 'oxy-website/newsroom')
+    const key = new URL(cdnUrl).pathname.slice(1)
+
+    // 3. Thumbnails (optional)
+    let width: number | undefined
+    let height: number | undefined
+    let thumbnails = { sm: '', md: '', lg: '' }
+    try {
+      const result = await processImage(buffer, filename, contentType, 'oxy-website/newsroom')
+      width = result.width; height = result.height; thumbnails = result.thumbnails
+    } catch { /* thumbnails are optional */ }
+
+    // 4. Create Media document
+    const media = await Media.create({
+      url: cdnUrl, thumbnails, filename, key,
+      mimeType: contentType, size: buffer.length, width, height,
+      alt: params.alt || '', tags: ['newsroom'], folder: 'newsroom',
+      uploadedBy: 'mcp',
+    })
+
+    // 5. Update the post
+    const post = await NewsroomPost.findOneAndUpdate(
+      { slug: params.postSlug },
+      { coverImage: media._id, imageAlt: params.alt || '' },
+      { new: true },
+    ).populate('coverImage ogImage')
+    if (!post) return err(`Post not found: ${params.postSlug}`)
+
+    return ok({ media, post })
+  } catch (e) { return err(e) }
+})
+
+server.tool('upload_and_set_team_avatar', 'Download an image, upload to S3, create Media document, and set it as a team member avatar.', {
+  memberSlug: z.string().describe('Slug of the team member to update'),
+  imageUrl: z.string().describe('Source URL of the image to download'),
+  filename: z.string().optional(),
+  alt: z.string().optional(),
+}, async (params) => {
+  try {
+    const resp = await fetch(params.imageUrl)
+    if (!resp.ok) return err(`Failed to download: HTTP ${resp.status}`)
+    const buffer = Buffer.from(await resp.arrayBuffer())
+    const contentType = resp.headers.get('content-type') || 'image/jpeg'
+    const filename = params.filename || new URL(params.imageUrl).pathname.split('/').pop() || 'avatar.jpg'
+
+    const cdnUrl = await uploadToSpaces(buffer, filename, contentType, 'oxy-website/team')
+    const key = new URL(cdnUrl).pathname.slice(1)
+
+    let width: number | undefined
+    let height: number | undefined
+    let thumbnails = { sm: '', md: '', lg: '' }
+    try {
+      const result = await processImage(buffer, filename, contentType, 'oxy-website/team')
+      width = result.width; height = result.height; thumbnails = result.thumbnails
+    } catch { /* optional */ }
+
+    const media = await Media.create({
+      url: cdnUrl, thumbnails, filename, key,
+      mimeType: contentType, size: buffer.length, width, height,
+      alt: params.alt || '', tags: ['team'], folder: 'team',
+      uploadedBy: 'mcp',
+    })
+
+    const member = await TeamMember.findOneAndUpdate(
+      { slug: params.memberSlug },
+      { avatar: media._id },
+      { new: true },
+    ).populate('avatar')
+    if (!member) return err(`Team member not found: ${params.memberSlug}`)
+
+    return ok({ media, member })
+  } catch (e) { return err(e) }
+})
+
+server.tool('bulk_upload_post_covers', 'Upload cover images for multiple posts in one call. Each entry maps a post slug to an image URL.', {
+  posts: z.array(z.object({
+    slug: z.string().describe('Post slug'),
+    imageUrl: z.string().describe('Source URL of the cover image'),
+    alt: z.string().optional().describe('Alt text'),
+  })).describe('Array of posts with their cover image URLs'),
+}, async ({ posts }) => {
+  const results: { slug: string; status: string; mediaId?: string; error?: string }[] = []
+  for (const p of posts) {
+    try {
+      const resp = await fetch(p.imageUrl)
+      if (!resp.ok) { results.push({ slug: p.slug, status: 'error', error: `Download failed: ${resp.status}` }); continue }
+      const buffer = Buffer.from(await resp.arrayBuffer())
+      const contentType = resp.headers.get('content-type') || 'image/jpeg'
+      const filename = new URL(p.imageUrl).pathname.split('/').pop() || 'cover.jpg'
+
+      const cdnUrl = await uploadToSpaces(buffer, filename, contentType, 'oxy-website/newsroom')
+      const key = new URL(cdnUrl).pathname.slice(1)
+
+      let width: number | undefined, height: number | undefined, thumbnails = { sm: '', md: '', lg: '' }
+      try { const r = await processImage(buffer, filename, contentType, 'oxy-website/newsroom'); width = r.width; height = r.height; thumbnails = r.thumbnails } catch {}
+
+      const media = await Media.create({
+        url: cdnUrl, thumbnails, filename, key,
+        mimeType: contentType, size: buffer.length, width, height,
+        alt: p.alt || '', tags: ['newsroom'], folder: 'newsroom', uploadedBy: 'mcp',
+      })
+
+      await NewsroomPost.findOneAndUpdate({ slug: p.slug }, { coverImage: media._id, imageAlt: p.alt || '' })
+      results.push({ slug: p.slug, status: 'ok', mediaId: media._id.toString() })
+    } catch (e) {
+      results.push({ slug: p.slug, status: 'error', error: e instanceof Error ? e.message : String(e) })
+    }
+  }
+  return ok(results)
+})
+
+server.tool('get_post_with_media', 'Get a newsroom post with its cover image and OG image fully resolved to URLs.', {
+  slug: z.string().describe('Post slug'),
+}, async ({ slug }) => {
+  try {
+    const post = await NewsroomPost.findOne({ slug }).populate('coverImage ogImage')
+    if (!post) return err('Post not found')
+    return ok(post)
   } catch (e) { return err(e) }
 })
 
