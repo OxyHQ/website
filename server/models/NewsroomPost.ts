@@ -30,7 +30,7 @@ const NewsroomPostSchema = new Schema<INewsroomPost>({
   resume: { type: String, default: '' },
   description: { type: String, default: '' },
   content: { type: String, default: '' },
-  coverImage: String,
+  coverImage: { type: Schema.Types.Mixed, default: '' },
   imageAlt: String,
   oxyUserId: String,
   authorUsername: String,
@@ -42,7 +42,7 @@ const NewsroomPostSchema = new Schema<INewsroomPost>({
   dark: { type: Boolean, default: false },
   status: { type: String, enum: ['draft', 'published'], default: 'published', index: true },
   metaTitle: String,
-  ogImage: String,
+  ogImage: { type: Schema.Types.Mixed, default: '' },
   publishedAt: { type: Date, default: Date.now },
 }, { timestamps: true })
 

@@ -16,6 +16,7 @@ import BackupAdmin from '../components/admin/sections/BackupAdmin'
 import CommentsAdmin from '../components/admin/sections/CommentsAdmin'
 import FeaturesAdmin from '../components/admin/sections/FeaturesAdmin'
 import BadgesAdmin from '../components/admin/sections/BadgesAdmin'
+import MediaAdmin from '../components/admin/sections/MediaAdmin'
 import NotFoundPage from './NotFoundPage'
 
 export default function AdminPage() {
@@ -44,6 +45,7 @@ export default function AdminPage() {
       <Route path="comments" element={<AdminLayout><CommentsAdmin /></AdminLayout>} />
       <Route path="features" element={<AdminLayout><FeaturesAdmin /></AdminLayout>} />
       <Route path="badges" element={<AdminLayout><BadgesAdmin /></AdminLayout>} />
+      <Route path="media" element={<AdminLayout><MediaAdmin /></AdminLayout>} />
       <Route path="*" element={<Navigate to="settings" replace />} />
     </Routes>
   )

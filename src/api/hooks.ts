@@ -268,6 +268,47 @@ export function useTeamMember(slug: string) {
   })
 }
 
+// ── Media ──
+export interface MediaItem {
+  _id: string
+  url: string
+  thumbnails: { sm: string; md: string; lg: string }
+  filename: string
+  key: string
+  mimeType: string
+  size: number
+  width?: number
+  height?: number
+  alt: string
+  tags: string[]
+  folder: string
+  createdAt: string
+}
+
+export function useMedia(params?: { search?: string; type?: string; tag?: string; folder?: string; page?: number; limit?: number }) {
+  const searchParams = new URLSearchParams()
+  if (params?.search) searchParams.set('search', params.search)
+  if (params?.type) searchParams.set('type', params.type)
+  if (params?.tag) searchParams.set('tag', params.tag)
+  if (params?.folder) searchParams.set('folder', params.folder)
+  if (params?.page) searchParams.set('page', String(params.page))
+  if (params?.limit) searchParams.set('limit', String(params.limit))
+  const qs = searchParams.toString()
+  return useQuery<{ items: MediaItem[]; total: number; page: number; pages: number }>({
+    queryKey: ['media', qs],
+    queryFn: () => apiFetch(`/media?${qs}`),
+    staleTime: 30_000,
+  })
+}
+
+export function useMediaItem(id: string) {
+  return useQuery<MediaItem>({
+    queryKey: ['media', id],
+    queryFn: () => apiFetch(`/media/${id}`),
+    enabled: !!id,
+  })
+}
+
 export function useJob(slug: string) {
   const locale = useCurrentLocale()
   return useQuery({

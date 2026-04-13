@@ -30,7 +30,7 @@ const TeamMemberSchema = new Schema<ITeamMember>({
   role: { type: String, required: true },
   department: { type: String, default: '' },
   bio: { type: String, default: '' },
-  avatar: { type: String, default: '' },
+  avatar: { type: Schema.Types.Mixed, default: '' },
   order: { type: Number, default: 0 },
   active: { type: Boolean, default: true },
   socials: {

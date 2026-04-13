@@ -8,6 +8,7 @@ import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
 import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
+import MediaPicker from '../MediaPicker'
 
 export default function SiteSettingsAdmin() {
   const { data, refetch } = useSiteSettings()
@@ -48,7 +49,13 @@ export default function SiteSettingsAdmin() {
         <div className="mt-6 flex flex-col gap-4">
           <Field label="Site Title" value={form.siteTitle} onChange={(v) => setForm({ ...form, siteTitle: v })} />
           <Field label="Site Description" value={form.siteDescription} onChange={(v) => setForm({ ...form, siteDescription: v })} textarea />
-          <Field label="OG Image URL" value={form.ogImage} onChange={(v) => setForm({ ...form, ogImage: v })} />
+          <MediaPicker
+            value={form.ogImage}
+            onChange={(id) => setForm({ ...form, ogImage: id || '' })}
+            label="OG Image"
+            folder="site"
+            accept="image/*"
+          />
 
           <div className="mt-4 rounded-xl border border-border p-4">
             <h3 className="text-sm font-medium text-foreground">Banner</h3>

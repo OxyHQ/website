@@ -21,7 +21,7 @@ const ChangelogEntrySchema = new Schema<IChangelogEntry>({
   tags: [String],
   date: { type: Date, required: true },
   items: [String],
-  media: String,
+  media: { type: Schema.Types.Mixed, default: '' },
   githubReleaseId: { type: Number, unique: true, sparse: true },
   repoOwner: String,
   repoName: String,

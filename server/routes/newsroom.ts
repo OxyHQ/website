@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { NewsroomPost } from '../models/NewsroomPost.js'
+import { Media } from '../models/Media.js'
 import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
@@ -7,6 +8,24 @@ import { localeMiddleware } from '../middleware/locale.js'
 import { applyTranslation, applyTranslations } from '../utils/applyTranslation.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
+
+/** If a field looks like a MongoDB ObjectId, populate it from the Media collection */
+async function resolveMedia(value: any): Promise<string> {
+  if (!value) return ''
+  if (typeof value === 'string' && /^[a-f0-9]{24}$/i.test(value)) {
+    const media = await Media.findById(value)
+    return media?.url || value
+  }
+  if (typeof value === 'object' && value.url) return value.url
+  return String(value)
+}
+
+async function resolvePostMedia(post: any) {
+  const obj = post.toJSON ? post.toJSON() : { ...post }
+  obj.coverImage = await resolveMedia(obj.coverImage)
+  obj.ogImage = await resolveMedia(obj.ogImage)
+  return obj
+}
 
 const router = Router()
 
@@ -47,7 +66,8 @@ router.get('/', localeMiddleware, async (req, res) => {
     result = applyTranslations(result, translations)
   }
 
-  res.json({ posts: result, total, page: pageNum, pages: Math.ceil(total / limitNum) })
+  const resolved = await Promise.all(result.map(resolvePostMedia))
+  res.json({ posts: resolved, total, page: pageNum, pages: Math.ceil(total / limitNum) })
 })
 
 router.get('/:slug', localeMiddleware, async (req, res) => {
@@ -57,14 +77,14 @@ router.get('/:slug', localeMiddleware, async (req, res) => {
   if (post.status === 'draft' && req.query.preview !== 'true') {
     return res.status(404).json({ error: 'Post not found' })
   }
-  if (req.isDefaultLocale) return res.json(post)
+  if (req.isDefaultLocale) return res.json(await resolvePostMedia(post))
 
   const translation = await Translation.findOne({
     locale: req.locale,
     collection: 'newsroom',
     documentId: post._id.toString(),
   })
-  res.json(applyTranslation(post.toJSON(), translation))
+  res.json(await resolvePostMedia(applyTranslation(post.toJSON(), translation)))
 })
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {

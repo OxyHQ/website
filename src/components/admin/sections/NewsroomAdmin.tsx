@@ -10,6 +10,7 @@ import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
 import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
+import MediaPicker from '../MediaPicker'
 
 export default function NewsroomAdmin() {
   const { data, refetch } = useNewsroomPosts({ limit: 50 })
@@ -69,7 +70,13 @@ export default function NewsroomAdmin() {
           <Field label="Slug" value={editing.slug} onChange={(v) => setEditing({ ...editing, slug: v })} />
           <Field label="Resume" value={editing.resume} onChange={(v) => setEditing({ ...editing, resume: v })} textarea />
           <Field label="Content (Markdown)" value={editing.content} onChange={(v) => setEditing({ ...editing, content: v })} textarea rows={12} />
-          <Field label="Cover Image URL" value={editing.coverImage ?? ''} onChange={(v) => setEditing({ ...editing, coverImage: v })} />
+          <MediaPicker
+            value={editing.coverImage}
+            onChange={(id) => setEditing({ ...editing, coverImage: id || '' })}
+            label="Cover Image"
+            folder="newsroom"
+            accept="image/*"
+          />
           <Field label="Categories (comma-separated)" value={(editing.categories ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, categories: v.split(',').map((c: string) => c.trim()).filter(Boolean) })} />
           <Field label="Tags (comma-separated)" value={(editing.tags ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t: string) => t.trim()).filter(Boolean) })} />
           <div className="flex items-center gap-4">
@@ -82,7 +89,13 @@ export default function NewsroomAdmin() {
             <div className="flex flex-col gap-4">
               <Field label="Meta Title (optional)" value={editing.metaTitle ?? ''} onChange={(v) => setEditing({ ...editing, metaTitle: v })} />
               <Field label="Meta Description (optional)" value={editing.metaDescription ?? ''} onChange={(v) => setEditing({ ...editing, metaDescription: v })} textarea />
-              <Field label="OG Image URL (optional)" value={editing.ogImage ?? ''} onChange={(v) => setEditing({ ...editing, ogImage: v })} />
+              <MediaPicker
+                value={editing.ogImage}
+                onChange={(id) => setEditing({ ...editing, ogImage: id || '' })}
+                label="OG Image"
+                folder="newsroom"
+                accept="image/*"
+              />
             </div>
           </div>
 

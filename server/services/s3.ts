@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { config } from '../config.js'
 import crypto from 'node:crypto'
 import path from 'node:path'
@@ -37,4 +37,14 @@ export async function uploadToSpaces(
   }))
 
   return `https://${config.s3.bucket}.${config.s3.region}.cdn.digitaloceanspaces.com/${key}`
+}
+
+/**
+ * Delete an object from DigitalOcean Spaces by its key.
+ */
+export async function deleteFromSpaces(key: string): Promise<void> {
+  await s3.send(new DeleteObjectCommand({
+    Bucket: config.s3.bucket,
+    Key: key,
+  }))
 }

@@ -6,6 +6,7 @@ import { Badge } from '@oxyhq/bloom/badge'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
+import MediaPicker from '../MediaPicker'
 
 export default function ChangelogAdmin() {
   const { data, refetch } = useChangelog()
@@ -48,7 +49,13 @@ export default function ChangelogAdmin() {
           <div className="flex flex-col gap-1.5"><Label>Content (Markdown)</Label><Textarea value={editing.content} onChange={(e) => setEditing({ ...editing, content: e.target.value })} rows={6} /></div>
           <div className="flex flex-col gap-1.5"><Label>Tags (comma-separated)</Label><Input value={(editing.tags ?? []).join(', ')} onChange={(e) => setEditing({ ...editing, tags: e.target.value.split(',').map((t: string) => t.trim()).filter(Boolean) })} /></div>
           <div className="flex flex-col gap-1.5"><Label>Items (one per line)</Label><Textarea value={(editing.items ?? []).join('\n')} onChange={(e) => setEditing({ ...editing, items: e.target.value.split('\n').filter(Boolean) })} rows={4} className="font-mono" /></div>
-          <div className="flex flex-col gap-1.5"><Label>Media URL (optional)</Label><Input value={editing.media ?? ''} onChange={(e) => setEditing({ ...editing, media: e.target.value })} placeholder="Image or video URL" /></div>
+          <MediaPicker
+            value={editing.media}
+            onChange={(id) => setEditing({ ...editing, media: id || '' })}
+            label="Media"
+            folder="changelog"
+            accept="image/*,video/*"
+          />
           <div className="flex gap-3">
             <PrimaryButton onPress={save} disabled={saving}>{saving ? 'Saving...' : 'Save'}</PrimaryButton>
             <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>
