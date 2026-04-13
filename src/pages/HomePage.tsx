@@ -94,29 +94,31 @@ function PartnerLogos() {
   }, [swapLogo])
 
   return (
-    <div className="py-5">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
-        <div className="col-span-full">
-          <div className="grid grid-cols-7 gap-x-5 max-[950px]:grid-cols-3" id="partner-grid">
-            {visibleLogos.map((logo, index) => (
-              <div className={`flex items-center justify-center h-[100px] transition-opacity duration-1000 max-[950px]:h-[60px] max-[950px]:[&:nth-child(n+4)]:hidden${hiddenSlot === index ? ' opacity-0' : ''}`} key={index}>
-                <div className="flex items-center justify-center w-full h-full" data-logo={logo}>
-                  <img
-                    className="w-full h-auto object-contain max-w-full max-h-full [max-height:66px] dark:invert"
-                    src={`${IMG}/${logo}.svg`}
-                    alt={logo.charAt(0).toUpperCase() + logo.slice(1)}
-                    width={224}
-                    height={90}
-                    loading="lazy"
-                    decoding="async"
-                  />
+    <section className="container">
+      <div className="border-border border-x">
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-[2/-2] py-5">
+            <div className="grid grid-cols-7 gap-x-5 max-[950px]:grid-cols-3" id="partner-grid">
+              {visibleLogos.map((logo, index) => (
+                <div className={`flex items-center justify-center h-[100px] transition-opacity duration-1000 max-[950px]:h-[60px] max-[950px]:[&:nth-child(n+4)]:hidden${hiddenSlot === index ? ' opacity-0' : ''}`} key={index}>
+                  <div className="flex items-center justify-center w-full h-full" data-logo={logo}>
+                    <img
+                      className="w-full h-auto object-contain max-w-full max-h-full [max-height:66px] dark:invert"
+                      src={`${IMG}/${logo}.svg`}
+                      alt={logo.charAt(0).toUpperCase() + logo.slice(1)}
+                      width={224}
+                      height={90}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }
 
@@ -125,15 +127,19 @@ function PartnerLogos() {
 /* ------------------------------------------------------------------ */
 function AllInOneSection() {
   return (
-    <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
-        <div className="col-span-full text-center space-y-[1em]">
-          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none">
-            Build for everyone,<br className="max-[950px]:hidden" />
-            not just yourself.
-          </h2>
-          <p className="max-w-[440px] mx-auto">Oxy exists because we believe technology should serve humanity, not exploit it. Through community-driven projects and open-source tools, we prove that helping people and building sustainable systems aren&apos;t competing goals.</p>
-          <a href="/technologies" className={`${BTN} bg-primary text-primary-foreground`}>Explore the Ecosystem</a>
+    <section className="container">
+      <div className="border-border border-x">
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-[2/-2] py-10 max-[950px]:py-6">
+            <div className="col-span-full text-center space-y-[1em]">
+              <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none">
+                Build for everyone,<br className="max-[950px]:hidden" />
+                not just yourself.
+              </h2>
+              <p className="max-w-[440px] mx-auto">Oxy exists because we believe technology should serve humanity, not exploit it. Through community-driven projects and open-source tools, we prove that helping people and building sustainable systems aren&apos;t competing goals.</p>
+              <a href="/technologies" className={`${BTN} bg-primary text-primary-foreground`}>Explore the Ecosystem</a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -355,113 +361,117 @@ function StatsAndTestimonialsSection() {
     : 2
 
   return (
-    <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
-        <div className="col-span-full mb-5">
-          <Swiper
-            modules={[Autoplay]}
-            slidesPerView="auto"
-            spaceBetween={0}
-            grabCursor
-            className="roi-stats-swiper my-6"
-            breakpoints={{
-              1460: { slidesPerView: STATS.length, spaceBetween: 0 },
-            }}
-          >
-            {STATS.map((s, i) => (
-              <SwiperSlide key={s.label} className="!w-auto">
-                <div className={`min-w-[230px] px-6 max-[1460px]:min-w-[250px] max-[950px]:min-w-[150px]${i < STATS.length - 1 ? ' border-r border-foreground/10' : ''}`}>
-                  <div>
-                    <p className="text-sm leading-4 tracking-wide font-[450] opacity-80 mb-[34px]"><strong>{s.label}</strong></p>
-                  </div>
-                  <div>
-                    <p className="font-serif text-[40px] leading-[1.07] mb-[9px]">{s.value}</p>
-                    <p className="max-w-[210px]">{s.desc}</p>
-                  </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-        <div className="col-span-full">
-          <Swiper
-            modules={[Autoplay]}
-            onSwiper={(s) => { swiperRef.current = s }}
-            slidesPerView={4}
-            spaceBetween={24}
-            autoplay={{
-              delay: AUTO_DELAY,
-              disableOnInteraction: false,
-            }}
-            onSlideChange={(s) => {
-              setActiveIndex(s.realIndex)
-              startProgress()
-            }}
-            onAutoplayStart={() => startProgress()}
-            breakpoints={{
-              0: { slidesPerView: 1.15, spaceBetween: 12 },
-              640: { slidesPerView: 2, spaceBetween: 16 },
-              950: { slidesPerView: 3, spaceBetween: 20 },
-              1400: { slidesPerView: 4, spaceBetween: 24 },
-            }}
-            className="image-card-slider"
-          >
-            {TESTIMONIALS.map((t, i) => (
-              <SwiperSlide key={i} style={{ height: 'auto' }}>
-                <div
-                  className={`relative overflow-hidden rounded-3xl aspect-[4/5] max-[950px]:aspect-[4/6] ${t.light ? 'text-white' : 'text-foreground/80'}`}
-                >
-                  <img src={t.bg} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" width={800} height={1000} loading="eager" decoding="async" />
-                  <div className="absolute inset-0 bg-black/10" />
-                  <div className="relative z-10 flex flex-col justify-between gap-12 px-7 py-8 max-[950px]:p-8 h-full">
-                    <div>
-                      <p className="text-base leading-relaxed tracking-tight">&ldquo;{t.quote}&rdquo;</p>
+    <section className="container">
+      <div className="border-border border-x">
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-[2/-2] py-10 max-[950px]:py-6">
+            <div className="mb-5">
+              <Swiper
+                modules={[Autoplay]}
+                slidesPerView="auto"
+                spaceBetween={0}
+                grabCursor
+                className="roi-stats-swiper my-6"
+                breakpoints={{
+                  1460: { slidesPerView: STATS.length, spaceBetween: 0 },
+                }}
+              >
+                {STATS.map((s, i) => (
+                  <SwiperSlide key={s.label} className="!w-auto">
+                    <div className={`min-w-[230px] px-6 max-[1460px]:min-w-[250px] max-[950px]:min-w-[150px]${i < STATS.length - 1 ? ' border-r border-foreground/10' : ''}`}>
+                      <div>
+                        <p className="text-sm leading-4 tracking-wide font-[450] opacity-80 mb-[34px]"><strong>{s.label}</strong></p>
+                      </div>
+                      <div>
+                        <p className="font-serif text-[40px] leading-[1.07] mb-[9px]">{s.value}</p>
+                        <p className="max-w-[210px]">{s.desc}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm leading-relaxed">
-                        <span className="opacity-60">{t.role}</span><br />
-                        {t.company}
-                      </p>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+            <div>
+              <Swiper
+                modules={[Autoplay]}
+                onSwiper={(s) => { swiperRef.current = s }}
+                slidesPerView={4}
+                spaceBetween={24}
+                autoplay={{
+                  delay: AUTO_DELAY,
+                  disableOnInteraction: false,
+                }}
+                onSlideChange={(s) => {
+                  setActiveIndex(s.realIndex)
+                  startProgress()
+                }}
+                onAutoplayStart={() => startProgress()}
+                breakpoints={{
+                  0: { slidesPerView: 1.15, spaceBetween: 12 },
+                  640: { slidesPerView: 2, spaceBetween: 16 },
+                  950: { slidesPerView: 3, spaceBetween: 20 },
+                  1400: { slidesPerView: 4, spaceBetween: 24 },
+                }}
+                className="image-card-slider"
+              >
+                {TESTIMONIALS.map((t, i) => (
+                  <SwiperSlide key={i} style={{ height: 'auto' }}>
+                    <div
+                      className={`relative overflow-hidden rounded-3xl aspect-[4/5] max-[950px]:aspect-[4/6] ${t.light ? 'text-white' : 'text-foreground/80'}`}
+                    >
+                      <img src={t.bg} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" width={800} height={1000} loading="eager" decoding="async" />
+                      <div className="absolute inset-0 bg-black/10" />
+                      <div className="relative z-10 flex flex-col justify-between gap-12 px-7 py-8 max-[950px]:p-8 h-full">
+                        <div>
+                          <p className="text-base leading-relaxed tracking-tight">&ldquo;{t.quote}&rdquo;</p>
+                        </div>
+                        <div>
+                          <p className="text-sm leading-relaxed">
+                            <span className="opacity-60">{t.role}</span><br />
+                            {t.company}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-          <div className="image-card-slider-ui-wrapper">
-            <ol className="image-card-slider-dots">
-              {Array.from({ length: totalPages }).map((_, i) => (
-                <li
-                  key={i}
-                  className={`dot${Math.floor(activeIndex / (swiperRef.current?.params.slidesPerView as number || 4)) === i ? ' is-selected' : ''}`}
-                  onClick={() => {
-                    const perView = swiperRef.current?.params.slidesPerView as number || 4
-                    swiperRef.current?.slideTo(i * perView)
-                  }}
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+              <div className="image-card-slider-ui-wrapper">
+                <ol className="image-card-slider-dots">
+                  {Array.from({ length: totalPages }).map((_, i) => (
+                    <li
+                      key={i}
+                      className={`dot${Math.floor(activeIndex / (swiperRef.current?.params.slidesPerView as number || 4)) === i ? ' is-selected' : ''}`}
+                      onClick={() => {
+                        const perView = swiperRef.current?.params.slidesPerView as number || 4
+                        swiperRef.current?.slideTo(i * perView)
+                      }}
+                    >
+                      <div
+                        className="timer"
+                        style={{
+                          width: Math.floor(activeIndex / (swiperRef.current?.params.slidesPerView as number || 4)) === i && playing
+                            ? `${progress}%`
+                            : '0%',
+                        }}
+                      />
+                    </li>
+                  ))}
+                </ol>
+                <button
+                  className={`toggle-autoplay${playing ? '' : ' paused'}`}
+                  onClick={toggleAutoplay}
+                  aria-label={playing ? 'Pause autoplay' : 'Play autoplay'}
                 >
-                  <div
-                    className="timer"
-                    style={{
-                      width: Math.floor(activeIndex / (swiperRef.current?.params.slidesPerView as number || 4)) === i && playing
-                        ? `${progress}%`
-                        : '0%',
-                    }}
-                  />
-                </li>
-              ))}
-            </ol>
-            <button
-              className={`toggle-autoplay${playing ? '' : ' paused'}`}
-              onClick={toggleAutoplay}
-              aria-label={playing ? 'Pause autoplay' : 'Play autoplay'}
-            >
-              <svg width="8" height="12" className="pause" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0.895 12C0.595 12 0.369 11.916 0.219 11.747C0.073 11.579 0 11.326 0 10.988V1.005C0 0.672 0.075 0.422 0.225 0.253C0.376 0.084 0.599 0 0.895 0H2.366C2.658 0 2.88 0.082 3.03 0.246C3.184 0.41 3.261 0.663 3.261 1.005V10.988C3.261 11.326 3.184 11.579 3.03 11.747C2.88 11.916 2.658 12 2.366 12H0.895ZM5.64 12C5.34 12 5.114 11.916 4.964 11.747C4.814 11.579 4.739 11.326 4.739 10.988V1.005C4.739 0.672 4.814 0.422 4.964 0.253C5.114 0.084 5.34 0 5.64 0H7.099C7.399 0 7.624 0.082 7.775 0.246C7.925 0.41 8 0.663 8 1.005V10.988C8 11.326 7.925 11.579 7.775 11.747C7.624 11.916 7.399 12 7.099 12H5.64Z" fill="currentColor"/>
-              </svg>
-              <svg width="10" height="11" className="play" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 9.968V1.032C0 0.681 0.09 0.422 0.271 0.253C0.452 0.084 0.668 0 0.917 0C1.141 0 1.365 0.061 1.589 0.184L9.218 4.551C9.494 4.707 9.692 4.854 9.813 4.994C9.938 5.133 10 5.302 10 5.5C10 5.694 9.938 5.863 9.813 6.006C9.692 6.146 9.494 6.293 9.218 6.449L1.589 10.817C1.365 10.939 1.141 11 0.917 11C0.668 11 0.452 10.914 0.271 10.741C0.09 10.572 0 10.314 0 9.968Z" fill="currentColor"/>
-              </svg>
-            </button>
+                  <svg width="8" height="12" className="pause" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.895 12C0.595 12 0.369 11.916 0.219 11.747C0.073 11.579 0 11.326 0 10.988V1.005C0 0.672 0.075 0.422 0.225 0.253C0.376 0.084 0.599 0 0.895 0H2.366C2.658 0 2.88 0.082 3.03 0.246C3.184 0.41 3.261 0.663 3.261 1.005V10.988C3.261 11.326 3.184 11.579 3.03 11.747C2.88 11.916 2.658 12 2.366 12H0.895ZM5.64 12C5.34 12 5.114 11.916 4.964 11.747C4.814 11.579 4.739 11.326 4.739 10.988V1.005C4.739 0.672 4.814 0.422 4.964 0.253C5.114 0.084 5.34 0 5.64 0H7.099C7.399 0 7.624 0.082 7.775 0.246C7.925 0.41 8 0.663 8 1.005V10.988C8 11.326 7.925 11.579 7.775 11.747C7.624 11.916 7.399 12 7.099 12H5.64Z" fill="currentColor"/>
+                  </svg>
+                  <svg width="10" height="11" className="play" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 9.968V1.032C0 0.681 0.09 0.422 0.271 0.253C0.452 0.084 0.668 0 0.917 0C1.141 0 1.365 0.061 1.589 0.184L9.218 4.551C9.494 4.707 9.692 4.854 9.813 4.994C9.938 5.133 10 5.302 10 5.5C10 5.694 9.938 5.863 9.813 6.006C9.692 6.146 9.494 6.293 9.218 6.449L1.589 10.817C1.365 10.939 1.141 11 0.917 11C0.668 11 0.452 10.914 0.271 10.741C0.09 10.572 0 10.314 0 9.968Z" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -508,30 +518,32 @@ const TESTIMONIALS = [
 /* ------------------------------------------------------------------ */
 function ModelAgnosticSection() {
   return (
-    <section className="py-8">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
-        <div className="col-span-full">
-          <div className="model-agnostic-wrap relative max-[950px]:mb-8">
-            <div className="grid grid-cols-12 gap-6 items-center">
-              <div className="col-span-6 max-[950px]:col-span-full z-10 flex items-center justify-center py-[85px] pb-[70px]">
-                <img src={`${IMG}/model-agnostic-popover.svg`} alt="Model selector" width={600} height={400} loading="lazy" decoding="async" />
+    <section className="container">
+      <div className="border-border border-x">
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-[2/-2] py-8">
+            <div className="model-agnostic-wrap relative max-[950px]:mb-8">
+              <div className="grid grid-cols-12 gap-6 items-center">
+                <div className="col-span-6 max-[950px]:col-span-full z-10 flex items-center justify-center py-[85px] pb-[70px]">
+                  <img src={`${IMG}/model-agnostic-popover.svg`} alt="Model selector" width={600} height={400} loading="lazy" decoding="async" />
+                </div>
+                <div className="col-span-4 max-[950px]:hidden col-start-8 z-10 text-white">
+                  <p className="mb-6"><strong>Independent Ecosystem</strong></p>
+                  <p className="text-[22px] leading-[1.2] font-[450] max-w-[420px]">
+                    Radically transparent, fiercely human. No ads. No data selling. No venture capital strings. Just purpose-driven tools designed for real-world impact.
+                  </p>
+                </div>
               </div>
-              <div className="col-span-4 max-[950px]:hidden col-start-8 z-10 text-white">
-                <p className="mb-6"><strong>Independent Ecosystem</strong></p>
-                <p className="text-[22px] leading-[1.2] font-[450] max-w-[420px]">
-                  Radically transparent, fiercely human. No ads. No data selling. No venture capital strings. Just purpose-driven tools designed for real-world impact.
-                </p>
+              <div className="model-agnostic-bg absolute inset-0 overflow-hidden rounded-3xl z-[1]">
+                <img src={`${IMG}/agents-model-agnostic.webp`} alt="Model agnostic" className="w-full h-full object-cover" width={2400} height={1800} loading="lazy" decoding="async" />
               </div>
             </div>
-            <div className="model-agnostic-bg absolute inset-0 overflow-hidden rounded-3xl z-[1]">
-              <img src={`${IMG}/agents-model-agnostic.webp`} alt="Model agnostic" className="w-full h-full object-cover" width={2400} height={1800} loading="lazy" decoding="async" />
+            <div className="hidden max-[950px]:block px-3">
+              <p className="mb-6"><strong>Independent Ecosystem</strong></p>
+              <p className="text-[22px] leading-[1.2] font-[450] max-w-[420px]">
+                Radically transparent, fiercely human. No ads. No data selling. No venture capital strings. Just purpose-driven tools designed for real-world impact.
+              </p>
             </div>
-          </div>
-          <div className="hidden max-[950px]:block px-3">
-            <p className="mb-6"><strong>Independent Ecosystem</strong></p>
-            <p className="text-[22px] leading-[1.2] font-[450] max-w-[420px]">
-              Radically transparent, fiercely human. No ads. No data selling. No venture capital strings. Just purpose-driven tools designed for real-world impact.
-            </p>
           </div>
         </div>
       </div>
@@ -656,53 +668,59 @@ function TeamsSection() {
   }, [])
 
   return (
-    <section className="py-8">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 side-by-side-tabs">
-        <div className="col-span-6 max-[950px]:col-span-full">
-          <div className="tabs tabs-fade">
-            {TEAM_TABS.map((t) => (
-              <div key={t.id} className={`tab${t.id === activeId ? ' active' : ''}`} data-tab={t.id}>
-                <div className="media-with-prompt">
-                  <div className="media rounded-3xl overflow-hidden" style={{ aspectRatio: '181 / 145' }}>
-                    <img src={t.thumb} alt={t.label} className="w-full h-full object-cover" width={1200} height={800} loading="lazy" decoding="async" />
-                  </div>
-                  <div className="prompt-overlay">
-                    <div className="prompt-box-bg" />
-                    <div className="prompt-box-blur" />
-                    <div className="typewrite text-white">
-                      {t.id === activeId && <TypewriterText texts={t.prompts} resetKey={resetKey} />}
+    <section className="container">
+      <div className="border-border border-x">
+        <div className="grid grid-cols-12 gap-6 side-by-side-tabs">
+          <div className="col-[2/-2] py-8">
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-6 max-[950px]:col-span-full">
+                <div className="tabs tabs-fade">
+                  {TEAM_TABS.map((t) => (
+                    <div key={t.id} className={`tab${t.id === activeId ? ' active' : ''}`} data-tab={t.id}>
+                      <div className="media-with-prompt">
+                        <div className="media rounded-3xl overflow-hidden" style={{ aspectRatio: '181 / 145' }}>
+                          <img src={t.thumb} alt={t.label} className="w-full h-full object-cover" width={1200} height={800} loading="lazy" decoding="async" />
+                        </div>
+                        <div className="prompt-overlay">
+                          <div className="prompt-box-bg" />
+                          <div className="prompt-box-blur" />
+                          <div className="typewrite text-white">
+                            {t.id === activeId && <TypewriterText texts={t.prompts} resetKey={resetKey} />}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-        <div className="col-span-5 col-start-8 max-[950px]:col-span-full max-[950px]:col-start-1 flex flex-col gap-12 justify-between">
-          <div>
-            <p className="text-primary mb-5"><strong>Explore the Oxy Ecosystem</strong></p>
-            <div className="teams-tabs-nav flex flex-col [&>a]:cursor-pointer">
-              {TEAM_TABS.map((t) => (
-                <a
-                  key={t.id}
-                  className={`text-[22px] leading-[1.2] font-[450] flex items-center justify-start gap-[0.3em] cursor-pointer${t.id === activeId ? ' opacity-100' : ' opacity-30'}`}
-                  data-tab={t.id}
-                  onClick={() => handleTabClick(t.id)}
-                >
-                  <span className={t.id === activeId ? 'inline' : 'hidden'}>&rarr;</span> {t.label}
-                </a>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-[1em]">
-            <div className="tabs">
-              {TEAM_TABS.map((t) => (
-                <div key={t.id} className={`tab${t.id === activeId ? ' active' : ''}`} data-tab={t.id}>
-                  <p className="opacity-80 max-w-[490px]">{t.desc}</p>
+              <div className="col-span-5 col-start-8 max-[950px]:col-span-full max-[950px]:col-start-1 flex flex-col gap-12 justify-between">
+                <div>
+                  <p className="text-primary mb-5"><strong>Explore the Oxy Ecosystem</strong></p>
+                  <div className="teams-tabs-nav flex flex-col [&>a]:cursor-pointer">
+                    {TEAM_TABS.map((t) => (
+                      <a
+                        key={t.id}
+                        className={`text-[22px] leading-[1.2] font-[450] flex items-center justify-start gap-[0.3em] cursor-pointer${t.id === activeId ? ' opacity-100' : ' opacity-30'}`}
+                        data-tab={t.id}
+                        onClick={() => handleTabClick(t.id)}
+                      >
+                        <span className={t.id === activeId ? 'inline' : 'hidden'}>&rarr;</span> {t.label}
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              ))}
+                <div className="space-y-[1em]">
+                  <div className="tabs">
+                    {TEAM_TABS.map((t) => (
+                      <div key={t.id} className={`tab${t.id === activeId ? ' active' : ''}`} data-tab={t.id}>
+                        <p className="opacity-80 max-w-[490px]">{t.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <a href="/technologies" className={`${BTN} bg-primary text-primary-foreground`}>Learn More</a>
+                </div>
+              </div>
             </div>
-            <a href="/technologies" className={`${BTN} bg-primary text-primary-foreground`}>Learn More</a>
           </div>
         </div>
       </div>
@@ -744,29 +762,33 @@ function TickIcon({ className }: { className?: string }) {
 
 function PartnershipSection() {
   return (
-    <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
-        <div className="col-span-full text-center">
-          <p className="mb-6 text-primary"><strong>Join the mission</strong></p>
-          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">Build the future with us</h2>
-          <p className="opacity-80 max-w-[500px] mx-auto">Whether you&apos;re a developer, designer, activist, or dreamer — there&apos;s a place for you in the Oxy ecosystem.</p>
-        </div>
-      </div>
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
-        <div className="col-span-6 max-[950px]:col-span-full">
-          <div className="min-[951px]:h-full overflow-hidden rounded-3xl">
-            <img src={`${IMG}/partnerships-banner.avif`} alt="Partnerships" className="w-full h-full object-cover" style={{ objectPosition: '50% 30%' }} width={1440} height={900} loading="lazy" decoding="async" />
-          </div>
-        </div>
-        <div className="col-span-6 max-[950px]:col-span-full">
-          <div className="grid grid-cols-2 max-[650px]:grid-cols-1 gap-6">
-            {PARTNERSHIP_ITEMS.map((item) => (
-              <div key={item} className="p-5 px-6 rounded-3xl bg-foreground/5 flex flex-col gap-[26px]">
-                <TickFilledIcon className="inline-block w-[1em] h-[1em] fill-current stroke-current stroke-0 opacity-40" />
-                {item}
+    <section className="container">
+      <div className="border-border border-x">
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-[2/-2] py-10 max-[950px]:py-6">
+            <div className="text-center mb-8">
+              <p className="mb-6 text-primary"><strong>Join the mission</strong></p>
+              <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">Build the future with us</h2>
+              <p className="opacity-80 max-w-[500px] mx-auto">Whether you&apos;re a developer, designer, activist, or dreamer — there&apos;s a place for you in the Oxy ecosystem.</p>
+            </div>
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-6 max-[950px]:col-span-full">
+                <div className="min-[951px]:h-full overflow-hidden rounded-3xl">
+                  <img src={`${IMG}/partnerships-banner.avif`} alt="Partnerships" className="w-full h-full object-cover" style={{ objectPosition: '50% 30%' }} width={1440} height={900} loading="lazy" decoding="async" />
+                </div>
               </div>
-            ))}
-            <a href="/get-involved" className="bg-primary text-primary-foreground p-5 px-6 rounded-3xl flex flex-col gap-[26px] justify-end transition-opacity duration-400 hover:opacity-60">Get Involved</a>
+              <div className="col-span-6 max-[950px]:col-span-full">
+                <div className="grid grid-cols-2 max-[650px]:grid-cols-1 gap-6">
+                  {PARTNERSHIP_ITEMS.map((item) => (
+                    <div key={item} className="p-5 px-6 rounded-3xl bg-foreground/5 flex flex-col gap-[26px]">
+                      <TickFilledIcon className="inline-block w-[1em] h-[1em] fill-current stroke-current stroke-0 opacity-40" />
+                      {item}
+                    </div>
+                  ))}
+                  <a href="/get-involved" className="bg-primary text-primary-foreground p-5 px-6 rounded-3xl flex flex-col gap-[26px] justify-end transition-opacity duration-400 hover:opacity-60">Get Involved</a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -809,50 +831,52 @@ const SECURITY_ITEMS = [
 
 function IntegrationsSecuritySection() {
   return (
-    <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
-        <div className="col-span-full text-center">
-          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5 max-w-[500px] mx-auto">Everything you need, all in one place</h2>
-          <p className="opacity-80 max-w-[350px] mx-auto">Explore our documentation, contribute to our codebase, and connect with the community.</p>
-        </div>
-      </div>
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
-        <div className="col-span-full">
-          <div className="relative p-8 rounded-3xl bg-foreground/[0.03]">
-            <div className="grid grid-cols-12 gap-6">
-              <div className="col-span-4 max-[950px]:col-span-full"><p><strong>For Developers</strong></p></div>
-              <div className="col-span-7 max-[950px]:col-span-full">
-                <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-sm leading-4 tracking-wide font-[450]">
-                  {INTEGRATIONS.map((item) => (
-                    <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+&]:mt-3">
-                      <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
-                        <img src={`${IMG}/${item.icon}`} width={20} height={20} alt={`${item.name} icon`} className="w-auto h-auto max-w-5 max-h-5 object-contain dark:invert" loading="lazy" decoding="async" />
-                      </div>
-                      <span>{item.name}</span>
+    <section className="container">
+      <div className="border-border border-x">
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-[2/-2] py-10 max-[950px]:py-6">
+            <div className="text-center mb-8">
+              <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5 max-w-[500px] mx-auto">Everything you need, all in one place</h2>
+              <p className="opacity-80 max-w-[350px] mx-auto">Explore our documentation, contribute to our codebase, and connect with the community.</p>
+            </div>
+            <div>
+              <div className="relative p-8 rounded-3xl bg-foreground/[0.03]">
+                <div className="grid grid-cols-12 gap-6">
+                  <div className="col-span-4 max-[950px]:col-span-full"><p><strong>For Developers</strong></p></div>
+                  <div className="col-span-7 max-[950px]:col-span-full">
+                    <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-sm leading-4 tracking-wide font-[450]">
+                      {INTEGRATIONS.map((item) => (
+                        <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+&]:mt-3">
+                          <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
+                            <img src={`${IMG}/${item.icon}`} width={20} height={20} alt={`${item.name} icon`} className="w-auto h-auto max-w-5 max-h-5 object-contain dark:invert" loading="lazy" decoding="async" />
+                          </div>
+                          <span>{item.name}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
                 </div>
+                <a className={`${BTN} bg-foreground/5 max-[950px]:static absolute bottom-8 left-8`} href="/docs">Explore Developer Hub</a>
+              </div>
+              <div className="relative p-8 rounded-3xl bg-foreground/[0.03] mt-4">
+                <div className="grid grid-cols-12 gap-6">
+                  <div className="col-span-4 max-[950px]:col-span-full"><p><strong>For Everyone</strong></p></div>
+                  <div className="col-span-7 max-[950px]:col-span-full">
+                    <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-sm leading-4 tracking-wide font-[450]">
+                      {SECURITY_ITEMS.map((item) => (
+                        <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+&]:mt-3">
+                          <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
+                            <img src={`${IMG}/${item.icon}`} width={item.size} height={item.size} alt="security icon" className="w-auto h-auto max-w-5 max-h-5 object-contain dark:invert" loading="lazy" decoding="async" />
+                          </div>
+                          <span>{item.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <a className={`${BTN} bg-foreground/5 max-[950px]:static absolute bottom-8 left-8`} href="/help">Visit Help Center</a>
               </div>
             </div>
-            <a className={`${BTN} bg-foreground/5 max-[950px]:static absolute bottom-8 left-8`} href="/docs">Explore Developer Hub</a>
-          </div>
-          <div className="relative p-8 rounded-3xl bg-foreground/[0.03] mt-4">
-            <div className="grid grid-cols-12 gap-6">
-              <div className="col-span-4 max-[950px]:col-span-full"><p><strong>For Everyone</strong></p></div>
-              <div className="col-span-7 max-[950px]:col-span-full">
-                <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-sm leading-4 tracking-wide font-[450]">
-                  {SECURITY_ITEMS.map((item) => (
-                    <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+&]:mt-3">
-                      <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
-                        <img src={`${IMG}/${item.icon}`} width={item.size} height={item.size} alt="security icon" className="w-auto h-auto max-w-5 max-h-5 object-contain dark:invert" loading="lazy" decoding="async" />
-                      </div>
-                      <span>{item.name}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <a className={`${BTN} bg-foreground/5 max-[950px]:static absolute bottom-8 left-8`} href="/help">Visit Help Center</a>
           </div>
         </div>
       </div>
@@ -876,22 +900,23 @@ function BannerSection() {
 /* ------------------------------------------------------------------ */
 function IOSAppSection() {
   return (
-    <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5 mb-8">
-        <div className="col-span-full text-center">
-          <p className="mb-6 text-primary"><strong>Oxy Services</strong></p>
-          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">Technology with purpose</h2>
-        </div>
-      </div>
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
-        <div className="col-span-8 col-start-3 max-[950px]:col-span-full max-[950px]:col-start-1 text-center">
-          <div className="mb-5">
-            <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" className="w-full h-auto object-contain" width={1902} height={1330} loading="lazy" decoding="async" />
-          </div>
-          <p className="text-[13px] leading-4 tracking-wide font-[450] mb-5 max-w-[530px] mx-auto">
-            <span className="opacity-60">Connect all your tools, access open-source AI, and join a global community building technology for good. Every product we create is designed to serve people, not exploit them.</span> Free and open source.
-          </p>
-          <a href="#" target="_blank" rel="noopener noreferrer">
+    <section className="container">
+      <div className="border-border border-x">
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-[2/-2] py-10 max-[950px]:py-6">
+            <div className="text-center mb-8">
+              <p className="mb-6 text-primary"><strong>Oxy Services</strong></p>
+              <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">Technology with purpose</h2>
+            </div>
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-8 col-start-3 max-[950px]:col-span-full max-[950px]:col-start-1 text-center">
+                <div className="mb-5">
+                  <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" className="w-full h-auto object-contain" width={1902} height={1330} loading="lazy" decoding="async" />
+                </div>
+                <p className="text-[13px] leading-4 tracking-wide font-[450] mb-5 max-w-[530px] mx-auto">
+                  <span className="opacity-60">Connect all your tools, access open-source AI, and join a global community building technology for good. Every product we create is designed to serve people, not exploit them.</span> Free and open source.
+                </p>
+                <a href="#" target="_blank" rel="noopener noreferrer">
             <svg width="144" height="48" viewBox="0 0 144 48" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g clipPath="url(#clip0_appstore)">
                 <path d="M11.4414 0.600586H132.595L133.459 0.602539C133.821 0.604857 134.192 0.611296 134.56 0.617188H134.562C135.335 0.625791 136.106 0.693368 136.868 0.820312V0.821289C137.604 0.946475 138.317 1.17951 138.984 1.51465V1.51562C140.233 2.15679 141.263 3.15013 141.95 4.36914L142.083 4.61621C142.416 5.27974 142.647 5.98987 142.768 6.72266L142.769 6.72559C142.897 7.48906 142.968 8.26106 142.982 9.03516V9.03613C142.987 9.39958 142.987 9.76527 142.987 10.1338V10.1465C142.996 10.5736 142.997 11.0029 142.997 11.4434V36.5576C142.997 37.0017 142.996 37.429 142.987 37.8574V37.8701C142.987 38.2431 142.987 38.6006 142.982 38.9688C142.968 39.7432 142.897 40.5155 142.769 41.2793L142.768 41.2822C142.647 42.0171 142.416 42.7295 142.081 43.3945C141.742 44.0528 141.302 44.654 140.776 45.1758L140.773 45.1787C140.317 45.6394 139.798 46.0335 139.232 46.3496L138.987 46.4805C138.32 46.8171 137.607 47.0531 136.871 47.1807C136.108 47.3069 135.335 47.3751 134.562 47.3848H134.556C134.194 47.3928 133.823 47.3975 133.463 47.3975H133.459C133.03 47.3998 132.593 47.4004 132.162 47.4004H11.4414C11.0012 47.4004 10.5677 47.3998 10.1309 47.3975H10.1279C9.76567 47.3975 9.40538 47.3928 9.03809 47.3848H9.0332C8.25741 47.3745 7.48337 47.3064 6.71777 47.1807C5.98468 47.0541 5.27449 46.8186 4.61133 46.4814L4.61035 46.4805C3.94879 46.1451 3.34548 45.7054 2.82324 45.1787L2.81836 45.1738C2.2919 44.6544 1.85276 44.0533 1.51855 43.3936V43.3926C1.18124 42.7283 0.94718 42.0162 0.825195 41.2812V41.2793L0.739258 40.7051C0.689903 40.3215 0.65627 39.9361 0.636719 39.5498L0.618164 38.9697V38.959L0.599609 37.8613V10.1426C0.605641 9.7642 0.607202 9.40927 0.618164 9.04688V9.03516C0.627348 8.2611 0.696751 7.48897 0.825195 6.72559V6.72461C0.947519 5.98978 1.18144 5.27758 1.51855 4.61328V4.6123C1.85322 3.94969 2.29239 3.34513 2.81934 2.82227L2.82129 2.82129C3.3463 2.29614 3.95047 1.85621 4.61133 1.51758C5.27464 1.18123 5.98458 0.94585 6.71777 0.821289L6.71875 0.822266C7.48363 0.69558 8.25698 0.627289 9.03223 0.618164H9.03516C9.40856 0.612256 9.76829 0.604914 10.1318 0.602539L10.1309 0.601562C10.5678 0.599173 11.0012 0.600586 11.4414 0.600586Z" stroke="#0A0A0A" strokeWidth="1.2" />
@@ -926,6 +951,9 @@ function IOSAppSection() {
               </defs>
             </svg>
           </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -939,22 +967,26 @@ const TRUSTED_LOGOS = ['strava', 'polestar', 'merck', 'apollo.io', 'robinhood', 
 
 function TrustedBySection() {
   return (
-    <section className="bg-surface text-foreground py-10 pb-[50px]">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
-        <div className="col-span-full">
-          <h3 className="text-[22px] leading-[1.2] font-[450] mb-10 max-w-[720px]">
-            Built by the community, for the community.
-          </h3>
-          <div className="grid grid-cols-8 max-[950px]:grid-cols-2 gap-x-5 items-center">
-            {TRUSTED_LOGOS.map((logo) => (
-              <div key={logo} className="flex justify-center items-center">
-                <img src={`${IMG}/${logo}.svg`} alt={logo} className="max-h-[66px] w-auto dark:invert" width={224} height={66} loading="lazy" decoding="async" />
+    <div className="bg-surface text-foreground">
+      <section className="container">
+        <div className="border-border border-x">
+          <div className="grid grid-cols-12 gap-6">
+            <div className="col-[2/-2] py-10 pb-[50px]">
+              <h3 className="text-[22px] leading-[1.2] font-[450] mb-10 max-w-[720px]">
+                Built by the community, for the community.
+              </h3>
+              <div className="grid grid-cols-8 max-[950px]:grid-cols-2 gap-x-5 items-center">
+                {TRUSTED_LOGOS.map((logo) => (
+                  <div key={logo} className="flex justify-center items-center">
+                    <img src={`${IMG}/${logo}.svg`} alt={logo} className="max-h-[66px] w-auto dark:invert" width={224} height={66} loading="lazy" decoding="async" />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   )
 }
 
@@ -1011,32 +1043,34 @@ const PLANS = [
 
 function PricingSection() {
   return (
-    <section className="py-10 max-[950px]:py-6">
-      <div className="grid grid-cols-12 gap-6 max-w-[1432px] mx-auto px-8 max-[950px]:px-5">
-        <div className="col-span-full">
-          <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-10 text-center">Plans for Everyone</h2>
-          <div className="mb-20">
-            <div className="flex gap-[18px] max-[950px]:flex-col" style={{ rowGap: '6rem' }}>
-              {PLANS.map((plan) => (
-                <div key={plan.name} className="flex-1">
-                  <p className="text-[22px] leading-[1.2] font-[450] mb-3">{plan.name}</p>
-                  <p className="mb-5"><strong>{plan.price}</strong></p>
-                  {plan.name === 'Organization' ? (
-                    <a className={`${BTN} bg-primary text-primary-foreground`} href={plan.ctaHref}>{plan.cta}</a>
-                  ) : (
-                    <a className={`${BTN} bg-foreground/5`} href={plan.ctaHref} target="_blank" rel="noopener noreferrer">{plan.cta}</a>
-                  )}
-                  <hr className="border-0 border-t border-black/[0.07] my-6" />
-                  <ul className="list-none p-0 m-0">
-                    {plan.features.map((f, i) => (
-                      <li key={i} className="grid grid-cols-[24px_1fr] gap-2 items-start mb-3 text-base leading-[1.4]">
-                        <TickIcon className="inline-block w-[1em] h-[1em] fill-current stroke-current stroke-0 text-base" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+    <section className="container">
+      <div className="border-border border-x">
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-[2/-2] py-10 max-[950px]:py-6">
+            <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-10 text-center">Plans for Everyone</h2>
+            <div className="mb-20">
+              <div className="flex gap-[18px] max-[950px]:flex-col" style={{ rowGap: '6rem' }}>
+                {PLANS.map((plan) => (
+                  <div key={plan.name} className="flex-1">
+                    <p className="text-[22px] leading-[1.2] font-[450] mb-3">{plan.name}</p>
+                    <p className="mb-5"><strong>{plan.price}</strong></p>
+                    {plan.name === 'Organization' ? (
+                      <a className={`${BTN} bg-primary text-primary-foreground`} href={plan.ctaHref}>{plan.cta}</a>
+                    ) : (
+                      <a className={`${BTN} bg-foreground/5`} href={plan.ctaHref} target="_blank" rel="noopener noreferrer">{plan.cta}</a>
+                    )}
+                    <hr className="border-0 border-t border-black/[0.07] my-6" />
+                    <ul className="list-none p-0 m-0">
+                      {plan.features.map((f, i) => (
+                        <li key={i} className="grid grid-cols-[24px_1fr] gap-2 items-start mb-3 text-base leading-[1.4]">
+                          <TickIcon className="inline-block w-[1em] h-[1em] fill-current stroke-current stroke-0 text-base" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
