@@ -604,6 +604,45 @@ body {
 .heading-xl { font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem); line-height: 1.2; }
 .heading-md { font-size: 1.125rem; line-height: 1.3; }
 
+/* Mono tag — uppercase monospace label (xAI-style) */
+.mono-tag {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Force dark mode variables on a section regardless of root theme */
+.force-dark {
+  --background: hsl(277 50% 5%);
+  --foreground: hsl(0 0% 93%);
+  --surface: hsl(277 20% 18%);
+  --surface-foreground: hsl(0 0% 93%);
+  --popover: hsl(277 20% 18%);
+  --popover-foreground: hsl(0 0% 93%);
+  --primary: hsl(277 66% 56%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(277 20% 18%);
+  --secondary-foreground: hsl(0 0% 93%);
+  --muted: hsl(277 18% 20%);
+  --muted-foreground: hsl(0 0% 70%);
+  --accent: hsl(277 18% 20%);
+  --accent-foreground: hsl(0 0% 93%);
+  --destructive: hsl(0 84% 60%);
+  --border: hsl(277 12% 20%);
+  --input: hsl(277 10% 23%);
+  --ring: hsl(277 66% 56%);
+  --sidebar: hsl(277 30% 8%);
+  --color-background: hsl(277 50% 5%);
+  --color-foreground: hsl(0 0% 93%);
+  --color-primary: hsl(277 66% 56%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  --color-muted-foreground: hsl(0 0% 70%);
+  --color-border: hsl(277 12% 20%);
+  --color-surface: hsl(277 20% 18%);
+  --color-surface-foreground: hsl(0 0% 93%);
+  color-scheme: dark;
+}
+
 /* Frost border glass effect */
 .frost-border {
   position: relative;

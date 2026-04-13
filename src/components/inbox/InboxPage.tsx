@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { inboxHero, inboxDemoTabs, inboxFeatureCards } from '../../data/inbox'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 import AnimatedLineGrid from './AnimatedLineGrid'
+import Button from '../ui/Button'
 
 /* ───────────────────────── Tab Videos Map ───────────────────────── */
 
@@ -99,36 +100,6 @@ const iconMap: Record<string, React.FC<{ className?: string }>> = {
   chat: ChatIcon,
   shield: ShieldIcon,
 }
-
-/* ───────────────────────── Frost Button ───────────────────────── */
-
-function FrostButton({
-  children,
-  className = '',
-  href,
-  style,
-}: {
-  children: React.ReactNode
-  className?: string
-  href?: string
-  style?: React.CSSProperties
-}) {
-  const classes = `inline-flex items-center gap-1.5 rounded-full border border-foreground/20 bg-foreground/5 px-4 py-2 text-lg font-medium text-foreground backdrop-blur-sm transition-shadow shadow-[0px_0px_7px_1px_rgba(255,255,255,0.1)_inset] hover:shadow-[0px_0px_8px_1px_rgba(255,255,255,0.15)_inset] ${className}`
-
-  if (href) {
-    return (
-      <a href={href} className={classes} style={style}>
-        {children}
-      </a>
-    )
-  }
-  return (
-    <button type="button" className={classes} style={style}>
-      {children}
-    </button>
-  )
-}
-
 
 /* ───────────────────────── Main Page ───────────────────────── */
 
@@ -282,10 +253,10 @@ export default function InboxPage() {
 
                 {/* CTA button */}
                 <div className="mb-4 mt-4 w-fit">
-                  <FrostButton className="gap-1.5 px-3 py-2 text-sm" href="#">
+                  <Button variant="outline" size="sm" href="https://inbox.oxy.so">
                     Get Started
                     <ArrowIcon className="size-3" />
-                  </FrostButton>
+                  </Button>
                 </div>
 
                 {/* Demo navigation tabs (desktop only) */}
@@ -355,7 +326,7 @@ export default function InboxPage() {
             />
             <div className="ml-5 w-[calc(100%-20px)] pt-8 relative">
               <p className="text-sm pl-5 font-bold uppercase tracking-wide text-white/50 mix-blend-plus-lighter">
-                {`Budapest - 08:00 - ${inboxDemoTabs[activeTab]?.label ?? 'Unified Inbox'}`}
+                {`Barcelona - 08:00 - ${inboxDemoTabs[activeTab]?.label ?? 'Unified Inbox'}`}
               </p>
               {/* Gradient line with dot */}
               <div
@@ -377,7 +348,7 @@ export default function InboxPage() {
           {/* Sticky section header — mobile */}
           <div className="ml-5 w-[calc(100%-20px)] pt-8 block lg:hidden sticky top-[var(--site-header-height,64px)] z-50 bg-transparent backdrop-blur-md">
             <p className="text-sm pl-5 font-bold uppercase tracking-wide text-white/50 mix-blend-plus-lighter">
-              {`Budapest - 08:00 - ${inboxDemoTabs[activeTab]?.label ?? 'Unified Inbox'}`}
+              {`Barcelona - 08:00 - ${inboxDemoTabs[activeTab]?.label ?? 'Unified Inbox'}`}
             </p>
             <div
               className="relative mt-4 h-[0.5px] w-full"
@@ -445,10 +416,10 @@ export default function InboxPage() {
                 </p>
               </div>
               <div className="scroll-reveal" style={{ transitionDelay: '300ms' }}>
-                <button className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-[18px] font-medium text-primary-foreground transition hover:bg-secondary">
+                <Button variant="outline" size="lg" href="https://inbox.oxy.so">
                   Get started today
                   <ArrowIcon className="mt-0.5 size-4" />
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -476,10 +447,10 @@ export default function InboxPage() {
               Built for messages that matter.
             </h2>
             <div className="scroll-reveal mt-6" style={{ transitionDelay: '100ms' }}>
-              <FrostButton className="w-fit gap-1.5 px-3 py-2 text-sm font-medium" href="#">
+              <Button variant="outline" size="sm" href="https://inbox.oxy.so">
                 Get Started
                 <ArrowIcon className="mt-0.5 size-3" />
-              </FrostButton>
+              </Button>
             </div>
           </div>
 

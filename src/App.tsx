@@ -41,6 +41,7 @@ const LegalPage = lazy(() => import('./pages/LegalPage'))
 const UserProfilePage = lazy(() => import('./pages/UserProfilePage'))
 const FeatureBoardPage = lazy(() => import('./pages/FeatureBoardPage'))
 const AstroPage = lazy(() => import('./pages/AstroPage'))
+const AIPage = lazy(() => import('./pages/AIPage'))
 
 const OXY_API = 'https://api.oxy.so'
 
@@ -100,6 +101,7 @@ function PublicRoutes() {
       <Route path="codea" element={<CodeaPage />} />
       <Route path="codea/extension" element={<CodexExtensionPage />} />
       <Route path="inbox" element={<InboxPage />} />
+      <Route path="ai" element={<AIPage />} />
       <Route path="ai/pricing" element={<AIPricingPage />} />
       <Route path="dashboard" element={<DashboardPage />} />
       <Route path="initiative" element={<InitiativePage />} />

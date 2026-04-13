@@ -122,10 +122,11 @@ export function useFooter() {
 }
 
 // ── Newsroom ──
-export function useNewsroomPosts(params?: { category?: string; featured?: boolean; limit?: number; page?: number; author?: string }) {
+export function useNewsroomPosts(params?: { category?: string; tag?: string; featured?: boolean; limit?: number; page?: number; author?: string }) {
   const locale = useCurrentLocale()
   const searchParams = new URLSearchParams()
   if (params?.category) searchParams.set('category', params.category)
+  if (params?.tag) searchParams.set('tag', params.tag)
   if (params?.featured) searchParams.set('featured', 'true')
   if (params?.limit) searchParams.set('limit', String(params.limit))
   if (params?.page) searchParams.set('page', String(params.page))

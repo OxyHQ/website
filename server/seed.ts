@@ -218,6 +218,25 @@ async function seed() {
   })
   console.log('Seeded site settings')
 
+  // ── Pages ──
+  await Page.create({
+    slug: 'ai',
+    title: 'Oxy AI — Understand Your World',
+    description: 'Intelligent AI that understands your workflow, your data, and your goals. Chat, API, and developer tools built for everyone.',
+    sections: [],
+    promptPhrases: [
+      'Summarize the latest research on climate change mitigation...',
+      'What are the key findings in CRISPR gene therapy?',
+      'Explain how transformer models work in simple terms...',
+      'Find recent papers on drug discovery using AI...',
+      'What are the breakthroughs in quantum computing this year?',
+      'How is AI being used in genomics research?',
+      'Analyze the trends in renewable energy adoption...',
+      'What do we know about neuroplasticity and learning?',
+    ],
+  })
+  console.log('Seeded pages')
+
   // ── Changelog (sample) ──
   await ChangelogEntry.insertMany([
     { title: 'Ask Oxy public beta', content: 'Ask Oxy is now available to all workspaces.', tags: ['ai', 'beta'], date: new Date('2026-03-20'), items: ['Natural language CRM queries', 'Meeting intelligence', 'Call recording & analysis'] },

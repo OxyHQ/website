@@ -9,6 +9,7 @@ import { Autoplay } from 'swiper/modules'
 import type SwiperType from 'swiper'
 import 'swiper/css'
 import '../styles/landing.css'
+import AIResearchSection from '../components/ai/AIResearchSection'
 
 const IMG = '/images/landing'
 
@@ -1070,6 +1071,7 @@ export default function Landing4() {
         <IOSAppSection />
         <TrustedBySection />
         <PricingSection />
+        <AIResearchSection />
       </main>
       <Footer />
     </>
