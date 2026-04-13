@@ -1,4 +1,4 @@
-import mongoose, { Schema, type Document } from 'mongoose'
+import mongoose, { Schema, Types, type Document } from 'mongoose'
 
 export interface IBanner {
   text: string
@@ -9,7 +9,7 @@ export interface IBanner {
 export interface ISiteSettings extends Document {
   siteTitle: string
   siteDescription: string
-  ogImage: string
+  ogImage: Types.ObjectId | null
   banner?: IBanner
 }
 
@@ -22,7 +22,7 @@ const BannerSchema = new Schema<IBanner>({
 const SiteSettingsSchema = new Schema<ISiteSettings>({
   siteTitle: { type: String, default: 'Oxy' },
   siteDescription: { type: String, default: '' },
-  ogImage: { type: String, default: '' },
+  ogImage: { type: Schema.Types.ObjectId, ref: 'Media', default: null },
   banner: BannerSchema,
 }, { timestamps: true })
 

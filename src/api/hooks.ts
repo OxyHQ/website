@@ -8,6 +8,35 @@ import { type PricingPlan } from '../data/pricing'
 import { type NewsroomPost } from '../data/newsroom'
 import { type DescriptionBlock } from '../data/careers'
 
+/**
+ * Resolve a populated Media field to a URL string.
+ * Handles: null → '', string → string, { url } object → url, { thumbnails } → best thumbnail.
+ */
+function resolveMediaUrl(field: unknown, preferThumbnail?: 'sm' | 'md' | 'lg'): string {
+  if (!field) return ''
+  if (typeof field === 'string') return field
+  if (typeof field === 'object' && field !== null) {
+    const media = field as { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } }
+    if (preferThumbnail && media.thumbnails?.[preferThumbnail]) return media.thumbnails[preferThumbnail]!
+    return media.url || ''
+  }
+  return ''
+}
+
+/** Resolve all media fields on a newsroom post to URL strings */
+function normalizePostMedia(post: NewsroomPost): NewsroomPost {
+  return {
+    ...post,
+    coverImage: resolveMediaUrl(post.coverImage, 'lg'),
+    ogImage: resolveMediaUrl(post.ogImage),
+  }
+}
+
+/** Resolve media field on a changelog entry */
+function normalizeEntryMedia<T extends { media?: unknown }>(entry: T): T {
+  return { ...entry, media: resolveMediaUrl(entry.media, 'lg') as any }
+}
+
 
 // ── Pages ──
 export interface PageSection {
@@ -136,6 +165,7 @@ export function useNewsroomPosts(params?: { category?: string; tag?: string; fea
   return useQuery({
     queryKey: ['newsroom', params, locale],
     queryFn: () => apiFetch<{ posts: NewsroomPost[]; total: number; page: number; pages: number }>(`/newsroom${qs ? `?${qs}` : ''}`, { locale }),
+    select: (data) => ({ ...data, posts: data.posts.map(normalizePostMedia) }),
     placeholderData: keepPreviousData,
   })
 }
@@ -145,6 +175,7 @@ export function useNewsroomPost(slug: string) {
   return useQuery({
     queryKey: ['newsroom', slug, locale],
     queryFn: () => apiFetch<NewsroomPost>(`/newsroom/${slug}`, { locale }),
+    select: normalizePostMedia,
     enabled: !!slug,
   })
 }
@@ -214,6 +245,7 @@ export function useChangelog(params?: { repo?: string; page?: number; limit?: nu
   return useQuery({
     queryKey: ['changelog', params],
     queryFn: () => apiFetch<ChangelogResponse>(`/changelog${qs ? `?${qs}` : ''}`),
+    select: (data) => ({ ...data, entries: data.entries.map(normalizeEntryMedia) }),
   })
 }
 
@@ -256,6 +288,7 @@ export function useTeamMembers() {
   return useQuery({
     queryKey: ['team'],
     queryFn: () => apiFetch<{ _id: string; name: string; slug: string; role: string; department: string; bio: string; avatar: string; socials?: { linkedin?: string; twitter?: string; github?: string; website?: string } }[]>('/team'),
+    select: (data) => data.map(m => ({ ...m, avatar: resolveMediaUrl(m.avatar, 'md') })),
     staleTime: 5 * 60_000,
   })
 }
@@ -264,6 +297,7 @@ export function useTeamMember(slug: string) {
   return useQuery({
     queryKey: ['team', slug],
     queryFn: () => apiFetch<{ _id: string; name: string; slug: string; role: string; department: string; bio: string; avatar: string; socials?: { linkedin?: string; twitter?: string; github?: string; website?: string } }>(`/team/${slug}`),
+    select: (data) => ({ ...data, avatar: resolveMediaUrl(data.avatar, 'md') }),
     enabled: !!slug,
   })
 }
@@ -334,6 +368,7 @@ export function useSiteSettings() {
   return useQuery({
     queryKey: ['settings', locale],
     queryFn: () => apiFetch<SiteSettings>('/settings', { locale }),
+    select: (data) => ({ ...data, ogImage: resolveMediaUrl(data.ogImage) }),
     staleTime: 2 * 60_000,
     placeholderData: keepPreviousData,
   })

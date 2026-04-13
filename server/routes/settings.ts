@@ -9,7 +9,7 @@ import { applyTranslation } from '../utils/applyTranslation.js'
 const router = Router()
 
 router.get('/', localeMiddleware, async (req, res) => {
-  const settings = await SiteSettings.findOne()
+  const settings = await SiteSettings.findOne().populate('ogImage')
   const data = settings?.toJSON() ?? { siteTitle: 'Oxy', siteDescription: '', ogImage: '' }
   if (req.isDefaultLocale || !settings) return res.json(data)
 
