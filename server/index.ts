@@ -24,6 +24,7 @@ import commentsRouter from './routes/comments.js'
 import featuresRouter from './routes/features.js'
 import profilesRouter from './routes/profiles.js'
 import badgesRouter from './routes/badges.js'
+import teamRouter from './routes/team.js'
 import { mountMcp } from './mcp.js'
 
 const app = express()
@@ -47,6 +48,7 @@ app.use('/api/pricing', pricingRouter)
 app.use('/api/testimonials', testimonialsRouter)
 app.use('/api/changelog', changelogRouter)
 app.use('/api/jobs', jobsRouter)
+app.use('/api/team', teamRouter)
 app.use('/api/settings', settingsRouter)
 app.use('/api/mcp-tokens', mcpTokensRouter)
 app.use('/api/locales', localesRouter)

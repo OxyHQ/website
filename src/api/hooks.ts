@@ -251,6 +251,23 @@ export function useJobs() {
   })
 }
 
+// ── Team ──
+export function useTeamMembers() {
+  return useQuery({
+    queryKey: ['team'],
+    queryFn: () => apiFetch<{ _id: string; name: string; slug: string; role: string; department: string; bio: string; avatar: string; socials?: { linkedin?: string; twitter?: string; github?: string; website?: string } }[]>('/team'),
+    staleTime: 5 * 60_000,
+  })
+}
+
+export function useTeamMember(slug: string) {
+  return useQuery({
+    queryKey: ['team', slug],
+    queryFn: () => apiFetch<{ _id: string; name: string; slug: string; role: string; department: string; bio: string; avatar: string; socials?: { linkedin?: string; twitter?: string; github?: string; website?: string } }>(`/team/${slug}`),
+    enabled: !!slug,
+  })
+}
+
 export function useJob(slug: string) {
   const locale = useCurrentLocale()
   return useQuery({

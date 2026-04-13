@@ -10,6 +10,7 @@ import { Navigation } from './models/Navigation.js'
 import { Footer } from './models/Footer.js'
 import { PricingPlan } from './models/PricingPlan.js'
 import { Testimonial } from './models/Testimonial.js'
+import { TeamMember } from './models/TeamMember.js'
 import { ChangelogEntry } from './models/ChangelogEntry.js'
 import { Job } from './models/Job.js'
 import { SiteSettings } from './models/SiteSettings.js'
@@ -236,6 +237,16 @@ async function seed() {
     ],
   })
   console.log('Seeded pages')
+
+  // ── Team Members ──
+  await TeamMember.deleteMany({})
+  await TeamMember.create([
+    { name: 'Ton Soteras', slug: 'ton', role: 'Public Relations Officer', department: 'Communications', bio: 'Responsible for talking, discussing, negotiating, and recruiting people who are interested in Oxy and FairCoin.', order: 1 },
+    { name: 'Juan C. Moslares Fusté', slug: 'juan-c-moslares-fuste', role: 'Chief Communications Officer (CCO)', department: 'Communications', bio: 'Juan leads communication at Oxy, connecting our vision with the world through his experience in radio.', order: 2 },
+    { name: 'Alejandra Sanchez Garcia', slug: 'alejandrasanchez', role: 'Frontend Developer', department: 'Engineering', bio: 'Alejandra focuses on designing and developing user-friendly interfaces that align with Oxy\'s vision. By applying modern web technologies and best practices, she helps create seamless and impactful digital experiences.', order: 3 },
+    { name: 'Desirée Moreno Corpas', slug: 'desiree', role: 'Full-Stack Web Developer', department: 'Engineering', bio: 'Desirée is a Full-Stack Web Developer with expertise in JavaScript, PHP, React, and Agile methodologies. After transitioning from a career in the performing arts, she now focuses on creating scalable, user-centered web applications.', order: 4 },
+  ])
+  console.log('Seeded team members')
 
   // ── Changelog (sample) ──
   await ChangelogEntry.insertMany([

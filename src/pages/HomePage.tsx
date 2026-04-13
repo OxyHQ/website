@@ -31,8 +31,8 @@ function HeroSection() {
       </div>
 
       {/* Text overlay */}
-      <div className="relative z-[5] flex-1 flex items-end px-10 pt-[100px] pb-5 max-[950px]:px-5 max-[950px]:pt-20 text-foreground">
-        <div>
+      <div className="relative z-[5] flex-1 flex items-end text-foreground">
+        <div className="container pb-5 pt-[100px] max-[950px]:pt-20">
           <h1 className="font-serif text-[40px] font-bold leading-[1.2] tracking-tight max-w-[540px] max-[950px]:text-[28px] max-[950px]:max-w-full">
             Creating a future where technology empowers individuals
             to live connected, fulfilling, and sustainable lives.

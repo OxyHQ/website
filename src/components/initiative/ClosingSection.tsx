@@ -4,7 +4,7 @@ import Button from '../ui/Button'
 export default function ClosingSection() {
   return (
     <section className="w-full bg-surface">
-      <div className="mx-auto w-full max-w-[1200px] px-6">
+      <div className="container">
         <div className="flex flex-col border-x border-border">
           {/* Top decoration */}
           <div className="relative grid grid-cols-12 overflow-hidden border-b border-border max-lg:hidden">

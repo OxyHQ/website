@@ -43,6 +43,7 @@ const FeatureBoardPage = lazy(() => import('./pages/FeatureBoardPage'))
 const AstroPage = lazy(() => import('./pages/AstroPage'))
 const AIPage = lazy(() => import('./pages/AIPage'))
 const CompanyPage = lazy(() => import('./pages/CompanyPage'))
+const TeamPage = lazy(() => import('./pages/TeamPage'))
 
 const OXY_API = 'https://api.oxy.so'
 
@@ -90,6 +91,7 @@ function PublicRoutes() {
       <Route index element={<HomePage />} />
       <Route path="partners" element={<PartnersPage />} />
       <Route path="company" element={<CompanyPage />} />
+      <Route path="company/team" element={<TeamPage />} />
       <Route path="company/careers" element={<CareersPage />} />
       <Route path="company/careers/:slug" element={<CareerDetailPage />} />
       <Route path="pricing" element={<PricingPage />} />
