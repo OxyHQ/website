@@ -11,7 +11,6 @@ import NavDropdownItem from '../ui/NavDropdownItem'
 import Button from '../ui/Button'
 import ThemeToggle from '../ui/ThemeToggle'
 import Logo from '../ui/Logo'
-import Container from './Container'
 import LocalePicker from '../ui/LocalePicker'
 import { useAccountPanel } from '../../contexts/AccountPanelContext'
 
@@ -302,7 +301,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
       </div>
 
       {/* ─── Main nav ─── */}
-      <Container>
+      <div className="container">
         <nav className="py-2 lg:py-3.5">
           <div className="flex items-center justify-between">
             <div className="flex grow items-center gap-x-9">
@@ -414,7 +413,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
             </div>
           </div>
         </nav>
-      </Container>
+      </div>
 
       {/* ─── Shared Dropdown Viewport ─── */}
       {hasMeasured && (
@@ -472,7 +471,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
       {/* ─── Mobile drawer ─── */}
       {mobileOpen && (
         <div className="border-t border-border bg-background lg:hidden">
-          <Container>
+          <div className="container">
             <div className="flex flex-col gap-1 py-4">
               {dropdowns.map((dd) => (
                 <div key={dd.label}>
@@ -541,7 +540,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
                 </div>
               )}
             </div>
-          </Container>
+          </div>
         </div>
       )}
     </header>
