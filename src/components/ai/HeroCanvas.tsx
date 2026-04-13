@@ -10,10 +10,15 @@ interface Star {
   opacity: number
 }
 
+/** Parse an rgb/rgba color string into [r, g, b] number strings. */
+function parseRgb(color: string): [string, string, string] {
+  const m = color.match(/(\d+)/g)
+  return [m?.[0] ?? '255', m?.[1] ?? '255', m?.[2] ?? '255']
+}
+
 /**
- * Full-viewport starfield / particle canvas animation.
- * Replicates the xAI hero background with drifting stars that
- * subtly move toward the camera, creating a depth effect.
+ * Full-viewport starfield canvas animation.
+ * Stars drift toward the camera with depth perspective and faint trails.
  */
 export default function HeroCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -30,12 +35,11 @@ export default function HeroCanvas() {
     let h = 0
     const STAR_COUNT = 400
     const stars: Star[] = []
+    let fgRgb: [string, string, string] = ['255', '255', '255']
 
-    // Read the theme foreground color so particles match light/dark mode
-    function getFgColor() {
-      const style = getComputedStyle(canvas!)
-      const fg = style.getPropertyValue('color')
-      return fg || 'rgb(255,255,255)'
+    function readFgColor() {
+      const fg = getComputedStyle(canvas!).getPropertyValue('color')
+      if (fg) fgRgb = parseRgb(fg)
     }
 
     function resize() {
@@ -45,18 +49,16 @@ export default function HeroCanvas() {
       canvas!.width = w * dpr
       canvas!.height = h * dpr
       ctx!.scale(dpr, dpr)
+      readFgColor()
     }
 
     function initStars() {
       stars.length = 0
       for (let i = 0; i < STAR_COUNT; i++) {
-        const x = Math.random() * w - w / 2
-        const y = Math.random() * h - h / 2
-        const z = Math.random() * 1000
         stars.push({
-          x,
-          y,
-          z,
+          x: Math.random() * w - w / 2,
+          y: Math.random() * h - h / 2,
+          z: Math.random() * 1000,
           px: 0,
           py: 0,
           size: Math.random() * 1.5 + 0.5,
@@ -76,12 +78,7 @@ export default function HeroCanvas() {
 
       const cx = w / 2
       const cy = h / 2
-      // Parse foreground color to r,g,b for canvas drawing
-      const fgRaw = getFgColor()
-      const m = fgRaw.match(/(\d+)/g)
-      const r2 = m?.[0] ?? '255'
-      const g2 = m?.[1] ?? '255'
-      const b2 = m?.[2] ?? '255'
+      const [cr, cg, cb] = fgRgb
 
       for (const star of stars) {
         star.z -= speed
@@ -110,15 +107,14 @@ export default function HeroCanvas() {
 
         ctx.beginPath()
         ctx.arc(sx, sy, Math.max(r, 0.3), 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${r2}, ${g2}, ${b2}, ${alpha})`
+        ctx.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`
         ctx.fill()
 
-        // Faint trail
         if (star.px && star.py) {
           ctx.beginPath()
           ctx.moveTo(star.px, star.py)
           ctx.lineTo(sx, sy)
-          ctx.strokeStyle = `rgba(${r2}, ${g2}, ${b2}, ${alpha * 0.15})`
+          ctx.strokeStyle = `rgba(${cr},${cg},${cb},${alpha * 0.15})`
           ctx.lineWidth = Math.max(r * 0.4, 0.2)
           ctx.stroke()
         }
@@ -132,10 +128,7 @@ export default function HeroCanvas() {
 
     animRef.current = requestAnimationFrame(animate)
 
-    const onResize = () => {
-      resize()
-      initStars()
-    }
+    const onResize = () => { resize(); initStars() }
     window.addEventListener('resize', onResize)
 
     return () => {
@@ -147,8 +140,8 @@ export default function HeroCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute bottom-0 left-0 right-0 top-0 text-foreground"
-      style={{ opacity: 1, width: '100%', height: '100%' }}
+      className="absolute inset-0 text-foreground"
+      style={{ width: '100%', height: '100%' }}
     />
   )
 }

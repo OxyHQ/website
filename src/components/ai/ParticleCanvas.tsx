@@ -10,10 +10,15 @@ interface Particle {
   pulseOffset: number
 }
 
+/** Parse an rgb/rgba color string into [r, g, b] number strings. */
+function parseRgb(color: string): [string, string, string] {
+  const m = color.match(/(\d+)/g)
+  return [m?.[0] ?? '255', m?.[1] ?? '255', m?.[2] ?? '255']
+}
+
 /**
- * Floating particle canvas for the CTA / "Pro" section background.
- * Replicates the xAI SuperGrok section particle animation with
- * radial-gradient mask for soft edge falloff.
+ * Floating particle canvas with pulsing dots and connection lines.
+ * Used as the background for the AI for Research CTA section.
  */
 export default function ParticleCanvas({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -29,7 +34,14 @@ export default function ParticleCanvas({ className }: { className?: string }) {
     let w = 0
     let h = 0
     const PARTICLE_COUNT = 120
+    const CONNECTION_DIST_SQ = 100 * 100 // squared to avoid sqrt
     const particles: Particle[] = []
+    let fgRgb: [string, string, string] = ['255', '255', '255']
+
+    function readFgColor() {
+      const fg = getComputedStyle(canvas!).getPropertyValue('color')
+      if (fg) fgRgb = parseRgb(fg)
+    }
 
     function resize() {
       const dpr = window.devicePixelRatio || 1
@@ -38,6 +50,7 @@ export default function ParticleCanvas({ className }: { className?: string }) {
       canvas!.width = w * dpr
       canvas!.height = h * dpr
       ctx!.scale(dpr, dpr)
+      readFgColor()
     }
 
     function initParticles() {
@@ -58,28 +71,17 @@ export default function ParticleCanvas({ className }: { className?: string }) {
     resize()
     initParticles()
 
-    function getFgColor() {
-      const style = getComputedStyle(canvas!)
-      const fg = style.getPropertyValue('color')
-      return fg || 'rgb(255,255,255)'
-    }
-
     function animate() {
       if (!ctx) return
       ctx.clearRect(0, 0, w, h)
 
       const time = Date.now() * 0.001
-      const fgRaw = getFgColor()
-      const m = fgRaw.match(/(\d+)/g)
-      const cr = m?.[0] ?? '255'
-      const cg = m?.[1] ?? '255'
-      const cb = m?.[2] ?? '255'
+      const [cr, cg, cb] = fgRgb
 
       for (const p of particles) {
         p.x += p.vx
         p.y += p.vy
 
-        // Wrap around edges
         if (p.x < -10) p.x = w + 10
         if (p.x > w + 10) p.x = -10
         if (p.y < -10) p.y = h + 10
@@ -90,23 +92,23 @@ export default function ParticleCanvas({ className }: { className?: string }) {
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${cr}, ${cg}, ${cb}, ${alpha})`
+        ctx.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`
         ctx.fill()
       }
 
-      // Draw faint connection lines between nearby particles
+      // Connection lines (use squared distance to avoid sqrt)
+      ctx.lineWidth = 0.5
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x
           const dy = particles[i].y - particles[j].y
-          const dist = Math.sqrt(dx * dx + dy * dy)
-          if (dist < 100) {
-            const alpha = (1 - dist / 100) * 0.06
+          const distSq = dx * dx + dy * dy
+          if (distSq < CONNECTION_DIST_SQ) {
+            const alpha = (1 - Math.sqrt(distSq) / 100) * 0.06
             ctx.beginPath()
             ctx.moveTo(particles[i].x, particles[i].y)
             ctx.lineTo(particles[j].x, particles[j].y)
-            ctx.strokeStyle = `rgba(${cr}, ${cg}, ${cb}, ${alpha})`
-            ctx.lineWidth = 0.5
+            ctx.strokeStyle = `rgba(${cr},${cg},${cb},${alpha})`
             ctx.stroke()
           }
         }
@@ -117,10 +119,7 @@ export default function ParticleCanvas({ className }: { className?: string }) {
 
     animRef.current = requestAnimationFrame(animate)
 
-    const onResize = () => {
-      resize()
-      initParticles()
-    }
+    const onResize = () => { resize(); initParticles() }
     window.addEventListener('resize', onResize)
 
     return () => {

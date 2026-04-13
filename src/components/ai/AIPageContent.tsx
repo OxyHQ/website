@@ -18,12 +18,12 @@ import {
 const GlobeScene = lazy(() => import('./GlobeScene'))
 
 /* ─────────────────────────────────────────────
-   Icon SVGs (exact xAI Heroicon paths)
+   Icon SVGs
    ───────────────────────────────────────────── */
 
 function ArrowUpRightIcon({ className }: { className?: string }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true" data-slot="icon" className={className}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true" className={className}>
       <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
     </svg>
   )
@@ -31,16 +31,15 @@ function ArrowUpRightIcon({ className }: { className?: string }) {
 
 function ArrowDownIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-slot="icon" className="my-2 size-6">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="my-2 size-6">
       <path fillRule="evenodd" clipRule="evenodd" d="M12 2.25a.75.75 0 0 1 .75.75v16.19l6.22-6.22a.75.75 0 1 1 1.06 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 1 1 1.06-1.06l6.22 6.22V3a.75.75 0 0 1 .75-.75Z" />
     </svg>
   )
 }
 
 /* ─────────────────────────────────────────────
-   Product card SVGs (exact from xAI source)
-   — SVG strokes use currentColor so they
-     inherit from the page's text color
+   Product card SVGs — strokes use currentColor
+   so they inherit from the page's text color
    ───────────────────────────────────────────── */
 
 function AliaSvg({ fill = 'currentColor', stroke = 'none', strokeWidth = 0, opacity = 1, className }: { fill?: string; stroke?: string; strokeWidth?: number; opacity?: number; className?: string }) {
@@ -97,7 +96,7 @@ function DocSvg({ className }: { className: string }) {
 }
 
 /* ─────────────────────────────────────────────
-   Corner dots overlay (exact from xAI)
+   Corner dots overlay for product cards
    ───────────────────────────────────────────── */
 
 function CornerDots() {
@@ -182,7 +181,7 @@ export default function AIPageContent() {
 
             {/* Bottom bar */}
             <div className="relative z-10 flex items-end justify-between gap-6 pb-4 pt-4 lg:min-h-[160px] lg:py-10">
-              <button type="button" onClick={() => document.getElementById('ai-products')?.scrollIntoView({ behavior: 'smooth' })} className="cursor-pointer">
+              <button type="button" onClick={() => document.getElementById('ai-products')?.scrollIntoView({ behavior: 'smooth' })} className="cursor-pointer" aria-label="Scroll to products">
                 <ArrowDownIcon />
               </button>
               <div className="flex flex-col items-end gap-6 sm:gap-8 md:flex-row lg:gap-12">
@@ -214,7 +213,7 @@ export default function AIPageContent() {
             {/* Card 1: Oxy Chat */}
             <div className="group relative flex h-full flex-col space-y-4 px-0 py-10 lg:p-8 from-secondary/10 border-border border-t via-transparent to-transparent lg:border-l lg:border-t-0 lg:hover:bg-gradient-to-b gap-10 overflow-hidden md:flex-row lg:flex-col">
               <CornerDots />
-              <a href={productCards[0].href}><div className="absolute inset-0" /></a>
+              <a href={productCards[0].href} aria-label={productCards[0].title}><span className="absolute inset-0" /></a>
               <div className="flex flex-col gap-3 lg:gap-4">
                 <h3 className="text-xl leading-6 text-foreground">{productCards[0].title}</h3>
                 <p className="text-muted-foreground text-balance">{productCards[0].description}</p>
@@ -231,7 +230,7 @@ export default function AIPageContent() {
             {/* Card 2: API */}
             <div className="group relative flex h-full flex-col space-y-4 px-0 py-10 lg:p-8 from-secondary/10 border-border border-t via-transparent to-transparent lg:border-l lg:border-t-0 lg:hover:bg-gradient-to-b gap-10 overflow-hidden md:flex-row lg:flex-col">
               <CornerDots />
-              <a href={productCards[1].href}><div className="absolute inset-0" /></a>
+              <a href={productCards[1].href} aria-label={productCards[1].title}><span className="absolute inset-0" /></a>
               <div className="flex flex-col gap-3 lg:gap-4">
                 <h3 className="text-xl leading-6 text-foreground">{productCards[1].title}</h3>
                 <p className="text-muted-foreground text-balance">{productCards[1].description}</p>
@@ -249,7 +248,7 @@ export default function AIPageContent() {
             {/* Card 3: Developer Docs */}
             <div className="group relative flex h-full flex-col space-y-4 px-0 py-10 lg:p-8 from-secondary/10 border-border border-t via-transparent to-transparent lg:border-l lg:border-t-0 lg:hover:bg-gradient-to-b gap-10 overflow-hidden md:flex-row lg:flex-col">
               <CornerDots />
-              <a href={productCards[2].href}><div className="absolute inset-0" /></a>
+              <a href={productCards[2].href} aria-label={productCards[2].title}><span className="absolute inset-0" /></a>
               <div className="flex flex-col gap-3 lg:gap-4">
                 <h3 className="text-xl leading-6 text-foreground">{productCards[2].title}</h3>
                 <p className="text-muted-foreground text-balance">{productCards[2].description}</p>
@@ -345,8 +344,8 @@ export default function AIPageContent() {
                     </div>
                     <div className="flex flex-1 flex-col space-y-6">
                       <div className="block grow space-y-4">
-                        <a href={`/newsroom/${article.slug}`}>
-                          <div className="absolute inset-0" />
+                        <a href={`/newsroom/${article.slug}`} aria-label={article.title}>
+                          <span className="absolute inset-0" />
                           <h3 className="text-xl leading-6 text-foreground">{article.title}</h3>
                         </a>
                         <p className="text-muted-foreground grow text-balance">{article.resume}</p>
