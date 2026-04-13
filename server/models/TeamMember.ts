@@ -1,4 +1,4 @@
-import mongoose, { Schema, type Document } from 'mongoose'
+import mongoose, { Schema, Types, type Document } from 'mongoose'
 
 export interface ITeamMember extends Document {
   name: string
@@ -6,7 +6,7 @@ export interface ITeamMember extends Document {
   role: string
   department: string
   bio: string
-  avatar: string
+  avatar: Types.ObjectId | null
   order: number
   active: boolean
   socials: {
@@ -30,7 +30,7 @@ const TeamMemberSchema = new Schema<ITeamMember>({
   role: { type: String, required: true },
   department: { type: String, default: '' },
   bio: { type: String, default: '' },
-  avatar: { type: Schema.Types.Mixed, default: '' },
+  avatar: { type: Schema.Types.ObjectId, ref: 'Media', default: null },
   order: { type: Number, default: 0 },
   active: { type: Boolean, default: true },
   socials: {

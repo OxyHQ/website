@@ -1,27 +1,9 @@
 import { Router } from 'express'
 import { ChangelogEntry } from '../models/ChangelogEntry.js'
-import { Media } from '../models/Media.js'
 import TrackedRepo from '../models/TrackedRepo.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { syncAllRepos, syncSingleRepo } from '../services/githubSync.js'
-
-/** If a field looks like a MongoDB ObjectId, populate it from the Media collection */
-async function resolveMedia(value: any): Promise<string> {
-  if (!value) return ''
-  if (typeof value === 'string' && /^[a-f0-9]{24}$/i.test(value)) {
-    const media = await Media.findById(value)
-    return media?.url || value
-  }
-  if (typeof value === 'object' && value.url) return value.url
-  return String(value)
-}
-
-async function resolveEntryMedia(entry: any) {
-  const obj = entry.toJSON ? entry.toJSON() : { ...entry }
-  obj.media = await resolveMedia(obj.media)
-  return obj
-}
 
 const router = Router()
 
@@ -46,6 +28,7 @@ router.get('/', async (req, res) => {
 
   const [entries, total, repoAgg] = await Promise.all([
     ChangelogEntry.find(filter)
+      .populate('media')
       .sort('-date')
       .skip((page - 1) * limit)
       .limit(limit),
@@ -63,10 +46,8 @@ router.get('/', async (req, res) => {
     displayName: r._id.display,
   }))
 
-  const resolvedEntries = await Promise.all(entries.map(resolveEntryMedia))
-
   res.json({
-    entries: resolvedEntries,
+    entries,
     total,
     page,
     pages: Math.ceil(total / limit),

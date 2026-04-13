@@ -1,4 +1,4 @@
-import mongoose, { Schema, type Document } from 'mongoose'
+import mongoose, { Schema, Types, type Document } from 'mongoose'
 
 export interface INewsroomPost extends Document {
   title: string
@@ -6,7 +6,7 @@ export interface INewsroomPost extends Document {
   resume: string
   description: string
   content: string
-  coverImage?: string
+  coverImage: Types.ObjectId | null
   imageAlt?: string
   oxyUserId?: string
   authorUsername?: string
@@ -18,7 +18,7 @@ export interface INewsroomPost extends Document {
   dark: boolean
   status: 'draft' | 'published'
   metaTitle?: string
-  ogImage?: string
+  ogImage: Types.ObjectId | null
   publishedAt: Date
   createdAt: Date
   updatedAt: Date
@@ -30,7 +30,7 @@ const NewsroomPostSchema = new Schema<INewsroomPost>({
   resume: { type: String, default: '' },
   description: { type: String, default: '' },
   content: { type: String, default: '' },
-  coverImage: { type: Schema.Types.Mixed, default: '' },
+  coverImage: { type: Schema.Types.ObjectId, ref: 'Media', default: null },
   imageAlt: String,
   oxyUserId: String,
   authorUsername: String,
@@ -42,7 +42,7 @@ const NewsroomPostSchema = new Schema<INewsroomPost>({
   dark: { type: Boolean, default: false },
   status: { type: String, enum: ['draft', 'published'], default: 'published', index: true },
   metaTitle: String,
-  ogImage: { type: Schema.Types.Mixed, default: '' },
+  ogImage: { type: Schema.Types.ObjectId, ref: 'Media', default: null },
   publishedAt: { type: Date, default: Date.now },
 }, { timestamps: true })
 

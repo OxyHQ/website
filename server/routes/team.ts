@@ -1,40 +1,21 @@
 import { Router } from 'express'
 import { TeamMember } from '../models/TeamMember.js'
-import { Media } from '../models/Media.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
-
-/** If a field looks like a MongoDB ObjectId, populate it from the Media collection */
-async function resolveMedia(value: any): Promise<string> {
-  if (!value) return ''
-  if (typeof value === 'string' && /^[a-f0-9]{24}$/i.test(value)) {
-    const media = await Media.findById(value)
-    return media?.url || value
-  }
-  if (typeof value === 'object' && value.url) return value.url
-  return String(value)
-}
-
-async function resolveMemberMedia(member: any) {
-  const obj = member.toJSON ? member.toJSON() : { ...member }
-  obj.avatar = await resolveMedia(obj.avatar)
-  return obj
-}
 
 const router = Router()
 
 // List active team members (public)
 router.get('/', async (_req, res) => {
-  const members = await TeamMember.find({ active: true }).sort('order name')
-  const resolved = await Promise.all(members.map(resolveMemberMedia))
-  res.json(resolved)
+  const members = await TeamMember.find({ active: true }).populate('avatar').sort('order name')
+  res.json(members)
 })
 
 // Get single team member by slug (public)
 router.get('/:slug', async (req, res) => {
-  const member = await TeamMember.findOne({ slug: req.params.slug })
+  const member = await TeamMember.findOne({ slug: req.params.slug }).populate('avatar')
   if (!member) return res.status(404).json({ error: 'Team member not found' })
-  res.json(await resolveMemberMedia(member))
+  res.json(member)
 })
 
 // Create team member (admin)

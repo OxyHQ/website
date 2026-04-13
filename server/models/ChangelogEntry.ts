@@ -1,4 +1,4 @@
-import mongoose, { Schema, type Document } from 'mongoose'
+import mongoose, { Schema, Types, type Document } from 'mongoose'
 
 export interface IChangelogEntry extends Document {
   title: string
@@ -6,7 +6,7 @@ export interface IChangelogEntry extends Document {
   tags: string[]
   date: Date
   items?: string[]
-  media?: string
+  media: Types.ObjectId | null
   githubReleaseId?: number
   repoOwner?: string
   repoName?: string
@@ -21,7 +21,7 @@ const ChangelogEntrySchema = new Schema<IChangelogEntry>({
   tags: [String],
   date: { type: Date, required: true },
   items: [String],
-  media: { type: Schema.Types.Mixed, default: '' },
+  media: { type: Schema.Types.ObjectId, ref: 'Media', default: null },
   githubReleaseId: { type: Number, unique: true, sparse: true },
   repoOwner: String,
   repoName: String,
