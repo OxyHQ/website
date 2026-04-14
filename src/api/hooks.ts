@@ -228,6 +228,13 @@ export interface ProductLogoRef {
   thumbnails?: { sm?: string; md?: string; lg?: string }
 }
 
+export interface ProductCategoryRef {
+  _id?: string
+  slug?: string
+  label?: string
+  order?: number
+}
+
 export interface ProductRecord {
   _id?: string
   productId: string
@@ -243,12 +250,26 @@ export interface ProductRecord {
   brandForeground?: string
   mark: string
   logo?: string | ProductLogoRef | null
+  category?: string | ProductCategoryRef | null
   section: string
   lifecycle: ProductLifecycle
   showOnProducts: boolean
   showOnStatus: boolean
   showInNav: boolean
   order: number
+}
+
+export function resolveProductCategoryId(product: Pick<ProductRecord, 'category'>): string {
+  const cat = product.category
+  if (!cat) return ''
+  if (typeof cat === 'string') return cat
+  return cat._id ?? ''
+}
+
+export function resolveProductCategoryLabel(product: Pick<ProductRecord, 'category' | 'section'>): string {
+  const cat = product.category
+  if (cat && typeof cat === 'object' && cat.label) return cat.label
+  return product.section || ''
 }
 
 export interface UseProductsOptions {

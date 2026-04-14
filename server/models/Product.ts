@@ -23,7 +23,9 @@ export interface IProduct extends Document {
   mark: string
   /** Media ref for the app icon / logo. Takes precedence over `mark`. */
   logo?: Types.ObjectId | null
-  /** Grouping label used by /status and the /products page. Matches the navbar section labels. */
+  /** Category ObjectId ref used by /products, /status, and the Ecosystem navbar dropdown. */
+  category?: Types.ObjectId | null
+  /** Legacy string slug kept for seed compatibility and as a fallback when category ref is unset. */
   section: string
   /** Lifecycle bucket on /products — live vs in-development. */
   lifecycle: ProductLifecycle
@@ -52,7 +54,8 @@ const ProductSchema = new Schema<IProduct>({
   brandForeground: { type: String },
   mark: { type: String, required: true },
   logo: { type: Schema.Types.ObjectId, ref: 'Media', default: null },
-  section: { type: String, default: 'Apps' },
+  category: { type: Schema.Types.ObjectId, ref: 'Category', default: null },
+  section: { type: String, default: 'apps' },
   lifecycle: { type: String, enum: ['live', 'in-development'], default: 'live' },
   showOnProducts: { type: Boolean, default: true },
   showOnStatus: { type: Boolean, default: true },

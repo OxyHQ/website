@@ -12,6 +12,7 @@ const router = Router()
 
 // Accept either a string (Media id) or null to clear. Empty string becomes null.
 const mediaRefSchema = z.union([z.string(), z.null()]).optional().transform((v) => (v && v.length > 0 ? v : null))
+const categoryRefSchema = z.union([z.string(), z.null()]).optional().transform((v) => (v && v.length > 0 ? v : null))
 
 const productBodySchema = z.object({
   productId: z.string().min(1),
@@ -27,7 +28,8 @@ const productBodySchema = z.object({
   brandForeground: z.string().optional(),
   mark: z.string().min(1),
   logo: mediaRefSchema,
-  section: z.string().optional().default('Apps'),
+  category: categoryRefSchema,
+  section: z.string().optional().default('apps'),
   lifecycle: z.enum(['live', 'in-development']).optional().default('live'),
   showOnProducts: z.boolean().optional().default(true),
   showOnStatus: z.boolean().optional().default(true),
@@ -55,6 +57,7 @@ router.get('/', localeMiddleware, async (req, res) => {
   const docs = await Product.find(mongoQuery)
     .sort({ lifecycle: 1, section: 1, order: 1 })
     .populate('logo')
+    .populate('category')
 
   if (req.isDefaultLocale) return res.json(docs)
 
@@ -67,7 +70,9 @@ router.get('/', localeMiddleware, async (req, res) => {
 })
 
 router.get('/:productId', localeMiddleware, async (req, res) => {
-  const doc = await Product.findOne({ productId: req.params.productId }).populate('logo')
+  const doc = await Product.findOne({ productId: req.params.productId })
+    .populate('logo')
+    .populate('category')
   if (!doc) return res.status(404).json({ error: 'Not found' })
   if (req.isDefaultLocale) return res.json(doc)
   const translations = await Translation.find({
@@ -94,7 +99,9 @@ router.put('/:productId', requireAuth, adminOnly, async (req, res) => {
     { productId: req.params.productId },
     patch,
     { new: true, runValidators: true },
-  ).populate('logo')
+  )
+    .populate('logo')
+    .populate('category')
   if (!doc) return res.status(404).json({ error: 'Not found' })
   res.json(doc)
 })

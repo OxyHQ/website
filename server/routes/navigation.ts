@@ -3,7 +3,6 @@ import { z } from 'zod'
 import { Navigation } from '../models/Navigation.js'
 import { Translation } from '../models/Translation.js'
 import { Product, type IProduct } from '../models/Product.js'
-import { Category } from '../models/Category.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
@@ -53,20 +52,28 @@ function productToNavItem(product: IProduct, categoryLabel: string): Record<stri
   }
 }
 
+interface PopulatedCategory {
+  _id?: unknown
+  label?: string
+  order?: number
+}
+
 async function resolveAppsDropdown(dropdown: Record<string, unknown>): Promise<Record<string, unknown>> {
   const products = await Product.find({ showInNav: true })
-    .sort({ section: 1, order: 1 })
     .populate('logo')
+    .populate('category')
 
-  // Resolve category labels via slug → label. Anything that doesn't match
-  // a Category row falls back to the raw section string.
-  const categories = await Category.find({ scope: { $in: ['apps', 'generic'] } })
-  const labelBySlug = new Map(categories.map((c) => [c.slug, c.label]))
+  const withLabels = products.map((p) => {
+    const populated = (p as unknown as { category?: PopulatedCategory | null }).category
+    const label = populated?.label ?? 'Other'
+    const sortOrder = populated?.order ?? 99
+    return { product: p, label, sortOrder }
+  })
 
-  const generatedItems = products.map((p) =>
-    productToNavItem(p, labelBySlug.get(p.section) || p.section || 'Apps'),
-  )
+  // Stable sort: category order, then product order within the category.
+  withLabels.sort((a, b) => (a.sortOrder - b.sortOrder) || (a.product.order - b.product.order))
 
+  const generatedItems = withLabels.map(({ product, label }) => productToNavItem(product, label))
   return { ...dropdown, items: generatedItems }
 }
 

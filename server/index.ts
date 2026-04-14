@@ -6,6 +6,8 @@ import { ValidationError } from './utils/validate.js'
 
 import pagesRouter from './routes/pages.js'
 import { Navigation } from './models/Navigation.js'
+import { Product } from './models/Product.js'
+import { Category } from './models/Category.js'
 import navigationRouter from './routes/navigation.js'
 import footerRouter from './routes/footer.js'
 import heroRouter from './routes/hero.js'
@@ -213,11 +215,33 @@ async function migrateEcosystemDropdown() {
   }
 }
 
+async function migrateProductCategoryRefs() {
+  // Products used to store a free-text `section` slug. Link every legacy
+  // product to the matching Category document by slug so `product.category`
+  // becomes the single source of truth.
+  const orphans = await Product.find({ $or: [{ category: null }, { category: { $exists: false } }] })
+  if (orphans.length === 0) return
+  const categories = await Category.find({})
+  const idBySlug = new Map(categories.map((c) => [c.slug, c._id]))
+  let linked = 0
+  for (const product of orphans) {
+    const categoryId = product.section ? idBySlug.get(product.section) : undefined
+    if (!categoryId) continue
+    product.category = categoryId
+    await product.save()
+    linked++
+  }
+  if (linked > 0) {
+    console.log(`[migration] Linked ${linked} product(s) to their Category by legacy slug`)
+  }
+}
+
 async function start() {
   await mongoose.connect(config.mongoUri)
   console.log('Connected to MongoDB')
 
   await migrateEcosystemDropdown()
+  await migrateProductCategoryRefs()
 
   startSyncInterval()
 

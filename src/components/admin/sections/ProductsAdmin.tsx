@@ -1,5 +1,13 @@
 import { useState } from 'react'
-import { useProducts, useMediaItem, type ProductRecord, type ProductLifecycle } from '../../../api/hooks'
+import { Link } from 'react-router-dom'
+import {
+  useProducts,
+  useCategories,
+  useMediaItem,
+  resolveProductCategoryId,
+  type ProductRecord,
+  type ProductLifecycle,
+} from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Input } from '../../ui/shadcn/input'
@@ -75,7 +83,8 @@ function emptyProduct(): ProductRecord {
     brandForeground: '',
     mark: '',
     logo: null,
-    section: 'Apps',
+    category: null,
+    section: 'apps',
     lifecycle: 'live',
     showOnProducts: true,
     showOnStatus: true,
@@ -84,27 +93,25 @@ function emptyProduct(): ProductRecord {
   }
 }
 
-// Only collapse the populated Media object to a plain id when we're about to
-// start editing — the list view keeps the full populated ref so ProductMark
-// can render the logo instantly without a round-trip through useMediaItem.
-function stripLogoForEditing(product: ProductRecord): ProductRecord {
-  return { ...product, logo: mediaId(product.logo) || null }
+// Only collapse populated refs to plain id strings when we're about to
+// start editing — the list view keeps the full populated refs so we can
+// render labels/logos instantly without round-trips.
+function stripRefsForEditing(product: ProductRecord): ProductRecord {
+  return {
+    ...product,
+    logo: mediaId(product.logo) || null,
+    category: resolveProductCategoryId(product) || null,
+  }
 }
 
 function slugify(input: string): string {
   return input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 }
 
-const SECTION_SUGGESTIONS = [
-  'Social & Communication',
-  'Finance & Commerce',
-  'Apps',
-  'Infrastructure',
-  'Developer',
-]
-
 export default function ProductsAdmin() {
   const { data, refetch } = useProducts()
+  const { data: categoriesData } = useCategories('apps')
+  const categories = categoriesData ?? []
   const [editing, setEditing] = useState<ProductRecord | null>(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -306,16 +313,21 @@ export default function ProductsAdmin() {
 
           <div className="grid grid-cols-3 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label>Section</Label>
-              <Input
-                value={editing.section}
-                onChange={(e) => setEditing({ ...editing, section: e.target.value })}
-                list="product-sections"
-              />
-              <datalist id="product-sections">
-                {SECTION_SUGGESTIONS.map((s) => <option key={s} value={s} />)}
-              </datalist>
-              <p className="text-xs text-muted-foreground">Used by /products and /status grouping and the navbar.</p>
+              <Label>Category</Label>
+              <select
+                value={typeof editing.category === 'string' ? editing.category : ''}
+                onChange={(e) => setEditing({ ...editing, category: e.target.value || null })}
+                className="h-9 rounded-md border border-border bg-background px-3 text-sm"
+              >
+                <option value="">— Select a category —</option>
+                {categories.map((c) => (
+                  <option key={c._id ?? c.slug} value={c._id ?? ''}>{c.label}</option>
+                ))}
+              </select>
+              <p className="text-xs text-muted-foreground">
+                Manage in <Link to="/admin/categories" className="underline underline-offset-2 hover:text-foreground">Categories</Link>.
+                Drives grouping on /products, /status, and the Ecosystem navbar dropdown.
+              </p>
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>Lifecycle</Label>
@@ -418,13 +430,15 @@ export default function ProductsAdmin() {
             <p className="mt-3 text-sm text-muted-foreground">Nothing in this group yet.</p>
           ) : (
             <div className="mt-3 divide-y divide-border rounded-2xl border border-border">
-              {group.items.map((product) => (
+              {group.items.map((product) => {
+                const categoryLabel = categories.find((c) => c.slug === product.section)?.label ?? product.section
+                return (
                 <div key={product.productId} className="flex items-center gap-4 px-4 py-3">
                   <ProductMark product={product} size="sm" />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium text-foreground">{product.name}</div>
                     <div className="truncate text-xs text-muted-foreground">
-                      <span className="font-mono">{product.productId}</span> · {product.section} · {product.href}
+                      <span className="font-mono">{product.productId}</span> · {categoryLabel} · {product.href}
                     </div>
                   </div>
                   <div className="hidden shrink-0 gap-1 text-xs text-muted-foreground md:flex">
@@ -433,11 +447,12 @@ export default function ProductsAdmin() {
                     {product.showInNav && <span>· nav</span>}
                   </div>
                   <div className="shrink-0">
-                    <Button variant="ghost" size="small" onPress={() => setEditing(stripLogoForEditing(product))}>Edit</Button>
+                    <Button variant="ghost" size="small" onPress={() => setEditing(stripRefsForEditing(product))}>Edit</Button>
                     <Button variant="ghost" size="small" onPress={() => remove(product.productId)}>Delete</Button>
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </section>
