@@ -263,17 +263,11 @@ export default function NavigationAdmin() {
                   placeholder="Menu label"
                 />
                 <div className="flex items-center gap-2">
-                  <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">
-                    <span>Kind</span>
-                    <select
-                      value={dropdown.kind}
-                      onChange={(e) => updateDropdown(di, 'kind', e.target.value as AdminNavKind)}
-                      className="h-8 rounded-md border border-border bg-background px-2 text-xs"
-                    >
-                      <option value="manual">Manual items</option>
-                      <option value="apps">Apps (from Products CMS)</option>
-                    </select>
-                  </label>
+                  {dropdown.kind === 'apps' && (
+                    <span className="rounded-full border border-emerald-500/40 bg-emerald-500/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                      From Products CMS
+                    </span>
+                  )}
                   <Button variant="ghost" size="small" onPress={() => removeDropdown(di)}>Remove menu</Button>
                 </div>
               </div>

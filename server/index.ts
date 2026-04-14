@@ -5,6 +5,7 @@ import { config } from './config.js'
 import { ValidationError } from './utils/validate.js'
 
 import pagesRouter from './routes/pages.js'
+import { Navigation } from './models/Navigation.js'
 import navigationRouter from './routes/navigation.js'
 import footerRouter from './routes/footer.js'
 import heroRouter from './routes/hero.js'
@@ -199,9 +200,24 @@ app.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
   return next(err)
 })
 
+async function migrateEcosystemDropdown() {
+  // Any dropdown that was historically called "Ecosystem" is now
+  // auto-driven by the Products CMS. One-shot migration so existing
+  // prod data picks up the new apps-mode without a manual admin save.
+  const result = await Navigation.updateMany(
+    { label: /^ecosystem$/i, kind: { $ne: 'apps' } },
+    { $set: { kind: 'apps' } },
+  )
+  if (result.modifiedCount > 0) {
+    console.log(`[migration] Upgraded ${result.modifiedCount} ecosystem dropdown(s) to apps mode`)
+  }
+}
+
 async function start() {
   await mongoose.connect(config.mongoUri)
   console.log('Connected to MongoDB')
+
+  await migrateEcosystemDropdown()
 
   startSyncInterval()
 
