@@ -1,9 +1,20 @@
 import { useState } from 'react'
 import { useHero, useUpdateHero, type HeroContent } from '../../../api/hooks'
 import { PrimaryButton } from '@oxyhq/bloom/button'
-import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
+import { Input } from '../../ui/shadcn/input'
 import { Label } from '../../ui/shadcn/label'
+import MediaPicker from '../MediaPicker'
+
+function mediaId(image: unknown): string {
+  if (!image) return ''
+  if (typeof image === 'string') return image
+  if (typeof image === 'object' && image !== null && '_id' in image) {
+    const id = (image as { _id?: unknown })._id
+    return typeof id === 'string' ? id : ''
+  }
+  return ''
+}
 
 interface HeroForm {
   title: string
@@ -19,9 +30,9 @@ function toForm(data: HeroContent | undefined): HeroForm {
   return {
     title: data?.title ?? '',
     eyebrow: data?.eyebrow ?? '',
-    backgroundVideoWebm: data?.backgroundVideoWebm ?? '',
-    backgroundVideoMp4: data?.backgroundVideoMp4 ?? '',
-    backgroundPoster: data?.backgroundPoster ?? '',
+    backgroundVideoWebm: mediaId(data?.backgroundVideoWebm),
+    backgroundVideoMp4: mediaId(data?.backgroundVideoMp4),
+    backgroundPoster: mediaId(data?.backgroundPoster),
     carouselSlotsJson: JSON.stringify(data?.carouselSlots ?? [], null, 2),
   }
 }
@@ -106,35 +117,32 @@ export default function HeroAdmin() {
         <div className="rounded-xl border border-border p-4">
           <h3 className="text-sm font-medium text-foreground">Background media</h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            Either a full URL (e.g. <code className="font-mono">/images/landing/hero-background.webm</code>)
-            or a Media document <code className="font-mono">_id</code>. Media IDs get
-            populated and served from the CDN.
+            Upload or pick from the media library. WebM and MP4 are both
+            served so browsers get the best-supported format; the poster shows
+            before the video starts playing.
           </p>
-          <div className="mt-3 flex flex-col gap-3">
-            <div className="flex flex-col gap-1.5">
-              <Label>Video (WebM)</Label>
-              <Input
-                value={form.backgroundVideoWebm}
-                onChange={(e) => setForm({ ...form, backgroundVideoWebm: e.target.value })}
-                placeholder="/images/landing/hero-background.webm"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Video (MP4)</Label>
-              <Input
-                value={form.backgroundVideoMp4}
-                onChange={(e) => setForm({ ...form, backgroundVideoMp4: e.target.value })}
-                placeholder="/images/landing/hero-background.mp4"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Poster image</Label>
-              <Input
-                value={form.backgroundPoster}
-                onChange={(e) => setForm({ ...form, backgroundPoster: e.target.value })}
-                placeholder="/images/landing/hero-bg.avif"
-              />
-            </div>
+          <div className="mt-3 flex flex-col gap-4">
+            <MediaPicker
+              label="Video (WebM)"
+              value={form.backgroundVideoWebm}
+              onChange={(id) => setForm({ ...form, backgroundVideoWebm: id ?? '' })}
+              folder="hero"
+              accept="video/webm"
+            />
+            <MediaPicker
+              label="Video (MP4)"
+              value={form.backgroundVideoMp4}
+              onChange={(id) => setForm({ ...form, backgroundVideoMp4: id ?? '' })}
+              folder="hero"
+              accept="video/mp4"
+            />
+            <MediaPicker
+              label="Poster image"
+              value={form.backgroundPoster}
+              onChange={(id) => setForm({ ...form, backgroundPoster: id ?? '' })}
+              folder="hero"
+              accept="image/*"
+            />
           </div>
         </div>
 

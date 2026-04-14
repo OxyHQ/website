@@ -5,7 +5,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HeroCarousel from '../components/homepage/HeroCarousel'
 import { heroCarouselSlots } from '../data/heroCarousel'
-import { useHero } from '../api/hooks'
+import { useHero, type HeroMediaRef } from '../api/hooks'
 import { usePageChromeStore } from '../stores/pageChromeStore'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
@@ -13,6 +13,12 @@ import type SwiperType from 'swiper'
 import 'swiper/css'
 import '../styles/landing.css'
 import AIResearchSection from '../components/ai/AIResearchSection'
+
+function heroMediaUrl(ref: HeroMediaRef | undefined): string {
+  if (!ref) return ''
+  if (typeof ref === 'string') return ref
+  return ref.thumbnails?.lg || ref.url || ''
+}
 
 const IMG = '/images/landing'
 
@@ -36,9 +42,9 @@ function HeroSection() {
 
   const title = hero?.title || DEFAULT_HERO_TITLE
   const eyebrow = hero?.eyebrow || DEFAULT_HERO_EYEBROW
-  const webm = hero?.backgroundVideoWebm || DEFAULT_HERO_BG_WEBM
-  const mp4 = hero?.backgroundVideoMp4 || DEFAULT_HERO_BG_MP4
-  const poster = hero?.backgroundPoster || DEFAULT_HERO_POSTER
+  const webm = heroMediaUrl(hero?.backgroundVideoWebm) || DEFAULT_HERO_BG_WEBM
+  const mp4 = heroMediaUrl(hero?.backgroundVideoMp4) || DEFAULT_HERO_BG_MP4
+  const poster = heroMediaUrl(hero?.backgroundPoster) || DEFAULT_HERO_POSTER
   // Fall back to the static slot list if the CMS doc hasn't populated it yet.
   // Empty arrays count as "not set" so admins can't accidentally clear the grid.
   const slots = hero?.carouselSlots && hero.carouselSlots.length > 0
