@@ -30,28 +30,36 @@ interface AdminNavItem {
   section?: string
 }
 
+type AdminNavKind = 'manual' | 'apps'
+
 interface AdminNavDropdown {
   _id?: string
   label: string
+  kind: AdminNavKind
   order: number
   items: AdminNavItem[]
   sidePanel: NavSidePanel | null
 }
 
 function normalizeDropdowns(data: ReturnType<typeof useNavigation>['data']): AdminNavDropdown[] {
-  return (data ?? []).map((dd) => ({
-    ...dd,
-    label: dd.label ?? '',
-    order: dd.order ?? 0,
-    items: (dd.sections ?? []).flatMap((s: NavDropdownSection) =>
-      (s.items ?? []).map((item: NavDropdownItem) => ({
-        ...item,
-        image: mediaId(item.image),
-        section: s.heading || '',
-      }))
-    ),
-    sidePanel: dd.sidePanel ?? null,
-  }))
+  return (data ?? []).map((dd) => {
+    const raw = dd as unknown as { kind?: unknown }
+    const kind: AdminNavKind = raw.kind === 'apps' ? 'apps' : 'manual'
+    return {
+      ...dd,
+      label: dd.label ?? '',
+      kind,
+      order: dd.order ?? 0,
+      items: (dd.sections ?? []).flatMap((s: NavDropdownSection) =>
+        (s.items ?? []).map((item: NavDropdownItem) => ({
+          ...item,
+          image: mediaId(item.image),
+          section: s.heading || '',
+        }))
+      ),
+      sidePanel: dd.sidePanel ?? null,
+    }
+  })
 }
 
 export default function NavigationAdmin() {
@@ -80,7 +88,7 @@ export default function NavigationAdmin() {
   }
 
   const addDropdown = () => {
-    setDropdowns([...dropdowns, { label: 'New Menu', order: dropdowns.length, items: [], sidePanel: null }])
+    setDropdowns([...dropdowns, { label: 'New Menu', kind: 'manual', order: dropdowns.length, items: [], sidePanel: null }])
   }
 
   const removeDropdown = (idx: number) => {
@@ -247,19 +255,40 @@ export default function NavigationAdmin() {
         <div className="mt-6 flex flex-col gap-6">
           {dropdowns.map((dropdown, di) => (
             <div key={di} className="rounded-xl border border-border p-5">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-4">
                 <Input
                   value={dropdown.label}
                   onChange={(e) => updateDropdown(di, 'label', e.target.value)}
                   className="max-w-xs text-lg font-semibold border-none shadow-none px-0 focus-visible:ring-0"
                   placeholder="Menu label"
                 />
-                <Button variant="ghost" size="small" onPress={() => removeDropdown(di)}>Remove menu</Button>
+                <div className="flex items-center gap-2">
+                  <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">
+                    <span>Kind</span>
+                    <select
+                      value={dropdown.kind}
+                      onChange={(e) => updateDropdown(di, 'kind', e.target.value as AdminNavKind)}
+                      className="h-8 rounded-md border border-border bg-background px-2 text-xs"
+                    >
+                      <option value="manual">Manual items</option>
+                      <option value="apps">Apps (from Products CMS)</option>
+                    </select>
+                  </label>
+                  <Button variant="ghost" size="small" onPress={() => removeDropdown(di)}>Remove menu</Button>
+                </div>
               </div>
 
               <Divider />
 
-              {/* Items */}
+              {dropdown.kind === 'apps' ? (
+                /* Apps-mode — no item management; items come from Product.find({ showInNav: true }) */
+                <div className="mt-4 rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
+                  Items for this dropdown are generated automatically from the Products CMS.
+                  Every product with <span className="font-mono">showInNav</span> enabled appears here,
+                  grouped by its category. To add or reorder items, edit the product directly.
+                </div>
+              ) : (
+              /* Manual items */
               <div className="mt-4">
                 <h4 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">Items</h4>
                 <div className="flex flex-col gap-3">
@@ -308,6 +337,7 @@ export default function NavigationAdmin() {
                   </div>
                 </div>
               </div>
+              )}
 
               <Divider />
 
