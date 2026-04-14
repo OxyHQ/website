@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
@@ -64,19 +64,30 @@ export default function AccountPanel() {
   const { user, signOut } = useAuth()
   const location = useLocation()
 
-  useEffect(() => { close() }, [location.pathname, close])
+  // Derived-state pattern: close the panel on route change without useEffect.
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+  const [lastPath, setLastPath] = useState(location.pathname)
+  if (lastPath !== location.pathname) {
+    setLastPath(location.pathname)
+    if (isOpen) close()
+  }
 
-  useEffect(() => {
-    if (!isOpen) return
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
+  // Escape listener lives only while the panel is open — wired via a callback
+  // ref on a conditionally-mounted sentinel element.
+  const escapeSentinelRef = useCallback((node: HTMLSpanElement | null) => {
+    if (!node) return
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close()
+    }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [isOpen, close])
+  }, [close])
 
   const displayName = formatDisplayName(user?.name, user?.username ?? '')
 
   return (
     <>
+      {isOpen && <span ref={escapeSentinelRef} aria-hidden hidden />}
       {/* Backdrop */}
       <div
         className={`fixed inset-0 z-[60] bg-black/40 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}

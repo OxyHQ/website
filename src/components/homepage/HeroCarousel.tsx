@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useMemo } from 'react'
+import { useRef, useCallback, useMemo } from 'react'
 import type { CarouselSlot } from '../../data/heroCarousel'
 import { useJobs, useNewsroomPosts } from '../../api/hooks'
 import CarouselSlotRenderer from './HeroCarouselCard'
@@ -50,12 +50,12 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     })
   }, [slots, jobs, posts])
 
-  const outerRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const posRef = useRef(0)
   const speedRef = useRef(NORMAL_SPEED)
   const targetSpeedRef = useRef(NORMAL_SPEED)
   const rafRef = useRef<number>(0)
+  const visibleRef = useRef(false)
 
   const animate = useCallback(() => {
     const track = trackRef.current
@@ -74,16 +74,15 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     rafRef.current = requestAnimationFrame(animate)
   }, [])
 
-  useEffect(() => {
+  // React 19 callback ref with cleanup — owns the rAF loop, IntersectionObserver,
+  // visibilitychange listener, and wheel listener in one place. Attaches when the
+  // outer element mounts, tears everything down on unmount.
+  const outerRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    const outer = outerRef.current
-    if (!outer) return
-
-    let visible = false
-
     const start = () => {
-      if (!visible || document.hidden || rafRef.current !== 0) return
+      if (!visibleRef.current || document.hidden || rafRef.current !== 0) return
       rafRef.current = requestAnimationFrame(animate)
     }
     const stop = () => {
@@ -93,13 +92,13 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
 
     const io = new IntersectionObserver(
       ([entry]) => {
-        visible = entry.isIntersecting
-        if (visible) start()
+        visibleRef.current = entry.isIntersecting
+        if (visibleRef.current) start()
         else stop()
       },
       { threshold: 0 },
     )
-    io.observe(outer)
+    io.observe(node)
 
     const handleVisibility = () => {
       if (document.hidden) stop()
@@ -107,19 +106,8 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     }
     document.addEventListener('visibilitychange', handleVisibility)
 
-    return () => {
-      stop()
-      io.disconnect()
-      document.removeEventListener('visibilitychange', handleVisibility)
-    }
-  }, [animate])
-
-  useEffect(() => {
-    const outer = outerRef.current
-    if (!outer) return
-
     const handleWheel = (e: WheelEvent) => {
-      const rect = outer.getBoundingClientRect()
+      const rect = node.getBoundingClientRect()
       if (rect.bottom <= 0 || rect.top >= window.innerHeight) return
 
       const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
@@ -130,10 +118,15 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
 
       posRef.current -= delta
     }
-
     window.addEventListener('wheel', handleWheel, { passive: false })
-    return () => window.removeEventListener('wheel', handleWheel)
-  }, [])
+
+    return () => {
+      stop()
+      io.disconnect()
+      document.removeEventListener('visibilitychange', handleVisibility)
+      window.removeEventListener('wheel', handleWheel)
+    }
+  }, [animate])
 
   const handleMouseEnter = useCallback(() => {
     targetSpeedRef.current = SLOW_SPEED

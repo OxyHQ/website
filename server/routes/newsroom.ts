@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { z } from 'zod'
 import { NewsroomPost } from '../models/NewsroomPost.js'
 import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
@@ -7,11 +8,36 @@ import { localeMiddleware } from '../middleware/locale.js'
 import { applyTranslation, applyTranslations } from '../utils/applyTranslation.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
+import { validate } from '../utils/validate.js'
 
 const router = Router()
 
+const listQuerySchema = z.object({
+  category: z.string().optional(),
+  tag: z.string().optional(),
+  featured: z.string().optional(),
+  status: z.string().optional(),
+  search: z.string().optional(),
+  author: z.string().optional(),
+  limit: z.string().optional(),
+  page: z.string().optional(),
+  locale: z.string().optional(),
+}).passthrough()
+
+const detailQuerySchema = z.object({
+  preview: z.string().optional(),
+  locale: z.string().optional(),
+}).passthrough()
+
+const slugParamsSchema = z.object({ slug: z.string().min(1) })
+const postBodySchema = z.object({}).passthrough()
+
 router.get('/', localeMiddleware, async (req, res) => {
-  const { category, tag, featured, status, search, author, limit = '20', page = '1' } = req.query
+  const {
+    category, tag, featured, status, search, author,
+    limit = '20', page = '1',
+  } = validate(listQuerySchema, req.query)
+
   const filter: Record<string, unknown> = {}
   if (category) filter.categories = category
   if (tag) filter.tags = tag
@@ -26,7 +52,7 @@ router.get('/', localeMiddleware, async (req, res) => {
   }
 
   // Text search on title and excerpt
-  if (search && typeof search === 'string') {
+  if (search) {
     const regex = { $regex: search, $options: 'i' }
     filter.$or = [{ title: regex }, { resume: regex }]
   }
@@ -51,10 +77,13 @@ router.get('/', localeMiddleware, async (req, res) => {
 })
 
 router.get('/:slug', localeMiddleware, async (req, res) => {
-  const post = await NewsroomPost.findOne({ slug: req.params.slug }).populate('coverImage ogImage')
+  const { slug } = validate(slugParamsSchema, req.params)
+  const { preview } = validate(detailQuerySchema, req.query)
+
+  const post = await NewsroomPost.findOne({ slug }).populate('coverImage ogImage')
   if (!post) return res.status(404).json({ error: 'Post not found' })
   // Hide drafts from public unless preview=true with auth
-  if (post.status === 'draft' && req.query.preview !== 'true') {
+  if (post.status === 'draft' && preview !== 'true') {
     return res.status(404).json({ error: 'Post not found' })
   }
   if (req.isDefaultLocale) return res.json(post)
@@ -71,9 +100,11 @@ router.post('/', requireAuth, adminOnly, async (req, res) => {
   const user = req.user
   if (!user) return res.status(401).json({ error: 'Authentication required' })
 
+  const body = validate(postBodySchema, req.body)
+
   try {
     const post = await NewsroomPost.create({
-      ...req.body,
+      ...body,
       oxyUserId: user.id,
     })
     res.status(201).json(post)
@@ -83,8 +114,10 @@ router.post('/', requireAuth, adminOnly, async (req, res) => {
 })
 
 router.put('/:slug', requireAuth, adminOnly, async (req, res) => {
+  const { slug } = validate(slugParamsSchema, req.params)
+  const body = validate(postBodySchema, req.body)
   try {
-    const post = await NewsroomPost.findOneAndUpdate({ slug: req.params.slug }, req.body, { new: true })
+    const post = await NewsroomPost.findOneAndUpdate({ slug }, body, { new: true })
     if (!post) return res.status(404).json({ error: 'Post not found' })
     res.json(post)
   } catch (err) {
@@ -93,8 +126,9 @@ router.put('/:slug', requireAuth, adminOnly, async (req, res) => {
 })
 
 router.delete('/:slug', requireAuth, adminOnly, async (req, res) => {
+  const { slug } = validate(slugParamsSchema, req.params)
   try {
-    const post = await NewsroomPost.findOneAndDelete({ slug: req.params.slug })
+    const post = await NewsroomPost.findOneAndDelete({ slug })
     if (!post) return res.status(404).json({ error: 'Post not found' })
     res.json({ ok: true })
   } catch (err) {

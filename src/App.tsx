@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, lazy, Suspense } from 'react'
+import { useState, useCallback, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WebOxyProvider, useAuth, useWebOxy } from '@oxyhq/auth'
@@ -53,7 +53,14 @@ const queryClient = new QueryClient({
 
 function ScrollToTop() {
   const { pathname } = useLocation()
-  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  // Derived-state pattern: scroll to top when the pathname changes without
+  // reaching for useEffect. The compare runs during render, React batches the
+  // resulting state update, and window.scrollTo executes synchronously.
+  const [lastPath, setLastPath] = useState(pathname)
+  if (lastPath !== pathname) {
+    setLastPath(pathname)
+    if (typeof window !== 'undefined') window.scrollTo(0, 0)
+  }
   return null
 }
 

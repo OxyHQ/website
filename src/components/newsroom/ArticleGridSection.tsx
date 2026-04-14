@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { NewsCardGrid } from './NewsCard'
 import { useNewsroomPosts } from '../../api/hooks'
 import { newsCategories } from '../../data/newsroom'
@@ -86,21 +86,23 @@ export default function ArticleGridSection({ ui = {} }: { ui?: ArticleGridUI }) 
   const [activeFilters, setActiveFilters] = useState<string[]>([])
   const [sortBy, setSortBy] = useState<SortOption>('newest')
 
-  const filterRef = useRef<HTMLDivElement>(null)
-  const sortRef = useRef<HTMLDivElement>(null)
-
-  // Close dropdowns on outside click
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
-        setFilterOpen(false)
-      }
-      if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
-        setSortOpen(false)
-      }
+  // React 19 callback refs — outside-click listeners live only while each dropdown is open.
+  const filterDropdownRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return
+    const handler = (e: MouseEvent) => {
+      if (!node.contains(e.target as Node)) setFilterOpen(false)
     }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const sortDropdownRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return
+    const handler = (e: MouseEvent) => {
+      if (!node.contains(e.target as Node)) setSortOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
   }, [])
 
   function toggleFilter(cat: string) {
@@ -144,7 +146,7 @@ export default function ArticleGridSection({ ui = {} }: { ui?: ArticleGridUI }) 
         <div className="flex flex-row items-center justify-between gap-5 lg:justify-normal">
           <div className="flex flex-row items-center gap-5">
             {/* Filter dropdown */}
-            <div ref={filterRef} className="relative">
+            <div ref={filterDropdownRef} className="relative">
               <button
                 type="button"
                 onClick={() => { setFilterOpen(!filterOpen); setSortOpen(false) }}
@@ -198,7 +200,7 @@ export default function ArticleGridSection({ ui = {} }: { ui?: ArticleGridUI }) 
             </div>
 
             {/* Sort dropdown */}
-            <div ref={sortRef} className="relative">
+            <div ref={sortDropdownRef} className="relative">
               <button
                 type="button"
                 onClick={() => { setSortOpen(!sortOpen); setFilterOpen(false) }}

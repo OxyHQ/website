@@ -1,35 +1,29 @@
-import { useRef, useEffect } from 'react'
+import { useCallback } from 'react'
 
 export default function AnimatedLineGrid() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
+  // Callback ref installs the rAF render loop + scroll/resize listeners tied to the canvas lifetime.
+  // When React unmounts the canvas the cleanup returned here tears everything down — no useEffect.
+  const canvasRef = useCallback((canvas: HTMLCanvasElement | null) => {
     if (!canvas) return
-
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    let animationId: number
+    let animationId = 0
     let scrollY = 0
 
-    function handleScroll() {
+    const handleScroll = () => {
       scrollY = window.scrollY
     }
-    window.addEventListener('scroll', handleScroll, { passive: true })
 
-    function resize() {
+    const resize = () => {
       const dpr = window.devicePixelRatio || 1
-      const rect = canvas!.getBoundingClientRect()
-      canvas!.width = rect.width * dpr
-      canvas!.height = rect.height * dpr
-      ctx!.scale(dpr, dpr)
+      const rect = canvas.getBoundingClientRect()
+      canvas.width = rect.width * dpr
+      canvas.height = rect.height * dpr
+      ctx.scale(dpr, dpr)
     }
-    resize()
-    window.addEventListener('resize', resize)
 
-    function draw() {
-      if (!ctx || !canvas) return
+    const draw = () => {
       const w = canvas.getBoundingClientRect().width
       const h = canvas.getBoundingClientRect().height
 
@@ -86,6 +80,9 @@ export default function AnimatedLineGrid() {
       animationId = requestAnimationFrame(draw)
     }
 
+    resize()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', resize)
     draw()
 
     return () => {

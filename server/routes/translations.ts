@@ -1,32 +1,39 @@
 import { Router } from 'express'
+import { z } from 'zod'
 import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
+import { validate } from '../utils/validate.js'
 
 const router = Router()
 
 // Valid collections that support translations
-const TRANSLATABLE_COLLECTIONS = new Set([
+const TRANSLATABLE_COLLECTIONS = [
   'navigation', 'footer', 'pricing', 'testimonials',
   'settings', 'pages', 'newsroom', 'jobs',
-])
+] as const
 
-function validateCollection(collectionName: string) {
-  return TRANSLATABLE_COLLECTIONS.has(collectionName)
-}
+const collectionParamsSchema = z.object({
+  collection: z.enum(TRANSLATABLE_COLLECTIONS),
+})
 
-function getLocale(req: import('express').Request): string | null {
-  const locale = req.query.locale
-  if (typeof locale === 'string' && locale) return locale
-  return null
-}
+const collectionAndDocParamsSchema = z.object({
+  collection: z.enum(TRANSLATABLE_COLLECTIONS),
+  documentId: z.string().min(1),
+})
+
+const localeQuerySchema = z.object({
+  locale: z.string().min(1, 'locale query parameter is required'),
+}).passthrough()
+
+const upsertBodySchema = z.object({
+  fields: z.record(z.string(), z.unknown()),
+}).passthrough()
 
 // Get all translations for a collection + locale
 router.get('/:collection', async (req, res) => {
-  const collectionName = req.params.collection
-  const locale = getLocale(req)
-  if (!locale) return res.status(400).json({ error: 'locale query parameter is required' })
-  if (!validateCollection(collectionName)) return res.status(400).json({ error: 'Invalid collection' })
+  const { collection: collectionName } = validate(collectionParamsSchema, req.params)
+  const { locale } = validate(localeQuerySchema, req.query)
 
   const translations = await Translation.find({ locale, collectionName })
   res.json(translations)
@@ -34,11 +41,8 @@ router.get('/:collection', async (req, res) => {
 
 // Get translation for a specific document
 router.get('/:collection/:documentId', async (req, res) => {
-  const collectionName = req.params.collection
-  const { documentId } = req.params
-  const locale = getLocale(req)
-  if (!locale) return res.status(400).json({ error: 'locale query parameter is required' })
-  if (!validateCollection(collectionName)) return res.status(400).json({ error: 'Invalid collection' })
+  const { collection: collectionName, documentId } = validate(collectionAndDocParamsSchema, req.params)
+  const { locale } = validate(localeQuerySchema, req.query)
 
   const translation = await Translation.findOne({ locale, collectionName, documentId })
   if (!translation) return res.status(404).json({ error: 'Translation not found' })
@@ -47,14 +51,9 @@ router.get('/:collection/:documentId', async (req, res) => {
 
 // Admin: upsert translation for a specific document
 router.put('/:collection/:documentId', requireAuth, adminOnly, async (req, res) => {
-  const collectionName = req.params.collection as string
-  const documentId = req.params.documentId as string
-  const locale = getLocale(req)
-  if (!locale) return res.status(400).json({ error: 'locale query parameter is required' })
-  if (!validateCollection(collectionName)) return res.status(400).json({ error: 'Invalid collection' })
-
-  const { fields } = req.body
-  if (!fields || typeof fields !== 'object') return res.status(400).json({ error: 'fields object is required' })
+  const { collection: collectionName, documentId } = validate(collectionAndDocParamsSchema, req.params)
+  const { locale } = validate(localeQuerySchema, req.query)
+  const { fields } = validate(upsertBodySchema, req.body)
 
   const translation = await Translation.findOneAndUpdate(
     { locale, collectionName, documentId },
@@ -66,11 +65,8 @@ router.put('/:collection/:documentId', requireAuth, adminOnly, async (req, res) 
 
 // Admin: delete translation
 router.delete('/:collection/:documentId', requireAuth, adminOnly, async (req, res) => {
-  const collectionName = req.params.collection as string
-  const documentId = req.params.documentId as string
-  const locale = getLocale(req)
-  if (!locale) return res.status(400).json({ error: 'locale query parameter is required' })
-  if (!validateCollection(collectionName)) return res.status(400).json({ error: 'Invalid collection' })
+  const { collection: collectionName, documentId } = validate(collectionAndDocParamsSchema, req.params)
+  const { locale } = validate(localeQuerySchema, req.query)
 
   const result = await Translation.findOneAndDelete({ locale, collectionName, documentId })
   if (!result) return res.status(404).json({ error: 'Translation not found' })

@@ -1,28 +1,27 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { useLocaleContext } from '../../contexts/LocaleContext'
 import { Globe } from 'lucide-react'
 
 export default function LocalePicker() {
   const { locale, locales, setLocale } = useLocaleContext()
   const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!open) return
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+  // React 19 callback ref with cleanup — listener lives only while the dropdown is mounted.
+  const dropdownRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return
+    const handler = (e: MouseEvent) => {
+      if (!node.contains(e.target as Node)) setOpen(false)
     }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [open])
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
 
-  // Don't render if only one locale exists
   if (locales.length <= 1) return null
 
   const current = locales.find(l => l.code === locale)
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative">
       <button
         onClick={() => setOpen(!open)}
         className="inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-transparent px-2.5 text-sm text-muted-foreground transition-colors duration-300 hover:bg-surface hover:text-foreground"
@@ -33,7 +32,10 @@ export default function LocalePicker() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 min-w-[140px] rounded-xl border border-border bg-background p-1.5 shadow-lg">
+        <div
+          ref={dropdownRef}
+          className="absolute right-0 top-full z-50 mt-2 min-w-[140px] rounded-xl border border-border bg-background p-1.5 shadow-lg"
+        >
           {locales.map((l) => (
             <button
               key={l.code}

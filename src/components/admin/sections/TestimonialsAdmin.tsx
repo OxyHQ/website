@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useTestimonials } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton } from '@oxyhq/bloom/button'
@@ -8,20 +8,35 @@ import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { BatchTranslationEditor } from '../TranslationEditor'
 import { Label } from '../../ui/shadcn/label'
 
+interface AdminTestimonial {
+  _id?: string
+  quote: string
+  author: string
+  role: string
+  company: string
+  order: number
+}
+
+function cloneTestimonials(data: unknown): AdminTestimonial[] {
+  if (!data) return []
+  return JSON.parse(JSON.stringify(data)) as AdminTestimonial[]
+}
+
 export default function TestimonialsAdmin() {
   const { data, refetch } = useTestimonials()
   const { data: locales } = useLocales()
-  const [items, setItems] = useState<any[]>([])
+  const [items, setItems] = useState<AdminTestimonial[]>(() => cloneTestimonials(data))
+  const [lastSyncedData, setLastSyncedData] = useState(data)
   const [saving, setSaving] = useState(false)
   const [activeLocale, setActiveLocale] = useState('')
 
   const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
+  const resolvedActiveLocale = activeLocale || defaultLocale
 
-  useEffect(() => { if (data) setItems(JSON.parse(JSON.stringify(data))) }, [data])
-
-  useEffect(() => {
-    if (defaultLocale && !activeLocale) setActiveLocale(defaultLocale)
-  }, [defaultLocale, activeLocale])
+  if (data !== lastSyncedData) {
+    setLastSyncedData(data)
+    if (data) setItems(cloneTestimonials(data))
+  }
 
   const save = async () => {
     setSaving(true)
@@ -37,7 +52,7 @@ export default function TestimonialsAdmin() {
   const add = () => setItems([...items, { quote: '', author: '', role: '', company: '', order: items.length }])
   const remove = (idx: number) => setItems(items.filter((_, i) => i !== idx))
 
-  const isDefault = !activeLocale || activeLocale === defaultLocale
+  const isDefault = resolvedActiveLocale === defaultLocale
 
   return (
     <div>
@@ -50,15 +65,15 @@ export default function TestimonialsAdmin() {
       </div>
 
       <div className="mt-4">
-        <LocaleSwitcher activeLocale={activeLocale} onLocaleChange={setActiveLocale} />
+        <LocaleSwitcher activeLocale={resolvedActiveLocale} onLocaleChange={setActiveLocale} />
       </div>
 
       {!isDefault ? (
         <div className="mt-6">
           <BatchTranslationEditor
             collection="testimonials"
-            locale={activeLocale}
-            documents={items.filter(t => t._id)}
+            locale={resolvedActiveLocale}
+            documents={items.filter((t): t is AdminTestimonial & { _id: string } => !!t._id)}
             renderItem={({ doc, fields, updateField }) => (
               <div className="rounded-xl border border-border p-4">
                 <p className="mb-2 text-xs text-muted-foreground">By: {doc.author}</p>

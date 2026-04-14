@@ -1,10 +1,12 @@
 import { Router } from 'express'
+import { z } from 'zod'
 import { Vote } from '../models/Vote.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { config } from '../config.js'
 import { checkAndAwardBadges } from '../services/badgeService.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
+import { validate } from '../utils/validate.js'
 
 const router = Router()
 
@@ -35,6 +37,21 @@ interface CachedData {
 // In-memory cache — 5 minute TTL
 let issueCache: CachedData | null = null
 const CACHE_TTL = 5 * 60 * 1000
+
+const listQuerySchema = z.object({
+  status: z.string().optional(),
+  category: z.string().optional(),
+  sort: z.string().optional(),
+  page: z.string().optional(),
+  limit: z.string().optional(),
+  state: z.string().optional(),
+}).passthrough()
+
+const issueParamsSchema = z.object({
+  owner: z.string().min(1),
+  repo: z.string().min(1),
+  number: z.string().min(1),
+})
 
 function githubHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
@@ -111,7 +128,7 @@ function deriveCategory(labels: Array<{ name: string }>): string {
 
 // List feature requests (GitHub Issues)
 router.get('/', optionalAuth, async (req, res) => {
-  const { status, category, sort = 'votes', page = '1', limit = '20', state } = req.query
+  const { status, category, sort = 'votes', page = '1', limit = '20', state } = validate(listQuerySchema, req.query)
 
   try {
     let issues = await fetchAllIssues()
@@ -124,12 +141,12 @@ router.get('/', optionalAuth, async (req, res) => {
     }
 
     // Filter by derived status
-    if (status && typeof status === 'string') {
+    if (status) {
       issues = issues.filter(i => deriveStatus(i.labels) === status)
     }
 
     // Filter by category
-    if (category && typeof category === 'string') {
+    if (category) {
       issues = issues.filter(i => deriveCategory(i.labels).toLowerCase() === category.toLowerCase())
     }
 
@@ -209,7 +226,7 @@ router.get('/', optionalAuth, async (req, res) => {
 
 // Get single issue details
 router.get('/:owner/:repo/:number', optionalAuth, async (req, res) => {
-  const { owner, repo, number } = req.params
+  const { owner, repo, number } = validate(issueParamsSchema, req.params)
 
   try {
     const url = `https://api.github.com/repos/${owner}/${repo}/issues/${number}`
@@ -259,20 +276,23 @@ router.get('/:owner/:repo/:number', optionalAuth, async (req, res) => {
 
 // Toggle vote on an issue
 router.post('/:owner/:repo/:number/vote', requireAuth, async (req, res) => {
-  const { owner, repo, number } = req.params
+  const user = req.user
+  if (!user) return res.status(401).json({ error: 'Authentication required' })
+
+  const { owner, repo, number } = validate(issueParamsSchema, req.params)
   const key = `${owner}/${repo}#${number}`
 
   try {
-    const existing = await Vote.findOneAndDelete({ featureRequestId: key, userId: req.user.id })
+    const existing = await Vote.findOneAndDelete({ featureRequestId: key, userId: user.id })
 
     if (!existing) {
-      await Vote.create({ featureRequestId: key, userId: req.user.id })
+      await Vote.create({ featureRequestId: key, userId: user.id })
     }
 
     const localVoteCount = await Vote.countDocuments({ featureRequestId: key })
 
     // Fire-and-forget badge check
-    checkAndAwardBadges(req.user.id, req.user.username).catch(() => {})
+    checkAndAwardBadges(user.id, user.username).catch(() => {})
 
     res.json({ localVotes: localVoteCount, userVoted: !existing })
   } catch (err) {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { inboxHero, inboxDemoTabs, inboxFeatureCards } from '../../data/inbox'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 import AnimatedLineGrid from './AnimatedLineGrid'
@@ -109,37 +109,34 @@ export default function InboxPage() {
   const ctaRef = useScrollReveal()
   const featuresRef = useScrollReveal()
 
-  // Sun halo scroll effect
-  useEffect(() => {
-    function handleScroll() {
-      const halo = document.getElementById('glow-effect')
-      if (halo) {
-        const opacity = Math.min(1, window.scrollY / 500)
-        halo.style.opacity = String(opacity)
-      }
+  // Callback ref on the halo element: attach the scroll listener when the element is set,
+  // detach when it's null. No useEffect needed.
+  const haloRef = useCallback((halo: HTMLDivElement | null) => {
+    if (!halo) return
+    const handleScroll = () => {
+      halo.style.opacity = String(Math.min(1, window.scrollY / 500))
     }
+    handleScroll()
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Left panel stays visible — no parallax fade
-
-  // Combined: track active section + fade out sections behind
-  // Uses offsetTop since sticky sections can't rely on IntersectionObserver
-  useEffect(() => {
+  // Callback ref on the scroll tracker sentinel. Installs one scroll/resize listener
+  // tied to the element lifetime — removed when the sentinel unmounts.
+  const scrollTrackerRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return
     const offsets: number[] = []
 
-    function cacheOffsets() {
+    const cacheOffsets = () => {
       sectionRefs.current.forEach((el, i) => {
         if (el) offsets[i] = el.offsetTop
       })
     }
 
-    function handleScroll() {
+    const handleScroll = () => {
       if (offsets.length === 0) cacheOffsets()
 
       const scrollY = window.scrollY
-
       const sections = sectionRefs.current
 
       // Find current section based on scroll position
@@ -150,7 +147,6 @@ export default function InboxPage() {
         }
       }
 
-      // Update active tab
       setActiveTab(currentIdx)
 
       // Three states:
@@ -162,17 +158,14 @@ export default function InboxPage() {
         if (!el) continue
 
         if (i < currentIdx) {
-          // Past — fade out and slide up
           el.style.opacity = '0'
           el.style.transform = 'translateY(-30px)'
           el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out'
         } else if (i === currentIdx) {
-          // Current — fully visible
           el.style.opacity = '1'
           el.style.transform = 'none'
           el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out'
         } else {
-          // Future — hidden, will fade in from below
           el.style.opacity = '0'
           el.style.transform = 'translateY(50px)'
           el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out'
@@ -191,7 +184,7 @@ export default function InboxPage() {
   }, [])
 
   return (
-    <div className="text-foreground">
+    <div ref={scrollTrackerRef} className="text-foreground">
       {/* ── Fixed background layers (stay in place while content scrolls) ── */}
       <div className="fixed inset-0 z-[-1] pointer-events-none">
         {/* Layer 1: Gradient — transitions per active section */}
@@ -209,6 +202,7 @@ export default function InboxPage() {
 
         {/* Layer 3: CSS glow effect (fades in on scroll) */}
         <div
+          ref={haloRef}
           className="absolute h-screen w-[12rem] rounded-full right-[40rem] top-0 rotate-45 opacity-0 transition-opacity duration-300 ease-in-out"
           id="glow-effect"
           style={{

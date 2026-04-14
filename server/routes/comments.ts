@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { z } from 'zod'
 import { Comment } from '../models/Comment.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
@@ -7,33 +8,60 @@ import { COMMENTABLE_TARGET_TYPES } from '../constants/social.js'
 import { checkAndAwardBadges } from '../services/badgeService.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
+import { validate } from '../utils/validate.js'
 
 const router = Router()
 
-const VALID_TARGET_TYPES = COMMENTABLE_TARGET_TYPES as readonly string[]
 const MAX_BODY_LENGTH = 2000
 const RATE_LIMIT_MS = 10_000
 const EDIT_WINDOW_MS = 15 * 60 * 1000
+
+const listQuerySchema = z.object({
+  targetType: z.enum(COMMENTABLE_TARGET_TYPES),
+  targetId: z.string().min(1),
+}).passthrough()
+
+const createBodySchema = z.object({
+  targetType: z.enum(COMMENTABLE_TARGET_TYPES),
+  targetId: z.string().min(1),
+  body: z.string().min(1).max(MAX_BODY_LENGTH),
+  parentId: z.string().nullable().optional(),
+}).passthrough()
+
+const editBodySchema = z.object({
+  body: z.string().min(1).max(MAX_BODY_LENGTH),
+}).passthrough()
+
+const moderateBodySchema = z.object({
+  status: z.enum(['visible', 'hidden', 'deleted']),
+}).passthrough()
+
+const idParamsSchema = z.object({ id: z.string().min(1) })
+
+const usernameParamsSchema = z.object({ username: z.string().min(1) })
+
+const paginationQuerySchema = z.object({
+  page: z.string().optional(),
+  limit: z.string().optional(),
+}).passthrough()
+
+const adminQueueQuerySchema = z.object({
+  page: z.string().optional(),
+  limit: z.string().optional(),
+  status: z.string().optional(),
+}).passthrough()
 
 /**
  * GET / — List visible comments for a given target.
  * Deleted comments that have replies are returned with scrubbed body/username.
  */
 router.get('/', optionalAuth, async (req, res) => {
-  const { targetType, targetId } = req.query
-
-  if (!targetType || !targetId) {
-    return res.status(400).json({ error: 'targetType and targetId are required' })
-  }
-
-  if (!VALID_TARGET_TYPES.includes(targetType as string)) {
-    return res.status(400).json({ error: `targetType must be one of: ${VALID_TARGET_TYPES.join(', ')}` })
-  }
+  const { targetType, targetId } = validate(listQuerySchema, req.query)
 
   try {
     const comments = await Comment.find({
-      targetType: targetType as string,
-      targetId: targetId as string,
+      targetType,
+      targetId,
       status: { $in: ['visible', 'deleted'] },
     }).sort({ createdAt: 1 })
 
@@ -70,22 +98,10 @@ router.get('/', optionalAuth, async (req, res) => {
  * POST / — Create a new comment.
  */
 router.post('/', requireAuth, async (req, res) => {
-  const { targetType, targetId, body, parentId } = req.body
   const user = req.user
-
   if (!user) return res.status(401).json({ error: 'Authentication required' })
 
-  if (!targetType || !targetId || !body) {
-    return res.status(400).json({ error: 'targetType, targetId, and body are required' })
-  }
-
-  if (!VALID_TARGET_TYPES.includes(targetType)) {
-    return res.status(400).json({ error: `targetType must be one of: ${VALID_TARGET_TYPES.join(', ')}` })
-  }
-
-  if (typeof body !== 'string' || body.length > MAX_BODY_LENGTH) {
-    return res.status(400).json({ error: `body must be a string of at most ${MAX_BODY_LENGTH} characters` })
-  }
+  const { targetType, targetId, body, parentId } = validate(createBodySchema, req.body)
 
   try {
     // Rate limit: no more than 1 comment per 10 seconds on the same target
@@ -137,8 +153,11 @@ router.put('/:id', requireAuth, async (req, res) => {
   const user = req.user
   if (!user) return res.status(401).json({ error: 'Authentication required' })
 
+  const { id } = validate(idParamsSchema, req.params)
+  const { body } = validate(editBodySchema, req.body)
+
   try {
-    const comment = await Comment.findById(req.params.id)
+    const comment = await Comment.findById(id)
     if (!comment) return res.status(404).json({ error: 'Comment not found' })
 
     if (comment.userId !== user.id) {
@@ -148,11 +167,6 @@ router.put('/:id', requireAuth, async (req, res) => {
     const elapsed = Date.now() - comment.createdAt.getTime()
     if (elapsed > EDIT_WINDOW_MS) {
       return res.status(403).json({ error: 'Edit window has expired (15 minutes)' })
-    }
-
-    const { body } = req.body
-    if (!body || typeof body !== 'string' || body.length > MAX_BODY_LENGTH) {
-      return res.status(400).json({ error: `body must be a string of at most ${MAX_BODY_LENGTH} characters` })
     }
 
     comment.body = body
@@ -173,8 +187,10 @@ router.delete('/:id', requireAuth, async (req, res) => {
   const user = req.user
   if (!user) return res.status(401).json({ error: 'Authentication required' })
 
+  const { id } = validate(idParamsSchema, req.params)
+
   try {
-    const comment = await Comment.findById(req.params.id)
+    const comment = await Comment.findById(id)
     if (!comment) return res.status(404).json({ error: 'Comment not found' })
 
     // Allow the comment author or an admin to delete
@@ -199,16 +215,12 @@ router.delete('/:id', requireAuth, async (req, res) => {
  * PUT /:id/moderate — Admin moderation (change status).
  */
 router.put('/:id/moderate', requireAuth, adminOnly, async (req, res) => {
-  const { status } = req.body
-  const validStatuses = ['visible', 'hidden', 'deleted']
-
-  if (!status || !validStatuses.includes(status)) {
-    return res.status(400).json({ error: `status must be one of: ${validStatuses.join(', ')}` })
-  }
+  const { id } = validate(idParamsSchema, req.params)
+  const { status } = validate(moderateBodySchema, req.body)
 
   try {
     const comment = await Comment.findByIdAndUpdate(
-      req.params.id,
+      id,
       { status },
       { new: true },
     )
@@ -225,12 +237,12 @@ router.put('/:id/moderate', requireAuth, adminOnly, async (req, res) => {
  * GET /admin/queue — Admin queue of all comments with optional status filter.
  */
 router.get('/admin/queue', requireAuth, adminOnly, async (req, res) => {
-  const { page = '1', limit = '20', status } = req.query
+  const { page = '1', limit = '20', status } = validate(adminQueueQuerySchema, req.query)
 
   const { pageNum, limitNum, skip } = parsePagination(page, limit, 100)
 
   const filter: Record<string, string> = {}
-  if (status && typeof status === 'string') {
+  if (status) {
     filter.status = status
   }
 
@@ -256,12 +268,13 @@ router.get('/admin/queue', requireAuth, adminOnly, async (req, res) => {
  * GET /user/:username — Public list of visible comments by username.
  */
 router.get('/user/:username', async (req, res) => {
-  const { page = '1', limit = '20' } = req.query
+  const { username } = validate(usernameParamsSchema, req.params)
+  const { page = '1', limit = '20' } = validate(paginationQuerySchema, req.query)
 
   const { pageNum, limitNum, skip } = parsePagination(page, limit, 100)
 
   try {
-    const filter = { username: req.params.username, status: 'visible' }
+    const filter = { username, status: 'visible' }
     const [comments, total] = await Promise.all([
       Comment.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
       Comment.countDocuments(filter),

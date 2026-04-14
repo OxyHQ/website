@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useCallback } from 'react'
 
 interface Dot {
   x: number
@@ -22,38 +22,36 @@ function parseRgb(color: string): [string, string, string] {
  * (toggled via CSS group-hover opacity on the parent).
  */
 export default function ApiCardCanvas({ className }: { className?: string }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const animRef = useRef<number>(0)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
+  // React 19 callback ref — owns the rAF loop and resize listener from the
+  // moment the canvas mounts until it unmounts.
+  const canvasRef = useCallback((el: HTMLCanvasElement | null) => {
+    if (!el) return
+    const ctx2d = el.getContext('2d')
+    if (!ctx2d) return
 
     let w = 0
     let h = 0
     const DOT_COUNT = 60
     const dots: Dot[] = []
     let fgRgb: [string, string, string] = ['255', '255', '255']
+    let rafId = 0
 
-    function readFgColor() {
-      const fg = getComputedStyle(canvas!).getPropertyValue('color')
+    const readFgColor = () => {
+      const fg = getComputedStyle(el).getPropertyValue('color')
       if (fg) fgRgb = parseRgb(fg)
     }
 
-    function resize() {
+    const resize = () => {
       const dpr = window.devicePixelRatio || 1
-      w = canvas!.clientWidth
-      h = canvas!.clientHeight
-      canvas!.width = w * dpr
-      canvas!.height = h * dpr
-      ctx!.scale(dpr, dpr)
+      w = el.clientWidth
+      h = el.clientHeight
+      el.width = w * dpr
+      el.height = h * dpr
+      ctx2d.scale(dpr, dpr)
       readFgColor()
     }
 
-    function initDots() {
+    const initDots = () => {
       dots.length = 0
       for (let i = 0; i < DOT_COUNT; i++) {
         const y = Math.random() * h
@@ -72,9 +70,8 @@ export default function ApiCardCanvas({ className }: { className?: string }) {
     resize()
     initDots()
 
-    function animate() {
-      if (!ctx) return
-      ctx.clearRect(0, 0, w, h)
+    const animate = () => {
+      ctx2d.clearRect(0, 0, w, h)
 
       const time = Date.now() * 0.002
       const [cr, cg, cb] = fgRgb
@@ -89,22 +86,25 @@ export default function ApiCardCanvas({ className }: { className?: string }) {
         dot.y = dot.baseY + Math.sin(time + dot.phase) * dot.amplitude
 
         const alpha = 0.3 + Math.sin(time * 0.5 + dot.phase) * 0.2
-        ctx.beginPath()
-        ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`
-        ctx.fill()
+        ctx2d.beginPath()
+        ctx2d.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2)
+        ctx2d.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`
+        ctx2d.fill()
       }
 
-      animRef.current = requestAnimationFrame(animate)
+      rafId = requestAnimationFrame(animate)
     }
 
-    animRef.current = requestAnimationFrame(animate)
+    rafId = requestAnimationFrame(animate)
 
-    const onResize = () => { resize(); initDots() }
+    const onResize = () => {
+      resize()
+      initDots()
+    }
     window.addEventListener('resize', onResize)
 
     return () => {
-      cancelAnimationFrame(animRef.current)
+      cancelAnimationFrame(rafId)
       window.removeEventListener('resize', onResize)
     }
   }, [])

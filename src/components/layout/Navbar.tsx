@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useLayoutEffect, useMemo } from 'react'
+import { useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
@@ -7,6 +7,7 @@ import {
   type NavDropdown,
 } from '../../data/content'
 import { useNavigation, useSiteSettings } from '../../api/hooks'
+import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '../../api/scrollStore'
 import NavDropdownItem from '../ui/NavDropdownItem'
 import Button from '../ui/Button'
 import ThemeToggle from '../ui/ThemeToggle'
@@ -101,7 +102,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
   const banner = siteSettings?.banner
   const dropdownLabels = useMemo(() => dropdowns.map((d) => d.label), [dropdowns])
 
-  const [scrollY, setScrollY] = useState(0)
+  const scrollY = useSyncExternalStore(subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [bannerDismissed, setBannerDismissed] = useState(false)
   const bannerVisible = !bannerDismissed && (banner?.visible ?? true)
@@ -118,7 +119,17 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const measureRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({})
-  const navAreaRef = useRef<HTMLDivElement>(null)
+  const prevDropdownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Scheduled imperatively from openDropdown when we swap prevDropdown, so no
+  // effect is needed to watch state transitions.
+  const schedulePrevClear = useCallback(() => {
+    if (prevDropdownTimerRef.current) clearTimeout(prevDropdownTimerRef.current)
+    prevDropdownTimerRef.current = setTimeout(() => {
+      setPrevDropdown(null)
+      prevDropdownTimerRef.current = null
+    }, 220)
+  }, [])
 
   // Measure all panels once on mount
   useLayoutEffect(() => {
@@ -154,13 +165,14 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
         const nextIndex = dropdownLabels.indexOf(label)
         setDirection(nextIndex > prevIndex ? 'right' : 'left')
         setPrevDropdown(activeDropdown)
+        schedulePrevClear()
       } else {
         setDirection(null)
         setPrevDropdown(null)
       }
       setActiveDropdown(label)
     },
-    [activeDropdown, dropdownLabels]
+    [activeDropdown, dropdownLabels, schedulePrevClear]
   )
 
   const closeAll = useCallback(() => {
@@ -180,39 +192,23 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
     }
   }, [])
 
-  useEffect(() => {
+  // React 19 callback ref — owns the global Escape handler lifecycle. Attaches when
+  // the nav area mounts, detaches on unmount. Also clears any pending close timeout.
+  const escapeRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { closeAll(); setMobileOpen(false) }
+      if (e.key !== 'Escape') return
+      setActiveDropdown(null)
+      setPrevDropdown(null)
+      setDirection(null)
+      setMobileOpen(false)
     }
     window.addEventListener('keydown', handler)
     return () => {
       window.removeEventListener('keydown', handler)
       if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
     }
-  }, [closeAll])
-
-  // Track scroll position for transparent navbar + banner (rAF-throttled)
-  useEffect(() => {
-    let raf = 0
-    const onScroll = () => {
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(() => setScrollY(window.scrollY))
-    }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      cancelAnimationFrame(raf)
-    }
   }, [])
-
-  // Clear prev after exit animation finishes
-  useEffect(() => {
-    if (prevDropdown) {
-      const t = setTimeout(() => setPrevDropdown(null), 220)
-      return () => clearTimeout(t)
-    }
-  }, [prevDropdown])
 
   const getAnimClass = (label: string) => {
     if (label === activeDropdown) {
@@ -310,7 +306,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
               </Link>
 
               {/* Desktop nav */}
-              <div ref={navAreaRef} className="relative z-10" onMouseLeave={scheduleClose}>
+              <div ref={escapeRef} className="relative z-10" onMouseLeave={scheduleClose}>
                 <ul className="hidden items-center gap-x-1.5 lg:flex">
                   {dropdowns.map((dd) => (
                     <li key={dd.label}>

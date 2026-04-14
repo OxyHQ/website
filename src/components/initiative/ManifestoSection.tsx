@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import React, { useRef, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 interface ManifestoSectionProps {
@@ -17,9 +17,7 @@ interface ImageItem {
 }
 
 export const ManifestoSection: React.FC<ManifestoSectionProps> = ({ imagePaths = [] }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [images, setImages] = useState<ImageItem[]>([]);
-  const isInView = useInView(containerRef, { amount: 0.3 });
   const [isActive, setIsActive] = useState(false);
   const usedCells = useRef<Set<number>>(new Set());
   const imageCounter = useRef(0);
@@ -30,6 +28,10 @@ export const ManifestoSection: React.FC<ManifestoSectionProps> = ({ imagePaths =
     () => (isMobile ? { min: 20, max: 40 } : { min: 40, max: 70 }),
     [isMobile]
   );
+  const widthRangeRef = useRef(widthRange);
+  widthRangeRef.current = widthRange;
+  const imagePathsLengthRef = useRef(imagePaths.length);
+  imagePathsLengthRef.current = imagePaths.length;
 
   const getRandomPosition = useCallback((): { cellIndex: number; x: number; y: number } | null => {
     const availableCells = Array.from({ length: 80 }, (_, i) => i).filter((i) => {
@@ -59,16 +61,16 @@ export const ManifestoSection: React.FC<ManifestoSectionProps> = ({ imagePaths =
 
     const newImage: ImageItem = {
       id: `img-${imageCounter.current++}`,
-      imageIndex: imageCounter.current % imagePaths.length,
+      imageIndex: imageCounter.current % imagePathsLengthRef.current,
       cellIndex: position.cellIndex,
       x: position.x,
       y: position.y,
-      width: widthRange.min + Math.random() * (widthRange.max - widthRange.min),
+      width: widthRangeRef.current.min + Math.random() * (widthRangeRef.current.max - widthRangeRef.current.min),
       expiresAt: Date.now() + 2500 + 1500 * Math.random(),
     };
 
     setImages((prev) => [...prev, newImage]);
-  }, [getRandomPosition, imagePaths.length, widthRange]);
+  }, [getRandomPosition]);
 
   const clearImages = useCallback(() => {
     usedCells.current.clear();
@@ -76,51 +78,48 @@ export const ManifestoSection: React.FC<ManifestoSectionProps> = ({ imagePaths =
     setImages([]);
   }, []);
 
-  // Add images periodically when active
-  useEffect(() => {
-    if (!isActive) return;
-
-    const interval = setInterval(addImage, 150);
-    return () => clearInterval(interval);
-  }, [isActive, addImage]);
-
-  // Remove expired images
-  useEffect(() => {
-    if (!isActive) return;
-
-    const interval = setInterval(() => {
-      const now = Date.now();
+  // React 19 callback ref on the container — owns all intervals and the initial
+  // burst timers while the section is visible. framer-motion drives activation
+  // via onViewportEnter/onViewportLeave (below). The callback re-runs on
+  // isActive changes because the dep array includes it.
+  const containerRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return
+    if (!isActive) return
+    const spawn = setInterval(addImage, 150)
+    const expire = setInterval(() => {
+      const now = Date.now()
       setImages((prev) => {
-        const expired = prev.filter((img) => img.expiresAt <= now);
-        expired.forEach((img) => {
-          usedCells.current.delete(img.cellIndex);
-        });
-        return prev.filter((img) => img.expiresAt > now);
-      });
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [isActive]);
-
-  // Handle in-view state
-  useEffect(() => {
-    if (isInView && !isActive) {
-      setIsActive(true);
-      // Initial burst of 12 images with 80ms intervals (matching original)
-      const timeout = setTimeout(() => {
-        for (let i = 0; i < 12; i++) {
-          setTimeout(() => addImage(), 80 * i);
-        }
-      }, 800); // Match original 800ms initial delay
-      return () => clearTimeout(timeout);
-    } else if (!isInView && isActive) {
-      clearImages();
-      setIsActive(false);
+        prev.forEach((img) => {
+          if (img.expiresAt <= now) usedCells.current.delete(img.cellIndex)
+        })
+        return prev.filter((img) => img.expiresAt > now)
+      })
+    }, 100)
+    const burstTimers: number[] = []
+    const burstStart = window.setTimeout(() => {
+      for (let i = 0; i < 12; i++) {
+        burstTimers.push(window.setTimeout(() => addImage(), 80 * i))
+      }
+    }, 800)
+    return () => {
+      clearInterval(spawn)
+      clearInterval(expire)
+      clearTimeout(burstStart)
+      burstTimers.forEach((id) => clearTimeout(id))
     }
-  }, [isInView, isActive, addImage, clearImages]);
+  }, [isActive, addImage])
 
   return (
-    <div data-section="image-by-image" className="h-dvh bg-white dark:bg-black">
+    <motion.div
+      data-section="image-by-image"
+      className="h-dvh bg-white dark:bg-black"
+      onViewportEnter={() => setIsActive(true)}
+      onViewportLeave={() => {
+        setIsActive(false)
+        clearImages()
+      }}
+      viewport={{ amount: 0.3 }}
+    >
       <div className="relative h-full w-full" ref={containerRef}>
         <div className="pointer-events-none invisible absolute h-0 w-0 overflow-hidden" aria-hidden="true">
           {imagePaths.map((src, idx) => (
@@ -159,6 +158,6 @@ export const ManifestoSection: React.FC<ManifestoSectionProps> = ({ imagePaths =
           </h2>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, Suspense, lazy } from 'react'
+import { useState, useCallback, useSyncExternalStore, Suspense, lazy } from 'react'
 import { PromptInput } from '@oxyhq/bloom/prompt-input'
 import HeroCanvas from './HeroCanvas'
 import ParticleCanvas from './ParticleCanvas'
@@ -16,6 +16,46 @@ import {
 } from '../../data/ai'
 
 const GlobeScene = lazy(() => import('./GlobeScene'))
+
+/* ─────────────────────────────────────────────
+   Module-level scroll position store.
+   Exposed via useSyncExternalStore so any number of
+   subscribers share a single passive scroll listener.
+   ───────────────────────────────────────────── */
+
+type ScrollListener = () => void
+const scrollListeners = new Set<ScrollListener>()
+let lastScrollY = 0
+let scrollHandlerAttached = false
+
+const notifyScrollListeners = () => {
+  lastScrollY = typeof window === 'undefined' ? 0 : window.scrollY
+  scrollListeners.forEach((listener) => listener())
+}
+
+const subscribeScrollY = (listener: ScrollListener): (() => void) => {
+  if (typeof window === 'undefined') return () => {}
+  scrollListeners.add(listener)
+  if (!scrollHandlerAttached) {
+    lastScrollY = window.scrollY
+    window.addEventListener('scroll', notifyScrollListeners, { passive: true })
+    scrollHandlerAttached = true
+  }
+  return () => {
+    scrollListeners.delete(listener)
+    if (scrollListeners.size === 0 && scrollHandlerAttached) {
+      window.removeEventListener('scroll', notifyScrollListeners)
+      scrollHandlerAttached = false
+    }
+  }
+}
+
+const getScrollYSnapshot = (): number => lastScrollY
+const getScrollYServerSnapshot = (): number => 0
+
+function useScrollY(): number {
+  return useSyncExternalStore(subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot)
+}
 
 /* ─────────────────────────────────────────────
    Icon SVGs
@@ -124,7 +164,7 @@ function formatDate(dateStr: string) {
    ═══════════════════════════════════════════════ */
 
 export default function AIPageContent() {
-  const [scrollY, setScrollY] = useState(0)
+  const scrollY = useScrollY()
   const [promptValue, setPromptValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -132,12 +172,6 @@ export default function AIPageContent() {
   const articles = newsData?.posts ?? []
   const { data: promptPhrases } = usePromptPhrases('ai')
   const currentPlaceholder = promptPhrases?.length ? promptPhrases[Math.floor(Date.now() / 5000) % promptPhrases.length] : heroPlaceholder
-
-  useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   const handleSubmit = useCallback(() => {
     const trimmed = promptValue.trim()

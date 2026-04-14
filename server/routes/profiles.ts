@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { z } from 'zod'
 import { UserProfileExtra } from '../models/UserProfileExtra.js'
 import { UserBadge } from '../models/UserBadge.js'
 import { Comment } from '../models/Comment.js'
@@ -9,8 +10,23 @@ import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { config } from '../config.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
+import { validate } from '../utils/validate.js'
 
 const router = Router()
+
+const userIdParamsSchema = z.object({ userId: z.string().min(1) })
+const usernameParamsSchema = z.object({ username: z.string().min(1) })
+
+const updateMeBodySchema = z.object({
+  bio: z.string().max(280, 'Bio must be 280 characters or less').optional(),
+  showActivity: z.boolean().optional(),
+}).passthrough()
+
+const activityQuerySchema = z.object({
+  page: z.string().optional(),
+  limit: z.string().optional(),
+  type: z.string().optional(),
+}).passthrough()
 
 interface OxyClient {
   getProfileByUsername(username: string): Promise<Record<string, unknown>>
@@ -23,8 +39,8 @@ let oxyPromise: Promise<OxyClient> | null = null
 function getOxy(): Promise<OxyClient> {
   if (!oxyPromise) {
     oxyPromise = import('@oxyhq/core').then(mod => {
-      const OxyServices = mod.OxyServices ?? mod.default
-      return new OxyServices({ baseURL: config.oxyApiBase }) as OxyClient
+      const client = new mod.OxyServices({ baseURL: config.oxyApiBase })
+      return client as unknown as OxyClient
     })
   }
   return oxyPromise
@@ -33,9 +49,10 @@ function getOxy(): Promise<OxyClient> {
 // Get basic user info by ID (for article author display)
 // MUST be before /:username to avoid Express matching "id" as a username
 router.get('/id/:userId', async (req, res) => {
+  const { userId } = validate(userIdParamsSchema, req.params)
   try {
     const client = await getOxy()
-    const oxyUser = await client.getUserById(req.params.userId)
+    const oxyUser = await client.getUserById(userId)
     res.json({
       _id: oxyUser._id ?? oxyUser.id,
       username: oxyUser.username,
@@ -51,23 +68,19 @@ router.get('/id/:userId', async (req, res) => {
 // Update own profile
 // MUST be before /:username to avoid Express matching "me" as a username
 router.put('/me', requireAuth, async (req, res) => {
-  const { bio, showActivity } = req.body
+  const user = req.user
+  if (!user) return res.status(401).json({ error: 'Authentication required' })
+
+  const { bio, showActivity } = validate(updateMeBodySchema, req.body)
 
   try {
     const update: Record<string, unknown> = {}
-    if (bio !== undefined) {
-      if (typeof bio !== 'string' || bio.length > 280) {
-        return res.status(400).json({ error: 'Bio must be 280 characters or less' })
-      }
-      update.bio = bio
-    }
-    if (showActivity !== undefined) {
-      update.showActivity = !!showActivity
-    }
+    if (bio !== undefined) update.bio = bio
+    if (showActivity !== undefined) update.showActivity = showActivity
 
     const profile = await UserProfileExtra.findOneAndUpdate(
-      { userId: req.user.id },
-      { ...update, userId: req.user.id, username: req.user.username },
+      { userId: user.id },
+      { ...update, userId: user.id, username: user.username },
       { upsert: true, new: true },
     )
 
@@ -79,7 +92,7 @@ router.put('/me', requireAuth, async (req, res) => {
 
 // Get public profile
 router.get('/:username', optionalAuth, async (req, res) => {
-  const { username } = req.params
+  const { username } = validate(usernameParamsSchema, req.params)
 
   try {
     let oxyUser: Record<string, unknown>
@@ -133,11 +146,11 @@ router.get('/:username', optionalAuth, async (req, res) => {
 
 // Get user activity feed
 router.get('/:username/activity', async (req, res) => {
-  const { username } = req.params
-  const { page, limit, type } = req.query
+  const { username } = validate(usernameParamsSchema, req.params)
+  const { page, limit, type } = validate(activityQuerySchema, req.query)
 
   try {
-    const { pageNum: _page, limitNum, skip } = parsePagination(page, limit)
+    const { limitNum, skip } = parsePagination(page, limit)
 
     const profileExtra = await UserProfileExtra.findOne({ username })
     if (profileExtra?.showActivity === false) {
@@ -164,8 +177,9 @@ router.get('/:username/activity', async (req, res) => {
 
 // Get user badges
 router.get('/:username/badges', async (req, res) => {
+  const { username } = validate(usernameParamsSchema, req.params)
   try {
-    const badges = await UserBadge.find({ username: req.params.username }).sort('-awardedAt')
+    const badges = await UserBadge.find({ username }).sort('-awardedAt')
     res.json(badges.map(b => ({ badgeId: b.badgeId, awardedAt: b.awardedAt })))
   } catch (err) {
     res.status(500).json({ error: `Failed to load badges: ${toErrorMessage(err)}` })

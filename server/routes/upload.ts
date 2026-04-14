@@ -1,18 +1,25 @@
 import { Router } from 'express'
 import multer from 'multer'
+import { z } from 'zod'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { uploadToSpaces } from '../services/s3.js'
 import { processImage } from '../services/thumbnails.js'
 import { Media } from '../models/Media.js'
+import { validate } from '../utils/validate.js'
 
 const router = Router()
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } })
 
+const uploadBodySchema = z.object({
+  folder: z.string().optional(),
+}).passthrough()
+
 router.post('/', requireAuth, adminOnly, upload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file provided' })
 
-  const folder = typeof req.body.folder === 'string' ? `oxy-website/${req.body.folder}` : 'oxy-website/images'
+  const { folder: folderInput } = validate(uploadBodySchema, req.body)
+  const folder = folderInput ? `oxy-website/${folderInput}` : 'oxy-website/images'
 
   try {
     // Step 1: Upload original to S3 (must succeed)
@@ -37,14 +44,15 @@ router.post('/', requireAuth, adminOnly, upload.single('file'), async (req, res)
       url, thumbnails, filename: req.file.originalname, key,
       mimeType: req.file.mimetype, size: req.file.size,
       width, height, alt: '', tags: [],
-      folder: req.body.folder || 'images',
-      uploadedBy: (req as any).userId || '',
+      folder: folderInput || 'images',
+      uploadedBy: req.user?.id || '',
     })
 
     res.json(media)
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Upload error:', err)
-    res.status(500).json({ error: err.message || 'Upload failed' })
+    const message = err instanceof Error ? err.message : 'Upload failed'
+    res.status(500).json({ error: message })
   }
 })
 

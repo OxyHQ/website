@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSiteSettings, type SiteSettings } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { PrimaryButton } from '@oxyhq/bloom/button'
@@ -10,22 +10,28 @@ import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 import MediaPicker from '../MediaPicker'
 
+const EMPTY_SETTINGS: SiteSettings = {
+  siteTitle: '',
+  siteDescription: '',
+  ogImage: '',
+  banner: { text: '', href: '', visible: false },
+}
+
 export default function SiteSettingsAdmin() {
   const { data, refetch } = useSiteSettings()
   const { data: locales } = useLocales()
-  const [form, setForm] = useState<SiteSettings>({ siteTitle: '', siteDescription: '', ogImage: '', banner: { text: '', href: '', visible: false } })
+  const [form, setForm] = useState<SiteSettings>(data ?? EMPTY_SETTINGS)
+  const [lastSyncedData, setLastSyncedData] = useState(data)
   const [saving, setSaving] = useState(false)
   const [activeLocale, setActiveLocale] = useState('')
 
   const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
+  const resolvedActiveLocale = activeLocale || defaultLocale
 
-  useEffect(() => {
+  if (data !== lastSyncedData) {
+    setLastSyncedData(data)
     if (data) setForm(data)
-  }, [data])
-
-  useEffect(() => {
-    if (defaultLocale && !activeLocale) setActiveLocale(defaultLocale)
-  }, [defaultLocale, activeLocale])
+  }
 
   const save = async () => {
     setSaving(true)
@@ -34,7 +40,7 @@ export default function SiteSettingsAdmin() {
     setSaving(false)
   }
 
-  const isDefault = !activeLocale || activeLocale === defaultLocale
+  const isDefault = resolvedActiveLocale === defaultLocale
 
   return (
     <div>
@@ -42,7 +48,7 @@ export default function SiteSettingsAdmin() {
       <p className="mt-1 text-sm text-muted-foreground">Global site metadata and banner configuration.</p>
 
       <div className="mt-4">
-        <LocaleSwitcher activeLocale={activeLocale} onLocaleChange={setActiveLocale} />
+        <LocaleSwitcher activeLocale={resolvedActiveLocale} onLocaleChange={setActiveLocale} />
       </div>
 
       {isDefault ? (
@@ -77,7 +83,7 @@ export default function SiteSettingsAdmin() {
           <TranslationFields
             collection="settings"
             documentId={data?._id ?? ''}
-            locale={activeLocale}
+            locale={resolvedActiveLocale}
             originalFields={data ?? {}}
             translatableFields={[
               { key: 'siteTitle', label: 'Site Title', type: 'text' },

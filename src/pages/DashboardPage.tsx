@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import { Maximize2, Minimize2 } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
@@ -13,19 +13,28 @@ import InfraOverlay from "../components/dashboard/InfraOverlay";
 import Logo from "../components/ui/Logo";
 import { usePlatformStats, useInfraStatus } from "../api/hooks";
 
+function subscribeFullscreen(callback: () => void): () => void {
+  document.addEventListener("fullscreenchange", callback);
+  return () => document.removeEventListener("fullscreenchange", callback);
+}
+
+function getFullscreenSnapshot(): boolean {
+  return document.fullscreenElement !== null;
+}
+
+function getFullscreenServerSnapshot(): boolean {
+  return false;
+}
+
 export default function DashboardPage() {
   const { data: stats, activityEvents } = usePlatformStats();
   const { data: infraData } = useInfraStatus();
   const dashboardRef = useRef<HTMLDivElement>(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-
-  useEffect(() => {
-    function onFullscreenChange() {
-      setIsFullscreen(document.fullscreenElement !== null);
-    }
-    document.addEventListener("fullscreenchange", onFullscreenChange);
-    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
-  }, []);
+  const isFullscreen = useSyncExternalStore(
+    subscribeFullscreen,
+    getFullscreenSnapshot,
+    getFullscreenServerSnapshot,
+  );
 
   function toggleFullscreen() {
     if (document.fullscreenElement) {

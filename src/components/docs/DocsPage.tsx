@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { docsSidebar, docsCards } from '../../data/docs'
 import DocsSubNav from './DocsSubNav'
@@ -39,15 +39,6 @@ function CardIcon({ icon }: { icon: DocsCard['icon'] }) {
 function CopyPageMenu() {
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setOpen(false)
-    }
-    if (open) document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [open])
 
   function copyPage() {
     const content = document.querySelector('[data-docs-content]')?.textContent
@@ -59,7 +50,7 @@ function CopyPageMenu() {
   }
 
   return (
-    <div ref={menuRef} className="relative items-center shrink-0 min-w-[156px] justify-end ml-auto sm:flex hidden" id="page-context-menu">
+    <div className="relative items-center shrink-0 min-w-[156px] justify-end ml-auto sm:flex hidden" id="page-context-menu">
       <button
         className="rounded-l-xl px-3 text-foreground py-1.5 border border-border bg-surface hover:bg-surface border-r-0"
         aria-label="Copy page"
@@ -88,6 +79,14 @@ function CopyPageMenu() {
       </button>
 
       {open && (
+        <>
+          {/* Invisible full-viewport backdrop closes the menu on any outside click — no listeners */}
+          <button
+            type="button"
+            aria-label="Close menu"
+            className="fixed inset-0 z-40 cursor-default bg-transparent"
+            onClick={() => setOpen(false)}
+          />
         <div className="absolute right-0 top-full mt-1 z-50 min-w-[180px] rounded-xl border border-border bg-surface shadow-[0px_4px_16px_rgba(0,0,0,0.4),0px_1px_4px_rgba(0,0,0,0.3)] py-1">
           <button
             className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-surface rounded-lg mx-1"
@@ -134,6 +133,7 @@ function CopyPageMenu() {
             Open in new tab
           </button>
         </div>
+        </>
       )}
     </div>
   )

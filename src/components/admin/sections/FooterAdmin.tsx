@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useFooter } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton } from '@oxyhq/bloom/button'
@@ -15,22 +15,27 @@ interface FooterForm {
   copyright: string
 }
 
+const EMPTY_FOOTER: FooterForm = { columns: [], socialLinks: [], copyright: '' }
+
+function cloneFooter(data: FooterForm | undefined): FooterForm {
+  return data ? (JSON.parse(JSON.stringify(data)) as FooterForm) : EMPTY_FOOTER
+}
+
 export default function FooterAdmin() {
   const { data, refetch } = useFooter()
   const { data: locales } = useLocales()
-  const [form, setForm] = useState<FooterForm>({ columns: [], socialLinks: [], copyright: '' })
+  const [form, setForm] = useState<FooterForm>(() => cloneFooter(data))
+  const [lastSyncedData, setLastSyncedData] = useState(data)
   const [saving, setSaving] = useState(false)
   const [activeLocale, setActiveLocale] = useState('')
 
   const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
+  const resolvedActiveLocale = activeLocale || defaultLocale
 
-  useEffect(() => {
-    if (data) setForm(JSON.parse(JSON.stringify(data)))
-  }, [data])
-
-  useEffect(() => {
-    if (defaultLocale && !activeLocale) setActiveLocale(defaultLocale)
-  }, [defaultLocale, activeLocale])
+  if (data !== lastSyncedData) {
+    setLastSyncedData(data)
+    if (data) setForm(cloneFooter(data))
+  }
 
   const save = async () => {
     setSaving(true)
@@ -58,7 +63,7 @@ export default function FooterAdmin() {
     setForm(next)
   }
 
-  const isDefault = !activeLocale || activeLocale === defaultLocale
+  const isDefault = resolvedActiveLocale === defaultLocale
 
   return (
     <div>
@@ -66,7 +71,7 @@ export default function FooterAdmin() {
       <p className="mt-1 text-sm text-muted-foreground">Edit footer columns and links.</p>
 
       <div className="mt-4">
-        <LocaleSwitcher activeLocale={activeLocale} onLocaleChange={setActiveLocale} />
+        <LocaleSwitcher activeLocale={resolvedActiveLocale} onLocaleChange={setActiveLocale} />
       </div>
 
       {!isDefault ? (
@@ -74,13 +79,13 @@ export default function FooterAdmin() {
           <TranslationJsonEditor
             collection="footer"
             documentId={data?._id ?? ''}
-            locale={activeLocale}
+            locale={resolvedActiveLocale}
           >
             {({ fields, setFields, save: saveTranslation, saving: savingTranslation }) => (
               <div className="flex flex-col gap-4">
                 <div className="rounded-lg border border-border/50 bg-muted/30 px-4 py-3">
                   <p className="text-sm text-muted-foreground">
-                    Editing <span className="font-medium text-foreground">{activeLocale.toUpperCase()}</span> translation.
+                    Editing <span className="font-medium text-foreground">{resolvedActiveLocale.toUpperCase()}</span> translation.
                   </p>
                 </div>
 

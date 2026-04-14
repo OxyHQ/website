@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useCallback } from 'react'
 import { promptLibraryCards } from '../../data/content'
 import type { PromptLibraryCard } from '../../data/content'
 
@@ -51,36 +51,28 @@ function PromptCard({ card }: { card: PromptLibraryCard }) {
 const GAP = 24 // gap-6 = 24px
 
 function MarqueeRow({ cards, direction, duration = 30 }: { cards: PromptLibraryCard[]; direction: 'left' | 'right'; duration?: number }) {
-  const trackRef = useRef<HTMLDivElement>(null)
+  const childCount = cards.length
 
-  useEffect(() => {
-    const track = trackRef.current
+  // React 19 callback ref — measures children and starts the WAAPI animation on
+  // mount, cancels on unmount. Re-runs when any dep changes because the callback
+  // identity is keyed on the deps.
+  const trackRef = useCallback((track: HTMLDivElement | null) => {
     if (!track) return
-
-    // Measure the width of one set of cards (first half of children)
-    const childCount = cards.length
     let setWidth = 0
     for (let i = 0; i < childCount; i++) {
-      const child = track.children[i] as HTMLElement
-      if (child) {
-        setWidth += child.offsetWidth + GAP
-      }
+      const child = track.children[i] as HTMLElement | undefined
+      if (child) setWidth += child.offsetWidth + GAP
     }
-
-    // Set the animation using the measured width
-    const translateDist = setWidth
     const keyframes = direction === 'left'
-      ? [{ transform: 'translateX(0)' }, { transform: `translateX(-${translateDist}px)` }]
-      : [{ transform: `translateX(-${translateDist}px)` }, { transform: 'translateX(0)' }]
-
+      ? [{ transform: 'translateX(0)' }, { transform: `translateX(-${setWidth}px)` }]
+      : [{ transform: `translateX(-${setWidth}px)` }, { transform: 'translateX(0)' }]
     const animation = track.animate(keyframes, {
       duration: duration * 1000,
       iterations: Infinity,
       easing: 'linear',
     })
-
     return () => animation.cancel()
-  }, [cards.length, direction, duration])
+  }, [childCount, direction, duration])
 
   return (
     <div>

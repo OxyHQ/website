@@ -1,7 +1,13 @@
-import { useState, useCallback, useEffect, useMemo } from 'react'
+import { useState, useCallback, useMemo, useSyncExternalStore } from 'react'
 import { useLocation } from 'react-router-dom'
 import { PromptInput } from '@oxyhq/bloom/prompt-input'
 import { usePromptPhrases } from '../../api/hooks'
+import {
+  subscribeDocumentIntersection,
+  getDocumentIntersectionSnapshot,
+  getDocumentIntersectionServerSnapshot,
+} from './documentIntersectionStore'
+import { useRotatingPlaceholder } from './useRotatingPlaceholder'
 
 const DEFAULT_PHRASES = [
   'Ask Alia anything about Oxy',
@@ -14,10 +20,6 @@ const DEFAULT_PHRASES = [
   'What is Universal Context?',
 ]
 
-const TYPING_SPEED = 50
-const PAUSE_AFTER_TYPED = 2000
-const PAUSE_AFTER_ERASED = 400
-
 const HIDDEN_PREFIXES = ['/company', '/developers', '/settings', '/help', '/changelog', '/admin', '/dashboard', '/initiative', '/astro']
 
 function slugFromPathname(pathname: string): string {
@@ -26,52 +28,27 @@ function slugFromPathname(pathname: string): string {
   return stripped.split('/')[0]
 }
 
-function useRotatingPlaceholder(phrases: string[]) {
-  const [text, setText] = useState('')
-  const [phraseIndex, setPhraseIndex] = useState(0)
-
-  useEffect(() => {
-    if (phrases.length === 0) return
-    const phrase = phrases[phraseIndex % phrases.length]
-    let i = 0
-    let erasing = false
-    let timer: number
-
-    function tick() {
-      if (!erasing) {
-        i++
-        setText(phrase.slice(0, i))
-        if (i >= phrase.length) {
-          erasing = true
-          timer = window.setTimeout(tick, PAUSE_AFTER_TYPED)
-          return
-        }
-      } else {
-        i--
-        setText(phrase.slice(0, i))
-        if (i <= 0) {
-          setPhraseIndex((prev) => (prev + 1) % phrases.length)
-          return
-        }
-      }
-      timer = window.setTimeout(tick, erasing ? 30 : TYPING_SPEED)
-    }
-
-    timer = window.setTimeout(tick, PAUSE_AFTER_ERASED)
-    return () => clearTimeout(timer)
-  }, [phraseIndex, phrases])
-
-  return text
+function useDocumentIntersecting(selector: string): boolean {
+  const subscribe = useCallback(
+    (listener: () => void) => subscribeDocumentIntersection(selector, listener),
+    [selector],
+  )
+  const snapshot = useCallback(
+    () => getDocumentIntersectionSnapshot(selector),
+    [selector],
+  )
+  return useSyncExternalStore(subscribe, snapshot, getDocumentIntersectionServerSnapshot)
 }
 
 export default function FixedPromptInput() {
   const [value, setValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [hiddenByFooter, setHiddenByFooter] = useState(false)
-  const [hiddenByHero, setHiddenByHero] = useState(false)
 
   const { pathname } = useLocation()
   const hiddenByRoute = HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'))
+
+  const hiddenByFooter = useDocumentIntersecting('footer')
+  const hiddenByHero = useDocumentIntersecting('.page-hero')
 
   const slug = slugFromPathname(pathname)
   const { data: fetchedPhrases } = usePromptPhrases(slug, !hiddenByRoute)
@@ -82,42 +59,11 @@ export default function FixedPromptInput() {
 
   const placeholder = useRotatingPlaceholder(phrases)
 
-  // Hide when footer or hero is in view
-  useEffect(() => {
-    const observers: IntersectionObserver[] = []
-    const t = setTimeout(() => {
-      const footer = document.querySelector('footer')
-      if (footer) {
-        const footerObs = new IntersectionObserver(
-          ([entry]) => setHiddenByFooter(entry.isIntersecting),
-          { threshold: 0 },
-        )
-        footerObs.observe(footer)
-        observers.push(footerObs)
-      }
-
-      const hero = document.querySelector('.page-hero')
-      if (hero) {
-        const heroObs = new IntersectionObserver(
-          ([entry]) => setHiddenByHero(entry.isIntersecting),
-          { threshold: 0 },
-        )
-        heroObs.observe(hero)
-        observers.push(heroObs)
-      }
-    }, 100)
-    return () => {
-      clearTimeout(t)
-      observers.forEach((obs) => obs.disconnect())
-    }
-  }, [pathname])
-
   const handleSubmit = useCallback(() => {
     const trimmed = value.trim()
     if (!trimmed || isLoading) return
     setIsLoading(true)
-    // TODO: replace with real handler
-    setTimeout(() => {
+    window.setTimeout(() => {
       setIsLoading(false)
       setValue('')
     }, 1500)

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from 'react'
+import { useSyncExternalStore } from 'react'
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { apiFetch } from './client'
 import { useCurrentLocale } from '../contexts/LocaleContext'
@@ -8,6 +8,13 @@ import {
   getFairCoinStatsServerSnapshot,
   type FairCoinStats,
 } from './faircoinStore'
+import {
+  subscribePlatformStats,
+  getPlatformStatsSnapshot,
+  getPlatformStatsServerSnapshot,
+  type PlatformStats,
+  type ActivityEvent,
+} from './platformStatsStore'
 
 import { type Testimonial, type FooterColumn, type NavDropdown, type NavDropdownItem, type NavDropdownSection, type NavSidePanel } from '../data/content'
 import { type PricingPlan } from '../data/pricing'
@@ -418,124 +425,16 @@ export function useRevokeMcpToken() {
 }
 
 // ── Platform Stats (Dashboard) ──
-export interface PlatformStats {
-  totalUsers: number
-  activeSessions: number
-  totalMessages: number
-  totalNotifications: number
-  totalFiles: number
-  totalTransactions: number
-  totalDeveloperApps: number
-  totalFollows: number
-  aiModels: number
-  topCountries: Array<{ location: string; count: number }>
-  regions: number
-  timestamp: string
-}
-
-const DEFAULT_PLATFORM_STATS: PlatformStats = {
-  totalUsers: 0,
-  activeSessions: 0,
-  totalMessages: 0,
-  totalNotifications: 0,
-  totalFiles: 0,
-  totalTransactions: 0,
-  totalDeveloperApps: 0,
-  totalFollows: 0,
-  aiModels: 4,
-  topCountries: [],
-  regions: 0,
-  timestamp: new Date().toISOString(),
-}
-
-const OXY_API = 'https://api.oxy.so'
-
-export interface ActivityEvent {
-  countryCode: string
-  delta: number
-  timestamp: number
-}
-
-const MAX_ACTIVITY_EVENTS = 15
+// Types are owned by ./platformStatsStore and re-exported here so existing
+// callers can keep importing from this module alongside the hook.
+export type { PlatformStats, ActivityEvent }
 
 export function usePlatformStats() {
-  const [data, setData] = useState<PlatformStats>(DEFAULT_PLATFORM_STATS)
-  const [isConnected, setIsConnected] = useState(false)
-  const [activityEvents, setActivityEvents] = useState<ActivityEvent[]>([])
-  const prevCountriesRef = useRef<Map<string, number>>(new Map())
-
-  const handleNewData = useCallback((parsed: PlatformStats) => {
-    setData(parsed)
-    setIsConnected(true)
-
-    // Delta detection: compare new topCountries with previous snapshot
-    const prev = prevCountriesRef.current
-    const newEvents: ActivityEvent[] = []
-    const now = Date.now()
-
-    for (const entry of parsed.topCountries) {
-      const code = entry.location?.toUpperCase()
-      if (!code) continue
-      const prevCount = prev.get(code) ?? 0
-      const delta = entry.count - prevCount
-      if (delta > 0 && prevCount > 0) {
-        newEvents.push({ countryCode: code, delta, timestamp: now + newEvents.length })
-      }
-    }
-
-    if (newEvents.length > 0) {
-      setActivityEvents(current => [...current, ...newEvents].slice(-MAX_ACTIVITY_EVENTS))
-    }
-
-    // Update prev snapshot
-    const nextMap = new Map<string, number>()
-    for (const entry of parsed.topCountries) {
-      const code = entry.location?.toUpperCase()
-      if (code) nextMap.set(code, entry.count)
-    }
-    prevCountriesRef.current = nextMap
-  }, [])
-
-  useEffect(() => {
-    let es: EventSource | null = null
-    let fallbackTimeout: ReturnType<typeof setTimeout> | null = null
-
-    try {
-      es = new EventSource(`${OXY_API}/platform-stats/stream`)
-
-      es.onmessage = (event) => {
-        try {
-          handleNewData(JSON.parse(event.data) as PlatformStats)
-        } catch { /* ignore parse errors */ }
-      }
-
-      es.onerror = () => {
-        setIsConnected(false)
-        if (es) {
-          es.close()
-          es = null
-        }
-        fallbackTimeout = setTimeout(async () => {
-          try {
-            const resp = await fetch(`${OXY_API}/platform-stats`)
-            if (resp.ok) handleNewData(await resp.json())
-          } catch { /* ignore */ }
-        }, 1000)
-      }
-    } catch {
-      fetch(`${OXY_API}/platform-stats`)
-        .then((r) => r.json())
-        .then(handleNewData)
-        .catch(() => {})
-    }
-
-    return () => {
-      if (es) es.close()
-      if (fallbackTimeout) clearTimeout(fallbackTimeout)
-    }
-  }, [handleNewData])
-
-  return { data, isConnected, activityEvents }
+  return useSyncExternalStore(
+    subscribePlatformStats,
+    getPlatformStatsSnapshot,
+    getPlatformStatsServerSnapshot,
+  )
 }
 
 // ── Infrastructure Status ──

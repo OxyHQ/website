@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import type { CardSize, CarouselSlot, HeroCard } from '../../data/heroCarousel'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -9,12 +9,15 @@ import type { FairCoinStats } from '../../api/faircoinStore'
 import 'swiper/css'
 import 'swiper/css/effect-cube'
 
-function useCountUp(end: number, decimals: number, duration = 2000) {
+function AnimatedStat({ end, decimals, duration = 2000 }: { end: number; decimals: number; duration?: number }) {
   const [value, setValue] = useState(0)
-  const ref = useRef<HTMLSpanElement>(null)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
+
+  // React 19 callback ref with cleanup — IntersectionObserver + rAF count-up lifecycle
+  // is owned directly by the ref. No effect, no dep-array churn when `end` changes
+  // after data loads.
+  const spanRef = useCallback((node: HTMLSpanElement | null) => {
+    if (!node) return
+    let rafId = 0
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return
       observer.disconnect()
@@ -23,20 +26,19 @@ function useCountUp(end: number, decimals: number, duration = 2000) {
         const t = Math.min((now - start) / duration, 1)
         const ease = 1 - Math.pow(1 - t, 3)
         setValue(parseFloat((ease * end).toFixed(decimals)))
-        if (t < 1) requestAnimationFrame(tick)
+        if (t < 1) rafId = requestAnimationFrame(tick)
       }
-      requestAnimationFrame(tick)
+      rafId = requestAnimationFrame(tick)
     })
-    observer.observe(el)
-    return () => observer.disconnect()
+    observer.observe(node)
+    return () => {
+      observer.disconnect()
+      if (rafId) cancelAnimationFrame(rafId)
+    }
   }, [end, decimals, duration])
-  return { value, ref }
-}
 
-function AnimatedStat({ end, decimals }: { end: number; decimals: number }) {
-  const { value, ref } = useCountUp(end, decimals)
   return (
-    <span ref={ref}>
+    <span ref={spanRef}>
       {decimals > 0 ? value.toFixed(decimals) : value.toLocaleString()}
     </span>
   )

@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useCallback } from 'react'
 
 interface Particle {
   x: number
@@ -21,39 +21,37 @@ function parseRgb(color: string): [string, string, string] {
  * Used as the background for the AI for Research CTA section.
  */
 export default function ParticleCanvas({ className }: { className?: string }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const animRef = useRef<number>(0)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
+  // React 19 callback ref — owns the rAF loop and the window resize listener.
+  // When the canvas mounts the loop starts; on unmount everything is torn down.
+  const canvasRef = useCallback((el: HTMLCanvasElement | null) => {
+    if (!el) return
+    const ctx2d = el.getContext('2d')
+    if (!ctx2d) return
 
     let w = 0
     let h = 0
     const PARTICLE_COUNT = 120
-    const CONNECTION_DIST_SQ = 100 * 100 // squared to avoid sqrt
+    const CONNECTION_DIST_SQ = 100 * 100
     const particles: Particle[] = []
     let fgRgb: [string, string, string] = ['255', '255', '255']
+    let rafId = 0
 
-    function readFgColor() {
-      const fg = getComputedStyle(canvas!).getPropertyValue('color')
+    const readFgColor = () => {
+      const fg = getComputedStyle(el).getPropertyValue('color')
       if (fg) fgRgb = parseRgb(fg)
     }
 
-    function resize() {
+    const resize = () => {
       const dpr = window.devicePixelRatio || 1
-      w = canvas!.clientWidth
-      h = canvas!.clientHeight
-      canvas!.width = w * dpr
-      canvas!.height = h * dpr
-      ctx!.scale(dpr, dpr)
+      w = el.clientWidth
+      h = el.clientHeight
+      el.width = w * dpr
+      el.height = h * dpr
+      ctx2d.scale(dpr, dpr)
       readFgColor()
     }
 
-    function initParticles() {
+    const initParticles = () => {
       particles.length = 0
       for (let i = 0; i < PARTICLE_COUNT; i++) {
         particles.push({
@@ -71,17 +69,14 @@ export default function ParticleCanvas({ className }: { className?: string }) {
     resize()
     initParticles()
 
-    function animate() {
-      if (!ctx) return
-      ctx.clearRect(0, 0, w, h)
-
+    const animate = () => {
+      ctx2d.clearRect(0, 0, w, h)
       const time = Date.now() * 0.001
       const [cr, cg, cb] = fgRgb
 
       for (const p of particles) {
         p.x += p.vx
         p.y += p.vy
-
         if (p.x < -10) p.x = w + 10
         if (p.x > w + 10) p.x = -10
         if (p.y < -10) p.y = h + 10
@@ -90,14 +85,13 @@ export default function ParticleCanvas({ className }: { className?: string }) {
         const pulse = Math.sin(time * 1.5 + p.pulseOffset) * 0.3 + 0.7
         const alpha = p.opacity * pulse
 
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`
-        ctx.fill()
+        ctx2d.beginPath()
+        ctx2d.arc(p.x, p.y, p.size, 0, Math.PI * 2)
+        ctx2d.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`
+        ctx2d.fill()
       }
 
-      // Connection lines (use squared distance to avoid sqrt)
-      ctx.lineWidth = 0.5
+      ctx2d.lineWidth = 0.5
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x
@@ -105,25 +99,28 @@ export default function ParticleCanvas({ className }: { className?: string }) {
           const distSq = dx * dx + dy * dy
           if (distSq < CONNECTION_DIST_SQ) {
             const alpha = (1 - Math.sqrt(distSq) / 100) * 0.06
-            ctx.beginPath()
-            ctx.moveTo(particles[i].x, particles[i].y)
-            ctx.lineTo(particles[j].x, particles[j].y)
-            ctx.strokeStyle = `rgba(${cr},${cg},${cb},${alpha})`
-            ctx.stroke()
+            ctx2d.beginPath()
+            ctx2d.moveTo(particles[i].x, particles[i].y)
+            ctx2d.lineTo(particles[j].x, particles[j].y)
+            ctx2d.strokeStyle = `rgba(${cr},${cg},${cb},${alpha})`
+            ctx2d.stroke()
           }
         }
       }
 
-      animRef.current = requestAnimationFrame(animate)
+      rafId = requestAnimationFrame(animate)
     }
 
-    animRef.current = requestAnimationFrame(animate)
+    rafId = requestAnimationFrame(animate)
 
-    const onResize = () => { resize(); initParticles() }
+    const onResize = () => {
+      resize()
+      initParticles()
+    }
     window.addEventListener('resize', onResize)
 
     return () => {
-      cancelAnimationFrame(animRef.current)
+      cancelAnimationFrame(rafId)
       window.removeEventListener('resize', onResize)
     }
   }, [])

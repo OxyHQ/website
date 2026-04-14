@@ -1,5 +1,5 @@
 import type React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { hero } from '../../data/content'
 import Button from '../ui/Button'
 
@@ -16,11 +16,12 @@ export default function HeroSection() {
   const [typingDone, setTypingDone] = useState(false)
   const [showResponse, setShowResponse] = useState(false)
 
-  useEffect(() => {
+  // React 19 callback ref — owns the entire intro-animation timer chain.
+  // Attaches on mount, clears every timer on unmount.
+  const stageRef = useCallback((node: HTMLElement | null) => {
+    if (!node) return
     const timers: number[] = []
-
-    // Start typing at 1200ms
-    timers.push(window.setTimeout(() => {
+    const startTyping = window.setTimeout(() => {
       setShowCursor(true)
       let i = 0
       const interval = window.setInterval(() => {
@@ -28,23 +29,28 @@ export default function HeroSection() {
         setTypedText(fullText.slice(0, i))
         if (i >= fullText.length) {
           clearInterval(interval)
-          timers.push(window.setTimeout(() => {
+          const done = window.setTimeout(() => {
             setShowCursor(false)
             setTypingDone(true)
-          }, 400))
+          }, 400)
+          timers.push(done)
         }
       }, 60)
       timers.push(interval)
-    }, 1200))
-
-    // Stagger the response mockup reveals
-    timers.push(window.setTimeout(() => setShowResponse(true), 2000))
-
-    return () => timers.forEach(id => clearTimeout(id))
+    }, 1200)
+    timers.push(startTyping)
+    const revealResponse = window.setTimeout(() => setShowResponse(true), 2000)
+    timers.push(revealResponse)
+    return () => {
+      timers.forEach(id => {
+        clearTimeout(id)
+        clearInterval(id)
+      })
+    }
   }, [])
 
   return (
-    <section className="flex min-h-[calc(100svh-var(--site-header-height))] flex-col bg-gradient-to-b from-background to-surface">
+    <section ref={stageRef} className="flex min-h-[calc(100svh-var(--site-header-height))] flex-col bg-gradient-to-b from-background to-surface">
       {/* Main content area with background glow */}
       <div className="relative flex flex-1 flex-col overflow-hidden">
         {/* Radial glow */}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -88,13 +88,15 @@ function PartnerLogos() {
     }, 400)
   }, [])
 
-  useEffect(() => {
+  // React 19 callback ref — owns the logo-swap interval while the section is mounted.
+  const sectionRef = useCallback((node: HTMLElement | null) => {
+    if (!node) return
     const interval = setInterval(swapLogo, 2000)
     return () => clearInterval(interval)
   }, [swapLogo])
 
   return (
-    <section className="container">
+    <section ref={sectionRef} className="container">
       <div className="border-border border-x">
         <div className="grid grid-cols-12 gap-6">
           <div className="col-[2/-2] py-5">
@@ -211,7 +213,10 @@ function FeaturesSection() {
     }, 200)
   }, [stopTimer])
 
-  useEffect(() => {
+  // React 19 callback ref — keyed on `active` + `playing`. Each change tears down
+  // the prior timer (via cleanup) and starts a fresh one when playing is true.
+  const tabsRef = useCallback((node: HTMLElement | null) => {
+    if (!node) return
     if (playing) {
       startTimer()
     } else {
@@ -231,7 +236,7 @@ function FeaturesSection() {
   }
 
   return (
-    <section className="py-0">
+    <section ref={tabsRef} className="py-0">
       <div className="agents-features-section">
         <div className="agents-features-bg">
           <img
@@ -338,8 +343,12 @@ function StatsAndTestimonialsSection() {
     setProgress(0)
   }, [])
 
-  useEffect(() => {
-    return () => { if (progressRef.current) clearInterval(progressRef.current) }
+  // React 19 callback ref — clears the progress interval on unmount.
+  const sectionRef = useCallback((node: HTMLElement | null) => {
+    if (!node) return
+    return () => {
+      if (progressRef.current) clearInterval(progressRef.current)
+    }
   }, [])
 
   const toggleAutoplay = () => {
@@ -361,7 +370,7 @@ function StatsAndTestimonialsSection() {
     : 2
 
   return (
-    <section className="container">
+    <section ref={sectionRef} className="container">
       <div className="border-border border-x">
         <div className="grid grid-cols-12 gap-6">
           <div className="col-[2/-2] py-10 max-[950px]:py-6">
@@ -625,13 +634,21 @@ function TypewriterText({ texts, resetKey }: { texts: string[]; resetKey: number
   const [charIdx, setCharIdx] = useState(0)
   const [deleting, setDeleting] = useState(false)
 
-  useEffect(() => {
+  // Derived-state pattern: reset on resetKey change without an effect.
+  // https://react.dev/learn/you-might-not-need-an-effect#resetting-all-state-when-a-prop-changes
+  const [lastResetKey, setLastResetKey] = useState(resetKey)
+  if (lastResetKey !== resetKey) {
+    setLastResetKey(resetKey)
     setTextIdx(0)
     setCharIdx(0)
     setDeleting(false)
-  }, [resetKey])
+  }
 
-  useEffect(() => {
+  // React 19 callback ref — owns the typewriter animation timer. Keyed on the
+  // three state values that drive the animation step, so each transition tears
+  // down the previous timer and schedules the next one.
+  const sentinelRef = useCallback((node: HTMLSpanElement | null) => {
+    if (!node) return
     const text = texts[textIdx]
     if (!deleting && charIdx < text.length) {
       const id = setTimeout(() => setCharIdx((c) => c + 1), 40)
@@ -652,7 +669,7 @@ function TypewriterText({ texts, resetKey }: { texts: string[]; resetKey: number
   }, [charIdx, deleting, textIdx, texts])
 
   return (
-    <span className="typewrap">
+    <span ref={sentinelRef} className="typewrap">
       {texts[textIdx].slice(0, charIdx)}
     </span>
   )

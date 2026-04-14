@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState, useEffect } from 'react'
+import { useRef, useMemo, useState, useCallback } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
@@ -23,10 +23,10 @@ function Globe({ color }: { color: string }) {
   const positions = useMemo(() => generateGlobePoints(4000, 2), [])
 
   useFrame((_, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.08
-      meshRef.current.rotation.x = Math.sin(Date.now() * 0.0001) * 0.1
-    }
+    const mesh = meshRef.current
+    if (!mesh) return
+    mesh.rotation.y += delta * 0.08
+    mesh.rotation.x = Math.sin(Date.now() * 0.0001) * 0.1
   })
 
   return (
@@ -69,22 +69,29 @@ function GlobeGlow({ color }: { color: string }) {
  * Reads the CSS --foreground color so dots adapt to light/dark mode.
  */
 export default function GlobeScene({ className }: { className?: string }) {
-  const wrapperRef = useRef<HTMLDivElement>(null)
   const [dotColor, setDotColor] = useState('#ededed')
+  const observerRef = useRef<MutationObserver | null>(null)
 
-  useEffect(() => {
-    if (!wrapperRef.current) return
-    const fg = getComputedStyle(wrapperRef.current).getPropertyValue('color')
-    if (fg) setDotColor(fg)
+  const wrapperRef = useCallback((node: HTMLDivElement | null) => {
+    if (observerRef.current) {
+      observerRef.current.disconnect()
+      observerRef.current = null
+    }
+    if (!node) return
 
-    // Re-read on theme changes
-    const observer = new MutationObserver(() => {
-      if (!wrapperRef.current) return
-      const c = getComputedStyle(wrapperRef.current).getPropertyValue('color')
+    const readColor = () => {
+      const c = getComputedStyle(node).getPropertyValue('color')
       if (c) setDotColor(c)
+    }
+
+    readColor()
+
+    const observer = new MutationObserver(readColor)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
     })
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
-    return () => observer.disconnect()
+    observerRef.current = observer
   }, [])
 
   return (

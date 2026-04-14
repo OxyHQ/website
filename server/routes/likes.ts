@@ -1,20 +1,28 @@
 import { Router } from 'express'
+import { z } from 'zod'
 import { Like } from '../models/Like.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { LIKEABLE_TARGET_TYPES } from '../constants/social.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
+import { validate } from '../utils/validate.js'
 
 const router = Router()
 
-router.get('/', optionalAuth, async (req, res) => {
-  const { targetType, targetId } = req.query
+const listQuerySchema = z.object({
+  targetType: z.string().min(1, 'targetType and targetId are required'),
+  targetId: z.string().min(1, 'targetType and targetId are required'),
+}).passthrough()
 
-  if (!targetType || !targetId) {
-    return res.status(400).json({ error: 'targetType and targetId are required' })
-  }
+const toggleBodySchema = z.object({
+  targetType: z.enum(LIKEABLE_TARGET_TYPES),
+  targetId: z.string().min(1),
+}).passthrough()
+
+router.get('/', optionalAuth, async (req, res) => {
+  const { targetType, targetId } = validate(listQuerySchema, req.query)
 
   try {
-    const filter = { targetType: targetType as string, targetId: targetId as string }
+    const filter = { targetType, targetId }
     const [count, existing] = await Promise.all([
       Like.countDocuments(filter),
       req.user
@@ -30,22 +38,17 @@ router.get('/', optionalAuth, async (req, res) => {
 })
 
 router.post('/toggle', requireAuth, async (req, res) => {
-  const { targetType, targetId } = req.body
+  const user = req.user
+  if (!user) return res.status(401).json({ error: 'Authentication required' })
 
-  if (!targetType || !targetId) {
-    return res.status(400).json({ error: 'targetType and targetId are required' })
-  }
-
-  if (!LIKEABLE_TARGET_TYPES.includes(targetType)) {
-    return res.status(400).json({ error: `targetType must be one of: ${LIKEABLE_TARGET_TYPES.join(', ')}` })
-  }
+  const { targetType, targetId } = validate(toggleBodySchema, req.body)
 
   try {
-    const filter = { targetType, targetId, userId: req.user.id }
+    const filter = { targetType, targetId, userId: user.id }
     const existing = await Like.findOneAndDelete(filter)
 
     if (!existing) {
-      await Like.create({ ...filter, username: req.user.username })
+      await Like.create({ ...filter, username: user.username })
     }
 
     const count = await Like.countDocuments({ targetType, targetId })

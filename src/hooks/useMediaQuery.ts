@@ -1,17 +1,61 @@
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react'
 
-export function useMediaQuery(query: string) {
-  const [matches, setMatches] = useState(false);
+type Listener = () => void
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(query);
-    setMatches(mediaQuery.matches);
+interface QueryStore {
+  mql: MediaQueryList
+  listeners: Set<Listener>
+  subscribe: (listener: Listener) => () => void
+  getSnapshot: () => boolean
+}
 
-    const handler = (event: MediaQueryListEvent) => setMatches(event.matches);
-    mediaQuery.addEventListener('change', handler);
+const stores = new Map<string, QueryStore>()
 
-    return () => mediaQuery.removeEventListener('change', handler);
-  }, [query]);
+function getStore(query: string): QueryStore | null {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    return null
+  }
+  const existing = stores.get(query)
+  if (existing) return existing
+  const mql = window.matchMedia(query)
+  const listeners = new Set<Listener>()
+  const notify = () => {
+    listeners.forEach((listener) => listener())
+  }
+  const store: QueryStore = {
+    mql,
+    listeners,
+    subscribe: (listener) => {
+      if (listeners.size === 0) {
+        mql.addEventListener('change', notify)
+      }
+      listeners.add(listener)
+      return () => {
+        listeners.delete(listener)
+        if (listeners.size === 0) {
+          mql.removeEventListener('change', notify)
+        }
+      }
+    },
+    getSnapshot: () => mql.matches,
+  }
+  stores.set(query, store)
+  return store
+}
 
-  return matches;
+function emptySubscribe(): () => void {
+  return () => {}
+}
+
+function falseSnapshot(): boolean {
+  return false
+}
+
+export function useMediaQuery(query: string): boolean {
+  const store = getStore(query)
+  return useSyncExternalStore(
+    store ? store.subscribe : emptySubscribe,
+    store ? store.getSnapshot : falseSnapshot,
+    falseSnapshot,
+  )
 }

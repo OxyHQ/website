@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatNumber } from "../../data/dashboard/country-data";
 import type { PlatformStats } from "../../api/hooks";
@@ -46,31 +46,38 @@ function PixelGridTransition({
 
   const [shuffledOrder, setShuffledOrder] = useState<number[]>([]);
 
-  useEffect(() => {
-    if (!hasActivatedRef.current && !isActive) return;
-    if (isActive) hasActivatedRef.current = true;
+  // React 19 callback ref — keyed on isActive / animationStepDuration / pixels.
+  // Each transition tears down the prior shrink/hide timers and kicks off new
+  // ones synchronously when the sentinel mounts. The transition is only
+  // armed after the first activation (matches the original gating).
+  const animationTriggerRef = useCallback(
+    (node: HTMLSpanElement | null) => {
+      if (!node) return;
+      if (!hasActivatedRef.current && !isActive) return;
+      if (isActive) hasActivatedRef.current = true;
 
-    const indices = pixels.map((_, i) => i);
-    for (let i = indices.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [indices[i], indices[j]] = [indices[j], indices[i]];
-    }
-    setShuffledOrder(indices);
+      const indices = pixels.map((_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      setShuffledOrder(indices);
+      setShowPixels(true);
+      setAnimState("growing");
 
-    setShowPixels(true);
-    setAnimState("growing");
+      const shrinkTimer = setTimeout(() => setAnimState("shrinking"), animationStepDuration * 1000);
+      const hideTimer = setTimeout(() => {
+        setShowPixels(false);
+        setAnimState("idle");
+      }, animationStepDuration * 2000);
 
-    const shrinkTimer = setTimeout(() => setAnimState("shrinking"), animationStepDuration * 1000);
-    const hideTimer = setTimeout(() => {
-      setShowPixels(false);
-      setAnimState("idle");
-    }, animationStepDuration * 2000);
-
-    return () => {
-      clearTimeout(shrinkTimer);
-      clearTimeout(hideTimer);
-    };
-  }, [isActive, animationStepDuration, pixels]);
+      return () => {
+        clearTimeout(shrinkTimer);
+        clearTimeout(hideTimer);
+      };
+    },
+    [isActive, animationStepDuration, pixels],
+  );
 
   const delayPerPixel = useMemo(() => animationStepDuration / pixels.length, [animationStepDuration, pixels.length]);
   const orderMap = useMemo(() => {
@@ -81,6 +88,12 @@ function PixelGridTransition({
 
   return (
     <div className={`w-full overflow-hidden max-w-full relative ${className || ""}`}>
+      <span
+        key={`${isActive ? "on" : "off"}-${pixels.length}`}
+        ref={animationTriggerRef}
+        aria-hidden
+        hidden
+      />
       <motion.div
         className="h-full"
         aria-hidden={isActive}

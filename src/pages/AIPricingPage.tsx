@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Check } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
@@ -57,15 +58,19 @@ function buildComparison(plans: APIPlan[]) {
 }
 
 export default function AIPricingPage() {
-  const [plans, setPlans] = useState<APIPlan[]>([])
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
 
-  useEffect(() => {
-    fetch('https://api.alia.onl/billing/plans?product=alia')
-      .then((r) => r.json())
-      .then((data) => setPlans(data.plans?.sort((a: APIPlan, b: APIPlan) => a.sortOrder - b.sortOrder) || []))
-      .catch(() => {})
-  }, [])
+  const { data: plans = [] } = useQuery<APIPlan[]>({
+    queryKey: ['alia-billing-plans'],
+    queryFn: async () => {
+      const res = await fetch('https://api.alia.onl/billing/plans?product=alia')
+      if (!res.ok) throw new Error(`alia billing HTTP ${res.status}`)
+      const data = await res.json()
+      const list: APIPlan[] = Array.isArray(data.plans) ? data.plans : []
+      return [...list].sort((a, b) => a.sortOrder - b.sortOrder)
+    },
+    staleTime: 5 * 60_000,
+  })
 
   const comparison = plans.length > 0 ? buildComparison(plans) : []
   const sidebarLabels = ['Credits', 'Models', 'Channels', 'Limits']

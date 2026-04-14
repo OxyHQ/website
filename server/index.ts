@@ -1,7 +1,8 @@
-import express from 'express'
+import express, { type NextFunction, type Request, type Response } from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import { config } from './config.js'
+import { ValidationError } from './utils/validate.js'
 
 import pagesRouter from './routes/pages.js'
 import navigationRouter from './routes/navigation.js'
@@ -180,6 +181,15 @@ app.get('/api/infra-status', async (_req, res) => {
 
 // Health check
 app.get('/api/health', (_req, res) => res.json({ ok: true }))
+
+// Validation error handler — must come after all routes so it catches
+// ValidationError thrown by route handlers via the `validate()` helper.
+app.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof ValidationError) {
+    return res.status(400).json({ error: 'ValidationError', issues: err.issues })
+  }
+  return next(err)
+})
 
 async function start() {
   await mongoose.connect(config.mongoUri)

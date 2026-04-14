@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { usePricing } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { type PricingPlan } from '../../../data/pricing'
@@ -10,20 +10,25 @@ import { Label } from '../../ui/shadcn/label'
 import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { BatchTranslationEditor } from '../TranslationEditor'
 
+function cloneData<T>(data: T[] | undefined): T[] {
+  return data ? (JSON.parse(JSON.stringify(data)) as T[]) : []
+}
+
 export default function PricingAdmin() {
   const { data, refetch } = usePricing()
   const { data: locales } = useLocales()
-  const [plans, setPlans] = useState<PricingPlan[]>([])
+  const [plans, setPlans] = useState<PricingPlan[]>(() => cloneData(data))
+  const [lastSyncedData, setLastSyncedData] = useState(data)
   const [saving, setSaving] = useState(false)
   const [activeLocale, setActiveLocale] = useState('')
 
   const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
+  const resolvedActiveLocale = activeLocale || defaultLocale
 
-  useEffect(() => { if (data) setPlans(JSON.parse(JSON.stringify(data))) }, [data])
-
-  useEffect(() => {
-    if (defaultLocale && !activeLocale) setActiveLocale(defaultLocale)
-  }, [defaultLocale, activeLocale])
+  if (data !== lastSyncedData) {
+    setLastSyncedData(data)
+    if (data) setPlans(cloneData(data))
+  }
 
   const save = async () => {
     setSaving(true)
@@ -44,7 +49,7 @@ export default function PricingAdmin() {
     setPlans(next)
   }
 
-  const isDefault = !activeLocale || activeLocale === defaultLocale
+  const isDefault = resolvedActiveLocale === defaultLocale
 
   return (
     <div>
@@ -52,14 +57,14 @@ export default function PricingAdmin() {
       <p className="mt-1 text-sm text-muted-foreground">Edit pricing plans.</p>
 
       <div className="mt-4">
-        <LocaleSwitcher activeLocale={activeLocale} onLocaleChange={setActiveLocale} />
+        <LocaleSwitcher activeLocale={resolvedActiveLocale} onLocaleChange={setActiveLocale} />
       </div>
 
       {!isDefault ? (
         <div className="mt-6">
           <BatchTranslationEditor
             collection="pricing"
-            locale={activeLocale}
+            locale={resolvedActiveLocale}
             documents={plans.filter((p): p is PricingPlan & { _id: string } => !!p._id)}
             renderItem={({ doc, fields, updateField }) => (
               <div className="rounded-xl border border-border p-4">

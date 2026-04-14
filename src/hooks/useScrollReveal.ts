@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 
 interface ScrollRevealOptions {
   threshold?: number
@@ -6,44 +6,46 @@ interface ScrollRevealOptions {
 }
 
 /**
- * Attaches an IntersectionObserver to a container ref.
- * Any child with class `scroll-reveal` will get `revealed` added
- * when the container enters the viewport.
+ * Returns a callback ref that, when attached to an element, observes it with
+ * an IntersectionObserver. Any descendant with class `scroll-reveal` will get
+ * `revealed` added once the container enters the viewport.
+ *
+ * Uses a callback ref (not useEffect) so observer lifecycle is owned directly
+ * by React's ref system — no effect churn, no dep-array edge cases.
  */
 export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
-  options: ScrollRevealOptions = {}
-) {
-  const ref = useRef<T>(null)
+  options: ScrollRevealOptions = {},
+): (node: T | null) => void {
+  const observerRef = useRef<IntersectionObserver | null>(null)
+  const currentNodeRef = useRef<T | null>(null)
+  const { threshold = 0.15, rootMargin = '0px 0px -50px 0px' } = options
 
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
+  return useCallback(
+    (node: T | null) => {
+      if (observerRef.current) {
+        observerRef.current.disconnect()
+        observerRef.current = null
+      }
+      currentNodeRef.current = node
+      if (!node) return
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Reveal all scroll-reveal children
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return
             const targets = entry.target.querySelectorAll('.scroll-reveal')
             targets.forEach((target) => target.classList.add('revealed'))
-            // Also reveal the container itself if it has the class
             if (entry.target.classList.contains('scroll-reveal')) {
               entry.target.classList.add('revealed')
             }
             observer.unobserve(entry.target)
-          }
-        })
-      },
-      {
-        threshold: options.threshold ?? 0.15,
-        rootMargin: options.rootMargin ?? '0px 0px -50px 0px',
-      }
-    )
-
-    observer.observe(el)
-
-    return () => observer.disconnect()
-  }, [options.threshold, options.rootMargin])
-
-  return ref
+          })
+        },
+        { threshold, rootMargin },
+      )
+      observer.observe(node)
+      observerRef.current = observer
+    },
+    [threshold, rootMargin],
+  )
 }

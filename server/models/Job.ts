@@ -15,6 +15,8 @@ export interface IJob extends Document {
   >
   active: boolean
   order: number
+  createdAt: Date
+  updatedAt: Date
 }
 
 function generateSlug(title: string, location: string): string {

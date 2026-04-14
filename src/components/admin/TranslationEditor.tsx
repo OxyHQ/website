@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../api/client'
 import { PrimaryButton } from '@oxyhq/bloom/button'
@@ -34,12 +34,15 @@ export function TranslationFields({
     enabled: !!documentId && !!locale,
   })
 
-  const [fields, setFields] = useState<Record<string, any>>({})
+  const [fields, setFields] = useState<Record<string, any>>(() => existing?.fields ?? {})
+  const [lastSyncedExisting, setLastSyncedExisting] = useState(existing)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
+  // Reset local edits when server data changes (i.e., when switching locale/document).
+  if (existing !== lastSyncedExisting) {
+    setLastSyncedExisting(existing)
     setFields(existing?.fields ?? {})
-  }, [existing])
+  }
 
   const getVal = (obj: Record<string, any>, path: string) =>
     path.split('.').reduce((acc, p) => acc?.[p], obj)
@@ -139,12 +142,14 @@ export function TranslationJsonEditor({
     enabled: !!documentId && !!locale,
   })
 
-  const [fields, setFields] = useState<Record<string, any>>({})
+  const [fields, setFields] = useState<Record<string, any>>(() => existing?.fields ?? {})
+  const [lastSyncedExisting, setLastSyncedExisting] = useState(existing)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
+  if (existing !== lastSyncedExisting) {
+    setLastSyncedExisting(existing)
     setFields(existing?.fields ?? {})
-  }, [existing])
+  }
 
   const save = async () => {
     setSaving(true)
@@ -189,17 +194,24 @@ export function BatchTranslationEditor({
 }) {
   const qc = useQueryClient()
   const { data: existing } = useBatchTranslations(collection, locale)
-  const [translationsMap, setTranslationsMap] = useState<Record<string, Record<string, any>>>({})
-  const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
-    if (!existing) return
+  function buildMap(rows: typeof existing): Record<string, Record<string, any>> {
+    if (!rows) return {}
     const map: Record<string, Record<string, any>> = {}
-    for (const t of existing) {
+    for (const t of rows) {
       map[t.documentId] = t.fields
     }
-    setTranslationsMap(map)
-  }, [existing])
+    return map
+  }
+
+  const [translationsMap, setTranslationsMap] = useState<Record<string, Record<string, any>>>(() => buildMap(existing))
+  const [lastSyncedExisting, setLastSyncedExisting] = useState(existing)
+  const [saving, setSaving] = useState(false)
+
+  if (existing !== lastSyncedExisting) {
+    setLastSyncedExisting(existing)
+    if (existing) setTranslationsMap(buildMap(existing))
+  }
 
   const updateField = (docId: string, key: string, value: any) => {
     setTranslationsMap(prev => ({

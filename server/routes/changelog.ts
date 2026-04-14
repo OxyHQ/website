@@ -1,23 +1,46 @@
 import { Router } from 'express'
+import { z } from 'zod'
 import { ChangelogEntry } from '../models/ChangelogEntry.js'
 import TrackedRepo from '../models/TrackedRepo.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { syncAllRepos, syncSingleRepo } from '../services/githubSync.js'
+import { validate } from '../utils/validate.js'
 
 const router = Router()
 
+const listQuerySchema = z.object({
+  repo: z.string().optional(),
+  page: z.string().optional(),
+  limit: z.string().optional(),
+})
+
+const idParamsSchema = z.object({ id: z.string().min(1) })
+
+const entryBodySchema = z.object({}).passthrough()
+
+const trackedRepoBodySchema = z.object({
+  owner: z.string().min(1),
+  repo: z.string().min(1),
+  displayName: z.string().optional(),
+  defaultTags: z.array(z.object({
+    label: z.string(),
+    color: z.string(),
+  })).optional(),
+  active: z.boolean().optional(),
+}).passthrough()
+
 // GET /  — filtered + paginated changelog entries
 router.get('/', async (req, res) => {
-  const { repo, page: pageParam, limit: limitParam } = req.query
+  const { repo, page: pageParam, limit: limitParam } = validate(listQuerySchema, req.query)
 
-  const page = Math.max(1, parseInt(pageParam as string) || 1)
-  const limit = Math.min(100, Math.max(1, parseInt(limitParam as string) || 20))
+  const page = Math.max(1, parseInt(pageParam ?? '', 10) || 1)
+  const limit = Math.min(100, Math.max(1, parseInt(limitParam ?? '', 10) || 20))
 
-  const filter: Record<string, any> = {}
+  const filter: Record<string, string> = {}
   if (repo) {
     // repo can be "owner/name" or just "name"
-    const parts = (repo as string).split('/')
+    const parts = repo.split('/')
     if (parts.length === 2) {
       filter.repoOwner = parts[0]
       filter.repoName = parts[1]
@@ -57,20 +80,24 @@ router.get('/', async (req, res) => {
 
 // POST /  — create manual changelog entry (admin)
 router.post('/', requireAuth, adminOnly, async (req, res) => {
-  const entry = await ChangelogEntry.create(req.body)
+  const body = validate(entryBodySchema, req.body)
+  const entry = await ChangelogEntry.create(body)
   res.status(201).json(entry)
 })
 
 // PUT /:id  — update changelog entry (admin)
 router.put('/:id', requireAuth, adminOnly, async (req, res) => {
-  const entry = await ChangelogEntry.findByIdAndUpdate(req.params.id, req.body, { new: true })
+  const { id } = validate(idParamsSchema, req.params)
+  const body = validate(entryBodySchema, req.body)
+  const entry = await ChangelogEntry.findByIdAndUpdate(id, body, { new: true })
   if (!entry) return res.status(404).json({ error: 'Entry not found' })
   res.json(entry)
 })
 
 // DELETE /:id  — delete changelog entry (admin)
 router.delete('/:id', requireAuth, adminOnly, async (req, res) => {
-  const entry = await ChangelogEntry.findByIdAndDelete(req.params.id)
+  const { id } = validate(idParamsSchema, req.params)
+  const entry = await ChangelogEntry.findByIdAndDelete(id)
   if (!entry) return res.status(404).json({ error: 'Entry not found' })
   res.json({ ok: true })
 })
@@ -85,7 +112,7 @@ router.get('/repos', async (_req, res) => {
 
 // POST /repos  — add tracked repo (admin)
 router.post('/repos', requireAuth, adminOnly, async (req, res) => {
-  const { owner, repo, displayName, defaultTags, active } = req.body
+  const { owner, repo, displayName, defaultTags, active } = validate(trackedRepoBodySchema, req.body)
   const tracked = await TrackedRepo.create({
     owner,
     repo,
@@ -98,18 +125,21 @@ router.post('/repos', requireAuth, adminOnly, async (req, res) => {
 
 // DELETE /repos/:id  — remove tracked repo (admin)
 router.delete('/repos/:id', requireAuth, adminOnly, async (req, res) => {
-  const tracked = await TrackedRepo.findByIdAndDelete(req.params.id)
+  const { id } = validate(idParamsSchema, req.params)
+  const tracked = await TrackedRepo.findByIdAndDelete(id)
   if (!tracked) return res.status(404).json({ error: 'Tracked repo not found' })
   res.json({ ok: true })
 })
 
 // POST /repos/:id/sync  — manual sync single repo (admin)
 router.post('/repos/:id/sync', requireAuth, adminOnly, async (req, res) => {
+  const { id } = validate(idParamsSchema, req.params)
   try {
-    const count = await syncSingleRepo(req.params.id as string)
+    const count = await syncSingleRepo(id)
     res.json({ ok: true, synced: count })
-  } catch (err: any) {
-    res.status(400).json({ error: err.message })
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Sync failed'
+    res.status(400).json({ error: message })
   }
 })
 

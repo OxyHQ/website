@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigation } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton } from '@oxyhq/bloom/button'
@@ -26,32 +26,35 @@ interface AdminNavDropdown {
   sidePanel: NavSidePanel | null
 }
 
+function normalizeDropdowns(data: ReturnType<typeof useNavigation>['data']): AdminNavDropdown[] {
+  return (data ?? []).map((dd) => ({
+    ...dd,
+    label: dd.label ?? '',
+    order: dd.order ?? 0,
+    items: (dd.sections ?? []).flatMap((s: NavDropdownSection) =>
+      (s.items ?? []).map((item: NavDropdownItem) => ({ ...item, section: s.heading || '' }))
+    ),
+    sidePanel: dd.sidePanel ?? null,
+  }))
+}
+
 export default function NavigationAdmin() {
   const { data, refetch } = useNavigation()
   const { data: locales } = useLocales()
-  const [dropdowns, setDropdowns] = useState<AdminNavDropdown[]>([])
+  const [dropdowns, setDropdowns] = useState<AdminNavDropdown[]>(() => normalizeDropdowns(data))
+  const [lastSyncedData, setLastSyncedData] = useState(data)
   const [saving, setSaving] = useState(false)
   const [activeLocale, setActiveLocale] = useState('')
 
   const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
+  const resolvedActiveLocale = activeLocale || defaultLocale
 
-  useEffect(() => {
-    if (!data) return
-    const normalized = (data ?? []).map((dd) => ({
-      ...dd,
-      label: dd.label ?? '',
-      order: dd.order ?? 0,
-      items: (dd.sections ?? []).flatMap((s: NavDropdownSection) =>
-        (s.items ?? []).map((item: NavDropdownItem) => ({ ...item, section: s.heading || '' }))
-      ),
-      sidePanel: dd.sidePanel ?? null,
-    }))
-    setDropdowns(normalized)
-  }, [data])
-
-  useEffect(() => {
-    if (defaultLocale && !activeLocale) setActiveLocale(defaultLocale)
-  }, [defaultLocale, activeLocale])
+  // Reset local form state when the server data changes — documented React pattern
+  // for deriving state from props without useEffect.
+  if (data !== lastSyncedData) {
+    setLastSyncedData(data)
+    setDropdowns(normalizeDropdowns(data))
+  }
 
   const save = async () => {
     setSaving(true)
@@ -126,7 +129,7 @@ export default function NavigationAdmin() {
     setDropdowns(next)
   }
 
-  const isDefault = !activeLocale || activeLocale === defaultLocale
+  const isDefault = resolvedActiveLocale === defaultLocale
 
   return (
     <div>
@@ -139,14 +142,14 @@ export default function NavigationAdmin() {
       </div>
 
       <div className="mt-4">
-        <LocaleSwitcher activeLocale={activeLocale} onLocaleChange={setActiveLocale} />
+        <LocaleSwitcher activeLocale={resolvedActiveLocale} onLocaleChange={setActiveLocale} />
       </div>
 
       {!isDefault ? (
         <div className="mt-6">
           <BatchTranslationEditor
             collection="navigation"
-            locale={activeLocale}
+            locale={resolvedActiveLocale}
             documents={dropdowns.filter((d): d is AdminNavDropdown & { _id: string } => !!d._id)}
             renderItem={({ doc, fields, updateField }) => (
               <div className="rounded-xl border border-border p-5">
