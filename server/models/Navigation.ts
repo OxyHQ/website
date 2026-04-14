@@ -5,6 +5,7 @@ export interface INavItem {
   description: string
   href: string
   icon?: string
+  image?: string
   section?: string
   showGrid?: boolean
 }
@@ -26,6 +27,7 @@ const NavItemSchema = new Schema<INavItem>({
   description: { type: String, default: '' },
   href: { type: String, required: true },
   icon: String,
+  image: String,
   section: String,
   showGrid: { type: Boolean, default: true },
 }, { _id: false })

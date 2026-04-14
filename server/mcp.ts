@@ -10,6 +10,7 @@ import { config } from './config.js'
 import { Page } from './models/Page.js'
 import { Navigation } from './models/Navigation.js'
 import { Footer } from './models/Footer.js'
+import { HeroContent, getOrCreateHero } from './models/HeroContent.js'
 import { NewsroomPost } from './models/NewsroomPost.js'
 import { PricingPlan } from './models/PricingPlan.js'
 import { Testimonial } from './models/Testimonial.js'
@@ -25,6 +26,7 @@ import { Media } from './models/Media.js'
 import { syncAllRepos, syncSingleRepo } from './services/githubSync.js'
 import { deleteFromSpaces, uploadToSpaces } from './services/s3.js'
 import { processImage } from './services/thumbnails.js'
+import { heroUpdateRawShape, heroUpdateSchema, type HeroUpdate } from './validation/hero.js'
 
 function createMcpServer() {
   const server = new McpServer({
@@ -200,6 +202,42 @@ server.tool('update_footer', 'Update footer content', {
     }
     const created = await Footer.create(params)
     return ok(created)
+  } catch (e) { return err(e) }
+})
+
+// ── Hero ────────────────────────────────────────────────────────────────────
+
+server.tool('get_hero', 'Get the homepage hero singleton: title, eyebrow text, background video/poster, and the carousel slot grid that sits below the hero copy. Returns sensible defaults the first time it is called so the site renders identically before any edits.', {}, async () => {
+  try {
+    const hero = await getOrCreateHero()
+    return ok(hero)
+  } catch (e) { return err(e) }
+})
+
+server.tool('update_hero', 'Update the homepage hero. Pass any subset of: title (supports newlines), eyebrow, background video/poster (Media _id or static URL like "/images/landing/hero-background.webm"), or carouselSlots (full replacement of the grid). Only provided fields are changed.', heroUpdateRawShape, async (params: HeroUpdate) => {
+  try {
+    // Re-validate via the same schema the REST route uses so the MCP and the
+    // HTTP path stay in lockstep on shape, defaults, and rejections.
+    const body = heroUpdateSchema.parse(params)
+    await getOrCreateHero({ populate: false })
+
+    const update: Record<string, unknown> = {}
+    if (body.title !== undefined) update.title = body.title
+    if (body.eyebrow !== undefined) update.eyebrow = body.eyebrow
+    for (const field of ['backgroundVideoWebm', 'backgroundVideoMp4', 'backgroundPoster'] as const) {
+      const value = body[field]
+      if (value === undefined) continue
+      if (typeof value === 'string' && mongoose.Types.ObjectId.isValid(value) && value.length === 24) {
+        update[field] = new mongoose.Types.ObjectId(value)
+      } else {
+        update[field] = value || null
+      }
+    }
+    if (body.carouselSlots !== undefined) update.carouselSlots = body.carouselSlots
+
+    const hero = await HeroContent.findOneAndUpdate({}, update, { new: true, upsert: true })
+      .populate('backgroundVideoWebm backgroundVideoMp4 backgroundPoster')
+    return ok(hero)
   } catch (e) { return err(e) }
 })
 

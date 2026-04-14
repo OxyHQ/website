@@ -163,6 +163,69 @@ export function useFooter() {
   })
 }
 
+// ── Hero ──
+import type { CarouselSlot } from '../data/heroCarousel'
+
+export interface HeroContent {
+  _id?: string
+  title: string
+  eyebrow: string
+  /** Resolved to a URL string by the hook's select() */
+  backgroundVideoWebm: string
+  backgroundVideoMp4: string
+  backgroundPoster: string
+  carouselSlots: CarouselSlot[]
+}
+
+interface RawHeroContent {
+  _id?: string
+  title?: string
+  eyebrow?: string
+  backgroundVideoWebm?: unknown
+  backgroundVideoMp4?: unknown
+  backgroundPoster?: unknown
+  carouselSlots?: CarouselSlot[]
+}
+
+function normalizeHero(raw: RawHeroContent): HeroContent {
+  return {
+    _id: raw._id,
+    title: raw.title ?? '',
+    eyebrow: raw.eyebrow ?? '',
+    backgroundVideoWebm: resolveMediaUrl(raw.backgroundVideoWebm),
+    backgroundVideoMp4: resolveMediaUrl(raw.backgroundVideoMp4),
+    backgroundPoster: resolveMediaUrl(raw.backgroundPoster, 'lg'),
+    carouselSlots: Array.isArray(raw.carouselSlots) ? raw.carouselSlots : [],
+  }
+}
+
+export function useHero() {
+  const locale = useCurrentLocale()
+  return useQuery({
+    queryKey: ['hero', locale],
+    queryFn: () => apiFetch<RawHeroContent>('/hero', { locale }),
+    select: normalizeHero,
+    staleTime: 60_000,
+    retry: 1,
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useUpdateHero() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Partial<{
+      title: string
+      eyebrow: string
+      backgroundVideoWebm: string
+      backgroundVideoMp4: string
+      backgroundPoster: string
+      carouselSlots: CarouselSlot[]
+    }>) => apiFetch<RawHeroContent>('/hero', { method: 'PUT', body: JSON.stringify(data) }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['hero'] }),
+  })
+}
+
 // ── Newsroom ──
 export function useNewsroomPosts(params?: { category?: string; tag?: string; featured?: boolean; limit?: number; page?: number; author?: string }) {
   const locale = useCurrentLocale()

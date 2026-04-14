@@ -4,6 +4,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HeroCarousel from '../components/homepage/HeroCarousel'
 import { heroCarouselSlots } from '../data/heroCarousel'
+import { useHero } from '../api/hooks'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import type SwiperType from 'swiper'
@@ -15,17 +16,43 @@ const IMG = '/images/landing'
 
 const BTN = 'inline-flex items-center cursor-pointer text-base leading-relaxed font-[450] rounded-full px-4 py-2 max-h-[38px] transition-opacity duration-200 hover:opacity-60'
 
+// Hero defaults — used both when the API returns no data and as the fallback
+// for individual fields. These match the original hardcoded markup so the
+// site renders identically when the CMS hasn't been touched.
+const DEFAULT_HERO_TITLE = 'Creating a future where technology empowers individuals\nto live connected, fulfilling, and sustainable lives.'
+const DEFAULT_HERO_EYEBROW = 'Built by people who believe in change. Ethical, open, and deeply human.'
+const DEFAULT_HERO_BG_WEBM = `${IMG}/hero-background.webm`
+const DEFAULT_HERO_BG_MP4 = `${IMG}/hero-background.mp4`
+const DEFAULT_HERO_POSTER = `${IMG}/hero-bg.avif`
+
 /* ------------------------------------------------------------------ */
 /*  Hero                                                               */
 /* ------------------------------------------------------------------ */
 function HeroSection() {
+  const { data: hero } = useHero()
+
+  const title = hero?.title || DEFAULT_HERO_TITLE
+  const eyebrow = hero?.eyebrow || DEFAULT_HERO_EYEBROW
+  const webm = hero?.backgroundVideoWebm || DEFAULT_HERO_BG_WEBM
+  const mp4 = hero?.backgroundVideoMp4 || DEFAULT_HERO_BG_MP4
+  const poster = hero?.backgroundPoster || DEFAULT_HERO_POSTER
+  // Fall back to the static slot list if the CMS doc hasn't populated it yet.
+  // Empty arrays count as "not set" so admins can't accidentally clear the grid.
+  const slots = hero?.carouselSlots && hero.carouselSlots.length > 0
+    ? hero.carouselSlots
+    : heroCarouselSlots
+
+  // Render `\n` in the title as visual line breaks while keeping the underlying
+  // string CMS-friendly. This avoids dangerouslySetInnerHTML.
+  const titleLines = title.split('\n')
+
   return (
     <div className="page-hero relative min-h-svh flex flex-col [overflow-x:clip]">
       {/* Background video */}
       <div className="absolute inset-0 z-[1] overflow-hidden [transform:translateZ(0)]">
-        <video autoPlay loop muted playsInline preload="metadata" poster={`${IMG}/hero-bg.avif`} className="size-full object-cover object-center">
-          <source src={`${IMG}/hero-background.webm`} type="video/webm" />
-          <source src={`${IMG}/hero-background.mp4`} type="video/mp4" />
+        <video autoPlay loop muted playsInline preload="metadata" poster={poster} className="size-full object-cover object-center">
+          <source src={webm} type="video/webm" />
+          <source src={mp4} type="video/mp4" />
         </video>
         <div className="hero-oxy-overlay absolute inset-0" />
       </div>
@@ -34,17 +61,21 @@ function HeroSection() {
       <div className="relative z-[5] flex-1 flex items-end text-foreground">
         <div className="container pb-5 pt-[100px] max-[950px]:pt-20">
           <h1 className="font-serif text-[40px] font-bold leading-[1.2] tracking-tight max-w-[540px] max-[950px]:text-[28px] max-[950px]:max-w-full">
-            Creating a future where technology empowers individuals
-            to live connected, fulfilling, and sustainable lives.
+            {titleLines.map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < titleLines.length - 1 && <br />}
+              </span>
+            ))}
           </h1>
           <p className="text-[13px] font-medium tracking-[0.12em] uppercase mt-3 opacity-70">
-            Built by people who believe in change. Ethical, open, and deeply human.
+            {eyebrow}
           </p>
         </div>
       </div>
 
       {/* Infinite carousel grid */}
-      <HeroCarousel slots={heroCarouselSlots} />
+      <HeroCarousel slots={slots} />
     </div>
   )
 }

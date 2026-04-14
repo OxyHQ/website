@@ -41,6 +41,7 @@ export interface NavDropdownItem {
   description: string
   href: string
   icon?: string
+  image?: string
   showGrid?: boolean
 }
 
@@ -231,27 +232,30 @@ export interface PartnerProgram {
 export const partnerPrograms: PartnerProgram[] = [
   {
     number: '01',
-    label: 'Open Source Partners',
-    title: 'Open Source Partners.',
-    description: 'Build and maintain open-source projects that extend the Oxy ecosystem.',
-    ctaText: 'Become an Open Source Partner',
-    ctaHref: '#',
+    label: 'Open source partners',
+    title: 'Open source partners.',
+    description:
+      'Build and maintain open-source projects that extend the Oxy ecosystem — from SDKs and integrations to forks and self-hosted deployments.',
+    ctaText: 'Become an open source partner',
+    ctaHref: '#become-a-partner',
   },
   {
     number: '02',
-    label: 'Community Partners',
-    title: 'Community Partners.',
-    description: 'Grow vibrant communities and champion ethical technology.',
-    ctaText: 'Become a Community Partner',
-    ctaHref: '#',
+    label: 'Community partners',
+    title: 'Community partners.',
+    description:
+      'Grow vibrant communities on top of the Oxy stack and help us champion ethical, privacy-first technology around the world.',
+    ctaText: 'Become a community partner',
+    ctaHref: '#become-a-partner',
   },
   {
     number: '03',
-    label: 'Education Partners',
-    title: 'Education Partners.',
-    description: 'Bring open-source tools and digital literacy into classrooms and workshops.',
-    ctaText: 'Become an Education Partner',
-    ctaHref: '#',
+    label: 'Education partners',
+    title: 'Education partners.',
+    description:
+      'Bring open-source tools, digital literacy, and the Oxy ecosystem into classrooms, workshops, and university programs.',
+    ctaText: 'Become an education partner',
+    ctaHref: '#become-a-partner',
   },
 ]
 

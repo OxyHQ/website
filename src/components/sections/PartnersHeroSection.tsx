@@ -1,3 +1,5 @@
+import Button from '../ui/Button'
+
 export default function PartnersHeroSection() {
   return (
     <div className="mx-auto w-full max-w-[1200px] px-6">
@@ -25,20 +27,32 @@ export default function PartnersHeroSection() {
           <div className="relative col-[2/-2]">
             <header className="flex w-full flex-col items-center pb-24 pt-30 max-xl:pt-25 max-lg:pt-20 lg:pb-28 xl:pb-32">
               {/* Badge */}
-              <div className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 text-[13px]/[1.4em] font-medium text-foreground">
-                <h1>Partner programs</h1>
-              </div>
+              <p className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 text-[13px]/[1.4em] font-medium text-foreground">
+                Partner programs
+              </p>
 
               {/* Title */}
-              <h2 className="max-w-[15em] text-balance text-center text-heading-responsive-lg">
-                Partner with us to build the next generation of CRM.
-              </h2>
+              <h1 className="max-w-[15em] text-balance text-center text-heading-responsive-lg">
+                Build the open, ethical web with us.
+              </h1>
 
               {/* Subtitle */}
-              <p className="mt-4 max-w-xl text-balance text-center text-lg text-foreground lg:text-xl">
-                We work with the best developers, creators, and consultants to
-                power the next era of companies.
+              <p className="mt-4 max-w-2xl text-balance text-center text-lg text-foreground lg:text-xl">
+                Oxy is an open-source ecosystem for social, AI, identity, and
+                everyday tools. We work with developers, communities, and
+                educators who want to ship privacy-first products people can
+                actually trust.
               </p>
+
+              {/* CTAs */}
+              <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+                <Button variant="primary" size="md" responsive href="#become-a-partner">
+                  Become a partner
+                </Button>
+                <Button variant="outline" size="md" responsive href="/company">
+                  Learn about Oxy
+                </Button>
+              </div>
             </header>
           </div>
         </div>

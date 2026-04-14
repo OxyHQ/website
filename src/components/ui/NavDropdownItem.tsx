@@ -40,10 +40,11 @@ const linkClass = "group relative flex w-full items-center justify-start gap-x-3
 function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const IconComponent = item.icon ? iconMap[item.icon] : null
   const showGrid = item.showGrid !== false
+  const hasImage = Boolean(item.image)
 
   return (
     <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-[13px] border border-border md:rounded-none md:border-0">
-      {showGrid && (
+      {showGrid && !hasImage && (
         <svg width="40" height="40" fill="none" className="absolute inset-0">
           <g
             className="transition-colors duration-150 ease-out stroke-border/40 group-hover:stroke-border/70 dark:stroke-muted/40 dark:group-hover:stroke-muted/70"
@@ -55,7 +56,17 @@ function ItemIcon({ item }: { item: NavDropdownItemType }) {
           </g>
         </svg>
       )}
-      {IconComponent ? (
+      {hasImage ? (
+        <img
+          src={item.image}
+          alt=""
+          width={40}
+          height={40}
+          loading="lazy"
+          decoding="async"
+          className="isolate size-10 object-contain"
+        />
+      ) : IconComponent ? (
         <IconComponent className="nav-icon isolate size-10 text-muted-foreground" />
       ) : (
         <div className="isolate flex h-10 w-10 items-center justify-center text-sm font-semibold text-primary">

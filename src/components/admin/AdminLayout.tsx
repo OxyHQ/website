@@ -35,6 +35,7 @@ import {
   Lightbulb,
   Award,
   ImageIcon,
+  Sparkles,
 } from 'lucide-react'
 
 export { ADMIN_USERNAMES } from '../../constants'
@@ -50,6 +51,7 @@ const sections: AdminSection[] = [
   { id: 'settings', label: 'Site Settings', icon: <Settings className="size-4" />, group: 'Configuration' },
   { id: 'navigation', label: 'Navigation', icon: <Menu className="size-4" />, group: 'Configuration' },
   { id: 'footer', label: 'Footer', icon: <LayoutTemplate className="size-4" />, group: 'Configuration' },
+  { id: 'hero', label: 'Hero', icon: <Sparkles className="size-4" />, group: 'Content' },
   { id: 'pages', label: 'Pages', icon: <FileText className="size-4" />, group: 'Content' },
   { id: 'newsroom', label: 'Newsroom', icon: <PenSquare className="size-4" />, group: 'Content' },
   { id: 'pricing', label: 'Pricing', icon: <Tag className="size-4" />, group: 'Content' },

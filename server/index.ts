@@ -7,6 +7,7 @@ import { ValidationError } from './utils/validate.js'
 import pagesRouter from './routes/pages.js'
 import navigationRouter from './routes/navigation.js'
 import footerRouter from './routes/footer.js'
+import heroRouter from './routes/hero.js'
 import newsroomRouter from './routes/newsroom.js'
 import pricingRouter from './routes/pricing.js'
 import testimonialsRouter from './routes/testimonials.js'
@@ -45,6 +46,7 @@ app.use(express.json({ limit: '5mb' }))
 app.use('/api/pages', pagesRouter)
 app.use('/api/navigation', navigationRouter)
 app.use('/api/footer', footerRouter)
+app.use('/api/hero', heroRouter)
 app.use('/api/newsroom', newsroomRouter)
 app.use('/api/pricing', pricingRouter)
 app.use('/api/testimonials', testimonialsRouter)

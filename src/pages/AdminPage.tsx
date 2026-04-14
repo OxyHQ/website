@@ -4,6 +4,7 @@ import AdminLayout, { ADMIN_USERNAMES } from '../components/admin/AdminLayout'
 import SiteSettingsAdmin from '../components/admin/sections/SiteSettingsAdmin'
 import NavigationAdmin from '../components/admin/sections/NavigationAdmin'
 import FooterAdmin from '../components/admin/sections/FooterAdmin'
+import HeroAdmin from '../components/admin/sections/HeroAdmin'
 import PagesAdmin from '../components/admin/sections/PagesAdmin'
 import NewsroomAdmin from '../components/admin/sections/NewsroomAdmin'
 import PricingAdmin from '../components/admin/sections/PricingAdmin'
@@ -33,6 +34,7 @@ export default function AdminPage() {
       <Route path="settings" element={<AdminLayout><SiteSettingsAdmin /></AdminLayout>} />
       <Route path="navigation" element={<AdminLayout><NavigationAdmin /></AdminLayout>} />
       <Route path="footer" element={<AdminLayout><FooterAdmin /></AdminLayout>} />
+      <Route path="hero" element={<AdminLayout><HeroAdmin /></AdminLayout>} />
       <Route path="pages" element={<AdminLayout><PagesAdmin /></AdminLayout>} />
       <Route path="newsroom" element={<AdminLayout><NewsroomAdmin /></AdminLayout>} />
       <Route path="pricing" element={<AdminLayout><PricingAdmin /></AdminLayout>} />

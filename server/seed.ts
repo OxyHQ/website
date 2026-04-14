@@ -8,6 +8,7 @@ import mongoose from 'mongoose'
 import { config } from './config.js'
 import { Navigation } from './models/Navigation.js'
 import { Footer } from './models/Footer.js'
+import { HeroContent, DEFAULT_HERO_TITLE, DEFAULT_HERO_EYEBROW, DEFAULT_HERO_BG_WEBM, DEFAULT_HERO_BG_MP4, DEFAULT_HERO_POSTER, DEFAULT_CAROUSEL_SLOTS } from './models/HeroContent.js'
 import { PricingPlan } from './models/PricingPlan.js'
 import { Testimonial } from './models/Testimonial.js'
 import { TeamMember } from './models/TeamMember.js'
@@ -24,7 +25,7 @@ async function seed() {
   console.log('Connected to MongoDB')
 
   // ── Drop all collections (full reset) ──
-  const collections = [Navigation, Footer, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, TrackedRepo, TeamMember, Media]
+  const collections = [Navigation, Footer, HeroContent, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, TrackedRepo, TeamMember, Media]
   await Promise.all(collections.map((m) => m.deleteMany({})))
   console.log('Cleared all collections')
 
@@ -202,6 +203,17 @@ async function seed() {
     copyright: 'Made with 💚 in the 🌎 by Oxy.',
   })
   console.log('Seeded footer')
+
+  // ── Hero (homepage hero singleton) ──
+  await HeroContent.create({
+    title: DEFAULT_HERO_TITLE,
+    eyebrow: DEFAULT_HERO_EYEBROW,
+    backgroundVideoWebm: DEFAULT_HERO_BG_WEBM,
+    backgroundVideoMp4: DEFAULT_HERO_BG_MP4,
+    backgroundPoster: DEFAULT_HERO_POSTER,
+    carouselSlots: DEFAULT_CAROUSEL_SLOTS,
+  })
+  console.log('Seeded hero')
 
   // ── Testimonials (exact copy) ──
   await Testimonial.insertMany([
