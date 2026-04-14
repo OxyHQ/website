@@ -59,15 +59,21 @@ function StatusDot({ status, pulse = false, size = 'md' }: { status: ServiceStat
 }
 
 function ServiceLogo({ service }: { service: ServiceStatusEntry }) {
+  const hasLogo = Boolean(service.logoUrl)
+  const style = hasLogo
+    ? undefined
+    : { backgroundColor: service.brand, color: service.brandForeground || '#ffffff' }
   return (
     <span
-      className="relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-base font-semibold tracking-tight"
-      style={{ backgroundColor: service.brand, color: service.brandForeground || '#ffffff' }}
+      className={`relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-base font-semibold tracking-tight ${
+        hasLogo ? 'bg-surface border border-border/60' : ''
+      }`}
+      style={style}
       aria-hidden="true"
     >
-      {service.logoUrl ? (
+      {hasLogo ? (
         <img
-          src={service.logoUrl}
+          src={service.logoUrl ?? ''}
           alt=""
           loading="lazy"
           decoding="async"

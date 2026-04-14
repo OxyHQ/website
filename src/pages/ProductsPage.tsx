@@ -123,6 +123,7 @@ function ProductCardLink({ product, children }: { product: ProductRecord; childr
 function ProductCard({ product }: { product: ProductRecord }) {
   const fg = product.brandForeground ?? '#ffffff'
   const logoUrl = resolveProductLogoUrl(product)
+  const hasLogo = Boolean(logoUrl)
   return (
     <ProductCardLink product={product}>
       {/* Brand accent strip — uses real product brand color, not a theme token */}
@@ -135,11 +136,13 @@ function ProductCard({ product }: { product: ProductRecord }) {
       {/* Brand mark + tagline row */}
       <div className="flex items-center gap-3">
         <span
-          className="relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-lg font-semibold tracking-tight"
-          style={{ backgroundColor: product.brand, color: fg }}
+          className={`relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-lg font-semibold tracking-tight ${
+            hasLogo ? 'bg-surface border border-border/60' : ''
+          }`}
+          style={hasLogo ? undefined : { backgroundColor: product.brand, color: fg }}
           aria-hidden="true"
         >
-          {logoUrl ? (
+          {hasLogo ? (
             <img
               src={logoUrl}
               alt=""

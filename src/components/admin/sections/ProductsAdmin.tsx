@@ -35,14 +35,17 @@ function ProductMark({ product, size = 'md' }: { product: ProductRecord; size?: 
   const { data: lookedUp } = useMediaItem(needsLookup ? (logoIdOrObject as string) : '')
   const directUrl = mediaUrl(logoIdOrObject)
   const logoUrl = directUrl || mediaUrl(lookedUp)
+  const hasLogo = Boolean(logoUrl)
   const sizeClass = size === 'sm' ? 'size-10 rounded-xl text-sm' : 'size-11 rounded-2xl text-lg'
   return (
     <span
-      className={`relative flex shrink-0 items-center justify-center overflow-hidden font-semibold tracking-tight ${sizeClass}`}
-      style={{ backgroundColor: product.brand, color: product.brandForeground || '#ffffff' }}
+      className={`relative flex shrink-0 items-center justify-center overflow-hidden font-semibold tracking-tight ${sizeClass} ${
+        hasLogo ? 'bg-surface border border-border/60' : ''
+      }`}
+      style={hasLogo ? undefined : { backgroundColor: product.brand, color: product.brandForeground || '#ffffff' }}
       aria-hidden="true"
     >
-      {logoUrl ? (
+      {hasLogo ? (
         <img
           src={logoUrl}
           alt=""
