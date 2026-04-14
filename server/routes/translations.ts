@@ -11,6 +11,7 @@ const router = Router()
 const TRANSLATABLE_COLLECTIONS = [
   'navigation', 'footer', 'pricing', 'testimonials',
   'settings', 'pages', 'newsroom', 'jobs',
+  'hero', 'products', 'categories', 'team', 'changelog',
 ] as const
 
 const collectionParamsSchema = z.object({

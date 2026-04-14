@@ -2,8 +2,11 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { ChangelogEntry } from '../models/ChangelogEntry.js'
 import TrackedRepo from '../models/TrackedRepo.js'
+import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
+import { localeMiddleware } from '../middleware/locale.js'
+import { applyTranslations } from '../utils/applyTranslation.js'
 import { syncAllRepos, syncSingleRepo } from '../services/githubSync.js'
 import { validate } from '../utils/validate.js'
 
@@ -31,7 +34,7 @@ const trackedRepoBodySchema = z.object({
 }).passthrough()
 
 // GET /  — filtered + paginated changelog entries
-router.get('/', async (req, res) => {
+router.get('/', localeMiddleware, async (req, res) => {
   const { repo, page: pageParam, limit: limitParam } = validate(listQuerySchema, req.query)
 
   const page = Math.max(1, parseInt(pageParam ?? '', 10) || 1)
@@ -69,8 +72,18 @@ router.get('/', async (req, res) => {
     displayName: r._id.display,
   }))
 
+  let serialized = entries.map((e) => e.toJSON())
+  if (!req.isDefaultLocale) {
+    const translations = await Translation.find({
+      locale: req.locale,
+      collectionName: 'changelog',
+      documentId: { $in: entries.map(e => e._id.toString()) },
+    })
+    serialized = applyTranslations(serialized, translations)
+  }
+
   res.json({
-    entries,
+    entries: serialized,
     total,
     page,
     pages: Math.ceil(total / limit),

@@ -4,7 +4,26 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import { useProducts, resolveProductLogoUrl, type ProductRecord } from '../api/hooks'
+import { useProducts, usePage, resolveProductLogoUrl, type ProductRecord, type PageSection } from '../api/hooks'
+
+// Fallback copy for the hero — used when the CMS `pages/products` document is
+// missing the corresponding section. Copy matches the pre-CMS markup so the
+// page renders identically when admins haven't touched the Pages editor yet.
+const DEFAULT_HERO_BADGE = 'The Oxy ecosystem'
+const DEFAULT_HERO_TITLE = 'Every product in the Oxy ecosystem.'
+const DEFAULT_HERO_SUBTITLE = 'Open-source, privacy-first software for messaging, intelligence, identity and beyond. One ecosystem, built around the people who use it.'
+
+function sectionHeading(sections: PageSection[], type: string, fallback: string): string {
+  return sections.find(s => s.type === type)?.heading || fallback
+}
+
+function sectionSubheading(sections: PageSection[], type: string, fallback: string): string {
+  return sections.find(s => s.type === type)?.subheading || fallback
+}
+
+function sectionContent(sections: PageSection[], type: string, fallback: string): string {
+  return sections.find(s => s.type === type)?.content || fallback
+}
 
 function groupBySection(products: ProductRecord[]): Array<[string, ProductRecord[]]> {
   const map = new Map<string, ProductRecord[]>()
@@ -190,11 +209,17 @@ function ProductCard({ product }: { product: ProductRecord }) {
 
 export default function ProductsPage() {
   const { data: products = [] } = useProducts({ surface: 'products' })
+  const { data: pageData } = usePage('products')
   const liveProducts = products.filter((p) => p.lifecycle === 'live')
   const newProducts = products.filter((p) => p.lifecycle === 'in-development')
   const liveGroups = groupBySection(liveProducts)
   const hasLive = liveProducts.length > 0
   const hasNew = newProducts.length > 0
+
+  const sections = pageData?.sections ?? []
+  const heroBadge = sectionContent(sections, 'hero', DEFAULT_HERO_BADGE)
+  const heroTitle = sectionHeading(sections, 'hero', DEFAULT_HERO_TITLE)
+  const heroSubtitle = sectionSubheading(sections, 'hero', DEFAULT_HERO_SUBTITLE)
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
@@ -211,14 +236,13 @@ export default function ProductsPage() {
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
               <div className="col-[2/-2] flex flex-col items-center gap-4 text-center">
                 <div className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground">
-                  The Oxy ecosystem
+                  {heroBadge}
                 </div>
                 <h1 className="max-w-[18em] text-balance text-heading-responsive-lg">
-                  Every product in the Oxy ecosystem.
+                  {heroTitle}
                 </h1>
                 <p className="mt-4 max-w-2xl text-balance text-lg text-muted-foreground lg:text-xl">
-                  Open-source, privacy-first software for messaging, intelligence, identity and beyond.
-                  One ecosystem, built around the people who use it.
+                  {heroSubtitle}
                 </p>
                 <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
                   <Button variant="primary" size="md" responsive href="/developers/docs">

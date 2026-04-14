@@ -5,7 +5,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HeroCarousel from '../components/homepage/HeroCarousel'
 import { heroCarouselSlots } from '../data/heroCarousel'
-import { useHero, type HeroMediaRef } from '../api/hooks'
+import { useHero, usePage, type HeroMediaRef, type PageSection } from '../api/hooks'
 import { usePageChromeStore } from '../stores/pageChromeStore'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
@@ -13,6 +13,32 @@ import type SwiperType from 'swiper'
 import 'swiper/css'
 import '../styles/landing.css'
 import AIResearchSection from '../components/ai/AIResearchSection'
+
+/**
+ * Pulls a heading, subheading or content string out of a Page document's
+ * `sections` array. Returns the provided fallback when the section is missing
+ * or the target field is empty. Mirrors the NewsroomPage helper — kept local
+ * so each page can own its fallback set without a cross-page import.
+ */
+function pageHeading(sections: PageSection[] | undefined, type: string, fallback: string): string {
+  return sections?.find(s => s.type === type)?.heading || fallback
+}
+
+function pageSubheading(sections: PageSection[] | undefined, type: string, fallback: string): string {
+  return sections?.find(s => s.type === type)?.subheading || fallback
+}
+
+function pageContent(sections: PageSection[] | undefined, type: string, fallback: string): string {
+  return sections?.find(s => s.type === type)?.content || fallback
+}
+
+// Fallback copy for home-page marketing sections. Used when the CMS
+// `pages/home` document is missing the corresponding section so the site
+// renders identically to the hardcoded baseline.
+const DEFAULT_ALL_IN_ONE_HEADING_LINE_1 = 'Build for everyone,'
+const DEFAULT_ALL_IN_ONE_HEADING_LINE_2 = 'not just yourself.'
+const DEFAULT_ALL_IN_ONE_BODY = 'Oxy exists because we believe technology should serve humanity, not exploit it. Through community-driven projects and open-source tools, we prove that helping people and building sustainable systems aren\u2019t competing goals.'
+const DEFAULT_ALL_IN_ONE_CTA = 'Explore the Ecosystem'
 
 function heroMediaUrl(ref: HeroMediaRef | undefined): string {
   if (!ref) return ''
@@ -176,6 +202,19 @@ function PartnerLogos() {
 /*  All-in-One Section                                                 */
 /* ------------------------------------------------------------------ */
 function AllInOneSection() {
+  const { data: pageData } = usePage('home')
+  const sections = pageData?.sections
+  // Heading is stored as a single string with a pipe separator so the CMS can
+  // drive line-breaks at the exact point used by the current layout. Fall
+  // back to the pre-CMS two-line split when nothing has been published yet.
+  const headingFallback = `${DEFAULT_ALL_IN_ONE_HEADING_LINE_1}|${DEFAULT_ALL_IN_ONE_HEADING_LINE_2}`
+  const headingRaw = pageHeading(sections, 'all-in-one', headingFallback)
+  const [headingLine1, headingLine2] = headingRaw.includes('|')
+    ? headingRaw.split('|', 2)
+    : [headingRaw, '']
+  const body = pageContent(sections, 'all-in-one', DEFAULT_ALL_IN_ONE_BODY)
+  const cta = pageSubheading(sections, 'all-in-one', DEFAULT_ALL_IN_ONE_CTA)
+
   return (
     <section className="container">
       <div className="border-border border-x">
@@ -183,11 +222,16 @@ function AllInOneSection() {
           <div className="col-[2/-2] py-10 max-[950px]:py-6">
             <div className="col-span-full text-center space-y-[1em]">
               <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none">
-                Build for everyone,<br className="max-[950px]:hidden" />
-                not just yourself.
+                {headingLine1}
+                {headingLine2 && (
+                  <>
+                    <br className="max-[950px]:hidden" />
+                    {headingLine2}
+                  </>
+                )}
               </h2>
-              <p className="max-w-[440px] mx-auto">Oxy exists because we believe technology should serve humanity, not exploit it. Through community-driven projects and open-source tools, we prove that helping people and building sustainable systems aren&apos;t competing goals.</p>
-              <a href="/technologies" className={`${BTN} bg-primary text-primary-foreground`}>Explore the Ecosystem</a>
+              <p className="max-w-[440px] mx-auto">{body}</p>
+              <a href="/technologies" className={`${BTN} bg-primary text-primary-foreground`}>{cta}</a>
             </div>
           </div>
         </div>

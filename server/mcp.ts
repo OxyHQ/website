@@ -874,7 +874,7 @@ server.tool('delete_locale', 'Delete a locale and all its translations. Cannot d
 
 // ── Translations ────────────────────────────────────────────────────────────
 
-const TRANSLATABLE_COLLECTIONS = ['navigation', 'footer', 'pricing', 'testimonials', 'settings', 'pages', 'newsroom', 'jobs']
+const TRANSLATABLE_COLLECTIONS = ['navigation', 'footer', 'pricing', 'testimonials', 'settings', 'pages', 'newsroom', 'jobs', 'hero', 'products', 'categories', 'team', 'changelog']
 
 server.tool('list_translation_collections', 'List all collections that support translations.', {}, async () => {
   return ok(TRANSLATABLE_COLLECTIONS)

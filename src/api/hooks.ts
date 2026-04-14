@@ -210,10 +210,11 @@ export interface CategoryRecord {
 }
 
 export function useCategories(scope?: CategoryScope) {
+  const locale = useCurrentLocale()
   const qs = scope ? `?scope=${scope}` : ''
   return useQuery<CategoryRecord[]>({
-    queryKey: ['categories', scope ?? 'all'],
-    queryFn: () => apiFetch<CategoryRecord[]>(`/categories${qs}`),
+    queryKey: ['categories', scope ?? 'all', locale],
+    queryFn: () => apiFetch<CategoryRecord[]>(`/categories${qs}`, { locale }),
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
   })
@@ -328,9 +329,10 @@ export interface ServiceStatusPayload {
 }
 
 export function useServiceStatus() {
+  const locale = useCurrentLocale()
   return useQuery<ServiceStatusPayload>({
-    queryKey: ['status'],
-    queryFn: () => apiFetch<ServiceStatusPayload>('/status'),
+    queryKey: ['status', locale],
+    queryFn: () => apiFetch<ServiceStatusPayload>('/status', { locale }),
     staleTime: 30_000,
     refetchInterval: 60_000,
     retry: 1,
@@ -438,6 +440,7 @@ interface ChangelogResponse {
 }
 
 export function useChangelog(params?: { repo?: string; page?: number; limit?: number }) {
+  const locale = useCurrentLocale()
   const searchParams = new URLSearchParams()
   if (params?.repo) searchParams.set('repo', params.repo)
   if (params?.page) searchParams.set('page', String(params.page))
@@ -445,8 +448,8 @@ export function useChangelog(params?: { repo?: string; page?: number; limit?: nu
   const qs = searchParams.toString()
 
   return useQuery({
-    queryKey: ['changelog', params],
-    queryFn: () => apiFetch<ChangelogResponse>(`/changelog${qs ? `?${qs}` : ''}`),
+    queryKey: ['changelog', params, locale],
+    queryFn: () => apiFetch<ChangelogResponse>(`/changelog${qs ? `?${qs}` : ''}`, { locale }),
     select: (data) => ({ ...data, entries: data.entries.map(normalizeEntryMedia) }),
   })
 }
@@ -487,18 +490,20 @@ export function useJobs() {
 
 // ── Team ──
 export function useTeamMembers() {
+  const locale = useCurrentLocale()
   return useQuery({
-    queryKey: ['team'],
-    queryFn: () => apiFetch<{ _id: string; name: string; slug: string; role: string; department: string; bio: string; avatar: string; socials?: { linkedin?: string; twitter?: string; github?: string; website?: string } }[]>('/team'),
+    queryKey: ['team', locale],
+    queryFn: () => apiFetch<{ _id: string; name: string; slug: string; role: string; department: string; bio: string; avatar: string; socials?: { linkedin?: string; twitter?: string; github?: string; website?: string } }[]>('/team', { locale }),
     select: (data) => data.map(m => ({ ...m, avatar: resolveMediaUrl(m.avatar, 'md') })),
     staleTime: 5 * 60_000,
   })
 }
 
 export function useTeamMember(slug: string) {
+  const locale = useCurrentLocale()
   return useQuery({
-    queryKey: ['team', slug],
-    queryFn: () => apiFetch<{ _id: string; name: string; slug: string; role: string; department: string; bio: string; avatar: string; socials?: { linkedin?: string; twitter?: string; github?: string; website?: string } }>(`/team/${slug}`),
+    queryKey: ['team', slug, locale],
+    queryFn: () => apiFetch<{ _id: string; name: string; slug: string; role: string; department: string; bio: string; avatar: string; socials?: { linkedin?: string; twitter?: string; github?: string; website?: string } }>(`/team/${slug}`, { locale }),
     select: (data) => ({ ...data, avatar: resolveMediaUrl(data.avatar, 'md') }),
     enabled: !!slug,
   })

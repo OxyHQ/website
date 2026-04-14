@@ -1,5 +1,7 @@
 import { Router } from 'express'
 import { Product, type IProduct } from '../models/Product.js'
+import { Translation } from '../models/Translation.js'
+import { localeMiddleware } from '../middleware/locale.js'
 
 const router = Router()
 
@@ -27,6 +29,20 @@ interface ServiceResult {
   lastChecked: string
 }
 
+// Internal variant: adds the Mongo document id so the per-locale response
+// builder can look up a Translation override for name/description without
+// re-probing or re-querying the product collection. The `productDocId` field
+// is stripped before the payload is written to the wire.
+interface CachedServiceResult extends ServiceResult {
+  productDocId: string
+}
+
+interface CachedStatusPayload {
+  generatedAt: string
+  overall: ServiceStatus
+  services: CachedServiceResult[]
+}
+
 interface StatusPayload {
   generatedAt: string
   overall: ServiceStatus
@@ -37,9 +53,9 @@ const PROBE_TIMEOUT_MS = 5_000
 const SLOW_LATENCY_MS = 1_500
 const CACHE_TTL_MS = 60_000
 
-let cached: StatusPayload | null = null
+let cached: CachedStatusPayload | null = null
 let cachedAt = 0
-let inFlight: Promise<StatusPayload> | null = null
+let inFlight: Promise<CachedStatusPayload> | null = null
 
 function resolveLogoUrl(logo: unknown): string | null {
   if (!logo || typeof logo !== 'object') return null
@@ -47,13 +63,14 @@ function resolveLogoUrl(logo: unknown): string | null {
   return obj.url || obj.thumbnails?.lg || obj.thumbnails?.md || obj.thumbnails?.sm || null
 }
 
-async function probeService(product: IProduct): Promise<ServiceResult> {
+async function probeService(product: IProduct): Promise<CachedServiceResult> {
   const target = product.healthUrl || product.href
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS)
   const start = Date.now()
-  const base: Omit<ServiceResult, 'status' | 'latencyMs' | 'httpStatus' | 'lastChecked'> = {
+  const base: Omit<CachedServiceResult, 'status' | 'latencyMs' | 'httpStatus' | 'lastChecked'> = {
     id: product.productId,
+    productDocId: product._id.toString(),
     name: product.name,
     description: product.tagline || product.description || '',
     section: product.section || 'Other',
@@ -91,7 +108,7 @@ async function probeService(product: IProduct): Promise<ServiceResult> {
   }
 }
 
-function computeOverall(services: ServiceResult[]): ServiceStatus {
+function computeOverall(services: CachedServiceResult[]): ServiceStatus {
   if (services.length === 0) return 'unknown'
   if (services.some(s => s.status === 'down')) return 'down'
   if (services.some(s => s.status === 'degraded')) return 'degraded'
@@ -99,7 +116,7 @@ function computeOverall(services: ServiceResult[]): ServiceStatus {
   return 'unknown'
 }
 
-async function buildPayload(): Promise<StatusPayload> {
+async function buildPayload(): Promise<CachedStatusPayload> {
   const products = await Product.find({ showOnStatus: true })
     .sort({ section: 1, order: 1 })
     .populate('logo')
@@ -111,7 +128,7 @@ async function buildPayload(): Promise<StatusPayload> {
   }
 }
 
-async function getStatus(): Promise<StatusPayload> {
+async function getStatus(): Promise<CachedStatusPayload> {
   const fresh = cached && Date.now() - cachedAt < CACHE_TTL_MS
   if (fresh && cached) return cached
   if (inFlight) return inFlight
@@ -125,10 +142,59 @@ async function getStatus(): Promise<StatusPayload> {
   return inFlight
 }
 
-router.get('/', async (_req, res) => {
+/**
+ * Strip the internal `productDocId` field and overlay any translated
+ * name/description/section for the caller's locale. Returns the public
+ * StatusPayload shape.
+ */
+async function localizePayload(
+  payload: CachedStatusPayload,
+  locale: string | undefined,
+  isDefaultLocale: boolean,
+): Promise<StatusPayload> {
+  if (isDefaultLocale || !locale) {
+    return {
+      generatedAt: payload.generatedAt,
+      overall: payload.overall,
+      services: payload.services.map(({ productDocId: _omit, ...rest }) => rest),
+    }
+  }
+
+  const docIds = payload.services.map(s => s.productDocId)
+  const translations = await Translation.find({
+    locale,
+    collectionName: 'products',
+    documentId: { $in: docIds },
+  })
+
+  const overlays = new Map<string, Record<string, unknown>>()
+  for (const t of translations) {
+    overlays.set(t.documentId, t.fields)
+  }
+
+  const services: ServiceResult[] = payload.services.map(({ productDocId, ...base }) => {
+    const fields = overlays.get(productDocId)
+    if (!fields) return base
+    const name = typeof fields.name === 'string' ? fields.name : base.name
+    const tagline = typeof fields.tagline === 'string' ? fields.tagline : null
+    const description = typeof fields.description === 'string' ? fields.description : null
+    // Preserve the same "tagline over description" fallback used when probing.
+    const nextDescription = tagline ?? description ?? base.description
+    return { ...base, name, description: nextDescription }
+  })
+
+  return {
+    generatedAt: payload.generatedAt,
+    overall: payload.overall,
+    services,
+  }
+}
+
+router.get('/', localeMiddleware, async (req, res) => {
   try {
     const payload = await getStatus()
-    res.json(payload)
+    const localized = await localizePayload(payload, req.locale, req.isDefaultLocale ?? true)
+    res.json(localized)
   } catch (err) {
     res.status(500).json({ error: err instanceof Error ? err.message : 'status probe failed' })
   }

@@ -5,11 +5,24 @@ import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import AIResearchSection from '../components/ai/AIResearchSection'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import { useNewsroomPosts, useJobs, useTeamMembers } from '../api/hooks'
+import { useNewsroomPosts, useJobs, useTeamMembers, usePage, type PageSection } from '../api/hooks'
 import {
   companyHero, companyStats, companyCulture, culturePerks,
   companyValues, companyFAQ, companyLinks,
 } from '../data/company'
+
+// Fallback copy for the Values section — used when the CMS `pages/company`
+// document hasn't been populated with a matching section.
+const DEFAULT_VALUES_HEADING = 'Our values'
+const DEFAULT_VALUES_DESCRIPTION = 'The principles that guide everything we do — from the features we ship to how we show up every day.'
+
+function sectionHeading(sections: PageSection[], type: string, fallback: string): string {
+  return sections.find(s => s.type === type)?.heading || fallback
+}
+
+function sectionSubheading(sections: PageSection[], type: string, fallback: string): string {
+  return sections.find(s => s.type === type)?.subheading || fallback
+}
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' })
@@ -74,7 +87,12 @@ export default function CompanyPage() {
   const { data: jobs = [] } = useJobs()
   const openCount = jobs.length
   const { data: teamMembers = [] } = useTeamMembers()
+  const { data: pageData } = usePage('company')
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null)
+
+  const sections = pageData?.sections ?? []
+  const valuesHeading = sectionHeading(sections, 'values', DEFAULT_VALUES_HEADING)
+  const valuesDescription = sectionSubheading(sections, 'values', DEFAULT_VALUES_DESCRIPTION)
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
@@ -190,9 +208,9 @@ export default function CompanyPage() {
           <div className="border-border border-x">
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-start">
               <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-start col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
-                <h2 className="text-pretty inline">Our values.</h2>{' '}
+                <h2 className="text-pretty inline">{valuesHeading}.</h2>{' '}
                 <p className="inline text-pretty font-medium text-muted-foreground">
-                  The principles that guide everything we do — from the features we ship to how we show up every day.
+                  {valuesDescription}
                 </p>
               </div>
             </header>

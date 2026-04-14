@@ -90,7 +90,7 @@ router.get('/:slug', localeMiddleware, async (req, res) => {
 
   const translation = await Translation.findOne({
     locale: req.locale,
-    collection: 'newsroom',
+    collectionName: 'newsroom',
     documentId: post._id.toString(),
   })
   res.json(applyTranslation(post.toJSON(), translation))
