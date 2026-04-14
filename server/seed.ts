@@ -39,22 +39,40 @@ async function seed() {
     return doc._id
   }
 
-  // ── Navigation (exact copy of static data) ──
+  // ── Navigation (matches current production) ──
+  const CDN = 'https://oxy-bucket.ams3.cdn.digitaloceanspaces.com/oxy-website'
+  const navMedia = {
+    services: await seedMedia(`${CDN}/navigation/services-b126fbf2.png`, 'services.png', 'image/png'),
+    mention: await seedMedia(`${CDN}/navigation/mention-3ecfe392.png`, 'mention.png', 'image/png'),
+    alia: await seedMedia(`${CDN}/navigation/alia-ef4a795f.png`, 'alia.png', 'image/png'),
+    inbox: await seedMedia(`${CDN}/images/inbox-6503df10.svg`, 'inbox.svg', 'image/svg+xml'),
+    faircoin: await seedMedia(`${CDN}/navigation/fc-222e8abd.png`, 'fc.png', 'image/png'),
+    faircoinWallet: await seedMedia(`${CDN}/images/icon-512-fbf188a8.png`, 'faircoin-wallet.png', 'image/png'),
+    faircoinExplorer: await seedMedia(`${CDN}/navigation/download--2--8f1ee71e.png`, 'faircoin-explorer.png', 'image/png'),
+    marketplace: await seedMedia(`${CDN}/navigation/marketplace-a974d3c1.png`, 'marketplace.png', 'image/png'),
+    homiio: await seedMedia(`${CDN}/navigation/homiio-8014d905.png`, 'homiio.png', 'image/png'),
+    horizon: await seedMedia(`${CDN}/navigation/horizon-20110870.png`, 'horizon.png', 'image/png'),
+    moovo: await seedMedia(`${CDN}/navigation/moovo-22821c3e.png`, 'moovo.png', 'image/png'),
+    astro: await seedMedia(`${CDN}/images/icon-512-ad603f2d.png`, 'astro.png', 'image/png'),
+    clarity: await seedMedia(`${CDN}/navigation/clarity-f24c11b8.png`, 'clarity.png', 'image/png'),
+    tnp: await seedMedia(`${CDN}/navigation/tnp-cfad841c.png`, 'tnp.png', 'image/png'),
+  }
+
   await Navigation.insertMany([
     {
       label: 'Platform',
       order: 0,
       items: [
-        { title: 'Ask Oxy', description: 'Search and create with AI', href: '/', section: 'CRM Platform' },
-        { title: 'AI', description: 'Native to your CRM', href: '/ai', icon: 'ai', section: 'CRM Platform' },
-        { title: 'Data model', description: 'Sync and enrich your data', href: '#', icon: 'data', section: 'CRM Platform' },
-        { title: 'Productivity & collaboration', description: 'Context for your team operations', href: '#', icon: 'collaboration', section: 'CRM Platform' },
+        { title: 'AI', description: 'Native to your platform', href: '/ai', icon: 'ai', section: 'Platform' },
+        { title: 'Data model', description: 'Sync and enrich your data', href: '#', icon: 'data', section: 'Platform' },
+        { title: 'Productivity & collaboration', description: 'Context for your team operations', href: '#', icon: 'collaboration', section: 'Platform' },
+        { title: 'Services', description: 'Managed Oxy services', href: '/', image: navMedia.services, section: 'Platform' },
         { title: 'Workflows', description: 'Automate any process', href: '#', icon: 'automations', section: 'Automations' },
         { title: 'Sequences', description: 'Personalized outreach', href: '#', icon: 'sequences', section: 'Automations' },
         { title: 'Call Intelligence', description: 'Record and analyze meetings', href: '#', icon: 'call-intelligence', section: 'Insights' },
         { title: 'Reporting', description: 'Insights in real time', href: '#', icon: 'reporting', section: 'Insights' },
         { title: 'Developer Platform', description: 'Build on Oxy', href: '/developers/docs', icon: 'developers', section: 'Ecosystem' },
-        { title: 'Apps', description: 'Extend with integrations', href: '#', icon: 'apps', section: 'Ecosystem' },
+        { title: 'Apps', description: 'Extend with integrations', href: '/apps', icon: 'apps', section: 'Ecosystem' },
       ],
       sidePanel: {
         heading: 'Get started',
@@ -71,7 +89,7 @@ async function seed() {
       order: 1,
       items: [
         { title: 'Help center', description: "Learn more about Oxy's features", href: '/help', icon: 'help-center', section: 'Support' },
-        { title: 'Academy', description: 'Essential Oxy features explained', href: '#', icon: 'academy', section: 'Support' },
+        { title: 'Academy', description: 'Essential Oxy features explained', href: '/academy', icon: 'academy', section: 'Support' },
         { title: 'Developer docs', description: 'Start building Oxy apps', href: '/developers/docs', icon: 'developers', section: 'Developers' },
         { title: 'Partner programs', description: 'Developers, creators, consultants', href: '/partners', icon: 'partners', section: 'Partners' },
       ],
@@ -89,25 +107,27 @@ async function seed() {
       label: 'Ecosystem',
       order: 2,
       items: [
-        { title: 'Mention', description: 'Decentralized social media', href: '#', icon: 'mention', section: 'Social & Communication' },
-        { title: 'Alia', description: 'AI-powered assistant', href: 'https://alia.onl/', icon: 'alia', section: 'Social & Communication' },
-        { title: 'Inbox', description: 'Unified messaging hub', href: '#', icon: 'inbox', section: 'Social & Communication' },
-        { title: 'Shh', description: 'Private encrypted chat', href: '#', icon: 'shh', section: 'Social & Communication' },
-        { title: 'FairCoin', description: 'Ethical digital currency', href: 'https://fairco.in/', icon: 'faircoin', section: 'Finance & Commerce' },
-        { title: 'FairCoin Wallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', icon: 'faircoin-wallet', section: 'Finance & Commerce' },
-        { title: 'FairCoin Explorer', description: 'Browse the blockchain', href: '#', icon: 'faircoin-explorer', section: 'Finance & Commerce' },
-        { title: 'Marketplace', description: 'Buy and sell with crypto', href: '#', icon: 'marketplace', section: 'Finance & Commerce' },
-        { title: 'Homiio', description: 'Real estate platform', href: 'https://homiio.com/', icon: 'homiio', section: 'Apps' },
-        { title: 'Horizon', description: 'Project management', href: '#', icon: 'horizon', section: 'Apps' },
-        { title: 'Moovo', description: 'Urban mobility network', href: '#', icon: 'moovo', section: 'Apps' },
-        { title: 'TNP', description: 'Alternative namespace system', href: '/tnp', icon: 'tnp', section: 'Infrastructure' },
+        { title: 'Mention', description: 'Decentralized social media', href: '#', image: navMedia.mention, section: 'Social & Communication' },
+        { title: 'Alia', description: 'AI-powered assistant', href: 'https://alia.onl/', image: navMedia.alia, section: 'Social & Communication' },
+        { title: 'Inbox', description: 'Unified messaging hub', href: '#', image: navMedia.inbox, section: 'Social & Communication' },
+        { title: 'Shh', description: 'Private encrypted chat', href: '#', section: 'Social & Communication' },
+        { title: 'FairCoin', description: 'Ethical digital currency', href: 'https://fairco.in/', image: navMedia.faircoin, section: 'Finance & Commerce' },
+        { title: 'FairCoin Wallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', image: navMedia.faircoinWallet, section: 'Finance & Commerce' },
+        { title: 'FairCoin Explorer', description: 'Browse the blockchain', href: '#', image: navMedia.faircoinExplorer, section: 'Finance & Commerce' },
+        { title: 'Marketplace', description: 'Buy and sell with crypto', href: '#', image: navMedia.marketplace, section: 'Finance & Commerce' },
+        { title: 'Homiio', description: 'Real estate platform', href: 'https://homiio.com/', image: navMedia.homiio, section: 'Apps' },
+        { title: 'Horizon', description: 'Project management', href: '#', image: navMedia.horizon, section: 'Apps' },
+        { title: 'Moovo', description: 'Urban mobility network', href: '#', image: navMedia.moovo, section: 'Apps' },
+        { title: 'Astro Browser', description: 'AI Browser & Assistant', href: '/astro', image: navMedia.astro, section: 'Apps' },
+        { title: 'Clarity', description: 'AI-powered answer engine', href: '/clarity', image: navMedia.clarity, section: 'Apps' },
+        { title: 'TNP', description: 'Alternative namespace system', href: '/tnp', image: navMedia.tnp, section: 'Infrastructure' },
       ],
       sidePanel: {
         heading: 'Explore',
         links: [
-          { label: 'All products', href: '#' },
-          { label: 'Open source', href: '#' },
-          { label: 'Developer platform', href: '#' },
+          { label: 'All products', href: '/products' },
+          { label: 'Open source', href: 'https://github.com/OxyHQ' },
+          { label: 'Developer platform', href: '/developers/docs' },
           { label: 'Status page', href: '#' },
         ],
       },
