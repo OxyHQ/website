@@ -129,7 +129,7 @@ export default function NavDropdownItem({ item }: NavDropdownItemProps) {
   }
 
   return (
-    <a href={item.href} className={linkClass}>
+    <a href={item.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
       <ItemContent item={item} />
     </a>
   )
