@@ -5,12 +5,21 @@ const router = Router()
 
 type ServiceStatus = 'operational' | 'degraded' | 'down' | 'unknown'
 
+interface LogoRef {
+  url?: string
+  thumbnails?: { sm?: string; md?: string; lg?: string }
+}
+
 interface ServiceResult {
   id: string
   name: string
   description: string
   section: string
   url: string
+  brand: string
+  brandForeground?: string
+  mark: string
+  logoUrl: string | null
   status: ServiceStatus
   latencyMs: number | null
   httpStatus: number | null
@@ -31,6 +40,12 @@ let cached: StatusPayload | null = null
 let cachedAt = 0
 let inFlight: Promise<StatusPayload> | null = null
 
+function resolveLogoUrl(logo: unknown): string | null {
+  if (!logo || typeof logo !== 'object') return null
+  const obj = logo as LogoRef
+  return obj.url || obj.thumbnails?.lg || obj.thumbnails?.md || obj.thumbnails?.sm || null
+}
+
 async function probeService(product: IProduct): Promise<ServiceResult> {
   const target = product.healthUrl || product.href
   const controller = new AbortController()
@@ -42,6 +57,10 @@ async function probeService(product: IProduct): Promise<ServiceResult> {
     description: product.tagline || product.description || '',
     section: product.section || 'Other',
     url: product.href,
+    brand: product.brand,
+    brandForeground: product.brandForeground,
+    mark: product.mark,
+    logoUrl: resolveLogoUrl(product.logo),
   }
   try {
     const res = await fetch(target, {
@@ -79,7 +98,9 @@ function computeOverall(services: ServiceResult[]): ServiceStatus {
 }
 
 async function buildPayload(): Promise<StatusPayload> {
-  const products = await Product.find({ showOnStatus: true }).sort({ section: 1, order: 1 })
+  const products = await Product.find({ showOnStatus: true })
+    .sort({ section: 1, order: 1 })
+    .populate('logo')
   const services = await Promise.all(products.map(probeService))
   return {
     generatedAt: new Date().toISOString(),

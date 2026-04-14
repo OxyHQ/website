@@ -263,8 +263,12 @@ export interface ServiceStatusEntry {
   id: string
   name: string
   description: string
-  category: string
+  section: string
   url: string
+  brand: string
+  brandForeground?: string
+  mark: string
+  logoUrl: string | null
   status: ServiceStatusValue
   latencyMs: number | null
   httpStatus: number | null
