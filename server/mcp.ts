@@ -1156,21 +1156,34 @@ const productRawShape = {
   tagline: z.string().optional().describe('Single-line tag shown above the title on each product card'),
   description: z.string().optional().describe('Short body copy shown inside the card'),
   href: z.string().describe('Destination URL. Internal paths start with "/"; external links start with "http"'),
+  healthUrl: z.string().optional().describe('Optional URL to probe for /status health checks. Defaults to `href` when unset.'),
   external: z.boolean().optional().describe('True for off-site destinations (opens in a new tab, shows up-right arrow)'),
   cta: z.string().optional().describe('CTA label (e.g. "Explore Alia", "Visit Mention")'),
   brand: z.string().describe('Hex brand color for the card accent strip + icon mark (e.g. "#7c3aed")'),
   brandForeground: z.string().optional().describe('Optional hex color for the icon mark text. Defaults to white.'),
-  mark: z.string().describe('Single letter used inside the brand square'),
-  category: z.enum(['live', 'in-development']).optional().describe('"live" for the shipped grid, "in-development" for the secondary section'),
-  order: z.number().optional().describe('Sort order inside the category. Lower comes first.'),
+  mark: z.string().describe('Single letter used inside the brand square when no logo is set'),
+  logo: z.string().optional().describe('Media document id for the app logo. Takes precedence over `mark`.'),
+  section: z.string().optional().describe('Grouping label used on /products and /status (e.g. "Social & Communication").'),
+  lifecycle: z.enum(['live', 'in-development']).optional().describe('"live" for the shipped grid, "in-development" for the new/upcoming section'),
+  showOnProducts: z.boolean().optional().describe('Show this product on the /products page.'),
+  showOnStatus: z.boolean().optional().describe('Include in /status health probes.'),
+  showInNav: z.boolean().optional().describe('Expose in the ecosystem navbar dropdown.'),
+  order: z.number().optional().describe('Sort order inside the section. Lower comes first.'),
 }
 
-server.tool('list_products', 'List every product on the /products page, sorted by category then order.', {
-  category: z.enum(['live', 'in-development']).optional().describe('Filter to a single category'),
-}, async ({ category }) => {
+server.tool('list_products', 'List every product. Supports filtering by lifecycle, section, or which surface the product opts into.', {
+  lifecycle: z.enum(['live', 'in-development']).optional().describe('Filter by lifecycle bucket'),
+  section: z.string().optional().describe('Filter by section label'),
+  surface: z.enum(['products', 'status', 'nav']).optional().describe('Filter to products that opt into the given surface'),
+}, async ({ lifecycle, section, surface }) => {
   try {
-    const query = category ? { category } : {}
-    const products = await Product.find(query).sort({ category: 1, order: 1 })
+    const query: Record<string, unknown> = {}
+    if (lifecycle) query.lifecycle = lifecycle
+    if (section) query.section = section
+    if (surface === 'products') query.showOnProducts = true
+    if (surface === 'status') query.showOnStatus = true
+    if (surface === 'nav') query.showInNav = true
+    const products = await Product.find(query).sort({ lifecycle: 1, section: 1, order: 1 }).populate('logo')
     return ok(products)
   } catch (e) { return err(e) }
 })
@@ -1179,13 +1192,13 @@ server.tool('get_product', 'Get a single product by its productId.', {
   productId: z.string().describe('Stable product id (e.g. "alia", "mention")'),
 }, async ({ productId }) => {
   try {
-    const product = await Product.findOne({ productId })
+    const product = await Product.findOne({ productId }).populate('logo')
     if (!product) return err('Product not found')
     return ok(product)
   } catch (e) { return err(e) }
 })
 
-server.tool('create_product', 'Create a new product on the /products page.', productRawShape, async (input) => {
+server.tool('create_product', 'Create a new product. By default it appears on /products, /status, and the ecosystem navbar dropdown.', productRawShape, async (input) => {
   try {
     const existing = await Product.findOne({ productId: input.productId })
     if (existing) return err(`Product "${input.productId}" already exists`)
@@ -1200,16 +1213,24 @@ server.tool('update_product', 'Update an existing product. Only the fields you p
   tagline: z.string().optional(),
   description: z.string().optional(),
   href: z.string().optional(),
+  healthUrl: z.string().optional(),
   external: z.boolean().optional(),
   cta: z.string().optional(),
   brand: z.string().optional(),
   brandForeground: z.string().optional(),
   mark: z.string().optional(),
-  category: z.enum(['live', 'in-development']).optional(),
+  logo: z.string().optional().describe('Media document id. Pass empty string to clear.'),
+  section: z.string().optional(),
+  lifecycle: z.enum(['live', 'in-development']).optional(),
+  showOnProducts: z.boolean().optional(),
+  showOnStatus: z.boolean().optional(),
+  showInNav: z.boolean().optional(),
   order: z.number().optional(),
 }, async ({ productId, ...patch }) => {
   try {
-    const product = await Product.findOneAndUpdate({ productId }, patch, { new: true })
+    const normalized: Record<string, unknown> = { ...patch }
+    if (patch.logo !== undefined) normalized.logo = patch.logo && patch.logo.length > 0 ? patch.logo : null
+    const product = await Product.findOneAndUpdate({ productId }, normalized, { new: true }).populate('logo')
     if (!product) return err('Product not found')
     return ok(product)
   } catch (e) { return err(e) }

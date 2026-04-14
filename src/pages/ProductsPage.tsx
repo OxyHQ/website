@@ -4,7 +4,17 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import { useProducts, type ProductRecord } from '../api/hooks'
+import { useProducts, resolveProductLogoUrl, type ProductRecord } from '../api/hooks'
+
+function groupBySection(products: ProductRecord[]): Array<[string, ProductRecord[]]> {
+  const map = new Map<string, ProductRecord[]>()
+  for (const p of products) {
+    const list = map.get(p.section) ?? []
+    list.push(p)
+    map.set(p.section, list)
+  }
+  return Array.from(map.entries())
+}
 
 /* ──────────────────────────────────────────────
  * /products
@@ -112,6 +122,7 @@ function ProductCardLink({ product, children }: { product: ProductRecord; childr
 
 function ProductCard({ product }: { product: ProductRecord }) {
   const fg = product.brandForeground ?? '#ffffff'
+  const logoUrl = resolveProductLogoUrl(product)
   return (
     <ProductCardLink product={product}>
       {/* Brand accent strip — uses real product brand color, not a theme token */}
@@ -124,11 +135,21 @@ function ProductCard({ product }: { product: ProductRecord }) {
       {/* Brand mark + tagline row */}
       <div className="flex items-center gap-3">
         <span
-          className="flex size-11 items-center justify-center rounded-2xl text-lg font-semibold tracking-tight"
+          className="relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-lg font-semibold tracking-tight"
           style={{ backgroundColor: product.brand, color: fg }}
           aria-hidden="true"
         >
-          {product.mark}
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-contain p-1.5"
+            />
+          ) : (
+            product.mark
+          )}
         </span>
         <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           {product.tagline}
@@ -159,9 +180,12 @@ function ProductCard({ product }: { product: ProductRecord }) {
 /* ── Page ── */
 
 export default function ProductsPage() {
-  const { data: products = [] } = useProducts()
-  const liveProducts = products.filter((p) => p.category === 'live')
-  const newProducts = products.filter((p) => p.category === 'in-development')
+  const { data: products = [] } = useProducts({ surface: 'products' })
+  const liveProducts = products.filter((p) => p.lifecycle === 'live')
+  const newProducts = products.filter((p) => p.lifecycle === 'in-development')
+  const liveGroups = groupBySection(liveProducts)
+  const hasLive = liveProducts.length > 0
+  const hasNew = newProducts.length > 0
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
@@ -200,76 +224,91 @@ export default function ProductsPage() {
           </div>
         </section>
 
-        {/* ═══ Live products grid ═══ */}
-        <section className="container" id="all-products">
-          <div className="border-border border-x">
-            <DashedHLine />
-            <DashedVLines />
+        {/* ═══ Live products — grouped by section ═══ */}
+        {hasLive && (
+          <section className="container" id="all-products">
+            <div className="border-border border-x">
+              <DashedHLine />
+              <DashedVLines />
 
-            <header className="grid grid-cols-12 pt-20 pb-12 max-lg:pt-16 max-lg:pb-10 justify-items-start">
-              <div className="col-[2/-2] max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
-                <h2 className="text-pretty inline">Built and shipped.</h2>{' '}
-                <p className="inline text-pretty font-medium text-muted-foreground">
-                  Products you can use today — each independently developed, each tied to the same open ecosystem.
-                </p>
-              </div>
-            </header>
-
-            <DashedVLines />
-
-            {/* Pixel-gap card grid — matches CompanyPage values/team layout */}
-            <div className="relative grid grid-cols-12">
-              <div
-                className="pointer-events-none absolute inset-0 text-border/30"
-                style={{ backgroundImage: 'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)' }}
-                aria-hidden="true"
-              />
-              <div className="relative col-[2/-2] grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-3">
-                {liveProducts.map((product) => (
-                  <ProductCard key={product.productId} product={product} />
-                ))}
-              </div>
-            </div>
-
-            <DashedVLines height="h-21 md:h-40" />
-          </div>
-        </section>
-
-        {/* ═══ New / in-development ═══ */}
-        <section className="container">
-          <div className="border-border border-x">
-            <header className="grid grid-cols-12 pt-20 pb-12 max-lg:pt-16 max-lg:pb-10 justify-items-start">
-              <div className="col-[2/-2] flex w-full items-end justify-between gap-6">
-                <div className="max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
-                  <h2 className="text-pretty inline">New and in development.</h2>{' '}
+              <header className="grid grid-cols-12 pt-20 pb-12 max-lg:pt-16 max-lg:pb-10 justify-items-start">
+                <div className="col-[2/-2] max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
+                  <h2 className="text-pretty inline">Built and shipped.</h2>{' '}
                   <p className="inline text-pretty font-medium text-muted-foreground">
-                    Fresh products and tooling we&apos;re building in the open right now.
+                    Products you can use today — each independently developed, each tied to the same open ecosystem.
                   </p>
                 </div>
-                <Button variant="outline" size="sm" href="/changelog">
-                  Changelog
-                </Button>
-              </div>
-            </header>
+              </header>
 
-            <DashedVLines />
+              <DashedVLines />
 
-            <div className="relative grid grid-cols-12">
-              <div
-                className="pointer-events-none absolute inset-0 text-border/30"
-                style={{ backgroundImage: 'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)' }}
-                aria-hidden="true"
-              />
-              <div className="relative col-[2/-2] grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2">
-                {newProducts.map((product) => (
-                  <ProductCard key={product.productId} product={product} />
-                ))}
-              </div>
+              {liveGroups.map(([section, items]) => (
+                <div key={section}>
+                  {/* Section label */}
+                  <div className="grid grid-cols-12 pt-10 pb-5">
+                    <div className="col-[2/-2]">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{section}</p>
+                    </div>
+                  </div>
+
+                  {/* Pixel-gap card grid */}
+                  <div className="relative grid grid-cols-12">
+                    <div
+                      className="pointer-events-none absolute inset-0 text-border/30"
+                      style={{ backgroundImage: 'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)' }}
+                      aria-hidden="true"
+                    />
+                    <div className="relative col-[2/-2] grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-3">
+                      {items.map((product) => (
+                        <ProductCard key={product.productId} product={product} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <DashedVLines height="h-21 md:h-40" />
             </div>
+          </section>
+        )}
 
-            <DashedVLines height="h-21 md:h-40" />
-          </div>
-        </section>
+        {/* ═══ New / in-development ═══ */}
+        {hasNew && (
+          <section className="container">
+            <div className="border-border border-x">
+              <header className="grid grid-cols-12 pt-20 pb-12 max-lg:pt-16 max-lg:pb-10 justify-items-start">
+                <div className="col-[2/-2] flex w-full items-end justify-between gap-6">
+                  <div className="max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
+                    <h2 className="text-pretty inline">New and in development.</h2>{' '}
+                    <p className="inline text-pretty font-medium text-muted-foreground">
+                      Fresh products and tooling we&apos;re building in the open right now.
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" href="/changelog">
+                    Changelog
+                  </Button>
+                </div>
+              </header>
+
+              <DashedVLines />
+
+              <div className="relative grid grid-cols-12">
+                <div
+                  className="pointer-events-none absolute inset-0 text-border/30"
+                  style={{ backgroundImage: 'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)' }}
+                  aria-hidden="true"
+                />
+                <div className="relative col-[2/-2] grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2">
+                  {newProducts.map((product) => (
+                    <ProductCard key={product.productId} product={product} />
+                  ))}
+                </div>
+              </div>
+
+              <DashedVLines height="h-21 md:h-40" />
+            </div>
+          </section>
+        )}
 
         {/* ═══ Build on Oxy CTA ═══ */}
         <section className="container">

@@ -198,7 +198,13 @@ export function useHero() {
 }
 
 // ── Products ──
-export type ProductCategory = 'live' | 'in-development'
+export type ProductLifecycle = 'live' | 'in-development'
+
+export interface ProductLogoRef {
+  _id?: string
+  url?: string
+  thumbnails?: { sm?: string; md?: string; lg?: string }
+}
 
 export interface ProductRecord {
   _id?: string
@@ -207,23 +213,47 @@ export interface ProductRecord {
   tagline: string
   description: string
   href: string
+  healthUrl?: string
   external: boolean
   cta: string
   brand: string
   brandForeground?: string
   mark: string
-  category: ProductCategory
+  logo?: string | ProductLogoRef | null
+  section: string
+  lifecycle: ProductLifecycle
+  showOnProducts: boolean
+  showOnStatus: boolean
+  showInNav: boolean
   order: number
 }
 
-export function useProducts() {
+export interface UseProductsOptions {
+  surface?: 'products' | 'status' | 'nav'
+  lifecycle?: ProductLifecycle
+  section?: string
+}
+
+export function useProducts(options: UseProductsOptions = {}) {
   const locale = useCurrentLocale()
+  const qs = new URLSearchParams()
+  if (options.surface) qs.set('surface', options.surface)
+  if (options.lifecycle) qs.set('lifecycle', options.lifecycle)
+  if (options.section) qs.set('section', options.section)
+  const query = qs.toString()
   return useQuery<ProductRecord[]>({
-    queryKey: ['products', locale],
-    queryFn: () => apiFetch<ProductRecord[]>('/products', { locale }),
+    queryKey: ['products', options.surface ?? 'all', options.lifecycle ?? 'any', options.section ?? 'any', locale],
+    queryFn: () => apiFetch<ProductRecord[]>(`/products${query ? `?${query}` : ''}`, { locale }),
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
   })
+}
+
+export function resolveProductLogoUrl(product: ProductRecord): string {
+  const logo = product.logo
+  if (!logo) return ''
+  if (typeof logo === 'string') return logo
+  return logo.thumbnails?.md || logo.thumbnails?.lg || logo.url || ''
 }
 
 // ── Service status ──

@@ -1,10 +1,21 @@
 import { useState } from 'react'
-import { useProducts, type ProductRecord, type ProductCategory } from '../../../api/hooks'
+import { useProducts, type ProductRecord, type ProductLifecycle } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
+import MediaPicker from '../MediaPicker'
+
+function mediaId(logo: unknown): string {
+  if (!logo) return ''
+  if (typeof logo === 'string') return logo
+  if (typeof logo === 'object' && logo !== null && '_id' in logo) {
+    const id = (logo as { _id?: unknown })._id
+    return typeof id === 'string' ? id : ''
+  }
+  return ''
+}
 
 function emptyProduct(): ProductRecord {
   return {
@@ -13,22 +24,37 @@ function emptyProduct(): ProductRecord {
     tagline: '',
     description: '',
     href: '',
+    healthUrl: '',
     external: false,
     cta: 'Learn more',
     brand: '#7c3aed',
     brandForeground: '',
     mark: '',
-    category: 'live',
+    logo: null,
+    section: 'Apps',
+    lifecycle: 'live',
+    showOnProducts: true,
+    showOnStatus: true,
+    showInNav: true,
     order: 0,
   }
 }
 
-function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+function normalizeLogo(product: ProductRecord): ProductRecord {
+  return { ...product, logo: mediaId(product.logo) || null }
 }
+
+function slugify(input: string): string {
+  return input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+}
+
+const SECTION_SUGGESTIONS = [
+  'Social & Communication',
+  'Finance & Commerce',
+  'Apps',
+  'Infrastructure',
+  'Developer',
+]
 
 export default function ProductsAdmin() {
   const { data, refetch } = useProducts()
@@ -36,9 +62,9 @@ export default function ProductsAdmin() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const products = data ?? []
-  const liveProducts = products.filter((p) => p.category === 'live')
-  const newProducts = products.filter((p) => p.category === 'in-development')
+  const products = (data ?? []).map(normalizeLogo)
+  const liveProducts = products.filter((p) => p.lifecycle === 'live')
+  const newProducts = products.filter((p) => p.lifecycle === 'in-development')
 
   const save = async () => {
     if (!editing) return
@@ -47,6 +73,7 @@ export default function ProductsAdmin() {
     try {
       const payload: Partial<ProductRecord> = { ...editing }
       if (!payload.brandForeground) delete payload.brandForeground
+      if (!payload.healthUrl) delete payload.healthUrl
       if (editing._id) {
         await apiFetch(`/products/${editing.productId}`, { method: 'PUT', body: JSON.stringify(payload) })
       } else {
@@ -136,6 +163,19 @@ export default function ProductsAdmin() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
+              <Label>Health URL (optional)</Label>
+              <Input
+                value={editing.healthUrl ?? ''}
+                onChange={(e) => setEditing({ ...editing, healthUrl: e.target.value })}
+                placeholder="Defaults to href if empty"
+                className="font-mono"
+              />
+              <p className="text-xs text-muted-foreground">Used by /status. Point at an unauthenticated health endpoint when possible.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
               <Label>CTA label</Label>
               <Input
                 value={editing.cta}
@@ -143,17 +183,28 @@ export default function ProductsAdmin() {
                 placeholder="Explore Alia"
               />
             </div>
+            <div className="flex items-center gap-2 pt-6">
+              <input
+                id="product-external"
+                type="checkbox"
+                checked={editing.external}
+                onChange={(e) => setEditing({ ...editing, external: e.target.checked })}
+                className="size-4 rounded border border-border"
+              />
+              <Label htmlFor="product-external">External link (opens in a new tab)</Label>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <input
-              id="product-external"
-              type="checkbox"
-              checked={editing.external}
-              onChange={(e) => setEditing({ ...editing, external: e.target.checked })}
-              className="size-4 rounded border border-border"
+          {/* Logo picker */}
+          <div className="flex flex-col gap-1.5">
+            <Label>Logo</Label>
+            <MediaPicker
+              value={mediaId(editing.logo) || ''}
+              onChange={(id) => setEditing({ ...editing, logo: id ?? null })}
+              folder="products"
+              accept="image/*"
             />
-            <Label htmlFor="product-external">External link (opens in a new tab)</Label>
+            <p className="text-xs text-muted-foreground">Upload or pick a square app icon. When set, it replaces the letter mark.</p>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
@@ -184,7 +235,7 @@ export default function ProductsAdmin() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label>Mark letter</Label>
+              <Label>Mark letter (fallback)</Label>
               <Input
                 value={editing.mark}
                 maxLength={2}
@@ -194,12 +245,24 @@ export default function ProductsAdmin() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label>Category</Label>
+              <Label>Section</Label>
+              <Input
+                value={editing.section}
+                onChange={(e) => setEditing({ ...editing, section: e.target.value })}
+                list="product-sections"
+              />
+              <datalist id="product-sections">
+                {SECTION_SUGGESTIONS.map((s) => <option key={s} value={s} />)}
+              </datalist>
+              <p className="text-xs text-muted-foreground">Used by /products and /status grouping and the navbar.</p>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label>Lifecycle</Label>
               <select
-                value={editing.category}
-                onChange={(e) => setEditing({ ...editing, category: e.target.value as ProductCategory })}
+                value={editing.lifecycle}
+                onChange={(e) => setEditing({ ...editing, lifecycle: e.target.value as ProductLifecycle })}
                 className="h-9 rounded-md border border-border bg-background px-3 text-sm"
               >
                 <option value="live">Live (built and shipped)</option>
@@ -216,12 +279,47 @@ export default function ProductsAdmin() {
             </div>
           </div>
 
+          {/* Surface toggles */}
+          <div className="rounded-xl border border-border p-4">
+            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Surfaces</div>
+            <p className="mt-1 text-xs text-muted-foreground">Which public surfaces should this product appear on?</p>
+            <div className="mt-3 grid grid-cols-3 gap-3">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editing.showOnProducts}
+                  onChange={(e) => setEditing({ ...editing, showOnProducts: e.target.checked })}
+                  className="size-4 rounded border border-border"
+                />
+                <span className="text-sm">/products</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editing.showOnStatus}
+                  onChange={(e) => setEditing({ ...editing, showOnStatus: e.target.checked })}
+                  className="size-4 rounded border border-border"
+                />
+                <span className="text-sm">/status</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editing.showInNav}
+                  onChange={(e) => setEditing({ ...editing, showInNav: e.target.checked })}
+                  className="size-4 rounded border border-border"
+                />
+                <span className="text-sm">Navbar</span>
+              </label>
+            </div>
+          </div>
+
           {/* Live preview */}
-          <div className="mt-4 flex flex-col gap-2">
+          <div className="mt-2 flex flex-col gap-2">
             <Label>Preview</Label>
             <div className="inline-flex items-center gap-3 rounded-2xl border border-border bg-background p-4">
               <span
-                className="flex size-11 items-center justify-center rounded-2xl text-lg font-semibold tracking-tight"
+                className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-lg font-semibold tracking-tight"
                 style={{ backgroundColor: editing.brand, color: editing.brandForeground || '#ffffff' }}
                 aria-hidden="true"
               >
@@ -252,7 +350,7 @@ export default function ProductsAdmin() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold text-foreground">Products</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Every card that appears on /products. Edit, reorder, or delete each one.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Single source of truth for every Oxy app. Powers /products, /status, and the ecosystem navbar dropdown.</p>
         </div>
         <PrimaryButton onPress={() => setEditing(emptyProduct())}>Add product</PrimaryButton>
       </div>
@@ -279,10 +377,14 @@ export default function ProductsAdmin() {
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium text-foreground">{product.name}</div>
                     <div className="truncate text-xs text-muted-foreground">
-                      <span className="font-mono">{product.productId}</span> · {product.href}
+                      <span className="font-mono">{product.productId}</span> · {product.section} · {product.href}
                     </div>
                   </div>
-                  <div className="shrink-0 text-xs text-muted-foreground">#{product.order}</div>
+                  <div className="hidden shrink-0 gap-1 text-xs text-muted-foreground md:flex">
+                    {product.showOnProducts && <span>prod</span>}
+                    {product.showOnStatus && <span>· status</span>}
+                    {product.showInNav && <span>· nav</span>}
+                  </div>
                   <div className="shrink-0">
                     <Button variant="ghost" size="small" onPress={() => setEditing(product)}>Edit</Button>
                     <Button variant="ghost" size="small" onPress={() => remove(product.productId)}>Delete</Button>

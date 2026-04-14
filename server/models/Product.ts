@@ -1,19 +1,36 @@
-import mongoose, { Schema, type Document } from 'mongoose'
+import mongoose, { Schema, type Document, type Types } from 'mongoose'
 
-export type ProductCategory = 'live' | 'in-development'
+export type ProductLifecycle = 'live' | 'in-development'
 
 export interface IProduct extends Document {
+  /** Stable URL-safe id used as primary lookup key. */
   productId: string
   name: string
   tagline: string
   description: string
+  /** Canonical destination URL for cards and navbar links. */
   href: string
+  /** Optional URL to probe for /status health checks. Defaults to `href`. */
+  healthUrl?: string
   external: boolean
   cta: string
+  /** Hex brand color for the card accent strip + icon mark */
   brand: string
   brandForeground?: string
+  /** Single-letter fallback when no logo is set. */
   mark: string
-  category: ProductCategory
+  /** Media ref for the app icon / logo. Takes precedence over `mark`. */
+  logo?: Types.ObjectId | null
+  /** Grouping label used by /status and the /products page. Matches the navbar section labels. */
+  section: string
+  /** Lifecycle bucket on /products — live vs in-development. */
+  lifecycle: ProductLifecycle
+  /** Show on the /products page. */
+  showOnProducts: boolean
+  /** Probe on /status. */
+  showOnStatus: boolean
+  /** Show in the ecosystem navbar dropdown. */
+  showInNav: boolean
   order: number
   createdAt: Date
   updatedAt: Date
@@ -25,15 +42,23 @@ const ProductSchema = new Schema<IProduct>({
   tagline: { type: String, default: '' },
   description: { type: String, default: '' },
   href: { type: String, required: true },
+  healthUrl: { type: String },
   external: { type: Boolean, default: false },
   cta: { type: String, default: 'Learn more' },
   brand: { type: String, required: true },
   brandForeground: { type: String },
   mark: { type: String, required: true },
-  category: { type: String, enum: ['live', 'in-development'], default: 'live' },
+  logo: { type: Schema.Types.ObjectId, ref: 'Media', default: null },
+  section: { type: String, default: 'Apps' },
+  lifecycle: { type: String, enum: ['live', 'in-development'], default: 'live' },
+  showOnProducts: { type: Boolean, default: true },
+  showOnStatus: { type: Boolean, default: true },
+  showInNav: { type: Boolean, default: true },
   order: { type: Number, default: 0 },
 }, { timestamps: true })
 
-ProductSchema.index({ category: 1, order: 1 })
+ProductSchema.index({ lifecycle: 1, section: 1, order: 1 })
+ProductSchema.index({ showOnStatus: 1 })
+ProductSchema.index({ showInNav: 1 })
 
 export const Product = mongoose.model<IProduct>('Product', ProductSchema)
