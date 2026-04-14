@@ -96,27 +96,31 @@ function ArrowUpRightIcon({ className = '' }: { className?: string }) {
 /* ── Product card ── */
 
 function ProductCardLink({ product, children }: { product: ProductRecord; children: React.ReactNode }) {
-  if (product.external) {
+  // Prefer the local landing page when set — it's the marketing surface on
+  // oxy.so. Falls back to the external app href otherwise.
+  const destination = product.landingUrl && product.landingUrl.length > 0 ? product.landingUrl : product.href
+  const isInternal = destination.startsWith('/')
+  if (isInternal) {
     return (
-      <a
-        href={product.href}
-        target="_blank"
-        rel="noopener noreferrer"
+      <Link
+        to={destination}
         className="group relative flex h-full flex-col bg-background p-8 transition-colors duration-300 hover:bg-surface lg:p-10"
         aria-label={`${product.name} — ${product.tagline}`}
       >
         {children}
-      </a>
+      </Link>
     )
   }
   return (
-    <Link
-      to={product.href}
+    <a
+      href={destination}
+      target="_blank"
+      rel="noopener noreferrer"
       className="group relative flex h-full flex-col bg-background p-8 transition-colors duration-300 hover:bg-surface lg:p-10"
       aria-label={`${product.name} — ${product.tagline}`}
     >
       {children}
-    </Link>
+    </a>
   )
 }
 
@@ -124,6 +128,8 @@ function ProductCard({ product }: { product: ProductRecord }) {
   const fg = product.brandForeground ?? '#ffffff'
   const logoUrl = resolveProductLogoUrl(product)
   const hasLogo = Boolean(logoUrl)
+  const destination = product.landingUrl && product.landingUrl.length > 0 ? product.landingUrl : product.href
+  const destinationIsInternal = destination.startsWith('/')
   return (
     <ProductCardLink product={product}>
       {/* Brand accent strip — uses real product brand color, not a theme token */}
@@ -170,10 +176,10 @@ function ProductCard({ product }: { product: ProductRecord }) {
       {/* CTA — pinned to bottom on tall cards */}
       <span className="mt-8 inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
         {product.cta}
-        {product.external ? (
-          <ArrowUpRightIcon className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        ) : (
+        {destinationIsInternal ? (
           <ArrowRightIcon className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+        ) : (
+          <ArrowUpRightIcon className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         )}
       </span>
     </ProductCardLink>

@@ -19,6 +19,7 @@ const productBodySchema = z.object({
   tagline: z.string().optional().default(''),
   description: z.string().optional().default(''),
   href: z.string().min(1),
+  landingUrl: z.string().optional(),
   healthUrl: z.string().optional(),
   external: z.boolean().optional().default(false),
   cta: z.string().optional().default('Learn more'),

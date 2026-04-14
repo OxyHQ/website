@@ -213,6 +213,7 @@ export interface ProductRecord {
   tagline: string
   description: string
   href: string
+  landingUrl?: string
   healthUrl?: string
   external: boolean
   cta: string
@@ -265,6 +266,7 @@ export interface ServiceStatusEntry {
   description: string
   section: string
   url: string
+  landingUrl: string | null
   brand: string
   brandForeground?: string
   mark: string

@@ -8,8 +8,10 @@ export interface IProduct extends Document {
   name: string
   tagline: string
   description: string
-  /** Canonical destination URL for cards and navbar links. */
+  /** Canonical destination URL — the actual running app / external URL. */
   href: string
+  /** Optional local landing page on oxy.so (e.g. "/inbox", "/astro"). When set, /products card and navbar link here first. */
+  landingUrl?: string
   /** Optional URL to probe for /status health checks. Defaults to `href`. */
   healthUrl?: string
   external: boolean
@@ -42,6 +44,7 @@ const ProductSchema = new Schema<IProduct>({
   tagline: { type: String, default: '' },
   description: { type: String, default: '' },
   href: { type: String, required: true },
+  landingUrl: { type: String },
   healthUrl: { type: String },
   external: { type: Boolean, default: false },
   cta: { type: String, default: 'Learn more' },

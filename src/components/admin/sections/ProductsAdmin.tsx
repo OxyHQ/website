@@ -67,6 +67,7 @@ function emptyProduct(): ProductRecord {
     tagline: '',
     description: '',
     href: '',
+    landingUrl: '',
     healthUrl: '',
     external: false,
     cta: 'Learn more',
@@ -83,7 +84,10 @@ function emptyProduct(): ProductRecord {
   }
 }
 
-function normalizeLogo(product: ProductRecord): ProductRecord {
+// Only collapse the populated Media object to a plain id when we're about to
+// start editing — the list view keeps the full populated ref so ProductMark
+// can render the logo instantly without a round-trip through useMediaItem.
+function stripLogoForEditing(product: ProductRecord): ProductRecord {
   return { ...product, logo: mediaId(product.logo) || null }
 }
 
@@ -105,7 +109,7 @@ export default function ProductsAdmin() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const products = (data ?? []).map(normalizeLogo)
+  const products = data ?? []
   const liveProducts = products.filter((p) => p.lifecycle === 'live')
   const newProducts = products.filter((p) => p.lifecycle === 'in-development')
 
@@ -117,6 +121,7 @@ export default function ProductsAdmin() {
       const payload: Partial<ProductRecord> = { ...editing }
       if (!payload.brandForeground) delete payload.brandForeground
       if (!payload.healthUrl) delete payload.healthUrl
+      if (!payload.landingUrl) delete payload.landingUrl
       if (editing._id) {
         await apiFetch(`/products/${editing.productId}`, { method: 'PUT', body: JSON.stringify(payload) })
       } else {
@@ -195,22 +200,33 @@ export default function ProductsAdmin() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label>Href</Label>
+              <Label>App URL</Label>
               <Input
                 value={editing.href}
                 onChange={(e) => setEditing({ ...editing, href: e.target.value })}
-                placeholder="/path or https://…"
+                placeholder="https://alia.onl/"
                 className="font-mono"
               />
+              <p className="text-xs text-muted-foreground">The actual running app — where "Open" buttons go. External URL or internal path.</p>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label>Landing page on oxy.so (optional)</Label>
+              <Input
+                value={editing.landingUrl ?? ''}
+                onChange={(e) => setEditing({ ...editing, landingUrl: e.target.value })}
+                placeholder="/alia"
+                className="font-mono"
+              />
+              <p className="text-xs text-muted-foreground">Local marketing/learn-more page on this site. When set, the /products card and navbar link here first.</p>
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>Health URL (optional)</Label>
               <Input
                 value={editing.healthUrl ?? ''}
                 onChange={(e) => setEditing({ ...editing, healthUrl: e.target.value })}
-                placeholder="Defaults to href if empty"
+                placeholder="Defaults to App URL if empty"
                 className="font-mono"
               />
               <p className="text-xs text-muted-foreground">Used by /status. Point at an unauthenticated health endpoint when possible.</p>
@@ -417,7 +433,7 @@ export default function ProductsAdmin() {
                     {product.showInNav && <span>· nav</span>}
                   </div>
                   <div className="shrink-0">
-                    <Button variant="ghost" size="small" onPress={() => setEditing(product)}>Edit</Button>
+                    <Button variant="ghost" size="small" onPress={() => setEditing(stripLogoForEditing(product))}>Edit</Button>
                     <Button variant="ghost" size="small" onPress={() => remove(product.productId)}>Delete</Button>
                   </div>
                 </div>

@@ -16,6 +16,7 @@ interface ServiceResult {
   description: string
   section: string
   url: string
+  landingUrl: string | null
   brand: string
   brandForeground?: string
   mark: string
@@ -57,6 +58,7 @@ async function probeService(product: IProduct): Promise<ServiceResult> {
     description: product.tagline || product.description || '',
     section: product.section || 'Other',
     url: product.href,
+    landingUrl: product.landingUrl || null,
     brand: product.brand,
     brandForeground: product.brandForeground,
     mark: product.mark,

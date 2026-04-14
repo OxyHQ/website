@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -106,12 +107,7 @@ function formatRelative(iso: string): string {
 
 function ServiceRow({ service }: { service: ServiceStatusEntry }) {
   return (
-    <a
-      href={service.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group relative flex items-center gap-4 px-5 py-4 transition-colors duration-200 hover:bg-foreground/5"
-    >
+    <div className="group relative flex items-center gap-4 px-5 py-4 transition-colors duration-200 hover:bg-foreground/5">
       {/* brand accent strip on hover */}
       <span
         className="absolute inset-y-0 left-0 w-1 origin-top scale-y-0 transition-transform duration-300 group-hover:scale-y-100"
@@ -122,6 +118,14 @@ function ServiceRow({ service }: { service: ServiceStatusEntry }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
           <span className="truncate text-sm font-medium text-foreground">{service.name}</span>
+          {service.landingUrl && (
+            <Link
+              to={service.landingUrl}
+              className="hidden text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline sm:inline"
+            >
+              Learn more
+            </Link>
+          )}
         </div>
         <div className="mt-0.5 truncate text-xs text-muted-foreground">{service.description}</div>
       </div>
@@ -137,7 +141,18 @@ function ServiceRow({ service }: { service: ServiceStatusEntry }) {
         <StatusDot status={service.status} size="sm" />
         {STATUS_LABEL[service.status]}
       </span>
-    </a>
+      <a
+        href={service.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hidden shrink-0 rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-background md:inline-flex md:items-center md:gap-1"
+      >
+        Open
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="size-3" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+        </svg>
+      </a>
+    </div>
   )
 }
 
