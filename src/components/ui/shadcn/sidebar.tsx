@@ -24,8 +24,15 @@ export function useSidebar() {
 
 /* ── Provider ── */
 
+function getInitialOpen(defaultOpen: boolean): boolean {
+  if (typeof window === 'undefined') return defaultOpen
+  // Collapsed by default on small screens so the overlay doesn't cover the
+  // page on first paint. Desktop users still get the full sidebar.
+  return window.matchMedia('(min-width: 768px)').matches ? defaultOpen : false
+}
+
 export function SidebarProvider({ defaultOpen = true, children }: { defaultOpen?: boolean; children: ReactNode }) {
-  const [open, setOpen] = useState(defaultOpen)
+  const [open, setOpen] = useState(() => getInitialOpen(defaultOpen))
   const toggleSidebar = useCallback(() => setOpen((o) => !o), [])
   return (
     <SidebarContext.Provider value={{ open, setOpen, toggleSidebar }}>
@@ -40,21 +47,39 @@ export function SidebarProvider({ defaultOpen = true, children }: { defaultOpen?
 
 export const Sidebar = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement> & { side?: 'left' | 'right' }>(
   ({ side = 'left', className, children, ...props }, ref) => {
-    const { open } = useSidebar()
+    const { open, setOpen } = useSidebar()
     return (
-      <aside
-        ref={ref}
-        data-state={open ? 'expanded' : 'collapsed'}
-        className={cn(
-          'group/sidebar sticky top-0 flex h-screen shrink-0 flex-col border-border bg-surface overflow-hidden transition-[width] duration-200',
-          side === 'left' ? 'border-r' : 'border-l',
-          open ? 'w-64' : 'w-14',
-          className,
-        )}
-        {...props}
-      >
-        {children}
-      </aside>
+      <>
+        {/* Mobile backdrop — only rendered below md breakpoint while the sidebar is open */}
+        <div
+          onClick={() => setOpen(false)}
+          className={cn(
+            'fixed inset-0 z-30 bg-black/50 transition-opacity md:hidden',
+            open ? 'opacity-100' : 'pointer-events-none opacity-0',
+          )}
+          aria-hidden="true"
+        />
+        <aside
+          ref={ref}
+          data-state={open ? 'expanded' : 'collapsed'}
+          className={cn(
+            'group/sidebar flex h-dvh shrink-0 flex-col border-border bg-surface overflow-hidden transition-[transform,width] duration-200',
+            side === 'left' ? 'border-r' : 'border-l',
+            // Mobile: off-canvas overlay
+            side === 'left'
+              ? 'fixed inset-y-0 left-0 z-40 w-64'
+              : 'fixed inset-y-0 right-0 z-40 w-64',
+            open ? 'translate-x-0' : side === 'left' ? '-translate-x-full' : 'translate-x-full',
+            // Desktop: sticky in flow, collapse width instead
+            'md:sticky md:top-0 md:translate-x-0',
+            open ? 'md:w-64' : 'md:w-14',
+            className,
+          )}
+          {...props}
+        >
+          {children}
+        </aside>
+      </>
     )
   },
 )
