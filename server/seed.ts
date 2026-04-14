@@ -21,6 +21,7 @@ import { Page } from './models/Page.js'
 import { NewsroomPost } from './models/NewsroomPost.js'
 import { Course } from './models/Course.js'
 import { Resource } from './models/Resource.js'
+import { HelpArticle } from './models/HelpArticle.js'
 import { Media } from './models/Media.js'
 import TrackedRepo from './models/TrackedRepo.js'
 
@@ -29,7 +30,7 @@ async function seed() {
   console.log('Connected to MongoDB')
 
   // ── Drop all collections (full reset) ──
-  const collections = [Navigation, Footer, HeroContent, Product, Category, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, Course, Resource, TrackedRepo, TeamMember, Media]
+  const collections = [Navigation, Footer, HeroContent, Product, Category, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, Course, Resource, HelpArticle, TrackedRepo, TeamMember, Media]
   await Promise.all(collections.map((m) => m.deleteMany({})))
   console.log('Cleared all collections')
 
@@ -213,6 +214,10 @@ async function seed() {
     { slug: 'developer', label: 'Developer', scope: 'apps', order: 4 },
     { slug: 'fundamentals', label: 'Fundamentals', scope: 'generic', order: 0, description: 'Core concepts and first steps on the Oxy platform.' },
     { slug: 'advanced', label: 'Advanced', scope: 'generic', order: 1, description: 'Deep dives, production patterns and performance tuning.' },
+    { slug: 'help-getting-started', label: 'Getting started', scope: 'generic', order: 10, description: 'Set up your account and find your way around Oxy.' },
+    { slug: 'help-account', label: 'Account & profile', scope: 'generic', order: 11, description: 'Manage your account, preferences and identity.' },
+    { slug: 'help-billing', label: 'Billing & plans', scope: 'generic', order: 12, description: 'Subscriptions, invoices and payment methods.' },
+    { slug: 'help-developer', label: 'Developer & API', scope: 'generic', order: 13, description: 'Integrations, the Oxy API and self-serve tooling.' },
   ])
   const categoryIdBySlug = new Map(categoryDocs.map((c) => [c.slug, c._id] as const))
   const categoryRef = (slug: string) => categoryIdBySlug.get(slug) ?? null
@@ -784,6 +789,128 @@ async function seed() {
     },
   ])
   console.log('Seeded academy resources')
+
+  // ── Help Center: Page hero + popular searches ──
+  await Page.create({
+    slug: 'help',
+    title: 'Help Center',
+    description: 'Find answers to common questions about Oxy, troubleshoot issues and get in touch with support.',
+    sections: [
+      {
+        type: 'hero',
+        heading: 'How can we help?',
+        subheading: 'Get answers to common questions on all things Oxy',
+        content: 'Help center',
+        order: 0,
+      },
+      {
+        type: 'getting-started',
+        heading: 'Get started',
+        subheading: 'with ',
+        content: 'Oxy 101.',
+        order: 1,
+      },
+      {
+        type: 'getting-started-lead',
+        content: 'Everything you need to master the basics of Oxy.',
+        order: 2,
+      },
+      {
+        type: 'popular-searches',
+        items: [
+          { key: 'importing', value: 'importing' },
+          { key: 'billing', value: 'billing' },
+          { key: 'integrations', value: 'integrations' },
+        ],
+        order: 3,
+      },
+    ],
+    promptPhrases: [],
+  })
+  console.log('Seeded help page')
+
+  // ── Help Center: Articles ──
+  await HelpArticle.insertMany([
+    {
+      slug: 'introduction-to-oxy',
+      title: 'Introduction',
+      summary: 'Learn why Oxy is the CRM of the future.',
+      content: '## Welcome to Oxy\n\nOxy is an AI-first platform built around the people who use it. This article gives you the high-level tour — what makes Oxy different, who it is for and how the pieces fit together.\n\n- A privacy-first identity layer used across every Oxy product.\n- A unified data model that connects messaging, finance, infrastructure and AI.\n- An open ecosystem you can extend with your own apps and integrations.',
+      category: categoryRef('help-getting-started'),
+      icon: 'rocket',
+      tags: ['intro', 'overview'],
+      featured: true,
+      status: 'published',
+      order: 0,
+      publishedAt: new Date('2026-03-01'),
+    },
+    {
+      slug: 'navigating-oxy',
+      title: 'Introduction to navigating Oxy',
+      summary: 'Get to know your way around Oxy.',
+      content: '## Navigating the workspace\n\nThe Oxy interface is designed to stay out of your way. This guide walks through the main surfaces you will use every day — the sidebar, command palette, account panel and search.',
+      category: categoryRef('help-getting-started'),
+      icon: 'compass',
+      tags: ['ui', 'navigation'],
+      featured: true,
+      status: 'published',
+      order: 1,
+      publishedAt: new Date('2026-03-02'),
+    },
+    {
+      slug: 'sync-email-and-calendar',
+      title: 'Introduction to email sync',
+      summary: 'Sync emails and calendar events in minutes.',
+      content: '## Connect your inbox\n\nOxy can sync your existing email and calendar so the platform always has the latest context. This article covers the supported providers, OAuth flow, and how to manage permissions after you connect.',
+      category: categoryRef('help-getting-started'),
+      icon: 'mail',
+      tags: ['email', 'integrations'],
+      featured: true,
+      status: 'published',
+      order: 2,
+      publishedAt: new Date('2026-03-03'),
+    },
+    {
+      slug: 'manage-your-account',
+      title: 'Managing your account',
+      summary: 'Update your profile, change your password and manage devices.',
+      content: '## Account settings\n\nVisit the account panel to update your profile photo, change your password, manage active devices and review your security log.',
+      category: categoryRef('help-account'),
+      icon: 'user',
+      tags: ['account', 'profile'],
+      featured: false,
+      status: 'published',
+      order: 3,
+      publishedAt: new Date('2026-03-05'),
+    },
+    {
+      slug: 'understanding-billing',
+      title: 'Understanding billing',
+      summary: 'Review invoices, change plans and update payment methods.',
+      content: '## Billing\n\nThe billing section in your account shows every invoice, the plan you are on and your payment method. You can switch between monthly and annual billing at any time — pro-rated charges are applied automatically.',
+      category: categoryRef('help-billing'),
+      icon: 'credit-card',
+      tags: ['billing', 'invoices'],
+      featured: false,
+      status: 'published',
+      order: 4,
+      publishedAt: new Date('2026-03-08'),
+    },
+    {
+      slug: 'using-the-api',
+      title: 'Using the Oxy API',
+      summary: 'Authenticate, make your first request and explore the reference.',
+      content: '## API basics\n\nThe Oxy API is REST-based with JSON request and response bodies. You authenticate with a personal access token and call any endpoint over HTTPS — see the [developer docs](/developers/docs) for the full reference.',
+      category: categoryRef('help-developer'),
+      icon: 'code',
+      tags: ['api', 'developer'],
+      featured: false,
+      status: 'published',
+      order: 5,
+      publishedAt: new Date('2026-03-10'),
+    },
+  ])
+  console.log('Seeded help articles')
 
   console.log('\nSeed complete! All collections reset with original data.')
   await mongoose.disconnect()

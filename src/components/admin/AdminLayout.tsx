@@ -42,6 +42,7 @@ import {
   UserPlus,
   GraduationCap,
   Library,
+  LifeBuoy,
 } from 'lucide-react'
 
 export { ADMIN_USERNAMES } from '../../constants'
@@ -64,6 +65,7 @@ const sections: AdminSection[] = [
   { id: 'newsroom', label: 'Newsroom', icon: <PenSquare className="size-4" />, group: 'Content' },
   { id: 'courses', label: 'Courses', icon: <GraduationCap className="size-4" />, group: 'Content' },
   { id: 'resources', label: 'Resources', icon: <Library className="size-4" />, group: 'Content' },
+  { id: 'help', label: 'Help Center', icon: <LifeBuoy className="size-4" />, group: 'Content' },
   { id: 'pricing', label: 'Pricing', icon: <Tag className="size-4" />, group: 'Content' },
   { id: 'testimonials', label: 'Testimonials', icon: <Quote className="size-4" />, group: 'Content' },
   { id: 'changelog', label: 'Changelog', icon: <Clock className="size-4" />, group: 'Content' },

@@ -17,6 +17,7 @@ import categoriesRouter from './routes/categories.js'
 import newsroomRouter from './routes/newsroom.js'
 import coursesRouter from './routes/courses.js'
 import resourcesRouter from './routes/resources.js'
+import helpRouter from './routes/help.js'
 import pricingRouter from './routes/pricing.js'
 import testimonialsRouter from './routes/testimonials.js'
 import changelogRouter from './routes/changelog.js'
@@ -62,6 +63,7 @@ app.use('/api/categories', categoriesRouter)
 app.use('/api/newsroom', newsroomRouter)
 app.use('/api/courses', coursesRouter)
 app.use('/api/resources', resourcesRouter)
+app.use('/api/help', helpRouter)
 app.use('/api/pricing', pricingRouter)
 app.use('/api/testimonials', testimonialsRouter)
 app.use('/api/changelog', changelogRouter)

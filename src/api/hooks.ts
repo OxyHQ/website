@@ -602,6 +602,91 @@ export function resolveResourceCategoryLabel(resource: Pick<ResourceRecord, 'cat
   return ''
 }
 
+// ── Help Center: Articles ──
+export type HelpArticleStatus = 'draft' | 'published'
+
+export interface HelpArticleRecord {
+  _id?: string
+  slug: string
+  title: string
+  summary: string
+  content: string
+  category?: string | CourseCategoryRef | null
+  icon?: string
+  coverImage?: string | CourseCoverRef | null
+  tags: string[]
+  featured: boolean
+  status: HelpArticleStatus
+  publishedAt: string
+  order: number
+  createdAt?: string
+  updatedAt?: string
+}
+
+interface HelpArticlesListResponse {
+  articles: HelpArticleRecord[]
+  total: number
+  page: number
+  pages: number
+}
+
+function normalizeHelpArticle(article: HelpArticleRecord): HelpArticleRecord {
+  return {
+    ...article,
+    coverImage: resolveMediaUrl(article.coverImage, 'lg'),
+  }
+}
+
+export interface UseHelpArticlesOptions {
+  category?: string
+  tag?: string
+  featured?: boolean
+  status?: HelpArticleStatus
+  limit?: number
+  page?: number
+}
+
+export function useHelpArticles(options: UseHelpArticlesOptions = {}) {
+  const locale = useCurrentLocale()
+  const qs = new URLSearchParams()
+  if (options.category) qs.set('category', options.category)
+  if (options.tag) qs.set('tag', options.tag)
+  if (options.featured) qs.set('featured', 'true')
+  if (options.status) qs.set('status', options.status)
+  if (options.limit) qs.set('limit', String(options.limit))
+  if (options.page) qs.set('page', String(options.page))
+  const query = qs.toString()
+  return useQuery({
+    queryKey: ['help-articles', options, locale],
+    queryFn: () => apiFetch<HelpArticlesListResponse>(`/help${query ? `?${query}` : ''}`, { locale }),
+    select: (data) => ({ ...data, articles: data.articles.map(normalizeHelpArticle) }),
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useHelpArticle(slug: string) {
+  const locale = useCurrentLocale()
+  return useQuery({
+    queryKey: ['help-article', slug, locale],
+    queryFn: () => apiFetch<HelpArticleRecord>(`/help/${slug}`, { locale }),
+    select: normalizeHelpArticle,
+    enabled: !!slug,
+  })
+}
+
+export function resolveHelpArticleCategoryId(article: Pick<HelpArticleRecord, 'category'>): string {
+  const cat = article.category
+  if (!cat) return ''
+  if (typeof cat === 'string') return cat
+  return cat._id ?? ''
+}
+
+export function resolveHelpArticleCategoryLabel(article: Pick<HelpArticleRecord, 'category'>): string {
+  const cat = article.category
+  if (cat && typeof cat === 'object' && cat.label) return cat.label
+  return ''
+}
+
 // ── Pricing ──
 export function usePricing() {
   const locale = useCurrentLocale()
@@ -1142,6 +1227,18 @@ export interface PublicReferral {
   customLandingUrl: string | null
 }
 
+/**
+ * Dashboard-safe view returned by GET /api/referrals/:code/dashboard.
+ * Adds counters and commission so a referrer who knows their code can
+ * see their stats. Email and admin notes are still hidden.
+ */
+export interface ReferralDashboard extends PublicReferral {
+  clicks: number
+  signups: number
+  commissionPercent: number | null
+  oxyUserId: string | null
+}
+
 export function useReferrals(type?: ReferralType) {
   const qs = type ? `?type=${type}` : ''
   return useQuery<ReferralRecord[]>({
@@ -1158,6 +1255,17 @@ export function useReferral(code: string) {
     enabled: !!code,
     retry: false,
     staleTime: 5 * 60_000,
+  })
+}
+
+export function useReferralDashboard(code: string) {
+  return useQuery<ReferralDashboard>({
+    queryKey: ['referral', code, 'dashboard'],
+    queryFn: () => apiFetch<ReferralDashboard>(`/referrals/${encodeURIComponent(code)}/dashboard`),
+    enabled: !!code,
+    retry: false,
+    staleTime: 30_000,
+    refetchInterval: 60_000,
   })
 }
 

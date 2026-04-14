@@ -53,6 +53,27 @@ router.get('/:code', async (req, res) => {
   })
 })
 
+// ── Dashboard view ─────────────────────────────────────────────────────────
+// Returns the same public fields plus clicks / signups / commissionPercent.
+// The referral code itself is the soft secret — anyone holding it can see
+// these counters. Email and admin notes stay hidden.
+router.get('/:code/dashboard', async (req, res) => {
+  const doc = await Referral.findOne({ code: req.params.code })
+  if (!doc) return res.status(404).json({ error: 'Not found' })
+  if (doc.status !== 'active') return res.status(404).json({ error: 'Not found' })
+  res.json({
+    code: doc.code,
+    name: doc.name,
+    type: doc.type,
+    status: doc.status,
+    customLandingUrl: doc.customLandingUrl ?? null,
+    clicks: doc.clicks,
+    signups: doc.signups,
+    commissionPercent: doc.commissionPercent ?? null,
+    oxyUserId: doc.oxyUserId ?? null,
+  })
+})
+
 // ── Admin: create ───────────────────────────────────────────────────────────
 router.post('/', requireAuth, adminOnly, async (req, res) => {
   const body = validate(referralBodySchema, req.body)

@@ -24,9 +24,11 @@ import TrackedRepo from './models/TrackedRepo.js'
 import { TeamMember } from './models/TeamMember.js'
 import { Media } from './models/Media.js'
 import { Product } from './models/Product.js'
+import { Category } from './models/Category.js'
 import { Referral } from './models/Referral.js'
 import { Course } from './models/Course.js'
 import { Resource } from './models/Resource.js'
+import { HelpArticle } from './models/HelpArticle.js'
 import { syncAllRepos, syncSingleRepo } from './services/githubSync.js'
 import { deleteFromSpaces, uploadToSpaces } from './services/s3.js'
 import { processImage } from './services/thumbnails.js'
@@ -877,7 +879,7 @@ server.tool('delete_locale', 'Delete a locale and all its translations. Cannot d
 
 // ── Translations ────────────────────────────────────────────────────────────
 
-const TRANSLATABLE_COLLECTIONS = ['navigation', 'footer', 'pricing', 'testimonials', 'settings', 'pages', 'newsroom', 'jobs', 'hero', 'products', 'categories', 'team', 'changelog', 'courses', 'resources']
+const TRANSLATABLE_COLLECTIONS = ['navigation', 'footer', 'pricing', 'testimonials', 'settings', 'pages', 'newsroom', 'jobs', 'hero', 'products', 'categories', 'team', 'changelog', 'courses', 'resources', 'help']
 
 server.tool('list_translation_collections', 'List all collections that support translations.', {}, async () => {
   return ok(TRANSLATABLE_COLLECTIONS)
@@ -1148,6 +1150,69 @@ server.tool('get_post_with_media', 'Get a newsroom post with its cover image and
     const post = await NewsroomPost.findOne({ slug }).populate('coverImage ogImage')
     if (!post) return err('Post not found')
     return ok(post)
+  } catch (e) { return err(e) }
+})
+
+// ── Categories ────────────────────────────────────────────────────────────
+
+const categoryRawShape = {
+  slug: z.string().describe('URL-safe stable id (e.g. "social-communication"). Lower-case, dashes only.'),
+  label: z.string().describe('Human label shown on /products, /status, navbar, etc.'),
+  description: z.string().optional().describe('Optional long description'),
+  scope: z.enum(['apps', 'nav', 'generic']).optional().describe('Where this category is allowed to be used. "apps" for product/status grouping, "nav" for navbar dropdown headings, "generic" for shared use.'),
+  order: z.number().optional().describe('Sort order within the scope. Lower comes first.'),
+}
+
+server.tool('list_categories', 'List all categories. Optionally filter by scope.', {
+  scope: z.enum(['apps', 'nav', 'generic']).optional().describe('Filter to one scope'),
+}, async ({ scope }) => {
+  try {
+    const filter = scope ? { scope } : {}
+    const categories = await Category.find(filter).sort({ order: 1, label: 1 })
+    return ok(categories)
+  } catch (e) { return err(e) }
+})
+
+server.tool('get_category', 'Get a single category by slug.', {
+  slug: z.string().describe('Category slug'),
+}, async ({ slug }) => {
+  try {
+    const doc = await Category.findOne({ slug })
+    if (!doc) return err('Category not found')
+    return ok(doc)
+  } catch (e) { return err(e) }
+})
+
+server.tool('create_category', 'Create a new category. Categories are reusable grouping labels referenced by products, navbar dropdowns, etc.', categoryRawShape, async (input) => {
+  try {
+    const existing = await Category.findOne({ slug: input.slug })
+    if (existing) return err(`Category "${input.slug}" already exists`)
+    const doc = await Category.create(input)
+    return ok(doc)
+  } catch (e) { return err(e) }
+})
+
+server.tool('update_category', 'Update an existing category. Only the fields you provide are changed. The slug cannot be changed after creation.', {
+  slug: z.string().describe('Slug of the category to update'),
+  label: z.string().optional(),
+  description: z.string().optional(),
+  scope: z.enum(['apps', 'nav', 'generic']).optional(),
+  order: z.number().optional(),
+}, async ({ slug, ...patch }) => {
+  try {
+    const doc = await Category.findOneAndUpdate({ slug }, patch, { new: true })
+    if (!doc) return err('Category not found')
+    return ok(doc)
+  } catch (e) { return err(e) }
+})
+
+server.tool('delete_category', 'Permanently delete a category. Products or nav items still pointing at it will need to be re-assigned.', {
+  slug: z.string().describe('Slug of the category to delete'),
+}, async ({ slug }) => {
+  try {
+    const doc = await Category.findOneAndDelete({ slug })
+    if (!doc) return err('Category not found')
+    return ok({ deleted: true, slug })
   } catch (e) { return err(e) }
 })
 
@@ -1512,6 +1577,128 @@ server.tool('delete_resource', 'Permanently delete an Academy resource by slug. 
   try {
     const resource = await Resource.findOneAndDelete({ slug })
     if (!resource) return err('Resource not found')
+    return ok({ deleted: true, slug })
+  } catch (e) { return err(e) }
+})
+
+// ── Help Center: Articles ──────────────────────────────────────────────────
+
+server.tool('list_help_articles', 'List Help Center articles with optional filtering by category, tag, featured status, and publication status. Returns paginated results sorted by order asc then publishedAt desc.', {
+  category: z.string().optional().describe('Filter by Category _id (generic scope)'),
+  tag: z.string().optional().describe('Filter by tag'),
+  featured: z.boolean().optional().describe('Filter to only featured articles'),
+  status: z.enum(['draft', 'published']).optional().describe('Filter by publication status'),
+  limit: z.number().optional().describe('Results per page (default 20)'),
+  page: z.number().optional().describe('Page number (default 1)'),
+}, async (params) => {
+  try {
+    const filter: Record<string, unknown> = {}
+    if (params.category) filter.category = params.category
+    if (params.tag) filter.tags = params.tag
+    if (params.featured) filter.featured = true
+    if (params.status) filter.status = params.status
+
+    const limit = params.limit ?? 20
+    const page = params.page ?? 1
+    const skip = (page - 1) * limit
+
+    const [articles, total] = await Promise.all([
+      HelpArticle.find(filter)
+        .populate('coverImage')
+        .populate('category')
+        .sort({ order: 1, publishedAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      HelpArticle.countDocuments(filter),
+    ])
+    return ok({ articles, total, page, pages: Math.ceil(total / limit) })
+  } catch (e) { return err(e) }
+})
+
+server.tool('get_help_article', 'Get a single Help Center article by its URL slug, including populated cover image and category.', {
+  slug: z.string().describe('The URL slug of the help article'),
+}, async ({ slug }) => {
+  try {
+    const article = await HelpArticle.findOne({ slug }).populate('coverImage').populate('category')
+    if (!article) return err('Help article not found')
+    return ok(article)
+  } catch (e) { return err(e) }
+})
+
+server.tool('create_help_article', 'Create a new Help Center article. Auto-generates the slug from the title if none is provided.', {
+  title: z.string().describe('Article title'),
+  slug: z.string().optional().describe('URL slug. Auto-generated from title if omitted.'),
+  summary: z.string().optional().describe('Short summary shown on cards (1-2 sentences)'),
+  content: z.string().optional().describe('Full article body shown on the detail page (Markdown)'),
+  category: z.string().optional().describe('Category _id (generic scope)'),
+  icon: z.string().optional().describe('Optional lucide icon name (e.g. "rocket"). Stored as kebab-case.'),
+  coverImage: z.string().optional().describe('Media document ID for the cover image'),
+  tags: z.array(z.string()).optional().describe('Tags for filtering'),
+  featured: z.boolean().optional().describe('Surface on the Help Center "getting started" grid'),
+  status: z.enum(['draft', 'published']).optional().describe('Publication status. Defaults to published.'),
+  publishedAt: z.string().optional().describe('Publication date as ISO string'),
+  order: z.number().optional().describe('Display order (lower = first)'),
+}, async (params) => {
+  try {
+    let slug = params.slug || generateSlug(params.title)
+    const existing = await HelpArticle.findOne({ slug })
+    if (existing) slug = `${slug}-${Date.now().toString(36)}`
+    const { publishedAt, coverImage, category, ...rest } = params
+    const article = await HelpArticle.create({
+      ...rest,
+      slug,
+      coverImage: coverImage && coverImage.length > 0 ? new mongoose.Types.ObjectId(coverImage) : null,
+      category: category && category.length > 0 ? new mongoose.Types.ObjectId(category) : null,
+      publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
+    })
+    const populated = await HelpArticle.findById(article._id).populate('coverImage').populate('category')
+    return ok(populated)
+  } catch (e) { return err(e) }
+})
+
+server.tool('update_help_article', 'Update an existing Help Center article by slug. Only provided fields are changed.', {
+  slug: z.string().describe('Current slug of the article to update'),
+  newSlug: z.string().optional().describe('New slug to replace the current one. Must be unique.'),
+  title: z.string().optional(),
+  summary: z.string().optional(),
+  content: z.string().optional(),
+  category: z.string().optional().describe('Category _id. Pass empty string to clear.'),
+  icon: z.string().optional().describe('Lucide icon name. Pass empty string to clear.'),
+  coverImage: z.string().optional().describe('Media document ID. Pass empty string to clear.'),
+  tags: z.array(z.string()).optional(),
+  featured: z.boolean().optional(),
+  status: z.enum(['draft', 'published']).optional(),
+  publishedAt: z.string().optional(),
+  order: z.number().optional(),
+}, async ({ slug, newSlug, ...updates }) => {
+  try {
+    const patch: Record<string, unknown> = { ...updates }
+    if (newSlug) patch.slug = newSlug
+    if (updates.publishedAt) patch.publishedAt = new Date(updates.publishedAt)
+    if (updates.coverImage !== undefined) {
+      patch.coverImage = updates.coverImage && updates.coverImage.length > 0
+        ? new mongoose.Types.ObjectId(updates.coverImage)
+        : null
+    }
+    if (updates.category !== undefined) {
+      patch.category = updates.category && updates.category.length > 0
+        ? new mongoose.Types.ObjectId(updates.category)
+        : null
+    }
+    const article = await HelpArticle.findOneAndUpdate({ slug }, patch, { new: true })
+      .populate('coverImage')
+      .populate('category')
+    if (!article) return err('Help article not found')
+    return ok(article)
+  } catch (e) { return err(e) }
+})
+
+server.tool('delete_help_article', 'Permanently delete a Help Center article by slug. Cannot be undone.', {
+  slug: z.string().describe('The URL slug of the article to delete'),
+}, async ({ slug }) => {
+  try {
+    const article = await HelpArticle.findOneAndDelete({ slug })
+    if (!article) return err('Help article not found')
     return ok({ deleted: true, slug })
   } catch (e) { return err(e) }
 })

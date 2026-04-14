@@ -1,12 +1,61 @@
 import { Link } from 'react-router-dom'
+import * as LucideIcons from 'lucide-react'
 import {
-  helpCategories,
-  gettingStartedArticles,
-  sidebarSections,
-  popularSearches,
-} from '../../data/help'
+  useHelpArticles,
+  useCategories,
+  usePage,
+  resolveHelpArticleCategoryId,
+  type HelpArticleRecord,
+  type CategoryRecord,
+  type PageSection,
+} from '../../api/hooks'
 
-/* ─── SVG Icons ─── */
+/* ─── Copy fallbacks when /pages/help has not been populated ─── */
+
+const DEFAULT_HERO_BADGE = 'Help center'
+const DEFAULT_HERO_TITLE = 'How can we help?'
+const DEFAULT_HERO_SUBTITLE = 'Get answers to common questions on all things Oxy'
+const DEFAULT_GETTING_STARTED_HEADING = 'Get started'
+const DEFAULT_GETTING_STARTED_SUB_PRE = 'with '
+const DEFAULT_GETTING_STARTED_SUB_POST = 'Oxy 101.'
+const DEFAULT_GETTING_STARTED_LEAD = 'Everything you need to master the basics of Oxy.'
+
+const DEFAULT_POPULAR_SEARCHES = ['importing', 'billing', 'integrations']
+
+/* ─── Section helpers (mirror ProductsPage / AcademyPage) ─── */
+
+function sectionHeading(sections: PageSection[], type: string, fallback: string): string {
+  return sections.find(s => s.type === type)?.heading || fallback
+}
+
+function sectionSubheading(sections: PageSection[], type: string, fallback: string): string {
+  return sections.find(s => s.type === type)?.subheading || fallback
+}
+
+function sectionContent(sections: PageSection[], type: string, fallback: string): string {
+  return sections.find(s => s.type === type)?.content || fallback
+}
+
+function sectionItems(sections: PageSection[], type: string): Array<{ key: string; value: string; [extra: string]: unknown }> {
+  return sections.find(s => s.type === type)?.items ?? []
+}
+
+/* ─── Lucide icon lookup (icons stored in kebab-case) ─── */
+
+type LucideComponent = LucideIcons.LucideIcon
+const LUCIDE_INDEX = LucideIcons as unknown as Record<string, LucideComponent>
+
+function fromKebab(input: string): string {
+  return input.replace(/(^|-)([a-z])/g, (_, __, c: string) => c.toUpperCase())
+}
+
+function lucideIcon(name: string | undefined): LucideComponent | null {
+  if (!name) return null
+  const Icon = LUCIDE_INDEX[fromKebab(name)]
+  return typeof Icon === 'function' ? Icon : null
+}
+
+/* ─── SVG Icons (kept for the sidebar + hero search visuals) ─── */
 
 function SearchIcon({ className = '' }: { className?: string }) {
   return (
@@ -63,91 +112,57 @@ function ArrowRight() {
   )
 }
 
-/* Placeholder icons for categories */
-function AcademyIcon({ className = '' }: { className?: string }) {
-  return (
-    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" className={className}>
-      <rect width="44" height="44" rx="10" fill="var(--color-surface)" />
-      <path
-        d="M22 14l-10 5 10 5 10-5-10-5z"
-        stroke="var(--color-muted-foreground)"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M14 21v6l8 4 8-4v-6"
-        stroke="var(--color-muted-foreground)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
+/* ─── Card helpers ─── */
 
-function ReferenceIcon({ className = '' }: { className?: string }) {
-  return (
-    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" className={className}>
-      <rect width="44" height="44" rx="10" fill="var(--color-surface)" />
-      <path
-        d="M16 14h12a2 2 0 012 2v12a2 2 0 01-2 2H16a2 2 0 01-2-2V16a2 2 0 012-2z"
-        stroke="var(--color-muted-foreground)"
-        strokeWidth="1.5"
-      />
-      <path d="M18 19h8M18 22h8M18 25h5" stroke="var(--color-muted-foreground)" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function ApiIcon({ className = '' }: { className?: string }) {
-  return (
-    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" className={className}>
-      <rect width="44" height="44" rx="10" fill="var(--color-surface)" />
-      <path
-        d="M18 17l-4 5 4 5M26 17l4 5-4 5M23 15l-2 14"
-        stroke="var(--color-muted-foreground)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-/* Sidebar icon for section headers (smaller) */
-function SidebarSectionIcon({ icon }: { icon: string }) {
-  if (icon === 'academy') {
+function CategoryCardIcon({ name, className = '' }: { name?: string; className?: string }) {
+  const Icon = lucideIcon(name)
+  if (Icon) {
     return (
-      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" className="size-7.5">
-        <rect width="30" height="30" rx="7" fill="var(--color-surface)" />
-        <path d="M15 9l-7 3.5 7 3.5 7-3.5L15 9z" stroke="var(--color-muted-foreground)" strokeWidth="1.2" strokeLinejoin="round" />
-        <path d="M10 14v4l5 2.5 5-2.5v-4" stroke="var(--color-muted-foreground)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      <div className={`flex items-center justify-center rounded-[10px] border border-border bg-surface ${className}`}>
+        <Icon className="size-5 text-muted-foreground" aria-hidden="true" />
+      </div>
     )
   }
-  if (icon === 'reference') {
-    return (
-      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" className="size-7.5">
-        <rect width="30" height="30" rx="7" fill="var(--color-surface)" />
-        <path d="M10 9h10a1.5 1.5 0 011.5 1.5v9a1.5 1.5 0 01-1.5 1.5H10a1.5 1.5 0 01-1.5-1.5v-9A1.5 1.5 0 0110 9z" stroke="var(--color-muted-foreground)" strokeWidth="1.2" />
-        <path d="M12 13h6M12 15.5h6M12 18h4" stroke="var(--color-muted-foreground)" strokeWidth="1.2" strokeLinecap="round" />
-      </svg>
-    )
-  }
-  return null
+  return (
+    <div className={`flex items-center justify-center rounded-[10px] border border-border bg-surface ${className}`} aria-hidden="true">
+      <div className="size-2 rounded-full bg-muted-foreground" />
+    </div>
+  )
 }
 
-/* Card icon (larger) */
-function CardIcon({ icon, className = '' }: { icon: string; className?: string }) {
-  if (icon === 'academy') return <AcademyIcon className={className} />
-  if (icon === 'reference') return <ReferenceIcon className={className} />
-  if (icon === 'api') return <ApiIcon className={className} />
-  return null
+function ArticleNumber({ index }: { index: number }) {
+  return (
+    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground text-sm shadow-[0px_2px_4px_0px_rgba(28,40,64,0.04),0px_1px_2px_-1px_rgba(28,40,64,0.08)] transition-[border-color] group-hover:border-input">
+      {index + 1}
+    </div>
+  )
 }
 
 /* ─── Sidebar ─── */
 
-function HelpSidebar() {
+interface CategoryGroup {
+  category: CategoryRecord
+  articles: HelpArticleRecord[]
+}
+
+function buildCategoryGroups(categories: CategoryRecord[], articles: HelpArticleRecord[]): CategoryGroup[] {
+  const byCategory = new Map<string, HelpArticleRecord[]>()
+  for (const article of articles) {
+    const id = resolveHelpArticleCategoryId(article)
+    if (!id) continue
+    const list = byCategory.get(id) ?? []
+    list.push(article)
+    byCategory.set(id, list)
+  }
+  return categories
+    .map((category) => ({
+      category,
+      articles: byCategory.get(category._id ?? '') ?? [],
+    }))
+    .filter((group) => group.articles.length > 0)
+}
+
+function HelpSidebar({ groups }: { groups: CategoryGroup[] }) {
   return (
     <nav className="col-[1/6] border-border border-r max-xl:col-[1/7] max-lg:hidden">
       <div className="sticky top-[var(--site-header-height,56px)] flex h-[calc(100vh-var(--site-header-height,56px))] flex-col pt-10">
@@ -172,30 +187,30 @@ function HelpSidebar() {
         {/* Scrollable nav */}
         <div className="mask-t-from-[calc(100%-40px)] relative flex-1 overflow-y-scroll pt-10 pr-6 pb-8 [scrollbar-gutter:stable]">
           <div className="mb-5 flex flex-col gap-5 lg:mb-8 lg:gap-8">
-            {sidebarSections.map((section) => (
-              <div key={section.name}>
-                <a
+            {groups.map(({ category, articles }) => (
+              <div key={category.slug}>
+                <Link
                   className="flex items-center gap-[7px] rounded-[10px] py-px pl-px hover:bg-surface/80"
-                  href={`/help/${section.name.toLowerCase()}`}
+                  to={`/help#${category.slug}`}
                 >
-                  <SidebarSectionIcon icon={section.icon} />
-                  <div className="font-semibold text-xs uppercase">{section.name}</div>
-                </a>
+                  <CategoryCardIcon name={category.slug} className="size-7.5" />
+                  <div className="font-semibold text-xs uppercase">{category.label}</div>
+                </Link>
                 <div className="mt-1 flex flex-col lg:gap-0.5">
-                  {section.items.map((item) => (
-                    <div key={item.label} className="group relative w-full">
+                  {articles.map((article) => (
+                    <div key={article.slug} className="group relative w-full">
                       <button
                         className="absolute top-0 left-0 cursor-pointer self-start rounded-[10px] p-2.5 ring-inset transition-[background-color] hover:bg-surface group-hover:bg-surface"
                         type="button"
                       >
                         <ChevronRight />
                       </button>
-                      <a
+                      <Link
                         className="inline-block w-full rounded-[10px] p-1.5 pr-2.5 pl-[38px] text-left text-muted-foreground text-sm hover:bg-surface"
-                        href={item.href}
+                        to={`/help/${article.slug}`}
                       >
-                        {item.label}
-                      </a>
+                        {article.title}
+                      </Link>
                     </div>
                   ))}
                 </div>
@@ -210,16 +225,47 @@ function HelpSidebar() {
 
 /* ─── Main Content ─── */
 
-function HelpContent() {
+interface HelpContentProps {
+  heroBadge: string
+  heroTitle: string
+  heroSubtitle: string
+  popularSearches: string[]
+  categories: CategoryRecord[]
+  featuredArticles: HelpArticleRecord[]
+  gettingStartedHeading: string
+  gettingStartedSubPre: string
+  gettingStartedSubPost: string
+  gettingStartedLead: string
+  articleCountByCategoryId: Map<string, number>
+}
+
+function HelpContent({
+  heroBadge,
+  heroTitle,
+  heroSubtitle,
+  popularSearches,
+  categories,
+  featuredArticles,
+  gettingStartedHeading,
+  gettingStartedSubPre,
+  gettingStartedSubPost,
+  gettingStartedLead,
+  articleCountByCategoryId,
+}: HelpContentProps) {
   return (
     <div className="col-[7/-1] pt-10 pb-20 max-lg:col-[1/-1] max-xl:col-[8/-1]">
       <section className="grid w-full grid-cols-18">
         <div className="col-[2/-3] flex flex-col items-center pt-19 pb-10 max-lg:col-[1/-1] max-lg:pt-10">
           {/* Hero */}
           <div className="flex flex-col items-center text-center">
-            <h1 className="mt-6 text-heading-lg">How can we help?</h1>
+            {heroBadge && (
+              <div className="inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground">
+                {heroBadge}
+              </div>
+            )}
+            <h1 className="mt-6 text-heading-lg">{heroTitle}</h1>
             <div className="mt-4 max-w-[20em] text-pretty text-foreground text-xl">
-              Get answers to common questions on all things Oxy
+              {heroSubtitle}
             </div>
           </div>
 
@@ -241,40 +287,49 @@ function HelpContent() {
             </button>
 
             {/* Popular searches */}
-            <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-2 text-muted-foreground mt-4 md:mt-5">
-              <p className="shrink-0 text-muted-foreground text-sm">Popular searches:</p>
-              <ul className="flex gap-1.5 text-xs">
-                {popularSearches.map((s) => (
-                  <li key={s}>
-                    <button className="relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default gap-x-1.5 rounded-[10px] px-2.5 text-xs button-outline !bg-surface hover:!bg-surface !text-muted-foreground h-7">
-                      {s}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {popularSearches.length > 0 && (
+              <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-2 text-muted-foreground mt-4 md:mt-5">
+                <p className="shrink-0 text-muted-foreground text-sm">Popular searches:</p>
+                <ul className="flex gap-1.5 text-xs">
+                  {popularSearches.map((s) => (
+                    <li key={s}>
+                      <button className="relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default gap-x-1.5 rounded-[10px] px-2.5 text-xs button-outline !bg-surface hover:!bg-surface !text-muted-foreground h-7">
+                        {s}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
-          {/* 3 Resource cards */}
-          <div className="mt-25 grid w-full grid-cols-3 gap-5 max-lg:grid-cols-1 max-lg:gap-4 max-md:mt-15">
-            {helpCategories.map((cat) => (
-              <Link
-                key={cat.name}
-                className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-border p-6 pt-5.5 transition-colors duration-400 ease-in-out hover:border-input hover:duration-150 active:border-input active:duration-50 size-full"
-                to={cat.href}
-              >
-                <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
-                <div className="relative flex items-center justify-between">
-                  <CardIcon icon={cat.icon} className="relative size-11 max-lg:size-10" />
-                  <ArrowRight />
-                </div>
-                <div className="relative flex flex-col gap-1">
-                  <h3 className="font-semibold text-foreground">{cat.name}</h3>
-                  <p className="text-balance text-sm text-muted-foreground">{cat.description}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {/* Category cards */}
+          {categories.length > 0 && (
+            <div className="mt-25 grid w-full grid-cols-3 gap-5 max-lg:grid-cols-1 max-lg:gap-4 max-md:mt-15">
+              {categories.slice(0, 3).map((category) => {
+                const count = articleCountByCategoryId.get(category._id ?? '') ?? 0
+                return (
+                  <Link
+                    key={category.slug}
+                    className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-border p-6 pt-5.5 transition-colors duration-400 ease-in-out hover:border-input hover:duration-150 active:border-input active:duration-50 size-full"
+                    to={`/help#${category.slug}`}
+                  >
+                    <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
+                    <div className="relative flex items-center justify-between">
+                      <CategoryCardIcon name={category.slug} className="relative size-11 max-lg:size-10" />
+                      <ArrowRight />
+                    </div>
+                    <div className="relative flex flex-col gap-1">
+                      <h3 className="font-semibold text-foreground">{category.label}</h3>
+                      <p className="text-balance text-sm text-muted-foreground">
+                        {category.description || `${count} ${count === 1 ? 'article' : 'articles'}`}
+                      </p>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
 
           {/* Divider */}
           <svg width="100%" height="1" className="text-border my-15 md:my-25">
@@ -286,43 +341,46 @@ function HelpContent() {
             <div className="w-full xl:max-w-96">
               <div>
                 <h2 className="text-heading-md">
-                  <span>Get started </span>
-                  <span className="text-muted-foreground">with </span>
+                  <span>{gettingStartedHeading} </span>
+                  <span className="text-muted-foreground">{gettingStartedSubPre}</span>
                   <br />
-                  <span className="text-muted-foreground">Oxy 101.</span>
+                  <span className="text-muted-foreground">{gettingStartedSubPost}</span>
                 </h2>
               </div>
-              <p className="mt-3 text-muted-foreground">
-                Everything you need to master the basics of Oxy.
-              </p>
+              <p className="mt-3 text-muted-foreground">{gettingStartedLead}</p>
             </div>
             <div>
               <ul>
-                {gettingStartedArticles.map((article, i) => (
+                {featuredArticles.map((article, i) => (
                   <li
-                    key={article.title}
+                    key={article.slug}
                     className="border-border border-b pt-8 pb-[31px] first-of-type:pt-0"
                   >
-                    <a className="group -m-2 flex gap-x-8 rounded-xl p-2" href={article.href}>
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground text-sm shadow-[0px_2px_4px_0px_rgba(28,40,64,0.04),0px_1px_2px_-1px_rgba(28,40,64,0.08)] transition-[border-color] group-hover:border-input">
-                        {i + 1}
-                      </div>
+                    <Link className="group -m-2 flex gap-x-8 rounded-xl p-2" to={`/help/${article.slug}`}>
+                      <ArticleNumber index={i} />
                       <div>
                         <p className="text-balance font-semibold">{article.title}</p>
                         <p className="mt-0.5 line-clamp-2 text-balance text-muted-foreground transition-[color] group-hover:text-foreground">
-                          {article.description}
+                          {article.summary}
                         </p>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                 ))}
+                {featuredArticles.length === 0 && (
+                  <li className="border-border border-b pt-8 pb-[31px] first-of-type:pt-0">
+                    <p className="text-balance text-muted-foreground">
+                      No featured articles yet. Add one in the admin to populate this list.
+                    </p>
+                  </li>
+                )}
               </ul>
-              <a
+              <Link
                 className="-m-px mt-7 inline-block rounded-sm p-px text-muted-foreground transition-[color] hover:text-foreground active:text-muted-foreground"
-                href="#"
+                to="/help"
               >
                 See all articles...
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -334,11 +392,55 @@ function HelpContent() {
 /* ─── Page Export ─── */
 
 export default function HelpPageContent() {
+  const { data: pageData } = usePage('help')
+  const { data: categoriesData } = useCategories('generic')
+  const { data: articlesData } = useHelpArticles({ limit: 100 })
+  const { data: featuredData } = useHelpArticles({ featured: true, limit: 6 })
+
+  const sections = pageData?.sections ?? []
+  const heroBadge = sectionContent(sections, 'hero', DEFAULT_HERO_BADGE)
+  const heroTitle = sectionHeading(sections, 'hero', DEFAULT_HERO_TITLE)
+  const heroSubtitle = sectionSubheading(sections, 'hero', DEFAULT_HERO_SUBTITLE)
+  const gettingStartedHeading = sectionHeading(sections, 'getting-started', DEFAULT_GETTING_STARTED_HEADING)
+  const gettingStartedSubPre = sectionSubheading(sections, 'getting-started', DEFAULT_GETTING_STARTED_SUB_PRE)
+  const gettingStartedSubPost = sectionContent(sections, 'getting-started', DEFAULT_GETTING_STARTED_SUB_POST)
+  const gettingStartedLead = sectionContent(sections, 'getting-started-lead', DEFAULT_GETTING_STARTED_LEAD)
+
+  const popularSearchItems = sectionItems(sections, 'popular-searches')
+  const popularSearches = popularSearchItems.length > 0
+    ? popularSearchItems.map(item => item.value || item.key).filter(Boolean)
+    : DEFAULT_POPULAR_SEARCHES
+
+  const categories = categoriesData ?? []
+  const articles = articlesData?.articles ?? []
+  const featuredArticles = featuredData?.articles ?? []
+
+  const articleCountByCategoryId = new Map<string, number>()
+  for (const article of articles) {
+    const id = resolveHelpArticleCategoryId(article)
+    if (!id) continue
+    articleCountByCategoryId.set(id, (articleCountByCategoryId.get(id) ?? 0) + 1)
+  }
+
+  const sidebarGroups = buildCategoryGroups(categories, articles)
+
   return (
     <div className="container">
       <div className="grid grid-cols-24">
-        <HelpSidebar />
-        <HelpContent />
+        <HelpSidebar groups={sidebarGroups} />
+        <HelpContent
+          heroBadge={heroBadge}
+          heroTitle={heroTitle}
+          heroSubtitle={heroSubtitle}
+          popularSearches={popularSearches}
+          categories={categories}
+          featuredArticles={featuredArticles}
+          gettingStartedHeading={gettingStartedHeading}
+          gettingStartedSubPre={gettingStartedSubPre}
+          gettingStartedSubPost={gettingStartedSubPost}
+          gettingStartedLead={gettingStartedLead}
+          articleCountByCategoryId={articleCountByCategoryId}
+        />
       </div>
     </div>
   )

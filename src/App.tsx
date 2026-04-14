@@ -35,6 +35,7 @@ const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const InitiativePage = lazy(() => import('./pages/InitiativePage'))
 const AIPricingPage = lazy(() => import('./pages/AIPricingPage'))
 const HelpPage = lazy(() => import('./pages/HelpPage'))
+const HelpArticlePage = lazy(() => import('./pages/HelpArticlePage'))
 const ChangelogPage = lazy(() => import('./pages/ChangelogPage'))
 const DocsPage = lazy(() => import('./pages/DocsPage'))
 const DocsIntroPage = lazy(() => import('./pages/DocsIntroPage'))
@@ -52,6 +53,7 @@ const BusinessPage = lazy(() => import('./pages/BusinessPage'))
 const ProductsPage = lazy(() => import('./pages/ProductsPage'))
 const StatusPage = lazy(() => import('./pages/StatusPage'))
 const ReferralsPage = lazy(() => import('./pages/ReferralsPage'))
+const ReferralsDashboardPage = lazy(() => import('./pages/ReferralsDashboardPage'))
 
 const OXY_API = 'https://api.oxy.so'
 
@@ -106,6 +108,7 @@ function PublicRoutes() {
       <Route index element={<HomePage />} />
       <Route path="partners" element={<PartnersPage />} />
       <Route path="referrals" element={<ReferralsPage />} />
+      <Route path="referrals/dashboard" element={<ReferralsDashboardPage />} />
       <Route path="products" element={<ProductsPage />} />
       <Route path="status" element={<StatusPage />} />
       <Route path="company" element={<CompanyPage />} />
@@ -121,6 +124,7 @@ function PublicRoutes() {
       <Route path="academy" element={<AcademyPage />} />
       <Route path="academy/:slug" element={<CourseDetailPage />} />
       <Route path="help" element={<HelpPage />} />
+      <Route path="help/:slug" element={<HelpArticlePage />} />
       <Route path="changelog" element={<ChangelogPage />} />
       <Route path="developers/docs" element={<DocsIntroPage />} />
       <Route path="developers/docs/overview" element={<DocsPage />} />

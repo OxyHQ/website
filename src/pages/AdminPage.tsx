@@ -11,6 +11,7 @@ import CategoriesAdmin from '../components/admin/sections/CategoriesAdmin'
 import NewsroomAdmin from '../components/admin/sections/NewsroomAdmin'
 import CoursesAdmin from '../components/admin/sections/CoursesAdmin'
 import ResourcesAdmin from '../components/admin/sections/ResourcesAdmin'
+import HelpAdmin from '../components/admin/sections/HelpAdmin'
 import PricingAdmin from '../components/admin/sections/PricingAdmin'
 import TestimonialsAdmin from '../components/admin/sections/TestimonialsAdmin'
 import ChangelogAdmin from '../components/admin/sections/ChangelogAdmin'
@@ -47,6 +48,7 @@ export default function AdminPage() {
       <Route path="newsroom" element={<AdminLayout><NewsroomAdmin /></AdminLayout>} />
       <Route path="courses" element={<AdminLayout><CoursesAdmin /></AdminLayout>} />
       <Route path="resources" element={<AdminLayout><ResourcesAdmin /></AdminLayout>} />
+      <Route path="help" element={<AdminLayout><HelpAdmin /></AdminLayout>} />
       <Route path="pricing" element={<AdminLayout><PricingAdmin /></AdminLayout>} />
       <Route path="testimonials" element={<AdminLayout><TestimonialsAdmin /></AdminLayout>} />
       <Route path="changelog" element={<AdminLayout><ChangelogAdmin /></AdminLayout>} />

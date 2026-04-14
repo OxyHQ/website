@@ -63,7 +63,7 @@ const DEFAULT_PROGRAMS: ProgramCard[] = [
     title: 'Just share',
     description: 'Grab a personal share link in seconds. No application, no paperwork — just a way to send Oxy to a friend and get credit for the assist.',
     cta: 'Get a share link',
-    ctaHref: '/dashboard',
+    ctaHref: '/referrals/dashboard',
   },
 ]
 
@@ -429,7 +429,7 @@ export default function ReferralsPage() {
                   <Button variant="primary" size="md" responsive href="/partners">
                     Visit the partners page
                   </Button>
-                  <Button variant="outline" size="md" responsive href="/dashboard">
+                  <Button variant="outline" size="md" responsive href="/referrals/dashboard">
                     Get a share link
                   </Button>
                 </div>
