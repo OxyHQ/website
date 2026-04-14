@@ -4,8 +4,14 @@ import type { ComponentType, SVGProps } from 'react'
 
 function resolveImageUrl(image: NavDropdownItemType['image']): string {
   if (!image) return ''
-  if (typeof image === 'string') return image.startsWith('http') || image.startsWith('/') ? image : ''
-  return image.thumbnails?.md || image.thumbnails?.lg || image.url || ''
+  if (typeof image === 'string') {
+    return image.startsWith('http') || image.startsWith('/') ? image : ''
+  }
+  if (image.url) return image.url
+  if (image.thumbnails?.lg) return image.thumbnails.lg
+  if (image.thumbnails?.md) return image.thumbnails.md
+  if (image.thumbnails?.sm) return image.thumbnails.sm
+  return ''
 }
 
 // Import all nav icons as React components (inline SVG)
@@ -67,11 +73,9 @@ function ItemIcon({ item }: { item: NavDropdownItemType }) {
         <img
           src={imageUrl}
           alt=""
-          width={40}
-          height={40}
           loading="lazy"
           decoding="async"
-          className="isolate size-10 object-contain"
+          className="relative z-10 h-full w-full object-contain p-1"
         />
       ) : IconComponent ? (
         <IconComponent className="nav-icon isolate size-10 text-muted-foreground" />
