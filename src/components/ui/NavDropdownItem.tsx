@@ -57,8 +57,8 @@ function ItemIcon({ item }: { item: NavDropdownItemType }) {
 
   return (
     <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-[13px] border border-border md:rounded-none md:border-0">
-      {showGrid && !hasImage && (
-        <svg width="40" height="40" fill="none" className="absolute inset-0">
+      {showGrid && (
+        <svg width="40" height="40" fill="none" className="absolute inset-0 z-0">
           <g
             className="transition-colors duration-150 ease-out stroke-border/40 group-hover:stroke-border/70 dark:stroke-muted/40 dark:group-hover:stroke-muted/70"
             strokeWidth=".7"
