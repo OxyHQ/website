@@ -1167,6 +1167,12 @@ async function validateToken(token: string): Promise<boolean> {
 export function mountMcp(app: express.Express) {
   const transports = new Map<string, StreamableHTTPServerTransport>()
 
+  const isInitializeRequest = (body: unknown): boolean => {
+    if (!body || typeof body !== 'object') return false
+    const b = body as { method?: unknown }
+    return b.method === 'initialize'
+  }
+
   app.post('/mcp', async (req, res) => {
     const token = (req.query.token as string) || req.headers.authorization?.replace('Bearer ', '')
     if (!token || !(await validateToken(token))) {
@@ -1176,13 +1182,32 @@ export function mountMcp(app: express.Express) {
 
     const sessionId = req.headers['mcp-session-id'] as string | undefined
 
-    // Existing session
+    // Existing session — route to its live transport
     if (sessionId && transports.has(sessionId)) {
-      await transports.get(sessionId)!.handleRequest(req, res)
+      const transport = transports.get(sessionId)
+      if (transport) {
+        await transport.handleRequest(req, res)
+        return
+      }
+    }
+
+    // Stale session — the client is sending a non-initialize request with
+    // a session id we don't know about (server restart, transport GC, etc.).
+    // Respond with a JSON-RPC error so the client re-initializes instead of
+    // silently falling through to the new-session branch.
+    if (sessionId && !isInitializeRequest(req.body)) {
+      res.status(404).json({
+        jsonrpc: '2.0',
+        error: {
+          code: -32001,
+          message: 'Session not found. Re-initialize the MCP connection.',
+        },
+        id: (req.body as { id?: unknown })?.id ?? null,
+      })
       return
     }
 
-    // New session (initialize request)
+    // Fresh initialize request — spin up a new transport and register it
     const mcpServer = createMcpServer()
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID() })
     transport.onclose = () => {
@@ -1190,7 +1215,6 @@ export function mountMcp(app: express.Express) {
     }
     await mcpServer.connect(transport)
     await transport.handleRequest(req, res)
-    // Store after handleRequest so sessionId is set
     if (transport.sessionId) {
       transports.set(transport.sessionId, transport)
     }
@@ -1199,10 +1223,20 @@ export function mountMcp(app: express.Express) {
   app.get('/mcp', async (req, res) => {
     const sessionId = req.headers['mcp-session-id'] as string | undefined
     if (sessionId && transports.has(sessionId)) {
-      await transports.get(sessionId)!.handleRequest(req, res)
-      return
+      const transport = transports.get(sessionId)
+      if (transport) {
+        await transport.handleRequest(req, res)
+        return
+      }
     }
-    res.status(400).json({ error: 'No active session. Send initialize first via POST.' })
+    res.status(404).json({
+      jsonrpc: '2.0',
+      error: {
+        code: -32001,
+        message: 'Session not found. Re-initialize the MCP connection.',
+      },
+      id: null,
+    })
   })
 
   app.delete('/mcp', async (req, res) => {
