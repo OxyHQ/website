@@ -197,6 +197,28 @@ export function useHero() {
   })
 }
 
+// ── Categories ──
+export type CategoryScope = 'apps' | 'nav' | 'generic'
+
+export interface CategoryRecord {
+  _id?: string
+  slug: string
+  label: string
+  description?: string
+  scope: CategoryScope
+  order: number
+}
+
+export function useCategories(scope?: CategoryScope) {
+  const qs = scope ? `?scope=${scope}` : ''
+  return useQuery<CategoryRecord[]>({
+    queryKey: ['categories', scope ?? 'all'],
+    queryFn: () => apiFetch<CategoryRecord[]>(`/categories${qs}`),
+    staleTime: 5 * 60_000,
+    placeholderData: keepPreviousData,
+  })
+}
+
 // ── Products ──
 export type ProductLifecycle = 'live' | 'in-development'
 

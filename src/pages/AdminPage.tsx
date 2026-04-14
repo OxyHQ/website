@@ -7,6 +7,7 @@ import FooterAdmin from '../components/admin/sections/FooterAdmin'
 import HeroAdmin from '../components/admin/sections/HeroAdmin'
 import PagesAdmin from '../components/admin/sections/PagesAdmin'
 import ProductsAdmin from '../components/admin/sections/ProductsAdmin'
+import CategoriesAdmin from '../components/admin/sections/CategoriesAdmin'
 import NewsroomAdmin from '../components/admin/sections/NewsroomAdmin'
 import PricingAdmin from '../components/admin/sections/PricingAdmin'
 import TestimonialsAdmin from '../components/admin/sections/TestimonialsAdmin'
@@ -38,6 +39,7 @@ export default function AdminPage() {
       <Route path="hero" element={<AdminLayout><HeroAdmin /></AdminLayout>} />
       <Route path="pages" element={<AdminLayout><PagesAdmin /></AdminLayout>} />
       <Route path="products" element={<AdminLayout><ProductsAdmin /></AdminLayout>} />
+      <Route path="categories" element={<AdminLayout><CategoriesAdmin /></AdminLayout>} />
       <Route path="newsroom" element={<AdminLayout><NewsroomAdmin /></AdminLayout>} />
       <Route path="pricing" element={<AdminLayout><PricingAdmin /></AdminLayout>} />
       <Route path="testimonials" element={<AdminLayout><TestimonialsAdmin /></AdminLayout>} />
