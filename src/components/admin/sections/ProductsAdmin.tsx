@@ -89,6 +89,7 @@ function emptyProduct(): ProductRecord {
     showOnProducts: true,
     showOnStatus: true,
     showInNav: true,
+    navOpensApp: false,
     order: 0,
   }
 }
@@ -381,6 +382,22 @@ export default function ProductsAdmin() {
                   className="size-4 rounded border border-border"
                 />
                 <span className="text-sm">Navbar</span>
+              </label>
+            </div>
+            <div className="mt-4 border-t border-border pt-4">
+              <label className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  checked={editing.navOpensApp}
+                  onChange={(e) => setEditing({ ...editing, navOpensApp: e.target.checked })}
+                  className="mt-0.5 size-4 rounded border border-border"
+                />
+                <span className="text-sm">
+                  Navbar links straight to the app
+                  <span className="block text-xs text-muted-foreground">
+                    Off by default — the dropdown opens the local landing page (when set) so visitors stay on oxy.so first. Turn this on to skip the landing page and jump directly to the running app URL.
+                  </span>
+                </span>
               </label>
             </div>
           </div>

@@ -256,6 +256,7 @@ export interface ProductRecord {
   showOnProducts: boolean
   showOnStatus: boolean
   showInNav: boolean
+  navOpensApp: boolean
   order: number
 }
 

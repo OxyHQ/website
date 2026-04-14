@@ -35,6 +35,9 @@ export interface IProduct extends Document {
   showOnStatus: boolean
   /** Show in the ecosystem navbar dropdown. */
   showInNav: boolean
+  /** When true, the navbar dropdown links straight to `href` (the running app)
+   *  even if a `landingUrl` is set. Default: link to the local landing page. */
+  navOpensApp: boolean
   order: number
   createdAt: Date
   updatedAt: Date
@@ -60,6 +63,7 @@ const ProductSchema = new Schema<IProduct>({
   showOnProducts: { type: Boolean, default: true },
   showOnStatus: { type: Boolean, default: true },
   showInNav: { type: Boolean, default: true },
+  navOpensApp: { type: Boolean, default: false },
   order: { type: Number, default: 0 },
 }, { timestamps: true })
 

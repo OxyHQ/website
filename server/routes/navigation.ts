@@ -37,15 +37,19 @@ const navigationBodySchema = z.array(z.object({
 
 /**
  * Turn a Product from the CMS into a nav item with the same shape the
- * frontend already expects. landingUrl wins over href — the dropdown is a
- * browsing surface, not a deep link to the running service.
+ * frontend already expects. By default the dropdown links to the local
+ * landing page (oxy.so/<slug>) — admins opt into linking straight to the
+ * running app via the navOpensApp toggle.
  */
 function productToNavItem(product: IProduct, categoryLabel: string): Record<string, unknown> {
   const imageRef = (product as unknown as { logo?: unknown }).logo
+  const href = product.navOpensApp
+    ? product.href
+    : product.landingUrl || product.href
   return {
     title: product.name,
     description: product.tagline || product.description || '',
-    href: product.landingUrl || product.href,
+    href,
     image: imageRef ?? null,
     section: categoryLabel,
     showGrid: true,

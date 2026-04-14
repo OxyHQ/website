@@ -1169,6 +1169,7 @@ const productRawShape = {
   showOnProducts: z.boolean().optional().describe('Show this product on the /products page.'),
   showOnStatus: z.boolean().optional().describe('Include in /status health probes.'),
   showInNav: z.boolean().optional().describe('Expose in the ecosystem navbar dropdown.'),
+  navOpensApp: z.boolean().optional().describe('When true, the navbar dropdown links straight to `href` (the running app) even if a landingUrl is set. Default false.'),
   order: z.number().optional().describe('Sort order inside the section. Lower comes first.'),
 }
 
@@ -1227,6 +1228,7 @@ server.tool('update_product', 'Update an existing product. Only the fields you p
   showOnProducts: z.boolean().optional(),
   showOnStatus: z.boolean().optional(),
   showInNav: z.boolean().optional(),
+  navOpensApp: z.boolean().optional(),
   order: z.number().optional(),
 }, async ({ productId, ...patch }) => {
   try {

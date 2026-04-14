@@ -34,6 +34,7 @@ const productBodySchema = z.object({
   showOnProducts: z.boolean().optional().default(true),
   showOnStatus: z.boolean().optional().default(true),
   showInNav: z.boolean().optional().default(true),
+  navOpensApp: z.boolean().optional().default(false),
   order: z.number().optional().default(0),
 })
 
