@@ -23,6 +23,7 @@ import { Translation } from './models/Translation.js'
 import TrackedRepo from './models/TrackedRepo.js'
 import { TeamMember } from './models/TeamMember.js'
 import { Media } from './models/Media.js'
+import { Product } from './models/Product.js'
 import { syncAllRepos, syncSingleRepo } from './services/githubSync.js'
 import { deleteFromSpaces, uploadToSpaces } from './services/s3.js'
 import { processImage } from './services/thumbnails.js'
@@ -1144,6 +1145,83 @@ server.tool('get_post_with_media', 'Get a newsroom post with its cover image and
     const post = await NewsroomPost.findOne({ slug }).populate('coverImage ogImage')
     if (!post) return err('Post not found')
     return ok(post)
+  } catch (e) { return err(e) }
+})
+
+// ── Products ──────────────────────────────────────────────────────────────
+
+const productRawShape = {
+  productId: z.string().describe('Stable URL-safe id (e.g. "alia", "mention"). Used as the primary lookup key.'),
+  name: z.string().describe('Display name'),
+  tagline: z.string().optional().describe('Single-line tag shown above the title on each product card'),
+  description: z.string().optional().describe('Short body copy shown inside the card'),
+  href: z.string().describe('Destination URL. Internal paths start with "/"; external links start with "http"'),
+  external: z.boolean().optional().describe('True for off-site destinations (opens in a new tab, shows up-right arrow)'),
+  cta: z.string().optional().describe('CTA label (e.g. "Explore Alia", "Visit Mention")'),
+  brand: z.string().describe('Hex brand color for the card accent strip + icon mark (e.g. "#7c3aed")'),
+  brandForeground: z.string().optional().describe('Optional hex color for the icon mark text. Defaults to white.'),
+  mark: z.string().describe('Single letter used inside the brand square'),
+  category: z.enum(['live', 'in-development']).optional().describe('"live" for the shipped grid, "in-development" for the secondary section'),
+  order: z.number().optional().describe('Sort order inside the category. Lower comes first.'),
+}
+
+server.tool('list_products', 'List every product on the /products page, sorted by category then order.', {
+  category: z.enum(['live', 'in-development']).optional().describe('Filter to a single category'),
+}, async ({ category }) => {
+  try {
+    const query = category ? { category } : {}
+    const products = await Product.find(query).sort({ category: 1, order: 1 })
+    return ok(products)
+  } catch (e) { return err(e) }
+})
+
+server.tool('get_product', 'Get a single product by its productId.', {
+  productId: z.string().describe('Stable product id (e.g. "alia", "mention")'),
+}, async ({ productId }) => {
+  try {
+    const product = await Product.findOne({ productId })
+    if (!product) return err('Product not found')
+    return ok(product)
+  } catch (e) { return err(e) }
+})
+
+server.tool('create_product', 'Create a new product on the /products page.', productRawShape, async (input) => {
+  try {
+    const existing = await Product.findOne({ productId: input.productId })
+    if (existing) return err(`Product "${input.productId}" already exists`)
+    const product = await Product.create(input)
+    return ok(product)
+  } catch (e) { return err(e) }
+})
+
+server.tool('update_product', 'Update an existing product. Only the fields you provide are changed.', {
+  productId: z.string().describe('Stable product id to update'),
+  name: z.string().optional(),
+  tagline: z.string().optional(),
+  description: z.string().optional(),
+  href: z.string().optional(),
+  external: z.boolean().optional(),
+  cta: z.string().optional(),
+  brand: z.string().optional(),
+  brandForeground: z.string().optional(),
+  mark: z.string().optional(),
+  category: z.enum(['live', 'in-development']).optional(),
+  order: z.number().optional(),
+}, async ({ productId, ...patch }) => {
+  try {
+    const product = await Product.findOneAndUpdate({ productId }, patch, { new: true })
+    if (!product) return err('Product not found')
+    return ok(product)
+  } catch (e) { return err(e) }
+})
+
+server.tool('delete_product', 'Permanently delete a product. This action cannot be undone.', {
+  productId: z.string().describe('Stable product id to delete'),
+}, async ({ productId }) => {
+  try {
+    const doc = await Product.findOneAndDelete({ productId })
+    if (!doc) return err('Product not found')
+    return ok({ deleted: true, productId })
   } catch (e) { return err(e) }
 })
 

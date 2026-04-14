@@ -8,6 +8,7 @@ import mongoose from 'mongoose'
 import { config } from './config.js'
 import { Navigation } from './models/Navigation.js'
 import { Footer } from './models/Footer.js'
+import { Product } from './models/Product.js'
 import { HeroContent, DEFAULT_HERO_TITLE, DEFAULT_HERO_EYEBROW, DEFAULT_HERO_BG_WEBM, DEFAULT_HERO_BG_MP4, DEFAULT_HERO_POSTER, DEFAULT_CAROUSEL_SLOTS } from './models/HeroContent.js'
 import { PricingPlan } from './models/PricingPlan.js'
 import { Testimonial } from './models/Testimonial.js'
@@ -25,7 +26,7 @@ async function seed() {
   console.log('Connected to MongoDB')
 
   // ── Drop all collections (full reset) ──
-  const collections = [Navigation, Footer, HeroContent, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, TrackedRepo, TeamMember, Media]
+  const collections = [Navigation, Footer, HeroContent, Product, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, TrackedRepo, TeamMember, Media]
   await Promise.all(collections.map((m) => m.deleteMany({})))
   console.log('Cleared all collections')
 
@@ -223,6 +224,22 @@ async function seed() {
     copyright: 'Made with 💚 in the 🌎 by Oxy.',
   })
   console.log('Seeded footer')
+
+  // ── Products (/products page grid, CMS-backed) ──
+  await Product.insertMany([
+    { productId: 'alia', name: 'Alia AI', tagline: 'Intelligent assistant', description: 'Your private AI assistant on web, iOS and Android. Ask anything, get answers, automate work — without your data feeding a training set.', href: 'https://alia.onl/', external: true, cta: 'Open Alia', brand: '#7c3aed', mark: 'A', category: 'live', order: 0 },
+    { productId: 'mention', name: 'Mention', tagline: 'Open social network', description: 'A social network built on respect. No engagement-maxxing algorithms, no surveillance ads — just genuine connection on the open fediverse.', href: 'https://mention.earth/', external: true, cta: 'Visit Mention', brand: '#0ea5e9', mark: 'M', category: 'live', order: 1 },
+    { productId: 'inbox', name: 'Oxy Inbox', tagline: 'Unified messaging', description: 'All your email, chat and federated messages in one calm place. Smart triage surfaces what matters, end-to-end encrypted by default.', href: '/inbox', external: false, cta: 'Explore Inbox', brand: '#1e40af', mark: 'I', category: 'live', order: 2 },
+    { productId: 'codea', name: 'Codea', tagline: 'Open-source code editor', description: 'A professional AI code editor that runs in your browser, on your machine, or self-hosted. Write, review and ship — on your terms.', href: '/codea', external: false, cta: 'Explore Codea', brand: '#0f172a', mark: 'C', category: 'live', order: 3 },
+    { productId: 'oxy-ai', name: 'Oxy AI', tagline: 'Models, API and SDKs', description: 'Privacy-first AI for developers. Open models you can inspect, fine-tune and self-host — backed by a fast, multilingual API.', href: '/ai', external: false, cta: 'Explore Oxy AI', brand: '#dc2626', mark: 'O', category: 'live', order: 4 },
+    { productId: 'tnp', name: 'TNP', tagline: 'Alternative namespace', description: 'The Network Protocol — register names on .ox, .app, .com and more. DNS-only, system-wide, and fully under your control.', href: '/tnp', external: false, cta: 'Explore TNP', brand: '#10b981', mark: 'T', category: 'live', order: 5 },
+    { productId: 'oxyos', name: 'Oxy OS', tagline: 'Operating system', description: 'An operating system designed around privacy and user freedom. Your computer, your data — no telemetry, no tracking, no compromises.', href: '/os', external: false, cta: 'Explore Oxy OS', brand: '#f97316', mark: 'X', category: 'live', order: 6 },
+    { productId: 'faircoin', name: 'FairCoin', tagline: 'Currency that cares', description: 'Cryptocurrency built for sustainability, not speculation. Powering ethical commerce and local economies worldwide.', href: 'https://fair.coop/', external: true, cta: 'Visit FairCoin', brand: '#16a34a', mark: 'F', category: 'live', order: 7 },
+    { productId: 'homiio', name: 'Homiio', tagline: 'Affordable housing', description: 'Technology that makes affordable housing accessible. Connecting people with homes they can actually afford, neighbourhood by neighbourhood.', href: 'https://homiio.com/', external: true, cta: 'Visit Homiio', brand: '#e11d48', mark: 'H', category: 'live', order: 8 },
+    { productId: 'astro', name: 'Astro', tagline: 'AI browser', description: 'Browse the web with AI by your side. Astro gives you instant answers, smarter suggestions and help with tasks — privacy you control.', href: '/astro', external: false, cta: 'Explore Astro', brand: '#a855f7', mark: 'A', category: 'in-development', order: 0 },
+    { productId: 'codex-extension', name: 'Codex Extension', tagline: 'Codea, everywhere you code', description: 'Bring Codea\u2019s open-source AI assistant into the editor you already use. Reviews, refactors and completions — free to inspect, free to extend.', href: '/codea/extension', external: false, cta: 'Explore the extension', brand: '#475569', mark: 'E', category: 'in-development', order: 1 },
+  ])
+  console.log('Seeded products')
 
   // ── Hero (homepage hero singleton) ──
   await HeroContent.create({

@@ -4,176 +4,22 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
+import { useProducts, type ProductRecord } from '../api/hooks'
 
 /* ──────────────────────────────────────────────
  * /products
  *
- * High-level overview of every product in the Oxy ecosystem.
- * Each card links to its dedicated page (or to the external product
- * surface for products that don't have a marketing page on this site).
+ * High-level overview of every product in the Oxy ecosystem. Data comes
+ * from the CMS via useProducts(); edit it in the admin at /admin/products
+ * or through the MCP tools (list_products, create_product, update_product,
+ * delete_product).
  *
  * Layout follows the canonical CompanyPage / HomePage patterns:
  *   container > border-x > grid grid-cols-12 > col-[2/-2]
  * Dashed rule helpers (DashedHLine / DashedVLines) match CompanyPage.
- * Brand colors are real product colors, not generic theme tokens —
- * they live on each card via inline CSS variables.
+ * Brand colors come straight from the CMS — real product brand colors,
+ * not theme tokens.
  * ──────────────────────────────────────────── */
-
-interface Product {
-  /** URL-safe id, used as React key */
-  id: string
-  /** Display name */
-  name: string
-  /** Single-line tag shown above the title on each card */
-  tagline: string
-  /** Short description shown in the card body */
-  description: string
-  /** Where the card's primary CTA should send the visitor */
-  href: string
-  /** True when the destination is off-site (opens in new tab, gets the arrow) */
-  external?: boolean
-  /** CTA label (defaults vary by destination type) */
-  cta: string
-  /** Hex brand color used for the card accent strip + icon mark */
-  brand: string
-  /** Optional contrasting color for the icon mark text — defaults to white */
-  brandForeground?: string
-  /** Single emoji-free letter mark used inside the brand square */
-  mark: string
-}
-
-/* ── Live products — featured grid ── */
-const LIVE_PRODUCTS: readonly Product[] = [
-  {
-    id: 'alia',
-    name: 'Alia AI',
-    tagline: 'Intelligent assistant',
-    description:
-      'Your private AI assistant on web, iOS and Android. Ask anything, get answers, automate work — without your data feeding a training set.',
-    href: 'https://alia.onl/',
-    external: true,
-    cta: 'Open Alia',
-    brand: '#7c3aed',
-    mark: 'A',
-  },
-  {
-    id: 'mention',
-    name: 'Mention',
-    tagline: 'Open social network',
-    description:
-      'A social network built on respect. No engagement-maxxing algorithms, no surveillance ads — just genuine connection on the open fediverse.',
-    href: 'https://mention.earth/',
-    external: true,
-    cta: 'Visit Mention',
-    brand: '#0ea5e9',
-    mark: 'M',
-  },
-  {
-    id: 'inbox',
-    name: 'Oxy Inbox',
-    tagline: 'Unified messaging',
-    description:
-      'All your email, chat and federated messages in one calm place. Smart triage surfaces what matters, end-to-end encrypted by default.',
-    href: '/inbox',
-    cta: 'Explore Inbox',
-    brand: '#1e40af',
-    mark: 'I',
-  },
-  {
-    id: 'codea',
-    name: 'Codea',
-    tagline: 'Open-source code editor',
-    description:
-      'A professional AI code editor that runs in your browser, on your machine, or self-hosted. Write, review and ship — on your terms.',
-    href: '/codea',
-    cta: 'Explore Codea',
-    brand: '#0f172a',
-    mark: 'C',
-  },
-  {
-    id: 'oxy-ai',
-    name: 'Oxy AI',
-    tagline: 'Models, API and SDKs',
-    description:
-      'Privacy-first AI for developers. Open models you can inspect, fine-tune and self-host — backed by a fast, multilingual API.',
-    href: '/ai',
-    cta: 'Explore Oxy AI',
-    brand: '#dc2626',
-    mark: 'O',
-  },
-  {
-    id: 'tnp',
-    name: 'TNP',
-    tagline: 'Alternative namespace',
-    description:
-      'The Network Protocol — register names on .ox, .app, .com and more. DNS-only, system-wide, and fully under your control.',
-    href: '/tnp',
-    cta: 'Explore TNP',
-    brand: '#10b981',
-    mark: 'T',
-  },
-  {
-    id: 'oxyos',
-    name: 'Oxy OS',
-    tagline: 'Operating system',
-    description:
-      'An operating system designed around privacy and user freedom. Your computer, your data — no telemetry, no tracking, no compromises.',
-    href: '/os',
-    cta: 'Explore Oxy OS',
-    brand: '#f97316',
-    mark: 'X',
-  },
-  {
-    id: 'faircoin',
-    name: 'FairCoin',
-    tagline: 'Currency that cares',
-    description:
-      'Cryptocurrency built for sustainability, not speculation. Powering ethical commerce and local economies worldwide.',
-    href: 'https://fair.coop/',
-    external: true,
-    cta: 'Visit FairCoin',
-    brand: '#16a34a',
-    mark: 'F',
-  },
-  {
-    id: 'homiio',
-    name: 'Homiio',
-    tagline: 'Affordable housing',
-    description:
-      'Technology that makes affordable housing accessible. Connecting people with homes they can actually afford, neighbourhood by neighbourhood.',
-    href: 'https://homiio.com/',
-    external: true,
-    cta: 'Visit Homiio',
-    brand: '#e11d48',
-    mark: 'H',
-  },
-] as const
-
-/* ── In-development / new — secondary section ── */
-const NEW_PRODUCTS: readonly Product[] = [
-  {
-    id: 'astro',
-    name: 'Astro',
-    tagline: 'AI browser',
-    description:
-      'Browse the web with AI by your side. Astro gives you instant answers, smarter suggestions and help with tasks — privacy you control.',
-    href: '/astro',
-    cta: 'Explore Astro',
-    brand: '#a855f7',
-    mark: 'A',
-  },
-  {
-    id: 'codex-extension',
-    name: 'Codex Extension',
-    tagline: 'Codea, everywhere you code',
-    description:
-      'Bring Codea\u2019s open-source AI assistant into the editor you already use. Reviews, refactors and completions — free to inspect, free to extend.',
-    href: '/codea/extension',
-    cta: 'Explore the extension',
-    brand: '#475569',
-    mark: 'E',
-  },
-] as const
 
 /* ── Layout primitives — match CompanyPage helpers ── */
 
@@ -239,7 +85,7 @@ function ArrowUpRightIcon({ className = '' }: { className?: string }) {
 
 /* ── Product card ── */
 
-function ProductCardLink({ product, children }: { product: Product; children: React.ReactNode }) {
+function ProductCardLink({ product, children }: { product: ProductRecord; children: React.ReactNode }) {
   if (product.external) {
     return (
       <a
@@ -264,7 +110,7 @@ function ProductCardLink({ product, children }: { product: Product; children: Re
   )
 }
 
-function ProductCard({ product }: { product: Product }) {
+function ProductCard({ product }: { product: ProductRecord }) {
   const fg = product.brandForeground ?? '#ffffff'
   return (
     <ProductCardLink product={product}>
@@ -313,6 +159,10 @@ function ProductCard({ product }: { product: Product }) {
 /* ── Page ── */
 
 export default function ProductsPage() {
+  const { data: products = [] } = useProducts()
+  const liveProducts = products.filter((p) => p.category === 'live')
+  const newProducts = products.filter((p) => p.category === 'in-development')
+
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
@@ -375,8 +225,8 @@ export default function ProductsPage() {
                 aria-hidden="true"
               />
               <div className="relative col-[2/-2] grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-3">
-                {LIVE_PRODUCTS.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                {liveProducts.map((product) => (
+                  <ProductCard key={product.productId} product={product} />
                 ))}
               </div>
             </div>
@@ -411,8 +261,8 @@ export default function ProductsPage() {
                 aria-hidden="true"
               />
               <div className="relative col-[2/-2] grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2">
-                {NEW_PRODUCTS.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                {newProducts.map((product) => (
+                  <ProductCard key={product.productId} product={product} />
                 ))}
               </div>
             </div>

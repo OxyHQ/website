@@ -197,6 +197,35 @@ export function useHero() {
   })
 }
 
+// ── Products ──
+export type ProductCategory = 'live' | 'in-development'
+
+export interface ProductRecord {
+  _id?: string
+  productId: string
+  name: string
+  tagline: string
+  description: string
+  href: string
+  external: boolean
+  cta: string
+  brand: string
+  brandForeground?: string
+  mark: string
+  category: ProductCategory
+  order: number
+}
+
+export function useProducts() {
+  const locale = useCurrentLocale()
+  return useQuery<ProductRecord[]>({
+    queryKey: ['products', locale],
+    queryFn: () => apiFetch<ProductRecord[]>('/products', { locale }),
+    staleTime: 5 * 60_000,
+    placeholderData: keepPreviousData,
+  })
+}
+
 // ── Service status ──
 export type ServiceStatusValue = 'operational' | 'degraded' | 'down' | 'unknown'
 
