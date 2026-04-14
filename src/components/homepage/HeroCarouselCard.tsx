@@ -4,6 +4,8 @@ import type { CardSize, CarouselSlot, HeroCard } from '../../data/heroCarousel'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCube, Autoplay } from 'swiper/modules'
 import { StarFour, PlugsConnected, Unite, Cpu } from '@phosphor-icons/react'
+import { useFairCoinStats } from '../../api/hooks'
+import type { FairCoinStats } from '../../api/faircoinStore'
 import 'swiper/css'
 import 'swiper/css/effect-cube'
 
@@ -125,15 +127,29 @@ function CardFace({ card, size }: { card: HeroCard; size: CardSize }) {
 
 const FAIRCOIN_STORE_IMAGE = '/images/landing/faircoin-store.png'
 
-const FAIRCOIN_STATS = [
-  { label: 'Current Blocks', end: 842391, decimals: 0, Icon: StarFour },
-  { label: 'Network (KH/s)', end: 1247, decimals: 0, Icon: PlugsConnected },
-  { label: 'Active Peers', end: 3891, decimals: 0, Icon: Unite },
-  { label: 'Difficulty', end: 0.0024, decimals: 4, Icon: Cpu },
+type FairCoinStatKey = 'blocks' | 'hashrate' | 'peers' | 'difficulty'
+
+const FAIRCOIN_STAT_META: { key: FairCoinStatKey; label: string; decimals: number; Icon: typeof StarFour }[] = [
+  { key: 'blocks', label: 'Current Blocks', decimals: 0, Icon: StarFour },
+  { key: 'hashrate', label: 'Network (KH/s)', decimals: 0, Icon: PlugsConnected },
+  { key: 'peers', label: 'Active Peers', decimals: 0, Icon: Unite },
+  { key: 'difficulty', label: 'Difficulty', decimals: 4, Icon: Cpu },
 ]
 
+function toDisplayValues(stats: FairCoinStats | null): Record<FairCoinStatKey, number> {
+  if (!stats) return { blocks: 0, hashrate: 0, peers: 0, difficulty: 0 }
+  return {
+    blocks: stats.blocks,
+    hashrate: stats.networkHashPs / 1000,
+    peers: stats.connections,
+    difficulty: stats.difficulty,
+  }
+}
+
 function FairCoinFace() {
-  const [runs, setRuns] = useState(() => FAIRCOIN_STATS.map(() => 0))
+  const stats = useFairCoinStats()
+  const values = toDisplayValues(stats)
+  const [runs, setRuns] = useState(() => FAIRCOIN_STAT_META.map(() => 0))
   return (
     <div className="grid h-full w-full grid-cols-[1fr_1fr_auto] bg-[#166534]">
       {/* Col 1: title + buttons */}
@@ -156,21 +172,24 @@ function FairCoinFace() {
       {/* Col 2: stats grid */}
       <div className="flex items-center py-4 px-3 lg:py-5 lg:px-4">
         <div className="flex w-full flex-col gap-1.5 lg:gap-2">
-          {FAIRCOIN_STATS.map((stat, i) => (
-            <div key={stat.label} className="cursor-pointer select-none rounded-full bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5" onClick={() => setRuns(r => r.map((v, j) => j === i ? v + 1 : v))}>
-              <div className="flex items-center gap-2">
-                <stat.Icon size={16} className="text-white/70" weight="bold" />
-                <div>
-                  <span className="block text-[9px] font-semibold uppercase tracking-wider text-white/70 lg:text-[10px]">
-                    {stat.label}
-                  </span>
-                  <span className="block text-xl font-bold text-white lg:text-2xl">
-                    <AnimatedStat key={runs[i]} end={stat.end} decimals={stat.decimals} />
-                  </span>
+          {FAIRCOIN_STAT_META.map((stat, i) => {
+            const value = values[stat.key]
+            return (
+              <div key={stat.label} className="cursor-pointer select-none rounded-full bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5" onClick={() => setRuns(r => r.map((v, j) => j === i ? v + 1 : v))}>
+                <div className="flex items-center gap-2">
+                  <stat.Icon size={16} className="text-white/70" weight="bold" />
+                  <div>
+                    <span className="block text-[9px] font-semibold uppercase tracking-wider text-white/70 lg:text-[10px]">
+                      {stat.label}
+                    </span>
+                    <span className="block text-xl font-bold text-white lg:text-2xl">
+                      <AnimatedStat key={`${runs[i]}-${value}`} end={value} decimals={stat.decimals} />
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
       {/* Col 3: news card */}

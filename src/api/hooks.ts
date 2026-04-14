@@ -1,7 +1,13 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from 'react'
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { apiFetch } from './client'
 import { useCurrentLocale } from '../contexts/LocaleContext'
+import {
+  subscribeFairCoinStats,
+  getFairCoinStatsSnapshot,
+  getFairCoinStatsServerSnapshot,
+  type FairCoinStats,
+} from './faircoinStore'
 
 import { type Testimonial, type FooterColumn, type NavDropdown, type NavDropdownItem, type NavDropdownSection, type NavSidePanel } from '../data/content'
 import { type PricingPlan } from '../data/pricing'
@@ -789,4 +795,15 @@ export function useToggleFeatureVote(owner: string, repo: string, number: number
       queryClient.invalidateQueries({ queryKey: ['feature', owner, repo, number] })
     },
   })
+}
+
+// ── FairCoin live stats ──
+export type { FairCoinStats }
+
+export function useFairCoinStats(): FairCoinStats | null {
+  return useSyncExternalStore(
+    subscribeFairCoinStats,
+    getFairCoinStatsSnapshot,
+    getFairCoinStatsServerSnapshot,
+  )
 }
