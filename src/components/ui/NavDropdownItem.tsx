@@ -2,6 +2,12 @@ import { Link } from 'react-router-dom'
 import type { NavDropdownItem as NavDropdownItemType } from '../../data/content'
 import type { ComponentType, SVGProps } from 'react'
 
+function resolveImageUrl(image: NavDropdownItemType['image']): string {
+  if (!image) return ''
+  if (typeof image === 'string') return image.startsWith('http') || image.startsWith('/') ? image : ''
+  return image.thumbnails?.md || image.thumbnails?.lg || image.url || ''
+}
+
 // Import all nav icons as React components (inline SVG)
 import AiIcon from '../../assets/nav/ai.svg?react'
 import DataIcon from '../../assets/nav/data.svg?react'
@@ -40,7 +46,8 @@ const linkClass = "group relative flex w-full items-center justify-start gap-x-3
 function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const IconComponent = item.icon ? iconMap[item.icon] : null
   const showGrid = item.showGrid !== false
-  const hasImage = Boolean(item.image)
+  const imageUrl = resolveImageUrl(item.image)
+  const hasImage = Boolean(imageUrl)
 
   return (
     <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-[13px] border border-border md:rounded-none md:border-0">
@@ -58,7 +65,7 @@ function ItemIcon({ item }: { item: NavDropdownItemType }) {
       )}
       {hasImage ? (
         <img
-          src={item.image}
+          src={imageUrl}
           alt=""
           width={40}
           height={40}

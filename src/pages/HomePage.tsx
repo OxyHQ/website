@@ -1,10 +1,12 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HeroCarousel from '../components/homepage/HeroCarousel'
 import { heroCarouselSlots } from '../data/heroCarousel'
 import { useHero } from '../api/hooks'
+import { usePageChromeStore } from '../stores/pageChromeStore'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import type SwiperType from 'swiper'
@@ -30,6 +32,7 @@ const DEFAULT_HERO_POSTER = `${IMG}/hero-bg.avif`
 /* ------------------------------------------------------------------ */
 function HeroSection() {
   const { data: hero } = useHero()
+  const setHeroVisible = usePageChromeStore((s) => s.setHeroVisible)
 
   const title = hero?.title || DEFAULT_HERO_TITLE
   const eyebrow = hero?.eyebrow || DEFAULT_HERO_EYEBROW
@@ -46,8 +49,16 @@ function HeroSection() {
   // string CMS-friendly. This avoids dangerouslySetInnerHTML.
   const titleLines = title.split('\n')
 
+  // Publish hero visibility to the shared UI-chrome store so the floating
+  // prompt bar hides while the hero is on screen. Callback-ref-equivalent
+  // via framer-motion — no effect, no dep-array wiring.
   return (
-    <div className="page-hero relative min-h-svh flex flex-col [overflow-x:clip]">
+    <motion.div
+      className="page-hero relative min-h-svh flex flex-col [overflow-x:clip]"
+      onViewportEnter={() => setHeroVisible(true)}
+      onViewportLeave={() => setHeroVisible(false)}
+      viewport={{ amount: 0 }}
+    >
       {/* Background video */}
       <div className="absolute inset-0 z-[1] overflow-hidden [transform:translateZ(0)]">
         <video autoPlay loop muted playsInline preload="metadata" poster={poster} className="size-full object-cover object-center">
@@ -76,7 +87,7 @@ function HeroSection() {
 
       {/* Infinite carousel grid */}
       <HeroCarousel slots={slots} />
-    </div>
+    </motion.div>
   )
 }
 

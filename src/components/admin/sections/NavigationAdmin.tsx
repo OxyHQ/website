@@ -6,9 +6,20 @@ import { Divider } from '@oxyhq/bloom/divider'
 import { Input } from '../../ui/shadcn/input'
 import { Label } from '../../ui/shadcn/label'
 import { IconPicker } from '../../ui/shadcn/icon-picker'
+import MediaPicker from '../MediaPicker'
 import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { BatchTranslationEditor } from '../TranslationEditor'
 import { type NavItem, type NavDropdownSection, type NavDropdownItem, type NavSidePanel } from '../../../data/content'
+
+function mediaId(image: unknown): string {
+  if (!image) return ''
+  if (typeof image === 'string') return image
+  if (typeof image === 'object' && image !== null && '_id' in image) {
+    const id = (image as { _id?: unknown })._id
+    return typeof id === 'string' ? id : ''
+  }
+  return ''
+}
 
 interface AdminNavItem {
   title: string
@@ -33,7 +44,11 @@ function normalizeDropdowns(data: ReturnType<typeof useNavigation>['data']): Adm
     label: dd.label ?? '',
     order: dd.order ?? 0,
     items: (dd.sections ?? []).flatMap((s: NavDropdownSection) =>
-      (s.items ?? []).map((item: NavDropdownItem) => ({ ...item, section: s.heading || '' }))
+      (s.items ?? []).map((item: NavDropdownItem) => ({
+        ...item,
+        image: mediaId(item.image),
+        section: s.heading || '',
+      }))
     ),
     sidePanel: dd.sidePanel ?? null,
   }))
@@ -273,29 +288,14 @@ export default function NavigationAdmin() {
                           <p className="text-xs text-muted-foreground">Used when no image is set below.</p>
                         </div>
                         <div className="flex flex-col gap-1.5 col-span-2">
-                          <Label>Image / logo URL</Label>
-                          <div className="flex items-start gap-3">
-                            {item.image ? (
-                              <img
-                                src={item.image}
-                                alt=""
-                                width={40}
-                                height={40}
-                                className="h-10 w-10 shrink-0 rounded-[10px] border border-border object-contain"
-                              />
-                            ) : (
-                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-dashed border-border text-[10px] text-muted-foreground">
-                                none
-                              </div>
-                            )}
-                            <Input
-                              value={item.image ?? ''}
-                              onChange={(e) => updateItem(di, ii, 'image', e.target.value)}
-                              placeholder="https://… or /images/nav/item.svg"
-                              className="flex-1 font-mono"
-                            />
-                          </div>
-                          <p className="text-xs text-muted-foreground">When set, the image replaces the icon in the navbar. Paste a CDN URL or upload via the Media section.</p>
+                          <Label>Image / logo</Label>
+                          <MediaPicker
+                            value={item.image ?? ''}
+                            onChange={(id) => updateItem(di, ii, 'image', id ?? '')}
+                            folder="navigation"
+                            accept="image/*"
+                          />
+                          <p className="text-xs text-muted-foreground">Pick or upload a logo. When set, it replaces the icon in the navbar.</p>
                         </div>
                       </div>
                       <div className="mt-3">

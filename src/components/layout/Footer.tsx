@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useFooter } from '../../api/hooks'
 import Logo from '../ui/Logo'
+import { usePageChromeStore } from '../../stores/pageChromeStore'
 import { type FooterColumn, type FooterLink } from '../../data/content'
 
 /* ─── Shared small components ─── */
@@ -99,9 +101,15 @@ function FooterLinkItem({ link }: { link: FooterLink }) {
 export default function Footer() {
   const { data: footerData } = useFooter()
   const footerColumns = footerData?.columns ?? []
+  const setFooterVisible = usePageChromeStore((s) => s.setFooterVisible)
 
   return (
-    <footer className="relative flex w-full flex-col justify-between bg-background">
+    <motion.footer
+      className="relative flex w-full flex-col justify-between bg-background"
+      onViewportEnter={() => setFooterVisible(true)}
+      onViewportLeave={() => setFooterVisible(false)}
+      viewport={{ amount: 0 }}
+    >
       <Divider />
 
       {/* Columns */}
@@ -166,6 +174,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-    </footer>
+    </motion.footer>
   )
 }

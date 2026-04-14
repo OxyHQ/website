@@ -36,12 +36,18 @@ export interface NavItem {
   href: string
 }
 
+export interface NavDropdownItemImage {
+  _id?: string
+  url?: string
+  thumbnails?: { sm?: string; md?: string; lg?: string }
+}
+
 export interface NavDropdownItem {
   title: string
   description: string
   href: string
   icon?: string
-  image?: string
+  image?: string | NavDropdownItemImage | null
   showGrid?: boolean
 }
 

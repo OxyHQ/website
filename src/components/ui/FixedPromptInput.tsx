@@ -1,13 +1,8 @@
-import { useState, useCallback, useMemo, useSyncExternalStore } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 import { PromptInput } from '@oxyhq/bloom/prompt-input'
 import { usePromptPhrases } from '../../api/hooks'
-import {
-  subscribeDocumentIntersection,
-  getDocumentIntersectionSnapshot,
-  getDocumentIntersectionServerSnapshot,
-} from './documentIntersectionStore'
-import { useRotatingPlaceholder } from './useRotatingPlaceholder'
+import { usePageChromeStore } from '../../stores/pageChromeStore'
 
 const DEFAULT_PHRASES = [
   'Ask Alia anything about Oxy',
@@ -20,6 +15,11 @@ const DEFAULT_PHRASES = [
   'What is Universal Context?',
 ]
 
+const TYPING_SPEED_MS = 50
+const PAUSE_AFTER_TYPED_MS = 2000
+const PAUSE_AFTER_ERASED_MS = 400
+const ERASING_SPEED_MS = 30
+
 const HIDDEN_PREFIXES = ['/company', '/developers', '/settings', '/help', '/changelog', '/admin', '/dashboard', '/initiative', '/astro']
 
 function slugFromPathname(pathname: string): string {
@@ -28,27 +28,53 @@ function slugFromPathname(pathname: string): string {
   return stripped.split('/')[0]
 }
 
-function useDocumentIntersecting(selector: string): boolean {
-  const subscribe = useCallback(
-    (listener: () => void) => subscribeDocumentIntersection(selector, listener),
-    [selector],
-  )
-  const snapshot = useCallback(
-    () => getDocumentIntersectionSnapshot(selector),
-    [selector],
-  )
-  return useSyncExternalStore(subscribe, snapshot, getDocumentIntersectionServerSnapshot)
+function useRotatingPlaceholder(phrases: string[]) {
+  const [text, setText] = useState('')
+  const [phraseIndex, setPhraseIndex] = useState(0)
+
+  useEffect(() => {
+    if (phrases.length === 0) return
+    const phrase = phrases[phraseIndex % phrases.length]
+    let i = 0
+    let erasing = false
+    let timer: number
+
+    const tick = () => {
+      if (!erasing) {
+        i++
+        setText(phrase.slice(0, i))
+        if (i >= phrase.length) {
+          erasing = true
+          timer = window.setTimeout(tick, PAUSE_AFTER_TYPED_MS)
+          return
+        }
+      } else {
+        i--
+        setText(phrase.slice(0, i))
+        if (i <= 0) {
+          setPhraseIndex((prev) => (prev + 1) % phrases.length)
+          return
+        }
+      }
+      timer = window.setTimeout(tick, erasing ? ERASING_SPEED_MS : TYPING_SPEED_MS)
+    }
+
+    timer = window.setTimeout(tick, PAUSE_AFTER_ERASED_MS)
+    return () => clearTimeout(timer)
+  }, [phraseIndex, phrases])
+
+  return text
 }
 
 export default function FixedPromptInput() {
   const [value, setValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
+  const hiddenByHero = usePageChromeStore((s) => s.heroVisible)
+  const hiddenByFooter = usePageChromeStore((s) => s.footerVisible)
+
   const { pathname } = useLocation()
   const hiddenByRoute = HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'))
-
-  const hiddenByFooter = useDocumentIntersecting('footer')
-  const hiddenByHero = useDocumentIntersecting('.page-hero')
 
   const slug = slugFromPathname(pathname)
   const { data: fetchedPhrases } = usePromptPhrases(slug, !hiddenByRoute)

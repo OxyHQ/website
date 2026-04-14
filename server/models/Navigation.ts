@@ -1,11 +1,11 @@
-import mongoose, { Schema, type Document } from 'mongoose'
+import mongoose, { Schema, type Document, type Types } from 'mongoose'
 
 export interface INavItem {
   title: string
   description: string
   href: string
   icon?: string
-  image?: string
+  image?: Types.ObjectId | null
   section?: string
   showGrid?: boolean
 }
@@ -27,7 +27,7 @@ const NavItemSchema = new Schema<INavItem>({
   description: { type: String, default: '' },
   href: { type: String, required: true },
   icon: String,
-  image: String,
+  image: { type: Schema.Types.ObjectId, ref: 'Media', default: null },
   section: String,
   showGrid: { type: Boolean, default: true },
 }, { _id: false })
