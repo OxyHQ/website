@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -213,10 +213,7 @@ function FeaturesSection() {
     }, 200)
   }, [stopTimer])
 
-  // React 19 callback ref — keyed on `active` + `playing`. Each change tears down
-  // the prior timer (via cleanup) and starts a fresh one when playing is true.
-  const tabsRef = useCallback((node: HTMLElement | null) => {
-    if (!node) return
+  useEffect(() => {
     if (playing) {
       startTimer()
     } else {
@@ -236,7 +233,7 @@ function FeaturesSection() {
   }
 
   return (
-    <section ref={tabsRef} className="py-0">
+    <section className="py-0">
       <div className="agents-features-section">
         <div className="agents-features-bg">
           <img
@@ -635,7 +632,6 @@ function TypewriterText({ texts, resetKey }: { texts: string[]; resetKey: number
   const [deleting, setDeleting] = useState(false)
 
   // Derived-state pattern: reset on resetKey change without an effect.
-  // https://react.dev/learn/you-might-not-need-an-effect#resetting-all-state-when-a-prop-changes
   const [lastResetKey, setLastResetKey] = useState(resetKey)
   if (lastResetKey !== resetKey) {
     setLastResetKey(resetKey)
@@ -644,11 +640,7 @@ function TypewriterText({ texts, resetKey }: { texts: string[]; resetKey: number
     setDeleting(false)
   }
 
-  // React 19 callback ref — owns the typewriter animation timer. Keyed on the
-  // three state values that drive the animation step, so each transition tears
-  // down the previous timer and schedules the next one.
-  const sentinelRef = useCallback((node: HTMLSpanElement | null) => {
-    if (!node) return
+  useEffect(() => {
     const text = texts[textIdx]
     if (!deleting && charIdx < text.length) {
       const id = setTimeout(() => setCharIdx((c) => c + 1), 40)
@@ -669,7 +661,7 @@ function TypewriterText({ texts, resetKey }: { texts: string[]; resetKey: number
   }, [charIdx, deleting, textIdx, texts])
 
   return (
-    <span ref={sentinelRef} className="typewrap">
+    <span className="typewrap">
       {texts[textIdx].slice(0, charIdx)}
     </span>
   )

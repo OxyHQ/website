@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { CardSize, CarouselSlot, HeroCard } from '../../data/heroCarousel'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -11,12 +11,11 @@ import 'swiper/css/effect-cube'
 
 function AnimatedStat({ end, decimals, duration = 2000 }: { end: number; decimals: number; duration?: number }) {
   const [value, setValue] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
 
-  // React 19 callback ref with cleanup — IntersectionObserver + rAF count-up lifecycle
-  // is owned directly by the ref. No effect, no dep-array churn when `end` changes
-  // after data loads.
-  const spanRef = useCallback((node: HTMLSpanElement | null) => {
-    if (!node) return
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
     let rafId = 0
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return
@@ -30,7 +29,7 @@ function AnimatedStat({ end, decimals, duration = 2000 }: { end: number; decimal
       }
       rafId = requestAnimationFrame(tick)
     })
-    observer.observe(node)
+    observer.observe(el)
     return () => {
       observer.disconnect()
       if (rafId) cancelAnimationFrame(rafId)
@@ -38,7 +37,7 @@ function AnimatedStat({ end, decimals, duration = 2000 }: { end: number; decimal
   }, [end, decimals, duration])
 
   return (
-    <span ref={spanRef}>
+    <span ref={ref}>
       {decimals > 0 ? value.toFixed(decimals) : value.toLocaleString()}
     </span>
   )

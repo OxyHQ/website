@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 
@@ -78,12 +78,7 @@ export const ManifestoSection: React.FC<ManifestoSectionProps> = ({ imagePaths =
     setImages([]);
   }, []);
 
-  // React 19 callback ref on the container — owns all intervals and the initial
-  // burst timers while the section is visible. framer-motion drives activation
-  // via onViewportEnter/onViewportLeave (below). The callback re-runs on
-  // isActive changes because the dep array includes it.
-  const containerRef = useCallback((node: HTMLDivElement | null) => {
-    if (!node) return
+  useEffect(() => {
     if (!isActive) return
     const spawn = setInterval(addImage, 150)
     const expire = setInterval(() => {
@@ -120,7 +115,7 @@ export const ManifestoSection: React.FC<ManifestoSectionProps> = ({ imagePaths =
       }}
       viewport={{ amount: 0.3 }}
     >
-      <div className="relative h-full w-full" ref={containerRef}>
+      <div className="relative h-full w-full">
         <div className="pointer-events-none invisible absolute h-0 w-0 overflow-hidden" aria-hidden="true">
           {imagePaths.map((src, idx) => (
             <img key={idx} src={src || "/placeholder.svg"} alt="" />
