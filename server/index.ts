@@ -15,6 +15,8 @@ import statusRouter from './routes/status.js'
 import productsRouter from './routes/products.js'
 import categoriesRouter from './routes/categories.js'
 import newsroomRouter from './routes/newsroom.js'
+import coursesRouter from './routes/courses.js'
+import resourcesRouter from './routes/resources.js'
 import pricingRouter from './routes/pricing.js'
 import testimonialsRouter from './routes/testimonials.js'
 import changelogRouter from './routes/changelog.js'
@@ -34,6 +36,7 @@ import profilesRouter from './routes/profiles.js'
 import badgesRouter from './routes/badges.js'
 import teamRouter from './routes/team.js'
 import mediaRouter from './routes/media.js'
+import referralsRouter from './routes/referrals.js'
 import { mountMcp } from './mcp.js'
 
 const app = express()
@@ -57,6 +60,8 @@ app.use('/api/status', statusRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/categories', categoriesRouter)
 app.use('/api/newsroom', newsroomRouter)
+app.use('/api/courses', coursesRouter)
+app.use('/api/resources', resourcesRouter)
 app.use('/api/pricing', pricingRouter)
 app.use('/api/testimonials', testimonialsRouter)
 app.use('/api/changelog', changelogRouter)
@@ -76,6 +81,7 @@ app.use('/api/comments', commentsRouter)
 app.use('/api/features', featuresRouter)
 app.use('/api/profiles', profilesRouter)
 app.use('/api/badges', badgesRouter)
+app.use('/api/referrals', referralsRouter)
 
 // Sitemap
 app.use('/', sitemapRouter)

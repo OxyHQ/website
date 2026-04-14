@@ -57,7 +57,14 @@ export interface PageSection {
   heading?: string
   subheading?: string
   content?: string
-  items?: Array<{ key: string; value: string }>
+  /**
+   * Free-form item list persisted as Mixed on the server. `key`/`value` remain
+   * as typed string fields for backward compatibility with sections that use
+   * the simple key/value form (e.g. Newsroom UI strings). Newer sections can
+   * store richer objects by writing additional fields — consumers read those
+   * extra fields via the index signature and narrow them with type guards.
+   */
+  items?: Array<{ key: string; value: string; [extra: string]: unknown }>
   order: number
 }
 
@@ -391,6 +398,208 @@ export function useCreateNewsroomPost() {
       apiFetch<NewsroomPost>('/newsroom', { method: 'POST', body: JSON.stringify(data) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['newsroom'] }),
   })
+}
+
+// ── Academy: Courses ──
+export type CourseLevel = 'beginner' | 'intermediate' | 'advanced'
+export type CourseStatus = 'draft' | 'published'
+
+export interface CourseCoverRef {
+  _id?: string
+  url?: string
+  thumbnails?: { sm?: string; md?: string; lg?: string }
+}
+
+export interface CourseCategoryRef {
+  _id?: string
+  slug?: string
+  label?: string
+  description?: string
+  order?: number
+}
+
+export interface CourseLesson {
+  title: string
+  slug: string
+  content: string
+  order: number
+  videoUrl?: string
+  durationMinutes?: number
+}
+
+export interface CourseRecord {
+  _id?: string
+  slug: string
+  title: string
+  summary: string
+  description: string
+  coverImage?: string | CourseCoverRef | null
+  category?: string | CourseCategoryRef | null
+  level: CourseLevel
+  durationMinutes?: number
+  lessons: CourseLesson[]
+  tags: string[]
+  featured: boolean
+  status: CourseStatus
+  publishedAt: string
+  order: number
+  createdAt?: string
+  updatedAt?: string
+}
+
+interface CoursesListResponse {
+  courses: CourseRecord[]
+  total: number
+  page: number
+  pages: number
+}
+
+function normalizeCourse(course: CourseRecord): CourseRecord {
+  return {
+    ...course,
+    coverImage: resolveMediaUrl(course.coverImage, 'lg'),
+  }
+}
+
+export interface UseCoursesOptions {
+  category?: string
+  tag?: string
+  featured?: boolean
+  status?: CourseStatus
+  level?: CourseLevel
+  limit?: number
+  page?: number
+}
+
+export function useCourses(options: UseCoursesOptions = {}) {
+  const locale = useCurrentLocale()
+  const qs = new URLSearchParams()
+  if (options.category) qs.set('category', options.category)
+  if (options.tag) qs.set('tag', options.tag)
+  if (options.featured) qs.set('featured', 'true')
+  if (options.status) qs.set('status', options.status)
+  if (options.level) qs.set('level', options.level)
+  if (options.limit) qs.set('limit', String(options.limit))
+  if (options.page) qs.set('page', String(options.page))
+  const query = qs.toString()
+  return useQuery({
+    queryKey: ['courses', options, locale],
+    queryFn: () => apiFetch<CoursesListResponse>(`/courses${query ? `?${query}` : ''}`, { locale }),
+    select: (data) => ({ ...data, courses: data.courses.map(normalizeCourse) }),
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useCourse(slug: string) {
+  const locale = useCurrentLocale()
+  return useQuery({
+    queryKey: ['course', slug, locale],
+    queryFn: () => apiFetch<CourseRecord>(`/courses/${slug}`, { locale }),
+    select: normalizeCourse,
+    enabled: !!slug,
+  })
+}
+
+export function resolveCourseCategoryId(course: Pick<CourseRecord, 'category'>): string {
+  const cat = course.category
+  if (!cat) return ''
+  if (typeof cat === 'string') return cat
+  return cat._id ?? ''
+}
+
+export function resolveCourseCategoryLabel(course: Pick<CourseRecord, 'category'>): string {
+  const cat = course.category
+  if (cat && typeof cat === 'object' && cat.label) return cat.label
+  return ''
+}
+
+// ── Academy: Resources ──
+export type ResourceType = 'guide' | 'paper' | 'video' | 'tool' | 'template' | 'link'
+export type ResourceStatus = 'draft' | 'published'
+
+export interface ResourceRecord {
+  _id?: string
+  slug: string
+  title: string
+  summary: string
+  type: ResourceType
+  coverImage?: string | CourseCoverRef | null
+  category?: string | CourseCategoryRef | null
+  href: string
+  external: boolean
+  tags: string[]
+  featured: boolean
+  status: ResourceStatus
+  publishedAt: string
+  order: number
+  createdAt?: string
+  updatedAt?: string
+}
+
+interface ResourcesListResponse {
+  resources: ResourceRecord[]
+  total: number
+  page: number
+  pages: number
+}
+
+function normalizeResource(resource: ResourceRecord): ResourceRecord {
+  return {
+    ...resource,
+    coverImage: resolveMediaUrl(resource.coverImage, 'lg'),
+  }
+}
+
+export interface UseResourcesOptions {
+  category?: string
+  tag?: string
+  type?: ResourceType
+  featured?: boolean
+  status?: ResourceStatus
+  limit?: number
+  page?: number
+}
+
+export function useResources(options: UseResourcesOptions = {}) {
+  const locale = useCurrentLocale()
+  const qs = new URLSearchParams()
+  if (options.category) qs.set('category', options.category)
+  if (options.tag) qs.set('tag', options.tag)
+  if (options.type) qs.set('type', options.type)
+  if (options.featured) qs.set('featured', 'true')
+  if (options.status) qs.set('status', options.status)
+  if (options.limit) qs.set('limit', String(options.limit))
+  if (options.page) qs.set('page', String(options.page))
+  const query = qs.toString()
+  return useQuery({
+    queryKey: ['resources', options, locale],
+    queryFn: () => apiFetch<ResourcesListResponse>(`/resources${query ? `?${query}` : ''}`, { locale }),
+    select: (data) => ({ ...data, resources: data.resources.map(normalizeResource) }),
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useResource(slug: string) {
+  const locale = useCurrentLocale()
+  return useQuery({
+    queryKey: ['resource', slug, locale],
+    queryFn: () => apiFetch<ResourceRecord>(`/resources/${slug}`, { locale }),
+    select: normalizeResource,
+    enabled: !!slug,
+  })
+}
+
+export function resolveResourceCategoryId(resource: Pick<ResourceRecord, 'category'>): string {
+  const cat = resource.category
+  if (!cat) return ''
+  if (typeof cat === 'string') return cat
+  return cat._id ?? ''
+}
+
+export function resolveResourceCategoryLabel(resource: Pick<ResourceRecord, 'category'>): string {
+  const cat = resource.category
+  if (cat && typeof cat === 'object' && cat.label) return cat.label
+  return ''
 }
 
 // ── Pricing ──
@@ -899,4 +1108,85 @@ export function useFairCoinStats(): FairCoinStats | null {
     getFairCoinStatsSnapshot,
     getFairCoinStatsServerSnapshot,
   )
+}
+
+// ── Referrals ──
+export type ReferralType = 'paid' | 'ambassador' | 'user'
+export type ReferralStatus = 'active' | 'paused' | 'revoked'
+
+/** Admin-facing referral record. The `/api/referrals/:code` public endpoint returns
+ *  a narrower subset (see PublicReferral) — never expose email/commission/notes/counts. */
+export interface ReferralRecord {
+  _id?: string
+  code: string
+  name: string
+  email?: string
+  type: ReferralType
+  status: ReferralStatus
+  oxyUserId?: string
+  commissionPercent?: number
+  customLandingUrl?: string
+  notes?: string
+  clicks: number
+  signups: number
+  createdAt?: string
+  updatedAt?: string
+}
+
+/** Public-safe view returned by GET /api/referrals/:code. */
+export interface PublicReferral {
+  code: string
+  name: string
+  type: ReferralType
+  status: ReferralStatus
+  customLandingUrl: string | null
+}
+
+export function useReferrals(type?: ReferralType) {
+  const qs = type ? `?type=${type}` : ''
+  return useQuery<ReferralRecord[]>({
+    queryKey: ['referrals', type ?? 'all'],
+    queryFn: () => apiFetch<ReferralRecord[]>(`/referrals${qs}`),
+    staleTime: 60_000,
+  })
+}
+
+export function useReferral(code: string) {
+  return useQuery<PublicReferral>({
+    queryKey: ['referral', code],
+    queryFn: () => apiFetch<PublicReferral>(`/referrals/${encodeURIComponent(code)}`),
+    enabled: !!code,
+    retry: false,
+    staleTime: 5 * 60_000,
+  })
+}
+
+export function useCreateReferral() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Partial<ReferralRecord>) =>
+      apiFetch<ReferralRecord>('/referrals', { method: 'POST', body: JSON.stringify(data) }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['referrals'] }),
+  })
+}
+
+export function useUpdateReferral() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ code, patch }: { code: string; patch: Partial<ReferralRecord> }) =>
+      apiFetch<ReferralRecord>(`/referrals/${encodeURIComponent(code)}`, {
+        method: 'PUT',
+        body: JSON.stringify(patch),
+      }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['referrals'] }),
+  })
+}
+
+export function useDeleteReferral() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (code: string) =>
+      apiFetch<{ ok: boolean }>(`/referrals/${encodeURIComponent(code)}`, { method: 'DELETE' }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['referrals'] }),
+  })
 }

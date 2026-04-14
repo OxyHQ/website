@@ -9,16 +9,20 @@ import PagesAdmin from '../components/admin/sections/PagesAdmin'
 import ProductsAdmin from '../components/admin/sections/ProductsAdmin'
 import CategoriesAdmin from '../components/admin/sections/CategoriesAdmin'
 import NewsroomAdmin from '../components/admin/sections/NewsroomAdmin'
+import CoursesAdmin from '../components/admin/sections/CoursesAdmin'
+import ResourcesAdmin from '../components/admin/sections/ResourcesAdmin'
 import PricingAdmin from '../components/admin/sections/PricingAdmin'
 import TestimonialsAdmin from '../components/admin/sections/TestimonialsAdmin'
 import ChangelogAdmin from '../components/admin/sections/ChangelogAdmin'
 import JobsAdmin from '../components/admin/sections/JobsAdmin'
+import TeamAdmin from '../components/admin/sections/TeamAdmin'
 import McpTokensAdmin from '../components/admin/sections/McpTokensAdmin'
 import LocalesAdmin from '../components/admin/sections/LocalesAdmin'
 import BackupAdmin from '../components/admin/sections/BackupAdmin'
 import CommentsAdmin from '../components/admin/sections/CommentsAdmin'
 import FeaturesAdmin from '../components/admin/sections/FeaturesAdmin'
 import BadgesAdmin from '../components/admin/sections/BadgesAdmin'
+import ReferralsAdmin from '../components/admin/sections/ReferralsAdmin'
 import MediaAdmin from '../components/admin/sections/MediaAdmin'
 import NotFoundPage from './NotFoundPage'
 
@@ -41,16 +45,20 @@ export default function AdminPage() {
       <Route path="products" element={<AdminLayout><ProductsAdmin /></AdminLayout>} />
       <Route path="categories" element={<AdminLayout><CategoriesAdmin /></AdminLayout>} />
       <Route path="newsroom" element={<AdminLayout><NewsroomAdmin /></AdminLayout>} />
+      <Route path="courses" element={<AdminLayout><CoursesAdmin /></AdminLayout>} />
+      <Route path="resources" element={<AdminLayout><ResourcesAdmin /></AdminLayout>} />
       <Route path="pricing" element={<AdminLayout><PricingAdmin /></AdminLayout>} />
       <Route path="testimonials" element={<AdminLayout><TestimonialsAdmin /></AdminLayout>} />
       <Route path="changelog" element={<AdminLayout><ChangelogAdmin /></AdminLayout>} />
       <Route path="jobs" element={<AdminLayout><JobsAdmin /></AdminLayout>} />
+      <Route path="team" element={<AdminLayout><TeamAdmin /></AdminLayout>} />
       <Route path="locales" element={<AdminLayout><LocalesAdmin /></AdminLayout>} />
       <Route path="mcp-tokens" element={<AdminLayout><McpTokensAdmin /></AdminLayout>} />
       <Route path="backup" element={<AdminLayout><BackupAdmin /></AdminLayout>} />
       <Route path="comments" element={<AdminLayout><CommentsAdmin /></AdminLayout>} />
       <Route path="features" element={<AdminLayout><FeaturesAdmin /></AdminLayout>} />
       <Route path="badges" element={<AdminLayout><BadgesAdmin /></AdminLayout>} />
+      <Route path="referrals" element={<AdminLayout><ReferralsAdmin /></AdminLayout>} />
       <Route path="media" element={<AdminLayout><MediaAdmin /></AdminLayout>} />
       <Route path="*" element={<Navigate to="settings" replace />} />
     </Routes>

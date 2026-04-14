@@ -38,6 +38,10 @@ import {
   Award,
   ImageIcon,
   Sparkles,
+  Users,
+  UserPlus,
+  GraduationCap,
+  Library,
 } from 'lucide-react'
 
 export { ADMIN_USERNAMES } from '../../constants'
@@ -58,10 +62,13 @@ const sections: AdminSection[] = [
   { id: 'products', label: 'Products', icon: <Package className="size-4" />, group: 'Content' },
   { id: 'categories', label: 'Categories', icon: <FolderTree className="size-4" />, group: 'Content' },
   { id: 'newsroom', label: 'Newsroom', icon: <PenSquare className="size-4" />, group: 'Content' },
+  { id: 'courses', label: 'Courses', icon: <GraduationCap className="size-4" />, group: 'Content' },
+  { id: 'resources', label: 'Resources', icon: <Library className="size-4" />, group: 'Content' },
   { id: 'pricing', label: 'Pricing', icon: <Tag className="size-4" />, group: 'Content' },
   { id: 'testimonials', label: 'Testimonials', icon: <Quote className="size-4" />, group: 'Content' },
   { id: 'changelog', label: 'Changelog', icon: <Clock className="size-4" />, group: 'Content' },
   { id: 'jobs', label: 'Jobs', icon: <Briefcase className="size-4" />, group: 'Content' },
+  { id: 'team', label: 'Team', icon: <Users className="size-4" />, group: 'Content' },
   { id: 'media', label: 'Media', icon: <ImageIcon className="size-4" />, group: 'Content' },
   { id: 'locales', label: 'Locales', icon: <Languages className="size-4" />, group: 'Configuration' },
   { id: 'mcp-tokens', label: 'API Tokens', icon: <KeyRound className="size-4" />, group: 'Developer' },
@@ -69,6 +76,7 @@ const sections: AdminSection[] = [
   { id: 'comments', label: 'Comments', icon: <MessageSquare className="size-4" />, group: 'Community' },
   { id: 'features', label: 'Feature Board', icon: <Lightbulb className="size-4" />, group: 'Community' },
   { id: 'badges', label: 'Badges', icon: <Award className="size-4" />, group: 'Community' },
+  { id: 'referrals', label: 'Referrals', icon: <UserPlus className="size-4" />, group: 'Community' },
 ]
 
 const groups = [...new Set(sections.map((s) => s.group))]

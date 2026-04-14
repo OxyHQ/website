@@ -19,6 +19,8 @@ import { Job } from './models/Job.js'
 import { SiteSettings } from './models/SiteSettings.js'
 import { Page } from './models/Page.js'
 import { NewsroomPost } from './models/NewsroomPost.js'
+import { Course } from './models/Course.js'
+import { Resource } from './models/Resource.js'
 import { Media } from './models/Media.js'
 import TrackedRepo from './models/TrackedRepo.js'
 
@@ -27,7 +29,7 @@ async function seed() {
   console.log('Connected to MongoDB')
 
   // ── Drop all collections (full reset) ──
-  const collections = [Navigation, Footer, HeroContent, Product, Category, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, TrackedRepo, TeamMember, Media]
+  const collections = [Navigation, Footer, HeroContent, Product, Category, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, Course, Resource, TrackedRepo, TeamMember, Media]
   await Promise.all(collections.map((m) => m.deleteMany({})))
   console.log('Cleared all collections')
 
@@ -130,12 +132,12 @@ async function seed() {
         title: 'Company',
         links: [
           { label: 'About Us', href: '#' },
-          { label: 'How Our Business Works', href: '#' },
+          { label: 'How Our Business Works', href: '/company/business' },
           { label: 'Careers', href: '/company/careers' },
           { label: 'Investor Relations', href: '#' },
-          { label: 'Transparency Center', href: '#' },
+          { label: 'Transparency Center', href: '/company/transparency' },
           { label: 'Community Guidelines', href: '#' },
-          { label: 'Manifesto', href: '#' },
+          { label: 'Manifesto', href: '/company/manifesto' },
           { label: 'Newsroom', href: '/newsroom' },
           { label: 'Engineering blog', href: '/company/news', isNewBadge: true },
           { label: 'Become a partner', href: '/partners' },
@@ -202,13 +204,15 @@ async function seed() {
   })
   console.log('Seeded footer')
 
-  // ── Categories (shared grouping labels used by products + navbar) ──
+  // ── Categories (shared grouping labels used by products + navbar + academy) ──
   const categoryDocs = await Category.insertMany([
     { slug: 'social-communication', label: 'Social & Communication', scope: 'apps', order: 0 },
     { slug: 'finance-commerce', label: 'Finance & Commerce', scope: 'apps', order: 1 },
     { slug: 'apps', label: 'Apps', scope: 'apps', order: 2 },
     { slug: 'infrastructure', label: 'Infrastructure', scope: 'apps', order: 3 },
     { slug: 'developer', label: 'Developer', scope: 'apps', order: 4 },
+    { slug: 'fundamentals', label: 'Fundamentals', scope: 'generic', order: 0, description: 'Core concepts and first steps on the Oxy platform.' },
+    { slug: 'advanced', label: 'Advanced', scope: 'generic', order: 1, description: 'Deep dives, production patterns and performance tuning.' },
   ])
   const categoryIdBySlug = new Map(categoryDocs.map((c) => [c.slug, c._id] as const))
   const categoryRef = (slug: string) => categoryIdBySlug.get(slug) ?? null
@@ -587,6 +591,199 @@ async function seed() {
     },
   ])
   console.log('Seeded newsroom posts')
+
+  // ── Academy: Courses ──
+  const academyCoverImages = await Promise.all([
+    seedMedia('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&h=630&fit=crop', 'academy-fundamentals-cover.jpg'),
+    seedMedia('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1200&h=630&fit=crop', 'academy-ai-cover.jpg'),
+    seedMedia('https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=630&fit=crop', 'academy-federation-cover.jpg'),
+    seedMedia('https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=1200&h=630&fit=crop', 'academy-production-cover.jpg'),
+    seedMedia('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&h=630&fit=crop', 'academy-guide-cover.jpg'),
+    seedMedia('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200&h=630&fit=crop', 'academy-paper-cover.jpg'),
+    seedMedia('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1200&h=630&fit=crop', 'academy-video-cover.jpg'),
+    seedMedia('https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&h=630&fit=crop', 'academy-tool-cover.jpg'),
+    seedMedia('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&h=630&fit=crop', 'academy-template-cover.jpg'),
+    seedMedia('https://images.unsplash.com/photo-1554200876-56c2f25224fa?w=1200&h=630&fit=crop', 'academy-link-cover.jpg'),
+  ])
+
+  await Course.insertMany([
+    {
+      slug: 'oxy-fundamentals',
+      title: 'Oxy Fundamentals',
+      summary: 'A hands-on tour of the Oxy platform — identity, data, automations, and how the pieces fit together.',
+      description: 'In this course you will set up an Oxy workspace, connect your first integrations, and learn how the shared platform primitives power every product in the ecosystem. By the end, you will have a working mental model of the stack and the confidence to ship your own flows.',
+      coverImage: academyCoverImages[0],
+      category: categoryRef('fundamentals'),
+      level: 'beginner',
+      durationMinutes: 90,
+      featured: true,
+      status: 'published',
+      order: 0,
+      tags: ['platform', 'getting-started'],
+      lessons: [
+        { title: 'Welcome to Oxy', slug: 'welcome', content: 'Meet the platform, the team behind it, and the principles that drive every decision we ship.', order: 0, durationMinutes: 8 },
+        { title: 'Workspaces and identity', slug: 'workspaces', content: 'Create a workspace, invite your team, and set up single sign-on with the Oxy identity layer.', order: 1, durationMinutes: 12 },
+        { title: 'Your first automation', slug: 'first-automation', content: 'Wire a trigger to an action and watch the CRM respond in real time.', order: 2, durationMinutes: 18 },
+      ],
+      publishedAt: new Date('2026-02-20'),
+    },
+    {
+      slug: 'building-with-oxy-ai',
+      title: 'Building with Oxy AI',
+      summary: 'Learn how to call the Oxy AI API, design prompts that actually ship, and ground responses in your own data.',
+      description: 'Go beyond playground experiments. This course walks through using the Oxy AI API in production: prompt design, retrieval grounding, evaluation, and how to keep latency and cost in check.',
+      coverImage: academyCoverImages[1],
+      category: categoryRef('fundamentals'),
+      level: 'intermediate',
+      durationMinutes: 120,
+      featured: true,
+      status: 'published',
+      order: 1,
+      tags: ['ai', 'api', 'rag'],
+      lessons: [
+        { title: 'API basics', slug: 'api-basics', content: 'Authenticate, call the chat endpoint, and stream responses.', order: 0, durationMinutes: 15 },
+        { title: 'Grounding with your data', slug: 'grounding', content: 'Combine retrieval, citations, and structured output to keep answers honest.', order: 1, durationMinutes: 25 },
+        { title: 'Evaluating outputs', slug: 'evaluating', content: 'Ship a small eval harness so you can improve prompts with confidence.', order: 2, durationMinutes: 20 },
+      ],
+      publishedAt: new Date('2026-02-25'),
+    },
+    {
+      slug: 'federated-messaging-with-mention',
+      title: 'Federated messaging with Mention',
+      summary: 'Publish, subscribe, and moderate across the open fediverse using Mention and the Oxy Inbox API.',
+      description: 'Mention speaks ActivityPub, and so can your app. This advanced course covers the federation story end-to-end — delivery, signatures, moderation, and the pragmatic trade-offs we made along the way.',
+      coverImage: academyCoverImages[2],
+      category: categoryRef('advanced'),
+      level: 'advanced',
+      durationMinutes: 150,
+      featured: true,
+      status: 'published',
+      order: 2,
+      tags: ['fediverse', 'activitypub', 'messaging'],
+      lessons: [
+        { title: 'ActivityPub primer', slug: 'activitypub-primer', content: 'What the protocol actually guarantees, and where you still need to make product decisions.', order: 0, durationMinutes: 20 },
+        { title: 'Signing and delivery', slug: 'signing-delivery', content: 'HTTP signatures, retries and inbox fan-out without falling off a cliff.', order: 1, durationMinutes: 30 },
+        { title: 'Moderation at scale', slug: 'moderation', content: 'Block lists, reporting flows and the tooling we ship with Mention out of the box.', order: 2, durationMinutes: 25 },
+      ],
+      publishedAt: new Date('2026-03-02'),
+    },
+    {
+      slug: 'production-ready-deploys',
+      title: 'Production-ready deploys',
+      summary: 'Take a demo from "it works on my machine" to "it serves a million users" with the Oxy deployment toolkit.',
+      description: 'A practical course on shipping real workloads on Oxy infrastructure — observability, blue/green rollouts, incident response, and the rituals every team should adopt before launch day.',
+      coverImage: academyCoverImages[3],
+      category: categoryRef('advanced'),
+      level: 'advanced',
+      durationMinutes: 180,
+      featured: false,
+      status: 'published',
+      order: 3,
+      tags: ['production', 'ops', 'observability'],
+      lessons: [
+        { title: 'Instrumenting your service', slug: 'instrumenting', content: 'Traces, metrics and logs that actually tell you what broke.', order: 0, durationMinutes: 30 },
+        { title: 'Rolling out without fear', slug: 'rollouts', content: 'Feature flags, canary pools and the rollback you hope to never press.', order: 1, durationMinutes: 30 },
+        { title: 'Incident response', slug: 'incident-response', content: 'Runbooks, comms and the post-incident doc everyone actually reads.', order: 2, durationMinutes: 30 },
+      ],
+      publishedAt: new Date('2026-03-08'),
+    },
+  ])
+  console.log('Seeded courses')
+
+  // ── Academy: Resources ──
+  await Resource.insertMany([
+    {
+      slug: 'oxy-platform-overview-guide',
+      title: 'The Oxy platform, in one page',
+      summary: 'A fast-moving written tour of every surface in the Oxy ecosystem — what it does, when to use it, and where to dig deeper.',
+      type: 'guide',
+      coverImage: academyCoverImages[4],
+      category: categoryRef('fundamentals'),
+      href: '/academy/oxy-fundamentals',
+      external: false,
+      featured: true,
+      status: 'published',
+      order: 0,
+      tags: ['platform', 'overview'],
+      publishedAt: new Date('2026-02-22'),
+    },
+    {
+      slug: 'grounded-answers-research-paper',
+      title: 'Grounded answers: the Oxy AI research note',
+      summary: 'The short paper behind Oxy AI — retrieval, ranking, and how we keep answers tethered to your data.',
+      type: 'paper',
+      coverImage: academyCoverImages[5],
+      category: categoryRef('advanced'),
+      href: 'https://oxy.so/og-default.png',
+      external: true,
+      featured: false,
+      status: 'published',
+      order: 1,
+      tags: ['ai', 'research'],
+      publishedAt: new Date('2026-02-27'),
+    },
+    {
+      slug: 'mention-moderation-walkthrough-video',
+      title: 'Mention moderation walkthrough',
+      summary: 'A 14-minute screencast walking through the moderation console end-to-end.',
+      type: 'video',
+      coverImage: academyCoverImages[6],
+      category: categoryRef('advanced'),
+      href: 'https://mention.earth/',
+      external: true,
+      featured: false,
+      status: 'published',
+      order: 2,
+      tags: ['fediverse', 'moderation', 'video'],
+      publishedAt: new Date('2026-03-03'),
+    },
+    {
+      slug: 'oxy-cli-tool',
+      title: 'Oxy CLI',
+      summary: 'A tiny command-line tool for shipping, debugging and observing Oxy apps without leaving your terminal.',
+      type: 'tool',
+      coverImage: academyCoverImages[7],
+      category: categoryRef('fundamentals'),
+      href: '/developers/docs',
+      external: false,
+      featured: true,
+      status: 'published',
+      order: 3,
+      tags: ['cli', 'dev-tools'],
+      publishedAt: new Date('2026-03-05'),
+    },
+    {
+      slug: 'launch-readiness-template',
+      title: 'Launch readiness template',
+      summary: 'A copy-and-customize checklist every product team can run before cutting over to production.',
+      type: 'template',
+      coverImage: academyCoverImages[8],
+      category: categoryRef('advanced'),
+      href: '/developers/docs',
+      external: false,
+      featured: false,
+      status: 'published',
+      order: 4,
+      tags: ['ops', 'launch'],
+      publishedAt: new Date('2026-03-09'),
+    },
+    {
+      slug: 'oxy-developer-docs',
+      title: 'Oxy Developer Docs',
+      summary: 'The canonical reference for every public API surface across the Oxy platform.',
+      type: 'link',
+      coverImage: academyCoverImages[9],
+      category: categoryRef('fundamentals'),
+      href: '/developers/docs',
+      external: false,
+      featured: false,
+      status: 'published',
+      order: 5,
+      tags: ['docs', 'reference'],
+      publishedAt: new Date('2026-03-11'),
+    },
+  ])
+  console.log('Seeded academy resources')
 
   console.log('\nSeed complete! All collections reset with original data.')
   await mongoose.disconnect()

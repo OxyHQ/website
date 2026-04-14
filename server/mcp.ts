@@ -24,6 +24,9 @@ import TrackedRepo from './models/TrackedRepo.js'
 import { TeamMember } from './models/TeamMember.js'
 import { Media } from './models/Media.js'
 import { Product } from './models/Product.js'
+import { Referral } from './models/Referral.js'
+import { Course } from './models/Course.js'
+import { Resource } from './models/Resource.js'
 import { syncAllRepos, syncSingleRepo } from './services/githubSync.js'
 import { deleteFromSpaces, uploadToSpaces } from './services/s3.js'
 import { processImage } from './services/thumbnails.js'
@@ -874,7 +877,7 @@ server.tool('delete_locale', 'Delete a locale and all its translations. Cannot d
 
 // ── Translations ────────────────────────────────────────────────────────────
 
-const TRANSLATABLE_COLLECTIONS = ['navigation', 'footer', 'pricing', 'testimonials', 'settings', 'pages', 'newsroom', 'jobs', 'hero', 'products', 'categories', 'team', 'changelog']
+const TRANSLATABLE_COLLECTIONS = ['navigation', 'footer', 'pricing', 'testimonials', 'settings', 'pages', 'newsroom', 'jobs', 'hero', 'products', 'categories', 'team', 'changelog', 'courses', 'resources']
 
 server.tool('list_translation_collections', 'List all collections that support translations.', {}, async () => {
   return ok(TRANSLATABLE_COLLECTIONS)
@@ -1247,6 +1250,343 @@ server.tool('delete_product', 'Permanently delete a product. This action cannot 
     const doc = await Product.findOneAndDelete({ productId })
     if (!doc) return err('Product not found')
     return ok({ deleted: true, productId })
+  } catch (e) { return err(e) }
+})
+
+// ── Academy: Courses ────────────────────────────────────────────────────────
+
+const lessonRawShape = {
+  title: z.string().describe('Lesson title'),
+  slug: z.string().describe('URL-safe lesson slug, unique within the course'),
+  content: z.string().optional().describe('Lesson body in Markdown'),
+  order: z.number().optional().describe('Lesson order within the course (lower = first)'),
+  videoUrl: z.string().optional().describe('Optional video URL for the lesson'),
+  durationMinutes: z.number().optional().describe('Estimated lesson duration in minutes'),
+}
+
+server.tool('list_courses', 'List Academy courses with optional filtering by category, tag, featured status, and publication status. Returns paginated results sorted by order asc then publishedAt desc.', {
+  category: z.string().optional().describe('Filter by Category _id (generic scope)'),
+  tag: z.string().optional().describe('Filter by tag'),
+  featured: z.boolean().optional().describe('Filter to only featured courses'),
+  status: z.enum(['draft', 'published']).optional().describe('Filter by publication status'),
+  level: z.enum(['beginner', 'intermediate', 'advanced']).optional().describe('Filter by difficulty level'),
+  limit: z.number().optional().describe('Results per page (default 20)'),
+  page: z.number().optional().describe('Page number (default 1)'),
+}, async (params) => {
+  try {
+    const filter: Record<string, unknown> = {}
+    if (params.category) filter.category = params.category
+    if (params.tag) filter.tags = params.tag
+    if (params.featured) filter.featured = true
+    if (params.status) filter.status = params.status
+    if (params.level) filter.level = params.level
+
+    const limit = params.limit ?? 20
+    const page = params.page ?? 1
+    const skip = (page - 1) * limit
+
+    const [courses, total] = await Promise.all([
+      Course.find(filter)
+        .populate('coverImage')
+        .populate('category')
+        .sort({ order: 1, publishedAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Course.countDocuments(filter),
+    ])
+    return ok({ courses, total, page, pages: Math.ceil(total / limit) })
+  } catch (e) { return err(e) }
+})
+
+server.tool('get_course', 'Get a single Academy course by its URL slug, including its lessons and populated cover image / category.', {
+  slug: z.string().describe('The URL slug of the course'),
+}, async ({ slug }) => {
+  try {
+    const course = await Course.findOne({ slug }).populate('coverImage').populate('category')
+    if (!course) return err('Course not found')
+    return ok(course)
+  } catch (e) { return err(e) }
+})
+
+server.tool('create_course', 'Create a new Academy course. Auto-generates the slug from the title if none is provided.', {
+  title: z.string().describe('Course title'),
+  slug: z.string().optional().describe('URL slug. Auto-generated from title if omitted.'),
+  summary: z.string().optional().describe('Short summary shown on cards (1-2 sentences)'),
+  description: z.string().optional().describe('Longer description shown on the detail page (Markdown)'),
+  coverImage: z.string().optional().describe('Media document ID for the cover image'),
+  category: z.string().optional().describe('Category _id (generic scope)'),
+  level: z.enum(['beginner', 'intermediate', 'advanced']).optional().describe('Difficulty level'),
+  durationMinutes: z.number().optional().describe('Total estimated duration in minutes'),
+  lessons: z.array(z.object(lessonRawShape)).optional().describe('Embedded lessons list'),
+  tags: z.array(z.string()).optional().describe('Tags for filtering'),
+  featured: z.boolean().optional().describe('Surface on the Academy featured grid'),
+  status: z.enum(['draft', 'published']).optional().describe('Publication status. Defaults to published.'),
+  publishedAt: z.string().optional().describe('Publication date as ISO string'),
+  order: z.number().optional().describe('Display order (lower = first)'),
+}, async (params) => {
+  try {
+    let slug = params.slug || generateSlug(params.title)
+    const existing = await Course.findOne({ slug })
+    if (existing) slug = `${slug}-${Date.now().toString(36)}`
+    const { publishedAt, coverImage, category, ...rest } = params
+    const course = await Course.create({
+      ...rest,
+      slug,
+      coverImage: coverImage && coverImage.length > 0 ? new mongoose.Types.ObjectId(coverImage) : null,
+      category: category && category.length > 0 ? new mongoose.Types.ObjectId(category) : null,
+      publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
+    })
+    const populated = await Course.findById(course._id).populate('coverImage').populate('category')
+    return ok(populated)
+  } catch (e) { return err(e) }
+})
+
+server.tool('update_course', 'Update an existing Academy course by slug. Only provided fields are changed.', {
+  slug: z.string().describe('Current slug of the course to update'),
+  newSlug: z.string().optional().describe('New slug to replace the current one. Must be unique.'),
+  title: z.string().optional(),
+  summary: z.string().optional(),
+  description: z.string().optional(),
+  coverImage: z.string().optional().describe('Media document ID. Pass empty string to clear.'),
+  category: z.string().optional().describe('Category _id. Pass empty string to clear.'),
+  level: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
+  durationMinutes: z.number().optional(),
+  lessons: z.array(z.object(lessonRawShape)).optional(),
+  tags: z.array(z.string()).optional(),
+  featured: z.boolean().optional(),
+  status: z.enum(['draft', 'published']).optional(),
+  publishedAt: z.string().optional(),
+  order: z.number().optional(),
+}, async ({ slug, newSlug, ...updates }) => {
+  try {
+    const patch: Record<string, unknown> = { ...updates }
+    if (newSlug) patch.slug = newSlug
+    if (updates.publishedAt) patch.publishedAt = new Date(updates.publishedAt)
+    if (updates.coverImage !== undefined) {
+      patch.coverImage = updates.coverImage && updates.coverImage.length > 0
+        ? new mongoose.Types.ObjectId(updates.coverImage)
+        : null
+    }
+    if (updates.category !== undefined) {
+      patch.category = updates.category && updates.category.length > 0
+        ? new mongoose.Types.ObjectId(updates.category)
+        : null
+    }
+    const course = await Course.findOneAndUpdate({ slug }, patch, { new: true })
+      .populate('coverImage')
+      .populate('category')
+    if (!course) return err('Course not found')
+    return ok(course)
+  } catch (e) { return err(e) }
+})
+
+server.tool('delete_course', 'Permanently delete an Academy course by slug. Cannot be undone.', {
+  slug: z.string().describe('The URL slug of the course to delete'),
+}, async ({ slug }) => {
+  try {
+    const course = await Course.findOneAndDelete({ slug })
+    if (!course) return err('Course not found')
+    return ok({ deleted: true, slug })
+  } catch (e) { return err(e) }
+})
+
+// ── Academy: Resources ──────────────────────────────────────────────────────
+
+server.tool('list_resources', 'List Academy resources (guides, papers, videos, tools, templates, links). Returns paginated results sorted by order asc then publishedAt desc.', {
+  category: z.string().optional().describe('Filter by Category _id (generic scope)'),
+  tag: z.string().optional().describe('Filter by tag'),
+  type: z.enum(['guide', 'paper', 'video', 'tool', 'template', 'link']).optional().describe('Filter by resource type'),
+  featured: z.boolean().optional().describe('Filter to only featured resources'),
+  status: z.enum(['draft', 'published']).optional().describe('Filter by publication status'),
+  limit: z.number().optional().describe('Results per page (default 20)'),
+  page: z.number().optional().describe('Page number (default 1)'),
+}, async (params) => {
+  try {
+    const filter: Record<string, unknown> = {}
+    if (params.category) filter.category = params.category
+    if (params.tag) filter.tags = params.tag
+    if (params.type) filter.type = params.type
+    if (params.featured) filter.featured = true
+    if (params.status) filter.status = params.status
+
+    const limit = params.limit ?? 20
+    const page = params.page ?? 1
+    const skip = (page - 1) * limit
+
+    const [resources, total] = await Promise.all([
+      Resource.find(filter)
+        .populate('coverImage')
+        .populate('category')
+        .sort({ order: 1, publishedAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Resource.countDocuments(filter),
+    ])
+    return ok({ resources, total, page, pages: Math.ceil(total / limit) })
+  } catch (e) { return err(e) }
+})
+
+server.tool('get_resource', 'Get a single Academy resource by its URL slug.', {
+  slug: z.string().describe('The URL slug of the resource'),
+}, async ({ slug }) => {
+  try {
+    const resource = await Resource.findOne({ slug }).populate('coverImage').populate('category')
+    if (!resource) return err('Resource not found')
+    return ok(resource)
+  } catch (e) { return err(e) }
+})
+
+server.tool('create_resource', 'Create a new Academy resource. Auto-generates the slug from the title if none is provided.', {
+  title: z.string().describe('Resource title'),
+  slug: z.string().optional().describe('URL slug. Auto-generated from title if omitted.'),
+  summary: z.string().optional().describe('Short summary shown on cards'),
+  type: z.enum(['guide', 'paper', 'video', 'tool', 'template', 'link']).optional().describe('Resource type. Defaults to "guide".'),
+  coverImage: z.string().optional().describe('Media document ID for the cover image'),
+  category: z.string().optional().describe('Category _id (generic scope)'),
+  href: z.string().describe('Canonical URL — local path like "/academy/...", or full external URL'),
+  external: z.boolean().optional().describe('True for off-site destinations'),
+  tags: z.array(z.string()).optional().describe('Tags for filtering'),
+  featured: z.boolean().optional().describe('Surface on the Academy featured grid'),
+  status: z.enum(['draft', 'published']).optional().describe('Publication status. Defaults to published.'),
+  publishedAt: z.string().optional().describe('Publication date as ISO string'),
+  order: z.number().optional().describe('Display order (lower = first)'),
+}, async (params) => {
+  try {
+    let slug = params.slug || generateSlug(params.title)
+    const existing = await Resource.findOne({ slug })
+    if (existing) slug = `${slug}-${Date.now().toString(36)}`
+    const { publishedAt, coverImage, category, ...rest } = params
+    const resource = await Resource.create({
+      ...rest,
+      slug,
+      coverImage: coverImage && coverImage.length > 0 ? new mongoose.Types.ObjectId(coverImage) : null,
+      category: category && category.length > 0 ? new mongoose.Types.ObjectId(category) : null,
+      publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
+    })
+    const populated = await Resource.findById(resource._id).populate('coverImage').populate('category')
+    return ok(populated)
+  } catch (e) { return err(e) }
+})
+
+server.tool('update_resource', 'Update an existing Academy resource by slug. Only provided fields are changed.', {
+  slug: z.string().describe('Current slug of the resource to update'),
+  newSlug: z.string().optional().describe('New slug to replace the current one. Must be unique.'),
+  title: z.string().optional(),
+  summary: z.string().optional(),
+  type: z.enum(['guide', 'paper', 'video', 'tool', 'template', 'link']).optional(),
+  coverImage: z.string().optional().describe('Media document ID. Pass empty string to clear.'),
+  category: z.string().optional().describe('Category _id. Pass empty string to clear.'),
+  href: z.string().optional(),
+  external: z.boolean().optional(),
+  tags: z.array(z.string()).optional(),
+  featured: z.boolean().optional(),
+  status: z.enum(['draft', 'published']).optional(),
+  publishedAt: z.string().optional(),
+  order: z.number().optional(),
+}, async ({ slug, newSlug, ...updates }) => {
+  try {
+    const patch: Record<string, unknown> = { ...updates }
+    if (newSlug) patch.slug = newSlug
+    if (updates.publishedAt) patch.publishedAt = new Date(updates.publishedAt)
+    if (updates.coverImage !== undefined) {
+      patch.coverImage = updates.coverImage && updates.coverImage.length > 0
+        ? new mongoose.Types.ObjectId(updates.coverImage)
+        : null
+    }
+    if (updates.category !== undefined) {
+      patch.category = updates.category && updates.category.length > 0
+        ? new mongoose.Types.ObjectId(updates.category)
+        : null
+    }
+    const resource = await Resource.findOneAndUpdate({ slug }, patch, { new: true })
+      .populate('coverImage')
+      .populate('category')
+    if (!resource) return err('Resource not found')
+    return ok(resource)
+  } catch (e) { return err(e) }
+})
+
+server.tool('delete_resource', 'Permanently delete an Academy resource by slug. Cannot be undone.', {
+  slug: z.string().describe('The URL slug of the resource to delete'),
+}, async ({ slug }) => {
+  try {
+    const resource = await Resource.findOneAndDelete({ slug })
+    if (!resource) return err('Resource not found')
+    return ok({ deleted: true, slug })
+  } catch (e) { return err(e) }
+})
+
+// ── Referrals ──────────────────────────────────────────────────────────────
+
+const referralRawShape = {
+  code: z.string().describe('Unique URL-safe code (e.g. "ALEX-2026"). Letters, digits, dash, underscore only.'),
+  name: z.string().describe('Display name of the referrer — shown on the public landing when someone visits /referrals?ref=CODE'),
+  email: z.string().optional().describe('Contact email. Admin-only — never returned from the public endpoint.'),
+  type: z.enum(['paid', 'ambassador', 'user']).optional().describe('"paid" for affiliates on commission, "ambassador" for unpaid-but-tracked advocates, "user" for casual share links'),
+  status: z.enum(['active', 'paused', 'revoked']).optional().describe('Only active codes resolve on the public endpoint'),
+  oxyUserId: z.string().optional().describe('Optional link to an Oxy account by user id'),
+  commissionPercent: z.number().min(0).max(100).optional().describe('For type="paid" — commission percent, 0–100'),
+  customLandingUrl: z.string().optional().describe('Optional destination override. When unset, the code sends visitors to /referrals?ref=CODE.'),
+  notes: z.string().optional().describe('Admin-only free-form notes'),
+}
+
+server.tool('list_referrals', 'List every referral. Supports filtering by program type or lifecycle status.', {
+  type: z.enum(['paid', 'ambassador', 'user']).optional().describe('Filter by program bucket'),
+  status: z.enum(['active', 'paused', 'revoked']).optional().describe('Filter by lifecycle status'),
+}, async ({ type, status }) => {
+  try {
+    const query: Record<string, unknown> = {}
+    if (type) query.type = type
+    if (status) query.status = status
+    const referrals = await Referral.find(query).sort({ type: 1, createdAt: -1 })
+    return ok(referrals)
+  } catch (e) { return err(e) }
+})
+
+server.tool('get_referral', 'Get a single referral by its code.', {
+  code: z.string().describe('Unique referral code'),
+}, async ({ code }) => {
+  try {
+    const referral = await Referral.findOne({ code })
+    if (!referral) return err('Referral not found')
+    return ok(referral)
+  } catch (e) { return err(e) }
+})
+
+server.tool('create_referral', 'Create a new referral code. Defaults to type="user" and status="active".', referralRawShape, async (input) => {
+  try {
+    const existing = await Referral.findOne({ code: input.code })
+    if (existing) return err(`Referral "${input.code}" already exists`)
+    const referral = await Referral.create(input)
+    return ok(referral)
+  } catch (e) { return err(e) }
+})
+
+server.tool('update_referral', 'Update an existing referral. Only the fields you provide are changed.', {
+  code: z.string().describe('Referral code to update'),
+  name: z.string().optional(),
+  email: z.string().optional(),
+  type: z.enum(['paid', 'ambassador', 'user']).optional(),
+  status: z.enum(['active', 'paused', 'revoked']).optional(),
+  oxyUserId: z.string().optional(),
+  commissionPercent: z.number().min(0).max(100).optional(),
+  customLandingUrl: z.string().optional(),
+  notes: z.string().optional(),
+}, async ({ code, ...patch }) => {
+  try {
+    const referral = await Referral.findOneAndUpdate({ code }, patch, { new: true })
+    if (!referral) return err('Referral not found')
+    return ok(referral)
+  } catch (e) { return err(e) }
+})
+
+server.tool('delete_referral', 'Permanently delete a referral code. This action cannot be undone.', {
+  code: z.string().describe('Referral code to delete'),
+}, async ({ code }) => {
+  try {
+    const doc = await Referral.findOneAndDelete({ code })
+    if (!doc) return err('Referral not found')
+    return ok({ deleted: true, code })
   } catch (e) { return err(e) }
 })
 

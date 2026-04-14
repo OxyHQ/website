@@ -20,6 +20,8 @@ const CareersPage = lazy(() => import('./pages/CareersPage'))
 const PricingPage = lazy(() => import('./pages/PricingPage'))
 const NewsroomPage = lazy(() => import('./pages/NewsroomPage'))
 const NewsroomPostPage = lazy(() => import('./pages/NewsroomPostPage'))
+const AcademyPage = lazy(() => import('./pages/AcademyPage'))
+const CourseDetailPage = lazy(() => import('./pages/CourseDetailPage'))
 const BlogPage = lazy(() => import('./pages/BlogPage'))
 const CodeaPage = lazy(() => import('./pages/CodeaPage'))
 const CodexExtensionPage = lazy(() => import('./pages/CodexExtensionPage'))
@@ -44,8 +46,12 @@ const AstroPage = lazy(() => import('./pages/AstroPage'))
 const AIPage = lazy(() => import('./pages/AIPage'))
 const CompanyPage = lazy(() => import('./pages/CompanyPage'))
 const TeamPage = lazy(() => import('./pages/TeamPage'))
+const ManifestoPage = lazy(() => import('./pages/ManifestoPage'))
+const TransparencyPage = lazy(() => import('./pages/TransparencyPage'))
+const BusinessPage = lazy(() => import('./pages/BusinessPage'))
 const ProductsPage = lazy(() => import('./pages/ProductsPage'))
 const StatusPage = lazy(() => import('./pages/StatusPage'))
+const ReferralsPage = lazy(() => import('./pages/ReferralsPage'))
 
 const OXY_API = 'https://api.oxy.so'
 
@@ -99,15 +105,21 @@ function PublicRoutes() {
     <>
       <Route index element={<HomePage />} />
       <Route path="partners" element={<PartnersPage />} />
+      <Route path="referrals" element={<ReferralsPage />} />
       <Route path="products" element={<ProductsPage />} />
       <Route path="status" element={<StatusPage />} />
       <Route path="company" element={<CompanyPage />} />
       <Route path="company/team" element={<TeamPage />} />
+      <Route path="company/manifesto" element={<ManifestoPage />} />
+      <Route path="company/transparency" element={<TransparencyPage />} />
+      <Route path="company/business" element={<BusinessPage />} />
       <Route path="company/careers" element={<CareersPage />} />
       <Route path="company/careers/:slug" element={<CareerDetailPage />} />
       <Route path="pricing" element={<PricingPage />} />
       <Route path="newsroom" element={<NewsroomPage />} />
       <Route path="newsroom/:slug" element={<NewsroomPostPage />} />
+      <Route path="academy" element={<AcademyPage />} />
+      <Route path="academy/:slug" element={<CourseDetailPage />} />
       <Route path="help" element={<HelpPage />} />
       <Route path="changelog" element={<ChangelogPage />} />
       <Route path="developers/docs" element={<DocsIntroPage />} />

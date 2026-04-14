@@ -12,6 +12,7 @@ const TRANSLATABLE_COLLECTIONS = [
   'navigation', 'footer', 'pricing', 'testimonials',
   'settings', 'pages', 'newsroom', 'jobs',
   'hero', 'products', 'categories', 'team', 'changelog',
+  'courses', 'resources',
 ] as const
 
 const collectionParamsSchema = z.object({
