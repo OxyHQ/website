@@ -4,7 +4,7 @@ import type { CardSize, CarouselSlot, HeroCard } from '../../data/heroCarousel'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCube, Autoplay } from 'swiper/modules'
 import { StarFour, PlugsConnected, Unite, Cpu } from '@phosphor-icons/react'
-import { useFairCoinStats } from '../../api/hooks'
+import { useFairCoinStats, useNewsroomPosts } from '../../api/hooks'
 import type { FairCoinStats } from '../../api/faircoinStore'
 import 'swiper/css'
 import 'swiper/css/effect-cube'
@@ -147,10 +147,24 @@ function toDisplayValues(stats: FairCoinStats | null): Record<FairCoinStatKey, n
   }
 }
 
+const FAIRCOIN_NEWS_DATE_FORMAT: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' }
+
 function FairCoinFace() {
   const stats = useFairCoinStats()
   const values = toDisplayValues(stats)
   const [runs, setRuns] = useState(() => FAIRCOIN_STAT_META.map(() => 0))
+
+  // Pull the latest FairCoin-tagged newsroom post from the CMS for the
+  // right-hand news card. Falls back to the static image + copy when the
+  // query hasn't resolved or there's nothing tagged yet.
+  const { data: newsData } = useNewsroomPosts({ tag: 'FairCoin', limit: 1 })
+  const post = newsData?.posts?.[0]
+  const newsImage = (post && typeof post.coverImage === 'string' && post.coverImage) || FAIRCOIN_STORE_IMAGE
+  const newsTitle = post?.title ?? 'Empowering local stores with FairCoin: a sustainable solution'
+  const newsDate = post?.publishedAt
+    ? new Date(post.publishedAt).toLocaleDateString('en-US', FAIRCOIN_NEWS_DATE_FORMAT)
+    : 'Apr 3, 2026'
+  const newsHref = post?.slug ? `/newsroom/${post.slug}` : null
   return (
     <div className="grid h-full w-full grid-cols-[1fr_1fr_auto] bg-[#166534]">
       {/* Col 1: title + buttons */}
@@ -193,26 +207,48 @@ function FairCoinFace() {
           })}
         </div>
       </div>
-      {/* Col 3: news card */}
-      <div className="m-2.5 flex w-[260px] flex-col overflow-hidden rounded-2xl bg-[#14532d] lg:m-3 lg:w-[300px]">
-        <img
-          src={FAIRCOIN_STORE_IMAGE}
-          alt="Local store"
-          className="h-3/5 w-full object-cover"
-          width={600}
-          height={400}
-          loading="lazy"
-          decoding="async"
-        />
-        <div className="flex flex-1 flex-col justify-end p-3 lg:p-4">
-          <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-green-400 lg:text-[11px]">
-            Apr 3, 2026
-          </span>
-          <p className="text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
-            Empowering local stores with FairCoin: a sustainable solution
-          </p>
+      {/* Col 3: news card — CMS-driven, latest post tagged "FairCoin" */}
+      {newsHref ? (
+        <Link to={newsHref} className="group m-2.5 flex w-[260px] flex-col overflow-hidden rounded-2xl bg-[#14532d] lg:m-3 lg:w-[300px]">
+          <img
+            src={newsImage}
+            alt=""
+            className="h-3/5 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            width={600}
+            height={400}
+            loading="lazy"
+            decoding="async"
+          />
+          <div className="flex flex-1 flex-col justify-end p-3 lg:p-4">
+            <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-green-400 lg:text-[11px]">
+              {newsDate}
+            </span>
+            <p className="line-clamp-3 text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
+              {newsTitle}
+            </p>
+          </div>
+        </Link>
+      ) : (
+        <div className="m-2.5 flex w-[260px] flex-col overflow-hidden rounded-2xl bg-[#14532d] lg:m-3 lg:w-[300px]">
+          <img
+            src={newsImage}
+            alt=""
+            className="h-3/5 w-full object-cover"
+            width={600}
+            height={400}
+            loading="lazy"
+            decoding="async"
+          />
+          <div className="flex flex-1 flex-col justify-end p-3 lg:p-4">
+            <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-green-400 lg:text-[11px]">
+              {newsDate}
+            </span>
+            <p className="line-clamp-3 text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
+              {newsTitle}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

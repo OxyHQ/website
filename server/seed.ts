@@ -9,6 +9,7 @@ import { config } from './config.js'
 import { Navigation } from './models/Navigation.js'
 import { Footer } from './models/Footer.js'
 import { Product } from './models/Product.js'
+import { Category } from './models/Category.js'
 import { HeroContent, DEFAULT_HERO_TITLE, DEFAULT_HERO_EYEBROW, DEFAULT_HERO_BG_WEBM, DEFAULT_HERO_BG_MP4, DEFAULT_HERO_POSTER, DEFAULT_CAROUSEL_SLOTS } from './models/HeroContent.js'
 import { PricingPlan } from './models/PricingPlan.js'
 import { Testimonial } from './models/Testimonial.js'
@@ -26,7 +27,7 @@ async function seed() {
   console.log('Connected to MongoDB')
 
   // ── Drop all collections (full reset) ──
-  const collections = [Navigation, Footer, HeroContent, Product, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, TrackedRepo, TeamMember, Media]
+  const collections = [Navigation, Footer, HeroContent, Product, Category, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, TrackedRepo, TeamMember, Media]
   await Promise.all(collections.map((m) => m.deleteMany({})))
   console.log('Cleared all collections')
 
@@ -41,23 +42,11 @@ async function seed() {
   }
 
   // ── Navigation (matches current production) ──
+  // Manual dropdowns (Platform / Resources) still have hand-curated items.
+  // Ecosystem is now a `kind: 'apps'` dropdown — resolved server-side from
+  // Product.find({ showInNav: true }) grouped by Category slug.
   const CDN = 'https://oxy-bucket.ams3.cdn.digitaloceanspaces.com/oxy-website'
-  const navMedia = {
-    services: await seedMedia(`${CDN}/navigation/services-b126fbf2.png`, 'services.png', 'image/png'),
-    mention: await seedMedia(`${CDN}/navigation/mention-3ecfe392.png`, 'mention.png', 'image/png'),
-    alia: await seedMedia(`${CDN}/navigation/alia-ef4a795f.png`, 'alia.png', 'image/png'),
-    inbox: await seedMedia(`${CDN}/images/inbox-6503df10.svg`, 'inbox.svg', 'image/svg+xml'),
-    faircoin: await seedMedia(`${CDN}/navigation/fc-222e8abd.png`, 'fc.png', 'image/png'),
-    faircoinWallet: await seedMedia(`${CDN}/images/icon-512-fbf188a8.png`, 'faircoin-wallet.png', 'image/png'),
-    faircoinExplorer: await seedMedia(`${CDN}/navigation/download--2--8f1ee71e.png`, 'faircoin-explorer.png', 'image/png'),
-    marketplace: await seedMedia(`${CDN}/navigation/marketplace-a974d3c1.png`, 'marketplace.png', 'image/png'),
-    homiio: await seedMedia(`${CDN}/navigation/homiio-8014d905.png`, 'homiio.png', 'image/png'),
-    horizon: await seedMedia(`${CDN}/navigation/horizon-20110870.png`, 'horizon.png', 'image/png'),
-    moovo: await seedMedia(`${CDN}/navigation/moovo-22821c3e.png`, 'moovo.png', 'image/png'),
-    astro: await seedMedia(`${CDN}/images/icon-512-ad603f2d.png`, 'astro.png', 'image/png'),
-    clarity: await seedMedia(`${CDN}/navigation/clarity-f24c11b8.png`, 'clarity.png', 'image/png'),
-    tnp: await seedMedia(`${CDN}/navigation/tnp-cfad841c.png`, 'tnp.png', 'image/png'),
-  }
+  const servicesMedia = await seedMedia(`${CDN}/navigation/services-b126fbf2.png`, 'services.png', 'image/png')
 
   await Navigation.insertMany([
     {
@@ -67,7 +56,7 @@ async function seed() {
         { title: 'AI', description: 'Native to your platform', href: '/ai', icon: 'ai', section: 'Platform' },
         { title: 'Data model', description: 'Sync and enrich your data', href: '#', icon: 'data', section: 'Platform' },
         { title: 'Productivity & collaboration', description: 'Context for your team operations', href: '#', icon: 'collaboration', section: 'Platform' },
-        { title: 'Services', description: 'Managed Oxy services', href: '/', image: navMedia.services, section: 'Platform' },
+        { title: 'Services', description: 'Managed Oxy services', href: '/', image: servicesMedia, section: 'Platform' },
         { title: 'Workflows', description: 'Automate any process', href: '#', icon: 'automations', section: 'Automations' },
         { title: 'Sequences', description: 'Personalized outreach', href: '#', icon: 'sequences', section: 'Automations' },
         { title: 'Call Intelligence', description: 'Record and analyze meetings', href: '#', icon: 'call-intelligence', section: 'Insights' },
@@ -106,30 +95,18 @@ async function seed() {
     },
     {
       label: 'Ecosystem',
+      // Items are generated at response time from products where showInNav=true,
+      // grouped by their category slug. Nothing manual to keep in sync here.
+      kind: 'apps',
       order: 2,
-      items: [
-        { title: 'Mention', description: 'Decentralized social media', href: '#', image: navMedia.mention, section: 'Social & Communication' },
-        { title: 'Alia', description: 'AI-powered assistant', href: 'https://alia.onl/', image: navMedia.alia, section: 'Social & Communication' },
-        { title: 'Inbox', description: 'Unified messaging hub', href: '#', image: navMedia.inbox, section: 'Social & Communication' },
-        { title: 'Shh', description: 'Private encrypted chat', href: '#', section: 'Social & Communication' },
-        { title: 'FairCoin', description: 'Ethical digital currency', href: 'https://fairco.in/', image: navMedia.faircoin, section: 'Finance & Commerce' },
-        { title: 'FairCoin Wallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', image: navMedia.faircoinWallet, section: 'Finance & Commerce' },
-        { title: 'FairCoin Explorer', description: 'Browse the blockchain', href: '#', image: navMedia.faircoinExplorer, section: 'Finance & Commerce' },
-        { title: 'Marketplace', description: 'Buy and sell with crypto', href: '#', image: navMedia.marketplace, section: 'Finance & Commerce' },
-        { title: 'Homiio', description: 'Real estate platform', href: 'https://homiio.com/', image: navMedia.homiio, section: 'Apps' },
-        { title: 'Horizon', description: 'Project management', href: '#', image: navMedia.horizon, section: 'Apps' },
-        { title: 'Moovo', description: 'Urban mobility network', href: '#', image: navMedia.moovo, section: 'Apps' },
-        { title: 'Astro Browser', description: 'AI Browser & Assistant', href: '/astro', image: navMedia.astro, section: 'Apps' },
-        { title: 'Clarity', description: 'AI-powered answer engine', href: '/clarity', image: navMedia.clarity, section: 'Apps' },
-        { title: 'TNP', description: 'Alternative namespace system', href: '/tnp', image: navMedia.tnp, section: 'Infrastructure' },
-      ],
+      items: [],
       sidePanel: {
         heading: 'Explore',
         links: [
           { label: 'All products', href: '/products' },
           { label: 'Open source', href: 'https://github.com/OxyHQ' },
           { label: 'Developer platform', href: '/developers/docs' },
-          { label: 'Status page', href: '#' },
+          { label: 'Status page', href: '/status' },
         ],
       },
     },
@@ -225,25 +202,36 @@ async function seed() {
   })
   console.log('Seeded footer')
 
+  // ── Categories (shared grouping labels used by products + navbar) ──
+  await Category.insertMany([
+    { slug: 'social-communication', label: 'Social & Communication', scope: 'apps', order: 0 },
+    { slug: 'finance-commerce', label: 'Finance & Commerce', scope: 'apps', order: 1 },
+    { slug: 'apps', label: 'Apps', scope: 'apps', order: 2 },
+    { slug: 'infrastructure', label: 'Infrastructure', scope: 'apps', order: 3 },
+    { slug: 'developer', label: 'Developer', scope: 'apps', order: 4 },
+  ])
+  console.log('Seeded categories')
+
   // ── Products (/products + /status + ecosystem navbar, single source of truth) ──
+  // `section` is a Category slug — see Category seed above.
   await Product.insertMany([
-    { productId: 'alia', name: 'Alia AI', tagline: 'Intelligent assistant', description: 'Your private AI assistant on web, iOS and Android. Ask anything, get answers, automate work — without your data feeding a training set.', href: 'https://alia.onl/', healthUrl: 'https://alia.onl/', external: true, cta: 'Open Alia', brand: '#7c3aed', mark: 'A', section: 'Social & Communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
-    { productId: 'mention', name: 'Mention', tagline: 'Open social network', description: 'A social network built on respect. No engagement-maxxing algorithms, no surveillance ads — just genuine connection on the open fediverse.', href: 'https://mention.earth/', external: true, cta: 'Visit Mention', brand: '#0ea5e9', mark: 'M', section: 'Social & Communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 1 },
-    { productId: 'inbox', name: 'Oxy Inbox', tagline: 'Unified messaging', description: 'All your email, chat and federated messages in one calm place. Smart triage surfaces what matters, end-to-end encrypted by default.', href: 'https://inbox.oxy.so', external: false, cta: 'Explore Inbox', brand: '#1e40af', mark: 'I', section: 'Social & Communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 2 },
-    { productId: 'faircoin', name: 'FairCoin', tagline: 'Currency that cares', description: 'Cryptocurrency built for sustainability, not speculation. Powering ethical commerce and local economies worldwide.', href: 'https://fairco.in/', external: true, cta: 'Visit FairCoin', brand: '#16a34a', mark: 'F', section: 'Finance & Commerce', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
-    { productId: 'faircoin-wallet', name: 'FairCoin Wallet', tagline: 'Manage your FairCoin', description: 'Self-custodied wallet built for everyday FairCoin use — send, receive, and track balances across devices.', href: 'https://fairco.in/wallet', external: true, cta: 'Open wallet', brand: '#16a34a', mark: 'W', section: 'Finance & Commerce', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: true, order: 1 },
-    { productId: 'faircoin-explorer', name: 'FairCoin Explorer', tagline: 'Blockchain explorer', description: 'Browse blocks, transactions and addresses on the FairCoin network.', href: 'https://explorer.fairco.in', healthUrl: 'https://explorer.fairco.in/api/mining-info?network=mainnet', external: true, cta: 'Open explorer', brand: '#16a34a', mark: 'E', section: 'Finance & Commerce', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 2 },
-    { productId: 'homiio', name: 'Homiio', tagline: 'Affordable housing', description: 'Technology that makes affordable housing accessible. Connecting people with homes they can actually afford, neighbourhood by neighbourhood.', href: 'https://homiio.com/', external: true, cta: 'Visit Homiio', brand: '#e11d48', mark: 'H', section: 'Apps', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
-    { productId: 'clarity', name: 'Clarity', tagline: 'AI answer engine', description: 'AI-powered answer engine that cites its sources and respects your privacy.', href: 'https://clarity.surf', external: true, cta: 'Open Clarity', brand: '#0ea5e9', mark: 'C', section: 'Apps', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 1 },
-    { productId: 'codea', name: 'Codea', tagline: 'Open-source code editor', description: 'A professional AI code editor that runs in your browser, on your machine, or self-hosted. Write, review and ship — on your terms.', href: '/codea', external: false, cta: 'Explore Codea', brand: '#0f172a', mark: 'C', section: 'Apps', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: true, order: 2 },
-    { productId: 'oxyos', name: 'Oxy OS', tagline: 'Operating system', description: 'An operating system designed around privacy and user freedom. Your computer, your data — no telemetry, no tracking, no compromises.', href: 'https://os.oxy.so', external: false, cta: 'Explore Oxy OS', brand: '#f97316', mark: 'X', section: 'Apps', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 3 },
-    { productId: 'oxy-ai', name: 'Oxy AI', tagline: 'Models, API and SDKs', description: 'Privacy-first AI for developers. Open models you can inspect, fine-tune and self-host — backed by a fast, multilingual API.', href: '/ai', external: false, cta: 'Explore Oxy AI', brand: '#dc2626', mark: 'O', section: 'Developer', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: false, order: 0 },
-    { productId: 'oxy-api', name: 'Oxy API', tagline: 'Core identity + platform API', description: 'The core API that powers sign-in, sessions and the Oxy ecosystem.', href: 'https://api.oxy.so', healthUrl: 'https://api.oxy.so/health', external: true, cta: 'API reference', brand: '#475569', mark: 'A', section: 'Infrastructure', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 0 },
-    { productId: 'website-api', name: 'Website API', tagline: 'Powers oxy.so content + MCP', description: 'Content API and MCP server for oxy.so.', href: 'https://website-api.oxy.so', healthUrl: 'https://website-api.oxy.so/api/health', external: true, cta: 'Status', brand: '#475569', mark: 'W', section: 'Infrastructure', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 1 },
-    { productId: 'accounts', name: 'Accounts', tagline: 'Sign-in, profile, billing', description: 'Central hub for managing your Oxy identity, devices and billing.', href: 'https://accounts.oxy.so', external: true, cta: 'Open accounts', brand: '#475569', mark: 'A', section: 'Infrastructure', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 2 },
-    { productId: 'tnp', name: 'TNP', tagline: 'Alternative namespace', description: 'The Network Protocol — register names on .ox, .app, .com and more. DNS-only, system-wide, and fully under your control.', href: '/tnp', external: false, cta: 'Explore TNP', brand: '#10b981', mark: 'T', section: 'Infrastructure', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: true, order: 3 },
-    { productId: 'astro', name: 'Astro', tagline: 'AI browser', description: 'Browse the web with AI by your side. Astro gives you instant answers, smarter suggestions and help with tasks — privacy you control.', href: '/astro', external: false, cta: 'Explore Astro', brand: '#a855f7', mark: 'A', section: 'Apps', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: true, order: 0 },
-    { productId: 'codex-extension', name: 'Codex Extension', tagline: 'Codea, everywhere you code', description: 'Bring Codea\u2019s open-source AI assistant into the editor you already use. Reviews, refactors and completions — free to inspect, free to extend.', href: '/codea/extension', external: false, cta: 'Explore the extension', brand: '#475569', mark: 'E', section: 'Developer', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: false, order: 1 },
+    { productId: 'alia', name: 'Alia AI', tagline: 'Intelligent assistant', description: 'Your private AI assistant on web, iOS and Android. Ask anything, get answers, automate work — without your data feeding a training set.', href: 'https://alia.onl/', landingUrl: '/alia', healthUrl: 'https://alia.onl/', external: true, cta: 'Open Alia', brand: '#7c3aed', mark: 'A', section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
+    { productId: 'mention', name: 'Mention', tagline: 'Open social network', description: 'A social network built on respect. No engagement-maxxing algorithms, no surveillance ads — just genuine connection on the open fediverse.', href: 'https://mention.earth/', external: true, cta: 'Visit Mention', brand: '#0ea5e9', mark: 'M', section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 1 },
+    { productId: 'inbox', name: 'Oxy Inbox', tagline: 'Unified messaging', description: 'All your email, chat and federated messages in one calm place. Smart triage surfaces what matters, end-to-end encrypted by default.', href: 'https://inbox.oxy.so', landingUrl: '/inbox', external: false, cta: 'Explore Inbox', brand: '#1e40af', mark: 'I', section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 2 },
+    { productId: 'faircoin', name: 'FairCoin', tagline: 'Currency that cares', description: 'Cryptocurrency built for sustainability, not speculation. Powering ethical commerce and local economies worldwide.', href: 'https://fairco.in/', external: true, cta: 'Visit FairCoin', brand: '#16a34a', mark: 'F', section: 'finance-commerce', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
+    { productId: 'faircoin-wallet', name: 'FairCoin Wallet', tagline: 'Manage your FairCoin', description: 'Self-custodied wallet built for everyday FairCoin use — send, receive, and track balances across devices.', href: 'https://fairco.in/wallet', external: true, cta: 'Open wallet', brand: '#16a34a', mark: 'W', section: 'finance-commerce', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: true, order: 1 },
+    { productId: 'faircoin-explorer', name: 'FairCoin Explorer', tagline: 'Blockchain explorer', description: 'Browse blocks, transactions and addresses on the FairCoin network.', href: 'https://explorer.fairco.in', healthUrl: 'https://explorer.fairco.in/api/mining-info?network=mainnet', external: true, cta: 'Open explorer', brand: '#16a34a', mark: 'E', section: 'finance-commerce', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 2 },
+    { productId: 'homiio', name: 'Homiio', tagline: 'Affordable housing', description: 'Technology that makes affordable housing accessible. Connecting people with homes they can actually afford, neighbourhood by neighbourhood.', href: 'https://homiio.com/', external: true, cta: 'Visit Homiio', brand: '#e11d48', mark: 'H', section: 'apps', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
+    { productId: 'clarity', name: 'Clarity', tagline: 'AI answer engine', description: 'AI-powered answer engine that cites its sources and respects your privacy.', href: 'https://clarity.surf', external: true, cta: 'Open Clarity', brand: '#0ea5e9', mark: 'C', section: 'apps', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 1 },
+    { productId: 'codea', name: 'Codea', tagline: 'Open-source code editor', description: 'A professional AI code editor that runs in your browser, on your machine, or self-hosted. Write, review and ship — on your terms.', href: '/codea', landingUrl: '/codea', external: false, cta: 'Explore Codea', brand: '#0f172a', mark: 'C', section: 'apps', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: true, order: 2 },
+    { productId: 'oxyos', name: 'Oxy OS', tagline: 'Operating system', description: 'An operating system designed around privacy and user freedom. Your computer, your data — no telemetry, no tracking, no compromises.', href: 'https://os.oxy.so', landingUrl: '/os', external: false, cta: 'Explore Oxy OS', brand: '#f97316', mark: 'X', section: 'apps', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 3 },
+    { productId: 'oxy-ai', name: 'Oxy AI', tagline: 'Models, API and SDKs', description: 'Privacy-first AI for developers. Open models you can inspect, fine-tune and self-host — backed by a fast, multilingual API.', href: '/ai', external: false, cta: 'Explore Oxy AI', brand: '#dc2626', mark: 'O', section: 'developer', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: false, order: 0 },
+    { productId: 'oxy-api', name: 'Oxy API', tagline: 'Core identity + platform API', description: 'The core API that powers sign-in, sessions and the Oxy ecosystem.', href: 'https://api.oxy.so', healthUrl: 'https://api.oxy.so/health', external: true, cta: 'API reference', brand: '#475569', mark: 'A', section: 'infrastructure', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 0 },
+    { productId: 'website-api', name: 'Website API', tagline: 'Powers oxy.so content + MCP', description: 'Content API and MCP server for oxy.so.', href: 'https://website-api.oxy.so', healthUrl: 'https://website-api.oxy.so/api/health', external: true, cta: 'Status', brand: '#475569', mark: 'W', section: 'infrastructure', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 1 },
+    { productId: 'accounts', name: 'Accounts', tagline: 'Sign-in, profile, billing', description: 'Central hub for managing your Oxy identity, devices and billing.', href: 'https://accounts.oxy.so', external: true, cta: 'Open accounts', brand: '#475569', mark: 'A', section: 'infrastructure', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 2 },
+    { productId: 'tnp', name: 'TNP', tagline: 'Alternative namespace', description: 'The Network Protocol — register names on .ox, .app, .com and more. DNS-only, system-wide, and fully under your control.', href: '/tnp', landingUrl: '/tnp', external: false, cta: 'Explore TNP', brand: '#10b981', mark: 'T', section: 'infrastructure', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: true, order: 3 },
+    { productId: 'astro', name: 'Astro', tagline: 'AI browser', description: 'Browse the web with AI by your side. Astro gives you instant answers, smarter suggestions and help with tasks — privacy you control.', href: '/astro', landingUrl: '/astro', external: false, cta: 'Explore Astro', brand: '#a855f7', mark: 'A', section: 'apps', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: true, order: 0 },
+    { productId: 'codex-extension', name: 'Codex Extension', tagline: 'Codea, everywhere you code', description: 'Bring Codea\u2019s open-source AI assistant into the editor you already use. Reviews, refactors and completions — free to inspect, free to extend.', href: '/codea/extension', landingUrl: '/codea/extension', external: false, cta: 'Explore the extension', brand: '#475569', mark: 'E', section: 'developer', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: false, order: 1 },
   ])
   console.log('Seeded products')
 

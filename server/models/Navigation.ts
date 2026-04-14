@@ -17,6 +17,12 @@ export interface ISidePanelLink {
 
 export interface INavDropdown extends Document {
   label: string
+  /**
+   * "manual" = items[] is the source of truth.
+   * "apps"   = items[] is ignored; the dropdown renders Products where
+   *            showInNav=true, grouped by their category/section.
+   */
+  kind: 'manual' | 'apps'
   items: INavItem[]
   sidePanel?: { heading: string; links: ISidePanelLink[] }
   order: number
@@ -39,6 +45,7 @@ const SidePanelLinkSchema = new Schema<ISidePanelLink>({
 
 const NavigationSchema = new Schema<INavDropdown>({
   label: { type: String, required: true },
+  kind: { type: String, enum: ['manual', 'apps'], default: 'manual' },
   items: [NavItemSchema],
   sidePanel: {
     heading: String,
