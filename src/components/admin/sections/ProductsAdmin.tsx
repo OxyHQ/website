@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useProducts, type ProductRecord, type ProductLifecycle } from '../../../api/hooks'
+import { useProducts, useMediaItem, type ProductRecord, type ProductLifecycle } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Input } from '../../ui/shadcn/input'
@@ -15,6 +15,46 @@ function mediaId(logo: unknown): string {
     return typeof id === 'string' ? id : ''
   }
   return ''
+}
+
+function mediaUrl(logo: unknown): string {
+  if (!logo) return ''
+  if (typeof logo === 'string') return logo.startsWith('http') || logo.startsWith('/') ? logo : ''
+  if (typeof logo === 'object' && logo !== null) {
+    const obj = logo as { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } }
+    return obj.url || obj.thumbnails?.lg || obj.thumbnails?.md || obj.thumbnails?.sm || ''
+  }
+  return ''
+}
+
+function ProductMark({ product, size = 'md' }: { product: ProductRecord; size?: 'sm' | 'md' }) {
+  // When logo is a plain id string (list view after normalizeLogo), pull the Media doc
+  // so we can render the actual image instead of just the letter mark.
+  const logoIdOrObject = product.logo
+  const needsLookup = typeof logoIdOrObject === 'string' && logoIdOrObject.length > 0
+  const { data: lookedUp } = useMediaItem(needsLookup ? (logoIdOrObject as string) : '')
+  const directUrl = mediaUrl(logoIdOrObject)
+  const logoUrl = directUrl || mediaUrl(lookedUp)
+  const sizeClass = size === 'sm' ? 'size-10 rounded-xl text-sm' : 'size-11 rounded-2xl text-lg'
+  return (
+    <span
+      className={`relative flex shrink-0 items-center justify-center overflow-hidden font-semibold tracking-tight ${sizeClass}`}
+      style={{ backgroundColor: product.brand, color: product.brandForeground || '#ffffff' }}
+      aria-hidden="true"
+    >
+      {logoUrl ? (
+        <img
+          src={logoUrl}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-contain p-1.5"
+        />
+      ) : (
+        product.mark || '?'
+      )}
+    </span>
+  )
 }
 
 function emptyProduct(): ProductRecord {
@@ -318,13 +358,7 @@ export default function ProductsAdmin() {
           <div className="mt-2 flex flex-col gap-2">
             <Label>Preview</Label>
             <div className="inline-flex items-center gap-3 rounded-2xl border border-border bg-background p-4">
-              <span
-                className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-lg font-semibold tracking-tight"
-                style={{ backgroundColor: editing.brand, color: editing.brandForeground || '#ffffff' }}
-                aria-hidden="true"
-              >
-                {editing.mark || '?'}
-              </span>
+              <ProductMark product={editing} />
               <div>
                 <div className="text-xs uppercase tracking-wider text-muted-foreground">{editing.tagline || 'tagline'}</div>
                 <div className="text-lg font-medium text-foreground">{editing.name || 'Product name'}</div>
@@ -367,13 +401,7 @@ export default function ProductsAdmin() {
             <div className="mt-3 divide-y divide-border rounded-2xl border border-border">
               {group.items.map((product) => (
                 <div key={product.productId} className="flex items-center gap-4 px-4 py-3">
-                  <span
-                    className="flex size-10 shrink-0 items-center justify-center rounded-xl text-sm font-semibold"
-                    style={{ backgroundColor: product.brand, color: product.brandForeground || '#ffffff' }}
-                    aria-hidden="true"
-                  >
-                    {product.mark}
-                  </span>
+                  <ProductMark product={product} size="sm" />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium text-foreground">{product.name}</div>
                     <div className="truncate text-xs text-muted-foreground">
