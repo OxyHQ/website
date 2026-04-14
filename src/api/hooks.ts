@@ -197,6 +197,37 @@ export function useHero() {
   })
 }
 
+// ── Service status ──
+export type ServiceStatusValue = 'operational' | 'degraded' | 'down' | 'unknown'
+
+export interface ServiceStatusEntry {
+  id: string
+  name: string
+  description: string
+  category: string
+  url: string
+  status: ServiceStatusValue
+  latencyMs: number | null
+  httpStatus: number | null
+  lastChecked: string
+}
+
+export interface ServiceStatusPayload {
+  generatedAt: string
+  overall: ServiceStatusValue
+  services: ServiceStatusEntry[]
+}
+
+export function useServiceStatus() {
+  return useQuery<ServiceStatusPayload>({
+    queryKey: ['status'],
+    queryFn: () => apiFetch<ServiceStatusPayload>('/status'),
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+    retry: 1,
+  })
+}
+
 export function useUpdateHero() {
   const qc = useQueryClient()
   return useMutation({
