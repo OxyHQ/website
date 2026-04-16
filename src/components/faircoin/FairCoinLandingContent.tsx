@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Button from '../ui/Button'
+import { fc } from '../../lib/faircoin-links'
 
 const CONTRACT_ADDRESS = '0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3'
 const BASESCAN_URL = `https://basescan.org/address/${CONTRACT_ADDRESS}`
@@ -150,6 +151,7 @@ function StepArrow() {
 }
 
 export default function FairCoinLandingContent() {
+  const bridgeHref = useMemo(() => fc('/bridge'), [])
   return (
     <div className="cursor-theme faircoin-theme">
       {/* Hero */}
@@ -167,7 +169,7 @@ export default function FairCoinLandingContent() {
               The native bridge from FairCoin to Ethereum L2. Trade FAIR on Uniswap, hold it in MetaMask, keep the 1:1 peg.
             </p>
             <div className="flex justify-center gap-x-g1 items-center flex-wrap mb-v1">
-              <Button href="/faircoin/bridge">Use the bridge</Button>
+              <Button href={bridgeHref}>Use the bridge</Button>
               <Button variant="outline" href={BASESCAN_URL} target="_blank" rel="noopener noreferrer">
                 View contract
               </Button>
@@ -332,7 +334,7 @@ export default function FairCoinLandingContent() {
                 The bridge is open. The source is public. The contract is verified. Everything you need to get started.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-x-g1 gap-y-2">
-                <Button href="/faircoin/bridge">Use the bridge</Button>
+                <Button href={bridgeHref}>Use the bridge</Button>
                 <Button variant="outline" href={BRIDGE_SOURCE_URL} target="_blank" rel="noopener noreferrer">
                   Source on GitHub
                 </Button>

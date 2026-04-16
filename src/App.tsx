@@ -11,6 +11,7 @@ import { isFairCoinHost } from './lib/host'
 
 import HomePage from './pages/HomePage'
 import FairCoinLanding from './pages/FairCoinLanding'
+import FairCoinBridgePage from './pages/FairCoinBridge'
 import { AccountPanelProvider } from './contexts/AccountPanelContext'
 
 const FixedPromptInput = lazy(() => import('./components/ui/FixedPromptInput'))
@@ -109,11 +110,14 @@ function PublicRoutes() {
   // natively instead of the Oxy homepage. Everything else on that host falls
   // through to NotFoundPage via the catch-all in App. On oxy.so the root
   // stays HomePage and /faircoin still resolves to the same landing.
-  const IndexElement = isFairCoinHost() ? <FairCoinLanding /> : <HomePage />
+  const onFairCoinHost = isFairCoinHost()
+  const IndexElement = onFairCoinHost ? <FairCoinLanding /> : <HomePage />
   return (
     <>
       <Route index element={IndexElement} />
+      {onFairCoinHost && <Route path="bridge" element={<FairCoinBridgePage />} />}
       <Route path="faircoin" element={<FairCoinLanding />} />
+      <Route path="faircoin/bridge" element={<FairCoinBridgePage />} />
       <Route path="partners" element={<PartnersPage />} />
       <Route path="referrals" element={<ReferralsPage />} />
       <Route path="referrals/dashboard" element={<ReferralsDashboardPage />} />

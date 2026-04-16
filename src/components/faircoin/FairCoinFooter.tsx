@@ -1,34 +1,44 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { fc } from '../../lib/faircoin-links'
 
 const LOGO_URL = 'https://fairco.in/logo.jpg'
 
-const FOOTER_COLUMNS = [
-  {
-    title: 'FairCoin',
-    links: [
-      { label: 'About', href: 'https://fairco.in/about', external: true },
-      { label: 'Explorer', href: 'https://explorer.fairco.in', external: true },
-      { label: 'Token list', href: '/tokenlist.json', external: true },
-      { label: 'Contract', href: 'https://basescan.org/address/0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3', external: true },
-    ],
-  },
-  {
-    title: 'Bridge',
-    links: [
-      { label: 'Use the bridge', href: '/faircoin/bridge', external: false },
-      { label: 'Source on GitHub', href: 'https://github.com/FairCoinOfficial/faircoin-bridge', external: true },
-      { label: 'Proof of reserves', href: 'https://fairco.in/reserves', external: true },
-    ],
-  },
-  {
-    title: 'Community',
-    links: [
-      { label: 'Discord', href: 'https://discord.gg/faircoin', external: true },
-      { label: 'Twitter', href: 'https://twitter.com/faircoin', external: true },
-      { label: 'GitHub', href: 'https://github.com/FairCoinOfficial', external: true },
-    ],
-  },
-] as const
+interface FooterColumnLink {
+  label: string
+  href: string
+  external?: boolean
+}
+
+function buildFooterColumns(): ReadonlyArray<{ title: string; links: readonly FooterColumnLink[] }> {
+  return [
+    {
+      title: 'FairCoin',
+      links: [
+        { label: 'About', href: 'https://fairco.in/about', external: true },
+        { label: 'Explorer', href: 'https://explorer.fairco.in', external: true },
+        { label: 'Token list', href: '/tokenlist.json', external: true },
+        { label: 'Contract', href: 'https://basescan.org/address/0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3', external: true },
+      ],
+    },
+    {
+      title: 'Bridge',
+      links: [
+        { label: 'Use the bridge', href: fc('/bridge') },
+        { label: 'Source on GitHub', href: 'https://github.com/FairCoinOfficial/faircoin-bridge', external: true },
+        { label: 'Proof of reserves', href: 'https://fairco.in/reserves', external: true },
+      ],
+    },
+    {
+      title: 'Community',
+      links: [
+        { label: 'Discord', href: 'https://discord.gg/faircoin', external: true },
+        { label: 'Twitter', href: 'https://twitter.com/faircoin', external: true },
+        { label: 'GitHub', href: 'https://github.com/FairCoinOfficial', external: true },
+      ],
+    },
+  ] as const
+}
 
 function ExternalArrow() {
   return (
@@ -83,6 +93,9 @@ function FooterLink({ link }: { link: { label: string; href: string; external?: 
 }
 
 export default function FairCoinFooter() {
+  const columns = useMemo(() => buildFooterColumns(), [])
+  const homeHref = useMemo(() => fc('/'), [])
+
   return (
     <footer className="relative flex w-full flex-col justify-between bg-background">
       <Divider />
@@ -90,7 +103,7 @@ export default function FairCoinFooter() {
         <div className="grid grid-cols-1 gap-10 px-px pt-10 pb-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-3">
             <Link
-              to="/"
+              to={homeHref}
               aria-label="FairCoin homepage"
               className="flex items-center gap-2"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -110,7 +123,7 @@ export default function FairCoinFooter() {
             </p>
           </div>
 
-          {FOOTER_COLUMNS.map((column) => (
+          {columns.map((column) => (
             <div key={column.title} className="break-inside-avoid">
               <h2 className="py-1 text-sm font-medium text-foreground">{column.title}</h2>
               <ul className="flex flex-col">

@@ -1,25 +1,14 @@
-import { useCallback, useState, useSyncExternalStore } from 'react'
+import { useCallback, useMemo, useState, useSyncExternalStore } from 'react'
 import { Link } from 'react-router-dom'
 import Button from '../ui/Button'
 import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '../../api/scrollStore'
+import { fc } from '../../lib/faircoin-links'
 
 interface FairCoinNavLink {
   label: string
   href: string
   external?: boolean
 }
-
-const NAV_LINKS: readonly FairCoinNavLink[] = [
-  { label: 'Home', href: '/' },
-  { label: 'Bridge', href: '/faircoin/bridge' },
-  { label: 'Explorer', href: 'https://explorer.fairco.in', external: true },
-  { label: 'GitHub', href: 'https://github.com/FairCoinOfficial', external: true },
-  {
-    label: 'Contract',
-    href: 'https://basescan.org/address/0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3',
-    external: true,
-  },
-]
 
 const LOGO_URL = 'https://fairco.in/logo.jpg'
 
@@ -60,6 +49,23 @@ export default function FairCoinNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const closeMobile = useCallback(() => setMobileOpen(false), [])
 
+  const navLinks = useMemo<readonly FairCoinNavLink[]>(
+    () => [
+      { label: 'Home', href: fc('/') },
+      { label: 'Bridge', href: fc('/bridge') },
+      { label: 'Explorer', href: 'https://explorer.fairco.in', external: true },
+      { label: 'GitHub', href: 'https://github.com/FairCoinOfficial', external: true },
+      {
+        label: 'Contract',
+        href: 'https://basescan.org/address/0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3',
+        external: true,
+      },
+    ],
+    [],
+  )
+  const bridgeHref = useMemo(() => fc('/bridge'), [])
+  const homeHref = useMemo(() => fc('/'), [])
+
   const scrolled = scrollY > 50
 
   return (
@@ -75,7 +81,7 @@ export default function FairCoinNavbar() {
             <div className="flex items-center justify-between">
               <div className="flex grow items-center gap-x-9">
                 <Link
-                  to="/"
+                  to={homeHref}
                   className="flex items-center gap-2 -mx-1.5 rounded-xl px-1.5"
                   aria-label="FairCoin homepage"
                   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -92,7 +98,7 @@ export default function FairCoinNavbar() {
                 </Link>
 
                 <ul className="hidden items-center gap-x-1.5 lg:flex">
-                  {NAV_LINKS.map((link) => (
+                  {navLinks.map((link) => (
                     <li key={link.label}>
                       <NavLinkItem link={link} />
                     </li>
@@ -122,7 +128,7 @@ export default function FairCoinNavbar() {
                 >
                   View source
                 </Button>
-                <Button variant="primary" size="sm" href="/faircoin/bridge">
+                <Button variant="primary" size="sm" href={bridgeHref}>
                   Use the bridge
                 </Button>
               </div>
@@ -134,7 +140,7 @@ export default function FairCoinNavbar() {
           <div className="border-t border-border bg-background lg:hidden">
             <div className="mx-auto w-full max-w-[1200px] px-6">
               <div className="flex flex-col gap-1 py-4">
-                {NAV_LINKS.map((link) => (
+                {navLinks.map((link) => (
                   <div key={link.label}>
                     {link.external ? (
                       <a
@@ -169,7 +175,7 @@ export default function FairCoinNavbar() {
                   >
                     View source
                   </Button>
-                  <Button variant="primary" size="md" href="/faircoin/bridge" className="w-full">
+                  <Button variant="primary" size="md" href={bridgeHref} className="w-full">
                     Use the bridge
                   </Button>
                 </div>
