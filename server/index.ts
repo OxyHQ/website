@@ -42,8 +42,24 @@ import { mountMcp } from './mcp.js'
 
 const app = express()
 
+const ALWAYS_ALLOWED_ORIGINS = new Set([
+  'https://oxy.so',
+  'https://www.oxy.so',
+  'https://fairco.in',
+  'https://www.fairco.in',
+  'http://localhost:5173',
+  'http://localhost:4173',
+])
+
 app.use(cors({
-  origin: config.corsOrigin ? config.corsOrigin.split(',') : true,
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true)
+    if (ALWAYS_ALLOWED_ORIGINS.has(origin)) return callback(null, true)
+    const envAllowed = config.corsOrigin?.split(',').map((s) => s.trim()).filter(Boolean) ?? []
+    if (envAllowed.includes(origin)) return callback(null, true)
+    if (envAllowed.length === 0 && !config.corsOrigin) return callback(null, true)
+    return callback(new Error(`CORS: origin ${origin} not allowed`), false)
+  },
   credentials: true,
 }))
 
