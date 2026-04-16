@@ -28,6 +28,10 @@ const connectors = [
   coinbaseWallet({
     appName: 'FairCoin',
     appLogoUrl: 'https://fairco.in/logo.jpg',
+    // 'all' = use Coinbase Wallet extension if present, otherwise open the
+    // hosted Smart Wallet popup. Without this, users without the extension
+    // hit "Provider not found".
+    preference: 'all',
   }),
   ...(WALLETCONNECT_PROJECT_ID
     ? [
