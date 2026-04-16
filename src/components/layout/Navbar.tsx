@@ -104,14 +104,45 @@ export interface NavbarItem {
   external?: boolean
 }
 
+/**
+ * One entry in a sub-brand grouped dropdown. Used when a `navItems` entry
+ * has a `children` array — the navbar then renders a labelled menu instead
+ * of a flat link.
+ */
+export interface NavbarGroupItem {
+  label: string
+  href: string
+  external?: boolean
+  description?: string
+}
+
+/**
+ * Sub-brand navigation entry. Either a flat `{label, href}` link or a
+ * grouped `{label, children: [...]}` dropdown. FairCoin uses this to present
+ * Get FAIR / Network / Developers / Community as dropdowns.
+ */
+export type NavbarGroupedItem =
+  | NavbarItem
+  | { label: string; children: readonly NavbarGroupItem[] }
+
+export function isNavbarGroup(
+  item: NavbarGroupedItem,
+): item is { label: string; children: readonly NavbarGroupItem[] } {
+  return 'children' in item && Array.isArray(item.children)
+}
+
 interface NavbarProps {
   /** Override the brand block. Defaults to the Oxy logo linking to `/`. */
   brand?: NavbarBrand
   /**
    * When set, replaces both CMS dropdowns and `simpleNavLinks` with a flat
    * link list. Useful for sub-brands (FairCoin) that don't use the Oxy nav.
+   *
+   * Items can be flat links (`{label, href}`) or grouped dropdowns
+   * (`{label, children: [...]}`); the navbar renders dropdowns inline with
+   * full keyboard support and a mobile accordion fallback.
    */
-  navItems?: readonly NavbarItem[]
+  navItems?: readonly NavbarGroupedItem[]
   /** Replace the default Sign in / Start for free buttons. */
   ctaButtons?: React.ReactNode
   /** Hide the auth buttons / avatar entirely. */
@@ -124,6 +155,146 @@ interface NavbarProps {
   rightActions?: React.ReactNode
   /** Make navbar fully transparent with no border */
   transparent?: boolean
+}
+
+/**
+ * Hover/keyboard-driven dropdown for sub-brand grouped nav items. Lighter
+ * than the CMS-driven `DropdownContent` — single-column, no measurement,
+ * absolute-positioned under the trigger. Keyboard support: ESC closes,
+ * Arrow Down focuses first item, Arrow Up focuses last.
+ */
+function FlatGroupDropdown({
+  label,
+  children_,
+  isTransparent,
+}: {
+  label: string
+  children_: readonly NavbarGroupItem[]
+  isTransparent: boolean
+}) {
+  const [open, setOpen] = useState(false)
+  const [focused, setFocused] = useState<number>(-1)
+  const closeRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const itemRefs = useRef<Array<HTMLAnchorElement | null>>([])
+
+  const cancelClose = useCallback(() => {
+    if (closeRef.current) {
+      clearTimeout(closeRef.current)
+      closeRef.current = null
+    }
+  }, [])
+  const scheduleClose = useCallback(() => {
+    cancelClose()
+    closeRef.current = setTimeout(() => setOpen(false), 150)
+  }, [cancelClose])
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'Escape') {
+        setOpen(false)
+        return
+      }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        const next = Math.min(children_.length - 1, focused + 1)
+        setFocused(next)
+        itemRefs.current[next]?.focus()
+        return
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        const next = Math.max(0, focused - 1)
+        setFocused(next)
+        itemRefs.current[next]?.focus()
+      }
+    },
+    [children_.length, focused],
+  )
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => {
+        cancelClose()
+        setOpen(true)
+      }}
+      onMouseLeave={scheduleClose}
+      onKeyDown={handleKeyDown}
+    >
+      <button
+        type="button"
+        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`}
+        style={{
+          background: open ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
+          color: open ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
+        }}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        onClick={() => setOpen((o) => !o)}
+        onFocus={() => {
+          cancelClose()
+          setOpen(true)
+        }}
+      >
+        <span>{label}</span>
+        <ChevronDown
+          className={`transition-transform duration-300 ${open ? 'translate-y-px' : ''}`}
+        />
+      </button>
+      <div
+        role="menu"
+        aria-label={label}
+        className={`absolute left-0 top-full z-20 min-w-[260px] origin-top transition-all duration-200 ${open ? 'opacity-100 translate-y-2 pointer-events-auto' : 'opacity-0 -translate-y-1 pointer-events-none'}`}
+      >
+        <div className="overflow-hidden rounded-2xl border border-border bg-popover shadow-[0_24px_60px_-24px_rgba(0,0,0,0.35)]">
+          <ul className="flex flex-col gap-0.5 p-2">
+            {children_.map((child, i) =>
+              child.external || !child.href.startsWith('/') ? (
+                <li key={child.label} role="none">
+                  <a
+                    ref={(el) => {
+                      itemRefs.current[i] = el
+                    }}
+                    role="menuitem"
+                    tabIndex={open ? 0 : -1}
+                    href={child.href}
+                    {...(child.external
+                      ? { target: '_blank', rel: 'noopener noreferrer' }
+                      : {})}
+                    onClick={() => setOpen(false)}
+                    className="flex flex-col gap-0.5 rounded-xl px-3 py-2 text-sm transition-colors hover:bg-foreground/5 focus:bg-foreground/5 focus:outline-none"
+                  >
+                    <span className="text-foreground">{child.label}</span>
+                    {child.description ? (
+                      <span className="text-[11px] text-muted-foreground">{child.description}</span>
+                    ) : null}
+                  </a>
+                </li>
+              ) : (
+                <li key={child.label} role="none">
+                  <Link
+                    ref={(el) => {
+                      itemRefs.current[i] = el
+                    }}
+                    role="menuitem"
+                    tabIndex={open ? 0 : -1}
+                    to={child.href}
+                    onClick={() => setOpen(false)}
+                    className="flex flex-col gap-0.5 rounded-xl px-3 py-2 text-sm transition-colors hover:bg-foreground/5 focus:bg-foreground/5 focus:outline-none"
+                  >
+                    <span className="text-foreground">{child.label}</span>
+                    {child.description ? (
+                      <span className="text-[11px] text-muted-foreground">{child.description}</span>
+                    ) : null}
+                  </Link>
+                </li>
+              ),
+            )}
+          </ul>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function Navbar({
@@ -148,7 +319,7 @@ export default function Navbar({
     () => (useFlatNav ? [] : navigationData ?? []),
     [useFlatNav, navigationData],
   )
-  const flatLinks: readonly NavbarItem[] = useMemo(
+  const flatLinks: readonly NavbarGroupedItem[] = useMemo(
     () => (useFlatNav ? navItems ?? [] : []),
     [useFlatNav, navItems],
   )
@@ -367,26 +538,36 @@ export default function Navbar({
               <div ref={escapeRef} className="relative z-10" onMouseLeave={scheduleClose}>
                 <ul className="hidden items-center gap-x-1.5 lg:flex">
                   {useFlatNav
-                    ? flatLinks.map((link) => (
-                        <li key={link.label}>
-                          {link.external || !link.href.startsWith('/') ? (
-                            <a
-                              href={link.href}
-                              {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                              className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
-                            >
-                              {link.label}
-                            </a>
-                          ) : (
-                            <Link
-                              to={link.href}
-                              className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
-                            >
-                              {link.label}
-                            </Link>
-                          )}
-                        </li>
-                      ))
+                    ? flatLinks.map((item) =>
+                        isNavbarGroup(item) ? (
+                          <li key={item.label}>
+                            <FlatGroupDropdown
+                              label={item.label}
+                              children_={item.children}
+                              isTransparent={isTransparent ?? false}
+                            />
+                          </li>
+                        ) : (
+                          <li key={item.label}>
+                            {item.external || !item.href.startsWith('/') ? (
+                              <a
+                                href={item.href}
+                                {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                                className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
+                              >
+                                {item.label}
+                              </a>
+                            ) : (
+                              <Link
+                                to={item.href}
+                                className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
+                              >
+                                {item.label}
+                              </Link>
+                            )}
+                          </li>
+                        ),
+                      )
                     : (
                       <>
                         {dropdowns.map((dd) => (
@@ -558,28 +739,72 @@ export default function Navbar({
           <div className="container">
             <div className="flex flex-col gap-1 py-4">
               {useFlatNav ? (
-                flatLinks.map((link) => (
-                  link.external || !link.href.startsWith('/') ? (
+                flatLinks.map((item) =>
+                  isNavbarGroup(item) ? (
+                    <div key={item.label}>
+                      <button
+                        type="button"
+                        className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
+                        onClick={() =>
+                          setMobileAccordion(mobileAccordion === item.label ? null : item.label)
+                        }
+                        aria-expanded={mobileAccordion === item.label}
+                      >
+                        {item.label}
+                        <ChevronDown
+                          className={`transition-transform duration-200 ${mobileAccordion === item.label ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                      {mobileAccordion === item.label && (
+                        <div className="flex flex-col gap-1 pb-2 pl-4">
+                          {item.children.map((child) =>
+                            child.external || !child.href.startsWith('/') ? (
+                              <a
+                                key={child.label}
+                                href={child.href}
+                                {...(child.external
+                                  ? { target: '_blank', rel: 'noopener noreferrer' }
+                                  : {})}
+                                className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                                onClick={() => setMobileOpen(false)}
+                              >
+                                {child.label}
+                              </a>
+                            ) : (
+                              <Link
+                                key={child.label}
+                                to={child.href}
+                                className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                                onClick={() => setMobileOpen(false)}
+                              >
+                                {child.label}
+                              </Link>
+                            ),
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ) : item.external || !item.href.startsWith('/') ? (
                     <a
-                      key={link.label}
-                      href={link.href}
-                      {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                      key={item.label}
+                      href={item.href}
+                      {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                       className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
                       onClick={() => setMobileOpen(false)}
                     >
-                      {link.label}
+                      {item.label}
                     </a>
                   ) : (
                     <Link
-                      key={link.label}
-                      to={link.href}
+                      key={item.label}
+                      to={item.href}
                       className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
                       onClick={() => setMobileOpen(false)}
                     >
-                      {link.label}
+                      {item.label}
                     </Link>
-                  )
-                ))
+                  ),
+                )
               ) : (
                 <>
                   {dropdowns.map((dd) => (

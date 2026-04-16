@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import Button from '../components/ui/Button'
 import { fc } from './faircoin-links'
 import { isFairCoinHost } from './host'
-import type { NavbarBrand, NavbarItem } from '../components/layout/Navbar'
+import type { NavbarBrand, NavbarGroupedItem } from '../components/layout/Navbar'
 import type { FooterBrand, FooterColumnConfig } from '../components/layout/Footer'
 
 /**
@@ -83,18 +83,141 @@ export function useFairCoinFooterBrand(): FooterBrand | undefined {
   )
 }
 
-export function useFairCoinNavItems(): readonly NavbarItem[] | undefined {
+/**
+ * Grouped FairCoin navigation. Returns dropdown groups for Get FAIR / Network
+ * / Developers / Community plus a flat "Buy" link as the primary CTA.
+ *
+ * Buy stays flat because it is the user's #1 action — surfacing it as a
+ * dropdown would bury it. Everything else lives under labelled groups so the
+ * top-level rail stays uncluttered.
+ */
+export function useFairCoinNavItems(): readonly NavbarGroupedItem[] | undefined {
   const onFairCoinHost = isFairCoinHost()
   return useMemo(
     () =>
       onFairCoinHost
         ? ([
-            { label: 'Home', href: fc('/') },
             { label: 'Buy', href: fc('/buy') },
-            { label: 'Wallets', href: 'https://github.com/FairCoinOfficial/FAIRWallet/releases', external: true },
-            { label: 'Network', href: 'https://explorer.fairco.in', external: true },
-            { label: 'GitHub', href: 'https://github.com/FairCoinOfficial', external: true },
-          ] as const)
+            {
+              label: 'Get FAIR',
+              children: [
+                {
+                  label: 'Buy with USDC',
+                  href: fc('/buy'),
+                  description: 'Pay USDC on Base, receive FAIR on the FairCoin chain.',
+                },
+                {
+                  label: 'Redeem WFAIR',
+                  href: fc('/unwrap'),
+                  description: 'Burn WFAIR on Base for native FAIR.',
+                },
+                {
+                  label: 'Get a wallet',
+                  href: 'https://github.com/FairCoinOfficial/FAIRWallet/releases',
+                  external: true,
+                  description: 'FAIRWallet — iOS, Android, desktop.',
+                },
+                {
+                  label: 'Run a masternode',
+                  href: 'https://github.com/FairCoinOfficial/FairCoin#masternodes',
+                  external: true,
+                  description: 'Stake 5,000 FAIR and earn block rewards.',
+                },
+              ],
+            },
+            {
+              label: 'Network',
+              children: [
+                {
+                  label: 'Explorer',
+                  href: 'https://explorer.fairco.in',
+                  external: true,
+                  description: 'Browse blocks, transactions, addresses.',
+                },
+                {
+                  label: 'Live stats',
+                  href: 'https://explorer.fairco.in/stats',
+                  external: true,
+                  description: 'Hashrate, masternodes, supply, mempool.',
+                },
+                {
+                  label: 'Masternodes',
+                  href: 'https://explorer.fairco.in/masternodes',
+                  external: true,
+                  description: 'Active masternode list and rewards.',
+                },
+                {
+                  label: 'WFAIR contract',
+                  href: 'https://basescan.org/address/0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3',
+                  external: true,
+                  description: 'Verified on Base mainnet.',
+                },
+                {
+                  label: 'Uniswap pool',
+                  href: 'https://app.uniswap.org/explore/tokens/base/0xf2853ceddf47a05fee0b4b24dff2925d59737fb3',
+                  external: true,
+                  description: 'WFAIR/USDC v3 pool on Base.',
+                },
+              ],
+            },
+            {
+              label: 'Developers',
+              children: [
+                {
+                  label: 'GitHub org',
+                  href: 'https://github.com/FairCoinOfficial',
+                  external: true,
+                  description: 'All FairCoin source — chain, wallets, bridge.',
+                },
+                {
+                  label: 'WFAIR bridge',
+                  href: fc('/bridge'),
+                  description: 'API reference and reserve dashboard.',
+                },
+                {
+                  label: 'Bridge source',
+                  href: BRIDGE_SOURCE_URL,
+                  external: true,
+                  description: 'faircoin-bridge service + contracts.',
+                },
+                {
+                  label: 'Token list',
+                  href: '/tokenlist.json',
+                  external: true,
+                  description: 'Standard token list — import WFAIR into wallets.',
+                },
+                {
+                  label: 'FairCoin Core',
+                  href: 'https://github.com/FairCoinOfficial/FairCoin',
+                  external: true,
+                  description: 'Reference daemon source.',
+                },
+              ],
+            },
+            {
+              label: 'Community',
+              children: [
+                {
+                  label: 'Reddit',
+                  href: 'https://reddit.com/r/FairCoinOfficial',
+                  external: true,
+                  description: 'r/FairCoinOfficial — discussions and AMAs.',
+                },
+                {
+                  label: 'Telegram',
+                  href: 'https://t.me/FairCoin_',
+                  external: true,
+                  description: 'Day-to-day chat with maintainers.',
+                },
+                {
+                  label: 'Twitter',
+                  href: 'https://twitter.com/FairCoin_',
+                  external: true,
+                  description: 'Announcements and short updates.',
+                },
+              ],
+            },
+          ] as const satisfies readonly NavbarGroupedItem[])
         : undefined,
     [onFairCoinHost],
   )

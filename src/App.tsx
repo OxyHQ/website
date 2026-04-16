@@ -12,8 +12,9 @@ import { isFairCoinHost } from './lib/host'
 
 import HomePage from './pages/HomePage'
 import FairCoinLanding from './pages/FairCoinLanding'
-import FairCoinBridgePage from './pages/FairCoinBridge'
-import FairCoinBuyPage from './pages/FairCoinBuy'
+const FairCoinBridgePage = lazy(() => import('./pages/FairCoinBridge'))
+const FairCoinBuyPage = lazy(() => import('./pages/FairCoinBuy'))
+const FairCoinUnwrapPage = lazy(() => import('./pages/FairCoinUnwrap'))
 import { AccountPanelProvider } from './contexts/AccountPanelContext'
 
 const FixedPromptInput = lazy(() => import('./components/ui/FixedPromptInput'))
@@ -117,6 +118,8 @@ function PublicRoutes() {
       <>
         <Route index element={<FairCoinLanding />} />
         <Route path="buy" element={<FairCoinBuyPage />} />
+        <Route path="unwrap" element={<FairCoinUnwrapPage />} />
+        <Route path="redeem" element={<FairCoinUnwrapPage />} />
         <Route path="bridge" element={<FairCoinBridgePage />} />
       </>
     )
@@ -126,6 +129,8 @@ function PublicRoutes() {
       <Route index element={<HomePage />} />
       <Route path="faircoin" element={<FairCoinLanding />} />
       <Route path="faircoin/buy" element={<FairCoinBuyPage />} />
+      <Route path="faircoin/unwrap" element={<FairCoinUnwrapPage />} />
+      <Route path="faircoin/redeem" element={<FairCoinUnwrapPage />} />
       <Route path="faircoin/bridge" element={<FairCoinBridgePage />} />
       <Route path="partners" element={<PartnersPage />} />
       <Route path="referrals" element={<ReferralsPage />} />
