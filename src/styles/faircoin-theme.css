@@ -35,14 +35,26 @@
  * and the 404 fallback when served from a FairCoin host.
  */
 
-/* Phudu is the FairCoin official typeface — applied to all FairCoin
- * surfaces regardless of host (fairco.in apex AND oxy.so/faircoin/*).
- * Pages opt in by adding `.faircoin-surface` to their root.
- * The colour theme (`.faircoin-theme`) is still host-conditional. */
-.faircoin-surface,
-.faircoin-surface *,
-.faircoin-theme,
-.faircoin-theme * {
+/* Phudu is the FairCoin official display typeface — used ONLY for big titles
+ * (h1, h2, hero display, gradient-text, type-xl/2xl/lg). Body text keeps the
+ * inherited app font for legibility at small sizes.
+ * Pages opt in by adding `.faircoin-surface` to their root. */
+.faircoin-surface h1,
+.faircoin-surface h2,
+.faircoin-surface .gradient-text,
+.faircoin-surface .type-xl,
+.faircoin-surface .type-2xl,
+.faircoin-surface .type-md-lg,
+.faircoin-surface .text-display,
+.faircoin-surface .font-faircoin,
+.faircoin-theme h1,
+.faircoin-theme h2,
+.faircoin-theme .gradient-text,
+.faircoin-theme .type-xl,
+.faircoin-theme .type-2xl,
+.faircoin-theme .type-md-lg,
+.faircoin-theme .text-display,
+.faircoin-theme .font-faircoin {
   font-family: 'Phudu', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
