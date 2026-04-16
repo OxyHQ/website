@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
@@ -18,62 +18,35 @@ import {
 
 const SEO_TITLE = 'Buy FairCoin — fairco.in'
 const SEO_DESCRIPTION =
-  'Buy FAIR delivered straight to your FairCoin wallet. Pay, confirm, and receive — handled in one flow.'
+  'Two ways to buy FAIR. Use FAIRWallet to pay USDC and receive native FAIR in your wallet, or swap USDC for WFAIR directly on Uniswap.'
 
-/**
- * FairCoin address format heuristic. Mainnet addresses start with `F` and are
- * Base58Check-encoded, typically 33–35 characters. We avoid pulling a full
- * Base58 validator into the bundle for what is, today, a marketing form — the
- * authoritative validation happens server-side via fairRpc validateAddress
- * once the orchestrator backend is wired up. This catches obvious typos
- * (wrong network, wrong length, illegal characters) before submission.
- */
-const FAIR_ADDRESS_RE = /^F[1-9A-HJ-NP-Za-km-z]{32,34}$/
+const WFAIR_CONTRACT_ADDRESS = '0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3'
+const UNISWAP_SWAP_URL = `https://app.uniswap.org/swap?outputCurrency=${WFAIR_CONTRACT_ADDRESS}&chain=base`
+const UNISWAP_POOL_EXPLORE_URL =
+  'https://app.uniswap.org/explore/tokens/base/0xf2853ceddf47a05fee0b4b24dff2925d59737fb3'
+const FAIRWALLET_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases'
+const BRIDGE_SERVICE_URL = 'https://bridge.fairco.in'
 
-const STEPS: ReadonlyArray<{ index: string; title: string; description: string }> = [
+const FAIRWALLET_STEPS: ReadonlyArray<{ index: string; title: string; description: string }> = [
   {
     index: '01',
-    title: 'Pay',
+    title: 'Open the Buy tab',
     description:
-      'Choose how much FAIR you want and pay with your card or bank. Pricing is locked at the moment of payment.',
+      'Install FAIRWallet on Android, iOS or desktop and open the Buy tab. The wallet generates the receive address for you.',
   },
   {
     index: '02',
-    title: 'Confirm',
+    title: 'Pay in USDC',
     description:
-      'We process the order and prepare the delivery to your FairCoin address. You get an email when everything is queued.',
+      'Enter the FAIR amount, get a one-time USDC deposit address on Base, and send the payment from any wallet that holds USDC.',
   },
   {
     index: '03',
-    title: 'FAIR delivered',
+    title: 'Receive FAIR',
     description:
-      'FAIR arrives in your wallet in minutes. No exchange account, no L2 wallet to manage, no extra steps.',
+      'Once the USDC payment confirms, the bridge releases FAIR to your wallet automatically. No exchange account, no swaps.',
   },
 ]
-
-interface FormState {
-  amount: string
-  address: string
-}
-
-type SubmitState = 'idle' | 'invalid' | 'pending' | 'queued'
-
-function validate(state: FormState): { ok: true } | { ok: false; reason: string } {
-  const amountNumber = Number(state.amount)
-  if (!Number.isFinite(amountNumber) || amountNumber <= 0) {
-    return { ok: false, reason: 'Enter an amount of FAIR greater than 0.' }
-  }
-  if (amountNumber > 1_000_000) {
-    return { ok: false, reason: 'For amounts above 1,000,000 FAIR contact us directly for OTC.' }
-  }
-  if (!FAIR_ADDRESS_RE.test(state.address.trim())) {
-    return {
-      ok: false,
-      reason: 'That does not look like a FairCoin mainnet address (should start with F).',
-    }
-  }
-  return { ok: true }
-}
 
 export default function FairCoinBuyPage() {
   const onFairCoinHost = isFairCoinHost()
@@ -93,26 +66,6 @@ export default function FairCoinBuyPage() {
     ? 'faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
     : 'flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
   const mainClass = onFairCoinHost ? 'cursor-theme faircoin-theme flex-1' : 'cursor-theme flex-1'
-
-  const [form, setForm] = useState<FormState>({ amount: '', address: '' })
-  const [submitState, setSubmitState] = useState<SubmitState>('idle')
-  const [validationError, setValidationError] = useState<string | null>(null)
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const result = validate(form)
-    if (!result.ok) {
-      setSubmitState('invalid')
-      setValidationError(result.reason)
-      return
-    }
-    setValidationError(null)
-    setSubmitState('pending')
-    // The live payment + bridge orchestrator is phase 2. For now we move the
-    // user to a "queued" state and surface OTC contact details — no fake
-    // payment dialog.
-    window.setTimeout(() => setSubmitState('queued'), 600)
-  }
 
   return (
     <div className={rootClass}>
@@ -134,119 +87,127 @@ export default function FairCoinBuyPage() {
                 <span>[</span> <span>Buy FairCoin</span> <span>]</span>
               </div>
               <h1 className="type-xl sm:type-2xl text-balance mb-v1 gradient-text">
-                Get FAIR delivered to your wallet
+                Two ways to get FAIR
               </h1>
               <p className="type-base text-muted-foreground text-pretty mb-v1 mx-auto max-w-2xl">
-                Pay once. Receive FAIR straight in your FairCoin wallet. No exchange account, no
-                token swaps, no manual steps.
+                Pay in USDC through FAIRWallet and receive native FAIR in your wallet, or swap
+                directly for WFAIR on Uniswap if you already use a Web3 wallet on Base.
               </p>
+              <div className="mx-auto mt-v1 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium text-foreground">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                </span>
+                Beta — USDC payments are processed automatically. Card payment coming soon.
+              </div>
             </div>
           </div>
         </section>
 
-        {/* ── Form ── */}
+        {/* ── Two paths ── */}
         <section className="section">
           <div className="container">
-            <div className="mx-auto max-w-2xl">
-              <form
-                onSubmit={handleSubmit}
-                className="card flex flex-col gap-4 border border-border bg-surface"
-                aria-label="Buy FairCoin"
-              >
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="buy-amount" className="text-sm font-medium text-foreground">
-                    Amount of FAIR
-                  </label>
-                  <input
-                    id="buy-amount"
-                    name="amount"
-                    type="number"
-                    inputMode="decimal"
-                    min="0"
-                    step="any"
-                    placeholder="100"
-                    value={form.amount}
-                    onChange={(e) => setForm((s) => ({ ...s, amount: e.target.value }))}
-                    className="h-11 w-full rounded-lg border border-border bg-background px-3 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
-                    required
-                  />
+            <div className="grid gap-g1 grid-cols-1 items-stretch lg:grid-cols-2">
+              {/* FAIRWallet path */}
+              <div className="card flex h-full flex-col gap-4 border border-primary/30 bg-surface">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="mono-tag text-xs text-primary">[ Recommended ]</span>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="buy-address" className="text-sm font-medium text-foreground">
-                    Your FairCoin address
-                  </label>
-                  <input
-                    id="buy-address"
-                    name="address"
-                    type="text"
-                    autoComplete="off"
-                    spellCheck={false}
-                    placeholder="F..."
-                    value={form.address}
-                    onChange={(e) => setForm((s) => ({ ...s, address: e.target.value }))}
-                    className="h-11 w-full rounded-lg border border-border bg-background px-3 font-mono text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
-                    aria-describedby="buy-address-hint"
-                    required
-                  />
-                  <p id="buy-address-hint" className="text-xs text-muted-foreground">
-                    Mainnet addresses start with <span className="font-mono">F</span>. Get one in{' '}
-                    <a
-                      href="https://github.com/FairCoinOfficial/FAIRWallet/releases"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-foreground underline decoration-primary/40 underline-offset-4 hover:decoration-primary"
-                    >
-                      FAIRWallet
-                    </a>
-                    .
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <span className="text-sm font-medium text-foreground">Estimated total</span>
-                  <div className="flex h-11 w-full items-center rounded-lg border border-dashed border-border bg-background px-3 text-sm text-muted-foreground">
-                    Live pricing arrives once the FAIR market is live.
-                  </div>
-                </div>
-
-                {validationError && submitState === 'invalid' && (
-                  <p role="alert" className="text-sm text-destructive">
-                    {validationError}
-                  </p>
-                )}
-
-                {submitState === 'queued' ? (
-                  <div className="flex flex-col gap-3 rounded-lg border border-primary/40 bg-primary/10 p-4 text-sm text-foreground">
-                    <p className="font-medium">You're on the list.</p>
-                    <p className="text-muted-foreground">
-                      Card and bank-transfer payments are coming soon. Until then, send an email to{' '}
-                      <a
-                        href={`mailto:hello@fairco.in?subject=Buy%20FairCoin%20OTC&body=Amount%3A%20${encodeURIComponent(form.amount)}%20FAIR%0AAddress%3A%20${encodeURIComponent(form.address)}`}
-                        className="text-foreground underline decoration-primary/40 underline-offset-4 hover:decoration-primary"
-                      >
-                        hello@fairco.in
-                      </a>{' '}
-                      and we'll arrange OTC delivery to your address.
-                    </p>
-                  </div>
-                ) : (
-                  <Button type="submit" size="lg" className="self-start">
-                    {submitState === 'pending' ? 'Working…' : 'Continue'}
+                <h2 className="type-md text-foreground">Buy in FAIRWallet</h2>
+                <p className="type-base text-muted-foreground">
+                  The simplest path. Install FAIRWallet, open the Buy tab, enter how much FAIR you
+                  want, pay USDC to the address it generates, and FAIR arrives in your wallet
+                  automatically — no Web3 wallet, no swaps, no manual bridging.
+                </p>
+                <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
+                  <li className="flex gap-2">
+                    <span aria-hidden className="text-primary">
+                      —
+                    </span>
+                    <span>Native FAIR delivered straight to your FairCoin wallet</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span aria-hidden className="text-primary">
+                      —
+                    </span>
+                    <span>USDC payment on Base, supported in any Web3 wallet or exchange</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span aria-hidden className="text-primary">
+                      —
+                    </span>
+                    <span>Card and bank-transfer payment in development</span>
+                  </li>
+                </ul>
+                <div className="mt-auto flex flex-wrap gap-x-g1 gap-y-2 pt-2">
+                  <Button
+                    href={FAIRWALLET_RELEASES_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Download FAIRWallet
                   </Button>
-                )}
-              </form>
+                </div>
+              </div>
+
+              {/* Uniswap path */}
+              <div className="card flex h-full flex-col gap-4 border border-border bg-surface">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="mono-tag text-xs text-muted-foreground">[ Advanced ]</span>
+                </div>
+                <h2 className="type-md text-foreground">Trade WFAIR on Uniswap</h2>
+                <p className="type-base text-muted-foreground">
+                  If you already use a Web3 wallet and hold USDC on Base, swap directly for WFAIR on
+                  Uniswap v3. WFAIR is the 1:1 wrapped representation of FairCoin and is fully
+                  redeemable for native FAIR through the bridge.
+                </p>
+                <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
+                  <li className="flex gap-2">
+                    <span aria-hidden className="text-primary">
+                      —
+                    </span>
+                    <span>WFAIR/USDC pool on Base, 0.3% fee tier</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span aria-hidden className="text-primary">
+                      —
+                    </span>
+                    <span>Settles in your Web3 wallet — instant access to DeFi</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span aria-hidden className="text-primary">
+                      —
+                    </span>
+                    <span>Unwrap to native FAIR any time via the bridge</span>
+                  </li>
+                </ul>
+                <div className="mt-auto flex flex-wrap gap-x-g1 gap-y-2 pt-2">
+                  <Button href={UNISWAP_SWAP_URL} target="_blank" rel="noopener noreferrer">
+                    Swap on Uniswap
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    href={UNISWAP_POOL_EXPLORE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View pool
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* ── Steps ── */}
+        {/* ── How FAIRWallet Buy works ── */}
         <section className="section">
           <div className="container">
             <div className="mono-tag mb-v1 flex items-center gap-2 text-sm">
-              <span>[</span> <span>How it works</span> <span>]</span>
+              <span>[</span> <span>How FAIRWallet Buy works</span> <span>]</span>
             </div>
             <h2 className="type-md-lg text-balance mb-v2 max-w-prose-narrow">Three steps</h2>
             <div className="grid gap-g1 grid-cols-1 items-stretch md:grid-cols-3">
-              {STEPS.map((step) => (
+              {FAIRWALLET_STEPS.map((step) => (
                 <div key={step.index} className="card flex h-full grow-1 flex-col">
                   <span className="mono-tag text-sm mb-v8/12 text-primary">{step.index}</span>
                   <h3 className="type-base md:type-md text-foreground">{step.title}</h3>
@@ -262,8 +223,17 @@ export default function FairCoinBuyPage() {
           <div className="container">
             <div className="mx-auto max-w-2xl space-y-4 text-center">
               <p className="text-xs text-muted-foreground">
-                Powered by the WFAIR bridge under the hood — FAIR is delivered to your wallet
-                automatically. See{' '}
+                The FAIRWallet Buy flow uses the WFAIR{' '}
+                <a
+                  href={BRIDGE_SERVICE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground underline decoration-primary/40 underline-offset-4 hover:decoration-primary"
+                >
+                  bridge service
+                </a>{' '}
+                under the hood — USDC is custodied while WFAIR is minted and unwrapped to native
+                FAIR before it reaches your wallet. See{' '}
                 <Link
                   to={bridgeHref}
                   className="text-foreground underline decoration-primary/40 underline-offset-4 hover:decoration-primary"

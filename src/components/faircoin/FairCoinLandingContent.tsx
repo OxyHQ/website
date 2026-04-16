@@ -17,6 +17,10 @@ const SEEDER_REPO_URL = 'https://github.com/FairCoinOfficial/faircoin-seeder'
 const WFAIR_CONTRACT_ADDRESS = '0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3'
 const WFAIR_BASESCAN_URL = `https://basescan.org/address/${WFAIR_CONTRACT_ADDRESS}`
 const BRIDGE_SOURCE_URL = 'https://github.com/FairCoinOfficial/faircoin-bridge'
+const UNISWAP_POOL_ADDRESS = '0x9F4F694390c60b51e30461c785C1345A1545b7ca'
+const UNISWAP_SWAP_URL = `https://app.uniswap.org/swap?outputCurrency=${WFAIR_CONTRACT_ADDRESS}&chain=base`
+const UNISWAP_POOL_EXPLORE_URL =
+  'https://app.uniswap.org/explore/tokens/base/0xf2853ceddf47a05fee0b4b24dff2925d59737fb3'
 
 interface NetworkParam {
   label: string
@@ -112,9 +116,9 @@ const FAQS: readonly FaqItem[] = [
       'FairCoin is a community-run cryptocurrency forked from Bitcoin in 2014. Hybrid PoW/PoS consensus, Quark hashing, 120-second blocks, capped at 33 million coins. Maintained by volunteers — no ICO, no foundation, no pre-mine beyond the initial 5M coin distribution at block 1.',
   },
   {
-    question: 'How do I get FAIR?',
+    question: 'Where can I buy FAIR?',
     answer:
-      'Install FAIRWallet to receive and send FAIR. To acquire it: stake by holding it in a wallet, run a masternode (5,000 FAIR collateral), mine in the early PoW phase, or trade with someone in the community. Centralised exchange listings are not the focus.',
+      'Three paths. (1) Install FAIRWallet and use the Buy tab — pay with USDC, FAIR arrives in your wallet automatically. This is the easiest way. (2) If you already hold USDC on Base and use a Web3 wallet, swap it for WFAIR on Uniswap — WFAIR is the 1:1 wrapped version of FAIR, redeemable through the bridge. (3) If you already hold native FAIR on the FairCoin chain, use the bridge to wrap or unwrap between FAIR and WFAIR. You can also acquire FAIR by staking it, running a masternode, or mining the early PoW phase.',
   },
   {
     question: 'Can I run my own node?',
@@ -124,7 +128,7 @@ const FAQS: readonly FaqItem[] = [
   {
     question: 'Is there a wrapped version on Ethereum?',
     answer:
-      'Yes — WFAIR on Base. It is a 1:1 wrapped representation for use in Ethereum DeFi. Strictly secondary to native FairCoin and entirely optional. See the Bridge section.',
+      'Yes — WFAIR on Base. It is live at 0xF2853C…37fb3 on Base mainnet. 1:1 wrapped representation for use in Ethereum DeFi, with a live Uniswap v3 pool against USDC. Strictly secondary to native FairCoin and fully redeemable through the bridge. See the WFAIR section below.',
   },
   {
     question: 'Where can I follow development?',
@@ -211,8 +215,8 @@ export default function FairCoinLandingContent() {
               <Button variant="outline" href={FAIRWALLET_RELEASES_URL} target="_blank" rel="noopener noreferrer">
                 Get a wallet
               </Button>
-              <Button variant="ghost" href={EXPLORER_URL} target="_blank" rel="noopener noreferrer">
-                Explore the network
+              <Button variant="ghost" href={UNISWAP_SWAP_URL} target="_blank" rel="noopener noreferrer">
+                Trade WFAIR on Uniswap
               </Button>
             </div>
           </div>
@@ -356,7 +360,16 @@ export default function FairCoinLandingContent() {
               <div className="mono-tag mb-v1 flex items-center gap-2 text-sm">
                 <span>[</span> <span>Optional</span> <span>]</span>
               </div>
-              <h2 className="type-md-lg text-balance">Bridge to Base (WFAIR)</h2>
+              <div className="flex flex-wrap items-center gap-3">
+                <h2 className="type-md-lg text-balance">Bridge to Base (WFAIR)</h2>
+                <span className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium text-foreground">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                  </span>
+                  Live now
+                </span>
+              </div>
             </div>
             <div className="col-span-full mt-v1 md:col-start-10 md:col-end-25 md:mt-0 lg:col-start-10 lg:col-end-25">
               <div className="type-base text-muted-foreground max-w-prose space-y-4">
@@ -364,13 +377,37 @@ export default function FairCoinLandingContent() {
                   WFAIR is a 1:1 wrapped representation of FairCoin on{' '}
                   <span className="text-foreground">Base</span>, the Ethereum L2. It exists so
                   holders who want to use FAIR inside Ethereum DeFi can do so without giving up the
-                  underlying coin. Optional, secondary, fully redeemable.
+                  underlying coin. Optional, secondary, fully redeemable. The contract is verified
+                  on Base mainnet and a Uniswap v3 pool against USDC is live with a 0.3% fee tier.
                 </p>
-                <div className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 font-mono text-xs text-foreground">
-                  <span className="break-all">{WFAIR_CONTRACT_ADDRESS}</span>
-                  <CopyButton text={WFAIR_CONTRACT_ADDRESS} />
+                <div className="space-y-2">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                    WFAIR contract
+                  </p>
+                  <div className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 font-mono text-xs text-foreground">
+                    <span className="break-all">{WFAIR_CONTRACT_ADDRESS}</span>
+                    <CopyButton text={WFAIR_CONTRACT_ADDRESS} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                    Uniswap v3 pool (WFAIR/USDC)
+                  </p>
+                  <div className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 font-mono text-xs text-foreground">
+                    <span className="break-all">{UNISWAP_POOL_ADDRESS}</span>
+                    <CopyButton text={UNISWAP_POOL_ADDRESS} />
+                  </div>
                 </div>
                 <div className="flex flex-wrap gap-x-g1 gap-y-2">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    href={UNISWAP_SWAP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Trade on Uniswap
+                  </Button>
                   <Button variant="outline" size="sm" href={bridgeHref}>
                     Bridge details
                   </Button>
@@ -382,6 +419,15 @@ export default function FairCoinLandingContent() {
                     rel="noopener noreferrer"
                   >
                     Contract on Basescan
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    href={UNISWAP_POOL_EXPLORE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Pool on Uniswap
                   </Button>
                   <Button
                     variant="ghost"
