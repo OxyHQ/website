@@ -175,7 +175,7 @@ export function useFairCoinFooterColumns(): readonly FooterColumnConfig[] | unde
             {
               title: 'Community',
               links: [
-                { label: 'Reddit', href: 'https://reddit.com/r/FairCoin', isExternal: true },
+                { label: 'Reddit', href: 'https://reddit.com/r/FairCoinOfficial', isExternal: true },
                 { label: 'Telegram', href: 'https://t.me/FairCoin_', isExternal: true },
                 { label: 'Twitter', href: 'https://twitter.com/FairCoin_', isExternal: true },
                 { label: 'GitHub', href: 'https://github.com/FairCoinOfficial', isExternal: true },

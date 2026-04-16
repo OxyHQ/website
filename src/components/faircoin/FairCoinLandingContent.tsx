@@ -9,7 +9,7 @@ const FAIRCOIN_REPO_URL = 'https://github.com/FairCoinOfficial/FairCoin'
 const FAIRWALLET_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases'
 const FAIRNODE_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRNode/releases'
 const ABOUT_URL = 'https://fairco.in/about'
-const REDDIT_URL = 'https://reddit.com/r/FairCoin'
+const REDDIT_URL = 'https://reddit.com/r/FairCoinOfficial'
 const TWITTER_URL = 'https://twitter.com/FairCoin_'
 const TELEGRAM_URL = 'https://t.me/FairCoin_'
 const GITHUB_ORG_URL = 'https://github.com/FairCoinOfficial'
@@ -464,7 +464,7 @@ export default function FairCoinLandingContent() {
             >
               <h3 className="type-base md:type-md text-foreground">Reddit</h3>
               <p className="mt-2 text-pretty text-muted-foreground">
-                Discussions, AMAs and longer-form posts on r/FairCoin.
+                Discussions, AMAs and longer-form posts on r/FairCoinOfficial.
               </p>
             </a>
             <a
