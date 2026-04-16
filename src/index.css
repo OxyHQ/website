@@ -81,6 +81,7 @@
 @import './styles/oxyos-theme.css';
 @import './styles/tnp-theme.css';
 @import './styles/astro-theme.css';
+@import './styles/faircoin-theme.css';
 
 @theme {
   /* Neutral palette (used for specific non-semantic styling) */

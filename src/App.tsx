@@ -7,8 +7,10 @@ import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
 import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppColorName } from './theme'
 import { LocaleProvider } from './contexts/LocaleContext'
 import { setTokenGetter } from './api/client'
+import { isFairCoinHost } from './lib/host'
 
 import HomePage from './pages/HomePage'
+import FairCoinLanding from './pages/FairCoinLanding'
 import { AccountPanelProvider } from './contexts/AccountPanelContext'
 
 const FixedPromptInput = lazy(() => import('./components/ui/FixedPromptInput'))
@@ -103,9 +105,15 @@ function LocaleLayout() {
 }
 
 function PublicRoutes() {
+  // On fairco.in (apex + www), the root path renders the FairCoin landing
+  // natively instead of the Oxy homepage. Everything else on that host falls
+  // through to NotFoundPage via the catch-all in App. On oxy.so the root
+  // stays HomePage and /faircoin still resolves to the same landing.
+  const IndexElement = isFairCoinHost() ? <FairCoinLanding /> : <HomePage />
   return (
     <>
-      <Route index element={<HomePage />} />
+      <Route index element={IndexElement} />
+      <Route path="faircoin" element={<FairCoinLanding />} />
       <Route path="partners" element={<PartnersPage />} />
       <Route path="referrals" element={<ReferralsPage />} />
       <Route path="referrals/dashboard" element={<ReferralsDashboardPage />} />
