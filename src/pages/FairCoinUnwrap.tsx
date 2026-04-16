@@ -1,7 +1,8 @@
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
-import FairCoinLandingContent from '../components/faircoin/FairCoinLandingContent'
+import UnwrapApp from '../components/faircoin/unwrap/UnwrapApp'
+import WagmiAppProvider from '../components/faircoin/WagmiAppProvider'
 import { isFairCoinHost } from '../lib/host'
 import {
   useFairCoinFooterBrand,
@@ -13,11 +14,16 @@ import {
   useFairCoinNavbarBrand,
 } from '../lib/faircoin-chrome'
 
-const SEO_TITLE = 'FairCoin — community-run cryptocurrency'
+const SEO_TITLE = 'Redeem WFAIR — fairco.in'
 const SEO_DESCRIPTION =
-  'FairCoin is a community-run cryptocurrency. Decentralized, fair, free of speculation. Hybrid PoW/PoS, capped at 33M coins. Wallets, masternodes, explorer and an optional Base bridge.'
+  'Burn WFAIR on Base and receive native FAIR on the FairCoin chain. 1:1 redemption through the official FairCoin bridge.'
 
-export default function FairCoinLanding() {
+/**
+ * `/unwrap` (or `/faircoin/unwrap` on oxy.so) — wallet-driven WFAIR → FAIR
+ * redemption. Wraps `UnwrapApp` in the wagmi provider so the page can talk to
+ * the user's wallet and the WFAIR contract on Base mainnet.
+ */
+export default function FairCoinUnwrapPage() {
   const onFairCoinHost = isFairCoinHost()
   const navbarBrand = useFairCoinNavbarBrand()
   const navItems = useFairCoinNavItems()
@@ -27,16 +33,13 @@ export default function FairCoinLanding() {
   const footerLegalLinks = useFairCoinFooterLegalLinks()
   const footerCopyright = useFairCoinFooterCopyright()
 
-  // On fairco.in we re-skin everything: Bloom theme, navbar, footer, CSS vars.
-  // On oxy.so the same routes render as Oxy subpages — Oxy chrome and Oxy
-  // theme variables — so the only override here is the page content.
   const rootClass = onFairCoinHost
     ? 'faircoin-surface faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
     : 'faircoin-surface flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
 
   return (
     <div className={rootClass}>
-      <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin" />
+      <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin/unwrap" />
       <Navbar
         brand={navbarBrand}
         navItems={navItems}
@@ -46,7 +49,9 @@ export default function FairCoinLanding() {
         hideLocalePicker={onFairCoinHost}
       />
       <main className="flex-1">
-        <FairCoinLandingContent />
+        <WagmiAppProvider>
+          <UnwrapApp />
+        </WagmiAppProvider>
       </main>
       <Footer
         brand={footerBrand}

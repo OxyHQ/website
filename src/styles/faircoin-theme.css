@@ -1,20 +1,50 @@
+/* Phudu — FAIRWallet's display font, self-hosted for the FairCoin surface. */
+@font-face {
+  font-family: 'Phudu';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/phudu/Phudu-Light.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Phudu';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/phudu/Phudu-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Phudu';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/phudu/Phudu-Bold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Phudu';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('/fonts/phudu/Phudu-Black.ttf') format('truetype');
+}
+
 /* FairCoin theme — applies Bloom's "faircoin" color preset at the layout level.
  *
  * Used as a className wrapper (`.faircoin-theme`) on the root of any page that
  * lives in the FairCoin surface — fairco.in apex routes, oxy.so/faircoin/*,
  * and the 404 fallback when served from a FairCoin host.
- *
- * Values mirror APP_COLOR_PRESETS.faircoin from @oxyhq/bloom. Wrapping in
- * `hsl(...)` follows the same convention as src/theme/index.ts so Tailwind's
- * `var(--background)` consumers get a parsed color.
- *
- * Three groups serve different consumers:
- * - Bloom tokens (--background, --primary, …) → shared components (Navbar, Footer, buttons)
- * - Tailwind @theme aliases (--color-background, …) → Tailwind utility classes
- * - cursor-theme color vars (--color-theme-bg, …) → .cursor-theme layout utilities
- *
- * Light + dark variants so the global theme toggle keeps working.
  */
+
+/* Phudu is the FairCoin official typeface — applied to all FairCoin
+ * surfaces regardless of host (fairco.in apex AND oxy.so/faircoin/*).
+ * Pages opt in by adding `.faircoin-surface` to their root.
+ * The colour theme (`.faircoin-theme`) is still host-conditional. */
+.faircoin-surface,
+.faircoin-surface *,
+.faircoin-theme,
+.faircoin-theme * {
+  font-family: 'Phudu', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
 
 /* ── Light mode ── */
 .faircoin-theme {

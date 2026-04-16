@@ -85,8 +85,8 @@ export default function FairCoinBridgePage() {
   // oxy.so the page reads as an Oxy subpage, so the wrapper is dropped and
   // the active Oxy theme variables stay in effect.
   const rootClass = onFairCoinHost
-    ? 'faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
-    : 'flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
+    ? 'faircoin-surface faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
+    : 'faircoin-surface flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
   const mainClass = onFairCoinHost ? 'cursor-theme faircoin-theme flex-1' : 'cursor-theme flex-1'
 
   return (
