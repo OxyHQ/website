@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
-import Button from '../components/ui/Button'
+import BuyForm from '../components/faircoin/buy/BuyForm'
 import { fc } from '../lib/faircoin-links'
 import { isFairCoinHost } from '../lib/host'
 import {
@@ -18,35 +18,12 @@ import {
 
 const SEO_TITLE = 'Buy FairCoin — fairco.in'
 const SEO_DESCRIPTION =
-  'Two ways to buy FAIR. Use FAIRWallet to pay USDC and receive native FAIR in your wallet, or swap USDC for WFAIR directly on Uniswap.'
+  'Buy native FAIR with USDC on Base. Pay from any wallet, the bridge swaps and delivers FAIR straight to your FairCoin address.'
 
+const BRIDGE_SERVICE_URL = 'https://bridge.fairco.in'
+const FAIRWALLET_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases'
 const WFAIR_CONTRACT_ADDRESS = '0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3'
 const UNISWAP_SWAP_URL = `https://app.uniswap.org/swap?outputCurrency=${WFAIR_CONTRACT_ADDRESS}&chain=base`
-const UNISWAP_POOL_EXPLORE_URL =
-  'https://app.uniswap.org/explore/tokens/base/0xf2853ceddf47a05fee0b4b24dff2925d59737fb3'
-const FAIRWALLET_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases'
-const BRIDGE_SERVICE_URL = 'https://bridge.fairco.in'
-
-const FAIRWALLET_STEPS: ReadonlyArray<{ index: string; title: string; description: string }> = [
-  {
-    index: '01',
-    title: 'Open the Buy tab',
-    description:
-      'Install FAIRWallet on Android, iOS or desktop and open the Buy tab. The wallet generates the receive address for you.',
-  },
-  {
-    index: '02',
-    title: 'Pay in USDC',
-    description:
-      'Enter the FAIR amount, get a one-time USDC deposit address on Base, and send the payment from any wallet that holds USDC.',
-  },
-  {
-    index: '03',
-    title: 'Receive FAIR',
-    description:
-      'Once the USDC payment confirms, the bridge releases FAIR to your wallet automatically. No exchange account, no swaps.',
-  },
-]
 
 export default function FairCoinBuyPage() {
   const onFairCoinHost = isFairCoinHost()
@@ -87,133 +64,68 @@ export default function FairCoinBuyPage() {
                 <span>[</span> <span>Buy FairCoin</span> <span>]</span>
               </div>
               <h1 className="type-xl sm:type-2xl text-balance mb-v1 gradient-text">
-                Two ways to get FAIR
+                FAIR delivered to your wallet
               </h1>
               <p className="type-base text-muted-foreground text-pretty mb-v1 mx-auto max-w-2xl">
-                Pay in USDC through FAIRWallet and receive native FAIR in your wallet, or swap
-                directly for WFAIR on Uniswap if you already use a Web3 wallet on Base.
+                Pay in USDC on Base from any wallet. The bridge swaps your USDC
+                for WFAIR, burns it, and releases native FAIR straight to the
+                FairCoin address you provide. End-to-end in about two minutes,
+                no exchange account required.
               </p>
               <div className="mx-auto mt-v1 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium text-foreground">
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
                 </span>
-                Beta — USDC payments are processed automatically. Card payment coming soon.
+                Beta — USDC payments only. Card &amp; ETH coming soon.
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── Two paths ── */}
+        {/* ── Buy form ── */}
         <section className="section">
           <div className="container">
-            <div className="grid gap-g1 grid-cols-1 items-stretch lg:grid-cols-2">
-              {/* FAIRWallet path */}
-              <div className="card flex h-full flex-col gap-4 border border-primary/30 bg-surface">
+            <BuyForm />
+          </div>
+        </section>
+
+        {/* ── Alternative path ── */}
+        <section className="section">
+          <div className="container">
+            <div className="mx-auto max-w-3xl">
+              <div className="card flex flex-col gap-3 border border-border bg-surface">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="mono-tag text-xs text-primary">[ Recommended ]</span>
+                  <span className="mono-tag text-xs text-muted-foreground">
+                    [ Already on Web3? ]
+                  </span>
                 </div>
-                <h2 className="type-md text-foreground">Buy in FAIRWallet</h2>
+                <h2 className="type-md text-foreground">
+                  Trade WFAIR on Uniswap instead
+                </h2>
                 <p className="type-base text-muted-foreground">
-                  The simplest path. Install FAIRWallet, open the Buy tab, enter how much FAIR you
-                  want, pay USDC to the address it generates, and FAIR arrives in your wallet
-                  automatically — no Web3 wallet, no swaps, no manual bridging.
+                  If you already use a Web3 wallet on Base, you can swap USDC
+                  for WFAIR (the 1:1 wrapped representation of FairCoin)
+                  directly on Uniswap v3, then unwrap to native FAIR through the
+                  bridge any time.
                 </p>
-                <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
-                  <li className="flex gap-2">
-                    <span aria-hidden className="text-primary">
-                      —
-                    </span>
-                    <span>Native FAIR delivered straight to your FairCoin wallet</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span aria-hidden className="text-primary">
-                      —
-                    </span>
-                    <span>USDC payment on Base, supported in any Web3 wallet or exchange</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span aria-hidden className="text-primary">
-                      —
-                    </span>
-                    <span>Card and bank-transfer payment in development</span>
-                  </li>
-                </ul>
-                <div className="mt-auto flex flex-wrap gap-x-g1 gap-y-2 pt-2">
-                  <Button
-                    href={FAIRWALLET_RELEASES_URL}
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <a
+                    href={UNISWAP_SWAP_URL}
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
                   >
-                    Download FAIRWallet
-                  </Button>
-                </div>
-              </div>
-
-              {/* Uniswap path */}
-              <div className="card flex h-full flex-col gap-4 border border-border bg-surface">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="mono-tag text-xs text-muted-foreground">[ Advanced ]</span>
-                </div>
-                <h2 className="type-md text-foreground">Trade WFAIR on Uniswap</h2>
-                <p className="type-base text-muted-foreground">
-                  If you already use a Web3 wallet and hold USDC on Base, swap directly for WFAIR on
-                  Uniswap v3. WFAIR is the 1:1 wrapped representation of FairCoin and is fully
-                  redeemable for native FAIR through the bridge.
-                </p>
-                <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
-                  <li className="flex gap-2">
-                    <span aria-hidden className="text-primary">
-                      —
-                    </span>
-                    <span>WFAIR/USDC pool on Base, 0.3% fee tier</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span aria-hidden className="text-primary">
-                      —
-                    </span>
-                    <span>Settles in your Web3 wallet — instant access to DeFi</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span aria-hidden className="text-primary">
-                      —
-                    </span>
-                    <span>Unwrap to native FAIR any time via the bridge</span>
-                  </li>
-                </ul>
-                <div className="mt-auto flex flex-wrap gap-x-g1 gap-y-2 pt-2">
-                  <Button href={UNISWAP_SWAP_URL} target="_blank" rel="noopener noreferrer">
                     Swap on Uniswap
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    href={UNISWAP_POOL_EXPLORE_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  </a>
+                  <Link
+                    to={bridgeHref}
+                    className="inline-flex items-center justify-center rounded-full border border-transparent px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    View pool
-                  </Button>
+                    How the bridge works →
+                  </Link>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── How FAIRWallet Buy works ── */}
-        <section className="section">
-          <div className="container">
-            <div className="mono-tag mb-v1 flex items-center gap-2 text-sm">
-              <span>[</span> <span>How FAIRWallet Buy works</span> <span>]</span>
-            </div>
-            <h2 className="type-md-lg text-balance mb-v2 max-w-prose-narrow">Three steps</h2>
-            <div className="grid gap-g1 grid-cols-1 items-stretch md:grid-cols-3">
-              {FAIRWALLET_STEPS.map((step) => (
-                <div key={step.index} className="card flex h-full grow-1 flex-col">
-                  <span className="mono-tag text-sm mb-v8/12 text-primary">{step.index}</span>
-                  <h3 className="type-base md:type-md text-foreground">{step.title}</h3>
-                  <p className="mt-2 text-pretty text-muted-foreground">{step.description}</p>
-                </div>
-              ))}
             </div>
           </div>
         </section>
@@ -223,7 +135,7 @@ export default function FairCoinBuyPage() {
           <div className="container">
             <div className="mx-auto max-w-2xl space-y-4 text-center">
               <p className="text-xs text-muted-foreground">
-                The FAIRWallet Buy flow uses the WFAIR{' '}
+                The web Buy flow uses the WFAIR{' '}
                 <a
                   href={BRIDGE_SERVICE_URL}
                   target="_blank"
@@ -232,15 +144,24 @@ export default function FairCoinBuyPage() {
                 >
                   bridge service
                 </a>{' '}
-                under the hood — USDC is custodied while WFAIR is minted and unwrapped to native
-                FAIR before it reaches your wallet. See{' '}
+                under the hood — USDC is custodied while WFAIR is minted and
+                unwrapped to native FAIR before it reaches your wallet. See{' '}
                 <Link
                   to={bridgeHref}
                   className="text-foreground underline decoration-primary/40 underline-offset-4 hover:decoration-primary"
                 >
                   the bridge page
                 </Link>{' '}
-                for the technical details.
+                for the technical details, or{' '}
+                <a
+                  href={FAIRWALLET_RELEASES_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground underline decoration-primary/40 underline-offset-4 hover:decoration-primary"
+                >
+                  download FAIRWallet
+                </a>{' '}
+                for the same flow on mobile and desktop.
               </p>
               <Link to={homeHref} className="inline-block text-sm underline text-muted-foreground">
                 ← Back to FairCoin
