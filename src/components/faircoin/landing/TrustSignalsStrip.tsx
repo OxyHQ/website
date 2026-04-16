@@ -46,7 +46,7 @@ export default function TrustSignalsStrip() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.6 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+          className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
         >
           Built on open infrastructure
         </motion.p>
@@ -68,7 +68,7 @@ export default function TrustSignalsStrip() {
               <span className="flex h-5 w-5 items-center justify-center text-foreground/80 transition-colors group-hover:text-foreground">
                 {s.icon}
               </span>
-              <span className="text-xs font-semibold text-muted-foreground transition-colors group-hover:text-foreground">
+              <span className="text-sm font-semibold text-muted-foreground transition-colors group-hover:text-foreground">
                 {s.label}
               </span>
             </a>

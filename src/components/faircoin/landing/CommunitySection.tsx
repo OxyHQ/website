@@ -45,7 +45,7 @@ export default function CommunitySection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
           >
             Community
           </motion.span>
@@ -78,7 +78,7 @@ export default function CommunitySection() {
               </span>
               <div className="flex flex-1 flex-col gap-0.5">
                 <h3 className="text-base font-semibold text-foreground">{item.name}</h3>
-                <p className="text-xs text-muted-foreground">{item.description}</p>
+                <p className="text-sm text-muted-foreground">{item.description}</p>
               </div>
               <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
             </motion.a>

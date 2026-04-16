@@ -74,7 +74,7 @@ export default function LiveBridgeSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.5 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
-              className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary"
+              className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary"
             >
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
@@ -99,7 +99,7 @@ export default function LiveBridgeSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.5 }}
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
-              className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground"
+              className="mt-5 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground"
             >
               WFAIR is a 1:1 wrapped representation of FAIR on Base. Trade it in
               Uniswap, hold it in any EVM wallet, redeem it back to native FAIR
@@ -175,14 +175,14 @@ function StatTile({ icon: Icon, label, value, suffix, isLoading, href }: StatTil
           <Icon className="h-5 w-5" />
         </span>
         <div className="flex flex-col gap-0.5">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             {label}
           </span>
           <span className="flex items-baseline gap-2 font-semibold text-foreground">
             <span className="text-2xl tabular-nums sm:text-[28px]">
               {isLoading ? <Shimmer width="6rem" /> : value}
             </span>
-            <span className="text-xs font-medium text-muted-foreground">{suffix}</span>
+            <span className="text-sm font-medium text-muted-foreground">{suffix}</span>
           </span>
         </div>
       </div>
@@ -232,7 +232,7 @@ function PegHealthTile({
           <Activity className="h-5 w-5" />
         </span>
         <div className="flex flex-col gap-0.5">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             Peg health
           </span>
           <span className="flex items-center gap-2 text-base font-semibold text-foreground">
@@ -245,7 +245,7 @@ function PegHealthTile({
             {label}
           </span>
           {snapshotAt ? (
-            <span className="text-[11px] text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               Snapshot {snapshotAt}
             </span>
           ) : null}

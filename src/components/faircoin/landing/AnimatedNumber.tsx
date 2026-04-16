@@ -87,7 +87,7 @@ export default function AnimatedNumber({
     <span className="tabular-nums">
       {prefix}
       {formatted}
-      {suffix ? <span className="ml-1.5 text-xs font-medium text-muted-foreground">{suffix}</span> : null}
+      {suffix ? <span className="ml-1.5 text-sm font-medium text-muted-foreground">{suffix}</span> : null}
     </span>
   )
 }

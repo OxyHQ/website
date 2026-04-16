@@ -106,7 +106,7 @@ export default function LiveStatsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary"
+            className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary"
           >
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
@@ -128,7 +128,7 @@ export default function LiveStatsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
-            className="mt-3 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground"
+            className="mt-3 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground"
           >
             Live data straight from the FairCoin chain, the Base WFAIR contract
             and the bridge custody snapshot. No CMS, no caching — what you see
@@ -278,7 +278,7 @@ function RailHeader({
           {title}
         </h3>
       </div>
-      <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+      <span className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
         {hint}
       </span>
     </div>
@@ -347,7 +347,7 @@ function StatTile({
           <Icon className="h-[18px] w-[18px]" strokeWidth={2.25} />
         </span>
         <div className="flex flex-1 flex-col gap-1">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
             {eyebrow}
           </span>
           <span className="font-mono text-xl font-semibold leading-tight text-foreground sm:text-[22px]">
@@ -434,7 +434,7 @@ function PegHealthTile({ healthy, snapshotAt, isLoading }: PegHealthTileProps) {
           <Activity className="h-[18px] w-[18px]" strokeWidth={2.25} />
         </span>
         <div className="flex flex-1 flex-col gap-1">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
             Peg health
           </span>
           <span className={`font-mono text-xl font-semibold leading-tight sm:text-[22px] ${valueColor}`}>
@@ -449,7 +449,7 @@ function PegHealthTile({ healthy, snapshotAt, isLoading }: PegHealthTileProps) {
             </span>
           </span>
           {snapshotAt ? (
-            <span className="text-[10px] text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               Snapshot{' '}
               {snapshotAt.toLocaleString(undefined, {
                 month: 'short',

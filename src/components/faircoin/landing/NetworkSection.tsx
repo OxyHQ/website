@@ -50,7 +50,7 @@ export default function NetworkSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
           >
             Open infrastructure
           </motion.span>
@@ -68,7 +68,7 @@ export default function NetworkSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
-            className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground"
+            className="mt-5 text-pretty text-lg leading-relaxed text-muted-foreground"
           >
             No corporate gatekeeper. The chain, the explorer, the seeders, the
             wallets — all open, all reproducible, all yours to fork.
@@ -96,9 +96,9 @@ export default function NetworkSection() {
               </div>
               <div className="flex flex-col gap-2">
                 <h3 className="text-lg font-semibold text-foreground">{piece.title}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{piece.description}</p>
+                <p className="text-base leading-relaxed text-muted-foreground">{piece.description}</p>
               </div>
-              <span className="mt-auto pt-2 text-xs font-semibold uppercase tracking-wider text-primary">
+              <span className="mt-auto pt-2 text-sm font-semibold uppercase tracking-wider text-primary">
                 {piece.cta} →
               </span>
             </motion.a>

@@ -50,7 +50,7 @@ export default function WalletsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
           >
             Wallets
           </motion.span>
@@ -68,7 +68,7 @@ export default function WalletsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
-            className="mt-5 text-pretty text-base leading-relaxed text-muted-foreground"
+            className="mt-5 text-pretty text-lg leading-relaxed text-muted-foreground"
           >
             Every flavour, every platform. Hold native FAIR in a non-custodial
             wallet that talks straight to the chain.
@@ -105,13 +105,13 @@ export default function WalletsSection() {
               </div>
               <div className="flex flex-col gap-2">
                 <h3 className="text-lg font-semibold text-foreground">{wallet.name}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{wallet.description}</p>
+                <p className="text-base leading-relaxed text-muted-foreground">{wallet.description}</p>
               </div>
               <div className="mt-auto flex flex-wrap gap-1.5 pt-2">
                 {wallet.badges.map((badge) => (
                   <span
                     key={badge}
-                    className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
+                    className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
                   >
                     {badge}
                   </span>
@@ -121,7 +121,7 @@ export default function WalletsSection() {
           ))}
         </div>
 
-        <p className="mt-10 text-center text-xs text-muted-foreground">
+        <p className="mt-10 text-center text-sm text-muted-foreground">
           No centralised exchanges today. Acquire FAIR via the{' '}
           <a
             href="/buy"

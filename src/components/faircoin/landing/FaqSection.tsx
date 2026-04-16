@@ -44,7 +44,7 @@ export default function FaqSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
           >
             FAQ
           </motion.span>
@@ -78,7 +78,7 @@ export default function FaqSection() {
                   <Plus className="h-3.5 w-3.5" />
                 </span>
               </summary>
-              <div className="px-6 pb-6 text-sm leading-relaxed text-muted-foreground">
+              <div className="px-6 pb-6 text-base leading-relaxed text-muted-foreground">
                 {faq.answer}
               </div>
             </motion.details>

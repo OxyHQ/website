@@ -106,29 +106,71 @@ export interface NavbarItem {
 
 /**
  * One entry in a sub-brand grouped dropdown. Used when a `navItems` entry
- * has a `children` array — the navbar then renders a labelled menu instead
- * of a flat link.
+ * has a `children` (or `columns`) array — the navbar then renders a labelled
+ * menu instead of a flat link.
+ *
+ * `icon` is a React node (typically a 16-20px SVG) rendered inside a circular
+ * tinted background to the left of the link. `description` appears as a
+ * smaller line under the label, matching the Oxy CMS dropdown layout.
  */
 export interface NavbarGroupItem {
   label: string
   href: string
   external?: boolean
   description?: string
+  icon?: React.ReactNode
 }
 
 /**
- * Sub-brand navigation entry. Either a flat `{label, href}` link or a
- * grouped `{label, children: [...]}` dropdown. FairCoin uses this to present
- * Get FAIR / Network / Developers / Community as dropdowns.
+ * One column inside a multi-column dropdown panel. Has its own heading and
+ * a list of items. Used for the FairCoin Network dropdown (Explore + Run).
+ */
+export interface NavbarGroupColumn {
+  title: string
+  items: readonly NavbarGroupItem[]
+}
+
+/**
+ * Sub-brand navigation entry. Three shapes:
+ *  - Flat link: `{label, href}` — no dropdown
+ *  - Single-column dropdown: `{label, children: [...]}` — backward-compatible
+ *  - Multi-column dropdown: `{label, columns: [...]}` — for richer panels
+ *
+ * FairCoin uses this to present Get FAIR / Network / Developers / Community
+ * as rich dropdown panels modeled after the Oxy CMS-driven nav.
  */
 export type NavbarGroupedItem =
   | NavbarItem
   | { label: string; children: readonly NavbarGroupItem[] }
+  | { label: string; columns: readonly NavbarGroupColumn[] }
 
 export function isNavbarGroup(
   item: NavbarGroupedItem,
-): item is { label: string; children: readonly NavbarGroupItem[] } {
-  return 'children' in item && Array.isArray(item.children)
+): item is
+  | { label: string; children: readonly NavbarGroupItem[] }
+  | { label: string; columns: readonly NavbarGroupColumn[] } {
+  return (
+    ('children' in item && Array.isArray(item.children)) ||
+    ('columns' in item && Array.isArray(item.columns))
+  )
+}
+
+function getGroupColumns(
+  group:
+    | { label: string; children: readonly NavbarGroupItem[] }
+    | { label: string; columns: readonly NavbarGroupColumn[] },
+): readonly NavbarGroupColumn[] {
+  if ('columns' in group) return group.columns
+  return [{ title: group.label, items: group.children }]
+}
+
+function getGroupItems(
+  group:
+    | { label: string; children: readonly NavbarGroupItem[] }
+    | { label: string; columns: readonly NavbarGroupColumn[] },
+): readonly NavbarGroupItem[] {
+  if ('columns' in group) return group.columns.flatMap((c) => c.items)
+  return group.children
 }
 
 interface NavbarProps {
@@ -158,20 +200,118 @@ interface NavbarProps {
 }
 
 /**
- * Hover/keyboard-driven dropdown for sub-brand grouped nav items. Lighter
- * than the CMS-driven `DropdownContent` — single-column, no measurement,
- * absolute-positioned under the trigger. Keyboard support: ESC closes,
- * Arrow Down focuses first item, Arrow Up focuses last.
+ * Rich dropdown item matching the Oxy CMS dropdown layout — icon circle on
+ * the left, label + description stacked to the right, hover arrow affordance.
+ */
+function GroupedDropdownItem({
+  item,
+  onSelect,
+  tabIndex,
+  itemRef,
+}: {
+  item: NavbarGroupItem
+  onSelect: () => void
+  tabIndex: number
+  itemRef: (el: HTMLAnchorElement | null) => void
+}) {
+  const content = (
+    <>
+      <span
+        aria-hidden
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border text-primary"
+        style={{ background: 'color-mix(in srgb, var(--color-primary) 10%, transparent)' }}
+      >
+        {item.icon ?? <DefaultGroupedIcon />}
+      </span>
+      <span className="flex min-w-0 flex-1 flex-col pr-2">
+        <span className="flex items-baseline justify-between gap-1.5">
+          <span className="truncate text-sm text-foreground">{item.label}</span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            className="relative shrink-0 -translate-x-0.5 text-foreground opacity-0 transition-[opacity,translate] duration-300 group-hover/gdi:translate-x-0 group-hover/gdi:opacity-100"
+          >
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M10.3536 6.35356C10.5488 6.1583 10.5488 5.84171 10.3536 5.64645L7.85355 3.14645C7.65829 2.95118 7.34171 2.95118 7.14645 3.14645C6.95118 3.34171 6.95118 3.65829 7.14645 3.85355L8.79289 5.5L2 5.50001C1.72386 5.50001 1.5 5.72386 1.5 6.00001C1.5 6.27615 1.72386 6.50001 2 6.50001L8.79289 6.5L7.14645 8.14645C6.95118 8.34171 6.95118 8.65829 7.14645 8.85355C7.34171 9.04882 7.65829 9.04882 7.85355 8.85355L10.3536 6.35356Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+        {item.description ? (
+          <span className="mt-0.5 truncate text-sm text-muted-foreground">
+            {item.description}
+          </span>
+        ) : null}
+      </span>
+    </>
+  )
+
+  const className =
+    'group/gdi relative flex w-full items-center gap-3 rounded-xl border border-transparent p-2 transition-colors duration-300 hover:bg-foreground/5 focus:bg-foreground/5 focus:outline-none'
+
+  if (item.external || !item.href.startsWith('/')) {
+    return (
+      <a
+        ref={itemRef}
+        role="menuitem"
+        tabIndex={tabIndex}
+        href={item.href}
+        {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        onClick={onSelect}
+        className={className}
+      >
+        {content}
+      </a>
+    )
+  }
+
+  return (
+    <Link
+      ref={itemRef}
+      role="menuitem"
+      tabIndex={tabIndex}
+      to={item.href}
+      onClick={onSelect}
+      className={className}
+    >
+      {content}
+    </Link>
+  )
+}
+
+function DefaultGroupedIcon() {
+  // Small dot cluster fallback — used when an item doesn't provide its own icon.
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <circle cx="4" cy="4" r="1.25" fill="currentColor" />
+      <circle cx="12" cy="4" r="1.25" fill="currentColor" />
+      <circle cx="4" cy="12" r="1.25" fill="currentColor" />
+      <circle cx="12" cy="12" r="1.25" fill="currentColor" />
+    </svg>
+  )
+}
+
+/**
+ * Hover/keyboard-driven rich dropdown for sub-brand grouped nav items. Supports
+ * single-column (`children`) and multi-column (`columns`) layouts, mirroring
+ * the CMS-driven `DropdownContent` so sub-brands get the same visual depth.
+ *
+ * Keyboard: ESC closes, ArrowDown focuses next item, ArrowUp focuses previous.
  */
 function FlatGroupDropdown({
   label,
-  children_,
+  columns,
   isTransparent,
 }: {
   label: string
-  children_: readonly NavbarGroupItem[]
+  columns: readonly NavbarGroupColumn[]
   isTransparent: boolean
 }) {
+  const allItems = useMemo(() => columns.flatMap((c) => c.items), [columns])
   const [open, setOpen] = useState(false)
   const [focused, setFocused] = useState<number>(-1)
   const closeRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -196,7 +336,7 @@ function FlatGroupDropdown({
       }
       if (e.key === 'ArrowDown') {
         e.preventDefault()
-        const next = Math.min(children_.length - 1, focused + 1)
+        const next = Math.min(allItems.length - 1, focused + 1)
         setFocused(next)
         itemRefs.current[next]?.focus()
         return
@@ -208,8 +348,15 @@ function FlatGroupDropdown({
         itemRefs.current[next]?.focus()
       }
     },
-    [children_.length, focused],
+    [allItems.length, focused],
   )
+
+  // Panel width — multi-column layouts get a wider panel; single-column stays narrow.
+  const isMultiColumn = columns.length > 1
+  const panelWidth = isMultiColumn ? 'w-[680px]' : 'w-[360px]'
+
+  // Tabindex offset per column so arrow keys traverse all columns in order.
+  let itemIdxCursor = 0
 
   return (
     <div
@@ -244,53 +391,44 @@ function FlatGroupDropdown({
       <div
         role="menu"
         aria-label={label}
-        className={`absolute left-0 top-full z-20 min-w-[260px] origin-top transition-all duration-200 ${open ? 'opacity-100 translate-y-2 pointer-events-auto' : 'opacity-0 -translate-y-1 pointer-events-none'}`}
+        className={`absolute left-0 top-full z-20 origin-top transition-all duration-200 ${panelWidth} ${open ? 'opacity-100 translate-y-2 pointer-events-auto' : 'opacity-0 -translate-y-1 pointer-events-none'}`}
       >
-        <div className="overflow-hidden rounded-2xl border border-border bg-popover shadow-[0_24px_60px_-24px_rgba(0,0,0,0.35)]">
-          <ul className="flex flex-col gap-0.5 p-2">
-            {children_.map((child, i) =>
-              child.external || !child.href.startsWith('/') ? (
-                <li key={child.label} role="none">
-                  <a
-                    ref={(el) => {
-                      itemRefs.current[i] = el
-                    }}
-                    role="menuitem"
-                    tabIndex={open ? 0 : -1}
-                    href={child.href}
-                    {...(child.external
-                      ? { target: '_blank', rel: 'noopener noreferrer' }
-                      : {})}
-                    onClick={() => setOpen(false)}
-                    className="flex flex-col gap-0.5 rounded-xl px-3 py-2 text-sm transition-colors hover:bg-foreground/5 focus:bg-foreground/5 focus:outline-none"
-                  >
-                    <span className="text-foreground">{child.label}</span>
-                    {child.description ? (
-                      <span className="text-[11px] text-muted-foreground">{child.description}</span>
-                    ) : null}
-                  </a>
-                </li>
-              ) : (
-                <li key={child.label} role="none">
-                  <Link
-                    ref={(el) => {
-                      itemRefs.current[i] = el
-                    }}
-                    role="menuitem"
-                    tabIndex={open ? 0 : -1}
-                    to={child.href}
-                    onClick={() => setOpen(false)}
-                    className="flex flex-col gap-0.5 rounded-xl px-3 py-2 text-sm transition-colors hover:bg-foreground/5 focus:bg-foreground/5 focus:outline-none"
-                  >
-                    <span className="text-foreground">{child.label}</span>
-                    {child.description ? (
-                      <span className="text-[11px] text-muted-foreground">{child.description}</span>
-                    ) : null}
-                  </Link>
-                </li>
-              ),
-            )}
-          </ul>
+        <div
+          className="overflow-hidden rounded-2xl border border-border shadow-[0_24px_60px_-24px_rgba(0,0,0,0.35)]"
+          style={{
+            background: 'color-mix(in srgb, var(--background) 85%, transparent)',
+            backdropFilter: 'blur(12px)',
+          }}
+        >
+          <div className={`grid gap-x-3 p-3 ${isMultiColumn ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            {columns.map((column) => (
+              <div key={column.title} className="flex flex-col">
+                {isMultiColumn ? (
+                  <p className="mt-2 mb-1 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    {column.title}
+                  </p>
+                ) : null}
+                <ul className="flex flex-col gap-0.5">
+                  {column.items.map((item) => {
+                    const thisIdx = itemIdxCursor
+                    itemIdxCursor += 1
+                    return (
+                      <li key={item.label} role="none">
+                        <GroupedDropdownItem
+                          item={item}
+                          tabIndex={open ? 0 : -1}
+                          itemRef={(el) => {
+                            itemRefs.current[thisIdx] = el
+                          }}
+                          onSelect={() => setOpen(false)}
+                        />
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -543,7 +681,7 @@ export default function Navbar({
                           <li key={item.label}>
                             <FlatGroupDropdown
                               label={item.label}
-                              children_={item.children}
+                              columns={getGroupColumns(item)}
                               isTransparent={isTransparent ?? false}
                             />
                           </li>
@@ -757,7 +895,7 @@ export default function Navbar({
                       </button>
                       {mobileAccordion === item.label && (
                         <div className="flex flex-col gap-1 pb-2 pl-4">
-                          {item.children.map((child) =>
+                          {getGroupItems(item).map((child) =>
                             child.external || !child.href.startsWith('/') ? (
                               <a
                                 key={child.label}

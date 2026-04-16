@@ -1,10 +1,7 @@
-import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Download, ShieldCheck, Wallet } from 'lucide-react'
+import Button from '../../ui/Button'
 import { fc } from '../../../lib/faircoin-links'
 import PhoneMockup from './PhoneMockup'
-
-const FAIRWALLET_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases'
 
 const STATS = [
   { label: 'Since', value: '2014' },
@@ -21,6 +18,10 @@ const STATS = [
  * Falls back to a single-column stack on mobile so the phone mockup sits
  * below the headline, keeping the primary CTA above the fold on small
  * screens. Subtle gradient backdrop + grid decoration for depth.
+ *
+ * Buttons use the shared Oxy `Button` component — same shape and behaviour
+ * as the rest of the site. They are intentionally icon-free in the hero per
+ * the FairCoin design rules (icons OK in other sections, not here).
  */
 export default function HeroSection() {
   return (
@@ -41,7 +42,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
-              className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary"
+              className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary"
             >
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
@@ -66,7 +67,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
-              className="mt-6 max-w-xl text-balance text-base leading-relaxed text-muted-foreground sm:text-lg lg:mx-0"
+              className="mt-6 max-w-xl text-balance text-lg leading-relaxed text-muted-foreground sm:text-xl lg:mx-0"
             >
               FairCoin is a community-run cryptocurrency. Hybrid proof-of-work
               and proof-of-stake, hard-capped at 33 million coins. Maintained
@@ -77,36 +78,24 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.15 }}
-              className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:gap-4 lg:items-start lg:justify-start"
+              className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:gap-3 lg:items-start lg:justify-start"
             >
-              <Link
-                to={fc('/buy')}
-                className="group inline-flex h-12 items-center gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-[0_8px_24px_-8px] shadow-primary/40 transition-all duration-200 hover:brightness-110 hover:shadow-primary/60 active:scale-[0.99]"
-              >
-                <Wallet className="h-4 w-4" />
+              <Button variant="primary" size="lg" href={fc('/buy')}>
                 Buy FairCoin
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-              <a
-                href={FAIRWALLET_RELEASES_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-12 items-center gap-2 rounded-full border border-border bg-background/60 px-6 text-sm font-semibold text-foreground backdrop-blur-sm transition-all duration-200 hover:border-primary/50 hover:bg-background"
-              >
-                <Download className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="lg" href={fc('/wallet')}>
                 Get FAIRWallet
-              </a>
+              </Button>
             </motion.div>
 
-            <motion.div
+            <motion.p
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.2 }}
-              className="mt-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground"
+              className="mt-4 text-sm text-muted-foreground"
             >
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Open source · No ICO · No foundation
-            </motion.div>
+              Open source. No ICO. No foundation.
+            </motion.p>
           </div>
 
           {/* Phone mockup column */}
@@ -143,7 +132,7 @@ export default function HeroSection() {
               key={stat.label}
               className="flex flex-col items-center gap-1 bg-background px-4 py-6"
             >
-              <dt className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 {stat.label}
               </dt>
               <dd className="text-2xl font-semibold tabular-nums text-foreground">{stat.value}</dd>
@@ -172,7 +161,7 @@ function FloatingChip({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut', delay }}
       className={[
-        'absolute inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider shadow-[0_8px_24px_-12px_rgba(0,0,0,0.35)] backdrop-blur-sm',
+        'absolute inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-wider shadow-[0_8px_24px_-12px_rgba(0,0,0,0.35)] backdrop-blur-sm',
         accent
           ? 'border border-primary/40 bg-primary/15 text-primary'
           : 'border border-border bg-popover/95 text-foreground',

@@ -48,7 +48,7 @@ export default function BridgeFlowVisual() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, amount: 0.5 }}
         transition={{ duration: 0.5, delay: 0.4 }}
-        className="mt-6 text-center text-xs text-muted-foreground"
+        className="mt-6 text-center text-sm text-muted-foreground"
       >
         1:1 redemption · Bridge custody secured by signed multi-party setup
       </motion.p>
@@ -84,7 +84,7 @@ function CoinCard({ symbol, name, chain, accent, delay }: CoinCardProps) {
       </div>
       <div className="text-center">
         <p className="text-base font-semibold text-foreground">{name}</p>
-        <p className="text-[11px] uppercase tracking-wider text-muted-foreground">{chain}</p>
+        <p className="text-xs uppercase tracking-wider text-muted-foreground">{chain}</p>
       </div>
     </motion.div>
   )
@@ -109,7 +109,7 @@ function ArrowGroup({
         >
           <ArrowDown className="h-4 w-4" />
         </motion.span>
-        <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
           Bridge
         </span>
       </div>
@@ -126,7 +126,7 @@ function ArrowGroup({
       >
         <ArrowRight className="h-4 w-4" />
       </motion.span>
-      <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
         wrap
       </span>
       <motion.span
@@ -138,7 +138,7 @@ function ArrowGroup({
       >
         <ArrowRight className="h-4 w-4 -scale-x-100" />
       </motion.span>
-      <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
         unwrap
       </span>
     </div>

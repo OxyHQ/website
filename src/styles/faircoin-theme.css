@@ -184,6 +184,43 @@
   color: var(--color-muted-foreground);
 }
 
+/* ── Phone mockup scope ──
+ * The marketing site shows a small "device frame" reproducing the FAIRWallet
+ * home screen. The real wallet app is always rendered in its own theme, not
+ * the website's. Pin the phone screen to the *dark* FairCoin palette so the
+ * mockup stays consistent regardless of the site's light/dark mode toggle.
+ *
+ * This scope is intentionally narrow — only used by `PhoneMockup.tsx`. Add
+ * `className="phone-mockup-dark"` on the phone screen wrapper and use plain
+ * Tailwind tokens (`bg-background`, `text-foreground`, `bg-primary`, etc.)
+ * inside; they resolve to the FairCoin dark values below.
+ */
+.phone-mockup-dark {
+  --background: hsl(69 54% 8%);
+  --foreground: hsl(0 0% 93%);
+  --surface: hsl(69 30% 13%);
+  --surface-foreground: hsl(0 0% 93%);
+  --popover: hsl(69 30% 13%);
+  --popover-foreground: hsl(0 0% 93%);
+  --primary: hsl(92 96% 65%);
+  --primary-foreground: hsl(0 0% 0%);
+  --muted: hsl(69 18% 16%);
+  --muted-foreground: hsl(0 0% 46%);
+  --border: hsl(69 20% 18%);
+
+  --color-background: hsl(69 54% 8%);
+  --color-foreground: hsl(0 0% 93%);
+  --color-primary: hsl(92 96% 65%);
+  --color-primary-foreground: hsl(0 0% 0%);
+  --color-surface: hsl(69 30% 13%);
+  --color-surface-foreground: hsl(0 0% 93%);
+  --color-muted: hsl(69 18% 16%);
+  --color-muted-foreground: hsl(0 0% 46%);
+  --color-border: hsl(69 20% 18%);
+  --color-popover: hsl(69 30% 13%);
+  --color-popover-foreground: hsl(0 0% 93%);
+}
+
 /* ── Hero gradient text — reads from the active theme's primary so it works
  *    on every brand (Oxy purple on oxy.so/faircoin/*, FairCoin green on
  *    fairco.in). Defined globally rather than scoped to `.faircoin-theme` so

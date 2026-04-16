@@ -33,7 +33,7 @@ export default function NetworkSpecSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
             >
               The chain
             </motion.span>
@@ -51,7 +51,7 @@ export default function NetworkSpecSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.05 }}
-              className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground"
+              className="mt-5 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground"
             >
               FairCoin is a Bitcoin-fork cryptocurrency launched in 2014. It
               pairs proof-of-work with proof-of-stake, runs the Quark hash
@@ -63,7 +63,7 @@ export default function NetworkSpecSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
-              className="mt-3 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground"
+              className="mt-3 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground"
             >
               Maintained by volunteers. No ICO, no foundation, no marketing
               budget — just a daemon, a few wallets, an explorer and a small
@@ -79,7 +79,7 @@ export default function NetworkSpecSection() {
             transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
             className="overflow-hidden rounded-3xl border border-border bg-popover/60 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.18)] backdrop-blur-sm"
           >
-            <div className="flex items-center justify-between border-b border-border bg-background/50 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            <div className="flex items-center justify-between border-b border-border bg-background/50 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               <span>FairCoin Core specification</span>
               <span className="font-mono">v3 · mainnet</span>
             </div>
@@ -92,13 +92,13 @@ export default function NetworkSpecSection() {
                     idx < NETWORK_PARAMS.length - 1 ? 'border-b border-border/60' : '',
                   ].join(' ')}
                 >
-                  <dt className="text-sm font-medium text-muted-foreground">{param.label}</dt>
+                  <dt className="text-base font-medium text-muted-foreground">{param.label}</dt>
                   <dd className="text-right">
-                    <span className="font-mono text-sm font-semibold text-foreground">
+                    <span className="font-mono text-base font-semibold text-foreground">
                       {param.value}
                     </span>
                     {param.hint ? (
-                      <span className="ml-2 text-[11px] text-muted-foreground">{param.hint}</span>
+                      <span className="ml-2 text-sm text-muted-foreground">{param.hint}</span>
                     ) : null}
                   </dd>
                 </div>
