@@ -9,8 +9,9 @@ const FAIRCOIN_REPO_URL = 'https://github.com/FairCoinOfficial/FairCoin'
 const FAIRWALLET_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRWallet/releases'
 const FAIRNODE_RELEASES_URL = 'https://github.com/FairCoinOfficial/FAIRNode/releases'
 const ABOUT_URL = 'https://fairco.in/about'
-const DISCORD_URL = 'https://discord.gg/faircoin'
-const TWITTER_URL = 'https://twitter.com/faircoin'
+const REDDIT_URL = 'https://reddit.com/r/FairCoin'
+const TWITTER_URL = 'https://twitter.com/FairCoin_'
+const TELEGRAM_URL = 'https://t.me/FairCoin_'
 const GITHUB_ORG_URL = 'https://github.com/FairCoinOfficial'
 const SEEDER_REPO_URL = 'https://github.com/FairCoinOfficial/faircoin-seeder'
 
@@ -133,7 +134,7 @@ const FAQS: readonly FaqItem[] = [
   {
     question: 'Where can I follow development?',
     answer:
-      'GitHub at FairCoinOfficial. Discussions happen on Discord and Twitter. The full source for the chain, wallets, explorer, seeder and bridge is open on GitHub.',
+      'GitHub at FairCoinOfficial. Discussions happen on Reddit (r/FairCoin), Telegram and Twitter. The full source for the chain, wallets, explorer, seeder and bridge is open on GitHub.',
   },
 ]
 
@@ -454,14 +455,25 @@ export default function FairCoinLandingContent() {
           <h2 className="type-md-lg text-balance mb-v2 max-w-prose-narrow">
             Talk to the project
           </h2>
-          <div className="grid gap-g1 grid-cols-1 items-stretch md:grid-cols-3">
+          <div className="grid gap-g1 grid-cols-1 items-stretch sm:grid-cols-2 lg:grid-cols-4">
             <a
-              href={DISCORD_URL}
+              href={REDDIT_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="card flex h-full grow-1 flex-col transition-colors hover:border-primary/40"
             >
-              <h3 className="type-base md:type-md text-foreground">Discord</h3>
+              <h3 className="type-base md:type-md text-foreground">Reddit</h3>
+              <p className="mt-2 text-pretty text-muted-foreground">
+                Discussions, AMAs and longer-form posts on r/FairCoin.
+              </p>
+            </a>
+            <a
+              href={TELEGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card flex h-full grow-1 flex-col transition-colors hover:border-primary/40"
+            >
+              <h3 className="type-base md:type-md text-foreground">Telegram</h3>
               <p className="mt-2 text-pretty text-muted-foreground">
                 Day-to-day chat with maintainers and community.
               </p>
@@ -485,7 +497,7 @@ export default function FairCoinLandingContent() {
             >
               <h3 className="type-base md:type-md text-foreground">GitHub</h3>
               <p className="mt-2 text-pretty text-muted-foreground">
-                Every repository — chain, wallets, explorer, bridge — is open on FairCoinOfficial.
+                Every repository — chain, wallets, explorer, bridge — open on FairCoinOfficial.
               </p>
             </a>
           </div>
@@ -534,7 +546,7 @@ export default function FairCoinLandingContent() {
                 </Button>
                 <Button
                   variant="ghost"
-                  href={DISCORD_URL}
+                  href={TELEGRAM_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

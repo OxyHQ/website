@@ -101,7 +101,7 @@ function FooterLinkItem({ link }: { link: FooterLink }) {
     </>
   )
 
-  if (link.href.startsWith('/')) {
+  if (link.href.startsWith('/') && !link.isExternal) {
     return <Link to={link.href} className={LINK_CLASS}>{content}</Link>
   }
 
