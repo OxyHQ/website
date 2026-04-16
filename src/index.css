@@ -1,7 +1,9 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* build-tag: 2026-04-16-cachebust-1 */
+:root {
+  --build-tag: '2026-04-16T11-cachebust-2';
+}
 
 @keyframes theme-icon-in {
   from {
