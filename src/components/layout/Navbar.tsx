@@ -5,6 +5,7 @@ import { Avatar } from '@oxyhq/bloom/avatar'
 import {
   simpleNavLinks,
   type NavDropdown,
+  type NavItem,
 } from '../../data/content'
 import { useNavigation, useSiteSettings } from '../../api/hooks'
 import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '../../api/scrollStore'
@@ -55,11 +56,13 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
           <svg width="1" height="100%" className="absolute inset-y-0 left-0 text-foreground/20">
             <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
           </svg>
-          <li className="contents">
-            <p className="mt-3 mb-0.5 inline-block px-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              {dropdown.sidePanel.heading}
-            </p>
-          </li>
+          {dropdown.sidePanel.heading ? (
+            <li className="contents">
+              <p className="mt-3 mb-0.5 inline-block px-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                {dropdown.sidePanel.heading}
+              </p>
+            </li>
+          ) : null}
           {dropdown.sidePanel.links.map((link, i) => (
             <li key={i} className="contents">
               {link.href.startsWith('/') ? (
@@ -97,94 +100,37 @@ export interface NavbarBrand {
   logo: React.ReactNode
 }
 
-/** Flat navigation item used when `navItems` is provided. Bypasses CMS dropdowns. */
+/**
+ * Flat top-level link rendered to the right of the dropdown triggers. Oxy uses
+ * these for `Products` / `Pricing`; FairCoin uses one for the primary `Buy`
+ * CTA. External links are auto-detected by the `href` scheme.
+ */
 export interface NavbarItem {
   label: string
   href: string
   external?: boolean
 }
 
-/**
- * One entry in a sub-brand grouped dropdown. Used when a `navItems` entry
- * has a `children` (or `columns`) array — the navbar then renders a labelled
- * menu instead of a flat link.
- *
- * `icon` is a React node (typically a 16-20px SVG) rendered inside a circular
- * tinted background to the left of the link. `description` appears as a
- * smaller line under the label, matching the Oxy CMS dropdown layout.
- */
-export interface NavbarGroupItem {
-  label: string
-  href: string
-  external?: boolean
-  description?: string
-  icon?: React.ReactNode
-}
-
-/**
- * One column inside a multi-column dropdown panel. Has its own heading and
- * a list of items. Used for the FairCoin Network dropdown (Explore + Run).
- */
-export interface NavbarGroupColumn {
-  title: string
-  items: readonly NavbarGroupItem[]
-}
-
-/**
- * Sub-brand navigation entry. Three shapes:
- *  - Flat link: `{label, href}` — no dropdown
- *  - Single-column dropdown: `{label, children: [...]}` — backward-compatible
- *  - Multi-column dropdown: `{label, columns: [...]}` — for richer panels
- *
- * FairCoin uses this to present Get FAIR / Network / Developers / Community
- * as rich dropdown panels modeled after the Oxy CMS-driven nav.
- */
-export type NavbarGroupedItem =
-  | NavbarItem
-  | { label: string; children: readonly NavbarGroupItem[] }
-  | { label: string; columns: readonly NavbarGroupColumn[] }
-
-export function isNavbarGroup(
-  item: NavbarGroupedItem,
-): item is
-  | { label: string; children: readonly NavbarGroupItem[] }
-  | { label: string; columns: readonly NavbarGroupColumn[] } {
-  return (
-    ('children' in item && Array.isArray(item.children)) ||
-    ('columns' in item && Array.isArray(item.columns))
-  )
-}
-
-function getGroupColumns(
-  group:
-    | { label: string; children: readonly NavbarGroupItem[] }
-    | { label: string; columns: readonly NavbarGroupColumn[] },
-): readonly NavbarGroupColumn[] {
-  if ('columns' in group) return group.columns
-  return [{ title: group.label, items: group.children }]
-}
-
-function getGroupItems(
-  group:
-    | { label: string; children: readonly NavbarGroupItem[] }
-    | { label: string; columns: readonly NavbarGroupColumn[] },
-): readonly NavbarGroupItem[] {
-  if ('columns' in group) return group.columns.flatMap((c) => c.items)
-  return group.children
-}
-
 interface NavbarProps {
   /** Override the brand block. Defaults to the Oxy logo linking to `/`. */
   brand?: NavbarBrand
   /**
-   * When set, replaces both CMS dropdowns and `simpleNavLinks` with a flat
-   * link list. Useful for sub-brands (FairCoin) that don't use the Oxy nav.
-   *
-   * Items can be flat links (`{label, href}`) or grouped dropdowns
-   * (`{label, children: [...]}`); the navbar renders dropdowns inline with
-   * full keyboard support and a mobile accordion fallback.
+   * Replace CMS-driven dropdowns with the supplied list. Both Oxy (CMS) and
+   * sub-brands (FairCoin) render through the SAME pipeline — the same
+   * `DropdownContent`, the same measurement + animation, the same
+   * `NavDropdownItem` item layout with icon, title, description. Sub-brands
+   * skip the `useNavigation()` query by supplying this prop.
    */
-  navItems?: readonly NavbarGroupedItem[]
+  customDropdowns?: readonly NavDropdown[]
+  /**
+   * Replace the default `simpleNavLinks` (Products / Pricing) with a custom
+   * flat link list rendered to the right of the dropdown triggers. FairCoin
+   * uses this to surface a direct `Buy` link as the primary CTA.
+   *
+   * Only applied when `customDropdowns` is also provided — pairing the two
+   * signals a sub-brand nav and disables the CMS queries.
+   */
+  customNavLinks?: readonly NavItem[]
   /** Replace the default Sign in / Start for free buttons. */
   ctaButtons?: React.ReactNode
   /** Hide the auth buttons / avatar entirely. */
@@ -199,245 +145,10 @@ interface NavbarProps {
   transparent?: boolean
 }
 
-/**
- * Rich dropdown item matching the Oxy CMS dropdown layout — icon circle on
- * the left, label + description stacked to the right, hover arrow affordance.
- */
-function GroupedDropdownItem({
-  item,
-  onSelect,
-  tabIndex,
-  itemRef,
-}: {
-  item: NavbarGroupItem
-  onSelect: () => void
-  tabIndex: number
-  itemRef: (el: HTMLAnchorElement | null) => void
-}) {
-  const content = (
-    <>
-      <span
-        aria-hidden
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border text-primary"
-        style={{ background: 'color-mix(in srgb, var(--color-primary) 10%, transparent)' }}
-      >
-        {item.icon ?? <DefaultGroupedIcon />}
-      </span>
-      <span className="flex min-w-0 flex-1 flex-col pr-2">
-        <span className="flex items-baseline justify-between gap-1.5">
-          <span className="truncate text-sm text-foreground">{item.label}</span>
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            className="relative shrink-0 -translate-x-0.5 text-foreground opacity-0 transition-[opacity,translate] duration-300 group-hover/gdi:translate-x-0 group-hover/gdi:opacity-100"
-          >
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M10.3536 6.35356C10.5488 6.1583 10.5488 5.84171 10.3536 5.64645L7.85355 3.14645C7.65829 2.95118 7.34171 2.95118 7.14645 3.14645C6.95118 3.34171 6.95118 3.65829 7.14645 3.85355L8.79289 5.5L2 5.50001C1.72386 5.50001 1.5 5.72386 1.5 6.00001C1.5 6.27615 1.72386 6.50001 2 6.50001L8.79289 6.5L7.14645 8.14645C6.95118 8.34171 6.95118 8.65829 7.14645 8.85355C7.34171 9.04882 7.65829 9.04882 7.85355 8.85355L10.3536 6.35356Z"
-              fill="currentColor"
-            />
-          </svg>
-        </span>
-        {item.description ? (
-          <span className="mt-0.5 truncate text-sm text-muted-foreground">
-            {item.description}
-          </span>
-        ) : null}
-      </span>
-    </>
-  )
-
-  const className =
-    'group/gdi relative flex w-full items-center gap-3 rounded-xl border border-transparent p-2 transition-colors duration-300 hover:bg-foreground/5 focus:bg-foreground/5 focus:outline-none'
-
-  if (item.external || !item.href.startsWith('/')) {
-    return (
-      <a
-        ref={itemRef}
-        role="menuitem"
-        tabIndex={tabIndex}
-        href={item.href}
-        {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-        onClick={onSelect}
-        className={className}
-      >
-        {content}
-      </a>
-    )
-  }
-
-  return (
-    <Link
-      ref={itemRef}
-      role="menuitem"
-      tabIndex={tabIndex}
-      to={item.href}
-      onClick={onSelect}
-      className={className}
-    >
-      {content}
-    </Link>
-  )
-}
-
-function DefaultGroupedIcon() {
-  // Small dot cluster fallback — used when an item doesn't provide its own icon.
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <circle cx="4" cy="4" r="1.25" fill="currentColor" />
-      <circle cx="12" cy="4" r="1.25" fill="currentColor" />
-      <circle cx="4" cy="12" r="1.25" fill="currentColor" />
-      <circle cx="12" cy="12" r="1.25" fill="currentColor" />
-    </svg>
-  )
-}
-
-/**
- * Hover/keyboard-driven rich dropdown for sub-brand grouped nav items. Supports
- * single-column (`children`) and multi-column (`columns`) layouts, mirroring
- * the CMS-driven `DropdownContent` so sub-brands get the same visual depth.
- *
- * Keyboard: ESC closes, ArrowDown focuses next item, ArrowUp focuses previous.
- */
-function FlatGroupDropdown({
-  label,
-  columns,
-  isTransparent,
-}: {
-  label: string
-  columns: readonly NavbarGroupColumn[]
-  isTransparent: boolean
-}) {
-  const allItems = useMemo(() => columns.flatMap((c) => c.items), [columns])
-  const [open, setOpen] = useState(false)
-  const [focused, setFocused] = useState<number>(-1)
-  const closeRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const itemRefs = useRef<Array<HTMLAnchorElement | null>>([])
-
-  const cancelClose = useCallback(() => {
-    if (closeRef.current) {
-      clearTimeout(closeRef.current)
-      closeRef.current = null
-    }
-  }, [])
-  const scheduleClose = useCallback(() => {
-    cancelClose()
-    closeRef.current = setTimeout(() => setOpen(false), 150)
-  }, [cancelClose])
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (e.key === 'Escape') {
-        setOpen(false)
-        return
-      }
-      if (e.key === 'ArrowDown') {
-        e.preventDefault()
-        const next = Math.min(allItems.length - 1, focused + 1)
-        setFocused(next)
-        itemRefs.current[next]?.focus()
-        return
-      }
-      if (e.key === 'ArrowUp') {
-        e.preventDefault()
-        const next = Math.max(0, focused - 1)
-        setFocused(next)
-        itemRefs.current[next]?.focus()
-      }
-    },
-    [allItems.length, focused],
-  )
-
-  // Panel width — multi-column layouts get a wider panel; single-column stays narrow.
-  const isMultiColumn = columns.length > 1
-  const panelWidth = isMultiColumn ? 'w-[680px]' : 'w-[360px]'
-
-  // Tabindex offset per column so arrow keys traverse all columns in order.
-  let itemIdxCursor = 0
-
-  return (
-    <div
-      className="relative"
-      onMouseEnter={() => {
-        cancelClose()
-        setOpen(true)
-      }}
-      onMouseLeave={scheduleClose}
-      onKeyDown={handleKeyDown}
-    >
-      <button
-        type="button"
-        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`}
-        style={{
-          background: open ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
-          color: open ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
-        }}
-        aria-expanded={open}
-        aria-haspopup="menu"
-        onClick={() => setOpen((o) => !o)}
-        onFocus={() => {
-          cancelClose()
-          setOpen(true)
-        }}
-      >
-        <span>{label}</span>
-        <ChevronDown
-          className={`transition-transform duration-300 ${open ? 'translate-y-px' : ''}`}
-        />
-      </button>
-      <div
-        role="menu"
-        aria-label={label}
-        className={`absolute left-0 top-full z-20 origin-top transition-all duration-200 ${panelWidth} ${open ? 'opacity-100 translate-y-2 pointer-events-auto' : 'opacity-0 -translate-y-1 pointer-events-none'}`}
-      >
-        <div
-          className="overflow-hidden rounded-2xl border border-border shadow-[0_24px_60px_-24px_rgba(0,0,0,0.35)]"
-          style={{
-            background: 'color-mix(in srgb, var(--background) 85%, transparent)',
-            backdropFilter: 'blur(12px)',
-          }}
-        >
-          <div className={`grid gap-x-3 p-3 ${isMultiColumn ? 'grid-cols-2' : 'grid-cols-1'}`}>
-            {columns.map((column) => (
-              <div key={column.title} className="flex flex-col">
-                {isMultiColumn ? (
-                  <p className="mt-2 mb-1 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    {column.title}
-                  </p>
-                ) : null}
-                <ul className="flex flex-col gap-0.5">
-                  {column.items.map((item) => {
-                    const thisIdx = itemIdxCursor
-                    itemIdxCursor += 1
-                    return (
-                      <li key={item.label} role="none">
-                        <GroupedDropdownItem
-                          item={item}
-                          tabIndex={open ? 0 : -1}
-                          itemRef={(el) => {
-                            itemRefs.current[thisIdx] = el
-                          }}
-                          onSelect={() => setOpen(false)}
-                        />
-                      </li>
-                    )
-                  })}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export default function Navbar({
   brand,
-  navItems,
+  customDropdowns,
+  customNavLinks,
   ctaButtons,
   hideAuth,
   hideBanner,
@@ -447,19 +158,19 @@ export default function Navbar({
 }: NavbarProps = {}) {
   const { user, isAuthenticated, signIn } = useAuth()
   const accountPanel = useAccountPanel()
-  // When a flat navItems list is supplied (e.g. FairCoin), skip the CMS
-  // dropdown query — those callers don't render dropdowns and don't want
-  // the Oxy navigation cache to kick in.
-  const useFlatNav = navItems !== undefined
+  // Sub-brand mode: customDropdowns bypasses the CMS queries. The nav renders
+  // the supplied dropdowns + flat links through the SAME pipeline as the CMS
+  // path, so measurement, hover animation, and mobile accordion are identical.
+  const useCustomNav = customDropdowns !== undefined
   const { data: navigationData } = useNavigation()
   const { data: siteSettings } = useSiteSettings()
-  const dropdowns: NavDropdown[] = useMemo(
-    () => (useFlatNav ? [] : navigationData ?? []),
-    [useFlatNav, navigationData],
+  const dropdowns: readonly NavDropdown[] = useMemo(
+    () => (useCustomNav ? customDropdowns ?? [] : navigationData ?? []),
+    [useCustomNav, customDropdowns, navigationData],
   )
-  const flatLinks: readonly NavbarGroupedItem[] = useMemo(
-    () => (useFlatNav ? navItems ?? [] : []),
-    [useFlatNav, navItems],
+  const flatLinks: readonly NavItem[] = useMemo(
+    () => (useCustomNav ? customNavLinks ?? [] : simpleNavLinks),
+    [useCustomNav, customNavLinks],
   )
   const banner = siteSettings?.banner
   const dropdownLabels = useMemo(() => dropdowns.map((d) => d.label), [dropdowns])
@@ -493,7 +204,7 @@ export default function Navbar({
     }, 220)
   }, [])
 
-  // Measure all panels once on mount
+  // Measure all panels once on mount (or whenever the dropdown list changes).
   useLayoutEffect(() => {
     const sizes: Record<string, { w: number; h: number }> = {}
     for (const dd of dropdowns) {
@@ -593,6 +304,13 @@ export default function Navbar({
   const bannerOffset = bannerVisible ? Math.max(0, bannerHeight - scrollY) : 0
   const isTransparent = transparent && !scrolled && !isOpen
 
+  const linkClassName = (isTp: boolean) =>
+    `inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${
+      isTp
+        ? 'text-white/80 hover:bg-white/10 hover:text-white'
+        : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
+    }`
+
   return (
     <>
       {/* ─── Banner ─── */}
@@ -675,80 +393,45 @@ export default function Navbar({
               {/* Desktop nav */}
               <div ref={escapeRef} className="relative z-10" onMouseLeave={scheduleClose}>
                 <ul className="hidden items-center gap-x-1.5 lg:flex">
-                  {useFlatNav
-                    ? flatLinks.map((item) =>
-                        isNavbarGroup(item) ? (
-                          <li key={item.label}>
-                            <FlatGroupDropdown
-                              label={item.label}
-                              columns={getGroupColumns(item)}
-                              isTransparent={isTransparent ?? false}
-                            />
-                          </li>
-                        ) : (
-                          <li key={item.label}>
-                            {item.external || !item.href.startsWith('/') ? (
-                              <a
-                                href={item.href}
-                                {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                                className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
-                              >
-                                {item.label}
-                              </a>
-                            ) : (
-                              <Link
-                                to={item.href}
-                                className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
-                              >
-                                {item.label}
-                              </Link>
-                            )}
-                          </li>
-                        ),
-                      )
-                    : (
-                      <>
-                        {dropdowns.map((dd) => (
-                          <li key={dd.label}>
-                            <button
-                              ref={(el) => { triggerRefs.current[dd.label] = el }}
-                              className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`}
-                              style={{
-                                background: activeDropdown === dd.label ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
-                                color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
-                              }}
-                              onMouseEnter={() => openDropdown(dd.label)}
-                              aria-expanded={activeDropdown === dd.label}
-                            >
-                              <span>{dd.label}</span>
-                              <ChevronDown className={`transition-transform duration-300 ${activeDropdown === dd.label ? 'translate-y-px' : ''}`} />
-                            </button>
-                          </li>
-                        ))}
-                        {simpleNavLinks.map((link) => (
-                          <li key={link.label}>
-                            {link.href.startsWith('/') ? (
-                              <Link
-                                to={link.href}
-                                className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
-                                onMouseEnter={scheduleClose}
-                              >
-                                {link.label}
-                              </Link>
-                            ) : (
-                              <a
-                                href={link.href}
-                                className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
-                                onMouseEnter={scheduleClose}
-                              >
-                                {link.label}
-                              </a>
-                            )}
-                          </li>
-                        ))}
-                      </>
-                    )
-                  }
+                  {dropdowns.map((dd) => (
+                    <li key={dd.label}>
+                      <button
+                        ref={(el) => { triggerRefs.current[dd.label] = el }}
+                        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`}
+                        style={{
+                          background: activeDropdown === dd.label ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
+                          color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
+                        }}
+                        onMouseEnter={() => openDropdown(dd.label)}
+                        aria-expanded={activeDropdown === dd.label}
+                      >
+                        <span>{dd.label}</span>
+                        <ChevronDown className={`transition-transform duration-300 ${activeDropdown === dd.label ? 'translate-y-px' : ''}`} />
+                      </button>
+                    </li>
+                  ))}
+                  {flatLinks.map((link) => (
+                    <li key={link.label}>
+                      {link.href.startsWith('/') && !link.external ? (
+                        <Link
+                          to={link.href}
+                          className={linkClassName(isTransparent ?? false)}
+                          onMouseEnter={scheduleClose}
+                        >
+                          {link.label}
+                        </Link>
+                      ) : (
+                        <a
+                          href={link.href}
+                          {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                          className={linkClassName(isTransparent ?? false)}
+                          onMouseEnter={scheduleClose}
+                        >
+                          {link.label}
+                        </a>
+                      )}
+                    </li>
+                  ))}
                 </ul>
 
               </div>
@@ -876,126 +559,67 @@ export default function Navbar({
         <div className="border-t border-border bg-background lg:hidden">
           <div className="container">
             <div className="flex flex-col gap-1 py-4">
-              {useFlatNav ? (
-                flatLinks.map((item) =>
-                  isNavbarGroup(item) ? (
-                    <div key={item.label}>
-                      <button
-                        type="button"
-                        className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
-                        onClick={() =>
-                          setMobileAccordion(mobileAccordion === item.label ? null : item.label)
-                        }
-                        aria-expanded={mobileAccordion === item.label}
-                      >
-                        {item.label}
-                        <ChevronDown
-                          className={`transition-transform duration-200 ${mobileAccordion === item.label ? 'rotate-180' : ''}`}
-                        />
-                      </button>
-                      {mobileAccordion === item.label && (
-                        <div className="flex flex-col gap-1 pb-2 pl-4">
-                          {getGroupItems(item).map((child) =>
-                            child.external || !child.href.startsWith('/') ? (
-                              <a
-                                key={child.label}
-                                href={child.href}
-                                {...(child.external
-                                  ? { target: '_blank', rel: 'noopener noreferrer' }
-                                  : {})}
-                                className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
-                                onClick={() => setMobileOpen(false)}
-                              >
-                                {child.label}
-                              </a>
-                            ) : (
-                              <Link
-                                key={child.label}
-                                to={child.href}
-                                className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
-                                onClick={() => setMobileOpen(false)}
-                              >
-                                {child.label}
-                              </Link>
-                            ),
-                          )}
-                        </div>
+              {dropdowns.map((dd) => (
+                <div key={dd.label}>
+                  <button
+                    className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
+                    onClick={() => setMobileAccordion(mobileAccordion === dd.label ? null : dd.label)}
+                    aria-expanded={mobileAccordion === dd.label}
+                  >
+                    {dd.label}
+                    <ChevronDown className={`transition-transform duration-200 ${mobileAccordion === dd.label ? 'rotate-180' : ''}`} />
+                  </button>
+                  {mobileAccordion === dd.label && (
+                    <div className="flex flex-col gap-1 pb-2 pl-4">
+                      {dd.sections.map((s) =>
+                        s.items.map((item) => (
+                          item.href.startsWith('/') ? (
+                            <Link key={item.title} to={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                              {item.title}
+                            </Link>
+                          ) : (
+                            <a key={item.title} href={item.href} target="_blank" rel="noopener noreferrer" className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                              {item.title}
+                            </a>
+                          )
+                        ))
                       )}
+                      {dd.sidePanel?.links.map((link) => (
+                        link.href.startsWith('/') ? (
+                          <Link key={link.label} to={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                            {link.label}
+                          </Link>
+                        ) : (
+                          <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                            {link.label}
+                          </a>
+                        )
+                      ))}
                     </div>
-                  ) : item.external || !item.href.startsWith('/') ? (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                      className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <Link
-                      key={item.label}
-                      to={item.href}
-                      className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      {item.label}
-                    </Link>
-                  ),
-                )
-              ) : (
-                <>
-                  {dropdowns.map((dd) => (
-                    <div key={dd.label}>
-                      <button
-                        className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
-                        onClick={() => setMobileAccordion(mobileAccordion === dd.label ? null : dd.label)}
-                      >
-                        {dd.label}
-                        <ChevronDown className={`transition-transform duration-200 ${mobileAccordion === dd.label ? 'rotate-180' : ''}`} />
-                      </button>
-                      {mobileAccordion === dd.label && (
-                        <div className="flex flex-col gap-1 pb-2 pl-4">
-                          {dd.sections.map((s) =>
-                            s.items.map((item) => (
-                              item.href.startsWith('/') ? (
-                                <Link key={item.title} to={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
-                                  {item.title}
-                                </Link>
-                              ) : (
-                                <a key={item.title} href={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
-                                  {item.title}
-                                </a>
-                              )
-                            ))
-                          )}
-                          {dd.sidePanel?.links.map((link) => (
-                            link.href.startsWith('/') ? (
-                              <Link key={link.label} to={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
-                                {link.label}
-                              </Link>
-                            ) : (
-                              <a key={link.label} href={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
-                                {link.label}
-                              </a>
-                            )
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                  {simpleNavLinks.map((link) => (
-                    link.href.startsWith('/') ? (
-                      <Link key={link.label} to={link.href} className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5" onClick={() => setMobileOpen(false)}>
-                        {link.label}
-                      </Link>
-                    ) : (
-                      <a key={link.label} href={link.href} className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5" onClick={() => setMobileOpen(false)}>
-                        {link.label}
-                      </a>
-                    )
-                  ))}
-                </>
+                  )}
+                </div>
+              ))}
+              {flatLinks.map((link) =>
+                link.href.startsWith('/') && !link.external ? (
+                  <Link
+                    key={link.label}
+                    to={link.href}
+                    className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {link.label}
+                  </a>
+                ),
               )}
               <hr className="my-2 border-border" />
               {!hideLocalePicker && (

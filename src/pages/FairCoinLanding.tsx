@@ -4,13 +4,14 @@ import SEO from '../components/SEO'
 import FairCoinLandingContent from '../components/faircoin/FairCoinLandingContent'
 import { isFairCoinHost } from '../lib/host'
 import {
+  useFairCoinDropdowns,
   useFairCoinFooterBrand,
   useFairCoinFooterColumns,
   useFairCoinFooterCopyright,
   useFairCoinFooterLegalLinks,
   useFairCoinNavCtaButtons,
-  useFairCoinNavItems,
   useFairCoinNavbarBrand,
+  useFairCoinSimpleNavLinks,
 } from '../lib/faircoin-chrome'
 
 const SEO_TITLE = 'FairCoin — community-run cryptocurrency'
@@ -20,7 +21,8 @@ const SEO_DESCRIPTION =
 export default function FairCoinLanding() {
   const onFairCoinHost = isFairCoinHost()
   const navbarBrand = useFairCoinNavbarBrand()
-  const navItems = useFairCoinNavItems()
+  const dropdowns = useFairCoinDropdowns()
+  const simpleNavLinks = useFairCoinSimpleNavLinks()
   const ctaButtons = useFairCoinNavCtaButtons()
   const footerBrand = useFairCoinFooterBrand()
   const footerColumns = useFairCoinFooterColumns()
@@ -39,7 +41,8 @@ export default function FairCoinLanding() {
       <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin" />
       <Navbar
         brand={navbarBrand}
-        navItems={navItems}
+        customDropdowns={dropdowns}
+        customNavLinks={simpleNavLinks}
         ctaButtons={ctaButtons}
         hideAuth={onFairCoinHost}
         hideBanner={onFairCoinHost}

@@ -33,6 +33,11 @@ interface AppShellProps {
  * card area and a small wizard stepper, so transactional flows feel like a
  * crypto-app card (Uniswap swap, Stripe checkout) rather than a marketing
  * page section.
+ *
+ * Sizing: mobile-first — the card fills the viewport minus 16px gutters on
+ * small screens, and locks to ~448px (`max-w-md`) on desktop. The body is
+ * `overflow-hidden` so child step transitions can slide horizontally without
+ * leaking past the card edge.
  */
 export default function AppShell({
   eyebrow,
@@ -48,34 +53,34 @@ export default function AppShell({
     <section className="relative overflow-hidden">
       {/* Soft ambient gradient backdrop */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-x-0 top-0 h-[420px] bg-gradient-to-b from-primary/[0.08] via-primary/[0.02] to-transparent" />
-        <div className="absolute left-1/2 top-24 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-primary/[0.06] blur-3xl" />
+        <div className="absolute inset-x-0 top-0 h-[360px] bg-gradient-to-b from-primary/[0.08] via-primary/[0.02] to-transparent" />
+        <div className="absolute left-1/2 top-20 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-primary/[0.06] blur-3xl" />
       </div>
 
-      <div className="relative mx-auto flex w-full max-w-[560px] flex-col px-4 pb-16 pt-10 sm:pt-14 lg:pt-20">
+      <div className="relative mx-auto flex w-full max-w-md flex-col px-4 pb-12 pt-8 sm:pt-10 lg:pt-12">
         {/* Header */}
-        <header className="mb-6 flex flex-col items-center text-center sm:mb-8">
+        <header className="mb-5 flex flex-col items-center text-center sm:mb-6">
           {eyebrow ? (
-            <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
+            <span className="mb-2.5 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
               {eyebrow}
             </span>
           ) : null}
-          <h1 className="text-balance text-2xl font-semibold leading-tight text-foreground sm:text-[28px]">
+          <h1 className="text-balance text-[22px] font-semibold leading-tight text-foreground sm:text-[26px]">
             {title}
           </h1>
           {subtitle ? (
-            <p className="mt-2 max-w-[420px] text-pretty text-sm text-muted-foreground">
+            <p className="mt-1.5 max-w-[380px] text-pretty text-[13px] text-muted-foreground">
               {subtitle}
             </p>
           ) : null}
-          {toolbar ? <div className="mt-5">{toolbar}</div> : null}
+          {toolbar ? <div className="mt-4">{toolbar}</div> : null}
         </header>
 
         {/* Step indicator */}
         {steps && steps.length > 1 ? (
           <nav
             aria-label="Progress"
-            className="mb-4 flex items-center justify-center gap-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
+            className="mb-3 flex items-center justify-center gap-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
           >
             {steps.map((step, idx) => {
               const done = idx < currentStep
@@ -99,7 +104,7 @@ export default function AppShell({
                     <span
                       aria-hidden
                       className={[
-                        'h-px w-6 transition-colors duration-300 sm:w-10',
+                        'h-px w-6 transition-colors duration-300 sm:w-8',
                         done ? 'bg-primary/60' : 'bg-border',
                       ].join(' ')}
                     />
@@ -112,17 +117,17 @@ export default function AppShell({
 
         {/* Card */}
         <div className="relative">
-          <div className="pointer-events-none absolute -inset-px rounded-[28px] bg-gradient-to-b from-primary/30 via-border to-border opacity-60 blur-[2px]" />
-          <div className="relative rounded-[28px] border border-border bg-popover/95 p-5 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.35)] backdrop-blur-sm sm:p-6">
+          <div className="pointer-events-none absolute -inset-px rounded-[24px] bg-gradient-to-b from-primary/30 via-border to-border opacity-60 blur-[2px]" />
+          <div className="relative overflow-hidden rounded-[24px] border border-border bg-popover/95 p-4 shadow-[0_24px_48px_-24px_rgba(0,0,0,0.35)] backdrop-blur-sm sm:p-5">
             {children}
           </div>
         </div>
 
         {footnote ? (
-          <p className="mt-6 text-center text-xs text-muted-foreground">{footnote}</p>
+          <p className="mt-5 text-center text-xs text-muted-foreground">{footnote}</p>
         ) : null}
 
-        <p className="mt-8 text-center text-xs text-muted-foreground/70">
+        <p className="mt-6 text-center text-xs text-muted-foreground/70">
           <Link to={fc('/')} className="underline-offset-4 hover:text-muted-foreground hover:underline">
             ← Back to FairCoin
           </Link>

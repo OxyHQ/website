@@ -4,13 +4,14 @@ import SEO from '../components/SEO'
 import WalletLandingContent from '../components/faircoin/wallet/WalletLandingContent'
 import { isFairCoinHost } from '../lib/host'
 import {
+  useFairCoinDropdowns,
   useFairCoinFooterBrand,
   useFairCoinFooterColumns,
   useFairCoinFooterCopyright,
   useFairCoinFooterLegalLinks,
   useFairCoinNavCtaButtons,
-  useFairCoinNavItems,
   useFairCoinNavbarBrand,
+  useFairCoinSimpleNavLinks,
 } from '../lib/faircoin-chrome'
 
 const SEO_TITLE = 'FAIRWallet — your FairCoin wallet'
@@ -26,7 +27,8 @@ const SEO_DESCRIPTION =
 export default function FairCoinWalletPage() {
   const onFairCoinHost = isFairCoinHost()
   const navbarBrand = useFairCoinNavbarBrand()
-  const navItems = useFairCoinNavItems()
+  const dropdowns = useFairCoinDropdowns()
+  const simpleNavLinks = useFairCoinSimpleNavLinks()
   const ctaButtons = useFairCoinNavCtaButtons()
   const footerBrand = useFairCoinFooterBrand()
   const footerColumns = useFairCoinFooterColumns()
@@ -44,7 +46,8 @@ export default function FairCoinWalletPage() {
       <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin/wallet" />
       <Navbar
         brand={navbarBrand}
-        navItems={navItems}
+        customDropdowns={dropdowns}
+        customNavLinks={simpleNavLinks}
         ctaButtons={ctaButtons}
         hideAuth={onFairCoinHost}
         hideBanner={onFairCoinHost}

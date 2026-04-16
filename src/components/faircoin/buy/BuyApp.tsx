@@ -8,8 +8,9 @@
  *
  * The state machine is derived from `quoteId + status query.data` (no
  * `useEffect`), and the polling hook (`useFaircoinBuyStatus`) auto-stops at
- * terminal states. UI imitates Uniswap-swap / wallet-app patterns: focused
- * card, centered, monospace for hashes, copy-to-clipboard buttons everywhere.
+ * terminal states. Step transitions slide horizontally via `StepTransition`
+ * so moving amount → pay feels continuous (incoming slides in from the
+ * right; back navigation reverses the direction).
  */
 import { useCallback, useMemo, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
@@ -27,6 +28,7 @@ import {
   Wallet,
 } from 'lucide-react'
 import AppShell from '../app/AppShell'
+import StepTransition from '../app/StepTransition'
 import {
   BuyApiError,
   type BuyOrderStatus,
@@ -77,38 +79,154 @@ const PAYMENT_OPTIONS: readonly PaymentOptionDef[] = [
   { currency: 'CARD', label: 'Card', hint: 'Apple/Google Pay · soon', comingSoon: true },
 ]
 
-type WizardState =
+type StageKind = 'amount' | 'pay' | 'done' | 'failed'
+
+type Stage =
   | { kind: 'amount' }
   | { kind: 'pay'; quote: BuyQuoteResponse }
+  | { kind: 'done'; status: BuyStatusResponse }
+  | { kind: 'failed'; message: string | null }
+
+interface ShellCopy {
+  eyebrow: string
+  title: string
+  subtitle?: string
+  currentStep: number
+  footnote?: React.ReactNode
+}
+
+const SHELL_COPY: Record<StageKind, ShellCopy> = {
+  amount: {
+    eyebrow: 'Buy FAIR',
+    title: 'Buy native FairCoin',
+    subtitle: 'Pay in USDC on Base. Get FAIR delivered straight to your wallet.',
+    currentStep: 0,
+    footnote: (
+      <>
+        USDC on Base only. Sending from another network will lose your funds.{' '}
+        <a
+          href="https://github.com/FairCoinOfficial/faircoin-bridge"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline-offset-4 hover:text-foreground hover:underline"
+        >
+          How the bridge works
+        </a>
+        .
+      </>
+    ),
+  },
+  pay: {
+    eyebrow: 'Send payment',
+    title: 'Send USDC to receive FAIR',
+    subtitle: 'Your FAIR will arrive automatically once payment is detected.',
+    currentStep: 1,
+  },
+  done: {
+    eyebrow: 'Done',
+    title: 'FAIR delivered',
+    subtitle: 'Your wallet should reflect the new balance shortly.',
+    currentStep: 2,
+  },
+  failed: {
+    eyebrow: 'Order failed',
+    title: 'Something went wrong',
+    subtitle: 'The bridge could not complete the transfer.',
+    currentStep: 1,
+  },
+}
 
 export default function BuyApp() {
-  const [wizard, setWizard] = useState<WizardState>({ kind: 'amount' })
+  const [stage, setStage] = useState<Stage>({ kind: 'amount' })
+  const [direction, setDirection] = useState<1 | -1>(1)
   const quoteMutation = useFaircoinBuyQuote()
 
   const handleQuoteIssued = useCallback((quote: BuyQuoteResponse) => {
-    setWizard({ kind: 'pay', quote })
+    setDirection(1)
+    setStage({ kind: 'pay', quote })
   }, [])
 
   const handleReset = useCallback(() => {
     quoteMutation.reset()
-    setWizard({ kind: 'amount' })
+    setDirection(-1)
+    setStage({ kind: 'amount' })
   }, [quoteMutation])
 
-  if (wizard.kind === 'pay') {
-    return <PaymentScreen quote={wizard.quote} onStartOver={handleReset} />
-  }
+  const copy = SHELL_COPY[stage.kind]
 
-  return <AmountScreen mutation={quoteMutation} onQuoteIssued={handleQuoteIssued} />
+  return (
+    <AppShell
+      eyebrow={copy.eyebrow}
+      title={copy.title}
+      subtitle={copy.subtitle}
+      steps={STEPS}
+      currentStep={copy.currentStep}
+      footnote={copy.footnote}
+    >
+      <StepTransition stepKey={stage.kind} direction={direction}>
+        <BuyStage
+          stage={stage}
+          setStage={setStage}
+          setDirection={setDirection}
+          quoteMutation={quoteMutation}
+          onQuoteIssued={handleQuoteIssued}
+          onReset={handleReset}
+        />
+      </StepTransition>
+    </AppShell>
+  )
+}
+
+interface BuyStageProps {
+  stage: Stage
+  setStage: (s: Stage) => void
+  setDirection: (d: 1 | -1) => void
+  quoteMutation: ReturnType<typeof useFaircoinBuyQuote>
+  onQuoteIssued: (quote: BuyQuoteResponse) => void
+  onReset: () => void
+}
+
+function BuyStage({
+  stage,
+  setStage,
+  setDirection,
+  quoteMutation,
+  onQuoteIssued,
+  onReset,
+}: BuyStageProps) {
+  if (stage.kind === 'amount') {
+    return <AmountStep mutation={quoteMutation} onQuoteIssued={onQuoteIssued} />
+  }
+  if (stage.kind === 'pay') {
+    return (
+      <PaymentStep
+        quote={stage.quote}
+        onAdvance={(status) => {
+          setDirection(1)
+          setStage({ kind: 'done', status })
+        }}
+        onFail={(message) => {
+          setDirection(1)
+          setStage({ kind: 'failed', message })
+        }}
+        onStartOver={onReset}
+      />
+    )
+  }
+  if (stage.kind === 'done') {
+    return <SuccessStep status={stage.status} onStartOver={onReset} />
+  }
+  return <FailedStep message={stage.message} onStartOver={onReset} />
 }
 
 // ── Step 1 — amount, address, payment method ─────────────────────────────
 
-interface AmountScreenProps {
+interface AmountStepProps {
   mutation: ReturnType<typeof useFaircoinBuyQuote>
   onQuoteIssued: (quote: BuyQuoteResponse) => void
 }
 
-function AmountScreen({ mutation, onQuoteIssued }: AmountScreenProps) {
+function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
   const [amount, setAmount] = useState('10')
   const [address, setAddress] = useState('')
   const [currency, setCurrency] = useState<PaymentCurrency>('USDC_BASE')
@@ -163,203 +281,183 @@ function AmountScreen({ mutation, onQuoteIssued }: AmountScreenProps) {
   )
 
   return (
-    <AppShell
-      eyebrow="Buy FAIR"
-      title="Buy native FairCoin"
-      subtitle="Pay in USDC on Base. Get FAIR delivered straight to your wallet."
-      steps={STEPS}
-      currentStep={0}
-      footnote={
-        <>
-          USDC on Base only. Sending from another network will lose your funds.{' '}
-          <a
-            href="https://github.com/FairCoinOfficial/faircoin-bridge"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline-offset-4 hover:text-foreground hover:underline"
-          >
-            How the bridge works
-          </a>
-          .
-        </>
-      }
-    >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        {/* You pay (FAIR) — hero amount input */}
-        <div className="rounded-2xl border border-border bg-background/60 p-5">
-          <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            <span>You buy</span>
-            {usdEstimate ? (
-              <span className="text-muted-foreground/80">≈ {usdEstimate}</span>
-            ) : null}
-          </div>
-          <div className="mt-3 flex items-baseline justify-between gap-3">
-            <input
-              id="buy-amount"
-              type="text"
-              inputMode="decimal"
-              autoComplete="off"
-              placeholder="0"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              onBlur={() => setTouched((t) => ({ ...t, amount: true }))}
-              aria-label="Amount of FAIR to buy"
-              className="w-full bg-transparent text-[44px] font-semibold leading-none tracking-tight text-foreground placeholder:text-muted-foreground/40 focus:outline-none sm:text-[52px]"
-            />
-            <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-              <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
-                F
-              </span>
-              <span className="text-sm font-semibold text-foreground">FAIR</span>
-            </div>
-          </div>
-          <div className="mt-3 flex items-center justify-between text-xs">
-            <div className="flex flex-wrap gap-1.5">
-              {PRESET_AMOUNTS.map((preset) => {
-                const active = amount === preset
-                return (
-                  <button
-                    key={preset}
-                    type="button"
-                    onClick={() => setAmount(preset)}
-                    className={[
-                      'rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors',
-                      active
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground',
-                    ].join(' ')}
-                  >
-                    {preset}
-                  </button>
-                )
-              })}
-            </div>
-            <span className="text-muted-foreground/80">
-              Min {BUY_BOUNDS.min} · Max {BUY_BOUNDS.max.toLocaleString()}
-            </span>
-          </div>
-          {amountError ? (
-            <p className="mt-2 text-xs font-medium text-destructive">{amountError}</p>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {/* You pay (FAIR) — hero amount input */}
+      <div className="rounded-2xl border border-border bg-background/60 p-4">
+        <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <span>You buy</span>
+          {usdEstimate ? (
+            <span className="text-muted-foreground/80">≈ {usdEstimate}</span>
           ) : null}
         </div>
-
-        {/* Direction indicator */}
-        <div className="relative -my-3 flex justify-center" aria-hidden>
-          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-popover text-muted-foreground shadow-sm">
-            <ArrowDown className="h-4 w-4" />
+        <div className="mt-2.5 flex items-baseline justify-between gap-3">
+          <input
+            id="buy-amount"
+            type="text"
+            inputMode="decimal"
+            autoComplete="off"
+            placeholder="0"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            onBlur={() => setTouched((t) => ({ ...t, amount: true }))}
+            aria-label="Amount of FAIR to buy"
+            className="w-full bg-transparent text-[44px] font-semibold leading-[1.05] tracking-tight text-foreground placeholder:text-muted-foreground/40 focus:outline-none sm:text-[52px]"
+          />
+          <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
+            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
+              F
+            </span>
+            <span className="text-sm font-semibold text-foreground">FAIR</span>
           </div>
         </div>
-
-        {/* You pay with — payment method picker */}
-        <div className="rounded-2xl border border-border bg-background/60 p-5">
-          <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            You pay with
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {PAYMENT_OPTIONS.map((option) => {
-              const active = option.currency === currency
-              const disabled = option.comingSoon === true
+        <div className="mt-2.5 flex items-center justify-between text-xs">
+          <div className="flex flex-wrap gap-1.5">
+            {PRESET_AMOUNTS.map((preset) => {
+              const active = amount === preset
               return (
                 <button
-                  key={option.currency}
+                  key={preset}
                   type="button"
-                  disabled={disabled}
-                  onClick={() => setCurrency(option.currency)}
+                  onClick={() => setAmount(preset)}
                   className={[
-                    'flex flex-1 min-w-[120px] flex-col items-start gap-0.5 rounded-xl border px-3 py-2.5 text-left transition-all duration-150',
+                    'rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors',
                     active
-                      ? 'border-primary bg-primary/10 ring-2 ring-primary/30'
-                      : disabled
-                        ? 'cursor-not-allowed border-border bg-background/40 opacity-50'
-                        : 'border-border bg-background/40 hover:border-primary/40 hover:bg-background/80',
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground',
                   ].join(' ')}
                 >
-                  <span className="text-sm font-semibold text-foreground">{option.label}</span>
-                  <span className="text-[11px] text-muted-foreground">{option.hint}</span>
+                  {preset}
                 </button>
               )
             })}
           </div>
+          <span className="text-muted-foreground/80">
+            Min {BUY_BOUNDS.min} · Max {BUY_BOUNDS.max.toLocaleString()}
+          </span>
         </div>
-
-        {/* Destination */}
-        <div className="rounded-2xl border border-border bg-background/60 p-5">
-          <label
-            htmlFor="buy-address"
-            className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
-          >
-            Send FAIR to
-          </label>
-          <div className="mt-3 flex items-center gap-2 rounded-xl border border-border bg-popover/60 px-3 py-2.5 transition-colors focus-within:border-primary">
-            <Wallet aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
-            <input
-              id="buy-address"
-              type="text"
-              autoComplete="off"
-              spellCheck={false}
-              placeholder="FErMgtiwoX4zrmUi5MHY7iZ2qij32ckdDg"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              onBlur={() => setTouched((t) => ({ ...t, address: true }))}
-              className="w-full bg-transparent font-mono text-[13px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
-            />
-          </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
-            <span>
-              No wallet?{' '}
-              <a
-                href={FAIRWALLET_RELEASES_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-foreground underline-offset-4 hover:underline"
-              >
-                Get FAIRWallet
-              </a>
-            </span>
-            {addressError ? (
-              <span className="font-medium text-destructive">{addressError}</span>
-            ) : null}
-          </div>
-        </div>
-
-        {/* CTA */}
-        <button
-          type="submit"
-          disabled={!canSubmit}
-          className="group flex h-14 items-center justify-center gap-2 rounded-2xl bg-primary text-base font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
-        >
-          {mutation.isPending ? (
-            <>
-              <Loader2 aria-hidden className="h-4 w-4 animate-spin" />
-              Generating quote…
-            </>
-          ) : (
-            <>
-              Continue
-              <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </>
-          )}
-        </button>
-
-        {submissionError ? (
-          <div className="flex items-start gap-2 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-xs text-destructive">
-            <ShieldAlert aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-            <span>{submissionError}</span>
-          </div>
+        {amountError ? (
+          <p className="mt-2 text-xs font-medium text-destructive">{amountError}</p>
         ) : null}
-      </form>
-    </AppShell>
+      </div>
+
+      {/* Direction indicator */}
+      <div className="relative -my-2.5 flex justify-center" aria-hidden>
+        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-popover text-muted-foreground shadow-sm">
+          <ArrowDown className="h-3.5 w-3.5" />
+        </div>
+      </div>
+
+      {/* You pay with — payment method picker */}
+      <div className="rounded-2xl border border-border bg-background/60 p-4">
+        <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          You pay with
+        </div>
+        <div className="mt-2.5 flex flex-wrap gap-2">
+          {PAYMENT_OPTIONS.map((option) => {
+            const active = option.currency === currency
+            const disabled = option.comingSoon === true
+            return (
+              <button
+                key={option.currency}
+                type="button"
+                disabled={disabled}
+                onClick={() => setCurrency(option.currency)}
+                className={[
+                  'flex flex-1 min-w-[110px] flex-col items-start gap-0.5 rounded-xl border px-3 py-2 text-left transition-all duration-150',
+                  active
+                    ? 'border-primary bg-primary/10 ring-2 ring-primary/30'
+                    : disabled
+                      ? 'cursor-not-allowed border-border bg-background/40 opacity-50'
+                      : 'border-border bg-background/40 hover:border-primary/40 hover:bg-background/80',
+                ].join(' ')}
+              >
+                <span className="text-sm font-semibold text-foreground">{option.label}</span>
+                <span className="text-[11px] text-muted-foreground">{option.hint}</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Destination */}
+      <div className="rounded-2xl border border-border bg-background/60 p-4">
+        <label
+          htmlFor="buy-address"
+          className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+        >
+          Send FAIR to
+        </label>
+        <div className="mt-2.5 flex items-center gap-2 rounded-xl border border-border bg-popover/60 px-3 py-2.5 transition-colors focus-within:border-primary">
+          <Wallet aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <input
+            id="buy-address"
+            type="text"
+            autoComplete="off"
+            spellCheck={false}
+            placeholder="FErMgtiwoX4zrmUi5MHY7iZ2qij32ckdDg"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            onBlur={() => setTouched((t) => ({ ...t, address: true }))}
+            className="w-full bg-transparent font-mono text-[13px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+          />
+        </div>
+        <div className="mt-2 flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+          <span>
+            No wallet?{' '}
+            <a
+              href={FAIRWALLET_RELEASES_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground underline-offset-4 hover:underline"
+            >
+              Get FAIRWallet
+            </a>
+          </span>
+          {addressError ? (
+            <span className="text-right font-medium text-destructive">{addressError}</span>
+          ) : null}
+        </div>
+      </div>
+
+      {/* CTA */}
+      <button
+        type="submit"
+        disabled={!canSubmit}
+        className="group flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-base font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground sm:h-14"
+      >
+        {mutation.isPending ? (
+          <>
+            <Loader2 aria-hidden className="h-4 w-4 animate-spin" />
+            Generating quote…
+          </>
+        ) : (
+          <>
+            Continue
+            <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </>
+        )}
+      </button>
+
+      {submissionError ? (
+        <div className="flex items-start gap-2 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-xs text-destructive">
+          <ShieldAlert aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <span>{submissionError}</span>
+        </div>
+      ) : null}
+    </form>
   )
 }
 
 // ── Step 2 — payment + status ────────────────────────────────────────────
 
-interface PaymentScreenProps {
+interface PaymentStepProps {
   quote: BuyQuoteResponse
+  onAdvance: (status: BuyStatusResponse) => void
+  onFail: (message: string | null) => void
   onStartOver: () => void
 }
 
-function PaymentScreen({ quote, onStartOver }: PaymentScreenProps) {
+function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps) {
   const statusQuery = useFaircoinBuyStatus(quote.id)
   const status = statusQuery.data ?? null
   const effectiveStatus: BuyOrderStatus = status?.status ?? 'AWAITING_PAYMENT'
@@ -375,136 +473,121 @@ function PaymentScreen({ quote, onStartOver }: PaymentScreenProps) {
   const quoteExpired =
     effectiveStatus === 'EXPIRED' || (paymentNotStarted && secondsRemaining <= 0)
 
-  if (effectiveStatus === 'DELIVERED' && status) {
-    return <SuccessScreen status={status} onStartOver={onStartOver} />
-  }
-
-  if (effectiveStatus === 'FAILED') {
-    return (
-      <FailedScreen
-        message={status?.errorMessage ?? null}
-        onStartOver={onStartOver}
-      />
-    )
-  }
+  // Step transition: derive advance/fail from query state during render
+  // (no `useEffect`). `StepTransition` handles the animation; this screen
+  // just notifies the parent to swap stages.
+  useDerivedStageTransition(effectiveStatus, status, onAdvance, onFail)
 
   return (
-    <AppShell
-      eyebrow="Send payment"
-      title="Send USDC to receive FAIR"
-      subtitle="Your FAIR will arrive automatically once payment is detected."
-      steps={STEPS}
-      currentStep={1}
-    >
-      <div className="flex flex-col gap-5">
-        {/* Amount + countdown header */}
-        <div className="rounded-2xl border border-border bg-background/60 p-5">
-          <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            <span>Send exactly</span>
-            {paymentNotStarted && !quoteExpired ? (
-              <Countdown secondsRemaining={secondsRemaining} />
-            ) : null}
-          </div>
-          <div className="mt-3 flex items-baseline justify-between gap-3">
-            <span className="text-[36px] font-semibold leading-none tracking-tight text-foreground sm:text-[44px]">
-              {quote.paymentAmountFormatted}
-            </span>
-            <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-              <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
-                $
-              </span>
-              <span className="text-sm font-semibold text-foreground">{quote.paymentSymbol}</span>
-            </div>
-          </div>
-          <p className="mt-2 text-[11px] text-muted-foreground">
-            On {quote.paymentNetworkLabel}. Other networks will be lost.
-          </p>
-        </div>
-
-        {/* QR + address */}
-        {quote.paymentAddress ? (
-          <div className="rounded-2xl border border-border bg-background/60 p-5">
-            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Or scan the QR
-            </div>
-            <div className="mt-4 flex flex-col items-center gap-4">
-              <div className="rounded-2xl bg-white p-3 shadow-sm">
-                <QRCodeSVG
-                  value={quote.paymentAddress}
-                  size={200}
-                  bgColor="#ffffff"
-                  fgColor="#0a0a0a"
-                  level="M"
-                  marginSize={0}
-                />
-              </div>
-              <CopyableValue
-                label="Payment address"
-                value={quote.paymentAddress}
-                monospace
-              />
-            </div>
-          </div>
-        ) : null}
-
-        {/* Network warning */}
-        <div className="flex items-start gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
-          <ShieldAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
-          <span>
-            Send <strong>{quote.paymentSymbol}</strong> on{' '}
-            <strong>{quote.paymentNetworkLabel}</strong> only. The bridge cannot recover
-            cross-network transfers.
-          </span>
-        </div>
-
-        {/* Status timeline */}
-        <div className="rounded-2xl border border-border bg-background/60 p-5">
-          <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            <span>Bridge status</span>
-            <LiveDot active={!quoteExpired} />
-          </div>
-          <div className="mt-4">
-            <StatusTimeline status={effectiveStatus} status_data={status} />
-          </div>
-          {quoteExpired ? (
-            <p className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
-              Quote expired before payment was detected. Generate a new quote to continue.
-            </p>
+    <div className="flex flex-col gap-4">
+      {/* Amount + countdown header */}
+      <div className="rounded-2xl border border-border bg-background/60 p-4">
+        <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <span>Send exactly</span>
+          {paymentNotStarted && !quoteExpired ? (
+            <Countdown secondsRemaining={secondsRemaining} />
           ) : null}
         </div>
-
-        {/* Footer destination + reset */}
-        <div className="flex flex-col gap-3 rounded-2xl border border-border bg-background/40 p-4">
-          <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground">
-            <span>Destination</span>
-            <span className="font-mono text-[11px] text-foreground/80">
-              {shortAddress(quote.fairDestinationAddress)}
+        <div className="mt-2.5 flex items-baseline justify-between gap-3">
+          <span className="text-[36px] font-semibold leading-[1.05] tracking-tight text-foreground sm:text-[44px]">
+            {quote.paymentAmountFormatted}
+          </span>
+          <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
+            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+              $
             </span>
+            <span className="text-sm font-semibold text-foreground">{quote.paymentSymbol}</span>
           </div>
-          <button
-            type="button"
-            onClick={onStartOver}
-            className="flex h-10 items-center justify-center gap-2 rounded-xl border border-border bg-popover/40 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
-          >
-            <ArrowLeft aria-hidden className="h-4 w-4" />
-            {quoteExpired ? 'Generate new quote' : 'Start over'}
-          </button>
         </div>
+        <p className="mt-2 text-[11px] text-muted-foreground">
+          On {quote.paymentNetworkLabel}. Other networks will be lost.
+        </p>
+      </div>
 
-        {statusQuery.isError && statusQuery.failureCount > 2 ? (
-          <p className="text-center text-xs text-muted-foreground">
-            <Loader2 aria-hidden className="mr-1 inline h-3 w-3 animate-spin" />
-            Reconnecting to bridge…
+      {/* QR + address */}
+      {quote.paymentAddress ? (
+        <div className="rounded-2xl border border-border bg-background/60 p-4">
+          <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Or scan the QR
+          </div>
+          <div className="mt-3 flex flex-col items-center gap-3">
+            <div className="rounded-2xl bg-white p-2.5 shadow-sm">
+              <QRCodeSVG
+                value={quote.paymentAddress}
+                size={180}
+                bgColor="#ffffff"
+                fgColor="#0a0a0a"
+                level="M"
+                marginSize={0}
+                className="h-[180px] w-[180px] sm:h-[220px] sm:w-[220px]"
+              />
+            </div>
+            <CopyableValue
+              label="Payment address"
+              value={quote.paymentAddress}
+              monospace
+            />
+          </div>
+        </div>
+      ) : null}
+
+      {/* Network warning */}
+      <div className="flex items-start gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-3.5 py-2.5 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+        <ShieldAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
+        <span>
+          Send <strong>{quote.paymentSymbol}</strong> on{' '}
+          <strong>{quote.paymentNetworkLabel}</strong> only. The bridge cannot recover
+          cross-network transfers.
+        </span>
+      </div>
+
+      {/* Status timeline */}
+      <div className="rounded-2xl border border-border bg-background/60 p-4">
+        <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <span>Bridge status</span>
+          <LiveDot active={!quoteExpired} />
+        </div>
+        <div className="mt-3.5">
+          <StatusTimeline status={effectiveStatus} status_data={status} />
+        </div>
+        {quoteExpired ? (
+          <p className="mt-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+            Quote expired before payment was detected. Generate a new quote to continue.
           </p>
         ) : null}
       </div>
-    </AppShell>
+
+      {/* Footer destination + reset */}
+      <div className="flex flex-col gap-2.5 rounded-2xl border border-border bg-background/40 p-3.5">
+        <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground">
+          <span>Destination</span>
+          <span className="font-mono text-[11px] text-foreground/80">
+            {shortAddress(quote.fairDestinationAddress)}
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={onStartOver}
+          className="flex h-10 items-center justify-center gap-2 rounded-xl border border-border bg-popover/40 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+        >
+          <ArrowLeft aria-hidden className="h-4 w-4" />
+          {quoteExpired ? 'Generate new quote' : 'Start over'}
+        </button>
+      </div>
+
+      {statusQuery.isError && statusQuery.failureCount > 2 ? (
+        <p className="text-center text-xs text-muted-foreground">
+          <Loader2 aria-hidden className="mr-1 inline h-3 w-3 animate-spin" />
+          Reconnecting to bridge…
+        </p>
+      ) : null}
+    </div>
   )
 }
 
 // ── Step 3 — success ─────────────────────────────────────────────────────
 
-function SuccessScreen({
+function SuccessStep({
   status,
   onStartOver,
 }: {
@@ -520,83 +603,73 @@ function SuccessScreen({
     : null
 
   return (
-    <AppShell
-      eyebrow="Done"
-      title="FAIR delivered"
-      subtitle="Your wallet should reflect the new balance shortly."
-      steps={STEPS}
-      currentStep={2}
-    >
-      <div className="flex flex-col items-center gap-6 py-2 text-center">
-        <SuccessCheckmark />
+    <div className="flex flex-col items-center gap-5 py-1 text-center">
+      <SuccessCheckmark />
 
-        <div className="flex flex-col items-center gap-1">
-          <p className="text-[40px] font-semibold leading-none text-foreground sm:text-[48px]">
-            {fairAmount}
-          </p>
-          <p className="text-sm font-medium uppercase tracking-wider text-primary">FAIR delivered</p>
-        </div>
-
-        <div className="w-full rounded-2xl border border-border bg-background/60 p-4 text-left">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-            Sent to
-          </div>
-          <p className="mt-1 break-all font-mono text-xs text-foreground">
-            {status.fairDestinationAddress}
-          </p>
-        </div>
-
-        {/* Tx links */}
-        {(explorerTxUrl || baseTxUrl) && (
-          <div className="flex w-full flex-col gap-2">
-            {explorerTxUrl ? (
-              <a
-                href={explorerTxUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/60 px-4 py-3 text-sm transition-colors hover:border-primary/50 hover:bg-background"
-              >
-                <span className="text-foreground">FairCoin transaction</span>
-                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  Explorer
-                  <ExternalLink aria-hidden className="h-3 w-3" />
-                </span>
-              </a>
-            ) : null}
-            {baseTxUrl ? (
-              <a
-                href={baseTxUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/60 px-4 py-3 text-sm transition-colors hover:border-primary/50 hover:bg-background"
-              >
-                <span className="text-foreground">Base swap</span>
-                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  Basescan
-                  <ExternalLink aria-hidden className="h-3 w-3" />
-                </span>
-              </a>
-            ) : null}
-          </div>
-        )}
-
-        <div className="flex w-full flex-col gap-2 sm:flex-row">
-          <button
-            type="button"
-            onClick={onStartOver}
-            className="h-12 flex-1 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
-          >
-            Buy more FAIR
-          </button>
-        </div>
+      <div className="flex flex-col items-center gap-1">
+        <p className="text-[40px] font-semibold leading-[1.05] text-foreground sm:text-[48px]">
+          {fairAmount}
+        </p>
+        <p className="text-sm font-medium uppercase tracking-wider text-primary">FAIR delivered</p>
       </div>
-    </AppShell>
+
+      <div className="w-full rounded-2xl border border-border bg-background/60 p-3.5 text-left">
+        <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          Sent to
+        </div>
+        <p className="mt-1 break-all font-mono text-xs text-foreground">
+          {status.fairDestinationAddress}
+        </p>
+      </div>
+
+      {/* Tx links */}
+      {(explorerTxUrl || baseTxUrl) && (
+        <div className="flex w-full flex-col gap-2">
+          {explorerTxUrl ? (
+            <a
+              href={explorerTxUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
+            >
+              <span className="text-foreground">FairCoin transaction</span>
+              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                Explorer
+                <ExternalLink aria-hidden className="h-3 w-3" />
+              </span>
+            </a>
+          ) : null}
+          {baseTxUrl ? (
+            <a
+              href={baseTxUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
+            >
+              <span className="text-foreground">Base swap</span>
+              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                Basescan
+                <ExternalLink aria-hidden className="h-3 w-3" />
+              </span>
+            </a>
+          ) : null}
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={onStartOver}
+        className="h-12 w-full rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
+      >
+        Buy more FAIR
+      </button>
+    </div>
   )
 }
 
 // ── Failed ───────────────────────────────────────────────────────────────
 
-function FailedScreen({
+function FailedStep({
   message,
   onStartOver,
 }: {
@@ -604,28 +677,20 @@ function FailedScreen({
   onStartOver: () => void
 }) {
   return (
-    <AppShell
-      eyebrow="Order failed"
-      title="Something went wrong"
-      subtitle="The bridge could not complete the transfer."
-      steps={STEPS}
-      currentStep={1}
-    >
-      <div className="flex flex-col gap-5">
-        <div className="flex items-start gap-3 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
-          <ShieldAlert aria-hidden className="mt-0.5 h-5 w-5 shrink-0" />
-          <span>{message ?? 'No further detail was provided. Try a fresh quote.'}</span>
-        </div>
-        <button
-          type="button"
-          onClick={onStartOver}
-          className="flex h-12 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
-        >
-          <RotateCcw aria-hidden className="h-4 w-4" />
-          Start a new order
-        </button>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-start gap-2.5 rounded-2xl border border-destructive/40 bg-destructive/10 p-3.5 text-sm text-destructive">
+        <ShieldAlert aria-hidden className="mt-0.5 h-5 w-5 shrink-0" />
+        <span>{message ?? 'No further detail was provided. Try a fresh quote.'}</span>
       </div>
-    </AppShell>
+      <button
+        type="button"
+        onClick={onStartOver}
+        className="flex h-12 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
+      >
+        <RotateCcw aria-hidden className="h-4 w-4" />
+        Start a new order
+      </button>
+    </div>
   )
 }
 
@@ -818,16 +883,37 @@ function TxHashLink({ hash, chain }: { hash: string; chain: 'base' | 'fair' }) {
 
 function SuccessCheckmark() {
   return (
-    <div className="relative flex h-20 w-20 items-center justify-center">
+    <div className="relative flex h-16 w-16 items-center justify-center sm:h-20 sm:w-20">
       <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
-      <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-primary/15">
-        <CheckCircle2 className="h-10 w-10 text-primary" strokeWidth={2.5} />
+      <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 sm:h-20 sm:w-20">
+        <CheckCircle2 className="h-8 w-8 text-primary sm:h-10 sm:w-10" strokeWidth={2.5} />
       </span>
     </div>
   )
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────
+
+/**
+ * Advances the parent stage to `done`/`failed` exactly once when the bridge
+ * reports a terminal status. Implemented as render-time derived state via a
+ * `useState` + inline compare — no `useEffect`.
+ */
+function useDerivedStageTransition(
+  effectiveStatus: BuyOrderStatus,
+  status: BuyStatusResponse | null,
+  onAdvance: (status: BuyStatusResponse) => void,
+  onFail: (message: string | null) => void,
+) {
+  const [handled, setHandled] = useState<BuyOrderStatus | null>(null)
+  if (handled !== 'DELIVERED' && effectiveStatus === 'DELIVERED' && status) {
+    setHandled('DELIVERED')
+    onAdvance(status)
+  } else if (handled !== 'FAILED' && effectiveStatus === 'FAILED') {
+    setHandled('FAILED')
+    onFail(status?.errorMessage ?? null)
+  }
+}
 
 function txForStep(key: BuyOrderStatus, data: BuyStatusResponse | null): string | null {
   if (!data) return null

@@ -5,13 +5,14 @@ import UnwrapApp from '../components/faircoin/unwrap/UnwrapApp'
 import WagmiAppProvider from '../components/faircoin/WagmiAppProvider'
 import { isFairCoinHost } from '../lib/host'
 import {
+  useFairCoinDropdowns,
   useFairCoinFooterBrand,
   useFairCoinFooterColumns,
   useFairCoinFooterCopyright,
   useFairCoinFooterLegalLinks,
   useFairCoinNavCtaButtons,
-  useFairCoinNavItems,
   useFairCoinNavbarBrand,
+  useFairCoinSimpleNavLinks,
 } from '../lib/faircoin-chrome'
 
 const SEO_TITLE = 'Redeem WFAIR — fairco.in'
@@ -26,7 +27,8 @@ const SEO_DESCRIPTION =
 export default function FairCoinUnwrapPage() {
   const onFairCoinHost = isFairCoinHost()
   const navbarBrand = useFairCoinNavbarBrand()
-  const navItems = useFairCoinNavItems()
+  const dropdowns = useFairCoinDropdowns()
+  const simpleNavLinks = useFairCoinSimpleNavLinks()
   const ctaButtons = useFairCoinNavCtaButtons()
   const footerBrand = useFairCoinFooterBrand()
   const footerColumns = useFairCoinFooterColumns()
@@ -42,7 +44,8 @@ export default function FairCoinUnwrapPage() {
       <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin/unwrap" />
       <Navbar
         brand={navbarBrand}
-        navItems={navItems}
+        customDropdowns={dropdowns}
+        customNavLinks={simpleNavLinks}
         ctaButtons={ctaButtons}
         hideAuth={onFairCoinHost}
         hideBanner={onFairCoinHost}

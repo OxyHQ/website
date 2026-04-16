@@ -5,13 +5,14 @@ import BridgeContent from '../components/faircoin/bridge/BridgeContent'
 import WagmiAppProvider from '../components/faircoin/WagmiAppProvider'
 import { isFairCoinHost } from '../lib/host'
 import {
+  useFairCoinDropdowns,
   useFairCoinFooterBrand,
   useFairCoinFooterColumns,
   useFairCoinFooterCopyright,
   useFairCoinFooterLegalLinks,
   useFairCoinNavCtaButtons,
-  useFairCoinNavItems,
   useFairCoinNavbarBrand,
+  useFairCoinSimpleNavLinks,
 } from '../lib/faircoin-chrome'
 
 const SEO_TITLE = 'FairCoin bridge (WFAIR on Base) — fairco.in'
@@ -26,7 +27,8 @@ const SEO_DESCRIPTION =
 export default function FairCoinBridgePage() {
   const onFairCoinHost = isFairCoinHost()
   const navbarBrand = useFairCoinNavbarBrand()
-  const navItems = useFairCoinNavItems()
+  const dropdowns = useFairCoinDropdowns()
+  const simpleNavLinks = useFairCoinSimpleNavLinks()
   const ctaButtons = useFairCoinNavCtaButtons()
   const footerBrand = useFairCoinFooterBrand()
   const footerColumns = useFairCoinFooterColumns()
@@ -44,7 +46,8 @@ export default function FairCoinBridgePage() {
       <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin/bridge" />
       <Navbar
         brand={navbarBrand}
-        navItems={navItems}
+        customDropdowns={dropdowns}
+        customNavLinks={simpleNavLinks}
         ctaButtons={ctaButtons}
         hideAuth={onFairCoinHost}
         hideBanner={onFairCoinHost}

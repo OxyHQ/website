@@ -27,6 +27,22 @@ import AppsIcon from '../../assets/nav/apps.svg?react'
 import HelpCenterIcon from '../../assets/nav/help-center.svg?react'
 import AcademyIcon from '../../assets/nav/academy.svg?react'
 import PartnersIcon from '../../assets/nav/partners.svg?react'
+// FairCoin-specific nav icons (sub-brand dropdowns)
+import WalletNavIcon from '../../assets/nav/wallet.svg?react'
+import BridgeNavIcon from '../../assets/nav/bridge.svg?react'
+import MasternodeNavIcon from '../../assets/nav/masternode.svg?react'
+import NetworkNavIcon from '../../assets/nav/network.svg?react'
+import ExplorerNavIcon from '../../assets/nav/explorer.svg?react'
+import CoinsNavIcon from '../../assets/nav/coins.svg?react'
+import SwapNavIcon from '../../assets/nav/swap.svg?react'
+import ChartNavIcon from '../../assets/nav/chart.svg?react'
+import ContractNavIcon from '../../assets/nav/contract.svg?react'
+import PoolNavIcon from '../../assets/nav/pool.svg?react'
+import GithubNavIcon from '../../assets/nav/github.svg?react'
+import PackageNavIcon from '../../assets/nav/package.svg?react'
+import ChatNavIcon from '../../assets/nav/chat.svg?react'
+import SendNavIcon from '../../assets/nav/send.svg?react'
+import TwitterNavIcon from '../../assets/nav/twitter.svg?react'
 
 const iconMap: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   ai: AiIcon,
@@ -41,6 +57,21 @@ const iconMap: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   'help-center': HelpCenterIcon,
   academy: AcademyIcon,
   partners: PartnersIcon,
+  wallet: WalletNavIcon,
+  bridge: BridgeNavIcon,
+  masternode: MasternodeNavIcon,
+  network: NetworkNavIcon,
+  explorer: ExplorerNavIcon,
+  coins: CoinsNavIcon,
+  swap: SwapNavIcon,
+  chart: ChartNavIcon,
+  contract: ContractNavIcon,
+  pool: PoolNavIcon,
+  github: GithubNavIcon,
+  package: PackageNavIcon,
+  chat: ChatNavIcon,
+  send: SendNavIcon,
+  twitter: TwitterNavIcon,
 }
 
 interface NavDropdownItemProps {

@@ -6,13 +6,14 @@ import Button from '../components/ui/Button'
 import { isFairCoinHost } from '../lib/host'
 import { fc } from '../lib/faircoin-links'
 import {
+  useFairCoinDropdowns,
   useFairCoinFooterBrand,
   useFairCoinFooterColumns,
   useFairCoinFooterCopyright,
   useFairCoinFooterLegalLinks,
   useFairCoinNavCtaButtons,
-  useFairCoinNavItems,
   useFairCoinNavbarBrand,
+  useFairCoinSimpleNavLinks,
 } from '../lib/faircoin-chrome'
 
 export default function NotFoundPage() {
@@ -21,7 +22,8 @@ export default function NotFoundPage() {
   // Each FairCoin chrome hook returns `undefined` off-host, so the Navbar /
   // Footer naturally fall back to the Oxy defaults — no prop branching needed.
   const navbarBrand = useFairCoinNavbarBrand()
-  const navItems = useFairCoinNavItems()
+  const dropdowns = useFairCoinDropdowns()
+  const simpleNavLinks = useFairCoinSimpleNavLinks()
   const ctaButtons = useFairCoinNavCtaButtons()
   const footerBrand = useFairCoinFooterBrand()
   const footerColumns = useFairCoinFooterColumns()
@@ -38,7 +40,8 @@ export default function NotFoundPage() {
       />
       <Navbar
         brand={navbarBrand}
-        navItems={navItems}
+        customDropdowns={dropdowns}
+        customNavLinks={simpleNavLinks}
         ctaButtons={ctaButtons}
         hideAuth={onFairCoinHost}
         hideBanner={onFairCoinHost}

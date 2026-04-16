@@ -8,9 +8,8 @@
  *   4. STATUS   — poll bridge withdrawal endpoint for FAIR delivery
  *   5. DONE     — success
  *
- * `useEffect` is avoided. Step transitions derive from wagmi/react-query state
- * shape: `isConnected → showAmount`, `writeStatus === 'success' → showStatus`,
- * `withdrawal.status === 'FINAL' → showDone`.
+ * Step transitions slide horizontally via `StepTransition`. `useEffect` is
+ * avoided — transitions derive from wagmi/react-query state shape.
  */
 import { useCallback, useMemo, useState } from 'react'
 import { stringToBytes, formatUnits, parseUnits, toHex } from 'viem'
@@ -39,6 +38,7 @@ import {
   Wallet,
 } from 'lucide-react'
 import AppShell from '../app/AppShell'
+import StepTransition from '../app/StepTransition'
 import { isValidFairAddress } from '../buy/validate'
 import { useFaircoinWithdrawalStatus } from '../../../hooks/use-faircoin-withdrawal'
 import {
@@ -71,119 +71,179 @@ interface ActiveBurn {
   destinationAddress: string
 }
 
+type StageKind = 'connect' | 'redeem' | 'status'
+
+interface ShellCopy {
+  eyebrow: string
+  title: string
+  subtitle?: string
+  currentStep: number
+  footnote?: React.ReactNode
+}
+
+const SHELL_COPY_CONNECT: ShellCopy = {
+  eyebrow: 'Redeem WFAIR',
+  title: 'Unwrap WFAIR back to native FAIR',
+  subtitle:
+    'Connect a wallet on Base to burn WFAIR. The bridge releases native FAIR on the FairCoin chain.',
+  currentStep: 0,
+  footnote: (
+    <>
+      Need WFAIR?{' '}
+      <a
+        href="https://app.uniswap.org/swap?outputCurrency=0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3&chain=base"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline-offset-4 hover:text-foreground hover:underline"
+      >
+        Trade for it on Uniswap
+      </a>
+      .
+    </>
+  ),
+}
+
+const SHELL_COPY_REDEEM: ShellCopy = {
+  eyebrow: 'Redeem WFAIR',
+  title: 'Unwrap WFAIR to native FAIR',
+  subtitle: 'Burn WFAIR on Base. The bridge releases the equivalent FAIR to your address.',
+  currentStep: 0,
+}
+
+const SHELL_COPY_TRACKING: ShellCopy = {
+  eyebrow: 'Tracking redemption',
+  title: 'Releasing native FAIR',
+  subtitle:
+    'Your burn is being indexed by the bridge. Native FAIR will arrive shortly.',
+  currentStep: 1,
+}
+
 export default function UnwrapApp() {
   const account = useAccount()
+  const { disconnect } = useDisconnect()
   const [activeBurn, setActiveBurn] = useState<ActiveBurn | null>(null)
+  const [direction, setDirection] = useState<1 | -1>(1)
 
-  // Step transitions are derived. No useEffect required.
-  if (!account.isConnected || !account.address) {
-    return <ConnectScreen />
-  }
+  // Derive the active stage from wagmi + local state. No useEffect.
+  const stageKind: StageKind = !account.isConnected || !account.address
+    ? 'connect'
+    : activeBurn
+      ? 'status'
+      : 'redeem'
 
-  if (activeBurn) {
-    return (
-      <StatusScreen
-        burn={activeBurn}
-        onReset={() => setActiveBurn(null)}
-      />
-    )
-  }
+  const handleBurnConfirmed = useCallback(
+    (txHash: `0x${string}`, amountWei: bigint, destinationAddress: string) => {
+      setDirection(1)
+      setActiveBurn({ txHash, amountWei, destinationAddress })
+    },
+    [],
+  )
+
+  const handleReset = useCallback(() => {
+    setDirection(-1)
+    setActiveBurn(null)
+  }, [])
+
+  const copy = useMemo<ShellCopy>(() => {
+    if (stageKind === 'connect') return SHELL_COPY_CONNECT
+    if (stageKind === 'redeem') return SHELL_COPY_REDEEM
+    return SHELL_COPY_TRACKING
+  }, [stageKind])
+
+  const toolbar = stageKind !== 'connect' && account.address ? (
+    <ConnectedPill address={account.address} onDisconnect={() => disconnect()} />
+  ) : null
 
   return (
-    <RedeemScreen
-      address={account.address}
-      onBurnConfirmed={(txHash, amountWei, destinationAddress) =>
-        setActiveBurn({ txHash, amountWei, destinationAddress })
-      }
-    />
+    <AppShell
+      eyebrow={copy.eyebrow}
+      title={copy.title}
+      subtitle={copy.subtitle}
+      steps={STEPS}
+      currentStep={copy.currentStep}
+      toolbar={toolbar}
+      footnote={copy.footnote}
+    >
+      <StepTransition stepKey={stageKind} direction={direction}>
+        {stageKind === 'connect' ? (
+          <ConnectStep />
+        ) : stageKind === 'status' && activeBurn ? (
+          <StatusStep burn={activeBurn} onReset={handleReset} />
+        ) : account.address ? (
+          <RedeemStep address={account.address} onBurnConfirmed={handleBurnConfirmed} />
+        ) : null}
+      </StepTransition>
+    </AppShell>
   )
 }
 
 // ── Step 1 — connect ─────────────────────────────────────────────────────
 
-function ConnectScreen() {
+function ConnectStep() {
   const { connectors, connect, isPending: isConnecting, error: connectError } = useConnect()
   const [chosen, setChosen] = useState<string | null>(null)
 
   return (
-    <AppShell
-      eyebrow="Redeem WFAIR"
-      title="Unwrap WFAIR back to native FAIR"
-      subtitle="Connect a wallet on Base to burn WFAIR. The bridge releases native FAIR on the FairCoin chain."
-      steps={STEPS}
-      currentStep={0}
-      footnote={
-        <>
-          Need WFAIR?{' '}
-          <a
-            href="https://app.uniswap.org/swap?outputCurrency=0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3&chain=base"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline-offset-4 hover:text-foreground hover:underline"
+    <div className="flex flex-col gap-3">
+      <p className="text-center text-sm text-muted-foreground">
+        Choose a wallet to continue
+      </p>
+      {connectors.map((connector) => {
+        const isThisPending = isConnecting && chosen === connector.uid
+        return (
+          <button
+            key={connector.uid}
+            type="button"
+            disabled={isConnecting}
+            onClick={() => {
+              setChosen(connector.uid)
+              connect({ connector, chainId: base.id })
+            }}
+            className="flex h-14 items-center justify-between rounded-2xl border border-border bg-background/60 px-4 text-left transition-all duration-150 hover:border-primary/50 hover:bg-background disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Trade for it on Uniswap
-          </a>
-          .
-        </>
-      }
-    >
-      <div className="flex flex-col gap-3">
-        <p className="text-center text-sm text-muted-foreground">Choose a wallet to continue</p>
-        {connectors.map((connector) => {
-          const isThisPending = isConnecting && chosen === connector.uid
-          return (
-            <button
-              key={connector.uid}
-              type="button"
-              disabled={isConnecting}
-              onClick={() => {
-                setChosen(connector.uid)
-                connect({ connector, chainId: base.id })
-              }}
-              className="flex h-14 items-center justify-between rounded-2xl border border-border bg-background/60 px-5 text-left transition-all duration-150 hover:border-primary/50 hover:bg-background disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <span className="flex items-center gap-3">
-                <span aria-hidden className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <Wallet className="h-4 w-4" />
+            <span className="flex items-center gap-3">
+              <span aria-hidden className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Wallet className="h-4 w-4" />
+              </span>
+              <span className="flex flex-col">
+                <span className="text-sm font-semibold text-foreground">
+                  {connectorLabel(connector.name, connector.id)}
                 </span>
-                <span className="flex flex-col">
-                  <span className="text-sm font-semibold text-foreground">
-                    {connectorLabel(connector.name, connector.id)}
-                  </span>
-                  <span className="text-[11px] text-muted-foreground">
-                    {connectorHint(connector.id)}
-                  </span>
+                <span className="text-[11px] text-muted-foreground">
+                  {connectorHint(connector.id)}
                 </span>
               </span>
-              {isThisPending ? (
-                <Loader2 aria-hidden className="h-4 w-4 animate-spin text-muted-foreground" />
-              ) : (
-                <ArrowRight aria-hidden className="h-4 w-4 text-muted-foreground" />
-              )}
-            </button>
-          )
-        })}
-
-        {connectError ? (
-          <div className="flex items-start gap-2 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-xs text-destructive">
-            <AlertTriangle aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-            <span>
-              {connectError.message.length > 0 ? connectError.message : 'Could not connect to wallet.'}
             </span>
-          </div>
-        ) : null}
+            {isThisPending ? (
+              <Loader2 aria-hidden className="h-4 w-4 animate-spin text-muted-foreground" />
+            ) : (
+              <ArrowRight aria-hidden className="h-4 w-4 text-muted-foreground" />
+            )}
+          </button>
+        )
+      })}
 
-        <p className="mt-2 text-center text-xs text-muted-foreground">
-          We never see your keys. The redemption is signed in your wallet on Base mainnet.
-        </p>
-      </div>
-    </AppShell>
+      {connectError ? (
+        <div className="flex items-start gap-2 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-xs text-destructive">
+          <AlertTriangle aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <span>
+            {connectError.message.length > 0
+              ? connectError.message
+              : 'Could not connect to wallet.'}
+          </span>
+        </div>
+      ) : null}
+
+      <p className="mt-1 text-center text-xs text-muted-foreground">
+        We never see your keys. The redemption is signed in your wallet on Base mainnet.
+      </p>
+    </div>
   )
 }
 
 // ── Step 2 — amount + destination + burn ─────────────────────────────────
 
-interface RedeemScreenProps {
+interface RedeemStepProps {
   address: `0x${string}`
   onBurnConfirmed: (
     txHash: `0x${string}`,
@@ -192,8 +252,7 @@ interface RedeemScreenProps {
   ) => void
 }
 
-function RedeemScreen({ address, onBurnConfirmed }: RedeemScreenProps) {
-  const { disconnect } = useDisconnect()
+function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
   const chainId = useChainId()
   const { switchChain, isPending: isSwitchingChain } = useSwitchChain()
   const onWrongChain = chainId !== base.id
@@ -235,7 +294,7 @@ function RedeemScreen({ address, onBurnConfirmed }: RedeemScreenProps) {
     query: { enabled: Boolean(burnHash) },
   })
 
-  // Step transition: once the burn is mined, hand off to the status screen.
+  // Step transition: once the burn is mined, hand off to the status step.
   // Derived during render rather than via useEffect.
   const lastBurn = useDerivedConfirmedBurn(
     burnHash,
@@ -330,221 +389,207 @@ function RedeemScreen({ address, onBurnConfirmed }: RedeemScreenProps) {
       : null
 
   return (
-    <AppShell
-      eyebrow="Redeem WFAIR"
-      title="Unwrap WFAIR to native FAIR"
-      subtitle="Burn WFAIR on Base. The bridge releases the equivalent FAIR to your address."
-      steps={STEPS}
-      currentStep={0}
-      toolbar={
-        <ConnectedPill
-          address={address}
-          onDisconnect={() => disconnect()}
-        />
-      }
-    >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        {onWrongChain ? (
-          <div className="flex flex-col gap-3 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-amber-700 dark:text-amber-300">
-            <div className="flex items-start gap-2 text-sm">
-              <ShieldAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
-              <span>
-                Your wallet is on the wrong network. WFAIR lives on{' '}
-                <strong>Base mainnet</strong>.
-              </span>
-            </div>
-            <button
-              type="button"
-              disabled={isSwitchingChain}
-              onClick={() => switchChain({ chainId: base.id })}
-              className="h-10 rounded-xl bg-amber-500 text-sm font-semibold text-white transition-all hover:brightness-110 disabled:opacity-60"
-            >
-              {isSwitchingChain ? 'Switching network…' : 'Switch to Base'}
-            </button>
-          </div>
-        ) : null}
-
-        {/* You burn (WFAIR) — hero amount input */}
-        <div className="rounded-2xl border border-border bg-background/60 p-5">
-          <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            <span>You burn</span>
-            <span className="text-muted-foreground/80">
-              Balance: {formatBalanceForDisplay(balanceFormatted)} WFAIR
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {onWrongChain ? (
+        <div className="flex flex-col gap-2.5 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-3.5 text-amber-700 dark:text-amber-300">
+          <div className="flex items-start gap-2 text-sm">
+            <ShieldAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>
+              Your wallet is on the wrong network. WFAIR lives on{' '}
+              <strong>Base mainnet</strong>.
             </span>
           </div>
-          <div className="mt-3 flex items-baseline justify-between gap-3">
-            <input
-              id="unwrap-amount"
-              type="text"
-              inputMode="decimal"
-              autoComplete="off"
-              placeholder="0"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              onBlur={() => setTouched((t) => ({ ...t, amount: true }))}
-              aria-label="Amount of WFAIR to burn"
-              className="w-full bg-transparent text-[44px] font-semibold leading-none tracking-tight text-foreground placeholder:text-muted-foreground/40 focus:outline-none sm:text-[52px]"
-            />
-            <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-              <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
-                W
-              </span>
-              <span className="text-sm font-semibold text-foreground">WFAIR</span>
-            </div>
+          <button
+            type="button"
+            disabled={isSwitchingChain}
+            onClick={() => switchChain({ chainId: base.id })}
+            className="h-10 rounded-xl bg-amber-500 text-sm font-semibold text-white transition-all hover:brightness-110 disabled:opacity-60"
+          >
+            {isSwitchingChain ? 'Switching network…' : 'Switch to Base'}
+          </button>
+        </div>
+      ) : null}
+
+      {/* You burn (WFAIR) — hero amount input */}
+      <div className="rounded-2xl border border-border bg-background/60 p-4">
+        <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <span>You burn</span>
+          <span className="text-muted-foreground/80">
+            Balance: {formatBalanceForDisplay(balanceFormatted)} WFAIR
+          </span>
+        </div>
+        <div className="mt-2.5 flex items-baseline justify-between gap-3">
+          <input
+            id="unwrap-amount"
+            type="text"
+            inputMode="decimal"
+            autoComplete="off"
+            placeholder="0"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            onBlur={() => setTouched((t) => ({ ...t, amount: true }))}
+            aria-label="Amount of WFAIR to burn"
+            className="w-full bg-transparent text-[44px] font-semibold leading-[1.05] tracking-tight text-foreground placeholder:text-muted-foreground/40 focus:outline-none sm:text-[52px]"
+          />
+          <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
+            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+              W
+            </span>
+            <span className="text-sm font-semibold text-foreground">WFAIR</span>
           </div>
-          <div className="mt-3 flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleMax}
-              disabled={balanceWei === 0n}
-              className="rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary transition-colors hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+        </div>
+        <div className="mt-2.5 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleMax}
+            disabled={balanceWei === 0n}
+            className="rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary transition-colors hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Max
+          </button>
+          {(['25', '50', '75'] as const).map((pct) => {
+            const fraction = (balanceWei * BigInt(Number(pct))) / 100n
+            const display = formatUnits(fraction, WFAIR_DECIMALS)
+            return (
+              <button
+                key={pct}
+                type="button"
+                onClick={() => setAmount(display)}
+                disabled={balanceWei === 0n}
+                className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {pct}%
+              </button>
+            )
+          })}
+        </div>
+        {amountErrorMsg ? (
+          <p className="mt-2 text-xs font-medium text-destructive">{amountErrorMsg}</p>
+        ) : null}
+      </div>
+
+      {/* Direction indicator */}
+      <div className="relative -my-2.5 flex justify-center" aria-hidden>
+        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-popover text-muted-foreground shadow-sm">
+          <ArrowDown className="h-3.5 w-3.5" />
+        </div>
+      </div>
+
+      {/* You receive — preview */}
+      <div className="rounded-2xl border border-border bg-background/60 p-4">
+        <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          You receive
+        </div>
+        <div className="mt-2.5 flex items-baseline justify-between gap-3">
+          <span className="text-[40px] font-semibold leading-[1.05] tracking-tight text-foreground sm:text-[48px]">
+            {amount.trim().length > 0 && amountValid ? amount : '0'}
+          </span>
+          <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
+            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
+              F
+            </span>
+            <span className="text-sm font-semibold text-foreground">FAIR</span>
+          </div>
+        </div>
+        <p className="mt-2 text-[11px] text-muted-foreground">
+          1 WFAIR = 1 FAIR. No fees from the bridge — only Base network gas to sign the burn.
+        </p>
+      </div>
+
+      {/* Destination */}
+      <div className="rounded-2xl border border-border bg-background/60 p-4">
+        <label
+          htmlFor="unwrap-destination"
+          className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
+        >
+          Send FAIR to
+        </label>
+        <div className="mt-2.5 flex items-center gap-2 rounded-xl border border-border bg-popover/60 px-3 py-2.5 transition-colors focus-within:border-primary">
+          <Wallet aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <input
+            id="unwrap-destination"
+            type="text"
+            autoComplete="off"
+            spellCheck={false}
+            placeholder="FErMgtiwoX4zrmUi5MHY7iZ2qij32ckdDg"
+            value={destination}
+            onChange={(e) => setDestination(e.target.value)}
+            onBlur={() => setTouched((t) => ({ ...t, destination: true }))}
+            className="w-full bg-transparent font-mono text-[13px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+          />
+        </div>
+        <div className="mt-2 flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+          <span>
+            No wallet?{' '}
+            <a
+              href={FAIRWALLET_RELEASES_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground underline-offset-4 hover:underline"
             >
-              Max
-            </button>
-            {(['25', '50', '75'] as const).map((pct) => {
-              const fraction = (balanceWei * BigInt(Number(pct))) / 100n
-              const display = formatUnits(fraction, WFAIR_DECIMALS)
-              return (
-                <button
-                  key={pct}
-                  type="button"
-                  onClick={() => setAmount(display)}
-                  disabled={balanceWei === 0n}
-                  className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {pct}%
-                </button>
-              )
-            })}
-          </div>
-          {amountErrorMsg ? (
-            <p className="mt-2 text-xs font-medium text-destructive">{amountErrorMsg}</p>
+              Get FAIRWallet
+            </a>
+          </span>
+          {destinationErrorMsg ? (
+            <span className="text-right font-medium text-destructive">{destinationErrorMsg}</span>
           ) : null}
         </div>
+      </div>
 
-        {/* Direction indicator */}
-        <div className="relative -my-3 flex justify-center" aria-hidden>
-          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-popover text-muted-foreground shadow-sm">
-            <ArrowDown className="h-4 w-4" />
-          </div>
+      {isPaused ? (
+        <div className="flex items-start gap-2 rounded-2xl border border-destructive/40 bg-destructive/10 p-3.5 text-sm text-destructive">
+          <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>The WFAIR contract is currently paused. Redemptions are disabled.</span>
         </div>
+      ) : null}
 
-        {/* You receive — preview */}
-        <div className="rounded-2xl border border-border bg-background/60 p-5">
-          <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            You receive
-          </div>
-          <div className="mt-3 flex items-baseline justify-between gap-3">
-            <span className="text-[40px] font-semibold leading-none tracking-tight text-foreground sm:text-[48px]">
-              {amount.trim().length > 0 && amountValid ? amount : '0'}
-            </span>
-            <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-              <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
-                F
-              </span>
-              <span className="text-sm font-semibold text-foreground">FAIR</span>
-            </div>
-          </div>
-          <p className="mt-2 text-[11px] text-muted-foreground">
-            1 WFAIR = 1 FAIR. No fees from the bridge — only Base network gas to sign the burn.
-          </p>
-        </div>
+      {/* CTA */}
+      <button
+        type="submit"
+        disabled={!canSubmit}
+        className="group flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-base font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground sm:h-14"
+      >
+        {writeContract.isPending ? (
+          <>
+            <Loader2 aria-hidden className="h-4 w-4 animate-spin" />
+            Confirm in your wallet…
+          </>
+        ) : burnReceipt.isLoading ? (
+          <>
+            <Loader2 aria-hidden className="h-4 w-4 animate-spin" />
+            Waiting for confirmation…
+          </>
+        ) : (
+          <>
+            Redeem WFAIR
+            <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </>
+        )}
+      </button>
 
-        {/* Destination */}
-        <div className="rounded-2xl border border-border bg-background/60 p-5">
-          <label
-            htmlFor="unwrap-destination"
-            className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
-          >
-            Send FAIR to
-          </label>
-          <div className="mt-3 flex items-center gap-2 rounded-xl border border-border bg-popover/60 px-3 py-2.5 transition-colors focus-within:border-primary">
-            <Wallet aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
-            <input
-              id="unwrap-destination"
-              type="text"
-              autoComplete="off"
-              spellCheck={false}
-              placeholder="FErMgtiwoX4zrmUi5MHY7iZ2qij32ckdDg"
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-              onBlur={() => setTouched((t) => ({ ...t, destination: true }))}
-              className="w-full bg-transparent font-mono text-[13px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
-            />
-          </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
-            <span>
-              No wallet?{' '}
-              <a
-                href={FAIRWALLET_RELEASES_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-foreground underline-offset-4 hover:underline"
-              >
-                Get FAIRWallet
-              </a>
-            </span>
-            {destinationErrorMsg ? (
-              <span className="font-medium text-destructive">{destinationErrorMsg}</span>
-            ) : null}
-          </div>
-        </div>
+      {writeError && !writeContract.isPending ? (
+        <ErrorBanner message={describeWriteError(writeError)} />
+      ) : null}
+      {receiptError ? <ErrorBanner message={receiptError.message} /> : null}
+      {failureMessage ? <ErrorBanner message={failureMessage} /> : null}
 
-        {isPaused ? (
-          <div className="flex items-start gap-2 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
-            <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
-            <span>The WFAIR contract is currently paused. Redemptions are disabled.</span>
-          </div>
-        ) : null}
-
-        {/* CTA */}
-        <button
-          type="submit"
-          disabled={!canSubmit}
-          className="group flex h-14 items-center justify-center gap-2 rounded-2xl bg-primary text-base font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
-        >
-          {writeContract.isPending ? (
-            <>
-              <Loader2 aria-hidden className="h-4 w-4 animate-spin" />
-              Confirm in your wallet…
-            </>
-          ) : burnReceipt.isLoading ? (
-            <>
-              <Loader2 aria-hidden className="h-4 w-4 animate-spin" />
-              Waiting for confirmation…
-            </>
-          ) : (
-            <>
-              Redeem WFAIR
-              <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </>
-          )}
-        </button>
-
-        {writeError && !writeContract.isPending ? (
-          <ErrorBanner message={describeWriteError(writeError)} />
-        ) : null}
-        {receiptError ? <ErrorBanner message={receiptError.message} /> : null}
-        {failureMessage ? <ErrorBanner message={failureMessage} /> : null}
-
-        {burnHash && !burnReceipt.data ? (
-          <p className="rounded-xl border border-border bg-background/40 px-3 py-2 text-center text-xs text-muted-foreground">
-            Tx submitted — waiting for confirmation on Base.
-          </p>
-        ) : null}
-      </form>
-    </AppShell>
+      {burnHash && !burnReceipt.data ? (
+        <p className="rounded-xl border border-border bg-background/40 px-3 py-2 text-center text-xs text-muted-foreground">
+          Tx submitted — waiting for confirmation on Base.
+        </p>
+      ) : null}
+    </form>
   )
 }
 
 // ── Step 3 — status / done ───────────────────────────────────────────────
 
-interface StatusScreenProps {
+interface StatusStepProps {
   burn: ActiveBurn
   onReset: () => void
 }
 
-function StatusScreen({ burn, onReset }: StatusScreenProps) {
+function StatusStep({ burn, onReset }: StatusStepProps) {
   const withdrawal = useFaircoinWithdrawalStatus(burn.txHash)
   const status = withdrawal.data
   const isFinal = status?.status === 'FINAL'
@@ -555,94 +600,90 @@ function StatusScreen({ burn, onReset }: StatusScreenProps) {
   }
 
   if (isFailed && status) {
-    return (
-      <AppShell
-        eyebrow="Redemption failed"
-        title="Bridge could not deliver FAIR"
-        subtitle="The burn was successful, but the bridge could not release native FAIR."
-        steps={STEPS}
-        currentStep={1}
-      >
-        <div className="flex flex-col gap-5">
-          <ErrorBanner message="The bridge marked this redemption as FAILED. Reach out to support with your burn tx hash." />
-          <div className="rounded-2xl border border-border bg-background/60 p-4">
-            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-              Burn transaction
-            </div>
-            <p className="mt-1 break-all font-mono text-xs text-foreground">{burn.txHash}</p>
-          </div>
-          <button
-            type="button"
-            onClick={onReset}
-            className="flex h-12 items-center justify-center gap-2 rounded-xl border border-border bg-popover/40 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
-          >
-            <RotateCcw aria-hidden className="h-4 w-4" />
-            Start a new redemption
-          </button>
-        </div>
-      </AppShell>
-    )
+    return <UnwrapFailed burn={burn} onReset={onReset} />
   }
 
   return (
-    <AppShell
-      eyebrow="Tracking redemption"
-      title="Releasing native FAIR"
-      subtitle="Your burn is being indexed by the bridge. Native FAIR will arrive shortly."
-      steps={STEPS}
-      currentStep={1}
-    >
-      <div className="flex flex-col gap-5">
-        <div className="rounded-2xl border border-border bg-background/60 p-5">
-          <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            <span>You burned</span>
-            <LiveDot active />
-          </div>
-          <div className="mt-3 flex items-baseline justify-between gap-3">
-            <span className="text-[40px] font-semibold leading-none tracking-tight text-foreground sm:text-[48px]">
-              {formatUnits(burn.amountWei, WFAIR_DECIMALS)}
+    <div className="flex flex-col gap-4">
+      <div className="rounded-2xl border border-border bg-background/60 p-4">
+        <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <span>You burned</span>
+          <LiveDot active />
+        </div>
+        <div className="mt-2.5 flex items-baseline justify-between gap-3">
+          <span className="text-[40px] font-semibold leading-[1.05] tracking-tight text-foreground sm:text-[48px]">
+            {formatUnits(burn.amountWei, WFAIR_DECIMALS)}
+          </span>
+          <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
+            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+              W
             </span>
-            <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-              <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
-                W
-              </span>
-              <span className="text-sm font-semibold text-foreground">WFAIR</span>
-            </div>
+            <span className="text-sm font-semibold text-foreground">WFAIR</span>
           </div>
         </div>
-
-        <div className="rounded-2xl border border-border bg-background/60 p-5">
-          <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Bridge status
-          </div>
-          <div className="mt-4">
-            <UnwrapTimeline status={status} />
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-border bg-background/40 p-4">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-            Burn transaction
-          </div>
-          <a
-            href={`${BASESCAN_BASE}/tx/${encodeURIComponent(burn.txHash)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-1 inline-flex items-center gap-1.5 break-all font-mono text-xs text-foreground underline-offset-4 hover:underline"
-          >
-            {burn.txHash}
-            <ExternalLink aria-hidden className="h-3 w-3 shrink-0" />
-          </a>
-        </div>
-
-        {withdrawal.isError && withdrawal.failureCount > 2 ? (
-          <p className="text-center text-xs text-muted-foreground">
-            <Loader2 aria-hidden className="mr-1 inline h-3 w-3 animate-spin" />
-            Reconnecting to bridge…
-          </p>
-        ) : null}
       </div>
-    </AppShell>
+
+      <div className="rounded-2xl border border-border bg-background/60 p-4">
+        <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          Bridge status
+        </div>
+        <div className="mt-3.5">
+          <UnwrapTimeline status={status} />
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-background/40 p-3.5">
+        <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          Burn transaction
+        </div>
+        <a
+          href={`${BASESCAN_BASE}/tx/${encodeURIComponent(burn.txHash)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-1 inline-flex items-center gap-1.5 break-all font-mono text-xs text-foreground underline-offset-4 hover:underline"
+        >
+          {burn.txHash}
+          <ExternalLink aria-hidden className="h-3 w-3 shrink-0" />
+        </a>
+      </div>
+
+      {withdrawal.isError && withdrawal.failureCount > 2 ? (
+        <p className="text-center text-xs text-muted-foreground">
+          <Loader2 aria-hidden className="mr-1 inline h-3 w-3 animate-spin" />
+          Reconnecting to bridge…
+        </p>
+      ) : null}
+    </div>
+  )
+}
+
+function UnwrapFailed({
+  burn,
+  onReset,
+}: {
+  burn: ActiveBurn
+  onReset: () => void
+}) {
+  // Intentionally rendered inside the tracking shell to avoid a second layout
+  // shift after the bridge reports FAILED mid-flight.
+  return (
+    <div className="flex flex-col gap-4">
+      <ErrorBanner message="The bridge marked this redemption as FAILED. Reach out to support with your burn tx hash." />
+      <div className="rounded-2xl border border-border bg-background/60 p-3.5">
+        <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          Burn transaction
+        </div>
+        <p className="mt-1 break-all font-mono text-xs text-foreground">{burn.txHash}</p>
+      </div>
+      <button
+        type="button"
+        onClick={onReset}
+        className="flex h-12 items-center justify-center gap-2 rounded-xl border border-border bg-popover/40 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+      >
+        <RotateCcw aria-hidden className="h-4 w-4" />
+        Start a new redemption
+      </button>
+    </div>
   )
 }
 
@@ -662,70 +703,62 @@ function UnwrapSuccess({
   const burnUrl = `${BASESCAN_BASE}/tx/${encodeURIComponent(status.baseBurnTxHash)}`
 
   return (
-    <AppShell
-      eyebrow="Done"
-      title="FAIR delivered"
-      subtitle="Your wallet should reflect the new balance shortly."
-      steps={STEPS}
-      currentStep={2}
-    >
-      <div className="flex flex-col items-center gap-6 py-2 text-center">
-        <SuccessCheckmark />
+    <div className="flex flex-col items-center gap-5 py-1 text-center">
+      <SuccessCheckmark />
 
-        <div className="flex flex-col items-center gap-1">
-          <p className="text-[40px] font-semibold leading-none text-foreground sm:text-[48px]">
-            {fairAmount}
-          </p>
-          <p className="text-sm font-medium uppercase tracking-wider text-primary">FAIR delivered</p>
+      <div className="flex flex-col items-center gap-1">
+        <p className="text-[40px] font-semibold leading-[1.05] text-foreground sm:text-[48px]">
+          {fairAmount}
+        </p>
+        <p className="text-sm font-medium uppercase tracking-wider text-primary">FAIR delivered</p>
+      </div>
+
+      <div className="w-full rounded-2xl border border-border bg-background/60 p-3.5 text-left">
+        <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          Sent to
         </div>
+        <p className="mt-1 break-all font-mono text-xs text-foreground">
+          {status.destinationFairAddress || burn.destinationAddress}
+        </p>
+      </div>
 
-        <div className="w-full rounded-2xl border border-border bg-background/60 p-4 text-left">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-            Sent to
-          </div>
-          <p className="mt-1 break-all font-mono text-xs text-foreground">
-            {status.destinationFairAddress || burn.destinationAddress}
-          </p>
-        </div>
-
-        <div className="flex w-full flex-col gap-2">
-          {explorerUrl ? (
-            <a
-              href={explorerUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/60 px-4 py-3 text-sm transition-colors hover:border-primary/50 hover:bg-background"
-            >
-              <span className="text-foreground">FairCoin transaction</span>
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                Explorer
-                <ExternalLink aria-hidden className="h-3 w-3" />
-              </span>
-            </a>
-          ) : null}
+      <div className="flex w-full flex-col gap-2">
+        {explorerUrl ? (
           <a
-            href={burnUrl}
+            href={explorerUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/60 px-4 py-3 text-sm transition-colors hover:border-primary/50 hover:bg-background"
+            className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
           >
-            <span className="text-foreground">Base burn</span>
+            <span className="text-foreground">FairCoin transaction</span>
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              Basescan
+              Explorer
               <ExternalLink aria-hidden className="h-3 w-3" />
             </span>
           </a>
-        </div>
-
-        <button
-          type="button"
-          onClick={onReset}
-          className="h-12 w-full rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
+        ) : null}
+        <a
+          href={burnUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
         >
-          Redeem more WFAIR
-        </button>
+          <span className="text-foreground">Base burn</span>
+          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            Basescan
+            <ExternalLink aria-hidden className="h-3 w-3" />
+          </span>
+        </a>
       </div>
-    </AppShell>
+
+      <button
+        type="button"
+        onClick={onReset}
+        className="h-12 w-full rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
+      >
+        Redeem more WFAIR
+      </button>
+    </div>
   )
 }
 
@@ -904,10 +937,10 @@ function ErrorBanner({ message }: { message: string }) {
 
 function SuccessCheckmark() {
   return (
-    <div className="relative flex h-20 w-20 items-center justify-center">
+    <div className="relative flex h-16 w-16 items-center justify-center sm:h-20 sm:w-20">
       <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
-      <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-primary/15">
-        <CheckCircle2 className="h-10 w-10 text-primary" strokeWidth={2.5} />
+      <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 sm:h-20 sm:w-20">
+        <CheckCircle2 className="h-8 w-8 text-primary sm:h-10 sm:w-10" strokeWidth={2.5} />
       </span>
     </div>
   )

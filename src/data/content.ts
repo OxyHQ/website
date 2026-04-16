@@ -34,6 +34,12 @@ export interface PrivacyPoint {
 export interface NavItem {
   label: string
   href: string
+  /**
+   * When `true`, the Navbar renders this link as an `<a target="_blank">`
+   * regardless of the href scheme. Useful for cross-host links that still
+   * start with `/` (e.g. a sub-brand linking to a tokenlist.json file).
+   */
+  external?: boolean
 }
 
 export interface NavDropdownItemImage {
