@@ -21,7 +21,7 @@ const NAV_LINKS: readonly FairCoinNavLink[] = [
   },
 ]
 
-const LOGO_URL = 'https://fairco.in/logo.png'
+const LOGO_URL = 'https://fairco.in/logo.jpg'
 
 function NavLinkItem({ link, onNavigate }: { link: FairCoinNavLink; onNavigate?: () => void }) {
   const className =

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-const LOGO_URL = 'https://fairco.in/logo.png'
+const LOGO_URL = 'https://fairco.in/logo.jpg'
 
 const FOOTER_COLUMNS = [
   {
