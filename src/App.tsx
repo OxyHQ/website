@@ -2,6 +2,7 @@ import { useState, useCallback, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WebOxyProvider, useAuth, useWebOxy } from '@oxyhq/auth'
+import type { User } from '@oxyhq/core'
 import { BloomThemeProvider } from '@oxyhq/bloom/theme'
 import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
 import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppColorName } from './theme'
@@ -12,6 +13,7 @@ import { isFairCoinHost } from './lib/host'
 import HomePage from './pages/HomePage'
 import FairCoinLanding from './pages/FairCoinLanding'
 import FairCoinBridgePage from './pages/FairCoinBridge'
+import FairCoinBuyPage from './pages/FairCoinBuy'
 import { AccountPanelProvider } from './contexts/AccountPanelContext'
 
 const FixedPromptInput = lazy(() => import('./components/ui/FixedPromptInput'))
@@ -114,6 +116,7 @@ function PublicRoutes() {
     return (
       <>
         <Route index element={<FairCoinLanding />} />
+        <Route path="buy" element={<FairCoinBuyPage />} />
         <Route path="bridge" element={<FairCoinBridgePage />} />
       </>
     )
@@ -122,6 +125,7 @@ function PublicRoutes() {
     <>
       <Route index element={<HomePage />} />
       <Route path="faircoin" element={<FairCoinLanding />} />
+      <Route path="faircoin/buy" element={<FairCoinBuyPage />} />
       <Route path="faircoin/bridge" element={<FairCoinBridgePage />} />
       <Route path="partners" element={<PartnersPage />} />
       <Route path="referrals" element={<ReferralsPage />} />
@@ -168,11 +172,22 @@ function PublicRoutes() {
 
 export default function App() {
   const [mode] = useState<ThemeMode>(getSavedMode)
+  // `getSavedPreset()` is host-aware — on the FairCoin apex it always returns
+  // `'faircoin'`, ignoring the localStorage value. So Bloom's faircoin preset
+  // is what gets written to `:root` for the entire document. On oxy.so the
+  // saved preset wins and the FairCoin sub-routes get scoped theming via the
+  // `.faircoin-theme` CSS wrapper on each page.
   const [preset] = useState<AppColorName>(getSavedPreset)
+  // `applyUserColor()` is also host-aware (no-op on FairCoin), but we forward
+  // it through here so the auth event still fires for any future hooks.
+  const handleAuthChange = useCallback(
+    (user: User | null) => applyUserColor(user?.color),
+    [],
+  )
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WebOxyProvider baseURL={OXY_API} onAuthStateChange={(user) => applyUserColor(user?.color)}>
+      <WebOxyProvider baseURL={OXY_API} onAuthStateChange={handleAuthChange}>
         <AppSetup>
           <BloomThemeProvider mode={mode} colorPreset={preset}>
             <BrowserRouter>

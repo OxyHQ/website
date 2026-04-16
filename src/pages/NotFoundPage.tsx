@@ -1,28 +1,51 @@
 import { useMemo } from 'react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
-import FairCoinNavbar from '../components/faircoin/FairCoinNavbar'
-import FairCoinFooter from '../components/faircoin/FairCoinFooter'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import { isFairCoinHost } from '../lib/host'
 import { fc } from '../lib/faircoin-links'
+import {
+  useFairCoinFooterBrand,
+  useFairCoinFooterColumns,
+  useFairCoinFooterCopyright,
+  useFairCoinFooterLegalLinks,
+  useFairCoinNavCtaButtons,
+  useFairCoinNavItems,
+  useFairCoinNavbarBrand,
+} from '../lib/faircoin-chrome'
 
 export default function NotFoundPage() {
   const onFairCoinHost = isFairCoinHost()
-  const Nav = onFairCoinHost ? FairCoinNavbar : Navbar
-  const Foot = onFairCoinHost ? FairCoinFooter : Footer
   const homeHref = useMemo(() => fc('/'), [])
+  const navbarBrand = useFairCoinNavbarBrand()
+  const navItems = useFairCoinNavItems()
+  const ctaButtons = useFairCoinNavCtaButtons()
+  const footerBrand = useFairCoinFooterBrand()
+  const footerColumns = useFairCoinFooterColumns()
+  const footerLegalLinks = useFairCoinFooterLegalLinks()
+  const footerCopyright = useFairCoinFooterCopyright()
 
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
+    <div className={`flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background ${onFairCoinHost ? 'faircoin-theme' : ''}`}>
       <SEO
         title="Page Not Found"
         description="The page you're looking for doesn't exist."
         canonicalPath="/404"
         noIndex
       />
-      <Nav />
+      {onFairCoinHost ? (
+        <Navbar
+          brand={navbarBrand}
+          navItems={navItems}
+          ctaButtons={ctaButtons}
+          hideAuth
+          hideBanner
+          hideLocalePicker
+        />
+      ) : (
+        <Navbar />
+      )}
       <main className="flex flex-1 items-center pt-[var(--site-header-height)]">
         <div className="container border-x border-border">
           <div className="grid grid-cols-12 items-center py-12 lg:py-16">
@@ -68,7 +91,17 @@ export default function NotFoundPage() {
           </div>
         </div>
       </main>
-      <Foot />
+      {onFairCoinHost ? (
+        <Footer
+          brand={footerBrand}
+          columns={footerColumns}
+          socialLinks={[]}
+          legalLinks={footerLegalLinks}
+          copyright={footerCopyright}
+        />
+      ) : (
+        <Footer />
+      )}
     </div>
   )
 }

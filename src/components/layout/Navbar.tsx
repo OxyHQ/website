@@ -86,26 +86,79 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
 }
 
 /* ─── Main Navbar ─── */
+
+/** Brand block (logo + home link) rendered at the start of the navbar. */
+export interface NavbarBrand {
+  /** Where the brand link points. Use `/` for Oxy, `fc('/')` for FairCoin. */
+  homeHref: string
+  /** Accessible label for the brand link. */
+  ariaLabel: string
+  /** Logo / wordmark element. Sized by the caller. */
+  logo: React.ReactNode
+}
+
+/** Flat navigation item used when `navItems` is provided. Bypasses CMS dropdowns. */
+export interface NavbarItem {
+  label: string
+  href: string
+  external?: boolean
+}
+
 interface NavbarProps {
+  /** Override the brand block. Defaults to the Oxy logo linking to `/`. */
+  brand?: NavbarBrand
+  /**
+   * When set, replaces both CMS dropdowns and `simpleNavLinks` with a flat
+   * link list. Useful for sub-brands (FairCoin) that don't use the Oxy nav.
+   */
+  navItems?: readonly NavbarItem[]
+  /** Replace the default Sign in / Start for free buttons. */
+  ctaButtons?: React.ReactNode
+  /** Hide the auth buttons / avatar entirely. */
+  hideAuth?: boolean
+  /** Hide the global announcement banner. */
+  hideBanner?: boolean
+  /** Hide the locale picker. */
+  hideLocalePicker?: boolean
   /** Extra elements rendered before Sign in / Start for free on desktop, and before auth buttons on mobile */
   rightActions?: React.ReactNode
   /** Make navbar fully transparent with no border */
   transparent?: boolean
 }
 
-export default function Navbar({ rightActions, transparent }: NavbarProps = {}) {
+export default function Navbar({
+  brand,
+  navItems,
+  ctaButtons,
+  hideAuth,
+  hideBanner,
+  hideLocalePicker,
+  rightActions,
+  transparent,
+}: NavbarProps = {}) {
   const { user, isAuthenticated, signIn } = useAuth()
   const accountPanel = useAccountPanel()
+  // When a flat navItems list is supplied (e.g. FairCoin), skip the CMS
+  // dropdown query — those callers don't render dropdowns and don't want
+  // the Oxy navigation cache to kick in.
+  const useFlatNav = navItems !== undefined
   const { data: navigationData } = useNavigation()
   const { data: siteSettings } = useSiteSettings()
-  const dropdowns: NavDropdown[] = useMemo(() => navigationData ?? [], [navigationData])
+  const dropdowns: NavDropdown[] = useMemo(
+    () => (useFlatNav ? [] : navigationData ?? []),
+    [useFlatNav, navigationData],
+  )
+  const flatLinks: readonly NavbarItem[] = useMemo(
+    () => (useFlatNav ? navItems ?? [] : []),
+    [useFlatNav, navItems],
+  )
   const banner = siteSettings?.banner
   const dropdownLabels = useMemo(() => dropdowns.map((d) => d.label), [dropdowns])
 
   const scrollY = useSyncExternalStore(subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [bannerDismissed, setBannerDismissed] = useState(false)
-  const bannerVisible = !bannerDismissed && (banner?.visible ?? true)
+  const bannerVisible = !hideBanner && !bannerDismissed && (banner?.visible ?? true)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [prevDropdown, setPrevDropdown] = useState<string | null>(null)
   const [direction, setDirection] = useState<'left' | 'right' | null>(null)
@@ -301,51 +354,82 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
         <nav className="py-2 lg:py-3.5">
           <div className="flex items-center justify-between">
             <div className="flex grow items-center gap-x-9">
-              <Link to="/" className="-mx-1.5 rounded-xl px-1.5" aria-label="Oxy homepage" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                <Logo className="h-6" />
+              <Link
+                to={brand?.homeHref ?? '/'}
+                className="-mx-1.5 rounded-xl px-1.5"
+                aria-label={brand?.ariaLabel ?? 'Oxy homepage'}
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
+                {brand?.logo ?? <Logo className="h-6" />}
               </Link>
 
               {/* Desktop nav */}
               <div ref={escapeRef} className="relative z-10" onMouseLeave={scheduleClose}>
                 <ul className="hidden items-center gap-x-1.5 lg:flex">
-                  {dropdowns.map((dd) => (
-                    <li key={dd.label}>
-                      <button
-                        ref={(el) => { triggerRefs.current[dd.label] = el }}
-                        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`}
-                        style={{
-                          background: activeDropdown === dd.label ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
-                          color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
-                        }}
-                        onMouseEnter={() => openDropdown(dd.label)}
-                        aria-expanded={activeDropdown === dd.label}
-                      >
-                        <span>{dd.label}</span>
-                        <ChevronDown className={`transition-transform duration-300 ${activeDropdown === dd.label ? 'translate-y-px' : ''}`} />
-                      </button>
-                    </li>
-                  ))}
-                  {simpleNavLinks.map((link) => (
-                    <li key={link.label}>
-                      {link.href.startsWith('/') ? (
-                                <Link
-                          to={link.href}
-                          className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
-                          onMouseEnter={scheduleClose}
-                        >
-                          {link.label}
-                        </Link>
-                      ) : (
-                        <a
-                          href={link.href}
-                          className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
-                          onMouseEnter={scheduleClose}
-                        >
-                          {link.label}
-                        </a>
-                      )}
-                    </li>
-                  ))}
+                  {useFlatNav
+                    ? flatLinks.map((link) => (
+                        <li key={link.label}>
+                          {link.external || !link.href.startsWith('/') ? (
+                            <a
+                              href={link.href}
+                              {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                              className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
+                            >
+                              {link.label}
+                            </a>
+                          ) : (
+                            <Link
+                              to={link.href}
+                              className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
+                            >
+                              {link.label}
+                            </Link>
+                          )}
+                        </li>
+                      ))
+                    : (
+                      <>
+                        {dropdowns.map((dd) => (
+                          <li key={dd.label}>
+                            <button
+                              ref={(el) => { triggerRefs.current[dd.label] = el }}
+                              className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`}
+                              style={{
+                                background: activeDropdown === dd.label ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
+                                color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
+                              }}
+                              onMouseEnter={() => openDropdown(dd.label)}
+                              aria-expanded={activeDropdown === dd.label}
+                            >
+                              <span>{dd.label}</span>
+                              <ChevronDown className={`transition-transform duration-300 ${activeDropdown === dd.label ? 'translate-y-px' : ''}`} />
+                            </button>
+                          </li>
+                        ))}
+                        {simpleNavLinks.map((link) => (
+                          <li key={link.label}>
+                            {link.href.startsWith('/') ? (
+                              <Link
+                                to={link.href}
+                                className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
+                                onMouseEnter={scheduleClose}
+                              >
+                                {link.label}
+                              </Link>
+                            ) : (
+                              <a
+                                href={link.href}
+                                className={`inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}`}
+                                onMouseEnter={scheduleClose}
+                              >
+                                {link.label}
+                              </a>
+                            )}
+                          </li>
+                        ))}
+                      </>
+                    )
+                  }
                 </ul>
 
               </div>
@@ -353,7 +437,7 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
 
             {/* Mobile controls */}
             <div className="flex items-center gap-x-2 lg:hidden">
-              {isAuthenticated && (
+              {!hideAuth && isAuthenticated && (
                 <button onClick={accountPanel.toggle} className="cursor-pointer">
                   <Avatar source={user?.avatar} size={28} placeholderColor={user?.color} />
                 </button>
@@ -378,33 +462,37 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
 
             {/* Desktop buttons */}
             <div className="hidden items-center gap-x-2.5 lg:flex">
-              <div className={isTransparent ? '[&_button]:!bg-white/10 [&_button]:!text-white/80 [&_button:hover]:!bg-white/20 [&_button:hover]:!text-white [&_a]:!text-white/80 [&_a:hover]:!text-white [&_svg]:!text-white/80' : ''}>
-                <LocalePicker />
-              </div>
+              {!hideLocalePicker && (
+                <div className={isTransparent ? '[&_button]:!bg-white/10 [&_button]:!text-white/80 [&_button:hover]:!bg-white/20 [&_button:hover]:!text-white [&_a]:!text-white/80 [&_a:hover]:!text-white [&_svg]:!text-white/80' : ''}>
+                  <LocalePicker />
+                </div>
+              )}
               <div className={isTransparent ? '[&_button]:!bg-white/10 [&_button]:!text-white/80 [&_button:hover]:!bg-white/20 [&_button:hover]:!text-white [&_svg]:!text-white/80' : ''}>
                 <ThemeToggle />
               </div>
               {rightActions}
-              {isAuthenticated ? (
-                <button onClick={accountPanel.toggle} className="cursor-pointer">
-                  <Avatar
-                    source={user?.avatar}
-                    size={32}
-                    placeholderColor={user?.color}
-                  />
-                </button>
-              ) : (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => signIn()}
-                    className={isTransparent ? '!bg-white/10 !border-transparent !text-white hover:!bg-white/20' : ''}
-                  >
-                    Sign in
-                  </Button>
-                  <Button variant="primary" size="sm" onClick={() => signIn()}>Start for free</Button>
-                </>
+              {ctaButtons ?? (
+                hideAuth ? null : isAuthenticated ? (
+                  <button onClick={accountPanel.toggle} className="cursor-pointer">
+                    <Avatar
+                      source={user?.avatar}
+                      size={32}
+                      placeholderColor={user?.color}
+                    />
+                  </button>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => signIn()}
+                      className={isTransparent ? '!bg-white/10 !border-transparent !text-white hover:!bg-white/20' : ''}
+                    >
+                      Sign in
+                    </Button>
+                    <Button variant="primary" size="sm" onClick={() => signIn()}>Start for free</Button>
+                  </>
+                )
               )}
             </div>
           </div>
@@ -469,71 +557,106 @@ export default function Navbar({ rightActions, transparent }: NavbarProps = {}) 
         <div className="border-t border-border bg-background lg:hidden">
           <div className="container">
             <div className="flex flex-col gap-1 py-4">
-              {dropdowns.map((dd) => (
-                <div key={dd.label}>
-                  <button
-                    className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
-                    onClick={() => setMobileAccordion(mobileAccordion === dd.label ? null : dd.label)}
-                  >
-                    {dd.label}
-                    <ChevronDown className={`transition-transform duration-200 ${mobileAccordion === dd.label ? 'rotate-180' : ''}`} />
-                  </button>
-                  {mobileAccordion === dd.label && (
-                    <div className="flex flex-col gap-1 pb-2 pl-4">
-                      {dd.sections.map((s) =>
-                        s.items.map((item) => (
-                          item.href.startsWith('/') ? (
-                            <Link key={item.title} to={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
-                              {item.title}
-                            </Link>
-                          ) : (
-                            <a key={item.title} href={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
-                              {item.title}
-                            </a>
-                          )
-                        ))
+              {useFlatNav ? (
+                flatLinks.map((link) => (
+                  link.external || !link.href.startsWith('/') ? (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                      className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={link.label}
+                      to={link.href}
+                      className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  )
+                ))
+              ) : (
+                <>
+                  {dropdowns.map((dd) => (
+                    <div key={dd.label}>
+                      <button
+                        className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
+                        onClick={() => setMobileAccordion(mobileAccordion === dd.label ? null : dd.label)}
+                      >
+                        {dd.label}
+                        <ChevronDown className={`transition-transform duration-200 ${mobileAccordion === dd.label ? 'rotate-180' : ''}`} />
+                      </button>
+                      {mobileAccordion === dd.label && (
+                        <div className="flex flex-col gap-1 pb-2 pl-4">
+                          {dd.sections.map((s) =>
+                            s.items.map((item) => (
+                              item.href.startsWith('/') ? (
+                                <Link key={item.title} to={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                                  {item.title}
+                                </Link>
+                              ) : (
+                                <a key={item.title} href={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                                  {item.title}
+                                </a>
+                              )
+                            ))
+                          )}
+                          {dd.sidePanel?.links.map((link) => (
+                            link.href.startsWith('/') ? (
+                              <Link key={link.label} to={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                                {link.label}
+                              </Link>
+                            ) : (
+                              <a key={link.label} href={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                                {link.label}
+                              </a>
+                            )
+                          ))}
+                        </div>
                       )}
-                      {dd.sidePanel?.links.map((link) => (
-                        link.href.startsWith('/') ? (
-                          <Link key={link.label} to={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
-                            {link.label}
-                          </Link>
-                        ) : (
-                          <a key={link.label} href={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
-                            {link.label}
-                          </a>
-                        )
-                      ))}
                     </div>
-                  )}
-                </div>
-              ))}
-              {simpleNavLinks.map((link) => (
-                link.href.startsWith('/') ? (
-                  <Link key={link.label} to={link.href} className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5" onClick={() => setMobileOpen(false)}>
-                    {link.label}
-                  </Link>
-                ) : (
-                  <a key={link.label} href={link.href} className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5" onClick={() => setMobileOpen(false)}>
-                    {link.label}
-                  </a>
-                )
-              ))}
+                  ))}
+                  {simpleNavLinks.map((link) => (
+                    link.href.startsWith('/') ? (
+                      <Link key={link.label} to={link.href} className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5" onClick={() => setMobileOpen(false)}>
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <a key={link.label} href={link.href} className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5" onClick={() => setMobileOpen(false)}>
+                        {link.label}
+                      </a>
+                    )
+                  ))}
+                </>
+              )}
               <hr className="my-2 border-border" />
-              <div className="flex items-center justify-between px-4 py-2">
-                <span className="text-sm text-muted-foreground">Language</span>
-                <LocalePicker />
-              </div>
+              {!hideLocalePicker && (
+                <div className="flex items-center justify-between px-4 py-2">
+                  <span className="text-sm text-muted-foreground">Language</span>
+                  <LocalePicker />
+                </div>
+              )}
               <div className="flex items-center justify-between px-4 py-2">
                 <span className="text-sm text-muted-foreground">Theme</span>
                 <ThemeToggle />
               </div>
-              {!isAuthenticated && (
+              {ctaButtons ? (
                 <div className="flex flex-col gap-2 px-4 pt-2">
-                  {rightActions && <div className="flex flex-col gap-2">{rightActions}</div>}
-                  <Button variant="outline" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Sign in</Button>
-                  <Button variant="primary" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Start for free</Button>
+                  {ctaButtons}
                 </div>
+              ) : (
+                !hideAuth && !isAuthenticated && (
+                  <div className="flex flex-col gap-2 px-4 pt-2">
+                    {rightActions && <div className="flex flex-col gap-2">{rightActions}</div>}
+                    <Button variant="outline" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Sign in</Button>
+                    <Button variant="primary" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Start for free</Button>
+                  </div>
+                )
               )}
             </div>
           </div>

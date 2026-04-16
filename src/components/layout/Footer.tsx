@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { useFooter } from '../../api/hooks'
 import Logo from '../ui/Logo'
 import { usePageChromeStore } from '../../stores/pageChromeStore'
-import { type FooterColumn, type FooterLink } from '../../data/content'
+import { type FooterLink } from '../../data/content'
 
 /* ─── Shared small components ─── */
 
@@ -53,12 +53,27 @@ function XIcon() {
 
 /* ─── Data ─── */
 
-const SOCIAL_LINKS = [
+interface SocialLink {
+  label: string
+  icon: () => React.JSX.Element
+  href: string
+}
+
+const DEFAULT_SOCIAL_LINKS: readonly SocialLink[] = [
   { label: 'LinkedIn', icon: LinkedInIcon, href: 'https://www.linkedin.com/company/oxyhq/' },
   { label: 'X', icon: XIcon, href: 'https://x.com/oxyhqinc' },
-] as const
+]
 
-const LEGAL_LINKS = [
+interface LegalLink {
+  label: string
+  /** Internal route (uses react-router Link) when this is set. */
+  to?: string
+  /** External URL (uses an anchor tag) when this is set instead of `to`. */
+  href?: string
+  isExternal?: boolean
+}
+
+const DEFAULT_LEGAL_LINKS: readonly LegalLink[] = [
   { label: 'Legal', to: '/legal' },
   { label: 'Privacy Policy', to: '/legal/privacy' },
   { label: 'Cookie Policy', to: '/legal/cookies' },
@@ -66,7 +81,12 @@ const LEGAL_LINKS = [
   { label: 'Terms & Conditions', to: '/legal/terms' },
   { label: 'LLMs', to: '/legal/llms' },
   { label: 'Settings', to: '/settings' },
-] as const
+]
+
+const DEFAULT_DESCRIPTION =
+  'Oxy is an open-source technology ecosystem building ethical, privacy-first tools that serve humanity. From social networking to AI, messaging to housing — technology with purpose.'
+
+const DEFAULT_COPYRIGHT = 'Made with 💚 in the 🌎 by Oxy.'
 
 /* ─── Footer link (handles internal/external, badge, arrow) ─── */
 
@@ -98,9 +118,52 @@ function FooterLinkItem({ link }: { link: FooterLink }) {
 
 /* ─── Main component ─── */
 
-export default function Footer() {
+/** Brand block (logo + description + home link) for the footer. */
+export interface FooterBrand {
+  homeHref: string
+  ariaLabel: string
+  /** Logo / wordmark element. Sized by the caller. */
+  logo: React.ReactNode
+  description: string
+}
+
+/** A single footer column. Mirrors the CMS shape so it's easy to swap later. */
+export interface FooterColumnConfig {
+  title: string
+  links: readonly FooterLink[]
+}
+
+interface FooterProps {
+  /** Override the brand block. Defaults to Oxy logo + description. */
+  brand?: FooterBrand
+  /**
+   * Override the column data. When omitted, columns come from the CMS via
+   * `useFooter()` — preserving existing Oxy behavior.
+   */
+  columns?: readonly FooterColumnConfig[]
+  socialLinks?: readonly SocialLink[]
+  legalLinks?: readonly LegalLink[]
+  copyright?: string
+}
+
+export default function Footer({
+  brand,
+  columns,
+  socialLinks,
+  legalLinks,
+  copyright,
+}: FooterProps = {}) {
+  const useCmsColumns = columns === undefined
   const { data: footerData } = useFooter()
-  const footerColumns = footerData?.columns ?? []
+  const footerColumns: readonly { title: string; links: readonly FooterLink[] }[] = useCmsColumns
+    ? footerData?.columns ?? []
+    : columns ?? []
+  const social = socialLinks ?? DEFAULT_SOCIAL_LINKS
+  const legal = legalLinks ?? DEFAULT_LEGAL_LINKS
+  const copyrightText = copyright ?? DEFAULT_COPYRIGHT
+  const description = brand?.description ?? DEFAULT_DESCRIPTION
+  const homeHref = brand?.homeHref ?? '/'
+  const ariaLabel = brand?.ariaLabel ?? 'Oxy homepage'
   const setFooterVisible = usePageChromeStore((s) => s.setFooterVisible)
 
   return (
@@ -113,24 +176,26 @@ export default function Footer() {
       <Divider />
 
       {/* Columns */}
-      <div className="container flex-1">
-        <div className="px-px pt-10 pb-4">
-          <div className="columns-4 gap-0 max-xl:columns-3 max-lg:columns-2 max-xs:columns-1">
-            {footerColumns.map((column: FooterColumn) => (
-              <div key={column.title} className="break-inside-avoid pb-5">
-                <h2 className="py-1 text-foreground text-sm font-medium">{column.title}</h2>
-                <ul className="flex flex-col">
-                  {column.links.map((link: FooterLink) => (
-                    <li key={link.label}>
-                      <FooterLinkItem link={link} />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+      {footerColumns.length > 0 && (
+        <div className="container flex-1">
+          <div className="px-px pt-10 pb-4">
+            <div className="columns-4 gap-0 max-xl:columns-3 max-lg:columns-2 max-xs:columns-1">
+              {footerColumns.map((column) => (
+                <div key={column.title} className="break-inside-avoid pb-5">
+                  <h2 className="py-1 text-foreground text-sm font-medium">{column.title}</h2>
+                  <ul className="flex flex-col">
+                    {column.links.map((link: FooterLink) => (
+                      <li key={link.label}>
+                        <FooterLinkItem link={link} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Bottom bar */}
       <div className="w-full">
@@ -140,37 +205,57 @@ export default function Footer() {
           {/* Logo + Social row */}
           <div className="flex flex-wrap items-center justify-between gap-6 px-px pt-4 pb-4">
             <div className="flex flex-col gap-3">
-              <Link className="-m-1.5 inline-block w-fit rounded-lg p-1.5" aria-label="Oxy homepage" to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                <Logo className="h-11" />
+              <Link className="-m-1.5 inline-block w-fit rounded-lg p-1.5" aria-label={ariaLabel} to={homeHref} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                {brand?.logo ?? <Logo className="h-11" />}
               </Link>
-              <p className="max-w-lg text-sm text-muted-foreground">Oxy is an open-source technology ecosystem building ethical, privacy-first tools that serve humanity. From social networking to AI, messaging to housing — technology with purpose.</p>
+              <p className="max-w-lg text-sm text-muted-foreground">{description}</p>
             </div>
-            <div className="flex items-center gap-3">
-              {SOCIAL_LINKS.map(({ label, icon: Icon, href }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-400 ease-in-out hover:text-foreground hover:duration-150 active:text-foreground active:duration-50"
-                  aria-label={`Oxy on ${label}`}
-                >
-                  <Icon />
-                </a>
-              ))}
-            </div>
+            {social.length > 0 && (
+              <div className="flex items-center gap-3">
+                {social.map(({ label, icon: Icon, href }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-400 ease-in-out hover:text-foreground hover:duration-150 active:text-foreground active:duration-50"
+                    aria-label={`${ariaLabel.replace(/ homepage$/i, '')} on ${label}`}
+                  >
+                    <Icon />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Legal links */}
-          <div className="grid grid-cols-4 gap-x-6 gap-y-2 px-px pb-6 font-normal text-muted-foreground text-sm max-lg:grid-cols-3 max-md:grid-cols-2">
-            {LEGAL_LINKS.map(({ label, to }) => (
-              <Link key={to} className="transition-colors duration-150 hover:text-foreground" to={to}>{label}</Link>
-            ))}
-          </div>
+          {legal.length > 0 && (
+            <div className="grid grid-cols-4 gap-x-6 gap-y-2 px-px pb-6 font-normal text-muted-foreground text-sm max-lg:grid-cols-3 max-md:grid-cols-2">
+              {legal.map((item) => {
+                if (item.to) {
+                  return (
+                    <Link key={item.label} className="transition-colors duration-150 hover:text-foreground" to={item.to}>
+                      {item.label}
+                    </Link>
+                  )
+                }
+                return (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    {...(item.isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    className="transition-colors duration-150 hover:text-foreground"
+                  >
+                    {item.label}
+                  </a>
+                )
+              })}
+            </div>
+          )}
 
           {/* Copyright */}
           <div className="px-px pb-4 font-normal text-muted-foreground text-xs">
-            <p>Made with 💚 in the 🌎 by Oxy.</p>
+            <p>{copyrightText}</p>
           </div>
         </div>
       </div>

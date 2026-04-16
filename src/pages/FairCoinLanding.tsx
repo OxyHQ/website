@@ -1,26 +1,51 @@
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
-import FairCoinNavbar from '../components/faircoin/FairCoinNavbar'
-import FairCoinFooter from '../components/faircoin/FairCoinFooter'
 import FairCoinLandingContent from '../components/faircoin/FairCoinLandingContent'
-import { isFairCoinHost } from '../lib/host'
+import {
+  useFairCoinFooterBrand,
+  useFairCoinFooterColumns,
+  useFairCoinFooterCopyright,
+  useFairCoinFooterLegalLinks,
+  useFairCoinNavCtaButtons,
+  useFairCoinNavItems,
+  useFairCoinNavbarBrand,
+} from '../lib/faircoin-chrome'
 
-const SEO_TITLE = 'Wrapped FairCoin on Base — fairco.in'
+const SEO_TITLE = 'FairCoin — community-run cryptocurrency'
 const SEO_DESCRIPTION =
-  '1:1 wrapped FairCoin (WFAIR) on Base. Native bridge. Trade FAIR on Uniswap, Ethereum DeFi, and more.'
+  'FairCoin is a community-run cryptocurrency. Decentralized, fair, free of speculation. Hybrid PoW/PoS, capped at 33M coins. Wallets, masternodes, explorer and an optional Base bridge.'
 
 export default function FairCoinLanding() {
-  const onFairCoin = isFairCoinHost()
+  const navbarBrand = useFairCoinNavbarBrand()
+  const navItems = useFairCoinNavItems()
+  const ctaButtons = useFairCoinNavCtaButtons()
+  const footerBrand = useFairCoinFooterBrand()
+  const footerColumns = useFairCoinFooterColumns()
+  const footerLegalLinks = useFairCoinFooterLegalLinks()
+  const footerCopyright = useFairCoinFooterCopyright()
 
   return (
     <div className="faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin" />
-      {onFairCoin ? <FairCoinNavbar /> : <Navbar />}
+      <Navbar
+        brand={navbarBrand}
+        navItems={navItems}
+        ctaButtons={ctaButtons}
+        hideAuth
+        hideBanner
+        hideLocalePicker
+      />
       <main className="flex-1">
         <FairCoinLandingContent />
       </main>
-      {onFairCoin ? <FairCoinFooter /> : <Footer />}
+      <Footer
+        brand={footerBrand}
+        columns={footerColumns}
+        socialLinks={[]}
+        legalLinks={footerLegalLinks}
+        copyright={footerCopyright}
+      />
     </div>
   )
 }

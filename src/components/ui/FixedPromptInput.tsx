@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { PromptInput } from '@oxyhq/bloom/prompt-input'
 import { usePromptPhrases } from '../../api/hooks'
 import { usePageChromeStore } from '../../stores/pageChromeStore'
+import { isFairCoinHost } from '../../lib/host'
 
 const DEFAULT_PHRASES = [
   'Ask Alia anything about Oxy',
@@ -20,7 +21,10 @@ const PAUSE_AFTER_TYPED_MS = 2000
 const PAUSE_AFTER_ERASED_MS = 400
 const ERASING_SPEED_MS = 30
 
-const HIDDEN_PREFIXES = ['/company', '/developers', '/settings', '/help', '/changelog', '/admin', '/dashboard', '/initiative', '/astro']
+// `/faircoin` covers the FairCoin landing + bridge under oxy.so. The
+// `isFairCoinHost()` check below covers fairco.in, where the same pages live
+// at the apex (`/`, `/bridge`) and the prefix list wouldn't match.
+const HIDDEN_PREFIXES = ['/company', '/developers', '/settings', '/help', '/changelog', '/admin', '/dashboard', '/initiative', '/astro', '/faircoin']
 
 function slugFromPathname(pathname: string): string {
   const stripped = pathname.replace(/^\/+|\/+$/g, '')
@@ -74,7 +78,9 @@ export default function FixedPromptInput() {
   const hiddenByFooter = usePageChromeStore((s) => s.footerVisible)
 
   const { pathname } = useLocation()
-  const hiddenByRoute = HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'))
+  const hiddenByRoute =
+    isFairCoinHost() ||
+    HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'))
 
   const slug = slugFromPathname(pathname)
   const { data: fetchedPhrases } = usePromptPhrases(slug, !hiddenByRoute)

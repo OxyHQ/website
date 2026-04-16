@@ -6,6 +6,12 @@
  * these variables so all utility classes update automatically.
  *
  * Persistence: localStorage keys "theme" (dark|light) and "colorPreset" (AppColorName).
+ *
+ * Host awareness: on the FairCoin apex (fairco.in / www.fairco.in) the saved
+ * preset is ignored and Bloom's `'faircoin'` preset is used as the floor. The
+ * personal user color only applies on Oxy. This keeps the FairCoin brand
+ * stable for visitors who happen to have an Oxy account with a different
+ * color set elsewhere.
  */
 
 import {
@@ -14,6 +20,7 @@ import {
   hexToAppColorName,
   type AppColorName,
 } from '@oxyhq/bloom/theme'
+import { isFairCoinHost } from '../lib/host'
 
 export { APP_COLOR_PRESETS, APP_COLOR_NAMES, hexToAppColorName }
 export type { AppColorName }
@@ -34,6 +41,7 @@ export function getSavedMode(): ThemeMode {
 }
 
 export function getSavedPreset(): AppColorName {
+  if (isFairCoinHost()) return 'faircoin'
   const saved = localStorage.getItem(STORAGE_KEY_PRESET) as AppColorName | null
   if (saved && APP_COLOR_PRESETS[saved]) return saved
   return DEFAULT_PRESET
@@ -72,8 +80,11 @@ export function applyPreset(preset: AppColorName, mode: ThemeMode) {
 /**
  * Apply user's color as the theme preset (like Mention does).
  * Called when auth state changes. Falls back to saved preset if no user color.
+ *
+ * No-op on the FairCoin apex — the FairCoin brand always wins there.
  */
 export function applyUserColor(userColorHex?: string | null) {
+  if (isFairCoinHost()) return
   if (userColorHex) {
     const presetName = hexToAppColorName(userColorHex)
     setColorPreset(presetName)
