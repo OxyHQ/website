@@ -106,16 +106,21 @@ function LocaleLayout() {
 }
 
 function PublicRoutes() {
-  // On fairco.in (apex + www), the root path renders the FairCoin landing
-  // natively instead of the Oxy homepage. Everything else on that host falls
-  // through to NotFoundPage via the catch-all in App. On oxy.so the root
-  // stays HomePage and /faircoin still resolves to the same landing.
-  const onFairCoinHost = isFairCoinHost()
-  const IndexElement = onFairCoinHost ? <FairCoinLanding /> : <HomePage />
+  // The SPA serves two brands. On fairco.in only the FairCoin surface is
+  // mounted; every Oxy route falls through to NotFoundPage. On oxy.so the
+  // FairCoin landing + bridge are mounted under /faircoin alongside the full
+  // Oxy site. Same SPA, hostname picks which routes exist.
+  if (isFairCoinHost()) {
+    return (
+      <>
+        <Route index element={<FairCoinLanding />} />
+        <Route path="bridge" element={<FairCoinBridgePage />} />
+      </>
+    )
+  }
   return (
     <>
-      <Route index element={IndexElement} />
-      {onFairCoinHost && <Route path="bridge" element={<FairCoinBridgePage />} />}
+      <Route index element={<HomePage />} />
       <Route path="faircoin" element={<FairCoinLanding />} />
       <Route path="faircoin/bridge" element={<FairCoinBridgePage />} />
       <Route path="partners" element={<PartnersPage />} />

@@ -1,9 +1,19 @@
+import { useMemo } from 'react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
+import FairCoinNavbar from '../components/faircoin/FairCoinNavbar'
+import FairCoinFooter from '../components/faircoin/FairCoinFooter'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
+import { isFairCoinHost } from '../lib/host'
+import { fc } from '../lib/faircoin-links'
 
 export default function NotFoundPage() {
+  const onFairCoinHost = isFairCoinHost()
+  const Nav = onFairCoinHost ? FairCoinNavbar : Navbar
+  const Foot = onFairCoinHost ? FairCoinFooter : Footer
+  const homeHref = useMemo(() => fc('/'), [])
+
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
@@ -12,7 +22,7 @@ export default function NotFoundPage() {
         canonicalPath="/404"
         noIndex
       />
-      <Navbar />
+      <Nav />
       <main className="flex flex-1 items-center pt-[var(--site-header-height)]">
         <div className="container border-x border-border">
           <div className="grid grid-cols-12 items-center py-12 lg:py-16">
@@ -24,12 +34,24 @@ export default function NotFoundPage() {
                 The page you're looking for doesn't exist or has been moved.
               </p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5 lg:justify-start">
-                <Button variant="primary" size="md" href="/">
+                <Button variant="primary" size="md" href={homeHref}>
                   Go to homepage
                 </Button>
-                <Button variant="outline" size="md" href="/help">
-                  Visit help center
-                </Button>
+                {onFairCoinHost ? (
+                  <Button
+                    variant="outline"
+                    size="md"
+                    href="https://explorer.fairco.in"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open Explorer
+                  </Button>
+                ) : (
+                  <Button variant="outline" size="md" href="/help">
+                    Visit help center
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -46,7 +68,7 @@ export default function NotFoundPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      <Foot />
     </div>
   )
 }
