@@ -17,8 +17,8 @@
   if (!isFairCoin) return;
 
   var OVERRIDES = [
-    ['site-favicon', 'href', '/favicon-faircoin.svg'],
-    ['site-favicon', 'type', 'image/svg+xml'],
+    ['site-favicon', 'href', '/favicon-faircoin.png'],
+    ['site-favicon', 'type', 'image/png'],
     ['site-manifest', 'href', '/manifest-faircoin.webmanifest'],
     ['site-theme-color', 'content', '#07120c'],
   ];
