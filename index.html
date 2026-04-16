@@ -2,7 +2,21 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link id="site-favicon" rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      (function () {
+        var h = location.hostname;
+        if (h === 'fairco.in' || h === 'www.fairco.in') {
+          var link = document.getElementById('site-favicon');
+          if (link) {
+            link.setAttribute('type', 'image/jpeg');
+            link.setAttribute('href', '/logo.jpg');
+          }
+          var theme = document.querySelector('meta[name="theme-color"]');
+          if (theme) theme.setAttribute('content', '#07120c');
+        }
+      })();
+    </script>
     <link rel="preload" href="/fonts/EmberModernDisplayStd-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/EmberModernDisplayStd-Bold.woff2" as="font" type="font/woff2" crossorigin />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
