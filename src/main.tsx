@@ -3,6 +3,9 @@ if (typeof globalThis !== 'undefined' && typeof (globalThis as Record<string, un
   ;(globalThis as Record<string, unknown>).global = globalThis
 }
 
+const __BUILD_TAG = '2026-04-16T11:00:00Z'
+;(globalThis as Record<string, unknown>).__BUILD_TAG = __BUILD_TAG
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
