@@ -5,6 +5,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import { fc } from '../lib/faircoin-links'
+import { isFairCoinHost } from '../lib/host'
 import {
   useFairCoinFooterBrand,
   useFairCoinFooterColumns,
@@ -25,6 +26,7 @@ const EXPLORER_BRIDGE_URL = 'https://explorer.fairco.in/bridge'
 const BRIDGE_SOURCE_URL = 'https://github.com/FairCoinOfficial/faircoin-bridge'
 
 export default function FairCoinBridgePage() {
+  const onFairCoinHost = isFairCoinHost()
   const navbarBrand = useFairCoinNavbarBrand()
   const navItems = useFairCoinNavItems()
   const ctaButtons = useFairCoinNavCtaButtons()
@@ -35,18 +37,26 @@ export default function FairCoinBridgePage() {
   const homeHref = useMemo(() => fc('/'), [])
   const buyHref = useMemo(() => fc('/buy'), [])
 
+  // On fairco.in we apply the FairCoin Bloom theme via `.faircoin-theme`. On
+  // oxy.so the page reads as an Oxy subpage, so the wrapper is dropped and
+  // the active Oxy theme variables stay in effect.
+  const rootClass = onFairCoinHost
+    ? 'faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
+    : 'flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
+  const mainClass = onFairCoinHost ? 'cursor-theme faircoin-theme flex-1' : 'cursor-theme flex-1'
+
   return (
-    <div className="faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
+    <div className={rootClass}>
       <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin/bridge" />
       <Navbar
         brand={navbarBrand}
         navItems={navItems}
         ctaButtons={ctaButtons}
-        hideAuth
-        hideBanner
-        hideLocalePicker
+        hideAuth={onFairCoinHost}
+        hideBanner={onFairCoinHost}
+        hideLocalePicker={onFairCoinHost}
       />
-      <main className="cursor-theme faircoin-theme flex-1">
+      <main className={mainClass}>
         <section className="section section--headline">
           <div className="container">
             <div className="mx-auto max-w-prose-medium-wide text-center">
@@ -121,7 +131,7 @@ export default function FairCoinBridgePage() {
       <Footer
         brand={footerBrand}
         columns={footerColumns}
-        socialLinks={[]}
+        socialLinks={onFairCoinHost ? [] : undefined}
         legalLinks={footerLegalLinks}
         copyright={footerCopyright}
       />

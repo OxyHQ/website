@@ -175,8 +175,11 @@ export default function App() {
   // `getSavedPreset()` is host-aware — on the FairCoin apex it always returns
   // `'faircoin'`, ignoring the localStorage value. So Bloom's faircoin preset
   // is what gets written to `:root` for the entire document. On oxy.so the
-  // saved preset wins and the FairCoin sub-routes get scoped theming via the
-  // `.faircoin-theme` CSS wrapper on each page.
+  // saved preset wins for the whole site, including `/faircoin/*` — those
+  // routes intentionally render as Oxy subpages with Oxy chrome and Oxy
+  // theme, only the page body shows FairCoin content. The full FairCoin
+  // brand (green Bloom theme + dedicated nav/footer) only takes over on
+  // fairco.in itself.
   const [preset] = useState<AppColorName>(getSavedPreset)
   // `applyUserColor()` is also host-aware (no-op on FairCoin), but we forward
   // it through here so the auth event still fires for any future hooks.

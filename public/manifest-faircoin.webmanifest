@@ -1,0 +1,12 @@
+{
+  "name": "FairCoin",
+  "short_name": "FairCoin",
+  "description": "A community-run cryptocurrency. Decentralized, fair, free of speculation.",
+  "icons": [
+    { "src": "/favicon-faircoin.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "theme_color": "#07120c",
+  "background_color": "#07120c",
+  "display": "standalone",
+  "start_url": "/"
+}

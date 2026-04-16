@@ -5,6 +5,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import { fc } from '../lib/faircoin-links'
+import { isFairCoinHost } from '../lib/host'
 import {
   useFairCoinFooterBrand,
   useFairCoinFooterColumns,
@@ -75,6 +76,7 @@ function validate(state: FormState): { ok: true } | { ok: false; reason: string 
 }
 
 export default function FairCoinBuyPage() {
+  const onFairCoinHost = isFairCoinHost()
   const navbarBrand = useFairCoinNavbarBrand()
   const navItems = useFairCoinNavItems()
   const ctaButtons = useFairCoinNavCtaButtons()
@@ -84,6 +86,13 @@ export default function FairCoinBuyPage() {
   const footerCopyright = useFairCoinFooterCopyright()
   const homeHref = useMemo(() => fc('/'), [])
   const bridgeHref = useMemo(() => fc('/bridge'), [])
+
+  // Same dual-mount story as the other FairCoin pages — Bloom/CSS theme is
+  // host-gated so /faircoin/buy on oxy.so reads as an Oxy subpage.
+  const rootClass = onFairCoinHost
+    ? 'faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
+    : 'flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
+  const mainClass = onFairCoinHost ? 'cursor-theme faircoin-theme flex-1' : 'cursor-theme flex-1'
 
   const [form, setForm] = useState<FormState>({ amount: '', address: '' })
   const [submitState, setSubmitState] = useState<SubmitState>('idle')
@@ -106,17 +115,17 @@ export default function FairCoinBuyPage() {
   }
 
   return (
-    <div className="faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
+    <div className={rootClass}>
       <SEO title={SEO_TITLE} description={SEO_DESCRIPTION} canonicalPath="/faircoin/buy" />
       <Navbar
         brand={navbarBrand}
         navItems={navItems}
         ctaButtons={ctaButtons}
-        hideAuth
-        hideBanner
-        hideLocalePicker
+        hideAuth={onFairCoinHost}
+        hideBanner={onFairCoinHost}
+        hideLocalePicker={onFairCoinHost}
       />
-      <main className="cursor-theme faircoin-theme flex-1">
+      <main className={mainClass}>
         {/* ── Hero ── */}
         <section className="section section--headline">
           <div className="container">
@@ -273,7 +282,7 @@ export default function FairCoinBuyPage() {
       <Footer
         brand={footerBrand}
         columns={footerColumns}
-        socialLinks={[]}
+        socialLinks={onFairCoinHost ? [] : undefined}
         legalLinks={footerLegalLinks}
         copyright={footerCopyright}
       />

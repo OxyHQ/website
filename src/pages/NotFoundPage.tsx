@@ -18,6 +18,8 @@ import {
 export default function NotFoundPage() {
   const onFairCoinHost = isFairCoinHost()
   const homeHref = useMemo(() => fc('/'), [])
+  // Each FairCoin chrome hook returns `undefined` off-host, so the Navbar /
+  // Footer naturally fall back to the Oxy defaults — no prop branching needed.
   const navbarBrand = useFairCoinNavbarBrand()
   const navItems = useFairCoinNavItems()
   const ctaButtons = useFairCoinNavCtaButtons()
@@ -34,18 +36,14 @@ export default function NotFoundPage() {
         canonicalPath="/404"
         noIndex
       />
-      {onFairCoinHost ? (
-        <Navbar
-          brand={navbarBrand}
-          navItems={navItems}
-          ctaButtons={ctaButtons}
-          hideAuth
-          hideBanner
-          hideLocalePicker
-        />
-      ) : (
-        <Navbar />
-      )}
+      <Navbar
+        brand={navbarBrand}
+        navItems={navItems}
+        ctaButtons={ctaButtons}
+        hideAuth={onFairCoinHost}
+        hideBanner={onFairCoinHost}
+        hideLocalePicker={onFairCoinHost}
+      />
       <main className="flex flex-1 items-center pt-[var(--site-header-height)]">
         <div className="container border-x border-border">
           <div className="grid grid-cols-12 items-center py-12 lg:py-16">
@@ -91,17 +89,13 @@ export default function NotFoundPage() {
           </div>
         </div>
       </main>
-      {onFairCoinHost ? (
-        <Footer
-          brand={footerBrand}
-          columns={footerColumns}
-          socialLinks={[]}
-          legalLinks={footerLegalLinks}
-          copyright={footerCopyright}
-        />
-      ) : (
-        <Footer />
-      )}
+      <Footer
+        brand={footerBrand}
+        columns={footerColumns}
+        socialLinks={onFairCoinHost ? [] : undefined}
+        legalLinks={footerLegalLinks}
+        copyright={footerCopyright}
+      />
     </div>
   )
 }

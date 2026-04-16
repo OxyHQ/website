@@ -1,0 +1,12 @@
+{
+  "name": "Oxy",
+  "short_name": "Oxy",
+  "description": "The AI-powered CRM for go-to-market teams.",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "theme_color": "#0a0a0b",
+  "background_color": "#0a0a0b",
+  "display": "standalone",
+  "start_url": "/"
+}

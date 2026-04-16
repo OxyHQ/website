@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Button from '../ui/Button'
 import { fc } from '../../lib/faircoin-links'
+import { isFairCoinHost } from '../../lib/host'
 
 const EXPLORER_URL = 'https://explorer.fairco.in'
 const FAIRCOIN_REPO_URL = 'https://github.com/FairCoinOfficial/FairCoin'
@@ -186,8 +187,13 @@ function FaqItemCard({ question, answer }: FaqItem) {
 
 export default function FairCoinLandingContent() {
   const bridgeHref = useMemo(() => fc('/bridge'), [])
+  // The `.cursor-theme` className provides the typography + section utilities
+  // (`type-xl`, `section`, `card`, …) regardless of brand. The `.faircoin-theme`
+  // wrapper only kicks in on fairco.in to override Bloom CSS variables to
+  // FairCoin green. On oxy.so the same content uses the active Oxy theme.
+  const wrapperClass = isFairCoinHost() ? 'cursor-theme faircoin-theme' : 'cursor-theme'
   return (
-    <div className="cursor-theme faircoin-theme">
+    <div className={wrapperClass}>
       {/* ── Hero ── */}
       <section className="section section--headline">
         <div className="container">

@@ -129,7 +129,11 @@
   --color-theme-product-editor: hsl(69 30% 13%);
 }
 
-/* ── Bracketed section labels ── */
+/* ── Bracketed section labels ──
+ * Scoped here only because the FairCoin section uses a denser monospace size
+ * (0.75rem) than the global `.mono-tag` rule. The base `.mono-tag` (defined in
+ * index.css) handles font-family/transform/letter-spacing for all surfaces.
+ */
 .faircoin-theme .mono-tag {
   font-family: var(--font-geist-mono, ui-monospace, monospace);
   font-size: 0.75rem;
@@ -138,8 +142,11 @@
   color: var(--color-muted-foreground);
 }
 
-/* ── Hero gradient text — reads from Bloom primary so light/dark both look right ── */
-.faircoin-theme .gradient-text {
+/* ── Hero gradient text — reads from the active theme's primary so it works
+ *    on every brand (Oxy purple on oxy.so/faircoin/*, FairCoin green on
+ *    fairco.in). Defined globally rather than scoped to `.faircoin-theme` so
+ *    the FairCoin pages still get a gradient when rendered as Oxy subpages. */
+.gradient-text {
   background: linear-gradient(
     to right,
     var(--color-primary) 0%,
@@ -150,8 +157,9 @@
   background-clip: text;
 }
 
-/* ── Monospace contract / address block ── */
-.faircoin-theme .code-block {
+/* ── Monospace contract / address block — same rationale: brand-agnostic
+ *    so it survives when the wrapper className is dropped on oxy.so. */
+.code-block {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 12px;
