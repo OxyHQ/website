@@ -16,31 +16,38 @@ import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors'
 
 const PUBLIC_BASE_RPC = 'https://mainnet.base.org'
 
-const WALLETCONNECT_PROJECT_ID =
-  (import.meta.env.VITE_WALLETCONNECT_PROJECT_ID as string | undefined) ??
-  // Public dev placeholder used by Reown's example apps. Limited rate budget,
-  // visible to anyone with devtools — only acceptable for local previews.
-  '3fbb6bba6f1de962d911bb5b5c3dba68'
+// Only enable WalletConnect when the operator provisions a real project at
+// https://cloud.reown.com. The placeholder ID returns 403 on getWallets and
+// 3000 "Project not found" on the relayer socket, which spams the console.
+const WALLETCONNECT_PROJECT_ID = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID as
+  | string
+  | undefined
+
+const connectors = [
+  injected({ shimDisconnect: true }),
+  coinbaseWallet({
+    appName: 'FairCoin',
+    appLogoUrl: 'https://fairco.in/logo.jpg',
+  }),
+  ...(WALLETCONNECT_PROJECT_ID
+    ? [
+        walletConnect({
+          projectId: WALLETCONNECT_PROJECT_ID,
+          showQrModal: true,
+          metadata: {
+            name: 'FairCoin',
+            description: 'Redeem WFAIR for native FAIR via the FairCoin bridge.',
+            url: 'https://fairco.in',
+            icons: ['https://fairco.in/logo.jpg'],
+          },
+        }),
+      ]
+    : []),
+]
 
 export const FAIRCOIN_WAGMI_CONFIG = createConfig({
   chains: [base],
-  connectors: [
-    injected({ shimDisconnect: true }),
-    walletConnect({
-      projectId: WALLETCONNECT_PROJECT_ID,
-      showQrModal: true,
-      metadata: {
-        name: 'FairCoin',
-        description: 'Redeem WFAIR for native FAIR via the FairCoin bridge.',
-        url: 'https://fairco.in',
-        icons: ['https://fairco.in/logo.jpg'],
-      },
-    }),
-    coinbaseWallet({
-      appName: 'FairCoin',
-      appLogoUrl: 'https://fairco.in/logo.jpg',
-    }),
-  ],
+  connectors,
   transports: {
     [base.id]: http(PUBLIC_BASE_RPC),
   },
