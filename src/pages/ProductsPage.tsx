@@ -225,7 +225,7 @@ export default function ProductsPage() {
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
         title="Products"
-        description="Every product in the Oxy ecosystem — Alia AI, Mention, Inbox, Codea, Oxy AI, TNP, Oxy OS, FairCoin, Homiio and more. Open-source, privacy-first tools that put people first."
+        description="Every product in the Oxy ecosystem — Alia AI, Mention, Inbox, Codea, Oxy AI, Oxy CRM, Oxy OS, Bloom UI, TNP, FairCoin, Homiio and more. Open-source, privacy-first tools that put people first."
         canonicalPath="/products"
       />
       <Navbar />
