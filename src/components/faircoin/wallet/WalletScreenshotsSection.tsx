@@ -6,35 +6,26 @@ interface ScreenLabel {
   description: string
 }
 
+// Only the Home screen has a real mockup right now. The Send / Receive /
+// Activity screens used to reuse the same PhoneMockup four times pretending
+// to be four different screens — removed to avoid misleading the user.
+// Once per-screen mockups exist, re-add them here.
 const SCREENS: readonly ScreenLabel[] = [
   {
     title: 'Home',
     description:
       'Hero image, balance in FAIR + USD, sync status pill, action buttons row, recent activity.',
   },
-  {
-    title: 'Send',
-    description:
-      'Paste an address or scan a QR. Confirm with Face ID. Transaction broadcast in seconds.',
-  },
-  {
-    title: 'Receive',
-    description:
-      'Big QR code. Tap-to-share payment requests. Optional amount in FAIR or USD.',
-  },
-  {
-    title: 'Activity',
-    description:
-      'Filterable transaction history. Tap any item to see fees, confirmations, and the explorer link.',
-  },
 ]
 
 /**
- * Screenshots gallery — uses the PhoneMockup three times to keep the page
- * coherent before we ship a full multi-screen capture set. The descriptions
- * walk users through what each screen does.
+ * Screenshots gallery — currently shows a single Home-screen mockup. Other
+ * screens (Send, Receive, Activity) are described in the FAQ and feature
+ * sections but won't appear here until per-screen mockups are produced.
  */
 export default function WalletScreenshotsSection() {
+  if (SCREENS.length === 0) return null
+
   return (
     <section className="relative isolate overflow-hidden">
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">

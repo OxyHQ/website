@@ -77,6 +77,9 @@ export default function PartnerTestimonialsSection() {
     setActiveIndex(index)
   }, [])
 
+  // Don't render the section at all when there are no real testimonials.
+  if (partnerTestimonials.length === 0) return null
+
   return (
     <>
       <HorizontalLine className="w-full text-border" />

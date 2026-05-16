@@ -57,22 +57,25 @@ export default function CodeaPage() {
       </section>
 
       {/* ── 2. Logo Garden ── */}
-      <section className="section bg-theme-bg text-theme-text pb-v1.5 pt-0" id="logo-garden">
-        <div className="stack container text-center">
-          <h2 className="type-sm mb-v1">
-            Trusted every day by teams that build world-class software
-          </h2>
-          <div className="logo-garden-responsive-8">
-            {logoCompanies.map((name) => (
-              <div key={name} className="relative flex items-center justify-center">
-                <div className="bg-theme-card-hex card-border px-g0.75 flex h-[4rem] w-full items-center justify-center rounded-xs sm:h-[4.5rem] md:h-[6.25rem]">
-                  <span className="text-theme-text-sec text-sm">{name}</span>
+      {/* ── 2. Logo Garden ── */}
+      {logoCompanies.length > 0 && (
+        <section className="section bg-theme-bg text-theme-text pb-v1.5 pt-0" id="logo-garden">
+          <div className="stack container text-center">
+            <h2 className="type-sm mb-v1">
+              Trusted every day by teams that build world-class software
+            </h2>
+            <div className="logo-garden-responsive-8">
+              {logoCompanies.map((name) => (
+                <div key={name} className="relative flex items-center justify-center">
+                  <div className="bg-theme-card-hex card-border px-g0.75 flex h-[4rem] w-full items-center justify-center rounded-xs sm:h-[4.5rem] md:h-[6.25rem]">
+                    <span className="text-theme-text-sec text-sm">{name}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── 3. Feature Cards ── */}
       <section className="section section--flush-x">
@@ -139,38 +142,40 @@ export default function CodeaPage() {
       </section>
 
       {/* ── 4. "The new way to build software" + Testimonials ── */}
-      <section className="section bg-theme-bg text-theme-text overflow-hidden">
-        <div className="container">
-          <div className="text-center mx-auto mb-v2.5 max-w-prose-medium-wide">
-            <h2 className="type-lg text-balance mx-auto">The new way to build software.</h2>
+      {testimonials.length > 0 && (
+        <section className="section bg-theme-bg text-theme-text overflow-hidden">
+          <div className="container">
+            <div className="text-center mx-auto mb-v2.5 max-w-prose-medium-wide">
+              <h2 className="type-lg text-balance mx-auto">The new way to build software.</h2>
+            </div>
           </div>
-        </div>
-        <div className="container">
-          <div className="grid grid-cols-1 gap-g1 md:grid-cols-2 lg:grid-cols-3 items-stretch">
-            {testimonials.map((t) => (
-              <div key={t.author} className={t.hidden ? 'hidden md:block' : ''}>
-                <div className="card relative flex h-full min-h-[180px] w-full shrink-0 flex-col">
-                  <figure className="flex h-full flex-col">
-                    <blockquote className="grow overflow-hidden">
-                      <p className="type-base line-clamp-4 whitespace-pre-wrap md:line-clamp-5">
-                        {t.quote}
-                      </p>
-                    </blockquote>
-                    <div className="mt-v2 flex items-center gap-g1">
-                      <figcaption>
-                        <div className="type-sm">
-                          {t.author}{' '}
-                          <span className="type-sm text-theme-text-sec block">{t.role}</span>
-                        </div>
-                      </figcaption>
-                    </div>
-                  </figure>
+          <div className="container">
+            <div className="grid grid-cols-1 gap-g1 md:grid-cols-2 lg:grid-cols-3 items-stretch">
+              {testimonials.map((t) => (
+                <div key={t.author} className={t.hidden ? 'hidden md:block' : ''}>
+                  <div className="card relative flex h-full min-h-[180px] w-full shrink-0 flex-col">
+                    <figure className="flex h-full flex-col">
+                      <blockquote className="grow overflow-hidden">
+                        <p className="type-base line-clamp-4 whitespace-pre-wrap md:line-clamp-5">
+                          {t.quote}
+                        </p>
+                      </blockquote>
+                      <div className="mt-v2 flex items-center gap-g1">
+                        <figcaption>
+                          <div className="type-sm">
+                            {t.author}{' '}
+                            <span className="type-sm text-theme-text-sec block">{t.role}</span>
+                          </div>
+                        </figcaption>
+                      </div>
+                    </figure>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── 5. Stay on the frontier ── */}
       <section className="section bg-theme-bg text-theme-text">
@@ -208,26 +213,28 @@ export default function CodeaPage() {
       </section>
 
       {/* ── 6. Changelog ── */}
-      <section className="section bg-theme-bg text-theme-text">
-        <div className="container">
-          <h2 className="type-md-lg text-theme-text mb-v1">Changelog</h2>
-          <div className="gap-g1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-            {changelogEntries.map((entry) => (
-              <article key={entry.title} className="flex flex-col">
-                <a className="card stack pb-g2 grow-1" href={entry.href}>
-                  <div className="text-theme-text-sec relative left-[-1px] flex items-center">
-                    <time className="type-base">{entry.date}</time>
-                  </div>
-                  <p className="type-base text-theme-text">{entry.title}</p>
-                </a>
-              </article>
-            ))}
+      {changelogEntries.length > 0 && (
+        <section className="section bg-theme-bg text-theme-text">
+          <div className="container">
+            <h2 className="type-md-lg text-theme-text mb-v1">Changelog</h2>
+            <div className="gap-g1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+              {changelogEntries.map((entry) => (
+                <article key={entry.title} className="flex flex-col">
+                  <a className="card stack pb-g2 grow-1" href={entry.href}>
+                    <div className="text-theme-text-sec relative left-[-1px] flex items-center">
+                      <time className="type-base">{entry.date}</time>
+                    </div>
+                    <p className="type-base text-theme-text">{entry.title}</p>
+                  </a>
+                </article>
+              ))}
+            </div>
+            <a className="btn-text mt-v1 inline-flex" href="/changelog">
+              See what&rsquo;s new in Codea &rarr;
+            </a>
           </div>
-          <a className="btn-text mt-v1 inline-flex" href="/changelog">
-            See what&rsquo;s new in Codea &rarr;
-          </a>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── 7. Team / Join Us card ── */}
       <section className="section bg-theme-bg text-theme-text">
@@ -267,34 +274,36 @@ export default function CodeaPage() {
       </section>
 
       {/* ── 8. Recent Highlights ── */}
-      <section className="section bg-theme-card-hex text-theme-text">
-        <div className="container">
-          <div className="grid-cursor gap-0">
-            <div className="col-span-full md:col-start-1 md:col-end-7 lg:col-start-1 lg:col-end-9 xl:col-start-1 xl:col-end-7">
-              <h2 className="type-base text-theme-text mb-v1 sticky top-0 lg:mb-0">Recent highlights</h2>
-            </div>
-            <div className="col-span-full md:col-start-7 md:col-end-25 lg:col-start-9 lg:col-end-25 xl:col-start-7 xl:col-end-19">
-              {highlights.map((h, i) => (
-                <article key={h.title} className={`flex grow-1 flex-col${i < highlights.length - 1 ? ' mb-g1' : ''}`}>
-                  <a className="card card--text grow-1" href={h.href}>
-                    <div className="flex flex-col">
-                      <div className="grow-1">
-                        <p className="type-base text-theme-text text-pretty">{h.title}</p>
-                        <p className="type-base text-theme-text-sec text-pretty">{h.description}</p>
+      {highlights.length > 0 && (
+        <section className="section bg-theme-card-hex text-theme-text">
+          <div className="container">
+            <div className="grid-cursor gap-0">
+              <div className="col-span-full md:col-start-1 md:col-end-7 lg:col-start-1 lg:col-end-9 xl:col-start-1 xl:col-end-7">
+                <h2 className="type-base text-theme-text mb-v1 sticky top-0 lg:mb-0">Recent highlights</h2>
+              </div>
+              <div className="col-span-full md:col-start-7 md:col-end-25 lg:col-start-9 lg:col-end-25 xl:col-start-7 xl:col-end-19">
+                {highlights.map((h, i) => (
+                  <article key={h.title} className={`flex grow-1 flex-col${i < highlights.length - 1 ? ' mb-g1' : ''}`}>
+                    <a className="card card--text grow-1" href={h.href}>
+                      <div className="flex flex-col">
+                        <div className="grow-1">
+                          <p className="type-base text-theme-text text-pretty">{h.title}</p>
+                          <p className="type-base text-theme-text-sec text-pretty">{h.description}</p>
+                        </div>
+                        <div className="mt-v1 text-theme-text-sec flex shrink-0 items-center">
+                          <span className="capitalize">{h.category}&nbsp;&middot;&nbsp;</span>
+                          <time className="type-base">{h.date}</time>
+                        </div>
                       </div>
-                      <div className="mt-v1 text-theme-text-sec flex shrink-0 items-center">
-                        <span className="capitalize">{h.category}&nbsp;&middot;&nbsp;</span>
-                        <time className="type-base">{h.date}</time>
-                      </div>
-                    </div>
-                  </a>
-                </article>
-              ))}
-              <a className="btn-text mt-v1 inline-flex" href="/company/news">View more posts &rarr;</a>
+                    </a>
+                  </article>
+                ))}
+                <a className="btn-text mt-v1 inline-flex" href="/company/news">View more posts &rarr;</a>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── 9. CTA ── */}
       <section className="section bg-theme-bg text-theme-text section--headline">
