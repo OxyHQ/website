@@ -1,43 +1,21 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import Button from '../ui/Button'
+import { HorizontalLine, VerticalLine } from '../ui/GridDecoration'
 import { useJob } from '../../api/hooks'
 import { type DescriptionBlock } from '../../data/careers'
 import { FEATURES } from '../../constants'
 import SEO from '../SEO'
 import StructuredData from '../StructuredData'
 
-function DashedLineH() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function SolidLineH() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function DashedLineV({ className = '' }: { className?: string }) {
-  return (
-    <svg width="1" height="100%" className={`text-border ${className}`}>
-      <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function SolidLineV({ className = '' }: { className?: string }) {
-  return (
-    <svg width="1" height="100%" className={`text-border ${className}`}>
-      <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
-    </svg>
-  )
-}
+const DashedLineH = () => <HorizontalLine className="w-full text-border" dashed />
+const SolidLineH = () => <HorizontalLine className="w-full text-border" />
+const DashedLineV = ({ className = '' }: { className?: string }) => (
+  <VerticalLine dashed className={`text-border ${className}`} />
+)
+const SolidLineV = ({ className = '' }: { className?: string }) => (
+  <VerticalLine className={`text-border ${className}`} />
+)
 
 function DescriptionContent({ blocks }: { blocks: DescriptionBlock[] }) {
   return (

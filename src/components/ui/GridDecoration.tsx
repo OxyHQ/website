@@ -1,4 +1,10 @@
-export function HorizontalLine({ className = '' }: { className?: string }) {
+export function HorizontalLine({
+  className = '',
+  dashed = false,
+}: {
+  className?: string;
+  dashed?: boolean;
+}) {
   return (
     <svg width="100%" height="1" className={className}>
       <line
@@ -7,6 +13,7 @@ export function HorizontalLine({ className = '' }: { className?: string }) {
         x2="100%"
         y2="0.5"
         stroke="currentColor"
+        strokeDasharray={dashed ? '4 6' : undefined}
         strokeLinecap="round"
       />
     </svg>

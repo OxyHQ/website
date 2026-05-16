@@ -1,23 +1,11 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import Button from '../ui/Button'
+import { HorizontalLine } from '../ui/GridDecoration'
 import { useJobs, type Job } from '../../api/hooks'
 
-function DashedLine() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function SolidLine() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-    </svg>
-  )
-}
+const DashedLine = () => <HorizontalLine className="w-full text-border" dashed />
+const SolidLine = () => <HorizontalLine className="w-full text-border" />
 
 interface DepartmentGroup {
   name: string

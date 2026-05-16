@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react'
 import { useNewsroomPosts } from '../../api/hooks'
 import { blogCategories } from '../../data/blog'
+import { ArrowRightIcon } from '../icons'
+import { HorizontalLine, VerticalLine } from '../ui/GridDecoration'
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr)
@@ -31,9 +33,7 @@ export default function BlogLatestSection() {
 
   return (
     <>
-      <svg width="100%" height="1" className="text-border">
-        <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-      </svg>
+      <HorizontalLine className="w-full text-border" />
       <div className="bg-surface">
         <div className="container">
           <div className="border-border border-x">
@@ -44,14 +44,9 @@ export default function BlogLatestSection() {
               </div>
             </header>
 
-            {/* Solid separator (desktop) */}
-            <svg width="100%" height="1" className="text-border max-lg:hidden">
-              <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-            </svg>
-            {/* Dashed separator (mobile) */}
-            <svg width="100%" height="1" className="text-border lg:hidden">
-              <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-            </svg>
+            {/* Separator: solid on desktop, dashed on mobile */}
+            <HorizontalLine className="w-full text-border max-lg:hidden" />
+            <HorizontalLine className="w-full text-border lg:hidden" dashed />
 
             {/* Content: sidebar + article list */}
             <div className="relative grid grid-cols-24 max-lg:grid-cols-12">
@@ -76,15 +71,11 @@ export default function BlogLatestSection() {
                   })}
                 </ul>
                 {/* Vertical separator line */}
-                <svg width="1" height="100%" className="text-border absolute inset-y-0 right-0 max-lg:hidden">
-                  <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
-                </svg>
+                <VerticalLine className="text-border absolute inset-y-0 right-0 max-lg:hidden" />
               </div>
 
               {/* Mobile separator */}
-              <svg width="100%" height="1" className="text-border col-[1/-1] lg:hidden">
-                <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-              </svg>
+              <HorizontalLine className="w-full text-border col-[1/-1] lg:hidden" />
 
               {/* Article list */}
               <div className="relative isolate max-lg:col-[1/-1] col-[9/-1] max-xl:col-[7/-1]">
@@ -109,29 +100,18 @@ export default function BlogLatestSection() {
                       <p className="relative col-[11/13] text-overline max-lg:col-[-6/-2] max-lg:row-1 max-lg:justify-self-end">{formatDate(article.publishedAt)}</p>
                       <p className="relative col-[13/15] truncate text-overline max-lg:col-[2/6] max-lg:row-1">[{article.categories[0]}]</p>
                       {/* Arrow icon */}
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 14 14"
-                        fill="none"
+                      <ArrowRightIcon
                         className="relative top-0.5 col-[-3/-2] justify-self-end text-muted-foreground max-lg:hidden transition-[translate,color] duration-400 ease-in-out group-hover:translate-x-0.5 group-hover:duration-150 group-active:translate-x-0.5 group-active:duration-50"
-                      >
-                        <path
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="1.1"
-                          d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5"
-                        />
-                      </svg>
+                      />
                       <p className="relative col-[2/-2] line-clamp-2 max-w-[28em] text-pretty pt-2 text-muted-foreground text-sm max-xl:text-sm">
                         {article.resume}
                       </p>
                     </a>
                     {/* Dashed separator between articles */}
-                    <svg width="100%" height="1" className={`text-border${index === filteredArticles.length - 1 ? ' hidden' : ''}`}>
-                      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-                    </svg>
+                    <HorizontalLine
+                      dashed
+                      className={`w-full text-border${index === filteredArticles.length - 1 ? ' hidden' : ''}`}
+                    />
                   </div>
                 ))}
               </div>
@@ -140,15 +120,9 @@ export default function BlogLatestSection() {
             {/* Bottom decoration */}
             <div aria-hidden="true" className="grid w-full overflow-hidden max-xl:h-30 max-lg:h-25 h-25 grid-cols-24">
               <div className="col-[2/-2] flex justify-between">
-                <svg width="1" height="100%" className="text-border invisible">
-                  <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-                </svg>
-                <svg width="1" height="100%" className="text-border">
-                  <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-                </svg>
-                <svg width="1" height="100%" className="text-border invisible">
-                  <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-                </svg>
+                <VerticalLine dashed className="text-border invisible" />
+                <VerticalLine dashed className="text-border" />
+                <VerticalLine dashed className="text-border invisible" />
               </div>
             </div>
           </div>

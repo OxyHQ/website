@@ -3,6 +3,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
+import { HorizontalLine } from '../components/ui/GridDecoration'
 import { usePage, type PageSection } from '../api/hooks'
 
 /* ──────────────────────────────────────────────
@@ -201,13 +202,7 @@ function parseSpend(sections: PageSection[], fallback: SpendRow[]): SpendRow[] {
 
 /* ── Layout primitives ── */
 
-function DashedHLine() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-    </svg>
-  )
-}
+const DashedHLine = () => <HorizontalLine className="w-full text-border" dashed />
 
 function DashedVLines({ height = 'h-5' }: { height?: string }) {
   return (
