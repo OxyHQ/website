@@ -42,11 +42,11 @@ interface TeamMember {
 }
 
 const members: TeamMember[] = [
-  { name: 'Sarah Chen', role: 'Frontend', tasks: 34, activityPct: 92, color: '#6366f1' },
-  { name: 'Marcus J.', role: 'Backend', tasks: 28, activityPct: 82, color: '#f59e0b' },
-  { name: 'Priya S.', role: 'Full-stack', tasks: 22, activityPct: 58, color: '#10b981' },
-  { name: 'Alex R.', role: 'DevOps', tasks: 18, activityPct: 50, color: '#f43f5e' },
-  { name: 'Emily Z.', role: 'Mobile', tasks: 25, activityPct: 78, color: '#8b5cf6' },
+  { name: 'Teammate A', role: 'Frontend', tasks: 34, activityPct: 92, color: '#6366f1' },
+  { name: 'Teammate B', role: 'Backend', tasks: 28, activityPct: 82, color: '#f59e0b' },
+  { name: 'Teammate C', role: 'Full-stack', tasks: 22, activityPct: 58, color: '#10b981' },
+  { name: 'Teammate D', role: 'DevOps', tasks: 18, activityPct: 50, color: '#f43f5e' },
+  { name: 'Teammate E', role: 'Mobile', tasks: 25, activityPct: 78, color: '#8b5cf6' },
 ];
 
 const MemberRow = ({ member }: { member: TeamMember }) => (

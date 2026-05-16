@@ -1,4 +1,4 @@
-// Static IDE demo mockup — recreates an OpenAI Codex-style hero IDE window.
+// Static IDE demo mockup — recreates an Oxy Codea-style hero IDE window.
 // Purely visual, no interactivity.
 
 export default function IDEDemoMockup() {
@@ -49,21 +49,21 @@ export default function IDEDemoMockup() {
               { name: 'Implement dark mode', time: '8h' },
             ]}
           />
-          {/* ChatGPT group */}
+          {/* Mention group */}
           <ThreadGroup
-            name="ChatGPT"
+            name="Mention"
             icon={<FolderIcon />}
-            threads={[{ name: 'Voice mode shortcuts', time: '2h' }]}
+            threads={[{ name: 'Notification grouping pass', time: '2h' }]}
           />
-          {/* Sora group */}
+          {/* Oxy AI (Alia) group */}
           <ThreadGroup
-            name="Sora"
+            name="Oxy AI"
             icon={<FolderIcon />}
             threads={[{ name: 'Persist prompt presets', time: '5h' }]}
           />
-          {/* Atlas group */}
+          {/* Inbox group */}
           <ThreadGroup
-            name="Atlas"
+            name="Inbox"
             icon={<FolderIcon />}
             threads={[{ name: 'Add Status filter facet', time: '3h' }]}
           />

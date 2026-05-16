@@ -28,7 +28,7 @@ function ChatMockup() {
               </svg>
             </div>
             <span className="text-sm font-medium text-foreground underline decoration-border">
-              Basepoint // Greenleaf
+              Mention // Inbox
             </span>
           </div>
         </div>
@@ -144,12 +144,12 @@ function MeetingMockup() {
             <path d="M1 5.5h12" stroke="var(--color-muted-foreground)" strokeWidth="1.2" />
             <path d="M4 1v2.5M10 1v2.5" stroke="var(--color-muted-foreground)" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
-          <span className="text-xs font-medium text-foreground">QBR - Greenleaf Inc.</span>
+          <span className="text-xs font-medium text-foreground">Quarterly review</span>
           <span className="ml-auto text-xs text-muted-foreground">Today, 2:00 PM</span>
         </div>
         <div className="grid grid-cols-[auto_1fr] items-start gap-x-1.5 gap-y-1">
           <span className="text-xs text-muted-foreground">Account</span>
-          <span className="text-xs text-foreground">Greenleaf Inc. &middot; Enterprise</span>
+          <span className="text-xs text-foreground">Sample workspace &middot; Pro</span>
           <span className="text-xs text-muted-foreground">Health</span>
           <span className="text-xs text-foreground">Good &middot; NPS 72</span>
         </div>
@@ -202,7 +202,7 @@ function CallMockup() {
             <path d="M8.5 1.5C10.5 2 12 3.5 12.5 5.5M8.5 3.5C9.5 3.8 10.2 4.5 10.5 5.5" stroke="var(--color-primary)" strokeWidth="1.2" strokeLinecap="round" />
             <path d="M2 3.5C2 2.95 2.45 2.5 3 2.5h1.5l1 2.5-1.25.75a7.5 7.5 0 003.5 3.5L8.5 8l2.5 1v1.5c0 .55-.45 1-1 1A9.5 9.5 0 012 3.5z" stroke="var(--color-muted-foreground)" strokeWidth="1.2" strokeLinejoin="round" />
           </svg>
-          <span className="text-xs font-medium text-foreground">Discovery Call - Acme Corp</span>
+          <span className="text-xs font-medium text-foreground">Discovery call</span>
           <span className="ml-auto text-xs text-muted-foreground">32 min</span>
         </div>
         <div className="flex items-center gap-3">

@@ -1,10 +1,10 @@
 const emails = [
-  { sender: "Alex Chen", avatar: "AC", subject: "Q1 revenue report — final numbers", time: "9:32 AM", unread: true },
-  { sender: "Maya Johnson", avatar: "MJ", subject: "Updated brand guidelines attached", time: "9:15 AM", unread: true, aiDraft: true },
-  { sender: "Jordan Lee", avatar: "JL", subject: "Re: Product launch timeline", time: "8:48 AM", unread: false },
-  { sender: "Priya Patel", avatar: "PP", subject: "Quarterly OKR check-in notes", time: "8:20 AM", unread: false, aiDraft: true },
-  { sender: "Sam Rivera", avatar: "SR", subject: "New logo concepts for review", time: "7:55 AM", unread: true },
-  { sender: "Newsletter Bot", avatar: "NB", subject: "Your weekly design digest", time: "6:00 AM", unread: false, archived: true },
+  { sender: "Finance team", avatar: "FT", subject: "Q1 revenue report — final numbers", time: "9:32 AM", unread: true },
+  { sender: "Design", avatar: "DS", subject: "Updated brand guidelines attached", time: "9:15 AM", unread: true, aiDraft: true },
+  { sender: "Product", avatar: "PR", subject: "Re: Product launch timeline", time: "8:48 AM", unread: false },
+  { sender: "People ops", avatar: "PO", subject: "Quarterly OKR check-in notes", time: "8:20 AM", unread: false, aiDraft: true },
+  { sender: "Brand", avatar: "BR", subject: "New logo concepts for review", time: "7:55 AM", unread: true },
+  { sender: "Newsletter", avatar: "NL", subject: "Your weekly design digest", time: "6:00 AM", unread: false, archived: true },
 ];
 
 const tabs = [

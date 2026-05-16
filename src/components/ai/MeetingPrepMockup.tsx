@@ -1,8 +1,8 @@
 const attendees = [
-  { initials: "SC", name: "Sarah C." },
-  { initials: "JL", name: "Jordan L." },
-  { initials: "MP", name: "Maya P." },
-  { initials: "AK", name: "Alex K." },
+  { initials: "AA", name: "Attendee 1" },
+  { initials: "BB", name: "Attendee 2" },
+  { initials: "CC", name: "Attendee 3" },
+  { initials: "DD", name: "Attendee 4" },
 ];
 
 const actionItems = [
@@ -65,13 +65,13 @@ const MeetingPrepMockup = () => {
         <div className="bg-foreground/5 rounded-xl p-4">
           <h4 className="text-xs font-medium text-foreground mb-2">Previous meeting notes</h4>
           <p className="text-[11px] leading-relaxed text-foreground/50">
-            Reviewed mobile nav prototypes. Agreed to simplify to 4 primary tabs. Jordan to lead usability testing by Friday. Design system tokens discussion deferred to next session.
+            Reviewed mobile nav prototypes. Agreed to simplify to 4 primary tabs. Usability testing to wrap by Friday. Design system tokens discussion deferred to next session.
           </p>
         </div>
 
-        {/* Related Slack threads */}
+        {/* Related Mention threads */}
         <div className="bg-foreground/5 rounded-xl p-4">
-          <h4 className="text-xs font-medium text-foreground mb-2">Related Slack threads</h4>
+          <h4 className="text-xs font-medium text-foreground mb-2">Related Mention threads</h4>
           <div className="flex flex-col gap-1.5">
             {["#design — Mobile nav: updated interaction patterns", "#product — Accessibility audit follow-up items"].map((t) => (
               <div key={t} className="flex items-center gap-2 text-[11px] text-foreground/50">

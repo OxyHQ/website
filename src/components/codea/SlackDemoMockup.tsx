@@ -37,10 +37,10 @@ export default function SlackDemoMockup() {
 
       {/* ─── Messages ─── */}
       <div className="flex-1 space-y-1 overflow-y-auto px-2 py-3">
-        {/* Sarah's message */}
+        {/* Teammate's message */}
         <Message
-          avatar={<Avatar color="#3b82f6" initials="S" />}
-          name="Sarah Chen"
+          avatar={<Avatar color="#3b82f6" initials="A" />}
+          name="Teammate A"
           time="10:24 AM"
         >
           Just pushed the initial sync implementation. Can someone review the
@@ -95,10 +95,10 @@ export default function SlackDemoMockup() {
           </div>
         </Message>
 
-        {/* Marcus's message */}
+        {/* Teammate's message */}
         <Message
-          avatar={<Avatar color="#22c55e" initials="M" />}
-          name="Marcus Rivera"
+          avatar={<Avatar color="#22c55e" initials="B" />}
+          name="Teammate B"
           time="10:28 AM"
         >
           Nice catch! I'll fix the mutex issue.{' '}

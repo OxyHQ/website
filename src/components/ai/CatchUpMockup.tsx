@@ -1,9 +1,9 @@
 const emails = [
-  { sender: "David Park", color: "#EF4444", priority: "urgent" as const, subject: "Server outage — production down", summary: "Critical: API response times spiked 10x, customers affected since 2:14 PM" },
-  { sender: "Lisa Wang", color: "#F59E0B", priority: "important" as const, subject: "Board deck needs final review", summary: "Deadline moved up to tomorrow morning, slides 8-12 need your input" },
-  { sender: "Tom Rivera", color: "#73A7FF", priority: "normal" as const, subject: "Re: New hire onboarding plan", summary: "Confirmed the start date for Monday, equipment request submitted" },
-  { sender: "Priya Sharma", color: "#A78BFA", priority: "important" as const, subject: "Partnership proposal from Acme Corp", summary: "They're offering a 2-year deal with 15% revenue share, wants a call Thursday" },
-  { sender: "Chris Muller", color: "#34D399", priority: "normal" as const, subject: "Team offsite — venue options", summary: "Narrowed it down to 3 venues, budget looks good for the lakehouse option" },
+  { sender: "Ops on-call", color: "#EF4444", priority: "urgent" as const, subject: "Server outage — production down", summary: "Critical: API response times spiked 10x, customers affected since 2:14 PM" },
+  { sender: "Product lead", color: "#F59E0B", priority: "important" as const, subject: "Board deck needs final review", summary: "Deadline moved up to tomorrow morning, slides 8-12 need your input" },
+  { sender: "People team", color: "#73A7FF", priority: "normal" as const, subject: "Re: New hire onboarding plan", summary: "Confirmed the start date for Monday, equipment request submitted" },
+  { sender: "BD inbox", color: "#A78BFA", priority: "important" as const, subject: "Partnership proposal", summary: "Two-year deal with revenue share, asking for a call later this week" },
+  { sender: "Events team", color: "#34D399", priority: "normal" as const, subject: "Team offsite — venue options", summary: "Narrowed it down to 3 venues, budget looks good for the lakehouse option" },
 ];
 
 const priorityDot = { urgent: "bg-red-500", important: "bg-yellow-500", normal: "bg-foreground/20" };
@@ -59,7 +59,7 @@ const CatchUpMockup = () => {
         {/* Reply highlight */}
         <div className="bg-[#73A7FF]/10 border-l-2 border-[#73A7FF] rounded-r-xl p-4">
           <p className="text-xs font-medium text-[#73A7FF]">3 emails need your reply</p>
-          <p className="mt-0.5 text-[11px] text-foreground/50">David, Lisa, and Priya are waiting on a response</p>
+          <p className="mt-0.5 text-[11px] text-foreground/50">3 people are waiting on a response</p>
         </div>
       </div>
     </div>

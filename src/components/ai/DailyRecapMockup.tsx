@@ -46,7 +46,7 @@ const DailyRecapMockup = () => {
         {/* Header */}
         <div>
           <h2 className="text-lg font-semibold text-foreground">Today's summary</h2>
-          <p className="mt-0.5 text-sm text-foreground/50">Monday, March 23</p>
+          <p className="mt-0.5 text-sm text-foreground/50">End-of-day recap</p>
         </div>
 
         {/* Stats row */}

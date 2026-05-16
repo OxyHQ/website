@@ -1,9 +1,9 @@
 const heldNotifications = [
-  { sender: "Maya Johnson", snippet: "Hey, quick question about the design..." },
-  { sender: "Slack: #engineering", snippet: "New deployment pipeline is ready for..." },
-  { sender: "Jordan Lee", snippet: "Can we push the 4 PM meeting to..." },
+  { sender: "Design", snippet: "Hey, quick question about the design..." },
+  { sender: "Mention: #engineering", snippet: "New deployment pipeline is ready for..." },
+  { sender: "Product", snippet: "Can we push the 4 PM meeting to..." },
   { sender: "Calendar", snippet: "Reminder: Team standup in 15 minutes" },
-  { sender: "Alex Chen", snippet: "Shared a doc: Q1 Revenue Analysis" },
+  { sender: "Inbox", snippet: "Shared a doc: Q1 Revenue Analysis" },
 ];
 
 const DeepWorkMockup = () => {

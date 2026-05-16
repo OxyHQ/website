@@ -18,13 +18,13 @@ const MorningBriefingMockup = () => {
         {/* Greeting */}
         <div>
           <h2 className="text-lg font-semibold text-foreground">
-            Good morning, Sarah{" "}
+            Good morning{" "}
             <span role="img" aria-label="wave">
               👋
             </span>
           </h2>
           <p className="mt-0.5 text-sm text-foreground/50">
-            Monday, March 24
+            Today's briefing
           </p>
         </div>
 
@@ -61,15 +61,15 @@ const MorningBriefingMockup = () => {
           <div className="flex flex-col gap-2">
             {[
               {
-                sender: "Alex Chen",
+                sender: "Finance",
                 subject: "Q1 revenue report — final numbers",
               },
               {
-                sender: "Maya Johnson",
+                sender: "Design",
                 subject: "Updated brand guidelines attached",
               },
               {
-                sender: "Jordan Lee",
+                sender: "Product",
                 subject: "Re: Product launch timeline",
               },
             ].map((email) => (
@@ -132,7 +132,7 @@ const MorningBriefingMockup = () => {
             {[
               { time: "10:00 AM", title: "Design team sync" },
               { time: "1:00 PM", title: "Product roadmap review" },
-              { time: "3:30 PM", title: "1:1 with Jamie" },
+              { time: "3:30 PM", title: "1:1 with your lead" },
             ].map((meeting) => (
               <div
                 key={meeting.time}

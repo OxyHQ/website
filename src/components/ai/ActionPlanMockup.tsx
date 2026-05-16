@@ -1,15 +1,15 @@
 const tasks = [
-  { title: "Review PR #482 — auth refactor", source: "from: GitHub", done: true },
-  { title: "Reply to Lisa's budget question", source: "from: Email", done: true },
+  { title: "Review PR #482 — auth refactor", source: "from: Codea", done: true },
+  { title: "Reply to budget question", source: "from: Inbox", done: true },
   { title: "Update Q1 roadmap slide deck", source: "from: Meeting", done: true },
-  { title: "Schedule 1:1 with new designer", source: "from: Slack", done: false },
+  { title: "Schedule 1:1 with new designer", source: "from: Mention", done: false },
   { title: "Write post-mortem for Friday's outage", source: "from: Incident", done: false },
   { title: "Submit expense report", source: "from: Calendar", done: false },
 ];
 
 const aiTasks = [
-  { title: "Prep talking points for 3 PM investor call", source: "from: Calendar + Email" },
-  { title: "Follow up with Acme Corp on partnership terms", source: "from: Email thread" },
+  { title: "Prep talking points for 3 PM call", source: "from: Calendar + Inbox" },
+  { title: "Follow up on partnership terms", source: "from: Inbox thread" },
 ];
 
 const completed = tasks.filter((t) => t.done).length;

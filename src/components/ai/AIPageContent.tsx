@@ -345,7 +345,7 @@ export default function AIPageContent() {
         <AIResearchSection />
       </section>
 
-      {/* ═══ SECTION 5: Blog / News (exact xAI structure, real data) ═══ */}
+      {/* ═══ SECTION 5: Blog / News ═══ */}
       <section className="py-16 sm:py-32">
         <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl space-y-16 sm:space-y-32">
           {/* Header */}

@@ -144,7 +144,7 @@ export default function HeroSection() {
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex flex-col gap-0.5">
                             <span className="text-[13px] font-semibold leading-[18px] text-foreground md:text-sm">
-                              Greenleaf Onboarding
+                              Product kickoff
                             </span>
                             <span className="text-[11px] leading-4 text-foreground/40 md:text-xs">
                               Dec 12, 10:40 – 11:40 AM
@@ -206,7 +206,7 @@ export default function HeroSection() {
                             </svg>
                           </div>
                           <span className="text-[12px] leading-4 text-foreground/55 md:text-[13px] md:leading-[18px]">
-                            Send onboarding checklist to Greenleaf team
+                            Share onboarding checklist with the team
                           </span>
                         </div>
                       </div>
