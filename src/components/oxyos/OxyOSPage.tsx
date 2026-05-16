@@ -1,4 +1,5 @@
 import Button from '../ui/Button'
+import { FEATURES } from '../../constants'
 
 const featureCards = [
   {
@@ -62,14 +63,10 @@ const screenshots = [
   '/images/oxyos/screenshot-4.png',
 ]
 
-const testimonials = [
-  { quote: 'Finally a distro that respects my hardware. Boots in under 10 seconds on my ThinkPad.', author: 'Alex R.', role: 'Systems Engineer' },
-  { quote: 'I switched from Arch to OxyOS. Less time configuring, more time working.', author: 'Marcus T.', role: 'Backend Developer' },
-  { quote: 'The Openbox setup is clean and snappy. Exactly what a lightweight distro should be.', author: 'Sarah L.', role: 'DevOps Engineer' },
-  { quote: 'Running this on a 10 year old laptop and it flies. Rock solid stability.', author: 'David M.', role: 'IT Admin', hidden: true },
-  { quote: 'Pipewire out of the box was the cherry on top. Audio just works.', author: 'Yuki N.', role: 'Music Producer', hidden: true },
-  { quote: 'The shelf panel is clean and intuitive. Love the quick settings.', author: 'Priya K.', role: 'UX Designer' },
-]
+// NOTE: testimonials below were fabricated placeholder copy and are kept
+// only behind FEATURES.SHOW_TESTIMONIALS. Cleared until real OxyOS user
+// quotes can be sourced.
+const testimonials: { quote: string; author: string; role: string; hidden?: boolean }[] = []
 
 const faqItems: Array<{ question: string; answer: string; code?: string; answerEnd?: string; link?: { label: string; href: string } }> = [
   {
@@ -248,38 +245,40 @@ export default function OxyOSContent() {
       </section>
 
       {/* ── 4. "The new way to run Linux" + Testimonials ── */}
-      <section className="section bg-theme-bg text-theme-text overflow-hidden">
-        <div className="container">
-          <div className="text-center mx-auto mb-v2.5 max-w-prose-medium-wide">
-            <h2 className="type-lg text-balance mx-auto">Lightweight Linux, done right.</h2>
+      {FEATURES.SHOW_TESTIMONIALS && testimonials.length > 0 && (
+        <section className="section bg-theme-bg text-theme-text overflow-hidden">
+          <div className="container">
+            <div className="text-center mx-auto mb-v2.5 max-w-prose-medium-wide">
+              <h2 className="type-lg text-balance mx-auto">Lightweight Linux, done right.</h2>
+            </div>
           </div>
-        </div>
-        <div className="container">
-          <div className="grid grid-cols-1 gap-g1 md:grid-cols-2 lg:grid-cols-3 items-stretch">
-            {testimonials.map((t) => (
-              <div key={t.author} className={t.hidden ? 'hidden md:block' : ''}>
-                <div className="card relative flex h-full min-h-[180px] w-full shrink-0 flex-col">
-                  <figure className="flex h-full flex-col">
-                    <blockquote className="grow overflow-hidden">
-                      <p className="type-base line-clamp-4 whitespace-pre-wrap md:line-clamp-5">
-                        {t.quote}
-                      </p>
-                    </blockquote>
-                    <div className="mt-v2 flex items-center gap-g1">
-                      <figcaption>
-                        <div className="type-sm">
-                          {t.author}{' '}
-                          <span className="type-sm text-theme-text-sec block">{t.role}</span>
-                        </div>
-                      </figcaption>
-                    </div>
-                  </figure>
+          <div className="container">
+            <div className="grid grid-cols-1 gap-g1 md:grid-cols-2 lg:grid-cols-3 items-stretch">
+              {testimonials.map((t) => (
+                <div key={t.author} className={t.hidden ? 'hidden md:block' : ''}>
+                  <div className="card relative flex h-full min-h-[180px] w-full shrink-0 flex-col">
+                    <figure className="flex h-full flex-col">
+                      <blockquote className="grow overflow-hidden">
+                        <p className="type-base line-clamp-4 whitespace-pre-wrap md:line-clamp-5">
+                          {t.quote}
+                        </p>
+                      </blockquote>
+                      <div className="mt-v2 flex items-center gap-g1">
+                        <figcaption>
+                          <div className="type-sm">
+                            {t.author}{' '}
+                            <span className="type-sm text-theme-text-sec block">{t.role}</span>
+                          </div>
+                        </figcaption>
+                      </div>
+                    </figure>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── 5. What's New (feature grid cards) ── */}
       <section className="section bg-theme-bg text-theme-text">

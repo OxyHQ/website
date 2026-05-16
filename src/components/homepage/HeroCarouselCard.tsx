@@ -160,10 +160,10 @@ function FairCoinFace() {
   const { data: newsData } = useNewsroomPosts({ tag: 'FairCoin', limit: 1 })
   const post = newsData?.posts?.[0]
   const newsImage = (post && typeof post.coverImage === 'string' && post.coverImage) || FAIRCOIN_STORE_IMAGE
-  const newsTitle = post?.title ?? 'Empowering local stores with FairCoin: a sustainable solution'
+  const newsTitle = post?.title ?? 'Empowering local stores with FairCoin'
   const newsDate = post?.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString('en-US', FAIRCOIN_NEWS_DATE_FORMAT)
-    : 'Apr 3, 2026'
+    : ''
   const newsHref = post?.slug ? `/newsroom/${post.slug}` : null
   return (
     <div className="grid h-full w-full grid-cols-[1fr_1fr_auto] bg-[#166534]">

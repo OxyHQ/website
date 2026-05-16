@@ -6,6 +6,7 @@ import SEO from '../components/SEO'
 import HeroCarousel from '../components/homepage/HeroCarousel'
 import { heroCarouselSlots } from '../data/heroCarousel'
 import { useHero, usePage, type HeroMediaRef, type PageSection } from '../api/hooks'
+import { FEATURES } from '../constants'
 import { usePageChromeStore } from '../stores/pageChromeStore'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
@@ -126,11 +127,11 @@ function HeroSection() {
 /* ------------------------------------------------------------------ */
 /*  Partner Logos                                                       */
 /* ------------------------------------------------------------------ */
-const ALL_LOGOS = [
-  'strava', 'piab', 'robinhood', 'asics', 'polestar', 'voi', 'brex',
-  'apollo.io', 'b-lab-europe', 'veoneer', 'merck', 'ahlsell',
-  'electrolux', 'swile', 'truecaller', 'kearney', 'foodora', 'hinge',
-]
+// NOTE: The original list contained real third-party companies (Strava,
+// Robinhood, Merck, etc.) cloned from another marketing site. Until real
+// Oxy partner logos are available, the list is empty and the section is
+// gated by FEATURES.SHOW_TRUSTED_LOGOS at the render site below.
+const ALL_LOGOS: string[] = []
 
 // The number of logo slots shown at once — constant for the lifetime of the page.
 const LOGO_VISIBLE_COUNT = 7
@@ -463,6 +464,7 @@ function StatsAndTestimonialsSection() {
       <div className="border-border border-x">
         <div className="grid grid-cols-12 gap-6">
           <div className="col-[2/-2] py-10 max-[950px]:py-6">
+            {FEATURES.SHOW_HOMEPAGE_STATS && (
             <div className="mb-5">
               <Swiper
                 modules={[Autoplay]}
@@ -489,6 +491,8 @@ function StatsAndTestimonialsSection() {
                 ))}
               </Swiper>
             </div>
+            )}
+            {FEATURES.SHOW_TESTIMONIALS && (
             <div>
               <Swiper
                 modules={[Autoplay]}
@@ -570,6 +574,7 @@ function StatsAndTestimonialsSection() {
                 </button>
               </div>
             </div>
+            )}
           </div>
         </div>
       </div>
@@ -1064,7 +1069,11 @@ function IOSAppSection() {
 /* ------------------------------------------------------------------ */
 /*  Trusted By                                                         */
 /* ------------------------------------------------------------------ */
-const TRUSTED_LOGOS = ['strava', 'polestar', 'merck', 'apollo.io', 'robinhood', 'amgen', 'electrolux', 'piab']
+// Previously rendered real third-party logos (Strava, Polestar, Merck, ...)
+// cloned from another marketing site. Replaced with an empty list and
+// gated behind FEATURES.SHOW_TRUSTED_LOGOS until real Oxy partner / user
+// logos are available.
+const TRUSTED_LOGOS: string[] = []
 
 function TrustedBySection() {
   return (
@@ -1194,17 +1203,17 @@ export default function Landing4() {
       <Navbar transparent />
       <main className="oxy-landing">
         <HeroSection />
-        <PartnerLogos />
+        {FEATURES.SHOW_TRUSTED_LOGOS && <PartnerLogos />}
         <AllInOneSection />
         <FeaturesSection />
-        <StatsAndTestimonialsSection />
+        {(FEATURES.SHOW_HOMEPAGE_STATS || FEATURES.SHOW_TESTIMONIALS) && <StatsAndTestimonialsSection />}
         <ModelAgnosticSection />
         <TeamsSection />
         <PartnershipSection />
         <IntegrationsSecuritySection />
         <BannerSection />
         <IOSAppSection />
-        <TrustedBySection />
+        {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}
         <PricingSection />
         <AIResearchSection />
       </main>

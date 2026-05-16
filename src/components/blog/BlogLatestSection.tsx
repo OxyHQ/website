@@ -19,6 +19,16 @@ export default function BlogLatestSection() {
     return allArticles.filter((a) => a.categories.includes(activeCategory))
   }, [activeCategory, allArticles])
 
+  // Compute live counts from CMS data so we never display stale fake counts.
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { 'All articles': allArticles.length }
+    for (const cat of blogCategories) {
+      if (cat.label === 'All articles') continue
+      counts[cat.label] = allArticles.filter((a) => a.categories.includes(cat.label)).length
+    }
+    return counts
+  }, [allArticles])
+
   return (
     <>
       <svg width="100%" height="1" className="text-border">
@@ -59,7 +69,7 @@ export default function BlogLatestSection() {
                           <span className={isActive ? 'shrink truncate text-foreground' : 'text-muted-foreground'}>
                             {cat.label}
                           </span>
-                          <span className="align-super text-overline">[{cat.count}]</span>
+                          <span className="align-super text-overline">[{categoryCounts[cat.label] ?? 0}]</span>
                         </button>
                       </li>
                     )

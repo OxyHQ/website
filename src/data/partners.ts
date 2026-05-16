@@ -1,59 +1,19 @@
 /**
  * Partner brand logos shown on the homepage and `/partners` page.
  *
- * Each entry corresponds to an SVG file at
- *   `public/images/landing/<slug>.svg`
+ * NOTE: The list below previously contained real third-party companies
+ * (Strava, Robinhood, Merck, Polestar, etc.) cloned from another marketing
+ * site. None of those are actual Oxy partners, so the list is now empty.
+ * Surfaces that render this list are also flag-gated behind
+ * `FEATURES.SHOW_TRUSTED_LOGOS` until verified Oxy partner logos exist.
  *
- * Logos are rendered with `dark:invert` so a single colorway works in both
- * light and dark themes. When you add a new logo, drop the SVG into the
- * landing folder and append the slug here.
+ * To add a real partner: drop an SVG into `public/images/landing/<slug>.svg`,
+ * add its slug to `partnerLogos`, and add a display name to
+ * `PARTNER_DISPLAY_NAMES` below.
  */
-export const partnerLogos: readonly string[] = [
-  'strava',
-  'piab',
-  'robinhood',
-  'asics',
-  'polestar',
-  'voi',
-  'brex',
-  'apollo.io',
-  'b-lab-europe',
-  'veoneer',
-  'merck',
-  'ahlsell',
-  'electrolux',
-  'swile',
-  'truecaller',
-  'kearney',
-  'foodora',
-  'hinge',
-]
+export const partnerLogos: readonly string[] = []
 
-/**
- * Map from logo slug to a human-friendly display name used as the `alt`
- * attribute and screen-reader label. Falls back to a Title-Cased version of
- * the slug for any logo not listed here.
- */
-const PARTNER_DISPLAY_NAMES: Record<string, string> = {
-  strava: 'Strava',
-  piab: 'Piab',
-  robinhood: 'Robinhood',
-  asics: 'ASICS',
-  polestar: 'Polestar',
-  voi: 'Voi',
-  brex: 'Brex',
-  'apollo.io': 'Apollo.io',
-  'b-lab-europe': 'B Lab Europe',
-  veoneer: 'Veoneer',
-  merck: 'Merck',
-  ahlsell: 'Ahlsell',
-  electrolux: 'Electrolux',
-  swile: 'Swile',
-  truecaller: 'Truecaller',
-  kearney: 'Kearney',
-  foodora: 'Foodora',
-  hinge: 'Hinge',
-}
+const PARTNER_DISPLAY_NAMES: Record<string, string> = {}
 
 export function getPartnerDisplayName(slug: string): string {
   const explicit = PARTNER_DISPLAY_NAMES[slug]

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import Button from '../../ui/Button'
 import { fc } from '../../../lib/faircoin-links'
+import { useUniswapPoolStats } from '../../../hooks/use-faircoin-network-stats'
 import PhoneMockup from './PhoneMockup'
 
 const STATS = [
@@ -24,6 +25,11 @@ const STATS = [
  * the FairCoin design rules (icons OK in other sections, not here).
  */
 export default function HeroSection() {
+  const { data: poolStats } = useUniswapPoolStats()
+  const wfairPriceLabel =
+    poolStats?.wfairPriceUsdc && poolStats.wfairPriceUsdc > 0
+      ? `WFAIR · $${poolStats.wfairPriceUsdc.toFixed(poolStats.wfairPriceUsdc < 1 ? 4 : 2)}`
+      : null
   return (
     <section className="relative isolate overflow-hidden">
       {/* Ambient gradient backdrop */}
@@ -106,14 +112,16 @@ export default function HeroSection() {
               className="-left-4 top-12 sm:left-0 lg:-left-6"
               delay={0.7}
             />
+            {wfairPriceLabel && (
+              <FloatingChip
+                label={wfairPriceLabel}
+                className="-right-2 top-32 sm:right-0 lg:-right-2"
+                delay={0.9}
+                accent
+              />
+            )}
             <FloatingChip
-              label="$0.92 · 24h +2%"
-              className="-right-2 top-32 sm:right-0 lg:-right-2"
-              delay={0.9}
-              accent
-            />
-            <FloatingChip
-              label="Stake · 0.18 FAIR"
+              label="Stake-ready"
               className="-bottom-2 left-8 sm:-bottom-2 lg:-bottom-2"
               delay={1.1}
             />

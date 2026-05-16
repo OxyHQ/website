@@ -1,3 +1,4 @@
+import { FEATURES } from '../../constants'
 import IDEDemoMockup from './IDEDemoMockup'
 import MissionControlMockup from './MissionControlMockup'
 // SlackDemoMockup available at './SlackDemoMockup' for future use
@@ -5,7 +6,11 @@ import CodeEditorMockup from './CodeEditorMockup'
 import BackgroundTasksMockup from './BackgroundTasksMockup'
 import TeamDashboardMockup from './TeamDashboardMockup'
 
-const logos = ['Cisco', 'Scale', 'Notion', 'Cognition', 'Anduril']
+// NOTE: `logos` previously listed real third-party companies (Cisco/Scale/
+// Notion/Cognition/Anduril) cloned from OpenAI Codex's marketing page —
+// none of them are real Codea customers. The list is empty and the logo
+// section is rendered only behind FEATURES.SHOW_TRUSTED_LOGOS.
+const logos: string[] = []
 
 const features = [
   { title: 'Built to drive real engineering work', description: 'From routine pull requests to your hardest problems, Codea reliably completes tasks end to end, like building features, complex refactors, migrations, and more.' },
@@ -21,14 +26,10 @@ const platforms = [
   { title: 'Build with the API', description: 'Integrate Codea into your CI/CD pipeline, custom tooling, or internal platforms with our developer-friendly API.' },
 ]
 
-const testimonials = [
-  { name: 'Sarah Chen', role: 'Staff Engineer at Vercel', quote: 'Codea completely changed how our team handles large refactors. What used to take weeks now takes hours.' },
-  { name: 'Marcus Johnson', role: 'CTO at Replay', quote: 'The parallel execution is a game changer. We run 10 tasks at once and review the results in one sitting.' },
-  { name: 'Priya Sharma', role: 'Engineering Lead at Linear', quote: 'It actually understands our codebase. The suggestions feel like they come from someone on the team for months.' },
-  { name: 'Alex Rivera', role: 'Senior Developer at Stripe', quote: 'We integrated Codea into our CI pipeline and it catches bugs before they even reach code review.' },
-  { name: 'Emily Zhang', role: 'Founder at Basedash', quote: 'As a small team, Codea feels like having an extra senior engineer. It writes tests, fixes bugs, and ships features.' },
-  { name: 'David Kim', role: 'VP Engineering at Notion', quote: 'The context awareness is unreal. It respects our conventions and patterns without any extra configuration.' },
-]
+// NOTE: `testimonials` previously contained fake quotes attributed to real
+// people at Vercel/Replay/Linear/Stripe/Basedash/Notion. Cleared until
+// real Codea testimonials exist. Rendered only behind FEATURES.SHOW_TESTIMONIALS.
+const testimonials: { name: string; role: string; quote: string }[] = []
 
 export default function CodexExtensionContent() {
   return (
@@ -70,21 +71,23 @@ export default function CodexExtensionContent() {
       </section>
 
       {/* ── 2. Logo Garden ── */}
-      <section className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 pt-6 pb-10 text-center md:pt-12 md:pb-12">
-        <div className="mt-6 w-full max-w-[1040px] md:mt-8">
-          <div className="relative h-[76px] w-full overflow-hidden">
-            <div className="absolute inset-0 grid grid-cols-5 grid-rows-1 place-items-center gap-x-10 gap-y-8">
-              {logos.map((name) => (
-                <div key={name} className="relative mx-auto flex h-full w-full max-w-[220px] items-center justify-center">
-                  <span className="flex h-14 w-full items-center justify-center md:h-16">
-                    <span className="text-muted-foreground text-sm opacity-60 [filter:grayscale(1)]">{name}</span>
-                  </span>
-                </div>
-              ))}
+      {FEATURES.SHOW_TRUSTED_LOGOS && logos.length > 0 && (
+        <section className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 pt-6 pb-10 text-center md:pt-12 md:pb-12">
+          <div className="mt-6 w-full max-w-[1040px] md:mt-8">
+            <div className="relative h-[76px] w-full overflow-hidden">
+              <div className="absolute inset-0 grid grid-cols-5 grid-rows-1 place-items-center gap-x-10 gap-y-8">
+                {logos.map((name) => (
+                  <div key={name} className="relative mx-auto flex h-full w-full max-w-[220px] items-center justify-center">
+                    <span className="flex h-14 w-full items-center justify-center md:h-16">
+                      <span className="text-muted-foreground text-sm opacity-60 [filter:grayscale(1)]">{name}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── 3. Features ── */}
       <section className="mx-auto flex w-full flex-col items-center px-6 pt-20 pb-36 text-center md:px-16 md:pt-24 md:pb-40">
@@ -140,25 +143,27 @@ export default function CodexExtensionContent() {
       </section>
 
       {/* ── 5. Testimonials ── */}
-      <section className="flex w-full flex-col items-center text-center">
-        <h2 className="text-foreground text-[clamp(1.75rem,1.5rem+1.5vw,2.5rem)] font-semibold leading-tight tracking-[-0.02em] text-balance px-4">
-          What builders are saying
-        </h2>
-        <div className="mt-12 grid w-full grid-cols-1 gap-6 px-6 md:grid-cols-2 lg:grid-cols-3 max-w-6xl">
-          {testimonials.map((t) => (
-            <div key={t.name} className="bg-secondary flex flex-col justify-between rounded-lg p-6">
-              <p className="text-foreground text-sm leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
-              <div className="mt-4 flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-background" />
-                <div>
-                  <div className="text-foreground text-sm font-medium">{t.name}</div>
-                  <div className="text-muted-foreground text-xs">{t.role}</div>
+      {FEATURES.SHOW_TESTIMONIALS && testimonials.length > 0 && (
+        <section className="flex w-full flex-col items-center text-center">
+          <h2 className="text-foreground text-[clamp(1.75rem,1.5rem+1.5vw,2.5rem)] font-semibold leading-tight tracking-[-0.02em] text-balance px-4">
+            What builders are saying
+          </h2>
+          <div className="mt-12 grid w-full grid-cols-1 gap-6 px-6 md:grid-cols-2 lg:grid-cols-3 max-w-6xl">
+            {testimonials.map((t) => (
+              <div key={t.name} className="bg-secondary flex flex-col justify-between rounded-lg p-6">
+                <p className="text-foreground text-sm leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
+                <div className="mt-4 flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-background" />
+                  <div>
+                    <div className="text-foreground text-sm font-medium">{t.name}</div>
+                    <div className="text-muted-foreground text-xs">{t.role}</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ── 6. Final CTA ── */}
       <section className="relative overflow-hidden">
