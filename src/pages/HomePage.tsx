@@ -252,6 +252,12 @@ const FEATURE_TABS = [
     thumb: '/images/screenshots/mention-app.png',
   },
   {
+    id: 'allo',
+    label: 'Allo',
+    heading: 'Private messaging.<br>Open by design.',
+    thumb: `${IMG}/video-thumb-customer-support.webp`,
+  },
+  {
     id: 'inbox',
     label: 'Inbox',
     heading: 'All your messages.<br>One place.',

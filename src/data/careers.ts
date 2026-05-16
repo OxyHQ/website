@@ -1,7 +1,7 @@
 export const careersHero = {
   badge: 'Careers',
   title: 'Our mission is to build ethical technology that empowers people.',
-  subtitle: "We're an open-source ecosystem of AI agents and apps — Mention, Inbox, Codea, Oxy AI, Oxy CRM, OxyOS, Bloom UI, TNP, FairCoin and Homiio. Join us to build technology that creates opportunity for everyone.",
+  subtitle: "We're an open-source ecosystem of AI agents and apps — Mention, Allo, Inbox, Codea, Oxy AI, Oxy CRM, OxyOS, Bloom UI, TNP, FairCoin and Homiio. Join us to build technology that creates opportunity for everyone.",
 }
 
 export interface Value {

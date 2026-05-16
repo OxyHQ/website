@@ -209,10 +209,10 @@ export default function DocsPage() {
           {/* Content */}
           <div className="relative mt-8 mb-14 [contain:inline-size] isolate max-w-3xl" data-docs-content>
             <p className="text-muted-foreground leading-7">
-              Oxy is an open-source ecosystem of AI agents and apps — Mention, Inbox, Codea, Oxy AI,
-              Oxy CRM, OxyOS, Bloom UI, TNP, FairCoin and Homiio. In these guides, you can find
-              everything you need to build powerful integrations, automations and data pipelines on
-              top of Oxy.
+              Oxy is an open-source ecosystem of AI agents and apps — Mention, Allo, Inbox, Codea,
+              Oxy AI, Oxy CRM, OxyOS, Bloom UI, TNP, FairCoin and Homiio. In these guides, you can
+              find everything you need to build powerful integrations, automations and data
+              pipelines on top of Oxy.
             </p>
             <p className="text-muted-foreground leading-7 mt-4">
               Our docs cover guides, examples, references and code to help you build apps and share them with

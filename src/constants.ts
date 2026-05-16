@@ -21,6 +21,7 @@ export const OXY_GITHUB_URL = `https://github.com/${OXY_GITHUB_ORG}`
 
 export const OXY_PRODUCTS = [
   'Mention',
+  'Allo',
   'Inbox',
   'Codea Studio',
   'Codea AI',
@@ -39,7 +40,7 @@ export const OXY_POSITIONING = {
   short:
     'Oxy is an open-source ethical tech ecosystem building AI agents and apps for a future where technology empowers people.',
   long:
-    "Oxy is an open-source, ethical technology ecosystem building AI agents and apps. Our products — including Mention, Inbox, Codea Studio, Codea AI, the Codea VS Code Extension, Oxy AI (Alia), Oxy CRM, OxyOS, Bloom UI, TNP, FairCoin and Homiio — share a single mission: empower people without selling their data.",
+    "Oxy is an open-source, ethical technology ecosystem building AI agents and apps. Our products — including Mention, Allo, Inbox, Codea Studio, Codea AI, the Codea VS Code Extension, Oxy AI (Alia), Oxy CRM, OxyOS, Bloom UI, TNP, FairCoin and Homiio — share a single mission: empower people without selling their data.",
 } as const
 
 /**
