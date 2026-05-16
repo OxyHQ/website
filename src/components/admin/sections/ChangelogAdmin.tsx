@@ -6,8 +6,6 @@ import { Badge } from '@oxyhq/bloom/badge'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
 import MediaPicker from '../MediaPicker'
 
 export default function ChangelogAdmin() {
@@ -29,13 +27,11 @@ export default function ChangelogAdmin() {
     setEditing(null)
   }
 
-  const deleteAction = useConfirmAction<ChangelogEntry>({
-    onConfirm: async (entry) => {
-      if (!entry._id) return
-      await apiFetch(`/changelog/${entry._id}`, { method: 'DELETE' })
-      await refetch()
-    },
-  })
+  const deleteEntry = async (id: string) => {
+    if (!confirm('Delete this changelog entry?')) return
+    await apiFetch(`/changelog/${id}`, { method: 'DELETE' })
+    await refetch()
+  }
 
   if (editing) {
     return (
@@ -91,22 +87,12 @@ export default function ChangelogAdmin() {
             </div>
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="small" onPress={() => setEditing({ ...e })}>Edit</Button>
-              <Button variant="ghost" size="small" onPress={() => e._id && deleteAction.request(e)}>Delete</Button>
+              <Button variant="ghost" size="small" onPress={() => e._id && deleteEntry(e._id)}>Delete</Button>
             </div>
           </div>
         ))}
         {entries.length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">No entries yet.</p>}
       </div>
-
-      <ConfirmDialog
-        control={deleteAction.control}
-        title={deleteAction.target ? `Delete “${deleteAction.target.title}”?` : 'Delete changelog entry?'}
-        description="This permanently removes the changelog entry. This cannot be undone."
-        confirmLabel="Delete"
-        tone="danger"
-        busy={deleteAction.busy}
-        onConfirm={deleteAction.confirm}
-      />
     </div>
   )
 }

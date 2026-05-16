@@ -8,8 +8,6 @@ import { Badge } from '@oxyhq/bloom/badge'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
 import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 import MediaPicker from '../MediaPicker'
@@ -55,12 +53,11 @@ export default function NewsroomAdmin() {
     setEditing(null)
   }
 
-  const deleteAction = useConfirmAction<NewsroomPost>({
-    onConfirm: async (post) => {
-      await apiFetch(`/newsroom/${post.slug}`, { method: 'DELETE' })
-      await refetch()
-    },
-  })
+  const deletePost = async (slug: string) => {
+    if (!confirm('Delete this post?')) return
+    await apiFetch(`/newsroom/${slug}`, { method: 'DELETE' })
+    await refetch()
+  }
 
   if (editing) {
     return (
@@ -173,7 +170,7 @@ export default function NewsroomAdmin() {
               {isDefault ? (
                 <>
                   <Button variant="ghost" size="small" onPress={() => setEditing({ ...post })}>Edit</Button>
-                  <Button variant="ghost" size="small" onPress={() => deleteAction.request(post)}>Delete</Button>
+                  <Button variant="ghost" size="small" onPress={() => deletePost(post.slug)}>Delete</Button>
                 </>
               ) : (
                 <Button variant="ghost" size="small" onPress={() => setTranslatingPost(post)}>Translate</Button>
@@ -183,16 +180,6 @@ export default function NewsroomAdmin() {
         ))}
         {posts.length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">No posts yet.</p>}
       </div>
-
-      <ConfirmDialog
-        control={deleteAction.control}
-        title={deleteAction.target ? `Delete “${deleteAction.target.title}”?` : 'Delete this post?'}
-        description="This permanently removes the newsroom post. This cannot be undone."
-        confirmLabel="Delete"
-        tone="danger"
-        busy={deleteAction.busy}
-        onConfirm={deleteAction.confirm}
-      />
     </div>
   )
 }

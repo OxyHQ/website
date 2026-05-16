@@ -17,8 +17,6 @@ import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
 import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
 import MediaPicker from '../MediaPicker'
 
 function slugify(input: string): string {
@@ -159,12 +157,11 @@ export default function CoursesAdmin() {
     }
   }
 
-  const deleteAction = useConfirmAction<CourseRecord>({
-    onConfirm: async (course) => {
-      await apiFetch(`/courses/${course.slug}`, { method: 'DELETE' })
-      await refresh()
-    },
-  })
+  const remove = async (slug: string) => {
+    if (!confirm(`Delete course "${slug}"? This cannot be undone.`)) return
+    await apiFetch(`/courses/${slug}`, { method: 'DELETE' })
+    await refresh()
+  }
 
   const updateLesson = (index: number, patch: Partial<CourseLesson>) => {
     if (!editing) return
@@ -474,7 +471,7 @@ export default function CoursesAdmin() {
                 {isDefault ? (
                   <>
                     <Button variant="ghost" size="small" onPress={() => setEditing(stripRefsForEditing(course))}>Edit</Button>
-                    <Button variant="ghost" size="small" onPress={() => deleteAction.request(course)}>Delete</Button>
+                    <Button variant="ghost" size="small" onPress={() => remove(course.slug)}>Delete</Button>
                   </>
                 ) : (
                   <Button variant="ghost" size="small" onPress={() => setTranslating(course)}>Translate</Button>
@@ -487,16 +484,6 @@ export default function CoursesAdmin() {
           <p className="py-8 text-center text-sm text-muted-foreground">No courses yet.</p>
         )}
       </div>
-
-      <ConfirmDialog
-        control={deleteAction.control}
-        title={deleteAction.target ? `Delete “${deleteAction.target.title || deleteAction.target.slug}”?` : 'Delete course?'}
-        description="This permanently removes the course. This cannot be undone."
-        confirmLabel="Delete"
-        tone="danger"
-        busy={deleteAction.busy}
-        onConfirm={deleteAction.confirm}
-      />
     </div>
   )
 }

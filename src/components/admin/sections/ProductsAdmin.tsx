@@ -13,8 +13,6 @@ import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
 import MediaPicker from '../MediaPicker'
 
 function mediaId(logo: unknown): string {
@@ -146,12 +144,11 @@ export default function ProductsAdmin() {
     }
   }
 
-  const deleteAction = useConfirmAction<ProductRecord>({
-    onConfirm: async (product) => {
-      await apiFetch(`/products/${product.productId}`, { method: 'DELETE' })
-      await refetch()
-    },
-  })
+  const remove = async (productId: string) => {
+    if (!confirm(`Delete product "${productId}"? This cannot be undone.`)) return
+    await apiFetch(`/products/${productId}`, { method: 'DELETE' })
+    await refetch()
+  }
 
   if (editing) {
     const isNew = !editing._id
@@ -468,7 +465,7 @@ export default function ProductsAdmin() {
                   </div>
                   <div className="shrink-0">
                     <Button variant="ghost" size="small" onPress={() => setEditing(stripRefsForEditing(product))}>Edit</Button>
-                    <Button variant="ghost" size="small" onPress={() => deleteAction.request(product)}>Delete</Button>
+                    <Button variant="ghost" size="small" onPress={() => remove(product.productId)}>Delete</Button>
                   </div>
                 </div>
                 )
@@ -477,16 +474,6 @@ export default function ProductsAdmin() {
           )}
         </section>
       ))}
-
-      <ConfirmDialog
-        control={deleteAction.control}
-        title={deleteAction.target ? `Delete “${deleteAction.target.name || deleteAction.target.productId}”?` : 'Delete product?'}
-        description="This permanently removes the product entry. This cannot be undone."
-        confirmLabel="Delete"
-        tone="danger"
-        busy={deleteAction.busy}
-        onConfirm={deleteAction.confirm}
-      />
     </div>
   )
 }

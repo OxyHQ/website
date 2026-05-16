@@ -12,8 +12,6 @@ import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
 
 // Each row in the list view groups referrals by program type, so admins can
 // scan affiliates vs. ambassadors vs. casual share codes at a glance.
@@ -98,12 +96,11 @@ export default function ReferralsAdmin() {
     }
   }
 
-  const deleteAction = useConfirmAction<ReferralRecord>({
-    onConfirm: async (referral) => {
-      await deleteMutation.mutateAsync(referral.code)
-      await refetch()
-    },
-  })
+  const remove = async (code: string) => {
+    if (!confirm(`Delete referral code "${code}"? This cannot be undone.`)) return
+    await deleteMutation.mutateAsync(code)
+    await refetch()
+  }
 
   if (editing) {
     const isNew = !editing._id
@@ -322,7 +319,7 @@ export default function ReferralsAdmin() {
                     </div>
                     <div className="shrink-0">
                       <Button variant="ghost" size="small" onPress={() => setEditing({ ...referral })}>Edit</Button>
-                      <Button variant="ghost" size="small" onPress={() => deleteAction.request(referral)}>Delete</Button>
+                      <Button variant="ghost" size="small" onPress={() => remove(referral.code)}>Delete</Button>
                     </div>
                   </div>
                 ))}
@@ -331,16 +328,6 @@ export default function ReferralsAdmin() {
           </section>
         )
       })}
-
-      <ConfirmDialog
-        control={deleteAction.control}
-        title={deleteAction.target ? `Delete referral “${deleteAction.target.code}”?` : 'Delete referral?'}
-        description="This permanently removes the referral code. This cannot be undone."
-        confirmLabel="Delete"
-        tone="danger"
-        busy={deleteAction.busy}
-        onConfirm={deleteAction.confirm}
-      />
     </div>
   )
 }

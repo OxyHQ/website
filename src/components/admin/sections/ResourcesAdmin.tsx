@@ -16,8 +16,6 @@ import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
 import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
 import MediaPicker from '../MediaPicker'
 
 const RESOURCE_TYPES: ResourceType[] = ['guide', 'paper', 'video', 'tool', 'template', 'link']
@@ -136,12 +134,11 @@ export default function ResourcesAdmin() {
     }
   }
 
-  const deleteAction = useConfirmAction<ResourceRecord>({
-    onConfirm: async (resource) => {
-      await apiFetch(`/resources/${resource.slug}`, { method: 'DELETE' })
-      await refresh()
-    },
-  })
+  const remove = async (slug: string) => {
+    if (!confirm(`Delete resource "${slug}"? This cannot be undone.`)) return
+    await apiFetch(`/resources/${slug}`, { method: 'DELETE' })
+    await refresh()
+  }
 
   if (editing) {
     const isNew = !editing._id
@@ -341,7 +338,7 @@ export default function ResourcesAdmin() {
                 {isDefault ? (
                   <>
                     <Button variant="ghost" size="small" onPress={() => setEditing(stripRefsForEditing(resource))}>Edit</Button>
-                    <Button variant="ghost" size="small" onPress={() => deleteAction.request(resource)}>Delete</Button>
+                    <Button variant="ghost" size="small" onPress={() => remove(resource.slug)}>Delete</Button>
                   </>
                 ) : (
                   <Button variant="ghost" size="small" onPress={() => setTranslating(resource)}>Translate</Button>
@@ -354,16 +351,6 @@ export default function ResourcesAdmin() {
           <p className="py-8 text-center text-sm text-muted-foreground">No resources yet.</p>
         )}
       </div>
-
-      <ConfirmDialog
-        control={deleteAction.control}
-        title={deleteAction.target ? `Delete “${deleteAction.target.title || deleteAction.target.slug}”?` : 'Delete resource?'}
-        description="This permanently removes the resource. This cannot be undone."
-        confirmLabel="Delete"
-        tone="danger"
-        busy={deleteAction.busy}
-        onConfirm={deleteAction.confirm}
-      />
     </div>
   )
 }

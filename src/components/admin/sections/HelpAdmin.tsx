@@ -13,8 +13,6 @@ import { Badge } from '@oxyhq/bloom/badge'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
 import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 import MediaPicker from '../MediaPicker'
@@ -137,12 +135,11 @@ export default function HelpAdmin() {
     }
   }
 
-  const deleteAction = useConfirmAction<HelpArticleRecord>({
-    onConfirm: async (article) => {
-      await apiFetch(`/help/${article.slug}`, { method: 'DELETE' })
-      await refresh()
-    },
-  })
+  const remove = async (slug: string) => {
+    if (!confirm(`Delete help article "${slug}"? This cannot be undone.`)) return
+    await apiFetch(`/help/${slug}`, { method: 'DELETE' })
+    await refresh()
+  }
 
   if (editing) {
     const isNew = !editing._id
@@ -350,7 +347,7 @@ export default function HelpAdmin() {
                 {isDefault ? (
                   <>
                     <Button variant="ghost" size="small" onPress={() => setEditing(stripRefsForEditing(article))}>Edit</Button>
-                    <Button variant="ghost" size="small" onPress={() => deleteAction.request(article)}>Delete</Button>
+                    <Button variant="ghost" size="small" onPress={() => remove(article.slug)}>Delete</Button>
                   </>
                 ) : (
                   <Button variant="ghost" size="small" onPress={() => setTranslating(article)}>Translate</Button>
@@ -363,16 +360,6 @@ export default function HelpAdmin() {
           <p className="py-8 text-center text-sm text-muted-foreground">No help articles yet.</p>
         )}
       </div>
-
-      <ConfirmDialog
-        control={deleteAction.control}
-        title={deleteAction.target ? `Delete “${deleteAction.target.title || deleteAction.target.slug}”?` : 'Delete help article?'}
-        description="This permanently removes the help article. This cannot be undone."
-        confirmLabel="Delete"
-        tone="danger"
-        busy={deleteAction.busy}
-        onConfirm={deleteAction.confirm}
-      />
     </div>
   )
 }

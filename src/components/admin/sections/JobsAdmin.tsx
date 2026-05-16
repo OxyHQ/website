@@ -6,8 +6,6 @@ import { Switch } from '@oxyhq/bloom/switch'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
-import ConfirmDialog from '../ConfirmDialog'
-import { useConfirmAction } from '../useConfirmAction'
 import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 import { type DescriptionBlock } from '../../../data/careers'
@@ -53,13 +51,11 @@ export default function JobsAdmin() {
     }
   }
 
-  const deleteAction = useConfirmAction<Job>({
-    onConfirm: async (job) => {
-      if (!job._id) return
-      await apiFetch(`/jobs/${job._id}`, { method: 'DELETE' })
-      await refetch()
-    },
-  })
+  const deleteJob = async (id: string) => {
+    if (!confirm('Delete this job?')) return
+    await apiFetch(`/jobs/${id}`, { method: 'DELETE' })
+    await refetch()
+  }
 
   const autoSlug = (title: string, location: string) => {
     return `${title} ${location}`
@@ -251,7 +247,7 @@ export default function JobsAdmin() {
               {isDefault ? (
                 <>
                   <Button variant="ghost" size="small" onPress={() => setEditing({ ...j, description: Array.isArray(j.description) ? j.description : [] })}>Edit</Button>
-                  {j._id && <Button variant="ghost" size="small" onPress={() => deleteAction.request(j)}>Delete</Button>}
+                  {j._id && <Button variant="ghost" size="small" onPress={() => deleteJob(j._id!)}>Delete</Button>}
                 </>
               ) : (
                 <Button variant="ghost" size="small" onPress={() => setTranslatingJob(j)}>Translate</Button>
@@ -262,16 +258,6 @@ export default function JobsAdmin() {
         ))}
         {jobs.length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">No jobs yet.</p>}
       </div>
-
-      <ConfirmDialog
-        control={deleteAction.control}
-        title={deleteAction.target ? `Delete “${deleteAction.target.title}”?` : 'Delete this job?'}
-        description="This removes the job posting permanently. This cannot be undone."
-        confirmLabel="Delete"
-        tone="danger"
-        busy={deleteAction.busy}
-        onConfirm={deleteAction.confirm}
-      />
     </div>
   )
 }
