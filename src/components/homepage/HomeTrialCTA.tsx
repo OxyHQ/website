@@ -11,18 +11,18 @@ export default function HomeTrialCTA() {
           <div className="grid grid-cols-12 py-20 lg:py-32">
             <div className="scroll-reveal col-[2/-2] flex flex-col items-center justify-between gap-8 lg:col-[2/7] lg:flex-col lg:items-start">
               <h2 className="text-center text-heading-responsive-md lg:text-left">
-                Start with a 14-day
+                Start exploring the
                 <br />
                 <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
-                  free trial of Pro.
+                  Oxy ecosystem.
                 </span>
               </h2>
               <div className="flex items-center gap-2.5">
-                <Button variant="primary" size="md" href="#">
-                  Start for free
+                <Button variant="primary" size="md" href="/products">
+                  Get started
                 </Button>
-                <Button variant="outline" size="md" href="#">
-                  Talk to sales
+                <Button variant="outline" size="md" href="/company">
+                  Talk to us
                 </Button>
               </div>
             </div>

@@ -280,7 +280,7 @@ export default function DocsPage() {
 
           {/* Pagination */}
           <div className="px-0.5 flex items-center text-sm font-semibold text-foreground pb-16 border-t border-border pt-10 max-w-3xl">
-            <a className="flex items-center ml-auto space-x-3 group" href="#">
+            <a className="flex items-center ml-auto space-x-3 group" href="/developers/docs">
               <span className="group-hover:text-foreground">Quickstart</span>
               <svg viewBox="0 0 3 6" className="h-1.5 stroke-muted-foreground overflow-visible group-hover:stroke-foreground">
                 <path d="M0 0L3 3L0 6" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

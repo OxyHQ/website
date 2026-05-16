@@ -3,10 +3,10 @@ import { docsSidebar } from '../../data/docs'
 import DocsSubNav from './DocsSubNav'
 
 const introCards = [
-  { title: 'Quickstart', description: 'Deploy your first docs site in minutes with our step-by-step guide', href: '#', image: 'rocket' },
-  { title: 'CLI installation', description: 'Install the CLI to preview and develop your docs locally', href: '#', image: 'cli' },
-  { title: 'Web editor', description: 'Make quick updates and manage content with our browser-based editor', href: '#', image: 'editor' },
-  { title: 'Components', description: 'Build rich, interactive documentation with our ready-to-use components', href: '#', image: 'components' },
+  { title: 'Quickstart', description: 'Deploy your first docs site in minutes with our step-by-step guide', href: '/developers/docs', image: 'rocket' },
+  { title: 'CLI installation', description: 'Install the CLI to preview and develop your docs locally', href: '/developers/docs', image: 'cli' },
+  { title: 'Web editor', description: 'Make quick updates and manage content with our browser-based editor', href: '/developers/docs', image: 'editor' },
+  { title: 'Components', description: 'Build rich, interactive documentation with our ready-to-use components', href: '/developers/docs', image: 'components' },
 ]
 
 /* ─── Sidebar (same as overview page) ─── */

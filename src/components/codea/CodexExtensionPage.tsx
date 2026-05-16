@@ -124,7 +124,7 @@ export default function CodexExtensionContent() {
           Use Codea across multiple surfaces, all connected by your account.
         </div>
         <div className="mt-6 flex justify-center">
-          <a className="relative inline-flex items-center justify-center text-nowrap transition-colors h-10 rounded-full px-5 text-sm font-medium button-primary" href="#">
+          <a className="relative inline-flex items-center justify-center text-nowrap transition-colors h-10 rounded-full px-5 text-sm font-medium button-primary" href="/developers/docs">
             Learn more in the developer docs
             <span className="relative top-[0.5px] ms-1">↗</span>
           </a>

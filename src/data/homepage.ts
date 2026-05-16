@@ -34,13 +34,13 @@ export const bentoCards: BentoCard[] = [
     title: 'Connect your data',
     description: 'Integrate any data source for a real-time single source of truth across your organisation.',
     cta: 'Explore integrations',
-    href: '#',
+    href: '/developers/docs',
   },
   {
     title: 'Powerful reporting',
     description: 'Create real-time, detailed reports that scale with your data. Visualise, customise, and get deep insights in seconds.',
     cta: 'Explore reporting',
-    href: '#',
+    href: '/products',
   },
 ]
 
@@ -56,6 +56,6 @@ export const enrichmentSection = {
 }
 
 export const finalCTA = {
-  line1: 'The platform behind',
-  line2: 'thousands of teams.',
+  line1: 'Open ecosystem,',
+  line2: 'built in the open.',
 }

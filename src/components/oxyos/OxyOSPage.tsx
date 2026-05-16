@@ -105,8 +105,8 @@ const hardwareCards = [
 const highlights = [
   { title: 'OxyOS Ozone released', description: 'New desktop shelf, full OxyOS branding, custom package repo, and refreshed desktop experience.', category: 'release', date: 'Mar 2026', href: 'https://github.com/OxyHQ/OxyOS/releases' },
   { title: 'OxyOS Shelf built from scratch', description: 'A custom bottom dock with app launcher, pinned icons, system tray, and quick settings panel.', category: 'feature', date: 'Mar 2026', href: 'https://github.com/OxyHQ/OxyOS-shelf' },
-  { title: 'Pipewire replaces PulseAudio', description: 'Lower latency, better Bluetooth support, and seamless audio switching out of the box.', category: 'feature', date: 'Feb 2026', href: '#' },
-  { title: 'Power profiles integration', description: 'Switch between performance and battery saving modes directly from your Openbox menu.', category: 'feature', date: 'Dec 2025', href: '#' },
+  { title: 'Pipewire replaces PulseAudio', description: 'Lower latency, better Bluetooth support, and seamless audio switching out of the box.', category: 'feature', date: 'Feb 2026', href: '/changelog' },
+  { title: 'Power profiles integration', description: 'Switch between performance and battery saving modes directly from your Openbox menu.', category: 'feature', date: 'Dec 2025', href: '/changelog' },
 ]
 
 export default function OxyOSContent() {

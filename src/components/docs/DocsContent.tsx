@@ -112,7 +112,7 @@ export default function DocsContent() {
       >
         <div></div>
         <a
-          href="#"
+          href="/developers/docs"
           className="group flex items-center gap-3 text-base font-semibold text-foreground hover:text-foreground"
         >
           Quickstart

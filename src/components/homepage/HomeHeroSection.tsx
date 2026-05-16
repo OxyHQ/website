@@ -30,7 +30,7 @@ export default function HomeHeroSection() {
           <div className="relative z-10 flex flex-col items-center justify-end">
             {/* Logo badge row */}
             <p className="text-sm font-medium text-muted-foreground tracking-wide uppercase">
-              Trusted by leading teams
+              Open-source ecosystem
             </p>
 
             <h1 className="mt-6 max-w-[14ch] text-center text-heading-md md:text-heading-lg lg:text-heading-xl text-foreground">
@@ -42,11 +42,11 @@ export default function HomeHeroSection() {
             </p>
 
             <div className="mt-6 flex items-center gap-2">
-              <Button variant="primary" size="md" href="#">
-                Start for free
+              <Button variant="primary" size="md" href="/products">
+                Get started
               </Button>
-              <Button variant="outline" size="md" href="#">
-                Talk to sales
+              <Button variant="outline" size="md" href="/company">
+                Talk to us
               </Button>
             </div>
           </div>

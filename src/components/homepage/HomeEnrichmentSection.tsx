@@ -16,9 +16,9 @@ export default function HomeEnrichmentSection() {
             <div className="flex items-center justify-between px-5 text-overline">
               <h2 className="flex gap-x-[6px]">
                 <span>[03]</span>
-                <span className="text-muted-foreground">Data enrichment</span>
+                <span className="text-muted-foreground">Built for speed</span>
               </h2>
-              <span>/ speed 1:1</span>
+              <span>/ ship 1:1</span>
             </div>
             <svg
               width="100%"
@@ -44,13 +44,13 @@ export default function HomeEnrichmentSection() {
                 Build fast.{' '}
               </h3>
               <p className="inline font-medium text-muted-foreground">
-                Forget months of setup. Oxy syncs immediately with your email and
-                calendar, building a powerful CRM right before your eyes.
+                Forget months of setup. Oxy apps come with sensible defaults, share data,
+                and integrate with your AI agents so you ship from day one.
               </p>
             </div>
             <div className="scroll-reveal mt-7 px-6 lg:px-0">
-              <Button variant="primary" size="md" href="#">
-                Start for free
+              <Button variant="primary" size="md" href="/products">
+                Get started
               </Button>
             </div>
           </div>

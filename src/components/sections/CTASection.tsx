@@ -38,15 +38,15 @@ export default function CTASection() {
             {/* Content: left side */}
             <div className="col-[2/6] flex flex-col py-30 max-lg:py-20 max-lg:col-[2/-2] max-lg:items-center">
               <h2 className="text-balance text-heading-responsive-md! text-foreground max-lg:text-center scroll-reveal">
-                <span>Ask more from CRM. Ask Oxy.</span>
+                <span>Build with the Oxy ecosystem.</span>
                 <span className="font-normal font-serif"> </span>
               </h2>
               <div className="flex w-full items-center justify-center gap-x-2.5 gap-y-2 max-md:flex-col max-md:items-center mt-8 lg:justify-start scroll-reveal" style={{ transitionDelay: '150ms' }}>
-                <Button variant="primary" size="md" href="#">
-                  Start for free
+                <Button variant="primary" size="md" href="/products">
+                  Get started
                 </Button>
-                <Button variant="outline" size="md" href="#">
-                  Talk to sales
+                <Button variant="outline" size="md" href="/company">
+                  Talk to us
                 </Button>
               </div>
             </div>

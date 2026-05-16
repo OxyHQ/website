@@ -21,15 +21,15 @@ export default function CodeaPage() {
             <div className="flex justify-start gap-x-g1 items-center">
               <div>
                 <div className="hidden items-center md:flex">
-                  <a className="btn" href="#">
-                    Download for Windows
+                  <a className="btn" href="/codea/extension">
+                    Try Codea
                     <div aria-hidden="true" className="btn-icon">
-                      <span aria-hidden="true">&#x2913;</span>
+                      <span aria-hidden="true">&rarr;</span>
                     </div>
                   </a>
                 </div>
                 <div className="flex items-center md:hidden">
-                  <a href="#" className="btn">
+                  <a href="/codea/extension" className="btn">
                     Try mobile agent
                     <div aria-hidden="true" className="btn-icon">
                       <span aria-hidden="true">&rarr;</span>
@@ -38,7 +38,7 @@ export default function CodeaPage() {
                 </div>
               </div>
               <div className="hidden md:block">
-                <a className="btn btn--secondary" href="#">
+                <a className="btn btn--secondary" href="/company">
                   Request a demo
                   <div aria-hidden="true" className="btn-icon">
                     <span aria-hidden="true">&rarr;</span>
@@ -223,7 +223,7 @@ export default function CodeaPage() {
               </article>
             ))}
           </div>
-          <a className="btn-text mt-v1 inline-flex" href="#">
+          <a className="btn-text mt-v1 inline-flex" href="/changelog">
             See what&rsquo;s new in Codea &rarr;
           </a>
         </div>
@@ -243,7 +243,7 @@ export default function CodeaPage() {
                   </div>
                   <div className="mt-v1">
                     <div className="flex justify-start gap-x-g1 items-center">
-                      <a className="btn-tertiary" href="#">
+                      <a className="btn-tertiary" href="/company/careers">
                         Join us
                         <div aria-hidden="true" className="btn-icon">
                           <span aria-hidden="true">&rarr;</span>
@@ -290,7 +290,7 @@ export default function CodeaPage() {
                   </a>
                 </article>
               ))}
-              <a className="btn-text mt-v1 inline-flex" href="#">View more posts &rarr;</a>
+              <a className="btn-text mt-v1 inline-flex" href="/company/news">View more posts &rarr;</a>
             </div>
           </div>
         </div>
@@ -306,15 +306,15 @@ export default function CodeaPage() {
             <div className="flex justify-center gap-x-g1 items-center">
               <div>
                 <div className="hidden items-center md:flex">
-                  <a className="btn" href="#">
-                    Download for Windows
+                  <a className="btn" href="/codea/extension">
+                    Try Codea
                     <div aria-hidden="true" className="btn-icon">
-                      <span aria-hidden="true">&#x2913;</span>
+                      <span aria-hidden="true">&rarr;</span>
                     </div>
                   </a>
                 </div>
                 <div className="flex items-center md:hidden">
-                  <a href="#" className="btn">
+                  <a href="/codea/extension" className="btn">
                     Try mobile agent
                     <div aria-hidden="true" className="btn-icon">
                       <span aria-hidden="true">&rarr;</span>

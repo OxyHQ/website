@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom'
 
 const tabs = [
   { label: 'Overview', to: '/developers/docs', active: true },
-  { label: 'App SDK', to: '#' },
-  { label: 'REST API', to: '#' },
-  { label: 'MCP', to: '#' },
+  { label: 'App SDK', to: '/developers/docs' },
+  { label: 'REST API', to: '/developers/docs' },
+  { label: 'MCP', to: '/developers/docs' },
 ]
 
 export default function DocsSubNav() {

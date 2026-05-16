@@ -28,11 +28,11 @@ export default function HomeFinalCTA() {
             className="mt-6 flex items-center gap-2 animate-fade-in-up"
             style={{ animationDelay: '1000ms' }}
           >
-            <Button variant="primary" size="md" href="#">
-              Start for free
+            <Button variant="primary" size="md" href="/products">
+              Get started
             </Button>
-            <Button variant="outline" size="md" href="#">
-              Talk to sales
+            <Button variant="outline" size="md" href="/company">
+              Talk to us
             </Button>
           </div>
         </div>

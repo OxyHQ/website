@@ -3,7 +3,7 @@ import Button from '../ui/Button'
 
 export default function ClosingSection() {
   return (
-    <section className="w-full bg-surface">
+    <section id="explore" className="w-full bg-surface scroll-mt-24">
       <div className="container">
         <div className="flex flex-col border-x border-border">
           {/* Top decoration */}

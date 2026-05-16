@@ -69,7 +69,7 @@ function ArrowIcon() {
 
 export default function EngagementSection() {
   return (
-    <section className="container">
+    <section id="get-involved" className="container scroll-mt-24">
       <div className="border-x border-border">
         {/* Header */}
         <header className="grid grid-cols-12 justify-items-start pb-15 pt-40 max-xl:pb-16 max-xl:pt-30 max-lg:pb-15 max-lg:pt-25">

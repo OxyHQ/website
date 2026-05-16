@@ -279,11 +279,11 @@ export default function HeroSection() {
               Universal Context.
             </p>
             <div className="flex items-center justify-center gap-x-2.5">
-              <Button variant="outline" size="md" href="#">
-                Talk to sales
+              <Button variant="outline" size="md" href="/company">
+                Talk to us
               </Button>
-              <Button variant="primary" size="md" href="#">
-                Start for free
+              <Button variant="primary" size="md" href="/products">
+                Get started
               </Button>
             </div>
           </div>

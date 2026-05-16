@@ -1,7 +1,7 @@
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 import Button from '../ui/Button'
 
-const tabs = ['Scale-ups', 'SaaS startups', 'SMBs', 'Investors']
+const tabs = ['Builders', 'Open source', 'Teams', 'Researchers']
 
 export default function HomeAdaptiveSection() {
   const sectionRef = useScrollReveal()
@@ -18,9 +18,9 @@ export default function HomeAdaptiveSection() {
             <div className="flex items-center justify-between px-5 text-overline">
               <h2 className="flex gap-x-[6px]">
                 <span>[02]</span>
-                <span className="text-muted-foreground">Adaptive model</span>
+                <span className="text-muted-foreground">Adaptive ecosystem</span>
               </h2>
-              <span>/ data &harr; business</span>
+              <span>/ apps &harr; agents</span>
             </div>
             <svg
               width="100%"
@@ -43,15 +43,15 @@ export default function HomeAdaptiveSection() {
           <div className="pt-20 lg:flex lg:flex-col lg:items-center lg:border-border lg:border-x lg:pt-[120px]">
             <div className="scroll-reveal max-w-[880px] text-heading-sm lg:text-center px-6 lg:px-0">
               <h3 className="inline font-semibold text-foreground">
-                A seismic shift in CRM flexibility.{' '}
+                One ecosystem, every workflow.{' '}
               </h3>
               <p className="inline font-medium text-muted-foreground">
-                Oxy's powerful data model adapts to how your business works, not the
-                other way around. Your business model — perfectly reflected in your CRM.
+                Mention, Inbox, Codea, Oxy AI and the rest of the ecosystem share data,
+                identity and agents — so your tools finally work together.
               </p>
             </div>
-            <Button variant="outline" size="md" href="#" className="scroll-reveal mt-7">
-              Explore our data model
+            <Button variant="outline" size="md" href="/products" className="scroll-reveal mt-7">
+              Explore the ecosystem
             </Button>
           </div>
 
