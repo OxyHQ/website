@@ -30,9 +30,10 @@ interface ConfirmDialogProps {
 /**
  * Reusable confirm dialog for the admin UI.
  *
- * Uses Bloom UI's Dialog primitives for the portal, backdrop, focus-trap and
- * scroll-lock plumbing, and Bloom's Buttons for the actions — so it stays
- * consistent with the rest of the Oxy product surfaces that build on Bloom.
+ * Uses Bloom's Dialog primitives for the portal, backdrop, focus-trap and
+ * scroll-lock plumbing — but renders Tailwind-styled DOM inside so it matches
+ * the rest of the admin (rather than using Bloom's RN-styled Prompt.Basic
+ * which would look out of place).
  *
  * Usage:
  *
