@@ -6,7 +6,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import { HorizontalLine } from '../components/ui/GridDecoration'
+import { HorizontalLine, DashedVLines } from '../components/ui/GridDecoration'
 import { API_BASE } from '../api/client'
 import { useReferral, usePage, type PageSection } from '../api/hooks'
 
@@ -144,24 +144,6 @@ function resolvePrograms(sections: PageSection[]): ProgramCard[] {
 // ── Layout primitives — match CompanyPage / ProductsPage helpers ────────────
 
 const DashedHLine = () => <HorizontalLine className="w-full text-border" dashed />
-
-function DashedVLines({ height = 'h-5' }: { height?: string }) {
-  return (
-    <div className={`grid w-full grid-cols-12 overflow-hidden ${height}`}>
-      <div className="col-[2/-2] flex justify-between">
-        <svg width="1" height="100%" className="text-border">
-          <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-        </svg>
-        <svg width="1" height="100%" className="text-border">
-          <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-        </svg>
-        <svg width="1" height="100%" className="text-border">
-          <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-        </svg>
-      </div>
-    </div>
-  )
-}
 
 // ── FAQ item — same pattern as CompanyPage::FAQItem ────────────────────────
 

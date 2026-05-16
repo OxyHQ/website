@@ -45,3 +45,22 @@ export function VerticalLine({
 export function CornerDot({ className = '' }: { className?: string }) {
   return <div className={`size-1 bg-input ${className}`} />;
 }
+
+/**
+ * Three evenly-spaced dashed vertical lines spanning the section width.
+ *
+ * Used between rows on long marketing pages (CompanyPage, ProductsPage,
+ * ReferralsPage, etc.) as a subtle grid divider. Defaults to a 20px tall
+ * strip; pass a Tailwind height utility via `height` to change it.
+ */
+export function DashedVLines({ height = 'h-5' }: { height?: string }) {
+  return (
+    <div className={`grid w-full grid-cols-12 overflow-hidden ${height}`}>
+      <div className="col-[2/-2] flex justify-between">
+        <VerticalLine dashed className="text-border" />
+        <VerticalLine dashed className="text-border" />
+        <VerticalLine dashed className="text-border" />
+      </div>
+    </div>
+  );
+}

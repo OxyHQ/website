@@ -47,7 +47,7 @@ export default function NotFoundPage() {
         hideBanner={onFairCoinHost}
         hideLocalePicker={onFairCoinHost}
       />
-      <main className="flex flex-1 items-center pt-[var(--site-header-height)]">
+      <main className="flex flex-1 items-center">
         <div className="container border-x border-border">
           <div className="grid grid-cols-12 items-center py-12 lg:py-16">
             {/* Text */}
