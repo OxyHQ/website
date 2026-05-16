@@ -1,1 +1,73 @@
+/**
+ * Application-wide constants and feature flags.
+ *
+ * Feature flags here are used to hide sections that currently rely on
+ * placeholder / cloned content until real CMS-driven data is wired up.
+ * Set a flag to `true` once the section has real, verified data.
+ */
+
 export const ADMIN_USERNAMES = ['oxy', 'nate']
+
+/**
+ * Canonical company identity. Use these everywhere instead of hardcoding
+ * names, taglines, or descriptions in copy. Oxy is an open-source ethical
+ * tech ecosystem building AI agents and apps — NOT a CRM (though Oxy CRM
+ * is one of the products in the ecosystem).
+ */
+export const OXY_FOUNDER = 'Nate Isern'
+export const OXY_HQ = 'Barcelona, ES'
+export const OXY_GITHUB_ORG = 'OxyHQ'
+export const OXY_GITHUB_URL = `https://github.com/${OXY_GITHUB_ORG}`
+
+export const OXY_PRODUCTS = [
+  'Mention',
+  'Inbox',
+  'Codea',
+  'Oxy AI (Alia)',
+  'Oxy CRM',
+  'OxyOS',
+  'TNP',
+  'FairCoin',
+  'Homiio',
+] as const
+
+export const OXY_POSITIONING = {
+  tagline: 'An open-source ethical tech ecosystem building AI agents and apps.',
+  short:
+    'Oxy is an open-source ethical tech ecosystem building AI agents and apps for a future where technology empowers people.',
+  long:
+    "Oxy is an open-source, ethical technology ecosystem building AI agents and apps. Our products — including Mention, Inbox, Codea, Oxy AI (Alia), Oxy CRM, OxyOS, TNP, FairCoin and Homiio — share a single mission: empower people without selling their data.",
+} as const
+
+/**
+ * Feature flags. Default to `false` for any surface that still relies on
+ * placeholder/cloned content. Flip to `true` once real data is in place.
+ */
+export const FEATURES = {
+  /** Render the homepage "trusted by" / partner logo walls. */
+  SHOW_TRUSTED_LOGOS: false,
+  /** Render testimonial sections (cloned/fake people right now). */
+  SHOW_TESTIMONIALS: false,
+  /** Render the homepage STATS strip with hardcoded numbers. */
+  SHOW_HOMEPAGE_STATS: false,
+  /** Render the world map / dashboard country-data section. */
+  SHOW_DASHBOARD_COUNTRY_METRICS: false,
+  /** Render App Store / Play Store / download badges for products that don't ship yet. */
+  SHOW_PLACEHOLDER_DOWNLOADS: false,
+  /** Render the Astro browser download CTAs (no real downloads yet). */
+  SHOW_ASTRO_DOWNLOADS: false,
+  /** Render the Codea download CTAs (no real download yet). */
+  SHOW_CODEA_DOWNLOADS: false,
+  /** Render the Initiative manifesto image carousel (uses Unsplash URLs). */
+  SHOW_INITIATIVE_MANIFESTO_IMAGES: false,
+  /** Render the static FairCoin price chip in the hero. */
+  SHOW_FAIRCOIN_HERO_PRICE_CHIP: false,
+  /** Static fallback hero-carousel content (when CMS has no data). */
+  SHOW_HERO_CAROUSEL_FALLBACK: false,
+  /** Render the static blog fallback content (data/blog.ts). */
+  SHOW_BLOG_STATIC_FALLBACK: false,
+  /** Render the "trusted by" pricing logo strip. */
+  SHOW_PRICING_LOGOS: false,
+} as const
+
+export type FeatureFlag = keyof typeof FEATURES
