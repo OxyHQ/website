@@ -41,8 +41,8 @@ export default function TeamSizeSection() {
           </svg>
 
           <div className="relative col-[2/-2] flex max-w-md flex-col gap-y-3 md:col-[2/9]">
-            <h2 className="text-balance text-foreground">130+ team members.</h2>
-            <p className="text-balance text-muted-foreground">Building from our HQ in London, and across Europe and the US.</p>
+            <h2 className="text-balance text-foreground">A small team, big ambitions.</h2>
+            <p className="text-balance text-muted-foreground">Building from our HQ in Barcelona, with a remote-first team across Europe and beyond.</p>
           </div>
 
           <div className="relative col-[2/-2] grid grid-cols-10 gap-2.5 md:gap-3 lg:grid-cols-10">

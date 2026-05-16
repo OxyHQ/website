@@ -154,7 +154,7 @@ export default function CareersHeroSection() {
                   <div className="h-full w-full rounded-full">
                     <div className="flex h-full w-full items-center justify-center rounded-full bg-surface text-muted-foreground">
                     <span className="lg:text-[10px] lg:leading-[14px] text-[12px] tabular-nums leading-[16px] tracking-tighter">
-                      +127
+                      +
                     </span>
                     </div>
                   </div>

@@ -34,13 +34,15 @@ export const companyHero = {
   subtitle: 'Our north star: a world where technology creates opportunity for everyone, not just those who can afford it.',
 }
 
-/* ── Stats ── */
+/* ── Stats ──
+   Note: any numeric stat that needs to stay accurate (team size, etc.)
+   should be derived from CMS data at render-time, not hardcoded here. */
 
 export const companyStats = [
   { value: 'Global', label: 'Impact', description: 'Serving communities worldwide' },
   { value: 'AI', label: 'Workflows', description: 'Automating what slows you down' },
   { value: 'Barcelona', label: 'ES', description: 'HQ + remote team worldwide' },
-  { value: '26', label: 'Team members', description: 'And growing every month' },
+  { value: 'Open', label: 'Source', description: 'Built in the open with our community' },
 ]
 
 /* ── Culture ── */
@@ -76,34 +78,10 @@ export const companyValues: CompanyValue[] = [
   { title: 'Diversity and inclusion', description: 'We believe in building a diverse and inclusive team.' },
 ]
 
-/* ── Team ── */
-
-export const teamMembers: TeamMember[] = [
-  {
-    name: 'Ton Soteras',
-    role: 'Public Relations Officer',
-    description: 'Responsible for talking, discussing, negotiating, and recruiting people who are interested in Oxy and FairCoin.',
-    slug: 'ton',
-  },
-  {
-    name: 'Juan C. Moslares Fuste',
-    role: 'Chief Communications Officer (CCO)',
-    description: 'Juan leads communication at Oxy, connecting our vision with the world through his experience in radio.',
-    slug: 'juan-c-moslares-fuste',
-  },
-  {
-    name: 'Alejandra Sanchez Garcia',
-    role: 'Frontend Developer',
-    description: 'Alejandra focuses on designing and developing user-friendly interfaces that align with Oxy\'s vision.',
-    slug: 'alejandrasanchez',
-  },
-  {
-    name: 'Desiree Moreno Corpas',
-    role: 'Full-Stack Web Developer',
-    description: 'Desiree is a Full-Stack Web Developer with expertise in JavaScript, PHP, React, and Agile methodologies.',
-    slug: 'desiree',
-  },
-]
+/* ── Team ──
+   Team data is sourced exclusively from the CMS via `useTeamMembers()`.
+   Do NOT hardcode team members here — that creates drift the moment a
+   real team member is added or leaves. The founder is Nate Isern. */
 
 /* ── FAQ ── */
 
