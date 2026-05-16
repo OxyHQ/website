@@ -208,13 +208,13 @@ export default function DocsPage() {
           {/* Content */}
           <div className="relative mt-8 mb-14 [contain:inline-size] isolate max-w-3xl" data-docs-content>
             <p className="text-muted-foreground leading-7">
-              Oxy is a revolutionary CRM platform which is highly customisable, incredibly powerful and
-              data-driven. In these guides, you can find everything you need to build powerful integrations,
-              automations and data pipelines on top of Oxy.
+              Oxy is an open-source ecosystem of AI agents and apps — Mention, Inbox, Codea, Oxy AI,
+              Oxy CRM, OxyOS, TNP, FairCoin and Homiio. In these guides, you can find everything you
+              need to build powerful integrations, automations and data pipelines on top of Oxy.
             </p>
             <p className="text-muted-foreground leading-7 mt-4">
               Our docs cover guides, examples, references and code to help you build apps and share them with
-              Oxy's customers or for your own workspace.
+              the Oxy community or for your own workspace.
             </p>
             <p className="text-muted-foreground leading-7 mt-4">
               The Oxy Developer Platform consists of three parts:

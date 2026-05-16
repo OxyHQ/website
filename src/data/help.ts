@@ -18,9 +18,9 @@ export interface HelpArticle {
 }
 
 export const gettingStartedArticles: HelpArticle[] = [
-  { title: 'Introduction', description: 'Learn why Oxy is the CRM of the future.', href: '#' },
-  { title: 'Introduction to navigating Oxy', description: 'Get to know your way around Oxy.', href: '#' },
-  { title: 'Introduction to email sync', description: 'Sync emails and calendar events in minutes.', href: '#' },
+  { title: 'Introduction', description: 'Learn what the Oxy ecosystem is and how its products fit together.', href: '/help' },
+  { title: 'Introduction to navigating Oxy', description: 'Get to know your way around Oxy.', href: '/help' },
+  { title: 'Introduction to integrations', description: 'Connect Oxy apps to the tools you already use.', href: '/help' },
 ]
 
 export interface SidebarSection {
@@ -34,25 +34,25 @@ export const sidebarSections: SidebarSection[] = [
     name: 'Academy',
     icon: 'academy',
     items: [
-      { label: 'Introductions', href: '#' },
-      { label: 'Workflows', href: '#' },
-      { label: 'Sequences', href: '#' },
+      { label: 'Introductions', href: '/help' },
+      { label: 'Workflows', href: '/help' },
+      { label: 'Automations', href: '/help' },
     ],
   },
   {
     name: 'Reference',
     icon: 'reference',
     items: [
-      { label: 'Oxy 101', href: '#' },
-      { label: 'People, companies & records', href: '#' },
-      { label: 'Objects, lists & attributes', href: '#' },
-      { label: 'Notes, tasks & threads', href: '#' },
-      { label: 'Email & calendar', href: '#' },
-      { label: 'Automations', href: '#' },
-      { label: 'Reporting & analytics', href: '#' },
-      { label: 'Imports & exports', href: '#' },
-      { label: 'Integrations', href: '#' },
-      { label: 'Billing & admin', href: '#' },
+      { label: 'Oxy 101', href: '/help' },
+      { label: 'Accounts & profiles', href: '/help' },
+      { label: 'Workspaces & teams', href: '/help' },
+      { label: 'Notes, tasks & threads', href: '/help' },
+      { label: 'AI agents (Alia)', href: '/help' },
+      { label: 'Automations', href: '/help' },
+      { label: 'Analytics', href: '/help' },
+      { label: 'Imports & exports', href: '/help' },
+      { label: 'Integrations', href: '/help' },
+      { label: 'Billing & admin', href: '/help' },
     ],
   },
 ]

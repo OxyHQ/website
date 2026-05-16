@@ -15,7 +15,7 @@ export default function CareersPage() {
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
         title="Careers"
-        description="Join Oxy and help build the CRM of the future. We're redefining CRM with AI-native features. See open positions in Engineering, Product, Design, and more."
+        description="Join Oxy and help build an open-source ecosystem of AI agents and apps. See open positions in Engineering, Product, Design, and more."
         canonicalPath="/company/careers"
       />
       <Navbar />

@@ -81,7 +81,7 @@ export default function NewsroomPage() {
 
   const sections = pageData?.sections ?? []
   const title = pageData?.title ?? 'Newsroom'
-  const description = pageData?.description ?? 'The latest news, product announcements, research, and stories from Oxy — the AI-powered CRM platform for go-to-market teams.'
+  const description = pageData?.description ?? 'The latest news, product announcements, research, and stories from Oxy — an open-source ecosystem of AI agents and apps.'
 
   const heroTitle = sectionHeading(sections, 'hero', 'Newsroom')
   const recentNewsTitle = sectionHeading(sections, 'recent-news', 'Recent news')

@@ -82,7 +82,7 @@ export default function OpenPositionsSection() {
         <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
           <div className="flex max-w-lg flex-col gap-4 max-lg:gap-3 text-center col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
             <h2 className="text-pretty text-heading-responsive-md">Open positions.</h2>
-            <p className="text-pretty text-muted-foreground text-xl">If you want to share our mission of building the definitive CRM, we'd love to hear from you.</p>
+            <p className="text-pretty text-muted-foreground text-xl">If you want to share our mission of building an open-source ecosystem of AI agents and apps, we'd love to hear from you.</p>
           </div>
         </header>
 

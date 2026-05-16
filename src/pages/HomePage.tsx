@@ -1187,8 +1187,8 @@ export default function Landing4() {
   return (
     <>
       <SEO
-        title="Oxy \u2014 Build expert AI agents in minutes"
-        description="One platform for creating expert AI agents grounded in your company's knowledge. No coding required. Connect all your data quickly and securely."
+        title="Oxy — Open-source ecosystem of AI agents and apps"
+        description="Oxy is an open-source ethical tech ecosystem building AI agents and apps — Mention, Inbox, Codea, Oxy AI, Oxy CRM, OxyOS, TNP, FairCoin and Homiio."
         canonicalPath="/"
       />
       <Navbar transparent />

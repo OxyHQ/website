@@ -12,44 +12,44 @@ interface HoverCard {
 
 const hoverCards: HoverCard[] = [
   {
-    title: 'View contributing data',
-    description: 'Added the ability for users to view contributing data for Insight reports, so they can drill-down into underlying records or segments.',
-    tags: [{ label: 'Design', variant: 'accent' }, { label: 'Enhancement', variant: 'primary' }],
+    title: 'Mention notifications',
+    description: 'Added rich, real-time mention notifications so people stay in the loop without losing focus.',
+    tags: [{ label: 'Mention', variant: 'accent' }, { label: 'Feature', variant: 'primary' }],
   },
   {
-    title: 'Automated lead scoring',
-    description: 'Deploy AI-powered lead scoring that automatically evaluates and prioritizes leads based on engagement signals and fit criteria.',
-    tags: [{ label: 'Feature', variant: 'primary' }, { label: 'AI', variant: 'muted' }],
+    title: 'Codea agent runs in parallel',
+    description: 'Codea can now spin up multiple coding agents in parallel sandboxes so long tasks finish faster.',
+    tags: [{ label: 'Codea', variant: 'primary' }, { label: 'AI', variant: 'muted' }],
   },
   {
-    title: 'Real-time pipeline sync',
-    description: 'Sync pipeline data in real-time across all connected tools, ensuring your team always has the latest information.',
-    tags: [{ label: 'Engineering', variant: 'primary' }, { label: 'Data', variant: 'accent' }],
+    title: 'Inbox unified search',
+    description: 'Search across every conversation, attachment and thread in Inbox with one keystroke.',
+    tags: [{ label: 'Inbox', variant: 'primary' }, { label: 'Search', variant: 'accent' }],
   },
   {
-    title: 'Custom workflow builder',
-    description: 'Build complex automation workflows with a visual builder that supports branching, conditions, and integrations.',
-    tags: [{ label: 'Product', variant: 'accent' }, { label: 'Feature', variant: 'primary' }],
+    title: 'Oxy AI custom agents',
+    description: 'Build domain-specific agents on top of Alia with the App SDK — no model retraining required.',
+    tags: [{ label: 'Oxy AI', variant: 'accent' }, { label: 'Feature', variant: 'primary' }],
   },
   {
-    title: 'Multi-language support',
-    description: 'Full internationalization support across the platform, enabling teams worldwide to work in their preferred language.',
-    tags: [{ label: 'Enhancement', variant: 'primary' }, { label: 'Reports', variant: 'muted' }],
+    title: 'Multi-language UI',
+    description: 'Full internationalization across the platform so teams worldwide can work in their preferred language.',
+    tags: [{ label: 'Enhancement', variant: 'primary' }, { label: 'i18n', variant: 'muted' }],
   },
   {
-    title: 'Advanced reporting engine',
-    description: 'Create real-time, detailed reports that scale with your data. Visualize, customize, and get deep insights in seconds.',
-    tags: [{ label: 'Design', variant: 'accent' }, { label: 'Reports', variant: 'muted' }],
+    title: 'OxyOS power profiles',
+    description: 'Tunable power profiles so OxyOS adapts to a laptop, desktop, or low-power device automatically.',
+    tags: [{ label: 'OxyOS', variant: 'accent' }, { label: 'Performance', variant: 'muted' }],
   },
   {
-    title: 'Call intelligence insights',
-    description: 'AI automatically picks up buying signals, blockers, and feature requests during calls — not days later.',
-    tags: [{ label: 'AI', variant: 'muted' }, { label: 'Feature', variant: 'primary' }],
+    title: 'FairCoin bridge',
+    description: 'Move native FAIR to and from Base via the audited WFAIR bridge with end-to-end visibility.',
+    tags: [{ label: 'FairCoin', variant: 'muted' }, { label: 'Feature', variant: 'primary' }],
   },
   {
-    title: 'Flexible data model',
-    description: 'Build custom objects, attributes, and relationships that perfectly mirror how your business actually works.',
-    tags: [{ label: 'Engineering', variant: 'primary' }, { label: 'Product', variant: 'accent' }],
+    title: 'Open by default',
+    description: 'Everything we build ships under an open-source license — fork it, audit it, run it yourself.',
+    tags: [{ label: 'Engineering', variant: 'primary' }, { label: 'Open source', variant: 'accent' }],
   },
 ]
 
