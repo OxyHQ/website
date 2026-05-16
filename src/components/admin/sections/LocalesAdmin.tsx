@@ -7,6 +7,8 @@ import { Input } from '../../ui/shadcn/input'
 import { Label } from '../../ui/shadcn/label'
 import { Switch } from '@oxyhq/bloom/switch'
 import { Trash2, Plus } from 'lucide-react'
+import ConfirmDialog from '../ConfirmDialog'
+import { useConfirmAction } from '../useConfirmAction'
 
 interface LocaleForm {
   code: string
@@ -44,11 +46,12 @@ export default function LocalesAdmin() {
     }
   }
 
-  const deleteLocale = async (code: string) => {
-    if (!confirm(`Delete locale "${code}" and all its translations?`)) return
-    await apiFetch(`/locales/${code}`, { method: 'DELETE' })
-    await refetch()
-  }
+  const deleteAction = useConfirmAction<Locale>({
+    onConfirm: async (locale) => {
+      await apiFetch(`/locales/${locale.code}`, { method: 'DELETE' })
+      await refetch()
+    },
+  })
 
   const startEdit = (locale: Locale) => {
     setForm({ code: locale.code, name: locale.name, nativeName: locale.nativeName, isDefault: locale.isDefault, enabled: locale.enabled })
@@ -82,7 +85,7 @@ export default function LocalesAdmin() {
                 Edit
               </button>
               {!locale.isDefault && (
-                <button onClick={() => deleteLocale(locale.code)} className="rounded-md p-1.5 text-muted-foreground hover:text-red-500">
+                <button onClick={() => deleteAction.request(locale)} className="rounded-md p-1.5 text-muted-foreground hover:text-red-500">
                   <Trash2 className="size-4" />
                 </button>
               )}
@@ -138,6 +141,16 @@ export default function LocalesAdmin() {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        control={deleteAction.control}
+        title={deleteAction.target ? `Delete locale “${deleteAction.target.code}”?` : 'Delete locale?'}
+        description="This removes the locale and all of its translations. This cannot be undone."
+        confirmLabel="Delete"
+        tone="danger"
+        busy={deleteAction.busy}
+        onConfirm={deleteAction.confirm}
+      />
     </div>
   )
 }

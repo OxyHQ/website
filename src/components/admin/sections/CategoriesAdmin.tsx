@@ -5,6 +5,8 @@ import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
+import ConfirmDialog from '../ConfirmDialog'
+import { useConfirmAction } from '../useConfirmAction'
 
 function slugify(input: string): string {
   return input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
@@ -54,11 +56,12 @@ export default function CategoriesAdmin() {
     }
   }
 
-  const remove = async (slug: string) => {
-    if (!confirm(`Delete category "${slug}"? Any products or nav items still pointing at it will need to be re-assigned.`)) return
-    await apiFetch(`/categories/${slug}`, { method: 'DELETE' })
-    await refetch()
-  }
+  const deleteAction = useConfirmAction<CategoryRecord>({
+    onConfirm: async (category) => {
+      await apiFetch(`/categories/${category.slug}`, { method: 'DELETE' })
+      await refetch()
+    },
+  })
 
   if (editing) {
     const isNew = !editing._id
@@ -178,7 +181,7 @@ export default function CategoriesAdmin() {
                   <div className="shrink-0 text-xs text-muted-foreground">#{category.order}</div>
                   <div className="shrink-0">
                     <Button variant="ghost" size="small" onPress={() => setEditing(category)}>Edit</Button>
-                    <Button variant="ghost" size="small" onPress={() => remove(category.slug)}>Delete</Button>
+                    <Button variant="ghost" size="small" onPress={() => deleteAction.request(category)}>Delete</Button>
                   </div>
                 </div>
               ))}
@@ -186,6 +189,16 @@ export default function CategoriesAdmin() {
           )}
         </section>
       ))}
+
+      <ConfirmDialog
+        control={deleteAction.control}
+        title={deleteAction.target ? `Delete “${deleteAction.target.label || deleteAction.target.slug}”?` : 'Delete category?'}
+        description="Any products or nav items still pointing at this category will need to be re-assigned. This cannot be undone."
+        confirmLabel="Delete"
+        tone="danger"
+        busy={deleteAction.busy}
+        onConfirm={deleteAction.confirm}
+      />
     </div>
   )
 }
