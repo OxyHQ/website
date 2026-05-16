@@ -1,4 +1,5 @@
 import { usePricing } from '../../api/hooks'
+import { FEATURES } from '../../constants'
 import Button from '../ui/Button'
 import BillingToggle from './BillingToggle'
 
@@ -13,9 +14,9 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
   return (
     <div className="container">
       <div className="flex flex-col items-center pt-[116px]">
-        <h1 className="text-center text-heading-responsive-lg">From zero to IPO.</h1>
+        <h1 className="text-center text-heading-responsive-lg">Pricing for the Oxy ecosystem.</h1>
         <p className="mt-4 max-w-md text-balance text-center text-secondary-foreground text-xl">
-          Designed for every stage of your journey. Start today, no credit card required.
+          Most Oxy apps are free and open source. Paid plans add hosting, support, and team features. Start today, no credit card required.
         </p>
       </div>
 
@@ -138,21 +139,21 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
       </div>
 
       {/* Logo bar */}
-      <div className="mt-16">
-        <div className="container">
-          <div className="">
-            <div className="grid grid-cols-12 justify-items-center py-25">
-              <div className="col-[2/-2]">
-                <div className="grid max-w-7xl grid-cols-6 gap-x-8 gap-y-4.5 max-xl:grid-cols-4 max-xl:gap-y-5 max-lg:gap-x-5 max-lg:gap-y-3 max-md:grid-cols-3 max-md:gap-x-4 max-md:gap-y-2 max-md:[&>*:nth-child(1n+10)]:hidden">
-                  {['Railway', 'Public', 'Wordsmith', 'Plain', 'Passionfroot'].map(name => (
-                    <span key={name} className="size-full h-12 object-contain max-xl:h-10 text-sm font-medium text-accent-foreground flex items-center justify-center">{name}</span>
-                  ))}
+      {FEATURES.SHOW_PRICING_LOGOS && (
+        <div className="mt-16">
+          <div className="container">
+            <div className="">
+              <div className="grid grid-cols-12 justify-items-center py-25">
+                <div className="col-[2/-2]">
+                  <div className="grid max-w-7xl grid-cols-6 gap-x-8 gap-y-4.5 max-xl:grid-cols-4 max-xl:gap-y-5 max-lg:gap-x-5 max-lg:gap-y-3 max-md:grid-cols-3 max-md:gap-x-4 max-md:gap-y-2 max-md:[&>*:nth-child(1n+10)]:hidden">
+                    {/* Placeholder logo strip — kept behind FEATURES.SHOW_PRICING_LOGOS until real customer/community logos are available. */}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

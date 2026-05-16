@@ -68,7 +68,7 @@ export default function PricingCompareSection() {
       <div className="flex flex-col items-center text-center">
         <h2 className="font-bold text-heading-md">Compare plans.</h2>
         <p className="mt-2 text-secondary-foreground">
-          Everything you need to build the perfect relationship management tool for your team.
+          Everything you need to build, run, and scale on top of the Oxy ecosystem.
         </p>
       </div>
 

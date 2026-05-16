@@ -15,19 +15,19 @@ export default function PricingPage() {
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-primary-background">
       <SEO
         title="Pricing"
-        description="Start free, scale as you grow. Oxy offers Free, Plus, Pro, and Enterprise plans for teams of every size. Plans start at $29/seat/month billed annually."
+        description="Pricing for the Oxy ecosystem. Most Oxy apps are free and open source; paid plans add hosting, support, and team features. Start free, scale as you grow."
         canonicalPath="/pricing"
       />
       <StructuredData data={{
         '@context': 'https://schema.org',
         '@type': 'SoftwareApplication',
-        name: 'Oxy CRM',
+        name: 'Oxy',
         applicationCategory: 'BusinessApplication',
         operatingSystem: 'Web',
         offers: [
           { '@type': 'Offer', name: 'Free', price: '0', priceCurrency: 'USD' },
-          { '@type': 'Offer', name: 'Plus', price: '29', priceCurrency: 'USD', billingIncrement: 'P1M' },
-          { '@type': 'Offer', name: 'Pro', price: '79', priceCurrency: 'USD', billingIncrement: 'P1M' },
+          { '@type': 'Offer', name: 'Plus', price: '0', priceCurrency: 'USD', description: 'See current pricing on the page' },
+          { '@type': 'Offer', name: 'Pro', price: '0', priceCurrency: 'USD', description: 'See current pricing on the page' },
           { '@type': 'Offer', name: 'Enterprise', price: '0', priceCurrency: 'USD', description: 'Custom pricing' },
         ],
       }} />
