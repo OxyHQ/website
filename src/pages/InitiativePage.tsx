@@ -8,6 +8,7 @@ import EngagementSection from '../components/initiative/EngagementSection'
 import ClosingSection from '../components/initiative/ClosingSection'
 import { HorizontalLine } from '../components/ui/GridDecoration'
 import { imagePaths } from '../data/initiative'
+import { FEATURES } from '../constants'
 
 export default function InitiativePage() {
   return (
@@ -21,7 +22,9 @@ export default function InitiativePage() {
         <Navbar transparent />
       </div>
       <main>
-        <ManifestoSection imagePaths={imagePaths} />
+        {FEATURES.SHOW_INITIATIVE_MANIFESTO_IMAGES && imagePaths.length > 0 && (
+          <ManifestoSection imagePaths={imagePaths} />
+        )}
         <div className="bg-background">
           <IntroSection />
           <div className="contents">

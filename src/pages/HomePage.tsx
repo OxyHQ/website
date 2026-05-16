@@ -906,18 +906,18 @@ function PartnershipSection() {
 /*  Integrations & Security                                            */
 /* ------------------------------------------------------------------ */
 const INTEGRATIONS = [
-  { name: 'API Documentation', icon: 'google-meet.svg' },
-  { name: 'GitHub Repositories', icon: 'google-drive.svg' },
-  { name: 'SDK & Libraries', icon: 'google-calendar.svg' },
-  { name: 'Developer Blog', icon: 'dropbox.svg' },
-  { name: 'Community Forum', icon: 'confluence.svg' },
-  { name: 'Bug Tracker', icon: 'jira.svg' },
-  { name: 'Changelog', icon: 'servicenow.svg' },
-  { name: 'Status Page', icon: 'salesforce.svg' },
-  { name: 'Developer Discord', icon: 'teams.svg' },
-  { name: 'Code Examples', icon: 'sharepoint.svg' },
-  { name: 'Video Tutorials', icon: 'workday.svg' },
-  { name: 'Newsletter', icon: 'slack.svg' },
+  { name: 'API Documentation' },
+  { name: 'GitHub Repositories' },
+  { name: 'SDK & Libraries' },
+  { name: 'Developer Blog' },
+  { name: 'Community Forum' },
+  { name: 'Bug Tracker' },
+  { name: 'Changelog' },
+  { name: 'Status Page' },
+  { name: 'Developer Discord' },
+  { name: 'Code Examples' },
+  { name: 'Video Tutorials' },
+  { name: 'Newsletter' },
 ]
 
 const SECURITY_ITEMS = [
@@ -953,9 +953,7 @@ function IntegrationsSecuritySection() {
                     <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-sm leading-4 tracking-wide font-[450]">
                       {INTEGRATIONS.map((item) => (
                         <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+&]:mt-3">
-                          <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
-                            <img src={`${IMG}/${item.icon}`} width={20} height={20} alt={`${item.name} icon`} className="w-auto h-auto max-w-5 max-h-5 object-contain dark:invert" loading="lazy" decoding="async" />
-                          </div>
+                          <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm" aria-hidden="true" />
                           <span>{item.name}</span>
                         </div>
                       ))}
