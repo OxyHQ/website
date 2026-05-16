@@ -27,9 +27,6 @@ const sectionGradients: Record<number, [string, string, string]> = {
   6: ['#2E3D5F', '#6A7D90', '#9B8565'], // End-to-End Encryption — evening warm
 }
 
-/* ───────────────────────── Placeholder Mockup ───────────────────────── */
-
-
 /* ───────────────────────── Icon components ───────────────────────── */
 
 function SparkleIcon({ className }: { className?: string }) {

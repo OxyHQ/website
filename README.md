@@ -1,75 +1,76 @@
-# React + TypeScript + Vite
+# Oxy website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Source for [oxy.so](https://oxy.so) and the FairCoin sub-brand at
+[fairco.in](https://fairco.in) (dual-mounted from this same React app —
+see `src/lib/host.ts` and `src/lib/faircoin-chrome.tsx`).
 
-Currently, two official plugins are available:
+Oxy is an open-source ethical tech ecosystem building AI agents and apps:
+Mention, Inbox, Codea Studio, Codea AI, Codea VS Code Extension,
+Oxy AI (Alia), Oxy CRM, OxyOS, TNP, FairCoin and Homiio.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- **React + Vite + TypeScript** — SPA with React Router.
+- **Tailwind CSS** — utility-first styling with custom theme tokens in
+  `src/styles/` and `src/index.css`.
+- **TanStack Query** — server state. API hooks live in `src/api/hooks.ts`
+  and bind to the CMS at `https://api.oxy.so`.
+- **wagmi + viem** — wallet integration for FairCoin pages.
+- **Express + Mongoose** — the API server lives under `server/`.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Getting started
 
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+bun install
+bun dev      # vite dev server on :5173, api server on :3001
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Other scripts:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+bun run build     # type-check + production build to dist/
+bun run lint      # eslint
+bun run preview   # serve the built bundle locally
 ```
+
+## Project layout
+
+```
+src/
+  api/         — REST client + TanStack Query hooks
+  components/  — UI by surface area (homepage, codea, faircoin, ai, ...)
+  data/        — Static fallback content & types used when the CMS is empty
+  hooks/       — Domain hooks (FairCoin chain stats, scroll reveal, etc.)
+  lib/         — Pure helpers (faircoin-links, host detection, wagmi config)
+  pages/       — Route-level components (one per Route in App.tsx)
+  stores/      — Zustand stores for cross-tree UI state
+  styles/      — Page- and product-specific theme CSS
+  constants.ts — Canonical positioning, founder, HQ, feature flags
+```
+
+## Feature flags
+
+`src/constants.ts` exports a `FEATURES` object used to hide sections that
+currently rely on placeholder content. Flip a flag to `true` once the
+relevant section has real data wired up. See the comments in that file
+for what each flag gates.
+
+## Quarantined assets
+
+The site was originally scaffolded by cloning marketing pages from other
+products. Cloned/unused image assets now live under
+`public/images/_unused/` (and `public/_unused/`) with a README explaining
+their provenance. They are not deleted yet in case any are re-used after
+the surrounding content is rewritten.
+
+## Conventions
+
+- Don&rsquo;t describe Oxy as a CRM. Oxy CRM is one product in the
+  ecosystem; the parent brand is an open-source ecosystem of AI agents
+  and apps.
+- All team / blog / changelog / job / testimonial content should come
+  from the CMS (`useTeamMembers`, `useNewsroomPosts`, `useJobs`, etc.).
+  Static fallbacks under `src/data/` should stay empty or generic.
+- Don&rsquo;t hardcode third-party customer logos or testimonials —
+  they&rsquo;re still gated behind `FEATURES.SHOW_TRUSTED_LOGOS` /
+  `FEATURES.SHOW_TESTIMONIALS` until real, verified ones exist.

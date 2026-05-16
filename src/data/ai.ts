@@ -58,8 +58,8 @@ export const globeTextRight = 'Your World'
 
 export const researchHeading = 'AI for Research'
 export const researchParagraphs = [
-  "At Oxy, we're building AI that advances research across science, healthcare, and human understanding, tackling the problems that matter most.",
-  'From accelerating drug discovery and genomics to climate modeling and social science, {highlight} is designed to help researchers push the boundaries of what\'s possible.',
+  "At Oxy, we want AI to help advance research across science, healthcare, and human understanding — the problems that matter most.",
+  'From scientific computing and data analysis to modeling and the social sciences, {highlight} is designed to help researchers push the boundaries of what\'s possible.',
 ]
 export const researchHighlight = 'Oxy AI'
 export const researchCta = 'Learn more'

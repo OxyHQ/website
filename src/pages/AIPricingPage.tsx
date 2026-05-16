@@ -60,7 +60,7 @@ function buildComparison(plans: APIPlan[]) {
 export default function AIPricingPage() {
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
 
-  const { data: plans = [] } = useQuery<APIPlan[]>({
+  const { data: plans = [], isPending, isError, error, refetch } = useQuery<APIPlan[]>({
     queryKey: ['alia-billing-plans'],
     queryFn: async () => {
       const res = await fetch('https://api.alia.onl/billing/plans?product=alia')
@@ -75,13 +75,51 @@ export default function AIPricingPage() {
   const comparison = plans.length > 0 ? buildComparison(plans) : []
   const sidebarLabels = ['Credits', 'Models', 'Channels', 'Limits']
 
-  if (plans.length === 0) return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <Navbar />
-      <div className="flex-1 flex items-center justify-center text-muted-foreground">Loading plans...</div>
-      <Footer />
-    </div>
-  )
+  if (isPending) {
+    return (
+      <div className="flex min-h-screen flex-col bg-background">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center text-muted-foreground" role="status" aria-live="polite">
+          Loading plans…
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (isError || plans.length === 0) {
+    return (
+      <div className="flex min-h-screen flex-col bg-background">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center px-6">
+          <div className="max-w-md text-center" role="alert">
+            <h1 className="text-2xl font-semibold text-foreground">We couldn&rsquo;t load the plans.</h1>
+            <p className="mt-3 text-muted-foreground">
+              {isError && error instanceof Error
+                ? error.message
+                : 'No plans were returned from the billing service.'}
+            </p>
+            <div className="mt-6 flex justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => refetch()}
+                className="inline-flex h-10 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background"
+              >
+                Try again
+              </button>
+              <a
+                className="inline-flex h-10 items-center justify-center rounded-full border border-border px-5 text-sm font-medium text-foreground"
+                href="/pricing"
+              >
+                See ecosystem pricing
+              </a>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">

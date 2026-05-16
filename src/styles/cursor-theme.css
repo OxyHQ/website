@@ -1,4 +1,17 @@
-/* Codea theme for /codea page */
+/*
+ * Codea theme for /codea page.
+ *
+ * NOTE: The class is called `cursor-theme` for historical reasons (the
+ * theming approach was lifted from a Cursor-IDE-style design pass). The
+ * class name is not user-facing; it just scopes CSS variables. We've
+ * kept it stable to avoid touching ~100 selectors at once. To rename,
+ * also rename in:
+ *   - this file
+ *   - src/components/{codea,oxyos,tnp}/*.tsx
+ *   - src/pages/{Codea,OxyOS,Astro}Page.tsx
+ *   - src/styles/{oxyos,tnp,astro}-theme.css
+ *   - src/index.css
+ */
 .cursor-theme {
   /* Colors */
   --color-theme-bg: #0a0a0b;

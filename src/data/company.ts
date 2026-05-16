@@ -53,18 +53,21 @@ export const companyCulture = {
 }
 
 export const culturePerks: CulturePerk[] = [
-  { title: 'Pet-Friendly Community', href: '/company/culture/pet-friendly-community' },
-  { title: 'Financial Awareness Together', href: '/company/culture/financial-awareness-together' },
-  { title: 'Support for Family Time', href: '/company/culture/support-for-family-time' },
-  { title: 'Continuous Learning Culture', href: '/company/culture/continuous-learning-culture' },
-  { title: 'Access to Network Benefits', href: '/company/culture/access-to-network-benefits' },
-  { title: 'Unlimited Time Off', href: '/company/culture/unlimited-time-off' },
-  { title: 'Remote-First Mindset', href: '/company/culture/remote-first-mindset' },
-  { title: 'Active Lifestyle Encouragement', href: '/company/culture/active-lifestyle-encouragement' },
-  { title: 'Team Bonding Activities', href: '/company/culture/team-bonding-activities' },
-  { title: 'Focus on Wellbeing', href: '/company/culture/focus-on-wellbeing' },
-  { title: 'Community and Connection', href: '/company/culture/community-and-connection' },
-  { title: 'Flexible Work Environment', href: '/company/culture/flexible-work-environment' },
+  // NOTE: each perk used to link to `/company/culture/<slug>` but those
+  // sub-pages don't exist. Until they do, every perk points to the main
+  // company page (the perks are rendered as descriptive labels anyway).
+  { title: 'Pet-Friendly Community', href: '/company' },
+  { title: 'Financial Awareness Together', href: '/company' },
+  { title: 'Support for Family Time', href: '/company' },
+  { title: 'Continuous Learning Culture', href: '/company' },
+  { title: 'Access to Network Benefits', href: '/company' },
+  { title: 'Unlimited Time Off', href: '/company' },
+  { title: 'Remote-First Mindset', href: '/company' },
+  { title: 'Active Lifestyle Encouragement', href: '/company' },
+  { title: 'Team Bonding Activities', href: '/company' },
+  { title: 'Focus on Wellbeing', href: '/company' },
+  { title: 'Community and Connection', href: '/company' },
+  { title: 'Flexible Work Environment', href: '/company' },
 ]
 
 /* ── Values ── */

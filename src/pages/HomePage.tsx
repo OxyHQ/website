@@ -1190,7 +1190,7 @@ function PricingSection() {
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
-export default function Landing4() {
+export default function HomePage() {
   return (
     <>
       <SEO

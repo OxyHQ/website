@@ -181,7 +181,7 @@ const features = [
     image: `${IMAGES}/cursor.png`,
     eyebrow: `${IMAGES}/cursor-eyebrow.svg`,
     imageAlt: 'Rewrite anything inside Astro',
-    eyebrowAlt: 'Cursor icon',
+    eyebrowAlt: 'Mouse cursor icon',
     imagePosition: 'right' as const,
   },
 ]
