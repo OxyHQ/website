@@ -7,6 +7,8 @@ import { Switch } from '@oxyhq/bloom/switch'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
+import ConfirmDialog from '../ConfirmDialog'
+import { useConfirmAction } from '../useConfirmAction'
 import MediaPicker from '../MediaPicker'
 
 /** Raw team member shape as returned by /api/team with avatar populated. */
@@ -154,6 +156,19 @@ export default function TeamAdmin() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const deleteAction = useConfirmAction<TeamMemberRaw>({
+    onConfirm: async (member) => {
+      if (!member._id) return
+      setError(null)
+      try {
+        await apiFetch(`/team/${member._id}`, { method: 'DELETE' })
+        await refetch()
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to delete team member')
+      }
+    },
+  })
+
   const save = async () => {
     if (!editing) return
     setError(null)
@@ -199,15 +214,9 @@ export default function TeamAdmin() {
     }
   }
 
-  const remove = async (member: TeamMemberRaw) => {
+  const requestDelete = (member: TeamMemberRaw) => {
     if (!member._id) return
-    if (!confirm(`Delete team member "${member.name}"? This cannot be undone.`)) return
-    try {
-      await apiFetch(`/team/${member._id}`, { method: 'DELETE' })
-      await refetch()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete team member')
-    }
+    deleteAction.request(member)
   }
 
   if (editing) {
@@ -421,7 +430,7 @@ export default function TeamAdmin() {
                   <SocialIcons socials={member.socials} />
                   <div className="shrink-0">
                     <Button variant="ghost" size="small" onPress={() => setEditing(stripRefsForEditing(member))}>Edit</Button>
-                    <Button variant="ghost" size="small" onPress={() => remove(member)}>Delete</Button>
+                    <Button variant="ghost" size="small" onPress={() => requestDelete(member)}>Delete</Button>
                   </div>
                 </div>
               ))}
@@ -429,6 +438,16 @@ export default function TeamAdmin() {
           </section>
         ))
       )}
+
+      <ConfirmDialog
+        control={deleteAction.control}
+        title={deleteAction.target ? `Delete ${deleteAction.target.name}?` : 'Delete team member?'}
+        description="This will remove the team member from the public /company/team page. This cannot be undone."
+        confirmLabel="Delete"
+        tone="danger"
+        busy={deleteAction.busy}
+        onConfirm={deleteAction.confirm}
+      />
     </div>
   )
 }

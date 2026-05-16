@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react'
 import { PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { API_BASE, getAuthHeaders } from '../../../api/client'
+import ConfirmDialog from '../ConfirmDialog'
+import { useConfirmAction } from '../useConfirmAction'
 
 interface ImportResult {
   success: boolean
@@ -12,6 +14,50 @@ export default function BackupAdmin() {
   const [importing, setImporting] = useState(false)
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const restoreAction = useConfirmAction<File>({
+    onConfirm: async (file) => {
+      setImporting(true)
+      setStatus(null)
+      try {
+        const text = await file.text()
+        const parsed: unknown = JSON.parse(text)
+
+        if (
+          typeof parsed !== 'object' ||
+          parsed === null ||
+          !('collections' in parsed) ||
+          !('version' in parsed)
+        ) {
+          throw new Error('Invalid backup file: missing required fields (version, collections)')
+        }
+
+        const headers = await getAuthHeaders()
+        const res = await fetch(`${API_BASE}/backup`, {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: text,
+        })
+
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({ error: `Import failed (${res.status})` }))
+          throw new Error(body.error ?? `Import failed (${res.status})`)
+        }
+
+        const result: ImportResult = await res.json()
+        const total = Object.values(result.imported).reduce((sum, n) => sum + n, 0)
+        setStatus({
+          type: 'success',
+          message: `Import complete: ${total} documents across ${Object.keys(result.imported).length} collections.`,
+        })
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Import failed'
+        setStatus({ type: 'error', message })
+      } finally {
+        setImporting(false)
+      }
+    },
+  })
 
   const handleExport = async () => {
     setExporting(true)
@@ -48,56 +94,14 @@ export default function BackupAdmin() {
     fileInputRef.current?.click()
   }
 
-  const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
     // Reset input so the same file can be re-selected
     e.target.value = ''
 
-    if (!confirm('Are you sure? This will replace ALL existing CMS data with the backup contents. This action cannot be undone.')) {
-      return
-    }
-
-    setImporting(true)
-    setStatus(null)
-    try {
-      const text = await file.text()
-      const parsed: unknown = JSON.parse(text)
-
-      if (
-        typeof parsed !== 'object' ||
-        parsed === null ||
-        !('collections' in parsed) ||
-        !('version' in parsed)
-      ) {
-        throw new Error('Invalid backup file: missing required fields (version, collections)')
-      }
-
-      const headers = await getAuthHeaders()
-      const res = await fetch(`${API_BASE}/backup`, {
-        method: 'POST',
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        body: text,
-      })
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({ error: `Import failed (${res.status})` }))
-        throw new Error(body.error ?? `Import failed (${res.status})`)
-      }
-
-      const result: ImportResult = await res.json()
-      const total = Object.values(result.imported).reduce((sum, n) => sum + n, 0)
-      setStatus({
-        type: 'success',
-        message: `Import complete: ${total} documents across ${Object.keys(result.imported).length} collections.`,
-      })
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Import failed'
-      setStatus({ type: 'error', message })
-    } finally {
-      setImporting(false)
-    }
+    restoreAction.request(file)
   }
 
   return (
@@ -151,6 +155,22 @@ export default function BackupAdmin() {
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        control={restoreAction.control}
+        title="Restore from backup?"
+        description={
+          <>
+            This will replace <strong>all existing CMS data</strong> with the contents of{' '}
+            <span className="font-mono">{restoreAction.target?.name ?? 'the selected file'}</span>.
+            This action cannot be undone.
+          </>
+        }
+        confirmLabel="Restore"
+        tone="danger"
+        busy={restoreAction.busy}
+        onConfirm={restoreAction.confirm}
+      />
     </div>
   )
 }

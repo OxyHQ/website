@@ -4,6 +4,8 @@ import { PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Label } from '../../ui/shadcn/label'
 import { apiFetch } from '../../../api/client'
+import ConfirmDialog from '../ConfirmDialog'
+import { useConfirmAction } from '../useConfirmAction'
 import MediaPickerDialog from '../MediaPickerDialog'
 
 function formatBytes(bytes: number): string {
@@ -43,12 +45,13 @@ export default function MediaAdmin() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('Delete this media permanently? This cannot be undone.')) return
-    await apiFetch(`/media/${id}`, { method: 'DELETE' })
-    await refetch()
-    if (editing?._id === id) setEditing(null)
-  }
+  const deleteAction = useConfirmAction<MediaItem>({
+    onConfirm: async (item) => {
+      await apiFetch(`/media/${item._id}`, { method: 'DELETE' })
+      await refetch()
+      if (editing?._id === item._id) setEditing(null)
+    },
+  })
 
   if (editing) {
     const thumb = editing.thumbnails?.lg || editing.url
@@ -95,12 +98,22 @@ export default function MediaAdmin() {
               <PrimaryButton onPress={handleSave} disabled={saving}>
                 <span>{saving ? 'Saving...' : 'Save'}</span>
               </PrimaryButton>
-              <SecondaryButton onPress={() => handleDelete(editing._id)}>
+              <SecondaryButton onPress={() => deleteAction.request(editing)}>
                 <span style={{ color: 'var(--color-destructive)' }}>Delete</span>
               </SecondaryButton>
             </div>
           </div>
         </div>
+
+        <ConfirmDialog
+          control={deleteAction.control}
+          title={deleteAction.target ? `Delete “${deleteAction.target.filename}”?` : 'Delete media?'}
+          description="This permanently deletes the file. Any references will break. This cannot be undone."
+          confirmLabel="Delete"
+          tone="danger"
+          busy={deleteAction.busy}
+          onConfirm={deleteAction.confirm}
+        />
       </div>
     )
   }
@@ -183,6 +196,16 @@ export default function MediaAdmin() {
           folder="images"
         />
       )}
+
+      <ConfirmDialog
+        control={deleteAction.control}
+        title={deleteAction.target ? `Delete “${deleteAction.target.filename}”?` : 'Delete media?'}
+        description="This permanently deletes the file. Any references will break. This cannot be undone."
+        confirmLabel="Delete"
+        tone="danger"
+        busy={deleteAction.busy}
+        onConfirm={deleteAction.confirm}
+      />
     </div>
   )
 }
