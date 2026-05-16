@@ -38,7 +38,16 @@ function SectionContent({ slug }: { slug: string }) {
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground">This document is being prepared and will be available soon.</p>
+        <div className="text-muted-foreground space-y-3">
+          <p>This document is being prepared and will be published here once it is ready.</p>
+          <p>
+            In the meantime, if you have a legal, privacy, or compliance question, reach out at{' '}
+            <a className="text-foreground underline" href="mailto:legal@oxy.so">
+              legal@oxy.so
+            </a>
+            .
+          </p>
+        </div>
       )}
     </div>
   )

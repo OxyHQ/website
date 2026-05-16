@@ -7,6 +7,7 @@ import {
   changelogEntries,
   highlights,
 } from '../../data/codea'
+import IDEDemoMockup from './IDEDemoMockup'
 
 export default function CodeaPage() {
   return (
@@ -47,16 +48,13 @@ export default function CodeaPage() {
               </div>
             </div>
           </div>
-          {/* IDE screenshot placeholder */}
-          <div className="media-border-container relative aspect-[16/10] bg-theme-card">
-            <div className="absolute inset-0 flex items-center justify-center text-theme-text-sec text-sm">
-              IDE Demo Preview
-            </div>
+          {/* IDE screenshot */}
+          <div className="media-border-container relative aspect-[16/10] bg-theme-card overflow-hidden">
+            <IDEDemoMockup />
           </div>
         </div>
       </section>
 
-      {/* ── 2. Logo Garden ── */}
       {/* ── 2. Logo Garden ── */}
       {logoCompanies.length > 0 && (
         <section className="section bg-theme-bg text-theme-text pb-v1.5 pt-0" id="logo-garden">
