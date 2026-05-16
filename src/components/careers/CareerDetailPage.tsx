@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import Button from '../ui/Button'
 import { useJob } from '../../api/hooks'
 import { type DescriptionBlock } from '../../data/careers'
+import { FEATURES } from '../../constants'
 import SEO from '../SEO'
 import StructuredData from '../StructuredData'
 
@@ -375,11 +376,24 @@ export default function CareerDetailContent() {
             ) : null}
           </div>
 
-          {/* Apply form */}
+          {/* Apply */}
           <div id="apply-form" className="mt-24 w-full max-w-xl" style={{ scrollMarginTop: 'calc(var(--site-header-height) + 48px)' }}>
             <h2 className="text-heading-sm text-foreground">Apply for this position</h2>
             <div className="min-h-12 lg:rounded-3xl lg:border lg:border-border lg:px-6 lg:pt-1.5 mt-6">
-              <ApplicationForm />
+              {FEATURES.SHOW_CAREERS_APPLICATION_FORM ? (
+                <ApplicationForm />
+              ) : (
+                <div className="py-8">
+                  <p className="text-muted-foreground">
+                    Send your CV, a short note about why you&rsquo;d like to join Oxy, and any
+                    relevant work (GitHub, portfolio, links) to{' '}
+                    <a className="text-foreground underline" href="mailto:careers@oxy.so">
+                      careers@oxy.so
+                    </a>
+                    . We read every application.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

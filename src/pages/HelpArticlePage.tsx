@@ -6,6 +6,7 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
+import { FEATURES } from '../constants'
 import {
   useHelpArticle,
   useHelpArticles,
@@ -216,36 +217,38 @@ export default function HelpArticlePage() {
         )}
 
         {/* ═══ Was this helpful? ═══ */}
-        <section className="container">
-          <div className="border-border border-x">
-            <DashedHLine />
-            <div className="grid grid-cols-12">
-              <div className="col-[2/-2] py-12 max-lg:py-10">
-                <div className="mx-auto flex max-w-[720px] flex-col items-center gap-4 text-center">
-                  <p className="text-sm font-medium text-foreground">Was this article helpful?</p>
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-background px-4 text-sm font-medium text-muted-foreground transition-colors hover:border-input hover:text-foreground"
-                      aria-label="Mark this article as helpful"
-                    >
-                      <ThumbsUp className="size-4" aria-hidden="true" />
-                      Yes
-                    </button>
-                    <button
-                      type="button"
-                      className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-background px-4 text-sm font-medium text-muted-foreground transition-colors hover:border-input hover:text-foreground"
-                      aria-label="Mark this article as not helpful"
-                    >
-                      <ThumbsDown className="size-4" aria-hidden="true" />
-                      No
-                    </button>
+        {FEATURES.SHOW_ARTICLE_FEEDBACK && (
+          <section className="container">
+            <div className="border-border border-x">
+              <DashedHLine />
+              <div className="grid grid-cols-12">
+                <div className="col-[2/-2] py-12 max-lg:py-10">
+                  <div className="mx-auto flex max-w-[720px] flex-col items-center gap-4 text-center">
+                    <p className="text-sm font-medium text-foreground">Was this article helpful?</p>
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-background px-4 text-sm font-medium text-muted-foreground transition-colors hover:border-input hover:text-foreground"
+                        aria-label="Mark this article as helpful"
+                      >
+                        <ThumbsUp className="size-4" aria-hidden="true" />
+                        Yes
+                      </button>
+                      <button
+                        type="button"
+                        className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-background px-4 text-sm font-medium text-muted-foreground transition-colors hover:border-input hover:text-foreground"
+                        aria-label="Mark this article as not helpful"
+                      >
+                        <ThumbsDown className="size-4" aria-hidden="true" />
+                        No
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* ═══ Prev / Next ═══ */}
         {(prev || next) && (

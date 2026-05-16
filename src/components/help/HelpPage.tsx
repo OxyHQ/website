@@ -166,20 +166,21 @@ function HelpSidebar({ groups }: { groups: CategoryGroup[] }) {
   return (
     <nav className="col-[1/6] border-border border-r max-xl:col-[1/7] max-lg:hidden">
       <div className="sticky top-[var(--site-header-height,56px)] flex h-[calc(100vh-var(--site-header-height,56px))] flex-col pt-10">
-        {/* Search button */}
+        {/* Search button — placeholder UI until a real search experience
+            is wired. Disabled so users get the right signal instead of a
+            silent no-op. */}
         <div className="pr-6">
-          <button className="relative inline-flex cursor-pointer items-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-9 gap-x-1.5 rounded-[10px] px-3 text-sm button-outline justify-between pr-2 w-full">
+          <button
+            type="button"
+            disabled
+            aria-disabled="true"
+            title="Search is coming soon"
+            className="relative inline-flex items-center text-nowrap border transition-colors h-9 gap-x-1.5 rounded-[10px] px-3 text-sm button-outline justify-between pr-2 w-full opacity-60 cursor-not-allowed"
+          >
             <SearchIcon className="text-muted-foreground" />
             <div className="flex w-full items-center justify-between gap-2">
               <span className="text-muted-foreground">Search help</span>
-              <div className="flex gap-1">
-                <div className="pointer-events-none text-muted-foreground text-xs leading-3 flex min-h-[22px] min-w-[22px] items-center justify-center rounded-md border-border border-x border-t border-b-2 bg-background px-1 pt-[3px] pb-0.5 shadow-[0px_1px_0px_1px_var(--color-border)]">
-                  &#8984;
-                </div>
-                <div className="pointer-events-none text-muted-foreground text-xs leading-3 flex min-h-[22px] min-w-[22px] items-center justify-center rounded-md border-border border-x border-t border-b-2 bg-background px-1 pt-[3px] pb-0.5 shadow-[0px_1px_0px_1px_var(--color-border)]">
-                  K
-                </div>
-              </div>
+              <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Soon</span>
             </div>
           </button>
         </div>
@@ -269,31 +270,36 @@ function HelpContent({
             </div>
           </div>
 
-          {/* Search bar */}
+          {/* Search bar — placeholder UI until a real search experience is
+              wired. Disabled so users get the right signal instead of a
+              silent no-op. */}
           <div className="mt-10 flex w-full max-w-[558px] flex-col items-center md:mt-8">
-            <button className="relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-11.5 gap-x-2 rounded-xl px-3.5 button-outline w-full pr-2.5 text-sm shadow-[0px_1px_2px_-1px_rgba(28,40,64,0.08),_0px_2px_4px_0px_rgba(28,40,64,0.04)]">
+            <button
+              type="button"
+              disabled
+              aria-disabled="true"
+              title="Search is coming soon"
+              className="relative inline-flex items-center justify-center text-nowrap border transition-colors h-11.5 gap-x-2 rounded-xl px-3.5 button-outline w-full pr-2.5 text-sm shadow-[0px_1px_2px_-1px_rgba(28,40,64,0.08),_0px_2px_4px_0px_rgba(28,40,64,0.04)] opacity-60 cursor-not-allowed"
+            >
               <SearchIcon />
               <p className="w-full truncate text-left text-muted-foreground">
-                Search help (e.g. integrations, importing, or billing)
+                Search is coming soon — browse the categories below for now
               </p>
-              <div className="flex gap-x-1 text-muted-foreground">
-                <div className="flex size-7 items-center justify-center rounded-lg border border-border border-b-2 shadow-[0px_1px_0px_1px_var(--color-border)]">
-                  &#8984;
-                </div>
-                <div className="flex size-7 items-center justify-center rounded-lg border border-border border-b-2 shadow-[0px_1px_0px_1px_var(--color-border)]">
-                  K
-                </div>
-              </div>
             </button>
 
-            {/* Popular searches */}
+            {/* Popular searches — decorative until search is wired. */}
             {popularSearches.length > 0 && (
               <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-2 text-muted-foreground mt-4 md:mt-5">
-                <p className="shrink-0 text-muted-foreground text-sm">Popular searches:</p>
+                <p className="shrink-0 text-muted-foreground text-sm">Popular topics:</p>
                 <ul className="flex gap-1.5 text-xs">
                   {popularSearches.map((s) => (
                     <li key={s}>
-                      <button className="relative inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default gap-x-1.5 rounded-[10px] px-2.5 text-xs button-outline !bg-surface hover:!bg-surface !text-muted-foreground h-7">
+                      <button
+                        type="button"
+                        disabled
+                        aria-disabled="true"
+                        className="relative inline-flex items-center justify-center text-nowrap border gap-x-1.5 rounded-[10px] px-2.5 text-xs button-outline !bg-surface !text-muted-foreground h-7 opacity-60 cursor-not-allowed"
+                      >
                         {s}
                       </button>
                     </li>

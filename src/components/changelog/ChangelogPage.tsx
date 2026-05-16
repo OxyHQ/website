@@ -2,6 +2,7 @@ import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useChangelog, useTrackedRepos } from '../../api/hooks'
+import { FEATURES } from '../../constants'
 import LikeButton from '../social/LikeButton'
 
 export default function ChangelogContent() {
@@ -50,30 +51,35 @@ export default function ChangelogContent() {
                   <p className="mt-4 max-w-xl text-balance text-lg text-foreground lg:text-xl text-center">
                     A rundown of the latest Oxy feature releases, product enhancements, design updates, and important bug fixes.
                   </p>
-                  <form className="flex flex-col gap-2 mt-6 w-full max-w-xs" onSubmit={(e) => e.preventDefault()}>
-                    <div className="flex flex-col gap-y-1.5">
-                      <div>
-                        <input
-                          className="block w-full rounded-[10px] bg-background p-[10px_13px] outline-hidden transition-all duration-300 ease-out text-foreground placeholder:text-muted-foreground border border-input hover:border-input hover:shadow-[0px_1px_4px_rgba(56,_62,_71,_0.1)] focus:border-primary focus:ring-[3px] focus:ring-ring/30 placeholder:max-w-full placeholder:text-base placeholder-shown:truncate"
-                          placeholder="Your email address"
-                          type="text"
-                          name="email"
-                        />
-                      </div>
-                    </div>
-                    <button
-                      className="inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-11.5 gap-x-2 rounded-xl px-3.5 text-base has-[>svg:last-child,>img:last-child]:pr-3 has-[>svg:first-child,>img:first-child]:pl-3 button-primary relative"
-                      type="submit"
+                  {FEATURES.SHOW_NEWSLETTER_FORMS && (
+                    <form
+                      className="flex flex-col gap-2 mt-6 w-full max-w-xs"
+                      onSubmit={(e) => e.preventDefault()}
                     >
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="animate-spin opacity-0 transition-opacity duration-150">
-                          <circle cx="9" cy="9" r="8" stroke="currentColor" strokeOpacity="0.1" strokeWidth="1.5" />
-                          <path d="M17 9C17 10.0506 16.7931 11.0909 16.391 12.0615C15.989 13.0321 15.3997 13.914 14.6569 14.6569C13.914 15.3997 13.0321 15.989 12.0615 16.391C11.0909 16.7931 10.0506 17 9 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
+                      <div className="flex flex-col gap-y-1.5">
+                        <div>
+                          <input
+                            className="block w-full rounded-[10px] bg-background p-[10px_13px] outline-hidden transition-all duration-300 ease-out text-foreground placeholder:text-muted-foreground border border-input hover:border-input hover:shadow-[0px_1px_4px_rgba(56,_62,_71,_0.1)] focus:border-primary focus:ring-[3px] focus:ring-ring/30 placeholder:max-w-full placeholder:text-base placeholder-shown:truncate"
+                            placeholder="Your email address"
+                            type="text"
+                            name="email"
+                          />
+                        </div>
                       </div>
-                      <span className="transition-opacity duration-150">Subscribe</span>
-                    </button>
-                  </form>
+                      <button
+                        className="inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-11.5 gap-x-2 rounded-xl px-3.5 text-base has-[>svg:last-child,>img:last-child]:pr-3 has-[>svg:first-child,>img:first-child]:pl-3 button-primary relative"
+                        type="submit"
+                      >
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="animate-spin opacity-0 transition-opacity duration-150">
+                            <circle cx="9" cy="9" r="8" stroke="currentColor" strokeOpacity="0.1" strokeWidth="1.5" />
+                            <path d="M17 9C17 10.0506 16.7931 11.0909 16.391 12.0615C15.989 13.0321 15.3997 13.914 14.6569 14.6569C13.914 15.3997 13.0321 15.989 12.0615 16.391C11.0909 16.7931 10.0506 17 9 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </div>
+                        <span className="transition-opacity duration-150">Subscribe</span>
+                      </button>
+                    </form>
+                  )}
                 </header>
               </div>
             </div>

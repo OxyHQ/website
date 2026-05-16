@@ -9,13 +9,13 @@ export default function CodexExtensionPage() {
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-primary-background">
       <SEO
         title="Codea VS Code Extension"
-        description="Bring Codea's AI-powered coding assistance directly into VS Code. Intelligent completions, refactoring, and code understanding in your favorite editor."
+        description="Bring Codea AI directly into VS Code. Intelligent completions, refactoring, and multi-agent coding inside your editor."
         canonicalPath="/codea/extension"
       />
       <Navbar
         rightActions={
-          <Button variant="primary" size="sm" href="/codea/extension">
-            Try Codea
+          <Button variant="primary" size="sm" href="/codea">
+            Codea Studio
           </Button>
         }
       />

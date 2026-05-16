@@ -1106,7 +1106,7 @@ const PLANS = [
     name: 'Community',
     price: 'Free forever',
     cta: 'Get Started',
-    ctaHref: '/',
+    ctaHref: '/products',
     features: [
       'Access to all Oxy platforms',
       'Open-source codebase',
@@ -1121,7 +1121,7 @@ const PLANS = [
     name: 'Contributor',
     price: 'Free',
     cta: 'Join Us',
-    ctaHref: '/get-involved',
+    ctaHref: '/company/careers',
     features: [
       'Everything in Community',
       'Early access to new features',
@@ -1136,7 +1136,7 @@ const PLANS = [
     name: 'Organization',
     price: 'Custom',
     cta: 'Contact Us',
-    ctaHref: '/contact',
+    ctaHref: '/company',
     features: [
       'Everything in Contributor',
       'Custom deployments',
@@ -1165,7 +1165,7 @@ function PricingSection() {
                     {plan.name === 'Organization' ? (
                       <a className={`${BTN} bg-primary text-primary-foreground`} href={plan.ctaHref}>{plan.cta}</a>
                     ) : (
-                      <a className={`${BTN} bg-foreground/5`} href={plan.ctaHref} target="_blank" rel="noopener noreferrer">{plan.cta}</a>
+                      <a className={`${BTN} bg-foreground/5`} href={plan.ctaHref}>{plan.cta}</a>
                     )}
                     <hr className="border-0 border-t border-black/[0.07] my-6" />
                     <ul className="list-none p-0 m-0">

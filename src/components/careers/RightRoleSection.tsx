@@ -1,4 +1,5 @@
 import Button from '../ui/Button'
+import { FEATURES } from '../../constants'
 
 export default function RightRoleSection() {
   return (
@@ -30,17 +31,21 @@ export default function RightRoleSection() {
                 </p>
               </div>
 
-              {/* Email form */}
-              <form className="flex-col gap-2 col-span-full grid min-h-16 w-full max-w-sm items-start md:grid-cols-[1fr_min-content]">
-                <input
-                  className="block w-full rounded-[10px] bg-background p-[10px_13px] outline-hidden transition-all duration-300 ease-out text-foreground placeholder:text-muted-foreground border border-input hover:border-input hover:shadow-[0px_1px_4px_rgba(56,62,71,0.1)] focus:border-primary focus:ring-[3px] focus:ring-ring/30 placeholder:max-w-full placeholder:text-base placeholder-shown:truncate"
-                  type="email"
-                  placeholder="Your email address"
-                />
-                <Button type="submit" variant="primary" size="lg">
-                  Subscribe
-                </Button>
-              </form>
+              {/* Email subscribe form — only rendered once the newsletter
+                  API is wired (FEATURES.SHOW_NEWSLETTER_FORMS). */}
+              {FEATURES.SHOW_NEWSLETTER_FORMS && (
+                <form className="flex-col gap-2 col-span-full grid min-h-16 w-full max-w-sm items-start md:grid-cols-[1fr_min-content]">
+                  <input
+                    name="email"
+                    className="block w-full rounded-[10px] bg-background p-[10px_13px] outline-hidden transition-all duration-300 ease-out text-foreground placeholder:text-muted-foreground border border-input hover:border-input hover:shadow-[0px_1px_4px_rgba(56,62,71,0.1)] focus:border-primary focus:ring-[3px] focus:ring-ring/30 placeholder:max-w-full placeholder:text-base placeholder-shown:truncate"
+                    type="email"
+                    placeholder="Your email address"
+                  />
+                  <Button type="submit" variant="primary" size="lg">
+                    Subscribe
+                  </Button>
+                </form>
+              )}
             </div>
           </div>
         </div>

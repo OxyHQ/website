@@ -22,7 +22,9 @@ export const OXY_GITHUB_URL = `https://github.com/${OXY_GITHUB_ORG}`
 export const OXY_PRODUCTS = [
   'Mention',
   'Inbox',
-  'Codea',
+  'Codea Studio',
+  'Codea AI',
+  'Codea VS Code Extension',
   'Oxy AI (Alia)',
   'Oxy CRM',
   'OxyOS',
@@ -68,6 +70,23 @@ export const FEATURES = {
   SHOW_BLOG_STATIC_FALLBACK: false,
   /** Render the "trusted by" pricing logo strip. */
   SHOW_PRICING_LOGOS: false,
+  /**
+   * Render the newsletter / changelog / careers email subscribe forms.
+   * Off until a real subscription API endpoint is wired up; turning it on
+   * with a stub form would silently drop user emails.
+   */
+  SHOW_NEWSLETTER_FORMS: false,
+  /**
+   * Render the inline "Was this article helpful?" feedback widgets on
+   * docs and help pages. Off until the feedback endpoint exists.
+   */
+  SHOW_ARTICLE_FEEDBACK: false,
+  /**
+   * Render the in-page job application form on `/company/careers/:slug`.
+   * Off until the careers submission endpoint is wired up; until then the
+   * page shows a short "Apply via email" block instead.
+   */
+  SHOW_CAREERS_APPLICATION_FORM: false,
 } as const
 
 export type FeatureFlag = keyof typeof FEATURES
