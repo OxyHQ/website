@@ -230,7 +230,7 @@ export default function ProductsAdmin() {
                 placeholder="/alia"
                 className="font-mono"
               />
-              <p className="text-xs text-muted-foreground">Local marketing/learn-more page on this site. When set, the /products card and navbar link here first.</p>
+              <p className="text-xs text-muted-foreground">Local marketing/learn-more page on this site. When set, the /technologies card and navbar link here first.</p>
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>Health URL (optional)</Label>
@@ -330,7 +330,7 @@ export default function ProductsAdmin() {
               </select>
               <p className="text-xs text-muted-foreground">
                 Manage in <Link to="/admin/categories" className="underline underline-offset-2 hover:text-foreground">Categories</Link>.
-                Drives grouping on /products, /status, and the Ecosystem navbar dropdown.
+                Drives grouping on /technologies, /status, and the Ecosystem navbar dropdown.
               </p>
             </div>
             <div className="flex flex-col gap-1.5">
@@ -366,7 +366,7 @@ export default function ProductsAdmin() {
                   onChange={(e) => setEditing({ ...editing, showOnProducts: e.target.checked })}
                   className="size-4 rounded border border-border"
                 />
-                <span className="text-sm">/products</span>
+                <span className="text-sm">/technologies</span>
               </label>
               <label className="flex items-center gap-2">
                 <input
@@ -435,7 +435,7 @@ export default function ProductsAdmin() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold text-foreground">Products</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Single source of truth for every Oxy app. Powers /products, /status, and the ecosystem navbar dropdown.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Single source of truth for every Oxy app. Powers /technologies, /status, and the ecosystem navbar dropdown.</p>
         </div>
         <PrimaryButton onPress={() => setEditing(emptyProduct())}>Add product</PrimaryButton>
       </div>

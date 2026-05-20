@@ -22,7 +22,7 @@ const DEFAULT_GETTING_STARTED_LEAD = 'Everything you need to master the basics o
 
 const DEFAULT_POPULAR_SEARCHES = ['importing', 'billing', 'integrations']
 
-/* ─── Section helpers (mirror ProductsPage / AcademyPage) ─── */
+/* ─── Section helpers (mirror TechnologiesPage / AcademyPage) ─── */
 
 function sectionHeading(sections: PageSection[], type: string, fallback: string): string {
   return sections.find(s => s.type === type)?.heading || fallback

@@ -38,6 +38,7 @@ import badgesRouter from './routes/badges.js'
 import teamRouter from './routes/team.js'
 import mediaRouter from './routes/media.js'
 import referralsRouter from './routes/referrals.js'
+import fundingRouter from './routes/funding.js'
 import { mountMcp } from './mcp.js'
 
 const app = express()
@@ -100,6 +101,7 @@ app.use('/api/features', featuresRouter)
 app.use('/api/profiles', profilesRouter)
 app.use('/api/badges', badgesRouter)
 app.use('/api/referrals', referralsRouter)
+app.use('/api/funding-progress', fundingRouter)
 
 // Sitemap
 app.use('/', sitemapRouter)

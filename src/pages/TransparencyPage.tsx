@@ -13,7 +13,7 @@ import { usePage, type PageSection } from '../api/hooks'
  * commitments fall back to constants so the page renders correctly on fresh
  * databases or when the CMS document hasn't been populated yet.
  *
- * Layout follows the canonical CompanyPage / ProductsPage patterns:
+ * Layout follows the canonical CompanyPage / TechnologiesPage patterns:
  *   container > border-border border-x > grid grid-cols-12 > col-[2/-2]
  * ──────────────────────────────────────────── */
 

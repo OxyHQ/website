@@ -13,7 +13,7 @@ import { usePage, type PageSection } from '../api/hooks'
  * is missing or the relevant section hasn't been populated, so the page
  * renders identically even on fresh databases.
  *
- * Layout follows the canonical CompanyPage / ProductsPage patterns:
+ * Layout follows the canonical CompanyPage / TechnologiesPage patterns:
  *   container > border-border border-x > grid grid-cols-12 > col-[2/-2]
  * Dashed rule helpers match CompanyPage.
  * ──────────────────────────────────────────── */
@@ -75,7 +75,7 @@ const DEFAULT_CTA_HEADING = 'Sign the manifesto'
 const DEFAULT_CTA_SUBHEADING =
   'If any of this resonates, join us. Build with us, work with us, or just hold us to it in public.'
 
-/* ── CMS helpers (mirrors ProductsPage) ── */
+/* ── CMS helpers (mirrors TechnologiesPage) ── */
 
 function sectionHeading(sections: PageSection[], type: string, fallback: string): string {
   return sections.find((s) => s.type === type)?.heading || fallback

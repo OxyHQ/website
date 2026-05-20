@@ -18,7 +18,7 @@ import {
   type PageSection,
 } from '../api/hooks'
 
-/* ── Canonical-layout helpers (mirror CompanyPage / ProductsPage) ── */
+/* ── Canonical-layout helpers (mirror CompanyPage / TechnologiesPage) ── */
 
 function DashedHLine() {
   return (

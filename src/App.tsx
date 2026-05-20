@@ -1,5 +1,5 @@
 import { useState, useCallback, lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WebOxyProvider, useAuth, useWebOxy } from '@oxyhq/auth'
 import type { User } from '@oxyhq/core'
@@ -57,10 +57,11 @@ const TeamPage = lazy(() => import('./pages/TeamPage'))
 const ManifestoPage = lazy(() => import('./pages/ManifestoPage'))
 const TransparencyPage = lazy(() => import('./pages/TransparencyPage'))
 const BusinessPage = lazy(() => import('./pages/BusinessPage'))
-const ProductsPage = lazy(() => import('./pages/ProductsPage'))
+const TechnologiesPage = lazy(() => import('./pages/TechnologiesPage'))
 const StatusPage = lazy(() => import('./pages/StatusPage'))
 const ReferralsPage = lazy(() => import('./pages/ReferralsPage'))
 const ReferralsDashboardPage = lazy(() => import('./pages/ReferralsDashboardPage'))
+const SustainPage = lazy(() => import('./pages/SustainPage'))
 
 const OXY_API = 'https://api.oxy.so'
 
@@ -138,7 +139,8 @@ function PublicRoutes() {
       <Route path="partners" element={<PartnersPage />} />
       <Route path="referrals" element={<ReferralsPage />} />
       <Route path="referrals/dashboard" element={<ReferralsDashboardPage />} />
-      <Route path="products" element={<ProductsPage />} />
+      <Route path="technologies" element={<TechnologiesPage />} />
+      <Route path="products" element={<Navigate to="/technologies" replace />} />
       <Route path="status" element={<StatusPage />} />
       <Route path="company" element={<CompanyPage />} />
       <Route path="company/team" element={<TeamPage />} />
@@ -174,6 +176,7 @@ function PublicRoutes() {
       <Route path="u/:username" element={<UserProfilePage />} />
       <Route path="astro" element={<AstroPage />} />
       <Route path="features" element={<FeatureBoardPage />} />
+      <Route path="sustain" element={<SustainPage />} />
     </>
   )
 }

@@ -1157,7 +1157,7 @@ server.tool('get_post_with_media', 'Get a newsroom post with its cover image and
 
 const categoryRawShape = {
   slug: z.string().describe('URL-safe stable id (e.g. "social-communication"). Lower-case, dashes only.'),
-  label: z.string().describe('Human label shown on /products, /status, navbar, etc.'),
+  label: z.string().describe('Human label shown on /technologies, /status, navbar, etc.'),
   description: z.string().optional().describe('Optional long description'),
   scope: z.enum(['apps', 'nav', 'generic']).optional().describe('Where this category is allowed to be used. "apps" for product/status grouping, "nav" for navbar dropdown headings, "generic" for shared use.'),
   order: z.number().optional().describe('Sort order within the scope. Lower comes first.'),
@@ -1224,7 +1224,7 @@ const productRawShape = {
   tagline: z.string().optional().describe('Single-line tag shown above the title on each product card'),
   description: z.string().optional().describe('Short body copy shown inside the card'),
   href: z.string().describe('Canonical destination — the running app / external URL. Starts with "http" for external, "/" for internal.'),
-  landingUrl: z.string().optional().describe('Optional local landing page on oxy.so (e.g. "/inbox"). When set, /products and the navbar link here instead of href.'),
+  landingUrl: z.string().optional().describe('Optional local landing page on oxy.so (e.g. "/inbox"). When set, /technologies and the navbar link here instead of href.'),
   healthUrl: z.string().optional().describe('Optional URL to probe for /status health checks. Defaults to `href` when unset.'),
   external: z.boolean().optional().describe('True for off-site destinations (opens in a new tab, shows up-right arrow)'),
   cta: z.string().optional().describe('CTA label (e.g. "Explore Alia", "Visit Mention")'),
@@ -1232,9 +1232,9 @@ const productRawShape = {
   brandForeground: z.string().optional().describe('Optional hex color for the icon mark text. Defaults to white.'),
   mark: z.string().describe('Single letter used inside the brand square when no logo is set'),
   logo: z.string().optional().describe('Media document id for the app logo. Takes precedence over `mark`.'),
-  section: z.string().optional().describe('Grouping label used on /products and /status (e.g. "Social & Communication").'),
+  section: z.string().optional().describe('Grouping label used on /technologies and /status (e.g. "Social & Communication").'),
   lifecycle: z.enum(['live', 'in-development']).optional().describe('"live" for the shipped grid, "in-development" for the new/upcoming section'),
-  showOnProducts: z.boolean().optional().describe('Show this product on the /products page.'),
+  showOnProducts: z.boolean().optional().describe('Show this product on the /technologies page.'),
   showOnStatus: z.boolean().optional().describe('Include in /status health probes.'),
   showInNav: z.boolean().optional().describe('Expose in the ecosystem navbar dropdown.'),
   navOpensApp: z.boolean().optional().describe('When true, the navbar dropdown links straight to `href` (the running app) even if a landingUrl is set. Default false.'),
@@ -1268,7 +1268,7 @@ server.tool('get_product', 'Get a single product by its productId.', {
   } catch (e) { return err(e) }
 })
 
-server.tool('create_product', 'Create a new product. By default it appears on /products, /status, and the ecosystem navbar dropdown.', productRawShape, async (input) => {
+server.tool('create_product', 'Create a new product. By default it appears on /technologies, /status, and the ecosystem navbar dropdown.', productRawShape, async (input) => {
   try {
     const existing = await Product.findOne({ productId: input.productId })
     if (existing) return err(`Product "${input.productId}" already exists`)

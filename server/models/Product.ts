@@ -10,7 +10,7 @@ export interface IProduct extends Document {
   description: string
   /** Canonical destination URL — the actual running app / external URL. */
   href: string
-  /** Optional local landing page on oxy.so (e.g. "/inbox", "/astro"). When set, /products card and navbar link here first. */
+  /** Optional local landing page on oxy.so (e.g. "/inbox", "/astro"). When set, /technologies card and navbar link here first. */
   landingUrl?: string
   /** Optional URL to probe for /status health checks. Defaults to `href`. */
   healthUrl?: string
@@ -23,13 +23,13 @@ export interface IProduct extends Document {
   mark: string
   /** Media ref for the app icon / logo. Takes precedence over `mark`. */
   logo?: Types.ObjectId | null
-  /** Category ObjectId ref used by /products, /status, and the Ecosystem navbar dropdown. */
+  /** Category ObjectId ref used by /technologies, /status, and the Ecosystem navbar dropdown. */
   category?: Types.ObjectId | null
   /** Legacy string slug kept for seed compatibility and as a fallback when category ref is unset. */
   section: string
-  /** Lifecycle bucket on /products — live vs in-development. */
+  /** Lifecycle bucket on /technologies — live vs in-development. */
   lifecycle: ProductLifecycle
-  /** Show on the /products page. */
+  /** Show on the /technologies page. */
   showOnProducts: boolean
   /** Probe on /status. */
   showOnStatus: boolean

@@ -134,9 +134,9 @@ function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void 
 
         <p className="astro-stagger-in mt-5 text-center text-[11px] text-neutral-400 leading-relaxed dark:text-neutral-500" style={{ animationDelay: '580ms' }}>
           By downloading, you agree to the Astro{' '}
-          <a href="/terms" className="underline hover:text-neutral-600 dark:hover:text-neutral-300">Terms of Service</a>
+          <a href="/legal/terms" className="underline hover:text-neutral-600 dark:hover:text-neutral-300">Terms of Service</a>
           {' '}and{' '}
-          <a href="/privacy" className="underline hover:text-neutral-600 dark:hover:text-neutral-300">Privacy Policy</a>.
+          <a href="/legal/privacy" className="underline hover:text-neutral-600 dark:hover:text-neutral-300">Privacy Policy</a>.
         </p>
       </div>
     </div>

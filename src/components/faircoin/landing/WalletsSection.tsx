@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Apple, Globe, ArrowUpRight, Cpu, Server } from 'lucide-react'
+import { fc } from '../../../lib/faircoin-links'
 
 interface WalletOption {
   name: string
@@ -124,7 +125,7 @@ export default function WalletsSection() {
         <p className="mt-10 text-center text-sm text-muted-foreground">
           No centralised exchanges today. Acquire FAIR via the{' '}
           <a
-            href="/buy"
+            href={fc('/buy')}
             className="text-foreground underline-offset-4 hover:underline"
           >
             web buy flow

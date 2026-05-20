@@ -42,7 +42,7 @@ export default function CTASection() {
                 <span className="font-normal font-serif"> </span>
               </h2>
               <div className="flex w-full items-center justify-center gap-x-2.5 gap-y-2 max-md:flex-col max-md:items-center mt-8 lg:justify-start scroll-reveal" style={{ transitionDelay: '150ms' }}>
-                <Button variant="primary" size="md" href="/products">
+                <Button variant="primary" size="md" href="/technologies">
                   Get started
                 </Button>
                 <Button variant="outline" size="md" href="/company">

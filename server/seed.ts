@@ -106,7 +106,7 @@ async function seed() {
       sidePanel: {
         heading: 'Explore',
         links: [
-          { label: 'All products', href: '/products' },
+          { label: 'All technologies', href: '/technologies' },
           { label: 'Open source', href: 'https://github.com/OxyHQ' },
           { label: 'Developer platform', href: '/developers/docs' },
           { label: 'Status page', href: '/status' },
@@ -223,7 +223,7 @@ async function seed() {
   const categoryRef = (slug: string) => categoryIdBySlug.get(slug) ?? null
   console.log('Seeded categories')
 
-  // ── Products (/products + /status + ecosystem navbar, single source of truth) ──
+  // ── Products (/technologies + /status + ecosystem navbar, single source of truth) ──
   // `category` is the ObjectId ref to a Category; `section` stays populated
   // with the matching slug for backwards compatibility / fallback grouping.
   await Product.insertMany([

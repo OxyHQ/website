@@ -28,7 +28,7 @@ export default function HomeFinalCTA() {
             className="mt-6 flex items-center gap-2 animate-fade-in-up"
             style={{ animationDelay: '1000ms' }}
           >
-            <Button variant="primary" size="md" href="/products">
+            <Button variant="primary" size="md" href="/technologies">
               Get started
             </Button>
             <Button variant="outline" size="md" href="/company">

@@ -1298,3 +1298,28 @@ export function useDeleteReferral() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['referrals'] }),
   })
 }
+
+// ── Funding Progress ──
+export interface FundingProgress {
+  targetAmount: number
+  raisedAmount: number
+  currency: string
+  sustainable: boolean
+  breakdown: {
+    subscriptions: number
+    donations: number
+    partnerships: number
+    services: number
+  }
+  supporters: number
+  updatedAt: string
+}
+
+export function useFundingProgress() {
+  return useQuery({
+    queryKey: ['funding-progress'],
+    queryFn: () => apiFetch<FundingProgress>('/funding-progress'),
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+  })
+}

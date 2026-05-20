@@ -282,7 +282,7 @@ export default function HeroSection() {
               <Button variant="outline" size="md" href="/company">
                 Talk to us
               </Button>
-              <Button variant="primary" size="md" href="/products">
+              <Button variant="primary" size="md" href="/technologies">
                 Get started
               </Button>
             </div>

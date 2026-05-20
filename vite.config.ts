@@ -40,6 +40,7 @@ export default defineConfig({
     exclude: ['@react-native-async-storage/async-storage'],
   },
   server: {
+    host: true,
     forwardConsole: true,
     proxy: {
       '/api': 'http://localhost:4000',

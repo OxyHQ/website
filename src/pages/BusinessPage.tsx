@@ -13,7 +13,7 @@ import { usePage, type PageSection } from '../api/hooks'
  * `pages/company-business` document. Every block falls back to constant copy
  * so the page renders fully on fresh databases.
  *
- * Layout follows the canonical CompanyPage / ProductsPage patterns:
+ * Layout follows the canonical CompanyPage / TechnologiesPage patterns:
  *   container > border-border border-x > grid grid-cols-12 > col-[2/-2]
  * ──────────────────────────────────────────── */
 

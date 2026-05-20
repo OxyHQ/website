@@ -49,7 +49,7 @@ export function CornerDot({ className = '' }: { className?: string }) {
 /**
  * Three evenly-spaced dashed vertical lines spanning the section width.
  *
- * Used between rows on long marketing pages (CompanyPage, ProductsPage,
+ * Used between rows on long marketing pages (CompanyPage, TechnologiesPage,
  * ReferralsPage, etc.) as a subtle grid divider. Defaults to a 20px tall
  * strip; pass a Tailwind height utility via `height` to change it.
  */

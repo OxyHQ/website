@@ -50,7 +50,7 @@ export default function HomeAdaptiveSection() {
                 identity and agents — so your tools finally work together.
               </p>
             </div>
-            <Button variant="outline" size="md" href="/products" className="scroll-reveal mt-7">
+            <Button variant="outline" size="md" href="/technologies" className="scroll-reveal mt-7">
               Explore the ecosystem
             </Button>
           </div>

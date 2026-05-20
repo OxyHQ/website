@@ -40,7 +40,7 @@ export const bentoCards: BentoCard[] = [
     title: 'Powerful reporting',
     description: 'Create real-time, detailed reports that scale with your data. Visualise, customise, and get deep insights in seconds.',
     cta: 'Explore reporting',
-    href: '/products',
+    href: '/technologies',
   },
 ]
 

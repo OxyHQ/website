@@ -36,7 +36,7 @@ function groupBySection(products: ProductRecord[]): Array<[string, ProductRecord
 }
 
 /* ──────────────────────────────────────────────
- * /products
+ * /technologies
  *
  * High-level overview of every product in the Oxy ecosystem. Data comes
  * from the CMS via useProducts(); edit it in the admin at /admin/products
@@ -207,7 +207,7 @@ function ProductCard({ product }: { product: ProductRecord }) {
 
 /* ── Page ── */
 
-export default function ProductsPage() {
+export default function TechnologiesPage() {
   const { data: products = [] } = useProducts({ surface: 'products' })
   const { data: pageData } = usePage('products')
   const liveProducts = products.filter((p) => p.lifecycle === 'live')
@@ -224,9 +224,9 @@ export default function ProductsPage() {
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
-        title="Products"
+        title="Technologies"
         description="Every product in the Oxy ecosystem — Alia AI, Mention, Allo, Inbox, Codea, Oxy AI, Oxy CRM, Oxy OS, Bloom UI, TNP, FairCoin, Homiio and more. Open-source, privacy-first tools that put people first."
-        canonicalPath="/products"
+        canonicalPath="/technologies"
       />
       <Navbar />
       <main>

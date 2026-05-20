@@ -141,7 +141,7 @@ function resolvePrograms(sections: PageSection[]): ProgramCard[] {
   }))
 }
 
-// ── Layout primitives — match CompanyPage / ProductsPage helpers ────────────
+// ── Layout primitives — match CompanyPage / TechnologiesPage helpers ────────────
 
 const DashedHLine = () => <HorizontalLine className="w-full text-border" dashed />
 

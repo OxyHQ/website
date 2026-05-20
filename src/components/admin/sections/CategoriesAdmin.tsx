@@ -17,7 +17,7 @@ function emptyCategory(): CategoryRecord {
 }
 
 const SCOPE_LABEL: Record<CategoryScope, string> = {
-  apps: 'Apps sections (/products, /status, navbar)',
+  apps: 'Apps sections (/technologies, /status, navbar)',
   nav: 'Navbar dropdown headings',
   generic: 'Generic / shared across everything',
 }
@@ -90,7 +90,7 @@ export default function CategoriesAdmin() {
                 }}
                 placeholder="Social & Communication"
               />
-              <p className="text-xs text-muted-foreground">Human-readable label shown on /products, /status, and navbar headings.</p>
+              <p className="text-xs text-muted-foreground">Human-readable label shown on /technologies, /status, and navbar headings.</p>
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>Slug</Label>
@@ -155,7 +155,7 @@ export default function CategoriesAdmin() {
         <div>
           <h2 className="text-xl font-semibold text-foreground">Categories</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Reusable labels used to group products on /products, /status, and the Ecosystem navbar dropdown.
+            Reusable labels used to group products on /technologies, /status, and the Ecosystem navbar dropdown.
             Identified by slug, rendered as <span className="font-mono">label</span>.
           </p>
         </div>

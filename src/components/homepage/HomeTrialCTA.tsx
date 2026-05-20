@@ -18,7 +18,7 @@ export default function HomeTrialCTA() {
                 </span>
               </h2>
               <div className="flex items-center gap-2.5">
-                <Button variant="primary" size="md" href="/products">
+                <Button variant="primary" size="md" href="/technologies">
                   Get started
                 </Button>
                 <Button variant="outline" size="md" href="/company">

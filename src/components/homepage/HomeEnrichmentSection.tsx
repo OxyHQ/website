@@ -49,7 +49,7 @@ export default function HomeEnrichmentSection() {
               </p>
             </div>
             <div className="scroll-reveal mt-7 px-6 lg:px-0">
-              <Button variant="primary" size="md" href="/products">
+              <Button variant="primary" size="md" href="/technologies">
                 Get started
               </Button>
             </div>

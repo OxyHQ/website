@@ -42,7 +42,7 @@ export default function HomeHeroSection() {
             </p>
 
             <div className="mt-6 flex items-center gap-2">
-              <Button variant="primary" size="md" href="/products">
+              <Button variant="primary" size="md" href="/technologies">
                 Get started
               </Button>
               <Button variant="outline" size="md" href="/company">
