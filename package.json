@@ -19,7 +19,7 @@
     "@aws-sdk/client-s3": "^3.1025.0",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@oxyhq/auth": "^2.0.4",
-    "@oxyhq/bloom": "^0.3.2",
+    "@oxyhq/bloom": "^0.3.3",
     "@oxyhq/core": "^1.11.11",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-separator": "^1.1.8",
