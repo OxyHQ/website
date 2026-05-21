@@ -63,24 +63,6 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@font-face {
-  font-family: 'Ember Modern';
-  src: url('/fonts/EmberModernDisplayStd-Regular.woff2') format('woff2'),
-       url('/fonts/EmberModernDisplayStd-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Ember Modern';
-  src: url('/fonts/EmberModernDisplayStd-Bold.woff2') format('woff2'),
-       url('/fonts/EmberModernDisplayStd-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@import "@fontsource-variable/inter";
-@import "@fontsource-variable/geist-mono";
 @import './styles/cursor-theme.css';
 @import './styles/oxyos-theme.css';
 @import './styles/tnp-theme.css';
@@ -152,11 +134,15 @@
   --color-oxy-blue: #0057f3;
   --color-oxy-red: #fa0019;
 
-  /* Typography */
-  --font-sans: 'Ember Modern', 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Ember Modern', 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
-  --font-serif: 'Ember Modern', Georgia, 'Times New Roman', serif;
-  --font-mono: 'Geist Mono Variable', 'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  /* Typography — powered by @oxyhq/bloom fonts.
+   * Bloom's <BloomThemeProvider> injects --bloom-font-display / --bloom-font-sans /
+   * --bloom-font-mono onto :root at startup. The display family is BlomusModernus
+   * (Oxy's MIT custom font), sans is Inter Variable, mono is Geist Mono Variable.
+   * All three font files ship inside @oxyhq/bloom — no separate font assets needed. */
+  --font-sans: var(--bloom-font-sans);
+  --font-display: var(--bloom-font-display);
+  --font-serif: var(--bloom-font-display);
+  --font-mono: var(--bloom-font-mono);
 
   /* Heading sizes */
   --text-heading-xs: 1.75rem;
