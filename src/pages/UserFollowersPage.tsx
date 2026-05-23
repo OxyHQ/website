@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useWebOxy } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
@@ -113,15 +112,8 @@ export default function UserFollowersPage({ initialTab }: UserFollowersPageProps
       <main className="flex flex-1 flex-col">
         <div className="container">
           <div className="mx-auto max-w-[720px] px-5 py-12 md:px-8">
-            {/* Back + owner header */}
-            <div className="mb-5 flex items-center gap-3">
-              <Link
-                to={`/u/${username}`}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-surface"
-                aria-label="Back to profile"
-              >
-                <ArrowLeft size={18} />
-              </Link>
+            {/* Owner header */}
+            <Link to={`/u/${username}`} className="mb-5 flex items-center gap-3">
               {profile && (
                 <div className="shrink-0">
                   <Avatar
@@ -135,7 +127,7 @@ export default function UserFollowersPage({ initialTab }: UserFollowersPageProps
                 <h1 className="truncate text-xl font-bold text-foreground">{displayName}</h1>
                 <p className="truncate text-[13px] text-muted-foreground">@{username}</p>
               </div>
-            </div>
+            </Link>
 
             {/* Tabs */}
             <div className="flex border-b border-border">
