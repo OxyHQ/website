@@ -133,6 +133,7 @@ router.get('/:username', optionalAuth, async (req, res) => {
         name: oxyUser.name,
         avatar: oxyUser.avatar,
         color: oxyUser.color,
+        createdAt: oxyUser.createdAt,
       },
       bio: profileExtra?.bio || (oxyUser.bio as string) || '',
       showActivity: profileExtra?.showActivity !== false,

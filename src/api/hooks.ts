@@ -47,7 +47,7 @@ function normalizePostMedia(post: NewsroomPost): NewsroomPost {
 
 /** Resolve media field on a changelog entry */
 function normalizeEntryMedia<T extends { media?: unknown }>(entry: T): T {
-  return { ...entry, media: resolveMediaUrl(entry.media, 'lg') as any }
+  return { ...entry, media: resolveMediaUrl(entry.media, 'lg') } as T
 }
 
 
@@ -134,8 +134,8 @@ function normalizeNavItem(dd: RawNavDropdown): NavigationItem {
       sectionMap[heading] = []
       sectionOrder.push(heading)
     }
-    const { section: _s, ...rest } = item
-    sectionMap[heading].push(rest)
+    const itemWithoutSection = Object.fromEntries(Object.entries(item).filter(([k]) => k !== "section")) as NavDropdownItem
+    sectionMap[heading].push(itemWithoutSection)
   }
   return {
     _id: dd._id,
@@ -1034,6 +1034,7 @@ export interface UserProfileData {
     name: { first?: string; last?: string }
     avatar?: string
     color?: string
+    createdAt?: string
   }
   bio: string
   showActivity: boolean

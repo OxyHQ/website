@@ -8,11 +8,11 @@ interface ProfileActivityProps {
   userId?: string
 }
 
-type TabType = 'posts' | 'comments' | 'likes'
+type TabType = 'comments' | 'posts' | 'likes'
 
 const TABS: Array<{ value: TabType; label: string }> = [
-  { value: 'posts', label: 'Articles' },
   { value: 'comments', label: 'Comments' },
+  { value: 'posts', label: 'Articles' },
   { value: 'likes', label: 'Likes' },
 ]
 
@@ -87,7 +87,7 @@ function PostItem({ post }: { post: { slug: string; title: string; resume?: stri
 }
 
 export default function ProfileActivity({ username, userId }: ProfileActivityProps) {
-  const [activeTab, setActiveTab] = useState<TabType>('posts')
+  const [activeTab, setActiveTab] = useState<TabType>('comments')
   const { data: profile } = useUserProfile(username)
   const { data: activityData, isLoading: activityLoading } = useUserActivity(username, { type: activeTab === 'posts' ? undefined : activeTab })
   const { data: postsData, isPending: postsLoading } = useNewsroomPosts({ author: userId, limit: 20 })

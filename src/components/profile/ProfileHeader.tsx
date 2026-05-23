@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import { CalendarDays } from 'lucide-react'
 import { useAuth, useWebOxy } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
@@ -11,6 +12,12 @@ interface ProfileHeaderProps {
   profile: UserProfileData
   isOwnProfile: boolean
   onEditBio?: () => void
+}
+
+function formatJoinedDate(iso: string): string {
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
 }
 
 export default function ProfileHeader({ profile, isOwnProfile, onEditBio }: ProfileHeaderProps) {
@@ -61,20 +68,26 @@ export default function ProfileHeader({ profile, isOwnProfile, onEditBio }: Prof
       {/* Joined */}
       <div className="mt-3 flex items-center gap-1.5 text-[15px] text-muted-foreground">
         <CalendarDays size={16} />
-        <span>Joined Oxy</span>
+        <span>Joined Oxy{user.createdAt ? ` ${formatJoinedDate(user.createdAt)}` : ''}</span>
       </div>
 
       {/* Stats row - Twitter style */}
       {stats && (
-        <div className="mt-3 flex gap-4 text-[15px]">
-          <span>
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[15px]">
+          <Link
+            to={`/u/${user.username}/following`}
+            className="hover:underline"
+          >
             <span className="font-bold text-foreground">{stats.following}</span>{' '}
             <span className="text-muted-foreground">Following</span>
-          </span>
-          <span>
+          </Link>
+          <Link
+            to={`/u/${user.username}/followers`}
+            className="hover:underline"
+          >
             <span className="font-bold text-foreground">{stats.followers}</span>{' '}
             <span className="text-muted-foreground">Followers</span>
-          </span>
+          </Link>
           <span>
             <span className="font-bold text-foreground">{stats.comments}</span>{' '}
             <span className="text-muted-foreground">Comments</span>
