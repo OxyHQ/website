@@ -39,7 +39,9 @@ function UserRow({ user }: { user: UserListItem }) {
       className="block border-b border-border px-1 py-4 transition-colors hover:bg-surface/50"
     >
       <div className="flex items-start gap-3">
-        <Avatar source={user.avatar} size={48} placeholderColor={user.color} />
+        <div className="shrink-0">
+          <Avatar source={user.avatar} size={48} placeholderColor={user.color} name={displayName} />
+        </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-[15px] font-bold text-foreground">{displayName}</p>
           <p className="truncate text-[15px] text-muted-foreground">@{user.username}</p>
