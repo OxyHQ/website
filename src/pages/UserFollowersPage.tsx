@@ -40,7 +40,7 @@ function UserRow({ user }: { user: UserListItem }) {
     >
       <div className="flex items-start gap-3">
         <div className="shrink-0">
-          <Avatar source={user.avatar} size={48} placeholderColor={user.color} name={displayName} />
+          <Avatar source={user.avatar} size={48} placeholderColor={user.color} />
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-[15px] font-bold text-foreground">{displayName}</p>
@@ -113,15 +113,24 @@ export default function UserFollowersPage({ initialTab }: UserFollowersPageProps
       <main className="flex flex-1 flex-col">
         <div className="container">
           <div className="mx-auto max-w-[720px] px-5 py-12 md:px-8">
-            {/* Back + name header */}
+            {/* Back + owner header */}
             <div className="mb-5 flex items-center gap-3">
               <Link
                 to={`/u/${username}`}
-                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-surface"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-surface"
                 aria-label="Back to profile"
               >
                 <ArrowLeft size={18} />
               </Link>
+              {profile && (
+                <div className="shrink-0">
+                  <Avatar
+                    source={profile.user.avatar}
+                    size={40}
+                    placeholderColor={profile.user.color}
+                  />
+                </div>
+              )}
               <div className="min-w-0">
                 <h1 className="truncate text-xl font-bold text-foreground">{displayName}</h1>
                 <p className="truncate text-[13px] text-muted-foreground">@{username}</p>
