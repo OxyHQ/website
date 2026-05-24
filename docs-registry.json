@@ -1,0 +1,22 @@
+{
+  "repos": [
+    {
+      "name": "Bloom",
+      "localPath": "../Bloom"
+    },
+    {
+      "name": "OxyHQServices",
+      "localPath": "../OxyHQServices",
+      "configPaths": [
+        "packages/core",
+        "packages/auth-sdk",
+        "packages/services",
+        "packages/api",
+        "packages/accounts",
+        "packages/inbox",
+        "packages/console",
+        "packages/auth"
+      ]
+    }
+  ]
+}

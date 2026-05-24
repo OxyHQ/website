@@ -4,12 +4,26 @@ import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 import svgr from 'vite-plugin-svgr'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
+import mdx from '@mdx-js/rollup'
+import remarkGfm from 'remark-gfm'
+import remarkFrontmatter from 'remark-frontmatter'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     tailwindcss(),
     svgr(),
+    // MDX runs before React so JSX in synced docs becomes valid React.
+    // `remarkFrontmatter` ensures `---` YAML blocks at the top of synced
+    // pages are treated as data, not as MDX content (so they can include
+    // angle brackets without parser errors).
+    {
+      enforce: 'pre',
+      ...mdx({
+        remarkPlugins: [remarkFrontmatter, remarkGfm],
+        providerImportSource: '@mdx-js/react',
+      }),
+    },
     react(),
     babel({ presets: [reactCompilerPreset()] }),
     ViteImageOptimizer({
