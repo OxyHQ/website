@@ -53,8 +53,23 @@ export interface DocsRegistry {
 export interface DocsRegistryEntry {
   /** Display label used in logs. Should match `displayName` from the config. */
   name: string;
-  /** Absolute path to the repo root on the dev machine. */
-  localPath: string;
+  /**
+   * Optional: absolute or website-relative path to the repo root on the dev
+   * machine. Used when present and existent for fast local iteration.
+   * If absent (or the path does not resolve), the entry falls back to `git`.
+   */
+  localPath?: string;
+  /**
+   * Optional: HTTPS git URL used as a fallback (or sole source in CI) when
+   * `localPath` is missing. Shallow-cloned into
+   * `node_modules/.docs-cache/<name>/`.
+   */
+  git?: string;
+  /**
+   * Optional: branch or tag to check out when cloning via `git`. Defaults to
+   * `'main'`.
+   */
+  ref?: string;
   /**
    * Optional: when the repo is a monorepo, the path *within* the repo where
    * `docs.config.json` files live. If unset, defaults to the repo root.

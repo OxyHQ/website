@@ -2,11 +2,15 @@
   "repos": [
     {
       "name": "Bloom",
-      "localPath": "../Bloom"
+      "localPath": "/nonexistent/Bloom",
+      "git": "https://github.com/OxyHQ/Bloom.git",
+      "ref": "main"
     },
     {
       "name": "OxyHQServices",
-      "localPath": "../OxyHQServices",
+      "localPath": "/nonexistent/OxyHQServices",
+      "git": "https://github.com/OxyHQ/OxyHQServices.git",
+      "ref": "main",
       "configPaths": [
         "packages/core",
         "packages/auth-sdk",

@@ -9,7 +9,7 @@
     "dev:client": "vite",
     "prebuild": "bun scripts/sync-docs.ts",
     "build": "tsc -b && vite build",
-    "postbuild": "bun scripts/build-docs-search-index.ts && pagefind --site dist",
+    "postbuild": "bun scripts/build-docs-search-index.ts && bun scripts/run-pagefind.ts",
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "bun server/index.ts",

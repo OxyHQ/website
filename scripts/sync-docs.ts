@@ -38,6 +38,7 @@ import type {
 const WEBSITE_ROOT = path.resolve(import.meta.dir, '..');
 const REGISTRY_PATH = path.join(WEBSITE_ROOT, 'docs-registry.json');
 const SYNCED_DIR = path.join(WEBSITE_ROOT, 'src', 'content', '_synced');
+const CACHE_DIR = path.join(WEBSITE_ROOT, 'node_modules', '.docs-cache');
 
 interface FrontMatter {
   title?: string;
@@ -50,10 +51,59 @@ async function loadRegistry(): Promise<DocsRegistry> {
   return JSON.parse(raw) as DocsRegistry;
 }
 
-function resolveRepoPath(entry: DocsRegistryEntry): string {
-  return path.isAbsolute(entry.localPath)
-    ? entry.localPath
-    : path.resolve(WEBSITE_ROOT, entry.localPath);
+/** Resolve `entry.localPath` to an absolute path (relative paths are anchored to the website root). */
+function resolveLocalPath(localPath: string): string {
+  return path.isAbsolute(localPath) ? localPath : path.resolve(WEBSITE_ROOT, localPath);
+}
+
+/**
+ * Shallow-clone (or refresh) `git` into `node_modules/.docs-cache/<name>/`
+ * and return the absolute path to the working tree. Throws on hard failure.
+ */
+function syncGitCache(name: string, git: string, ref: string): string {
+  const dest = path.join(CACHE_DIR, name);
+  const gitDir = path.join(dest, '.git');
+  if (existsSync(gitDir)) {
+    console.error(`[sync-docs] refreshing cached clone for ${name} (${ref})...`);
+    execSync(`git fetch --depth 1 origin ${ref}`, { cwd: dest, stdio: 'pipe' });
+    execSync(`git reset --hard FETCH_HEAD`, { cwd: dest, stdio: 'pipe' });
+  } else {
+    console.error(`[sync-docs] cloning ${git} (${ref}) into ${dest}...`);
+    // Wipe a partial directory if a previous run left it behind without .git.
+    if (existsSync(dest)) {
+      execSync(`rm -rf ${JSON.stringify(dest)}`);
+    }
+    execSync(`mkdir -p ${JSON.stringify(CACHE_DIR)}`);
+    execSync(
+      `git clone --depth 1 --branch ${JSON.stringify(ref)} ${JSON.stringify(git)} ${JSON.stringify(dest)}`,
+      { stdio: 'pipe' },
+    );
+  }
+  return dest;
+}
+
+/**
+ * Resolve a registry entry to an absolute working-tree path on disk.
+ * Prefers `localPath` when it exists (fast dev iteration); falls back to
+ * cloning `git` into `node_modules/.docs-cache/<name>/`. Returns `null` when
+ * neither source is usable.
+ */
+function resolveRepoRoot(entry: DocsRegistryEntry): string | null {
+  if (entry.localPath) {
+    const resolved = resolveLocalPath(entry.localPath);
+    if (existsSync(resolved)) return resolved;
+    console.warn(`[sync-docs] localPath '${entry.localPath}' not found for ${entry.name}; falling back to git.`);
+  }
+  if (entry.git) {
+    try {
+      return syncGitCache(entry.name, entry.git, entry.ref ?? 'main');
+    } catch (err) {
+      console.error(`[sync-docs] failed to sync git source for ${entry.name}:`, err);
+      return null;
+    }
+  }
+  console.warn(`[sync-docs] no usable source (localPath or git) for ${entry.name}; skipping.`);
+  return null;
 }
 
 async function readDocsConfig(configPath: string): Promise<DocsConfig | null> {
@@ -67,8 +117,10 @@ async function readDocsConfig(configPath: string): Promise<DocsConfig | null> {
   }
 }
 
-async function collectConfigs(entry: DocsRegistryEntry): Promise<Array<{ config: DocsConfig; rootDir: string }>> {
-  const repoRoot = resolveRepoPath(entry);
+async function collectConfigs(
+  entry: DocsRegistryEntry,
+  repoRoot: string,
+): Promise<Array<{ config: DocsConfig; rootDir: string }>> {
   const results: Array<{ config: DocsConfig; rootDir: string }> = [];
   const candidates = entry.configPaths ?? [''];
   for (const sub of candidates) {
@@ -296,12 +348,13 @@ async function syncPackage(
 }
 
 async function syncRepo(entry: DocsRegistryEntry): Promise<SyncedPackage[]> {
-  const configs = await collectConfigs(entry);
+  const repoRoot = resolveRepoRoot(entry);
+  if (!repoRoot) return [];
+  const configs = await collectConfigs(entry, repoRoot);
   if (configs.length === 0) {
     console.warn(`[sync-docs] no docs.config.json found for ${entry.name}`);
     return [];
   }
-  const repoRoot = resolveRepoPath(entry);
   const out: SyncedPackage[] = [];
   for (const { config, rootDir } of configs) {
     const pkg = await syncPackage(config, rootDir, repoRoot);
