@@ -166,6 +166,32 @@ function slugFromFile(relPath: string): string {
   return noExt === 'index' ? '' : noExt.replace(/\\/g, '/');
 }
 
+/**
+ * Rewrite legacy /docs/... references to the canonical /developers/docs/...
+ * route used by this website. Source repos authored their MDX against the
+ * older route scheme; we normalize on the way in so synced content matches
+ * what the SPA actually serves. Handles both markdown link targets
+ * (the ](path) form) and bold link captions (the [**path**] form).
+ */
+function rewriteDocsLinks(source: string): string {
+  return (
+    source
+      // Link captions like `[**/docs/api**]` or `[/docs/x]` — the bracketed
+      // display text that authors hand-write to mirror the URL.
+      .replace(/(\[(?:\*\*)?)\/docs(\/[^\]\s)]*?)((?:\*\*)?\])/g, '$1/developers/docs$2$3')
+      // Link targets like `](/docs/...)`.
+      .replace(/(\]\()\/docs(\/|\))/g, '$1/developers/docs$2')
+  );
+}
+
+async function rewriteMdxLinksInPlace(filePath: string): Promise<void> {
+  const original = await readFile(filePath, 'utf8');
+  const rewritten = rewriteDocsLinks(original);
+  if (rewritten !== original) {
+    await writeFile(filePath, rewritten);
+  }
+}
+
 async function walkMdx(dir: string, base = dir): Promise<string[]> {
   const out: string[] = [];
   if (!existsSync(dir)) return out;
@@ -212,6 +238,7 @@ async function copyVersionFromTree(
   const pages: SyncedPage[] = [];
   for (const rel of files) {
     const full = path.join(outDir, rel);
+    await rewriteMdxLinksInPlace(full);
     const source = await readFile(full, 'utf8');
     const { data, body } = parseFrontMatter(source);
     const slug = slugFromFile(rel);
@@ -268,8 +295,9 @@ async function copyVersionFromGitTag(
     }
     const dest = path.join(outDir, relUnderDocs);
     await mkdir(path.dirname(dest), { recursive: true });
-    await writeFile(dest, contents);
-    const { data, body } = parseFrontMatter(contents.toString('utf8'));
+    const rewritten = rewriteDocsLinks(contents.toString('utf8'));
+    await writeFile(dest, rewritten);
+    const { data, body } = parseFrontMatter(rewritten);
     const slug = slugFromFile(relUnderDocs);
     const title = data.title ?? deriveTitleFromBody(body, slug || 'Overview');
     pages.push({

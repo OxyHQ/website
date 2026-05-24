@@ -7,8 +7,8 @@
  * Pagefind to crawl. Rather than introduce a full SSR pipeline, we render a
  * minimal HTML shell per synced MDX page — just enough content for Pagefind
  * to extract the title, headings, and prose. Clicking a Pagefind result
- * navigates to the SPA route (`/docs/<package>/<version>/<slug>`), which
- * does the real React rendering.
+ * navigates to the SPA route (`/developers/docs/<package>/<version>/<slug>`),
+ * which does the real React rendering.
  *
  * Output lands at `dist/docs-content/<package>/<version>/<slug>.html`.
  * `pagefind --site dist` then walks `dist/` and emits `dist/pagefind/`.
@@ -166,8 +166,8 @@ async function main(): Promise<void> {
         const slugPath = page.slug ? `${page.slug}.html` : 'index.html';
         const dest = path.join(OUT_DIR, pkg.shortName, ver.version, slugPath);
         const canonical = page.slug
-          ? `/docs/${pkg.shortName}/${ver.version}/${page.slug}`
-          : `/docs/${pkg.shortName}/${ver.version}`;
+          ? `/developers/docs/${pkg.shortName}/${ver.version}/${page.slug}`
+          : `/developers/docs/${pkg.shortName}/${ver.version}`;
         await ensureDir(path.dirname(dest));
         await writeFile(dest, wrapHtml(`${title} — ${pkg.displayName}`, html, canonical));
         total += 1;

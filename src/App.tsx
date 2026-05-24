@@ -46,9 +46,6 @@ const HelpArticlePage = lazy(() => import('./pages/HelpArticlePage'))
 const ChangelogPage = lazy(() => import('./pages/ChangelogPage'))
 const DocsPage = lazy(() => import('./pages/DocsPage'))
 const DocsIntroPage = lazy(() => import('./pages/DocsIntroPage'))
-const DocsHubPage = lazy(() => import('./pages/docs/DocsHubPage'))
-const DocsPackagePage = lazy(() => import('./pages/docs/DocsPackagePage'))
-const DocsApiPage = lazy(() => import('./pages/docs/DocsApiPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
 const UserProfilePage = lazy(() => import('./pages/UserProfilePage'))
@@ -162,13 +159,11 @@ function PublicRoutes() {
       <Route path="help/:slug" element={<HelpArticlePage />} />
       <Route path="changelog" element={<ChangelogPage />} />
       <Route path="developers/docs" element={<DocsIntroPage />} />
-      <Route path="developers/docs/overview" element={<DocsPage />} />
-      <Route path="docs" element={<DocsHubPage />} />
-      <Route path="docs/api" element={<DocsApiPage />} />
-      <Route path="docs/api/:version" element={<DocsApiPage />} />
-      <Route path="docs/:package" element={<DocsPackagePage />} />
-      <Route path="docs/:package/:version" element={<DocsPackagePage />} />
-      <Route path="docs/:package/:version/*" element={<DocsPackagePage />} />
+      <Route path="developers/docs/api" element={<DocsPage />} />
+      <Route path="developers/docs/api/:version" element={<DocsPage />} />
+      <Route path="developers/docs/:package" element={<DocsPage />} />
+      <Route path="developers/docs/:package/:version" element={<DocsPage />} />
+      <Route path="developers/docs/:package/:version/*" element={<DocsPage />} />
       <Route path="company/news" element={<BlogPage />} />
       <Route path="codea" element={<CodeaPage />} />
       <Route path="codea/extension" element={<CodexExtensionPage />} />

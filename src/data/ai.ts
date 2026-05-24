@@ -44,7 +44,7 @@ export const productCards: ProductCard[] = [
     title: 'Developer Docs',
     description:
       'Learn how to quickly integrate Oxy AI at the heart of your applications and explore guides covering common use cases.',
-    href: '/developers/docs/overview',
+    href: '/developers/docs',
     cta: 'Learn more',
   },
 ]

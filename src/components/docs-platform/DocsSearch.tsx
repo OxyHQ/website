@@ -37,8 +37,8 @@ function buildMiniSearchIndex(index: SyncedIndex) {
       if (ver.version !== pkg.defaultVersion) continue
       for (const page of ver.pages) {
         const url = page.slug
-          ? `/docs/${pkg.shortName}/${ver.version}/${page.slug}`
-          : `/docs/${pkg.shortName}/${ver.version}`
+          ? `/developers/docs/${pkg.shortName}/${ver.version}/${page.slug}`
+          : `/developers/docs/${pkg.shortName}/${ver.version}`
         documents.push({
           id: url,
           title: page.title,
@@ -111,7 +111,7 @@ async function searchProd(query: string, packages: SyncedPackage[]): Promise<Sea
     const url = data.url.replace(/\.html$/, '')
     // Best-effort: associate URL with one of our packages so we can show a
     // category label. Falls back to "Docs".
-    const matchPkg = packages.find((p) => url.includes(`/docs/${p.shortName}/`))
+    const matchPkg = packages.find((p) => url.includes(`/developers/docs/${p.shortName}/`))
     out.push({
       id: r.id,
       url,

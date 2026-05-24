@@ -16,14 +16,14 @@ export const features: CodeaFeature[] = [
     title: 'AI-powered editing, built in',
     description: 'Codea pairs you with an AI assistant that understands your project context, suggests completions, and helps you refactor — all without leaving the editor.',
     cta: 'See how AI editing works \u2192',
-    ctaHref: '/developers/docs/codea',
+    ctaHref: '/codea',
     layout: 'left',
   },
   {
     title: 'Code from any browser',
     description: 'No downloads, no installs. Open Codea in your browser and start writing code instantly with a full-featured editing experience backed by the cloud.',
     cta: 'Try Codea in your browser \u2192',
-    ctaHref: '/developers/docs/codea',
+    ctaHref: '/codea',
     layout: 'left',
   },
   {
@@ -64,13 +64,13 @@ export const frontierCards: FrontierCard[] = [
     title: 'Browser-native development',
     description: 'Get a full development environment in any modern browser — with file management, terminal access, and real-time collaboration, no setup required.',
     cta: 'Learn more',
-    ctaHref: '/developers/docs/codea',
+    ctaHref: '/codea',
   },
   {
     title: 'AI that fits your workflow',
     description: 'Inline completions, chat-driven refactors, and context-aware suggestions that adapt to your codebase. Use the AI when it helps, ignore it when it doesn\u2019t.',
     cta: 'Explore AI features',
-    ctaHref: '/developers/docs/codea',
+    ctaHref: '/codea',
   },
 ]
 
@@ -103,7 +103,7 @@ export const footerColumns: FooterColumn[] = [
   {
     title: 'Product',
     links: [
-      { label: 'Codea Editor', href: '/developers/docs/codea' },
+      { label: 'Codea Editor', href: '/codea' },
       { label: 'Oxy Platform', href: '/developers/docs' },
       { label: 'Pricing', href: '/pricing' },
     ],

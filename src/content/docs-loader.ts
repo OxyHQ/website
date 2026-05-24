@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react'
+import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
 import indexJson from './_synced/index.json'
 import type { SyncedIndex, SyncedPackage, SyncedPage, SyncedVersion } from '../../scripts/types'
 
@@ -10,6 +10,19 @@ const index = indexJson as SyncedIndex
 const lazyMdx = import.meta.glob<{ default: ComponentType<Record<string, unknown>> }>(
   './_synced/**/*.{mdx,md}',
 )
+
+// Pre-bound `React.lazy` components, keyed by the MDX file's relative path
+// (matching the `file` field on `SyncedPage`). Building the lazy wrappers at
+// module init keeps component identities stable across renders — which is
+// what `react-hooks/static-components` (and React Compiler) expects.
+const lazyComponents = new Map<string, LazyExoticComponent<ComponentType<Record<string, unknown>>>>()
+for (const key of Object.keys(lazyMdx)) {
+  const loader = lazyMdx[key]
+  if (!loader) continue
+  // Strip the `./_synced/` prefix to match `SyncedPage.file`.
+  const file = key.replace(/^\.\/_synced\//, '')
+  lazyComponents.set(file, lazy(loader))
+}
 
 export function getIndex(): SyncedIndex {
   return index
@@ -39,3 +52,14 @@ export function loadMdx(file: string): (() => Promise<{ default: ComponentType<R
   const loader = lazyMdx[key]
   return loader ?? null
 }
+
+/**
+ * Pre-bound `React.lazy` components keyed by MDX file path. Component
+ * identities are stable for the lifetime of the module so consumers can read
+ * the entry into a local and render it without violating the
+ * `react-hooks/static-components` rule (which forbids creating a component
+ * inside render).
+ */
+export type MdxLazyComponent = LazyExoticComponent<ComponentType<Record<string, unknown>>>
+
+export const mdxLazyComponents: ReadonlyMap<string, MdxLazyComponent> = lazyComponents

@@ -52,8 +52,8 @@ export default function VersionSelector({ pkg, currentVersion, slug }: VersionSe
                 onClick={() => {
                   setOpen(false)
                   const href = slug
-                    ? `/docs/${pkg.shortName}/${v.version}/${slug}`
-                    : `/docs/${pkg.shortName}/${v.version}`
+                    ? `/developers/docs/${pkg.shortName}/${v.version}/${slug}`
+                    : `/developers/docs/${pkg.shortName}/${v.version}`
                   navigate(href)
                 }}
               >
