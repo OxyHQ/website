@@ -1,4 +1,4 @@
-import { Suspense, createElement, lazy, useState } from 'react'
+import { Suspense, createElement, lazy, useMemo, useState } from 'react'
 import { Navigate, NavLink, useLocation, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { MDXProvider } from '@mdx-js/react'
@@ -13,6 +13,7 @@ import {
   resolveVersion,
 } from '../../content/docs-loader'
 import type { SyncedPackage, SyncedVersion } from '../../../scripts/types'
+import { ChevronDownIcon } from '../icons/ChevronDownIcon'
 import { mdxComponents } from '../docs-platform/mdxComponentMap'
 import DocsSearch from '../docs-platform/DocsSearch'
 import VersionSelector from '../docs-platform/VersionSelector'
@@ -42,9 +43,39 @@ function pageHref(pkg: SyncedPackage, version: string, slug: string): string {
   return buildDocsHref(pkg, version, slug)
 }
 
+/**
+ * Map a synced package's shortName to a public asset path. Returning
+ * `undefined` triggers the letter-fallback avatar in `DocsSidebar`. Keep this
+ * table in sync with the SVG/PNG files committed under
+ * `public/images/apps/<shortName>.{svg,png}`.
+ */
+function getPackageLogo(shortName: string): string | undefined {
+  const map: Record<string, string> = {
+    accounts: '/images/apps/accounts.png',
+    alia: '/images/apps/alia.svg',
+    allo: '/images/apps/allo.png',
+    astro: '/images/apps/astro.svg',
+    auth: '/images/apps/auth.svg',
+    clarity: '/images/apps/clarity.png',
+    inbox: '/images/apps/inbox.png',
+    oxyos: '/images/apps/oxyos.png',
+  }
+  return map[shortName]
+}
+
+interface SidebarItem {
+  label: string
+  href: string
+  shortName: string
+  /** True for the package-name row; false for child page rows under an expanded package. */
+  isPackageHeader: boolean
+}
+
 interface SidebarSection {
+  /** Stable category id (for tracking expand/collapse independent of label). */
+  category: SyncedPackage['category']
   title: string
-  items: Array<{ label: string; href: string }>
+  items: SidebarItem[]
 }
 
 /**
@@ -64,7 +95,7 @@ function buildSidebar(activePkg?: SyncedPackage, activeVersion?: SyncedVersion):
   for (const cat of categoryOrder) {
     const pkgs = grouped.get(cat)
     if (!pkgs || pkgs.length === 0) continue
-    const items: SidebarSection['items'] = []
+    const items: SidebarItem[] = []
     for (const pkg of pkgs) {
       const expanded = activePkg?.shortName === pkg.shortName
       const version =
@@ -79,22 +110,52 @@ function buildSidebar(activePkg?: SyncedPackage, activeVersion?: SyncedVersion):
           items.push({
             label: page.title,
             href: pageHref(pkg, version.version, page.slug),
+            shortName: pkg.shortName,
+            isPackageHeader: false,
           })
         }
       } else {
         items.push({
           label: pkg.displayName,
           href: pageHref(pkg, version.version, ''),
+          shortName: pkg.shortName,
+          isPackageHeader: true,
         })
       }
     }
     if (items.length === 0) continue
-    sections.push({ title: categoryLabels[cat], items })
+    sections.push({ category: cat, title: categoryLabels[cat], items })
   }
   return sections
 }
 
 /* -------------------------- Sidebar UI -------------------------------- */
+
+/** Letter avatar fallback used when no logo asset exists for a package. */
+function PackageLogo({ shortName, label }: { shortName: string; label: string }) {
+  const src = getPackageLogo(shortName)
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt=""
+        aria-hidden="true"
+        className="size-5 shrink-0 rounded-md object-contain"
+        loading="lazy"
+        decoding="async"
+      />
+    )
+  }
+  const letter = label.replace(/^@[^/]+\//, '').charAt(0).toUpperCase() || '?'
+  return (
+    <span
+      aria-hidden="true"
+      className="size-5 shrink-0 inline-flex items-center justify-center rounded-full bg-primary/15 text-primary text-[10px] font-medium leading-none"
+    >
+      {letter}
+    </span>
+  )
+}
 
 function DocsSidebar({
   sections,
@@ -104,41 +165,89 @@ function DocsSidebar({
   activePkg?: SyncedPackage
 }) {
   const location = useLocation()
+  // Default expansion: only the category containing the active package is
+  // expanded; all others collapsed. Computed once per `activePkg`/`sections`
+  // shape change via `useMemo` — no `useEffect`.
+  const initialExpanded = useMemo<Record<SyncedPackage['category'], boolean>>(() => {
+    const out: Record<SyncedPackage['category'], boolean> = {
+      'ui-library': false,
+      sdk: false,
+      app: false,
+      service: false,
+    }
+    if (activePkg) {
+      out[activePkg.category] = true
+    } else if (sections.length > 0) {
+      // No active package (e.g. docs hub) — expand the first non-empty section
+      // so the sidebar isn't entirely closed on first load.
+      out[sections[0].category] = true
+    }
+    return out
+  }, [activePkg, sections])
+  const [expanded, setExpanded] =
+    useState<Record<SyncedPackage['category'], boolean>>(initialExpanded)
+
+  function toggle(cat: SyncedPackage['category']) {
+    setExpanded((prev) => ({ ...prev, [cat]: !prev[cat] }))
+  }
+
   return (
     <aside className="hidden lg:block w-[19.5rem] shrink-0 border-r border-border">
       <div className="sticky top-[calc(var(--site-header-height,64px)+48px)] h-[calc(100vh-var(--site-header-height,64px)-48px)] overflow-y-auto relative text-sm leading-6 pt-6 pb-10 pl-6 pr-6">
-        {sections.map((section, sectionIdx) => (
-          <div key={section.title} className={sectionIdx === 0 ? '' : 'mt-8'}>
-            <h5 className="mb-2.5 font-semibold text-foreground pl-4">{section.title}</h5>
-            <ul className="space-y-px">
-              {section.items.map((item) => {
-                const isActive = location.pathname === item.href
-                const isActivePackageHeader =
-                  activePkg !== undefined &&
-                  !isActive &&
-                  item.href.startsWith(`/developers/docs/${activePkg.shortName}/`)
-                return (
-                  <li key={item.label + item.href}>
-                    <NavLink
-                      className={
-                        isActive
-                          ? 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl w-full outline-offset-[-1px] bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]'
-                          : isActivePackageHeader
-                            ? 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-surface text-foreground'
-                            : 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-surface text-muted-foreground hover:text-foreground'
-                      }
-                      to={item.href}
-                    >
-                      <div className="flex-1 flex items-start space-x-2.5">
-                        <div className="break-words [word-break:break-word]">{item.label}</div>
-                      </div>
-                    </NavLink>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-        ))}
+        {sections.map((section, sectionIdx) => {
+          const isOpen = expanded[section.category]
+          return (
+            <div key={section.category} className={sectionIdx === 0 ? '' : 'mt-6'}>
+              <button
+                type="button"
+                onClick={() => toggle(section.category)}
+                aria-expanded={isOpen}
+                className="w-full mb-2.5 flex items-center justify-between pl-4 pr-3 py-1 rounded-lg hover:bg-surface group"
+              >
+                <span className="font-semibold text-foreground text-left">{section.title}</span>
+                <ChevronDownIcon
+                  className={
+                    isOpen
+                      ? 'rotate-0 transition-transform text-muted-foreground group-hover:text-foreground'
+                      : '-rotate-90 transition-transform text-muted-foreground group-hover:text-foreground'
+                  }
+                />
+              </button>
+              {isOpen ? (
+                <ul className="space-y-px">
+                  {section.items.map((item) => {
+                    const isActive = location.pathname === item.href
+                    const isActivePackageHeader =
+                      activePkg !== undefined &&
+                      !isActive &&
+                      item.href.startsWith(`/developers/docs/${activePkg.shortName}/`)
+                    return (
+                      <li key={item.label + item.href}>
+                        <NavLink
+                          className={
+                            isActive
+                              ? 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl w-full outline-offset-[-1px] bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]'
+                              : isActivePackageHeader
+                                ? 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-surface text-foreground'
+                                : 'group flex items-start pr-3 py-1.5 pl-4 cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-surface text-muted-foreground hover:text-foreground'
+                          }
+                          to={item.href}
+                        >
+                          <div className="flex-1 flex items-start space-x-2.5">
+                            {item.isPackageHeader ? (
+                              <PackageLogo shortName={item.shortName} label={item.label} />
+                            ) : null}
+                            <div className="break-words [word-break:break-word]">{item.label}</div>
+                          </div>
+                        </NavLink>
+                      </li>
+                    )
+                  })}
+                </ul>
+              ) : null}
+            </div>
+          )
+        })}
       </div>
     </aside>
   )

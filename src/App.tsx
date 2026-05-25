@@ -47,6 +47,7 @@ const HelpArticlePage = lazy(() => import('./pages/HelpArticlePage'))
 const ChangelogPage = lazy(() => import('./pages/ChangelogPage'))
 const DocsPage = lazy(() => import('./pages/DocsPage'))
 const DocsIntroPage = lazy(() => import('./pages/DocsIntroPage'))
+const DevelopersPage = lazy(() => import('./pages/DevelopersPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
 const UserProfilePage = lazy(() => import('./pages/UserProfilePage'))
@@ -160,6 +161,7 @@ function PublicRoutes() {
       <Route path="help" element={<HelpPage />} />
       <Route path="help/*" element={<HelpArticlePage />} />
       <Route path="changelog" element={<ChangelogPage />} />
+      <Route path="developers" element={<DevelopersPage />} />
       <Route path="developers/docs" element={<DocsIntroPage />} />
       <Route path="developers/docs/api" element={<DocsPage />} />
       <Route path="developers/docs/api/:version" element={<DocsPage />} />
