@@ -40,9 +40,60 @@ export function getVersion(pkg: SyncedPackage, version: string): SyncedVersion |
   return pkg.versions.find((v) => v.version === version)
 }
 
+/**
+ * Resolve the "active" version for a package given a (possibly absent) user-
+ * requested version. Always returns a `SyncedVersion` if the package has
+ * any versions at all — falls back to `latestVersion`, then `defaultVersion`,
+ * then the first listed version. Callers can rely on this to never throw.
+ */
+export function resolveVersion(
+  pkg: SyncedPackage,
+  requested?: string,
+): SyncedVersion | undefined {
+  if (requested) {
+    const match = getVersion(pkg, requested)
+    if (match) return match
+  }
+  const latest =
+    getVersion(pkg, pkg.latestVersion) ?? getVersion(pkg, pkg.defaultVersion)
+  return latest ?? pkg.versions[0]
+}
+
+/**
+ * Build a docs URL for a given package + version + slug. Versioned packages
+ * carry the version segment; non-versioned packages use the flat form. Pass
+ * `'latest'` as `version` to render the canonical path with no version
+ * segment (always points at the resolved latest version).
+ */
+export function buildDocsHref(
+  pkg: SyncedPackage,
+  version: string | 'latest',
+  slug = '',
+): string {
+  const base = '/developers/docs'
+  const cleanSlug = slug.replace(/^\/+/, '').replace(/\/+$/, '')
+  if (!pkg.versioned || version === 'latest') {
+    return cleanSlug ? `${base}/${pkg.shortName}/${cleanSlug}` : `${base}/${pkg.shortName}`
+  }
+  return cleanSlug
+    ? `${base}/${pkg.shortName}/${version}/${cleanSlug}`
+    : `${base}/${pkg.shortName}/${version}`
+}
+
 export function getPage(version: SyncedVersion, slug: string): SyncedPage | undefined {
   const normalized = slug.replace(/\/+$/, '')
   return version.pages.find((p) => p.slug === normalized)
+}
+
+/** True when `version` is listed in the package's `deprecatedVersions`. */
+export function isVersionDeprecated(pkg: SyncedPackage, version: string): boolean {
+  return pkg.deprecatedVersions.includes(version)
+}
+
+/** True when `version` is older than `latestVersion` (string compare on the version slug). */
+export function isVersionOutdated(pkg: SyncedPackage, version: string): boolean {
+  if (!pkg.versioned) return false
+  return version !== pkg.latestVersion
 }
 
 export function loadMdx(file: string): (() => Promise<{ default: ComponentType<Record<string, unknown>> }>) | null {

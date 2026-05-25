@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, type ChangeEvent, type KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import MiniSearch from 'minisearch'
-import { getIndex } from '../../content/docs-loader'
+import { buildDocsHref, getIndex } from '../../content/docs-loader'
 import type { SyncedIndex, SyncedPackage } from '../../../scripts/types'
 
 interface SearchResult {
@@ -33,12 +33,15 @@ function buildMiniSearchIndex(index: SyncedIndex) {
   const documents: Array<{ id: string; title: string; packageName: string; category: string; url: string; body: string }> = []
   for (const pkg of index.packages) {
     for (const ver of pkg.versions) {
-      // Only the default version is searchable to keep the index small in dev.
-      if (ver.version !== pkg.defaultVersion) continue
+      // Only the latest version (or working tree, for non-versioned packages)
+      // is searchable — keeps the dev-mode MiniSearch index small and
+      // prevents old-version duplicates from cluttering results.
+      if (ver.version !== pkg.latestVersion) continue
       for (const page of ver.pages) {
-        const url = page.slug
-          ? `/developers/docs/${pkg.shortName}/${ver.version}/${page.slug}`
-          : `/developers/docs/${pkg.shortName}/${ver.version}`
+        // `buildDocsHref(pkg, 'latest', slug)` strips the version segment
+        // for non-versioned packages — search results route directly to
+        // the canonical SPA URL.
+        const url = buildDocsHref(pkg, 'latest', page.slug)
         documents.push({
           id: url,
           title: page.title,

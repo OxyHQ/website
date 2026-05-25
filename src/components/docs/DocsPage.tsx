@@ -4,16 +4,19 @@ import { useQuery } from '@tanstack/react-query'
 import { MDXProvider } from '@mdx-js/react'
 import { FEATURES } from '../../constants'
 import {
+  buildDocsHref,
   mdxLazyComponents,
   getPackage,
   getPage,
   getPackages,
   getVersion,
+  resolveVersion,
 } from '../../content/docs-loader'
 import type { SyncedPackage, SyncedVersion } from '../../../scripts/types'
 import { mdxComponents } from '../docs-platform/mdxComponentMap'
 import DocsSearch from '../docs-platform/DocsSearch'
 import VersionSelector from '../docs-platform/VersionSelector'
+import VersionBanner from '../docs-platform/VersionBanner'
 import DocsSubNav from './DocsSubNav'
 
 /* ------------------------------ Constants ----------------------------- */
@@ -35,9 +38,8 @@ interface PackageRoute {
   slug: string
 }
 
-function pageHref(shortName: string, version: string, slug: string): string {
-  const base = `/developers/docs/${shortName}/${version}`
-  return slug ? `${base}/${slug}` : base
+function pageHref(pkg: SyncedPackage, version: string, slug: string): string {
+  return buildDocsHref(pkg, version, slug)
 }
 
 interface SidebarSection {
@@ -68,19 +70,21 @@ function buildSidebar(activePkg?: SyncedPackage, activeVersion?: SyncedVersion):
       const version =
         expanded && activeVersion
           ? activeVersion
-          : pkg.versions.find((v) => v.version === pkg.defaultVersion) ?? pkg.versions[0]
+          : pkg.versions.find((v) => v.version === pkg.latestVersion) ??
+            pkg.versions.find((v) => v.version === pkg.defaultVersion) ??
+            pkg.versions[0]
       if (!version) continue
       if (expanded) {
         for (const page of version.pages) {
           items.push({
             label: page.title,
-            href: pageHref(pkg.shortName, version.version, page.slug),
+            href: pageHref(pkg, version.version, page.slug),
           })
         }
       } else {
         items.push({
           label: pkg.displayName,
-          href: pageHref(pkg.shortName, version.version, ''),
+          href: pageHref(pkg, version.version, ''),
         })
       }
     }
@@ -349,14 +353,37 @@ function resolveRoute(params: DocsRouteParams): PackageRoute | null | 'redirect'
   if (!shortName) return null
   const pkg = getPackage(shortName)
   if (!pkg) return null
+
   const requestedVersion = params.version ?? ''
+  const splat = (params['*'] ?? '').replace(/^\/+/, '').replace(/\/+$/, '')
+
+  if (!pkg.versioned) {
+    // Non-versioned package. React Router still binds `params.version` for
+    // the `:package/:version` route, but for these packages that segment is
+    // really part of the slug. Stitch it back onto the splat so a URL like
+    // `/developers/docs/accounts/security/activity` resolves to the
+    // `security/activity` slug under the package's lone version.
+    const stitchedSlug = [requestedVersion, splat].filter(Boolean).join('/')
+    const version = resolveVersion(pkg)
+    if (!version) return null
+    const page = getPage(version, stitchedSlug)
+    if (page) return { pkg, version, slug: stitchedSlug }
+    // No matching slug — if nothing was requested, fall through to the
+    // index page; otherwise bounce to the package root.
+    if (!stitchedSlug) {
+      const index = getPage(version, '')
+      if (index) return { pkg, version, slug: '' }
+    }
+    return 'redirect'
+  }
+
+  // Versioned package — the URL must include a real version segment.
   if (!requestedVersion) return 'redirect'
   const version = getVersion(pkg, requestedVersion)
   if (!version) return 'redirect'
-  const slug = (params['*'] ?? '').replace(/\/+$/, '')
-  const pageExists = getPage(version, slug)
+  const pageExists = getPage(version, splat)
   if (!pageExists) return 'redirect'
-  return { pkg, version, slug }
+  return { pkg, version, slug: splat }
 }
 
 export default function DocsPage() {
@@ -369,10 +396,8 @@ export default function DocsPage() {
   if (onApiRoute) {
     const apiPkg = getPackage('api')
     const requestedVersion = typeof params.version === 'string' ? params.version : ''
-    const version =
-      apiPkg && requestedVersion && getVersion(apiPkg, requestedVersion)
-        ? requestedVersion
-        : (apiPkg?.defaultVersion ?? 'main')
+    const resolvedVersion = apiPkg ? resolveVersion(apiPkg, requestedVersion) : undefined
+    const version = resolvedVersion?.version ?? apiPkg?.latestVersion ?? 'main'
     const sections = buildSidebar(apiPkg ?? undefined)
     return (
       <DocsShell
@@ -399,7 +424,7 @@ export default function DocsPage() {
   if (resolved === 'redirect') {
     const fallbackPkg = params.package ? getPackage(params.package) : undefined
     const dest = fallbackPkg
-      ? `/developers/docs/${fallbackPkg.shortName}/${fallbackPkg.defaultVersion}`
+      ? buildDocsHref(fallbackPkg, fallbackPkg.latestVersion, '')
       : '/developers/docs'
     return <Navigate to={dest} replace />
   }
@@ -408,7 +433,7 @@ export default function DocsPage() {
   const page = getPage(version, slug)
   if (!page) {
     // Defensive — resolveRoute guards this, but keep TypeScript narrowing happy.
-    return <Navigate to={`/developers/docs/${pkg.shortName}/${pkg.defaultVersion}`} replace />
+    return <Navigate to={buildDocsHref(pkg, pkg.latestVersion, '')} replace />
   }
   const sections = buildSidebar(pkg, version)
   return (
@@ -452,8 +477,15 @@ function DocsShell({
   activePkg,
   children,
 }: DocsShellProps) {
+  // The version selector only makes sense for packages that opted into
+  // versioning AND ship more than one version. Non-versioned packages
+  // never show it; single-version versioned packages also hide it so the
+  // header stays clean until a second version ships.
   const showVersionSelector =
-    pkg !== undefined && currentVersion !== undefined && pkg.versions.length > 1
+    pkg !== undefined &&
+    currentVersion !== undefined &&
+    pkg.versioned &&
+    pkg.versions.length > 1
   return (
     <div className="relative antialiased">
       <DocsSubNav />
@@ -492,6 +524,9 @@ function DocsShell({
             className="relative mt-8 mb-14 [contain:inline-size] isolate max-w-3xl prose prose-neutral dark:prose-invert text-foreground"
             data-docs-content
           >
+            {pkg && currentVersion ? (
+              <VersionBanner pkg={pkg} currentVersion={currentVersion} slug={slug} />
+            ) : null}
             {children}
           </div>
 

@@ -1,5 +1,5 @@
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { getPackages } from '../../content/docs-loader'
+import { buildDocsHref, getPackages } from '../../content/docs-loader'
 import type { SyncedPackage } from '../../../scripts/types'
 import DocsSearch from '../docs-platform/DocsSearch'
 import DocsSubNav from './DocsSubNav'
@@ -17,8 +17,13 @@ const categoryOrder: CategoryConfig[] = [
   { category: 'service', title: 'Services', description: 'Backend services and REST APIs.' },
 ]
 
+/**
+ * Canonical landing URL for a package card. Versioned packages link to
+ * their latest version with no slug; non-versioned packages link straight
+ * to the bare package URL (no version segment).
+ */
 function pageHref(pkg: SyncedPackage): string {
-  return `/developers/docs/${pkg.shortName}/${pkg.defaultVersion}`
+  return buildDocsHref(pkg, pkg.latestVersion, '')
 }
 
 /* ─── Sidebar: synced packages grouped by category ─── */
@@ -139,9 +144,11 @@ export default function DocsIntroPage() {
                       >
                         <div className="flex items-center justify-between mb-1">
                           <span className="font-semibold text-foreground">{pkg.displayName}</span>
-                          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                            {pkg.defaultVersion}
-                          </span>
+                          {pkg.versioned ? (
+                            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                              v{pkg.latestVersion}
+                            </span>
+                          ) : null}
                         </div>
                         <div className="text-xs text-muted-foreground font-mono">{pkg.package}</div>
                         {pkg.description ? (

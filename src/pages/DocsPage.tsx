@@ -4,11 +4,21 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import DocsPageContent from '../components/docs/DocsPage'
-import { getPackage, getVersion, getPage } from '../content/docs-loader'
+import {
+  buildDocsHref,
+  getPackage,
+  getPage,
+  getVersion,
+  resolveVersion,
+} from '../content/docs-loader'
 
 interface DocsRouteMeta {
   title: string
   description: string
+  /**
+   * The URL the browser is actually rendering. Used as a fallback for the
+   * SEO canonical when we can't resolve a more specific canonical.
+   */
   canonicalPath: string
 }
 
@@ -16,9 +26,13 @@ function useDocsRouteMeta(): DocsRouteMeta {
   const params = useParams<{ package?: string; version?: string; '*'?: string }>()
   const location = useLocation()
   return useMemo(() => {
-    const canonicalPath = location.pathname
+    const currentPath = location.pathname
     // `/developers/docs/api[/:version]` — the dedicated REST API route.
-    if (params.package === undefined && location.pathname.startsWith('/developers/docs/api')) {
+    if (params.package === undefined && currentPath.startsWith('/developers/docs/api')) {
+      const apiPkg = getPackage('api')
+      const canonicalPath = apiPkg
+        ? buildDocsHref(apiPkg, apiPkg.latestVersion, '')
+        : currentPath
       return {
         title: 'Oxy REST API',
         description:
@@ -31,15 +45,28 @@ function useDocsRouteMeta(): DocsRouteMeta {
       return {
         title: 'Documentation',
         description: 'Oxy developer documentation: SDKs, UI library, API reference, per-app guides.',
-        canonicalPath,
+        canonicalPath: currentPath,
       }
     }
-    const version =
-      params.version && getVersion(pkg, params.version)
-        ? getVersion(pkg, params.version)
-        : getVersion(pkg, pkg.defaultVersion)
-    const slug = (params['*'] ?? '').replace(/\/+$/, '')
-    const page = version ? getPage(version, slug) : undefined
+    // For non-versioned packages, the URL "version" segment is part of the
+    // slug — stitch it back onto the splat. Mirrors the resolver in
+    // `components/docs/DocsPage.tsx`.
+    const splat = (params['*'] ?? '').replace(/^\/+/, '').replace(/\/+$/, '')
+    let activeVersion = pkg.versioned
+      ? (params.version && getVersion(pkg, params.version)) || resolveVersion(pkg)
+      : resolveVersion(pkg)
+    const activeSlug = pkg.versioned
+      ? splat
+      : [params.version ?? '', splat].filter(Boolean).join('/')
+    if (!activeVersion) activeVersion = resolveVersion(pkg)
+
+    const page = activeVersion ? getPage(activeVersion, activeSlug) : undefined
+
+    // Canonical: always the latest-version URL for the resolved slug. This
+    // de-duplicates old-version pages in search engines without hiding
+    // them from crawlers (we deliberately do not set `noIndex`).
+    const canonicalPath = buildDocsHref(pkg, pkg.latestVersion, activeSlug)
+
     if (!page) {
       return {
         title: `${pkg.displayName} — Oxy Docs`,

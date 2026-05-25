@@ -289,8 +289,9 @@ function isWorkingTreeVersion(version: string): boolean {
  * / `v<version>` as fallbacks for non-scoped repos (Mention, Allo, etc.).
  *
  * We try candidates in order and return the first one that exists. Returns
- * `null` if none match — the caller then warns and falls back to the
- * working tree so the build still produces *something*.
+ * `null` if none match — the caller then warns and skips that version
+ * entirely (no fallback to the working tree; duplicating "latest" content
+ * under every missing version would be misleading).
  */
 function resolveVersionTag(repoRoot: string, pkg: string, version: string): string | null {
   // If the caller passed a literal tag (e.g. `'v1.2.3'`), prefer the
@@ -327,7 +328,7 @@ async function copyVersionFromGitTag(
   ignore: string[] = [],
 ): Promise<SyncedPage[]> {
   // List tracked files under docsPath at the given tag.
-  let listing = '';
+  let listing: string;
   try {
     listing = execSync(`git ls-tree -r --name-only ${tag} -- ${docsPath}`, {
       cwd: repoRoot,
@@ -587,34 +588,38 @@ async function syncPackage(
     Array.isArray(config.versions) && config.versions.length > 0
       ? config.versions
       : [config.defaultVersion ?? 'main'];
+  // Throttle the "no tag matched" warning — versioned packages with long
+  // release histories spam the build log otherwise. Log the first one in
+  // detail, then collapse the rest into a single summary line.
+  let missingTagCount = 0;
+  const missingTagSamples: string[] = [];
   for (const version of versionList) {
     const outDir = path.join(SYNCED_DIR, config.shortName, version);
-    let pages: SyncedPage[] = [];
+    let pages: SyncedPage[];
     if (isWorkingTreeVersion(version) || !versioned) {
-      // Working tree: read MDX directly off disk. This is the only path for
-      // non-versioned packages (apps) and for the "dev preview" entry on
-      // versioned packages.
+      // Working tree: read MDX directly off disk. This is the only path
+      // for non-versioned packages (apps) and for the "dev preview" entry
+      // on versioned packages.
       const srcDocsDir = path.join(rootDir, config.docsPath);
       pages = await copyVersionFromTree(srcDocsDir, outDir, ignore);
     } else {
       // Versioned tag: resolve to an actual git tag, then `git show` the
-      // tree at that tag. Falls through to the working tree if the tag is
-      // missing so the website still has *something* to render.
+      // tree at that tag. If the tag isn't reachable from the working
+      // tree, skip this version — duplicating the latest tree under every
+      // missing version would be both misleading and slow (each version
+      // would re-run TypeDoc against the same source).
       const resolvedTag = resolveVersionTag(repoRoot, config.package, version);
-      if (resolvedTag) {
-        const docsPathInRepo = path.relative(repoRoot, path.join(rootDir, config.docsPath));
-        pages = await copyVersionFromGitTag(repoRoot, resolvedTag, docsPathInRepo, outDir, ignore);
-      } else {
-        console.warn(
-          `[sync-docs] no tag matched for ${config.package}@${version} in ${repoRoot} — using working tree.`,
-        );
+      if (!resolvedTag) {
+        missingTagCount += 1;
+        if (missingTagSamples.length < 3) missingTagSamples.push(version);
+        // Skip this version — no content, no TypeDoc, no entry in the
+        // synced index. The SPA naturally degrades: the version selector
+        // hides versions with no pages, and any direct link to an
+        // unreachable version redirects to `latestVersion`.
+        continue;
       }
-      if (pages.length === 0) {
-        const srcDocsDir = path.join(rootDir, config.docsPath);
-        if (existsSync(srcDocsDir)) {
-          pages = await copyVersionFromTree(srcDocsDir, outDir, ignore);
-        }
-      }
+      const docsPathInRepo = path.relative(repoRoot, path.join(rootDir, config.docsPath));
+      pages = await copyVersionFromGitTag(repoRoot, resolvedTag, docsPathInRepo, outDir, ignore);
     }
     // Pull the OpenAPI document for service packages so the Scalar viewer
     // can `import` it from `_synced/api/<version>/openapi.json`.
@@ -625,20 +630,42 @@ async function syncPackage(
     for (const page of pages) {
       page.section = 'guides';
     }
-    // Auto-generate TypeDoc API reference (best-effort; warns and skips on
-    // failure so a broken package doesn't break the whole sync).
-    const apiPages = await runTypedoc(config, rootDir, repoRoot, outDir, version);
-    pages.push(...apiPages);
+    // Auto-generate TypeDoc API reference. We only run TypeDoc for the
+    // configured `latestVersion` (or the lone version on non-versioned
+    // packages) because TypeDoc reads from the *working tree* — running
+    // it for every old version would document today's source under each
+    // historical slug, which is both wrong and prohibitively slow (each
+    // run takes 30-60s, and the services package has ~400 versions).
+    const isApiTarget =
+      isWorkingTreeVersion(version) ||
+      version === (config.latestVersion ?? config.defaultVersion);
+    if (isApiTarget) {
+      const apiPages = await runTypedoc(config, rootDir, repoRoot, outDir, version);
+      pages.push(...apiPages);
+    }
     versions.push({ version, pages });
   }
-  // Resolved latest version:
-  //   - explicit `latestVersion` wins (versioned packages only)
-  //   - otherwise the first entry in `versions[]` (newest first by convention)
-  //   - falls back to the legacy `defaultVersion` field for non-versioned
-  //     packages that omit `versions[]` entirely.
+  if (missingTagCount > 0) {
+    console.warn(
+      `[sync-docs] ${config.package}: ${missingTagCount} version(s) skipped (no matching git tag) — samples: ${missingTagSamples.join(', ')}.`,
+    );
+  }
+  // Resolved latest version. Resolution order:
+  //   1. Explicit `latestVersion` from the config, if it ended up being
+  //      synced (i.e. its tag was reachable). Tag-pinned packages may
+  //      list a `latestVersion` that's not reachable from the working
+  //      tree — fall through in that case.
+  //   2. The first successfully-synced version (versions[] preserves
+  //      config order, which is "newest first" by convention).
+  //   3. The legacy `defaultVersion` field.
+  //   4. `'main'` as a last resort so consumers always have a non-empty
+  //      string to render.
+  const syncedSlugs = new Set(versions.map((v) => v.version));
   const latestVersion =
-    config.latestVersion ??
-    (Array.isArray(config.versions) ? config.versions[0] : undefined) ??
+    (config.latestVersion && syncedSlugs.has(config.latestVersion)
+      ? config.latestVersion
+      : undefined) ??
+    versions[0]?.version ??
     config.defaultVersion ??
     'main';
   return {
