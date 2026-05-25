@@ -1,0 +1,81 @@
+---
+title: Recovery
+description: What to do if you lose your device, your password, or both. The full recovery playbook.
+course: using-oxy-id
+order: 3
+duration: 10 min
+level: beginner
+tags: [recovery, security]
+---
+
+Bad things happen. Phones get lost. Laptops die. People forget passwords. Recovery is the safety net you set up *before* any of that occurs.
+
+## Recovery scenarios
+
+There are five things that can go wrong, in increasing order of severity:
+
+1. **Forgot your password** — easy. Reset it via your recovery email.
+2. **Lost a device** — easy. Sign in on another device, revoke the lost one.
+3. **Lost the only device you had** — moderate. Use your recovery phrase on a new device.
+4. **Lost the only device AND the recovery phrase** — hard. You can still get back in if you have backup codes for your 2FA — but you'll lose access to encrypted data on the device.
+5. **Lost everything** — game over. There is no master backdoor. This is the trade-off for true end-to-end encryption.
+
+## Recovery flows
+
+### Forgotten password
+
+<Steps>
+  <Step title="Tap Forgot password on the sign-in screen">
+    A reset link is sent to your recovery email.
+  </Step>
+  <Step title="Click the link">
+    Choose a new password. The new password takes effect immediately and invalidates all existing sessions.
+  </Step>
+</Steps>
+
+### Lost device
+
+<Steps>
+  <Step title="Sign in on any other device you trust">
+    The Devices screen lists all active sessions.
+  </Step>
+  <Step title="Tap Revoke on the lost device">
+    Optionally mark it as lost or stolen to trigger automatic key rotation for encrypted content.
+  </Step>
+</Steps>
+
+### Lost all devices
+
+<Steps>
+  <Step title="Get a new device">
+    Any platform Oxy runs on works.
+  </Step>
+  <Step title="Open Accounts and tap I have a recovery phrase">
+    On the welcome screen.
+  </Step>
+  <Step title="Enter your 24-word recovery phrase">
+    In order. Spaces are required. The app re-derives your private key from the phrase.
+  </Step>
+  <Step title="Sign in normally">
+    Your identity is restored. End-to-end encrypted data from before this point may not be readable if it was sealed with a per-device session key — see below.
+  </Step>
+</Steps>
+
+## What's recoverable, what isn't
+
+| Data | Recoverable from phrase? |
+|------|--------------------------|
+| Your account / username | Yes |
+| Profile info (avatar, color, bio) | Yes |
+| Public posts in Mention | Yes |
+| Plain-text email metadata in Inbox | Yes |
+| End-to-end encrypted Inbox messages stored only on a lost device | No |
+| Allo chat history stored only on a lost device | No |
+
+This is why Oxy backs up encrypted-message blobs to your other devices — so losing one doesn't lose conversation history. If you only had one device, lose that device, and never wrote down your phrase, the encrypted content is gone.
+
+<Callout type="danger" title="Test your recovery">
+  Once a year, do a recovery drill: install Accounts on a spare device, restore from your phrase, verify everything works, then wipe the spare. Don't wait until an emergency to find out your written phrase has a typo.
+</Callout>
+
+<NextPrev prev={{ href: '/academy/using-oxy-id/02-key-management', title: 'Key management' }} />

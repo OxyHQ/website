@@ -1,46 +1,40 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import * as LucideIcons from 'lucide-react'
+import { useCurrentLocale } from '../../contexts/LocaleContext'
 import {
-  useHelpArticles,
-  useCategories,
-  usePage,
-  resolveHelpArticleCategoryId,
-  type HelpArticleRecord,
-  type CategoryRecord,
-  type PageSection,
-} from '../../api/hooks'
+  loadHelpArticles,
+  loadFeaturedHelpArticles,
+  loadHelpArticleCounts,
+  HELP_CATEGORIES,
+  type HelpEntry,
+  type HelpCategoryMeta,
+} from '../../content/help-loader'
 
-/* ─── Copy fallbacks when /pages/help has not been populated ─── */
+/* ──────────────────────────────────────────────
+ * /help — landing
+ *
+ * Reads articles + categories from the MDX loader (locale-aware) and
+ * renders the existing landing chrome — category cards, sidebar nav,
+ * featured "Get started" list. UI is preserved verbatim; only the data
+ * source changed (was CMS API, now build-time MDX).
+ *
+ * Heading copy is held in module-level constants since this page is no
+ * longer driven by the `/pages/help` CMS doc.
+ * ──────────────────────────────────────────── */
 
-const DEFAULT_HERO_BADGE = 'Help center'
-const DEFAULT_HERO_TITLE = 'How can we help?'
-const DEFAULT_HERO_SUBTITLE = 'Get answers to common questions on all things Oxy'
-const DEFAULT_GETTING_STARTED_HEADING = 'Get started'
-const DEFAULT_GETTING_STARTED_SUB_PRE = 'with '
-const DEFAULT_GETTING_STARTED_SUB_POST = 'Oxy 101.'
-const DEFAULT_GETTING_STARTED_LEAD = 'Everything you need to master the basics of Oxy.'
+/* ─── Landing copy ─── */
 
-const DEFAULT_POPULAR_SEARCHES = ['importing', 'billing', 'integrations']
+const HERO_BADGE = 'Help center'
+const HERO_TITLE = 'How can we help?'
+const HERO_SUBTITLE = 'Get answers to common questions on all things Oxy'
+const GETTING_STARTED_HEADING = 'Get started'
+const GETTING_STARTED_SUB_PRE = 'with '
+const GETTING_STARTED_SUB_POST = 'Oxy 101.'
+const GETTING_STARTED_LEAD = 'Everything you need to master the basics of Oxy.'
+const POPULAR_SEARCHES = ['recovery email', 'encryption', 'sign in']
 
-/* ─── Section helpers (mirror TechnologiesPage / AcademyPage) ─── */
-
-function sectionHeading(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find(s => s.type === type)?.heading || fallback
-}
-
-function sectionSubheading(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find(s => s.type === type)?.subheading || fallback
-}
-
-function sectionContent(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find(s => s.type === type)?.content || fallback
-}
-
-function sectionItems(sections: PageSection[], type: string): Array<{ key: string; value: string; [extra: string]: unknown }> {
-  return sections.find(s => s.type === type)?.items ?? []
-}
-
-/* ─── Lucide icon lookup (icons stored in kebab-case) ─── */
+/* ─── Lucide icon lookup ─── */
 
 type LucideComponent = LucideIcons.LucideIcon
 const LUCIDE_INDEX = LucideIcons as unknown as Record<string, LucideComponent>
@@ -141,23 +135,22 @@ function ArticleNumber({ index }: { index: number }) {
 /* ─── Sidebar ─── */
 
 interface CategoryGroup {
-  category: CategoryRecord
-  articles: HelpArticleRecord[]
+  category: HelpCategoryMeta
+  articles: HelpEntry[]
 }
 
-function buildCategoryGroups(categories: CategoryRecord[], articles: HelpArticleRecord[]): CategoryGroup[] {
-  const byCategory = new Map<string, HelpArticleRecord[]>()
+function buildCategoryGroups(articles: HelpEntry[]): CategoryGroup[] {
+  const byCategory = new Map<string, HelpEntry[]>()
   for (const article of articles) {
-    const id = resolveHelpArticleCategoryId(article)
-    if (!id) continue
-    const list = byCategory.get(id) ?? []
+    const list = byCategory.get(article.frontmatter.category) ?? []
     list.push(article)
-    byCategory.set(id, list)
+    byCategory.set(article.frontmatter.category, list)
   }
-  return categories
+  return [...HELP_CATEGORIES]
+    .sort((a, b) => a.order - b.order)
     .map((category) => ({
       category,
-      articles: byCategory.get(category._id ?? '') ?? [],
+      articles: byCategory.get(category.id) ?? [],
     }))
     .filter((group) => group.articles.length > 0)
 }
@@ -189,12 +182,12 @@ function HelpSidebar({ groups }: { groups: CategoryGroup[] }) {
         <div className="mask-t-from-[calc(100%-40px)] relative flex-1 overflow-y-scroll pt-10 pr-6 pb-8 [scrollbar-gutter:stable]">
           <div className="mb-5 flex flex-col gap-5 lg:mb-8 lg:gap-8">
             {groups.map(({ category, articles }) => (
-              <div key={category.slug}>
+              <div key={category.id}>
                 <Link
                   className="flex items-center gap-[7px] rounded-[10px] py-px pl-px hover:bg-surface/80"
-                  to={`/help#${category.slug}`}
+                  to={`/help#${category.id}`}
                 >
-                  <CategoryCardIcon name={category.slug} className="size-7.5" />
+                  <CategoryCardIcon name={category.icon} className="size-7.5" />
                   <div className="font-semibold text-xs uppercase">{category.label}</div>
                 </Link>
                 <div className="mt-1 flex flex-col lg:gap-0.5">
@@ -210,7 +203,7 @@ function HelpSidebar({ groups }: { groups: CategoryGroup[] }) {
                         className="inline-block w-full rounded-[10px] p-1.5 pr-2.5 pl-[38px] text-left text-muted-foreground text-sm hover:bg-surface"
                         to={`/help/${article.slug}`}
                       >
-                        {article.title}
+                        {article.frontmatter.title}
                       </Link>
                     </div>
                   ))}
@@ -227,31 +220,15 @@ function HelpSidebar({ groups }: { groups: CategoryGroup[] }) {
 /* ─── Main Content ─── */
 
 interface HelpContentProps {
-  heroBadge: string
-  heroTitle: string
-  heroSubtitle: string
-  popularSearches: string[]
-  categories: CategoryRecord[]
-  featuredArticles: HelpArticleRecord[]
-  gettingStartedHeading: string
-  gettingStartedSubPre: string
-  gettingStartedSubPost: string
-  gettingStartedLead: string
-  articleCountByCategoryId: Map<string, number>
+  categories: HelpCategoryMeta[]
+  featuredArticles: HelpEntry[]
+  articleCountsByCategory: Map<string, number>
 }
 
 function HelpContent({
-  heroBadge,
-  heroTitle,
-  heroSubtitle,
-  popularSearches,
   categories,
   featuredArticles,
-  gettingStartedHeading,
-  gettingStartedSubPre,
-  gettingStartedSubPost,
-  gettingStartedLead,
-  articleCountByCategoryId,
+  articleCountsByCategory,
 }: HelpContentProps) {
   return (
     <div className="col-[7/-1] pt-10 pb-20 max-lg:col-[1/-1] max-xl:col-[8/-1]">
@@ -259,14 +236,12 @@ function HelpContent({
         <div className="col-[2/-3] flex flex-col items-center pt-19 pb-10 max-lg:col-[1/-1] max-lg:pt-10">
           {/* Hero */}
           <div className="flex flex-col items-center text-center">
-            {heroBadge && (
-              <div className="inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground">
-                {heroBadge}
-              </div>
-            )}
-            <h1 className="mt-6 text-heading-lg">{heroTitle}</h1>
+            <div className="inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground">
+              {HERO_BADGE}
+            </div>
+            <h1 className="mt-6 text-heading-lg">{HERO_TITLE}</h1>
             <div className="mt-4 max-w-[20em] text-pretty text-foreground text-xl">
-              {heroSubtitle}
+              {HERO_SUBTITLE}
             </div>
           </div>
 
@@ -288,11 +263,11 @@ function HelpContent({
             </button>
 
             {/* Popular searches — decorative until search is wired. */}
-            {popularSearches.length > 0 && (
+            {POPULAR_SEARCHES.length > 0 && (
               <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-2 text-muted-foreground mt-4 md:mt-5">
                 <p className="shrink-0 text-muted-foreground text-sm">Popular topics:</p>
                 <ul className="flex gap-1.5 text-xs">
-                  {popularSearches.map((s) => (
+                  {POPULAR_SEARCHES.map((s) => (
                     <li key={s}>
                       <button
                         type="button"
@@ -313,16 +288,16 @@ function HelpContent({
           {categories.length > 0 && (
             <div className="mt-25 grid w-full grid-cols-3 gap-5 max-lg:grid-cols-1 max-lg:gap-4 max-md:mt-15">
               {categories.slice(0, 3).map((category) => {
-                const count = articleCountByCategoryId.get(category._id ?? '') ?? 0
+                const count = articleCountsByCategory.get(category.id) ?? 0
                 return (
                   <Link
-                    key={category.slug}
+                    key={category.id}
                     className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-border p-6 pt-5.5 transition-colors duration-400 ease-in-out hover:border-input hover:duration-150 active:border-input active:duration-50 size-full"
-                    to={`/help#${category.slug}`}
+                    to={`/help#${category.id}`}
                   >
                     <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
                     <div className="relative flex items-center justify-between">
-                      <CategoryCardIcon name={category.slug} className="relative size-11 max-lg:size-10" />
+                      <CategoryCardIcon name={category.icon} className="relative size-11 max-lg:size-10" />
                       <ArrowRight />
                     </div>
                     <div className="relative flex flex-col gap-1">
@@ -347,13 +322,13 @@ function HelpContent({
             <div className="w-full xl:max-w-96">
               <div>
                 <h2 className="text-heading-md">
-                  <span>{gettingStartedHeading} </span>
-                  <span className="text-muted-foreground">{gettingStartedSubPre}</span>
+                  <span>{GETTING_STARTED_HEADING} </span>
+                  <span className="text-muted-foreground">{GETTING_STARTED_SUB_PRE}</span>
                   <br />
-                  <span className="text-muted-foreground">{gettingStartedSubPost}</span>
+                  <span className="text-muted-foreground">{GETTING_STARTED_SUB_POST}</span>
                 </h2>
               </div>
-              <p className="mt-3 text-muted-foreground">{gettingStartedLead}</p>
+              <p className="mt-3 text-muted-foreground">{GETTING_STARTED_LEAD}</p>
             </div>
             <div>
               <ul>
@@ -365,9 +340,9 @@ function HelpContent({
                     <Link className="group -m-2 flex gap-x-8 rounded-xl p-2" to={`/help/${article.slug}`}>
                       <ArticleNumber index={i} />
                       <div>
-                        <p className="text-balance font-semibold">{article.title}</p>
+                        <p className="text-balance font-semibold">{article.frontmatter.title}</p>
                         <p className="mt-0.5 line-clamp-2 text-balance text-muted-foreground transition-[color] group-hover:text-foreground">
-                          {article.summary}
+                          {article.frontmatter.description}
                         </p>
                       </div>
                     </Link>
@@ -376,7 +351,7 @@ function HelpContent({
                 {featuredArticles.length === 0 && (
                   <li className="border-border border-b pt-8 pb-[31px] first-of-type:pt-0">
                     <p className="text-balance text-muted-foreground">
-                      No featured articles yet. Add one in the admin to populate this list.
+                      No featured articles yet. Mark an article as `featured: true` in its frontmatter to populate this list.
                     </p>
                   </li>
                 )}
@@ -398,54 +373,28 @@ function HelpContent({
 /* ─── Page Export ─── */
 
 export default function HelpPageContent() {
-  const { data: pageData } = usePage('help')
-  const { data: categoriesData } = useCategories('generic')
-  const { data: articlesData } = useHelpArticles({ limit: 100 })
-  const { data: featuredData } = useHelpArticles({ featured: true, limit: 6 })
+  const locale = useCurrentLocale()
+  const articles = useMemo(() => loadHelpArticles(locale), [locale])
+  const featured = useMemo(() => loadFeaturedHelpArticles(locale, 6), [locale])
+  const counts = useMemo(() => loadHelpArticleCounts(locale), [locale])
+  const groups = useMemo(() => buildCategoryGroups(articles), [articles])
 
-  const sections = pageData?.sections ?? []
-  const heroBadge = sectionContent(sections, 'hero', DEFAULT_HERO_BADGE)
-  const heroTitle = sectionHeading(sections, 'hero', DEFAULT_HERO_TITLE)
-  const heroSubtitle = sectionSubheading(sections, 'hero', DEFAULT_HERO_SUBTITLE)
-  const gettingStartedHeading = sectionHeading(sections, 'getting-started', DEFAULT_GETTING_STARTED_HEADING)
-  const gettingStartedSubPre = sectionSubheading(sections, 'getting-started', DEFAULT_GETTING_STARTED_SUB_PRE)
-  const gettingStartedSubPost = sectionContent(sections, 'getting-started', DEFAULT_GETTING_STARTED_SUB_POST)
-  const gettingStartedLead = sectionContent(sections, 'getting-started-lead', DEFAULT_GETTING_STARTED_LEAD)
-
-  const popularSearchItems = sectionItems(sections, 'popular-searches')
-  const popularSearches = popularSearchItems.length > 0
-    ? popularSearchItems.map(item => item.value || item.key).filter(Boolean)
-    : DEFAULT_POPULAR_SEARCHES
-
-  const categories = categoriesData ?? []
-  const articles = articlesData?.articles ?? []
-  const featuredArticles = featuredData?.articles ?? []
-
-  const articleCountByCategoryId = new Map<string, number>()
-  for (const article of articles) {
-    const id = resolveHelpArticleCategoryId(article)
-    if (!id) continue
-    articleCountByCategoryId.set(id, (articleCountByCategoryId.get(id) ?? 0) + 1)
-  }
-
-  const sidebarGroups = buildCategoryGroups(categories, articles)
+  // Map<HelpCategoryId, number> → Map<string, number> — keeps the prop
+  // generic so HelpContent doesn't depend on the loader's exact ID union.
+  const countsByString = useMemo(() => {
+    const m = new Map<string, number>()
+    for (const [k, v] of counts) m.set(k, v)
+    return m
+  }, [counts])
 
   return (
     <div className="container">
       <div className="grid grid-cols-24">
-        <HelpSidebar groups={sidebarGroups} />
+        <HelpSidebar groups={groups} />
         <HelpContent
-          heroBadge={heroBadge}
-          heroTitle={heroTitle}
-          heroSubtitle={heroSubtitle}
-          popularSearches={popularSearches}
-          categories={categories}
-          featuredArticles={featuredArticles}
-          gettingStartedHeading={gettingStartedHeading}
-          gettingStartedSubPre={gettingStartedSubPre}
-          gettingStartedSubPost={gettingStartedSubPost}
-          gettingStartedLead={gettingStartedLead}
-          articleCountByCategoryId={articleCountByCategoryId}
+          categories={HELP_CATEGORIES}
+          featuredArticles={featured}
+          articleCountsByCategory={countsByString}
         />
       </div>
     </div>

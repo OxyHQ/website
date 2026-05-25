@@ -1,0 +1,36 @@
+---
+title: Read your usage metrics
+description: Understand what the Console usage dashboard is telling you about your app.
+category: console
+order: 3
+audience: developer
+updated: 2026-05-25
+tags: [console, metrics, billing]
+---
+
+The **Usage** tab in Console shows how your app is being used over time. This is also where your billing comes from — every plan has a usage allowance, and overage is billed at the rates listed in [Pricing](/pricing).
+
+## What each metric means
+
+- **API calls** — every successful HTTP request your app makes to `api.oxy.so`. 4xx errors don't count.
+- **Auth requests** — sign-in attempts that flow through your app's OAuth client. Counted once per user per day, not once per token refresh.
+- **Storage** — total bytes occupied by files your users have uploaded through your app.
+- **Bandwidth** — bytes downloaded by users from your app's storage.
+
+## Reading the chart
+
+The default view is the last 30 days, bucketed by day. Switch to **Hour** for a 24-hour view or **Month** to see your billing trajectory.
+
+<Callout type="tip" title="Set usage alerts">
+  In **Usage → Alerts** you can set a threshold (e.g. 80% of plan) — we email you when you cross it. No surprise overages.
+</Callout>
+
+## When numbers look off
+
+If a metric looks wrong, check:
+
+1. Are you on the right environment? Dev and prod have separate counters.
+2. Are some requests authenticated as a different app? Check the **Top callers** breakdown.
+3. Is there a [status incident](/status) that might be artificially inflating retries?
+
+Still confused — open a support ticket from the **?** menu and we'll dig in.

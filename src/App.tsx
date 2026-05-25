@@ -29,6 +29,7 @@ const NewsroomPage = lazy(() => import('./pages/NewsroomPage'))
 const NewsroomPostPage = lazy(() => import('./pages/NewsroomPostPage'))
 const AcademyPage = lazy(() => import('./pages/AcademyPage'))
 const CourseDetailPage = lazy(() => import('./pages/CourseDetailPage'))
+const LessonPage = lazy(() => import('./pages/LessonPage'))
 const BlogPage = lazy(() => import('./pages/BlogPage'))
 const CodeaPage = lazy(() => import('./pages/CodeaPage'))
 const CodexExtensionPage = lazy(() => import('./pages/CodexExtensionPage'))
@@ -155,15 +156,30 @@ function PublicRoutes() {
       <Route path="newsroom/:slug" element={<NewsroomPostPage />} />
       <Route path="academy" element={<AcademyPage />} />
       <Route path="academy/:slug" element={<CourseDetailPage />} />
+      <Route path="academy/:slug/:lesson" element={<LessonPage />} />
       <Route path="help" element={<HelpPage />} />
-      <Route path="help/:slug" element={<HelpArticlePage />} />
+      <Route path="help/*" element={<HelpArticlePage />} />
       <Route path="changelog" element={<ChangelogPage />} />
       <Route path="developers/docs" element={<DocsIntroPage />} />
       <Route path="developers/docs/api" element={<DocsPage />} />
       <Route path="developers/docs/api/:version" element={<DocsPage />} />
+      {/*
+        Docs routing.
+
+        Versioned packages (SDKs, libraries, REST APIs) use the explicit
+        `:version` segment. Non-versioned end-user apps (Accounts, Inbox,
+        Console, Mention, Allo, ...) skip the version segment entirely —
+        the deepest catch-all `:package/*` below handles their slugs.
+
+        `DocsPage` resolves the route by reading the package's
+        `docs.config.json`: if `versioned: true`, the URL must include a
+        version (otherwise it redirects to `latestVersion`); if missing,
+        the catch-all matches and renders directly without redirect.
+      */}
       <Route path="developers/docs/:package" element={<DocsPage />} />
       <Route path="developers/docs/:package/:version" element={<DocsPage />} />
       <Route path="developers/docs/:package/:version/*" element={<DocsPage />} />
+      <Route path="developers/docs/:package/*" element={<DocsPage />} />
       <Route path="company/news" element={<BlogPage />} />
       <Route path="codea" element={<CodeaPage />} />
       <Route path="codea/extension" element={<CodexExtensionPage />} />

@@ -1,0 +1,48 @@
+---
+title: Cómo funciona el cifrado de Inbox
+description: Una explicación en lenguaje claro del cifrado de extremo a extremo en Inbox.
+category: inbox
+order: 2
+audience: user
+featured: true
+updated: 2026-05-25
+tags: [cifrado, seguridad, privacidad]
+---
+
+Cuando envías un correo en Inbox a otro usuario de Oxy, el cuerpo del mensaje y los archivos adjuntos se cifran en tu dispositivo antes de salir de él. Solo el dispositivo del destinatario puede descifrarlos — no Oxy, ningún proveedor de internet por el medio, ningún gobierno.
+
+## Cómo funciona en tres frases
+
+1. Cada Oxy ID tiene una clave pública — una cadena que cualquiera puede ver.
+2. Cuando redactas un mensaje, tu dispositivo cifra el contenido usando la clave pública del destinatario.
+3. Solo la **clave privada** correspondiente (que vive en el dispositivo del destinatario, nunca en nuestros servidores) puede descifrarlo.
+
+<Callout type="info" title='Qué significa "de extremo a extremo"'>
+  Los "extremos" son tu dispositivo y el del destinatario. Todo lo que hay entre medio — incluidos los servidores de Oxy — solo ve texto cifrado opaco.
+</Callout>
+
+## Qué se cifra
+
+- Cuerpo del mensaje
+- Asunto (desde 2024)
+- Archivos adjuntos
+- Contexto de la respuesta
+
+## Qué no se cifra
+
+Metadatos del correo que tienen que ser visibles para la entrega:
+- Direcciones del remitente y destinatario
+- Marca de tiempo
+- Tamaño total del mensaje
+
+No registramos ni vendemos estos metadatos.
+
+## Puentes a contactos fuera de Oxy
+
+Cuando envías correo a alguien que no está en Oxy, no hay clave pública con la que cifrar. Inbox usa SMTP estándar como respaldo. Si necesitas cifrado, usa el [Puente de Oxy](/help/inbox/compose-message) añadiendo `[secure]` al asunto — el destinatario recibe un enlace de un solo uso para leer el mensaje en una página protegida con frase.
+
+## Rotación de claves
+
+Rotamos automáticamente las claves efímeras por mensaje (forward secrecy). Tu clave de identidad maestra rota cada dos años o cuando marcas un dispositivo como perdido.
+
+<NextPrev next={{ href: '/help/inbox/manage-labels', title: 'Gestionar etiquetas' }} />

@@ -1,0 +1,49 @@
+---
+title: Manage API keys
+description: Create, rotate, and revoke API keys for your Console apps.
+category: console
+order: 2
+audience: developer
+updated: 2026-05-25
+tags: [api, keys, security]
+---
+
+Every Console app has a pair of credentials — an **API key** (public identifier) and an **API secret** (kept server-side). Treat them with the same care as a database password.
+
+## Where to find them
+
+Open your app in Console → **Credentials**. The API key is shown in full. The secret is shown **once** at creation and then masked; rotate it if you ever lose it.
+
+## Rotate a key
+
+<Steps>
+  <Step title="Open the Credentials tab">
+    Console → Your app → Credentials.
+  </Step>
+  <Step title="Tap Rotate secret">
+    A new secret is generated. The old one keeps working for 24 hours so you can deploy without downtime.
+  </Step>
+  <Step title="Update your app">
+    Set the new value in your environment variables and redeploy. After 24 hours the old secret stops working.
+  </Step>
+</Steps>
+
+## Use a key in code
+
+```ts
+import { OxyServices } from '@oxyhq/core'
+
+const oxy = new OxyServices({ baseURL: 'https://api.oxy.so' })
+oxy.configureServiceAuth(
+  process.env.OXY_API_KEY!,
+  process.env.OXY_API_SECRET!,
+)
+
+const token = await oxy.getServiceToken()
+```
+
+See [Service tokens](/developers/docs/core) in the developer docs for the full pattern.
+
+<Callout type="danger" title="Never commit secrets">
+  Do not put your API secret in source control. Use environment variables and a secrets manager.
+</Callout>

@@ -1,0 +1,48 @@
+---
+title: How Inbox encryption works
+description: A plain-English explanation of end-to-end encryption in Inbox.
+category: inbox
+order: 2
+audience: user
+featured: true
+updated: 2026-05-25
+tags: [encryption, security, privacy]
+---
+
+When you send an email in Inbox to another Oxy user, the message body and attachments are encrypted on your device before they leave it. Only the recipient's device can decrypt them — not Oxy, not any internet provider in between, not any government.
+
+## How it works in three sentences
+
+1. Every Oxy ID has a public key — a string anyone can see.
+2. When you compose a message, your device encrypts the contents using the recipient's public key.
+3. Only the matching **private key** (which lives on the recipient's device, never on our servers) can decrypt it.
+
+<Callout type="info" title='What "end-to-end" actually means'>
+  The "ends" are your device and the recipient's device. Everything between — including Oxy's servers — sees only opaque ciphertext.
+</Callout>
+
+## What gets encrypted
+
+- Message body
+- Subject line (since 2024)
+- Attachments
+- Reply context
+
+## What doesn't get encrypted
+
+Email metadata that has to be visible for delivery:
+- Sender and recipient addresses
+- Timestamp
+- Total message size
+
+We do not log or sell this metadata.
+
+## Bridging non-Oxy contacts
+
+When you email someone who isn't on Oxy, there's no public key to encrypt to. Inbox falls back to standard SMTP. If you need encryption, use the [Oxy Bridge](/help/inbox/compose-message) by adding `[secure]` to the subject line — the recipient gets a one-time link to read the message on a passphrase-protected page.
+
+## Key rotation
+
+We rotate per-message ephemeral keys automatically (forward secrecy). Your master identity key rotates every two years or whenever you mark a device as lost.
+
+<NextPrev next={{ href: '/help/inbox/manage-labels', title: 'Manage labels' }} />

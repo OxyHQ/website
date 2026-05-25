@@ -1,0 +1,39 @@
+---
+title: The sign-in flow
+description: What happens behind the scenes when you sign in to an Oxy app.
+category: auth
+order: 2
+audience: user
+updated: 2026-05-25
+tags: [auth, sign-in]
+---
+
+Signing in to Oxy looks deceptively simple — type your username, type your password, you're in. Here's what's actually happening behind the curtain.
+
+## The steps
+
+<Steps>
+  <Step title="Username lookup">
+    When you type your username, Oxy fetches a tiny public profile (color, avatar, display name). This is so the next screen can be branded for you, which is also a phishing defense: a fake login screen can't fake your colors.
+  </Step>
+  <Step title="Password (or passkey)">
+    You enter your password — never sent in cleartext, hashed client-side before transmission. If you have a passkey set up, you can skip the password entirely.
+  </Step>
+  <Step title="Two-factor">
+    If you've enabled 2FA, you'll enter the rotating code from your authenticator or approve a push notification.
+  </Step>
+  <Step title="Session provisioning">
+    The server hands back two tokens: a short-lived access token (1 hour) and a long-lived refresh token (30 days). Both are tied to this specific device.
+  </Step>
+  <Step title="Identity restore">
+    On first sign-in, your private key is loaded from secure device storage — encrypted with a key derived from your recovery phrase. If this is a brand-new device, you'll be asked to restore from your recovery phrase.
+  </Step>
+</Steps>
+
+## Why so many steps?
+
+Most are invisible — they happen in milliseconds. The point is that no single compromise (a password leak, a stolen device, a server breach) gives an attacker your full identity.
+
+<Callout type="tip" title="Each step has a help article">
+  See [Add a recovery email](/help/account/add-recovery-email), [2FA setup](/help/auth/2fa-setup), and [Identity basics](/academy/using-oxy-id/01-identity-basics) for the deep dives.
+</Callout>

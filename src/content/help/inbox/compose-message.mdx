@@ -1,0 +1,38 @@
+---
+title: Compose a message
+description: Write and send an end-to-end encrypted email from Inbox.
+category: inbox
+order: 1
+audience: user
+featured: true
+updated: 2026-05-25
+tags: [compose, sending]
+---
+
+Inbox uses end-to-end encryption by default when the recipient is also on Oxy. For non-Oxy recipients, Inbox falls back to standard email (still TLS-encrypted in transit).
+
+## Send a message
+
+<Steps>
+  <Step title="Tap Compose">
+    The pencil icon in the top right opens a new message.
+  </Step>
+  <Step title="Pick a recipient">
+    Start typing a name or address. Oxy contacts show a lock icon to indicate end-to-end encryption.
+  </Step>
+  <Step title="Write and send">
+    Subject and body. Attach files via the paperclip — attachments are encrypted alongside the message body.
+  </Step>
+</Steps>
+
+## What the encryption indicator means
+
+| Icon | Meaning |
+|------|---------|
+| Lock (closed) | End-to-end encrypted. Only you and the recipient can read it. |
+| Lock (open) | TLS-only. Encrypted in transit but the recipient's provider can read it. |
+| No icon | Sent as plain SMTP. We do not recommend this; turn on **Settings → Privacy → Reject plain-text** to block it. |
+
+<Callout type="tip">
+  Add `[secure]` to a non-Oxy recipient's subject line to send via the [Oxy Bridge](/help/inbox/encryption) — they'll get a link to read the message on a one-time secure page.
+</Callout>

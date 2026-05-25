@@ -1,0 +1,49 @@
+---
+title: Identity basics
+description: Understand what an Oxy ID actually is — keys, accounts, and the difference between them.
+course: using-oxy-id
+order: 1
+duration: 7 min
+level: beginner
+tags: [identity, keys]
+---
+
+Your Oxy ID is not really an "account" in the traditional sense. It's a **keypair** — a pair of cryptographic numbers, one public and one private — plus a username pointing at them.
+
+## The two keys
+
+Every Oxy ID has:
+
+- **Public key** — anyone can know this. It's how people send you encrypted messages and how servers verify your signatures.
+- **Private key** — only you have this. It proves you own the public key.
+
+The private key is generated on your device when you create the account. **It never leaves your device** unless you explicitly back it up.
+
+## What this changes
+
+Traditional accounts use a password. Whoever knows the password owns the account.
+
+With keypairs, **whoever holds the private key owns the identity**. We can't impersonate you because we don't have your key. A breach of our servers does not leak your identity. A subpoena to us can't recover your data.
+
+<Callout type="info" title="The flip side">
+  Because we can't impersonate you, we also can't recover for you. If you lose your private key AND your recovery phrase AND your backup codes, your account is gone forever. That's the cost of true cryptographic ownership.
+</Callout>
+
+## How your username relates
+
+Your username (`@nate`, `@example`) is a human-friendly pointer to your public key. We keep a registry — username → public key — so people can find you without having to memorize a 64-character hex string.
+
+If you ever need to prove your username is yours, you sign a challenge with your private key. The server checks the signature against the registered public key. Done — no password involved.
+
+## Why this matters
+
+The keypair model is what makes everything else possible:
+
+- End-to-end encryption (Inbox, Allo)
+- Cross-app sign-in without redirects (FedCM)
+- Federated posting where remote servers can verify your posts (Mention)
+- Server-side authorization for developer apps (Console)
+
+It's all the same primitive.
+
+<NextPrev next={{ href: '/academy/using-oxy-id/02-key-management', title: 'Key management' }} />

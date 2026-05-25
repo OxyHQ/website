@@ -1,0 +1,46 @@
+---
+title: Create a developer app
+description: Register an app in Console to get the credentials you need to call Oxy APIs.
+category: console
+order: 1
+audience: developer
+featured: true
+updated: 2026-05-25
+tags: [console, apps, oauth]
+---
+
+A **developer app** is an OAuth2 client registration. Every app you build that calls Oxy APIs on behalf of users — or makes server-side requests — needs one.
+
+## Create an app
+
+<Steps>
+  <Step title="Open Console">
+    Sign in at [console.oxy.so](https://console.oxy.so).
+  </Step>
+  <Step title="Tap New app">
+    Choose a name (visible to users) and a redirect URI.
+  </Step>
+  <Step title="Pick the scopes you need">
+    Start small — `profile:read` and `email:send` are the most common. Users see the scope list during OAuth consent.
+  </Step>
+</Steps>
+
+## What you get
+
+Console gives you two credentials:
+
+- **API key** (`oxy_dk_…`) — public-ish, included in the OAuth flow.
+- **API secret** (`oxy_sk_…`) — server-side only, never ship to a browser or mobile app.
+
+<Callout type="warning" title="Treat your secret like a password">
+  Anyone with your API secret can impersonate your app. Rotate it from **App → Credentials → Rotate** if it leaks.
+</Callout>
+
+## Production checklist
+
+- [ ] Real redirect URIs (no `localhost` in prod)
+- [ ] Privacy policy and terms URLs filled in (we surface them in the consent screen)
+- [ ] Webhook endpoint added (for billing/usage events)
+- [ ] App icon uploaded (shown in the consent screen)
+
+<NextPrev next={{ href: '/help/console/api-keys', title: 'Manage API keys' }} />

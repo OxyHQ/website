@@ -1,0 +1,55 @@
+---
+title: Key management
+description: Where your keys live, how they're stored, and how to add new devices safely.
+course: using-oxy-id
+order: 2
+duration: 8 min
+level: beginner
+tags: [keys, devices, security]
+---
+
+Your private key is a secret. The Accounts app stores it for you, but you should know where it lives, what protects it, and what to do when something goes wrong.
+
+## Where the key lives
+
+Depending on your device:
+
+- **iOS / iPadOS** — in the Secure Enclave (hardware-protected). The key never leaves the chip.
+- **Android** — in the Hardware-backed Keystore where available, fallback to the StrongBox or software keystore.
+- **macOS** — in the Keychain.
+- **Windows** — in the Credential Manager.
+- **Linux** — in libsecret (Gnome Keyring, KWallet).
+- **Browser (web)** — in `IndexedDB` with the WebCrypto-backed encryption key in a non-extractable form.
+
+In every case, the operating system protects the key from other apps reading it.
+
+## Adding a new device
+
+When you sign in on a new device, that device needs your key too. You have two options:
+
+### Option A — paste your recovery phrase
+
+The safest if you have your 24-word phrase handy. The new device re-derives your key from the phrase. The phrase is never transmitted.
+
+### Option B — scan a QR code from an existing device
+
+Faster. On your existing device: **Accounts → Devices → Add device**. A QR code appears, expiring in 60 seconds. Scan it with the new device's camera. The keys are transferred over an end-to-end encrypted channel.
+
+<Callout type="warning" title="Never share your QR code">
+  The Add Device QR is a one-time, time-limited token but it still transfers your identity. Don't put it on a screenshare. Don't post it.
+</Callout>
+
+## Removing a device
+
+If you sell a device or it gets stolen, revoke it from **Accounts → Devices → Revoke**. The revocation is signed by your master key and broadcast to every other device. The revoked device's session becomes invalid immediately.
+
+After revocation, that device can't decrypt new messages — but it can still read messages it already decrypted (because those were stored locally on the device). This is why marking a device as **lost/stolen** also triggers a key-rotation: new messages use a new key the old device doesn't have.
+
+## Backing up
+
+The recovery phrase IS the backup. There's no separate "export key" file. If you have your phrase written down and stored securely, you have a full backup.
+
+<NextPrev
+  prev={{ href: '/academy/using-oxy-id/01-identity-basics', title: 'Identity basics' }}
+  next={{ href: '/academy/using-oxy-id/03-recovery', title: 'Recovery' }}
+/>

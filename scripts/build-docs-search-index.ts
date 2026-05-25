@@ -142,6 +142,107 @@ async function readSyncedIndex(): Promise<SyncedIndex | null> {
   }
 }
 
+/* ─── Help / Academy / Company content walker ─── */
+
+/**
+ * A single content surface to index — help, academy, or company. Each entry
+ * results in one HTML stub file under `dist/<outSubdir>/` so Pagefind sees
+ * it as a discrete document.
+ */
+interface ContentSurface {
+  /** Source directory under `src/content`. */
+  sourceDir: string;
+  /** Output subdirectory under `dist/`. */
+  outSubdir: string;
+  /** Section label written alongside the title for grouping in search UI. */
+  section: string;
+  /** Builds the canonical URL the SPA navigates to when a result is clicked. */
+  buildCanonical: (relativeFile: string) => string | null;
+}
+
+/**
+ * Walk a directory recursively and yield every `.mdx` file relative to
+ * `root`. Locale variants (e.g. `foo.es.mdx`) are skipped — Pagefind only
+ * indexes the default-locale copy. Default-locale files are those without a
+ * `.{2-letter-locale}` suffix before `.mdx`.
+ */
+async function* walkMdxFiles(root: string): AsyncGenerator<string> {
+  if (!existsSync(root)) return;
+  const entries = await readdir(root, { withFileTypes: true, recursive: true });
+  for (const entry of entries) {
+    if (!entry.isFile()) continue;
+    if (!entry.name.endsWith('.mdx')) continue;
+    // Skip locale variants — `welcome.es.mdx` matches; `welcome.mdx` does not.
+    if (/\.[a-z]{2}\.mdx$/.test(entry.name)) continue;
+    // Node 22 gives entries with `parentPath`; older give `path`.
+    const parent = (entry as { parentPath?: string; path?: string }).parentPath
+      ?? (entry as { parentPath?: string; path?: string }).path
+      ?? root;
+    const absolute = path.join(parent, entry.name);
+    yield path.relative(root, absolute);
+  }
+}
+
+/** Build the slug used in the canonical URL — strips `.mdx` from the path. */
+function slugFromRelativePath(relativeFile: string): string {
+  return relativeFile.replace(/\.mdx$/, '').replace(/\\/g, '/');
+}
+
+const CONTENT_SURFACES: ContentSurface[] = [
+  {
+    sourceDir: path.join(WEBSITE_ROOT, 'src', 'content', 'help'),
+    outSubdir: 'help-content',
+    section: 'Help',
+    buildCanonical: (relativeFile) => {
+      const slug = slugFromRelativePath(relativeFile);
+      return slug ? `/help/${slug}` : null;
+    },
+  },
+  {
+    sourceDir: path.join(WEBSITE_ROOT, 'src', 'content', 'academy'),
+    outSubdir: 'academy-content',
+    section: 'Academy',
+    buildCanonical: (relativeFile) => {
+      const slug = slugFromRelativePath(relativeFile);
+      // Academy lessons live at `<course>/<lesson>`. Top-level files (none
+      // expected today) are skipped — they'd not have a renderable route.
+      if (!slug.includes('/')) return null;
+      return `/academy/${slug}`;
+    },
+  },
+  {
+    sourceDir: path.join(WEBSITE_ROOT, 'src', 'content', 'company'),
+    outSubdir: 'company-content',
+    section: 'Company',
+    buildCanonical: (relativeFile) => {
+      const slug = slugFromRelativePath(relativeFile);
+      // Only the known prose pages have routes today. Any new MDX file under
+      // `content/company/` without a route will simply not be indexed.
+      const known = new Set(['manifesto', 'transparency', 'business']);
+      return known.has(slug) ? `/company/${slug}` : null;
+    },
+  },
+];
+
+async function indexContentSurface(surface: ContentSurface): Promise<number> {
+  let written = 0;
+  for await (const relativeFile of walkMdxFiles(surface.sourceDir)) {
+    const absolute = path.join(surface.sourceDir, relativeFile);
+    const source = await readFile(absolute, 'utf8');
+    const { data, body } = parseFrontMatter(source);
+    const title = data.title ?? relativeFile.replace(/\.mdx$/, '');
+    const canonical = surface.buildCanonical(relativeFile);
+    if (!canonical) continue;
+    const html = mdxToHtml(body);
+    const slug = slugFromRelativePath(relativeFile);
+    const dest = path.join(WEBSITE_ROOT, 'dist', surface.outSubdir, `${slug}.html`);
+    await ensureDir(path.dirname(dest));
+    await writeFile(dest, wrapHtml(`${title} — ${surface.section}`, html, canonical));
+    written += 1;
+  }
+  return written;
+}
+
 async function main(): Promise<void> {
   if (!existsSync(DIST)) {
     console.error('[build-docs-search-index] dist/ does not exist — skipping.');
@@ -155,7 +256,24 @@ async function main(): Promise<void> {
   await ensureDir(OUT_DIR);
   let total = 0;
   for (const pkg of index.packages) {
+    const isVersioned = pkg.versioned === true;
     for (const ver of pkg.versions) {
+      // Disk segment — non-versioned packages skip the version dir so
+      // Pagefind URLs match the SPA routes 1:1.
+      const versionDirSegment = isVersioned ? ver.version : '';
+      // Canonical URL always points at the latest version of this slug so
+      // search engines de-duplicate stale results onto the up-to-date
+      // page. Non-versioned packages have no version segment at all.
+      const buildCanonical = (slug: string): string => {
+        if (!isVersioned) {
+          return slug
+            ? `/developers/docs/${pkg.shortName}/${slug}`
+            : `/developers/docs/${pkg.shortName}`;
+        }
+        return slug
+          ? `/developers/docs/${pkg.shortName}/${pkg.latestVersion}/${slug}`
+          : `/developers/docs/${pkg.shortName}/${pkg.latestVersion}`;
+      };
       for (const page of ver.pages) {
         const syncedFile = path.join(WEBSITE_ROOT, 'src', 'content', '_synced', page.file);
         if (!existsSync(syncedFile)) continue;
@@ -164,20 +282,28 @@ async function main(): Promise<void> {
         const title = data.title ?? page.title;
         const html = mdxToHtml(body);
         const slugPath = page.slug ? `${page.slug}.html` : 'index.html';
-        const dest = path.join(OUT_DIR, pkg.shortName, ver.version, slugPath);
-        const canonical = page.slug
-          ? `/developers/docs/${pkg.shortName}/${ver.version}/${page.slug}`
-          : `/developers/docs/${pkg.shortName}/${ver.version}`;
+        const dest = versionDirSegment
+          ? path.join(OUT_DIR, pkg.shortName, versionDirSegment, slugPath)
+          : path.join(OUT_DIR, pkg.shortName, slugPath);
+        const canonical = buildCanonical(page.slug);
         await ensureDir(path.dirname(dest));
         await writeFile(dest, wrapHtml(`${title} — ${pkg.displayName}`, html, canonical));
         total += 1;
       }
     }
   }
+  // Index help / academy / company MDX surfaces too — same Pagefind pipeline.
+  for (const surface of CONTENT_SURFACES) {
+    const written = await indexContentSurface(surface);
+    console.error(
+      `[build-docs-search-index] wrote ${written} ${surface.section} pages to dist/${surface.outSubdir}/.`,
+    );
+    total += written;
+  }
   // Sanity check: walk what we just wrote.
   const written = await readdir(OUT_DIR, { recursive: true });
   console.error(
-    `[build-docs-search-index] wrote ${total} pages to ${OUT_DIR} (${written.length} entries).`,
+    `[build-docs-search-index] wrote ${total} pages total (${written.length} entries under ${OUT_DIR}).`,
   );
 }
 

@@ -1,0 +1,46 @@
+---
+title: Delete your account
+description: Permanently delete your Oxy account and what happens to your data.
+category: account
+order: 3
+audience: user
+updated: 2026-05-25
+tags: [account, deletion]
+---
+
+Account deletion is permanent. We do not keep a "soft-deleted" copy of your data — once the grace period ends, every server-side record tied to your identity is purged.
+
+<Callout type="danger" title="This cannot be undone">
+  Deletion immediately revokes every device. After 30 days your data is unrecoverable.
+</Callout>
+
+## Before you delete
+
+- **Export anything you want to keep.** Use **Settings → Privacy → Export my data** to download a full archive.
+- **Cancel any active subscriptions.** Open the billing screen and end any plans first.
+- **Tell your contacts.** End-to-end encrypted Inbox messages stay readable on the other party's device, but new replies will bounce.
+
+## How to delete
+
+<Steps>
+  <Step title="Open Settings">
+    Sign into Accounts and go to **Settings → Privacy**.
+  </Step>
+  <Step title="Choose Delete account">
+    Tap the **Delete my account** button at the bottom of the screen.
+  </Step>
+  <Step title="Confirm with your username">
+    Type your full username exactly to confirm. This is intentionally annoying — accidental deletions cost real data.
+  </Step>
+  <Step title="Wait 30 days or finalize immediately">
+    By default we hold your data for 30 days in case you change your mind. Tap **Cancel deletion** during this window to restore everything. After 30 days the purge is final.
+  </Step>
+</Steps>
+
+## What gets deleted
+
+- Your Oxy ID and all device sessions
+- Email in Inbox (encrypted blobs and metadata)
+- Posts and follows in Mention (federated copies on other servers may persist — this is how the fediverse works)
+- Apps and API keys in Console
+- All billing records except the legally required minimum (tax records)

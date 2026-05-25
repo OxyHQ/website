@@ -1,0 +1,49 @@
+---
+title: Set up two-factor authentication
+description: Add a second layer of security to your Oxy account.
+category: auth
+order: 3
+audience: user
+updated: 2026-05-25
+tags: [auth, 2fa, security]
+---
+
+Two-factor authentication (2FA) makes it much harder for someone to take over your account even if they steal your password. We strongly recommend turning it on for every account, especially if you store anything sensitive in Inbox.
+
+## What "two factor" actually means
+
+The two factors are:
+
+1. **Something you know** — your password
+2. **Something you have** — a code from your phone or a hardware key
+
+To sign in, an attacker would need both.
+
+## Set it up
+
+<Steps>
+  <Step title="Open Security">
+    Accounts → Settings → Security → Two-factor authentication.
+  </Step>
+  <Step title="Pick a method">
+    - **Authenticator app** (recommended). Works offline. Use 1Password, Bitwarden, Aegis, or Google Authenticator.
+    - **Hardware key** (most secure). YubiKey or similar.
+    - **SMS** (not recommended). SIM-swap attacks make this weaker than the alternatives.
+  </Step>
+  <Step title="Scan the QR code">
+    For authenticator apps. Your app generates 6-digit codes that rotate every 30 seconds.
+  </Step>
+  <Step title="Save your backup codes">
+    These are one-time codes for emergency access if you lose your second factor. Print them or save them in a password manager. Do not skip this step.
+  </Step>
+</Steps>
+
+## Lost your second factor?
+
+If you no longer have access to your authenticator app or hardware key, use one of your backup codes. Each one works exactly once.
+
+If you've also lost your backup codes, you'll need your recovery phrase to regain access. See [Recovery](/academy/using-oxy-id/03-recovery) for the full reset flow.
+
+<Callout type="danger" title="No backup codes? No recovery phrase? No account">
+  Oxy literally cannot recover your account if you lose all three. This is the cost of true end-to-end encryption — we don't hold a key to your data.
+</Callout>
