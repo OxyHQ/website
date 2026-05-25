@@ -64,35 +64,29 @@ function getPackageLogo(shortName: string): string | undefined {
 }
 
 /**
- * A leaf in the sidebar tree — a clickable link to a synced docs page or the
- * package's own landing row.
+ * A leaf in the sidebar tree — a clickable link to a synced docs page.
  */
 interface SidebarLeaf {
   kind: 'leaf'
-  /** Display label (page title, or package displayName for the package row). */
+  /** Display label (page title). */
   label: string
   /** Full router href. */
   href: string
-  /** Owning package shortName — used by `PackageLogo`. */
-  shortName: string
-  /** True for the package-name row that opens the active package's tree. */
-  isPackageHeader: boolean
   /**
-   * Full page slug (only set when this leaf maps to a `SyncedPage`). Used to
-   * compute the default-expanded set of branches that lead to the active page.
-   * Empty string for the package header (index page).
+   * Full page slug. Used to compute the default-expanded set of branches
+   * that lead to the active page.
    */
   slug: string
 }
 
 /**
- * A branch in the sidebar tree — a non-leaf segment (e.g. `api` or
- * `functions`) that groups one or more child nodes. Renders as a chevron
+ * A group in the sidebar tree — a non-leaf segment (e.g. `functions` or
+ * `classes`) that groups one or more child nodes. Renders as a chevron
  * button + child list.
  */
-interface SidebarBranch {
-  kind: 'branch'
-  /** Display label — the segment string (e.g. `functions`). */
+interface SidebarGroup {
+  kind: 'group'
+  /** Human-readable label (title-cased segment, e.g. `Functions`). */
   label: string
   /**
    * Stable identifier composed of the package shortName plus the full path
@@ -101,174 +95,192 @@ interface SidebarBranch {
    */
   key: string
   children: SidebarNode[]
-  /** Total leaf descendants under this branch (recursive). */
+  /** Total leaf descendants under this group (recursive). */
+  leafCount: number
+  /**
+   * Optional page that sits at the group's own slug (e.g. an `api` README
+   * at `slug='api'` alongside `slug='api/functions/*'` pages). When set,
+   * the renderer prepends an `Overview` link as the group's first child.
+   * Tracked separately from `children` so common-prefix elimination can
+   * discard the wrapper page cleanly without scanning for synthetic leaves.
+   */
+  overview?: { label: string; href: string; slug: string }
+}
+
+/**
+ * A package row — always rendered as a `NavLink` with the package logo.
+ * When the package is the active one, it owns its sub-tree as nested
+ * children rendered indented below the row.
+ */
+interface SidebarPackage {
+  kind: 'package'
+  /** Display label (package displayName, e.g. `@oxyhq/auth`). */
+  label: string
+  /** Full router href to the package index page. */
+  href: string
+  /** Owning package shortName — used by `PackageLogo`. */
+  shortName: string
+  /** Stable identifier (the package shortName). */
+  key: string
+  /**
+   * Sub-tree of the package's pages. Empty for collapsed (non-active)
+   * packages. Non-empty for the active package — rendered as nested
+   * children of the package row.
+   */
+  children: SidebarNode[]
+  /** Total leaf descendants in `children` (recursive). */
   leafCount: number
 }
 
-type SidebarNode = SidebarBranch | SidebarLeaf
+type SidebarNode = SidebarPackage | SidebarGroup | SidebarLeaf
 
 interface SidebarSection {
   /** Stable category id (for tracking expand/collapse independent of label). */
   category: SyncedPackage['category']
   title: string
-  /**
-   * Top-level nodes for the section. For the active package this is the
-   * tree of its synced pages; for collapsed packages it's a single leaf (the
-   * package row).
-   */
-  nodes: SidebarNode[]
+  /** Top-level package nodes in this section. */
+  nodes: SidebarPackage[]
+}
+
+/**
+ * Map a slug segment to a human-readable label. Split on `-` / `_`,
+ * capitalize the first word, lowercase the rest, and join with spaces.
+ * Examples: `functions` → `Functions`, `type-aliases` → `Type aliases`.
+ */
+function formatGroupLabel(segment: string): string {
+  const words = segment.split(/[-_]/).filter((w) => w.length > 0)
+  if (words.length === 0) return segment
+  const head = words[0]
+  const headCased = head.charAt(0).toUpperCase() + head.slice(1).toLowerCase()
+  if (words.length === 1) return headCased
+  const tail = words.slice(1).map((w) => w.toLowerCase()).join(' ')
+  return `${headCased} ${tail}`
 }
 
 /**
  * Build a tree of `SidebarNode`s from a flat list of synced pages by
- * splitting each slug on `/`. Non-final segments become branches; the page
+ * splitting each slug on `/`. Non-final segments become groups; the page
  * itself is attached as a leaf at the terminal segment.
  *
- * For packages whose slugs have zero slashes (the typical hand-written
- * docs case, e.g. services/`GETTING_STARTED`) the result is a flat list of
- * leaves and the UI is identical to the pre-tree behavior.
+ * The intermediate tree is built with insertion-order `Map`s so each child
+ * segment appears exactly once (no parallel `orderedKeys` array — that was
+ * the source of duplicate group rows). When a leaf's segment later turns
+ * out to also host children (e.g. an `api` README plus deeper pages under
+ * `api/functions/...`), we convert the leaf to a group in-place — the
+ * `Map` slot is reused, preserving insertion order.
  */
 function buildPageTree(pkg: SyncedPackage, version: SyncedVersion): SidebarNode[] {
-  interface TreeBranch {
-    label: string
+  interface TreeGroup {
+    /** Raw slug segment (pre-formatting). */
+    segment: string
+    /** Stable key — `pkg.shortName` + fullPath, or `pkg.shortName` for root. */
     key: string
+    /** Insertion-ordered children. */
     children: Map<string, TreeNode>
-    orderedKeys: string[]
+    /**
+     * Optional page anchored at this group's own slug (e.g. the `api`
+     * README that sits at the same path as the `api/` group). Rendered as
+     * an `Overview` entry when present.
+     */
     page?: SyncedPage
   }
-  interface TreeLeaf {
+  interface TreeLeafEntry {
     label: string
     href: string
     slug: string
-    page: SyncedPage
   }
   type TreeNode =
-    | { kind: 'leaf'; leaf: TreeLeaf }
-    | { kind: 'branch'; branch: TreeBranch }
+    | { kind: 'leaf'; leaf: TreeLeafEntry }
+    | { kind: 'group'; group: TreeGroup }
 
-  const root: TreeBranch = {
-    label: '',
+  const root: TreeGroup = {
+    segment: '',
     key: pkg.shortName,
     children: new Map(),
-    orderedKeys: [],
   }
 
-  function ensureBranch(parent: TreeBranch, segment: string, fullPath: string): TreeBranch {
+  function ensureGroup(parent: TreeGroup, segment: string, fullPath: string): TreeGroup {
     const existing = parent.children.get(segment)
-    if (existing && existing.kind === 'branch') {
-      return existing.branch
+    if (existing && existing.kind === 'group') {
+      return existing.group
     }
-    const branch: TreeBranch = {
-      label: segment,
+    const group: TreeGroup = {
+      segment,
       key: `${pkg.shortName}/${fullPath}`,
       children: new Map(),
-      orderedKeys: [],
     }
-    parent.children.set(segment, { kind: 'branch', branch })
-    parent.orderedKeys.push(segment)
-    return branch
+    // If `existing` is a leaf, promote it: the page becomes the new group's
+    // anchor (rendered as "Overview" below). `Map.set` on an existing key
+    // overwrites the value while keeping the original insertion slot.
+    if (existing && existing.kind === 'leaf') {
+      const synced = version.pages.find((p) => p.slug === existing.leaf.slug)
+      if (synced) group.page = synced
+    }
+    parent.children.set(segment, { kind: 'group', group })
+    return group
   }
 
   for (const page of version.pages) {
     if (!page.slug) {
-      // Index page — anchor it at the root branch itself so the package
-      // header can still link to it.
+      // Index page — anchored at the root group; the package row links to it.
       root.page = page
       continue
     }
-    const segments = page.slug.split('/')
-    let node: TreeBranch = root
+    const segments = page.slug.split('/').filter((s) => s.length > 0)
+    if (segments.length === 0) continue
+    let node: TreeGroup = root
     for (let i = 0; i < segments.length - 1; i += 1) {
       const segment = segments[i]
-      if (!segment) continue
       const fullPath = segments.slice(0, i + 1).join('/')
-      node = ensureBranch(node, segment, fullPath)
+      node = ensureGroup(node, segment, fullPath)
     }
     const lastSegment = segments[segments.length - 1]
-    if (!lastSegment) continue
-    const leaf: TreeLeaf = {
+    const leaf: TreeLeafEntry = {
       label: page.title,
       href: pageHref(pkg, version.version, page.slug),
       slug: page.slug,
-      page,
     }
-    // If a branch already exists with this segment (e.g. a node with both
-    // children AND a leaf page at the same slug, like `api` having children
-    // under it and `api` itself being a page), attach the leaf as the
-    // branch's own page — render the branch header as a link.
     const existing = node.children.get(lastSegment)
-    if (existing && existing.kind === 'branch') {
-      existing.branch.page = page
+    if (existing && existing.kind === 'group') {
+      // Deeper pages were processed first — this page sits at the group's
+      // own slug. Anchor it as the group's overview page.
+      existing.group.page = page
       continue
     }
-    if (existing) {
-      // Duplicate slug — overwrite (last write wins, matches array order).
-      node.children.set(lastSegment, { kind: 'leaf', leaf })
-      continue
-    }
+    // Either no existing entry, or an existing leaf at the same slug
+    // (duplicate — last write wins, matching the input order).
     node.children.set(lastSegment, { kind: 'leaf', leaf })
-    node.orderedKeys.push(lastSegment)
   }
 
-  function materialize(branch: TreeBranch): SidebarNode[] {
+  function materialize(group: TreeGroup): SidebarNode[] {
     const out: SidebarNode[] = []
-    for (const segment of branch.orderedKeys) {
-      const node = branch.children.get(segment)
-      if (!node) continue
-      if (node.kind === 'leaf') {
+    for (const [, child] of group.children) {
+      if (child.kind === 'leaf') {
         out.push({
           kind: 'leaf',
-          label: node.leaf.label,
-          href: node.leaf.href,
-          shortName: pkg.shortName,
-          isPackageHeader: false,
-          slug: node.leaf.slug,
+          label: child.leaf.label,
+          href: child.leaf.href,
+          slug: child.leaf.slug,
         })
         continue
       }
-      const childNodes = materialize(node.branch)
-      if (childNodes.length === 0) {
-        // Branch ended up with no children — only possible when its only
-        // page is its own (anchored at `page`). Render as a plain leaf.
-        if (node.branch.page) {
-          out.push({
-            kind: 'leaf',
-            label: node.branch.page.title,
-            href: pageHref(pkg, version.version, node.branch.page.slug),
-            shortName: pkg.shortName,
-            isPackageHeader: false,
-            slug: node.branch.page.slug,
-          })
-        }
-        continue
-      }
-      // If the branch ALSO has a page at its own slug, prepend it as the
-      // first child so users can navigate to the branch overview while
-      // still seeing its subtree.
-      let children = childNodes
-      if (node.branch.page) {
-        children = [
-          {
-            kind: 'leaf' as const,
+      const childNodes = materialize(child.group)
+      if (childNodes.length === 0 && !child.group.page) continue
+      const overview = child.group.page
+        ? {
             label: 'Overview',
-            href: pageHref(pkg, version.version, node.branch.page.slug),
-            shortName: pkg.shortName,
-            isPackageHeader: false,
-            slug: node.branch.page.slug,
-          },
-          ...childNodes,
-        ]
-      }
-      const leafCount = children.reduce(
-        (acc, c) => acc + (c.kind === 'leaf' ? 1 : c.leafCount),
-        0,
-      )
+            href: pageHref(pkg, version.version, child.group.page.slug),
+            slug: child.group.page.slug,
+          }
+        : undefined
+      const leafCount = countLeaves(childNodes) + (overview ? 1 : 0)
       out.push({
-        kind: 'branch',
-        label: node.branch.label,
-        key: node.branch.key,
-        children,
+        kind: 'group',
+        label: formatGroupLabel(child.group.segment),
+        key: child.group.key,
+        children: childNodes,
         leafCount,
+        ...(overview ? { overview } : {}),
       })
     }
     return out
@@ -277,15 +289,45 @@ function buildPageTree(pkg: SyncedPackage, version: SyncedVersion): SidebarNode[
   return materialize(root)
 }
 
+function countLeaves(nodes: SidebarNode[]): number {
+  let total = 0
+  for (const node of nodes) {
+    if (node.kind === 'leaf') total += 1
+    else total += node.leafCount
+  }
+  return total
+}
+
 /**
- * Build a docs sidebar grouped by category. Each package appears under its
- * category, with its index page first and other slugs after. This is the
- * cross-package "everything" sidebar shown on every docs detail page so the
- * reader can jump between packages without going back to the hub.
- *
- * For the active package the inner list is a tree (see `buildPageTree`) so
- * large typedoc-generated packages (bloom, core, auth-sdk) don't render as
- * unmanageable 500-row flat lists.
+ * Common-prefix elimination: if a node has exactly one non-leaf child and
+ * no leaf children, drop the wrapper and recurse into the child. Applied
+ * to the package's children so `api/functions/...` shows up directly as
+ * `Functions` under the package row — the `api/` wrapper is redundant
+ * when every page sits under it.
+ */
+function collapseSingleWrapper(nodes: SidebarNode[]): SidebarNode[] {
+  let current = nodes
+  while (
+    current.length === 1 &&
+    current[0].kind === 'group' &&
+    !current.some((n) => n.kind === 'leaf')
+  ) {
+    const only = current[0]
+    if (only.kind !== 'group') break
+    current = only.children
+  }
+  return current.map((n) =>
+    n.kind === 'group'
+      ? ({ ...n, children: collapseSingleWrapper(n.children) } as SidebarGroup)
+      : n,
+  )
+}
+
+/**
+ * Build a docs sidebar grouped by category. Each package appears as a
+ * `package` node; the active package owns its page-tree as nested
+ * children (after common-prefix elimination). Non-active packages render
+ * as a single collapsed row.
  */
 function buildSidebar(activePkg?: SyncedPackage, activeVersion?: SyncedVersion): SidebarSection[] {
   const sections: SidebarSection[] = []
@@ -298,43 +340,29 @@ function buildSidebar(activePkg?: SyncedPackage, activeVersion?: SyncedVersion):
   for (const cat of categoryOrder) {
     const pkgs = grouped.get(cat)
     if (!pkgs || pkgs.length === 0) continue
-    const nodes: SidebarNode[] = []
+    const nodes: SidebarPackage[] = []
     for (const pkg of pkgs) {
-      const expanded = activePkg?.shortName === pkg.shortName
+      const isActive = activePkg?.shortName === pkg.shortName
       const version =
-        expanded && activeVersion
+        isActive && activeVersion
           ? activeVersion
           : pkg.versions.find((v) => v.version === pkg.latestVersion) ??
             pkg.versions.find((v) => v.version === pkg.defaultVersion) ??
             pkg.versions[0]
       if (!version) continue
-      if (expanded) {
-        // Render the package header itself first, then the synced page tree
-        // beneath. The header acts as the link back to the package index.
-        nodes.push({
-          kind: 'leaf',
-          label: pkg.displayName,
-          href: pageHref(pkg, version.version, ''),
-          shortName: pkg.shortName,
-          isPackageHeader: true,
-          slug: '',
-        })
-        for (const node of buildPageTree(pkg, version)) {
-          // The package's own index page is already shown as the header
-          // row above — skip it if it shows up at the root of the tree.
-          if (node.kind === 'leaf' && node.slug === '') continue
-          nodes.push(node)
-        }
-      } else {
-        nodes.push({
-          kind: 'leaf',
-          label: pkg.displayName,
-          href: pageHref(pkg, version.version, ''),
-          shortName: pkg.shortName,
-          isPackageHeader: true,
-          slug: '',
-        })
+      let children: SidebarNode[] = []
+      if (isActive) {
+        children = collapseSingleWrapper(buildPageTree(pkg, version))
       }
+      nodes.push({
+        kind: 'package',
+        label: pkg.displayName,
+        href: pageHref(pkg, version.version, ''),
+        shortName: pkg.shortName,
+        key: pkg.shortName,
+        children,
+        leafCount: countLeaves(children),
+      })
     }
     if (nodes.length === 0) continue
     sections.push({ category: cat, title: categoryLabels[cat], nodes })
@@ -343,10 +371,10 @@ function buildSidebar(activePkg?: SyncedPackage, activeVersion?: SyncedVersion):
 }
 
 /**
- * Walk `nodes` and collect the keys of every branch that lies on the path
- * from the root to a leaf matching `activePath`. Used to seed the initial
- * expand state so the active page is always visible without forcing every
- * branch open.
+ * Walk `nodes` and collect the keys of every group/package that lies on
+ * the path from the root to a leaf matching `activePath`. Used to seed
+ * the initial expand state so the active page is always visible without
+ * forcing every group open.
  */
 function collectActivePath(nodes: SidebarNode[], activePath: string): Set<string> {
   const out = new Set<string>()
@@ -354,7 +382,7 @@ function collectActivePath(nodes: SidebarNode[], activePath: string): Set<string
     if (node.kind === 'leaf') {
       return node.href === activePath
     }
-    let containsActive = false
+    let containsActive = node.kind === 'package' && node.href === activePath
     for (const child of node.children) {
       if (visit(child)) containsActive = true
     }
@@ -417,6 +445,12 @@ function paddingForDepth(depth: number): string {
   return depthPaddingClasses[7] ?? 'pl-4'
 }
 
+function childKey(child: SidebarNode): string {
+  if (child.kind === 'leaf') return `leaf:${child.href}`
+  if (child.kind === 'group') return `group:${child.key}`
+  return `package:${child.key}`
+}
+
 function SidebarTreeNode({
   node,
   depth,
@@ -444,12 +478,47 @@ function SidebarTreeNode({
           to={node.href}
         >
           <div className="flex-1 flex items-start space-x-2.5">
-            {node.isPackageHeader ? (
-              <PackageLogo shortName={node.shortName} label={node.label} />
-            ) : null}
             <div className="break-words [word-break:break-word]">{node.label}</div>
           </div>
         </NavLink>
+      </li>
+    )
+  }
+  if (node.kind === 'package') {
+    // The package row is always a NavLink with the package logo. When the
+    // package owns children (the active package), they render nested
+    // beneath — no separate toggle, the active package is always open.
+    const isActive = activePath === node.href
+    const pad = paddingForDepth(depth)
+    return (
+      <li>
+        <NavLink
+          className={
+            isActive
+              ? `group flex items-start pr-3 py-1.5 ${pad} cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl w-full outline-offset-[-1px] bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]`
+              : `group flex items-start pr-3 py-1.5 ${pad} cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-surface text-muted-foreground hover:text-foreground`
+          }
+          to={node.href}
+        >
+          <div className="flex-1 flex items-start space-x-2.5">
+            <PackageLogo shortName={node.shortName} label={node.label} />
+            <div className="break-words [word-break:break-word]">{node.label}</div>
+          </div>
+        </NavLink>
+        {node.children.length > 0 ? (
+          <ul className="space-y-px mt-px">
+            {node.children.map((child) => (
+              <SidebarTreeNode
+                key={childKey(child)}
+                node={child}
+                depth={depth + 1}
+                expanded={expanded}
+                toggle={toggle}
+                activePath={activePath}
+              />
+            ))}
+          </ul>
+        ) : null}
       </li>
     )
   }
@@ -477,9 +546,24 @@ function SidebarTreeNode({
       </button>
       {isOpen ? (
         <ul className="space-y-px">
+          {node.overview ? (
+            <SidebarTreeNode
+              key={`leaf:${node.overview.href}`}
+              node={{
+                kind: 'leaf',
+                label: node.overview.label,
+                href: node.overview.href,
+                slug: node.overview.slug,
+              }}
+              depth={depth + 1}
+              expanded={expanded}
+              toggle={toggle}
+              activePath={activePath}
+            />
+          ) : null}
           {node.children.map((child) => (
             <SidebarTreeNode
-              key={child.kind === 'leaf' ? `leaf:${child.href}` : `branch:${child.key}`}
+              key={childKey(child)}
               node={child}
               depth={depth + 1}
               expanded={expanded}
@@ -577,7 +661,7 @@ function DocsSidebar({
                 <ul className="space-y-px">
                   {section.nodes.map((node) => (
                     <SidebarTreeNode
-                      key={node.kind === 'leaf' ? `leaf:${node.href}` : `branch:${node.key}`}
+                      key={childKey(node)}
                       node={node}
                       depth={0}
                       expanded={treeExpanded}
