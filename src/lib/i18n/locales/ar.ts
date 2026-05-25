@@ -77,6 +77,7 @@ const ar: Translations = {
     settings: 'الإعدادات',
     socialLinkedIn: 'LinkedIn',
     socialX: 'X',
+    socialMention: 'Mention',
   },
   home: {
     heroTitleDefault: 'نصنع مستقبلًا تمكّن فيه التقنية الأفراد\nمن العيش بحياة مترابطة ومرضية ومستدامة.',

@@ -10,6 +10,7 @@ import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useCurrentLocale } from '../lib/i18n'
 import { loadLesson, loadCourse } from '../content/academy-loader'
 import { mdxContentComponents } from '../content/_components'
+import ShareWithMention from '../components/social/ShareWithMention'
 
 /* ──────────────────────────────────────────────
  * /academy/:slug/:lesson
@@ -106,6 +107,16 @@ export default function LessonPage() {
               </Suspense>
             </MDXProvider>
           </article>
+        </PageSection>
+
+        {/* ═══ Share ═══ */}
+        <PageSection spacing="sm" width="narrow">
+          <ShareWithMention
+            title={`${lesson.frontmatter.title} — ${course.title}`}
+            url={`https://oxy.so/academy/${course.slug}/${lesson.lessonSlug}`}
+            hashtags={['oxyacademy', 'learn']}
+            via="oxy"
+          />
         </PageSection>
 
         {/* ═══ Prev / Next ═══ */}

@@ -77,6 +77,7 @@ const zh: Translations = {
     settings: '设置',
     socialLinkedIn: 'LinkedIn',
     socialX: 'X',
+    socialMention: 'Mention',
   },
   home: {
     heroTitleDefault: '创造一个未来,让技术赋能个人\n过上连接、充实、可持续的生活。',

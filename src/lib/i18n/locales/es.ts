@@ -77,6 +77,7 @@ const es: Translations = {
     settings: 'Ajustes',
     socialLinkedIn: 'LinkedIn',
     socialX: 'X',
+    socialMention: 'Mention',
   },
   home: {
     heroTitleDefault: 'Creando un futuro donde la tecnología empodera a las personas\npara vivir vidas conectadas, plenas y sostenibles.',

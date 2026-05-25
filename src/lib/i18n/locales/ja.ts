@@ -77,6 +77,7 @@ const ja: Translations = {
     settings: '設定',
     socialLinkedIn: 'LinkedIn',
     socialX: 'X',
+    socialMention: 'Mention',
   },
   home: {
     heroTitleDefault: 'テクノロジーが個人を支え、\nつながり、満たされ、持続可能な人生を送れる未来を創る。',

@@ -1,8 +1,8 @@
 import { buildMentionComposeUrl } from '../../lib/mentionShare'
 import MentionIcon from './MentionIcon'
 
-interface DiscussOnMentionProps {
-  /** Pre-filled composer text (typically the article title). */
+interface ShareWithMentionProps {
+  /** Pre-filled composer text (typically the page title). */
   title: string
   /** Canonical URL of the page being shared. */
   url: string
@@ -13,14 +13,14 @@ interface DiscussOnMentionProps {
 }
 
 /**
- * "Discuss on Mention" pill — used on long-form content (articles, blog
- * posts) where "discuss" reads better than "share". For docs / lessons /
- * courses, use the sibling `ShareWithMention` variant.
+ * "Share with Mention" pill — used on reference content (docs, courses,
+ * lessons) where "share" reads better than "discuss". For articles / blog
+ * posts, use the sibling `DiscussOnMention` variant.
  *
  * Both wrap `buildMentionComposeUrl` so the produced URL stays in sync with
  * Mention's intent contract (see `src/lib/mentionShare.ts`).
  */
-export default function DiscussOnMention({ title, url, hashtags, via }: DiscussOnMentionProps) {
+export default function ShareWithMention({ title, url, hashtags, via }: ShareWithMentionProps) {
   const mentionUrl = buildMentionComposeUrl({ text: title, url, hashtags, via })
 
   return (
@@ -31,7 +31,7 @@ export default function DiscussOnMention({ title, url, hashtags, via }: DiscussO
       className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-surface hover:text-foreground"
     >
       <MentionIcon className="h-4 w-4" />
-      Discuss on Mention
+      Share with Mention
     </a>
   )
 }

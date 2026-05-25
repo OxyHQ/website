@@ -77,6 +77,7 @@ const ca: Translations = {
     settings: 'Configuració',
     socialLinkedIn: 'LinkedIn',
     socialX: 'X',
+    socialMention: 'Mention',
   },
   home: {
     heroTitleDefault: 'Creant un futur on la tecnologia empodera les persones\nper viure vides connectades, plenes i sostenibles.',

@@ -11,6 +11,7 @@ import { FEATURES } from '../constants'
 import { useCurrentLocale } from '../lib/i18n'
 import { loadHelpBySlug, loadHelpSiblings, HELP_CATEGORIES } from '../content/help-loader'
 import { mdxContentComponents } from '../content/_components'
+import ShareWithMention from '../components/social/ShareWithMention'
 
 /* ──────────────────────────────────────────────
  * /help/* — single help-center article
@@ -146,6 +147,16 @@ export default function HelpArticlePage() {
               </Suspense>
             </MDXProvider>
           </article>
+        </PageSection>
+
+        {/* ═══ Share ═══ */}
+        <PageSection spacing="sm" width="narrow">
+          <ShareWithMention
+            title={frontmatter.title}
+            url={`https://oxy.so/help/${entry.slug}`}
+            hashtags={frontmatter.tags.length > 0 ? frontmatter.tags : ['help']}
+            via="oxy"
+          />
         </PageSection>
 
         {/* ═══ Was this helpful? ═══ */}

@@ -10,6 +10,7 @@ import SectionHeading from '../components/layout/SectionHeading'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useCurrentLocale } from '../lib/i18n'
 import { loadCourse, type LessonEntry } from '../content/academy-loader'
+import ShareWithMention from '../components/social/ShareWithMention'
 
 /* ──────────────────────────────────────────────
  * /academy/:slug
@@ -157,8 +158,8 @@ export default function CourseDetailPage() {
                 ))}
               </div>
             )}
-            {firstLesson && (
-              <div className="mt-4 flex flex-wrap items-center gap-3">
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              {firstLesson && (
                 <Button
                   variant="primary"
                   size="md"
@@ -167,8 +168,14 @@ export default function CourseDetailPage() {
                 >
                   Start first lesson
                 </Button>
-              </div>
-            )}
+              )}
+              <ShareWithMention
+                title={course.title}
+                url={`https://oxy.so/academy/${course.slug}`}
+                hashtags={['oxyacademy']}
+                via="oxy"
+              />
+            </div>
           </div>
         </section>
 

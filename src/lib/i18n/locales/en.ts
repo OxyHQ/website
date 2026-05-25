@@ -98,6 +98,7 @@ const en = {
     settings: 'Settings',
     socialLinkedIn: 'LinkedIn',
     socialX: 'X',
+    socialMention: 'Mention',
   },
 
   // ── Homepage ──────────────────────────────────────────────

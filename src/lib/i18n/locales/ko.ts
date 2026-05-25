@@ -77,6 +77,7 @@ const ko: Translations = {
     settings: '설정',
     socialLinkedIn: 'LinkedIn',
     socialX: 'X',
+    socialMention: 'Mention',
   },
   home: {
     heroTitleDefault: '기술이 개인에게 힘을 실어\n연결되고 충만하며 지속 가능한 삶을 살 수 있는 미래를 만듭니다.',
