@@ -85,63 +85,24 @@ const COURSES_BY_SLUG = new Map(ACADEMY_COURSES.map((c) => [c.slug, c]))
 
 /* ─── Glob loaders ─── */
 
-const frontmatterModules = import.meta.glob<string>('./academy/**/*.mdx', {
-  query: '?raw',
-  import: 'default',
+/**
+ * Eager metadata glob. Each compiled MDX module exposes `frontmatter` as a
+ * named export (via `remark-mdx-frontmatter`). The lazy glob below is used
+ * for the React component default export so individual lessons still ship
+ * as their own chunks.
+ */
+interface MdxModuleMeta {
+  frontmatter: Record<string, unknown>
+  default: ComponentType<Record<string, unknown>>
+}
+
+const eagerModules = import.meta.glob<MdxModuleMeta>('./academy/**/*.mdx', {
   eager: true,
 })
 
 const componentModules = import.meta.glob<{ default: ComponentType<Record<string, unknown>> }>(
   './academy/**/*.mdx',
 )
-
-/* ─── Frontmatter parser (shared shape with help-loader) ─── */
-
-interface ParsedFrontmatter {
-  data: Record<string, unknown>
-  body: string
-}
-
-function parseFrontmatter(source: string): ParsedFrontmatter {
-  if (!source.startsWith('---\n') && !source.startsWith('---\r\n')) {
-    return { data: {}, body: source }
-  }
-  const end = source.indexOf('\n---', 4)
-  if (end < 0) return { data: {}, body: source }
-  const fmBlock = source.slice(4, end)
-  const body = source.slice(end + 4).replace(/^\r?\n/, '')
-  const data: Record<string, unknown> = {}
-  for (const rawLine of fmBlock.split('\n')) {
-    const line = rawLine.trim()
-    if (!line || line.startsWith('#')) continue
-    const colon = line.indexOf(':')
-    if (colon < 0) continue
-    const key = line.slice(0, colon).trim()
-    const valueRaw = line.slice(colon + 1).trim()
-    data[key] = coerceYamlValue(valueRaw)
-  }
-  return { data, body }
-}
-
-function coerceYamlValue(raw: string): unknown {
-  if (raw === '') return ''
-  if (raw === 'true') return true
-  if (raw === 'false') return false
-  if (raw === 'null' || raw === '~') return null
-  if ((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
-    return raw.slice(1, -1).replace(/\\(["'\\])/g, '$1')
-  }
-  if (raw.startsWith('[') && raw.endsWith(']')) {
-    const inner = raw.slice(1, -1).trim()
-    if (inner === '') return []
-    return inner.split(',').map((item) => coerceYamlValue(item.trim()))
-  }
-  if (/^-?\d+(?:\.\d+)?$/.test(raw)) {
-    const num = Number(raw)
-    if (Number.isFinite(num)) return num
-  }
-  return raw
-}
 
 /* ─── Index build ─── */
 
@@ -166,7 +127,7 @@ function buildIndex(): AcademyIndex {
   const byPath = new Map<string, Map<string, LessonEntry>>()
   const courseLessonsSet = new Map<string, Set<string>>()
 
-  for (const [path, raw] of Object.entries(frontmatterModules)) {
+  for (const [path, mod] of Object.entries(eagerModules)) {
     const relative = path.replace(/^\.\/academy\//, '')
     const { slug, locale } = parseLocaleFromPath(relative)
     // `slug` here is `<course>/<lesson>` because parseLocaleFromPath keeps
@@ -181,7 +142,9 @@ function buildIndex(): AcademyIndex {
     const course = slug.slice(0, firstSlash)
     const lessonSlug = slug.slice(firstSlash + 1)
 
-    const { data } = parseFrontmatter(raw)
+    // Frontmatter exported by `remark-mdx-frontmatter`. Clone before mutating
+    // because the export is shared across renders.
+    const data: Record<string, unknown> = { ...(mod.frontmatter ?? {}) }
     // Authors don't repeat `course` in frontmatter — it's the folder name. We
     // inject it before validation so the schema check still passes.
     if (typeof data.course !== 'string' || data.course.length === 0) {

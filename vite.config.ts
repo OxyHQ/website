@@ -7,6 +7,7 @@ import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import mdx from '@mdx-js/rollup'
 import remarkGfm from 'remark-gfm'
 import remarkFrontmatter from 'remark-frontmatter'
+import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,13 +15,15 @@ export default defineConfig({
     tailwindcss(),
     svgr(),
     // MDX runs before React so JSX in synced docs becomes valid React.
-    // `remarkFrontmatter` ensures `---` YAML blocks at the top of synced
-    // pages are treated as data, not as MDX content (so they can include
-    // angle brackets without parser errors).
+    // `remarkFrontmatter` parses `---` YAML blocks as data (so they can
+    // include angle brackets without parser errors). `remarkMdxFrontmatter`
+    // then exposes that data as `export const frontmatter = {...}` on the
+    // compiled module — loaders read it via `module.frontmatter` instead of
+    // re-parsing the raw source (which `enforce: 'pre'` would also transform).
     {
       enforce: 'pre',
       ...mdx({
-        remarkPlugins: [remarkFrontmatter, remarkGfm],
+        remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm],
         providerImportSource: '@mdx-js/react',
       }),
     },

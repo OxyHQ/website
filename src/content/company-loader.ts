@@ -29,63 +29,23 @@ export interface CompanyEntry {
 
 /* ─── Glob loaders ─── */
 
-const frontmatterModules = import.meta.glob<string>('./company/**/*.mdx', {
-  query: '?raw',
-  import: 'default',
+/**
+ * Eager metadata glob. Each compiled MDX module exposes `frontmatter` as a
+ * named export (via `remark-mdx-frontmatter`). The lazy glob below is used
+ * for the React component default export.
+ */
+interface MdxModuleMeta {
+  frontmatter: Record<string, unknown>
+  default: ComponentType<Record<string, unknown>>
+}
+
+const eagerModules = import.meta.glob<MdxModuleMeta>('./company/**/*.mdx', {
   eager: true,
 })
 
 const componentModules = import.meta.glob<{ default: ComponentType<Record<string, unknown>> }>(
   './company/**/*.mdx',
 )
-
-/* ─── Frontmatter parser ─── */
-
-interface ParsedFrontmatter {
-  data: Record<string, unknown>
-  body: string
-}
-
-function parseFrontmatter(source: string): ParsedFrontmatter {
-  if (!source.startsWith('---\n') && !source.startsWith('---\r\n')) {
-    return { data: {}, body: source }
-  }
-  const end = source.indexOf('\n---', 4)
-  if (end < 0) return { data: {}, body: source }
-  const fmBlock = source.slice(4, end)
-  const body = source.slice(end + 4).replace(/^\r?\n/, '')
-  const data: Record<string, unknown> = {}
-  for (const rawLine of fmBlock.split('\n')) {
-    const line = rawLine.trim()
-    if (!line || line.startsWith('#')) continue
-    const colon = line.indexOf(':')
-    if (colon < 0) continue
-    const key = line.slice(0, colon).trim()
-    const valueRaw = line.slice(colon + 1).trim()
-    data[key] = coerceYamlValue(valueRaw)
-  }
-  return { data, body }
-}
-
-function coerceYamlValue(raw: string): unknown {
-  if (raw === '') return ''
-  if (raw === 'true') return true
-  if (raw === 'false') return false
-  if (raw === 'null' || raw === '~') return null
-  if ((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
-    return raw.slice(1, -1).replace(/\\(["'\\])/g, '$1')
-  }
-  if (raw.startsWith('[') && raw.endsWith(']')) {
-    const inner = raw.slice(1, -1).trim()
-    if (inner === '') return []
-    return inner.split(',').map((item) => coerceYamlValue(item.trim()))
-  }
-  if (/^-?\d+(?:\.\d+)?$/.test(raw)) {
-    const num = Number(raw)
-    if (Number.isFinite(num)) return num
-  }
-  return raw
-}
 
 /* ─── Index build ─── */
 
@@ -96,12 +56,11 @@ interface CompanyIndex {
 function buildIndex(): CompanyIndex {
   const bySlug = new Map<string, Map<string, CompanyEntry>>()
 
-  for (const [path, raw] of Object.entries(frontmatterModules)) {
+  for (const [path, mod] of Object.entries(eagerModules)) {
     const relative = path.replace(/^\.\/company\//, '')
     const { slug, locale } = parseLocaleFromPath(relative)
 
-    const { data } = parseFrontmatter(raw)
-    const parsed = CompanyFrontmatter.safeParse(data)
+    const parsed = CompanyFrontmatter.safeParse(mod.frontmatter ?? {})
     if (!parsed.success) {
       console.error(
         `[company-loader] invalid frontmatter for ${path}:`,

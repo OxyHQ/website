@@ -90,13 +90,18 @@ export const HELP_CATEGORIES: HelpCategoryMeta[] = [
 
 /* ─── Glob loaders ─── */
 
-// Frontmatter glob is eager so we can build indexes / category lists without
-// fetching every MDX module. We import the raw text and parse YAML ourselves;
-// MDX's frontmatter export isn't directly readable from a glob without
-// loading the module.
-const frontmatterModules = import.meta.glob<string>('./help/**/*.mdx', {
-  query: '?raw',
-  import: 'default',
+/**
+ * Eager metadata glob. Each compiled MDX module exposes `frontmatter` as a
+ * named export (via `remark-mdx-frontmatter`) plus the default component.
+ * We only read `frontmatter` here; the default component is wrapped via the
+ * lazy glob below so individual articles still ship as their own chunks.
+ */
+interface MdxModuleMeta {
+  frontmatter: Record<string, unknown>
+  default: ComponentType<Record<string, unknown>>
+}
+
+const eagerModules = import.meta.glob<MdxModuleMeta>('./help/**/*.mdx', {
   eager: true,
 })
 
@@ -104,73 +109,6 @@ const frontmatterModules = import.meta.glob<string>('./help/**/*.mdx', {
 const componentModules = import.meta.glob<{ default: ComponentType<Record<string, unknown>> }>(
   './help/**/*.mdx',
 )
-
-/* ─── YAML frontmatter parser ─── */
-
-interface ParsedFrontmatter {
-  data: Record<string, unknown>
-  body: string
-}
-
-/**
- * Parse a YAML frontmatter block — only the simple key/value forms that
- * authors actually use in help/academy/company MDX:
- *
- *   ---
- *   title: Add a recovery email
- *   description: Keep your account recoverable.
- *   category: account
- *   order: 1
- *   featured: true
- *   tags: [security, account]
- *   ---
- *
- * Numbers, booleans, strings (quoted or bare), and one-line `[a, b, c]`
- * arrays are supported. Anything fancier should go in the MDX body.
- */
-function parseFrontmatter(source: string): ParsedFrontmatter {
-  if (!source.startsWith('---\n') && !source.startsWith('---\r\n')) {
-    return { data: {}, body: source }
-  }
-  const end = source.indexOf('\n---', 4)
-  if (end < 0) return { data: {}, body: source }
-  const fmBlock = source.slice(4, end)
-  const body = source.slice(end + 4).replace(/^\r?\n/, '')
-  const data: Record<string, unknown> = {}
-  for (const rawLine of fmBlock.split('\n')) {
-    const line = rawLine.trim()
-    if (!line || line.startsWith('#')) continue
-    const colon = line.indexOf(':')
-    if (colon < 0) continue
-    const key = line.slice(0, colon).trim()
-    const valueRaw = line.slice(colon + 1).trim()
-    data[key] = coerceYamlValue(valueRaw)
-  }
-  return { data, body }
-}
-
-function coerceYamlValue(raw: string): unknown {
-  if (raw === '') return ''
-  if (raw === 'true') return true
-  if (raw === 'false') return false
-  if (raw === 'null' || raw === '~') return null
-  // Quoted strings — strip the wrapping quotes and unescape `\"` / `\'`.
-  if ((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
-    return raw.slice(1, -1).replace(/\\(["'\\])/g, '$1')
-  }
-  // Inline arrays.
-  if (raw.startsWith('[') && raw.endsWith(']')) {
-    const inner = raw.slice(1, -1).trim()
-    if (inner === '') return []
-    return inner.split(',').map((item) => coerceYamlValue(item.trim()))
-  }
-  // Numbers — only when the whole string is a finite numeric literal.
-  if (/^-?\d+(?:\.\d+)?$/.test(raw)) {
-    const num = Number(raw)
-    if (Number.isFinite(num)) return num
-  }
-  return raw
-}
 
 /* ─── Index build ─── */
 
@@ -185,13 +123,12 @@ function buildIndex(): HelpIndex {
   const byKey = new Map<string, HelpEntry>()
   const bySlug = new Map<string, Map<string, HelpEntry>>()
 
-  for (const [path, raw] of Object.entries(frontmatterModules)) {
+  for (const [path, mod] of Object.entries(eagerModules)) {
     // Strip the `./help/` prefix to get the path relative to the content root.
     const relative = path.replace(/^\.\/help\//, '')
     const { slug, locale } = parseLocaleFromPath(relative)
 
-    const { data } = parseFrontmatter(raw)
-    const parsed = HelpFrontmatter.safeParse(data)
+    const parsed = HelpFrontmatter.safeParse(mod.frontmatter ?? {})
     if (!parsed.success) {
       // Surface broken frontmatter loudly — silent skips here lead to
       // articles disappearing from the index with no diagnostic trail.
