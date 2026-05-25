@@ -382,8 +382,14 @@ function resolveRoute(params: DocsRouteParams): PackageRoute | null | 'redirect'
   const version = getVersion(pkg, requestedVersion)
   if (!version) return 'redirect'
   const pageExists = getPage(version, splat)
-  if (!pageExists) return 'redirect'
-  return { pkg, version, slug: splat }
+  if (pageExists) return { pkg, version, slug: splat }
+  // No slug requested → render the package's first page as the overview.
+  // Without this the route would redirect to itself and loop forever.
+  if (!splat) {
+    const firstPage = version.pages[0]
+    if (firstPage) return { pkg, version, slug: firstPage.slug }
+  }
+  return 'redirect'
 }
 
 export default function DocsPage() {
