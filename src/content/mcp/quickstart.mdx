@@ -1,0 +1,135 @@
+---
+title: Quickstart
+description: Connect Claude Desktop or Claude Code to the Oxy MCP server in five minutes.
+order: 1
+---
+
+# Quickstart
+
+Connect Claude to the Oxy MCP server so it can read and modify your CMS content directly. The server speaks the [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports) transport, mounted at `https://api.oxy.so/mcp`.
+
+<Callout variant="info" title="You will need">
+  - An **admin** account on oxy.so (only admins can mint MCP tokens).
+  - **Claude Desktop** (macOS / Windows) or **Claude Code** (any platform).
+  - About five minutes.
+</Callout>
+
+## 1. Mint a token
+
+Tokens are 32-byte random hex strings, hashed before storage. The raw token is shown **once** at creation time — there is no way to recover it later. If you lose it, mint a new one and revoke the old.
+
+You have two ways to mint a token.
+
+### Option A — admin console
+
+1. **Open the admin console.** Go to **oxy.so → Admin → MCP Tokens** while signed in as an admin.
+2. **Create a token.** Give it a descriptive name (e.g. `Claude Desktop — Alex`) and optionally an expiry date. Hit **Create**.
+3. **Copy the raw token.** A long hex string (`a1b2c3...`) appears in the response. Copy it now — it will not be shown again.
+
+### Option B — REST API
+
+If you prefer the shell, the same operation is available as `POST /api/mcp-tokens`:
+
+```bash
+curl -X POST https://api.oxy.so/api/mcp-tokens \
+  -H "Authorization: Bearer <your-admin-session-jwt>" \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "Claude Desktop — Alex" }'
+```
+
+Response:
+
+```json
+{
+  "_id": "65fa…",
+  "name": "Claude Desktop — Alex",
+  "token": "a1b2c3d4e5f6…",
+  "createdAt": "2026-05-25T12:34:56.000Z"
+}
+```
+
+The `token` field is the raw secret. Save it in your password manager.
+
+## 2. Connect a client
+
+Pick the client you use most.
+
+### Claude Desktop
+
+Claude Desktop expects an entry under `mcpServers` in its config file:
+
+- **macOS** — `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows** — `%APPDATA%\Claude\claude_desktop_config.json`
+
+The Oxy MCP server is reached over HTTP, so use the `url` form (Claude Desktop 0.7+):
+
+```json
+{
+  "mcpServers": {
+    "oxy": {
+      "url": "https://api.oxy.so/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_TOKEN_HERE"
+      }
+    }
+  }
+}
+```
+
+Save the file and restart Claude Desktop. The MCP plug icon at the bottom of the chat composer should now list **oxy** with **92 tools** available.
+
+### Claude Code
+
+Claude Code (the CLI) uses the same MCP protocol. Register the server with `claude mcp add`:
+
+```bash
+claude mcp add oxy \
+  --transport http \
+  --url https://api.oxy.so/mcp \
+  --header "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+Restart the Claude Code session. Run `/mcp` in any session to confirm the `oxy` server is connected.
+
+### Any MCP client
+
+Programmatic clients that speak the [Streamable HTTP transport](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) (TypeScript SDK 1.x and equivalents) can connect directly:
+
+```ts
+import { Client } from '@modelcontextprotocol/sdk/client/index.js'
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
+
+const transport = new StreamableHTTPClientTransport(
+  new URL('https://api.oxy.so/mcp'),
+  { requestInit: { headers: { Authorization: `Bearer ${process.env.OXY_MCP_TOKEN}` } } },
+)
+const client = new Client({ name: 'my-agent', version: '1.0.0' }, { capabilities: {} })
+await client.connect(transport)
+
+const { tools } = await client.listTools()
+console.log(`Connected, ${tools.length} tools available`)
+```
+
+The server only advertises `tools` capabilities, so `client.listResources()` and `client.listPrompts()` both return empty arrays.
+
+## 3. Try your first call
+
+Ask Claude:
+
+> List the five most recent newsroom posts and show me their titles.
+
+Claude will pick the `list_posts` tool, call it with `{ limit: 5 }`, and render the returned JSON as a table. You should see exactly the same posts that appear on the [oxy.so newsroom](https://oxy.so/newsroom).
+
+If Claude reports `Invalid or expired token`, double-check that:
+
+- The token is the **raw** secret you copied at creation time (not the `_id`).
+- The token has not been revoked or expired (see `list_mcp_tokens`).
+- The `Authorization` header reads `Bearer <token>`, not `<token>` alone.
+
+See [Authentication](/developers/docs/mcp/authentication) for the full token lifecycle.
+
+## What's next
+
+- [Tools](/developers/docs/mcp/tools) — reference for every callable tool.
+- [Transports](/developers/docs/mcp/transports) — when to use HTTP vs the local CLI.
+- [Examples](/developers/docs/mcp/examples) — full workflows.

@@ -1,0 +1,140 @@
+---
+title: Authentication
+description: Mint, rotate, and revoke MCP API tokens for the Oxy server.
+order: 3
+---
+
+# Authentication
+
+Every request to the Oxy MCP server requires a valid token. Tokens are bearer credentials — anyone who holds the raw string can impersonate it until you revoke it. Treat them like passwords.
+
+## Token model
+
+| Field | Description |
+|-------|-------------|
+| `_id` | Mongo `ObjectId`. Used to revoke. Safe to log. |
+| `name` | Human label, e.g. `Claude Desktop — Alex`. Safe to log. |
+| `tokenHash` | SHA-256 of the raw token. Stored server-side; never returned. |
+| `createdBy` | Admin username that minted the token. |
+| `createdAt` | ISO timestamp. |
+| `lastUsedAt` | Updated on each accepted request. Helps audit dormant tokens. |
+| `expiresAt` | Optional ISO timestamp. Omit for non-expiring tokens. |
+| `revoked` | Boolean. Once `true`, the token is rejected on the next request. |
+
+The raw token is a **32-byte random hex string** (`crypto.randomBytes(32).toString('hex')` → 64 hex characters). It is returned **once** — at creation time — and never again. If you lose it, mint a new one.
+
+## Minting a token
+
+Two equivalent paths.
+
+### Admin UI
+
+Sign in to oxy.so as an admin, open **Admin → MCP Tokens**, fill in the name (and optional expiry), and copy the raw token from the success modal.
+
+### REST API
+
+```bash
+curl -X POST https://api.oxy.so/api/mcp-tokens \
+  -H "Authorization: Bearer <admin-session-jwt>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "CI/CD — release-bot",
+    "expiresAt": "2027-01-01T00:00:00Z"
+  }'
+```
+
+Response:
+
+```json
+{
+  "_id": "65fa1234abcd5678ef901234",
+  "name": "CI/CD — release-bot",
+  "token": "a1b2c3d4e5f6...64-hex-chars-total",
+  "createdAt": "2026-05-25T12:34:56.000Z",
+  "expiresAt": "2027-01-01T00:00:00.000Z"
+}
+```
+
+The `Authorization` header on this request is a normal **user session JWT** (not an MCP token). The endpoint is guarded by `requireAuth` plus `adminOnly` — only signed-in admins may mint tokens.
+
+### From within MCP itself
+
+Once you have one token, you can ask Claude to mint more via the `create_mcp_token` tool:
+
+> Create a new MCP token called "Release bot" with no expiry.
+
+This calls `create_mcp_token` and returns the raw secret in the chat. Treat the output as sensitive — Claude will show the raw token in the response.
+
+## Using a token
+
+The server accepts the token in either of two places on `POST /mcp`:
+
+```
+Authorization: Bearer <token>
+```
+
+…or, for clients that cannot set headers (rare for HTTP MCP clients):
+
+```
+POST /mcp?token=<token>
+```
+
+The header form is strongly preferred. The query-string form exists because some early MCP clients did not yet support custom headers — log scrubbing pipelines will leak query-string tokens far more often than headers.
+
+On every accepted request the server bumps `lastUsedAt`. This is a useful signal for dormant-token cleanup — anything with a `lastUsedAt` older than a few months is likely safe to revoke.
+
+## Validation rules
+
+A token is **valid** when all of the following are true:
+
+1. SHA-256 of the bearer string matches a stored `tokenHash`.
+2. The matched document has `revoked: false`.
+3. Either `expiresAt` is unset, or `expiresAt > now`.
+
+Any failure returns:
+
+```json
+{ "error": "Invalid or expired token" }
+```
+
+…with HTTP `401`. The server does not distinguish between revoked, expired, and unknown tokens — clients only learn that the credential is no longer good.
+
+## Revoking a token
+
+You have three options — pick whichever matches the situation.
+
+### Admin UI
+
+**Admin → MCP Tokens → Revoke** marks the token as `revoked: true`.
+
+### REST API
+
+```bash
+curl -X DELETE https://api.oxy.so/api/mcp-tokens/<id> \
+  -H "Authorization: Bearer <admin-session-jwt>"
+```
+
+The `<id>` is the token's `_id` (returned at creation, also visible from `list_mcp_tokens`).
+
+### From within MCP
+
+> Revoke MCP token 65fa1234abcd5678ef901234.
+
+Calls `revoke_mcp_token`. Useful for ad-hoc rotations from inside a Claude session.
+
+## Rotation pattern
+
+There is no built-in "rotate" call — rotation is three steps:
+
+1. **Mint a replacement.** `create_mcp_token` with the same name (any name is allowed; uniqueness is not enforced).
+2. **Roll over the client.** Drop the new token into your client config and reload. Send one test request.
+3. **Revoke the old one.** `revoke_mcp_token` against the previous `_id`. The next request from any client still holding the old token fails with `401`.
+
+For automated rotations, run all three steps from a single MCP session — the create/revoke pair is atomic-enough that downtime is measured in milliseconds.
+
+## Operational notes
+
+- **No per-tool scopes.** A token grants access to every registered tool. If you need limited capabilities, run a proxy in front of `/mcp` that filters tool calls.
+- **No per-user delegation.** Tokens act on the Mongo database as a single privileged actor (`createdBy: 'mcp-admin'` for direct MCP calls, the admin's username for REST-created ones). They do not impersonate end users.
+- **No rate limiting yet.** The MCP route does not currently enforce per-token rate limits. Pair the token with an outer reverse proxy if you need throttling.
+- **Storage.** Token hashes live in the `mcptokens` collection on the same MongoDB instance that backs the rest of the CMS.

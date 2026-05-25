@@ -1,0 +1,124 @@
+---
+title: Transports
+description: How the Oxy MCP server speaks to clients — Streamable HTTP, session management, and what it does not support.
+order: 4
+---
+
+# Transports
+
+The Oxy MCP server runs **one** transport: **Streamable HTTP**, mounted at `POST /mcp` on the same Express app that serves `api.oxy.so`. There is no stdio mode, no SSE-only mode, and no WebSocket option.
+
+If you have used older MCP servers that needed `npx` invocations on the client machine, this is a different model — the server runs once on Oxy's infrastructure and any number of clients connect to it over HTTPS.
+
+## The Streamable HTTP transport
+
+Streamable HTTP is the [transport defined in MCP 2025-03-26](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http). One bidirectional channel multiplexes JSON-RPC requests, responses, and server-pushed notifications over a single HTTP connection.
+
+The Oxy server uses the official [`StreamableHTTPServerTransport`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/server/streamableHttp.ts) from `@modelcontextprotocol/sdk` 1.x. The three verbs are:
+
+| Verb | Purpose |
+|------|---------|
+| `POST /mcp` | Send a JSON-RPC request. Either initializes a new session, or routes by the `mcp-session-id` header to an existing one. |
+| `GET /mcp` | Open the long-lived stream for the existing session (server → client notifications). |
+| `DELETE /mcp` | Tear down the session and free the per-session transport. |
+
+### Session lifecycle
+
+1. **Initialize.** The client sends `POST /mcp` with a JSON-RPC `initialize` request and no `mcp-session-id` header. The server spins up a fresh `McpServer` + transport, allocates a UUID session id, and returns it in the `mcp-session-id` response header.
+2. **Subsequent requests.** The client echoes that `mcp-session-id` header on every follow-up request. The server routes to the live transport keyed on the id.
+3. **Stale session recovery.** If the server has restarted (or garbage-collected the session) and the client sends a non-`initialize` request with an unknown id, the server returns JSON-RPC error `-32001 Session not found. Re-initialize the MCP connection.` Clients should respond by re-running `initialize` and retrying the call.
+4. **Cleanup.** Either side may close. The client should call `DELETE /mcp` with the session id; the server deletes the transport from its in-memory map. If the client just disconnects, the transport's `onclose` handler removes it automatically.
+
+### Authentication on every verb
+
+Both query string and header forms of the token are accepted on `POST /mcp`. The token is validated **before** session routing, so a revoked token cannot reuse an open session id.
+
+```ts
+// Pseudocode for the server's check
+const token = req.query.token ?? req.headers.authorization?.replace('Bearer ', '')
+if (!token || !(await validateToken(token))) return res.status(401).json(...)
+```
+
+`GET /mcp` and `DELETE /mcp` are gated by knowledge of a valid `mcp-session-id` — which itself was only handed out after a token check on the originating `POST`.
+
+## When to use Streamable HTTP
+
+Always. It is the only transport the Oxy server speaks. Concretely:
+
+- **Claude Desktop** (0.7+) supports HTTP MCP servers natively via the `url` field in `claude_desktop_config.json`.
+- **Claude Code** speaks HTTP MCP servers via `claude mcp add --transport http`.
+- **Custom clients** built with `@modelcontextprotocol/sdk` use [`StreamableHTTPClientTransport`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/client/streamableHttp.ts).
+
+## What the server does **not** support
+
+- **stdio.** The server is not designed to be spawned by the client. There is no `bun mcp.ts` adapter that talks stdio — you cannot use it as a "local" MCP server.
+- **HTTP+SSE (legacy).** The 2024-11-05 spec defined a two-endpoint pair (`POST /messages` plus a separate `SSE /sse`). The Oxy server uses the newer single-endpoint Streamable HTTP design and does not back-fill the legacy split. Older clients that only support HTTP+SSE will fail to connect.
+- **WebSockets.** Not a real MCP transport, not implemented.
+- **Anonymous reads.** Every verb requires a token. There is no public catalog endpoint.
+
+## Connection example (TypeScript)
+
+The minimum viable client looks like:
+
+```ts
+import { Client } from '@modelcontextprotocol/sdk/client/index.js'
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
+
+const transport = new StreamableHTTPClientTransport(
+  new URL('https://api.oxy.so/mcp'),
+  {
+    requestInit: {
+      headers: { Authorization: `Bearer ${process.env.OXY_MCP_TOKEN}` },
+    },
+  },
+)
+
+const client = new Client(
+  { name: 'oxy-script', version: '1.0.0' },
+  { capabilities: {} },
+)
+
+await client.connect(transport)
+
+const tools = await client.listTools()
+console.log(`Connected with ${tools.tools.length} tools`)
+
+const recent = await client.callTool({
+  name: 'list_posts',
+  arguments: { limit: 5 },
+})
+console.log(recent.content)
+
+await client.close()
+```
+
+The SDK takes care of:
+
+- Sending `initialize` and remembering the `mcp-session-id`.
+- Echoing the session id on every subsequent request.
+- Re-initializing on `-32001` errors when the server has restarted.
+- Closing the session cleanly via `DELETE /mcp`.
+
+## Connection example (Python)
+
+The [official Python SDK](https://github.com/modelcontextprotocol/python-sdk) follows the same shape:
+
+```python
+from mcp import ClientSession
+from mcp.client.streamable_http import streamablehttp_client
+
+async with streamablehttp_client(
+    "https://api.oxy.so/mcp",
+    headers={"Authorization": f"Bearer {OXY_MCP_TOKEN}"},
+) as (read, write, _):
+    async with ClientSession(read, write) as session:
+        await session.initialize()
+        tools = await session.list_tools()
+        result = await session.call_tool("list_posts", {"limit": 5})
+```
+
+## Self-hosted variations
+
+The MCP server code lives in [`server/mcp.ts`](https://github.com/OxyHQ/website/blob/main/server/mcp.ts) of the [website](https://github.com/OxyHQ/website) repo. If you fork the site, you inherit the same transport on the same path. To bind it to a different mount point or a different Express app, call `mountMcp(app)` from wherever your server bootstraps — the function registers the three verbs on the app you pass in.
+
+There is no provision for switching to stdio — it would require swapping the transport and reworking the Express integration. That is intentional: Streamable HTTP fits the "hosted CMS" model the rest of the site already uses.

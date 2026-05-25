@@ -1,0 +1,193 @@
+---
+title: Examples
+description: Real-world workflows you can run through the Oxy MCP server today.
+order: 5
+---
+
+# Examples
+
+These are end-to-end workflows you can drop straight into a Claude session. Each one assumes the Oxy MCP server is already connected (see the [Quickstart](/developers/docs/mcp/quickstart)) and that you are signed in with a token that has access to the CMS.
+
+## Publish a newsroom post with a generated cover image
+
+**Goal:** turn a paragraph of copy into a published `/newsroom` entry, complete with an AI-generated cover image hosted on Spaces.
+
+> Draft a newsroom post titled "Oxy ships native federation across every app". Categories: Engineering, Product. Tags: federation, fediverse. Resume should be one sentence. Body around 200 words, friendly tone, with a `## Why this matters` section near the end. Use the cover image at `https://images.example.com/federation.jpg`, alt "Two clouds meeting in the middle".
+
+Claude will:
+
+1. Call `create_post` with `status: 'draft'` and the markdown body it just wrote, omitting `coverImage` until step 2.
+2. Call `upload_and_set_post_cover` with `postSlug` (returned from step 1) and the source URL. The tool downloads the image, uploads to `oxy-website/newsroom/`, generates thumbnails, creates a `Media` document, and patches the post in one shot.
+3. Call `update_post` with `status: 'published'` once you confirm the draft looks right.
+
+If the cover image is broken, run:
+
+> Use `debug_upload_test` against `https://images.example.com/federation.jpg`.
+
+The output lists each step (fetch → buffer → S3 → Media → cleanup) so you can pinpoint the failure.
+
+## Bulk-import a backlog of posts
+
+**Goal:** seed the newsroom from a CSV or a list of URLs.
+
+> I'll paste 12 (title, slug, resume, body, cover-image-url) tuples. For each one, call `create_post` with `status: 'draft'`, then `upload_and_set_post_cover` to wire the cover. Report any failures.
+
+Or, when you only need to backfill cover images on posts that already exist:
+
+> Here is a JSON array of `{ slug, imageUrl, alt }`. Run `bulk_upload_post_covers` against it and summarize the results.
+
+`bulk_upload_post_covers` accepts the full array in one call and returns `{ slug, status, mediaId?, error? }` per entry, so a single tool round-trip handles the whole batch.
+
+## Sync the changelog from GitHub releases
+
+**Goal:** keep `/changelog` in sync with releases across every Oxy repo.
+
+1. **List the tracked repos.**
+
+   > List the tracked GitHub repos and tell me which ones haven't synced in the last 24 hours.
+
+   Claude calls `list_tracked_repos` and filters by `lastSyncedAt`.
+
+2. **Add a missing one.**
+
+   > Add `OxyHQ/Bloom` as a tracked repo. Default tags: `Feature` (green), `Design` (purple).
+
+   Calls `add_tracked_repo` with the `defaultTags` array.
+
+3. **Trigger a manual sync.**
+
+   > Sync every active tracked repo now.
+
+   Calls `sync_all_repos`. For a single repo, `sync_repo` with the `_id`.
+
+4. **Spot-check the result.**
+
+   > List the five most recent changelog entries.
+
+   Calls `list_changelog` with `limit: 5`.
+
+A nightly cron (configured in `services/githubSync.startSyncInterval`) runs `sync_all_repos` automatically — these manual triggers are for hot fixes and new-repo onboarding.
+
+## Translate the navbar and footer into Catalan
+
+**Goal:** add a new locale and translate every navigation surface.
+
+1. **Create the locale.**
+
+   > Create a locale `ca-ES`, English name "Catalan", native name "Català". Enable it, but don't make it default.
+
+   Calls `create_locale`.
+
+2. **Fetch the source content.**
+
+   > Get the navigation, the footer, and the hero, and print their JSON so I can translate it.
+
+   Calls `get_navigation`, `get_footer`, `get_hero` in sequence.
+
+3. **Upsert translations.**
+
+   > For navigation document &lt;ID&gt;, set the Catalan translation to `{ items, sidePanel }` with every label translated.
+
+   Calls `upsert_translation` with `collection: 'navigation'`, the document `_id`, `locale: 'ca-ES'`, and the translated `fields` map. Repeat for `footer` and `hero`.
+
+4. **Verify.**
+
+   > List every Catalan translation across collections.
+
+   Loop over `list_translation_collections` calling `get_translations` with `collection` and `locale: 'ca-ES'`.
+
+Only the field keys that differ from the original need to live in `fields` — everything else falls through to the source document at render time.
+
+## Run a referral campaign
+
+**Goal:** spin up a small partner program with three ambassador codes and one paid affiliate.
+
+> Create four referrals:
+> - `ALICE-2026` for Alice Chen, type ambassador, status active.
+> - `BEN-2026` for Ben Patel, ambassador, active.
+> - `CARLA-2026` for Carla Diaz, ambassador, active.
+> - `DEV-PARTNER-A` for Acme Co., paid, 20% commission, custom landing `/partners/acme`.
+
+Claude fires four `create_referral` calls and reports any duplicates. Then:
+
+> List every active paid referral with their commission percent.
+
+Calls `list_referrals` with `type: 'paid'` and `status: 'active'`.
+
+To pause one:
+
+> Set `BEN-2026` to status paused.
+
+`update_referral` with `{ code: 'BEN-2026', status: 'paused' }`.
+
+## Audit and clean up the media library
+
+**Goal:** find media that is no longer referenced anywhere and free up Spaces storage.
+
+> List every media item tagged "newsroom" that isn't referenced by any newsroom post.
+
+This is not a single tool — Claude orchestrates it across calls:
+
+1. `list_media` with `{ tag: 'newsroom', limit: 100 }`, paginating until exhausted.
+2. `list_posts` with `{ limit: 100, status: 'published' }` plus drafts, paginating.
+3. Diff the `Media._id` set against `post.coverImage` and `post.ogImage` references.
+4. Print the orphans for review before any `delete_media` calls.
+
+Always confirm before destructive deletes — `delete_media` also removes the S3 object and its thumbnails, and the action cannot be undone.
+
+## Rotate every tracked-repo's default tag scheme
+
+**Goal:** rename `Fix` → `Bug fix` everywhere.
+
+> For each tracked repo, update its `defaultTags` so the entry with label "Fix" becomes "Bug fix" (same color). Leave every other tag alone.
+
+Claude calls `list_tracked_repos`, then for each one calls `add_tracked_repo` — there is no `update_tracked_repo` today, so the rename happens by removing and re-adding. If the upstream behaviour ever changes, the same prompt will keep working without modification.
+
+## Manage your MCP tokens from within MCP
+
+**Goal:** rotate the token Claude itself is using.
+
+1. **Mint a replacement.**
+
+   > Create a new MCP token called "Claude Desktop — Alex (rotation 2026-05)" with expiry 2027-05-01. Save the raw token to a code block — I'll copy it.
+
+   `create_mcp_token`.
+
+2. **Swap tokens locally.** Update `claude_desktop_config.json` (or your client's equivalent) with the new token. Restart Claude. Verify the connection is still live with `/mcp`.
+
+3. **Revoke the old one.**
+
+   > List my MCP tokens and revoke the one named "Claude Desktop — Alex" (the older one without "rotation 2026-05" in the name).
+
+   `list_mcp_tokens` + `revoke_mcp_token`.
+
+The second-to-last step is fully scripted: from a fresh Claude session you can rotate a key end-to-end in under a minute.
+
+## Build a custom agent on top
+
+The `@modelcontextprotocol/sdk` clients (TypeScript, Python, etc.) connect to the same `/mcp` endpoint Claude uses. If you need a programmatic agent — for nightly jobs, integration tests, or a custom chat UI — wire it directly:
+
+```ts
+import { Client } from '@modelcontextprotocol/sdk/client/index.js'
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
+
+const transport = new StreamableHTTPClientTransport(
+  new URL('https://api.oxy.so/mcp'),
+  { requestInit: { headers: { Authorization: `Bearer ${process.env.OXY_MCP_TOKEN}` } } },
+)
+const client = new Client({ name: 'oxy-nightly', version: '1.0.0' }, { capabilities: {} })
+await client.connect(transport)
+
+// Daily: refresh the changelog from GitHub.
+await client.callTool({ name: 'sync_all_repos', arguments: {} })
+
+// Weekly: surface drafts older than 14 days.
+const cutoff = Date.now() - 14 * 24 * 60 * 60 * 1000
+const drafts = await client.callTool({
+  name: 'list_posts',
+  arguments: { status: 'draft', limit: 100 },
+})
+// …parse drafts.content[0].text as JSON and filter by publishedAt < cutoff
+```
+
+The agent does not need to be hosted near `api.oxy.so` — it just needs network access and a valid token.

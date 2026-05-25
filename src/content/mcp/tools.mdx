@@ -1,0 +1,1044 @@
+---
+title: Tools
+description: Every tool exposed by the Oxy MCP server, with its input schema and an example response.
+order: 2
+---
+
+# Tools
+
+The Oxy MCP server registers **92 tools**, grouped here by the CMS surface they operate on. All tool inputs are validated with [Zod](https://zod.dev) on the server, so calls with bad shapes return a clear error before they hit the database.
+
+Every tool returns a single text content block whose body is the JSON-stringified result. Errors come back with `isError: true` and the stack trace in the text body.
+
+<Callout variant="info" title="Reading the schemas">
+  Each input shape below is the TypeScript form Claude sees when picking arguments. `?` marks optional fields. `&#x7c;` marks a discriminated union. `string ObjectId` means a 24-character Mongo `_id` string.
+</Callout>
+
+## Pages
+
+Mongo collection: `pages`. CMS-managed marketing pages with composable section blocks.
+
+### `list_pages`
+
+List every page slug.
+
+```ts
+input: {}
+output: Array<{ slug: string; title: string }>
+```
+
+### `get_page`
+
+Fetch a single page by slug, including its sections array.
+
+```ts
+input: { slug: string }
+output: Page
+```
+
+### `upsert_page`
+
+Create or update a page. Sections is a flexible array of `{ type, heading?, subheading?, content?, items?, order? }` blocks.
+
+```ts
+input: {
+  slug: string
+  title: string
+  description?: string
+  sections?: Array<Section>
+  promptPhrases?: string[]
+}
+```
+
+## Navigation
+
+Mongo collection: `navigations`. Top-level header dropdowns.
+
+### `get_navigation`
+
+Returns every dropdown sorted by `order`.
+
+```ts
+input: {}
+output: Array<NavDropdown>
+```
+
+### `replace_navigation`
+
+Replaces the entire navigation with the supplied array. Destructive: existing dropdowns are deleted first.
+
+```ts
+input: {
+  items: Array<{
+    label: string
+    items: Array<{ title, description?, href, icon?, section?, showGrid? }>
+    sidePanel?: { heading, links: Array<{ label, href }> }
+    order?: number
+  }>
+}
+```
+
+## Footer
+
+Mongo collection: `footers`. Singleton.
+
+### `get_footer`
+
+```ts
+input: {}
+output: { columns, socialLinks, copyright } | { columns: [], socialLinks: [], copyright: '' }
+```
+
+### `update_footer`
+
+Patches the singleton. Only provided fields are changed.
+
+```ts
+input: {
+  columns?: Array<{ title, links: Array<{ label, href, isNewBadge?, isExternal? }> }>
+  socialLinks?: Array<{ label, icon, href }>
+  copyright?: string
+}
+```
+
+## Hero
+
+Mongo collection: `herocontents`. Singleton homepage hero.
+
+### `get_hero`
+
+Returns the hero. Lazily creates it with sane defaults on first call.
+
+```ts
+input: {}
+output: HeroContent
+```
+
+### `update_hero`
+
+Patches the hero. Background video/poster fields accept either a Media `_id` (24-char ObjectId) or a static URL string like `/images/landing/hero-background.webm`.
+
+```ts
+input: {
+  title?: string
+  eyebrow?: string
+  backgroundVideoWebm?: string  // Media _id or static URL
+  backgroundVideoMp4?: string
+  backgroundPoster?: string
+  carouselSlots?: Array<CarouselSlot>  // full replacement
+}
+```
+
+## Newsroom
+
+Mongo collection: `newsroomposts`.
+
+### `list_posts`
+
+Filterable, paginated list sorted by `publishedAt` desc.
+
+```ts
+input: {
+  category?: string         // e.g. "Company", "Research", "Product", "Safety", "Engineering", "Security"
+  tag?: string
+  featured?: boolean
+  status?: 'draft' | 'published'
+  search?: string           // matches title or resume
+  limit?: number            // default 20
+  page?: number             // default 1
+}
+output: { posts: Post[], total, page, pages }
+```
+
+### `get_post`
+
+```ts
+input: { slug: string }
+output: Post  // with coverImage and ogImage populated
+```
+
+### `create_post`
+
+Slug auto-generated from title if omitted; collision suffix appended on conflict.
+
+```ts
+input: {
+  title: string
+  slug?: string
+  resume?: string
+  description?: string
+  content?: string          // Markdown
+  coverImage: string        // Media _id, required
+  imageAlt?: string
+  tags?: string[]
+  categories?: string[]
+  featured?: boolean
+  colorPrimary?: string
+  colorSecondary?: string
+  dark?: boolean
+  status?: 'draft' | 'published'
+  oxyUserId?: string
+  metaTitle?: string
+  ogImage?: string          // Media _id
+  publishedAt?: string      // ISO date
+}
+```
+
+### `update_post`
+
+Patch by slug. Pass `newSlug` to rename. Only provided fields change.
+
+```ts
+input: {
+  slug: string                // current slug
+  newSlug?: string
+  ...all create_post fields, optional
+}
+```
+
+### `delete_post`
+
+```ts
+input: { slug: string }
+output: { deleted: true, slug }
+```
+
+### `search_posts`
+
+Lightweight search across `title` and `resume`.
+
+```ts
+input: { query: string, limit?: number /* default 10 */ }
+output: Post[]
+```
+
+### `get_post_with_media`
+
+Same as `get_post`, but always populates `coverImage` and `ogImage`.
+
+```ts
+input: { slug: string }
+output: Post
+```
+
+## Pricing
+
+Mongo collection: `pricingplans`.
+
+### `get_pricing`
+
+```ts
+input: {}
+output: PricingPlan[]
+```
+
+### `replace_pricing`
+
+Replaces the entire plan list.
+
+```ts
+input: {
+  plans: Array<{
+    name: string
+    price: { monthly: number, annual: number }
+    description?: string
+    features?: string[]
+    cta?: string
+    highlighted?: boolean
+    order?: number
+  }>
+}
+```
+
+## Testimonials
+
+Mongo collection: `testimonials`.
+
+### `get_testimonials`
+
+```ts
+input: {}
+output: Testimonial[]
+```
+
+### `replace_testimonials`
+
+Replaces the full list.
+
+```ts
+input: {
+  testimonials: Array<{
+    quote: string
+    author: string
+    role?: string
+    company?: string
+    avatar?: string
+    order?: number
+  }>
+}
+```
+
+## Changelog
+
+Mongo collection: `changelogentries`. Manual entries plus entries auto-synced from tracked GitHub repos.
+
+### `list_changelog`
+
+```ts
+input: {
+  repo?: string             // "owner/name" or just "name"
+  search?: string
+  limit?: number            // default 20
+  page?: number             // default 1
+}
+output: { entries, total, page, pages }
+```
+
+### `create_changelog_entry`
+
+```ts
+input: {
+  title: string
+  content?: string
+  tags?: string[]           // e.g. ["Feature", "Enhancement", "Fix", "Design"]
+  date: string              // ISO date
+  items?: string[]
+  media?: string            // Media _id
+}
+```
+
+### `update_changelog_entry`
+
+```ts
+input: { id: string, ...patch fields }
+```
+
+### `delete_changelog_entry`
+
+```ts
+input: { id: string }
+```
+
+## Tracked GitHub repos
+
+Mongo collection: `trackedrepos`. Drive the GitHub-release-to-changelog automation.
+
+### `list_tracked_repos`
+
+```ts
+input: {}
+output: TrackedRepo[]
+```
+
+### `add_tracked_repo`
+
+```ts
+input: {
+  owner: string             // e.g. "OxyHQ"
+  repo: string              // e.g. "Oxy"
+  displayName?: string      // defaults to `owner/repo`
+  defaultTags?: Array<{ label, color }>
+  active?: boolean          // default true
+}
+```
+
+### `remove_tracked_repo`
+
+Does **not** delete the existing changelog entries.
+
+```ts
+input: { id: string }
+```
+
+### `sync_repo`
+
+Manually pulls new releases for a single tracked repo.
+
+```ts
+input: { id: string }
+output: { synced: number }
+```
+
+### `sync_all_repos`
+
+```ts
+input: {}
+output: { ok: true, message: 'Sync complete' }
+```
+
+## Jobs
+
+Mongo collection: `jobs`. Careers page listings.
+
+### `list_jobs`
+
+Defaults to only `active: true` listings.
+
+```ts
+input: { active?: boolean }
+output: Job[]
+```
+
+### `get_job`
+
+```ts
+input: { slug: string }
+output: Job
+```
+
+### `create_job`
+
+Description blocks are a discriminated union: `{ type: 'paragraph', text }`, `{ type: 'heading', text }`, or `{ type: 'list', items: string[] }`.
+
+```ts
+input: {
+  title: string
+  department: string
+  slug?: string
+  subtitle?: string
+  location?: string
+  type?: string             // "Full-time", "Contract", etc.
+  compensation?: string
+  description?: Array<DescriptionBlock>
+  active?: boolean
+  order?: number
+}
+```
+
+### `update_job`
+
+```ts
+input: { slug: string, ...optional create_job fields }
+```
+
+### `delete_job`
+
+```ts
+input: { slug: string }
+```
+
+## Team members
+
+Mongo collection: `teammembers`.
+
+### `list_team_members`
+
+Active-only by default.
+
+```ts
+input: { active?: boolean }
+output: TeamMember[]
+```
+
+### `get_team_member`
+
+```ts
+input: { slug: string }
+output: TeamMember
+```
+
+### `create_team_member`
+
+```ts
+input: {
+  name: string
+  slug?: string
+  role: string
+  department?: string
+  bio?: string
+  avatar?: string           // Media _id
+  order?: number
+  active?: boolean
+  socials?: { linkedin?, twitter?, github?, website? }
+}
+```
+
+### `update_team_member`
+
+```ts
+input: { slug: string, ...optional create_team_member fields }
+```
+
+### `delete_team_member`
+
+```ts
+input: { slug: string }
+```
+
+## Media library
+
+Mongo collection: `media`. Backed by DigitalOcean Spaces (S3-compatible).
+
+### `list_media`
+
+```ts
+input: {
+  search?: string
+  type?: 'image' | 'video' | 'document'
+  tag?: string
+  folder?: string
+  limit?: number, page?: number
+}
+output: { items, total, page, pages }
+```
+
+### `get_media`
+
+```ts
+input: { id: string }
+output: Media
+```
+
+### `update_media`
+
+```ts
+input: { id: string, alt?: string, tags?: string[], folder?: string }
+```
+
+### `delete_media`
+
+Deletes the S3 object **and** its thumbnails, then removes the Mongo document.
+
+```ts
+input: { id: string }
+output: { deleted: true, id }
+```
+
+### `upload_image`
+
+Downloads an image from a URL, uploads to Spaces, generates thumbnails, creates a Media document. Returns the full Media object.
+
+```ts
+input: {
+  url: string
+  filename?: string         // derived from URL if omitted
+  folder?: string           // subfolder in oxy-website/, default "images"
+  alt?: string
+  tags?: string[]
+}
+output: Media
+```
+
+### `upload_and_set_post_cover`
+
+One-step variant: download → upload → create Media → set as `coverImage` on the named post.
+
+```ts
+input: {
+  postSlug: string
+  imageUrl: string
+  filename?: string
+  alt?: string
+}
+output: { media: Media, post: Post }
+```
+
+### `upload_and_set_team_avatar`
+
+Same flow for team member avatars.
+
+```ts
+input: {
+  memberSlug: string
+  imageUrl: string
+  filename?: string
+  alt?: string
+}
+output: { media: Media, member: TeamMember }
+```
+
+### `bulk_upload_post_covers`
+
+Batch variant — one network round-trip per post, results collected.
+
+```ts
+input: { posts: Array<{ slug: string, imageUrl: string, alt?: string }> }
+output: Array<{ slug, status: 'ok' | 'error', mediaId?, error? }>
+```
+
+### `debug_upload_test`
+
+Diagnoses each step of the upload pipeline (download → buffer → S3 → Media). Use this to debug `upload_image` failures. Cleans up after itself.
+
+```ts
+input: { url: string }
+output: { success: boolean, steps: string[] }
+```
+
+## Settings
+
+Mongo collection: `sitesettings`. Singleton.
+
+### `get_settings`
+
+```ts
+input: {}
+output: { siteTitle, siteDescription, ogImage, banner }
+```
+
+### `update_settings`
+
+```ts
+input: {
+  siteTitle?: string
+  siteDescription?: string
+  ogImage?: string
+  banner?: { text: string, href?: string, visible?: boolean }
+}
+```
+
+## Locales
+
+Mongo collection: `locales`. The set of languages the site supports.
+
+### `list_locales`
+
+```ts
+input: {}
+output: Locale[]            // both enabled and disabled
+```
+
+### `create_locale`
+
+Setting `isDefault: true` clears the flag on every other locale first.
+
+```ts
+input: {
+  code: string              // BCP-47, e.g. "ca-ES"
+  slug?: string             // defaults to lower-cased code
+  name: string              // English name, e.g. "Catalan"
+  nativeName: string        // e.g. "Català"
+  isDefault?: boolean
+  enabled?: boolean         // default true
+  order?: number
+}
+```
+
+### `update_locale`
+
+```ts
+input: { code: string, ...patch fields }
+```
+
+### `delete_locale`
+
+Refuses to delete the default locale. Also deletes every translation for that locale.
+
+```ts
+input: { code: string }
+output: { deleted: true, code, translationsRemoved: number }
+```
+
+## Translations
+
+Mongo collection: `translations`. Per-document field overrides keyed by `(collection, documentId, locale)`.
+
+Translatable collections: `navigation`, `footer`, `pricing`, `testimonials`, `settings`, `pages`, `newsroom`, `jobs`, `hero`, `products`, `categories`, `team`, `changelog`, `courses`, `resources`, `help`.
+
+### `list_translation_collections`
+
+```ts
+input: {}
+output: string[]            // the list above
+```
+
+### `get_translations`
+
+```ts
+input: { collection: string, locale: string }
+output: Translation[]
+```
+
+### `get_translation`
+
+```ts
+input: { collection: string, documentId: string, locale: string }
+output: Translation
+```
+
+### `upsert_translation`
+
+Create or update one translation. `fields` is a flat map of overrides — only include keys that differ from the original document.
+
+```ts
+input: {
+  collection: string
+  documentId: string
+  locale: string
+  fields: Record<string, unknown>
+  // e.g. { title: "Hola", excerpt: "Resumen..." }
+}
+```
+
+### `delete_translation`
+
+```ts
+input: { collection: string, documentId: string, locale: string }
+```
+
+## MCP tokens
+
+Mongo collection: `mcptokens`. Self-management of the same tokens that authenticate MCP calls.
+
+### `list_mcp_tokens`
+
+Token hashes are **never** returned.
+
+```ts
+input: {}
+output: Array<{ _id, name, createdBy, createdAt, lastUsedAt, expiresAt, revoked }>
+```
+
+### `create_mcp_token`
+
+Returns the raw token **once**. Save it immediately — there is no way to recover it.
+
+```ts
+input: { name: string, expiresAt?: string /* ISO date */ }
+output: { _id, name, token: string /* raw secret */, createdAt, expiresAt }
+```
+
+### `revoke_mcp_token`
+
+Sets `revoked: true`. The token will fail validation on the very next request.
+
+```ts
+input: { id: string }
+output: { revoked: true, id }
+```
+
+## Categories
+
+Mongo collection: `categories`. Reusable grouping labels referenced by products, navbar dropdowns, courses, resources, and help articles.
+
+### `list_categories`
+
+```ts
+input: { scope?: 'apps' | 'nav' | 'generic' }
+output: Category[]
+```
+
+### `get_category`
+
+```ts
+input: { slug: string }
+output: Category
+```
+
+### `create_category`
+
+```ts
+input: {
+  slug: string              // URL-safe stable id, e.g. "social-communication"
+  label: string             // human label
+  description?: string
+  scope?: 'apps' | 'nav' | 'generic'
+  order?: number
+}
+```
+
+### `update_category`
+
+Slug cannot be changed after creation.
+
+```ts
+input: { slug: string, label?, description?, scope?, order? }
+```
+
+### `delete_category`
+
+Does **not** automatically reassign products or nav items that point at the category.
+
+```ts
+input: { slug: string }
+```
+
+## Products
+
+Mongo collection: `products`. Surfaces the `/technologies` grid, the `/status` health probes, and the ecosystem navbar.
+
+### `list_products`
+
+```ts
+input: {
+  lifecycle?: 'live' | 'in-development'
+  section?: string
+  surface?: 'products' | 'status' | 'nav'
+}
+output: Product[]
+```
+
+### `get_product`
+
+```ts
+input: { productId: string }
+output: Product
+```
+
+### `create_product`
+
+```ts
+input: {
+  productId: string         // stable, URL-safe, e.g. "alia"
+  name: string
+  tagline?: string
+  description?: string
+  href: string              // canonical destination
+  landingUrl?: string       // optional local landing page on oxy.so
+  healthUrl?: string        // for /status probes
+  external?: boolean
+  cta?: string
+  brand: string             // hex color
+  brandForeground?: string
+  mark: string              // single-letter brand mark
+  logo?: string             // Media _id (takes precedence over `mark`)
+  section?: string
+  lifecycle?: 'live' | 'in-development'
+  showOnProducts?: boolean
+  showOnStatus?: boolean
+  showInNav?: boolean
+  navOpensApp?: boolean
+  order?: number
+}
+```
+
+### `update_product`
+
+Pass `logo: ""` to clear the logo.
+
+```ts
+input: { productId: string, ...optional create_product fields }
+```
+
+### `delete_product`
+
+```ts
+input: { productId: string }
+```
+
+## Academy: courses
+
+Mongo collection: `courses`.
+
+### `list_courses`
+
+```ts
+input: {
+  category?: string         // Category _id, generic scope
+  tag?: string
+  featured?: boolean
+  status?: 'draft' | 'published'
+  level?: 'beginner' | 'intermediate' | 'advanced'
+  limit?: number, page?: number
+}
+output: { courses, total, page, pages }
+```
+
+### `get_course`
+
+```ts
+input: { slug: string }
+output: Course               // with coverImage + category populated
+```
+
+### `create_course`
+
+Lessons embedded as `{ title, slug, content?, order?, videoUrl?, durationMinutes? }`.
+
+```ts
+input: {
+  title: string
+  slug?: string
+  summary?: string
+  description?: string
+  coverImage?: string        // Media _id
+  category?: string          // Category _id
+  level?: 'beginner' | 'intermediate' | 'advanced'
+  durationMinutes?: number
+  lessons?: Array<Lesson>
+  tags?: string[]
+  featured?: boolean
+  status?: 'draft' | 'published'
+  publishedAt?: string       // ISO date
+  order?: number
+}
+```
+
+### `update_course`
+
+```ts
+input: {
+  slug: string
+  newSlug?: string
+  ...optional create_course fields
+}
+```
+
+### `delete_course`
+
+```ts
+input: { slug: string }
+```
+
+## Academy: resources
+
+Mongo collection: `resources`.
+
+### `list_resources`
+
+```ts
+input: {
+  category?: string
+  tag?: string
+  type?: 'guide' | 'paper' | 'video' | 'tool' | 'template' | 'link'
+  featured?: boolean
+  status?: 'draft' | 'published'
+  limit?: number, page?: number
+}
+output: { resources, total, page, pages }
+```
+
+### `get_resource`
+
+```ts
+input: { slug: string }
+output: Resource
+```
+
+### `create_resource`
+
+```ts
+input: {
+  title: string
+  slug?: string
+  summary?: string
+  type?: 'guide' | 'paper' | 'video' | 'tool' | 'template' | 'link'  // default 'guide'
+  coverImage?: string
+  category?: string
+  href: string               // local path or full URL
+  external?: boolean
+  tags?: string[]
+  featured?: boolean
+  status?: 'draft' | 'published'
+  publishedAt?: string
+  order?: number
+}
+```
+
+### `update_resource`
+
+```ts
+input: { slug: string, newSlug?, ...optional create_resource fields }
+```
+
+### `delete_resource`
+
+```ts
+input: { slug: string }
+```
+
+## Help Center: articles
+
+Mongo collection: `helparticles`.
+
+### `list_help_articles`
+
+```ts
+input: {
+  category?: string
+  tag?: string
+  featured?: boolean
+  status?: 'draft' | 'published'
+  limit?: number, page?: number
+}
+output: { articles, total, page, pages }
+```
+
+### `get_help_article`
+
+```ts
+input: { slug: string }
+output: HelpArticle
+```
+
+### `create_help_article`
+
+Icon is a [Lucide](https://lucide.dev) name in kebab-case, e.g. `rocket`, `book-open-text`.
+
+```ts
+input: {
+  title: string
+  slug?: string
+  summary?: string
+  content?: string           // Markdown
+  category?: string
+  icon?: string
+  coverImage?: string
+  tags?: string[]
+  featured?: boolean
+  status?: 'draft' | 'published'
+  publishedAt?: string
+  order?: number
+}
+```
+
+### `update_help_article`
+
+```ts
+input: { slug: string, newSlug?, ...optional create_help_article fields }
+```
+
+### `delete_help_article`
+
+```ts
+input: { slug: string }
+```
+
+## Referrals
+
+Mongo collection: `referrals`. Powers `/referrals?ref=CODE` landings.
+
+### `list_referrals`
+
+```ts
+input: {
+  type?: 'paid' | 'ambassador' | 'user'
+  status?: 'active' | 'paused' | 'revoked'
+}
+output: Referral[]
+```
+
+### `get_referral`
+
+```ts
+input: { code: string }
+output: Referral
+```
+
+### `create_referral`
+
+```ts
+input: {
+  code: string               // letters, digits, dash, underscore
+  name: string               // display name shown on the public landing
+  email?: string             // admin-only
+  type?: 'paid' | 'ambassador' | 'user'
+  status?: 'active' | 'paused' | 'revoked'
+  oxyUserId?: string
+  commissionPercent?: number // 0-100, for type='paid'
+  customLandingUrl?: string  // override the default /referrals?ref=CODE
+  notes?: string             // admin-only
+}
+```
+
+### `update_referral`
+
+```ts
+input: { code: string, ...optional create_referral fields }
+```
+
+### `delete_referral`
+
+```ts
+input: { code: string }
+```

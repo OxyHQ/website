@@ -1,0 +1,80 @@
+---
+title: Oxy MCP Server
+description: Drive the Oxy website CMS from Claude (and any MCP-aware client) over the Model Context Protocol.
+order: 0
+---
+
+# Oxy MCP Server
+
+The Oxy MCP server exposes the [oxy.so](https://oxy.so) website content management system as a set of tools that any [Model Context Protocol](https://modelcontextprotocol.io) client can call — most commonly **Claude Desktop** and **Claude Code**, but also any agent built on the official Anthropic SDK or a third-party MCP client.
+
+<Badge variant="warning">Preview</Badge> <Badge>MCP 1.x</Badge> <Badge>Streamable HTTP</Badge>
+
+## What you get
+
+Instead of clicking through the admin panel, you can ask Claude things like:
+
+- "Publish a newsroom post titled *Oxy raises Series B*, tag it Company, and use the press kit image at this URL."
+- "List the help articles in the *Getting started* category and rewrite their summaries to be one sentence."
+- "Create a referral code `ALEX-2026`, ambassador type, status active."
+- "Show me every product on the technologies grid and flag the ones missing a logo."
+
+Each natural-language request is routed by Claude to one or more MCP tools, which talk to MongoDB and DigitalOcean Spaces on the website's behalf.
+
+## What it is, briefly
+
+The [Model Context Protocol](https://modelcontextprotocol.io) is an open standard from Anthropic for letting LLMs call external tools and read external data. An MCP server speaks JSON-RPC 2.0 over a transport (stdio, HTTP, or SSE) and advertises a list of tools, resources, and prompts to any connected client.
+
+The Oxy MCP server is a [`McpServer`](https://github.com/modelcontextprotocol/typescript-sdk) instance built with `@modelcontextprotocol/sdk`, mounted at `POST /mcp` on `api.oxy.so` over the **Streamable HTTP** transport.
+
+## What it exposes
+
+The server registers **92 tools** spread across these surfaces of the website CMS:
+
+| Surface | Tools |
+|---------|-------|
+| Pages | `list_pages`, `get_page`, `upsert_page` |
+| Navigation | `get_navigation`, `replace_navigation` |
+| Footer | `get_footer`, `update_footer` |
+| Hero | `get_hero`, `update_hero` |
+| Newsroom posts | `list_posts`, `get_post`, `create_post`, `update_post`, `delete_post`, `search_posts`, `get_post_with_media` |
+| Pricing | `get_pricing`, `replace_pricing` |
+| Testimonials | `get_testimonials`, `replace_testimonials` |
+| Changelog | `list_changelog`, `create_changelog_entry`, `update_changelog_entry`, `delete_changelog_entry` |
+| Tracked GitHub repos | `list_tracked_repos`, `add_tracked_repo`, `remove_tracked_repo`, `sync_repo`, `sync_all_repos` |
+| Jobs | `list_jobs`, `get_job`, `create_job`, `update_job`, `delete_job` |
+| Team members | `list_team_members`, `get_team_member`, `create_team_member`, `update_team_member`, `delete_team_member` |
+| Media library (S3) | `list_media`, `get_media`, `update_media`, `delete_media`, `upload_image`, `upload_and_set_post_cover`, `upload_and_set_team_avatar`, `bulk_upload_post_covers`, `debug_upload_test` |
+| Settings | `get_settings`, `update_settings` |
+| Locales | `list_locales`, `create_locale`, `update_locale`, `delete_locale` |
+| Translations | `list_translation_collections`, `get_translations`, `get_translation`, `upsert_translation`, `delete_translation` |
+| MCP tokens | `list_mcp_tokens`, `create_mcp_token`, `revoke_mcp_token` |
+| Categories | `list_categories`, `get_category`, `create_category`, `update_category`, `delete_category` |
+| Products | `list_products`, `get_product`, `create_product`, `update_product`, `delete_product` |
+| Academy courses | `list_courses`, `get_course`, `create_course`, `update_course`, `delete_course` |
+| Academy resources | `list_resources`, `get_resource`, `create_resource`, `update_resource`, `delete_resource` |
+| Help articles | `list_help_articles`, `get_help_article`, `create_help_article`, `update_help_article`, `delete_help_article` |
+| Referrals | `list_referrals`, `get_referral`, `create_referral`, `update_referral`, `delete_referral` |
+
+See [Tools](/developers/docs/mcp/tools) for the full reference.
+
+## Who it's for
+
+- **Operators of oxy.so** running their CMS through Claude instead of (or alongside) the admin UI.
+- **Internal automations** that bulk-import posts, sync changelog entries from GitHub releases, or refresh translations.
+- **AI app developers** building agents that need to read or modify Oxy website content programmatically.
+
+It is **not** the same as the Oxy REST API. The REST API at `api.oxy.so` powers public Oxy apps (identity, files, billing, etc.); the MCP server is a thin layer over the website's internal Mongo models that ships with the CMS itself.
+
+## What it does not expose
+
+- No **resources** (`resources/list`) — the server only registers `tools`. All content is fetched via tool calls.
+- No **prompts** (`prompts/list`) — the server advertises no canned prompts.
+- No public endpoints — every request requires a valid MCP token (see [Authentication](/developers/docs/mcp/authentication)).
+
+## Where to go next
+
+1. **Get connected.** Follow the [Quickstart](/developers/docs/mcp/quickstart) to wire Claude Desktop or Claude Code to the server in about five minutes.
+2. **Generate a token.** Read [Authentication](/developers/docs/mcp/authentication) to mint a token from the admin console.
+3. **Browse the tools.** [Tools](/developers/docs/mcp/tools) lists every callable tool with its input schema and an example response.
+4. **Try a real task.** [Examples](/developers/docs/mcp/examples) shows complete workflows — "publish a post with an AI-generated cover image", "spin up a referral campaign", "translate the navbar into Catalan".

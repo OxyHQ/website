@@ -74,6 +74,13 @@
       "name": "OxyFont",
       "localPath": "/home/nate/Oxy/OxyFont",
       "skipIfNoLocal": true
+    },
+    {
+      "name": "Website (MCP)",
+      "localPath": "/home/nate/Oxy/website",
+      "git": "https://github.com/OxyHQ/website.git",
+      "ref": "main",
+      "configPaths": [""]
     }
   ]
 }

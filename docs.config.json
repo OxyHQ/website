@@ -1,0 +1,12 @@
+{
+  "package": "mcp",
+  "displayName": "Oxy MCP",
+  "shortName": "mcp",
+  "repo": "https://github.com/OxyHQ/website",
+  "category": "service",
+  "versioned": false,
+  "versions": ["main"],
+  "defaultVersion": "main",
+  "docsPath": "src/content/mcp/",
+  "description": "Model Context Protocol server for Claude + Oxy."
+}
