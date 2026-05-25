@@ -79,6 +79,9 @@ function syncGitCache(name: string, git: string, ref: string): string {
       { stdio: 'pipe' },
     );
   }
+  // Fetch tag refs so per-version `git show <tag>:<file>` works.
+  // `--depth 1 --branch` clones only the branch tip and skips tags by default.
+  execSync(`git fetch --depth 1 origin 'refs/tags/*:refs/tags/*'`, { cwd: dest, stdio: 'pipe' });
   return dest;
 }
 
@@ -92,7 +95,9 @@ function resolveRepoRoot(entry: DocsRegistryEntry): string | null {
   if (entry.localPath) {
     const resolved = resolveLocalPath(entry.localPath);
     if (existsSync(resolved)) return resolved;
-    console.warn(`[sync-docs] localPath '${entry.localPath}' not found for ${entry.name}; falling back to git.`);
+    if (entry.git) {
+      console.warn(`[sync-docs] localPath '${entry.localPath}' not found for ${entry.name}; falling back to git.`);
+    }
   }
   if (entry.git) {
     try {
@@ -101,6 +106,10 @@ function resolveRepoRoot(entry: DocsRegistryEntry): string | null {
       console.error(`[sync-docs] failed to sync git source for ${entry.name}:`, err);
       return null;
     }
+  }
+  if (entry.skipIfNoLocal) {
+    console.error(`[sync-docs] no localPath for ${entry.name} and skipIfNoLocal is set; skipping.`);
+    return null;
   }
   console.warn(`[sync-docs] no usable source (localPath or git) for ${entry.name}; skipping.`);
   return null;
@@ -261,6 +270,55 @@ async function copyVersionFromTree(
   return pages;
 }
 
+/**
+ * `'main'` and `'master'` are working-tree refs (or development branches),
+ * not pinned releases. Versioned packages may still list them so the
+ * "latest dev preview" stays browsable; non-versioned packages always use
+ * one of them. We special-case both so sync-docs never tries to resolve
+ * them as semver tags.
+ */
+function isWorkingTreeVersion(version: string): boolean {
+  return version === 'main' || version === 'master' || version === 'local';
+}
+
+/**
+ * Resolve a version string to the actual git tag in the source repo.
+ *
+ * Convention (documented in `scripts/README.md`): tags are
+ * `@oxyhq/<package>@<version>` for npm-scoped packages, or `<package>@<version>`
+ * / `v<version>` as fallbacks for non-scoped repos (Mention, Allo, etc.).
+ *
+ * We try candidates in order and return the first one that exists. Returns
+ * `null` if none match — the caller then warns and falls back to the
+ * working tree so the build still produces *something*.
+ */
+function resolveVersionTag(repoRoot: string, pkg: string, version: string): string | null {
+  // If the caller passed a literal tag (e.g. `'v1.2.3'`), prefer the
+  // longer-form candidates first but accept the raw string too.
+  const candidates: string[] = [];
+  const scopedOrPlain = pkg.startsWith('@') ? pkg : pkg.toLowerCase();
+  candidates.push(`${scopedOrPlain}@${version}`);
+  // Non-scoped lowercase mirror for repos that publish unscoped (e.g. `tnp`).
+  if (pkg.startsWith('@')) {
+    candidates.push(`${pkg.toLowerCase()}@${version}`);
+  }
+  candidates.push(`v${version}`);
+  candidates.push(version);
+
+  for (const tag of candidates) {
+    try {
+      execSync(`git rev-parse --verify --quiet ${JSON.stringify(`refs/tags/${tag}`)}`, {
+        cwd: repoRoot,
+        stdio: 'pipe',
+      });
+      return tag;
+    } catch {
+      // Try the next candidate.
+    }
+  }
+  return null;
+}
+
 async function copyVersionFromGitTag(
   repoRoot: string,
   tag: string,
@@ -332,6 +390,188 @@ async function copyOpenApiSpec(rootDir: string, outDir: string): Promise<void> {
   }
 }
 
+/* ------------------------------ TypeDoc ------------------------------- */
+
+/**
+ * Walk upwards from `startDir` to find the nearest `tsconfig.json`. Used
+ * when a package's own `tsconfig.json` is missing — some monorepos only
+ * carry a root `tsconfig.json` that the packages extend.
+ */
+function findNearestTsconfig(startDir: string, stopAt: string): string | null {
+  let current = path.resolve(startDir);
+  const stop = path.resolve(stopAt);
+  // Walk up until we cross above `stopAt` (the repo root). Guard against
+  // infinite loops with a manual step count.
+  for (let i = 0; i < 12; i += 1) {
+    const candidate = path.join(current, 'tsconfig.json');
+    if (existsSync(candidate)) return candidate;
+    if (current === stop || current === path.dirname(current)) return null;
+    current = path.dirname(current);
+  }
+  return null;
+}
+
+/**
+ * Strip the front-matter / "title:" lines TypeDoc emits to make pages render
+ * cleanly inside the docs shell. The shell already shows the page title.
+ */
+function normalizeTypedocMarkdown(source: string): string {
+  let body = source;
+  // Drop the leading `**@oxyhq/foo**\n\n***\n\n` block typedoc-plugin-markdown
+  // prepends to every file — it's a no-op breadcrumb that just creates noise.
+  body = body.replace(/^\*\*[^*\n]+\*\*\n\n\*\*\*\n\n/, '');
+  // Some pages prepend a `[**@oxyhq/foo**](../README.md)\n\n***\n\n` link.
+  body = body.replace(/^\[\*\*[^*\n]+\*\*\]\([^)]+\)\n\n\*\*\*\n\n/, '');
+  // Drop the breadcrumb line `[@oxyhq/foo](href) / SymbolName` that the link
+  // rewriter leaves behind. Followed by a blank line.
+  body = body.replace(/^\[[^\]]+\]\([^)]+\)\s*\/\s*[^\n]+\n+/, '');
+  return body;
+}
+
+/**
+ * Convert relative `.md`/`.mdx` links between TypeDoc-generated files to
+ * absolute docs URLs that the SPA router understands. Without this, links
+ * like `[Foo](../interfaces/Foo.md)` would 404 inside the docs shell.
+ *
+ * `fileRelativeDir` is the source file's directory relative to the api/
+ * root (e.g. `'interfaces'`, `''`). It anchors `../` and `./` resolution.
+ */
+function rewriteTypedocLinks(source: string, pkgBaseUrl: string, fileRelativeDir: string): string {
+  // Match markdown link targets that point at a `.md` file with an optional
+  // anchor: `](./foo.md)`, `](../bar/baz.md#anchor)`, etc.
+  return source.replace(
+    /\]\(((?!https?:|mailto:|#)[^)\s]+\.mdx?)(#[^)]*)?\)/g,
+    (_match, target: string, anchor: string | undefined) => {
+      const targetUnix = target.replace(/\\/g, '/');
+      // Resolve `../foo/bar.md` against the source file's directory, so the
+      // final URL doesn't carry literal `..` segments through to the router.
+      const fromDir = fileRelativeDir ? `/${fileRelativeDir}/` : '/';
+      const resolved = path.posix.normalize(`${fromDir}${targetUnix}`).replace(/^\/+/, '');
+      const noExt = resolved.replace(/\.(mdx?|md)$/i, '');
+      // README → the api/ index page (empty trailing slug).
+      const slug = noExt.replace(/\/?README$/i, '').replace(/\/?index$/i, '');
+      const href = slug ? `${pkgBaseUrl}/${slug}` : pkgBaseUrl;
+      return `](${href}${anchor ?? ''})`;
+    },
+  );
+}
+
+/** Write a friendly title to the top of an API page so the sidebar surfaces it. */
+function deriveTypedocTitle(filePath: string, source: string): string {
+  // TypeDoc emits `# Interface: Foo`, `# Class: Bar`, `# Function: baz()`.
+  const headingMatch = source.match(/^#\s+(.+)$/m);
+  if (headingMatch?.[1]) {
+    return headingMatch[1].replace(/^(Interface|Class|Function|Type Alias|Variable|Module|Namespace):\s+/, '').trim();
+  }
+  return path.basename(filePath, path.extname(filePath));
+}
+
+/**
+ * Invoke TypeDoc to extract API reference markdown for a single package
+ * version. The output lands at `<outDir>/api/` so it routes under
+ * `/developers/docs/<pkg>/<version>/api/...`. On failure (missing tsconfig,
+ * broken types, plugin error) we log a warning and return an empty array
+ * so the rest of the sync still succeeds.
+ */
+async function runTypedoc(
+  config: DocsConfig,
+  rootDir: string,
+  repoRoot: string,
+  outDir: string,
+  version: string,
+): Promise<SyncedPage[]> {
+  const typedoc = config.typedoc;
+  if (!typedoc?.entry) return [];
+
+  const entryAbs = path.resolve(rootDir, typedoc.entry);
+  if (!existsSync(entryAbs)) {
+    console.warn(`[sync-docs] typedoc entry '${entryAbs}' not found for ${config.shortName}@${version}; skipping API reference.`);
+    return [];
+  }
+
+  const tsconfigAbs = findNearestTsconfig(rootDir, repoRoot);
+  if (!tsconfigAbs) {
+    console.warn(`[sync-docs] no tsconfig.json found near ${rootDir}; skipping API reference for ${config.shortName}@${version}.`);
+    return [];
+  }
+
+  const apiOutDir = path.join(outDir, 'api');
+  // Reset the api/ subtree so stale pages from earlier runs don't linger.
+  if (existsSync(apiOutDir)) {
+    await rm(apiOutDir, { recursive: true, force: true });
+  }
+  await mkdir(apiOutDir, { recursive: true });
+
+  const typedocBin = path.join(WEBSITE_ROOT, 'node_modules', 'typedoc', 'bin', 'typedoc');
+  if (!existsSync(typedocBin)) {
+    console.warn(`[sync-docs] typedoc not installed at ${typedocBin}; run \`bun install\` in website/. Skipping API reference.`);
+    return [];
+  }
+
+  // The flat `kind` router groups output into `classes/`, `interfaces/`,
+  // `functions/`, `types/`, `variables/`, `modules/` — keeping slugs clean
+  // and free of `@scope/` segments.
+  const args = [
+    '--entryPoints', entryAbs,
+    '--out', apiOutDir,
+    '--plugin', 'typedoc-plugin-markdown',
+    '--readme', 'none',
+    '--tsconfig', tsconfigAbs,
+    '--router', 'kind',
+    '--skipErrorChecking',
+    '--hideGenerator',
+    '--disableSources',
+  ];
+
+  try {
+    execSync(`node ${JSON.stringify(typedocBin)} ${args.map((a) => JSON.stringify(a)).join(' ')}`, {
+      stdio: 'pipe',
+      env: { ...process.env, FORCE_COLOR: '0' },
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`[sync-docs] typedoc failed for ${config.shortName}@${version}:`, message.split('\n')[0]);
+    return [];
+  }
+
+  // Post-process every generated markdown file: rewrite relative links,
+  // strip the TypeDoc breadcrumb noise, then record a `SyncedPage` entry.
+  const files = await walkMdx(apiOutDir);
+  if (files.length === 0) {
+    console.warn(`[sync-docs] typedoc produced no markdown for ${config.shortName}@${version}.`);
+    return [];
+  }
+
+  const pkgBaseUrl = `/developers/docs/${config.shortName}/${version}/api`;
+  const pages: SyncedPage[] = [];
+  for (const rel of files) {
+    const full = path.join(apiOutDir, rel);
+    const raw = await readFile(full, 'utf8');
+    const fileRelativeDir = path.dirname(rel).replace(/\\/g, '/');
+    const dir = fileRelativeDir === '.' ? '' : fileRelativeDir;
+    const cleaned = normalizeTypedocMarkdown(rewriteTypedocLinks(raw, pkgBaseUrl, dir));
+    await writeFile(full, cleaned);
+    // Slug is the file path under `outDir` (so `api/` is included).
+    const slug = `api/${rel.replace(/\\/g, '/').replace(/\.(mdx?|md)$/i, '')}`.replace(/\/README$/i, '').replace(/\/index$/i, '');
+    const title = deriveTypedocTitle(rel, cleaned);
+    pages.push({
+      slug,
+      title,
+      file: path.relative(SYNCED_DIR, full).replace(/\\/g, '/'),
+      order: 10000, // Always sorts after hand-written guides (default 1000).
+      section: 'api',
+    });
+  }
+
+  pages.sort((a, b) => {
+    // Index page (api/) first.
+    if (a.slug === 'api') return -1;
+    if (b.slug === 'api') return 1;
+    return a.slug.localeCompare(b.slug);
+  });
+  return pages;
+}
+
 async function syncPackage(
   config: DocsConfig,
   rootDir: string,
@@ -339,17 +579,37 @@ async function syncPackage(
 ): Promise<SyncedPackage> {
   const versions: SyncedVersion[] = [];
   const ignore = config.docsIgnore ?? [];
-  for (const version of config.versions) {
+  const versioned = config.versioned === true;
+  // Non-versioned packages may omit `versions[]` entirely — fall back to
+  // `defaultVersion` (typically `'main'`) so they still produce a synced
+  // tree. Versioned packages must list `versions[]` explicitly.
+  const versionList =
+    Array.isArray(config.versions) && config.versions.length > 0
+      ? config.versions
+      : [config.defaultVersion ?? 'main'];
+  for (const version of versionList) {
     const outDir = path.join(SYNCED_DIR, config.shortName, version);
     let pages: SyncedPage[] = [];
-    if (version === 'main' || version === 'local') {
+    if (isWorkingTreeVersion(version) || !versioned) {
+      // Working tree: read MDX directly off disk. This is the only path for
+      // non-versioned packages (apps) and for the "dev preview" entry on
+      // versioned packages.
       const srcDocsDir = path.join(rootDir, config.docsPath);
       pages = await copyVersionFromTree(srcDocsDir, outDir, ignore);
     } else {
-      const docsPathInRepo = path.relative(repoRoot, path.join(rootDir, config.docsPath));
-      pages = await copyVersionFromGitTag(repoRoot, version, docsPathInRepo, outDir, ignore);
+      // Versioned tag: resolve to an actual git tag, then `git show` the
+      // tree at that tag. Falls through to the working tree if the tag is
+      // missing so the website still has *something* to render.
+      const resolvedTag = resolveVersionTag(repoRoot, config.package, version);
+      if (resolvedTag) {
+        const docsPathInRepo = path.relative(repoRoot, path.join(rootDir, config.docsPath));
+        pages = await copyVersionFromGitTag(repoRoot, resolvedTag, docsPathInRepo, outDir, ignore);
+      } else {
+        console.warn(
+          `[sync-docs] no tag matched for ${config.package}@${version} in ${repoRoot} — using working tree.`,
+        );
+      }
       if (pages.length === 0) {
-        // Fallback to working-tree copy so we always have *something* to render.
         const srcDocsDir = path.join(rootDir, config.docsPath);
         if (existsSync(srcDocsDir)) {
           pages = await copyVersionFromTree(srcDocsDir, outDir, ignore);
@@ -361,8 +621,26 @@ async function syncPackage(
     if (config.category === 'service') {
       await copyOpenApiSpec(rootDir, outDir);
     }
+    // Tag hand-written pages so the sidebar can group them under "Guides".
+    for (const page of pages) {
+      page.section = 'guides';
+    }
+    // Auto-generate TypeDoc API reference (best-effort; warns and skips on
+    // failure so a broken package doesn't break the whole sync).
+    const apiPages = await runTypedoc(config, rootDir, repoRoot, outDir, version);
+    pages.push(...apiPages);
     versions.push({ version, pages });
   }
+  // Resolved latest version:
+  //   - explicit `latestVersion` wins (versioned packages only)
+  //   - otherwise the first entry in `versions[]` (newest first by convention)
+  //   - falls back to the legacy `defaultVersion` field for non-versioned
+  //     packages that omit `versions[]` entirely.
+  const latestVersion =
+    config.latestVersion ??
+    (Array.isArray(config.versions) ? config.versions[0] : undefined) ??
+    config.defaultVersion ??
+    'main';
   return {
     package: config.package,
     displayName: config.displayName,
@@ -372,6 +650,9 @@ async function syncPackage(
     description: config.description,
     defaultVersion: config.defaultVersion,
     versions,
+    versioned,
+    latestVersion,
+    deprecatedVersions: config.deprecatedVersions ?? [],
   };
 }
 
