@@ -2,13 +2,13 @@
   "repos": [
     {
       "name": "Bloom",
-      "localPath": "/nonexistent/Bloom",
+      "localPath": "/home/nate/Oxy/Bloom",
       "git": "https://github.com/OxyHQ/Bloom.git",
       "ref": "main"
     },
     {
       "name": "OxyHQServices",
-      "localPath": "/nonexistent/OxyHQServices",
+      "localPath": "/home/nate/Oxy/OxyHQServices",
       "git": "https://github.com/OxyHQ/OxyHQServices.git",
       "ref": "main",
       "configPaths": [
@@ -21,6 +21,59 @@
         "packages/console",
         "packages/auth"
       ]
+    },
+    {
+      "name": "Alia",
+      "localPath": "/home/nate/Oxy/Alia",
+      "git": "https://github.com/OxyHQ/Alia.git",
+      "ref": "main"
+    },
+    {
+      "name": "Allo",
+      "localPath": "/home/nate/Oxy/Allo",
+      "git": "https://github.com/OxyHQ/Allo.git",
+      "ref": "main"
+    },
+    {
+      "name": "Mention",
+      "localPath": "/home/nate/Oxy/Mention",
+      "git": "https://github.com/OxyHQ/Mention.git",
+      "ref": "main"
+    },
+    {
+      "name": "Homiio",
+      "localPath": "/home/nate/Oxy/Homiio",
+      "git": "https://github.com/OxyHQ/Homiio.git",
+      "ref": "main"
+    },
+    {
+      "name": "TNP",
+      "localPath": "/home/nate/Oxy/tnp",
+      "git": "https://github.com/OxyHQ/tnp.git",
+      "ref": "main"
+    },
+    {
+      "name": "Astro",
+      "localPath": "/home/nate/Oxy/Astro",
+      "git": "https://github.com/OxyHQ/Astro.git",
+      "ref": "master"
+    },
+    {
+      "name": "Clarity",
+      "localPath": "/home/nate/Oxy/Clarity",
+      "git": "https://github.com/OxyHQ/Clarity.git",
+      "ref": "master"
+    },
+    {
+      "name": "OxyOS",
+      "localPath": "/home/nate/Oxy/OxyOS",
+      "git": "https://github.com/OxyHQ/OxyOS.git",
+      "ref": "master"
+    },
+    {
+      "name": "OxyFont",
+      "localPath": "/home/nate/Oxy/OxyFont",
+      "skipIfNoLocal": true
     }
   ]
 }
