@@ -8,7 +8,7 @@ import SEO from '../components/SEO'
 import PageSection from '../components/layout/PageSection'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { FEATURES } from '../constants'
-import { useCurrentLocale } from '../contexts/LocaleContext'
+import { useCurrentLocale } from '../lib/i18n'
 import { loadHelpBySlug, loadHelpSiblings, HELP_CATEGORIES } from '../content/help-loader'
 import { mdxContentComponents } from '../content/_components'
 

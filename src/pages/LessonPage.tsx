@@ -7,7 +7,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import PageSection from '../components/layout/PageSection'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import { useCurrentLocale } from '../contexts/LocaleContext'
+import { useCurrentLocale } from '../lib/i18n'
 import { loadLesson, loadCourse } from '../content/academy-loader'
 import { mdxContentComponents } from '../content/_components'
 

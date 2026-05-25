@@ -6,7 +6,7 @@ import type { User } from '@oxyhq/core'
 import { BloomThemeProvider } from '@oxyhq/bloom/theme'
 import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
 import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppColorName } from './theme'
-import { LocaleProvider } from './contexts/LocaleContext'
+import { LocaleProvider } from './lib/i18n'
 import { setTokenGetter } from './api/client'
 import { isFairCoinHost } from './lib/host'
 

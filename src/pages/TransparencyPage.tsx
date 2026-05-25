@@ -6,7 +6,7 @@ import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import PageSection from '../components/layout/PageSection'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import { useCurrentLocale } from '../contexts/LocaleContext'
+import { useCurrentLocale } from '../lib/i18n'
 import { loadCompanyPage } from '../content/company-loader'
 import { mdxContentComponents } from '../content/_components'
 

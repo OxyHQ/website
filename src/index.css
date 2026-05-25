@@ -717,3 +717,28 @@ body {
 .group:hover .attio-group-hover-underline {
   background-size: 100% 1px;
 }
+
+/* ──────────────────────────────────────────────
+ * RTL support — applied automatically when
+ * `<html dir="rtl">` is set by `LocaleProvider`
+ * for Arabic (and any future RTL locales).
+ *
+ * Tailwind v4 ships logical properties for the
+ * common spacing/positioning utilities, so this
+ * file only patches the cases where directional
+ * SVG arrows / decorative rotations need to flip.
+ * ──────────────────────────────────────────── */
+[dir='rtl'] .attio-group-hover-underline {
+  background-position: 100% 100%;
+}
+/* External-link arrow uses a -45deg rotation — flip across the y-axis when
+   the document direction is RTL so the arrow still points outward. */
+[dir='rtl'] svg.-rotate-45 {
+  transform: scaleX(-1) rotate(-45deg);
+}
+/* Right-side dropdown panels should align to the start of the trigger in RTL. */
+[dir='rtl'] .right-0 {
+  right: auto;
+  left: 0;
+}
+

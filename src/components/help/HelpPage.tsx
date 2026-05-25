@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import * as LucideIcons from 'lucide-react'
-import { useCurrentLocale } from '../../contexts/LocaleContext'
+import { useCurrentLocale } from '../../lib/i18n'
 import {
   loadHelpArticles,
   loadFeaturedHelpArticles,

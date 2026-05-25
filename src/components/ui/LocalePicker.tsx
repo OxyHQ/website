@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react'
-import { useLocaleContext } from '../../contexts/LocaleContext'
+import { useLocaleContext, useTranslation } from '../../lib/i18n'
 import { Globe } from 'lucide-react'
 
 export default function LocalePicker() {
   const { locale, locales, setLocale } = useLocaleContext()
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
 
   // React 19 callback ref with cleanup — listener lives only while the dropdown is mounted.
@@ -25,7 +26,7 @@ export default function LocalePicker() {
       <button
         onClick={() => setOpen(!open)}
         className="inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-transparent px-2.5 text-sm text-muted-foreground transition-colors duration-300 hover:bg-surface hover:text-foreground"
-        aria-label="Change language"
+        aria-label={t('common.changeLanguage')}
       >
         <Globe className="size-4" />
         <span className="hidden sm:inline">{current?.nativeName ?? locale.toUpperCase()}</span>

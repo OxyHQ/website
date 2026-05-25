@@ -6,7 +6,7 @@ import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import PageSection from '../components/layout/PageSection'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import { useCurrentLocale } from '../contexts/LocaleContext'
+import { useCurrentLocale, useTranslation } from '../lib/i18n'
 import { loadCompanyPage } from '../content/company-loader'
 import { mdxContentComponents } from '../content/_components'
 
@@ -20,6 +20,7 @@ import { mdxContentComponents } from '../content/_components'
 
 export default function ManifestoPage() {
   const locale = useCurrentLocale()
+  const { t } = useTranslation()
   const entry = loadCompanyPage('manifesto', locale)
 
   if (!entry) {
@@ -66,10 +67,10 @@ export default function ManifestoPage() {
             </p>
             <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
               <Button variant="primary" size="md" responsive href="/partners">
-                Partner with us
+                {t('companyPages.partnerWithUs')}
               </Button>
               <Button variant="outline" size="md" responsive href="/company/careers">
-                Join the team
+                {t('companyPages.joinTheTeam')}
               </Button>
             </div>
           </div>

@@ -8,7 +8,7 @@ import Button from '../components/ui/Button'
 import PageSection from '../components/layout/PageSection'
 import SectionHeading from '../components/layout/SectionHeading'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import { useCurrentLocale } from '../contexts/LocaleContext'
+import { useCurrentLocale } from '../lib/i18n'
 import { loadCourses, ACADEMY_COURSES, type CourseWithLessons } from '../content/academy-loader'
 
 /* ──────────────────────────────────────────────

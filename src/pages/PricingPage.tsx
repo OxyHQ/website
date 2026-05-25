@@ -7,15 +7,17 @@ import PricingHeroSection from '../components/pricing/PricingHeroSection'
 import PricingStickyTable from '../components/pricing/PricingStickyTable'
 import PricingCompareSection from '../components/pricing/PricingCompareSection'
 import PricingFaqSection from '../components/pricing/PricingFaqSection'
+import { useTranslation } from '../lib/i18n'
 
 export default function PricingPage() {
   const [isAnnual, setIsAnnual] = useState(true)
+  const { t } = useTranslation()
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-primary-background">
       <SEO
-        title="Pricing"
-        description="Pricing for the Oxy ecosystem. Most Oxy apps are free and open source; paid plans add hosting, support, and team features. Start free, scale as you grow."
+        title={t('pricing.seoTitle')}
+        description={t('pricing.seoDescription')}
         canonicalPath="/pricing"
       />
       <StructuredData data={{

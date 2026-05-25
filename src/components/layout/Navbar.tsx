@@ -9,6 +9,7 @@ import {
 } from '../../data/content'
 import { useNavigation, useSiteSettings } from '../../api/hooks'
 import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '../../api/scrollStore'
+import { useTranslation } from '../../lib/i18n'
 import NavDropdownItem from '../ui/NavDropdownItem'
 import Button from '../ui/Button'
 import ThemeToggle from '../ui/ThemeToggle'
@@ -158,6 +159,7 @@ export default function Navbar({
 }: NavbarProps = {}) {
   const { user, isAuthenticated, signIn } = useAuth()
   const accountPanel = useAccountPanel()
+  const { t } = useTranslation()
   // Sub-brand mode: customDropdowns bypasses the CMS queries. The nav renders
   // the supplied dropdowns + flat links through the SAME pipeline as the CMS
   // path, so measurement, hover animation, and mobile accordion are identical.
@@ -329,7 +331,7 @@ export default function Navbar({
                 to={banner?.href ?? '/inbox'}
               >
                 <span className="attio-group-hover-underline relative truncate text-[13px]/5">
-                  {banner?.text ?? 'Alia. Think better, together.'}
+                  {banner?.text ?? t('navbar.bannerDefault')}
                 </span>
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50">
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
@@ -337,7 +339,7 @@ export default function Navbar({
               </Link>
               <button
                 className="inline-flex cursor-pointer items-center justify-center text-nowrap border text-base transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default size-8 rounded-full button-outline !bg-transparent !border-transparent dark absolute top-1/2 right-0 -translate-y-1/2 hover:!border-muted-foreground"
-                aria-label="Dismiss banner"
+                aria-label={t('common.dismissBanner')}
                 onClick={() => setBannerDismissed(true)}
               >
                 <svg className="text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" fill="none">
@@ -384,7 +386,7 @@ export default function Navbar({
               <Link
                 to={brand?.homeHref ?? '/'}
                 className="-mx-1.5 rounded-xl px-1.5"
-                aria-label={brand?.ariaLabel ?? 'Oxy homepage'}
+                aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               >
                 {brand?.logo ?? <Logo className="h-6" />}
@@ -446,7 +448,7 @@ export default function Navbar({
               )}
               <button
                 className={`inline-flex h-9 w-9 items-center justify-center rounded-full ${isTransparent ? 'text-white' : 'text-muted-foreground'}`}
-                aria-label="Open menu"
+                aria-label={mobileOpen ? t('common.closeMenu') : t('common.openMenu')}
                 aria-expanded={mobileOpen}
                 onClick={() => setMobileOpen(!mobileOpen)}
               >
@@ -490,9 +492,9 @@ export default function Navbar({
                       onClick={() => signIn()}
                       className={isTransparent ? '!bg-white/10 !border-transparent !text-white hover:!bg-white/20' : ''}
                     >
-                      Sign in
+                      {t('common.signIn')}
                     </Button>
-                    <Button variant="primary" size="sm" onClick={() => signIn()}>Start for free</Button>
+                    <Button variant="primary" size="sm" onClick={() => signIn()}>{t('common.startForFree')}</Button>
                   </>
                 )
               )}
@@ -624,12 +626,12 @@ export default function Navbar({
               <hr className="my-2 border-border" />
               {!hideLocalePicker && (
                 <div className="flex items-center justify-between px-4 py-2">
-                  <span className="text-sm text-muted-foreground">Language</span>
+                  <span className="text-sm text-muted-foreground">{t('common.language')}</span>
                   <LocalePicker />
                 </div>
               )}
               <div className="flex items-center justify-between px-4 py-2">
-                <span className="text-sm text-muted-foreground">Theme</span>
+                <span className="text-sm text-muted-foreground">{t('common.theme')}</span>
                 <ThemeToggle />
               </div>
               {ctaButtons ? (
@@ -640,8 +642,8 @@ export default function Navbar({
                 !hideAuth && !isAuthenticated && (
                   <div className="flex flex-col gap-2 px-4 pt-2">
                     {rightActions && <div className="flex flex-col gap-2">{rightActions}</div>}
-                    <Button variant="outline" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Sign in</Button>
-                    <Button variant="primary" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">Start for free</Button>
+                    <Button variant="outline" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">{t('common.signIn')}</Button>
+                    <Button variant="primary" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">{t('common.startForFree')}</Button>
                   </div>
                 )
               )}

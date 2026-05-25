@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react'
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { apiFetch } from './client'
-import { useCurrentLocale } from '../contexts/LocaleContext'
+import { useCurrentLocale } from '../lib/i18n'
 import {
   subscribeFairCoinStats,
   getFairCoinStatsSnapshot,

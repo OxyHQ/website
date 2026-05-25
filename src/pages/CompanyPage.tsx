@@ -6,15 +6,11 @@ import Button from '../components/ui/Button'
 import AIResearchSection from '../components/ai/AIResearchSection'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useNewsroomPosts, useJobs, useTeamMembers, usePage, type PageSection } from '../api/hooks'
+import { useTranslation } from '../lib/i18n'
 import {
   companyHero, companyStats, companyCulture, culturePerks,
   companyValues, companyFAQ, companyLinks,
 } from '../data/company'
-
-// Fallback copy for the Values section — used when the CMS `pages/company`
-// document hasn't been populated with a matching section.
-const DEFAULT_VALUES_HEADING = 'Our values'
-const DEFAULT_VALUES_DESCRIPTION = 'The principles that guide everything we do — from the features we ship to how we show up every day.'
 
 function sectionHeading(sections: PageSection[], type: string, fallback: string): string {
   return sections.find(s => s.type === type)?.heading || fallback
@@ -82,6 +78,7 @@ function FAQItem({ question, answer, isOpen, onToggle }: { question: string; ans
 }
 
 export default function CompanyPage() {
+  const { t } = useTranslation()
   const { data: newsData } = useNewsroomPosts({ featured: true, limit: 3 })
   const articles = newsData?.posts ?? []
   const { data: jobs = [] } = useJobs()
@@ -91,14 +88,14 @@ export default function CompanyPage() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null)
 
   const sections = pageData?.sections ?? []
-  const valuesHeading = sectionHeading(sections, 'values', DEFAULT_VALUES_HEADING)
-  const valuesDescription = sectionSubheading(sections, 'values', DEFAULT_VALUES_DESCRIPTION)
+  const valuesHeading = sectionHeading(sections, 'values', t('company.valuesHeading'))
+  const valuesDescription = sectionSubheading(sections, 'values', t('company.valuesDescription'))
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
-        title="Company"
-        description="We build ethical technology that solves real problems, giving people the tools to shape their own futures. Learn about our mission, values, culture, and team."
+        title={t('company.seoTitle')}
+        description={t('company.seoDescription')}
         canonicalPath="/company"
       />
       <Navbar />
@@ -122,10 +119,10 @@ export default function CompanyPage() {
                   </p>
                   <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
                     <Button variant="primary" size="md" responsive href="/initiative">
-                      Our initiative
+                      {t('company.ourInitiative')}
                     </Button>
                     <Button variant="outline" size="md" responsive href="/company/careers">
-                      View careers
+                      {t('company.viewCareers')}
                     </Button>
                   </div>
                 </div>
@@ -246,13 +243,13 @@ export default function CompanyPage() {
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-start">
               <div className="col-[2/-2] flex w-full items-end justify-between">
                 <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
-                  <h2 className="text-pretty inline">Team.</h2>{' '}
+                  <h2 className="text-pretty inline">{t('company.teamHeading')}.</h2>{' '}
                   <p className="inline text-pretty font-medium text-muted-foreground">
-                    Meet some of the people building Oxy.
+                    {t('company.teamSubheading')}
                   </p>
                 </div>
                 <Button variant="outline" size="sm" href="/company/team">
-                  See all
+                  {t('company.teamSeeAll')}
                 </Button>
               </div>
             </header>

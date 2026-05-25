@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useFooter } from '../../api/hooks'
+import { useTranslation } from '../../lib/i18n'
 import Logo from '../ui/Logo'
 import { usePageChromeStore } from '../../stores/pageChromeStore'
 import { type FooterLink } from '../../data/content'
@@ -25,8 +26,15 @@ function ExternalArrow() {
 
 function NewBadge() {
   return (
+    <NewBadgeInner />
+  )
+}
+
+function NewBadgeInner() {
+  const { t } = useTranslation()
+  return (
     <div className="ml-1.5 rounded-[10px] bg-primary px-1.5 py-1 font-normal text-[10px] text-primary-foreground leading-[7px] tracking-normal">
-      New
+      {t('common.new')}
     </div>
   )
 }
@@ -59,10 +67,11 @@ interface SocialLink {
   href: string
 }
 
-const DEFAULT_SOCIAL_LINKS: readonly SocialLink[] = [
-  { label: 'LinkedIn', icon: LinkedInIcon, href: 'https://www.linkedin.com/company/oxyhq/' },
-  { label: 'X', icon: XIcon, href: 'https://x.com/oxyhqinc' },
-]
+// Brand social URLs are constant; labels are translated via `t()` at render time.
+const SOCIAL_URLS = {
+  linkedIn: 'https://www.linkedin.com/company/oxyhq/',
+  x: 'https://x.com/oxyhqinc',
+} as const
 
 interface LegalLink {
   label: string
@@ -72,21 +81,6 @@ interface LegalLink {
   href?: string
   isExternal?: boolean
 }
-
-const DEFAULT_LEGAL_LINKS: readonly LegalLink[] = [
-  { label: 'Legal', to: '/legal' },
-  { label: 'Privacy Policy', to: '/legal/privacy' },
-  { label: 'Cookie Policy', to: '/legal/cookies' },
-  { label: 'Accessibility', to: '/legal/accessibility' },
-  { label: 'Terms & Conditions', to: '/legal/terms' },
-  { label: 'LLMs', to: '/legal/llms' },
-  { label: 'Settings', to: '/settings' },
-]
-
-const DEFAULT_DESCRIPTION =
-  'Oxy is an open-source technology ecosystem building ethical, privacy-first tools that serve humanity. From social networking to AI, messaging to housing — technology with purpose.'
-
-const DEFAULT_COPYRIGHT = 'Made with 💚 in the 🌎 by Oxy.'
 
 /* ─── Footer link (handles internal/external, badge, arrow) ─── */
 
@@ -153,17 +147,31 @@ export default function Footer({
   legalLinks,
   copyright,
 }: FooterProps = {}) {
+  const { t } = useTranslation()
   const useCmsColumns = columns === undefined
   const { data: footerData } = useFooter()
   const footerColumns: readonly { title: string; links: readonly FooterLink[] }[] = useCmsColumns
     ? footerData?.columns ?? []
     : columns ?? []
-  const social = socialLinks ?? DEFAULT_SOCIAL_LINKS
-  const legal = legalLinks ?? DEFAULT_LEGAL_LINKS
-  const copyrightText = copyright ?? DEFAULT_COPYRIGHT
-  const description = brand?.description ?? DEFAULT_DESCRIPTION
+  const defaultSocial: readonly SocialLink[] = [
+    { label: t('footer.socialLinkedIn'), icon: LinkedInIcon, href: SOCIAL_URLS.linkedIn },
+    { label: t('footer.socialX'), icon: XIcon, href: SOCIAL_URLS.x },
+  ]
+  const defaultLegal: readonly LegalLink[] = [
+    { label: t('footer.legal'), to: '/legal' },
+    { label: t('footer.privacyPolicy'), to: '/legal/privacy' },
+    { label: t('footer.cookiePolicy'), to: '/legal/cookies' },
+    { label: t('footer.accessibility'), to: '/legal/accessibility' },
+    { label: t('footer.termsAndConditions'), to: '/legal/terms' },
+    { label: t('footer.llms'), to: '/legal/llms' },
+    { label: t('footer.settings'), to: '/settings' },
+  ]
+  const social = socialLinks ?? defaultSocial
+  const legal = legalLinks ?? defaultLegal
+  const copyrightText = copyright ?? t('footer.copyright')
+  const description = brand?.description ?? t('footer.description')
   const homeHref = brand?.homeHref ?? '/'
-  const ariaLabel = brand?.ariaLabel ?? 'Oxy homepage'
+  const ariaLabel = brand?.ariaLabel ?? t('navbar.homepage')
   const setFooterVisible = usePageChromeStore((s) => s.setFooterVisible)
 
   return (

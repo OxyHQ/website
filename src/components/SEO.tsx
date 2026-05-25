@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async'
+import { useLocaleContext, SUPPORTED_LOCALES, DEFAULT_LOCALE, type Locale } from '../lib/i18n'
 
 interface SEOProps {
   title: string
@@ -15,6 +16,33 @@ interface SEOProps {
 const SITE_URL = 'https://oxy.so'
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.png`
 
+/**
+ * BCP-47 og:locale codes for our supported 2-letter locales. og:locale wants
+ * a `language_TERRITORY` shape; we pick the most common territory variant for
+ * each so social embeds render in the right script/typography.
+ */
+const OG_LOCALES: Record<Locale, string> = {
+  en: 'en_US',
+  es: 'es_ES',
+  fr: 'fr_FR',
+  de: 'de_DE',
+  it: 'it_IT',
+  pt: 'pt_PT',
+  ca: 'ca_ES',
+  ja: 'ja_JP',
+  ko: 'ko_KR',
+  zh: 'zh_CN',
+  ar: 'ar_SA',
+}
+
+/** Build the canonical URL for a given path + locale. The default locale
+ *  surface lives at the bare URL; non-default locales live under `/{locale}`. */
+function buildLocalizedUrl(canonicalPath: string, locale: Locale): string {
+  const cleanPath = canonicalPath === '/' ? '' : canonicalPath
+  if (locale === DEFAULT_LOCALE) return `${SITE_URL}${canonicalPath}`
+  return `${SITE_URL}/${locale}${cleanPath}`
+}
+
 export default function SEO({
   title,
   description,
@@ -26,16 +54,33 @@ export default function SEO({
   modifiedTime,
   author,
 }: SEOProps) {
+  const { locale, locales } = useLocaleContext()
   const fullTitle = canonicalPath === '/' ? title : `${title} | Oxy`
-  const canonicalUrl = `${SITE_URL}${canonicalPath}`
+  const canonicalUrl = buildLocalizedUrl(canonicalPath, locale)
   const image = ogImage ?? DEFAULT_OG_IMAGE
+  // Restrict hreflang output to locales the API exposes as enabled, falling
+  // back to the static SUPPORTED_LOCALES list if the picker hasn't hydrated.
+  const enabledCodes: readonly Locale[] =
+    locales.length > 0 ? locales.map((l) => l.code) : SUPPORTED_LOCALES
 
   return (
     <Helmet>
+      <html lang={locale} />
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonicalUrl} />
       <meta name="theme-color" content="#0a0a0b" />
+
+      {/* hreflang — one entry per enabled locale plus x-default → English. */}
+      {enabledCodes.map((code) => (
+        <link
+          key={`hreflang-${code}`}
+          rel="alternate"
+          hrefLang={code}
+          href={buildLocalizedUrl(canonicalPath, code)}
+        />
+      ))}
+      <link rel="alternate" hrefLang="x-default" href={buildLocalizedUrl(canonicalPath, DEFAULT_LOCALE)} />
 
       {/* Open Graph */}
       <meta property="og:title" content={fullTitle} />
@@ -44,7 +89,12 @@ export default function SEO({
       <meta property="og:image" content={image} />
       <meta property="og:type" content={ogType} />
       <meta property="og:site_name" content="Oxy" />
-      <meta property="og:locale" content="en_US" />
+      <meta property="og:locale" content={OG_LOCALES[locale]} />
+      {enabledCodes
+        .filter((code) => code !== locale)
+        .map((code) => (
+          <meta key={`og-alt-${code}`} property="og:locale:alternate" content={OG_LOCALES[code]} />
+        ))}
 
       {publishedTime && <meta property="article:published_time" content={publishedTime} />}
       {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
