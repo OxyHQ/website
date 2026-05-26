@@ -6,7 +6,12 @@
  * opens the hidden `/developers/docs/_thumbnail/<Name>` route in headless
  * Chromium, takes a 400×300 screenshot at 2× DPR for both light and dark
  * themes, and writes the result to
- * `src/content/_synced/bloom/<version>/thumbnails/<Name>.{light,dark}.png`.
+ * `src/content/bloom-thumbnails/<version>/<Name>.{light,dark}.png`.
+ *
+ * Why a sibling directory and not `_synced/bloom/<version>/thumbnails/`?
+ * `bun scripts/sync-docs.ts` wipes `_synced/` on every run, so anything
+ * written there would not survive a build. `bloom-thumbnails/` lives next
+ * to `bloom-demos/` and is consumed by `BloomHubGrid` via a Vite glob.
  *
  * Run locally only. CI consumes the committed PNGs.
  *
@@ -200,10 +205,8 @@ async function main(): Promise<void> {
     WEBSITE_ROOT,
     'src',
     'content',
-    '_synced',
-    'bloom',
+    'bloom-thumbnails',
     bloom.latestVersion,
-    'thumbnails',
   )
   await mkdir(outDir, { recursive: true })
 

@@ -8,10 +8,12 @@ import { getPackage, getVersion, resolveVersion } from '../../content/docs-loade
  * link to the component's API reference page.
  *
  * Thumbnails live under
- * `src/content/_synced/bloom/<version>/thumbnails/<Name>.{light,dark}.png`
- * and are produced by `scripts/render-bloom-thumbnails.ts`. The grid handles
- * missing thumbnails by showing a placeholder card so a partially-generated
- * batch still renders a usable hub.
+ * `src/content/bloom-thumbnails/<version>/<Name>.{light,dark}.png` and are
+ * produced by `scripts/render-bloom-thumbnails.ts`. They sit OUTSIDE
+ * `_synced/` (which `sync-docs.ts` wipes on every run) so they survive
+ * across builds and can be committed. The grid handles missing thumbnails
+ * by showing a placeholder card so a partially-generated batch still
+ * renders a usable hub.
  */
 
 // Eager glob — these are PNGs and they're small (400×300 @ 2× DPR ≈ 30-80 KB).
@@ -19,7 +21,7 @@ import { getPackage, getVersion, resolveVersion } from '../../content/docs-loade
 // total payload only matters once the hub mounts, and the network only fetches
 // the variant matching `prefers-color-scheme`.
 const thumbnails = import.meta.glob<string>(
-  '../../content/_synced/bloom/*/thumbnails/*.png',
+  '../../content/bloom-thumbnails/*/*.png',
   { eager: true, query: '?url', import: 'default' },
 )
 
@@ -37,8 +39,8 @@ function buildVersionMap(): ReadonlyMap<string, VersionThumbnails> {
   const out = new Map<string, Map<string, ThumbnailEntry>>()
   for (const [path, url] of Object.entries(thumbnails)) {
     // Path shape:
-    //   ../../content/_synced/bloom/<version>/thumbnails/<Name>.<variant>.png
-    const match = path.match(/\/bloom\/([^/]+)\/thumbnails\/([^/]+)\.(light|dark)\.png$/)
+    //   ../../content/bloom-thumbnails/<version>/<Name>.<variant>.png
+    const match = path.match(/\/bloom-thumbnails\/([^/]+)\/([^/]+)\.(light|dark)\.png$/)
     if (!match) continue
     const [, version, name, variant] = match
     if (!version || !name || !variant) continue
