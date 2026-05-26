@@ -34,6 +34,7 @@ const categoryOrder: Array<SyncedPackage['category']> = ['ui-library', 'sdk', 'a
 /* ------------------------------ Helpers ------------------------------- */
 
 interface PackageRoute {
+  kind: 'page'
   pkg: SyncedPackage
   version: SyncedVersion
   slug: string
@@ -374,18 +375,37 @@ function buildSidebar(activePkg?: SyncedPackage, activeVersion?: SyncedVersion):
  * the path from the root to a leaf matching `activePath`. Used to seed
  * the initial expand state so the active page is always visible without
  * forcing every group open.
+ *
+ * When a package row is itself the active path (i.e. user is on the
+ * package's overview / landing page rather than a deep page), the whole
+ * sub-tree of that package is expanded — every descendant group key is
+ * added — so users see the full table of contents on first paint. For
+ * deep leaves only the ancestor groups are expanded.
  */
 function collectActivePath(nodes: SidebarNode[], activePath: string): Set<string> {
   const out = new Set<string>()
+  function addAllGroupKeys(children: SidebarNode[]): void {
+    for (const child of children) {
+      if (child.kind === 'leaf') continue
+      out.add(child.key)
+      addAllGroupKeys(child.children)
+    }
+  }
   function visit(node: SidebarNode): boolean {
     if (node.kind === 'leaf') {
       return node.href === activePath
     }
-    let containsActive = node.kind === 'package' && node.href === activePath
+    const selfMatches = node.kind === 'package' && node.href === activePath
+    let containsActive = selfMatches
     for (const child of node.children) {
       if (visit(child)) containsActive = true
     }
     if (containsActive) out.add(node.key)
+    // If the package row itself is the active path (overview landing),
+    // expand every descendant group so the full TOC is visible. This
+    // doesn't apply to inner groups — we want deep-page navigation to
+    // only expand the ancestor path, not blow open every sibling group.
+    if (selfMatches) addAllGroupKeys(node.children)
     return containsActive
   }
   for (const node of nodes) visit(node)
@@ -866,9 +886,13 @@ interface OpenApiSpec {
   tags?: OpenApiTag[]
 }
 
-/** HTTP methods rendered as operations in the API sidebar. */
+/**
+ * HTTP methods enumerated when counting operations per OpenAPI tag. The
+ * sidebar only needs the count — full per-operation rendering is owned by
+ * Scalar's in-page navigation, so we don't surface a discriminated method
+ * type beyond this list.
+ */
 const HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'] as const
-type HttpMethod = (typeof HTTP_METHODS)[number]
 
 // Eager glob: every synced OpenAPI doc gets compiled into the SPA chunk so
 // version switches don't trigger a network round-trip.
@@ -918,7 +942,7 @@ function ApiBody({ version }: { version: string }) {
   return (
     <div className="-mx-6 lg:-mx-12">
       <Suspense fallback={<div className="text-sm text-muted-foreground">Loading…</div>}>
-        <ApiReferenceReact configuration={{ spec: { content: spec } }} />
+        <ApiReferenceReact configuration={{ content: spec }} />
       </Suspense>
     </div>
   )
@@ -926,27 +950,21 @@ function ApiBody({ version }: { version: string }) {
 
 /* -------------------------- API sidebar ------------------------------ */
 
-interface ApiOperationEntry {
-  method: HttpMethod
-  path: string
-  /** Tag used to group this operation. Falls back to `'Misc'` when absent. */
-  tag: string
-  summary?: string
-  /**
-   * Slugified anchor that matches the IDs Scalar generates for operations.
-   * Format: `tag/{tag-slug}/{METHOD}{path}`. See
-   * `node_modules/@scalar/workspace-store/dist/navigation/get-navigation-options.js`.
-   */
-  anchor: string
-}
-
 interface ApiTagGroup {
   /** Tag display name. */
   name: string
-  /** Slugified anchor for the tag header itself. */
+  /**
+   * Slugified anchor for the tag header. Format: `tag/{slug}` — matches
+   * the IDs Scalar emits on its tag section elements. Per-operation deep
+   * links are intentionally omitted from this sidebar because Scalar's
+   * operation IDs vary by document name / multi-document mode and would
+   * produce dead anchors. Scalar's own in-page sidebar handles per-op
+   * navigation; ours just gives a fast tag-level jump table.
+   */
   anchor: string
   description?: string
-  operations: ApiOperationEntry[]
+  /** Operation count, displayed as a badge next to the tag name. */
+  operationCount: number
 }
 
 /**
@@ -970,23 +988,29 @@ function slugifyTag(value: string): string {
 /**
  * Build the OpenAPI-driven sidebar model from a parsed spec. Operations
  * are grouped by `op.tags[0]`; tags declared in the spec's top-level
- * `tags` array preserve their declared order, and any extra tags
- * referenced by operations but not declared come last alphabetically.
+ * `tags` array preserve their declared order. Empty groups (declared but
+ * unreferenced) are dropped from the result.
  */
 function buildApiSidebar(spec: OpenApiSpec): ApiTagGroup[] {
-  const groups = new Map<string, ApiTagGroup>()
+  interface MutableGroup {
+    name: string
+    anchor: string
+    description?: string
+    count: number
+  }
+  const groups = new Map<string, MutableGroup>()
 
-  function ensureGroup(name: string, description?: string): ApiTagGroup {
+  function ensureGroup(name: string, description?: string): MutableGroup {
     const existing = groups.get(name)
     if (existing) {
       if (!existing.description && description) existing.description = description
       return existing
     }
-    const created: ApiTagGroup = {
+    const created: MutableGroup = {
       name,
       anchor: `tag/${slugifyTag(name)}`,
       description,
-      operations: [],
+      count: 0,
     }
     groups.set(name, created)
     return created
@@ -1003,57 +1027,33 @@ function buildApiSidebar(spec: OpenApiSpec): ApiTagGroup[] {
   }
 
   const paths = spec.paths ?? {}
-  for (const [path, item] of Object.entries(paths)) {
+  for (const item of Object.values(paths)) {
     for (const method of HTTP_METHODS) {
       const op = item[method]
       if (!op) continue
       const tagName = op.tags?.[0] ?? 'Misc'
       const group = ensureGroup(tagName)
-      const tagSlug = slugifyTag(tagName)
-      group.operations.push({
-        method,
-        path,
-        tag: tagName,
-        summary: op.summary,
-        anchor: `tag/${tagSlug}/${method.toUpperCase()}${path}`,
-      })
+      group.count += 1
     }
   }
 
-  // Drop empty tag groups (declared in `tags` but referenced by no
-  // operation) and sort operations inside each group by path so the
-  // sidebar reads in stable order regardless of `paths` key iteration.
   const result: ApiTagGroup[] = []
   for (const group of groups.values()) {
-    if (group.operations.length === 0) continue
-    group.operations.sort((a, b) => {
-      if (a.path === b.path) return a.method.localeCompare(b.method)
-      return a.path.localeCompare(b.path)
+    if (group.count === 0) continue
+    result.push({
+      name: group.name,
+      anchor: group.anchor,
+      description: group.description,
+      operationCount: group.count,
     })
-    result.push(group)
   }
   return result
-}
-
-/**
- * Tailwind text-color classes for each HTTP method label in the sidebar.
- * Listed inline so the JIT scanner picks them up at build time.
- */
-const httpMethodColor: Record<HttpMethod, string> = {
-  get: 'text-emerald-500',
-  post: 'text-sky-500',
-  put: 'text-amber-500',
-  patch: 'text-amber-500',
-  delete: 'text-rose-500',
-  head: 'text-muted-foreground',
-  options: 'text-muted-foreground',
-  trace: 'text-muted-foreground',
 }
 
 function ApiSidebar({ version }: { version: string }) {
   const location = useLocation()
   // Matches the existing pattern at `ApiBody` — cache the parsed spec per
-  // version so flipping between operations doesn't re-parse it.
+  // version so flipping between tags doesn't re-parse it.
   const specQuery = useQuery({
     queryKey: ['api-sidebar', version],
     queryFn: async () => {
@@ -1066,34 +1066,6 @@ function ApiSidebar({ version }: { version: string }) {
   })
 
   const groups = specQuery.data ?? null
-
-  // Default-expand only the active tag (matched against the URL hash). If no
-  // hash is present, expand the first group so the sidebar doesn't open
-  // completely closed.
-  const initialExpanded = useMemo<Set<string>>(() => {
-    const out = new Set<string>()
-    if (!groups) return out
-    const hash = location.hash.replace(/^#/, '')
-    let matched = false
-    for (const group of groups) {
-      if (hash.startsWith(group.anchor)) {
-        out.add(group.name)
-        matched = true
-      }
-    }
-    if (!matched && groups[0]) out.add(groups[0].name)
-    return out
-  }, [groups, location.hash])
-  const [expanded, setExpanded] = useState<Set<string>>(initialExpanded)
-
-  function toggle(name: string) {
-    setExpanded((prev) => {
-      const next = new Set(prev)
-      if (next.has(name)) next.delete(name)
-      else next.add(name)
-      return next
-    })
-  }
 
   const activeHash = location.hash.replace(/^#/, '')
   const hubHref = '/developers/docs'
@@ -1117,64 +1089,31 @@ function ApiSidebar({ version }: { version: string }) {
             API reference unavailable: {specQuery.error.message}
           </div>
         ) : null}
-        {groups
-          ? groups.map((group) => {
-              const isOpen = expanded.has(group.name)
+        {groups ? (
+          <ul className="space-y-px">
+            {groups.map((group) => {
+              const href = `/developers/docs/api/${version}#${group.anchor}`
+              const isActive = activeHash === group.anchor
               return (
-                <div key={group.name} className="mt-2">
-                  <button
-                    type="button"
-                    onClick={() => toggle(group.name)}
-                    aria-expanded={isOpen}
-                    className="w-full mb-1 flex items-center justify-between pl-4 pr-3 py-1 rounded-lg hover:bg-surface group"
+                <li key={group.name}>
+                  <NavLink
+                    to={href}
+                    className={
+                      isActive
+                        ? 'group flex items-center justify-between pr-3 py-1.5 pl-4 cursor-pointer text-left rounded-xl w-full outline-offset-[-1px] bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]'
+                        : 'group flex items-center justify-between pr-3 py-1.5 pl-4 cursor-pointer text-left rounded-xl w-full outline-offset-[-1px] hover:bg-surface text-muted-foreground hover:text-foreground'
+                    }
                   >
-                    <span className="font-semibold text-foreground text-left">{group.name}</span>
-                    <span className="flex items-center gap-2 shrink-0">
-                      <span className="text-xs text-muted-foreground/70 tabular-nums">
-                        ({group.operations.length})
-                      </span>
-                      <ChevronDownIcon
-                        className={
-                          isOpen
-                            ? 'rotate-0 transition-transform text-muted-foreground group-hover:text-foreground'
-                            : '-rotate-90 transition-transform text-muted-foreground group-hover:text-foreground'
-                        }
-                      />
+                    <span className="font-semibold">{group.name}</span>
+                    <span className="text-xs text-muted-foreground/70 tabular-nums shrink-0">
+                      ({group.operationCount})
                     </span>
-                  </button>
-                  {isOpen ? (
-                    <ul className="space-y-px">
-                      {group.operations.map((op) => {
-                        const href = `/developers/docs/api/${version}#${op.anchor}`
-                        const isActive = activeHash === op.anchor
-                        return (
-                          <li key={`${op.method}:${op.path}`}>
-                            <NavLink
-                              to={href}
-                              className={
-                                isActive
-                                  ? 'group flex items-center gap-x-2 pr-3 py-1.5 pl-8 cursor-pointer text-left rounded-xl w-full outline-offset-[-1px] bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]'
-                                  : 'group flex items-center gap-x-2 pr-3 py-1.5 pl-8 cursor-pointer text-left rounded-xl w-full outline-offset-[-1px] hover:bg-surface text-muted-foreground hover:text-foreground'
-                              }
-                            >
-                              <span
-                                className={`shrink-0 text-[10px] font-semibold uppercase tracking-wide w-12 ${httpMethodColor[op.method]}`}
-                              >
-                                {op.method}
-                              </span>
-                              <span className="font-mono text-xs break-all [word-break:break-word]">
-                                {op.path}
-                              </span>
-                            </NavLink>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  ) : null}
-                </div>
+                  </NavLink>
+                </li>
               )
-            })
-          : null}
+            })}
+          </ul>
+        ) : null}
       </div>
     </aside>
   )
@@ -1216,7 +1155,26 @@ type DocsRouteParams = Record<string, string | undefined> & {
   '*'?: string
 }
 
-function resolveRoute(params: DocsRouteParams): PackageRoute | null | 'redirect' {
+/**
+ * Result of resolving a docs URL.
+ *
+ * - `PackageRoute` — a real page exists at the requested slug; render it.
+ * - `null` — the package itself doesn't exist; 404 to the docs hub.
+ * - `'redirect'` — package exists but the URL needs a bounce (missing version,
+ *   unknown slug, etc.). Renderer issues a `<Navigate>` to a canonical URL.
+ * - `'empty'` — package + version exist but the version has zero published
+ *   pages. Render a friendly placeholder inside the shell so the sidebar
+ *   still renders. Cannot be expressed as `'redirect'` because the canonical
+ *   URL for the package would be the same one we're already on — a redirect
+ *   to ourselves causes an infinite render loop.
+ */
+type ResolveResult =
+  | PackageRoute
+  | { kind: 'empty'; pkg: SyncedPackage; version: SyncedVersion }
+  | null
+  | 'redirect'
+
+function resolveRoute(params: DocsRouteParams): ResolveResult {
   const shortName = params.package ?? ''
   if (!shortName) return null
   const pkg = getPackage(shortName)
@@ -1234,13 +1192,15 @@ function resolveRoute(params: DocsRouteParams): PackageRoute | null | 'redirect'
     const stitchedSlug = [requestedVersion, splat].filter(Boolean).join('/')
     const version = resolveVersion(pkg)
     if (!version) return null
+    // Zero-page version — render the empty placeholder regardless of slug.
+    if (version.pages.length === 0) return { kind: 'empty', pkg, version }
     const page = getPage(version, stitchedSlug)
-    if (page) return { pkg, version, slug: stitchedSlug }
+    if (page) return { kind: 'page', pkg, version, slug: stitchedSlug }
     // No matching slug — if nothing was requested, fall through to the
     // index page; otherwise bounce to the package root.
     if (!stitchedSlug) {
       const index = getPage(version, '')
-      if (index) return { pkg, version, slug: '' }
+      if (index) return { kind: 'page', pkg, version, slug: '' }
     }
     return 'redirect'
   }
@@ -1249,13 +1209,16 @@ function resolveRoute(params: DocsRouteParams): PackageRoute | null | 'redirect'
   if (!requestedVersion) return 'redirect'
   const version = getVersion(pkg, requestedVersion)
   if (!version) return 'redirect'
+  // Zero-page version — render the empty placeholder regardless of slug.
+  // A redirect would loop because the canonical URL has no slug either.
+  if (version.pages.length === 0) return { kind: 'empty', pkg, version }
   const pageExists = getPage(version, splat)
-  if (pageExists) return { pkg, version, slug: splat }
+  if (pageExists) return { kind: 'page', pkg, version, slug: splat }
   // No slug requested → render the package's first page as the overview.
   // Without this the route would redirect to itself and loop forever.
   if (!splat) {
     const firstPage = version.pages[0]
-    if (firstPage) return { pkg, version, slug: firstPage.slug }
+    if (firstPage) return { kind: 'page', pkg, version, slug: firstPage.slug }
   }
   return 'redirect'
 }
@@ -1278,11 +1241,11 @@ export default function DocsPage() {
         sidebar={<ApiSidebar version={version} />}
         eyebrow="REST API"
         title="API Reference"
-        subtitle="Browse the OpenAPI-rendered reference for the Oxy platform REST API."
         pkg={apiPkg}
         currentVersion={version}
         slug=""
         activePkg={apiPkg ?? undefined}
+        hideHeader
       >
         <ApiBody version={version} />
       </DocsShell>
@@ -1301,6 +1264,31 @@ export default function DocsPage() {
       ? buildDocsHref(fallbackPkg, fallbackPkg.latestVersion, '')
       : '/developers/docs'
     return <Navigate to={dest} replace />
+  }
+  if (resolved.kind === 'empty') {
+    // Package + version exist but no docs have been published yet. Render
+    // the shell with a friendly placeholder so the sidebar (and active
+    // package highlight) still appears. Slug intentionally left blank so
+    // the package row matches `activePath === node.href` and highlights.
+    const { pkg, version } = resolved
+    const sections = buildSidebar(pkg, version)
+    return (
+      <DocsShell
+        sections={sections}
+        eyebrow={pkg.displayName}
+        title={`${pkg.displayName} docs`}
+        pkg={pkg}
+        currentVersion={version.version}
+        slug=""
+        activePkg={pkg}
+      >
+        <div className="not-prose rounded-2xl border border-border bg-surface p-6">
+          <p className="text-sm text-muted-foreground">
+            Documentation for this version isn't published yet. Check back soon.
+          </p>
+        </div>
+      </DocsShell>
+    )
   }
 
   const { pkg, version, slug } = resolved
@@ -1347,6 +1335,13 @@ interface DocsShellProps {
   currentVersion?: string
   slug?: string
   activePkg?: SyncedPackage
+  /**
+   * Suppress the shell's eyebrow/title/subtitle header. Used by the REST
+   * API route — Scalar renders its own H1 ("Oxy REST API") at the top of
+   * the content area, so the shell's "API Reference" H1 would be a
+   * duplicate.
+   */
+  hideHeader?: boolean
   children: React.ReactNode
 }
 
@@ -1360,6 +1355,7 @@ function DocsShell({
   currentVersion,
   slug,
   activePkg,
+  hideHeader,
   children,
 }: DocsShellProps) {
   // The version selector only makes sense for packages that opted into
@@ -1390,25 +1386,31 @@ function DocsShell({
             ) : null}
           </div>
 
-          <header className="relative leading-none">
-            <div className="mt-0.5 space-y-2.5">
-              <div className="h-5 text-primary text-sm font-semibold">{eyebrow}</div>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center relative gap-2 min-w-0">
-                <h1 className="text-2xl sm:text-3xl text-foreground tracking-tight [overflow-wrap:anywhere] font-bold break-all">
-                  {title}
-                </h1>
-                <CopyPageMenu />
+          {hideHeader ? null : (
+            <header className="relative leading-none">
+              <div className="mt-0.5 space-y-2.5">
+                <div className="h-5 text-primary text-sm font-semibold">{eyebrow}</div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center relative gap-2 min-w-0">
+                  <h1 className="text-2xl sm:text-3xl text-foreground tracking-tight [overflow-wrap:anywhere] font-bold break-all">
+                    {title}
+                  </h1>
+                  <CopyPageMenu />
+                </div>
               </div>
-            </div>
-            {subtitle ? (
-              <div className="mt-2 text-lg text-muted-foreground">
-                <p>{subtitle}</p>
-              </div>
-            ) : null}
-          </header>
+              {subtitle ? (
+                <div className="mt-2 text-lg text-muted-foreground">
+                  <p>{subtitle}</p>
+                </div>
+              ) : null}
+            </header>
+          )}
 
           <div
-            className="relative mt-8 mb-14 [contain:inline-size] isolate max-w-3xl prose prose-neutral dark:prose-invert text-foreground"
+            className={
+              hideHeader
+                ? 'relative mb-14 [contain:inline-size] isolate prose prose-neutral dark:prose-invert text-foreground'
+                : 'relative mt-8 mb-14 [contain:inline-size] isolate max-w-3xl prose prose-neutral dark:prose-invert text-foreground'
+            }
             data-docs-content
           >
             {pkg && currentVersion ? (
