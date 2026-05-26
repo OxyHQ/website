@@ -1092,12 +1092,26 @@ function ApiSidebar({ version }: { version: string }) {
         {groups ? (
           <ul className="space-y-px">
             {groups.map((group) => {
-              const href = `/developers/docs/api/${version}#${group.anchor}`
+              const href = `#${group.anchor}`
               const isActive = activeHash === group.anchor
+              const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+                // Scalar IDs contain `/` and React Router intercepts <NavLink>
+                // clicks, so the browser's native hash-anchor scroll never
+                // fires. Drive scroll manually and update the hash.
+                event.preventDefault()
+                const target = document.getElementById(group.anchor)
+                if (target) {
+                  target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  if (location.hash !== `#${group.anchor}`) {
+                    window.history.replaceState(null, '', `${location.pathname}${location.search}#${group.anchor}`)
+                  }
+                }
+              }
               return (
                 <li key={group.name}>
-                  <NavLink
-                    to={href}
+                  <a
+                    href={href}
+                    onClick={onClick}
                     className={
                       isActive
                         ? 'group flex items-center justify-between pr-3 py-1.5 pl-4 cursor-pointer text-left rounded-xl w-full outline-offset-[-1px] bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]'
@@ -1108,7 +1122,7 @@ function ApiSidebar({ version }: { version: string }) {
                     <span className="text-xs text-muted-foreground/70 tabular-nums shrink-0">
                       ({group.operationCount})
                     </span>
-                  </NavLink>
+                  </a>
                 </li>
               )
             })}
