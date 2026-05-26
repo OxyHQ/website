@@ -132,7 +132,7 @@ export default function CareersHeroSection() {
             </p>
 
             <div className="mt-7 flex w-auto items-center gap-x-3 gap-y-4 max-lg:flex-col">
-              <Button variant="primary" size="md" responsive>
+              <Button variant="primary" size="md" responsive href="#open-positions">
                 Join the team
               </Button>
 

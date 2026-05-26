@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import Button from '../ui/Button'
 import { HorizontalLine, VerticalLine } from '../ui/GridDecoration'
-import { useJob } from '../../api/hooks'
+import { useJob, useJobs, type Job } from '../../api/hooks'
 import { type DescriptionBlock } from '../../data/careers'
 import { FEATURES } from '../../constants'
 import SEO from '../SEO'
@@ -176,7 +176,7 @@ function ApplicationForm() {
   )
 }
 
-function NotFoundView() {
+function NotFoundView({ relatedJobs }: { relatedJobs: Job[] }) {
   return (
     <article>
       <div className="grid grid-cols-12 py-20">
@@ -195,13 +195,72 @@ function NotFoundView() {
           </p>
         </div>
       </div>
+      <RelatedRoles jobs={relatedJobs} />
     </article>
+  )
+}
+
+interface RelatedRolesProps {
+  jobs: Job[]
+}
+
+function RelatedRoles({ jobs }: RelatedRolesProps) {
+  if (jobs.length === 0) return null
+  return (
+    <aside className="relative grid grid-cols-12 border-border border-t pt-16 pb-24">
+      <DashedLineV className="absolute col-[-2] max-lg:hidden" />
+      <div className="col-[2/-2] mb-8 flex items-baseline justify-between gap-4">
+        <h2 className="text-balance font-semibold text-heading-sm text-foreground">Other open roles.</h2>
+        <Link
+          to="/company/careers"
+          className="text-sm text-muted-foreground underline decoration-2 decoration-border underline-offset-2 transition-colors hover:text-foreground"
+        >
+          View all
+        </Link>
+      </div>
+      <ul className="col-[2/-2] grid gap-3 md:grid-cols-2">
+        {jobs.map((j) => (
+          <li key={j.slug}>
+            <Link
+              to={`/company/careers/${j.slug}`}
+              className="group relative flex flex-col gap-2 overflow-hidden rounded-2xl border border-border p-5 transition-colors duration-300 ease-in-out hover:border-input active:border-input"
+            >
+              <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-active:opacity-100" />
+              <div className="relative flex items-center justify-between gap-3">
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">{j.department}</p>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
+                  fill="none"
+                  className="shrink-0 text-muted-foreground transition-[translate,color] duration-300 ease-in-out group-hover:translate-x-0.5 group-hover:text-foreground"
+                >
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
+                </svg>
+              </div>
+              <h3 className="relative text-balance font-semibold text-base text-foreground">{j.title}</h3>
+              <p className="relative text-sm text-muted-foreground">{j.location}</p>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </aside>
   )
 }
 
 export default function CareerDetailContent() {
   const { slug } = useParams<{ slug: string }>()
   const { data: job, isPending } = useJob(slug ?? '')
+  const { data: allJobs } = useJobs()
+
+  const relatedJobs = useMemo(() => {
+    if (!allJobs || !slug) return []
+    const others = allJobs.filter((j) => j.slug !== slug)
+    if (!job) return others.slice(0, 4)
+    const sameDept = others.filter((j) => j.department === job.department)
+    const otherDept = others.filter((j) => j.department !== job.department)
+    return [...sameDept, ...otherDept].slice(0, 4)
+  }, [allJobs, slug, job])
 
   if (isPending) {
     return (
@@ -229,7 +288,7 @@ export default function CareerDetailContent() {
           canonicalPath={`/company/careers/${slug}`}
           noIndex
         />
-        <NotFoundView />
+        <NotFoundView relatedJobs={relatedJobs} />
       </>
     )
   }
@@ -376,6 +435,8 @@ export default function CareerDetailContent() {
           </div>
         </div>
       </div>
+
+      <RelatedRoles jobs={relatedJobs} />
     </article>
   )
 }

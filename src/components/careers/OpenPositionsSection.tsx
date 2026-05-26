@@ -22,10 +22,12 @@ function groupJobsByDepartment(jobs: Job[]): DepartmentGroup[] {
       deptMap.set(dept, { name: dept, id, jobs: [] })
     }
     if (!job.slug) continue
-    deptMap.get(dept)!.jobs.push({
+    const deptEntry = deptMap.get(dept)
+    if (!deptEntry) continue
+    deptEntry.jobs.push({
       title: job.title,
       location: job.location,
-      href: `/careers/${job.slug}`,
+      href: `/company/careers/${job.slug}`,
     })
   }
   return Array.from(deptMap.values())

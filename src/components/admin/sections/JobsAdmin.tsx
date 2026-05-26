@@ -246,7 +246,7 @@ export default function JobsAdmin() {
             </div>
             <div className="flex items-center gap-2">
               {j.slug && (
-                <a href={`/careers/${j.slug}`} target="_blank" rel="noopener noreferrer" className="rounded-md px-2 py-1 text-xs text-muted-foreground hover:text-foreground">View</a>
+                <a href={`/company/careers/${j.slug}`} target="_blank" rel="noopener noreferrer" className="rounded-md px-2 py-1 text-xs text-muted-foreground hover:text-foreground">View</a>
               )}
               {isDefault ? (
                 <>
