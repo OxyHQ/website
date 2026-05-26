@@ -1008,7 +1008,7 @@ function buildApiSidebar(spec: OpenApiSpec): ApiTagGroup[] {
     }
     const created: MutableGroup = {
       name,
-      anchor: `tag/${slugifyTag(name)}`,
+      anchor: `api-1/tag/${slugifyTag(name)}`,
       description,
       count: 0,
     }
