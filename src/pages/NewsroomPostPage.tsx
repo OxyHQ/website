@@ -165,7 +165,12 @@ export default function NewsroomPostPage() {
         {/* Like + social actions */}
         <div className="mx-auto mt-10 max-w-[720px] px-5 md:px-8 flex items-center gap-3">
           <LikeButton targetType="newsroom" targetId={post.slug} />
-          <DiscussOnMention title={post.title} url={`https://oxy.so/newsroom/${post.slug}`} />
+          <DiscussOnMention
+            title={post.title}
+            url={`https://oxy.so/newsroom/${post.slug}`}
+            hashtags={post.tags}
+            via="oxy"
+          />
         </div>
 
         {/* Comments */}
