@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "predev": "bun scripts/sync-docs.ts",
+    "predev": "bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts",
     "dev": "bun server/index.ts & vite",
     "dev:client": "vite",
-    "prebuild": "bun scripts/sync-docs.ts",
+    "prebuild": "bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts",
     "build": "tsc -b && vite build",
     "postbuild": "bun scripts/build-docs-search-index.ts && bun scripts/run-pagefind.ts",
     "lint": "eslint .",
@@ -17,7 +17,8 @@
     "start:server": "bun server/index.ts",
     "seed": "bun server/seed.ts",
     "mcp": "bun server/mcp.ts",
-    "sync-docs": "bun scripts/sync-docs.ts"
+    "sync-docs": "bun scripts/sync-docs.ts",
+    "sync-changelog": "bun scripts/sync-changelog.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1025.0",

@@ -1,0 +1,82 @@
+{
+  "generatedAt": "2026-05-26T09:26:00.345Z",
+  "repos": [
+    {
+      "owner": "OxyHQ",
+      "name": "website",
+      "displayName": "Website"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "OxyHQServices",
+      "displayName": "Oxy SDK"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "Bloom",
+      "displayName": "Bloom"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "Mention",
+      "displayName": "Mention"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "Allo",
+      "displayName": "Allo"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "Alia",
+      "displayName": "Alia"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "Homiio",
+      "displayName": "Homiio"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "tnp",
+      "displayName": "TNP"
+    },
+    {
+      "owner": "OxyHQ",
+      "name": "Astro",
+      "displayName": "Astro"
+    }
+  ],
+  "entries": [
+    {
+      "_id": "gh-305356646",
+      "title": "TNP Client v0.2.0",
+      "content": "TNP Client v0.2.0 — overlay network with encrypted tunnels\n\n**Install (one command):**\n```bash\n# macOS / Linux\ncurl -fsSL https://get.tnp.network | sh\n\n# Windows (PowerShell)\nirm https://get.tnp.network/ps | iex\n```\n\n**Platforms:** linux-x64, linux-arm64, darwin-x64, darwin-arm64, windows-x64\n\n**What's new:**\n- Interactive CLI menu (`tnp` with no args)\n- Overlay network: SOCKS5 proxy + encrypted WebSocket tunnels\n- Service node mode (`tnp serve`)\n- Become a relay node from the menu\n- Cross-platform installer scripts\n",
+      "tags": [],
+      "date": "2026-04-05T01:18:24Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 305356646,
+      "repoOwner": "OxyHQ",
+      "repoName": "tnp",
+      "repoDisplayName": "TNP",
+      "htmlUrl": "https://github.com/OxyHQ/tnp/releases/tag/v0.2.0",
+      "tagName": "v0.2.0"
+    },
+    {
+      "_id": "gh-302179662",
+      "title": "TNP Client v0.1.0",
+      "content": "TNP DNS resolver daemon v0.1.0\n\n**Install:**\n```\n# macOS / Linux\ncurl -fsSL https://tnp.network/install.sh | sh\n\n# Windows (PowerShell as Administrator)\nirm https://tnp.network/install.ps1 | iex\n```\n",
+      "tags": [],
+      "date": "2026-03-27T02:51:32Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 302179662,
+      "repoOwner": "OxyHQ",
+      "repoName": "tnp",
+      "repoDisplayName": "TNP",
+      "htmlUrl": "https://github.com/OxyHQ/tnp/releases/tag/v0.1.0",
+      "tagName": "v0.1.0"
+    }
+  ]
+}

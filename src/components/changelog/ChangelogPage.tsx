@@ -1,18 +1,29 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { useChangelog, useTrackedRepos } from '../../api/hooks'
+import { getStaticChangelog } from '../../content/changelog-loader'
 import { FEATURES } from '../../constants'
-import LikeButton from '../social/LikeButton'
+
+const PAGE_SIZE = 10
 
 export default function ChangelogContent() {
+  const { entries: allEntries, repos } = getStaticChangelog()
+
   const [selectedRepo, setSelectedRepo] = useState<string | undefined>(undefined)
   const [currentPage, setCurrentPage] = useState(1)
 
-  const { data, isPending, isError } = useChangelog({ repo: selectedRepo, page: currentPage, limit: 10 })
-  const { data: repos } = useTrackedRepos()
+  const filtered = useMemo(() => {
+    if (!selectedRepo) return allEntries
+    const [owner, name] = selectedRepo.split('/')
+    return allEntries.filter((e) => e.repoOwner === owner && e.repoName === name)
+  }, [allEntries, selectedRepo])
 
-  const entries = data?.entries
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const safePage = Math.min(Math.max(1, currentPage), totalPages)
+  const entries = useMemo(
+    () => filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE),
+    [filtered, safePage],
+  )
 
   return (
     <>
@@ -97,7 +108,7 @@ export default function ChangelogContent() {
       </div>
 
       {/* Repo filter bar */}
-      {repos && repos.length > 0 && (
+      {repos.length > 0 && (
         <div className="container">
           <div className="border-x border-border">
             <div className="grid grid-cols-12">
@@ -112,19 +123,22 @@ export default function ChangelogContent() {
                 >
                   All
                 </button>
-                {repos.map((r) => (
-                  <button
-                    key={`${r.owner}/${r.repo}`}
-                    onClick={() => { setSelectedRepo(`${r.owner}/${r.repo}`); setCurrentPage(1) }}
-                    className={`inline-flex items-center rounded-[10px] px-3 py-1.5 text-sm transition-colors ${
-                      selectedRepo === `${r.owner}/${r.repo}`
-                        ? 'bg-primary-foreground text-primary-background'
-                        : 'text-tertiary-foreground hover:text-secondary-foreground border border-subtle-stroke'
-                    }`}
-                  >
-                    {r.displayName}
-                  </button>
-                ))}
+                {repos.map((r) => {
+                  const key = `${r.owner}/${r.name}`
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => { setSelectedRepo(key); setCurrentPage(1) }}
+                      className={`inline-flex items-center rounded-[10px] px-3 py-1.5 text-sm transition-colors ${
+                        selectedRepo === key
+                          ? 'bg-primary-foreground text-primary-background'
+                          : 'text-tertiary-foreground hover:text-secondary-foreground border border-subtle-stroke'
+                      }`}
+                    >
+                      {r.displayName}
+                    </button>
+                  )
+                })}
               </div>
             </div>
           </div>
@@ -136,36 +150,13 @@ export default function ChangelogContent() {
         <div className="border-x border-border">
           <div className="grid grid-cols-12">
             <div className="col-[2/-2]">
-              {isPending && (
-                <div className="space-y-12 py-16">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="space-y-4">
-                      <div className="h-4 w-32 animate-pulse rounded bg-surface" />
-                      <div className="h-7 w-3/4 animate-pulse rounded-lg bg-surface" />
-                      <div className="space-y-2">
-                        <div className="h-4 w-full animate-pulse rounded bg-surface" />
-                        <div className="h-4 w-5/6 animate-pulse rounded bg-surface" />
-                        <div className="h-4 w-2/3 animate-pulse rounded bg-surface" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {isError && !isPending && (
-                <div className="py-20 text-center text-muted-foreground">
-                  <p className="text-lg">Failed to load changelog.</p>
-                  <p className="mt-2 text-sm">Please try again later.</p>
-                </div>
-              )}
-
-              {!isPending && !isError && (!entries || entries.length === 0) && (
+              {entries.length === 0 && (
                 <div className="py-20 text-center text-muted-foreground">
                   <p className="text-lg">No changelog entries yet.</p>
                 </div>
               )}
 
-              {entries && entries.length > 0 && entries.map((entry) => (
+              {entries.map((entry) => (
                 <article
                   key={entry._id}
                   className="relative grid border-border border-b py-[60px] lg:grid-cols-[1fr_minmax(0,600px)_1fr] lg:py-[90px]"
@@ -234,10 +225,6 @@ export default function ChangelogContent() {
                     <time className="mt-5 text-muted-foreground text-xs lg:hidden" aria-hidden="true">
                       {new Date(entry.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </time>
-
-                    <div className="mt-5">
-                      <LikeButton targetType="changelog" targetId={entry._id ?? ''} />
-                    </div>
                   </div>
                 </article>
               ))}
@@ -248,24 +235,24 @@ export default function ChangelogContent() {
       </div>
 
       {/* Pagination */}
-      {data && data.pages > 1 && (
+      {totalPages > 1 && (
         <div className="container">
           <div className="border-x border-border">
             <div className="grid grid-cols-12">
               <div className="col-[2/-2] flex items-center justify-center gap-2 py-10">
                 <button
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={currentPage <= 1}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={safePage <= 1}
                   className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-secondary-foreground disabled:opacity-40"
                 >
                   Previous
                 </button>
                 <span className="text-sm text-tertiary-foreground">
-                  Page {currentPage} of {data.pages}
+                  Page {safePage} of {totalPages}
                 </span>
                 <button
-                  onClick={() => setCurrentPage(p => Math.min(data.pages, p + 1))}
-                  disabled={currentPage >= data.pages}
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={safePage >= totalPages}
                   className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-secondary-foreground disabled:opacity-40"
                 >
                   Next
@@ -279,7 +266,7 @@ export default function ChangelogContent() {
   )
 }
 
-/** Map tag name strings to colors for API entries */
+/** Map tag name strings to colors for entries */
 function tagColor(tag: string): string {
   const colors: Record<string, string> = {
     Feature: 'rgb(38, 109, 240)',
@@ -289,6 +276,9 @@ function tagColor(tag: string): string {
     Reports: 'rgb(34, 197, 94)',
     'Bug Fix': 'rgb(34, 197, 94)',
     Breaking: 'rgb(239, 68, 68)',
+    Docs: 'rgb(148, 163, 184)',
+    Performance: 'rgb(168, 85, 247)',
+    Security: 'rgb(239, 68, 68)',
   }
   return colors[tag] || 'rgb(156, 163, 175)'
 }
