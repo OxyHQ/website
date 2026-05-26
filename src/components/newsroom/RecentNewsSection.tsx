@@ -10,10 +10,22 @@ interface RecentNewsSectionProps {
   title?: string
   linkText?: string
   viewAllText?: string
+  /**
+   * When set, scopes the recent-news rail to a single category. Also flips the
+   * "View more" link target to /company/news for the scoped variant.
+   */
+  category?: string
+  /** Override target for the section header link (defaults to /newsroom). */
+  href?: string
 }
 
-export default function RecentNewsSection({ title = 'Recent news', linkText = 'View more' }: RecentNewsSectionProps) {
-  const { data, isPending } = useNewsroomPosts({ limit: 5 })
+export default function RecentNewsSection({
+  title = 'Recent news',
+  linkText = 'View more',
+  category,
+  href = '/newsroom',
+}: RecentNewsSectionProps) {
+  const { data, isPending } = useNewsroomPosts({ category, limit: 5 })
   const recentNewsArticles = data?.posts ?? []
 
   if (!isPending && recentNewsArticles.length === 0) return null
@@ -22,7 +34,7 @@ export default function RecentNewsSection({ title = 'Recent news', linkText = 'V
     <section className="mx-auto w-full max-w-[1200px] px-5 md:px-8">
       <SectionHeader
         title={title}
-        href="/newsroom"
+        href={href}
         linkText={linkText}
       />
 

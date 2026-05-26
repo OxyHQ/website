@@ -68,8 +68,6 @@ export const FEATURES = {
   SHOW_FAIRCOIN_HERO_PRICE_CHIP: false,
   /** Static fallback hero-carousel content (when CMS has no data). */
   SHOW_HERO_CAROUSEL_FALLBACK: false,
-  /** Render the static blog fallback content (data/blog.ts). */
-  SHOW_BLOG_STATIC_FALLBACK: false,
   /** Render the "trusted by" pricing logo strip. */
   SHOW_PRICING_LOGOS: false,
   /**

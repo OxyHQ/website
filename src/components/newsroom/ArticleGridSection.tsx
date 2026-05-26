@@ -73,12 +73,22 @@ interface ArticleGridUI {
 
 const filterCategories = newsCategories.filter((c) => c !== 'All')
 
-export default function ArticleGridSection({ ui = {} }: { ui?: ArticleGridUI }) {
+interface ArticleGridSectionProps {
+  ui?: ArticleGridUI
+  /**
+   * When set, scopes the underlying query to a single category and hides the
+   * category filter UI (since there's nothing else to filter to). Used by
+   * /company/news.
+   */
+  category?: string
+}
+
+export default function ArticleGridSection({ ui = {}, category }: ArticleGridSectionProps) {
   const sortLabels: Record<SortOption, string> = {
     newest: ui.newest ?? 'Newest',
     oldest: ui.oldest ?? 'Oldest',
   }
-  const { data } = useNewsroomPosts()
+  const { data } = useNewsroomPosts({ category })
   const gridArticles = data?.posts ?? []
   const [visibleCount, setVisibleCount] = useState(6)
   const [filterOpen, setFilterOpen] = useState(false)
@@ -145,59 +155,61 @@ export default function ArticleGridSection({ ui = {} }: { ui?: ArticleGridUI }) 
         <hr className="mb-1 mt-4 border-t border-border lg:hidden" />
         <div className="flex flex-row items-center justify-between gap-5 lg:justify-normal">
           <div className="flex flex-row items-center gap-5">
-            {/* Filter dropdown */}
-            <div ref={filterDropdownRef} className="relative">
-              <button
-                type="button"
-                onClick={() => { setFilterOpen(!filterOpen); setSortOpen(false) }}
-                className="flex h-10 cursor-pointer items-center justify-start gap-[0.3em] whitespace-nowrap rounded px-0 text-sm font-medium text-foreground transition-colors duration-200 hover:text-muted-foreground"
-              >
-                <FilterIcon />
-                <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                  {ui.filter ?? 'Filter'}
-                </span>
-                {activeFilters.length > 0 && (
-                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-surface px-1.5 text-xs font-semibold text-foreground">
-                    {activeFilters.length}
+            {/* Filter dropdown — hidden when the section is scoped to a single category */}
+            {!category && (
+              <div ref={filterDropdownRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => { setFilterOpen(!filterOpen); setSortOpen(false) }}
+                  className="flex h-10 cursor-pointer items-center justify-start gap-[0.3em] whitespace-nowrap rounded px-0 text-sm font-medium text-foreground transition-colors duration-200 hover:text-muted-foreground"
+                >
+                  <FilterIcon />
+                  <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                    {ui.filter ?? 'Filter'}
                   </span>
-                )}
-              </button>
-
-              {filterOpen && (
-                <div className="absolute left-0 top-full z-50 mt-1 w-52 rounded-xl border border-border bg-background py-1 shadow-lg">
-                  {filterCategories.map((cat) => {
-                    const isActive = activeFilters.includes(cat)
-                    return (
-                      <button
-                        key={cat}
-                        onClick={() => toggleFilter(cat)}
-                        className="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-sm transition-colors duration-150 hover:bg-surface"
-                      >
-                        <span className={isActive ? 'text-foreground' : 'text-muted-foreground'}>
-                          {cat}
-                        </span>
-                        {isActive && (
-                          <span className="text-foreground">
-                            <CheckIcon />
-                          </span>
-                        )}
-                      </button>
-                    )
-                  })}
                   {activeFilters.length > 0 && (
-                    <>
-                      <div className="my-1 h-px bg-border" />
-                      <button
-                        onClick={clearFilters}
-                        className="flex w-full cursor-pointer items-center px-3 py-2 text-sm text-muted-foreground transition-colors duration-150 hover:bg-surface hover:text-foreground"
-                      >
-                        {ui.clearAll ?? 'Clear all'}
-                      </button>
-                    </>
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-surface px-1.5 text-xs font-semibold text-foreground">
+                      {activeFilters.length}
+                    </span>
                   )}
-                </div>
-              )}
-            </div>
+                </button>
+
+                {filterOpen && (
+                  <div className="absolute left-0 top-full z-50 mt-1 w-52 rounded-xl border border-border bg-background py-1 shadow-lg">
+                    {filterCategories.map((cat) => {
+                      const isActive = activeFilters.includes(cat)
+                      return (
+                        <button
+                          key={cat}
+                          onClick={() => toggleFilter(cat)}
+                          className="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-sm transition-colors duration-150 hover:bg-surface"
+                        >
+                          <span className={isActive ? 'text-foreground' : 'text-muted-foreground'}>
+                            {cat}
+                          </span>
+                          {isActive && (
+                            <span className="text-foreground">
+                              <CheckIcon />
+                            </span>
+                          )}
+                        </button>
+                      )
+                    })}
+                    {activeFilters.length > 0 && (
+                      <>
+                        <div className="my-1 h-px bg-border" />
+                        <button
+                          onClick={clearFilters}
+                          className="flex w-full cursor-pointer items-center px-3 py-2 text-sm text-muted-foreground transition-colors duration-150 hover:bg-surface hover:text-foreground"
+                        >
+                          {ui.clearAll ?? 'Clear all'}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Sort dropdown */}
             <div ref={sortDropdownRef} className="relative">
