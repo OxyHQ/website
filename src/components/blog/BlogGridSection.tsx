@@ -25,6 +25,19 @@ export default function BlogGridSection() {
             <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
             <div className="relative col-[2/-2] flex size-full flex-col justify-between">
               <div>
+                {article.coverImage && (
+                  <div className="mb-6 overflow-hidden rounded-md bg-surface">
+                    <img
+                      src={article.coverImage}
+                      alt={article.imageAlt || article.title}
+                      width="800"
+                      height="450"
+                      loading="lazy"
+                      decoding="async"
+                      className="aspect-video w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-[1.0125] group-hover:duration-150"
+                    />
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <p className="text-overline">[{article.categories[0]}]</p>
                   <time className="text-overline">{formatDate(article.publishedAt)}</time>

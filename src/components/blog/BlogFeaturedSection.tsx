@@ -9,8 +9,12 @@ function formatDate(dateStr: string): string {
 }
 
 export default function BlogFeaturedSection() {
-  const { data } = useNewsroomPosts({ category: 'Company', featured: true, limit: 1 })
-  const article = data?.posts?.[0] ?? null
+  // Featured post for the hero — prefer a Company-category post explicitly
+  // marked `featured: true`, but fall back to the latest Company post so the
+  // hero (and its cover image) always renders when at least one post exists.
+  const { data: featured } = useNewsroomPosts({ category: 'Company', featured: true, limit: 1 })
+  const { data: latest } = useNewsroomPosts({ category: 'Company', limit: 1 })
+  const article = featured?.posts?.[0] ?? latest?.posts?.[0] ?? null
 
   if (!article) return null
 
@@ -38,11 +42,11 @@ export default function BlogFeaturedSection() {
             <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
           </svg>
           <img
-            alt=""
+            alt={article.imageAlt || article.title}
             width="1161"
             height="652"
-            className="relative aspect-video w-full"
-            src={article.coverImage || '/images/blog-cover-ask-oxy.png'}
+            className="relative aspect-video w-full object-cover"
+            src={article.coverImage || '/og-default.png'}
             loading="lazy"
             decoding="async"
           />
@@ -112,11 +116,11 @@ export default function BlogFeaturedSection() {
             </div>
             <div className="col-[2/-2]">
               <img
-                alt=""
+                alt={article.imageAlt || article.title}
                 width="1161"
                 height="652"
-                className="aspect-video w-full"
-                src={article.coverImage || '/images/blog-cover-ask-oxy.png'}
+                className="aspect-video w-full object-cover"
+                src={article.coverImage || '/og-default.png'}
                 loading="lazy"
                 decoding="async"
               />
