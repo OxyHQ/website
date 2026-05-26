@@ -324,10 +324,12 @@ function collapseSingleWrapper(nodes: SidebarNode[]): SidebarNode[] {
 }
 
 /**
- * Build a docs sidebar grouped by category. Each package appears as a
- * `package` node; the active package owns its page-tree as nested
- * children (after common-prefix elimination). Non-active packages render
- * as a single collapsed row.
+ * Build a docs sidebar grouped by category. Every package emits its own
+ * page-tree (after common-prefix elimination) so any package row can be
+ * expanded in place via its chevron without first navigating into the
+ * package. The active package's tree is auto-expanded by the renderer
+ * via `collectActivePath`; non-active packages stay collapsed until the
+ * user clicks their chevron.
  */
 function buildSidebar(activePkg?: SyncedPackage, activeVersion?: SyncedVersion): SidebarSection[] {
   const sections: SidebarSection[] = []
@@ -350,10 +352,7 @@ function buildSidebar(activePkg?: SyncedPackage, activeVersion?: SyncedVersion):
             pkg.versions.find((v) => v.version === pkg.defaultVersion) ??
             pkg.versions[0]
       if (!version) continue
-      let children: SidebarNode[] = []
-      if (isActive) {
-        children = collapseSingleWrapper(buildPageTree(pkg, version))
-      }
+      const children = collapseSingleWrapper(buildPageTree(pkg, version))
       nodes.push({
         kind: 'package',
         label: pkg.displayName,
@@ -485,27 +484,57 @@ function SidebarTreeNode({
     )
   }
   if (node.kind === 'package') {
-    // The package row is always a NavLink with the package logo. When the
-    // package owns children (the active package), they render nested
-    // beneath — no separate toggle, the active package is always open.
+    // The package row is a NavLink (logo + label) that navigates to the
+    // package overview, with an optional sibling chevron button that
+    // toggles the sub-tree in place. The two are siblings (not nested) so
+    // clicking the chevron never triggers navigation. Hover styling is
+    // shared across the row via a peer-group pattern using `group/row`.
     const isActive = activePath === node.href
     const pad = paddingForDepth(depth)
+    // Show a chevron when the package has any non-leaf descendant, or more
+    // than one child total — i.e. anything worth expanding. A single leaf
+    // child stands on its own without an extra wrapper toggle.
+    const hasGroup = node.children.some((c) => c.kind !== 'leaf')
+    const hasChevron = hasGroup || node.children.length > 1
+    const isOpen = expanded.has(node.key)
+    const showChildren = node.children.length > 0 && (!hasChevron || isOpen)
     return (
       <li>
-        <NavLink
+        <div
           className={
             isActive
-              ? `group flex items-start pr-3 py-1.5 ${pad} cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl w-full outline-offset-[-1px] bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]`
-              : `group flex items-start pr-3 py-1.5 ${pad} cursor-pointer gap-x-3 text-left rounded-xl w-full outline-offset-[-1px] hover:bg-surface text-muted-foreground hover:text-foreground`
+              ? `group/row flex items-stretch rounded-xl bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]`
+              : `group/row flex items-stretch rounded-xl hover:bg-surface text-muted-foreground hover:text-foreground`
           }
-          to={node.href}
         >
-          <div className="flex-1 flex items-start space-x-2.5">
-            <PackageLogo shortName={node.shortName} label={node.label} />
-            <div className="break-words [word-break:break-word]">{node.label}</div>
-          </div>
-        </NavLink>
-        {node.children.length > 0 ? (
+          <NavLink
+            to={node.href}
+            className={`flex-1 min-w-0 flex items-start ${hasChevron ? 'pr-2' : 'pr-3'} py-1.5 ${pad} cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl outline-offset-[-1px]`}
+          >
+            <div className="flex-1 flex items-start space-x-2.5">
+              <PackageLogo shortName={node.shortName} label={node.label} />
+              <div className="break-words [word-break:break-word]">{node.label}</div>
+            </div>
+          </NavLink>
+          {hasChevron ? (
+            <button
+              type="button"
+              onClick={() => toggle(node.key)}
+              aria-expanded={isOpen}
+              aria-label={`Toggle ${node.label} pages`}
+              className="shrink-0 flex items-center justify-center pr-3 pl-2 py-1.5 rounded-xl cursor-pointer"
+            >
+              <ChevronDownIcon
+                className={
+                  isOpen
+                    ? 'rotate-0 transition-transform text-muted-foreground group-hover/row:text-foreground'
+                    : '-rotate-90 transition-transform text-muted-foreground group-hover/row:text-foreground'
+                }
+              />
+            </button>
+          ) : null}
+        </div>
+        {showChildren ? (
           <ul className="space-y-px mt-px">
             {node.children.map((child) => (
               <SidebarTreeNode
@@ -615,7 +644,7 @@ function DocsSidebar({
   // initial set contains every branch on the path from the section root
   // down to the active page, so the active link is visible on first paint
   // without forcing every other branch open.
-  const initialTreeExpanded = useMemo<Set<string>>(() => {
+  const activePathKeys = useMemo<Set<string>>(() => {
     const out = new Set<string>()
     for (const section of sections) {
       for (const key of collectActivePath(section.nodes, location.pathname)) {
@@ -624,7 +653,19 @@ function DocsSidebar({
     }
     return out
   }, [sections, location.pathname])
-  const [treeExpanded, setTreeExpanded] = useState<Set<string>>(initialTreeExpanded)
+  const [treeExpanded, setTreeExpanded] = useState<Set<string>>(activePathKeys)
+  // Derived-state pattern (no useEffect): on pathname change, merge the new
+  // active-path keys into the user's expand set so navigating to a new
+  // package auto-expands its tree without clobbering the user's own toggles.
+  const [prevPathname, setPrevPathname] = useState<string>(location.pathname)
+  if (prevPathname !== location.pathname) {
+    setPrevPathname(location.pathname)
+    setTreeExpanded((prev) => {
+      const next = new Set(prev)
+      for (const key of activePathKeys) next.add(key)
+      return next
+    })
+  }
 
   function toggleTree(key: string) {
     setTreeExpanded((prev) => {
