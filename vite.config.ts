@@ -1,3 +1,4 @@
+import path from 'node:path'
 import { defineConfig } from 'vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
@@ -48,13 +49,52 @@ export default defineConfig({
   ],
   resolve: {
     tsconfigPaths: true,
-    alias: {
-      'react-native': 'react-native-web',
-    },
+    alias: [
+      // Native-only spec helper that `react-native-svg` and Bloom's
+      // `BottomSheet` pull in transitively. `react-native-web` doesn't ship
+      // this path, so we resolve it to a noop shim — see
+      // `src/lib/codegenNativeComponentShim.ts`. The alias must precede the
+      // bare `react-native` mapping below so it matches first.
+      {
+        find: /^react-native\/Libraries\/Utilities\/codegenNativeComponent$/,
+        replacement: path.resolve(import.meta.dirname, 'src/lib/codegenNativeComponentShim.ts'),
+      },
+      // `react-native-svg` eagerly imports its Fabric (new-architecture)
+      // native modules even on web. Those modules call
+      // `TurboModuleRegistry.getEnforcing(...)` which `react-native-web`
+      // doesn't export, so we redirect them to a noop default export — the
+      // SVG primitives that read these modules are gated on
+      // `Platform.OS === 'ios' | 'android'`, so the web bundle never reaches
+      // them at runtime.
+      {
+        find: /^react-native-svg\/lib\/module\/fabric\/.+$/,
+        replacement: path.resolve(import.meta.dirname, 'src/lib/nativeSvgFabricShim.ts'),
+      },
+      // Route `from 'react-native'` to a thin shim that re-exports
+      // `react-native-web` and adds the legacy native-only exports
+      // (`TurboModuleRegistry`) that some RN packages — namely
+      // `react-native-svg` — eagerly import on the web target. Without
+      // the shim, those imports throw `MISSING_EXPORT` at bundle time even
+      // though the runtime code paths are gated on `Platform.OS`.
+      {
+        find: /^react-native$/,
+        replacement: path.resolve(import.meta.dirname, 'src/lib/reactNativeWebExtended.ts'),
+      },
+    ],
   },
   optimizeDeps: {
     include: ['react-simple-maps', 'prop-types', 'd3-geo', 'topojson-client'],
-    exclude: ['@react-native-async-storage/async-storage'],
+    // `react-native-svg` and `react-native-safe-area-context` ship native
+    // Fabric modules that don't bundle for the web target. Excluding them
+    // from dep optimization keeps Vite's source-mode resolver in charge, so
+    // the aliases above can rewrite the unresolvable native paths to web
+    // shims. Without this, Rolldown pre-bundles the package and bypasses the
+    // alias layer, which surfaces as `MISSING_EXPORT`/`UNLOADABLE_DEPENDENCY`.
+    exclude: [
+      '@react-native-async-storage/async-storage',
+      'react-native-svg',
+      'react-native-safe-area-context',
+    ],
   },
   server: {
     host: true,

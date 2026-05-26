@@ -47,6 +47,8 @@ const HelpArticlePage = lazy(() => import('./pages/HelpArticlePage'))
 const ChangelogPage = lazy(() => import('./pages/ChangelogPage'))
 const DocsPage = lazy(() => import('./pages/DocsPage'))
 const DocsIntroPage = lazy(() => import('./pages/DocsIntroPage'))
+const DocsThumbnailPage = lazy(() => import('./pages/DocsThumbnailPage'))
+const BloomPlayground = lazy(() => import('./components/docs/BloomPlayground'))
 const DevelopersPage = lazy(() => import('./pages/DevelopersPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
@@ -163,8 +165,19 @@ function PublicRoutes() {
       <Route path="changelog" element={<ChangelogPage />} />
       <Route path="developers" element={<DevelopersPage />} />
       <Route path="developers/docs" element={<DocsIntroPage />} />
+      <Route path="developers/docs/_thumbnail/:name" element={<DocsThumbnailPage />} />
       <Route path="developers/docs/api" element={<DocsPage />} />
       <Route path="developers/docs/api/:version" element={<DocsPage />} />
+      {/*
+        Interactive Bloom playground.
+
+        Mounted before the generic docs catch-alls so its `playground`
+        slug resolves to the interactive page instead of routing through
+        DocsPage (which would return a 404 since there's no MDX file
+        with that slug in the typedoc output).
+      */}
+      <Route path="developers/docs/bloom/playground" element={<BloomPlayground />} />
+      <Route path="developers/docs/bloom/:version/playground" element={<BloomPlayground />} />
       {/*
         Docs routing.
 

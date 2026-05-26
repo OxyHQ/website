@@ -457,6 +457,36 @@ function rewriteTypedocLinks(source: string, pkgBaseUrl: string, fileRelativeDir
   );
 }
 
+/**
+ * List the curated Bloom demo names by scanning
+ * `src/content/bloom-demos/<Name>.tsx`. Used by the sync to decide which
+ * Bloom typedoc pages should get a live `<BloomDemo>` block prepended.
+ */
+async function loadBloomDemoNames(): Promise<Set<string>> {
+  const demosDir = path.join(WEBSITE_ROOT, 'src', 'content', 'bloom-demos');
+  if (!existsSync(demosDir)) return new Set<string>();
+  const entries = await readdir(demosDir);
+  const out = new Set<string>();
+  for (const file of entries) {
+    const match = file.match(/^([A-Z][^./]*)\.tsx$/);
+    if (match && match[1]) out.add(match[1]);
+  }
+  return out;
+}
+
+/**
+ * Insert a `<BloomDemo name="..." />` block right after the page's H1 in a
+ * typedoc-generated markdown file. If no H1 is present, the demo is
+ * prepended at the top.
+ */
+function injectBloomDemo(source: string, demoName: string): string {
+  const block = `<BloomDemo name="${demoName}" />\n\n`;
+  const h1 = source.match(/^# .+$/m);
+  if (!h1 || h1.index === undefined) return `${block}${source}`;
+  const insertAt = h1.index + h1[0].length;
+  return `${source.slice(0, insertAt)}\n\n${block}${source.slice(insertAt).replace(/^\n+/, '')}`;
+}
+
 /** Write a friendly title to the top of an API page so the sidebar surfaces it. */
 function deriveTypedocTitle(filePath: string, source: string): string {
   // TypeDoc emits `# Interface: Foo`, `# Class: Bar`, `# Function: baz()`.
@@ -544,21 +574,65 @@ async function runTypedoc(
   }
 
   const pkgBaseUrl = `/developers/docs/${config.shortName}/${version}/api`;
+  // For Bloom, look up which curated demos exist so we can prepend a live
+  // `<BloomDemo>` block to the matching typedoc function page. Skipped for
+  // other packages; demos are a Bloom-only concept today.
+  const bloomDemoNames =
+    config.shortName === 'bloom' ? await loadBloomDemoNames() : new Set<string>();
   const pages: SyncedPage[] = [];
   for (const rel of files) {
     const full = path.join(apiOutDir, rel);
     const raw = await readFile(full, 'utf8');
     const fileRelativeDir = path.dirname(rel).replace(/\\/g, '/');
     const dir = fileRelativeDir === '.' ? '' : fileRelativeDir;
-    const cleaned = normalizeTypedocMarkdown(rewriteTypedocLinks(raw, pkgBaseUrl, dir));
-    await writeFile(full, cleaned);
+    let cleaned = normalizeTypedocMarkdown(rewriteTypedocLinks(raw, pkgBaseUrl, dir));
+    // Track whether we injected JSX MDX components — if so the file needs the
+    // `.mdx` extension so the MDX plugin actually compiles the embedded JSX.
+    // Leaving typedoc's stock pages as `.md` avoids parsing failures on prose
+    // that happens to contain `{ ... }` literals (common in TS prop docs).
+    let injectedMdx = false;
+    // Bloom overview gets a visual component hub grid prepended. The grid is
+    // a custom MDX component (registered in `mdxComponentMap.tsx`) that reads
+    // the bloom-demos registry and renders one card per demoed component with
+    // light/dark thumbnails captured by `scripts/render-bloom-thumbnails.ts`.
+    if (config.shortName === 'bloom' && /(^|\/)README\.mdx?$/i.test(rel)) {
+      cleaned = `<BloomHubGrid />\n\n${cleaned}`;
+      injectedMdx = true;
+    }
+    // Prepend a live `<BloomDemo>` block on Bloom API pages that map to a
+    // curated demo. The demo name is the file's basename without extension —
+    // for namespaced symbols (`Tabs.Tab.md`) we also try the prefix before
+    // the first dot so sub-symbols still surface the parent component's
+    // live demo (`<BloomDemo name="Tabs" />` for `Tabs.Tab`, etc.).
+    if (config.shortName === 'bloom' && bloomDemoNames.size > 0) {
+      const baseName = path.basename(rel, path.extname(rel));
+      const directHit = bloomDemoNames.has(baseName) ? baseName : null;
+      const dotPrefix = baseName.includes('.') ? baseName.split('.')[0] : null;
+      const indirectHit = directHit ?? (dotPrefix && bloomDemoNames.has(dotPrefix) ? dotPrefix : null);
+      if (indirectHit) {
+        cleaned = injectBloomDemo(cleaned, indirectHit);
+        injectedMdx = true;
+      }
+    }
+    // Rename the file from `.md` → `.mdx` only when we injected JSX. The
+    // original `.md` is left under typedoc's emitted name and we redirect the
+    // synced index entry to the `.mdx` copy.
+    let outRel = rel;
+    let outFull = full;
+    if (injectedMdx && /\.md$/i.test(rel)) {
+      outRel = rel.replace(/\.md$/i, '.mdx');
+      outFull = path.join(apiOutDir, outRel);
+      // Remove the original .md so we don't double-publish the same page.
+      await rm(full, { force: true });
+    }
+    await writeFile(outFull, cleaned);
     // Slug is the file path under `outDir` (so `api/` is included).
-    const slug = `api/${rel.replace(/\\/g, '/').replace(/\.(mdx?|md)$/i, '')}`.replace(/\/README$/i, '').replace(/\/index$/i, '');
-    const title = deriveTypedocTitle(rel, cleaned);
+    const slug = `api/${outRel.replace(/\\/g, '/').replace(/\.(mdx?|md)$/i, '')}`.replace(/\/README$/i, '').replace(/\/index$/i, '');
+    const title = deriveTypedocTitle(outRel, cleaned);
     pages.push({
       slug,
       title,
-      file: path.relative(SYNCED_DIR, full).replace(/\\/g, '/'),
+      file: path.relative(SYNCED_DIR, outFull).replace(/\\/g, '/'),
       order: 10000, // Always sorts after hand-written guides (default 1000).
       section: 'api',
     });

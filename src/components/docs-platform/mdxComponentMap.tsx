@@ -1,5 +1,7 @@
 import type { ComponentPropsWithoutRef } from 'react'
 import { cn } from '../../lib/utils'
+import { BloomDemo } from './BloomDemo'
+import { BloomHubGrid } from './BloomHubGrid'
 import { Badge, Callout, Code, LiveExample } from './MdxComponents'
 
 /**
@@ -120,4 +122,6 @@ export const mdxComponents = {
   Code,
   Badge,
   LiveExample,
+  BloomDemo,
+  BloomHubGrid,
 }

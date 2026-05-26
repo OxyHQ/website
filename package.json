@@ -18,7 +18,8 @@
     "seed": "bun server/seed.ts",
     "mcp": "bun server/mcp.ts",
     "sync-docs": "bun scripts/sync-docs.ts",
-    "sync-changelog": "bun scripts/sync-changelog.ts"
+    "sync-changelog": "bun scripts/sync-changelog.ts",
+    "render:bloom-thumbnails": "bun scripts/render-bloom-thumbnails.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1025.0",
@@ -83,6 +84,7 @@
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.60.0",
     "@rolldown/plugin-babel": "^0.2.1",
     "@tailwindcss/vite": "^4.2.2",
     "@types/babel__core": "^7.20.5",
@@ -97,6 +99,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "pagefind": "^1.5.2",
+    "playwright": "^1.60.0",
     "remark-mdx-frontmatter": "^5.2.0",
     "sharp": "^0.34.5",
     "svgo": "^4.0.1",
