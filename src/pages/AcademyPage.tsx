@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, BookOpen, Clock, GraduationCap, Sparkles } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -10,110 +10,197 @@ import SectionHeading from '../components/layout/SectionHeading'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useCurrentLocale } from '../lib/i18n'
 import { loadCourses, ACADEMY_COURSES, type CourseWithLessons } from '../content/academy-loader'
+import { courseGradient, courseInitials } from '../components/academy/courseVisual'
 
 /* ──────────────────────────────────────────────
  * /academy
  *
- * Public Oxy Academy landing — featured courses + topic filter. Data comes
- * from the MDX loader (build-time, locale-aware). Layout uses the canonical
- * PageSection / SectionHeading primitives. Cards are bespoke (cover image
- * + meta row) rather than the generic Card primitive — they need the
- * image-led shell.
+ * Public Oxy Academy landing. Hero introduces the program, a feature card
+ * spotlights the first featured course, and a grid surfaces the rest of the
+ * catalog. When a course author hasn't provided a `coverImage`, each card
+ * falls back to a deterministic gradient + monogram derived from the slug
+ * so the listing reads visually rich instead of a wall of identical placeholders.
  * ──────────────────────────────────────────── */
 
 const HERO_BADGE = 'Oxy Academy'
 const HERO_TITLE = 'Learn to build on Oxy.'
 const HERO_SUBTITLE =
-  'Hands-on courses, deep guides and practical templates — everything you need to understand the platform and ship real work on top of it.'
-const COURSES_HEADING = 'Featured courses'
-const COURSES_SUB = 'Self-paced lessons that walk you from first principles to production.'
-const CATEGORIES_HEADING = 'Browse by tag'
-const CTA_HEADING = 'Ready to start learning?'
-const CTA_SUBTITLE = 'Open a course and start building on the Oxy platform today.'
+  "Hands-on courses, deep guides and practical templates — everything you need to understand the platform and ship real work on top of it."
+const COURSES_HEADING = 'All courses'
+const COURSES_SUB =
+  'Self-paced lessons that walk you from first principles to production. Start with the basics or jump to whichever topic you need.'
+const SPOTLIGHT_HEADING = 'Start here'
+const SPOTLIGHT_SUB = "If you're new to Oxy, this is the path we recommend."
+const WHY_HEADING = 'Built for builders.'
+const WHY_SUB = 'Every course is written by the team behind the product. Short lessons, real examples, zero filler.'
 
-/* ── Course card ── */
+/* ── Course cover ─────────────────────────────────────────── */
 
-function CourseCard({ course }: { course: CourseWithLessons }) {
+function CourseCover({
+  course,
+  className,
+}: {
+  course: CourseWithLessons
+  className: string
+}) {
   const cover = course.coverImage ?? ''
-  const duration = course.duration ?? ''
-  const mark = course.title.charAt(0).toUpperCase() || 'O'
+  if (cover) {
+    return (
+      <img
+        src={cover}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className={`${className} object-cover`}
+      />
+    )
+  }
+  const gradient = courseGradient(course.slug)
+  const initials = courseInitials(course.title)
+  return (
+    <div
+      className={`${className} relative overflow-hidden bg-gradient-to-br ${gradient.from} ${gradient.via} ${gradient.to}`}
+      aria-hidden="true"
+    >
+      <span className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.18),transparent_55%)]" />
+      <span className="absolute -right-4 -bottom-4 text-[8rem] font-semibold leading-none text-white/15 tracking-tighter select-none">
+        {initials}
+      </span>
+      <span className="absolute left-6 top-6 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-white/90 backdrop-blur">
+        <GraduationCap className="size-3" aria-hidden="true" />
+        Course
+      </span>
+    </div>
+  )
+}
+
+/* ── Spotlight (large feature card) ───────────────────────── */
+
+function CourseSpotlight({ course }: { course: CourseWithLessons }) {
+  const firstLesson = course.lessons[0]
   return (
     <Link
-      to={`/academy/${course.slug}`}
-      className="group relative flex h-full flex-col rounded-3xl border border-border bg-background p-8 transition-colors duration-300 hover:bg-surface lg:p-10"
-      aria-label={`${course.title} — ${course.summary}`}
+      to={firstLesson ? `/academy/${course.slug}/${firstLesson.lessonSlug}` : `/academy/${course.slug}`}
+      className="group grid overflow-hidden rounded-3xl border border-border bg-background transition-colors hover:bg-surface lg:grid-cols-5"
+      aria-label={`${course.title} — start the first lesson`}
     >
-      <span
-        className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 rounded-t-3xl bg-foreground/80 transition-transform duration-300 ease-out group-hover:scale-x-100"
-        aria-hidden="true"
-      />
-
-      {/* Cover / fallback brand-square */}
-      <div className="relative overflow-hidden rounded-2xl">
-        {cover ? (
-          <img
-            src={cover}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className="aspect-[16/10] w-full object-cover"
-          />
-        ) : (
-          <div
-            className="flex aspect-[16/10] w-full items-center justify-center text-4xl font-semibold tracking-tight text-white"
-            style={{ backgroundColor: '#0f172a' }}
-            aria-hidden="true"
-          >
-            {mark}
-          </div>
-        )}
+      <CourseCover course={course} className="aspect-[16/10] w-full lg:col-span-3 lg:aspect-auto lg:h-full" />
+      <div className="flex flex-col gap-5 p-8 lg:col-span-2 lg:p-10">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+          <Sparkles className="size-3.5" aria-hidden="true" />
+          Featured course
+        </div>
+        <h3 className="text-balance text-2xl font-medium tracking-tight text-foreground md:text-3xl">
+          {course.title}
+        </h3>
+        <p className="text-pretty text-base leading-relaxed text-muted-foreground">{course.summary}</p>
+        <CourseMeta course={course} />
+        <div className="mt-auto pt-2">
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
+            {firstLesson ? 'Start the first lesson' : 'Open course'}
+            <ArrowRight
+              className="size-4 transition-transform duration-300 group-hover:translate-x-1"
+              aria-hidden="true"
+            />
+          </span>
+        </div>
       </div>
-
-      {/* Title */}
-      <h3 className="mt-6 text-2xl font-medium text-foreground">{course.title}</h3>
-
-      {/* Summary */}
-      <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground">
-        {course.summary}
-      </p>
-
-      {/* Meta row */}
-      <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-muted-foreground">
-        <span className="capitalize">{course.level}</span>
-        {duration && (
-          <>
-            <span aria-hidden="true">·</span>
-            <span>{duration}</span>
-          </>
-        )}
-        {course.lessons.length > 0 && (
-          <>
-            <span aria-hidden="true">·</span>
-            <span>{course.lessons.length} lessons</span>
-          </>
-        )}
-      </div>
-
-      {/* CTA */}
-      <span className="mt-8 inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
-        Start course
-        <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
-      </span>
     </Link>
   )
 }
 
-/* ── Page ── */
+/* ── Standard course card ─────────────────────────────────── */
+
+function CourseMeta({ course }: { course: CourseWithLessons }) {
+  const duration = course.duration ?? ''
+  return (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-muted-foreground">
+      <span className="inline-flex items-center gap-1.5 capitalize">
+        <GraduationCap className="size-3.5" aria-hidden="true" />
+        {course.level}
+      </span>
+      {duration ? (
+        <span className="inline-flex items-center gap-1.5">
+          <Clock className="size-3.5" aria-hidden="true" />
+          {duration}
+        </span>
+      ) : null}
+      {course.lessons.length > 0 ? (
+        <span className="inline-flex items-center gap-1.5">
+          <BookOpen className="size-3.5" aria-hidden="true" />
+          {course.lessons.length} {course.lessons.length === 1 ? 'lesson' : 'lessons'}
+        </span>
+      ) : null}
+    </div>
+  )
+}
+
+function CourseCard({ course }: { course: CourseWithLessons }) {
+  return (
+    <Link
+      to={`/academy/${course.slug}`}
+      className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-background transition-colors duration-300 hover:bg-surface"
+      aria-label={`${course.title} — ${course.summary}`}
+    >
+      <span
+        className="absolute inset-x-0 top-0 z-10 h-1 origin-left scale-x-0 bg-foreground/80 transition-transform duration-300 ease-out group-hover:scale-x-100"
+        aria-hidden="true"
+      />
+
+      <CourseCover course={course} className="aspect-[16/10] w-full" />
+
+      <div className="flex flex-1 flex-col p-7 lg:p-8">
+        {course.featured ? (
+          <span className="mb-3 inline-flex w-fit items-center gap-1 rounded-full border border-border bg-surface px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground">
+            <Sparkles className="size-3" aria-hidden="true" />
+            Featured
+          </span>
+        ) : null}
+
+        <h3 className="text-xl font-medium text-foreground md:text-2xl">{course.title}</h3>
+
+        <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground">{course.summary}</p>
+
+        <div className="mt-5">
+          <CourseMeta course={course} />
+        </div>
+
+        <span className="mt-7 inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
+          Start course
+          <ArrowRight
+            className="size-4 transition-transform duration-300 group-hover:translate-x-1"
+            aria-hidden="true"
+          />
+        </span>
+      </div>
+    </Link>
+  )
+}
+
+/* ── Page ─────────────────────────────────────────────────── */
 
 const ALL_TAGS = '__all__'
+
+const VALUE_PROPS: { title: string; description: string }[] = [
+  {
+    title: 'Practical, not academic.',
+    description: 'Every lesson ends with code you can paste and run. No theory dumps.',
+  },
+  {
+    title: 'Stays current.',
+    description: 'Courses are versioned next to the platform. When Oxy ships, the lesson updates.',
+  },
+  {
+    title: 'Open source friendly.',
+    description: 'Examples link to public repos so you can clone, fork, and remix.',
+  },
+]
 
 export default function AcademyPage() {
   const [activeTag, setActiveTag] = useState<string>(ALL_TAGS)
   const locale = useCurrentLocale()
   const allCourses = useMemo(() => loadCourses(locale), [locale])
 
-  // Build the tag set from registered courses (not from MDX) so the filter
-  // row is stable even when a course has no lessons yet.
   const tags = useMemo(() => {
     const set = new Set<string>()
     for (const course of ACADEMY_COURSES) {
@@ -122,15 +209,25 @@ export default function AcademyPage() {
     return [...set].sort((a, b) => a.localeCompare(b))
   }, [])
 
-  const coursesToShow = useMemo(() => {
+  const filteredCourses = useMemo(() => {
     if (activeTag === ALL_TAGS) return allCourses
     return allCourses.filter((c) => c.tags.includes(activeTag))
   }, [activeTag, allCourses])
 
-  const featuredCourses = useMemo(() => allCourses.filter((c) => c.featured), [allCourses])
-  const displayCourses = activeTag === ALL_TAGS && featuredCourses.length > 0
-    ? featuredCourses
-    : coursesToShow
+  const spotlight = useMemo(
+    () => allCourses.find((c) => c.featured && c.lessons.length > 0) ?? allCourses[0] ?? null,
+    [allCourses],
+  )
+  const gridCourses = useMemo(
+    () => filteredCourses.filter((c) => c.slug !== spotlight?.slug),
+    [filteredCourses, spotlight],
+  )
+  const showSpotlight = activeTag === ALL_TAGS && spotlight !== null
+
+  const totalLessons = useMemo(
+    () => allCourses.reduce((sum, c) => sum + c.lessons.length, 0),
+    [allCourses],
+  )
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -142,35 +239,72 @@ export default function AcademyPage() {
       <Navbar />
       <main>
         {/* ═══ Hero ═══ */}
-        <section className="relative">
-          <div className="relative mx-auto flex max-w-4xl flex-col items-center gap-6 px-6 pt-32 pb-20 text-center lg:px-8 lg:pt-40 lg:pb-28">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+        <section className="relative overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px] bg-gradient-to-b from-surface to-background"
+          />
+          <div className="relative mx-auto flex max-w-4xl flex-col items-center gap-6 px-6 pt-32 pb-16 text-center lg:px-8 lg:pt-40 lg:pb-20">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              <GraduationCap className="size-3.5 text-primary" aria-hidden="true" />
               {HERO_BADGE}
-            </p>
+            </span>
             <h1 className="text-balance text-4xl font-medium tracking-tight text-foreground md:text-5xl lg:text-6xl">
               {HERO_TITLE}
             </h1>
             <p className="max-w-2xl text-balance text-lg leading-relaxed text-muted-foreground md:text-xl">
               {HERO_SUBTITLE}
             </p>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-              <Button variant="primary" size="md" responsive href="#featured-courses">
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+              <Button variant="primary" size="md" responsive href="#all-courses">
                 Explore courses
               </Button>
               <Button variant="outline" size="md" responsive href="/developers/docs">
                 Developer docs
               </Button>
             </div>
+            {(allCourses.length > 0 || totalLessons > 0) && (
+              <dl className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <dt className="sr-only">Courses</dt>
+                  <dd className="text-base font-semibold text-foreground">{allCourses.length}</dd>
+                  <span>{allCourses.length === 1 ? 'course' : 'courses'}</span>
+                </div>
+                <span aria-hidden="true" className="hidden h-4 w-px bg-border md:inline-block" />
+                <div className="flex items-center gap-2">
+                  <dt className="sr-only">Lessons</dt>
+                  <dd className="text-base font-semibold text-foreground">{totalLessons}</dd>
+                  <span>{totalLessons === 1 ? 'lesson' : 'lessons'}</span>
+                </div>
+                <span aria-hidden="true" className="hidden h-4 w-px bg-border md:inline-block" />
+                <div className="flex items-center gap-2">
+                  <dd className="text-base font-semibold text-foreground">Free</dd>
+                  <span>for everyone</span>
+                </div>
+              </dl>
+            )}
           </div>
         </section>
 
+        {/* ═══ Spotlight ═══ */}
+        {showSpotlight && (
+          <PageSection spacing="sm" id="spotlight">
+            <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+              <SectionHeading
+                eyebrow={SPOTLIGHT_HEADING}
+                title="Your first hour on Oxy."
+                description={SPOTLIGHT_SUB}
+              />
+            </div>
+            <CourseSpotlight course={spotlight} />
+          </PageSection>
+        )}
+
         {/* ═══ Tag filter row ═══ */}
-        {tags.length > 0 && (
-          <PageSection spacing="sm" tone="surface">
+        {tags.length > 1 && (
+          <PageSection spacing="sm" tone="surface" id="all-courses">
             <div className="flex flex-wrap items-end justify-between gap-4">
-              <h2 className="text-2xl font-medium tracking-tight text-foreground md:text-3xl">
-                {CATEGORIES_HEADING}
-              </h2>
+              <SectionHeading title={COURSES_HEADING} description={COURSES_SUB} />
               {activeTag !== ALL_TAGS && (
                 <button
                   type="button"
@@ -215,35 +349,57 @@ export default function AcademyPage() {
         )}
 
         {/* ═══ Courses grid ═══ */}
-        {displayCourses.length > 0 && (
-          <PageSection spacing="lg" id="featured-courses">
-            <SectionHeading title={COURSES_HEADING} description={COURSES_SUB} />
-            <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-              {displayCourses.map((course) => (
+        {(gridCourses.length > 0 || (!showSpotlight && filteredCourses.length > 0)) && (
+          <PageSection
+            spacing={tags.length > 1 ? 'md' : 'lg'}
+            tone={tags.length > 1 ? 'surface' : 'default'}
+            id={tags.length > 1 ? undefined : 'all-courses'}
+            innerClassName={tags.length > 1 ? 'pt-0 md:pt-0 lg:pt-0' : ''}
+          >
+            {tags.length <= 1 && (
+              <SectionHeading title={COURSES_HEADING} description={COURSES_SUB} />
+            )}
+            <div
+              className={`grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 ${
+                tags.length > 1 ? '' : 'mt-12'
+              }`}
+            >
+              {(showSpotlight ? gridCourses : filteredCourses).map((course) => (
                 <CourseCard key={course.slug} course={course} />
               ))}
             </div>
+
+            {filteredCourses.length === 0 && (
+              <div className="mt-12 rounded-3xl border border-dashed border-border bg-background px-6 py-16 text-center">
+                <p className="text-base text-muted-foreground">
+                  No courses match that tag yet. Try{' '}
+                  <button
+                    type="button"
+                    onClick={() => setActiveTag(ALL_TAGS)}
+                    className="font-medium text-foreground underline-offset-4 hover:underline"
+                  >
+                    clearing the filter
+                  </button>
+                  .
+                </p>
+              </div>
+            )}
           </PageSection>
         )}
 
-        {/* ═══ Closing CTA ═══ */}
-        <PageSection spacing="lg" width="narrow">
-          <div className="flex flex-col items-center gap-6 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-              Oxy Academy
-            </p>
-            <h2 className="text-balance text-3xl font-medium tracking-tight text-foreground md:text-4xl lg:text-5xl">
-              {CTA_HEADING}
-            </h2>
-            <p className="max-w-xl text-pretty text-lg text-muted-foreground">{CTA_SUBTITLE}</p>
-            <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
-              <Button variant="primary" size="md" responsive href="#featured-courses">
-                Browse courses
-              </Button>
-              <Button variant="outline" size="md" responsive href="/developers/docs">
-                Developer docs
-              </Button>
-            </div>
+        {/* ═══ Value props ═══ */}
+        <PageSection spacing="lg">
+          <SectionHeading eyebrow="Why Academy" title={WHY_HEADING} description={WHY_SUB} />
+          <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3 lg:gap-8">
+            {VALUE_PROPS.map((prop) => (
+              <div
+                key={prop.title}
+                className="flex flex-col gap-3 rounded-3xl border border-border bg-background p-7 lg:p-8"
+              >
+                <h3 className="text-lg font-medium tracking-tight text-foreground">{prop.title}</h3>
+                <p className="text-pretty text-sm leading-relaxed text-muted-foreground">{prop.description}</p>
+              </div>
+            ))}
           </div>
         </PageSection>
 
