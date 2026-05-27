@@ -155,10 +155,11 @@ function buildIndex(): HelpIndex {
     const Component = lazy(componentLoader)
 
     // Generated OG card fallback. `scripts/build-help-og-images.ts` writes
-    // `/images/help-og/<slug>.png` for every article that doesn't ship a
-    // `coverImage:` of its own — committed to the repo so the file is
-    // guaranteed to exist at runtime. Author-set covers win.
-    const generatedCover = `/images/help-og/${slug}.png`
+    // a card per `(locale, slug)` pair — the default locale keeps the bare
+    // path for backwards-compat with existing OG URLs, every other locale
+    // nests under `/<locale>/`. Author-set covers always win.
+    const localePrefix = locale === DEFAULT_LOCALE ? '' : `/${locale}`
+    const generatedCover = `/images/help-og${localePrefix}/${slug}.png`
     const cover = parsed.data.coverImage ?? generatedCover
 
     const entry: HelpEntry = {
