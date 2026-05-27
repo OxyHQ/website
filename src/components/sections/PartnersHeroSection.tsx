@@ -71,8 +71,8 @@ export default function PartnersHeroSection() {
                 <Button variant="primary" size="md" responsive href="#become-a-partner">
                   Become a partner
                 </Button>
-                <Button variant="outline" size="md" responsive href="/company">
-                  Learn about Oxy
+                <Button variant="outline" size="md" responsive href="#programs">
+                  Browse programs
                 </Button>
               </div>
             </header>
