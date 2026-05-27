@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T10:14:06.120Z",
+  "generatedAt": "2026-05-27T15:51:35.587Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -3913,6 +3913,13 @@
               "section": "api"
             },
             {
+              "slug": "api/classes/OxyAppDataIdentifierError",
+              "title": "OxyAppDataIdentifierError",
+              "file": "core/1.11.13/api/classes/OxyAppDataIdentifierError.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/classes/OxyAuthenticationError",
               "title": "OxyAuthenticationError",
               "file": "core/1.11.13/api/classes/OxyAuthenticationError.md",
@@ -5604,6 +5611,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/isMissingAppDataEndpointError",
+              "title": "isMissingAppDataEndpointError()",
+              "file": "auth-sdk/2.0.4/api/functions/isMissingAppDataEndpointError.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/isTimeoutOrNetworkError",
               "title": "isTimeoutOrNetworkError()",
               "file": "auth-sdk/2.0.4/api/functions/isTimeoutOrNetworkError.md",
@@ -5649,6 +5663,20 @@
               "slug": "api/functions/useAccounts",
               "title": "useAccounts()",
               "file": "auth-sdk/2.0.4/api/functions/useAccounts.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useAppData",
+              "title": "useAppData()",
+              "file": "auth-sdk/2.0.4/api/functions/useAppData.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useAppDataNamespace",
+              "title": "useAppDataNamespace()",
+              "file": "auth-sdk/2.0.4/api/functions/useAppDataNamespace.md",
               "order": 10000,
               "section": "api"
             },
@@ -5719,6 +5747,13 @@
               "slug": "api/functions/useCurrentUser",
               "title": "useCurrentUser()",
               "file": "auth-sdk/2.0.4/api/functions/useCurrentUser.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useDeleteAppData",
+              "title": "useDeleteAppData()",
+              "file": "auth-sdk/2.0.4/api/functions/useDeleteAppData.md",
               "order": 10000,
               "section": "api"
             },
@@ -5831,6 +5866,13 @@
               "slug": "api/functions/useSessionSocket",
               "title": "useSessionSocket()",
               "file": "auth-sdk/2.0.4/api/functions/useSessionSocket.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useSetAppData",
+              "title": "useSetAppData()",
+              "file": "auth-sdk/2.0.4/api/functions/useSetAppData.md",
               "order": 10000,
               "section": "api"
             },
@@ -6034,6 +6076,13 @@
               "slug": "api/types/ViewMode",
               "title": "ViewMode",
               "file": "auth-sdk/2.0.4/api/types/ViewMode.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/appDataQueryKeys",
+              "title": "appDataQueryKeys",
+              "file": "auth-sdk/2.0.4/api/variables/appDataQueryKeys.md",
               "order": 10000,
               "section": "api"
             },
@@ -13299,15 +13348,24 @@
       "repo": "https://github.com/OxyHQ/OxyHQServices",
       "category": "service",
       "description": "REST API reference for the Oxy platform — auth, accounts, files, billing.",
-      "defaultVersion": "1.0.2",
+      "defaultVersion": "main",
       "versions": [
         {
-          "version": "1.0.2",
-          "pages": []
+          "version": "main",
+          "pages": [
+            {
+              "slug": "",
+              "title": "REST API",
+              "description": "The Oxy platform REST API — authentication, accounts, files, billing, federation. OpenAPI 3.1, rendered with Scalar.",
+              "file": "api/main/index.mdx",
+              "order": 0,
+              "section": "guides"
+            }
+          ]
         }
       ],
-      "versioned": true,
-      "latestVersion": "1.0.2",
+      "versioned": false,
+      "latestVersion": "main",
       "deprecatedVersions": []
     },
     {
@@ -13336,6 +13394,14 @@
               "description": "How MyAccount walks a user from first launch to a fully recoverable identity.",
               "file": "accounts/main/onboarding.mdx",
               "order": 2,
+              "section": "guides"
+            },
+            {
+              "slug": "security",
+              "title": "Security",
+              "description": "Devices, sessions, two-factor auth, and the activity log inside MyAccount.",
+              "file": "accounts/main/security.mdx",
+              "order": 3,
               "section": "guides"
             }
           ]
@@ -13372,6 +13438,14 @@
               "file": "inbox/main/encryption.mdx",
               "order": 2,
               "section": "guides"
+            },
+            {
+              "slug": "sync",
+              "title": "Offline & sync",
+              "description": "How Inbox stays usable without a network, and how it reconciles when one returns.",
+              "file": "inbox/main/sync.mdx",
+              "order": 3,
+              "section": "guides"
             }
           ]
         }
@@ -13399,6 +13473,22 @@
               "file": "console/main/index.mdx",
               "order": 0,
               "section": "guides"
+            },
+            {
+              "slug": "webhooks",
+              "title": "Webhooks",
+              "description": "How to subscribe to platform events, verify signatures, and handle retries.",
+              "file": "console/main/webhooks.mdx",
+              "order": 2,
+              "section": "guides"
+            },
+            {
+              "slug": "apps",
+              "title": "Developer apps",
+              "description": "Registering apps, scopes, redirect URIs, and the difference between public and confidential clients.",
+              "file": "console/main/apps.mdx",
+              "order": 3,
+              "section": "guides"
             }
           ]
         }
@@ -13425,6 +13515,22 @@
               "description": "Standalone Vite auth app and FedCM Identity Provider.",
               "file": "auth/main/index.mdx",
               "order": 0,
+              "section": "guides"
+            },
+            {
+              "slug": "fedcm",
+              "title": "FedCM",
+              "description": "How auth.oxy.so works as a Federated Credential Management Identity Provider.",
+              "file": "auth/main/fedcm.mdx",
+              "order": 2,
+              "section": "guides"
+            },
+            {
+              "slug": "recovery",
+              "title": "Account recovery",
+              "description": "How auth.oxy.so handles password reset and identity recovery.",
+              "file": "auth/main/recovery.mdx",
+              "order": 3,
               "section": "guides"
             }
           ]
@@ -13807,15 +13913,48 @@
       "repo": "https://github.com/OxyHQ/tnp",
       "category": "service",
       "description": "Alternative DNS / namespace system — Vite web + Bun API + DNS server",
-      "defaultVersion": "0.1.0",
+      "defaultVersion": "main",
       "versions": [
         {
-          "version": "0.1.0",
-          "pages": []
+          "version": "main",
+          "pages": [
+            {
+              "slug": "",
+              "title": "TNP",
+              "description": "The Network Protocol — an alternative internet namespace controlled by Oxy, with custom TLDs, a public DNS resolver, and an optional encrypted overlay.",
+              "file": "tnp/main/index.mdx",
+              "order": 0,
+              "section": "guides"
+            },
+            {
+              "slug": "dns-server",
+              "title": "DNS Server",
+              "description": "How the public TNP resolver and the local client DNS proxy answer queries, cache them, and forward upstream.",
+              "file": "tnp/main/dns-server.mdx",
+              "order": 1,
+              "section": "guides"
+            },
+            {
+              "slug": "sdk",
+              "title": "Client SDK",
+              "description": "The tnp CLI, the DnsProxy and TnpApiClient modules, and the encrypted overlay (tnp connect / serve / relay).",
+              "file": "tnp/main/sdk.mdx",
+              "order": 2,
+              "section": "guides"
+            },
+            {
+              "slug": "api",
+              "title": "REST API",
+              "description": "Every HTTP endpoint exposed by the TNP API — DNS resolution, TLDs, domains, records, service nodes, relays, client distribution.",
+              "file": "tnp/main/api.mdx",
+              "order": 3,
+              "section": "guides"
+            }
+          ]
         }
       ],
-      "versioned": true,
-      "latestVersion": "0.1.0",
+      "versioned": false,
+      "latestVersion": "main",
       "deprecatedVersions": []
     },
     {
