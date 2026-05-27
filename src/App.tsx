@@ -75,14 +75,38 @@ const queryClient = new QueryClient({
 })
 
 function ScrollToTop() {
-  const { pathname } = useLocation()
-  // Derived-state pattern: scroll to top when the pathname changes without
-  // reaching for useEffect. The compare runs during render, React batches the
-  // resulting state update, and window.scrollTo executes synchronously.
-  const [lastPath, setLastPath] = useState(pathname)
-  if (lastPath !== pathname) {
-    setLastPath(pathname)
-    if (typeof window !== 'undefined') window.scrollTo(0, 0)
+  const { pathname, hash } = useLocation()
+  // Derived-state pattern: react to location changes during render without
+  // reaching for useEffect. Track the last (pathname, hash) tuple and pick
+  // one of two behaviours when it changes:
+  //
+  //   1. hash present → defer to rAF so the target element has had a chance
+  //      to render, then `scrollIntoView` on it. Falls back to scrollTo(0,0)
+  //      if the element is missing.
+  //   2. no hash      → scroll to top synchronously (original behaviour).
+  //
+  // rAF is needed for case 1 because react-router updates `location`
+  // synchronously during render — the new page hasn't mounted yet at this
+  // point, so `getElementById` would return null.
+  const [lastKey, setLastKey] = useState(`${pathname}${hash}`)
+  const currentKey = `${pathname}${hash}`
+  if (lastKey !== currentKey) {
+    setLastKey(currentKey)
+    if (typeof window !== 'undefined') {
+      if (hash) {
+        const targetId = hash.slice(1)
+        requestAnimationFrame(() => {
+          const el = document.getElementById(targetId)
+          if (el) {
+            el.scrollIntoView({ block: 'start' })
+          } else {
+            window.scrollTo(0, 0)
+          }
+        })
+      } else {
+        window.scrollTo(0, 0)
+      }
+    }
   }
   return null
 }
