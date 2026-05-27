@@ -9,7 +9,10 @@ import {
   HELP_CATEGORIES,
   type HelpEntry,
   type HelpCategoryMeta,
+  type HelpCategoryId,
 } from '../../content/help-loader'
+import HelpProductBadge from './HelpProductBadge'
+import { getHelpProductLogo } from './getHelpProductLogo'
 
 /* ──────────────────────────────────────────────
  * /help — landing
@@ -108,7 +111,28 @@ function ArrowRight() {
 
 /* ─── Card helpers ─── */
 
-function CategoryCardIcon({ name, className = '' }: { name?: string; className?: string }) {
+function CategoryCardIcon({
+  name,
+  category,
+  className = '',
+}: { name?: string; category?: HelpCategoryId; className?: string }) {
+  const logo = category ? getHelpProductLogo(category) : undefined
+  if (logo) {
+    return (
+      <div
+        className={`flex items-center justify-center rounded-[10px] border border-border bg-surface p-1.5 ${className}`}
+      >
+        <img
+          src={logo}
+          alt=""
+          aria-hidden="true"
+          className="h-full w-full object-contain"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    )
+  }
   const Icon = lucideIcon(name)
   if (Icon) {
     return (
@@ -187,7 +211,7 @@ function HelpSidebar({ groups }: { groups: CategoryGroup[] }) {
                   className="flex items-center gap-[7px] rounded-[10px] py-px pl-px hover:bg-surface/80"
                   to={`/help#${category.id}`}
                 >
-                  <CategoryCardIcon name={category.icon} className="size-7.5" />
+                  <CategoryCardIcon name={category.icon} category={category.id} className="size-7.5" />
                   <div className="font-semibold text-xs uppercase">{category.label}</div>
                 </Link>
                 <div className="mt-1 flex flex-col lg:gap-0.5">
@@ -221,12 +245,14 @@ function HelpSidebar({ groups }: { groups: CategoryGroup[] }) {
 
 interface HelpContentProps {
   categories: HelpCategoryMeta[]
+  groups: CategoryGroup[]
   featuredArticles: HelpEntry[]
   articleCountsByCategory: Map<string, number>
 }
 
 function HelpContent({
   categories,
+  groups,
   featuredArticles,
   articleCountsByCategory,
 }: HelpContentProps) {
@@ -297,7 +323,7 @@ function HelpContent({
                   >
                     <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
                     <div className="relative flex items-center justify-between">
-                      <CategoryCardIcon name={category.icon} className="relative size-11 max-lg:size-10" />
+                      <CategoryCardIcon name={category.icon} category={category.id} className="relative size-11 max-lg:size-10" />
                       <ArrowRight />
                     </div>
                     <div className="relative flex flex-col gap-1">
@@ -309,6 +335,51 @@ function HelpContent({
                   </Link>
                 )
               })}
+            </div>
+          )}
+
+          {/* Browse by product — one column per category, each headed by
+              its Oxy ecosystem logo so readers can scan to the right
+              product first, then drill into a specific article. */}
+          {groups.length > 0 && (
+            <div className="mt-20 w-full self-stretch md:mt-25">
+              <div className="mb-8 flex flex-col gap-2">
+                <h2 className="text-heading-md">Browse by product</h2>
+                <p className="text-muted-foreground">
+                  Articles organized by the Oxy app or service they cover.
+                </p>
+              </div>
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {groups.map(({ category, articles }) => (
+                  <section
+                    key={category.id}
+                    id={category.id}
+                    className="scroll-mt-24 flex flex-col gap-4 rounded-2xl border border-border bg-background p-5 transition-colors hover:border-input"
+                  >
+                    <header className="flex items-center justify-between gap-3 pb-3 border-b border-border">
+                      <HelpProductBadge category={category.id} label={category.label} size="lg" />
+                      <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                        {articles.length} {articles.length === 1 ? 'article' : 'articles'}
+                      </span>
+                    </header>
+                    <ul className="flex flex-col gap-1">
+                      {articles.map((article) => (
+                        <li key={article.slug}>
+                          <Link
+                            to={`/help/${article.slug}`}
+                            className="group flex items-start justify-between gap-3 rounded-xl px-2 py-2 -mx-2 transition-colors hover:bg-surface"
+                          >
+                            <span className="flex-1 text-sm text-foreground transition-colors group-hover:text-primary">
+                              {article.frontmatter.title}
+                            </span>
+                            <ArrowRight />
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                ))}
+              </div>
             </div>
           )}
 
@@ -332,22 +403,34 @@ function HelpContent({
             </div>
             <div>
               <ul>
-                {featuredArticles.map((article, i) => (
-                  <li
-                    key={article.slug}
-                    className="border-border border-b pt-8 pb-[31px] first-of-type:pt-0"
-                  >
-                    <Link className="group -m-2 flex gap-x-8 rounded-xl p-2" to={`/help/${article.slug}`}>
-                      <ArticleNumber index={i} />
-                      <div>
-                        <p className="text-balance font-semibold">{article.frontmatter.title}</p>
-                        <p className="mt-0.5 line-clamp-2 text-balance text-muted-foreground transition-[color] group-hover:text-foreground">
-                          {article.frontmatter.description}
-                        </p>
-                      </div>
-                    </Link>
-                  </li>
-                ))}
+                {featuredArticles.map((article, i) => {
+                  const categoryMeta = HELP_CATEGORIES.find(
+                    (c) => c.id === article.frontmatter.category,
+                  )
+                  return (
+                    <li
+                      key={article.slug}
+                      className="border-border border-b pt-8 pb-[31px] first-of-type:pt-0"
+                    >
+                      <Link className="group -m-2 flex gap-x-8 rounded-xl p-2" to={`/help/${article.slug}`}>
+                        <ArticleNumber index={i} />
+                        <div className="flex flex-col gap-1.5">
+                          {categoryMeta && (
+                            <HelpProductBadge
+                              category={categoryMeta.id}
+                              label={categoryMeta.label}
+                              size="sm"
+                            />
+                          )}
+                          <p className="text-balance font-semibold">{article.frontmatter.title}</p>
+                          <p className="line-clamp-2 text-balance text-muted-foreground transition-[color] group-hover:text-foreground">
+                            {article.frontmatter.description}
+                          </p>
+                        </div>
+                      </Link>
+                    </li>
+                  )
+                })}
                 {featuredArticles.length === 0 && (
                   <li className="border-border border-b pt-8 pb-[31px] first-of-type:pt-0">
                     <p className="text-balance text-muted-foreground">
@@ -393,6 +476,7 @@ export default function HelpPageContent() {
         <HelpSidebar groups={groups} />
         <HelpContent
           categories={HELP_CATEGORIES}
+          groups={groups}
           featuredArticles={featured}
           articleCountsByCategory={countsByString}
         />
