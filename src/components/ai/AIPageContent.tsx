@@ -3,16 +3,15 @@ import { PromptInput } from '@oxyhq/bloom/prompt-input'
 import HeroCanvas from './HeroCanvas'
 import ParticleCanvas from './ParticleCanvas'
 import ApiCardCanvas from './ApiCardCanvas'
-import Logo from '../ui/Logo'
 import Button from '../ui/Button'
-import { useNewsroomPosts, usePromptPhrases } from '../../api/hooks'
+import { usePromptPhrases } from '../../api/hooks'
 import AIResearchSection from './AIResearchSection'
+import RecentNewsSection from '../newsroom/RecentNewsSection'
 import {
   heroTagline, heroDescription, heroAnnouncementDesktop, heroAnnouncementMobile,
   heroAnnouncementHref, heroPlaceholder,
   productsTag, productsHeading, productCards,
   globeTextLeft, globeTextRight,
-  blogTag, blogHeading, blogExploreCta, blogExploreHref, blogReadCta, blogEmptyText,
 } from '../../data/ai'
 
 const GlobeScene = lazy(() => import('./GlobeScene'))
@@ -150,15 +149,6 @@ function CornerDots() {
   )
 }
 
-/* ─────────────────────────────────────────────
-   Date formatter
-   ───────────────────────────────────────────── */
-
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' })
-}
-
 /* ═══════════════════════════════════════════════
    MAIN PAGE CONTENT
    ═══════════════════════════════════════════════ */
@@ -168,8 +158,6 @@ export default function AIPageContent() {
   const [promptValue, setPromptValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const { data: newsData } = useNewsroomPosts({ tag: 'ai', limit: 3 })
-  const articles = newsData?.posts ?? []
   const { data: promptPhrases } = usePromptPhrases('ai')
   const currentPlaceholder = promptPhrases?.length ? promptPhrases[Math.floor(Date.now() / 5000) % promptPhrases.length] : heroPlaceholder
 
@@ -345,80 +333,14 @@ export default function AIPageContent() {
         <AIResearchSection />
       </section>
 
-      {/* ═══ SECTION 5: Blog / News ═══ */}
+      {/* ═══ SECTION 5: Latest news — canonical newsroom rail ═══ */}
       <section className="py-16 sm:py-32">
-        <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl space-y-16 sm:space-y-32">
-          {/* Header */}
-          <div className="space-y-12">
-            <div>
-              <div className="mono-tag flex items-center gap-2 text-sm text-muted-foreground"><span>[ </span><span> {blogTag} </span><span> ]</span></div>
-            </div>
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-              <div className="max-w-2xl space-y-12">
-                <h2 className="text-balance text-3xl tracking-tight md:text-4xl lg:text-5xl text-foreground">{blogHeading}</h2>
-              </div>
-              <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:gap-12">
-                <div>
-                  <Button variant="outline" size="md" href={blogExploreHref}>
-                    {blogExploreCta}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Articles */}
-          <div>
-            {articles.map((article) => (
-              <div key={article.slug} className="group relative">
-                <div className="border-border flex flex-col gap-10 border-b py-16 first-of-type:border-t last-of-type:border-b-0 md:flex-row md:gap-12">
-                  <div className="order-2 flex flex-1 flex-col gap-4 md:order-1 md:gap-12 xl:flex-row">
-                    <div>
-                      <p className="mono-tag text-xs leading-6 text-muted-foreground">{formatDate(article.publishedAt)}</p>
-                    </div>
-                    <div className="flex flex-1 flex-col space-y-6">
-                      <div className="block grow space-y-4">
-                        <a href={`/newsroom/${article.slug}`} aria-label={article.title}>
-                          <span className="absolute inset-0" />
-                          <h3 className="text-xl leading-6 text-foreground">{article.title}</h3>
-                        </a>
-                        <p className="text-muted-foreground grow text-balance">{article.resume}</p>
-                      </div>
-                      <div className="flex items-center justify-between gap-3">
-                        <div><span className="mono-tag text-xs text-muted-foreground">{article.tags?.[0] || article.categories?.[0] || 'ai'}</span></div>
-                        <div>
-                          <Button variant="outline" size="sm" className="pointer-events-none group-hover:bg-surface">
-                            {blogReadCta}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="order-1 flex-1 md:order-2 xl:max-w-[500px]">
-                    <div
-                      className="break-words flex w-full items-center whitespace-pre-wrap bg-surface duration-150 aspect-[16/10] text-4xl leading-[2.5rem] tracking-tight"
-                      style={{
-                        backgroundImage: article.coverImage ? `url(${article.coverImage})` : 'none',
-                        backgroundSize: 'auto 100%',
-                        backgroundPosition: 'center center',
-                        backgroundRepeat: 'no-repeat',
-                      }}
-                    >
-                      {!article.coverImage && (
-                        <div className="flex h-full w-full items-center justify-center">
-                          <Logo className="h-12 w-auto text-foreground/10" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-            {articles.length === 0 && (
-              <p className="text-muted-foreground py-16 text-center">{blogEmptyText}</p>
-            )}
-          </div>
-        </div>
+        <RecentNewsSection
+          title="Latest news"
+          linkText="View all"
+          category="Product"
+          href="/newsroom"
+        />
       </section>
 
       {/* ═══ Floating header gradient (scroll-triggered) ═══ */}

@@ -64,12 +64,3 @@ export const researchParagraphs = [
 export const researchHighlight = 'Oxy AI'
 export const researchCta = 'Learn more'
 export const researchCtaHref = '/initiative'
-
-/* ── Section 5: Blog / News ── */
-
-export const blogTag = 'Blog'
-export const blogHeading = 'Latest news'
-export const blogExploreCta = 'Explore more'
-export const blogExploreHref = '/company/news'
-export const blogReadCta = 'Read'
-export const blogEmptyText = 'No articles found.'
