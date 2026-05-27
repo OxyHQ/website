@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, BookOpen, Check, Clock, GraduationCap, Sparkles } from 'lucide-react'
+import { ArrowRight, BookOpen, Check, Clock, GraduationCap, Sparkles } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -274,15 +274,7 @@ export default function CourseDetailPage() {
             className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] bg-gradient-to-b from-surface to-background"
           />
           <div className="mx-auto max-w-[1200px] px-6 pt-28 pb-12 lg:px-8 lg:pt-36 lg:pb-16">
-            <Link
-              to="/academy"
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="size-4" aria-hidden="true" />
-              Back to Academy
-            </Link>
-
-            <div className="mt-8 grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
               {/* Text column */}
               <div className="flex flex-col gap-5 lg:col-span-7">
                 <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">

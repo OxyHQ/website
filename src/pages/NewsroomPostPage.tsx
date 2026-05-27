@@ -90,21 +90,8 @@ export default function NewsroomPostPage() {
       <Navbar />
 
       <main className="pb-20 md:pb-28">
-        {/* Back link */}
-        <div className="mx-auto max-w-[720px] px-5 pt-8 md:px-8">
-          <Link
-            to="/newsroom"
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="h-4 w-4">
-              <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Back to Newsroom
-          </Link>
-        </div>
-
         {/* Article header */}
-        <header className="mx-auto max-w-[720px] px-5 pt-8 md:px-8">
+        <header className="mx-auto max-w-[720px] px-5 pt-[5rem] md:px-8 md:pt-28">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
             <span>{post.categories[0]}</span>
             <span>&middot;</span>

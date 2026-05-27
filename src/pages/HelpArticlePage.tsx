@@ -191,17 +191,9 @@ export default function HelpArticlePage() {
         {/* ═══ Hero ═══ */}
         <section className="relative">
           <div className="relative mx-auto flex max-w-5xl flex-col items-start gap-4 px-6 pt-28 pb-10 lg:px-8 lg:pt-36">
-            <Link
-              to="/help"
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="size-4" aria-hidden="true" />
-              Back to Help Center
-            </Link>
-
             {/* Breadcrumb */}
             <nav
-              className="mt-2 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground"
+              className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground"
               aria-label="Breadcrumb"
             >
               <Link to="/" className="transition-colors hover:text-foreground">
