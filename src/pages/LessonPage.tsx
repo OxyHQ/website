@@ -289,6 +289,62 @@ export default function LessonPage() {
           </div>
         </section>
 
+        {/* ═══ Prev / Next — compact secondary pagers ═══
+              The sticky outline is the primary navigation. These plain-text
+              pagers sit at the end of the article body for keyboard / mobile
+              users and to surface lesson titles without duplicating the
+              sidebar's card chrome. */}
+        {(prev || next) && (
+          <PageSection spacing="sm" width="narrow">
+            <div className="flex items-stretch justify-between gap-6 border-t border-border pt-6 text-sm">
+              {prev ? (
+                <Link
+                  to={`/academy/${prev.course}/${prev.lessonSlug}`}
+                  className="group inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
+                  rel="prev"
+                >
+                  <ArrowLeft
+                    className="size-4 shrink-0 transition-transform group-hover:-translate-x-0.5"
+                    aria-hidden="true"
+                  />
+                  <span className="min-w-0">
+                    <span className="block text-xs font-medium uppercase tracking-wider">
+                      Previous
+                    </span>
+                    <span className="block truncate font-medium text-foreground">
+                      {prev.title}
+                    </span>
+                  </span>
+                </Link>
+              ) : (
+                <span aria-hidden="true" />
+              )}
+              {next ? (
+                <Link
+                  to={`/academy/${next.course}/${next.lessonSlug}`}
+                  className="group ml-auto inline-flex items-center gap-2 text-right text-muted-foreground transition-colors hover:text-foreground"
+                  rel="next"
+                >
+                  <span className="min-w-0">
+                    <span className="block text-xs font-medium uppercase tracking-wider">
+                      Next
+                    </span>
+                    <span className="block truncate font-medium text-foreground">
+                      {next.title}
+                    </span>
+                  </span>
+                  <ArrowRight
+                    className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5"
+                    aria-hidden="true"
+                  />
+                </Link>
+              ) : (
+                <span aria-hidden="true" />
+              )}
+            </div>
+          </PageSection>
+        )}
+
         {/* ═══ Share ═══ */}
         <PageSection spacing="sm" width="narrow">
           <ShareWithMention
@@ -298,42 +354,6 @@ export default function LessonPage() {
             via="oxy"
           />
         </PageSection>
-
-        {/* ═══ Prev / Next ═══ */}
-        {(prev || next) && (
-          <PageSection spacing="sm" width="narrow">
-            <div className="grid gap-4 sm:grid-cols-2">
-              {prev ? (
-                <Link
-                  to={`/academy/${prev.course}/${prev.lessonSlug}`}
-                  className="group flex flex-col gap-1 rounded-2xl border border-border bg-background p-5 transition-colors hover:border-input hover:bg-surface"
-                >
-                  <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    <ArrowLeft className="size-3.5" aria-hidden="true" />
-                    Previous lesson
-                  </span>
-                  <span className="text-base font-semibold text-foreground">{prev.title}</span>
-                </Link>
-              ) : (
-                <div aria-hidden="true" />
-              )}
-              {next ? (
-                <Link
-                  to={`/academy/${next.course}/${next.lessonSlug}`}
-                  className="group flex flex-col items-end gap-1 rounded-2xl border border-border bg-background p-5 text-right transition-colors hover:border-input hover:bg-surface sm:col-start-2"
-                >
-                  <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    Next lesson
-                    <ArrowRight className="size-3.5" aria-hidden="true" />
-                  </span>
-                  <span className="text-base font-semibold text-foreground">{next.title}</span>
-                </Link>
-              ) : (
-                <div aria-hidden="true" />
-              )}
-            </div>
-          </PageSection>
-        )}
 
         {/* ═══ Course-complete CTA when no next lesson ═══ */}
         {!next && (
