@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, BookOpen, Clock, GraduationCap, Sparkles } from 'lucide-react'
+import { ArrowRight, BookOpen, Check, Clock, GraduationCap, Sparkles } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -11,6 +11,8 @@ import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useCurrentLocale } from '../lib/i18n'
 import { loadCourses, ACADEMY_COURSES, type CourseWithLessons } from '../content/academy-loader'
 import { courseGradient, courseInitials } from '../components/academy/courseVisual'
+import { useAcademyAllProgress } from '../components/academy/useAcademyProgress'
+import type { CourseProgress } from '../components/academy/progressStorage'
 
 /* ──────────────────────────────────────────────
  * /academy
@@ -135,7 +137,60 @@ function CourseMeta({ course }: { course: CourseWithLessons }) {
   )
 }
 
-function CourseCard({ course }: { course: CourseWithLessons }) {
+/* ── Per-course progress chip ─────────────────────────────── */
+
+interface ProgressSummary {
+  completed: number
+  total: number
+  status: 'not-started' | 'in-progress' | 'completed'
+}
+
+function summarize(course: CourseWithLessons, progress: CourseProgress): ProgressSummary {
+  const total = course.lessons.length
+  let completed = 0
+  for (const lesson of course.lessons) {
+    if (progress[lesson.lessonSlug]?.status === 'completed') completed += 1
+  }
+  let status: ProgressSummary['status'] = 'not-started'
+  if (completed > 0 && completed === total) {
+    status = 'completed'
+  } else if (completed > 0 || Object.values(progress).some((l) => l.status === 'in-progress')) {
+    status = 'in-progress'
+  }
+  return { completed, total, status }
+}
+
+function ProgressChip({ summary }: { summary: ProgressSummary }) {
+  if (summary.status === 'not-started') return null
+  if (summary.status === 'completed') {
+    return (
+      <span className="inline-flex w-fit items-center gap-1 rounded-full bg-foreground px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-background">
+        <Check className="size-3" aria-hidden="true" />
+        Completed
+      </span>
+    )
+  }
+  return (
+    <span className="inline-flex w-fit items-center gap-1 rounded-full border border-border bg-surface px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground">
+      In progress · {summary.completed}/{summary.total}
+    </span>
+  )
+}
+
+function CourseCard({
+  course,
+  progress,
+}: {
+  course: CourseWithLessons
+  progress: CourseProgress
+}) {
+  const summary = summarize(course, progress)
+  const ctaLabel =
+    summary.status === 'completed'
+      ? 'Review course'
+      : summary.status === 'in-progress'
+        ? 'Resume course'
+        : 'Start course'
   return (
     <Link
       to={`/academy/${course.slug}`}
@@ -150,12 +205,15 @@ function CourseCard({ course }: { course: CourseWithLessons }) {
       <CourseCover course={course} className="aspect-[16/10] w-full" />
 
       <div className="flex flex-1 flex-col p-7 lg:p-8">
-        {course.featured ? (
-          <span className="mb-3 inline-flex w-fit items-center gap-1 rounded-full border border-border bg-surface px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground">
-            <Sparkles className="size-3" aria-hidden="true" />
-            Featured
-          </span>
-        ) : null}
+        <div className="mb-3 flex flex-wrap gap-2">
+          {course.featured ? (
+            <span className="inline-flex w-fit items-center gap-1 rounded-full border border-border bg-surface px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground">
+              <Sparkles className="size-3" aria-hidden="true" />
+              Featured
+            </span>
+          ) : null}
+          <ProgressChip summary={summary} />
+        </div>
 
         <h3 className="text-xl font-medium text-foreground md:text-2xl">{course.title}</h3>
 
@@ -166,7 +224,7 @@ function CourseCard({ course }: { course: CourseWithLessons }) {
         </div>
 
         <span className="mt-7 inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
-          Start course
+          {ctaLabel}
           <ArrowRight
             className="size-4 transition-transform duration-300 group-hover:translate-x-1"
             aria-hidden="true"
@@ -196,10 +254,24 @@ const VALUE_PROPS: { title: string; description: string }[] = [
   },
 ]
 
+function lastActivityTime(progress: CourseProgress): number {
+  let latest = 0
+  for (const lesson of Object.values(progress)) {
+    if (!lesson.completedAt) continue
+    const t = Date.parse(lesson.completedAt)
+    if (Number.isFinite(t) && t > latest) latest = t
+  }
+  return latest
+}
+
 export default function AcademyPage() {
   const [activeTag, setActiveTag] = useState<string>(ALL_TAGS)
   const locale = useCurrentLocale()
   const allCourses = useMemo(() => loadCourses(locale), [locale])
+
+  const { data: allProgress } = useAcademyAllProgress()
+
+  const progressFor = (slug: string): CourseProgress => allProgress[slug] ?? {}
 
   const tags = useMemo(() => {
     const set = new Set<string>()
@@ -228,6 +300,36 @@ export default function AcademyPage() {
     () => allCourses.reduce((sum, c) => sum + c.lessons.length, 0),
     [allCourses],
   )
+
+  // "Continue learning" — the most-recently-touched in-progress course
+  // (anywhere across the catalog). Skips completed courses; only shows when
+  // the user has actually started something.
+  const continueLearningCourse = useMemo(() => {
+    let chosen: { course: CourseWithLessons; touched: number } | null = null
+    for (const course of allCourses) {
+      const progress = progressFor(course.slug)
+      const summary = summarize(course, progress)
+      if (summary.status !== 'in-progress') continue
+      const touched = lastActivityTime(progress)
+      if (!chosen || touched > chosen.touched) {
+        chosen = { course, touched }
+      }
+    }
+    return chosen?.course ?? null
+    // progressFor and summarize depend on allProgress + allCourses; we list
+    // those as deps so the rail re-evaluates when either changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allProgress, allCourses])
+
+  const continueLearningLessonSlug = useMemo(() => {
+    if (!continueLearningCourse) return null
+    const progress = progressFor(continueLearningCourse.slug)
+    for (const lesson of continueLearningCourse.lessons) {
+      if (progress[lesson.lessonSlug]?.status !== 'completed') return lesson.lessonSlug
+    }
+    return continueLearningCourse.lessons[0]?.lessonSlug ?? null
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [continueLearningCourse, allProgress])
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -285,6 +387,51 @@ export default function AcademyPage() {
             )}
           </div>
         </section>
+
+        {/* ═══ Continue learning ═══ */}
+        {continueLearningCourse && continueLearningLessonSlug ? (
+          <PageSection spacing="sm" id="continue-learning">
+            <SectionHeading
+              eyebrow="Continue learning"
+              title="Pick up where you left off."
+              description="The most recent course you started — jump straight back into the next lesson."
+            />
+            <div className="mt-8">
+              <Link
+                to={`/academy/${continueLearningCourse.slug}/${continueLearningLessonSlug}`}
+                className="group grid overflow-hidden rounded-3xl border border-border bg-background transition-colors hover:bg-surface lg:grid-cols-5"
+                aria-label={`${continueLearningCourse.title} — resume`}
+              >
+                <CourseCover
+                  course={continueLearningCourse}
+                  className="aspect-[16/10] w-full lg:col-span-2 lg:aspect-auto lg:h-full"
+                />
+                <div className="flex flex-col gap-4 p-8 lg:col-span-3 lg:p-10">
+                  <ProgressChip
+                    summary={summarize(
+                      continueLearningCourse,
+                      progressFor(continueLearningCourse.slug),
+                    )}
+                  />
+                  <h3 className="text-balance text-2xl font-medium tracking-tight text-foreground md:text-3xl">
+                    {continueLearningCourse.title}
+                  </h3>
+                  <p className="text-pretty text-base leading-relaxed text-muted-foreground">
+                    {continueLearningCourse.summary}
+                  </p>
+                  <CourseMeta course={continueLearningCourse} />
+                  <span className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
+                    Resume next lesson
+                    <ArrowRight
+                      className="size-4 transition-transform duration-300 group-hover:translate-x-1"
+                      aria-hidden="true"
+                    />
+                  </span>
+                </div>
+              </Link>
+            </div>
+          </PageSection>
+        ) : null}
 
         {/* ═══ Spotlight ═══ */}
         {showSpotlight && (
@@ -365,7 +512,11 @@ export default function AcademyPage() {
               }`}
             >
               {(showSpotlight ? gridCourses : filteredCourses).map((course) => (
-                <CourseCard key={course.slug} course={course} />
+                <CourseCard
+                  key={course.slug}
+                  course={course}
+                  progress={progressFor(course.slug)}
+                />
               ))}
             </div>
 

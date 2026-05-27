@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, BookOpen, Clock, GraduationCap, Sparkles } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BookOpen, Check, Clock, GraduationCap, Sparkles } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -12,6 +12,8 @@ import { useCurrentLocale } from '../lib/i18n'
 import { loadCourse, loadCourses, type LessonEntry } from '../content/academy-loader'
 import ShareWithMention from '../components/social/ShareWithMention'
 import { courseGradient, courseInitials } from '../components/academy/courseVisual'
+import { useAcademyProgress } from '../components/academy/useAcademyProgress'
+import type { CourseProgress } from '../components/academy/progressStorage'
 
 /* ──────────────────────────────────────────────
  * /academy/:slug
@@ -68,22 +70,37 @@ function LessonRow({
   courseSlug,
   lesson,
   index,
+  isCompleted,
+  isResumeTarget,
 }: {
   courseSlug: string
   lesson: LessonEntry
   index: number
+  isCompleted: boolean
+  isResumeTarget: boolean
 }) {
   const duration = lesson.frontmatter.duration ?? ''
   return (
     <Link
       to={`/academy/${courseSlug}/${lesson.lessonSlug}`}
-      className="group flex items-start gap-5 rounded-2xl border border-border bg-background p-5 transition-colors hover:bg-surface md:p-6"
+      aria-label={`${lesson.frontmatter.title}${isCompleted ? ' — completed' : ''}${
+        isResumeTarget ? ' — resume here' : ''
+      }`}
+      className={`group flex items-start gap-5 rounded-2xl border p-5 transition-colors md:p-6 ${
+        isResumeTarget
+          ? 'border-foreground bg-background hover:bg-surface'
+          : 'border-border bg-background hover:bg-surface'
+      }`}
     >
       <span
-        className="grid size-10 shrink-0 place-items-center rounded-xl border border-border bg-surface font-mono text-sm font-semibold text-foreground"
+        className={`grid size-10 shrink-0 place-items-center rounded-xl font-mono text-sm font-semibold transition-colors ${
+          isCompleted
+            ? 'border border-transparent bg-foreground text-background'
+            : 'border border-border bg-surface text-foreground'
+        }`}
         aria-hidden="true"
       >
-        {String(index + 1).padStart(2, '0')}
+        {isCompleted ? <Check className="size-4" /> : String(index + 1).padStart(2, '0')}
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -94,6 +111,16 @@ function LessonRow({
             <span className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground">
               <Clock className="size-3" aria-hidden="true" />
               {duration}
+            </span>
+          ) : null}
+          {isResumeTarget ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-foreground px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-background">
+              Resume here
+            </span>
+          ) : null}
+          {isCompleted && !isResumeTarget ? (
+            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+              Completed
             </span>
           ) : null}
         </div>
@@ -148,6 +175,20 @@ function RelatedCourseCard({
 
 /* ── Page ─────────────────────────────────────────────────── */
 
+function pickResumeLessonSlug(
+  lessons: LessonEntry[],
+  progress: CourseProgress,
+): string | null {
+  if (lessons.length === 0) return null
+  // First not-completed lesson; if every lesson is completed, no resume target.
+  for (const lesson of lessons) {
+    if (progress[lesson.lessonSlug]?.status !== 'completed') {
+      return lesson.lessonSlug
+    }
+  }
+  return null
+}
+
 export default function CourseDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const locale = useCurrentLocale()
@@ -157,6 +198,11 @@ export default function CourseDetailPage() {
     () => allCourses.filter((c) => c.slug !== course?.slug).slice(0, 3),
     [allCourses, course],
   )
+
+  // Hook must run before the early `if (!course)` return — pass an empty
+  // slug fallback so it stays inert when no course resolves. The store
+  // accepts any kebab-case key, so this is safe.
+  const { data: progress } = useAcademyProgress(slug ?? course?.slug ?? 'unknown')
 
   if (!course) {
     return (
@@ -187,6 +233,28 @@ export default function CourseDetailPage() {
     : course.lessons.length > 0
       ? `${course.lessons.length} ${course.lessons.length === 1 ? 'lesson' : 'lessons'}`
       : ''
+
+  const resumeLessonSlug = pickResumeLessonSlug(course.lessons, progress)
+  const completedCount = course.lessons.reduce(
+    (acc, l) => (progress[l.lessonSlug]?.status === 'completed' ? acc + 1 : acc),
+    0,
+  )
+  const completionPct =
+    course.lessons.length > 0
+      ? Math.round((completedCount / course.lessons.length) * 100)
+      : 0
+  const isCourseStarted = completedCount > 0 || resumeLessonSlug !== firstLesson?.lessonSlug
+  // The hero CTA flips to "Resume" once any lesson is completed (or once we
+  // know about an in-progress lesson). When the entire course is finished
+  // it stays on the last lesson for re-reads.
+  const heroCtaLessonSlug =
+    resumeLessonSlug ?? course.lessons[course.lessons.length - 1]?.lessonSlug ?? null
+  const heroCtaLabel =
+    completedCount === 0
+      ? 'Start first lesson'
+      : completedCount === course.lessons.length
+        ? 'Review course'
+        : 'Resume course'
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -261,6 +329,15 @@ export default function CourseDetailPage() {
                     <dt className="sr-only">Cost</dt>
                     <dd>Free, self-paced</dd>
                   </div>
+                  {isCourseStarted && course.lessons.length > 0 ? (
+                    <div className="flex items-center gap-2">
+                      <Check className="size-4" aria-hidden="true" />
+                      <dt className="sr-only">Progress</dt>
+                      <dd>
+                        {completedCount} / {course.lessons.length} completed ({completionPct}%)
+                      </dd>
+                    </div>
+                  ) : null}
                 </dl>
 
                 {course.tags.length > 0 && (
@@ -277,14 +354,14 @@ export default function CourseDetailPage() {
                 )}
 
                 <div className="mt-4 flex flex-wrap items-center gap-3">
-                  {firstLesson ? (
+                  {heroCtaLessonSlug ? (
                     <Button
                       variant="primary"
                       size="md"
                       responsive
-                      href={`/academy/${course.slug}/${firstLesson.lessonSlug}`}
+                      href={`/academy/${course.slug}/${heroCtaLessonSlug}`}
                     >
-                      Start first lesson
+                      {heroCtaLabel}
                     </Button>
                   ) : null}
                   <Button variant="outline" size="md" responsive href="/academy">
@@ -319,7 +396,13 @@ export default function CourseDetailPage() {
                 <ol className="mt-10 flex flex-col gap-3">
                   {course.lessons.map((lesson, index) => (
                     <li key={lesson.lessonSlug}>
-                      <LessonRow courseSlug={course.slug} lesson={lesson} index={index} />
+                      <LessonRow
+                        courseSlug={course.slug}
+                        lesson={lesson}
+                        index={index}
+                        isCompleted={progress[lesson.lessonSlug]?.status === 'completed'}
+                        isResumeTarget={lesson.lessonSlug === resumeLessonSlug && completedCount > 0}
+                      />
                     </li>
                   ))}
                 </ol>
@@ -352,20 +435,40 @@ export default function CourseDetailPage() {
                       <dt className="text-muted-foreground">Lessons</dt>
                       <dd className="font-medium text-foreground">{course.lessons.length}</dd>
                     </div>
+                    {course.lessons.length > 0 && isCourseStarted ? (
+                      <div className="flex items-center justify-between gap-3">
+                        <dt className="text-muted-foreground">Progress</dt>
+                        <dd className="font-medium text-foreground">
+                          {completedCount} / {course.lessons.length}
+                        </dd>
+                      </div>
+                    ) : null}
                     <div className="flex items-center justify-between gap-3">
                       <dt className="text-muted-foreground">Price</dt>
                       <dd className="font-medium text-foreground">Free</dd>
                     </div>
                   </dl>
 
-                  {firstLesson ? (
+                  {isCourseStarted && course.lessons.length > 0 ? (
+                    <div className="flex flex-col gap-2">
+                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-background">
+                        <div
+                          className="h-full rounded-full bg-foreground transition-[width] duration-500"
+                          style={{ width: `${completionPct}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground">{completionPct}% complete</p>
+                    </div>
+                  ) : null}
+
+                  {heroCtaLessonSlug ? (
                     <Button
                       variant="primary"
                       size="md"
-                      href={`/academy/${course.slug}/${firstLesson.lessonSlug}`}
+                      href={`/academy/${course.slug}/${heroCtaLessonSlug}`}
                       className="w-full"
                     >
-                      Start course
+                      {heroCtaLabel}
                     </Button>
                   ) : null}
 

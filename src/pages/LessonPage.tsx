@@ -1,4 +1,4 @@
-import { Suspense, createElement } from 'react'
+import { Suspense, createElement, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { MDXProvider } from '@mdx-js/react'
 import { ArrowLeft, ArrowRight, BookOpen, Check, Clock } from 'lucide-react'
@@ -11,6 +11,8 @@ import { useCurrentLocale } from '../lib/i18n'
 import { loadLesson, loadCourse } from '../content/academy-loader'
 import { mdxContentComponents } from '../content/_components'
 import ShareWithMention from '../components/social/ShareWithMention'
+import { useAcademyProgress } from '../components/academy/useAcademyProgress'
+import type { CourseProgress } from '../components/academy/progressStorage'
 
 /* ──────────────────────────────────────────────
  * /academy/:slug/:lesson
@@ -34,10 +36,27 @@ interface LessonSidebarProps {
   courseTitle: string
   outline: LessonOutlineItem[]
   activeIndex: number
+  progress: CourseProgress
 }
 
-function LessonSidebar({ courseSlug, courseTitle, outline, activeIndex }: LessonSidebarProps) {
+function countCompleted(outline: LessonOutlineItem[], progress: CourseProgress): number {
+  let n = 0
+  for (const item of outline) {
+    if (progress[item.lessonSlug]?.status === 'completed') n += 1
+  }
+  return n
+}
+
+function LessonSidebar({
+  courseSlug,
+  courseTitle,
+  outline,
+  activeIndex,
+  progress,
+}: LessonSidebarProps) {
   const total = outline.length
+  const completed = countCompleted(outline, progress)
+  const completionPct = total > 0 ? Math.round((completed / total) * 100) : 0
   return (
     <aside className="hidden lg:block lg:col-span-4 xl:col-span-3">
       <div className="sticky top-24 flex flex-col gap-5 rounded-3xl border border-border bg-surface p-6">
@@ -50,18 +69,18 @@ function LessonSidebar({ courseSlug, courseTitle, outline, activeIndex }: Lesson
         </Link>
         <h3 className="text-base font-semibold tracking-tight text-foreground">{courseTitle}</h3>
 
-        {/* Progress strip */}
+        {/* Progress strip — driven by *actual* completion, not lesson position */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>
-              Lesson {activeIndex + 1} of {total}
+              {completed} / {total} completed
             </span>
-            <span>{Math.round(((activeIndex + 1) / total) * 100)}%</span>
+            <span>{completionPct}%</span>
           </div>
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-background">
             <div
               className="h-full rounded-full bg-foreground transition-[width] duration-500"
-              style={{ width: `${((activeIndex + 1) / total) * 100}%` }}
+              style={{ width: `${completionPct}%` }}
             />
           </div>
         </div>
@@ -71,7 +90,7 @@ function LessonSidebar({ courseSlug, courseTitle, outline, activeIndex }: Lesson
           <ol className="flex flex-col gap-1">
             {outline.map((item, index) => {
               const isActive = index === activeIndex
-              const isCompleted = index < activeIndex
+              const isCompleted = progress[item.lessonSlug]?.status === 'completed'
               return (
                 <li key={item.lessonSlug}>
                   <Link
@@ -120,14 +139,15 @@ function LessonSidebar({ courseSlug, courseTitle, outline, activeIndex }: Lesson
 function LessonProgressStrip({
   courseSlug,
   courseTitle,
-  activeIndex,
+  completed,
   total,
 }: {
   courseSlug: string
   courseTitle: string
-  activeIndex: number
+  completed: number
   total: number
 }) {
+  const pct = total > 0 ? Math.round((completed / total) * 100) : 0
   return (
     <div className="lg:hidden">
       <Link
@@ -140,13 +160,13 @@ function LessonProgressStrip({
             <span className="font-medium uppercase tracking-wider">{courseTitle}</span>
           </span>
           <span>
-            Lesson {activeIndex + 1} / {total}
+            {completed} / {total} completed
           </span>
         </div>
         <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-background">
           <div
             className="h-full rounded-full bg-foreground transition-[width] duration-500"
-            style={{ width: `${((activeIndex + 1) / total) * 100}%` }}
+            style={{ width: `${pct}%` }}
           />
         </div>
       </Link>
@@ -162,6 +182,60 @@ export default function LessonPage() {
   const courseSlug = params.slug ?? ''
   const lessonSlug = params.lesson ?? ''
   const data = loadLesson(courseSlug, lessonSlug, locale)
+
+  // The progress hook must always run (Rules of Hooks). When the lesson
+  // doesn't resolve we just don't *use* the data — passing the URL params is
+  // safe because the namespace store happily accepts any kebab-case key.
+  const { data: progress, markLessonStarted, markLessonCompleted } =
+    useAcademyProgress(courseSlug)
+  const isLessonCompleted = progress[lessonSlug]?.status === 'completed'
+
+  // Mark the lesson as started the first time this page mounts for this
+  // (course, lesson) pair. Subsequent visits don't downgrade a completed
+  // lesson back to "in-progress" — the markLessonStarted helper guards that.
+  // We tuck the call in a useEffect because the mutation it issues is a DOM
+  // side effect (a network write), not derived state.
+  useEffect(() => {
+    if (!data) return
+    if (typeof window === 'undefined') return
+    markLessonStarted(lessonSlug)
+    // We deliberately omit `markLessonStarted` from deps — its identity
+    // changes on every render (different `data` snapshot inside the
+    // closure) and the markLessonStarted helper is idempotent for an
+    // already-started lesson, so this re-runs only on lesson-slug changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, lessonSlug])
+
+  // Auto-mark-on-scroll: once the user has scrolled past 90% of the article
+  // body, we mark the lesson as completed. The button below remains the
+  // primary, explicit action — this is just a nudge for readers who skim
+  // through the bottom CTA without clicking the button.
+  const articleRef = useRef<HTMLElement | null>(null)
+  useEffect(() => {
+    if (!data) return
+    if (isLessonCompleted) return
+    if (typeof window === 'undefined') return
+    const article = articleRef.current
+    if (!article) return
+
+    const onScroll = () => {
+      const rect = article.getBoundingClientRect()
+      // Distance scrolled past the article's top into its body.
+      const scrolledIntoArticle = -rect.top
+      const articleHeight = article.offsetHeight
+      if (articleHeight <= 0) return
+      const ratio = scrolledIntoArticle / articleHeight
+      if (ratio >= 0.9) {
+        markLessonCompleted(lessonSlug)
+        window.removeEventListener('scroll', onScroll)
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, isLessonCompleted, lessonSlug])
 
   if (!data) {
     return (
@@ -192,6 +266,7 @@ export default function LessonPage() {
     duration: l.frontmatter.duration,
   }))
   const totalLessons = outline.length
+  const completedCount = countCompleted(outline, progress)
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -262,19 +337,61 @@ export default function LessonPage() {
                 <LessonProgressStrip
                   courseSlug={course.slug}
                   courseTitle={course.title}
-                  activeIndex={position}
+                  completed={completedCount}
                   total={totalLessons}
                 />
               ) : null}
             </div>
 
             {/* Body */}
-            <article className="min-w-0 pb-4 text-foreground lg:col-span-8 xl:col-span-9 lg:pb-8">
+            <article
+              ref={articleRef}
+              className="min-w-0 pb-4 text-foreground lg:col-span-8 xl:col-span-9 lg:pb-8"
+            >
               <MDXProvider components={mdxContentComponents}>
                 <Suspense fallback={<div className="text-sm text-muted-foreground">Loading…</div>}>
                   {createElement(lesson.Component)}
                 </Suspense>
               </MDXProvider>
+
+              {/* Mark as completed — primary, explicit completion mechanism.
+                  The scroll-based auto-mark above is a nudge, not a replacement. */}
+              <div className="mt-10 flex flex-col items-start gap-3 rounded-2xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`grid size-9 place-items-center rounded-full transition-colors ${
+                      isLessonCompleted
+                        ? 'bg-foreground text-background'
+                        : 'border border-border bg-background text-muted-foreground'
+                    }`}
+                    aria-hidden="true"
+                  >
+                    <Check className="size-4" />
+                  </span>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      {isLessonCompleted ? "You've completed this lesson." : 'Finished this lesson?'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {isLessonCompleted
+                        ? 'Progress is synced to your Oxy account when signed in.'
+                        : 'Mark it complete to track your progress through the course.'}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => markLessonCompleted(lessonSlug)}
+                  disabled={isLessonCompleted}
+                  className={`inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-sm font-medium transition-colors ${
+                    isLessonCompleted
+                      ? 'cursor-not-allowed border border-border bg-background text-muted-foreground'
+                      : 'bg-foreground text-background hover:bg-foreground/90'
+                  }`}
+                >
+                  {isLessonCompleted ? 'Completed' : 'Mark as completed'}
+                </button>
+              </div>
             </article>
 
             {/* Sidebar */}
@@ -284,6 +401,7 @@ export default function LessonPage() {
                 courseTitle={course.title}
                 outline={outline}
                 activeIndex={position}
+                progress={progress}
               />
             ) : null}
           </div>
