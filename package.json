@@ -7,7 +7,7 @@
     "predev": "bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts",
     "dev": "bun server/index.ts & vite",
     "dev:client": "vite",
-    "prebuild": "bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts",
+    "prebuild": "bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts && bun scripts/build-help-og-images.ts",
     "build": "tsc -b && vite build",
     "postbuild": "bun scripts/build-docs-search-index.ts && bun scripts/run-pagefind.ts",
     "lint": "eslint .",
@@ -19,6 +19,7 @@
     "mcp": "bun server/mcp.ts",
     "sync-docs": "bun scripts/sync-docs.ts",
     "sync-changelog": "bun scripts/sync-changelog.ts",
+    "build:help-og": "bun scripts/build-help-og-images.ts",
     "render:bloom-thumbnails": "bun scripts/render-bloom-thumbnails.ts"
   },
   "dependencies": {
@@ -86,6 +87,7 @@
     "@babel/core": "^7.29.0",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.60.0",
+    "@resvg/resvg-js": "^2.6.2",
     "@rolldown/plugin-babel": "^0.2.1",
     "@tailwindcss/vite": "^4.2.2",
     "@types/babel__core": "^7.20.5",
@@ -102,6 +104,7 @@
     "pagefind": "^1.5.2",
     "playwright": "^1.60.0",
     "remark-mdx-frontmatter": "^5.2.0",
+    "satori": "^0.26.0",
     "sharp": "^0.34.5",
     "svgo": "^4.0.1",
     "tailwindcss": "^4.2.2",

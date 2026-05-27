@@ -33,6 +33,14 @@ export interface HelpEntry {
   slug: string
   locale: string
   frontmatter: z.infer<typeof HelpFrontmatter>
+  /**
+   * Resolved cover image URL — author-set `coverImage` from frontmatter when
+   * present, otherwise the auto-generated OG card at
+   * `/images/help-og/<slug>.png` produced by `scripts/build-help-og-images.ts`.
+   * Listing cards and the article header should prefer this over
+   * `frontmatter.coverImage` so unset articles fall back to the generated PNG.
+   */
+  cover: string
   Component: LazyExoticComponent<ComponentType<Record<string, unknown>>>
 }
 
@@ -146,10 +154,22 @@ function buildIndex(): HelpIndex {
     }
     const Component = lazy(componentLoader)
 
+    // Generated OG card fallback. `scripts/build-help-og-images.ts` writes
+    // `/images/help-og/<slug>.png` for every article that doesn't ship a
+    // `coverImage:` of its own — committed to the repo so the file is
+    // guaranteed to exist at runtime. Author-set covers win.
+    const generatedCover = `/images/help-og/${slug}.png`
+    const cover = parsed.data.coverImage ?? generatedCover
+
     const entry: HelpEntry = {
       slug,
       locale,
-      frontmatter: parsed.data,
+      // Mirror the resolved cover back into frontmatter.coverImage so legacy
+      // consumers that read the field directly (e.g. before this loader
+      // exposed `cover`) also benefit from the fallback without having to
+      // know about it.
+      frontmatter: { ...parsed.data, coverImage: cover },
+      cover,
       Component,
     }
     byKey.set(`${locale}:${slug}`, entry)
