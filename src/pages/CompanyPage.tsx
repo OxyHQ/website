@@ -5,7 +5,8 @@ import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import AIResearchSection from '../components/ai/AIResearchSection'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import { useNewsroomPosts, useJobs, useTeamMembers, usePage, type PageSection } from '../api/hooks'
+import RecentNewsSection from '../components/newsroom/RecentNewsSection'
+import { useJobs, useTeamMembers, usePage, type PageSection } from '../api/hooks'
 import { useTranslation } from '../lib/i18n'
 import {
   companyHero, companyStats, companyCulture, culturePerks,
@@ -18,10 +19,6 @@ function sectionHeading(sections: PageSection[], type: string, fallback: string)
 
 function sectionSubheading(sections: PageSection[], type: string, fallback: string): string {
   return sections.find(s => s.type === type)?.subheading || fallback
-}
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' })
 }
 
 function DashedHLine() {
@@ -79,8 +76,6 @@ function FAQItem({ question, answer, isOpen, onToggle }: { question: string; ans
 
 export default function CompanyPage() {
   const { t } = useTranslation()
-  const { data: newsData } = useNewsroomPosts({ featured: true, limit: 3 })
-  const articles = newsData?.posts ?? []
   const { data: jobs = [] } = useJobs()
   const openCount = jobs.length
   const { data: teamMembers = [] } = useTeamMembers()
@@ -314,51 +309,21 @@ export default function CompanyPage() {
         </section>
 
         {/* ═══ Latest News ═══ */}
-        {articles.length > 0 && (
-          <section className="container">
-            <div className="border-border border-x">
-              <DashedVLines />
-              <DashedHLine />
-              <div className="grid grid-cols-12">
-                <div className="col-[2/-2] py-20 max-lg:py-16">
-                  <div className="flex items-end justify-between mb-10">
-                    <h2 className="text-heading-responsive-sm">Latest news</h2>
-                    <Button variant="outline" size="sm" href="/newsroom">
-                      View all
-                    </Button>
-                  </div>
-                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {articles.map((article) => (
-                      <a
-                        key={article.slug}
-                        href={`/newsroom/${article.slug}`}
-                        className="group relative overflow-hidden rounded-2xl border border-border p-6 pt-5.5 transition-colors duration-400 ease-in-out hover:border-input hover:duration-150"
-                      >
-                        <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50" />
-                        <div className="relative">
-                          {article.coverImage && (
-                            <img
-                              src={article.coverImage}
-                              alt={article.imageAlt || article.title}
-                              className="aspect-[16/10] w-full rounded-lg object-cover"
-                              loading="lazy"
-                            />
-                          )}
-                          <div className={article.coverImage ? 'mt-4' : ''}>
-                            <p className="text-xs text-muted-foreground">{formatDate(article.publishedAt)}</p>
-                            <h3 className="mt-2 text-lg font-medium text-foreground">{article.title}</h3>
-                            <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{article.resume}</p>
-                          </div>
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <DashedVLines height="h-20" />
+        <section className="container">
+          <div className="border-border border-x">
+            <DashedVLines />
+            <DashedHLine />
+            <div className="py-20 max-lg:py-16">
+              <RecentNewsSection
+                title="Latest news"
+                linkText="View all"
+                category="Company"
+                href="/company/news"
+              />
             </div>
-          </section>
-        )}
+            <DashedVLines height="h-20" />
+          </div>
+        </section>
 
         {/* ═══ FAQ ═══ */}
         <section className="container">
