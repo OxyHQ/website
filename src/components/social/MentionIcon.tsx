@@ -1,7 +1,9 @@
 /**
- * Inline Mention brand glyph — a speech bubble with a question mark dot.
- * Kept as a local SVG (rather than an icon-lib import) so the mark matches
- * Mention's visual identity exactly and renders without an extra request.
+ * Mention's actual brand glyph — the stylized "M" mark from the Mention app
+ * (source: Mention/packages/frontend/assets/logo.tsx). Kept as an inline SVG
+ * so the mark matches the canonical identity and renders without an extra
+ * network request. `currentColor` lets the consumer set the fill via Tailwind
+ * text-* utilities.
  */
 
 interface MentionIconProps {
@@ -12,16 +14,12 @@ interface MentionIconProps {
 export default function MentionIcon({ className = 'h-4 w-4' }: MentionIconProps) {
   return (
     <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
+      viewBox="0 0 67.65 74.16"
+      fill="currentColor"
       className={className}
       aria-hidden="true"
     >
-      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-      <path d="M8 12a4 4 0 1 1 8 0c0 2.5-2 3-2 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="12" cy="18" r="0.5" fill="currentColor" stroke="currentColor" />
+      <path d="M60.31,69.05c-.38,1.28-.28,3.27,1.23,4.4,1.25,.94,2.94,.89,4.15,.2,2.17-1.23,1.95-4.01,1.93-4.2-.12-1.2-.79-3.05-2.38-3.57-1.99-.65-4.32,1.12-4.93,3.17Zm-25.68-15.26c-.55-2.36,.03-3.77,.36-5.19,1.9-8.07,3.99-16.1,5.7-24.21,1.3-6.17,3.27-12.26,2.95-18.69-.1-2.04-.31-4.09-2.44-5.07-2.19-1.02-4.42-.79-6.38,.64-.89,.65-1.74,1.46-2.35,2.37-3.65,5.43-7.57,10.72-10.77,16.4C13.26,35.01,6.84,50.89,.74,66.91c-1.42,3.74-.85,5.88,2.18,6.94,2.72,.95,5.21-.38,6.16-3.74,4.57-16.2,11.72-31.29,19.67-46.06,1.02-1.9,1.97-3.83,4.61-5.66-.42,2.24-.67,3.66-.96,5.07-2.65,12.88-6.49,25.49-8.48,38.52-.52,3.43,.15,6.29,3.47,7.82,3.48,1.6,6.02-.21,8.02-2.9,3.7-4.96,7.34-9.96,10.96-14.98,2.77-3.84,5.71-7.53,9.2-10.75,.78-.72,1.54-2.01,2.77-1.45,1.12,.51,1.02,1.92,1.04,3.01,.09,4.71,.06,9.43,.18,14.14,.06,2.24,.12,4.9,3.14,5.09,3.03,.19,3.79-2.12,4.17-4.69,.89-6.05,.87-12.13,.6-18.2-.3-6.7-4.95-9.74-11.34-7.69-5.82,1.87-9.12,6.72-12.82,11.01-2.97,3.45-5.54,7.24-8.69,11.4Z" />
     </svg>
   )
 }

@@ -13,6 +13,7 @@ export function getPackageLogo(shortName: string): string | undefined {
     auth: '/images/apps/auth.svg',
     clarity: '/images/apps/clarity.png',
     inbox: '/images/apps/inbox.png',
+    mention: '/images/apps/mention.png',
     oxyos: '/images/apps/oxyos.png',
   }
   return map[shortName]
