@@ -1,56 +1,15 @@
 /**
- * Minimal typed subset of the OpenAPI 3.x document. We only read the fields
- * needed to drive the REST API sidebar — Scalar parses the full document on
- * its own. Keep this type narrow and additive (`?` everywhere) so new
- * OpenAPI fields don't accidentally break the build.
+ * Minimal typed shape for the OpenAPI 3.x document loaded by the docs
+ * route. Scalar parses the full document itself, so we only need this for
+ * the static import glob's return type. Kept narrow + additive so new
+ * OpenAPI fields never break the build.
  */
-export interface OpenApiOperation {
-  tags?: string[]
-  operationId?: string
-  summary?: string
-  description?: string
-  deprecated?: boolean
-}
-
-export interface OpenApiPathItem {
-  get?: OpenApiOperation
-  post?: OpenApiOperation
-  put?: OpenApiOperation
-  patch?: OpenApiOperation
-  delete?: OpenApiOperation
-  head?: OpenApiOperation
-  options?: OpenApiOperation
-  trace?: OpenApiOperation
-}
-
-export interface OpenApiTag {
-  name: string
-  description?: string
-}
-
 export interface OpenApiSpec {
   openapi?: string
   info?: { title?: string }
-  paths?: Record<string, OpenApiPathItem>
-  tags?: OpenApiTag[]
+  paths?: Record<string, unknown>
+  tags?: Array<{ name: string; description?: string }>
 }
-
-/**
- * HTTP methods enumerated when counting operations per OpenAPI tag. The
- * sidebar only needs the count — full per-operation rendering is owned by
- * Scalar's in-page navigation, so we don't surface a discriminated method
- * type beyond this list.
- */
-export const HTTP_METHODS = [
-  'get',
-  'post',
-  'put',
-  'patch',
-  'delete',
-  'head',
-  'options',
-  'trace',
-] as const
 
 // Eager glob: every synced OpenAPI doc gets compiled into the SPA chunk so
 // version switches don't trigger a network round-trip.

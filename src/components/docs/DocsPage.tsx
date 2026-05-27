@@ -1,7 +1,6 @@
 import { Navigate, useLocation, useParams } from 'react-router-dom'
 import { buildDocsHref, getPackage, getPage, resolveVersion } from '../../content/docs-loader'
 import { DocsApiBody } from './DocsApiBody'
-import { DocsApiSidebar } from './DocsApiSidebar'
 import { DocsMdxBody } from './DocsMdxBody'
 import { buildSidebar } from './DocsPackageSidebar'
 import { DocsShell } from './DocsShell'
@@ -20,10 +19,14 @@ export default function DocsPage() {
     const requestedVersion = typeof params.version === 'string' ? params.version : ''
     const resolvedVersion = apiPkg ? resolveVersion(apiPkg, requestedVersion) : undefined
     const version = resolvedVersion?.version ?? apiPkg?.latestVersion ?? 'main'
+    // Scalar renders its own tag/operation/search sidebar inside ApiReference,
+    // so we mount this route without our own sidebar — otherwise we ship two
+    // nav rails plus the surrounding shell aside and Scalar gets squeezed
+    // into a ~750px column with empty bands on either side.
     return (
       <DocsShell
         sections={null}
-        sidebar={<DocsApiSidebar version={version} />}
+        hideSidebar
         eyebrow="REST API"
         title="API Reference"
         pkg={apiPkg}

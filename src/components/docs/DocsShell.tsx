@@ -11,15 +11,10 @@ import type { SidebarSection } from './docsTypes'
 export interface DocsShellProps {
   /**
    * Pre-built section model for the package sidebar. Pass `null` together
-   * with a `sidebar` element to render a custom sidebar (e.g. the
-   * OpenAPI-driven REST API nav).
+   * with `hideSidebar` to mount the shell without any left rail (used by
+   * the Scalar-rendered REST API route, where Scalar ships its own nav).
    */
   sections: SidebarSection[] | null
-  /**
-   * Optional sidebar override. When provided, replaces the default
-   * `DocsSidebar` rendering — `sections` is ignored.
-   */
-  sidebar?: React.ReactNode
   eyebrow: string
   title: string
   subtitle?: string
@@ -34,12 +29,17 @@ export interface DocsShellProps {
    * duplicate.
    */
   hideHeader?: boolean
+  /**
+   * Skip the left rail entirely. Used by the REST API route so the
+   * Scalar reference can own the full available width without sitting
+   * next to a redundant tag-jump sidebar of our own.
+   */
+  hideSidebar?: boolean
   children: React.ReactNode
 }
 
 export function DocsShell({
   sections,
-  sidebar,
   eyebrow,
   title,
   subtitle,
@@ -48,6 +48,7 @@ export function DocsShell({
   slug,
   activePkg,
   hideHeader,
+  hideSidebar,
   children,
 }: DocsShellProps) {
   // The version selector only makes sense for packages that opted into
@@ -64,9 +65,11 @@ export function DocsShell({
       <DocsSubNav />
 
       <div className="container flex">
-        {sidebar ?? (
-          sections ? <DocsPackageSidebar sections={sections} activePkg={activePkg} /> : null
-        )}
+        {hideSidebar
+          ? null
+          : sections
+            ? <DocsPackageSidebar sections={sections} activePkg={activePkg} />
+            : null}
 
         <div className="relative grow box-border flex-col w-full py-10 px-6 lg:px-12 min-w-0">
           <div className="mb-6 flex items-center gap-4">
