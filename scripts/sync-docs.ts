@@ -81,7 +81,16 @@ function syncGitCache(name: string, git: string, ref: string): string {
   }
   // Fetch tag refs so per-version `git show <tag>:<file>` works.
   // `--depth 1 --branch` clones only the branch tip and skips tags by default.
-  execSync(`git fetch --depth 1 origin 'refs/tags/*:refs/tags/*'`, { cwd: dest, stdio: 'pipe' });
+  // Untagged repos (Mention, Allo, Homiio, Clarity, this repo for the MCP
+  // docs, …) make this exit non-zero with empty stderr — that's expected and
+  // must not break the sync of the rest of the registry.
+  try {
+    execSync(`git fetch --depth 1 origin 'refs/tags/*:refs/tags/*'`, { cwd: dest, stdio: 'pipe' });
+  } catch {
+    // No tags to fetch — fine. Per-version syncs against this repo will be
+    // skipped at the `versions` loop with a warning. Untagged repos rely on
+    // the `main`/`master` ref instead.
+  }
   return dest;
 }
 
