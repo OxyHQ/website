@@ -225,7 +225,7 @@ export default function HelpArticlePage() {
               </div>
             )}
 
-            <h1 className="max-w-[18em] text-balance text-4xl font-medium tracking-tight text-foreground md:text-5xl">
+            <h1 className="max-w-[18em] text-balance text-heading-responsive-lg text-foreground">
               {frontmatter.title}
             </h1>
             {frontmatter.description && (

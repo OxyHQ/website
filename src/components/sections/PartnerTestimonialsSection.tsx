@@ -85,7 +85,7 @@ export default function PartnerTestimonialsSection() {
       <HorizontalLine className="w-full text-border" />
 
       <div className="bg-surface">
-        <div className="mx-auto w-full max-w-[1200px] px-6">
+        <div className="container">
           <div className="border-x border-border">
 
             {/* ── Desktop layout ── */}

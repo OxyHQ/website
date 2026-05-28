@@ -35,10 +35,18 @@ const TONE: Record<Tone, string> = {
   inverse: 'bg-foreground text-background',
 }
 
+/*
+ * `wide` is the default: it delegates width + horizontal padding to the
+ * site-global `.container` class (Attio-style responsive breakpoints, caps
+ * at 1760px on >=1920px viewports). The narrower `prose` and `narrow`
+ * variants keep their explicit max-widths so callers can still constrain
+ * legibility-critical content (article bodies, sub-headings) below the
+ * container width.
+ */
 const WIDTH: Record<Width, string> = {
-  prose: 'max-w-2xl',
-  narrow: 'max-w-3xl',
-  wide: 'max-w-[1200px]',
+  prose: 'mx-auto px-6 lg:px-8 max-w-2xl',
+  narrow: 'mx-auto px-6 lg:px-8 max-w-3xl',
+  wide: 'container',
   full: '',
 }
 
@@ -63,7 +71,6 @@ export default function PageSection({
 }: PageSectionProps) {
   const outerClasses = [TONE[tone], className].filter(Boolean).join(' ')
   const innerClasses = [
-    'mx-auto px-6 lg:px-8',
     WIDTH[width],
     SPACING[spacing],
     innerClassName,

@@ -67,7 +67,7 @@ export default function NewsroomHeroSection({ title = 'Newsroom', category }: Ne
   const isLoading = featuredPending || fallbackPending || sidebarPending
 
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-5 pt-[5rem] md:px-8 md:pt-10">
+    <section className="container pt-[5rem] md:pt-10">
       {/* ── Title ── */}
       <div className="flex flex-col gap-1">
         <h1 className="shrink-0 text-heading-responsive-lg text-foreground">

@@ -29,12 +29,12 @@ export default function CarouselSection({
   return (
     <section className="w-full">
       {/* Header inside container */}
-      <div className="mx-auto max-w-[1200px] px-5 md:px-8">
+      <div className="container">
         <SectionHeader title={title} href={href} linkText={linkText} />
       </div>
 
-      {/* Outer: flex w-auto, matching @lg:max-w-container */}
-      <div className="mx-auto flex w-auto max-w-[1200px]">
+      {/* Outer: flex w-auto, matching the site-global container */}
+      <div className="container flex w-auto">
         {/* Scroll container: no-scrollbar snap-x snap-mandatory */}
         <div className="w-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {/* Inner grid: min-w-[56rem] on mobile, unset on md+, grid-cols-3 */}

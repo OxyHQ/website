@@ -55,7 +55,7 @@ export default function BusinessPage() {
                 {frontmatter.eyebrow}
               </p>
             ) : null}
-            <h1 className="text-balance text-4xl font-medium tracking-tight text-foreground md:text-5xl lg:text-6xl">
+            <h1 className="text-balance text-heading-responsive-lg text-foreground">
               {frontmatter.title}
             </h1>
             <p className="max-w-2xl text-balance text-lg leading-relaxed text-muted-foreground md:text-xl">

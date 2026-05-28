@@ -57,7 +57,10 @@ function CourseHeroArtwork({
       aria-hidden="true"
     >
       <span className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,255,255,0.22),transparent_55%)]" />
-      <span className="absolute -right-8 -bottom-12 text-[14rem] font-semibold leading-none text-white/15 tracking-tighter select-none">
+      <span
+        className="absolute -right-8 -bottom-12 text-[14rem] font-semibold leading-none text-white/15 tracking-tighter select-none"
+        style={{ fontFamily: 'var(--font-display)' }}
+      >
         {initials}
       </span>
     </div>
@@ -273,7 +276,7 @@ export default function CourseDetailPage() {
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] bg-gradient-to-b from-surface to-background"
           />
-          <div className="mx-auto max-w-[1200px] px-6 pt-28 pb-12 lg:px-8 lg:pt-36 lg:pb-16">
+          <div className="container pt-28 pb-12 lg:pt-36 lg:pb-16">
             <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
               {/* Text column */}
               <div className="flex flex-col gap-5 lg:col-span-7">
@@ -290,7 +293,7 @@ export default function CourseDetailPage() {
                   ) : null}
                 </div>
 
-                <h1 className="text-balance text-4xl font-medium tracking-tight text-foreground md:text-5xl lg:text-6xl">
+                <h1 className="text-balance text-heading-responsive-lg text-foreground">
                   {course.title}
                 </h1>
                 {course.summary && (

@@ -45,7 +45,7 @@ function ProgramIllustration({ index }: { index: number }) {
 
 export default function PartnerProgramsSection() {
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-6">
+    <div className="container">
       <div className="isolate border-x border-border">
         {partnerPrograms.map((program, index) => (
           <div key={program.number}>

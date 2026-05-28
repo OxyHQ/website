@@ -21,8 +21,8 @@ type Align = 'left' | 'center'
 type Size = 'md' | 'lg'
 
 const SIZE: Record<Size, string> = {
-  md: 'text-2xl tracking-tight md:text-3xl lg:text-4xl',
-  lg: 'text-3xl tracking-tight md:text-4xl lg:text-5xl',
+  md: 'text-heading-responsive-md',
+  lg: 'text-heading-responsive-lg',
 }
 
 interface SectionHeadingProps {
@@ -55,7 +55,7 @@ export default function SectionHeading({
           {eyebrow}
         </p>
       ) : null}
-      <h2 className={`text-balance font-medium text-foreground ${SIZE[size]}`}>
+      <h2 className={`text-balance text-foreground ${SIZE[size]}`}>
         {title}
       </h2>
       {description ? (

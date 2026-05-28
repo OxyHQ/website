@@ -144,7 +144,7 @@ export default function ArticleGridSection({ ui = {}, category }: ArticleGridSec
   const hasMore = visibleCount < sorted.length
 
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-5 md:px-8">
+    <section className="container">
       {/* ── Filter / sort toolbar ──
        * Original: flex flex-col @lg:flex-row @lg:items-center @lg:justify-between
        * hr: border-primary-4 mb-3xs mt-md border-t-1 @lg:hidden

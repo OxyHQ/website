@@ -27,7 +27,7 @@ export default function PartnersHeroSection() {
   const heroSubtitle = sectionSubheading(sections, 'hero', DEFAULT_HERO_SUBTITLE)
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-6">
+    <div className="container">
       <div className="relative isolate border-x border-border">
         {/* Dot pattern background */}
         <svg

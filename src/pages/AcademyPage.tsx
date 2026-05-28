@@ -92,7 +92,7 @@ function CourseSpotlight({ course }: { course: CourseWithLessons }) {
           <Sparkles className="size-3.5" aria-hidden="true" />
           Featured course
         </div>
-        <h3 className="text-balance text-2xl font-medium tracking-tight text-foreground md:text-3xl">
+        <h3 className="text-balance text-heading-responsive-md text-foreground">
           {course.title}
         </h3>
         <p className="text-pretty text-base leading-relaxed text-muted-foreground">{course.summary}</p>
@@ -351,7 +351,7 @@ export default function AcademyPage() {
               <GraduationCap className="size-3.5 text-primary" aria-hidden="true" />
               {HERO_BADGE}
             </span>
-            <h1 className="text-balance text-4xl font-medium tracking-tight text-foreground md:text-5xl lg:text-6xl">
+            <h1 className="text-balance text-heading-responsive-lg text-foreground">
               {HERO_TITLE}
             </h1>
             <p className="max-w-2xl text-balance text-lg leading-relaxed text-muted-foreground md:text-xl">
@@ -413,7 +413,7 @@ export default function AcademyPage() {
                       progressFor(continueLearningCourse.slug),
                     )}
                   />
-                  <h3 className="text-balance text-2xl font-medium tracking-tight text-foreground md:text-3xl">
+                  <h3 className="text-balance text-heading-responsive-md text-foreground">
                     {continueLearningCourse.title}
                   </h3>
                   <p className="text-pretty text-base leading-relaxed text-muted-foreground">

@@ -284,7 +284,7 @@ export default function LessonPage() {
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[320px] bg-gradient-to-b from-surface to-background"
           />
-          <div className="mx-auto max-w-[1200px] px-6 pt-28 pb-10 lg:px-8 lg:pt-36">
+          <div className="container pt-28 pb-10 lg:pt-36">
             <nav
               className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground"
               aria-label="Breadcrumb"
@@ -317,7 +317,7 @@ export default function LessonPage() {
               ) : null}
             </div>
 
-            <h1 className="mt-6 max-w-3xl text-balance text-4xl font-medium tracking-tight text-foreground md:text-5xl lg:text-6xl">
+            <h1 className="mt-6 max-w-3xl text-balance text-heading-responsive-lg text-foreground">
               {lesson.frontmatter.title}
             </h1>
             {lesson.frontmatter.description && (
@@ -329,7 +329,7 @@ export default function LessonPage() {
         </section>
 
         {/* ═══ Body + sticky outline ═══ */}
-        <section className="mx-auto max-w-[1200px] px-6 lg:px-8">
+        <section className="container">
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             {/* Mobile progress strip (shown above body on <lg) */}
             <div className="lg:hidden">
@@ -480,7 +480,7 @@ export default function LessonPage() {
               <span className="grid size-12 place-items-center rounded-full border border-border bg-background text-foreground">
                 <Check className="size-5" aria-hidden="true" />
               </span>
-              <h2 className="text-2xl font-medium tracking-tight text-foreground">
+              <h2 className="text-heading-responsive-md text-foreground">
                 You finished the course.
               </h2>
               <p className="max-w-md text-pretty text-muted-foreground">

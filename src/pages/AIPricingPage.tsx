@@ -130,7 +130,7 @@ export default function AIPricingPage() {
           <div className="mx-auto max-w-5xl px-4 sm:px-8">
             {/* Hero */}
             <section className="mt-24 mb-8 lg:mb-0">
-              <h1 className="text-5xl xl:text-6xl text-balance">
+              <h1 className="text-heading-responsive-lg text-balance text-foreground">
                 Predictable pricing. <span className="text-muted-foreground">Designed to scale.</span>
               </h1>
             </section>

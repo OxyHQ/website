@@ -31,7 +31,7 @@ export default function RecentNewsSection({
   if (!isPending && recentNewsArticles.length === 0) return null
 
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-5 md:px-8">
+    <section className="container">
       <SectionHeader
         title={title}
         href={href}

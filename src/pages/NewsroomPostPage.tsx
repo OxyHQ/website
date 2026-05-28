@@ -167,7 +167,7 @@ export default function NewsroomPostPage() {
 
         {/* Related posts */}
         {relatedPosts.length > 0 && (
-          <section className="mx-auto mt-16 max-w-[1200px] px-5 md:mt-20 md:px-8">
+          <section className="container mt-16 md:mt-20">
             <h2 className="mb-8 text-xl font-semibold text-foreground">
               Related articles
             </h2>

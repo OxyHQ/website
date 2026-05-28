@@ -26,7 +26,7 @@ function SectionContent({ slug }: { slug: string }) {
         </svg>
         All legal documents
       </Link>
-      <h1 className="mb-8 text-4xl font-semibold tracking-tight text-foreground">{title}</h1>
+      <h1 className="mb-8 text-heading-responsive-lg text-foreground">{title}</h1>
       {pageSections.length > 0 ? (
         <div className="prose prose-neutral dark:prose-invert max-w-none">
           {pageSections.map((s: PageSection, i: number) => (
@@ -56,7 +56,7 @@ function SectionContent({ slug }: { slug: string }) {
 function LegalIndex() {
   return (
     <div className="container max-w-3xl py-16">
-      <h1 className="mb-2 text-4xl font-semibold tracking-tight text-foreground">Legal</h1>
+      <h1 className="mb-2 text-heading-responsive-lg text-foreground">Legal</h1>
       <p className="mb-10 text-lg text-muted-foreground">Legal documents and policies for Oxy.</p>
       <div className="flex flex-col gap-3">
         {legalSections.map((section) => (

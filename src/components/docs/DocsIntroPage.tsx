@@ -67,7 +67,7 @@ export default function DocsIntroPage() {
 
           {/* Hero content */}
           <div className="relative z-10 px-4 py-16 lg:py-32 lg:pb-16 max-w-3xl mx-auto">
-            <h1 className="block text-4xl font-medium text-center text-foreground tracking-tight">
+            <h1 className="block text-heading-responsive-lg text-center text-foreground">
               Documentation
             </h1>
             <div className="max-w-xl mx-auto px-4 mt-4 text-lg text-center text-muted-foreground">
