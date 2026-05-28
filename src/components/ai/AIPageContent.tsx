@@ -229,7 +229,7 @@ export default function AIPageContent() {
         <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl space-y-16 sm:space-y-32">
           <div>
             <div className="mono-tag flex items-center gap-2 text-sm text-muted-foreground"><span>[ </span><span> {productsTag} </span><span> ]</span></div>
-            <h1 className="text-balance text-3xl tracking-tight md:text-4xl lg:text-5xl mt-4 text-foreground">{productsHeading}</h1>
+            <h1 className="text-heading-responsive-lg text-balance mt-4 text-foreground">{productsHeading}</h1>
           </div>
           <div className="grid gap-0 lg:grid-cols-3 lg:-space-x-px">
             {/* Card 1: Oxy Chat */}

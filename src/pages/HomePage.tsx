@@ -104,7 +104,7 @@ function HeroSection() {
       {/* Text overlay */}
       <div className="relative z-[5] flex-1 flex items-end text-foreground">
         <div className="container pb-5 pt-[100px] max-[950px]:pt-20">
-          <h1 className="font-serif text-[40px] font-bold leading-[1.2] tracking-tight max-w-[540px] max-[950px]:text-[28px] max-[950px]:max-w-full">
+          <h1 className="text-heading-responsive-lg max-w-[540px]">
             {titleLines.map((line, i) => (
               <span key={i}>
                 {line}
@@ -222,7 +222,7 @@ function AllInOneSection() {
         <div className="grid grid-cols-12 gap-6">
           <div className="col-[2/-2] py-10 max-[950px]:py-6">
             <div className="col-span-full text-center space-y-[1em]">
-              <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none">
+              <h2 className="text-heading-responsive-lg">
                 {headingLine1}
                 {headingLine2 && (
                   <>
@@ -489,7 +489,7 @@ function StatsAndTestimonialsSection() {
                         <p className="text-sm leading-4 tracking-wide font-[450] opacity-80 mb-[34px]"><strong>{s.label}</strong></p>
                       </div>
                       <div>
-                        <p className="font-serif text-[40px] leading-[1.07] mb-[9px]">{s.value}</p>
+                        <p className="text-heading-responsive-lg mb-[9px]">{s.value}</p>
                         <p className="max-w-[210px]">{s.desc}</p>
                       </div>
                     </div>
@@ -880,7 +880,7 @@ function PartnershipSection() {
           <div className="col-[2/-2] py-10 max-[950px]:py-6">
             <div className="text-center mb-8">
               <p className="mb-6 text-primary"><strong>Join the mission</strong></p>
-              <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">Build the future with us</h2>
+              <h2 className="text-heading-responsive-lg mb-5">Build the future with us</h2>
               <p className="opacity-80 max-w-[500px] mx-auto">Whether you&apos;re a developer, designer, activist, or dreamer — there&apos;s a place for you in the Oxy ecosystem.</p>
             </div>
             <div className="grid grid-cols-12 gap-6">
@@ -948,7 +948,7 @@ function IntegrationsSecuritySection() {
         <div className="grid grid-cols-12 gap-6">
           <div className="col-[2/-2] py-10 max-[950px]:py-6">
             <div className="text-center mb-8">
-              <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5 max-w-[500px] mx-auto">Everything you need, all in one place</h2>
+              <h2 className="text-heading-responsive-lg mb-5 max-w-[500px] mx-auto">Everything you need, all in one place</h2>
               <p className="opacity-80 max-w-[350px] mx-auto">Explore our documentation, contribute to our codebase, and connect with the community.</p>
             </div>
             <div>
@@ -1016,7 +1016,7 @@ function IOSAppSection() {
           <div className="col-[2/-2] py-10 max-[950px]:py-6">
             <div className="text-center mb-8">
               <p className="mb-6 text-primary"><strong>Oxy Services</strong></p>
-              <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-5">Technology with purpose</h2>
+              <h2 className="text-heading-responsive-lg mb-5">Technology with purpose</h2>
             </div>
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-8 col-start-3 max-[950px]:col-span-full max-[950px]:col-start-1 text-center">
@@ -1161,7 +1161,7 @@ function PricingSection() {
       <div className="border-border border-x">
         <div className="grid grid-cols-12 gap-6">
           <div className="col-[2/-2] py-10 max-[950px]:py-6">
-            <h2 className="font-serif text-[40px] leading-[1.07] max-[950px]:text-[34px] max-[950px]:leading-none mb-10 text-center">Plans for Everyone</h2>
+            <h2 className="text-heading-responsive-lg mb-10 text-center">Plans for Everyone</h2>
             <div className="mb-20">
               <div className="flex gap-[18px] max-[950px]:flex-col" style={{ rowGap: '6rem' }}>
                 {PLANS.map((plan) => (

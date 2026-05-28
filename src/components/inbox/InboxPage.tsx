@@ -225,7 +225,7 @@ export default function InboxPage() {
                 <h6 className="text-lg font-medium text-white">{inboxHero.badge}</h6>
 
                 {/* Title */}
-                <h1 className="font-geist mt-4 max-w-80 text-4xl font-medium text-white sm:max-w-none sm:text-[42px] lg:text-5xl leading-[1.1]">
+                <h1 className="text-heading-responsive-lg mt-4 max-w-80 text-white sm:max-w-none">
                   {inboxHero.title}
                 </h1>
 
@@ -364,10 +364,10 @@ export default function InboxPage() {
             >
               <div className="relative mx-auto flex h-full w-full flex-col pl-10 pt-10 pb-0">
                 <div className="shrink-0 mb-10 flex flex-col gap-1.5">
-                  <h3 className="heading-3xl font-geist text-4xl font-medium text-white">
+                  <h3 className="text-heading-responsive-md text-white">
                     {tab.label}
                   </h3>
-                  <p className="body-lg pr-10 font-geist text-base text-white/70">
+                  <p className="body-lg pr-10 text-base text-white/70">
                     {tab.description}
                   </p>
                 </div>
@@ -429,7 +429,7 @@ export default function InboxPage() {
       <div
         ref={featuresRef}
         id="features"
-        className="font-geist pt-12 sm:pt-14 md:pb-4 lg:pb-14 pb-0 md:overflow-x-auto hide-scrollbar"
+        className="pt-12 sm:pt-14 md:pb-4 lg:pb-14 pb-0 md:overflow-x-auto hide-scrollbar"
       >
         <div className="flex flex-col gap-4 px-4 sm:px-6 md:flex-row md:w-max md:items-start md:px-0 md:pl-14 md:pr-8">
           {/* Left: heading + CTA (scrolls with cards) */}

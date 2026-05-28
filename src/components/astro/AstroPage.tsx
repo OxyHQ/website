@@ -315,7 +315,7 @@ export default function AstroPageContent() {
                 </div>
               </div>
 
-              <h1 className="text-center text-5xl font-bold text-white md:text-6xl">
+              <h1 className="text-heading-responsive-lg text-center text-white">
                 Astro
               </h1>
 
