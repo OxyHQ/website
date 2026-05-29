@@ -986,7 +986,21 @@ function ForDevelopersCard() {
           </div>
         </div>
       </div>
-      <div className="mt-8 flex flex-wrap gap-2">
+      <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm opacity-80">
+        <Link to="/changelog" className="hover:opacity-100 hover:underline">Changelog</Link>
+        <Link to="/status" className="hover:opacity-100 hover:underline">Status</Link>
+        <Link to="/academy" className="hover:opacity-100 hover:underline">Academy</Link>
+        <a
+          href="https://github.com/OxyHQ"
+          target="_blank"
+          rel="noreferrer"
+          className="hover:opacity-100 hover:underline"
+        >
+          Issues
+        </a>
+        <Link to="/help" className="hover:opacity-100 hover:underline">Help center</Link>
+      </div>
+      <div className="mt-6 flex flex-wrap gap-2">
         <Link to="/developers/docs" className={`${BTN} bg-foreground text-background hover:bg-foreground/90`}>
           Read the docs
         </Link>
