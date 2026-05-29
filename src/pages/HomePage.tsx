@@ -14,6 +14,9 @@ import type SwiperType from 'swiper'
 import 'swiper/css'
 import '../styles/landing.css'
 import AIResearchSection from '../components/ai/AIResearchSection'
+import { Link } from 'react-router-dom'
+import { getPackages, buildDocsHref } from '../content/docs-loader'
+import { getPackageLogo } from '../components/docs/getPackageLogo'
 
 /**
  * Pulls a heading, subheading or content string out of a Page document's
@@ -909,23 +912,103 @@ function PartnershipSection() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Integrations & Security                                            */
+/*  For Developers card                                                */
 /* ------------------------------------------------------------------ */
-const INTEGRATIONS = [
-  { name: 'API Documentation' },
-  { name: 'GitHub Repositories' },
-  { name: 'SDK & Libraries' },
-  { name: 'Developer Blog' },
-  { name: 'Community Forum' },
-  { name: 'Bug Tracker' },
-  { name: 'Changelog' },
-  { name: 'Status Page' },
-  { name: 'Developer Discord' },
-  { name: 'Code Examples' },
-  { name: 'Video Tutorials' },
-  { name: 'Newsletter' },
+const FEATURED_DEV_SHORTNAMES = [
+  'services',
+  'core',
+  'auth-sdk',
+  'bloom',
+  'api',
+  'mention',
+  'inbox',
+  'accounts',
 ]
 
+function ForDevelopersCard() {
+  const packages = getPackages()
+  const map = new Map(packages.map((p) => [p.shortName, p]))
+  const featured = FEATURED_DEV_SHORTNAMES.map((name) => map.get(name)).filter(
+    (pkg): pkg is NonNullable<typeof pkg> => pkg !== undefined,
+  )
+
+  return (
+    <div className="relative p-8 rounded-3xl bg-foreground/[0.03]">
+      <div className="grid grid-cols-12 gap-6">
+        <div className="col-span-4 max-[950px]:col-span-full">
+          <p className="mb-2 text-lg"><strong>For developers</strong></p>
+          <p className="text-sm opacity-70 max-w-[280px]">
+            SDKs, REST APIs, and an OpenAPI playground — all open source.
+          </p>
+          <pre className="hidden lg:block mt-4 text-[12px] leading-relaxed rounded-xl bg-background/60 border border-border px-3 py-2 font-mono overflow-x-auto">
+            <code>bun add @oxyhq/services</code>
+          </pre>
+        </div>
+        <div className="col-span-7 max-[950px]:col-span-full">
+          <div className="grid grid-cols-2 max-[1100px]:grid-cols-1 max-[950px]:grid-cols-2 max-[520px]:grid-cols-1 gap-2">
+            {featured.map((pkg) => {
+              const logo = getPackageLogo(pkg.shortName)
+              const letter = pkg.displayName.replace(/^@[^/]+\//, '').charAt(0).toUpperCase()
+              const href = buildDocsHref(pkg, pkg.latestVersion, '')
+              return (
+                <Link
+                  key={pkg.shortName}
+                  to={href}
+                  className="group flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-foreground/[0.04] transition-colors"
+                >
+                  {logo ? (
+                    <img
+                      src={logo}
+                      width={36}
+                      height={36}
+                      alt=""
+                      className="w-9 h-9 rounded-[10px] object-contain bg-background shadow-sm"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden
+                      className="w-9 h-9 rounded-[10px] inline-flex items-center justify-center bg-primary/15 text-primary text-sm font-semibold shadow-sm"
+                    >
+                      {letter}
+                    </span>
+                  )}
+                  <span className="flex-1 min-w-0">
+                    <span className="block text-sm font-medium truncate">{pkg.displayName}</span>
+                    <span className="block text-[11px] opacity-60 truncate font-mono">
+                      {pkg.package}
+                    </span>
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+      <div className="mt-8 flex flex-wrap gap-2">
+        <Link to="/developers/docs" className={`${BTN} bg-foreground text-background hover:bg-foreground/90`}>
+          Read the docs
+        </Link>
+        <Link to="/developers/docs/api" className={`${BTN} bg-foreground/5`}>
+          Browse the API
+        </Link>
+        <a
+          href="https://github.com/OxyHQ"
+          target="_blank"
+          rel="noreferrer"
+          className={`${BTN} bg-foreground/5`}
+        >
+          GitHub
+        </a>
+      </div>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Security & Trust                                                   */
+/* ------------------------------------------------------------------ */
 const SECURITY_ITEMS = [
   { name: 'Help Center', icon: 'agents-security-icons-01.svg', size: 16 },
   { name: 'Community Guidelines', icon: 'agents-security-icons-02.svg', size: 16 },
@@ -952,22 +1035,8 @@ function IntegrationsSecuritySection() {
               <p className="opacity-80 max-w-[350px] mx-auto">Explore our documentation, contribute to our codebase, and connect with the community.</p>
             </div>
             <div>
-              <div className="relative p-8 rounded-3xl bg-foreground/[0.03]">
-                <div className="grid grid-cols-12 gap-6">
-                  <div className="col-span-4 max-[950px]:col-span-full"><p><strong>For Developers</strong></p></div>
-                  <div className="col-span-7 max-[950px]:col-span-full">
-                    <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-sm leading-4 tracking-wide font-[450]">
-                      {INTEGRATIONS.map((item) => (
-                        <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+&]:mt-3">
-                          <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm" aria-hidden="true" />
-                          <span>{item.name}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <a className={`${BTN} bg-foreground/5 max-[950px]:static absolute bottom-8 left-8`} href="/developers/docs">Explore Developer Hub</a>
-              </div>
+              <ForDevelopersCard />
+
               <div className="relative p-8 rounded-3xl bg-foreground/[0.03] mt-4">
                 <div className="grid grid-cols-12 gap-6">
                   <div className="col-span-4 max-[950px]:col-span-full"><p><strong>For Everyone</strong></p></div>
