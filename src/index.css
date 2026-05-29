@@ -344,8 +344,8 @@ body {
 }
 @media (min-width: 992px) {
   .text-heading-responsive-lg {
-    font-size: var(--text-heading-lg);
-    line-height: var(--text-heading-lg--line-height);
+    font-size: 3rem;
+    line-height: 3.25rem;
     letter-spacing: -0.015em;
   }
 }
