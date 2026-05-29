@@ -9,6 +9,7 @@ import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppC
 import { LocaleProvider } from './lib/i18n'
 import { setTokenGetter } from './api/client'
 import { isFairCoinHost } from './lib/host'
+import ErrorBoundary from './components/ErrorBoundary'
 
 import HomePage from './pages/HomePage'
 import FairCoinLanding from './pages/FairCoinLanding'
@@ -226,7 +227,14 @@ function PublicRoutes() {
       <Route path="ai" element={<AIPage />} />
       <Route path="ai/pricing" element={<AIPricingPage />} />
       <Route path="dashboard" element={<DashboardPage />} />
-      <Route path="initiative" element={<InitiativePage />} />
+      <Route
+        path="initiative"
+        element={
+          <ErrorBoundary>
+            <InitiativePage />
+          </ErrorBoundary>
+        }
+      />
       <Route path="os" element={<OxyOSPage />} />
       <Route path="tnp" element={<TNPPage />} />
       <Route path="tnp/install" element={<TNPInstallPage />} />

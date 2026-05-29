@@ -2,6 +2,7 @@ import { useRef, useSyncExternalStore } from "react";
 import { Maximize2, Minimize2 } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import SEO from "../components/SEO";
 import MapContainer from "../components/dashboard/MapContainer";
 import {
   TotalRequests,
@@ -46,6 +47,12 @@ export default function DashboardPage() {
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
+      <SEO
+        title="Dashboard"
+        description="Oxy Platform live dashboard — real-time API traffic, top countries, and infrastructure status across every Oxy region."
+        canonicalPath="/dashboard"
+      />
+      <h1 className="sr-only">Oxy Platform Dashboard</h1>
       {!isFullscreen && <Navbar />}
       <main className="flex-1">
         <div ref={dashboardRef} className={`container font-mono flex flex-col bg-background ${isFullscreen ? "min-h-screen px-8" : "min-h-[calc(100dvh-var(--site-header-height))]"}`}>

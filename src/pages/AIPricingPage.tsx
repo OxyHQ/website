@@ -62,14 +62,34 @@ export default function AIPricingPage() {
 
   const { data: plans = [], isPending, isError, error, refetch } = useQuery<APIPlan[]>({
     queryKey: ['alia-billing-plans'],
-    queryFn: async () => {
-      const res = await fetch('https://api.alia.onl/billing/plans?product=alia')
-      if (!res.ok) throw new Error(`alia billing HTTP ${res.status}`)
-      const data = await res.json()
-      const list: APIPlan[] = Array.isArray(data.plans) ? data.plans : []
-      return [...list].sort((a, b) => a.sortOrder - b.sortOrder)
+    queryFn: async ({ signal }) => {
+      // Abort hung requests after 8s so the page never sits in `isPending`
+      // forever when api.alia.onl is unreachable, CORS-broken, or slow.
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(new Error('Request timed out')), 8000)
+      // Chain react-query's own AbortSignal so navigation also cancels the fetch.
+      signal?.addEventListener('abort', () => controller.abort(signal.reason))
+      try {
+        const res = await fetch('https://api.alia.onl/billing/plans?product=alia', {
+          signal: controller.signal,
+        })
+        if (!res.ok) throw new Error(`alia billing HTTP ${res.status}`)
+        const data = await res.json()
+        const list: APIPlan[] = Array.isArray(data.plans) ? data.plans : []
+        return [...list].sort((a, b) => a.sortOrder - b.sortOrder)
+      } finally {
+        clearTimeout(timeout)
+      }
     },
     staleTime: 5 * 60_000,
+    // The nearest QueryClientProvider sets `networkMode: 'offlineFirst'` (in
+    // `<WebOxyProvider>`) or `'online'` (the App-level default). Both park
+    // failed requests instead of transitioning to `isError`, which is why the
+    // page used to sit in `isPending` forever. Force `always` so the failure
+    // surfaces synchronously, and disable retries — the user can retry
+    // explicitly via the "Try again" button in the error state.
+    networkMode: 'always',
+    retry: false,
   })
 
   const comparison = plans.length > 0 ? buildComparison(plans) : []
@@ -79,9 +99,19 @@ export default function AIPricingPage() {
     return (
       <div className="flex min-h-screen flex-col bg-background">
         <Navbar />
-        <div className="flex-1 flex items-center justify-center text-muted-foreground" role="status" aria-live="polite">
-          Loading plans…
-        </div>
+        <main className="flex-1 flex items-center justify-center px-6 py-24">
+          <div
+            className="flex items-center gap-3 text-muted-foreground"
+            role="status"
+            aria-live="polite"
+          >
+            <span
+              className="size-4 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-foreground"
+              aria-hidden="true"
+            />
+            <span>Loading plans…</span>
+          </div>
+        </main>
         <Footer />
       </div>
     )
@@ -91,31 +121,33 @@ export default function AIPricingPage() {
     return (
       <div className="flex min-h-screen flex-col bg-background">
         <Navbar />
-        <div className="flex-1 flex items-center justify-center px-6">
+        <main className="flex-1 flex items-center justify-center px-6 py-24">
           <div className="max-w-md text-center" role="alert">
-            <h1 className="text-2xl font-semibold text-foreground">We couldn&rsquo;t load the plans.</h1>
+            <h1 className="text-2xl font-semibold text-foreground">
+              Couldn&rsquo;t load AI pricing
+            </h1>
             <p className="mt-3 text-muted-foreground">
               {isError && error instanceof Error
                 ? error.message
                 : 'No plans were returned from the billing service.'}
             </p>
-            <div className="mt-6 flex justify-center gap-3">
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
               <button
                 type="button"
                 onClick={() => refetch()}
-                className="inline-flex h-10 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background"
+                className="inline-flex h-10 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background hover:bg-foreground/90 cursor-pointer"
               >
                 Try again
               </button>
               <a
-                className="inline-flex h-10 items-center justify-center rounded-full border border-border px-5 text-sm font-medium text-foreground"
+                className="inline-flex h-10 items-center justify-center rounded-full border border-border px-5 text-sm font-medium text-foreground hover:bg-accent"
                 href="/pricing"
               >
                 See ecosystem pricing
               </a>
             </div>
           </div>
-        </div>
+        </main>
         <Footer />
       </div>
     )
