@@ -364,7 +364,7 @@ export default function TechnologiesPage() {
                     <Button variant="primary" size="md" responsive href="/developers/docs">
                       Read the docs
                     </Button>
-                    <Button variant="outline" size="md" responsive href="/developers/docs/overview">
+                    <Button variant="outline" size="md" responsive href="/developers/docs/api">
                       API overview
                     </Button>
                   </div>

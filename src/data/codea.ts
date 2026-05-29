@@ -120,8 +120,8 @@ export const footerColumns: FooterColumn[] = [
   {
     title: 'Company',
     links: [
-      { label: 'Blog', href: '/blog' },
-      { label: 'Careers', href: '/careers' },
+      { label: 'Blog', href: '/company/news' },
+      { label: 'Careers', href: '/company/careers' },
     ],
   },
   {
