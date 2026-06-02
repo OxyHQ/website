@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
+import { ArrowUpRight, Sparkle } from '@phosphor-icons/react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -28,10 +29,6 @@ function pageHeading(sections: PageSection[] | undefined, type: string, fallback
   return sections?.find(s => s.type === type)?.heading || fallback
 }
 
-function pageSubheading(sections: PageSection[] | undefined, type: string, fallback: string): string {
-  return sections?.find(s => s.type === type)?.subheading || fallback
-}
-
 function pageContent(sections: PageSection[] | undefined, type: string, fallback: string): string {
   return sections?.find(s => s.type === type)?.content || fallback
 }
@@ -41,8 +38,7 @@ function pageContent(sections: PageSection[] | undefined, type: string, fallback
 // renders identically to the hardcoded baseline.
 const DEFAULT_ALL_IN_ONE_HEADING_LINE_1 = 'Build for everyone,'
 const DEFAULT_ALL_IN_ONE_HEADING_LINE_2 = 'not just yourself.'
-const DEFAULT_ALL_IN_ONE_BODY = 'Oxy exists because we believe technology should serve humanity, not exploit it. Through community-driven projects and open-source tools, we prove that helping people and building sustainable systems aren\u2019t competing goals.'
-const DEFAULT_ALL_IN_ONE_CTA = 'Explore the Ecosystem'
+const DEFAULT_ALL_IN_ONE_BODY = 'Oxy exists because we believe technology should serve humanity, not exploit it. Through community-driven projects and open-source tools, we prove that helping people and building sustainable systems aren\u2019t competing goals. They\u2019re the same mission.'
 
 function heroMediaUrl(ref: HeroMediaRef | undefined): string {
   if (!ref) return ''
@@ -53,6 +49,15 @@ function heroMediaUrl(ref: HeroMediaRef | undefined): string {
 const IMG = '/images/landing'
 
 const BTN = 'inline-flex items-center cursor-pointer text-base leading-relaxed font-[450] rounded-full px-4 py-2 max-h-[38px] transition-opacity duration-200 hover:opacity-60'
+
+// Scroll-reveal preset shared by every reshaped section so the page animates
+// in with one consistent, subtle motion.
+const REVEAL = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.2 },
+  transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
+}
 
 // Hero defaults — used both when the API returns no data and as the fallback
 // for individual fields. These match the original hardcoded markup so the
@@ -203,9 +208,22 @@ function PartnerLogos() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  All-in-One Section                                                 */
+/*  Build for everyone (resource links)                                */
 /* ------------------------------------------------------------------ */
-function AllInOneSection() {
+interface ResourceLink {
+  label: string
+  href: string
+  external?: boolean
+}
+
+const BUILD_FOR_EVERYONE_LINKS: ResourceLink[] = [
+  { label: 'Oxy Newsroom', href: '/newsroom' },
+  { label: 'Search documentation', href: '/developers/docs' },
+  { label: 'Dig into the code', href: 'https://github.com/OxyHQ', external: true },
+  { label: 'Meet the Oxy team', href: '/company/team' },
+]
+
+function BuildForEveryoneSection() {
   const { data: pageData } = usePage('home')
   const sections = pageData?.sections
   // Heading is stored as a single string with a pipe separator so the CMS can
@@ -217,28 +235,334 @@ function AllInOneSection() {
     ? headingRaw.split('|', 2)
     : [headingRaw, '']
   const body = pageContent(sections, 'all-in-one', DEFAULT_ALL_IN_ONE_BODY)
-  const cta = pageSubheading(sections, 'all-in-one', DEFAULT_ALL_IN_ONE_CTA)
 
   return (
     <section className="container">
       <div className="border-border border-x">
         <div className="grid grid-cols-12 gap-6">
-          <div className="col-[2/-2] py-10 max-[950px]:py-6">
-            <div className="col-span-full text-center space-y-[1em]">
+          <motion.div
+            className="col-[2/-2] py-16 max-[950px]:py-10 grid grid-cols-2 gap-x-16 gap-y-10 items-start max-[950px]:grid-cols-1"
+            {...REVEAL}
+          >
+            {/* Left — heading + body */}
+            <div>
               <h2 className="text-heading-responsive-lg">
                 {headingLine1}
                 {headingLine2 && (
                   <>
-                    <br className="max-[950px]:hidden" />
+                    <br />
                     {headingLine2}
                   </>
                 )}
               </h2>
-              <p className="max-w-[440px] mx-auto">{body}</p>
-              <a href="/technologies" className={`${BTN} bg-primary text-primary-foreground`}>{cta}</a>
+              <p className="max-w-[460px] mt-5 opacity-80">{body}</p>
             </div>
-          </div>
+
+            {/* Right — resource links */}
+            <ul className="flex flex-col">
+              {BUILD_FOR_EVERYONE_LINKS.map((link, i) => {
+                const isLast = i === BUILD_FOR_EVERYONE_LINKS.length - 1
+                const rowClass = `group flex items-center justify-between gap-4 border-t border-border py-5 text-2xl font-[450] transition-opacity duration-200 hover:opacity-60${isLast ? ' border-b' : ''}`
+                const arrow = (
+                  <ArrowUpRight
+                    weight="regular"
+                    className="shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    aria-hidden
+                  />
+                )
+                return (
+                  <li key={link.label}>
+                    {link.external ? (
+                      <a href={link.href} target="_blank" rel="noreferrer" className={rowClass}>
+                        <span>{link.label}</span>
+                        {arrow}
+                      </a>
+                    ) : (
+                      <Link to={link.href} className={rowClass}>
+                        <span>{link.label}</span>
+                        {arrow}
+                      </Link>
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
+          </motion.div>
         </div>
+      </div>
+    </section>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Values (photo-card carousel)                                       */
+/* ------------------------------------------------------------------ */
+interface ValueCard {
+  img: string
+  title: string
+  body: string
+}
+
+const VALUES: ValueCard[] = [
+  {
+    img: '/images/hero/hero-4.webp',
+    title: 'Human-first design.',
+    body: 'We design tools that empower people, not manipulate them. Every decision starts with the question: does this serve the user?',
+  },
+  {
+    img: '/images/hero/hero-1.webp',
+    title: 'Your data stays yours.',
+    body: 'No ads, no data brokers, no hidden monetization. Privacy isn’t a feature we bolt on. It’s the foundation everything is built on.',
+  },
+  {
+    img: '/images/hero/hero-5.jpg',
+    title: 'AI with a purpose.',
+    body: 'Every product we ship is built to advance justice, inclusion, or sustainability. If it doesn’t move the needle on what matters, we don’t build it.',
+  },
+  {
+    img: '/images/hero/hero-3.webp',
+    title: 'Open by default.',
+    body: 'Every Oxy tool is open source. We believe transparency isn’t optional, it’s how you earn trust. Inspect the code, fork it, improve it.',
+  },
+]
+
+function ValuesSection() {
+  const swiperRef = useRef<SwiperType | null>(null)
+
+  return (
+    <section className="container">
+      <div className="border-border border-x">
+        <div className="grid grid-cols-12 gap-6">
+          <motion.div className="col-[2/-2] py-16 max-[950px]:py-10" {...REVEAL}>
+            <div className="flex items-end justify-between gap-6 mb-8">
+              <h2 className="text-heading-responsive-lg max-w-[440px]">What we stand for.</h2>
+              <div className="flex items-center gap-3 shrink-0">
+                <button
+                  type="button"
+                  aria-label="Previous value"
+                  onClick={() => swiperRef.current?.slidePrev()}
+                  className="values-nav-btn"
+                >
+                  <ArrowUpRight weight="regular" className="-rotate-[135deg]" aria-hidden />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Next value"
+                  onClick={() => swiperRef.current?.slideNext()}
+                  className="values-nav-btn"
+                >
+                  <ArrowUpRight weight="regular" className="rotate-45" aria-hidden />
+                </button>
+              </div>
+            </div>
+            <Swiper
+              onSwiper={(s) => { swiperRef.current = s }}
+              slidesPerView={1.15}
+              spaceBetween={24}
+              grabCursor
+              className="values-swiper"
+              breakpoints={{
+                640: { slidesPerView: 2, spaceBetween: 24 },
+                950: { slidesPerView: 2.5, spaceBetween: 24 },
+                1200: { slidesPerView: 3.2, spaceBetween: 24 },
+              }}
+            >
+              {VALUES.map((value) => (
+                <SwiperSlide key={value.title} style={{ height: 'auto' }}>
+                  <article className="flex flex-col h-full">
+                    <div className="overflow-hidden rounded-3xl aspect-[4/5]">
+                      <img
+                        src={value.img}
+                        alt=""
+                        aria-hidden="true"
+                        className="h-full w-full object-cover"
+                        width={800}
+                        height={1000}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                    <h3 className="mt-5 text-xl font-semibold tracking-tight">{value.title}</h3>
+                    <p className="mt-2 opacity-60 leading-relaxed">{value.body}</p>
+                  </article>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Independent ecosystem                                              */
+/* ------------------------------------------------------------------ */
+function IndependentEcosystemSection() {
+  return (
+    <section className="container">
+      <div className="border-border border-x">
+        <div className="grid grid-cols-12 gap-6">
+          <motion.div
+            className="col-[2/-2] py-16 max-[950px]:py-10 grid grid-cols-2 gap-12 items-center max-[950px]:grid-cols-1"
+            {...REVEAL}
+          >
+            {/* Left — text + buttons */}
+            <div>
+              <h2 className="text-heading-responsive-lg max-w-[560px]">
+                An independent ecosystem of ethical technology. Radically transparent, fiercely human.
+              </h2>
+              <p className="mt-5 max-w-[460px] opacity-80">
+                No ads. No data selling. No venture capital strings. Just purpose-driven AI tools designed for real-world impact.
+              </p>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Link to="/newsroom" className={`${BTN} bg-foreground text-background`}>Newsroom</Link>
+                <Link to="/company/business" className={`${BTN} bg-primary text-primary-foreground`}>For Investors</Link>
+              </div>
+            </div>
+
+            {/* Right — rounded image */}
+            <div className="relative overflow-hidden rounded-[40px] aspect-[3/2]">
+              <img
+                src={`${IMG}/agents-model-agnostic.webp`}
+                alt="Oxy ecosystem"
+                className="h-full w-full object-cover"
+                width={2400}
+                height={1600}
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="absolute inset-0 bg-black/10" />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Ecosystem grid (dark)                                              */
+/* ------------------------------------------------------------------ */
+interface EcosystemEntry {
+  name: string
+  href: string
+  external?: boolean
+  logo?: string
+  /** Brand background for letter-fallback badges. */
+  color?: string
+}
+
+const ECOSYSTEM: EcosystemEntry[] = [
+  { name: 'Oxy', href: '/', logo: '/images/landing/oxy3d.png' },
+  { name: 'Mention', href: '/technologies', logo: '/images/apps/mention.png' },
+  { name: 'Allo', href: '/technologies', logo: '/images/apps/allo.png' },
+  { name: 'Inbox', href: '/inbox', logo: '/images/apps/inbox.png' },
+  { name: 'Alia', href: '/ai', logo: '/images/apps/alia.svg' },
+  { name: 'Accounts', href: '/technologies', logo: '/images/apps/accounts.png' },
+  { name: 'Auth', href: '/developers/docs', logo: '/images/apps/auth.svg' },
+  { name: 'Clarity', href: '/technologies', logo: '/images/apps/clarity.png' },
+  { name: 'OxyOS', href: '/os', logo: '/images/apps/oxyos.png' },
+  { name: 'Astro', href: '/astro', logo: '/images/apps/astro.svg' },
+  { name: 'FairCoin', href: '/faircoin', color: '#166534' },
+  { name: 'Homiio', href: '/technologies', color: '#0e7490' },
+  { name: 'TNP', href: '/tnp', color: '#9333ea' },
+  { name: 'Codea', href: '/codea', color: '#b45309' },
+  { name: 'Bloom', href: '/developers/docs/bloom', logo: getPackageLogo('bloom'), color: '#be185d' },
+  { name: 'Sustain', href: '/sustain', color: '#15803d' },
+]
+
+function EcosystemBadge({ entry, index, animate }: { entry: EcosystemEntry; index: number; animate: boolean }) {
+  const baseBadge = 'flex h-14 w-14 items-center justify-center overflow-hidden rounded-full shadow-lg transition-transform duration-200 group-hover:scale-110'
+
+  const content = entry.logo ? (
+    // Image logos sit on a near-white app-icon tile so dark/transparent
+    // artwork (OXY wordmark, Alia script, droplet marks) stays legible on the
+    // #050505 section background.
+    <span className={`${baseBadge} bg-white/95 ring-1 ring-black/5`}>
+      <img
+        src={entry.logo}
+        alt={entry.name}
+        className="h-full w-full object-contain p-2.5"
+        width={56}
+        height={56}
+        loading="lazy"
+        decoding="async"
+      />
+    </span>
+  ) : (
+    // Colored letter circles already read clearly on black — keep as-is.
+    <span
+      className={`${baseBadge} ring-1 ring-white/10 backdrop-blur-sm`}
+      style={{ backgroundColor: entry.color }}
+    >
+      <span aria-hidden className="text-base font-semibold text-white">
+        {entry.name.charAt(0)}
+      </span>
+    </span>
+  )
+
+  const float = animate
+    ? {
+        animate: { y: [0, -6, 0] },
+        transition: {
+          duration: 4 + (index % 3),
+          repeat: Infinity,
+          ease: 'easeInOut' as const,
+          delay: index * 0.15,
+        },
+      }
+    : {}
+
+  return (
+    <motion.div {...float}>
+      {entry.external ? (
+        <a href={entry.href} target="_blank" rel="noreferrer" aria-label={entry.name} className="group block">
+          {content}
+        </a>
+      ) : (
+        <Link to={entry.href} aria-label={entry.name} className="group block">
+          {content}
+        </Link>
+      )}
+    </motion.div>
+  )
+}
+
+function EcosystemGridSection() {
+  const reduceMotion = useReducedMotion()
+  const animate = !reduceMotion
+
+  return (
+    <section className="ecosystem-grid relative overflow-hidden bg-[#050505] text-white py-28 md:py-40">
+      {/* Background layers */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(56,90,255,0.35),transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 select-none text-center font-display text-[28vw] font-black leading-none text-white/[0.04]">
+        OXY
+      </div>
+      <Sparkle
+        weight="fill"
+        className="pointer-events-none absolute bottom-10 right-10 text-white/10"
+        size={28}
+        aria-hidden
+      />
+
+      {/* Foreground */}
+      <div className="relative z-10 container">
+        <motion.h2
+          className="mb-12 text-center text-3xl md:text-4xl font-bold tracking-tight text-white/80"
+          {...REVEAL}
+        >
+          Explore the Oxy Ecosystem
+        </motion.h2>
+        <motion.div
+          className="mx-auto flex max-w-[720px] flex-wrap justify-center gap-4"
+          {...REVEAL}
+        >
+          {ECOSYSTEM.map((entry, i) => (
+            <EcosystemBadge key={entry.name} entry={entry} index={i} animate={animate} />
+          ))}
+        </motion.div>
       </div>
     </section>
   )
@@ -286,44 +610,37 @@ const FEATURE_TABS = [
   },
 ]
 
+const FEATURES_AUTO_DURATION = 6000
+
 function FeaturesSection() {
   const [active, setActive] = useState(0)
   const [progress, setProgress] = useState(0)
   const [playing, setPlaying] = useState(true)
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const startRef = useRef<number>(Date.now())
-  const AUTO_DURATION = 6000
 
-  const stopTimer = useCallback(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-      intervalRef.current = null
-    }
-  }, [])
-
-  const startTimer = useCallback(() => {
-    stopTimer()
-    startRef.current = Date.now()
-    setProgress(0)
-    intervalRef.current = setInterval(() => {
-      const elapsed = Date.now() - startRef.current
-      const pct = Math.min((elapsed / AUTO_DURATION) * 100, 100)
+  // Drive the auto-advance progress bar with requestAnimationFrame. Progress is
+  // computed from elapsed wall-clock time and applied inside the rAF callback
+  // (async), so no setState happens synchronously in the effect body. While
+  // paused the loop simply doesn't run; the rendered width is derived as 0
+  // below, so there's no need to reset state on pause.
+  useEffect(() => {
+    if (!playing) return
+    let frame = 0
+    const start = performance.now()
+    const tick = (now: number) => {
+      const pct = Math.min(((now - start) / FEATURES_AUTO_DURATION) * 100, 100)
       setProgress(pct)
       if (pct >= 100) {
         setActive((prev) => (prev + 1) % FEATURE_TABS.length)
+        return
       }
-    }, 200)
-  }, [stopTimer])
-
-  useEffect(() => {
-    if (playing) {
-      startTimer()
-    } else {
-      stopTimer()
-      setProgress(0)
+      frame = requestAnimationFrame(tick)
     }
-    return stopTimer
-  }, [active, playing, startTimer, stopTimer])
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [active, playing])
+
+  // Derived: the active tab's timer fills with progress only while playing.
+  const displayedProgress = playing ? progress : 0
 
   const handleTabClick = (i: number) => {
     setActive(i)
@@ -367,7 +684,7 @@ function FeaturesSection() {
                 <strong>{t.label}</strong>
                 <div
                   className="timer"
-                  style={{ width: i === active && playing ? `${progress}%` : '0%' }}
+                  style={{ width: i === active ? `${displayedProgress}%` : '0%' }}
                 />
               </a>
             ))}
@@ -424,8 +741,17 @@ function StatsAndTestimonialsSection() {
   const [playing, setPlaying] = useState(true)
   const [activeIndex, setActiveIndex] = useState(0)
   const [progress, setProgress] = useState(0)
+  // Tracks the responsive `slidesPerView` so the dot pager can be derived
+  // without reading swiperRef.current during render. Updated from Swiper's
+  // event callbacks (init + breakpoint), never in the render body.
+  const [perView, setPerView] = useState(4)
   const progressRef = useRef<ReturnType<typeof setInterval>>(null)
   const AUTO_DELAY = 5000
+
+  const syncPerView = useCallback((swiper: SwiperType) => {
+    const value = swiper.params.slidesPerView
+    if (typeof value === 'number') setPerView(value)
+  }, [])
 
   const startProgress = useCallback(() => {
     if (progressRef.current) clearInterval(progressRef.current)
@@ -463,10 +789,9 @@ function StatsAndTestimonialsSection() {
     setPlaying(p => !p)
   }
 
-  // Total number of "pages" (groups) — Swiper handles this via snapGrid
-  const totalPages = swiperRef.current
-    ? Math.ceil(TESTIMONIALS.length / (swiperRef.current.params.slidesPerView as number || 4))
-    : 2
+  // Total number of "pages" (groups), derived from the tracked slidesPerView.
+  const totalPages = Math.ceil(TESTIMONIALS.length / perView)
+  const selectedPage = Math.floor(activeIndex / perView)
 
   return (
     <section ref={sectionRef} className="container">
@@ -505,7 +830,7 @@ function StatsAndTestimonialsSection() {
             <div>
               <Swiper
                 modules={[Autoplay]}
-                onSwiper={(s) => { swiperRef.current = s }}
+                onSwiper={(s) => { swiperRef.current = s; syncPerView(s) }}
                 slidesPerView={4}
                 spaceBetween={24}
                 autoplay={{
@@ -516,6 +841,7 @@ function StatsAndTestimonialsSection() {
                   setActiveIndex(s.realIndex)
                   startProgress()
                 }}
+                onBreakpoint={(s) => syncPerView(s)}
                 onAutoplayStart={() => startProgress()}
                 breakpoints={{
                   0: { slidesPerView: 1.15, spaceBetween: 12 },
@@ -552,18 +878,13 @@ function StatsAndTestimonialsSection() {
                   {Array.from({ length: totalPages }).map((_, i) => (
                     <li
                       key={i}
-                      className={`dot${Math.floor(activeIndex / (swiperRef.current?.params.slidesPerView as number || 4)) === i ? ' is-selected' : ''}`}
-                      onClick={() => {
-                        const perView = swiperRef.current?.params.slidesPerView as number || 4
-                        swiperRef.current?.slideTo(i * perView)
-                      }}
+                      className={`dot${selectedPage === i ? ' is-selected' : ''}`}
+                      onClick={() => swiperRef.current?.slideTo(i * perView)}
                     >
                       <div
                         className="timer"
                         style={{
-                          width: Math.floor(activeIndex / (swiperRef.current?.params.slidesPerView as number || 4)) === i && playing
-                            ? `${progress}%`
-                            : '0%',
+                          width: selectedPage === i && playing ? `${progress}%` : '0%',
                         }}
                       />
                     </li>
@@ -624,44 +945,6 @@ const TESTIMONIALS = [
     light: true,
   },
 ]
-
-/* ------------------------------------------------------------------ */
-/*  Model Agnostic                                                     */
-/* ------------------------------------------------------------------ */
-function ModelAgnosticSection() {
-  return (
-    <section className="container">
-      <div className="border-border border-x">
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-[2/-2] py-8">
-            <div className="model-agnostic-wrap relative max-[950px]:mb-8">
-              <div className="grid grid-cols-12 gap-6 items-center">
-                <div className="col-span-6 max-[950px]:col-span-full z-10 flex items-center justify-center py-[85px] pb-[70px]">
-                  <img src={`${IMG}/model-agnostic-popover.svg`} alt="Model selector" width={600} height={400} loading="lazy" decoding="async" />
-                </div>
-                <div className="col-span-4 max-[950px]:hidden col-start-8 z-10 text-white">
-                  <p className="mb-6"><strong>Independent Ecosystem</strong></p>
-                  <p className="text-[22px] leading-[1.2] font-[450] max-w-[420px]">
-                    Radically transparent, fiercely human. No ads. No data selling. No venture capital strings. Just purpose-driven tools designed for real-world impact.
-                  </p>
-                </div>
-              </div>
-              <div className="model-agnostic-bg absolute inset-0 overflow-hidden rounded-3xl z-[1]">
-                <img src={`${IMG}/agents-model-agnostic.webp`} alt="Model agnostic" className="w-full h-full object-cover" width={2400} height={1800} loading="lazy" decoding="async" />
-              </div>
-            </div>
-            <div className="hidden max-[950px]:block px-3">
-              <p className="mb-6"><strong>Independent Ecosystem</strong></p>
-              <p className="text-[22px] leading-[1.2] font-[450] max-w-[420px]">
-                Radically transparent, fiercely human. No ads. No data selling. No venture capital strings. Just purpose-driven tools designed for real-world impact.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
 
 /* ------------------------------------------------------------------ */
 /*  Teams Tabs (Side by Side)                                          */
@@ -760,10 +1043,13 @@ function TypewriterText({ texts, resetKey }: { texts: string[]; resetKey: number
       const id = setTimeout(() => setCharIdx((c) => c - 1), 20)
       return () => clearTimeout(id)
     }
-    if (deleting && charIdx === 0) {
+    // Fully deleted: advance to the next phrase. Scheduled via a timer (rather
+    // than set synchronously in the effect body) to avoid cascading renders.
+    const id = setTimeout(() => {
       setDeleting(false)
       setTextIdx((i) => (i + 1) % texts.length)
-    }
+    }, 400)
+    return () => clearTimeout(id)
   }, [charIdx, deleting, textIdx, texts])
 
   return (
@@ -1291,10 +1577,11 @@ export default function HomePage() {
       <main className="oxy-landing">
         <HeroSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <PartnerLogos />}
-        <AllInOneSection />
+        <BuildForEveryoneSection />
+        <ValuesSection />
         <FeaturesSection />
         {(FEATURES.SHOW_HOMEPAGE_STATS || FEATURES.SHOW_TESTIMONIALS) && <StatsAndTestimonialsSection />}
-        <ModelAgnosticSection />
+        <IndependentEcosystemSection />
         <TeamsSection />
         <PartnershipSection />
         <IntegrationsSecuritySection />
@@ -1302,6 +1589,7 @@ export default function HomePage() {
         <IOSAppSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}
         <PricingSection />
+        <EcosystemGridSection />
         <AIResearchSection />
       </main>
       <Footer />
