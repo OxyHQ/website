@@ -8,6 +8,9 @@ export interface AuthUser {
 }
 
 declare global {
+  // The Express namespace is the canonical augmentation point for
+  // attaching request-scoped data; module syntax cannot extend it.
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       user?: AuthUser

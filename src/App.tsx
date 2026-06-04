@@ -37,6 +37,8 @@ const CodexExtensionPage = lazy(() => import('./pages/CodexExtensionPage'))
 const OxyOSPage = lazy(() => import('./pages/OxyOSPage'))
 const TNPPage = lazy(() => import('./pages/TNPPage'))
 const TNPInstallPage = lazy(() => import('./pages/TNPInstallPage'))
+const HomiioPage = lazy(() => import('./pages/HomiioPage'))
+const MentionPage = lazy(() => import('./pages/MentionPage'))
 const CareerDetailPage = lazy(() => import('./pages/CareerDetailPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 const InboxPage = lazy(() => import('./pages/InboxPage'))
@@ -238,6 +240,8 @@ function PublicRoutes() {
       <Route path="os" element={<OxyOSPage />} />
       <Route path="tnp" element={<TNPPage />} />
       <Route path="tnp/install" element={<TNPInstallPage />} />
+      <Route path="homiio" element={<HomiioPage />} />
+      <Route path="mention" element={<MentionPage />} />
       <Route path="settings" element={<SettingsPage />} />
       <Route path="legal" element={<LegalPage />} />
       <Route path="legal/:section" element={<LegalPage />} />

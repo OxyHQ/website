@@ -23,7 +23,7 @@ function generateSlug(title: string, location: string): string {
   const raw = `${title} ${location}`
   return raw
     .toLowerCase()
-    .replace(/[\[\]()]/g, '')
+    .replace(/[[\]()]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 }

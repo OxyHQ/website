@@ -29,6 +29,10 @@ export function AccountPanelProvider({ children }: { children: ReactNode }) {
   )
 }
 
+// Co-located hook + provider — splitting them would require updating
+// every callsite for a fast-refresh edge case that doesn't apply here
+// (this provider isn't edited live during product development).
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAccountPanel() {
   return useContext(AccountPanelContext)
 }

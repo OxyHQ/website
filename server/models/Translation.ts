@@ -1,10 +1,10 @@
-import mongoose, { Schema, Document } from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 
 export interface ITranslation {
   locale: string
   collectionName: string
   documentId: string
-  fields: Record<string, any>
+  fields: Record<string, unknown>
   createdAt: Date
   updatedAt: Date
 }

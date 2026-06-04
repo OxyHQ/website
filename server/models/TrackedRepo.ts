@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose'
 
-interface ITrackedRepo extends Document {
+export interface ITrackedRepo extends Document {
   owner: string
   repo: string
   displayName: string

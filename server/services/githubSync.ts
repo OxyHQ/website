@@ -1,5 +1,5 @@
 import { config } from '../config.js'
-import TrackedRepo from '../models/TrackedRepo.js'
+import TrackedRepo, { type ITrackedRepo } from '../models/TrackedRepo.js'
 import { ChangelogEntry } from '../models/ChangelogEntry.js'
 
 interface GitHubRelease {
@@ -59,7 +59,7 @@ async function fetchReleasesForRepo(
   return releases
 }
 
-async function syncRepo(trackedRepo: any): Promise<number> {
+async function syncRepo(trackedRepo: ITrackedRepo): Promise<number> {
   const { owner, repo, displayName, defaultTags, lastSyncAt } = trackedRepo
 
   console.log(`[GitHub Sync] Syncing ${owner}/${repo}...`)
@@ -89,7 +89,7 @@ async function syncRepo(trackedRepo: any): Promise<number> {
             $set: {
               title: release.name || release.tag_name,
               content: release.body || '',
-              tags: tags.map((t: any) => t.label),
+              tags: tags.map((t: { label: string }) => t.label),
               date: new Date(release.published_at),
               githubReleaseId: release.id,
               repoOwner: owner,
@@ -112,9 +112,10 @@ async function syncRepo(trackedRepo: any): Promise<number> {
 
     console.log(`[GitHub Sync] ${owner}/${repo}: synced ${releases.length} releases`)
     return releases.length
-  } catch (err: any) {
-    console.error(`[GitHub Sync] ${owner}/${repo} error:`, err.message)
-    trackedRepo.lastSyncError = err.message
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error(`[GitHub Sync] ${owner}/${repo} error:`, message)
+    trackedRepo.lastSyncError = message
     await trackedRepo.save()
     return 0
   }

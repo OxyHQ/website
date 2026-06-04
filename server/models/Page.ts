@@ -5,7 +5,7 @@ export interface ISection {
   heading?: string
   subheading?: string
   content?: string
-  items?: any[]
+  items?: unknown[]
   order: number
 }
 

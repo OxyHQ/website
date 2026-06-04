@@ -2,6 +2,9 @@ import type { Request, Response, NextFunction } from 'express'
 import { Locale } from '../models/Locale.js'
 
 declare global {
+  // The Express namespace is the canonical augmentation point for
+  // attaching request-scoped data; module syntax cannot extend it.
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       locale?: string
@@ -45,7 +48,8 @@ export function invalidateLocaleCache() {
  */
 export async function localeMiddleware(req: Request, _res: Response, next: NextFunction) {
   const { defaultLocale, enabledLocales } = await getLocaleInfo()
-  const requested = (req.query.locale as string)?.toLowerCase()
+  const raw = req.query.locale
+  const requested = typeof raw === 'string' ? raw.toLowerCase() : undefined
 
   if (requested && enabledLocales.has(requested)) {
     req.locale = requested

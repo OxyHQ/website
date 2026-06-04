@@ -1,11 +1,17 @@
 import type { ITranslation } from '../models/Translation.js'
 
+type Unknown = Record<string, unknown>
+
+function isPlainObject(value: unknown): value is Unknown {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
 /**
  * Deep-merges translation fields over a document's JSON.
  * Only overwrites fields present in the translation; missing fields
  * fall back to the original (default locale) value.
  */
-export function applyTranslation<T extends Record<string, any>>(
+export function applyTranslation<T extends Unknown>(
   doc: T,
   translation: ITranslation | null,
 ): T {
@@ -16,7 +22,7 @@ export function applyTranslation<T extends Record<string, any>>(
 /**
  * Applies translations to an array of documents, matching by _id.
  */
-export function applyTranslations<T extends Record<string, any>>(
+export function applyTranslations<T extends Unknown>(
   docs: T[],
   translations: ITranslation[],
 ): T[] {
@@ -26,38 +32,43 @@ export function applyTranslations<T extends Record<string, any>>(
     map.set(t.documentId, t)
   }
   return docs.map(doc => {
-    const id = (doc._id ?? doc.id)?.toString()
+    const idRaw = doc._id ?? doc.id
+    const id =
+      idRaw != null && typeof (idRaw as { toString?: () => string }).toString === 'function'
+        ? (idRaw as { toString: () => string }).toString()
+        : undefined
     const t = id ? map.get(id) : null
     return t ? deepMerge(doc, t.fields) : doc
   })
 }
 
-function deepMerge<T extends Record<string, any>>(
+function deepMerge<T extends Unknown>(
   target: T,
-  source: Record<string, any>,
+  source: Unknown,
 ): T {
-  const result = { ...target }
+  const result: Unknown = { ...target }
   for (const key of Object.keys(source)) {
     const srcVal = source[key]
-    const tgtVal = (target as any)[key]
+    const tgtVal = target[key]
     if (srcVal === null || srcVal === undefined) continue
     if (Array.isArray(srcVal) && Array.isArray(tgtVal)) {
       // Merge arrays element-by-element for nested structures (e.g. nav items)
-      result[key as keyof T] = tgtVal.map((item: any, i: number) => {
-        if (i < srcVal.length && srcVal[i] != null && typeof srcVal[i] === 'object' && typeof item === 'object' && !Array.isArray(item)) {
-          return deepMerge(item, srcVal[i])
+      const merged = tgtVal.map((item: unknown, i: number) => {
+        if (i < srcVal.length && srcVal[i] != null && isPlainObject(srcVal[i]) && isPlainObject(item)) {
+          return deepMerge(item, srcVal[i] as Unknown)
         }
         return i < srcVal.length && srcVal[i] != null ? srcVal[i] : item
-      }) as any
+      })
       // If source array is longer, append extra elements
       if (srcVal.length > tgtVal.length) {
-        ;(result[key as keyof T] as any[]).push(...srcVal.slice(tgtVal.length))
+        merged.push(...srcVal.slice(tgtVal.length))
       }
-    } else if (typeof srcVal === 'object' && typeof tgtVal === 'object' && !Array.isArray(srcVal)) {
-      result[key as keyof T] = deepMerge(tgtVal, srcVal)
+      result[key] = merged
+    } else if (isPlainObject(srcVal) && isPlainObject(tgtVal)) {
+      result[key] = deepMerge(tgtVal, srcVal)
     } else {
-      result[key as keyof T] = srcVal
+      result[key] = srcVal
     }
   }
-  return result
+  return result as T
 }

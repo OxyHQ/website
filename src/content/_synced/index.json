@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-27T15:51:35.587Z",
+  "generatedAt": "2026-06-02T15:20:07.401Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -126,6 +126,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/CenteredDialog",
+              "title": "CenteredDialog()",
+              "file": "bloom/0.5.0/api/functions/CenteredDialog.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/ContextMenu.Divider",
               "title": "Divider()",
               "file": "bloom/0.5.0/api/functions/ContextMenu.Divider.md",
@@ -220,6 +227,13 @@
               "slug": "api/functions/Icons.Full",
               "title": "Full()",
               "file": "bloom/0.5.0/api/functions/Icons.Full.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/initCssInteropDarkMode",
+              "title": "initCssInteropDarkMode()",
+              "file": "bloom/0.5.0/api/functions/initCssInteropDarkMode.md",
               "order": 10000,
               "section": "api"
             },
@@ -458,6 +472,13 @@
               "slug": "api/functions/setColorSchemeSafe",
               "title": "setColorSchemeSafe()",
               "file": "bloom/0.5.0/api/functions/setColorSchemeSafe.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/Skeleton.Box",
+              "title": "Box()",
+              "file": "bloom/0.5.0/api/functions/Skeleton.Box.mdx",
               "order": 10000,
               "section": "api"
             },
@@ -840,6 +861,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/ErrorBoundaryFallbackContext",
+              "title": "ErrorBoundaryFallbackContext",
+              "file": "bloom/0.5.0/api/interfaces/ErrorBoundaryFallbackContext.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/ErrorBoundaryProps",
               "title": "ErrorBoundaryProps",
               "file": "bloom/0.5.0/api/interfaces/ErrorBoundaryProps.md",
@@ -1211,6 +1239,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/CenteredDialogProps",
+              "title": "CenteredDialogProps",
+              "file": "bloom/0.5.0/api/types/CenteredDialogProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/CheckboxSize",
               "title": "CheckboxSize",
               "file": "bloom/0.5.0/api/types/CheckboxSize.md",
@@ -1270,6 +1305,13 @@
               "slug": "api/types/DialogProps",
               "title": "DialogProps",
               "file": "bloom/0.5.0/api/types/DialogProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/ErrorBoundaryFallback",
+              "title": "ErrorBoundaryFallback",
+              "file": "bloom/0.5.0/api/types/ErrorBoundaryFallback.md",
               "order": 10000,
               "section": "api"
             },
@@ -1501,6 +1543,13 @@
               "slug": "api/variables/CardTitle",
               "title": "CardTitle",
               "file": "bloom/0.5.0/api/variables/CardTitle.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/CENTERED_DIALOG_BACKDROP_TESTID",
+              "title": "CENTERED\\_DIALOG\\_BACKDROP\\_TESTID",
+              "file": "bloom/0.5.0/api/variables/CENTERED_DIALOG_BACKDROP_TESTID.md",
               "order": 10000,
               "section": "api"
             },
@@ -13870,9 +13919,25 @@
             {
               "slug": "",
               "title": "Homiio",
-              "description": "Real estate platform with ethical pricing, AI tenant-rights assistant, Stripe billing, and PostHog analytics — Expo/RN + Node + Oxy.",
+              "description": "Real estate platform with ethical pricing, AI tenant-rights assistant, Stripe billing, and marketplace analytics — Expo/RN + Node + Oxy.",
               "file": "homiio/main/index.mdx",
               "order": 0,
+              "section": "guides"
+            },
+            {
+              "slug": "getting-started",
+              "title": "Getting started",
+              "description": "Clone, install, configure environment, and run Homiio locally for the first time.",
+              "file": "homiio/main/getting-started.mdx",
+              "order": 1,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture",
+              "title": "Architecture",
+              "description": "Workspace layout, tech stack, request lifecycle, and the data model that anchors the rest of the system.",
+              "file": "homiio/main/architecture.mdx",
+              "order": 2,
               "section": "guides"
             },
             {
@@ -13880,7 +13945,7 @@
               "title": "Listings",
               "description": "The Property schema, search and discovery, accommodation types beyond apartments, and external sourcing.",
               "file": "homiio/main/listings.mdx",
-              "order": 1,
+              "order": 3,
               "section": "guides"
             },
             {
@@ -13888,15 +13953,53 @@
               "title": "Payments",
               "description": "Stripe Checkout, idempotent webhooks, customer portal, file credits, and the Homiio+ / Founder subscription tiers.",
               "file": "homiio/main/payments.mdx",
-              "order": 2,
+              "order": 4,
               "section": "guides"
             },
             {
               "slug": "analytics",
               "title": "Analytics",
-              "description": "PostHog autocapture and session replay on the client, plus the backend stats aggregator used by the Insights screen.",
+              "description": "The /api/analytics insights endpoint, the public marketplace stats aggregator, and how the Insights screen consumes both.",
               "file": "homiio/main/analytics.mdx",
-              "order": 3,
+              "order": 5,
+              "section": "guides"
+            },
+            {
+              "slug": "auth",
+              "title": "Auth",
+              "description": "How Homiio integrates with Oxy on React Native and on the server, the automatic profile bootstrap, and the per-request flow.",
+              "file": "homiio/main/auth.mdx",
+              "order": 6,
+              "section": "guides"
+            },
+            {
+              "slug": "deployment",
+              "title": "Deployment",
+              "description": "Vercel builds for frontend and backend, the shared-types-first build orchestration, and serverless concerns (Mongo, cron).",
+              "file": "homiio/main/deployment.mdx",
+              "order": 7,
+              "section": "guides"
+            },
+            {
+              "slug": "contributing",
+              "title": "Contributing",
+              "description": "Repo layout, the agent-first workflow, code conventions, and the rules that keep the monorepo healthy.",
+              "file": "homiio/main/contributing.mdx",
+              "order": 8,
+              "section": "guides"
+            },
+            {
+              "slug": "superpowers/specs/2026-06-01-homiio-agent-earn-screen",
+              "title": "Homiio — \"Earn with Homiio\" Agent screen + referral-link MVP",
+              "file": "homiio/main/superpowers/specs/2026-06-01-homiio-agent-earn-screen.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "superpowers/specs/2026-06-01-oxy-multi-identity-profiles-design",
+              "title": "Multi-Identity Profiles: Oxy-owned identity + Homiio real-estate sidecar",
+              "file": "homiio/main/superpowers/specs/2026-06-01-oxy-multi-identity-profiles-design.md",
+              "order": 1000,
               "section": "guides"
             }
           ]

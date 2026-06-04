@@ -18,6 +18,10 @@ const SidebarContext = createContext<SidebarContext>({
   toggleSidebar: () => {},
 })
 
+// Co-located hook + components mirrors the upstream shadcn-ui template.
+// Fast refresh isn't relevant — this is a low-level UI primitive that
+// isn't edited live during product development.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useSidebar() {
   return useContext(SidebarContext)
 }

@@ -4,7 +4,6 @@ import express from 'express'
 import mongoose from 'mongoose'
 import crypto from 'node:crypto'
 import { z } from 'zod'
-import { config } from './config.js'
 
 // Models
 import { Page } from './models/Page.js'
@@ -356,12 +355,13 @@ server.tool('update_post', 'Update an existing newsroom post by slug. Only the f
   publishedAt: z.string().optional().describe('Publication date as ISO string'),
 }, async ({ slug, newSlug, ...updates }) => {
   try {
-    if (updates.publishedAt) (updates as any).publishedAt = new Date(updates.publishedAt)
-    if (newSlug) (updates as any).slug = newSlug
+    const patch: Record<string, unknown> = { ...updates }
+    if (updates.publishedAt) patch.publishedAt = new Date(updates.publishedAt)
+    if (newSlug) patch.slug = newSlug
     // Cast string IDs to ObjectId for media fields
-    if (updates.coverImage) (updates as any).coverImage = new mongoose.Types.ObjectId(updates.coverImage)
-    if (updates.ogImage) (updates as any).ogImage = new mongoose.Types.ObjectId(updates.ogImage)
-    const post = await NewsroomPost.findOneAndUpdate({ slug }, updates, { new: true }).populate('coverImage ogImage')
+    if (updates.coverImage) patch.coverImage = new mongoose.Types.ObjectId(updates.coverImage)
+    if (updates.ogImage) patch.ogImage = new mongoose.Types.ObjectId(updates.ogImage)
+    const post = await NewsroomPost.findOneAndUpdate({ slug }, patch, { new: true }).populate('coverImage ogImage')
     if (!post) return err('Post not found')
     return ok(post)
   } catch (e) { return err(e) }
@@ -504,8 +504,9 @@ server.tool('update_changelog_entry', 'Update a changelog entry by ID. Only prov
   media: z.string().optional().describe('Media document ID for an image or video'),
 }, async ({ id, ...updates }) => {
   try {
-    if (updates.date) (updates as any).date = new Date(updates.date)
-    const entry = await ChangelogEntry.findByIdAndUpdate(id, updates, { new: true })
+    const patch: Record<string, unknown> = { ...updates }
+    if (updates.date) patch.date = new Date(updates.date)
+    const entry = await ChangelogEntry.findByIdAndUpdate(id, patch, { new: true })
     if (!entry) return err('Changelog entry not found')
     return ok(entry)
   } catch (e) { return err(e) }
@@ -1000,7 +1001,7 @@ server.tool('upload_image', 'Download an image from a URL, upload it to S3, gene
       width = result.width
       height = result.height
       thumbnails = result.thumbnails
-    } catch (e) {
+    } catch {
       // Thumbnail generation is optional
     }
 
@@ -1126,7 +1127,14 @@ server.tool('bulk_upload_post_covers', 'Upload cover images for multiple posts i
       const key = new URL(cdnUrl).pathname.slice(1)
 
       let width: number | undefined, height: number | undefined, thumbnails = { sm: '', md: '', lg: '' }
-      try { const r = await processImage(buffer, filename, contentType, 'oxy-website/newsroom'); width = r.width; height = r.height; thumbnails = r.thumbnails } catch {}
+      try {
+        const r = await processImage(buffer, filename, contentType, 'oxy-website/newsroom')
+        width = r.width
+        height = r.height
+        thumbnails = r.thumbnails
+      } catch {
+        // Thumbnail generation is optional
+      }
 
       const media = await Media.create({
         url: cdnUrl, thumbnails, filename, key,

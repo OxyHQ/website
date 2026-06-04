@@ -142,6 +142,11 @@ async function getStatus(): Promise<CachedStatusPayload> {
   return inFlight
 }
 
+function stripDocId({ productDocId: _docId, ...rest }: CachedServiceResult): ServiceResult {
+  void _docId
+  return rest
+}
+
 /**
  * Strip the internal `productDocId` field and overlay any translated
  * name/description/section for the caller's locale. Returns the public
@@ -156,7 +161,7 @@ async function localizePayload(
     return {
       generatedAt: payload.generatedAt,
       overall: payload.overall,
-      services: payload.services.map(({ productDocId: _omit, ...rest }) => rest),
+      services: payload.services.map(stripDocId),
     }
   }
 

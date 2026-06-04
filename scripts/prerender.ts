@@ -58,7 +58,6 @@ const NEWSROOM_API = 'https://website-api.oxy.so/api/newsroom?limit=500'
 const JOBS_API = 'https://website-api.oxy.so/api/jobs'
 
 const SITE_URL = 'https://oxy.so'
-const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.png`
 
 /** Per-route SEO contract. Mirrors `<SEO>`'s prop interface. */
 interface SEOProps {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { getStaticChangelog } from '../../content/changelog-loader'
@@ -12,18 +12,19 @@ export default function ChangelogContent() {
   const [selectedRepo, setSelectedRepo] = useState<string | undefined>(undefined)
   const [currentPage, setCurrentPage] = useState(1)
 
-  const filtered = useMemo(() => {
-    if (!selectedRepo) return allEntries
-    const [owner, name] = selectedRepo.split('/')
-    return allEntries.filter((e) => e.repoOwner === owner && e.repoName === name)
-  }, [allEntries, selectedRepo])
+  // React Compiler memoizes these derived values automatically; manual
+  // `useMemo` here trips the immutability rule because the compiler
+  // can't prove that `allEntries` won't be mutated downstream.
+  const filtered = selectedRepo
+    ? allEntries.filter((e) => {
+        const [owner, name] = selectedRepo.split('/')
+        return e.repoOwner === owner && e.repoName === name
+      })
+    : allEntries
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const safePage = Math.min(Math.max(1, currentPage), totalPages)
-  const entries = useMemo(
-    () => filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE),
-    [filtered, safePage],
-  )
+  const entries = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { useState, useCallback, useSyncExternalStore, Suspense, lazy } from 'react'
+import { useState, useCallback, useEffect, useSyncExternalStore, Suspense, lazy } from 'react'
 import { PromptInput } from '@oxyhq/bloom/prompt-input'
 import HeroCanvas from './HeroCanvas'
 import ParticleCanvas from './ParticleCanvas'
@@ -159,7 +159,15 @@ export default function AIPageContent() {
   const [isLoading, setIsLoading] = useState(false)
 
   const { data: promptPhrases } = usePromptPhrases('ai')
-  const currentPlaceholder = promptPhrases?.length ? promptPhrases[Math.floor(Date.now() / 5000) % promptPhrases.length] : heroPlaceholder
+  const [phraseIdx, setPhraseIdx] = useState(0)
+  useEffect(() => {
+    if (!promptPhrases?.length) return
+    const id = setInterval(() => {
+      setPhraseIdx((i) => (i + 1) % promptPhrases.length)
+    }, 5000)
+    return () => clearInterval(id)
+  }, [promptPhrases?.length])
+  const currentPlaceholder = promptPhrases?.length ? promptPhrases[phraseIdx % promptPhrases.length] : heroPlaceholder
 
   const handleSubmit = useCallback(() => {
     const trimmed = promptValue.trim()

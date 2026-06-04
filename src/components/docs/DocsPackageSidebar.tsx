@@ -206,6 +206,10 @@ function collapseSingleWrapper(nodes: SidebarNode[]): SidebarNode[] {
  * via `collectActivePath`; non-active packages stay collapsed until the
  * user clicks their chevron.
  */
+// Co-located with the sidebar component because it shares the tree-building
+// helpers above. Fast refresh isn't relevant for this pure function — it has
+// no React state to preserve across edits.
+// eslint-disable-next-line react-refresh/only-export-components
 export function buildSidebar(
   activePkg?: SyncedPackage,
   activeVersion?: SyncedVersion,

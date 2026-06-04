@@ -24,7 +24,7 @@ const ERASING_SPEED_MS = 30
 // `/faircoin` covers the FairCoin landing + bridge under oxy.so. The
 // `isFairCoinHost()` check below covers fairco.in, where the same pages live
 // at the apex (`/`, `/bridge`) and the prefix list wouldn't match.
-const HIDDEN_PREFIXES = ['/company', '/developers', '/settings', '/help', '/changelog', '/admin', '/dashboard', '/initiative', '/astro', '/faircoin']
+const HIDDEN_PREFIXES = ['/company', '/developers', '/settings', '/help', '/changelog', '/admin', '/dashboard', '/initiative', '/astro', '/faircoin', '/homiio', '/mention']
 
 function slugFromPathname(pathname: string): string {
   const stripped = pathname.replace(/^\/+|\/+$/g, '')
