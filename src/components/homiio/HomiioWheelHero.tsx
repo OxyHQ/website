@@ -175,7 +175,7 @@ function TrustScene() {
 
 function SindiScene() {
   return (
-    <div className="flex w-full max-w-5xl flex-col items-center">
+    <div className="mt-[14vh] flex w-full max-w-5xl flex-col items-center">
       <h2 className="mb-6 text-center font-display text-[clamp(1.75rem,4vw,3rem)] font-semibold uppercase leading-tight tracking-tight text-neutral-900">
         Meet Sindi
       </h2>
@@ -186,19 +186,23 @@ function SindiScene() {
   )
 }
 
-const SCENES: readonly ReactNode[] = [
-  <HeroScene key="hero" />,
-  <TransparentScene key="transparent" />,
-  <RoommateScene key="roommate" />,
-  <TrustScene key="trust" />,
-  <SindiScene key="sindi" />,
-]
-
 /* ------------------------------------------------------------------ */
-/* Hero (pinned scrollytelling) + reduced-motion fallback             */
+/* Hero (pinned wheel + tightly-stacked panels) + reduced fallback     */
 /* ------------------------------------------------------------------ */
 
-const GRADIENT = 'bg-[linear-gradient(180deg,#0047BD_0%,#1f6fd0_26%,#bcd8ef_44%,#FFF7D8_58%,#FFF7D8_100%)]'
+const GRADIENT = 'bg-[linear-gradient(180deg,#0047BD_0%,#1f6fd0_20%,#bcd8ef_36%,#FFF7D8_50%,#FFF7D8_100%)]'
+
+/** The feature panels, stacked with ~1rem between them (like the original). */
+function Panels() {
+  return (
+    <div className="flex w-full flex-col items-center gap-4">
+      <TransparentScene />
+      <RoommateScene />
+      <TrustScene />
+      <SindiScene />
+    </div>
+  )
+}
 
 export default function HomiioWheelHero() {
   const ref = useRef<HTMLDivElement>(null)
@@ -206,31 +210,30 @@ export default function HomiioWheelHero() {
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
   const rotate = useTransform(scrollYProgress, [0, 1], [0, 105])
-  const panelsY = useTransform(scrollYProgress, [0, 1], ['0vh', `-${(SCENES.length - 1) * 100}vh`])
 
   if (reduce) {
     return (
       <div className={`relative overflow-hidden ${GRADIENT}`}>
-        {SCENES.map((scene, i) => (
-          <section key={i} className="flex min-h-[70vh] w-full items-center justify-center px-6 py-16">
-            {scene}
-          </section>
-        ))}
+        <div className="flex flex-col items-center gap-4 px-6 pb-[14vh] pt-[16vh]">
+          <HeroScene />
+          <Panels />
+        </div>
       </div>
     )
   }
 
   return (
-    <div ref={ref} className={`relative ${GRADIENT}`} style={{ height: `${SCENES.length * 100}vh` }}>
-      <div className="sticky top-0 h-screen overflow-hidden">
+    <div ref={ref} className={`relative ${GRADIENT}`}>
+      {/* The rotating wheel pins behind everything for the whole section. */}
+      <div className="sticky top-0 z-0 h-screen overflow-hidden">
         <Wheel rotate={rotate} />
-        <motion.div style={{ y: panelsY }} className="absolute inset-0 z-10">
-          {SCENES.map((scene, i) => (
-            <div key={i} className="flex h-screen w-full items-center justify-center px-6">
-              {scene}
-            </div>
-          ))}
-        </motion.div>
+      </div>
+      {/* Content scrolls over the wheel: hero title, then the stacked panels. */}
+      <div className="relative z-10 -mt-[100vh] flex flex-col items-center px-6 pb-[16vh]">
+        <div className="flex min-h-[78vh] items-center justify-center">
+          <HeroScene />
+        </div>
+        <Panels />
       </div>
     </div>
   )
