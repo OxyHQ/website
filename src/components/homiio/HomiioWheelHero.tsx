@@ -122,7 +122,8 @@ function TrustCard({ listing, ok }: { listing: HomiioListing; ok: boolean }) {
 function HeroScene() {
   return (
     <h1 className="mx-auto max-w-2xl text-center font-display text-[clamp(2.25rem,5.5vw,4rem)] font-semibold uppercase leading-[1.05] tracking-tight text-white">
-      <span className="text-[#FFC233]">Homiio.</span> Rental made easy
+      <span className="block text-[clamp(3.5rem,9vw,6.5rem)] leading-[0.95] text-[#FFC233]">Homiio.</span>
+      Rental made easy
     </h1>
   )
 }
@@ -223,14 +224,17 @@ export default function HomiioWheelHero() {
   }
 
   return (
-    <div ref={ref} className={`relative ${GRADIENT}`}>
-      {/* The rotating wheel pins behind everything for the whole section. */}
-      <div className="sticky top-0 z-0 h-screen overflow-hidden">
+    // z-20 keeps the whole hero (and its overflowing wheel) above the next
+    // section, so the wheel rides over the spiral instead of being clipped.
+    <div ref={ref} className={`relative z-20 ${GRADIENT}`}>
+      {/* The rotating wheel pins behind the hero content. No overflow clip, so
+          it's never hard-cut at the hand-off — it just scrolls over the spiral. */}
+      <div className="pointer-events-none sticky top-0 z-0 h-screen">
         <Wheel rotate={rotate} />
       </div>
       {/* Content scrolls over the wheel: hero title, then the stacked panels. */}
       <div className="relative z-10 -mt-[100vh] flex flex-col items-center px-6 pb-[16vh]">
-        <div className="flex min-h-[78vh] items-center justify-center">
+        <div className="flex min-h-[82vh] items-end justify-center pb-[10vh]">
           <HeroScene />
         </div>
         <Panels />
