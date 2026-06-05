@@ -1,7 +1,10 @@
-import { motion, useReducedMotion, type MotionValue } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { ChatCircle, Repeat, Heart, BookmarkSimple, Export } from '@phosphor-icons/react'
 import phoneFrame from '../../assets/mention/phone.png'
 import { MENTION_POSTS, type MentionPost } from './data'
+
+/** Two laps so the auto-scroll loops seamlessly. */
+const FEED_LOOP = [...MENTION_POSTS, ...MENTION_POSTS]
 
 function FeedRow({ post }: { post: MentionPost }) {
   return (
@@ -25,31 +28,19 @@ function FeedRow({ post }: { post: MentionPost }) {
   )
 }
 
-interface MentionPhoneProps {
-  className?: string
-  /** When provided, the feed scrolls in lock-step with this value (page scroll). */
-  feedY?: MotionValue<string>
-}
-
-/**
- * iPhone mockup whose screen runs a Mention feed. When `feedY` is supplied the
- * feed is driven by the page scroll; otherwise it auto-scrolls on a loop.
- */
-export default function MentionPhone({ className = '', feedY }: MentionPhoneProps) {
+/** iPhone mockup whose screen auto-scrolls a Mention feed (reduced-motion fallback). */
+export default function MentionPhone() {
   const reduce = useReducedMotion()
-  const loop = [...MENTION_POSTS, ...MENTION_POSTS]
-
   return (
-    <div className={`relative w-[268px] ${className}`}>
+    <div className="relative w-[268px]">
       <img src={phoneFrame} alt="" draggable={false} className="pointer-events-none relative z-10 w-full select-none" />
       {/* Screen clip — sits under the frame's bezel, above its white screen */}
       <div className="absolute inset-x-[5.5%] top-[5%] bottom-[3.5%] z-0 overflow-hidden rounded-[28px] bg-white">
         <motion.div
-          style={feedY ? { y: feedY } : undefined}
-          animate={feedY || reduce ? undefined : { y: ['0%', '-50%'] }}
-          transition={feedY ? undefined : { duration: 34, ease: 'linear', repeat: Infinity }}
+          animate={reduce ? undefined : { y: ['0%', '-50%'] }}
+          transition={reduce ? undefined : { duration: 34, ease: 'linear', repeat: Infinity }}
         >
-          {loop.map((post, i) => (
+          {FEED_LOOP.map((post, i) => (
             <FeedRow key={`${post.id}-${i}`} post={post} />
           ))}
         </motion.div>

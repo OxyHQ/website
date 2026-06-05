@@ -47,13 +47,9 @@ function tileBackground(from: string, to: string): string {
   ].join(', ')
 }
 
-interface HomiioFeatureCardsProps {
-  className?: string
-}
-
-export default function HomiioFeatureCards({ className = '' }: HomiioFeatureCardsProps) {
+export default function HomiioFeatureCards() {
   return (
-    <div className={`grid w-full grid-cols-1 gap-6 sm:grid-cols-3 ${className}`}>
+    <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-3">
       {FEATURES.map((feature) => (
         <div key={feature.title} className="flex flex-col text-left">
           <div

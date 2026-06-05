@@ -66,18 +66,16 @@ interface FlyIn {
 
 interface FeedSpec {
   id: string
-  /** Scattered hero start; present only for the cards that fly in. */
-  fly?: FlyIn
+  /** Hero scatter start — every card flies in from one. */
+  fly: FlyIn
 }
 
 /**
  * The phone feed is a real flex column (so posts are always back-to-back, no
- * gaps). The first cards are scattered across the hero and fly in to their
- * natural slot; the rest fade in below so a normal scroll reveals them.
+ * gaps). Every card is scattered across the hero and flies in to its slot —
+ * fly.y is the scatter offset measured from each card's resting slot, so they
+ * start at the hero ring positions even though the feed is a column.
  */
-// fly.y is the hero scatter offset measured *from each post's flex slot*, so the
-// cards start at the original ring positions even though the feed is a column.
-// Every feed post flies in from the hero — no extras, no duplicates.
 const FEED: readonly FeedSpec[] = [
   { id: 'vecna-1', fly: { x: 300, y: -39, rot: 5, enter: 0.44 } },
   { id: 'athina-1', fly: { x: -390, y: -127, rot: -6, enter: 0.42 } },
@@ -89,18 +87,17 @@ const FEED: readonly FeedSpec[] = [
   { id: 'vecna-2', fly: { x: -470, y: -279, rot: -2, enter: 0.43 } },
 ]
 
-/** One feed post; flies in from the hero scatter to its flex slot, or fades in. */
+/** One feed post; flies in from the hero scatter to its flex slot. */
 function FeedPost({ spec, progress, flat }: { spec: FeedSpec; progress: MotionValue<number>; flat: boolean }) {
-  const fly = spec.fly
-  const range: [number, number] = fly ? [0.26, fly.enter] : [0, 1]
-  const x = useTransform(progress, range, fly ? [fly.x, 0] : [0, 0])
-  const y = useTransform(progress, range, fly ? [fly.y, 0] : [0, 0])
+  const { fly } = spec
+  const range: [number, number] = [0.26, fly.enter]
+  const x = useTransform(progress, range, [fly.x, 0])
+  const y = useTransform(progress, range, [fly.y, 0])
   // Hero cards are bigger; in the feed they sit at full (compact, flat) size.
-  const scale = useTransform(progress, range, fly ? [1.28, 1] : [1, 1])
-  const rotate = useTransform(progress, range, fly ? [fly.rot, 0] : [0, 0])
-  const opacity = useTransform(progress, fly ? [0, 0.04] : [0.4, 0.47], [fly ? 1 : 0, 1])
+  const scale = useTransform(progress, range, [1.28, 1])
+  const rotate = useTransform(progress, range, [fly.rot, 0])
   return (
-    <motion.div style={{ x, y, scale, rotate, opacity }} className="w-full shrink-0">
+    <motion.div style={{ x, y, scale, rotate }} className="w-full shrink-0">
       <MentionPostCard post={post(spec.id)} flat={flat} className="w-full" />
     </motion.div>
   )
@@ -256,10 +253,11 @@ function IntegrationsSection() {
 }
 
 /**
- * The username slot in mention.earth/@…, rolling vertically through the handles
- * one at a time (holds on each, then rolls to the next, looping forever).
+ * Vertical roll keyframes for the mention.earth/@… username slot — hold on each
+ * handle, then roll to the next, looping forever. Render-invariant, so built
+ * once from the module constant.
  */
-function UsernameRoll() {
+const ROLL = (() => {
   const names = MENTION_HANDLES
   const N = names.length
   const unit = 100 / (N + 1)
@@ -273,21 +271,29 @@ function UsernameRoll() {
   }
   yframes.push((-N * unit).toFixed(3) + '%')
   times.push(1)
+  return {
+    yframes,
+    times,
+    duration: N * 1.5,
+    items: [...names, names[0]],
+    longest: names.reduce((a, b) => (b.length > a.length ? b : a)),
+  }
+})()
 
-  const longest = names.reduce((a, b) => (b.length > a.length ? b : a))
+function UsernameRoll() {
   return (
     // The invisible handle stays in flow: it sets the width *and* the text
     // baseline (so it lines up with the prefix). The roll is layered on top and
     // clipped to a single line.
     <span className="relative inline-block whitespace-nowrap text-left text-foreground">
-      <span className="invisible">{longest}</span>
+      <span className="invisible">{ROLL.longest}</span>
       <span className="absolute inset-0 overflow-hidden">
         <motion.span
           className="flex flex-col"
-          animate={{ y: yframes }}
-          transition={{ duration: N * 1.5, times, ease: [0.76, 0, 0.24, 1], repeat: Infinity }}
+          animate={{ y: ROLL.yframes }}
+          transition={{ duration: ROLL.duration, times: ROLL.times, ease: [0.76, 0, 0.24, 1], repeat: Infinity }}
         >
-          {[...names, names[0]].map((h, i) => (
+          {ROLL.items.map((h, i) => (
             <span key={i} className="block">{h}</span>
           ))}
         </motion.span>

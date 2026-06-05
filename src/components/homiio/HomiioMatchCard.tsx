@@ -3,19 +3,13 @@ import { SANDRA_IMAGE } from './data'
 
 const TAGS = ['Dog', 'Music', 'TV', 'Clean', 'Yoga'] as const
 
-interface HomiioMatchCardProps {
-  className?: string
-}
-
 /**
  * Roommate-match profile card. A compatibility score sits over the portrait,
  * followed by values-based tags — the heart of Homiio's "roommate harmony".
  */
-export default function HomiioMatchCard({ className = '' }: HomiioMatchCardProps) {
+export default function HomiioMatchCard() {
   return (
-    <article
-      className={`w-[210px] rounded-3xl bg-white p-3 text-left shadow-[0_20px_50px_-20px_rgba(0,0,0,0.4)] ring-1 ring-black/5 ${className}`}
-    >
+    <article className="w-[210px] rounded-3xl bg-white p-3 text-left shadow-[0_20px_50px_-20px_rgba(0,0,0,0.4)] ring-1 ring-black/5">
       <div className="relative">
         <img
           src={SANDRA_IMAGE}

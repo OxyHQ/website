@@ -7,18 +7,6 @@ import gaudi from '../../assets/homiio/gaudi.jpg'
 import industria from '../../assets/homiio/industria.jpg'
 import sandra from '../../assets/homiio/sandra.jpg'
 
-/**
- * Brand palette lifted from the original Homiio landing (Framer). The hero
- * wheel sits on a vertical wash from royal blue into warm cream; the accent
- * gold paints the "Homiio." wordmark and the listing prices.
- */
-export const HOMIIO_COLORS = {
-  blue: '#0047BD',
-  cream: '#FFF7D8',
-  gold: '#FFC233',
-  tag: '#BCE9D0',
-} as const
-
 export interface HomiioListing {
   id: string
   title: string

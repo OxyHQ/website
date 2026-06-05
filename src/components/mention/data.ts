@@ -59,12 +59,7 @@ export const MENTION_PROFILES: readonly MentionProfile[] = [
   },
 ]
 
-/** Handles that scroll past in the "your unique link" marquee. */
+/** Handles the username slot rolls through in the "your unique link" section. */
 export const MENTION_HANDLES: readonly string[] = [
   'aina', 'loak', 'zoe', 'eike', 'nate', 'gabriela', 'clara', 'athina', 'joan', 'enric', 'niko',
-]
-
-/** "Posts. Communities. ..." word list for the big typographic section. */
-export const MENTION_WORDS: readonly string[] = [
-  'Posts', 'Communities', 'Feeds', 'Photos', 'Polls', 'Streams', 'Questions', 'Videos', 'Chat',
 ]
