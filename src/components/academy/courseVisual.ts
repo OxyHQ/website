@@ -1,3 +1,5 @@
+import type { CourseLevel } from '../../content/academy-loader'
+
 /* ──────────────────────────────────────────────
  * Academy course cover fallback
  *
@@ -57,4 +59,11 @@ export function courseInitials(title: string): string {
   const first = (words[0] ?? '').charAt(0)
   const second = (words[1] ?? '').charAt(0)
   return (first + second).toUpperCase()
+}
+
+/** Shared level label + status-dot colour, reused across the academy pages. */
+export const COURSE_LEVELS: Record<CourseLevel, { label: string; dot: string }> = {
+  beginner: { label: 'Beginner', dot: 'bg-emerald-500' },
+  intermediate: { label: 'Intermediate', dot: 'bg-amber-500' },
+  advanced: { label: 'Advanced', dot: 'bg-rose-500' },
 }

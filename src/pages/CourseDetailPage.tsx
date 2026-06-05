@@ -1,67 +1,39 @@
 import { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowRight, BookOpen, Check, Clock, GraduationCap, Sparkles } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BookOpen, Check, Clock, PlayCircle, Sparkles } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
-import PageSection from '../components/layout/PageSection'
-import SectionHeading from '../components/layout/SectionHeading'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useCurrentLocale } from '../lib/i18n'
-import { loadCourse, loadCourses, type LessonEntry } from '../content/academy-loader'
+import { loadCourse, loadCourses, type CourseLevel, type LessonEntry } from '../content/academy-loader'
 import ShareWithMention from '../components/social/ShareWithMention'
-import { courseGradient, courseInitials } from '../components/academy/courseVisual'
+import { courseGradient, courseInitials, COURSE_LEVELS } from '../components/academy/courseVisual'
 import { useAcademyProgress } from '../components/academy/useAcademyProgress'
 import type { CourseProgress } from '../components/academy/progressStorage'
 
 /* ──────────────────────────────────────────────
  * /academy/:slug
  *
- * Course landing page. Hero card carries the cover/gradient, summary, level
- * + duration metadata, and a CTA into the first lesson. The body lists every
- * lesson as a numbered card with title, description, and duration — no
- * accordion clicks required. A sticky aside surfaces course metadata and
- * the share action so users always have context while scrolling the
- * lesson list. Finally, a "More courses" rail closes the page with the
- * other courses in the catalog.
+ * Compact course page: a tight two-column hero (cover + title/meta/CTA), the
+ * curriculum as a dense numbered checklist, and a sticky enrol/share card.
+ * Spacing is app-dense, not marketing-loose, and the visual language (level
+ * dot, progress bar, monogram cover) matches the Academy catalog.
  * ──────────────────────────────────────────── */
 
-/* ── Cover / gradient hero artwork ────────────────────────── */
+/* ── Cover / gradient artwork ─────────────────────────────── */
 
-function CourseHeroArtwork({
-  slug,
-  title,
-  cover,
-}: {
-  slug: string
-  title: string
-  cover: string
-}) {
+function CourseArtwork({ slug, title, cover, className }: { slug: string; title: string; cover: string; className: string }) {
   if (cover) {
-    return (
-      <img
-        src={cover}
-        alt=""
-        className="h-full w-full object-cover"
-        loading="eager"
-        decoding="async"
-      />
-    )
+    return <img src={cover} alt="" className={`${className} object-cover`} loading="eager" decoding="async" />
   }
-  const gradient = courseGradient(slug)
-  const initials = courseInitials(title)
+  const g = courseGradient(slug)
   return (
-    <div
-      className={`relative h-full w-full overflow-hidden bg-gradient-to-br ${gradient.from} ${gradient.via} ${gradient.to}`}
-      aria-hidden="true"
-    >
-      <span className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,255,255,0.22),transparent_55%)]" />
-      <span
-        className="absolute -right-8 -bottom-12 text-[14rem] font-semibold leading-none text-white/15 tracking-tighter select-none"
-        style={{ fontFamily: 'var(--font-display)' }}
-      >
-        {initials}
+    <div className={`${className} relative overflow-hidden bg-gradient-to-br ${g.from} ${g.via} ${g.to}`} aria-hidden="true">
+      <span className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,255,255,0.22),transparent_55%)]" />
+      <span className="absolute -right-5 -bottom-8 select-none text-[9rem] font-bold leading-none tracking-tighter text-white/15">
+        {courseInitials(title)}
       </span>
     </div>
   )
@@ -86,30 +58,22 @@ function LessonRow({
   return (
     <Link
       to={`/academy/${courseSlug}/${lesson.lessonSlug}`}
-      aria-label={`${lesson.frontmatter.title}${isCompleted ? ' — completed' : ''}${
-        isResumeTarget ? ' — resume here' : ''
-      }`}
-      className={`group flex items-start gap-5 rounded-2xl border p-5 transition-colors md:p-6 ${
-        isResumeTarget
-          ? 'border-foreground bg-background hover:bg-surface'
-          : 'border-border bg-background hover:bg-surface'
+      aria-label={`${lesson.frontmatter.title}${isCompleted ? ' — completed' : ''}${isResumeTarget ? ' — resume here' : ''}`}
+      className={`group flex items-center gap-4 rounded-xl border p-4 transition-colors ${
+        isResumeTarget ? 'border-foreground bg-surface' : 'border-border bg-background hover:bg-surface'
       }`}
     >
       <span
-        className={`grid size-10 shrink-0 place-items-center rounded-xl font-mono text-sm font-semibold transition-colors ${
-          isCompleted
-            ? 'border border-transparent bg-foreground text-background'
-            : 'border border-border bg-surface text-foreground'
+        className={`grid size-9 shrink-0 place-items-center rounded-lg font-mono text-xs font-semibold ${
+          isCompleted ? 'bg-emerald-500 text-white' : 'border border-border bg-surface text-foreground'
         }`}
         aria-hidden="true"
       >
         {isCompleted ? <Check className="size-4" /> : String(index + 1).padStart(2, '0')}
       </span>
       <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h3 className="text-base font-medium text-foreground md:text-lg">
-            {lesson.frontmatter.title}
-          </h3>
+        <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
+          <h3 className="text-[15px] font-medium text-foreground">{lesson.frontmatter.title}</h3>
           {duration ? (
             <span className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground">
               <Clock className="size-3" aria-hidden="true" />
@@ -118,58 +82,46 @@ function LessonRow({
           ) : null}
           {isResumeTarget ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-foreground px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-background">
-              Resume here
-            </span>
-          ) : null}
-          {isCompleted && !isResumeTarget ? (
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-              Completed
+              Resume
             </span>
           ) : null}
         </div>
         {lesson.frontmatter.description ? (
-          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-            {lesson.frontmatter.description}
-          </p>
+          <p className="mt-0.5 line-clamp-1 text-[13px] leading-relaxed text-muted-foreground">{lesson.frontmatter.description}</p>
         ) : null}
       </div>
       <ArrowRight
-        className="mt-2 size-4 shrink-0 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-foreground"
+        className="size-4 shrink-0 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-foreground"
         aria-hidden="true"
       />
     </Link>
   )
 }
 
-/* ── More-courses rail card ───────────────────────────────── */
+/* ── More-courses card ────────────────────────────────────── */
 
 function RelatedCourseCard({
   course,
 }: {
-  course: { slug: string; title: string; summary: string; coverImage?: string; level: string }
+  course: { slug: string; title: string; summary: string; coverImage?: string; level: CourseLevel }
 }) {
-  const cover = course.coverImage ?? ''
+  const lvl = COURSE_LEVELS[course.level]
   return (
     <Link
       to={`/academy/${course.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-background transition-colors hover:bg-surface"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-input hover:shadow-lg"
     >
-      <div className="aspect-[16/10] w-full">
-        <CourseHeroArtwork slug={course.slug} title={course.title} cover={cover} />
-      </div>
-      <div className="flex flex-1 flex-col p-6 lg:p-7">
-        <span className="inline-flex w-fit items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          <GraduationCap className="size-3" aria-hidden="true" />
-          {course.level}
+      <CourseArtwork slug={course.slug} title={course.title} cover={course.coverImage ?? ''} className="aspect-[16/9] w-full" />
+      <div className="flex flex-1 flex-col p-5">
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+          <span className={`size-2 rounded-full ${lvl.dot}`} aria-hidden="true" />
+          {lvl.label}
         </span>
-        <h3 className="mt-3 text-lg font-medium text-foreground md:text-xl">{course.title}</h3>
-        <p className="mt-2 text-pretty text-sm leading-relaxed text-muted-foreground">{course.summary}</p>
-        <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
+        <h3 className="mt-2 text-base font-semibold text-foreground md:text-lg">{course.title}</h3>
+        <p className="mt-1.5 line-clamp-2 text-pretty text-sm leading-relaxed text-muted-foreground">{course.summary}</p>
+        <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-foreground">
           Open course
-          <ArrowRight
-            className="size-4 transition-transform duration-300 group-hover:translate-x-1"
-            aria-hidden="true"
-          />
+          <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
         </span>
       </div>
     </Link>
@@ -178,16 +130,10 @@ function RelatedCourseCard({
 
 /* ── Page ─────────────────────────────────────────────────── */
 
-function pickResumeLessonSlug(
-  lessons: LessonEntry[],
-  progress: CourseProgress,
-): string | null {
+function pickResumeLessonSlug(lessons: LessonEntry[], progress: CourseProgress): string | null {
   if (lessons.length === 0) return null
-  // First not-completed lesson; if every lesson is completed, no resume target.
   for (const lesson of lessons) {
-    if (progress[lesson.lessonSlug]?.status !== 'completed') {
-      return lesson.lessonSlug
-    }
+    if (progress[lesson.lessonSlug]?.status !== 'completed') return lesson.lessonSlug
   }
   return null
 }
@@ -197,25 +143,15 @@ export default function CourseDetailPage() {
   const locale = useCurrentLocale()
   const course = loadCourse(slug ?? '', locale)
   const allCourses = useMemo(() => loadCourses(locale), [locale])
-  const related = useMemo(
-    () => allCourses.filter((c) => c.slug !== course?.slug).slice(0, 3),
-    [allCourses, course],
-  )
+  const related = useMemo(() => allCourses.filter((c) => c.slug !== course?.slug).slice(0, 3), [allCourses, course])
 
-  // Hook must run before the early `if (!course)` return — pass an empty
-  // slug fallback so it stays inert when no course resolves. The store
-  // accepts any kebab-case key, so this is safe.
+  // Hook must run before the early `if (!course)` return.
   const { data: progress } = useAcademyProgress(slug ?? course?.slug ?? 'unknown')
 
   if (!course) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
-        <SEO
-          title="Course not found"
-          description="The course you are looking for does not exist."
-          canonicalPath={`/academy/${slug ?? ''}`}
-          noIndex
-        />
+        <SEO title="Course not found" description="The course you are looking for does not exist." canonicalPath={`/academy/${slug ?? ''}`} noIndex />
         <Navbar />
         <main className="flex flex-1 flex-col items-center justify-center gap-4">
           <h1 className="text-2xl font-semibold text-foreground">Course not found</h1>
@@ -230,34 +166,19 @@ export default function CourseDetailPage() {
 
   const duration = course.duration ?? ''
   const cover = course.coverImage ?? ''
+  const lvl = COURSE_LEVELS[course.level]
   const firstLesson = course.lessons[0]
-  const totalDurationText = duration
-    ? duration
-    : course.lessons.length > 0
-      ? `${course.lessons.length} ${course.lessons.length === 1 ? 'lesson' : 'lessons'}`
-      : ''
 
   const resumeLessonSlug = pickResumeLessonSlug(course.lessons, progress)
   const completedCount = course.lessons.reduce(
     (acc, l) => (progress[l.lessonSlug]?.status === 'completed' ? acc + 1 : acc),
     0,
   )
-  const completionPct =
-    course.lessons.length > 0
-      ? Math.round((completedCount / course.lessons.length) * 100)
-      : 0
-  const isCourseStarted = completedCount > 0 || resumeLessonSlug !== firstLesson?.lessonSlug
-  // The hero CTA flips to "Resume" once any lesson is completed (or once we
-  // know about an in-progress lesson). When the entire course is finished
-  // it stays on the last lesson for re-reads.
-  const heroCtaLessonSlug =
-    resumeLessonSlug ?? course.lessons[course.lessons.length - 1]?.lessonSlug ?? null
+  const completionPct = course.lessons.length > 0 ? Math.round((completedCount / course.lessons.length) * 100) : 0
+  const isStarted = completedCount > 0 || resumeLessonSlug !== firstLesson?.lessonSlug
+  const heroCtaLessonSlug = resumeLessonSlug ?? course.lessons[course.lessons.length - 1]?.lessonSlug ?? null
   const heroCtaLabel =
-    completedCount === 0
-      ? 'Start first lesson'
-      : completedCount === course.lessons.length
-        ? 'Review course'
-        : 'Resume course'
+    completedCount === 0 ? 'Start first lesson' : completedCount === course.lessons.length ? 'Review course' : 'Resume course'
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -270,108 +191,81 @@ export default function CourseDetailPage() {
       />
       <Navbar />
       <main>
-        {/* ═══ Hero (text column + visual column) ═══ */}
+        {/* ═══ Hero ═══ */}
         <section className="relative overflow-hidden">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] bg-gradient-to-b from-surface to-background"
+            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[360px] bg-gradient-to-b from-surface to-background"
           />
-          <div className="container pt-28 pb-12 lg:pt-36 lg:pb-16">
-            <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
-              {/* Text column */}
-              <div className="flex flex-col gap-5 lg:col-span-7">
-                <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  <span className="inline-flex items-center gap-1.5 text-primary">
+          <div className="mx-auto max-w-6xl px-6 pt-24 pb-8 lg:pt-28 lg:pb-10">
+            <Link
+              to="/academy"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" />
+              Academy
+            </Link>
+
+            <div className="mt-5 grid items-center gap-8 lg:grid-cols-[1fr_minmax(0,420px)] lg:gap-12">
+              {/* Text */}
+              <div className="flex flex-col gap-4 lg:order-1">
+                <div className="flex flex-wrap items-center gap-2.5 text-xs font-medium text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5 font-semibold uppercase tracking-[0.16em] text-primary">
                     <Sparkles className="size-3.5" aria-hidden="true" />
-                    Oxy Academy course
+                    Course
                   </span>
-                  {course.level ? (
-                    <>
-                      <span aria-hidden="true">·</span>
-                      <span className="capitalize">{course.level}</span>
-                    </>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className={`size-2 rounded-full ${lvl.dot}`} aria-hidden="true" />
+                    {lvl.label}
+                  </span>
+                  {duration ? (
+                    <span className="inline-flex items-center gap-1.5">
+                      <Clock className="size-3.5" aria-hidden="true" />
+                      {duration}
+                    </span>
+                  ) : null}
+                  {course.lessons.length > 0 ? (
+                    <span className="inline-flex items-center gap-1.5">
+                      <BookOpen className="size-3.5" aria-hidden="true" />
+                      {course.lessons.length} {course.lessons.length === 1 ? 'lesson' : 'lessons'}
+                    </span>
                   ) : null}
                 </div>
 
-                <h1 className="text-balance text-heading-responsive-lg text-foreground">
-                  {course.title}
-                </h1>
+                <h1 className="text-balance text-heading-responsive-lg text-foreground">{course.title}</h1>
                 {course.summary && (
-                  <p className="max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
-                    {course.summary}
-                  </p>
+                  <p className="max-w-xl text-pretty leading-relaxed text-muted-foreground">{course.summary}</p>
                 )}
 
-                <dl className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-                  {totalDurationText ? (
-                    <div className="flex items-center gap-2">
-                      <Clock className="size-4" aria-hidden="true" />
-                      <dt className="sr-only">Duration</dt>
-                      <dd>{totalDurationText}</dd>
+                {isStarted && course.lessons.length > 0 ? (
+                  <div className="flex items-center gap-3">
+                    <div className="h-2 max-w-xs flex-1 overflow-hidden rounded-full bg-border">
+                      <div className="h-full rounded-full bg-primary" style={{ width: `${completionPct}%` }} />
                     </div>
-                  ) : null}
-                  {course.lessons.length > 0 ? (
-                    <div className="flex items-center gap-2">
-                      <BookOpen className="size-4" aria-hidden="true" />
-                      <dt className="sr-only">Lessons</dt>
-                      <dd>
-                        {course.lessons.length} {course.lessons.length === 1 ? 'lesson' : 'lessons'}
-                      </dd>
-                    </div>
-                  ) : null}
-                  <div className="flex items-center gap-2">
-                    <GraduationCap className="size-4" aria-hidden="true" />
-                    <dt className="sr-only">Cost</dt>
-                    <dd>Free, self-paced</dd>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {completedCount}/{course.lessons.length} · {completionPct}%
+                    </span>
                   </div>
-                  {isCourseStarted && course.lessons.length > 0 ? (
-                    <div className="flex items-center gap-2">
-                      <Check className="size-4" aria-hidden="true" />
-                      <dt className="sr-only">Progress</dt>
-                      <dd>
-                        {completedCount} / {course.lessons.length} completed ({completionPct}%)
-                      </dd>
-                    </div>
-                  ) : null}
-                </dl>
+                ) : null}
 
-                {course.tags.length > 0 && (
-                  <div className="mt-1 flex flex-wrap gap-2">
-                    {course.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full bg-surface px-3 py-1 text-xs font-medium text-muted-foreground"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                <div className="mt-4 flex flex-wrap items-center gap-3">
+                <div className="mt-1 flex flex-wrap items-center gap-2.5">
                   {heroCtaLessonSlug ? (
-                    <Button
-                      variant="primary"
-                      size="md"
-                      responsive
-                      href={`/academy/${course.slug}/${heroCtaLessonSlug}`}
-                    >
+                    <Button variant="primary" size="md" href={`/academy/${course.slug}/${heroCtaLessonSlug}`}>
+                      <PlayCircle className="size-4" aria-hidden="true" />
                       {heroCtaLabel}
                     </Button>
                   ) : null}
-                  <Button variant="outline" size="md" responsive href="/academy">
-                    Browse all courses
-                  </Button>
+                  {course.tags.slice(0, 3).map((tag) => (
+                    <span key={tag} className="rounded-full bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
 
-              {/* Visual column */}
-              <div className="lg:col-span-5">
-                <div className="overflow-hidden rounded-3xl border border-border shadow-sm">
-                  <div className="aspect-[16/11] w-full">
-                    <CourseHeroArtwork slug={course.slug} title={course.title} cover={cover} />
-                  </div>
-                </div>
+              {/* Cover */}
+              <div className="overflow-hidden rounded-2xl border border-border shadow-sm lg:order-2">
+                <CourseArtwork slug={course.slug} title={course.title} cover={cover} className="aspect-[16/10] w-full" />
               </div>
             </div>
           </div>
@@ -379,16 +273,17 @@ export default function CourseDetailPage() {
 
         {/* ═══ Curriculum + sticky aside ═══ */}
         {course.lessons.length > 0 && (
-          <PageSection spacing="md">
-            <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
-              {/* Curriculum column */}
-              <div className="lg:col-span-8">
-                <SectionHeading
-                  eyebrow="Curriculum"
-                  title="What you'll cover."
-                  description="Lessons are short, sequenced, and link out to the platform docs when you want to go deeper."
-                />
-                <ol className="mt-10 flex flex-col gap-3">
+          <section className="mx-auto max-w-6xl px-6 pb-14">
+            <div className="grid gap-8 lg:grid-cols-[1fr_300px] lg:gap-10">
+              {/* Curriculum */}
+              <div>
+                <div className="mb-5 flex items-baseline justify-between gap-3">
+                  <h2 className="text-heading-responsive-sm text-foreground">Curriculum</h2>
+                  <span className="text-sm text-muted-foreground">
+                    {course.lessons.length} {course.lessons.length === 1 ? 'lesson' : 'lessons'}
+                  </span>
+                </div>
+                <ol className="flex flex-col gap-2.5">
                   {course.lessons.map((lesson, index) => (
                     <li key={lesson.lessonSlug}>
                       <LessonRow
@@ -404,21 +299,15 @@ export default function CourseDetailPage() {
               </div>
 
               {/* Sticky aside */}
-              <aside className="lg:col-span-4">
-                <div className="sticky top-24 flex flex-col gap-6 rounded-3xl border border-border bg-surface p-6 md:p-7">
-                  <div>
-                    <h3 className="text-base font-semibold tracking-tight text-foreground">
-                      About this course
-                    </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      {course.summary}
-                    </p>
-                  </div>
-
-                  <dl className="grid grid-cols-1 gap-3 border-t border-border pt-5 text-sm">
+              <aside>
+                <div className="sticky top-24 flex flex-col gap-4 rounded-2xl border border-border bg-surface p-5">
+                  <dl className="grid grid-cols-1 gap-2.5 text-sm">
                     <div className="flex items-center justify-between gap-3">
                       <dt className="text-muted-foreground">Level</dt>
-                      <dd className="font-medium capitalize text-foreground">{course.level}</dd>
+                      <dd className="inline-flex items-center gap-1.5 font-medium text-foreground">
+                        <span className={`size-2 rounded-full ${lvl.dot}`} aria-hidden="true" />
+                        {lvl.label}
+                      </dd>
                     </div>
                     {duration ? (
                       <div className="flex items-center justify-between gap-3">
@@ -430,47 +319,29 @@ export default function CourseDetailPage() {
                       <dt className="text-muted-foreground">Lessons</dt>
                       <dd className="font-medium text-foreground">{course.lessons.length}</dd>
                     </div>
-                    {course.lessons.length > 0 && isCourseStarted ? (
-                      <div className="flex items-center justify-between gap-3">
-                        <dt className="text-muted-foreground">Progress</dt>
-                        <dd className="font-medium text-foreground">
-                          {completedCount} / {course.lessons.length}
-                        </dd>
-                      </div>
-                    ) : null}
                     <div className="flex items-center justify-between gap-3">
                       <dt className="text-muted-foreground">Price</dt>
                       <dd className="font-medium text-foreground">Free</dd>
                     </div>
                   </dl>
 
-                  {isCourseStarted && course.lessons.length > 0 ? (
-                    <div className="flex flex-col gap-2">
+                  {isStarted && course.lessons.length > 0 ? (
+                    <div className="flex flex-col gap-1.5 border-t border-border pt-4">
                       <div className="h-1.5 w-full overflow-hidden rounded-full bg-background">
-                        <div
-                          className="h-full rounded-full bg-foreground transition-[width] duration-500"
-                          style={{ width: `${completionPct}%` }}
-                        />
+                        <div className="h-full rounded-full bg-primary" style={{ width: `${completionPct}%` }} />
                       </div>
                       <p className="text-xs text-muted-foreground">{completionPct}% complete</p>
                     </div>
                   ) : null}
 
                   {heroCtaLessonSlug ? (
-                    <Button
-                      variant="primary"
-                      size="md"
-                      href={`/academy/${course.slug}/${heroCtaLessonSlug}`}
-                      className="w-full"
-                    >
+                    <Button variant="primary" size="md" href={`/academy/${course.slug}/${heroCtaLessonSlug}`} className="w-full">
                       {heroCtaLabel}
                     </Button>
                   ) : null}
 
-                  <div className="border-t border-border pt-5">
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Share this course
-                    </p>
+                  <div className="border-t border-border pt-4">
+                    <p className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Share this course</p>
                     <ShareWithMention
                       title={course.title}
                       url={`https://oxy.so/academy/${course.slug}`}
@@ -481,37 +352,29 @@ export default function CourseDetailPage() {
                 </div>
               </aside>
             </div>
-          </PageSection>
+          </section>
         )}
 
         {/* ═══ More courses ═══ */}
         {related.length > 0 && (
-          <PageSection spacing="lg" tone="surface">
-            <SectionHeading
-              eyebrow="Keep learning"
-              title="More from Academy."
-              description="Other courses to round out what you just learned."
-            />
-            <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-              {related.map((c) => (
-                <RelatedCourseCard
-                  key={c.slug}
-                  course={{
-                    slug: c.slug,
-                    title: c.title,
-                    summary: c.summary,
-                    coverImage: c.coverImage,
-                    level: c.level,
-                  }}
-                />
-              ))}
+          <section className="border-t border-border bg-surface/40">
+            <div className="mx-auto max-w-6xl px-6 py-12 lg:py-14">
+              <div className="mb-6 flex items-end justify-between gap-3">
+                <h2 className="text-heading-responsive-sm text-foreground">More from Academy</h2>
+                <Link to="/academy" className="text-sm font-medium text-primary hover:underline">
+                  Browse all
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {related.map((c) => (
+                  <RelatedCourseCard
+                    key={c.slug}
+                    course={{ slug: c.slug, title: c.title, summary: c.summary, coverImage: c.coverImage, level: c.level }}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="mt-10 flex justify-center">
-              <Button variant="outline" size="md" responsive href="/academy">
-                Browse all courses
-              </Button>
-            </div>
-          </PageSection>
+          </section>
         )}
 
         <KeepUpToDateSection />
