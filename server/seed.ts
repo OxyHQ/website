@@ -97,7 +97,7 @@ async function seed() {
       },
     },
     {
-      label: 'Ecosystem',
+      label: 'Technologies',
       // Items are generated at response time from products where showInNav=true,
       // grouped by their category slug. Nothing manual to keep in sync here.
       kind: 'apps',
