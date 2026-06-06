@@ -4,18 +4,26 @@ import { useAuth } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import {
   simpleNavLinks,
+  resourcesNavCard,
+  productNavDropdown,
   type NavDropdown,
   type NavItem,
 } from '../../data/content'
+import { NavCard, NavFeatureGrid } from './NavMegaPanels'
 import { useNavigation, useSiteSettings } from '../../api/hooks'
 import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '../../api/scrollStore'
-import { useTranslation } from '../../lib/i18n'
+import { useTranslation, useLocaleContext } from '../../lib/i18n'
 import NavDropdownItem from '../ui/NavDropdownItem'
 import Button from '../ui/Button'
-import ThemeToggle from '../ui/ThemeToggle'
 import Logo from '../ui/Logo'
-import LocalePicker from '../ui/LocalePicker'
+import { SettingsPanel } from '../ui/SettingsPanel'
+import { Settings } from 'lucide-react'
 import { useAccountPanel } from '../../contexts/AccountPanelContext'
+
+/** Pseudo-dropdown key for the settings panel (theme + language), routed through
+ *  the same shared viewport as the nav dropdowns. Prefixed so it never collides
+ *  with a CMS label. */
+const SETTINGS_DROPDOWN_KEY = '__settings__'
 
 /* ─── SVG Icons ─── */
 function ChevronDown({ className = '' }: { className?: string }) {
@@ -28,6 +36,8 @@ function ChevronDown({ className = '' }: { className?: string }) {
 
 /* ─── Dropdown Content Panel ─── */
 function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
+  if (dropdown.featureGrid) return <NavFeatureGrid grid={dropdown.featureGrid} />
+
   const itemCount = (dropdown.sections ?? []).reduce((n, s) => n + (s.items?.length ?? 0), 0)
   const useGrid = itemCount > 6
 
@@ -51,6 +61,12 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
           )),
         ])}
       </ul>
+
+      {dropdown.card && (
+        <div className="relative w-64 shrink-0 p-4 pt-3">
+          <NavCard card={dropdown.card} />
+        </div>
+      )}
 
       {dropdown.sidePanel && (
         <ul className="relative flex w-48 shrink-0 flex-col gap-1.5 p-4 pt-3">
@@ -160,16 +176,27 @@ export default function Navbar({
   const { user, isAuthenticated, signIn } = useAuth()
   const accountPanel = useAccountPanel()
   const { t } = useTranslation()
+  const { locales } = useLocaleContext()
+  // The settings gear (theme + language) always shows; the language section
+  // inside it only when more than one locale is offered.
+  const showLanguageInSettings = !hideLocalePicker && locales.length > 1
   // Sub-brand mode: customDropdowns bypasses the CMS queries. The nav renders
   // the supplied dropdowns + flat links through the SAME pipeline as the CMS
   // path, so measurement, hover animation, and mobile accordion are identical.
   const useCustomNav = customDropdowns !== undefined
   const { data: navigationData } = useNavigation()
   const { data: siteSettings } = useSiteSettings()
-  const dropdowns: readonly NavDropdown[] = useMemo(
-    () => (useCustomNav ? customDropdowns ?? [] : navigationData ?? []),
-    [useCustomNav, customDropdowns, navigationData],
-  )
+  const dropdowns: readonly NavDropdown[] = useMemo(() => {
+    if (useCustomNav) return customDropdowns ?? []
+    // Hardcoded bridges until both are modelled in the CMS navigation document:
+    // the `Product` feature-grid dropdown, and the Resources promo card.
+    return [
+      productNavDropdown,
+      ...(navigationData ?? []).map((dd) =>
+        dd.label === 'Resources' ? { ...dd, card: resourcesNavCard } : dd,
+      ),
+    ]
+  }, [useCustomNav, customDropdowns, navigationData])
   const flatLinks: readonly NavItem[] = useMemo(
     () => (useCustomNav ? customNavLinks ?? [] : simpleNavLinks),
     [useCustomNav, customNavLinks],
@@ -215,17 +242,28 @@ export default function Navbar({
         sizes[dd.label] = { w: el.scrollWidth, h: el.scrollHeight }
       }
     }
+    const localeEl = measureRefs.current[SETTINGS_DROPDOWN_KEY]
+    if (localeEl) {
+      sizes[SETTINGS_DROPDOWN_KEY] = { w: localeEl.scrollWidth, h: localeEl.scrollHeight }
+    }
     setPanelSizes(sizes)
     setHasMeasured(true)
-  }, [dropdowns])
+  }, [dropdowns, showLanguageInSettings])
 
-  // Align dropdown left edge with active trigger button
+  // Align the panel with the active trigger: left edge for left-nav dropdowns,
+  // right edge for the right-aligned language picker.
   useLayoutEffect(() => {
     if (!activeDropdown) return
     const trigger = triggerRefs.current[activeDropdown]
     if (!trigger) return
-    setDropdownLeft(trigger.getBoundingClientRect().left)
-  }, [activeDropdown])
+    const rect = trigger.getBoundingClientRect()
+    if (activeDropdown === SETTINGS_DROPDOWN_KEY) {
+      const w = panelSizes[SETTINGS_DROPDOWN_KEY]?.w ?? 0
+      setDropdownLeft(rect.right - w)
+    } else {
+      setDropdownLeft(rect.left)
+    }
+  }, [activeDropdown, panelSizes])
 
   const openDropdown = useCallback(
     (label: string) => {
@@ -304,7 +342,7 @@ export default function Navbar({
   const scrolled = scrollY > 50
   const bannerHeight = 40 // matches --site-header-banner-visible-height
   const bannerOffset = bannerVisible ? Math.max(0, bannerHeight - scrollY) : 0
-  const isTransparent = transparent && !scrolled && !isOpen
+  const isTransparent = transparent && !scrolled && !isOpen && !mobileOpen
 
   const linkClassName = (isTp: boolean) =>
     `inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${
@@ -355,7 +393,11 @@ export default function Navbar({
       className={`fixed left-0 right-0 z-50 transition-[border-color,backdrop-filter] duration-300 ${isTransparent ? 'border-b border-transparent' : 'border-b border-border backdrop-blur-md'}`}
       style={{
         top: bannerOffset,
-        background: isTransparent ? 'transparent' : 'color-mix(in srgb, var(--background) 80%, transparent)',
+        background: isTransparent
+          ? 'transparent'
+          : mobileOpen
+            ? 'var(--background)'
+            : 'color-mix(in srgb, var(--background) 80%, transparent)',
       }}
     >
 
@@ -376,24 +418,17 @@ export default function Navbar({
             <DropdownContent dropdown={dd} />
           </div>
         ))}
+        <div ref={(el) => { measureRefs.current[SETTINGS_DROPDOWN_KEY] = el }} style={{ display: 'inline-block' }}>
+          <SettingsPanel showLanguage={showLanguageInSettings} />
+        </div>
       </div>
 
       {/* ─── Main nav ─── */}
-      <div className="container">
+      <div className="container max-lg:!max-w-full max-lg:!px-4">
         <nav className="py-2 lg:py-3.5">
-          <div className="flex items-center justify-between">
-            <div className="flex grow items-center gap-x-9">
-              <Link
-                to={brand?.homeHref ?? '/'}
-                className="-mx-1.5 rounded-xl px-1.5"
-                aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              >
-                {brand?.logo ?? <Logo className="h-6" />}
-              </Link>
-
-              {/* Desktop nav */}
-              <div ref={escapeRef} className="relative z-10" onMouseLeave={scheduleClose}>
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-4">
+            {/* Desktop nav (left) */}
+            <div ref={escapeRef} className="relative z-10 justify-self-start" onMouseLeave={scheduleClose}>
                 <ul className="hidden items-center gap-x-1.5 lg:flex">
                   {dropdowns.map((dd) => (
                     <li key={dd.label}>
@@ -437,10 +472,21 @@ export default function Navbar({
                 </ul>
 
               </div>
-            </div>
 
-            {/* Mobile controls */}
-            <div className="flex items-center gap-x-2 lg:hidden">
+            {/* Center logo */}
+            <Link
+              to={brand?.homeHref ?? '/'}
+              className="justify-self-center -mx-1.5 rounded-xl px-1.5"
+              aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            >
+              {brand?.logo ?? <Logo className="h-6" />}
+            </Link>
+
+            {/* Right controls (mobile + desktop) */}
+            <div className="flex items-center justify-self-end gap-x-2">
+              {/* Mobile controls */}
+              <div className="flex items-center gap-x-2 lg:hidden">
               {!hideAuth && isAuthenticated && (
                 <button onClick={accountPanel.toggle} className="cursor-pointer">
                   <Avatar source={user?.avatar} size={28} placeholderColor={user?.color} />
@@ -466,14 +512,21 @@ export default function Navbar({
 
             {/* Desktop buttons */}
             <div className="hidden items-center gap-x-2.5 lg:flex">
-              {!hideLocalePicker && (
-                <div className={isTransparent ? '[&_button]:!bg-white/10 [&_button]:!text-white/80 [&_button:hover]:!bg-white/20 [&_button:hover]:!text-white [&_a]:!text-white/80 [&_a:hover]:!text-white [&_svg]:!text-white/80' : ''}>
-                  <LocalePicker />
-                </div>
-              )}
-              <div className={isTransparent ? '[&_button]:!bg-white/10 [&_button]:!text-white/80 [&_button:hover]:!bg-white/20 [&_button:hover]:!text-white [&_svg]:!text-white/80' : ''}>
-                <ThemeToggle />
-              </div>
+              <button
+                ref={(el) => { triggerRefs.current[SETTINGS_DROPDOWN_KEY] = el }}
+                className={`group inline-flex h-9 w-9 cursor-pointer select-none items-center justify-center rounded-full border border-transparent transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`}
+                style={{
+                  background: activeDropdown === SETTINGS_DROPDOWN_KEY ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
+                  color: activeDropdown === SETTINGS_DROPDOWN_KEY ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
+                }}
+                onMouseEnter={() => openDropdown(SETTINGS_DROPDOWN_KEY)}
+                onMouseLeave={scheduleClose}
+                onClick={() => (activeDropdown === SETTINGS_DROPDOWN_KEY ? closeAll() : openDropdown(SETTINGS_DROPDOWN_KEY))}
+                aria-expanded={activeDropdown === SETTINGS_DROPDOWN_KEY}
+                aria-label={t('footer.settings')}
+              >
+                <Settings className="size-[18px] transition-transform duration-300 group-hover:rotate-45" />
+              </button>
               {rightActions}
               {ctaButtons ?? (
                 hideAuth ? null : isAuthenticated ? (
@@ -485,19 +538,17 @@ export default function Navbar({
                     />
                   </button>
                 ) : (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => signIn()}
-                      className={isTransparent ? '!bg-white/10 !border-transparent !text-white hover:!bg-white/20' : ''}
-                    >
-                      {t('common.signIn')}
-                    </Button>
-                    <Button variant="primary" size="sm" onClick={() => signIn()}>{t('common.startForFree')}</Button>
-                  </>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => signIn()}
+                    className={isTransparent ? '!bg-white/10 !border-transparent !text-white hover:!bg-white/20' : ''}
+                  >
+                    {t('common.signIn')}
+                  </Button>
                 )
               )}
+            </div>
             </div>
           </div>
         </nav>
@@ -519,7 +570,7 @@ export default function Navbar({
           onMouseLeave={scheduleClose}
         >
           <div
-            className="overflow-hidden rounded-xl border border-border"
+            className="overflow-hidden rounded-2xl border border-border"
             style={{
               width: activeSize ? activeSize.w : 0,
               height: activeSize ? activeSize.h : 0,
@@ -551,6 +602,25 @@ export default function Navbar({
                   </div>
                 )
               })}
+              {(() => {
+                const isActive = activeDropdown === SETTINGS_DROPDOWN_KEY
+                const show = isActive || prevDropdown === SETTINGS_DROPDOWN_KEY
+                return (
+                  <div
+                    className={isActive ? 'animate-nav-fade-in' : ''}
+                    style={{
+                      position: isActive ? 'relative' : 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: panelSizes[SETTINGS_DROPDOWN_KEY]?.w,
+                      visibility: show ? 'visible' : 'hidden',
+                      pointerEvents: isActive ? 'auto' : 'none',
+                    }}
+                  >
+                    <SettingsPanel showLanguage={showLanguageInSettings} />
+                  </div>
+                )
+              })()}
             </div>
           </div>
         </div>
@@ -558,13 +628,16 @@ export default function Navbar({
 
       {/* ─── Mobile drawer ─── */}
       {mobileOpen && (
-        <div className="border-t border-border bg-background lg:hidden">
-          <div className="container">
+        <div
+          className="border-t border-border bg-background lg:hidden overflow-y-auto overscroll-contain"
+          style={{ maxHeight: `calc(100dvh - ${bannerOffset}px - var(--site-header-height))` }}
+        >
+          <div className="container max-lg:!max-w-full max-lg:!px-4">
             <div className="flex flex-col gap-1 py-4">
               {dropdowns.map((dd) => (
                 <div key={dd.label}>
                   <button
-                    className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
+                    className="flex w-full items-center justify-between rounded-xl px-2 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
                     onClick={() => setMobileAccordion(mobileAccordion === dd.label ? null : dd.label)}
                     aria-expanded={mobileAccordion === dd.label}
                   >
@@ -572,27 +645,40 @@ export default function Navbar({
                     <ChevronDown className={`transition-transform duration-200 ${mobileAccordion === dd.label ? 'rotate-180' : ''}`} />
                   </button>
                   {mobileAccordion === dd.label && (
-                    <div className="flex flex-col gap-1 pb-2 pl-4">
-                      {dd.sections.map((s) =>
-                        s.items.map((item) => (
-                          item.href.startsWith('/') ? (
-                            <Link key={item.title} to={item.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
-                              {item.title}
-                            </Link>
-                          ) : (
-                            <a key={item.title} href={item.href} target="_blank" rel="noopener noreferrer" className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
-                              {item.title}
-                            </a>
-                          )
-                        ))
-                      )}
+                    // Same components as desktop, stacked vertically; the wrapper
+                    // click closes the drawer when any link inside is tapped.
+                    <div className="flex flex-col gap-1 pb-3" onClick={() => setMobileOpen(false)}>
+                      {dd.featureGrid?.features.map((item) => (
+                        <NavDropdownItem key={item.href} item={item} />
+                      ))}
+                      {dd.sections.map((section) => (
+                        <div key={section.heading} className="flex flex-col gap-1">
+                          {section.heading ? (
+                            <p className="mt-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                              {section.heading}
+                            </p>
+                          ) : null}
+                          {section.items.map((item) => (
+                            <NavDropdownItem key={`${section.heading}-${item.title}`} item={item} />
+                          ))}
+                        </div>
+                      ))}
+                      {(dd.featureGrid?.cards?.length || dd.card) ? (
+                        <div className="mt-2 flex flex-col gap-3">
+                          {[...(dd.featureGrid?.cards ?? []), ...(dd.card ? [dd.card] : [])].map((card) => (
+                            <div key={card.href} className="aspect-video overflow-hidden rounded-xl">
+                              <NavCard card={card} />
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
                       {dd.sidePanel?.links.map((link) => (
                         link.href.startsWith('/') ? (
-                          <Link key={link.label} to={link.href} className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                          <Link key={link.label} to={link.href} className="rounded-xl px-2 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground">
                             {link.label}
                           </Link>
                         ) : (
-                          <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="rounded-xl px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground" onClick={() => setMobileOpen(false)}>
+                          <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="rounded-xl px-2 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground">
                             {link.label}
                           </a>
                         )
@@ -606,7 +692,7 @@ export default function Navbar({
                   <Link
                     key={link.label}
                     to={link.href}
-                    className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
+                    className="rounded-xl px-2 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
                     onClick={() => setMobileOpen(false)}
                   >
                     {link.label}
@@ -616,7 +702,7 @@ export default function Navbar({
                     key={link.label}
                     href={link.href}
                     {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                    className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
+                    className="rounded-xl px-2 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
                     onClick={() => setMobileOpen(false)}
                   >
                     {link.label}
@@ -624,26 +710,17 @@ export default function Navbar({
                 ),
               )}
               <hr className="my-2 border-border" />
-              {!hideLocalePicker && (
-                <div className="flex items-center justify-between px-4 py-2">
-                  <span className="text-sm text-muted-foreground">{t('common.language')}</span>
-                  <LocalePicker />
-                </div>
-              )}
-              <div className="flex items-center justify-between px-4 py-2">
-                <span className="text-sm text-muted-foreground">{t('common.theme')}</span>
-                <ThemeToggle />
-              </div>
+              {/* Settings — same component as the desktop gear (theme + language) */}
+              <SettingsPanel showLanguage={showLanguageInSettings} className="w-full" />
               {ctaButtons ? (
-                <div className="flex flex-col gap-2 px-4 pt-2">
+                <div className="flex flex-col gap-2 px-2 pt-2">
                   {ctaButtons}
                 </div>
               ) : (
                 !hideAuth && !isAuthenticated && (
-                  <div className="flex flex-col gap-2 px-4 pt-2">
+                  <div className="flex flex-col gap-2 px-2 pt-2">
                     {rightActions && <div className="flex flex-col gap-2">{rightActions}</div>}
                     <Button variant="outline" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">{t('common.signIn')}</Button>
-                    <Button variant="primary" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">{t('common.startForFree')}</Button>
                   </div>
                 )
               )}

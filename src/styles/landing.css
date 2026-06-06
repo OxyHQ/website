@@ -77,7 +77,7 @@
 }
 
 .oxy-landing .hero-card-pill-left {
-  border-radius: var(--pill-r) 20px 20px var(--pill-r);
+  border-radius: var(--pill-r) 24px 24px var(--pill-r);
 }
 
 /* Swiper cube card */

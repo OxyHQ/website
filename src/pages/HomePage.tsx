@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowUpRight, Sparkle } from '@phosphor-icons/react'
+import { motion } from 'framer-motion'
+import { ArrowUpRight } from '@phosphor-icons/react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -112,7 +112,7 @@ function HeroSection() {
       {/* Text overlay */}
       <div className="relative z-[5] flex-1 flex items-end text-foreground">
         <div className="container pb-5 pt-[100px] max-[950px]:pt-20">
-          <h1 className="text-heading-responsive-lg max-w-[540px]">
+          <h1 className="font-display font-semibold tracking-[-0.015em] text-[1.9rem] leading-[2.15rem] lg:text-[2.6rem] lg:leading-[2.9rem] max-w-[560px]">
             {titleLines.map((line, i) => (
               <span key={i}>
                 {line}
@@ -120,7 +120,7 @@ function HeroSection() {
               </span>
             ))}
           </h1>
-          <p className="text-[13px] font-medium tracking-[0.12em] uppercase mt-3 opacity-70">
+          <p className="text-lg font-normal leading-relaxed mt-4 max-w-[440px] opacity-80">
             {eyebrow}
           </p>
         </div>
@@ -262,7 +262,7 @@ function BuildForEveryoneSection() {
             <ul className="flex flex-col">
               {BUILD_FOR_EVERYONE_LINKS.map((link, i) => {
                 const isLast = i === BUILD_FOR_EVERYONE_LINKS.length - 1
-                const rowClass = `group flex items-center justify-between gap-4 border-t border-border py-5 text-2xl font-[450] transition-opacity duration-200 hover:opacity-60${isLast ? ' border-b' : ''}`
+                const rowClass = `group flex items-center justify-between gap-4 border-t border-border py-5 font-display text-2xl font-[450] transition-opacity duration-200 hover:opacity-60${isLast ? ' border-b' : ''}`
                 const arrow = (
                   <ArrowUpRight
                     weight="regular"
@@ -436,133 +436,6 @@ function IndependentEcosystemSection() {
             </div>
           </motion.div>
         </div>
-      </div>
-    </section>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-/*  Ecosystem grid (dark)                                              */
-/* ------------------------------------------------------------------ */
-interface EcosystemEntry {
-  name: string
-  href: string
-  external?: boolean
-  logo?: string
-  /** Brand background for letter-fallback badges. */
-  color?: string
-}
-
-const ECOSYSTEM: EcosystemEntry[] = [
-  { name: 'Oxy', href: '/', logo: '/images/landing/oxy3d.png' },
-  { name: 'Mention', href: '/technologies', logo: '/images/apps/mention.png' },
-  { name: 'Allo', href: '/technologies', logo: '/images/apps/allo.png' },
-  { name: 'Inbox', href: '/inbox', logo: '/images/apps/inbox.png' },
-  { name: 'Alia', href: '/ai', logo: '/images/apps/alia.svg' },
-  { name: 'Accounts', href: '/technologies', logo: '/images/apps/accounts.png' },
-  { name: 'Auth', href: '/developers/docs', logo: '/images/apps/auth.svg' },
-  { name: 'Clarity', href: '/technologies', logo: '/images/apps/clarity.png' },
-  { name: 'OxyOS', href: '/os', logo: '/images/apps/oxyos.png' },
-  { name: 'Astro', href: '/astro', logo: '/images/apps/astro.svg' },
-  { name: 'FairCoin', href: '/faircoin', color: '#166534' },
-  { name: 'Homiio', href: '/technologies', color: '#0e7490' },
-  { name: 'TNP', href: '/tnp', color: '#9333ea' },
-  { name: 'Codea', href: '/codea', color: '#b45309' },
-  { name: 'Bloom', href: '/developers/docs/bloom', logo: getPackageLogo('bloom'), color: '#be185d' },
-  { name: 'Sustain', href: '/sustain', color: '#15803d' },
-]
-
-function EcosystemBadge({ entry, index, animate }: { entry: EcosystemEntry; index: number; animate: boolean }) {
-  const baseBadge = 'flex h-14 w-14 items-center justify-center overflow-hidden rounded-full shadow-lg transition-transform duration-200 group-hover:scale-110'
-
-  const content = entry.logo ? (
-    // Image logos sit on a near-white app-icon tile so dark/transparent
-    // artwork (OXY wordmark, Alia script, droplet marks) stays legible on the
-    // #050505 section background.
-    <span className={`${baseBadge} bg-white/95 ring-1 ring-black/5`}>
-      <img
-        src={entry.logo}
-        alt={entry.name}
-        className="h-full w-full object-contain p-2.5"
-        width={56}
-        height={56}
-        loading="lazy"
-        decoding="async"
-      />
-    </span>
-  ) : (
-    // Colored letter circles already read clearly on black — keep as-is.
-    <span
-      className={`${baseBadge} ring-1 ring-white/10 backdrop-blur-sm`}
-      style={{ backgroundColor: entry.color }}
-    >
-      <span aria-hidden className="text-base font-semibold text-white">
-        {entry.name.charAt(0)}
-      </span>
-    </span>
-  )
-
-  const float = animate
-    ? {
-        animate: { y: [0, -6, 0] },
-        transition: {
-          duration: 4 + (index % 3),
-          repeat: Infinity,
-          ease: 'easeInOut' as const,
-          delay: index * 0.15,
-        },
-      }
-    : {}
-
-  return (
-    <motion.div {...float}>
-      {entry.external ? (
-        <a href={entry.href} target="_blank" rel="noreferrer" aria-label={entry.name} className="group block">
-          {content}
-        </a>
-      ) : (
-        <Link to={entry.href} aria-label={entry.name} className="group block">
-          {content}
-        </Link>
-      )}
-    </motion.div>
-  )
-}
-
-function EcosystemGridSection() {
-  const reduceMotion = useReducedMotion()
-  const animate = !reduceMotion
-
-  return (
-    <section className="ecosystem-grid relative overflow-hidden bg-[#050505] text-white py-28 md:py-40">
-      {/* Background layers */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(56,90,255,0.35),transparent_60%)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 select-none text-center font-display text-[28vw] font-black leading-none text-white/[0.04]">
-        OXY
-      </div>
-      <Sparkle
-        weight="fill"
-        className="pointer-events-none absolute bottom-10 right-10 text-white/10"
-        size={28}
-        aria-hidden
-      />
-
-      {/* Foreground */}
-      <div className="relative z-10 container">
-        <motion.h2
-          className="mb-12 text-center text-3xl md:text-4xl font-bold tracking-tight text-white/80"
-          {...REVEAL}
-        >
-          Explore the Oxy Ecosystem
-        </motion.h2>
-        <motion.div
-          className="mx-auto flex max-w-[720px] flex-wrap justify-center gap-4"
-          {...REVEAL}
-        >
-          {ECOSYSTEM.map((entry, i) => (
-            <EcosystemBadge key={entry.name} entry={entry} index={i} animate={animate} />
-          ))}
-        </motion.div>
       </div>
     </section>
   )
@@ -1589,7 +1462,6 @@ export default function HomePage() {
         <IOSAppSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}
         <PricingSection />
-        <EcosystemGridSection />
         <AIResearchSection />
       </main>
       <Footer />

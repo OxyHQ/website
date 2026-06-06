@@ -141,4 +141,16 @@ export const heroCarouselSlots: CarouselSlot[] = [
       },
     ],
   },
+  // Photo — keeps the single-height cell count even so the 2-row grid tiles
+  // with no empty cells (8 single cells → 4 full columns).
+  {
+    size: '1x1',
+    faces: [
+      {
+        type: 'photo',
+        image: '/images/hero/hero-3.webp',
+        alt: 'Community event',
+      },
+    ],
+  },
 ]

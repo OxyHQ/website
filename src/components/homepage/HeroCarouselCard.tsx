@@ -62,7 +62,7 @@ function NewsroomFace({ card, size }: { card: Extract<HeroCard, { type: 'newsroo
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-purple-900/30" />
       <div className={`absolute bottom-0 left-0 right-0 ${large ? 'p-4 lg:p-5' : 'p-2.5 lg:p-3'}`}>
         <span className={`mb-0.5 block truncate font-bold uppercase tracking-wider text-purple-200 ${large ? 'text-[10px] lg:text-xs' : 'text-[9px] lg:text-[10px]'}`}>{card.category}</span>
-        <p className={`line-clamp-4 font-bold leading-snug ${large ? 'text-lg lg:text-xl' : 'text-sm lg:text-base'}`}>{card.title}</p>
+        <p className={`font-display line-clamp-4 font-bold leading-snug ${large ? 'text-lg lg:text-xl' : 'text-sm lg:text-base'}`}>{card.title}</p>
       </div>
     </Link>
   )
@@ -73,7 +73,7 @@ function CareersFace({ card, size }: { card: Extract<HeroCard, { type: 'careers'
   return (
     <Link to={card.slug ? `/company/careers/${card.slug}` : '/company/careers'} className={`flex h-full w-full flex-col items-start justify-end bg-primary text-white ${large ? 'p-5 lg:p-6' : 'p-4 lg:p-5'}`}>
       <span className="mb-2 inline-block max-w-full truncate rounded-full bg-white/20 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white lg:text-[10px]">{card.department}</span>
-      <p className={`line-clamp-3 font-extrabold leading-tight text-white ${large ? 'text-2xl lg:text-3xl' : 'text-xl lg:text-2xl'}`}>{card.jobTitle}</p>
+      <p className={`font-display line-clamp-3 font-extrabold leading-tight text-white ${large ? 'text-2xl lg:text-3xl' : 'text-xl lg:text-2xl'}`}>{card.jobTitle}</p>
     </Link>
   )
 }
@@ -108,7 +108,7 @@ function ValuesFace({ card, size }: { card: Extract<HeroCard, { type: 'values' }
   const large = isLargeSlot(size)
   return (
     <div className={`flex h-full w-full flex-col justify-center bg-[#fafaf9] ${large ? 'p-4 lg:p-5' : 'p-3 lg:p-4'}`}>
-      <h4 className={`truncate font-bold text-gray-900 ${large ? 'text-xl lg:text-2xl' : 'text-lg lg:text-xl'}`}>{card.heading}</h4>
+      <h4 className={`font-display truncate font-bold text-gray-900 ${large ? 'text-xl lg:text-2xl' : 'text-lg lg:text-xl'}`}>{card.heading}</h4>
       <p className={`mt-1 line-clamp-3 leading-relaxed text-gray-600 ${large ? 'text-sm lg:text-base' : 'text-xs lg:text-sm'}`}>{card.body}</p>
     </div>
   )
@@ -169,7 +169,7 @@ function FairCoinFace() {
     <div className="grid h-full w-full grid-cols-[1fr_1fr_auto] bg-[#166534]">
       {/* Col 1: title + buttons */}
       <div className="flex flex-col justify-center gap-3 pl-10 py-4 pr-3 lg:pl-14 lg:py-5 lg:pr-4">
-        <h3 className="text-5xl font-extrabold uppercase tracking-wider text-white">
+        <h3 className="font-display text-5xl font-extrabold uppercase tracking-wider text-white">
           FairCoin <span className="font-normal italic text-green-200">Today</span>
         </h3>
         <div className="flex flex-wrap gap-2">
@@ -223,7 +223,7 @@ function FairCoinFace() {
             <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-green-400 lg:text-[11px]">
               {newsDate}
             </span>
-            <p className="line-clamp-3 text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
+            <p className="font-display line-clamp-3 text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
               {newsTitle}
             </p>
           </div>
@@ -243,7 +243,7 @@ function FairCoinFace() {
             <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-green-400 lg:text-[11px]">
               {newsDate}
             </span>
-            <p className="line-clamp-3 text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
+            <p className="font-display line-clamp-3 text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
               {newsTitle}
             </p>
           </div>
@@ -255,7 +255,7 @@ function FairCoinFace() {
 
 export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   const sizeClass = sizeClasses[slot.size]
-  const radiusClass = slot.rounded ? 'rounded-full' : slot.roundedLeft ? 'hero-card-pill-left' : 'rounded-[20px]'
+  const radiusClass = slot.rounded ? 'rounded-full' : slot.roundedLeft ? 'hero-card-pill-left' : 'rounded-[24px]'
 
   if (slot.faces.length <= 1) {
     return (

@@ -67,10 +67,107 @@ export interface NavSidePanel {
   links: NavItem[]
 }
 
+/**
+ * Promo card rendered as its own panel between the items grid and the side
+ * panel. A single full-bleed image with a gradient-anchored title/description,
+ * the whole card links to `href`.
+ */
+export interface NavDropdownCard {
+  href: string
+  image: string
+  title: string
+  description: string
+  alt?: string
+}
+
+/**
+ * A wide three-column dropdown: a column of `features` next to promo `cards`.
+ * Features reuse `NavDropdownItem` so they render identically to the other
+ * dropdowns. Distinct from the `sections`/`sidePanel` layout — a dropdown uses
+ * one or the other.
+ */
+export interface NavFeatureGrid {
+  features: NavDropdownItem[]
+  cards: NavDropdownCard[]
+}
+
 export interface NavDropdown {
   label: string
   sections: NavDropdownSection[]
+  card?: NavDropdownCard
   sidePanel?: NavSidePanel
+  featureGrid?: NavFeatureGrid
+}
+
+/**
+ * The `Product` dropdown: a feature column + two promo cards. Hardcoded for now;
+ * move to the CMS navigation document when it needs to be editor-managed.
+ */
+export const productNavDropdown: NavDropdown = {
+  label: 'Product',
+  sections: [],
+  featureGrid: {
+    features: [
+      {
+        href: '/features/support',
+        title: 'Support Platform',
+        description: 'Support your customers from anywhere with a unified Inbox',
+        icon: 'chat',
+      },
+      {
+        href: '/features/feedback',
+        title: 'Feedback & Roadmaps',
+        description: 'Capture & prioritize user feedback and build roadmaps',
+        icon: 'sequences',
+      },
+      {
+        href: '/features/help-center',
+        title: 'Help Center',
+        description: 'Provide self-service support with a beautiful Help Center',
+        icon: 'help-center',
+      },
+      {
+        href: '/features/changelog',
+        title: 'Changelog',
+        description: 'Share the latest updates with your users and teammates',
+        icon: 'package',
+      },
+      {
+        href: '/features/surveys',
+        title: 'Surveys',
+        description: 'Capture feedback and measure satisfaction with our surveys',
+        icon: 'reporting',
+      },
+    ],
+    cards: [
+      {
+        href: '/integrations',
+        image: '/images/nav-resources-card.jpg',
+        title: 'Integrates with all your tools',
+        description: 'Integrate with Linear, Slack, Jira and 10+ other tools to streamline your workflow',
+        alt: 'Integrations',
+      },
+      {
+        href: '/demo',
+        image: '/images/nav-demo-card.jpg',
+        title: 'Live demo',
+        description: 'Try out all Oxy modules & widgets in our demo environment',
+        alt: 'Live demo',
+      },
+    ],
+  },
+}
+
+/**
+ * Promo card injected into the `Resources` dropdown. Hardcoded for now; move to
+ * the CMS navigation document when the card needs to be editor-managed.
+ */
+export const resourcesNavCard: NavDropdownCard = {
+  href: '/integrations',
+  image: '/images/nav-resources-card.jpg',
+  title: 'Integrates with all your tools',
+  description: 'Integrate with Linear, Slack, Jira and 10+ other tools to streamline your workflow',
+  alt: 'Integrations',
 }
 
 export interface FooterLink {
