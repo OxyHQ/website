@@ -85,16 +85,17 @@ export default defineConfig({
     ],
   },
   optimizeDeps: {
-    include: ['react-simple-maps', 'prop-types', 'd3-geo', 'topojson-client'],
-    // `react-native-svg` and `react-native-safe-area-context` ship native
-    // Fabric modules that don't bundle for the web target. Excluding them
-    // from dep optimization keeps Vite's source-mode resolver in charge, so
-    // the aliases above can rewrite the unresolvable native paths to web
-    // shims. Without this, Rolldown pre-bundles the package and bypasses the
-    // alias layer, which surfaces as `MISSING_EXPORT`/`UNLOADABLE_DEPENDENCY`.
+    // `react-native-svg` ships CommonJS files inside its ESM build
+    // (`lib/module/.../transform.js`, `transformToRn.js`, …) and its own ESM
+    // modules import *named* exports from them. In source mode (excluded) Vite
+    // can't resolve those named exports across the CJS↔ESM boundary, which
+    // breaks any page that renders an SVG transform (e.g. the docs shell).
+    // Pre-bundling the package bundles those files together so the interop is
+    // resolved. The native Fabric paths it eagerly imports are redirected by
+    // the `resolve.alias` entries above, which the optimizer honours.
+    include: ['react-simple-maps', 'prop-types', 'd3-geo', 'topojson-client', 'react-native-svg'],
     exclude: [
       '@react-native-async-storage/async-storage',
-      'react-native-svg',
       'react-native-safe-area-context',
     ],
   },

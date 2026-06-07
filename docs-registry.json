@@ -47,6 +47,12 @@
       "ref": "main"
     },
     {
+      "name": "FairCoin",
+      "localPath": "/home/nate/FairCoinWorkspace/FairCoin",
+      "git": "https://github.com/FairCoinOfficial/FairCoin.git",
+      "ref": "main"
+    },
+    {
       "name": "TNP",
       "localPath": "/home/nate/Oxy/tnp",
       "git": "https://github.com/OxyHQ/tnp.git",
