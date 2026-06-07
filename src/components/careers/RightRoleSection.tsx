@@ -5,7 +5,7 @@ export default function RightRoleSection() {
   return (
     <section className="w-full bg-surface">
       <div className="container">
-        <div className="flex flex-col border-border border-x">
+        <div className="flex flex-col">
           {/* Top decoration */}
           <div className="relative grid grid-cols-12 overflow-hidden border-border border-b max-lg:hidden">
             <svg width="1" height="100%" className="text-border relative col-2 h-8 max-xl:hidden">

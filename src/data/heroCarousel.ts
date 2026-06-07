@@ -49,6 +49,14 @@ export type HeroCard =
       type: 'video'
       src: string
     }
+  | {
+      type: 'promo'
+      image: string
+      title: string
+      description: string
+      href: string
+      alt?: string
+    }
 
 /** A slot in the carousel grid. Has a size and one or more card faces that rotate. */
 export interface CarouselSlot {
@@ -96,6 +104,20 @@ export const heroCarouselSlots: CarouselSlot[] = [
     roundedLeft: true,
     faces: [{ type: 'faircoin' }],
   },
+  // Promo card — integrations
+  {
+    size: '2x2',
+    faces: [
+      {
+        type: 'promo',
+        image: '/images/nav-resources-card.jpg',
+        title: 'Integrates with all your tools',
+        description: 'Integrate with Linear, Slack, Jira and 10+ other tools to streamline your workflow',
+        href: '/integrations',
+        alt: 'Integrations',
+      },
+    ],
+  },
   // Photo
   {
     size: '1x1',
@@ -127,6 +149,20 @@ export const heroCarouselSlots: CarouselSlot[] = [
         type: 'photo',
         image: '/images/hero/hero-1.webp',
         alt: 'Workshop',
+      },
+    ],
+  },
+  // Promo card — live demo
+  {
+    size: '2x2',
+    faces: [
+      {
+        type: 'promo',
+        image: '/images/nav-demo-card.jpg',
+        title: 'Live demo',
+        description: 'Try out all Oxy modules & widgets in our demo environment',
+        href: '/demo',
+        alt: 'Live demo',
       },
     ],
   },

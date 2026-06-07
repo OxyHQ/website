@@ -29,7 +29,7 @@ const PARTNER_PILLARS = [
 export default function PartnerPillarsSection() {
   return (
     <section className="container">
-      <div className="border-x border-border">
+      <div>
         <header className="grid grid-cols-12 justify-items-start pb-12 pt-25 max-xl:pb-10 max-xl:pt-20 max-lg:pt-16">
           <div className="col-[2/-2] max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
             <h2 className="text-pretty inline">Why partner with Oxy.</h2>{' '}

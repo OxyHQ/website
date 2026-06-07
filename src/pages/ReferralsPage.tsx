@@ -20,7 +20,7 @@ import { useReferral, usePage, type PageSection } from '../api/hooks'
  * sentinel — exactly one ping per page load, no useEffect.
  *
  * Layout shell matches every other marketing page:
- *   container > border-border border-x > grid grid-cols-12 > col-[2/-2]
+ *   container > > grid grid-cols-12 > col-[2/-2]
  * ────────────────────────────────────────────────────────────────────── */
 
 // ── Fallback copy (used when the CMS `pages/referrals` doc is empty) ──
@@ -225,7 +225,7 @@ export default function ReferralsPage() {
 
         {/* ═══ Hero ═══ */}
         <section className="container">
-          <div className="lg:border-border lg:border-x">
+          <div>
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
               <div className="col-[2/-2] flex flex-col items-center gap-4 text-center">
                 {hasValidCode && referral && (
@@ -261,7 +261,7 @@ export default function ReferralsPage() {
 
         {/* ═══ Programs ═══ */}
         <section className="container scroll-mt-24" id="programs">
-          <div className="border-border border-x">
+          <div>
             <DashedHLine />
             <DashedVLines />
 
@@ -312,7 +312,7 @@ export default function ReferralsPage() {
 
         {/* ═══ How it works ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <header className="grid grid-cols-12 justify-items-start pt-20 pb-12 max-lg:pt-16 max-lg:pb-10">
               <div className="col-[2/-2] max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
                 <h2 className="inline text-pretty">{stepsHeading}.</h2>{' '}
@@ -357,7 +357,7 @@ export default function ReferralsPage() {
 
         {/* ═══ FAQ ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <DashedVLines />
             <DashedHLine />
             <div className="grid grid-cols-12">
@@ -381,7 +381,7 @@ export default function ReferralsPage() {
 
         {/* ═══ Become a partner CTA ═══ */}
         <section className="container">
-          <div className="relative isolate border-x border-border">
+          <div className="relative isolate">
             <svg width="100%" height="100%" aria-hidden="true" className="mask-t-to-50% absolute inset-0 text-muted">
               <defs>
                 <pattern id="referrals-cta-dots" width="10" height="10" patternUnits="userSpaceOnUse">

@@ -40,7 +40,7 @@ export default function HomeAdaptiveSection() {
           </div>
 
           {/* Content */}
-          <div className="pt-20 lg:flex lg:flex-col lg:items-center lg:border-border lg:border-x lg:pt-[120px]">
+          <div className="pt-20 lg:flex lg:flex-col lg:items-center lg:pt-[120px]">
             <div className="scroll-reveal max-w-[880px] text-heading-sm lg:text-center px-6 lg:px-0">
               <h3 className="inline font-semibold text-foreground">
                 One ecosystem, every workflow.{' '}
@@ -57,7 +57,7 @@ export default function HomeAdaptiveSection() {
 
           {/* Tabs + product mockup area */}
           <div className="lg:container">
-            <div className="lg:border-border lg:border-x">
+            <div>
               {/* Tab buttons */}
               <div className="hide-scrollbar flex gap-x-1.5 overflow-scroll py-5 pt-20 pb-4 lg:pt-[120px] justify-center">
                 {tabs.map((tab, i) => (

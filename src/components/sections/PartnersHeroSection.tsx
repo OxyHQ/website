@@ -28,7 +28,7 @@ export default function PartnersHeroSection() {
 
   return (
     <div className="container">
-      <div className="relative isolate border-x border-border">
+      <div className="relative isolate">
         {/* Dot pattern background */}
         <svg
           width="100%"

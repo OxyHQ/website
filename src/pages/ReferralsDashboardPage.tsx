@@ -231,7 +231,7 @@ export default function ReferralsDashboardPage() {
 
       <main className="flex-1">
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <DashedHLine />
             <div className="grid grid-cols-12">
               <div className="col-[2/-2] py-20 max-lg:py-14">

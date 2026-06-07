@@ -44,7 +44,7 @@ function groupBySection(products: ProductRecord[]): Array<[string, ProductRecord
  * delete_product).
  *
  * Layout follows the canonical CompanyPage / HomePage patterns:
- *   container > border-x > grid grid-cols-12 > col-[2/-2]
+ *   container > > grid grid-cols-12 > col-[2/-2]
  * Dashed rule helpers (DashedHLine / DashedVLines) match CompanyPage.
  * Brand colors come straight from the CMS — real product brand colors,
  * not theme tokens.
@@ -232,7 +232,7 @@ export default function TechnologiesPage() {
       <main>
         {/* ═══ Hero ═══ */}
         <section className="container">
-          <div className="lg:border-border lg:border-x">
+          <div>
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
               <div className="col-[2/-2] flex flex-col items-center gap-4 text-center">
                 <div className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground">
@@ -260,7 +260,7 @@ export default function TechnologiesPage() {
         {/* ═══ Live products — grouped by section ═══ */}
         {hasLive && (
           <section className="container" id="all-products">
-            <div className="border-border border-x">
+            <div>
               <DashedHLine />
               <DashedVLines />
 
@@ -308,7 +308,7 @@ export default function TechnologiesPage() {
         {/* ═══ New / in-development ═══ */}
         {hasNew && (
           <section className="container">
-            <div className="border-border border-x">
+            <div>
               <header className="grid grid-cols-12 pt-20 pb-12 max-lg:pt-16 max-lg:pb-10 justify-items-start">
                 <div className="col-[2/-2] flex w-full items-end justify-between gap-6">
                   <div className="max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
@@ -345,7 +345,7 @@ export default function TechnologiesPage() {
 
         {/* ═══ Build on Oxy CTA ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <DashedHLine />
             <div className="grid grid-cols-12">
               <div className="col-[2/-2] py-20 max-lg:py-16">

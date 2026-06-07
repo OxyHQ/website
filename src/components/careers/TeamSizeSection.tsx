@@ -24,7 +24,7 @@ const photos = [
 export default function TeamSizeSection() {
   return (
     <section className="container">
-      <div className="flex flex-col items-center overflow-hidden border-border border-x">
+      <div className="flex flex-col items-center overflow-hidden">
         <svg width="100%" height="1" className="text-border">
           <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
         </svg>

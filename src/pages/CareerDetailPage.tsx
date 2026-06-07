@@ -7,7 +7,7 @@ export default function CareerDetailPage() {
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <Navbar />
       <main className="container">
-        <div className="border-border border-x">
+        <div>
           <CareerDetailContent />
         </div>
       </main>

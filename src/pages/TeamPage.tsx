@@ -35,7 +35,7 @@ export default function TeamPage() {
       <main>
         {/* ═══ Hero ═══ */}
         <section className="container">
-          <div className="lg:border-border lg:border-x">
+          <div>
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
               <div className="col-[2/-2] flex flex-col items-center gap-4 text-center">
                 <div className="inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground mb-6">
@@ -59,7 +59,7 @@ export default function TeamPage() {
 
         {/* ═══ Team Grid ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <DashedHLine />
 
             {isPending ? (

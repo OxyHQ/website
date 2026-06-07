@@ -3,7 +3,7 @@ import { pillarsSection } from '../../data/initiative'
 export default function PillarsSection() {
   return (
     <section id="technologies" className="container scroll-mt-24">
-      <div className="border-x border-border">
+      <div>
         <header className="grid grid-cols-12 justify-items-start pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15">
           <div className="col-[2/-2] max-w-[20em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
             <h2 className="inline text-pretty">{pillarsSection.heading}</h2>{' '}

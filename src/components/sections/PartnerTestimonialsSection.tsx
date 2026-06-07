@@ -86,7 +86,7 @@ export default function PartnerTestimonialsSection() {
 
       <div className="bg-surface">
         <div className="container">
-          <div className="border-x border-border">
+          <div>
 
             {/* ── Desktop layout ── */}
             <div className="grid overflow-hidden max-lg:hidden" style={{ gridTemplateColumns: 'repeat(24, minmax(0, 1fr))' }}>

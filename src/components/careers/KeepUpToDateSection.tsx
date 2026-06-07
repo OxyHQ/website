@@ -44,7 +44,7 @@ function SocialIcon({ type }: { type: string }) {
 export default function KeepUpToDateSection() {
   return (
     <section className="container">
-      <div className="border-border border-x">
+      <div>
         <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-start !pb-15">
           <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-start col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
             <h2 className="text-pretty inline">Keep up to date.</h2>

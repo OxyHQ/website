@@ -32,7 +32,7 @@ export default function ChangelogContent() {
       <section className="relative overflow-hidden">
         {/* Background gradient */}
         <div className="container relative">
-          <div className="relative isolate border-x border-border">
+          <div className="relative isolate">
             <div className="absolute bottom-0 left-0 z-10 w-full h-[200px] bg-[linear-gradient(to_bottom,transparent,var(--color-border))]" aria-hidden="true" />
             {/* Dot pattern background */}
             <svg
@@ -101,7 +101,7 @@ export default function ChangelogContent() {
 
       {/* Separator */}
       <div className="container">
-        <div className="border-x border-border">
+        <div>
           <svg width="100%" height="1" className="w-full text-border">
             <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
           </svg>
@@ -111,7 +111,7 @@ export default function ChangelogContent() {
       {/* Repo filter bar */}
       {repos.length > 0 && (
         <div className="container">
-          <div className="border-x border-border">
+          <div>
             <div className="grid grid-cols-12">
               <div className="col-[2/-2] flex flex-wrap gap-2 py-6">
                 <button
@@ -148,7 +148,7 @@ export default function ChangelogContent() {
 
       {/* Article List */}
       <div className="container pb-[60px] lg:pb-[90px]">
-        <div className="border-x border-border">
+        <div>
           <div className="grid grid-cols-12">
             <div className="col-[2/-2]">
               {entries.length === 0 && (
@@ -238,7 +238,7 @@ export default function ChangelogContent() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="container">
-          <div className="border-x border-border">
+          <div>
             <div className="grid grid-cols-12">
               <div className="col-[2/-2] flex items-center justify-center gap-2 py-10">
                 <button

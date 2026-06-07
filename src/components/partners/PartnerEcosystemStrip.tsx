@@ -83,7 +83,7 @@ export default function PartnerEcosystemStrip() {
 
   return (
     <section className="container">
-      <div className="border-x border-border">
+      <div>
         <header className="grid grid-cols-12 justify-items-start pb-12 pt-25 max-xl:pb-10 max-xl:pt-20 max-lg:pt-16">
           <div className="col-[2/-2] flex w-full flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div className="max-w-[26em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">

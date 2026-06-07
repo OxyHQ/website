@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCube, Autoplay } from 'swiper/modules'
 import { StarFour, PlugsConnected, Unite, Cpu } from '@phosphor-icons/react'
 import { useFairCoinStats, useNewsroomPosts } from '../../api/hooks'
+import { PromoCard } from '../ui/PromoCard'
 import type { FairCoinStats } from '../../api/faircoinStore'
 import 'swiper/css'
 import 'swiper/css/effect-cube'
@@ -80,7 +81,7 @@ function CareersFace({ card, size }: { card: Extract<HeroCard, { type: 'careers'
 
 function BrandFace({ card }: { card: Extract<HeroCard, { type: 'brand' }> }) {
   if (card.variant === 'oxy') {
-    return <img src="/images/landing/oxy3d.png" alt="Oxy" className="h-full w-full bg-black object-cover" width={512} height={341} loading="lazy" decoding="async" />
+    return <img src="/images/landing/oxy-logo.jpg" alt="Oxy" className="h-full w-full bg-black object-cover" width={640} height={640} loading="lazy" decoding="async" />
   }
   return (
     <div className="relative flex h-full w-full items-center justify-center bg-[#166534]">
@@ -123,6 +124,7 @@ function CardFace({ card, size }: { card: HeroCard; size: CardSize }) {
     case 'faircoin': return <FairCoinFace />
     case 'video': return <VideoFace card={card} />
     case 'values': return <ValuesFace card={card} size={size} />
+    case 'promo': return <PromoCard image={card.image} title={card.title} description={card.description} href={card.href} alt={card.alt} className="rounded-[24px]" />
   }
 }
 

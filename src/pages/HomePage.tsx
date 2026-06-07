@@ -180,7 +180,7 @@ function PartnerLogos() {
 
   return (
     <section ref={sectionRef} className="container">
-      <div className="border-border border-x">
+      <div>
         <div className="grid grid-cols-12 gap-6">
           <div className="col-[2/-2] py-5">
             <div className="grid grid-cols-7 gap-x-5 max-[950px]:grid-cols-3" id="partner-grid">
@@ -238,7 +238,7 @@ function BuildForEveryoneSection() {
 
   return (
     <section className="container">
-      <div className="border-border border-x">
+      <div>
         <div className="grid grid-cols-12 gap-6">
           <motion.div
             className="col-[2/-2] py-16 max-[950px]:py-10 grid grid-cols-2 gap-x-16 gap-y-10 items-start max-[950px]:grid-cols-1"
@@ -260,9 +260,8 @@ function BuildForEveryoneSection() {
 
             {/* Right — resource links */}
             <ul className="flex flex-col">
-              {BUILD_FOR_EVERYONE_LINKS.map((link, i) => {
-                const isLast = i === BUILD_FOR_EVERYONE_LINKS.length - 1
-                const rowClass = `group flex items-center justify-between gap-4 border-t border-border py-5 font-display text-2xl font-[450] transition-opacity duration-200 hover:opacity-60${isLast ? ' border-b' : ''}`
+              {BUILD_FOR_EVERYONE_LINKS.map((link) => {
+                const rowClass = `group flex items-center justify-between gap-4 py-5 font-display text-2xl font-[450] transition-opacity duration-200 hover:opacity-60`
                 const arrow = (
                   <ArrowUpRight
                     weight="regular"
@@ -331,7 +330,7 @@ function ValuesSection() {
 
   return (
     <section className="container">
-      <div className="border-border border-x">
+      <div>
         <div className="grid grid-cols-12 gap-6">
           <motion.div className="col-[2/-2] py-16 max-[950px]:py-10" {...REVEAL}>
             <div className="flex items-end justify-between gap-6 mb-8">
@@ -401,7 +400,7 @@ function ValuesSection() {
 function IndependentEcosystemSection() {
   return (
     <section className="container">
-      <div className="border-border border-x">
+      <div>
         <div className="grid grid-cols-12 gap-6">
           <motion.div
             className="col-[2/-2] py-16 max-[950px]:py-10 grid grid-cols-2 gap-12 items-center max-[950px]:grid-cols-1"
@@ -668,7 +667,7 @@ function StatsAndTestimonialsSection() {
 
   return (
     <section ref={sectionRef} className="container">
-      <div className="border-border border-x">
+      <div>
         <div className="grid grid-cols-12 gap-6">
           <div className="col-[2/-2] py-10 max-[950px]:py-6">
             {FEATURES.SHOW_HOMEPAGE_STATS && (
@@ -943,7 +942,7 @@ function TeamsSection() {
 
   return (
     <section className="container">
-      <div className="border-border border-x">
+      <div>
         <div className="grid grid-cols-12 gap-6 side-by-side-tabs">
           <div className="col-[2/-2] py-8">
             <div className="grid grid-cols-12 gap-6">
@@ -1037,7 +1036,7 @@ function TickIcon({ className }: { className?: string }) {
 function PartnershipSection() {
   return (
     <section className="container">
-      <div className="border-border border-x">
+      <div>
         <div className="grid grid-cols-12 gap-6">
           <div className="col-[2/-2] py-10 max-[950px]:py-6">
             <div className="text-center mb-8">
@@ -1200,7 +1199,7 @@ const SECURITY_ITEMS = [
 function IntegrationsSecuritySection() {
   return (
     <section className="container">
-      <div className="border-border border-x">
+      <div>
         <div className="grid grid-cols-12 gap-6">
           <div className="col-[2/-2] py-10 max-[950px]:py-6">
             <div className="text-center mb-8">
@@ -1253,7 +1252,7 @@ function BannerSection() {
 function IOSAppSection() {
   return (
     <section className="container">
-      <div className="border-border border-x">
+      <div>
         <div className="grid grid-cols-12 gap-6">
           <div className="col-[2/-2] py-10 max-[950px]:py-6">
             <div className="text-center mb-8">
@@ -1325,7 +1324,7 @@ function TrustedBySection() {
   return (
     <div className="bg-surface text-foreground">
       <section className="container">
-        <div className="border-border border-x">
+        <div>
           <div className="grid grid-cols-12 gap-6">
             <div className="col-[2/-2] py-10 pb-[50px]">
               <h3 className="text-[22px] leading-[1.2] font-[450] mb-10 max-w-[720px]">
@@ -1400,7 +1399,7 @@ const PLANS = [
 function PricingSection() {
   return (
     <section className="container">
-      <div className="border-border border-x">
+      <div>
         <div className="grid grid-cols-12 gap-6">
           <div className="col-[2/-2] py-10 max-[950px]:py-6">
             <h2 className="text-heading-responsive-lg mb-10 text-center">Plans for Everyone</h2>

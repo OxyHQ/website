@@ -48,7 +48,7 @@ export default function NotFoundPage() {
         hideLocalePicker={onFairCoinHost}
       />
       <main className="flex flex-1 items-center">
-        <div className="container border-x border-border">
+        <div className="container">
           <div className="grid grid-cols-12 items-center py-12 lg:py-16">
             {/* Text */}
             <div className="col-span-full flex flex-col items-center text-center lg:col-[2/8] lg:items-start lg:text-left">

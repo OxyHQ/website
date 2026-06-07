@@ -289,7 +289,7 @@ export default function CapabilitiesSection() {
       <div className="container flex flex-1 flex-col">
         <div
           ref={ref}
-          className="flex w-full flex-1 flex-col border-border border-x"
+          className="flex w-full flex-1 flex-col"
         >
           {/* Header */}
           <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
@@ -327,7 +327,7 @@ export default function CapabilitiesSection() {
           {/* Split-panel card */}
           <div className="grid grid-cols-12 pb-10">
             <div
-              className="relative col-[2/-2] max-lg:col-span-full flex w-full border border-border max-lg:aspect-video max-lg:border-x-0 max-md:aspect-5/4 max-lg:aspect-square! scroll-reveal"
+              className="relative col-[2/-2] max-lg:col-span-full flex w-full border border-border max-lg:aspect-video max--0 max-md:aspect-5/4 max-lg:aspect-square! scroll-reveal"
               style={{ transitionDelay: '200ms' }}
             >
               {/* Left half — title + description */}

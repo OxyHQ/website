@@ -7,7 +7,7 @@ export default function CTASection() {
   return (
     <section className="dark bg-background">
       <div className="container flex flex-1 flex-col">
-        <div className="flex w-full flex-1 flex-col border-border border-x">
+        <div className="flex w-full flex-1 flex-col">
           {/* Top grid decoration */}
           <div aria-hidden="true" className="grid h-40 w-full grid-cols-12 overflow-hidden max-xl:h-30 max-lg:h-25 h-8!">
             <div className="col-[2/-2] flex justify-between">

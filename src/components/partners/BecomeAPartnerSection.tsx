@@ -45,7 +45,7 @@ export default function BecomeAPartnerSection() {
 
   return (
     <section id="become-a-partner" className="container scroll-mt-24">
-      <div className="relative isolate border-x border-border">
+      <div className="relative isolate">
         {/* Dot pattern background */}
         <svg
           width="100%"

@@ -112,7 +112,7 @@ export default function CareersHeroSection() {
 
   return (
     <section className="container relative max-lg:overflow-hidden">
-      <div className="relative grid w-full grid-cols-12 gap-x-6 lg:border-border lg:border-x">
+      <div className="relative grid w-full grid-cols-12 gap-x-6">
         {/* Left content */}
         <div className="relative col-span-full row-1 lg:col-[2/-2]">
           <header

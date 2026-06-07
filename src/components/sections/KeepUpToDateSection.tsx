@@ -68,7 +68,7 @@ function ArrowIcon() {
 export default function KeepUpToDateSection() {
   return (
     <section className="container">
-      <div className="border-x border-border">
+      <div>
         {/* Header */}
         <header className="grid grid-cols-12 justify-items-start pb-15 pt-40 max-xl:pb-16 max-xl:pt-30 max-lg:pb-15 max-lg:pt-25">
           <div className="col-[2/-2] flex max-w-xl flex-col gap-4 text-start max-lg:gap-3">

@@ -63,7 +63,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
       </ul>
 
       {dropdown.card && (
-        <div className="relative w-64 shrink-0 p-4 pt-3">
+        <div className="relative w-80 shrink-0 p-4 pt-3">
           <NavCard card={dropdown.card} />
         </div>
       )}
@@ -425,7 +425,7 @@ export default function Navbar({
 
       {/* ─── Main nav ─── */}
       <div className="container max-lg:!max-w-full max-lg:!px-4">
-        <nav className="py-2 lg:py-3.5">
+        <nav className="py-[5px]">
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-4">
             {/* Desktop nav (left) */}
             <div ref={escapeRef} className="relative z-10 justify-self-start" onMouseLeave={scheduleClose}>
@@ -666,7 +666,7 @@ export default function Navbar({
                       {(dd.featureGrid?.cards?.length || dd.card) ? (
                         <div className="mt-2 flex flex-col gap-3">
                           {[...(dd.featureGrid?.cards ?? []), ...(dd.card ? [dd.card] : [])].map((card) => (
-                            <div key={card.href} className="aspect-video overflow-hidden rounded-xl">
+                            <div key={card.href} className="aspect-[4/3] overflow-hidden rounded-xl">
                               <NavCard card={card} />
                             </div>
                           ))}

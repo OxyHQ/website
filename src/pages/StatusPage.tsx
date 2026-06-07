@@ -229,7 +229,7 @@ export default function StatusPage() {
       <main className="flex-1">
         {/* ═══ Hero ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <div className="grid grid-cols-12">
               <div className="col-[2/-2] pt-24 pb-16 max-lg:pt-20 max-lg:pb-12">
                 <div className="flex flex-col items-start gap-5">
@@ -300,7 +300,7 @@ export default function StatusPage() {
 
         {/* ═══ Services list ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <header className="grid grid-cols-12 pt-16 pb-10 max-lg:pt-12 max-lg:pb-8 justify-items-start">
               <div className="col-[2/-2] flex w-full items-end justify-between gap-6">
                 <div className="max-w-[28em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">

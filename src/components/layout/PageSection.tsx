@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
  * PageSection
  *
  * The canonical marketing-page section primitive. Replaces the legacy
- * `section.container > div.border-x > grid grid-cols-12 > col-[2/-2]`
+ * `section.container > div. > grid grid-cols-12 > col-[2/-2]`
  * pattern. Vertical rhythm, content width, and optional background tone
  * all funnel through here so the whole site stays consistent.
  *

@@ -22,7 +22,7 @@ const bubbles = Array.from({ length: COLS * ROWS }, (_, i) => {
 export default function JoinTeamSection() {
   return (
     <section className="container">
-      <div className="relative border-border border-x">
+      <div className="relative">
         {/* Background dashed grid lines */}
         <div className="absolute inset-0 grid grid-cols-12 max-lg:hidden">
           <div className="col-[2/-2] flex justify-between">

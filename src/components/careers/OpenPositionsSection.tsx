@@ -68,7 +68,7 @@ export default function OpenPositionsSection() {
 
   return (
     <section className="container" id="open-positions">
-      <div className="flex flex-col overflow-hidden border-border border-x">
+      <div className="flex flex-col overflow-hidden">
         <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
           <div className="flex max-w-lg flex-col gap-4 max-lg:gap-3 text-center col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
             <h2 className="text-pretty text-heading-responsive-md">Open positions.</h2>
@@ -117,7 +117,7 @@ export default function OpenPositionsSection() {
             <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
           </svg>
 
-          <div className="relative col-[2/-2] bg-background max-xl:col-[1/-1] xl:border-border xl:border-x">
+          <div className="relative col-[2/-2] bg-background max-xl:col-[1/-1]">
             <div className="relative flex flex-col pb-18">
               {isPending && (
                 <div className="flex flex-col gap-4 py-16 px-8">

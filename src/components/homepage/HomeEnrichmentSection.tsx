@@ -38,7 +38,7 @@ export default function HomeEnrichmentSection() {
           </div>
 
           {/* Content */}
-          <div className="pt-20 lg:flex lg:flex-col lg:items-center lg:border-border lg:border-x lg:pt-[120px]">
+          <div className="pt-20 lg:flex lg:flex-col lg:items-center lg:pt-[120px]">
             <div className="scroll-reveal max-w-[880px] text-heading-sm lg:text-center px-6 lg:px-0">
               <h3 className="inline font-semibold text-foreground">
                 Build fast.{' '}
@@ -57,7 +57,7 @@ export default function HomeEnrichmentSection() {
 
           {/* Product mockup area */}
           <div className="lg:container">
-            <div className="lg:border-border lg:border-x">
+            <div>
               <div className="scroll-reveal relative py-12 pt-20 lg:pt-[120px]">
                 <div className="mx-auto max-w-3xl aspect-[16/10] rounded-xl bg-gradient-to-br from-surface to-border border border-border overflow-hidden">
                   <img

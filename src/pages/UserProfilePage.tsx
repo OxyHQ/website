@@ -95,7 +95,7 @@ export default function UserProfilePage() {
       <Navbar />
 
       <main className="flex flex-1 flex-col">
-        <div className="container border-x border-border">
+        <div className="container">
           <div className="mx-auto max-w-[720px] px-5 py-12 md:px-8">
             {isLoading ? (
               <ProfileSkeleton />

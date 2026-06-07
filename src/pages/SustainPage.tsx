@@ -18,7 +18,7 @@ import { usePage, useFundingProgress, type PageSection, type FundingProgress } f
  * databases.
  *
  * Layout follows the canonical ManifestoPage / CompanyPage patterns:
- *   container > border-border border-x > grid grid-cols-12 > col-[2/-2]
+ *   container > > grid grid-cols-12 > col-[2/-2]
  * Dashed rule helpers match ManifestoPage.
  * ──────────────────────────────────────────── */
 
@@ -259,7 +259,7 @@ export default function SustainPage() {
       <main>
         {/* ═══ Hero ═══ */}
         <section className="container">
-          <div className="lg:border-border lg:border-x">
+          <div>
             <div className="relative overflow-hidden">
               <DotPattern id="sustain-hero-dots" className="opacity-40 dark:opacity-20" />
             <header className="relative grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
@@ -289,7 +289,7 @@ export default function SustainPage() {
 
         {/* ═══ Why this page exists ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <DashedHLine />
             <div className="grid grid-cols-12">
               <div className="col-[2/-2] py-20 max-lg:py-16">
@@ -309,7 +309,7 @@ export default function SustainPage() {
 
         {/* ═══ Our commitment ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <DashedVLines height="h-10" />
 
             <header className="grid grid-cols-12 pt-20 pb-12 max-lg:pt-16 max-lg:pb-10 justify-items-start">
@@ -349,7 +349,7 @@ export default function SustainPage() {
 
         {/* ═══ Funding progress ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <DashedHLine />
             <DashedVLines />
             <div className="relative grid grid-cols-12">
@@ -413,7 +413,7 @@ export default function SustainPage() {
 
         {/* ═══ How you can help ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <div className="grid grid-cols-12">
               <div className="col-[2/-2] py-20 max-lg:py-16">
                 <div className="mx-auto max-w-2xl">
@@ -465,7 +465,7 @@ export default function SustainPage() {
 
         {/* ═══ CTA ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <DashedVLines height="h-10" />
             <div className="grid grid-cols-12">
               <div className="col-[2/-2] py-20 max-lg:py-16">

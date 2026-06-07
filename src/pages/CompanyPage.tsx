@@ -97,7 +97,7 @@ export default function CompanyPage() {
       <main>
         {/* ═══ Hero ═══ */}
         <section className="container">
-          <div className="lg:border-border lg:border-x">
+          <div>
             <div className="relative overflow-hidden">
               {/* Background image */}
               <div className="absolute inset-0 bg-cover bg-center opacity-20 dark:opacity-15" style={{ backgroundImage: 'url(/company/hero-bg.jpg)' }} />
@@ -128,7 +128,7 @@ export default function CompanyPage() {
 
         {/* ═══ Stats ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <DashedHLine />
             <DashedVLines />
             <div className="relative grid grid-cols-12">
@@ -159,7 +159,7 @@ export default function CompanyPage() {
 
         {/* ═══ Culture ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-start">
               <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-start col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
                 <h2 className="text-pretty inline">{companyCulture.heading}.</h2>{' '}
@@ -197,7 +197,7 @@ export default function CompanyPage() {
 
         {/* ═══ Values ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-start">
               <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-start col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
                 <h2 className="text-pretty inline">{valuesHeading}.</h2>{' '}
@@ -234,7 +234,7 @@ export default function CompanyPage() {
 
         {/* ═══ Team ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-start">
               <div className="col-[2/-2] flex w-full items-end justify-between">
                 <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
@@ -276,7 +276,7 @@ export default function CompanyPage() {
 
         {/* ═══ Open Roles ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
               <div className="col-[2/-2] text-center">
                 <h2 className="text-heading-responsive-sm">Open roles</h2>
@@ -297,7 +297,7 @@ export default function CompanyPage() {
 
         {/* ═══ AI for Research ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <DashedVLines />
             <DashedHLine />
             <div className="py-20 max-lg:py-16">
@@ -310,7 +310,7 @@ export default function CompanyPage() {
 
         {/* ═══ Latest News ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <DashedVLines />
             <DashedHLine />
             <div className="py-20 max-lg:py-16">
@@ -327,7 +327,7 @@ export default function CompanyPage() {
 
         {/* ═══ FAQ ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <DashedVLines />
             <DashedHLine />
             <div className="grid grid-cols-12">
@@ -351,7 +351,7 @@ export default function CompanyPage() {
 
         {/* ═══ Quick Links ═══ */}
         <section className="container">
-          <div className="border-border border-x">
+          <div>
             <DashedHLine />
             <div className="grid grid-cols-12">
               <div className="col-[2/-2] py-20 max-lg:py-16">

@@ -4,7 +4,7 @@ import { homeHero } from '../../data/homepage'
 export default function HomeHeroSection() {
   return (
     <section className="flex w-full max-w-screen flex-col items-center justify-center overflow-x-clip bg-linear-to-b from-surface to-background relative">
-      <div className="container border-border lg:border-x">
+      <div className="container">
         <div className="sticky top-[64px] grid h-[calc(100vh-64px)] w-full justify-center gap-9 lg:grid-rows-2 lg:gap-[52px] lg:px-6 lg:pt-[72px]">
           {/* SVG dot pattern background */}
           <svg

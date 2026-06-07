@@ -9,7 +9,7 @@ export default function PricingFaqSection() {
   }
 
   return (
-    <section className="">
+    <section>
       <div className="container">
         <div className="border-border grid grid-cols-12 gap-x-6 pt-20 lg:pt-32 xl:pt-44 pb-16 lg:pb-24 xl:pb-32">
           <div className="col-span-12 xl:col-start-2 xl:col-end-12">

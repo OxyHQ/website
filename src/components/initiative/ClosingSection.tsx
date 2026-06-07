@@ -5,7 +5,7 @@ export default function ClosingSection() {
   return (
     <section id="explore" className="w-full bg-surface scroll-mt-24">
       <div className="container">
-        <div className="flex flex-col border-x border-border">
+        <div className="flex flex-col">
           {/* Top decoration */}
           <div className="relative grid grid-cols-12 overflow-hidden border-b border-border max-lg:hidden">
             <svg width="1" height="100%" className="relative col-2 h-8 text-border max-xl:hidden">

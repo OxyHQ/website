@@ -37,7 +37,7 @@ export default function FeatureBoardPage() {
         {/* Hero */}
         <section className="relative overflow-hidden">
           <div className="container relative">
-            <div className="relative isolate border-x border-border">
+            <div className="relative isolate">
               <div className="absolute bottom-0 left-0 z-10 h-[200px] w-full bg-[linear-gradient(to_bottom,transparent,var(--color-border))]" aria-hidden="true" />
               <svg width="100%" height="100%" className="mask-t-to-50% absolute inset-0 text-muted">
                 <defs>

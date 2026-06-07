@@ -2,7 +2,7 @@ export default function CulturePhotosSection() {
   return (
     <section className="relative">
       <div className="container">
-        <div className="grid grid-cols-12 lg:relative lg:border-border lg:border-x">
+        <div className="grid grid-cols-12 lg:relative">
           {/* Top dashed horizontal line */}
           <svg width="100%" height="1" className="text-border absolute inset-x-0 top-19">
             <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
