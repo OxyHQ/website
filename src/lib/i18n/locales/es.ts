@@ -24,6 +24,8 @@ const es: Translations = {
     next: 'Siguiente',
     previous: 'Anterior',
     search: 'Buscar',
+    closeSearch: 'Cerrar búsqueda',
+    noResults: 'Sin resultados.',
     contactUs: 'Contáctanos',
     contactSales: 'Hablar con ventas',
     talkToSales: 'Hablar con ventas',

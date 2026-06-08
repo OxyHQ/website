@@ -24,6 +24,8 @@ const zh: Translations = {
     next: '下一步',
     previous: '上一步',
     search: '搜索',
+    closeSearch: '关闭搜索',
+    noResults: '无结果。',
     contactUs: '联系我们',
     contactSales: '联系销售',
     talkToSales: '与销售对话',

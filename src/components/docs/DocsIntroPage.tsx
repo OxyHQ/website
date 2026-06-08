@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { buildDocsHref, getPackages } from '../../content/docs-loader'
 import type { SyncedPackage } from '../../../scripts/types'
-import DocsSearch from '../docs-platform/DocsSearch'
 import DocsSubNav from './DocsSubNav'
 import { DocsPackageSidebar, buildSidebar } from './DocsPackageSidebar'
 
@@ -74,10 +73,6 @@ export default function DocsIntroPage() {
               Everything you need to build on the Oxy platform — open source, no vendor lock-in.
             </div>
 
-            {/* Search */}
-            <div className="mt-8 mx-auto max-w-xl relative">
-              <DocsSearch variant="inline" />
-            </div>
           </div>
 
           {/* Category sections */}

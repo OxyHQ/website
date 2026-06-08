@@ -24,6 +24,8 @@ const ja: Translations = {
     next: '次へ',
     previous: '前へ',
     search: '検索',
+    closeSearch: '検索を閉じる',
+    noResults: '結果がありません。',
     contactUs: 'お問い合わせ',
     contactSales: '営業に問い合わせる',
     talkToSales: '営業に相談する',

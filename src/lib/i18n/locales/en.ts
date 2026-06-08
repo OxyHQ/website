@@ -41,6 +41,8 @@ const en = {
     next: 'Next',
     previous: 'Previous',
     search: 'Search',
+    closeSearch: 'Close search',
+    noResults: 'No results.',
     contactUs: 'Contact us',
     contactSales: 'Contact sales',
     talkToSales: 'Talk to sales',

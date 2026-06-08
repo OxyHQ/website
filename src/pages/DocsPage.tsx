@@ -1,9 +1,11 @@
 import { useParams, useLocation } from 'react-router-dom'
-import { useMemo } from 'react'
+import { useLayoutEffect, useMemo } from 'react'
+import { useBloomTheme } from '@oxyhq/bloom/theme'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import DocsPageContent from '../components/docs/DocsPage'
+import { applyPreset, type AppColorName } from '../theme'
 import {
   buildDocsHref,
   getPackage,
@@ -11,6 +13,30 @@ import {
   getVersion,
   resolveVersion,
 } from '../content/docs-loader'
+
+/**
+ * Brand-themed docs: render a package's docs in its own Bloom color preset.
+ * FairCoin docs adopt the `faircoin` preset (accent + surfaces) while you're on
+ * them, then restore the site preset on the way out. Color presets live as CSS
+ * vars on :root, so we apply/restore them imperatively here — a nested
+ * BloomThemeProvider can't unset them when it unmounts.
+ */
+const BRAND_PRESETS: Record<string, AppColorName> = { faircoin: 'faircoin' }
+
+function useDocsBrandPreset() {
+  const params = useParams<{ package?: string }>()
+  const { theme, colorPreset } = useBloomTheme()
+  const resolved: 'light' | 'dark' = theme.mode === 'dark' ? 'dark' : 'light'
+  const brandPreset = useMemo<AppColorName | null>(() => {
+    const pkg = params.package ? getPackage(params.package) : undefined
+    return (pkg && BRAND_PRESETS[pkg.shortName]) ?? null
+  }, [params.package])
+  useLayoutEffect(() => {
+    if (!brandPreset) return
+    applyPreset(brandPreset, resolved)
+    return () => applyPreset(colorPreset, resolved)
+  }, [brandPreset, resolved, colorPreset])
+}
 
 interface DocsRouteMeta {
   title: string
@@ -84,6 +110,7 @@ function useDocsRouteMeta(): DocsRouteMeta {
 
 export default function DocsPage() {
   const meta = useDocsRouteMeta()
+  useDocsBrandPreset()
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO

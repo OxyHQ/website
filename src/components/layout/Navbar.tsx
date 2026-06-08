@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import {
@@ -13,11 +13,12 @@ import { NavCard, NavFeatureGrid } from './NavMegaPanels'
 import { useNavigation, useSiteSettings } from '../../api/hooks'
 import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '../../api/scrollStore'
 import { useTranslation, useLocaleContext } from '../../lib/i18n'
+import { searchSite, groupResults, GROUP_LABELS, type SearchResult } from '../../lib/site-search'
 import NavDropdownItem from '../ui/NavDropdownItem'
 import Button from '../ui/Button'
 import Logo from '../ui/Logo'
 import { SettingsPanel } from '../ui/SettingsPanel'
-import { Settings } from 'lucide-react'
+import { Settings, Search, X } from 'lucide-react'
 import { useAccountPanel } from '../../contexts/AccountPanelContext'
 
 /** Pseudo-dropdown key for the settings panel (theme + language), routed through
@@ -206,6 +207,12 @@ export default function Navbar({
 
   const scrollY = useSyncExternalStore(subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([])
+  const [activeResult, setActiveResult] = useState(0)
+  const searchDebounce = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const navigate = useNavigate()
   const [bannerDismissed, setBannerDismissed] = useState(false)
   const bannerVisible = !hideBanner && !bannerDismissed && (banner?.visible ?? true)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
@@ -342,7 +349,29 @@ export default function Navbar({
   const scrolled = scrollY > 50
   const bannerHeight = 40 // matches --site-header-banner-visible-height
   const bannerOffset = bannerVisible ? Math.max(0, bannerHeight - scrollY) : 0
-  const isTransparent = transparent && !scrolled && !isOpen && !mobileOpen
+  const isTransparent = transparent && !scrolled && !isOpen && !mobileOpen && !searchOpen
+
+  const closeSearch = useCallback(() => {
+    setSearchOpen(false)
+    setSearchQuery('')
+    setSearchResults([])
+    setActiveResult(0)
+  }, [])
+  const runSearch = useCallback((q: string) => {
+    if (searchDebounce.current) clearTimeout(searchDebounce.current)
+    if (!q.trim()) {
+      setSearchResults([])
+      return
+    }
+    searchDebounce.current = setTimeout(() => {
+      searchSite(q).then((r) => {
+        setSearchResults(r)
+        setActiveResult(0)
+      })
+    }, 120)
+  }, [])
+  const searchGroups = useMemo(() => groupResults(searchResults), [searchResults])
+  const flatResults = useMemo(() => searchGroups.flatMap((g) => g.items), [searchGroups])
 
   const linkClassName = (isTp: boolean) =>
     `inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${
@@ -429,7 +458,7 @@ export default function Navbar({
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-4">
             {/* Desktop nav (left) */}
             <div ref={escapeRef} className="relative z-10 justify-self-start" onMouseLeave={scheduleClose}>
-                <ul className="hidden items-center gap-x-1.5 lg:flex">
+                <ul className={`hidden items-center gap-x-1.5 ${searchOpen ? '' : 'lg:flex'}`}>
                   {dropdowns.map((dd) => (
                     <li key={dd.label}>
                       <button
@@ -473,15 +502,99 @@ export default function Navbar({
 
               </div>
 
-            {/* Center logo */}
-            <Link
-              to={brand?.homeHref ?? '/'}
-              className="justify-self-center -mx-1.5 rounded-xl px-1.5"
-              aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            >
-              {brand?.logo ?? <Logo className="h-6" />}
-            </Link>
+            {/* Center: logo, or the search field (Google Photos-style) when open */}
+            {searchOpen ? (
+              <div className="relative w-[min(460px,42vw)] justify-self-center">
+                <Search className="pointer-events-none absolute left-3.5 top-1/2 size-[18px] -translate-y-1/2 text-muted-foreground" />
+                <input
+                  autoFocus
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                    runSearch(e.target.value)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                      closeSearch()
+                    } else if (e.key === 'ArrowDown') {
+                      e.preventDefault()
+                      setActiveResult((i) => Math.min(i + 1, flatResults.length - 1))
+                    } else if (e.key === 'ArrowUp') {
+                      e.preventDefault()
+                      setActiveResult((i) => Math.max(i - 1, 0))
+                    } else if (e.key === 'Enter') {
+                      const r = flatResults[activeResult]
+                      if (r) {
+                        e.preventDefault()
+                        closeSearch()
+                        navigate(r.url)
+                      }
+                    }
+                  }}
+                  placeholder={t('common.search')}
+                  aria-label={t('common.search')}
+                  className="h-10 w-full rounded-full border border-border bg-foreground/5 pl-11 pr-10 text-[15px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/25 focus:bg-background"
+                />
+                <button
+                  type="button"
+                  onClick={closeSearch}
+                  aria-label={t('common.closeSearch')}
+                  className="absolute right-2 top-1/2 inline-flex size-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                >
+                  <X className="size-4" />
+                </button>
+
+                {searchQuery.trim() ? (
+                  <div className="absolute left-0 right-0 top-full mt-2 max-h-[min(70vh,520px)] overflow-y-auto rounded-2xl border border-border bg-background p-2 text-left shadow-xl">
+                    {flatResults.length === 0 ? (
+                      <div className="px-3 py-6 text-center text-sm text-muted-foreground">{t('common.noResults')}</div>
+                    ) : (
+                      searchGroups.map((group, gi) => {
+                        const offset = searchGroups.slice(0, gi).reduce((n, g) => n + g.items.length, 0)
+                        return (
+                          <div key={group.group} className="mb-2 last:mb-0">
+                            <div className="px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                              {GROUP_LABELS[group.group] ?? group.group}
+                            </div>
+                            <ul>
+                              {group.items.map((r, idx) => {
+                                const isActive = offset + idx === activeResult
+                                return (
+                                  <li key={r.id}>
+                                    <button
+                                      type="button"
+                                      onMouseEnter={() => setActiveResult(offset + idx)}
+                                      onClick={() => {
+                                        closeSearch()
+                                        navigate(r.url)
+                                      }}
+                                      className={`block w-full cursor-pointer rounded-xl px-3 py-2 text-left transition-colors ${isActive ? 'bg-foreground/5' : ''}`}
+                                    >
+                                      <div className="truncate text-sm text-foreground">{r.title}</div>
+                                      <div className="truncate text-[11px] text-muted-foreground">{r.subtitle}</div>
+                                    </button>
+                                  </li>
+                                )
+                              })}
+                            </ul>
+                          </div>
+                        )
+                      })
+                    )}
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <Link
+                to={brand?.homeHref ?? '/'}
+                className="justify-self-center -mx-1.5 rounded-xl px-1.5"
+                aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
+                {brand?.logo ?? <Logo className="h-6" />}
+              </Link>
+            )}
 
             {/* Right controls (mobile + desktop) */}
             <div className="flex items-center justify-self-end gap-x-2">
@@ -512,6 +625,22 @@ export default function Navbar({
 
             {/* Desktop buttons */}
             <div className="hidden items-center gap-x-2.5 lg:flex">
+              <button
+                type="button"
+                className={`group inline-flex h-9 w-9 cursor-pointer select-none items-center justify-center rounded-full border border-transparent transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`}
+                style={{
+                  background: searchOpen ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
+                  color: searchOpen ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
+                }}
+                onClick={() => {
+                  closeAll()
+                  setSearchOpen((open) => !open)
+                }}
+                aria-label={t('common.search')}
+                aria-expanded={searchOpen}
+              >
+                <Search className="size-[18px]" />
+              </button>
               <button
                 ref={(el) => { triggerRefs.current[SETTINGS_DROPDOWN_KEY] = el }}
                 className={`group inline-flex h-9 w-9 cursor-pointer select-none items-center justify-center rounded-full border border-transparent transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`}

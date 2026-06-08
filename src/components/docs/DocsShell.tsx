@@ -1,6 +1,5 @@
 import type { SyncedPackage } from '../../../scripts/types'
 import { FEATURES } from '../../constants'
-import DocsSearch from '../docs-platform/DocsSearch'
 import VersionSelector from '../docs-platform/VersionSelector'
 import VersionBanner from '../docs-platform/VersionBanner'
 import DocsSubNav from './DocsSubNav'
@@ -72,14 +71,11 @@ export function DocsShell({
             : null}
 
         <div className="relative grow box-border flex-col w-full py-10 px-6 lg:px-12 min-w-0">
-          <div className="mb-6 flex items-center gap-4">
-            <div className="relative flex-1 max-w-xl">
-              <DocsSearch variant="inline" />
-            </div>
-            {showVersionSelector && pkg && currentVersion ? (
+          {showVersionSelector && pkg && currentVersion ? (
+            <div className="mb-6 flex items-center justify-end">
               <VersionSelector pkg={pkg} currentVersion={currentVersion} slug={slug} />
-            ) : null}
-          </div>
+            </div>
+          ) : null}
 
           {hideHeader ? null : (
             <header className="relative leading-none">

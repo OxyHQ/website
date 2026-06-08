@@ -24,6 +24,8 @@ const ca: Translations = {
     next: 'Següent',
     previous: 'Anterior',
     search: 'Cerca',
+    closeSearch: 'Tanca la cerca',
+    noResults: 'Cap resultat.',
     contactUs: 'Contacta amb nosaltres',
     contactSales: 'Parla amb vendes',
     talkToSales: 'Parla amb vendes',

@@ -24,6 +24,8 @@ const ar: Translations = {
     next: 'التالي',
     previous: 'السابق',
     search: 'بحث',
+    closeSearch: 'إغلاق البحث',
+    noResults: 'لا نتائج.',
     contactUs: 'تواصل معنا',
     contactSales: 'تواصل مع المبيعات',
     talkToSales: 'تحدّث مع المبيعات',
