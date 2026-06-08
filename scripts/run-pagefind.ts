@@ -15,7 +15,7 @@
  */
 
 import { existsSync } from 'node:fs';
-import { readdir } from 'node:fs/promises';
+import { readdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 
@@ -64,6 +64,24 @@ async function main(): Promise<void> {
   }
   if (typeof result.status === 'number' && result.status !== 0) {
     process.exit(result.status);
+  }
+  await removeIndexStubs();
+}
+
+/**
+ * The `*-content` stub trees (docs-content, help-content, …) exist only so
+ * Pagefind has full-text HTML to index at build time. Once `dist/pagefind/` is
+ * written they're dead weight — and Cloudflare would otherwise serve them as
+ * unstyled public pages (e.g. `/docs-content/...`). Remove them so the deploy
+ * ships only the index; search results already point at the real SPA routes.
+ */
+async function removeIndexStubs(): Promise<void> {
+  const entries = await readdir(DIST, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.isDirectory() && entry.name.endsWith('-content')) {
+      await rm(path.join(DIST, entry.name), { recursive: true, force: true });
+      console.error(`[run-pagefind] removed build-only stubs: dist/${entry.name}/`);
+    }
   }
 }
 
