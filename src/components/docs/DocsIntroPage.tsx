@@ -3,6 +3,7 @@ import { buildDocsHref, getPackages } from '../../content/docs-loader'
 import type { SyncedPackage } from '../../../scripts/types'
 import DocsSubNav from './DocsSubNav'
 import { DocsPackageSidebar, buildSidebar } from './DocsPackageSidebar'
+import docsHeroBg from './docs-hero-bg.svg?raw'
 
 interface CategoryConfig {
   category: SyncedPackage['category']
@@ -40,29 +41,14 @@ export default function DocsIntroPage() {
 
         {/* Main content */}
         <div className="relative grow box-border flex-col w-full py-10 px-6 lg:px-12 min-w-0">
-          {/* Background image */}
-          <div className="absolute -top-14 left-0 right-0 opacity-80">
-            <img
-              src="/docs/background-light.svg"
-              alt=""
-              className="object-contain block dark:hidden pointer-events-none w-full h-auto"
-              width={1152}
-              height={388}
-              style={{ aspectRatio: '1152 / 388' }}
-              loading="eager"
-              decoding="async"
-            />
-            <img
-              src="/docs/background-dark.svg"
-              alt=""
-              className="object-contain hidden dark:block pointer-events-none w-full h-auto"
-              width={1152}
-              height={388}
-              style={{ aspectRatio: '1152 / 388' }}
-              loading="eager"
-              decoding="async"
-            />
-          </div>
+          {/* Background illustration — inlined (not an <img>) so its fills read
+              the active Bloom color preset + light/dark via CSS vars, instead of
+              the old hardcoded purple. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-14 left-0 right-0 opacity-80 [&>svg]:block [&>svg]:h-auto [&>svg]:w-full"
+            dangerouslySetInnerHTML={{ __html: docsHeroBg }}
+          />
 
           {/* Hero content */}
           <div className="relative z-10 px-4 py-16 lg:py-32 lg:pb-16 max-w-3xl mx-auto">
