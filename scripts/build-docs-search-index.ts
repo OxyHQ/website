@@ -244,6 +244,10 @@ async function indexContentSurface(surface: ContentSurface): Promise<number> {
 }
 
 const NEWSROOM_API = 'https://website-api.oxy.so/api/newsroom?limit=500';
+// Slugs become file paths *and* URLs, so only accept safe characters — defends
+// the build against a malformed or hostile slug from the API (path traversal,
+// stray HTML in the canonical URL, etc.).
+const SAFE_SLUG = /^[a-z0-9-]+$/i;
 
 interface NewsroomPost {
   slug: string;
@@ -267,7 +271,7 @@ async function indexNewsroom(): Promise<number> {
       return 0;
     }
     const data = (await res.json()) as { posts?: NewsroomPost[] };
-    posts = (data.posts ?? []).filter((p) => p.slug && (p.status ?? 'published') === 'published');
+    posts = (data.posts ?? []).filter((p) => SAFE_SLUG.test(p.slug ?? '') && (p.status ?? 'published') === 'published');
   } catch (err) {
     console.warn('[build-docs-search-index] newsroom fetch failed — skipping blog:', (err as Error).message);
     return 0;

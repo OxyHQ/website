@@ -123,7 +123,7 @@ async function fetchNewsroomDocuments(): Promise<IndexDoc[]> {
     if (!res.ok) return []
     const data = (await res.json()) as { posts?: NewsroomPost[] }
     return (data.posts ?? [])
-      .filter((p) => p.slug && (p.status ?? 'published') === 'published')
+      .filter((p) => /^[a-z0-9-]+$/i.test(p.slug ?? '') && (p.status ?? 'published') === 'published')
       .map((p) => ({
         id: `/newsroom/${p.slug}`,
         title: p.title,
