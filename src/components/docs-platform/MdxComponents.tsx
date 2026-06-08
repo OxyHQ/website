@@ -1,6 +1,7 @@
-import { useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Check, Copy } from 'lucide-react'
 import { cn } from '../../lib/utils'
+import { reactNodeToText, useCopyToClipboard } from '../../lib/useCopyToClipboard'
 
 /* -------------------------------- Code -------------------------------- */
 
@@ -111,39 +112,18 @@ export function LiveExample({ title, children, source }: LiveExampleProps) {
 
 /* -------------------------------- MdxPre ------------------------------ */
 
-function codeText(node: ReactNode): string {
-  if (typeof node === 'string') return node
-  if (typeof node === 'number') return String(node)
-  if (Array.isArray(node)) return node.map(codeText).join('')
-  if (node && typeof node === 'object' && 'props' in node) {
-    const props = (node as { props?: { children?: ReactNode } }).props
-    if (props && 'children' in props) return codeText(props.children)
-  }
-  return ''
-}
-
 /**
  * Fenced code blocks (```lang). Renders the code in a compact card with a
  * language pill and a hover copy button. Inline `code` keeps its own pill via
  * the tag map, so this only owns block code.
  */
 export function MdxPre({ children }: { children?: ReactNode }) {
-  const [copied, setCopied] = useState(false)
+  const { copied, copy } = useCopyToClipboard()
+  const text = reactNodeToText(children)
   let language: string | undefined
   if (children && typeof children === 'object' && 'props' in children) {
     const className = (children as { props?: { className?: string } }).props?.className ?? ''
     language = /language-([\w-]+)/.exec(className)?.[1]
-  }
-  const copy = () => {
-    const text = codeText(children)
-    if (!text) return
-    navigator.clipboard.writeText(text).then(
-      () => {
-        setCopied(true)
-        window.setTimeout(() => setCopied(false), 1500)
-      },
-      (err: unknown) => console.error('[MdxPre] clipboard write failed:', err),
-    )
   }
   return (
     <figure className="not-prose group relative my-5 overflow-hidden rounded-xl border border-border bg-surface">
@@ -155,7 +135,7 @@ export function MdxPre({ children }: { children?: ReactNode }) {
         ) : null}
         <button
           type="button"
-          onClick={copy}
+          onClick={() => copy(text)}
           aria-label="Copy code to clipboard"
           className="inline-flex items-center gap-1 rounded-md border border-border bg-background/80 px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
         >
@@ -171,7 +151,7 @@ export function MdxPre({ children }: { children?: ReactNode }) {
         </button>
       </div>
       <pre className="overflow-x-auto p-4 text-[13px] leading-relaxed text-foreground">
-        <code className="font-mono">{codeText(children)}</code>
+        <code className="font-mono">{text}</code>
       </pre>
     </figure>
   )

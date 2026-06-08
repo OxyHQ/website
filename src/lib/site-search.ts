@@ -1,6 +1,7 @@
 import type MiniSearch from 'minisearch'
 import { buildDocsHref, getIndex } from '../content/docs-loader'
 import { categoryLabels, categoryOrder } from '../components/docs/docsTypes'
+import { isIndexablePost, type NewsroomPost } from './newsroom-source'
 import type { SyncedIndex, SyncedPackage } from '../../scripts/types'
 
 /**
@@ -104,14 +105,6 @@ function buildSearchDocuments(index: SyncedIndex): IndexDoc[] {
   return documents
 }
 
-interface NewsroomPost {
-  slug: string
-  title: string
-  description?: string
-  resume?: string
-  status?: string
-}
-
 /**
  * Dev-only: fetch published blog posts so local search covers the newsroom too
  * (production indexes them through Pagefind). Best-effort — returns [] if the
@@ -123,7 +116,7 @@ async function fetchNewsroomDocuments(): Promise<IndexDoc[]> {
     if (!res.ok) return []
     const data = (await res.json()) as { posts?: NewsroomPost[] }
     return (data.posts ?? [])
-      .filter((p) => /^[a-z0-9-]+$/i.test(p.slug ?? '') && (p.status ?? 'published') === 'published')
+      .filter(isIndexablePost)
       .map((p) => ({
         id: `/newsroom/${p.slug}`,
         title: p.title,
@@ -243,7 +236,7 @@ export function groupResults(
  * posts, and so on. Returns [] (no reordering) elsewhere.
  */
 export function searchContextGroups(pathname: string): string[] {
-  if (pathname.startsWith('/developers/docs')) return ['ui-library', 'sdk', 'app', 'service']
+  if (pathname.startsWith('/developers/docs')) return [...categoryOrder]
   if (pathname.startsWith('/newsroom')) return ['blog']
   if (pathname.startsWith('/help') || pathname.startsWith('/academy')) return ['pages']
   return []

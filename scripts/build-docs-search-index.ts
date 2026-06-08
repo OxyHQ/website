@@ -18,6 +18,7 @@ import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import type { SyncedIndex } from './types.ts';
+import { isIndexablePost, type NewsroomPost } from '../src/lib/newsroom-source';
 
 const WEBSITE_ROOT = path.resolve(import.meta.dir, '..');
 const SYNCED_INDEX = path.join(WEBSITE_ROOT, 'src', 'content', '_synced', 'index.json');
@@ -245,18 +246,6 @@ async function indexContentSurface(surface: ContentSurface): Promise<number> {
 }
 
 const NEWSROOM_API = 'https://website-api.oxy.so/api/newsroom?limit=500';
-// Slugs become file paths *and* URLs, so only accept safe characters — defends
-// the build against a malformed or hostile slug from the API (path traversal,
-// stray HTML in the canonical URL, etc.).
-const SAFE_SLUG = /^[a-z0-9-]+$/i;
-
-interface NewsroomPost {
-  slug: string;
-  title: string;
-  description?: string;
-  resume?: string;
-  status?: string;
-}
 
 /**
  * Index the CMS-driven newsroom (blog). Posts aren't MDX on disk, so fetch the
@@ -272,7 +261,7 @@ async function indexNewsroom(): Promise<number> {
       return 0;
     }
     const data = (await res.json()) as { posts?: NewsroomPost[] };
-    posts = (data.posts ?? []).filter((p) => SAFE_SLUG.test(p.slug ?? '') && (p.status ?? 'published') === 'published');
+    posts = (data.posts ?? []).filter(isIndexablePost);
   } catch (err) {
     console.warn('[build-docs-search-index] newsroom fetch failed — skipping blog:', (err as Error).message);
     return 0;

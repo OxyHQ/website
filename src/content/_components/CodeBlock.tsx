@@ -1,6 +1,7 @@
-import { useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Check, Copy } from 'lucide-react'
 import { cn } from '../../lib/utils'
+import { reactNodeToText, useCopyToClipboard } from '../../lib/useCopyToClipboard'
 
 /* ──────────────────────────────────────────────
  * <CodeBlock language="ts" filename="foo.ts">
@@ -22,35 +23,8 @@ interface CodeBlockProps {
   className?: string
 }
 
-function extractTextContent(node: ReactNode): string {
-  if (typeof node === 'string') return node
-  if (typeof node === 'number') return String(node)
-  if (Array.isArray(node)) return node.map(extractTextContent).join('')
-  if (node && typeof node === 'object' && 'props' in node) {
-    const props = (node as { props?: { children?: ReactNode } }).props
-    if (props && 'children' in props) return extractTextContent(props.children)
-  }
-  return ''
-}
-
 export default function CodeBlock({ language, filename, children, className }: CodeBlockProps) {
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = () => {
-    const text = extractTextContent(children)
-    if (!text) return
-    navigator.clipboard.writeText(text).then(
-      () => {
-        setCopied(true)
-        window.setTimeout(() => setCopied(false), 1500)
-      },
-      (err: unknown) => {
-        // Surface a real failure so users know nothing happened. No silent
-        // catch — clipboard rejections matter.
-        console.error('[CodeBlock] clipboard write failed:', err)
-      },
-    )
-  }
+  const { copied, copy } = useCopyToClipboard()
 
   const showHeader = filename !== undefined || language !== undefined
 
@@ -70,7 +44,7 @@ export default function CodeBlock({ language, filename, children, className }: C
           </div>
           <button
             type="button"
-            onClick={handleCopy}
+            onClick={() => copy(reactNodeToText(children))}
             className="inline-flex items-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-xs text-muted-foreground transition-colors hover:border-border hover:text-foreground"
             aria-label="Copy code to clipboard"
           >
