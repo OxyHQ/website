@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { createElement, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import * as LucideIcons from 'lucide-react'
 import { useCurrentLocale } from '../../lib/i18n'
@@ -137,7 +137,7 @@ function CategoryCardIcon({
   if (Icon) {
     return (
       <div className={`flex items-center justify-center rounded-[10px] border border-border bg-surface ${className}`}>
-        <Icon className="size-5 text-muted-foreground" aria-hidden="true" />
+        {createElement(Icon, { className: 'size-5 text-muted-foreground', 'aria-hidden': 'true' })}
       </div>
     )
   }

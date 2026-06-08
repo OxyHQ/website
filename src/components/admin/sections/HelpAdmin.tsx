@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   useHelpArticles,
   useCategories,
+  useLocales,
   resolveHelpArticleCategoryId,
   type HelpArticleRecord,
   type HelpArticleStatus,
@@ -15,7 +16,7 @@ import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
-import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
+import LocaleSwitcher from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 import MediaPicker from '../MediaPicker'
 

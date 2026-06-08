@@ -241,21 +241,30 @@ export default function Navbar({
     }, 220)
   }, [])
 
-  // Measure all panels once on mount (or whenever the dropdown list changes).
+  // Measure each hidden panel so the shared dropdown viewport can size itself.
+  // A ResizeObserver drives it — it fires once on observe and again on any
+  // reflow (e.g. fonts loading), so the state update lives in its callback
+  // rather than directly in the effect body.
   useLayoutEffect(() => {
-    const sizes: Record<string, { w: number; h: number }> = {}
+    const measure = () => {
+      const sizes: Record<string, { w: number; h: number }> = {}
+      for (const dd of dropdowns) {
+        const el = measureRefs.current[dd.label]
+        if (el) sizes[dd.label] = { w: el.scrollWidth, h: el.scrollHeight }
+      }
+      const settingsEl = measureRefs.current[SETTINGS_DROPDOWN_KEY]
+      if (settingsEl) sizes[SETTINGS_DROPDOWN_KEY] = { w: settingsEl.scrollWidth, h: settingsEl.scrollHeight }
+      setPanelSizes(sizes)
+      setHasMeasured(true)
+    }
+    const observer = new ResizeObserver(measure)
     for (const dd of dropdowns) {
       const el = measureRefs.current[dd.label]
-      if (el) {
-        sizes[dd.label] = { w: el.scrollWidth, h: el.scrollHeight }
-      }
+      if (el) observer.observe(el)
     }
-    const localeEl = measureRefs.current[SETTINGS_DROPDOWN_KEY]
-    if (localeEl) {
-      sizes[SETTINGS_DROPDOWN_KEY] = { w: localeEl.scrollWidth, h: localeEl.scrollHeight }
-    }
-    setPanelSizes(sizes)
-    setHasMeasured(true)
+    const settingsEl = measureRefs.current[SETTINGS_DROPDOWN_KEY]
+    if (settingsEl) observer.observe(settingsEl)
+    return () => observer.disconnect()
   }, [dropdowns, showLanguageInSettings])
 
   // Align the panel with the active trigger: left edge for left-nav dropdowns,

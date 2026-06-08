@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../../api/client'
-import { useLocales, type Locale } from '../LocaleSwitcher'
+import { useLocales, type Locale } from '../../../api/hooks'
 import { PrimaryButton } from '@oxyhq/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Label } from '../../ui/shadcn/label'

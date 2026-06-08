@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { usePage, useUpdatePage } from '../../../api/hooks'
+import { usePage, useUpdatePage, type PageData, type PageSection } from '../../../api/hooks'
 
 const PAGE_SLUGS = ['home', 'pricing', 'partners', 'help', 'ai', 'codea', 'os', 'newsroom']
 
@@ -34,10 +34,10 @@ export default function PagesAdmin() {
 function PageEditor({ slug }: { slug: string }) {
   const { data, refetch } = usePage(slug)
   const updatePage = useUpdatePage(slug)
-  const [form, setForm] = useState<any>(null)
+  const [form, setForm] = useState<PageData | null>(null)
   const [saving, setSaving] = useState(false)
 
-  if (data && !form) setForm(JSON.parse(JSON.stringify(data)))
+  if (data && !form) setForm(JSON.parse(JSON.stringify(data)) as PageData)
   if (!form) return <p className="text-sm text-muted-foreground">Loading page...</p>
 
   const save = async () => {
@@ -47,8 +47,8 @@ function PageEditor({ slug }: { slug: string }) {
     setSaving(false)
   }
 
-  const updateSection = (idx: number, field: string, value: any) => {
-    const next = { ...form, sections: [...form.sections] }
+  const updateSection = (idx: number, field: 'heading' | 'subheading' | 'content', value: string) => {
+    const next: PageData = { ...form, sections: [...form.sections] }
     next.sections[idx] = { ...next.sections[idx], [field]: value }
     setForm(next)
   }
@@ -94,7 +94,7 @@ function PageEditor({ slug }: { slug: string }) {
         })()}
 
         <h3 className="mt-4 text-sm font-semibold text-foreground">Sections</h3>
-        {(form.sections ?? []).map((section: any, i: number) => (
+        {(form.sections ?? []).map((section: PageSection, i: number) => (
           <div key={i} className="rounded-xl border border-border p-4">
             <div className="flex items-center justify-between">
               <span className="text-xs font-mono text-muted-foreground">{section.type}</span>

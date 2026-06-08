@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { usePricing } from '../../../api/hooks'
+import { usePricing, useLocales } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { type PricingPlan } from '../../../data/pricing'
 import { PrimaryButton } from '@oxyhq/bloom/button'
@@ -7,7 +7,7 @@ import { Switch } from '@oxyhq/bloom/switch'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
-import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
+import LocaleSwitcher from '../LocaleSwitcher'
 import { BatchTranslationEditor } from '../TranslationEditor'
 
 function cloneData<T>(data: T[] | undefined): T[] {

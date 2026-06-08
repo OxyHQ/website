@@ -6,6 +6,38 @@ import { Input } from '../ui/shadcn/input'
 import { Textarea } from '../ui/shadcn/textarea'
 import { Label } from '../ui/shadcn/label'
 
+/**
+ * Locale override values keyed by field path. Translations mirror the shape of
+ * the source document (which varies per collection: jobs, navigation, footer,
+ * pricing, testimonials…), so the map is a tree of primitives, arrays, and
+ * nested maps. Editors navigate it dynamically (`fields.items?.[i]?.title`)
+ * without knowing the concrete document type, so each node is freely indexable.
+ */
+export interface TranslationFieldMap {
+  [key: string]: TranslationFieldValue
+}
+export type TranslationFieldValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | TranslationFieldValue[]
+  | TranslationFieldMap
+
+/**
+ * A translation is a partial, recursively-optional override of a source
+ * document: editors fill in only the fields they want localized, mirroring the
+ * source shape. `DeepPartial` lets the editor callbacks expose `fields` typed
+ * against the concrete document so call sites get real autocompletion and type
+ * checking (`fields.items?.[i]?.title`) instead of an untyped bag.
+ */
+export type DeepPartial<T> = T extends Array<infer U>
+  ? Array<DeepPartial<U>>
+  : T extends object
+    ? { [K in keyof T]?: DeepPartial<T[K]> }
+    : T
+
 // ── Simple field-based translation editor ──
 
 interface TranslatableField {
@@ -14,7 +46,7 @@ interface TranslatableField {
   type: 'text' | 'textarea'
 }
 
-export function TranslationFields({
+export function TranslationFields<O extends object>({
   collection,
   documentId,
   locale,
@@ -24,17 +56,17 @@ export function TranslationFields({
   collection: string
   documentId: string
   locale: string
-  originalFields: Record<string, any>
+  originalFields: O
   translatableFields: TranslatableField[]
 }) {
   const qc = useQueryClient()
   const { data: existing } = useQuery({
     queryKey: ['translation', collection, documentId, locale],
-    queryFn: () => apiFetch<{ fields: Record<string, any> }>(`/translations/${collection}/${documentId}?locale=${locale}`).catch(() => null),
+    queryFn: () => apiFetch<{ fields: TranslationFieldMap }>(`/translations/${collection}/${documentId}?locale=${locale}`).catch(() => null),
     enabled: !!documentId && !!locale,
   })
 
-  const [fields, setFields] = useState<Record<string, any>>(() => existing?.fields ?? {})
+  const [fields, setFields] = useState<TranslationFieldMap>(() => existing?.fields ?? {})
   const [lastSyncedExisting, setLastSyncedExisting] = useState(existing)
   const [saving, setSaving] = useState(false)
 
@@ -44,16 +76,25 @@ export function TranslationFields({
     setFields(existing?.fields ?? {})
   }
 
-  const getVal = (obj: Record<string, any>, path: string) =>
-    path.split('.').reduce((acc, p) => acc?.[p], obj)
+  // Resolve a dotted path against an arbitrary document. The shape varies per
+  // collection and is walked at runtime, so the source is read as `unknown`
+  // and narrowed at the leaf by the caller.
+  const getVal = (obj: unknown, path: string): unknown =>
+    path.split('.').reduce<unknown>(
+      (acc, p) => (acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[p] : undefined),
+      obj,
+    )
 
-  const setVal = (obj: Record<string, any>, path: string, value: any) => {
+  const setVal = (obj: TranslationFieldMap, path: string, value: TranslationFieldValue): TranslationFieldMap => {
     const parts = path.split('.')
-    const result = { ...obj }
-    let current: any = result
+    const result: TranslationFieldMap = { ...obj }
+    let current: TranslationFieldMap = result
     for (let i = 0; i < parts.length - 1; i++) {
-      current[parts[i]] = { ...(current[parts[i]] ?? {}) }
-      current = current[parts[i]]
+      const existingChild = current[parts[i]]
+      const nextChild: TranslationFieldMap =
+        existingChild && typeof existingChild === 'object' && !Array.isArray(existingChild) ? { ...existingChild } : {}
+      current[parts[i]] = nextChild
+      current = nextChild
     }
     current[parts[parts.length - 1]] = value
     return result
@@ -101,7 +142,7 @@ export function TranslationFields({
                 placeholder={typeof originalValue === 'string' ? originalValue : ''}
               />
             )}
-            {originalValue && typeof originalValue === 'string' && (
+            {typeof originalValue === 'string' && originalValue.length > 0 && (
               <p className="text-xs text-muted-foreground">Original: {originalValue}</p>
             )}
           </div>
@@ -119,7 +160,7 @@ export function TranslationFields({
 
 // ── Generic translation editor using raw JSON fields ──
 
-export function TranslationJsonEditor({
+export function TranslationJsonEditor<T = TranslationFieldMap>({
   collection,
   documentId,
   locale,
@@ -129,8 +170,8 @@ export function TranslationJsonEditor({
   documentId: string
   locale: string
   children: (props: {
-    fields: Record<string, any>
-    setFields: (fields: Record<string, any>) => void
+    fields: DeepPartial<T>
+    setFields: (fields: DeepPartial<T>) => void
     save: () => Promise<void>
     saving: boolean
   }) => ReactNode
@@ -138,11 +179,11 @@ export function TranslationJsonEditor({
   const qc = useQueryClient()
   const { data: existing } = useQuery({
     queryKey: ['translation', collection, documentId, locale],
-    queryFn: () => apiFetch<{ fields: Record<string, any> }>(`/translations/${collection}/${documentId}?locale=${locale}`).catch(() => null),
+    queryFn: () => apiFetch<{ fields: TranslationFieldMap }>(`/translations/${collection}/${documentId}?locale=${locale}`).catch(() => null),
     enabled: !!documentId && !!locale,
   })
 
-  const [fields, setFields] = useState<Record<string, any>>(() => existing?.fields ?? {})
+  const [fields, setFields] = useState<TranslationFieldMap>(() => existing?.fields ?? {})
   const [lastSyncedExisting, setLastSyncedExisting] = useState(existing)
   const [saving, setSaving] = useState(false)
 
@@ -164,20 +205,24 @@ export function TranslationJsonEditor({
     }
   }
 
-  return <>{children({ fields, setFields, save, saving })}</>
+  // Storage is the raw JSON map; the callback works against `DeepPartial<T>`
+  // (a partial override of the document shape). Bridge the two at the boundary.
+  const setTypedFields = (next: DeepPartial<T>) => setFields(next as TranslationFieldMap)
+
+  return <>{children({ fields: fields as DeepPartial<T>, setFields: setTypedFields, save, saving })}</>
 }
 
 // ── Batch translation editor for array collections (navigation, pricing, testimonials) ──
 
-export function useBatchTranslations(collection: string, locale: string) {
+function useBatchTranslations(collection: string, locale: string) {
   return useQuery({
     queryKey: ['translations', collection, locale],
-    queryFn: () => apiFetch<Array<{ documentId: string; fields: Record<string, any> }>>(`/translations/${collection}?locale=${locale}`),
+    queryFn: () => apiFetch<Array<{ documentId: string; fields: TranslationFieldMap }>>(`/translations/${collection}?locale=${locale}`),
     enabled: !!locale,
   })
 }
 
-export function BatchTranslationEditor({
+export function BatchTranslationEditor<D extends { _id: string }>({
   collection,
   locale,
   documents,
@@ -185,26 +230,26 @@ export function BatchTranslationEditor({
 }: {
   collection: string
   locale: string
-  documents: Array<{ _id: string; [key: string]: any }>
+  documents: D[]
   renderItem: (props: {
-    doc: any
-    fields: Record<string, any>
-    updateField: (key: string, value: any) => void
+    doc: D
+    fields: DeepPartial<D>
+    updateField: (key: string, value: TranslationFieldValue) => void
   }) => ReactNode
 }) {
   const qc = useQueryClient()
   const { data: existing } = useBatchTranslations(collection, locale)
 
-  function buildMap(rows: typeof existing): Record<string, Record<string, any>> {
+  function buildMap(rows: typeof existing): Record<string, TranslationFieldMap> {
     if (!rows) return {}
-    const map: Record<string, Record<string, any>> = {}
+    const map: Record<string, TranslationFieldMap> = {}
     for (const t of rows) {
       map[t.documentId] = t.fields
     }
     return map
   }
 
-  const [translationsMap, setTranslationsMap] = useState<Record<string, Record<string, any>>>(() => buildMap(existing))
+  const [translationsMap, setTranslationsMap] = useState<Record<string, TranslationFieldMap>>(() => buildMap(existing))
   const [lastSyncedExisting, setLastSyncedExisting] = useState(existing)
   const [saving, setSaving] = useState(false)
 
@@ -213,7 +258,7 @@ export function BatchTranslationEditor({
     if (existing) setTranslationsMap(buildMap(existing))
   }
 
-  const updateField = (docId: string, key: string, value: any) => {
+  const updateField = (docId: string, key: string, value: TranslationFieldValue) => {
     setTranslationsMap(prev => ({
       ...prev,
       [docId]: { ...(prev[docId] ?? {}), [key]: value },
@@ -251,7 +296,9 @@ export function BatchTranslationEditor({
         <div key={doc._id}>
           {renderItem({
             doc,
-            fields: translationsMap[doc._id] ?? {},
+            // Stored translations are a partial override of the document shape;
+            // expose them typed against `D` for the render callback.
+            fields: (translationsMap[doc._id] ?? {}) as DeepPartial<D>,
             updateField: (key, value) => updateField(doc._id, key, value),
           })}
         </div>

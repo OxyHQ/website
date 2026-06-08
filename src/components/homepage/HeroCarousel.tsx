@@ -57,7 +57,10 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
   const rafRef = useRef<number>(0)
   const visibleRef = useRef(false)
 
-  const animate = useCallback(() => {
+  // Named function expression so the recursive `requestAnimationFrame` call
+  // references the function's own internal name (`loop`) rather than the
+  // `animate` closure variable while it is still being declared.
+  const animate = useCallback(function loop() {
     const track = trackRef.current
     if (!track) return
 
@@ -71,7 +74,7 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     }
 
     track.style.transform = `translateX(${posRef.current}px)`
-    rafRef.current = requestAnimationFrame(animate)
+    rafRef.current = requestAnimationFrame(loop)
   }, [])
 
   // React 19 callback ref with cleanup — owns the rAF loop, IntersectionObserver,

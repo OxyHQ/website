@@ -89,7 +89,7 @@ export function usePage(slug: string) {
 export function useUpdatePage(slug: string) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: Record<string, unknown>) => apiFetch(`/pages/${slug}`, { method: 'PUT', body: JSON.stringify(data) }),
+    mutationFn: (data: Partial<PageData>) => apiFetch(`/pages/${slug}`, { method: 'PUT', body: JSON.stringify(data) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['page', slug] }),
   })
 }
@@ -779,6 +779,25 @@ export function useJobs() {
     queryFn: () => apiFetch<Job[]>('/jobs', { locale }),
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
+  })
+}
+
+// ── Locales ──
+export interface Locale {
+  _id: string
+  code: string
+  name: string
+  nativeName: string
+  isDefault: boolean
+  enabled: boolean
+}
+
+export function useLocales() {
+  return useQuery({
+    queryKey: ['locales-all'],
+    queryFn: () => apiFetch<Locale[]>('/locales/all'),
+    retry: 1,
+    staleTime: 300_000,
   })
 }
 

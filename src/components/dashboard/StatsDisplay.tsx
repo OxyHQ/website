@@ -32,9 +32,13 @@ function PixelGridTransition({
   const [animState, setAnimState] = useState<"idle" | "growing" | "shrinking">("idle");
   const hasActivatedRef = useRef(false);
 
-  const pixels = useMemo(() => {
+  // The per-pixel color is randomly assigned once and must stay stable across
+  // re-renders. `Math.random()` is impure and can't run in the render body
+  // (or a `useMemo`), so the grid — including its random colors — is built in
+  // a lazy `useState` initializer that runs a single time on mount.
+  const [pixels] = useState(() => {
     const total = gridSize * gridSize;
-    const result = [];
+    const result: { id: number; row: number; col: number; color: string }[] = [];
     for (let n = 0; n < total; n++) {
       const row = Math.floor(n / gridSize);
       const col = n % gridSize;
@@ -42,7 +46,7 @@ function PixelGridTransition({
       result.push({ id: n, row, col, color });
     }
     return result;
-  }, [gridSize]);
+  });
 
   const [shuffledOrder, setShuffledOrder] = useState<number[]>([]);
 

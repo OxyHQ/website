@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { useTestimonials } from '../../../api/hooks'
+import { useTestimonials, useLocales } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton } from '@oxyhq/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
-import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
+import LocaleSwitcher from '../LocaleSwitcher'
 import { BatchTranslationEditor } from '../TranslationEditor'
 import { Label } from '../../ui/shadcn/label'
 

@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { useFooter } from '../../../api/hooks'
+import { useFooter, useLocales } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton } from '@oxyhq/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Label } from '../../ui/shadcn/label'
-import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
+import LocaleSwitcher from '../LocaleSwitcher'
 import { TranslationJsonEditor } from '../TranslationEditor'
 import { type FooterColumn } from '../../../data/content'
 
@@ -76,7 +76,7 @@ export default function FooterAdmin() {
 
       {!isDefault ? (
         <div className="mt-6">
-          <TranslationJsonEditor
+          <TranslationJsonEditor<FooterForm>
             collection="footer"
             documentId={data?._id ?? ''}
             locale={resolvedActiveLocale}

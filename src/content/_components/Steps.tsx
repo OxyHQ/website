@@ -47,17 +47,23 @@ interface StepsProps {
   children: ReactNode
 }
 
-export default function Steps({ children }: StepsProps) {
+// Auto-numbers `<Step>` children sequentially. Defined at module scope (a
+// pure helper, not a render body) so the running `counter` is a plain local
+// that never escapes a render. Only valid elements are numbered — interleaved
+// non-elements (e.g. whitespace text nodes wrapped by MDX) pass through
+// untouched and don't consume a number.
+function numberSteps(children: ReactNode): ReactNode {
   let counter = 0
-  const numbered = Children.map(children, (child) => {
+  return Children.map(children, (child) => {
     if (!isValidElement(child)) return child
-    // Only auto-number elements whose intent is a Step (carries `title` or
-    // is the exported `Step`). Don't blindly inject into every child — that
-    // would corrupt whitespace text nodes wrapped by MDX.
     counter += 1
     const childElement = child as ReactElement<StepProps>
     return cloneElement(childElement, { index: counter })
   })
+}
+
+export default function Steps({ children }: StepsProps) {
+  const numbered = numberSteps(children)
   return (
     <ol className="not-prose my-6 ml-4 flex flex-col gap-6 border-l border-border pl-6">
       {numbered}

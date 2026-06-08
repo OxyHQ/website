@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   useResources,
   useCategories,
+  useLocales,
   resolveResourceCategoryId,
   type ResourceRecord,
   type ResourceType,
@@ -14,7 +15,7 @@ import { Badge } from '@oxyhq/bloom/badge'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
-import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
+import LocaleSwitcher from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'

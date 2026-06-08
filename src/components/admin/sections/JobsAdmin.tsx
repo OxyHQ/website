@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useJobs, type Job } from '../../../api/hooks'
+import { useJobs, useLocales, type Job } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Switch } from '@oxyhq/bloom/switch'
@@ -8,7 +8,7 @@ import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
-import LocaleSwitcher, { useLocales } from '../LocaleSwitcher'
+import LocaleSwitcher from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 import { type DescriptionBlock } from '../../../data/careers'
 
@@ -64,7 +64,7 @@ export default function JobsAdmin() {
   const autoSlug = (title: string, location: string) => {
     return `${title} ${location}`
       .toLowerCase()
-      .replace(/[\[\]()]/g, '')
+      .replace(/[[\]()]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '')
   }
@@ -131,7 +131,7 @@ export default function JobsAdmin() {
                 value={editing.location}
                 onChange={(e) => {
                   const location = e.target.value
-                  const updates: any = { location }
+                  const updates: Partial<Job> = { location }
                   if (!editing._id) updates.slug = autoSlug(editing.title, location)
                   setEditing({ ...editing, ...updates })
                 }}

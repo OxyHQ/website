@@ -45,7 +45,13 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
 
   const isOwn = user?._id === comment.userId
   const isAdmin = ADMIN_USERNAMES.includes(user?.username ?? '')
-  const withinEditWindow = Date.now() - new Date(comment.createdAt).getTime() < EDIT_WINDOW_MS
+  // Captured once at mount: whether the 15-minute edit window is still open.
+  // Reading `Date.now()` directly in render is impure (unstable across
+  // re-renders); a lazy initializer freezes it to the value the first render
+  // would have produced.
+  const [withinEditWindow] = useState(
+    () => Date.now() - new Date(comment.createdAt).getTime() < EDIT_WINDOW_MS,
+  )
   const canEdit = isOwn && withinEditWindow
   const canDelete = isOwn
   const isHidden = comment.status === 'hidden'

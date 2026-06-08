@@ -28,10 +28,17 @@ export const ManifestoSection: React.FC<ManifestoSectionProps> = ({ imagePaths =
     () => (isMobile ? { min: 20, max: 40 } : { min: 40, max: 70 }),
     [isMobile]
   );
+  // Latest-value refs so `addImage` can read the current width range and
+  // image count without being re-created (which would restart the spawn
+  // intervals). Refs are synced in an effect rather than during render —
+  // `addImage` is only ever invoked from timers, never synchronously during
+  // the render→effect window, so the values it reads stay current.
   const widthRangeRef = useRef(widthRange);
-  widthRangeRef.current = widthRange;
   const imagePathsLengthRef = useRef(imagePaths.length);
-  imagePathsLengthRef.current = imagePaths.length;
+  useEffect(() => {
+    widthRangeRef.current = widthRange;
+    imagePathsLengthRef.current = imagePaths.length;
+  }, [widthRange, imagePaths.length]);
 
   const getRandomPosition = useCallback((): { cellIndex: number; x: number; y: number } | null => {
     const availableCells = Array.from({ length: 80 }, (_, i) => i).filter((i) => {

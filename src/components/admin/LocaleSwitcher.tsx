@@ -1,23 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
-import { apiFetch } from '../../api/client'
-
-export interface Locale {
-  _id: string
-  code: string
-  name: string
-  nativeName: string
-  isDefault: boolean
-  enabled: boolean
-}
-
-export function useLocales() {
-  return useQuery({
-    queryKey: ['locales-all'],
-    queryFn: () => apiFetch<Locale[]>('/locales/all'),
-    retry: 1,
-    staleTime: 300_000,
-  })
-}
+import { useLocales } from '../../api/hooks'
 
 export default function LocaleSwitcher({
   activeLocale,
