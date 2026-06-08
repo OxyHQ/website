@@ -69,6 +69,18 @@ export function resolveDocsRoute(params: DocsRouteParams): ResolveResult {
       const placeholder: SyncedVersion = { version: requestedVersion, pages: [] }
       return { kind: 'empty', pkg, version: placeholder }
     }
+    // Not a real version and not version-shaped: this is the canonical
+    // no-version form (`buildDocsHref(pkg, 'latest', slug)`, used by search and
+    // SEO canonicals) where React Router bound the first slug segment to
+    // `:version`. Fold it back onto the splat and resolve against the latest
+    // version so deep links like `/developers/docs/bloom/api/functions/select`
+    // land on the actual page instead of redirecting to the package root.
+    const latest = resolveVersion(pkg)
+    if (latest && latest.pages.length > 0) {
+      const slug = [requestedVersion, splat].filter(Boolean).join('/')
+      const page = getPage(latest, slug)
+      if (page) return { kind: 'page', pkg, version: latest, slug }
+    }
     return 'redirect'
   }
   // Zero-page version — render the empty placeholder regardless of slug.
