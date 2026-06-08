@@ -117,6 +117,7 @@ function wrapHtml(title: string, body: string, canonicalUrl: string): string {
 <title>${escapeHtml(title)}</title>
 <meta name="pagefind-body" />
 <link rel="canonical" href="${escapeHtml(canonicalUrl)}" />
+<meta data-pagefind-meta="route[content]" content="${escapeHtml(canonicalUrl)}" />
 </head>
 <body>
 <main data-pagefind-body>

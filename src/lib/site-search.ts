@@ -36,7 +36,7 @@ interface PagefindResult {
   data: () => Promise<{
     url: string
     excerpt: string
-    meta: { title: string }
+    meta: { title: string; route?: string }
     filters: Record<string, string[]>
   }>
 }
@@ -192,7 +192,9 @@ async function searchProd(query: string): Promise<SearchResult[] | null> {
   const datas = await Promise.all(top.map((r) => r.data()))
   return top.map((r, i) => {
     const data = datas[i]
-    const url = data.url.replace(/\.html$/, '').replace(/\/index$/, '') || '/'
+    // Content stubs declare their real SPA route in pagefind metadata
+    // (`route`); prerendered pages fall back to their own file URL.
+    const url = data.meta.route ?? (data.url.replace(/\.html$/, '').replace(/\/index$/, '') || '/')
     const { group, subtitle } = classifyResult(url, packages)
     return { id: r.id, url, title: data.meta.title ?? url, group, subtitle, snippet: data.excerpt }
   })
