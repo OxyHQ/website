@@ -21,7 +21,7 @@
  * partial repos so the website still builds when one source repo is broken.
  */
 
-import { readFile, writeFile, mkdir, rm, readdir, stat, cp } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, rm, readdir, rename, cp } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
@@ -782,21 +782,17 @@ async function syncRepo(entry: DocsRegistryEntry): Promise<SyncedPackage[]> {
   return out;
 }
 
-async function pathExists(p: string): Promise<boolean> {
-  try {
-    await stat(p);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 async function main(): Promise<void> {
   console.error('[sync-docs] building docs content tree...');
-  if (await pathExists(SYNCED_DIR)) {
-    await rm(SYNCED_DIR, { recursive: true, force: true });
-  }
+  // Clean stale per-package trees, but keep `index.json` in place while we
+  // rebuild. `docs-loader.ts` imports it statically, so it must never vanish
+  // mid-build or Vite fails to resolve the import (`./_synced/index.json`).
+  // The fresh index is swapped in atomically (temp + rename) at the end.
   await mkdir(SYNCED_DIR, { recursive: true });
+  for (const entry of await readdir(SYNCED_DIR)) {
+    if (entry === 'index.json') continue;
+    await rm(path.join(SYNCED_DIR, entry), { recursive: true, force: true });
+  }
   const registry = await loadRegistry();
   const packages: SyncedPackage[] = [];
   for (const entry of registry.repos) {
@@ -807,7 +803,10 @@ async function main(): Promise<void> {
     generatedAt: new Date().toISOString(),
     packages,
   };
-  await writeFile(path.join(SYNCED_DIR, 'index.json'), JSON.stringify(index, null, 2));
+  const indexPath = path.join(SYNCED_DIR, 'index.json');
+  const tmpPath = `${indexPath}.tmp`;
+  await writeFile(tmpPath, JSON.stringify(index, null, 2));
+  await rename(tmpPath, indexPath);
   console.error(`[sync-docs] wrote ${packages.length} packages, ${packages.reduce((n, p) => n + p.versions.reduce((m, v) => m + v.pages.length, 0), 0)} pages.`);
 }
 
