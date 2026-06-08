@@ -243,6 +243,46 @@ async function indexContentSurface(surface: ContentSurface): Promise<number> {
   return written;
 }
 
+const NEWSROOM_API = 'https://website-api.oxy.so/api/newsroom?limit=500';
+
+interface NewsroomPost {
+  slug: string;
+  title: string;
+  description?: string;
+  resume?: string;
+  status?: string;
+}
+
+/**
+ * Index the CMS-driven newsroom (blog). Posts aren't MDX on disk, so fetch the
+ * published list from the live API and emit one stub per post — same Pagefind
+ * pipeline as the MDX surfaces, just sourced over the network.
+ */
+async function indexNewsroom(): Promise<number> {
+  let posts: NewsroomPost[];
+  try {
+    const res = await fetch(NEWSROOM_API);
+    if (!res.ok) {
+      console.warn(`[build-docs-search-index] newsroom API returned ${res.status} — skipping blog.`);
+      return 0;
+    }
+    const data = (await res.json()) as { posts?: NewsroomPost[] };
+    posts = (data.posts ?? []).filter((p) => p.slug && (p.status ?? 'published') === 'published');
+  } catch (err) {
+    console.warn('[build-docs-search-index] newsroom fetch failed — skipping blog:', (err as Error).message);
+    return 0;
+  }
+  let written = 0;
+  for (const post of posts) {
+    const body = `<p>${escapeHtml(post.description ?? post.resume ?? post.title)}</p>`;
+    const dest = path.join(WEBSITE_ROOT, 'dist', 'newsroom-content', `${post.slug}.html`);
+    await ensureDir(path.dirname(dest));
+    await writeFile(dest, wrapHtml(`${post.title} — Newsroom`, body, `/newsroom/${post.slug}`));
+    written += 1;
+  }
+  return written;
+}
+
 async function main(): Promise<void> {
   if (!existsSync(DIST)) {
     console.error('[build-docs-search-index] dist/ does not exist — skipping.');
@@ -300,6 +340,10 @@ async function main(): Promise<void> {
     );
     total += written;
   }
+  // Newsroom (blog) — CMS content fetched at build time, not MDX on disk.
+  const newsroomWritten = await indexNewsroom();
+  console.error(`[build-docs-search-index] wrote ${newsroomWritten} Newsroom posts to dist/newsroom-content/.`);
+  total += newsroomWritten;
   // Sanity check: walk what we just wrote.
   const written = await readdir(OUT_DIR, { recursive: true });
   console.error(

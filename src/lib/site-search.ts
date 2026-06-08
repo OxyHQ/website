@@ -1,6 +1,7 @@
-import MiniSearch from 'minisearch'
+import type MiniSearch from 'minisearch'
 import { buildDocsHref, getIndex } from '../content/docs-loader'
-import type { SyncedIndex } from '../../scripts/types'
+import { categoryLabels, categoryOrder } from '../components/docs/docsTypes'
+import type { SyncedIndex, SyncedPackage } from '../../scripts/types'
 
 /**
  * Site-wide search engine, shared by the navbar search.
@@ -24,15 +25,11 @@ export interface SearchResult {
   snippet?: string
 }
 
-const GROUP_ORDER = ['pages', 'ui-library', 'sdk', 'app', 'service'] as const
+// `pages` (marketing) first, then the docs categories in their canonical order
+// and labels — shared with the docs sidebar/hub via docsTypes so they can't drift.
+const GROUP_ORDER: string[] = ['pages', 'blog', ...categoryOrder]
 
-export const GROUP_LABELS: Record<string, string> = {
-  pages: 'Pages',
-  'ui-library': 'UI Library',
-  sdk: 'SDK',
-  app: 'Apps',
-  service: 'Services',
-}
+export const GROUP_LABELS: Record<string, string> = { pages: 'Pages', blog: 'Newsroom', ...categoryLabels }
 
 interface PagefindResult {
   id: string
@@ -81,7 +78,7 @@ interface IndexDoc {
   body: string
 }
 
-function buildMiniSearchIndex(index: SyncedIndex): MiniSearch {
+function buildSearchDocuments(index: SyncedIndex): IndexDoc[] {
   const documents: IndexDoc[] = []
   for (const page of SITE_PAGES) {
     documents.push({ id: page.url, title: page.title, subtitle: 'Oxy', group: 'pages', url: page.url, body: page.title })
@@ -104,25 +101,64 @@ function buildMiniSearchIndex(index: SyncedIndex): MiniSearch {
       }
     }
   }
-  const ms = new MiniSearch<IndexDoc>({
-    fields: ['title', 'body', 'subtitle'],
-    storeFields: ['title', 'subtitle', 'group', 'url', 'body'],
-    searchOptions: { boost: { title: 3, subtitle: 1.5 }, fuzzy: 0.2, prefix: true },
-  })
-  ms.addAll(documents)
-  return ms
+  return documents
+}
+
+interface NewsroomPost {
+  slug: string
+  title: string
+  description?: string
+  resume?: string
+  status?: string
+}
+
+/**
+ * Dev-only: fetch published blog posts so local search covers the newsroom too
+ * (production indexes them through Pagefind). Best-effort — returns [] if the
+ * API is unavailable, so search never breaks on a missing backend.
+ */
+async function fetchNewsroomDocuments(): Promise<IndexDoc[]> {
+  try {
+    const res = await fetch('/api/newsroom?limit=500')
+    if (!res.ok) return []
+    const data = (await res.json()) as { posts?: NewsroomPost[] }
+    return (data.posts ?? [])
+      .filter((p) => p.slug && (p.status ?? 'published') === 'published')
+      .map((p) => ({
+        id: `/newsroom/${p.slug}`,
+        title: p.title,
+        subtitle: 'Newsroom',
+        group: 'blog',
+        url: `/newsroom/${p.slug}`,
+        body: p.description ?? p.resume ?? p.title,
+      }))
+  } catch {
+    return []
+  }
 }
 
 let miniSearch: MiniSearch | null = null
 
-function getMiniSearch(): MiniSearch {
-  if (!miniSearch) miniSearch = buildMiniSearchIndex(getIndex())
+// MiniSearch (~18 KB gzip) only powers the dev fallback, so load it dynamically:
+// it stays out of the eager bundle that ships the navbar on every page.
+async function getMiniSearch(): Promise<MiniSearch> {
+  if (!miniSearch) {
+    const { default: MiniSearch } = await import('minisearch')
+    const ms = new MiniSearch<IndexDoc>({
+      fields: ['title', 'body', 'subtitle'],
+      storeFields: ['title', 'subtitle', 'group', 'url', 'body'],
+      searchOptions: { boost: { title: 3, subtitle: 1.5 }, fuzzy: 0.2, prefix: true },
+    })
+    ms.addAll(buildSearchDocuments(getIndex()))
+    ms.addAll(await fetchNewsroomDocuments())
+    miniSearch = ms
+  }
   return miniSearch
 }
 
-function searchDev(query: string): SearchResult[] {
-  const matches = getMiniSearch().search(query)
-  return matches.slice(0, 20).map((m) => {
+async function searchDev(query: string): Promise<SearchResult[]> {
+  const ms = await getMiniSearch()
+  return ms.search(query).slice(0, 20).map((m) => {
     const s = m as unknown as { id: string; url: string; title: string; subtitle: string; group: string; body: string }
     return { id: s.id, url: s.url, title: s.title, group: s.group, subtitle: s.subtitle, snippet: s.body }
   })
@@ -151,21 +187,25 @@ async function searchProd(query: string): Promise<SearchResult[] | null> {
   if (!pagefind) return null
   const { results } = await pagefind.search(query)
   const packages = getIndex().packages
-  const out: SearchResult[] = []
-  for (const r of results.slice(0, 20)) {
-    const data = await r.data()
+  const top = results.slice(0, 20)
+  // Each `r.data()` is an independent fragment fetch — load them in parallel.
+  const datas = await Promise.all(top.map((r) => r.data()))
+  return top.map((r, i) => {
+    const data = datas[i]
     const url = data.url.replace(/\.html$/, '').replace(/\/index$/, '') || '/'
-    const docPkg = packages.find((p) => url.includes(`/developers/docs/${p.shortName}`))
-    out.push({
-      id: r.id,
-      url,
-      title: data.meta.title ?? url,
-      group: docPkg?.category ?? 'pages',
-      subtitle: docPkg?.displayName ?? 'Oxy',
-      snippet: data.excerpt,
-    })
-  }
-  return out
+    const { group, subtitle } = classifyResult(url, packages)
+    return { id: r.id, url, title: data.meta.title ?? url, group, subtitle, snippet: data.excerpt }
+  })
+}
+
+/** Map a result URL to its display group + subtitle (docs package, blog, …). */
+function classifyResult(url: string, packages: SyncedPackage[]): { group: string; subtitle: string } {
+  const docPkg = packages.find((p) => url.includes(`/developers/docs/${p.shortName}`))
+  if (docPkg) return { group: docPkg.category, subtitle: docPkg.displayName }
+  if (url.startsWith('/newsroom')) return { group: 'blog', subtitle: 'Newsroom' }
+  if (url.startsWith('/academy')) return { group: 'pages', subtitle: 'Academy' }
+  if (url.startsWith('/help')) return { group: 'pages', subtitle: 'Help' }
+  return { group: 'pages', subtitle: 'Oxy' }
 }
 
 /* ----------------------------- API ------------------------------- */

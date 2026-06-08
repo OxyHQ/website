@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
+import { Fragment, useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
@@ -370,8 +370,10 @@ export default function Navbar({
       })
     }, 120)
   }, [])
-  const searchGroups = useMemo(() => groupResults(searchResults), [searchResults])
-  const flatResults = useMemo(() => searchGroups.flatMap((g) => g.items), [searchGroups])
+  // Group-ordered flat list: keyboard nav indexes into it, and the dropdown
+  // renders straight from it (inserting a header when the group changes), so the
+  // flat order has a single source of truth.
+  const flatResults = useMemo(() => groupResults(searchResults).flatMap((g) => g.items), [searchResults])
 
   const linkClassName = (isTp: boolean) =>
     `inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${
@@ -379,6 +381,13 @@ export default function Navbar({
         ? 'text-white/80 hover:bg-white/10 hover:text-white'
         : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
     }`
+
+  // Shared styling for the round icon buttons (search + settings).
+  const iconButtonClass = `group inline-flex h-9 w-9 cursor-pointer select-none items-center justify-center rounded-full border border-transparent transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`
+  const iconButtonStyle = (active: boolean) => ({
+    background: active ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
+    color: active ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
+  })
 
   return (
     <>
@@ -550,35 +559,29 @@ export default function Navbar({
                     {flatResults.length === 0 ? (
                       <div className="px-3 py-6 text-center text-sm text-muted-foreground">{t('common.noResults')}</div>
                     ) : (
-                      searchGroups.map((group, gi) => {
-                        const offset = searchGroups.slice(0, gi).reduce((n, g) => n + g.items.length, 0)
+                      flatResults.map((r, i) => {
+                        const showHeader = i === 0 || flatResults[i - 1].group !== r.group
+                        const isActive = i === activeResult
                         return (
-                          <div key={group.group} className="mb-2 last:mb-0">
-                            <div className="px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                              {GROUP_LABELS[group.group] ?? group.group}
-                            </div>
-                            <ul>
-                              {group.items.map((r, idx) => {
-                                const isActive = offset + idx === activeResult
-                                return (
-                                  <li key={r.id}>
-                                    <button
-                                      type="button"
-                                      onMouseEnter={() => setActiveResult(offset + idx)}
-                                      onClick={() => {
-                                        closeSearch()
-                                        navigate(r.url)
-                                      }}
-                                      className={`block w-full cursor-pointer rounded-xl px-3 py-2 text-left transition-colors ${isActive ? 'bg-foreground/5' : ''}`}
-                                    >
-                                      <div className="truncate text-sm text-foreground">{r.title}</div>
-                                      <div className="truncate text-[11px] text-muted-foreground">{r.subtitle}</div>
-                                    </button>
-                                  </li>
-                                )
-                              })}
-                            </ul>
-                          </div>
+                          <Fragment key={r.id}>
+                            {showHeader ? (
+                              <div className="px-3 pb-1 pt-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground first:pt-1">
+                                {GROUP_LABELS[r.group] ?? r.group}
+                              </div>
+                            ) : null}
+                            <button
+                              type="button"
+                              onMouseEnter={() => setActiveResult(i)}
+                              onClick={() => {
+                                closeSearch()
+                                navigate(r.url)
+                              }}
+                              className={`block w-full cursor-pointer rounded-xl px-3 py-2 text-left transition-colors ${isActive ? 'bg-foreground/5' : ''}`}
+                            >
+                              <div className="truncate text-sm text-foreground">{r.title}</div>
+                              <div className="truncate text-[11px] text-muted-foreground">{r.subtitle}</div>
+                            </button>
+                          </Fragment>
                         )
                       })
                     )}
@@ -627,11 +630,8 @@ export default function Navbar({
             <div className="hidden items-center gap-x-2.5 lg:flex">
               <button
                 type="button"
-                className={`group inline-flex h-9 w-9 cursor-pointer select-none items-center justify-center rounded-full border border-transparent transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`}
-                style={{
-                  background: searchOpen ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
-                  color: searchOpen ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
-                }}
+                className={iconButtonClass}
+                style={iconButtonStyle(searchOpen)}
                 onClick={() => {
                   closeAll()
                   setSearchOpen((open) => !open)
@@ -643,11 +643,8 @@ export default function Navbar({
               </button>
               <button
                 ref={(el) => { triggerRefs.current[SETTINGS_DROPDOWN_KEY] = el }}
-                className={`group inline-flex h-9 w-9 cursor-pointer select-none items-center justify-center rounded-full border border-transparent transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`}
-                style={{
-                  background: activeDropdown === SETTINGS_DROPDOWN_KEY ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
-                  color: activeDropdown === SETTINGS_DROPDOWN_KEY ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
-                }}
+                className={iconButtonClass}
+                style={iconButtonStyle(activeDropdown === SETTINGS_DROPDOWN_KEY)}
                 onMouseEnter={() => openDropdown(SETTINGS_DROPDOWN_KEY)}
                 onMouseLeave={scheduleClose}
                 onClick={() => (activeDropdown === SETTINGS_DROPDOWN_KEY ? closeAll() : openDropdown(SETTINGS_DROPDOWN_KEY))}

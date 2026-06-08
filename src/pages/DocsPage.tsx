@@ -21,15 +21,13 @@ import {
  * vars on :root, so we apply/restore them imperatively here — a nested
  * BloomThemeProvider can't unset them when it unmounts.
  */
-const BRAND_PRESETS: Record<string, AppColorName> = { faircoin: 'faircoin' }
-
 function useDocsBrandPreset() {
   const params = useParams<{ package?: string }>()
   const { theme, colorPreset } = useBloomTheme()
   const resolved: 'light' | 'dark' = theme.mode === 'dark' ? 'dark' : 'light'
   const brandPreset = useMemo<AppColorName | null>(() => {
     const pkg = params.package ? getPackage(params.package) : undefined
-    return (pkg && BRAND_PRESETS[pkg.shortName]) ?? null
+    return pkg?.shortName === 'faircoin' ? 'faircoin' : null
   }, [params.package])
   useLayoutEffect(() => {
     if (!brandPreset) return
