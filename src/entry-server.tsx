@@ -39,6 +39,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import SEO from './components/SEO'
 import { LocaleProvider } from './lib/i18n'
+import type { SeoData } from './lib/seo'
 
 /**
  * Mirrors the props of `<SEO>` exactly. Kept inline (not imported from
@@ -63,7 +64,7 @@ export interface SEORenderResult {
   head: string
 }
 
-export function renderSEO(input: SEORenderInput): SEORenderResult {
+export function renderSEO(input: SEORenderInput, seoData: SeoData | null = null): SEORenderResult {
   const helmetContext: { helmet?: HelmetServerState } = {}
 
   // Fresh QueryClient per call — never let cache state leak across routes.
@@ -72,6 +73,10 @@ export function renderSEO(input: SEORenderInput): SEORenderResult {
       queries: { staleTime: Infinity, retry: false, refetchOnWindowFocus: false },
     },
   })
+  // Seed the CMS-managed SEO so `<SEO>`'s `useSeo()` resolves synchronously from
+  // cache. staleTime Infinity means no per-route network fetch during the build;
+  // `null` (API unseeded/unreachable) makes `<SEO>` fall back to the props below.
+  queryClient.setQueryData(['seo'], seoData)
 
   // `<SEO>` reads `useLocaleContext()` to emit hreflang entries. The
   // LocaleProvider's `useQuery('public-locales')` returns `undefined`

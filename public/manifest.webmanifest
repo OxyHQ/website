@@ -1,7 +1,7 @@
 {
   "name": "Oxy",
   "short_name": "Oxy",
-  "description": "The AI-powered CRM for go-to-market teams.",
+  "description": "Open-source ecosystem of AI agents and apps.",
   "icons": [
     { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
   ],

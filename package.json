@@ -21,6 +21,7 @@
     "sync-docs": "bun scripts/sync-docs.ts",
     "sync-changelog": "bun scripts/sync-changelog.ts",
     "build:help-og": "bun scripts/build-help-og-images.ts",
+    "build:faircoin-og": "bun scripts/build-faircoin-og.ts",
     "render:bloom-thumbnails": "bun scripts/render-bloom-thumbnails.ts"
   },
   "dependencies": {

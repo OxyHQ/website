@@ -24,6 +24,7 @@ import changelogRouter from './routes/changelog.js'
 import { startSyncInterval } from './services/githubSync.js'
 import jobsRouter from './routes/jobs.js'
 import settingsRouter from './routes/settings.js'
+import seoRouter from './routes/seo.js'
 import mcpTokensRouter from './routes/mcp-tokens.js'
 import localesRouter from './routes/locales.js'
 import translationsRouter from './routes/translations.js'
@@ -88,6 +89,7 @@ app.use('/api/jobs', jobsRouter)
 app.use('/api/team', teamRouter)
 app.use('/api/media', mediaRouter)
 app.use('/api/settings', settingsRouter)
+app.use('/api/seo', seoRouter)
 app.use('/api/mcp-tokens', mcpTokensRouter)
 app.use('/api/locales', localesRouter)
 app.use('/api/translations', translationsRouter)

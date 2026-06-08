@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from '@oxyhq/auth'
 import AdminLayout, { ADMIN_USERNAMES } from '../components/admin/AdminLayout'
 import SiteSettingsAdmin from '../components/admin/sections/SiteSettingsAdmin'
+import SeoAdmin from '../components/admin/sections/SeoAdmin'
 import NavigationAdmin from '../components/admin/sections/NavigationAdmin'
 import FooterAdmin from '../components/admin/sections/FooterAdmin'
 import HeroAdmin from '../components/admin/sections/HeroAdmin'
@@ -39,6 +40,7 @@ export default function AdminPage() {
     <Routes>
       <Route index element={<Navigate to="settings" replace />} />
       <Route path="settings" element={<AdminLayout><SiteSettingsAdmin /></AdminLayout>} />
+      <Route path="seo" element={<AdminLayout><SeoAdmin /></AdminLayout>} />
       <Route path="navigation" element={<AdminLayout><NavigationAdmin /></AdminLayout>} />
       <Route path="footer" element={<AdminLayout><FooterAdmin /></AdminLayout>} />
       <Route path="hero" element={<AdminLayout><HeroAdmin /></AdminLayout>} />

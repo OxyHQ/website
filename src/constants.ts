@@ -36,11 +36,11 @@ export const OXY_PRODUCTS = [
 ] as const
 
 export const OXY_POSITIONING = {
-  tagline: 'An open-source ethical tech ecosystem building AI agents and apps.',
+  tagline: 'An independent, open-source ecosystem of ethical technology.',
   short:
-    'Oxy is an open-source ethical tech ecosystem building AI agents and apps for a future where technology empowers people.',
+    'Oxy is an independent, open-source ecosystem of ethical technology built to empower people, not exploit them.',
   long:
-    "Oxy is an open-source, ethical technology ecosystem building AI agents and apps. Our products — including Mention, Allo, Inbox, Codea Studio, Codea AI, the Codea VS Code Extension, Oxy AI (Alia), Oxy CRM, OxyOS, Bloom UI, TNP, FairCoin and Homiio — share a single mission: empower people without selling their data.",
+    'Oxy is an independent, open-source ecosystem of ethical technology built to empower people, not exploit them. Apps, AI, an operating system, a browser, identity and more. Mention, Allo, Inbox, Codea, Oxy AI, OxyOS, Astro, TNP, FairCoin and Homiio.',
 } as const
 
 /**

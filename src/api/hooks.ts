@@ -894,6 +894,43 @@ export function useSiteSettings() {
   })
 }
 
+// ── SEO ──
+// The SEO table is CMS-managed and host-aware (oxy.so / fairco.in). Types live
+// in ../lib/seo (the shared resolver used by the client, prerender, and edge),
+// so the admin editor and the runtime resolver stay in lockstep.
+import type { SeoBrand, SeoMeta, SeoData } from '../lib/seo'
+export type { SeoBrand, SeoMeta, SeoData }
+
+export function useSeo() {
+  return useQuery<SeoData>({
+    queryKey: ['seo'],
+    queryFn: () => apiFetch<SeoData>('/seo'),
+    staleTime: 2 * 60_000,
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useUpsertSeo() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (entry: { brand: SeoBrand; path: string } & Partial<SeoMeta>) =>
+      apiFetch('/seo', { method: 'PUT', body: JSON.stringify(entry) }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['seo'] }),
+  })
+}
+
+export function useDeleteSeo() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ brand, path }: { brand: SeoBrand; path: string }) =>
+      apiFetch<{ ok: boolean }>(
+        `/seo?brand=${encodeURIComponent(brand)}&path=${encodeURIComponent(path)}`,
+        { method: 'DELETE' },
+      ),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['seo'] }),
+  })
+}
+
 // ── MCP Tokens ──
 export interface McpToken {
   _id: string

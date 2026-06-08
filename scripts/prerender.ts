@@ -46,6 +46,7 @@ import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { build as viteBuild } from 'vite'
 import type { SyncedIndex } from './types.ts'
+import type { SeoData } from '../src/lib/seo'
 
 const WEBSITE_ROOT = path.resolve(import.meta.dir, '..')
 const DIST_DIR = path.join(WEBSITE_ROOT, 'dist')
@@ -56,6 +57,7 @@ const HELP_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'help')
 const ACADEMY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'academy')
 const NEWSROOM_API = 'https://website-api.oxy.so/api/newsroom?limit=500'
 const JOBS_API = 'https://website-api.oxy.so/api/jobs'
+const SEO_API = 'https://website-api.oxy.so/api/seo'
 
 const SITE_URL = 'https://oxy.so'
 
@@ -73,7 +75,7 @@ interface SEOProps {
 }
 
 interface RenderSEOFn {
-  (input: SEOProps): { head: string }
+  (input: SEOProps, seoData: SeoData | null): { head: string }
 }
 
 /* ── SSR bundle build ─────────────────────────────────────────────── */
@@ -153,9 +155,9 @@ async function buildSsrBundle(): Promise<RenderSEOFn> {
  */
 const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   '/': {
-    title: 'Oxy — The AI-Powered CRM for Go-To-Market Teams',
+    title: 'Oxy, an open-source ecosystem of ethical technology',
     description:
-      'Search, update, and create across your entire CRM just by asking. Oxy is the AI CRM with Universal Context that deeply understands your business.',
+      'Oxy is an independent, open-source ecosystem of ethical technology built to empower people, not exploit them. Apps, AI, an operating system, a browser, identity and more.',
     canonicalPath: '/',
   },
   '/pricing': {
@@ -265,7 +267,7 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/ai': {
     title: 'Oxy AI',
-    description: 'Universal Context for go-to-market teams — search, update, and create across every record by asking.',
+    description: 'Oxy AI is Alia, an AI assistant built on the open, privacy first Oxy ecosystem.',
     canonicalPath: '/ai',
   },
   '/ai/pricing': {
@@ -346,28 +348,30 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   // FairCoin marketing surfaces on oxy.so (the apex on fairco.in gets its
   // own brand chrome but renders the same components).
   '/faircoin': {
-    title: 'FairCoin — Universal Basic Income on Chain',
-    description: 'FairCoin pays a universal basic income, on-chain, to verified humans. Open, audited, and permissionless.',
+    title: 'FairCoin, community run cryptocurrency',
+    description:
+      'FairCoin is a community run cryptocurrency. Decentralized, fair, free of speculation. Hybrid PoW and PoS, capped at 33M coins.',
     canonicalPath: '/faircoin',
   },
   '/faircoin/buy': {
     title: 'Buy FairCoin',
-    description: 'Bridge stablecoins into FairCoin and start receiving the daily basic income.',
+    description: 'Buy FAIR with USDC. Bridge to WFAIR on Base, then unwrap to native FairCoin.',
     canonicalPath: '/faircoin/buy',
   },
   '/faircoin/unwrap': {
     title: 'Redeem FairCoin',
-    description: 'Convert FairCoin back into the base stablecoin via the redemption flow.',
+    description: 'Unwrap WFAIR on Base back to native FairCoin.',
     canonicalPath: '/faircoin/unwrap',
   },
   '/faircoin/bridge': {
-    title: 'FairCoin Bridge',
-    description: 'Move FairCoin across supported chains via the official bridge.',
+    title: 'FairCoin bridge, WFAIR on Base',
+    description:
+      'Technical reference for the WFAIR bridge. 1:1 wrapped FairCoin on Base. Contract, source, status, reserves and API endpoints.',
     canonicalPath: '/faircoin/bridge',
   },
   '/faircoin/wallet': {
-    title: 'FairCoin Wallet',
-    description: 'A self-custodial wallet for receiving the daily basic income.',
+    title: 'FAIRWallet',
+    description: 'FAIRWallet is a self custody wallet for receiving, sending and staking FairCoin.',
     canonicalPath: '/faircoin/wallet',
   },
 }
@@ -759,13 +763,30 @@ interface RenderJob {
   seo: SEOProps
 }
 
+/**
+ * Fetch the CMS-managed SEO once for the whole build. Best-effort: if the API
+ * is unseeded or unreachable, returns null and every route falls back to its
+ * enumerated props, so the build never breaks on a missing backend.
+ */
+async function fetchSeoData(): Promise<SeoData | null> {
+  try {
+    const res = await fetch(SEO_API)
+    if (!res.ok) return null
+    return (await res.json()) as SeoData
+  } catch (err) {
+    console.warn('[prerender] SEO CMS fetch failed, using fallback meta:', (err as Error).message)
+    return null
+  }
+}
+
 async function writeRoute(
   renderSEO: RenderSEOFn,
   shell: string,
   job: RenderJob,
+  seoData: SeoData | null,
 ): Promise<boolean> {
   try {
-    const { head } = renderSEO(job.seo)
+    const { head } = renderSEO(job.seo, seoData)
     if (!head) {
       console.warn(`[prerender] empty head for ${job.url}`)
     }
@@ -790,10 +811,11 @@ async function main(): Promise<void> {
 
   const startTime = Date.now()
 
-  const [renderSEO, jobs, shell] = await Promise.all([
+  const [renderSEO, jobs, shell, seoData] = await Promise.all([
     buildSsrBundle(),
     enumerateAllRoutes(),
     loadShellHtml(),
+    fetchSeoData(),
   ])
 
   console.log(`[prerender] rendering ${jobs.length} routes…`)
@@ -808,7 +830,7 @@ async function main(): Promise<void> {
       const idx = cursor++
       const job = jobs[idx]
       if (!job) continue
-      const ok = await writeRoute(renderSEO, shell, job)
+      const ok = await writeRoute(renderSEO, shell, job, seoData)
       if (ok) succeeded++
       else failed++
       if ((idx + 1) % 100 === 0 || idx + 1 === jobs.length) {

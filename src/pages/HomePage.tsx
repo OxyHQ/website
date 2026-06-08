@@ -1441,8 +1441,8 @@ export default function HomePage() {
   return (
     <>
       <SEO
-        title="Oxy — Open-source ecosystem of AI agents and apps"
-        description="Oxy is an open-source ethical tech ecosystem building AI agents and apps — Mention, Inbox, Codea, Oxy AI, Oxy CRM, OxyOS, TNP, FairCoin and Homiio."
+        title="Oxy, an open-source ecosystem of ethical technology"
+        description="Oxy is an independent, open-source ecosystem of ethical technology built to empower people, not exploit them. Apps, AI, an operating system, a browser, identity and more."
         canonicalPath="/"
       />
       <Navbar transparent />
