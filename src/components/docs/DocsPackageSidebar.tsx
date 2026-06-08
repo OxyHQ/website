@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { buildDocsHref, getPackages } from '../../content/docs-loader'
 import type { SyncedPackage, SyncedPage, SyncedVersion } from '../../../scripts/types'
@@ -510,9 +510,11 @@ function SidebarTreeNode({
 export function DocsPackageSidebar({
   sections,
   activePkg,
+  versionSelector,
 }: {
   sections: SidebarSection[]
   activePkg?: SyncedPackage
+  versionSelector?: ReactNode
 }) {
   const location = useLocation()
   // Default expansion: only the category containing the active package is
@@ -580,6 +582,7 @@ export function DocsPackageSidebar({
   return (
     <aside className="hidden lg:block w-[19.5rem] shrink-0 border-r border-border">
       <div className="sticky top-[calc(var(--site-header-height,64px)+48px)] h-[calc(100vh-var(--site-header-height,64px)-48px)] overflow-y-auto relative text-sm leading-6 pt-6 pb-10 pl-6 pr-6">
+        {versionSelector ? <div className="mb-5 pl-1">{versionSelector}</div> : null}
         {sections.map((section, sectionIdx) => {
           const isOpen = expanded[section.category]
           return (

@@ -1,5 +1,5 @@
 import { Fragment, useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import {
@@ -13,7 +13,7 @@ import { NavCard, NavFeatureGrid } from './NavMegaPanels'
 import { useNavigation, useSiteSettings } from '../../api/hooks'
 import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '../../api/scrollStore'
 import { useTranslation, useLocaleContext } from '../../lib/i18n'
-import { searchSite, groupResults, GROUP_LABELS, type SearchResult } from '../../lib/site-search'
+import { searchSite, groupResults, searchContextGroups, GROUP_LABELS, type SearchResult } from '../../lib/site-search'
 import NavDropdownItem from '../ui/NavDropdownItem'
 import Button from '../ui/Button'
 import Logo from '../ui/Logo'
@@ -213,6 +213,7 @@ export default function Navbar({
   const [activeResult, setActiveResult] = useState(0)
   const searchDebounce = useRef<ReturnType<typeof setTimeout> | null>(null)
   const navigate = useNavigate()
+  const searchPath = useLocation().pathname
   const [bannerDismissed, setBannerDismissed] = useState(false)
   const bannerVisible = !hideBanner && !bannerDismissed && (banner?.visible ?? true)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
@@ -373,7 +374,10 @@ export default function Navbar({
   // Group-ordered flat list: keyboard nav indexes into it, and the dropdown
   // renders straight from it (inserting a header when the group changes), so the
   // flat order has a single source of truth.
-  const flatResults = useMemo(() => groupResults(searchResults).flatMap((g) => g.items), [searchResults])
+  const flatResults = useMemo(
+    () => groupResults(searchResults, searchContextGroups(searchPath)).flatMap((g) => g.items),
+    [searchResults, searchPath],
+  )
 
   const linkClassName = (isTp: boolean) =>
     `inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${

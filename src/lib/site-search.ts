@@ -219,13 +219,32 @@ export async function searchSite(query: string): Promise<SearchResult[]> {
   return prod !== null ? prod : searchDev(query)
 }
 
-/** Group flat results by section in a stable display order. */
-export function groupResults(results: SearchResult[]): Array<{ group: string; items: SearchResult[] }> {
+/**
+ * Group flat results by section. `priority` groups are surfaced first (current-
+ * section context), then the rest follow the canonical order.
+ */
+export function groupResults(
+  results: SearchResult[],
+  priority: string[] = [],
+): Array<{ group: string; items: SearchResult[] }> {
   const groups = new Map<string, SearchResult[]>()
   for (const r of results) {
     const list = groups.get(r.group) ?? []
     list.push(r)
     groups.set(r.group, list)
   }
-  return GROUP_ORDER.filter((g) => groups.has(g)).map((g) => ({ group: g, items: groups.get(g) ?? [] }))
+  const order = [...priority, ...GROUP_ORDER.filter((g) => !priority.includes(g))]
+  return order.filter((g) => groups.has(g)).map((g) => ({ group: g, items: groups.get(g) ?? [] }))
+}
+
+/**
+ * Which result groups to surface first given the page the user is on — so a
+ * search from the docs prioritizes docs, from the newsroom prioritizes blog
+ * posts, and so on. Returns [] (no reordering) elsewhere.
+ */
+export function searchContextGroups(pathname: string): string[] {
+  if (pathname.startsWith('/developers/docs')) return ['ui-library', 'sdk', 'app', 'service']
+  if (pathname.startsWith('/newsroom')) return ['blog']
+  if (pathname.startsWith('/help') || pathname.startsWith('/academy')) return ['pages']
+  return []
 }

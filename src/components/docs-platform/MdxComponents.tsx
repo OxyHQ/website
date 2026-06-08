@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
+import { Check, Copy } from 'lucide-react'
 import { cn } from '../../lib/utils'
 
 /* -------------------------------- Code -------------------------------- */
@@ -105,6 +106,74 @@ export function LiveExample({ title, children, source }: LiveExampleProps) {
         </pre>
       ) : null}
     </section>
+  )
+}
+
+/* -------------------------------- MdxPre ------------------------------ */
+
+function codeText(node: ReactNode): string {
+  if (typeof node === 'string') return node
+  if (typeof node === 'number') return String(node)
+  if (Array.isArray(node)) return node.map(codeText).join('')
+  if (node && typeof node === 'object' && 'props' in node) {
+    const props = (node as { props?: { children?: ReactNode } }).props
+    if (props && 'children' in props) return codeText(props.children)
+  }
+  return ''
+}
+
+/**
+ * Fenced code blocks (```lang). Renders the code in a compact card with a
+ * language pill and a hover copy button. Inline `code` keeps its own pill via
+ * the tag map, so this only owns block code.
+ */
+export function MdxPre({ children }: { children?: ReactNode }) {
+  const [copied, setCopied] = useState(false)
+  let language: string | undefined
+  if (children && typeof children === 'object' && 'props' in children) {
+    const className = (children as { props?: { className?: string } }).props?.className ?? ''
+    language = /language-([\w-]+)/.exec(className)?.[1]
+  }
+  const copy = () => {
+    const text = codeText(children)
+    if (!text) return
+    navigator.clipboard.writeText(text).then(
+      () => {
+        setCopied(true)
+        window.setTimeout(() => setCopied(false), 1500)
+      },
+      (err: unknown) => console.error('[MdxPre] clipboard write failed:', err),
+    )
+  }
+  return (
+    <figure className="not-prose group relative my-5 overflow-hidden rounded-xl border border-border bg-surface">
+      <div className="absolute right-2 top-2 z-10 flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+        {language ? (
+          <span className="rounded bg-background/80 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            {language}
+          </span>
+        ) : null}
+        <button
+          type="button"
+          onClick={copy}
+          aria-label="Copy code to clipboard"
+          className="inline-flex items-center gap-1 rounded-md border border-border bg-background/80 px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+        >
+          {copied ? (
+            <>
+              <Check className="size-3" aria-hidden /> Copied
+            </>
+          ) : (
+            <>
+              <Copy className="size-3" aria-hidden /> Copy
+            </>
+          )}
+        </button>
+      </div>
+      <pre className="overflow-x-auto p-4 text-[13px] leading-relaxed text-foreground">
+        <code className="font-mono">{codeText(children)}</code>
+      </pre>
+    </figure>
   )
 }
 

@@ -67,15 +67,20 @@ export function DocsShell({
         {hideSidebar
           ? null
           : sections
-            ? <DocsPackageSidebar sections={sections} activePkg={activePkg} />
+            ? (
+              <DocsPackageSidebar
+                sections={sections}
+                activePkg={activePkg}
+                versionSelector={
+                  showVersionSelector && pkg && currentVersion ? (
+                    <VersionSelector pkg={pkg} currentVersion={currentVersion} slug={slug} />
+                  ) : null
+                }
+              />
+            )
             : null}
 
         <div className="relative grow box-border flex-col w-full py-10 px-6 lg:px-12 min-w-0">
-          {showVersionSelector && pkg && currentVersion ? (
-            <div className="mb-6 flex items-center justify-end">
-              <VersionSelector pkg={pkg} currentVersion={currentVersion} slug={slug} />
-            </div>
-          ) : null}
 
           {hideHeader ? null : (
             <header className="relative leading-none">
