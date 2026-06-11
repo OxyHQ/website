@@ -1,11 +1,11 @@
 import { type ReactNode } from 'react'
 import { View } from 'react-native'
-import * as Dialog from '@oxyhq/bloom/dialog'
+import { Dialog, type DialogControlProps } from '@oxyhq/bloom/dialog'
 import { Button, PrimaryButton } from '@oxyhq/bloom/button'
 
 interface ConfirmDialogProps {
-  /** Control returned by `Dialog.useDialogControl()`. */
-  control: Dialog.DialogControlProps
+  /** Control returned by `useDialogControl()`. */
+  control: DialogControlProps
   /** Optional `aria-label` describing the dialog purpose. */
   label?: string
   /** Heading shown in bold at the top. */
@@ -30,14 +30,14 @@ interface ConfirmDialogProps {
 /**
  * Reusable confirm dialog for the admin UI.
  *
- * Uses Bloom's Dialog primitives for the portal, backdrop, focus-trap and
- * scroll-lock plumbing — but renders Tailwind-styled DOM inside so it matches
- * the rest of the admin (rather than using Bloom's RN-styled Prompt.Basic
- * which would look out of place).
+ * Uses Bloom's unified `<Dialog>` (custom-children mode) for the portal,
+ * backdrop, focus-trap and scroll-lock plumbing — but renders Tailwind-styled
+ * DOM inside so it matches the rest of the admin (rather than using Bloom's
+ * RN-styled declarative `title`/`actions` mode which would look out of place).
  *
  * Usage:
  *
- *   const confirmDelete = Dialog.useDialogControl()
+ *   const confirmDelete = useDialogControl()
  *   ...
  *   <Button onPress={() => confirmDelete.open()}>Delete</Button>
  *   <ConfirmDialog
@@ -69,29 +69,27 @@ export default function ConfirmDialog({
   }
 
   return (
-    <Dialog.Outer control={control} webOptions={{ alignCenter: true }}>
-      <Dialog.Inner label={label ?? title}>
-        <View style={{ padding: 24 }}>
-          <div className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-            {description && (
-              <div className="text-sm text-muted-foreground">{description}</div>
-            )}
-            <div className="mt-4 flex items-center justify-end gap-2">
-              <Button variant="ghost" size="small" onPress={() => control.close()} disabled={busy}>
-                {cancelLabel}
-              </Button>
-              <PrimaryButton
-                onPress={handleConfirm}
-                disabled={busy}
-                className={tone === 'danger' ? '!bg-rose-600 hover:!bg-rose-700' : undefined}
-              >
-                {busy ? 'Working…' : confirmLabel}
-              </PrimaryButton>
-            </div>
+    <Dialog control={control} label={label ?? title}>
+      <View style={{ padding: 24 }}>
+        <div className="flex flex-col gap-3">
+          <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+          {description && (
+            <div className="text-sm text-muted-foreground">{description}</div>
+          )}
+          <div className="mt-4 flex items-center justify-end gap-2">
+            <Button variant="ghost" size="small" onPress={() => control.close()} disabled={busy}>
+              {cancelLabel}
+            </Button>
+            <PrimaryButton
+              onPress={handleConfirm}
+              disabled={busy}
+              className={tone === 'danger' ? '!bg-rose-600 hover:!bg-rose-700' : undefined}
+            >
+              {busy ? 'Working…' : confirmLabel}
+            </PrimaryButton>
           </div>
-        </View>
-      </Dialog.Inner>
-    </Dialog.Outer>
+        </div>
+      </View>
+    </Dialog>
   )
 }
