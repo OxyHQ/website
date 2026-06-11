@@ -1,3 +1,12 @@
+# FedCM IdP well-known. Chrome fetches this from the eTLD+1 (oxy.so) to
+# validate the IdP config at https://auth.oxy.so/fedcm.json. It MUST be
+# served as application/json, otherwise FedCM rejects the IdP and
+# navigator.credentials.get() throws NetworkError before any UI shows —
+# breaking login on accounts.oxy.so and every Oxy app.
+/.well-known/web-identity
+  Content-Type: application/json
+  Cache-Control: public, max-age=300, must-revalidate
+
 # Cache static assets aggressively
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
