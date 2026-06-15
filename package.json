@@ -30,7 +30,7 @@
     "@mdx-js/rollup": "^3.1.1",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@oxyhq/auth": "^4.1.0",
-    "@oxyhq/bloom": "^0.6.12",
+    "@oxyhq/bloom": "^0.7.6",
     "@oxyhq/core": "^3.2.0",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-separator": "^1.1.8",
