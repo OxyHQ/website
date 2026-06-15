@@ -73,6 +73,13 @@ const SustainPage = lazy(() => import('./pages/SustainPage'))
 
 const OXY_API = 'https://api.oxy.so'
 
+// Registered Oxy OAuth client id for the public website. Sourced from the
+// website's standard `VITE_*` env convention so deploys can override it, with
+// the registered production client id as the committed default.
+const OXY_CLIENT_ID =
+  (import.meta.env.VITE_OXY_CLIENT_ID as string | undefined) ||
+  'oxy_dk_e572a3df046f98c2c29098f1349a7927183751e08ca2b757'
+
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 60_000, retry: 1 } },
 })
@@ -275,7 +282,7 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WebOxyProvider baseURL={OXY_API} onAuthStateChange={handleAuthChange}>
+      <WebOxyProvider baseURL={OXY_API} clientId={OXY_CLIENT_ID} onAuthStateChange={handleAuthChange}>
         <AppSetup>
           <BloomThemeProvider mode={mode} colorPreset={preset}>
             <BrowserRouter>
