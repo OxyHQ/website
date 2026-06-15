@@ -95,7 +95,7 @@ export default function WalletsSection() {
                 className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                 style={{
                   background:
-                    'radial-gradient(circle at top right, hsl(var(--primary)/0.16) 0%, transparent 60%)',
+                    'radial-gradient(circle at top right, color-mix(in srgb, var(--primary) 16%, transparent) 0%, transparent 60%)',
                 }}
               />
               <div className="flex items-start justify-between">

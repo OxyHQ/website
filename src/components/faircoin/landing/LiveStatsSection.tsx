@@ -331,7 +331,7 @@ function StatTile({
         className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
         style={{
           background:
-            'radial-gradient(circle at top right, hsl(var(--primary)/0.15) 0%, transparent 60%)',
+            'radial-gradient(circle at top right, color-mix(in srgb, var(--primary) 15%, transparent) 0%, transparent 60%)',
         }}
       />
       {/* Update pulse — fades from primary tint */}

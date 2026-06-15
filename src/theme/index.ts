@@ -17,6 +17,7 @@
 import {
   APP_COLOR_PRESETS,
   APP_COLOR_NAMES,
+  applyPresetVarsToDocument,
   hexToAppColorName,
   type AppColorName,
 } from '@oxyhq/bloom/theme'
@@ -64,17 +65,13 @@ export function setColorPreset(preset: AppColorName) {
 /* ── Core: inject Bloom CSS variables onto :root ── */
 
 export function applyPreset(preset: AppColorName, mode: ThemeMode) {
-  const config = APP_COLOR_PRESETS[preset]
-  if (!config) return
+  if (!APP_COLOR_PRESETS[preset]) return
 
-  const vars = mode === 'dark' ? config.dark : config.light
-  const root = document.documentElement
-
-  for (const [key, value] of Object.entries(vars)) {
-    // Bloom stores bare HSL values like "277 66% 56%"
-    // We wrap in hsl() for CSS consumption
-    root.style.setProperty(key, `hsl(${value})`)
-  }
+  // Delegate to Bloom's canonical writer (0.8.0+). It resolves the preset's
+  // tokens to full `rgb(...)` colors via getResolvedTokens and writes both the
+  // base palette and the extended (card/chart/sidebar) tokens onto :root, so
+  // `var(--x)` — the form Tailwind v4 @theme compiles to — resolves directly.
+  applyPresetVarsToDocument(preset, mode)
 }
 
 /**
