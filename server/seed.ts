@@ -180,7 +180,7 @@ async function seed() {
           { label: 'Mention', href: '/mention' },
           { label: 'Moovo', href: '#' },
           { label: 'Helpio', href: '#' },
-          { label: 'Syra', href: 'https://syra.oxy.so/' },
+          { label: 'Syra', href: 'https://syra.fm/' },
           { label: 'Homiio', href: '/homiio' },
         ],
       },
