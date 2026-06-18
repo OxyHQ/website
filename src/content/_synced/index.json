@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-17T21:32:33.264Z",
+  "generatedAt": "2026-06-18T04:12:33.300Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -4630,6 +4630,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/getSsoCallbackBootstrapScript",
+              "title": "getSsoCallbackBootstrapScript()",
+              "file": "core/main/api/functions/getSsoCallbackBootstrapScript.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/getSystemColorScheme",
               "title": "getSystemColorScheme()",
               "file": "core/main/api/functions/getSystemColorScheme.md",
@@ -5074,6 +5081,13 @@
               "slug": "api/functions/ssoAttemptedKey",
               "title": "ssoAttemptedKey()",
               "file": "core/main/api/functions/ssoAttemptedKey.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/ssoCallbackBootstrapKey",
+              "title": "ssoCallbackBootstrapKey()",
+              "file": "core/main/api/functions/ssoCallbackBootstrapKey.md",
               "order": 10000,
               "section": "api"
             },
