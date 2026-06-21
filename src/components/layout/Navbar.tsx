@@ -618,7 +618,7 @@ export default function Navbar({
               <div className="flex items-center gap-x-2 lg:hidden">
               {!hideAuth && isAuthenticated && (
                 <button onClick={accountPanel.toggle} className="cursor-pointer">
-                  <Avatar source={user?.avatar} size={28} placeholderColor={user?.color} />
+                  <Avatar source={user?.avatar} size={28} placeholderColor={user?.color ?? undefined} />
                 </button>
               )}
               <button
@@ -673,7 +673,7 @@ export default function Navbar({
                     <Avatar
                       source={user?.avatar}
                       size={32}
-                      placeholderColor={user?.color}
+                      placeholderColor={user?.color ?? undefined}
                     />
                   </button>
                 ) : (

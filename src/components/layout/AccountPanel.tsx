@@ -111,8 +111,8 @@ export default function AccountPanel() {
           {/* ─── Profile header with animated background ─── */}
           <div className="flex flex-col items-center pb-5 pt-1">
             {isOpen
-              ? <AvatarWithAnimation avatarSource={user?.avatar} avatarColor={user?.color} size={100} />
-              : <Avatar source={user?.avatar} size={100} placeholderColor={user?.color} />
+              ? <AvatarWithAnimation avatarSource={user?.avatar ?? undefined} avatarColor={user?.color ?? undefined} size={100} />
+              : <Avatar source={user?.avatar} size={100} placeholderColor={user?.color ?? undefined} />
             }
             <div className="mt-3 text-center">
               <div className="text-xl font-semibold text-foreground">{displayName}</div>

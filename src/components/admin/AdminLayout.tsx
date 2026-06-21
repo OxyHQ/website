@@ -95,7 +95,7 @@ function AdminSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-3 px-1">
-          <Avatar source={user?.avatar} size={open ? 28 : 24} placeholderColor={user?.color} />
+          <Avatar source={user?.avatar} size={open ? 28 : 24} placeholderColor={user?.color ?? undefined} />
           {open && (
             <div className="min-w-0">
               <div className="truncate text-sm font-medium text-foreground">Admin</div>
