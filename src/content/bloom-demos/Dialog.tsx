@@ -3,7 +3,7 @@ import { PrimaryButton } from '@oxyhq/bloom/button'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {
-  description: 'Centered modal with backdrop and declarative title, description and actions.',
+  description: 'Overlay with placement — centered modal, side-sheet (left/right), or bottom-sheet — with declarative title, description and actions.',
 }
 
 export default function DialogDemo() {
