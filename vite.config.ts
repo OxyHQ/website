@@ -1,4 +1,5 @@
 import path from 'node:path'
+import fs from 'node:fs'
 import { defineConfig } from 'vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
@@ -30,6 +31,32 @@ export default defineConfig({
         providerImportSource: '@mdx-js/react',
       }),
     },
+    // `react-native-reanimated` ships `lib/module/*.js` files that contain
+    // untransformed JSX (e.g. `component/LayoutAnimationConfig.js`). Vite 8 /
+    // rolldown defaults to treating `.js` files as plain JavaScript — JSX
+    // parsing is disabled. Those files produce `[PARSE_ERROR] Unexpected JSX
+    // expression` / `[builtin:vite-transform] Unexpected JSX expression` during
+    // the production build.
+    //
+    // The fix: intercept those files in a `load` hook and return them with
+    // `moduleType: 'jsx'`. Rolldown's `ModuleType` union includes `'jsx'`,
+    // which instructs the bundler (and the OXC transform wired by
+    // `@vitejs/plugin-react`) to parse and transform the file as JSX rather
+    // than plain JS.
+    {
+      name: 'reanimated-jsx',
+      enforce: 'pre',
+      load(id) {
+        if (
+          id.includes('node_modules/react-native-reanimated') &&
+          id.endsWith('.js') &&
+          !id.includes('\0')
+        ) {
+          return { code: fs.readFileSync(id, 'utf-8'), moduleType: 'jsx' }
+        }
+        return undefined
+      },
+    },
     react(),
     babel({ presets: [reactCompilerPreset()] }),
     ViteImageOptimizer({
@@ -50,6 +77,13 @@ export default defineConfig({
     }),
   ],
   resolve: {
+    // Prefer `.web.js` platform variants over `.js` — react-native-gesture-handler
+    // ships `.web.js` stubs for files (e.g. `getShadowNodeFromRef.web.js`) that
+    // contain dynamic `require()` calls to Flow-typed react-native internals in
+    // their native counterpart. Without this ordering Vite resolves the native
+    // version and rolldown tries to statically parse those Flow files, producing
+    // `[PARSE_ERROR] Flow is not supported`. Order mirrors Metro's default.
+    extensions: ['.web.js', '.web.ts', '.web.tsx', '.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'],
     tsconfigPaths: true,
     alias: [
       // Native-only spec helper that `react-native-svg` and Bloom's
@@ -93,7 +127,12 @@ export default defineConfig({
     // Pre-bundling the package bundles those files together so the interop is
     // resolved. The native Fabric paths it eagerly imports are redirected by
     // the `resolve.alias` entries above, which the optimizer honours.
-    include: ['react-simple-maps', 'prop-types', 'd3-geo', 'topojson-client', 'react-native-svg'],
+    //
+    // `react-native-reanimated` and `react-native-gesture-handler` are
+    // pre-bundled here so esbuild resolves their cross-CJS/ESM interop during
+    // dev mode. For the production build the `oxc` override above handles
+    // the JSX in reanimated's `lib/module/` files directly via rolldown.
+    include: ['react-simple-maps', 'prop-types', 'd3-geo', 'topojson-client', 'react-native-svg', 'react-native-reanimated', 'react-native-gesture-handler'],
     exclude: [
       '@react-native-async-storage/async-storage',
       'react-native-safe-area-context',

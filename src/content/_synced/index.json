@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-18T04:12:33.300Z",
+  "generatedAt": "2026-06-24T23:08:05.918Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -28,51 +28,51 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/Admonition.Admonition",
+              "slug": "api/functions/Admonition",
               "title": "Admonition()",
-              "file": "bloom/0.5.0/api/functions/Admonition.Admonition.md",
+              "file": "bloom/0.5.0/api/functions/Admonition.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Admonition.Button",
-              "title": "Button()",
-              "file": "bloom/0.5.0/api/functions/Admonition.Button.md",
+              "slug": "api/functions/AdmonitionButton",
+              "title": "AdmonitionButton()",
+              "file": "bloom/0.5.0/api/functions/AdmonitionButton.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Admonition.Content",
-              "title": "Content()",
-              "file": "bloom/0.5.0/api/functions/Admonition.Content.md",
+              "slug": "api/functions/AdmonitionContent",
+              "title": "AdmonitionContent()",
+              "file": "bloom/0.5.0/api/functions/AdmonitionContent.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Admonition.Icon",
-              "title": "Icon()",
-              "file": "bloom/0.5.0/api/functions/Admonition.Icon.md",
+              "slug": "api/functions/AdmonitionIcon",
+              "title": "AdmonitionIcon()",
+              "file": "bloom/0.5.0/api/functions/AdmonitionIcon.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Admonition.Outer",
-              "title": "Outer()",
-              "file": "bloom/0.5.0/api/functions/Admonition.Outer.md",
+              "slug": "api/functions/AdmonitionRoot",
+              "title": "AdmonitionRoot()",
+              "file": "bloom/0.5.0/api/functions/AdmonitionRoot.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Admonition.Row",
-              "title": "Row()",
-              "file": "bloom/0.5.0/api/functions/Admonition.Row.md",
+              "slug": "api/functions/AdmonitionRow",
+              "title": "AdmonitionRow()",
+              "file": "bloom/0.5.0/api/functions/AdmonitionRow.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Admonition.Text",
-              "title": "Text()",
-              "file": "bloom/0.5.0/api/functions/Admonition.Text.md",
+              "slug": "api/functions/AdmonitionText",
+              "title": "AdmonitionText()",
+              "file": "bloom/0.5.0/api/functions/AdmonitionText.md",
               "order": 10000,
               "section": "api"
             },
@@ -133,13 +133,6 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/CenteredDialog",
-              "title": "CenteredDialog()",
-              "file": "bloom/0.5.0/api/functions/CenteredDialog.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/functions/confirm",
               "title": "confirm()",
               "file": "bloom/0.5.0/api/functions/confirm.md",
@@ -147,58 +140,58 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/ContextMenu.Divider",
-              "title": "Divider()",
-              "file": "bloom/0.5.0/api/functions/ContextMenu.Divider.md",
+              "slug": "api/functions/ContextMenu",
+              "title": "ContextMenu()",
+              "file": "bloom/0.5.0/api/functions/ContextMenu.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/ContextMenu.Group",
-              "title": "Group()",
-              "file": "bloom/0.5.0/api/functions/ContextMenu.Group.md",
+              "slug": "api/functions/ContextMenuContent",
+              "title": "ContextMenuContent()",
+              "file": "bloom/0.5.0/api/functions/ContextMenuContent.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/ContextMenu.Item",
-              "title": "Item()",
-              "file": "bloom/0.5.0/api/functions/ContextMenu.Item.md",
+              "slug": "api/functions/ContextMenuDivider",
+              "title": "ContextMenuDivider()",
+              "file": "bloom/0.5.0/api/functions/ContextMenuDivider.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/ContextMenu.ItemIcon",
-              "title": "ItemIcon()",
-              "file": "bloom/0.5.0/api/functions/ContextMenu.ItemIcon.md",
+              "slug": "api/functions/ContextMenuGroup",
+              "title": "ContextMenuGroup()",
+              "file": "bloom/0.5.0/api/functions/ContextMenuGroup.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/ContextMenu.ItemText",
-              "title": "ItemText()",
-              "file": "bloom/0.5.0/api/functions/ContextMenu.ItemText.md",
+              "slug": "api/functions/ContextMenuItem",
+              "title": "ContextMenuItem()",
+              "file": "bloom/0.5.0/api/functions/ContextMenuItem.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/ContextMenu.Outer",
-              "title": "Outer()",
-              "file": "bloom/0.5.0/api/functions/ContextMenu.Outer.md",
+              "slug": "api/functions/ContextMenuItemIcon",
+              "title": "ContextMenuItemIcon()",
+              "file": "bloom/0.5.0/api/functions/ContextMenuItemIcon.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/ContextMenu.Root",
-              "title": "Root()",
-              "file": "bloom/0.5.0/api/functions/ContextMenu.Root.md",
+              "slug": "api/functions/ContextMenuItemText",
+              "title": "ContextMenuItemText()",
+              "file": "bloom/0.5.0/api/functions/ContextMenuItemText.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/ContextMenu.Trigger",
-              "title": "Trigger()",
-              "file": "bloom/0.5.0/api/functions/ContextMenu.Trigger.md",
+              "slug": "api/functions/ContextMenuTrigger",
+              "title": "ContextMenuTrigger()",
+              "file": "bloom/0.5.0/api/functions/ContextMenuTrigger.md",
               "order": 10000,
               "section": "api"
             },
@@ -266,65 +259,58 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/Menu.Divider",
-              "title": "Divider()",
-              "file": "bloom/0.5.0/api/functions/Menu.Divider.md",
+              "slug": "api/functions/Menu",
+              "title": "Menu()",
+              "file": "bloom/0.5.0/api/functions/Menu.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Menu.Group",
-              "title": "Group()",
-              "file": "bloom/0.5.0/api/functions/Menu.Group.md",
+              "slug": "api/functions/MenuContent",
+              "title": "MenuContent()",
+              "file": "bloom/0.5.0/api/functions/MenuContent.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Menu.Item",
-              "title": "Item()",
-              "file": "bloom/0.5.0/api/functions/Menu.Item.md",
+              "slug": "api/functions/MenuDivider",
+              "title": "MenuDivider()",
+              "file": "bloom/0.5.0/api/functions/MenuDivider.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Menu.ItemIcon",
-              "title": "ItemIcon()",
-              "file": "bloom/0.5.0/api/functions/Menu.ItemIcon.md",
+              "slug": "api/functions/MenuGroup",
+              "title": "MenuGroup()",
+              "file": "bloom/0.5.0/api/functions/MenuGroup.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Menu.ItemText",
-              "title": "ItemText()",
-              "file": "bloom/0.5.0/api/functions/Menu.ItemText.md",
+              "slug": "api/functions/MenuItem",
+              "title": "MenuItem()",
+              "file": "bloom/0.5.0/api/functions/MenuItem.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Menu.Outer",
-              "title": "Outer()",
-              "file": "bloom/0.5.0/api/functions/Menu.Outer.md",
+              "slug": "api/functions/MenuItemIcon",
+              "title": "MenuItemIcon()",
+              "file": "bloom/0.5.0/api/functions/MenuItemIcon.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Menu.Root",
-              "title": "Root()",
-              "file": "bloom/0.5.0/api/functions/Menu.Root.md",
+              "slug": "api/functions/MenuItemText",
+              "title": "MenuItemText()",
+              "file": "bloom/0.5.0/api/functions/MenuItemText.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Menu.Trigger",
-              "title": "Trigger()",
-              "file": "bloom/0.5.0/api/functions/Menu.Trigger.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/Menu.useMenuContext",
-              "title": "useMenuContext()",
-              "file": "bloom/0.5.0/api/functions/Menu.useMenuContext.md",
+              "slug": "api/functions/MenuTrigger",
+              "title": "MenuTrigger()",
+              "file": "bloom/0.5.0/api/functions/MenuTrigger.md",
               "order": 10000,
               "section": "api"
             },
@@ -343,100 +329,79 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/Popover.Content",
-              "title": "Content()",
-              "file": "bloom/0.5.0/api/functions/Popover.Content.md",
+              "slug": "api/functions/Popover",
+              "title": "Popover()",
+              "file": "bloom/0.5.0/api/functions/Popover.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Popover.Root",
-              "title": "Root()",
-              "file": "bloom/0.5.0/api/functions/Popover.Root.md",
+              "slug": "api/functions/PopoverContent",
+              "title": "PopoverContent()",
+              "file": "bloom/0.5.0/api/functions/PopoverContent.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Popover.Trigger",
-              "title": "Trigger()",
-              "file": "bloom/0.5.0/api/functions/Popover.Trigger.md",
+              "slug": "api/functions/PopoverTrigger",
+              "title": "PopoverTrigger()",
+              "file": "bloom/0.5.0/api/functions/PopoverTrigger.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Popover.usePopoverContext",
-              "title": "usePopoverContext()",
-              "file": "bloom/0.5.0/api/functions/Popover.usePopoverContext.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/PromptInput.PromptInput",
+              "slug": "api/functions/PromptInput",
               "title": "PromptInput()",
-              "file": "bloom/0.5.0/api/functions/PromptInput.PromptInput.md",
+              "file": "bloom/0.5.0/api/functions/PromptInput.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/PromptInput.PromptInputActions",
+              "slug": "api/functions/PromptInputActions",
               "title": "PromptInputActions()",
-              "file": "bloom/0.5.0/api/functions/PromptInput.PromptInputActions.md",
+              "file": "bloom/0.5.0/api/functions/PromptInputActions.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/PromptInput.PromptInputAttachments",
+              "slug": "api/functions/PromptInputAttachments",
               "title": "PromptInputAttachments()",
-              "file": "bloom/0.5.0/api/functions/PromptInput.PromptInputAttachments.md",
+              "file": "bloom/0.5.0/api/functions/PromptInputAttachments.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/PromptInput.PromptInputSubmitButton",
+              "slug": "api/functions/PromptInputSubmitButton",
               "title": "PromptInputSubmitButton()",
-              "file": "bloom/0.5.0/api/functions/PromptInput.PromptInputSubmitButton.md",
+              "file": "bloom/0.5.0/api/functions/PromptInputSubmitButton.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/PromptInput.PromptInputTextarea",
+              "slug": "api/functions/PromptInputTextarea",
               "title": "PromptInputTextarea()",
-              "file": "bloom/0.5.0/api/functions/PromptInput.PromptInputTextarea.md",
+              "file": "bloom/0.5.0/api/functions/PromptInputTextarea.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/PromptInput.useIsFullscreen",
-              "title": "useIsFullscreen()",
-              "file": "bloom/0.5.0/api/functions/PromptInput.useIsFullscreen.md",
+              "slug": "api/functions/SegmentedControl",
+              "title": "SegmentedControl()",
+              "file": "bloom/0.5.0/api/functions/SegmentedControl.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/PromptInput.usePromptInput",
-              "title": "usePromptInput()",
-              "file": "bloom/0.5.0/api/functions/PromptInput.usePromptInput.md",
+              "slug": "api/functions/SegmentedControlItem",
+              "title": "SegmentedControlItem()",
+              "file": "bloom/0.5.0/api/functions/SegmentedControlItem.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/SegmentedControl.Item",
-              "title": "Item()",
-              "file": "bloom/0.5.0/api/functions/SegmentedControl.Item.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/SegmentedControl.ItemText",
-              "title": "ItemText()",
-              "file": "bloom/0.5.0/api/functions/SegmentedControl.ItemText.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/SegmentedControl.Root",
-              "title": "Root()",
-              "file": "bloom/0.5.0/api/functions/SegmentedControl.Root.md",
+              "slug": "api/functions/SegmentedControlItemText",
+              "title": "SegmentedControlItemText()",
+              "file": "bloom/0.5.0/api/functions/SegmentedControlItemText.md",
               "order": 10000,
               "section": "api"
             },
@@ -448,72 +413,65 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/Select.Content",
-              "title": "Content()",
-              "file": "bloom/0.5.0/api/functions/Select.Content.mdx",
+              "slug": "api/functions/Select-1",
+              "title": "Select()",
+              "file": "bloom/0.5.0/api/functions/Select-1.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Select.Icon",
-              "title": "Icon()",
-              "file": "bloom/0.5.0/api/functions/Select.Icon.mdx",
+              "slug": "api/functions/SelectContent",
+              "title": "SelectContent()",
+              "file": "bloom/0.5.0/api/functions/SelectContent.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Select.Item",
-              "title": "Item()",
-              "file": "bloom/0.5.0/api/functions/Select.Item.mdx",
+              "slug": "api/functions/SelectIcon",
+              "title": "SelectIcon()",
+              "file": "bloom/0.5.0/api/functions/SelectIcon.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Select.ItemIndicator",
-              "title": "ItemIndicator()",
-              "file": "bloom/0.5.0/api/functions/Select.ItemIndicator.mdx",
+              "slug": "api/functions/SelectItem",
+              "title": "SelectItem()",
+              "file": "bloom/0.5.0/api/functions/SelectItem.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Select.ItemText",
-              "title": "ItemText()",
-              "file": "bloom/0.5.0/api/functions/Select.ItemText.mdx",
+              "slug": "api/functions/SelectItemIndicator",
+              "title": "SelectItemIndicator()",
+              "file": "bloom/0.5.0/api/functions/SelectItemIndicator.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Select.Root",
-              "title": "Root()",
-              "file": "bloom/0.5.0/api/functions/Select.Root.mdx",
+              "slug": "api/functions/SelectItemText",
+              "title": "SelectItemText()",
+              "file": "bloom/0.5.0/api/functions/SelectItemText.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Select.Separator",
-              "title": "Separator()",
-              "file": "bloom/0.5.0/api/functions/Select.Separator.mdx",
+              "slug": "api/functions/SelectSeparator",
+              "title": "SelectSeparator()",
+              "file": "bloom/0.5.0/api/functions/SelectSeparator.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Select.Trigger",
-              "title": "Trigger()",
-              "file": "bloom/0.5.0/api/functions/Select.Trigger.mdx",
+              "slug": "api/functions/SelectTrigger",
+              "title": "SelectTrigger()",
+              "file": "bloom/0.5.0/api/functions/SelectTrigger.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Select.useItemContext",
-              "title": "useItemContext()",
-              "file": "bloom/0.5.0/api/functions/Select.useItemContext.mdx",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/Select.ValueText",
-              "title": "ValueText()",
-              "file": "bloom/0.5.0/api/functions/Select.ValueText.mdx",
+              "slug": "api/functions/SelectValue",
+              "title": "SelectValue()",
+              "file": "bloom/0.5.0/api/functions/SelectValue.md",
               "order": 10000,
               "section": "api"
             },
@@ -567,79 +525,72 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/TextField.GhostText",
-              "title": "GhostText()",
-              "file": "bloom/0.5.0/api/functions/TextField.GhostText.mdx",
+              "slug": "api/functions/TextField",
+              "title": "TextField()",
+              "file": "bloom/0.5.0/api/functions/TextField.mdx",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/TextField.Icon",
-              "title": "Icon()",
-              "file": "bloom/0.5.0/api/functions/TextField.Icon.mdx",
+              "slug": "api/functions/TextFieldGhost",
+              "title": "TextFieldGhost()",
+              "file": "bloom/0.5.0/api/functions/TextFieldGhost.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/TextField.Input",
-              "title": "Input()",
-              "file": "bloom/0.5.0/api/functions/TextField.Input.mdx",
+              "slug": "api/functions/TextFieldIcon",
+              "title": "TextFieldIcon()",
+              "file": "bloom/0.5.0/api/functions/TextFieldIcon.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/TextField.LabelText",
-              "title": "LabelText()",
-              "file": "bloom/0.5.0/api/functions/TextField.LabelText.mdx",
+              "slug": "api/functions/TextFieldInput",
+              "title": "TextFieldInput()",
+              "file": "bloom/0.5.0/api/functions/TextFieldInput.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/TextField.Root",
-              "title": "Root()",
-              "file": "bloom/0.5.0/api/functions/TextField.Root.mdx",
+              "slug": "api/functions/TextFieldLabel",
+              "title": "TextFieldLabel()",
+              "file": "bloom/0.5.0/api/functions/TextFieldLabel.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/TextField.SuffixText",
-              "title": "SuffixText()",
-              "file": "bloom/0.5.0/api/functions/TextField.SuffixText.mdx",
+              "slug": "api/functions/TextFieldSuffix",
+              "title": "TextFieldSuffix()",
+              "file": "bloom/0.5.0/api/functions/TextFieldSuffix.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/TextField.useSharedInputStyles",
-              "title": "useSharedInputStyles()",
-              "file": "bloom/0.5.0/api/functions/TextField.useSharedInputStyles.mdx",
+              "slug": "api/functions/Tooltip",
+              "title": "Tooltip()",
+              "file": "bloom/0.5.0/api/functions/Tooltip.mdx",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Tooltip.Content",
-              "title": "Content()",
-              "file": "bloom/0.5.0/api/functions/Tooltip.Content.mdx",
+              "slug": "api/functions/TooltipContent",
+              "title": "TooltipContent()",
+              "file": "bloom/0.5.0/api/functions/TooltipContent.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Tooltip.Outer",
-              "title": "Outer()",
-              "file": "bloom/0.5.0/api/functions/Tooltip.Outer.mdx",
+              "slug": "api/functions/TooltipSheetCompatProvider",
+              "title": "TooltipSheetCompatProvider()",
+              "file": "bloom/0.5.0/api/functions/TooltipSheetCompatProvider.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/Tooltip.SheetCompatProvider",
-              "title": "SheetCompatProvider()",
-              "file": "bloom/0.5.0/api/functions/Tooltip.SheetCompatProvider.mdx",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/Tooltip.Target",
-              "title": "Target()",
-              "file": "bloom/0.5.0/api/functions/Tooltip.Target.mdx",
+              "slug": "api/functions/TooltipTrigger",
+              "title": "TooltipTrigger()",
+              "file": "bloom/0.5.0/api/functions/TooltipTrigger.md",
               "order": 10000,
               "section": "api"
             },
@@ -700,6 +651,55 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/useIsFullscreen",
+              "title": "useIsFullscreen()",
+              "file": "bloom/0.5.0/api/functions/useIsFullscreen.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useMenuContext",
+              "title": "useMenuContext()",
+              "file": "bloom/0.5.0/api/functions/useMenuContext.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useNavigationTheme",
+              "title": "useNavigationTheme()",
+              "file": "bloom/0.5.0/api/functions/useNavigationTheme.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/usePopoverContext",
+              "title": "usePopoverContext()",
+              "file": "bloom/0.5.0/api/functions/usePopoverContext.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/usePromptInput",
+              "title": "usePromptInput()",
+              "file": "bloom/0.5.0/api/functions/usePromptInput.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useSelectItemContext",
+              "title": "useSelectItemContext()",
+              "file": "bloom/0.5.0/api/functions/useSelectItemContext.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useSharedInputStyles",
+              "title": "useSharedInputStyles()",
+              "file": "bloom/0.5.0/api/functions/useSharedInputStyles.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/useTheme",
               "title": "useTheme()",
               "file": "bloom/0.5.0/api/functions/useTheme.md",
@@ -728,30 +728,30 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/Accordion.AccordionContentProps",
+              "slug": "api/interfaces/AccordionContentProps",
               "title": "AccordionContentProps",
-              "file": "bloom/0.5.0/api/interfaces/Accordion.AccordionContentProps.mdx",
+              "file": "bloom/0.5.0/api/interfaces/AccordionContentProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/Accordion.AccordionItemProps",
+              "slug": "api/interfaces/AccordionItemProps",
               "title": "AccordionItemProps",
-              "file": "bloom/0.5.0/api/interfaces/Accordion.AccordionItemProps.mdx",
+              "file": "bloom/0.5.0/api/interfaces/AccordionItemProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/Accordion.AccordionProps",
+              "slug": "api/interfaces/AccordionProps",
               "title": "AccordionProps",
-              "file": "bloom/0.5.0/api/interfaces/Accordion.AccordionProps.mdx",
+              "file": "bloom/0.5.0/api/interfaces/AccordionProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/Accordion.AccordionTriggerProps",
+              "slug": "api/interfaces/AccordionTriggerProps",
               "title": "AccordionTriggerProps",
-              "file": "bloom/0.5.0/api/interfaces/Accordion.AccordionTriggerProps.mdx",
+              "file": "bloom/0.5.0/api/interfaces/AccordionTriggerProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -773,6 +773,27 @@
               "slug": "api/interfaces/AppColorPreset",
               "title": "AppColorPreset",
               "file": "bloom/0.5.0/api/interfaces/AppColorPreset.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/Attachment",
+              "title": "Attachment",
+              "file": "bloom/0.5.0/api/interfaces/Attachment.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AvatarGroupItem",
+              "title": "AvatarGroupItem",
+              "file": "bloom/0.5.0/api/interfaces/AvatarGroupItem.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AvatarGroupProps",
+              "title": "AvatarGroupProps",
+              "file": "bloom/0.5.0/api/interfaces/AvatarGroupProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -980,6 +1001,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/FabProps",
+              "title": "FabProps",
+              "file": "bloom/0.5.0/api/interfaces/FabProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/FieldProps",
               "title": "FieldProps",
               "file": "bloom/0.5.0/api/interfaces/FieldProps.md",
@@ -1050,6 +1078,20 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/NavigationTheme",
+              "title": "NavigationTheme",
+              "file": "bloom/0.5.0/api/interfaces/NavigationTheme.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/NavigationThemeFont",
+              "title": "NavigationThemeFont",
+              "file": "bloom/0.5.0/api/interfaces/NavigationThemeFont.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/PersistedThemeState",
               "title": "PersistedThemeState",
               "file": "bloom/0.5.0/api/interfaces/PersistedThemeState.md",
@@ -1057,79 +1099,72 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/Popover.PopoverContentProps",
+              "slug": "api/interfaces/PopoverContentProps",
               "title": "PopoverContentProps",
-              "file": "bloom/0.5.0/api/interfaces/Popover.PopoverContentProps.md",
+              "file": "bloom/0.5.0/api/interfaces/PopoverContentProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/Popover.PopoverRootProps",
-              "title": "PopoverRootProps",
-              "file": "bloom/0.5.0/api/interfaces/Popover.PopoverRootProps.md",
+              "slug": "api/interfaces/PopoverProps",
+              "title": "PopoverProps",
+              "file": "bloom/0.5.0/api/interfaces/PopoverProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/Popover.PopoverTriggerProps",
+              "slug": "api/interfaces/PopoverTriggerProps",
               "title": "PopoverTriggerProps",
-              "file": "bloom/0.5.0/api/interfaces/Popover.PopoverTriggerProps.md",
+              "file": "bloom/0.5.0/api/interfaces/PopoverTriggerProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/Popover.PopoverTriggerRenderProps",
+              "slug": "api/interfaces/PopoverTriggerRenderProps",
               "title": "PopoverTriggerRenderProps",
-              "file": "bloom/0.5.0/api/interfaces/Popover.PopoverTriggerRenderProps.md",
+              "file": "bloom/0.5.0/api/interfaces/PopoverTriggerRenderProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/Popover.PopoverTriggerState",
+              "slug": "api/interfaces/PopoverTriggerState",
               "title": "PopoverTriggerState",
-              "file": "bloom/0.5.0/api/interfaces/Popover.PopoverTriggerState.md",
+              "file": "bloom/0.5.0/api/interfaces/PopoverTriggerState.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/PromptInput.Attachment",
-              "title": "Attachment",
-              "file": "bloom/0.5.0/api/interfaces/PromptInput.Attachment.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/PromptInput.PromptInputActionsProps",
+              "slug": "api/interfaces/PromptInputActionsProps",
               "title": "PromptInputActionsProps",
-              "file": "bloom/0.5.0/api/interfaces/PromptInput.PromptInputActionsProps.md",
+              "file": "bloom/0.5.0/api/interfaces/PromptInputActionsProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/PromptInput.PromptInputAttachmentsProps",
+              "slug": "api/interfaces/PromptInputAttachmentsProps",
               "title": "PromptInputAttachmentsProps",
-              "file": "bloom/0.5.0/api/interfaces/PromptInput.PromptInputAttachmentsProps.md",
+              "file": "bloom/0.5.0/api/interfaces/PromptInputAttachmentsProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/PromptInput.PromptInputProps",
+              "slug": "api/interfaces/PromptInputProps",
               "title": "PromptInputProps",
-              "file": "bloom/0.5.0/api/interfaces/PromptInput.PromptInputProps.md",
+              "file": "bloom/0.5.0/api/interfaces/PromptInputProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/PromptInput.PromptInputSubmitButtonProps",
+              "slug": "api/interfaces/PromptInputSubmitButtonProps",
               "title": "PromptInputSubmitButtonProps",
-              "file": "bloom/0.5.0/api/interfaces/PromptInput.PromptInputSubmitButtonProps.md",
+              "file": "bloom/0.5.0/api/interfaces/PromptInputSubmitButtonProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/PromptInput.PromptInputTextareaProps",
+              "slug": "api/interfaces/PromptInputTextareaProps",
               "title": "PromptInputTextareaProps",
-              "file": "bloom/0.5.0/api/interfaces/PromptInput.PromptInputTextareaProps.md",
+              "file": "bloom/0.5.0/api/interfaces/PromptInputTextareaProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -1190,23 +1225,23 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/Tabs.TabPanelProps",
-              "title": "TabPanelProps",
-              "file": "bloom/0.5.0/api/interfaces/Tabs.TabPanelProps.mdx",
+              "slug": "api/interfaces/TabsContentProps",
+              "title": "TabsContentProps",
+              "file": "bloom/0.5.0/api/interfaces/TabsContentProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/Tabs.TabProps",
-              "title": "TabProps",
-              "file": "bloom/0.5.0/api/interfaces/Tabs.TabProps.mdx",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/Tabs.TabsProps",
+              "slug": "api/interfaces/TabsProps",
               "title": "TabsProps",
-              "file": "bloom/0.5.0/api/interfaces/Tabs.TabsProps.mdx",
+              "file": "bloom/0.5.0/api/interfaces/TabsProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/TabsTriggerProps",
+              "title": "TabsTriggerProps",
+              "file": "bloom/0.5.0/api/interfaces/TabsTriggerProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -1232,16 +1267,16 @@
               "section": "api"
             },
             {
-              "slug": "api/modules/Accordion",
-              "title": "Accordion",
-              "file": "bloom/0.5.0/api/modules/Accordion.mdx",
+              "slug": "api/interfaces/UserHoverCardProps",
+              "title": "UserHoverCardProps",
+              "file": "bloom/0.5.0/api/interfaces/UserHoverCardProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/modules/Admonition",
-              "title": "Admonition",
-              "file": "bloom/0.5.0/api/modules/Admonition.md",
+              "slug": "api/interfaces/UserHoverCardStat",
+              "title": "UserHoverCardStat",
+              "file": "bloom/0.5.0/api/interfaces/UserHoverCardStat.md",
               "order": 10000,
               "section": "api"
             },
@@ -1249,13 +1284,6 @@
               "slug": "api/modules/Code",
               "title": "Code",
               "file": "bloom/0.5.0/api/modules/Code.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/modules/ContextMenu",
-              "title": "ContextMenu",
-              "file": "bloom/0.5.0/api/modules/ContextMenu.md",
               "order": 10000,
               "section": "api"
             },
@@ -1281,41 +1309,6 @@
               "section": "api"
             },
             {
-              "slug": "api/modules/Menu",
-              "title": "Menu",
-              "file": "bloom/0.5.0/api/modules/Menu.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/modules/Popover",
-              "title": "Popover",
-              "file": "bloom/0.5.0/api/modules/Popover.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/modules/PromptInput",
-              "title": "PromptInput",
-              "file": "bloom/0.5.0/api/modules/PromptInput.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/modules/SegmentedControl",
-              "title": "SegmentedControl",
-              "file": "bloom/0.5.0/api/modules/SegmentedControl.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/modules/Select",
-              "title": "Select",
-              "file": "bloom/0.5.0/api/modules/Select.mdx",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/modules/Skeleton",
               "title": "Skeleton",
               "file": "bloom/0.5.0/api/modules/Skeleton.mdx",
@@ -1330,30 +1323,9 @@
               "section": "api"
             },
             {
-              "slug": "api/modules/Tabs",
-              "title": "Tabs",
-              "file": "bloom/0.5.0/api/modules/Tabs.mdx",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/modules/TextField",
-              "title": "TextField",
-              "file": "bloom/0.5.0/api/modules/TextField.mdx",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/modules/tokens",
               "title": "tokens",
               "file": "bloom/0.5.0/api/modules/tokens.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/modules/Tooltip",
-              "title": "Tooltip",
-              "file": "bloom/0.5.0/api/modules/Tooltip.mdx",
               "order": 10000,
               "section": "api"
             },
@@ -1365,9 +1337,9 @@
               "section": "api"
             },
             {
-              "slug": "api/types/Accordion.AccordionType",
+              "slug": "api/types/AccordionType",
               "title": "AccordionType",
-              "file": "bloom/0.5.0/api/types/Accordion.AccordionType.mdx",
+              "file": "bloom/0.5.0/api/types/AccordionType.md",
               "order": 10000,
               "section": "api"
             },
@@ -1449,13 +1421,6 @@
               "section": "api"
             },
             {
-              "slug": "api/types/CenteredDialogProps",
-              "title": "CenteredDialogProps",
-              "file": "bloom/0.5.0/api/types/CenteredDialogProps.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/types/CheckboxSize",
               "title": "CheckboxSize",
               "file": "bloom/0.5.0/api/types/CheckboxSize.md",
@@ -1512,6 +1477,20 @@
               "section": "api"
             },
             {
+              "slug": "api/types/DialogInset",
+              "title": "DialogInset",
+              "file": "bloom/0.5.0/api/types/DialogInset.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/DialogPlacement",
+              "title": "DialogPlacement",
+              "file": "bloom/0.5.0/api/types/DialogPlacement.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/DialogProps",
               "title": "DialogProps",
               "file": "bloom/0.5.0/api/types/DialogProps.md",
@@ -1522,6 +1501,27 @@
               "slug": "api/types/ErrorBoundaryFallback",
               "title": "ErrorBoundaryFallback",
               "file": "bloom/0.5.0/api/types/ErrorBoundaryFallback.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/FabPlacement",
+              "title": "FabPlacement",
+              "file": "bloom/0.5.0/api/types/FabPlacement.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/FabSize",
+              "title": "FabSize",
+              "file": "bloom/0.5.0/api/types/FabSize.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/FabVariant",
+              "title": "FabVariant",
+              "file": "bloom/0.5.0/api/types/FabVariant.md",
               "order": 10000,
               "section": "api"
             },
@@ -1568,16 +1568,16 @@
               "section": "api"
             },
             {
-              "slug": "api/types/Popover.PopoverControlProps",
+              "slug": "api/types/PopoverControlProps",
               "title": "PopoverControlProps",
-              "file": "bloom/0.5.0/api/types/Popover.PopoverControlProps.md",
+              "file": "bloom/0.5.0/api/types/PopoverControlProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/types/Popover.PopoverPlacement",
+              "slug": "api/types/PopoverPlacement",
               "title": "PopoverPlacement",
-              "file": "bloom/0.5.0/api/types/Popover.PopoverPlacement.md",
+              "file": "bloom/0.5.0/api/types/PopoverPlacement.md",
               "order": 10000,
               "section": "api"
             },
@@ -1589,30 +1589,37 @@
               "section": "api"
             },
             {
-              "slug": "api/types/PromptInput.PromptInputContextType",
+              "slug": "api/types/PromptInputContextType",
               "title": "PromptInputContextType",
-              "file": "bloom/0.5.0/api/types/PromptInput.PromptInputContextType.md",
+              "file": "bloom/0.5.0/api/types/PromptInputContextType.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/types/Tabs.TabsVariant",
+              "slug": "api/types/ResponsiveDialogPlacement",
+              "title": "ResponsiveDialogPlacement",
+              "file": "bloom/0.5.0/api/types/ResponsiveDialogPlacement.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/TabsVariant",
               "title": "TabsVariant",
-              "file": "bloom/0.5.0/api/types/Tabs.TabsVariant.mdx",
+              "file": "bloom/0.5.0/api/types/TabsVariant.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/types/TextField.InputProps",
-              "title": "InputProps",
-              "file": "bloom/0.5.0/api/types/TextField.InputProps.mdx",
+              "slug": "api/types/TextFieldInputProps",
+              "title": "TextFieldInputProps",
+              "file": "bloom/0.5.0/api/types/TextFieldInputProps.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/types/TextField.RootProps",
-              "title": "RootProps",
-              "file": "bloom/0.5.0/api/types/TextField.RootProps.mdx",
+              "slug": "api/types/TextFieldProps",
+              "title": "TextFieldProps",
+              "file": "bloom/0.5.0/api/types/TextFieldProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -1652,30 +1659,30 @@
               "section": "api"
             },
             {
-              "slug": "api/variables/Accordion.Accordion",
+              "slug": "api/variables/Accordion",
               "title": "Accordion",
-              "file": "bloom/0.5.0/api/variables/Accordion.Accordion.mdx",
+              "file": "bloom/0.5.0/api/variables/Accordion.mdx",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/variables/Accordion.AccordionContent",
+              "slug": "api/variables/AccordionContent",
               "title": "AccordionContent",
-              "file": "bloom/0.5.0/api/variables/Accordion.AccordionContent.mdx",
+              "file": "bloom/0.5.0/api/variables/AccordionContent.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/variables/Accordion.AccordionItem",
+              "slug": "api/variables/AccordionItem",
               "title": "AccordionItem",
-              "file": "bloom/0.5.0/api/variables/Accordion.AccordionItem.mdx",
+              "file": "bloom/0.5.0/api/variables/AccordionItem.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/variables/Accordion.AccordionTrigger",
+              "slug": "api/variables/AccordionTrigger",
               "title": "AccordionTrigger",
-              "file": "bloom/0.5.0/api/variables/Accordion.AccordionTrigger.mdx",
+              "file": "bloom/0.5.0/api/variables/AccordionTrigger.md",
               "order": 10000,
               "section": "api"
             },
@@ -1718,6 +1725,13 @@
               "slug": "api/variables/Avatar",
               "title": "Avatar",
               "file": "bloom/0.5.0/api/variables/Avatar.mdx",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/AvatarGroup",
+              "title": "AvatarGroup",
+              "file": "bloom/0.5.0/api/variables/AvatarGroup.md",
               "order": 10000,
               "section": "api"
             },
@@ -1792,13 +1806,6 @@
               "section": "api"
             },
             {
-              "slug": "api/variables/CENTERED_DIALOG_BACKDROP_TESTID",
-              "title": "CENTERED\\_DIALOG\\_BACKDROP\\_TESTID",
-              "file": "bloom/0.5.0/api/variables/CENTERED_DIALOG_BACKDROP_TESTID.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/variables/Checkbox",
               "title": "Checkbox",
               "file": "bloom/0.5.0/api/variables/Checkbox.mdx",
@@ -1855,9 +1862,30 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/DestructiveButton",
+              "title": "DestructiveButton",
+              "file": "bloom/0.5.0/api/variables/DestructiveButton.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/DIALOG_SHEET_BACKDROP_TESTID",
+              "title": "DIALOG\\_SHEET\\_BACKDROP\\_TESTID",
+              "file": "bloom/0.5.0/api/variables/DIALOG_SHEET_BACKDROP_TESTID.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Divider",
               "title": "Divider",
               "file": "bloom/0.5.0/api/variables/Divider.mdx",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/Fab",
+              "title": "Fab",
+              "file": "bloom/0.5.0/api/variables/Fab.md",
               "order": 10000,
               "section": "api"
             },
@@ -3731,6 +3759,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/InverseButton",
+              "title": "InverseButton",
+              "file": "bloom/0.5.0/api/variables/InverseButton.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Item",
               "title": "Item",
               "file": "bloom/0.5.0/api/variables/Item.md",
@@ -3752,6 +3787,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/LinkButton",
+              "title": "LinkButton",
+              "file": "bloom/0.5.0/api/variables/LinkButton.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/Loading",
               "title": "Loading",
               "file": "bloom/0.5.0/api/variables/Loading.mdx",
@@ -3762,6 +3804,13 @@
               "slug": "api/variables/Outlet",
               "title": "Outlet",
               "file": "bloom/0.5.0/api/variables/Outlet.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/OutlineButton",
+              "title": "OutlineButton",
+              "file": "bloom/0.5.0/api/variables/OutlineButton.md",
               "order": 10000,
               "section": "api"
             },
@@ -3871,23 +3920,23 @@
               "section": "api"
             },
             {
-              "slug": "api/variables/Tabs.Tab",
-              "title": "Tab",
-              "file": "bloom/0.5.0/api/variables/Tabs.Tab.mdx",
+              "slug": "api/variables/Tabs",
+              "title": "Tabs",
+              "file": "bloom/0.5.0/api/variables/Tabs.mdx",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/variables/Tabs.TabPanel",
-              "title": "TabPanel",
-              "file": "bloom/0.5.0/api/variables/Tabs.TabPanel.mdx",
+              "slug": "api/variables/TabsContent",
+              "title": "TabsContent",
+              "file": "bloom/0.5.0/api/variables/TabsContent.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/variables/Tabs.TabsBar",
-              "title": "TabsBar",
-              "file": "bloom/0.5.0/api/variables/Tabs.TabsBar.mdx",
+              "slug": "api/variables/TabsTrigger",
+              "title": "TabsTrigger",
+              "file": "bloom/0.5.0/api/variables/TabsTrigger.md",
               "order": 10000,
               "section": "api"
             },
@@ -3948,9 +3997,9 @@
               "section": "api"
             },
             {
-              "slug": "api/variables/Tooltip.TextBubble",
-              "title": "TextBubble",
-              "file": "bloom/0.5.0/api/variables/Tooltip.TextBubble.mdx",
+              "slug": "api/variables/TooltipTextBubble",
+              "title": "TooltipTextBubble",
+              "file": "bloom/0.5.0/api/variables/TooltipTextBubble.md",
               "order": 10000,
               "section": "api"
             },
@@ -4007,6 +4056,13 @@
               "slug": "api/variables/Typography.Text",
               "title": "Text",
               "file": "bloom/0.5.0/api/variables/Typography.Text.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/UserHoverCard",
+              "title": "UserHoverCard",
+              "file": "bloom/0.5.0/api/variables/UserHoverCard.md",
               "order": 10000,
               "section": "api"
             },
@@ -4574,6 +4630,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/getCanonicalUserHandle",
+              "title": "getCanonicalUserHandle()",
+              "file": "core/main/api/functions/getCanonicalUserHandle.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/getContrastTextColor",
               "title": "getContrastTextColor()",
               "file": "core/main/api/functions/getContrastTextColor.md",
@@ -4612,6 +4675,20 @@
               "slug": "api/functions/getNativeLanguageName",
               "title": "getNativeLanguageName()",
               "file": "core/main/api/functions/getNativeLanguageName.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/getNormalizedUserHandle",
+              "title": "getNormalizedUserHandle()",
+              "file": "core/main/api/functions/getNormalizedUserHandle.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/getNormalizedUserId",
+              "title": "getNormalizedUserId()",
+              "file": "core/main/api/functions/getNormalizedUserId.md",
               "order": 10000,
               "section": "api"
             },
@@ -4976,6 +5053,20 @@
               "slug": "api/functions/normalizeTheme",
               "title": "normalizeTheme()",
               "file": "core/main/api/functions/normalizeTheme.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/normalizeUserIdentity",
+              "title": "normalizeUserIdentity()",
+              "file": "core/main/api/functions/normalizeUserIdentity.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/normalizeUserIdentityOrNull",
+              "title": "normalizeUserIdentityOrNull()",
+              "file": "core/main/api/functions/normalizeUserIdentityOrNull.md",
               "order": 10000,
               "section": "api"
             },
@@ -5414,6 +5505,34 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/BulkFollowEntry",
+              "title": "BulkFollowEntry",
+              "file": "core/main/api/interfaces/BulkFollowEntry.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/BulkFollowResult",
+              "title": "BulkFollowResult",
+              "file": "core/main/api/interfaces/BulkFollowResult.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/BulkUnfollowEntry",
+              "title": "BulkUnfollowEntry",
+              "file": "core/main/api/interfaces/BulkUnfollowEntry.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/BulkUnfollowResult",
+              "title": "BulkUnfollowResult",
+              "file": "core/main/api/interfaces/BulkUnfollowResult.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/CircuitBreakerConfig",
               "title": "CircuitBreakerConfig",
               "file": "core/main/api/interfaces/CircuitBreakerConfig.md",
@@ -5655,6 +5774,13 @@
               "slug": "api/interfaces/LanguageMetadata",
               "title": "LanguageMetadata",
               "file": "core/main/api/interfaces/LanguageMetadata.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/LinkedHttpClient",
+              "title": "LinkedHttpClient",
+              "file": "core/main/api/interfaces/LinkedHttpClient.md",
               "order": 10000,
               "section": "api"
             },
@@ -6142,6 +6268,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/UserHandleInput",
+              "title": "UserHandleInput",
+              "file": "core/main/api/interfaces/UserHandleInput.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/UserPreferences",
               "title": "UserPreferences",
               "file": "core/main/api/interfaces/UserPreferences.md",
@@ -6264,6 +6397,13 @@
               "slug": "api/types/AuthStateChangeCallback",
               "title": "AuthStateChangeCallback",
               "file": "core/main/api/types/AuthStateChangeCallback.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/CanonicalUserHandleInput",
+              "title": "CanonicalUserHandleInput",
+              "file": "core/main/api/types/CanonicalUserHandleInput.md",
               "order": 10000,
               "section": "api"
             },
@@ -7823,6 +7963,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/MultiFollowButtonProps",
+              "title": "MultiFollowButtonProps",
+              "file": "services/main/api/interfaces/MultiFollowButtonProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/MutationStatus",
               "title": "MutationStatus",
               "file": "services/main/api/interfaces/MutationStatus.md",
@@ -7847,6 +7994,13 @@
               "slug": "api/interfaces/ProfileMutationConfig",
               "title": "ProfileMutationConfig\\<TData, TVariables\\>",
               "file": "services/main/api/interfaces/ProfileMutationConfig.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/SingleFollowButtonProps",
+              "title": "SingleFollowButtonProps",
+              "file": "services/main/api/interfaces/SingleFollowButtonProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -7910,6 +8064,13 @@
               "slug": "api/types/DeviceAccountUser",
               "title": "DeviceAccountUser",
               "file": "services/main/api/types/DeviceAccountUser.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/FollowButtonProps",
+              "title": "FollowButtonProps",
+              "file": "services/main/api/types/FollowButtonProps.md",
               "order": 10000,
               "section": "api"
             },
