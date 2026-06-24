@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import * as Tabs from '@oxyhq/bloom/tabs'
+import { Tabs, TabsTrigger, TabsContent } from '@oxyhq/bloom/tabs'
 import type { PlaygroundValues } from './_playground'
 
 type TabsVariant = 'underline' | 'filled' | 'outlined'
@@ -12,16 +12,16 @@ export default function TabsDemo() {
   const [tab, setTab] = useState('overview')
   return (
     <div className="flex w-full max-w-md flex-col gap-3">
-      <Tabs.TabsBar value={tab} onValueChange={setTab} variant="underline">
-        <Tabs.Tab value="overview" label="Overview" />
-        <Tabs.Tab value="activity" label="Activity" />
-        <Tabs.Tab value="settings" label="Settings" />
-      </Tabs.TabsBar>
-      <Tabs.TabPanel value={tab}>
+      <Tabs value={tab} onValueChange={setTab} variant="underline">
+        <TabsTrigger value="overview" label="Overview" />
+        <TabsTrigger value="activity" label="Activity" />
+        <TabsTrigger value="settings" label="Settings" />
+      </Tabs>
+      <TabsContent value={tab}>
         <div className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
           You are viewing the {tab} panel.
         </div>
-      </Tabs.TabPanel>
+      </TabsContent>
     </div>
   )
 }
@@ -37,11 +37,11 @@ export function Playground({ values }: { values: PlaygroundValues }) {
   }
   return (
     <div style={{ width: 360 }}>
-      <Tabs.TabsBar value={tab} onValueChange={setTab} variant={variant}>
-        <Tabs.Tab value="overview" label="Overview" />
-        <Tabs.Tab value="activity" label="Activity" />
-        <Tabs.Tab value="settings" label="Settings" />
-      </Tabs.TabsBar>
+      <Tabs value={tab} onValueChange={setTab} variant={variant}>
+        <TabsTrigger value="overview" label="Overview" />
+        <TabsTrigger value="activity" label="Activity" />
+        <TabsTrigger value="settings" label="Settings" />
+      </Tabs>
     </div>
   )
 }

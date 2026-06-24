@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import * as Accordion from '@oxyhq/bloom/accordion'
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@oxyhq/bloom/accordion'
 import type { PlaygroundValues } from './_playground'
 
 type AccordionType = 'single' | 'multiple'
@@ -12,26 +12,26 @@ export default function AccordionDemo() {
   const [open, setOpen] = useState<string | string[] | undefined>('first')
   return (
     <div className="w-full max-w-md">
-      <Accordion.Accordion type="single" value={open} onValueChange={setOpen}>
-        <Accordion.AccordionItem value="first">
-          <Accordion.AccordionTrigger>What is Bloom?</Accordion.AccordionTrigger>
-          <Accordion.AccordionContent>
+      <Accordion type="single" value={open} onValueChange={setOpen}>
+        <AccordionItem value="first">
+          <AccordionTrigger>What is Bloom?</AccordionTrigger>
+          <AccordionContent>
             <p>Bloom is the shared UI component library across the Oxy ecosystem.</p>
-          </Accordion.AccordionContent>
-        </Accordion.AccordionItem>
-        <Accordion.AccordionItem value="second">
-          <Accordion.AccordionTrigger>Does it work on the web?</Accordion.AccordionTrigger>
-          <Accordion.AccordionContent>
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="second">
+          <AccordionTrigger>Does it work on the web?</AccordionTrigger>
+          <AccordionContent>
             <p>Yes — every component has a web-forked implementation tuned for React DOM.</p>
-          </Accordion.AccordionContent>
-        </Accordion.AccordionItem>
-        <Accordion.AccordionItem value="third">
-          <Accordion.AccordionTrigger>Can I theme it?</Accordion.AccordionTrigger>
-          <Accordion.AccordionContent>
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="third">
+          <AccordionTrigger>Can I theme it?</AccordionTrigger>
+          <AccordionContent>
             <p>Wrap your app in BloomThemeProvider with a colorPreset and Bloom does the rest.</p>
-          </Accordion.AccordionContent>
-        </Accordion.AccordionItem>
-      </Accordion.Accordion>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   )
 }
@@ -52,20 +52,20 @@ export function Playground({ values }: { values: PlaygroundValues }) {
   }
   return (
     <div style={{ width: 360 }}>
-      <Accordion.Accordion type={type} value={open} onValueChange={setOpen}>
-        <Accordion.AccordionItem value="first">
-          <Accordion.AccordionTrigger>{firstLabel}</Accordion.AccordionTrigger>
-          <Accordion.AccordionContent>
+      <Accordion type={type} value={open} onValueChange={setOpen}>
+        <AccordionItem value="first">
+          <AccordionTrigger>{firstLabel}</AccordionTrigger>
+          <AccordionContent>
             <p>{firstBody}</p>
-          </Accordion.AccordionContent>
-        </Accordion.AccordionItem>
-        <Accordion.AccordionItem value="second">
-          <Accordion.AccordionTrigger>{secondLabel}</Accordion.AccordionTrigger>
-          <Accordion.AccordionContent>
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="second">
+          <AccordionTrigger>{secondLabel}</AccordionTrigger>
+          <AccordionContent>
             <p>{secondBody}</p>
-          </Accordion.AccordionContent>
-        </Accordion.AccordionItem>
-      </Accordion.Accordion>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   )
 }

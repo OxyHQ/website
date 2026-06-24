@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import * as Tooltip from '@oxyhq/bloom/tooltip'
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipTextBubble } from '@oxyhq/bloom/tooltip'
 import { PrimaryButton } from '@oxyhq/bloom/button'
 import type { PlaygroundValues } from './_playground'
 
@@ -11,8 +11,8 @@ export default function TooltipDemo() {
   const [visible, setVisible] = useState(false)
   return (
     <div className="flex items-center justify-center p-6">
-      <Tooltip.Outer visible={visible} onVisibleChange={setVisible} position="top">
-        <Tooltip.Target>
+      <Tooltip visible={visible} onVisibleChange={setVisible} position="top">
+        <TooltipTrigger>
           <span
             onMouseEnter={() => setVisible(true)}
             onMouseLeave={() => setVisible(false)}
@@ -21,11 +21,11 @@ export default function TooltipDemo() {
           >
             <PrimaryButton onPress={() => setVisible((v) => !v)}>Hover me</PrimaryButton>
           </span>
-        </Tooltip.Target>
-        <Tooltip.Content label="Helpful tooltip">
-          <Tooltip.TextBubble>Helpful tooltip</Tooltip.TextBubble>
-        </Tooltip.Content>
-      </Tooltip.Outer>
+        </TooltipTrigger>
+        <TooltipContent label="Helpful tooltip">
+          <TooltipTextBubble>Helpful tooltip</TooltipTextBubble>
+        </TooltipContent>
+      </Tooltip>
     </div>
   )
 }
@@ -41,8 +41,8 @@ export function Playground({ values }: { values: PlaygroundValues }) {
     setVisible(initial)
   }
   return (
-    <Tooltip.Outer visible={visible} onVisibleChange={setVisible} position={position}>
-      <Tooltip.Target>
+    <Tooltip visible={visible} onVisibleChange={setVisible} position={position}>
+      <TooltipTrigger>
         <span
           onMouseEnter={() => setVisible(true)}
           onMouseLeave={() => setVisible(false)}
@@ -51,10 +51,10 @@ export function Playground({ values }: { values: PlaygroundValues }) {
         >
           <PrimaryButton onPress={() => setVisible((v) => !v)}>Hover target</PrimaryButton>
         </span>
-      </Tooltip.Target>
-      <Tooltip.Content label={label}>
-        <Tooltip.TextBubble>{label}</Tooltip.TextBubble>
-      </Tooltip.Content>
-    </Tooltip.Outer>
+      </TooltipTrigger>
+      <TooltipContent label={label}>
+        <TooltipTextBubble>{label}</TooltipTextBubble>
+      </TooltipContent>
+    </Tooltip>
   )
 }

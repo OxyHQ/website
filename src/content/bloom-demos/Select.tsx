@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import * as Select from '@oxyhq/bloom/select'
+import { Select, SelectTrigger, SelectValue, SelectIcon, SelectContent, SelectItem, SelectItemText, SelectItemIndicator } from '@oxyhq/bloom/select'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {
@@ -22,28 +22,28 @@ export default function SelectDemo() {
   const [value, setValue] = useState('medium')
   return (
     <div className="w-full max-w-xs">
-      <Select.Root value={value} onValueChange={setValue}>
-        <Select.Trigger label="Priority">
-          <Select.ValueText placeholder="Select priority">
+      <Select value={value} onValueChange={setValue}>
+        <SelectTrigger label="Priority">
+          <SelectValue placeholder="Select priority">
             {(selected) =>
               selected && typeof selected === 'object' && 'label' in selected
                 ? (selected as Item).label
                 : 'Select priority'
             }
-          </Select.ValueText>
-          <Select.Icon />
-        </Select.Trigger>
-        <Select.Content
+          </SelectValue>
+          <SelectIcon />
+        </SelectTrigger>
+        <SelectContent
           items={items}
           label="Priority"
           renderItem={(item) => (
-            <Select.Item value={item.value} label={item.label}>
-              <Select.ItemText>{item.label}</Select.ItemText>
-              <Select.ItemIndicator />
-            </Select.Item>
+            <SelectItem value={item.value} label={item.label}>
+              <SelectItemText>{item.label}</SelectItemText>
+              <SelectItemIndicator />
+            </SelectItem>
           )}
         />
-      </Select.Root>
+      </Select>
     </div>
   )
 }
@@ -60,28 +60,28 @@ export function Playground({ values }: { values: PlaygroundValues }) {
   }
   return (
     <div style={{ width: 240 }}>
-      <Select.Root value={value} onValueChange={setValue} disabled={disabled}>
-        <Select.Trigger label={label}>
-          <Select.ValueText placeholder={label}>
+      <Select value={value} onValueChange={setValue} disabled={disabled}>
+        <SelectTrigger label={label}>
+          <SelectValue placeholder={label}>
             {(selected) =>
               selected && typeof selected === 'object' && 'label' in selected
                 ? (selected as Item).label
                 : label
             }
-          </Select.ValueText>
-          <Select.Icon />
-        </Select.Trigger>
-        <Select.Content
+          </SelectValue>
+          <SelectIcon />
+        </SelectTrigger>
+        <SelectContent
           items={items}
           label={label}
           renderItem={(item) => (
-            <Select.Item value={item.value} label={item.label}>
-              <Select.ItemText>{item.label}</Select.ItemText>
-              <Select.ItemIndicator />
-            </Select.Item>
+            <SelectItem value={item.value} label={item.label}>
+              <SelectItemText>{item.label}</SelectItemText>
+              <SelectItemIndicator />
+            </SelectItem>
           )}
         />
-      </Select.Root>
+      </Select>
     </div>
   )
 }

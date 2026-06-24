@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import * as TextField from '@oxyhq/bloom/text-field'
+import { TextField, TextFieldInput } from '@oxyhq/bloom/text-field'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {
@@ -11,15 +11,15 @@ export default function TextFieldDemo() {
   const [email, setEmail] = useState('alex@example.com')
   return (
     <div className="flex w-full max-w-sm flex-col gap-4">
-      <TextField.Root>
-        <TextField.Input label="Full name" value={name} onChangeText={setName} placeholder="Ada Lovelace" />
-      </TextField.Root>
-      <TextField.Root>
-        <TextField.Input label="Email" value={email} onChangeText={setEmail} />
-      </TextField.Root>
-      <TextField.Root isInvalid>
-        <TextField.Input label="Username" value="taken" onChangeText={() => undefined} isInvalid />
-      </TextField.Root>
+      <TextField>
+        <TextFieldInput label="Full name" value={name} onChangeText={setName} placeholder="Ada Lovelace" />
+      </TextField>
+      <TextField>
+        <TextFieldInput label="Email" value={email} onChangeText={setEmail} />
+      </TextField>
+      <TextField isInvalid>
+        <TextFieldInput label="Username" value="taken" onChangeText={() => undefined} isInvalid />
+      </TextField>
     </div>
   )
 }
@@ -38,15 +38,15 @@ export function Playground({ values }: { values: PlaygroundValues }) {
   }
   return (
     <div style={{ width: 280 }}>
-      <TextField.Root isInvalid={isInvalid}>
-        <TextField.Input
+      <TextField isInvalid={isInvalid}>
+        <TextFieldInput
           label={label}
           value={text}
           onChangeText={setText}
           placeholder={placeholder}
           isInvalid={isInvalid}
         />
-      </TextField.Root>
+      </TextField>
     </div>
   )
 }

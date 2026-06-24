@@ -1,7 +1,7 @@
 import { Suspense, createElement, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Switch } from '@oxyhq/bloom/switch'
-import * as Select from '@oxyhq/bloom/select'
+import { Select, SelectTrigger, SelectValue, SelectIcon, SelectContent, SelectItem, SelectItemText, SelectItemIndicator } from '@oxyhq/bloom/select'
 import { bloomDemos, getBloomDemo, type BloomDemo } from '../../content/bloom-demos/registry'
 import {
   defaultValues,
@@ -94,28 +94,28 @@ function DemoPicker({
 }) {
   return (
     <div style={{ maxWidth: 320 }}>
-      <Select.Root value={value} onValueChange={onChange}>
-        <Select.Trigger label="Component">
-          <Select.ValueText placeholder="Select component">
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger label="Component">
+          <SelectValue placeholder="Select component">
             {(selected) =>
               selected && typeof selected === 'object' && 'label' in selected
                 ? (selected as DemoPickerOption).label
                 : 'Select component'
             }
-          </Select.ValueText>
-          <Select.Icon />
-        </Select.Trigger>
-        <Select.Content
+          </SelectValue>
+          <SelectIcon />
+        </SelectTrigger>
+        <SelectContent
           items={[...options]}
           label="Component"
           renderItem={(item) => (
-            <Select.Item value={item.value} label={item.label}>
-              <Select.ItemText>{item.label}</Select.ItemText>
-              <Select.ItemIndicator />
-            </Select.Item>
+            <SelectItem value={item.value} label={item.label}>
+              <SelectItemText>{item.label}</SelectItemText>
+              <SelectItemIndicator />
+            </SelectItem>
           )}
         />
-      </Select.Root>
+      </Select>
     </div>
   )
 }
@@ -236,22 +236,22 @@ function PropControl({ prop, value, onChange }: PropControlProps) {
     return (
       <div className="flex flex-col gap-1">
         <span className="font-mono text-xs text-muted-foreground">{prop.name}</span>
-        <Select.Root value={current} onValueChange={(next) => onChange(prop.name, next)}>
-          <Select.Trigger label={prop.name}>
-            <Select.ValueText placeholder={prop.name}>{() => current}</Select.ValueText>
-            <Select.Icon />
-          </Select.Trigger>
-          <Select.Content
+        <Select value={current} onValueChange={(next) => onChange(prop.name, next)}>
+          <SelectTrigger label={prop.name}>
+            <SelectValue placeholder={prop.name}>{() => current}</SelectValue>
+            <SelectIcon />
+          </SelectTrigger>
+          <SelectContent
             label={prop.name}
             items={prop.options.map((opt) => ({ value: opt, label: opt }))}
             renderItem={(item) => (
-              <Select.Item value={item.value} label={item.label}>
-                <Select.ItemText>{item.label}</Select.ItemText>
-                <Select.ItemIndicator />
-              </Select.Item>
+              <SelectItem value={item.value} label={item.label}>
+                <SelectItemText>{item.label}</SelectItemText>
+                <SelectItemIndicator />
+              </SelectItem>
             )}
           />
-        </Select.Root>
+        </Select>
       </div>
     )
   }
