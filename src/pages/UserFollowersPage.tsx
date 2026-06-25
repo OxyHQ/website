@@ -67,11 +67,12 @@ export default function UserFollowersPage({ initialTab }: UserFollowersPageProps
   const { oxyServices } = useWebOxy()
   const { data: profile } = useUserProfile(username)
   const userId = profile?.user._id
+  const canViewFollowList = Boolean(userId && profile?.stats)
 
   const { data, isLoading } = useQuery({
-    queryKey: ['user-follow-list', userId, activeTab],
+    queryKey: ['user-follow-list', userId, activeTab, canViewFollowList],
     queryFn: async () => {
-      if (!userId) return { users: [] as User[], total: 0 }
+      if (!userId || !canViewFollowList) return { users: [] as User[], total: 0 }
       if (activeTab === 'followers') {
         const res = await oxyServices.getUserFollowers(userId, { limit: 50 })
         return { users: res.followers, total: res.total }
@@ -79,11 +80,12 @@ export default function UserFollowersPage({ initialTab }: UserFollowersPageProps
       const res = await oxyServices.getUserFollowing(userId, { limit: 50 })
       return { users: res.following, total: res.total }
     },
-    enabled: !!userId,
+    enabled: canViewFollowList,
     staleTime: 60_000,
   })
 
   const displayName = profile ? profile.user.name.displayName : username
+  const isActivityPrivate = Boolean(profile && !profile.stats)
 
   const tabLabel = activeTab === 'followers' ? 'Followers' : 'Following'
   const users = data?.users ?? []
@@ -138,7 +140,11 @@ export default function UserFollowersPage({ initialTab }: UserFollowersPageProps
             </div>
 
             {/* List */}
-            {isLoading ? (
+            {isActivityPrivate ? (
+              <p className="py-12 text-center text-sm text-muted-foreground">
+                @{username} does not share activity publicly.
+              </p>
+            ) : isLoading ? (
               <ListSkeleton />
             ) : users.length > 0 ? (
               <div>
