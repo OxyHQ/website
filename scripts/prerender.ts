@@ -427,7 +427,8 @@ async function fetchJobs(): Promise<JobApiEntry[]> {
     if (!res.ok) return []
     const data = (await res.json()) as JobsApiResponse
     return (data.jobs ?? []).filter((j) => (j.status ?? 'open') !== 'closed' && j.slug)
-  } catch {
+  } catch (err) {
+    console.warn('[prerender] jobs fetch failed:', (err as Error).message)
     return []
   }
 }
@@ -752,10 +753,43 @@ function injectHead(shell: string, headHtml: string): string {
   return `${shell.slice(0, idx)}    ${headHtml}\n  ${shell.slice(idx)}`
 }
 
+function assertSafeRoutePath(routePath: string): string {
+  if (!routePath.startsWith('/')) {
+    throw new Error(`route path must be absolute: ${routePath}`)
+  }
+  if (routePath.includes('\\') || routePath.includes('\0') || routePath.includes('?') || routePath.includes('#')) {
+    throw new Error(`route path contains unsupported characters: ${routePath}`)
+  }
+
+  const normalized = path.posix.normalize(routePath)
+  if (normalized !== routePath.replace(/\/+$/, '') && !(routePath === '/' && normalized === '/')) {
+    throw new Error(`route path is not normalized: ${routePath}`)
+  }
+
+  for (const segment of normalized.split('/')) {
+    if (segment === '..' || segment === '.') {
+      throw new Error(`route path contains traversal segment: ${routePath}`)
+    }
+  }
+
+  return normalized
+}
+
+function assertInsideDist(filePath: string): string {
+  const resolvedDist = path.resolve(DIST_DIR)
+  const resolvedFile = path.resolve(filePath)
+  const relative = path.relative(resolvedDist, resolvedFile)
+  if (relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative))) {
+    return resolvedFile
+  }
+  throw new Error(`refusing to write outside dist: ${resolvedFile}`)
+}
+
 function pathToFile(routePath: string): string {
-  if (routePath === '/') return path.join(DIST_DIR, 'index.html')
-  const clean = routePath.replace(/^\/+/, '').replace(/\/+$/, '')
-  return path.join(DIST_DIR, clean, 'index.html')
+  const safeRoutePath = assertSafeRoutePath(routePath)
+  if (safeRoutePath === '/') return assertInsideDist(path.join(DIST_DIR, 'index.html'))
+  const clean = safeRoutePath.replace(/^\/+/, '').replace(/\/+$/, '')
+  return assertInsideDist(path.join(DIST_DIR, clean, 'index.html'))
 }
 
 interface RenderJob {
