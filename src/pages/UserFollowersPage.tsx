@@ -2,24 +2,14 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useWebOxy } from '@oxyhq/auth'
+import type { User } from '@oxyhq/core'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import { useUserProfile } from '../api/hooks'
-import { formatDisplayName } from '../lib/userUtils'
 
 type TabType = 'followers' | 'following'
-
-interface UserListItem {
-  _id?: string
-  id?: string
-  username: string
-  name?: { first?: string; last?: string }
-  avatar?: string
-  color?: string
-  bio?: string
-}
 
 interface UserFollowersPageProps {
   initialTab: TabType
@@ -30,8 +20,8 @@ const TABS: Array<{ value: TabType; label: string }> = [
   { value: 'following', label: 'Following' },
 ]
 
-function UserRow({ user }: { user: UserListItem }) {
-  const displayName = formatDisplayName(user.name, user.username)
+function UserRow({ user }: { user: User }) {
+  const displayName = user.name.displayName
   return (
     <Link
       to={`/u/${user.username}`}
@@ -39,7 +29,7 @@ function UserRow({ user }: { user: UserListItem }) {
     >
       <div className="flex items-start gap-3">
         <div className="shrink-0">
-          <Avatar source={user.avatar} size={48} placeholderColor={user.color} />
+          <Avatar source={user.avatar ?? undefined} size={48} variant="thumb" placeholderColor={user.color ?? undefined} />
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-[15px] font-bold text-foreground">{displayName}</p>
@@ -81,21 +71,19 @@ export default function UserFollowersPage({ initialTab }: UserFollowersPageProps
   const { data, isLoading } = useQuery({
     queryKey: ['user-follow-list', userId, activeTab],
     queryFn: async () => {
-      if (!userId) return { users: [] as UserListItem[], total: 0 }
+      if (!userId) return { users: [] as User[], total: 0 }
       if (activeTab === 'followers') {
         const res = await oxyServices.getUserFollowers(userId, { limit: 50 })
-        return { users: res.followers as unknown as UserListItem[], total: res.total }
+        return { users: res.followers, total: res.total }
       }
       const res = await oxyServices.getUserFollowing(userId, { limit: 50 })
-      return { users: res.following as unknown as UserListItem[], total: res.total }
+      return { users: res.following, total: res.total }
     },
     enabled: !!userId,
     staleTime: 60_000,
   })
 
-  const displayName = profile
-    ? formatDisplayName(profile.user.name, profile.user.username)
-    : username
+  const displayName = profile ? profile.user.name.displayName : username
 
   const tabLabel = activeTab === 'followers' ? 'Followers' : 'Following'
   const users = data?.users ?? []
@@ -119,6 +107,7 @@ export default function UserFollowersPage({ initialTab }: UserFollowersPageProps
                   <Avatar
                     source={profile.user.avatar}
                     size={40}
+                    variant="thumb"
                     placeholderColor={profile.user.color}
                   />
                 </div>
@@ -154,7 +143,7 @@ export default function UserFollowersPage({ initialTab }: UserFollowersPageProps
             ) : users.length > 0 ? (
               <div>
                 {users.map((u) => (
-                  <UserRow key={u._id ?? u.id ?? u.username} user={u} />
+                  <UserRow key={u.id ?? u.username} user={u} />
                 ))}
               </div>
             ) : (

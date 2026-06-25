@@ -53,7 +53,10 @@ const INITIAL_STATE: PlatformStatsState = {
 }
 
 const MAX_ACTIVITY_EVENTS = 15
-const OXY_API = 'https://api.oxy.so'
+// Oxy platform API base URL. Mirrors the VITE_OXY_API convention used in
+// App.tsx — a deploy can override it; the production URL is the fallback.
+const OXY_API =
+  (import.meta.env.VITE_OXY_API as string | undefined) || 'https://api.oxy.so'
 const FALLBACK_DELAY_MS = 1_000
 
 type Listener = () => void

@@ -1,13 +1,15 @@
+import type { OxyServices } from '@oxyhq/core'
+
 export const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api'
 
-let getAccessToken: (() => Promise<string | null>) | null = null
+let oxyServices: OxyServices | null = null
 
-export function setTokenGetter(getter: () => Promise<string | null>) {
-  getAccessToken = getter
+export function setOxyServices(oxy: OxyServices) {
+  oxyServices = oxy
 }
 
 export async function getAuthHeaders(): Promise<Record<string, string>> {
-  const token = getAccessToken ? await getAccessToken() : null
+  const token = oxyServices ? oxyServices.getAccessToken() : null
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 

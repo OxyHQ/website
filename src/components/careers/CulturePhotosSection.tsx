@@ -31,8 +31,11 @@ export default function CulturePhotosSection() {
                   className="size-full object-cover"
                   loading="lazy"
                   onError={(e) => {
-                    e.currentTarget.parentElement!.innerHTML =
-                      '<span class="text-muted-foreground">Culture video placeholder</span>'
+                    const parent = e.currentTarget.parentElement
+                    if (parent) {
+                      parent.innerHTML =
+                        '<span class="text-muted-foreground">Culture video placeholder</span>'
+                    }
                   }}
                 />
               </div>

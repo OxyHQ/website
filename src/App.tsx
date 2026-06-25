@@ -1,13 +1,13 @@
 import { useState, useCallback, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { WebOxyProvider, useAuth, useWebOxy } from '@oxyhq/auth'
+import { WebOxyProvider, useWebOxy } from '@oxyhq/auth'
 import type { User } from '@oxyhq/core'
 import { BloomThemeProvider } from '@oxyhq/bloom/theme'
 import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
 import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppColorName } from './theme'
 import { LocaleProvider } from './lib/i18n'
-import { setTokenGetter } from './api/client'
+import { setOxyServices } from './api/client'
 import { isFairCoinHost } from './lib/host'
 import ErrorBoundary from './components/ErrorBoundary'
 
@@ -71,7 +71,11 @@ const ReferralsPage = lazy(() => import('./pages/ReferralsPage'))
 const ReferralsDashboardPage = lazy(() => import('./pages/ReferralsDashboardPage'))
 const SustainPage = lazy(() => import('./pages/SustainPage'))
 
-const OXY_API = 'https://api.oxy.so'
+// Oxy platform API base URL. Sourced from the website's standard `VITE_*` env
+// convention so deploys can override it, with the production URL as the
+// committed default.
+const OXY_API =
+  (import.meta.env.VITE_OXY_API as string | undefined) || 'https://api.oxy.so'
 
 // Registered Oxy OAuth client id for the public website. Sourced from the
 // website's standard `VITE_*` env convention so deploys can override it, with
@@ -122,18 +126,20 @@ function ScrollToTop() {
 }
 
 function AppSetup({ children }: { children: React.ReactNode }) {
-  const { authManager } = useAuth()
   const { oxyServices } = useWebOxy()
 
-  // Set API client auth token getter (same pattern as console)
-  setTokenGetter(() => authManager.getAccessToken())
+  // Wire the website's own-backend fetch client to the SDK session so every
+  // /api call carries the current bearer token without manual token plumbing.
+  setOxyServices(oxyServices)
 
-  // Resolve Bloom image file IDs to download URLs
+  // Resolve Bloom image file IDs to download URLs. The optional `variant`
+  // selects the rendition (e.g. 'thumb') and is forwarded from Avatar's
+  // variant prop — the single chokepoint for cloud.oxy.so URL construction.
   const resolveImage = useCallback(
-    (fileId: string): string | undefined => {
+    (fileId: string, variant?: string): string | undefined => {
       if (!fileId) return undefined
       if (fileId.startsWith('http')) return fileId
-      return oxyServices.getFileDownloadUrl(fileId, 'thumb')
+      return oxyServices.getFileDownloadUrl(fileId, variant)
     },
     [oxyServices],
   )

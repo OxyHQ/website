@@ -7,7 +7,8 @@ import { config } from '../config.js'
  */
 export function adminOnly(req: Request, res: Response, next: NextFunction) {
   if (!req.user) return res.status(401).json({ error: 'Authentication required' })
-  if (!config.adminUsernames.includes(req.user.username)) {
+  const username = req.user.username
+  if (!username || !config.adminUsernames.includes(username)) {
     return res.status(403).json({ error: 'Admin access required' })
   }
   next()

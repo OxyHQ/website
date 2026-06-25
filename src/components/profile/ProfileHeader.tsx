@@ -5,7 +5,6 @@ import { useAuth, useWebOxy } from '@oxyhq/auth'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { UserProfileData } from '../../api/hooks'
-import { formatDisplayName } from '../../lib/userUtils'
 import ProfileBadges from './ProfileBadges'
 
 interface ProfileHeaderProps {
@@ -22,7 +21,7 @@ function formatJoinedDate(iso: string): string {
 
 export default function ProfileHeader({ profile, isOwnProfile, onEditBio }: ProfileHeaderProps) {
   const { user, bio, badges, stats } = profile
-  const displayName = formatDisplayName(user.name, user.username)
+  const displayName = user.name.displayName
   const displayBio = bio
 
   return (

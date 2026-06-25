@@ -4,6 +4,7 @@ import express from 'express'
 import mongoose from 'mongoose'
 import crypto from 'node:crypto'
 import { z } from 'zod'
+import { safeFetch, SsrfRejection, UpstreamError } from '@oxyhq/core/server'
 
 // Models
 import { Page } from './models/Page.js'
@@ -32,6 +33,47 @@ import { syncAllRepos, syncSingleRepo } from './services/githubSync.js'
 import { deleteFromSpaces, uploadToSpaces } from './services/s3.js'
 import { processImage } from './services/thumbnails.js'
 import { heroUpdateRawShape, heroUpdateSchema, type HeroUpdate } from './validation/hero.js'
+
+// ── SSRF-safe URL download helper ────────────────────────────────────────────
+
+const MAX_DOWNLOAD_BYTES = 25 * 1024 * 1024 // 25 MB
+
+async function downloadUrl(url: string, maxBytes = MAX_DOWNLOAD_BYTES): Promise<{ buffer: Buffer; contentType: string }> {
+  const result = await safeFetch(url)
+  if (result.status < 200 || result.status >= 300) {
+    result.response.destroy()
+    throw new UpstreamError(`Upstream returned ${result.status}`)
+  }
+  const rawContentType = result.headers['content-type']
+  const contentType = Array.isArray(rawContentType)
+    ? rawContentType[0] ?? 'application/octet-stream'
+    : rawContentType ?? 'application/octet-stream'
+
+  return new Promise<{ buffer: Buffer; contentType: string }>((resolve, reject) => {
+    const chunks: Buffer[] = []
+    let totalBytes = 0
+
+    result.response.on('data', (chunk: Buffer) => {
+      totalBytes += chunk.length
+      if (totalBytes > maxBytes) {
+        result.response.destroy()
+        reject(new UpstreamError(`Response exceeds ${maxBytes} byte limit`))
+        return
+      }
+      chunks.push(chunk)
+    })
+
+    result.response.on('end', () => {
+      resolve({ buffer: Buffer.concat(chunks), contentType })
+    })
+
+    result.response.on('error', (err: Error) => {
+      reject(new UpstreamError(`Stream error: ${err.message}`))
+    })
+  })
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 function createMcpServer() {
   const server = new McpServer({
@@ -67,10 +109,8 @@ server.tool('debug_upload_test', 'Test each step of the upload pipeline and repo
   const steps: string[] = []
   try {
     steps.push('1. Starting fetch...')
-    const resp = await fetch(url)
-    steps.push(`2. Fetch done: status=${resp.status}, content-type=${resp.headers.get('content-type')}`)
-    
-    const buffer = Buffer.from(await resp.arrayBuffer())
+    const { buffer, contentType } = await downloadUrl(url)
+    steps.push(`2. Fetch done: content-type=${contentType}`)
     steps.push(`3. Buffer: ${buffer.length} bytes`)
     
     steps.push('4. Testing S3 upload...')
@@ -982,10 +1022,7 @@ server.tool('upload_image', 'Download an image from a URL, upload it to S3, gene
   tags: z.array(z.string()).optional().describe('Tags for organization'),
 }, async (params) => {
   try {
-    const resp = await fetch(params.url)
-    if (!resp.ok) return err(`Failed to download: ${resp.status}`)
-    const buffer = Buffer.from(await resp.arrayBuffer())
-    const contentType = resp.headers.get('content-type') || 'application/octet-stream'
+    const { buffer, contentType } = await downloadUrl(params.url)
     const filename = params.filename || new URL(params.url).pathname.split('/').pop() || 'image'
     const subfolder = params.folder || 'images'
     const folder = `oxy-website/${subfolder}`
@@ -1026,10 +1063,7 @@ server.tool('upload_and_set_post_cover', 'Download an image from URL, upload to 
 }, async (params) => {
   try {
     // 1. Download
-    const resp = await fetch(params.imageUrl)
-    if (!resp.ok) return err(`Failed to download image: HTTP ${resp.status}`)
-    const buffer = Buffer.from(await resp.arrayBuffer())
-    const contentType = resp.headers.get('content-type') || 'image/jpeg'
+    const { buffer, contentType } = await downloadUrl(params.imageUrl)
     const filename = params.filename || new URL(params.imageUrl).pathname.split('/').pop() || 'cover.jpg'
 
     // 2. Upload to S3
@@ -1072,10 +1106,7 @@ server.tool('upload_and_set_team_avatar', 'Download an image, upload to S3, crea
   alt: z.string().optional(),
 }, async (params) => {
   try {
-    const resp = await fetch(params.imageUrl)
-    if (!resp.ok) return err(`Failed to download: HTTP ${resp.status}`)
-    const buffer = Buffer.from(await resp.arrayBuffer())
-    const contentType = resp.headers.get('content-type') || 'image/jpeg'
+    const { buffer, contentType } = await downloadUrl(params.imageUrl)
     const filename = params.filename || new URL(params.imageUrl).pathname.split('/').pop() || 'avatar.jpg'
 
     const cdnUrl = await uploadToSpaces(buffer, filename, contentType, 'oxy-website/team')
@@ -1117,10 +1148,7 @@ server.tool('bulk_upload_post_covers', 'Upload cover images for multiple posts i
   const results: { slug: string; status: string; mediaId?: string; error?: string }[] = []
   for (const p of posts) {
     try {
-      const resp = await fetch(p.imageUrl)
-      if (!resp.ok) { results.push({ slug: p.slug, status: 'error', error: `Download failed: ${resp.status}` }); continue }
-      const buffer = Buffer.from(await resp.arrayBuffer())
-      const contentType = resp.headers.get('content-type') || 'image/jpeg'
+      const { buffer, contentType } = await downloadUrl(p.imageUrl)
       const filename = new URL(p.imageUrl).pathname.split('/').pop() || 'cover.jpg'
 
       const cdnUrl = await uploadToSpaces(buffer, filename, contentType, 'oxy-website/newsroom')
@@ -1812,7 +1840,7 @@ export function mountMcp(app: express.Express) {
   }
 
   app.post('/mcp', async (req, res) => {
-    const token = (req.query.token as string) || req.headers.authorization?.replace('Bearer ', '')
+    const token = req.headers.authorization?.replace('Bearer ', '')
     if (!token || !(await validateToken(token))) {
       res.status(401).json({ error: 'Invalid or expired token' })
       return

@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import { useUserById } from '../../api/hooks'
-import { formatDisplayName } from '../../lib/userUtils'
 
 interface ArticleAuthorsProps {
   userIds: string[]
@@ -12,16 +11,18 @@ function AuthorChip({ userId }: { userId: string }) {
 
   if (!user) return null
 
-  const displayName = formatDisplayName(user.name, user.username)
+  const displayName = user.name.displayName
 
   return (
     <Link to={`/u/${user.username}`} className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-80">
-      <Avatar source={user.avatar} size={20} placeholderColor={user.color} />
+      <Avatar source={user.avatar} size={20} variant="thumb" placeholderColor={user.color} />
       <span className="text-sm font-medium text-foreground">{displayName}</span>
     </Link>
   )
 }
 
+// Each AuthorChip fetches one user independently. A future POST /users/by-ids
+// batch route with a service token would consolidate N calls into one here.
 export default function ArticleAuthors({ userIds }: ArticleAuthorsProps) {
   if (!userIds.length) return null
 

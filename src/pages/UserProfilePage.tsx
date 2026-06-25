@@ -8,7 +8,6 @@ import ProfileHeader from '../components/profile/ProfileHeader'
 import ProfileActivity from '../components/profile/ProfileActivity'
 import ProfileEditForm from '../components/profile/ProfileEditForm'
 import { useUserProfile } from '../api/hooks'
-import { formatDisplayName } from '../lib/userUtils'
 
 function ProfileSkeleton() {
   return (
@@ -81,9 +80,7 @@ export default function UserProfilePage() {
 
   const isOwnProfile = Boolean(authUser?.username && authUser.username === profile?.user.username)
 
-  const displayName = profile
-    ? formatDisplayName(profile.user.name, profile.user.username)
-    : username
+  const displayName = profile ? profile.user.name.displayName : username
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">

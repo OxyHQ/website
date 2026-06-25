@@ -134,10 +134,14 @@ router.post('/', requireAuth, async (req, res) => {
       body,
       parentId: parentId ?? null,
       userId: user.id,
-      username: user.username,
+      username: user.username ?? '',
     })
 
-    checkAndAwardBadges(user.id, user.username).catch(() => {})
+    if (user.username) {
+      checkAndAwardBadges(user.id, user.username).catch((err) =>
+        console.warn('[comments] badge check failed:', toErrorMessage(err)),
+      )
+    }
 
     res.status(201).json(comment)
   } catch (err) {
@@ -195,7 +199,7 @@ router.delete('/:id', requireAuth, async (req, res) => {
 
     // Allow the comment author or an admin to delete
     const isAuthor = comment.userId === user.id
-    const isAdmin = config.adminUsernames.includes(user.username)
+    const isAdmin = user.username != null && config.adminUsernames.includes(user.username)
 
     if (!isAuthor && !isAdmin) {
       return res.status(403).json({ error: 'You can only delete your own comments' })

@@ -23,8 +23,8 @@ function formatDate(dateStr: string): string {
 }
 
 export default function NewsroomPostPage() {
-  const { slug } = useParams<{ slug: string }>()
-  const { data: post, isLoading } = useNewsroomPost(slug!)
+  const { slug = '' } = useParams<{ slug: string }>()
+  const { data: post, isLoading } = useNewsroomPost(slug)
   const { data: relatedData } = useNewsroomPosts(
     post ? { category: post.categories[0], limit: 4 } : undefined,
   )

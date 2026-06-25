@@ -28,20 +28,12 @@ const activityQuerySchema = z.object({
   type: z.string().optional(),
 }).passthrough()
 
-interface OxyClient {
-  getProfileByUsername(username: string): Promise<Record<string, unknown>>
-  getUserById(userId: string): Promise<Record<string, unknown>>
-  getUserFollowers(userId: string): Promise<{ total: number }>
-  getUserFollowing(userId: string): Promise<{ total: number }>
-}
+type OxyClient = InstanceType<typeof import('@oxyhq/core').OxyServices>
 
 let oxyPromise: Promise<OxyClient> | null = null
 function getOxy(): Promise<OxyClient> {
   if (!oxyPromise) {
-    oxyPromise = import('@oxyhq/core').then(mod => {
-      const client = new mod.OxyServices({ baseURL: config.oxyApiBase })
-      return client as unknown as OxyClient
-    })
+    oxyPromise = import('@oxyhq/core').then(mod => new mod.OxyServices({ baseURL: config.oxyApiBase }))
   }
   return oxyPromise
 }
@@ -54,7 +46,7 @@ router.get('/id/:userId', async (req, res) => {
     const client = await getOxy()
     const oxyUser = await client.getUserById(userId)
     res.json({
-      _id: oxyUser._id ?? oxyUser.id,
+      _id: oxyUser.id,
       username: oxyUser.username,
       name: oxyUser.name,
       avatar: oxyUser.avatar,
@@ -80,7 +72,7 @@ router.put('/me', requireAuth, async (req, res) => {
 
     const profile = await UserProfileExtra.findOneAndUpdate(
       { userId: user.id },
-      { ...update, userId: user.id, username: user.username },
+      { ...update, userId: user.id, ...(user.username != null && { username: user.username }) },
       { upsert: true, new: true },
     )
 
@@ -95,7 +87,7 @@ router.get('/:username', optionalAuth, async (req, res) => {
   const { username } = validate(usernameParamsSchema, req.params)
 
   try {
-    let oxyUser: Record<string, unknown>
+    let oxyUser: Awaited<ReturnType<OxyClient['getProfileByUsername']>>
     try {
       const client = await getOxy()
       oxyUser = await client.getProfileByUsername(username)
@@ -111,7 +103,7 @@ router.get('/:username', optionalAuth, async (req, res) => {
     const isSelf = req.user?.username === username
     const showActivity = profileExtra?.showActivity !== false
 
-    const userId = (oxyUser._id ?? oxyUser.id) as string
+    const userId = oxyUser.id
     let stats = null
     if (showActivity || isSelf) {
       const client = await getOxy()
@@ -128,14 +120,14 @@ router.get('/:username', optionalAuth, async (req, res) => {
 
     res.json({
       user: {
-        _id: oxyUser._id ?? oxyUser.id,
+        _id: oxyUser.id,
         username: oxyUser.username,
         name: oxyUser.name,
         avatar: oxyUser.avatar,
         color: oxyUser.color,
         createdAt: oxyUser.createdAt,
       },
-      bio: profileExtra?.bio || (oxyUser.bio as string) || '',
+      bio: profileExtra?.bio || oxyUser.bio || '',
       showActivity: profileExtra?.showActivity !== false,
       badges: badges.map(b => ({ badgeId: b.badgeId, awardedAt: b.awardedAt })),
       stats,

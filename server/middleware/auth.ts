@@ -1,11 +1,13 @@
-import type { Request, Response, NextFunction } from 'express'
+import { OxyServices } from '@oxyhq/core'
+import {
+  createOxyAuthMiddleware,
+  createOptionalOxyAuth,
+  type OxyRequestUser,
+} from '@oxyhq/core/server'
 import { config } from '../config.js'
 
-export interface AuthUser {
-  id: string
-  username: string
-  name?: { first?: string; last?: string }
-}
+// Single shared OxyServices instance for auth middleware — constructed once.
+const oxy = new OxyServices({ baseURL: config.oxyApiBase })
 
 declare global {
   // The Express namespace is the canonical augmentation point for
@@ -13,46 +15,19 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
-      user?: AuthUser
+      user?: OxyRequestUser
     }
   }
 }
 
+export type { OxyRequestUser }
+
 /**
  * Optional auth — attaches user to req if valid token present, continues either way.
  */
-async function fetchCurrentUser(token: string): Promise<AuthUser | null> {
-  const response = await fetch(`${config.oxyApiBase}/api/users/me`, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-  if (!response.ok) return null
-  const body = await response.json()
-  return body.data ?? body
-}
+export const optionalAuth = createOptionalOxyAuth(oxy, { auth: { loadUser: true } })
 
-export async function optionalAuth(req: Request, _res: Response, next: NextFunction) {
-  const token = req.headers.authorization?.replace('Bearer ', '')
-  if (!token) return next()
-
-  try {
-    const user = await fetchCurrentUser(token)
-    if (user) req.user = user
-  } catch {
-    // Ignore — proceed without user
-  }
-  next()
-}
-
-export async function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const token = req.headers.authorization?.replace('Bearer ', '')
-  if (!token) return res.status(401).json({ error: 'Authentication required' })
-
-  try {
-    const user = await fetchCurrentUser(token)
-    if (!user) return res.status(401).json({ error: 'Invalid session' })
-    req.user = user
-    next()
-  } catch {
-    res.status(401).json({ error: 'Authentication failed' })
-  }
-}
+/**
+ * Require auth — 401s when no valid token is present.
+ */
+export const requireAuth = createOxyAuthMiddleware(oxy, { auth: { loadUser: true } })

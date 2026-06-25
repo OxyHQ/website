@@ -32,8 +32,11 @@ function extFromMime(contentType: string): string {
 }
 
 /**
- * Upload a buffer to DigitalOcean Spaces.
- * Returns the public CDN URL.
+ * Upload a buffer to object storage. Returns the public CDN URL.
+ *
+ * The logical key (`folder/file`) is what callers persist and pass back to
+ * `deleteFromSpaces`; the physical object is stored under `config.s3.keyPrefix`
+ * (e.g. `public/`), which CloudFront's origin path strips off when serving.
  */
 export async function uploadToSpaces(
   buffer: Buffer,
@@ -50,21 +53,20 @@ export async function uploadToSpaces(
 
   await s3.send(new PutObjectCommand({
     Bucket: config.s3.bucket,
-    Key: key,
+    Key: `${config.s3.keyPrefix}${key}`,
     Body: buffer,
     ContentType: contentType,
-    ACL: 'public-read',
   }))
 
-  return `https://${config.s3.bucket}.${config.s3.region}.cdn.digitaloceanspaces.com/${key}`
+  return `${config.s3.cdnBaseUrl}/${key}`
 }
 
 /**
- * Delete an object from DigitalOcean Spaces by its key.
+ * Delete an object by its logical key (as returned in the stored CDN URL path).
  */
 export async function deleteFromSpaces(key: string): Promise<void> {
   await s3.send(new DeleteObjectCommand({
     Bucket: config.s3.bucket,
-    Key: key,
+    Key: `${config.s3.keyPrefix}${key}`,
   }))
 }

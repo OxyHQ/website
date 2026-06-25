@@ -1087,7 +1087,7 @@ export interface UserProfileData {
   user: {
     _id: string
     username: string
-    name: { first?: string; last?: string }
+    name: { displayName: string; first?: string; last?: string }
     avatar?: string
     color?: string
     createdAt?: string
@@ -1101,7 +1101,7 @@ export interface UserProfileData {
 export function useUserById(userId: string) {
   return useQuery({
     queryKey: ['user-by-id', userId],
-    queryFn: () => apiFetch<{ _id: string; username: string; name: { first?: string; last?: string }; avatar?: string; color?: string }>(`/profiles/id/${userId}`),
+    queryFn: () => apiFetch<{ _id: string; username: string; name: { displayName: string; first?: string; last?: string }; avatar?: string; color?: string }>(`/profiles/id/${userId}`),
     enabled: !!userId,
     staleTime: 5 * 60_000,
   })

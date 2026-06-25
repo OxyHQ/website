@@ -292,7 +292,11 @@ router.post('/:owner/:repo/:number/vote', requireAuth, async (req, res) => {
     const localVoteCount = await Vote.countDocuments({ featureRequestId: key })
 
     // Fire-and-forget badge check
-    checkAndAwardBadges(user.id, user.username).catch(() => {})
+    if (user.username) {
+      checkAndAwardBadges(user.id, user.username).catch((err) =>
+        console.warn('[features] badge check failed:', toErrorMessage(err)),
+      )
+    }
 
     res.json({ localVotes: localVoteCount, userVoted: !existing })
   } catch (err) {

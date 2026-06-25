@@ -5,7 +5,6 @@ import { Avatar } from '@oxyhq/bloom/avatar'
 import { useLottie } from 'lottie-react'
 import { useAccountPanel } from '../../contexts/AccountPanelContext'
 import { ADMIN_USERNAMES } from '../../constants'
-import { formatDisplayName } from '../../lib/userUtils'
 import welcomeAnimation from '../../assets/lottie/welcomeheader_background.json'
 
 function AvatarWithAnimation({ avatarSource, avatarColor, size }: { avatarSource?: string; avatarColor?: string; size: number }) {
@@ -83,7 +82,7 @@ export default function AccountPanel() {
     return () => window.removeEventListener('keydown', handler)
   }, [close])
 
-  const displayName = formatDisplayName(user?.name, user?.username ?? '')
+  const displayName = user?.name.displayName ?? ''
 
   return (
     <>

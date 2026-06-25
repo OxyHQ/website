@@ -48,7 +48,7 @@ router.post('/toggle', requireAuth, async (req, res) => {
     const existing = await Like.findOneAndDelete(filter)
 
     if (!existing) {
-      await Like.create({ ...filter, username: user.username })
+      await Like.create({ ...filter, username: user.username ?? '' })
     }
 
     const count = await Like.countDocuments({ targetType, targetId })
