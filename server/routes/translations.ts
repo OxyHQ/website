@@ -33,7 +33,7 @@ const upsertBodySchema = z.object({
 }).passthrough()
 
 // Get all translations for a collection + locale
-router.get('/:collection', async (req, res) => {
+router.get('/:collection', requireAuth, adminOnly, async (req, res) => {
   const { collection: collectionName } = validate(collectionParamsSchema, req.params)
   const { locale } = validate(localeQuerySchema, req.query)
 
@@ -42,7 +42,7 @@ router.get('/:collection', async (req, res) => {
 })
 
 // Get translation for a specific document
-router.get('/:collection/:documentId', async (req, res) => {
+router.get('/:collection/:documentId', requireAuth, adminOnly, async (req, res) => {
   const { collection: collectionName, documentId } = validate(collectionAndDocParamsSchema, req.params)
   const { locale } = validate(localeQuerySchema, req.query)
 
