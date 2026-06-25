@@ -22,9 +22,9 @@
  */
 
 import { readFile, writeFile, mkdir, rm, readdir, rename, cp } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import type {
   DocsConfig,
   DocsRegistry,
@@ -39,6 +39,61 @@ const WEBSITE_ROOT = path.resolve(import.meta.dir, '..');
 const REGISTRY_PATH = path.join(WEBSITE_ROOT, 'docs-registry.json');
 const SYNCED_DIR = path.join(WEBSITE_ROOT, 'src', 'content', '_synced');
 const CACHE_DIR = path.join(WEBSITE_ROOT, 'node_modules', '.docs-cache');
+
+const SAFE_GIT_REF_PATTERN = /^[A-Za-z0-9._/@+-]+$/;
+
+function isSafeRelativePath(value: string): boolean {
+  if (!value || value.includes('\0') || path.isAbsolute(value)) return false;
+  const normalized = value.replace(/\\/g, '/');
+  if (normalized.startsWith('/') || normalized.split('/').includes('..')) return false;
+  return true;
+}
+
+function assertSafeGitRef(value: string, label: string): void {
+  if (!SAFE_GIT_REF_PATTERN.test(value) || value.startsWith('-') || value.includes('..')) {
+    throw new Error(`[sync-docs] unsafe ${label}: ${value}`);
+  }
+}
+
+function assertSafeDocsPath(value: string, label: string): void {
+  if (!isSafeRelativePath(value)) {
+    throw new Error(`[sync-docs] unsafe ${label}: ${value}`);
+  }
+}
+
+function cacheSegmentForRegistryName(value: string): string {
+  const segment = value.replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '');
+  if (!segment) {
+    throw new Error(`[sync-docs] registry name cannot produce a cache directory: ${value}`);
+  }
+  return segment;
+}
+
+function validateDocsConfig(config: DocsConfig, configPath: string): void {
+  if (typeof config.docsPath !== 'string') {
+    throw new Error(`[sync-docs] ${configPath}: docsPath must be a string.`);
+  }
+  assertSafeDocsPath(config.docsPath, `${configPath} docsPath`);
+
+  const versions = Array.isArray(config.versions) ? config.versions : [];
+  for (const version of versions) {
+    if (typeof version !== 'string') {
+      throw new Error(`[sync-docs] ${configPath}: versions must contain only strings.`);
+    }
+    assertSafeGitRef(version, `${configPath} version`);
+  }
+  if (config.defaultVersion !== undefined) assertSafeGitRef(config.defaultVersion, `${configPath} defaultVersion`);
+  if (config.latestVersion !== undefined) assertSafeGitRef(config.latestVersion, `${configPath} latestVersion`);
+  for (const pattern of config.docsIgnore ?? []) {
+    if (typeof pattern !== 'string') {
+      throw new Error(`[sync-docs] ${configPath}: docsIgnore must contain only strings.`);
+    }
+    const pathPart = pattern.endsWith('/*') ? pattern.slice(0, -2) : pattern;
+    if (pathPart && !isSafeRelativePath(pathPart)) {
+      throw new Error(`[sync-docs] ${configPath}: unsafe docsIgnore path: ${pattern}`);
+    }
+  }
+}
 
 interface FrontMatter {
   title?: string;
@@ -61,23 +116,22 @@ function resolveLocalPath(localPath: string): string {
  * and return the absolute path to the working tree. Throws on hard failure.
  */
 function syncGitCache(name: string, git: string, ref: string): string {
-  const dest = path.join(CACHE_DIR, name);
+  const dest = path.join(CACHE_DIR, cacheSegmentForRegistryName(name));
   const gitDir = path.join(dest, '.git');
   if (existsSync(gitDir)) {
     console.error(`[sync-docs] refreshing cached clone for ${name} (${ref})...`);
-    execSync(`git fetch --depth 1 origin ${ref}`, { cwd: dest, stdio: 'pipe' });
-    execSync(`git reset --hard FETCH_HEAD`, { cwd: dest, stdio: 'pipe' });
+    assertSafeGitRef(ref, `${name} ref`);
+    execFileSync('git', ['fetch', '--depth', '1', 'origin', ref], { cwd: dest, stdio: 'pipe' });
+    execFileSync('git', ['reset', '--hard', 'FETCH_HEAD'], { cwd: dest, stdio: 'pipe' });
   } else {
     console.error(`[sync-docs] cloning ${git} (${ref}) into ${dest}...`);
     // Wipe a partial directory if a previous run left it behind without .git.
     if (existsSync(dest)) {
-      execSync(`rm -rf ${JSON.stringify(dest)}`);
+      rmSync(dest, { recursive: true, force: true });
     }
-    execSync(`mkdir -p ${JSON.stringify(CACHE_DIR)}`);
-    execSync(
-      `git clone --depth 1 --branch ${JSON.stringify(ref)} ${JSON.stringify(git)} ${JSON.stringify(dest)}`,
-      { stdio: 'pipe' },
-    );
+    mkdirSync(CACHE_DIR, { recursive: true });
+    assertSafeGitRef(ref, `${name} ref`);
+    execFileSync('git', ['clone', '--depth', '1', '--branch', ref, git, dest], { stdio: 'pipe' });
   }
   // Fetch tag refs so per-version `git show <tag>:<file>` works.
   // `--depth 1 --branch` clones only the branch tip and skips tags by default.
@@ -85,7 +139,7 @@ function syncGitCache(name: string, git: string, ref: string): string {
   // docs, …) make this exit non-zero with empty stderr — that's expected and
   // must not break the sync of the rest of the registry.
   try {
-    execSync(`git fetch --depth 1 origin 'refs/tags/*:refs/tags/*'`, { cwd: dest, stdio: 'pipe' });
+    execFileSync('git', ['fetch', '--depth', '1', 'origin', 'refs/tags/*:refs/tags/*'], { cwd: dest, stdio: 'pipe' });
   } catch {
     // No tags to fetch — fine. Per-version syncs against this repo will be
     // skipped at the `versions` loop with a warning. Untagged repos rely on
@@ -126,13 +180,16 @@ function resolveRepoRoot(entry: DocsRegistryEntry): string | null {
 
 async function readDocsConfig(configPath: string): Promise<DocsConfig | null> {
   if (!existsSync(configPath)) return null;
+  const raw = await readFile(configPath, 'utf8');
+  let config: DocsConfig;
   try {
-    const raw = await readFile(configPath, 'utf8');
-    return JSON.parse(raw) as DocsConfig;
+    config = JSON.parse(raw) as DocsConfig;
   } catch (err) {
     console.error(`[sync-docs] failed to parse ${configPath}:`, err);
     return null;
   }
+  validateDocsConfig(config, configPath);
+  return config;
 }
 
 async function collectConfigs(
@@ -142,6 +199,10 @@ async function collectConfigs(
   const results: Array<{ config: DocsConfig; rootDir: string }> = [];
   const candidates = entry.configPaths ?? [''];
   for (const sub of candidates) {
+    if (sub && !isSafeRelativePath(sub)) {
+      console.error(`[sync-docs] unsafe config path '${sub}' for ${entry.name}; skipping.`);
+      continue;
+    }
     const dir = sub ? path.join(repoRoot, sub) : repoRoot;
     const configPath = path.join(dir, 'docs.config.json');
     const config = await readDocsConfig(configPath);
@@ -305,6 +366,7 @@ function isWorkingTreeVersion(version: string): boolean {
 function resolveVersionTag(repoRoot: string, pkg: string, version: string): string | null {
   // If the caller passed a literal tag (e.g. `'v1.2.3'`), prefer the
   // longer-form candidates first but accept the raw string too.
+  assertSafeGitRef(version, `${pkg} version`);
   const candidates: string[] = [];
   const scopedOrPlain = pkg.startsWith('@') ? pkg : pkg.toLowerCase();
   candidates.push(`${scopedOrPlain}@${version}`);
@@ -317,7 +379,8 @@ function resolveVersionTag(repoRoot: string, pkg: string, version: string): stri
 
   for (const tag of candidates) {
     try {
-      execSync(`git rev-parse --verify --quiet ${JSON.stringify(`refs/tags/${tag}`)}`, {
+      assertSafeGitRef(tag, `${pkg} tag candidate`);
+      execFileSync('git', ['rev-parse', '--verify', '--quiet', `refs/tags/${tag}`], {
         cwd: repoRoot,
         stdio: 'pipe',
       });
@@ -339,7 +402,9 @@ async function copyVersionFromGitTag(
   // List tracked files under docsPath at the given tag.
   let listing: string;
   try {
-    listing = execSync(`git ls-tree -r --name-only ${tag} -- ${docsPath}`, {
+    assertSafeGitRef(tag, 'resolved tag');
+    assertSafeDocsPath(docsPath, 'docsPath in repo');
+    listing = execFileSync('git', ['ls-tree', '-r', '--name-only', tag, '--', docsPath], {
       cwd: repoRoot,
       encoding: 'utf8',
     });
@@ -347,16 +412,21 @@ async function copyVersionFromGitTag(
     console.warn(`[sync-docs] tag '${tag}' not found in ${repoRoot} — skipping.`);
     return [];
   }
-  const files = listing.split('\n').filter((f) => /\.(mdx|md)$/i.test(f));
+  const normalizedDocsPath = docsPath.replace(/\\/g, '/').replace(/\/+$/, '');
+  const files = listing
+    .split('\n')
+    .filter((f) => /\.(mdx|md)$/i.test(f))
+    .filter((f) => f === normalizedDocsPath || f.startsWith(`${normalizedDocsPath}/`));
   if (files.length === 0) return [];
   await mkdir(outDir, { recursive: true });
   const pages: SyncedPage[] = [];
   for (const file of files) {
-    const relUnderDocs = path.relative(docsPath, file);
+    const relUnderDocs = path.posix.relative(normalizedDocsPath, file.replace(/\\/g, '/'));
+    if (!isSafeRelativePath(relUnderDocs)) continue;
     if (isIgnored(relUnderDocs, ignore)) continue;
     let contents: Buffer;
     try {
-      contents = execSync(`git show ${tag}:${file}`, { cwd: repoRoot });
+      contents = execFileSync('git', ['show', `${tag}:${file}`], { cwd: repoRoot });
     } catch (err) {
       console.error(`[sync-docs] git show failed for ${tag}:${file}`, err);
       continue;
@@ -564,7 +634,7 @@ async function runTypedoc(
   ];
 
   try {
-    execSync(`node ${JSON.stringify(typedocBin)} ${args.map((a) => JSON.stringify(a)).join(' ')}`, {
+    execFileSync('node', [typedocBin, ...args], {
       stdio: 'pipe',
       env: { ...process.env, FORCE_COLOR: '0' },
     });
