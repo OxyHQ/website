@@ -2,13 +2,14 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { HelpArticle } from '../models/HelpArticle.js'
 import { Translation } from '../models/Translation.js'
-import { requireAuth } from '../middleware/auth.js'
+import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
 import { applyTranslation, applyTranslations } from '../utils/applyTranslation.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
+import { config } from '../config.js'
 
 const router = Router()
 
@@ -36,7 +37,7 @@ const listQuerySchema = z.object({
   category: z.string().optional(),
   tag: z.string().optional(),
   featured: z.string().optional(),
-  status: z.string().optional(),
+  status: z.enum(['draft', 'published']).optional(),
   limit: z.string().optional(),
   page: z.string().optional(),
   locale: z.string().optional(),
@@ -49,7 +50,12 @@ const detailQuerySchema = z.object({
 
 const slugParamsSchema = z.object({ slug: z.string().min(1) })
 
-router.get('/', localeMiddleware, async (req, res) => {
+function isAdminRequest(req: Parameters<typeof adminOnly>[0]): boolean {
+  const username = req.user?.username
+  return Boolean(username && config.adminUsernames.includes(username))
+}
+
+router.get('/', optionalAuth, localeMiddleware, async (req, res) => {
   const { category, tag, featured, status, limit = '20', page = '1' } = validate(listQuerySchema, req.query)
 
   const filter: Record<string, unknown> = {}
@@ -57,8 +63,9 @@ router.get('/', localeMiddleware, async (req, res) => {
   if (tag) filter.tags = tag
   if (featured === 'true') filter.featured = true
 
-  if (status) {
-    filter.status = status
+  if (status === 'draft') {
+    if (!isAdminRequest(req)) return res.status(403).json({ error: 'Admin access required' })
+    filter.status = 'draft'
   } else {
     filter.status = 'published'
   }
@@ -87,13 +94,13 @@ router.get('/', localeMiddleware, async (req, res) => {
   res.json({ articles: result, total, page: pageNum, pages: Math.ceil(total / limitNum) })
 })
 
-router.get('/:slug', localeMiddleware, async (req, res) => {
+router.get('/:slug', optionalAuth, localeMiddleware, async (req, res) => {
   const { slug } = validate(slugParamsSchema, req.params)
   const { preview } = validate(detailQuerySchema, req.query)
 
   const article = await HelpArticle.findOne({ slug }).populate('coverImage').populate('category')
   if (!article) return res.status(404).json({ error: 'Help article not found' })
-  if (article.status === 'draft' && preview !== 'true') {
+  if (article.status === 'draft' && (preview !== 'true' || !isAdminRequest(req))) {
     return res.status(404).json({ error: 'Help article not found' })
   }
   if (req.isDefaultLocale) return res.json(article)
