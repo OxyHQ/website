@@ -76,7 +76,7 @@ export function renderSEO(input: SEORenderInput, seoData: SeoData | null = null)
   // Seed the CMS-managed SEO so `<SEO>`'s `useSeo()` resolves synchronously from
   // cache. staleTime Infinity means no per-route network fetch during the build;
   // `null` (API unseeded/unreachable) makes `<SEO>` fall back to the props below.
-  queryClient.setQueryData(['seo'], seoData)
+  queryClient.setQueryData(['seo', 'oxy', input.canonicalPath], seoData)
 
   // `<SEO>` reads `useLocaleContext()` to emit hreflang entries. The
   // LocaleProvider's `useQuery('public-locales')` returns `undefined`

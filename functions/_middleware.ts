@@ -11,15 +11,18 @@ import { brandForHost, resolveSeoOrDefault, type SeoData } from '../src/lib/seo'
  *
  * Oxy is the prerendered default, so Oxy requests pass straight through. Only
  * FairCoin hosts get rewritten, and only HTML responses. The metadata is
- * CMS-managed (`GET /api/seo`, edge-cached); if that is unseeded or unreachable
+ * CMS-managed (`GET /api/seo?brand&path`, edge-cached); if that is unseeded or unreachable
  * we fall back to the brand bootstrap meta, so this can never make things worse.
  */
 
 const SEO_API = 'https://website-api.oxy.so/api/seo'
 
-async function fetchSeoData(): Promise<SeoData | null> {
+async function fetchSeoData(pathname: string, brand: string): Promise<SeoData | null> {
   try {
-    const res = await fetch(SEO_API, {
+    const url = new URL(SEO_API)
+    url.searchParams.set('brand', brand)
+    url.searchParams.set('path', pathname)
+    const res = await fetch(url.toString(), {
       cf: { cacheTtl: 300, cacheEverything: true },
     } as RequestInit)
     if (!res.ok) return null
@@ -41,7 +44,7 @@ const onRequest: PagesFunction = async (context) => {
   if (!(response.headers.get('content-type') ?? '').includes('text/html')) return response
 
   try {
-    const meta = resolveSeoOrDefault(await fetchSeoData(), url.pathname, url.hostname)
+    const meta = resolveSeoOrDefault(await fetchSeoData(url.pathname, 'faircoin'), url.pathname, url.hostname)
     const setContent = (value: string) => ({
       element(el: Element) {
         el.setAttribute('content', value)

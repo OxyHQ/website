@@ -67,7 +67,7 @@ export default function SEO({
   const { locale, locales } = useLocaleContext()
   const host = typeof window === 'undefined' ? undefined : window.location.hostname
   const { brand, origin, siteName } = brandConfig(host)
-  const { data: seoData } = useSeo()
+  const { data: seoData } = useSeo(canonicalPath, brand)
   const cms = resolveSeo(seoData ?? null, canonicalPath, host)
 
   const metaTitle = cms?.title ?? title

@@ -901,10 +901,19 @@ export function useSiteSettings() {
 import type { SeoBrand, SeoMeta, SeoData } from '../lib/seo'
 export type { SeoBrand, SeoMeta, SeoData }
 
-export function useSeo() {
+export function useSeo(path: string, brand: SeoBrand) {
   return useQuery<SeoData>({
-    queryKey: ['seo'],
-    queryFn: () => apiFetch<SeoData>('/seo'),
+    queryKey: ['seo', brand, path],
+    queryFn: () => apiFetch<SeoData>(`/seo?brand=${encodeURIComponent(brand)}&path=${encodeURIComponent(path)}`),
+    staleTime: 2 * 60_000,
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useAdminSeo() {
+  return useQuery<SeoData>({
+    queryKey: ['seo', 'admin'],
+    queryFn: () => apiFetch<SeoData>('/seo/all'),
     staleTime: 2 * 60_000,
     placeholderData: keepPreviousData,
   })

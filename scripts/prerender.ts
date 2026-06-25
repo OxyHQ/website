@@ -764,13 +764,16 @@ interface RenderJob {
 }
 
 /**
- * Fetch the CMS-managed SEO once for the whole build. Best-effort: if the API
- * is unseeded or unreachable, returns null and every route falls back to its
- * enumerated props, so the build never breaks on a missing backend.
+ * Fetch the CMS-managed SEO for one route. Best-effort: if the API is unseeded
+ * or unreachable, returns null and that route falls back to its enumerated
+ * props, so the build never breaks on a missing backend.
  */
-async function fetchSeoData(): Promise<SeoData | null> {
+async function fetchSeoData(routePath: string): Promise<SeoData | null> {
   try {
-    const res = await fetch(SEO_API)
+    const url = new URL(SEO_API)
+    url.searchParams.set('brand', 'oxy')
+    url.searchParams.set('path', routePath)
+    const res = await fetch(url.toString())
     if (!res.ok) return null
     return (await res.json()) as SeoData
   } catch (err) {
@@ -783,9 +786,9 @@ async function writeRoute(
   renderSEO: RenderSEOFn,
   shell: string,
   job: RenderJob,
-  seoData: SeoData | null,
 ): Promise<boolean> {
   try {
+    const seoData = await fetchSeoData(job.url)
     const { head } = renderSEO(job.seo, seoData)
     if (!head) {
       console.warn(`[prerender] empty head for ${job.url}`)
@@ -811,11 +814,10 @@ async function main(): Promise<void> {
 
   const startTime = Date.now()
 
-  const [renderSEO, jobs, shell, seoData] = await Promise.all([
+  const [renderSEO, jobs, shell] = await Promise.all([
     buildSsrBundle(),
     enumerateAllRoutes(),
     loadShellHtml(),
-    fetchSeoData(),
   ])
 
   console.log(`[prerender] rendering ${jobs.length} routes…`)
@@ -830,7 +832,7 @@ async function main(): Promise<void> {
       const idx = cursor++
       const job = jobs[idx]
       if (!job) continue
-      const ok = await writeRoute(renderSEO, shell, job, seoData)
+      const ok = await writeRoute(renderSEO, shell, job)
       if (ok) succeeded++
       else failed++
       if ((idx + 1) % 100 === 0 || idx + 1 === jobs.length) {
