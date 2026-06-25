@@ -9,7 +9,8 @@
  *
  * Conditional requests via ETag (cached in `node_modules/.changelog-cache/`)
  * keep repeat builds fast and avoid burning the anonymous rate limit.
- * Set `GITHUB_TOKEN` in CI to lift the limit further.
+ * Set `GITHUB_TOKEN` in CI to lift the limit further, but only after
+ * each repository has been verified as public without credentials.
  *
  * Set `CHANGELOG_REPOS=owner/name,owner/name` to override the default list.
  *
@@ -195,7 +196,44 @@ interface FetchResult {
   fromCache: boolean
 }
 
+async function verifyPublicRepo(repo: TrackedRepo): Promise<boolean> {
+  const url = `https://api.github.com/repos/${repo.owner}/${repo.name}`
+  const headers: Record<string, string> = {
+    'User-Agent': 'oxy-website-changelog',
+    Accept: 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+  }
+
+  const res = await fetch(url, { headers })
+
+  if (res.status === 404) {
+    console.warn(`[sync-changelog] ${repo.owner}/${repo.name}: repo is not publicly visible (404), skipping`)
+    return false
+  }
+
+  if (!res.ok) {
+    throw new Error(`[sync-changelog] ${repo.owner}/${repo.name}: unable to verify public visibility (HTTP ${res.status})`)
+  }
+
+  const raw: unknown = await res.json()
+  if (!raw || typeof raw !== 'object' || !('private' in raw) || typeof raw.private !== 'boolean') {
+    throw new Error(`[sync-changelog] ${repo.owner}/${repo.name}: invalid repository visibility response`)
+  }
+
+  if (raw.private) {
+    console.warn(`[sync-changelog] ${repo.owner}/${repo.name}: repo is private, skipping`)
+    return false
+  }
+
+  return true
+}
+
 async function fetchReleases(repo: TrackedRepo, token: string | undefined): Promise<FetchResult> {
+  const isPublic = await verifyPublicRepo(repo)
+  if (!isPublic) {
+    return { releases: [], fromCache: false }
+  }
+
   const cached = await readCache(repo.owner, repo.name)
   const url = `https://api.github.com/repos/${repo.owner}/${repo.name}/releases?per_page=50`
   const headers: Record<string, string> = {
