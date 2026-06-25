@@ -22,9 +22,9 @@
  */
 
 import { readFile, writeFile, mkdir, rm, readdir, rename, cp } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import type {
   DocsConfig,
   DocsRegistry,
@@ -65,19 +65,16 @@ function syncGitCache(name: string, git: string, ref: string): string {
   const gitDir = path.join(dest, '.git');
   if (existsSync(gitDir)) {
     console.error(`[sync-docs] refreshing cached clone for ${name} (${ref})...`);
-    execSync(`git fetch --depth 1 origin ${ref}`, { cwd: dest, stdio: 'pipe' });
-    execSync(`git reset --hard FETCH_HEAD`, { cwd: dest, stdio: 'pipe' });
+    execFileSync('git', ['fetch', '--depth', '1', 'origin', ref], { cwd: dest, stdio: 'pipe' });
+    execFileSync('git', ['reset', '--hard', 'FETCH_HEAD'], { cwd: dest, stdio: 'pipe' });
   } else {
     console.error(`[sync-docs] cloning ${git} (${ref}) into ${dest}...`);
     // Wipe a partial directory if a previous run left it behind without .git.
     if (existsSync(dest)) {
-      execSync(`rm -rf ${JSON.stringify(dest)}`);
+      rmSync(dest, { recursive: true, force: true });
     }
-    execSync(`mkdir -p ${JSON.stringify(CACHE_DIR)}`);
-    execSync(
-      `git clone --depth 1 --branch ${JSON.stringify(ref)} ${JSON.stringify(git)} ${JSON.stringify(dest)}`,
-      { stdio: 'pipe' },
-    );
+    mkdirSync(CACHE_DIR, { recursive: true });
+    execFileSync('git', ['clone', '--depth', '1', '--branch', ref, git, dest], { stdio: 'pipe' });
   }
   // Fetch tag refs so per-version `git show <tag>:<file>` works.
   // `--depth 1 --branch` clones only the branch tip and skips tags by default.
@@ -85,8 +82,12 @@ function syncGitCache(name: string, git: string, ref: string): string {
   // docs, …) make this exit non-zero with empty stderr — that's expected and
   // must not break the sync of the rest of the registry.
   try {
-    execSync(`git fetch --depth 1 origin 'refs/tags/*:refs/tags/*'`, { cwd: dest, stdio: 'pipe' });
-  } catch {
+    execFileSync('git', ['fetch', '--depth', '1', 'origin', 'refs/tags/*:refs/tags/*'], { cwd: dest, stdio: 'pipe' });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (process.env.SYNC_DOCS_DEBUG === '1') {
+      console.warn(`[sync-docs] no tag refs fetched for ${name}: ${message.split('\n')[0]}`);
+    }
     // No tags to fetch — fine. Per-version syncs against this repo will be
     // skipped at the `versions` loop with a warning. Untagged repos rely on
     // the `main`/`master` ref instead.
@@ -317,13 +318,16 @@ function resolveVersionTag(repoRoot: string, pkg: string, version: string): stri
 
   for (const tag of candidates) {
     try {
-      execSync(`git rev-parse --verify --quiet ${JSON.stringify(`refs/tags/${tag}`)}`, {
+      execFileSync('git', ['rev-parse', '--verify', '--quiet', `refs/tags/${tag}`], {
         cwd: repoRoot,
         stdio: 'pipe',
       });
       return tag;
-    } catch {
-      // Try the next candidate.
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      if (process.env.SYNC_DOCS_DEBUG === '1') {
+        console.warn(`[sync-docs] tag candidate '${tag}' did not resolve: ${message.split('\n')[0]}`);
+      }
     }
   }
   return null;
@@ -339,12 +343,13 @@ async function copyVersionFromGitTag(
   // List tracked files under docsPath at the given tag.
   let listing: string;
   try {
-    listing = execSync(`git ls-tree -r --name-only ${tag} -- ${docsPath}`, {
+    listing = execFileSync('git', ['ls-tree', '-r', '--name-only', tag, '--', docsPath], {
       cwd: repoRoot,
       encoding: 'utf8',
     });
-  } catch {
-    console.warn(`[sync-docs] tag '${tag}' not found in ${repoRoot} — skipping.`);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn(`[sync-docs] tag '${tag}' not found in ${repoRoot} — skipping: ${message.split('\n')[0]}`);
     return [];
   }
   const files = listing.split('\n').filter((f) => /\.(mdx|md)$/i.test(f));
@@ -356,7 +361,7 @@ async function copyVersionFromGitTag(
     if (isIgnored(relUnderDocs, ignore)) continue;
     let contents: Buffer;
     try {
-      contents = execSync(`git show ${tag}:${file}`, { cwd: repoRoot });
+      contents = execFileSync('git', ['show', `${tag}:${file}`], { cwd: repoRoot });
     } catch (err) {
       console.error(`[sync-docs] git show failed for ${tag}:${file}`, err);
       continue;
@@ -564,7 +569,7 @@ async function runTypedoc(
   ];
 
   try {
-    execSync(`node ${JSON.stringify(typedocBin)} ${args.map((a) => JSON.stringify(a)).join(' ')}`, {
+    execFileSync('node', [typedocBin, ...args], {
       stdio: 'pipe',
       env: { ...process.env, FORCE_COLOR: '0' },
     });
