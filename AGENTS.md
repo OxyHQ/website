@@ -242,7 +242,7 @@ This is a TypeScript-primary monorepo. Default to TypeScript for all new code. N
 
 ## Website — Oxy SDK Conventions
 
-- **Versions**: `@oxyhq/core ^3.10.0`, `@oxyhq/bloom ^0.19.1`, `@oxyhq/contracts ^0.2.1` (transitive via core). `@oxyhq/auth ^5.0.1` where the website has SSO-aware pages.
+- **Versions**: `@oxyhq/core ^3.11.0`, `@oxyhq/bloom ^0.19.1`, `@oxyhq/contracts ^0.3.0` (transitive via core). `@oxyhq/auth ^5.1.1` where the website has SSO-aware pages.
 - **Media**: avatars/images resolve ONLY through `oxyServices.getFileDownloadUrl(id, variant)` + bloom's variant-aware `<Avatar source={fileId} variant="thumb">`. Never hardcode `cloud.oxy.so` or `/media/` URLs in components.
 - **Display names**: render `name.displayName` directly (core 3.10 fixes the type under node resolution). No local name fallbacks.
 - **Backend auth (flagged follow-up)**: migrating local auth to `@oxyhq/core/server` (`createOxyAuthMiddleware`/`getRequiredOxyUserId`) is a pending follow-up (Express 5 peer). Do not add new local auth middleware in the meantime.
@@ -252,21 +252,22 @@ This is a TypeScript-primary monorepo. Default to TypeScript for all new code. N
 ## Oxy SDK Published Versions
 
 Current published majors (npm):
-- `@oxyhq/core` **3.10.0** — current target. Includes `@oxyhq/core/server` (`createOxyAuthMiddleware`, `createOptionalOxyAuth`, `createOxyRateLimit`, `requireOxyAuth`, `getRequiredOxyUserId`) and linked backend clients. `name.displayName` type fixed under node resolution. **GOTCHA: 3.3.0 and 3.4.0 are BROKEN for external consumers** because of an unpublished/workspace contracts dependency. Pin core to **^3.10.0**.
-- `@oxyhq/auth` **5.0.1** — `WebOxyProvider` intercepts `/__oxy/sso-callback` before child apps render.
-- `@oxyhq/services` **11.0.0** — current target. Packaging-only major — deps moved to peerDependencies; public API unchanged. `OxyProvider` owns RP cold boot, `clientId`, callback interception, private API readiness, invalidated-token sign-out.
+- `@oxyhq/core` **3.11.0** — current target. **3.11.0:** self-sovereign identity layer (did:web, signed records, signed data export, domain verification) + "Sign in with Oxy" (shared-keychain SSO + cross-device QR/deep-link handoff via the new `Commons by Oxy` native app). **Accounts is now keyless "Accounts by Oxy"** (management-only; identity creation moved to Commons). Includes `@oxyhq/core/server` (`createOxyAuthMiddleware`, `createOptionalOxyAuth`, `createOxyRateLimit`, `requireOxyAuth`, `getRequiredOxyUserId`) and linked backend clients. `name.displayName` type fixed under node resolution. **GOTCHA: 3.3.0 and 3.4.0 are BROKEN for external consumers** because of an unpublished/workspace contracts dependency. Pin core to **^3.11.0**.
+- `@oxyhq/contracts` **0.3.0** — current target. Includes self-sovereign identity contracts (DID, signed records, domain verification DTOs). Transitive via `@oxyhq/core`.
+- `@oxyhq/auth` **5.1.1** — current target. 5.1.x adds `useCommonsSignIn` hook + IdP Sign-in-with-Oxy UI support (shared-keychain handoff via Commons).
+- `@oxyhq/services` **11.1.0** — current target. 11.1.0 adds "Sign in with Oxy" (Commons QR scanner + approval UI + deep-link handoff). 11.0.0 was a packaging-only major — deps moved to peerDependencies; public API unchanged. `OxyProvider` owns RP cold boot, `clientId`, callback interception, private API readiness, invalidated-token sign-out.
 - `@oxyhq/bloom` **0.19.1** — current target. Variant-aware media: `ImageResolver` + `<Avatar source={fileId} variant="thumb">`. Retains the 0.7.x web CSS-var fix; web consumers use `var(--x)`, not `hsl(var(--x))`, for Bloom base tokens.
 
-**All active RP consumers (2026-06-25):** target `@oxyhq/core ^3.10.0`, `@oxyhq/auth ^5.0.1` where used, `@oxyhq/services ^11.0.0` where used, and `@oxyhq/bloom ^0.19.1` where used. Expo web apps that can receive `/__oxy/sso-callback` inject `getSsoCallbackBootstrapScript()` in `app/+html.tsx`; app backend clients use `oxyServices.createLinkedClient({ baseURL })`.
+**All active RP consumers (2026-06-26):** target `@oxyhq/core ^3.11.0`, `@oxyhq/contracts ^0.3.0` (transitive via core), `@oxyhq/auth ^5.1.1` where used, `@oxyhq/services ^11.1.0` where used, and `@oxyhq/bloom ^0.19.1` where used. Expo web apps that can receive `/__oxy/sso-callback` inject `getSsoCallbackBootstrapScript()` in `app/+html.tsx`; app backend clients use `oxyServices.createLinkedClient({ baseURL })`.
 
-**CRITICAL — SSO helpers live ONLY in `@oxyhq/core` (2026-06-19):** `consumeSsoReturn`, `buildSsoBounceUrl`, `isCentralIdPOrigin`, `guardActive`, `ssoNavigate`, `ssoStateKey`/`ssoGuardKey`/`ssoDestKey`/`ssoNoSessionKey`, `ssoCallbackBootstrapKey`, `getSsoCallbackBootstrapScript`, `SSO_CALLBACK_PATH`, `SSO_GUARD_TTL_MS`, `registrableApex`, `MULTIPART_TLDS`, and `CENTRAL_IDP_APEX` are defined ONCE in `@oxyhq/core` and imported by auth-sdk, services, Expo root HTML, and the CF Worker. Do NOT re-introduce local copies in any consumer.
+**CRITICAL — SSO helpers live ONLY in `@oxyhq/core` (2026-06-19):** `consumeSsoReturn`, `buildSsoBounceUrl`, `isCentralIdPOrigin`, `guardActive`, `ssoNavigate`, `ssoStateKey`/`ssoGuardKey`/`ssoDestKey`/`ssoNoSessionKey`, `ssoCallbackBootstrapKey`, `getSsoCallbackBootstrapScript`, `SSO_CALLBACK_PATH`, `SSO_GUARD_TTL_MS`, `registrableApex`, and `CENTRAL_IDP_APEX` are defined ONCE in `@oxyhq/core` and imported by auth-sdk, services, Expo root HTML, and the CF Worker. Do NOT re-introduce local copies in any consumer. (`MULTIPART_TLDS` was removed — `fapiAutoDetect.ts` now uses `tldts` Public Suffix List.)
 
 **Breaking in `@oxyhq/services@11.0.0`:**
 - Packaging-only major — deps moved to peerDependencies. Public API unchanged.
 
 **Breaking in `@oxyhq/services@10.0.0`:**
 - `appName` prop REMOVED from `OxyProvider` — use `clientId` instead. Cross-app device sign-in requires `clientId`.
-- Current consumers should pair it with `@oxyhq/core ^3.10.0`.
+- Current consumers should pair it with `@oxyhq/core ^3.11.0`.
 
 **Breaking in `@oxyhq/services@8.0.0`:**
 - `@tanstack/*` moved from `dependencies` → `peerDependencies`. RN/Expo apps MUST declare: `@tanstack/react-query ^5.100.0`, `@tanstack/react-query-persist-client ^5.100.0`, `@tanstack/query-async-storage-persister ^5.100.0`. Web apps additionally add the optional `@tanstack/query-sync-storage-persister ^5.100.0`.
