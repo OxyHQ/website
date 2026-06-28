@@ -2,15 +2,20 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { Course } from '../models/Course.js'
 import { Translation } from '../models/Translation.js'
-import { requireAuth } from '../middleware/auth.js'
+import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
 import { applyTranslation, applyTranslations } from '../utils/applyTranslation.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
+import { config } from '../config.js'
 
 const router = Router()
+
+function isAdminRequest(req: { user?: { username?: string | null } }): boolean {
+  return req.user?.username != null && config.adminUsernames.includes(req.user.username)
+}
 
 // Accept either a string (id/slug) or null to clear. Empty string becomes null.
 const refSchema = z.union([z.string(), z.null()]).optional().transform((v) => (v && v.length > 0 ? v : null))
@@ -60,7 +65,7 @@ const detailQuerySchema = z.object({
 
 const slugParamsSchema = z.object({ slug: z.string().min(1) })
 
-router.get('/', localeMiddleware, async (req, res) => {
+router.get('/', localeMiddleware, optionalAuth, async (req, res) => {
   const { category, tag, featured, status, limit = '20', page = '1' } = validate(listQuerySchema, req.query)
 
   const filter: Record<string, unknown> = {}
@@ -68,11 +73,7 @@ router.get('/', localeMiddleware, async (req, res) => {
   if (tag) filter.tags = tag
   if (featured === 'true') filter.featured = true
 
-  if (status) {
-    filter.status = status
-  } else {
-    filter.status = 'published'
-  }
+  filter.status = isAdminRequest(req) && status ? status : 'published'
 
   const { pageNum, limitNum, skip } = parsePagination(page, limit)
   const [courses, total] = await Promise.all([
@@ -98,15 +99,15 @@ router.get('/', localeMiddleware, async (req, res) => {
   res.json({ courses: result, total, page: pageNum, pages: Math.ceil(total / limitNum) })
 })
 
-router.get('/:slug', localeMiddleware, async (req, res) => {
+router.get('/:slug', localeMiddleware, optionalAuth, async (req, res) => {
   const { slug } = validate(slugParamsSchema, req.params)
   const { preview } = validate(detailQuerySchema, req.query)
 
-  const course = await Course.findOne({ slug }).populate('coverImage').populate('category')
+  const filter: Record<string, unknown> = { slug }
+  if (!isAdminRequest(req) || preview !== 'true') filter.status = 'published'
+
+  const course = await Course.findOne(filter).populate('coverImage').populate('category')
   if (!course) return res.status(404).json({ error: 'Course not found' })
-  if (course.status === 'draft' && preview !== 'true') {
-    return res.status(404).json({ error: 'Course not found' })
-  }
   if (req.isDefaultLocale) return res.json(course)
 
   const translation = await Translation.findOne({
