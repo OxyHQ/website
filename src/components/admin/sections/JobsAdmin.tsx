@@ -166,7 +166,7 @@ export default function JobsAdmin() {
                     <Textarea
                       value={block.text}
                       onChange={(e) => updateBlock(idx, { text: e.target.value })}
-                      placeholder={block.type === 'heading' ? 'Section heading' : 'Paragraph text (HTML allowed)'}
+                      placeholder={block.type === 'heading' ? 'Section heading' : 'Paragraph text'}
                       rows={block.type === 'heading' ? 1 : 3}
                     />
                   )}

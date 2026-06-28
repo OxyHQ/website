@@ -30,7 +30,7 @@ router.get('/', localeMiddleware, async (req, res) => {
 // Get single job by slug (public)
 router.get('/:slug', localeMiddleware, async (req, res) => {
   const { slug } = validate(slugParamsSchema, req.params)
-  const job = await Job.findOne({ slug })
+  const job = await Job.findOne({ slug, active: true })
   if (!job) return res.status(404).json({ error: 'Job not found' })
   if (req.isDefaultLocale) return res.json(job)
 

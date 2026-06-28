@@ -23,11 +23,9 @@ function DescriptionContent({ blocks }: { blocks: DescriptionBlock[] }) {
       {blocks.map((block, i) => {
         if (block.type === 'paragraph') {
           return (
-            <p
-              key={i}
-              className="not-first:mt-[13px] text-pretty text-secondary-foreground leading-[26px]"
-              dangerouslySetInnerHTML={{ __html: block.text }}
-            />
+            <p key={i} className="not-first:mt-[13px] text-pretty text-secondary-foreground leading-[26px]">
+              {block.text}
+            </p>
           )
         }
         if (block.type === 'heading') {
@@ -406,10 +404,9 @@ export default function CareerDetailContent() {
             {Array.isArray(job.description) ? (
               <DescriptionContent blocks={job.description} />
             ) : typeof job.description === 'string' && job.description ? (
-              <div
-                className="prose prose-neutral dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: job.description }}
-              />
+              <p className="whitespace-pre-line text-pretty text-secondary-foreground leading-[26px]">
+                {job.description}
+              </p>
             ) : null}
           </div>
 
