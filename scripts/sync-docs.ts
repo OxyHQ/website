@@ -82,8 +82,8 @@ function validateDocsConfig(config: DocsConfig, configPath: string): void {
     }
     assertSafeGitRef(version, `${configPath} version`);
   }
-  if (config.defaultVersion !== undefined) assertSafeGitRef(config.defaultVersion, `${configPath} defaultVersion`);
-  if (config.latestVersion !== undefined) assertSafeGitRef(config.latestVersion, `${configPath} latestVersion`);
+  if (typeof config.defaultVersion === 'string') assertSafeGitRef(config.defaultVersion, `${configPath} defaultVersion`);
+  if (typeof config.latestVersion === 'string') assertSafeGitRef(config.latestVersion, `${configPath} latestVersion`);
   for (const pattern of config.docsIgnore ?? []) {
     if (typeof pattern !== 'string') {
       throw new Error(`[sync-docs] ${configPath}: docsIgnore must contain only strings.`);
