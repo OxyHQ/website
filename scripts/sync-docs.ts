@@ -111,6 +111,11 @@ function resolveLocalPath(localPath: string): string {
   return path.isAbsolute(localPath) ? localPath : path.resolve(WEBSITE_ROOT, localPath);
 }
 
+/** Whether `ref` is a full 40-character commit SHA (vs a branch/tag name). */
+function isFullGitSha(ref: string): boolean {
+  return /^[0-9a-f]{40}$/i.test(ref);
+}
+
 /**
  * Shallow-clone (or refresh) `git` into `node_modules/.docs-cache/<name>/`
  * and return the absolute path to the working tree. Throws on hard failure.
@@ -131,7 +136,17 @@ function syncGitCache(name: string, git: string, ref: string): string {
     }
     mkdirSync(CACHE_DIR, { recursive: true });
     assertSafeGitRef(ref, `${name} ref`);
-    execFileSync('git', ['clone', '--depth', '1', '--branch', ref, git, dest], { stdio: 'pipe' });
+    if (isFullGitSha(ref)) {
+      // `git clone --branch` only accepts branch/tag names, not a raw 40-hex
+      // commit SHA. For a pinned SHA, init an empty repo and fetch the exact
+      // commit, then detach onto it.
+      execFileSync('git', ['init', dest], { stdio: 'pipe' });
+      execFileSync('git', ['remote', 'add', 'origin', git], { cwd: dest, stdio: 'pipe' });
+      execFileSync('git', ['fetch', '--depth', '1', 'origin', ref], { cwd: dest, stdio: 'pipe' });
+      execFileSync('git', ['checkout', '--detach', 'FETCH_HEAD'], { cwd: dest, stdio: 'pipe' });
+    } else {
+      execFileSync('git', ['clone', '--depth', '1', '--branch', ref, git, dest], { stdio: 'pipe' });
+    }
   }
   // Fetch tag refs so per-version `git show <tag>:<file>` works.
   // `--depth 1 --branch` clones only the branch tip and skips tags by default.
