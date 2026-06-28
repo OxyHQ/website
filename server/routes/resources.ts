@@ -9,13 +9,9 @@ import { applyTranslation, applyTranslations } from '../utils/applyTranslation.j
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
-import { config } from '../config.js'
+import { isAdminUser } from '../utils/adminAccess.js'
 
 const router = Router()
-
-function isAdminRequest(req: { user?: { username?: string | null } }): boolean {
-  return req.user?.username != null && config.adminUsernames.includes(req.user.username)
-}
 
 const refSchema = z.union([z.string(), z.null()]).optional().transform((v) => (v && v.length > 0 ? v : null))
 
@@ -66,7 +62,7 @@ router.get('/', localeMiddleware, optionalAuth, async (req, res) => {
   if (type) filter.type = type
   if (featured === 'true') filter.featured = true
 
-  filter.status = isAdminRequest(req) && status ? status : 'published'
+  filter.status = isAdminUser(req.user) && status ? status : 'published'
 
   const { pageNum, limitNum, skip } = parsePagination(page, limit)
   const [resources, total] = await Promise.all([
@@ -97,7 +93,7 @@ router.get('/:slug', localeMiddleware, optionalAuth, async (req, res) => {
   const { preview } = validate(detailQuerySchema, req.query)
 
   const filter: Record<string, unknown> = { slug }
-  if (!isAdminRequest(req) || preview !== 'true') filter.status = 'published'
+  if (!isAdminUser(req.user) || preview !== 'true') filter.status = 'published'
 
   const resource = await Resource.findOne(filter).populate('coverImage').populate('category')
   if (!resource) return res.status(404).json({ error: 'Resource not found' })
