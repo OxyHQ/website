@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import Button from '../ui/Button'
 
+const TNP_DOWNLOADS_URL = 'https://tnp.network/downloads'
+
 const tldCards = [
   {
     tld: '.ox',
@@ -28,8 +30,8 @@ const steps = [
   {
     number: '01',
     title: 'Install TNP',
-    description: 'One command. It configures your system DNS to resolve TNP domains alongside the regular internet.',
-    code: 'curl -fsSL https://get.tnp.network | sh',
+    description: 'Download the signed installer for your platform, verify it, then run it locally to configure TNP DNS alongside the regular internet.',
+    code: TNP_DOWNLOADS_URL,
   },
   {
     number: '02',
@@ -108,8 +110,8 @@ export default function TNPContent() {
               </Button>
             </div>
             <div className="code-block flex items-center justify-between text-left">
-              <code>curl -fsSL https://get.tnp.network | sh</code>
-              <CopyButton text="curl -fsSL https://get.tnp.network | sh" />
+              <code>{TNP_DOWNLOADS_URL}</code>
+              <CopyButton text={TNP_DOWNLOADS_URL} />
             </div>
           </div>
         </div>

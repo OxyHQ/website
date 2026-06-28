@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import Button from '../ui/Button'
 
+const TNP_DOWNLOADS_URL = 'https://tnp.network/downloads'
+const VERIFY_INSTRUCTIONS = 'Verify the published checksum and signature before running the installer.'
+
 type Platform = 'macos' | 'linux' | 'windows'
 
 const platforms: { id: Platform; label: string }[] = [
@@ -30,7 +33,7 @@ function CopyButton({ text }: { text: string }) {
 
 export default function TNPInstallContent() {
   const [platform, setPlatform] = useState<Platform>('macos')
-  const installCommand = 'curl -fsSL https://get.tnp.network | sh'
+  const downloadUrl = TNP_DOWNLOADS_URL
 
   return (
     <div className="cursor-theme tnp-theme">
@@ -45,7 +48,7 @@ export default function TNPInstallContent() {
               Install TNP
             </h1>
             <p className="type-base text-theme-text-sec text-pretty mb-v1">
-              One command. Your device starts resolving TNP domains immediately.
+              Download a signed installer, verify it, then run it locally to start resolving TNP domains.
             </p>
           </div>
         </div>
@@ -55,9 +58,12 @@ export default function TNPInstallContent() {
       <section className="section bg-theme-bg text-theme-text pt-0">
         <div className="container max-w-prose-medium-wide mx-auto">
           <div className="code-block flex items-center justify-between text-left mb-v2">
-            <code>{installCommand}</code>
-            <CopyButton text={installCommand} />
+            <code>{downloadUrl}</code>
+            <CopyButton text={downloadUrl} />
           </div>
+          <p className="type-sm text-theme-text-sec mb-v2">
+            {VERIFY_INSTRUCTIONS} Do not pipe downloaded scripts directly into a shell.
+          </p>
 
           {/* ── Platform tabs ── */}
           <div className="mb-v1">
@@ -82,7 +88,7 @@ export default function TNPInstallContent() {
                 <div className="type-base space-y-4">
                   <h3>macOS</h3>
                   <p className="text-theme-text-sec">
-                    The installer configures your system DNS resolver to query TNP nameservers for
+                    After verification, the installer configures your system DNS resolver to query TNP nameservers for
                     TNP domains, while forwarding everything else to your default resolver.
                   </p>
                   <div className="space-y-2 text-theme-text-sec">
@@ -95,7 +101,7 @@ export default function TNPInstallContent() {
                   <div className="space-y-2 text-theme-text-sec">
                     <p className="type-sm">What the installer does:</p>
                     <ul className="type-sm list-disc pl-5 space-y-1">
-                      <li>Downloads the TNP resolver binary</li>
+                      <li>Installs the verified TNP resolver binary</li>
                       <li>Creates a resolver entry in <code className="rounded bg-theme-card px-1.5 py-0.5 text-xs text-theme-text">/etc/resolver/</code> for each TNP TLD</li>
                       <li>Starts a lightweight background service via launchd</li>
                     </ul>
@@ -110,7 +116,7 @@ export default function TNPInstallContent() {
                   <h3>Linux</h3>
                   <p className="text-theme-text-sec">
                     Works with systemd-resolved, NetworkManager, and standalone resolv.conf setups.
-                    The installer detects your DNS configuration automatically.
+                    After verification, the installer detects your DNS configuration automatically.
                   </p>
                   <div className="space-y-2 text-theme-text-sec">
                     <p className="type-sm">Requirements:</p>
@@ -122,7 +128,7 @@ export default function TNPInstallContent() {
                   <div className="space-y-2 text-theme-text-sec">
                     <p className="type-sm">What the installer does:</p>
                     <ul className="type-sm list-disc pl-5 space-y-1">
-                      <li>Downloads the TNP resolver binary</li>
+                      <li>Installs the verified TNP resolver binary</li>
                       <li>Configures systemd-resolved split DNS (or adds entries to resolv.conf)</li>
                       <li>Enables a systemd service for the TNP resolver</li>
                     </ul>
