@@ -976,42 +976,6 @@ server.tool('delete_translation', 'Delete a translation for a specific document 
   } catch (e) { return err(e) }
 })
 
-// ── MCP Tokens ───────────────────────────────────────────────────────────────
-
-server.tool('list_mcp_tokens', 'List all MCP API tokens. Token hashes are never exposed. Shows name, creator, usage, and expiry info.', {}, async () => {
-  try {
-    const tokens = await McpToken.find({}, 'name createdBy createdAt lastUsedAt expiresAt revoked').sort('-createdAt')
-    return ok(tokens)
-  } catch (e) { return err(e) }
-})
-
-server.tool('create_mcp_token', 'Create a new MCP API token. The raw token is returned only once — save it securely.', {
-  name: z.string().describe('A descriptive name for this token, e.g. "Claude Desktop" or "CI/CD"'),
-  expiresAt: z.string().optional().describe('Expiry date as ISO string. Omit for no expiration.'),
-}, async (params) => {
-  try {
-    const rawToken = crypto.randomBytes(32).toString('hex')
-    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex')
-    const token = await McpToken.create({
-      name: params.name,
-      tokenHash,
-      createdBy: 'mcp-admin',
-      expiresAt: params.expiresAt ? new Date(params.expiresAt) : undefined,
-    })
-    return ok({ _id: token._id, name: token.name, token: rawToken, createdAt: token.createdAt, expiresAt: token.expiresAt })
-  } catch (e) { return err(e) }
-})
-
-server.tool('revoke_mcp_token', 'Revoke an MCP API token. The token will immediately stop working.', {
-  id: z.string().describe('The _id of the token to revoke'),
-}, async ({ id }) => {
-  try {
-    const token = await McpToken.findByIdAndUpdate(id, { revoked: true }, { new: true })
-    if (!token) return err('Token not found')
-    return ok({ revoked: true, id })
-  } catch (e) { return err(e) }
-})
-
 // ── Upload ──────────────────────────────────────────────────────────────────
 
 server.tool('upload_image', 'Download an image from a URL, upload it to S3, generate thumbnails, and create a Media document. Returns the full Media object.', {
