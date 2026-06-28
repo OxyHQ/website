@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { Comment } from '../models/Comment.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
-import { config } from '../config.js'
+import { isAdminUser } from '../utils/adminAccess.js'
 import { COMMENTABLE_TARGET_TYPES } from '../constants/social.js'
 import { checkAndAwardBadges } from '../services/badgeService.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
@@ -199,7 +199,7 @@ router.delete('/:id', requireAuth, async (req, res) => {
 
     // Allow the comment author or an admin to delete
     const isAuthor = comment.userId === user.id
-    const isAdmin = user.username != null && config.adminUsernames.includes(user.username)
+    const isAdmin = isAdminUser(user)
 
     if (!isAuthor && !isAdmin) {
       return res.status(403).json({ error: 'You can only delete your own comments' })

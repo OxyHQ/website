@@ -1,12 +1,16 @@
 import dotenv from 'dotenv'
 dotenv.config()
 
+function parseCsvEnv(value: string | undefined): string[] {
+  return value?.split(',').map((item) => item.trim()).filter(Boolean) ?? []
+}
+
 export const config = {
   port: parseInt(process.env.PORT || '4000', 10),
   mongoUri: process.env.MONGO_URI || 'mongodb://localhost:27017/oxy-website',
   oxyApiBase: process.env.OXY_API_BASE || 'https://api.oxy.so',
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
-  adminUsernames: ['oxy', 'nate'],
+  adminUserIds: parseCsvEnv(process.env.OXY_ADMIN_USER_IDS),
   githubToken: process.env.GITHUB_TOKEN || '',
   doApiToken: process.env.DO_API_TOKEN || '',
   s3: {

@@ -9,7 +9,7 @@ import { applyTranslation, applyTranslations } from '../utils/applyTranslation.j
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
-import { config } from '../config.js'
+import { isAdminUser } from '../utils/adminAccess.js'
 
 const router = Router()
 
@@ -51,8 +51,7 @@ const detailQuerySchema = z.object({
 const slugParamsSchema = z.object({ slug: z.string().min(1) })
 
 function isAdminRequest(req: Parameters<typeof adminOnly>[0]): boolean {
-  const username = req.user?.username
-  return Boolean(username && config.adminUsernames.includes(username))
+  return isAdminUser(req.user)
 }
 
 router.get('/', optionalAuth, localeMiddleware, async (req, res) => {
