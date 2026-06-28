@@ -2,7 +2,6 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { Vote } from '../models/Vote.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
-import { config } from '../config.js'
 import { checkAndAwardBadges } from '../services/badgeService.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
@@ -12,6 +11,7 @@ const router = Router()
 
 const GITHUB_ORG = 'oxyhq'
 const FEATURE_LABEL = 'feature-request'
+const GITHUB_PUBLIC_ISSUES_SEARCH = `org:${GITHUB_ORG}+label:${FEATURE_LABEL}+is:issue`
 
 interface GitHubIssue {
   id: number
@@ -53,15 +53,19 @@ const issueParamsSchema = z.object({
   number: z.string().min(1),
 })
 
-function githubHeaders(): Record<string, string> {
-  const headers: Record<string, string> = {
+function publicGithubHeaders(): Record<string, string> {
+  return {
     Accept: 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
   }
-  if (config.githubToken) {
-    headers.Authorization = `Bearer ${config.githubToken}`
-  }
-  return headers
+}
+
+function hasFeatureRequestLabel(issue: GitHubIssue): boolean {
+  return issue.labels.some((label) => label.name.toLowerCase() === FEATURE_LABEL)
+}
+
+function isAllowedFeatureOwner(owner: string): boolean {
+  return owner.toLowerCase() === GITHUB_ORG
 }
 
 function parseRepoFromUrl(repoUrl: string): { owner: string; repo: string } {
@@ -80,8 +84,8 @@ async function fetchAllIssues(): Promise<GitHubIssue[]> {
   const perPage = 100
 
   while (true) {
-    const url = `https://api.github.com/search/issues?q=org:${GITHUB_ORG}+label:${FEATURE_LABEL}+is:issue&sort=reactions-%2B1&order=desc&per_page=${perPage}&page=${page}`
-    const resp = await fetch(url, { headers: githubHeaders() })
+    const url = `https://api.github.com/search/issues?q=${GITHUB_PUBLIC_ISSUES_SEARCH}&sort=reactions-%2B1&order=desc&per_page=${perPage}&page=${page}`
+    const resp = await fetch(url, { headers: publicGithubHeaders() })
 
     if (resp.status === 429 || resp.status === 403) {
       if (issueCache) {
@@ -229,8 +233,12 @@ router.get('/:owner/:repo/:number', optionalAuth, async (req, res) => {
   const { owner, repo, number } = validate(issueParamsSchema, req.params)
 
   try {
+    if (!isAllowedFeatureOwner(owner)) {
+      return res.status(404).json({ error: 'Issue not found' })
+    }
+
     const url = `https://api.github.com/repos/${owner}/${repo}/issues/${number}`
-    const resp = await fetch(url, { headers: githubHeaders() })
+    const resp = await fetch(url, { headers: publicGithubHeaders() })
 
     if (!resp.ok) {
       if (resp.status === 404) return res.status(404).json({ error: 'Issue not found' })
@@ -238,6 +246,10 @@ router.get('/:owner/:repo/:number', optionalAuth, async (req, res) => {
     }
 
     const issue: GitHubIssue = await resp.json()
+    if (!hasFeatureRequestLabel(issue)) {
+      return res.status(404).json({ error: 'Issue not found' })
+    }
+
     const key = `${owner}/${repo}#${number}`
 
     const [localVoteCount, userVote] = await Promise.all([
