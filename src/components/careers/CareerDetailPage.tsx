@@ -17,6 +17,85 @@ const SolidLineV = ({ className = '' }: { className?: string }) => (
   <VerticalLine className={`text-border ${className}`} />
 )
 
+const ALLOWED_DESCRIPTION_TAGS = new Set([
+  'a',
+  'br',
+  'code',
+  'em',
+  'li',
+  'ol',
+  'p',
+  'strong',
+  'ul',
+])
+const ALLOWED_DESCRIPTION_ATTRIBUTES = new Set(['href', 'rel', 'target', 'title'])
+const SAFE_LINK_PROTOCOLS = new Set(['http:', 'https:', 'mailto:'])
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function sanitizeDescriptionHtml(html: string) {
+  if (typeof document === 'undefined') {
+    return escapeHtml(html)
+  }
+
+  const template = document.createElement('template')
+  template.innerHTML = html
+  const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_ELEMENT)
+  const elements: Element[] = []
+
+  while (true) {
+    const node = walker.nextNode()
+    if (!node) break
+    elements.push(node as Element)
+  }
+
+  for (const element of elements) {
+    const tagName = element.tagName.toLowerCase()
+
+    if (!ALLOWED_DESCRIPTION_TAGS.has(tagName)) {
+      element.replaceWith(...Array.from(element.childNodes))
+      continue
+    }
+
+    for (const attribute of Array.from(element.attributes)) {
+      const attributeName = attribute.name.toLowerCase()
+      if (!ALLOWED_DESCRIPTION_ATTRIBUTES.has(attributeName) || tagName !== 'a') {
+        element.removeAttribute(attribute.name)
+        continue
+      }
+
+      if (attributeName === 'href') {
+        try {
+          const href = new URL(attribute.value, window.location.origin)
+          if (!SAFE_LINK_PROTOCOLS.has(href.protocol)) {
+            element.removeAttribute(attribute.name)
+          }
+        } catch {
+          element.removeAttribute(attribute.name)
+        }
+      }
+    }
+
+    if (tagName === 'a') {
+      element.setAttribute('rel', 'noopener noreferrer')
+      if (element.getAttribute('target') === '_blank') {
+        element.setAttribute('target', '_blank')
+      } else {
+        element.removeAttribute('target')
+      }
+    }
+  }
+
+  return template.innerHTML
+}
+
 function DescriptionContent({ blocks }: { blocks: DescriptionBlock[] }) {
   return (
     <>
@@ -26,7 +105,7 @@ function DescriptionContent({ blocks }: { blocks: DescriptionBlock[] }) {
             <p
               key={i}
               className="not-first:mt-[13px] text-pretty text-secondary-foreground leading-[26px]"
-              dangerouslySetInnerHTML={{ __html: block.text }}
+              dangerouslySetInnerHTML={{ __html: sanitizeDescriptionHtml(block.text) }}
             />
           )
         }
@@ -408,7 +487,7 @@ export default function CareerDetailContent() {
             ) : typeof job.description === 'string' && job.description ? (
               <div
                 className="prose prose-neutral dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: job.description }}
+                dangerouslySetInnerHTML={{ __html: sanitizeDescriptionHtml(job.description) }}
               />
             ) : null}
           </div>
