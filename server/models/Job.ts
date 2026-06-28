@@ -28,6 +28,12 @@ function generateSlug(title: string, location: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
+const DescriptionBlockSchema = new Schema({
+  type: { type: String, enum: ['paragraph', 'heading', 'list'], required: true },
+  text: { type: String, default: '' },
+  items: { type: [String], default: [] },
+}, { _id: false, strict: 'throw' })
+
 const JobSchema = new Schema<IJob>({
   title: { type: String, required: true },
   slug: { type: String, unique: true },
@@ -36,7 +42,7 @@ const JobSchema = new Schema<IJob>({
   location: { type: String, default: 'Remote' },
   type: { type: String, default: 'Full-time' },
   compensation: { type: String, default: '' },
-  description: { type: Schema.Types.Mixed, default: [] },
+  description: { type: [DescriptionBlockSchema], default: [] },
   active: { type: Boolean, default: true },
   order: { type: Number, default: 0 },
 }, { timestamps: true })
