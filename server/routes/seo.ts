@@ -19,23 +19,40 @@ interface BrandSeo {
 
 const emptyBrand = (): BrandSeo => ({ default: null, routes: {} })
 
-/**
- * GET /api/seo — the whole SEO table, grouped by brand:
- * `{ oxy: { default, routes }, faircoin: { default, routes } }`. Cacheable; the
- * client, prerender, and edge middleware each fetch this once and resolve a
- * route locally.
- */
-router.get('/', async (_req, res) => {
-  const entries = await Seo.find().lean()
+function groupSeoEntries(entries: Array<{ brand: SeoBrand; path: string; title: string; description: string; ogImage: string }>): Record<SeoBrand, BrandSeo> {
   const out: Record<SeoBrand, BrandSeo> = { oxy: emptyBrand(), faircoin: emptyBrand() }
   for (const e of entries) {
-    const brand = out[e.brand as SeoBrand] ?? (out[e.brand as SeoBrand] = emptyBrand())
+    const brand = out[e.brand]
     const meta: SeoMeta = { title: e.title, description: e.description, ogImage: e.ogImage }
     if (e.path === '*') brand.default = meta
     else brand.routes[e.path] = meta
   }
+  return out
+}
+
+const seoPublicQuerySchema = z.object({
+  brand: z.enum(['oxy', 'faircoin']),
+  path: z.string().min(1),
+})
+
+/** GET /api/seo/all — the whole SEO table, grouped by brand. Admin only. */
+router.get('/all', requireAuth, adminOnly, async (_req, res) => {
+  const entries = await Seo.find().lean()
+  res.set('Cache-Control', 'private, no-store')
+  res.json(groupSeoEntries(entries))
+})
+
+/**
+ * GET /api/seo — public metadata for one brand/path only. Cacheable; the
+ * client, prerender, and edge middleware request the route they are rendering
+ * instead of enumerating the entire CMS SEO inventory.
+ */
+router.get('/', async (req, res) => {
+  const { brand, path } = validate(seoPublicQuerySchema, req.query)
+  const normalizedPath = path.length > 1 && path.endsWith('/') ? path.replace(/\/+$/, '') : path
+  const entries = await Seo.find({ brand, path: { $in: ['*', normalizedPath || '/'] } }).lean()
   res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=600')
-  res.json(out)
+  res.json(groupSeoEntries(entries))
 })
 
 const seoBodySchema = z.object({

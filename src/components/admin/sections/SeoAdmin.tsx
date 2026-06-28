@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useSeo, useUpsertSeo, useDeleteSeo, type SeoBrand, type SeoMeta, type SeoData } from '../../../api/hooks'
+import { useAdminSeo, useUpsertSeo, useDeleteSeo, type SeoBrand, type SeoMeta, type SeoData } from '../../../api/hooks'
 import { PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
@@ -35,7 +35,7 @@ function rowsFromData(data: SeoData | undefined, brand: SeoBrand): RouteRow[] {
 }
 
 export default function SeoAdmin() {
-  const { data } = useSeo()
+  const { data } = useAdminSeo()
   const upsert = useUpsertSeo()
   const remove = useDeleteSeo()
 
