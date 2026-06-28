@@ -1,8 +1,10 @@
+import { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import { usePage, type PageSection } from '../api/hooks'
+import { sanitizeCmsHtml } from '../lib/sanitizeCmsHtml'
 
 const legalSections = [
   { slug: 'privacy', title: 'Privacy Policy', description: 'How we collect, use, and protect your data.' },
@@ -11,6 +13,12 @@ const legalSections = [
   { slug: 'accessibility', title: 'Accessibility', description: 'Our commitment to digital accessibility.' },
   { slug: 'llms', title: 'LLMs', description: 'How Oxy uses large language models.' },
 ]
+
+function SanitizedSectionContent({ content }: { content: string }) {
+  const sanitizedContent = useMemo(() => sanitizeCmsHtml(content), [content])
+
+  return <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
+}
 
 function SectionContent({ slug }: { slug: string }) {
   const meta = legalSections.find((s) => s.slug === slug)
@@ -33,7 +41,7 @@ function SectionContent({ slug }: { slug: string }) {
             <div key={i}>
               {s.heading && <h2>{s.heading}</h2>}
               {s.subheading && <h3>{s.subheading}</h3>}
-              {s.content && <div dangerouslySetInnerHTML={{ __html: s.content }} />}
+              {s.content && <SanitizedSectionContent content={s.content} />}
             </div>
           ))}
         </div>
