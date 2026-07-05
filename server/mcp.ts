@@ -4,7 +4,7 @@ import express from 'express'
 import mongoose from 'mongoose'
 import crypto from 'node:crypto'
 import { z } from 'zod'
-import { safeFetch, SsrfRejection, UpstreamError } from '@oxyhq/core/server'
+import { safeFetch, UpstreamError } from '@oxyhq/core/server'
 
 // Models
 import { Page } from './models/Page.js'

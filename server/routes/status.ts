@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { safeFetch } from '@oxyhq/core/server'
 import { Product, type IProduct } from '../models/Product.js'
 import { Translation } from '../models/Translation.js'
 import { localeMiddleware } from '../middleware/locale.js'
@@ -82,20 +83,22 @@ async function probeService(product: IProduct): Promise<CachedServiceResult> {
     logoUrl: resolveLogoUrl(product.logo),
   }
   try {
-    const res = await fetch(target, {
+    const res = await safeFetch(target, {
       method: 'GET',
-      redirect: 'follow',
       signal: controller.signal,
       headers: { 'User-Agent': 'OxyStatusBot/1.0 (+https://oxy.so/status)' },
     })
+    res.response.destroy()
     const latencyMs = Date.now() - start
     const httpStatus = res.status
-    const ok = res.ok || (httpStatus >= 200 && httpStatus < 400)
+    const ok = httpStatus >= 200 && httpStatus < 400
     const status: ServiceStatus = ok
       ? (latencyMs > SLOW_LATENCY_MS ? 'degraded' : 'operational')
       : 'down'
     return { ...base, status, latencyMs, httpStatus, lastChecked: new Date().toISOString() }
-  } catch {
+  } catch (err) {
+    const probeFailureReason = err instanceof Error ? err.message : 'Unknown status probe failure'
+    void probeFailureReason
     return {
       ...base,
       status: 'down',

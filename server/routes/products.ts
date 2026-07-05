@@ -2,13 +2,32 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { Product } from '../models/Product.js'
 import { Translation } from '../models/Translation.js'
-import { requireAuth } from '../middleware/auth.js'
+import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
+import { config } from '../config.js'
 import { localeMiddleware } from '../middleware/locale.js'
 import { applyTranslations } from '../utils/applyTranslation.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
+
+
+type ProductJson = Record<string, unknown> & { healthUrl?: unknown }
+
+function canViewStatusProbeTargets(req: { user?: { username?: string } }): boolean {
+  const username = req.user?.username
+  return Boolean(username && config.adminUsernames.includes(username))
+}
+
+function redactStatusProbeTarget<T extends ProductJson>(product: T): Omit<T, 'healthUrl'> {
+  const { healthUrl: _healthUrl, ...publicProduct } = product
+  void _healthUrl
+  return publicProduct
+}
+
+function productJson(doc: { toJSON: () => ProductJson }): ProductJson {
+  return doc.toJSON()
+}
 
 // Accept either a string (Media id) or null to clear. Empty string becomes null.
 const mediaRefSchema = z.union([z.string(), z.null()]).optional().transform((v) => (v && v.length > 0 ? v : null))
@@ -46,7 +65,7 @@ const listQuerySchema = z.object({
   section: z.string().optional(),
 })
 
-router.get('/', localeMiddleware, async (req, res) => {
+router.get('/', optionalAuth, localeMiddleware, async (req, res) => {
   const query = validate(listQuerySchema, req.query)
   const mongoQuery: Record<string, unknown> = {}
   if (query.surface === 'products') mongoQuery.showOnProducts = true
@@ -60,28 +79,36 @@ router.get('/', localeMiddleware, async (req, res) => {
     .populate('logo')
     .populate('category')
 
-  if (req.isDefaultLocale) return res.json(docs)
+  const includeHealthUrl = canViewStatusProbeTargets(req)
+  const defaultLocaleDocs = docs.map(productJson)
+  if (req.isDefaultLocale) {
+    return res.json(includeHealthUrl ? defaultLocaleDocs : defaultLocaleDocs.map(redactStatusProbeTarget))
+  }
 
   const translations = await Translation.find({
     locale: req.locale,
     collectionName: 'products',
     documentId: { $in: docs.map(d => d._id.toString()) },
   })
-  res.json(applyTranslations(docs.map(d => d.toJSON()), translations))
+  const translatedDocs = applyTranslations(defaultLocaleDocs, translations)
+  res.json(includeHealthUrl ? translatedDocs : translatedDocs.map(redactStatusProbeTarget))
 })
 
-router.get('/:productId', localeMiddleware, async (req, res) => {
+router.get('/:productId', optionalAuth, localeMiddleware, async (req, res) => {
   const doc = await Product.findOne({ productId: req.params.productId })
     .populate('logo')
     .populate('category')
   if (!doc) return res.status(404).json({ error: 'Not found' })
-  if (req.isDefaultLocale) return res.json(doc)
+  const includeHealthUrl = canViewStatusProbeTargets(req)
+  const defaultLocaleDoc = productJson(doc)
+  if (req.isDefaultLocale) return res.json(includeHealthUrl ? defaultLocaleDoc : redactStatusProbeTarget(defaultLocaleDoc))
   const translations = await Translation.find({
     locale: req.locale,
     collectionName: 'products',
     documentId: doc._id.toString(),
   })
-  res.json(applyTranslations([doc.toJSON()], translations)[0])
+  const translatedDoc = applyTranslations([defaultLocaleDoc], translations)[0]
+  res.json(includeHealthUrl ? translatedDoc : redactStatusProbeTarget(translatedDoc))
 })
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {
