@@ -1,5 +1,5 @@
 import { Heart } from 'lucide-react'
-import { useAuth } from '@oxyhq/auth'
+import { useAuth } from '@oxyhq/services'
 import { useLikes, useToggleLike } from '../../api/hooks'
 
 interface LikeButtonProps {

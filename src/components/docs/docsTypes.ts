@@ -76,7 +76,7 @@ export interface SidebarGroup {
  */
 export interface SidebarPackage {
   kind: 'package'
-  /** Display label (package displayName, e.g. `@oxyhq/auth`). */
+  /** Display label (package displayName, e.g. `@oxyhq/services`). */
   label: string
   /** Full router href to the package index page. */
   href: string

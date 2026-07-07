@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '@oxyhq/auth'
+import { useAuth } from '@oxyhq/services'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import { useLottie } from 'lottie-react'
 import { useAccountPanel } from '../../contexts/AccountPanelContext'

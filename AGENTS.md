@@ -1,6 +1,6 @@
 # Website (`~/Oxy/website`)
 
-Vite 8 + React 19 + react-router-dom v7 + Tailwind v4 + TypeScript 6 marketing/web presence. Single flat package (no workspaces). Oxy SDK packages used: `@oxyhq/core`, `@oxyhq/bloom`, `@oxyhq/auth`.
+Vite 8 + React 19 + react-router-dom v7 + Tailwind v4 + TypeScript 6 marketing/web presence. Single flat package (no workspaces). Oxy SDK packages used: `@oxyhq/core`, `@oxyhq/bloom`, `@oxyhq/services`.
 
 ## Structure
 

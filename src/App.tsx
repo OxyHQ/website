@@ -1,7 +1,7 @@
 import { useState, useCallback, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { WebOxyProvider, useWebOxy } from '@oxyhq/auth'
+import { OxyProvider, useOxy } from '@oxyhq/services'
 import type { User } from '@oxyhq/core'
 import { BloomThemeProvider } from '@oxyhq/bloom/theme'
 import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
@@ -126,7 +126,7 @@ function ScrollToTop() {
 }
 
 function AppSetup({ children }: { children: React.ReactNode }) {
-  const { oxyServices } = useWebOxy()
+  const { oxyServices } = useOxy()
 
   // Wire the website's own-backend fetch client to the SDK session so every
   // /api call carries the current bearer token without manual token plumbing.
@@ -282,13 +282,18 @@ export default function App() {
   // `applyUserColor()` is also host-aware (no-op on FairCoin), but we forward
   // it through here so the auth event still fires for any future hooks.
   const handleAuthChange = useCallback(
-    (user: User | null) => applyUserColor(user?.color),
+    (user: unknown) => applyUserColor((user as User | null)?.color),
     [],
   )
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WebOxyProvider baseURL={OXY_API} clientId={OXY_CLIENT_ID} onAuthStateChange={handleAuthChange}>
+      <OxyProvider
+        baseURL={OXY_API}
+        clientId={OXY_CLIENT_ID}
+        queryClient={queryClient}
+        onAuthStateChange={handleAuthChange}
+      >
         <AppSetup>
           <BloomThemeProvider mode={mode} colorPreset={preset}>
             <BrowserRouter>
@@ -309,7 +314,7 @@ export default function App() {
             </BrowserRouter>
           </BloomThemeProvider>
         </AppSetup>
-      </WebOxyProvider>
+      </OxyProvider>
     </QueryClientProvider>
   )
 }

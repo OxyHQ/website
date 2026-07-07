@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { CalendarDays } from 'lucide-react'
-import { useAuth, useWebOxy } from '@oxyhq/auth'
+import { useAuth, useOxy } from '@oxyhq/services'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { UserProfileData } from '../../api/hooks'
@@ -109,7 +109,7 @@ export default function ProfileHeader({ profile, isOwnProfile, onEditBio }: Prof
 
 function FollowButton({ userId }: { userId: string }) {
   const { isAuthenticated, signIn } = useAuth()
-  const { oxyServices } = useWebOxy()
+  const { oxyServices } = useOxy()
   const queryClient = useQueryClient()
   const [hovering, setHovering] = useState(false)
 

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { MessageSquare } from 'lucide-react'
-import { useAuth } from '@oxyhq/auth'
+import { useAuth } from '@oxyhq/services'
 import { useComments } from '../../api/hooks'
 import type { CommentData } from '../../api/hooks'
 import CommentComposer from './CommentComposer'

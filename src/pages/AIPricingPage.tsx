@@ -83,7 +83,7 @@ export default function AIPricingPage() {
     },
     staleTime: 5 * 60_000,
     // The nearest QueryClientProvider sets `networkMode: 'offlineFirst'` (in
-    // `<WebOxyProvider>`) or `'online'` (the App-level default). Both park
+    // `<OxyProvider>`) or `'online'` (the App-level default). Both park
     // failed requests instead of transitioning to `isError`, which is why the
     // page used to sit in `isPending` forever. Force `always` so the failure
     // surfaces synchronously, and disable retries — the user can retry
