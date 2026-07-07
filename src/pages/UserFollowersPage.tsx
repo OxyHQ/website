@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { useWebOxy } from '@oxyhq/auth'
+import { useOxy } from '@oxyhq/services'
 import type { User } from '@oxyhq/core'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import Navbar from '../components/layout/Navbar'
@@ -64,7 +64,7 @@ function ListSkeleton() {
 export default function UserFollowersPage({ initialTab }: UserFollowersPageProps) {
   const { username = '' } = useParams<{ username: string }>()
   const [activeTab, setActiveTab] = useState<TabType>(initialTab)
-  const { oxyServices } = useWebOxy()
+  const { oxyServices } = useOxy()
   const { data: profile } = useUserProfile(username)
   const userId = profile?.user._id
   const canViewFollowList = Boolean(userId && profile?.stats)

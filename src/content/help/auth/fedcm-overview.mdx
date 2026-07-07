@@ -1,45 +1,51 @@
 ---
-title: FedCM at Oxy — overview
-description: A summary of how Federated Credential Management (FedCM) powers cross-app sign-in across Oxy.
+title: Device-first sign-in at Oxy
+description: How Oxy apps restore sessions with a per-origin device secret — no cookies, no FedCM, no redirect bounces.
 category: auth
 order: 1
 audience: developer
 featured: true
-updated: 2026-05-25
-tags: [fedcm, oauth, identity]
+updated: 2026-07-07
+tags: [auth, oauth, identity, device-session]
 ---
 
-[FedCM](https://developers.google.com/privacy-sandbox/3pcd/fedcm) is the browser API for federated sign-in without third-party cookies. Oxy is a FedCM **identity provider** — every Oxy app uses it to sign you in without the redirect-bounce pattern.
+Oxy apps use a **device-first, zero-cookie** session model. Each web origin (or native app) stores its own `{ deviceId, deviceSecret }` pair. The client mints short-lived bearer tokens by presenting that secret to the Oxy API — possession of the secret is the proof.
 
 ## Why it matters
 
-Before FedCM, third-party cookies were how sites knew you were signed in elsewhere. Browsers are deprecating them. FedCM gives us a privacy-preserving replacement: the browser mediates the consent and only shares the minimum needed.
+Cross-domain cookies, FedCM, and SSO redirect bounces were removed ecosystem-wide. Device-first auth keeps each app's session scoped to its own origin while still letting users switch accounts in-app through the shared `OxyAccountDialog`.
 
-## How Oxy uses it
+## How it works
 
-1. You sign in to Accounts once.
-2. Any other Oxy app (Inbox, Console, Mention) opens with a FedCM call to the Oxy IdP.
-3. The browser shows a one-tap consent sheet ("Continue as Nate Isern").
-4. Your session is provisioned without a single redirect.
+1. The user signs in once inside the app (`OxyAccountDialog` — QR, password, or Commons handoff).
+2. The SDK persists `deviceId` + `deviceSecret` for that origin.
+3. On reload, `OxyProvider` cold-boots: mints a fresh access token from the stored secret via `POST /session/device/token`.
+4. Private API calls wait on `useAuth().canUsePrivateApi` until the token is ready.
 
-<Callout type="info" title="No third-party cookies needed">
-  Oxy works without third-party cookies. FedCM is the mechanism.
+<Callout type="info" title="No session cookies">
+  There is no `oxy_device` cookie, no refresh-token family, and no FedCM surface. Device secrets live in first-party storage only.
 </Callout>
 
 ## Building on top
 
-If you're building an app that wants to sign users in with their Oxy ID, you can use the FedCM flow directly. The auth-sdk handles all the wiring.
+Wrap your app with `OxyProvider` from `@oxyhq/services` and register your app's OAuth `clientId`:
 
-```ts
-import { WebOxyProvider, useWebOxy } from '@oxyhq/auth'
+```tsx
+import { OxyProvider, useAuth } from '@oxyhq/services'
 
 function App() {
   return (
-    <WebOxyProvider baseURL="https://api.oxy.so">
+    <OxyProvider baseURL="https://api.oxy.so" clientId={import.meta.env.VITE_OXY_CLIENT_ID}>
       <YourApp />
-    </WebOxyProvider>
+    </OxyProvider>
   )
+}
+
+function SignInButton() {
+  const { isAuthenticated, signIn } = useAuth()
+  if (isAuthenticated) return null
+  return <button type="button" onClick={() => signIn()}>Sign in with Oxy</button>
 }
 ```
 
-See the [auth-sdk docs](/developers/docs/auth) for the full integration.
+See the [services SDK docs](/developers/docs/services) for the full integration guide.

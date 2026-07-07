@@ -21,13 +21,12 @@
  * ──────────────────────────────────────────── */
 
 import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from 'react'
+import { useAuth, useOxy } from '@oxyhq/services'
 import {
   useAppData,
   useAppDataNamespace,
-  useAuth,
   useSetAppData,
-  useWebOxy,
-} from '@oxyhq/auth'
+} from '../../lib/appDataHooks'
 import {
   clearAllLocalAcademyProgress,
   mergeCourseProgress,
@@ -88,7 +87,7 @@ export function useAcademyProgress(courseSlug: string): UseAcademyProgressResult
   const { isAuthenticated } = useAuth()
   // `useWebOxy` exposes the OxyServices client we need for the imperative
   // setter; `useAuth` is just the subset of state surfaced for app code.
-  const { oxyServices: _oxyServices } = useWebOxy()
+  const { oxyServices: _oxyServices } = useOxy()
 
   // ── Signed-in path: React Query handles fetch + cache ─────────────────
   const remote = useAppData<CourseProgress>(ACADEMY_NAMESPACE, courseSlug)
@@ -176,7 +175,7 @@ export function useAcademyProgress(courseSlug: string): UseAcademyProgressResult
       cancelled = true
     }
     // We intentionally omit setRemote and _oxyServices from deps — those
-    // are stable across re-renders inside WebOxyProvider and re-running this
+    // are stable across re-renders inside OxyProvider and re-running this
     // effect on every render would re-trigger the migration.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated])

@@ -1,6 +1,6 @@
 import { Fragment, useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useAuth } from '@oxyhq/auth'
+import { useAuth } from '@oxyhq/services'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import {
   simpleNavLinks,

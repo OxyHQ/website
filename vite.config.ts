@@ -11,10 +11,14 @@ import remarkGfm from 'remark-gfm'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import rehypeSlug from 'rehype-slug'
+import reactNativeWeb from 'vite-plugin-react-native-web'
+
+const emptyModule = path.resolve(import.meta.dirname, 'src/lib/empty-module.js')
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
+    reactNativeWeb(),
     tailwindcss(),
     svgr(),
     // MDX runs before React so JSX in synced docs becomes valid React.
@@ -86,6 +90,23 @@ export default defineConfig({
     extensions: ['.web.js', '.web.ts', '.web.tsx', '.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'],
     tsconfigPaths: true,
     alias: [
+      { find: /^react-native\/Libraries\/.*/, replacement: emptyModule },
+      {
+        find: 'react-native-screens',
+        replacement: path.resolve(import.meta.dirname, 'src/lib/shims/react-native-screens.js'),
+      },
+      {
+        find: '@react-native/assets-registry/registry',
+        replacement: 'react-native-web/dist/modules/AssetRegistry',
+      },
+      {
+        find: '@react-native-async-storage/async-storage',
+        replacement: emptyModule,
+      },
+      { find: 'expo-web-browser', replacement: emptyModule },
+      { find: 'expo-document-picker', replacement: emptyModule },
+      { find: 'expo-haptics', replacement: emptyModule },
+      { find: 'expo-image-manipulator', replacement: emptyModule },
       // Native-only spec helper that `react-native-svg` and Bloom's
       // `BottomSheet` pull in transitively. `react-native-web` doesn't ship
       // this path, so we resolve it to a noop shim — see
@@ -118,6 +139,10 @@ export default defineConfig({
       },
     ],
   },
+  define: {
+    __DEV__: JSON.stringify(mode !== 'production'),
+    'process.env.NODE_ENV': JSON.stringify(mode),
+  },
   optimizeDeps: {
     // `react-native-svg` ships CommonJS files inside its ESM build
     // (`lib/module/.../transform.js`, `transformToRn.js`, …) and its own ESM
@@ -145,4 +170,4 @@ export default defineConfig({
       '/api': 'http://localhost:4000',
     },
   },
-})
+}))

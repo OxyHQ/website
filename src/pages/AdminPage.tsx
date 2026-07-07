@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { useAuth } from '@oxyhq/auth'
+import { useAuth } from '@oxyhq/services'
 import AdminLayout, { ADMIN_USERNAMES } from '../components/admin/AdminLayout'
 import SiteSettingsAdmin from '../components/admin/sections/SiteSettingsAdmin'
 import SeoAdmin from '../components/admin/sections/SeoAdmin'
