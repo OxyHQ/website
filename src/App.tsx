@@ -286,16 +286,21 @@ export default function App() {
     [],
   )
 
+  // BloomThemeProvider must wrap OxyProvider: OxyProvider mounts
+  // OxyAccountDialog + ToastOutlet as siblings of `children`, and those
+  // call useTheme(). Nesting Bloom inside Oxy leaves those overlays
+  // outside the provider and throws "useTheme must be used within a
+  // <BloomThemeProvider>".
   return (
     <QueryClientProvider client={queryClient}>
-      <OxyProvider
-        baseURL={OXY_API}
-        clientId={OXY_CLIENT_ID}
-        queryClient={queryClient}
-        onAuthStateChange={handleAuthChange}
-      >
-        <AppSetup>
-          <BloomThemeProvider mode={mode} colorPreset={preset}>
+      <BloomThemeProvider mode={mode} colorPreset={preset}>
+        <OxyProvider
+          baseURL={OXY_API}
+          clientId={OXY_CLIENT_ID}
+          queryClient={queryClient}
+          onAuthStateChange={handleAuthChange}
+        >
+          <AppSetup>
             <BrowserRouter>
               <AccountPanelProvider>
                 <ScrollToTop />
@@ -312,9 +317,9 @@ export default function App() {
                 </Suspense>
               </AccountPanelProvider>
             </BrowserRouter>
-          </BloomThemeProvider>
-        </AppSetup>
-      </OxyProvider>
+          </AppSetup>
+        </OxyProvider>
+      </BloomThemeProvider>
     </QueryClientProvider>
   )
 }
