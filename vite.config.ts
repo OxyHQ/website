@@ -1,5 +1,6 @@
 import path from 'node:path'
 import fs from 'node:fs'
+import { createRequire } from 'node:module'
 import { defineConfig } from 'vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
@@ -13,7 +14,56 @@ import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import rehypeSlug from 'rehype-slug'
 import reactNativeWeb from 'vite-plugin-react-native-web'
 
+const require = createRequire(import.meta.url)
 const emptyModule = path.resolve(import.meta.dirname, 'src/lib/empty-module.js')
+
+// Bloom / services ship `'worklet'` directives but not the Babel-plugin
+// `__workletHash` metadata. Reanimated's `useHandler` (used by
+// `useAnimatedScrollHandler` in Bloom's BottomSheet) rejects plain functions
+// even on web, so we must run `react-native-reanimated/plugin` over those
+// packages.
+const oxyhqWorkletPath =
+  /[/\\]node_modules[/\\]@oxyhq[/\\](?:bloom|services)[/\\]/
+
+/**
+ * Transform `@oxyhq/bloom` / `@oxyhq/services` with the Reanimated Babel
+ * plugin. Implemented as a dedicated Vite plugin (not `@rolldown/plugin-babel`)
+ * so we can strip Vite's `?v=` query from `filename` — Reanimated's plugin
+ * `fs.readFileSync`s the filename and ENOENTs on query-suffixed paths.
+ */
+function oxyhqReanimatedWorklets() {
+  // Lazy-require so config evaluation doesn't pay the Babel cost until first
+  // transform, and so CJS `react-native-reanimated/plugin` loads cleanly.
+  let babelTransform: typeof import('@babel/core').transformSync | undefined
+  let reanimatedPlugin: unknown
+
+  return {
+    name: 'oxyhq-reanimated-worklets',
+    enforce: 'pre' as const,
+    transform(code: string, id: string) {
+      const file = id.split('?', 1)[0]
+      if (!oxyhqWorkletPath.test(file)) return null
+      if (!/\.[cm]?[jt]sx?$/.test(file)) return null
+
+      if (!babelTransform) {
+        babelTransform = require('@babel/core').transformSync
+        reanimatedPlugin = require('react-native-reanimated/plugin')
+      }
+
+      const result = babelTransform!(code, {
+        filename: file,
+        babelrc: false,
+        configFile: false,
+        sourceMaps: true,
+        // `substituteWebPlatformChecks` folds `isWeb()` / `shouldBeUseWeb()`
+        // to `true` at transform time for the web target.
+        plugins: [[reanimatedPlugin, { substituteWebPlatformChecks: true }]],
+      })
+      if (!result?.code) return null
+      return { code: result.code, map: result.map }
+    },
+  }
+}
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -61,6 +111,8 @@ export default defineConfig(({ mode }) => ({
         return undefined
       },
     },
+    // Workletize Bloom/services before other transforms see them.
+    oxyhqReanimatedWorklets(),
     react(),
     babel({ presets: [reactCompilerPreset()] }),
     ViteImageOptimizer({
@@ -158,9 +210,15 @@ export default defineConfig(({ mode }) => ({
     // dev mode. For the production build the `oxc` override above handles
     // the JSX in reanimated's `lib/module/` files directly via rolldown.
     include: ['react-simple-maps', 'prop-types', 'd3-geo', 'topojson-client', 'react-native-svg', 'react-native-reanimated', 'react-native-gesture-handler'],
+    // Keep Bloom/services out of the dep optimizer so the Reanimated Babel
+    // plugin (above) can attach `__workletHash` to their `'worklet'` callbacks.
+    // Prebundling would ship the untransformed JS and throw
+    // "Passed a function that is not a worklet" from `useHandler`.
     exclude: [
       '@react-native-async-storage/async-storage',
       'react-native-safe-area-context',
+      '@oxyhq/bloom',
+      '@oxyhq/services',
     ],
   },
   server: {
