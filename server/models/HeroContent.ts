@@ -202,6 +202,35 @@ export const DEFAULT_CAROUSEL_SLOTS: ICarouselSlot[] = [
   },
 ]
 
+/** Background fields that may hold either a Media ObjectId or a static URL. */
+const HERO_MEDIA_PATHS = [
+  'backgroundVideoWebm',
+  'backgroundVideoMp4',
+  'backgroundPoster',
+] as const
+
+/**
+ * Whether a Mixed media-ref value is safe to `populate()` as a Media ObjectId.
+ * Static URLs (e.g. `/images/landing/hero-background.webm`) must be left alone —
+ * Mongoose still tries to cast Mixed+ref values to ObjectId during populate and
+ * throws CastError on path strings, which surfaces as HTTP 500 on GET /api/hero.
+ */
+function isPopulatableMediaRef(value: unknown): boolean {
+  if (value instanceof Types.ObjectId) return true
+  return typeof value === 'string' && Types.ObjectId.isValid(value) && value.length === 24
+}
+
+/**
+ * Populate only the hero media fields that currently hold ObjectIds.
+ * Fields storing static URL strings are skipped so populate never CastErrors.
+ */
+export async function populateHeroMedia(doc: IHeroContent): Promise<IHeroContent> {
+  const paths = HERO_MEDIA_PATHS.filter((path) => isPopulatableMediaRef(doc.get(path)))
+  if (paths.length === 0) return doc
+  await doc.populate(paths.join(' '))
+  return doc
+}
+
 /**
  * Load the singleton hero document, creating it with sensible defaults
  * (drawn from the original hardcoded values) on first call. Optionally
@@ -209,10 +238,8 @@ export const DEFAULT_CAROUSEL_SLOTS: ICarouselSlot[] = [
  * the frontend without an extra round-trip.
  */
 export async function getOrCreateHero({ populate = true } = {}): Promise<IHeroContent> {
-  const query = HeroContent.findOne()
-  if (populate) query.populate('backgroundVideoWebm backgroundVideoMp4 backgroundPoster')
-  const existing = await query
-  if (existing) return existing
+  const existing = await HeroContent.findOne()
+  if (existing) return populate ? populateHeroMedia(existing) : existing
 
   const created = await HeroContent.create({
     title: DEFAULT_HERO_TITLE,
@@ -223,6 +250,5 @@ export async function getOrCreateHero({ populate = true } = {}): Promise<IHeroCo
     carouselSlots: DEFAULT_CAROUSEL_SLOTS,
   })
   if (!populate) return created
-  const populated = await HeroContent.findById(created._id).populate('backgroundVideoWebm backgroundVideoMp4 backgroundPoster')
-  return populated ?? created
+  return populateHeroMedia(created)
 }

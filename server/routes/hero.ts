@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import mongoose from 'mongoose'
-import { HeroContent, getOrCreateHero, type MediaRef } from '../models/HeroContent.js'
+import { HeroContent, getOrCreateHero, populateHeroMedia, type MediaRef } from '../models/HeroContent.js'
 import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
@@ -58,9 +58,11 @@ router.put('/', requireAuth, adminOnly, async (req, res) => {
     {},
     applyHeroUpdate(body),
     { new: true, upsert: true },
-  ).populate('backgroundVideoWebm backgroundVideoMp4 backgroundPoster')
+  )
   if (!updated) return res.status(500).json({ error: 'Failed to update hero content' })
-  res.json(updated)
+  // Selective populate: Mixed fields may hold static URLs that CastError
+  // under a blanket `.populate(...)`.
+  res.json(await populateHeroMedia(updated))
 })
 
 export default router
