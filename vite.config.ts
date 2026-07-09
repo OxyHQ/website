@@ -55,6 +55,12 @@ function oxyhqReanimatedWorklets() {
         babelrc: false,
         configFile: false,
         sourceMaps: true,
+        // Bloom/services may resolve to `.tsx` / JSX source (react-native
+        // export condition or monorepo). Babel does not enable those parsers
+        // by default — without this, transformSync throws a syntax error.
+        parserOpts: {
+          plugins: ['jsx', 'typescript'],
+        },
         // `substituteWebPlatformChecks` folds `isWeb()` / `shouldBeUseWeb()`
         // to `true` at transform time for the web target.
         plugins: [[reanimatedPlugin, { substituteWebPlatformChecks: true }]],

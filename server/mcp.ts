@@ -10,7 +10,7 @@ import { safeFetch, SsrfRejection, UpstreamError } from '@oxyhq/core/server'
 import { Page } from './models/Page.js'
 import { Navigation } from './models/Navigation.js'
 import { Footer } from './models/Footer.js'
-import { HeroContent, getOrCreateHero } from './models/HeroContent.js'
+import { HeroContent, getOrCreateHero, populateHeroMedia } from './models/HeroContent.js'
 import { NewsroomPost } from './models/NewsroomPost.js'
 import { PricingPlan } from './models/PricingPlan.js'
 import { Testimonial } from './models/Testimonial.js'
@@ -281,8 +281,10 @@ server.tool('update_hero', 'Update the homepage hero. Pass any subset of: title 
     if (body.carouselSlots !== undefined) update.carouselSlots = body.carouselSlots
 
     const hero = await HeroContent.findOneAndUpdate({}, update, { new: true, upsert: true })
-      .populate('backgroundVideoWebm backgroundVideoMp4 backgroundPoster')
-    return ok(hero)
+    if (!hero) return err(new Error('Failed to update hero content'))
+    // Selective populate: Mixed fields may hold static URLs that CastError
+    // under a blanket `.populate(...)`.
+    return ok(await populateHeroMedia(hero))
   } catch (e) { return err(e) }
 })
 
