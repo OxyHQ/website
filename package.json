@@ -17,6 +17,7 @@
     "build:server": "tsc -p tsconfig.server.json",
     "start:server": "bun server/index.ts",
     "seed": "bun server/seed.ts",
+    "seed:homiio-tips": "bun server/seedHomiioTips.ts",
     "mcp": "bun server/mcp.ts",
     "sync-docs": "bun scripts/sync-docs.ts",
     "sync-changelog": "bun scripts/sync-changelog.ts",

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useNewsroomPosts, useCreateNewsroomPost, useLocales } from '../../../api/hooks'
-import { type NewsroomPost } from '../../../data/newsroom'
+import { useNewsroomPosts, useCreateNewsroomPost, useLocales, useProducts, type ProductRecord } from '../../../api/hooks'
+import { type NewsroomPost, type NewsroomProductRef } from '../../../data/newsroom'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
 import { Switch } from '@oxyhq/bloom/switch'
@@ -14,9 +14,22 @@ import LocaleSwitcher from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 import MediaPicker from '../MediaPicker'
 
+function productIdOf(ref: string | NewsroomProductRef): string {
+  if (typeof ref === 'string') return ref
+  return ref._id
+}
+
+function stripProductsForEditing(post: NewsroomPost): NewsroomPost {
+  return {
+    ...post,
+    products: (post.products ?? []).map(productIdOf).filter(Boolean),
+  }
+}
+
 export default function NewsroomAdmin() {
   const { data, refetch } = useNewsroomPosts({ limit: 50 })
   const { data: locales } = useLocales()
+  const { data: productsData } = useProducts()
   const createPost = useCreateNewsroomPost()
   const [editing, setEditing] = useState<NewsroomPost | null>(null)
   const [saving, setSaving] = useState(false)
@@ -25,6 +38,7 @@ export default function NewsroomAdmin() {
 
   const defaultLocale = locales?.find(l => l.isDefault)?.code ?? 'en'
   const posts = data?.posts ?? []
+  const products = productsData ?? []
   const isDefault = !activeLocale || activeLocale === defaultLocale
 
   const emptyPost = (): NewsroomPost => ({
@@ -34,6 +48,7 @@ export default function NewsroomAdmin() {
     content: '',
     tags: [],
     categories: ['General'],
+    products: [],
     featured: false,
     status: 'published',
     oxyUserId: '',
@@ -42,13 +57,26 @@ export default function NewsroomAdmin() {
     updatedAt: new Date().toISOString(),
   })
 
+  const toggleProduct = (product: ProductRecord) => {
+    if (!editing || !product._id) return
+    const current = (editing.products ?? []).map(productIdOf)
+    const next = current.includes(product._id)
+      ? current.filter((id) => id !== product._id)
+      : [...current, product._id]
+    setEditing({ ...editing, products: next })
+  }
+
   const save = async () => {
     if (!editing) return
     setSaving(true)
-    if (editing._id) {
-      await apiFetch(`/newsroom/${editing.slug}`, { method: 'PUT', body: JSON.stringify(editing) })
+    const payload: NewsroomPost = {
+      ...editing,
+      products: (editing.products ?? []).map(productIdOf).filter(Boolean),
+    }
+    if (payload._id) {
+      await apiFetch(`/newsroom/${payload.slug}`, { method: 'PUT', body: JSON.stringify(payload) })
     } else {
-      await createPost.mutateAsync(editing)
+      await createPost.mutateAsync(payload)
     }
     await refetch()
     setSaving(false)
@@ -63,6 +91,7 @@ export default function NewsroomAdmin() {
   })
 
   if (editing) {
+    const selectedProductIds = new Set((editing.products ?? []).map(productIdOf))
     return (
       <div>
         <div className="mb-4"><Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back to list</Button></div>
@@ -82,6 +111,36 @@ export default function NewsroomAdmin() {
           />
           <Field label="Categories (comma-separated)" value={(editing.categories ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, categories: v.split(',').map((c: string) => c.trim()).filter(Boolean) })} />
           <Field label="Tags (comma-separated)" value={(editing.tags ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t: string) => t.trim()).filter(Boolean) })} />
+
+          <div className="flex flex-col gap-1.5">
+            <Label>Products</Label>
+            <p className="text-xs text-muted-foreground">Select which products this post belongs to (e.g. Homiio Tips).</p>
+            <div className="mt-1 max-h-48 overflow-y-auto rounded-lg border border-border p-3">
+              {products.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No products available.</p>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {products.map((product) => {
+                    if (!product._id) return null
+                    const checked = selectedProductIds.has(product._id)
+                    return (
+                      <label key={product._id} className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => toggleProduct(product)}
+                          className="size-4 rounded border border-border"
+                        />
+                        <span className="font-medium">{product.name}</span>
+                        <span className="font-mono text-xs text-muted-foreground">{product.productId}</span>
+                      </label>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2"><Switch value={editing.featured} onValueChange={(val) => setEditing({ ...editing, featured: val })} /><Label>Featured</Label></div>
             <div className="flex items-center gap-2"><Switch value={editing.status === 'published'} onValueChange={(val) => setEditing({ ...editing, status: val ? 'published' : 'draft' })} /><Label>{editing.status === 'published' ? 'Published' : 'Draft'}</Label></div>
@@ -167,12 +226,21 @@ export default function NewsroomAdmin() {
               </div>
               <div className="mt-0.5 text-xs text-muted-foreground">
                 {new Date(post.publishedAt).toLocaleDateString()}
+                {(post.products ?? []).length > 0 && (
+                  <span>
+                    {' · '}
+                    {(post.products ?? [])
+                      .map((p) => (typeof p === 'object' ? p.name : null))
+                      .filter(Boolean)
+                      .join(', ')}
+                  </span>
+                )}
               </div>
             </div>
             <div className="flex items-center gap-2">
               {isDefault ? (
                 <>
-                  <Button variant="ghost" size="small" onPress={() => setEditing({ ...post })}>Edit</Button>
+                  <Button variant="ghost" size="small" onPress={() => setEditing(stripProductsForEditing(post))}>Edit</Button>
                   <Button variant="ghost" size="small" onPress={() => deleteAction.request(post)}>Delete</Button>
                 </>
               ) : (

@@ -1,3 +1,9 @@
+export interface NewsroomProductRef {
+  _id: string
+  productId: string
+  name: string
+}
+
 export interface NewsroomPost {
   _id?: string
   slug: string
@@ -11,6 +17,8 @@ export interface NewsroomPost {
   authorUsername?: string
   tags: string[]
   categories: string[]
+  /** Product `_id` strings when editing; populated `{ _id, productId, name }` on list/detail. */
+  products: Array<string | NewsroomProductRef>
   featured: boolean
   colorPrimary?: string
   colorSecondary?: string
@@ -31,6 +39,7 @@ export const newsCategories = [
   'Safety',
   'Engineering',
   'Security',
+  'Tips',
   'All',
 ] as const
 

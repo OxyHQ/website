@@ -49,8 +49,12 @@ const ALWAYS_ALLOWED_ORIGINS = new Set([
   'https://www.oxy.so',
   'https://fairco.in',
   'https://www.fairco.in',
+  'https://homiio.com',
+  'https://www.homiio.com',
   'http://localhost:5173',
   'http://localhost:4173',
+  'http://localhost:8081',
+  'http://localhost:19006',
 ])
 
 app.use(cors({

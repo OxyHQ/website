@@ -40,6 +40,7 @@ function resolveMediaUrl(field: unknown, preferThumbnail?: 'sm' | 'md' | 'lg'): 
 function normalizePostMedia(post: NewsroomPost): NewsroomPost {
   return {
     ...post,
+    products: post.products ?? [],
     coverImage: resolveMediaUrl(post.coverImage, 'lg'),
     ogImage: resolveMediaUrl(post.ogImage),
   }
