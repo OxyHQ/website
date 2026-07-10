@@ -189,7 +189,9 @@ export default function NewsroomAdmin() {
             translatableFields={[
               { key: 'title', label: 'Title', type: 'text' },
               { key: 'resume', label: 'Resume', type: 'textarea' },
+              { key: 'description', label: 'Description', type: 'textarea' },
               { key: 'content', label: 'Content (Markdown)', type: 'textarea' },
+              { key: 'imageAlt', label: 'Image alt', type: 'text' },
             ]}
           />
         </div>
