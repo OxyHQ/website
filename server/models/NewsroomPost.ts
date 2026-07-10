@@ -12,6 +12,7 @@ export interface INewsroomPost extends Document {
   authorUsername?: string
   tags: string[]
   categories: string[]
+  products: Types.ObjectId[]
   featured: boolean
   colorPrimary?: string
   colorSecondary?: string
@@ -36,6 +37,7 @@ const NewsroomPostSchema = new Schema<INewsroomPost>({
   authorUsername: String,
   tags: [String],
   categories: { type: [String], default: [] },
+  products: { type: [{ type: Schema.Types.ObjectId, ref: 'Product' }], default: [] },
   featured: { type: Boolean, default: false },
   colorPrimary: String,
   colorSecondary: String,

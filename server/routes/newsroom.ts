@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { NewsroomPost } from '../models/NewsroomPost.js'
+import { Product } from '../models/Product.js'
 import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
@@ -12,9 +13,16 @@ import { validate } from '../utils/validate.js'
 
 const router = Router()
 
+const NEWSROOM_POPULATE = [
+  { path: 'coverImage' },
+  { path: 'ogImage' },
+  { path: 'products', select: 'productId name' },
+] as const
+
 const listQuerySchema = z.object({
   category: z.string().optional(),
   tag: z.string().optional(),
+  product: z.string().optional(),
   featured: z.string().optional(),
   status: z.string().optional(),
   search: z.string().optional(),
@@ -34,7 +42,7 @@ const postBodySchema = z.object({}).passthrough()
 
 router.get('/', localeMiddleware, async (req, res) => {
   const {
-    category, tag, featured, status, search, author,
+    category, tag, product: productId, featured, status, search, author,
     limit = '20', page = '1',
   } = validate(listQuerySchema, req.query)
 
@@ -43,6 +51,15 @@ router.get('/', localeMiddleware, async (req, res) => {
   if (tag) filter.tags = tag
   if (featured === 'true') filter.featured = true
   if (author) filter.oxyUserId = author
+
+  if (productId) {
+    const product = await Product.findOne({ productId }).select('_id')
+    if (!product) {
+      const { pageNum, limitNum } = parsePagination(page, limit)
+      return res.json({ posts: [], total: 0, page: pageNum, pages: 0 })
+    }
+    filter.products = product._id
+  }
 
   // Default to published posts for public requests
   if (status) {
@@ -59,7 +76,7 @@ router.get('/', localeMiddleware, async (req, res) => {
 
   const { pageNum, limitNum, skip } = parsePagination(page, limit)
   const [posts, total] = await Promise.all([
-    NewsroomPost.find(filter).populate('coverImage ogImage').sort('-publishedAt').skip(skip).limit(limitNum),
+    NewsroomPost.find(filter).populate([...NEWSROOM_POPULATE]).sort('-publishedAt').skip(skip).limit(limitNum),
     NewsroomPost.countDocuments(filter),
   ])
 
@@ -80,7 +97,7 @@ router.get('/:slug', localeMiddleware, async (req, res) => {
   const { slug } = validate(slugParamsSchema, req.params)
   const { preview } = validate(detailQuerySchema, req.query)
 
-  const post = await NewsroomPost.findOne({ slug }).populate('coverImage ogImage')
+  const post = await NewsroomPost.findOne({ slug }).populate([...NEWSROOM_POPULATE])
   if (!post) return res.status(404).json({ error: 'Post not found' })
   // Hide drafts from public unless preview=true with auth
   if (post.status === 'draft' && preview !== 'true') {

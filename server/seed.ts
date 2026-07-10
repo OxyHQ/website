@@ -226,7 +226,7 @@ async function seed() {
   // ── Products (/technologies + /status + ecosystem navbar, single source of truth) ──
   // `category` is the ObjectId ref to a Category; `section` stays populated
   // with the matching slug for backwards compatibility / fallback grouping.
-  await Product.insertMany([
+  const seededProducts = await Product.insertMany([
     { productId: 'alia', name: 'Alia AI', tagline: 'Intelligent assistant', description: 'Your private AI assistant on web, iOS and Android. Ask anything, get answers, automate work — without your data feeding a training set.', href: 'https://alia.onl/', landingUrl: '/alia', healthUrl: 'https://alia.onl/', external: true, cta: 'Open Alia', brand: '#7c3aed', mark: 'A', category: categoryRef('social-communication'), section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
     { productId: 'mention', name: 'Mention', tagline: 'Open social network', description: 'A social network built on respect. No engagement-maxxing algorithms, no surveillance ads — just genuine connection on the open fediverse. Your profile, your content, your unique link.', href: 'https://mention.earth/', landingUrl: '/mention', external: false, cta: 'Explore Mention', brand: '#0ea5e9', mark: 'M', category: categoryRef('social-communication'), section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 1 },
     { productId: 'inbox', name: 'Oxy Inbox', tagline: 'Unified messaging', description: 'All your email, chat and federated messages in one calm place. Smart triage surfaces what matters, end-to-end encrypted by default.', href: 'https://inbox.oxy.so', landingUrl: '/inbox', external: false, cta: 'Explore Inbox', brand: '#1e40af', mark: 'I', category: categoryRef('social-communication'), section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 2 },
@@ -245,6 +245,12 @@ async function seed() {
     { productId: 'astro', name: 'Astro', tagline: 'AI browser', description: 'Browse the web with AI by your side. Astro gives you instant answers, smarter suggestions and help with tasks — privacy you control.', href: '/astro', landingUrl: '/astro', external: false, cta: 'Explore Astro', brand: '#a855f7', mark: 'A', category: categoryRef('apps'), section: 'apps', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: true, order: 0 },
     { productId: 'codex-extension', name: 'Codex Extension', tagline: 'Codea, everywhere you code', description: 'Bring Codea\u2019s open-source AI assistant into the editor you already use. Reviews, refactors and completions — free to inspect, free to extend.', href: '/codea/extension', landingUrl: '/codea/extension', external: false, cta: 'Explore the extension', brand: '#475569', mark: 'E', category: categoryRef('developer'), section: 'developer', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: false, order: 1 },
   ])
+  const productIdByKey = new Map(seededProducts.map((p) => [p.productId, p._id] as const))
+  const productRef = (productId: string) => {
+    const id = productIdByKey.get(productId)
+    if (!id) throw new Error(`Seed product missing: ${productId}`)
+    return id
+  }
   console.log('Seeded products')
 
   // ── Hero (homepage hero singleton) ──
@@ -441,6 +447,7 @@ async function seed() {
     seedMedia('https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1200&h=630&fit=crop', 'g2-leader-cover.jpg'),
     seedMedia('https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=1200&h=630&fit=crop', 'data-migration-cover.jpg'),
     seedMedia('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&h=630&fit=crop', 'prompt-injection-cover.jpg'),
+    seedMedia('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&h=630&fit=crop', 'homiio-rental-tips-cover.jpg'),
   ])
 
   await NewsroomPost.insertMany([
@@ -593,6 +600,21 @@ async function seed() {
       featured: false,
       status: 'published',
       publishedAt: new Date('2026-01-08'),
+    },
+    {
+      title: 'How to Read a Rental Listing Like a Pro',
+      slug: 'how-to-read-a-rental-listing-like-a-pro',
+      resume: 'Spot red flags, decode fees, and compare listings so you rent with confidence on Homiio.',
+      description: 'A practical Homiio tip on evaluating rental listings before you apply or book a viewing.',
+      content: '## Start with the essentials\n\nBefore you fall for the photos, check **rent**, **deposit**, **availability**, and **what is included**. A listing that hides fees until the last step is a warning sign.\n\n## Decode the fine print\n\n- Utilities: which ones are included?\n- Lease length and renewal terms\n- Pet policy and any extra deposits\n- Who pays for repairs and maintenance\n\n## Use Homiio signals\n\nOn Homiio, prefer listings with clear source info, verified details, and transparent apply/viewing paths. If something feels off, ask Sindi or skip the listing.\n\n## Next steps\n\nSave favorites, compare a shortlist, then book a viewing only when the numbers and terms make sense.',
+      coverImage: newsroomImages[10],
+      imageAlt: 'Bright modern apartment living room',
+      tags: ['renting', 'listings', 'beginners'],
+      categories: ['Tips'],
+      products: [productRef('homiio')],
+      featured: true,
+      status: 'published',
+      publishedAt: new Date('2026-07-01'),
     },
   ])
   console.log('Seeded newsroom posts')
