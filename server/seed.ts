@@ -601,21 +601,6 @@ async function seed() {
       status: 'published',
       publishedAt: new Date('2026-01-08'),
     },
-    {
-      title: 'How to Read a Rental Listing Like a Pro',
-      slug: 'how-to-read-a-rental-listing-like-a-pro',
-      resume: 'Spot red flags, decode fees, and compare listings so you rent with confidence on Homiio.',
-      description: 'A practical Homiio tip on evaluating rental listings before you apply or book a viewing.',
-      content: '## Start with the essentials\n\nBefore you fall for the photos, check **rent**, **deposit**, **availability**, and **what is included**. A listing that hides fees until the last step is a warning sign.\n\n## Decode the fine print\n\n- Utilities: which ones are included?\n- Lease length and renewal terms\n- Pet policy and any extra deposits\n- Who pays for repairs and maintenance\n\n## Use Homiio signals\n\nOn Homiio, prefer listings with clear source info, verified details, and transparent apply/viewing paths. If something feels off, ask Sindi or skip the listing.\n\n## Next steps\n\nSave favorites, compare a shortlist, then book a viewing only when the numbers and terms make sense.',
-      coverImage: newsroomImages[10],
-      imageAlt: 'Bright modern apartment living room',
-      tags: ['renting', 'listings', 'beginners'],
-      categories: ['Tips'],
-      products: [productRef('homiio')],
-      featured: true,
-      status: 'published',
-      publishedAt: new Date('2026-07-01'),
-    },
   ])
   console.log('Seeded newsroom posts')
 
