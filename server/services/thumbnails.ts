@@ -26,7 +26,7 @@ export async function processImage(
 ): Promise<ThumbnailResult> {
   if (!mimeType.startsWith('image/')) return EMPTY_THUMBS
 
-  let sharp: typeof import('sharp')
+  let sharp: import('sharp').SharpConstructor
   try {
     sharp = (await import('sharp')).default
   } catch {

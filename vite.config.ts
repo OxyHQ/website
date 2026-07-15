@@ -35,7 +35,7 @@ function oxyhqReanimatedWorklets() {
   // Lazy-require so config evaluation doesn't pay the Babel cost until first
   // transform, and so CJS `react-native-reanimated/plugin` loads cleanly.
   let babelTransform: typeof import('@babel/core').transformSync | undefined
-  let reanimatedPlugin: unknown
+  let reanimatedPlugin: import('@babel/core').PluginTarget | undefined
 
   return {
     name: 'oxyhq-reanimated-worklets',
@@ -49,8 +49,9 @@ function oxyhqReanimatedWorklets() {
         babelTransform = require('@babel/core').transformSync
         reanimatedPlugin = require('react-native-reanimated/plugin')
       }
+      if (!babelTransform || !reanimatedPlugin) return null
 
-      const result = babelTransform!(code, {
+      const result = babelTransform(code, {
         filename: file,
         babelrc: false,
         configFile: false,

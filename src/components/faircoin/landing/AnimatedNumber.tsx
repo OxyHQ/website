@@ -44,10 +44,9 @@ export default function AnimatedNumber({
   const rafRef = useRef<number | null>(null)
 
   useEffect(() => {
-    if (value === null) {
-      setDisplay(null)
-      return
-    }
+    // Nothing to tween toward — the render below shows the placeholder
+    // directly off `value`, so `display` is simply left at its last number.
+    if (value === null) return
     fromRef.current = display ?? value
     toRef.current = value
     startRef.current = null
@@ -74,7 +73,7 @@ export default function AnimatedNumber({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, durationMs])
 
-  if (display === null) {
+  if (value === null || display === null) {
     return <span>{placeholder}</span>
   }
 

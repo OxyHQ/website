@@ -1,6 +1,7 @@
 import { Router } from 'express'
+import type { QueryFilter } from 'mongoose'
 import { z } from 'zod'
-import { Comment } from '../models/Comment.js'
+import { Comment, type IComment } from '../models/Comment.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { isAdminUser } from '../utils/adminAccess.js'
@@ -278,7 +279,7 @@ router.get('/user/:username', async (req, res) => {
   const { pageNum, limitNum, skip } = parsePagination(page, limit, 100)
 
   try {
-    const filter = { username, status: 'visible' }
+    const filter: QueryFilter<IComment> = { username, status: 'visible' }
     const [comments, total] = await Promise.all([
       Comment.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
       Comment.countDocuments(filter),

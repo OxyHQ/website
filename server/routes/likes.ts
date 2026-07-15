@@ -1,6 +1,7 @@
 import { Router } from 'express'
+import type { QueryFilter } from 'mongoose'
 import { z } from 'zod'
-import { Like } from '../models/Like.js'
+import { Like, type ILike } from '../models/Like.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { LIKEABLE_TARGET_TYPES } from '../constants/social.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
@@ -22,7 +23,9 @@ router.get('/', optionalAuth, async (req, res) => {
   const { targetType, targetId } = validate(listQuerySchema, req.query)
 
   try {
-    const filter = { targetType, targetId }
+    // `listQuerySchema` accepts any non-empty string (not the `ILike` enum) so an
+    // unrecognized targetType harmlessly matches zero documents instead of 400ing.
+    const filter: QueryFilter<ILike> = { targetType: targetType as ILike['targetType'], targetId }
     const [count, existing] = await Promise.all([
       Like.countDocuments(filter),
       req.user
