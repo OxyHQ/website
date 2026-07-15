@@ -12,20 +12,20 @@
  * entry to OVERRIDES below. Each entry is `[id, attribute, value]`.
  */
 (function () {
-  var host = location.hostname;
-  var isFairCoin = host === 'fairco.in' || host === 'www.fairco.in';
+  const host = location.hostname;
+  const isFairCoin = host === 'fairco.in' || host === 'www.fairco.in';
   if (!isFairCoin) return;
 
-  var OVERRIDES = [
+  const OVERRIDES = [
     ['site-favicon', 'href', '/favicon-faircoin.png'],
     ['site-favicon', 'type', 'image/png'],
     ['site-manifest', 'href', '/manifest-faircoin.webmanifest'],
     ['site-theme-color', 'content', '#07120c'],
   ];
 
-  for (var i = 0; i < OVERRIDES.length; i++) {
-    var entry = OVERRIDES[i];
-    var el = document.getElementById(entry[0]);
+  for (let i = 0; i < OVERRIDES.length; i++) {
+    const entry = OVERRIDES[i];
+    const el = document.getElementById(entry[0]);
     if (el) el.setAttribute(entry[1], entry[2]);
   }
 
