@@ -8,6 +8,7 @@ import pagesRouter from './routes/pages.js'
 import { Navigation } from './models/Navigation.js'
 import { Product } from './models/Product.js'
 import { Category } from './models/Category.js'
+import { Translation } from './models/Translation.js'
 import navigationRouter from './routes/navigation.js'
 import footerRouter from './routes/footer.js'
 import heroRouter from './routes/hero.js'
@@ -279,12 +280,33 @@ async function migrateProductCategoryRefs() {
   }
 }
 
+async function migrateDropStaleTranslationIndex() {
+  // The `collectionName` field was once called `collection`. A unique index on
+  // the old name still lingers in some environments and wrongly enforces
+  // uniqueness on (locale, documentId) alone, rejecting legitimate writes that
+  // reuse a documentId across collections in one locale (reachable via the MCP
+  // upsert). Drop it idempotently; the canonical
+  // locale+collectionName+documentId index stays.
+  const STALE_INDEX = 'locale_1_collection_1_documentId_1'
+  const db = mongoose.connection.db
+  if (!db) return
+  const existing = await db
+    .listCollections({ name: Translation.collection.collectionName })
+    .toArray()
+  if (existing.length === 0) return
+  const indexes = await Translation.collection.indexes()
+  if (!indexes.some((idx) => idx.name === STALE_INDEX)) return
+  await Translation.collection.dropIndex(STALE_INDEX)
+  console.log(`[migration] Dropped stale translations index ${STALE_INDEX}`)
+}
+
 async function start() {
   await mongoose.connect(config.mongoUri)
   console.log('Connected to MongoDB')
 
   await migrateEcosystemDropdown()
   await migrateProductCategoryRefs()
+  await migrateDropStaleTranslationIndex()
 
   startSyncInterval()
 
