@@ -4,16 +4,9 @@ import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { validate } from '../utils/validate.js'
+import { TRANSLATABLE_COLLECTIONS } from '../constants/translations.js'
 
 const router = Router()
-
-// Valid collections that support translations
-const TRANSLATABLE_COLLECTIONS = [
-  'navigation', 'footer', 'pricing', 'testimonials',
-  'settings', 'pages', 'newsroom', 'jobs',
-  'hero', 'products', 'categories', 'team', 'changelog',
-  'courses', 'resources', 'help',
-] as const
 
 const collectionParamsSchema = z.object({
   collection: z.enum(TRANSLATABLE_COLLECTIONS),

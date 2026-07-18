@@ -46,8 +46,6 @@ import {
   Search,
 } from 'lucide-react'
 
-export { ADMIN_USERNAMES } from '../../constants'
-
 interface AdminSection {
   id: string
   label: string

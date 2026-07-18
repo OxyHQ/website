@@ -1,6 +1,6 @@
 import type { NewsroomPost } from '../../data/newsroom'
 import { NewsCardCarousel } from './NewsCard'
-import SectionHeader from './SectionHeader'
+import SectionHeaderWithLink from './SectionHeaderWithLink'
 
 interface CarouselSectionProps {
   title: string
@@ -30,7 +30,7 @@ export default function CarouselSection({
     <section className="w-full">
       {/* Header inside container */}
       <div className="container">
-        <SectionHeader title={title} href={href} linkText={linkText} />
+        <SectionHeaderWithLink title={title} href={href} linkText={linkText} />
       </div>
 
       {/* Outer: flex w-auto, matching the site-global container */}

@@ -50,6 +50,11 @@ import type { SeoData } from './lib/seo'
 export interface SEORenderInput {
   title: string
   description: string
+  /**
+   * Always the BARE path (`/pricing`), never locale-prefixed. `<SEO>`'s
+   * `buildLocalizedUrl` adds the `/<locale>` prefix itself for canonical,
+   * hreflang and x-default — passing `/es/pricing` here would double-prefix.
+   */
   canonicalPath: string
   ogImage?: string
   ogType?: string
@@ -59,12 +64,43 @@ export interface SEORenderInput {
   author?: string
 }
 
+/** One entry of `GET /api/locales`, as far as `<SEO>`'s hreflang block cares. */
+export interface SEOLocaleSeed {
+  code: string
+  name?: string
+  nativeName?: string
+  isDefault?: boolean
+  enabled?: boolean
+  translationCount?: number
+  translationReady?: boolean
+}
+
+export interface SEORenderOptions {
+  /**
+   * Locale to render as. `LocaleProvider` resolves this from the router path,
+   * so we seed the router at `/<locale><canonicalPath>` while `<SEO>` still
+   * receives the bare `canonicalPath`. Omitted → the default locale.
+   */
+  locale?: string
+  /**
+   * Seeds the `public-locales` query. Without it the provider sees no API data
+   * and every entry is `translationReady: false`, so a prerendered page emits
+   * ZERO hreflang links — the crawler-facing case this whole pipeline exists
+   * for. The prerender passes the same list it derives its locale set from.
+   */
+  locales?: SEOLocaleSeed[]
+}
+
 export interface SEORenderResult {
   /** Serialized `<head>` fragment, ready to splice into HTML. */
   head: string
 }
 
-export function renderSEO(input: SEORenderInput, seoData: SeoData | null = null): SEORenderResult {
+export function renderSEO(
+  input: SEORenderInput,
+  seoData: SeoData | null = null,
+  options: SEORenderOptions = {},
+): SEORenderResult {
   const helmetContext: { helmet?: HelmetServerState } = {}
 
   // Fresh QueryClient per call — never let cache state leak across routes.
@@ -77,6 +113,20 @@ export function renderSEO(input: SEORenderInput, seoData: SeoData | null = null)
   // cache. staleTime Infinity means no per-route network fetch during the build;
   // `null` (API unseeded/unreachable) makes `<SEO>` fall back to the props below.
   queryClient.setQueryData(['seo', 'oxy', input.canonicalPath], seoData)
+  // Same key `LocaleProvider`'s `useQuery` reads. Seeding it is what lets the
+  // prerendered <head> carry real hreflang links instead of none.
+  if (options.locales) {
+    queryClient.setQueryData(['public-locales'], options.locales)
+  }
+
+  // Router path carries the locale prefix so `LocaleProvider` detects it;
+  // `<SEO canonicalPath>` stays bare so `buildLocalizedUrl` prefixes once.
+  const routerPath =
+    options.locale && input.canonicalPath === '/'
+      ? `/${options.locale}`
+      : options.locale
+        ? `/${options.locale}${input.canonicalPath}`
+        : input.canonicalPath
 
   // `<SEO>` reads `useLocaleContext()` to emit hreflang entries. The
   // LocaleProvider's `useQuery('public-locales')` returns `undefined`
@@ -89,7 +139,7 @@ export function renderSEO(input: SEORenderInput, seoData: SeoData | null = null)
   const body = renderToString(
     <HelmetProvider context={helmetContext}>
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={[input.canonicalPath]}>
+        <MemoryRouter initialEntries={[routerPath]}>
           <LocaleProvider>
             <SEO
               title={input.title}

@@ -1,11 +1,10 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { TeamMember } from '../models/TeamMember.js'
-import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
-import { applyTranslation, applyTranslations } from '../utils/applyTranslation.js'
+import { localizeMany, localizeOne } from '../utils/localize.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
@@ -17,14 +16,7 @@ const teamMemberBodySchema = z.object({}).passthrough()
 // List active team members (public)
 router.get('/', localeMiddleware, async (req, res) => {
   const members = await TeamMember.find({ active: true }).populate('avatar').sort('order name')
-  if (req.isDefaultLocale) return res.json(members)
-
-  const translations = await Translation.find({
-    locale: req.locale,
-    collectionName: 'team',
-    documentId: { $in: members.map(m => m._id.toString()) },
-  })
-  res.json(applyTranslations(members.map(m => m.toJSON()), translations))
+  res.json(await localizeMany(req, 'team', members))
 })
 
 // Get single team member by slug (public)
@@ -32,14 +24,7 @@ router.get('/:slug', localeMiddleware, async (req, res) => {
   const { slug } = validate(slugParamsSchema, req.params)
   const member = await TeamMember.findOne({ slug }).populate('avatar')
   if (!member) return res.status(404).json({ error: 'Team member not found' })
-  if (req.isDefaultLocale) return res.json(member)
-
-  const translation = await Translation.findOne({
-    locale: req.locale,
-    collectionName: 'team',
-    documentId: member._id.toString(),
-  })
-  res.json(applyTranslation(member.toJSON(), translation))
+  res.json(await localizeOne(req, 'team', member))
 })
 
 // Create team member (admin)

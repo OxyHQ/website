@@ -245,7 +245,10 @@ async function indexContentSurface(surface: ContentSurface): Promise<number> {
   return written;
 }
 
-const NEWSROOM_API = 'https://website-api.oxy.so/api/newsroom?limit=500';
+// Reads the same `VITE_API_URL` the SPA does (`src/api/client.ts`) so a staging
+// build indexes staging posts instead of silently indexing production; the
+// fallback is the production value used when the var is unset.
+const NEWSROOM_API = `${process.env.VITE_API_URL || 'https://website-api.oxy.so'}/api/newsroom?limit=500`;
 
 /**
  * Index the CMS-driven newsroom (blog). Posts aren't MDX on disk, so fetch the

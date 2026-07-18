@@ -8,6 +8,7 @@ import SEO from '../components/SEO'
 import PageSection from '../components/layout/PageSection'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useCurrentLocale } from '../lib/i18n'
+import { brandConfig } from '../lib/seo'
 import {
   loadHelpBySlug,
   loadHelpSiblings,
@@ -135,6 +136,7 @@ export default function HelpArticlePage() {
   const locale = useCurrentLocale()
   const slug = (params['*'] ?? '').replace(/\/+$/, '')
   const entry = loadHelpBySlug(slug, locale)
+  const { origin } = brandConfig(typeof window === 'undefined' ? undefined : window.location.hostname)
 
   // Hooks must be unconditional. Compute derived values up front
   // and gate on `entry` in the render path only.
@@ -309,7 +311,7 @@ export default function HelpArticlePage() {
         <PageSection spacing="sm" width="narrow">
           <ShareWithMention
             title={frontmatter.title}
-            url={`https://oxy.so/help/${entry.slug}`}
+            url={`${origin}/help/${entry.slug}`}
             hashtags={frontmatter.tags.length > 0 ? frontmatter.tags : ['help']}
             via="oxy"
           />

@@ -1,11 +1,10 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { Page } from '../models/Page.js'
-import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
-import { applyTranslation } from '../utils/applyTranslation.js'
+import { localizeOne } from '../utils/localize.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
@@ -17,28 +16,14 @@ router.get('/:slug', localeMiddleware, async (req, res) => {
   const { slug } = validate(slugParamsSchema, req.params)
   const page = await Page.findOne({ slug })
   if (!page) return res.status(404).json({ error: 'Page not found' })
-  if (req.isDefaultLocale) return res.json(page)
-
-  const translation = await Translation.findOne({
-    locale: req.locale,
-    collectionName: 'pages',
-    documentId: page._id.toString(),
-  })
-  res.json(applyTranslation(page.toJSON(), translation))
+  res.json(await localizeOne(req, 'pages', page))
 })
 
 router.get('/:slug/prompt-phrases', localeMiddleware, async (req, res) => {
   const { slug } = validate(slugParamsSchema, req.params)
   const page = await Page.findOne({ slug })
   if (!page) return res.json([])
-  if (req.isDefaultLocale) return res.json(page.promptPhrases ?? [])
-
-  const translation = await Translation.findOne({
-    locale: req.locale,
-    collectionName: 'pages',
-    documentId: page._id.toString(),
-  })
-  const merged = applyTranslation(page.toJSON(), translation)
+  const merged = await localizeOne(req, 'pages', page)
   res.json(merged.promptPhrases ?? [])
 })
 

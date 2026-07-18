@@ -1,4 +1,5 @@
 import { engagementSection } from '../../data/initiative'
+import { ArrowRightIcon } from '../icons'
 
 function PathwayIcon({ type }: { type: string }) {
   switch (type) {
@@ -47,26 +48,6 @@ function PathwayIcon({ type }: { type: string }) {
   }
 }
 
-function ArrowIcon() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
-      fill="none"
-      className="relative -translate-x-0.5 -rotate-45 shrink-0 text-foreground opacity-0 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150"
-    >
-      <path
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.1"
-        d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5"
-      />
-    </svg>
-  )
-}
-
 export default function EngagementSection() {
   return (
     <section id="get-involved" className="container scroll-mt-24">
@@ -95,7 +76,7 @@ export default function EngagementSection() {
                 {/* Icon + arrow */}
                 <div className="relative flex items-center justify-between">
                   <PathwayIcon type={pathway.iconType} />
-                  <ArrowIcon />
+                  <ArrowRightIcon className="relative -translate-x-0.5 -rotate-45 shrink-0 text-foreground opacity-0 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150" />
                 </div>
 
                 {/* Text */}

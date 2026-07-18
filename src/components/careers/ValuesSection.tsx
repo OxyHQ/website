@@ -8,7 +8,7 @@ export default function ValuesSection() {
           <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-start col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
             <h2 className="text-pretty inline">Our values.</h2>{' '}
             <p className="inline text-pretty font-medium text-muted-foreground">
-              To build for the next era of companies, we stand by our core principles in everything we do — from the features we ship to how we show up every day.
+              To build for the next era of companies, we stand by our core principles in everything we do, from the features we ship to how we show up every day.
             </p>
           </div>
         </header>

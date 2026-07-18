@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { bentoCards } from '../../data/homepage'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
+import { ArrowRightIcon } from '../icons'
 
 export default function HomeBentoSection() {
   const sectionRef = useScrollReveal()
@@ -95,9 +96,7 @@ export default function HomeBentoSection() {
                       className="button-ghost group mt-auto -ml-3.5 inline-flex h-10 cursor-pointer items-center gap-x-2 rounded-xl border border-transparent px-3.25 text-base transition-colors duration-300"
                     >
                       <span>{card.cta}</span>
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
-                      </svg>
+                      <ArrowRightIcon className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150" />
                     </Link>
                   ) : (
                     <a
@@ -105,9 +104,7 @@ export default function HomeBentoSection() {
                       className="button-ghost group mt-auto -ml-3.5 inline-flex h-10 cursor-pointer items-center gap-x-2 rounded-xl border border-transparent px-3.25 text-base transition-colors duration-300"
                     >
                       <span>{card.cta}</span>
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
-                      </svg>
+                      <ArrowRightIcon className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150" />
                     </a>
                   )}
 

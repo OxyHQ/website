@@ -70,7 +70,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
             Something went wrong loading this page.
           </h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            We hit an unexpected error while rendering. Try refreshing — if the
+            We hit an unexpected error while rendering. Try refreshing. If the
             problem persists, our team has already been notified.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">

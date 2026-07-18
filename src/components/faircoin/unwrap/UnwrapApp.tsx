@@ -492,7 +492,7 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
           </div>
         </div>
         <p className="mt-2 text-[11px] text-muted-foreground">
-          1 WFAIR = 1 FAIR. No fees from the bridge — only Base network gas to sign the burn.
+          1 WFAIR = 1 FAIR. No fees from the bridge, only Base network gas to sign the burn.
         </p>
       </div>
 
@@ -575,7 +575,7 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
 
       {burnHash && !burnReceipt.data ? (
         <p className="rounded-xl border border-border bg-background/40 px-3 py-2 text-center text-xs text-muted-foreground">
-          Tx submitted — waiting for confirmation on Base.
+          Tx submitted. Waiting for confirmation on Base.
         </p>
       ) : null}
     </form>

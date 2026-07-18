@@ -216,7 +216,23 @@ export default defineConfig(({ mode }) => ({
     // pre-bundled here so esbuild resolves their cross-CJS/ESM interop during
     // dev mode. For the production build the `oxc` override above handles
     // the JSX in reanimated's `lib/module/` files directly via rolldown.
-    include: ['react-simple-maps', 'prop-types', 'd3-geo', 'topojson-client', 'react-native-svg', 'react-native-reanimated', 'react-native-gesture-handler'],
+    //
+    // `debug`, `expo-modules-core`, `fontfaceobserver` and `color` are CJS-only
+    // packages reached through the excluded `@oxyhq/services` subtree below.
+    // `exclude` stops Vite prebundling that subtree, so in dev they are served
+    // unbundled and `import x from 'cjs-pkg'` fails with "does not provide an
+    // export named 'default'". Listing them lets esbuild resolve the interop up
+    // front. Production is unaffected — rolldown bundles the whole graph.
+    include: [
+      'd3-geo',
+      'debug',
+      'color',
+      'fontfaceobserver',
+      'expo-modules-core',
+      'react-native-svg',
+      'react-native-reanimated',
+      'react-native-gesture-handler',
+    ],
     // Keep Bloom/services out of the dep optimizer so the Reanimated Babel
     // plugin (above) can attach `__workletHash` to their `'worklet'` callbacks.
     // Prebundling would ship the untransformed JS and throw

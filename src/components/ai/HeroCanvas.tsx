@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { parseRgb } from './parseRgb'
 
 interface Star {
   x: number
@@ -8,12 +9,6 @@ interface Star {
   py: number
   size: number
   opacity: number
-}
-
-/** Parse an rgb/rgba color string into [r, g, b] number strings. */
-function parseRgb(color: string): [string, string, string] {
-  const m = color.match(/(\d+)/g)
-  return [m?.[0] ?? '255', m?.[1] ?? '255', m?.[2] ?? '255']
 }
 
 /**
@@ -96,6 +91,10 @@ export default function HeroCanvas() {
           star.x = Math.random() * w - w / 2
           star.y = Math.random() * h - h / 2
           star.z = 1000
+          // Same trail reset as the z<=0 respawn above: without it the next frame
+          // strokes a line from the star's old screen position to its new one.
+          star.px = 0
+          star.py = 0
           continue
         }
 

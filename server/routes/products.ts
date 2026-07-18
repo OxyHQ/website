@@ -1,11 +1,10 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { Product } from '../models/Product.js'
-import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
-import { applyTranslations } from '../utils/applyTranslation.js'
+import { localizeMany, localizeOne } from '../utils/localize.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
@@ -60,14 +59,7 @@ router.get('/', localeMiddleware, async (req, res) => {
     .populate('logo')
     .populate('category')
 
-  if (req.isDefaultLocale) return res.json(docs)
-
-  const translations = await Translation.find({
-    locale: req.locale,
-    collectionName: 'products',
-    documentId: { $in: docs.map(d => d._id.toString()) },
-  })
-  res.json(applyTranslations(docs.map(d => d.toJSON()), translations))
+  res.json(await localizeMany(req, 'products', docs))
 })
 
 router.get('/:productId', localeMiddleware, async (req, res) => {
@@ -75,13 +67,7 @@ router.get('/:productId', localeMiddleware, async (req, res) => {
     .populate('logo')
     .populate('category')
   if (!doc) return res.status(404).json({ error: 'Not found' })
-  if (req.isDefaultLocale) return res.json(doc)
-  const translations = await Translation.find({
-    locale: req.locale,
-    collectionName: 'products',
-    documentId: doc._id.toString(),
-  })
-  res.json(applyTranslations([doc.toJSON()], translations)[0])
+  res.json(await localizeOne(req, 'products', doc))
 })
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {

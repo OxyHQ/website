@@ -1,11 +1,10 @@
 import { Router } from 'express'
 import mongoose from 'mongoose'
 import { HeroContent, getOrCreateHero, populateHeroMedia, type MediaRef } from '../models/HeroContent.js'
-import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
-import { applyTranslation } from '../utils/applyTranslation.js'
+import { localizeOne } from '../utils/localize.js'
 import { validate } from '../utils/validate.js'
 import { heroUpdateSchema, type HeroUpdate } from '../validation/hero.js'
 
@@ -39,15 +38,7 @@ function applyHeroUpdate(update: HeroUpdate): Record<string, unknown> {
 
 router.get('/', localeMiddleware, async (req, res) => {
   const hero = await getOrCreateHero()
-  const data = hero.toJSON()
-  if (req.isDefaultLocale) return res.json(data)
-
-  const translation = await Translation.findOne({
-    locale: req.locale,
-    collectionName: 'hero',
-    documentId: hero._id.toString(),
-  })
-  res.json(applyTranslation(data, translation))
+  res.json(await localizeOne(req, 'hero', hero))
 })
 
 router.put('/', requireAuth, adminOnly, async (req, res) => {

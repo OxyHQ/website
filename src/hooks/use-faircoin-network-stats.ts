@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useReadContract, useReadContracts } from 'wagmi'
 import { base } from 'wagmi/chains'
 import { fetchExplorerStats, type ExplorerStats } from '../api/faircoin-explorer'
+import { WFAIR_ADDRESS, WFAIR_DECIMALS } from '../lib/wfair-contract'
 
 const CHAIN_TIP_REFETCH_MS = 15_000
 
@@ -86,7 +87,6 @@ export interface UniswapPoolStats {
   poolUsdcBalance: bigint | null
 }
 
-const WFAIR_DECIMALS = 18
 const USDC_DECIMALS = 6
 const Q96 = 2n ** 96n
 
@@ -152,7 +152,7 @@ export function useUniswapPoolStats(): {
   const balancesQuery = useReadContracts({
     contracts: [
       {
-        address: '0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3',
+        address: WFAIR_ADDRESS,
         abi: ERC20_BALANCE_ABI,
         functionName: 'balanceOf',
         args: [UNISWAP_POOL_ADDRESS],
@@ -195,8 +195,7 @@ export function useUniswapPoolStats(): {
 
   const sqrtPriceX96 = slot[0]
   const token0 = token0Result.result.toLowerCase()
-  const wfairAddrLower = '0xF2853CedDF47A05Fee0B4b24DFf2925d59737fb3'.toLowerCase()
-  const wfairIsToken0 = token0 === wfairAddrLower
+  const wfairIsToken0 = token0 === WFAIR_ADDRESS.toLowerCase()
 
   const wfairBalance = wfairBalanceResult.result
   const usdcBalance = usdcBalanceResult.result

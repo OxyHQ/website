@@ -37,7 +37,7 @@ export const HOMIIO_FAQS: readonly HomiioFaq[] = [
   {
     question: 'What makes Homiio different from other housing sites?',
     answer:
-      'Homiio puts fairness first: transparent property histories, an Oxy-powered trust score for users and landlords, and values-based roommate matching — no surveillance, no hidden fees, no fake listings.',
+      'Homiio puts fairness first: transparent property histories, an Oxy-powered trust score for users and landlords, and values-based roommate matching. No surveillance, no hidden fees, no fake listings.',
   },
   {
     question: 'How does Sindi assist tenants?',

@@ -1,12 +1,12 @@
 import { useState, useCallback, lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Outlet, useLocation, useParams, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { OxyProvider, useOxy } from '@oxyhq/services'
 import type { User } from '@oxyhq/core'
 import { BloomThemeProvider } from '@oxyhq/bloom/theme'
 import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
 import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppColorName } from './theme'
-import { LocaleProvider } from './lib/i18n'
+import { LocaleProvider, DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from './lib/i18n'
 import { setOxyServices } from './api/client'
 import { isFairCoinHost } from './lib/host'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -155,6 +155,46 @@ function LocaleLayout() {
   )
 }
 
+/**
+ * Layout for the locale-prefixed mirror of the public route tree (`/es/pricing`).
+ *
+ * URL rule: the default locale is served ONLY at the bare path. `/pricing` is
+ * canonical; `/en/pricing` collapses onto it. Every non-default locale lives
+ * under its own prefix. `SEO.tsx`'s `buildLocalizedUrl` (canonical + hreflang +
+ * x-default) and `locale-context.tsx`'s `setLocale` implement the same rule,
+ * all keyed on the static `DEFAULT_LOCALE` rather than the CMS-configured
+ * default — the URL shape must not shift when someone flips a CMS toggle, or
+ * every already-indexed URL silently changes meaning.
+ *
+ * The `:locale` segment is validated here rather than trusted: an unknown
+ * first segment (`/xx/pricing`) must reach `NotFoundPage`, not render the page
+ * with a silently-wrong locale.
+ */
+function LocalePrefixedLayout() {
+  const { locale } = useParams<{ locale: string }>()
+  const location = useLocation()
+
+  if (!locale || !SUPPORTED_LOCALES.includes(locale as Locale)) {
+    // NotFoundPage renders Navbar/Footer/SEO, all of which read locale context.
+    return (
+      <LocaleProvider>
+        <NotFoundPage />
+      </LocaleProvider>
+    )
+  }
+
+  if (locale === DEFAULT_LOCALE) {
+    const rest = location.pathname.slice(locale.length + 1) || '/'
+    return <Navigate to={rest + location.search + location.hash} replace />
+  }
+
+  return (
+    <LocaleProvider>
+      <Outlet />
+    </LocaleProvider>
+  )
+}
+
 function PublicRoutes() {
   // The SPA serves two brands. On fairco.in only the FairCoin surface is
   // mounted; every Oxy route falls through to NotFoundPage. On oxy.so the
@@ -259,8 +299,8 @@ function PublicRoutes() {
       <Route path="legal" element={<LegalPage />} />
       <Route path="legal/:section" element={<LegalPage />} />
       <Route path="u/:username" element={<UserProfilePage />} />
-      <Route path="u/:username/followers" element={<UserFollowersPage initialTab="followers" />} />
-      <Route path="u/:username/following" element={<UserFollowersPage initialTab="following" />} />
+      <Route path="u/:username/followers" element={<UserFollowersPage />} />
+      <Route path="u/:username/following" element={<UserFollowersPage />} />
       <Route path="astro" element={<AstroPage />} />
       <Route path="features" element={<FeatureBoardPage />} />
       <Route path="sustain" element={<SustainPage />} />
@@ -308,6 +348,17 @@ export default function App() {
                   <Routes>
                     <Route path="/admin/*" element={<AdminPage />} />
                     <Route path="/" element={<LocaleLayout />}>
+                      {PublicRoutes()}
+                      <Route path="*" element={<NotFoundPage />} />
+                    </Route>
+                    {/*
+                      The same route table mounted a second time under a locale
+                      segment, so `/es/pricing` resolves without maintaining a
+                      parallel list. Static paths outrank the dynamic `:locale`
+                      segment in React Router's ranking, so bare `/pricing`
+                      still matches the branch above.
+                    */}
+                    <Route path=":locale" element={<LocalePrefixedLayout />}>
                       {PublicRoutes()}
                       <Route path="*" element={<NotFoundPage />} />
                     </Route>

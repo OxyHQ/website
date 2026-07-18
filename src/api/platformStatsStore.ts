@@ -57,7 +57,8 @@ const MAX_ACTIVITY_EVENTS = 15
 // App.tsx — a deploy can override it; the production URL is the fallback.
 const OXY_API =
   (import.meta.env.VITE_OXY_API as string | undefined) || 'https://api.oxy.so'
-const FALLBACK_DELAY_MS = 1_000
+const INITIAL_RECONNECT_DELAY_MS = 1_000
+const MAX_RECONNECT_DELAY_MS = 30_000
 
 type Listener = () => void
 
@@ -66,7 +67,8 @@ const listeners = new Set<Listener>()
 const prevCountries = new Map<string, number>()
 
 let es: EventSource | null = null
-let fallbackTimer: ReturnType<typeof setTimeout> | null = null
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null
+let reconnectAttempts = 0
 
 function emit() {
   listeners.forEach((listener) => listener())
@@ -121,6 +123,30 @@ async function fetchFallback() {
   }
 }
 
+/**
+ * Reconnect the stream with exponential backoff, mirroring `faircoinStore`.
+ * Without this a single network blip left the store permanently disconnected:
+ * nothing re-opened the EventSource, and `subscribePlatformStats` only opens on
+ * an empty→non-empty listener transition, so a dashboard left open froze.
+ *
+ * Each attempt also refreshes over plain HTTP, so the numbers keep advancing
+ * even where the SSE stream itself is unreachable (a proxy stripping
+ * `text/event-stream`, for instance).
+ */
+function scheduleReconnect() {
+  if (reconnectTimer || listeners.size === 0) return
+  const delay = Math.min(
+    INITIAL_RECONNECT_DELAY_MS * Math.pow(2, reconnectAttempts++),
+    MAX_RECONNECT_DELAY_MS
+  )
+  reconnectTimer = setTimeout(() => {
+    reconnectTimer = null
+    if (listeners.size === 0) return
+    fetchFallback()
+    openStream()
+  }, delay)
+}
+
 function openStream() {
   if (typeof EventSource === 'undefined') {
     fetchFallback()
@@ -131,6 +157,10 @@ function openStream() {
   try {
     const source = new EventSource(`${OXY_API}/platform-stats/stream`)
     es = source
+
+    source.onopen = () => {
+      reconnectAttempts = 0
+    }
 
     source.onmessage = (event) => {
       try {
@@ -146,16 +176,12 @@ function openStream() {
         source.close()
         es = null
       }
-      if (!fallbackTimer && listeners.size > 0) {
-        fallbackTimer = setTimeout(() => {
-          fallbackTimer = null
-          fetchFallback()
-        }, FALLBACK_DELAY_MS)
-      }
+      scheduleReconnect()
     }
   } catch (err) {
     console.warn('[platformStatsStore] stream open failed:', err)
     fetchFallback()
+    scheduleReconnect()
   }
 }
 
@@ -165,10 +191,11 @@ function teardown() {
     es = null
     source.close()
   }
-  if (fallbackTimer) {
-    clearTimeout(fallbackTimer)
-    fallbackTimer = null
+  if (reconnectTimer) {
+    clearTimeout(reconnectTimer)
+    reconnectTimer = null
   }
+  reconnectAttempts = 0
   prevCountries.clear()
 }
 

@@ -18,7 +18,7 @@ const WALLETS: readonly WalletOption[] = [
   {
     name: 'FAIRWallet',
     description:
-      'Lightweight SPV wallet for everyday use. Connects directly to the FairCoin P2P network — no server in the middle.',
+      'Lightweight SPV wallet for everyday use. Connects directly to the FairCoin P2P network, with no server in the middle.',
     badges: ['iOS', 'Android', 'macOS', 'Windows', 'Linux'],
     href: FAIRWALLET_RELEASES_URL,
     icon: Globe,

@@ -101,7 +101,7 @@ const InfraNodeMarker = memo(
     const color = STATUS_COLORS[status];
     return (
       <g>
-        <title>{`${label} — ${status} (${services} services)`}</title>
+        <title>{`${label}: ${status} (${services} services)`}</title>
         {/* Pulsing ring */}
         <motion.circle
           cx={x}

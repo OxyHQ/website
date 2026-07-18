@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Avatar } from '@oxyhq/bloom/avatar'
+import { getNormalizedUserHandle } from '@oxyhq/core'
 import { useUserById } from '../../api/hooks'
 
 interface ArticleAuthorsProps {
@@ -11,7 +12,10 @@ function AuthorChip({ userId }: { userId: string }) {
 
   if (!user) return null
 
-  const displayName = user.name.displayName
+  // `name.displayName` is optional in the SDK shape — fall back to the
+  // normalized handle so a federated author never renders as an empty chip.
+  const displayName =
+    user.name.displayName?.trim() || getNormalizedUserHandle(user) || user.username
 
   return (
     <Link to={`/u/${user.username}`} className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-80">

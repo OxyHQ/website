@@ -10,7 +10,8 @@
  */
 const DEFAULT_BRIDGE_BASE_URL = 'https://bridge.fairco.in'
 
-function getBridgeBaseUrl(): string {
+/** Bridge origin for every FairCoin bridge caller. Owned here; imported elsewhere. */
+export function getBridgeBaseUrl(): string {
   const override = (import.meta.env.VITE_FAIRCOIN_BRIDGE_URL as string | undefined) ?? ''
   return override.length > 0 ? override : DEFAULT_BRIDGE_BASE_URL
 }

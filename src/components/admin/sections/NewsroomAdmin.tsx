@@ -261,6 +261,7 @@ export default function NewsroomAdmin() {
         confirmLabel="Delete"
         tone="danger"
         busy={deleteAction.busy}
+        error={deleteAction.error}
         onConfirm={deleteAction.confirm}
       />
     </div>

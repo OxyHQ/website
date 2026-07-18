@@ -1,13 +1,13 @@
 import { Router } from 'express'
+import type { QueryFilter } from 'mongoose'
 import { z } from 'zod'
 import { UserProfileExtra } from '../models/UserProfileExtra.js'
 import { UserBadge } from '../models/UserBadge.js'
-import { Comment } from '../models/Comment.js'
+import { Comment, type IComment } from '../models/Comment.js'
 import { Like } from '../models/Like.js'
 import { Vote } from '../models/Vote.js'
 import { NewsroomPost } from '../models/NewsroomPost.js'
-import { optionalAuth, requireAuth } from '../middleware/auth.js'
-import { config } from '../config.js'
+import { optionalAuth, oxy, requireAuth } from '../middleware/auth.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
@@ -28,23 +28,12 @@ const activityQuerySchema = z.object({
   type: z.string().optional(),
 }).passthrough()
 
-type OxyClient = InstanceType<typeof import('@oxyhq/core').OxyServices>
-
-let oxyPromise: Promise<OxyClient> | null = null
-function getOxy(): Promise<OxyClient> {
-  if (!oxyPromise) {
-    oxyPromise = import('@oxyhq/core').then(mod => new mod.OxyServices({ baseURL: config.oxyApiBase }))
-  }
-  return oxyPromise
-}
-
 // Get basic user info by ID (for article author display)
 // MUST be before /:username to avoid Express matching "id" as a username
 router.get('/id/:userId', async (req, res) => {
   const { userId } = validate(userIdParamsSchema, req.params)
   try {
-    const client = await getOxy()
-    const oxyUser = await client.getUserById(userId)
+    const oxyUser = await oxy.getUserById(userId)
     res.json({
       _id: oxyUser.id,
       username: oxyUser.username,
@@ -87,10 +76,9 @@ router.get('/:username', optionalAuth, async (req, res) => {
   const { username } = validate(usernameParamsSchema, req.params)
 
   try {
-    let oxyUser: Awaited<ReturnType<OxyClient['getProfileByUsername']>>
+    let oxyUser: Awaited<ReturnType<typeof oxy.getProfileByUsername>>
     try {
-      const client = await getOxy()
-      oxyUser = await client.getProfileByUsername(username)
+      oxyUser = await oxy.getProfileByUsername(username)
     } catch {
       return res.status(404).json({ error: 'User not found' })
     }
@@ -106,14 +94,13 @@ router.get('/:username', optionalAuth, async (req, res) => {
     const userId = oxyUser.id
     let stats = null
     if (showActivity || isSelf) {
-      const client = await getOxy()
       const [comments, likes, votes, articles, followers, following] = await Promise.all([
         Comment.countDocuments({ userId, status: 'visible' }),
         Like.countDocuments({ userId }),
         Vote.countDocuments({ userId }),
         NewsroomPost.countDocuments({ oxyUserId: userId, status: 'published' }),
-        client.getUserFollowers(userId).then(r => r.total).catch(() => 0),
-        client.getUserFollowing(userId).then(r => r.total).catch(() => 0),
+        oxy.getUserFollowers(userId).then(r => r.total).catch(() => 0),
+        oxy.getUserFollowing(userId).then(r => r.total).catch(() => 0),
       ])
       stats = { comments, likes, votes, articles, followers, following }
     }
@@ -151,18 +138,22 @@ router.get('/:username/activity', async (req, res) => {
     }
 
     const activities: Array<{ type: string; data: unknown; createdAt: Date }> = []
+    // Count across the whole collection, not just the page that was fetched.
+    let total = 0
 
     if (!type || type === 'comments') {
-      const comments = await Comment.find({ username, status: 'visible' })
-        .sort('-createdAt')
-        .skip(skip)
-        .limit(limitNum)
+      const filter: QueryFilter<IComment> = { username, status: 'visible' }
+      const [comments, commentCount] = await Promise.all([
+        Comment.find(filter).sort('-createdAt').skip(skip).limit(limitNum),
+        Comment.countDocuments(filter),
+      ])
       comments.forEach(c => activities.push({ type: 'comment', data: c.toJSON(), createdAt: c.createdAt }))
+      total += commentCount
     }
 
     activities.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
-    res.json({ items: activities, total: activities.length })
+    res.json({ items: activities, total })
   } catch (err) {
     res.status(500).json({ error: `Failed to load activity: ${toErrorMessage(err)}` })
   }

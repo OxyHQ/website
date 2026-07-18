@@ -12,7 +12,7 @@ const actionItems = [
 ];
 
 const talkingPoints = [
-  "Mobile nav redesign is ahead of schedule — demo ready for stakeholders",
+  "Mobile nav redesign is ahead of schedule, demo ready for stakeholders",
   "Accessibility score improved from 72 to 91 after last sprint",
   "Design system tokens need alignment with new brand colors",
 ];
@@ -73,7 +73,7 @@ const MeetingPrepMockup = () => {
         <div className="bg-foreground/5 rounded-xl p-4">
           <h4 className="text-xs font-medium text-foreground mb-2">Related Mention threads</h4>
           <div className="flex flex-col gap-1.5">
-            {["#design — Mobile nav: updated interaction patterns", "#product — Accessibility audit follow-up items"].map((t) => (
+            {["#design: Mobile nav, updated interaction patterns", "#product: Accessibility audit follow-up items"].map((t) => (
               <div key={t} className="flex items-center gap-2 text-[11px] text-foreground/50">
                 <span className="text-foreground/30">#</span>
                 <span>{t}</span>

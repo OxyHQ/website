@@ -71,7 +71,7 @@ export default function NetworkSection() {
             className="mt-5 text-pretty text-lg leading-relaxed text-muted-foreground"
           >
             No corporate gatekeeper. The chain, the explorer, the seeders, the
-            wallets — all open, all reproducible, all yours to fork.
+            wallets: all open, all reproducible, all yours to fork.
           </motion.p>
         </div>
 

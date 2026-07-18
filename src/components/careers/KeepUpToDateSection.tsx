@@ -1,4 +1,5 @@
 import { socialCards } from '../../data/careers'
+import { ArrowRightIcon } from '../icons'
 
 function SocialIcon({ type }: { type: string }) {
   switch (type) {
@@ -68,22 +69,7 @@ export default function KeepUpToDateSection() {
                 <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-hover:duration-50 group-active:opacity-100 group-active:duration-50" />
                 <div className="relative flex items-center justify-between">
                   <SocialIcon type={card.iconType} />
-                  {/* Arrow */}
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 14 14"
-                    fill="none"
-                    className="relative shrink-0 text-foreground opacity-0 -translate-x-0.25 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150 group-active:translate-0 group-active:opacity-100 group-active:duration-50 -rotate-45"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="1.1"
-                      d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5"
-                    />
-                  </svg>
+                  <ArrowRightIcon className="relative shrink-0 text-foreground opacity-0 -translate-x-0.25 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150 group-active:translate-0 group-active:opacity-100 group-active:duration-50 -rotate-45" />
                 </div>
                 <div className="relative flex flex-col gap-1">
                   <h3 className="font-semibold text-foreground">{card.title}</h3>

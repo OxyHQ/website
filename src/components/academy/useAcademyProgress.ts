@@ -31,8 +31,10 @@ import {
   clearAllLocalAcademyProgress,
   mergeCourseProgress,
   readAllLocalCourseProgress,
+  sanitizeCourseProgress,
   subscribeProgress,
   writeLocalCourseProgress,
+  LOCAL_STORAGE_PREFIX,
   type CourseProgress,
   type LessonProgress,
 } from './progressStorage'
@@ -72,7 +74,7 @@ export interface UseAcademyProgressResult {
 function getLocalSnapshot(courseSlug: string): string | null {
   if (typeof window === 'undefined') return null
   try {
-    return window.localStorage.getItem(`oxy:academy:progress:${courseSlug}`)
+    return window.localStorage.getItem(`${LOCAL_STORAGE_PREFIX}${courseSlug}`)
   } catch {
     return null
   }
@@ -85,9 +87,7 @@ function getServerSnapshot(): string | null {
 
 export function useAcademyProgress(courseSlug: string): UseAcademyProgressResult {
   const { isAuthenticated } = useAuth()
-  // `useWebOxy` exposes the OxyServices client we need for the imperative
-  // setter; `useAuth` is just the subset of state surfaced for app code.
-  const { oxyServices: _oxyServices } = useOxy()
+  const { oxyServices } = useOxy()
 
   // ── Signed-in path: React Query handles fetch + cache ─────────────────
   const remote = useAppData<CourseProgress>(ACADEMY_NAMESPACE, courseSlug)
@@ -106,14 +106,12 @@ export function useAcademyProgress(courseSlug: string): UseAcademyProgressResult
   const localParsed = useMemo<CourseProgress>(() => {
     if (!localRaw) return EMPTY_PROGRESS
     try {
-      const parsed = JSON.parse(localRaw)
-      if (parsed && typeof parsed === 'object') {
-        return parsed as CourseProgress
-      }
+      // Same validation the storage module applies on its own read paths — a
+      // tampered or stale entry must not reach the UI through this one.
+      return sanitizeCourseProgress(JSON.parse(localRaw))
     } catch {
-      // fall through
+      return EMPTY_PROGRESS
     }
-    return EMPTY_PROGRESS
   }, [localRaw])
 
   // ── One-shot sign-in migration ────────────────────────────────────────
@@ -144,7 +142,7 @@ export function useAcademyProgress(courseSlug: string): UseAcademyProgressResult
           // back to a read-then-merge per course.
           let merged = progress
           try {
-            const current = await _oxyServices.getAppData<CourseProgress>(
+            const current = await oxyServices.getAppData<CourseProgress>(
               ACADEMY_NAMESPACE,
               localCourseSlug,
             )
@@ -174,7 +172,7 @@ export function useAcademyProgress(courseSlug: string): UseAcademyProgressResult
     return () => {
       cancelled = true
     }
-    // We intentionally omit setRemote and _oxyServices from deps — those
+    // We intentionally omit setRemote and oxyServices from deps — those
     // are stable across re-renders inside OxyProvider and re-running this
     // effect on every render would re-trigger the migration.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -285,19 +283,21 @@ export function useAcademyAllProgress(): {
     (listener: () => void) => subscribeProgress(listener),
     [],
   )
-  // Snapshot is a comma-joined list of keys: cheap stable-ish identity so
-  // writes anywhere in the namespace re-render the listing.
+  // Snapshot is the sorted `key -> stored value` list. It has to embed the
+  // values themselves, not their lengths: marking a lesson completed rewrites
+  // the entry at the same byte length, and a length-keyed snapshot would be
+  // identical across that write, leaving the chips stale.
   const localSnapshot = useCallback((): string => {
     if (typeof window === 'undefined') return ''
     try {
-      const keys: string[] = []
+      const entries: string[] = []
       for (let i = 0; i < window.localStorage.length; i += 1) {
         const key = window.localStorage.key(i)
-        if (key && key.startsWith('oxy:academy:progress:')) {
-          keys.push(`${key}:${window.localStorage.getItem(key)?.length ?? 0}`)
+        if (key && key.startsWith(LOCAL_STORAGE_PREFIX)) {
+          entries.push(`${key}:${window.localStorage.getItem(key) ?? ''}`)
         }
       }
-      return keys.sort().join('|')
+      return entries.sort().join('|')
     } catch {
       return ''
     }

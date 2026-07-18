@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { Vote } from '../models/Vote.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
+import { adminOnly } from '../middleware/adminOnly.js'
 import { checkAndAwardBadges } from '../services/badgeService.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
@@ -318,7 +319,7 @@ router.post('/:owner/:repo/:number/vote', requireAuth, async (req, res) => {
 })
 
 // Clear cache (admin utility)
-router.post('/cache/clear', requireAuth, async (_req, res) => {
+router.post('/cache/clear', requireAuth, adminOnly, async (_req, res) => {
   issueCache = null
   res.json({ success: true })
 })

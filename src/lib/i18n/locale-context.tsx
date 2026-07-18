@@ -147,6 +147,15 @@ interface ApiLocale {
   name: string
   nativeName: string
   isDefault: boolean
+  /** Translation docs for this locale. Always 0 for the default locale. */
+  translationCount: number
+  /**
+   * Whether this locale's `/<code>/…` URLs should be advertised and prerendered.
+   * Computed server-side from the same helper the sitemap uses, so the runtime
+   * hreflang block and the sitemap can never advertise different locale sets.
+   * Always `false` for the default locale, which lives at the bare path.
+   */
+  translationReady: boolean
 }
 
 interface LocaleProviderProps {
@@ -227,14 +236,20 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
       const isLocaleHead = head ? coerceLocale(head) !== null : false
       const pathWithoutLocale = '/' + (isLocaleHead ? segments.slice(1) : segments).join('/')
 
+      // Keyed on the static DEFAULT_LOCALE, NOT the CMS-configured
+      // `defaultLocale`: `buildLocalizedUrl` in SEO.tsx (canonical, hreflang,
+      // x-default), the route table in App.tsx, the prerender and the sitemap
+      // all resolve the prefix from DEFAULT_LOCALE. Keying this on the CMS
+      // value instead would make the picker navigate to a URL the canonical
+      // tag disagrees with the moment the CMS default is anything but 'en'.
       const nextPath =
-        next === defaultLocale
+        next === DEFAULT_LOCALE
           ? pathWithoutLocale === '/' ? '/' : pathWithoutLocale
           : `/${next}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`
 
       navigate(nextPath + location.search + location.hash)
     },
-    [navigate, location.pathname, location.search, location.hash, defaultLocale],
+    [navigate, location.pathname, location.search, location.hash],
   )
 
   const dict = DICTS[locale] ?? DICTS[DEFAULT_LOCALE]
@@ -260,6 +275,10 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
           name: apiMatch?.name ?? entry.name,
           nativeName: apiMatch?.nativeName ?? entry.nativeName,
           isDefault: entry.code === defaultLocale,
+          // Absent the API entry we cannot know a locale has translations, so
+          // it stays un-advertised until the real answer arrives.
+          translationCount: apiMatch?.translationCount ?? 0,
+          translationReady: apiMatch?.translationReady ?? false,
         }
       }),
     [apiLocales, enabledLocales, defaultLocale],

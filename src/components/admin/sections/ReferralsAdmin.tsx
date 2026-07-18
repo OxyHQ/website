@@ -24,7 +24,7 @@ const TYPE_LABELS: Record<ReferralType, string> = {
 }
 
 const TYPE_DESCRIPTIONS: Record<ReferralType, string> = {
-  paid: 'Commission-based partners — paid per signup or per conversion.',
+  paid: 'Commission-based partners, paid per signup or per conversion.',
   ambassador: 'Unpaid-but-tracked advocates. Perks and recognition only.',
   user: 'Casual share links for anyone who wants to pass on what they love.',
 }
@@ -155,7 +155,7 @@ export default function ReferralsAdmin() {
               onChange={(e) => setEditing({ ...editing, email: e.target.value })}
               placeholder="alex@example.com"
             />
-            <p className="text-xs text-muted-foreground">Never exposed on the public /referrals endpoint — admin tracking only.</p>
+            <p className="text-xs text-muted-foreground">Never exposed on the public /referrals endpoint. Admin tracking only.</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -253,7 +253,7 @@ export default function ReferralsAdmin() {
                   <div className="text-xs text-muted-foreground">Signups</div>
                 </div>
               </div>
-              <p className="mt-3 text-xs text-muted-foreground">Clicks are auto-tracked. Signups are updated manually for now — no automated payout flow yet.</p>
+              <p className="mt-3 text-xs text-muted-foreground">Clicks are auto-tracked. Signups are updated manually for now. No automated payout flow yet.</p>
             </div>
           )}
 
@@ -339,6 +339,7 @@ export default function ReferralsAdmin() {
         confirmLabel="Delete"
         tone="danger"
         busy={deleteAction.busy}
+        error={deleteAction.error}
         onConfirm={deleteAction.confirm}
       />
     </div>

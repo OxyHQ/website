@@ -88,12 +88,16 @@ export const ManifestoSection: React.FC<ManifestoSectionProps> = ({ imagePaths =
   useEffect(() => {
     if (!isActive) return
     const spawn = setInterval(addImage, 150)
+    // Returning `prev` untouched when nothing expired keeps the 100ms tick from
+    // re-rendering the whole AnimatePresence subtree for nothing. Cells are freed
+    // only on a tick that actually expires something; `Set.delete` is idempotent,
+    // so a double-invoked updater in StrictMode stays correct.
     const expire = setInterval(() => {
       const now = Date.now()
       setImages((prev) => {
-        prev.forEach((img) => {
-          if (img.expiresAt <= now) usedCells.current.delete(img.cellIndex)
-        })
+        const expired = prev.filter((img) => img.expiresAt <= now)
+        if (expired.length === 0) return prev
+        for (const img of expired) usedCells.current.delete(img.cellIndex)
         return prev.filter((img) => img.expiresAt > now)
       })
     }, 100)

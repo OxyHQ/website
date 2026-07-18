@@ -6,8 +6,9 @@ import {
 } from '@oxyhq/core/server'
 import { config } from '../config.js'
 
-// Single shared OxyServices instance for auth middleware — constructed once.
-const oxy = new OxyServices({ baseURL: config.oxyApiBase })
+// Single shared OxyServices instance for the whole backend — constructed once.
+// Routes that need to call the Oxy API import this rather than building their own.
+export const oxy = new OxyServices({ baseURL: config.oxyApiBase })
 
 declare global {
   // The Express namespace is the canonical augmentation point for

@@ -12,6 +12,7 @@ import {
   type HelpCategoryId,
 } from '../../content/help-loader'
 import HelpProductBadge from './HelpProductBadge'
+import { ArrowRightIcon } from '../icons'
 import { getHelpProductLogo } from './getHelpProductLogo'
 
 /* ──────────────────────────────────────────────
@@ -89,23 +90,10 @@ function ChevronRight() {
   )
 }
 
+/** The shared arrow with this page's slide-in-on-hover treatment. */
 function ArrowRight() {
   return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
-      fill="none"
-      className="relative shrink-0 text-foreground opacity-0 -translate-x-0.25 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150 group-active:translate-0 group-active:opacity-100 group-active:duration-50"
-    >
-      <path
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.1"
-        d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5"
-      />
-    </svg>
+    <ArrowRightIcon className="relative shrink-0 text-foreground opacity-0 -translate-x-0.25 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150 group-active:translate-0 group-active:opacity-100 group-active:duration-50" />
   )
 }
 
@@ -284,7 +272,7 @@ function HelpContent({
             >
               <SearchIcon />
               <p className="w-full truncate text-left text-muted-foreground">
-                Search is coming soon — browse the categories below for now
+                Search is coming soon. Browse the categories below for now
               </p>
             </button>
 

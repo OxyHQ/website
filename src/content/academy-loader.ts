@@ -1,6 +1,7 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
 import { z } from 'zod'
 import { AcademyFrontmatter, DEFAULT_LOCALE, parseLocaleFromPath } from './schemas'
+import { ACADEMY_COURSES, type CourseMeta } from './academy-courses'
 
 /* ──────────────────────────────────────────────
  * academy-loader.ts
@@ -25,61 +26,11 @@ import { AcademyFrontmatter, DEFAULT_LOCALE, parseLocaleFromPath } from './schem
  *
  * Course metadata lives in `ACADEMY_COURSES` below. Adding a new course
  * requires both creating the folder + lesson MDX and registering the
- * course metadata here. This keeps the course catalog explicit instead of
- * being mined from frontmatter scattered across lesson files.
+ * course metadata in `academy-courses.ts`. This keeps the course catalog
+ * explicit instead of being mined from frontmatter scattered across lesson
+ * files, and lets `scripts/prerender.ts` share it (this file's
+ * `import.meta.glob` calls make it Vite-only).
  * ──────────────────────────────────────────── */
-
-export type CourseLevel = 'beginner' | 'intermediate' | 'advanced'
-
-export interface CourseMeta {
-  slug: string
-  title: string
-  summary: string
-  level: CourseLevel
-  /** Human-readable total duration. */
-  duration?: string
-  /** Order in the catalog (asc). */
-  order: number
-  /** Featured courses surface on the academy landing first. */
-  featured: boolean
-  /** Optional cover image (absolute URL or asset path). */
-  coverImage?: string
-  /** Free-form tags. */
-  tags: string[]
-}
-
-export const ACADEMY_COURSES: CourseMeta[] = [
-  {
-    slug: 'getting-started',
-    title: 'Getting started with Oxy',
-    summary: 'Set up your account, install the apps, and ship your first project on Oxy.',
-    level: 'beginner',
-    duration: '~15 min',
-    order: 10,
-    featured: true,
-    tags: ['intro', 'onboarding'],
-  },
-  {
-    slug: 'using-oxy-id',
-    title: 'Using your Oxy ID',
-    summary: 'Your portable identity — how Oxy ID keys, sessions, and recovery work end to end.',
-    level: 'beginner',
-    duration: '~20 min',
-    order: 20,
-    featured: true,
-    tags: ['identity', 'security'],
-  },
-  {
-    slug: 'publishing-with-mention',
-    title: 'Publishing with Mention',
-    summary: 'Use Mention to publish to the fediverse, manage your audience, and grow your reach.',
-    level: 'intermediate',
-    duration: '~25 min',
-    order: 30,
-    featured: false,
-    tags: ['mention', 'publishing', 'fediverse'],
-  },
-]
 
 const COURSES_BY_SLUG = new Map(ACADEMY_COURSES.map((c) => [c.slug, c]))
 

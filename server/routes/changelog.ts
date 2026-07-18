@@ -2,15 +2,18 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { ChangelogEntry } from '../models/ChangelogEntry.js'
 import TrackedRepo from '../models/TrackedRepo.js'
-import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
-import { applyTranslations } from '../utils/applyTranslation.js'
+import { localizeMany } from '../utils/localize.js'
 import { syncAllRepos, syncSingleRepo } from '../services/githubSync.js'
+import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
+
+// The changelog list pages larger than the default API page size.
+const MAX_CHANGELOG_PAGE_SIZE = 100
 
 const listQuerySchema = z.object({
   repo: z.string().optional(),
@@ -37,8 +40,7 @@ const trackedRepoBodySchema = z.object({
 router.get('/', localeMiddleware, async (req, res) => {
   const { repo, page: pageParam, limit: limitParam } = validate(listQuerySchema, req.query)
 
-  const page = Math.max(1, parseInt(pageParam ?? '', 10) || 1)
-  const limit = Math.min(100, Math.max(1, parseInt(limitParam ?? '', 10) || 20))
+  const { pageNum, limitNum, skip } = parsePagination(pageParam, limitParam, MAX_CHANGELOG_PAGE_SIZE)
 
   const filter: Record<string, string> = {}
   if (repo) {
@@ -56,8 +58,8 @@ router.get('/', localeMiddleware, async (req, res) => {
     ChangelogEntry.find(filter)
       .populate('media')
       .sort('-date')
-      .skip((page - 1) * limit)
-      .limit(limit),
+      .skip(skip)
+      .limit(limitNum),
     ChangelogEntry.countDocuments(filter),
     ChangelogEntry.aggregate([
       { $match: { repoOwner: { $ne: null } } },
@@ -72,21 +74,13 @@ router.get('/', localeMiddleware, async (req, res) => {
     displayName: r._id.display,
   }))
 
-  let serialized = entries.map((e) => e.toJSON())
-  if (!req.isDefaultLocale) {
-    const translations = await Translation.find({
-      locale: req.locale,
-      collectionName: 'changelog',
-      documentId: { $in: entries.map(e => e._id.toString()) },
-    })
-    serialized = applyTranslations(serialized, translations)
-  }
+  const serialized = await localizeMany(req, 'changelog', entries)
 
   res.json({
     entries: serialized,
     total,
-    page,
-    pages: Math.ceil(total / limit),
+    page: pageNum,
+    pages: Math.ceil(total / limitNum),
     repos,
   })
 })

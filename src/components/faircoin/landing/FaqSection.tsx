@@ -10,12 +10,12 @@ const FAQS: readonly FaqItem[] = [
   {
     question: 'What is FairCoin?',
     answer:
-      'FairCoin is a community-run cryptocurrency forked from Bitcoin in 2014. Hybrid PoW/PoS consensus, Quark hashing, 120-second blocks, capped at 33 million coins. Maintained by volunteers — no ICO, no foundation, no pre-mine beyond the initial 5M coin distribution at block 1.',
+      'FairCoin is a community-run cryptocurrency forked from Bitcoin in 2014. Hybrid PoW/PoS consensus, Quark hashing, 120-second blocks, capped at 33 million coins. Maintained by volunteers. No ICO, no foundation, no pre-mine beyond the initial 5M coin distribution at block 1.',
   },
   {
     question: 'Where can I buy FAIR?',
     answer:
-      'Three paths. (1) Use the web Buy flow on this site to pay with USDC on Base — FAIR arrives in your wallet automatically. (2) If you already hold USDC on Base and use a Web3 wallet, swap it for WFAIR on Uniswap. (3) If you already hold WFAIR or native FAIR, the bridge wraps and unwraps between them. You can also acquire FAIR by staking it, running a masternode, or mining the early PoW phase.',
+      'Three paths. (1) Use the web Buy flow on this site to pay with USDC on Base, and FAIR arrives in your wallet automatically. (2) If you already hold USDC on Base and use a Web3 wallet, swap it for WFAIR on Uniswap. (3) If you already hold WFAIR or native FAIR, the bridge wraps and unwraps between them. You can also acquire FAIR by staking it, running a masternode, or mining the early PoW phase.',
   },
   {
     question: 'Can I run my own node?',
@@ -25,7 +25,7 @@ const FAQS: readonly FaqItem[] = [
   {
     question: 'Is there a wrapped version on Ethereum?',
     answer:
-      'Yes — WFAIR on Base. It is live on Base mainnet at 0xF2853C…37fb3. 1:1 wrapped representation for use in Ethereum DeFi, with a live Uniswap v3 pool against USDC. Strictly secondary to native FairCoin and fully redeemable through the bridge.',
+      'Yes, WFAIR on Base. It is live on Base mainnet at 0xF2853C…37fb3. 1:1 wrapped representation for use in Ethereum DeFi, with a live Uniswap v3 pool against USDC. Strictly secondary to native FairCoin and fully redeemable through the bridge.',
   },
   {
     question: 'Where can I follow development?',

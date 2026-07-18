@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Button from '../ui/Button'
 import { HorizontalLine } from '../ui/GridDecoration'
 import { useJobs, type Job } from '../../api/hooks'
+import { ArrowRightIcon } from '../icons'
 
 const DashedLine = () => <HorizontalLine className="w-full text-border" dashed />
 const SolidLine = () => <HorizontalLine className="w-full text-border" />
@@ -170,15 +171,7 @@ export default function OpenPositionsSection() {
                           {job.location}
                         </p>
                         {/* Arrow */}
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 14 14"
-                          fill="none"
-                          className="col-11 row-3 self-center justify-self-end text-muted-foreground transition-[translate,color] duration-400 ease-in-out group-hover:translate-x-0.5 group-hover:duration-150 group-active:translate-x-0.5 group-active:duration-50 md:row-2 lg:col-12 lg:row-1 lg:justify-self-center xl:col-[-2/-1]"
-                        >
-                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
-                        </svg>
+                        <ArrowRightIcon className="col-11 row-3 self-center justify-self-end text-muted-foreground transition-[translate,color] duration-400 ease-in-out group-hover:translate-x-0.5 group-hover:duration-150 group-active:translate-x-0.5 group-active:duration-50 md:row-2 lg:col-12 lg:row-1 lg:justify-self-center xl:col-[-2/-1]" />
                       </Link>
                       {/* Dashed separator between rows (and after last row) */}
                       <DashedLine />

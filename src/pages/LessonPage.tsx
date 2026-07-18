@@ -271,7 +271,7 @@ export default function LessonPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SEO
-        title={`${lesson.frontmatter.title} — ${course.title}`}
+        title={`${lesson.frontmatter.title}, ${course.title}`}
         description={lesson.frontmatter.description}
         canonicalPath={`/academy/${course.slug}/${lesson.lessonSlug}`}
         ogType="article"
@@ -466,7 +466,7 @@ export default function LessonPage() {
         {/* ═══ Share ═══ */}
         <PageSection spacing="sm" width="narrow">
           <ShareWithMention
-            title={`${lesson.frontmatter.title} — ${course.title}`}
+            title={`${lesson.frontmatter.title}, ${course.title}`}
             url={`https://oxy.so/academy/${course.slug}/${lesson.lessonSlug}`}
             hashtags={['oxyacademy', 'learn']}
             via="oxy"

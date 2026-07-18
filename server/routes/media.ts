@@ -5,8 +5,12 @@ import { deleteFromSpaces } from '../services/s3.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { validate } from '../utils/validate.js'
+import { parsePagination } from '../utils/parsePagination.js'
 
 const router = Router()
+
+// The media library grid pages larger than the default API page size.
+const MAX_MEDIA_PAGE_SIZE = 100
 
 const listQuerySchema = z.object({
   search: z.string().optional(),
@@ -28,8 +32,7 @@ const updateBodySchema = z.object({
 // List media (admin) — supports search, type filter, pagination
 router.get('/', requireAuth, adminOnly, async (req, res) => {
   const { search, type, tag, folder, page = '1', limit = '40' } = validate(listQuerySchema, req.query)
-  const pageNum = Math.max(1, parseInt(page, 10))
-  const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10)))
+  const { pageNum, limitNum, skip } = parsePagination(page, limit, MAX_MEDIA_PAGE_SIZE)
 
   const filter: Record<string, unknown> = {}
   if (search) filter.$text = { $search: search }
@@ -40,7 +43,7 @@ router.get('/', requireAuth, adminOnly, async (req, res) => {
   if (folder) filter.folder = folder
 
   const [items, total] = await Promise.all([
-    Media.find(filter).sort({ createdAt: -1 }).skip((pageNum - 1) * limitNum).limit(limitNum),
+    Media.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
     Media.countDocuments(filter),
   ])
 

@@ -15,11 +15,25 @@ import { brandForHost, resolveSeoOrDefault, type SeoData } from '../src/lib/seo'
  * we fall back to the brand bootstrap meta, so this can never make things worse.
  */
 
-const SEO_API = 'https://website-api.oxy.so/api/seo'
+/** Cloudflare Pages runtime bindings this middleware reads. */
+interface Env {
+  /**
+   * Website backend origin, mirroring the `VITE_API_URL` the SPA reads. Set it
+   * as a Pages environment variable to point a preview deployment at a staging
+   * backend; unset it falls back to production.
+   */
+  VITE_API_URL?: string
+}
 
-async function fetchSeoData(pathname: string, brand: string): Promise<SeoData | null> {
+const DEFAULT_API_BASE = 'https://website-api.oxy.so'
+
+async function fetchSeoData(
+  apiBase: string,
+  pathname: string,
+  brand: string,
+): Promise<SeoData | null> {
   try {
-    const url = new URL(SEO_API)
+    const url = new URL(`${apiBase}/api/seo`)
     url.searchParams.set('brand', brand)
     url.searchParams.set('path', pathname)
     const res = await fetch(url.toString(), {
@@ -33,8 +47,8 @@ async function fetchSeoData(pathname: string, brand: string): Promise<SeoData | 
   }
 }
 
-const onRequest: PagesFunction = async (context) => {
-  const { request, next } = context
+const onRequest: PagesFunction<Env> = async (context) => {
+  const { request, next, env } = context
 
   // Oxy is the prerendered default — nothing to rewrite.
   const url = new URL(request.url)
@@ -44,7 +58,8 @@ const onRequest: PagesFunction = async (context) => {
   if (!(response.headers.get('content-type') ?? '').includes('text/html')) return response
 
   try {
-    const meta = resolveSeoOrDefault(await fetchSeoData(url.pathname, 'faircoin'), url.pathname, url.hostname)
+    const seoData = await fetchSeoData(env.VITE_API_URL || DEFAULT_API_BASE, url.pathname, 'faircoin')
+    const meta = resolveSeoOrDefault(seoData, url.pathname, url.hostname)
     const setContent = (value: string) => ({
       element(el: Element) {
         el.setAttribute('content', value)

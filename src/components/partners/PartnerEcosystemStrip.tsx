@@ -50,7 +50,7 @@ function EcosystemTile({ product }: EcosystemTileProps) {
 
   if (isInternal) {
     return (
-      <Link to={destination} className={baseClass} aria-label={`${product.name} — ${product.tagline}`}>
+      <Link to={destination} className={baseClass} aria-label={`${product.name}: ${product.tagline}`}>
         {body}
       </Link>
     )
@@ -61,7 +61,7 @@ function EcosystemTile({ product }: EcosystemTileProps) {
       target="_blank"
       rel="noopener noreferrer"
       className={baseClass}
-      aria-label={`${product.name} — ${product.tagline}`}
+      aria-label={`${product.name}: ${product.tagline}`}
     >
       {body}
     </a>
@@ -89,7 +89,7 @@ export default function PartnerEcosystemStrip() {
             <div className="max-w-[26em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
               <h2 className="text-pretty inline">Plug into the Oxy ecosystem.</h2>{' '}
               <p className="text-pretty inline font-medium text-muted-foreground">
-                One identity layer, one contract — every product partners can build on.
+                One identity layer, one contract, and every product partners can build on.
               </p>
             </div>
             <Link

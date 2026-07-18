@@ -55,7 +55,8 @@ export function resolveVersion(
     if (match) return match
   }
   const latest =
-    getVersion(pkg, pkg.latestVersion) ?? getVersion(pkg, pkg.defaultVersion)
+    getVersion(pkg, pkg.latestVersion) ??
+    (pkg.defaultVersion ? getVersion(pkg, pkg.defaultVersion) : undefined)
   return latest ?? pkg.versions[0]
 }
 

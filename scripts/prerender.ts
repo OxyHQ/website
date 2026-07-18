@@ -47,6 +47,13 @@ import path from 'node:path'
 import { build as viteBuild } from 'vite'
 import type { SyncedIndex } from './types.ts'
 import type { SeoData } from '../src/lib/seo'
+import type { SEOLocaleSeed } from '../src/entry-server'
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, isRtlLocale, type Locale } from '../src/lib/i18n/types'
+import { ACADEMY_COURSES } from '../src/content/academy-courses'
+
+/** Course metadata by slug, so academy titles match what the SPA renders. */
+const COURSE_BY_SLUG = new Map(ACADEMY_COURSES.map((course) => [course.slug, course]))
+const courseTitle = (slug: string): string => COURSE_BY_SLUG.get(slug)?.title ?? prettifySlug(slug)
 
 const WEBSITE_ROOT = path.resolve(import.meta.dir, '..')
 const DIST_DIR = path.join(WEBSITE_ROOT, 'dist')
@@ -55,11 +62,29 @@ const SYNCED_INDEX = path.join(WEBSITE_ROOT, 'src', 'content', '_synced', 'index
 const SYNCED_DIR = path.join(WEBSITE_ROOT, 'src', 'content', '_synced')
 const HELP_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'help')
 const ACADEMY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'academy')
-const NEWSROOM_API = 'https://website-api.oxy.so/api/newsroom?limit=500'
-const JOBS_API = 'https://website-api.oxy.so/api/jobs'
-const SEO_API = 'https://website-api.oxy.so/api/seo'
+/**
+ * Backend origin for the CMS-driven content baked into the prerendered HTML.
+ * Reads the same `VITE_API_URL` the SPA does (`src/api/client.ts`) so a staging
+ * build prerenders staging content instead of silently baking in production;
+ * the fallbacks are the production values used when the var is unset.
+ */
+const API_BASE = process.env.VITE_API_URL || 'https://website-api.oxy.so'
+const NEWSROOM_API = `${API_BASE}/api/newsroom?limit=500`
+const JOBS_API = `${API_BASE}/api/jobs`
+const SEO_API = `${API_BASE}/api/seo`
+const LOCALES_API = `${API_BASE}/api/locales`
 
-const SITE_URL = 'https://oxy.so'
+/**
+ * Cloudflare Pages hard-fails a deployment above 20,000 files. Every extra
+ * locale mirrors the entire route tree, so the ceiling is reached after only a
+ * couple of locales. We stop well short of it and fail loudly rather than let
+ * a deploy get rejected (or worse, silently truncated) after a green build.
+ */
+const CF_PAGES_FILE_LIMIT = 20_000
+const FILE_BUDGET = 18_000
+
+/** Canonical public origin, used to absolutise OG image URLs. */
+const SITE_URL = process.env.SITE_URL || 'https://oxy.so'
 
 /** Per-route SEO contract. Mirrors `<SEO>`'s prop interface. */
 interface SEOProps {
@@ -75,7 +100,11 @@ interface SEOProps {
 }
 
 interface RenderSEOFn {
-  (input: SEOProps, seoData: SeoData | null): { head: string }
+  (
+    input: SEOProps,
+    seoData: SeoData | null,
+    options?: { locale?: string; locales?: SEOLocaleSeed[] },
+  ): { head: string }
 }
 
 /* ── SSR bundle build ─────────────────────────────────────────────── */
@@ -167,7 +196,7 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/partners': {
     title: 'Partners',
-    description: 'Meet the partners building on and with Oxy — agencies, integrators, and platform companies.',
+    description: 'Meet the partners building on and with Oxy: agencies, integrators, and platform companies.',
     canonicalPath: '/partners',
   },
   '/referrals': {
@@ -177,12 +206,12 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/technologies': {
     title: 'Technologies',
-    description: 'Explore the products and platforms that make up the Oxy ecosystem — Bloom, OxyOS, Astro, Codea, and more.',
+    description: 'Explore the products and platforms that make up the Oxy ecosystem: Bloom, OxyOS, Astro, Codea, and more.',
     canonicalPath: '/technologies',
   },
   '/status': {
     title: 'Status',
-    description: 'Live operational status for the Oxy platform — API, identity, messaging, and the developer console.',
+    description: 'Live operational status for the Oxy platform: API, identity, messaging, and the developer console.',
     canonicalPath: '/status',
   },
   '/company': {
@@ -192,7 +221,7 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/company/team': {
     title: 'Team',
-    description: 'Meet the people building Oxy — engineers, designers, and operators across multiple continents.',
+    description: 'Meet the people building Oxy: engineers, designers, and operators across multiple continents.',
     canonicalPath: '/company/team',
   },
   '/company/manifesto': {
@@ -237,7 +266,7 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/changelog': {
     title: 'Changelog',
-    description: 'Release notes for the Oxy ecosystem — every shipped feature, fix, and breaking change.',
+    description: 'Release notes for the Oxy ecosystem: every shipped feature, fix, and breaking change.',
     canonicalPath: '/changelog',
   },
   '/developers': {
@@ -247,12 +276,12 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/developers/docs': {
     title: 'Documentation',
-    description: 'Developer docs for every Oxy SDK, app, and platform API — version-locked, searchable, and open source.',
+    description: 'Developer docs for every Oxy SDK, app, and platform API. Version-locked, searchable, and open source.',
     canonicalPath: '/developers/docs',
   },
   '/codea': {
     title: 'Codea',
-    description: 'The AI-powered code editor — VS Code, native, with multi-model agents and your repo as context.',
+    description: 'The AI-powered code editor. VS Code, native, with multi-model agents and your repo as context.',
     canonicalPath: '/codea',
   },
   '/codea/extension': {
@@ -261,8 +290,8 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     canonicalPath: '/codea/extension',
   },
   '/inbox': {
-    title: 'Inbox — End-to-end encrypted email',
-    description: 'A modern, end-to-end encrypted inbox built on Oxy ID — your keys, your data, no scanning.',
+    title: 'Inbox, end-to-end encrypted email',
+    description: 'A modern, end-to-end encrypted inbox built on Oxy ID. Your keys, your data, no scanning.',
     canonicalPath: '/inbox',
   },
   '/ai': {
@@ -272,7 +301,7 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/ai/pricing': {
     title: 'AI Pricing',
-    description: 'Predictable usage-based pricing for the Oxy AI assistant — pay only for what you ask.',
+    description: 'Predictable usage-based pricing for the Oxy AI assistant. Pay only for what you ask.',
     canonicalPath: '/ai/pricing',
   },
   '/initiative': {
@@ -286,7 +315,7 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     canonicalPath: '/os',
   },
   '/tnp': {
-    title: 'TNP — The Name Project',
+    title: 'TNP, The Name Project',
     description: 'A decentralized alternative DNS / namespace system. Get your own .pres handle and own your identity end to end.',
     canonicalPath: '/tnp',
   },
@@ -322,12 +351,12 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/legal/cookies': {
     title: 'Cookies Policy',
-    description: 'How Oxy uses cookies, localStorage, and similar technologies — and how to opt out.',
+    description: 'How Oxy uses cookies, localStorage, and similar technologies, plus how to opt out.',
     canonicalPath: '/legal/cookies',
   },
   '/legal/security': {
     title: 'Security',
-    description: 'How Oxy keeps your data safe — encryption, key handling, infrastructure, and our responsible disclosure program.',
+    description: 'How Oxy keeps your data safe: encryption, key handling, infrastructure, and our responsible disclosure program.',
     canonicalPath: '/legal/security',
   },
   '/astro': {
@@ -337,7 +366,7 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/features': {
     title: 'Feature Requests',
-    description: 'Vote on what Oxy ships next — the public roadmap for every product in the ecosystem.',
+    description: 'Vote on what Oxy ships next. The public roadmap for every product in the ecosystem.',
     canonicalPath: '/features',
   },
   '/sustain': {
@@ -395,15 +424,20 @@ interface NewsroomApiResponse {
   posts: NewsroomApiPost[]
 }
 
+/**
+ * Subset of `/api/jobs` used for SEO. Mirrors `Job` in `src/api/hooks.ts` —
+ * the route returns a bare array (the backend already filters `active: true`).
+ * `description` is deliberately absent: the API returns it as a block array,
+ * not a string, so it can never be used as meta description text.
+ */
 interface JobApiEntry {
   slug: string
-  title?: string
-  description?: string
-  status?: string
-}
-
-interface JobsApiResponse {
-  jobs?: JobApiEntry[]
+  title: string
+  department: string
+  subtitle?: string
+  location: string
+  type?: string
+  engagement?: string
 }
 
 async function fetchNewsroomPosts(): Promise<NewsroomApiPost[]> {
@@ -425,8 +459,10 @@ async function fetchJobs(): Promise<JobApiEntry[]> {
   try {
     const res = await fetch(JOBS_API)
     if (!res.ok) return []
-    const data = (await res.json()) as JobsApiResponse
-    return (data.jobs ?? []).filter((j) => (j.status ?? 'open') !== 'closed' && j.slug)
+    const jobs = (await res.json()) as JobApiEntry[]
+    // Skip malformed entries rather than interpolating `undefined` into a
+    // <title>; every field below is required to build the SEO props.
+    return jobs.filter((job) => job.slug && job.title && job.department && job.location)
   } catch (err) {
     console.warn('[prerender] jobs fetch failed:', (err as Error).message)
     return []
@@ -535,7 +571,7 @@ async function enumerateDocsRoutes(): Promise<Array<{ url: string; seo: SEOProps
       ? `/developers/docs/${pkg.shortName}/${pkg.latestVersion}`
       : `/developers/docs/${pkg.shortName}`
     out.set(landingUrl, {
-      title: `${pkg.displayName} — Oxy Docs`,
+      title: `${pkg.displayName}, Oxy Docs`,
       description:
         pkg.description ?? `Documentation for ${pkg.displayName}, part of the Oxy ecosystem.`,
       canonicalPath: landingUrl,
@@ -575,7 +611,7 @@ async function enumerateDocsRoutes(): Promise<Array<{ url: string; seo: SEOProps
           : url
 
         out.set(url, {
-          title: `${page.title} — ${pkg.displayName}`,
+          title: `${page.title}, ${pkg.displayName}`,
           description,
           canonicalPath,
         })
@@ -633,20 +669,26 @@ async function enumerateAcademyRoutes(): Promise<Array<{ url: string; seo: SEOPr
     lessons.push({
       url: `/academy/${slug}`,
       seo: {
-        title: `${title} — Oxy Academy`,
+        // Mirrors `LessonPage`'s `<SEO title>`; the course title comes from the
+        // same `ACADEMY_COURSES` catalog the SPA reads.
+        title: `${title}, ${courseTitle(course)}`,
         description,
         canonicalPath: `/academy/${slug}`,
       },
     })
   }
-  const courseRoutes = Array.from(courses).map<{ url: string; seo: SEOProps }>((course) => ({
-    url: `/academy/${course}`,
-    seo: {
-      title: `${prettifySlug(course)} — Oxy Academy`,
-      description: `Course: ${prettifySlug(course)} on Oxy Academy.`,
-      canonicalPath: `/academy/${course}`,
-    },
-  }))
+  const courseRoutes = Array.from(courses).map<{ url: string; seo: SEOProps }>((course) => {
+    const meta = COURSE_BY_SLUG.get(course)
+    return {
+      url: `/academy/${course}`,
+      seo: {
+        // `CourseDetailPage` renders the bare `course.title`; match it exactly.
+        title: meta?.title ?? prettifySlug(course),
+        description: meta?.summary ?? `Course: ${prettifySlug(course)} on Oxy Academy.`,
+        canonicalPath: `/academy/${course}`,
+      },
+    }
+  })
   return [...courseRoutes, ...lessons]
 }
 
@@ -683,15 +725,86 @@ function buildJobRoutes(jobs: JobApiEntry[]): Array<{ url: string; seo: SEOProps
   return jobs.map((job) => ({
     url: `/company/careers/${job.slug}`,
     seo: {
-      title: job.title ? `${job.title} — Careers at Oxy` : `Career — ${job.slug}`,
+      // Mirrors `CareerDetailPage`'s `<SEO>` props verbatim so the prerendered
+      // <head> and the client-rendered one produce the same title/description.
+      title: `${job.title}, ${job.department}`,
       description:
-        job.description ?? `Open position at Oxy — apply via the careers page.`,
+        job.subtitle ||
+        `Join Oxy as ${job.title}. ${job.location}. ${job.engagement ?? job.type ?? 'Full-time'}.`,
       canonicalPath: `/company/careers/${job.slug}`,
     },
   }))
 }
 
 /* ── All routes ───────────────────────────────────────────────────── */
+
+/**
+ * Locales whose `/<code>/…` mirror we prerender.
+ *
+ * Filters on `translationReady` and NOTHING else. That flag is computed
+ * server-side (`server/utils/localeReadiness.ts`) from the same helper the
+ * sitemap uses, so the sitemap and this build can never advertise different
+ * locale sets. Re-deriving readiness here from `translationCount` would let the
+ * two silently drift, which is the one outcome we're trying to avoid.
+ *
+ * `enabled` is deliberately NOT a proxy: it defaults to true the moment a
+ * locale row is created, long before any translation exists.
+ *
+ * Returns `[]` on any failure or when nothing qualifies. That is a correct,
+ * non-fatal outcome — it just means no locale-prefixed pages get emitted.
+ */
+async function fetchTranslationReadyLocales(): Promise<{
+  locales: Locale[]
+  seed: SEOLocaleSeed[]
+}> {
+  let entries: SEOLocaleSeed[]
+  try {
+    const res = await fetch(LOCALES_API)
+    if (!res.ok) {
+      console.warn(`[prerender] locales API returned ${res.status} — no locale-prefixed pages.`)
+      return { locales: [], seed: [] }
+    }
+    entries = (await res.json()) as SEOLocaleSeed[]
+  } catch (err) {
+    console.warn('[prerender] locales fetch failed — no locale-prefixed pages:', (err as Error).message)
+    return { locales: [], seed: [] }
+  }
+
+  const locales: Locale[] = []
+  for (const entry of entries) {
+    if (entry.translationReady !== true) continue
+    const code = entry.code as Locale
+    if (!SUPPORTED_LOCALES.includes(code)) continue
+    // The default locale is served ONLY at the bare path, so it never gets a
+    // prefixed mirror. Keyed on the STATIC `DEFAULT_LOCALE` rather than the
+    // CMS `isDefault`, matching `App.tsx` / `SEO.tsx` / `locale-context.tsx`:
+    // the URL shape must not shift when someone flips a CMS toggle.
+    if (code === DEFAULT_LOCALE) continue
+    if (!locales.includes(code)) locales.push(code)
+  }
+  return { locales, seed: entries }
+}
+
+/**
+ * Mirror every base route under each translation-ready locale. The base
+ * (default-locale) routes keep their bare paths; `seo` is shared untouched
+ * because `canonicalPath` must stay bare — `<SEO>` derives the localized
+ * canonical, hreflang and x-default from it plus the active locale.
+ */
+function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): RenderJob[] {
+  if (locales.length === 0) return base
+  const expanded: RenderJob[] = [...base]
+  for (const locale of locales) {
+    for (const job of base) {
+      expanded.push({
+        url: job.url === '/' ? `/${locale}` : `/${locale}${job.url}`,
+        seo: job.seo,
+        locale,
+      })
+    }
+  }
+  return expanded
+}
 
 async function enumerateAllRoutes(): Promise<Array<{ url: string; seo: SEOProps }>> {
   const result = new Map<string, SEOProps>()
@@ -747,6 +860,26 @@ function stripExistingMeta(shell: string): string {
   return out
 }
 
+/**
+ * Localize the shell's `<html lang dir>` for a locale mirror.
+ *
+ * `<SEO>` sets these via helmet's `htmlAttributes`, but the prerender only
+ * splices `<title>/<meta>/<link>` into the static shell — attributes on the
+ * `<html>` element itself are not part of that fragment. Without this a
+ * prerendered `/es/...` page ships `lang="en"`, which is what crawlers and
+ * screen readers read before hydration.
+ */
+function applyHtmlLang(shell: string, locale: Locale): string {
+  const dir = isRtlLocale(locale) ? 'rtl' : 'ltr'
+  return shell.replace(
+    /<html\b[^>]*>/i,
+    (tag) =>
+      tag
+        .replace(/\slang=(["'])[^"']*\1/i, ` lang="${locale}"`)
+        .replace(/\sdir=(["'])[^"']*\1/i, ` dir="${dir}"`),
+  )
+}
+
 function injectHead(shell: string, headHtml: string): string {
   const idx = shell.indexOf('</head>')
   if (idx < 0) throw new Error('[prerender] shell missing </head>')
@@ -794,7 +927,10 @@ function pathToFile(routePath: string): string {
 
 interface RenderJob {
   url: string
+  /** Always the bare-path SEO props; the locale prefix lives in `url`. */
   seo: SEOProps
+  /** Set only for locale-prefixed mirrors; absent means the default locale. */
+  locale?: Locale
 }
 
 /**
@@ -820,14 +956,18 @@ async function writeRoute(
   renderSEO: RenderSEOFn,
   shell: string,
   job: RenderJob,
+  localeSeed: SEOLocaleSeed[],
 ): Promise<boolean> {
   try {
-    const seoData = await fetchSeoData(job.url)
-    const { head } = renderSEO(job.seo, seoData)
+    // CMS SEO is keyed on the bare canonical path — a locale mirror shares the
+    // same entry rather than looking up a `/es/...` key that does not exist.
+    const seoData = await fetchSeoData(job.seo.canonicalPath)
+    const { head } = renderSEO(job.seo, seoData, { locale: job.locale, locales: localeSeed })
     if (!head) {
       console.warn(`[prerender] empty head for ${job.url}`)
     }
-    const stripped = stripExistingMeta(shell)
+    const localized = job.locale ? applyHtmlLang(shell, job.locale) : shell
+    const stripped = stripExistingMeta(localized)
     const html = injectHead(stripped, head)
     const outFile = pathToFile(job.url)
     await mkdir(path.dirname(outFile), { recursive: true })
@@ -839,6 +979,35 @@ async function writeRoute(
   }
 }
 
+/**
+ * Count everything under `dist/` that is NOT a route document, i.e. the assets
+ * `vite build` emitted. Every `index.html` is excluded because those are this
+ * script's own output: counting them would double-count on a re-run (the
+ * previous run's pages plus the pages we are about to write) and could fail a
+ * local build that CI, which always starts from a fresh `dist/`, would pass.
+ */
+async function countNonRouteFiles(dir: string): Promise<number> {
+  if (!existsSync(dir)) return 0
+  const entries = await readdir(dir, { recursive: true, withFileTypes: true })
+  return entries.filter((entry) => entry.isFile() && entry.name !== 'index.html').length
+}
+
+/**
+ * Deploy audit trail: what this build actually emitted.
+ *
+ * NOT a consumed input. `SEO.tsx` advertises hreflang from `translationReady`
+ * on the live `/api/locales`, and `localeReadiness.ts` stays the single
+ * authority shared with the sitemap — this file must never become a second
+ * source those two have to be kept in sync with. It exists so a shipped
+ * `dist/` can be inspected after the fact ("which locales does this deploy
+ * contain?") without re-querying an API whose answer may have moved since.
+ */
+async function writeLocaleManifest(locales: readonly Locale[]): Promise<void> {
+  const outFile = path.join(DIST_DIR, 'prerendered-locales.json')
+  const payload = { defaultLocale: DEFAULT_LOCALE, prerendered: locales }
+  await writeFile(outFile, `${JSON.stringify(payload, null, 2)}\n`, 'utf8')
+}
+
 /* ── Main ─────────────────────────────────────────────────────────── */
 
 async function main(): Promise<void> {
@@ -848,11 +1017,44 @@ async function main(): Promise<void> {
 
   const startTime = Date.now()
 
-  const [renderSEO, jobs, shell] = await Promise.all([
+  const [renderSEO, baseRoutes, shell, localeInfo] = await Promise.all([
     buildSsrBundle(),
     enumerateAllRoutes(),
     loadShellHtml(),
+    fetchTranslationReadyLocales(),
   ])
+
+  const jobs = expandRoutesForLocales(baseRoutes, localeInfo.locales)
+
+  if (localeInfo.locales.length === 0) {
+    console.log(
+      '[prerender] no translation-ready locales — emitting default-locale routes only. ' +
+        'This is expected until a locale crosses the server-side readiness threshold.',
+    )
+  } else {
+    console.log(
+      `[prerender] translation-ready locales: ${localeInfo.locales.join(', ')} ` +
+        `(+${jobs.length - baseRoutes.length} locale-prefixed routes)`,
+    )
+  }
+
+  // A locale mirrors the whole tree, so the Cloudflare ceiling is reached after
+  // very few locales. Fail here rather than after a green build.
+  const assetFiles = await countNonRouteFiles(DIST_DIR)
+  const projected = assetFiles + jobs.length
+  console.log(
+    `[prerender] file budget: ${assetFiles} assets + ${jobs.length} routes ` +
+      `= ~${projected} (budget ${FILE_BUDGET}, Cloudflare limit ${CF_PAGES_FILE_LIMIT})`,
+  )
+  if (projected > FILE_BUDGET) {
+    throw new Error(
+      `[prerender] projected ~${projected} files exceeds the ${FILE_BUDGET} budget ` +
+        `(Cloudflare Pages rejects deploys above ${CF_PAGES_FILE_LIMIT}). ` +
+        `Reduce the number of prerendered locales (currently ${localeInfo.locales.length}).`,
+    )
+  }
+
+  await writeLocaleManifest(localeInfo.locales)
 
   console.log(`[prerender] rendering ${jobs.length} routes…`)
 
@@ -866,7 +1068,7 @@ async function main(): Promise<void> {
       const idx = cursor++
       const job = jobs[idx]
       if (!job) continue
-      const ok = await writeRoute(renderSEO, shell, job)
+      const ok = await writeRoute(renderSEO, shell, job, localeInfo.seed)
       if (ok) succeeded++
       else failed++
       if ((idx + 1) % 100 === 0 || idx + 1 === jobs.length) {
@@ -884,7 +1086,10 @@ async function main(): Promise<void> {
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
   console.log(`[prerender] wrote ${succeeded} routes (${failed} failed) in ${elapsed}s`)
 
-  if (failed > 0 && process.env.PRERENDER_STRICT === '1') {
+  // Strict by default: a prerender failure means those routes ship with the
+  // generic home-page title/OG meta, which is worse than a failed build.
+  // Set PRERENDER_STRICT=0 to opt out (local experiments only).
+  if (failed > 0 && process.env.PRERENDER_STRICT !== '0') {
     process.exit(1)
   }
 }

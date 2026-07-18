@@ -1,11 +1,10 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { HelpArticle } from '../models/HelpArticle.js'
-import { Translation } from '../models/Translation.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
-import { applyTranslation, applyTranslations } from '../utils/applyTranslation.js'
+import { localizeMany, localizeOne } from '../utils/localize.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
@@ -80,15 +79,7 @@ router.get('/', optionalAuth, localeMiddleware, async (req, res) => {
     HelpArticle.countDocuments(filter),
   ])
 
-  let result = articles.map(a => a.toJSON())
-  if (!req.isDefaultLocale) {
-    const translations = await Translation.find({
-      locale: req.locale,
-      collectionName: 'help',
-      documentId: { $in: articles.map(a => a._id.toString()) },
-    })
-    result = applyTranslations(result, translations)
-  }
+  const result = await localizeMany(req, 'help', articles)
 
   res.json({ articles: result, total, page: pageNum, pages: Math.ceil(total / limitNum) })
 })
@@ -102,14 +93,7 @@ router.get('/:slug', optionalAuth, localeMiddleware, async (req, res) => {
   if (article.status === 'draft' && (preview !== 'true' || !isAdminRequest(req))) {
     return res.status(404).json({ error: 'Help article not found' })
   }
-  if (req.isDefaultLocale) return res.json(article)
-
-  const translation = await Translation.findOne({
-    locale: req.locale,
-    collectionName: 'help',
-    documentId: article._id.toString(),
-  })
-  res.json(applyTranslation(article.toJSON(), translation))
+  res.json(await localizeOne(req, 'help', article))
 })
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {

@@ -8,7 +8,10 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 export default defineConfig([
   globalIgnores(['dist']),
   {
+    // Browser-side SPA code. The Node/Bun-side trees are handled by the next
+    // block — the React plugins and browser globals don't apply there.
     files: ['**/*.{ts,tsx}'],
+    ignores: ['scripts/**', 'server/**', 'functions/**'],
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,
@@ -18,6 +21,16 @@ export default defineConfig([
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+    },
+  },
+  {
+    // Build scripts (Bun), the Express backend (Bun), and the Cloudflare Pages
+    // edge function. No React, no browser globals.
+    files: ['scripts/**/*.ts', 'server/**/*.ts', 'functions/**/*.ts'],
+    extends: [js.configs.recommended, tseslint.configs.recommended],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.node,
     },
   },
   {

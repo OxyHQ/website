@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth } from '@oxyhq/services'
+import { getNormalizedUserHandle } from '@oxyhq/core'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -80,7 +81,11 @@ export default function UserProfilePage() {
 
   const isOwnProfile = Boolean(authUser?.username && authUser.username === profile?.user.username)
 
-  const displayName = profile ? profile.user.name.displayName : username
+  // `name.displayName` is optional in the SDK shape the profiles route passes
+  // through, so fall back to the normalized handle rather than an empty title.
+  const displayName = profile
+    ? profile.user.name.displayName?.trim() || getNormalizedUserHandle(profile.user) || username
+    : username
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">

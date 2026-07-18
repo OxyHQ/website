@@ -30,7 +30,8 @@ function resolveMediaUrl(field: unknown, preferThumbnail?: 'sm' | 'md' | 'lg'): 
   if (typeof field === 'string') return field
   if (typeof field === 'object' && field !== null) {
     const media = field as { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } }
-    if (preferThumbnail && media.thumbnails?.[preferThumbnail]) return media.thumbnails[preferThumbnail]!
+    const thumbnail = preferThumbnail ? media.thumbnails?.[preferThumbnail] : undefined
+    if (thumbnail) return thumbnail
     return media.url || ''
   }
   return ''
@@ -276,12 +277,6 @@ export function resolveProductCategoryId(product: Pick<ProductRecord, 'category'
   return cat._id ?? ''
 }
 
-export function resolveProductCategoryLabel(product: Pick<ProductRecord, 'category' | 'section'>): string {
-  const cat = product.category
-  if (cat && typeof cat === 'object' && cat.label) return cat.label
-  return product.section || ''
-}
-
 export interface UseProductsOptions {
   surface?: 'products' | 'status' | 'nav'
   lifecycle?: ProductLifecycle
@@ -363,7 +358,10 @@ export function useUpdateHero() {
 }
 
 // ── Newsroom ──
-export function useNewsroomPosts(params?: { category?: string; tag?: string; featured?: boolean; limit?: number; page?: number; author?: string }) {
+export function useNewsroomPosts(
+  params?: { category?: string; tag?: string; featured?: boolean; limit?: number; page?: number; author?: string },
+  options?: { enabled?: boolean },
+) {
   const locale = useCurrentLocale()
   const searchParams = new URLSearchParams()
   if (params?.category) searchParams.set('category', params.category)
@@ -379,6 +377,7 @@ export function useNewsroomPosts(params?: { category?: string; tag?: string; fea
     queryFn: () => apiFetch<{ posts: NewsroomPost[]; total: number; page: number; pages: number }>(`/newsroom${qs ? `?${qs}` : ''}`, { locale }),
     select: (data) => ({ ...data, posts: data.posts.map(normalizePostMedia) }),
     placeholderData: keepPreviousData,
+    enabled: options?.enabled ?? true,
   })
 }
 
@@ -491,27 +490,11 @@ export function useCourses(options: UseCoursesOptions = {}) {
   })
 }
 
-export function useCourse(slug: string) {
-  const locale = useCurrentLocale()
-  return useQuery({
-    queryKey: ['course', slug, locale],
-    queryFn: () => apiFetch<CourseRecord>(`/courses/${slug}`, { locale }),
-    select: normalizeCourse,
-    enabled: !!slug,
-  })
-}
-
 export function resolveCourseCategoryId(course: Pick<CourseRecord, 'category'>): string {
   const cat = course.category
   if (!cat) return ''
   if (typeof cat === 'string') return cat
   return cat._id ?? ''
-}
-
-export function resolveCourseCategoryLabel(course: Pick<CourseRecord, 'category'>): string {
-  const cat = course.category
-  if (cat && typeof cat === 'object' && cat.label) return cat.label
-  return ''
 }
 
 // ── Academy: Resources ──
@@ -580,27 +563,11 @@ export function useResources(options: UseResourcesOptions = {}) {
   })
 }
 
-export function useResource(slug: string) {
-  const locale = useCurrentLocale()
-  return useQuery({
-    queryKey: ['resource', slug, locale],
-    queryFn: () => apiFetch<ResourceRecord>(`/resources/${slug}`, { locale }),
-    select: normalizeResource,
-    enabled: !!slug,
-  })
-}
-
 export function resolveResourceCategoryId(resource: Pick<ResourceRecord, 'category'>): string {
   const cat = resource.category
   if (!cat) return ''
   if (typeof cat === 'string') return cat
   return cat._id ?? ''
-}
-
-export function resolveResourceCategoryLabel(resource: Pick<ResourceRecord, 'category'>): string {
-  const cat = resource.category
-  if (cat && typeof cat === 'object' && cat.label) return cat.label
-  return ''
 }
 
 // ── Help Center: Articles ──
@@ -665,27 +632,11 @@ export function useHelpArticles(options: UseHelpArticlesOptions = {}) {
   })
 }
 
-export function useHelpArticle(slug: string) {
-  const locale = useCurrentLocale()
-  return useQuery({
-    queryKey: ['help-article', slug, locale],
-    queryFn: () => apiFetch<HelpArticleRecord>(`/help/${slug}`, { locale }),
-    select: normalizeHelpArticle,
-    enabled: !!slug,
-  })
-}
-
 export function resolveHelpArticleCategoryId(article: Pick<HelpArticleRecord, 'category'>): string {
   const cat = article.category
   if (!cat) return ''
   if (typeof cat === 'string') return cat
   return cat._id ?? ''
-}
-
-export function resolveHelpArticleCategoryLabel(article: Pick<HelpArticleRecord, 'category'>): string {
-  const cat = article.category
-  if (cat && typeof cat === 'object' && cat.label) return cat.label
-  return ''
 }
 
 // ── Pricing ──
@@ -749,13 +700,6 @@ export function useChangelog(params?: { repo?: string; page?: number; limit?: nu
   })
 }
 
-export function useTrackedRepos() {
-  return useQuery({
-    queryKey: ['changelog-repos'],
-    queryFn: () => apiFetch<Array<{ _id: string; owner: string; repo: string; displayName: string; lastSyncAt: string | null; active: boolean }>>('/changelog/repos'),
-  })
-}
-
 // ── Jobs ──
 export interface Job {
   _id?: string
@@ -810,16 +754,6 @@ export function useTeamMembers() {
     queryFn: () => apiFetch<{ _id: string; name: string; slug: string; role: string; department: string; bio: string; avatar: string; socials?: { linkedin?: string; twitter?: string; github?: string; website?: string } }[]>('/team', { locale }),
     select: (data) => data.map(m => ({ ...m, avatar: resolveMediaUrl(m.avatar, 'md') })),
     staleTime: 5 * 60_000,
-  })
-}
-
-export function useTeamMember(slug: string) {
-  const locale = useCurrentLocale()
-  return useQuery({
-    queryKey: ['team', slug, locale],
-    queryFn: () => apiFetch<{ _id: string; name: string; slug: string; role: string; department: string; bio: string; avatar: string; socials?: { linkedin?: string; twitter?: string; github?: string; website?: string } }>(`/team/${slug}`, { locale }),
-    select: (data) => ({ ...data, avatar: resolveMediaUrl(data.avatar, 'md') }),
-    enabled: !!slug,
   })
 }
 
@@ -1097,7 +1031,13 @@ export interface UserProfileData {
   user: {
     _id: string
     username: string
-    name: { displayName: string; first?: string; last?: string }
+    /**
+     * `displayName` is OPTIONAL in the SDK (`@oxyhq/core`), and
+     * `server/routes/profiles.ts` passes the SDK shape straight through, so a
+     * federated actor can arrive without one. Render the normalized handle as
+     * the fallback (`getNormalizedUserHandle`) instead of recomposing a name.
+     */
+    name: { displayName?: string; first?: string; last?: string }
     avatar?: string
     color?: string
     createdAt?: string
@@ -1111,7 +1051,7 @@ export interface UserProfileData {
 export function useUserById(userId: string) {
   return useQuery({
     queryKey: ['user-by-id', userId],
-    queryFn: () => apiFetch<{ _id: string; username: string; name: { displayName: string; first?: string; last?: string }; avatar?: string; color?: string }>(`/profiles/id/${userId}`),
+    queryFn: () => apiFetch<{ _id: string; username: string; name: { displayName?: string; first?: string; last?: string }; avatar?: string; color?: string }>(`/profiles/id/${userId}`),
     enabled: !!userId,
     staleTime: 5 * 60_000,
   })
@@ -1229,14 +1169,6 @@ export function useFeatureRequests(params?: { status?: string; category?: string
     queryKey: ['features', params],
     queryFn: () => apiFetch<FeatureListResponse>(`/features${query ? `?${query}` : ''}`),
     staleTime: 60_000,
-  })
-}
-
-export function useFeatureDetail(owner: string, repo: string, number: number) {
-  return useQuery({
-    queryKey: ['feature', owner, repo, number],
-    queryFn: () => apiFetch<FeatureRequestData>(`/features/${owner}/${repo}/${number}`),
-    enabled: !!owner && !!repo && number > 0,
   })
 }
 

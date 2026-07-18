@@ -38,7 +38,7 @@ const API_ENDPOINTS: readonly ApiEndpoint[] = [
   {
     method: 'GET',
     path: '/health',
-    description: 'Liveness probe — returns service status. Open in any browser.',
+    description: 'Liveness probe. Returns service status. Open in any browser.',
     href: BRIDGE_HEALTH_URL,
     exampleCurl: `curl ${BRIDGE_HEALTH_URL}`,
   },
@@ -46,7 +46,7 @@ const API_ENDPOINTS: readonly ApiEndpoint[] = [
     method: 'GET',
     path: '/api/bridge/reserves',
     description:
-      'Bridge reserve snapshot — total WFAIR supply on Base versus FAIR custodied on the FairCoin chain. 503 until first snapshot.',
+      'Bridge reserve snapshot: total WFAIR supply on Base versus FAIR custodied on the FairCoin chain. 503 until first snapshot.',
     href: BRIDGE_RESERVES_URL,
     exampleCurl: `curl ${BRIDGE_RESERVES_URL}`,
   },
@@ -54,7 +54,7 @@ const API_ENDPOINTS: readonly ApiEndpoint[] = [
     method: 'POST',
     path: '/api/bridge/deposit/intent',
     description:
-      'Create a deposit intent — pay native FAIR to the returned address, receive WFAIR on Base.',
+      'Create a deposit intent: pay native FAIR to the returned address, receive WFAIR on Base.',
     exampleCurl: `curl -X POST ${BRIDGE_SERVICE_URL}/api/bridge/deposit/intent \\
   -H 'content-type: application/json' \\
   -d '{"baseAddress":"0x...","fairAmountSats":"1000000000"}'`,
@@ -71,7 +71,7 @@ const API_ENDPOINTS: readonly ApiEndpoint[] = [
   {
     method: 'GET',
     path: '/api/buy/status/:id',
-    description: 'Poll the status of a Buy order — pending, paid, releasing, delivered.',
+    description: 'Poll the status of a Buy order: pending, paid, releasing, delivered.',
     exampleCurl: `curl ${BRIDGE_SERVICE_URL}/api/buy/status/<order-id>`,
   },
   {
@@ -141,7 +141,7 @@ function BridgeHero() {
           >
             Wrap native FAIR into WFAIR on Base, or unwrap WFAIR back to native
             FAIR. Open source, fully redeemable, fully verified. This is the
-            technical reference for integrators — if you just want FAIR, use{' '}
+            technical reference for integrators. If you just want FAIR, use{' '}
             <Link to={fc('/buy')} className="text-foreground underline-offset-4 hover:underline">
               Buy FairCoin
             </Link>

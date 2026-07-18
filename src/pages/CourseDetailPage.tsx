@@ -7,7 +7,9 @@ import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useCurrentLocale } from '../lib/i18n'
-import { loadCourse, loadCourses, type CourseLevel, type LessonEntry } from '../content/academy-loader'
+import { brandConfig } from '../lib/seo'
+import { loadCourse, loadCourses, type LessonEntry } from '../content/academy-loader'
+import type { CourseLevel } from '../content/academy-courses'
 import ShareWithMention from '../components/social/ShareWithMention'
 import { courseGradient, courseInitials, COURSE_LEVELS } from '../components/academy/courseVisual'
 import { useAcademyProgress } from '../components/academy/useAcademyProgress'
@@ -142,6 +144,7 @@ export default function CourseDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const locale = useCurrentLocale()
   const course = loadCourse(slug ?? '', locale)
+  const { origin } = brandConfig(typeof window === 'undefined' ? undefined : window.location.hostname)
   const allCourses = useMemo(() => loadCourses(locale), [locale])
   const related = useMemo(() => allCourses.filter((c) => c.slug !== course?.slug).slice(0, 3), [allCourses, course])
 
@@ -344,7 +347,7 @@ export default function CourseDetailPage() {
                     <p className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Share this course</p>
                     <ShareWithMention
                       title={course.title}
-                      url={`https://oxy.so/academy/${course.slug}`}
+                      url={`${origin}/academy/${course.slug}`}
                       hashtags={['oxyacademy']}
                       via="oxy"
                     />

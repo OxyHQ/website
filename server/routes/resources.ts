@@ -1,11 +1,10 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { Resource } from '../models/Resource.js'
-import { Translation } from '../models/Translation.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
-import { applyTranslation, applyTranslations } from '../utils/applyTranslation.js'
+import { localizeMany, localizeOne } from '../utils/localize.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
@@ -75,15 +74,7 @@ router.get('/', localeMiddleware, optionalAuth, async (req, res) => {
     Resource.countDocuments(filter),
   ])
 
-  let result = resources.map(r => r.toJSON())
-  if (!req.isDefaultLocale) {
-    const translations = await Translation.find({
-      locale: req.locale,
-      collectionName: 'resources',
-      documentId: { $in: resources.map(r => r._id.toString()) },
-    })
-    result = applyTranslations(result, translations)
-  }
+  const result = await localizeMany(req, 'resources', resources)
 
   res.json({ resources: result, total, page: pageNum, pages: Math.ceil(total / limitNum) })
 })
@@ -97,14 +88,7 @@ router.get('/:slug', localeMiddleware, optionalAuth, async (req, res) => {
 
   const resource = await Resource.findOne(filter).populate('coverImage').populate('category')
   if (!resource) return res.status(404).json({ error: 'Resource not found' })
-  if (req.isDefaultLocale) return res.json(resource)
-
-  const translation = await Translation.findOne({
-    locale: req.locale,
-    collectionName: 'resources',
-    documentId: resource._id.toString(),
-  })
-  res.json(applyTranslation(resource.toJSON(), translation))
+  res.json(await localizeOne(req, 'resources', resource))
 })
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {

@@ -56,7 +56,7 @@ export default function DocsIntroPage() {
               Documentation
             </h1>
             <div className="max-w-xl mx-auto px-4 mt-4 text-lg text-center text-muted-foreground">
-              Everything you need to build on the Oxy platform — open source, no vendor lock-in.
+              Everything you need to build on the Oxy platform: open source, no vendor lock-in.
             </div>
 
           </div>

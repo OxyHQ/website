@@ -16,7 +16,10 @@ import App from './App.tsx'
 // Apply saved color preset + dark/light mode before first render
 initTheme()
 
-createRoot(document.getElementById('root')!).render(
+const rootElement = document.getElementById('root')
+if (!rootElement) throw new Error('Root element #root not found')
+
+createRoot(rootElement).render(
   <StrictMode>
     <HelmetProvider>
       <App />

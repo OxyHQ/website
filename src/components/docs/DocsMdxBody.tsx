@@ -10,7 +10,7 @@ export function DocsMdxBody({ file }: { file: string }) {
     return (
       <div className="not-prose rounded-2xl border border-border bg-surface p-6">
         <p className="text-sm text-muted-foreground">
-          Page content unavailable. The synced docs may be out of date — run{' '}
+          Page content unavailable. The synced docs may be out of date. Run{' '}
           <code>bun scripts/sync-docs.ts</code> from the website root.
         </p>
       </div>

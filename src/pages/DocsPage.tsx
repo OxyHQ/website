@@ -1,9 +1,7 @@
 import { useParams, useLocation } from 'react-router-dom'
 import { useLayoutEffect, useMemo } from 'react'
 import { useBloomTheme } from '@oxyhq/bloom/theme'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
+import PageShell from '../components/layout/PageShell'
 import DocsPageContent from '../components/docs/DocsPage'
 import { applyPreset, type AppColorName } from '../theme'
 import {
@@ -93,13 +91,13 @@ function useDocsRouteMeta(): DocsRouteMeta {
 
     if (!page) {
       return {
-        title: `${pkg.displayName} — Oxy Docs`,
+        title: `${pkg.displayName}, Oxy Docs`,
         description: pkg.description ?? `Documentation for ${pkg.displayName}.`,
         canonicalPath,
       }
     }
     return {
-      title: `${page.title} — ${pkg.displayName}`,
+      title: `${page.title}, ${pkg.displayName}`,
       description: page.description ?? pkg.description ?? `Documentation for ${pkg.displayName}.`,
       canonicalPath,
     }
@@ -110,17 +108,8 @@ export default function DocsPage() {
   const meta = useDocsRouteMeta()
   useDocsBrandPreset()
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
-      <SEO
-        title={meta.title}
-        description={meta.description}
-        canonicalPath={meta.canonicalPath}
-      />
-      <Navbar />
-      <main className="flex-1 bg-background text-muted-foreground">
-        <DocsPageContent />
-      </main>
-      <Footer />
-    </div>
+    <PageShell seo={meta} mainClassName="flex-1 bg-background text-muted-foreground">
+      <DocsPageContent />
+    </PageShell>
   )
 }

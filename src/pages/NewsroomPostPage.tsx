@@ -7,6 +7,7 @@ import SEO from '../components/SEO'
 import StructuredData from '../components/StructuredData'
 import { useNewsroomPost, useNewsroomPosts } from '../api/hooks'
 import { type NewsroomPost } from '../data/newsroom'
+import { brandConfig } from '../lib/seo'
 import { readTime } from '../lib/userUtils'
 import { NewsCardGrid } from '../components/newsroom/NewsCard'
 import LikeButton from '../components/social/LikeButton'
@@ -24,9 +25,17 @@ function formatDate(dateStr: string): string {
 
 export default function NewsroomPostPage() {
   const { slug = '' } = useParams<{ slug: string }>()
+  // Host-aware so an article read on fairco.in never emits oxy.so JSON-LD.
+  const { origin, siteName, ogImage } = brandConfig(
+    typeof window === 'undefined' ? undefined : window.location.hostname,
+  )
   const { data: post, isLoading } = useNewsroomPost(slug)
+  // Gated on `post`: without `enabled` this fired an unfiltered, unlimited
+  // `/newsroom` request on every article load, only to discard it once the post
+  // arrived and the category-filtered query replaced it.
   const { data: relatedData } = useNewsroomPosts(
-    post ? { category: post.categories[0], limit: 4 } : undefined,
+    { category: post?.categories[0], limit: 4 },
+    { enabled: !!post },
   )
 
   const relatedPosts = (relatedData?.posts ?? []).filter(
@@ -76,16 +85,16 @@ export default function NewsroomPostPage() {
         '@type': 'Article',
         headline: post.title,
         description: post.resume,
-        image: post.coverImage || 'https://oxy.so/og-default.png',
+        image: post.coverImage || ogImage,
         datePublished: post.publishedAt,
         dateModified: post.updatedAt || post.publishedAt,
-        author: { '@type': 'Organization', name: 'Oxy', url: 'https://oxy.so' },
+        author: { '@type': 'Organization', name: siteName, url: origin },
         publisher: {
           '@type': 'Organization',
-          name: 'Oxy',
-          logo: { '@type': 'ImageObject', url: 'https://oxy.so/favicon.svg' },
+          name: siteName,
+          logo: { '@type': 'ImageObject', url: `${origin}/favicon.svg` },
         },
-        mainEntityOfPage: { '@type': 'WebPage', '@id': `https://oxy.so/newsroom/${post.slug}` },
+        mainEntityOfPage: { '@type': 'WebPage', '@id': `${origin}/newsroom/${post.slug}` },
       }} />
       <Navbar />
 
@@ -154,7 +163,7 @@ export default function NewsroomPostPage() {
           <LikeButton targetType="newsroom" targetId={post.slug} />
           <DiscussOnMention
             title={post.title}
-            url={`https://oxy.so/newsroom/${post.slug}`}
+            url={`${origin}/newsroom/${post.slug}`}
             hashtags={post.tags}
             via="oxy"
           />

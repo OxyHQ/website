@@ -194,20 +194,6 @@ export const hero = {
     'Oxy is an ethical technology ecosystem built on open-source principles. From social connection to AI assistance, Oxy provides privacy-first tools that respect your data, empower communities, and put people before profit.',
 }
 
-// Universal Context
-export const universalContext = {
-  title: 'Connected Ecosystem',
-  trademark: false,
-  subtitle: 'A Unified Approach to Ethical Technology',
-  points: [
-    'Privacy-first architecture ensures your data stays yours — no surveillance, no selling',
-    'Fully open-source so anyone can inspect, contribute, and build with confidence',
-    'Seamless interoperability across Oxy products — social, AI, and developer tools work as one',
-    'Community-driven development shaped by the people who use it, not corporate interests',
-    'Built on open standards to connect with the broader ecosystem, not lock you in',
-  ],
-}
-
 // Capabilities
 export const capabilities: Capability[] = [
   {

@@ -139,8 +139,6 @@ export async function syncSingleRepo(repoId: string): Promise<number> {
   return syncRepo(repo)
 }
 
-let syncInterval: NodeJS.Timeout | null = null
-
 export function startSyncInterval(intervalMs = 15 * 60 * 1000): void {
   // Run once after a short delay (let MongoDB connect)
   setTimeout(() => {
@@ -148,16 +146,11 @@ export function startSyncInterval(intervalMs = 15 * 60 * 1000): void {
   }, 10_000)
 
   // Then run on interval
-  syncInterval = setInterval(() => {
+  const syncInterval = setInterval(() => {
     syncAllRepos().catch((err) => console.error('[GitHub Sync] Interval sync error:', err))
   }, intervalMs)
+  // Background housekeeping must never hold the event loop open on its own.
+  syncInterval.unref?.()
 
   console.log(`[GitHub Sync] Background sync started (every ${intervalMs / 60000} min)`)
-}
-
-export function stopSyncInterval(): void {
-  if (syncInterval) {
-    clearInterval(syncInterval)
-    syncInterval = null
-  }
 }

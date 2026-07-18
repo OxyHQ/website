@@ -1,11 +1,10 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { Category } from '../models/Category.js'
-import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
-import { applyTranslation, applyTranslations } from '../utils/applyTranslation.js'
+import { localizeMany, localizeOne } from '../utils/localize.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
@@ -28,27 +27,13 @@ router.get('/', localeMiddleware, async (req, res) => {
   const query = validate(listQuerySchema, req.query)
   const filter = query.scope ? { scope: query.scope } : {}
   const docs = await Category.find(filter).sort({ order: 1, label: 1 })
-  if (req.isDefaultLocale) return res.json(docs)
-
-  const translations = await Translation.find({
-    locale: req.locale,
-    collectionName: 'categories',
-    documentId: { $in: docs.map(d => d._id.toString()) },
-  })
-  res.json(applyTranslations(docs.map(d => d.toJSON()), translations))
+  res.json(await localizeMany(req, 'categories', docs))
 })
 
 router.get('/:slug', localeMiddleware, async (req, res) => {
   const doc = await Category.findOne({ slug: req.params.slug })
   if (!doc) return res.status(404).json({ error: 'Not found' })
-  if (req.isDefaultLocale) return res.json(doc)
-
-  const translation = await Translation.findOne({
-    locale: req.locale,
-    collectionName: 'categories',
-    documentId: doc._id.toString(),
-  })
-  res.json(applyTranslation(doc.toJSON(), translation))
+  res.json(await localizeOne(req, 'categories', doc))
 })
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {

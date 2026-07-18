@@ -30,14 +30,6 @@ export interface LessonProgress {
 /** `lessonSlug -> LessonProgress` for a single course. */
 export type CourseProgress = Record<string, LessonProgress>
 
-/** Cross-course rollup written under the same namespace as a separate key. */
-export interface CourseIndexEntry {
-  courseSlug: string
-  /** Most recent `completedAt` across the course's lessons, or "" if none. */
-  lastActivityAt: string
-  status: 'in-progress' | 'completed'
-}
-
 /** localStorage key prefix used for the per-course progress maps. */
 export const LOCAL_STORAGE_PREFIX = 'oxy:academy:progress:'
 
@@ -96,7 +88,7 @@ function isLessonProgress(value: unknown): value is LessonProgress {
  * Reject anything that doesn't look like a `CourseProgress` map — keeps a
  * tampered or stale entry from poisoning the UI.
  */
-function sanitizeCourseProgress(value: unknown): CourseProgress {
+export function sanitizeCourseProgress(value: unknown): CourseProgress {
   if (!value || typeof value !== 'object') return {}
   const out: CourseProgress = {}
   for (const [lessonSlug, lessonValue] of Object.entries(value as Record<string, unknown>)) {
@@ -105,18 +97,6 @@ function sanitizeCourseProgress(value: unknown): CourseProgress {
     }
   }
   return out
-}
-
-/** Read course progress from localStorage. Returns `{}` outside the browser. */
-export function readLocalCourseProgress(courseSlug: string): CourseProgress {
-  if (typeof window === 'undefined') return {}
-  try {
-    const raw = window.localStorage.getItem(`${LOCAL_STORAGE_PREFIX}${courseSlug}`)
-    if (!raw) return {}
-    return sanitizeCourseProgress(JSON.parse(raw))
-  } catch {
-    return {}
-  }
 }
 
 /** Persist course progress to localStorage. No-op outside the browser. */
@@ -132,17 +112,6 @@ export function writeLocalCourseProgress(courseSlug: string, progress: CoursePro
     // Quota errors / disabled storage — best-effort, the in-memory cache
     // through React Query / useSyncExternalStore still keeps the session
     // current.
-  }
-}
-
-/** Drop a single course's local progress. */
-export function clearLocalCourseProgress(courseSlug: string): void {
-  if (typeof window === 'undefined') return
-  try {
-    window.localStorage.removeItem(`${LOCAL_STORAGE_PREFIX}${courseSlug}`)
-    notify()
-  } catch {
-    // ignore
   }
 }
 
@@ -232,28 +201,4 @@ export function mergeCourseProgress(
     out[lessonSlug] = bTime > aTime ? bEntry : aEntry
   }
   return out
-}
-
-/** Roll up a single course-progress map into a `CourseIndexEntry`. */
-export function summarizeCourseProgress(
-  courseSlug: string,
-  progress: CourseProgress,
-): CourseIndexEntry | null {
-  const lessons = Object.values(progress)
-  if (lessons.length === 0) return null
-  let latest = ''
-  let allCompleted = true
-  for (const lesson of lessons) {
-    if (lesson.status !== 'completed') {
-      allCompleted = false
-    }
-    if (lesson.completedAt && lesson.completedAt > latest) {
-      latest = lesson.completedAt
-    }
-  }
-  return {
-    courseSlug,
-    lastActivityAt: latest,
-    status: allCompleted ? 'completed' : 'in-progress',
-  }
 }

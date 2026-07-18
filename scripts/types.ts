@@ -139,7 +139,13 @@ export interface SyncedPackage {
   repo: string;
   category: DocsCategory;
   description?: string;
-  defaultVersion: string;
+  /**
+   * Verbatim copy of `DocsConfig.defaultVersion`, so it is absent whenever the
+   * package's `docs.config.json` omits it. Prefer `latestVersion` — that is the
+   * already-resolved field, with the `defaultVersion` → `'main'` fallback
+   * applied.
+   */
+  defaultVersion?: string;
   versions: SyncedVersion[];
   /**
    * `true` if the package ships versioned docs. Mirrors `DocsConfig.versioned`.

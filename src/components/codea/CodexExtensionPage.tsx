@@ -14,9 +14,9 @@ const logos: string[] = []
 
 const features = [
   { title: 'Built to drive real engineering work', description: 'From routine pull requests to your hardest problems, Codea reliably completes tasks end to end, like building features, complex refactors, migrations, and more.' },
-  { title: 'Designed for multi-agent workflows', description: 'Run multiple agents in parallel, each in its own sandboxed environment. Review diffs, approve changes, and merge — all from one interface.' },
+  { title: 'Designed for multi-agent workflows', description: 'Run multiple agents in parallel, each in its own sandboxed environment. Review diffs, approve changes, and merge, all from one interface.' },
   { title: 'Adapts to how your team builds', description: 'Codea reads your codebase conventions, respects your linting rules, and follows your architecture patterns automatically.' },
-  { title: 'Made for always-on background work', description: 'Kick off tasks and let them run. Codea works asynchronously — you get notified when results are ready to review.' },
+  { title: 'Made for always-on background work', description: 'Kick off tasks and let them run. Codea works asynchronously and notifies you when results are ready to review.' },
   { title: 'Raises the bar across your team', description: 'From junior devs to staff engineers, Codea helps everyone ship faster while maintaining quality and consistency.' },
 ]
 

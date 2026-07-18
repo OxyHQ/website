@@ -109,10 +109,9 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
     }
     document.addEventListener('visibilitychange', handleVisibility)
 
+    // Bound to the carousel itself, not window: a horizontal trackpad swipe
+    // anywhere else on the page must keep scrolling that element, not scrub here.
     const handleWheel = (e: WheelEvent) => {
-      const rect = node.getBoundingClientRect()
-      if (rect.bottom <= 0 || rect.top >= window.innerHeight) return
-
       const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
       const delta = isHorizontal ? e.deltaX : e.deltaY
       if (Math.abs(delta) < 1) return
@@ -121,13 +120,13 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
 
       posRef.current -= delta
     }
-    window.addEventListener('wheel', handleWheel, { passive: false })
+    node.addEventListener('wheel', handleWheel, { passive: false })
 
     return () => {
       stop()
       io.disconnect()
       document.removeEventListener('visibilitychange', handleVisibility)
-      window.removeEventListener('wheel', handleWheel)
+      node.removeEventListener('wheel', handleWheel)
     }
   }, [animate])
 

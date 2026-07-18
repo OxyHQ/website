@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { CalendarDays } from 'lucide-react'
 import { useAuth, useOxy } from '@oxyhq/services'
+import { getNormalizedUserHandle } from '@oxyhq/core'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { UserProfileData } from '../../api/hooks'
@@ -21,7 +22,11 @@ function formatJoinedDate(iso: string): string {
 
 export default function ProfileHeader({ profile, isOwnProfile, onEditBio }: ProfileHeaderProps) {
   const { user, bio, badges, stats } = profile
-  const displayName = user.name.displayName
+  // `name.displayName` is optional in the SDK shape — a federated actor can
+  // legitimately have none, so fall back to the normalized handle rather than
+  // rendering an empty heading.
+  const displayName =
+    user.name.displayName?.trim() || getNormalizedUserHandle(user) || user.username
   const displayBio = bio
 
   return (

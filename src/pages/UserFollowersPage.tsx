@@ -1,8 +1,7 @@
-import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useOxy } from '@oxyhq/services'
-import type { User } from '@oxyhq/core'
+import { getNormalizedUserHandle, type User } from '@oxyhq/core'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
@@ -11,17 +10,13 @@ import { useUserProfile } from '../api/hooks'
 
 type TabType = 'followers' | 'following'
 
-interface UserFollowersPageProps {
-  initialTab: TabType
-}
-
 const TABS: Array<{ value: TabType; label: string }> = [
   { value: 'followers', label: 'Followers' },
   { value: 'following', label: 'Following' },
 ]
 
 function UserRow({ user }: { user: User }) {
-  const displayName = user.name.displayName
+  const displayName = user.name.displayName?.trim() || getNormalizedUserHandle(user) || user.username
   return (
     <Link
       to={`/u/${user.username}`}
@@ -61,16 +56,21 @@ function ListSkeleton() {
   )
 }
 
-export default function UserFollowersPage({ initialTab }: UserFollowersPageProps) {
+export default function UserFollowersPage() {
   const { username = '' } = useParams<{ username: string }>()
-  const [activeTab, setActiveTab] = useState<TabType>(initialTab)
+  const { pathname } = useLocation()
+  // The route is the single source of truth for the tab: `/u/:username/following`
+  // vs `/u/:username/followers`. Deriving it here (instead of mirroring it into
+  // local state) keeps the canonical URL and the highlighted tab in lockstep,
+  // and re-derives correctly when navigating between the two routes.
+  const activeTab: TabType = pathname.endsWith('/following') ? 'following' : 'followers'
   const { oxyServices } = useOxy()
   const { data: profile } = useUserProfile(username)
   const userId = profile?.user._id
   const canViewFollowList = Boolean(userId && profile?.stats)
 
   const { data, isLoading } = useQuery({
-    queryKey: ['user-follow-list', userId, activeTab, canViewFollowList],
+    queryKey: ['user-follow-list', userId, activeTab],
     queryFn: async () => {
       if (!userId || !canViewFollowList) return { users: [] as User[], total: 0 }
       if (activeTab === 'followers') {
@@ -84,7 +84,9 @@ export default function UserFollowersPage({ initialTab }: UserFollowersPageProps
     staleTime: 60_000,
   })
 
-  const displayName = profile ? profile.user.name.displayName : username
+  const displayName = profile
+    ? profile.user.name.displayName?.trim() || getNormalizedUserHandle(profile.user) || username
+    : username
   const isActivityPrivate = Boolean(profile && !profile.stats)
 
   const tabLabel = activeTab === 'followers' ? 'Followers' : 'Following'
@@ -123,10 +125,9 @@ export default function UserFollowersPage({ initialTab }: UserFollowersPageProps
             {/* Tabs */}
             <div className="flex border-b border-border">
               {TABS.map((tab) => (
-                <button
+                <Link
                   key={tab.value}
-                  type="button"
-                  onClick={() => setActiveTab(tab.value)}
+                  to={`/u/${username}/${tab.value}`}
                   className="relative flex-1 py-3.5 text-center text-sm font-medium transition-colors hover:bg-surface/50"
                 >
                   <span className={activeTab === tab.value ? 'text-foreground' : 'text-muted-foreground'}>
@@ -135,7 +136,7 @@ export default function UserFollowersPage({ initialTab }: UserFollowersPageProps
                   {activeTab === tab.value && (
                     <div className="absolute bottom-0 left-1/2 h-[3px] w-14 -translate-x-1/2 rounded-full bg-primary" />
                   )}
-                </button>
+                </Link>
               ))}
             </div>
 

@@ -1,9 +1,9 @@
 import { Helmet } from 'react-helmet-async'
-import { useLocaleContext, SUPPORTED_LOCALES, DEFAULT_LOCALE, type Locale } from '../lib/i18n'
+import { useLocaleContext, DEFAULT_LOCALE, type Locale } from '../lib/i18n'
 import { brandConfig, resolveSeo } from '../lib/seo'
 import { useSeo } from '../api/hooks'
 
-interface SEOProps {
+export interface SEOProps {
   title: string
   description: string
   canonicalPath: string
@@ -66,21 +66,30 @@ export default function SEO({
 }: SEOProps) {
   const { locale, locales } = useLocaleContext()
   const host = typeof window === 'undefined' ? undefined : window.location.hostname
-  const { brand, origin, siteName } = brandConfig(host)
+  const { brand, origin, siteName, ogImage: defaultOgImage } = brandConfig(host)
   const { data: seoData } = useSeo(canonicalPath, brand)
   const cms = resolveSeo(seoData ?? null, canonicalPath, host)
 
   const metaTitle = cms?.title ?? title
   const metaDescription = cms?.description ?? description
-  const defaultOgImage = `${origin}${brand === 'faircoin' ? '/og-faircoin.png' : '/og-default.png'}`
   const image = cms?.ogImage ?? ogImage ?? defaultOgImage
 
   const fullTitle = canonicalPath === '/' ? metaTitle : `${metaTitle} | ${siteName}`
   const canonicalUrl = buildLocalizedUrl(origin, canonicalPath, locale)
-  // Restrict hreflang output to locales the API exposes as enabled, falling
-  // back to the static SUPPORTED_LOCALES list if the picker hasn't hydrated.
-  const enabledCodes: readonly Locale[] =
-    locales.length > 0 ? locales.map((l) => l.code) : SUPPORTED_LOCALES
+  // Advertise only locales that actually have translations. `enabled` is an
+  // editorial "show in the picker" toggle that defaults to true, so it says
+  // nothing about whether `/<code>/…` would render anything but an English
+  // shell. `translationReady` comes from the same server helper the sitemap
+  // uses, so the two can never advertise different locale sets — and the server
+  // guarantees it is false for the default locale, which lives at the bare path.
+  //
+  // There is deliberately no static fallback: before the query resolves every
+  // entry is translationReady:false, so a cold render advertises nothing rather
+  // than all 11 locales. Cold render is exactly when a crawler is most likely
+  // to be looking.
+  const alternateCodes: readonly Locale[] = locales
+    .filter((l) => l.translationReady)
+    .map((l) => l.code)
 
   return (
     <Helmet>
@@ -90,8 +99,9 @@ export default function SEO({
       <link rel="canonical" href={canonicalUrl} />
       <meta name="theme-color" content="#0a0a0b" />
 
-      {/* hreflang — one entry per enabled locale plus x-default → English. */}
-      {enabledCodes.map((code) => (
+      {/* hreflang — one entry per translation-ready locale, plus x-default →
+          the bare (default-locale) path. */}
+      {alternateCodes.map((code) => (
         <link
           key={`hreflang-${code}`}
           rel="alternate"
@@ -109,7 +119,7 @@ export default function SEO({
       <meta property="og:type" content={ogType} />
       <meta property="og:site_name" content={siteName} />
       <meta property="og:locale" content={OG_LOCALES[locale]} />
-      {enabledCodes
+      {alternateCodes
         .filter((code) => code !== locale)
         .map((code) => (
           <meta key={`og-alt-${code}`} property="og:locale:alternate" content={OG_LOCALES[code]} />

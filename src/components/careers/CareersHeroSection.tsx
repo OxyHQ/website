@@ -28,7 +28,7 @@ const hoverCards: HoverCard[] = [
   },
   {
     title: 'Oxy AI custom agents',
-    description: 'Build domain-specific agents on top of Alia with the App SDK — no model retraining required.',
+    description: 'Build domain-specific agents on top of Alia with the App SDK. No model retraining required.',
     tags: [{ label: 'Oxy AI', variant: 'accent' }, { label: 'Feature', variant: 'primary' }],
   },
   {
@@ -48,7 +48,7 @@ const hoverCards: HoverCard[] = [
   },
   {
     title: 'Open by default',
-    description: 'Everything we build ships under an open-source license — fork it, audit it, run it yourself.',
+    description: 'Everything we build ships under an open-source license: fork it, audit it, run it yourself.',
     tags: [{ label: 'Engineering', variant: 'primary' }, { label: 'Open source', variant: 'accent' }],
   },
 ]

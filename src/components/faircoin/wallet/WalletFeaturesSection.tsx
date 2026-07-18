@@ -25,7 +25,7 @@ const FEATURES: readonly Feature[] = [
   },
   {
     icon: Wifi,
-    title: 'SPV — no servers',
+    title: 'SPV, no servers',
     description:
       'Talks straight to the FairCoin P2P network. No middlemen, no APIs, no tracking. Your phone is the wallet.',
   },
@@ -57,7 +57,7 @@ const FEATURES: readonly Feature[] = [
     icon: Zap,
     title: 'FastSend',
     description:
-      'Masternode-powered instant confirmations. Coffee-shop friendly — confirmations in seconds, not minutes.',
+      'Masternode-powered instant confirmations. Coffee-shop friendly: confirmations in seconds, not minutes.',
   },
   {
     icon: MapPin,

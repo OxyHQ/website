@@ -166,7 +166,7 @@ export default function BackgroundTasksMockup() {
           <div className="min-w-0 flex-1">
             <p className="text-[13px] leading-snug text-white/60">
               <span className="font-medium text-white/80">Task completed:</span>{" "}
-              Add API rate limiting —{" "}
+              Add API rate limiting.{" "}
               <span className="text-white/40">12 files changed.</span>
             </p>
             <span className="mt-1 inline-block text-xs font-medium text-blue-400">

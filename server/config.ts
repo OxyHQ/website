@@ -10,6 +10,13 @@ export const config = {
   mongoUri: process.env.MONGO_URI || 'mongodb://localhost:27017/oxy-website',
   oxyApiBase: process.env.OXY_API_BASE || 'https://api.oxy.so',
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  // Canonical public origin used to build absolute URLs (sitemap, feeds).
+  siteUrl: process.env.SITE_URL || 'https://oxy.so',
+  // The locale served at the bare path; every other locale lives under
+  // `/<code>/…`. Mirrors the SPA's static DEFAULT_LOCALE (src/lib/i18n/types.ts)
+  // and must stay in sync with it — this is deliberately NOT the CMS-configured
+  // default, which an editor can change without the route shape following.
+  defaultLocale: process.env.DEFAULT_LOCALE || 'en',
   adminUserIds: parseCsvEnv(process.env.OXY_ADMIN_USER_IDS),
   githubToken: process.env.GITHUB_TOKEN || '',
   doApiToken: process.env.DO_API_TOKEN || '',

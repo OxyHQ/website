@@ -349,7 +349,7 @@ export default function AstroPageContent() {
             <div className="col-span-12 col-start-1 w-full px-6 lg:col-span-6 lg:col-start-4 lg:px-0">
               <p className="type-md-lg text-center font-semibold text-foreground text-balance">
                 Browse the web with AI by your side for instant answers, smarter
-                suggestions, and help with tasks — all with privacy settings you
+                suggestions, and help with tasks, all with privacy settings you
                 control.
               </p>
             </div>

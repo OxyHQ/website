@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useFooter } from '../../api/hooks'
 import { useTranslation } from '../../lib/i18n'
 import Logo from '../ui/Logo'
+import { ArrowRightIcon } from '../icons'
 import { usePageChromeStore } from '../../stores/pageChromeStore'
 import { type FooterLink } from '../../data/content'
 
@@ -12,14 +13,6 @@ function Divider() {
   return (
     <svg width="100%" height="1" className="text-border">
       <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function ExternalArrow() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="ml-0.5 -rotate-45 text-muted-foreground transition-colors duration-200 ease-in-out-cubic group-hover:text-foreground group-hover:delay-50 group-focus:text-foreground group-focus:delay-50 group-active:text-foreground group-active:duration-50">
-      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
     </svg>
   )
 }
@@ -102,7 +95,9 @@ function FooterLinkItem({ link }: { link: FooterLink }) {
     <>
       <span className="footer-hover-underline group-hover:duration-150">{link.label}</span>
       {link.isNewBadge && <NewBadge />}
-      {link.isExternal && <ExternalArrow />}
+      {link.isExternal && (
+        <ArrowRightIcon className="ml-0.5 -rotate-45 text-muted-foreground transition-colors duration-200 ease-in-out-cubic group-hover:text-foreground group-hover:delay-50 group-focus:text-foreground group-focus:delay-50 group-active:text-foreground group-active:duration-50" />
+      )}
     </>
   )
 

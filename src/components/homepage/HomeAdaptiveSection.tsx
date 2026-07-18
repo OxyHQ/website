@@ -47,7 +47,7 @@ export default function HomeAdaptiveSection() {
               </h3>
               <p className="inline font-medium text-muted-foreground">
                 Mention, Inbox, Codea, Oxy AI and the rest of the ecosystem share data,
-                identity and agents — so your tools finally work together.
+                identity and agents, so your tools finally work together.
               </p>
             </div>
             <Button variant="outline" size="md" href="/technologies" className="scroll-reveal mt-7">

@@ -118,8 +118,8 @@ export async function apiFetch<T>(path: string, options?: RequestInit & { locale
       ? err.message
       : ((err as { message?: string } | null)?.message ?? String(err))
     if (typeof status === 'number' && message.startsWith(`HTTP ${status}:`)) {
-      throw new Error(`API error ${status}`)
+      throw new Error(`API error ${status}`, { cause: err })
     }
-    throw err instanceof Error ? err : new Error(message)
+    throw err instanceof Error ? err : new Error(message, { cause: err })
   }
 }

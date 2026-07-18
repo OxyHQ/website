@@ -220,7 +220,7 @@ export default function ProductsAdmin() {
                 placeholder="https://alia.onl/"
                 className="font-mono"
               />
-              <p className="text-xs text-muted-foreground">The actual running app — where "Open" buttons go. External URL or internal path.</p>
+              <p className="text-xs text-muted-foreground">The actual running app, where "Open" buttons go. External URL or internal path.</p>
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>Landing page on oxy.so (optional)</Label>
@@ -323,7 +323,7 @@ export default function ProductsAdmin() {
                 onChange={(e) => setEditing({ ...editing, category: e.target.value || null })}
                 className="h-9 rounded-md border border-border bg-background px-3 text-sm"
               >
-                <option value="">— Select a category —</option>
+                <option value="">Select a category</option>
                 {categories.map((c) => (
                   <option key={c._id ?? c.slug} value={c._id ?? ''}>{c.label}</option>
                 ))}
@@ -398,7 +398,7 @@ export default function ProductsAdmin() {
                 <span className="text-sm">
                   Navbar links straight to the app
                   <span className="block text-xs text-muted-foreground">
-                    Off by default — the dropdown opens the local landing page (when set) so visitors stay on oxy.so first. Turn this on to skip the landing page and jump directly to the running app URL.
+                    Off by default: the dropdown opens the local landing page (when set) so visitors stay on oxy.so first. Turn this on to skip the landing page and jump directly to the running app URL.
                   </span>
                 </span>
               </label>
@@ -485,6 +485,7 @@ export default function ProductsAdmin() {
         confirmLabel="Delete"
         tone="danger"
         busy={deleteAction.busy}
+        error={deleteAction.error}
         onConfirm={deleteAction.confirm}
       />
     </div>

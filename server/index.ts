@@ -63,7 +63,6 @@ app.use(cors({
     if (ALWAYS_ALLOWED_ORIGINS.has(origin)) return callback(null, true)
     const envAllowed = config.corsOrigin?.split(',').map((s) => s.trim()).filter(Boolean) ?? []
     if (envAllowed.includes(origin)) return callback(null, true)
-    if (envAllowed.length === 0 && !config.corsOrigin) return callback(null, true)
     return callback(new Error(`CORS: origin ${origin} not allowed`), false)
   },
   credentials: true,
@@ -154,10 +153,11 @@ async function fetchInfraStatus(): Promise<InfraStatusNode[]> {
   const regionMap = new Map<string, InfraStatusNode>()
 
   const ensure = (region: string): InfraStatusNode => {
-    if (!regionMap.has(region)) {
-      regionMap.set(region, { region, status: 'online', droplets: 0, apps: 0, dbs: 0 })
-    }
-    return regionMap.get(region)!
+    const existing = regionMap.get(region)
+    if (existing) return existing
+    const node: InfraStatusNode = { region, status: 'online', droplets: 0, apps: 0, dbs: 0 }
+    regionMap.set(region, node)
+    return node
   }
 
   try {
@@ -234,6 +234,17 @@ app.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
   return next(err)
 })
 
+// Terminal error handler — without this, anything that is not a ValidationError
+// reaches Express's default handler, which answers JSON API clients with an
+// HTML error page and logs nothing about which route failed.
+app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
+  console.error(`[error] ${req.method} ${req.originalUrl}:`, err)
+  // A response that has already started streaming cannot be rewritten; the
+  // default handler is the only thing that can abort the connection cleanly.
+  if (res.headersSent) return next(err)
+  return res.status(500).json({ error: 'Internal server error' })
+})
+
 async function migrateEcosystemDropdown() {
   // Any dropdown that was historically called "Ecosystem" is now
   // auto-driven by the Products CMS. One-shot migration so existing
@@ -282,4 +293,9 @@ async function start() {
   })
 }
 
-start().catch(console.error)
+start().catch((err) => {
+  // Exit non-zero so the orchestrator replaces the task instead of leaving a
+  // booted-but-not-listening process alive.
+  console.error('Fatal: server failed to start:', err)
+  process.exit(1)
+})

@@ -3,8 +3,10 @@ import { useParams, Link } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
+import { ArrowRightIcon } from '../components/icons'
 import { usePage, type PageSection } from '../api/hooks'
 import { sanitizeCmsHtml } from '../lib/sanitizeCmsHtml'
+import NotFoundPage from './NotFoundPage'
 
 const legalSections = [
   { slug: 'privacy', title: 'Privacy Policy', description: 'How we collect, use, and protect your data.' },
@@ -77,9 +79,7 @@ function LegalIndex() {
               <h2 className="text-base font-medium text-foreground">{section.title}</h2>
               <p className="mt-0.5 text-sm text-muted-foreground">{section.description}</p>
             </div>
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
-            </svg>
+            <ArrowRightIcon className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
           </Link>
         ))}
       </div>
@@ -90,6 +90,12 @@ function LegalIndex() {
 export default function LegalPage() {
   const { section } = useParams<{ section?: string }>()
   const current = section ? legalSections.find((s) => s.slug === section) : undefined
+
+  // An unrecognized `:section` used to render a 200 with a self-referencing
+  // canonical and a placeholder `<h1>`, i.e. unbounded indexable thin content.
+  // Treat it as a miss, the same way AdminPage handles an unauthorized route.
+  if (section && !current) return <NotFoundPage />
+
   const title = current?.title ?? 'Legal'
   const description = current?.description ?? 'Legal documents and policies for Oxy.'
 

@@ -169,6 +169,7 @@ export default function BackupAdmin() {
         confirmLabel="Restore"
         tone="danger"
         busy={restoreAction.busy}
+        error={restoreAction.error}
         onConfirm={restoreAction.confirm}
       />
     </div>

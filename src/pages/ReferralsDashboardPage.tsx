@@ -6,6 +6,7 @@ import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useReferralDashboard, type ReferralDashboard } from '../api/hooks'
+import { brandConfig } from '../lib/seo'
 
 /* ──────────────────────────────────────────────
  * /referrals/dashboard
@@ -68,7 +69,7 @@ function buildShareUrl(code: string, customLandingUrl: string | null | undefined
     const sep = customLandingUrl.includes('?') ? '&' : '?'
     return `${customLandingUrl}${sep}ref=${code}`
   }
-  if (typeof window === 'undefined') return `https://oxy.so/referrals?ref=${code}`
+  if (typeof window === 'undefined') return `${brandConfig().origin}/referrals?ref=${code}`
   return `${window.location.origin}/referrals?ref=${code}`
 }
 

@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { parseRgb } from './parseRgb'
 
 interface Dot {
   x: number
@@ -8,12 +9,6 @@ interface Dot {
   amplitude: number
   speed: number
   size: number
-}
-
-/** Parse an rgb/rgba color string into [r, g, b] number strings. */
-function parseRgb(color: string): [string, string, string] {
-  const m = color.match(/(\d+)/g)
-  return [m?.[0] ?? '255', m?.[1] ?? '255', m?.[2] ?? '255']
 }
 
 /**

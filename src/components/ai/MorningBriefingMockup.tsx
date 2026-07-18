@@ -62,7 +62,7 @@ const MorningBriefingMockup = () => {
             {[
               {
                 sender: "Finance",
-                subject: "Q1 revenue report — final numbers",
+                subject: "Q1 revenue report: final numbers",
               },
               {
                 sender: "Design",
@@ -190,7 +190,7 @@ const MorningBriefingMockup = () => {
         <div className="bg-[#73A7FF]/10 border-l-2 border-[#73A7FF] rounded-r-xl p-4">
           <p className="text-xs leading-relaxed text-foreground/70">
             <span className="font-medium text-[#73A7FF]">AI Suggestion</span>
-            {" — "}
+            {": "}
             Based on your 10am meeting with Design team, I've prepared a
             summary of last week's design review notes.
           </p>

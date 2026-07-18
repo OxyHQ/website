@@ -25,17 +25,23 @@ import { HelpArticle } from './models/HelpArticle.js'
 import { Media } from './models/Media.js'
 import TrackedRepo from './models/TrackedRepo.js'
 
+/** A model referenced only so that every document in its collection can be dropped. */
+type ClearableModel = { deleteMany(filter: Record<string, never>): PromiseLike<unknown> }
+
 async function seed() {
   await mongoose.connect(config.mongoUri)
   console.log('Connected to MongoDB')
 
   // ── Drop all collections (full reset) ──
-  const collections = [Navigation, Footer, HeroContent, Product, Category, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, Course, Resource, HelpArticle, TrackedRepo, TeamMember, Media]
+  // Typed structurally: the array mixes 18 different Model<T> types, and the
+  // resulting union defeats overload resolution on `deleteMany`. Clearing is
+  // all these models are used for here, so that is all the type needs to state.
+  const collections: ClearableModel[] = [Navigation, Footer, HeroContent, Product, Category, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, Course, Resource, HelpArticle, TrackedRepo, TeamMember, Media]
   await Promise.all(collections.map((m) => m.deleteMany({})))
   console.log('Cleared all collections')
 
   // ── Media helper: create a Media document from a URL ──
-  async function seedMedia(url: string, filename: string, mimeType = 'image/jpeg'): Promise<typeof import('mongoose').Types.ObjectId> {
+  async function seedMedia(url: string, filename: string, mimeType = 'image/jpeg'): Promise<mongoose.Types.ObjectId> {
     const doc = await Media.create({
       url, filename, key: new URL(url).pathname.slice(1) || filename,
       mimeType, size: 0, alt: '', tags: [], folder: 'seed',
@@ -226,7 +232,7 @@ async function seed() {
   // ── Products (/technologies + /status + ecosystem navbar, single source of truth) ──
   // `category` is the ObjectId ref to a Category; `section` stays populated
   // with the matching slug for backwards compatibility / fallback grouping.
-  const seededProducts = await Product.insertMany([
+  await Product.insertMany([
     { productId: 'alia', name: 'Alia AI', tagline: 'Intelligent assistant', description: 'Your private AI assistant on web, iOS and Android. Ask anything, get answers, automate work — without your data feeding a training set.', href: 'https://alia.onl/', landingUrl: '/alia', healthUrl: 'https://alia.onl/', external: true, cta: 'Open Alia', brand: '#7c3aed', mark: 'A', category: categoryRef('social-communication'), section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
     { productId: 'mention', name: 'Mention', tagline: 'Open social network', description: 'A social network built on respect. No engagement-maxxing algorithms, no surveillance ads — just genuine connection on the open fediverse. Your profile, your content, your unique link.', href: 'https://mention.earth/', landingUrl: '/mention', external: false, cta: 'Explore Mention', brand: '#0ea5e9', mark: 'M', category: categoryRef('social-communication'), section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 1 },
     { productId: 'inbox', name: 'Oxy Inbox', tagline: 'Unified messaging', description: 'All your email, chat and federated messages in one calm place. Smart triage surfaces what matters, end-to-end encrypted by default.', href: 'https://inbox.oxy.so', landingUrl: '/inbox', external: false, cta: 'Explore Inbox', brand: '#1e40af', mark: 'I', category: categoryRef('social-communication'), section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 2 },
@@ -245,12 +251,6 @@ async function seed() {
     { productId: 'astro', name: 'Astro', tagline: 'AI browser', description: 'Browse the web with AI by your side. Astro gives you instant answers, smarter suggestions and help with tasks — privacy you control.', href: '/astro', landingUrl: '/astro', external: false, cta: 'Explore Astro', brand: '#a855f7', mark: 'A', category: categoryRef('apps'), section: 'apps', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: true, order: 0 },
     { productId: 'codex-extension', name: 'Codex Extension', tagline: 'Codea, everywhere you code', description: 'Bring Codea\u2019s open-source AI assistant into the editor you already use. Reviews, refactors and completions — free to inspect, free to extend.', href: '/codea/extension', landingUrl: '/codea/extension', external: false, cta: 'Explore the extension', brand: '#475569', mark: 'E', category: categoryRef('developer'), section: 'developer', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: false, order: 1 },
   ])
-  const productIdByKey = new Map(seededProducts.map((p) => [p.productId, p._id] as const))
-  const productRef = (productId: string) => {
-    const id = productIdByKey.get(productId)
-    if (!id) throw new Error(`Seed product missing: ${productId}`)
-    return id
-  }
   console.log('Seeded products')
 
   // ── Hero (homepage hero singleton) ──

@@ -131,7 +131,7 @@ export default function LiveStatsSection() {
             className="mt-3 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground"
           >
             Live data straight from the FairCoin chain, the Base WFAIR contract
-            and the bridge custody snapshot. No CMS, no caching — what you see
+            and the bridge custody snapshot. No CMS, no caching. What you see
             is what is on-chain right now.
           </motion.p>
         </div>

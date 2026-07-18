@@ -17,7 +17,6 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
   options: ScrollRevealOptions = {},
 ): (node: T | null) => void {
   const observerRef = useRef<IntersectionObserver | null>(null)
-  const currentNodeRef = useRef<T | null>(null)
   const { threshold = 0.15, rootMargin = '0px 0px -50px 0px' } = options
 
   return useCallback(
@@ -26,7 +25,6 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
         observerRef.current.disconnect()
         observerRef.current = null
       }
-      currentNodeRef.current = node
       if (!node) return
 
       const observer = new IntersectionObserver(

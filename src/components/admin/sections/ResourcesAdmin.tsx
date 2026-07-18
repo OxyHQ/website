@@ -200,7 +200,7 @@ export default function ResourcesAdmin() {
                 onChange={(e) => setEditing({ ...editing, category: e.target.value || null })}
                 className="h-9 rounded-md border border-border bg-background px-3 text-sm"
               >
-                <option value="">— Select a category —</option>
+                <option value="">Select a category</option>
                 {categories.map((c) => (
                   <option key={c._id ?? c.slug} value={c._id ?? ''}>{c.label}</option>
                 ))}
@@ -216,7 +216,7 @@ export default function ResourcesAdmin() {
               placeholder="/academy/… or https://…"
               className="font-mono"
             />
-            <p className="text-xs text-muted-foreground">Canonical destination — local path or external URL.</p>
+            <p className="text-xs text-muted-foreground">Canonical destination: local path or external URL.</p>
           </div>
 
           <MediaPicker
@@ -363,6 +363,7 @@ export default function ResourcesAdmin() {
         confirmLabel="Delete"
         tone="danger"
         busy={deleteAction.busy}
+        error={deleteAction.error}
         onConfirm={deleteAction.confirm}
       />
     </div>

@@ -1,5 +1,5 @@
 const tasks = [
-  { title: "Review PR #482 — auth refactor", source: "from: Codea", done: true },
+  { title: "Review PR #482: auth refactor", source: "from: Codea", done: true },
   { title: "Reply to budget question", source: "from: Inbox", done: true },
   { title: "Update Q1 roadmap slide deck", source: "from: Meeting", done: true },
   { title: "Schedule 1:1 with new designer", source: "from: Mention", done: false },

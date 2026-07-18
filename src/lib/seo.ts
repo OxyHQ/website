@@ -109,9 +109,21 @@ export function resolveSeo(data: SeoData | null, pathname: string, host?: string
 }
 
 /** Brand identity + origin for a host, with no CMS lookup. */
-export function brandConfig(host?: string | null): { brand: SeoBrand; origin: string; siteName: string } {
+export function brandConfig(host?: string | null): {
+  brand: SeoBrand
+  origin: string
+  siteName: string
+  /** Absolute URL of the brand's default OG image. */
+  ogImage: string
+} {
   const brand = brandForHost(host)
-  return { brand, origin: BRANDS[brand].origin, siteName: BRANDS[brand].siteName }
+  const identity = BRANDS[brand]
+  return {
+    brand,
+    origin: identity.origin,
+    siteName: identity.siteName,
+    ogImage: identity.origin + identity.fallbackOgImage,
+  }
 }
 
 /**

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Check } from 'lucide-react'
+import SEO from '../components/SEO'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 
@@ -94,10 +95,20 @@ export default function AIPricingPage() {
 
   const comparison = plans.length > 0 ? buildComparison(plans) : []
   const sidebarLabels = ['Credits', 'Models', 'Channels', 'Limits']
+  // Rendered from every branch so client-side navigation updates the head even
+  // while the plans request is pending or has failed.
+  const seo = (
+    <SEO
+      title="AI Pricing"
+      description="Predictable usage-based pricing for the Oxy AI assistant. Pay only for what you ask."
+      canonicalPath="/ai/pricing"
+    />
+  )
 
   if (isPending) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
+        {seo}
         <Navbar />
         <main className="flex-1 flex items-center justify-center px-6 py-24">
           <div
@@ -120,6 +131,7 @@ export default function AIPricingPage() {
   if (isError || plans.length === 0) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
+        {seo}
         <Navbar />
         <main className="flex-1 flex items-center justify-center px-6 py-24">
           <div className="max-w-md text-center" role="alert">
@@ -155,6 +167,7 @@ export default function AIPricingPage() {
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
+      {seo}
       <Navbar />
       <main>
         {/* Hero + Cards */}

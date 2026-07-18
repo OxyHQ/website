@@ -1,30 +1,10 @@
 import { Link } from 'react-router-dom'
+import { ArrowRightIcon } from '../icons'
 
-interface SectionHeaderProps {
+interface SectionHeaderWithLinkProps {
   title: string
   href: string
   linkText?: string
-}
-
-/* ─── Arrow icon for "View all" links ─── */
-function ArrowRight() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
-      fill="none"
-      className="ml-0.5 transition-transform duration-200 group-hover:translate-x-0.5"
-    >
-      <path
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.1"
-        d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5"
-      />
-    </svg>
-  )
 }
 
 /* ──────────────────────────────────────────────────
@@ -33,11 +13,11 @@ function ArrowRight() {
  * Title: text-h4 text-primary-100
  * Link: text-button variant
  * ────────────────────────────────────────────── */
-export default function SectionHeader({
+export default function SectionHeaderWithLink({
   title,
   href,
   linkText = 'View all',
-}: SectionHeaderProps) {
+}: SectionHeaderWithLinkProps) {
   return (
     <div className="mb-6 flex items-baseline justify-between">
       <div>
@@ -51,7 +31,7 @@ export default function SectionHeader({
           className="group flex min-h-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
         >
           {linkText}
-          <ArrowRight />
+          <ArrowRightIcon className="ml-0.5 transition-transform duration-200 group-hover:translate-x-0.5" />
         </Link>
       ) : (
         <a
@@ -59,7 +39,7 @@ export default function SectionHeader({
           className="group flex min-h-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
         >
           {linkText}
-          <ArrowRight />
+          <ArrowRightIcon className="ml-0.5 transition-transform duration-200 group-hover:translate-x-0.5" />
         </a>
       )}
     </div>

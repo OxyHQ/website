@@ -21,10 +21,17 @@ interface ConfirmDialogProps {
    * actions; defaults to `'primary'`.
    */
   tone?: 'primary' | 'danger'
-  /** Called when the user clicks the confirm button. Dialog closes automatically afterwards. */
+  /**
+   * Called when the user clicks the confirm button. The handler owns the dialog
+   * lifecycle from here: it must close `control` itself once the action
+   * succeeds, and report any failure through `error`. `useConfirmAction` does
+   * both.
+   */
   onConfirm: () => void | Promise<void>
   /** Disable the confirm button (e.g. while a delete request is in flight). */
   busy?: boolean
+  /** Failure message from the last confirm attempt. Shown in place; the dialog stays open. */
+  error?: string | null
 }
 
 /**
@@ -35,18 +42,23 @@ interface ConfirmDialogProps {
  * DOM inside so it matches the rest of the admin (rather than using Bloom's
  * RN-styled declarative `title`/`actions` mode which would look out of place).
  *
- * Usage:
+ * Pair it with `useConfirmAction`, which owns the open/run/close lifecycle and
+ * keeps the dialog open with an `error` when the action fails:
  *
- *   const confirmDelete = useDialogControl()
+ *   const deleteAction = useConfirmAction<Member>({
+ *     onConfirm: (member) => apiFetch(`/team/${member._id}`, { method: 'DELETE' }),
+ *   })
  *   ...
- *   <Button onPress={() => confirmDelete.open()}>Delete</Button>
+ *   <Button onPress={() => deleteAction.request(member)}>Delete</Button>
  *   <ConfirmDialog
- *     control={confirmDelete}
+ *     control={deleteAction.control}
  *     title="Delete team member?"
  *     description="This cannot be undone."
  *     confirmLabel="Delete"
  *     tone="danger"
- *     onConfirm={() => deleteMember(id)}
+ *     busy={deleteAction.busy}
+ *     error={deleteAction.error}
+ *     onConfirm={deleteAction.confirm}
  *   />
  */
 export default function ConfirmDialog({
@@ -59,15 +71,8 @@ export default function ConfirmDialog({
   tone = 'primary',
   onConfirm,
   busy = false,
+  error = null,
 }: ConfirmDialogProps) {
-  const handleConfirm = async () => {
-    try {
-      await onConfirm()
-    } finally {
-      control.close()
-    }
-  }
-
   return (
     <Dialog control={control} label={label ?? title}>
       <View style={{ padding: 24 }}>
@@ -76,12 +81,13 @@ export default function ConfirmDialog({
           {description && (
             <div className="text-sm text-muted-foreground">{description}</div>
           )}
+          {error && <p className="text-sm text-rose-600 dark:text-rose-400">{error}</p>}
           <div className="mt-4 flex items-center justify-end gap-2">
             <Button variant="ghost" size="small" onPress={() => control.close()} disabled={busy}>
               {cancelLabel}
             </Button>
             <PrimaryButton
-              onPress={handleConfirm}
+              onPress={() => { void onConfirm() }}
               disabled={busy}
               className={tone === 'danger' ? '!bg-rose-600 hover:!bg-rose-700' : undefined}
             >

@@ -2,6 +2,7 @@ import { usePricing } from '../../api/hooks'
 import { FEATURES } from '../../constants'
 import Button from '../ui/Button'
 import BillingToggle from './BillingToggle'
+import { ArrowRightIcon } from '../icons'
 
 interface Props {
   isAnnual: boolean
@@ -117,9 +118,7 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
                     </Button>
                     <Button variant="ghost" size="md" responsive className="group self-center md:hidden">
                       <span>{plan.cta}</span>
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="relative transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
-                      </svg>
+                      <ArrowRightIcon className="relative transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50" />
                     </Button>
                   </>
                 ) : (

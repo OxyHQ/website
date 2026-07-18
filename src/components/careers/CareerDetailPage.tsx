@@ -7,6 +7,7 @@ import { type DescriptionBlock } from '../../data/careers'
 import { FEATURES } from '../../constants'
 import SEO from '../SEO'
 import StructuredData from '../StructuredData'
+import { ArrowRightIcon } from '../icons'
 
 const DashedLineH = () => <HorizontalLine className="w-full text-border" dashed />
 const SolidLineH = () => <HorizontalLine className="w-full text-border" />
@@ -226,15 +227,7 @@ function RelatedRoles({ jobs }: RelatedRolesProps) {
               <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-active:opacity-100" />
               <div className="relative flex items-center justify-between gap-3">
                 <p className="text-xs uppercase tracking-wider text-muted-foreground">{j.department}</p>
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  className="shrink-0 text-muted-foreground transition-[translate,color] duration-300 ease-in-out group-hover:translate-x-0.5 group-hover:text-foreground"
-                >
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
-                </svg>
+                <ArrowRightIcon className="shrink-0 text-muted-foreground transition-[translate,color] duration-300 ease-in-out group-hover:translate-x-0.5 group-hover:text-foreground" />
               </div>
               <h3 className="relative text-balance font-semibold text-base text-foreground">{j.title}</h3>
               <p className="relative text-sm text-muted-foreground">{j.location}</p>
@@ -296,7 +289,7 @@ export default function CareerDetailContent() {
   return (
     <article>
       <SEO
-        title={`${job.title} — ${job.department}`}
+        title={`${job.title}, ${job.department}`}
         description={job.subtitle || `Join Oxy as ${job.title}. ${job.location}. ${engagement}.`}
         canonicalPath={`/company/careers/${slug}`}
       />

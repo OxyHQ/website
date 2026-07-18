@@ -92,8 +92,6 @@ export interface HighlightArticle {
 
 export const highlights: HighlightArticle[] = []
 
-export const pressQuotes: { quote: string; source: string }[] = []
-
 export interface FooterColumn {
   title: string
   links: { label: string; href: string; external?: boolean }[]

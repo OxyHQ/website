@@ -12,7 +12,7 @@ const PARTNER_PILLARS = [
   {
     title: 'Privacy is the spec',
     description:
-      'No surveillance, no data brokering. Your users — and theirs — own their data, and you can prove it line by line.',
+      'No surveillance, no data brokering. Your users (and theirs) own their data, and you can prove it line by line.',
   },
   {
     title: 'A real ecosystem',

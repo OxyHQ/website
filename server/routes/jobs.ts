@@ -1,11 +1,10 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { Job } from '../models/Job.js'
-import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
-import { applyTranslation, applyTranslations } from '../utils/applyTranslation.js'
+import { localizeMany, localizeOne } from '../utils/localize.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
@@ -17,14 +16,7 @@ const jobBodySchema = z.object({}).passthrough()
 // List active jobs (public)
 router.get('/', localeMiddleware, async (req, res) => {
   const jobs = await Job.find({ active: true }).sort('order department')
-  if (req.isDefaultLocale) return res.json(jobs)
-
-  const translations = await Translation.find({
-    locale: req.locale,
-    collectionName: 'jobs',
-    documentId: { $in: jobs.map(j => j._id.toString()) },
-  })
-  res.json(applyTranslations(jobs.map(j => j.toJSON()), translations))
+  res.json(await localizeMany(req, 'jobs', jobs))
 })
 
 // Get single job by slug (public)
@@ -32,14 +24,7 @@ router.get('/:slug', localeMiddleware, async (req, res) => {
   const { slug } = validate(slugParamsSchema, req.params)
   const job = await Job.findOne({ slug, active: true })
   if (!job) return res.status(404).json({ error: 'Job not found' })
-  if (req.isDefaultLocale) return res.json(job)
-
-  const translation = await Translation.findOne({
-    locale: req.locale,
-    collectionName: 'jobs',
-    documentId: job._id.toString(),
-  })
-  res.json(applyTranslation(job.toJSON(), translation))
+  res.json(await localizeOne(req, 'jobs', job))
 })
 
 // Create job (admin)

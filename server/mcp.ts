@@ -4,7 +4,7 @@ import express from 'express'
 import mongoose from 'mongoose'
 import crypto from 'node:crypto'
 import { z } from 'zod'
-import { safeFetch, SsrfRejection, UpstreamError } from '@oxyhq/core/server'
+import { safeFetch, UpstreamError } from '@oxyhq/core/server'
 
 // Models
 import { Page } from './models/Page.js'
@@ -33,6 +33,8 @@ import { syncAllRepos, syncSingleRepo } from './services/githubSync.js'
 import { deleteFromSpaces, uploadToSpaces } from './services/s3.js'
 import { processImage } from './services/thumbnails.js'
 import { heroUpdateRawShape, heroUpdateSchema, type HeroUpdate } from './validation/hero.js'
+import { escapeRegex } from './utils/escapeRegex.js'
+import { TRANSLATABLE_COLLECTIONS } from './constants/translations.js'
 
 // ── SSRF-safe URL download helper ────────────────────────────────────────────
 
@@ -424,7 +426,7 @@ server.tool('search_posts', 'Search newsroom posts by title or resume text. Retu
   limit: z.number().optional().describe('Maximum results to return (default 10)'),
 }, async (params) => {
   try {
-    const regex = { $regex: params.query, $options: 'i' }
+    const regex = { $regex: escapeRegex(params.query), $options: 'i' }
     const posts = await NewsroomPost.find({
       $or: [{ title: regex }, { resume: regex }],
     }).sort('-publishedAt').limit(params.limit ?? 10)
@@ -829,7 +831,21 @@ server.tool('delete_media', 'Delete a media item from S3 and the database.', {
   try {
     const media = await Media.findById(id)
     if (!media) return err('Media not found')
-    const keys = [media.key, ...[media.thumbnails?.sm, media.thumbnails?.md, media.thumbnails?.lg].filter(Boolean).map(u => { try { return new URL(u!).pathname.slice(1) } catch { return '' } }).filter(Boolean)]
+
+    // Thumbnails are stored as absolute CDN URLs; derive each S3 object key from
+    // the URL path. An unparseable URL has no key to delete, so record it —
+    // silently skipping would orphan the object in the bucket.
+    const keys = [media.key]
+    for (const url of [media.thumbnails?.sm, media.thumbnails?.md, media.thumbnails?.lg]) {
+      if (!url) continue
+      try {
+        const key = new URL(url).pathname.slice(1)
+        if (key) keys.push(key)
+      } catch {
+        console.warn(`[mcp] delete_media: unparseable thumbnail URL for media ${id}, object may be orphaned: ${url}`)
+      }
+    }
+
     await Promise.allSettled(keys.map(k => deleteFromSpaces(k)))
     await media.deleteOne()
     return ok({ deleted: true, id })
@@ -922,14 +938,12 @@ server.tool('delete_locale', 'Delete a locale and all its translations. Cannot d
 
 // ── Translations ────────────────────────────────────────────────────────────
 
-const TRANSLATABLE_COLLECTIONS = ['navigation', 'footer', 'pricing', 'testimonials', 'settings', 'pages', 'newsroom', 'jobs', 'hero', 'products', 'categories', 'team', 'changelog', 'courses', 'resources', 'help']
-
 server.tool('list_translation_collections', 'List all collections that support translations.', {}, async () => {
   return ok(TRANSLATABLE_COLLECTIONS)
 })
 
 server.tool('get_translations', 'Get all translations for a collection in a specific locale. Returns an array of translated documents.', {
-  collection: z.string().describe(`Collection to query. One of: ${TRANSLATABLE_COLLECTIONS.join(', ')}`),
+  collection: z.enum(TRANSLATABLE_COLLECTIONS).describe('Collection to query'),
   locale: z.string().describe('Locale code, e.g. "es", "fr", "ja"'),
 }, async ({ collection, locale }) => {
   try {
@@ -939,7 +953,7 @@ server.tool('get_translations', 'Get all translations for a collection in a spec
 })
 
 server.tool('get_translation', 'Get the translation for a specific document in a collection.', {
-  collection: z.string().describe(`Collection name. One of: ${TRANSLATABLE_COLLECTIONS.join(', ')}`),
+  collection: z.enum(TRANSLATABLE_COLLECTIONS).describe('Collection name'),
   documentId: z.string().describe('The _id of the original document being translated'),
   locale: z.string().describe('Locale code, e.g. "es"'),
 }, async ({ collection, documentId, locale }) => {
@@ -951,7 +965,7 @@ server.tool('get_translation', 'Get the translation for a specific document in a
 })
 
 server.tool('upsert_translation', 'Create or update a translation. The fields object contains key-value overrides that replace the original document fields for the given locale.', {
-  collection: z.string().describe(`Collection name. One of: ${TRANSLATABLE_COLLECTIONS.join(', ')}`),
+  collection: z.enum(TRANSLATABLE_COLLECTIONS).describe('Collection name'),
   documentId: z.string().describe('The _id of the original document being translated'),
   locale: z.string().describe('Locale code, e.g. "es"'),
   fields: z.record(z.string(), z.any()).describe('Key-value field overrides. e.g. { "title": "Hola", "excerpt": "Resumen..." }. Only include fields that differ from the original.'),
@@ -967,7 +981,7 @@ server.tool('upsert_translation', 'Create or update a translation. The fields ob
 })
 
 server.tool('delete_translation', 'Delete a translation for a specific document and locale.', {
-  collection: z.string().describe('Collection name'),
+  collection: z.enum(TRANSLATABLE_COLLECTIONS).describe('Collection name'),
   documentId: z.string().describe('The _id of the document'),
   locale: z.string().describe('Locale code'),
 }, async ({ collection, documentId, locale }) => {
@@ -1791,93 +1805,123 @@ async function validateToken(token: string): Promise<boolean> {
     $or: [{ expiresAt: null }, { expiresAt: { $gt: new Date() } }],
   })
   if (!mcpToken) return false
-  mcpToken.lastUsedAt = new Date()
-  await mcpToken.save()
+  await McpToken.updateOne({ _id: mcpToken._id }, { $set: { lastUsedAt: new Date() } })
   return true
 }
 
-export function mountMcp(app: express.Express) {
-  const transports = new Map<string, StreamableHTTPServerTransport>()
+/**
+ * Validates the bearer token carried in the Authorization header. Responds 401
+ * and returns false when it is missing or invalid, so callers can bail early.
+ * The token is only ever read from the header — never from the query string.
+ */
+async function requireMcpToken(req: express.Request, res: express.Response): Promise<boolean> {
+  const token = req.headers.authorization?.replace('Bearer ', '')
+  if (!token || !(await validateToken(token))) {
+    res.status(401).json({ error: 'Invalid or expired token' })
+    return false
+  }
+  return true
+}
 
-  const isInitializeRequest = (body: unknown): boolean => {
-    if (!body || typeof body !== 'object') return false
-    const b = body as { method?: unknown }
-    return b.method === 'initialize'
+/** Sessions untouched for longer than this are swept along with their McpServer. */
+const MCP_SESSION_TTL_MS = 30 * 60 * 1000
+
+interface McpSession {
+  transport: StreamableHTTPServerTransport
+  lastSeen: number
+}
+
+const SESSION_NOT_FOUND = {
+  jsonrpc: '2.0',
+  error: {
+    code: -32001,
+    message: 'Session not found. Re-initialize the MCP connection.',
+  },
+  id: null,
+} as const
+
+export function mountMcp(app: express.Express) {
+  const sessions = new Map<string, McpSession>()
+
+  /** Returns the live transport for a session id, refreshing its last-seen stamp. */
+  const touch = (sessionId: string | undefined): StreamableHTTPServerTransport | undefined => {
+    const session = sessionId ? sessions.get(sessionId) : undefined
+    if (!session) return undefined
+    session.lastSeen = Date.now()
+    return session.transport
+  }
+
+  // An unclean disconnect never fires onclose, so entries would otherwise pin a
+  // transport plus its per-session McpServer forever. Swept on each new session.
+  const sweepExpiredSessions = () => {
+    const cutoff = Date.now() - MCP_SESSION_TTL_MS
+    for (const [id, session] of sessions) {
+      if (session.lastSeen < cutoff) {
+        sessions.delete(id)
+        session.transport.close().catch(e => {
+          console.error(`[mcp] failed to close expired transport ${id}:`, e)
+        })
+      }
+    }
   }
 
   app.post('/mcp', async (req, res) => {
-    const token = req.headers.authorization?.replace('Bearer ', '')
-    if (!token || !(await validateToken(token))) {
-      res.status(401).json({ error: 'Invalid or expired token' })
-      return
-    }
+    if (!(await requireMcpToken(req, res))) return
 
     const sessionId = req.headers['mcp-session-id'] as string | undefined
 
     // Existing session — route to its live transport
-    if (sessionId && transports.has(sessionId)) {
-      const transport = transports.get(sessionId)
-      if (transport) {
-        await transport.handleRequest(req, res)
-        return
-      }
+    const existing = touch(sessionId)
+    if (existing) {
+      await existing.handleRequest(req, res)
+      return
     }
 
-    // Stale session — the client is sending a non-initialize request with
-    // a session id we don't know about (server restart, transport GC, etc.).
-    // Respond with a JSON-RPC error so the client re-initializes instead of
-    // silently falling through to the new-session branch.
-    if (sessionId && !isInitializeRequest(req.body)) {
-      res.status(404).json({
-        jsonrpc: '2.0',
-        error: {
-          code: -32001,
-          message: 'Session not found. Re-initialize the MCP connection.',
-        },
-        id: (req.body as { id?: unknown })?.id ?? null,
-      })
+    // mountMcp runs before express.json(), so req.body is always undefined here
+    // and this handler cannot tell an initialize request from any other one.
+    // Consequently a request bearing a session id we don't know about (server
+    // restart, transport GC, unclean disconnect) always gets the re-initialize
+    // error; only a request with no session id at all opens a new session.
+    if (sessionId) {
+      res.status(404).json(SESSION_NOT_FOUND)
       return
     }
 
     // Fresh initialize request — spin up a new transport and register it
+    sweepExpiredSessions()
     const mcpServer = createMcpServer()
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID() })
     transport.onclose = () => {
-      if (transport.sessionId) transports.delete(transport.sessionId)
+      if (transport.sessionId) sessions.delete(transport.sessionId)
     }
     await mcpServer.connect(transport)
     await transport.handleRequest(req, res)
     if (transport.sessionId) {
-      transports.set(transport.sessionId, transport)
+      sessions.set(transport.sessionId, { transport, lastSeen: Date.now() })
     }
   })
 
   app.get('/mcp', async (req, res) => {
-    const sessionId = req.headers['mcp-session-id'] as string | undefined
-    if (sessionId && transports.has(sessionId)) {
-      const transport = transports.get(sessionId)
-      if (transport) {
-        await transport.handleRequest(req, res)
-        return
-      }
+    if (!(await requireMcpToken(req, res))) return
+
+    const transport = touch(req.headers['mcp-session-id'] as string | undefined)
+    if (transport) {
+      await transport.handleRequest(req, res)
+      return
     }
-    res.status(404).json({
-      jsonrpc: '2.0',
-      error: {
-        code: -32001,
-        message: 'Session not found. Re-initialize the MCP connection.',
-      },
-      id: null,
-    })
+    res.status(404).json(SESSION_NOT_FOUND)
   })
 
   app.delete('/mcp', async (req, res) => {
+    if (!(await requireMcpToken(req, res))) return
+
     const sessionId = req.headers['mcp-session-id'] as string | undefined
-    if (sessionId && transports.has(sessionId)) {
-      await transports.get(sessionId)!.handleRequest(req, res)
-      transports.delete(sessionId)
-    } else {
+    const transport = touch(sessionId)
+    if (!sessionId || !transport) {
       res.status(400).json({ error: 'Invalid session' })
+      return
     }
+    await transport.handleRequest(req, res)
+    sessions.delete(sessionId)
   })
 }

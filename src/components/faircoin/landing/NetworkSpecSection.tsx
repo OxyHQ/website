@@ -66,7 +66,7 @@ export default function NetworkSpecSection() {
               className="mt-3 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground"
             >
               Maintained by volunteers. No ICO, no foundation, no marketing
-              budget — just a daemon, a few wallets, an explorer and a small
+              budget. Just a daemon, a few wallets, an explorer and a small
               group of people that keep shipping.
             </motion.p>
           </div>

@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { safeFetch } from '@oxyhq/core/server'
 import { Product, type IProduct } from '../models/Product.js'
 import { Translation } from '../models/Translation.js'
 import { localeMiddleware } from '../middleware/locale.js'
@@ -82,16 +83,17 @@ async function probeService(product: IProduct): Promise<CachedServiceResult> {
     logoUrl: resolveLogoUrl(product.logo),
   }
   try {
-    const res = await fetch(target, {
+    // healthUrl/href are CMS-supplied, so the probe must be SSRF-safe.
+    const result = await safeFetch(target, {
       method: 'GET',
-      redirect: 'follow',
       signal: controller.signal,
       headers: { 'User-Agent': 'OxyStatusBot/1.0 (+https://oxy.so/status)' },
     })
     const latencyMs = Date.now() - start
-    const httpStatus = res.status
-    const ok = res.ok || (httpStatus >= 200 && httpStatus < 400)
-    const status: ServiceStatus = ok
+    const httpStatus = result.status
+    // Only the status line matters for a health probe — discard the body.
+    result.response.destroy()
+    const status: ServiceStatus = httpStatus >= 200 && httpStatus < 400
       ? (latencyMs > SLOW_LATENCY_MS ? 'degraded' : 'operational')
       : 'down'
     return { ...base, status, latencyMs, httpStatus, lastChecked: new Date().toISOString() }

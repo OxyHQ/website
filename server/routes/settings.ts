@@ -1,11 +1,10 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { SiteSettings } from '../models/SiteSettings.js'
-import { Translation } from '../models/Translation.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
-import { applyTranslation } from '../utils/applyTranslation.js'
+import { localizeOne } from '../utils/localize.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
@@ -14,15 +13,8 @@ const settingsBodySchema = z.object({}).passthrough()
 
 router.get('/', localeMiddleware, async (req, res) => {
   const settings = await SiteSettings.findOne().populate('ogImage')
-  const data = settings?.toJSON() ?? { siteTitle: 'Oxy', siteDescription: '', ogImage: '' }
-  if (req.isDefaultLocale || !settings) return res.json(data)
-
-  const translation = await Translation.findOne({
-    locale: req.locale,
-    collectionName: 'settings',
-    documentId: settings._id.toString(),
-  })
-  res.json(applyTranslation(data, translation))
+  if (!settings) return res.json({ siteTitle: 'Oxy', siteDescription: '', ogImage: '' })
+  res.json(await localizeOne(req, 'settings', settings))
 })
 
 router.put('/', requireAuth, adminOnly, async (req, res) => {

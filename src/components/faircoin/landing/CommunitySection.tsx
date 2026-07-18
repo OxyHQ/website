@@ -29,7 +29,7 @@ const ITEMS = [
   {
     name: 'GitHub',
     description:
-      'Every repository — chain, wallets, explorer, bridge — open on FairCoinOfficial.',
+      'Every repository (chain, wallets, explorer, bridge) open on FairCoinOfficial.',
     href: GITHUB_ORG_URL,
     icon: GithubIcon,
   },

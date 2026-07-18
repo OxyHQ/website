@@ -1,5 +1,5 @@
 import { NewsCardRow } from './NewsCard'
-import SectionHeader from './SectionHeader'
+import SectionHeaderWithLink from './SectionHeaderWithLink'
 import { useNewsroomPosts } from '../../api/hooks'
 
 /* ──────────────────────────────────────────────────
@@ -32,7 +32,7 @@ export default function RecentNewsSection({
 
   return (
     <section className="container">
-      <SectionHeader
+      <SectionHeaderWithLink
         title={title}
         href={href}
         linkText={linkText}

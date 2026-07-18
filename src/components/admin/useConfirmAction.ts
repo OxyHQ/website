@@ -13,15 +13,21 @@ interface UseConfirmActionResult<T> {
   target: T | null
   /** True while `onConfirm` is in-flight. */
   busy: boolean
+  /** Message from the last failed `confirm`, or null. Cleared by `request` and by a retry. */
+  error: string | null
   /** Open the dialog for a given item. */
   request: (target: T) => void
-  /** Invoke `onConfirm(target)` then close the dialog. Wire this to ConfirmDialog.onConfirm. */
+  /** Invoke `onConfirm(target)`, closing the dialog only on success. Wire this to ConfirmDialog.onConfirm. */
   confirm: () => Promise<void>
 }
 
 /**
  * Manages the "open confirm dialog -> run an async action -> close" lifecycle
  * for admin destructive operations. Pair with `<ConfirmDialog />`.
+ *
+ * The dialog closes ONLY when `onConfirm` resolves. If it throws, the dialog
+ * stays open and the message lands in `error` so the user can read it and
+ * retry — a failed delete must never look like a successful one.
  *
  * Usage:
  *
@@ -40,6 +46,7 @@ interface UseConfirmActionResult<T> {
  *     confirmLabel="Delete"
  *     tone="danger"
  *     busy={deleteAction.busy}
+ *     error={deleteAction.error}
  *     onConfirm={deleteAction.confirm}
  *   />
  */
@@ -47,10 +54,12 @@ export function useConfirmAction<T>({ onConfirm }: UseConfirmActionOptions<T>): 
   const control = Dialog.useDialogControl()
   const [target, setTarget] = useState<T | null>(null)
   const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const request = useCallback(
     (next: T) => {
       setTarget(next)
+      setError(null)
       control.open()
     },
     [control],
@@ -59,13 +68,17 @@ export function useConfirmAction<T>({ onConfirm }: UseConfirmActionOptions<T>): 
   const confirm = useCallback(async () => {
     if (target === null) return
     setBusy(true)
+    setError(null)
     try {
       await onConfirm(target)
       setTarget(null)
+      control.close()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'The action could not be completed.')
     } finally {
       setBusy(false)
     }
-  }, [onConfirm, target])
+  }, [control, onConfirm, target])
 
-  return { control, target, busy, request, confirm }
+  return { control, target, busy, error, request, confirm }
 }

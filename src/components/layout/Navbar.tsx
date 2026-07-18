@@ -19,6 +19,7 @@ import Button from '../ui/Button'
 import Logo from '../ui/Logo'
 import { SettingsPanel } from '../ui/SettingsPanel'
 import { Settings, Search, X } from 'lucide-react'
+import { ArrowRightIcon } from '../icons'
 import { useAccountPanel } from '../../contexts/AccountPanelContext'
 
 /** Pseudo-dropdown key for the settings panel (theme + language), routed through
@@ -312,6 +313,7 @@ export default function Navbar({
   }, [])
 
   const scheduleClose = useCallback(() => {
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
     closeTimeoutRef.current = setTimeout(closeAll, 200)
   }, [closeAll])
 
@@ -323,7 +325,9 @@ export default function Navbar({
   }, [])
 
   // React 19 callback ref — owns the global Escape handler lifecycle. Attaches when
-  // the nav area mounts, detaches on unmount. Also clears any pending close timeout.
+  // the nav area mounts, detaches on unmount. Also clears every pending timer: the
+  // navbar is mounted per-page, so it unmounts on each route change and any timer
+  // left running would fire against a dead component.
   const escapeRef = useCallback((node: HTMLDivElement | null) => {
     if (!node) return
     const handler = (e: KeyboardEvent) => {
@@ -337,6 +341,8 @@ export default function Navbar({
     return () => {
       window.removeEventListener('keydown', handler)
       if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
+      if (prevDropdownTimerRef.current) clearTimeout(prevDropdownTimerRef.current)
+      if (searchDebounce.current) clearTimeout(searchDebounce.current)
     }
   }, [])
 
@@ -422,9 +428,7 @@ export default function Navbar({
                 <span className="attio-group-hover-underline relative truncate text-[13px]/5">
                   {banner?.text ?? t('navbar.bannerDefault')}
                 </span>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M2.25 7h9.5m0 0L8.357 3.5M11.75 7l-3.393 3.5" />
-                </svg>
+                <ArrowRightIcon className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50" />
               </Link>
               <button
                 className="inline-flex cursor-pointer items-center justify-center text-nowrap border text-base transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default size-8 rounded-full button-outline !bg-transparent !border-transparent dark absolute top-1/2 right-0 -translate-y-1/2 hover:!border-muted-foreground"

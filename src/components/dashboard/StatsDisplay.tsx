@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { formatNumber } from "../../data/dashboard/country-data";
+import { formatNumber } from "../../lib/utils";
 import type { PlatformStats } from "../../api/hooks";
 
 function InfoIcon() {

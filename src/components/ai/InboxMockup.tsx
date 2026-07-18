@@ -1,5 +1,5 @@
 const emails = [
-  { sender: "Finance team", avatar: "FT", subject: "Q1 revenue report — final numbers", time: "9:32 AM", unread: true },
+  { sender: "Finance team", avatar: "FT", subject: "Q1 revenue report: final numbers", time: "9:32 AM", unread: true },
   { sender: "Design", avatar: "DS", subject: "Updated brand guidelines attached", time: "9:15 AM", unread: true, aiDraft: true },
   { sender: "Product", avatar: "PR", subject: "Re: Product launch timeline", time: "8:48 AM", unread: false },
   { sender: "People ops", avatar: "PO", subject: "Quarterly OKR check-in notes", time: "8:20 AM", unread: false, aiDraft: true },
@@ -74,7 +74,7 @@ const InboxMockup = () => {
                   )}
                   {email.archived && (
                     <span className="rounded-full bg-foreground/10 px-1.5 py-0.5 text-[10px] text-foreground/40">
-                      Low priority — archived
+                      Low priority, archived
                     </span>
                   )}
                 </div>

@@ -1,4 +1,4 @@
-import type { CourseLevel } from '../../content/academy-loader'
+import type { CourseLevel } from '../../content/academy-courses'
 
 /* ──────────────────────────────────────────────
  * Academy course cover fallback

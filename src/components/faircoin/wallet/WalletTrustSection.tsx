@@ -74,7 +74,7 @@ export default function WalletTrustSection() {
             className="mt-5 text-pretty text-lg leading-relaxed text-muted-foreground"
           >
             FAIRWallet is built and operated by the FairCoin community on the
-            same principles as the chain itself — open, fair, and free of
+            same principles as the chain itself: open, fair, and free of
             speculation.
           </motion.p>
         </div>

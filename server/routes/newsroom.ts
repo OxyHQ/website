@@ -2,14 +2,15 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { NewsroomPost } from '../models/NewsroomPost.js'
 import { Product } from '../models/Product.js'
-import { Translation } from '../models/Translation.js'
-import { requireAuth } from '../middleware/auth.js'
+import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
-import { applyTranslation, applyTranslations } from '../utils/applyTranslation.js'
+import { localizeMany, localizeOne } from '../utils/localize.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
+import { isAdminUser } from '../utils/adminAccess.js'
+import { escapeRegex } from '../utils/escapeRegex.js'
 
 const router = Router()
 
@@ -40,7 +41,7 @@ const detailQuerySchema = z.object({
 const slugParamsSchema = z.object({ slug: z.string().min(1) })
 const postBodySchema = z.object({}).passthrough()
 
-router.get('/', localeMiddleware, async (req, res) => {
+router.get('/', localeMiddleware, optionalAuth, async (req, res) => {
   const {
     category, tag, product: productId, featured, status, search, author,
     limit = '20', page = '1',
@@ -55,22 +56,18 @@ router.get('/', localeMiddleware, async (req, res) => {
   if (productId) {
     const product = await Product.findOne({ productId }).select('_id')
     if (!product) {
-      const { pageNum, limitNum } = parsePagination(page, limit)
+      const { pageNum } = parsePagination(page, limit)
       return res.json({ posts: [], total: 0, page: pageNum, pages: 0 })
     }
     filter.products = product._id
   }
 
-  // Default to published posts for public requests
-  if (status) {
-    filter.status = status
-  } else {
-    filter.status = 'published'
-  }
+  // Default to published posts for public requests; only admins may select a status.
+  filter.status = isAdminUser(req.user) && status ? status : 'published'
 
   // Text search on title and excerpt
   if (search) {
-    const regex = { $regex: search, $options: 'i' }
+    const regex = { $regex: escapeRegex(search), $options: 'i' }
     filter.$or = [{ title: regex }, { resume: regex }]
   }
 
@@ -80,37 +77,22 @@ router.get('/', localeMiddleware, async (req, res) => {
     NewsroomPost.countDocuments(filter),
   ])
 
-  let result = posts.map(p => p.toJSON())
-  if (!req.isDefaultLocale) {
-    const translations = await Translation.find({
-      locale: req.locale,
-      collectionName: 'newsroom',
-      documentId: { $in: posts.map(p => p._id.toString()) },
-    })
-    result = applyTranslations(result, translations)
-  }
+  const result = await localizeMany(req, 'newsroom', posts)
 
   res.json({ posts: result, total, page: pageNum, pages: Math.ceil(total / limitNum) })
 })
 
-router.get('/:slug', localeMiddleware, async (req, res) => {
+router.get('/:slug', localeMiddleware, optionalAuth, async (req, res) => {
   const { slug } = validate(slugParamsSchema, req.params)
   const { preview } = validate(detailQuerySchema, req.query)
 
   const post = await NewsroomPost.findOne({ slug }).populate([...NEWSROOM_POPULATE])
   if (!post) return res.status(404).json({ error: 'Post not found' })
-  // Hide drafts from public unless preview=true with auth
-  if (post.status === 'draft' && preview !== 'true') {
+  // Hide drafts from public; admins may see them with preview=true
+  if (post.status === 'draft' && (preview !== 'true' || !isAdminUser(req.user))) {
     return res.status(404).json({ error: 'Post not found' })
   }
-  if (req.isDefaultLocale) return res.json(post)
-
-  const translation = await Translation.findOne({
-    locale: req.locale,
-    collectionName: 'newsroom',
-    documentId: post._id.toString(),
-  })
-  res.json(applyTranslation(post.toJSON(), translation))
+  res.json(await localizeOne(req, 'newsroom', post))
 })
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {
