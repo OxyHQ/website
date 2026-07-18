@@ -29,7 +29,7 @@ export interface FAQItem {
 /* ── Hero ── */
 
 export const companyHero = {
-  badge: 'The Oxy Collective, Inc.',
+  badge: 'The Oxy Foundation, Inc.',
   title: 'We build ethical technology that solves real problems, giving people the tools to shape their own futures, not just consume someone else\'s vision.',
   subtitle: 'Our north star: a world where technology creates opportunity for everyone, not just those who can afford it.',
 }
