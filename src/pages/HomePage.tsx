@@ -112,7 +112,7 @@ function HeroSection() {
       {/* Text overlay */}
       <div className="relative z-[5] flex-1 flex items-end text-foreground">
         <div className="container pb-5 pt-[100px] max-[950px]:pt-20">
-          <h1 className="font-display font-semibold tracking-[-0.015em] text-[1.9rem] leading-[2.15rem] lg:text-[2.6rem] lg:leading-[2.9rem] max-w-[560px]">
+          <h1 className="font-display font-medium tracking-[-0.015em] text-[1.9rem] leading-[2.15rem] lg:text-[2.6rem] lg:leading-[2.9rem] max-w-[560px]">
             {titleLines.map((line, i) => (
               <span key={i}>
                 {line}
@@ -381,7 +381,7 @@ function ValuesSection() {
                         decoding="async"
                       />
                     </div>
-                    <h3 className="mt-5 text-xl font-semibold tracking-tight">{value.title}</h3>
+                    <h3 className="mt-5 text-xl font-medium tracking-tight">{value.title}</h3>
                     <p className="mt-2 opacity-60 leading-relaxed">{value.body}</p>
                   </article>
                 </SwiperSlide>
@@ -1127,7 +1127,7 @@ function ForDevelopersCard() {
                   ) : (
                     <span
                       aria-hidden
-                      className="w-9 h-9 rounded-[10px] inline-flex items-center justify-center bg-primary/15 text-primary text-sm font-semibold shadow-sm"
+                      className="w-9 h-9 rounded-[10px] inline-flex items-center justify-center bg-primary/15 text-primary text-sm font-medium shadow-sm"
                     >
                       {letter}
                     </span>
