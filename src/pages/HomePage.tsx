@@ -582,7 +582,7 @@ function FeaturesSection() {
                 <h2 dangerouslySetInnerHTML={{ __html: t.heading }} />
                 <div className="agent-features-tab-ui">
                   <div className="screen">
-                    <img src={`${IMG}/browser.svg`} alt="Browser UI" className="screen-frame" width={1200} height={800} loading="lazy" decoding="async" />
+                    <img src={`${IMG}/browser-frame.svg`} alt="Browser UI" className="screen-frame" width={1200} height={800} loading="lazy" decoding="async" />
                     <div className="screen-content">
                       <img src={t.thumb} alt={t.label} width={1200} height={800} loading="lazy" decoding="async" />
                     </div>
