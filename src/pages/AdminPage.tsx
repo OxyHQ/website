@@ -30,10 +30,17 @@ import MediaAdmin from '../components/admin/sections/MediaAdmin'
 import NotFoundPage from './NotFoundPage'
 
 export default function AdminPage() {
-  const { user, isAuthenticated, isLoading } = useAuth()
+  const { user, isLoading } = useAuth()
 
   if (isLoading) return null
-  if (!isAuthenticated || !user || !ADMIN_USERNAMES.includes(user.username)) {
+  // Gate on the resolved user only. `isAuthenticated` additionally requires the
+  // SDK's cross-domain cold boot to have resolved, which can stay false on a
+  // reload here even though the session is valid and `user` is populated —
+  // that combination rendered this page as a 404 for real admins. This check
+  // only decides whether to show the UI: every admin API route is gated
+  // server-side on OXY_ADMIN_USER_IDS (server/utils/adminAccess.ts), so a
+  // stale client-side pass leaks nothing.
+  if (!user || !ADMIN_USERNAMES.includes(user.username)) {
     return <NotFoundPage />
   }
 
