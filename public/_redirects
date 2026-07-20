@@ -2,10 +2,10 @@
 # index.html when the file doesn't exist. Prevents the browser
 # "MIME type text/html" error when a cached index.html references a
 # stale hashed bundle after a deploy.
-/assets/*  /404.html  404
-/images/*  /404.html  404
-/fonts/*   /404.html  404
-/models/*  /404.html  404
+/assets/*  /asset-missing.html  404
+/images/*  /asset-missing.html  404
+/fonts/*   /asset-missing.html  404
+/models/*  /asset-missing.html  404
 
 # SPA fallback — every other path renders the React shell.
 /*  /index.html  200

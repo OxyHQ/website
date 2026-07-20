@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
-    <title>Not Found</title>
+    <title>File not found</title>
   </head>
   <body>
     <!--
@@ -12,8 +12,11 @@
       rules in `_redirects`, which return a real 404 for missing files instead
       of falling through to the SPA shell.
 
-      This file must exist. Cloudflare Pages drops a `_redirects` rule whose
-      destination is missing, so without it those rules were silently ignored:
+      This file must exist, and must NOT be named `404.html`: Cloudflare Pages
+      treats a `404.html` as its automatic not-found page and serves it ahead of
+      the `/*` SPA catch-all, which breaks every client-side route that has no
+      prerendered file. Pages also drops a `_redirects` rule whose destination is
+      missing, so without this file those rules were silently ignored:
       a request for a hashed bundle that did not exist got the `/*` catch-all
       (`/index.html` with status 200), and `_headers` then told the browser to
       cache that HTML under a `.js` URL as `immutable, max-age=31536000`.
