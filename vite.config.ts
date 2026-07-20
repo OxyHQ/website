@@ -212,7 +212,7 @@ export default defineConfig(({ mode }) => ({
     // a visitor's browser cache from here.
     //
     // Bump this suffix if the same class of poisoning ever happens again.
-    assetsDir: 'assets/v2',
+    assetsDir: 'assets/v3',
   },
   define: {
     __DEV__: JSON.stringify(mode !== 'production'),
