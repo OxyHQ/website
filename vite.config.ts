@@ -223,20 +223,12 @@ export default defineConfig(({ mode }) => ({
     // unbundled and `import x from 'cjs-pkg'` fails with "does not provide an
     // export named 'default'". Listing them lets esbuild resolve the interop up
     // front. Production is unaffected — rolldown bundles the whole graph.
-    //
-    // `@expo/vector-icons` and `react-native-qrcode-svg` are required peers of
-    // `@oxyhq/services` that ship untransformed JSX in `.js` files. Served
-    // unbundled they fail Vite's import-analysis parse ("invalid JS syntax").
-    // Prebundling them here transforms the JSX up front, scoped to these two
-    // packages (not a global loader), so their CJS interop stays intact.
     include: [
       'd3-geo',
       'debug',
       'color',
       'fontfaceobserver',
       'expo-modules-core',
-      '@expo/vector-icons',
-      'react-native-qrcode-svg',
       'react-native-svg',
       'react-native-reanimated',
       'react-native-gesture-handler',
