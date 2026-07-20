@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Not Found</title>
+  </head>
+  <body>
+    <!--
+      Destination for the `/assets/*`, `/images/*`, `/fonts/*` and `/models/*`
+      rules in `_redirects`, which return a real 404 for missing files instead
+      of falling through to the SPA shell.
+
+      This file must exist. Cloudflare Pages drops a `_redirects` rule whose
+      destination is missing, so without it those rules were silently ignored:
+      a request for a hashed bundle that did not exist got the `/*` catch-all
+      (`/index.html` with status 200), and `_headers` then told the browser to
+      cache that HTML under a `.js` URL as `immutable, max-age=31536000`.
+      The result was a poisoned cache entry serving HTML for a script — a blank
+      page until the browser cache was cleared.
+    -->
+    <h1>Not found</h1>
+    <p>The requested file does not exist. <a href="/">Go to homepage</a></p>
+  </body>
+</html>
