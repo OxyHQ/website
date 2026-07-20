@@ -32,15 +32,20 @@ import NotFoundPage from './NotFoundPage'
 export default function AdminPage() {
   const { user, isLoading } = useAuth()
 
-  if (isLoading) return null
-  // Gate on the resolved user only. `isAuthenticated` additionally requires the
-  // SDK's cross-domain cold boot to have resolved, which can stay false on a
-  // reload here even though the session is valid and `user` is populated —
-  // that combination rendered this page as a 404 for real admins. This check
-  // only decides whether to show the UI: every admin API route is gated
-  // server-side on OXY_ADMIN_USER_IDS (server/utils/adminAccess.ts), so a
-  // stale client-side pass leaks nothing.
-  if (!user || !ADMIN_USERNAMES.includes(user.username)) {
+  // Render as soon as a user is resolved. Waiting on `isLoading` first is not
+  // safe here: the SDK's auth cold boot can stay pending indefinitely on this
+  // origin, and because `/admin/*` is a top-level route (no shared layout),
+  // returning null then blanks the entire page. `isAuthenticated` has the same
+  // problem — it additionally requires that cold boot to resolve, so it stays
+  // false for a signed-in admin and rendered this page as a 404.
+  //
+  // This check only decides whether to show the UI. Real authorization is
+  // enforced server-side: every /api admin route runs adminOnly, which checks
+  // the Oxy user id against OXY_ADMIN_USER_IDS (server/utils/adminAccess.ts).
+  if (!user) {
+    return isLoading ? null : <NotFoundPage />
+  }
+  if (!ADMIN_USERNAMES.includes(user.username)) {
     return <NotFoundPage />
   }
 
