@@ -198,6 +198,22 @@ export default defineConfig(({ mode }) => ({
       },
     ],
   },
+  build: {
+    // Emit build output under a versioned directory so every asset URL is new.
+    //
+    // A `_redirects` misconfiguration previously served `/index.html` with
+    // status 200 for missing files, and `_headers` marks everything under
+    // `/assets/*` as `immutable, max-age=31536000`. Browsers that requested a
+    // hashed bundle before it existed therefore cached HTML under a `.js` URL
+    // for a year and now refuse it ("Expected a JavaScript-or-Wasm module
+    // script but the server responded with MIME type text/html"), leaving the
+    // whole app blank. Filenames are content-hashed, so an unchanged chunk
+    // keeps its poisoned URL — only a new path escapes it, and we cannot purge
+    // a visitor's browser cache from here.
+    //
+    // Bump this suffix if the same class of poisoning ever happens again.
+    assetsDir: 'assets/v2',
+  },
   define: {
     __DEV__: JSON.stringify(mode !== 'production'),
     'process.env.NODE_ENV': JSON.stringify(mode),
