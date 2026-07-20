@@ -7,9 +7,17 @@
   Content-Type: application/json
   Cache-Control: public, max-age=300, must-revalidate
 
-# Cache static assets aggressively
+# Static assets are content-hashed, but they must NOT be cached `immutable`.
+# The SPA catch-all (`/*  /index.html  200`) serves index.html (200, HTML) for
+# any asset URL that briefly 404s during a deploy's edge propagation, and an
+# `immutable, max-age=31536000` header then freezes that HTML under a `.js` URL
+# for a year — a poisoned entry that blanks the whole app and cannot be purged
+# without dashboard access. `no-cache` still stores the file but revalidates it
+# against origin on every use, so a poisoned entry self-heals on the next
+# request instead of persisting. Revalidation of an unchanged hashed file is a
+# cheap 304.
 /assets/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, no-cache
 
 # Cache images
 /images/*
