@@ -1,6 +1,13 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Scan the Oxy SDK packages so their react-native-css className LAYOUT utilities
+ * (flex-1 / flex-row / gap-* / arbitrary [Npx]) are generated on web. Tailwind v4
+ * auto-detects this app's own src/ but excludes node_modules by default, so without
+ * these the SDK screens fall back to the RN-Web base View reset (inert layout). */
+@source "../node_modules/@oxyhq/services/lib/**/*.{js,jsx}";
+@source "../node_modules/@oxyhq/bloom/lib/**/*.{js,jsx}";
+
 :root {
   --build-tag: '2026-04-16T11-cachebust-2';
 }
