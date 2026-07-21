@@ -2,10 +2,39 @@ import { useState, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@oxyhq/services'
 import { Avatar } from '@oxyhq/bloom/avatar'
+import { SettingsListGroup } from '@oxyhq/bloom/settings-list'
+import { useTheme } from '@oxyhq/bloom/theme'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useLottie } from 'lottie-react'
 import { useAccountPanel } from '../../contexts/AccountPanelContext'
 import { ADMIN_USERNAMES } from '../../constants'
 import welcomeAnimation from '../../assets/lottie/welcomeheader_background.json'
+
+type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name']
+
+/* ─── Icon palette — mirrors `sidebarIcon*` in the Accounts app
+       (OxyHQServices/packages/accounts/constants/theme.ts) ─── */
+const ICON_COLORS = {
+  home: { light: '#1A73E8', dark: '#8AB4F8' },
+  personal: { light: '#34A853', dark: '#81C995' },
+  security: { light: '#4285F4', dark: '#8AB4F8' },
+  devices: { light: '#4285F4', dark: '#8AB4F8' },
+  data: { light: '#9C27B0', dark: '#CE93D8' },
+  sharing: { light: '#EA4335', dark: '#F28B82' },
+  payments: { light: '#FBBC04', dark: '#FDD663' },
+} as const
+
+type IconRole = keyof typeof ICON_COLORS
+
+/** Same formula as the Accounts app's `darkenColor` (utils/color-utils.ts). */
+function darkenColor(color: string, factor = 0.6): string {
+  const hex = color.replace('#', '')
+  const channel = (start: number) =>
+    Math.max(0, Math.round(parseInt(hex.substring(start, start + 2), 16) * (1 - factor)))
+      .toString(16)
+      .padStart(2, '0')
+  return `#${channel(0)}${channel(2)}${channel(4)}`
+}
 
 function AvatarWithAnimation({ avatarSource, avatarColor, size }: { avatarSource?: string; avatarColor?: string; size: number }) {
   const { View: LottieView } = useLottie(
@@ -24,44 +53,53 @@ function AvatarWithAnimation({ avatarSource, avatarColor, size }: { avatarSource
 
 /* ─── Shared styles ─── */
 const chipClass = 'flex shrink-0 items-center gap-1.5 rounded-full border border-border px-2 py-1.5 text-[13px] font-medium text-foreground transition-colors hover:bg-surface'
-const groupItemClass = 'flex w-full items-center gap-3 px-4 py-3 text-[14px] text-foreground transition-colors hover:bg-surface'
+const groupItemClass = 'flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left text-[14px] text-foreground transition-colors hover:bg-surface'
 
-function IconCircle({ children, bg }: { children: React.ReactNode; bg: string }) {
+/**
+ * Solid-colour circular badge with a MaterialCommunityIcons glyph, matching the
+ * Accounts app (chips/menu rows use 32px, info cards 36px; glyph is always 20px
+ * in a darkened shade of the badge colour).
+ */
+function IconBadge({ name, color, size = 32 }: { name: IconName; color: string; size?: number }) {
   return (
-    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: bg }}>
-      {children}
+    <div
+      className="flex shrink-0 items-center justify-center rounded-full"
+      style={{ width: size, height: size, backgroundColor: color }}
+    >
+      <MaterialCommunityIcons name={name} size={20} color={darkenColor(color)} />
     </div>
   )
 }
 
-function Chevron() {
+function Chevron({ color }: { color: string }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="ml-auto shrink-0 text-muted-foreground">
-      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="m6 4 4 4-4 4" />
-    </svg>
+    <span className="ml-auto flex shrink-0 items-center">
+      <MaterialCommunityIcons name="chevron-right" size={18} color={color} />
+    </span>
   )
 }
 
 /* ─── Quick‑action data ─── */
-const quickActions = [
-  { label: 'Personal Info', href: 'https://accounts.oxy.so/personal-info', stroke: '#34A853', bg: '#e6f4ea', d: 'M13.5 15.75v-1.5a3 3 0 00-3-3h-3a3 3 0 00-3 3v1.5M9 8.25a3 3 0 100-6 3 3 0 000 6z' },
-  { label: 'Security', href: 'https://accounts.oxy.so/security', stroke: '#4285F4', bg: '#e8f0fe', d: 'M9 1.5L3 4.5v4.5c0 4.14 2.56 7.01 6 7.5 3.44-.49 6-3.36 6-7.5V4.5L9 1.5z' },
-  { label: 'Devices', href: 'https://accounts.oxy.so/devices', stroke: '#4285F4', bg: '#e8f0fe', d: 'M2.25 3.75h13.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H2.25a.75.75 0 01-.75-.75v-7.5a.75.75 0 01.75-.75zM6.75 15h4.5M9 12.75v2.25' },
-  { label: 'Data & Privacy', href: 'https://accounts.oxy.so/data', stroke: '#9C27B0', bg: '#f3e8fd', d: 'M9 2.25v13.5M2.25 9h13.5M3.75 3.75h10.5a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5v-7.5a1.5 1.5 0 011.5-1.5z' },
-  { label: 'Sharing', href: 'https://accounts.oxy.so/sharing', stroke: '#EA4335', bg: '#fce8e6', d: 'M12 6.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM12 15.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM6 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5zM7.95 10.2l2.1 1.8M10.05 5.7l-2.1 1.8' },
-  { label: 'Payments', href: 'https://accounts.oxy.so/payments', stroke: '#FBBC04', bg: '#fef7e0', d: 'M2.25 6.75h13.5M2.25 5.25a1.5 1.5 0 011.5-1.5h10.5a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5H3.75a1.5 1.5 0 01-1.5-1.5v-7.5z' },
+const quickActions: { label: string; href: string; icon: IconName; role: IconRole }[] = [
+  { label: 'Personal Info', href: 'https://accounts.oxy.so/personal-info', icon: 'card-account-details-outline', role: 'personal' },
+  { label: 'Security', href: 'https://accounts.oxy.so/security', icon: 'shield-check-outline', role: 'security' },
+  { label: 'Devices', href: 'https://accounts.oxy.so/devices', icon: 'desktop-classic', role: 'devices' },
+  { label: 'Data & Privacy', href: 'https://accounts.oxy.so/data', icon: 'toggle-switch-outline', role: 'data' },
+  { label: 'Sharing', href: 'https://accounts.oxy.so/sharing', icon: 'account-group-outline', role: 'sharing' },
+  { label: 'Payments', href: 'https://accounts.oxy.so/payments', icon: 'wallet-outline', role: 'payments' },
 ]
 
 /* ─── Grouped menu items ─── */
-const menuItems = [
-  { label: 'Settings', href: '/settings', external: false, stroke: '#4285F4', bg: '#e8f0fe', d: 'M8 10a2 2 0 100-4 2 2 0 000 4zM12.7 10.1a1 1 0 00.2 1.1l.03.03a1.22 1.22 0 11-1.72 1.72l-.03-.03a1 1 0 00-1.1-.2 1 1 0 00-.61.92v.09a1.22 1.22 0 11-2.44 0v-.05a1 1 0 00-.65-.91 1 1 0 00-1.1.2l-.03.03a1.22 1.22 0 11-1.72-1.72l.03-.03a1 1 0 00.2-1.1 1 1 0 00-.92-.61h-.09a1.22 1.22 0 110-2.44h.05a1 1 0 00.91-.65 1 1 0 00-.2-1.1l-.03-.03A1.22 1.22 0 114.97 3.5l.03.03a1 1 0 001.1.2h.05a1 1 0 00.61-.92v-.09a1.22 1.22 0 112.44 0v.05a1 1 0 00.65.91 1 1 0 001.1-.2l.03-.03a1.22 1.22 0 111.72 1.72l-.03.03a1 1 0 00-.2 1.1v.05a1 1 0 00.92.61h.09a1.22 1.22 0 010 2.44h-.05a1 1 0 00-.91.65z' },
-  { label: 'Manage account', href: 'https://accounts.oxy.so', external: true, stroke: '#34A853', bg: '#e6f4ea', d: 'M12 14v-1.33A2.67 2.67 0 009.33 10H6.67A2.67 2.67 0 004 12.67V14M8 7.33A2.67 2.67 0 108 2a2.67 2.67 0 000 5.33z' },
+const menuItems: { label: string; href: string; external: boolean; icon: IconName; role: IconRole }[] = [
+  { label: 'Settings', href: '/settings', external: false, icon: 'cog-outline', role: 'home' },
+  { label: 'Manage account', href: 'https://accounts.oxy.so', external: true, icon: 'account-cog-outline', role: 'personal' },
 ]
 
 export default function AccountPanel() {
   const { isOpen, close } = useAccountPanel()
   const { user, signOut } = useAuth()
   const location = useLocation()
+  const { mode, colors } = useTheme()
 
   // Derived-state pattern: close the panel on route change without useEffect.
   // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
@@ -83,6 +121,7 @@ export default function AccountPanel() {
   }, [close])
 
   const displayName = user?.name.displayName ?? ''
+  const iconColor = (role: IconRole) => ICON_COLORS[role][mode]
 
   return (
     <>
@@ -101,9 +140,7 @@ export default function AccountPanel() {
           {/* Close */}
           <div className="flex justify-end px-4 pt-4">
             <button onClick={close} className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface hover:text-foreground" aria-label="Close panel">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" fill="none">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="m12.5 5.5-7 7m7 0-7-7" />
-              </svg>
+              <MaterialCommunityIcons name="close" size={18} color={colors.textSecondary} />
             </button>
           </div>
 
@@ -130,9 +167,7 @@ export default function AccountPanel() {
             <div className="flex gap-1.5 overflow-x-auto px-4 pb-1 hide-scrollbar">
               {quickActions.map((a) => (
                 <a key={a.label} href={a.href} target="_blank" rel="noopener noreferrer" className={chipClass}>
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full" style={{ backgroundColor: a.bg }}>
-                    <svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke={a.stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={a.d} /></svg>
-                  </div>
+                  <IconBadge name={a.icon} color={iconColor(a.role)} />
                   <span className="whitespace-nowrap">{a.label}</span>
                 </a>
               ))}
@@ -142,18 +177,14 @@ export default function AccountPanel() {
           {/* ─── Account info grid ─── */}
           <div className="grid grid-cols-2 gap-3 px-4 pb-4">
             <div className="rounded-2xl border border-border p-4">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full" style={{ backgroundColor: '#e6f4ea' }}>
-                <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="#34A853" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13.5 15.75v-1.5a3 3 0 00-3-3h-3a3 3 0 00-3 3v1.5M9 8.25a3 3 0 100-6 3 3 0 000 6z" /></svg>
-              </div>
+              <IconBadge name="account-outline" color={iconColor('personal')} size={36} />
               <div className="mt-4">
                 <div className="text-[11px] font-medium text-muted-foreground">Full name</div>
                 <div className="mt-0.5 text-base font-bold text-foreground">{displayName || '—'}</div>
               </div>
             </div>
             <div className="rounded-2xl border border-border p-4">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full" style={{ backgroundColor: '#e8f0fe' }}>
-                <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="#4285F4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v12M2 8h12" /><circle cx="8" cy="8" r="6" /></svg>
-              </div>
+              <IconBadge name="at" color={iconColor('personal')} size={36} />
               <div className="mt-4">
                 <div className="text-[11px] font-medium text-muted-foreground">Username</div>
                 <div className="mt-0.5 text-base font-bold text-foreground">{user?.username ? `@${user.username}` : '—'}</div>
@@ -161,47 +192,39 @@ export default function AccountPanel() {
             </div>
           </div>
 
-          {/* ─── Grouped menu section ─── */}
-          <div className="flex flex-1 flex-col px-4 pb-4">
-            <div className="text-sm font-semibold text-foreground mb-2">Account</div>
-            <div className="rounded-2xl border border-border overflow-hidden">
+          {/* ─── Grouped menu sections (Bloom chrome, real anchors as rows) ─── */}
+          <div className="flex-1 pb-4">
+            <SettingsListGroup title="Account">
               {menuItems.map((item) =>
                 item.external ? (
                   <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" className={groupItemClass}>
-                    <IconCircle bg={item.bg}>
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke={item.stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={item.d} /></svg>
-                    </IconCircle>
+                    <IconBadge name={item.icon} color={iconColor(item.role)} />
                     <span>{item.label}</span>
-                    <Chevron />
+                    <Chevron color={colors.textTertiary} />
                   </a>
                 ) : (
                   <Link key={item.label} to={item.href} className={groupItemClass}>
-                    <IconCircle bg={item.bg}>
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke={item.stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={item.d} /></svg>
-                    </IconCircle>
+                    <IconBadge name={item.icon} color={iconColor(item.role)} />
                     <span>{item.label}</span>
-                    <Chevron />
+                    <Chevron color={colors.textTertiary} />
                   </Link>
                 )
               )}
               {ADMIN_USERNAMES.includes(user?.username ?? '') && (
                 <Link to="/admin" className={groupItemClass}>
-                  <IconCircle bg="#fef7e0">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#FBBC04" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 4.5h12M2 8h12M2 11.5h8" /></svg>
-                  </IconCircle>
+                  <IconBadge name="shield-account-outline" color={iconColor('payments')} />
                   <span>Admin</span>
-                  <Chevron />
+                  <Chevron color={colors.textTertiary} />
                 </Link>
               )}
-            </div>
-          </div>
+            </SettingsListGroup>
 
-          {/* ─── Sign out ─── */}
-          <div className="border-t border-border p-4">
-            <button onClick={() => { signOut(); close() }} className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 14H3.33A1.33 1.33 0 012 12.67V3.33A1.33 1.33 0 013.33 2H6M10.67 11.33L14 8l-3.33-3.33M14 8H6" /></svg>
-              Sign out
-            </button>
+            <SettingsListGroup>
+              <button onClick={() => { signOut(); close() }} className={groupItemClass} style={{ color: colors.error }}>
+                <IconBadge name="logout" color={iconColor('sharing')} />
+                <span>Sign out</span>
+              </button>
+            </SettingsListGroup>
           </div>
         </div>
       </div>
