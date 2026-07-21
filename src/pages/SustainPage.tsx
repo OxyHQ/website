@@ -1,4 +1,5 @@
 import { Sparkles, CircleDollarSign, Megaphone } from 'lucide-react'
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -370,13 +371,13 @@ export default function SustainPage() {
                   <div className="mt-10">
                     {fundingPending && (
                       <div className="flex flex-col gap-6">
-                        <div className="h-10 w-3/4 animate-pulse rounded-lg bg-muted" />
-                        <div className="h-3 w-full animate-pulse rounded-full bg-muted" />
+                        <Skeleton.Box width="75%" height={40} />
+                        <Skeleton.Pill size={12} style={{ width: '100%' }} />
                         <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
                           {Array.from({ length: 4 }).map((_, i) => (
                             <div key={i} className="flex flex-col items-center gap-2">
-                              <div className="h-10 w-24 animate-pulse rounded-lg bg-muted" />
-                              <div className="h-4 w-20 animate-pulse rounded bg-muted" />
+                              <Skeleton.Box width={96} height={40} />
+                              <Skeleton.Box width={80} height={16} borderRadius={4} />
                             </div>
                           ))}
                         </div>

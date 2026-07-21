@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import * as Skeleton from "@oxyhq/bloom/skeleton";
 import type { InfraStatusNode, ActivityEvent } from "../../api/hooks";
 
 const DottedMap = lazy(() => import("./DottedMap"));
@@ -13,7 +14,7 @@ export default function MapContainer({ activeCountries, infraStatus, activityEve
   return (
     <Suspense
       fallback={
-        <div className="w-full h-[560px] bg-background animate-pulse rounded-md" />
+        <Skeleton.Box width="100%" height={560} borderRadius={6} />
       }
     >
       <DottedMap

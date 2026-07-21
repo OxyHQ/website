@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import { MessageCircle, FileText, Lock } from 'lucide-react'
 import { useUserActivity, useUserProfile, useNewsroomPosts } from '../../api/hooks'
 
@@ -132,11 +133,11 @@ export default function ProfileActivity({ username, userId }: ProfileActivityPro
             {[0, 1, 2].map((i) => (
               <div key={i} className="border-b border-border px-1 py-4">
                 <div className="flex gap-3">
-                  <div className="h-4 w-4 shrink-0 animate-pulse rounded bg-surface" />
+                  <Skeleton.Box width={16} height={16} borderRadius={4} />
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 w-full animate-pulse rounded bg-surface" />
-                    <div className="h-4 w-2/3 animate-pulse rounded bg-surface" />
-                    <div className="h-3 w-20 animate-pulse rounded bg-surface" />
+                    <Skeleton.Box width="100%" height={16} borderRadius={4} />
+                    <Skeleton.Box width="66%" height={16} borderRadius={4} />
+                    <Skeleton.Box width={80} height={12} borderRadius={4} />
                   </div>
                 </div>
               </div>

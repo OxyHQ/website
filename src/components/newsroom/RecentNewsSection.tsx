@@ -1,3 +1,4 @@
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import { NewsCardRow } from './NewsCard'
 import SectionHeaderWithLink from './SectionHeaderWithLink'
 import { useNewsroomPosts } from '../../api/hooks'
@@ -40,7 +41,7 @@ export default function RecentNewsSection({
 
       <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
         {isPending && [1, 2].map((i) => (
-          <div key={i} className="h-32 animate-pulse rounded-2xl bg-surface" />
+          <Skeleton.Box key={i} width="100%" height={128} borderRadius={16} />
         ))}
         {recentNewsArticles.map((article) => (
           <NewsCardRow key={article._id} article={article} />

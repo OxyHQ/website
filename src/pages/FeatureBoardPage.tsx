@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '@oxyhq/services'
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import { ExternalLink } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
@@ -99,13 +100,13 @@ export default function FeatureBoardPage() {
                 {[1, 2, 3, 4].map((i) => (
                   <div key={i} className="flex gap-4 rounded-xl border border-border p-4">
                     <div className="flex flex-col items-center gap-1">
-                      <div className="h-10 w-10 animate-pulse rounded-lg bg-surface" />
-                      <div className="h-3 w-6 animate-pulse rounded bg-surface" />
+                      <Skeleton.Box width={40} height={40} />
+                      <Skeleton.Box width={24} height={12} borderRadius={4} />
                     </div>
                     <div className="flex-1 space-y-2">
-                      <div className="h-5 w-2/3 animate-pulse rounded bg-surface" />
-                      <div className="h-4 w-full animate-pulse rounded bg-surface" />
-                      <div className="h-3 w-1/3 animate-pulse rounded bg-surface" />
+                      <Skeleton.Box width="66%" height={20} borderRadius={4} />
+                      <Skeleton.Box width="100%" height={16} borderRadius={4} />
+                      <Skeleton.Box width="33%" height={12} borderRadius={4} />
                     </div>
                   </div>
                 ))}

@@ -1,5 +1,6 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import { useOxy } from '@oxyhq/services'
 import { getNormalizedUserHandle, type User } from '@oxyhq/core'
 import { Avatar } from '@oxyhq/bloom/avatar'
@@ -44,10 +45,10 @@ function ListSkeleton() {
       {[0, 1, 2, 3, 4].map((i) => (
         <div key={i} className="border-b border-border px-1 py-4">
           <div className="flex gap-3">
-            <div className="h-12 w-12 shrink-0 animate-pulse rounded-full bg-surface" />
+            <Skeleton.Circle size={48} />
             <div className="flex-1 space-y-2">
-              <div className="h-4 w-32 animate-pulse rounded bg-surface" />
-              <div className="h-4 w-24 animate-pulse rounded bg-surface" />
+              <Skeleton.Box width={128} height={16} borderRadius={4} />
+              <Skeleton.Box width={96} height={16} borderRadius={4} />
             </div>
           </div>
         </div>

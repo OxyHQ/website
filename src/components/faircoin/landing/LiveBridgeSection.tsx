@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import { motion } from 'framer-motion'
 import { ArrowRight, Activity, ShieldCheck, Coins } from 'lucide-react'
 import { formatUnits } from 'viem'
@@ -257,11 +258,9 @@ function PegHealthTile({
 
 function Shimmer({ width = '4rem' }: { width?: string }) {
   return (
-    <span
-      aria-hidden
-      className="inline-block h-7 animate-pulse rounded-md bg-muted align-middle"
-      style={{ width }}
-    />
+    <span aria-hidden className="inline-block align-middle" style={{ width }}>
+      <Skeleton.Box width="100%" height={28} borderRadius={6} />
+    </span>
   )
 }
 

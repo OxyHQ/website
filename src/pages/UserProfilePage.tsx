@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth } from '@oxyhq/services'
 import { getNormalizedUserHandle } from '@oxyhq/core'
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -15,32 +16,32 @@ function ProfileSkeleton() {
     <div>
       {/* Avatar + button row */}
       <div className="flex items-center justify-between">
-        <div className="h-20 w-20 animate-pulse rounded-full bg-surface" />
-        <div className="h-9 w-28 animate-pulse rounded-full bg-surface" />
+        <Skeleton.Circle size={80} />
+        <Skeleton.Pill size={36} style={{ width: 112 }} />
       </div>
       {/* Name */}
       <div className="mt-2 space-y-1.5">
-        <div className="h-6 w-40 animate-pulse rounded bg-surface" />
-        <div className="h-4 w-28 animate-pulse rounded bg-surface" />
+        <Skeleton.Box width={160} height={24} borderRadius={4} />
+        <Skeleton.Box width={112} height={16} borderRadius={4} />
       </div>
       {/* Bio */}
       <div className="mt-3 space-y-1.5">
-        <div className="h-4 w-full animate-pulse rounded bg-surface" />
-        <div className="h-4 w-2/3 animate-pulse rounded bg-surface" />
+        <Skeleton.Box width="100%" height={16} borderRadius={4} />
+        <Skeleton.Box width="66%" height={16} borderRadius={4} />
       </div>
       {/* Joined */}
-      <div className="mt-3 h-4 w-24 animate-pulse rounded bg-surface" />
+      <Skeleton.Box width={96} height={16} borderRadius={4} style={{ marginTop: 12 }} />
       {/* Stats */}
       <div className="mt-3 flex gap-4">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="h-4 w-20 animate-pulse rounded bg-surface" />
+          <Skeleton.Box key={i} width={80} height={16} borderRadius={4} />
         ))}
       </div>
       {/* Tabs */}
       <div className="mt-5 flex border-b border-border">
         {[0, 1].map((i) => (
           <div key={i} className="flex-1 py-3.5">
-            <div className="mx-auto h-4 w-20 animate-pulse rounded bg-surface" />
+            <Skeleton.Box width={80} height={16} borderRadius={4} style={{ alignSelf: 'center' }} />
           </div>
         ))}
       </div>
@@ -49,10 +50,10 @@ function ProfileSkeleton() {
         {[0, 1, 2].map((i) => (
           <div key={i} className="border-b border-border px-1 py-4">
             <div className="flex gap-3">
-              <div className="h-4 w-4 shrink-0 animate-pulse rounded bg-surface" />
+              <Skeleton.Box width={16} height={16} borderRadius={4} />
               <div className="flex-1 space-y-2">
-                <div className="h-4 w-full animate-pulse rounded bg-surface" />
-                <div className="h-3 w-24 animate-pulse rounded bg-surface" />
+                <Skeleton.Box width="100%" height={16} borderRadius={4} />
+                <Skeleton.Box width={96} height={12} borderRadius={4} />
               </div>
             </div>
           </div>

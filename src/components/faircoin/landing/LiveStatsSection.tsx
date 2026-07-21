@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import { formatUnits } from 'viem'
 import { useReadContract } from 'wagmi'
 import { base } from 'wagmi/chains'
@@ -467,11 +468,9 @@ function PegHealthTile({ healthy, snapshotAt, isLoading }: PegHealthTileProps) {
 
 function Shimmer({ width = '4rem' }: { width?: string }) {
   return (
-    <span
-      aria-hidden
-      className="inline-block h-6 animate-pulse rounded-md bg-muted align-middle"
-      style={{ width }}
-    />
+    <span aria-hidden className="inline-block align-middle" style={{ width }}>
+      <Skeleton.Box width="100%" height={24} borderRadius={6} />
+    </span>
   )
 }
 

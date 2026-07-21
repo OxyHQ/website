@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -183,18 +184,18 @@ function SkeletonCard() {
   return (
     <div className="overflow-hidden rounded-3xl border border-border bg-surface/30">
       <header className="flex items-center justify-between border-b border-border px-5 py-3">
-        <div className="h-3 w-32 animate-pulse rounded bg-muted-foreground/20" />
-        <div className="h-5 w-24 animate-pulse rounded-full bg-muted-foreground/20" />
+        <Skeleton.Box width={128} height={12} borderRadius={4} />
+        <Skeleton.Pill size={20} style={{ width: 96 }} />
       </header>
       <div className="divide-y divide-border">
         {[0, 1, 2].map((i) => (
           <div key={i} className="flex items-center gap-4 px-5 py-4">
-            <div className="h-11 w-11 shrink-0 animate-pulse rounded-2xl bg-muted-foreground/20" />
+            <Skeleton.Box width={44} height={44} borderRadius={16} />
             <div className="flex-1">
-              <div className="h-3 w-32 animate-pulse rounded bg-muted-foreground/20" />
-              <div className="mt-2 h-3 w-64 animate-pulse rounded bg-muted-foreground/10" />
+              <Skeleton.Box width={128} height={12} borderRadius={4} />
+              <Skeleton.Box width={256} height={12} borderRadius={4} blend style={{ marginTop: 8 }} />
             </div>
-            <div className="h-5 w-20 animate-pulse rounded-full bg-muted-foreground/20" />
+            <Skeleton.Pill size={20} style={{ width: 80 }} />
           </div>
         ))}
       </div>

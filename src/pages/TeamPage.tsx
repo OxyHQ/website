@@ -1,3 +1,4 @@
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -68,9 +69,9 @@ export default function TeamPage() {
                   <div className="grid gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                       <div key={i} className="bg-background p-8">
-                        <div className="size-16 animate-pulse rounded-full bg-surface" />
-                        <div className="mt-4 h-4 w-32 animate-pulse rounded bg-surface" />
-                        <div className="mt-2 h-3 w-24 animate-pulse rounded bg-surface" />
+                        <Skeleton.Circle size={64} />
+                        <Skeleton.Box width={128} height={16} borderRadius={4} style={{ marginTop: 16 }} />
+                        <Skeleton.Box width={96} height={12} borderRadius={4} style={{ marginTop: 8 }} />
                       </div>
                     ))}
                   </div>

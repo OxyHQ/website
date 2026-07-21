@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import Button from '../ui/Button'
 import { HorizontalLine } from '../ui/GridDecoration'
 import { useJobs, type Job } from '../../api/hooks'
@@ -123,7 +124,7 @@ export default function OpenPositionsSection() {
               {isPending && (
                 <div className="flex flex-col gap-4 py-16 px-8">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-14 animate-pulse rounded-lg bg-surface" />
+                    <Skeleton.Box key={i} width="100%" height={56} />
                   ))}
                 </div>
               )}

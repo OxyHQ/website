@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import { NewsCardFeatured, NewsCardGrid } from './NewsCard'
 import { useNewsroomPosts } from '../../api/hooks'
 import { newsCategories, type NewsCategory } from '../../data/newsroom'
@@ -88,14 +89,14 @@ export default function NewsroomHeroSection({ title = 'Newsroom', category }: Ne
       <div className="mt-8 grid w-full grid-cols-1 gap-4 md:mt-12 lg:grid-cols-4">
         {/* Left — featured card (sticky on desktop) */}
         <div className="mb-4 self-start lg:sticky lg:top-[80px] lg:col-span-3 lg:mb-0">
-          {isLoading && <div className="aspect-[4/5] animate-pulse rounded-2xl bg-surface" />}
+          {isLoading && <Skeleton.Box width="100%" borderRadius={16} style={{ aspectRatio: 4 / 5 }} />}
           {!isLoading && featuredArticle && <NewsCardFeatured article={featuredArticle} />}
         </div>
 
         {/* Right — sidebar cards (desktop: stacked 1-col, hidden on mobile) */}
         <div className="hidden gap-x-1 gap-y-8 lg:grid lg:grid-cols-1 lg:px-0">
           {isLoading && [1, 2, 3].map((i) => (
-            <div key={i} className="aspect-square animate-pulse rounded-2xl bg-surface" />
+            <Skeleton.Box key={i} width="100%" borderRadius={16} style={{ aspectRatio: 1 }} />
           ))}
           {sidebarArticles.map((article) => (
             <NewsCardGrid key={article._id} article={article} />
@@ -105,7 +106,7 @@ export default function NewsroomHeroSection({ title = 'Newsroom', category }: Ne
         {/* Mobile/tablet fallback — sidebar cards in row */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-3 lg:hidden">
           {isLoading && [1, 2, 3].map((i) => (
-            <div key={i} className="aspect-square animate-pulse rounded-2xl bg-surface" />
+            <Skeleton.Box key={i} width="100%" borderRadius={16} style={{ aspectRatio: 1 }} />
           ))}
           {sidebarArticles.map((article) => (
             <NewsCardGrid key={article._id} article={article} />

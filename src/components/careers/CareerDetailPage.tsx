@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import Button from '../ui/Button'
 import { HorizontalLine, VerticalLine } from '../ui/GridDecoration'
 import { useJob, useJobs, type Job } from '../../api/hooks'
@@ -257,12 +258,12 @@ export default function CareerDetailContent() {
     return (
       <div className="container py-40">
         <div className="mx-auto max-w-2xl space-y-6">
-          <div className="h-8 w-48 animate-pulse rounded-lg bg-surface" />
-          <div className="h-12 w-full animate-pulse rounded-lg bg-surface" />
-          <div className="h-6 w-64 animate-pulse rounded-lg bg-surface" />
+          <Skeleton.Box width={192} height={32} />
+          <Skeleton.Box width="100%" height={48} />
+          <Skeleton.Box width={256} height={24} />
           <div className="mt-10 space-y-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-4 w-full animate-pulse rounded bg-surface" />
+              <Skeleton.Box key={i} width="100%" height={16} borderRadius={4} />
             ))}
           </div>
         </div>
