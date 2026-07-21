@@ -53,7 +53,7 @@ function AvatarWithAnimation({ avatarSource, avatarColor, size }: { avatarSource
 
 /* ─── Shared styles ─── */
 const chipClass = 'flex shrink-0 items-center gap-1.5 rounded-full border border-border px-2 py-1.5 text-[13px] font-medium text-foreground transition-colors hover:bg-surface'
-const groupItemClass = 'flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left text-[14px] text-foreground transition-colors hover:bg-surface'
+const groupItemClass = 'flex w-full cursor-pointer items-center gap-3 p-4 text-left text-[14px] text-foreground transition-colors hover:bg-surface'
 
 /**
  * Solid-colour circular badge with a MaterialCommunityIcons glyph, matching the
