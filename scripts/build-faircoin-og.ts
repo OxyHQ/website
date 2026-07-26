@@ -27,7 +27,7 @@ import satori from 'satori'
 import { Resvg } from '@resvg/resvg-js'
 
 const WEBSITE_ROOT = path.resolve(import.meta.dir, '..')
-const FONTS_DIR = path.join(WEBSITE_ROOT, 'public', 'fonts')
+const BUILD_FONTS_DIR = path.join(WEBSITE_ROOT, 'scripts', 'assets', 'fonts')
 const OUTPUT_PATH = path.join(WEBSITE_ROOT, 'public', 'og-faircoin.png')
 
 const CARD_WIDTH = 1200
@@ -66,10 +66,10 @@ interface BrandAssets {
 }
 
 async function loadFontBytes(): Promise<{ title: Buffer; body: Buffer }> {
-  const bold = path.join(FONTS_DIR, 'phudu', 'Phudu-Bold.ttf')
-  const regular = path.join(FONTS_DIR, 'phudu', 'Phudu-Regular.ttf')
+  const bold = path.join(BUILD_FONTS_DIR, 'phudu', 'Phudu-Bold.ttf')
+  const regular = path.join(BUILD_FONTS_DIR, 'phudu', 'Phudu-Regular.ttf')
   if (!existsSync(bold) || !existsSync(regular)) {
-    throw new Error(`[faircoin-og] missing Phudu font files in ${FONTS_DIR}/phudu/`)
+    throw new Error(`[faircoin-og] missing Phudu TrueType files in ${BUILD_FONTS_DIR}/phudu/`)
   }
   const [titleFont, bodyFont] = await Promise.all([readFile(bold), readFile(regular)])
   return { title: titleFont, body: bodyFont }

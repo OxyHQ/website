@@ -52,6 +52,7 @@ const ca: Translations = {
     yes: 'Sí',
     no: 'No',
     openMenu: 'Obre el menú',
+    accountMenu: 'Menú del compte',
     closeMenu: 'Tanca el menú',
     changeLanguage: "Canvia d'idioma",
     dismissBanner: 'Descarta el bàner',

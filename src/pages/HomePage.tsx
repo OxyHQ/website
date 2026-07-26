@@ -100,10 +100,29 @@ function HeroSection() {
       onViewportLeave={() => setHeroVisible(false)}
       viewport={{ amount: 0 }}
     >
-      {/* Background video */}
+      {/*
+        The poster is what the browser paints first and is almost always the
+        LCP element, but it is discovered only once the video element is parsed
+        and laid out. This starts the fetch earlier, at high priority. React 19
+        hoists `<link>` into <head> itself, so this needs no helmet — and it
+        follows the CMS-resolved `poster`, so an editor swapping the hero image
+        can't leave a stale preload pointing at the old file.
+      */}
+      <link rel="preload" as="image" href={poster} fetchPriority="high" />
+
+      {/* Background video — decorative; the headline beside it carries the meaning. */}
       <div className="absolute inset-0 z-[1] overflow-hidden [transform:translateZ(0)]">
-        <video autoPlay loop muted playsInline preload="metadata" poster={poster} className="size-full object-cover object-center">
-          <source src={webm} type="video/webm" />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          aria-hidden="true"
+          preload="none"
+          poster={poster}
+          className="size-full object-cover object-center"
+        >
+          {webm && <source src={webm} type="video/webm" />}
           <source src={mp4} type="video/mp4" />
         </video>
         <div className="hero-oxy-overlay absolute inset-0" />
@@ -527,9 +546,14 @@ function FeaturesSection() {
     <section className="py-0">
       <div className="agents-features-section">
         <div className="agents-features-bg">
+          {/* Decorative: the section's meaning is carried by the text below it,
+              so an alt string here would just be noise in a screen reader. */}
           <img
             src={`${IMG}/agents-features-bg.webp`}
-            alt="Agents features bg"
+            alt=""
+            aria-hidden="true"
+            width={2400}
+            height={2943}
             style={{ objectPosition: '50% 0%' }}
             loading="lazy"
             decoding="async"
@@ -538,7 +562,10 @@ function FeaturesSection() {
         <div className="agents-features-icons">
           <img
             src={`${IMG}/agents-features-icons.svg`}
-            alt="Agents features icons"
+            alt=""
+            aria-hidden="true"
+            width={1512}
+            height={1145}
             style={{ objectPosition: '50% 50%' }}
             loading="lazy"
             decoding="async"
@@ -728,7 +755,9 @@ function StatsAndTestimonialsSection() {
                     <div
                       className={`relative overflow-hidden rounded-3xl aspect-[4/5] max-[950px]:aspect-[4/6] ${t.light ? 'text-white' : 'text-foreground/80'}`}
                     >
-                      <img src={t.bg} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" width={800} height={1000} loading="eager" decoding="async" />
+                      {/* Below the fold, inside a carousel — `eager` made every
+                          slide's background a blocking request on first paint. */}
+                      <img src={t.bg} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" width={800} height={1000} loading="lazy" decoding="async" />
                       <div className="absolute inset-0 bg-black/10" />
                       <div className="relative z-10 flex flex-col justify-between gap-12 px-7 py-8 max-[950px]:p-8 h-full">
                         <div>

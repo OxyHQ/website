@@ -6,8 +6,6 @@
  * Set a flag to `true` once the section has real, verified data.
  */
 
-export const ADMIN_USERNAMES = ['oxy', 'nate']
-
 /**
  * Canonical company identity. Use these everywhere instead of hardcoding
  * names, taglines, or descriptions in copy. Oxy is an open-source ethical

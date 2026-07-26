@@ -7,7 +7,7 @@ import { useTheme } from '@oxyhq/bloom/theme'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useLottie } from 'lottie-react'
 import { useAccountPanel } from '../../contexts/AccountPanelContext'
-import { ADMIN_USERNAMES } from '../../constants'
+import { useAdminAccess } from '../../hooks/useAdminAccess'
 import welcomeAnimation from '../../assets/lottie/welcomeheader_background.json'
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name']
@@ -98,6 +98,7 @@ const menuItems: { label: string; href: string; external: boolean; icon: IconNam
 export default function AccountPanel() {
   const { isOpen, close } = useAccountPanel()
   const { user, signOut } = useAuth()
+  const { isAdmin } = useAdminAccess()
   const location = useLocation()
   const { mode, colors } = useTheme()
 
@@ -210,7 +211,7 @@ export default function AccountPanel() {
                   </Link>
                 )
               )}
-              {ADMIN_USERNAMES.includes(user?.username ?? '') && (
+              {isAdmin && (
                 <Link to="/admin" className={groupItemClass}>
                   <IconBadge name="shield-account-outline" color={iconColor('payments')} />
                   <span>Admin</span>

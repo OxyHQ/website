@@ -1,31 +1,37 @@
-/* Phudu — FAIRWallet's display font, self-hosted for the FairCoin surface. */
+/* Phudu — FAIRWallet's display font, self-hosted for the FairCoin surface.
+ *
+ * WOFF2 only. These shipped as TrueType, which is ~3x the transfer size for
+ * identical glyphs (262 kB → 82 kB across the four weights) and which the
+ * `/*.woff2` immutable-cache rule in `public/_headers` did not match, so they
+ * were also re-fetched more often than they needed to be. Every browser that
+ * can run this app supports WOFF2, so there is no fallback source to keep. */
 @font-face {
   font-family: 'Phudu';
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url('/fonts/phudu/Phudu-Light.ttf') format('truetype');
+  src: url('/fonts/phudu/Phudu-Light.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Phudu';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/phudu/Phudu-Regular.ttf') format('truetype');
+  src: url('/fonts/phudu/Phudu-Regular.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Phudu';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/phudu/Phudu-Bold.ttf') format('truetype');
+  src: url('/fonts/phudu/Phudu-Bold.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Phudu';
   font-style: normal;
   font-weight: 900;
   font-display: swap;
-  src: url('/fonts/phudu/Phudu-Black.ttf') format('truetype');
+  src: url('/fonts/phudu/Phudu-Black.woff2') format('woff2');
 }
 
 /* FairCoin theme — applies Bloom's "faircoin" color preset at the layout level.

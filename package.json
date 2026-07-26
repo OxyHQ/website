@@ -10,8 +10,9 @@
     "dev:client": "vite",
     "prebuild": "bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts && bun scripts/build-help-og-images.ts && rm -rf node_modules/.tmp",
     "build": "tsc -b && vite build",
-    "postbuild": "bun scripts/build-docs-search-index.ts && bun scripts/prerender.ts && bun scripts/run-pagefind.ts",
+    "postbuild": "bun scripts/build-docs-search-index.ts && bun scripts/prerender.ts && bun scripts/build-csp-headers.ts && bun scripts/run-pagefind.ts",
     "prerender": "bun scripts/prerender.ts",
+    "analyze": "ANALYZE=1 vite build && echo \"open node_modules/.tmp/bundle-stats.html\"",
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "bun server/index.ts",
@@ -24,6 +25,7 @@
     "sync-changelog": "bun scripts/sync-changelog.ts",
     "build:help-og": "bun scripts/build-help-og-images.ts",
     "build:faircoin-og": "bun scripts/build-faircoin-og.ts",
+    "optimize-media": "bun scripts/optimize-media.ts",
     "render:bloom-thumbnails": "bun scripts/render-bloom-thumbnails.ts"
   },
   "dependencies": {
@@ -111,6 +113,7 @@
     "pagefind": "^1.5.2",
     "playwright": "^1.61.1",
     "remark-mdx-frontmatter": "^5.2.0",
+    "rollup-plugin-visualizer": "^7.0.1",
     "satori": "^0.28.0",
     "sharp": "^0.35.3",
     "svgo": "^4.0.2",

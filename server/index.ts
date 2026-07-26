@@ -29,7 +29,6 @@ import seoRouter from './routes/seo.js'
 import mcpTokensRouter from './routes/mcp-tokens.js'
 import localesRouter from './routes/locales.js'
 import translationsRouter from './routes/translations.js'
-import sitemapRouter from './routes/sitemap.js'
 import backupRouter from './routes/backup.js'
 import uploadRouter from './routes/upload.js'
 import likesRouter from './routes/likes.js'
@@ -41,6 +40,7 @@ import teamRouter from './routes/team.js'
 import mediaRouter from './routes/media.js'
 import referralsRouter from './routes/referrals.js'
 import fundingRouter from './routes/funding.js'
+import adminAccessRouter from './routes/adminAccess.js'
 import { mountMcp } from './mcp.js'
 
 const app = express()
@@ -100,6 +100,9 @@ app.use('/api/translations', translationsRouter)
 app.use('/api/backup', backupRouter)
 app.use('/api/upload', uploadRouter)
 
+// Admin identity — the SPA's admin gate asks this instead of matching usernames.
+app.use('/api/admin', adminAccessRouter)
+
 // Social features
 app.use('/api/likes', likesRouter)
 app.use('/api/comments', commentsRouter)
@@ -109,8 +112,11 @@ app.use('/api/badges', badgesRouter)
 app.use('/api/referrals', referralsRouter)
 app.use('/api/funding-progress', fundingRouter)
 
-// Sitemap
-app.use('/', sitemapRouter)
+// Sitemap: generated at build time into `dist/sitemap.xml` by
+// `scripts/prerender.ts`, from the exact route list it renders. It is not
+// served from here — `robots.txt` points at `https://oxy.so/sitemap.xml`, and a
+// second, shorter route list on this origin could advertise URLs the build
+// never emitted. See the header of `scripts/sitemap.ts`.
 
 // Platform stats — proxy to Oxy API
 app.get('/api/platform-stats', async (_req, res) => {
@@ -223,8 +229,33 @@ app.get('/api/infra-status', async (_req, res) => {
   }
 })
 
-// Health check
+/**
+ * Liveness. Answers as soon as the process is listening, deliberately without
+ * touching MongoDB.
+ *
+ * This is the probe the load balancer must be pointed at. Making liveness
+ * depend on the database is what turns a database blip into a total outage: the
+ * probe fails, the orchestrator kills the task, the replacement hits the same
+ * database and is killed too, and the load balancer ends up with no healthy
+ * targets and serves 503 for everything — including after the database
+ * recovers, because nothing is left alive to notice.
+ */
 app.get('/api/health', (_req, res) => res.json({ ok: true }))
+
+/**
+ * Readiness — can this process actually serve data right now?
+ *
+ * Separate from liveness on purpose. Use this to decide whether to send traffic
+ * (or to alert), never to decide whether to kill the task. `readyState === 1`
+ * is mongoose's "connected".
+ */
+app.get('/api/ready', (_req, res) => {
+  const connected = mongoose.connection.readyState === 1
+  res.status(connected ? 200 : 503).json({
+    ready: connected,
+    db: mongoose.STATES[mongoose.connection.readyState] ?? 'unknown',
+  })
+})
 
 // Validation error handler — must come after all routes so it catches
 // ValidationError thrown by route handlers via the `validate()` helper.
@@ -300,24 +331,62 @@ async function migrateDropStaleTranslationIndex() {
   console.log(`[migration] Dropped stale translations index ${STALE_INDEX}`)
 }
 
-async function start() {
-  await mongoose.connect(config.mongoUri)
-  console.log('Connected to MongoDB')
+/**
+ * Connect to MongoDB and run start-up migrations, retrying forever.
+ *
+ * Deliberately not awaited before `listen()`. Mongoose buffers commands issued
+ * before the connection is up and replays them once it is, so a request that
+ * arrives during a reconnect waits rather than failing — and `/api/health`
+ * answers throughout, which is what keeps the task alive long enough to get
+ * there.
+ *
+ * Backs off to a ceiling instead of hammering a database that is already
+ * struggling. There is no give-up case: giving up would mean exiting, and a
+ * process that exits on an unreachable database is a process that cannot
+ * recover when the database returns.
+ */
+async function connectWithRetry(): Promise<void> {
+  const MAX_DELAY_MS = 30_000
+  let attempt = 0
 
-  await migrateEcosystemDropdown()
-  await migrateProductCategoryRefs()
-  await migrateDropStaleTranslationIndex()
+  for (;;) {
+    try {
+      await mongoose.connect(config.mongoUri)
+      console.log('Connected to MongoDB')
 
-  startSyncInterval()
+      await migrateEcosystemDropdown()
+      await migrateProductCategoryRefs()
+      await migrateDropStaleTranslationIndex()
 
-  app.listen(config.port, () => {
-    console.log(`Server running on http://localhost:${config.port}`)
-  })
+      startSyncInterval()
+      return
+    } catch (err) {
+      attempt++
+      const delay = Math.min(1000 * 2 ** (attempt - 1), MAX_DELAY_MS)
+      console.error(
+        `MongoDB unavailable (attempt ${attempt}), retrying in ${delay}ms:`,
+        (err as Error).message,
+      )
+      await new Promise((resolve) => setTimeout(resolve, delay))
+    }
+  }
 }
 
-start().catch((err) => {
-  // Exit non-zero so the orchestrator replaces the task instead of leaving a
-  // booted-but-not-listening process alive.
-  console.error('Fatal: server failed to start:', err)
-  process.exit(1)
+/**
+ * Listen first, connect second.
+ *
+ * The previous order — connect, migrate, then listen — meant the process never
+ * opened a port until MongoDB answered and three migrations completed. A slow
+ * or unreachable database therefore failed the load balancer's health check,
+ * the orchestrator replaced the task, the replacement failed the same way, and
+ * the target group drained to zero: every route 503s, and the CORS headers go
+ * with them, so callers see an opaque CORS error rather than the outage. That
+ * state does not clear on its own once the database recovers.
+ *
+ * Opening the port first means an unreachable database degrades this service
+ * instead of removing it, and it heals by itself.
+ */
+app.listen(config.port, () => {
+  console.log(`Server listening on http://localhost:${config.port}`)
+  void connectWithRetry()
 })

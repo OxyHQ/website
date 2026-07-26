@@ -1,11 +1,11 @@
 import avatarNate from '../../assets/mention/avatar-nate.jpg'
 import avatarVecna from '../../assets/mention/avatar-vecna.png'
-import avatarAthina from '../../assets/mention/avatar-athina.png'
+import avatarAthina from '../../assets/mention/avatar-athina.jpg'
 import avatarJoan from '../../assets/mention/avatar-joan.jpg'
 import avatarOxy from '../../assets/mention/avatar-oxy.jpg'
 import postNate from '../../assets/mention/post-nate.jpg'
 import postOxy from '../../assets/mention/post-oxy.jpg'
-import postOxy2 from '../../assets/mention/post-oxy2.png'
+import postOxy2 from '../../assets/mention/post-oxy2.jpg'
 import postUpsideDown from '../../assets/mention/post-upsidedown.webp'
 
 export interface MentionPost {

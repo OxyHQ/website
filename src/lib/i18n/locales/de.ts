@@ -52,6 +52,7 @@ const de: Translations = {
     yes: 'Ja',
     no: 'Nein',
     openMenu: 'Menü öffnen',
+    accountMenu: 'Kontomenü',
     closeMenu: 'Menü schließen',
     changeLanguage: 'Sprache ändern',
     dismissBanner: 'Banner schließen',

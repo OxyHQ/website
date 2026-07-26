@@ -33,6 +33,11 @@ export const ManifestoSection: React.FC<ManifestoSectionProps> = ({ imagePaths =
   // intervals). Refs are synced in an effect rather than during render —
   // `addImage` is only ever invoked from timers, never synchronously during
   // the render→effect window, so the values it reads stay current.
+  //
+  // The assign-during-render shortcut is not available here: this project
+  // compiles with the React Compiler, whose `react-hooks/refs` rule rejects ref
+  // writes in the render body because the compiler is free to re-order and
+  // memoize that work. The effect is the correct form under that constraint.
   const widthRangeRef = useRef(widthRange);
   const imagePathsLengthRef = useRef(imagePaths.length);
   useEffect(() => {

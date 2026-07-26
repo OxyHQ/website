@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { MessageSquare, Pencil, Trash2, Eye, EyeOff, X, Check } from 'lucide-react'
 import { useAuth } from '@oxyhq/services'
 import { useEditComment, useDeleteComment, useModerateComment } from '../../api/hooks'
-import { ADMIN_USERNAMES } from '../../constants'
+import { useAdminAccess } from '../../hooks/useAdminAccess'
 import type { CommentData } from '../../api/hooks'
 
 const EDIT_WINDOW_MS = 15 * 60 * 1000
@@ -44,7 +44,9 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const isOwn = user?._id === comment.userId
-  const isAdmin = ADMIN_USERNAMES.includes(user?.username ?? '')
+  // Server-decided, like everywhere else. This only reveals the moderation
+  // controls; `server/routes/comments.ts` re-checks before acting on them.
+  const { isAdmin } = useAdminAccess()
   // Captured once at mount: whether the 15-minute edit window is still open.
   // Reading `Date.now()` directly in render is impure (unstable across
   // re-renders); a lazy initializer freezes it to the value the first render

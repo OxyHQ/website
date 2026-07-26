@@ -34,8 +34,28 @@
   Cache-Control: public, max-age=0, must-revalidate
 
 # Security headers
+#
+# The script-src below carries a placeholder token, not literal hashes.
+# `scripts/build-csp-headers.ts` runs in `postbuild`, reads the inline <script>
+# blocks out of the built `dist/index.html`, and substitutes their real sha256
+# hashes. Hand-written hashes would be a trap: editing an inline script without
+# remembering to update the header blocks it at the edge, and the failure mode
+# is a blank page in production with a console error nobody sees until a user
+# reports it. Deriving them from the artifact makes that impossible.
+#
+# The token is deliberately not spelled out in this comment — it must appear
+# exactly once in this file so the build can detect an unsubstituted header.
+#
+# Deliberately permissive where it has to be:
+#   style-src 'unsafe-inline'  — react-native-web writes inline styles at runtime
+#   connect-src https: wss:    — wallet RPC + WalletConnect relays are user-chosen
+#   img/media https:           — CMS media is served from cloud.oxy.so and elsewhere
+# The value is in `script-src`: no inline script runs unless it is one of the two
+# we shipped, which is the case XSS actually needs.
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; script-src 'self' __CSP_SCRIPT_HASHES__; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; connect-src 'self' https: wss:; worker-src 'self' blob:; frame-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests

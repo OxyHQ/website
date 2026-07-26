@@ -52,6 +52,7 @@ const ar: Translations = {
     yes: 'نعم',
     no: 'لا',
     openMenu: 'فتح القائمة',
+    accountMenu: 'قائمة الحساب',
     closeMenu: 'إغلاق القائمة',
     changeLanguage: 'تغيير اللغة',
     dismissBanner: 'إخفاء الشريط',

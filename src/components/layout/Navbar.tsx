@@ -620,8 +620,16 @@ export default function Navbar({
             <div className="flex items-center justify-self-end gap-x-2">
               {/* Mobile controls */}
               <div className="flex items-center gap-x-2 lg:hidden">
+              {/* The avatar is the only child of these toggles, and it renders
+                  no text, so without a label the button has no accessible name
+                  at all — Lighthouse's `button-name` audit fails outright. */}
               {!hideAuth && isAuthenticated && (
-                <button onClick={accountPanel.toggle} className="cursor-pointer">
+                <button
+                  onClick={accountPanel.toggle}
+                  className="cursor-pointer"
+                  aria-label={t('common.accountMenu')}
+                  aria-expanded={accountPanel.isOpen}
+                >
                   <Avatar source={user?.avatar} size={28} variant="thumb" placeholderColor={user?.color ?? undefined} />
                 </button>
               )}
@@ -673,7 +681,12 @@ export default function Navbar({
               {rightActions}
               {ctaButtons ?? (
                 hideAuth ? null : isAuthenticated ? (
-                  <button onClick={accountPanel.toggle} className="cursor-pointer">
+                  <button
+                    onClick={accountPanel.toggle}
+                    className="cursor-pointer"
+                    aria-label={t('common.accountMenu')}
+                    aria-expanded={accountPanel.isOpen}
+                  >
                     <Avatar
                       source={user?.avatar}
                       size={32}

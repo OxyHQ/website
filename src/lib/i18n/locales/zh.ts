@@ -52,6 +52,7 @@ const zh: Translations = {
     yes: '是',
     no: '否',
     openMenu: '打开菜单',
+    accountMenu: '账户菜单',
     closeMenu: '关闭菜单',
     changeLanguage: '更改语言',
     dismissBanner: '关闭横幅',

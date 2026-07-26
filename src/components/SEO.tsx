@@ -97,7 +97,10 @@ export default function SEO({
       <title>{fullTitle}</title>
       <meta name="description" content={metaDescription} />
       <link rel="canonical" href={canonicalUrl} />
-      <meta name="theme-color" content="#0a0a0b" />
+      {/* No theme-color here on purpose. index.html owns that tag
+          (`id="site-theme-color"`) and the inline brand script rewrites it per
+          host. A second, brand-blind copy emitted from here would land after it
+          in <head> and win — repainting FairCoin's chrome with Oxy's color. */}
 
       {/* hreflang — one entry per translation-ready locale, plus x-default →
           the bare (default-locale) path. */}

@@ -69,6 +69,7 @@ const en = {
     yes: 'Yes',
     no: 'No',
     openMenu: 'Open menu',
+    accountMenu: 'Account menu',
     closeMenu: 'Close menu',
     changeLanguage: 'Change language',
     dismissBanner: 'Dismiss banner',

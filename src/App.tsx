@@ -12,7 +12,13 @@ import { isFairCoinHost } from './lib/host'
 import ErrorBoundary from './components/ErrorBoundary'
 
 import HomePage from './pages/HomePage'
-import FairCoinLanding from './pages/FairCoinLanding'
+// Lazy on purpose, and it must stay that way. `FairCoinLandingContent` pulls in
+// `WagmiAppProvider` → wagmi → viem → WalletConnect + Coinbase Wallet SDK, on
+// the order of 1.3 MB. A static import here puts all of it in the entry chunk,
+// which every oxy.so visitor downloads to render a page they never open — the
+// exact outcome `WagmiAppProvider`'s own docstring says it exists to prevent.
+// It is the index route on fairco.in, which pays one extra round trip for it.
+const FairCoinLanding = lazy(() => import('./pages/FairCoinLanding'))
 const FairCoinBridgePage = lazy(() => import('./pages/FairCoinBridge'))
 const FairCoinBuyPage = lazy(() => import('./pages/FairCoinBuy'))
 const FairCoinUnwrapPage = lazy(() => import('./pages/FairCoinUnwrap'))
@@ -346,7 +352,17 @@ export default function App() {
                 <ScrollToTop />
                 <Suspense fallback={<div className="min-h-screen" />}>
                   <Routes>
-                    <Route path="/admin/*" element={<AdminPage />} />
+                    {/* Guarded: /admin/* is a top-level route with no shared
+                        layout, so an unhandled render error here would blank the
+                        whole document instead of a section of a page. */}
+                    <Route
+                      path="/admin/*"
+                      element={
+                        <ErrorBoundary>
+                          <AdminPage />
+                        </ErrorBoundary>
+                      }
+                    />
                     <Route path="/" element={<LocaleLayout />}>
                       {PublicRoutes()}
                       <Route path="*" element={<NotFoundPage />} />

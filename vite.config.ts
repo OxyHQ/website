@@ -13,6 +13,7 @@ import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import rehypeSlug from 'rehype-slug'
 import reactNativeWeb from 'vite-plugin-react-native-web'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 const require = createRequire(import.meta.url)
 const emptyModule = path.resolve(import.meta.dirname, 'src/lib/empty-module.js')
@@ -138,6 +139,18 @@ export default defineConfig(({ mode }) => ({
       includePublic: true,
       logStats: true,
     }),
+    // Bundle treemap, opt-in via ANALYZE=1. The chunking strategy in
+    // `build.rollupOptions` is only defensible if it can be checked; without
+    // this, "which package is in the entry graph" is guesswork.
+    // Writes outside dist/ so an analysis run never ships to Cloudflare.
+    process.env.ANALYZE
+      ? visualizer({
+          filename: 'node_modules/.tmp/bundle-stats.html',
+          template: 'treemap',
+          gzipSize: true,
+          brotliSize: true,
+        })
+      : null,
   ],
   resolve: {
     // Prefer `.web.js` platform variants over `.js` — react-native-gesture-handler
@@ -213,6 +226,58 @@ export default defineConfig(({ mode }) => ({
     //
     // Bump this suffix if the same class of poisoning ever happens again.
     assetsDir: 'assets/v4',
+    // The largest chunks here (`vendor-scalar`, `vendor-three`) are lazy and
+    // legitimately big, so a low ceiling would warn on every build and train
+    // everyone to ignore the warning. What actually matters is which chunks the
+    // entry graph pulls in, and that is what `bun run analyze` shows.
+    chunkSizeWarningLimit: 1500,
+    rollupOptions: {
+      output: {
+        /**
+         * Split the heavy vendors out of the entry graph.
+         *
+         * Without this there is no chunking strategy at all: rolldown emits one
+         * chunk per module boundary it happens to find, Vite emits a
+         * `modulepreload` for every one of them reachable from the entry, and
+         * the homepage ended up preloading 66 files / ~1.3 MB compressed before
+         * first paint.
+         *
+         * Grouped by lifecycle, not by size: things that change together and
+         * are needed together belong in one cacheable file. Each group is
+         * matched on a `node_modules/<pkg>/` path so a package that merely
+         * mentions another one's name can't fall into the wrong bucket.
+         */
+        manualChunks(id: string) {
+          if (!id.includes('node_modules')) return undefined
+          const inPkg = (...names: string[]) =>
+            names.some((name) => id.includes(`node_modules/${name}/`))
+
+          // Wallet stack — only ever needed on FairCoin routes. Keeping it in
+          // one chunk means oxy.so never fetches any of it.
+          if (inPkg('wagmi', '@wagmi', 'viem', '@walletconnect', '@coinbase', 'ox', 'abitype')) {
+            return 'vendor-wallet'
+          }
+          // 3D globe — one lazy component on /ai uses it.
+          if (inPkg('three', '@react-three')) return 'vendor-three'
+          // The app shell: the Oxy SDK, Bloom, and the react-native-web stack
+          // they are built on. One chunk because it is one unit in practice —
+          // every route mounts OxyProvider + BloomThemeProvider, and rolldown
+          // merges the rnw modules in here anyway since Bloom is their only
+          // consumer. Confirmed with `bun run analyze`.
+          if (inPkg('@oxyhq', 'react-native-web', 'react-native-reanimated', 'react-native-gesture-handler', 'react-native-svg', '@expo/vector-icons', 'expo-modules-core')) {
+            return 'vendor-oxy'
+          }
+          if (inPkg('framer-motion', 'motion-dom', 'motion-utils')) return 'vendor-motion'
+          if (inPkg('swiper', 'keen-slider')) return 'vendor-carousel'
+          if (inPkg('@scalar')) return 'vendor-scalar'
+          if (inPkg('react', 'react-dom', 'react-router', 'react-router-dom', 'scheduler')) {
+            return 'vendor-react'
+          }
+          if (inPkg('@tanstack')) return 'vendor-query'
+          return undefined
+        },
+      },
+    },
   },
   define: {
     __DEV__: JSON.stringify(mode !== 'production'),

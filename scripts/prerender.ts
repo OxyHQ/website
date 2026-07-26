@@ -46,6 +46,7 @@ import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { build as viteBuild } from 'vite'
 import type { SyncedIndex } from './types.ts'
+import { buildSitemapXml, classifyRoute, toW3CDate, type SitemapEntry } from './sitemap.ts'
 import type { SeoData } from '../src/lib/seo'
 import type { SEOLocaleSeed } from '../src/entry-server'
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, isRtlLocale, type Locale } from '../src/lib/i18n/types'
@@ -838,8 +839,8 @@ async function loadShellHtml(): Promise<string> {
 
 /**
  * Tag-level regex set for the head fragments we override. Static tags
- * outside this set (favicon, manifest, host-meta.js, structured-data
- * script, theme-fouc script) stay in place — they're shared across
+ * outside this set (favicon, manifest, preconnects, host-meta and
+ * theme-fouc inline scripts, structured data) stay in place — they're shared across
  * every page and don't depend on the route.
  */
 const STRIP_PATTERNS: ReadonlyArray<RegExp> = [
@@ -1002,6 +1003,37 @@ async function countNonRouteFiles(dir: string): Promise<number> {
  * `dist/` can be inspected after the fact ("which locales does this deploy
  * contain?") without re-querying an API whose answer may have moved since.
  */
+/**
+ * Emit `dist/sitemap.xml` from the same route list that was just rendered.
+ *
+ * Written from `baseRoutes` (bare paths) rather than the locale-expanded jobs:
+ * each locale is an `xhtml:link` alternate on its canonical `<url>`, not a
+ * separate entry. `noIndex` routes are excluded — advertising a page that tells
+ * crawlers not to index it is a contradiction Search Console reports as an
+ * error.
+ */
+async function writeSitemap(
+  routes: ReadonlyArray<{ url: string; seo: SEOProps }>,
+  locales: readonly Locale[],
+): Promise<void> {
+  const entries: SitemapEntry[] = routes
+    .filter((route) => !route.seo.noIndex)
+    .map((route) => ({
+      path: route.url,
+      lastmod: toW3CDate(route.seo.modifiedTime ?? route.seo.publishedTime),
+      ...classifyRoute(route.url),
+    }))
+    .sort((a, b) => b.priority - a.priority || a.path.localeCompare(b.path))
+
+  const xml = buildSitemapXml(entries, {
+    siteUrl: SITE_URL,
+    defaultLocale: DEFAULT_LOCALE,
+    localeCodes: locales,
+  })
+  await writeFile(path.join(DIST_DIR, 'sitemap.xml'), xml, 'utf8')
+  console.log(`[prerender] wrote sitemap.xml (${entries.length} urls, ${locales.length} alternate locales)`)
+}
+
 async function writeLocaleManifest(locales: readonly Locale[]): Promise<void> {
   const outFile = path.join(DIST_DIR, 'prerendered-locales.json')
   const payload = { defaultLocale: DEFAULT_LOCALE, prerendered: locales }
@@ -1055,6 +1087,7 @@ async function main(): Promise<void> {
   }
 
   await writeLocaleManifest(localeInfo.locales)
+  await writeSitemap(baseRoutes, localeInfo.locales)
 
   console.log(`[prerender] rendering ${jobs.length} routes…`)
 

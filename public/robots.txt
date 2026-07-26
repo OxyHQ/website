@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
 
+# Authenticated and per-user surfaces. These are deliberately not prerendered,
+# so the SPA catch-all answers them with the generic shell — indexing them would
+# file duplicates of the homepage under a dozen URLs. The pages also send
+# `noindex`; this just saves the crawl.
+Disallow: /admin
+Disallow: /settings
+Disallow: /dashboard
+Disallow: /u/
+
+# Generated at build time by scripts/prerender.ts from the exact list of routes
+# it renders, so this can never advertise a URL that has no document.
 Sitemap: https://oxy.so/sitemap.xml

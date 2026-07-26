@@ -5,12 +5,45 @@
 <html lang="en" dir="ltr" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <!-- Brand-aware tags. Defaults are Oxy; host-meta.js swaps them on FairCoin hosts before React mounts. -->
+    <!-- Brand-aware tags. Defaults are Oxy; the inline script below swaps them on FairCoin hosts before React mounts. -->
     <link id="site-favicon" rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link id="site-manifest" rel="manifest" href="/manifest.webmanifest" />
     <meta id="site-theme-color" name="theme-color" content="#0a0a0b" />
-    <script src="/host-meta.js"></script>
+    <!--
+      Was `<script src="/host-meta.js">`. It has to run before first paint (it
+      swaps the brand favicon/manifest/theme-color on FairCoin hosts), so as an
+      external file it was a render-blocking round trip in <head> — for less
+      code than the request that fetched it. Inlined here and the file deleted,
+      rather than kept as a second copy that would drift. On oxy.so it returns
+      on the first line.
+    -->
+    <script>
+      (function () {
+        var host = location.hostname;
+        if (host !== 'fairco.in' && host !== 'www.fairco.in') return;
+        var overrides = [
+          ['site-favicon', 'href', '/favicon-faircoin.png'],
+          ['site-favicon', 'type', 'image/png'],
+          ['site-manifest', 'href', '/manifest-faircoin.webmanifest'],
+          ['site-theme-color', 'content', '#07120c'],
+        ];
+        for (var i = 0; i < overrides.length; i++) {
+          var el = document.getElementById(overrides[i][0]);
+          if (el) el.setAttribute(overrides[i][1], overrides[i][2]);
+        }
+        document.title = 'FairCoin — community-run cryptocurrency';
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--
+      The app talks to these three origins on first render (auth session, CMS
+      content, media). Without a hint each one costs a cold DNS + TLS handshake
+      after the JS has already parsed and asked for it.
+    -->
+    <link rel="preconnect" href="https://api.oxy.so" crossorigin />
+    <link rel="preconnect" href="https://website-api.oxy.so" crossorigin />
+    <link rel="preconnect" href="https://cloud.oxy.so" crossorigin />
     <title>Oxy, an open-source ecosystem of ethical technology</title>
     <meta name="description" content="Oxy is an independent, open-source ecosystem of ethical technology built to empower people, not exploit them. Apps, AI, an operating system, a browser, identity and more." />
 

@@ -1,7 +1,10 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from '@oxyhq/services'
+import * as Skeleton from '@oxyhq/bloom/skeleton'
 import AdminLayout from '../components/admin/AdminLayout'
-import { ADMIN_USERNAMES } from '../constants'
+import SEO from '../components/SEO'
+import Button from '../components/ui/Button'
+import { useAdminAccess } from '../hooks/useAdminAccess'
 import SiteSettingsAdmin from '../components/admin/sections/SiteSettingsAdmin'
 import SeoAdmin from '../components/admin/sections/SeoAdmin'
 import NavigationAdmin from '../components/admin/sections/NavigationAdmin'
@@ -27,26 +30,90 @@ import FeaturesAdmin from '../components/admin/sections/FeaturesAdmin'
 import BadgesAdmin from '../components/admin/sections/BadgesAdmin'
 import ReferralsAdmin from '../components/admin/sections/ReferralsAdmin'
 import MediaAdmin from '../components/admin/sections/MediaAdmin'
-import NotFoundPage from './NotFoundPage'
+
+/** Shared chrome for the three non-admin outcomes below. */
+function AdminGateScreen({ overline, title, children }: {
+  overline: string
+  title: string
+  children?: React.ReactNode
+}) {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
+      <SEO title={title} description="Oxy website administration." canonicalPath="/admin" noIndex />
+      <div className="w-full max-w-md text-center">
+        <p className="text-overline text-muted-foreground">/ {overline}</p>
+        <h1 className="mt-3 text-heading-responsive-sm">{title}</h1>
+        {children}
+      </div>
+    </div>
+  )
+}
 
 export default function AdminPage() {
-  const { user, isLoading } = useAuth()
+  const { signIn } = useAuth()
+  const { isAdmin, isAuthenticated, userId, username, isPending, isError, refetch } = useAdminAccess()
 
-  // Render as soon as a user is resolved. Waiting on `isLoading` first is not
-  // safe here: the SDK's auth cold boot can stay pending indefinitely on this
-  // origin, and because `/admin/*` is a top-level route (no shared layout),
-  // returning null then blanks the entire page. `isAuthenticated` has the same
-  // problem — it additionally requires that cold boot to resolve, so it stays
-  // false for a signed-in admin and rendered this page as a 404.
-  //
-  // This check only decides whether to show the UI. Real authorization is
-  // enforced server-side: every /api admin route runs adminOnly, which checks
-  // the Oxy user id against OXY_ADMIN_USER_IDS (server/utils/adminAccess.ts).
-  if (!user) {
-    return isLoading ? null : <NotFoundPage />
+  // Authorization is the server's answer, never a guess made here — see
+  // `useAdminAccess`. Each outcome below is a distinct, recoverable state:
+  // earlier versions of this gate collapsed "still resolving" and "not allowed"
+  // into a single terminal 404, which is how signed-in admins got locked out
+  // whenever the SDK's auth cold boot resolved after the first render.
+
+  if (isPending) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-background">
+        <Skeleton.Box width={160} height={20} borderRadius={4} />
+        <Skeleton.Box width={220} height={12} borderRadius={4} />
+        <span className="sr-only">Checking admin access…</span>
+      </div>
+    )
   }
-  if (!ADMIN_USERNAMES.includes(user.username)) {
-    return <NotFoundPage />
+
+  if (isError) {
+    return (
+      <AdminGateScreen overline="Status: unavailable" title="Couldn't verify access">
+        <p className="mt-3 text-pretty text-muted-foreground">
+          The website API didn't answer. Your session is fine — this is a connection problem.
+        </p>
+        <div className="mt-6 flex justify-center">
+          <Button variant="primary" size="md" onClick={() => void refetch()}>Try again</Button>
+        </div>
+      </AdminGateScreen>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <AdminGateScreen overline="Status: signed out" title="Sign in to continue">
+        <p className="mt-3 text-pretty text-muted-foreground">
+          Administration requires an Oxy account with admin access.
+        </p>
+        <div className="mt-6 flex justify-center">
+          <Button variant="primary" size="md" onClick={() => signIn()}>Sign in</Button>
+        </div>
+      </AdminGateScreen>
+    )
+  }
+
+  if (!isAdmin) {
+    return (
+      <AdminGateScreen overline="Status: 403" title="You don't have access">
+        <p className="mt-3 text-pretty text-muted-foreground">
+          You're signed in{username ? ` as @${username}` : ''}, but this account isn't an
+          administrator.
+        </p>
+        {/* Shown so the exact value can be copied into OXY_ADMIN_USER_IDS on the
+            backend — the allowlist is keyed on this id, not on the username. */}
+        {userId && (
+          <p className="mt-4 break-all rounded-md bg-surface px-3 py-2 font-mono text-xs text-muted-foreground">
+            User ID: {userId}
+          </p>
+        )}
+        <div className="mt-6 flex justify-center">
+          <Button variant="outline" size="md" href="/">Go to homepage</Button>
+        </div>
+      </AdminGateScreen>
+    )
   }
 
   return (

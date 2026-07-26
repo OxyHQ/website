@@ -52,6 +52,7 @@ const ko: Translations = {
     yes: '예',
     no: '아니요',
     openMenu: '메뉴 열기',
+    accountMenu: '계정 메뉴',
     closeMenu: '메뉴 닫기',
     changeLanguage: '언어 변경',
     dismissBanner: '배너 닫기',

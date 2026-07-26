@@ -52,6 +52,7 @@ const ja: Translations = {
     yes: 'はい',
     no: 'いいえ',
     openMenu: 'メニューを開く',
+    accountMenu: 'アカウントメニュー',
     closeMenu: 'メニューを閉じる',
     changeLanguage: '言語を変更',
     dismissBanner: 'バナーを閉じる',

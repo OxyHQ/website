@@ -26,12 +26,13 @@ import path from 'node:path'
 import { createElement, type ReactElement } from 'react'
 import satori from 'satori'
 import { Resvg } from '@resvg/resvg-js'
+import sharp from 'sharp'
 
 const WEBSITE_ROOT = path.resolve(import.meta.dir, '..')
 const HELP_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'help')
 const OUTPUT_DIR = path.join(WEBSITE_ROOT, 'public', 'images', 'help-og')
 const APPS_DIR = path.join(WEBSITE_ROOT, 'public', 'images', 'apps')
-const FONTS_DIR = path.join(WEBSITE_ROOT, 'public', 'fonts')
+const BUILD_FONTS_DIR = path.join(WEBSITE_ROOT, 'scripts', 'assets', 'fonts')
 
 const CARD_WIDTH = 1200
 const CARD_HEIGHT = 630
@@ -298,11 +299,20 @@ interface BrandAssets {
   productLogos: Record<string, string | undefined>
 }
 
+/**
+ * Phudu, as TrueType, for satori — which does not read WOFF2.
+ *
+ * These deliberately live under `scripts/assets/`, not `public/fonts/`. The
+ * browser is served WOFF2 (a third the bytes); the TTFs exist only so this
+ * script can rasterize text at build time, and anything under `public/` is
+ * copied verbatim into `dist/` and deployed. Keeping them here is what stops
+ * 130 kB of build-only font from shipping to every visitor.
+ */
 async function loadFontBytes(): Promise<{ title: Buffer; body: Buffer }> {
-  const bold = path.join(FONTS_DIR, 'phudu', 'Phudu-Bold.ttf')
-  const regular = path.join(FONTS_DIR, 'phudu', 'Phudu-Regular.ttf')
+  const bold = path.join(BUILD_FONTS_DIR, 'phudu', 'Phudu-Bold.ttf')
+  const regular = path.join(BUILD_FONTS_DIR, 'phudu', 'Phudu-Regular.ttf')
   if (!existsSync(bold) || !existsSync(regular)) {
-    throw new Error(`[help-og] missing Phudu font files in ${FONTS_DIR}/phudu/`)
+    throw new Error(`[help-og] missing Phudu TrueType files in ${BUILD_FONTS_DIR}/phudu/`)
   }
   const [titleFont, bodyFont] = await Promise.all([readFile(bold), readFile(regular)])
   return { title: titleFont, body: bodyFont }
@@ -579,7 +589,14 @@ async function renderCardPng(meta: ArticleMeta, assets: BrandAssets): Promise<Bu
     font: { loadSystemFonts: false },
     fitTo: { mode: 'width', value: CARD_WIDTH },
   })
-  return resvg.render().asPng()
+  // Resvg emits full-depth RGBA — around 290 kB per card, and these are
+  // committed to the repo and shipped. An OG card is flat colour, a logo and
+  // text, so palette quantization is close to lossless on this content and
+  // cuts it by roughly 80%. sharp is deterministic for fixed options, so the
+  // stable-output property above still holds.
+  return sharp(resvg.render().asPng())
+    .png({ compressionLevel: 9, palette: true, quality: 90, effort: 10 })
+    .toBuffer()
 }
 
 /* ─── Orchestration ─── */
