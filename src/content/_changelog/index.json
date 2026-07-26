@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-24T23:38:03.018Z",
+  "generatedAt": "2026-07-26T21:50:38.077Z",
   "repos": [
     {
       "owner": "OxyHQ",
@@ -48,6 +48,21 @@
     }
   ],
   "entries": [
+    {
+      "_id": "gh-345863387",
+      "title": "Oxy ID v1.0 — self-sovereign civic identity + decentralization",
+      "content": "# Oxy ID — self-sovereign civic identity + decentralization\n\nThis milestone turns **Commons by Oxy** into a citizen-identity app (\"Oxy ID\") with cryptographically-owned, verifiable reputation, and lays the foundation for user-run data nodes. The civic engine lives in `oxy-api`; ownership comes from **cryptography** (per-user hash-chained signed records) — Oxy is the fast read copy, the user owns the truth.\n\nFull technical documentation: [`docs/`](./docs/) · chronological detail: [`docs/CHANGELOG.md`](./docs/CHANGELOG.md).\n\n## Identity foundation (F0–F1)\n- **`did:web:api.oxy.so:u:<id>`** account-anchored DIDs (custodial ↔ self-sovereign, reversible via `authMethods`).\n- **Signed records v2** — a per-subject hash chain (`version/seq/prev/collection/rkey`, `RepoHead` O(1) head, shared `canonicalize`/`signedRecordSigningInput`). `verifyEnvelope` branches self-issued / Oxy-custodial / untrusted.\n- **Oxy Trust reputation** — crypto-owned via Oxy-signed attestations; users never self-award.\n\n## Anti-gaming + personhood + credentials (F2–F4)\n- **Real-life QR attestation** (HIGH) + **random validator jury** (weighted-reservoir selection, graph/device/IP exclusion, slashing).\n- **Proof-of-personhood** — web-of-trust vouches + staking + sybil clustering + random audits + on-device biometric (`evidence = 0.50·vouch + 0.35·real-life + 0.15·biometric`, θ=0.6 → verified tier).\n- **Verifiable credentials** — issue / verify-against-current-issuer-VM / revoke.\n\n## Decentralization — user nodes (F5)\n- **`@oxyhq/node`** — self-hostable data-node server (signed-record log + blobs, reuses `@oxyhq/core` verification).\n- **Oxy↔node**: public signed-log export; background **ingest** that re-verifies every record (signature + owner-DID + chain), **LWW** per `(collection,rkey)`, keeps forks, and **Oxy counter-signs** each ingested record (anti-rewrite witness).\n- **Managed vault** — Oxy operates a node for non-technical users (custodial `controller:'oxy'`).\n- **Invariant: reads NEVER touch a node** — a node down is stale, never slow.\n\n## Product + SDK\n- Clean rename **DNI → \"Oxy ID\"** everywhere; Commons nav restructured (merged ID landing, scan FAB, 3 tabs).\n- App-wide clean UI pass (Apple/World App aesthetic) + redesigned Reputation screen.\n- `@oxyhq/core` mixins: `identity`, `civic`, `reputation`, `nodes`. Full Commons UI for all of the above. **i18n en/es at 100% parity.**\n\n## Notes\n- npm packages are **not** published in this release (the SDK is consumed in-repo via `workspace:*`; civic/node contracts stay internal until the surface stabilizes).\n- Deferred (infra): managed-vault container orchestration; seed personhood verifiers; karma→reputation migration; `REC_SCORING_V2`.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n",
+      "tags": [],
+      "date": "2026-06-28T07:59:02Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 345863387,
+      "repoOwner": "OxyHQ",
+      "repoName": "OxyHQServices",
+      "repoDisplayName": "Oxy SDK",
+      "htmlUrl": "https://github.com/OxyHQ/OxyHQServices/releases/tag/oxy-id-v1.0",
+      "tagName": "oxy-id-v1.0"
+    },
     {
       "_id": "gh-305356646",
       "title": "TNP Client v0.2.0",
