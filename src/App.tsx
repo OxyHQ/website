@@ -1,12 +1,12 @@
 import { useState, useCallback, lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Outlet, useLocation, useParams, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { OxyProvider, useOxy } from '@oxyhq/services'
 import type { User } from '@oxyhq/core'
 import { BloomThemeProvider } from '@oxyhq/bloom/theme'
 import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
 import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppColorName } from './theme'
-import { LocaleProvider, DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from './lib/i18n'
+import { LocaleProvider, DEFAULT_LOCALE, SUPPORTED_LOCALES } from './lib/i18n'
 import { setOxyServices } from './api/client'
 import { isFairCoinHost } from './lib/host'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -162,43 +162,28 @@ function LocaleLayout() {
 }
 
 /**
- * Layout for the locale-prefixed mirror of the public route tree (`/es/pricing`).
+ * The locale prefixes that get their own mirror of the public route tree.
  *
- * URL rule: the default locale is served ONLY at the bare path. `/pricing` is
- * canonical; `/en/pricing` collapses onto it. Every non-default locale lives
- * under its own prefix. `SEO.tsx`'s `buildLocalizedUrl` (canonical + hreflang +
- * x-default) and `locale-context.tsx`'s `setLocale` implement the same rule,
- * all keyed on the static `DEFAULT_LOCALE` rather than the CMS-configured
- * default — the URL shape must not shift when someone flips a CMS toggle, or
- * every already-indexed URL silently changes meaning.
- *
- * The `:locale` segment is validated here rather than trusted: an unknown
- * first segment (`/xx/pricing`) must reach `NotFoundPage`, not render the page
- * with a silently-wrong locale.
+ * The default locale is deliberately absent: it is canonical at the bare path
+ * (`/pricing`, never `/en/pricing`). `SEO.tsx`'s `buildLocalizedUrl` (canonical
+ * + hreflang + x-default), `locale-context.tsx`'s `setLocale`, the prerender and
+ * the sitemap all implement the same rule, keyed on the static `DEFAULT_LOCALE`
+ * rather than the CMS-configured default — the URL shape must not shift when
+ * someone flips a CMS toggle, or every already-indexed URL silently changes
+ * meaning.
  */
-function LocalePrefixedLayout() {
-  const { locale } = useParams<{ locale: string }>()
+const LOCALE_PREFIXES = SUPPORTED_LOCALES.filter((code) => code !== DEFAULT_LOCALE)
+
+/**
+ * Collapse `/en/pricing` onto the canonical `/pricing`.
+ *
+ * Kept as a real route rather than folded into the locale branches, because
+ * those only exist for non-default locales now — see {@link LOCALE_PREFIXES}.
+ */
+function CollapseDefaultLocalePrefix() {
   const location = useLocation()
-
-  if (!locale || !SUPPORTED_LOCALES.includes(locale as Locale)) {
-    // NotFoundPage renders Navbar/Footer/SEO, all of which read locale context.
-    return (
-      <LocaleProvider>
-        <NotFoundPage />
-      </LocaleProvider>
-    )
-  }
-
-  if (locale === DEFAULT_LOCALE) {
-    const rest = location.pathname.slice(locale.length + 1) || '/'
-    return <Navigate to={rest + location.search + location.hash} replace />
-  }
-
-  return (
-    <LocaleProvider>
-      <Outlet />
-    </LocaleProvider>
-  )
+  const rest = location.pathname.slice(DEFAULT_LOCALE.length + 1) || '/'
+  return <Navigate to={rest + location.search + location.hash} replace />
 }
 
 function PublicRoutes() {
@@ -368,16 +353,29 @@ export default function App() {
                       <Route path="*" element={<NotFoundPage />} />
                     </Route>
                     {/*
-                      The same route table mounted a second time under a locale
-                      segment, so `/es/pricing` resolves without maintaining a
-                      parallel list. Static paths outrank the dynamic `:locale`
-                      segment in React Router's ranking, so bare `/pricing`
-                      still matches the branch above.
+                      The same route table mounted again under each locale, so
+                      `/es/pricing` resolves without maintaining a parallel list.
+
+                      One STATIC branch per locale, not a single `:locale` param.
+                      A dynamic segment outranks a splat in React Router, so
+                      `/:locale/settings` beat `/admin/*` and `/admin/settings`
+                      matched the locale branch with `locale = "admin"` — which
+                      is not a locale, so it rendered "Page not found". It hit
+                      exactly the admin sub-routes whose name is also a public
+                      route (settings, pricing, products, newsroom, help), and
+                      `/admin` redirects to `settings` on entry, so the whole
+                      admin area was unreachable. Static segments cannot collide
+                      with `/admin/*` this way, and they make the locale valid by
+                      construction — an unknown prefix like `/xx/pricing` now
+                      falls through to the catch-all above.
                     */}
-                    <Route path=":locale" element={<LocalePrefixedLayout />}>
-                      {PublicRoutes()}
-                      <Route path="*" element={<NotFoundPage />} />
-                    </Route>
+                    {LOCALE_PREFIXES.map((code) => (
+                      <Route key={code} path={code} element={<LocaleLayout />}>
+                        {PublicRoutes()}
+                        <Route path="*" element={<NotFoundPage />} />
+                      </Route>
+                    ))}
+                    <Route path={`${DEFAULT_LOCALE}/*`} element={<CollapseDefaultLocalePrefix />} />
                   </Routes>
                   <FixedPromptInput />
                   <AccountPanel />
