@@ -50,6 +50,10 @@
 #   style-src 'unsafe-inline'  — react-native-web writes inline styles at runtime
 #   connect-src https: wss:    — wallet RPC + WalletConnect relays are user-chosen
 #   img/media https:           — CMS media is served from cloud.oxy.so and elsewhere
+#   static.cloudflareinsights.com — Cloudflare injects its Web Analytics beacon
+#     into the response itself, so it is not visible in this repo's source and is
+#     easy to miss. Omitting it does not degrade gracefully: the script is
+#     blocked and analytics silently stops collecting.
 # The value is in `script-src`: no inline script runs unless it is one of the two
 # we shipped, which is the case XSS actually needs.
 /*
@@ -58,4 +62,4 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-  Content-Security-Policy: default-src 'self'; script-src 'self' __CSP_SCRIPT_HASHES__; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; connect-src 'self' https: wss:; worker-src 'self' blob:; frame-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com __CSP_SCRIPT_HASHES__; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; connect-src 'self' https: wss:; worker-src 'self' blob:; frame-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
