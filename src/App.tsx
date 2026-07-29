@@ -61,6 +61,7 @@ const BloomPlayground = lazy(() => import('./components/docs/BloomPlayground'))
 const DevelopersPage = lazy(() => import('./pages/DevelopersPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
+const AccountDeletionPage = lazy(() => import('./pages/AccountDeletionPage'))
 const UserProfilePage = lazy(() => import('./pages/UserProfilePage'))
 const UserFollowersPage = lazy(() => import('./pages/UserFollowersPage'))
 const FeatureBoardPage = lazy(() => import('./pages/FeatureBoardPage'))
@@ -288,6 +289,8 @@ function PublicRoutes() {
       <Route path="mention" element={<MentionPage />} />
       <Route path="settings" element={<SettingsPage />} />
       <Route path="legal" element={<LegalPage />} />
+      {/* Public, no-auth URL required by the Play Console Data safety form. */}
+      <Route path="account-deletion" element={<AccountDeletionPage />} />
       <Route path="legal/:section" element={<LegalPage />} />
       <Route path="u/:username" element={<UserProfilePage />} />
       <Route path="u/:username/followers" element={<UserFollowersPage />} />
