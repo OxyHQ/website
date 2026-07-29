@@ -330,6 +330,14 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     description: 'Terms of service, privacy policy, acceptable use policy, data-processing agreement, and security disclosures for Oxy.',
     canonicalPath: '/legal',
   },
+  // Prerendered on purpose: Google Play requires this URL to be reachable
+  // without signing in, and the crawler must get real content, not an empty
+  // SPA shell.
+  '/account-deletion': {
+    title: 'Delete your Oxy account',
+    description: 'How to permanently delete your Oxy account and identity, what data is removed, and what is kept.',
+    canonicalPath: '/account-deletion',
+  },
   '/legal/privacy': {
     title: 'Privacy Policy',
     description: 'How Oxy collects, processes, and stores your data. Updated whenever the policy changes.',
