@@ -104,55 +104,64 @@ export interface NavDropdown {
  * move to the CMS navigation document when it needs to be editor-managed.
  */
 export const productNavDropdown: NavDropdown = {
-  label: 'Product',
+  // Not "Product": the apps live in the Technologies dropdown, which is
+  // generated from the product records, so listing them here would be the same
+  // menu twice. This one carries what Oxy stands for instead.
+  label: 'Why Oxy',
   sections: [],
   featureGrid: {
     features: [
       {
-        href: '/features/support',
-        title: 'Support Platform',
-        description: 'Support your customers from anywhere with a unified Inbox',
-        icon: 'chat',
+        href: '/company/manifesto',
+        title: 'Manifesto',
+        description: 'What we believe and what we refuse to trade away',
+        icon: 'academy',
       },
       {
-        href: '/features/feedback',
-        title: 'Feedback & Roadmaps',
-        description: 'Capture & prioritize user feedback and build roadmaps',
-        icon: 'sequences',
+        href: '/company/charter',
+        title: 'Founding Charter',
+        description: 'The commitments we intend to be held to as we grow',
+        icon: 'contract',
       },
       {
-        href: '/features/help-center',
-        title: 'Help Center',
-        description: 'Provide self-service support with a beautiful Help Center',
-        icon: 'help-center',
+        href: '/company/business',
+        title: 'How our business works',
+        description: 'Where the money comes from, and what we refuse to earn',
+        icon: 'coins',
       },
       {
-        href: '/features/changelog',
-        title: 'Changelog',
-        description: 'Share the latest updates with your users and teammates',
-        icon: 'package',
-      },
-      {
-        href: '/features/surveys',
-        title: 'Surveys',
-        description: 'Capture feedback and measure satisfaction with our surveys',
+        href: '/company/transparency',
+        title: 'Transparency Center',
+        description: 'Decisions, data handling and how we stay accountable',
         icon: 'reporting',
+      },
+      {
+        href: '/initiative',
+        title: 'The Initiative',
+        description: 'The community work and projects we support',
+        icon: 'partners',
+      },
+      {
+        href: 'https://github.com/OxyHQ',
+        title: 'Open source',
+        description: 'Read, run and challenge the code behind the claims',
+        icon: 'github',
       },
     ],
     cards: [
       {
-        href: '/integrations',
-        image: '/images/nav-resources-card.jpg',
-        title: 'Integrates with all your tools',
-        description: 'Integrate with Linear, Slack, Jira and 10+ other tools to streamline your workflow',
-        alt: 'Integrations',
+        href: '/technologies',
+        image: '/images/nav-ecosystem-card.webp',
+        title: 'The whole ecosystem',
+        description: 'Every app and service, and how they share one identity and one platform',
+        alt: 'The Oxy ecosystem',
       },
       {
-        href: '/demo',
-        image: '/images/nav-demo-card.jpg',
-        title: 'Live demo',
-        description: 'Try out all Oxy modules & widgets in our demo environment',
-        alt: 'Live demo',
+        href: '/company/careers',
+        image: '/images/nav-careers-card.webp',
+        title: 'Build it with us',
+        description: 'Open roles across engineering, design and community',
+        alt: 'Working at Oxy',
       },
     ],
   },
@@ -163,11 +172,11 @@ export const productNavDropdown: NavDropdown = {
  * the CMS navigation document when the card needs to be editor-managed.
  */
 export const resourcesNavCard: NavDropdownCard = {
-  href: '/integrations',
+  href: '/academy',
   image: '/images/nav-resources-card.jpg',
-  title: 'Integrates with all your tools',
-  description: 'Integrate with Linear, Slack, Jira and 10+ other tools to streamline your workflow',
-  alt: 'Integrations',
+  title: 'Start with the Academy',
+  description: 'Short courses on Oxy ID, building on the platform and running it yourself',
+  alt: 'Oxy Academy',
 }
 
 export interface FooterLink {

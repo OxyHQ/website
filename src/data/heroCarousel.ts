@@ -104,17 +104,17 @@ export const heroCarouselSlots: CarouselSlot[] = [
     roundedLeft: true,
     faces: [{ type: 'faircoin' }],
   },
-  // Promo card — integrations
+  // Promo card — the ecosystem map
   {
     size: '2x2',
     faces: [
       {
         type: 'promo',
         image: '/images/nav-resources-card.jpg',
-        title: 'Integrates with all your tools',
-        description: 'Integrate with Linear, Slack, Jira and 10+ other tools to streamline your workflow',
-        href: '/integrations',
-        alt: 'Integrations',
+        title: 'One identity, every app',
+        description: 'Social, messaging, housing, payments and AI on one open platform you can inspect',
+        href: '/technologies',
+        alt: 'The Oxy ecosystem',
       },
     ],
   },
@@ -152,17 +152,17 @@ export const heroCarouselSlots: CarouselSlot[] = [
       },
     ],
   },
-  // Promo card — live demo
+  // Promo card — the charter
   {
     size: '2x2',
     faces: [
       {
         type: 'promo',
         image: '/images/nav-demo-card.jpg',
-        title: 'Live demo',
-        description: 'Try out all Oxy modules & widgets in our demo environment',
-        href: '/demo',
-        alt: 'Live demo',
+        title: 'The Founding Charter',
+        description: 'The commitments we intend to be held to, written down before they are convenient',
+        href: '/company/charter',
+        alt: 'The Oxy Founding Charter',
       },
     ],
   },

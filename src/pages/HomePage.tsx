@@ -201,7 +201,7 @@ function PartnerLogos() {
     <section ref={sectionRef} className="container">
       <div>
         <div className="grid grid-cols-12 gap-6">
-          <div className="col-[2/-2] py-5">
+          <div className="col-span-full py-5">
             <div className="grid grid-cols-7 gap-x-5 max-[950px]:grid-cols-3" id="partner-grid">
               {visibleLogos.map((logo, index) => (
                 <div className={`flex items-center justify-center h-[100px] transition-opacity duration-1000 max-[950px]:h-[60px] max-[950px]:[&:nth-child(n+4)]:hidden${hiddenSlot === index ? ' opacity-0' : ''}`} key={index}>
@@ -260,7 +260,7 @@ function BuildForEveryoneSection() {
       <div>
         <div className="grid grid-cols-12 gap-6">
           <motion.div
-            className="col-[2/-2] py-16 max-[950px]:py-10 grid grid-cols-2 gap-x-16 gap-y-10 items-start max-[950px]:grid-cols-1"
+            className="col-span-full py-16 max-[950px]:py-10 grid grid-cols-2 gap-x-16 gap-y-10 items-start max-[950px]:grid-cols-1"
             {...REVEAL}
           >
             {/* Left — heading + body */}
@@ -351,7 +351,7 @@ function ValuesSection() {
     <section className="container">
       <div>
         <div className="grid grid-cols-12 gap-6">
-          <motion.div className="col-[2/-2] py-16 max-[950px]:py-10" {...REVEAL}>
+          <motion.div className="col-span-full py-16 max-[950px]:py-10" {...REVEAL}>
             <div className="flex items-end justify-between gap-6 mb-8">
               <h2 className="text-heading-responsive-lg max-w-[440px]">What we stand for.</h2>
               <div className="flex items-center gap-3 shrink-0">
@@ -422,7 +422,7 @@ function IndependentEcosystemSection() {
       <div>
         <div className="grid grid-cols-12 gap-6">
           <motion.div
-            className="col-[2/-2] py-16 max-[950px]:py-10 grid grid-cols-2 gap-12 items-center max-[950px]:grid-cols-1"
+            className="col-span-full py-16 max-[950px]:py-10 grid grid-cols-2 gap-12 items-center max-[950px]:grid-cols-1"
             {...REVEAL}
           >
             {/* Left — text + buttons */}
@@ -571,11 +571,14 @@ function FeaturesSection() {
             decoding="async"
           />
         </div>
-        <div className="agents-features-content text-white text-center pt-[56px]">
+        {/* The band bleeds (it carries a full-width backdrop); its content
+            sits in the site container like every other section. */}
+        <div className="agents-features-content container text-white text-center pt-[56px]">
           <div className="agents-features-tabs-nav tabs-nav">
             {FEATURE_TABS.map((t, i) => (
-              <a
+              <button
                 key={t.id}
+                type="button"
                 className={i === active ? 'active' : undefined}
                 data-tab={t.id}
                 onClick={() => handleTabClick(i)}
@@ -585,11 +588,13 @@ function FeaturesSection() {
                   className="timer"
                   style={{ width: i === active ? `${displayedProgress}%` : '0%' }}
                 />
-              </a>
+              </button>
             ))}
-            <a
+            <button
+              type="button"
               className={`toggle-autoplay${playing ? ' playing' : ''}`}
               onClick={toggleAutoplay}
+              aria-label={playing ? 'Pause autoplay' : 'Play autoplay'}
             >
               <svg width="8" height="12" className="pause" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0.895149 12C0.594679 12 0.369327 11.9157 0.219092 11.7471C0.0730308 11.5785 0 11.3255 0 10.9883V1.00468C0 0.672131 0.0751174 0.421546 0.225352 0.252927C0.375587 0.0843091 0.598852 0 0.895149 0H2.3662C2.65832 0 2.8795 0.0819672 3.02973 0.245902C3.18414 0.409836 3.26135 0.662763 3.26135 1.00468V10.9883C3.26135 11.3255 3.18414 11.5785 3.02973 11.7471C2.8795 11.9157 2.65832 12 2.3662 12H0.895149ZM5.64006 12C5.33959 12 5.11424 11.9157 4.96401 11.7471C4.81377 11.5785 4.73865 11.3255 4.73865 10.9883V1.00468C4.73865 0.672131 4.81377 0.421546 4.96401 0.252927C5.11424 0.0843091 5.33959 0 5.64006 0H7.09859C7.39906 0 7.62441 0.0819672 7.77465 0.245902C7.92488 0.409836 8 0.662763 8 1.00468V10.9883C8 11.3255 7.92488 11.5785 7.77465 11.7471C7.62441 11.9157 7.39906 12 7.09859 12H5.64006Z" fill="currentColor"/>
@@ -597,7 +602,7 @@ function FeaturesSection() {
               <svg width="10" height="11" className="play" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 9.96835V1.03165C0 0.681435 0.0904393 0.421941 0.271318 0.253165C0.452196 0.0843882 0.667528 0 0.917313 0C1.14126 0 1.3652 0.0611814 1.58915 0.183544L9.21835 4.55063C9.49397 4.70675 9.69208 4.85443 9.81266 4.99367C9.93755 5.13291 10 5.30169 10 5.5C10 5.69409 9.93755 5.86287 9.81266 6.00633C9.69208 6.14557 9.49397 6.29325 9.21835 6.44937L1.58915 10.8165C1.3652 10.9388 1.14126 11 0.917313 11C0.667528 11 0.452196 10.9135 0.271318 10.7405C0.0904393 10.5717 0 10.3143 0 9.96835Z" fill="currentColor"/>
               </svg>
-            </a>
+            </button>
           </div>
           <div className="agents-features-tabs tabs">
             {FEATURE_TABS.map((t, i) => (
@@ -696,7 +701,7 @@ function StatsAndTestimonialsSection() {
     <section ref={sectionRef} className="container">
       <div>
         <div className="grid grid-cols-12 gap-6">
-          <div className="col-[2/-2] py-10 max-[950px]:py-6">
+          <div className="col-span-full py-10 max-[950px]:py-6">
             {FEATURES.SHOW_HOMEPAGE_STATS && (
             <div className="mb-5">
               <Swiper
@@ -973,7 +978,7 @@ function TeamsSection() {
     <section className="container">
       <div>
         <div className="grid grid-cols-12 gap-6 side-by-side-tabs">
-          <div className="col-[2/-2] py-8">
+          <div className="col-span-full py-8">
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-6 max-[950px]:col-span-full">
                 <div className="tabs tabs-fade">
@@ -998,16 +1003,17 @@ function TeamsSection() {
               <div className="col-span-5 col-start-8 max-[950px]:col-span-full max-[950px]:col-start-1 flex flex-col gap-12 justify-between">
                 <div>
                   <p className="text-primary mb-5"><strong>Explore the Oxy Ecosystem</strong></p>
-                  <div className="teams-tabs-nav flex flex-col [&>a]:cursor-pointer">
+                  <div className="teams-tabs-nav flex flex-col [&>button]:cursor-pointer">
                     {TEAM_TABS.map((t) => (
-                      <a
+                      <button
                         key={t.id}
-                        className={`text-[22px] leading-[1.2] font-[450] flex items-center justify-start gap-[0.3em] cursor-pointer${t.id === activeId ? ' opacity-100' : ' opacity-30'}`}
+                        type="button"
+                        className={`text-[22px] leading-[1.2] font-[450] flex items-center justify-start gap-[0.3em] cursor-pointer text-start${t.id === activeId ? ' opacity-100' : ' opacity-30'}`}
                         data-tab={t.id}
                         onClick={() => handleTabClick(t.id)}
                       >
                         <span className={t.id === activeId ? 'inline' : 'hidden'}>&rarr;</span> {t.label}
-                      </a>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -1067,7 +1073,7 @@ function PartnershipSection() {
     <section className="container">
       <div>
         <div className="grid grid-cols-12 gap-6">
-          <div className="col-[2/-2] py-10 max-[950px]:py-6">
+          <div className="col-span-full py-10 max-[950px]:py-6">
             <div className="text-center mb-8">
               <p className="mb-6 text-primary"><strong>Join the mission</strong></p>
               <h2 className="text-heading-responsive-lg mb-5">Build the future with us</h2>
@@ -1230,7 +1236,7 @@ function IntegrationsSecuritySection() {
     <section className="container">
       <div>
         <div className="grid grid-cols-12 gap-6">
-          <div className="col-[2/-2] py-10 max-[950px]:py-6">
+          <div className="col-span-full py-10 max-[950px]:py-6">
             <div className="text-center mb-8">
               <h2 className="text-heading-responsive-lg mb-5 max-w-[500px] mx-auto">Everything you need, all in one place</h2>
               <p className="opacity-80 max-w-[350px] mx-auto">Explore our documentation, contribute to our codebase, and connect with the community.</p>
@@ -1283,15 +1289,15 @@ function IOSAppSection() {
     <section className="container">
       <div>
         <div className="grid grid-cols-12 gap-6">
-          <div className="col-[2/-2] py-10 max-[950px]:py-6">
+          <div className="col-span-full py-10 max-[950px]:py-6">
             <div className="text-center mb-8">
-              <p className="mb-6 text-primary"><strong>Oxy Services</strong></p>
-              <h2 className="text-heading-responsive-lg mb-5">Technology with purpose</h2>
+              <h2 className="text-heading-responsive-lg mb-5">Commons app by Oxy</h2>
+              <p className="opacity-80 max-w-[500px] mx-auto">Self-custody identity for everything Oxy. Your keys never leave your phone, so no company can lock you out, track you, or sell your data.</p>
             </div>
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-8 col-start-3 max-[950px]:col-span-full max-[950px]:col-start-1 text-center">
                 <div className="mb-5">
-                  <img src={`${IMG}/agents-ios-app.webp`} alt="Agents iOS app" className="w-full h-auto object-contain" width={1902} height={1330} loading="lazy" decoding="async" />
+                  <img src={`${IMG}/identity-app.webp`} alt="Oxy self-custody identity on iOS" className="mask-b-from-85% mask-b-to-100% w-full h-auto object-contain" width={577} height={433} loading="lazy" decoding="async" />
                 </div>
                 <p className="text-[13px] leading-4 tracking-wide font-[450] mb-5 max-w-[530px] mx-auto">
                   <span className="opacity-60">Connect all your tools, access open-source AI, and join a global community building technology for good. Every product we create is designed to serve people, not exploit them.</span> Free and open source.
@@ -1355,7 +1361,7 @@ function TrustedBySection() {
       <section className="container">
         <div>
           <div className="grid grid-cols-12 gap-6">
-            <div className="col-[2/-2] py-10 pb-[50px]">
+            <div className="col-span-full py-10 pb-[50px]">
               <h3 className="text-[22px] leading-[1.2] font-[450] mb-10 max-w-[720px]">
                 Built by the community, for the community.
               </h3>
@@ -1430,7 +1436,7 @@ function PricingSection() {
     <section className="container">
       <div>
         <div className="grid grid-cols-12 gap-6">
-          <div className="col-[2/-2] py-10 max-[950px]:py-6">
+          <div className="col-span-full py-10 max-[950px]:py-6">
             <h2 className="text-heading-responsive-lg mb-10 text-center">Plans for Everyone</h2>
             <div className="mb-20">
               <div className="flex gap-[18px] max-[950px]:flex-col" style={{ rowGap: '6rem' }}>

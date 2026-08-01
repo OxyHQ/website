@@ -18,6 +18,12 @@ interface RecentNewsSectionProps {
   category?: string
   /** Override target for the section header link (defaults to /newsroom). */
   href?: string
+  /**
+   * Off when the caller already provides the page frame. A `container` inside
+   * a `container` applies the gutter twice, which leaves the rail sitting a
+   * full gutter inside the sections around it.
+   */
+  framed?: boolean
 }
 
 export default function RecentNewsSection({
@@ -25,6 +31,7 @@ export default function RecentNewsSection({
   linkText = 'View more',
   category,
   href = '/newsroom',
+  framed = true,
 }: RecentNewsSectionProps) {
   const { data, isPending } = useNewsroomPosts({ category, limit: 5 })
   const recentNewsArticles = data?.posts ?? []
@@ -32,7 +39,7 @@ export default function RecentNewsSection({
   if (!isPending && recentNewsArticles.length === 0) return null
 
   return (
-    <section className="container">
+    <section className={framed ? 'container' : undefined}>
       <SectionHeaderWithLink
         title={title}
         href={href}

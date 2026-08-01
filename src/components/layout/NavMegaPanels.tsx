@@ -37,7 +37,7 @@ export function NavFeatureGrid({ grid }: { grid: NavFeatureGridContent }) {
         ))}
       </ul>
       {grid.cards.map((card) => (
-        <NavCard key={card.href} card={card} />
+        <NavCard key={card.href} card={card} className="h-full" />
       ))}
     </div>
   )

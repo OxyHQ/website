@@ -61,25 +61,24 @@ async function seed() {
     {
       label: 'Platform',
       order: 0,
+      // No apps here: they are generated into the Technologies dropdown from the
+      // product records. This one is the layer underneath them.
       items: [
-        { title: 'AI', description: 'Native to your platform', href: '/ai', icon: 'ai', section: 'Platform' },
-        { title: 'Data model', description: 'Sync and enrich your data', href: '#', icon: 'data', section: 'Platform' },
-        { title: 'Productivity & collaboration', description: 'Context for your team operations', href: '#', icon: 'collaboration', section: 'Platform' },
-        { title: 'Services', description: 'Managed Oxy services', href: '/', image: servicesMedia, section: 'Platform' },
-        { title: 'Workflows', description: 'Automate any process', href: '#', icon: 'automations', section: 'Automations' },
-        { title: 'Sequences', description: 'Personalized outreach', href: '#', icon: 'sequences', section: 'Automations' },
-        { title: 'Call Intelligence', description: 'Record and analyze meetings', href: '#', icon: 'call-intelligence', section: 'Insights' },
-        { title: 'Reporting', description: 'Insights in real time', href: '#', icon: 'reporting', section: 'Insights' },
-        { title: 'Developer Platform', description: 'Build on Oxy', href: '/developers/docs', icon: 'developers', section: 'Ecosystem' },
-        { title: 'Apps', description: 'Extend with integrations', href: '/apps', icon: 'apps', section: 'Ecosystem' },
+        { title: 'Oxy ID', description: 'The identity layer every app signs in with', href: '/developers/docs', icon: 'data', section: 'Platform' },
+        { title: 'Oxy AI', description: 'Private models, API and SDKs', href: '/ai', icon: 'ai', section: 'Platform' },
+        { title: 'Bloom', description: 'The design system behind every app', href: '/developers/docs/bloom/playground', image: servicesMedia, section: 'Platform' },
+        { title: 'Developer platform', description: 'Build on Oxy', href: '/developers/docs', icon: 'developers', section: 'Build' },
+        { title: 'API reference', description: 'Every endpoint, versioned', href: '/developers/docs/api', icon: 'contract', section: 'Build' },
+        { title: 'Status', description: 'Live health of every service', href: '/status', icon: 'network', section: 'Build' },
+        { title: 'Open source', description: 'Read and run what we ship', href: 'https://github.com/OxyHQ', icon: 'github', section: 'Build' },
       ],
       sidePanel: {
         heading: 'Get started',
         links: [
-          { label: 'Oxy 101', href: '#' },
-          { label: 'Hire an expert', href: '#' },
-          { label: 'Startup program', href: '/partners' },
-          { label: 'Talk to sales', href: '/help' },
+          { label: 'Academy', href: '/academy' },
+          { label: 'Help center', href: '/help' },
+          { label: 'Pricing', href: '/pricing' },
+          { label: 'Partner programs', href: '/partners' },
         ],
       },
     },
@@ -89,15 +88,17 @@ async function seed() {
       items: [
         { title: 'Help center', description: "Learn more about Oxy's features", href: '/help', icon: 'help-center', section: 'Support' },
         { title: 'Academy', description: 'Essential Oxy features explained', href: '/academy', icon: 'academy', section: 'Support' },
+        { title: 'FAQs', description: 'Short answers about Oxy', href: '/faqs', icon: 'help-center', section: 'Support' },
         { title: 'Developer docs', description: 'Start building Oxy apps', href: '/developers/docs', icon: 'developers', section: 'Developers' },
+        { title: 'Newsroom', description: 'Announcements and engineering posts', href: '/newsroom', icon: 'reporting', section: 'Developers' },
         { title: 'Partner programs', description: 'Developers, creators, consultants', href: '/partners', icon: 'partners', section: 'Partners' },
       ],
       sidePanel: {
         heading: 'Company',
         links: [
+          { label: 'Manifesto', href: '/company/manifesto' },
+          { label: 'Founding Charter', href: '/company/charter' },
           { label: 'Changelog', href: '/changelog' },
-          { label: 'Newsroom', href: '/newsroom' },
-          { label: 'Engineering blog', href: '/company/news' },
           { label: 'Careers', href: '/company/careers' },
         ],
       },
@@ -128,78 +129,58 @@ async function seed() {
       {
         title: 'Platform',
         links: [
-          { label: 'Refer a team', href: '#', isNewBadge: true },
+          { label: 'Technologies', href: '/technologies' },
+          { label: 'Pricing', href: '/pricing' },
           { label: 'Changelog', href: '/changelog' },
-          { label: 'iOS app', href: '#', isExternal: true },
-          { label: 'Android app', href: '#', isExternal: true },
-          { label: 'Security', href: '#' },
+          { label: 'Status', href: '/status' },
+          { label: 'Referrals', href: '/referrals', isNewBadge: true },
         ],
       },
       {
         title: 'Company',
         links: [
-          { label: 'About Us', href: '#' },
-          { label: 'How Our Business Works', href: '/company/business' },
-          { label: 'Careers', href: '/company/careers' },
-          { label: 'Investor Relations', href: '#' },
-          { label: 'Transparency Center', href: '/company/transparency' },
-          { label: 'Community Guidelines', href: '#' },
+          { label: 'About Us', href: '/company' },
           { label: 'Manifesto', href: '/company/manifesto' },
+          { label: 'Founding Charter', href: '/company/charter' },
+          { label: 'How Our Business Works', href: '/company/business' },
+          { label: 'Transparency Center', href: '/company/transparency' },
+          { label: 'The Initiative', href: '/initiative' },
+          { label: 'Team', href: '/company/team' },
+          { label: 'Careers', href: '/company/careers' },
           { label: 'Newsroom', href: '/newsroom' },
           { label: 'Engineering blog', href: '/company/news', isNewBadge: true },
           { label: 'Become a partner', href: '/partners' },
         ],
       },
       {
-        title: 'Import from',
+        title: 'Learn',
         links: [
-          { label: 'Salesforce', href: '#' },
-          { label: 'Hubspot', href: '#' },
-          { label: 'Pipedrive', href: '#' },
-          { label: 'Zoho', href: '#' },
-          { label: 'Excel', href: '#' },
-          { label: 'CSV', href: '#' },
-        ],
-      },
-      {
-        title: 'Oxy for',
-        links: [
-          { label: 'Startups', href: '#' },
-          { label: 'Creators', href: '#' },
-          { label: 'Nonprofits', href: '#' },
-          { label: 'Freelancers', href: '#' },
-          { label: 'Communities', href: '#' },
-          { label: 'Education', href: '#' },
+          { label: 'Help center', href: '/help' },
+          { label: 'Academy', href: '/academy' },
+          { label: 'FAQs', href: '/faqs' },
+          { label: 'Developer docs', href: '/developers/docs' },
+          { label: 'API reference', href: '/developers/docs/api' },
+          { label: 'Open source', href: 'https://github.com/OxyHQ', isExternal: true },
         ],
       },
       {
         title: 'Apps',
         links: [
-          { label: 'Oxy OS', href: 'https://os.oxy.so' },
-          { label: 'Accounts', href: 'https://accounts.oxy.so/' },
-          { label: 'Marketplace', href: '#' },
-          { label: 'Alia', href: 'https://alia.onl/' },
-          { label: 'FAIRWallet', href: 'https://fairco.in/wallet' },
-          { label: 'Allo', href: 'https://allo.oxy.so/' },
-          { label: 'Oxy Pay', href: '#' },
-          { label: 'Noted', href: '#' },
+          { label: 'Commons', href: '/commons' },
+          { label: 'Accounts', href: 'https://accounts.oxy.so/', isExternal: true },
           { label: 'Mention', href: '/mention' },
-          { label: 'Moovo', href: '#' },
-          { label: 'Helpio', href: '#' },
-          { label: 'Syra', href: 'https://syra.fm/' },
+          { label: 'Oxy Inbox', href: '/inbox' },
+          { label: 'Allo', href: 'https://allo.oxy.so/', isExternal: true },
+          { label: 'Alia', href: 'https://alia.onl/', isExternal: true },
           { label: 'Homiio', href: '/homiio' },
-        ],
-      },
-      {
-        title: 'Resources',
-        links: [
-          { label: 'Startup program', href: '#' },
-          { label: 'Help center', href: '/help' },
-          { label: 'Automation templates', href: '#' },
-          { label: 'Developers', href: '/developers/docs' },
-          { label: 'System status', href: '#', isExternal: true },
-          { label: 'Hire an expert', href: '#' },
-          { label: 'Downloads', href: '#' },
+          { label: 'Syra', href: 'https://syra.fm', isExternal: true },
+          { label: 'Mercaria', href: 'https://mercaria.co', isExternal: true },
+          { label: 'Oxy Pay', href: '/pay' },
+          { label: 'FairCoin', href: '/faircoin' },
+          { label: 'Codea', href: '/codea' },
+          { label: 'Astro', href: '/astro' },
+          { label: 'TNP', href: '/tnp' },
+          { label: 'Oxy OS', href: '/os' },
         ],
       },
     ],
@@ -240,6 +221,7 @@ async function seed() {
     { productId: 'faircoin-bridge', name: 'FairCoin Bridge', tagline: 'FairCoin on Base', description: 'Custodial 1:1 bridge between FairCoin L1 and WFAIR on Base, and the buy-FAIR flow behind it.', href: 'https://bridge.fairco.in', healthUrl: 'https://bridge.fairco.in/health', external: true, cta: 'Bridge status', brand: '#16a34a', mark: 'B', category: categoryRef('finance-commerce'), section: 'finance-commerce', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 3 },
     { productId: 'faircoin-buy', name: 'FairCoin Buy', tagline: 'Buy FAIR with crypto', description: 'Payment-address allocation for buy orders. Separate from the bridge probe: buying can be down while deposits, mints and releases keep working.', href: 'https://buy.fairco.in', healthUrl: 'https://bridge.fairco.in/health/buy', external: true, cta: 'Buy FAIR', brand: '#16a34a', mark: 'B', category: categoryRef('finance-commerce'), section: 'finance-commerce', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 4 },
     { productId: 'faircoin-wallet', name: 'FairCoin Wallet', tagline: 'Manage your FairCoin', description: 'Self-custodied wallet built for everyday FairCoin use — send, receive, and track balances across devices.', href: 'https://fairco.in/wallet', external: true, cta: 'Open wallet', brand: '#16a34a', mark: 'W', category: categoryRef('finance-commerce'), section: 'finance-commerce', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: true, order: 1 },
+    { productId: 'pay', name: 'Oxy Pay', tagline: 'Money that works harder', description: 'Earn yield, get cashback, send money instantly, and manage it all in one place — with the Oxy Pay Card wherever Visa is accepted.', href: '/pay', landingUrl: '/pay', external: false, cta: 'Explore Oxy Pay', brand: '#16a34a', mark: 'P', category: categoryRef('finance-commerce'), section: 'finance-commerce', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: true, order: 3 },
     { productId: 'faircoin-explorer', name: 'FairCoin Explorer', tagline: 'Blockchain explorer', description: 'Browse blocks, transactions and addresses on the FairCoin network.', href: 'https://explorer.fairco.in', healthUrl: 'https://explorer.fairco.in/api/mining-info?network=mainnet', external: true, cta: 'Open explorer', brand: '#16a34a', mark: 'E', category: categoryRef('finance-commerce'), section: 'finance-commerce', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 2 },
     { productId: 'homiio', name: 'Homiio', tagline: 'Rental made easy', description: 'Renting made fair: transparent listings, values-based roommate matching, an Oxy-powered trust score and Sindi, your AI tenant-rights assistant. Affordable housing made accessible through open technology.', href: 'https://homiio.com/', landingUrl: '/homiio', external: false, cta: 'Explore Homiio', brand: '#e11d48', mark: 'H', category: categoryRef('apps'), section: 'apps', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
     { productId: 'clarity', name: 'Clarity', tagline: 'AI answer engine', description: 'AI-powered answer engine that cites its sources and respects your privacy.', href: 'https://clarity.surf', external: true, cta: 'Open Clarity', brand: '#0ea5e9', mark: 'C', category: categoryRef('apps'), section: 'apps', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 1 },
@@ -252,6 +234,9 @@ async function seed() {
     { productId: 'tnp', name: 'TNP', tagline: 'Alternative namespace', description: 'The Network Protocol — register names on .ox, .app, .com and more. DNS-only, system-wide, and fully under your control.', href: '/tnp', landingUrl: '/tnp', external: false, cta: 'Explore TNP', brand: '#10b981', mark: 'T', category: categoryRef('infrastructure'), section: 'infrastructure', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: true, order: 3 },
     { productId: 'astro', name: 'Astro', tagline: 'AI browser', description: 'Browse the web with AI by your side. Astro gives you instant answers, smarter suggestions and help with tasks — privacy you control.', href: '/astro', landingUrl: '/astro', external: false, cta: 'Explore Astro', brand: '#a855f7', mark: 'A', category: categoryRef('apps'), section: 'apps', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: true, order: 0 },
     { productId: 'codex-extension', name: 'Codex Extension', tagline: 'Codea, everywhere you code', description: 'Bring Codea\u2019s open-source AI assistant into the editor you already use. Reviews, refactors and completions — free to inspect, free to extend.', href: '/codea/extension', landingUrl: '/codea/extension', external: false, cta: 'Explore the extension', brand: '#475569', mark: 'E', category: categoryRef('developer'), section: 'developer', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: false, order: 1 },
+    { productId: 'syra', name: 'Syra', tagline: 'Music, artists and live', description: 'A home for music: streaming built around artists, listeners and live experiences rather than the economics of a catalogue.', href: 'https://syra.fm', healthUrl: 'https://api.syra.fm', external: true, cta: 'Open Syra', brand: '#f43f5e', mark: 'S', category: categoryRef('apps'), section: 'apps', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: true, order: 4 },
+    { productId: 'mercaria', name: 'Mercaria', tagline: 'Buy and sell, fairly', description: 'A marketplace for new goods from shops and secondhand items from people, with the same identity and trust you already have across Oxy.', href: 'https://mercaria.co', external: true, cta: 'Open Mercaria', brand: '#f59e0b', mark: 'M', category: categoryRef('finance-commerce'), section: 'finance-commerce', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: true, order: 5 },
+    { productId: 'crowdsource', name: 'CrowdSource', tagline: 'Participatory moderation', description: 'Reports become cases, cases are judged by an independent jury drawn at random, and the versioned decision goes back to the app. Nobody can pick the case they review.', href: '/company/charter#6-governance-designed-for-fallible-people', external: false, cta: 'How it works', brand: '#6366f1', mark: 'C', category: categoryRef('infrastructure'), section: 'infrastructure', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: false, order: 4 },
   ])
   console.log('Seeded products')
 
@@ -266,31 +251,28 @@ async function seed() {
   })
   console.log('Seeded hero')
 
-  // ── Testimonials (exact copy) ──
-  await Testimonial.insertMany([
-    { quote: 'Before every meeting, Ask Oxy centralizes, summarizes, and surfaces everything I need to know to give a great first impression or close the deal.', author: 'Sarah Chen', role: 'VP of Sales', company: 'Runway', order: 0 },
-    { quote: "Oxy is the first CRM that feels truly modern. It's powerful, flexible, and fast to build with. There's nothing like it on the market.", author: 'Marcus Rodriguez', role: 'Head of Revenue', company: 'Vercel', order: 1 },
-    { quote: "Oxy is now a permanent part of my Go-To-Market playbook. It's like Notion for Sales.", author: 'Emily Park', role: 'CEO', company: 'Beam', order: 2 },
-    { quote: 'Ask Oxy has become an indispensable tool for our sales leadership team, giving us incredible execution power and speed to insight.', author: 'David Kim', role: 'CRO', company: 'Scale', order: 3 },
-    { quote: 'As a fast growing startup, our GTM motion is constantly evolving. Ask Oxy has enabled us to answer important questions, fast.', author: 'Priya Sharma', role: 'Head of Ops', company: 'Ramp', order: 4 },
-  ])
-  console.log('Seeded testimonials')
+  // ── Testimonials ──
+  // Intentionally empty. The five that used to live here were invented quotes
+  // attributed to named people at real companies, which is not something the
+  // site can carry. Add real ones through /admin/testimonials once they exist.
+  console.log('Seeded testimonials (none)')
 
   // ── Pricing (exact copy) ──
   await PricingPlan.insertMany([
-    { name: 'Free', price: { monthly: 0, annual: 0 }, description: '500 credits per seat / month', features: ['500 credits per seat / month'], cta: 'Get started', ctaHref: '/signup', highlighted: false, order: 0 },
-    { name: 'Pro', price: { monthly: 0, annual: 0 }, description: '1,000 credits per seat / month', features: ['1,000 credits per seat / month'], cta: 'Get started', ctaHref: '/signup', highlighted: true, order: 1 },
-    { name: 'Enterprise', price: { monthly: 0, annual: 0 }, description: '2,500 credits per seat / month', features: ['2,500 credits per seat / month'], cta: 'Contact sales', ctaHref: '/contact', highlighted: false, order: 2 },
+    { name: 'Free', price: { monthly: 0, annual: 0 }, description: '500 credits per seat / month', features: ['500 credits per seat / month'], cta: 'Get started', ctaHref: 'https://accounts.oxy.so/', highlighted: false, order: 0 },
+    { name: 'Pro', price: { monthly: 0, annual: 0 }, description: '1,000 credits per seat / month', features: ['1,000 credits per seat / month'], cta: 'Get started', ctaHref: 'https://accounts.oxy.so/', highlighted: true, order: 1 },
+    { name: 'Enterprise', price: { monthly: 0, annual: 0 }, description: '2,500 credits per seat / month', features: ['2,500 credits per seat / month'], cta: 'Contact sales', ctaHref: '/help', highlighted: false, order: 2 },
   ])
   console.log('Seeded pricing')
 
   // ── Site Settings ──
   const ogMediaId = await seedMedia('https://oxy.so/og-default.png', 'og-default.png', 'image/png')
   await SiteSettings.create({
-    siteTitle: 'Oxy — The AI-Powered CRM for Go-To-Market Teams',
-    siteDescription: 'Search, update, and create across your entire CRM just by asking. Oxy is the AI CRM with Universal Context that deeply understands your business.',
+    siteTitle: 'Oxy — Open technology that answers to the people who use it',
+    siteDescription:
+      'An open ecosystem of apps built on one identity you hold yourself: social, messaging, housing, payments and AI. No surveillance advertising, no data sales, source you can read.',
     ogImage: ogMediaId,
-    banner: { text: 'Introducing Ask Oxy — AI-powered CRM intelligence', href: '#', visible: true },
+    banner: { text: 'Read the Oxy Founding Charter', href: '/company/charter', visible: true },
   })
   console.log('Seeded site settings')
 
@@ -325,8 +307,8 @@ async function seed() {
 
   // ── Changelog (sample) ──
   await ChangelogEntry.insertMany([
-    { title: 'Ask Oxy public beta', content: 'Ask Oxy is now available to all workspaces.', tags: ['ai', 'beta'], date: new Date('2026-03-20'), items: ['Natural language CRM queries', 'Meeting intelligence', 'Call recording & analysis'] },
-    { title: 'Workflow automations v2', content: 'Major update to the workflow engine.', tags: ['automations', 'release'], date: new Date('2026-03-10'), items: ['Conditional branching', 'Multi-step sequences', 'Webhook triggers'] },
+    { title: 'Device-first sessions everywhere', content: 'Signing in to any Oxy app now proves possession of a credential held on your device.', tags: ['identity', 'release'], date: new Date('2026-07-18'), items: ['No session cookie', 'Per-device credentials', 'Faster cold start'] },
+    { title: 'Founding Charter published', content: 'The commitments Oxy intends to be held to are now public.', tags: ['company'], date: new Date('2026-08-01'), items: ['Charter at /company/charter', 'Linked from the manifesto', 'Open to challenge'] },
   ])
   console.log('Seeded changelog')
 
@@ -381,14 +363,14 @@ async function seed() {
       location: 'Remote',
       type: 'Full-time',
       compensation: '$160K – $210K',
-      subtitle: 'Work on Ask Oxy and our AI infrastructure.',
+      subtitle: 'Work on Alia and the AI infrastructure behind it.',
       description: [
         { type: 'heading', text: 'About the role' },
-        { type: 'paragraph', text: 'Join the AI team building Ask Oxy, our AI-powered CRM intelligence engine. You will design and deploy machine learning models that help sales teams close deals faster by surfacing the right information at the right time.' },
+        { type: 'paragraph', text: 'Join the team building Alia, the assistant that runs across the Oxy ecosystem. You will design and deploy models that help people get real work done, without their data feeding somebody else\u2019s training set.' },
         { type: 'heading', text: 'What you will do' },
         { type: 'list', items: [
           'Design and train ML models for natural language understanding and entity extraction',
-          'Build retrieval-augmented generation (RAG) pipelines for CRM data',
+          'Build retrieval-augmented generation (RAG) pipelines over user-controlled data',
           'Optimize inference latency and cost across production workloads',
           'Develop evaluation frameworks for model quality and safety',
           'Collaborate with product engineers to integrate AI features end-to-end',
@@ -452,156 +434,93 @@ async function seed() {
     seedMedia('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&h=630&fit=crop', 'homiio-rental-tips-cover.jpg'),
   ])
 
+  // Seed posts describe work that actually exists in the ecosystem. The set
+  // this replaced claimed a $50M Series B led by a named investor, a G2 award
+  // and a SOC 2 Type II certification, none of which had happened.
   await NewsroomPost.insertMany([
     {
-      title: 'Introducing Ask Oxy: AI-Powered CRM Intelligence',
-      slug: 'introducing-ask-oxy-ai-powered-crm-intelligence',
-      resume: 'Ask Oxy is our new AI engine that lets you search, update, and create across your entire CRM using natural language.',
-      description: 'A deep dive into the technology behind Ask Oxy and how it transforms the way sales teams interact with their CRM.',
-      content: '<p>Today we are launching Ask Oxy, a new AI-powered interface that fundamentally changes how you interact with your CRM. Instead of clicking through menus and filters, you simply ask.</p><p>Ask Oxy understands context from your emails, meetings, and deal history to surface exactly what you need — before you even know you need it.</p>',
+      title: 'The Oxy Founding Charter',
+      slug: 'the-oxy-founding-charter',
+      resume: 'What Oxy is trying to become, what it must protect while it grows, and the commitments that are not for sale.',
+      description: 'The founding charter sets out the commitments Oxy intends to be held to as it grows.',
+      content: '<p>We have published the Oxy Founding Charter: a moral constitution for the work ahead. It states what Oxy is, how it can earn money without making people the product, why capital may support the mission but never own it, and which commitments should be hardest to change.</p><p>The charter is a founding draft rather than a finished institution. Its purpose is to make the direction clear enough that people can decide whether to trust it, join it and hold it accountable.</p>',
       coverImage: newsroomImages[0],
-      imageAlt: 'Abstract AI visualization',
-
-      tags: ['ai', 'product-launch', 'crm'],
-      categories: ['Product'],
+      imageAlt: 'Abstract composition in Oxy colours',
+      tags: ['company', 'governance'],
+      categories: ['Company'],
       featured: true,
       status: 'published',
-      publishedAt: new Date('2026-03-20'),
+      publishedAt: new Date('2026-08-01'),
     },
     {
-      title: 'How Oxy Built a Sub-100ms Search Engine for CRM Data',
-      slug: 'how-oxy-built-sub-100ms-search-engine-crm-data',
-      resume: 'A technical deep dive into the architecture behind our real-time CRM search, from indexing strategies to query optimization.',
-      description: 'Engineering blog post about building a fast search engine for CRM data.',
-      content: '<p>When your CRM holds millions of records across contacts, deals, emails, and calls, search latency matters. In this post we share how we built our search pipeline to consistently return results in under 100 milliseconds.</p>',
+      title: 'Device-first identity: how signing in to Oxy works',
+      slug: 'device-first-identity-how-signing-in-works',
+      resume: 'Your device holds the secret that proves who you are, so a breach of our infrastructure is not a breach of your identity.',
+      description: 'An explanation of the device-first session model behind Oxy ID.',
+      content: '<p>Signing in across Oxy no longer depends on a session cookie. Each device keeps its own credential and mints a short-lived access token by proving possession of it. There is no shared cookie to steal and nothing on our side that can impersonate you.</p><p>The trade-off is real: self custody puts the responsibility for recovery closer to the person holding the key, which is why recovery gets the engineering attention it does.</p>',
       coverImage: newsroomImages[1],
-      imageAlt: 'Server room with blue lighting',
-
-      tags: ['engineering', 'performance', 'search'],
+      imageAlt: 'Close-up of a phone being unlocked',
+      tags: ['engineering', 'identity', 'privacy'],
       categories: ['Engineering'],
       featured: false,
       status: 'published',
-      publishedAt: new Date('2026-03-15'),
+      publishedAt: new Date('2026-07-18'),
     },
     {
-      title: 'Our Approach to Responsible AI in Sales Technology',
-      slug: 'our-approach-to-responsible-ai-in-sales-technology',
-      resume: 'Oxy is committed to building AI that is transparent, fair, and aligned with user intent. Here is how we do it.',
-      description: 'An overview of the safety measures and ethical frameworks guiding AI development at Oxy.',
-      content: '<p>As AI becomes central to how businesses operate, we believe companies building AI products have a responsibility to ensure those systems are safe, fair, and transparent. This post outlines the principles and practices that guide AI development at Oxy.</p>',
+      title: 'Mention is federated: your posts travel beyond us',
+      slug: 'mention-is-federated',
+      resume: 'Mention speaks ActivityPub, so people on other servers running other software are first class participants.',
+      description: 'Why Mention federates through ActivityPub instead of building a walled garden.',
+      content: '<p>Mention connects to the wider social web through ActivityPub. Someone on a different server, running different software, operated by people we have never met, can follow you and reply to you without an account on anything we run.</p><p>By conventional measures federation is worse for us. It caps network effects and complicates moderation. We do it because a walled garden is the structure that makes every later abuse possible.</p>',
       coverImage: newsroomImages[2],
-      imageAlt: 'Human and AI collaboration concept',
-
-      tags: ['ai', 'ethics', 'safety'],
-      categories: ['Safety'],
-      featured: false,
-      status: 'published',
-      publishedAt: new Date('2026-03-10'),
-    },
-    {
-      title: 'Oxy Raises $50M Series B to Accelerate AI-First CRM',
-      slug: 'oxy-raises-50m-series-b-accelerate-ai-first-crm',
-      resume: 'We are thrilled to announce our Series B funding round, led by Sequoia Capital, to expand our team and product.',
-      description: 'Company announcement about the Series B funding round.',
-      content: '<p>Today we are announcing a $50M Series B round led by Sequoia Capital with participation from existing investors. This funding will accelerate our mission to make CRM intelligent, intuitive, and accessible to every go-to-market team.</p>',
-      coverImage: newsroomImages[3],
-      imageAlt: 'Team celebration in modern office',
-
-      tags: ['funding', 'company-news'],
-      categories: ['Company'],
-      featured: false,
-      status: 'published',
-      publishedAt: new Date('2026-02-28'),
-    },
-    {
-      title: 'Advancing LLM Reasoning for Structured CRM Queries',
-      slug: 'advancing-llm-reasoning-structured-crm-queries',
-      resume: 'New research from the Oxy AI team on improving large language model accuracy when translating natural language into database queries.',
-      description: 'Research paper summary on LLM query translation for CRM systems.',
-      content: '<p>One of the hardest problems in applying LLMs to enterprise software is translating ambiguous natural language into precise, structured queries. In this post we present our findings on constrained decoding techniques that improve query accuracy by 34%.</p>',
-      coverImage: newsroomImages[4],
-      imageAlt: 'Mathematical formulas on a whiteboard',
-
-      tags: ['ai', 'research', 'llm'],
-      categories: ['Research'],
-      featured: false,
-      status: 'published',
-      publishedAt: new Date('2026-02-20'),
-    },
-    {
-      title: 'SOC 2 Type II Certification: What It Means for Our Customers',
-      slug: 'soc-2-type-ii-certification-what-it-means',
-      resume: 'Oxy has achieved SOC 2 Type II compliance, reinforcing our commitment to enterprise-grade data security.',
-      description: 'Security announcement about SOC 2 Type II certification.',
-      content: '<p>Security is foundational to everything we build. We are proud to announce that Oxy has successfully completed a SOC 2 Type II audit, independently verifying our controls for data security, availability, and confidentiality.</p>',
-      coverImage: newsroomImages[5],
-      imageAlt: 'Security shield and lock concept',
-
-      tags: ['security', 'compliance', 'enterprise'],
-      categories: ['Security'],
-      featured: false,
-      status: 'published',
-      publishedAt: new Date('2026-02-10'),
-    },
-    {
-      title: 'Workflow Automations v2: Conditional Branching and Webhooks',
-      slug: 'workflow-automations-v2-conditional-branching-webhooks',
-      resume: 'Our biggest workflow update yet brings conditional logic, multi-step sequences, and webhook triggers to every workspace.',
-      description: 'Product update announcing Workflow Automations v2.',
-      content: '<p>Workflow Automations v2 is here. This release introduces conditional branching, enabling you to build sophisticated automation trees that respond to real-time signals from your pipeline. Combined with webhook triggers and multi-step sequences, your team can automate virtually any repeatable process.</p>',
-      coverImage: newsroomImages[6],
-      imageAlt: 'Dashboard with workflow automation interface',
-
-      tags: ['automations', 'product-update'],
+      imageAlt: 'Network of connected points',
+      tags: ['product', 'fediverse'],
       categories: ['Product'],
       featured: false,
       status: 'published',
-      publishedAt: new Date('2026-02-01'),
+      publishedAt: new Date('2026-06-30'),
     },
     {
-      title: 'Oxy Named a Leader in G2 Spring 2026 CRM Report',
-      slug: 'oxy-named-leader-g2-spring-2026-crm-report',
-      resume: 'G2 has recognized Oxy as a Leader in the CRM category based on high customer satisfaction and market presence.',
-      description: 'Company announcement about the G2 Spring 2026 recognition.',
-      content: '<p>We are honored to be recognized as a Leader in the G2 Spring 2026 Grid Report for CRM. This recognition reflects the trust our customers place in Oxy and the hard work of our entire team to deliver a product people love.</p>',
-      coverImage: newsroomImages[7],
-      imageAlt: 'Award trophy on a modern desk',
-
-      tags: ['awards', 'company-news'],
-      categories: ['Company'],
-      featured: false,
-      status: 'published',
-      publishedAt: new Date('2026-01-25'),
-    },
-    {
-      title: 'Migrating 2TB of CRM Data to a New Storage Layer Without Downtime',
-      slug: 'migrating-2tb-crm-data-new-storage-layer-zero-downtime',
-      resume: 'How the Oxy infrastructure team executed a zero-downtime migration of our primary datastore while serving production traffic.',
-      description: 'Engineering post about a large-scale data migration.',
-      content: '<p>Last quarter, we migrated our primary CRM datastore — over 2TB of live customer data — to a new storage layer without a single second of downtime. This post walks through the dual-write strategy, verification pipeline, and cutover process that made it possible.</p>',
-      coverImage: newsroomImages[8],
-      imageAlt: 'Data center infrastructure',
-
-      tags: ['engineering', 'infrastructure', 'migration'],
+      title: 'A shared design system across every Oxy app',
+      slug: 'a-shared-design-system-across-every-oxy-app',
+      resume: 'Bloom is the component library behind the apps, on web and on mobile, so a fix in one place lands everywhere.',
+      description: 'How the shared UI library keeps the ecosystem consistent.',
+      content: '<p>Every Oxy app renders the same components from one open library. Theming, accessibility and layout work done once reaches the whole ecosystem, and a bug fixed in the library is fixed in every app that consumes it.</p>',
+      coverImage: newsroomImages[6],
+      imageAlt: 'Grid of interface components',
+      tags: ['engineering', 'design'],
       categories: ['Engineering'],
       featured: false,
       status: 'published',
-      publishedAt: new Date('2026-01-15'),
+      publishedAt: new Date('2026-06-12'),
     },
     {
-      title: 'Detecting and Preventing Prompt Injection in Enterprise AI',
-      slug: 'detecting-preventing-prompt-injection-enterprise-ai',
-      resume: 'A look at the multi-layered defenses Oxy uses to protect AI features from prompt injection and adversarial inputs.',
-      description: 'Research and security post on prompt injection defense.',
-      content: '<p>As AI features become core to enterprise products, prompt injection attacks present a real security risk. In this post we detail the multi-layered defense strategy Oxy employs — from input sanitization and output validation to adversarial testing and monitoring — to keep our customers safe.</p>',
-      coverImage: newsroomImages[9],
-      imageAlt: 'Cybersecurity concept with digital shield',
-
-      tags: ['security', 'ai', 'research'],
-      categories: ['Research'],
+      title: 'FairCoin bridge and buy flow are now on the status page',
+      slug: 'faircoin-bridge-and-buy-on-status',
+      resume: 'The bridge and the buy flow are probed separately, because buying can be down while deposits and releases keep working.',
+      description: 'Status coverage for the FairCoin bridge and the buy flow.',
+      content: '<p>The FairCoin bridge and the buy flow now report to the public status page as separate services. They fail independently, so reporting them as one number hid outages that mattered to people mid-transaction.</p>',
+      coverImage: newsroomImages[8],
+      imageAlt: 'Bridge at dusk',
+      tags: ['faircoin', 'infrastructure'],
+      categories: ['Product'],
       featured: false,
       status: 'published',
-      publishedAt: new Date('2026-01-08'),
+      publishedAt: new Date('2026-05-22'),
+    },
+    {
+      title: 'Renting without the guesswork: what Homiio publishes',
+      slug: 'renting-without-the-guesswork',
+      resume: 'Transparent listings, values-based matching and an assistant that knows tenant rights.',
+      description: 'How Homiio approaches transparency in rental listings.',
+      content: '<p>Homiio publishes what tenants actually need in order to decide: the real cost, the real terms and a trust signal that can be inspected. Sindi, the tenant-rights assistant, answers questions about the rules that apply where you live.</p>',
+      coverImage: newsroomImages[10],
+      imageAlt: 'Apartment interior with natural light',
+      tags: ['homiio', 'product'],
+      categories: ['Product'],
+      featured: false,
+      status: 'published',
+      publishedAt: new Date('2026-05-06'),
     },
   ])
   console.log('Seeded newsroom posts')
@@ -637,7 +556,7 @@ async function seed() {
       lessons: [
         { title: 'Welcome to Oxy', slug: 'welcome', content: 'Meet the platform, the team behind it, and the principles that drive every decision we ship.', order: 0, durationMinutes: 8 },
         { title: 'Workspaces and identity', slug: 'workspaces', content: 'Create a workspace, invite your team, and set up single sign-on with the Oxy identity layer.', order: 1, durationMinutes: 12 },
-        { title: 'Your first automation', slug: 'first-automation', content: 'Wire a trigger to an action and watch the CRM respond in real time.', order: 2, durationMinutes: 18 },
+        { title: 'Your first automation', slug: 'first-automation', content: 'Wire a trigger to an action and watch the platform respond in real time.', order: 2, durationMinutes: 18 },
       ],
       publishedAt: new Date('2026-02-20'),
     },
@@ -843,7 +762,7 @@ async function seed() {
     {
       slug: 'introduction-to-oxy',
       title: 'Introduction',
-      summary: 'Learn why Oxy is the CRM of the future.',
+      summary: 'What Oxy is, who it is for and how the pieces fit together.',
       content: '## Welcome to Oxy\n\nOxy is an AI-first platform built around the people who use it. This article gives you the high-level tour — what makes Oxy different, who it is for and how the pieces fit together.\n\n- A privacy-first identity layer used across every Oxy product.\n- A unified data model that connects messaging, finance, infrastructure and AI.\n- An open ecosystem you can extend with your own apps and integrations.',
       category: categoryRef('help-getting-started'),
       icon: 'rocket',

@@ -8,10 +8,14 @@ import {
  * Reusable "AI for Research" section.
  * Renders as a `<div>` (not `<section>`) so it can be composed
  * inside a parent `<section>` wrapper with additional effects.
+ *
+ * It brings its own page frame by default. Pass `framed={false}` when the
+ * caller already provides one: a `container` inside a `container` applies the
+ * gutter twice and pushes the block a full gutter inside every other section.
  */
-export default function AIResearchSection() {
+export default function AIResearchSection({ framed = true }: { framed?: boolean }) {
   return (
-    <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl">
+    <div className={framed ? 'container' : undefined}>
       <div className="relative flex items-center justify-center py-6 lg:grid lg:grid-cols-3 lg:gap-8 lg:items-center">
         <img
           src="/ai/pro-left.avif"

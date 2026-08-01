@@ -19,10 +19,13 @@ export interface PromoCardProps {
 export function PromoCard({ image, title, description, href, alt, className = '' }: PromoCardProps) {
   const media = (
     <>
+      {/* Absolute, so the card's height comes from its container rather than
+          from the image's intrinsic size: a tall asset used to stretch the whole
+          nav panel to match it. */}
       <img
         src={image}
         alt={alt ?? title}
-        className="h-full w-full object-cover object-left transition-transform duration-500 ease-out group-hover:scale-105"
+        className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
       />
       {/* Caption fades into the Bloom theme background, so text stays readable in
           both light and dark mode via the semantic tokens below. */}
