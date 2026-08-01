@@ -45,6 +45,9 @@ const TNPPage = lazy(() => import('./pages/TNPPage'))
 const TNPInstallPage = lazy(() => import('./pages/TNPInstallPage'))
 const HomiioPage = lazy(() => import('./pages/HomiioPage'))
 const MentionPage = lazy(() => import('./pages/MentionPage'))
+const PayPage = lazy(() => import('./pages/PayPage'))
+const CommonsPage = lazy(() => import('./pages/CommonsPage'))
+const FaqsPage = lazy(() => import('./pages/FaqsPage'))
 const CareerDetailPage = lazy(() => import('./pages/CareerDetailPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 const InboxPage = lazy(() => import('./pages/InboxPage'))
@@ -69,9 +72,7 @@ const AstroPage = lazy(() => import('./pages/AstroPage'))
 const AIPage = lazy(() => import('./pages/AIPage'))
 const CompanyPage = lazy(() => import('./pages/CompanyPage'))
 const TeamPage = lazy(() => import('./pages/TeamPage'))
-const ManifestoPage = lazy(() => import('./pages/ManifestoPage'))
-const TransparencyPage = lazy(() => import('./pages/TransparencyPage'))
-const BusinessPage = lazy(() => import('./pages/BusinessPage'))
+const CompanyArticlePage = lazy(() => import('./pages/CompanyArticlePage'))
 const TechnologiesPage = lazy(() => import('./pages/TechnologiesPage'))
 const StatusPage = lazy(() => import('./pages/StatusPage'))
 const ReferralsPage = lazy(() => import('./pages/ReferralsPage'))
@@ -221,9 +222,46 @@ function PublicRoutes() {
       <Route path="status" element={<StatusPage />} />
       <Route path="company" element={<CompanyPage />} />
       <Route path="company/team" element={<TeamPage />} />
-      <Route path="company/manifesto" element={<ManifestoPage />} />
-      <Route path="company/transparency" element={<TransparencyPage />} />
-      <Route path="company/business" element={<BusinessPage />} />
+      <Route
+        path="company/manifesto"
+        element={
+          <CompanyArticlePage
+            slug="manifesto"
+            canonicalPath="/company/manifesto"
+            cta={{ title: 'Read the founding charter.', label: 'Open the charter', href: '/company/charter' }}
+          />
+        }
+      />
+      <Route
+        path="company/charter"
+        element={
+          <CompanyArticlePage
+            slug="charter"
+            canonicalPath="/company/charter"
+            cta={{ title: 'Help build it.', label: 'See open roles', href: '/company/careers' }}
+          />
+        }
+      />
+      <Route
+        path="company/transparency"
+        element={
+          <CompanyArticlePage
+            slug="transparency"
+            canonicalPath="/company/transparency"
+            cta={{ title: 'See where the money goes.', label: 'How our business works', href: '/company/business' }}
+          />
+        }
+      />
+      <Route
+        path="company/business"
+        element={
+          <CompanyArticlePage
+            slug="business"
+            canonicalPath="/company/business"
+            cta={{ title: 'Check the rest of it.', label: 'Transparency Center', href: '/company/transparency' }}
+          />
+        }
+      />
       <Route path="company/careers" element={<CareersPage />} />
       <Route path="company/careers/:slug" element={<CareerDetailPage />} />
       <Route path="pricing" element={<PricingPage />} />
@@ -287,6 +325,9 @@ function PublicRoutes() {
       <Route path="tnp/install" element={<TNPInstallPage />} />
       <Route path="homiio" element={<HomiioPage />} />
       <Route path="mention" element={<MentionPage />} />
+      <Route path="pay" element={<PayPage />} />
+      <Route path="commons" element={<CommonsPage />} />
+      <Route path="faqs" element={<FaqsPage />} />
       <Route path="settings" element={<SettingsPage />} />
       <Route path="legal" element={<LegalPage />} />
       {/* Public, no-auth URL required by the Play Console Data safety form. */}

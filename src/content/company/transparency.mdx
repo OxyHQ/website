@@ -1,51 +1,101 @@
 ---
-title: Transparency Center
-description: Open by default. The numbers, the money, the roadmap, the mistakes — we publish all of it.
+title: 'Transparency Center: What We Publish, and Why'
+description: What Oxy publishes about its code, its decisions, its incidents and its money, and what it deliberately does not.
 eyebrow: Transparency Center
 ogImage: /og/transparency.jpg
+date: August 2026
+readingTime: 8 minute read
 ---
 
-The numbers, the money, the roadmap, the mistakes — we publish all of it. Trust is earned by showing your work, not by asking for it.
+## Key takeaways
 
-## Annual reports
+<Takeaways>
 
-A yearly snapshot of what we built, how we spent, and where we fell short.
+- Transparency here means publishing the rules, architecture, incentives and limitations needed for informed trust. It does not mean exposing personal data or making abuse easier.
+- The source is the strongest thing we can offer: a claim about privacy that lives in code you can read is checkable, and one that lives in a policy is not.
+- Every public service reports to a live status page, and incidents get a written post-mortem rather than a quiet fix.
+- Decisions that affect people should carry reasons and a real appeal. Original decisions do not get silently rewritten to hide a mistake.
+- We publish where the money comes from and where it goes, because financial incentives shape product decisions more than principles do.
+- What we will not publish: personal data, security secrets, and anything whose disclosure would put someone at risk.
 
-### 2025 Transparency Report
+</Takeaways>
 
-Full breakdown of product launches, active users, revenue, compensation, security incidents, and the commitments we missed. [Read on Newsroom →](/newsroom)
+## Summary
 
-### 2024 Transparency Report
+Trust that cannot be verified is branding. So the useful question is not whether we promise to behave, but which of our claims you can check without taking our word for anything.
 
-The first public transparency report — covering the launch of Oxy Inbox, the fediverse bridge, and our shift to a worker-owned governance model. [Read on Newsroom →](/newsroom)
+This page collects those: what is open, what is measured, what gets written down when something goes wrong, and where the money comes from. It also states the limits, because a transparency page that claims to publish everything is already lying about one thing.
 
-## Open data
+The commitments underneath it are in the [Founding Charter](/company/charter), and the money side is in [How our business works](/company/business).
 
-Inspect the ecosystem in real time. These are not dashboards we control — they are the actual source of truth.
+## 1. Code and architecture
 
-### 100% open-source
+### 1.1 Open by default
 
-Every product in the Oxy ecosystem ships its full source code under an OSI-approved license. Audit it, fork it, self-host it. [Browse the org on GitHub →](https://github.com/OxyHQ)
+Core code that affects the public interest is open when privacy, security and law allow. Openness is both an invitation to participate and a form of accountability: it lets people inspect what a system claims to do, build on it, and demonstrate where it is wrong.
 
-### Live status page
+It also constrains us later. Code that thousands of people can read cannot quietly grow a tracker, and a protocol other people implement cannot be silently broken in our favour. [Browse the organisation on GitHub](https://github.com/OxyHQ).
 
-Real uptime for every public Oxy service. Incidents get post-mortems within 7 days — published, no exceptions. [View status →](/status)
+### 1.2 Claims that live in code
 
-### Third-party audits
+When we say a key never leaves your device, that is a statement about a code path you can follow. When we say a request carries no identifier, you can watch the request. The [developer documentation](/developers/docs) describes the interfaces those claims run through.
 
-Independent security, privacy, and accessibility reviews — published in full, including findings we are still working on. [Read latest audit →](/newsroom)
+### 1.3 What openness does not mean
 
-## Our commitments
+Publishing personal information, security secrets, or details that would make attacks easier is not transparency, it is negligence. What we publish is the rules, the architecture, the incentives and the material limitations.
 
-The promises we make to everyone who uses, builds on, or partners with Oxy.
+## 2. Reliability and incidents
 
-- We will never sell, trade, or share your personal data with third parties for marketing.
-- We will never run surveillance ads or profile you across products to sell your attention.
-- We will never use your private content to train AI models without explicit, granular consent.
-- We will publish post-mortems for every major incident within 7 days — findings and fixes.
-- We will keep every product open-source. No proprietary lock-ins, no closed re-licensing.
-- We will compensate contributors fairly and publish our compensation bands every year.
+### 2.1 Live status
 
-## Ask us anything
+Every public service reports to the [status page](/status), and services that can fail independently are probed independently. Reporting a bridge and the flow that buys through it as a single number hides outages that matter to somebody mid-transaction.
 
-Have a question about how Oxy operates, spends, or decides? We read every message and publish the answers that matter.
+### 2.2 Post-mortems
+
+Significant incidents get written up: what happened, who was affected, what the root cause was, and what changed so it does not recur. A fix that nobody can read teaches nobody anything.
+
+### 2.3 Changes we ship
+
+Product and platform changes land in the [changelog](/changelog), including the ones that remove something.
+
+## 3. Decisions about people
+
+### 3.1 Rules, reasons and appeals
+
+Rules that affect people should be public and applied consistently. Important decisions should carry reasons. Anyone affected should have an appeal that a human actually reads, and an original decision should not be quietly rewritten to make a mistake disappear.
+
+### 3.2 Participatory moderation
+
+CrowdSource is our attempt to take that further: a report becomes a case, evidence is preserved, a temporary jury drawn at random reviews it, and the decision is versioned and published. An appeal seats a new jury rather than erasing the first record. Automation can organise evidence and detect duplicates, but it does not get to be the final judge.
+
+### 3.3 Reputation has limits
+
+Trust signals help communities make specific decisions. They are dangerous when they become opaque, permanent or a proxy for a person's worth, so they stay contextual, explainable, bounded and appealable. No universal score decides whether someone deserves housing, food, education or respect.
+
+## 4. Data
+
+### 4.1 Collect less, keep less
+
+The strongest privacy guarantee available to any system is data it never collected. Everything else is a policy, and policies change owners. We collect what a service needs, keep it for as long as it is needed, and put control in the hands of the person it describes.
+
+### 4.2 Identity you hold
+
+Signing in across Oxy works by proving possession of a credential held on your device rather than by us vouching for you. That is why a breach of our infrastructure is not a breach of your identity: the useful material was never on our side.
+
+### 4.3 Leaving
+
+Export produces your actual content in a format something else can read, and the parts that federate keep working from somewhere else entirely. The right to leave is what makes staying meaningful.
+
+## 5. Money
+
+Where revenue comes from, what we refuse to earn it from, and how it is spent is published in [How our business works](/company/business), including the terms capital has to accept.
+
+We publish it because financial incentives shape product decisions far more reliably than stated values do. If you want to predict how a piece of software will treat you in five years, look at who pays for it.
+
+## 6. What we still owe you
+
+This page describes the standard. Some of it is fully in place, some of it is partial, and pretending otherwise would defeat the point of having a transparency page at all.
+
+Annual reporting, third-party audit summaries and per-service incident histories are the pieces we are still building out. When they exist they will be linked here rather than announced and quietly dropped.
+
+If you have a question about how Oxy operates, spends or decides, ask in public. The answers that matter get published, including the uncomfortable ones.

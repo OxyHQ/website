@@ -227,8 +227,14 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   },
   '/company/manifesto': {
     title: 'Manifesto',
-    description: 'Why Oxy exists, what we believe, and how we work. The principles that shape every product we ship.',
+    description: 'Why we build the way we do, what we refuse to trade away, and how to hold us to it.',
     canonicalPath: '/company/manifesto',
+  },
+  '/company/charter': {
+    title: 'Founding Charter',
+    description:
+      'What Oxy is trying to become, what it must protect while it grows, and what it must never sacrifice for speed, attention, money or status.',
+    canonicalPath: '/company/charter',
   },
   '/company/transparency': {
     title: 'Transparency',
