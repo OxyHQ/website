@@ -1,0 +1,192 @@
+/* Oxy Pay theme — the design tokens the /pay surface is built on.
+ *
+ * These are the source layout's own tokens, kept at their own values rather
+ * than aliased onto the site's Bloom semantics: the page is a dense grid of
+ * neutral panels where a tinted surface or a branded border reads as a bug.
+ * They still switch on `.dark`, so the page follows the global theme toggle.
+ *
+ * The `--pay-*` custom properties exist because the scenes size themselves in
+ * container-query units and set colours through inline `style`, where a Tailwind
+ * class cannot reach.
+ */
+
+@custom-variant mobile (@media (width >= 40rem));
+@custom-variant tablet (@media (width >= 48rem));
+@custom-variant tablet-lg (@media (width >= 64rem));
+@custom-variant tablet-wide (@media (width >= 75rem));
+@custom-variant max-tablet (@media (width < 48rem));
+@custom-variant max-tablet-lg (@media (width < 64rem));
+
+/* Every colour is a Bloom canonical token, so the page follows the active
+ * colour preset and the light/dark toggle with nothing hardcoded here.
+ *
+ * Bloom writes these onto `:root` at startup (`applyPresetVarsToDocument`):
+ *   --background --foreground --surface --surface-foreground
+ *   --popover --popover-foreground --card --card-foreground
+ *   --primary --primary-foreground --secondary --secondary-foreground
+ *   --tertiary --tertiary-foreground --muted --muted-foreground
+ *   --accent --accent-foreground --destructive --border --input --ring
+ *   --content-area --chart-1..5
+ *   --sidebar --sidebar-foreground --sidebar-primary --sidebar-primary-foreground
+ *   --sidebar-accent --sidebar-accent-foreground --sidebar-border --sidebar-ring
+ *
+ * Two gaps are deliberate on Bloom's side, and are the only values below that
+ * are not a straight `var()`:
+ *  - No third text level ships as a CSS var (`theme.colors.textTertiary` is the
+ *    engine's `outline` role, JS-only), so the tertiary text is mixed down from
+ *    `--muted-foreground` toward the page background.
+ *  - Status colours (`STATUS_COLORS` in Bloom's `build-theme`) are JS-only and
+ *    preset-INDEPENDENT by design, so semantic intent stays stable across
+ *    themes. `--pay-fg-success` mirrors Bloom's `success` (#10B981) literally.
+ */
+:root {
+  --pay-bg-primary: var(--background);
+  --pay-bg-secondary: var(--surface);
+  --pay-bg-tertiary: var(--muted);
+  --pay-bg-inputs: var(--input);
+  --pay-fg-primary: var(--foreground);
+  --pay-fg-secondary: var(--muted-foreground);
+  --pay-fg-tertiary: color-mix(in srgb, var(--muted-foreground) 68%, var(--background));
+  --pay-fg-inverted: var(--primary-foreground);
+  --pay-fg-brand: var(--primary);
+  --pay-fg-success: #10b981;
+  --pay-border-normal: var(--border);
+  --pay-button-primary: var(--primary);
+  --pay-button-primary-hover: color-mix(in srgb, var(--primary) 88%, black);
+  --pay-button-primary-pressed: color-mix(in srgb, var(--primary) 76%, black);
+}
+
+@theme {
+  --color-fg-primary: var(--pay-fg-primary);
+  --color-fg-secondary: var(--pay-fg-secondary);
+  --color-fg-tertiary: var(--pay-fg-tertiary);
+  --color-fg-inverted: var(--pay-fg-inverted);
+  --color-fg-brand: var(--pay-fg-brand);
+  --color-fg-success: var(--pay-fg-success);
+
+  --color-bg-primary: var(--pay-bg-primary);
+  --color-bg-secondary: var(--pay-bg-secondary);
+  --color-bg-tertiary: var(--pay-bg-tertiary);
+  --color-bg-inputs: var(--pay-bg-inputs);
+
+  --color-border-normal: var(--pay-border-normal);
+
+  --color-button-primary: var(--pay-button-primary);
+  --color-button-primary-hover: var(--pay-button-primary-hover);
+  --color-button-primary-pressed: var(--pay-button-primary-pressed);
+
+  /* Bloom's lightest surface: above `--background` in light, below it in dark —
+   * exactly the "raised row" the open FAQ panel wants, in one token. */
+  --color-card: var(--card);
+
+  --text-display: 3.5rem;
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: -0.025em;
+  --text-h3: 2.25rem;
+  --text-h3--line-height: 1.18;
+  --text-h3--letter-spacing: -0.02em;
+  --text-h4: 1.3125rem;
+  --text-h4--line-height: 1.3;
+  --text-h4--letter-spacing: -0.01em;
+  --text-nav: 0.9375rem;
+  --text-nav--line-height: 1.4;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.55;
+  --text-faq-answer: 0.9375rem;
+  --text-faq-answer--line-height: 1.55;
+  --text-button: 0.9375rem;
+  --text-button--line-height: 1.2;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.45;
+  --text-eyebrow: 0.8125rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-stat-label: 0.8125rem;
+  --text-stat-label--line-height: 1.2;
+  --text-account-balance: 1.125rem;
+  --text-account-balance--line-height: 1.2;
+
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Typefaces stay on Bloom's (`--bloom-font-sans` / `--bloom-font-display`), the
+ * same faces the rest of the site uses — only the surface colours are set here. */
+.pay-surface {
+  background: var(--pay-bg-primary);
+  color: var(--pay-fg-primary);
+}
+
+/* Scene loops. The feature mocks animate forever, so they are plain CSS
+ * keyframes rather than React state — nothing re-renders while they run. */
+@keyframes pay-nfc-ripple {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  25% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes pay-nfc-glyph {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+@keyframes pay-face-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes pay-char-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pay-nfc-ripple {
+  animation: pay-nfc-ripple 2.4s var(--ease-smooth) infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.pay-nfc-glyph {
+  animation: pay-nfc-glyph 2.4s var(--ease-smooth) infinite;
+}
+
+.pay-face-bob {
+  animation: pay-face-bob 2.6s ease-in-out infinite;
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+}
+
+.pay-char-in {
+  animation: pay-char-in 0.5s var(--ease-smooth) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pay-nfc-ripple,
+  .pay-nfc-glyph,
+  .pay-face-bob,
+  .pay-char-in {
+    animation: none;
+  }
+}
