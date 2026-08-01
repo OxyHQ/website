@@ -7,8 +7,8 @@ export default function FaqsPage() {
   return (
     <PageShell
       seo={{
-        title: 'Frequently Asked Questions',
-        description: 'Answers about Oxy: the ecosystem, Commons and self-custody identity, the apps, building on the SDK, and the company.',
+        title: 'Frequently asked questions',
+        description: 'Short answers about Oxy: what it is, what it costs, how the apps fit together, how your data is handled and how to build on the platform.',
         canonicalPath: '/faqs',
       }}
       className="slice-theme bg-background"

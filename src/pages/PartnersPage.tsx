@@ -13,7 +13,7 @@ export default function PartnersPage() {
     <div className="flex min-h-screen max-w-screen flex-col justify-between overflow-x-clip bg-background">
       <SEO
         title="Partners"
-        description="Join the Oxy partner ecosystem. Programs for developers, communities, and educators to build, integrate, and grow on the open-source Oxy stack."
+        description="Build with Oxy: education, community and ecosystem programs, with fair revenue splits and no exclusivity traps."
         canonicalPath="/partners"
       />
       <Navbar />

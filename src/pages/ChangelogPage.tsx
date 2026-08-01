@@ -6,8 +6,7 @@ export default function ChangelogPage() {
     <PageShell
       seo={{
         title: 'Changelog',
-        description:
-          "See what's new in Oxy. Latest releases, improvements, and bug fixes across all Oxy products.",
+        description: 'Every notable change across the Oxy ecosystem, including the ones that remove something.',
         canonicalPath: '/changelog',
       }}
       // Deliberately no `mainClassName`: this page's `<main>` has never carried

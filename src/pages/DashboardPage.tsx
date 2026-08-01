@@ -49,7 +49,7 @@ export default function DashboardPage() {
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
         title="Dashboard"
-        description="Oxy Platform live dashboard — real-time API traffic, top countries, and infrastructure status across every Oxy region."
+        description="Live platform dashboard: API traffic, top countries and infrastructure status across every Oxy region."
         canonicalPath="/dashboard"
       />
       <h1 className="sr-only">Oxy Platform Dashboard</h1>

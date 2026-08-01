@@ -5,7 +5,7 @@ export default function DocsIntroPage() {
   return (
     <PageShell
       seo={{
-        title: 'Developer Documentation',
+        title: 'Documentation',
         description:
           "Explore Oxy's developer documentation. API references, SDKs, integration guides, and everything you need to build with Oxy.",
         canonicalPath: '/developers/docs',

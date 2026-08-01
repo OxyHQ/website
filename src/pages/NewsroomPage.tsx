@@ -17,7 +17,7 @@ export default function NewsroomPage() {
   // Host-aware so a page served on fairco.in never emits oxy.so JSON-LD.
   const { origin, siteName } = brandConfig(typeof window === 'undefined' ? undefined : window.location.hostname)
   const title = pageData?.title ?? 'Newsroom'
-  const description = pageData?.description ?? 'The latest news, product announcements, research, and stories from Oxy — an open-source ecosystem of AI agents and apps.'
+  const description = pageData?.description ?? 'Announcements, product updates and engineering posts from across the Oxy ecosystem.'
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">

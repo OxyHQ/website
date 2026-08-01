@@ -222,7 +222,7 @@ export default function StatusPage() {
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
         title="Status"
-        description="Real-time health of every Oxy service, app, and infrastructure component."
+        description="Live operational status for every public Oxy service, probed independently so an outage in one is not hidden by another."
         canonicalPath="/status"
       />
       <Navbar />

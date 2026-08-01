@@ -29,7 +29,7 @@ export default function TeamPage() {
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
         title="Team"
-        description="Meet the people building Oxy. Our global, remote-first team is passionate about ethical technology and open source."
+        description="The people building Oxy across engineering, design, community and operations."
         canonicalPath="/company/team"
       />
       <Navbar />

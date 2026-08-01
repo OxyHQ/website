@@ -99,8 +99,8 @@ export default function AIPricingPage() {
   // while the plans request is pending or has failed.
   const seo = (
     <SEO
-      title="AI Pricing"
-      description="Predictable usage-based pricing for the Oxy AI assistant. Pay only for what you ask."
+      title="Oxy AI pricing"
+      description="What Oxy AI costs per plan, what each tier includes and how usage is measured. Bring your own model on the higher tiers."
       canonicalPath="/ai/pricing"
     />
   )

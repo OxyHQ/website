@@ -6,7 +6,7 @@ export default function PayPage() {
     <PageShell
       seo={{
         title: 'Oxy Pay',
-        description: 'Your money, on the world’s most powerful network. Earn yield, get cashback, and manage it all in one place.',
+        description: 'Payments across the Oxy ecosystem, with every fee shown before you confirm. In development: nothing is open for deposits yet.',
         canonicalPath: '/pay',
       }}
       className="bg-bg-primary"

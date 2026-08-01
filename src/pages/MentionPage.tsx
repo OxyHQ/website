@@ -6,7 +6,7 @@ export default function MentionPage() {
   return (
     <PageShell
       seo={{
-        title: 'Mention - Your profile. Your content.',
+        title: 'Mention, an open social network',
         description:
           "Mention is Oxy's open social network. Posts, communities, feeds, photos, polls, streams, questions, videos and chat — every one of your posts displayed in an intelligent feed. Claim your unique link, the good ones are still free.",
         canonicalPath: '/mention',

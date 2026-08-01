@@ -7,9 +7,9 @@ export default function CodexExtensionPage() {
   return (
     <PageShell
       seo={{
-        title: 'Codea VS Code Extension',
+        title: 'Codea for VS Code',
         description:
-          'Bring Codea AI directly into VS Code. Intelligent completions, refactoring, and multi-agent coding inside your editor.',
+          "Bring Codea's open-source assistant into the editor you already use: reviews, refactors and completions, free to inspect and extend.",
         canonicalPath: '/codea/extension',
       }}
       className="bg-primary-background"

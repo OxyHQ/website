@@ -5,9 +5,9 @@ export default function OxyOSPage() {
   return (
     <PageShell
       seo={{
-        title: 'OxyOS — Lightweight Desktop Linux',
+        title: 'Oxy OS',
         description:
-          'OxyOS is a lightweight desktop Linux project. Still small, still fast. A minimal Openbox desktop with a ChromeOS-style shelf.',
+          'An operating system designed around privacy and user freedom. No telemetry, no tracking, built on battle-tested open source.',
         canonicalPath: '/os',
       }}
       className="oxyos-theme bg-background"

@@ -5,9 +5,9 @@ export default function AstroPage() {
   return (
     <PageShell
       seo={{
-        title: 'Astro — AI Browser',
+        title: 'Astro Browser',
         description:
-          'Browse the web with AI by your side. Astro gives you instant answers, smarter suggestions, and help with tasks — all with privacy you control.',
+          'Browse with AI beside you: instant answers, smarter suggestions and help with tasks, with the privacy controls on your side.',
         canonicalPath: '/astro',
       }}
       className="cursor-theme astro-theme bg-background"

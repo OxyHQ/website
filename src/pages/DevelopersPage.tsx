@@ -255,7 +255,7 @@ export default function DevelopersPage() {
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background text-foreground">
       <SEO
         title="Developers"
-        description="Build on Oxy. TypeScript SDKs, React hooks, React Native components, and a fully documented REST API."
+        description="Build on Oxy: one identity layer, open APIs, SDKs for web and native, and a design system shared by every app."
         canonicalPath="/developers"
       />
       <Navbar />

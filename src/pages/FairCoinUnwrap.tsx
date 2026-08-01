@@ -15,7 +15,7 @@ import {
   useFairCoinSimpleNavLinks,
 } from '../lib/faircoin-chrome'
 
-const SEO_TITLE = 'Redeem WFAIR — fairco.in'
+const SEO_TITLE = 'Redeem WFAIR back to FairCoin'
 const SEO_DESCRIPTION =
   'Burn WFAIR on Base and receive native FAIR on the FairCoin chain. 1:1 redemption through the official FairCoin bridge.'
 

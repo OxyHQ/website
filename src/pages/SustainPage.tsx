@@ -48,7 +48,7 @@ const DEFAULT_COMMITMENTS: Commitment[] = [
   { title: 'No data sales', description: 'Your data is never sold, shared, or used for profiling. Not now, not if we\'re struggling, not if an acquirer offers. This is non-negotiable.' },
   { title: 'Full transparency', description: 'This page shows real numbers. How much we need, how much we have, where it comes from. Updated in real time, no spin.' },
   { title: 'Community-funded', description: 'Every subscriber and donor keeps Oxy independent. No VC pressure to monetize attention, no board pushing for ad revenue.' },
-  { title: 'Open roadmap', description: 'Supporters shape what we build next. The people who fund Oxy get a voice in its direction — not advertisers, not investors.' },
+  { title: 'Open roadmap', description: 'Supporters shape what we build next. The people who fund Oxy get a voice in its direction, not advertisers and not investors.' },
   { title: 'Sustainable by design', description: 'We optimize for decades, not quarters. Lean operations, boring infrastructure, no growth-at-all-costs. Oxy should outlive its founders.' },
 ]
 
@@ -252,8 +252,8 @@ export default function SustainPage() {
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
-        title="Sustain"
-        description="We will never ship ads. See how subscriptions and donations keep Oxy running without compromising your privacy — updated in real time."
+        title="Sustain Oxy"
+        description="How to support the work: sponsorship, contribution and the programs that keep open infrastructure maintained."
         canonicalPath="/sustain"
       />
       <Navbar />

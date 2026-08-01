@@ -7,7 +7,7 @@ export default function CareersPage() {
       seo={{
         title: 'Careers',
         description:
-          'Join Oxy and help build an open-source ecosystem of AI agents and apps. See open positions in Engineering, Product, Design, and more.',
+          'Open roles across engineering, design, community and operations. Help build software that answers to the people who use it.',
         canonicalPath: '/company/careers',
       }}
       className="slice-theme bg-background"

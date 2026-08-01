@@ -7,7 +7,7 @@ export default function TechnologiesPage() {
       seo={{
         title: 'Technologies',
         description:
-          'Every product in the Oxy ecosystem. Open-source, privacy-first software for messaging, intelligence, identity and beyond.',
+          'The ecosystem map: every Oxy app and service, and how they share one identity, one design system and one platform underneath.',
         canonicalPath: '/technologies',
       }}
       className="slice-theme bg-background"

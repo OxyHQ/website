@@ -322,7 +322,7 @@ export default function AcademyPage() {
     <div className="flex min-h-screen flex-col bg-background">
       <SEO
         title="Academy"
-        description="Oxy Academy — hands-on courses, guides and templates that teach you how to build across the Oxy ecosystem."
+        description="Short courses on Oxy ID, building on the platform and running it yourself, from first steps to production patterns."
         canonicalPath="/academy"
       />
       <Navbar />

@@ -28,8 +28,8 @@ export default function FeatureBoardPage() {
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
-        title="Feature Board"
-        description="Vote on features you'd like to see in Oxy products. Powered by GitHub Issues."
+        title="Feature requests"
+        description="What people are asking for across the Oxy apps, what is planned and what already shipped."
         canonicalPath="/features"
       />
       <Navbar />

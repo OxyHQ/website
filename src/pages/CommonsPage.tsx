@@ -5,9 +5,9 @@ export default function CommonsPage() {
   return (
     <PageShell
       seo={{
-        title: 'Commons by Oxy',
+        title: 'Commons, identity you actually own',
         description:
-          'Commons is where your Oxy identity lives: one key, held on your device, that signs you into every app in the ecosystem. No password, no account held on your behalf.',
+          'Oxy ID lives on your device, not in our database. Sign in across every Oxy app by proving possession of a key nobody else holds.',
         canonicalPath: '/commons',
       }}
       className="slice-theme bg-background"

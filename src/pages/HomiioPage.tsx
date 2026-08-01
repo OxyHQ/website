@@ -6,9 +6,9 @@ export default function HomiioPage() {
   return (
     <PageShell
       seo={{
-        title: 'Homiio - Rental made easy',
+        title: 'Homiio, renting made transparent',
         description:
-          'Homiio makes renting fair: transparent listings, values-based roommate matching, an Oxy-powered trust score, and Sindi, your AI tenant-rights assistant. Affordable housing made accessible through open technology.',
+          'Transparent listings, values-based matching, an Oxy-powered trust signal and an assistant that knows tenant rights.',
         canonicalPath: '/homiio',
       }}
       className="bg-[#FFF7D8]"

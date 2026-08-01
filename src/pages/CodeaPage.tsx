@@ -5,9 +5,9 @@ export default function CodeaPage() {
   return (
     <PageShell
       seo={{
-        title: 'Codea — AI Code Editor',
+        title: 'Codea, an open-source AI code editor',
         description:
-          'Codea is an AI-native code editor that understands your entire codebase. Write, refactor, and debug faster with intelligent AI assistance.',
+          'Write, review and ship in the browser, on your machine or self-hosted. A professional AI editor you can read the source of.',
         canonicalPath: '/codea',
       }}
       className="bg-[#0a0a0b]"

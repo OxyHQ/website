@@ -187,47 +187,154 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   '/': {
     title: 'Oxy, an open-source ecosystem of ethical technology',
     description:
-      'Oxy is an independent, open-source ecosystem of ethical technology built to empower people, not exploit them. Apps, AI, an operating system, a browser, identity and more.',
+      'One identity you hold yourself, and a family of open apps built on it: social, messaging, housing, payments, AI and an operating system. No ads, no data sales.',
     canonicalPath: '/',
   },
   '/pricing': {
     title: 'Pricing',
-    description: 'Simple, transparent pricing for individuals, teams, and enterprises building on Oxy.',
+    description:
+      'What each plan costs and what it includes across the Oxy apps. A free tier that is genuinely useful, and paid plans priced against real costs.',
     canonicalPath: '/pricing',
+  },
+  '/products': {
+    title: 'Products',
+    description:
+      'Every Oxy app in one list, from identity and social to housing, payments and developer tools, with what each one is for.',
+    canonicalPath: '/products',
+  },
+  '/technologies': {
+    title: 'Technologies',
+    description:
+      'The ecosystem map: every Oxy app and service, and how they share one identity, one design system and one platform underneath.',
+    canonicalPath: '/technologies',
+  },
+  '/commons': {
+    title: 'Commons, identity you actually own',
+    description:
+      'Oxy ID lives on your device, not in our database. Sign in across every Oxy app by proving possession of a key nobody else holds.',
+    canonicalPath: '/commons',
+  },
+  '/faqs': {
+    title: 'Frequently asked questions',
+    description:
+      'Short answers about Oxy: what it is, what it costs, how the apps fit together, how your data is handled and how to build on the platform.',
+    canonicalPath: '/faqs',
+  },
+  '/pay': {
+    title: 'Oxy Pay',
+    description:
+      'Payments across the Oxy ecosystem, with every fee shown before you confirm. In development: nothing is open for deposits yet.',
+    canonicalPath: '/pay',
+  },
+  '/mention': {
+    title: 'Mention, an open social network',
+    description:
+      'A social network on the fediverse, without engagement-maxxing algorithms or surveillance ads. Your posts travel through ActivityPub.',
+    canonicalPath: '/mention',
+  },
+  '/homiio': {
+    title: 'Homiio, renting made transparent',
+    description:
+      'Transparent listings, values-based matching, an Oxy-powered trust signal and an assistant that knows tenant rights.',
+    canonicalPath: '/homiio',
+  },
+  '/inbox': {
+    title: 'Inbox, end-to-end encrypted email',
+    description:
+      'Email, chat and federated messages in one calm place. Encrypted by default, with triage that surfaces what actually matters.',
+    canonicalPath: '/inbox',
+  },
+  '/ai': {
+    title: 'Oxy AI',
+    description:
+      'Private AI for people and developers: open models you can inspect, fine-tune and self-host, with conversations that never train anyone else.',
+    canonicalPath: '/ai',
+  },
+  '/ai/pricing': {
+    title: 'Oxy AI pricing',
+    description:
+      'What Oxy AI costs per plan, what each tier includes and how usage is measured. Bring your own model on the higher tiers.',
+    canonicalPath: '/ai/pricing',
+  },
+  '/os': {
+    title: 'Oxy OS',
+    description:
+      'An operating system designed around privacy and user freedom. No telemetry, no tracking, built on battle-tested open source.',
+    canonicalPath: '/os',
+  },
+  '/astro': {
+    title: 'Astro Browser',
+    description:
+      'Browse with AI beside you: instant answers, smarter suggestions and help with tasks, with the privacy controls on your side.',
+    canonicalPath: '/astro',
+  },
+  '/codea': {
+    title: 'Codea, an open-source AI code editor',
+    description:
+      'Write, review and ship in the browser, on your machine or self-hosted. A professional AI editor you can read the source of.',
+    canonicalPath: '/codea',
+  },
+  '/codea/extension': {
+    title: 'Codea for VS Code',
+    description:
+      'Bring Codea\'s open-source assistant into the editor you already use: reviews, refactors and completions, free to inspect and extend.',
+    canonicalPath: '/codea/extension',
+  },
+  '/tnp': {
+    title: 'TNP, The Name Project',
+    description: 'Register names on .ox, .app, .com and more. DNS-only, system-wide, and fully under your control.',
+    canonicalPath: '/tnp',
+  },
+  '/tnp/install': {
+    title: 'Install TNP',
+    description:
+      'Set up TNP on macOS, Linux, Windows, iOS and Android, and resolve alternative namespaces system-wide.',
+    canonicalPath: '/tnp/install',
+  },
+  '/status': {
+    title: 'Status',
+    description:
+      'Live operational status for every public Oxy service, probed independently so an outage in one is not hidden by another.',
+    canonicalPath: '/status',
   },
   '/partners': {
     title: 'Partners',
-    description: 'Meet the partners building on and with Oxy: agencies, integrators, and platform companies.',
+    description:
+      'Build with Oxy: education, community and ecosystem programs, with fair revenue splits and no exclusivity traps.',
     canonicalPath: '/partners',
   },
   '/referrals': {
     title: 'Referrals',
-    description: 'Earn rewards by referring friends to Oxy. Get a personal referral link from your dashboard.',
+    description: 'Refer people to Oxy and earn rewards. Get a personal referral link from your dashboard.',
     canonicalPath: '/referrals',
   },
-  '/technologies': {
-    title: 'Technologies',
-    description: 'Explore the products and platforms that make up the Oxy ecosystem: Bloom, OxyOS, Astro, Codea, and more.',
-    canonicalPath: '/technologies',
+  '/initiative': {
+    title: 'The Oxy Initiative',
+    description:
+      'The community work Oxy funds and supports: open source, digital rights, education and the people building alternatives.',
+    canonicalPath: '/initiative',
   },
-  '/status': {
-    title: 'Status',
-    description: 'Live operational status for the Oxy platform: API, identity, messaging, and the developer console.',
-    canonicalPath: '/status',
+  '/sustain': {
+    title: 'Sustain Oxy',
+    description:
+      'How to support the work: sponsorship, contribution and the programs that keep open infrastructure maintained.',
+    canonicalPath: '/sustain',
   },
   '/company': {
     title: 'Company',
-    description: 'Oxy builds open, ethical technology for the next generation of the internet. Learn about our mission, team, and approach.',
+    description:
+      'Who builds Oxy and why: an open ecosystem of ethical technology, the people behind it and the commitments it runs on.',
     canonicalPath: '/company',
   },
   '/company/team': {
     title: 'Team',
-    description: 'Meet the people building Oxy: engineers, designers, and operators across multiple continents.',
+    description: 'The people building Oxy across engineering, design, community and operations.',
     canonicalPath: '/company/team',
   },
   '/company/manifesto': {
     title: 'Manifesto',
-    description: 'Why we build the way we do, what we refuse to trade away, and how to hold us to it.',
+    description:
+      'Why we build the way we do, what we refuse to trade away, and how to hold us to it. The short version of the Founding Charter.',
     canonicalPath: '/company/manifesto',
   },
   '/company/charter': {
@@ -237,185 +344,147 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     canonicalPath: '/company/charter',
   },
   '/company/transparency': {
-    title: 'Transparency',
-    description: 'How we make decisions, how we handle data, and how we keep the platform accountable to the people who use it.',
+    title: 'Transparency Center',
+    description:
+      'What Oxy publishes about its code, decisions, incidents and money, and what it deliberately does not.',
     canonicalPath: '/company/transparency',
   },
   '/company/business': {
-    title: 'Business',
-    description: 'How Oxy makes money, who pays for what, and how we keep the lights on without selling your data.',
+    title: 'How our business works',
+    description:
+      'Where the money comes from, where it goes, what we refuse to earn it from, and the terms capital has to accept.',
     canonicalPath: '/company/business',
   },
   '/company/careers': {
     title: 'Careers',
-    description: 'Help us build a better internet. Open positions across engineering, design, and operations at Oxy.',
+    description:
+      'Open roles across engineering, design, community and operations. Help build software that answers to the people who use it.',
     canonicalPath: '/company/careers',
   },
   '/company/news': {
-    title: 'Blog',
-    description: 'Engineering deep dives, product updates, and notes from across the Oxy ecosystem.',
+    title: 'Engineering blog',
+    description:
+      'Deep dives from the people building Oxy: architecture, identity, federation and the decisions behind them.',
     canonicalPath: '/company/news',
   },
   '/newsroom': {
     title: 'Newsroom',
-    description: 'Announcements, product launches, and engineering digests from across the Oxy ecosystem.',
+    description: 'Announcements, product updates and engineering posts from across the Oxy ecosystem.',
     canonicalPath: '/newsroom',
   },
   '/academy': {
     title: 'Academy',
-    description: 'Free, self-paced courses on Oxy ID, the platform APIs, and building on the Oxy ecosystem.',
+    description:
+      'Short courses on Oxy ID, building on the platform and running it yourself, from first steps to production patterns.',
     canonicalPath: '/academy',
   },
   '/help': {
     title: 'Help Center',
-    description: 'How-tos, troubleshooting, and reference material for every Oxy product.',
+    description:
+      'Guides and answers for every Oxy product: accounts, identity, billing, privacy controls and the developer console.',
     canonicalPath: '/help',
   },
   '/changelog': {
     title: 'Changelog',
-    description: 'Release notes for the Oxy ecosystem: every shipped feature, fix, and breaking change.',
+    description: 'Every notable change across the Oxy ecosystem, including the ones that remove something.',
     canonicalPath: '/changelog',
   },
   '/developers': {
     title: 'Developers',
-    description: 'Build on Oxy. SDKs, REST APIs, FedCM, OAuth, and reference apps for every layer of the platform.',
+    description:
+      'Build on Oxy: one identity layer, open APIs, SDKs for web and native, and a design system shared by every app.',
     canonicalPath: '/developers',
   },
   '/developers/docs': {
     title: 'Documentation',
-    description: 'Developer docs for every Oxy SDK, app, and platform API. Version-locked, searchable, and open source.',
+    description: 'Guides, API references and SDK docs for the Oxy platform, from authentication to federation.',
     canonicalPath: '/developers/docs',
   },
-  '/codea': {
-    title: 'Codea',
-    description: 'The AI-powered code editor. VS Code, native, with multi-model agents and your repo as context.',
-    canonicalPath: '/codea',
+  '/developers/docs/api': {
+    title: 'API reference',
+    description:
+      'Every Oxy API endpoint, versioned, with request and response shapes and the auth each one expects.',
+    canonicalPath: '/developers/docs/api',
   },
-  '/codea/extension': {
-    title: 'Codex Extension for VS Code',
-    description: 'Bring Codea-style agents to your existing VS Code install via the Codex extension.',
-    canonicalPath: '/codea/extension',
+  '/developers/docs/bloom/playground': {
+    title: 'Bloom playground',
+    description:
+      'Try the components behind every Oxy app: live props, theming and the code to paste into your project.',
+    canonicalPath: '/developers/docs/bloom/playground',
   },
-  '/inbox': {
-    title: 'Inbox, end-to-end encrypted email',
-    description: 'A modern, end-to-end encrypted inbox built on Oxy ID. Your keys, your data, no scanning.',
-    canonicalPath: '/inbox',
-  },
-  '/ai': {
-    title: 'Oxy AI',
-    description: 'Oxy AI is Alia, an AI assistant built on the open, privacy first Oxy ecosystem.',
-    canonicalPath: '/ai',
-  },
-  '/ai/pricing': {
-    title: 'AI Pricing',
-    description: 'Predictable usage-based pricing for the Oxy AI assistant. Pay only for what you ask.',
-    canonicalPath: '/ai/pricing',
-  },
-  '/initiative': {
-    title: 'Initiative',
-    description: 'Hold yourself and your team accountable to the work that matters. Oxy Initiative tracks the projects, not the tasks.',
-    canonicalPath: '/initiative',
-  },
-  '/os': {
-    title: 'OxyOS',
-    description: 'A privacy-first, Android-derived operating system shipped with Oxy ID, encrypted backup, and your data under your keys.',
-    canonicalPath: '/os',
-  },
-  '/tnp': {
-    title: 'TNP, The Name Project',
-    description: 'A decentralized alternative DNS / namespace system. Get your own .pres handle and own your identity end to end.',
-    canonicalPath: '/tnp',
-  },
-  '/tnp/install': {
-    title: 'Install TNP',
-    description: 'Step-by-step setup for resolving the TNP namespace on macOS, Linux, Windows, iOS, and Android.',
-    canonicalPath: '/tnp/install',
+  '/features': {
+    title: 'Feature requests',
+    description: 'What people are asking for across the Oxy apps, what is planned and what already shipped.',
+    canonicalPath: '/features',
   },
   '/legal': {
     title: 'Legal',
-    description: 'Terms of service, privacy policy, acceptable use policy, data-processing agreement, and security disclosures for Oxy.',
+    description:
+      'Terms, privacy policy, data processing agreement, acceptable use and security disclosures for Oxy.',
     canonicalPath: '/legal',
-  },
-  // Prerendered on purpose: Google Play requires this URL to be reachable
-  // without signing in, and the crawler must get real content, not an empty
-  // SPA shell.
-  '/account-deletion': {
-    title: 'Delete your Oxy account',
-    description: 'How to permanently delete your Oxy account and identity, what data is removed, and what is kept.',
-    canonicalPath: '/account-deletion',
   },
   '/legal/privacy': {
     title: 'Privacy Policy',
-    description: 'How Oxy collects, processes, and stores your data. Updated whenever the policy changes.',
+    description: 'What Oxy collects, why, how long it is kept and how to remove or export it.',
     canonicalPath: '/legal/privacy',
   },
   '/legal/terms': {
     title: 'Terms of Service',
-    description: 'The terms under which you use Oxy products and APIs.',
+    description: 'The terms that govern the use of Oxy products and services.',
     canonicalPath: '/legal/terms',
   },
   '/legal/dpa': {
     title: 'Data Processing Agreement',
-    description: 'GDPR-aligned DPA for organizations processing personal data through Oxy.',
+    description: 'The processing terms for organisations running Oxy on behalf of their own users.',
     canonicalPath: '/legal/dpa',
   },
   '/legal/aup': {
     title: 'Acceptable Use Policy',
-    description: "What you can and can't do on Oxy. Read this before deploying anything that touches users.",
+    description: 'What is and is not allowed on Oxy services, and how the rules are enforced.',
     canonicalPath: '/legal/aup',
   },
   '/legal/cookies': {
     title: 'Cookies Policy',
-    description: 'How Oxy uses cookies, localStorage, and similar technologies, plus how to opt out.',
+    description: 'Which cookies and local storage Oxy uses, what each one is for and how to refuse them.',
     canonicalPath: '/legal/cookies',
   },
   '/legal/security': {
     title: 'Security',
-    description: 'How Oxy keeps your data safe: encryption, key handling, infrastructure, and our responsible disclosure program.',
+    description: 'How Oxy protects accounts and data, and how to report a vulnerability.',
     canonicalPath: '/legal/security',
   },
-  '/astro': {
-    title: 'Astro Browser',
-    description: 'A privacy-first Chromium-based browser shipped with Oxy ID, native FedCM, and your data under your keys.',
-    canonicalPath: '/astro',
+  '/account-deletion': {
+    title: 'Delete your Oxy account',
+    description: 'How to delete an Oxy account and what happens to your data when you do.',
+    canonicalPath: '/account-deletion',
   },
-  '/features': {
-    title: 'Feature Requests',
-    description: 'Vote on what Oxy ships next. The public roadmap for every product in the ecosystem.',
-    canonicalPath: '/features',
-  },
-  '/sustain': {
-    title: 'Sustain',
-    description: 'Support Oxy directly. Recurring contributions keep the open-source side of the ecosystem alive.',
-    canonicalPath: '/sustain',
-  },
-  // FairCoin marketing surfaces on oxy.so (the apex on fairco.in gets its
-  // own brand chrome but renders the same components).
   '/faircoin': {
     title: 'FairCoin, community run cryptocurrency',
     description:
-      'FairCoin is a community run cryptocurrency. Decentralized, fair, free of speculation. Hybrid PoW and PoS, capped at 33M coins.',
+      'A community run cryptocurrency: decentralized, fair and free of speculation. Hybrid PoW and PoS, capped at 33M coins.',
     canonicalPath: '/faircoin',
   },
   '/faircoin/buy': {
     title: 'Buy FairCoin',
-    description: 'Buy FAIR with USDC. Bridge to WFAIR on Base, then unwrap to native FairCoin.',
+    description:
+      'Buy FAIR with crypto through the official payment-address flow, with the network fee stated up front.',
     canonicalPath: '/faircoin/buy',
   },
   '/faircoin/unwrap': {
     title: 'Redeem FairCoin',
-    description: 'Unwrap WFAIR on Base back to native FairCoin.',
+    description: 'Redeem WFAIR on Base back to native FairCoin through the custodial bridge.',
     canonicalPath: '/faircoin/unwrap',
   },
   '/faircoin/bridge': {
     title: 'FairCoin bridge, WFAIR on Base',
     description:
-      'Technical reference for the WFAIR bridge. 1:1 wrapped FairCoin on Base. Contract, source, status, reserves and API endpoints.',
+      'Move value between FairCoin L1 and WFAIR on Base with a 1:1 custodial bridge, and follow its live status.',
     canonicalPath: '/faircoin/bridge',
   },
   '/faircoin/wallet': {
     title: 'FAIRWallet',
-    description: 'FAIRWallet is a self custody wallet for receiving, sending and staking FairCoin.',
+    description:
+      'A self-custodied wallet for everyday FairCoin use: send, receive and track balances across devices.',
     canonicalPath: '/faircoin/wallet',
   },
 }

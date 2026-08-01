@@ -14,7 +14,7 @@ import {
   useFairCoinSimpleNavLinks,
 } from '../lib/faircoin-chrome'
 
-const SEO_TITLE = 'FAIRWallet — your FairCoin wallet'
+const SEO_TITLE = 'FAIRWallet, your FairCoin wallet'
 const SEO_DESCRIPTION =
   'FAIRWallet is the official non-custodial wallet for FairCoin. Send, receive, stake and explore the FairCoin network from one app on Android, iOS, Windows, macOS and Linux.'
 

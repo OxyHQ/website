@@ -7,7 +7,7 @@ export default function InitiativePage() {
       seo={{
         title: 'The Oxy Initiative',
         description:
-          'Oxy Initiative is dedicated to turning visionary ideas into reality. Community support, organic farming, clean water, and environmental preservation.',
+          'The community work Oxy funds and supports: open source, digital rights, education and the people building alternatives.',
         canonicalPath: '/initiative',
       }}
       className="slice-theme bg-background"
