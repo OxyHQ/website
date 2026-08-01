@@ -49,7 +49,7 @@ export default function ChangelogContent() {
             </svg>
 
             <div className="relative z-20 grid grid-cols-12">
-              <div className="relative col-[2/-2]">
+              <div className="relative col-span-full">
                 <header
                   className="flex w-full flex-col pt-30 max-xl:pt-25 max-lg:pt-20 items-center pb-30 max-lg:pb-25"
                   style={{ '--animate-delay': '0ms', '--animate-delay-mobile': '0ms' } as React.CSSProperties}
@@ -113,7 +113,7 @@ export default function ChangelogContent() {
         <div className="container">
           <div>
             <div className="grid grid-cols-12">
-              <div className="col-[2/-2] flex flex-wrap gap-2 py-6">
+              <div className="col-span-full flex flex-wrap gap-2 py-6">
                 <button
                   onClick={() => { setSelectedRepo(undefined); setCurrentPage(1) }}
                   className={`inline-flex items-center rounded-[10px] px-3 py-1.5 text-sm transition-colors ${
@@ -150,7 +150,7 @@ export default function ChangelogContent() {
       <div className="container pb-[60px] lg:pb-[90px]">
         <div>
           <div className="grid grid-cols-12">
-            <div className="col-[2/-2]">
+            <div className="col-span-full">
               {entries.length === 0 && (
                 <div className="py-20 text-center text-muted-foreground">
                   <p className="text-lg">No changelog entries yet.</p>
@@ -240,7 +240,7 @@ export default function ChangelogContent() {
         <div className="container">
           <div>
             <div className="grid grid-cols-12">
-              <div className="col-[2/-2] flex items-center justify-center gap-2 py-10">
+              <div className="col-span-full flex items-center justify-center gap-2 py-10">
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={safePage <= 1}

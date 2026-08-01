@@ -18,9 +18,9 @@ import { usePage, useFundingProgress, type PageSection, type FundingProgress } f
  * hasn't been populated, so the page renders identically on fresh
  * databases.
  *
- * Layout follows the canonical ManifestoPage / CompanyPage patterns:
- *   container > > grid grid-cols-12 > col-[2/-2]
- * Dashed rule helpers match ManifestoPage.
+ * Layout follows the canonical CompanyArticlePage / CompanyPage patterns:
+ *   container > > grid grid-cols-12 > col-span-full
+ * Dashed rule helpers match CompanyPage.
  * ──────────────────────────────────────────── */
 
 /* ── Fallback copy ── */
@@ -65,7 +65,7 @@ const DEFAULT_CTA_SUBHEADING =
 
 const DONATE_URL = 'https://opencollective.com/oxy'
 
-/* ── CMS helpers (mirrors ManifestoPage) ── */
+/* ── CMS helpers (mirrors CompanyArticlePage) ── */
 
 function sectionHeading(sections: PageSection[], type: string, fallback: string): string {
   return sections.find((s) => s.type === type)?.heading || fallback
@@ -98,7 +98,7 @@ function parseCommitments(sections: PageSection[], fallback: Commitment[]): Comm
   return parsed.length > 0 ? parsed : fallback
 }
 
-/* ── Layout primitives (copied from ManifestoPage / CompanyPage) ── */
+/* ── Layout primitives (copied from CompanyPage) ── */
 
 function DashedHLine() {
   return (
@@ -111,7 +111,7 @@ function DashedHLine() {
 function DashedVLines({ height = 'h-5' }: { height?: string }) {
   return (
     <div className={`grid w-full grid-cols-12 overflow-hidden ${height}`}>
-      <div className="col-[2/-2] flex justify-between">
+      <div className="col-span-full flex justify-between">
         <svg width="1" height="100%" className="text-border">
           <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
         </svg>
@@ -264,7 +264,7 @@ export default function SustainPage() {
             <div className="relative overflow-hidden">
               <DotPattern id="sustain-hero-dots" className="opacity-40 dark:opacity-20" />
             <header className="relative grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
-              <div className="col-[2/-2] flex flex-col items-center gap-4 text-center">
+              <div className="col-span-full flex flex-col items-center gap-4 text-center">
                 <div className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground">
                   {heroBadge}
                 </div>
@@ -293,7 +293,7 @@ export default function SustainPage() {
           <div>
             <DashedHLine />
             <div className="grid grid-cols-12">
-              <div className="col-[2/-2] py-20 max-lg:py-16">
+              <div className="col-span-full py-20 max-lg:py-16">
                 <div className="mx-auto max-w-2xl">
                   <h2 className="text-heading-responsive-sm">{whyHeading}</h2>
                   <div className="mt-6 flex flex-col gap-5 text-lg leading-relaxed text-muted-foreground">
@@ -314,7 +314,7 @@ export default function SustainPage() {
             <DashedVLines height="h-10" />
 
             <header className="grid grid-cols-12 pt-20 pb-12 max-lg:pt-16 max-lg:pb-10 justify-items-start">
-              <div className="col-[2/-2] max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
+              <div className="col-span-full max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
                 <h2 className="text-pretty inline">{commitmentHeading}.</h2>{' '}
                 <p className="inline text-pretty font-medium text-muted-foreground">
                   {commitmentSubheading}
@@ -331,7 +331,7 @@ export default function SustainPage() {
                 className="pointer-events-none absolute inset-0 text-border/30"
                 style={{ backgroundImage: 'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)' }}
               />
-              <div className="relative col-[2/-2] grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-3">
+              <div className="relative col-span-full grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-3">
                 {commitments.map((commitment, idx) => (
                   <div key={commitment.title} className="bg-background p-8 lg:p-10">
                     <span className="font-mono text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -363,7 +363,7 @@ export default function SustainPage() {
                 </defs>
                 <rect width="100%" height="100%" fill="url(#funding-dots)" />
               </svg>
-              <div className="relative col-[2/-2] py-20 max-lg:py-16">
+              <div className="relative col-span-full py-20 max-lg:py-16">
                 <div className="mx-auto max-w-3xl">
                   <h2 className="text-heading-responsive-sm">{fundingHeading}</h2>
                   <p className="mt-2 text-muted-foreground">{fundingSubheading}</p>
@@ -416,7 +416,7 @@ export default function SustainPage() {
         <section className="container">
           <div>
             <div className="grid grid-cols-12">
-              <div className="col-[2/-2] py-20 max-lg:py-16">
+              <div className="col-span-full py-20 max-lg:py-16">
                 <div className="mx-auto max-w-2xl">
                   <h2 className="text-heading-responsive-sm">{helpHeading}</h2>
                   <div className="mt-6 flex flex-col gap-5 text-lg leading-relaxed text-muted-foreground">
@@ -469,7 +469,7 @@ export default function SustainPage() {
           <div>
             <DashedVLines height="h-10" />
             <div className="grid grid-cols-12">
-              <div className="col-[2/-2] py-20 max-lg:py-16">
+              <div className="col-span-full py-20 max-lg:py-16">
                 <div className="mx-auto flex max-w-3xl flex-col items-center gap-5 text-center">
                   <h2 className="text-balance text-heading-responsive-md">{ctaHeading}.</h2>
                   <p className="max-w-xl text-pretty text-muted-foreground">

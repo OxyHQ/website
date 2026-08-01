@@ -164,7 +164,7 @@ export default function UniversalContextSection() {
       <header className="relative flex flex-col gap-3 pt-92 text-center">
         <div className="container">
           <div className="grid grid-cols-12">
-            <div ref={ref} className="col-[2/-2] flex flex-col items-center gap-3">
+            <div ref={ref} className="col-span-full flex flex-col items-center gap-3">
           {/* "Powered by" label */}
           <p className="text-muted-foreground text-lg scroll-reveal">
             Powered by
@@ -188,7 +188,7 @@ export default function UniversalContextSection() {
           >
             <div className="grid grid-cols-12">
               <div
-                className="col-[2/-2]"
+                className="col-span-full"
                 style={{ aspectRatio: '5/1' }}
               >
                 <div

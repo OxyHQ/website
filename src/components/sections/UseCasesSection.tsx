@@ -11,7 +11,7 @@ export default function UseCasesSection() {
       <div>
         {/* Top decoration: tall grid with empty col (borders are the grid itself) */}
         <div aria-hidden="true" className="grid h-40 w-full grid-cols-12 overflow-hidden max-xl:h-30 max-lg:h-25">
-          <div className="col-[2/-2] flex justify-between">
+          <div className="col-span-full flex justify-between">
           </div>
         </div>
 
@@ -22,15 +22,15 @@ export default function UseCasesSection() {
 
         {/* Main content grid */}
         <div className="relative grid grid-cols-12">
-          <div ref={ref} className="relative col-[2/-2]">
+          <div ref={ref} className="relative col-span-full">
             {/* Header */}
-            <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center col-[2/-2] *:max-w-md">
-              <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-center col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
+            <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center col-span-full *:max-w-md">
+              <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-center col-span-full mix-blend-multiply dark:mix-blend-screen">
                 <h2 className="text-pretty inline">Intelligence built for how you work and what you do.</h2>
               </div>
 
               {/* Tabs */}
-              <div className="mt-12 flex items-center gap-1 col-[2/-2] scroll-reveal" style={{ transitionDelay: '150ms' }}>
+              <div className="mt-12 flex items-center gap-1 col-span-full scroll-reveal" style={{ transitionDelay: '150ms' }}>
                 {useCases.map((uc, i) => (
                   <button
                     key={uc.role}
@@ -47,7 +47,7 @@ export default function UseCasesSection() {
               </div>
 
               {/* Use case items */}
-              <div className="mt-10 grid w-full grid-cols-1 gap-4 md:grid-cols-2 col-[2/-2] scroll-reveal" style={{ transitionDelay: '300ms' }}>
+              <div className="mt-10 grid w-full grid-cols-1 gap-4 md:grid-cols-2 col-span-full scroll-reveal" style={{ transitionDelay: '300ms' }}>
                 {useCases[activeTab].items.map((item, i) => (
                   <div
                     key={i}

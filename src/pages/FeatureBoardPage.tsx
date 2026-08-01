@@ -50,7 +50,7 @@ export default function FeatureBoardPage() {
               </svg>
 
               <div className="relative z-20 grid grid-cols-12">
-                <div className="relative col-[2/-2]">
+                <div className="relative col-span-full">
                   <header className="flex w-full flex-col items-center pb-20 pt-28 max-lg:pb-16 max-lg:pt-20">
                     <div className="inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 text-[13px]/[1.4em] font-medium text-foreground mb-6">
                       <h1>Feature Board</h1>

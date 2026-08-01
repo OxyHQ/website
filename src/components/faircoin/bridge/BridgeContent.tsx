@@ -392,7 +392,7 @@ function ReferenceLinks() {
   )
   return (
     <section className="relative isolate">
-      <div className="container mx-auto max-w-5xl px-4 pb-24 pt-12">
+      <div className="mx-auto w-full max-w-5xl px-[var(--layout-gutter)] pb-24 pt-12">
         <div className="grid gap-3 sm:grid-cols-2">
           {items.map((item) => (
             <a

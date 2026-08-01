@@ -51,8 +51,11 @@ export default function PricingStickyTable({ isAnnual, onToggle }: Props) {
     <div className="container">
       <div className="hidden lg:block">
         <div className="pt-11">
-          <div className="container grid grid-cols-12 gap-x-6">
-            <div className="col-span-full xl:col-[2/-2]">
+          {/* Not a `container` again: this is already inside one, and nesting
+              them applied the page gutter twice — the table sat 96px inside
+              every other section on the site. */}
+          <div className="grid grid-cols-12 gap-x-6">
+            <div className="col-span-full xl:col-span-full">
               {/* Sticky header row with plan names + prices + CTAs */}
               <div className="grid grid-cols-[220px_1fr_1fr_1fr_1fr] gap-x-6 pt-10 sticky top-(--site-header-height) z-2 bg-primary-background">
                 {/* First column: billing toggle */}

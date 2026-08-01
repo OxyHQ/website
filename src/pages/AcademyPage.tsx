@@ -333,7 +333,7 @@ export default function AcademyPage() {
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[440px] bg-gradient-to-b from-surface via-surface/50 to-background"
           />
-          <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-6 pt-24 pb-10 text-center lg:pt-28">
+          <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 px-[var(--layout-gutter)] pt-24 pb-10 text-center lg:pt-28">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground shadow-sm">
               <GraduationCap className="size-3.5 text-primary" aria-hidden="true" />
               Oxy Academy
@@ -376,7 +376,7 @@ export default function AcademyPage() {
           </div>
         </section>
 
-        <div className="mx-auto max-w-6xl px-6">
+        <div className="container">
           {/* ═══ Continue learning ═══ */}
           {resume && resume.lessonSlug ? (
             <Link
@@ -432,7 +432,7 @@ export default function AcademyPage() {
 
         {/* ═══ Catalog ═══ */}
         <section id="catalog" className="scroll-mt-20 border-t border-border bg-surface/40">
-          <div className="mx-auto max-w-6xl px-6 py-10 lg:py-14">
+          <div className="container py-10 lg:py-14">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <h2 className="text-heading-responsive-sm text-foreground">
@@ -497,7 +497,7 @@ export default function AcademyPage() {
         </section>
 
         {/* ═══ Why ═══ */}
-        <section className="mx-auto max-w-6xl px-6 py-12 lg:py-16">
+        <section className="container py-12 lg:py-16">
           <h2 className="text-balance text-heading-responsive-sm text-foreground">Built for builders.</h2>
           <p className="mt-1.5 max-w-2xl text-pretty text-sm leading-relaxed text-muted-foreground">
             Every course is written by the team behind the product. Short lessons, real examples, zero filler.

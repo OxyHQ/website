@@ -9,7 +9,7 @@ export default function HomeTrialCTA() {
       <div className="container">
         <div>
           <div className="grid grid-cols-12 py-20 lg:py-32">
-            <div className="scroll-reveal col-[2/-2] flex flex-col items-center justify-between gap-8 lg:col-[2/7] lg:flex-col lg:items-start">
+            <div className="scroll-reveal col-span-full flex flex-col items-center justify-between gap-8 lg:col-[2/7] lg:flex-col lg:items-start">
               <h2 className="text-center text-heading-responsive-md lg:text-left">
                 Start exploring the
                 <br />

@@ -84,11 +84,11 @@ export default function PartnerProgramsSection() {
               <VerticalLine className="absolute inset-y-0 col-7 -translate-x-1/2 text-border max-lg:hidden" />
 
               {/* Left content */}
-              <div className="relative col-[2/7] grid grid-cols-10 grid-rows-9 max-lg:col-[2/-2]">
-                <h2 className="absolute left-0 top-0 col-[2/-2] row-2 text-overline max-lg:col-[1/-1]">
+              <div className="relative col-[2/7] grid grid-cols-10 grid-rows-9 max-lg:col-span-full">
+                <h2 className="absolute left-0 top-0 col-span-full row-2 text-overline max-lg:col-[1/-1]">
                   {program.number} / {program.label}
                 </h2>
-                <p className="absolute inset-x-0 bottom-0 col-[2/-2] row-[3/7] text-balance text-heading-responsive-sm max-lg:col-[1/-1]">
+                <p className="absolute inset-x-0 bottom-0 col-span-full row-[3/7] text-balance text-heading-responsive-sm max-lg:col-[1/-1]">
                   <span>{program.title}</span>{' '}
                   <span className="font-medium text-input">
                     {program.description}
@@ -99,7 +99,7 @@ export default function PartnerProgramsSection() {
                   size="md"
                   responsive
                   href={program.ctaHref}
-                  className="relative col-[2/-2] row-8 w-fit max-lg:absolute max-lg:bottom-0 max-lg:col-[1/-1] max-lg:row-[8/9]"
+                  className="relative col-span-full row-8 w-fit max-lg:absolute max-lg:bottom-0 max-lg:col-[1/-1] max-lg:row-[8/9]"
                 >
                   {program.ctaText}
                 </Button>
@@ -109,13 +109,13 @@ export default function PartnerProgramsSection() {
               <div className="relative col-[7/-1] flex size-full max-lg:hidden">
                 <div className="absolute inset-0 grid grid-cols-6 grid-rows-9 justify-between">
                   {/* Dashed vertical lines */}
-                  <div className="absolute inset-0 col-[2/-2] row-[1/-1] flex justify-between">
+                  <div className="absolute inset-0 col-span-full row-[1/-1] flex justify-between">
                     <VerticalLine className="text-border" dashed />
                     <VerticalLine className="text-border" dashed />
                     <VerticalLine className="text-border" dashed />
                   </div>
                   {/* Solid vertical lines */}
-                  <div className="absolute inset-0 col-[2/-2] row-[2/-2] flex justify-between">
+                  <div className="absolute inset-0 col-span-full row-[2/-2] flex justify-between">
                     <VerticalLine className="text-border" />
                     <VerticalLine className="text-border" />
                     <VerticalLine className="text-border" />
@@ -129,7 +129,7 @@ export default function PartnerProgramsSection() {
                     ))}
                   </div>
                   {/* Centered illustration */}
-                  <div className="absolute inset-0 col-[2/-2] row-[1/-1] flex items-center justify-center">
+                  <div className="absolute inset-0 col-span-full row-[1/-1] flex items-center justify-center">
                     <ProgramIllustration index={index} />
                   </div>
                 </div>
@@ -146,7 +146,7 @@ export default function PartnerProgramsSection() {
           aria-hidden="true"
           className="grid h-40 w-full grid-cols-12 overflow-hidden max-xl:h-30 max-lg:h-25"
         >
-          <div className="col-[2/-2] flex justify-between" />
+          <div className="col-span-full flex justify-between" />
         </div>
       </div>
     </div>

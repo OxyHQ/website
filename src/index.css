@@ -75,6 +75,8 @@
 @import './styles/tnp-theme.css';
 @import './styles/astro-theme.css';
 @import './styles/faircoin-theme.css';
+@import './styles/pay-theme.css';
+@import './styles/slice-theme.css';
 
 @theme {
   /* Neutral palette (used for specific non-semantic styling) */
@@ -270,34 +272,42 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Container — match Attio's breakpoints and add centering + padding */
+/* ─── The site's one content width ───
+ *
+ * Every full-width surface — page sections, the navbar, the footer — is capped
+ * and guttered by these two values, so content lines up vertically down the
+ * whole page no matter which component drew it. Change the measure here and
+ * the entire site moves together; nothing else may hardcode a page gutter or a
+ * content max-width.
+ *
+ * Consumers: `.container` below, and the `layout-px` / `layout-px-large`
+ * utilities in `styles/slice-theme.css`.
+ */
+:root {
+  --layout-max-width: 110rem; /* 1760px */
+  --layout-gutter: 1.25rem;
+}
+@media (min-width: 640px) {
+  :root {
+    --layout-gutter: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --layout-gutter: 4rem;
+  }
+}
+@media (min-width: 1280px) {
+  :root {
+    --layout-gutter: 6rem;
+  }
+}
+
 .container {
   margin-inline: auto;
-  padding-inline: 24px;
-}
-@media (max-width: 374px) {
-  .container { padding-inline: 16px; }
-}
-@media (min-width: 375px) {
-  .container { max-width: 375px; }
-}
-@media (min-width: 576px) {
-  .container { max-width: 576px; }
-}
-@media (min-width: 768px) {
-  .container { max-width: 768px; }
-}
-@media (min-width: 992px) {
-  .container { max-width: 992px; }
-}
-@media (min-width: 1200px) {
-  .container { max-width: 1200px; }
-}
-@media (min-width: 1536px) {
-  .container { max-width: 1536px; }
-}
-@media (min-width: 1920px) {
-  .container { max-width: 1760px; }
+  width: 100%;
+  max-width: var(--layout-max-width);
+  padding-inline: var(--layout-gutter);
 }
 
 /* Heading utilities */

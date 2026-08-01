@@ -180,7 +180,7 @@ function NotFoundView({ relatedJobs }: { relatedJobs: Job[] }) {
   return (
     <article>
       <div className="grid grid-cols-12 py-20">
-        <div className="col-[2/-2]">
+        <div className="col-span-full">
           <h1 className="text-heading-responsive-lg">Position not found.</h1>
           <p className="pt-6 text-muted-foreground text-xl">
             This job posting doesn&apos;t exist or may have been removed.
@@ -209,7 +209,7 @@ function RelatedRoles({ jobs }: RelatedRolesProps) {
   return (
     <aside className="relative grid grid-cols-12 border-border border-t pt-16 pb-24">
       <DashedLineV className="absolute col-[-2] max-lg:hidden" />
-      <div className="col-[2/-2] mb-8 flex items-baseline justify-between gap-4">
+      <div className="col-span-full mb-8 flex items-baseline justify-between gap-4">
         <h2 className="text-balance font-semibold text-heading-sm text-foreground">Other open roles.</h2>
         <Link
           to="/company/careers"
@@ -218,7 +218,7 @@ function RelatedRoles({ jobs }: RelatedRolesProps) {
           View all
         </Link>
       </div>
-      <ul className="col-[2/-2] grid gap-3 md:grid-cols-2">
+      <ul className="col-span-full grid gap-3 md:grid-cols-2">
         {jobs.map((j) => (
           <li key={j.slug}>
             <Link
@@ -337,13 +337,13 @@ export default function CareerDetailContent() {
           </defs>
           <rect width="100%" height="100%" fill="url(#_S_1_)" />
         </svg>
-        <h1 className="col-[2/-2] max-w-[24ch] text-balance pb-7 font-semibold text-heading-responsive-lg">{job.title}</h1>
-        <p className="col-[2/-2] max-w-[48ch] text-balance pb-10 text-xl">{job.subtitle}</p>
-        <div className="col-[2/-2] flex flex-col gap-2 max-lg:pb-5 lg:col-[2/6] xl:col-[2/5] xl:pr-8">
+        <h1 className="col-span-full max-w-[24ch] text-balance pb-7 font-semibold text-heading-responsive-lg">{job.title}</h1>
+        <p className="col-span-full max-w-[48ch] text-balance pb-10 text-xl">{job.subtitle}</p>
+        <div className="col-span-full flex flex-col gap-2 max-lg:pb-5 lg:col-[2/6] xl:col-[2/5] xl:pr-8">
           <h3 className="text-xs uppercase tracking-wider text-muted-foreground">Location</h3>
           <p className="text-balance text-sm text-muted-foreground">{job.location}</p>
         </div>
-        <div className="col-[2/-2] flex flex-col gap-2 lg:col-[6/12] xl:col-[5/12]">
+        <div className="col-span-full flex flex-col gap-2 lg:col-[6/12] xl:col-[5/12]">
           <h3 className="text-xs uppercase tracking-wider text-muted-foreground">Compensation</h3>
           <p className="text-sm text-muted-foreground">{job.compensation}</p>
         </div>
@@ -393,7 +393,7 @@ export default function CareerDetailContent() {
         </aside>
 
         {/* Right content area */}
-        <div className="col-[5/-2] max-w-prose pt-22 pb-32 max-xl:col-[2/-2] max-xl:pt-18">
+        <div className="col-[5/-2] max-w-prose pt-22 pb-32 max-xl:col-span-full max-xl:pt-18">
           <div className="max-w-prose font-normal">
             {Array.isArray(job.description) ? (
               <DescriptionContent blocks={job.description} />

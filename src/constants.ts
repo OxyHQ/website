@@ -60,8 +60,6 @@ export const FEATURES = {
   SHOW_ASTRO_DOWNLOADS: false,
   /** Render the Codea download CTAs (no real download yet). */
   SHOW_CODEA_DOWNLOADS: false,
-  /** Render the Initiative manifesto image carousel (uses Unsplash URLs). */
-  SHOW_INITIATIVE_MANIFESTO_IMAGES: false,
   /** Render the static FairCoin price chip in the hero. */
   SHOW_FAIRCOIN_HERO_PRICE_CHIP: false,
   /** Static fallback hero-carousel content (when CMS has no data). */

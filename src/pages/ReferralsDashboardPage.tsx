@@ -235,7 +235,7 @@ export default function ReferralsDashboardPage() {
           <div>
             <DashedHLine />
             <div className="grid grid-cols-12">
-              <div className="col-[2/-2] py-20 max-lg:py-14">
+              <div className="col-span-full py-20 max-lg:py-14">
                 {!code && <CodePrompt initialCode="" onSubmit={handleSubmit} />}
                 {code && isLoading && (
                   <p className="text-sm text-muted-foreground">Loading…</p>

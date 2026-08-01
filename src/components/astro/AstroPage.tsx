@@ -293,7 +293,7 @@ export default function AstroPageContent() {
         <section className="relative mt-10 w-full sm:mt-20">
           <div className="pointer-events-none absolute bottom-0 z-[-1] h-[500px] w-full bg-gradient-to-b from-transparent to-background" />
 
-          <div className="mx-auto grid w-full max-w-7xl grid-cols-12 flex-col items-center gap-8 md:gap-12">
+          <div className="container grid grid-cols-12 flex-col items-center gap-8 md:gap-12">
             {/* Title block */}
             <div className="relative col-span-12 row-start-1 flex flex-col items-center px-4 selection:bg-transparent md:px-6">
               {/* Blue glow */}
@@ -422,7 +422,7 @@ export default function AstroPageContent() {
 
         {/* ── Bottom CTA ── */}
         <section className="relative mt-10 w-full sm:mt-20">
-          <div className="mx-auto grid w-full max-w-7xl grid-cols-12 flex-col items-center gap-8 md:gap-12">
+          <div className="container grid grid-cols-12 flex-col items-center gap-8 md:gap-12">
             <div className="relative col-span-12 row-start-1 flex flex-col items-center px-4 selection:bg-transparent md:px-6">
               <div
                 aria-hidden="true"

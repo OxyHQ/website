@@ -200,7 +200,7 @@ export default function CourseDetailPage() {
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[360px] bg-gradient-to-b from-surface to-background"
           />
-          <div className="mx-auto max-w-6xl px-6 pt-24 pb-8 lg:pt-28 lg:pb-10">
+          <div className="container pt-24 pb-8 lg:pt-28 lg:pb-10">
             <Link
               to="/academy"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -276,7 +276,7 @@ export default function CourseDetailPage() {
 
         {/* ═══ Curriculum + sticky aside ═══ */}
         {course.lessons.length > 0 && (
-          <section className="mx-auto max-w-6xl px-6 pb-14">
+          <section className="container pb-14">
             <div className="grid gap-8 lg:grid-cols-[1fr_300px] lg:gap-10">
               {/* Curriculum */}
               <div>
@@ -361,7 +361,7 @@ export default function CourseDetailPage() {
         {/* ═══ More courses ═══ */}
         {related.length > 0 && (
           <section className="border-t border-border bg-surface/40">
-            <div className="mx-auto max-w-6xl px-6 py-12 lg:py-14">
+            <div className="container py-12 lg:py-14">
               <div className="mb-6 flex items-end justify-between gap-3">
                 <h2 className="text-heading-responsive-sm text-foreground">More from Academy</h2>
                 <Link to="/academy" className="text-sm font-medium text-primary hover:underline">

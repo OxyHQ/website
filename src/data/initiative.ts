@@ -114,13 +114,3 @@ export const closingSection = {
   heading: 'Build by yourself, not for yourself.',
   body: 'The future is not built by one person alone. It is built by communities coming together, sharing resources, and working toward a common vision. At the Oxy Initiative, we believe that collective action and sustainability are the foundations of lasting change. Every contribution, no matter how small, creates a ripple that reaches further than we can imagine.',
 }
-
-// --- Hero Images ---
-//
-// NOTE: This array previously held 16 Unsplash stock-photo URLs cloned from
-// the original ManifestoSection design. Since we don't own the imagery and
-// the `ManifestoSection` was decorative, the list is now empty.
-// `InitiativePage` gates the section behind `FEATURES.SHOW_INITIATIVE_MANIFESTO_IMAGES`
-// — flip the flag once self-hosted imagery exists.
-
-export const imagePaths: string[] = []

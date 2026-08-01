@@ -95,7 +95,7 @@ export default function PromptLibrarySection() {
       <div className="container flex flex-1 flex-col">
         <div className="flex w-full flex-1 flex-col">
           <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
-            <div className="col-[2/-2] max-w-lg text-center">
+            <div className="col-span-full max-w-lg text-center">
               <h2 className="text-pretty text-heading-responsive-md">From one expert to everyone.</h2>
               <p className="text-pretty text-tertiary text-xl">Best practice becomes standard practice with the prompt library.</p>
             </div>

@@ -146,7 +146,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-2 border-b border-border px-4 py-2">
             <SidebarTrigger />
           </div>
-          <div className="mx-auto max-w-4xl px-8 py-8">
+          <div className="mx-auto w-full max-w-4xl px-[var(--layout-gutter)] py-8">
             {children}
           </div>
         </main>

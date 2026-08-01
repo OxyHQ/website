@@ -37,7 +37,7 @@ const FAQS: readonly FaqItem[] = [
 export default function FaqSection() {
   return (
     <section className="relative isolate">
-      <div className="container mx-auto max-w-4xl px-4 py-20 sm:py-24">
+      <div className="mx-auto w-full max-w-4xl px-[var(--layout-gutter)] py-20 sm:py-24">
         <div className="text-center">
           <motion.span
             initial={{ opacity: 0, y: 8 }}

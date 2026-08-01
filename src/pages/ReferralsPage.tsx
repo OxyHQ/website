@@ -20,7 +20,7 @@ import { useReferral, usePage, type PageSection } from '../api/hooks'
  * sentinel — exactly one ping per page load, no useEffect.
  *
  * Layout shell matches every other marketing page:
- *   container > > grid grid-cols-12 > col-[2/-2]
+ *   container > > grid grid-cols-12 > col-span-full
  * ────────────────────────────────────────────────────────────────────── */
 
 // ── Fallback copy (used when the CMS `pages/referrals` doc is empty) ──
@@ -227,7 +227,7 @@ export default function ReferralsPage() {
         <section className="container">
           <div>
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
-              <div className="col-[2/-2] flex flex-col items-center gap-4 text-center">
+              <div className="col-span-full flex flex-col items-center gap-4 text-center">
                 {hasValidCode && referral && (
                   <div className="mb-2 inline-flex w-fit items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3 py-1.5 text-[13px]/[1.4em] font-medium text-primary">
                     <span className="relative flex size-2">
@@ -266,7 +266,7 @@ export default function ReferralsPage() {
             <DashedVLines />
 
             <header className="grid grid-cols-12 justify-items-start pt-20 pb-12 max-lg:pt-16 max-lg:pb-10">
-              <div className="col-[2/-2] max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
+              <div className="col-span-full max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
                 <h2 className="inline text-pretty">{programsHeading}.</h2>{' '}
                 <p className="inline text-pretty font-medium text-muted-foreground">
                   {programsSubheading}
@@ -286,7 +286,7 @@ export default function ReferralsPage() {
                     'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)',
                 }}
               />
-              <div className="relative col-[2/-2] grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-3">
+              <div className="relative col-span-full grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-3">
                 {programs.map((program) => (
                   <div key={program.key} className="flex flex-col bg-background p-8 lg:p-10">
                     <span className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
@@ -314,7 +314,7 @@ export default function ReferralsPage() {
         <section className="container">
           <div>
             <header className="grid grid-cols-12 justify-items-start pt-20 pb-12 max-lg:pt-16 max-lg:pb-10">
-              <div className="col-[2/-2] max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
+              <div className="col-span-full max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
                 <h2 className="inline text-pretty">{stepsHeading}.</h2>{' '}
                 <p className="inline text-pretty font-medium text-muted-foreground">
                   {stepsSubheading}
@@ -333,7 +333,7 @@ export default function ReferralsPage() {
                     'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)',
                 }}
               />
-              <div className="relative col-[2/-2] grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-3">
+              <div className="relative col-span-full grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-3">
                 {DEFAULT_STEPS.map((step, index) => (
                   <div key={step.title} className="flex flex-col bg-background p-8 lg:p-10">
                     <span
@@ -361,7 +361,7 @@ export default function ReferralsPage() {
             <DashedVLines />
             <DashedHLine />
             <div className="grid grid-cols-12">
-              <div className="col-[2/-2] py-20 max-lg:py-16">
+              <div className="col-span-full py-20 max-lg:py-16">
                 <h2 className="mb-10 text-heading-responsive-sm">{faqHeading}</h2>
                 <div className="mx-auto max-w-3xl">
                   {DEFAULT_FAQ.map((item, i) => (
@@ -392,7 +392,7 @@ export default function ReferralsPage() {
             </svg>
 
             <div className="relative z-10 grid grid-cols-12">
-              <div className="col-[2/-2] flex flex-col items-center pt-25 pb-25 text-center max-xl:pt-20 max-xl:pb-20 max-lg:pt-16 max-lg:pb-16">
+              <div className="col-span-full flex flex-col items-center pt-25 pb-25 text-center max-xl:pt-20 max-xl:pb-20 max-lg:pt-16 max-lg:pb-16">
                 <p className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 text-[13px]/[1.4em] font-medium text-foreground">
                   Become a partner
                 </p>

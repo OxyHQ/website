@@ -56,7 +56,7 @@ export function CornerDot({ className = '' }: { className?: string }) {
 export function DashedVLines({ height = 'h-5' }: { height?: string }) {
   return (
     <div className={`grid w-full grid-cols-12 overflow-hidden ${height}`}>
-      <div className="col-[2/-2] flex justify-between">
+      <div className="col-span-full flex justify-between">
         <VerticalLine dashed className="text-border" />
         <VerticalLine dashed className="text-border" />
         <VerticalLine dashed className="text-border" />

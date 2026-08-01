@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-26T22:40:17.674Z",
+  "generatedAt": "2026-08-01T07:29:05.589Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -738,6 +738,13 @@
               "slug": "api/functions/TextFieldSuffix",
               "title": "TextFieldSuffix()",
               "file": "bloom/0.5.0/api/functions/TextFieldSuffix.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/ToastOutlet",
+              "title": "ToastOutlet()",
+              "file": "bloom/0.5.0/api/functions/ToastOutlet.md",
               "order": 10000,
               "section": "api"
             },
@@ -1792,6 +1799,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/ToastFn",
+              "title": "ToastFn()",
+              "file": "bloom/0.5.0/api/interfaces/ToastFn.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/TopLoadingProps",
               "title": "TopLoadingProps",
               "file": "bloom/0.5.0/api/interfaces/TopLoadingProps.md",
@@ -2331,9 +2345,16 @@
               "section": "api"
             },
             {
-              "slug": "api/types/Toast",
-              "title": "Toast",
-              "file": "bloom/0.5.0/api/types/Toast.md",
+              "slug": "api/types/ToastOptions",
+              "title": "ToastOptions",
+              "file": "bloom/0.5.0/api/types/ToastOptions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/ToastType",
+              "title": "ToastType",
+              "file": "bloom/0.5.0/api/types/ToastType.md",
               "order": 10000,
               "section": "api"
             },
@@ -5246,6 +5267,13 @@
               "section": "api"
             },
             {
+              "slug": "api/classes/AccountNotOnDeviceError",
+              "title": "AccountNotOnDeviceError",
+              "file": "core/main/api/classes/AccountNotOnDeviceError.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/classes/AssetUrlResolutionError",
               "title": "AssetUrlResolutionError",
               "file": "core/main/api/classes/AssetUrlResolutionError.md",
@@ -5533,9 +5561,23 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/createMemoryIdentityPinStore",
+              "title": "createMemoryIdentityPinStore()",
+              "file": "core/main/api/functions/createMemoryIdentityPinStore.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/createNativeAuthStateStore",
               "title": "createNativeAuthStateStore()",
               "file": "core/main/api/functions/createNativeAuthStateStore.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/createNativeIdentityPinStore",
+              "title": "createNativeIdentityPinStore()",
+              "file": "core/main/api/functions/createNativeIdentityPinStore.md",
               "order": 10000,
               "section": "api"
             },
@@ -5564,6 +5606,13 @@
               "slug": "api/functions/createWebAuthStateStore",
               "title": "createWebAuthStateStore()",
               "file": "core/main/api/functions/createWebAuthStateStore.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/createWebIdentityPinStore",
+              "title": "createWebIdentityPinStore()",
+              "file": "core/main/api/functions/createWebIdentityPinStore.md",
               "order": 10000,
               "section": "api"
             },
@@ -5613,6 +5662,13 @@
               "slug": "api/functions/ensureValidToken",
               "title": "ensureValidToken()",
               "file": "core/main/api/functions/ensureValidToken.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/establishIdentitySession",
+              "title": "establishIdentitySession()",
+              "file": "core/main/api/functions/establishIdentitySession.md",
               "order": 10000,
               "section": "api"
             },
@@ -5795,6 +5851,13 @@
               "slug": "api/functions/hkdfSha256",
               "title": "hkdfSha256()",
               "file": "core/main/api/functions/hkdfSha256.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/identityPinMatches",
+              "title": "identityPinMatches()",
+              "file": "core/main/api/functions/identityPinMatches.md",
               "order": 10000,
               "section": "api"
             },
@@ -6268,6 +6331,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/resolveIdentityPin",
+              "title": "resolveIdentityPin()",
+              "file": "core/main/api/functions/resolveIdentityPin.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/retryAsync",
               "title": "retryAsync()",
               "file": "core/main/api/functions/retryAsync.md",
@@ -6313,6 +6383,13 @@
               "slug": "api/functions/sanitizeString",
               "title": "sanitizeString()",
               "file": "core/main/api/functions/sanitizeString.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/selectCommonsDelivery",
+              "title": "selectCommonsDelivery()",
+              "file": "core/main/api/functions/selectCommonsDelivery.md",
               "order": 10000,
               "section": "api"
             },
@@ -6807,6 +6884,41 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/CommonsApprovalSubjectAccount",
+              "title": "CommonsApprovalSubjectAccount",
+              "file": "core/main/api/interfaces/CommonsApprovalSubjectAccount.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/CommonsDeliveryFacts",
+              "title": "CommonsDeliveryFacts",
+              "file": "core/main/api/interfaces/CommonsDeliveryFacts.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/CommonsDeliveryResult",
+              "title": "CommonsDeliveryResult",
+              "file": "core/main/api/interfaces/CommonsDeliveryResult.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/CommonsOAuthContext",
+              "title": "CommonsOAuthContext",
+              "file": "core/main/api/interfaces/CommonsOAuthContext.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/CommonsOAuthFinalizeResult",
+              "title": "CommonsOAuthFinalizeResult",
+              "file": "core/main/api/interfaces/CommonsOAuthFinalizeResult.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/CommonsSignInActionResult",
               "title": "CommonsSignInActionResult",
               "file": "core/main/api/interfaces/CommonsSignInActionResult.md",
@@ -6954,6 +7066,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/EstablishedIdentitySession",
+              "title": "EstablishedIdentitySession",
+              "file": "core/main/api/interfaces/EstablishedIdentitySession.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/FileDeleteResponse",
               "title": "FileDeleteResponse",
               "file": "core/main/api/interfaces/FileDeleteResponse.md",
@@ -7017,9 +7136,37 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/IdentityBinding",
+              "title": "IdentityBinding",
+              "file": "core/main/api/interfaces/IdentityBinding.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/IdentityMarker",
               "title": "IdentityMarker",
               "file": "core/main/api/interfaces/IdentityMarker.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/IdentityPin",
+              "title": "IdentityPin",
+              "file": "core/main/api/interfaces/IdentityPin.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/IdentityPinStore",
+              "title": "IdentityPinStore",
+              "file": "core/main/api/interfaces/IdentityPinStore.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/IdentityRequestOptions",
+              "title": "IdentityRequestOptions",
+              "file": "core/main/api/interfaces/IdentityRequestOptions.md",
               "order": 10000,
               "section": "api"
             },
@@ -7293,6 +7440,13 @@
               "slug": "api/interfaces/RegisterNodeInput",
               "title": "RegisterNodeInput",
               "file": "core/main/api/interfaces/RegisterNodeInput.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/RegisterPushTokenInput",
+              "title": "RegisterPushTokenInput",
+              "file": "core/main/api/interfaces/RegisterPushTokenInput.md",
               "order": 10000,
               "section": "api"
             },
@@ -7934,6 +8088,27 @@
               "section": "api"
             },
             {
+              "slug": "api/types/CommonsDeliveryPlatform",
+              "title": "CommonsDeliveryPlatform",
+              "file": "core/main/api/types/CommonsDeliveryPlatform.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/CommonsDeliveryRoute",
+              "title": "CommonsDeliveryRoute",
+              "file": "core/main/api/types/CommonsDeliveryRoute.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/CommonsSignInPurpose",
+              "title": "CommonsSignInPurpose",
+              "file": "core/main/api/types/CommonsSignInPurpose.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/DeviceSecretMintOutcome",
               "title": "DeviceSecretMintOutcome",
               "file": "core/main/api/types/DeviceSecretMintOutcome.md",
@@ -8011,6 +8186,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/PushTokenPlatform",
+              "title": "PushTokenPlatform",
+              "file": "core/main/api/types/PushTokenPlatform.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/ReputationCategory",
               "title": "ReputationCategory",
               "file": "core/main/api/types/ReputationCategory.md",
@@ -8067,6 +8249,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/SessionMode",
+              "title": "SessionMode",
+              "file": "core/main/api/types/SessionMode.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/SessionStateOrigin",
               "title": "SessionStateOrigin",
               "file": "core/main/api/types/SessionStateOrigin.md",
@@ -8084,6 +8273,13 @@
               "slug": "api/types/SignInFlowPhase",
               "title": "SignInFlowPhase",
               "file": "core/main/api/types/SignInFlowPhase.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/SignInProgress",
+              "title": "SignInProgress",
+              "file": "core/main/api/types/SignInProgress.md",
               "order": 10000,
               "section": "api"
             },
@@ -8238,6 +8434,13 @@
               "slug": "api/variables/HttpStatus",
               "title": "HttpStatus",
               "file": "core/main/api/variables/HttpStatus.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/IDENTITY_PIN_STORAGE_KEY",
+              "title": "IDENTITY\\_PIN\\_STORAGE\\_KEY",
+              "file": "core/main/api/variables/IDENTITY_PIN_STORAGE_KEY.md",
               "order": 10000,
               "section": "api"
             },
@@ -8474,6 +8677,13 @@
               "section": "api"
             },
             {
+              "slug": "api/classes/IdentityBoundSessionError",
+              "title": "IdentityBoundSessionError",
+              "file": "services/main/api/classes/IdentityBoundSessionError.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/closeAccountDialog",
               "title": "closeAccountDialog()",
               "file": "services/main/api/functions/closeAccountDialog.md",
@@ -8509,9 +8719,9 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/FontLoader",
-              "title": "FontLoader()",
-              "file": "services/main/api/functions/FontLoader.md",
+              "slug": "api/functions/getExpoPushToken",
+              "title": "getExpoPushToken()",
+              "file": "services/main/api/functions/getExpoPushToken.md",
               "order": 10000,
               "section": "api"
             },
@@ -8519,6 +8729,20 @@
               "slug": "api/functions/handleAuthError",
               "title": "handleAuthError()",
               "file": "services/main/api/functions/handleAuthError.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/hasNotificationPermission",
+              "title": "hasNotificationPermission()",
+              "file": "services/main/api/functions/hasNotificationPermission.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/installForegroundNotificationHandler",
+              "title": "installForegroundNotificationHandler()",
+              "file": "services/main/api/functions/installForegroundNotificationHandler.md",
               "order": 10000,
               "section": "api"
             },
@@ -8614,6 +8838,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/openOAuthPopup",
+              "title": "openOAuthPopup()",
+              "file": "services/main/api/functions/openOAuthPopup.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/OxyConsentScreen",
               "title": "OxyConsentScreen()",
               "file": "services/main/api/functions/OxyConsentScreen.md",
@@ -8628,16 +8859,23 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/setOxyAssetInstance",
-              "title": "setOxyAssetInstance()",
-              "file": "services/main/api/functions/setOxyAssetInstance.md",
+              "slug": "api/functions/pushTokenPlatform",
+              "title": "pushTokenPlatform()",
+              "file": "services/main/api/functions/pushTokenPlatform.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/setupFonts",
-              "title": "setupFonts()",
-              "file": "services/main/api/functions/setupFonts.md",
+              "slug": "api/functions/requestNotificationPermission",
+              "title": "requestNotificationPermission()",
+              "file": "services/main/api/functions/requestNotificationPermission.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/setOxyAssetInstance",
+              "title": "setOxyAssetInstance()",
+              "file": "services/main/api/functions/setOxyAssetInstance.md",
               "order": 10000,
               "section": "api"
             },
@@ -8652,6 +8890,20 @@
               "slug": "api/functions/subscribeToAccountDialog",
               "title": "subscribeToAccountDialog()",
               "file": "services/main/api/functions/subscribeToAccountDialog.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/subscribeToNotificationResponses",
+              "title": "subscribeToNotificationResponses()",
+              "file": "services/main/api/functions/subscribeToNotificationResponses.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/takeLaunchNotificationData",
+              "title": "takeLaunchNotificationData()",
+              "file": "services/main/api/functions/takeLaunchNotificationData.md",
               "order": 10000,
               "section": "api"
             },
@@ -9125,6 +9377,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/OAuthPopupHandle",
+              "title": "OAuthPopupHandle",
+              "file": "services/main/api/interfaces/OAuthPopupHandle.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/OxyAuthChooserProps",
               "title": "OxyAuthChooserProps",
               "file": "services/main/api/interfaces/OxyAuthChooserProps.md",
@@ -9188,6 +9447,20 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/OxySignInRequestSurfaceProps",
+              "title": "OxySignInRequestSurfaceProps",
+              "file": "services/main/api/interfaces/OxySignInRequestSurfaceProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OxySignInSurfaceAction",
+              "title": "OxySignInSurfaceAction",
+              "file": "services/main/api/interfaces/OxySignInSurfaceAction.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/Payment",
               "title": "Payment",
               "file": "services/main/api/interfaces/Payment.md",
@@ -9219,6 +9492,13 @@
               "slug": "api/interfaces/SingleFollowButtonProps",
               "title": "SingleFollowButtonProps",
               "file": "services/main/api/interfaces/SingleFollowButtonProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/StartWebOAuthSignInOptions",
+              "title": "StartWebOAuthSignInOptions",
+              "file": "services/main/api/interfaces/StartWebOAuthSignInOptions.md",
               "order": 10000,
               "section": "api"
             },
@@ -9307,6 +9587,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/ForegroundPresentation",
+              "title": "ForegroundPresentation",
+              "file": "services/main/api/types/ForegroundPresentation.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/RequireOxyAuthPrompt",
               "title": "RequireOxyAuthPrompt",
               "file": "services/main/api/types/RequireOxyAuthPrompt.md",
@@ -9373,6 +9660,41 @@
               "slug": "api/types/WalletTransactionType",
               "title": "WalletTransactionType",
               "file": "services/main/api/types/WalletTransactionType.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/WebAuthMode",
+              "title": "WebAuthMode",
+              "file": "services/main/api/types/WebAuthMode.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/WebOAuthFailureReason",
+              "title": "WebOAuthFailureReason",
+              "file": "services/main/api/types/WebOAuthFailureReason.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/WebOAuthRedirectReason",
+              "title": "WebOAuthRedirectReason",
+              "file": "services/main/api/types/WebOAuthRedirectReason.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/WebOAuthSignInResult",
+              "title": "WebOAuthSignInResult",
+              "file": "services/main/api/types/WebOAuthSignInResult.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/WebOAuthUnsupportedReason",
+              "title": "WebOAuthUnsupportedReason",
+              "file": "services/main/api/types/WebOAuthUnsupportedReason.md",
               "order": 10000,
               "section": "api"
             },
@@ -9492,6 +9814,13 @@
               "slug": "api/variables/OxySignInButton",
               "title": "OxySignInButton",
               "file": "services/main/api/variables/OxySignInButton.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/OxySignInRequestSurface",
+              "title": "OxySignInRequestSurface",
+              "file": "services/main/api/variables/OxySignInRequestSurface.md",
               "order": 10000,
               "section": "api"
             },
@@ -10128,6 +10457,27 @@
               "section": "guides"
             },
             {
+              "slug": "superpowers/specs/2026-07-29-android-home-screen-widgets-design",
+              "title": "Android home-screen widgets",
+              "file": "mention/main/superpowers/specs/2026-07-29-android-home-screen-widgets-design.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "superpowers/specs/2026-07-29-pip-session-and-transport-controls-design",
+              "title": "PiP session + next/previous transport controls",
+              "file": "mention/main/superpowers/specs/2026-07-29-pip-session-and-transport-controls-design.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "superpowers/specs/2026-07-29-video-playback-authority-and-pip-design",
+              "title": "Video playback authority + Picture-in-Picture",
+              "file": "mention/main/superpowers/specs/2026-07-29-video-playback-authority-and-pip-design.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "THEMING",
               "title": "Theming",
               "file": "mention/main/THEMING.md",
@@ -10595,6 +10945,49 @@
       ],
       "versioned": false,
       "latestVersion": "master",
+      "deprecatedVersions": []
+    },
+    {
+      "package": "oxyfont",
+      "displayName": "OxyFont",
+      "shortName": "oxyfont",
+      "repo": "https://github.com/OxyHQ/OxyFont",
+      "category": "ui-library",
+      "description": "Oxy font family (BlomusModernus + variants)",
+      "defaultVersion": "0.1.0",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "pages": [
+            {
+              "slug": "",
+              "title": "OxyFont",
+              "description": "The Oxy display + text font family. BlomusModernus in TrueType and WOFF2.",
+              "file": "oxyfont/0.1.0/index.mdx",
+              "order": 0,
+              "section": "guides"
+            },
+            {
+              "slug": "usage",
+              "title": "Usage",
+              "description": "Load BlomusModernus in web, React Native, and Expo projects.",
+              "file": "oxyfont/0.1.0/usage.mdx",
+              "order": 1,
+              "section": "guides"
+            },
+            {
+              "slug": "specimens",
+              "title": "Specimens",
+              "description": "Live preview of BlomusModernus Regular and Bold across display, body, and caption sizes.",
+              "file": "oxyfont/0.1.0/specimens.mdx",
+              "order": 2,
+              "section": "guides"
+            }
+          ]
+        }
+      ],
+      "versioned": true,
+      "latestVersion": "0.1.0",
       "deprecatedVersions": []
     },
     {

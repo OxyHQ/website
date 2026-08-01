@@ -99,7 +99,7 @@ export default function UserProfilePage() {
 
       <main className="flex flex-1 flex-col">
         <div className="container">
-          <div className="mx-auto max-w-[720px] px-5 py-12 md:px-8">
+          <div className="mx-auto w-full max-w-[720px] px-[var(--layout-gutter)] py-12">
             {isLoading ? (
               <ProfileSkeleton />
             ) : isError || !profile ? (

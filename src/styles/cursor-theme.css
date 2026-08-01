@@ -87,13 +87,18 @@
 }
 
 /* ── Section ── */
-.cursor-theme .section { padding: var(--v3) var(--g2); }
+/* Vertical rhythm only. The horizontal frame belongs to the `.container`
+ * inside each section; adding a gutter here too stacked on top of it and left
+ * these pages 24px inside the header. */
+.cursor-theme .section { padding: var(--v3) 0; }
 .cursor-theme .section--flush-x { padding-left: 0; padding-right: 0; }
 .cursor-theme .section--flush-y { padding-top: 0; padding-bottom: 0; }
 .cursor-theme .section--headline { padding-top: var(--v4); padding-bottom: var(--v4); }
 
-/* ── Layout ── */
-.cursor-theme .container { max-width: 1200px; margin-left: auto; margin-right: auto; }
+/* ── Layout ──
+ * No width of its own: `.container` is the site frame, defined once in
+ * index.css. Capping it at 1200px here put every themed page's content 24px
+ * inside the header and the footer above and below it. */
 .cursor-theme .grid-cursor { display: grid; grid-template-columns: repeat(24, 1fr); }
 
 /* ── Card ── */

@@ -49,7 +49,7 @@ export default function PartnersHeroSection() {
         </svg>
 
         <div className="relative z-20 grid grid-cols-12">
-          <div className="relative col-[2/-2]">
+          <div className="relative col-span-full">
             <header className="flex w-full flex-col items-center pb-24 pt-30 max-xl:pt-25 max-lg:pt-20 lg:pb-28 xl:pb-32">
               {/* Badge */}
               <p className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 text-[13px]/[1.4em] font-medium text-foreground">

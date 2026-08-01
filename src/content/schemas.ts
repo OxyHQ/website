@@ -68,6 +68,12 @@ export const CompanyFrontmatter = z.object({
   ogImage: z.string().optional(),
   /** Optional eyebrow shown above the page title. */
   eyebrow: z.string().optional(),
+  /** Publication date, already formatted for display. */
+  date: z.string().optional(),
+  /** e.g. "8 minute read" — shown next to the date on long-form pages. */
+  readingTime: z.string().optional(),
+  /** Downloadable version offered next to the table of contents. */
+  pdfHref: z.string().optional(),
 })
 
 export type CompanyFrontmatter = z.infer<typeof CompanyFrontmatter>

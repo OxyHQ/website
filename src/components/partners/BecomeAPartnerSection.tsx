@@ -67,7 +67,7 @@ export default function BecomeAPartnerSection() {
         </svg>
 
         <div className="relative z-10 grid grid-cols-12">
-          <div className="col-[2/-2] flex flex-col items-center pb-20 pt-20 text-center max-xl:pb-16 max-xl:pt-16 max-lg:pb-12 max-lg:pt-12">
+          <div className="col-span-full flex flex-col items-center pb-20 pt-20 text-center max-xl:pb-16 max-xl:pt-16 max-lg:pb-12 max-lg:pt-12">
             <p className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 text-[13px]/[1.4em] font-medium text-foreground">
               Become a partner
             </p>

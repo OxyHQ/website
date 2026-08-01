@@ -38,7 +38,7 @@ export default function TeamPage() {
         <section className="container">
           <div>
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
-              <div className="col-[2/-2] flex flex-col items-center gap-4 text-center">
+              <div className="col-span-full flex flex-col items-center gap-4 text-center">
                 <div className="inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground mb-6">
                   Our Team
                 </div>
@@ -65,7 +65,7 @@ export default function TeamPage() {
 
             {isPending ? (
               <div className="grid grid-cols-12">
-                <div className="col-[2/-2] py-20">
+                <div className="col-span-full py-20">
                   <div className="grid gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                       <div key={i} className="bg-background p-8">
@@ -82,7 +82,7 @@ export default function TeamPage() {
                 <div key={dept}>
                   {/* Department header */}
                   <div className="grid grid-cols-12">
-                    <div className="col-[2/-2] py-6">
+                    <div className="col-span-full py-6">
                       <h2 className="text-sm font-medium uppercase tracking-widest text-muted-foreground">{dept}</h2>
                     </div>
                   </div>
@@ -90,7 +90,7 @@ export default function TeamPage() {
 
                   {/* Members grid — pixel-gap pattern */}
                   <div className="grid grid-cols-12">
-                    <div className="col-[2/-2] grid gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <div className="col-span-full grid gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                       {deptMembers.map((member) => (
                         <div key={member.slug} className="flex flex-col bg-background p-8">
                           <div className="size-16 shrink-0 rounded-full bg-surface border border-border overflow-hidden">

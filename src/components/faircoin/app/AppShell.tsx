@@ -57,7 +57,7 @@ export default function AppShell({
         <div className="absolute left-1/2 top-20 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-primary/[0.06] blur-3xl" />
       </div>
 
-      <div className="relative mx-auto flex w-full max-w-md flex-col px-4 pb-12 pt-8 sm:pt-10 lg:pt-12">
+      <div className="relative mx-auto flex w-full max-w-md flex-col px-[var(--layout-gutter)] pb-12 pt-8 sm:pt-10 lg:pt-12">
         {/* Header */}
         <header className="mb-5 flex flex-col items-center text-center sm:mb-6">
           {eyebrow ? (

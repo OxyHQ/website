@@ -107,7 +107,7 @@ export default function PartnerProgramsGrid() {
     <section id="programs" className="container scroll-mt-24">
       <div>
         <header className="grid grid-cols-12 justify-items-start pb-12 pt-25 max-xl:pb-10 max-xl:pt-20 max-lg:pt-16">
-          <div className="col-[2/-2] max-w-[26em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
+          <div className="col-span-full max-w-[26em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
             <h2 className="text-pretty inline">Three ways to partner.</h2>{' '}
             <p className="text-pretty inline font-medium text-muted-foreground">
               Pick the program that matches how you build, ship, or teach.
@@ -124,7 +124,7 @@ export default function PartnerProgramsGrid() {
                 'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)',
             }}
           />
-          <div className="relative col-[2/-2] grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-3">
+          <div className="relative col-span-full grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-3">
             {PROGRAMS.map((program) => (
               <PartnerProgramCard
                 key={program.number}
@@ -145,7 +145,7 @@ export default function PartnerProgramsGrid() {
           aria-hidden="true"
           className="grid h-25 w-full grid-cols-12 overflow-hidden max-xl:h-20 max-lg:h-15"
         >
-          <div className="col-[2/-2] flex justify-between" />
+          <div className="col-span-full flex justify-between" />
         </div>
       </div>
     </section>

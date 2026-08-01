@@ -232,7 +232,7 @@ export default function StatusPage() {
         <section className="container">
           <div>
             <div className="grid grid-cols-12">
-              <div className="col-[2/-2] pt-24 pb-16 max-lg:pt-20 max-lg:pb-12">
+              <div className="col-span-full pt-24 pb-16 max-lg:pt-20 max-lg:pb-12">
                 <div className="flex flex-col items-start gap-5">
                   <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5 text-[13px]/[1.4em] font-medium text-foreground">
                     <StatusDot status={overall} pulse size="md" />
@@ -303,7 +303,7 @@ export default function StatusPage() {
         <section className="container">
           <div>
             <header className="grid grid-cols-12 pt-16 pb-10 max-lg:pt-12 max-lg:pb-8 justify-items-start">
-              <div className="col-[2/-2] flex w-full items-end justify-between gap-6">
+              <div className="col-span-full flex w-full items-end justify-between gap-6">
                 <div className="max-w-[28em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
                   <h2 className="text-pretty inline">Every service, in one place.</h2>{' '}
                   <p className="inline text-pretty font-medium text-muted-foreground">
@@ -314,7 +314,7 @@ export default function StatusPage() {
             </header>
 
             <div className="grid grid-cols-12">
-              <div className="col-[2/-2] flex flex-col gap-5 pb-20">
+              <div className="col-span-full flex flex-col gap-5 pb-20">
                 {/* Error state */}
                 {isError && !data && (
                   <div className="rounded-2xl border border-rose-500/40 bg-rose-500/5 p-5 text-sm text-rose-600 dark:text-rose-400">

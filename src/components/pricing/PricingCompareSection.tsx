@@ -64,7 +64,7 @@ function MobileFeatureRow({ feature }: { feature: { name: string; values: [strin
 
 export default function PricingCompareSection() {
   return (
-    <div className="pt-12 lg:hidden">
+    <div className="container pt-12 lg:hidden">
       <div className="flex flex-col items-center text-center">
         <h2 className="font-bold text-heading-md">Compare plans.</h2>
         <p className="mt-2 text-secondary-foreground">

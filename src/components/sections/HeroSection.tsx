@@ -63,7 +63,7 @@ export default function HeroSection() {
 
         {/* Content in 12-col grid */}
         <div className="pointer-events-none relative grid flex-1 grid-cols-12">
-          <div className="col-[2/-2] flex flex-col items-center justify-center pb-12">
+          <div className="col-span-full flex flex-col items-center justify-center pb-12">
             <div className="pointer-events-auto">
               {/* Header with staggered animations */}
               <header className="flex w-full flex-col pt-30 pb-15 max-xl:pt-25 max-lg:pt-20 items-center" style={{ '--animate-delay': '0ms', '--animate-delay-mobile': '0ms' } as React.CSSProperties}>
@@ -255,7 +255,7 @@ export default function HeroSection() {
 
       {/* Spacer grid */}
       <div aria-hidden="true" className="grid h-30 w-full grid-cols-12 overflow-hidden max-xl:h-30 max-lg:h-25">
-        <div className="col-[2/-2] flex justify-between" />
+        <div className="col-span-full flex justify-between" />
       </div>
 
       {/* Separator line */}
@@ -273,7 +273,7 @@ export default function HeroSection() {
       {/* Sub-hero CTA bar */}
       <div className="container">
         <div className="grid w-full grid-cols-12">
-          <div className="col-[2/-2] flex flex-col items-center justify-between gap-6 py-12 max-md:pb-10 max-md:pt-15 lg:flex-row lg:gap-0">
+          <div className="col-span-full flex flex-col items-center justify-between gap-6 py-12 max-md:pb-10 max-md:pt-15 lg:flex-row lg:gap-0">
             <p className="max-w-md text-center text-lg text-foreground lg:text-left">
               Engineered for performance. Unified by design. Powered by
               Universal Context.

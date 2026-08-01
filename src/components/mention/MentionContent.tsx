@@ -106,7 +106,7 @@ function FeedPost({ spec, progress, flat }: { spec: FeedSpec; progress: MotionVa
 function HeroCopy({ opacity }: { opacity: MotionValue<number> }) {
   return (
     <motion.div style={{ opacity }} className="pointer-events-none absolute inset-0 z-30 flex items-center">
-      <div className="mx-auto w-full max-w-6xl px-6">
+      <div className="container">
         <div className="max-w-[600px]">
           <div className="flex items-center gap-3">
             <img src={logo} alt="" className="size-12 rounded-full object-cover sm:size-14" />

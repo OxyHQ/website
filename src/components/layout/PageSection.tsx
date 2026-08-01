@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
  * PageSection
  *
  * The canonical marketing-page section primitive. Replaces the legacy
- * `section.container > div. > grid grid-cols-12 > col-[2/-2]`
+ * `section.container > div. > grid grid-cols-12 > col-span-full`
  * pattern. Vertical rhythm, content width, and optional background tone
  * all funnel through here so the whole site stays consistent.
  *
@@ -44,8 +44,8 @@ const TONE: Record<Tone, string> = {
  * container width.
  */
 const WIDTH: Record<Width, string> = {
-  prose: 'mx-auto px-6 lg:px-8 max-w-2xl',
-  narrow: 'mx-auto px-6 lg:px-8 max-w-3xl',
+  prose: 'mx-auto w-full max-w-2xl px-[var(--layout-gutter)]',
+  narrow: 'mx-auto w-full max-w-3xl px-[var(--layout-gutter)]',
   wide: 'container',
   full: '',
 }

@@ -31,7 +31,7 @@ export default function PartnerPillarsSection() {
     <section className="container">
       <div>
         <header className="grid grid-cols-12 justify-items-start pb-12 pt-25 max-xl:pb-10 max-xl:pt-20 max-lg:pt-16">
-          <div className="col-[2/-2] max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
+          <div className="col-span-full max-w-[24em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
             <h2 className="text-pretty inline">Why partner with Oxy.</h2>{' '}
             <p className="text-pretty inline font-medium text-muted-foreground">
               The four things every Oxy partner gets, regardless of program.
@@ -48,7 +48,7 @@ export default function PartnerPillarsSection() {
                 'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)',
             }}
           />
-          <div className="relative col-[2/-2] grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-4">
+          <div className="relative col-span-full grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-4">
             {PARTNER_PILLARS.map((pillar) => (
               <div key={pillar.title} className="bg-background p-8 lg:p-10">
                 <h3 className="text-lg font-medium text-foreground">{pillar.title}</h3>
@@ -64,7 +64,7 @@ export default function PartnerPillarsSection() {
           aria-hidden="true"
           className="grid h-25 w-full grid-cols-12 overflow-hidden max-xl:h-20 max-lg:h-15"
         >
-          <div className="col-[2/-2] flex justify-between" />
+          <div className="col-span-full flex justify-between" />
         </div>
       </div>
     </section>

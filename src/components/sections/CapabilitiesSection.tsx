@@ -293,7 +293,7 @@ export default function CapabilitiesSection() {
         >
           {/* Header */}
           <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
-            <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-center col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
+            <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-center col-span-full mix-blend-multiply dark:mix-blend-screen">
               <h2 className="text-pretty inline">
                 Simply powerful customer intelligence.
               </h2>
@@ -327,7 +327,7 @@ export default function CapabilitiesSection() {
           {/* Split-panel card */}
           <div className="grid grid-cols-12 pb-10">
             <div
-              className="relative col-[2/-2] max-lg:col-span-full flex w-full border border-border max-lg:aspect-video max--0 max-md:aspect-5/4 max-lg:aspect-square! scroll-reveal"
+              className="relative col-span-full max-lg:col-span-full flex w-full border border-border max-lg:aspect-video max--0 max-md:aspect-5/4 max-lg:aspect-square! scroll-reveal"
               style={{ transitionDelay: '200ms' }}
             >
               {/* Left half — title + description */}

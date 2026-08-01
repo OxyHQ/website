@@ -10,7 +10,7 @@ export default function CTASection() {
         <div className="flex w-full flex-1 flex-col">
           {/* Top grid decoration */}
           <div aria-hidden="true" className="grid h-40 w-full grid-cols-12 overflow-hidden max-xl:h-30 max-lg:h-25 h-8!">
-            <div className="col-[2/-2] flex justify-between">
+            <div className="col-span-full flex justify-between">
               <svg width="1" height="100%" className="text-border">
                 <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
               </svg>
@@ -36,7 +36,7 @@ export default function CTASection() {
             </svg>
 
             {/* Content: left side */}
-            <div className="col-[2/6] flex flex-col py-30 max-lg:py-20 max-lg:col-[2/-2] max-lg:items-center">
+            <div className="col-[2/6] flex flex-col py-30 max-lg:py-20 max-lg:col-span-full max-lg:items-center">
               <h2 className="text-balance text-heading-responsive-md! text-foreground max-lg:text-center scroll-reveal">
                 <span>Build with the Oxy ecosystem.</span>
                 <span className="font-normal font-serif"> </span>

@@ -42,7 +42,7 @@ export default function CodexExtensionContent() {
         </div>
 
         {/* Hero content */}
-        <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center px-6 pt-12 pb-12 text-center sm:pt-28 sm:pb-16 md:pb-24 lg:pt-16">
+        <div className="container relative z-10 flex flex-col items-center pt-12 pb-12 text-center sm:pt-28 sm:pb-16 md:pb-24 lg:pt-16">
           {/* Icon */}
           <div className="flex h-[72px] w-[72px] items-center justify-center bg-transparent sm:h-[78px] sm:w-[78px] md:h-[92px] md:w-[92px]">
             <div className="relative overflow-hidden h-full w-full rounded-[20px] bg-secondary" />
@@ -72,7 +72,7 @@ export default function CodexExtensionContent() {
 
       {/* ── 2. Logo Garden ── */}
       {FEATURES.SHOW_TRUSTED_LOGOS && logos.length > 0 && (
-        <section className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 pt-6 pb-10 text-center md:pt-12 md:pb-12">
+        <section className="container flex flex-col items-center pt-6 pb-10 text-center md:pt-12 md:pb-12">
           <div className="mt-6 w-full max-w-[1040px] md:mt-8">
             <div className="relative h-[76px] w-full overflow-hidden">
               <div className="absolute inset-0 grid grid-cols-5 grid-rows-1 place-items-center gap-x-10 gap-y-8">
@@ -116,7 +116,7 @@ export default function CodexExtensionContent() {
       </section>
 
       {/* ── 4. The Same Agent Everywhere ── */}
-      <section className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 pb-24 text-center">
+      <section className="container flex flex-col items-center pb-24 text-center">
         <div className="text-foreground text-[clamp(1.75rem,1.5rem+1.5vw,2.5rem)] font-semibold leading-tight tracking-[-0.02em] md:text-[40px]">
           The same agent everywhere you code
         </div>

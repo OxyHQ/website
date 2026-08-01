@@ -11,7 +11,7 @@ export default function HomiioFAQ() {
   const [open, setOpen] = useState<number | null>(null)
 
   return (
-    <section className="mx-auto w-full max-w-2xl px-6 pb-16 pt-2">
+    <section className="mx-auto w-full max-w-2xl px-[var(--layout-gutter)] pb-16 pt-2">
       <ul className="flex flex-col gap-2">
         {HOMIIO_FAQS.map((faq, i) => {
           const isOpen = open === i

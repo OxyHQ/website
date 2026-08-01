@@ -235,7 +235,7 @@ export default function PartnerTestimonialsSection() {
                   >
                     <div className="grid w-full grid-cols-12">
                       {/* Content */}
-                      <div className="col-[2/-2] flex w-full flex-col gap-y-6 pt-9">
+                      <div className="col-span-full flex w-full flex-col gap-y-6 pt-9">
                         {/* Portrait placeholder */}
                         <div
                           className="flex w-30 items-center justify-center transition-[filter,opacity] duration-500 ease-out"
@@ -276,7 +276,7 @@ export default function PartnerTestimonialsSection() {
 
                     {/* Bottom bar with label + expand icon */}
                     <div className="absolute inset-x-0 bottom-0 grid h-15 w-full grid-cols-12 items-center text-overline">
-                      <div className="col-[2/-2] flex w-full items-center justify-between transition-colors duration-400 ease-in-out hover:text-foreground hover:duration-150">
+                      <div className="col-span-full flex w-full items-center justify-between transition-colors duration-400 ease-in-out hover:text-foreground hover:duration-150">
                         <p>{partner.partnerType}</p>
                         <ExpandIcon expanded={isActive} />
                       </div>

@@ -192,7 +192,7 @@ export default function HelpArticlePage() {
       <main>
         {/* ═══ Hero ═══ */}
         <section className="relative">
-          <div className="relative mx-auto flex max-w-5xl flex-col items-start gap-4 px-6 pt-28 pb-10 lg:px-8 lg:pt-36">
+          <div className="container relative flex flex-col items-start gap-4 pt-28 pb-10 lg:pt-36">
             {/* Breadcrumb */}
             <nav
               className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground"
@@ -279,7 +279,7 @@ export default function HelpArticlePage() {
         )}
 
         {/* ═══ Two-column body: TOC + article ═══ */}
-        <section className="mx-auto max-w-6xl px-6 lg:px-8 py-12 md:py-16">
+        <section className="container py-12 md:py-16">
           <div className="grid gap-10 lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[16rem_minmax(0,1fr)] xl:gap-16">
             {/* Sticky TOC + mobile select */}
             <aside>

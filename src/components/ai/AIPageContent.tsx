@@ -186,7 +186,7 @@ export default function AIPageContent() {
             <div className="opacity-50"><AliaSvg fill="none" stroke="currentColor" strokeWidth={14} /></div>
           </div>
           <HeroCanvas />
-          <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl flex h-full flex-col">
+          <div className="container flex h-full flex-col">
             <div className="relative z-20 mt-20 flex h-full w-full items-center">
               <hgroup className="space-y-8">
                 <div className="absolute inset-0 top-20 flex grow items-end justify-center">
@@ -234,7 +234,7 @@ export default function AIPageContent() {
 
       {/* ═══ SECTION 2: Products ═══ */}
       <section id="ai-products" className="py-16 sm:py-32">
-        <div className="mx-auto w-full px-4 lg:px-6 xl:max-w-7xl space-y-16 sm:space-y-32">
+        <div className="container space-y-16 sm:space-y-32">
           <div>
             <div className="mono-tag flex items-center gap-2 text-sm text-muted-foreground"><span>[ </span><span> {productsTag} </span><span> ]</span></div>
             <h1 className="text-heading-responsive-lg text-balance mt-4 text-foreground">{productsHeading}</h1>
@@ -305,12 +305,12 @@ export default function AIPageContent() {
         </div>
 
         <div className="pointer-events-none absolute inset-6 flex flex-col justify-center">
-          <div className="mx-auto flex w-full max-w-7xl">
+          <div className="container flex">
             <div style={{ transform: `translateX(${50 - scrollY * 0.03}px)` }} className="from-foreground/40 to-foreground inline-block text-balance bg-gradient-to-l bg-clip-text py-2 text-4xl leading-[2.25rem] tracking-tight text-transparent md:text-[5rem] md:leading-[5rem]">
               {globeTextLeft}
             </div>
           </div>
-          <div className="mx-auto flex w-full max-w-7xl justify-end">
+          <div className="container flex justify-end">
             <div style={{ transform: `translateX(${-50 + scrollY * 0.03}px)` }} className="from-foreground/40 to-foreground inline-block text-balance bg-gradient-to-r bg-clip-text py-2 text-4xl leading-[2.25rem] tracking-tight text-transparent md:text-[5rem] md:leading-[5rem]">
               {globeTextRight}
             </div>

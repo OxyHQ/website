@@ -52,7 +52,7 @@ export default function KeepUpToDateSection() {
       <div>
         {/* Header */}
         <header className="grid grid-cols-12 justify-items-start pb-15 pt-40 max-xl:pb-16 max-xl:pt-30 max-lg:pb-15 max-lg:pt-25">
-          <div className="col-[2/-2] flex max-w-xl flex-col gap-4 text-start max-lg:gap-3">
+          <div className="col-span-full flex max-w-xl flex-col gap-4 text-start max-lg:gap-3">
             <h2 className="text-pretty text-heading-responsive-md">
               Keep up to date.
             </h2>
@@ -64,7 +64,7 @@ export default function KeepUpToDateSection() {
 
         {/* Cards grid */}
         <div className="grid grid-cols-12">
-          <div className="col-[2/-2] grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <div className="col-span-full grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {keepUpToDateCards.map((card) => (
               <a
                 key={card.title}
@@ -99,7 +99,7 @@ export default function KeepUpToDateSection() {
           aria-hidden="true"
           className="grid h-40 w-full grid-cols-12 overflow-hidden max-xl:h-30 max-lg:h-25"
         >
-          <div className="col-[2/-2] flex justify-between" />
+          <div className="col-span-full flex justify-between" />
         </div>
       </div>
     </section>

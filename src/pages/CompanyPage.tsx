@@ -32,7 +32,7 @@ function DashedHLine() {
 function DashedVLines({ height = 'h-5' }: { height?: string }) {
   return (
     <div className={`grid w-full grid-cols-12 overflow-hidden ${height}`}>
-      <div className="col-[2/-2] flex justify-between">
+      <div className="col-span-full flex justify-between">
         <svg width="1" height="100%" className="text-border">
           <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
         </svg>
@@ -102,7 +102,7 @@ export default function CompanyPage() {
               {/* Background image */}
               <div className="absolute inset-0 bg-cover bg-center opacity-20 dark:opacity-15" style={{ backgroundImage: 'url(/company/hero-bg.jpg)' }} />
               <header className="relative grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
-                <div className="col-[2/-2] flex flex-col items-center gap-4 text-center">
+                <div className="col-span-full flex flex-col items-center gap-4 text-center">
                   <div className="inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground mb-6">
                     {companyHero.badge}
                   </div>
@@ -141,7 +141,7 @@ export default function CompanyPage() {
                 </defs>
                 <rect width="100%" height="100%" fill="url(#stats-dots)" />
               </svg>
-              <div className="relative col-[2/-2] py-20 max-lg:py-16">
+              <div className="relative col-span-full py-20 max-lg:py-16">
                 <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
                   {companyStats.map((stat) => (
                     <div key={stat.label} className="text-center">
@@ -161,7 +161,7 @@ export default function CompanyPage() {
         <section className="container">
           <div>
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-start">
-              <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-start col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
+              <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-start col-span-full mix-blend-multiply dark:mix-blend-screen">
                 <h2 className="text-pretty inline">{companyCulture.heading}.</h2>{' '}
                 <p className="inline text-pretty font-medium text-muted-foreground">
                   {companyCulture.description}
@@ -177,7 +177,7 @@ export default function CompanyPage() {
                 className="pointer-events-none absolute inset-0 text-border/30"
                 style={{ backgroundImage: 'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)' }}
               />
-              <div className="relative col-[2/-2] grid grid-cols-2 gap-px bg-border p-px max-lg:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="relative col-span-full grid grid-cols-2 gap-px bg-border p-px max-lg:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4">
                 {culturePerks.map((perk) => (
                   <a
                     key={perk.title}
@@ -199,7 +199,7 @@ export default function CompanyPage() {
         <section className="container">
           <div>
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-start">
-              <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-start col-[2/-2] mix-blend-multiply dark:mix-blend-screen">
+              <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-start col-span-full mix-blend-multiply dark:mix-blend-screen">
                 <h2 className="text-pretty inline">{valuesHeading}.</h2>{' '}
                 <p className="inline text-pretty font-medium text-muted-foreground">
                   {valuesDescription}
@@ -217,7 +217,7 @@ export default function CompanyPage() {
                 style={{ backgroundImage: 'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)' }}
               />
 
-              <div className="relative col-[2/-2] grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-3">
+              <div className="relative col-span-full grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-3">
                 {companyValues.map((v) => (
                   <div key={v.title} className="bg-background p-8 lg:p-10">
                     <h3 className="text-lg font-medium text-foreground">{v.title}</h3>
@@ -236,7 +236,7 @@ export default function CompanyPage() {
         <section className="container">
           <div>
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-start">
-              <div className="col-[2/-2] flex w-full items-end justify-between">
+              <div className="col-span-full flex w-full items-end justify-between">
                 <div className="max-w-[20em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
                   <h2 className="text-pretty inline">{t('company.teamHeading')}.</h2>{' '}
                   <p className="inline text-pretty font-medium text-muted-foreground">
@@ -257,7 +257,7 @@ export default function CompanyPage() {
                 className="pointer-events-none absolute inset-0 text-border/30"
                 style={{ backgroundImage: 'repeating-linear-gradient(125deg, transparent, transparent 6px, currentColor 6px, currentColor 7px)' }}
               />
-              <div className="relative col-[2/-2] grid gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-4">
+              <div className="relative col-span-full grid gap-px bg-border p-px sm:grid-cols-2 lg:grid-cols-4">
                 {teamMembers.slice(0, 8).map((member) => (
                   <a key={member.slug} href={`/company/team`} className="group flex flex-col bg-background p-8">
                     <div className="size-14 shrink-0 rounded-full bg-surface border border-border overflow-hidden">
@@ -278,7 +278,7 @@ export default function CompanyPage() {
         <section className="container">
           <div>
             <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
-              <div className="col-[2/-2] text-center">
+              <div className="col-span-full text-center">
                 <h2 className="text-heading-responsive-sm">Open roles</h2>
                 <p className="mt-4 text-lg text-muted-foreground">
                   We're a global, remote-first team building open-source technology that matters.
@@ -301,7 +301,7 @@ export default function CompanyPage() {
             <DashedVLines />
             <DashedHLine />
             <div className="py-20 max-lg:py-16">
-              <AIResearchSection />
+              <AIResearchSection framed={false} />
             </div>
             <DashedHLine />
             <DashedVLines />
@@ -315,6 +315,7 @@ export default function CompanyPage() {
             <DashedHLine />
             <div className="py-20 max-lg:py-16">
               <RecentNewsSection
+                framed={false}
                 title="Latest news"
                 linkText="View all"
                 category="Company"
@@ -331,7 +332,7 @@ export default function CompanyPage() {
             <DashedVLines />
             <DashedHLine />
             <div className="grid grid-cols-12">
-              <div className="col-[2/-2] py-20 max-lg:py-16">
+              <div className="col-span-full py-20 max-lg:py-16">
                 <h2 className="text-heading-responsive-sm mb-10">Find answers</h2>
                 <div className="mx-auto max-w-3xl">
                   {companyFAQ.map((item, i) => (
@@ -354,7 +355,7 @@ export default function CompanyPage() {
           <div>
             <DashedHLine />
             <div className="grid grid-cols-12">
-              <div className="col-[2/-2] py-20 max-lg:py-16">
+              <div className="col-span-full py-20 max-lg:py-16">
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {companyLinks.map((link) => (
                     <a

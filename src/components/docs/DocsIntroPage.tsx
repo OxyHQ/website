@@ -51,7 +51,7 @@ export default function DocsIntroPage() {
           />
 
           {/* Hero content */}
-          <div className="relative z-10 px-4 py-16 lg:py-32 lg:pb-16 max-w-3xl mx-auto">
+          <div className="relative z-10 mx-auto w-full max-w-3xl px-[var(--layout-gutter)] py-16 lg:py-32 lg:pb-16">
             <h1 className="block text-heading-responsive-lg text-center text-foreground">
               Documentation
             </h1>
@@ -62,7 +62,7 @@ export default function DocsIntroPage() {
           </div>
 
           {/* Category sections */}
-          <div className="relative z-10 max-w-5xl mx-auto px-4 pb-24 space-y-12">
+          <div className="relative z-10 mx-auto w-full max-w-5xl px-[var(--layout-gutter)] pb-24 space-y-12">
             {categoryOrder.map((cfg) => {
               const pkgs = packages.filter((p) => p.category === cfg.category)
               if (pkgs.length === 0) return null
