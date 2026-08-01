@@ -85,9 +85,12 @@ const SustainPage = lazy(() => import('./pages/SustainPage'))
 const OXY_API =
   (import.meta.env.VITE_OXY_API as string | undefined) || 'https://api.oxy.so'
 
-// Registered Oxy OAuth client id for the public website. Sourced from the
-// website's standard `VITE_*` env convention so deploys can override it, with
-// the registered production client id as the committed default.
+// Registered Oxy OAuth client id for the public website, read from the site's
+// standard `VITE_*` env convention. The deploy workflow injects the PRODUCTION
+// id from the `VITE_OXY_CLIENT_ID` secret; the committed value below is only a
+// fallback so a local build runs unconfigured. It is deliberately NOT the
+// production id — a fallback that happens to be correct in production hides the
+// case where the env var stops being injected, because nothing then changes.
 const OXY_CLIENT_ID =
   (import.meta.env.VITE_OXY_CLIENT_ID as string | undefined) ||
   'oxy_dk_e572a3df046f98c2c29098f1349a7927183751e08ca2b757'
