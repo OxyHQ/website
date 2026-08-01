@@ -1,6 +1,7 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
 import { z } from 'zod'
 import { HelpFrontmatter, DEFAULT_LOCALE, parseLocaleFromPath } from './schemas'
+import type { MdxHeading } from '../../scripts/vite-mdx-headings'
 
 /* ──────────────────────────────────────────────
  * help-loader.ts
@@ -33,6 +34,8 @@ export interface HelpEntry {
   slug: string
   locale: string
   frontmatter: z.infer<typeof HelpFrontmatter>
+  /** The article's own `##`–`####` headings, for its table of contents. */
+  headings: MdxHeading[]
   /**
    * Resolved cover image URL — author-set `coverImage` from frontmatter when
    * present, otherwise the auto-generated OG card at
@@ -106,6 +109,8 @@ export const HELP_CATEGORIES: HelpCategoryMeta[] = [
  */
 interface MdxModuleMeta {
   frontmatter: Record<string, unknown>
+  /** Added by the `mdx-headings` Vite plugin. */
+  headings?: MdxHeading[]
   default: ComponentType<Record<string, unknown>>
 }
 
@@ -170,6 +175,7 @@ function buildIndex(): HelpIndex {
       // exposed `cover`) also benefit from the fallback without having to
       // know about it.
       frontmatter: { ...parsed.data, coverImage: cover },
+      headings: mod.headings ?? [],
       cover,
       Component,
     }

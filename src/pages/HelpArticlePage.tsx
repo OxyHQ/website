@@ -36,7 +36,6 @@ import HelpArticleTOC from '../components/help/HelpArticleTOC'
  * same category.
  * ──────────────────────────────────────────── */
 
-const HELP_BODY_SELECTOR = '[data-help-body]'
 const WORDS_PER_MINUTE = 200
 const RELATED_LIMIT = 3
 
@@ -283,7 +282,7 @@ export default function HelpArticlePage() {
           <div className="grid gap-10 lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[16rem_minmax(0,1fr)] xl:gap-16">
             {/* Sticky TOC + mobile select */}
             <aside>
-              <HelpArticleTOC scanKey={entry.slug} bodySelector={HELP_BODY_SELECTOR} />
+              <HelpArticleTOC headings={entry.headings} />
             </aside>
 
             {/* Article body */}

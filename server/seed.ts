@@ -54,9 +54,6 @@ async function seed() {
   // Manual dropdowns (Platform / Resources) still have hand-curated items.
   // Ecosystem is now a `kind: 'apps'` dropdown — resolved server-side from
   // Product.find({ showInNav: true }) grouped by Category slug.
-  const CDN = 'https://oxy-bucket.ams3.cdn.digitaloceanspaces.com/oxy-website'
-  const servicesMedia = await seedMedia(`${CDN}/navigation/services-b126fbf2.png`, 'services.png', 'image/png')
-
   await Navigation.insertMany([
     {
       label: 'Platform',
@@ -66,7 +63,7 @@ async function seed() {
       items: [
         { title: 'Oxy ID', description: 'The identity layer every app signs in with', href: '/developers/docs', icon: 'data', section: 'Platform' },
         { title: 'Oxy AI', description: 'Private models, API and SDKs', href: '/ai', icon: 'ai', section: 'Platform' },
-        { title: 'Bloom', description: 'The design system behind every app', href: '/developers/docs/bloom/playground', image: servicesMedia, section: 'Platform' },
+        { title: 'Bloom', description: 'The design system behind every app', href: '/developers/docs/bloom/playground', icon: 'chart', section: 'Platform' },
         { title: 'Developer platform', description: 'Build on Oxy', href: '/developers/docs', icon: 'developers', section: 'Build' },
         { title: 'API reference', description: 'Every endpoint, versioned', href: '/developers/docs/api', icon: 'contract', section: 'Build' },
         { title: 'Status', description: 'Live health of every service', href: '/status', icon: 'network', section: 'Build' },
