@@ -43,7 +43,7 @@ export default function CompanyArticlePage({ slug, canonicalPath, cta }: Company
     )
   }
 
-  const { frontmatter, Component } = entry
+  const { frontmatter, headings, Component } = entry
 
   return (
     <PageShell
@@ -58,6 +58,7 @@ export default function CompanyArticlePage({ slug, canonicalPath, cta }: Company
     >
       <LongformArticle
         title={frontmatter.title}
+        entries={headings}
         date={frontmatter.date}
         readingTime={frontmatter.readingTime}
         pdfHref={frontmatter.pdfHref}

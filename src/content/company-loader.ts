@@ -1,6 +1,7 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
 import { z } from 'zod'
 import { CompanyFrontmatter, DEFAULT_LOCALE, parseLocaleFromPath } from './schemas'
+import type { MdxHeading } from '../../scripts/vite-mdx-headings'
 
 /* ──────────────────────────────────────────────
  * company-loader.ts
@@ -24,6 +25,8 @@ export interface CompanyEntry {
   slug: string
   locale: string
   frontmatter: z.infer<typeof CompanyFrontmatter>
+  /** The document's own `##`–`####` headings, for a table of contents. */
+  headings: MdxHeading[]
   Component: LazyExoticComponent<ComponentType<Record<string, unknown>>>
 }
 
@@ -36,6 +39,8 @@ export interface CompanyEntry {
  */
 interface MdxModuleMeta {
   frontmatter: Record<string, unknown>
+  /** Added by the `mdx-headings` Vite plugin. */
+  headings?: MdxHeading[]
   default: ComponentType<Record<string, unknown>>
 }
 
@@ -80,6 +85,7 @@ function buildIndex(): CompanyIndex {
       slug,
       locale,
       frontmatter: parsed.data,
+      headings: mod.headings ?? [],
       Component,
     }
     let localeMap = bySlug.get(slug)

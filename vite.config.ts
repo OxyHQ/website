@@ -12,6 +12,7 @@ import remarkGfm from 'remark-gfm'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import rehypeSlug from 'rehype-slug'
+import mdxHeadings from './scripts/vite-mdx-headings'
 import reactNativeWeb from 'vite-plugin-react-native-web'
 import { visualizer } from 'rollup-plugin-visualizer'
 
@@ -85,6 +86,9 @@ export default defineConfig(({ mode }) => ({
     // then exposes that data as `export const frontmatter = {...}` on the
     // compiled module — loaders read it via `module.frontmatter` instead of
     // re-parsing the raw source (which `enforce: 'pre'` would also transform).
+    // Adds `export const headings` to every MDX module, before the compiler
+    // turns the document into JavaScript.
+    mdxHeadings(),
     {
       enforce: 'pre',
       ...mdx({
