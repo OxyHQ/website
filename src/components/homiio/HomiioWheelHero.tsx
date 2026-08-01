@@ -5,26 +5,22 @@ import HomiioPropertyCard from './HomiioPropertyCard'
 import HomiioMatchCard from './HomiioMatchCard'
 import HomiioFeatureCards from './HomiioFeatureCards'
 import { CoinGlyph } from './icons'
-import { HOMIIO_LISTINGS, type HomiioListing } from './data'
-
-const byId = (id: string): HomiioListing =>
-  HOMIIO_LISTINGS.find((l) => l.id === id) ?? HOMIIO_LISTINGS[0]
-
-/** Three laps of the deck pack a dense, near-touching ring. */
-const WHEEL_CARDS: readonly HomiioListing[] = [...HOMIIO_LISTINGS, ...HOMIIO_LISTINGS, ...HOMIIO_LISTINGS]
+import { useHomiioDeck, type HomiioListing } from './data'
 
 /* ------------------------------------------------------------------ */
 /* Rotating wheel                                                      */
 /* ------------------------------------------------------------------ */
 
-function Wheel({ rotate }: { rotate: MotionValue<number> }) {
-  const n = WHEEL_CARDS.length
+function Wheel({ rotate, deck }: { rotate: MotionValue<number>; deck: readonly HomiioListing[] }) {
+  // Three laps of the deck pack a dense, near-touching ring.
+  const cards = [...deck, ...deck, ...deck]
+  const n = cards.length
   return (
     <motion.div
       style={{ rotate }}
       className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-0 w-0 [--wheel-r:clamp(300px,50vh,540px)]"
     >
-      {WHEEL_CARDS.map((listing, i) => {
+      {cards.map((listing, i) => {
         const angle = (360 / n) * i
         return (
           <div
@@ -97,7 +93,7 @@ function TrustCard({ listing, ok }: { listing: HomiioListing; ok: boolean }) {
   return (
     <div className="w-[104px] rounded-2xl bg-white p-1.5 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.4)] ring-1 ring-black/5">
       <div className="relative overflow-hidden rounded-xl">
-        <img src={listing.image} alt={listing.title} className="h-[78px] w-full object-cover" draggable={false} />
+        <img src={listing.imageUrl} alt={listing.title} className="h-[78px] w-full object-cover" draggable={false} />
         <div className="absolute inset-0 grid place-items-center">
           {ok ? (
             <Check weight="bold" className="h-9 w-9 text-emerald-400 drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)]" />
@@ -109,7 +105,7 @@ function TrustCard({ listing, ok }: { listing: HomiioListing; ok: boolean }) {
       <p className="mt-1 line-clamp-2 px-0.5 text-[9px] font-semibold leading-tight text-neutral-900">{listing.title}</p>
       <div className="flex items-center gap-0.5 px-0.5 pb-0.5">
         <CoinGlyph className="h-3 w-3 text-neutral-900" />
-        <span className="text-xs font-extrabold text-neutral-900">{listing.price}</span>
+        <span className="text-xs font-extrabold text-neutral-900">{listing.monthlyAmount.toLocaleString('en-GB')}</span>
       </div>
     </div>
   )
@@ -128,7 +124,7 @@ function HeroScene() {
   )
 }
 
-function TransparentScene() {
+function TransparentScene({ deck }: { deck: readonly HomiioListing[] }) {
   return (
     <StadiumPanel>
       <div className="text-center sm:max-w-[230px] sm:text-left">
@@ -136,7 +132,7 @@ function TransparentScene() {
         <SceneText>See property histories, report issues, and know your landlord&rsquo;s record before you rent&mdash;fairness first.</SceneText>
       </div>
       <GrayInset>
-        <HomiioPropertyCard listing={byId('teresa-pamies')} />
+        <HomiioPropertyCard listing={deck[0]} />
       </GrayInset>
     </StadiumPanel>
   )
@@ -156,7 +152,7 @@ function RoommateScene() {
   )
 }
 
-function TrustScene() {
+function TrustScene({ deck }: { deck: readonly HomiioListing[] }) {
   return (
     <StadiumPanel>
       <div className="text-center sm:max-w-[230px] sm:text-left">
@@ -165,9 +161,9 @@ function TrustScene() {
       </div>
       <GrayInset className="!p-4 sm:!p-5">
         <div className="flex gap-2">
-          <TrustCard listing={byId('torrent-olla')} ok={false} />
-          <TrustCard listing={byId('sant-antoni')} ok />
-          <TrustCard listing={byId('manso')} ok />
+          <TrustCard listing={deck[1 % deck.length]} ok={false} />
+          <TrustCard listing={deck[2 % deck.length]} ok />
+          <TrustCard listing={deck[3 % deck.length]} ok />
         </div>
       </GrayInset>
     </StadiumPanel>
@@ -194,12 +190,12 @@ function SindiScene() {
 const GRADIENT = 'bg-[linear-gradient(180deg,#0047BD_0%,#1f6fd0_20%,#bcd8ef_36%,#FFF7D8_50%,#FFF7D8_100%)]'
 
 /** The feature panels, stacked with ~1rem between them (like the original). */
-function Panels() {
+function Panels({ deck }: { deck: readonly HomiioListing[] }) {
   return (
     <div className="flex w-full flex-col items-center gap-4">
-      <TransparentScene />
+      <TransparentScene deck={deck} />
       <RoommateScene />
-      <TrustScene />
+      <TrustScene deck={deck} />
       <SindiScene />
     </div>
   )
@@ -208,6 +204,7 @@ function Panels() {
 export default function HomiioWheelHero() {
   const ref = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
+  const deck = useHomiioDeck()
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
   const rotate = useTransform(scrollYProgress, [0, 1], [0, 105])
@@ -217,7 +214,7 @@ export default function HomiioWheelHero() {
       <div className={`relative overflow-hidden ${GRADIENT}`}>
         <div className="flex flex-col items-center gap-4 px-6 pb-[14vh] pt-[16vh]">
           <HeroScene />
-          <Panels />
+          <Panels deck={deck} />
         </div>
       </div>
     )
@@ -230,14 +227,14 @@ export default function HomiioWheelHero() {
       {/* The rotating wheel pins behind the hero content. No overflow clip, so
           it's never hard-cut at the hand-off — it just scrolls over the spiral. */}
       <div className="pointer-events-none sticky top-0 z-0 h-screen">
-        <Wheel rotate={rotate} />
+        <Wheel rotate={rotate} deck={deck} />
       </div>
       {/* Content scrolls over the wheel: hero title, then the stacked panels. */}
       <div className="relative z-10 -mt-[100vh] flex flex-col items-center px-6 pb-[16vh]">
         <div className="flex min-h-[82vh] items-end justify-center pb-[10vh]">
           <HeroScene />
         </div>
-        <Panels />
+        <Panels deck={deck} />
       </div>
     </div>
   )

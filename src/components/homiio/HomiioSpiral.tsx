@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion'
 import HomiioPropertyCard from './HomiioPropertyCard'
-import { HOMIIO_LISTINGS } from './data'
+import { useHomiioDeck, type HomiioListing } from './data'
 
 interface Pt {
   x: number
@@ -58,27 +58,28 @@ const COUNT = Math.round(PATH_LEN / 122) // ≈ card-width spacing (overlap, no 
 const STEP = PATH_LEN / COUNT // exact divisor → seamless
 const TRAVEL = 720
 
-function FlowCard({ index, progress }: { index: number; progress: MotionValue<number> }) {
+function FlowCard({ index, progress, deck }: { index: number; progress: MotionValue<number>; deck: readonly HomiioListing[] }) {
   const transform = useTransform(progress, (v) => {
     const p = pointAt(index * STEP + v * TRAVEL)
     return `translate(-50%, -50%) translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px) rotate(${p.rot.toFixed(1)}deg) scale(0.9)`
   })
   return (
     <motion.div className="absolute left-0 top-0" style={{ transform }}>
-      <HomiioPropertyCard listing={HOMIIO_LISTINGS[index % HOMIIO_LISTINGS.length]} />
+      <HomiioPropertyCard listing={deck[index % deck.length]} />
     </motion.div>
   )
 }
 
 export default function HomiioSpiral() {
   const ref = useRef<HTMLDivElement>(null)
+  const deck = useHomiioDeck()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
   return (
     <section ref={ref} className="relative overflow-hidden bg-[#FFF7D8] py-[7vh]">
       <div className="relative mx-auto flex h-[clamp(440px,62vh,720px)] items-center justify-center">
         <div className="relative h-0 w-0 scale-[0.5] sm:scale-75 lg:scale-100">
           {Array.from({ length: COUNT }, (_, i) => (
-            <FlowCard key={i} index={i} progress={scrollYProgress} />
+            <FlowCard key={i} index={i} progress={scrollYProgress} deck={deck} />
           ))}
         </div>
       </div>

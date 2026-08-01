@@ -16,7 +16,7 @@ export default function HomiioPropertyCard({ listing, className = '' }: HomiioPr
       className={`flex w-[160px] flex-col rounded-2xl bg-white p-2 text-left shadow-[0_10px_30px_-12px_rgba(0,0,0,0.35)] ring-1 ring-black/5 ${className}`}
     >
       <img
-        src={listing.image}
+        src={listing.imageUrl}
         alt={listing.title}
         loading="lazy"
         draggable={false}
@@ -27,7 +27,10 @@ export default function HomiioPropertyCard({ listing, className = '' }: HomiioPr
       </h4>
       <div className="mt-1 flex items-center gap-1 px-1 pb-1">
         <CoinGlyph className="h-4 w-4 text-neutral-900" />
-        <span className="text-base font-extrabold tracking-tight text-neutral-900">{listing.price}</span>
+        <span className="text-base font-extrabold tracking-tight text-neutral-900">
+          {listing.monthlyAmount.toLocaleString('en-GB')}
+        </span>
+        <span className="text-[10px] font-semibold text-neutral-500">/mo</span>
       </div>
     </article>
   )

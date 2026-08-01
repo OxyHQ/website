@@ -14,6 +14,7 @@ import footerRouter from './routes/footer.js'
 import heroRouter from './routes/hero.js'
 import statusRouter from './routes/status.js'
 import productsRouter from './routes/products.js'
+import homiioRouter from './routes/homiio.js'
 import categoriesRouter from './routes/categories.js'
 import newsroomRouter from './routes/newsroom.js'
 import coursesRouter from './routes/courses.js'
@@ -81,6 +82,7 @@ app.use('/api/footer', footerRouter)
 app.use('/api/hero', heroRouter)
 app.use('/api/status', statusRouter)
 app.use('/api/products', productsRouter)
+app.use('/api/homiio', homiioRouter)
 app.use('/api/categories', categoriesRouter)
 app.use('/api/newsroom', newsroomRouter)
 app.use('/api/courses', coursesRouter)

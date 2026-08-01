@@ -1322,3 +1322,29 @@ export function useFundingProgress() {
     refetchInterval: 60_000,
   })
 }
+
+// ── Homiio listings ──
+/**
+ * Live rental listings from Homiio's own API, proxied by this site's backend
+ * (`server/routes/homiio.ts`) because `api.homiio.com` sends no CORS headers.
+ */
+export interface HomiioListing {
+  id: string
+  title: string
+  city: string
+  monthlyAmount: number
+  currency: string
+  bedrooms: number | null
+  squareFootage: number | null
+  imageUrl: string
+  href: string
+}
+
+export function useHomiioListings() {
+  return useQuery({
+    queryKey: ['homiio-listings'],
+    queryFn: () => apiFetch<{ listings: HomiioListing[] }>('/homiio/listings'),
+    select: (data) => data.listings,
+    staleTime: 5 * 60_000,
+  })
+}

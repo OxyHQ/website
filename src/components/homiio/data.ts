@@ -6,26 +6,40 @@ import rogerLluria from '../../assets/homiio/roger-lluria.jpg'
 import gaudi from '../../assets/homiio/gaudi.jpg'
 import industria from '../../assets/homiio/industria.jpg'
 import sandra from '../../assets/homiio/sandra.jpg'
+import { useHomiioListings, type HomiioListing as ApiHomiioListing } from '../../api/hooks'
 
-export interface HomiioListing {
-  id: string
-  title: string
-  /** Monthly price in FairCoin, shown next to the coin glyph. */
-  price: string
-  image: string
-}
+/**
+ * Shown while the live listings load, and if Homiio's API is unreachable. Same
+ * shape as the real ones so the card never has to know which it is holding.
+ */
+export type HomiioListing = ApiHomiioListing
 
 export const SANDRA_IMAGE = sandra
 
-/** The seven distinct listings that ride around the hero wheel. */
+/** A placeholder card: a local photo and a price, with the rest left empty. */
+function fallback(id: string, title: string, monthlyAmount: number, imageUrl: string): HomiioListing {
+  return {
+    id,
+    title,
+    city: 'Barcelona',
+    monthlyAmount,
+    currency: 'EUR',
+    bedrooms: null,
+    squareFootage: null,
+    imageUrl,
+    href: 'https://homiio.com',
+  }
+}
+
+/** The deck the hero falls back to before the live listings arrive. */
 export const HOMIIO_LISTINGS: readonly HomiioListing[] = [
-  { id: 'teresa-pamies', title: 'Alquiler de piso en calle de Teresa Pàmies, 61', price: '482', image: teresaPamies },
-  { id: 'torrent-olla', title: "Alquiler de piso en calle del Torrent de l'Olla, 60", price: '1,385', image: torrentOlla },
-  { id: 'sant-antoni', title: 'Alquiler de piso en Sant Antoni', price: '440', image: santAntoni },
-  { id: 'manso', title: 'Alquiler de piso en calle de Manso', price: '219', image: manso },
-  { id: 'roger-lluria', title: 'Alquiler de habitación en calle de Roger de Llúria, 126', price: '220', image: rogerLluria },
-  { id: 'gaudi', title: 'Alquiler de ático en avenida de Gaudí, 31', price: '600', image: gaudi },
-  { id: 'industria', title: 'Alquiler de piso en calle de la Indústria', price: '550', image: industria },
+  fallback('teresa-pamies', 'Apartment in Barcelona', 482, teresaPamies),
+  fallback('torrent-olla', 'Apartment in Barcelona', 1385, torrentOlla),
+  fallback('sant-antoni', 'Apartment in Sant Antoni', 440, santAntoni),
+  fallback('manso', 'Apartment in Barcelona', 219, manso),
+  fallback('roger-lluria', 'Room in Barcelona', 220, rogerLluria),
+  fallback('gaudi', 'Penthouse in Barcelona', 600, gaudi),
+  fallback('industria', 'Apartment in Barcelona', 550, industria),
 ]
 
 export interface HomiioFaq {
@@ -50,3 +64,13 @@ export const HOMIIO_FAQS: readonly HomiioFaq[] = [
       'Anyone with an Oxy account. Renters, room-seekers, and ethical landlords share one identity layer across the whole Oxy ecosystem, so your reputation and history travel with you.',
   },
 ]
+
+/**
+ * The listings the landing renders: Homiio's live rentals once they arrive,
+ * the local deck until then. One place decides, so the wheel and the spiral
+ * always show the same set.
+ */
+export function useHomiioDeck(): readonly HomiioListing[] {
+  const { data } = useHomiioListings()
+  return data && data.length > 0 ? data : HOMIIO_LISTINGS
+}
