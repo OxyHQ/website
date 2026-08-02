@@ -1,6 +1,8 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css";
+@import "nativewind/theme";
+@import "@oxyhq/bloom/design-tokens/theme.css";
 @plugin "@tailwindcss/typography";
 
 /* Scan the Oxy SDK packages so their react-native-css className LAYOUT utilities
