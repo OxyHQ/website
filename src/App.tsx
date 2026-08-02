@@ -23,10 +23,7 @@ const FairCoinBridgePage = lazy(() => import('./pages/FairCoinBridge'))
 const FairCoinBuyPage = lazy(() => import('./pages/FairCoinBuy'))
 const FairCoinUnwrapPage = lazy(() => import('./pages/FairCoinUnwrap'))
 const FairCoinWalletPage = lazy(() => import('./pages/FairCoinWallet'))
-import { AccountPanelProvider } from './contexts/AccountPanelContext'
-
 const FixedPromptInput = lazy(() => import('./components/ui/FixedPromptInput'))
-const AccountPanel = lazy(() => import('./components/layout/AccountPanel'))
 
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 const PartnersPage = lazy(() => import('./pages/PartnersPage'))
@@ -380,9 +377,8 @@ export default function App() {
         >
           <AppSetup>
             <BrowserRouter>
-              <AccountPanelProvider>
-                <ScrollToTop />
-                <Suspense fallback={<div className="min-h-screen" />}>
+              <ScrollToTop />
+              <Suspense fallback={<div className="min-h-screen" />}>
                   <Routes>
                     {/* Guarded: /admin/* is a top-level route with no shared
                         layout, so an unhandled render error here would blank the
@@ -425,9 +421,7 @@ export default function App() {
                     <Route path={`${DEFAULT_LOCALE}/*`} element={<CollapseDefaultLocalePrefix />} />
                   </Routes>
                   <FixedPromptInput />
-                  <AccountPanel />
-                </Suspense>
-              </AccountPanelProvider>
+              </Suspense>
             </BrowserRouter>
           </AppSetup>
         </OxyProvider>

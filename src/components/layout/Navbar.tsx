@@ -1,7 +1,6 @@
 import { Fragment, useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useAuth } from '@oxyhq/services'
-import { Avatar } from '@oxyhq/bloom/avatar'
+import { ProfileButton } from '@oxyhq/services'
 import {
   simpleNavLinks,
   resourcesNavCard,
@@ -15,12 +14,11 @@ import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '
 import { useTranslation, useLocaleContext } from '../../lib/i18n'
 import { searchSite, groupResults, searchContextGroups, GROUP_LABELS, type SearchResult } from '../../lib/site-search'
 import NavDropdownItem from '../ui/NavDropdownItem'
-import Button from '../ui/Button'
 import Logo from '../ui/Logo'
 import { SettingsPanel } from '../ui/SettingsPanel'
 import { Settings, Search, X } from 'lucide-react'
 import { ArrowRightIcon } from '../icons'
-import { useAccountPanel } from '../../contexts/AccountPanelContext'
+import { useAdminAccess } from '../../hooks/useAdminAccess'
 
 /** Pseudo-dropdown key for the settings panel (theme + language), routed through
  *  the same shared viewport as the nav dropdowns. Prefixed so it never collides
@@ -175,8 +173,6 @@ export default function Navbar({
   rightActions,
   transparent,
 }: NavbarProps = {}) {
-  const { user, isAuthenticated, signIn } = useAuth()
-  const accountPanel = useAccountPanel()
   const { t } = useTranslation()
   const { locales } = useLocaleContext()
   // The settings gear (theme + language) always shows; the language section
@@ -214,6 +210,7 @@ export default function Navbar({
   const [activeResult, setActiveResult] = useState(0)
   const searchDebounce = useRef<ReturnType<typeof setTimeout> | null>(null)
   const navigate = useNavigate()
+  const { isAdmin } = useAdminAccess()
   const searchPath = useLocation().pathname
   const [bannerDismissed, setBannerDismissed] = useState(false)
   const bannerVisible = !hideBanner && !bannerDismissed && (banner?.visible ?? true)
@@ -623,15 +620,12 @@ export default function Navbar({
               {/* The avatar is the only child of these toggles, and it renders
                   no text, so without a label the button has no accessible name
                   at all — Lighthouse's `button-name` audit fails outright. */}
-              {!hideAuth && isAuthenticated && (
-                <button
-                  onClick={accountPanel.toggle}
-                  className="cursor-pointer"
-                  aria-label={t('common.accountMenu')}
-                  aria-expanded={accountPanel.isOpen}
-                >
-                  <Avatar source={user?.avatar} size={28} variant="thumb" placeholderColor={user?.color ?? undefined} />
-                </button>
+              {!hideAuth && (
+                <ProfileButton
+                  expanded={false}
+                  avatarSize={28}
+                  menuItems={isAdmin ? [{ key: 'admin', label: 'Admin', icon: 'shield-account-outline', onPress: () => navigate('/admin') }] : []}
+                />
               )}
               <button
                 className={`inline-flex h-9 w-9 items-center justify-center rounded-full ${isTransparent ? 'text-white' : 'text-muted-foreground'}`}
@@ -679,31 +673,13 @@ export default function Navbar({
                 <Settings className="size-[18px] transition-transform duration-300 group-hover:rotate-45" />
               </button>
               {rightActions}
-              {ctaButtons ?? (
-                hideAuth ? null : isAuthenticated ? (
-                  <button
-                    onClick={accountPanel.toggle}
-                    className="cursor-pointer"
-                    aria-label={t('common.accountMenu')}
-                    aria-expanded={accountPanel.isOpen}
-                  >
-                    <Avatar
-                      source={user?.avatar}
-                      size={32}
-                      variant="thumb"
-                      placeholderColor={user?.color ?? undefined}
-                    />
-                  </button>
-                ) : (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => signIn()}
-                    className={isTransparent ? '!bg-white/10 !border-transparent !text-white hover:!bg-white/20' : ''}
-                  >
-                    {t('common.signIn')}
-                  </Button>
-                )
+              {ctaButtons}
+              {!hideAuth && (
+                <ProfileButton
+                  expanded={false}
+                  avatarSize={32}
+                  menuItems={isAdmin ? [{ key: 'admin', label: 'Admin', icon: 'shield-account-outline', onPress: () => navigate('/admin') }] : []}
+                />
               )}
             </div>
             </div>
@@ -873,13 +849,15 @@ export default function Navbar({
                 <div className="flex flex-col gap-2 px-2 pt-2">
                   {ctaButtons}
                 </div>
-              ) : (
-                !hideAuth && !isAuthenticated && (
-                  <div className="flex flex-col gap-2 px-2 pt-2">
-                    {rightActions && <div className="flex flex-col gap-2">{rightActions}</div>}
-                    <Button variant="outline" size="md" onClick={() => { signIn(); setMobileOpen(false) }} className="w-full">{t('common.signIn')}</Button>
-                  </div>
-                )
+              ) : null}
+              {!hideAuth && (
+                <div className="px-2 pt-2">
+                  <ProfileButton
+                    expanded
+                    menuItems={isAdmin ? [{ key: 'admin', label: 'Admin', icon: 'shield-account-outline', onPress: () => navigate('/admin') }] : []}
+                    className="w-full"
+                  />
+                </div>
               )}
             </div>
           </div>
