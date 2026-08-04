@@ -67,7 +67,7 @@ export default function PricingCompareSection() {
     <div className="container pt-12 lg:hidden">
       <div className="flex flex-col items-center text-center">
         <h2 className="font-bold text-heading-md">Compare plans.</h2>
-        <p className="mt-2 text-secondary-foreground">
+        <p className="mt-2 text-muted-foreground">
           Everything you need to build, run, and scale on top of the Oxy ecosystem.
         </p>
       </div>
@@ -76,7 +76,7 @@ export default function PricingCompareSection() {
       <div className="mt-10 flex flex-col gap-y-10">
         {featureCategories.map((category) => (
           <div key={category.name}>
-            <h3 className="border-subtle-stroke border-b py-4 text-lg text-secondary-foreground">{category.name}</h3>
+            <h3 className="border-subtle-stroke border-b py-4 text-lg text-muted-foreground">{category.name}</h3>
             {category.features.map((feature) => (
               <MobileFeatureRow key={feature.name} feature={feature} />
             ))}

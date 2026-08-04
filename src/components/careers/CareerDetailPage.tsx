@@ -25,14 +25,14 @@ function DescriptionContent({ blocks }: { blocks: DescriptionBlock[] }) {
       {blocks.map((block, i) => {
         if (block.type === 'paragraph') {
           return (
-            <p key={i} className="not-first:mt-[13px] text-pretty text-secondary-foreground leading-[26px]">
+            <p key={i} className="not-first:mt-[13px] text-pretty text-muted-foreground leading-[26px]">
               {block.text}
             </p>
           )
         }
         if (block.type === 'heading') {
           return (
-            <h3 key={i} className="relative not-first:mt-7 not-last:mb-3 font-semibold text-lg text-secondary-foreground">
+            <h3 key={i} className="relative not-first:mt-7 not-last:mb-3 font-semibold text-lg text-muted-foreground">
               <strong className="font-semibold">{block.text}</strong>
             </h3>
           )
@@ -42,7 +42,7 @@ function DescriptionContent({ blocks }: { blocks: DescriptionBlock[] }) {
             <ul key={i} className="not-first:mt-1.5 list-[square] pl-3.5 marker:text-muted-foreground">
               {block.items.map((item, j) => (
                 <li key={j} className="pt-1 pl-1.5 first:pt-1.5 [&:not(:has(ul,li))]:pb-1.5">
-                  <p className="not-first:mt-[13px] text-pretty text-secondary-foreground leading-[26px]">{item}</p>
+                  <p className="not-first:mt-[13px] text-pretty text-muted-foreground leading-[26px]">{item}</p>
                 </li>
               ))}
             </ul>
@@ -55,7 +55,7 @@ function DescriptionContent({ blocks }: { blocks: DescriptionBlock[] }) {
 }
 
 const inputClasses =
-  'block w-full rounded-[10px] bg-background p-[10px_13px] outline-hidden transition-all duration-300 ease-out text-secondary-foreground placeholder:text-muted-foreground border border-border hover:border-border hover:shadow-[0px_1px_4px_rgba(56,62,71,0.1)] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-300'
+  'block w-full rounded-[10px] bg-background p-[10px_13px] outline-hidden transition-all duration-300 ease-out text-muted-foreground placeholder:text-muted-foreground border border-border hover:border-border hover:shadow-[0px_1px_4px_rgba(56,62,71,0.1)] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-300'
 
 function ApplicationForm() {
   const [formData, setFormData] = useState({
@@ -76,7 +76,7 @@ function ApplicationForm() {
     <form className="space-y-6 py-8" onSubmit={handleSubmit}>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-secondary-foreground">
+          <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
             First name <span className="text-red-500">*</span>
           </label>
           <input
@@ -89,7 +89,7 @@ function ApplicationForm() {
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-secondary-foreground">
+          <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
             Last name <span className="text-red-500">*</span>
           </label>
           <input
@@ -104,7 +104,7 @@ function ApplicationForm() {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-secondary-foreground">
+        <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
           Email <span className="text-red-500">*</span>
         </label>
         <input
@@ -118,7 +118,7 @@ function ApplicationForm() {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-secondary-foreground">
+        <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
           Phone <span className="text-muted-foreground text-xs">(optional)</span>
         </label>
         <input
@@ -131,20 +131,20 @@ function ApplicationForm() {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-secondary-foreground">
+        <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
           Resume <span className="text-red-500">*</span>
         </label>
         <input
           type="file"
           required
           accept=".pdf,.doc,.docx"
-          className={`${inputClasses} file:mr-3 file:rounded-lg file:border-0 file:bg-surface file:px-3 file:py-1 file:text-sm file:font-medium file:text-secondary-foreground cursor-pointer`}
+          className={`${inputClasses} file:mr-3 file:rounded-lg file:border-0 file:bg-surface file:px-3 file:py-1 file:text-sm file:font-medium file:text-muted-foreground cursor-pointer`}
           onChange={(e) => setFormData({ ...formData, resume: e.target.files?.[0] ?? null })}
         />
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-secondary-foreground">
+        <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
           LinkedIn URL <span className="text-muted-foreground text-xs">(optional)</span>
         </label>
         <input
@@ -157,7 +157,7 @@ function ApplicationForm() {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-secondary-foreground">
+        <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
           Cover letter <span className="text-muted-foreground text-xs">(optional)</span>
         </label>
         <textarea
@@ -188,7 +188,7 @@ function NotFoundView({ relatedJobs }: { relatedJobs: Job[] }) {
           <p className="pt-8">
             <Link
               to="/company/careers"
-              className="underline decoration-2 decoration-border underline-offset-2 transition-all duration-700 hover:brightness-75 hover:duration-300 active:brightness-50 active:duration-0 text-secondary-foreground"
+              className="underline decoration-2 decoration-border underline-offset-2 transition-all duration-700 hover:brightness-75 hover:duration-300 active:brightness-50 active:duration-0 text-muted-foreground"
             >
               View all open positions
             </Link>
@@ -369,19 +369,19 @@ export default function CareerDetailContent() {
         <aside className="relative col-[1/4] bg-surface py-22 max-xl:hidden">
           <div className="sticky top-[calc(var(--site-header-height)+48px)] flex flex-col gap-4 px-9">
             <div className="mb-2">
-              <h2 className="text-balance font-semibold text-lg text-secondary-foreground">{job.title}</h2>
+              <h2 className="text-balance font-semibold text-lg text-muted-foreground">{job.title}</h2>
               <p className="mt-1 text-balance text-sm text-muted-foreground">{job.subtitle}</p>
             </div>
             <div>
-              <h3 className="font-semibold text-secondary-foreground">Location</h3>
+              <h3 className="font-semibold text-muted-foreground">Location</h3>
               <p className="mt-1 text-balance text-sm text-muted-foreground">{job.location}</p>
             </div>
             <div>
-              <h3 className="font-semibold text-secondary-foreground">Engagement Type</h3>
+              <h3 className="font-semibold text-muted-foreground">Engagement Type</h3>
               <p className="mt-1 text-balance text-sm text-muted-foreground">{engagement}</p>
             </div>
             <div>
-              <h3 className="font-semibold text-secondary-foreground">Compensation</h3>
+              <h3 className="font-semibold text-muted-foreground">Compensation</h3>
               <p className="mt-1 text-sm text-muted-foreground">{job.compensation}</p>
             </div>
             <div className="mt-3">
@@ -398,7 +398,7 @@ export default function CareerDetailContent() {
             {Array.isArray(job.description) ? (
               <DescriptionContent blocks={job.description} />
             ) : typeof job.description === 'string' && job.description ? (
-              <p className="whitespace-pre-line text-pretty text-secondary-foreground leading-[26px]">
+              <p className="whitespace-pre-line text-pretty text-muted-foreground leading-[26px]">
                 {job.description}
               </p>
             ) : null}

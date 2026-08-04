@@ -119,7 +119,7 @@ export default function ChangelogContent() {
                   className={`inline-flex items-center rounded-[10px] px-3 py-1.5 text-sm transition-colors ${
                     !selectedRepo
                       ? 'bg-primary-foreground text-primary-background'
-                      : 'text-tertiary-foreground hover:text-secondary-foreground border border-subtle-stroke'
+                      : 'text-tertiary-foreground hover:text-muted-foreground border border-subtle-stroke'
                   }`}
                 >
                   All
@@ -133,7 +133,7 @@ export default function ChangelogContent() {
                       className={`inline-flex items-center rounded-[10px] px-3 py-1.5 text-sm transition-colors ${
                         selectedRepo === key
                           ? 'bg-primary-foreground text-primary-background'
-                          : 'text-tertiary-foreground hover:text-secondary-foreground border border-subtle-stroke'
+                          : 'text-tertiary-foreground hover:text-muted-foreground border border-subtle-stroke'
                       }`}
                     >
                       {r.displayName}
@@ -244,7 +244,7 @@ export default function ChangelogContent() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={safePage <= 1}
-                  className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-secondary-foreground disabled:opacity-40"
+                  className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-muted-foreground disabled:opacity-40"
                 >
                   Previous
                 </button>
@@ -254,7 +254,7 @@ export default function ChangelogContent() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={safePage >= totalPages}
-                  className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-secondary-foreground disabled:opacity-40"
+                  className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-muted-foreground disabled:opacity-40"
                 >
                   Next
                 </button>

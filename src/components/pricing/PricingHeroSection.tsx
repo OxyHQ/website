@@ -16,7 +16,7 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
     <div className="container">
       <div className="flex flex-col items-center pt-[116px]">
         <h1 className="text-center text-heading-responsive-lg">Pricing for the Oxy ecosystem.</h1>
-        <p className="mt-4 max-w-md text-balance text-center text-secondary-foreground text-xl">
+        <p className="mt-4 max-w-md text-balance text-center text-muted-foreground text-xl">
           Most Oxy apps are free and open source. Paid plans add hosting, support, and team features. Start today, no credit card required.
         </p>
       </div>
@@ -69,7 +69,7 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
               }`}
             >
               <div className="flex flex-col">
-                <header className="text-secondary-foreground text-xl">{plan.name}</header>
+                <header className="text-muted-foreground text-xl">{plan.name}</header>
                 <div className="mt-4 lg:mt-8">
                   <div className="flex items-start gap-2">
                     <div className="inline-block overflow-y-hidden text-heading-md">
@@ -96,7 +96,7 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
                     )}
                   </div>
                 </div>
-                <div className="mt-5 font-semibold text-secondary-foreground text-sm lg:mt-8">{plan.description}</div>
+                <div className="mt-5 font-semibold text-muted-foreground text-sm lg:mt-8">{plan.description}</div>
                 <ul className="mt-2.5 flex flex-col gap-y-2.5">
                   {(plan.features ?? []).map((feature: string) => (
                     <li key={feature} className="flex items-start gap-2">

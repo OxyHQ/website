@@ -68,7 +68,7 @@ export default function PricingStickyTable({ isAnnual, onToggle }: Props) {
                 {pricingPlans.map((plan) => (
                   <div key={plan.name}>
                     <div className="flex items-center gap-x-2">
-                      <h3 className="text-2xl text-secondary-foreground">{plan.name}</h3>
+                      <h3 className="text-2xl text-muted-foreground">{plan.name}</h3>
                       {plan.highlighted && (
                         <div className="rounded-lg border border-blue-200 bg-blue-100 px-2 py-1 text-center text-blue-450 text-xs">Popular</div>
                       )}
@@ -112,7 +112,7 @@ export default function PricingStickyTable({ isAnnual, onToggle }: Props) {
               <div className="mt-10 flex flex-col gap-y-15">
                 {featureCategories.map((category) => (
                   <div key={category.name}>
-                    <h2 className="sticky top-[calc(var(--site-header-height)+197px)] z-1 border-subtle-stroke border-b bg-primary-background py-4 text-lg text-secondary-foreground">
+                    <h2 className="sticky top-[calc(var(--site-header-height)+197px)] z-1 border-subtle-stroke border-b bg-primary-background py-4 text-lg text-muted-foreground">
                       {category.name}
                     </h2>
                     {category.features.map((feature) => (

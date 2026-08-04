@@ -153,7 +153,7 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
             </div>
           </div>
         ) : (
-          <p className="mt-1 whitespace-pre-wrap text-sm text-secondary-foreground">
+          <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">
             {comment.body}
           </p>
         )}

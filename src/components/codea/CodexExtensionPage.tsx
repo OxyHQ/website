@@ -45,7 +45,7 @@ export default function CodexExtensionContent() {
         <div className="container relative z-10 flex flex-col items-center pt-12 pb-12 text-center sm:pt-28 sm:pb-16 md:pb-24 lg:pt-16">
           {/* Icon */}
           <div className="flex h-[72px] w-[72px] items-center justify-center bg-transparent sm:h-[78px] sm:w-[78px] md:h-[92px] md:w-[92px]">
-            <div className="relative overflow-hidden h-full w-full rounded-[20px] bg-secondary" />
+            <div className="relative overflow-hidden h-full w-full rounded-[20px] bg-muted" />
           </div>
           <div className="text-foreground text-[clamp(2.5rem,2rem+3vw,4.5rem)] font-semibold leading-none tracking-[-0.03em] mt-7 sm:mt-8 md:mt-10">
             Codea
@@ -131,8 +131,8 @@ export default function CodexExtensionContent() {
         </div>
         <div className="mt-16 grid w-full grid-cols-1 gap-8 text-start md:mt-20 md:grid-cols-3">
           {platforms.map((p) => (
-            <div key={p.title} className="bg-secondary/75 flex h-full flex-col overflow-hidden rounded-md p-4 shadow md:p-5">
-              <div className="relative -mx-2 -mt-2 w-auto overflow-hidden rounded-lg md:-mx-[10px] md:-mt-[10px] bg-secondary aspect-video flex items-center justify-center text-muted-foreground text-xs">
+            <div key={p.title} className="bg-muted/75 flex h-full flex-col overflow-hidden rounded-md p-4 shadow md:p-5">
+              <div className="relative -mx-2 -mt-2 w-auto overflow-hidden rounded-lg md:-mx-[10px] md:-mt-[10px] bg-muted aspect-video flex items-center justify-center text-muted-foreground text-xs">
                 {p.title}
               </div>
               <div className="text-foreground text-lg font-semibold mt-4">{p.title}</div>
@@ -150,7 +150,7 @@ export default function CodexExtensionContent() {
           </h2>
           <div className="mt-12 grid w-full grid-cols-1 gap-6 px-6 md:grid-cols-2 lg:grid-cols-3 max-w-6xl">
             {testimonials.map((t) => (
-              <div key={t.name} className="bg-secondary flex flex-col justify-between rounded-lg p-6">
+              <div key={t.name} className="bg-muted flex flex-col justify-between rounded-lg p-6">
                 <p className="text-foreground text-sm leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
                 <div className="mt-4 flex items-center gap-3">
                   <div className="h-8 w-8 rounded-full bg-background" />

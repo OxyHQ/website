@@ -34,7 +34,7 @@ function CellValue({ value }: { value: string }) {
 function getCardStyle(index: number, total: number, isFeatured: boolean) {
   if (isFeatured) return { bg: 'bg-primary text-primary-foreground', dot: 'bg-primary-foreground', border: 'border-primary-foreground/20', accent: 'text-primary-foreground/70', cta: 'bg-primary-foreground text-primary' }
   if (index === total - 1) return { bg: 'bg-foreground text-background', dot: 'bg-background/60', border: 'border-background/20', accent: 'text-background/70', cta: 'bg-background text-foreground' }
-  return { bg: 'bg-secondary text-secondary-foreground', dot: 'bg-primary', border: 'border-primary/20', accent: 'text-primary', cta: 'bg-primary text-primary-foreground hover:bg-primary/90' }
+  return { bg: 'bg-muted text-muted-foreground', dot: 'bg-primary', border: 'border-primary/20', accent: 'text-primary', cta: 'bg-primary text-primary-foreground hover:bg-primary/90' }
 }
 
 function buildComparison(plans: APIPlan[]) {
