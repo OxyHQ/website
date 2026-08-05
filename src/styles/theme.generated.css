@@ -368,6 +368,26 @@
   --color-info-foreground: rgb(255 255 255);
   --color-info-text: rgb(173 198 255);
   --color-info-subtle: rgba(59, 130, 246, 0.24);
+  --color-bg: rgb(19 12 20);
+  --color-fill: rgb(37 29 38);
+  --color-fill-secondary: rgb(48 39 49);
+  --color-fill-hover: rgb(48 39 49);
+  --color-fill-brand: rgb(158 74 184);
+  --color-fill-brand-hover: rgb(240 176 255);
+  --color-fill-inverse: rgb(237 222 235);
+  --color-fill-inverse-hover: rgb(210 193 210);
+  --color-fill-placeholder: rgb(48 39 49);
+  --color-text: rgb(237 222 235);
+  --color-text-secondary: rgb(210 193 210);
+  --color-text-tertiary: rgb(210 193 210);
+  --color-text-inverse: rgb(255 255 255);
+  --color-text-fixed-light: rgb(255 255 255);
+  --color-text-placeholder: rgb(210 193 210);
+  --color-border-image: rgb(79 67 80);
+  --color-border-secondary: rgb(79 67 80);
+  --color-border-input: rgb(79 67 80);
+  --color-border-input-active: rgb(240 176 255);
+  --color-divider: rgb(79 67 80);
   color-scheme: dark;
 }
 
@@ -489,6 +509,26 @@
   --color-info-foreground: rgb(255 255 255);
   --color-info-text: rgb(173 198 255);
   --color-info-subtle: rgba(59, 130, 246, 0.24);
+  --color-bg: rgb(15 13 23);
+  --color-fill: rgb(33 30 41);
+  --color-fill-secondary: rgb(43 40 51);
+  --color-fill-hover: rgb(43 40 51);
+  --color-fill-brand: rgb(120 85 233);
+  --color-fill-brand-hover: rgb(204 190 255);
+  --color-fill-inverse: rgb(230 224 239);
+  --color-fill-inverse-hover: rgb(202 196 213);
+  --color-fill-placeholder: rgb(43 40 51);
+  --color-text: rgb(230 224 239);
+  --color-text-secondary: rgb(202 196 213);
+  --color-text-tertiary: rgb(202 196 213);
+  --color-text-inverse: rgb(255 255 255);
+  --color-text-fixed-light: rgb(255 255 255);
+  --color-text-placeholder: rgb(202 196 213);
+  --color-border-image: rgb(72 69 83);
+  --color-border-secondary: rgb(72 69 83);
+  --color-border-input: rgb(72 69 83);
+  --color-border-input-active: rgb(204 190 255);
+  --color-divider: rgb(72 69 83);
   color-scheme: dark;
 }
 
@@ -610,6 +650,26 @@
   --color-info-foreground: rgb(255 255 255);
   --color-info-text: rgb(173 198 255);
   --color-info-subtle: rgba(59, 130, 246, 0.24);
+  --color-bg: rgb(16 12 22);
+  --color-fill: rgb(34 30 40);
+  --color-fill-secondary: rgb(44 40 51);
+  --color-fill-hover: rgb(44 40 51);
+  --color-fill-brand: rgb(131 103 184);
+  --color-fill-brand-hover: rgb(211 187 255);
+  --color-fill-inverse: rgb(232 223 238);
+  --color-fill-inverse-hover: rgb(204 195 213);
+  --color-fill-placeholder: rgb(44 40 51);
+  --color-text: rgb(232 223 238);
+  --color-text-secondary: rgb(204 195 213);
+  --color-text-tertiary: rgb(204 195 213);
+  --color-text-inverse: rgb(255 255 255);
+  --color-text-fixed-light: rgb(255 255 255);
+  --color-text-placeholder: rgb(204 195 213);
+  --color-border-image: rgb(74 68 83);
+  --color-border-secondary: rgb(74 68 83);
+  --color-border-input: rgb(74 68 83);
+  --color-border-input-active: rgb(211 187 255);
+  --color-divider: rgb(74 68 83);
   color-scheme: dark;
 }
 
@@ -731,6 +791,26 @@
   --color-info-foreground: rgb(255 255 255);
   --color-info-text: rgb(173 198 255);
   --color-info-subtle: rgba(59, 130, 246, 0.24);
+  --color-bg: rgb(6 16 11);
+  --color-fill: rgb(23 34 28);
+  --color-fill-secondary: rgb(33 44 38);
+  --color-fill-hover: rgb(33 44 38);
+  --color-fill-brand: rgb(0 135 92);
+  --color-fill-brand-hover: rgb(0 226 157);
+  --color-fill-inverse: rgb(217 230 220);
+  --color-fill-inverse-hover: rgb(186 203 191);
+  --color-fill-placeholder: rgb(33 44 38);
+  --color-text: rgb(217 230 220);
+  --color-text-secondary: rgb(186 203 191);
+  --color-text-tertiary: rgb(186 203 191);
+  --color-text-inverse: rgb(255 255 255);
+  --color-text-fixed-light: rgb(255 255 255);
+  --color-text-placeholder: rgb(186 203 191);
+  --color-border-image: rgb(59 74 65);
+  --color-border-secondary: rgb(59 74 65);
+  --color-border-input: rgb(59 74 65);
+  --color-border-input-active: rgb(0 226 157);
+  --color-divider: rgb(59 74 65);
   color-scheme: dark;
 }
 
@@ -852,6 +932,26 @@
   --color-info-foreground: rgb(255 255 255);
   --color-info-text: rgb(1 90 194);
   --color-info-subtle: rgba(59, 130, 246, 0.13);
+  --color-bg: rgb(237 244 255);
+  --color-fill: rgb(255 255 255);
+  --color-fill-secondary: rgb(226 233 244);
+  --color-fill-hover: rgb(226 233 244);
+  --color-fill-brand: rgb(0 110 175);
+  --color-fill-brand-hover: rgb(0 98 157);
+  --color-fill-inverse: rgb(21 28 36);
+  --color-fill-inverse-hover: rgb(62 72 82);
+  --color-fill-placeholder: rgb(226 233 244);
+  --color-text: rgb(21 28 36);
+  --color-text-secondary: rgb(62 72 82);
+  --color-text-tertiary: rgb(62 72 82);
+  --color-text-inverse: rgb(255 255 255);
+  --color-text-fixed-light: rgb(255 255 255);
+  --color-text-placeholder: rgb(62 72 82);
+  --color-border-image: rgb(190 199 212);
+  --color-border-secondary: rgb(190 199 212);
+  --color-border-input: rgb(190 199 212);
+  --color-border-input-active: rgb(0 98 157);
+  --color-divider: rgb(190 199 212);
 }
 
 .astro-theme:is(.dark, .dark *) {
@@ -971,6 +1071,26 @@
   --color-info-foreground: rgb(255 255 255);
   --color-info-text: rgb(173 198 255);
   --color-info-subtle: rgba(59, 130, 246, 0.24);
+  --color-bg: rgb(8 15 22);
+  --color-fill: rgb(25 32 40);
+  --color-fill-secondary: rgb(36 43 51);
+  --color-fill-hover: rgb(36 43 51);
+  --color-fill-brand: rgb(0 123 194);
+  --color-fill-brand-hover: rgb(153 203 255);
+  --color-fill-inverse: rgb(220 227 238);
+  --color-fill-inverse-hover: rgb(190 199 212);
+  --color-fill-placeholder: rgb(36 43 51);
+  --color-text: rgb(220 227 238);
+  --color-text-secondary: rgb(190 199 212);
+  --color-text-tertiary: rgb(190 199 212);
+  --color-text-inverse: rgb(255 255 255);
+  --color-text-fixed-light: rgb(255 255 255);
+  --color-text-placeholder: rgb(190 199 212);
+  --color-border-image: rgb(62 72 82);
+  --color-border-secondary: rgb(62 72 82);
+  --color-border-input: rgb(62 72 82);
+  --color-border-input-active: rgb(153 203 255);
+  --color-divider: rgb(62 72 82);
 }
 
 /* FairCoin sections on oxy.so — seed #9ffb50 */
@@ -1091,6 +1211,26 @@
   --color-info-foreground: rgb(255 255 255);
   --color-info-text: rgb(1 90 194);
   --color-info-subtle: rgba(59, 130, 246, 0.13);
+  --color-bg: rgb(240 246 227);
+  --color-fill: rgb(255 255 255);
+  --color-fill-secondary: rgb(228 235 216);
+  --color-fill-hover: rgb(228 235 216);
+  --color-fill-brand: rgb(62 119 0);
+  --color-fill-brand-hover: rgb(55 107 0);
+  --color-fill-inverse: rgb(24 29 18);
+  --color-fill-inverse-hover: rgb(65 73 57);
+  --color-fill-placeholder: rgb(228 235 216);
+  --color-text: rgb(24 29 18);
+  --color-text-secondary: rgb(65 73 57);
+  --color-text-tertiary: rgb(65 73 57);
+  --color-text-inverse: rgb(255 255 255);
+  --color-text-fixed-light: rgb(255 255 255);
+  --color-text-placeholder: rgb(65 73 57);
+  --color-border-image: rgb(193 202 180);
+  --color-border-secondary: rgb(193 202 180);
+  --color-border-input: rgb(193 202 180);
+  --color-border-input-active: rgb(55 107 0);
+  --color-divider: rgb(193 202 180);
 }
 
 .faircoin-theme:is(.dark, .dark *) {
@@ -1210,6 +1350,26 @@
   --color-info-foreground: rgb(255 255 255);
   --color-info-text: rgb(173 198 255);
   --color-info-subtle: rgba(59, 130, 246, 0.24);
+  --color-bg: rgb(10 16 6);
+  --color-fill: rgb(28 33 22);
+  --color-fill-secondary: rgb(38 44 32);
+  --color-fill-hover: rgb(38 44 32);
+  --color-fill-brand: rgb(159 251 80);
+  --color-fill-brand-hover: rgb(120 223 0);
+  --color-fill-inverse: rgb(223 229 211);
+  --color-fill-inverse-hover: rgb(193 202 180);
+  --color-fill-placeholder: rgb(38 44 32);
+  --color-text: rgb(223 229 211);
+  --color-text-secondary: rgb(193 202 180);
+  --color-text-tertiary: rgb(193 202 180);
+  --color-text-inverse: rgb(0 0 0);
+  --color-text-fixed-light: rgb(0 0 0);
+  --color-text-placeholder: rgb(193 202 180);
+  --color-border-image: rgb(65 73 57);
+  --color-border-secondary: rgb(65 73 57);
+  --color-border-input: rgb(65 73 57);
+  --color-border-input-active: rgb(120 223 0);
+  --color-divider: rgb(65 73 57);
 }
 
 /* FAIRWallet phone mockup — seed #9ffb50 */
@@ -1330,5 +1490,25 @@
   --color-info-foreground: rgb(255 255 255);
   --color-info-text: rgb(173 198 255);
   --color-info-subtle: rgba(59, 130, 246, 0.24);
+  --color-bg: rgb(10 16 6);
+  --color-fill: rgb(28 33 22);
+  --color-fill-secondary: rgb(38 44 32);
+  --color-fill-hover: rgb(38 44 32);
+  --color-fill-brand: rgb(159 251 80);
+  --color-fill-brand-hover: rgb(120 223 0);
+  --color-fill-inverse: rgb(223 229 211);
+  --color-fill-inverse-hover: rgb(193 202 180);
+  --color-fill-placeholder: rgb(38 44 32);
+  --color-text: rgb(223 229 211);
+  --color-text-secondary: rgb(193 202 180);
+  --color-text-tertiary: rgb(193 202 180);
+  --color-text-inverse: rgb(0 0 0);
+  --color-text-fixed-light: rgb(0 0 0);
+  --color-text-placeholder: rgb(193 202 180);
+  --color-border-image: rgb(65 73 57);
+  --color-border-secondary: rgb(65 73 57);
+  --color-border-input: rgb(65 73 57);
+  --color-border-input-active: rgb(120 223 0);
+  --color-divider: rgb(65 73 57);
   color-scheme: dark;
 }

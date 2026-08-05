@@ -2,23 +2,28 @@ import { useEffect, useState } from 'react'
 import type { MdxHeading } from '../../../scripts/vite-mdx-headings'
 
 /* ──────────────────────────────────────────────
- * HelpArticleTOC
+ * TableOfContents
  *
- * Sticky table of contents for a help article, with the section being read
- * highlighted as you scroll.
+ * Contents list for any long article — help, newsroom — with the section being
+ * read highlighted as you scroll.
  *
- * The headings come from the MDX module itself (see
- * `scripts/vite-mdx-headings.ts`), which is also where the element ids come
- * from, so the list is right before the lazily loaded article body has
- * rendered. Reading them back out of the DOM meant racing that module.
+ * The headings are always passed in, never read back out of the DOM: a help
+ * article's come from the MDX module (`scripts/vite-mdx-headings.ts`), a
+ * newsroom one's from its markdown source. Both know their headings before the
+ * body has rendered, and reading the DOM meant racing that render.
  * ──────────────────────────────────────────── */
 
-interface HelpArticleTOCProps {
+interface TableOfContentsProps {
   /** The article's headings, in document order. */
   headings: MdxHeading[]
+  /**
+   * Whether the list pins itself while the body scrolls. Off when the caller
+   * already pins the column it sits in, so the two do not fight.
+   */
+  sticky?: boolean
 }
 
-export default function HelpArticleTOC({ headings }: HelpArticleTOCProps) {
+export default function TableOfContents({ headings, sticky = true }: TableOfContentsProps) {
   const items = headings.filter((heading) => heading.level <= 3)
   const [activeId, setActiveId] = useState<string | null>(items[0]?.id ?? null)
 
@@ -72,11 +77,11 @@ export default function HelpArticleTOC({ headings }: HelpArticleTOCProps) {
     <>
       {/* Mobile: a "Jump to" select. */}
       <div className="lg:hidden mb-6">
-        <label htmlFor="help-toc-mobile" className="block text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">
+        <label htmlFor="article-toc-mobile" className="block text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">
           On this page
         </label>
         <select
-          id="help-toc-mobile"
+          id="article-toc-mobile"
           value={activeId ?? ''}
           onChange={handleSelectChange}
           className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground transition-colors hover:border-input focus:border-input focus:outline-none"
@@ -91,7 +96,10 @@ export default function HelpArticleTOC({ headings }: HelpArticleTOCProps) {
       </div>
 
       {/* Desktop: sticky sidebar TOC. */}
-      <nav className="max-lg:hidden sticky top-24 self-start" aria-label="Table of contents">
+      <nav
+        className={`max-lg:hidden self-start ${sticky ? 'sticky top-24' : ''}`}
+        aria-label="Table of contents"
+      >
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
           On this page
         </p>

@@ -1,6 +1,5 @@
+import { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -8,20 +7,16 @@ import StructuredData from '../components/StructuredData'
 import { useNewsroomPost, useNewsroomPosts } from '../api/hooks'
 import { type NewsroomPost } from '../data/newsroom'
 import { brandConfig } from '../lib/seo'
-import { readTime } from '../lib/userUtils'
 import { NewsCardGrid } from '../components/newsroom/NewsCard'
 import LikeButton from '../components/social/LikeButton'
 import DiscussOnMention from '../components/social/DiscussOnMention'
 import CommentSection from '../components/social/CommentSection'
-import ArticleAuthors from '../components/social/ArticleAuthor'
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  })
-}
+import ArticleHero from '../components/newsroom/article/ArticleHero'
+import ArticleSummary from '../components/newsroom/article/ArticleSummary'
+import ArticleMarkdown from '../components/newsroom/article/ArticleMarkdown'
+import ArticleSidebar from '../components/newsroom/article/ArticleSidebar'
+import ArticleScrollProgress from '../components/newsroom/article/ArticleScrollProgress'
+import { extractHeadings } from '../components/newsroom/article/headings'
 
 export default function NewsroomPostPage() {
   const { slug = '' } = useParams<{ slug: string }>()
@@ -42,12 +37,14 @@ export default function NewsroomPostPage() {
     (p: NewsroomPost) => p.slug !== slug,
   ).slice(0, 3)
 
+  const headings = useMemo(() => extractHeadings(post?.content ?? ''), [post?.content])
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
         <Navbar />
         <main className="flex flex-1 items-center justify-center">
-          <div className="text-muted-foreground">Loading...</div>
+          <div className="text-text-secondary">Loading...</div>
         </main>
         <Footer />
       </div>
@@ -59,7 +56,7 @@ export default function NewsroomPostPage() {
       <div className="flex min-h-screen flex-col bg-background">
         <Navbar />
         <main className="flex flex-1 flex-col items-center justify-center gap-4">
-          <h1 className="text-2xl font-semibold text-foreground">Post not found</h1>
+          <h1 className="text-2xl font-semibold text-text">Post not found</h1>
           <Link to="/newsroom" className="text-sm text-primary hover:underline">
             Back to Newsroom
           </Link>
@@ -68,6 +65,8 @@ export default function NewsroomPostPage() {
       </div>
     )
   }
+
+  const url = `${origin}/newsroom/${post.slug}`
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
@@ -94,90 +93,40 @@ export default function NewsroomPostPage() {
           name: siteName,
           logo: { '@type': 'ImageObject', url: `${origin}/favicon.svg` },
         },
-        mainEntityOfPage: { '@type': 'WebPage', '@id': `${origin}/newsroom/${post.slug}` },
+        mainEntityOfPage: { '@type': 'WebPage', '@id': url },
       }} />
       <Navbar />
 
-      <main className="pb-20 md:pb-28">
-        {/* Article header */}
-        <header className="mx-auto max-w-[720px] px-5 pt-[5rem] md:px-8 md:pt-28">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-            <span>{post.categories[0]}</span>
-            <span>&middot;</span>
-            <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
-            <span>&middot;</span>
-            <span>{readTime(post.content)}</span>
-          </div>
-          {post.oxyUserId && (
-            <div className="mt-3">
-              <ArticleAuthors userIds={[post.oxyUserId]} />
+      <main>
+        <ArticleHero post={post} url={url} />
+
+        {/* Body and sidebar share one measure; the body keeps `min-w-0` so a
+          * wide code block or table scrolls inside itself instead of pushing
+          * the sidebar off the page. */}
+        <div className="border-border lg:border-b">
+          <div className="relative mx-auto w-full max-w-[80.5rem] lg:flex lg:gap-10 lg:px-6">
+            <div className="flex w-full min-w-0 flex-col gap-4 px-4 py-4 pt-6 lg:gap-10 lg:px-0 lg:py-10">
+              {post.resume && <ArticleSummary resume={post.resume} />}
+
+              <article>
+                <ArticleMarkdown content={post.content} />
+              </article>
+
+              <div className="flex items-center gap-3">
+                <LikeButton targetType="newsroom" targetId={post.slug} />
+                <DiscussOnMention title={post.title} url={url} hashtags={post.tags} via="oxy" />
+              </div>
+
+              <CommentSection targetType="newsroom" targetId={post.slug} />
             </div>
-          )}
-          <h1 className="mt-4 text-heading-responsive-lg text-foreground">
-            {post.title}
-          </h1>
-          {post.resume && (
-            <p className="mt-4 text-lg text-muted-foreground">
-              {post.resume}
-            </p>
-          )}
-          {post.tags && post.tags.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {post.tags.map((tag: string) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-surface px-3 py-1 text-xs font-medium text-muted-foreground"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-        </header>
 
-        {/* Cover image */}
-        {post.coverImage && (
-          <div className="mx-auto mt-8 max-w-[900px] px-5 md:px-8">
-            <img
-              src={post.coverImage}
-              alt={post.title}
-              className="w-full rounded-lg object-cover"
-              style={{ aspectRatio: '16 / 9' }}
-              width={1600}
-              height={900}
-              loading="eager"
-              decoding="async"
-            />
+            <ArticleSidebar post={post} headings={headings} />
           </div>
-        )}
-
-        {/* Markdown content */}
-        <article className="prose prose-neutral dark:prose-invert mx-auto mt-10 max-w-[720px] px-5 md:px-8 prose-headings:font-semibold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:mb-4 prose-h2:text-2xl prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-xl prose-h4:mt-6 prose-h4:mb-2 prose-h5:mt-4 prose-p:leading-[1.8] prose-p:text-muted-foreground prose-li:text-muted-foreground prose-li:leading-[1.8] prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground prose-blockquote:border-primary/30 prose-blockquote:text-muted-foreground prose-blockquote:not-italic prose-img:rounded-lg prose-hr:border-border prose-code:rounded prose-code:bg-surface prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:before:content-none prose-code:after:content-none prose-pre:bg-surface prose-pre:border prose-pre:border-border">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {post.content}
-          </ReactMarkdown>
-        </article>
-
-        {/* Like + social actions */}
-        <div className="mx-auto mt-10 max-w-[720px] px-5 md:px-8 flex items-center gap-3">
-          <LikeButton targetType="newsroom" targetId={post.slug} />
-          <DiscussOnMention
-            title={post.title}
-            url={`${origin}/newsroom/${post.slug}`}
-            hashtags={post.tags}
-            via="oxy"
-          />
         </div>
 
-        {/* Comments */}
-        <div className="mx-auto max-w-[720px] px-5 md:px-8">
-          <CommentSection targetType="newsroom" targetId={post.slug} />
-        </div>
-
-        {/* Related posts */}
         {relatedPosts.length > 0 && (
           <section className="container mt-16 md:mt-20">
-            <h2 className="mb-8 text-xl font-semibold text-foreground">
+            <h2 className="mb-8 text-xl font-semibold text-text">
               Related articles
             </h2>
             <div className="grid grid-cols-1 gap-x-4 gap-y-10 sm:grid-cols-2 md:grid-cols-3">
@@ -187,6 +136,8 @@ export default function NewsroomPostPage() {
             </div>
           </section>
         )}
+
+        <ArticleScrollProgress />
       </main>
 
       <Footer />

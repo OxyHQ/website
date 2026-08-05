@@ -19,7 +19,7 @@ import {
 import { mdxContentComponents } from '../content/_components'
 import ShareWithMention from '../components/social/ShareWithMention'
 import HelpProductBadge from '../components/help/HelpProductBadge'
-import HelpArticleTOC from '../components/help/HelpArticleTOC'
+import TableOfContents from '../components/ui/TableOfContents'
 
 /* ──────────────────────────────────────────────
  * /help/* — single help-center article
@@ -282,7 +282,7 @@ export default function HelpArticlePage() {
           <div className="grid gap-10 lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[16rem_minmax(0,1fr)] xl:gap-16">
             {/* Sticky TOC + mobile select */}
             <aside>
-              <HelpArticleTOC headings={entry.headings} />
+              <TableOfContents headings={entry.headings} />
             </aside>
 
             {/* Article body */}
