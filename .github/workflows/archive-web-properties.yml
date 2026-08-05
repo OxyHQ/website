@@ -1,0 +1,72 @@
+# Ask the Internet Archive to capture the Oxy and FairCoin web properties.
+#
+# This exists for evidence, not for backups. Trademark rights in the United
+# States arise from use in commerce rather than from registration, and in the
+# European Union an earlier unregistered sign used in trade of more than merely
+# local significance can ground an opposition. Both arguments are made with
+# dated proof of use, and proof dated by an independent third party is worth
+# considerably more than a screenshot we took ourselves.
+#
+# Monthly rather than once, because a continuous record shows continuous use,
+# which is the thing that has to be shown.
+#
+# First run is deliberately the 20th: the sites were not ready to be frozen
+# into a permanent public archive before then.
+#
+# Best effort by design. The Save Page Now endpoint rate limits aggressively
+# and GitHub's runner addresses are shared, so a failed capture is expected
+# rather than exceptional and must never fail the job.
+
+name: Archive web properties
+
+on:
+  schedule:
+    - cron: '17 4 20 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: archive-web-properties
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Submit each property to the Wayback Machine
+        run: |
+          set -u
+          URLS="
+          https://oxy.so
+          https://mention.earth
+          https://fairco.in
+          https://syra.fm
+          https://homiio.com
+          https://alia.onl
+          https://tnp.network
+          https://os.oxy.so
+          https://explorer.fairco.in
+          https://accounts.oxy.so
+          https://console.oxy.so
+          "
+          ok=0; failed=0
+          for url in $URLS; do
+            [ -z "$url" ] && continue
+            code=$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 120 \
+              -A 'Oxy archive job (https://github.com/OxyHQ/website)' \
+              "https://web.archive.org/save/$url" || echo 000)
+            if [ "$code" = "200" ]; then
+              echo "captured  $url"
+              ok=$((ok+1))
+            else
+              echo "::warning::not captured ($code) $url"
+              failed=$((failed+1))
+            fi
+            sleep 12
+          done
+          echo "captured $ok, not captured $failed"
+          # Never fail the job on a rate limited capture. A missed month is a
+          # gap in the record, not a broken build, and a red cross here would
+          # train everyone to ignore it.
