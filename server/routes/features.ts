@@ -1,47 +1,47 @@
 import { Router } from 'express'
+import { rateLimit } from 'express-rate-limit'
 import { z } from 'zod'
+import { config } from '../config.js'
 import { Vote } from '../models/Vote.js'
+import { FeatureProposal } from '../models/FeatureProposal.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { checkAndAwardBadges } from '../services/badgeService.js'
+import {
+  FEATURE_LABEL,
+  GitHubApiError,
+  clearFeatureIssueCache,
+  createFeatureIssue,
+  derivePriority,
+  deriveStatus,
+  findFeatureRepo,
+  githubRequest,
+  issueVoteKey,
+  listFeatureRepos,
+  loadFeatureRequests,
+  repoKey,
+  type GitHubIssue,
+} from '../services/featureBoard.js'
+import { reconcileFeaturePriorities } from '../services/featurePriority.js'
+import { getPriorityTiers } from '../constants/featurePriority.js'
+import {
+  BODY_MAX_LENGTH,
+  BODY_MIN_LENGTH,
+  TITLE_MAX_LENGTH,
+  TITLE_MIN_LENGTH,
+  buildProposalIssueBody,
+  sanitizeProposalBody,
+  sanitizeProposalTitle,
+} from '../utils/proposalText.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
 
-const GITHUB_ORG = 'oxyhq'
-const FEATURE_LABEL = 'feature-request'
-const GITHUB_PUBLIC_ISSUES_SEARCH = `org:${GITHUB_ORG}+label:${FEATURE_LABEL}+is:issue`
-
-interface GitHubIssue {
-  id: number
-  number: number
-  title: string
-  body: string | null
-  html_url: string
-  state: string
-  labels: Array<{ name: string; color: string }>
-  user: { login: string; avatar_url: string }
-  reactions: { '+1': number; total_count: number }
-  comments: number
-  created_at: string
-  updated_at: string
-  repository_url: string
-}
-
-interface CachedData {
-  issues: GitHubIssue[]
-  expires: number
-}
-
-// In-memory cache — 5 minute TTL
-let issueCache: CachedData | null = null
-const CACHE_TTL = 5 * 60 * 1000
-
 const listQuerySchema = z.object({
   status: z.string().optional(),
-  category: z.string().optional(),
+  app: z.string().optional(),
   sort: z.string().optional(),
   page: z.string().optional(),
   limit: z.string().optional(),
@@ -51,209 +51,236 @@ const listQuerySchema = z.object({
 const issueParamsSchema = z.object({
   owner: z.string().min(1),
   repo: z.string().min(1),
-  number: z.string().min(1),
+  number: z.string().regex(/^\d+$/, 'issue number must be numeric'),
 })
 
-function publicGithubHeaders(): Record<string, string> {
-  return {
-    Accept: 'application/vnd.github+json',
-    'X-GitHub-Api-Version': '2022-11-28',
-  }
-}
+const proposalBodySchema = z.object({
+  // `owner/repo`, exactly the `key` served by GET /apps.
+  app: z.string().min(3).max(120),
+  // Generous outer bounds so an over-long submission is rejected with a message
+  // about the real limit, after sanitising, rather than by the schema.
+  title: z.string().min(1).max(TITLE_MAX_LENGTH * 2),
+  body: z.string().min(1).max(BODY_MAX_LENGTH * 2),
+})
 
-function hasFeatureRequestLabel(issue: GitHubIssue): boolean {
-  return issue.labels.some((label) => label.name.toLowerCase() === FEATURE_LABEL)
-}
+/**
+ * Burst guard in front of the proposal endpoint.
+ *
+ * Keyed on the Oxy user id rather than the IP: the route is behind
+ * `requireAuth`, so the identity is known and is the thing worth limiting, and
+ * keying on identity sidesteps the question of which proxy header to trust
+ * behind the load balancer. It is per instance and in memory, so it is the fast
+ * guard, not the real quota. The durable per-user quota inside the handler is
+ * what holds across instances and across restarts.
+ *
+ * Only a request that actually created an issue counts against it. What is
+ * being limited is writes to the issue tracker, and a rejected submission wrote
+ * nothing; counting those instead locks someone out for a minute for
+ * mistyping a title twice, which is the one case where this endpoint's user is
+ * definitely not an attacker.
+ */
+const proposalBurstLimiter = rateLimit({
+  windowMs: 60_000,
+  limit: config.featureBoard.proposalBurstPerMinute,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  skipFailedRequests: true,
+  keyGenerator: (req) => req.user?.id ?? 'anonymous',
+  handler: (_req, res) => {
+    res.status(429).json({ error: 'You are proposing too quickly. Wait a minute and try again.' })
+  },
+})
 
-function isAllowedFeatureOwner(owner: string): boolean {
-  return owner.toLowerCase() === GITHUB_ORG
-}
+/**
+ * GET /apps  — the apps the board covers.
+ *
+ * One source for three things: the board's filter, the proposal form's
+ * selector, and the allow-list every other route in this file checks against.
+ */
+router.get('/apps', async (_req, res) => {
+  const repos = await listFeatureRepos()
+  res.json({
+    apps: repos.map((repo) => ({
+      key: repo.key,
+      owner: repo.owner,
+      repo: repo.repo,
+      displayName: repo.displayName,
+      acceptsProposals: repo.acceptsProposals,
+    })),
+    priorities: getPriorityTiers().map((tier) => ({ key: tier.key, label: tier.label })),
+    // Served rather than duplicated in the SPA, so the form's counters and the
+    // validation that actually rejects a submission can never disagree.
+    limits: {
+      titleMin: TITLE_MIN_LENGTH,
+      titleMax: TITLE_MAX_LENGTH,
+      bodyMin: BODY_MIN_LENGTH,
+      bodyMax: BODY_MAX_LENGTH,
+    },
+  })
+})
 
-function parseRepoFromUrl(repoUrl: string): { owner: string; repo: string } {
-  // repository_url looks like "https://api.github.com/repos/oxyhq/mention"
-  const parts = repoUrl.split('/')
-  return { owner: parts[parts.length - 2], repo: parts[parts.length - 1] }
-}
-
-async function fetchAllIssues(): Promise<GitHubIssue[]> {
-  if (issueCache && issueCache.expires > Date.now()) {
-    return issueCache.issues
-  }
-
-  const allIssues: GitHubIssue[] = []
-  let page = 1
-  const perPage = 100
-
-  while (true) {
-    const url = `https://api.github.com/search/issues?q=${GITHUB_PUBLIC_ISSUES_SEARCH}&sort=reactions-%2B1&order=desc&per_page=${perPage}&page=${page}`
-    const resp = await fetch(url, { headers: publicGithubHeaders() })
-
-    if (resp.status === 429 || resp.status === 403) {
-      if (issueCache) {
-        issueCache.expires = Date.now() + CACHE_TTL * 2
-        return issueCache.issues
-      }
-      throw new Error(`GitHub rate limit hit: ${resp.status}`)
-    }
-
-    if (!resp.ok) {
-      const body = await resp.text()
-      throw new Error(`GitHub API error ${resp.status}: ${body}`)
-    }
-
-    const data = await resp.json()
-    allIssues.push(...data.items)
-
-    if (data.items.length < perPage || allIssues.length >= data.total_count) break
-    page++
-    if (page > 10) break // Safety limit
-  }
-
-  issueCache = { issues: allIssues, expires: Date.now() + CACHE_TTL }
-  return allIssues
-}
-
-// Derive status from GitHub labels
-function deriveStatus(labels: Array<{ name: string }>): string {
-  const labelNames = labels.map(l => l.name.toLowerCase())
-  if (labelNames.includes('completed') || labelNames.includes('done') || labelNames.includes('shipped')) return 'completed'
-  if (labelNames.includes('in-progress') || labelNames.includes('in progress')) return 'in_progress'
-  if (labelNames.includes('planned') || labelNames.includes('accepted')) return 'planned'
-  if (labelNames.includes('under-review') || labelNames.includes('under review') || labelNames.includes('triage')) return 'under_review'
-  if (labelNames.includes('declined') || labelNames.includes('wontfix') || labelNames.includes("won't fix")) return 'declined'
-  return 'open'
-}
-
-// Derive category from GitHub labels (first label that isn't a status or feature-request)
-function deriveCategory(labels: Array<{ name: string }>): string {
-  const statusLabels = new Set(['feature-request', 'completed', 'done', 'shipped', 'in-progress', 'in progress', 'planned', 'accepted', 'under-review', 'under review', 'triage', 'declined', 'wontfix', "won't fix"])
-  const category = labels.find(l => !statusLabels.has(l.name.toLowerCase()))
-  return category?.name ?? 'General'
-}
-
-// List feature requests (GitHub Issues)
+// GET /  — feature requests across every tracked app
 router.get('/', optionalAuth, async (req, res) => {
-  const { status, category, sort = 'votes', page = '1', limit = '20', state } = validate(listQuerySchema, req.query)
+  const { status, app, sort = 'votes', page = '1', limit = '20', state } = validate(listQuerySchema, req.query)
 
   try {
-    let issues = await fetchAllIssues()
+    let items = await loadFeatureRequests(req.user?.id)
 
-    // Filter by GitHub state (open/closed)
-    if (state === 'closed') {
-      issues = issues.filter(i => i.state === 'closed')
-    } else {
-      issues = issues.filter(i => i.state === 'open')
-    }
+    items = state === 'closed'
+      ? items.filter((item) => item.state === 'closed')
+      : items.filter((item) => item.state === 'open')
 
-    // Filter by derived status
     if (status) {
-      issues = issues.filter(i => deriveStatus(i.labels) === status)
+      items = items.filter((item) => item.status === status)
     }
 
-    // Filter by category
-    if (category) {
-      issues = issues.filter(i => deriveCategory(i.labels).toLowerCase() === category.toLowerCase())
+    if (app) {
+      const wanted = app.toLowerCase()
+      items = items.filter((item) => item.app.key === wanted)
     }
 
-    // Get local vote counts + user votes in a single query
-    const issueKeys = issues.map(i => {
-      const { owner, repo } = parseRepoFromUrl(i.repository_url)
-      return `${owner}/${repo}#${i.number}`
-    })
-
-    const votes = await Vote.find({ featureRequestId: { $in: issueKeys } })
-    const voteCounts = new Map<string, number>()
-    const userVotedSet = new Set<string>()
-    for (const v of votes) {
-      voteCounts.set(v.featureRequestId, (voteCounts.get(v.featureRequestId) ?? 0) + 1)
-      if (req.user && v.userId === req.user.id) {
-        userVotedSet.add(v.featureRequestId)
-      }
-    }
-
-    // Map to response format
-    let items = issues.map(issue => {
-      const { owner, repo } = parseRepoFromUrl(issue.repository_url)
-      const key = `${owner}/${repo}#${issue.number}`
-      const localVotes = voteCounts.get(key) ?? 0
-
-      return {
-        id: issue.id,
-        number: issue.number,
-        title: issue.title,
-        description: issue.body ?? '',
-        htmlUrl: issue.html_url,
-        state: issue.state,
-        status: deriveStatus(issue.labels),
-        category: deriveCategory(issue.labels),
-        labels: issue.labels,
-        author: issue.user.login,
-        authorAvatar: issue.user.avatar_url,
-        githubReactions: issue.reactions['+1'],
-        localVotes,
-        totalVotes: issue.reactions['+1'] + localVotes,
-        commentCount: issue.comments,
-        repo: `${owner}/${repo}`,
-        owner,
-        repoName: repo,
-        userVoted: userVotedSet.has(key),
-        createdAt: issue.created_at,
-        updatedAt: issue.updated_at,
-      }
-    })
-
-    // Sort
     if (sort === 'newest') {
       items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     } else if (sort === 'oldest') {
       items.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-    } else {
-      // Default: sort by total votes (GitHub reactions + local)
-      items.sort((a, b) => b.totalVotes - a.totalVotes)
     }
+    // `votes` is the order `loadFeatureRequests` already returns.
 
-    // Paginate
     const { pageNum, limitNum } = parsePagination(page, limit)
     const total = items.length
-    items = items.slice((pageNum - 1) * limitNum, pageNum * limitNum)
 
     res.json({
-      items,
+      items: items.slice((pageNum - 1) * limitNum, pageNum * limitNum),
       total,
       page: pageNum,
       pages: Math.ceil(total / limitNum),
     })
   } catch (err) {
     const message = toErrorMessage(err)
-    res.status(500).json({ error: `Failed to fetch features: ${message}` })
+    console.error('[features] list failed:', message)
+    res.status(502).json({ error: 'Failed to fetch features' })
   }
 })
 
-// Get single issue details
+/**
+ * POST /proposals  — open a real GitHub issue from the website.
+ *
+ * On a GitHub failure nothing is recorded and nothing is half created: the
+ * caller is told the proposal did not go through, the failure is logged with
+ * the status GitHub answered, and the user's quota is untouched so they can try
+ * again once it is fixed. Swallowing the error and answering 201 would leave a
+ * visitor believing a proposal exists that nobody will ever see.
+ */
+router.post('/proposals', requireAuth, proposalBurstLimiter, async (req, res) => {
+  const user = req.user
+  if (!user) return res.status(401).json({ error: 'Authentication required' })
+
+  const input = validate(proposalBodySchema, req.body)
+
+  const title = sanitizeProposalTitle(input.title)
+  const body = sanitizeProposalBody(input.body)
+
+  if (title.length < TITLE_MIN_LENGTH || title.length > TITLE_MAX_LENGTH) {
+    return res.status(400).json({
+      error: `Give the proposal a title between ${TITLE_MIN_LENGTH} and ${TITLE_MAX_LENGTH} characters.`,
+    })
+  }
+  if (body.length < BODY_MIN_LENGTH || body.length > BODY_MAX_LENGTH) {
+    return res.status(400).json({
+      error: `Describe the proposal in between ${BODY_MIN_LENGTH} and ${BODY_MAX_LENGTH} characters.`,
+    })
+  }
+
+  const [owner, repo] = input.app.split('/')
+  if (!owner || !repo) {
+    return res.status(400).json({ error: 'Choose which app the proposal is for.' })
+  }
+
+  const target = await findFeatureRepo(owner, repo)
+  if (!target) {
+    return res.status(404).json({ error: 'That app is not on the feature board.' })
+  }
+  if (!target.acceptsProposals) {
+    return res.status(409).json({ error: `${target.displayName} is not accepting proposals from the website.` })
+  }
+
+  const { proposalsPerWindow, proposalWindowHours } = config.featureBoard
+  const windowStart = new Date(Date.now() - proposalWindowHours * 60 * 60 * 1000)
+  const usedInWindow = await FeatureProposal.countDocuments({
+    userId: user.id,
+    createdAt: { $gte: windowStart },
+  })
+  if (usedInWindow >= proposalsPerWindow) {
+    return res.status(429).json({
+      error: `You can propose ${proposalsPerWindow} features every ${proposalWindowHours} hours. Try again later.`,
+    })
+  }
+
+  const username = user.username?.trim() || user.id
+
+  let created: { number: number; htmlUrl: string }
+  try {
+    created = await createFeatureIssue(target, {
+      title,
+      body: buildProposalIssueBody(body, {
+        username,
+        userId: user.id,
+        boardUrl: `${config.siteUrl}/features`,
+      }),
+    })
+  } catch (err) {
+    const message = toErrorMessage(err)
+    const status = err instanceof GitHubApiError ? err.status : 0
+    console.error(`[features] proposal to ${target.key} failed (github ${status || 'unreachable'}):`, message)
+
+    if (status === 503) {
+      return res.status(503).json({ error: 'Proposals are not available right now. Please try again later.' })
+    }
+    if (status === 410) {
+      return res.status(409).json({ error: `${target.displayName} is not accepting proposals right now.` })
+    }
+    if (status === 422) {
+      return res.status(400).json({ error: 'GitHub rejected this proposal. Try rewording it.' })
+    }
+    return res.status(502).json({ error: 'GitHub did not accept the proposal. Nothing was created, please try again later.' })
+  }
+
+  await FeatureProposal.create({
+    userId: user.id,
+    username,
+    owner: target.owner,
+    repo: target.repo,
+    issueNumber: created.number,
+    issueUrl: created.htmlUrl,
+    title,
+  })
+
+  // The board caches GitHub's search results; drop it so the new issue can show
+  // up as soon as GitHub has indexed it rather than up to five minutes later.
+  clearFeatureIssueCache()
+
+  res.status(201).json({
+    issueNumber: created.number,
+    issueUrl: created.htmlUrl,
+    app: { key: target.key, displayName: target.displayName },
+  })
+})
+
+// GET /:owner/:repo/:number  — one feature request
 router.get('/:owner/:repo/:number', optionalAuth, async (req, res) => {
   const { owner, repo, number } = validate(issueParamsSchema, req.params)
 
+  const app = await findFeatureRepo(owner, repo)
+  if (!app) return res.status(404).json({ error: 'Issue not found' })
+
   try {
-    if (!isAllowedFeatureOwner(owner)) {
+    const issue = await githubRequest<GitHubIssue>(`/repos/${app.owner}/${app.repo}/issues/${number}`)
+    if (!issue.labels.some((label) => label.name.toLowerCase() === FEATURE_LABEL)) {
       return res.status(404).json({ error: 'Issue not found' })
     }
 
-    const url = `https://api.github.com/repos/${owner}/${repo}/issues/${number}`
-    const resp = await fetch(url, { headers: publicGithubHeaders() })
-
-    if (!resp.ok) {
-      if (resp.status === 404) return res.status(404).json({ error: 'Issue not found' })
-      throw new Error(`GitHub API error ${resp.status}`)
-    }
-
-    const issue: GitHubIssue = await resp.json()
-    if (!hasFeatureRequestLabel(issue)) {
-      return res.status(404).json({ error: 'Issue not found' })
-    }
-
-    const key = `${owner}/${repo}#${number}`
-
-    const [localVoteCount, userVote] = await Promise.all([
+    const key = issueVoteKey(app.owner, app.repo, number)
+    const [localVotes, userVote] = await Promise.all([
       Vote.countDocuments({ featureRequestId: key }),
       req.user ? Vote.findOne({ featureRequestId: key, userId: req.user.id }) : null,
     ])
@@ -266,43 +293,53 @@ router.get('/:owner/:repo/:number', optionalAuth, async (req, res) => {
       htmlUrl: issue.html_url,
       state: issue.state,
       status: deriveStatus(issue.labels),
-      category: deriveCategory(issue.labels),
+      priority: derivePriority(issue.labels),
       labels: issue.labels,
       author: issue.user.login,
       authorAvatar: issue.user.avatar_url,
       githubReactions: issue.reactions['+1'],
-      localVotes: localVoteCount,
-      totalVotes: issue.reactions['+1'] + localVoteCount,
+      localVotes,
+      totalVotes: issue.reactions['+1'] + localVotes,
       commentCount: issue.comments,
-      repo: `${owner}/${repo}`,
-      owner,
-      repoName: repo,
+      owner: app.owner,
+      repoName: app.repo,
+      app: { key: app.key, owner: app.owner, repo: app.repo, displayName: app.displayName },
       userVoted: userVote !== null,
       createdAt: issue.created_at,
       updatedAt: issue.updated_at,
     })
   } catch (err) {
+    if (err instanceof GitHubApiError && err.status === 404) {
+      return res.status(404).json({ error: 'Issue not found' })
+    }
     const message = toErrorMessage(err)
-    res.status(500).json({ error: `Failed to fetch feature: ${message}` })
+    console.error(`[features] detail ${repoKey(owner, repo)}#${number} failed:`, message)
+    res.status(502).json({ error: 'Failed to fetch feature' })
   }
 })
 
-// Toggle vote on an issue
+// POST /:owner/:repo/:number/vote  — toggle this user's vote
 router.post('/:owner/:repo/:number/vote', requireAuth, async (req, res) => {
   const user = req.user
   if (!user) return res.status(401).json({ error: 'Authentication required' })
 
   const { owner, repo, number } = validate(issueParamsSchema, req.params)
-  const key = `${owner}/${repo}#${number}`
+
+  // Votes are only accepted for repos on the board, so an arbitrary
+  // owner/repo/number cannot seed vote rows for issues the board will never
+  // show, or for repos Oxy does not track at all.
+  const app = await findFeatureRepo(owner, repo)
+  if (!app) return res.status(404).json({ error: 'Issue not found' })
+
+  const key = issueVoteKey(app.owner, app.repo, number)
 
   try {
     const existing = await Vote.findOneAndDelete({ featureRequestId: key, userId: user.id })
-
     if (!existing) {
       await Vote.create({ featureRequestId: key, userId: user.id })
     }
 
-    const localVoteCount = await Vote.countDocuments({ featureRequestId: key })
+    const localVotes = await Vote.countDocuments({ featureRequestId: key })
 
     // Fire-and-forget badge check
     if (user.username) {
@@ -311,17 +348,29 @@ router.post('/:owner/:repo/:number/vote', requireAuth, async (req, res) => {
       )
     }
 
-    res.json({ localVotes: localVoteCount, userVoted: !existing })
+    res.json({ localVotes, userVoted: !existing })
   } catch (err) {
     const message = toErrorMessage(err)
-    res.status(500).json({ error: `Failed to toggle vote: ${message}` })
+    console.error(`[features] vote on ${key} failed:`, message)
+    res.status(500).json({ error: 'Failed to toggle vote' })
   }
 })
 
-// Clear cache (admin utility)
+// POST /cache/clear  — drop the cached GitHub search results (admin)
 router.post('/cache/clear', requireAuth, adminOnly, async (_req, res) => {
-  issueCache = null
+  clearFeatureIssueCache()
   res.json({ success: true })
+})
+
+// POST /priority/reconcile  — run the priority label pass now (admin)
+router.post('/priority/reconcile', requireAuth, adminOnly, async (_req, res) => {
+  try {
+    res.json(await reconcileFeaturePriorities())
+  } catch (err) {
+    const message = toErrorMessage(err)
+    console.error('[features] priority reconcile failed:', message)
+    res.status(502).json({ error: `Reconcile failed: ${message}` })
+  }
 })
 
 export default router

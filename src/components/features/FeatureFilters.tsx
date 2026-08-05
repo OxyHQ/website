@@ -1,3 +1,5 @@
+import type { FeatureAppOption } from '../../api/hooks'
+
 const STATUS_OPTIONS = [
   { value: '', label: 'All' },
   { value: 'open', label: 'Open' },
@@ -13,23 +15,25 @@ const SORT_OPTIONS = [
   { value: 'oldest', label: 'Oldest' },
 ] as const
 
-const CATEGORY_OPTIONS = ['General', 'Platform', 'AI', 'Codea', 'API'] as const
-
 interface FeatureFiltersProps {
   status: string
-  category: string
+  /** `owner/repo` of the selected app, or '' for every app. */
+  app: string
   sort: string
+  /** Apps on the board, from the same source the server filters against. */
+  apps: FeatureAppOption[]
   onChangeStatus: (value: string) => void
-  onChangeCategory: (value: string) => void
+  onChangeApp: (value: string) => void
   onChangeSort: (value: string) => void
 }
 
 export default function FeatureFilters({
   status,
-  category,
+  app,
   sort,
+  apps,
   onChangeStatus,
-  onChangeCategory,
+  onChangeApp,
   onChangeSort,
 }: FeatureFiltersProps) {
   return (
@@ -53,19 +57,21 @@ export default function FeatureFilters({
 
       <div className="flex flex-wrap items-center gap-3">
         <select
-          value={category}
-          onChange={(e) => onChangeCategory(e.target.value)}
+          value={app}
+          onChange={(e) => onChangeApp(e.target.value)}
+          aria-label="Filter by app"
           className="rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground"
         >
-          <option value="">All Categories</option>
-          {CATEGORY_OPTIONS.map((cat) => (
-            <option key={cat} value={cat}>{cat}</option>
+          <option value="">All apps</option>
+          {apps.map((option) => (
+            <option key={option.key} value={option.key}>{option.displayName}</option>
           ))}
         </select>
 
         <select
           value={sort}
           onChange={(e) => onChangeSort(e.target.value)}
+          aria-label="Sort feature requests"
           className="rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground"
         >
           {SORT_OPTIONS.map((opt) => (

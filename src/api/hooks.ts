@@ -1127,6 +1127,15 @@ export function useToggleLike() {
 }
 
 // ── Feature Requests (GitHub-backed) ──
+
+/** The app a feature request belongs to: one tracked repo, in either org. */
+export interface FeatureAppData {
+  key: string
+  owner: string
+  repo: string
+  displayName: string
+}
+
 export interface FeatureRequestData {
   id: number
   number: number
@@ -1135,7 +1144,8 @@ export interface FeatureRequestData {
   htmlUrl: string
   state: string
   status: string
-  category: string
+  /** Priority tier key set from the vote count, or null below the first tier. */
+  priority: string | null
   labels: Array<{ name: string; color: string }>
   author: string
   authorAvatar: string
@@ -1143,9 +1153,9 @@ export interface FeatureRequestData {
   localVotes: number
   totalVotes: number
   commentCount: number
-  repo: string
   owner: string
   repoName: string
+  app: FeatureAppData
   userVoted: boolean
   createdAt: string
   updatedAt: string
@@ -1158,10 +1168,30 @@ export interface FeatureListResponse {
   pages: number
 }
 
-export function useFeatureRequests(params?: { status?: string; category?: string; sort?: string; page?: number }) {
+export interface FeatureAppOption extends FeatureAppData {
+  acceptsProposals: boolean
+}
+
+export interface FeatureAppsResponse {
+  apps: FeatureAppOption[]
+  priorities: Array<{ key: string; label: string }>
+  /** Proposal length limits, served by the same validation that enforces them. */
+  limits: { titleMin: number; titleMax: number; bodyMin: number; bodyMax: number }
+}
+
+/** The apps on the board: the filter's options and the proposal form's targets. */
+export function useFeatureApps() {
+  return useQuery({
+    queryKey: ['feature-apps'],
+    queryFn: () => apiFetch<FeatureAppsResponse>('/features/apps'),
+    staleTime: 5 * 60_000,
+  })
+}
+
+export function useFeatureRequests(params?: { status?: string; app?: string; sort?: string; page?: number }) {
   const qs = new URLSearchParams()
   if (params?.status) qs.set('status', params.status)
-  if (params?.category) qs.set('category', params.category)
+  if (params?.app) qs.set('app', params.app)
   if (params?.sort) qs.set('sort', params.sort)
   if (params?.page) qs.set('page', String(params.page))
   const query = qs.toString()
@@ -1179,6 +1209,33 @@ export function useToggleFeatureVote(owner: string, repo: string, number: number
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['features'] })
       queryClient.invalidateQueries({ queryKey: ['feature', owner, repo, number] })
+    },
+  })
+}
+
+export interface FeatureProposalResult {
+  issueNumber: number
+  issueUrl: string
+  app: { key: string; displayName: string }
+}
+
+/**
+ * Submit a proposal, which opens a real GitHub issue in the selected app's repo.
+ *
+ * The list is invalidated on success, though GitHub's search index takes a
+ * moment to pick a brand new issue up, so the confirmation links straight to
+ * the issue rather than promising it is already on the board.
+ */
+export function useProposeFeature() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (input: { app: string; title: string; body: string }) =>
+      apiFetch<FeatureProposalResult>('/features/proposals', {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['features'] })
     },
   })
 }

@@ -27,6 +27,7 @@ import LocalesAdmin from '../components/admin/sections/LocalesAdmin'
 import BackupAdmin from '../components/admin/sections/BackupAdmin'
 import CommentsAdmin from '../components/admin/sections/CommentsAdmin'
 import FeaturesAdmin from '../components/admin/sections/FeaturesAdmin'
+import ReposAdmin from '../components/admin/sections/ReposAdmin'
 import BadgesAdmin from '../components/admin/sections/BadgesAdmin'
 import ReferralsAdmin from '../components/admin/sections/ReferralsAdmin'
 import MediaAdmin from '../components/admin/sections/MediaAdmin'
@@ -141,6 +142,7 @@ export default function AdminPage() {
       <Route path="backup" element={<AdminLayout><BackupAdmin /></AdminLayout>} />
       <Route path="comments" element={<AdminLayout><CommentsAdmin /></AdminLayout>} />
       <Route path="features" element={<AdminLayout><FeaturesAdmin /></AdminLayout>} />
+      <Route path="repos" element={<AdminLayout><ReposAdmin /></AdminLayout>} />
       <Route path="badges" element={<AdminLayout><BadgesAdmin /></AdminLayout>} />
       <Route path="referrals" element={<AdminLayout><ReferralsAdmin /></AdminLayout>} />
       <Route path="media" element={<AdminLayout><MediaAdmin /></AdminLayout>} />

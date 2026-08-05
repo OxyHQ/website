@@ -3,6 +3,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../../api/client'
 import type { FeatureListResponse } from '../../../api/hooks'
 
+interface ReconcileReport {
+  dryRun: boolean
+  checked: number
+  unchanged: number
+  changes: Array<{ repo: string; issueNumber: number; totalVotes: number; from: string | null; to: string | null }>
+  errors: Array<{ scope: string; message: string }>
+}
+
 const STATUS_COLORS: Record<string, string> = {
   open: 'bg-zinc-500/10 text-zinc-400',
   under_review: 'bg-blue-500/10 text-blue-500',
@@ -33,25 +41,73 @@ export default function FeaturesAdmin() {
     },
   })
 
+  // The same pass the scheduler runs, on demand. It writes a label only where
+  // the vote count has actually crossed a threshold, so running it twice in a
+  // row reports the second run as entirely unchanged.
+  const reconcile = useMutation({
+    mutationFn: () => apiFetch<ReconcileReport>('/features/priority/reconcile', { method: 'POST' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-features'] })
+    },
+  })
+
   const statuses = ['open', 'under_review', 'planned', 'in_progress', 'completed', 'declined']
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-foreground">Feature Board</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            {data?.total ?? 0} feature requests from GitHub (oxyhq org)
+            {data?.total ?? 0} feature requests across the tracked apps. Manage which apps are on the
+            board under Repositories.
           </p>
         </div>
-        <button
-          onClick={() => clearCache.mutate()}
-          disabled={clearCache.isPending}
-          className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
-        >
-          {clearCache.isPending ? 'Clearing...' : 'Clear Cache'}
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            onClick={() => reconcile.mutate()}
+            disabled={reconcile.isPending}
+            className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+          >
+            {reconcile.isPending ? 'Reconciling...' : 'Reconcile priorities'}
+          </button>
+          <button
+            onClick={() => clearCache.mutate()}
+            disabled={clearCache.isPending}
+            className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+          >
+            {clearCache.isPending ? 'Clearing...' : 'Clear Cache'}
+          </button>
+        </div>
       </div>
+
+      {reconcile.isError && (
+        <p className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+          {reconcile.error.message}
+        </p>
+      )}
+
+      {reconcile.isSuccess && (
+        <div className="mt-4 rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground">
+          <p>
+            Checked {reconcile.data.checked}, already correct {reconcile.data.unchanged}, changed{' '}
+            {reconcile.data.changes.length}
+            {reconcile.data.dryRun ? ' (dry run, nothing written)' : ''}
+            {reconcile.data.errors.length > 0 ? `, failed ${reconcile.data.errors.length}` : ''}
+          </p>
+          {reconcile.data.changes.map((change) => (
+            <p key={`${change.repo}#${change.issueNumber}`} className="mt-1 font-mono text-xs">
+              {change.repo}#{change.issueNumber}: {change.from ?? 'none'} to {change.to ?? 'none'} at{' '}
+              {change.totalVotes} votes
+            </p>
+          ))}
+          {reconcile.data.errors.map((error) => (
+            <p key={error.scope} className="mt-1 font-mono text-xs text-red-400">
+              {error.scope}: {error.message}
+            </p>
+          ))}
+        </div>
+      )}
 
       {/* Status tabs */}
       <div className="mt-4 flex flex-wrap gap-2">
@@ -97,14 +153,19 @@ export default function FeaturesAdmin() {
                     {feature.status.replace('_', ' ')}
                   </span>
                   <span className="rounded bg-surface px-1.5 py-0.5 text-xs text-muted-foreground">
-                    {feature.category}
+                    {feature.app.displayName}
                   </span>
+                  {feature.priority && (
+                    <span className="rounded bg-surface px-1.5 py-0.5 text-xs capitalize text-muted-foreground">
+                      {feature.priority} priority
+                    </span>
+                  )}
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground line-clamp-1">
                   {feature.description || 'No description'}
                 </p>
                 <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
-                  <span>{feature.repo}</span>
+                  <span>{feature.owner}/{feature.repoName}</span>
                   <span>#{feature.number}</span>
                   <span>by {feature.author}</span>
                   <span>{feature.totalVotes} votes ({feature.githubReactions} GH + {feature.localVotes} site)</span>

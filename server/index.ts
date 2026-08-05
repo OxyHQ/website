@@ -24,6 +24,8 @@ import pricingRouter from './routes/pricing.js'
 import testimonialsRouter from './routes/testimonials.js'
 import changelogRouter from './routes/changelog.js'
 import { startSyncInterval } from './services/githubSync.js'
+import { startFeaturePriorityInterval } from './services/featurePriority.js'
+import { getPriorityTiers } from './constants/featurePriority.js'
 import jobsRouter from './routes/jobs.js'
 import settingsRouter from './routes/settings.js'
 import seoRouter from './routes/seo.js'
@@ -361,6 +363,7 @@ async function connectWithRetry(): Promise<void> {
       await migrateDropStaleTranslationIndex()
 
       startSyncInterval()
+      startFeaturePriorityInterval()
       return
     } catch (err) {
       attempt++
@@ -388,6 +391,19 @@ async function connectWithRetry(): Promise<void> {
  * Opening the port first means an unreachable database degrades this service
  * instead of removing it, and it heals by itself.
  */
+/**
+ * Fail fast on a malformed `FEATURE_PRIORITY_TIERS`.
+ *
+ * Deliberately here, before anything starts, and deliberately not inside
+ * `connectWithRetry`: a throw in there is caught by the reconnect loop, which
+ * reports a configuration error as "MongoDB unavailable" and re-runs the
+ * migrations and `startSyncInterval` on every retry. This is a deploy-time
+ * mistake in an environment variable, so exiting is right. A task that exits
+ * immediately never takes traffic, and the one already running keeps serving
+ * until someone fixes the value.
+ */
+getPriorityTiers()
+
 app.listen(config.port, () => {
   console.log(`Server listening on http://localhost:${config.port}`)
   void connectWithRetry()

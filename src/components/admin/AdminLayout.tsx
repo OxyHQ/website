@@ -44,6 +44,7 @@ import {
   Library,
   LifeBuoy,
   Search,
+  GitBranch,
 } from 'lucide-react'
 
 interface AdminSection {
@@ -73,6 +74,7 @@ const sections: AdminSection[] = [
   { id: 'team', label: 'Team', icon: <Users className="size-4" />, group: 'Content' },
   { id: 'media', label: 'Media', icon: <ImageIcon className="size-4" />, group: 'Content' },
   { id: 'locales', label: 'Locales', icon: <Languages className="size-4" />, group: 'Configuration' },
+  { id: 'repos', label: 'Repositories', icon: <GitBranch className="size-4" />, group: 'Developer' },
   { id: 'mcp-tokens', label: 'API Tokens', icon: <KeyRound className="size-4" />, group: 'Developer' },
   { id: 'backup', label: 'Backup', icon: <HardDriveDownload className="size-4" />, group: 'Developer' },
   { id: 'comments', label: 'Comments', icon: <MessageSquare className="size-4" />, group: 'Community' },

@@ -5,6 +5,11 @@ function parseCsvEnv(value: string | undefined): string[] {
   return value?.split(',').map((item) => item.trim()).filter(Boolean) ?? []
 }
 
+function parsePositiveIntEnv(value: string | undefined, fallback: number): number {
+  const parsed = parseInt(value ?? '', 10)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
+}
+
 export const config = {
   port: parseInt(process.env.PORT || '4000', 10),
   mongoUri: process.env.MONGO_URI || 'mongodb://localhost:27017/oxy-website',
@@ -20,6 +25,28 @@ export const config = {
   adminUserIds: parseCsvEnv(process.env.OXY_ADMIN_USER_IDS),
   githubToken: process.env.GITHUB_TOKEN || '',
   doApiToken: process.env.DO_API_TOKEN || '',
+  featureBoard: {
+    // Token used to CREATE issues and to WRITE priority labels in the tracked
+    // repos, so it needs `issues: write` on every org the board covers. Kept
+    // separate from `githubToken` (read-only release sync) so the write scope
+    // is not handed to code that only ever reads, and it is deliberately not
+    // named `GITHUB_*`: GitHub reserves that prefix for Actions secrets, so a
+    // `GITHUB_`-prefixed name could never be provisioned through the repo
+    // secret to SSM sync that feeds this service.
+    githubToken: process.env.FEATURE_BOARD_GITHUB_TOKEN || '',
+    // Durable per-user proposal quota. Counted from the FeatureProposal
+    // collection, so it holds across instances and across restarts, unlike the
+    // in-process burst limiter that sits in front of it.
+    proposalsPerWindow: parsePositiveIntEnv(process.env.FEATURE_PROPOSAL_LIMIT, 5),
+    proposalWindowHours: parsePositiveIntEnv(process.env.FEATURE_PROPOSAL_WINDOW_HOURS, 24),
+    // Burst guard, per authenticated user, in front of the durable quota.
+    proposalBurstPerMinute: parsePositiveIntEnv(process.env.FEATURE_PROPOSAL_BURST_PER_MINUTE, 2),
+    // Raw JSON tier table; parsed and validated by `resolvePriorityTiers`.
+    priorityTiers: process.env.FEATURE_PRIORITY_TIERS || '',
+    priorityReconcileMinutes: parsePositiveIntEnv(process.env.FEATURE_PRIORITY_RECONCILE_MINUTES, 60),
+    // Compute and report the label changes without sending them to GitHub.
+    priorityDryRun: process.env.FEATURE_PRIORITY_DRY_RUN === 'true',
+  },
   s3: {
     // Leave endpoint unset for native AWS S3; set AWS_ENDPOINT_URL for an S3-compatible
     // provider (e.g. DigitalOcean Spaces).
