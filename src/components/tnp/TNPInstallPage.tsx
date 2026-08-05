@@ -24,7 +24,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="ml-3 shrink-0 cursor-pointer rounded-lg border border-transparent px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-[rgba(16,185,129,0.08)] hover:text-foreground"
+      className="ml-3 shrink-0 cursor-pointer rounded-lg border border-transparent px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-primary-text/10 hover:text-foreground"
     >
       {copied ? 'Copied' : 'Copy'}
     </button>
@@ -74,8 +74,8 @@ export default function TNPInstallContent() {
                   onClick={() => setPlatform(p.id)}
                   className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                     platform === p.id
-                      ? 'bg-[#10b981] text-white'
-                      : 'border border-[rgba(16,185,129,0.25)] text-muted-foreground hover:bg-[rgba(16,185,129,0.08)] hover:text-foreground'
+                      ? 'bg-primary text-white'
+                      : 'border border-primary-text/25 text-muted-foreground hover:bg-primary-text/10 hover:text-foreground'
                   }`}
                 >
                   {p.label}

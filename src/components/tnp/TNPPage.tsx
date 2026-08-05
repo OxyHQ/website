@@ -76,7 +76,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="ml-3 shrink-0 cursor-pointer rounded-lg border border-transparent px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-[rgba(16,185,129,0.08)] hover:text-foreground"
+      className="ml-3 shrink-0 cursor-pointer rounded-lg border border-transparent px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-primary-text/10 hover:text-foreground"
     >
       {copied ? 'Copied' : 'Copy'}
     </button>
@@ -169,11 +169,11 @@ export default function TNPContent() {
                 className="group relative flex h-full flex-col space-y-4 px-0 py-10 lg:p-8 border-border border-t lg:border-l lg:border-t-0 first:border-t-0 first:lg:border-l-0"
               >
                 {/* Corner dots (visible on hover, desktop only) */}
-                <div className="pointer-events-none absolute inset-0 isolate z-10 border border-[rgba(16,185,129,0.15)] opacity-0 group-hover:opacity-100 hidden lg:block">
-                  <div className="bg-[#10b981] absolute -left-1 -top-1 z-10 size-2 -translate-x-px -translate-y-px" />
-                  <div className="bg-[#10b981] absolute -right-1 -top-1 z-10 size-2 -translate-y-px translate-x-px" />
-                  <div className="bg-[#10b981] absolute -bottom-1 -left-1 z-10 size-2 -translate-x-px translate-y-px" />
-                  <div className="bg-[#10b981] absolute -bottom-1 -right-1 z-10 size-2 translate-x-px translate-y-px" />
+                <div className="pointer-events-none absolute inset-0 isolate z-10 border border-primary-text/15 opacity-0 group-hover:opacity-100 hidden lg:block">
+                  <div className="bg-primary-text absolute -left-1 -top-1 z-10 size-2 -translate-x-px -translate-y-px" />
+                  <div className="bg-primary-text absolute -right-1 -top-1 z-10 size-2 -translate-y-px translate-x-px" />
+                  <div className="bg-primary-text absolute -bottom-1 -left-1 z-10 size-2 -translate-x-px translate-y-px" />
+                  <div className="bg-primary-text absolute -bottom-1 -right-1 z-10 size-2 translate-x-px translate-y-px" />
                 </div>
                 <div className="max-w-sm grow">
                   <h3 className="type-md-lg gradient-text">{card.tld}</h3>
@@ -200,7 +200,7 @@ export default function TNPContent() {
               <div key={step.number} className="h-full">
                 <div className="card flex h-full grow-1 flex-col">
                   <div className="type-base max-w-prose flex grow flex-col">
-                    <span className="mono-tag text-[#10b981] text-sm mb-v8/12">{step.number}</span>
+                    <span className="mono-tag text-sm mb-v8/12">{step.number}</span>
                     <h3 className="type-base md:type-md">{step.title}</h3>
                     <p className="text-muted-foreground text-pretty mt-2">{step.description}</p>
                     {step.code && (
@@ -245,7 +245,7 @@ export default function TNPContent() {
       <section className="section section--headline bg-background text-foreground">
         <div className="container">
           <div className="relative flex items-center justify-center py-6">
-            <div className="absolute inset-x-0 -top-16 h-px bg-gradient-to-r from-transparent via-[#10b981] to-transparent opacity-40 sm:-top-32" />
+            <div className="absolute inset-x-0 -top-16 h-px bg-gradient-to-r from-transparent via-primary-text to-transparent opacity-40 sm:-top-32" />
             <div className="relative flex max-w-lg flex-col items-center space-y-8 text-center">
               <h2 className="type-xl sm:type-2xl text-balance gradient-text">
                 Claim your namespace.

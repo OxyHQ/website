@@ -60,6 +60,22 @@ function scopeBlock(selector: string, seed: string, mode: 'light' | 'dark', extr
   return block(selector, buildSeedScopeVars({ seed, mode }), extra)
 }
 
+/**
+ * The same block behind a min-width query, for a surface that only turns dark
+ * once it is wide enough — a hero that puts type over its cover picture from
+ * `lg` and shows the picture separately below it.
+ *
+ * It has to be its own class rather than a `lg:` prefix: a Tailwind variant
+ * applies to a utility, and a palette is a declaration block, not a utility.
+ */
+function mediaScopeBlock(query: string, selector: string, seed: string, extra?: string): string {
+  const body = scopeBlock(selector, seed, 'dark', extra)
+    .split('\n')
+    .map((line) => `  ${line}`)
+    .join('\n')
+  return `@media ${query} {\n${body}\n}`
+}
+
 function brandBlocks(surface: BrandSurface): string[] {
   const heading = `/* ${surface.label} — seed ${surface.seed} */`
   if (surface.mode === 'dark') {
@@ -97,6 +113,12 @@ sections.push(
     '.force-dark',
     APP_COLOR_PRESETS[SITE_PRESET].hex,
     'dark',
+    'color-scheme: dark;',
+  )}`,
+  `/* The same, from the width where a hero can carry type over its cover. */\n${mediaScopeBlock(
+    '(min-width: 64rem)',
+    '.force-dark-lg',
+    APP_COLOR_PRESETS[SITE_PRESET].hex,
     'color-scheme: dark;',
   )}`,
 )

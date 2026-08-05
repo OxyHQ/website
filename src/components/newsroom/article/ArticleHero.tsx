@@ -8,15 +8,11 @@ import ShareLinkButton from './ShareLinkButton'
  * The article's opening screen: category, title, byline, and the two controls
  * that frame the read — back to the index, and the link to share.
  *
- * With a cover image the whole band goes dark and the image sits behind it
- * (`force-dark` pins the palette, so the white type holds whatever mode the
- * visitor is in). Without one it stays on the page's own surface rather than
- * faking a dark hero over nothing.
- *
- * The reference layout this follows shows the cover behind the title only from
- * `lg` up and repeats it above the body on small screens. One image at every
- * width is the same picture in one place: less markup, one code path, and no
- * second network fetch of the same file on a phone.
+ * The cover behaves differently by width on purpose. From `lg` the band turns
+ * black and the picture sits behind the title, so `force-dark` pins the palette
+ * and the type stays light whatever mode the visitor is in. Below `lg` there is
+ * not enough height for type over a photograph, so the band keeps the page's own
+ * surface and the cover is shown whole, above the body.
  */
 
 function formatDate(dateStr: string): string {
@@ -24,60 +20,66 @@ function formatDate(dateStr: string): string {
 }
 
 export default function ArticleHero({ post, url }: { post: NewsroomPost; url: string }) {
-  const hasCover = Boolean(post.coverImage)
-
   return (
-    <section
-      className={`relative flex overflow-hidden border-b border-border p-6 pt-24 md:min-h-[26rem] lg:min-h-[38rem] ${
-        hasCover ? 'force-dark bg-black text-text' : 'bg-fill-secondary text-text'
-      }`}
-    >
-      {/* One dimming pass, not two: the black underneath plus this opacity is
-        * what keeps the title readable. A scrim on top of it as well left the
-        * photograph barely visible. */}
-      {hasCover && (
-        <div aria-hidden className="absolute inset-0 z-0 size-full opacity-70">
+    <>
+      <section
+        className={`relative flex overflow-hidden border-b border-border bg-fill-secondary p-6 pt-24 text-text md:min-h-[25rem] lg:min-h-[47.5rem] ${
+          post.coverImage ? 'force-dark-lg lg:bg-black' : ''
+        }`}
+      >
+        <div className="relative z-10 mx-auto flex h-auto w-full max-w-[77.5rem] flex-col items-center justify-between">
+          <div className="flex size-full flex-col items-center justify-center gap-4 py-10 text-center md:py-20">
+            {post.categories[0] && (
+              <p className="inline-block rounded-sm bg-fill-hover px-2 py-1 font-mono text-xs uppercase tracking-wider text-text">
+                {post.categories[0]}
+              </p>
+            )}
+            <h1 className="text-heading-responsive-lg">{post.title}</h1>
+            <div className="flex flex-wrap items-center justify-center gap-6">
+              <time className="text-sm" dateTime={post.publishedAt}>
+                {formatDate(post.publishedAt)}
+              </time>
+              {post.oxyUserId && <ArticleAuthors userIds={[post.oxyUserId]} />}
+            </div>
+          </div>
+
+          <div className="hidden w-full items-center justify-between md:flex">
+            <div className="flex items-center gap-4">
+              <BackToNewsroomButton />
+              <p className="font-mono text-xs uppercase tracking-wider text-text-secondary">{readTime(post.content)}</p>
+            </div>
+            <ShareLinkButton url={url} />
+          </div>
+        </div>
+
+        {post.coverImage && (
+          <div aria-hidden className="absolute top-0 left-0 z-0 hidden size-full opacity-70 lg:block">
+            <img
+              src={post.coverImage}
+              alt=""
+              width={1440}
+              height={800}
+              loading="eager"
+              decoding="async"
+              className="size-full object-cover object-center"
+            />
+          </div>
+        )}
+      </section>
+
+      {post.coverImage && (
+        <div className="p-4 pb-0 lg:hidden">
           <img
             src={post.coverImage}
-            alt=""
+            alt={post.imageAlt ?? ''}
             width={1440}
             height={800}
             loading="eager"
             decoding="async"
-            className="size-full object-cover object-center"
+            className="aspect-video w-full object-cover object-center"
           />
         </div>
       )}
-
-      <div className="relative z-10 mx-auto flex h-auto w-full max-w-[77.5rem] flex-col items-center justify-between">
-        <div className="flex size-full flex-col items-center justify-center gap-4 py-10 text-center md:py-20">
-          {post.categories[0] && (
-            <p className="inline-block rounded-radius-8 bg-fill-secondary px-2 py-1 font-mono text-xs uppercase tracking-wider text-text">
-              {post.categories[0]}
-            </p>
-          )}
-          <h1 className="text-heading-responsive-lg">{post.title}</h1>
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            <time className="text-sm" dateTime={post.publishedAt}>
-              {formatDate(post.publishedAt)}
-            </time>
-            {post.oxyUserId && <ArticleAuthors userIds={[post.oxyUserId]} />}
-          </div>
-        </div>
-
-        {/* Shown at every width, unlike the layout this follows: a phone reader
-          * is the one with no other way back to the index, and no address bar
-          * to copy from. */}
-        <div className="flex w-full flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-4">
-            <BackToNewsroomButton />
-            {/* Over a bright cover the muted role is unreadable, so this steps
-              * back from the title with opacity instead of a dimmer colour. */}
-            <p className="font-mono text-xs uppercase tracking-wider text-text/70">{readTime(post.content)}</p>
-          </div>
-          <ShareLinkButton url={url} />
-        </div>
-      </div>
-    </section>
+    </>
   )
 }

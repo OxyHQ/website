@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import ArticleToc, { type TocEntry } from './ArticleToc'
 import PillButton from './PillButton'
-import { ARTICLE_BLOCK } from './articleMdxComponents'
+import { ARTICLE_BLOCK } from './articleBlock'
 
 interface LongformArticleProps {
   title: string
