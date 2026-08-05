@@ -12,19 +12,14 @@
  *   - src/styles/{oxyos,tnp,astro}-theme.css
  *   - src/index.css
  */
+/* Colours are NOT here. The whole palette is derived from this surface's brand
+ * seed in `src/theme/brands.ts` and written into `styles/theme.generated.css`,
+ * so the page speaks the same token vocabulary as every other page —
+ * `bg-background`, `bg-card`, `text-muted-foreground`, `border-border` — and
+ * follows the ecosystem's colour engine instead of ten hand-picked hexes. What
+ * stays below is what makes this surface ITS OWN: type scale, vertical rhythm,
+ * grid gutters. */
 .cursor-theme {
-  /* Colors */
-  --color-theme-bg: #0a0a0b;
-  --color-theme-text: #e8e8e6;
-  --color-theme-text-sec: #8b8b8b;
-  --color-theme-card: #141415;
-  --color-theme-card-hex: #111112;
-  --color-theme-card-hover-hex: #1a1a1c;
-  --color-theme-border-02: rgba(255,255,255,0.08);
-  --color-theme-accent: #7c5aed;
-  --color-theme-product-chrome: #1e1e20;
-  --color-theme-product-editor: #1a1a1c;
-
   /* Typography scale */
   --type-sm: clamp(0.8125rem, 0.75rem + 0.25vw, 0.875rem);
   --type-base: clamp(0.9375rem, 0.875rem + 0.25vw, 1.0625rem);
@@ -59,14 +54,6 @@
   /* Stack gap */
   --stack-gap: 0.75rem;
 }
-
-/* ── Utility: Background & Text ── */
-.cursor-theme .bg-theme-bg { background-color: var(--color-theme-bg); }
-.cursor-theme .bg-theme-card { background-color: var(--color-theme-card); }
-.cursor-theme .bg-theme-card-hex { background-color: var(--color-theme-card-hex); }
-.cursor-theme .text-theme-text { color: var(--color-theme-text); }
-.cursor-theme .text-theme-text-sec { color: var(--color-theme-text-sec); }
-.cursor-theme .border-theme-border-02 { border-color: var(--color-theme-border-02); }
 
 /* ── Typography ── */
 .cursor-theme .type-sm { font-size: var(--type-sm); line-height: 1.5; }
@@ -103,8 +90,8 @@
 
 /* ── Card ── */
 .cursor-theme .card {
-  background: var(--color-theme-card-hex);
-  border: 1px solid var(--color-theme-border-02);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   overflow: hidden;
   padding: clamp(1rem, 0.75rem + 0.5vw, 1.5rem);
@@ -125,27 +112,27 @@
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 500;
-  background: var(--color-theme-text);
-  color: var(--color-theme-bg);
+  background: var(--color-foreground);
+  color: var(--color-background);
   transition: opacity 0.15s;
   text-decoration: none;
 }
 .cursor-theme .btn:hover { opacity: 0.9; }
 .cursor-theme .btn--secondary {
   background: transparent;
-  color: var(--color-theme-text);
-  border: 1px solid var(--color-theme-border-02);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
 }
 .cursor-theme .btn--secondary:hover { background: rgba(255,255,255,0.05); }
 .cursor-theme .btn-tertiary {
-  color: var(--color-theme-text);
+  color: var(--color-foreground);
   font-weight: 500;
   text-decoration: none;
 }
 .cursor-theme .btn-tertiary:hover { opacity: 0.8; }
 .cursor-theme .btn-icon { display: inline-flex; margin-left: 0.25rem; }
 .cursor-theme .btn-text {
-  color: var(--color-theme-text);
+  color: var(--color-foreground);
   font-weight: 500;
   text-decoration: none;
 }
@@ -153,12 +140,12 @@
 
 /* ── Card border / media ── */
 .cursor-theme .card-border {
-  border: 1px solid var(--color-theme-border-02);
+  border: 1px solid var(--color-border);
 }
 .cursor-theme .rounded-xs { border-radius: 12px; }
 
 .cursor-theme .media-border-container {
-  border: 1px solid var(--color-theme-border-02);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   overflow: hidden;
 }
@@ -231,12 +218,12 @@
 
 /* ── Footer link ── */
 .cursor-theme .footer-link {
-  color: var(--color-theme-text-sec);
+  color: var(--color-muted-foreground);
   text-decoration: none;
   transition: color 0.15s;
 }
 .cursor-theme .footer-link:hover {
-  color: var(--color-theme-text);
+  color: var(--color-foreground);
 }
 
 /* ── Logo garden ── */

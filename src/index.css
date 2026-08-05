@@ -74,10 +74,14 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* The resolved values behind Bloom's alias layer — site palette, the FairCoin
+ * apex, the forced-dark region, and every brand scope. Generated; see the file
+ * header and `scripts/generate-theme-css.ts`. */
+@import './styles/theme.generated.css';
+
 @import './styles/cursor-theme.css';
 @import './styles/oxyos-theme.css';
 @import './styles/tnp-theme.css';
-@import './styles/astro-theme.css';
 @import './styles/faircoin-theme.css';
 @import './styles/pay-theme.css';
 @import './styles/slice-theme.css';
@@ -106,40 +110,13 @@
   --color-white-800: #cad0d9;
   --color-white-900: #b5bdc9;
 
-  /* Semantic Colors — powered by @oxyhq/bloom presets.
-   * Bloom variables (--background, --primary, etc.) are set on :root by JS
-   * at startup via src/theme/index.ts. CSS fallbacks in :root/:dark below
-   * provide values before JS runs. */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-surface: var(--surface);
-  --color-surface-foreground: var(--surface-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-sidebar: var(--sidebar);
+  /* Semantic colours are NOT declared here.
+   * `@oxyhq/bloom/design-tokens/theme.css` (imported above) is the single
+   * authority for the `--color-x` alias vocabulary, and it ships more of it than
+   * this file ever aliased — card, tertiary, success/error/warning/info, the
+   * chart and sidebar families, the type scale, radii and shadows. The values
+   * behind those aliases come from `styles/theme.generated.css`. */
 
-  /* Extended semantic tokens — alias Bloom vars so they respond to the JS theme system.
-   * Used by pricing, careers, and other pages that don't apply a product-specific theme class.
-   * Product themes (.oxyos-theme, .tnp-theme) override these with their own values. */
-  --color-primary-background: var(--background);
-  --color-secondary-background: var(--surface);
-  --color-surface-subtle: var(--muted);
-  --color-tertiary-foreground: var(--muted-foreground);
-  --color-caption-foreground: var(--muted-foreground);
-  --color-subtle-stroke: var(--border);
-  --color-muted-strong-background: var(--border);
   --color-blue-450: #3977e8;
 
   /* Landing page colors */
@@ -193,55 +170,12 @@
 
 }
 
-/*
- * CSS fallback values for the "oxy" preset.
- * These are overridden at runtime by src/theme/index.ts (initTheme),
- * but are needed so the page renders correctly before JS executes.
- * Values sourced from: APP_COLOR_PRESETS['oxy'] in @oxyhq/bloom
- */
-:root {
-  --background: hsl(0 0% 99%);
-  --foreground: hsl(0 0% 12%);
-  --surface: hsl(277 10% 97%);
-  --surface-foreground: hsl(0 0% 12%);
-  --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(0 0% 12%);
-  --primary: hsl(277 66% 56%);
-  --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(277 8% 95%);
-  --secondary-foreground: hsl(0 0% 12%);
-  --muted: hsl(277 8% 95%);
-  --muted-foreground: hsl(277 5% 42%);
-  --accent: hsl(277 8% 95%);
-  --accent-foreground: hsl(0 0% 12%);
-  --destructive: hsl(0 84% 60%);
-  --border: hsl(277 8% 88%);
-  --input: hsl(277 8% 88%);
-  --ring: hsl(277 66% 56%);
-  --sidebar: hsl(277 10% 97%);
-}
-
-.dark {
-  --background: hsl(277 50% 5%);
-  --foreground: hsl(0 0% 93%);
-  --surface: hsl(277 20% 18%);
-  --surface-foreground: hsl(0 0% 93%);
-  --popover: hsl(277 20% 18%);
-  --popover-foreground: hsl(0 0% 93%);
-  --primary: hsl(277 66% 56%);
-  --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(277 20% 18%);
-  --secondary-foreground: hsl(0 0% 93%);
-  --muted: hsl(277 18% 20%);
-  --muted-foreground: hsl(0 0% 70%);
-  --accent: hsl(277 18% 20%);
-  --accent-foreground: hsl(0 0% 93%);
-  --destructive: hsl(0 84% 60%);
-  --border: hsl(277 12% 20%);
-  --input: hsl(277 10% 23%);
-  --ring: hsl(277 66% 56%);
-  --sidebar: hsl(277 30% 8%);
-}
+/* The palette itself lives in `styles/theme.generated.css` (imported above),
+ * derived from Bloom by `scripts/generate-theme-css.ts`. It is not written here
+ * by hand: this file used to carry an "oxy preset" palette that had drifted into
+ * a different one — a light-grey `--secondary` where the preset resolves to
+ * teal, a neutral white background against a pink-tinted one, and no `--card` at
+ * all — which every prerendered page showed until React replaced it. */
 
 /* Initiative page heading */
 .text-heading-xlarge {
@@ -624,38 +558,6 @@ body {
   font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-}
-
-/* Force dark mode variables on a section regardless of root theme */
-.force-dark {
-  --background: hsl(277 50% 5%);
-  --foreground: hsl(0 0% 93%);
-  --surface: hsl(277 20% 18%);
-  --surface-foreground: hsl(0 0% 93%);
-  --popover: hsl(277 20% 18%);
-  --popover-foreground: hsl(0 0% 93%);
-  --primary: hsl(277 66% 56%);
-  --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(277 20% 18%);
-  --secondary-foreground: hsl(0 0% 93%);
-  --muted: hsl(277 18% 20%);
-  --muted-foreground: hsl(0 0% 70%);
-  --accent: hsl(277 18% 20%);
-  --accent-foreground: hsl(0 0% 93%);
-  --destructive: hsl(0 84% 60%);
-  --border: hsl(277 12% 20%);
-  --input: hsl(277 10% 23%);
-  --ring: hsl(277 66% 56%);
-  --sidebar: hsl(277 30% 8%);
-  --color-background: hsl(277 50% 5%);
-  --color-foreground: hsl(0 0% 93%);
-  --color-primary: hsl(277 66% 56%);
-  --color-primary-foreground: hsl(0 0% 100%);
-  --color-muted-foreground: hsl(0 0% 70%);
-  --color-border: hsl(277 12% 20%);
-  --color-surface: hsl(277 20% 18%);
-  --color-surface-foreground: hsl(0 0% 93%);
-  color-scheme: dark;
 }
 
 /* Frost border glass effect */

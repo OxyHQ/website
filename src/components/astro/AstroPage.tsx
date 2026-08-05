@@ -217,12 +217,12 @@ function FeatureSection({
   const isLeft = imagePosition === 'left'
 
   return (
-    <section className="section bg-theme-bg text-theme-text overflow-x-clip">
+    <section className="section bg-background text-foreground overflow-x-clip">
       <div className="container">
         <div className="grid grid-cols-12 gap-y-8 md:gap-y-12 lg:gap-y-16">
           {/* Title */}
           <div className="col-span-12 flex flex-col items-center justify-center gap-4">
-            <h2 className="type-md-lg z-1 max-w-2xl px-6 text-center font-bold text-theme-text text-balance sm:w-2/3 sm:px-0">
+            <h2 className="type-md-lg z-1 max-w-2xl px-6 text-center font-bold text-foreground text-balance sm:w-2/3 sm:px-0">
               {title}
             </h2>
           </div>
@@ -253,7 +253,7 @@ function FeatureSection({
               isLeft ? 'md:col-start-8' : 'md:col-start-1'
             }`}
           >
-            <p className="type-md-lg max-w-4/5 font-semibold text-theme-text text-pretty md:max-w-full">
+            <p className="type-md-lg max-w-4/5 font-semibold text-foreground text-pretty md:max-w-full">
               {description}
             </p>
           </div>
@@ -362,7 +362,7 @@ export default function AstroPageContent() {
         ))}
 
         {/* ── Privacy Section ── */}
-        <section className="section bg-theme-bg text-theme-text overflow-x-clip">
+        <section className="section bg-background text-foreground overflow-x-clip">
           <div className="container">
             <div className="text-center mx-auto max-w-prose-medium-wide">
               <div className="max-w-xl mx-auto mb-v1 px-4">
@@ -375,10 +375,10 @@ export default function AstroPageContent() {
                   loading="lazy"
                 />
               </div>
-              <h2 className="type-lg font-bold text-theme-text text-balance mb-v1">
+              <h2 className="type-lg font-bold text-foreground text-balance mb-v1">
                 You&apos;re in control
               </h2>
-              <p className="type-md text-theme-text-sec text-pretty">
+              <p className="type-md text-muted-foreground text-pretty">
                 You decide which sites Astro can see, clear your browsing
                 history, use incognito, and manage browser memories anytime.
               </p>
@@ -387,9 +387,9 @@ export default function AstroPageContent() {
         </section>
 
         {/* ── More Features ── */}
-        <section className="section bg-theme-bg text-theme-text relative">
+        <section className="section bg-background text-foreground relative">
           <div className="container">
-            <h2 className="type-lg text-center font-semibold text-theme-text mb-v2">
+            <h2 className="type-lg text-center font-semibold text-foreground mb-v2">
               More features
             </h2>
 
@@ -409,10 +409,10 @@ export default function AstroPageContent() {
                         loading="lazy"
                       />
                     </div>
-                    <h3 className="type-md text-center font-semibold text-theme-text">
+                    <h3 className="type-md text-center font-semibold text-foreground">
                       {feature.title}
                     </h3>
-                    <p className="type-base text-center text-theme-text-sec">{feature.description}</p>
+                    <p className="type-base text-center text-muted-foreground">{feature.description}</p>
                   </div>
                 ))}
               </div>

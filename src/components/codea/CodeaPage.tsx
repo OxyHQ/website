@@ -13,7 +13,7 @@ export default function CodeaPage() {
   return (
     <div className="cursor-theme">
       {/* ── 1. Hero Section ── */}
-      <section className="section bg-theme-bg text-theme-text">
+      <section className="section bg-background text-foreground">
         <div className="container">
           <div className="text-left mb-v2.5 max-w-prose">
             <h1 className="type-md-lg text-balance mb-v1">
@@ -49,7 +49,7 @@ export default function CodeaPage() {
             </div>
           </div>
           {/* IDE screenshot */}
-          <div className="media-border-container relative aspect-[16/10] bg-theme-card overflow-hidden">
+          <div className="media-border-container relative aspect-[16/10] bg-card overflow-hidden">
             <IDEDemoMockup />
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function CodeaPage() {
 
       {/* ── 2. Logo Garden ── */}
       {logoCompanies.length > 0 && (
-        <section className="section bg-theme-bg text-theme-text pb-v1.5 pt-0" id="logo-garden">
+        <section className="section bg-background text-foreground pb-v1.5 pt-0" id="logo-garden">
           <div className="stack container text-center">
             <h2 className="type-sm mb-v1">
               Trusted every day by teams that build world-class software
@@ -65,8 +65,8 @@ export default function CodeaPage() {
             <div className="logo-garden-responsive-8">
               {logoCompanies.map((name) => (
                 <div key={name} className="relative flex items-center justify-center">
-                  <div className="bg-theme-card-hex card-border px-g0.75 flex h-[4rem] w-full items-center justify-center rounded-xs sm:h-[4.5rem] md:h-[6.25rem]">
-                    <span className="text-theme-text-sec text-sm">{name}</span>
+                  <div className="bg-surface card-border px-g0.75 flex h-[4rem] w-full items-center justify-center rounded-xs sm:h-[4.5rem] md:h-[6.25rem]">
+                    <span className="text-muted-foreground text-sm">{name}</span>
                   </div>
                 </div>
               ))}
@@ -78,7 +78,7 @@ export default function CodeaPage() {
       {/* ── 3. Feature Cards ── */}
       <section className="section section--flush-x">
         {features.map((feature, i) => (
-          <section key={feature.title} className="section bg-theme-bg text-theme-text section--flush-y">
+          <section key={feature.title} className="section bg-background text-foreground section--flush-y">
             <div className={i < features.length - 1 ? 'container mb-v4' : 'container'}>
               <div className="grid grid-rows-[auto_1fr]">
                 <a
@@ -96,7 +96,7 @@ export default function CodeaPage() {
                     <div className={`w-full max-w-prose ${feature.layout === 'right' ? 'lg:justify-self-end' : 'lg:justify-self-start'}`}>
                       <div className="type-base">
                         <h3 className="type-base md:type-md text-pretty">{feature.title}</h3>
-                        <div className="type-base md:type-md text-theme-text-sec text-pretty">
+                        <div className="type-base md:type-md text-muted-foreground text-pretty">
                           {feature.description}
                         </div>
                       </div>
@@ -130,7 +130,7 @@ export default function CodeaPage() {
                         : 'lg:col-start-9 lg:col-end-25'
                     }`}
                   >
-                    <div className="media-border-container relative aspect-[4/3] bg-theme-card" />
+                    <div className="media-border-container relative aspect-[4/3] bg-card" />
                   </div>
                 </div>
               </div>
@@ -141,7 +141,7 @@ export default function CodeaPage() {
 
       {/* ── 4. "The new way to build software" + Testimonials ── */}
       {testimonials.length > 0 && (
-        <section className="section bg-theme-bg text-theme-text overflow-hidden">
+        <section className="section bg-background text-foreground overflow-hidden">
           <div className="container">
             <div className="text-center mx-auto mb-v2.5 max-w-prose-medium-wide">
               <h2 className="type-lg text-balance mx-auto">The new way to build software.</h2>
@@ -162,7 +162,7 @@ export default function CodeaPage() {
                         <figcaption>
                           <div className="type-sm">
                             {t.author}{' '}
-                            <span className="type-sm text-theme-text-sec block">{t.role}</span>
+                            <span className="type-sm text-muted-foreground block">{t.role}</span>
                           </div>
                         </figcaption>
                       </div>
@@ -176,7 +176,7 @@ export default function CodeaPage() {
       )}
 
       {/* ── 5. Stay on the frontier ── */}
-      <section className="section bg-theme-bg text-theme-text">
+      <section className="section bg-background text-foreground">
         <div className="container my-v2">
           <div className="text-left mb-v1 max-w-prose-narrow">
             <h2 className="type-md-lg text-balance">Stay on the frontier</h2>
@@ -188,7 +188,7 @@ export default function CodeaPage() {
                   <div className="type-base max-w-prose flex grow flex-col">
                     <div>
                       <h3>{card.title}</h3>
-                      <div className="text-theme-text-sec text-pretty">{card.description}</div>
+                      <div className="text-muted-foreground text-pretty">{card.description}</div>
                     </div>
                     <div className="mt-auto pt-v8/12">
                       <a
@@ -201,7 +201,7 @@ export default function CodeaPage() {
                     </div>
                   </div>
                   <figure className="pt-g1.75">
-                    <div className="media-border-container relative aspect-[4/3] bg-theme-card" />
+                    <div className="media-border-container relative aspect-[4/3] bg-card" />
                   </figure>
                 </div>
               </div>
@@ -212,17 +212,17 @@ export default function CodeaPage() {
 
       {/* ── 6. Changelog ── */}
       {changelogEntries.length > 0 && (
-        <section className="section bg-theme-bg text-theme-text">
+        <section className="section bg-background text-foreground">
           <div className="container">
-            <h2 className="type-md-lg text-theme-text mb-v1">Changelog</h2>
+            <h2 className="type-md-lg text-foreground mb-v1">Changelog</h2>
             <div className="gap-g1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
               {changelogEntries.map((entry) => (
                 <article key={entry.title} className="flex flex-col">
                   <a className="card stack pb-g2 grow-1" href={entry.href}>
-                    <div className="text-theme-text-sec relative left-[-1px] flex items-center">
+                    <div className="text-muted-foreground relative left-[-1px] flex items-center">
                       <time className="type-base">{entry.date}</time>
                     </div>
-                    <p className="type-base text-theme-text">{entry.title}</p>
+                    <p className="type-base text-foreground">{entry.title}</p>
                   </a>
                 </article>
               ))}
@@ -235,7 +235,7 @@ export default function CodeaPage() {
       )}
 
       {/* ── 7. Team / Join Us card ── */}
-      <section className="section bg-theme-bg text-theme-text">
+      <section className="section bg-background text-foreground">
         <div className="container mb-v4">
           <div className="grid grid-rows-[auto_1fr]">
             <div className="card card--large grid-cursor col-span-full row-span-full gap-y-0 max-lg:grid-rows-subgrid">
@@ -264,7 +264,7 @@ export default function CodeaPage() {
             <div className="grid-cursor p-g1.75 col-span-full row-span-full gap-y-0 max-lg:grid-rows-subgrid pointer-events-none">
               <div className="col-span-full row-start-1 row-end-2 grid lg:row-start-1 lg:row-end-2 lg:items-center lg:col-start-1 lg:col-end-9 lg:pl-g0.25 lg:pr-g3" />
               <div className="max-lg:pt-v1 col-span-full row-start-2 row-end-3 grid cursor-default items-end lg:row-start-2 lg:row-end-3 lg:items-center lg:col-start-9 lg:col-end-25">
-                <div className="media-border-container relative aspect-video bg-theme-card" />
+                <div className="media-border-container relative aspect-video bg-card" />
               </div>
             </div>
           </div>
@@ -273,11 +273,11 @@ export default function CodeaPage() {
 
       {/* ── 8. Recent Highlights ── */}
       {highlights.length > 0 && (
-        <section className="section bg-theme-card-hex text-theme-text">
+        <section className="section bg-surface text-foreground">
           <div className="container">
             <div className="grid-cursor gap-0">
               <div className="col-span-full md:col-start-1 md:col-end-7 lg:col-start-1 lg:col-end-9 xl:col-start-1 xl:col-end-7">
-                <h2 className="type-base text-theme-text mb-v1 sticky top-0 lg:mb-0">Recent highlights</h2>
+                <h2 className="type-base text-foreground mb-v1 sticky top-0 lg:mb-0">Recent highlights</h2>
               </div>
               <div className="col-span-full md:col-start-7 md:col-end-25 lg:col-start-9 lg:col-end-25 xl:col-start-7 xl:col-end-19">
                 {highlights.map((h, i) => (
@@ -285,10 +285,10 @@ export default function CodeaPage() {
                     <a className="card card--text grow-1" href={h.href}>
                       <div className="flex flex-col">
                         <div className="grow-1">
-                          <p className="type-base text-theme-text text-pretty">{h.title}</p>
-                          <p className="type-base text-theme-text-sec text-pretty">{h.description}</p>
+                          <p className="type-base text-foreground text-pretty">{h.title}</p>
+                          <p className="type-base text-muted-foreground text-pretty">{h.description}</p>
                         </div>
-                        <div className="mt-v1 text-theme-text-sec flex shrink-0 items-center">
+                        <div className="mt-v1 text-muted-foreground flex shrink-0 items-center">
                           <span className="capitalize">{h.category}&nbsp;&middot;&nbsp;</span>
                           <time className="type-base">{h.date}</time>
                         </div>
@@ -304,7 +304,7 @@ export default function CodeaPage() {
       )}
 
       {/* ── 9. CTA ── */}
-      <section className="section bg-theme-bg text-theme-text section--headline">
+      <section className="section bg-background text-foreground section--headline">
         <div className="container">
           <div className="text-center mx-auto max-w-prose-medium-wide">
             <h2 className="type-xl sm:type-2xl text-balance mx-auto mb-v1">

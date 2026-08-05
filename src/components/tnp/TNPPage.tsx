@@ -76,7 +76,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="ml-3 shrink-0 cursor-pointer rounded-lg border border-transparent px-2.5 py-1 text-xs font-medium text-theme-text-sec transition-colors hover:bg-[rgba(16,185,129,0.08)] hover:text-theme-text"
+      className="ml-3 shrink-0 cursor-pointer rounded-lg border border-transparent px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-[rgba(16,185,129,0.08)] hover:text-foreground"
     >
       {copied ? 'Copied' : 'Copy'}
     </button>
@@ -87,17 +87,17 @@ export default function TNPContent() {
   return (
     <div className="cursor-theme tnp-theme">
       {/* ── 1. Hero ── */}
-      <section className="section section--headline bg-theme-bg text-theme-text">
+      <section className="section section--headline bg-background text-foreground">
         <div className="container">
           <div className="text-center mx-auto max-w-prose-medium-wide">
             <div className="mono-tag mb-v1 flex items-center justify-center gap-2 text-sm">
               <span>[</span> <span>TNP</span> <span>]</span>
             </div>
-            <p className="type-base text-theme-text-sec mb-v8/12">The Network Protocol</p>
+            <p className="type-base text-muted-foreground mb-v8/12">The Network Protocol</p>
             <h1 className="type-xl sm:type-2xl text-balance mb-v1 gradient-text">
               Your internet. Your rules.
             </h1>
-            <p className="type-base text-theme-text-sec text-pretty mb-v1">
+            <p className="type-base text-muted-foreground text-pretty mb-v1">
               TNP is an alternative internet namespace controlled by Oxy. Register domains on TLDs
               that no one else can offer. Install once, and every TNP domain resolves natively on your device.
             </p>
@@ -118,7 +118,7 @@ export default function TNPContent() {
       </section>
 
       {/* ── 2. What is TNP ── */}
-      <section className="section bg-theme-bg text-theme-text">
+      <section className="section bg-background text-foreground">
         <div className="container">
           <div className="grid-cursor gap-0">
             <div className="col-span-full md:col-start-1 md:col-end-10 lg:col-start-1 lg:col-end-9">
@@ -130,7 +130,7 @@ export default function TNPContent() {
               </h2>
             </div>
             <div className="col-span-full md:col-start-10 md:col-end-25 lg:col-start-10 lg:col-end-25 mt-v1 md:mt-0">
-              <div className="type-base text-theme-text-sec space-y-4 max-w-prose">
+              <div className="type-base text-muted-foreground space-y-4 max-w-prose">
                 <p>
                   TNP is an alternative internet layer that runs on top of the regular internet. It is
                   a parallel namespace: a new set of domain names that only resolve for people running TNP.
@@ -152,7 +152,7 @@ export default function TNPContent() {
       </section>
 
       {/* ── 3. TLDs ── */}
-      <section className="section bg-theme-bg text-theme-text">
+      <section className="section bg-background text-foreground">
         <div className="container">
           <div className="mono-tag mb-v1 flex items-center gap-2 text-sm">
             <span>[</span> <span>Domains</span> <span>]</span>
@@ -166,7 +166,7 @@ export default function TNPContent() {
             {tldCards.map((card) => (
               <div
                 key={card.tld}
-                className="group relative flex h-full flex-col space-y-4 px-0 py-10 lg:p-8 border-theme-border-02 border-t lg:border-l lg:border-t-0 first:border-t-0 first:lg:border-l-0"
+                className="group relative flex h-full flex-col space-y-4 px-0 py-10 lg:p-8 border-border border-t lg:border-l lg:border-t-0 first:border-t-0 first:lg:border-l-0"
               >
                 {/* Corner dots (visible on hover, desktop only) */}
                 <div className="pointer-events-none absolute inset-0 isolate z-10 border border-[rgba(16,185,129,0.15)] opacity-0 group-hover:opacity-100 hidden lg:block">
@@ -177,8 +177,8 @@ export default function TNPContent() {
                 </div>
                 <div className="max-w-sm grow">
                   <h3 className="type-md-lg gradient-text">{card.tld}</h3>
-                  <p className="type-base text-theme-text mt-2">{card.title}</p>
-                  <p className="type-base text-theme-text-sec mt-2">{card.description}</p>
+                  <p className="type-base text-foreground mt-2">{card.title}</p>
+                  <p className="type-base text-muted-foreground mt-2">{card.description}</p>
                 </div>
               </div>
             ))}
@@ -187,7 +187,7 @@ export default function TNPContent() {
       </section>
 
       {/* ── 4. How it works ── */}
-      <section className="section bg-theme-card-hex text-theme-text">
+      <section className="section bg-surface text-foreground">
         <div className="container">
           <div className="mono-tag mb-v1 flex items-center gap-2 text-sm">
             <span>[</span> <span>How it works</span> <span>]</span>
@@ -202,7 +202,7 @@ export default function TNPContent() {
                   <div className="type-base max-w-prose flex grow flex-col">
                     <span className="mono-tag text-[#10b981] text-sm mb-v8/12">{step.number}</span>
                     <h3 className="type-base md:type-md">{step.title}</h3>
-                    <p className="text-theme-text-sec text-pretty mt-2">{step.description}</p>
+                    <p className="text-muted-foreground text-pretty mt-2">{step.description}</p>
                     {step.code && (
                       <div className="code-block mt-v8/12 flex items-center justify-between">
                         <code className="text-xs">{step.code}</code>
@@ -218,7 +218,7 @@ export default function TNPContent() {
       </section>
 
       {/* ── 5. Why TNP ── */}
-      <section className="section bg-theme-bg text-theme-text">
+      <section className="section bg-background text-foreground">
         <div className="container">
           <div className="mono-tag mb-v1 flex items-center gap-2 text-sm">
             <span>[</span> <span>Why TNP</span> <span>]</span>
@@ -232,7 +232,7 @@ export default function TNPContent() {
                 <div className="card flex h-full grow-1 flex-col">
                   <div className="type-base max-w-prose flex grow flex-col">
                     <h3>{feature.title}</h3>
-                    <p className="text-theme-text-sec text-pretty mt-2">{feature.description}</p>
+                    <p className="text-muted-foreground text-pretty mt-2">{feature.description}</p>
                   </div>
                 </div>
               </div>
@@ -242,7 +242,7 @@ export default function TNPContent() {
       </section>
 
       {/* ── 6. Register CTA ── */}
-      <section className="section section--headline bg-theme-bg text-theme-text">
+      <section className="section section--headline bg-background text-foreground">
         <div className="container">
           <div className="relative flex items-center justify-center py-6">
             <div className="absolute inset-x-0 -top-16 h-px bg-gradient-to-r from-transparent via-[#10b981] to-transparent opacity-40 sm:-top-32" />
@@ -250,7 +250,7 @@ export default function TNPContent() {
               <h2 className="type-xl sm:type-2xl text-balance gradient-text">
                 Claim your namespace.
               </h2>
-              <p className="type-base text-theme-text-sec">
+              <p className="type-base text-muted-foreground">
                 Registration is free and requires an Oxy account. Pick your domain, set your records,
                 and you are live on the TNP network.
               </p>

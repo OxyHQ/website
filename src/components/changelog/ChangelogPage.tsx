@@ -118,8 +118,8 @@ export default function ChangelogContent() {
                   onClick={() => { setSelectedRepo(undefined); setCurrentPage(1) }}
                   className={`inline-flex items-center rounded-[10px] px-3 py-1.5 text-sm transition-colors ${
                     !selectedRepo
-                      ? 'bg-primary-foreground text-primary-background'
-                      : 'text-tertiary-foreground hover:text-muted-foreground border border-subtle-stroke'
+                      ? 'bg-primary-foreground text-background'
+                      : 'text-muted-foreground hover:text-muted-foreground border border-border'
                   }`}
                 >
                   All
@@ -132,8 +132,8 @@ export default function ChangelogContent() {
                       onClick={() => { setSelectedRepo(key); setCurrentPage(1) }}
                       className={`inline-flex items-center rounded-[10px] px-3 py-1.5 text-sm transition-colors ${
                         selectedRepo === key
-                          ? 'bg-primary-foreground text-primary-background'
-                          : 'text-tertiary-foreground hover:text-muted-foreground border border-subtle-stroke'
+                          ? 'bg-primary-foreground text-background'
+                          : 'text-muted-foreground hover:text-muted-foreground border border-border'
                       }`}
                     >
                       {r.displayName}
@@ -199,13 +199,13 @@ export default function ChangelogContent() {
                         {entry.title}
                       </h2>
                       {entry.tagName && (
-                        <span className="inline-flex items-center rounded-lg border border-subtle-stroke bg-secondary-background px-2 py-0.5 text-xs text-tertiary-foreground">
+                        <span className="inline-flex items-center rounded-lg border border-border bg-surface px-2 py-0.5 text-xs text-muted-foreground">
                           {entry.tagName}
                         </span>
                       )}
                     </div>
 
-                    <div className="font-normal leading-6.5 mt-5 text-muted-foreground prose prose-sm max-w-none prose-headings:text-foreground prose-a:text-[var(--color-blue-500)] prose-code:text-foreground prose-code:bg-secondary-background prose-code:px-1 prose-code:rounded-md prose-li:marker:text-muted-foreground">
+                    <div className="font-normal leading-6.5 mt-5 text-muted-foreground prose prose-sm max-w-none prose-headings:text-foreground prose-a:text-[var(--color-blue-500)] prose-code:text-foreground prose-code:bg-surface prose-code:px-1 prose-code:rounded-md prose-li:marker:text-muted-foreground">
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {entry.content}
                       </ReactMarkdown>
@@ -244,17 +244,17 @@ export default function ChangelogContent() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={safePage <= 1}
-                  className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-muted-foreground disabled:opacity-40"
+                  className="rounded-[10px] px-3 py-1.5 text-sm border border-border text-muted-foreground hover:text-muted-foreground disabled:opacity-40"
                 >
                   Previous
                 </button>
-                <span className="text-sm text-tertiary-foreground">
+                <span className="text-sm text-muted-foreground">
                   Page {safePage} of {totalPages}
                 </span>
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={safePage >= totalPages}
-                  className="rounded-[10px] px-3 py-1.5 text-sm border border-subtle-stroke text-tertiary-foreground hover:text-muted-foreground disabled:opacity-40"
+                  className="rounded-[10px] px-3 py-1.5 text-sm border border-border text-muted-foreground hover:text-muted-foreground disabled:opacity-40"
                 >
                   Next
                 </button>

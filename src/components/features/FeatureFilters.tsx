@@ -42,7 +42,7 @@ export default function FeatureFilters({
             onClick={() => onChangeStatus(opt.value)}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
               status === opt.value
-                ? 'bg-primary-foreground text-primary-background'
+                ? 'bg-primary-foreground text-background'
                 : 'text-muted-foreground hover:text-foreground border border-border'
             }`}
           >

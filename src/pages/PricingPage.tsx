@@ -14,7 +14,7 @@ export default function PricingPage() {
   const { t } = useTranslation()
 
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-primary-background">
+    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
         title={t('pricing.seoTitle')}
         description={t('pricing.seoDescription')}

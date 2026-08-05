@@ -10,7 +10,7 @@ export default function InboxPage() {
           'A modern, end-to-end encrypted inbox built on Oxy ID. Your keys, your data, no scanning.',
         canonicalPath: '/inbox',
       }}
-      className="bg-primary-background"
+      className="bg-background"
       mainClassName="flex-1"
     >
       <InboxPageContent />

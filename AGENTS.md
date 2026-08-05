@@ -24,6 +24,36 @@ bun run sync-changelog  # sync changelog to src/
 - **Frontend**: CF Pages project `oxy-website` (`dist/` output) via `.github/workflows/deploy.yml`. `VITE_API_URL=https://website-api.oxy.so`.
 - **Backend**: ECS Fargate (`~/Oxy/oxy-infra`) at `website-api.oxy.so` / `api.website.oxy.so`. Dockerfile `oven/bun:1.3.14-alpine`; CMD `bun server/index.ts` (TypeScript runs directly via Bun — no compile step).
 
+## Theme tokens
+
+Bloom is the only source of colour. `src/index.css` imports
+`@oxyhq/bloom/design-tokens/theme.css` for the `--color-x` alias vocabulary and
+declares none of it locally — it also brings `card`, `tertiary`,
+`success/error/warning/info`, the chart and sidebar families, the type scale,
+radii and shadows, so reach for those before inventing a name.
+
+- **Never hand-write a palette.** `src/styles/theme.generated.css` holds every
+  resolved value — the site palette, the FairCoin apex, `.force-dark`, and each
+  brand scope — and is written by `scripts/generate-theme-css.ts` (wired into
+  `predev` / `prebuild`, or `bun run generate:theme`) from Bloom's own
+  `getPresetVars` / `buildSeedScopeVars`. The file that preceded it claimed to
+  mirror the `oxy` preset and had drifted into a different palette: a light-grey
+  `--secondary` where the preset resolves to teal, and no `--card` at all, so
+  `bg-fill` was transparent until React mounted. Every page here is prerendered,
+  so that gap is what visitors saw first.
+- **A brand surface is one seed in `src/theme/brands.ts`**, and Bloom's engine
+  derives the ramp. A product stylesheet may hold type scale, rhythm, shape —
+  never a colour. `pay-theme.css` and `slice-theme.css` are the reference: every
+  value there is a `var()` or a `color-mix()` over Bloom tokens.
+- Scoped blocks must carry the `--color-x` aliases as well as the canonical
+  tokens, which is why they come from `buildSeedScopeVars`: an alias substitutes
+  where it is declared, so overriding `--background` inside `.tnp-theme` cannot
+  move a `--color-background` declared at `:root`.
+- Verify a theme change in a real browser, comparing the palette BEFORE the app's
+  JS runs against after — tsc and the build cannot see this class of bug. Block
+  `**/*.js` in Playwright rather than disabling JavaScript, or `page.evaluate`
+  reads an empty document and every route "passes".
+
 ## Rules
 
 - **MCP auth token**: passed as a request header ONLY — never as a query string parameter.

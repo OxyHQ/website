@@ -12,7 +12,7 @@ export default function CodexExtensionPage() {
           "Bring Codea's open-source assistant into the editor you already use: reviews, refactors and completions, free to inspect and extend.",
         canonicalPath: '/codea/extension',
       }}
-      className="bg-primary-background"
+      className="bg-background"
       navbar={
         <Navbar
           rightActions={

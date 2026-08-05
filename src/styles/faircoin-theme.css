@@ -64,167 +64,17 @@
   font-family: 'Phudu', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* ── Light mode ── */
-.faircoin-theme {
-  --background: hsl(0 0% 99%);
-  --foreground: hsl(0 0% 12%);
-  --surface: hsl(92 12% 95%);
-  --surface-foreground: hsl(0 0% 12%);
-  --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(0 0% 12%);
-  --primary: hsl(92 90% 25%);
-  --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(92 10% 92%);
-  --secondary-foreground: hsl(0 0% 12%);
-  --muted: hsl(92 8% 93%);
-  --muted-foreground: hsl(0 0% 40%);
-  --accent: hsl(92 10% 92%);
-  --accent-foreground: hsl(0 0% 12%);
-  --destructive: hsl(0 84% 60%);
-  --border: hsl(92 8% 85%);
-  --input: hsl(92 8% 85%);
-  --ring: hsl(92 90% 25%);
-  --sidebar: hsl(92 12% 95%);
-
-  --color-background: hsl(0 0% 99%);
-  --color-foreground: hsl(0 0% 12%);
-  --color-primary: hsl(92 90% 25%);
-  --color-primary-foreground: hsl(0 0% 100%);
-  --color-primary-background: hsl(0 0% 99%);
-  --color-secondary: hsl(92 10% 92%);
-  --color-secondary-foreground: hsl(0 0% 12%);
-  --color-muted: hsl(92 8% 93%);
-  --color-muted-foreground: hsl(0 0% 40%);
-  --color-accent: hsl(92 10% 92%);
-  --color-accent-foreground: hsl(0 0% 12%);
-  --color-destructive: hsl(0 84% 60%);
-  --color-surface: hsl(92 12% 95%);
-  --color-surface-foreground: hsl(0 0% 12%);
-  --color-border: hsl(92 8% 85%);
-  --color-input: hsl(92 8% 85%);
-  --color-ring: hsl(92 90% 25%);
-  --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(0 0% 12%);
-  --color-sidebar: hsl(92 12% 95%);
-  --color-banner-background: hsl(92 90% 25%);
-
-  --color-theme-bg: hsl(0 0% 99%);
-  --color-theme-text: hsl(0 0% 12%);
-  --color-theme-text-sec: hsl(0 0% 40%);
-  --color-theme-card: hsl(92 12% 95%);
-  --color-theme-card-hex: hsl(92 10% 92%);
-  --color-theme-card-hover-hex: hsl(92 10% 88%);
-  --color-theme-border-02: hsl(92 8% 85%);
-  --color-theme-accent: hsl(92 90% 25%);
-  --color-theme-product-chrome: hsl(92 12% 95%);
-  --color-theme-product-editor: hsl(92 12% 95%);
-}
-
-/* ── Dark mode ── */
-:is(.dark, .dark *) .faircoin-theme,
-.faircoin-theme:is(.dark, .dark *) {
-  --background: hsl(69 54% 8%);
-  --foreground: hsl(0 0% 93%);
-  --surface: hsl(69 30% 13%);
-  --surface-foreground: hsl(0 0% 93%);
-  --popover: hsl(69 30% 13%);
-  --popover-foreground: hsl(0 0% 93%);
-  --primary: hsl(92 96% 65%);
-  --primary-foreground: hsl(0 0% 0%);
-  --secondary: hsl(69 20% 15%);
-  --secondary-foreground: hsl(0 0% 93%);
-  --muted: hsl(69 18% 16%);
-  --muted-foreground: hsl(0 0% 46%);
-  --accent: hsl(69 18% 16%);
-  --accent-foreground: hsl(0 0% 93%);
-  --destructive: hsl(0 84% 60%);
-  --border: hsl(69 20% 18%);
-  --input: hsl(69 15% 20%);
-  --ring: hsl(92 96% 65%);
-  --sidebar: hsl(69 40% 6%);
-
-  --color-background: hsl(69 54% 8%);
-  --color-foreground: hsl(0 0% 93%);
-  --color-primary: hsl(92 96% 65%);
-  --color-primary-foreground: hsl(0 0% 0%);
-  --color-primary-background: hsl(69 54% 8%);
-  --color-secondary: hsl(69 20% 15%);
-  --color-secondary-foreground: hsl(0 0% 93%);
-  --color-muted: hsl(69 18% 16%);
-  --color-muted-foreground: hsl(0 0% 46%);
-  --color-accent: hsl(69 18% 16%);
-  --color-accent-foreground: hsl(0 0% 93%);
-  --color-destructive: hsl(0 84% 60%);
-  --color-surface: hsl(69 30% 13%);
-  --color-surface-foreground: hsl(0 0% 93%);
-  --color-border: hsl(69 20% 18%);
-  --color-input: hsl(69 15% 20%);
-  --color-ring: hsl(92 96% 65%);
-  --color-popover: hsl(69 30% 13%);
-  --color-popover-foreground: hsl(0 0% 93%);
-  --color-sidebar: hsl(69 40% 6%);
-  --color-banner-background: hsl(92 96% 65%);
-
-  --color-theme-bg: hsl(69 54% 8%);
-  --color-theme-text: hsl(0 0% 93%);
-  --color-theme-text-sec: hsl(0 0% 46%);
-  --color-theme-card: hsl(69 30% 13%);
-  --color-theme-card-hex: hsl(69 25% 11%);
-  --color-theme-card-hover-hex: hsl(69 22% 16%);
-  --color-theme-border-02: hsl(69 20% 18%);
-  --color-theme-accent: hsl(92 96% 65%);
-  --color-theme-product-chrome: hsl(69 40% 6%);
-  --color-theme-product-editor: hsl(69 30% 13%);
-}
-
 /* ── Bracketed section labels ──
  * Scoped here only because the FairCoin section uses a denser monospace size
  * (0.75rem) than the global `.mono-tag` rule. The base `.mono-tag` (defined in
  * index.css) handles font-family/transform/letter-spacing for all surfaces.
  */
 .faircoin-theme .mono-tag {
-  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--color-muted-foreground);
-}
-
-/* ── Phone mockup scope ──
- * The marketing site shows a small "device frame" reproducing the FAIRWallet
- * home screen. The real wallet app is always rendered in its own theme, not
- * the website's. Pin the phone screen to the *dark* FairCoin palette so the
- * mockup stays consistent regardless of the site's light/dark mode toggle.
- *
- * This scope is intentionally narrow — only used by `PhoneMockup.tsx`. Add
- * `className="phone-mockup-dark"` on the phone screen wrapper and use plain
- * Tailwind tokens (`bg-background`, `text-foreground`, `bg-primary`, etc.)
- * inside; they resolve to the FairCoin dark values below.
- */
-.phone-mockup-dark {
-  --background: hsl(69 54% 8%);
-  --foreground: hsl(0 0% 93%);
-  --surface: hsl(69 30% 13%);
-  --surface-foreground: hsl(0 0% 93%);
-  --popover: hsl(69 30% 13%);
-  --popover-foreground: hsl(0 0% 93%);
-  --primary: hsl(92 96% 65%);
-  --primary-foreground: hsl(0 0% 0%);
-  --muted: hsl(69 18% 16%);
-  --muted-foreground: hsl(0 0% 46%);
-  --border: hsl(69 20% 18%);
-
-  --color-background: hsl(69 54% 8%);
-  --color-foreground: hsl(0 0% 93%);
-  --color-primary: hsl(92 96% 65%);
-  --color-primary-foreground: hsl(0 0% 0%);
-  --color-surface: hsl(69 30% 13%);
-  --color-surface-foreground: hsl(0 0% 93%);
-  --color-muted: hsl(69 18% 16%);
-  --color-muted-foreground: hsl(0 0% 46%);
-  --color-border: hsl(69 20% 18%);
-  --color-popover: hsl(69 30% 13%);
-  --color-popover-foreground: hsl(0 0% 93%);
 }
 
 /* ── Hero gradient text — reads from the active theme's primary so it works
@@ -249,7 +99,7 @@
   border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 1rem 1.25rem;
-  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-family: var(--font-mono);
   font-size: 0.875rem;
   color: var(--color-primary);
   overflow-x: auto;

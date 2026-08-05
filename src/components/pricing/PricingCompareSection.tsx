@@ -4,7 +4,7 @@ import { featureCategories, type PricingPlan } from '../../data/pricing'
 
 const CheckIcon = () => (
   <span className="flex h-5 items-center">
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-tertiary-foreground">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-muted-foreground">
       <path d="M7 0.5C10.5899 0.5 13.5 3.41015 13.5 7C13.5 10.5899 10.5899 13.5 7 13.5C3.41015 13.5 0.5 10.5899 0.5 7C0.5 3.41015 3.41015 0.5 7 0.5ZM9.77734 4.58398C9.54758 4.43081 9.23716 4.49289 9.08398 4.72266L6.65332 8.36914C6.5595 8.50987 6.35573 8.51869 6.25 8.38672L4.89062 6.6875C4.71812 6.47187 4.40313 6.43687 4.1875 6.60938C3.97187 6.78188 3.93687 7.09687 4.10938 7.3125L5.46875 9.01172C5.99728 9.67219 7.01611 9.6277 7.48535 8.92383L9.91602 5.27734C10.0692 5.04758 10.0071 4.73716 9.77734 4.58398Z" fill="currentColor" />
     </svg>
   </span>
@@ -12,7 +12,7 @@ const CheckIcon = () => (
 
 const XIcon = () => (
   <span className="flex h-5 items-center">
-    <svg width="14" height="14" viewBox="0 0 14 14" className="text-caption-foreground">
+    <svg width="14" height="14" viewBox="0 0 14 14" className="text-muted-foreground">
       <path d="M10.6469 2.64673C10.8421 2.45147 11.1586 2.45147 11.3539 2.64673C11.5488 2.84202 11.549 3.1586 11.3539 3.35376L7.7074 6.99927L11.3539 10.6458C11.5491 10.841 11.5491 11.1585 11.3539 11.3538C11.1586 11.549 10.8411 11.549 10.6459 11.3538L6.99939 7.70728L3.35388 11.3538C3.15871 11.5488 2.84208 11.5487 2.64685 11.3538C2.45159 11.1585 2.45159 10.841 2.64685 10.6458L6.29236 6.99927L2.64685 3.35376C2.45159 3.1585 2.45159 2.84199 2.64685 2.64673C2.84211 2.45147 3.15862 2.45147 3.35388 2.64673L7.00037 6.29224L10.6469 2.64673Z" fill="currentColor" />
     </svg>
   </span>
@@ -31,10 +31,10 @@ function MobileFeatureRow({ feature }: { feature: { name: string; values: [strin
 
   return (
     <div data-state={isOpen ? 'open' : 'closed'}>
-      <div className="flex w-full items-center justify-between border-subtle-stroke border-b py-4">
+      <div className="flex w-full items-center justify-between border-border border-b py-4">
         <span className="flex items-start gap-x-1.5">
           <div className="flex gap-x-2">
-            <span className="text-sm text-tertiary-foreground">{feature.name}</span>
+            <span className="text-sm text-muted-foreground">{feature.name}</span>
           </div>
         </span>
         <button
@@ -51,7 +51,7 @@ function MobileFeatureRow({ feature }: { feature: { name: string; values: [strin
       {isOpen && (
         <div>
           {feature.values.map((val, i) => (
-            <div key={i} className="grid grid-cols-2 items-start border-weak-stroke border-b py-2.5 text-sm text-tertiary-foreground">
+            <div key={i} className="grid grid-cols-2 items-start border-weak-stroke border-b py-2.5 text-sm text-muted-foreground">
               <span className="text-accent-foreground">{planNames[i]}</span>
               {renderValue(val)}
             </div>
@@ -76,7 +76,7 @@ export default function PricingCompareSection() {
       <div className="mt-10 flex flex-col gap-y-10">
         {featureCategories.map((category) => (
           <div key={category.name}>
-            <h3 className="border-subtle-stroke border-b py-4 text-lg text-muted-foreground">{category.name}</h3>
+            <h3 className="border-border border-b py-4 text-lg text-muted-foreground">{category.name}</h3>
             {category.features.map((feature) => (
               <MobileFeatureRow key={feature.name} feature={feature} />
             ))}

@@ -22,6 +22,9 @@ import {
   type AppColorName,
 } from '@oxyhq/bloom/theme'
 import { isFairCoinHost } from '../lib/host'
+// The same two names the build-time stylesheet is generated from, so a page
+// cannot boot on one palette and hydrate into another.
+import { FAIRCOIN_PRESET, SITE_PRESET } from './brands'
 
 export { APP_COLOR_PRESETS, APP_COLOR_NAMES, hexToAppColorName }
 export type { AppColorName }
@@ -31,7 +34,7 @@ export type ThemeMode = 'light' | 'dark'
 const STORAGE_KEY_MODE = 'theme'
 const STORAGE_KEY_PRESET = 'colorPreset'
 
-export const DEFAULT_PRESET: AppColorName = 'oxy'
+export const DEFAULT_PRESET: AppColorName = SITE_PRESET
 export const DEFAULT_MODE: ThemeMode = 'dark'
 
 /* ── Getters ── */
@@ -42,7 +45,7 @@ export function getSavedMode(): ThemeMode {
 }
 
 export function getSavedPreset(): AppColorName {
-  if (isFairCoinHost()) return 'faircoin'
+  if (isFairCoinHost()) return FAIRCOIN_PRESET
   const saved = localStorage.getItem(STORAGE_KEY_PRESET) as AppColorName | null
   if (saved && APP_COLOR_PRESETS[saved]) return saved
   return DEFAULT_PRESET

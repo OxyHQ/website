@@ -113,13 +113,13 @@ export default function OxyOSContent() {
   return (
     <div className="cursor-theme oxyos-theme">
       {/* ── 1. Hero ── */}
-      <section className="page-hero section bg-theme-bg text-theme-text">
+      <section className="page-hero section bg-background text-foreground">
         <div className="container">
           <div className="text-center mx-auto mb-v2.5 max-w-prose-medium-wide">
             <h1 className="type-xl sm:type-2xl text-balance mb-v1">
               A minimal Linux distro, built to stay out of your way.
             </h1>
-            <p className="type-base text-theme-text-sec text-pretty mb-v1">
+            <p className="type-base text-muted-foreground text-pretty mb-v1">
               OxyOS is a lightweight desktop Linux project. Still small, still fast.
             </p>
             <div className="flex justify-center gap-x-g1 items-center">
@@ -135,7 +135,7 @@ export default function OxyOSContent() {
               </div>
             </div>
           </div>
-          <div className="media-border-container relative aspect-[16/10] bg-theme-card overflow-hidden">
+          <div className="media-border-container relative aspect-[16/10] bg-card overflow-hidden">
             <img
               alt="OxyOS desktop screenshot"
               src="/images/oxyos/os-desktop.jpg"
@@ -150,7 +150,7 @@ export default function OxyOSContent() {
       </section>
 
       {/* ── 2. Logo Garden ── */}
-      <section className="section bg-theme-bg text-theme-text pb-v1.5 pt-0" id="logo-garden">
+      <section className="section bg-background text-foreground pb-v1.5 pt-0" id="logo-garden">
         <div className="stack container text-center">
           <h2 className="type-sm mb-v1">
             Built on battle-tested open source foundations
@@ -158,8 +158,8 @@ export default function OxyOSContent() {
           <div className="logo-garden-responsive-8">
             {logoPartners.map((name) => (
               <div key={name} className="relative flex items-center justify-center">
-                <div className="bg-theme-card-hex card-border px-g0.75 flex h-[4rem] w-full items-center justify-center rounded-xs sm:h-[4.5rem] md:h-[6.25rem]">
-                  <span className="text-theme-text-sec text-sm">{name}</span>
+                <div className="bg-surface card-border px-g0.75 flex h-[4rem] w-full items-center justify-center rounded-xs sm:h-[4.5rem] md:h-[6.25rem]">
+                  <span className="text-muted-foreground text-sm">{name}</span>
                 </div>
               </div>
             ))}
@@ -170,7 +170,7 @@ export default function OxyOSContent() {
       {/* ── 3. Feature Cards (large, alternating layout) ── */}
       <section className="section section--flush-x">
         {featureCards.map((feature, i) => (
-          <section key={feature.title} className="section bg-theme-bg text-theme-text section--flush-y">
+          <section key={feature.title} className="section bg-background text-foreground section--flush-y">
             <div className={i < featureCards.length - 1 ? 'container mb-v4' : 'container'}>
               <div className="grid grid-rows-[auto_1fr]">
                 <a
@@ -189,7 +189,7 @@ export default function OxyOSContent() {
                     <div className={`w-full max-w-prose ${feature.layout === 'right' ? 'lg:justify-self-end' : 'lg:justify-self-start'}`}>
                       <div className="type-base">
                         <h3 className="type-base md:type-md text-pretty">{feature.title}</h3>
-                        <div className="type-base md:type-md text-theme-text-sec text-pretty">
+                        <div className="type-base md:type-md text-muted-foreground text-pretty">
                           {feature.description}
                         </div>
                       </div>
@@ -223,7 +223,7 @@ export default function OxyOSContent() {
                         : 'lg:col-start-9 lg:col-end-25'
                     }`}
                   >
-                    <div className="media-border-container relative aspect-[4/3] bg-theme-card overflow-hidden">
+                    <div className="media-border-container relative aspect-[4/3] bg-card overflow-hidden">
                       {feature.image && (
                         <img
                           alt={feature.imageAlt}
@@ -246,7 +246,7 @@ export default function OxyOSContent() {
 
       {/* ── 4. "The new way to run Linux" + Testimonials ── */}
       {FEATURES.SHOW_TESTIMONIALS && testimonials.length > 0 && (
-        <section className="section bg-theme-bg text-theme-text overflow-hidden">
+        <section className="section bg-background text-foreground overflow-hidden">
           <div className="container">
             <div className="text-center mx-auto mb-v2.5 max-w-prose-medium-wide">
               <h2 className="type-lg text-balance mx-auto">Lightweight Linux, done right.</h2>
@@ -267,7 +267,7 @@ export default function OxyOSContent() {
                         <figcaption>
                           <div className="type-sm">
                             {t.author}{' '}
-                            <span className="type-sm text-theme-text-sec block">{t.role}</span>
+                            <span className="type-sm text-muted-foreground block">{t.role}</span>
                           </div>
                         </figcaption>
                       </div>
@@ -281,7 +281,7 @@ export default function OxyOSContent() {
       )}
 
       {/* ── 5. What's New (feature grid cards) ── */}
-      <section className="section bg-theme-bg text-theme-text">
+      <section className="section bg-background text-foreground">
         <div className="container my-v2">
           <div className="text-left mb-v1 max-w-prose-narrow">
             <h2 className="type-md-lg text-balance">What&rsquo;s new in OxyOS 1.0</h2>
@@ -293,7 +293,7 @@ export default function OxyOSContent() {
                   <div className="type-base max-w-prose flex grow flex-col">
                     <div>
                       <h3>{f.title}</h3>
-                      <div className="text-theme-text-sec text-pretty">{f.description}</div>
+                      <div className="text-muted-foreground text-pretty">{f.description}</div>
                     </div>
                     {f.link && (
                       <div className="mt-auto pt-v8/12">
@@ -311,13 +311,13 @@ export default function OxyOSContent() {
       </section>
 
       {/* ── 6. Screenshots ── */}
-      <section className="section bg-theme-bg text-theme-text">
+      <section className="section bg-background text-foreground">
         <div className="container">
           <div className="gap-g1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
             {screenshots.map((src, i) => (
               <div key={src} className="flex flex-col">
                 <div className="card stack pb-g2 grow-1">
-                  <div className="media-border-container relative bg-theme-card overflow-hidden">
+                  <div className="media-border-container relative bg-card overflow-hidden">
                     <img alt={`OxyOS screenshot ${i + 1}`} src={src} className="w-full h-auto" width={1920} height={1080} loading="lazy" decoding="async" />
                   </div>
                 </div>
@@ -328,7 +328,7 @@ export default function OxyOSContent() {
       </section>
 
       {/* ── 7. Supported Hardware (large card) ── */}
-      <section className="section bg-theme-bg text-theme-text" id="hardware">
+      <section className="section bg-background text-foreground" id="hardware">
         <div className="container mb-v4">
           <div className="grid grid-rows-[auto_1fr]">
             <div className="card card--large grid-cursor col-span-full row-span-full gap-y-0 max-lg:grid-rows-subgrid">
@@ -351,7 +351,7 @@ export default function OxyOSContent() {
             <div className="grid-cursor p-g1.75 col-span-full row-span-full gap-y-0 max-lg:grid-rows-subgrid pointer-events-none">
               <div className="col-span-full row-start-1 row-end-2 grid lg:row-start-1 lg:row-end-2 lg:items-center lg:col-start-1 lg:col-end-9 lg:pl-g0.25 lg:pr-g3" />
               <div className="max-lg:pt-v1 col-span-full row-start-2 row-end-3 grid cursor-default items-end lg:row-start-2 lg:row-end-3 lg:items-center lg:col-start-9 lg:col-end-25">
-                <div className="media-border-container relative aspect-video bg-theme-card overflow-hidden">
+                <div className="media-border-container relative aspect-video bg-card overflow-hidden">
                   <img
                     alt="OxyOS running on desktop hardware"
                     src="/images/oxyos/os-desktop.jpg"
@@ -369,7 +369,7 @@ export default function OxyOSContent() {
       </section>
 
       {/* ── 8. Hardware Specs (3-col grid) ── */}
-      <section className="section bg-theme-card-hex text-theme-text">
+      <section className="section bg-surface text-foreground">
         <div className="container">
           <div className="grid gap-g1 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 items-stretch">
             {hardwareCards.map((card) => (
@@ -378,9 +378,9 @@ export default function OxyOSContent() {
                   <div className="type-base max-w-prose flex grow flex-col">
                     <div>
                       <h3>{card.title}</h3>
-                      <div className="text-theme-text-sec text-pretty">{card.description}</div>
+                      <div className="text-muted-foreground text-pretty">{card.description}</div>
                     </div>
-                    <ul className="mt-v8/12 space-y-1 text-theme-text-sec">
+                    <ul className="mt-v8/12 space-y-1 text-muted-foreground">
                       {card.specs.map((spec) => (
                         <li key={spec} className="type-sm">{spec}</li>
                       ))}
@@ -401,12 +401,12 @@ export default function OxyOSContent() {
       </section>
 
       {/* ── 9. FAQ ── */}
-      <section className="section bg-theme-bg text-theme-text">
+      <section className="section bg-background text-foreground">
         <div className="container">
           <div className="grid-cursor gap-0">
             <div className="col-span-full md:col-start-1 md:col-end-7 lg:col-start-1 lg:col-end-9 xl:col-start-1 xl:col-end-7">
               <h2 className="type-md-lg text-balance mb-v1">Frequently asked questions</h2>
-              <p className="type-base text-theme-text-sec mb-v1 lg:mb-0">
+              <p className="type-base text-muted-foreground mb-v1 lg:mb-0">
                 Can&apos;t find the answer you&apos;re looking for? Reach out on our{' '}
                 <Button variant="ghost" href="https://github.com/OxyHQ/OxyOS/issues">
                   GitHub issues
@@ -417,11 +417,11 @@ export default function OxyOSContent() {
               {faqItems.map((item) => (
                 <div key={item.question} className="mb-g1">
                   <div className="card card--text">
-                    <div className="type-base text-theme-text mb-v8/12">{item.question}</div>
-                    <div className="type-base text-theme-text-sec">
+                    <div className="type-base text-foreground mb-v8/12">{item.question}</div>
+                    <div className="type-base text-muted-foreground">
                       {item.answer}
                       {item.code && (
-                        <code className="mx-1 rounded bg-theme-card px-1.5 py-0.5 text-sm text-theme-text">
+                        <code className="mx-1 rounded bg-card px-1.5 py-0.5 text-sm text-foreground">
                           {item.code}
                         </code>
                       )}
@@ -444,11 +444,11 @@ export default function OxyOSContent() {
       </section>
 
       {/* ── 10. Recent Highlights ── */}
-      <section className="section bg-theme-card-hex text-theme-text">
+      <section className="section bg-surface text-foreground">
         <div className="container">
           <div className="grid-cursor gap-0">
             <div className="col-span-full md:col-start-1 md:col-end-7 lg:col-start-1 lg:col-end-9 xl:col-start-1 xl:col-end-7">
-              <h2 className="type-base text-theme-text mb-v1 sticky top-0 lg:mb-0">Recent highlights</h2>
+              <h2 className="type-base text-foreground mb-v1 sticky top-0 lg:mb-0">Recent highlights</h2>
             </div>
             <div className="col-span-full md:col-start-7 md:col-end-25 lg:col-start-9 lg:col-end-25 xl:col-start-7 xl:col-end-19">
               {highlights.map((h, i) => (
@@ -456,10 +456,10 @@ export default function OxyOSContent() {
                   <a className="card card--text grow-1" href={h.href}>
                     <div className="flex flex-col">
                       <div className="grow-1">
-                        <p className="type-base text-theme-text text-pretty">{h.title}</p>
-                        <p className="type-base text-theme-text-sec text-pretty">{h.description}</p>
+                        <p className="type-base text-foreground text-pretty">{h.title}</p>
+                        <p className="type-base text-muted-foreground text-pretty">{h.description}</p>
                       </div>
-                      <div className="mt-v1 text-theme-text-sec flex shrink-0 items-center">
+                      <div className="mt-v1 text-muted-foreground flex shrink-0 items-center">
                         <span className="capitalize">{h.category}&nbsp;&middot;&nbsp;</span>
                         <time className="type-base">{h.date}</time>
                       </div>
@@ -478,7 +478,7 @@ export default function OxyOSContent() {
       </section>
 
       {/* ── 11. CTA ── */}
-      <section className="section bg-theme-bg text-theme-text section--headline">
+      <section className="section bg-background text-foreground section--headline">
         <div className="container">
           <div className="text-center mx-auto max-w-prose-medium-wide">
             <h2 className="type-xl sm:type-2xl text-balance mx-auto mb-v1">

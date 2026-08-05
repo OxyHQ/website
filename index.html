@@ -21,6 +21,9 @@
       (function () {
         var host = location.hostname;
         if (host !== 'fairco.in' && host !== 'www.fairco.in') return;
+        // Selects the FairCoin palette out of styles/theme.generated.css. Without
+        // it the apex paints Oxy purple until React applies the preset.
+        document.documentElement.setAttribute('data-brand', 'faircoin');
         var overrides = [
           ['site-favicon', 'href', '/favicon-faircoin.png'],
           ['site-favicon', 'type', 'image/png'],
