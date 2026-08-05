@@ -1,29 +1,45 @@
 import { useState } from 'react'
 import { useAuth } from '@oxyhq/services'
 import * as Skeleton from '@oxyhq/bloom/skeleton'
-import { ExternalLink } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import FeatureCard from '../components/features/FeatureCard'
 import FeatureFilters from '../components/features/FeatureFilters'
-import { useFeatureRequests, useToggleFeatureVote, type FeatureRequestData } from '../api/hooks'
+import ProposeFeatureDialog from '../components/features/ProposeFeatureDialog'
+import { useFeatureApps, useFeatureRequests, useToggleFeatureVote, type FeatureRequestData } from '../api/hooks'
 
 export default function FeatureBoardPage() {
   const [status, setStatus] = useState('')
-  const [category, setCategory] = useState('')
+  const [app, setApp] = useState('')
   const [sort, setSort] = useState('votes')
   const [page, setPage] = useState(1)
+  const [proposeOpen, setProposeOpen] = useState(false)
+  const { isAuthenticated, signIn } = useAuth()
 
   const { data, isPending, isError } = useFeatureRequests({
     status: status || undefined,
-    category: category || undefined,
+    app: app || undefined,
     sort,
     page,
   })
+  const { data: appsData } = useFeatureApps()
 
   const features = data?.items ?? []
   const totalPages = data?.pages ?? 1
+  const apps = appsData?.apps ?? []
+  const canPropose = apps.some((option) => option.acceptsProposals)
+
+  // Signing in is what a visitor needs first; the form is no use without an
+  // account, since the proposal is attributed to it on GitHub.
+  function handleProposeClick() {
+    if (!isAuthenticated) {
+      signIn()
+      return
+    }
+    setProposeOpen(true)
+  }
 
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
@@ -61,15 +77,15 @@ export default function FeatureBoardPage() {
                     <p className="mt-4 max-w-xl text-balance text-center text-lg text-muted-foreground lg:text-xl">
                       Vote on features from across the Oxy ecosystem. Proposals are tracked on GitHub.
                     </p>
-                    <a
-                      href="https://github.com/OxyHQ"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      Suggest a Feature on GitHub
-                    </a>
+                    {canPropose && (
+                      <button
+                        onClick={handleProposeClick}
+                        className="mt-6 inline-flex cursor-pointer items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Propose a feature
+                      </button>
+                    )}
                   </header>
                 </div>
               </div>
@@ -86,10 +102,11 @@ export default function FeatureBoardPage() {
           <div className="mb-6">
             <FeatureFilters
               status={status}
-              category={category}
+              app={app}
               sort={sort}
+              apps={apps}
               onChangeStatus={(v) => { setStatus(v); setPage(1) }}
-              onChangeCategory={(v) => { setCategory(v); setPage(1) }}
+              onChangeApp={(v) => { setApp(v); setPage(1) }}
               onChangeSort={(v) => { setSort(v); setPage(1) }}
             />
           </div>
@@ -123,7 +140,9 @@ export default function FeatureBoardPage() {
             {!isPending && !isError && features.length === 0 && (
               <div className="py-20 text-center text-muted-foreground">
                 <p className="text-lg">No feature requests yet.</p>
-                <p className="mt-2 text-sm">Be the first to suggest a feature on GitHub.</p>
+                <p className="mt-2 text-sm">
+                  {canPropose ? 'Be the first to propose one.' : 'Check back soon.'}
+                </p>
               </div>
             )}
 
@@ -155,6 +174,15 @@ export default function FeatureBoardPage() {
           )}
         </div>
       </main>
+
+      {appsData && (
+        <ProposeFeatureDialog
+          open={proposeOpen}
+          onClose={() => setProposeOpen(false)}
+          apps={apps}
+          limits={appsData.limits}
+        />
+      )}
 
       <Footer />
     </div>

@@ -1,5 +1,6 @@
 import { ChevronUp, MessageSquare, ExternalLink } from 'lucide-react'
 import FeatureStatusBadge from './FeatureStatusBadge'
+import FeaturePriorityBadge from './FeaturePriorityBadge'
 import type { FeatureRequestData } from '../../api/hooks'
 
 interface FeatureCardProps {
@@ -46,6 +47,7 @@ export default function FeatureCard({ feature, onVote }: FeatureCardProps) {
             <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
           </a>
           <FeatureStatusBadge status={feature.status} />
+          <FeaturePriorityBadge priority={feature.priority} />
         </div>
 
         {descriptionPreview && (
@@ -54,14 +56,11 @@ export default function FeatureCard({ feature, onVote }: FeatureCardProps) {
 
         <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
           <span className="inline-flex items-center rounded-full border border-border bg-surface px-2 py-0.5 font-medium">
-            {feature.category}
+            {feature.app.displayName}
           </span>
           <span className="inline-flex items-center gap-1">
             <MessageSquare className="h-3.5 w-3.5" />
             {feature.commentCount}
-          </span>
-          <span className="rounded-full bg-surface px-2 py-0.5">
-            {feature.repoName}
           </span>
           <span>
             <img src={feature.authorAvatar} alt="" className="mr-1 inline h-4 w-4 rounded-full" />

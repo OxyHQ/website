@@ -34,6 +34,19 @@ const trackedRepoBodySchema = z.object({
     color: z.string(),
   })).optional(),
   active: z.boolean().optional(),
+  featureBoard: z.boolean().optional(),
+  acceptsProposals: z.boolean().optional(),
+}).passthrough()
+
+const trackedRepoUpdateSchema = z.object({
+  displayName: z.string().min(1).optional(),
+  defaultTags: z.array(z.object({
+    label: z.string(),
+    color: z.string(),
+  })).optional(),
+  active: z.boolean().optional(),
+  featureBoard: z.boolean().optional(),
+  acceptsProposals: z.boolean().optional(),
 }).passthrough()
 
 // GET /  — filtered + paginated changelog entries
@@ -119,15 +132,45 @@ router.get('/repos', async (_req, res) => {
 
 // POST /repos  — add tracked repo (admin)
 router.post('/repos', requireAuth, adminOnly, async (req, res) => {
-  const { owner, repo, displayName, defaultTags, active } = validate(trackedRepoBodySchema, req.body)
+  const { owner, repo, displayName, defaultTags, active, featureBoard, acceptsProposals } =
+    validate(trackedRepoBodySchema, req.body)
   const tracked = await TrackedRepo.create({
     owner,
     repo,
     displayName: displayName || `${owner}/${repo}`,
     defaultTags: defaultTags || [],
     active: active !== false,
+    // Opt in explicitly. A repo added to sync releases does not join the public
+    // feature board, or start taking public issues, unless it is asked to.
+    featureBoard: featureBoard === true,
+    acceptsProposals: acceptsProposals === true,
   })
   res.status(201).json(tracked)
+})
+
+// PUT /repos/:id  — update a tracked repo (admin)
+router.put('/repos/:id', requireAuth, adminOnly, async (req, res) => {
+  const { id } = validate(idParamsSchema, req.params)
+  const body = validate(trackedRepoUpdateSchema, req.body)
+
+  // Explicit field list: `owner` and `repo` identify the row and are not
+  // editable here, and nothing else from the request body is allowed near the
+  // update.
+  const update: Record<string, unknown> = {}
+  if (body.displayName !== undefined) update.displayName = body.displayName
+  if (body.defaultTags !== undefined) update.defaultTags = body.defaultTags
+  if (body.active !== undefined) update.active = body.active
+  if (body.featureBoard !== undefined) update.featureBoard = body.featureBoard
+  if (body.acceptsProposals !== undefined) update.acceptsProposals = body.acceptsProposals
+
+  // A repo can only take proposals if it is on the board at all, so turning the
+  // board off turns proposals off with it rather than leaving a row that would
+  // accept an issue for an app nobody can see.
+  if (update.featureBoard === false) update.acceptsProposals = false
+
+  const tracked = await TrackedRepo.findByIdAndUpdate(id, update, { new: true })
+  if (!tracked) return res.status(404).json({ error: 'Tracked repo not found' })
+  res.json(tracked)
 })
 
 // DELETE /repos/:id  — remove tracked repo (admin)

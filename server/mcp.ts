@@ -575,12 +575,14 @@ server.tool('list_tracked_repos', 'List GitHub repos tracked for automatic chang
   } catch (e) { return err(e) }
 })
 
-server.tool('add_tracked_repo', 'Add a GitHub repo to track. New releases will be automatically synced as changelog entries.', {
+server.tool('add_tracked_repo', 'Add a GitHub repo to track. New releases will be automatically synced as changelog entries, and the repo can additionally be put on the public feature board.', {
   owner: z.string().describe('GitHub repo owner, e.g. "OxyHQ"'),
   repo: z.string().describe('GitHub repo name, e.g. "Oxy"'),
-  displayName: z.string().optional().describe('Display name shown in the changelog. Defaults to "owner/repo".'),
+  displayName: z.string().optional().describe('Display name shown in the changelog and as the app name on the feature board. Defaults to "owner/repo".'),
   defaultTags: z.array(z.object({ label: z.string(), color: z.string() })).optional().describe('Default tags applied to synced entries'),
-  active: z.boolean().optional().describe('Whether sync is active. Defaults to true.'),
+  active: z.boolean().optional().describe('Whether changelog release sync is active. Defaults to true.'),
+  featureBoard: z.boolean().optional().describe('List this repo\'s feature-request issues on the public feature board. Defaults to false.'),
+  acceptsProposals: z.boolean().optional().describe('Let signed-in visitors open a feature-request issue here from the website. Requires featureBoard. Defaults to false.'),
 }, async (params) => {
   try {
     const tracked = await TrackedRepo.create({
@@ -588,7 +590,30 @@ server.tool('add_tracked_repo', 'Add a GitHub repo to track. New releases will b
       displayName: params.displayName || `${params.owner}/${params.repo}`,
       defaultTags: params.defaultTags || [],
       active: params.active !== false,
+      featureBoard: params.featureBoard === true,
+      acceptsProposals: params.acceptsProposals === true,
     })
+    return ok(tracked)
+  } catch (e) { return err(e) }
+})
+
+server.tool('update_tracked_repo', 'Update a tracked GitHub repo: its display name, its changelog sync switch, and whether it appears on the feature board or accepts proposals from the website.', {
+  id: z.string().describe('The _id of the tracked repo'),
+  displayName: z.string().optional(),
+  active: z.boolean().optional().describe('Whether changelog release sync is active'),
+  featureBoard: z.boolean().optional().describe('List this repo on the public feature board'),
+  acceptsProposals: z.boolean().optional().describe('Accept feature proposals submitted from the website'),
+}, async ({ id, ...fields }) => {
+  try {
+    const update: Record<string, unknown> = {}
+    if (fields.displayName !== undefined) update.displayName = fields.displayName
+    if (fields.active !== undefined) update.active = fields.active
+    if (fields.featureBoard !== undefined) update.featureBoard = fields.featureBoard
+    if (fields.acceptsProposals !== undefined) update.acceptsProposals = fields.acceptsProposals
+    if (update.featureBoard === false) update.acceptsProposals = false
+
+    const tracked = await TrackedRepo.findByIdAndUpdate(id, update, { new: true })
+    if (!tracked) return err('Tracked repo not found')
     return ok(tracked)
   } catch (e) { return err(e) }
 })

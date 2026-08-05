@@ -54,6 +54,40 @@ radii and shadows, so reach for those before inventing a name.
   `**/*.js` in Playwright rather than disabling JavaScript, or `page.evaluate`
   reads an empty document and every route "passes".
 
+## Feature board
+
+`TrackedRepo` is the single source for which repos the site knows about, and one
+row drives two unrelated surfaces, so each has its own switch. Never conflate
+them:
+
+- `active` gates the changelog release sync only. It predates the board.
+- `featureBoard` gates /features: which issues are listed, where votes may be
+  cast, and which priority labels are reconciled. **It is also the owner
+  allow-list**, which is why the board spans OxyHQ and FairCoinOfficial with no
+  org constant anywhere. Adding an org is a row, never a code change.
+- `acceptsProposals` additionally lets a signed-in visitor open an issue there.
+
+Seed the real repos with `bun run seed:feature-board` (idempotent, safe on
+production, only ever turns the two board switches on) and manage them
+afterwards under /admin/repos.
+
+- **A GitHub token env var must not be named `GITHUB_*`.** GitHub reserves that
+  prefix for Actions secrets, so such a name can never be provisioned through
+  the repo-secret to SSM sync in `deploy-aws.yml`. The board's write credential
+  is `FEATURE_BOARD_GITHUB_TOKEN` for exactly this reason. (The existing
+  read-only `GITHUB_TOKEN` hits the same wall: the sync explicitly skips it, so
+  the changelog sync runs anonymous in production.)
+- **Priority labels are reconciled on a schedule with hysteresis, never per
+  vote.** A label write is a permanent timeline event on someone's issue. Tiers
+  carry `enterAt`/`exitAt` and the gap between them is what stops an issue on a
+  boundary relabelling itself all day. The reconcile re-reads the issue's labels
+  immediately before writing, and writes nothing when they already match.
+- **Validate deploy-time configuration before `app.listen()`, not inside
+  `connectWithRetry`.** Anything thrown in that loop is caught and reported as
+  "MongoDB unavailable", the migrations re-run, and `startSyncInterval` stacks
+  another interval on every retry. `getPriorityTiers()` is called at boot for
+  this reason.
+
 ## Rules
 
 - **MCP auth token**: passed as a request header ONLY — never as a query string parameter.
