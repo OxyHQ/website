@@ -6,10 +6,8 @@ export default function CareerDetailPage() {
   return (
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <Navbar />
-      <main className="container">
-        <div>
-          <CareerDetailContent />
-        </div>
+      <main className="pt-[var(--site-header-height)]">
+        <CareerDetailContent />
       </main>
       <Footer />
     </div>

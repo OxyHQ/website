@@ -1,23 +1,21 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import * as Skeleton from '@oxyhq/bloom/skeleton'
 import Button from '../ui/Button'
-import { HorizontalLine, VerticalLine } from '../ui/GridDecoration'
-import { useJob, useJobs, type Job } from '../../api/hooks'
+import { useJob } from '../../api/hooks'
 import { type DescriptionBlock } from '../../data/careers'
-import { FEATURES } from '../../constants'
 import SEO from '../SEO'
 import StructuredData from '../StructuredData'
-import { ArrowRightIcon } from '../icons'
 
-const DashedLineH = () => <HorizontalLine className="w-full text-border" dashed />
-const SolidLineH = () => <HorizontalLine className="w-full text-border" />
-const DashedLineV = ({ className = '' }: { className?: string }) => (
-  <VerticalLine dashed className={`text-border ${className}`} />
-)
-const SolidLineV = ({ className = '' }: { className?: string }) => (
-  <VerticalLine className={`text-border ${className}`} />
-)
+/* ──────────────────────────────────────────────
+ * /company/careers/:slug
+ *
+ * Two columns: the role's identity pinned on the left while the description
+ * scrolls on the right, with the same apply pair repeated at the end of the
+ * text so it is never more than a screen away.
+ * ──────────────────────────────────────────── */
+
+const APPLY_EMAIL = 'careers@oxy.so'
 
 function DescriptionContent({ blocks }: { blocks: DescriptionBlock[] }) {
   return (
@@ -32,232 +30,86 @@ function DescriptionContent({ blocks }: { blocks: DescriptionBlock[] }) {
         }
         if (block.type === 'heading') {
           return (
-            <h3 key={i} className="relative not-first:mt-7 not-last:mb-3 font-semibold text-lg text-muted-foreground">
-              <strong className="font-semibold">{block.text}</strong>
+            <h3 key={i} className="relative not-first:mt-7 not-last:mb-3 font-medium text-lg">
+              {block.text}
             </h3>
           )
         }
-        if (block.type === 'list') {
-          return (
-            <ul key={i} className="not-first:mt-1.5 list-[square] pl-3.5 marker:text-muted-foreground">
-              {block.items.map((item, j) => (
-                <li key={j} className="pt-1 pl-1.5 first:pt-1.5 [&:not(:has(ul,li))]:pb-1.5">
-                  <p className="not-first:mt-[13px] text-pretty text-muted-foreground leading-[26px]">{item}</p>
-                </li>
-              ))}
-            </ul>
-          )
-        }
-        return null
+        return (
+          <ul key={i} className="not-first:mt-1.5 list-[square] pl-3.5 marker:text-muted-foreground">
+            {block.items.map((item, j) => (
+              <li key={j} className="pt-1 pl-1.5 first:pt-1.5 [&:not(:has(ul,li))]:pb-1.5">
+                <p className="text-pretty text-muted-foreground leading-[26px]">{item}</p>
+              </li>
+            ))}
+          </ul>
+        )
       })}
     </>
   )
 }
 
-const inputClasses =
-  'block w-full rounded-[10px] bg-background p-[10px_13px] outline-hidden transition-all duration-300 ease-out text-muted-foreground placeholder:text-muted-foreground border border-border hover:border-border hover:shadow-[0px_1px_4px_rgba(56,62,71,0.1)] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-300'
+/** Apply, plus the copy-link button and its confirmation. */
+function ApplyActions({ title }: { title: string }) {
+  const [copied, setCopied] = useState(false)
 
-function ApplicationForm() {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    resume: null as File | null,
-    linkedin: '',
-    coverLetter: '',
-  })
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const copyLink = async () => {
+    await navigator.clipboard.writeText(window.location.href)
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 2000)
   }
 
   return (
-    <form className="space-y-6 py-8" onSubmit={handleSubmit}>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
-            First name <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            required
-            placeholder="First name"
-            className={inputClasses}
-            value={formData.firstName}
-            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
-            Last name <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            required
-            placeholder="Last name"
-            className={inputClasses}
-            value={formData.lastName}
-            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
-          Email <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="email"
-          required
-          placeholder="you@example.com"
-          className={inputClasses}
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-        />
-      </div>
-
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
-          Phone <span className="text-muted-foreground text-xs">(optional)</span>
-        </label>
-        <input
-          type="tel"
-          placeholder="+1 (555) 000-0000"
-          className={inputClasses}
-          value={formData.phone}
-          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-        />
-      </div>
-
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
-          Resume <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="file"
-          required
-          accept=".pdf,.doc,.docx"
-          className={`${inputClasses} file:mr-3 file:rounded-lg file:border-0 file:bg-surface file:px-3 file:py-1 file:text-sm file:font-medium file:text-muted-foreground cursor-pointer`}
-          onChange={(e) => setFormData({ ...formData, resume: e.target.files?.[0] ?? null })}
-        />
-      </div>
-
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
-          LinkedIn URL <span className="text-muted-foreground text-xs">(optional)</span>
-        </label>
-        <input
-          type="url"
-          placeholder="https://linkedin.com/in/yourprofile"
-          className={inputClasses}
-          value={formData.linkedin}
-          onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
-        />
-      </div>
-
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
-          Cover letter <span className="text-muted-foreground text-xs">(optional)</span>
-        </label>
-        <textarea
-          rows={5}
-          placeholder="Tell us why you'd be a great fit..."
-          className={`${inputClasses} resize-y`}
-          value={formData.coverLetter}
-          onChange={(e) => setFormData({ ...formData, coverLetter: e.target.value })}
-        />
-      </div>
-
-      <Button type="submit" variant="primary" size="md">
-        Submit application
+    <div className="flex gap-2">
+      <Button
+        variant="primary"
+        size="md"
+        href={`mailto:${APPLY_EMAIL}?subject=${encodeURIComponent(`Application: ${title}`)}`}
+      >
+        Apply now
       </Button>
-    </form>
-  )
-}
-
-function NotFoundView({ relatedJobs }: { relatedJobs: Job[] }) {
-  return (
-    <article>
-      <div className="grid grid-cols-12 py-20">
-        <div className="col-span-full">
-          <h1 className="text-heading-responsive-lg">Position not found.</h1>
-          <p className="pt-6 text-muted-foreground text-xl">
-            This job posting doesn&apos;t exist or may have been removed.
-          </p>
-          <p className="pt-8">
-            <Link
-              to="/company/careers"
-              className="underline decoration-2 decoration-border underline-offset-2 transition-all duration-700 hover:brightness-75 hover:duration-300 active:brightness-50 active:duration-0 text-muted-foreground"
-            >
-              View all open positions
-            </Link>
-          </p>
+      <div className="relative">
+        <button
+          type="button"
+          onClick={copyLink}
+          aria-label="Copy link to this role"
+          className="inline-flex size-12 items-center justify-center rounded-sm bg-surface text-foreground transition-colors duration-200 hover:bg-border"
+        >
+          <svg viewBox="0 0 20 20" fill="none" className="size-5 shrink-0">
+            <path
+              d="m9 6 2.5-2.5a3.536 3.536 0 0 1 5 5L14 11M6 9l-2.5 2.5a3.536 3.536 0 1 0 5 5L11 14"
+              stroke="currentColor"
+              strokeLinecap="square"
+              strokeLinejoin="round"
+            />
+            <path d="m8 12 4-4" stroke="currentColor" />
+          </svg>
+        </button>
+        <div
+          className={`absolute left-full top-3 ml-2 w-28 transition-all duration-150 ${
+            copied ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0'
+          }`}
+        >
+          <div className="flex items-center gap-1 whitespace-nowrap rounded-sm bg-foreground px-2 py-1 text-background text-sm">
+            <svg viewBox="0 0 20 20" fill="none" className="size-4 shrink-0">
+              <path d="M18 4 7 16l-5-5" stroke="currentColor" />
+            </svg>
+            Copied link
+          </div>
         </div>
       </div>
-      <RelatedRoles jobs={relatedJobs} />
-    </article>
-  )
-}
-
-interface RelatedRolesProps {
-  jobs: Job[]
-}
-
-function RelatedRoles({ jobs }: RelatedRolesProps) {
-  if (jobs.length === 0) return null
-  return (
-    <aside className="relative grid grid-cols-12 border-border border-t pt-16 pb-24">
-      <DashedLineV className="absolute col-[-2] max-lg:hidden" />
-      <div className="col-span-full mb-8 flex items-baseline justify-between gap-4">
-        <h2 className="text-balance font-semibold text-heading-sm text-foreground">Other open roles.</h2>
-        <Link
-          to="/company/careers"
-          className="text-sm text-muted-foreground underline decoration-2 decoration-border underline-offset-2 transition-colors hover:text-foreground"
-        >
-          View all
-        </Link>
-      </div>
-      <ul className="col-span-full grid gap-3 md:grid-cols-2">
-        {jobs.map((j) => (
-          <li key={j.slug}>
-            <Link
-              to={`/company/careers/${j.slug}`}
-              className="group relative flex flex-col gap-2 overflow-hidden rounded-2xl border border-border p-5 transition-colors duration-300 ease-in-out hover:border-input active:border-input"
-            >
-              <div className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-80 group-active:opacity-100" />
-              <div className="relative flex items-center justify-between gap-3">
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">{j.department}</p>
-                <ArrowRightIcon className="shrink-0 text-muted-foreground transition-[translate,color] duration-300 ease-in-out group-hover:translate-x-0.5 group-hover:text-foreground" />
-              </div>
-              <h3 className="relative text-balance font-semibold text-base text-foreground">{j.title}</h3>
-              <p className="relative text-sm text-muted-foreground">{j.location}</p>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </aside>
+    </div>
   )
 }
 
 export default function CareerDetailContent() {
   const { slug } = useParams<{ slug: string }>()
   const { data: job, isPending } = useJob(slug ?? '')
-  const { data: allJobs } = useJobs()
-
-  const relatedJobs = useMemo(() => {
-    if (!allJobs || !slug) return []
-    const others = allJobs.filter((j) => j.slug !== slug)
-    if (!job) return others.slice(0, 4)
-    const sameDept = others.filter((j) => j.department === job.department)
-    const otherDept = others.filter((j) => j.department !== job.department)
-    return [...sameDept, ...otherDept].slice(0, 4)
-  }, [allJobs, slug, job])
 
   if (isPending) {
     return (
       <div className="container py-40">
-        <div className="mx-auto max-w-2xl space-y-6">
+        <div className="max-w-2xl space-y-6">
           <Skeleton.Box width={192} height={32} />
           <Skeleton.Box width="100%" height={48} />
           <Skeleton.Box width={256} height={24} />
@@ -275,12 +127,20 @@ export default function CareerDetailContent() {
     return (
       <>
         <SEO
-          title="Position Not Found"
+          title="Position not found"
           description="This job posting doesn't exist or may have been removed."
           canonicalPath={`/company/careers/${slug}`}
           noIndex
         />
-        <NotFoundView relatedJobs={relatedJobs} />
+        <div className="container py-40">
+          <h1 className="text-heading-responsive-lg">Position not found.</h1>
+          <p className="pt-6 text-muted-foreground">This role doesn&apos;t exist or has been filled.</p>
+          <p className="pt-8">
+            <Link to="/company/careers#open-positions" className="underline underline-offset-4">
+              View all open positions
+            </Link>
+          </p>
+        </div>
       </>
     )
   }
@@ -288,146 +148,91 @@ export default function CareerDetailContent() {
   const engagement = job.engagement ?? job.type ?? 'Full-time'
 
   return (
-    <article>
+    <section className="mb-12 border-border border-b">
       <SEO
         title={`${job.title}, ${job.department}`}
         description={job.subtitle || `Join Oxy as ${job.title}. ${job.location}. ${engagement}.`}
         canonicalPath={`/company/careers/${slug}`}
       />
-      <StructuredData data={{
-        '@context': 'https://schema.org',
-        '@type': 'JobPosting',
-        title: job.title,
-        description: job.subtitle,
-        datePosted: job.createdAt || new Date().toISOString(),
-        employmentType: engagement === 'Full-time' ? 'FULL_TIME' : engagement === 'Part-time' ? 'PART_TIME' : 'CONTRACTOR',
-        jobLocation: {
-          '@type': 'Place',
-          address: job.location,
-        },
-        hiringOrganization: {
-          '@type': 'Organization',
-          name: 'Oxy',
-          sameAs: 'https://oxy.so',
-          logo: 'https://oxy.so/favicon.svg',
-        },
-      }} />
-      {/* Breadcrumb aside */}
-      <aside className="relative grid h-28 grid-cols-12 items-end pb-5">
-        <DashedLineV className="absolute col-[-2] max-lg:hidden" />
-        <p className="col-2 whitespace-nowrap text-xs uppercase tracking-wider text-muted-foreground">
-          <Link className="transition-colors hover:text-foreground" to="/company/careers">Careers</Link>{' '}
-          / <span className="text-muted-foreground">{job.department}</span>
-        </p>
-        <p className="col-[-2] justify-self-center whitespace-nowrap text-xs uppercase tracking-wider text-muted-foreground max-lg:col-[-3] max-lg:justify-self-end">
-          {job.department}
-        </p>
-      </aside>
+      <StructuredData
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'JobPosting',
+          title: job.title,
+          description: job.subtitle,
+          datePosted: job.createdAt || new Date().toISOString(),
+          employmentType:
+            engagement === 'Full-time' ? 'FULL_TIME' : engagement === 'Part-time' ? 'PART_TIME' : 'CONTRACTOR',
+          jobLocation: { '@type': 'Place', address: job.location },
+          hiringOrganization: {
+            '@type': 'Organization',
+            name: 'Oxy',
+            sameAs: 'https://oxy.so',
+            logo: 'https://oxy.so/favicon.svg',
+          },
+        }}
+      />
 
-      <DashedLineH />
-
-      {/* Header */}
-      <header className="relative grid grid-cols-12 py-15 max-xl:pb-16">
-        <DashedLineV className="absolute col-[-2] max-lg:hidden" />
-        <svg width="100%" height="100%" className="text-surface absolute col-[-2] max-lg:hidden">
-          <defs>
-            <pattern id="_S_1_" width="10" height="10" patternUnits="userSpaceOnUse">
-              <rect x="5.5" y="5.5" width="1" height="1" fill="currentColor" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#_S_1_)" />
-        </svg>
-        <h1 className="col-span-full max-w-[24ch] text-balance pb-7 font-semibold text-heading-responsive-lg">{job.title}</h1>
-        <p className="col-span-full max-w-[48ch] text-balance pb-10 text-xl">{job.subtitle}</p>
-        <div className="col-span-full flex flex-col gap-2 max-lg:pb-5 lg:col-[2/6] xl:col-[2/5] xl:pr-8">
-          <h3 className="text-xs uppercase tracking-wider text-muted-foreground">Location</h3>
-          <p className="text-balance text-sm text-muted-foreground">{job.location}</p>
-        </div>
-        <div className="col-span-full flex flex-col gap-2 lg:col-[6/12] xl:col-[5/12]">
-          <h3 className="text-xs uppercase tracking-wider text-muted-foreground">Compensation</h3>
-          <p className="text-sm text-muted-foreground">{job.compensation}</p>
-        </div>
-      </header>
-
-      {/* Decorative separator */}
-      <svg width="100%" height="1" className="text-border max-xl:hidden">
-        <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-      </svg>
-      <div className="relative grid h-12 grid-cols-12 max-xl:hidden">
-        <DashedLineV className="col-4" />
-        <DashedLineV className="col-[-2]" />
-      </div>
-      <SolidLineH />
-
-      {/* Content area (2-column) */}
-      <div className="relative grid grid-cols-12">
-        {/* Vertical lines */}
-        <SolidLineV className="absolute col-4 max-xl:hidden" />
-        <DashedLineV className="absolute col-[-2] hidden lg:block xl:hidden" />
-
-        {/* Left sticky sidebar (desktop only) */}
-        <aside className="relative col-[1/4] bg-surface py-22 max-xl:hidden">
-          <div className="sticky top-[calc(var(--site-header-height)+48px)] flex flex-col gap-4 px-9">
-            <div className="mb-2">
-              <h2 className="text-balance font-semibold text-lg text-muted-foreground">{job.title}</h2>
-              <p className="mt-1 text-balance text-sm text-muted-foreground">{job.subtitle}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-muted-foreground">Location</h3>
-              <p className="mt-1 text-balance text-sm text-muted-foreground">{job.location}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-muted-foreground">Engagement Type</h3>
-              <p className="mt-1 text-balance text-sm text-muted-foreground">{engagement}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-muted-foreground">Compensation</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{job.compensation}</p>
-            </div>
-            <div className="mt-3">
-              <Button variant="primary" size="md" href="#apply-form">
-                Apply now
-              </Button>
-            </div>
-          </div>
-        </aside>
-
-        {/* Right content area */}
-        <div className="col-[5/-2] max-w-prose pt-22 pb-32 max-xl:col-span-full max-xl:pt-18">
-          <div className="max-w-prose font-normal">
-            {Array.isArray(job.description) ? (
-              <DescriptionContent blocks={job.description} />
-            ) : typeof job.description === 'string' && job.description ? (
-              <p className="whitespace-pre-line text-pretty text-muted-foreground leading-[26px]">
-                {job.description}
-              </p>
-            ) : null}
-          </div>
-
-          {/* Apply */}
-          <div id="apply-form" className="mt-24 w-full max-w-xl" style={{ scrollMarginTop: 'calc(var(--site-header-height) + 48px)' }}>
-            <h2 className="text-heading-sm text-foreground">Apply for this position</h2>
-            <div className="min-h-12 lg:rounded-3xl lg:border lg:border-border lg:px-6 lg:pt-1.5 mt-6">
-              {FEATURES.SHOW_CAREERS_APPLICATION_FORM ? (
-                <ApplicationForm />
-              ) : (
-                <div className="py-8">
-                  <p className="text-muted-foreground">
-                    Send your CV, a short note about why you&rsquo;d like to join Oxy, and any
-                    relevant work (GitHub, portfolio, links) to{' '}
-                    <a className="text-foreground underline" href="mailto:careers@oxy.so">
-                      careers@oxy.so
-                    </a>
-                    . We read every application.
-                  </p>
+      <div className="container">
+        <div className="grid grid-cols-12 md:gap-8">
+          <div className="relative col-span-12 py-8 md:col-span-4">
+            <div className="sticky top-[calc(var(--site-header-height)+2rem)]">
+              <div className="mb-8 md:mb-16">
+                <Link className="flex items-center gap-2" to="/company/careers#open-positions">
+                  <span className="size-2.5 rounded-full bg-current" />
+                  Careers
+                </Link>
+              </div>
+              <div className="inline-block rounded-sm bg-surface px-1.5 py-0.5 text-sm">{engagement}</div>
+              <h1 className="mb-10 mt-2 max-w-[450px] text-heading-responsive-md">{job.title}</h1>
+              <div className="flex flex-col gap-8">
+                <div className="flex flex-col gap-8 sm:flex-row sm:gap-16 md:flex-col md:gap-8">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-muted-foreground text-xs uppercase tracking-wider">Location</p>
+                    <p>{job.location}</p>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-muted-foreground text-xs uppercase tracking-wider">Department</p>
+                    <p>{job.department}</p>
+                  </div>
+                  {job.compensation && (
+                    <div className="flex flex-col gap-1">
+                      <p className="text-muted-foreground text-xs uppercase tracking-wider">Compensation</p>
+                      <p>{job.compensation}</p>
+                    </div>
+                  )}
                 </div>
-              )}
+                <ApplyActions title={job.title} />
+              </div>
+            </div>
+          </div>
+
+          <div className="col-span-12 border-border pb-16 md:col-span-8 md:border-l md:py-8 md:pl-16">
+            <div className="max-w-prose">
+              {job.subtitle && <p className="pb-6 text-pretty text-xl">{job.subtitle}</p>}
+              {Array.isArray(job.description) ? (
+                <DescriptionContent blocks={job.description} />
+              ) : typeof job.description === 'string' && job.description ? (
+                <p className="whitespace-pre-line text-pretty text-muted-foreground leading-[26px]">{job.description}</p>
+              ) : null}
+
+              <div className="mb-8 pt-10">
+                <h3 className="font-medium text-lg">How to apply</h3>
+                <p className="mt-3 text-pretty text-muted-foreground leading-[26px]">
+                  Send your CV, a short note about why you&rsquo;d like to join Oxy, and any relevant work (GitHub,
+                  portfolio, links) to{' '}
+                  <a className="underline underline-offset-4" href={`mailto:${APPLY_EMAIL}`}>
+                    {APPLY_EMAIL}
+                  </a>
+                  . We read every application.
+                </p>
+              </div>
+
+              <ApplyActions title={job.title} />
             </div>
           </div>
         </div>
       </div>
-
-      <RelatedRoles jobs={relatedJobs} />
-    </article>
+    </section>
   )
 }

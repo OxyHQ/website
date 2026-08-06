@@ -71,7 +71,7 @@ export default function CommentComposer({
             <button
               type="button"
               onClick={onCancel}
-              className="inline-flex cursor-pointer items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="inline-flex cursor-pointer items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               <X className="h-3.5 w-3.5" />
               Cancel
@@ -81,7 +81,7 @@ export default function CommentComposer({
             type="button"
             onClick={handleSubmit}
             disabled={!canSubmit}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Send className="h-3.5 w-3.5" />
             {createComment.isPending ? 'Posting...' : 'Post'}

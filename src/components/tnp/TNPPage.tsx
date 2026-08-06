@@ -76,7 +76,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="ml-3 shrink-0 cursor-pointer rounded-lg border border-transparent px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-primary-text/10 hover:text-foreground"
+      className="ml-3 shrink-0 cursor-pointer rounded-full border border-transparent px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-primary-text/10 hover:text-foreground"
     >
       {copied ? 'Copied' : 'Copy'}
     </button>

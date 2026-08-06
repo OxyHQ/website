@@ -109,7 +109,7 @@ const MeetingPrepMockup = () => {
         </div>
 
         {/* Join meeting button */}
-        <button className="w-full rounded-xl bg-[#73A7FF] py-2.5 text-xs font-semibold text-[#1a1a1c] transition-opacity hover:opacity-90">
+        <button className="w-full rounded-full bg-[#73A7FF] py-2.5 text-xs font-semibold text-[#1a1a1c] transition-opacity hover:opacity-90">
           Join meeting
         </button>
       </div>

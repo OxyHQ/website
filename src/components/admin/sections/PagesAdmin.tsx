@@ -106,7 +106,7 @@ function PageEditor({ slug }: { slug: string }) {
           </div>
         ))}
 
-        <button onClick={save} disabled={saving} className="self-start rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">
+        <button onClick={save} disabled={saving} className="self-start rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">
           {saving ? 'Saving...' : 'Save changes'}
         </button>
       </div>

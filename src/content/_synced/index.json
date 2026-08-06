@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-06T05:53:56.067Z",
+  "generatedAt": "2026-08-06T20:47:03.710Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -11032,6 +11032,78 @@
               "description": "How Astro talks to the Oxy platform — auth, cookies, Alia AI, and the update server.",
               "file": "astro/master/oxy-integration.mdx",
               "order": 3,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/baseline/feature-matrix",
+              "title": "Product behaviour baseline (feature matrix)",
+              "file": "astro/master/astro-next/baseline/feature-matrix.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/baseline/findings",
+              "title": "Baseline findings",
+              "file": "astro/master/astro-next/baseline/findings.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/baseline/patch-inventory",
+              "title": "Patch inventory",
+              "file": "astro/master/astro-next/baseline/patch-inventory.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/baseline/platform-matrix",
+              "title": "GN args matrix",
+              "file": "astro/master/astro-next/baseline/platform-matrix.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/baseline/README",
+              "title": "Astro Next baseline",
+              "file": "astro/master/astro-next/baseline/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/baseline/screenshots",
+              "title": "Screenshot and UI reference set",
+              "file": "astro/master/astro-next/baseline/screenshots.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/baseline/security-baseline",
+              "title": "WebUI security baseline",
+              "file": "astro/master/astro-next/baseline/security-baseline.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/baseline/source-inventory",
+              "title": "Source inventory",
+              "file": "astro/master/astro-next/baseline/source-inventory.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "recovery",
+              "title": "Recovery",
+              "description": "Recovering from an interrupted or failed legacy patch application.",
+              "file": "astro/master/recovery.mdx",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "reproducibility",
+              "title": "Reproducibility",
+              "description": "The source lock, deterministic sync, and build provenance.",
+              "file": "astro/master/reproducibility.mdx",
+              "order": 1000,
               "section": "guides"
             }
           ]

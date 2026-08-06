@@ -82,7 +82,6 @@ export const FEATURES = {
    * Off until the careers submission endpoint is wired up; until then the
    * page shows a short "Apply via email" block instead.
    */
-  SHOW_CAREERS_APPLICATION_FORM: false,
 } as const
 
 export type FeatureFlag = keyof typeof FEATURES

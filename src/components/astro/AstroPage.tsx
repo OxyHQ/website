@@ -271,26 +271,26 @@ export default function AstroPageContent() {
     <div className="relative">
       <DownloadDialog open={downloadOpen} onClose={() => setDownloadOpen(false)} />
       {/* Background */}
+      {/* The backdrop the whole page scrolls over: the photo covers the
+          viewport, with the brand colour behind it while it loads. */}
       <div className="fixed inset-0 bg-primary">
-        <div className="fixed inset-0 overflow-hidden opacity-100 transition-opacity duration-[450ms] ease-linear">
-          <div className="fixed inset-0">
-            <img
-              alt=""
-              className="pointer-events-none absolute h-0 w-0 select-none opacity-0"
-              crossOrigin="anonymous"
-              loading="eager"
-              fetchPriority="high"
-              decoding="async"
-              src={`${IMAGES}/hero-bg.jpg`}
-            />
-          </div>
+        <div className="fixed inset-0 overflow-hidden">
+          <img
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 size-full select-none object-cover"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            src={`${IMAGES}/hero-bg.jpg`}
+          />
         </div>
       </div>
 
       {/* Content */}
       <div className="relative z-10 transition-colors duration-500">
         {/* ── Hero ── */}
-        <section className="relative mt-10 w-full sm:mt-20">
+        <section className="relative w-full pt-[calc(var(--site-header-height)+2.5rem)] sm:pt-[calc(var(--site-header-height)+5rem)]">
           <div className="pointer-events-none absolute bottom-0 z-[-1] h-[500px] w-full bg-gradient-to-b from-transparent to-background" />
 
           <div className="container grid grid-cols-12 flex-col items-center gap-8 md:gap-12">
@@ -336,7 +336,7 @@ export default function AstroPageContent() {
               <div className="drop-shadow-[0_20px_50px_color-mix(in_srgb,var(--color-primary)_40%,transparent)]">
                 <div className="relative mx-auto aspect-video h-full w-full overflow-hidden rounded-2xl border border-border">
                   <img
-                    src="/images/astro/astro-browser.webp"
+                    src={`${IMAGES}/hero-shot.webp`}
                     alt="Astro browsing with the assistant open in a new tab"
                     className="absolute inset-0 h-full w-full object-cover"
                     width={1920}

@@ -352,7 +352,7 @@ function CurlBlock({ value }: { value: string }) {
         type="button"
         onClick={handleCopy}
         aria-label="Copy curl command"
-        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors hover:bg-primary/20"
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors hover:bg-primary/20"
       >
         {copied ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
       </button>

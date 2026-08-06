@@ -140,7 +140,7 @@ export default function AccountPanel() {
 
           {/* Close */}
           <div className="flex justify-end px-4 pt-4">
-            <button onClick={close} className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface hover:text-foreground" aria-label="Close panel">
+            <button onClick={close} className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-surface hover:text-foreground" aria-label="Close panel">
               <MaterialCommunityIcons name="close" size={18} color={colors.textSecondary} />
             </button>
           </div>

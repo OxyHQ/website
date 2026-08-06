@@ -72,7 +72,7 @@ export default function DashboardPage() {
               type="button"
               onClick={toggleFullscreen}
               aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-              className="p-2 m-0 bg-transparent text-muted-foreground border border-solid border-border hover:text-foreground hover:bg-accent transition-colors duration-150 flex items-center justify-center outline-none focus-visible:ring cursor-pointer rounded-md"
+              className="p-2 m-0 bg-transparent text-muted-foreground border border-solid border-border hover:text-foreground hover:bg-accent transition-colors duration-150 flex items-center justify-center outline-none focus-visible:ring cursor-pointer rounded-full"
             >
               {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
             </button>

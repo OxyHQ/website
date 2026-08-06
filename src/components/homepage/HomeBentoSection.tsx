@@ -101,7 +101,7 @@ export default function HomeBentoSection() {
                   ) : (
                     <a
                       href={card.href}
-                      className="button-ghost group mt-auto -ml-3.5 inline-flex h-10 cursor-pointer items-center gap-x-2 rounded-xl border border-transparent px-3.25 text-base transition-colors duration-300"
+                      className="button-ghost group mt-auto -ml-3.5 inline-flex h-10 cursor-pointer items-center gap-x-2 rounded-full border border-transparent px-3.25 text-base transition-colors duration-300"
                     >
                       <span>{card.cta}</span>
                       <ArrowRightIcon className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150" />

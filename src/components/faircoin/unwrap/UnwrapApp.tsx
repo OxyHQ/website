@@ -678,7 +678,7 @@ function UnwrapFailed({
       <button
         type="button"
         onClick={onReset}
-        className="flex h-12 items-center justify-center gap-2 rounded-xl border border-border bg-popover/40 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+        className="flex h-12 items-center justify-center gap-2 rounded-full border border-border bg-popover/40 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
       >
         <RotateCcw aria-hidden className="h-4 w-4" />
         Start a new redemption
@@ -728,7 +728,7 @@ function UnwrapSuccess({
             href={explorerUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
+            className="flex items-center justify-between gap-3 rounded-full border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
           >
             <span className="text-foreground">FairCoin transaction</span>
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -741,7 +741,7 @@ function UnwrapSuccess({
           href={burnUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
+          className="flex items-center justify-between gap-3 rounded-full border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
         >
           <span className="text-foreground">Base burn</span>
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -754,7 +754,7 @@ function UnwrapSuccess({
       <button
         type="button"
         onClick={onReset}
-        className="h-12 w-full rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
+        className="h-12 w-full rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
       >
         Redeem more WFAIR
       </button>

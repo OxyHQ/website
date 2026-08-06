@@ -160,6 +160,12 @@ interface NavbarProps {
   rightActions?: React.ReactNode
   /** Make navbar fully transparent with no border */
   transparent?: boolean
+  /**
+   * What the transparent bar is sitting on. A dark hero takes light type
+   * (the default); a light one — Astro's aluminium backdrop, say — takes dark
+   * type, otherwise the links wash out against it.
+   */
+  transparentOn?: 'dark' | 'light'
 }
 
 export default function Navbar({
@@ -172,6 +178,7 @@ export default function Navbar({
   hideLocalePicker,
   rightActions,
   transparent,
+  transparentOn = 'dark',
 }: NavbarProps = {}) {
   const { t } = useTranslation()
   const { locales } = useLocaleContext()
@@ -362,6 +369,35 @@ export default function Navbar({
   const scrolled = scrollY > 50
   const bannerHeight = 40 // matches --site-header-banner-visible-height
   const bannerOffset = bannerVisible ? Math.max(0, bannerHeight - scrollY) : 0
+
+  /**
+   * Publish the bar's real height as `--site-header-height`.
+   *
+   * Every sticky on the site parks against that token, and the static value can
+   * only ever be one number: the bar is 55px on a phone and 59px from `lg`, so
+   * a fixed token left every sticky element parked ~13px too high, with its
+   * first line of content sliding under it.
+   *
+   * Measured on the nav row rather than on `<header>`: the open dropdown panel
+   * lives inside the header and makes it several hundred pixels tall, which
+   * would publish that as the header height and push every page with a spacer
+   * down the moment a menu opened.
+   */
+  const measureHeaderHeight = useCallback((node: HTMLElement | null) => {
+    if (!node) return
+    const publish = () => {
+      const header = node.closest('header')
+      const border = header ? Number.parseFloat(getComputedStyle(header).borderBottomWidth) || 0 : 0
+      document.documentElement.style.setProperty(
+        '--site-header-height',
+        `${Math.round(node.getBoundingClientRect().height + border)}px`,
+      )
+    }
+    publish()
+    const observer = new ResizeObserver(publish)
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
   const isTransparent = transparent && !scrolled && !isOpen && !mobileOpen && !searchOpen
 
   const closeSearch = useCallback(() => {
@@ -391,18 +427,22 @@ export default function Navbar({
     [searchResults, searchPath],
   )
 
+  // The ink the transparent bar writes in, and the wash its hovers use.
+  const onLight = transparentOn === 'light'
+  const transparentInk = onLight ? 'text-black/70 hover:bg-black/5 hover:text-black' : 'text-white/80 hover:bg-white/10 hover:text-white'
+  const transparentHover = onLight ? 'hover:bg-black/5 hover:text-black' : 'hover:bg-white/10 hover:text-white'
+  const transparentColor = onLight ? 'black' : 'white'
+
   const linkClassName = (isTp: boolean) =>
     `inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${
-      isTp
-        ? 'text-white/80 hover:bg-white/10 hover:text-white'
-        : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
+      isTp ? transparentInk : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
     }`
 
   // Shared styling for the round icon buttons (search + settings).
-  const iconButtonClass = `group inline-flex h-9 w-9 cursor-pointer select-none items-center justify-center rounded-full border border-transparent transition-colors duration-300 ${isTransparent ? 'text-white/80 hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`
+  const iconButtonClass = `group inline-flex h-9 w-9 cursor-pointer select-none items-center justify-center rounded-full border border-transparent transition-colors duration-300 ${isTransparent ? transparentInk : 'hover:bg-foreground/5 hover:text-foreground'}`
   const iconButtonStyle = (active: boolean) => ({
     background: active ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
-    color: active ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
+    color: active ? 'var(--color-foreground)' : isTransparent ? transparentColor : 'var(--color-muted-foreground)',
   })
 
   return (
@@ -476,7 +516,7 @@ export default function Navbar({
       </div>
 
       {/* ─── Main nav ─── */}
-      <div className="container max-lg:!max-w-full max-lg:!px-4">
+      <div ref={measureHeaderHeight} className="container max-lg:!max-w-full max-lg:!px-4">
         <nav className="py-[5px]">
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-4">
             {/* Desktop nav (left) */}
@@ -486,10 +526,10 @@ export default function Navbar({
                     <li key={dd.label}>
                       <button
                         ref={(el) => { triggerRefs.current[dd.label] = el }}
-                        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? 'hover:bg-white/10 hover:text-white' : 'hover:bg-foreground/5 hover:text-foreground'}`}
+                        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? transparentHover : 'hover:bg-foreground/5 hover:text-foreground'}`}
                         style={{
                           background: activeDropdown === dd.label ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
-                          color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? 'white' : 'var(--color-muted-foreground)',
+                          color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? transparentColor : 'var(--color-muted-foreground)',
                         }}
                         onMouseEnter={() => openDropdown(dd.label)}
                         aria-expanded={activeDropdown === dd.label}
@@ -628,7 +668,7 @@ export default function Navbar({
                 />
               )}
               <button
-                className={`inline-flex h-9 w-9 items-center justify-center rounded-full ${isTransparent ? 'text-white' : 'text-muted-foreground'}`}
+                className={`inline-flex h-9 w-9 items-center justify-center rounded-full ${isTransparent ? (onLight ? 'text-black' : 'text-white') : 'text-muted-foreground'}`}
                 aria-label={mobileOpen ? t('common.closeMenu') : t('common.openMenu')}
                 aria-expanded={mobileOpen}
                 onClick={() => setMobileOpen(!mobileOpen)}

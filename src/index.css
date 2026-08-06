@@ -119,7 +119,10 @@
   --text-heading-xl--line-height: 4rem;
 
   /* Spacing */
-  --site-header-height: 46px;
+  /* The header measures itself and republishes this at runtime (see Navbar);
+   * this value is only what prerendered HTML uses before the app mounts, so it
+   * is the real height of the bar on a phone rather than a rounder number. */
+  --site-header-height: 55px;
   --site-header-banner-visible-height: 40px;
   --color-banner-background: var(--color-primary);
 
@@ -238,6 +241,7 @@ body {
 }
 
 /* Responsive heading utilities */
+
 .text-heading-responsive-lg {
   font-family: var(--font-display);
   font-size: var(--text-heading-md);

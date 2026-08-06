@@ -102,7 +102,7 @@ const DailyRecapMockup = () => {
         </div>
 
         {/* AI suggestion CTA */}
-        <button className="w-full rounded-xl bg-[#73A7FF]/15 border border-[#73A7FF]/20 py-2.5 text-xs font-semibold text-[#73A7FF] transition-colors hover:bg-[#73A7FF]/25">
+        <button className="w-full rounded-full bg-[#73A7FF]/15 border border-[#73A7FF]/20 py-2.5 text-xs font-semibold text-[#73A7FF] transition-colors hover:bg-[#73A7FF]/25">
           Prepare for tomorrow
         </button>
       </div>

@@ -1,16 +1,15 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { Search as BloomSearch } from '@oxyhq/bloom/search'
 import {
   ArrowRight,
   BookOpen,
   Check,
   Clock,
   Code2,
-  GraduationCap,
   PlayCircle,
   Radio,
   Rocket,
-  Search,
   ShieldCheck,
   Sparkles,
   Zap,
@@ -277,8 +276,6 @@ export default function AcademyPage() {
 
   const progressFor = (slug: string): CourseProgress => allProgress[slug] ?? {}
 
-  const totalLessons = useMemo(() => allCourses.reduce((n, c) => n + c.lessons.length, 0), [allCourses])
-
   const trackCounts = useMemo(
     () => new Map(TRACKS.map((t) => [t.key, allCourses.filter((c) => courseInTrack(c, t)).length])),
     [allCourses],
@@ -328,53 +325,56 @@ export default function AcademyPage() {
       <Navbar />
       <main>
         {/* ═══ Hero ═══ */}
-        <section className="relative overflow-hidden">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[440px] bg-gradient-to-b from-surface via-surface/50 to-background"
-          />
-          <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 px-[var(--layout-gutter)] pt-24 pb-10 text-center lg:pt-28">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground shadow-sm">
-              <GraduationCap className="size-3.5 text-primary" aria-hidden="true" />
-              Oxy Academy
-            </span>
-            <h1 className="text-balance text-heading-responsive-lg text-foreground">Learn the whole Oxy ecosystem.</h1>
-            <p className="max-w-xl text-balance leading-relaxed text-muted-foreground">
-              Hands-on, self-paced courses that take you from your first account to shipping real work — across identity,
-              social, and the developer platform.
-            </p>
-
-            {/* Search */}
-            <div className="relative mt-1 w-full max-w-lg">
-              <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-              <input
-                type="search"
+        <div className="bg-foreground pb-20 text-background">
+          <div className="container py-20 pb-10 md:pb-20">
+            <div className="flex items-center text-sm before:mr-2 before:inline-block before:size-2.5 before:shrink-0 before:bg-current">
+              <div className="shrink-0">Education Center</div>
+            </div>
+            <h1 className="mt-2 mb-10 max-w-[28ch] text-heading-responsive-lg">
+              Making sense of Oxy: identity, the platform, and running it yourself.
+            </h1>
+            <div className="w-full max-w-[680px]">
+              <BloomSearch
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="What do you want to learn?"
+                onChangeText={setQuery}
+                onClearText={() => setQuery('')}
+                placeholder="Search courses, lessons and topics"
                 aria-label="Search courses"
-                className="h-12 w-full rounded-full border border-border bg-background pl-12 pr-5 text-[15px] text-foreground shadow-md outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
               />
             </div>
-
-            <dl className="mt-1 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <dd className="font-semibold text-foreground">{allCourses.length}</dd>
-                <span>{allCourses.length === 1 ? 'course' : 'courses'}</span>
-              </div>
-              <span aria-hidden="true" className="h-3.5 w-px bg-border" />
-              <div className="flex items-center gap-1.5">
-                <dd className="font-semibold text-foreground">{totalLessons}</dd>
-                <span>{totalLessons === 1 ? 'lesson' : 'lessons'}</span>
-              </div>
-              <span aria-hidden="true" className="h-3.5 w-px bg-border" />
-              <div className="flex items-center gap-1.5">
-                <dd className="font-semibold text-foreground">Free</dd>
-                <span>for everyone</span>
-              </div>
-            </dl>
           </div>
-        </section>
+
+          <div className="container pt-8 pb-4">Browse by course</div>
+          <div className="overflow-x-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="container">
+              <div className="flex justify-stretch gap-4">
+                {allCourses.map((course) => (
+                  <div
+                    key={course.slug}
+                    className="flex w-[70vw] shrink-0 border-background/20 border-y sm:w-[28vw] lg:w-[22.5vw] xl:max-w-[324px]"
+                  >
+                    <Link
+                      to={`/academy/${course.slug}`}
+                      className="group flex w-full flex-1 cursor-pointer flex-col gap-3 py-3 text-left focus:outline-hidden"
+                    >
+                      <div className="relative isolate aspect-square w-full overflow-hidden rounded-xl bg-background/20">
+                        <CourseCover course={course} className="absolute inset-0 size-full" />
+                        <span className="absolute right-3 bottom-3 z-10 flex size-12 items-center justify-center rounded-full bg-foreground/40 text-background backdrop-blur-xs transition-colors duration-300 group-hover:bg-foreground/70">
+                          <ArrowRight className="size-5" aria-hidden="true" />
+                        </span>
+                      </div>
+                      <div className="pb-10">
+                        <p className="font-medium">{course.title}</p>
+                        <p className="text-background/60">{course.summary}</p>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+                <div className="w-1 flex-none sm:w-4 md:w-6 xl:w-8" />
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div className="container">
           {/* ═══ Continue learning ═══ */}

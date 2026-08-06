@@ -182,7 +182,7 @@ export default function HeroSection() {
                             Starts in 6 mins
                           </span>
                         </div>
-                        <button className="rounded-md bg-primary px-2.5 py-1 text-[11px] font-medium leading-4 text-white md:text-xs">
+                        <button className="rounded-full bg-primary px-2.5 py-1 text-[11px] font-medium leading-4 text-white md:text-xs">
                           Join meeting
                         </button>
                       </div>

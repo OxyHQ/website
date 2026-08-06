@@ -81,7 +81,7 @@ const DeepWorkMockup = () => {
         </div>
 
         {/* Exit button */}
-        <button className="w-full rounded-xl border border-foreground/10 bg-foreground/5 py-2.5 text-xs font-medium text-foreground/50 transition-colors hover:bg-foreground/10 hover:text-foreground/70">
+        <button className="w-full rounded-full border border-foreground/10 bg-foreground/5 py-2.5 text-xs font-medium text-foreground/50 transition-colors hover:bg-foreground/10 hover:text-foreground/70">
           Exit focus mode
         </button>
       </div>

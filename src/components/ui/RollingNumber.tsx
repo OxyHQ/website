@@ -1,54 +1,68 @@
-import { useReducedMotion } from 'framer-motion'
-
 /* ──────────────────────────────────────────────
  * RollingNumber
  *
- * A number whose digits roll into place when the section holding it comes into
- * view. Ten digits stacked in a column, the column translated by `-digit * 10%`
- * of its own height: nothing is measured, nothing runs per frame, and it lands
- * on the right glyph at any font size.
+ * The odometer from the source template, unchanged in mechanism: each digit is
+ * a column holding `0…9` with the target digit pinned one height below it, and
+ * the column translates up by exactly its own height. The number of cycles
+ * listed above the target is what makes a digit spin longer or shorter, so the
+ * effect is tuned by content rather than by timing.
  *
- * The caller owns the trigger (`active`), so a section can start every number
- * it holds at the same moment.
+ * The caller owns the trigger, so every number in a section starts together.
  * ──────────────────────────────────────────── */
 
-function RollingDigit({ digit, active, delayMs }: { digit: number; active: boolean; delayMs: number }) {
-  const reduce = useReducedMotion()
+interface RollingDigitProps {
+  digit: number
+  /** Extra full cycles before landing, so neighbouring digits do not spin alike. */
+  cycles: number
+  active: boolean
+}
+
+function RollingDigit({ digit, cycles, active }: RollingDigitProps) {
+  const reel: number[] = []
+  for (let cycle = 0; cycle < cycles; cycle += 1) {
+    for (let i = 0; i < 10; i += 1) reel.push(i)
+  }
+  for (let i = 0; i < digit; i += 1) reel.push(i)
+
   return (
-    <span className="relative inline-block overflow-hidden align-bottom" style={{ height: '1em' }}>
-      {/* Reserves the column's width without being visible. */}
-      <span className="invisible">{digit}</span>
+    <div className="relative inline-block">
+      {/* Holds the column's width; the reel itself is out of flow. */}
+      <span className="invisible inline-block">{digit}</span>
       <span
-        className="absolute inset-x-0 top-0 flex flex-col will-change-transform"
-        style={{
-          transform: `translateY(-${(reduce || active ? digit : 0) * 10}%)`,
-          transition: reduce ? undefined : `transform 1.6s cubic-bezier(.42,.08,.04,1) ${delayMs}ms`,
-        }}
+        className={`absolute left-0 top-0 flex flex-col transition-transform delay-300 duration-[2000ms] ease-[cubic-bezier(.42,.08,.04,1)] motion-reduce:-translate-y-full motion-reduce:duration-0 ${
+          active ? '-translate-y-full' : ''
+        }`}
       >
-        {Array.from({ length: 10 }, (_, i) => (
-          <span key={i}>{i}</span>
+        {reel.map((value, i) => (
+          <span key={i}>{value}</span>
         ))}
+        <span className="absolute bottom-0 translate-y-full">{digit}</span>
       </span>
-    </span>
+    </div>
   )
 }
 
 interface RollingNumberProps {
-  /** Digits roll; everything else (a `+`, a `%`, a `.`) stays put. */
+  /** Digits roll; `$`, `+`, `k`, `.` and the rest stay put. */
   value: string
-  /** Flip to true when the number is on screen. */
   active: boolean
 }
 
 export default function RollingNumber({ value, active }: RollingNumberProps) {
   let digitIndex = 0
   return (
-    <span className="inline-flex tabular-nums">
+    <div className="overflow-hidden whitespace-nowrap tracking-tighter">
       {value.split('').map((char, i) => {
-        if (char < '0' || char > '9') return <span key={i}>{char}</span>
-        const delay = digitIndex++ * 90
-        return <RollingDigit key={i} digit={Number(char)} active={active} delayMs={delay} />
+        if (char < '0' || char > '9') {
+          return (
+            <span key={i} className="inline-block">
+              {char}
+            </span>
+          )
+        }
+        const cycles = digitIndex++ === 0 ? 1 : 2
+        return <RollingDigit key={i} digit={Number(char)} cycles={cycles} active={active} />
       })}
-    </span>
+    </div>
   )
 }

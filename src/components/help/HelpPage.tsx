@@ -180,7 +180,7 @@ function HelpSidebar({ groups }: { groups: CategoryGroup[] }) {
             disabled
             aria-disabled="true"
             title="Search is coming soon"
-            className="relative inline-flex items-center text-nowrap border transition-colors h-9 gap-x-1.5 rounded-[10px] px-3 text-sm button-outline justify-between pr-2 w-full opacity-60 cursor-not-allowed"
+            className="relative inline-flex items-center text-nowrap border transition-colors h-9 gap-x-1.5 rounded-full px-3 text-sm button-outline justify-between pr-2 w-full opacity-60 cursor-not-allowed"
           >
             <SearchIcon className="text-muted-foreground" />
             <div className="flex w-full items-center justify-between gap-2">
@@ -206,7 +206,7 @@ function HelpSidebar({ groups }: { groups: CategoryGroup[] }) {
                   {articles.map((article) => (
                     <div key={article.slug} className="group relative w-full">
                       <button
-                        className="absolute top-0 left-0 cursor-pointer self-start rounded-[10px] p-2.5 ring-inset transition-[background-color] hover:bg-surface group-hover:bg-surface"
+                        className="absolute top-0 left-0 cursor-pointer self-start rounded-full p-2.5 ring-inset transition-[background-color] hover:bg-surface group-hover:bg-surface"
                         type="button"
                       >
                         <ChevronRight />
@@ -268,7 +268,7 @@ function HelpContent({
               disabled
               aria-disabled="true"
               title="Search is coming soon"
-              className="relative inline-flex items-center justify-center text-nowrap border transition-colors h-11.5 gap-x-2 rounded-xl px-3.5 button-outline w-full pr-2.5 text-sm shadow-[0px_1px_2px_-1px_rgba(28,40,64,0.08),_0px_2px_4px_0px_rgba(28,40,64,0.04)] opacity-60 cursor-not-allowed"
+              className="relative inline-flex items-center justify-center text-nowrap border transition-colors h-11.5 gap-x-2 rounded-full px-3.5 button-outline w-full pr-2.5 text-sm shadow-[0px_1px_2px_-1px_rgba(28,40,64,0.08),_0px_2px_4px_0px_rgba(28,40,64,0.04)] opacity-60 cursor-not-allowed"
             >
               <SearchIcon />
               <p className="w-full truncate text-left text-muted-foreground">
@@ -287,7 +287,7 @@ function HelpContent({
                         type="button"
                         disabled
                         aria-disabled="true"
-                        className="relative inline-flex items-center justify-center text-nowrap border gap-x-1.5 rounded-[10px] px-2.5 text-xs button-outline !bg-surface !text-muted-foreground h-7 opacity-60 cursor-not-allowed"
+                        className="relative inline-flex items-center justify-center text-nowrap border gap-x-1.5 rounded-full px-2.5 text-xs button-outline !bg-surface !text-muted-foreground h-7 opacity-60 cursor-not-allowed"
                       >
                         {s}
                       </button>

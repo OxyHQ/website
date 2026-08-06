@@ -568,7 +568,7 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
         <button
           type="button"
           onClick={onStartOver}
-          className="flex h-10 items-center justify-center gap-2 rounded-xl border border-border bg-popover/40 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+          className="flex h-10 items-center justify-center gap-2 rounded-full border border-border bg-popover/40 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
         >
           <ArrowLeft aria-hidden className="h-4 w-4" />
           {quoteExpired ? 'Generate new quote' : 'Start over'}
@@ -630,7 +630,7 @@ function SuccessStep({
               href={explorerTxUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
+              className="flex items-center justify-between gap-3 rounded-full border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
             >
               <span className="text-foreground">FairCoin transaction</span>
               <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -644,7 +644,7 @@ function SuccessStep({
               href={baseTxUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
+              className="flex items-center justify-between gap-3 rounded-full border border-border bg-background/60 px-3.5 py-2.5 text-sm transition-colors hover:border-primary/50 hover:bg-background"
             >
               <span className="text-foreground">Base swap</span>
               <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -659,7 +659,7 @@ function SuccessStep({
       <button
         type="button"
         onClick={onStartOver}
-        className="h-12 w-full rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
+        className="h-12 w-full rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
       >
         Buy more FAIR
       </button>
@@ -685,7 +685,7 @@ function FailedStep({
       <button
         type="button"
         onClick={onStartOver}
-        className="flex h-12 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
+        className="flex h-12 items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
       >
         <RotateCcw aria-hidden className="h-4 w-4" />
         Start a new order
@@ -770,7 +770,7 @@ function CopyableValue({ label, value, monospace }: CopyableValueProps) {
           type="button"
           onClick={handleCopy}
           aria-label={`Copy ${label}`}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors hover:bg-primary/20"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors hover:bg-primary/20"
         >
           {flash ? (
             <CheckCircle2 aria-hidden className="h-3.5 w-3.5" />

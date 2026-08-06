@@ -137,7 +137,7 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
                 type="button"
                 onClick={handleSaveEdit}
                 disabled={editComment.isPending}
-                className="inline-flex cursor-pointer items-center gap-1 rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                className="inline-flex cursor-pointer items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
               >
                 <Check className="h-3 w-3" />
                 Save

@@ -118,7 +118,7 @@ function DashboardContent({ referral }: { referral: ReferralDashboard }) {
             <button
               type="button"
               onClick={handleCopy}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-surface"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-surface"
             >
               <CopyIcon copied={copied} />
               {copied ? 'Copied!' : 'Copy link'}

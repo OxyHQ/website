@@ -177,7 +177,7 @@ export default function FeaturesAdmin() {
                 href={feature.htmlUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="shrink-0 rounded-lg border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
               >
                 View on GitHub
               </a>
