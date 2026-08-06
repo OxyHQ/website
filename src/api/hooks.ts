@@ -1202,13 +1202,113 @@ export function useFeatureRequests(params?: { status?: string; app?: string; sor
   })
 }
 
+/** One feature request. `null` params keep the query idle. */
+export function useFeatureRequest(owner: string, repo: string, number: string) {
+  return useQuery({
+    queryKey: ['feature', owner, repo, number],
+    queryFn: () => apiFetch<FeatureRequestData>(`/features/${owner}/${repo}/${number}`),
+    enabled: Boolean(owner && repo && number),
+    staleTime: 60_000,
+    // A feature request that is not on the board is a 404 and stays one; there
+    // is nothing for a retry to discover.
+    retry: false,
+  })
+}
+
+export interface FeatureCommentData {
+  id: number
+  body: string
+  htmlUrl: string
+  author: string
+  authorAvatar: string
+  authorUrl: string
+  fromMaintainer: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface FeatureCommentsResponse {
+  comments: FeatureCommentData[]
+  /** The thread runs past the one page we mirror. */
+  hasMore: boolean
+  threadUrl: string
+}
+
+export function useFeatureComments(owner: string, repo: string, number: string, options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: ['feature-comments', owner, repo, number],
+    queryFn: () => apiFetch<FeatureCommentsResponse>(`/features/${owner}/${repo}/${number}/comments`),
+    enabled: (options?.enabled ?? true) && Boolean(owner && repo && number),
+    staleTime: 60_000,
+    retry: false,
+  })
+}
+
+/** Flip one request's vote state, for the optimistic update below. */
+function toggleVoteLocally(item: FeatureRequestData): FeatureRequestData {
+  const delta = item.userVoted ? -1 : 1
+  return {
+    ...item,
+    userVoted: !item.userVoted,
+    localVotes: item.localVotes + delta,
+    totalVotes: item.totalVotes + delta,
+  }
+}
+
+/**
+ * Toggle this user's vote, applied optimistically.
+ *
+ * Both surfaces that can vote go through here, so the card and the detail page
+ * cannot drift: the same request, the same immediate feedback, the same
+ * rollback when the server disagrees. The list is updated in place rather than
+ * re-sorted, since a row jumping under the cursor at the moment it is clicked
+ * is a worse answer than the order settling on the next fetch.
+ */
 export function useToggleFeatureVote(owner: string, repo: string, number: number) {
   const queryClient = useQueryClient()
+  const detailKey = ['feature', owner, repo, String(number)]
+  const listFilter = { queryKey: ['features'] }
+
   return useMutation({
     mutationFn: () => apiFetch<{ localVotes: number; userVoted: boolean }>(`/features/${owner}/${repo}/${number}/vote`, { method: 'POST' }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['features'] })
-      queryClient.invalidateQueries({ queryKey: ['feature', owner, repo, number] })
+    onMutate: async () => {
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: detailKey }),
+        queryClient.cancelQueries(listFilter),
+      ])
+
+      const previousDetail = queryClient.getQueryData<FeatureRequestData>(detailKey)
+      const previousLists = queryClient.getQueriesData<FeatureListResponse>(listFilter)
+
+      if (previousDetail) {
+        queryClient.setQueryData<FeatureRequestData>(detailKey, toggleVoteLocally(previousDetail))
+      }
+      queryClient.setQueriesData<FeatureListResponse>(listFilter, (list) =>
+        list
+          ? {
+              ...list,
+              items: list.items.map((item) =>
+                item.owner === owner && item.repoName === repo && item.number === number
+                  ? toggleVoteLocally(item)
+                  : item,
+              ),
+            }
+          : list,
+      )
+
+      return { previousDetail, previousLists }
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previousDetail) {
+        queryClient.setQueryData(detailKey, context.previousDetail)
+      }
+      for (const [key, value] of context?.previousLists ?? []) {
+        queryClient.setQueryData(key, value)
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(listFilter)
+      queryClient.invalidateQueries({ queryKey: detailKey })
     },
   })
 }

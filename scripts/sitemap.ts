@@ -107,6 +107,9 @@ ${entries.map((entry) => buildUrlNode(entry, opts)).join('\n')}
  */
 const ROUTE_WEIGHTS: ReadonlyArray<{ prefix: string; changefreq: string; priority: number }> = [
   { prefix: '/newsroom/', changefreq: 'monthly', priority: 0.7 },
+  // One feature request. It changes whenever someone votes or a maintainer
+  // moves it, and depth alone would rate it as an obscure fourth-level page.
+  { prefix: '/features/', changefreq: 'weekly', priority: 0.5 },
   { prefix: '/company/careers/', changefreq: 'monthly', priority: 0.6 },
   { prefix: '/academy/', changefreq: 'monthly', priority: 0.6 },
   { prefix: '/help/', changefreq: 'monthly', priority: 0.5 },

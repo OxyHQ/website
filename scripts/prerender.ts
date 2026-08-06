@@ -50,6 +50,7 @@ import { buildSitemapXml, classifyRoute, toW3CDate, type SitemapEntry } from './
 import type { SeoData } from '../src/lib/seo'
 import type { SEOLocaleSeed } from '../src/entry-server'
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, isRtlLocale, type Locale } from '../src/lib/i18n/types'
+import { featureRequestDescription, featureRequestPath } from '../src/lib/featureRequest'
 import { ACADEMY_COURSES } from '../src/content/academy-courses'
 
 /** Course metadata by slug, so academy titles match what the SPA renders. */
@@ -72,6 +73,9 @@ const ACADEMY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'academy')
 const API_BASE = process.env.VITE_API_URL || 'https://website-api.oxy.so'
 const NEWSROOM_API = `${API_BASE}/api/newsroom?limit=500`
 const JOBS_API = `${API_BASE}/api/jobs`
+const FEATURES_API = `${API_BASE}/api/features`
+/** The features list caps `limit` server-side; asking for more returns this many. */
+const FEATURE_PRERENDER_PAGE_SIZE = 50
 const SEO_API = `${API_BASE}/api/seo`
 const LOCALES_API = `${API_BASE}/api/locales`
 
@@ -539,6 +543,59 @@ async function fetchNewsroomPosts(): Promise<NewsroomApiPost[]> {
   }
 }
 
+/**
+ * Subset of `/api/features` used for SEO. Mirrors `FeatureRequestData` in
+ * `src/api/hooks.ts`.
+ */
+interface FeatureApiEntry {
+  number: number
+  title: string
+  description: string
+  owner: string
+  repoName: string
+  createdAt: string
+  updatedAt: string
+  author: string
+}
+
+interface FeatureApiResponse {
+  items: FeatureApiEntry[]
+}
+
+/**
+ * Feature requests worth prerendering a `<head>` for.
+ *
+ * Two pages, not one: the most voted are the ones people link to, and the
+ * newest are the ones their author has just shared. Both are capped by the
+ * API's own page size, which keeps the file budget bounded no matter how large
+ * the board grows. Anything outside them still works, it just falls back to the
+ * generic shell in a crawler's preview until the next build.
+ */
+async function fetchFeatureRequests(): Promise<FeatureApiEntry[]> {
+  const byUrl = new Map<string, FeatureApiEntry>()
+
+  for (const query of ['sort=votes', 'sort=newest']) {
+    try {
+      const res = await fetch(`${FEATURES_API}?${query}&limit=${FEATURE_PRERENDER_PAGE_SIZE}`)
+      if (!res.ok) {
+        console.warn(`[prerender] features API returned ${res.status} for ${query}`)
+        continue
+      }
+      const data = (await res.json()) as FeatureApiResponse
+      for (const item of data.items ?? []) {
+        // Skip anything that cannot produce a title or a valid path rather than
+        // interpolating `undefined` into a <title> or a URL.
+        if (!item.title || !item.owner || !item.repoName || !item.number) continue
+        byUrl.set(`/features/${item.owner}/${item.repoName}/${item.number}`, item)
+      }
+    } catch (err) {
+      console.warn(`[prerender] features fetch failed (${query}):`, (err as Error).message)
+    }
+  }
+
+  return Array.from(byUrl.values())
+}
+
 async function fetchJobs(): Promise<JobApiEntry[]> {
   try {
     const res = await fetch(JOBS_API)
@@ -805,6 +862,23 @@ function buildNewsroomRoutes(posts: NewsroomApiPost[]): Array<{ url: string; seo
   }))
 }
 
+function buildFeatureRoutes(features: FeatureApiEntry[]): Array<{ url: string; seo: SEOProps }> {
+  return features.map((feature) => ({
+    url: featureRequestPath(feature.owner, feature.repoName, feature.number),
+    seo: {
+      // Mirrors `FeatureRequestPage`'s `<SEO>` props, through the same helpers,
+      // so the baked <head> and the client-rendered one cannot disagree.
+      title: feature.title,
+      description: featureRequestDescription(feature.description ?? '', feature.title),
+      canonicalPath: featureRequestPath(feature.owner, feature.repoName, feature.number),
+      ogType: 'article',
+      publishedTime: feature.createdAt,
+      modifiedTime: feature.updatedAt,
+      author: feature.author,
+    },
+  }))
+}
+
 function buildJobRoutes(jobs: JobApiEntry[]): Array<{ url: string; seo: SEOProps }> {
   return jobs.map((job) => ({
     url: `/company/careers/${job.slug}`,
@@ -897,9 +971,10 @@ async function enumerateAllRoutes(): Promise<Array<{ url: string; seo: SEOProps 
     result.set(url, seo)
   }
 
-  const [news, jobs, helpRoutes, academyRoutes, docsRoutes] = await Promise.all([
+  const [news, jobs, features, helpRoutes, academyRoutes, docsRoutes] = await Promise.all([
     fetchNewsroomPosts(),
     fetchJobs(),
+    fetchFeatureRequests(),
     enumerateHelpRoutes(),
     enumerateAcademyRoutes(),
     enumerateDocsRoutes(),
@@ -907,6 +982,7 @@ async function enumerateAllRoutes(): Promise<Array<{ url: string; seo: SEOProps 
 
   for (const { url, seo } of buildNewsroomRoutes(news)) result.set(url, seo)
   for (const { url, seo } of buildJobRoutes(jobs)) result.set(url, seo)
+  for (const { url, seo } of buildFeatureRoutes(features)) result.set(url, seo)
   for (const { url, seo } of helpRoutes) result.set(url, seo)
   for (const { url, seo } of academyRoutes) result.set(url, seo)
   for (const { url, seo } of docsRoutes) result.set(url, seo)

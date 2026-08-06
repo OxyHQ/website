@@ -8,19 +8,18 @@ import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { checkAndAwardBadges } from '../services/badgeService.js'
 import {
-  FEATURE_LABEL,
   GitHubApiError,
   clearFeatureIssueCache,
   createFeatureIssue,
   derivePriority,
   deriveStatus,
+  fetchFeatureIssue,
+  fetchFeatureIssueComments,
   findFeatureRepo,
-  githubRequest,
   issueVoteKey,
   listFeatureRepos,
   loadFeatureRequests,
   repoKey,
-  type GitHubIssue,
 } from '../services/featureBoard.js'
 import { reconcileFeaturePriorities } from '../services/featurePriority.js'
 import { getPriorityTiers } from '../constants/featurePriority.js'
@@ -53,6 +52,12 @@ const issueParamsSchema = z.object({
   repo: z.string().min(1),
   number: z.string().regex(/^\d+$/, 'issue number must be numeric'),
 })
+
+/**
+ * GitHub `author_association` values that mean the commenter speaks for the
+ * project. Everything else, including CONTRIBUTOR, is an ordinary participant.
+ */
+const MAINTAINER_ASSOCIATIONS = new Set(['OWNER', 'MEMBER', 'COLLABORATOR'])
 
 const proposalBodySchema = z.object({
   // `owner/repo`, exactly the `key` served by GET /apps.
@@ -274,10 +279,8 @@ router.get('/:owner/:repo/:number', optionalAuth, async (req, res) => {
   if (!app) return res.status(404).json({ error: 'Issue not found' })
 
   try {
-    const issue = await githubRequest<GitHubIssue>(`/repos/${app.owner}/${app.repo}/issues/${number}`)
-    if (!issue.labels.some((label) => label.name.toLowerCase() === FEATURE_LABEL)) {
-      return res.status(404).json({ error: 'Issue not found' })
-    }
+    const issue = await fetchFeatureIssue(app, number)
+    if (!issue) return res.status(404).json({ error: 'Issue not found' })
 
     const key = issueVoteKey(app.owner, app.repo, number)
     const [localVotes, userVote] = await Promise.all([
@@ -309,12 +312,60 @@ router.get('/:owner/:repo/:number', optionalAuth, async (req, res) => {
       updatedAt: issue.updated_at,
     })
   } catch (err) {
-    if (err instanceof GitHubApiError && err.status === 404) {
-      return res.status(404).json({ error: 'Issue not found' })
-    }
     const message = toErrorMessage(err)
     console.error(`[features] detail ${repoKey(owner, repo)}#${number} failed:`, message)
     res.status(502).json({ error: 'Failed to fetch feature' })
+  }
+})
+
+/**
+ * GET /:owner/:repo/:number/comments  — the issue thread, read only.
+ *
+ * Read only on purpose, and the asymmetry with proposals is deliberate.
+ * Proposing is one issue per person per day against a form with length limits
+ * and sanitising; commenting is unbounded, lands on a thread real people are
+ * subscribed to, and every message notifies them. That is a different abuse
+ * surface and it needs its own design, so writing from the website is out of
+ * scope here. Reading costs nothing extra: these repos are public, the
+ * comments already are too, and the point is that a visitor does not have to
+ * leave to follow the discussion.
+ */
+router.get('/:owner/:repo/:number/comments', async (req, res) => {
+  const { owner, repo, number } = validate(issueParamsSchema, req.params)
+
+  const app = await findFeatureRepo(owner, repo)
+  if (!app) return res.status(404).json({ error: 'Issue not found' })
+
+  try {
+    // Gated on the issue being a feature request, from the same cached read the
+    // detail route uses, so the comments of an unrelated issue in a tracked
+    // repo are not reachable through the board.
+    const issue = await fetchFeatureIssue(app, number)
+    if (!issue) return res.status(404).json({ error: 'Issue not found' })
+
+    const { comments, hasMore } = await fetchFeatureIssueComments(app, number)
+
+    res.json({
+      comments: comments.map((comment) => ({
+        id: comment.id,
+        body: comment.body ?? '',
+        htmlUrl: comment.html_url,
+        author: comment.user.login,
+        authorAvatar: comment.user.avatar_url,
+        authorUrl: comment.user.html_url,
+        // GitHub's author_association, narrowed to the one distinction a reader
+        // cares about: is this person answering for the project.
+        fromMaintainer: MAINTAINER_ASSOCIATIONS.has(comment.author_association),
+        createdAt: comment.created_at,
+        updatedAt: comment.updated_at,
+      })),
+      hasMore,
+      threadUrl: issue.html_url,
+    })
+  } catch (err) {
+    const message = toErrorMessage(err)
+    console.error(`[features] comments ${repoKey(owner, repo)}#${number} failed:`, message)
+    res.status(502).json({ error: 'Failed to fetch comments' })
   }
 })
 

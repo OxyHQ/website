@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '@oxyhq/services'
 import * as Skeleton from '@oxyhq/bloom/skeleton'
 import { Plus } from 'lucide-react'
@@ -12,11 +13,24 @@ import { useFeatureApps, useFeatureRequests, useToggleFeatureVote, type FeatureR
 
 export default function FeatureBoardPage() {
   const [status, setStatus] = useState('')
-  const [app, setApp] = useState('')
   const [sort, setSort] = useState('votes')
   const [page, setPage] = useState(1)
   const [proposeOpen, setProposeOpen] = useState(false)
   const { isAuthenticated, signIn } = useAuth()
+
+  // The app filter lives in the URL rather than in state, so a board filtered
+  // to one app is a link someone can share, and so the app name on a request's
+  // own page can point back at the rest of that app's requests.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const app = searchParams.get('app') ?? ''
+
+  function selectApp(value: string) {
+    const next = new URLSearchParams(searchParams)
+    if (value) next.set('app', value)
+    else next.delete('app')
+    setSearchParams(next, { replace: true })
+    setPage(1)
+  }
 
   const { data, isPending, isError } = useFeatureRequests({
     status: status || undefined,
@@ -106,7 +120,7 @@ export default function FeatureBoardPage() {
               sort={sort}
               apps={apps}
               onChangeStatus={(v) => { setStatus(v); setPage(1) }}
-              onChangeApp={(v) => { setApp(v); setPage(1) }}
+              onChangeApp={selectApp}
               onChangeSort={(v) => { setSort(v); setPage(1) }}
             />
           </div>
