@@ -437,6 +437,67 @@ export async function loadFeatureRequests(userId?: string): Promise<FeatureReque
 }
 
 /**
+ * Words carried by almost every feature request, so matching on them says
+ * nothing. Kept deliberately short: an aggressive stop list starts throwing away
+ * words that carry the meaning ("show", "list", "search" are all real features
+ * here).
+ */
+const STOPWORDS = new Set([
+  'a', 'an', 'and', 'as', 'at', 'be', 'but', 'by', 'can', 'for', 'from', 'have',
+  'i', 'if', 'in', 'is', 'it', 'of', 'on', 'or', 'that', 'the', 'this', 'to',
+  'we', 'with', 'would', 'should', 'add', 'feature', 'request', 'support',
+])
+
+/** Lowercase alphanumeric words, stop words dropped. */
+export function tokenize(text: string): string[] {
+  return (text.toLowerCase().match(/[a-z0-9]+/g) ?? []).filter((word) => !STOPWORDS.has(word))
+}
+
+/**
+ * How much of the query's vocabulary a candidate reuses, from 0 to 1.
+ *
+ * Token overlap, and nothing cleverer on purpose. It is cheap, it runs over the
+ * set already in memory, and above all it is explainable: a reader can see why
+ * two requests were called similar. Embeddings would rank better on paraphrases
+ * and worse on everything a reader can check, and this is a hint shown next to
+ * a form, not a decision anybody is bound by.
+ *
+ * A token counts when it prefixes a word in the candidate, so "dark mo" still
+ * finds "dark mode" while someone is still typing. The reverse also counts, so
+ * "rewards" finds "reward", but only past `MIN_REVERSE_PREFIX` characters:
+ * without that floor a stray one-letter word in a body ("a", "t") prefixes
+ * almost every query token, and every request matches every query. Measured on
+ * the real board, where "zzzz quantum teleport" matched an unrelated proposal
+ * through a lone "t".
+ */
+const MIN_REVERSE_PREFIX = 4
+
+export function overlapScore(queryTokens: string[], candidate: string): number {
+  if (queryTokens.length === 0) return 0
+  const candidateTokens = tokenize(candidate)
+  if (candidateTokens.length === 0) return 0
+
+  let matched = 0
+  for (const token of queryTokens) {
+    const hit = candidateTokens.some((word) =>
+      word.startsWith(token) || (word.length >= MIN_REVERSE_PREFIX && token.startsWith(word)),
+    )
+    if (hit) matched++
+  }
+  return matched / queryTokens.length
+}
+
+/**
+ * Score a request against a query: the title carries the meaning, the body is
+ * corroboration worth a fraction of it.
+ */
+export function scoreRequest(queryTokens: string[], request: FeatureRequestDto): number {
+  const title = overlapScore(queryTokens, request.title)
+  const body = overlapScore(queryTokens, request.description.slice(0, 600))
+  return title + body * 0.25
+}
+
+/**
  * One issue from a tracked repo, or null when it does not exist or is not a
  * feature request.
  *

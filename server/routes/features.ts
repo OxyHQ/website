@@ -20,6 +20,8 @@ import {
   listFeatureRepos,
   loadFeatureRequests,
   repoKey,
+  scoreRequest,
+  tokenize,
 } from '../services/featureBoard.js'
 import { reconcileFeaturePriorities } from '../services/featurePriority.js'
 import { getPriorityTiers } from '../constants/featurePriority.js'
@@ -45,6 +47,22 @@ const listQuerySchema = z.object({
   page: z.string().optional(),
   limit: z.string().optional(),
   state: z.string().optional(),
+  q: z.string().max(200).optional(),
+}).passthrough()
+
+/** How many similar requests the proposal form shows by default. */
+const SIMILAR_DEFAULT_LIMIT = 5
+const SIMILAR_MAX_LIMIT = 10
+/**
+ * Below this share of the typed words, a match is noise. Token overlap produces
+ * false positives freely, and a list of unrelated requests trains people to
+ * ignore the whole panel.
+ */
+const SIMILAR_MIN_SCORE = 0.5
+
+const similarQuerySchema = z.object({
+  title: z.string().max(200),
+  limit: z.string().optional(),
 }).passthrough()
 
 const issueParamsSchema = z.object({
@@ -124,16 +142,28 @@ router.get('/apps', async (_req, res) => {
   })
 })
 
+/**
+ * The roadmap groups the whole board at once rather than a page of it, so this
+ * route allows a larger page than the API default. Everything it returns is
+ * already in memory; the cap only bounds the response size.
+ */
+const MAX_FEATURE_PAGE_SIZE = 100
+
 // GET /  — feature requests across every tracked app
 router.get('/', optionalAuth, async (req, res) => {
-  const { status, app, sort = 'votes', page = '1', limit = '20', state } = validate(listQuerySchema, req.query)
+  const { status, app, sort = 'votes', page = '1', limit = '20', state, q } = validate(listQuerySchema, req.query)
 
   try {
     let items = await loadFeatureRequests(req.user?.id)
 
-    items = state === 'closed'
-      ? items.filter((item) => item.state === 'closed')
-      : items.filter((item) => item.state === 'open')
+    // `all` is what the roadmap asks for: a request that shipped is closed on
+    // GitHub, and a roadmap that hides everything delivered is a roadmap with
+    // the best news missing.
+    if (state === 'closed') {
+      items = items.filter((item) => item.state === 'closed')
+    } else if (state !== 'all') {
+      items = items.filter((item) => item.state === 'open')
+    }
 
     if (status) {
       items = items.filter((item) => item.status === status)
@@ -144,14 +174,32 @@ router.get('/', optionalAuth, async (req, res) => {
       items = items.filter((item) => item.app.key === wanted)
     }
 
-    if (sort === 'newest') {
+    // Counted before the search narrows things and before paging, so the
+    // roadmap's per-group totals describe the board rather than the page.
+    const statusCounts: Record<string, number> = {}
+    for (const item of items) {
+      statusCounts[item.status] = (statusCounts[item.status] ?? 0) + 1
+    }
+
+    // Search runs over the set already held in memory. It costs no GitHub
+    // request and cannot move the board closer to a rate limit, which is the
+    // whole reason it is not a query against GitHub's search API.
+    const queryTokens = tokenize(q ?? '')
+    if (queryTokens.length > 0) {
+      items = items
+        .map((item) => ({ item, score: scoreRequest(queryTokens, item) }))
+        .filter((scored) => scored.score > 0)
+        .sort((a, b) => b.score - a.score || b.item.totalVotes - a.item.totalVotes)
+        .map((scored) => scored.item)
+    } else if (sort === 'newest') {
       items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     } else if (sort === 'oldest') {
       items.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
     }
-    // `votes` is the order `loadFeatureRequests` already returns.
+    // `votes` is the order `loadFeatureRequests` already returns, and a search
+    // keeps its own relevance order rather than being re-sorted under it.
 
-    const { pageNum, limitNum } = parsePagination(page, limit)
+    const { pageNum, limitNum } = parsePagination(page, limit, MAX_FEATURE_PAGE_SIZE)
     const total = items.length
 
     res.json({
@@ -159,11 +207,57 @@ router.get('/', optionalAuth, async (req, res) => {
       total,
       page: pageNum,
       pages: Math.ceil(total / limitNum),
+      statusCounts,
     })
   } catch (err) {
     const message = toErrorMessage(err)
     console.error('[features] list failed:', message)
     res.status(502).json({ error: 'Failed to fetch features' })
+  }
+})
+
+/**
+ * GET /similar  — requests that look like the one someone is about to write.
+ *
+ * Shown next to the proposal form while the title is being typed, so a
+ * duplicate is found before it is filed rather than after. Three deliberate
+ * choices:
+ *
+ *   - It reads the same in-memory set as the board, so typing costs no GitHub
+ *     request.
+ *   - It includes CLOSED requests, unlike the board's default. The most useful
+ *     duplicate to surface is the one already shipped ("this exists, here it
+ *     is") or already declined with a reason, and both are closed.
+ *   - It never filters by app. The same idea in two apps is two legitimate
+ *     requests, so the app is shown and the reader decides.
+ */
+router.get('/similar', optionalAuth, async (req, res) => {
+  const { title, limit } = validate(similarQuerySchema, req.query)
+
+  const queryTokens = tokenize(title)
+  if (queryTokens.length === 0) {
+    return res.json({ matches: [], searched: false })
+  }
+
+  try {
+    const items = await loadFeatureRequests(req.user?.id)
+    const max = Math.min(Math.max(parseInt(limit ?? '', 10) || SIMILAR_DEFAULT_LIMIT, 1), SIMILAR_MAX_LIMIT)
+
+    const matches = items
+      .map((item) => ({ item, score: scoreRequest(queryTokens, item) }))
+      .filter((scored) => scored.score >= SIMILAR_MIN_SCORE)
+      .sort((a, b) => b.score - a.score || b.item.totalVotes - a.item.totalVotes)
+      .slice(0, max)
+      .map((scored) => scored.item)
+
+    res.json({ matches, searched: true })
+  } catch (err) {
+    const message = toErrorMessage(err)
+    console.error('[features] similar lookup failed:', message)
+    // A hint that cannot be produced must not stop someone proposing, so this
+    // answers "nothing found, and I could not look" rather than an error the
+    // dialog would have to render as a failure.
+    res.json({ matches: [], searched: false })
   }
 })
 

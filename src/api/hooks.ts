@@ -1166,6 +1166,11 @@ export interface FeatureListResponse {
   total: number
   page: number
   pages: number
+  /**
+   * Per-status totals over the whole filtered board, counted before paging, so
+   * the roadmap's group counts stay right when its rows are capped.
+   */
+  statusCounts: Record<string, number>
 }
 
 export interface FeatureAppOption extends FeatureAppData {
@@ -1188,17 +1193,61 @@ export function useFeatureApps() {
   })
 }
 
-export function useFeatureRequests(params?: { status?: string; app?: string; sort?: string; page?: number }) {
+export interface FeatureListParams {
+  status?: string
+  app?: string
+  sort?: string
+  page?: number
+  /** Free text, matched server-side over the issue set already in memory. */
+  q?: string
+  /** `all` includes closed proposals, which is what the roadmap needs. */
+  state?: 'open' | 'closed' | 'all'
+  limit?: number
+}
+
+export function useFeatureRequests(params?: FeatureListParams, options?: { enabled?: boolean }) {
   const qs = new URLSearchParams()
   if (params?.status) qs.set('status', params.status)
   if (params?.app) qs.set('app', params.app)
   if (params?.sort) qs.set('sort', params.sort)
   if (params?.page) qs.set('page', String(params.page))
+  if (params?.q) qs.set('q', params.q)
+  if (params?.state) qs.set('state', params.state)
+  if (params?.limit) qs.set('limit', String(params.limit))
   const query = qs.toString()
   return useQuery({
     queryKey: ['features', params],
     queryFn: () => apiFetch<FeatureListResponse>(`/features${query ? `?${query}` : ''}`),
+    enabled: options?.enabled ?? true,
     staleTime: 60_000,
+  })
+}
+
+export interface FeatureSimilarResponse {
+  matches: FeatureRequestData[]
+  /**
+   * False when nothing was looked up: too few usable words, or the lookup
+   * failed. It is the difference between "nothing matched" and "I did not
+   * manage to check", and the form says which.
+   */
+  searched: boolean
+}
+
+/**
+ * Proposals that look like the title being typed.
+ *
+ * Runs against the same in-memory set as the board, so it costs no GitHub
+ * request per keystroke, and it deliberately includes closed proposals: the
+ * duplicate worth surfacing is usually one already shipped or already declined.
+ */
+export function useSimilarFeatures(title: string, options?: { enabled?: boolean }) {
+  const trimmed = title.trim()
+  return useQuery({
+    queryKey: ['feature-similar', trimmed],
+    queryFn: () => apiFetch<FeatureSimilarResponse>(`/features/similar?title=${encodeURIComponent(trimmed)}`),
+    enabled: (options?.enabled ?? true) && trimmed.length >= 3,
+    staleTime: 60_000,
+    retry: false,
   })
 }
 
