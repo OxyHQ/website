@@ -184,9 +184,63 @@ function cacheSignature(repos: FeatureRepo[]): string {
   return repos.map((repo) => repo.key).sort().join(',')
 }
 
-/** Drop the cached GitHub issues. Used by the admin cache-clear endpoint. */
+/**
+ * Per-issue caches, for the detail page.
+ *
+ * Separate from the search cache above because they answer a different
+ * question, and the detail page is public: without them every page view and
+ * every refresh spent a GitHub request, which is how a single shared link
+ * exhausts the hourly budget for the whole board. Bounded and evicted oldest
+ * first, since the key space is every issue number a visitor can type.
+ */
+const DETAIL_CACHE_TTL_MS = 60 * 1000
+const DETAIL_CACHE_MAX_ENTRIES = 500
+
+interface CacheEntry<T> {
+  value: T
+  expires: number
+}
+
+const issueDetailCache = new Map<string, CacheEntry<GitHubIssue | null>>()
+const issueCommentsCache = new Map<string, CacheEntry<IssueComments>>()
+
+/**
+ * Read through a bounded TTL cache, with the same rate-limit treatment the
+ * search path uses: when GitHub refuses, a stale entry is held for another
+ * window and served rather than failing the page. Only a caller with nothing
+ * cached at all sees the error.
+ */
+async function cachedGithubRead<T>(
+  store: Map<string, CacheEntry<T>>,
+  key: string,
+  load: () => Promise<T>,
+): Promise<T> {
+  const cached = store.get(key)
+  if (cached && cached.expires > Date.now()) return cached.value
+
+  try {
+    const value = await load()
+    if (store.size >= DETAIL_CACHE_MAX_ENTRIES) {
+      // Map iterates in insertion order, so the first key is the oldest write.
+      const oldest = store.keys().next()
+      if (!oldest.done) store.delete(oldest.value)
+    }
+    store.set(key, { value, expires: Date.now() + DETAIL_CACHE_TTL_MS })
+    return value
+  } catch (err) {
+    if (cached && err instanceof GitHubApiError && (err.status === 429 || err.status === 403)) {
+      cached.expires = Date.now() + CACHE_RATE_LIMIT_EXTENSION_MS
+      return cached.value
+    }
+    throw err
+  }
+}
+
+/** Drop every cached GitHub read. Used by the admin cache-clear endpoint. */
 export function clearFeatureIssueCache(): void {
   issueCache = null
+  issueDetailCache.clear()
+  issueCommentsCache.clear()
 }
 
 interface SearchResponse {
@@ -380,6 +434,68 @@ export async function loadFeatureRequests(userId?: string): Promise<FeatureReque
 
   items.sort((a, b) => b.totalVotes - a.totalVotes)
   return items
+}
+
+/**
+ * One issue from a tracked repo, or null when it does not exist or is not a
+ * feature request.
+ *
+ * The label check lives here rather than at the route so both the detail page
+ * and its comments answer the same question from one cached read: the board
+ * shows feature requests, and an issue in a tracked repo that is not one is
+ * simply not on the board.
+ */
+export async function fetchFeatureIssue(repo: FeatureRepo, issueNumber: string): Promise<GitHubIssue | null> {
+  return cachedGithubRead(issueDetailCache, `${repo.key}#${issueNumber}`, async () => {
+    let issue: GitHubIssue
+    try {
+      issue = await githubRequest<GitHubIssue>(`/repos/${repo.owner}/${repo.repo}/issues/${issueNumber}`)
+    } catch (err) {
+      // A miss is cached like any other answer, so a crawler walking issue
+      // numbers cannot turn every 404 into a GitHub request.
+      if (err instanceof GitHubApiError && err.status === 404) return null
+      throw err
+    }
+    return issue.labels.some((label) => label.name.toLowerCase() === FEATURE_LABEL) ? issue : null
+  })
+}
+
+export interface GitHubIssueComment {
+  id: number
+  body: string | null
+  html_url: string
+  created_at: string
+  updated_at: string
+  author_association: string
+  user: { login: string; avatar_url: string; html_url: string }
+}
+
+export interface IssueComments {
+  comments: GitHubIssueComment[]
+  /** True when the thread runs past what one page holds. */
+  hasMore: boolean
+}
+
+/** Comments on an issue, capped at one page. */
+const COMMENTS_PAGE_SIZE = 100
+
+/**
+ * Read the comments on a feature request.
+ *
+ * One page, deliberately: a thread long enough to overflow it is a
+ * conversation, and the honest thing is to send the reader to GitHub for the
+ * rest rather than paginate a mirror of it here.
+ */
+export async function fetchFeatureIssueComments(
+  repo: FeatureRepo,
+  issueNumber: string,
+): Promise<IssueComments> {
+  return cachedGithubRead(issueCommentsCache, `${repo.key}#${issueNumber}`, async () => {
+    const comments = await githubRequest<GitHubIssueComment[]>(
+      `/repos/${repo.owner}/${repo.repo}/issues/${issueNumber}/comments?per_page=${COMMENTS_PAGE_SIZE}`,
+    )
+    return { comments, hasMore: comments.length === COMMENTS_PAGE_SIZE }
+  })
 }
 
 /** Create a `feature-request` issue in a tracked repo. */

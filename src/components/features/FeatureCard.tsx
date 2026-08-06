@@ -1,7 +1,9 @@
+import { Link } from 'react-router-dom'
 import { ChevronUp, MessageSquare, ExternalLink } from 'lucide-react'
 import FeatureStatusBadge from './FeatureStatusBadge'
 import FeaturePriorityBadge from './FeaturePriorityBadge'
 import type { FeatureRequestData } from '../../api/hooks'
+import { featureRequestPath } from '../../lib/featureRequest'
 
 interface FeatureCardProps {
   feature: FeatureRequestData
@@ -9,6 +11,7 @@ interface FeatureCardProps {
 }
 
 export default function FeatureCard({ feature, onVote }: FeatureCardProps) {
+  const detailPath = featureRequestPath(feature.owner, feature.repoName, feature.number)
   const descriptionPreview =
     feature.description.length > 120
       ? feature.description.slice(0, 120) + '...'
@@ -37,15 +40,16 @@ export default function FeatureCard({ feature, onVote }: FeatureCardProps) {
       {/* Content column */}
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <a
-            href={feature.htmlUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 font-semibold text-foreground hover:underline"
+          {/* The title opens the request here, not on GitHub. Reading a proposal
+              and voting on it are both things this site does; the GitHub thread
+              is where you go to join the discussion, which is why it stays a
+              quiet secondary link below rather than the primary action. */}
+          <Link
+            to={detailPath}
+            className="font-semibold text-foreground hover:underline"
           >
             {feature.title}
-            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
-          </a>
+          </Link>
           <FeatureStatusBadge status={feature.status} />
           <FeaturePriorityBadge priority={feature.priority} />
         </div>
@@ -58,15 +62,24 @@ export default function FeatureCard({ feature, onVote }: FeatureCardProps) {
           <span className="inline-flex items-center rounded-full border border-border bg-surface px-2 py-0.5 font-medium">
             {feature.app.displayName}
           </span>
-          <span className="inline-flex items-center gap-1">
+          <Link to={detailPath} className="inline-flex items-center gap-1 transition-colors hover:text-foreground">
             <MessageSquare className="h-3.5 w-3.5" />
             {feature.commentCount}
-          </span>
+          </Link>
           <span>
             <img src={feature.authorAvatar} alt="" className="mr-1 inline h-4 w-4 rounded-full" />
             {feature.author}
           </span>
           <span>{new Date(feature.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+          <a
+            href={feature.htmlUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+          >
+            GitHub
+            <ExternalLink className="h-3 w-3" />
+          </a>
         </div>
       </div>
     </div>

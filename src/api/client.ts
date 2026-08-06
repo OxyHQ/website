@@ -76,6 +76,21 @@ function toRequestData(body: RequestInit['body']): unknown {
  * are now owned by the SDK linked client instead of a per-call `getAccessToken()`
  * + hand-rolled `Authorization` header.
  */
+/**
+ * HTTP status behind an error thrown by {@link apiFetch}, when there is one.
+ *
+ * `apiFetch` rethrows the SDK's `ApiError` wrapped in a real `Error` so callers
+ * get a readable `message`, which puts the status one level down on `cause`.
+ * Reading it here rather than in each page keeps that shape in the file that
+ * creates it: a caller that needs to tell "this does not exist" from "the
+ * backend is unwell" should not have to know how the wrapping works.
+ */
+export function errorStatus(error: unknown): number | undefined {
+  const cause = (error as { cause?: unknown } | null)?.cause
+  const status = (cause as { status?: unknown } | null)?.status
+  return typeof status === 'number' ? status : undefined
+}
+
 export async function apiFetch<T>(path: string, options?: RequestInit & { locale?: string }): Promise<T> {
   if (!linked) {
     throw new Error('API client not initialized: setOxyServices() must run before apiFetch()')
