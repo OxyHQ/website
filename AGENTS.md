@@ -49,6 +49,11 @@ radii and shadows, so reach for those before inventing a name.
   tokens, which is why they come from `buildSeedScopeVars`: an alias substitutes
   where it is declared, so overriding `--background` inside `.tnp-theme` cannot
   move a `--color-background` declared at `:root`.
+- A palette cannot take a Tailwind variant — `lg:force-dark` is not a thing,
+  since a variant applies to a utility and a palette is a declaration block. A
+  surface that changes palette at a breakpoint (the newsroom hero, dark only from
+  `lg`) gets a second generated class inside a media query, `.force-dark-lg`,
+  from the same seed as the first.
 - Verify a theme change in a real browser, comparing the palette BEFORE the app's
   JS runs against after — tsc and the build cannot see this class of bug. Block
   `**/*.js` in Playwright rather than disabling JavaScript, or `page.evaluate`

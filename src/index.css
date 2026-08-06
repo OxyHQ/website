@@ -87,29 +87,6 @@
 @import './styles/slice-theme.css';
 
 @theme {
-  /* Neutral palette (used for specific non-semantic styling) */
-  --color-black-0: #000;
-  --color-black-50: #101113;
-  --color-black-100: #1c1d1f;
-  --color-black-200: #202124;
-  --color-black-300: #232529;
-  --color-black-400: #2e3238;
-  --color-black-500: #383e47;
-  --color-black-600: #505967;
-  --color-black-700: #6f7988;
-  --color-black-800: #8f99a8;
-  --color-black-900: #a4adba;
-
-  --color-white-100: #fff;
-  --color-white-200: #fafafb;
-  --color-white-300: #f3f4f6;
-  --color-white-400: #edeff3;
-  --color-white-500: #e4e7ec;
-  --color-white-600: #dee2e7;
-  --color-white-700: #d3d8df;
-  --color-white-800: #cad0d9;
-  --color-white-900: #b5bdc9;
-
   /* Semantic colours are NOT declared here.
    * `@oxyhq/bloom/design-tokens/theme.css` (imported above) is the single
    * authority for the `--color-x` alias vocabulary, and it ships more of it than
@@ -118,11 +95,6 @@
    * behind those aliases come from `styles/theme.generated.css`. */
 
   --color-blue-450: #3977e8;
-
-  /* Landing page colors */
-  --color-sand: #f6f5f4;
-  --color-oxy-blue: #0057f3;
-  --color-oxy-red: #fa0019;
 
   /* Typography — powered by @oxyhq/bloom fonts.
    * Bloom's <BloomThemeProvider> injects --bloom-font-display / --bloom-font-sans /
@@ -167,7 +139,6 @@
   /* Easing */
   --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
 
-
 }
 
 /* The palette itself lives in `styles/theme.generated.css` (imported above),
@@ -177,21 +148,6 @@
  * teal, a neutral white background against a pink-tinted one, and no `--card` at
  * all — which every prerendered page showed until React replaced it. */
 
-/* Initiative page heading */
-.text-heading-xlarge {
-  font-size: clamp(28px, 4.5vw, 52px);
-  line-height: 1.2;
-  letter-spacing: -0.04em;
-}
-
-/* Dashboard map utilities */
-.rsm-svg {
-  width: 100%;
-  height: auto;
-}
-.rsm-geographies path {
-  transition: fill 0.15s ease;
-}
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
@@ -249,14 +205,6 @@ body {
 }
 
 /* Heading utilities */
-.text-heading-xs {
-  font-family: var(--font-display);
-  font-size: var(--text-heading-xs);
-  line-height: var(--text-heading-xs--line-height);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
 .text-heading-sm {
   font-family: var(--font-display);
   font-size: var(--text-heading-sm);
@@ -335,16 +283,19 @@ body {
 
 /* Button variants */
 @layer components {
+  /* `primary-foreground` rather than a literal white: a preset whose primary is
+   * light (the mint and lime brands) needs dark type on it, and Bloom already
+   * resolves which. */
   .button-primary {
     background: var(--color-primary);
     border-color: var(--color-primary);
-    color: white;
+    color: var(--color-primary-foreground);
     transition: all 0.3s ease-in-out;
   }
   .button-primary:hover {
     background: color-mix(in srgb, var(--color-primary) 88%, black);
     border-color: color-mix(in srgb, var(--color-primary) 88%, black);
-    color: white;
+    color: var(--color-primary-foreground);
   }
 
   .button-outline {
@@ -469,27 +420,20 @@ body {
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+/* The thumb rides the theme like everything else, so it needs no light/dark
+ * pair of its own — `--border` already carries both. The selector that used to
+ * sit beside `.dark` here matched a hardcoded `bg-[#0f1117]` class that no
+ * component uses any more. */
 ::-webkit-scrollbar-thumb {
-  background: var(--color-white-500, #E4E7EC);
+  background: var(--color-border);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-white-700, #C8CDD5);
-}
-.dark ::-webkit-scrollbar-thumb,
-[class*="bg-[#0f1117]"] ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
-}
-.dark ::-webkit-scrollbar-thumb:hover,
-[class*="bg-[#0f1117]"] ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--color-muted-foreground);
 }
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-white-500, #E4E7EC) transparent;
-}
-.dark * {
-  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+  scrollbar-color: var(--color-border) transparent;
 }
 
 .animate-nav-enter-right {
@@ -506,12 +450,6 @@ body {
 }
 .animate-nav-fade-in {
   animation: dropdown-fade-in 0.15s cubic-bezier(0.65, 0, 0.35, 1) both;
-}
-
-/* Shared viewport container */
-.nav-viewport {
-  transition: width 0.2s cubic-bezier(0.65, 0, 0.35, 1),
-              height 0.2s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 /* Scroll reveal — elements start hidden, revealed by JS */
@@ -548,7 +486,6 @@ body {
 /* Dimension-style typography */
 .body-lg { font-size: 1rem; line-height: 1.5; }
 .body-md { font-size: 0.9375rem; line-height: 1.5; }
-.body-base { font-size: 0.875rem; line-height: 1.5; }
 .heading-3xl { font-size: clamp(2rem, 1.5rem + 2.5vw, 3.5rem); line-height: 1.05; letter-spacing: -0.02em; }
 .heading-xl { font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem); line-height: 1.2; }
 .heading-md { font-size: 1.125rem; line-height: 1.3; }
@@ -560,51 +497,9 @@ body {
   letter-spacing: 0.1em;
 }
 
-/* Frost border glass effect */
-.frost-border {
-  position: relative;
-  isolation: isolate;
-  border: var(--borderWidth, 1px) solid transparent;
-  background: var(--background, rgba(255,255,255,0.05));
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-}
-.frost-border::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(circle at 15% 0%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 50%);
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0.3;
-  transition: opacity 0.2s;
-}
-.frost-border:hover::before { opacity: 0.5; }
-
-/* Banner slide down */
-@keyframes slide-down {
-  from {
-    opacity: 0;
-    transform: translateY(-100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-slide-down {
-  animation: slide-down 0.4s ease-out both;
-}
-
 /* Attio product shadows */
 .shadow-attio-product-e1 {
   box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.03), 0px 2px 4px -1px rgba(0,0,0,0.04), 0px 4px 8px -2px rgba(0,0,0,0.06);
-}
-
-.shadow-attio-4 {
-  box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.03), 0px 2px 4px -1px rgba(0,0,0,0.05), 0px 4px 8px -2px rgba(0,0,0,0.08), 0px 8px 16px -4px rgba(0,0,0,0.1);
 }
 
 /* Text overline utility */
@@ -630,7 +525,6 @@ body {
   font-weight: 500;
   letter-spacing: -0.01em;
 }
-
 
 /* Footer link hover underline */
 .attio-group-hover-underline {
