@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-01T08:34:57.622Z",
+  "generatedAt": "2026-08-06T05:07:37.528Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -2023,6 +2023,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/ColorPresetGate",
+              "title": "ColorPresetGate",
+              "file": "bloom/0.5.0/api/types/ColorPresetGate.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/DialogAction",
               "title": "DialogAction",
               "file": "bloom/0.5.0/api/types/DialogAction.md",
@@ -2730,6 +2737,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/FREE_COLOR_NAMES",
+              "title": "FREE\\_COLOR\\_NAMES",
+              "file": "bloom/0.5.0/api/variables/FREE_COLOR_NAMES.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/FrostedIconButton",
               "title": "FrostedIconButton",
               "file": "bloom/0.5.0/api/variables/FrostedIconButton.md",
@@ -2761,6 +2775,13 @@
               "slug": "api/variables/GroupedButtons",
               "title": "GroupedButtons",
               "file": "bloom/0.5.0/api/variables/GroupedButtons.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/HANDLE_COLOR_NAMES",
+              "title": "HANDLE\\_COLOR\\_NAMES",
+              "file": "bloom/0.5.0/api/variables/HANDLE_COLOR_NAMES.md",
               "order": 10000,
               "section": "api"
             },
@@ -10237,7 +10258,7 @@
             {
               "slug": "encryption",
               "title": "Encryption",
-              "description": "Signal Protocol key bundle, ECDH derivation, AES-GCM message framing, and where keys live.",
+              "description": "Static ECDH (P-256) key agreement between identity keys, AES-256-GCM message framing, where keys live, and what isn't implemented yet.",
               "file": "allo/main/encryption.mdx",
               "order": 2,
               "section": "guides"
@@ -10248,6 +10269,62 @@
               "description": "REST endpoints and Socket.IO events exposed by @allo/backend.",
               "file": "allo/main/api.mdx",
               "order": 3,
+              "section": "guides"
+            },
+            {
+              "slug": "matrix/bridges",
+              "title": "Orquestación de bridges multi-red",
+              "file": "allo/main/matrix/bridges.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "matrix/client-strategy",
+              "title": "La estrategia de cliente: web y clave de recuperación",
+              "file": "allo/main/matrix/client-strategy.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "matrix/data-model",
+              "title": "El modelo de datos de Allo sobre Matrix",
+              "file": "allo/main/matrix/data-model.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "matrix/ephemeral",
+              "title": "El tercer nivel: conversaciones efímeras",
+              "file": "allo/main/matrix/ephemeral.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "matrix/interim-homeserver",
+              "title": "Usar Allo antes de tener homeserver propio",
+              "file": "allo/main/matrix/interim-homeserver.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "matrix/linked-accounts",
+              "title": "Cuentas vinculadas: las redes puenteadas desde el lado del usuario",
+              "file": "allo/main/matrix/linked-accounts.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "matrix/push",
+              "title": "Notificaciones push sobre Matrix",
+              "file": "allo/main/matrix/push.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "matrix/ui-wiring",
+              "title": "La UI contra el puerto de Matrix",
+              "file": "allo/main/matrix/ui-wiring.md",
+              "order": 1000,
               "section": "guides"
             }
           ]
@@ -10324,9 +10401,30 @@
               "section": "guides"
             },
             {
+              "slug": "handoff/inventory-parsing-gaps",
+              "title": "Six ways a model inventory reports a confident low number",
+              "file": "mention/main/handoff/inventory-parsing-gaps.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "handoff/userbehavior-inventory",
+              "title": "`UserBehavior` — per-line inventory",
+              "file": "mention/main/handoff/userbehavior-inventory.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "mentions",
               "title": "User mentions",
               "file": "mention/main/mentions.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "MONGO-TO-POSTGRES-CUTOVER",
+              "title": "Mongo → Postgres cutover runbook",
+              "file": "mention/main/MONGO-TO-POSTGRES-CUTOVER.md",
               "order": 1000,
               "section": "guides"
             },
@@ -10693,7 +10791,7 @@
       "shortName": "tnp",
       "repo": "https://github.com/OxyHQ/tnp",
       "category": "service",
-      "description": "Alternative DNS / namespace system — Vite web + Bun API + DNS server",
+      "description": "Universal network layer — namespace, resolution, encrypted overlay, Vite web + Bun API + DNS server + relay",
       "defaultVersion": "main",
       "versions": [
         {
@@ -10729,6 +10827,160 @@
               "description": "Every HTTP endpoint exposed by the TNP API — DNS resolution, TLDs, domains, records, service nodes, relays, client distribution.",
               "file": "tnp/main/api.mdx",
               "order": 3,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/audit-2026-08-06",
+              "title": "TNP Phase 0 technical audit — 2026-08-06",
+              "file": "tnp/main/architecture/audit-2026-08-06.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/discovery",
+              "title": "Discovery",
+              "file": "tnp/main/architecture/discovery.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/exit-nodes",
+              "title": "Exit nodes",
+              "file": "tnp/main/architecture/exit-nodes.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/glossary",
+              "title": "TNP glossary",
+              "file": "tnp/main/architecture/glossary.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/migration",
+              "title": "Migration plan",
+              "file": "tnp/main/architecture/migration.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/mobile-expo",
+              "title": "Mobile client (Expo)",
+              "file": "tnp/main/architecture/mobile-expo.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/naming",
+              "title": "Naming and namespace policy",
+              "file": "tnp/main/architecture/naming.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/onion-routing",
+              "title": "Onion routing",
+              "file": "tnp/main/architecture/onion-routing.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/operating-modes",
+              "title": "TNP operating modes",
+              "file": "tnp/main/architecture/operating-modes.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/overview",
+              "title": "TNP architecture overview",
+              "file": "tnp/main/architecture/overview.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/platforms",
+              "title": "Platform integration",
+              "file": "tnp/main/architecture/platforms.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/privacy-model",
+              "title": "Privacy model",
+              "file": "tnp/main/architecture/privacy-model.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/product",
+              "title": "What TNP is, as a product",
+              "file": "tnp/main/architecture/product.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/proxy",
+              "title": "Proxy",
+              "file": "tnp/main/architecture/proxy.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/relays",
+              "title": "Relays",
+              "file": "tnp/main/architecture/relays.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/resolution",
+              "title": "Resolution",
+              "file": "tnp/main/architecture/resolution.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/roadmap",
+              "title": "Roadmap",
+              "file": "tnp/main/architecture/roadmap.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/security",
+              "title": "Security architecture",
+              "file": "tnp/main/architecture/security.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/service-nodes",
+              "title": "Service nodes",
+              "file": "tnp/main/architecture/service-nodes.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/threat-model",
+              "title": "Threat model",
+              "file": "tnp/main/architecture/threat-model.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/transport",
+              "title": "Transport — TNP wire protocol v1",
+              "file": "tnp/main/architecture/transport.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "architecture/vpn",
+              "title": "VPN",
+              "file": "tnp/main/architecture/vpn.md",
+              "order": 1000,
               "section": "guides"
             }
           ]

@@ -34,12 +34,36 @@
  * would produce client-side, so there is no diff and no flash.
  */
 import { HelmetProvider, type HelmetServerState } from 'react-helmet-async'
-import { renderToString } from 'react-dom/server'
+import { renderToString, renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import SEO from './components/SEO'
+import ArticleMarkdown from './components/newsroom/article/ArticleMarkdown'
 import { LocaleProvider } from './lib/i18n'
 import type { SeoData } from './lib/seo'
+
+/**
+ * A page's prose, as HTML, for the document the crawler is served.
+ *
+ * The head this file renders told crawlers what a page WAS while `<body>` said
+ * nothing at all — 469 bytes and an empty `#root` on every route, including
+ * 1,400 documentation pages and every newsroom post. A crawler that does not
+ * run JavaScript indexed a title and a description of an empty document.
+ *
+ * This is the article renderer the browser uses, not a second markdown
+ * pipeline: same components, same classes, same heading ids, so what is indexed
+ * and what a reader ends up looking at cannot describe different documents. It
+ * imports react-markdown and nothing platform-specific, which is what keeps it
+ * out of the SSR trouble the rest of the page tree would bring (see the note at
+ * the top of this file).
+ *
+ * The app mounts with `createRoot`, which empties the container before its first
+ * render, so this markup is a pre-hydration view and never something React has
+ * to reconcile.
+ */
+export function renderMarkdownBody(markdown: string): string {
+  return renderToStaticMarkup(<ArticleMarkdown content={markdown} />)
+}
 
 /**
  * Mirrors the props of `<SEO>` exactly. Kept inline (not imported from

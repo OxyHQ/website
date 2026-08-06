@@ -104,6 +104,14 @@ interface SEOProps {
   noIndex?: boolean
 }
 
+/** Renders a page's markdown with the app's own article components. */
+type RenderMarkdownFn = (markdown: string) => string
+
+interface SsrRenderers {
+  renderSEO: RenderSEOFn
+  renderMarkdownBody: RenderMarkdownFn
+}
+
 interface RenderSEOFn {
   (
     input: SEOProps,
@@ -114,7 +122,7 @@ interface RenderSEOFn {
 
 /* ── SSR bundle build ─────────────────────────────────────────────── */
 
-async function buildSsrBundle(): Promise<RenderSEOFn> {
+async function buildSsrBundle(): Promise<SsrRenderers> {
   if (existsSync(SSR_DIR)) {
     await rm(SSR_DIR, { recursive: true })
   }
@@ -166,11 +174,14 @@ async function buildSsrBundle(): Promise<RenderSEOFn> {
   })
 
   const ssrEntry = path.join(SSR_DIR, 'entry-server.js')
-  const mod = (await import(`file://${ssrEntry}`)) as { renderSEO: RenderSEOFn }
+  const mod = (await import(`file://${ssrEntry}`)) as Partial<SsrRenderers>
   if (typeof mod.renderSEO !== 'function') {
     throw new Error('[prerender] SSR bundle did not export renderSEO()')
   }
-  return mod.renderSEO
+  if (typeof mod.renderMarkdownBody !== 'function') {
+    throw new Error('[prerender] SSR bundle did not export renderMarkdownBody()')
+  }
+  return { renderSEO: mod.renderSEO, renderMarkdownBody: mod.renderMarkdownBody }
 }
 
 /* ── Static route SEO props ───────────────────────────────────────── */
@@ -499,6 +510,9 @@ interface NewsroomApiPost {
   slug: string
   status?: string
   title: string
+  /** The post's body, in markdown. The list endpoint already returns it. */
+  content?: string
+  categories?: string[]
   description?: string
   resume?: string
   metaTitle?: string
@@ -659,6 +673,12 @@ async function walkMdxEntries(rootDir: string): Promise<Array<{ slug: string; fr
  * MDX files — anything more elaborate (lists, nested objects) is left as
  * a raw string; SEO only cares about a few flat string fields.
  */
+/** The document without its frontmatter block, which is metadata, not prose. */
+function stripFrontmatter(source: string): string {
+  const match = /^---\r?\n[\s\S]*?\r?\n---\r?\n?/.exec(source)
+  return match ? source.slice(match[0].length).trim() : source.trim()
+}
+
 function parseFrontmatter(source: string): Record<string, unknown> {
   if (!source.startsWith('---')) return {}
   const end = source.indexOf('\n---', 3)
@@ -699,11 +719,11 @@ interface DocsPageMeta {
  * the synced metadata doesn't already carry one — this mirrors how
  * `DocsPage` resolves the page meta at runtime.
  */
-async function enumerateDocsRoutes(): Promise<Array<{ url: string; seo: SEOProps }>> {
+async function enumerateDocsRoutes(): Promise<RouteEntry[]> {
   if (!existsSync(SYNCED_INDEX)) return []
   const raw = await readFile(SYNCED_INDEX, 'utf8')
   const index = JSON.parse(raw) as SyncedIndex
-  const out = new Map<string, SEOProps>()
+  const out = new Map<string, RouteEntry>()
 
   for (const pkg of index.packages) {
     const versioned = pkg.versioned === true
@@ -712,10 +732,13 @@ async function enumerateDocsRoutes(): Promise<Array<{ url: string; seo: SEOProps
       ? `/developers/docs/${pkg.shortName}/${pkg.latestVersion}`
       : `/developers/docs/${pkg.shortName}`
     out.set(landingUrl, {
-      title: `${pkg.displayName}, Oxy Docs`,
-      description:
-        pkg.description ?? `Documentation for ${pkg.displayName}, part of the Oxy ecosystem.`,
-      canonicalPath: landingUrl,
+      url: landingUrl,
+      seo: {
+        title: `${pkg.displayName}, Oxy Docs`,
+        description:
+          pkg.description ?? `Documentation for ${pkg.displayName}, part of the Oxy ecosystem.`,
+        canonicalPath: landingUrl,
+      },
     })
 
     for (const version of pkg.versions) {
@@ -732,14 +755,18 @@ async function enumerateDocsRoutes(): Promise<Array<{ url: string; seo: SEOProps
             : `/developers/docs/${pkg.shortName}`
         }
 
-        // Try to pull a description from the MDX frontmatter on disk.
+        // The file on disk answers two questions at once: what the page's
+        // description is, and what its prose says. It is read once for both.
         let description = page.description ?? pkg.description ?? `Documentation for ${pkg.displayName}.`
+        let markdown: string | undefined
         const mdxPath = page.file ? path.join(SYNCED_DIR, page.file) : null
         if (mdxPath && existsSync(mdxPath)) {
-          const fm = parseFrontmatter(await readFile(mdxPath, 'utf8'))
+          const source = await readFile(mdxPath, 'utf8')
+          const fm = parseFrontmatter(source)
           if (typeof fm.description === 'string' && fm.description.length > 0) {
             description = fm.description
           }
+          markdown = stripFrontmatter(source)
         }
 
         // Canonical points at the latest version — matches how DocsPage
@@ -752,15 +779,19 @@ async function enumerateDocsRoutes(): Promise<Array<{ url: string; seo: SEOProps
           : url
 
         out.set(url, {
-          title: `${page.title}, ${pkg.displayName}`,
-          description,
-          canonicalPath,
+          url,
+          seo: {
+            title: `${page.title}, ${pkg.displayName}`,
+            description,
+            canonicalPath,
+          },
+          body: markdown ? { heading: page.title, meta: pkg.displayName, markdown } : undefined,
         })
       }
     }
   }
 
-  return Array.from(out.entries()).map(([url, seo]) => ({ url, seo }))
+  return Array.from(out.values())
 }
 
 async function enumerateHelpRoutes(): Promise<Array<{ url: string; seo: SEOProps }>> {
@@ -847,9 +878,28 @@ function newsroomImage(post: NewsroomApiPost): string | undefined {
   return undefined
 }
 
-function buildNewsroomRoutes(posts: NewsroomApiPost[]): Array<{ url: string; seo: SEOProps }> {
+function newsroomDateline(post: NewsroomApiPost): string | undefined {
+  const published = post.publishedAt
+    ? new Date(post.publishedAt).toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : undefined
+  return [post.categories?.[0], published].filter(Boolean).join(' · ') || undefined
+}
+
+function buildNewsroomRoutes(posts: NewsroomApiPost[]): RouteEntry[] {
   return posts.map((post) => ({
     url: `/newsroom/${post.slug}`,
+    body: post.content
+      ? {
+          heading: post.title,
+          meta: newsroomDateline(post),
+          standfirst: post.resume,
+          markdown: post.content,
+        }
+      : undefined,
     seo: {
       title: post.metaTitle || post.title,
       description: post.description || post.resume || post.title,
@@ -955,6 +1005,9 @@ function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): 
   for (const locale of locales) {
     for (const job of base) {
       expanded.push({
+        // No `body`: the markdown behind it is the default locale's text, and a
+        // `/es/` URL serving English prose reads worse to a crawler than one
+        // serving none.
         url: job.url === '/' ? `/${locale}` : `/${locale}${job.url}`,
         seo: job.seo,
         locale,
@@ -964,11 +1017,11 @@ function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): 
   return expanded
 }
 
-async function enumerateAllRoutes(): Promise<Array<{ url: string; seo: SEOProps }>> {
-  const result = new Map<string, SEOProps>()
+async function enumerateAllRoutes(): Promise<RouteEntry[]> {
+  const result = new Map<string, RouteEntry>()
 
   for (const [url, seo] of Object.entries(STATIC_ROUTE_SEO)) {
-    result.set(url, seo)
+    result.set(url, { url, seo })
   }
 
   const [news, jobs, features, helpRoutes, academyRoutes, docsRoutes] = await Promise.all([
@@ -980,14 +1033,14 @@ async function enumerateAllRoutes(): Promise<Array<{ url: string; seo: SEOProps 
     enumerateDocsRoutes(),
   ])
 
-  for (const { url, seo } of buildNewsroomRoutes(news)) result.set(url, seo)
-  for (const { url, seo } of buildJobRoutes(jobs)) result.set(url, seo)
-  for (const { url, seo } of buildFeatureRoutes(features)) result.set(url, seo)
-  for (const { url, seo } of helpRoutes) result.set(url, seo)
-  for (const { url, seo } of academyRoutes) result.set(url, seo)
-  for (const { url, seo } of docsRoutes) result.set(url, seo)
+  for (const entry of buildNewsroomRoutes(news)) result.set(entry.url, entry)
+  for (const { url, seo } of buildJobRoutes(jobs)) result.set(url, { url, seo })
+  for (const { url, seo } of buildFeatureRoutes(features)) result.set(url, { url, seo })
+  for (const { url, seo } of helpRoutes) result.set(url, { url, seo })
+  for (const { url, seo } of academyRoutes) result.set(url, { url, seo })
+  for (const entry of docsRoutes) result.set(entry.url, entry)
 
-  return Array.from(result.entries()).map(([url, seo]) => ({ url, seo }))
+  return Array.from(result.values())
 }
 
 /* ── HTML emission ────────────────────────────────────────────────── */
@@ -1040,6 +1093,66 @@ function applyHtmlLang(shell: string, locale: Locale): string {
   )
 }
 
+const HTML_ESCAPES: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (char) => HTML_ESCAPES[char] ?? char)
+}
+
+/**
+ * Put the page's prose inside the container the app mounts into.
+ *
+ * `createRoot` empties that container before its first render, so this is what
+ * a crawler that runs no JavaScript reads, and what a reader sees for the
+ * moment before the bundle takes over — the same text either way, in the same
+ * classes.
+ */
+/**
+ * How much prose one document may carry.
+ *
+ * The generated API references are the reason there is a limit at all: one
+ * typedoc class page is 200 kB of markdown and renders to nearly a megabyte of
+ * HTML, which is a disproportionate thing to send ahead of a bundle that will
+ * replace it. The cut is on a blank line so it never lands mid-sentence, and
+ * every capped page is reported at the end of the build — a bound nothing
+ * announces reads as full coverage to whoever looks next.
+ */
+const MAX_PROSE_CHARS = 40_000
+const cappedRoutes: Array<{ url: string; chars: number }> = []
+
+function capProse(markdown: string, url: string): string {
+  if (markdown.length <= MAX_PROSE_CHARS) return markdown
+  const head = markdown.slice(0, MAX_PROSE_CHARS)
+  const boundary = head.lastIndexOf('\n\n')
+  cappedRoutes.push({ url, chars: markdown.length })
+  return boundary > MAX_PROSE_CHARS / 2 ? head.slice(0, boundary) : head
+}
+
+function injectBody(
+  shell: string,
+  body: PageBody,
+  url: string,
+  renderMarkdownBody: RenderMarkdownFn,
+): string {
+  const parts = [
+    `<h1 class="text-heading-responsive-lg text-text">${escapeHtml(body.heading)}</h1>`,
+    body.meta ? `<p class="mt-4 text-sm text-text-secondary">${escapeHtml(body.meta)}</p>` : '',
+    body.standfirst ? `<p class="mt-6 text-lg text-text">${escapeHtml(body.standfirst)}</p>` : '',
+    `<div class="mt-10">${renderMarkdownBody(capProse(body.markdown, url))}</div>`,
+  ]
+  const article = `<article class="mx-auto w-full max-w-[46rem] px-4 py-16">${parts.join('')}</article>`
+  const root = '<div id="root"></div>'
+  const idx = shell.indexOf(root)
+  if (idx < 0) throw new Error('[prerender] shell missing an empty #root container')
+  return `${shell.slice(0, idx)}<div id="root">${article}</div>${shell.slice(idx + root.length)}`
+}
+
 function injectHead(shell: string, headHtml: string): string {
   const idx = shell.indexOf('</head>')
   if (idx < 0) throw new Error('[prerender] shell missing </head>')
@@ -1085,12 +1198,40 @@ function pathToFile(routePath: string): string {
   return assertInsideDist(path.join(DIST_DIR, clean, 'index.html'))
 }
 
+/**
+ * The prose a route can put in the document it serves.
+ *
+ * Only the two families whose content IS markdown carry one — newsroom posts
+ * and the synced documentation. A marketing page is built from components, so
+ * there is no honest text to emit for it and it keeps the empty shell rather
+ * than gaining a heading that repeats its own `<title>`.
+ */
+interface PageBody {
+  /** The page's own H1. */
+  heading: string
+  /** A dateline, a package name — whatever the page shows under its title. */
+  meta?: string
+  /** The standfirst, where the page has one. */
+  standfirst?: string
+  /** The page's body, in markdown. */
+  markdown: string
+}
+
+/** A route the build will write, with the prose it can serve if it has any. */
+interface RouteEntry {
+  url: string
+  seo: SEOProps
+  body?: PageBody
+}
+
 interface RenderJob {
   url: string
   /** Always the bare-path SEO props; the locale prefix lives in `url`. */
   seo: SEOProps
   /** Set only for locale-prefixed mirrors; absent means the default locale. */
   locale?: Locale
+  /** Absent for routes with no markdown of their own. */
+  body?: PageBody
 }
 
 /**
@@ -1113,7 +1254,7 @@ async function fetchSeoData(routePath: string): Promise<SeoData | null> {
 }
 
 async function writeRoute(
-  renderSEO: RenderSEOFn,
+  ssr: SsrRenderers,
   shell: string,
   job: RenderJob,
   localeSeed: SEOLocaleSeed[],
@@ -1122,12 +1263,15 @@ async function writeRoute(
     // CMS SEO is keyed on the bare canonical path — a locale mirror shares the
     // same entry rather than looking up a `/es/...` key that does not exist.
     const seoData = await fetchSeoData(job.seo.canonicalPath)
-    const { head } = renderSEO(job.seo, seoData, { locale: job.locale, locales: localeSeed })
+    const { head } = ssr.renderSEO(job.seo, seoData, { locale: job.locale, locales: localeSeed })
     if (!head) {
       console.warn(`[prerender] empty head for ${job.url}`)
     }
     const localized = job.locale ? applyHtmlLang(shell, job.locale) : shell
-    const stripped = stripExistingMeta(localized)
+    const withBody = job.body
+      ? injectBody(localized, job.body, job.url, ssr.renderMarkdownBody)
+      : localized
+    const stripped = stripExistingMeta(withBody)
     const html = injectHead(stripped, head)
     const outFile = pathToFile(job.url)
     await mkdir(path.dirname(outFile), { recursive: true })
@@ -1208,7 +1352,7 @@ async function main(): Promise<void> {
 
   const startTime = Date.now()
 
-  const [renderSEO, baseRoutes, shell, localeInfo] = await Promise.all([
+  const [ssr, baseRoutes, shell, localeInfo] = await Promise.all([
     buildSsrBundle(),
     enumerateAllRoutes(),
     loadShellHtml(),
@@ -1260,7 +1404,7 @@ async function main(): Promise<void> {
       const idx = cursor++
       const job = jobs[idx]
       if (!job) continue
-      const ok = await writeRoute(renderSEO, shell, job, localeInfo.seed)
+      const ok = await writeRoute(ssr, shell, job, localeInfo.seed)
       if (ok) succeeded++
       else failed++
       if ((idx + 1) % 100 === 0 || idx + 1 === jobs.length) {
@@ -1277,6 +1421,13 @@ async function main(): Promise<void> {
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
   console.log(`[prerender] wrote ${succeeded} routes (${failed} failed) in ${elapsed}s`)
+  if (cappedRoutes.length > 0) {
+    const worst = cappedRoutes.reduce((a, b) => (b.chars > a.chars ? b : a))
+    console.log(
+      `[prerender] prose capped at ${MAX_PROSE_CHARS} chars on ${cappedRoutes.length} route(s); ` +
+        `largest was ${worst.url} at ${worst.chars}`,
+    )
+  }
 
   // Strict by default: a prerender failure means those routes ship with the
   // generic home-page title/OG meta, which is worse than a failed build.

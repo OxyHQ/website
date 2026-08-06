@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-01T08:35:02.543Z",
+  "generatedAt": "2026-08-06T05:07:43.853Z",
   "repos": [
     {
       "owner": "OxyHQ",
@@ -60,7 +60,7 @@
       "repoOwner": "OxyHQ",
       "repoName": "OxyHQServices",
       "repoDisplayName": "Oxy SDK",
-      "htmlUrl": "https://github.com/OxyHQ/OxyHQServices/releases/tag/oxy-id-v1.0",
+      "htmlUrl": "https://github.com/OxyHQ/oxy/releases/tag/oxy-id-v1.0",
       "tagName": "oxy-id-v1.0"
     },
     {
