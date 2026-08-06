@@ -1,12 +1,14 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { motion, useScroll, useTransform, useReducedMotion, useInView } from 'framer-motion'
 import { ArrowUpRight } from '@phosphor-icons/react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HeroCarousel from '../components/homepage/HeroCarousel'
 import { heroCarouselSlots } from '../data/heroCarousel'
-import { useHero, usePage, type HeroMediaRef, type PageSection } from '../api/hooks'
+import { useHero, usePage, type HeroMediaRef, type PageSection, useProducts, resolveProductLogoUrl, type ProductRecord } from '../api/hooks'
+import { getStaticChangelog } from '../content/changelog-loader'
+import RollingNumber from '../components/ui/RollingNumber'
 import { FEATURES } from '../constants'
 import { usePageChromeStore } from '../stores/pageChromeStore'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -853,182 +855,178 @@ const TESTIMONIALS = [
 ]
 
 /* ------------------------------------------------------------------ */
-/*  Teams Tabs (Side by Side)                                          */
+/*  Ecosystem                                                          */
 /* ------------------------------------------------------------------ */
-const TEAM_TABS = [
-  {
-    id: 'mention',
-    label: 'Mention',
-    desc: 'A social network built on respect. No algorithms designed to addict. No data harvested for ads. Just genuine human connection, powered by the fediverse.',
-    thumb: `${IMG}/video-thumb-sales-teams.webp`,
-    prompts: ['What\'s trending in my community?', 'Show me posts from people I follow', 'Find conversations about sustainability'],
-  },
-  {
-    id: 'allo',
-    label: 'Allo',
-    desc: 'End-to-end encrypted messaging designed for privacy. Group chats, voice, and media sharing — without compromising your data.',
-    thumb: `${IMG}/video-thumb-customer-support.webp`,
-    prompts: ['Start a secure group chat', 'Send an encrypted message', 'Share files privately'],
-  },
-  {
-    id: 'inbox',
-    label: 'Inbox',
-    desc: 'All your messages in one place. A unified inbox that keeps you connected across all Oxy platforms.',
-    thumb: `${IMG}/video-thumb-customer-support.webp`,
-    prompts: ['Show unread messages', 'Search my conversations', 'Filter by platform'],
-  },
-  {
-    id: 'codea',
-    label: 'Codea',
-    desc: 'A modern code editor built for developers. Write, run, and collaborate on code directly in your browser with AI assistance.',
-    thumb: `${IMG}/video-thumb-in-house-ops.webp`,
-    prompts: ['Create a new project', 'Run my code', 'Explain this function'],
-  },
-  {
-    id: 'oxy-ai',
-    label: 'Oxy AI',
-    desc: 'Intelligent AI models that understand your context. Search, create, and automate across the entire Oxy ecosystem.',
-    thumb: `${IMG}/video-thumb-sales-teams.webp`,
-    prompts: ['Summarize my recent activity', 'Draft a response to this message', 'Analyze this dataset'],
-  },
-  {
-    id: 'tnp',
-    label: 'TNP',
-    desc: 'The New Protocol — an alternative namespace system giving you true ownership of your digital identity. Your name, your rules.',
-    thumb: `${IMG}/video-thumb-in-house-ops.webp`,
-    prompts: ['Register a new name', 'Look up a TNP address', 'Configure my namespace'],
-  },
-  {
-    id: 'oxy-os',
-    label: 'Oxy OS',
-    desc: 'An operating system designed around privacy and user freedom. Your computer, your data — no telemetry, no tracking.',
-    thumb: `${IMG}/video-thumb-financial-services.webp`,
-    prompts: ['Install an application', 'Check system updates', 'Configure privacy settings'],
-  },
-  {
-    id: 'faircoin',
-    label: 'FairCoin',
-    desc: 'Cryptocurrency designed for sustainability, not speculation. Powering ethical commerce and local economies worldwide.',
-    thumb: `${IMG}/video-thumb-in-house-ops.webp`,
-    prompts: ['What is the current exchange rate?', 'Find stores accepting FairCoin', 'Track my transaction history'],
-  },
-  {
-    id: 'homiio',
-    label: 'Homiio',
-    desc: 'Technology that makes affordable housing accessible. Connecting people with homes they can actually afford.',
-    thumb: `${IMG}/video-thumb-financial-services.webp`,
-    prompts: ['Find affordable housing near me', 'Check my application status', 'Compare neighborhood amenities'],
-  },
-]
 
-function TypewriterText({ texts, resetKey }: { texts: string[]; resetKey: number }) {
-  const [textIdx, setTextIdx] = useState(0)
-  const [charIdx, setCharIdx] = useState(0)
-  const [deleting, setDeleting] = useState(false)
-
-  // Derived-state pattern: reset on resetKey change without an effect.
-  const [lastResetKey, setLastResetKey] = useState(resetKey)
-  if (lastResetKey !== resetKey) {
-    setLastResetKey(resetKey)
-    setTextIdx(0)
-    setCharIdx(0)
-    setDeleting(false)
+/** A product's own logo, or its letter on its brand colour. */
+function ProductMark({ product }: { product: ProductRecord }) {
+  const logo = resolveProductLogoUrl(product)
+  if (logo) {
+    return (
+      <img
+        src={logo}
+        alt=""
+        aria-hidden="true"
+        width={44}
+        height={44}
+        loading="lazy"
+        decoding="async"
+        className="size-11 shrink-0 rounded-xl object-cover"
+      />
+    )
   }
-
-  useEffect(() => {
-    const text = texts[textIdx]
-    if (!deleting && charIdx < text.length) {
-      const id = setTimeout(() => setCharIdx((c) => c + 1), 40)
-      return () => clearTimeout(id)
-    }
-    if (!deleting && charIdx === text.length) {
-      const id = setTimeout(() => setDeleting(true), 2000)
-      return () => clearTimeout(id)
-    }
-    if (deleting && charIdx > 0) {
-      const id = setTimeout(() => setCharIdx((c) => c - 1), 20)
-      return () => clearTimeout(id)
-    }
-    // Fully deleted: advance to the next phrase. Scheduled via a timer (rather
-    // than set synchronously in the effect body) to avoid cascading renders.
-    const id = setTimeout(() => {
-      setDeleting(false)
-      setTextIdx((i) => (i + 1) % texts.length)
-    }, 400)
-    return () => clearTimeout(id)
-  }, [charIdx, deleting, textIdx, texts])
-
   return (
-    <span className="typewrap">
-      {texts[textIdx].slice(0, charIdx)}
+    <span
+      aria-hidden="true"
+      className="flex size-11 shrink-0 items-center justify-center rounded-xl font-semibold text-lg"
+      style={{ backgroundColor: product.brand, color: product.brandForeground ?? '#fff' }}
+    >
+      {product.mark}
     </span>
   )
 }
 
-function TeamsSection() {
-  const [activeId, setActiveId] = useState(TEAM_TABS[0].id)
-  const [resetKey, setResetKey] = useState(0)
+/**
+ * The ecosystem, as the list of apps it actually is.
+ *
+ * This replaces a tabbed panel that showed one app at a time behind a stock
+ * photo, a typewriter animation and a description: six of the nine apps shared
+ * three photos between them, the inactive tabs sat at 30% opacity, and every
+ * one of them linked to the same page. The products come from the same records
+ * that drive /technologies, the navbar and /status, so nothing here can drift
+ * out of sync with them, and each card opens the app it names.
+ */
+/** Category order first, then the product's own, the same sequence /technologies uses. */
+function ecosystemOrder(product: ProductRecord): [number, number] {
+  const category = typeof product.category === 'object' && product.category !== null ? product.category : null
+  return [category?.order ?? Number.MAX_SAFE_INTEGER, product.order ?? 0]
+}
 
-  const handleTabClick = useCallback((id: string) => {
-    setActiveId(id)
-    setResetKey((k) => k + 1)
-  }, [])
+/** A landing shows the shape of the ecosystem; the full list lives on /technologies. */
+const ECOSYSTEM_LIMIT = 12
+
+function EcosystemSection() {
+  const { data: products = [], isPending } = useProducts({ surface: 'products' })
+  const shown = [...products]
+    .sort((a, b) => {
+      const [categoryA, orderA] = ecosystemOrder(a)
+      const [categoryB, orderB] = ecosystemOrder(b)
+      return categoryA - categoryB || orderA - orderB
+    })
+    .slice(0, ECOSYSTEM_LIMIT)
 
   return (
-    <section className="container">
-      <div>
-        <div className="grid grid-cols-12 gap-6 side-by-side-tabs">
-          <div className="col-span-full py-8">
-            <div className="grid grid-cols-12 gap-6">
-              <div className="col-span-6 max-[950px]:col-span-full">
-                <div className="tabs tabs-fade">
-                  {TEAM_TABS.map((t) => (
-                    <div key={t.id} className={`tab${t.id === activeId ? ' active' : ''}`} data-tab={t.id}>
-                      <div className="media-with-prompt">
-                        <div className="media rounded-3xl overflow-hidden" style={{ aspectRatio: '181 / 145' }}>
-                          <img src={t.thumb} alt={t.label} className="w-full h-full object-cover" width={1200} height={800} loading="lazy" decoding="async" />
-                        </div>
-                        <div className="prompt-overlay">
-                          <div className="prompt-box-bg" />
-                          <div className="prompt-box-blur" />
-                          <div className="typewrite text-white">
-                            {t.id === activeId && <TypewriterText texts={t.prompts} resetKey={resetKey} />}
-                          </div>
-                        </div>
+    <section className="container py-16 lg:py-24">
+      <div className="grid grid-cols-12 gap-6">
+        <div className="col-span-full flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+          <div>
+            <p className="mb-3 text-primary text-sm font-semibold">Explore the Oxy ecosystem</p>
+            <h2 className="text-heading-responsive-lg max-w-[16em] text-balance">
+              Many apps, one identity, one platform underneath
+            </h2>
+          </div>
+          <a href="/technologies" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            All technologies &rarr;
+          </a>
+        </div>
+
+        <div className="col-span-full mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3 xl:grid-cols-4">
+          {isPending
+            ? Array.from({ length: 8 }, (_, i) => (
+                <div key={i} className="h-[124px] animate-pulse rounded-2xl border border-border bg-surface" />
+              ))
+            : shown.map((product) => {
+                const href = product.landingUrl || product.href
+                const external = !href.startsWith('/')
+                return (
+                  <a
+                    key={product.productId}
+                    href={href}
+                    {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    className="group flex h-full flex-col gap-4 rounded-2xl border border-border bg-surface p-5 transition-colors hover:border-foreground/20 hover:bg-foreground/[0.03]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <ProductMark product={product} />
+                      <div className="min-w-0">
+                        <p className="truncate font-semibold text-foreground">{product.name}</p>
+                        {product.lifecycle === 'in-development' && (
+                          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">In development</p>
+                        )}
                       </div>
                     </div>
-                  ))}
-                </div>
+                    <p className="line-clamp-3 text-sm text-muted-foreground">
+                      {product.tagline || product.description}
+                    </p>
+                  </a>
+                )
+              })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  By the numbers                                                     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The ecosystem in figures.
+ *
+ * Every number here is one the site can actually stand behind: the apps and the
+ * repositories are counted from the same records that drive /technologies and
+ * the changelog, and the two that are not counted are commitments from the
+ * Founding Charter rather than metrics. No growth figures, no totals nobody can
+ * check.
+ */
+function ByTheNumbersSection() {
+  const ref = useRef<HTMLElement>(null)
+  const inView = useInView(ref, { once: true, amount: 0.3 })
+  const { data: products = [] } = useProducts({ surface: 'products' })
+  const { repos } = getStaticChangelog()
+
+  const stats = [
+    { value: String(products.length || 18), suffix: '', label: 'Apps in the ecosystem' },
+    { value: String(repos.length), suffix: '', label: 'Repositories you can read' },
+    { value: '1', suffix: '', label: 'Identity, held on your device' },
+  ]
+
+  return (
+    <section ref={ref} className="bg-surface text-foreground">
+      <div className="container grid gap-8 py-16 md:grid-cols-12 lg:py-24">
+        <div className="col-span-full max-w-[380px] md:col-span-5">
+          <p className="text-sm font-semibold text-primary">By the numbers</p>
+          <h2 className="mt-2 text-heading-responsive-lg text-balance">Built in the open</h2>
+          <p className="mt-4 text-muted-foreground">
+            Everything below is countable from what we publish: the apps that share one identity, the repositories
+            behind them, and the two commitments that decide how the rest is built.
+          </p>
+          <a
+            href="/company/charter"
+            className="mt-8 inline-flex items-center gap-2 border-border border-b pb-2 font-medium text-sm transition-colors hover:text-primary"
+          >
+            Read the Founding Charter <ArrowUpRight size={16} weight="bold" />
+          </a>
+        </div>
+
+        <div className="col-span-full flex flex-col md:col-span-6 md:col-start-7">
+          <div className="border-border border-t pt-6 pb-10 lg:pb-16">
+            <p className="font-display leading-[0.9] tracking-[-0.04em] text-[min(max(15vw,88px),180px)]">
+              <RollingNumber value="0" active={inView} />
+            </p>
+            <p className="mt-4 text-muted-foreground">Ads served, ever. No profiling, no data sales.</p>
+          </div>
+
+          <div className="grid grid-cols-1 border-border border-b sm:grid-cols-2">
+            {stats.map((stat) => (
+              <div key={stat.label} className="border-border border-t pt-4 pb-8 pr-4 lg:pb-10">
+                <p className="font-display leading-[1.1] tracking-[-0.04em] text-[min(max(6.25vw,42px),88px)]">
+                  <RollingNumber value={stat.value} active={inView} />
+                  {stat.suffix}
+                </p>
+                <p className="mt-2 text-muted-foreground text-sm">{stat.label}</p>
               </div>
-              <div className="col-span-5 col-start-8 max-[950px]:col-span-full max-[950px]:col-start-1 flex flex-col gap-12 justify-between">
-                <div>
-                  <p className="text-primary mb-5"><strong>Explore the Oxy Ecosystem</strong></p>
-                  <div className="teams-tabs-nav flex flex-col [&>button]:cursor-pointer">
-                    {TEAM_TABS.map((t) => (
-                      <button
-                        key={t.id}
-                        type="button"
-                        className={`text-[22px] leading-[1.2] font-[450] flex items-center justify-start gap-[0.3em] cursor-pointer text-start${t.id === activeId ? ' opacity-100' : ' opacity-30'}`}
-                        data-tab={t.id}
-                        onClick={() => handleTabClick(t.id)}
-                      >
-                        <span className={t.id === activeId ? 'inline' : 'hidden'}>&rarr;</span> {t.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="space-y-[1em]">
-                  <div className="tabs">
-                    {TEAM_TABS.map((t) => (
-                      <div key={t.id} className={`tab${t.id === activeId ? ' active' : ''}`} data-tab={t.id}>
-                        <p className="opacity-80 max-w-[490px]">{t.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <a href="/technologies" className={`${BTN} bg-primary text-primary-foreground`}>Learn More</a>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -1314,6 +1312,31 @@ function AppStoreBadge() {
 }
 
 /**
+ * The Play badge, drawn to match the App Store one beside it: same 144x48
+ * lockup, same outline, both taking their colour from the text around them.
+ */
+function GooglePlayBadge() {
+  return (
+    <svg width="144" height="48" viewBox="0 0 144 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Get it on Google Play">
+      <rect x="0.6" y="0.6" width="142.8" height="46.8" rx="7.4" stroke="currentColor" strokeWidth="1.2" />
+      {/* Play glyph: the classic four-facet triangle, in one colour. */}
+      <g transform="translate(14 12)">
+        <path d="M0.63 0.26A1.6 1.6 0 0 0 0.2 1.36v21.28c0 .43.16.82.43 1.1l.07.07 11.92-11.92v-.28L0.7 0.19l-.07.07Z" fill="currentColor" opacity="0.9" />
+        <path d="m16.6 15.86-3.98-3.98v-.28l3.98-3.98.09.05 4.71 2.68c1.35.76 1.35 2.02 0 2.79l-4.71 2.67-.09.05Z" fill="currentColor" opacity="0.75" />
+        <path d="M16.69 15.81 12.62 11.74 0.63 23.73a1.3 1.3 0 0 0 1.66.05l14.4-8.18" fill="currentColor" opacity="0.6" />
+        <path d="M16.69 7.67 2.29 -0.51a1.3 1.3 0 0 0-1.66.05l11.99 11.99 4.07-4.07Z" fill="currentColor" opacity="0.45" />
+      </g>
+      <text x="46" y="20" fill="currentColor" fontSize="8" fontWeight="500" letterSpacing="0.6" fontFamily="system-ui, sans-serif">
+        GET IT ON
+      </text>
+      <text x="46" y="35" fill="currentColor" fontSize="16" fontWeight="600" fontFamily="system-ui, sans-serif">
+        Google Play
+      </text>
+    </svg>
+  )
+}
+
+/**
  * One band for the Commons app: the night illustration behind everything, the
  * phone floating over it, the copy beside it and the download below.
  *
@@ -1326,8 +1349,12 @@ function CommonsAppSection() {
   const ref = useRef<HTMLElement>(null)
   const reduce = useReducedMotion()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const backdropY = useTransform(scrollYProgress, [0, 1], ['-6%', '6%'])
-  const phoneY = useTransform(scrollYProgress, [0, 1], ['14%', '-14%'])
+  // The backdrop is 140% tall and starts 20% above the band, so a ±8% drift of
+  // its own height still leaves it covering the band edge to edge.
+  const backdropY = useTransform(scrollYProgress, [0, 1], ['-8%', '8%'])
+  // The phone only ever moves DOWN from its resting position. Lifting it would
+  // raise the photo's hard bottom edge into the band and show the cut.
+  const phoneY = useTransform(scrollYProgress, [0, 1], ['22%', '0%'])
 
   return (
     <section ref={ref} className="relative isolate overflow-hidden">
@@ -1336,7 +1363,7 @@ function CommonsAppSection() {
         alt=""
         aria-hidden="true"
         style={reduce ? undefined : { y: backdropY }}
-        className="-z-20 absolute inset-0 h-[118%] w-full object-cover"
+        className="-z-20 absolute -top-[20%] left-0 h-[140%] w-full object-cover"
         width={1794}
         height={877}
         loading="lazy"
@@ -1357,20 +1384,31 @@ function CommonsAppSection() {
             </p>
 
             <div className="mt-10 flex flex-col gap-5 max-lg:items-center lg:mt-12">
-              <p className="max-w-[530px] font-[450] text-[13px] leading-4 tracking-wide">
+              <p className="max-w-[530px] font-[450] text-[13px] leading-relaxed tracking-wide">
                 <span className="opacity-60">
                   Connect all your tools, access open-source AI, and join a global community building technology for
                   good. Every product we create is designed to serve people, not exploit them.
                 </span>{' '}
                 Free and open source.
               </p>
-              <a
-                href="/technologies"
-                rel="noopener noreferrer"
-                className="inline-flex w-fit text-white transition-opacity hover:opacity-80"
-              >
-                <AppStoreBadge />
-              </a>
+              {/* Both point at the ecosystem page until the store listings are
+                  live; neither app is published yet. */}
+              <div className="flex flex-wrap items-center gap-3 max-lg:justify-center">
+                <a
+                  href="/technologies"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-fit text-white transition-opacity hover:opacity-80"
+                >
+                  <AppStoreBadge />
+                </a>
+                <a
+                  href="/technologies"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-fit text-white transition-opacity hover:opacity-80"
+                >
+                  <GooglePlayBadge />
+                </a>
+              </div>
             </div>
           </div>
 
@@ -1537,7 +1575,8 @@ export default function HomePage() {
         <FeaturesSection />
         {(FEATURES.SHOW_HOMEPAGE_STATS || FEATURES.SHOW_TESTIMONIALS) && <StatsAndTestimonialsSection />}
         <IndependentEcosystemSection />
-        <TeamsSection />
+        <EcosystemSection />
+        <ByTheNumbersSection />
         <PartnershipSection />
         <IntegrationsSecuritySection />
         <CommonsAppSection />
