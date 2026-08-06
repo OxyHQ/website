@@ -93,6 +93,33 @@ afterwards under /admin/repos.
   another interval on every retry. `getPriorityTiers()` is called at boot for
   this reason.
 
+## Prerendering and SEO
+
+`scripts/prerender.ts` writes `dist/<route>/index.html` for every route it can
+enumerate, plus `sitemap.xml` from that same list. Two halves come from the SSR
+bundle (`src/entry-server.tsx`): the `<head>`, rendered through the real `<SEO>`
+component, and — for routes whose content is markdown — the page's prose,
+rendered through the app's own `ArticleMarkdown`.
+
+- **A route serves prose only where prose is what it has.** Newsroom posts (the
+  API returns `content`) and the synced docs (markdown on disk). A marketing
+  page is built from components; emitting a heading that repeats its `<title>`
+  would be boilerplate, not content, so it keeps the shell.
+- **Locale mirrors deliberately keep the shell** — the markdown behind them is
+  the default locale's text, and a `/es/` URL serving English prose reads worse
+  than one serving none.
+- The app mounts with `createRoot`, which empties `#root` first, so prerendered
+  prose is never markup React has to reconcile. Do not switch to `hydrateRoot`
+  without making the markup match the full page tree, which is exactly what
+  `entry-server.tsx` explains it cannot do.
+- Prose is capped at 40,000 characters per document, cut on a blank line, and
+  every capped route is reported at the end of the build. The generated API
+  references are why: one typedoc page is 200 kB of markdown and rendered to
+  nearly a megabyte of HTML.
+- **Verify with JavaScript blocked, and mind the trailing slash.** `vite
+  preview` answers the slashless form with the SPA fallback, so a probe without
+  it reads an empty shell and reports that nothing changed.
+
 ## Rules
 
 - **MCP auth token**: passed as a request header ONLY — never as a query string parameter.

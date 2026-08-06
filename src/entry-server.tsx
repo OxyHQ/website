@@ -1,15 +1,16 @@
 /**
  * entry-server.tsx — build-time SEO renderer.
  *
- * Vite builds this file into a Node-loadable ESM bundle. The bundle exports
- * `renderSEO(props)` which mounts only the `<SEO>` component (the canonical
- * source of every meta tag the site ships) inside a minimal provider shell,
- * captures helmet's output (or, on React 19, scrapes the head tags out of
- * the `renderToString` payload), and returns a head fragment ready to
- * splice into `dist/<path>/index.html`.
+ * Vite builds this file into a Node-loadable ESM bundle with two exports, one
+ * per half of the document `scripts/prerender.ts` writes:
+ *   - `renderSEO(props)` mounts the `<SEO>` component (the canonical source of
+ *     every meta tag the site ships) and returns a `<head>` fragment.
+ *   - `renderMarkdownBody(markdown)` renders a page's prose with the same
+ *     article components the browser uses, for the routes whose content IS
+ *     markdown — newsroom posts and the synced documentation.
  *
- * Why this entry only renders `<SEO>`
- * -----------------------------------
+ * Why this entry does not mount whole pages
+ * -----------------------------------------
  * In principle we want to mount each page so its `<SEO>` call inside the
  * page body fires the same way it would at runtime. In practice the page
  * tree pulls in heavy React-Native-flavored libraries (`@oxyhq/bloom`,
@@ -27,11 +28,19 @@
  * `src/components/SEO.tsx`, every prerendered page picks it up
  * automatically on the next build.
  *
- * Hydration safety
- * ----------------
- * The SPA still mounts on the prerendered HTML and re-emits the same tags
- * via helmet-async at hydration. The static markup matches what helmet
- * would produce client-side, so there is no diff and no flash.
+ * `ArticleMarkdown` is the one page-tree component this file does mount, and it
+ * can be because its whole import graph is react-markdown — nothing
+ * platform-specific. A marketing page, built from components rather than prose,
+ * still ships the shell: there is no honest text to emit for it, and a heading
+ * that merely repeats the page's own `<title>` is not content.
+ *
+ * Mount safety
+ * ------------
+ * The app mounts with `createRoot`, which EMPTIES the container before its
+ * first render — so the prose above is a pre-hydration view, never markup React
+ * has to reconcile. The meta tags are a different story: helmet re-emits them
+ * client-side, and the static markup matches what it produces, so there is no
+ * diff and no flash there either.
  */
 import { HelmetProvider, type HelmetServerState } from 'react-helmet-async'
 import { renderToString, renderToStaticMarkup } from 'react-dom/server'
