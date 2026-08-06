@@ -143,5 +143,5 @@ bun run seed                      # seed the database
 <br>
 
 <div align="center">
-<sub>AGPL-3.0-only · The Oxy Collective Inc · <a href="LICENSE">LICENSE</a> · <a href="https://oxy.so">oxy.so</a></sub>
+<sub>Breathe License 1.0 · The Oxy Collective, Inc. · <a href="LICENSE">LICENSE</a> · <a href="https://oxy.so">oxy.so</a></sub>
 </div>
