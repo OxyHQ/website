@@ -17,8 +17,14 @@
   }
 }
 
-.oxy-landing img {
-  max-width: 100%;
+/* Inside `@layer base`, like the rule above it: unlayered, this beat every
+ * Tailwind `max-w-*` utility on the landing (utilities live in a layer, and
+ * unlayered rules outrank all layers), so an image could never be capped
+ * narrower than its column. */
+@layer base {
+  .oxy-landing img {
+    max-width: 100%;
+  }
 }
 
 
