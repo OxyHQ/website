@@ -11,9 +11,9 @@ const DOWNLOAD_LINKS: Record<Platform, string> = {
 }
 
 const PLATFORM_META: Record<Platform, { label: string; fileHint: string }> = {
-  macos: { label: 'macOS', fileHint: '.dmg' },
-  windows: { label: 'Windows', fileHint: '.exe' },
   linux: { label: 'Linux', fileHint: '.deb' },
+  windows: { label: 'Windows', fileHint: '.exe' },
+  macos: { label: 'macOS', fileHint: '.dmg' },
 }
 
 const DIALOG_EXIT_MS = 250
@@ -26,7 +26,7 @@ const CURRENT_PLATFORM: Platform = (() => {
   return 'linux'
 })()
 
-const OTHER_PLATFORMS = (['macos', 'windows', 'linux'] as Platform[]).filter(
+const OTHER_PLATFORMS = (['linux', 'windows', 'macos'] as Platform[]).filter(
   (p) => p !== CURRENT_PLATFORM,
 )
 
@@ -327,19 +327,22 @@ export default function AstroPageContent() {
               </button>
 
               <p className="mt-2 text-center text-sm text-white/60">
-                Available on macOS, Windows, and Linux
+                Available on Linux, Windows, and macOS
               </p>
             </div>
 
-            {/* Video */}
+            {/* Product shot */}
             <div className="col-span-12 col-start-1 select-none px-6 md:col-span-10 md:col-start-2 md:px-0 xl:col-span-8 xl:col-start-3">
               <div className="drop-shadow-[0_20px_50px_color-mix(in_srgb,var(--color-primary)_40%,transparent)]">
                 <div className="relative mx-auto aspect-video h-full w-full overflow-hidden rounded-2xl border border-border">
-                  <iframe
-                    src="https://player.vimeo.com/video/1129227761?h=94755e8733&badge=0&autopause=0&player_id=0&app_id=58479&controls=1&muted=1"
-                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-                    title="Video introducing Astro"
-                    className="absolute -start-px -top-px h-[calc(100%+2px)] w-[calc(100%+2px)]"
+                  <img
+                    src="/images/astro/astro-browser.webp"
+                    alt="Astro browsing with the assistant open in a new tab"
+                    className="absolute inset-0 h-full w-full object-cover"
+                    width={1920}
+                    height={1080}
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
               </div>
@@ -453,7 +456,7 @@ export default function AstroPageContent() {
               </button>
 
               <p className="mt-2 text-center text-sm text-white/60">
-                Available on macOS, Windows, and Linux
+                Available on Linux, Windows, and macOS
               </p>
             </div>
           </div>
