@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="LICENSE"><img alt="AGPL-3.0" src="https://img.shields.io/badge/license-AGPL--3.0-440151?style=flat-square"></a>
+  <a href="LICENSE"><img alt="Breathe License 1.0" src="https://img.shields.io/badge/license-Breathe%201.0-440151?style=flat-square"></a>
   <img alt="Bun" src="https://img.shields.io/badge/bun-1.3-440151?style=flat-square&logo=bun&logoColor=white">
   <img alt="Vite" src="https://img.shields.io/badge/Vite-8-440151?style=flat-square&logo=vite&logoColor=white">
   <img alt="React" src="https://img.shields.io/badge/React-19-440151?style=flat-square&logo=react&logoColor=white">
@@ -143,5 +143,5 @@ bun run seed                      # seed the database
 <br>
 
 <div align="center">
-<sub>AGPL-3.0-only · The Oxy Collective Inc · <a href="LICENSE">LICENSE</a> · <a href="https://oxy.so">oxy.so</a></sub>
+<sub>Breathe License 1.0 · The Oxy Collective, Inc. · <a href="LICENSE">LICENSE</a> · <a href="https://oxy.so">oxy.so</a></sub>
 </div>
