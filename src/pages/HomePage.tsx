@@ -1345,43 +1345,49 @@ function CommonsAppSection() {
       {/* The illustration is busiest on the left, where the copy sits. */}
       <div className="-z-10 absolute inset-0 bg-[linear-gradient(90deg,rgba(2,10,38,0.88)_0%,rgba(2,10,38,0.72)_45%,rgba(2,10,38,0.35)_100%)] max-lg:bg-[linear-gradient(180deg,rgba(2,10,38,0.85)_0%,rgba(2,10,38,0.6)_60%,rgba(2,10,38,0.85)_100%)]" />
 
-      <div className="container py-20 lg:py-28">
-        <div className="grid grid-cols-12 items-center gap-6">
-          <div className="col-span-full text-white max-lg:text-center lg:col-span-5">
+      {/* No bottom padding on the right: the phone is meant to rise out of the
+          band's lower edge rather than float in the middle of it. */}
+      <div className="container pt-20 lg:pt-28">
+        <div className="grid grid-cols-12 items-end gap-6">
+          <div className="col-span-full pb-20 text-white max-lg:text-center lg:col-span-5 lg:pb-28">
             <h2 className="text-heading-responsive-lg mb-5">Commons app by Oxy</h2>
             <p className="max-w-[500px] opacity-80 max-lg:mx-auto">
               Self-custody identity for everything Oxy. Your keys never leave your phone, so no company can lock you
               out, track you, or sell your data.
             </p>
+
+            <div className="mt-10 flex flex-col gap-5 max-lg:items-center lg:mt-12">
+              <p className="max-w-[530px] font-[450] text-[13px] leading-4 tracking-wide">
+                <span className="opacity-60">
+                  Connect all your tools, access open-source AI, and join a global community building technology for
+                  good. Every product we create is designed to serve people, not exploit them.
+                </span>{' '}
+                Free and open source.
+              </p>
+              <a
+                href="/technologies"
+                rel="noopener noreferrer"
+                className="inline-flex w-fit text-white transition-opacity hover:opacity-80"
+              >
+                <AppStoreBadge />
+              </a>
+            </div>
           </div>
 
           <motion.div
             style={reduce ? undefined : { y: phoneY }}
-            className="col-span-full max-lg:mt-10 lg:col-span-6 lg:col-start-7"
+            className="col-span-full self-end max-lg:mt-4 lg:col-span-6 lg:col-start-7"
           >
             <img
               src={`${IMG}/identity-app.webp`}
               alt="Oxy self-custody identity on iOS"
-              className="mask-b-from-80% mask-b-to-100% mx-auto h-auto w-full max-w-[260px] object-contain sm:max-w-[360px] lg:max-w-[520px] drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
+              className="mx-auto h-auto w-full max-w-[320px] object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)] sm:max-w-[440px] lg:max-w-none"
               width={577}
               height={433}
               loading="lazy"
               decoding="async"
             />
           </motion.div>
-        </div>
-
-        <div className="mt-12 flex flex-col items-center gap-5 text-center text-white lg:mt-16 lg:items-start lg:text-left">
-          <p className="max-w-[530px] font-[450] text-[13px] leading-4 tracking-wide">
-            <span className="opacity-60">
-              Connect all your tools, access open-source AI, and join a global community building technology for good.
-              Every product we create is designed to serve people, not exploit them.
-            </span>{' '}
-            Free and open source.
-          </p>
-          <a href="/technologies" rel="noopener noreferrer" className="inline-flex text-white transition-opacity hover:opacity-80">
-            <AppStoreBadge />
-          </a>
         </div>
       </div>
     </section>

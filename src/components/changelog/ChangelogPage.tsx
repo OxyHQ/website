@@ -1,10 +1,24 @@
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { getStaticChangelog } from '../../content/changelog-loader'
+import { getStaticChangelog, type StaticChangelogEntry } from '../../content/changelog-loader'
 import { FEATURES } from '../../constants'
 
 const PAGE_SIZE = 10
+
+/**
+ * A release body is written for GitHub, so its relative links point inside the
+ * repository that published it. Rendered here they resolved against oxy.so and
+ * 404'd, so they are re-pointed at the repo on its default branch: `tree` for a
+ * directory, `blob` for a file, which is how GitHub itself resolves them.
+ */
+function resolveReleaseLink(href: string | undefined, entry: StaticChangelogEntry): string | undefined {
+  if (!href || /^([a-z]+:|#|\/\/)/i.test(href)) return href
+  if (!entry.repoOwner || !entry.repoName) return href
+  const path = href.replace(/^\.?\//, '')
+  const kind = path.endsWith('/') ? 'tree' : 'blob'
+  return `https://github.com/${entry.repoOwner}/${entry.repoName}/${kind}/HEAD/${path}`
+}
 
 export default function ChangelogContent() {
   const { entries: allEntries, repos } = getStaticChangelog()
@@ -206,7 +220,16 @@ export default function ChangelogContent() {
                     </div>
 
                     <div className="font-normal leading-6.5 mt-5 text-muted-foreground prose prose-sm max-w-none prose-headings:text-foreground prose-a:text-[var(--color-blue-500)] prose-code:text-foreground prose-code:bg-surface prose-code:px-1 prose-code:rounded-md prose-li:marker:text-muted-foreground">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          a: ({ href, children }) => (
+                            <a href={resolveReleaseLink(href, entry)} target="_blank" rel="noopener noreferrer">
+                              {children}
+                            </a>
+                          ),
+                        }}
+                      >
                         {entry.content}
                       </ReactMarkdown>
                     </div>

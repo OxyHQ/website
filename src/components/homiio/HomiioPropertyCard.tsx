@@ -9,11 +9,18 @@ interface HomiioPropertyCardProps {
 /**
  * A single rental listing tile. Used both as the centre-stage example card and,
  * cloned many times, as the spokes of the rotating hero wheel.
+ *
+ * These are real listings, so the tile opens the one it shows. The wheel sets
+ * `pointer-events-none` on its own container, which keeps the decorative copies
+ * out of the tab order without the card needing to know where it is.
  */
 export default function HomiioPropertyCard({ listing, className = '' }: HomiioPropertyCardProps) {
   return (
-    <article
-      className={`flex w-[160px] flex-col rounded-2xl bg-white p-2 text-left shadow-[0_10px_30px_-12px_rgba(0,0,0,0.35)] ring-1 ring-black/5 ${className}`}
+    <a
+      href={listing.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`block w-[160px] rounded-2xl bg-white p-2 text-left shadow-[0_10px_30px_-12px_rgba(0,0,0,0.35)] ring-1 ring-black/5 transition-shadow hover:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.45)] ${className}`}
     >
       <img
         src={listing.imageUrl}
@@ -32,6 +39,6 @@ export default function HomiioPropertyCard({ listing, className = '' }: HomiioPr
         </span>
         <span className="text-[10px] font-semibold text-neutral-500">/mo</span>
       </div>
-    </article>
+    </a>
   )
 }
