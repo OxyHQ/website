@@ -43,7 +43,7 @@ export default function HomeBentoSection() {
 
           {/* Intro text */}
           <div className="container relative w-full lg:grid lg:grid-cols-12 lg:gap-x-6 lg:px-0">
-            <div className="col-span-10 col-start-2 max-w-[28em] text-balance pt-20 pb-16 text-heading-sm lg:pt-[120px]">
+            <div className="col-span-10 col-start-2 max-w-[28em] text-balance pt-20 pb-16 text-title-sm lg:pt-[120px]">
               <h3 className="inline">
                 <span className="font-semibold text-foreground">
                   GTM at full speed.

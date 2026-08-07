@@ -106,17 +106,173 @@
   --font-serif: var(--bloom-font-display);
   --font-mono: var(--bloom-font-mono);
 
-  /* Heading sizes */
-  --text-heading-xs: 1.75rem;
-  --text-heading-xs--line-height: 2.125rem;
-  --text-heading-sm: 2rem;
-  --text-heading-sm--line-height: 2.375rem;
-  --text-heading-md: 2.5rem;
-  --text-heading-md--line-height: 2.75rem;
-  --text-heading-lg: 3.5rem;
-  --text-heading-lg--line-height: 3.75rem;
-  --text-heading-xl: 4rem;
-  --text-heading-xl--line-height: 4rem;
+  /* ─── Type scale ───
+   *
+   * One scale, in four voices, and every step fluid between a phone and a
+   * desktop rather than snapping at a breakpoint:
+   *
+   *   body-*     reading text        weight 450
+   *   heading-*  a heading in flow   weight 650
+   *   display-*  a page's big type   weight 600
+   *   label-*    a chip or a badge   weight 500, line-height 1
+   *   link-*     an inline link      weight 500
+   *
+   * The values come from the reference Tailwind templates this site's newer
+   * surfaces are built on, so a pasted template keeps its proportions: its
+   * `tw-text-body-sm` is this file's `text-body-sm`, to the pixel.
+   *
+   * Use it INSTEAD of `text-[13px]`. There are 341 hand-written sizes left in
+   * src/ across 29 distinct pixel values — 8, 9, 10, 11, 12, 12.5, 13, 14, 15,
+   * 16, 17, 18, 20, 22, 26, 28, 32, 34, 36, 40, 42, 44, 48, 50, 52, 56, 60, 64,
+   * 72 — which is why type across the site reads as arbitrary: it is. Convert
+   * a surface to this scale when you touch it.
+   *
+   * `title-*` below is the older display-sized set, kept under an honest name:
+   * it was called `heading-*` while its smallest step was 28px, so a component
+   * asking for a small heading got one nearly three times the size. */
+  --text-body-xs: clamp(0.688rem, 0.156vw + 0.625rem, 0.75rem);
+  --text-body-xs--line-height: 1.45;
+  --text-body-xs--font-weight: 450;
+  --text-body-sm: clamp(0.75rem, 0.313vw + 0.625rem, 0.875rem);
+  --text-body-sm--line-height: 1.45;
+  --text-body-sm--font-weight: 450;
+  --text-body-md: clamp(0.875rem, 0.313vw + 0.75rem, 1rem);
+  --text-body-md--line-height: 1.45;
+  --text-body-md--font-weight: 450;
+  --text-body-lg: clamp(1rem, 0.313vw + 0.875rem, 1.125rem);
+  --text-body-lg--line-height: 1.45;
+  --text-body-lg--font-weight: 450;
+  --text-body-xl: clamp(1.125rem, 0.313vw + 1rem, 1.25rem);
+  --text-body-xl--line-height: 1.45;
+  --text-body-xl--font-weight: 450;
+  --text-body-2xl: clamp(1.25rem, 0.469vw + 1.063rem, 1.438rem);
+  --text-body-2xl--line-height: clamp(1.813rem, 0.32vw + 1.684rem, 1.941rem);
+  --text-body-2xl--letter-spacing: -0.01em;
+  --text-body-2xl--font-weight: 450;
+  --text-body-3xl: clamp(1.438rem, 0.469vw + 1.25rem, 1.625rem);
+  --text-body-3xl--line-height: clamp(1.941rem, 0.227vw + 1.85rem, 2.031rem);
+  --text-body-3xl--letter-spacing: -0.01em;
+  --text-body-3xl--font-weight: 450;
+
+  --text-heading-xs: clamp(0.688rem, 0.156vw + 0.625rem, 0.75rem);
+  --text-heading-xs--line-height: 1.45;
+  --text-heading-xs--font-weight: 650;
+  --text-heading-sm: clamp(0.75rem, 0.313vw + 0.625rem, 0.875rem);
+  --text-heading-sm--line-height: 1.45;
+  --text-heading-sm--font-weight: 650;
+  --text-heading-md: clamp(0.875rem, 0.313vw + 0.75rem, 1rem);
+  --text-heading-md--line-height: 1.45;
+  --text-heading-md--font-weight: 650;
+  --text-heading-lg: clamp(1rem, 0.313vw + 0.875rem, 1.125rem);
+  --text-heading-lg--line-height: clamp(1.45rem, 0.172vw + 1.381rem, 1.519rem);
+  --text-heading-lg--font-weight: 650;
+  --text-heading-xl: clamp(1.125rem, 0.781vw + 0.813rem, 1.438rem);
+  --text-heading-xl--line-height: clamp(1.519rem, 0.695vw + 1.241rem, 1.797rem);
+  --text-heading-xl--letter-spacing: -0.01em;
+  --text-heading-xl--font-weight: 650;
+  --text-heading-2xl: clamp(1.25rem, 1.406vw + 0.688rem, 1.813rem);
+  --text-heading-2xl--line-height: clamp(1.688rem, 1.445vw + 1.109rem, 2.266rem);
+  --text-heading-2xl--letter-spacing: -0.01em;
+  --text-heading-2xl--font-weight: 650;
+  --text-heading-3xl: clamp(1.438rem, 2.031vw + 0.625rem, 2.25rem);
+  --text-heading-3xl--line-height: clamp(1.797rem, 1.977vw + 1.006rem, 2.588rem);
+  --text-heading-3xl--letter-spacing: -0.02em;
+  --text-heading-3xl--font-weight: 650;
+
+  --text-display-6: clamp(1.813rem, 3.594vw + 0.375rem, 3.25rem);
+  --text-display-6--line-height: clamp(2.266rem, 3.68vw + 0.794rem, 3.738rem);
+  --text-display-6--letter-spacing: -0.02em;
+  --text-display-6--font-weight: 600;
+  --text-display-5: clamp(2.063rem, 3.906vw + 0.5rem, 3.625rem);
+  --text-display-5--line-height: clamp(2.475rem, 3.781vw + 0.963rem, 3.988rem);
+  --text-display-5--letter-spacing: -0.02em;
+  --text-display-5--font-weight: 600;
+  --text-display-4: clamp(2.25rem, 4.688vw + 0.375rem, 4.125rem);
+  --text-display-4--line-height: clamp(2.7rem, 4.594vw + 0.862rem, 4.538rem);
+  --text-display-4--letter-spacing: -0.02em;
+  --text-display-4--font-weight: 600;
+  --text-display-3: clamp(2.563rem, 5.156vw + 0.5rem, 4.625rem);
+  --text-display-3--line-height: clamp(2.947rem, 4.773vw + 1.038rem, 4.856rem);
+  --text-display-3--letter-spacing: -0.03em;
+  --text-display-3--font-weight: 600;
+  --text-display-2: clamp(2.875rem, 5.781vw + 0.563rem, 5.188rem);
+  --text-display-2--line-height: clamp(3.306rem, 5.352vw + 1.166rem, 5.447rem);
+  --text-display-2--letter-spacing: -0.03em;
+  --text-display-2--font-weight: 600;
+  --text-display-1: clamp(3.25rem, 6.563vw + 0.625rem, 5.875rem);
+  --text-display-1--line-height: clamp(3.738rem, 6.078vw + 1.306rem, 6.169rem);
+  --text-display-1--letter-spacing: -0.03em;
+  --text-display-1--font-weight: 600;
+  --text-display-0: clamp(4.125rem, 8.125vw + 0.875rem, 7.375rem);
+  --text-display-0--line-height: clamp(4.744rem, 7.5vw + 1.744rem, 7.744rem);
+  --text-display-0--letter-spacing: -0.03em;
+  --text-display-0--font-weight: 600;
+
+  --text-label-sm: clamp(0.688rem, 0.156vw + 0.625rem, 0.75rem);
+  --text-label-sm--line-height: 1;
+  --text-label-sm--font-weight: 500;
+  --text-label-md: clamp(0.75rem, 0.313vw + 0.625rem, 0.875rem);
+  --text-label-md--line-height: 1;
+  --text-label-md--font-weight: 500;
+  --text-label-lg: clamp(0.875rem, 0.313vw + 0.75rem, 1rem);
+  --text-label-lg--line-height: 1;
+  --text-label-lg--font-weight: 500;
+
+  --text-link-xs: clamp(0.688rem, 0.156vw + 0.625rem, 0.75rem);
+  --text-link-xs--line-height: 1.45;
+  --text-link-xs--font-weight: 500;
+  --text-link-sm: clamp(0.75rem, 0.313vw + 0.625rem, 0.875rem);
+  --text-link-sm--line-height: 1.45;
+  --text-link-sm--font-weight: 500;
+  --text-link-md: clamp(0.875rem, 0.313vw + 0.75rem, 1rem);
+  --text-link-md--line-height: 1.45;
+  --text-link-md--font-weight: 500;
+  --text-link-lg: clamp(1rem, 0.313vw + 0.875rem, 1.125rem);
+  --text-link-lg--line-height: 1.45;
+  --text-link-lg--font-weight: 500;
+
+  /* The older display-sized set, unchanged in value and honest in name. */
+  --text-title-xs: 1.75rem;
+  --text-title-xs--line-height: 2.125rem;
+  --text-title-sm: 2rem;
+  --text-title-sm--line-height: 2.375rem;
+  --text-title-md: 2.5rem;
+  --text-title-md--line-height: 2.75rem;
+  --text-title-lg: 3.5rem;
+  --text-title-lg--line-height: 3.75rem;
+  --text-title-xl: 4rem;
+  --text-title-xl--line-height: 4rem;
+
+  /* ─── Spacing ───
+   *
+   * The same idea for rhythm: a gap or a padding is a step on this scale, not a
+   * number picked per component. `gutter` is the gap BETWEEN columns of a grid
+   * — 16px on a phone, 32px from lg — which is what the templates call
+   * `gap-gutter--mobile` / `gap-gutter--desktop`.
+   *
+   * Tailwind's numeric scale (p-4, gap-2) still works and is not going away;
+   * these give the named steps a surface can be built from. */
+  --spacing-3xs: 1px;
+  --spacing-2xs: 2px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 48px;
+  --spacing-4xl: 64px;
+  --spacing-5xl: 96px;
+  --spacing-6xl: 128px;
+  --spacing-gutter: 16px;
+  --spacing-gutter-lg: 32px;
+  /* App icons are drawn at three fixed sizes and nowhere else. */
+  --spacing-app-icon-sm: 52px;
+  --spacing-app-icon-md: 64px;
+  --spacing-app-icon-lg: 72px;
+
+  /* The templates carry an `xs:` breakpoint below Tailwind's `sm`. */
+  --breakpoint-xs: 500px;
 
   /* Spacing */
   /* The header measures itself and republishes this at runtime (see Navbar);

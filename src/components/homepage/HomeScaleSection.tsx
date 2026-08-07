@@ -55,7 +55,7 @@ export default function HomeScaleSection() {
           <div className="container">
             <div className="py-20 lg:py-32">
               <div className="scroll-reveal text-center">
-                <h3 className="text-heading-sm font-semibold text-foreground">
+                <h3 className="text-title-sm font-semibold text-foreground">
                   Trusted by thousands of companies worldwide.
                 </h3>
                 <p className="mt-4 text-lg text-muted-foreground">

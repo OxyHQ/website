@@ -17,7 +17,7 @@ export default function PricingCard({ tier }: PricingCardProps) {
       <h3 className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
         {tier.name}
       </h3>
-      <p className="mt-3 text-heading-md text-foreground">
+      <p className="mt-3 text-title-md text-foreground">
         {tier.price ? `$${tier.price.monthly}` : 'Custom'}
       </p>
       <p className="mt-1 text-sm text-muted-foreground">{tier.description}</p>

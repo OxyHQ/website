@@ -32,10 +32,10 @@ function HeroSection({ products }: { products: ProductRecord[] }) {
   return (
     <section className="relative bg-foreground bg-cover bg-center text-background">
       <div className="container">
-        <div className="grid w-full grid-flow-dense grid-cols-12 gap-5 py-12 md:gap-8 md:py-16 lg:py-24">
+        <div className="grid w-full grid-flow-dense grid-cols-12 gap-gutter py-xl md:py-2xl lg:gap-x-gutter-lg lg:py-3xl">
           <div className="col-span-full flex flex-wrap justify-between lg:col-span-4 xl:col-span-6">
-            <div className="flex flex-col gap-2 pb-3 md:gap-3">
-              <h1 className="text-balance font-display text-[2.25rem]/[1.1] tracking-[-0.02em] lg:pb-8 lg:text-[3.25rem]/[1.05] xl:pb-12 xl:text-[4rem]/[1.02]">
+            <div className="flex flex-col gap-2xs pb-sm sm:gap-2xs md:gap-xs">
+              <h1 className="text-balance text-display-6 lg:pb-xl lg:text-heading-3xl xl:pb-2xl xl:text-display-6">
                 Every app in the ecosystem, one account you own
               </h1>
               <span className="hidden lg:inline-block">
@@ -48,7 +48,7 @@ function HeroSection({ products }: { products: ProductRecord[] }) {
           </div>
 
           <div className="col-span-full lg:col-span-8 xl:col-span-6">
-            <div className="grid grid-flow-dense grid-cols-1 gap-5 md:grid-cols-2 md:gap-8">
+            <div className="grid grid-flow-dense grid-cols-1 gap-gutter md:grid-cols-2 md:gap-gutter-lg">
               {products.map((product) => (
                 <AppCard key={product.productId} product={product} inverted />
               ))}
@@ -78,11 +78,11 @@ function AppGridSection({
 }) {
   if (products.length === 0) return null
   return (
-    <section className="flex w-full flex-col gap-5 md:gap-8">
+    <section className="flex w-full flex-col gap-gutter lg:gap-x-gutter-lg">
       <div className="flex flex-wrap justify-between">
-        <h2 className="text-heading-responsive-md">{title}</h2>
+        <h2 className="text-heading-xl">{title}</h2>
       </div>
-      <div className={`grid grid-flow-dense gap-5 md:gap-8 ${columns}`}>
+      <div className={`grid grid-flow-dense gap-gutter lg:gap-x-gutter-lg ${columns}`}>
         {products.map((product) => (
           <AppCard key={product.productId} product={product} />
         ))}
@@ -94,15 +94,15 @@ function AppGridSection({
 /** The editorial card beside the grid: a real document, not a promo. */
 function EditorialCard() {
   return (
-    <div className="flex h-full overflow-hidden rounded-sm bg-foreground text-background">
-      <div className="flex flex-col justify-between p-6 xl:p-8">
+    <div className="flex h-full overflow-hidden rounded-radius-8 bg-foreground text-background">
+      <div className="flex flex-col justify-between p-lg xl:p-xl">
         <div>
-          <p className="pb-2">The Founding Charter</p>
-          <h3 className="text-balance text-heading-responsive-sm">
+          <p className="pb-xs text-heading-md">The Founding Charter</p>
+          <h3 className="text-balance text-heading-xl">
             What every app here promises: no ads, no data sales, and the right to leave.
           </h3>
         </div>
-        <div className="pt-8 md:pt-10 lg:pt-12">
+        <div className="pt-lg md:pt-xl lg:pt-2xl xl:pt-3xl">
           <Link className="group/link no-underline hover:underline" to="/company/charter">
             Read the charter
             <ArrowGlyph />
@@ -131,10 +131,10 @@ const ADVANTAGES = [
 function AdvantageSection() {
   return (
     <section className="w-full border-border border-y bg-surface pb-8 lg:pb-16">
-      <div className="container flex flex-col gap-8 py-12 md:flex-row lg:py-20">
+      <div className="container flex flex-col gap-xl py-2xl md:flex-row lg:py-3xl">
         <div className="flex basis-1/2 flex-col justify-start md:items-start">
-          <h2 className="mb-3 text-heading-responsive-md md:mb-4">The Oxy app advantage</h2>
-          <p className="text-lg text-muted-foreground lg:max-w-[24em]">
+          <h2 className="mb-sm text-heading-3xl md:mb-md">The Oxy app advantage</h2>
+          <p className="text-body-xl text-muted-foreground lg:max-w-[24em]">
             Every app here is built on the same identity, the same design system and the same promises.
           </p>
           <div className="mt-8 hidden md:block">
@@ -143,11 +143,11 @@ function AdvantageSection() {
             </Button>
           </div>
         </div>
-        <ul className="flex basis-1/2 flex-col gap-6 lg:gap-8">
+        <ul className="flex basis-1/2 flex-col gap-lg lg:gap-xl">
           {ADVANTAGES.map((item) => (
             <li key={item.title} className="lg:max-w-[34em]">
-              <h3 className="text-heading-responsive-sm">{item.title}</h3>
-              <p className="mt-1 text-muted-foreground">{item.body}</p>
+              <h3 className="text-heading-lg">{item.title}</h3>
+              <p className="mt-2xs text-body-lg text-muted-foreground">{item.body}</p>
             </li>
           ))}
         </ul>
@@ -164,8 +164,8 @@ function AdvantageSection() {
 function ClosingSection() {
   return (
     <div className="bg-foreground">
-      <div className="container flex flex-col items-center gap-8 py-16 text-background lg:py-24">
-        <h2 className="text-center font-display text-[2rem]/[1.1] tracking-[-0.02em] md:text-[3rem]/[1.05]">
+      <div className="container flex flex-col items-center gap-xl py-2xl text-background lg:py-4xl">
+        <h2 className="text-center text-display-5">
           Want to build one?
         </h2>
         <Button
@@ -200,13 +200,13 @@ export default function AppsContent() {
       <HeroSection products={featured} />
 
       {isPending && (
-        <div className="container py-20">
+        <div className="container py-2xl lg:py-3xl">
           <p className="text-muted-foreground">Loading the ecosystem…</p>
         </div>
       )}
 
-      <div className="container my-12 md:my-16 lg:my-24">
-        <div className="flex flex-wrap gap-8 lg:flex-nowrap">
+      <div className="container my-xl md:my-2xl lg:my-3xl">
+        <div className="flex flex-wrap gap-gutter-lg lg:flex-nowrap">
           <div className="basis-full lg:basis-2/3 xl:basis-3/4">
             <AppGridSection
               title="Across the ecosystem"
@@ -221,7 +221,7 @@ export default function AppsContent() {
       </div>
 
       {upcoming.length > 0 && (
-        <div className="container my-12 md:my-16 lg:my-24">
+        <div className="container my-xl md:my-2xl lg:my-3xl">
           <AppGridSection
             title="In the making"
             products={upcoming}

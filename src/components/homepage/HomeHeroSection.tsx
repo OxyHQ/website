@@ -33,7 +33,7 @@ export default function HomeHeroSection() {
               Open-source ecosystem
             </p>
 
-            <h1 className="mt-6 max-w-[14ch] text-center text-heading-md md:text-heading-lg lg:text-heading-xl text-foreground">
+            <h1 className="mt-6 max-w-[14ch] text-center text-title-md md:text-title-lg lg:text-title-xl text-foreground">
               {homeHero.title}
             </h1>
 

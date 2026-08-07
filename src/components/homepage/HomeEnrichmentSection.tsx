@@ -39,7 +39,7 @@ export default function HomeEnrichmentSection() {
 
           {/* Content */}
           <div className="pt-20 lg:flex lg:flex-col lg:items-center lg:pt-[120px]">
-            <div className="scroll-reveal max-w-[880px] text-heading-sm lg:text-center px-6 lg:px-0">
+            <div className="scroll-reveal max-w-[880px] text-title-sm lg:text-center px-6 lg:px-0">
               <h3 className="inline font-semibold text-foreground">
                 Build fast.{' '}
               </h3>

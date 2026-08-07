@@ -6,7 +6,7 @@ export default function HomeFinalCTA() {
     <section className="relative overflow-hidden">
       <div className="container">
         <div className="flex flex-col items-center justify-center py-32 text-center">
-          <h2 className="text-center text-heading-md">
+          <h2 className="text-center text-title-md">
             <span className="block overflow-hidden">
               <span
                 className="block animate-fade-in-up"

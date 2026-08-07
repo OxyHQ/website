@@ -253,7 +253,7 @@ function HelpContent({
             <div className="inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground">
               {HERO_BADGE}
             </div>
-            <h1 className="mt-6 text-heading-lg">{HERO_TITLE}</h1>
+            <h1 className="mt-6 text-title-lg">{HERO_TITLE}</h1>
             <div className="mt-4 max-w-[20em] text-pretty text-foreground text-xl">
               {HERO_SUBTITLE}
             </div>
@@ -332,7 +332,7 @@ function HelpContent({
           {groups.length > 0 && (
             <div className="mt-20 w-full self-stretch md:mt-25">
               <div className="mb-8 flex flex-col gap-2">
-                <h2 className="text-heading-md">Browse by product</h2>
+                <h2 className="text-title-md">Browse by product</h2>
                 <p className="text-muted-foreground">
                   Articles organized by the Oxy app or service they cover.
                 </p>
@@ -380,7 +380,7 @@ function HelpContent({
           <div className="flex flex-col justify-between gap-x-[clamp(24px,calc(33.8%-215.304px),105px)] gap-y-10 xl:flex-row self-stretch">
             <div className="w-full xl:max-w-96">
               <div>
-                <h2 className="text-heading-md">
+                <h2 className="text-title-md">
                   <span>{GETTING_STARTED_HEADING} </span>
                   <span className="text-muted-foreground">{GETTING_STARTED_SUB_PRE}</span>
                   <br />

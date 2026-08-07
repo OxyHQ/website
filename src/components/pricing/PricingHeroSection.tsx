@@ -72,7 +72,7 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
                 <header className="text-muted-foreground text-xl">{plan.name}</header>
                 <div className="mt-4 lg:mt-8">
                   <div className="flex items-start gap-2">
-                    <div className="inline-block overflow-y-hidden text-heading-md">
+                    <div className="inline-block overflow-y-hidden text-title-md">
                       {plan.price ? (
                         <>
                           <span>$</span>
