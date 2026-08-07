@@ -252,24 +252,24 @@
    *
    * Tailwind's numeric scale (p-4, gap-2) still works and is not going away;
    * these give the named steps a surface can be built from. */
-  --spacing-3xs: 1px;
-  --spacing-2xs: 2px;
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 12px;
-  --spacing-lg: 16px;
-  --spacing-xl: 24px;
-  --spacing-2xl: 32px;
-  --spacing-3xl: 48px;
-  --spacing-4xl: 64px;
-  --spacing-5xl: 96px;
-  --spacing-6xl: 128px;
-  --spacing-gutter: 16px;
-  --spacing-gutter-lg: 32px;
+  --spacing-space-3xs: 1px;
+  --spacing-space-2xs: 2px;
+  --spacing-space-xs: 4px;
+  --spacing-space-sm: 8px;
+  --spacing-space-md: 12px;
+  --spacing-space-lg: 16px;
+  --spacing-space-xl: 24px;
+  --spacing-space-2xl: 32px;
+  --spacing-space-3xl: 48px;
+  --spacing-space-4xl: 64px;
+  --spacing-space-5xl: 96px;
+  --spacing-space-6xl: 128px;
+  --spacing-space-gutter: 16px;
+  --spacing-space-gutter-lg: 32px;
   /* App icons are drawn at three fixed sizes and nowhere else. */
-  --spacing-app-icon-sm: 52px;
-  --spacing-app-icon-md: 64px;
-  --spacing-app-icon-lg: 72px;
+  --spacing-space-app-icon-sm: 52px;
+  --spacing-space-app-icon-md: 64px;
+  --spacing-space-app-icon-lg: 72px;
 
   /* The templates carry an `xs:` breakpoint below Tailwind's `sm`. */
   --breakpoint-xs: 500px;

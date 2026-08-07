@@ -35,10 +35,10 @@ function HeroSection({ products }: { products: ProductRecord[] }) {
         {/* The template's rhythm is 24/32/48, but this page mounts the navbar
             transparent over the band, so the top has to clear the bar as well.
             The header measures itself and publishes its real height. */}
-        <div className="grid w-full grid-flow-dense grid-cols-12 gap-gutter pt-[calc(var(--site-header-height)+var(--spacing-xl))] pb-xl md:pt-[calc(var(--site-header-height)+var(--spacing-2xl))] md:pb-2xl lg:gap-x-gutter-lg lg:pt-[calc(var(--site-header-height)+var(--spacing-3xl))] lg:pb-3xl">
+        <div className="grid w-full grid-flow-dense grid-cols-12 gap-space-gutter pt-[calc(var(--site-header-height)+var(--spacing-space-xl))] pb-space-xl md:pt-[calc(var(--site-header-height)+var(--spacing-space-2xl))] md:pb-space-2xl lg:gap-x-space-gutter-lg lg:pt-[calc(var(--site-header-height)+var(--spacing-space-3xl))] lg:pb-space-3xl">
           <div className="col-span-full flex flex-wrap justify-between lg:col-span-4 xl:col-span-6">
-            <div className="flex flex-col gap-2xs pb-sm sm:gap-2xs md:gap-xs">
-              <h1 className="text-balance text-display-6 lg:pb-xl lg:text-heading-3xl xl:pb-2xl xl:text-display-6">
+            <div className="flex flex-col gap-space-2xs pb-space-sm sm:gap-space-2xs md:gap-space-xs">
+              <h1 className="text-balance text-display-6 lg:pb-space-xl lg:text-heading-3xl xl:pb-space-2xl xl:text-display-6">
                 Every app in the ecosystem, one account you own
               </h1>
               <span className="hidden lg:inline-block">
@@ -51,7 +51,7 @@ function HeroSection({ products }: { products: ProductRecord[] }) {
           </div>
 
           <div className="col-span-full lg:col-span-8 xl:col-span-6">
-            <div className="grid grid-flow-dense grid-cols-1 gap-gutter md:grid-cols-2 md:gap-gutter-lg">
+            <div className="grid grid-flow-dense grid-cols-1 gap-space-gutter md:grid-cols-2 md:gap-space-gutter-lg">
               {products.map((product) => (
                 <AppCard key={product.productId} product={product} inverted />
               ))}
@@ -81,11 +81,11 @@ function AppGridSection({
 }) {
   if (products.length === 0) return null
   return (
-    <section className="flex w-full flex-col gap-gutter lg:gap-x-gutter-lg">
+    <section className="flex w-full flex-col gap-space-gutter lg:gap-x-space-gutter-lg">
       <div className="flex flex-wrap justify-between">
         <h2 className="text-heading-xl">{title}</h2>
       </div>
-      <div className={`grid grid-flow-dense gap-gutter lg:gap-x-gutter-lg ${columns}`}>
+      <div className={`grid grid-flow-dense gap-space-gutter lg:gap-x-space-gutter-lg ${columns}`}>
         {products.map((product) => (
           <AppCard key={product.productId} product={product} />
         ))}
@@ -98,14 +98,14 @@ function AppGridSection({
 function EditorialCard() {
   return (
     <div className="flex h-full overflow-hidden rounded-radius-8 bg-foreground text-background">
-      <div className="flex flex-col justify-between p-lg xl:p-xl">
+      <div className="flex flex-col justify-between p-space-lg xl:p-space-xl">
         <div>
-          <p className="pb-xs text-heading-md">The Founding Charter</p>
+          <p className="pb-space-xs text-heading-md">The Founding Charter</p>
           <h3 className="text-balance text-heading-xl">
             What every app here promises: no ads, no data sales, and the right to leave.
           </h3>
         </div>
-        <div className="pt-lg md:pt-xl lg:pt-2xl xl:pt-3xl">
+        <div className="pt-space-lg md:pt-space-xl lg:pt-space-2xl xl:pt-space-3xl">
           <Link className="group/link no-underline hover:underline" to="/company/charter">
             Read the charter
             <ArrowGlyph />
@@ -134,9 +134,9 @@ const ADVANTAGES = [
 function AdvantageSection() {
   return (
     <section className="w-full border-border border-y bg-surface pb-8 lg:pb-16">
-      <div className="container flex flex-col gap-xl py-2xl md:flex-row lg:py-3xl">
+      <div className="container flex flex-col gap-space-xl py-space-2xl md:flex-row lg:py-space-3xl">
         <div className="flex basis-1/2 flex-col justify-start md:items-start">
-          <h2 className="mb-sm text-heading-3xl md:mb-md">The Oxy app advantage</h2>
+          <h2 className="mb-space-sm text-heading-3xl md:mb-space-md">The Oxy app advantage</h2>
           <p className="text-body-xl text-muted-foreground lg:max-w-[24em]">
             Every app here is built on the same identity, the same design system and the same promises.
           </p>
@@ -146,11 +146,11 @@ function AdvantageSection() {
             </Button>
           </div>
         </div>
-        <ul className="flex basis-1/2 flex-col gap-lg lg:gap-xl">
+        <ul className="flex basis-1/2 flex-col gap-space-lg lg:gap-space-xl">
           {ADVANTAGES.map((item) => (
             <li key={item.title} className="lg:max-w-[34em]">
               <h3 className="text-heading-lg">{item.title}</h3>
-              <p className="mt-2xs text-body-lg text-muted-foreground">{item.body}</p>
+              <p className="mt-space-2xs text-body-lg text-muted-foreground">{item.body}</p>
             </li>
           ))}
         </ul>
@@ -167,7 +167,7 @@ function AdvantageSection() {
 function ClosingSection() {
   return (
     <div className="bg-foreground">
-      <div className="container flex flex-col items-center gap-xl py-2xl text-background lg:py-4xl">
+      <div className="container flex flex-col items-center gap-space-xl py-space-2xl text-background lg:py-space-4xl">
         <h2 className="text-center text-display-5">
           Want to build one?
         </h2>
@@ -203,13 +203,13 @@ export default function AppsContent() {
       <HeroSection products={featured} />
 
       {isPending && (
-        <div className="container py-2xl lg:py-3xl">
+        <div className="container py-space-2xl lg:py-space-3xl">
           <p className="text-muted-foreground">Loading the ecosystem…</p>
         </div>
       )}
 
-      <div className="container my-xl md:my-2xl lg:my-3xl">
-        <div className="flex flex-wrap gap-gutter-lg lg:flex-nowrap">
+      <div className="container my-space-xl md:my-space-2xl lg:my-space-3xl">
+        <div className="flex flex-wrap gap-space-gutter-lg lg:flex-nowrap">
           <div className="basis-full lg:basis-2/3 xl:basis-3/4">
             <AppGridSection
               title="Across the ecosystem"
@@ -224,7 +224,7 @@ export default function AppsContent() {
       </div>
 
       {upcoming.length > 0 && (
-        <div className="container my-xl md:my-2xl lg:my-3xl">
+        <div className="container my-space-xl md:my-space-2xl lg:my-space-3xl">
           <AppGridSection
             title="In the making"
             products={upcoming}

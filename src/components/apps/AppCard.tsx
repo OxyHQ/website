@@ -53,17 +53,17 @@ export default function AppCard({ product, inverted = false }: { product: Produc
   const category = categoryLabel(product)
 
   // Sizes and gaps are the template's own steps, not approximations of them:
-  // a 52px icon (`app-icon-sm`), 12px from icon to text (`gap-md`), and 1px
-  // between the three lines (`gap-3xs`) — the lines are meant to read as one
+  // a 52px icon (`app-icon-sm`), 12px from icon to text (`gap-space-md`), and 1px
+  // between the three lines (`gap-space-3xs`) — the lines are meant to read as one
   // block, which they stop doing at the 4px this used to use.
   return (
     <div className="w-full">
       <Link
         to={appPath(product)}
-        className={`group relative flex cursor-pointer items-start gap-md ${inverted ? 'text-background' : 'text-foreground'}`}
+        className={`group relative flex cursor-pointer items-start gap-space-md ${inverted ? 'text-background' : 'text-foreground'}`}
       >
         <figure
-          className={`relative w-app-icon-sm shrink-0 overflow-hidden rounded-radius-8 transition-transform group-hover:scale-[1.025] ${
+          className={`relative w-space-app-icon-sm shrink-0 overflow-hidden rounded-radius-8 transition-transform group-hover:scale-[1.025] ${
             inverted ? 'shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)]' : 'shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)]'
           }`}
         >
@@ -72,7 +72,7 @@ export default function AppCard({ product, inverted = false }: { product: Produc
           </span>
         </figure>
 
-        <div className="flex w-full min-w-0 flex-col items-start gap-3xs">
+        <div className="flex w-full min-w-0 flex-col items-start gap-space-3xs">
           {/* The optical lift the template gives the name so its cap-height
               lines up with the top of the icon rather than its line box. */}
           <div className="text-body-sm font-medium transition-colors group-hover:opacity-80 md:-mt-[0.1em] lg:-mt-[0.2em]">
@@ -80,7 +80,7 @@ export default function AppCard({ product, inverted = false }: { product: Produc
           </div>
 
           <div
-            className={`relative flex items-center gap-xs self-stretch text-body-xs ${
+            className={`relative flex items-center gap-space-xs self-stretch text-body-xs ${
               inverted ? 'text-background/70' : 'text-muted-foreground'
             }`}
           >

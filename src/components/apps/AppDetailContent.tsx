@@ -47,7 +47,7 @@ function repoOwner(owner: string): string {
 function MetaRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <dt className="mb-xs text-heading-sm sm:text-heading-xs">{label}</dt>
+      <dt className="mb-space-xs text-heading-sm sm:text-heading-xs">{label}</dt>
       <dd className="text-body-sm text-muted-foreground">{children}</dd>
     </div>
   )
@@ -69,8 +69,8 @@ export default function AppDetailContent() {
 
   if (isPending) {
     return (
-      <div className="container py-2xl lg:py-3xl">
-        <div className="max-w-2xl space-y-6">
+      <div className="container py-space-2xl lg:py-space-3xl">
+        <div className="max-w-space-2xl space-y-6">
           <Skeleton.Box width={96} height={96} borderRadius={12} />
           <Skeleton.Box width={280} height={40} />
           <Skeleton.Box width="100%" height={16} />
@@ -89,7 +89,7 @@ export default function AppDetailContent() {
           canonicalPath={`/apps/${name}`}
           noIndex
         />
-        <div className="container py-2xl lg:py-3xl">
+        <div className="container py-space-2xl lg:py-space-3xl">
           <h1 className="text-heading-3xl">App not found.</h1>
           <p className="pt-6 text-muted-foreground">This app doesn&apos;t exist, or it has been renamed.</p>
           <p className="pt-8">
@@ -110,7 +110,7 @@ export default function AppDetailContent() {
   const opensExternally = openHref.startsWith('http')
 
   return (
-    <div className="container my-xl md:my-2xl lg:my-3xl">
+    <div className="container my-space-xl md:my-space-2xl lg:my-space-3xl">
       <SEO
         title={`${product.name}, ${category || 'Oxy'}`}
         description={product.tagline || product.description}
@@ -128,13 +128,13 @@ export default function AppDetailContent() {
         }}
       />
 
-      <div className="grid grid-cols-12 items-start gap-gutter lg:gap-x-gutter-lg">
+      <div className="grid grid-cols-12 items-start gap-space-gutter lg:gap-x-space-gutter-lg">
         {/* ── The app itself, pinned ── */}
-        <div className="col-span-full mb-lg lg:sticky lg:top-[calc(var(--site-header-height)+var(--spacing-xl))] lg:col-span-3 lg:mb-0">
-          <section className="flex flex-col gap-xl xs:flex-row lg:flex-col">
-            <div className="flex grow flex-col gap-xl">
-              <div className="flex items-stretch gap-md">
-                <figure className="relative size-3xl shrink-0 overflow-hidden rounded-radius-8 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] lg:size-app-icon-sm">
+        <div className="col-span-full mb-space-lg lg:sticky lg:top-[calc(var(--site-header-height)+var(--spacing-space-xl))] lg:col-span-3 lg:mb-0">
+          <section className="flex flex-col gap-space-xl xs:flex-row lg:flex-col">
+            <div className="flex grow flex-col gap-space-xl">
+              <div className="flex items-stretch gap-space-md">
+                <figure className="relative size-space-3xl shrink-0 overflow-hidden rounded-radius-8 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] lg:size-space-app-icon-sm">
                   <AppIcon product={product} />
                 </figure>
                 <div className="flex flex-col justify-center">
@@ -142,7 +142,7 @@ export default function AppDetailContent() {
                 </div>
               </div>
 
-              <dl className="flex flex-col gap-xl border-border border-t pt-xl">
+              <dl className="flex flex-col gap-space-xl border-border border-t pt-space-xl">
                 {category && (
                   <MetaRow label="Category">
                     <Link to="/technologies" className="underline underline-offset-4">
@@ -205,20 +205,20 @@ export default function AppDetailContent() {
             </div>
           )}
 
-          <div className="mb-2xl flex flex-col gap-lg">
+          <div className="mb-space-2xl flex flex-col gap-space-lg">
             <h2 className="text-pretty text-heading-lg">{product.tagline}</h2>
             {product.description && <p className="text-body-md text-muted-foreground">{product.description}</p>}
           </div>
 
           <div className="flex flex-col gap-6">
-            <div className="grid grid-cols-4 gap-x-gutter border-border border-t pt-sm lg:gap-x-gutter-lg">
+            <div className="grid grid-cols-4 gap-x-space-gutter border-border border-t pt-space-sm lg:gap-x-space-gutter-lg">
               <p className="col-span-full text-heading-sm sm:col-span-1 sm:text-heading-xs">Works with</p>
               <p className="col-span-full text-body-md text-muted-foreground sm:col-span-3">
                 Your Oxy account, on every other app in the ecosystem. One sign-in, one identity, and the same design
                 system underneath.
               </p>
             </div>
-            <div className="grid grid-cols-4 gap-x-gutter border-border border-t pt-sm lg:gap-x-gutter-lg">
+            <div className="grid grid-cols-4 gap-x-space-gutter border-border border-t pt-space-sm lg:gap-x-space-gutter-lg">
               <p className="col-span-full text-heading-sm sm:col-span-1 sm:text-heading-xs">Status</p>
               <p className="col-span-full text-body-md text-muted-foreground sm:col-span-3">
                 <Link to="/status" className="underline underline-offset-4">
@@ -230,8 +230,8 @@ export default function AppDetailContent() {
 
           {related.length > 0 && (
             <div className="mt-12 border-border border-t pt-8">
-              <h2 className="mb-lg text-heading-xl">More in the ecosystem</h2>
-              <div className="grid grid-cols-1 gap-gutter md:grid-cols-2 md:gap-gutter-lg">
+              <h2 className="mb-space-lg text-heading-xl">More in the ecosystem</h2>
+              <div className="grid grid-cols-1 gap-space-gutter md:grid-cols-2 md:gap-space-gutter-lg">
                 {related.map((item) => (
                   <AppCard key={item.productId} product={item} />
                 ))}
