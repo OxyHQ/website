@@ -77,7 +77,7 @@ router.get('/', optionalAuth, async (req, res) => {
           inArray(commentsTable.status, ['visible', 'deleted']),
         ),
       )
-      .orderBy(asc(commentsTable.createdAt))
+      .orderBy(asc(commentsTable.createdAt), asc(commentsTable._id))
 
     // Collect IDs of all parent comments that have replies
     const parentIdsWithReplies = new Set(
@@ -268,7 +268,7 @@ router.get('/admin/queue', requireAuth, adminOnly, async (req, res) => {
 
   try {
     const [comments, total] = await Promise.all([
-      db.select().from(commentsTable).where(where).orderBy(desc(commentsTable.createdAt)).offset(skip).limit(limitNum),
+      db.select().from(commentsTable).where(where).orderBy(desc(commentsTable.createdAt), asc(commentsTable._id)).offset(skip).limit(limitNum),
       countRows(db.select({ value: count() }).from(commentsTable).where(where)),
     ])
 
@@ -296,7 +296,7 @@ router.get('/user/:username', async (req, res) => {
   try {
     const where = and(eq(commentsTable.username, username), eq(commentsTable.status, 'visible'))
     const [comments, total] = await Promise.all([
-      db.select().from(commentsTable).where(where).orderBy(desc(commentsTable.createdAt)).offset(skip).limit(limitNum),
+      db.select().from(commentsTable).where(where).orderBy(desc(commentsTable.createdAt), asc(commentsTable._id)).offset(skip).limit(limitNum),
       countRows(db.select({ value: count() }).from(commentsTable).where(where)),
     ])
 

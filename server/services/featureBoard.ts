@@ -136,7 +136,7 @@ export async function listFeatureRepos(): Promise<FeatureRepo[]> {
     .select()
     .from(trackedRepos)
     .where(eq(trackedRepos.featureBoard, true))
-    .orderBy(asc(trackedRepos.displayName))
+    .orderBy(asc(trackedRepos.displayName), asc(trackedRepos._id))
   return docs.map(toFeatureRepo)
 }
 

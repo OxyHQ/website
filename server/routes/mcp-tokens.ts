@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import crypto from 'node:crypto'
-import { desc, eq } from 'drizzle-orm'
+import { asc, desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { db } from '../db/postgres.js'
 import { mcpTokens } from '../db/schema/index.js'
@@ -33,7 +33,7 @@ router.get('/', async (_req, res) => {
       revoked: mcpTokens.revoked,
     })
     .from(mcpTokens)
-    .orderBy(desc(mcpTokens.createdAt))
+    .orderBy(desc(mcpTokens.createdAt), asc(mcpTokens._id))
   res.json(tokens)
 })
 

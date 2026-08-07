@@ -38,7 +38,7 @@ router.get('/', async (_req, res) => {
 
 // List all locales including disabled (used by admin locale switcher)
 router.get('/all', async (_req, res) => {
-  const rows = await db.select().from(localesTable).orderBy(asc(localesTable.order))
+  const rows = await db.select().from(localesTable).orderBy(asc(localesTable.order), asc(localesTable._id))
   res.json(rows)
 })
 

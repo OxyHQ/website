@@ -14,7 +14,7 @@ const router = Router()
 const testimonialsBodySchema = z.array(z.object({}).passthrough())
 
 router.get('/', localeMiddleware, async (req, res) => {
-  const items = await db.select().from(testimonials).orderBy(asc(testimonials.order))
+  const items = await db.select().from(testimonials).orderBy(asc(testimonials.order), asc(testimonials._id))
   res.json(await localizeMany(req, 'testimonials', items))
 })
 

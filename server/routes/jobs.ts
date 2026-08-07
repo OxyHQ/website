@@ -22,7 +22,7 @@ router.get('/', localeMiddleware, async (req, res) => {
     .select()
     .from(jobs)
     .where(eq(jobs.active, true))
-    .orderBy(asc(jobs.order), asc(jobs.department))
+    .orderBy(asc(jobs.order), asc(jobs.department), asc(jobs._id))
   res.json(await localizeMany(req, 'jobs', rows))
 })
 

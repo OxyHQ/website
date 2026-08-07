@@ -71,7 +71,7 @@ router.get('/', localeMiddleware, async (req, res) => {
   const where = filters.length > 0 ? and(...filters) : undefined
 
   const [rows, [totals], repos] = await Promise.all([
-    db.select().from(changelogEntries).where(where).orderBy(desc(changelogEntries.date)).offset(skip).limit(limitNum),
+    db.select().from(changelogEntries).where(where).orderBy(desc(changelogEntries.date), asc(changelogEntries._id)).offset(skip).limit(limitNum),
     db.select({ value: count() }).from(changelogEntries).where(where),
     // The distinct repos that have entries, for the filter dropdown. The
     // aggregation this replaces grouped on the same three fields.
@@ -83,7 +83,7 @@ router.get('/', localeMiddleware, async (req, res) => {
       })
       .from(changelogEntries)
       .where(isNotNull(changelogEntries.repoOwner))
-      .orderBy(asc(changelogEntries.repoDisplayName)),
+      .orderBy(asc(changelogEntries.repoDisplayName), asc(changelogEntries._id)),
   ])
   const total = Number(totals?.value ?? 0)
   const entries = await populate(rows, { media })
@@ -131,7 +131,7 @@ router.delete('/:id', requireAuth, adminOnly, async (req, res) => {
 
 // GET /repos  — list tracked repos
 router.get('/repos', async (_req, res) => {
-  const repos = await db.select().from(trackedRepos).orderBy(asc(trackedRepos.displayName))
+  const repos = await db.select().from(trackedRepos).orderBy(asc(trackedRepos.displayName), asc(trackedRepos._id))
   res.json(repos)
 })
 

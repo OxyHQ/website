@@ -78,7 +78,7 @@ router.get('/', localeMiddleware, optionalAuth, async (req, res) => {
 
   const { pageNum, limitNum, skip } = parsePagination(page, limit)
   const [rows, [totals]] = await Promise.all([
-    db.select().from(table).where(where).orderBy(asc(table.order), desc(table.publishedAt)).offset(skip).limit(limitNum),
+    db.select().from(table).where(where).orderBy(asc(table.order), desc(table.publishedAt), asc(table._id)).offset(skip).limit(limitNum),
     db.select({ value: count() }).from(table).where(where),
   ])
   const total = Number(totals?.value ?? 0)

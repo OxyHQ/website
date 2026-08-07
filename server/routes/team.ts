@@ -23,7 +23,7 @@ router.get('/', localeMiddleware, async (req, res) => {
     .select()
     .from(teamMembers)
     .where(eq(teamMembers.active, true))
-    .orderBy(asc(teamMembers.order), asc(teamMembers.name))
+    .orderBy(asc(teamMembers.order), asc(teamMembers.name), asc(teamMembers._id))
   res.json(await localizeMany(req, 'team', await populate(rows, { avatar: media })))
 })
 

@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { and, count, desc, eq } from 'drizzle-orm'
+import { and, asc, count, desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { db } from '../db/postgres.js'
 import { comments, likes, newsroomPosts, userBadges, userProfileExtras, votes } from '../db/schema/index.js'
@@ -92,7 +92,7 @@ router.get('/:username', optionalAuth, async (req, res) => {
         .select({ badgeId: userBadges.badgeId, awardedAt: userBadges.awardedAt })
         .from(userBadges)
         .where(eq(userBadges.username, username))
-        .orderBy(desc(userBadges.awardedAt)),
+        .orderBy(desc(userBadges.awardedAt), asc(userBadges._id)),
     ])
 
     const isSelf = req.user?.username === username
@@ -160,7 +160,7 @@ router.get('/:username/activity', async (req, res) => {
     if (!type || type === 'comments') {
       const where = and(eq(comments.username, username), eq(comments.status, 'visible'))
       const [rows, commentCount] = await Promise.all([
-        db.select().from(comments).where(where).orderBy(desc(comments.createdAt)).offset(skip).limit(limitNum),
+        db.select().from(comments).where(where).orderBy(desc(comments.createdAt), asc(comments._id)).offset(skip).limit(limitNum),
         countRows(db.select({ value: count() }).from(comments).where(where)),
       ])
       rows.forEach(row => activities.push({ type: 'comment', data: row, createdAt: row.createdAt }))
@@ -183,7 +183,7 @@ router.get('/:username/badges', async (req, res) => {
       .select({ badgeId: userBadges.badgeId, awardedAt: userBadges.awardedAt })
       .from(userBadges)
       .where(eq(userBadges.username, username))
-      .orderBy(desc(userBadges.awardedAt))
+      .orderBy(desc(userBadges.awardedAt), asc(userBadges._id))
     res.json(badges)
   } catch (err) {
     res.status(500).json({ error: `Failed to load badges: ${toErrorMessage(err)}` })

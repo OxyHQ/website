@@ -91,7 +91,7 @@ async function populateItemImages(dropdowns: Record<string, unknown>[]): Promise
 }
 
 router.get('/', localeMiddleware, async (req, res) => {
-  const docs = await db.select().from(navigationDropdowns).orderBy(asc(navigationDropdowns.order))
+  const docs = await db.select().from(navigationDropdowns).orderBy(asc(navigationDropdowns.order), asc(navigationDropdowns._id))
   await populateItemImages(docs as unknown as Record<string, unknown>[])
 
   const hydrated = await Promise.all(

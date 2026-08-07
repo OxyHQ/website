@@ -63,7 +63,7 @@ async function countTranslationsByLocale(excluded: string[]): Promise<Map<string
  * from this, so the two can never advertise different locale sets.
  */
 export async function getEnabledLocalesWithReadiness() {
-  const locales = await db.select().from(localesTable).where(eq(localesTable.enabled, true)).orderBy(asc(localesTable.order))
+  const locales = await db.select().from(localesTable).where(eq(localesTable.enabled, true)).orderBy(asc(localesTable.order), asc(localesTable._id))
   const excluded = defaultCodes(locales.find(l => l.isDefault)?.code)
   const counts = await countTranslationsByLocale(excluded)
 

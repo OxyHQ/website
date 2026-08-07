@@ -64,7 +64,7 @@ router.get('/', localeMiddleware, async (req, res) => {
     .select()
     .from(products)
     .where(filters.length > 0 ? and(...filters) : undefined)
-    .orderBy(asc(products.lifecycle), asc(products.section), asc(products.order))
+    .orderBy(asc(products.lifecycle), asc(products.section), asc(products.order), asc(products._id))
 
   res.json(await localizeMany(req, 'products', await populate(rows, PRODUCT_REFS)))
 })

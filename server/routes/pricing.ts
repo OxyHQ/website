@@ -14,7 +14,7 @@ const router = Router()
 const pricingBodySchema = z.array(z.object({}).passthrough())
 
 router.get('/', localeMiddleware, async (req, res) => {
-  const plans = await db.select().from(pricingPlans).orderBy(asc(pricingPlans.order))
+  const plans = await db.select().from(pricingPlans).orderBy(asc(pricingPlans.order), asc(pricingPlans._id))
   res.json(await localizeMany(req, 'pricing', plans))
 })
 

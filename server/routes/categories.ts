@@ -31,7 +31,7 @@ router.get('/', localeMiddleware, async (req, res) => {
     .select()
     .from(categories)
     .where(query.scope ? eq(categories.scope, query.scope) : undefined)
-    .orderBy(asc(categories.order), asc(categories.label))
+    .orderBy(asc(categories.order), asc(categories.label), asc(categories._id))
   res.json(await localizeMany(req, 'categories', docs))
 })
 

@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { and, count, desc, eq, ilike, or, sql, type SQL } from 'drizzle-orm'
+import { and, asc, count, desc, eq, ilike, inArray, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
 import { db } from '../db/postgres.js'
 import { media, newsroomPosts, products } from '../db/schema/index.js'
@@ -47,10 +47,14 @@ async function attachProducts(posts: Record<string, unknown>[]): Promise<Record<
   const ids = [...new Set(posts.flatMap((post) => (post.products as string[] | null) ?? []))]
   if (ids.length === 0) return posts
 
+  // `inArray`, not `= ANY(${ids})`: a JS array bound into a raw fragment
+  // arrives as one scalar parameter, and Postgres reads the first id as an
+  // array literal — `malformed array literal: "6a5074…"`, 22P02, on every
+  // newsroom request. The typed builder expands the list into placeholders.
   const rows = await db
     .select({ _id: products._id, productId: products.productId, name: products.name })
     .from(products)
-    .where(sql`${products._id} = ANY(${ids})`)
+    .where(inArray(products._id, ids))
   const byId = new Map(rows.map((row) => [row._id, row]))
 
   for (const post of posts) {
@@ -96,7 +100,7 @@ router.get('/', localeMiddleware, optionalAuth, async (req, res) => {
   const where = and(...filters)
   const { pageNum, limitNum, skip } = parsePagination(page, limit)
   const [rows, [totals]] = await Promise.all([
-    db.select().from(newsroomPosts).where(where).orderBy(desc(newsroomPosts.publishedAt)).offset(skip).limit(limitNum),
+    db.select().from(newsroomPosts).where(where).orderBy(desc(newsroomPosts.publishedAt), asc(newsroomPosts._id)).offset(skip).limit(limitNum),
     db.select({ value: count() }).from(newsroomPosts).where(where),
   ])
   const total = Number(totals?.value ?? 0)

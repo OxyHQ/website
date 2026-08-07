@@ -164,7 +164,7 @@ async function insertOne(table: PgTable, values: Record<string, unknown>): Promi
 
 server.tool('list_pages', 'List all page slugs', {}, async () => {
   try {
-    const rows = await db.select({ _id: pages._id, slug: pages.slug, title: pages.title }).from(pages).orderBy(asc(pages.slug))
+    const rows = await db.select({ _id: pages._id, slug: pages.slug, title: pages.title }).from(pages).orderBy(asc(pages.slug), asc(pages._id))
     return ok(rows)
   } catch (e) { return err(e) }
 })
@@ -207,7 +207,7 @@ server.tool('upsert_page', 'Create or update a page', {
 
 server.tool('get_navigation', 'Get all navigation dropdowns', {}, async () => {
   try {
-    const nav = await db.select().from(navigationDropdowns).orderBy(asc(navigationDropdowns.order))
+    const nav = await db.select().from(navigationDropdowns).orderBy(asc(navigationDropdowns.order), asc(navigationDropdowns._id))
     return ok(nav)
   } catch (e) { return err(e) }
 })
@@ -382,7 +382,7 @@ server.tool('list_posts', 'List newsroom posts with optional filtering by catego
     const skip = (page - 1) * limit
 
     const [rows, [totals]] = await Promise.all([
-      db.select().from(newsroomPosts).where(where).orderBy(desc(newsroomPosts.publishedAt)).offset(skip).limit(limit),
+      db.select().from(newsroomPosts).where(where).orderBy(desc(newsroomPosts.publishedAt), asc(newsroomPosts._id)).offset(skip).limit(limit),
       db.select({ value: count() }).from(newsroomPosts).where(where),
     ])
     const total = Number(totals?.value ?? 0)
@@ -505,7 +505,7 @@ server.tool('search_posts', 'Search newsroom posts by title or resume text. Retu
       .select()
       .from(newsroomPosts)
       .where(or(ilike(newsroomPosts.title, pattern), ilike(newsroomPosts.resume, pattern)))
-      .orderBy(desc(newsroomPosts.publishedAt))
+      .orderBy(desc(newsroomPosts.publishedAt), asc(newsroomPosts._id))
       .limit(params.limit ?? 10)
     return ok(posts)
   } catch (e) { return err(e) }
@@ -515,7 +515,7 @@ server.tool('search_posts', 'Search newsroom posts by title or resume text. Retu
 
 server.tool('get_pricing', 'Get all pricing plans', {}, async () => {
   try {
-    const plans = await db.select().from(pricingPlans).orderBy(asc(pricingPlans.order))
+    const plans = await db.select().from(pricingPlans).orderBy(asc(pricingPlans.order), asc(pricingPlans._id))
     return ok(plans)
   } catch (e) { return err(e) }
 })
@@ -547,7 +547,7 @@ server.tool('replace_pricing', 'Replace all pricing plans', {
 
 server.tool('get_testimonials', 'Get all testimonials', {}, async () => {
   try {
-    const rows = await db.select().from(testimonialsTable).orderBy(asc(testimonialsTable.order))
+    const rows = await db.select().from(testimonialsTable).orderBy(asc(testimonialsTable.order), asc(testimonialsTable._id))
     return ok(rows)
   } catch (e) { return err(e) }
 })
@@ -602,7 +602,7 @@ server.tool('list_changelog', 'List changelog entries with optional repo filter,
     }
     const where = filters.length > 0 ? and(...filters) : undefined
     const [entries, [totals]] = await Promise.all([
-      db.select().from(changelogEntries).where(where).orderBy(desc(changelogEntries.date)).offset((page - 1) * limit).limit(limit),
+      db.select().from(changelogEntries).where(where).orderBy(desc(changelogEntries.date), asc(changelogEntries._id)).offset((page - 1) * limit).limit(limit),
       db.select({ value: count() }).from(changelogEntries).where(where),
     ])
     const total = Number(totals?.value ?? 0)
@@ -656,7 +656,7 @@ server.tool('delete_changelog_entry', 'Permanently delete a changelog entry by I
 
 server.tool('list_tracked_repos', 'List GitHub repos tracked for automatic changelog sync. Shows sync status and configuration.', {}, async () => {
   try {
-    const repos = await db.select().from(trackedRepos).orderBy(asc(trackedRepos.displayName))
+    const repos = await db.select().from(trackedRepos).orderBy(asc(trackedRepos.displayName), asc(trackedRepos._id))
     return ok(repos)
   } catch (e) { return err(e) }
 })
@@ -743,7 +743,7 @@ server.tool('list_jobs', 'List job listings on the careers page. By default retu
 }, async (params) => {
   try {
     const where = params.active !== false ? eq(jobs.active, true) : undefined
-    const rows = await db.select().from(jobs).where(where).orderBy(asc(jobs.order), asc(jobs.department))
+    const rows = await db.select().from(jobs).where(where).orderBy(asc(jobs.order), asc(jobs.department), asc(jobs._id))
     return ok(rows)
   } catch (e) { return err(e) }
 })
@@ -812,7 +812,7 @@ server.tool('list_team_members', 'List team members. Returns active members by d
 }, async (params) => {
   try {
     const where = params.active !== false ? eq(teamMembers.active, true) : undefined
-    const rows = await db.select().from(teamMembers).where(where).orderBy(asc(teamMembers.order), asc(teamMembers.name))
+    const rows = await db.select().from(teamMembers).where(where).orderBy(asc(teamMembers.order), asc(teamMembers.name), asc(teamMembers._id))
     const members = await populate(rows, { avatar: media })
     return ok(members)
   } catch (e) { return err(e) }
@@ -916,7 +916,7 @@ server.tool('list_media', 'List media files with optional search and type filter
     const limit = params.limit ?? 20
     const page = params.page ?? 1
     const [items, [totals]] = await Promise.all([
-      db.select().from(media).where(where).orderBy(desc(media.createdAt)).offset((page - 1) * limit).limit(limit),
+      db.select().from(media).where(where).orderBy(desc(media.createdAt), asc(media._id)).offset((page - 1) * limit).limit(limit),
       db.select({ value: count() }).from(media).where(where),
     ])
     const total = Number(totals?.value ?? 0)
@@ -1003,7 +1003,7 @@ server.tool('update_settings', 'Update site settings', {
 
 server.tool('list_locales', 'List all locales (both enabled and disabled). Locales control which languages the site supports.', {}, async () => {
   try {
-    const rows = await db.select().from(locales).orderBy(asc(locales.order))
+    const rows = await db.select().from(locales).orderBy(asc(locales.order), asc(locales._id))
     return ok(rows)
   } catch (e) { return err(e) }
 })
@@ -1351,7 +1351,7 @@ server.tool('list_categories', 'List all categories. Optionally filter by scope.
       .select()
       .from(categories)
       .where(scope ? eq(categories.scope, scope) : undefined)
-      .orderBy(asc(categories.order), asc(categories.label))
+      .orderBy(asc(categories.order), asc(categories.label), asc(categories._id))
     return ok(rows)
   } catch (e) { return err(e) }
 })
@@ -1440,7 +1440,7 @@ server.tool('list_products', 'List every product. Supports filtering by lifecycl
       .select()
       .from(products)
       .where(filters.length > 0 ? and(...filters) : undefined)
-      .orderBy(asc(products.lifecycle), asc(products.section), asc(products.order))
+      .orderBy(asc(products.lifecycle), asc(products.section), asc(products.order), asc(products._id))
     return ok(await populate(rows, { logo: media }))
   } catch (e) { return err(e) }
 })
@@ -1545,7 +1545,7 @@ server.tool('list_courses', 'List Academy courses with optional filtering by cat
     const skip = (page - 1) * limit
 
     const [rows, [totals]] = await Promise.all([
-      db.select().from(courses).where(where).orderBy(asc(courses.order), desc(courses.publishedAt)).offset(skip).limit(limit),
+      db.select().from(courses).where(where).orderBy(asc(courses.order), desc(courses.publishedAt), asc(courses._id)).offset(skip).limit(limit),
       db.select({ value: count() }).from(courses).where(where),
     ])
     const total = Number(totals?.value ?? 0)
@@ -1671,7 +1671,7 @@ server.tool('list_resources', 'List Academy resources (guides, papers, videos, t
     const skip = (page - 1) * limit
 
     const [rows, [totals]] = await Promise.all([
-      db.select().from(resources).where(where).orderBy(asc(resources.order), desc(resources.publishedAt)).offset(skip).limit(limit),
+      db.select().from(resources).where(where).orderBy(asc(resources.order), desc(resources.publishedAt), asc(resources._id)).offset(skip).limit(limit),
       db.select({ value: count() }).from(resources).where(where),
     ])
     const total = Number(totals?.value ?? 0)
@@ -1793,7 +1793,7 @@ server.tool('list_help_articles', 'List Help Center articles with optional filte
     const skip = (page - 1) * limit
 
     const [rows, [totals]] = await Promise.all([
-      db.select().from(helpArticles).where(where).orderBy(asc(helpArticles.order), desc(helpArticles.publishedAt)).offset(skip).limit(limit),
+      db.select().from(helpArticles).where(where).orderBy(asc(helpArticles.order), desc(helpArticles.publishedAt), asc(helpArticles._id)).offset(skip).limit(limit),
       db.select({ value: count() }).from(helpArticles).where(where),
     ])
     const total = Number(totals?.value ?? 0)
@@ -1916,7 +1916,7 @@ server.tool('list_referrals', 'List every referral. Supports filtering by progra
       .select()
       .from(referrals)
       .where(filters.length > 0 ? and(...filters) : undefined)
-      .orderBy(asc(referrals.type), desc(referrals.createdAt))
+      .orderBy(asc(referrals.type), desc(referrals.createdAt), asc(referrals._id))
     return ok(rows)
   } catch (e) { return err(e) }
 })

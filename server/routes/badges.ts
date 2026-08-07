@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, asc, desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { db } from '../db/postgres.js'
 import { userBadges } from '../db/schema/index.js'
@@ -87,7 +87,7 @@ router.post('/check/:userId', requireAuth, adminOnly, async (req, res) => {
       .select({ badgeId: userBadges.badgeId, awardedAt: userBadges.awardedAt })
       .from(userBadges)
       .where(eq(userBadges.userId, userId))
-      .orderBy(desc(userBadges.awardedAt))
+      .orderBy(desc(userBadges.awardedAt), asc(userBadges._id))
     res.json(badges)
   } catch (err) {
     const message = toErrorMessage(err)

@@ -128,7 +128,7 @@ async function buildPayload(): Promise<CachedStatusPayload> {
     .select()
     .from(products)
     .where(eq(products.showOnStatus, true))
-    .orderBy(asc(products.section), asc(products.order))
+    .orderBy(asc(products.section), asc(products.order), asc(products._id))
   const probed = (await populate(rows, { logo: media })) as unknown as ProductRow[]
   const services = await Promise.all(probed.map(probeService))
   return {

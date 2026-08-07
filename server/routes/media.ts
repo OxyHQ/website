@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { and, count, desc, eq, ilike, like, not, or, sql, type SQL } from 'drizzle-orm'
+import { and, asc, count, desc, eq, ilike, like, not, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
 import { db } from '../db/postgres.js'
 import { media as mediaTable } from '../db/schema/index.js'
@@ -58,7 +58,7 @@ router.get('/', requireAuth, adminOnly, async (req, res) => {
   const where = filters.length > 0 ? and(...filters) : undefined
 
   const [items, [totals]] = await Promise.all([
-    db.select().from(mediaTable).where(where).orderBy(desc(mediaTable.createdAt)).offset(skip).limit(limitNum),
+    db.select().from(mediaTable).where(where).orderBy(desc(mediaTable.createdAt), asc(mediaTable._id)).offset(skip).limit(limitNum),
     db.select({ value: count() }).from(mediaTable).where(where),
   ])
   const total = Number(totals?.value ?? 0)

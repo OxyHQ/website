@@ -40,7 +40,7 @@ router.get('/', requireAuth, adminOnly, async (req, res) => {
     .select()
     .from(referrals)
     .where(filters.length > 0 ? and(...filters) : undefined)
-    .orderBy(asc(referrals.type), desc(referrals.createdAt))
+    .orderBy(asc(referrals.type), desc(referrals.createdAt), asc(referrals._id))
   res.json(docs)
 })
 
