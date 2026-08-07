@@ -6,17 +6,22 @@
 # task on the same image, subnets and security group the service already uses,
 # which is a place that can see both, and then reports what that task did.
 #
-# Safe to run more than once: the copier writes by `_id` and never deletes, so a
-# second pass updates what changed in Mongo since the first and leaves the rest
-# alone. That is the point — run it once days before the cutover to prove it
-# works, and again during the window to catch the edits in between.
+# RETIRED ON 2026-08-07, when the site cut over. Every write now lands in
+# Postgres and Mongo is frozen, so a run today does not "catch up" anything — it
+# copies stale rows OVER newer ones, by `_id`, silently and for every collection.
+# Read docs/POSTGRES-CUTOVER.md before running this again.
+#
+# It was safe to repeat BEFORE the cutover, and that is what it was for: the
+# copier writes by `_id` and never deletes, so a second pass picked up whatever
+# had been edited in /admin since the first. The direction of "newer" is what
+# changed, not the mechanism.
 name: Copy Mongo to Postgres
 
 on:
   workflow_dispatch:
     inputs:
       confirm:
-        description: 'Type "copy" to confirm. Writes to the production Postgres.'
+        description: 'RETIRED — the site already serves from Postgres, so this overwrites live rows with frozen Mongo ones. Type "overwrite-live-data" only if you mean that.'
         required: true
         default: ''
 
@@ -39,8 +44,8 @@ jobs:
         env:
           CONFIRM: ${{ inputs.confirm }}
         run: |
-          if [ "$CONFIRM" != "copy" ]; then
-            echo "::error::Type 'copy' in the confirm field to run this."
+          if [ "$CONFIRM" != "overwrite-live-data" ]; then
+            echo "::error::The site serves from Postgres since 2026-08-07 — this job now copies frozen Mongo rows OVER live ones. Type 'overwrite-live-data' if that is what you mean."
             exit 1
           fi
 
