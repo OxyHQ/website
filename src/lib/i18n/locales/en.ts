@@ -41,6 +41,7 @@ const en = {
     next: 'Next',
     previous: 'Previous',
     search: 'Search',
+    searchApps: 'Search apps, guides, and more',
     closeSearch: 'Close search',
     noResults: 'No results.',
     contactUs: 'Contact us',

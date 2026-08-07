@@ -17,6 +17,7 @@ import type SwiperType from 'swiper'
 import 'swiper/css'
 import '../styles/landing.css'
 import AIResearchSection from '../components/ai/AIResearchSection'
+import AppCard from '../components/apps/AppCard'
 import { Link } from 'react-router-dom'
 import { getPackages, buildDocsHref } from '../content/docs-loader'
 import { getPackageLogo } from '../components/docs/getPackageLogo'
@@ -916,50 +917,32 @@ function EcosystemSection() {
     .slice(0, ECOSYSTEM_LIMIT)
 
   return (
-    <section className="container py-16 lg:py-24">
-      <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-full flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-          <div>
-            <p className="mb-3 text-primary text-sm font-semibold">Explore the Oxy ecosystem</p>
-            <h2 className="text-heading-responsive-lg max-w-[16em] text-balance">
+    <section className="container my-space-xl md:my-space-2xl lg:my-space-3xl">
+      <div className="flex w-full flex-col gap-space-gutter lg:gap-x-space-gutter-lg">
+        <div className="flex flex-wrap items-end justify-between gap-space-lg pb-space-sm">
+          <div className="flex flex-col md:gap-space-xs sm:gap-space-2xs">
+            <p className="text-heading-md text-primary">Explore the Oxy ecosystem</p>
+            <h2 className="max-w-[16em] text-balance text-heading-xl">
               Many apps, one identity, one platform underneath
             </h2>
           </div>
-          <a href="/technologies" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <a href="/technologies" className="text-link-md text-muted-foreground transition-colors hover:text-foreground">
             All technologies &rarr;
           </a>
         </div>
 
-        <div className="col-span-full mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="col-span-full grid grid-flow-dense grid-cols-1 gap-space-gutter md:grid-cols-2 lg:gap-x-space-gutter-lg xl:grid-cols-3">
           {isPending
             ? Array.from({ length: 8 }, (_, i) => (
-                <div key={i} className="h-[124px] animate-pulse rounded-2xl border border-border bg-surface" />
+                <div key={i} className="flex items-start gap-space-md">
+                  <div className="size-space-app-icon-sm shrink-0 animate-pulse rounded-radius-8 bg-surface" />
+                  <div className="flex w-full flex-col gap-space-3xs">
+                    <div className="h-4 w-2/5 animate-pulse rounded bg-surface" />
+                    <div className="h-3 w-4/5 animate-pulse rounded bg-surface" />
+                  </div>
+                </div>
               ))
-            : shown.map((product) => {
-                const href = product.landingUrl || product.href
-                const external = !href.startsWith('/')
-                return (
-                  <a
-                    key={product.productId}
-                    href={href}
-                    {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                    className="group flex h-full flex-col gap-4 rounded-2xl border border-border bg-surface p-5 transition-colors hover:border-foreground/20 hover:bg-foreground/[0.03]"
-                  >
-                    <div className="flex items-center gap-3">
-                      <ProductMark product={product} />
-                      <div className="min-w-0">
-                        <p className="truncate font-semibold text-foreground">{product.name}</p>
-                        {product.lifecycle === 'in-development' && (
-                          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">In development</p>
-                        )}
-                      </div>
-                    </div>
-                    <p className="line-clamp-3 text-sm text-muted-foreground">
-                      {product.tagline || product.description}
-                    </p>
-                  </a>
-                )
-              })}
+            : shown.map((product) => <AppCard key={product.productId} product={product} />)}
         </div>
       </div>
     </section>
@@ -1068,15 +1051,6 @@ function TickFilledIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 32 32" fill="currentColor">
       <path d="M32 16c0 8.837-7.163 16-16 16s-16-7.163-16-16c0-8.837 7.163-16 16-16s16 7.163 16 16z" />
       <path fill="#fff" d="M14.386 22.634c0.507 0 0.938-0.235 1.245-0.69l7.024-10.553c0.184-0.294 0.369-0.616 0.369-0.939 0-0.66-0.615-1.086-1.245-1.086-0.399 0-0.784 0.235-1.076 0.661l-6.379 9.775-3.028-3.743c-0.369-0.47-0.707-0.587-1.122-0.587-0.676 0-1.199 0.514-1.199 1.159 0 0.323 0.138 0.631 0.354 0.91l3.75 4.403c0.384 0.484 0.799 0.69 1.306 0.69z" />
-    </svg>
-  )
-}
-
-{/* tick (check-badge) from SVG icon */}
-function TickIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className ?? 'inline-block w-[1em] h-[1em] fill-current stroke-current stroke-0'} viewBox="0 0 32 32" fill="currentColor">
-      <path d="M7.732 27.587c-1.196 0-2.079-0.285-2.65-0.857s-0.857-1.455-0.857-2.65v-2.892c0-0.268-0.089-0.495-0.268-0.683l-2.048-2.061c-0.848-0.839-1.272-1.66-1.272-2.463s0.424-1.629 1.272-2.476l2.048-2.061c0.178-0.187 0.268-0.411 0.268-0.669v-2.905c0-1.205 0.286-2.088 0.857-2.65 0.571-0.571 1.455-0.857 2.65-0.857h2.905c0.268 0 0.491-0.089 0.669-0.268l2.061-2.048c0.848-0.848 1.673-1.272 2.476-1.272 0.803-0.009 1.624 0.415 2.463 1.272l2.061 2.048c0.187 0.178 0.415 0.268 0.683 0.268h2.891c1.205 0 2.088 0.29 2.65 0.87 0.571 0.571 0.857 1.45 0.857 2.637v2.905c0 0.259 0.094 0.482 0.281 0.669l2.048 2.061c0.839 0.848 1.258 1.673 1.258 2.476 0.009 0.803-0.41 1.624-1.258 2.463l-2.048 2.061c-0.188 0.187-0.281 0.415-0.281 0.683v2.892c0 1.205-0.286 2.088-0.857 2.65-0.571 0.571-1.455 0.857-2.65 0.857h-2.891c-0.268 0-0.495 0.094-0.683 0.281l-2.061 2.048c-0.839 0.839-1.66 1.258-2.463 1.258-0.803 0.009-1.629-0.411-2.476-1.258l-2.061-2.048c-0.178-0.187-0.402-0.281-0.669-0.281h-2.905zM14.345 22.514c0.232 0 0.442-0.054 0.629-0.161s0.352-0.268 0.495-0.482l6.292-9.919c0.080-0.134 0.156-0.277 0.228-0.428s0.107-0.303 0.107-0.455c0-0.312-0.116-0.558-0.348-0.736-0.232-0.187-0.491-0.281-0.776-0.281-0.393 0-0.714 0.205-0.964 0.616l-5.716 9.183-2.717-3.507c-0.17-0.223-0.335-0.375-0.495-0.455-0.152-0.080-0.326-0.12-0.522-0.12-0.303 0-0.558 0.112-0.763 0.335-0.205 0.214-0.308 0.473-0.308 0.776 0 0.152 0.027 0.303 0.080 0.455 0.062 0.143 0.143 0.281 0.241 0.415l3.36 4.123c0.178 0.232 0.361 0.397 0.549 0.495s0.397 0.147 0.629 0.147z" />
     </svg>
   )
 }
@@ -1424,95 +1398,6 @@ function TrustedBySection() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Pricing                                                            */
-/* ------------------------------------------------------------------ */
-const PLANS = [
-  {
-    name: 'Community',
-    price: 'Free forever',
-    cta: 'Get Started',
-    ctaHref: '/technologies',
-    features: [
-      'Access to all Oxy platforms',
-      'Open-source codebase',
-      'Community support',
-      'Basic API access',
-      'Public documentation',
-      'Bug reporting and feature requests',
-      'Community forum access',
-    ],
-  },
-  {
-    name: 'Contributor',
-    price: 'Free',
-    cta: 'Join Us',
-    ctaHref: '/company/careers',
-    features: [
-      'Everything in Community',
-      'Early access to new features',
-      'Direct developer support',
-      'Extended API access',
-      'Contributor badge',
-      'Private developer channels',
-      'Priority bug fixes',
-    ],
-  },
-  {
-    name: 'Organization',
-    price: 'Custom',
-    cta: 'Contact Us',
-    ctaHref: '/company',
-    features: [
-      'Everything in Contributor',
-      'Custom deployments',
-      'Dedicated support team',
-      'SLA guarantees',
-      'Custom integrations',
-      'On-premise hosting option',
-      'Training and onboarding',
-    ],
-  },
-]
-
-function PricingSection() {
-  return (
-    <section className="container">
-      <div>
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-full py-10 max-[950px]:py-6">
-            <h2 className="text-heading-responsive-lg mb-10 text-center">Plans for Everyone</h2>
-            <div className="mb-20">
-              <div className="flex gap-[18px] max-[950px]:flex-col" style={{ rowGap: '6rem' }}>
-                {PLANS.map((plan) => (
-                  <div key={plan.name} className="flex-1">
-                    <p className="text-[22px] leading-[1.2] font-[450] mb-3">{plan.name}</p>
-                    <p className="mb-5"><strong>{plan.price}</strong></p>
-                    {plan.name === 'Organization' ? (
-                      <a className={`${BTN} bg-primary text-primary-foreground`} href={plan.ctaHref}>{plan.cta}</a>
-                    ) : (
-                      <a className={`${BTN} bg-foreground/5`} href={plan.ctaHref}>{plan.cta}</a>
-                    )}
-                    <hr className="border-0 border-t border-black/[0.07] my-6" />
-                    <ul className="list-none p-0 m-0">
-                      {plan.features.map((f, i) => (
-                        <li key={i} className="grid grid-cols-[24px_1fr] gap-2 items-start mb-3 text-base leading-[1.4]">
-                          <TickIcon className="inline-block w-[1em] h-[1em] fill-current stroke-current stroke-0 text-base" />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 export default function HomePage() {
@@ -1538,7 +1423,6 @@ export default function HomePage() {
         <IntegrationsSecuritySection />
         <CommonsAppSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}
-        <PricingSection />
         <AIResearchSection />
       </main>
       <Footer />

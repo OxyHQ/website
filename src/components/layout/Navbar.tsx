@@ -44,13 +44,13 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
   return (
     <div className="flex w-max">
       <ul
-        className={`relative shrink-0 flex-col gap-1 p-4 pt-3 ${
-          useGrid ? 'grid w-[720px] grid-cols-2 gap-x-3 max-xl:w-[576px]' : 'flex w-96'
+        className={`relative shrink-0 flex-col gap-space-xs p-space-lg pt-space-md ${
+          useGrid ? 'grid w-[720px] grid-cols-2 gap-space-xl max-xl:w-[576px]' : 'flex w-96'
         }`}
       >
         {dropdown.sections.flatMap((section, si) => [
           <li key={`heading-${si}`} className="contents">
-            <p className={`mt-3 mb-1 inline-block px-4 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground ${useGrid ? 'col-span-2' : ''}`}>
+            <p className={`inline-block px-space-sm pt-space-sm pb-space-sm text-body-sm text-muted-foreground opacity-60 ${useGrid ? 'col-span-2' : ''}`}>
               {section.heading}
             </p>
           </li>,
@@ -567,8 +567,8 @@ export default function Navbar({
 
             {/* Center: logo, or the search field (Google Photos-style) when open */}
             {searchOpen ? (
-              <div className="relative w-[min(460px,42vw)] justify-self-center">
-                <Search className="pointer-events-none absolute left-3.5 top-1/2 size-[18px] -translate-y-1/2 text-muted-foreground" />
+              <div className="relative w-[min(500px,42vw)] justify-self-center lg:max-w-[31.25rem]">
+                <Search className="pointer-events-none absolute start-space-lg top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
                 <input
                   autoFocus
                   type="text"
@@ -595,9 +595,9 @@ export default function Navbar({
                       }
                     }
                   }}
-                  placeholder={t('common.search')}
+                  placeholder={t('common.searchApps')}
                   aria-label={t('common.search')}
-                  className="h-10 w-full rounded-full border border-border bg-foreground/5 pl-11 pr-10 text-[15px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/25 focus:bg-background"
+                  className="h-12 w-full rounded-2xl border border-border bg-foreground/5 ps-[44px] pe-10 text-body-md text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/25 focus:bg-background"
                 />
                 <button
                   type="button"

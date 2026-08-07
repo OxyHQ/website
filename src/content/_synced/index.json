@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-07T01:43:30.056Z",
+  "generatedAt": "2026-08-07T13:23:17.517Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -11063,6 +11063,13 @@
               "section": "guides"
             },
             {
+              "slug": "astro-next/architecture/chrome-scheme-extinction",
+              "title": "`chrome://` scheme extinction — inventory, classification and costed plan",
+              "file": "astro/master/astro-next/architecture/chrome-scheme-extinction.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "astro-next/architecture/clean-checkout-preconditions",
               "title": "What must be true for a clean checkout to compile `//astro`",
               "file": "astro/master/astro-next/architecture/clean-checkout-preconditions.md",
@@ -11171,6 +11178,13 @@
               "slug": "astro-next/baseline/source-inventory",
               "title": "Source inventory",
               "file": "astro/master/astro-next/baseline/source-inventory.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/policy/critical-subset-for-schemes",
+              "title": "The critical subset of #10 that blocks #11",
+              "file": "astro/master/astro-next/policy/critical-subset-for-schemes.md",
               "order": 1000,
               "section": "guides"
             },

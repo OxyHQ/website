@@ -78,7 +78,7 @@ interface NavDropdownItemProps {
   item: NavDropdownItemType
 }
 
-const linkClass = "group relative flex w-full items-center justify-start gap-x-3 rounded-xl border border-transparent p-2 transition-colors duration-300 hover:bg-foreground/5 h-fit before:absolute before:-top-0.75 before:-right-1.75 before:-bottom-0.75 before:-left-1.75"
+const linkClass = "group relative flex h-fit w-full max-w-[340px] items-start justify-start gap-space-md rounded-xl border border-transparent p-space-sm transition-colors duration-300 hover:bg-foreground/5 before:absolute before:-top-0.75 before:-right-1.75 before:-bottom-0.75 before:-left-1.75"
 
 function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const IconComponent = item.icon ? iconMap[item.icon] : null
@@ -125,9 +125,9 @@ function ItemContent({ item }: { item: NavDropdownItemType }) {
       <ItemIcon item={item} />
 
       {/* Text content */}
-      <div className="flex w-full min-w-0 flex-col pr-2">
+      <div className="flex w-full min-w-0 flex-col gap-space-3xs pr-space-sm">
         <div className="flex w-full items-baseline justify-between gap-1.5 text-foreground">
-          <span className="truncate text-sm">{item.title}</span>
+          <span className="text-heading-md">{item.title}</span>
           {/* Arrow icon — shows on hover */}
           <svg
             width="12"
@@ -144,7 +144,7 @@ function ItemContent({ item }: { item: NavDropdownItemType }) {
             />
           </svg>
         </div>
-        <p className="truncate text-sm text-muted-foreground">{item.description}</p>
+        <p className="text-body-sm text-muted-foreground opacity-80">{item.description}</p>
       </div>
     </>
   )
