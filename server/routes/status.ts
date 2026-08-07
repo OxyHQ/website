@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { safeFetch } from '@oxyhq/core/server'
 import { and, asc, eq, inArray } from 'drizzle-orm'
 import { db } from '../db/postgres.js'
-import { media, products, translations } from '../db/schema/index.js'
+import { categories, media, products, translations } from '../db/schema/index.js'
 import { populate } from '../db/refs.js'
 import { localeMiddleware } from '../middleware/locale.js'
 
@@ -57,7 +57,20 @@ const SLOW_LATENCY_MS = 1_500
 const CACHE_TTL_MS = 60_000
 
 /** A product row with its logo already resolved, which is what a probe reads. */
-type ProductRow = typeof products.$inferSelect & { logo: unknown }
+type ProductRow = typeof products.$inferSelect & { logo: unknown; category: unknown }
+
+/**
+ * The heading a group of services is shown under.
+ *
+ * `section` holds a category SLUG — that is what /admin writes and what it
+ * resolves against the category list — so rendering it raw put a lowercase
+ * `apps` on the page. The category's own label is the human string; the slug
+ * stands in only for a product that has no category.
+ */
+function resolveSectionLabel(product: ProductRow): string {
+  const category = product.category as { label?: string } | null
+  return category?.label || product.section || 'Other'
+}
 
 let cached: CachedStatusPayload | null = null
 let cachedAt = 0
@@ -79,7 +92,7 @@ async function probeService(product: ProductRow): Promise<CachedServiceResult> {
     productDocId: product._id,
     name: product.name,
     description: product.tagline || product.description || '',
-    section: product.section || 'Other',
+    section: resolveSectionLabel(product),
     url: product.href,
     landingUrl: product.landingUrl || null,
     brand: product.brand,
@@ -129,7 +142,7 @@ async function buildPayload(): Promise<CachedStatusPayload> {
     .from(products)
     .where(eq(products.showOnStatus, true))
     .orderBy(asc(products.section), asc(products.order), asc(products._id))
-  const probed = (await populate(rows, { logo: media })) as unknown as ProductRow[]
+  const probed = (await populate(rows, { logo: media, category: categories })) as unknown as ProductRow[]
   const services = await Promise.all(probed.map(probeService))
   return {
     generatedAt: new Date().toISOString(),
