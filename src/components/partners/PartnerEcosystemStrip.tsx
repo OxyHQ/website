@@ -71,7 +71,7 @@ function EcosystemTile({ product }: EcosystemTileProps) {
 /**
  * Live ecosystem strip on /partners — surfaces every product partners can
  * integrate with. Driven by the same `useProducts` data that powers
- * /technologies, so the list stays accurate without a separate logo file.
+ * /apps, so the list stays accurate without a separate logo file.
  *
  * Renders nothing when no live products are returned (network error,
  * empty CMS) so the section never becomes a bare heading.
@@ -93,7 +93,7 @@ export default function PartnerEcosystemStrip() {
               </p>
             </div>
             <Link
-              to="/technologies"
+              to="/apps"
               className="shrink-0 text-sm font-medium text-foreground underline-offset-4 hover:underline"
             >
               See all technologies

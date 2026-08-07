@@ -218,18 +218,6 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       'Every app in the Oxy ecosystem: social, messaging, AI, housing, payments and more, all on one account you own.',
     canonicalPath: '/apps',
   },
-  '/products': {
-    title: 'Products',
-    description:
-      'Every Oxy app in one list, from identity and social to housing, payments and developer tools, with what each one is for.',
-    canonicalPath: '/products',
-  },
-  '/technologies': {
-    title: 'Technologies',
-    description:
-      'The ecosystem map: every Oxy app and service, and how they share one identity, one design system and one platform underneath.',
-    canonicalPath: '/technologies',
-  },
   '/commons': {
     title: 'Commons, identity you actually own',
     description:

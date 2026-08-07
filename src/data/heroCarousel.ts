@@ -113,7 +113,7 @@ export const heroCarouselSlots: CarouselSlot[] = [
         image: '/images/nav-resources-card.jpg',
         title: 'One identity, every app',
         description: 'Social, messaging, housing, payments and AI on one open platform you can inspect',
-        href: '/technologies',
+        href: '/apps',
         alt: 'The Oxy ecosystem',
       },
     ],

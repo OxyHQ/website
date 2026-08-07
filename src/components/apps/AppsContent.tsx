@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useProducts, type ProductRecord } from '../../api/hooks'
 import Button from '../ui/Button'
 import AppCard from './AppCard'
+import BannerCta from '../slices/BannerCta'
 
 /* ──────────────────────────────────────────────
  * /apps
@@ -38,11 +39,11 @@ function HeroSection({ products }: { products: ProductRecord[] }) {
         <div className="grid w-full grid-flow-dense grid-cols-12 gap-space-gutter pt-[calc(var(--site-header-height)+var(--spacing-space-xl))] pb-space-xl md:pt-[calc(var(--site-header-height)+var(--spacing-space-2xl))] md:pb-space-2xl lg:gap-x-space-gutter-lg lg:pt-[calc(var(--site-header-height)+var(--spacing-space-3xl))] lg:pb-space-3xl">
           <div className="col-span-full flex flex-wrap justify-between lg:col-span-4 xl:col-span-6">
             <div className="flex flex-col gap-space-2xs pb-space-sm sm:gap-space-2xs md:gap-space-xs">
-              <h1 className="text-balance text-display-6 lg:pb-space-xl lg:text-heading-3xl xl:pb-space-2xl xl:text-display-6">
+              <h1 className="text-balance text-h2b leading-[1.02] lg:pb-space-xl xl:pb-space-2xl">
                 Every app in the ecosystem, one account you own
               </h1>
               <span className="hidden lg:inline-block">
-                <Link className="group/link no-underline hover:underline" to="/technologies">
+                <Link className="group/link no-underline hover:underline" to="/apps">
                   See how they fit together
                   <ArrowGlyph />
                 </Link>
@@ -59,7 +60,7 @@ function HeroSection({ products }: { products: ProductRecord[] }) {
           </div>
 
           <div className="col-span-full w-full pt-4 lg:hidden">
-            <Link className="group/link no-underline hover:underline" to="/technologies">
+            <Link className="group/link no-underline hover:underline" to="/apps">
               See how they fit together
               <ArrowGlyph />
             </Link>
@@ -164,24 +165,20 @@ function AdvantageSection() {
   )
 }
 
+/**
+ * The one section /technologies had that this page did not: the invitation to
+ * build on the ecosystem rather than only to use it. It replaces the closing
+ * band that said the same thing in weaker words.
+ */
 function ClosingSection() {
   return (
-    <div className="bg-foreground">
-      <div className="container flex flex-col items-center gap-space-xl py-space-2xl text-background lg:py-space-4xl">
-        <h2 className="text-center text-display-5">
-          Want to build one?
-        </h2>
-        <Button
-          variant="primary"
-          size="lg"
-          responsive
-          href="/developers/docs"
-          className="border-transparent bg-background text-foreground hover:bg-background/90"
-        >
-          Start with the developer docs
-        </Button>
-      </div>
-    </div>
+    <BannerCta
+      title="Build on Oxy"
+      body="Every part of the ecosystem is open source, and the SDK is yours to use."
+      primary={{ label: 'Get started building', href: '/developers/docs' }}
+      secondary={{ label: 'Read the API reference', href: '/developers/docs/api' }}
+      background={{ image: '/images/commons/crowd-poster.jpg', video: '/videos/commons-crowd.mp4' }}
+    />
   )
 }
 

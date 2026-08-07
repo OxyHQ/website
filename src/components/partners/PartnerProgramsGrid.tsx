@@ -53,7 +53,7 @@ const PROGRAMS: readonly ProgramConfig[] = [
     benefits: [
       'Co-marketing across Oxy channels and the changelog',
       'Direct access to API, SDK, and platform engineers',
-      'Featured listings in /technologies and developer docs',
+      'Featured listings in /apps and developer docs',
     ],
     ctaText: 'Apply as open source partner',
     ctaHref: '#become-a-partner',

@@ -145,7 +145,7 @@ export default function AppDetailContent() {
               <dl className="flex flex-col gap-space-xl border-border border-t pt-space-xl">
                 {category && (
                   <MetaRow label="Category">
-                    <Link to="/technologies" className="underline underline-offset-4">
+                    <Link to="/apps" className="underline underline-offset-4">
                       {category}
                     </Link>
                   </MetaRow>

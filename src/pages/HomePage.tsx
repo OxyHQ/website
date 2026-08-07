@@ -926,7 +926,7 @@ function EcosystemSection() {
               Many apps, one identity, one platform underneath
             </h2>
           </div>
-          <a href="/technologies" className="text-link-md text-muted-foreground transition-colors hover:text-foreground">
+          <a href="/apps" className="text-link-md text-muted-foreground transition-colors hover:text-foreground">
             All technologies &rarr;
           </a>
         </div>
@@ -1327,7 +1327,7 @@ function CommonsAppSection() {
                   Google Play; the App Store link waits on the iOS listing and
                   points at the ecosystem page until then. */}
               <div className="flex flex-wrap items-center gap-3 max-lg:justify-center">
-                <a href="/technologies" aria-label="Download on the App Store" className="inline-flex w-fit transition-opacity hover:opacity-80">
+                <a href="/apps" aria-label="Download on the App Store" className="inline-flex w-fit transition-opacity hover:opacity-80">
                   <img src="/images/badges/app-store.svg" alt="Download on the App Store" width={128} height={38} />
                 </a>
                 <a

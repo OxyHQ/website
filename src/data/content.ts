@@ -150,7 +150,7 @@ export const productNavDropdown: NavDropdown = {
     ],
     cards: [
       {
-        href: '/technologies',
+        href: '/apps',
         image: '/images/nav-ecosystem-card.webp',
         title: 'The whole ecosystem',
         description: 'Every app and service, and how they share one identity and one platform',

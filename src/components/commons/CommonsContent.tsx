@@ -23,7 +23,7 @@ const CAPABILITY_CARDS: CardItem[] = [
   {
     title: 'One session, every app',
     body: 'Sign in once and every Oxy app on the device follows. The session lives with the device, not with a cookie in one browser.',
-    link: { label: 'See the ecosystem', href: '/technologies' },
+    link: { label: 'See the ecosystem', href: '/apps' },
   },
   {
     title: 'A recovery phrase, not a support ticket',
@@ -36,7 +36,7 @@ const DETAIL_CARDS: CardItem[] = [
   {
     title: 'Create your identity',
     body: 'Commons walks you through it once: generate the key on the device, acknowledge the recovery phrase, and store an encrypted backup locally. From that point on, your account signs for itself.',
-    link: { label: 'Get the app', href: '/technologies' },
+    link: { label: 'Get the app', href: '/apps' },
   },
   {
     title: 'Your account, on the open web',
@@ -71,7 +71,7 @@ const UPDATES: UpdateItem[] = [
   },
   {
     title: 'The apps a Commons identity signs you into',
-    href: '/technologies',
+    href: '/apps',
     image: '/images/hero/hero-4.webp',
     imageAlt: '',
   },
@@ -105,7 +105,7 @@ export default function CommonsContent() {
             No password to reuse, no account for us to hold on your behalf.
           </>
         }
-        action={{ label: 'Get Commons', href: '/technologies' }}
+        action={{ label: 'Get Commons', href: '/apps' }}
       />
 
       <CardGrid title="What Commons does" cards={CAPABILITY_CARDS} />
@@ -135,7 +135,7 @@ export default function CommonsContent() {
           'Mention, Allo, Inbox, Homiio and the rest share one session on your device.',
           'Sign in once in Commons and the others are already signed in. Sign out, and they all let go together.',
         ]}
-        link={{ label: 'See the ecosystem', href: '/technologies' }}
+        link={{ label: 'See the ecosystem', href: '/apps' }}
         image={{ src: '/images/screenshots/mention-app.png', alt: 'Oxy apps sharing one identity' }}
       />
 

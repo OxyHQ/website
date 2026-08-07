@@ -73,7 +73,6 @@ const AIPage = lazy(() => import('./pages/AIPage'))
 const CompanyPage = lazy(() => import('./pages/CompanyPage'))
 const TeamPage = lazy(() => import('./pages/TeamPage'))
 const CompanyArticlePage = lazy(() => import('./pages/CompanyArticlePage'))
-const TechnologiesPage = lazy(() => import('./pages/TechnologiesPage'))
 const StatusPage = lazy(() => import('./pages/StatusPage'))
 const ReferralsPage = lazy(() => import('./pages/ReferralsPage'))
 const ReferralsDashboardPage = lazy(() => import('./pages/ReferralsDashboardPage'))
@@ -220,8 +219,10 @@ function PublicRoutes() {
       <Route path="partners" element={<PartnersPage />} />
       <Route path="referrals" element={<ReferralsPage />} />
       <Route path="referrals/dashboard" element={<ReferralsDashboardPage />} />
-      <Route path="technologies" element={<TechnologiesPage />} />
-      <Route path="products" element={<Navigate to="/technologies" replace />} />
+      {/* /technologies was the ecosystem directory; /apps is. Both old URLs
+          are linked from outside, so they redirect rather than 404. */}
+      <Route path="technologies" element={<Navigate to="/apps" replace />} />
+      <Route path="products" element={<Navigate to="/apps" replace />} />
       <Route path="status" element={<StatusPage />} />
       <Route path="company" element={<CompanyPage />} />
       <Route path="company/team" element={<TeamPage />} />

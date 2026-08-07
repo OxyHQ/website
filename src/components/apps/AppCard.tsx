@@ -91,8 +91,11 @@ export default function AppCard({ product, inverted = false }: { product: Produc
             </span>
           </div>
 
-          <div className={`text-body-xs ${inverted ? 'text-background/70' : 'text-muted-foreground'}`}>
-            {product.tagline}
+          {/* The template's description line runs to about sixty characters and
+              wraps rather than clipping, so the tagline falls back to the
+              longer description when a record has one. */}
+          <div className={`line-clamp-2 text-body-xs ${inverted ? 'text-background/70' : 'text-muted-foreground'}`}>
+            {product.tagline || product.description}
           </div>
         </div>
       </Link>

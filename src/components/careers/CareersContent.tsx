@@ -444,7 +444,7 @@ function PlacesSection() {
 
 const SPOTLIGHTS = [
   {
-    href: '/technologies',
+    href: '/apps',
     image: '/images/nav-ecosystem-card.webp',
     title: 'Engineering at Oxy',
     body: 'One identity, one SDK and one design system underneath every app in the ecosystem. See what is already running.',

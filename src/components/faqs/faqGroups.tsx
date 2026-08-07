@@ -65,7 +65,7 @@ export const faqGroups: FaqGroup[] = [
           <FaqParagraph>
             Mention for social, Allo for encrypted messaging, Inbox for mail, Alia for AI, Homiio for housing, FairCoin for payments,
             plus the SDK and Bloom UI underneath. The full list is on{' '}
-            <UnderlineLink href="/technologies">the technologies page</UnderlineLink>.
+            <UnderlineLink href="/apps">the apps page</UnderlineLink>.
           </FaqParagraph>
         ),
       },

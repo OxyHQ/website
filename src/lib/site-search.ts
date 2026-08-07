@@ -55,7 +55,7 @@ interface PagefindAPI {
  */
 const SITE_PAGES: Array<{ url: string; title: string }> = [
   { url: '/', title: 'Home' },
-  { url: '/technologies', title: 'Technologies' },
+  { url: '/apps', title: 'Technologies' },
   { url: '/pricing', title: 'Pricing' },
   { url: '/developers/docs', title: 'Developer docs' },
   { url: '/company', title: 'Company' },

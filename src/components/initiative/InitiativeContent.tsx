@@ -56,7 +56,7 @@ export default function InitiativeContent() {
         title={closingSection.heading}
         body={closingSection.body}
         emphasis="supporting"
-        action={{ label: 'Explore the ecosystem', href: '/technologies' }}
+        action={{ label: 'Explore the ecosystem', href: '/apps' }}
       />
     </>
   )

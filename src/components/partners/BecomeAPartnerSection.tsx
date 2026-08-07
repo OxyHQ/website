@@ -82,7 +82,7 @@ export default function BecomeAPartnerSection() {
               <Button variant="primary" size="md" responsive href={mailto}>
                 Email partners@oxy.so
               </Button>
-              <Button variant="outline" size="md" responsive href="/technologies">
+              <Button variant="outline" size="md" responsive href="/apps">
                 Explore what to build on
               </Button>
             </div>
