@@ -179,9 +179,12 @@ function ImageBandSection() {
           <div ref={ref} className="relative overflow-hidden pt-[100vw] sm:pt-[35vw] xl:pt-[590px]">
             <motion.div className="absolute left-0 top-0 size-full" style={reduceMotion ? undefined : { y }}>
               <img
-                src="/images/hero/hero-2.jpg"
-                alt="The team building Oxy"
-                className="absolute left-0 top-0 min-h-[calc(100%+120px)] w-full object-cover"
+                src={`${IMG}/company-band.jpg`}
+                alt="Two friends talking by a lake"
+                // The band is nearly 3:1 and the photo is 3:2, so a centred
+                // crop would take the middle third and cut both faces off the
+                // top. 25% puts the window over them.
+                className="absolute left-0 top-0 min-h-[calc(100%+120px)] w-full object-cover object-[center_25%]"
                 loading="lazy"
                 decoding="async"
               />

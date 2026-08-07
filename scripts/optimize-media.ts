@@ -179,6 +179,8 @@ const SKIP_BELOW_BYTES = 24_000
 const IMAGES: ImageTarget[] = [
   // 5260×3507 for a full-width banner.
   { file: 'public/images/landing/team-banner.jpg', maxWidth: 2560, format: 'jpeg', quality: 78 },
+  // The full-bleed band on /company, drawn at the 1760px layout width.
+  { file: 'public/images/landing/company-band.jpg', maxWidth: 1920, format: 'jpeg', quality: 78 },
   // OG images are fetched by crawlers that do not all speak WebP; the spec size
   // is 1200×630 and anything larger is discarded on the other end anyway.
   { file: 'public/og-default.png', maxWidth: 1200, format: 'png' },
