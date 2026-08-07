@@ -41,16 +41,31 @@ with `aws ecs describe-task-definition`, not with the `.tf` file.
 
 ## 3. Copy the data
 
-Twice. Once days before, to prove it works and to see how long it takes; once
-during the window, to catch everything edited since.
+Run the **Copy Mongo to Postgres** workflow (Actions → run → type `copy`).
+
+It does not copy anything on the runner: neither database is reachable from
+outside the VPC, so it starts a one-off ECS task on the same task definition,
+subnets and security group the API service is running, overriding the command
+to `bun server/db/copyFromMongo.ts`. That task can see both. The workflow then
+prints the task's log — per-collection read/written counts, then the row counts
+read back out of Postgres — and fails if the task exited non-zero or if any
+table came out short of what was written.
+
+It refuses to start unless the task definition carries **both** `MONGO_URI` and
+`DATABASE_URL`, so running it before step 2 tells you that rather than copying
+half of nothing.
+
+Run it twice: once days before, to prove it works and to see how long it takes;
+once during the window, to catch everything edited since. That is safe because
+the copy writes by `_id` and never deletes — verified against a real Mongo:
+a renamed document updates in place on the second pass, and a document deleted
+in Mongo stays in Postgres.
+
+Locally, against your own pair of databases, the same script is:
 
 ```bash
-MONGODB_URI='<production mongo>' DATABASE_URL='<new postgres>' bun run db:copy
+MONGO_URI='<mongo>' DATABASE_URL='<postgres>' bun run db:copy
 ```
-
-It prints per-collection read/written counts and then verifies by reading row
-counts back out of Postgres. A non-zero exit means at least one collection
-failed; nothing is deleted either way, so a failed run is safe to repeat.
 
 ## 4. Cut over
 

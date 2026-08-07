@@ -56,6 +56,14 @@ missing URL should fail at boot rather than quietly connect somewhere else.
 - `server/db/copyFromMongo.ts` (`bun run db:copy`) copies a Mongo database in,
   keyed on `_id`, idempotent and re-runnable, and never deletes. It verifies by
   reading counts back out of Postgres rather than trusting what the loop did.
+  In production it runs as a one-off ECS task via the **Copy Mongo to Postgres**
+  workflow, because neither database is reachable from a laptop or a GitHub
+  runner. Steps and the cutover order: `docs/POSTGRES-CUTOVER.md`.
+- **`mongodb` is pinned to 6, and is a runtime dependency, only for that copy.**
+  Driver 7 pulls a `bson` that calls `v8.startupSnapshot.isBuildingSnapshot()`
+  at import time, which Bun does not implement — the copier dies before it opens
+  a connection, and the production image runs Bun. Both the pin and the
+  dependency come out once the cutover is done.
 
 ## Theme tokens
 

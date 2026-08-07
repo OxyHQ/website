@@ -1,5 +1,6 @@
 import { MongoClient, ObjectId } from 'mongodb'
-import { sql as raw } from 'drizzle-orm'
+import { count } from 'drizzle-orm'
+import type { PgTable } from 'drizzle-orm/pg-core'
 import { closeDatabase, db } from './postgres.js'
 import * as schema from './schema/index.js'
 
@@ -19,10 +20,12 @@ import * as schema from './schema/index.js'
  * connection string turns into an empty site.
  * ──────────────────────────────────────────── */
 
-const MONGODB_URI = process.env.MONGODB_URI
+// `MONGO_URI` is what the ECS task definition already carries, so the copy can
+// run there without provisioning a second secret that says the same thing.
+const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_URI
 
 if (!MONGODB_URI) {
-  throw new Error('MONGODB_URI is not set. Point it at the database to copy FROM.')
+  throw new Error('Neither MONGODB_URI nor MONGO_URI is set. Point one at the database to copy FROM.')
 }
 
 /** Collections in dependency order: media and categories are referenced by the rest. */
@@ -128,22 +131,26 @@ for (const { collection, table } of COLLECTIONS) {
 }
 
 // Row counts read back from Postgres, not from what the loop believes it did:
-// the point of the check is to catch a write that silently did nothing.
+// the point of the check is to catch a write that silently did nothing. A row
+// short of what was written is marked, and the run fails.
 console.log('\n[copy] verifying against Postgres')
+let short = 0
 for (const { collection, table } of COLLECTIONS) {
-  const tableName = (schema[table] as unknown as { _: { name: string } })._.name
-  const [{ count }] = await db.execute<{ count: string }>(raw`select count(*)::text as count from ${raw.identifier(tableName)}`)
-  const expected = summary.find((entry) => entry.collection === collection)
-  const mark = expected && Number(count) >= expected.written ? ' ' : '!'
-  console.log(`${mark} ${tableName.padEnd(22)} ${count}`)
+  const target = schema[table] as PgTable
+  const [row] = await db.select({ value: count() }).from(target)
+  const written = summary.find((entry) => entry.collection === collection)?.written ?? 0
+  const rows = Number(row?.value ?? 0)
+  const ok = rows >= written
+  if (!ok) short += 1
+  console.log(`${ok ? ' ' : '!'} ${collection.padEnd(22)} ${rows} row(s)`)
 }
 
 const failed = summary.filter((entry) => entry.error)
 await mongo.close()
 await closeDatabase()
 
-if (failed.length > 0) {
-  console.error(`\n[copy] ${failed.length} collection(s) failed`)
+if (failed.length > 0 || short > 0) {
+  console.error(`\n[copy] ${failed.length} collection(s) failed, ${short} short of what was written`)
   process.exit(1)
 }
 console.log('\n[copy] done')
