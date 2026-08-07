@@ -1,14 +1,15 @@
 import express, { type NextFunction, type Request, type Response } from 'express'
 import cors from 'cors'
-import mongoose from 'mongoose'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { and, eq, isNull, sql } from 'drizzle-orm'
+import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { config } from './config.js'
 import { ValidationError } from './utils/validate.js'
 
 import pagesRouter from './routes/pages.js'
-import { Navigation } from './models/Navigation.js'
-import { Product } from './models/Product.js'
-import { Category } from './models/Category.js'
-import { Translation } from './models/Translation.js'
+import { db, sql as pgClient } from './db/postgres.js'
+import { categories, navigationDropdowns, products } from './db/schema/index.js'
 import navigationRouter from './routes/navigation.js'
 import footerRouter from './routes/footer.js'
 import heroRouter from './routes/hero.js'
@@ -45,6 +46,9 @@ import referralsRouter from './routes/referrals.js'
 import fundingRouter from './routes/funding.js'
 import adminAccessRouter from './routes/adminAccess.js'
 import { mountMcp } from './mcp.js'
+
+/** Migrations ship beside the server sources, so this resolves in dev and in the image alike. */
+const MIGRATIONS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'db', 'migrations')
 
 const app = express()
 
@@ -250,15 +254,17 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }))
  * Readiness — can this process actually serve data right now?
  *
  * Separate from liveness on purpose. Use this to decide whether to send traffic
- * (or to alert), never to decide whether to kill the task. `readyState === 1`
- * is mongoose's "connected".
+ * (or to alert), never to decide whether to kill the task. It asks the database
+ * rather than reading a cached connection flag: a pool that believes it is
+ * connected but cannot answer a query is exactly the state this must catch.
  */
-app.get('/api/ready', (_req, res) => {
-  const connected = mongoose.connection.readyState === 1
-  res.status(connected ? 200 : 503).json({
-    ready: connected,
-    db: mongoose.STATES[mongoose.connection.readyState] ?? 'unknown',
-  })
+app.get('/api/ready', async (_req, res) => {
+  try {
+    await pgClient`select 1`
+    res.json({ ready: true, db: 'connected' })
+  } catch (err) {
+    res.status(503).json({ ready: false, db: 'disconnected', error: (err as Error).message })
+  }
 })
 
 // Validation error handler — must come after all routes so it catches
@@ -285,64 +291,45 @@ async function migrateEcosystemDropdown() {
   // Any dropdown that was historically called "Ecosystem" is now
   // auto-driven by the Products CMS. One-shot migration so existing
   // prod data picks up the new apps-mode without a manual admin save.
-  const result = await Navigation.updateMany(
-    { label: /^ecosystem$/i, kind: { $ne: 'apps' } },
-    { $set: { kind: 'apps' } },
-  )
-  if (result.modifiedCount > 0) {
-    console.log(`[migration] Upgraded ${result.modifiedCount} ecosystem dropdown(s) to apps mode`)
+  const updated = await db
+    .update(navigationDropdowns)
+    .set({ kind: 'apps', updatedAt: new Date() })
+    .where(and(sql`lower(${navigationDropdowns.label}) = 'ecosystem'`, sql`${navigationDropdowns.kind} <> 'apps'`))
+    .returning({ id: navigationDropdowns._id })
+  if (updated.length > 0) {
+    console.log(`[migration] Upgraded ${updated.length} ecosystem dropdown(s) to apps mode`)
   }
 }
 
 async function migrateProductCategoryRefs() {
   // Products used to store a free-text `section` slug. Link every legacy
-  // product to the matching Category document by slug so `product.category`
+  // product to the matching category row by slug so `product.category`
   // becomes the single source of truth.
-  const orphans = await Product.find({ $or: [{ category: null }, { category: { $exists: false } }] })
+  const orphans = await db.select().from(products).where(isNull(products.category))
   if (orphans.length === 0) return
-  const categories = await Category.find({})
-  const idBySlug = new Map(categories.map((c) => [c.slug, c._id]))
+  const rows = await db.select({ id: categories._id, slug: categories.slug }).from(categories)
+  const idBySlug = new Map(rows.map((row) => [row.slug, row.id]))
   let linked = 0
   for (const product of orphans) {
     const categoryId = product.section ? idBySlug.get(product.section) : undefined
     if (!categoryId) continue
-    product.category = categoryId
-    await product.save()
+    await db.update(products).set({ category: categoryId, updatedAt: new Date() }).where(eq(products._id, product._id))
     linked++
   }
   if (linked > 0) {
-    console.log(`[migration] Linked ${linked} product(s) to their Category by legacy slug`)
+    console.log(`[migration] Linked ${linked} product(s) to their category by legacy slug`)
   }
 }
 
-async function migrateDropStaleTranslationIndex() {
-  // The `collectionName` field was once called `collection`. A unique index on
-  // the old name still lingers in some environments and wrongly enforces
-  // uniqueness on (locale, documentId) alone, rejecting legitimate writes that
-  // reuse a documentId across collections in one locale (reachable via the MCP
-  // upsert). Drop it idempotently; the canonical
-  // locale+collectionName+documentId index stays.
-  const STALE_INDEX = 'locale_1_collection_1_documentId_1'
-  const db = mongoose.connection.db
-  if (!db) return
-  const existing = await db
-    .listCollections({ name: Translation.collection.collectionName })
-    .toArray()
-  if (existing.length === 0) return
-  const indexes = await Translation.collection.indexes()
-  if (!indexes.some((idx) => idx.name === STALE_INDEX)) return
-  await Translation.collection.dropIndex(STALE_INDEX)
-  console.log(`[migration] Dropped stale translations index ${STALE_INDEX}`)
-}
-
 /**
- * Connect to MongoDB and run start-up migrations, retrying forever.
+ * Reach the database, apply migrations, run the start-up data fixes, retrying
+ * forever.
  *
- * Deliberately not awaited before `listen()`. Mongoose buffers commands issued
- * before the connection is up and replays them once it is, so a request that
- * arrives during a reconnect waits rather than failing — and `/api/health`
- * answers throughout, which is what keeps the task alive long enough to get
- * there.
+ * Deliberately not awaited before `listen()`: `/api/health` answers throughout,
+ * which is what keeps the task alive long enough to get here. Unlike Mongoose,
+ * postgres.js does not buffer statements issued before the pool is up, so a
+ * request arriving during an outage fails fast with a 500 rather than hanging —
+ * `/api/ready` is what tells the load balancer to stop sending them.
  *
  * Backs off to a ceiling instead of hammering a database that is already
  * struggling. There is no give-up case: giving up would mean exiting, and a
@@ -355,12 +342,16 @@ async function connectWithRetry(): Promise<void> {
 
   for (;;) {
     try {
-      await mongoose.connect(config.mongoUri)
-      console.log('Connected to MongoDB')
+      await pgClient`select 1`
+      console.log('Connected to PostgreSQL')
+
+      // The schema comes first: a task that starts against an older schema
+      // would serve 500s from every route that reads a new column.
+      await migrate(db, { migrationsFolder: MIGRATIONS_DIR })
+      console.log('[db] migrations applied')
 
       await migrateEcosystemDropdown()
       await migrateProductCategoryRefs()
-      await migrateDropStaleTranslationIndex()
 
       startSyncInterval()
       startFeaturePriorityInterval()
@@ -369,7 +360,7 @@ async function connectWithRetry(): Promise<void> {
       attempt++
       const delay = Math.min(1000 * 2 ** (attempt - 1), MAX_DELAY_MS)
       console.error(
-        `MongoDB unavailable (attempt ${attempt}), retrying in ${delay}ms:`,
+        `PostgreSQL unavailable (attempt ${attempt}), retrying in ${delay}ms:`,
         (err as Error).message,
       )
       await new Promise((resolve) => setTimeout(resolve, delay))

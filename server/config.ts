@@ -12,7 +12,11 @@ function parsePositiveIntEnv(value: string | undefined, fallback: number): numbe
 
 export const config = {
   port: parseInt(process.env.PORT || '4000', 10),
-  mongoUri: process.env.MONGO_URI || 'mongodb://localhost:27017/oxy-website',
+  /**
+   * Postgres connection string. Read here only so a missing value is reported
+   * with the rest of the configuration; `db/postgres.ts` is what opens the pool.
+   */
+  databaseUrl: process.env.DATABASE_URL || '',
   oxyApiBase: process.env.OXY_API_BASE || 'https://api.oxy.so',
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   // Canonical public origin used to build absolute URLs (sitemap, feeds).

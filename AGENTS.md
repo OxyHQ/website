@@ -24,6 +24,39 @@ bun run sync-changelog  # sync changelog to src/
 - **Frontend**: CF Pages project `oxy-website` (`dist/` output) via `.github/workflows/deploy.yml`. `VITE_API_URL=https://website-api.oxy.so`.
 - **Backend**: ECS Fargate (`~/Oxy/oxy-infra`) at `website-api.oxy.so` / `api.website.oxy.so`. Dockerfile `oven/bun:1.3.14-alpine`; CMD `bun server/index.ts` (TypeScript runs directly via Bun — no compile step).
 
+## Database
+
+PostgreSQL, reached through Drizzle + `postgres.js` — the same stack as Mention's
+backend. `DATABASE_URL` is the only knob; there is no fallback host, because a
+missing URL should fail at boot rather than quietly connect somewhere else.
+
+- **Schema** in `server/db/schema/`, one file per domain, `bun run db:generate`
+  writes the SQL into `server/db/migrations/`. Migrations are committed and
+  applied by `connectWithRetry` at boot, so a task can never serve a schema
+  older than the code that shipped with it. `bun run db:migrate` runs them by
+  hand.
+- **Primary keys are the Mongo ObjectId, under its Mongo name `_id`.** The admin
+  UI, every API response and every cross-table reference already speak in those
+  ids, so the copy from Mongo was a straight insert and the DTOs the frontend
+  receives did not change during the cutover. New rows get an id of the same
+  shape from `newObjectId()`.
+- **`.populate()` is `server/db/refs.ts`**: one query per referenced table for a
+  whole page of rows, never one per row. The API still hands the frontend the
+  referenced ROW in that field, which is what `resolveProductLogoUrl` and the
+  admin forms read.
+- Sub-documents that are read and written as a unit (a page's sections, a job's
+  description blocks, the hero's carousel slots) are `jsonb`. Splitting them
+  into child tables would buy joins nobody asked for.
+- **Duplicate-key handling changed shape:** Mongo's `err.code === 11000` is
+  SQLSTATE `23505` — `isUniqueViolation` in `server/db/pgErrors.ts`. A route that
+  checks the old value answers 500 where it used to answer 409.
+- **Wholesale replacements run in a transaction** (pricing, testimonials,
+  navigation, backup import). The admin sends the full list, and a delete that
+  succeeded without its insert would leave the site with no navigation.
+- `server/db/copyFromMongo.ts` (`bun run db:copy`) copies a Mongo database in,
+  keyed on `_id`, idempotent and re-runnable, and never deletes. It verifies by
+  reading counts back out of Postgres rather than trusting what the loop did.
+
 ## Theme tokens
 
 Bloom is the only source of colour. `src/index.css` imports

@@ -1,7 +1,9 @@
 import { Router } from 'express'
 import { z } from 'zod'
-import { ChangelogEntry } from '../models/ChangelogEntry.js'
-import TrackedRepo from '../models/TrackedRepo.js'
+import { and, asc, count, desc, eq, isNotNull, type SQL } from 'drizzle-orm'
+import { db } from '../db/postgres.js'
+import { changelogEntries, media, trackedRepos } from '../db/schema/index.js'
+import { populate } from '../db/refs.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
@@ -55,37 +57,36 @@ router.get('/', localeMiddleware, async (req, res) => {
 
   const { pageNum, limitNum, skip } = parsePagination(pageParam, limitParam, MAX_CHANGELOG_PAGE_SIZE)
 
-  const filter: Record<string, string> = {}
+  const filters: SQL[] = []
   if (repo) {
     // repo can be "owner/name" or just "name"
     const parts = repo.split('/')
     if (parts.length === 2) {
-      filter.repoOwner = parts[0]
-      filter.repoName = parts[1]
+      filters.push(eq(changelogEntries.repoOwner, parts[0]))
+      filters.push(eq(changelogEntries.repoName, parts[1]))
     } else {
-      filter.repoName = repo
+      filters.push(eq(changelogEntries.repoName, repo))
     }
   }
+  const where = filters.length > 0 ? and(...filters) : undefined
 
-  const [entries, total, repoAgg] = await Promise.all([
-    ChangelogEntry.find(filter)
-      .populate('media')
-      .sort('-date')
-      .skip(skip)
-      .limit(limitNum),
-    ChangelogEntry.countDocuments(filter),
-    ChangelogEntry.aggregate([
-      { $match: { repoOwner: { $ne: null } } },
-      { $group: { _id: { owner: '$repoOwner', name: '$repoName', display: '$repoDisplayName' } } },
-      { $sort: { '_id.display': 1 } },
-    ]),
+  const [rows, [totals], repos] = await Promise.all([
+    db.select().from(changelogEntries).where(where).orderBy(desc(changelogEntries.date)).offset(skip).limit(limitNum),
+    db.select({ value: count() }).from(changelogEntries).where(where),
+    // The distinct repos that have entries, for the filter dropdown. The
+    // aggregation this replaces grouped on the same three fields.
+    db
+      .selectDistinct({
+        owner: changelogEntries.repoOwner,
+        name: changelogEntries.repoName,
+        displayName: changelogEntries.repoDisplayName,
+      })
+      .from(changelogEntries)
+      .where(isNotNull(changelogEntries.repoOwner))
+      .orderBy(asc(changelogEntries.repoDisplayName)),
   ])
-
-  const repos = repoAgg.map((r) => ({
-    owner: r._id.owner,
-    name: r._id.name,
-    displayName: r._id.display,
-  }))
+  const total = Number(totals?.value ?? 0)
+  const entries = await populate(rows, { media })
 
   const serialized = await localizeMany(req, 'changelog', entries)
 
@@ -101,7 +102,7 @@ router.get('/', localeMiddleware, async (req, res) => {
 // POST /  — create manual changelog entry (admin)
 router.post('/', requireAuth, adminOnly, async (req, res) => {
   const body = validate(entryBodySchema, req.body)
-  const entry = await ChangelogEntry.create(body)
+  const [entry] = await db.insert(changelogEntries).values(body as never).returning()
   res.status(201).json(entry)
 })
 
@@ -109,7 +110,11 @@ router.post('/', requireAuth, adminOnly, async (req, res) => {
 router.put('/:id', requireAuth, adminOnly, async (req, res) => {
   const { id } = validate(idParamsSchema, req.params)
   const body = validate(entryBodySchema, req.body)
-  const entry = await ChangelogEntry.findByIdAndUpdate(id, body, { new: true })
+  const [entry] = await db
+    .update(changelogEntries)
+    .set({ ...body, updatedAt: new Date() } as never)
+    .where(eq(changelogEntries._id, id))
+    .returning()
   if (!entry) return res.status(404).json({ error: 'Entry not found' })
   res.json(entry)
 })
@@ -117,7 +122,7 @@ router.put('/:id', requireAuth, adminOnly, async (req, res) => {
 // DELETE /:id  — delete changelog entry (admin)
 router.delete('/:id', requireAuth, adminOnly, async (req, res) => {
   const { id } = validate(idParamsSchema, req.params)
-  const entry = await ChangelogEntry.findByIdAndDelete(id)
+  const [entry] = await db.delete(changelogEntries).where(eq(changelogEntries._id, id)).returning({ id: changelogEntries._id })
   if (!entry) return res.status(404).json({ error: 'Entry not found' })
   res.json({ ok: true })
 })
@@ -126,7 +131,7 @@ router.delete('/:id', requireAuth, adminOnly, async (req, res) => {
 
 // GET /repos  — list tracked repos
 router.get('/repos', async (_req, res) => {
-  const repos = await TrackedRepo.find().sort('displayName')
+  const repos = await db.select().from(trackedRepos).orderBy(asc(trackedRepos.displayName))
   res.json(repos)
 })
 
@@ -134,7 +139,7 @@ router.get('/repos', async (_req, res) => {
 router.post('/repos', requireAuth, adminOnly, async (req, res) => {
   const { owner, repo, displayName, defaultTags, active, featureBoard, acceptsProposals } =
     validate(trackedRepoBodySchema, req.body)
-  const tracked = await TrackedRepo.create({
+  const [tracked] = await db.insert(trackedRepos).values({
     owner,
     repo,
     displayName: displayName || `${owner}/${repo}`,
@@ -144,7 +149,7 @@ router.post('/repos', requireAuth, adminOnly, async (req, res) => {
     // feature board, or start taking public issues, unless it is asked to.
     featureBoard: featureBoard === true,
     acceptsProposals: acceptsProposals === true,
-  })
+  }).returning()
   res.status(201).json(tracked)
 })
 
@@ -168,7 +173,11 @@ router.put('/repos/:id', requireAuth, adminOnly, async (req, res) => {
   // accept an issue for an app nobody can see.
   if (update.featureBoard === false) update.acceptsProposals = false
 
-  const tracked = await TrackedRepo.findByIdAndUpdate(id, update, { new: true })
+  const [tracked] = await db
+    .update(trackedRepos)
+    .set({ ...update, updatedAt: new Date() } as never)
+    .where(eq(trackedRepos._id, id))
+    .returning()
   if (!tracked) return res.status(404).json({ error: 'Tracked repo not found' })
   res.json(tracked)
 })
@@ -176,7 +185,7 @@ router.put('/repos/:id', requireAuth, adminOnly, async (req, res) => {
 // DELETE /repos/:id  — remove tracked repo (admin)
 router.delete('/repos/:id', requireAuth, adminOnly, async (req, res) => {
   const { id } = validate(idParamsSchema, req.params)
-  const tracked = await TrackedRepo.findByIdAndDelete(id)
+  const [tracked] = await db.delete(trackedRepos).where(eq(trackedRepos._id, id)).returning({ id: trackedRepos._id })
   if (!tracked) return res.status(404).json({ error: 'Tracked repo not found' })
   res.json({ ok: true })
 })

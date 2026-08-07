@@ -1,6 +1,8 @@
 import { Router } from 'express'
-import mongoose from 'mongoose'
-import { HeroContent, getOrCreateHero, populateHeroMedia, type MediaRef } from '../models/HeroContent.js'
+import { db } from '../db/postgres.js'
+import { heroContents, media } from '../db/schema/index.js'
+import { populateOne } from '../db/refs.js'
+import { upsertSingleton } from '../db/singleton.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
@@ -10,50 +12,58 @@ import { heroUpdateSchema, type HeroUpdate } from '../validation/hero.js'
 
 const router = Router()
 
+/** The three media fields, which may hold an id or a plain URL. */
+const MEDIA_FIELDS = ['backgroundVideoWebm', 'backgroundVideoMp4', 'backgroundPoster'] as const
+
 /**
- * Coerce a media-ref-shaped input into the form Mongoose expects on the
- * `Mixed` field: a 24-character hex string is treated as an ObjectId so that
- * `populate()` finds the related Media document; anything else stays as-is
- * (e.g. a static URL like `/images/landing/hero-background.webm`).
+ * A media field is either a Media `_id` or a static URL like
+ * `/images/landing/hero-background.webm`. Only the first kind is looked up;
+ * the second is handed back untouched, which is why these are not foreign keys.
  */
-function normalizeMediaRef(value: unknown): MediaRef {
-  if (value === null || value === undefined || value === '') return null
-  if (typeof value !== 'string') return null
-  if (mongoose.Types.ObjectId.isValid(value) && value.length === 24) {
-    return new mongoose.Types.ObjectId(value)
+function isMediaId(value: unknown): value is string {
+  return typeof value === 'string' && /^[0-9a-f]{24}$/i.test(value)
+}
+
+async function withMedia(hero: Record<string, unknown>): Promise<Record<string, unknown>> {
+  const populated = { ...hero }
+  for (const field of MEDIA_FIELDS) {
+    const value = populated[field]
+    if (!isMediaId(value)) continue
+    const resolved = await populateOne({ ref: value }, { ref: media })
+    populated[field] = resolved?.ref ?? value
   }
-  return value
+  return populated
+}
+
+/** The hero is a singleton: read the row, or hand back an empty one. */
+async function readHero(): Promise<Record<string, unknown>> {
+  const [row] = await db.select().from(heroContents).limit(1)
+  if (row) return row
+  const [created] = await db.insert(heroContents).values({}).returning()
+  return created
 }
 
 function applyHeroUpdate(update: HeroUpdate): Record<string, unknown> {
   const next: Record<string, unknown> = {}
   if (update.title !== undefined) next.title = update.title
   if (update.eyebrow !== undefined) next.eyebrow = update.eyebrow
-  if (update.backgroundVideoWebm !== undefined) next.backgroundVideoWebm = normalizeMediaRef(update.backgroundVideoWebm)
-  if (update.backgroundVideoMp4 !== undefined) next.backgroundVideoMp4 = normalizeMediaRef(update.backgroundVideoMp4)
-  if (update.backgroundPoster !== undefined) next.backgroundPoster = normalizeMediaRef(update.backgroundPoster)
+  if (update.backgroundVideoWebm !== undefined) next.backgroundVideoWebm = update.backgroundVideoWebm || null
+  if (update.backgroundVideoMp4 !== undefined) next.backgroundVideoMp4 = update.backgroundVideoMp4 || null
+  if (update.backgroundPoster !== undefined) next.backgroundPoster = update.backgroundPoster || null
   if (update.carouselSlots !== undefined) next.carouselSlots = update.carouselSlots
   return next
 }
 
 router.get('/', localeMiddleware, async (req, res) => {
-  const hero = await getOrCreateHero()
+  const hero = await withMedia(await readHero())
   res.json(await localizeOne(req, 'hero', hero))
 })
 
 router.put('/', requireAuth, adminOnly, async (req, res) => {
   const body = validate(heroUpdateSchema, req.body)
-  // Ensure the singleton exists so updates always have a target.
-  await getOrCreateHero({ populate: false })
-  const updated = await HeroContent.findOneAndUpdate(
-    {},
-    applyHeroUpdate(body),
-    { new: true, upsert: true },
-  )
+  const updated = (await upsertSingleton(heroContents, applyHeroUpdate(body))) as Record<string, unknown> | undefined
   if (!updated) return res.status(500).json({ error: 'Failed to update hero content' })
-  // Selective populate: Mixed fields may hold static URLs that CastError
-  // under a blanket `.populate(...)`.
-  res.json(await populateHeroMedia(updated))
+  res.json(await withMedia(updated))
 })
 
 export default router

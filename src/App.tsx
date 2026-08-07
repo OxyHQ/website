@@ -44,6 +44,8 @@ const HomiioPage = lazy(() => import('./pages/HomiioPage'))
 const MentionPage = lazy(() => import('./pages/MentionPage'))
 const PayPage = lazy(() => import('./pages/PayPage'))
 const CommonsPage = lazy(() => import('./pages/CommonsPage'))
+const AppsPage = lazy(() => import('./pages/AppsPage'))
+const AppDetailPage = lazy(() => import('./pages/AppDetailPage'))
 const FaqsPage = lazy(() => import('./pages/FaqsPage'))
 const CareerDetailPage = lazy(() => import('./pages/CareerDetailPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
@@ -328,6 +330,8 @@ function PublicRoutes() {
       <Route path="mention" element={<MentionPage />} />
       <Route path="pay" element={<PayPage />} />
       <Route path="commons" element={<CommonsPage />} />
+      <Route path="apps" element={<AppsPage />} />
+      <Route path="apps/:name" element={<AppDetailPage />} />
       <Route path="faqs" element={<FaqsPage />} />
       <Route path="settings" element={<SettingsPage />} />
       <Route path="legal" element={<LegalPage />} />

@@ -1,6 +1,10 @@
-import type { ITranslation } from '../models/Translation.js'
-
 type Unknown = Record<string, unknown>
+
+/** The two fields these helpers read off a translation row. */
+interface TranslationOverlay {
+  documentId: string
+  fields: Unknown
+}
 
 function isPlainObject(value: unknown): value is Unknown {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -13,7 +17,7 @@ function isPlainObject(value: unknown): value is Unknown {
  */
 export function applyTranslation<T extends Unknown>(
   doc: T,
-  translation: ITranslation | null,
+  translation: TranslationOverlay | null,
 ): T {
   if (!translation) return doc
   return deepMerge(doc, translation.fields)
@@ -24,10 +28,10 @@ export function applyTranslation<T extends Unknown>(
  */
 export function applyTranslations<T extends Unknown>(
   docs: T[],
-  translations: ITranslation[],
+  translations: TranslationOverlay[],
 ): T[] {
   if (!translations.length) return docs
-  const map = new Map<string, ITranslation>()
+  const map = new Map<string, TranslationOverlay>()
   for (const t of translations) {
     map.set(t.documentId, t)
   }

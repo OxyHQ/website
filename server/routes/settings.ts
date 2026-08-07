@@ -1,6 +1,9 @@
 import { Router } from 'express'
 import { z } from 'zod'
-import { SiteSettings } from '../models/SiteSettings.js'
+import { db } from '../db/postgres.js'
+import { media, siteSettings } from '../db/schema/index.js'
+import { populateOne } from '../db/refs.js'
+import { upsertSingleton } from '../db/singleton.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
@@ -12,15 +15,15 @@ const router = Router()
 const settingsBodySchema = z.object({}).passthrough()
 
 router.get('/', localeMiddleware, async (req, res) => {
-  const settings = await SiteSettings.findOne().populate('ogImage')
+  const [row] = await db.select().from(siteSettings).limit(1)
+  const settings = await populateOne(row, { ogImage: media })
   if (!settings) return res.json({ siteTitle: 'Oxy', siteDescription: '', ogImage: '' })
   res.json(await localizeOne(req, 'settings', settings))
 })
 
 router.put('/', requireAuth, adminOnly, async (req, res) => {
   const body = validate(settingsBodySchema, req.body)
-  const settings = await SiteSettings.findOneAndUpdate({}, body, { new: true, upsert: true })
-  res.json(settings)
+  res.json(await upsertSingleton(siteSettings, body))
 })
 
 export default router

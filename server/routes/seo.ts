@@ -1,11 +1,15 @@
 import { Router } from 'express'
+import { and, eq, inArray } from 'drizzle-orm'
 import { z } from 'zod'
-import { Seo, type SeoBrand } from '../models/Seo.js'
+import { db } from '../db/postgres.js'
+import { seoEntries } from '../db/schema/index.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
+
+type SeoBrand = 'oxy' | 'faircoin'
 
 interface SeoMeta {
   title: string
@@ -19,10 +23,11 @@ interface BrandSeo {
 
 const emptyBrand = (): BrandSeo => ({ default: null, routes: {} })
 
-function groupSeoEntries(entries: Array<{ brand: SeoBrand; path: string; title: string; description: string; ogImage: string }>): Record<SeoBrand, BrandSeo> {
+function groupSeoEntries(entries: Array<{ brand: string; path: string; title: string; description: string; ogImage: string }>): Record<SeoBrand, BrandSeo> {
   const out: Record<SeoBrand, BrandSeo> = { oxy: emptyBrand(), faircoin: emptyBrand() }
   for (const e of entries) {
-    const brand = out[e.brand]
+    const brand = out[e.brand as SeoBrand]
+    if (!brand) continue
     const meta: SeoMeta = { title: e.title, description: e.description, ogImage: e.ogImage }
     if (e.path === '*') brand.default = meta
     else brand.routes[e.path] = meta
@@ -37,7 +42,7 @@ const seoPublicQuerySchema = z.object({
 
 /** GET /api/seo/all — the whole SEO table, grouped by brand. Admin only. */
 router.get('/all', requireAuth, adminOnly, async (_req, res) => {
-  const entries = await Seo.find().lean()
+  const entries = await db.select().from(seoEntries)
   res.set('Cache-Control', 'private, no-store')
   res.json(groupSeoEntries(entries))
 })
@@ -50,7 +55,10 @@ router.get('/all', requireAuth, adminOnly, async (_req, res) => {
 router.get('/', async (req, res) => {
   const { brand, path } = validate(seoPublicQuerySchema, req.query)
   const normalizedPath = path.length > 1 && path.endsWith('/') ? path.replace(/\/+$/, '') : path
-  const entries = await Seo.find({ brand, path: { $in: ['*', normalizedPath || '/'] } }).lean()
+  const entries = await db
+    .select()
+    .from(seoEntries)
+    .where(and(eq(seoEntries.brand, brand), inArray(seoEntries.path, ['*', normalizedPath || '/'])))
   res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=600')
   res.json(groupSeoEntries(entries))
 })
@@ -66,11 +74,14 @@ const seoBodySchema = z.object({
 /** PUT /api/seo — upsert one (brand, path) entry. Admin only. */
 router.put('/', requireAuth, adminOnly, async (req, res) => {
   const body = validate(seoBodySchema, req.body)
-  const entry = await Seo.findOneAndUpdate(
-    { brand: body.brand, path: body.path },
-    body,
-    { new: true, upsert: true },
-  )
+  const [entry] = await db
+    .insert(seoEntries)
+    .values(body)
+    .onConflictDoUpdate({
+      target: [seoEntries.brand, seoEntries.path],
+      set: { title: body.title, description: body.description, ogImage: body.ogImage, updatedAt: new Date() },
+    })
+    .returning()
   res.json(entry)
 })
 
@@ -82,7 +93,7 @@ const seoDeleteSchema = z.object({
 /** DELETE /api/seo — remove one (brand, path) entry. Admin only. */
 router.delete('/', requireAuth, adminOnly, async (req, res) => {
   const { brand, path } = validate(seoDeleteSchema, req.query)
-  await Seo.deleteOne({ brand, path })
+  await db.delete(seoEntries).where(and(eq(seoEntries.brand, brand), eq(seoEntries.path, path)))
   res.json({ ok: true })
 })
 

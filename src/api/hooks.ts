@@ -298,6 +298,18 @@ export function useProducts(options: UseProductsOptions = {}) {
   })
 }
 
+/** One product by its `productId`, for the app detail page. */
+export function useProduct(productId: string) {
+  const locale = useCurrentLocale()
+  return useQuery<ProductRecord>({
+    queryKey: ['product', productId, locale],
+    queryFn: () => apiFetch<ProductRecord>(`/products/${encodeURIComponent(productId)}`, { locale }),
+    enabled: productId.length > 0,
+    staleTime: 5 * 60_000,
+    retry: false,
+  })
+}
+
 export function resolveProductLogoUrl(product: ProductRecord): string {
   const logo = product.logo
   if (!logo) return ''

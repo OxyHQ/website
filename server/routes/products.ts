@@ -1,6 +1,9 @@
 import { Router } from 'express'
+import { and, asc, eq, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
-import { Product } from '../models/Product.js'
+import { db } from '../db/postgres.js'
+import { categories, media, products } from '../db/schema/index.js'
+import { populate, populateOne } from '../db/refs.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
@@ -8,6 +11,9 @@ import { localizeMany, localizeOne } from '../utils/localize.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
+
+/** The referenced rows every product response carries inline. */
+const PRODUCT_REFS = { logo: media, category: categories }
 
 // Accept either a string (Media id) or null to clear. Empty string becomes null.
 const mediaRefSchema = z.union([z.string(), z.null()]).optional().transform((v) => (v && v.length > 0 ? v : null))
@@ -47,55 +53,54 @@ const listQuerySchema = z.object({
 
 router.get('/', localeMiddleware, async (req, res) => {
   const query = validate(listQuerySchema, req.query)
-  const mongoQuery: Record<string, unknown> = {}
-  if (query.surface === 'products') mongoQuery.showOnProducts = true
-  if (query.surface === 'status') mongoQuery.showOnStatus = true
-  if (query.surface === 'nav') mongoQuery.showInNav = true
-  if (query.lifecycle) mongoQuery.lifecycle = query.lifecycle
-  if (query.section) mongoQuery.section = query.section
+  const filters: SQL[] = []
+  if (query.surface === 'products') filters.push(eq(products.showOnProducts, true))
+  if (query.surface === 'status') filters.push(eq(products.showOnStatus, true))
+  if (query.surface === 'nav') filters.push(eq(products.showInNav, true))
+  if (query.lifecycle) filters.push(eq(products.lifecycle, query.lifecycle))
+  if (query.section) filters.push(eq(products.section, query.section))
 
-  const docs = await Product.find(mongoQuery)
-    .sort({ lifecycle: 1, section: 1, order: 1 })
-    .populate('logo')
-    .populate('category')
+  const rows = await db
+    .select()
+    .from(products)
+    .where(filters.length > 0 ? and(...filters) : undefined)
+    .orderBy(asc(products.lifecycle), asc(products.section), asc(products.order))
 
-  res.json(await localizeMany(req, 'products', docs))
+  res.json(await localizeMany(req, 'products', await populate(rows, PRODUCT_REFS)))
 })
 
 router.get('/:productId', localeMiddleware, async (req, res) => {
-  const doc = await Product.findOne({ productId: req.params.productId })
-    .populate('logo')
-    .populate('category')
+  const [row] = await db.select().from(products).where(eq(products.productId, String(req.params.productId))).limit(1)
+  const doc = await populateOne(row, PRODUCT_REFS)
   if (!doc) return res.status(404).json({ error: 'Not found' })
   res.json(await localizeOne(req, 'products', doc))
 })
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {
   const body = validate(productBodySchema, req.body)
-  const existing = await Product.findOne({ productId: body.productId })
+  const [existing] = await db.select({ id: products._id }).from(products).where(eq(products.productId, body.productId)).limit(1)
   if (existing) {
     return res.status(409).json({ error: 'Product with this productId already exists' })
   }
-  const doc = await Product.create(body)
+  const [doc] = await db.insert(products).values(body).returning()
   res.status(201).json(doc)
 })
 
 router.put('/:productId', requireAuth, adminOnly, async (req, res) => {
   const patch = validate(productUpdateSchema, req.body)
-  const doc = await Product.findOneAndUpdate(
-    { productId: req.params.productId },
-    patch,
-    { new: true, runValidators: true },
-  )
-    .populate('logo')
-    .populate('category')
+  const [row] = await db
+    .update(products)
+    .set({ ...patch, updatedAt: new Date() })
+    .where(eq(products.productId, String(req.params.productId)))
+    .returning()
+  const doc = await populateOne(row, PRODUCT_REFS)
   if (!doc) return res.status(404).json({ error: 'Not found' })
   res.json(doc)
 })
 
 router.delete('/:productId', requireAuth, adminOnly, async (req, res) => {
-  const doc = await Product.findOneAndDelete({ productId: req.params.productId })
-  if (!doc) return res.status(404).json({ error: 'Not found' })
+  const [row] = await db.delete(products).where(eq(products.productId, String(req.params.productId))).returning({ id: products._id })
+  if (!row) return res.status(404).json({ error: 'Not found' })
   res.json({ ok: true, productId: req.params.productId })
 })
 

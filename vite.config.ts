@@ -321,7 +321,22 @@ export default defineConfig(({ mode }) => ({
       'fontfaceobserver',
       'expo-modules-core',
       '@expo/vector-icons',
+      // The SDK imports the icon families by subpath. `include` only covers the
+      // specifier it is given, so without these two the family files are served
+      // unbundled and their JSX fails Vite's import analysis — which takes the
+      // whole app down, not just the icon.
+      '@expo/vector-icons/Ionicons',
+      '@expo/vector-icons/MaterialCommunityIcons',
       'react-native-qrcode-svg',
+      // Reached through the excluded Bloom/services subtree and ships its
+      // components entry as CJS: unbundled, `import { Pressable }` from it
+      // fails at runtime with "does not provide an export named".
+      'react-native-css',
+      // The SDK imports `react-native-css/components`, whose entry is CJS.
+      // `include` only covers the specifier it is given, so the bare package
+      // name above does not cover this one: served unbundled, its named
+      // exports fail at runtime with "does not provide an export named".
+      'react-native-css/components',
       'react-native-svg',
       'react-native-reanimated',
       'react-native-gesture-handler',

@@ -1,8 +1,9 @@
 import { Router } from 'express'
+import { and, asc, eq, inArray } from 'drizzle-orm'
 import { z } from 'zod'
-import { Navigation } from '../models/Navigation.js'
-import { Translation } from '../models/Translation.js'
-import { Product, type IProduct } from '../models/Product.js'
+import { db } from '../db/postgres.js'
+import { categories, media, navigationDropdowns, products, translations as translationsTable } from '../db/schema/index.js'
+import { populate } from '../db/refs.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
@@ -41,14 +42,14 @@ const navigationBodySchema = z.array(z.object({
  * landing page (oxy.so/<slug>) — admins opt into linking straight to the
  * running app via the navOpensApp toggle.
  */
-function productToNavItem(product: IProduct, categoryLabel: string): Record<string, unknown> {
-  const imageRef = (product as unknown as { logo?: unknown }).logo
+function productToNavItem(product: Record<string, unknown>, categoryLabel: string): Record<string, unknown> {
+  const imageRef = product.logo
   const href = product.navOpensApp
-    ? product.href
-    : product.landingUrl || product.href
+    ? (product.href as string)
+    : ((product.landingUrl as string) || (product.href as string))
   return {
     title: product.name,
-    description: product.tagline || product.description || '',
+    description: (product.tagline as string) || (product.description as string) || '',
     href,
     image: imageRef ?? null,
     section: categoryLabel,
@@ -63,30 +64,39 @@ interface PopulatedCategory {
 }
 
 async function resolveAppsDropdown(dropdown: Record<string, unknown>): Promise<Record<string, unknown>> {
-  const products = await Product.find({ showInNav: true })
-    .populate('logo')
-    .populate('category')
+  const rows = await db.select().from(products).where(eq(products.showInNav, true))
+  const hydrated = await populate(rows as unknown as Record<string, unknown>[], { logo: media, category: categories })
 
-  const withLabels = products.map((p) => {
-    const populated = (p as unknown as { category?: PopulatedCategory | null }).category
+  const withLabels = hydrated.map((product) => {
+    const populated = product.category as PopulatedCategory | null
     const label = populated?.label ?? 'Other'
     const sortOrder = populated?.order ?? 99
-    return { product: p, label, sortOrder }
+    return { product, label, sortOrder }
   })
 
   // Stable sort: category order, then product order within the category.
-  withLabels.sort((a, b) => (a.sortOrder - b.sortOrder) || (a.product.order - b.product.order))
+  withLabels.sort((a, b) => (a.sortOrder - b.sortOrder) || ((a.product.order as number) - (b.product.order as number)))
 
   const generatedItems = withLabels.map(({ product, label }) => productToNavItem(product, label))
   return { ...dropdown, items: generatedItems }
 }
 
+/**
+ * Nav items carry an optional `image` media ref inside the `items` JSON, which
+ * no join can reach. One query resolves every image across every dropdown.
+ */
+async function populateItemImages(dropdowns: Record<string, unknown>[]): Promise<void> {
+  const items = dropdowns.flatMap((dropdown) => (dropdown.items as Record<string, unknown>[] | null) ?? [])
+  await populate(items, { image: media })
+}
+
 router.get('/', localeMiddleware, async (req, res) => {
-  const docs = await Navigation.find().sort('order').populate('items.image')
+  const docs = await db.select().from(navigationDropdowns).orderBy(asc(navigationDropdowns.order))
+  await populateItemImages(docs as unknown as Record<string, unknown>[])
 
   const hydrated = await Promise.all(
     docs.map(async (doc) => {
-      const json = doc.toJSON() as unknown as Record<string, unknown>
+      const json = doc as unknown as Record<string, unknown>
       if (json.kind === 'apps') {
         return resolveAppsDropdown(json)
       }
@@ -96,22 +106,31 @@ router.get('/', localeMiddleware, async (req, res) => {
 
   if (req.isDefaultLocale) return res.json(hydrated)
 
-  const translations = await Translation.find({
-    locale: req.locale,
-    collectionName: 'navigation',
-    documentId: { $in: docs.map(i => i._id.toString()) },
-  })
-  res.json(applyTranslations(hydrated, translations))
+  const overlays = await db
+    .select()
+    .from(translationsTable)
+    .where(
+      and(
+        eq(translationsTable.locale, req.locale as string),
+        eq(translationsTable.collectionName, 'navigation'),
+        inArray(translationsTable.documentId, docs.map((doc) => doc._id)),
+      ),
+    )
+  res.json(applyTranslations(hydrated, overlays))
 })
 
 router.put('/', requireAuth, adminOnly, async (req, res) => {
   const body = validate(navigationBodySchema, req.body)
-  await Navigation.deleteMany({})
-  const created = await Navigation.insertMany(body)
-  const docs = await Navigation.find({ _id: { $in: created.map(c => c._id) } })
-    .sort('order')
-    .populate('items.image')
-  res.json(docs)
+  // Replace wholesale in one transaction: the admin sends every dropdown, and
+  // a half-applied replacement would leave the site with no navigation.
+  const docs = await db.transaction(async (tx) => {
+    await tx.delete(navigationDropdowns)
+    if (body.length === 0) return []
+    return tx.insert(navigationDropdowns).values(body as never).returning()
+  })
+  const sorted = [...docs].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+  await populateItemImages(sorted as unknown as Record<string, unknown>[])
+  res.json(sorted)
 })
 
 export default router

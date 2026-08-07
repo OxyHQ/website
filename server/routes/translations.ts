@@ -1,6 +1,8 @@
 import { Router } from 'express'
+import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
-import { Translation } from '../models/Translation.js'
+import { db } from '../db/postgres.js'
+import { translations } from '../db/schema/index.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { validate } from '../utils/validate.js'
@@ -30,8 +32,11 @@ router.get('/:collection', requireAuth, adminOnly, async (req, res) => {
   const { collection: collectionName } = validate(collectionParamsSchema, req.params)
   const { locale } = validate(localeQuerySchema, req.query)
 
-  const translations = await Translation.find({ locale, collectionName })
-  res.json(translations)
+  const rows = await db
+    .select()
+    .from(translations)
+    .where(and(eq(translations.locale, locale), eq(translations.collectionName, collectionName)))
+  res.json(rows)
 })
 
 // Get translation for a specific document
@@ -39,7 +44,17 @@ router.get('/:collection/:documentId', requireAuth, adminOnly, async (req, res) 
   const { collection: collectionName, documentId } = validate(collectionAndDocParamsSchema, req.params)
   const { locale } = validate(localeQuerySchema, req.query)
 
-  const translation = await Translation.findOne({ locale, collectionName, documentId })
+  const [translation] = await db
+    .select()
+    .from(translations)
+    .where(
+      and(
+        eq(translations.locale, locale),
+        eq(translations.collectionName, collectionName),
+        eq(translations.documentId, documentId),
+      ),
+    )
+    .limit(1)
   if (!translation) return res.status(404).json({ error: 'Translation not found' })
   res.json(translation)
 })
@@ -50,11 +65,14 @@ router.put('/:collection/:documentId', requireAuth, adminOnly, async (req, res) 
   const { locale } = validate(localeQuerySchema, req.query)
   const { fields } = validate(upsertBodySchema, req.body)
 
-  const translation = await Translation.findOneAndUpdate(
-    { locale, collectionName, documentId },
-    { locale, collectionName, documentId, fields },
-    { upsert: true, new: true },
-  )
+  const [translation] = await db
+    .insert(translations)
+    .values({ locale, collectionName, documentId, fields })
+    .onConflictDoUpdate({
+      target: [translations.locale, translations.collectionName, translations.documentId],
+      set: { fields, updatedAt: new Date() },
+    })
+    .returning()
   res.json(translation)
 })
 
@@ -63,8 +81,17 @@ router.delete('/:collection/:documentId', requireAuth, adminOnly, async (req, re
   const { collection: collectionName, documentId } = validate(collectionAndDocParamsSchema, req.params)
   const { locale } = validate(localeQuerySchema, req.query)
 
-  const result = await Translation.findOneAndDelete({ locale, collectionName, documentId })
-  if (!result) return res.status(404).json({ error: 'Translation not found' })
+  const [removed] = await db
+    .delete(translations)
+    .where(
+      and(
+        eq(translations.locale, locale),
+        eq(translations.collectionName, collectionName),
+        eq(translations.documentId, documentId),
+      ),
+    )
+    .returning({ id: translations._id })
+  if (!removed) return res.status(404).json({ error: 'Translation not found' })
   res.json({ ok: true })
 })
 

@@ -1,18 +1,20 @@
 import { Router } from 'express'
-import type { QueryFilter } from 'mongoose'
+import { and, count, desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
-import { UserProfileExtra } from '../models/UserProfileExtra.js'
-import { UserBadge } from '../models/UserBadge.js'
-import { Comment, type IComment } from '../models/Comment.js'
-import { Like } from '../models/Like.js'
-import { Vote } from '../models/Vote.js'
-import { NewsroomPost } from '../models/NewsroomPost.js'
+import { db } from '../db/postgres.js'
+import { comments, likes, newsroomPosts, userBadges, userProfileExtras, votes } from '../db/schema/index.js'
 import { optionalAuth, oxy, requireAuth } from '../middleware/auth.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
+
+/** `count()` comes back as a one-row result; this unwraps it. */
+async function countRows(query: Promise<Array<{ value: number }>>): Promise<number> {
+  const [row] = await query
+  return Number(row?.value ?? 0)
+}
 
 const userIdParamsSchema = z.object({ userId: z.string().min(1) })
 const usernameParamsSchema = z.object({ username: z.string().min(1) })
@@ -59,13 +61,14 @@ router.put('/me', requireAuth, async (req, res) => {
     if (bio !== undefined) update.bio = bio
     if (showActivity !== undefined) update.showActivity = showActivity
 
-    const profile = await UserProfileExtra.findOneAndUpdate(
-      { userId: user.id },
-      { ...update, userId: user.id, ...(user.username != null && { username: user.username }) },
-      { upsert: true, new: true },
-    )
+    const values = { ...update, userId: user.id, username: user.username ?? '' }
+    const [profile] = await db
+      .insert(userProfileExtras)
+      .values(values as never)
+      .onConflictDoUpdate({ target: userProfileExtras.userId, set: { ...update, updatedAt: new Date() } as never })
+      .returning()
 
-    res.json(profile.toJSON())
+    res.json(profile)
   } catch (err) {
     res.status(500).json({ error: `Failed to update profile: ${toErrorMessage(err)}` })
   }
@@ -83,9 +86,13 @@ router.get('/:username', optionalAuth, async (req, res) => {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    const [profileExtra, badges] = await Promise.all([
-      UserProfileExtra.findOne({ username }),
-      UserBadge.find({ username }).sort('-awardedAt'),
+    const [[profileExtra], badges] = await Promise.all([
+      db.select().from(userProfileExtras).where(eq(userProfileExtras.username, username)).limit(1),
+      db
+        .select({ badgeId: userBadges.badgeId, awardedAt: userBadges.awardedAt })
+        .from(userBadges)
+        .where(eq(userBadges.username, username))
+        .orderBy(desc(userBadges.awardedAt)),
     ])
 
     const isSelf = req.user?.username === username
@@ -94,15 +101,20 @@ router.get('/:username', optionalAuth, async (req, res) => {
     const userId = oxyUser.id
     let stats = null
     if (showActivity || isSelf) {
-      const [comments, likes, votes, articles, followers, following] = await Promise.all([
-        Comment.countDocuments({ userId, status: 'visible' }),
-        Like.countDocuments({ userId }),
-        Vote.countDocuments({ userId }),
-        NewsroomPost.countDocuments({ oxyUserId: userId, status: 'published' }),
+      const [commentCount, likeCount, voteCount, articleCount, followers, following] = await Promise.all([
+        countRows(db.select({ value: count() }).from(comments).where(and(eq(comments.userId, userId), eq(comments.status, 'visible')))),
+        countRows(db.select({ value: count() }).from(likes).where(eq(likes.userId, userId))),
+        countRows(db.select({ value: count() }).from(votes).where(eq(votes.userId, userId))),
+        countRows(
+          db
+            .select({ value: count() })
+            .from(newsroomPosts)
+            .where(and(eq(newsroomPosts.oxyUserId, userId), eq(newsroomPosts.status, 'published'))),
+        ),
         oxy.getUserFollowers(userId).then(r => r.total).catch(() => 0),
         oxy.getUserFollowing(userId).then(r => r.total).catch(() => 0),
       ])
-      stats = { comments, likes, votes, articles, followers, following }
+      stats = { comments: commentCount, likes: likeCount, votes: voteCount, articles: articleCount, followers, following }
     }
 
     res.json({
@@ -116,7 +128,7 @@ router.get('/:username', optionalAuth, async (req, res) => {
       },
       bio: profileExtra?.bio || oxyUser.bio || '',
       showActivity: profileExtra?.showActivity !== false,
-      badges: badges.map(b => ({ badgeId: b.badgeId, awardedAt: b.awardedAt })),
+      badges,
       stats,
     })
   } catch (err) {
@@ -132,7 +144,11 @@ router.get('/:username/activity', async (req, res) => {
   try {
     const { limitNum, skip } = parsePagination(page, limit)
 
-    const profileExtra = await UserProfileExtra.findOne({ username })
+    const [profileExtra] = await db
+      .select()
+      .from(userProfileExtras)
+      .where(eq(userProfileExtras.username, username))
+      .limit(1)
     if (profileExtra?.showActivity === false) {
       return res.json({ items: [], total: 0 })
     }
@@ -142,12 +158,12 @@ router.get('/:username/activity', async (req, res) => {
     let total = 0
 
     if (!type || type === 'comments') {
-      const filter: QueryFilter<IComment> = { username, status: 'visible' }
-      const [comments, commentCount] = await Promise.all([
-        Comment.find(filter).sort('-createdAt').skip(skip).limit(limitNum),
-        Comment.countDocuments(filter),
+      const where = and(eq(comments.username, username), eq(comments.status, 'visible'))
+      const [rows, commentCount] = await Promise.all([
+        db.select().from(comments).where(where).orderBy(desc(comments.createdAt)).offset(skip).limit(limitNum),
+        countRows(db.select({ value: count() }).from(comments).where(where)),
       ])
-      comments.forEach(c => activities.push({ type: 'comment', data: c.toJSON(), createdAt: c.createdAt }))
+      rows.forEach(row => activities.push({ type: 'comment', data: row, createdAt: row.createdAt }))
       total += commentCount
     }
 
@@ -163,8 +179,12 @@ router.get('/:username/activity', async (req, res) => {
 router.get('/:username/badges', async (req, res) => {
   const { username } = validate(usernameParamsSchema, req.params)
   try {
-    const badges = await UserBadge.find({ username }).sort('-awardedAt')
-    res.json(badges.map(b => ({ badgeId: b.badgeId, awardedAt: b.awardedAt })))
+    const badges = await db
+      .select({ badgeId: userBadges.badgeId, awardedAt: userBadges.awardedAt })
+      .from(userBadges)
+      .where(eq(userBadges.username, username))
+      .orderBy(desc(userBadges.awardedAt))
+    res.json(badges)
   } catch (err) {
     res.status(500).json({ error: `Failed to load badges: ${toErrorMessage(err)}` })
   }

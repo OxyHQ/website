@@ -1,6 +1,8 @@
 import { Router } from 'express'
+import { asc, eq } from 'drizzle-orm'
 import { z } from 'zod'
-import { Category } from '../models/Category.js'
+import { db } from '../db/postgres.js'
+import { categories } from '../db/schema/index.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
@@ -25,34 +27,41 @@ const listQuerySchema = z.object({
 
 router.get('/', localeMiddleware, async (req, res) => {
   const query = validate(listQuerySchema, req.query)
-  const filter = query.scope ? { scope: query.scope } : {}
-  const docs = await Category.find(filter).sort({ order: 1, label: 1 })
+  const docs = await db
+    .select()
+    .from(categories)
+    .where(query.scope ? eq(categories.scope, query.scope) : undefined)
+    .orderBy(asc(categories.order), asc(categories.label))
   res.json(await localizeMany(req, 'categories', docs))
 })
 
 router.get('/:slug', localeMiddleware, async (req, res) => {
-  const doc = await Category.findOne({ slug: req.params.slug })
+  const [doc] = await db.select().from(categories).where(eq(categories.slug, String(req.params.slug))).limit(1)
   if (!doc) return res.status(404).json({ error: 'Not found' })
   res.json(await localizeOne(req, 'categories', doc))
 })
 
 router.post('/', requireAuth, adminOnly, async (req, res) => {
   const body = validate(categoryBodySchema, req.body)
-  const existing = await Category.findOne({ slug: body.slug })
+  const [existing] = await db.select({ id: categories._id }).from(categories).where(eq(categories.slug, body.slug)).limit(1)
   if (existing) return res.status(409).json({ error: 'Category with this slug already exists' })
-  const doc = await Category.create(body)
+  const [doc] = await db.insert(categories).values(body).returning()
   res.status(201).json(doc)
 })
 
 router.put('/:slug', requireAuth, adminOnly, async (req, res) => {
   const patch = validate(categoryUpdateSchema, req.body)
-  const doc = await Category.findOneAndUpdate({ slug: req.params.slug }, patch, { new: true, runValidators: true })
+  const [doc] = await db
+    .update(categories)
+    .set({ ...patch, updatedAt: new Date() })
+    .where(eq(categories.slug, String(req.params.slug)))
+    .returning()
   if (!doc) return res.status(404).json({ error: 'Not found' })
   res.json(doc)
 })
 
 router.delete('/:slug', requireAuth, adminOnly, async (req, res) => {
-  const doc = await Category.findOneAndDelete({ slug: req.params.slug })
+  const [doc] = await db.delete(categories).where(eq(categories.slug, String(req.params.slug))).returning({ id: categories._id })
   if (!doc) return res.status(404).json({ error: 'Not found' })
   res.json({ ok: true, slug: req.params.slug })
 })

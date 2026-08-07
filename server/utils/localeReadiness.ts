@@ -1,5 +1,6 @@
-import { Locale } from '../models/Locale.js'
-import { Translation } from '../models/Translation.js'
+import { asc, count, eq, notInArray } from 'drizzle-orm'
+import { db } from '../db/postgres.js'
+import { locales as localesTable, translations } from '../db/schema/index.js'
 import { config } from '../config.js'
 
 /**
@@ -41,17 +42,17 @@ function defaultCodes(cmsDefault: string | undefined): string[] {
 }
 
 /**
- * Counts Translation documents per locale in ONE aggregation, grouped on the
- * `locale` field. `$group` is served by the `{ locale, collectionName,
- * documentId }` index because `locale` is its leading key, so this is an index
- * scan rather than a full-collection scan.
+ * Counts translation rows per locale in ONE grouped query. The unique index on
+ * `(locale, collection_name, document_id)` has `locale` as its leading column,
+ * so this reads the index rather than the table.
  */
 async function countTranslationsByLocale(excluded: string[]): Promise<Map<string, number>> {
-  const rows = await Translation.aggregate<{ _id: string; count: number }>([
-    { $match: { locale: { $nin: excluded } } },
-    { $group: { _id: '$locale', count: { $sum: 1 } } },
-  ])
-  return new Map(rows.map(row => [row._id, row.count]))
+  const rows = await db
+    .select({ locale: translations.locale, count: count() })
+    .from(translations)
+    .where(excluded.length > 0 ? notInArray(translations.locale, excluded) : undefined)
+    .groupBy(translations.locale)
+  return new Map(rows.map(row => [row.locale, Number(row.count)]))
 }
 
 /**
@@ -62,7 +63,7 @@ async function countTranslationsByLocale(excluded: string[]): Promise<Map<string
  * from this, so the two can never advertise different locale sets.
  */
 export async function getEnabledLocalesWithReadiness() {
-  const locales = await Locale.find({ enabled: true }).sort('order').lean()
+  const locales = await db.select().from(localesTable).where(eq(localesTable.enabled, true)).orderBy(asc(localesTable.order))
   const excluded = defaultCodes(locales.find(l => l.isDefault)?.code)
   const counts = await countTranslationsByLocale(excluded)
 

@@ -1,7 +1,9 @@
 import { Router } from 'express'
 import { safeFetch } from '@oxyhq/core/server'
-import { Product, type IProduct } from '../models/Product.js'
-import { Translation } from '../models/Translation.js'
+import { and, asc, eq, inArray } from 'drizzle-orm'
+import { db } from '../db/postgres.js'
+import { media, products, translations } from '../db/schema/index.js'
+import { populate } from '../db/refs.js'
 import { localeMiddleware } from '../middleware/locale.js'
 
 const router = Router()
@@ -54,6 +56,9 @@ const PROBE_TIMEOUT_MS = 5_000
 const SLOW_LATENCY_MS = 1_500
 const CACHE_TTL_MS = 60_000
 
+/** A product row with its logo already resolved, which is what a probe reads. */
+type ProductRow = typeof products.$inferSelect & { logo: unknown }
+
 let cached: CachedStatusPayload | null = null
 let cachedAt = 0
 let inFlight: Promise<CachedStatusPayload> | null = null
@@ -64,14 +69,14 @@ function resolveLogoUrl(logo: unknown): string | null {
   return obj.url || obj.thumbnails?.lg || obj.thumbnails?.md || obj.thumbnails?.sm || null
 }
 
-async function probeService(product: IProduct): Promise<CachedServiceResult> {
+async function probeService(product: ProductRow): Promise<CachedServiceResult> {
   const target = product.healthUrl || product.href
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS)
   const start = Date.now()
   const base: Omit<CachedServiceResult, 'status' | 'latencyMs' | 'httpStatus' | 'lastChecked'> = {
     id: product.productId,
-    productDocId: product._id.toString(),
+    productDocId: product._id,
     name: product.name,
     description: product.tagline || product.description || '',
     section: product.section || 'Other',
@@ -119,10 +124,13 @@ function computeOverall(services: CachedServiceResult[]): ServiceStatus {
 }
 
 async function buildPayload(): Promise<CachedStatusPayload> {
-  const products = await Product.find({ showOnStatus: true })
-    .sort({ section: 1, order: 1 })
-    .populate('logo')
-  const services = await Promise.all(products.map(probeService))
+  const rows = await db
+    .select()
+    .from(products)
+    .where(eq(products.showOnStatus, true))
+    .orderBy(asc(products.section), asc(products.order))
+  const probed = (await populate(rows, { logo: media })) as unknown as ProductRow[]
+  const services = await Promise.all(probed.map(probeService))
   return {
     generatedAt: new Date().toISOString(),
     overall: computeOverall(services),
@@ -168,14 +176,21 @@ async function localizePayload(
   }
 
   const docIds = payload.services.map(s => s.productDocId)
-  const translations = await Translation.find({
-    locale,
-    collectionName: 'products',
-    documentId: { $in: docIds },
-  })
+  const rows = docIds.length > 0
+    ? await db
+        .select()
+        .from(translations)
+        .where(
+          and(
+            eq(translations.locale, locale),
+            eq(translations.collectionName, 'products'),
+            inArray(translations.documentId, docIds),
+          ),
+        )
+    : []
 
   const overlays = new Map<string, Record<string, unknown>>()
-  for (const t of translations) {
+  for (const t of rows) {
     overlays.set(t.documentId, t.fields)
   }
 

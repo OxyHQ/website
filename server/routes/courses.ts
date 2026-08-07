@@ -1,6 +1,9 @@
 import { Router } from 'express'
 import { z } from 'zod'
-import { Course } from '../models/Course.js'
+import { and, asc, count, desc, eq, sql, type SQL } from 'drizzle-orm'
+import { db } from '../db/postgres.js'
+import { categories, media, courses as table } from '../db/schema/index.js'
+import { populate, populateOne } from '../db/refs.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
@@ -11,6 +14,9 @@ import { validate } from '../utils/validate.js'
 import { isAdminUser } from '../utils/adminAccess.js'
 
 const router = Router()
+
+/** The referenced rows every response carries inline. */
+const REFS = { coverImage: media, category: categories }
 
 // Accept either a string (id/slug) or null to clear. Empty string becomes null.
 const refSchema = z.union([z.string(), z.null()]).optional().transform((v) => (v && v.length > 0 ? v : null))
@@ -63,23 +69,20 @@ const slugParamsSchema = z.object({ slug: z.string().min(1) })
 router.get('/', localeMiddleware, optionalAuth, async (req, res) => {
   const { category, tag, featured, status, limit = '20', page = '1' } = validate(listQuerySchema, req.query)
 
-  const filter: Record<string, unknown> = {}
-  if (category) filter.category = category
-  if (tag) filter.tags = tag
-  if (featured === 'true') filter.featured = true
-
-  filter.status = isAdminUser(req.user) && status ? status : 'published'
+  const filters: SQL[] = []
+  if (category) filters.push(eq(table.category, category))
+  if (tag) filters.push(sql`${table.tags} @> ARRAY[${tag}]::text[]`)
+  if (featured === 'true') filters.push(eq(table.featured, true))
+  filters.push(eq(table.status, isAdminUser(req.user) && status ? status : 'published'))
+  const where = and(...filters)
 
   const { pageNum, limitNum, skip } = parsePagination(page, limit)
-  const [courses, total] = await Promise.all([
-    Course.find(filter)
-      .populate('coverImage')
-      .populate('category')
-      .sort({ order: 1, publishedAt: -1 })
-      .skip(skip)
-      .limit(limitNum),
-    Course.countDocuments(filter),
+  const [rows, [totals]] = await Promise.all([
+    db.select().from(table).where(where).orderBy(asc(table.order), desc(table.publishedAt)).offset(skip).limit(limitNum),
+    db.select({ value: count() }).from(table).where(where),
   ])
+  const total = Number(totals?.value ?? 0)
+  const courses = await populate(rows, REFS)
 
   const result = await localizeMany(req, 'courses', courses)
 
@@ -90,10 +93,10 @@ router.get('/:slug', localeMiddleware, optionalAuth, async (req, res) => {
   const { slug } = validate(slugParamsSchema, req.params)
   const { preview } = validate(detailQuerySchema, req.query)
 
-  const filter: Record<string, unknown> = { slug }
-  if (!isAdminUser(req.user) || preview !== 'true') filter.status = 'published'
+  const visibility = !isAdminUser(req.user) || preview !== 'true' ? eq(table.status, 'published') : undefined
 
-  const course = await Course.findOne(filter).populate('coverImage').populate('category')
+  const [row] = await db.select().from(table).where(and(eq(table.slug, slug), visibility)).limit(1)
+  const course = await populateOne(row, REFS)
   if (!course) return res.status(404).json({ error: 'Course not found' })
   res.json(await localizeOne(req, 'courses', course))
 })
@@ -101,14 +104,14 @@ router.get('/:slug', localeMiddleware, optionalAuth, async (req, res) => {
 router.post('/', requireAuth, adminOnly, async (req, res) => {
   try {
     const body = validate(courseBodySchema, req.body)
-    const existing = await Course.findOne({ slug: body.slug })
+    const [existing] = await db.select({ id: table._id }).from(table).where(eq(table.slug, body.slug)).limit(1)
     if (existing) return res.status(409).json({ error: 'Course with this slug already exists' })
     const { publishedAt, ...rest } = body
-    const course = await Course.create({
-      ...rest,
-      publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
-    })
-    const populated = await Course.findById(course._id).populate('coverImage').populate('category')
+    const [created] = await db
+      .insert(table)
+      .values({ ...rest, publishedAt: publishedAt ? new Date(publishedAt) : new Date() } as never)
+      .returning()
+    const populated = await populateOne(created, REFS)
     res.status(201).json(populated)
   } catch (err) {
     res.status(500).json({ error: `Failed to create course: ${toErrorMessage(err)}` })
@@ -122,9 +125,12 @@ router.put('/:slug', requireAuth, adminOnly, async (req, res) => {
     const { publishedAt, ...rest } = body
     const patch: Record<string, unknown> = { ...rest }
     if (publishedAt) patch.publishedAt = new Date(publishedAt)
-    const course = await Course.findOneAndUpdate({ slug }, patch, { new: true, runValidators: true })
-      .populate('coverImage')
-      .populate('category')
+    const [updated] = await db
+      .update(table)
+      .set({ ...patch, updatedAt: new Date() } as never)
+      .where(eq(table.slug, slug))
+      .returning()
+    const course = await populateOne(updated, REFS)
     if (!course) return res.status(404).json({ error: 'Course not found' })
     res.json(course)
   } catch (err) {
@@ -135,7 +141,7 @@ router.put('/:slug', requireAuth, adminOnly, async (req, res) => {
 router.delete('/:slug', requireAuth, adminOnly, async (req, res) => {
   const { slug } = validate(slugParamsSchema, req.params)
   try {
-    const course = await Course.findOneAndDelete({ slug })
+    const [course] = await db.delete(table).where(eq(table.slug, slug)).returning({ id: table._id })
     if (!course) return res.status(404).json({ error: 'Course not found' })
     res.json({ ok: true, slug })
   } catch (err) {

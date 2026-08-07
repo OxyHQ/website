@@ -1,7 +1,8 @@
 import { Router } from 'express'
-import type { QueryFilter } from 'mongoose'
+import { and, asc, count, desc, eq, gte, inArray } from 'drizzle-orm'
 import { z } from 'zod'
-import { Comment, type IComment } from '../models/Comment.js'
+import { db } from '../db/postgres.js'
+import { comments as commentsTable } from '../db/schema/index.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { isAdminUser } from '../utils/adminAccess.js'
@@ -12,6 +13,12 @@ import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
+
+/** `count()` comes back as a one-row result; this unwraps it. */
+async function countRows(query: Promise<Array<{ value: number }>>): Promise<number> {
+  const [row] = await query
+  return Number(row?.value ?? 0)
+}
 
 const MAX_BODY_LENGTH = 2000
 const RATE_LIMIT_MS = 10_000
@@ -60,33 +67,31 @@ router.get('/', optionalAuth, async (req, res) => {
   const { targetType, targetId } = validate(listQuerySchema, req.query)
 
   try {
-    const comments = await Comment.find({
-      targetType,
-      targetId,
-      status: { $in: ['visible', 'deleted'] },
-    }).sort({ createdAt: 1 })
+    const rows = await db
+      .select()
+      .from(commentsTable)
+      .where(
+        and(
+          eq(commentsTable.targetType, targetType),
+          eq(commentsTable.targetId, targetId),
+          inArray(commentsTable.status, ['visible', 'deleted']),
+        ),
+      )
+      .orderBy(asc(commentsTable.createdAt))
 
     // Collect IDs of all parent comments that have replies
     const parentIdsWithReplies = new Set(
-      comments
-        .filter(c => c.parentId !== null)
-        .map(c => c.parentId?.toString()),
+      rows.filter(row => row.parentId !== null).map(row => row.parentId as string),
     )
 
-    const result = comments
-      .filter(c => {
+    const result = rows
+      .filter(row => {
         // Keep all visible comments
-        if (c.status === 'visible') return true
+        if (row.status === 'visible') return true
         // Keep deleted comments only if they have replies (show placeholder)
-        return parentIdsWithReplies.has(c._id.toString())
+        return parentIdsWithReplies.has(row._id)
       })
-      .map(c => {
-        const json = c.toJSON()
-        if (c.status === 'deleted') {
-          return { ...json, body: '[deleted]', username: '[deleted]' }
-        }
-        return json
-      })
+      .map(row => (row.status === 'deleted' ? { ...row, body: '[deleted]', username: '[deleted]' } : row))
 
     res.json(result)
   } catch (err) {
@@ -107,12 +112,18 @@ router.post('/', requireAuth, async (req, res) => {
   try {
     // Rate limit: no more than 1 comment per 10 seconds on the same target
     const recentCutoff = new Date(Date.now() - RATE_LIMIT_MS)
-    const recentComment = await Comment.findOne({
-      userId: user.id,
-      targetType,
-      targetId,
-      createdAt: { $gte: recentCutoff },
-    })
+    const [recentComment] = await db
+      .select({ id: commentsTable._id })
+      .from(commentsTable)
+      .where(
+        and(
+          eq(commentsTable.userId, user.id),
+          eq(commentsTable.targetType, targetType),
+          eq(commentsTable.targetId, targetId),
+          gte(commentsTable.createdAt, recentCutoff),
+        ),
+      )
+      .limit(1)
 
     if (recentComment) {
       return res.status(429).json({ error: 'You are commenting too fast. Please wait a few seconds.' })
@@ -120,7 +131,7 @@ router.post('/', requireAuth, async (req, res) => {
 
     // If parentId is provided, validate it references a top-level comment
     if (parentId) {
-      const parentComment = await Comment.findById(parentId)
+      const [parentComment] = await db.select().from(commentsTable).where(eq(commentsTable._id, parentId)).limit(1)
       if (!parentComment) {
         return res.status(400).json({ error: 'Parent comment not found' })
       }
@@ -129,14 +140,17 @@ router.post('/', requireAuth, async (req, res) => {
       }
     }
 
-    const comment = await Comment.create({
-      targetType,
-      targetId,
-      body,
-      parentId: parentId ?? null,
-      userId: user.id,
-      username: user.username ?? '',
-    })
+    const [comment] = await db
+      .insert(commentsTable)
+      .values({
+        targetType,
+        targetId,
+        body,
+        parentId: parentId ?? null,
+        userId: user.id,
+        username: user.username ?? '',
+      })
+      .returning()
 
     if (user.username) {
       checkAndAwardBadges(user.id, user.username).catch((err) =>
@@ -162,7 +176,7 @@ router.put('/:id', requireAuth, async (req, res) => {
   const { body } = validate(editBodySchema, req.body)
 
   try {
-    const comment = await Comment.findById(id)
+    const [comment] = await db.select().from(commentsTable).where(eq(commentsTable._id, id)).limit(1)
     if (!comment) return res.status(404).json({ error: 'Comment not found' })
 
     if (comment.userId !== user.id) {
@@ -174,11 +188,13 @@ router.put('/:id', requireAuth, async (req, res) => {
       return res.status(403).json({ error: 'Edit window has expired (15 minutes)' })
     }
 
-    comment.body = body
-    comment.editedAt = new Date()
-    await comment.save()
+    const [updated] = await db
+      .update(commentsTable)
+      .set({ body, editedAt: new Date(), updatedAt: new Date() })
+      .where(eq(commentsTable._id, id))
+      .returning()
 
-    res.json(comment)
+    res.json(updated)
   } catch (err) {
     const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to edit comment: ${message}` })
@@ -195,7 +211,7 @@ router.delete('/:id', requireAuth, async (req, res) => {
   const { id } = validate(idParamsSchema, req.params)
 
   try {
-    const comment = await Comment.findById(id)
+    const [comment] = await db.select().from(commentsTable).where(eq(commentsTable._id, id)).limit(1)
     if (!comment) return res.status(404).json({ error: 'Comment not found' })
 
     // Allow the comment author or an admin to delete
@@ -206,8 +222,10 @@ router.delete('/:id', requireAuth, async (req, res) => {
       return res.status(403).json({ error: 'You can only delete your own comments' })
     }
 
-    comment.status = 'deleted'
-    await comment.save()
+    await db
+      .update(commentsTable)
+      .set({ status: 'deleted', updatedAt: new Date() })
+      .where(eq(commentsTable._id, id))
 
     res.json({ success: true })
   } catch (err) {
@@ -224,11 +242,11 @@ router.put('/:id/moderate', requireAuth, adminOnly, async (req, res) => {
   const { status } = validate(moderateBodySchema, req.body)
 
   try {
-    const comment = await Comment.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true },
-    )
+    const [comment] = await db
+      .update(commentsTable)
+      .set({ status, updatedAt: new Date() })
+      .where(eq(commentsTable._id, id))
+      .returning()
     if (!comment) return res.status(404).json({ error: 'Comment not found' })
 
     res.json(comment)
@@ -246,15 +264,12 @@ router.get('/admin/queue', requireAuth, adminOnly, async (req, res) => {
 
   const { pageNum, limitNum, skip } = parsePagination(page, limit, 100)
 
-  const filter: Record<string, string> = {}
-  if (status) {
-    filter.status = status
-  }
+  const where = status ? eq(commentsTable.status, status) : undefined
 
   try {
     const [comments, total] = await Promise.all([
-      Comment.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
-      Comment.countDocuments(filter),
+      db.select().from(commentsTable).where(where).orderBy(desc(commentsTable.createdAt)).offset(skip).limit(limitNum),
+      countRows(db.select({ value: count() }).from(commentsTable).where(where)),
     ])
 
     res.json({
@@ -279,10 +294,10 @@ router.get('/user/:username', async (req, res) => {
   const { pageNum, limitNum, skip } = parsePagination(page, limit, 100)
 
   try {
-    const filter: QueryFilter<IComment> = { username, status: 'visible' }
+    const where = and(eq(commentsTable.username, username), eq(commentsTable.status, 'visible'))
     const [comments, total] = await Promise.all([
-      Comment.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
-      Comment.countDocuments(filter),
+      db.select().from(commentsTable).where(where).orderBy(desc(commentsTable.createdAt)).offset(skip).limit(limitNum),
+      countRows(db.select({ value: count() }).from(commentsTable).where(where)),
     ])
 
     res.json({

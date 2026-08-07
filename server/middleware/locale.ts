@@ -1,5 +1,7 @@
 import type { Request, Response, NextFunction } from 'express'
-import { Locale } from '../models/Locale.js'
+import { eq } from 'drizzle-orm'
+import { db } from '../db/postgres.js'
+import { locales as localesTable } from '../db/schema/index.js'
 
 declare global {
   // The Express namespace is the canonical augmentation point for
@@ -24,7 +26,7 @@ async function getLocaleInfo() {
     return { defaultLocale: cachedDefault, enabledLocales: cachedEnabled }
   }
 
-  const locales = await Locale.find({ enabled: true }).lean()
+  const locales = await db.select().from(localesTable).where(eq(localesTable.enabled, true))
   const defaultLocale = locales.find(l => l.isDefault)?.code ?? 'en'
   const enabledLocales = new Set(locales.map(l => l.code))
   if (!enabledLocales.size) enabledLocales.add(defaultLocale)

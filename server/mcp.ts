@@ -1,34 +1,48 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import express from 'express'
-import mongoose from 'mongoose'
+import { and, asc, count, desc, eq, gte, ilike, inArray, like, lte, ne, not, or, sql, type SQL } from 'drizzle-orm'
 import crypto from 'node:crypto'
 import { z } from 'zod'
 import { safeFetch, UpstreamError } from '@oxyhq/core/server'
 
 // Models
-import { Page } from './models/Page.js'
-import { Navigation } from './models/Navigation.js'
-import { Footer } from './models/Footer.js'
-import { HeroContent, getOrCreateHero, populateHeroMedia } from './models/HeroContent.js'
-import { NewsroomPost } from './models/NewsroomPost.js'
-import { PricingPlan } from './models/PricingPlan.js'
-import { Testimonial } from './models/Testimonial.js'
-import { ChangelogEntry } from './models/ChangelogEntry.js'
-import { Job } from './models/Job.js'
-import { SiteSettings } from './models/SiteSettings.js'
-import { McpToken } from './models/McpToken.js'
-import { Locale } from './models/Locale.js'
-import { Translation } from './models/Translation.js'
-import TrackedRepo from './models/TrackedRepo.js'
-import { TeamMember } from './models/TeamMember.js'
-import { Media } from './models/Media.js'
-import { Product } from './models/Product.js'
-import { Category } from './models/Category.js'
-import { Referral } from './models/Referral.js'
-import { Course } from './models/Course.js'
-import { Resource } from './models/Resource.js'
-import { HelpArticle } from './models/HelpArticle.js'
+import type { PgTable } from 'drizzle-orm/pg-core'
+import { db } from './db/postgres.js'
+import { populate, populateOne } from './db/refs.js'
+import { upsertSingleton } from './db/singleton.js'
+import {
+  categories,
+  changelogEntries,
+  courses,
+  helpArticles,
+  footers,
+  heroContents,
+  jobs,
+  locales,
+  mcpTokens,
+  media,
+  navigationDropdowns,
+  newsroomPosts,
+  pages,
+  pricingPlans,
+  products,
+  referrals,
+  resources,
+  siteSettings,
+  teamMembers,
+  testimonials as testimonialsTable,
+  trackedRepos,
+  translations,
+} from './db/schema/index.js'
+import {
+  DEFAULT_CAROUSEL_SLOTS,
+  DEFAULT_HERO_BG_MP4,
+  DEFAULT_HERO_BG_WEBM,
+  DEFAULT_HERO_EYEBROW,
+  DEFAULT_HERO_POSTER,
+  DEFAULT_HERO_TITLE,
+} from './constants/hero.js'
 import { syncAllRepos, syncSingleRepo } from './services/githubSync.js'
 import { deleteFromSpaces, uploadToSpaces } from './services/s3.js'
 import { processImage } from './services/thumbnails.js'
@@ -119,17 +133,17 @@ server.tool('debug_upload_test', 'Test each step of the upload pipeline and repo
     const cdnUrl = await uploadToSpaces(buffer, 'debug-test.jpg', 'image/jpeg', 'oxy-website/debug')
     steps.push(`5. S3 upload OK: ${cdnUrl}`)
     
-    steps.push('6. Testing Media.create...')
-    const media = await Media.create({
+    steps.push('6. Testing media insert...')
+    const mediaRow = await insertOne(media, {
       url: cdnUrl, thumbnails: { sm: '', md: '', lg: '' },
       filename: 'debug-test.jpg', key: new URL(cdnUrl).pathname.slice(1),
       mimeType: 'image/jpeg', size: buffer.length,
       alt: '', tags: ['debug'], folder: 'debug', uploadedBy: 'mcp',
     })
-    steps.push(`7. Media created: ${media._id}`)
-    
+    steps.push(`7. Media created: ${mediaRow._id}`)
+
     // Cleanup
-    await Media.findByIdAndDelete(media._id)
+    await db.delete(media).where(eq(media._id, mediaRow._id as string))
     steps.push('8. Cleanup done')
     
     return ok({ success: true, steps })
@@ -140,18 +154,24 @@ server.tool('debug_upload_test', 'Test each step of the upload pipeline and repo
   }
 })
 
+/** `Model.create(values)` became one insert that hands the row back. */
+async function insertOne(table: PgTable, values: Record<string, unknown>): Promise<Record<string, unknown>> {
+  const [row] = await db.insert(table).values(values as never).returning()
+  return row as Record<string, unknown>
+}
+
 // ── Pages ───────────────────────────────────────────────────────────────────
 
 server.tool('list_pages', 'List all page slugs', {}, async () => {
   try {
-    const pages = await Page.find({}, 'slug title').sort('slug')
-    return ok(pages)
+    const rows = await db.select({ _id: pages._id, slug: pages.slug, title: pages.title }).from(pages).orderBy(asc(pages.slug))
+    return ok(rows)
   } catch (e) { return err(e) }
 })
 
 server.tool('get_page', 'Get a page by slug', { slug: z.string() }, async ({ slug }) => {
   try {
-    const page = await Page.findOne({ slug })
+    const [page] = await db.select().from(pages).where(eq(pages.slug, slug)).limit(1)
     if (!page) return err('Page not found')
     return ok(page)
   } catch (e) { return err(e) }
@@ -174,7 +194,11 @@ server.tool('upsert_page', 'Create or update a page', {
   promptPhrases: z.array(z.string()).optional(),
 }, async (params) => {
   try {
-    const page = await Page.findOneAndUpdate({ slug: params.slug }, params, { new: true, upsert: true })
+    const [page] = await db
+      .insert(pages)
+      .values(params as never)
+      .onConflictDoUpdate({ target: pages.slug, set: { ...params, updatedAt: new Date() } as never })
+      .returning()
     return ok(page)
   } catch (e) { return err(e) }
 })
@@ -183,7 +207,7 @@ server.tool('upsert_page', 'Create or update a page', {
 
 server.tool('get_navigation', 'Get all navigation dropdowns', {}, async () => {
   try {
-    const nav = await Navigation.find().sort('order')
+    const nav = await db.select().from(navigationDropdowns).orderBy(asc(navigationDropdowns.order))
     return ok(nav)
   } catch (e) { return err(e) }
 })
@@ -209,8 +233,12 @@ server.tool('replace_navigation', 'Replace all navigation dropdowns', {
   items: z.array(navDropdownSchema),
 }, async ({ items }) => {
   try {
-    await Navigation.deleteMany({})
-    const nav = await Navigation.insertMany(items)
+    // One transaction: the site cannot be left without navigation halfway.
+    const nav = await db.transaction(async (tx) => {
+      await tx.delete(navigationDropdowns)
+      if (items.length === 0) return []
+      return tx.insert(navigationDropdowns).values(items as never).returning()
+    })
     return ok(nav)
   } catch (e) { return err(e) }
 })
@@ -219,7 +247,7 @@ server.tool('replace_navigation', 'Replace all navigation dropdowns', {
 
 server.tool('get_footer', 'Get footer content', {}, async () => {
   try {
-    const footer = await Footer.findOne()
+    const [footer] = await db.select().from(footers).limit(1)
     return ok(footer ?? { columns: [], socialLinks: [], copyright: '' })
   } catch (e) { return err(e) }
 })
@@ -239,25 +267,56 @@ server.tool('update_footer', 'Update footer content', {
   copyright: z.string().optional(),
 }, async (params) => {
   try {
-    const footer = await Footer.findOne()
-    if (footer) {
-      if (params.columns !== undefined) footer.columns = params.columns as InstanceType<typeof Footer>['columns']
-      if (params.socialLinks !== undefined) footer.socialLinks = params.socialLinks as InstanceType<typeof Footer>['socialLinks']
-      if (params.copyright !== undefined) footer.copyright = params.copyright
-      await footer.save()
-      return ok(footer)
-    }
-    const created = await Footer.create(params)
-    return ok(created)
+    // Only the fields that were sent, exactly as before: an omitted column
+    // list must not blank the footer.
+    const update: Record<string, unknown> = {}
+    if (params.columns !== undefined) update.columns = params.columns
+    if (params.socialLinks !== undefined) update.socialLinks = params.socialLinks
+    if (params.copyright !== undefined) update.copyright = params.copyright
+    return ok(await upsertSingleton(footers, update))
   } catch (e) { return err(e) }
 })
 
 // ── Hero ────────────────────────────────────────────────────────────────────
 
+/** A hero media field is either a Media `_id` or a static URL. */
+function isMediaId(value: unknown): value is string {
+  return typeof value === 'string' && /^[0-9a-f]{24}$/i.test(value)
+}
+
+/** Resolves the three media fields, leaving static URLs untouched. */
+async function withHeroMedia(hero: Record<string, unknown>): Promise<Record<string, unknown>> {
+  const populated = { ...hero }
+  for (const field of ['backgroundVideoWebm', 'backgroundVideoMp4', 'backgroundPoster'] as const) {
+    const value = populated[field]
+    if (!isMediaId(value)) continue
+    const resolved = await populateOne({ ref: value }, { ref: media })
+    populated[field] = resolved?.ref ?? value
+  }
+  return populated
+}
+
+/** The hero singleton, created with the shipped defaults on first read. */
+async function readHero(): Promise<Record<string, unknown>> {
+  const [row] = await db.select().from(heroContents).limit(1)
+  if (row) return withHeroMedia(row)
+  const [created] = await db
+    .insert(heroContents)
+    .values({
+      title: DEFAULT_HERO_TITLE,
+      eyebrow: DEFAULT_HERO_EYEBROW,
+      backgroundVideoWebm: DEFAULT_HERO_BG_WEBM,
+      backgroundVideoMp4: DEFAULT_HERO_BG_MP4,
+      backgroundPoster: DEFAULT_HERO_POSTER,
+      carouselSlots: DEFAULT_CAROUSEL_SLOTS as unknown as Record<string, unknown>[],
+    })
+    .returning()
+  return withHeroMedia(created)
+}
+
 server.tool('get_hero', 'Get the homepage hero singleton: title, eyebrow text, background video/poster, and the carousel slot grid that sits below the hero copy. Returns sensible defaults the first time it is called so the site renders identically before any edits.', {}, async () => {
   try {
-    const hero = await getOrCreateHero()
-    return ok(hero)
+    return ok(await readHero())
   } catch (e) { return err(e) }
 })
 
@@ -266,31 +325,34 @@ server.tool('update_hero', 'Update the homepage hero. Pass any subset of: title 
     // Re-validate via the same schema the REST route uses so the MCP and the
     // HTTP path stay in lockstep on shape, defaults, and rejections.
     const body = heroUpdateSchema.parse(params)
-    await getOrCreateHero({ populate: false })
 
     const update: Record<string, unknown> = {}
     if (body.title !== undefined) update.title = body.title
     if (body.eyebrow !== undefined) update.eyebrow = body.eyebrow
+    // A media field holds either a Media `_id` or a static URL; both are
+    // stored as given and resolved on read.
     for (const field of ['backgroundVideoWebm', 'backgroundVideoMp4', 'backgroundPoster'] as const) {
       const value = body[field]
       if (value === undefined) continue
-      if (typeof value === 'string' && mongoose.Types.ObjectId.isValid(value) && value.length === 24) {
-        update[field] = new mongoose.Types.ObjectId(value)
-      } else {
-        update[field] = value || null
-      }
+      update[field] = value || null
     }
     if (body.carouselSlots !== undefined) update.carouselSlots = body.carouselSlots
 
-    const hero = await HeroContent.findOneAndUpdate({}, update, { new: true, upsert: true })
+    const hero = (await upsertSingleton(heroContents, update)) as Record<string, unknown> | undefined
     if (!hero) return err(new Error('Failed to update hero content'))
     // Selective populate: Mixed fields may hold static URLs that CastError
     // under a blanket `.populate(...)`.
-    return ok(await populateHeroMedia(hero))
+    return ok(await withHeroMedia(hero))
   } catch (e) { return err(e) }
 })
 
 // ── Newsroom ────────────────────────────────────────────────────────────────
+
+/** The media refs every post response carries inline. */
+const POST_REFS = { coverImage: media, ogImage: media }
+
+/** Courses, resources and help articles all carry these two inline. */
+const CONTENT_REFS = { coverImage: media, category: categories }
 
 server.tool('list_posts', 'List newsroom posts with optional filtering by category, tag, featured status, and publication status. Returns paginated results sorted by publishedAt descending.', {
   category: z.string().optional().describe('Filter by category. Posts whose categories array contains this value. Common: Company, Research, Product, Safety, Engineering, Security'),
@@ -302,25 +364,29 @@ server.tool('list_posts', 'List newsroom posts with optional filtering by catego
   page: z.number().optional().describe('Page number (default 1)'),
 }, async (params) => {
   try {
-    const filter: Record<string, unknown> = {}
-    if (params.category) filter.categories = params.category
-    if (params.tag) filter.tags = params.tag
-    if (params.featured) filter.featured = true
-    if (params.status) filter.status = params.status
+    const filters: SQL[] = []
+    if (params.category) filters.push(sql`${newsroomPosts.categories} @> ARRAY[${params.category}]::text[]`)
+    if (params.tag) filters.push(sql`${newsroomPosts.tags} @> ARRAY[${params.tag}]::text[]`)
+    if (params.featured) filters.push(eq(newsroomPosts.featured, true))
+    if (params.status) filters.push(eq(newsroomPosts.status, params.status))
 
     if (params.search) {
-      const regex = { $regex: params.search, $options: 'i' }
-      filter.$or = [{ title: regex }, { resume: regex }]
+      const pattern = `%${params.search}%`
+      const searchFilter = or(ilike(newsroomPosts.title, pattern), ilike(newsroomPosts.resume, pattern))
+      if (searchFilter) filters.push(searchFilter)
     }
+    const where = filters.length > 0 ? and(...filters) : undefined
 
     const limit = params.limit ?? 20
     const page = params.page ?? 1
     const skip = (page - 1) * limit
 
-    const [posts, total] = await Promise.all([
-      NewsroomPost.find(filter).populate('coverImage ogImage').sort('-publishedAt').skip(skip).limit(limit),
-      NewsroomPost.countDocuments(filter),
+    const [rows, [totals]] = await Promise.all([
+      db.select().from(newsroomPosts).where(where).orderBy(desc(newsroomPosts.publishedAt)).offset(skip).limit(limit),
+      db.select({ value: count() }).from(newsroomPosts).where(where),
     ])
+    const total = Number(totals?.value ?? 0)
+    const posts = await populate(rows, POST_REFS)
     return ok({ posts, total, page, pages: Math.ceil(total / limit) })
   } catch (e) { return err(e) }
 })
@@ -329,7 +395,8 @@ server.tool('get_post', 'Get a single newsroom post by its URL slug. Returns ful
   slug: z.string().describe('The URL slug of the post'),
 }, async ({ slug }) => {
   try {
-    const post = await NewsroomPost.findOne({ slug }).populate('coverImage ogImage')
+    const [row] = await db.select().from(newsroomPosts).where(eq(newsroomPosts.slug, slug)).limit(1)
+    const post = await populateOne(row, POST_REFS)
     if (!post) return err('Post not found')
     return ok(post)
   } catch (e) { return err(e) }
@@ -362,18 +429,20 @@ server.tool('create_post', 'Create a new newsroom post. If slug is not provided,
   try {
     let slug = params.slug || generateSlug(params.title)
     // Check uniqueness, append suffix on collision
-    const existing = await NewsroomPost.findOne({ slug })
+    const [existing] = await db.select({ id: newsroomPosts._id }).from(newsroomPosts).where(eq(newsroomPosts.slug, slug)).limit(1)
     if (existing) {
       slug = `${slug}-${Date.now().toString(36)}`
     }
-    const post = await NewsroomPost.create({
-      ...params,
-      slug,
-      publishedAt: params.publishedAt ? new Date(params.publishedAt) : new Date(),
-      oxyUserId: params.oxyUserId || 'mcp-admin',
-    })
-    const populated = await NewsroomPost.findById(post._id).populate('coverImage ogImage')
-    return ok(populated)
+    const [post] = await db
+      .insert(newsroomPosts)
+      .values({
+        ...params,
+        slug,
+        publishedAt: params.publishedAt ? new Date(params.publishedAt) : new Date(),
+        oxyUserId: params.oxyUserId || 'mcp-admin',
+      } as never)
+      .returning()
+    return ok(await populateOne(post, POST_REFS))
   } catch (e) { return err(e) }
 })
 
@@ -399,13 +468,16 @@ server.tool('update_post', 'Update an existing newsroom post by slug. Only the f
   publishedAt: z.string().optional().describe('Publication date as ISO string'),
 }, async ({ slug, newSlug, ...updates }) => {
   try {
-    const patch: Record<string, unknown> = { ...updates }
+    const patch: Record<string, unknown> = { ...updates, updatedAt: new Date() }
     if (updates.publishedAt) patch.publishedAt = new Date(updates.publishedAt)
     if (newSlug) patch.slug = newSlug
-    // Cast string IDs to ObjectId for media fields
-    if (updates.coverImage) patch.coverImage = new mongoose.Types.ObjectId(updates.coverImage)
-    if (updates.ogImage) patch.ogImage = new mongoose.Types.ObjectId(updates.ogImage)
-    const post = await NewsroomPost.findOneAndUpdate({ slug }, patch, { new: true }).populate('coverImage ogImage')
+    // Media fields are ids stored as text; no cast needed.
+    const [row] = await db
+      .update(newsroomPosts)
+      .set(patch as never)
+      .where(eq(newsroomPosts.slug, slug))
+      .returning()
+    const post = await populateOne(row, POST_REFS)
     if (!post) return err('Post not found')
     return ok(post)
   } catch (e) { return err(e) }
@@ -415,7 +487,7 @@ server.tool('delete_post', 'Permanently delete a newsroom post by slug. This act
   slug: z.string().describe('The URL slug of the post to delete'),
 }, async ({ slug }) => {
   try {
-    const post = await NewsroomPost.findOneAndDelete({ slug })
+    const [post] = await db.delete(newsroomPosts).where(eq(newsroomPosts.slug, slug)).returning({ id: newsroomPosts._id })
     if (!post) return err('Post not found')
     return ok({ deleted: true, slug })
   } catch (e) { return err(e) }
@@ -426,10 +498,15 @@ server.tool('search_posts', 'Search newsroom posts by title or resume text. Retu
   limit: z.number().optional().describe('Maximum results to return (default 10)'),
 }, async (params) => {
   try {
-    const regex = { $regex: escapeRegex(params.query), $options: 'i' }
-    const posts = await NewsroomPost.find({
-      $or: [{ title: regex }, { resume: regex }],
-    }).sort('-publishedAt').limit(params.limit ?? 10)
+    // `ilike` binds the query as a parameter, so the escaping the regex
+    // version needed has no equivalent here.
+    const pattern = `%${params.query}%`
+    const posts = await db
+      .select()
+      .from(newsroomPosts)
+      .where(or(ilike(newsroomPosts.title, pattern), ilike(newsroomPosts.resume, pattern)))
+      .orderBy(desc(newsroomPosts.publishedAt))
+      .limit(params.limit ?? 10)
     return ok(posts)
   } catch (e) { return err(e) }
 })
@@ -438,7 +515,7 @@ server.tool('search_posts', 'Search newsroom posts by title or resume text. Retu
 
 server.tool('get_pricing', 'Get all pricing plans', {}, async () => {
   try {
-    const plans = await PricingPlan.find().sort('order')
+    const plans = await db.select().from(pricingPlans).orderBy(asc(pricingPlans.order))
     return ok(plans)
   } catch (e) { return err(e) }
 })
@@ -457,8 +534,11 @@ server.tool('replace_pricing', 'Replace all pricing plans', {
   plans: z.array(pricingPlanSchema),
 }, async ({ plans }) => {
   try {
-    await PricingPlan.deleteMany({})
-    const result = await PricingPlan.insertMany(plans)
+    const result = await db.transaction(async (tx) => {
+      await tx.delete(pricingPlans)
+      if (plans.length === 0) return []
+      return tx.insert(pricingPlans).values(plans as never).returning()
+    })
     return ok(result)
   } catch (e) { return err(e) }
 })
@@ -467,8 +547,8 @@ server.tool('replace_pricing', 'Replace all pricing plans', {
 
 server.tool('get_testimonials', 'Get all testimonials', {}, async () => {
   try {
-    const testimonials = await Testimonial.find().sort('order')
-    return ok(testimonials)
+    const rows = await db.select().from(testimonialsTable).orderBy(asc(testimonialsTable.order))
+    return ok(rows)
   } catch (e) { return err(e) }
 })
 
@@ -485,8 +565,11 @@ server.tool('replace_testimonials', 'Replace all testimonials', {
   testimonials: z.array(testimonialSchema),
 }, async ({ testimonials }) => {
   try {
-    await Testimonial.deleteMany({})
-    const result = await Testimonial.insertMany(testimonials)
+    const result = await db.transaction(async (tx) => {
+      await tx.delete(testimonialsTable)
+      if (testimonials.length === 0) return []
+      return tx.insert(testimonialsTable).values(testimonials as never).returning()
+    })
     return ok(result)
   } catch (e) { return err(e) }
 })
@@ -502,24 +585,27 @@ server.tool('list_changelog', 'List changelog entries with optional repo filter,
   try {
     const page = params.page ?? 1
     const limit = params.limit ?? 20
-    const filter: Record<string, unknown> = {}
+    const filters: SQL[] = []
     if (params.repo) {
       const parts = params.repo.split('/')
       if (parts.length === 2) {
-        filter.repoOwner = parts[0]
-        filter.repoName = parts[1]
+        filters.push(eq(changelogEntries.repoOwner, parts[0]))
+        filters.push(eq(changelogEntries.repoName, parts[1]))
       } else {
-        filter.repoName = params.repo
+        filters.push(eq(changelogEntries.repoName, params.repo))
       }
     }
     if (params.search) {
-      const regex = { $regex: params.search, $options: 'i' }
-      filter.$or = [{ title: regex }, { content: regex }]
+      const pattern = `%${params.search}%`
+      const searchFilter = or(ilike(changelogEntries.title, pattern), ilike(changelogEntries.content, pattern))
+      if (searchFilter) filters.push(searchFilter)
     }
-    const [entries, total] = await Promise.all([
-      ChangelogEntry.find(filter).populate('media').sort('-date').skip((page - 1) * limit).limit(limit),
-      ChangelogEntry.countDocuments(filter),
+    const where = filters.length > 0 ? and(...filters) : undefined
+    const [entries, [totals]] = await Promise.all([
+      db.select().from(changelogEntries).where(where).orderBy(desc(changelogEntries.date)).offset((page - 1) * limit).limit(limit),
+      db.select({ value: count() }).from(changelogEntries).where(where),
     ])
+    const total = Number(totals?.value ?? 0)
     return ok({ entries, total, page, pages: Math.ceil(total / limit) })
   } catch (e) { return err(e) }
 })
@@ -533,7 +619,7 @@ server.tool('create_changelog_entry', 'Create a new manual changelog entry.', {
   media: z.string().optional().describe('Media document ID for an image or video to display with the entry'),
 }, async (params) => {
   try {
-    const entry = await ChangelogEntry.create({ ...params, date: new Date(params.date) })
+    const entry = await insertOne(changelogEntries, { ...params, date: new Date(params.date) })
     return ok(entry)
   } catch (e) { return err(e) }
 })
@@ -550,7 +636,7 @@ server.tool('update_changelog_entry', 'Update a changelog entry by ID. Only prov
   try {
     const patch: Record<string, unknown> = { ...updates }
     if (updates.date) patch.date = new Date(updates.date)
-    const entry = await ChangelogEntry.findByIdAndUpdate(id, patch, { new: true })
+    const entry = (await db.update(changelogEntries).set({ ...patch, updatedAt: new Date() } as never).where(eq(changelogEntries._id, id)).returning())[0]
     if (!entry) return err('Changelog entry not found')
     return ok(entry)
   } catch (e) { return err(e) }
@@ -560,7 +646,7 @@ server.tool('delete_changelog_entry', 'Permanently delete a changelog entry by I
   id: z.string().describe('The _id of the changelog entry to delete'),
 }, async ({ id }) => {
   try {
-    const entry = await ChangelogEntry.findByIdAndDelete(id)
+    const entry = (await db.delete(changelogEntries).where(eq(changelogEntries._id, id)).returning({ id: changelogEntries._id }))[0]
     if (!entry) return err('Changelog entry not found')
     return ok({ deleted: true, id })
   } catch (e) { return err(e) }
@@ -570,7 +656,7 @@ server.tool('delete_changelog_entry', 'Permanently delete a changelog entry by I
 
 server.tool('list_tracked_repos', 'List GitHub repos tracked for automatic changelog sync. Shows sync status and configuration.', {}, async () => {
   try {
-    const repos = await TrackedRepo.find().sort('displayName')
+    const repos = await db.select().from(trackedRepos).orderBy(asc(trackedRepos.displayName))
     return ok(repos)
   } catch (e) { return err(e) }
 })
@@ -585,7 +671,7 @@ server.tool('add_tracked_repo', 'Add a GitHub repo to track. New releases will b
   acceptsProposals: z.boolean().optional().describe('Let signed-in visitors open a feature-request issue here from the website. Requires featureBoard. Defaults to false.'),
 }, async (params) => {
   try {
-    const tracked = await TrackedRepo.create({
+    const tracked = await insertOne(trackedRepos, {
       ...params,
       displayName: params.displayName || `${params.owner}/${params.repo}`,
       defaultTags: params.defaultTags || [],
@@ -612,7 +698,7 @@ server.tool('update_tracked_repo', 'Update a tracked GitHub repo: its display na
     if (fields.acceptsProposals !== undefined) update.acceptsProposals = fields.acceptsProposals
     if (update.featureBoard === false) update.acceptsProposals = false
 
-    const tracked = await TrackedRepo.findByIdAndUpdate(id, update, { new: true })
+    const tracked = (await db.update(trackedRepos).set({ ...update, updatedAt: new Date() } as never).where(eq(trackedRepos._id, id)).returning())[0]
     if (!tracked) return err('Tracked repo not found')
     return ok(tracked)
   } catch (e) { return err(e) }
@@ -622,7 +708,7 @@ server.tool('remove_tracked_repo', 'Remove a tracked GitHub repo. Does not delet
   id: z.string().describe('The _id of the tracked repo to remove'),
 }, async ({ id }) => {
   try {
-    const tracked = await TrackedRepo.findByIdAndDelete(id)
+    const tracked = (await db.delete(trackedRepos).where(eq(trackedRepos._id, id)).returning({ id: trackedRepos._id }))[0]
     if (!tracked) return err('Tracked repo not found')
     return ok({ deleted: true, id })
   } catch (e) { return err(e) }
@@ -656,10 +742,9 @@ server.tool('list_jobs', 'List job listings on the careers page. By default retu
   active: z.boolean().optional().describe('Filter by active status. Defaults to true (only active). Set false to include inactive.'),
 }, async (params) => {
   try {
-    const filter: Record<string, unknown> = {}
-    if (params.active !== false) filter.active = true
-    const jobs = await Job.find(filter).sort('order department')
-    return ok(jobs)
+    const where = params.active !== false ? eq(jobs.active, true) : undefined
+    const rows = await db.select().from(jobs).where(where).orderBy(asc(jobs.order), asc(jobs.department))
+    return ok(rows)
   } catch (e) { return err(e) }
 })
 
@@ -667,7 +752,7 @@ server.tool('get_job', 'Get a single job listing by its URL slug.', {
   slug: z.string().describe('The URL slug of the job listing'),
 }, async ({ slug }) => {
   try {
-    const job = await Job.findOne({ slug })
+    const job = (await db.select().from(jobs).where(eq(jobs.slug, slug)).limit(1))[0]
     if (!job) return err('Job not found')
     return ok(job)
   } catch (e) { return err(e) }
@@ -686,7 +771,7 @@ server.tool('create_job', 'Create a new job listing. Slug is auto-generated from
   order: z.number().optional().describe('Display order (lower = first). Defaults to 0.'),
 }, async (params) => {
   try {
-    const job = await Job.create(params)
+    const job = await insertOne(jobs, params)
     return ok(job)
   } catch (e) { return err(e) }
 })
@@ -704,7 +789,7 @@ server.tool('update_job', 'Update an existing job listing by slug. Only provided
   order: z.number().optional().describe('Display order'),
 }, async ({ slug, ...updates }) => {
   try {
-    const job = await Job.findOneAndUpdate({ slug }, updates, { new: true })
+    const job = (await db.update(jobs).set({ ...updates, updatedAt: new Date() } as never).where(eq(jobs.slug, slug)).returning())[0]
     if (!job) return err('Job not found')
     return ok(job)
   } catch (e) { return err(e) }
@@ -714,7 +799,7 @@ server.tool('delete_job', 'Permanently delete a job listing by slug.', {
   slug: z.string().describe('The URL slug of the job to delete'),
 }, async ({ slug }) => {
   try {
-    const job = await Job.findOneAndDelete({ slug })
+    const job = (await db.delete(jobs).where(eq(jobs.slug, slug)).returning({ id: jobs._id }))[0]
     if (!job) return err('Job not found')
     return ok({ deleted: true, slug })
   } catch (e) { return err(e) }
@@ -726,9 +811,9 @@ server.tool('list_team_members', 'List team members. Returns active members by d
   active: z.boolean().optional().describe('Filter by active status. Defaults to true.'),
 }, async (params) => {
   try {
-    const filter: Record<string, unknown> = {}
-    if (params.active !== false) filter.active = true
-    const members = await TeamMember.find(filter).populate('avatar').sort('order name')
+    const where = params.active !== false ? eq(teamMembers.active, true) : undefined
+    const rows = await db.select().from(teamMembers).where(where).orderBy(asc(teamMembers.order), asc(teamMembers.name))
+    const members = await populate(rows, { avatar: media })
     return ok(members)
   } catch (e) { return err(e) }
 })
@@ -737,7 +822,8 @@ server.tool('get_team_member', 'Get a team member by slug.', {
   slug: z.string().describe('The URL slug of the team member'),
 }, async ({ slug }) => {
   try {
-    const member = await TeamMember.findOne({ slug }).populate('avatar')
+    const [row] = await db.select().from(teamMembers).where(eq(teamMembers.slug, slug)).limit(1)
+    const member = await populateOne(row, { avatar: media })
     if (!member) return err('Team member not found')
     return ok(member)
   } catch (e) { return err(e) }
@@ -760,7 +846,7 @@ server.tool('create_team_member', 'Create a new team member.', {
   }).optional().describe('Social media links'),
 }, async (params) => {
   try {
-    const member = await TeamMember.create(params)
+    const member = await insertOne(teamMembers, params)
     return ok(member)
   } catch (e) { return err(e) }
 })
@@ -782,7 +868,7 @@ server.tool('update_team_member', 'Update a team member by slug.', {
   }).optional(),
 }, async ({ slug, ...updates }) => {
   try {
-    const member = await TeamMember.findOneAndUpdate({ slug }, updates, { new: true })
+    const member = (await db.update(teamMembers).set({ ...updates, updatedAt: new Date() } as never).where(eq(teamMembers.slug, slug)).returning())[0]
     if (!member) return err('Team member not found')
     return ok(member)
   } catch (e) { return err(e) }
@@ -792,7 +878,7 @@ server.tool('delete_team_member', 'Delete a team member by slug.', {
   slug: z.string().describe('The slug of the team member to delete'),
 }, async ({ slug }) => {
   try {
-    const member = await TeamMember.findOneAndDelete({ slug })
+    const member = (await db.delete(teamMembers).where(eq(teamMembers.slug, slug)).returning({ id: teamMembers._id }))[0]
     if (!member) return err('Team member not found')
     return ok({ deleted: true, slug })
   } catch (e) { return err(e) }
@@ -809,20 +895,31 @@ server.tool('list_media', 'List media files with optional search and type filter
   page: z.number().optional().describe('Page number (default 1)'),
 }, async (params) => {
   try {
-    const filter: Record<string, unknown> = {}
-    if (params.search) filter.$text = { $search: params.search }
-    if (params.type === 'image') filter.mimeType = { $regex: /^image\// }
-    else if (params.type === 'video') filter.mimeType = { $regex: /^video\// }
-    else if (params.type === 'document') filter.mimeType = { $nin: [/^image\//, /^video\//] }
-    if (params.tag) filter.tags = params.tag
-    if (params.folder) filter.folder = params.folder
+    const filters: SQL[] = []
+    // Substring match on filename and alt text, the two fields the old `$text`
+    // index covered.
+    if (params.search) {
+      const pattern = `%${params.search}%`
+      const searchFilter = or(ilike(media.filename, pattern), ilike(media.alt, pattern))
+      if (searchFilter) filters.push(searchFilter)
+    }
+    if (params.type === 'image') filters.push(like(media.mimeType, 'image/%'))
+    else if (params.type === 'video') filters.push(like(media.mimeType, 'video/%'))
+    else if (params.type === 'document') {
+      filters.push(not(like(media.mimeType, 'image/%')))
+      filters.push(not(like(media.mimeType, 'video/%')))
+    }
+    if (params.tag) filters.push(sql`${media.tags} @> ARRAY[${params.tag}]::text[]`)
+    if (params.folder) filters.push(eq(media.folder, params.folder))
+    const where = filters.length > 0 ? and(...filters) : undefined
 
     const limit = params.limit ?? 20
     const page = params.page ?? 1
-    const [items, total] = await Promise.all([
-      Media.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
-      Media.countDocuments(filter),
+    const [items, [totals]] = await Promise.all([
+      db.select().from(media).where(where).orderBy(desc(media.createdAt)).offset((page - 1) * limit).limit(limit),
+      db.select({ value: count() }).from(media).where(where),
     ])
+    const total = Number(totals?.value ?? 0)
     return ok({ items, total, page, pages: Math.ceil(total / limit) })
   } catch (e) { return err(e) }
 })
@@ -831,9 +928,9 @@ server.tool('get_media', 'Get a single media item by ID.', {
   id: z.string().describe('The _id of the media item'),
 }, async ({ id }) => {
   try {
-    const media = await Media.findById(id)
-    if (!media) return err('Media not found')
-    return ok(media)
+    const [row] = await db.select().from(media).where(eq(media._id, id)).limit(1)
+    if (!row) return err('Media not found')
+    return ok(row)
   } catch (e) { return err(e) }
 })
 
@@ -844,9 +941,9 @@ server.tool('update_media', 'Update media metadata (alt text, tags, folder).', {
   folder: z.string().optional().describe('Logical folder name'),
 }, async ({ id, ...updates }) => {
   try {
-    const media = await Media.findByIdAndUpdate(id, updates, { new: true })
-    if (!media) return err('Media not found')
-    return ok(media)
+    const [row] = await db.update(media).set({ ...updates, updatedAt: new Date() } as never).where(eq(media._id, id)).returning()
+    if (!row) return err('Media not found')
+    return ok(row)
   } catch (e) { return err(e) }
 })
 
@@ -854,14 +951,14 @@ server.tool('delete_media', 'Delete a media item from S3 and the database.', {
   id: z.string().describe('The _id of the media item to delete'),
 }, async ({ id }) => {
   try {
-    const media = await Media.findById(id)
-    if (!media) return err('Media not found')
+    const [row] = await db.select().from(media).where(eq(media._id, id)).limit(1)
+    if (!row) return err('Media not found')
 
     // Thumbnails are stored as absolute CDN URLs; derive each S3 object key from
     // the URL path. An unparseable URL has no key to delete, so record it —
     // silently skipping would orphan the object in the bucket.
-    const keys = [media.key]
-    for (const url of [media.thumbnails?.sm, media.thumbnails?.md, media.thumbnails?.lg]) {
+    const keys = [row.key]
+    for (const url of [row.thumbnails?.sm, row.thumbnails?.md, row.thumbnails?.lg]) {
       if (!url) continue
       try {
         const key = new URL(url).pathname.slice(1)
@@ -872,7 +969,7 @@ server.tool('delete_media', 'Delete a media item from S3 and the database.', {
     }
 
     await Promise.allSettled(keys.map(k => deleteFromSpaces(k)))
-    await media.deleteOne()
+    await db.delete(media).where(eq(media._id, id))
     return ok({ deleted: true, id })
   } catch (e) { return err(e) }
 })
@@ -881,7 +978,7 @@ server.tool('delete_media', 'Delete a media item from S3 and the database.', {
 
 server.tool('get_settings', 'Get site settings', {}, async () => {
   try {
-    const settings = await SiteSettings.findOne()
+    const [settings] = await db.select().from(siteSettings).limit(1)
     return ok(settings ?? { siteTitle: 'Oxy', siteDescription: '', ogImage: '', banner: null })
   } catch (e) { return err(e) }
 })
@@ -897,7 +994,7 @@ server.tool('update_settings', 'Update site settings', {
   }).optional(),
 }, async (params) => {
   try {
-    const settings = await SiteSettings.findOneAndUpdate({}, params, { new: true, upsert: true })
+    const settings = await upsertSingleton(siteSettings, params)
     return ok(settings)
   } catch (e) { return err(e) }
 })
@@ -906,8 +1003,8 @@ server.tool('update_settings', 'Update site settings', {
 
 server.tool('list_locales', 'List all locales (both enabled and disabled). Locales control which languages the site supports.', {}, async () => {
   try {
-    const locales = await Locale.find().sort('order')
-    return ok(locales)
+    const rows = await db.select().from(locales).orderBy(asc(locales.order))
+    return ok(rows)
   } catch (e) { return err(e) }
 })
 
@@ -922,9 +1019,9 @@ server.tool('create_locale', 'Create a new locale for the site. Translations can
 }, async (params) => {
   try {
     if (params.isDefault) {
-      await Locale.updateMany({}, { isDefault: false })
+      await db.update(locales).set({ isDefault: false })
     }
-    const locale = await Locale.create(params)
+    const locale = await insertOne(locales, params)
     return ok(locale)
   } catch (e) { return err(e) }
 })
@@ -940,9 +1037,9 @@ server.tool('update_locale', 'Update a locale by its code. Only provided fields 
 }, async ({ code, ...updates }) => {
   try {
     if (updates.isDefault) {
-      await Locale.updateMany({}, { isDefault: false })
+      await db.update(locales).set({ isDefault: false })
     }
-    const locale = await Locale.findOneAndUpdate({ code }, updates, { new: true })
+    const locale = (await db.update(locales).set({ ...updates, updatedAt: new Date() } as never).where(eq(locales.code, code)).returning())[0]
     if (!locale) return err('Locale not found')
     return ok(locale)
   } catch (e) { return err(e) }
@@ -952,11 +1049,16 @@ server.tool('delete_locale', 'Delete a locale and all its translations. Cannot d
   code: z.string().describe('The locale code to delete, e.g. "es"'),
 }, async ({ code }) => {
   try {
-    const locale = await Locale.findOne({ code })
+    const locale = (await db.select().from(locales).where(eq(locales.code, code)).limit(1))[0]
     if (!locale) return err('Locale not found')
     if (locale.isDefault) return err('Cannot delete the default locale')
-    await Locale.deleteOne({ code })
-    const { deletedCount } = await Translation.deleteMany({ locale: code })
+    // One transaction: a locale row without its translations, or the reverse,
+    // leaves the admin listing content that is already gone.
+    const removed = await db.transaction(async (tx) => {
+      await tx.delete(locales).where(eq(locales.code, code))
+      return tx.delete(translations).where(eq(translations.locale, code)).returning({ id: translations._id })
+    })
+    const deletedCount = removed.length
     return ok({ deleted: true, code, translationsRemoved: deletedCount })
   } catch (e) { return err(e) }
 })
@@ -972,7 +1074,10 @@ server.tool('get_translations', 'Get all translations for a collection in a spec
   locale: z.string().describe('Locale code, e.g. "es", "fr", "ja"'),
 }, async ({ collection, locale }) => {
   try {
-    const translations = await Translation.find({ collectionName: collection, locale })
+    const rows = await db
+      .select()
+      .from(translations)
+      .where(and(eq(translations.collectionName, collection), eq(translations.locale, locale)))
     return ok(translations)
   } catch (e) { return err(e) }
 })
@@ -983,7 +1088,17 @@ server.tool('get_translation', 'Get the translation for a specific document in a
   locale: z.string().describe('Locale code, e.g. "es"'),
 }, async ({ collection, documentId, locale }) => {
   try {
-    const translation = await Translation.findOne({ collectionName: collection, documentId, locale })
+    const [translation] = await db
+      .select()
+      .from(translations)
+      .where(
+        and(
+          eq(translations.collectionName, collection),
+          eq(translations.documentId, documentId),
+          eq(translations.locale, locale),
+        ),
+      )
+      .limit(1)
     if (!translation) return err('Translation not found')
     return ok(translation)
   } catch (e) { return err(e) }
@@ -996,11 +1111,14 @@ server.tool('upsert_translation', 'Create or update a translation. The fields ob
   fields: z.record(z.string(), z.any()).describe('Key-value field overrides. e.g. { "title": "Hola", "excerpt": "Resumen..." }. Only include fields that differ from the original.'),
 }, async ({ collection, documentId, locale, fields }) => {
   try {
-    const translation = await Translation.findOneAndUpdate(
-      { collectionName: collection, documentId, locale },
-      { collectionName: collection, fields },
-      { new: true, upsert: true },
-    )
+    const [translation] = await db
+      .insert(translations)
+      .values({ collectionName: collection, documentId, locale, fields })
+      .onConflictDoUpdate({
+        target: [translations.locale, translations.collectionName, translations.documentId],
+        set: { fields, updatedAt: new Date() },
+      })
+      .returning()
     return ok(translation)
   } catch (e) { return err(e) }
 })
@@ -1011,7 +1129,16 @@ server.tool('delete_translation', 'Delete a translation for a specific document 
   locale: z.string().describe('Locale code'),
 }, async ({ collection, documentId, locale }) => {
   try {
-    const translation = await Translation.findOneAndDelete({ collectionName: collection, documentId, locale })
+    const [translation] = await db
+      .delete(translations)
+      .where(
+        and(
+          eq(translations.collectionName, collection),
+          eq(translations.documentId, documentId),
+          eq(translations.locale, locale),
+        ),
+      )
+      .returning({ id: translations._id })
     if (!translation) return err('Translation not found')
     return ok({ deleted: true })
   } catch (e) { return err(e) }
@@ -1047,7 +1174,7 @@ server.tool('upload_image', 'Download an image from a URL, upload it to S3, gene
       // Thumbnail generation is optional
     }
 
-    const media = await Media.create({
+    const row = await insertOne(media, {
       url: cdnUrl, thumbnails, filename, key,
       mimeType: contentType, size: buffer.length,
       width, height,
@@ -1085,22 +1212,26 @@ server.tool('upload_and_set_post_cover', 'Download an image from URL, upload to 
     } catch { /* thumbnails are optional */ }
 
     // 4. Create Media document
-    const media = await Media.create({
-      url: cdnUrl, thumbnails, filename, key,
-      mimeType: contentType, size: buffer.length, width, height,
-      alt: params.alt || '', tags: ['newsroom'], folder: 'newsroom',
-      uploadedBy: 'mcp',
-    })
+    const [mediaRow] = await db
+      .insert(media)
+      .values({
+        url: cdnUrl, thumbnails, filename, key,
+        mimeType: contentType, size: buffer.length, width, height,
+        alt: params.alt || '', tags: ['newsroom'], folder: 'newsroom',
+        uploadedBy: 'mcp',
+      })
+      .returning()
 
     // 5. Update the post
-    const post = await NewsroomPost.findOneAndUpdate(
-      { slug: params.postSlug },
-      { coverImage: media._id, imageAlt: params.alt || '' },
-      { new: true },
-    ).populate('coverImage ogImage')
+    const [row] = await db
+      .update(newsroomPosts)
+      .set({ coverImage: mediaRow._id, imageAlt: params.alt || '', updatedAt: new Date() })
+      .where(eq(newsroomPosts.slug, params.postSlug))
+      .returning()
+    const post = await populateOne(row, POST_REFS)
     if (!post) return err(`Post not found: ${params.postSlug}`)
 
-    return ok({ media, post })
+    return ok({ media: mediaRow, post })
   } catch (e) { return err(e) }
 })
 
@@ -1125,21 +1256,22 @@ server.tool('upload_and_set_team_avatar', 'Download an image, upload to S3, crea
       width = result.width; height = result.height; thumbnails = result.thumbnails
     } catch { /* optional */ }
 
-    const media = await Media.create({
+    const mediaRow = await insertOne(media, {
       url: cdnUrl, thumbnails, filename, key,
       mimeType: contentType, size: buffer.length, width, height,
       alt: params.alt || '', tags: ['team'], folder: 'team',
       uploadedBy: 'mcp',
     })
 
-    const member = await TeamMember.findOneAndUpdate(
-      { slug: params.memberSlug },
-      { avatar: media._id },
-      { new: true },
-    ).populate('avatar')
+    const [row] = await db
+      .update(teamMembers)
+      .set({ avatar: mediaRow._id as string, updatedAt: new Date() })
+      .where(eq(teamMembers.slug, params.memberSlug))
+      .returning()
+    const member = await populateOne(row, { avatar: media })
     if (!member) return err(`Team member not found: ${params.memberSlug}`)
 
-    return ok({ media, member })
+    return ok({ media: mediaRow, member })
   } catch (e) { return err(e) }
 })
 
@@ -1169,14 +1301,20 @@ server.tool('bulk_upload_post_covers', 'Upload cover images for multiple posts i
         // Thumbnail generation is optional
       }
 
-      const media = await Media.create({
-        url: cdnUrl, thumbnails, filename, key,
-        mimeType: contentType, size: buffer.length, width, height,
-        alt: p.alt || '', tags: ['newsroom'], folder: 'newsroom', uploadedBy: 'mcp',
-      })
+      const [mediaRow] = await db
+        .insert(media)
+        .values({
+          url: cdnUrl, thumbnails, filename, key,
+          mimeType: contentType, size: buffer.length, width, height,
+          alt: p.alt || '', tags: ['newsroom'], folder: 'newsroom', uploadedBy: 'mcp',
+        })
+        .returning()
 
-      await NewsroomPost.findOneAndUpdate({ slug: p.slug }, { coverImage: media._id, imageAlt: p.alt || '' })
-      results.push({ slug: p.slug, status: 'ok', mediaId: media._id.toString() })
+      await db
+        .update(newsroomPosts)
+        .set({ coverImage: mediaRow._id, imageAlt: p.alt || '', updatedAt: new Date() })
+        .where(eq(newsroomPosts.slug, p.slug))
+      results.push({ slug: p.slug, status: 'ok', mediaId: mediaRow._id })
     } catch (e) {
       results.push({ slug: p.slug, status: 'error', error: e instanceof Error ? e.message : String(e) })
     }
@@ -1188,7 +1326,8 @@ server.tool('get_post_with_media', 'Get a newsroom post with its cover image and
   slug: z.string().describe('Post slug'),
 }, async ({ slug }) => {
   try {
-    const post = await NewsroomPost.findOne({ slug }).populate('coverImage ogImage')
+    const [row] = await db.select().from(newsroomPosts).where(eq(newsroomPosts.slug, slug)).limit(1)
+    const post = await populateOne(row, POST_REFS)
     if (!post) return err('Post not found')
     return ok(post)
   } catch (e) { return err(e) }
@@ -1208,9 +1347,12 @@ server.tool('list_categories', 'List all categories. Optionally filter by scope.
   scope: z.enum(['apps', 'nav', 'generic']).optional().describe('Filter to one scope'),
 }, async ({ scope }) => {
   try {
-    const filter = scope ? { scope } : {}
-    const categories = await Category.find(filter).sort({ order: 1, label: 1 })
-    return ok(categories)
+    const rows = await db
+      .select()
+      .from(categories)
+      .where(scope ? eq(categories.scope, scope) : undefined)
+      .orderBy(asc(categories.order), asc(categories.label))
+    return ok(rows)
   } catch (e) { return err(e) }
 })
 
@@ -1218,7 +1360,7 @@ server.tool('get_category', 'Get a single category by slug.', {
   slug: z.string().describe('Category slug'),
 }, async ({ slug }) => {
   try {
-    const doc = await Category.findOne({ slug })
+    const doc = (await db.select().from(categories).where(eq(categories.slug, slug)).limit(1))[0]
     if (!doc) return err('Category not found')
     return ok(doc)
   } catch (e) { return err(e) }
@@ -1226,9 +1368,9 @@ server.tool('get_category', 'Get a single category by slug.', {
 
 server.tool('create_category', 'Create a new category. Categories are reusable grouping labels referenced by products, navbar dropdowns, etc.', categoryRawShape, async (input) => {
   try {
-    const existing = await Category.findOne({ slug: input.slug })
+    const [existing] = await db.select({ id: categories._id }).from(categories).where(eq(categories.slug, input.slug)).limit(1)
     if (existing) return err(`Category "${input.slug}" already exists`)
-    const doc = await Category.create(input)
+    const doc = await insertOne(categories, input)
     return ok(doc)
   } catch (e) { return err(e) }
 })
@@ -1241,7 +1383,7 @@ server.tool('update_category', 'Update an existing category. Only the fields you
   order: z.number().optional(),
 }, async ({ slug, ...patch }) => {
   try {
-    const doc = await Category.findOneAndUpdate({ slug }, patch, { new: true })
+    const doc = (await db.update(categories).set({ ...patch, updatedAt: new Date() } as never).where(eq(categories.slug, slug)).returning())[0]
     if (!doc) return err('Category not found')
     return ok(doc)
   } catch (e) { return err(e) }
@@ -1251,7 +1393,7 @@ server.tool('delete_category', 'Permanently delete a category. Products or nav i
   slug: z.string().describe('Slug of the category to delete'),
 }, async ({ slug }) => {
   try {
-    const doc = await Category.findOneAndDelete({ slug })
+    const doc = (await db.delete(categories).where(eq(categories.slug, slug)).returning({ id: categories._id }))[0]
     if (!doc) return err('Category not found')
     return ok({ deleted: true, slug })
   } catch (e) { return err(e) }
@@ -1288,14 +1430,18 @@ server.tool('list_products', 'List every product. Supports filtering by lifecycl
   surface: z.enum(['products', 'status', 'nav']).optional().describe('Filter to products that opt into the given surface'),
 }, async ({ lifecycle, section, surface }) => {
   try {
-    const query: Record<string, unknown> = {}
-    if (lifecycle) query.lifecycle = lifecycle
-    if (section) query.section = section
-    if (surface === 'products') query.showOnProducts = true
-    if (surface === 'status') query.showOnStatus = true
-    if (surface === 'nav') query.showInNav = true
-    const products = await Product.find(query).sort({ lifecycle: 1, section: 1, order: 1 }).populate('logo')
-    return ok(products)
+    const filters: SQL[] = []
+    if (lifecycle) filters.push(eq(products.lifecycle, lifecycle))
+    if (section) filters.push(eq(products.section, section))
+    if (surface === 'products') filters.push(eq(products.showOnProducts, true))
+    if (surface === 'status') filters.push(eq(products.showOnStatus, true))
+    if (surface === 'nav') filters.push(eq(products.showInNav, true))
+    const rows = await db
+      .select()
+      .from(products)
+      .where(filters.length > 0 ? and(...filters) : undefined)
+      .orderBy(asc(products.lifecycle), asc(products.section), asc(products.order))
+    return ok(await populate(rows, { logo: media }))
   } catch (e) { return err(e) }
 })
 
@@ -1303,7 +1449,8 @@ server.tool('get_product', 'Get a single product by its productId.', {
   productId: z.string().describe('Stable product id (e.g. "alia", "mention")'),
 }, async ({ productId }) => {
   try {
-    const product = await Product.findOne({ productId }).populate('logo')
+    const [row] = await db.select().from(products).where(eq(products.productId, productId)).limit(1)
+    const product = await populateOne(row, { logo: media })
     if (!product) return err('Product not found')
     return ok(product)
   } catch (e) { return err(e) }
@@ -1311,9 +1458,9 @@ server.tool('get_product', 'Get a single product by its productId.', {
 
 server.tool('create_product', 'Create a new product. By default it appears on /technologies, /status, and the ecosystem navbar dropdown.', productRawShape, async (input) => {
   try {
-    const existing = await Product.findOne({ productId: input.productId })
+    const [existing] = await db.select({ id: products._id }).from(products).where(eq(products.productId, input.productId)).limit(1)
     if (existing) return err(`Product "${input.productId}" already exists`)
-    const product = await Product.create(input)
+    const product = await insertOne(products, input)
     return ok(product)
   } catch (e) { return err(e) }
 })
@@ -1343,7 +1490,12 @@ server.tool('update_product', 'Update an existing product. Only the fields you p
   try {
     const normalized: Record<string, unknown> = { ...patch }
     if (patch.logo !== undefined) normalized.logo = patch.logo && patch.logo.length > 0 ? patch.logo : null
-    const product = await Product.findOneAndUpdate({ productId }, normalized, { new: true }).populate('logo')
+    const [row] = await db
+      .update(products)
+      .set({ ...normalized, updatedAt: new Date() } as never)
+      .where(eq(products.productId, productId))
+      .returning()
+    const product = await populateOne(row, { logo: media })
     if (!product) return err('Product not found')
     return ok(product)
   } catch (e) { return err(e) }
@@ -1353,7 +1505,7 @@ server.tool('delete_product', 'Permanently delete a product. This action cannot 
   productId: z.string().describe('Stable product id to delete'),
 }, async ({ productId }) => {
   try {
-    const doc = await Product.findOneAndDelete({ productId })
+    const doc = (await db.delete(products).where(eq(products.productId, productId)).returning({ id: products._id }))[0]
     if (!doc) return err('Product not found')
     return ok({ deleted: true, productId })
   } catch (e) { return err(e) }
@@ -1380,27 +1532,25 @@ server.tool('list_courses', 'List Academy courses with optional filtering by cat
   page: z.number().optional().describe('Page number (default 1)'),
 }, async (params) => {
   try {
-    const filter: Record<string, unknown> = {}
-    if (params.category) filter.category = params.category
-    if (params.tag) filter.tags = params.tag
-    if (params.featured) filter.featured = true
-    if (params.status) filter.status = params.status
-    if (params.level) filter.level = params.level
+    const filters: SQL[] = []
+    if (params.category) filters.push(eq(courses.category, params.category))
+    if (params.tag) filters.push(sql`${courses.tags} @> ARRAY[${params.tag}]::text[]`)
+    if (params.featured) filters.push(eq(courses.featured, true))
+    if (params.status) filters.push(eq(courses.status, params.status))
+    if (params.level) filters.push(eq(courses.level, params.level))
+    const where = filters.length > 0 ? and(...filters) : undefined
 
     const limit = params.limit ?? 20
     const page = params.page ?? 1
     const skip = (page - 1) * limit
 
-    const [courses, total] = await Promise.all([
-      Course.find(filter)
-        .populate('coverImage')
-        .populate('category')
-        .sort({ order: 1, publishedAt: -1 })
-        .skip(skip)
-        .limit(limit),
-      Course.countDocuments(filter),
+    const [rows, [totals]] = await Promise.all([
+      db.select().from(courses).where(where).orderBy(asc(courses.order), desc(courses.publishedAt)).offset(skip).limit(limit),
+      db.select({ value: count() }).from(courses).where(where),
     ])
-    return ok({ courses, total, page, pages: Math.ceil(total / limit) })
+    const total = Number(totals?.value ?? 0)
+    const items = await populate(rows, CONTENT_REFS)
+    return ok({ courses: items, total, page, pages: Math.ceil(total / limit) })
   } catch (e) { return err(e) }
 })
 
@@ -1408,7 +1558,8 @@ server.tool('get_course', 'Get a single Academy course by its URL slug, includin
   slug: z.string().describe('The URL slug of the course'),
 }, async ({ slug }) => {
   try {
-    const course = await Course.findOne({ slug }).populate('coverImage').populate('category')
+    const [courseRow] = await db.select().from(courses).where(eq(courses.slug, slug)).limit(1)
+    const course = await populateOne(courseRow, CONTENT_REFS)
     if (!course) return err('Course not found')
     return ok(course)
   } catch (e) { return err(e) }
@@ -1432,17 +1583,17 @@ server.tool('create_course', 'Create a new Academy course. Auto-generates the sl
 }, async (params) => {
   try {
     let slug = params.slug || generateSlug(params.title)
-    const existing = await Course.findOne({ slug })
+    const [existing] = await db.select({ id: courses._id }).from(courses).where(eq(courses.slug, slug)).limit(1)
     if (existing) slug = `${slug}-${Date.now().toString(36)}`
     const { publishedAt, coverImage, category, ...rest } = params
-    const course = await Course.create({
+    const [courseCreated] = await db.insert(courses).values({
       ...rest,
       slug,
-      coverImage: coverImage && coverImage.length > 0 ? new mongoose.Types.ObjectId(coverImage) : null,
-      category: category && category.length > 0 ? new mongoose.Types.ObjectId(category) : null,
+      coverImage: coverImage && coverImage.length > 0 ? coverImage : null,
+      category: category && category.length > 0 ? category : null,
       publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
     })
-    const populated = await Course.findById(course._id).populate('coverImage').populate('category')
+    const populated = await populateOne(courseCreated, CONTENT_REFS)
     return ok(populated)
   } catch (e) { return err(e) }
 })
@@ -1470,17 +1621,16 @@ server.tool('update_course', 'Update an existing Academy course by slug. Only pr
     if (updates.publishedAt) patch.publishedAt = new Date(updates.publishedAt)
     if (updates.coverImage !== undefined) {
       patch.coverImage = updates.coverImage && updates.coverImage.length > 0
-        ? new mongoose.Types.ObjectId(updates.coverImage)
+        ? updates.coverImage
         : null
     }
     if (updates.category !== undefined) {
       patch.category = updates.category && updates.category.length > 0
-        ? new mongoose.Types.ObjectId(updates.category)
+        ? updates.category
         : null
     }
-    const course = await Course.findOneAndUpdate({ slug }, patch, { new: true })
-      .populate('coverImage')
-      .populate('category')
+    const [courseUpdated] = await db.update(courses).set({ ...patch, updatedAt: new Date() } as never).where(eq(courses.slug, slug)).returning()
+    const course = await populateOne(courseUpdated, CONTENT_REFS)
     if (!course) return err('Course not found')
     return ok(course)
   } catch (e) { return err(e) }
@@ -1490,7 +1640,7 @@ server.tool('delete_course', 'Permanently delete an Academy course by slug. Cann
   slug: z.string().describe('The URL slug of the course to delete'),
 }, async ({ slug }) => {
   try {
-    const course = await Course.findOneAndDelete({ slug })
+    const [course] = await db.delete(courses).where(eq(courses.slug, slug)).returning({ id: courses._id })
     if (!course) return err('Course not found')
     return ok({ deleted: true, slug })
   } catch (e) { return err(e) }
@@ -1508,27 +1658,25 @@ server.tool('list_resources', 'List Academy resources (guides, papers, videos, t
   page: z.number().optional().describe('Page number (default 1)'),
 }, async (params) => {
   try {
-    const filter: Record<string, unknown> = {}
-    if (params.category) filter.category = params.category
-    if (params.tag) filter.tags = params.tag
-    if (params.type) filter.type = params.type
-    if (params.featured) filter.featured = true
-    if (params.status) filter.status = params.status
+    const filters: SQL[] = []
+    if (params.category) filters.push(eq(resources.category, params.category))
+    if (params.tag) filters.push(sql`${resources.tags} @> ARRAY[${params.tag}]::text[]`)
+    if (params.type) filters.push(eq(resources.type, params.type))
+    if (params.featured) filters.push(eq(resources.featured, true))
+    if (params.status) filters.push(eq(resources.status, params.status))
+    const where = filters.length > 0 ? and(...filters) : undefined
 
     const limit = params.limit ?? 20
     const page = params.page ?? 1
     const skip = (page - 1) * limit
 
-    const [resources, total] = await Promise.all([
-      Resource.find(filter)
-        .populate('coverImage')
-        .populate('category')
-        .sort({ order: 1, publishedAt: -1 })
-        .skip(skip)
-        .limit(limit),
-      Resource.countDocuments(filter),
+    const [rows, [totals]] = await Promise.all([
+      db.select().from(resources).where(where).orderBy(asc(resources.order), desc(resources.publishedAt)).offset(skip).limit(limit),
+      db.select({ value: count() }).from(resources).where(where),
     ])
-    return ok({ resources, total, page, pages: Math.ceil(total / limit) })
+    const total = Number(totals?.value ?? 0)
+    const items = await populate(rows, CONTENT_REFS)
+    return ok({ resources: items, total, page, pages: Math.ceil(total / limit) })
   } catch (e) { return err(e) }
 })
 
@@ -1536,7 +1684,8 @@ server.tool('get_resource', 'Get a single Academy resource by its URL slug.', {
   slug: z.string().describe('The URL slug of the resource'),
 }, async ({ slug }) => {
   try {
-    const resource = await Resource.findOne({ slug }).populate('coverImage').populate('category')
+    const [resourceRow] = await db.select().from(resources).where(eq(resources.slug, slug)).limit(1)
+    const resource = await populateOne(resourceRow, CONTENT_REFS)
     if (!resource) return err('Resource not found')
     return ok(resource)
   } catch (e) { return err(e) }
@@ -1559,17 +1708,17 @@ server.tool('create_resource', 'Create a new Academy resource. Auto-generates th
 }, async (params) => {
   try {
     let slug = params.slug || generateSlug(params.title)
-    const existing = await Resource.findOne({ slug })
+    const [existing] = await db.select({ id: resources._id }).from(resources).where(eq(resources.slug, slug)).limit(1)
     if (existing) slug = `${slug}-${Date.now().toString(36)}`
     const { publishedAt, coverImage, category, ...rest } = params
-    const resource = await Resource.create({
+    const [resourceCreated] = await db.insert(resources).values({
       ...rest,
       slug,
-      coverImage: coverImage && coverImage.length > 0 ? new mongoose.Types.ObjectId(coverImage) : null,
-      category: category && category.length > 0 ? new mongoose.Types.ObjectId(category) : null,
+      coverImage: coverImage && coverImage.length > 0 ? coverImage : null,
+      category: category && category.length > 0 ? category : null,
       publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
     })
-    const populated = await Resource.findById(resource._id).populate('coverImage').populate('category')
+    const populated = await populateOne(resourceCreated, CONTENT_REFS)
     return ok(populated)
   } catch (e) { return err(e) }
 })
@@ -1596,17 +1745,16 @@ server.tool('update_resource', 'Update an existing Academy resource by slug. Onl
     if (updates.publishedAt) patch.publishedAt = new Date(updates.publishedAt)
     if (updates.coverImage !== undefined) {
       patch.coverImage = updates.coverImage && updates.coverImage.length > 0
-        ? new mongoose.Types.ObjectId(updates.coverImage)
+        ? updates.coverImage
         : null
     }
     if (updates.category !== undefined) {
       patch.category = updates.category && updates.category.length > 0
-        ? new mongoose.Types.ObjectId(updates.category)
+        ? updates.category
         : null
     }
-    const resource = await Resource.findOneAndUpdate({ slug }, patch, { new: true })
-      .populate('coverImage')
-      .populate('category')
+    const [resourceUpdated] = await db.update(resources).set({ ...patch, updatedAt: new Date() } as never).where(eq(resources.slug, slug)).returning()
+    const resource = await populateOne(resourceUpdated, CONTENT_REFS)
     if (!resource) return err('Resource not found')
     return ok(resource)
   } catch (e) { return err(e) }
@@ -1616,7 +1764,7 @@ server.tool('delete_resource', 'Permanently delete an Academy resource by slug. 
   slug: z.string().describe('The URL slug of the resource to delete'),
 }, async ({ slug }) => {
   try {
-    const resource = await Resource.findOneAndDelete({ slug })
+    const [resource] = await db.delete(resources).where(eq(resources.slug, slug)).returning({ id: resources._id })
     if (!resource) return err('Resource not found')
     return ok({ deleted: true, slug })
   } catch (e) { return err(e) }
@@ -1633,25 +1781,23 @@ server.tool('list_help_articles', 'List Help Center articles with optional filte
   page: z.number().optional().describe('Page number (default 1)'),
 }, async (params) => {
   try {
-    const filter: Record<string, unknown> = {}
-    if (params.category) filter.category = params.category
-    if (params.tag) filter.tags = params.tag
-    if (params.featured) filter.featured = true
-    if (params.status) filter.status = params.status
+    const filters: SQL[] = []
+    if (params.category) filters.push(eq(helpArticles.category, params.category))
+    if (params.tag) filters.push(sql`${helpArticles.tags} @> ARRAY[${params.tag}]::text[]`)
+    if (params.featured) filters.push(eq(helpArticles.featured, true))
+    if (params.status) filters.push(eq(helpArticles.status, params.status))
+    const where = filters.length > 0 ? and(...filters) : undefined
 
     const limit = params.limit ?? 20
     const page = params.page ?? 1
     const skip = (page - 1) * limit
 
-    const [articles, total] = await Promise.all([
-      HelpArticle.find(filter)
-        .populate('coverImage')
-        .populate('category')
-        .sort({ order: 1, publishedAt: -1 })
-        .skip(skip)
-        .limit(limit),
-      HelpArticle.countDocuments(filter),
+    const [rows, [totals]] = await Promise.all([
+      db.select().from(helpArticles).where(where).orderBy(asc(helpArticles.order), desc(helpArticles.publishedAt)).offset(skip).limit(limit),
+      db.select({ value: count() }).from(helpArticles).where(where),
     ])
+    const total = Number(totals?.value ?? 0)
+    const articles = await populate(rows, CONTENT_REFS)
     return ok({ articles, total, page, pages: Math.ceil(total / limit) })
   } catch (e) { return err(e) }
 })
@@ -1660,7 +1806,8 @@ server.tool('get_help_article', 'Get a single Help Center article by its URL slu
   slug: z.string().describe('The URL slug of the help article'),
 }, async ({ slug }) => {
   try {
-    const article = await HelpArticle.findOne({ slug }).populate('coverImage').populate('category')
+    const [articleRow] = await db.select().from(helpArticles).where(eq(helpArticles.slug, slug)).limit(1)
+    const article = await populateOne(articleRow, CONTENT_REFS)
     if (!article) return err('Help article not found')
     return ok(article)
   } catch (e) { return err(e) }
@@ -1682,17 +1829,17 @@ server.tool('create_help_article', 'Create a new Help Center article. Auto-gener
 }, async (params) => {
   try {
     let slug = params.slug || generateSlug(params.title)
-    const existing = await HelpArticle.findOne({ slug })
+    const [existing] = await db.select({ id: helpArticles._id }).from(helpArticles).where(eq(helpArticles.slug, slug)).limit(1)
     if (existing) slug = `${slug}-${Date.now().toString(36)}`
     const { publishedAt, coverImage, category, ...rest } = params
-    const article = await HelpArticle.create({
+    const [articleCreated] = await db.insert(helpArticles).values({
       ...rest,
       slug,
-      coverImage: coverImage && coverImage.length > 0 ? new mongoose.Types.ObjectId(coverImage) : null,
-      category: category && category.length > 0 ? new mongoose.Types.ObjectId(category) : null,
+      coverImage: coverImage && coverImage.length > 0 ? coverImage : null,
+      category: category && category.length > 0 ? category : null,
       publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
     })
-    const populated = await HelpArticle.findById(article._id).populate('coverImage').populate('category')
+    const populated = await populateOne(articleCreated, CONTENT_REFS)
     return ok(populated)
   } catch (e) { return err(e) }
 })
@@ -1718,17 +1865,16 @@ server.tool('update_help_article', 'Update an existing Help Center article by sl
     if (updates.publishedAt) patch.publishedAt = new Date(updates.publishedAt)
     if (updates.coverImage !== undefined) {
       patch.coverImage = updates.coverImage && updates.coverImage.length > 0
-        ? new mongoose.Types.ObjectId(updates.coverImage)
+        ? updates.coverImage
         : null
     }
     if (updates.category !== undefined) {
       patch.category = updates.category && updates.category.length > 0
-        ? new mongoose.Types.ObjectId(updates.category)
+        ? updates.category
         : null
     }
-    const article = await HelpArticle.findOneAndUpdate({ slug }, patch, { new: true })
-      .populate('coverImage')
-      .populate('category')
+    const [articleUpdated] = await db.update(helpArticles).set({ ...patch, updatedAt: new Date() } as never).where(eq(helpArticles.slug, slug)).returning()
+    const article = await populateOne(articleUpdated, CONTENT_REFS)
     if (!article) return err('Help article not found')
     return ok(article)
   } catch (e) { return err(e) }
@@ -1738,7 +1884,7 @@ server.tool('delete_help_article', 'Permanently delete a Help Center article by 
   slug: z.string().describe('The URL slug of the article to delete'),
 }, async ({ slug }) => {
   try {
-    const article = await HelpArticle.findOneAndDelete({ slug })
+    const [article] = await db.delete(helpArticles).where(eq(helpArticles.slug, slug)).returning({ id: helpArticles._id })
     if (!article) return err('Help article not found')
     return ok({ deleted: true, slug })
   } catch (e) { return err(e) }
@@ -1763,11 +1909,15 @@ server.tool('list_referrals', 'List every referral. Supports filtering by progra
   status: z.enum(['active', 'paused', 'revoked']).optional().describe('Filter by lifecycle status'),
 }, async ({ type, status }) => {
   try {
-    const query: Record<string, unknown> = {}
-    if (type) query.type = type
-    if (status) query.status = status
-    const referrals = await Referral.find(query).sort({ type: 1, createdAt: -1 })
-    return ok(referrals)
+    const filters: SQL[] = []
+    if (type) filters.push(eq(referrals.type, type))
+    if (status) filters.push(eq(referrals.status, status))
+    const rows = await db
+      .select()
+      .from(referrals)
+      .where(filters.length > 0 ? and(...filters) : undefined)
+      .orderBy(asc(referrals.type), desc(referrals.createdAt))
+    return ok(rows)
   } catch (e) { return err(e) }
 })
 
@@ -1775,7 +1925,7 @@ server.tool('get_referral', 'Get a single referral by its code.', {
   code: z.string().describe('Unique referral code'),
 }, async ({ code }) => {
   try {
-    const referral = await Referral.findOne({ code })
+    const [referral] = await db.select().from(referrals).where(eq(referrals.code, code)).limit(1)
     if (!referral) return err('Referral not found')
     return ok(referral)
   } catch (e) { return err(e) }
@@ -1783,9 +1933,9 @@ server.tool('get_referral', 'Get a single referral by its code.', {
 
 server.tool('create_referral', 'Create a new referral code. Defaults to type="user" and status="active".', referralRawShape, async (input) => {
   try {
-    const existing = await Referral.findOne({ code: input.code })
+    const [existing] = await db.select({ id: referrals._id }).from(referrals).where(eq(referrals.code, input.code)).limit(1)
     if (existing) return err(`Referral "${input.code}" already exists`)
-    const referral = await Referral.create(input)
+    const referral = await insertOne(referrals, input)
     return ok(referral)
   } catch (e) { return err(e) }
 })
@@ -1802,7 +1952,11 @@ server.tool('update_referral', 'Update an existing referral. Only the fields you
   notes: z.string().optional(),
 }, async ({ code, ...patch }) => {
   try {
-    const referral = await Referral.findOneAndUpdate({ code }, patch, { new: true })
+    const [referral] = await db
+      .update(referrals)
+      .set({ ...patch, updatedAt: new Date() } as never)
+      .where(eq(referrals.code, code))
+      .returning()
     if (!referral) return err('Referral not found')
     return ok(referral)
   } catch (e) { return err(e) }
@@ -1812,7 +1966,7 @@ server.tool('delete_referral', 'Permanently delete a referral code. This action 
   code: z.string().describe('Referral code to delete'),
 }, async ({ code }) => {
   try {
-    const doc = await Referral.findOneAndDelete({ code })
+    const [doc] = await db.delete(referrals).where(eq(referrals.code, code)).returning({ id: referrals._id })
     if (!doc) return err('Referral not found')
     return ok({ deleted: true, code })
   } catch (e) { return err(e) }
@@ -1824,13 +1978,22 @@ server.tool('delete_referral', 'Permanently delete a referral code. This action 
 
 async function validateToken(token: string): Promise<boolean> {
   const tokenHash = crypto.createHash('sha256').update(token).digest('hex')
-  const mcpToken = await McpToken.findOne({
-    tokenHash,
-    revoked: false,
-    $or: [{ expiresAt: null }, { expiresAt: { $gt: new Date() } }],
-  })
+  const now = new Date()
+  const [mcpToken] = await db
+    .select({ id: mcpTokens._id })
+    .from(mcpTokens)
+    .where(
+      and(
+        eq(mcpTokens.tokenHash, tokenHash),
+        eq(mcpTokens.revoked, false),
+        // A token with no expiry never expires; one with an expiry must still
+        // be in the future.
+        or(sql`${mcpTokens.expiresAt} is null`, gte(mcpTokens.expiresAt, now)),
+      ),
+    )
+    .limit(1)
   if (!mcpToken) return false
-  await McpToken.updateOne({ _id: mcpToken._id }, { $set: { lastUsedAt: new Date() } })
+  await db.update(mcpTokens).set({ lastUsedAt: now }).where(eq(mcpTokens._id, mcpToken.id))
   return true
 }
 

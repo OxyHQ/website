@@ -1,0 +1,1 @@
+ALTER TABLE "pricing_plans" ADD COLUMN "cta_href" text DEFAULT '' NOT NULL;

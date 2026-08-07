@@ -2,8 +2,9 @@ import { Router } from 'express'
 import { rateLimit } from 'express-rate-limit'
 import { z } from 'zod'
 import { config } from '../config.js'
-import { Vote } from '../models/Vote.js'
-import { FeatureProposal } from '../models/FeatureProposal.js'
+import { and, count, eq, gte } from 'drizzle-orm'
+import { db } from '../db/postgres.js'
+import { featureProposals, votes } from '../db/schema/index.js'
 import { optionalAuth, requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { checkAndAwardBadges } from '../services/badgeService.js'
@@ -39,6 +40,12 @@ import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
+
+/** `count()` comes back as a one-row result; this unwraps it. */
+async function countRows(query: Promise<Array<{ value: number }>>): Promise<number> {
+  const [row] = await query
+  return Number(row?.value ?? 0)
+}
 
 const listQuerySchema = z.object({
   status: z.string().optional(),
@@ -305,10 +312,12 @@ router.post('/proposals', requireAuth, proposalBurstLimiter, async (req, res) =>
 
   const { proposalsPerWindow, proposalWindowHours } = config.featureBoard
   const windowStart = new Date(Date.now() - proposalWindowHours * 60 * 60 * 1000)
-  const usedInWindow = await FeatureProposal.countDocuments({
-    userId: user.id,
-    createdAt: { $gte: windowStart },
-  })
+  const usedInWindow = await countRows(
+    db
+      .select({ value: count() })
+      .from(featureProposals)
+      .where(and(eq(featureProposals.userId, user.id), gte(featureProposals.createdAt, windowStart))),
+  )
   if (usedInWindow >= proposalsPerWindow) {
     return res.status(429).json({
       error: `You can propose ${proposalsPerWindow} features every ${proposalWindowHours} hours. Try again later.`,
@@ -344,7 +353,7 @@ router.post('/proposals', requireAuth, proposalBurstLimiter, async (req, res) =>
     return res.status(502).json({ error: 'GitHub did not accept the proposal. Nothing was created, please try again later.' })
   }
 
-  await FeatureProposal.create({
+  await db.insert(featureProposals).values({
     userId: user.id,
     username,
     owner: target.owner,
@@ -377,10 +386,17 @@ router.get('/:owner/:repo/:number', optionalAuth, async (req, res) => {
     if (!issue) return res.status(404).json({ error: 'Issue not found' })
 
     const key = issueVoteKey(app.owner, app.repo, number)
-    const [localVotes, userVote] = await Promise.all([
-      Vote.countDocuments({ featureRequestId: key }),
-      req.user ? Vote.findOne({ featureRequestId: key, userId: req.user.id }) : null,
+    const [localVotes, userVoteRows] = await Promise.all([
+      countRows(db.select({ value: count() }).from(votes).where(eq(votes.featureRequestId, key))),
+      req.user
+        ? db
+            .select({ id: votes._id })
+            .from(votes)
+            .where(and(eq(votes.featureRequestId, key), eq(votes.userId, req.user.id)))
+            .limit(1)
+        : Promise.resolve([]),
     ])
+    const userVote = userVoteRows.length > 0 ? userVoteRows[0] : null
 
     res.json({
       id: issue.id,
@@ -479,12 +495,19 @@ router.post('/:owner/:repo/:number/vote', requireAuth, async (req, res) => {
   const key = issueVoteKey(app.owner, app.repo, number)
 
   try {
-    const existing = await Vote.findOneAndDelete({ featureRequestId: key, userId: user.id })
-    if (!existing) {
-      await Vote.create({ featureRequestId: key, userId: user.id })
-    }
+    // Delete-then-insert in one transaction so two taps cannot leave the vote
+    // half-toggled; the unique index on (featureRequestId, userId) decides.
+    const existing = await db.transaction(async (tx) => {
+      const removed = await tx
+        .delete(votes)
+        .where(and(eq(votes.featureRequestId, key), eq(votes.userId, user.id)))
+        .returning({ id: votes._id })
+      if (removed.length > 0) return true
+      await tx.insert(votes).values({ featureRequestId: key, userId: user.id }).onConflictDoNothing()
+      return false
+    })
 
-    const localVotes = await Vote.countDocuments({ featureRequestId: key })
+    const localVotes = await countRows(db.select({ value: count() }).from(votes).where(eq(votes.featureRequestId, key)))
 
     // Fire-and-forget badge check
     if (user.username) {

@@ -1,6 +1,9 @@
 import { config } from '../config.js'
-import TrackedRepo, { type ITrackedRepo } from '../models/TrackedRepo.js'
-import { ChangelogEntry } from '../models/ChangelogEntry.js'
+import { eq, sql } from 'drizzle-orm'
+import { db } from '../db/postgres.js'
+import { changelogEntries, trackedRepos } from '../db/schema/index.js'
+
+type TrackedRepoRow = typeof trackedRepos.$inferSelect
 
 interface GitHubRelease {
   id: number
@@ -59,7 +62,15 @@ async function fetchReleasesForRepo(
   return releases
 }
 
-async function syncRepo(trackedRepo: ITrackedRepo): Promise<number> {
+/** One place to record the outcome of a sync attempt on the repo row. */
+async function recordSync(repoId: string, error: string | null): Promise<void> {
+  await db
+    .update(trackedRepos)
+    .set({ lastSyncAt: new Date(), lastSyncError: error, updatedAt: new Date() })
+    .where(eq(trackedRepos._id, repoId))
+}
+
+async function syncRepo(trackedRepo: TrackedRepoRow): Promise<number> {
   const { owner, repo, displayName, defaultTags, lastSyncAt } = trackedRepo
 
   console.log(`[GitHub Sync] Syncing ${owner}/${repo}...`)
@@ -69,60 +80,66 @@ async function syncRepo(trackedRepo: ITrackedRepo): Promise<number> {
 
     if (releases.length === 0) {
       console.log(`[GitHub Sync] ${owner}/${repo}: no new releases`)
-      trackedRepo.lastSyncAt = new Date()
-      trackedRepo.lastSyncError = null
-      await trackedRepo.save()
+      await recordSync(trackedRepo._id, null)
       return 0
     }
 
-    const ops = releases.map((release) => {
+    const rows = releases.map((release) => {
       // Auto-detect tags from release
-      const tags = [...(defaultTags || [])]
+      const tags = [...((defaultTags as { label: string; color: string }[] | null) ?? [])]
       if (release.prerelease) {
         tags.push({ label: 'Pre-release', color: 'rgb(253, 144, 56)' })
       }
 
       return {
-        updateOne: {
-          filter: { githubReleaseId: release.id },
-          update: {
-            $set: {
-              title: release.name || release.tag_name,
-              content: release.body || '',
-              tags: tags.map((t: { label: string }) => t.label),
-              date: new Date(release.published_at),
-              githubReleaseId: release.id,
-              repoOwner: owner,
-              repoName: repo,
-              repoDisplayName: displayName,
-              htmlUrl: release.html_url,
-              tagName: release.tag_name,
-            },
-          },
-          upsert: true,
-        },
+        title: release.name || release.tag_name,
+        content: release.body || '',
+        tags: tags.map((tag) => tag.label),
+        date: new Date(release.published_at),
+        githubReleaseId: release.id,
+        repoOwner: owner,
+        repoName: repo,
+        repoDisplayName: displayName,
+        htmlUrl: release.html_url,
+        tagName: release.tag_name,
       }
     })
 
-    await ChangelogEntry.bulkWrite(ops)
+    // One statement for the whole page of releases, keyed on the release id —
+    // the same upsert-per-release the bulkWrite did, minus the round trips.
+    await db
+      .insert(changelogEntries)
+      .values(rows)
+      .onConflictDoUpdate({
+        target: changelogEntries.githubReleaseId,
+        set: {
+          title: sql`excluded.title`,
+          content: sql`excluded.content`,
+          tags: sql`excluded.tags`,
+          date: sql`excluded.date`,
+          repoOwner: sql`excluded.repo_owner`,
+          repoName: sql`excluded.repo_name`,
+          repoDisplayName: sql`excluded.repo_display_name`,
+          htmlUrl: sql`excluded.html_url`,
+          tagName: sql`excluded.tag_name`,
+          updatedAt: new Date(),
+        },
+      })
 
-    trackedRepo.lastSyncAt = new Date()
-    trackedRepo.lastSyncError = null
-    await trackedRepo.save()
+    await recordSync(trackedRepo._id, null)
 
     console.log(`[GitHub Sync] ${owner}/${repo}: synced ${releases.length} releases`)
     return releases.length
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
     console.error(`[GitHub Sync] ${owner}/${repo} error:`, message)
-    trackedRepo.lastSyncError = message
-    await trackedRepo.save()
+    await recordSync(trackedRepo._id, message)
     return 0
   }
 }
 
 export async function syncAllRepos(): Promise<void> {
-  const repos = await TrackedRepo.find({ active: true })
+  const repos = await db.select().from(trackedRepos).where(eq(trackedRepos.active, true))
   console.log(`[GitHub Sync] Syncing ${repos.length} repos...`)
 
   for (const repo of repos) {
@@ -133,14 +150,14 @@ export async function syncAllRepos(): Promise<void> {
 }
 
 export async function syncSingleRepo(repoId: string): Promise<number> {
-  const repo = await TrackedRepo.findById(repoId)
+  const [repo] = await db.select().from(trackedRepos).where(eq(trackedRepos._id, repoId)).limit(1)
   if (!repo) throw new Error('Repo not found')
   if (!repo.active) throw new Error('Repo is inactive')
   return syncRepo(repo)
 }
 
 export function startSyncInterval(intervalMs = 15 * 60 * 1000): void {
-  // Run once after a short delay (let MongoDB connect)
+  // Run once after a short delay (let the database connection settle)
   setTimeout(() => {
     syncAllRepos().catch((err) => console.error('[GitHub Sync] Initial sync error:', err))
   }, 10_000)

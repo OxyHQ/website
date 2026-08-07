@@ -1,6 +1,9 @@
 import { config } from '../config.js'
-import TrackedRepo, { type ITrackedRepo } from '../models/TrackedRepo.js'
-import { Vote } from '../models/Vote.js'
+import { asc, eq, inArray } from 'drizzle-orm'
+import { db } from '../db/postgres.js'
+import { trackedRepos, votes as votesTable } from '../db/schema/index.js'
+
+type TrackedRepoRow = typeof trackedRepos.$inferSelect
 import { getPriorityTiers } from '../constants/featurePriority.js'
 
 /** The one label that makes an issue a feature request. */
@@ -111,7 +114,7 @@ export interface FeatureRepo {
   acceptsProposals: boolean
 }
 
-function toFeatureRepo(doc: ITrackedRepo): FeatureRepo {
+function toFeatureRepo(doc: TrackedRepoRow): FeatureRepo {
   return {
     key: repoKey(doc.owner, doc.repo),
     owner: doc.owner,
@@ -129,7 +132,11 @@ function toFeatureRepo(doc: ITrackedRepo): FeatureRepo {
  * new org is a row in this collection rather than an edit to a constant.
  */
 export async function listFeatureRepos(): Promise<FeatureRepo[]> {
-  const docs = await TrackedRepo.find({ featureBoard: true }).sort('displayName')
+  const docs = await db
+    .select()
+    .from(trackedRepos)
+    .where(eq(trackedRepos.featureBoard, true))
+    .orderBy(asc(trackedRepos.displayName))
   return docs.map(toFeatureRepo)
 }
 
@@ -390,7 +397,9 @@ export async function loadFeatureRequests(userId?: string): Promise<FeatureReque
     return issueVoteKey(owner, repo, issue.number)
   })
 
-  const votes = await Vote.find({ featureRequestId: { $in: voteKeys } })
+  const votes = voteKeys.length > 0
+    ? await db.select().from(votesTable).where(inArray(votesTable.featureRequestId, voteKeys))
+    : []
   const voteCounts = new Map<string, number>()
   const votedByUser = new Set<string>()
   for (const vote of votes) {

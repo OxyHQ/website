@@ -1,6 +1,8 @@
 import { Router } from 'express'
+import { and, count, desc, eq, ilike, like, not, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
-import { Media } from '../models/Media.js'
+import { db } from '../db/postgres.js'
+import { media as mediaTable } from '../db/schema/index.js'
 import { deleteFromSpaces } from '../services/s3.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
@@ -34,18 +36,32 @@ router.get('/', requireAuth, adminOnly, async (req, res) => {
   const { search, type, tag, folder, page = '1', limit = '40' } = validate(listQuerySchema, req.query)
   const { pageNum, limitNum, skip } = parsePagination(page, limit, MAX_MEDIA_PAGE_SIZE)
 
-  const filter: Record<string, unknown> = {}
-  if (search) filter.$text = { $search: search }
-  if (type === 'image') filter.mimeType = { $regex: /^image\// }
-  else if (type === 'video') filter.mimeType = { $regex: /^video\// }
-  else if (type === 'document') filter.mimeType = { $nin: [/^image\//, /^video\//] }
-  if (tag) filter.tags = tag
-  if (folder) filter.folder = folder
+  const filters: SQL[] = []
+  // Mongo ran this through a `$text` index over filename and alt. Postgres
+  // gets a case-insensitive substring match on the same two fields: the
+  // library is a few thousand rows and the admin types partial filenames,
+  // which a stemmed full-text index would match worse, not better.
+  if (search) {
+    const pattern = `%${search}%`
+    const searchFilter = or(ilike(mediaTable.filename, pattern), ilike(mediaTable.alt, pattern))
+    if (searchFilter) filters.push(searchFilter)
+  }
+  if (type === 'image') filters.push(like(mediaTable.mimeType, 'image/%'))
+  else if (type === 'video') filters.push(like(mediaTable.mimeType, 'video/%'))
+  else if (type === 'document') {
+    filters.push(not(like(mediaTable.mimeType, 'image/%')))
+    filters.push(not(like(mediaTable.mimeType, 'video/%')))
+  }
+  if (tag) filters.push(sql`${mediaTable.tags} @> ARRAY[${tag}]::text[]`)
+  if (folder) filters.push(eq(mediaTable.folder, folder))
 
-  const [items, total] = await Promise.all([
-    Media.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
-    Media.countDocuments(filter),
+  const where = filters.length > 0 ? and(...filters) : undefined
+
+  const [items, [totals]] = await Promise.all([
+    db.select().from(mediaTable).where(where).orderBy(desc(mediaTable.createdAt)).offset(skip).limit(limitNum),
+    db.select({ value: count() }).from(mediaTable).where(where),
   ])
+  const total = Number(totals?.value ?? 0)
 
   res.json({ items, total, page: pageNum, pages: Math.ceil(total / limitNum) })
 })
@@ -53,39 +69,39 @@ router.get('/', requireAuth, adminOnly, async (req, res) => {
 // Get single media by ID (public — used for resolving media refs)
 router.get('/:id', async (req, res) => {
   const { id } = validate(idParamsSchema, req.params)
-  const media = await Media.findById(id)
-  if (!media) return res.status(404).json({ error: 'Media not found' })
-  res.json(media)
+  const [row] = await db.select().from(mediaTable).where(eq(mediaTable._id, id)).limit(1)
+  if (!row) return res.status(404).json({ error: 'Media not found' })
+  res.json(row)
 })
 
 // Update media metadata (admin)
 router.patch('/:id', requireAuth, adminOnly, async (req, res) => {
   const { id } = validate(idParamsSchema, req.params)
   const { alt, tags, folder } = validate(updateBodySchema, req.body)
-  const update: Record<string, unknown> = {}
+  const update: Record<string, unknown> = { updatedAt: new Date() }
   if (alt !== undefined) update.alt = alt
   if (tags !== undefined) update.tags = tags
   if (folder !== undefined) update.folder = folder
 
-  const media = await Media.findByIdAndUpdate(id, update, { new: true })
-  if (!media) return res.status(404).json({ error: 'Media not found' })
-  res.json(media)
+  const [row] = await db.update(mediaTable).set(update as never).where(eq(mediaTable._id, id)).returning()
+  if (!row) return res.status(404).json({ error: 'Media not found' })
+  res.json(row)
 })
 
 // Delete media (admin) — removes from S3 + DB
 router.delete('/:id', requireAuth, adminOnly, async (req, res) => {
   const { id } = validate(idParamsSchema, req.params)
-  const media = await Media.findById(id)
-  if (!media) return res.status(404).json({ error: 'Media not found' })
+  const [row] = await db.select().from(mediaTable).where(eq(mediaTable._id, id)).limit(1)
+  if (!row) return res.status(404).json({ error: 'Media not found' })
 
   // Delete original + thumbnails from S3
-  const keysToDelete = [media.key]
-  if (media.thumbnails?.sm) keysToDelete.push(extractKey(media.thumbnails.sm))
-  if (media.thumbnails?.md) keysToDelete.push(extractKey(media.thumbnails.md))
-  if (media.thumbnails?.lg) keysToDelete.push(extractKey(media.thumbnails.lg))
+  const keysToDelete = [row.key]
+  if (row.thumbnails?.sm) keysToDelete.push(extractKey(row.thumbnails.sm))
+  if (row.thumbnails?.md) keysToDelete.push(extractKey(row.thumbnails.md))
+  if (row.thumbnails?.lg) keysToDelete.push(extractKey(row.thumbnails.lg))
 
   await Promise.allSettled(keysToDelete.filter(Boolean).map(k => deleteFromSpaces(k)))
-  await media.deleteOne()
+  await db.delete(mediaTable).where(eq(mediaTable._id, id))
 
   res.json({ ok: true })
 })

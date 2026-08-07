@@ -11,13 +11,14 @@
  * changelog as a side effect is not what anyone running it is asking for.
  *
  * `server/seed.ts` is deliberately not the place for this: that one wipes
- * collections before it writes.
+ * every table before it writes.
  *
- * Usage: MONGO_URI=... bun server/seedFeatureBoardRepos.ts
+ * Usage: DATABASE_URL=... bun server/seedFeatureBoardRepos.ts
  */
-import mongoose from 'mongoose'
+import { and, eq } from 'drizzle-orm'
 import { config } from './config.js'
-import TrackedRepo from './models/TrackedRepo.js'
+import { closeDatabase, db } from './db/postgres.js'
+import { trackedRepos } from './db/schema/index.js'
 import { GitHubApiError, githubRequest } from './services/featureBoard.js'
 import { toErrorMessage } from './utils/errorMessage.js'
 
@@ -85,8 +86,6 @@ async function checkRepo(entry: SeedRepo): Promise<string | null> {
 }
 
 async function main(): Promise<void> {
-  await mongoose.connect(config.mongoUri)
-  console.log('Connected to MongoDB')
 
   const canCheck = Boolean(config.featureBoard.githubToken || config.githubToken)
   if (!canCheck) {
@@ -107,20 +106,33 @@ async function main(): Promise<void> {
       }
     }
 
-    const result = await TrackedRepo.updateOne(
-      { owner: entry.owner, repo: entry.repo },
-      {
-        $set: { featureBoard: true, acceptsProposals: true },
-        $setOnInsert: {
-          displayName: entry.displayName,
-          defaultTags: [],
-          active: false,
-        },
-      },
-      { upsert: true },
-    )
+    // The two board switches are the only fields an existing row gets: a
+    // display name an admin changed, and the changelog `active` switch, are
+    // written on insert and never touched again.
+    const [existing] = await db
+      .select({ id: trackedRepos._id })
+      .from(trackedRepos)
+      .where(and(eq(trackedRepos.owner, entry.owner), eq(trackedRepos.repo, entry.repo)))
+      .limit(1)
 
-    if (result.upsertedCount > 0) {
+    if (existing) {
+      await db
+        .update(trackedRepos)
+        .set({ featureBoard: true, acceptsProposals: true, updatedAt: new Date() })
+        .where(eq(trackedRepos._id, existing.id))
+    } else {
+      await db.insert(trackedRepos).values({
+        owner: entry.owner,
+        repo: entry.repo,
+        displayName: entry.displayName,
+        defaultTags: [],
+        active: false,
+        featureBoard: true,
+        acceptsProposals: true,
+      })
+    }
+
+    if (!existing) {
       created++
       console.log(`added   ${entry.owner}/${entry.repo} as "${entry.displayName}"`)
     } else {
@@ -130,7 +142,7 @@ async function main(): Promise<void> {
   }
 
   console.log(`\nFeature board: ${created} added, ${updated} already tracked, ${skipped} skipped`)
-  await mongoose.disconnect()
+  await closeDatabase()
 }
 
 main().catch((err) => {

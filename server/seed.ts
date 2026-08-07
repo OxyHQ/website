@@ -1,60 +1,72 @@
 /**
- * Seed script — populates MongoDB with the original static content.
+ * Seed script — populates Postgres with the original static content.
  * Always drops existing data first (full reset).
  *
- * Usage: bun run seed
+ * Usage: DATABASE_URL=… bun run seed
  */
-import mongoose from 'mongoose'
-import { config } from './config.js'
-import { Navigation } from './models/Navigation.js'
-import { Footer } from './models/Footer.js'
-import { Product } from './models/Product.js'
-import { Category } from './models/Category.js'
-import { HeroContent, DEFAULT_HERO_TITLE, DEFAULT_HERO_EYEBROW, DEFAULT_HERO_BG_WEBM, DEFAULT_HERO_BG_MP4, DEFAULT_HERO_POSTER, DEFAULT_CAROUSEL_SLOTS } from './models/HeroContent.js'
-import { PricingPlan } from './models/PricingPlan.js'
-import { Testimonial } from './models/Testimonial.js'
-import { TeamMember } from './models/TeamMember.js'
-import { ChangelogEntry } from './models/ChangelogEntry.js'
-import { Job } from './models/Job.js'
-import { SiteSettings } from './models/SiteSettings.js'
-import { Page } from './models/Page.js'
-import { NewsroomPost } from './models/NewsroomPost.js'
-import { Course } from './models/Course.js'
-import { Resource } from './models/Resource.js'
-import { HelpArticle } from './models/HelpArticle.js'
-import { Media } from './models/Media.js'
-import TrackedRepo from './models/TrackedRepo.js'
-
-/** A model referenced only so that every document in its collection can be dropped. */
-type ClearableModel = { deleteMany(filter: Record<string, never>): PromiseLike<unknown> }
+import { closeDatabase, db } from './db/postgres.js'
+import {
+  categories,
+  changelogEntries,
+  courses,
+  footers,
+  helpArticles,
+  heroContents,
+  jobs,
+  media,
+  navigationDropdowns,
+  newsroomPosts,
+  pages,
+  pricingPlans,
+  products,
+  resources,
+  siteSettings,
+  teamMembers,
+  testimonials,
+  trackedRepos,
+} from './db/schema/index.js'
+import {
+  DEFAULT_CAROUSEL_SLOTS,
+  DEFAULT_HERO_BG_MP4,
+  DEFAULT_HERO_BG_WEBM,
+  DEFAULT_HERO_EYEBROW,
+  DEFAULT_HERO_POSTER,
+  DEFAULT_HERO_TITLE,
+} from './constants/hero.js'
 
 async function seed() {
-  await mongoose.connect(config.mongoUri)
-  console.log('Connected to MongoDB')
+  // ── Drop every seeded table (full reset) ──
+  // One transaction: a half-cleared database is worse than either end state,
+  // and the order matters because products and posts reference media.
+  await db.transaction(async (tx) => {
+    for (const table of [
+      navigationDropdowns, footers, heroContents, products, pricingPlans, testimonials,
+      changelogEntries, jobs, siteSettings, pages, newsroomPosts, courses, resources,
+      helpArticles, trackedRepos, teamMembers, categories, media,
+    ]) {
+      await tx.delete(table as never)
+    }
+  })
+  console.log('Cleared all tables')
 
-  // ── Drop all collections (full reset) ──
-  // Typed structurally: the array mixes 18 different Model<T> types, and the
-  // resulting union defeats overload resolution on `deleteMany`. Clearing is
-  // all these models are used for here, so that is all the type needs to state.
-  const collections: ClearableModel[] = [Navigation, Footer, HeroContent, Product, Category, PricingPlan, Testimonial, ChangelogEntry, Job, SiteSettings, Page, NewsroomPost, Course, Resource, HelpArticle, TrackedRepo, TeamMember, Media]
-  await Promise.all(collections.map((m) => m.deleteMany({})))
-  console.log('Cleared all collections')
-
-  // ── Media helper: create a Media document from a URL ──
-  async function seedMedia(url: string, filename: string, mimeType = 'image/jpeg'): Promise<mongoose.Types.ObjectId> {
-    const doc = await Media.create({
-      url, filename, key: new URL(url).pathname.slice(1) || filename,
-      mimeType, size: 0, alt: '', tags: [], folder: 'seed',
-      thumbnails: { sm: '', md: '', lg: '' },
-    })
-    return doc._id
+  // ── Media helper: create a media row from a URL ──
+  async function seedMedia(url: string, filename: string, mimeType = 'image/jpeg'): Promise<string> {
+    const [row] = await db
+      .insert(media)
+      .values({
+        url, filename, key: new URL(url).pathname.slice(1) || filename,
+        mimeType, size: 0, alt: '', tags: [], folder: 'seed',
+        thumbnails: { sm: '', md: '', lg: '' },
+      })
+      .returning({ id: media._id })
+    return row.id
   }
 
   // ── Navigation (matches current production) ──
   // Manual dropdowns (Platform / Resources) still have hand-curated items.
   // Ecosystem is now a `kind: 'apps'` dropdown — resolved server-side from
   // Product.find({ showInNav: true }) grouped by Category slug.
-  await Navigation.insertMany([
+  await db.insert(navigationDropdowns).values([
     {
       label: 'Platform',
       order: 0,
@@ -121,7 +133,7 @@ async function seed() {
   console.log('Seeded navigation')
 
   // ── Footer (exact copy) ──
-  await Footer.create({
+  await db.insert(footers).values({
     columns: [
       {
         title: 'Platform',
@@ -190,7 +202,7 @@ async function seed() {
   console.log('Seeded footer')
 
   // ── Categories (shared grouping labels used by products + navbar + academy) ──
-  const categoryDocs = await Category.insertMany([
+  const categoryDocs = await db.insert(categories).values([
     { slug: 'social-communication', label: 'Social & Communication', scope: 'apps', order: 0 },
     { slug: 'finance-commerce', label: 'Finance & Commerce', scope: 'apps', order: 1 },
     { slug: 'apps', label: 'Apps', scope: 'apps', order: 2 },
@@ -202,15 +214,15 @@ async function seed() {
     { slug: 'help-account', label: 'Account & profile', scope: 'generic', order: 11, description: 'Manage your account, preferences and identity.' },
     { slug: 'help-billing', label: 'Billing & plans', scope: 'generic', order: 12, description: 'Subscriptions, invoices and payment methods.' },
     { slug: 'help-developer', label: 'Developer & API', scope: 'generic', order: 13, description: 'Integrations, the Oxy API and self-serve tooling.' },
-  ])
-  const categoryIdBySlug = new Map(categoryDocs.map((c) => [c.slug, c._id] as const))
+  ]).returning({ slug: categories.slug, id: categories._id })
+  const categoryIdBySlug = new Map(categoryDocs.map((c) => [c.slug, c.id] as const))
   const categoryRef = (slug: string) => categoryIdBySlug.get(slug) ?? null
   console.log('Seeded categories')
 
   // ── Products (/technologies + /status + ecosystem navbar, single source of truth) ──
   // `category` is the ObjectId ref to a Category; `section` stays populated
   // with the matching slug for backwards compatibility / fallback grouping.
-  await Product.insertMany([
+  await db.insert(products).values([
     { productId: 'alia', name: 'Alia AI', tagline: 'Intelligent assistant', description: 'Your private AI assistant on web, iOS and Android. Ask anything, get answers, automate work — without your data feeding a training set.', href: 'https://alia.onl/', landingUrl: '/alia', healthUrl: 'https://alia.onl/', external: true, cta: 'Open Alia', brand: '#7c3aed', mark: 'A', category: categoryRef('social-communication'), section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
     { productId: 'mention', name: 'Mention', tagline: 'Open social network', description: 'A social network built on respect. No engagement-maxxing algorithms, no surveillance ads — just genuine connection on the open fediverse. Your profile, your content, your unique link.', href: 'https://mention.earth/', landingUrl: '/mention', external: false, cta: 'Explore Mention', brand: '#0ea5e9', mark: 'M', category: categoryRef('social-communication'), section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 1 },
     { productId: 'inbox', name: 'Oxy Inbox', tagline: 'Unified messaging', description: 'All your email, chat and federated messages in one calm place. Smart triage surfaces what matters, end-to-end encrypted by default.', href: 'https://inbox.oxy.so', landingUrl: '/inbox', external: false, cta: 'Explore Inbox', brand: '#1e40af', mark: 'I', category: categoryRef('social-communication'), section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 2 },
@@ -238,13 +250,13 @@ async function seed() {
   console.log('Seeded products')
 
   // ── Hero (homepage hero singleton) ──
-  await HeroContent.create({
+  await db.insert(heroContents).values({
     title: DEFAULT_HERO_TITLE,
     eyebrow: DEFAULT_HERO_EYEBROW,
     backgroundVideoWebm: DEFAULT_HERO_BG_WEBM,
     backgroundVideoMp4: DEFAULT_HERO_BG_MP4,
     backgroundPoster: DEFAULT_HERO_POSTER,
-    carouselSlots: DEFAULT_CAROUSEL_SLOTS,
+    carouselSlots: DEFAULT_CAROUSEL_SLOTS as unknown as Record<string, unknown>[],
   })
   console.log('Seeded hero')
 
@@ -255,7 +267,7 @@ async function seed() {
   console.log('Seeded testimonials (none)')
 
   // ── Pricing (exact copy) ──
-  await PricingPlan.insertMany([
+  await db.insert(pricingPlans).values([
     { name: 'Free', price: { monthly: 0, annual: 0 }, description: '500 credits per seat / month', features: ['500 credits per seat / month'], cta: 'Get started', ctaHref: 'https://accounts.oxy.so/', highlighted: false, order: 0 },
     { name: 'Pro', price: { monthly: 0, annual: 0 }, description: '1,000 credits per seat / month', features: ['1,000 credits per seat / month'], cta: 'Get started', ctaHref: 'https://accounts.oxy.so/', highlighted: true, order: 1 },
     { name: 'Enterprise', price: { monthly: 0, annual: 0 }, description: '2,500 credits per seat / month', features: ['2,500 credits per seat / month'], cta: 'Contact sales', ctaHref: '/help', highlighted: false, order: 2 },
@@ -264,7 +276,7 @@ async function seed() {
 
   // ── Site Settings ──
   const ogMediaId = await seedMedia('https://oxy.so/og-default.png', 'og-default.png', 'image/png')
-  await SiteSettings.create({
+  await db.insert(siteSettings).values({
     siteTitle: 'Oxy — Open technology that answers to the people who use it',
     siteDescription:
       'An open ecosystem of apps built on one identity you hold yourself: social, messaging, housing, payments and AI. No surveillance advertising, no data sales, source you can read.',
@@ -274,7 +286,7 @@ async function seed() {
   console.log('Seeded site settings')
 
   // ── Pages ──
-  await Page.create({
+  await db.insert(pages).values({
     slug: 'ai',
     title: 'Oxy AI — Understand Your World',
     description: 'Intelligent AI that understands your workflow, your data, and your goals. Chat, API, and developer tools built for everyone.',
@@ -293,8 +305,7 @@ async function seed() {
   console.log('Seeded pages')
 
   // ── Team Members ──
-  await TeamMember.deleteMany({})
-  await TeamMember.create([
+    await db.insert(teamMembers).values([
     { name: 'Ton Soteras', slug: 'ton', role: 'Public Relations Officer', department: 'Communications', bio: 'Responsible for talking, discussing, negotiating, and recruiting people who are interested in Oxy and FairCoin.', order: 1 },
     { name: 'Juan C. Moslares Fusté', slug: 'juan-c-moslares-fuste', role: 'Chief Communications Officer (CCO)', department: 'Communications', bio: 'Juan leads communication at Oxy, connecting our vision with the world through his experience in radio.', order: 2 },
     { name: 'Alejandra Sanchez Garcia', slug: 'alejandrasanchez', role: 'Frontend Developer', department: 'Engineering', bio: 'Alejandra focuses on designing and developing user-friendly interfaces that align with Oxy\'s vision. By applying modern web technologies and best practices, she helps create seamless and impactful digital experiences.', order: 3 },
@@ -303,14 +314,14 @@ async function seed() {
   console.log('Seeded team members')
 
   // ── Changelog (sample) ──
-  await ChangelogEntry.insertMany([
+  await db.insert(changelogEntries).values([
     { title: 'Device-first sessions everywhere', content: 'Signing in to any Oxy app now proves possession of a credential held on your device.', tags: ['identity', 'release'], date: new Date('2026-07-18'), items: ['No session cookie', 'Per-device credentials', 'Faster cold start'] },
     { title: 'Founding Charter published', content: 'The commitments Oxy intends to be held to are now public.', tags: ['company'], date: new Date('2026-08-01'), items: ['Charter at /company/charter', 'Linked from the manifesto', 'Open to challenge'] },
   ])
   console.log('Seeded changelog')
 
   // ── Tracked Repos (sample) ──
-  await TrackedRepo.create([
+  await db.insert(trackedRepos).values([
     {
       owner: 'vercel',
       repo: 'next.js',
@@ -322,7 +333,7 @@ async function seed() {
   console.log('Seeded tracked repos')
 
   // ── Jobs (sample) ──
-  await Job.insertMany([
+  await db.insert(jobs).values([
     {
       title: 'Senior Frontend Engineer',
       slug: 'senior-frontend-engineer-remote',
@@ -434,7 +445,7 @@ async function seed() {
   // Seed posts describe work that actually exists in the ecosystem. The set
   // this replaced claimed a $50M Series B led by a named investor, a G2 award
   // and a SOC 2 Type II certification, none of which had happened.
-  await NewsroomPost.insertMany([
+  await db.insert(newsroomPosts).values([
     {
       title: 'The Oxy Founding Charter',
       slug: 'the-oxy-founding-charter',
@@ -536,7 +547,7 @@ async function seed() {
     seedMedia('https://images.unsplash.com/photo-1554200876-56c2f25224fa?w=1200&h=630&fit=crop', 'academy-link-cover.jpg'),
   ])
 
-  await Course.insertMany([
+  await db.insert(courses).values([
     {
       slug: 'oxy-fundamentals',
       title: 'Oxy Fundamentals',
@@ -621,7 +632,7 @@ async function seed() {
   console.log('Seeded courses')
 
   // ── Academy: Resources ──
-  await Resource.insertMany([
+  await db.insert(resources).values([
     {
       slug: 'oxy-platform-overview-guide',
       title: 'The Oxy platform, in one page',
@@ -716,7 +727,7 @@ async function seed() {
   console.log('Seeded academy resources')
 
   // ── Help Center: Page hero + popular searches ──
-  await Page.create({
+  await db.insert(pages).values({
     slug: 'help',
     title: 'Help Center',
     description: 'Find answers to common questions about Oxy, troubleshoot issues and get in touch with support.',
@@ -755,7 +766,7 @@ async function seed() {
   console.log('Seeded help page')
 
   // ── Help Center: Articles ──
-  await HelpArticle.insertMany([
+  await db.insert(helpArticles).values([
     {
       slug: 'introduction-to-oxy',
       title: 'Introduction',
@@ -837,8 +848,8 @@ async function seed() {
   ])
   console.log('Seeded help articles')
 
-  console.log('\nSeed complete! All collections reset with original data.')
-  await mongoose.disconnect()
+  console.log('\nSeed complete! Every table reset with the original data.')
+  await closeDatabase()
 }
 
 seed().catch((err) => {

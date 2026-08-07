@@ -73,6 +73,7 @@ const ACADEMY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'academy')
 const API_BASE = process.env.VITE_API_URL || 'https://website-api.oxy.so'
 const NEWSROOM_API = `${API_BASE}/api/newsroom?limit=500`
 const JOBS_API = `${API_BASE}/api/jobs`
+const PRODUCTS_API = `${API_BASE}/api/products?surface=products`
 const FEATURES_API = `${API_BASE}/api/features`
 /** The features list caps `limit` server-side; asking for more returns this many. */
 const FEATURE_PRERENDER_PAGE_SIZE = 50
@@ -210,6 +211,12 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     description:
       'What each plan costs and what it includes across the Oxy apps. A free tier that is genuinely useful, and paid plans priced against real costs.',
     canonicalPath: '/pricing',
+  },
+  '/apps': {
+    title: 'Apps',
+    description:
+      'Every app in the Oxy ecosystem: social, messaging, AI, housing, payments and more, all on one account you own.',
+    canonicalPath: '/apps',
   },
   '/products': {
     title: 'Products',
@@ -610,6 +617,28 @@ async function fetchFeatureRequests(): Promise<FeatureApiEntry[]> {
   return Array.from(byUrl.values())
 }
 
+interface ProductApiEntry {
+  productId: string
+  name: string
+  tagline?: string
+  description?: string
+  category?: { label?: string } | string | null
+}
+
+async function fetchProducts(): Promise<ProductApiEntry[]> {
+  try {
+    const res = await fetch(PRODUCTS_API)
+    if (!res.ok) return []
+    const products = (await res.json()) as ProductApiEntry[]
+    // Without an id there is no URL to emit, and without a name there is no
+    // title — skip rather than interpolating `undefined` into either.
+    return products.filter((product) => product.productId && product.name)
+  } catch (err) {
+    console.warn('[prerender] products fetch failed:', (err as Error).message)
+    return []
+  }
+}
+
 async function fetchJobs(): Promise<JobApiEntry[]> {
   try {
     const res = await fetch(JOBS_API)
@@ -929,6 +958,22 @@ function buildFeatureRoutes(features: FeatureApiEntry[]): Array<{ url: string; s
   }))
 }
 
+function buildAppRoutes(products: ProductApiEntry[]): Array<{ url: string; seo: SEOProps }> {
+  return products.map((product) => {
+    const category = typeof product.category === 'object' && product.category ? (product.category.label ?? '') : ''
+    return {
+      url: `/apps/${product.productId}`,
+      seo: {
+        // Mirrors `AppDetailContent`'s `<SEO>` props verbatim so the
+        // prerendered <head> matches the client-rendered one.
+        title: `${product.name}, ${category || 'Oxy'}`,
+        description: product.tagline || product.description || '',
+        canonicalPath: `/apps/${product.productId}`,
+      },
+    }
+  })
+}
+
 function buildJobRoutes(jobs: JobApiEntry[]): Array<{ url: string; seo: SEOProps }> {
   return jobs.map((job) => ({
     url: `/company/careers/${job.slug}`,
@@ -1024,9 +1069,10 @@ async function enumerateAllRoutes(): Promise<RouteEntry[]> {
     result.set(url, { url, seo })
   }
 
-  const [news, jobs, features, helpRoutes, academyRoutes, docsRoutes] = await Promise.all([
+  const [news, jobs, apps, features, helpRoutes, academyRoutes, docsRoutes] = await Promise.all([
     fetchNewsroomPosts(),
     fetchJobs(),
+    fetchProducts(),
     fetchFeatureRequests(),
     enumerateHelpRoutes(),
     enumerateAcademyRoutes(),
@@ -1035,6 +1081,7 @@ async function enumerateAllRoutes(): Promise<RouteEntry[]> {
 
   for (const entry of buildNewsroomRoutes(news)) result.set(entry.url, entry)
   for (const { url, seo } of buildJobRoutes(jobs)) result.set(url, { url, seo })
+  for (const { url, seo } of buildAppRoutes(apps)) result.set(url, { url, seo })
   for (const { url, seo } of buildFeatureRoutes(features)) result.set(url, { url, seo })
   for (const { url, seo } of helpRoutes) result.set(url, { url, seo })
   for (const { url, seo } of academyRoutes) result.set(url, { url, seo })

@@ -1,41 +1,44 @@
 import { Router } from 'express'
-import type { Model } from 'mongoose'
+import type { PgTable } from 'drizzle-orm/pg-core'
 import { z } from 'zod'
-import { Navigation } from '../models/Navigation.js'
-import { Footer } from '../models/Footer.js'
-import { PricingPlan } from '../models/PricingPlan.js'
-import { Testimonial } from '../models/Testimonial.js'
-import { SiteSettings } from '../models/SiteSettings.js'
-import { NewsroomPost } from '../models/NewsroomPost.js'
-import { Job } from '../models/Job.js'
-import { ChangelogEntry } from '../models/ChangelogEntry.js'
-import { Page } from '../models/Page.js'
-import TrackedRepo from '../models/TrackedRepo.js'
-import { Locale } from '../models/Locale.js'
-import { Translation } from '../models/Translation.js'
+import { db } from '../db/postgres.js'
+import {
+  changelogEntries,
+  footers,
+  jobs,
+  locales,
+  navigationDropdowns,
+  newsroomPosts,
+  pages,
+  pricingPlans,
+  siteSettings,
+  testimonials,
+  trackedRepos,
+  translations,
+} from '../db/schema/index.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
 
-// Heterogeneous collection of mongoose models we snapshot during backup.
-// Typed as Record<string, Model<unknown>> so TypeScript accepts calling
-// .find() / .deleteMany() / .insertMany() on an iterator value without
-// widening to an unresolvable union of the individual model types.
-const collections: Record<string, Model<unknown>> = {
-  navigation: Navigation as unknown as Model<unknown>,
-  footer: Footer as unknown as Model<unknown>,
-  pricingPlans: PricingPlan as unknown as Model<unknown>,
-  testimonials: Testimonial as unknown as Model<unknown>,
-  siteSettings: SiteSettings as unknown as Model<unknown>,
-  newsroomPosts: NewsroomPost as unknown as Model<unknown>,
-  jobs: Job as unknown as Model<unknown>,
-  changelogEntries: ChangelogEntry as unknown as Model<unknown>,
-  pages: Page as unknown as Model<unknown>,
-  trackedRepos: TrackedRepo as unknown as Model<unknown>,
-  locales: Locale as unknown as Model<unknown>,
-  translations: Translation as unknown as Model<unknown>,
+/**
+ * The tables a backup snapshots, under the same keys the exported files have
+ * always used — an export taken before the Postgres migration still imports.
+ */
+const collections: Record<string, PgTable> = {
+  navigation: navigationDropdowns,
+  footer: footers,
+  pricingPlans,
+  testimonials,
+  siteSettings,
+  newsroomPosts,
+  jobs,
+  changelogEntries,
+  pages,
+  trackedRepos,
+  locales,
+  translations,
 }
 
 const importBodySchema = z.object({
@@ -45,8 +48,8 @@ const importBodySchema = z.object({
 router.get('/', requireAuth, adminOnly, async (_req, res) => {
   const data: Record<string, unknown[]> = {}
 
-  for (const [key, ModelCls] of Object.entries(collections)) {
-    data[key] = await ModelCls.find().lean()
+  for (const [key, table] of Object.entries(collections)) {
+    data[key] = await db.select().from(table as never)
   }
 
   const backup = {
@@ -66,16 +69,21 @@ router.post('/', requireAuth, adminOnly, async (req, res) => {
 
   const counts: Record<string, number> = {}
 
-  for (const [key, ModelCls] of Object.entries(collections)) {
-    const docs = imported[key]
-    if (!Array.isArray(docs)) continue
+  // The whole import is one transaction. Restoring a backup used to replace
+  // each collection in turn, so a failure halfway left the site with some
+  // tables from the backup and the rest from before it.
+  await db.transaction(async (tx) => {
+    for (const [key, table] of Object.entries(collections)) {
+      const docs = imported[key]
+      if (!Array.isArray(docs)) continue
 
-    await ModelCls.deleteMany({})
-    if (docs.length > 0) {
-      await ModelCls.insertMany(docs)
+      await tx.delete(table as never)
+      if (docs.length > 0) {
+        await tx.insert(table as never).values(docs as never)
+      }
+      counts[key] = docs.length
     }
-    counts[key] = docs.length
-  }
+  })
 
   res.json({ success: true, imported: counts })
 })

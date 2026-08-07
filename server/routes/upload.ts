@@ -5,7 +5,8 @@ import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { uploadToSpaces } from '../services/s3.js'
 import { processImage } from '../services/thumbnails.js'
-import { Media } from '../models/Media.js'
+import { db } from '../db/postgres.js'
+import { media as mediaTable } from '../db/schema/index.js'
 import { validate } from '../utils/validate.js'
 
 const router = Router()
@@ -40,13 +41,16 @@ router.post('/', requireAuth, adminOnly, upload.single('file'), async (req, res)
     }
 
     // Step 3: Create Media document (must succeed)
-    const media = await Media.create({
-      url, thumbnails, filename: req.file.originalname, key,
-      mimeType: req.file.mimetype, size: req.file.size,
-      width, height, alt: '', tags: [],
-      folder: folderInput || 'images',
-      uploadedBy: req.user?.id || '',
-    })
+    const [media] = await db
+      .insert(mediaTable)
+      .values({
+        url, thumbnails, filename: req.file.originalname, key,
+        mimeType: req.file.mimetype, size: req.file.size,
+        width, height, alt: '', tags: [],
+        folder: folderInput || 'images',
+        uploadedBy: req.user?.id || '',
+      })
+      .returning()
 
     res.json(media)
   } catch (err: unknown) {

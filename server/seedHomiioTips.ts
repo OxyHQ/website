@@ -1,20 +1,17 @@
 /**
  * Non-destructive upsert: ensure Homiio product + Newsroom locales exist,
  * publish Homiio Tips with English as the canonical (default-locale) body,
- * and upsert es/ca Translation docs. Safe for production (no collection wipes).
+ * and upsert es/ca translation rows. Safe for production (nothing is wiped).
  *
  * Usage: MONGO_URI=... bun server/seedHomiioTips.ts
  */
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import mongoose from 'mongoose'
+import { and, count, eq, ne, sql } from 'drizzle-orm'
 import { config } from './config.js'
-import { Product } from './models/Product.js'
-import { NewsroomPost } from './models/NewsroomPost.js'
-import { Media } from './models/Media.js'
-import { Locale } from './models/Locale.js'
-import { Translation } from './models/Translation.js'
+import { closeDatabase, db } from './db/postgres.js'
+import { locales, media, newsroomPosts, products, translations } from './db/schema/index.js'
 
 type LocalizedFields = {
   title: string
@@ -59,23 +56,21 @@ function loadTipsData(): TipsDataFile {
 async function ensureLocales(): Promise<void> {
   for (const loc of DESIRED_LOCALES) {
     if (loc.isDefault) {
-      await Locale.updateMany({ code: { $ne: loc.code } }, { $set: { isDefault: false } })
+      await db.update(locales).set({ isDefault: false }).where(ne(locales.code, loc.code))
     }
-    await Locale.findOneAndUpdate(
-      { code: loc.code },
-      {
-        $set: {
-          code: loc.code,
-          slug: loc.code,
-          name: loc.name,
-          nativeName: loc.nativeName,
-          isDefault: loc.isDefault,
-          enabled: loc.enabled,
-          order: loc.order,
-        },
-      },
-      { upsert: true, new: true },
-    )
+    const values = {
+      code: loc.code,
+      slug: loc.code,
+      name: loc.name,
+      nativeName: loc.nativeName,
+      isDefault: loc.isDefault,
+      enabled: loc.enabled,
+      order: loc.order,
+    }
+    await db
+      .insert(locales)
+      .values(values)
+      .onConflictDoUpdate({ target: locales.code, set: { ...values, updatedAt: new Date() } })
     console.log('Locale upserted:', loc.code, loc.isDefault ? '(default)' : '')
   }
 }
@@ -84,11 +79,11 @@ async function ensureCoverMedia(
   url: string,
   filename: string,
   alt: string,
-): Promise<mongoose.Types.ObjectId> {
-  const existing = await Media.findOne({ url }).select('_id')
-  if (existing) return existing._id
+): Promise<string> {
+  const [existing] = await db.select({ id: media._id }).from(media).where(eq(media.url, url)).limit(1)
+  if (existing) return existing.id
 
-  const doc = await Media.create({
+  const [row] = await db.insert(media).values({
     url,
     filename,
     key: new URL(url).pathname.slice(1) || filename,
@@ -98,8 +93,8 @@ async function ensureCoverMedia(
     tags: ['seed', 'homiio', 'tips'],
     folder: 'seed',
     thumbnails: { sm: '', md: '', lg: '' },
-  })
-  return doc._id
+  }).returning({ id: media._id })
+  return row.id
 }
 
 async function upsertTranslation(
@@ -107,34 +102,29 @@ async function upsertTranslation(
   locale: string,
   fields: LocalizedFields,
 ): Promise<void> {
-  await Translation.findOneAndUpdate(
-    { locale, collectionName: 'newsroom', documentId },
-    {
-      locale,
-      collectionName: 'newsroom',
-      documentId,
-      fields: {
+  const fieldValues = {
         title: fields.title,
         resume: fields.resume,
         description: fields.description,
-        content: fields.content,
-        imageAlt: fields.imageAlt,
-      },
-    },
-    { upsert: true, new: true },
-  )
+    content: fields.content,
+    imageAlt: fields.imageAlt,
+  }
+  await db
+    .insert(translations)
+    .values({ locale, collectionName: 'newsroom', documentId, fields: fieldValues })
+    .onConflictDoUpdate({
+      target: [translations.locale, translations.collectionName, translations.documentId],
+      set: { fields: fieldValues, updatedAt: new Date() },
+    })
 }
 
 async function main() {
   const data = loadTipsData()
-  await mongoose.connect(config.mongoUri)
-  console.log('Connected to MongoDB')
-
   await ensureLocales()
 
-  let product = await Product.findOne({ productId: 'homiio' })
+  let [product] = await db.select().from(products).where(eq(products.productId, 'homiio')).limit(1)
   if (!product) {
-    product = await Product.create({
+    ;[product] = await db.insert(products).values({
       productId: 'homiio',
       name: 'Homiio',
       tagline: 'Rental made easy',
@@ -152,16 +142,16 @@ async function main() {
       showOnStatus: true,
       showInNav: true,
       order: 0,
-    })
+    }).returning()
     console.log('Created Homiio product')
   } else {
-    console.log('Homiio product already exists:', product._id.toString())
+    console.log('Homiio product already exists:', product._id)
   }
 
   for (const slug of data.deleteSlugs) {
-    const deleted = await NewsroomPost.findOneAndDelete({ slug })
+    const [deleted] = await db.delete(newsroomPosts).where(eq(newsroomPosts.slug, slug)).returning({ id: newsroomPosts._id })
     if (deleted) {
-      console.log('Deleted obsolete tip:', slug, deleted._id.toString())
+      console.log('Deleted obsolete tip:', slug, deleted.id)
     } else {
       console.log('Obsolete tip already absent:', slug)
     }
@@ -186,13 +176,13 @@ async function main() {
       publishedAt: new Date(tip.publishedAt),
     }
 
-    const post = await NewsroomPost.findOneAndUpdate(
-      { slug: tip.slug },
-      { $set: payload },
-      { upsert: true, new: true },
-    )
+    const [post] = await db
+      .insert(newsroomPosts)
+      .values(payload)
+      .onConflictDoUpdate({ target: newsroomPosts.slug, set: { ...payload, updatedAt: new Date() } })
+      .returning()
 
-    const documentId = post._id.toString()
+    const documentId = post._id
     for (const locale of TRANSLATION_LOCALES) {
       await upsertTranslation(documentId, locale, tip[locale])
     }
@@ -208,14 +198,19 @@ async function main() {
     )
   }
 
-  const count = await NewsroomPost.countDocuments({
-    categories: 'Tips',
-    products: product._id,
-    status: 'published',
-  })
-  console.log('Published Homiio Tips total:', count)
+  const [totals] = await db
+    .select({ value: count() })
+    .from(newsroomPosts)
+    .where(
+      and(
+        sql`${newsroomPosts.categories} @> ARRAY['Tips']::text[]`,
+        sql`${newsroomPosts.products} @> ARRAY[${product._id}]::text[]`,
+        eq(newsroomPosts.status, 'published'),
+      ),
+    )
+  console.log('Published Homiio Tips total:', Number(totals?.value ?? 0))
 
-  await mongoose.disconnect()
+  await closeDatabase()
 }
 
 main().catch((err: unknown) => {

@@ -1,89 +1,25 @@
-import mongoose, { Schema, Types, type Document } from 'mongoose'
+/* ──────────────────────────────────────────────
+ * The homepage hero's defaults.
+ *
+ * Read by the seed and by the API's hero route. They live here rather than
+ * beside a database model so the values survive a change of storage engine.
+ * ──────────────────────────────────────────── */
 
-/**
- * Card sizes used in the hero carousel grid.
- * Mirrors the union in `src/data/heroCarousel.ts`.
- */
-export type CardSize = '1x1' | '2x1' | '1x2' | '2x2' | '4x2' | '5x2'
-
-export type HeroCard =
-  | { type: 'newsroom'; title: string; image: string; category: string; slug: string }
-  | { type: 'careers'; jobTitle: string; department: string; slug?: string }
-  | { type: 'brand'; variant: 'oxy' | 'fair' }
-  | { type: 'photo'; image: string; alt: string }
-  | { type: 'faircoin' }
-  | { type: 'values'; heading: string; body: string }
-  | { type: 'video'; src: string }
-
-export interface ICarouselSlot {
-  size: CardSize
-  faces: HeroCard[]
+export interface CarouselSlot {
+  size: string
+  faces: unknown
   rotateInterval?: number
   rounded?: boolean
   roundedLeft?: boolean
 }
 
-/**
- * Background media fields can store either a Media document reference
- * (preferred — uploaded through the CMS, gets thumbnails/CDN) or a plain
- * URL string for static assets that ship with the bundle. Routes that read
- * the model populate the Media refs and normalize them to URLs on the way
- * out.
- */
-export type MediaRef = Types.ObjectId | string | null
-
-export interface IHeroContent extends Document {
-  title: string
-  eyebrow: string
-  backgroundVideoWebm: MediaRef
-  backgroundVideoMp4: MediaRef
-  backgroundPoster: MediaRef
-  carouselSlots: ICarouselSlot[]
-  createdAt: Date
-  updatedAt: Date
-}
-
-/**
- * Mixed-type schema for the carousel slots: mongoose can't validate the
- * discriminated union directly, but the REST/MCP layers run zod against
- * `carouselSlotSchema` from `server/validation/hero.ts` before any write,
- * which gives the same guarantees with a more expressive vocabulary.
- *
- * The `faces` field uses a single Mixed schemaType (not an array of
- * schemaTypes) so mongoose accepts arbitrary HeroCard variants while keeping
- * the surrounding TS type strict.
- */
-const CarouselSlotSchema = new Schema<ICarouselSlot>({
-  size: { type: String, required: true },
-  faces: { type: Schema.Types.Mixed, required: true, default: [] },
-  rotateInterval: { type: Number },
-  rounded: { type: Boolean },
-  roundedLeft: { type: Boolean },
-}, { _id: false })
-
-const HeroContentSchema = new Schema<IHeroContent>({
-  title: { type: String, default: '' },
-  eyebrow: { type: String, default: '' },
-  backgroundVideoWebm: { type: Schema.Types.Mixed, ref: 'Media', default: null },
-  backgroundVideoMp4: { type: Schema.Types.Mixed, ref: 'Media', default: null },
-  backgroundPoster: { type: Schema.Types.Mixed, ref: 'Media', default: null },
-  carouselSlots: { type: [CarouselSlotSchema], default: [] },
-}, { timestamps: true })
-
-export const HeroContent = mongoose.model<IHeroContent>('HeroContent', HeroContentSchema)
-
-/**
- * Defaults that match the original hardcoded hero in `src/pages/HomePage.tsx`
- * and `src/data/heroCarousel.ts`. Used to seed-on-first-read so the site
- * renders identically before an admin has touched the CMS.
- */
 export const DEFAULT_HERO_TITLE = 'Creating a future where technology empowers individuals\nto live connected, fulfilling, and sustainable lives.'
 export const DEFAULT_HERO_EYEBROW = 'Built by people who believe in change. Ethical, open, and deeply human.'
 export const DEFAULT_HERO_BG_WEBM = '/images/landing/hero-background.webm'
 export const DEFAULT_HERO_BG_MP4 = '/images/landing/hero-background.mp4'
 export const DEFAULT_HERO_POSTER = '/images/landing/hero-bg.avif'
 
-export const DEFAULT_CAROUSEL_SLOTS: ICarouselSlot[] = [
+export const DEFAULT_CAROUSEL_SLOTS: CarouselSlot[] = [
   {
     size: '1x2',
     rotateInterval: 4000,
@@ -201,54 +137,3 @@ export const DEFAULT_CAROUSEL_SLOTS: ICarouselSlot[] = [
     ],
   },
 ]
-
-/** Background fields that may hold either a Media ObjectId or a static URL. */
-const HERO_MEDIA_PATHS = [
-  'backgroundVideoWebm',
-  'backgroundVideoMp4',
-  'backgroundPoster',
-] as const
-
-/**
- * Whether a Mixed media-ref value is safe to `populate()` as a Media ObjectId.
- * Static URLs (e.g. `/images/landing/hero-background.webm`) must be left alone —
- * Mongoose still tries to cast Mixed+ref values to ObjectId during populate and
- * throws CastError on path strings, which surfaces as HTTP 500 on GET /api/hero.
- */
-function isPopulatableMediaRef(value: unknown): boolean {
-  if (value instanceof Types.ObjectId) return true
-  return typeof value === 'string' && Types.ObjectId.isValid(value) && value.length === 24
-}
-
-/**
- * Populate only the hero media fields that currently hold ObjectIds.
- * Fields storing static URL strings are skipped so populate never CastErrors.
- */
-export async function populateHeroMedia(doc: IHeroContent): Promise<IHeroContent> {
-  const paths = HERO_MEDIA_PATHS.filter((path) => isPopulatableMediaRef(doc.get(path)))
-  if (paths.length === 0) return doc
-  await doc.populate(paths.join(' '))
-  return doc
-}
-
-/**
- * Load the singleton hero document, creating it with sensible defaults
- * (drawn from the original hardcoded values) on first call. Optionally
- * populates Media references so callers can hand the result straight to
- * the frontend without an extra round-trip.
- */
-export async function getOrCreateHero({ populate = true } = {}): Promise<IHeroContent> {
-  const existing = await HeroContent.findOne()
-  if (existing) return populate ? populateHeroMedia(existing) : existing
-
-  const created = await HeroContent.create({
-    title: DEFAULT_HERO_TITLE,
-    eyebrow: DEFAULT_HERO_EYEBROW,
-    backgroundVideoWebm: DEFAULT_HERO_BG_WEBM,
-    backgroundVideoMp4: DEFAULT_HERO_BG_MP4,
-    backgroundPoster: DEFAULT_HERO_POSTER,
-    carouselSlots: DEFAULT_CAROUSEL_SLOTS,
-  })
-  if (!populate) return created
-  return populateHeroMedia(created)
-}

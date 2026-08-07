@@ -1,6 +1,8 @@
 import { Router } from 'express'
+import { and, desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
-import { UserBadge } from '../models/UserBadge.js'
+import { db } from '../db/postgres.js'
+import { userBadges } from '../db/schema/index.js'
 import { BADGE_DEFINITIONS, BADGE_IDS } from '../data/badges.js'
 import { requireAuth } from '../middleware/auth.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
@@ -43,12 +45,15 @@ router.post('/award', requireAuth, adminOnly, async (req, res) => {
   const awardedBy = req.user?.id ?? ''
 
   try {
-    const badge = await UserBadge.findOneAndUpdate(
-      { userId, badgeId },
-      { userId, username, badgeId, awardedAt: new Date(), awardedBy },
-      { upsert: true, new: true },
-    )
-    res.status(201).json(badge.toJSON())
+    const [badge] = await db
+      .insert(userBadges)
+      .values({ userId, username, badgeId, awardedAt: new Date(), awardedBy })
+      .onConflictDoUpdate({
+        target: [userBadges.userId, userBadges.badgeId],
+        set: { username, awardedAt: new Date(), awardedBy },
+      })
+      .returning()
+    res.status(201).json(badge)
   } catch (err) {
     const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to award badge: ${message}` })
@@ -59,7 +64,10 @@ router.post('/award', requireAuth, adminOnly, async (req, res) => {
 router.delete('/:userId/:badgeId', requireAuth, adminOnly, async (req, res) => {
   const { userId, badgeId } = validate(revokeParamsSchema, req.params)
   try {
-    const result = await UserBadge.findOneAndDelete({ userId, badgeId })
+    const [result] = await db
+      .delete(userBadges)
+      .where(and(eq(userBadges.userId, userId), eq(userBadges.badgeId, badgeId)))
+      .returning({ id: userBadges._id })
     if (!result) return res.status(404).json({ error: 'Badge not found' })
     res.json({ success: true })
   } catch (err) {
@@ -75,8 +83,12 @@ router.post('/check/:userId', requireAuth, adminOnly, async (req, res) => {
 
   try {
     await checkAndAwardBadges(userId, username)
-    const badges = await UserBadge.find({ userId }).sort('-awardedAt')
-    res.json(badges.map(b => ({ badgeId: b.badgeId, awardedAt: b.awardedAt })))
+    const badges = await db
+      .select({ badgeId: userBadges.badgeId, awardedAt: userBadges.awardedAt })
+      .from(userBadges)
+      .where(eq(userBadges.userId, userId))
+      .orderBy(desc(userBadges.awardedAt))
+    res.json(badges)
   } catch (err) {
     const message = toErrorMessage(err)
     res.status(500).json({ error: `Failed to check badges: ${message}` })

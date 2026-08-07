@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-06T20:47:03.710Z",
+  "generatedAt": "2026-08-07T01:43:30.056Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -11035,6 +11035,90 @@
               "section": "guides"
             },
             {
+              "slug": "astro-next/architecture/ADR-0001-chromium-integration-model",
+              "title": "ADR-0001 — How Astro source is joined to Chromium",
+              "file": "astro/master/astro-next/architecture/ADR-0001-chromium-integration-model.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/architecture/astro-checkout-mechanism",
+              "title": "The exact mechanism for `//astro` as a deterministic checkout",
+              "file": "astro/master/astro-next/architecture/astro-checkout-mechanism.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/architecture/astro-module-layout",
+              "title": "The initial `//astro` directory structure",
+              "file": "astro/master/astro-next/architecture/astro-module-layout.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/architecture/astro-scheme-hooks",
+              "title": "`astro://` scheme integration — Chromium 146 hook survey",
+              "file": "astro/master/astro-next/architecture/astro-scheme-hooks.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/architecture/clean-checkout-preconditions",
+              "title": "What must be true for a clean checkout to compile `//astro`",
+              "file": "astro/master/astro-next/architecture/clean-checkout-preconditions.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/architecture/downstream-survey",
+              "title": "How other Chromium downstreams keep their delta small",
+              "file": "astro/master/astro-next/architecture/downstream-survey.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/architecture/minimum-chromium-hooks",
+              "title": "The minimum set of Chromium-owned hooks",
+              "file": "astro/master/astro-next/architecture/minimum-chromium-hooks.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/architecture/patch-retirement",
+              "title": "Patch retirement plan",
+              "file": "astro/master/astro-next/architecture/patch-retirement.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/architecture/product-identity-tests",
+              "title": "Product identity: acceptance tests",
+              "file": "astro/master/astro-next/architecture/product-identity-tests.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/architecture/product-manifest",
+              "title": "The Astro product manifest",
+              "file": "astro/master/astro-next/architecture/product-manifest.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/architecture/README",
+              "title": "Astro Next architecture",
+              "file": "astro/master/astro-next/architecture/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/architecture/upstream-allowlist-and-delta-report",
+              "title": "The upstream allowlist and the downstream-delta report",
+              "file": "astro/master/astro-next/architecture/upstream-allowlist-and-delta-report.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "astro-next/baseline/feature-matrix",
               "title": "Product behaviour baseline (feature matrix)",
               "file": "astro/master/astro-next/baseline/feature-matrix.md",
@@ -11087,6 +11171,27 @@
               "slug": "astro-next/baseline/source-inventory",
               "title": "Source inventory",
               "file": "astro/master/astro-next/baseline/source-inventory.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/policy/feature-manifest",
+              "title": "Astro Next feature matrix",
+              "file": "astro/master/astro-next/policy/feature-manifest.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/policy/network-endpoints",
+              "title": "Astro Next network endpoints",
+              "file": "astro/master/astro-next/policy/network-endpoints.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/policy/README",
+              "title": "Astro Next feature and network policy",
+              "file": "astro/master/astro-next/policy/README.md",
               "order": 1000,
               "section": "guides"
             },
