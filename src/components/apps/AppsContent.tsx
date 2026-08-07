@@ -32,7 +32,10 @@ function HeroSection({ products }: { products: ProductRecord[] }) {
   return (
     <section className="relative bg-foreground bg-cover bg-center text-background">
       <div className="container">
-        <div className="grid w-full grid-flow-dense grid-cols-12 gap-gutter py-xl md:py-2xl lg:gap-x-gutter-lg lg:py-3xl">
+        {/* The template's rhythm is 24/32/48, but this page mounts the navbar
+            transparent over the band, so the top has to clear the bar as well.
+            The header measures itself and publishes its real height. */}
+        <div className="grid w-full grid-flow-dense grid-cols-12 gap-gutter pt-[calc(var(--site-header-height)+var(--spacing-xl))] pb-xl md:pt-[calc(var(--site-header-height)+var(--spacing-2xl))] md:pb-2xl lg:gap-x-gutter-lg lg:pt-[calc(var(--site-header-height)+var(--spacing-3xl))] lg:pb-3xl">
           <div className="col-span-full flex flex-wrap justify-between lg:col-span-4 xl:col-span-6">
             <div className="flex flex-col gap-2xs pb-sm sm:gap-2xs md:gap-xs">
               <h1 className="text-balance text-display-6 lg:pb-xl lg:text-heading-3xl xl:pb-2xl xl:text-display-6">

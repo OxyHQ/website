@@ -130,9 +130,9 @@ export default function AppDetailContent() {
 
       <div className="grid grid-cols-12 items-start gap-gutter lg:gap-x-gutter-lg">
         {/* ── The app itself, pinned ── */}
-        <div className="col-span-full mb-8 lg:sticky lg:top-[calc(var(--site-header-height)+2rem)] lg:col-span-3 lg:mb-0">
-          <section className="flex flex-col gap-gutter-lg xs:flex-row lg:flex-col">
-            <div className="flex grow flex-col gap-gutter-lg">
+        <div className="col-span-full mb-lg lg:sticky lg:top-[calc(var(--site-header-height)+var(--spacing-xl))] lg:col-span-3 lg:mb-0">
+          <section className="flex flex-col gap-xl xs:flex-row lg:flex-col">
+            <div className="flex grow flex-col gap-xl">
               <div className="flex items-stretch gap-md">
                 <figure className="relative size-3xl shrink-0 overflow-hidden rounded-radius-8 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] lg:size-app-icon-sm">
                   <AppIcon product={product} />
