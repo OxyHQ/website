@@ -62,13 +62,29 @@ jobs:
           docker push "$IMG:${{ github.sha }}"
           docker push "$IMG:latest"
 
+      # `wait services-stable` is NOT a deploy check: when tasks fail to start,
+      # the circuit breaker rolls back to the previous deployment and the
+      # service becomes stable again — on the OLD image — so the wait returns 0
+      # and the job goes green on a deploy that never happened. That is exactly
+      # what it did on 2026-08-07 while the Postgres image was crashing at boot
+      # for want of DATABASE_URL. So the deployment this job started is asked,
+      # by id, whether it is the one still running.
       - name: Deploy to ECS (rolling; skipped until the service exists)
         run: |
           STATUS=$(aws ecs describe-services --cluster "$CLUSTER" --services "$APP" --query 'services[0].status' --output text 2>/dev/null || echo NONE)
-          if [ "$STATUS" = "ACTIVE" ]; then
-            aws ecs update-service --cluster "$CLUSTER" --service "$APP" --force-new-deployment >/dev/null
-            aws ecs wait services-stable --cluster "$CLUSTER" --services "$APP"
-            echo "deployed $APP"
-          else
+          if [ "$STATUS" != "ACTIVE" ]; then
             echo "ECS service $APP not created yet — image is in ECR, skipping deploy"
+            exit 0
           fi
+          ID=$(aws ecs update-service --cluster "$CLUSTER" --service "$APP" --force-new-deployment \
+            --query 'service.deployments[?status==`PRIMARY`].id | [0]' --output text)
+          echo "deployment $ID"
+          aws ecs wait services-stable --cluster "$CLUSTER" --services "$APP" || true
+          read -r LIVE STATE REASON <<<"$(aws ecs describe-services --cluster "$CLUSTER" --services "$APP" \
+            --query 'services[0].deployments[?status==`PRIMARY`].[id,rolloutState,rolloutStateReason] | [0]' --output text)"
+          if [ "$LIVE" != "$ID" ] || [ "$STATE" != "COMPLETED" ]; then
+            echo "::error::deploy did not take: started $ID, live $LIVE ($STATE — $REASON)"
+            aws ecs describe-services --cluster "$CLUSTER" --services "$APP" --query 'services[0].events[0:8].message' --output text
+            exit 1
+          fi
+          echo "deployed $APP ($STATE)"
