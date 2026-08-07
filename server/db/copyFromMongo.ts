@@ -1,6 +1,6 @@
 import { MongoClient, ObjectId } from 'mongodb'
 import { count } from 'drizzle-orm'
-import type { PgTable } from 'drizzle-orm/pg-core'
+import { getTableConfig, type PgTable } from 'drizzle-orm/pg-core'
 import { closeDatabase, db } from './postgres.js'
 import * as schema from './schema/index.js'
 
@@ -91,9 +91,29 @@ function projectOntoTable(doc: Record<string, unknown>, columns: Set<string>): R
   return row
 }
 
+/**
+ * The columns of `table` that carry a foreign key, under their JS names.
+ *
+ * Matched by object identity rather than by column name: `drizzle()` is
+ * configured with `casing: 'snake_case'`, so a column's SQL name is resolved at
+ * query time and reading `.name` here would compare the wrong string.
+ */
+function referenceColumns(table: PgTable): Set<string> {
+  const keyOf = new Map(Object.entries(table as unknown as Record<string, unknown>).map(([key, value]) => [value, key]))
+  const keys = new Set<string>()
+  for (const foreignKey of getTableConfig(table).foreignKeys) {
+    for (const column of foreignKey.reference().columns) {
+      const key = keyOf.get(column)
+      if (key) keys.add(key)
+    }
+  }
+  return keys
+}
+
 async function copyCollection(collectionName: string, tableKey: keyof typeof schema): Promise<{ read: number; written: number }> {
   const table = schema[tableKey] as never
   const columns = new Set(Object.keys(table as unknown as Record<string, unknown>))
+  const references = referenceColumns(table)
   const docs = await mongo.db().collection(collectionName).find({}).toArray()
 
   let written = 0
@@ -101,6 +121,19 @@ async function copyCollection(collectionName: string, tableKey: keyof typeof sch
     const normalised = normalise(doc) as Record<string, unknown>
     const row = projectOntoTable(normalised, columns)
     if (!row._id) continue
+
+    // Mongo enforced no referential integrity, so a field the schema calls a
+    // reference can hold anything — the newsroom's oldest posts keep an
+    // absolute image URL where a media id belongs. Postgres does enforce it, so
+    // one such value would fail the insert and take the rest of the collection
+    // with it. They are copied as null, which is what Mongo already served for
+    // them, and every one is named here rather than dropped quietly.
+    for (const [key, value] of Object.entries(row)) {
+      if (!references.has(key) || value === null || value === undefined) continue
+      if (/^[0-9a-f]{24}$/.test(String(value))) continue
+      console.log(`[copy]   ${collectionName}.${key} of ${row.slug ?? row._id}: not a reference, copied as null (${String(value).slice(0, 70)})`)
+      row[key] = null
+    }
     // Everything but the key is refreshed, so a re-run picks up edits made in
     // /admin since the previous pass.
     const updates = Object.fromEntries(Object.entries(row).filter(([key]) => key !== '_id'))

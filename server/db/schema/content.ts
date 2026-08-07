@@ -94,9 +94,13 @@ export const newsroomPosts = pgTable(
     resume: text().notNull().default(''),
     description: text().notNull().default(''),
     content: text().notNull().default(''),
-    coverImage: text()
-      .notNull()
-      .references(() => media._id),
+    // Nullable, like every other cover on this file: five of the 47 posts
+    // imported from the old Framer site hold an absolute framerusercontent URL
+    // here rather than a media id, and Mongo already served those as `null`
+    // (Mongoose cannot cast a URL to an ObjectId ref). A `not null` column
+    // would have made the copy fail on data the site has been serving for
+    // years.
+    coverImage: text().references(() => media._id, { onDelete: 'set null' }),
     imageAlt: text(),
     oxyUserId: text(),
     authorUsername: text(),
