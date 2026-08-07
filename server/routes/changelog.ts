@@ -83,7 +83,10 @@ router.get('/', localeMiddleware, async (req, res) => {
       })
       .from(changelogEntries)
       .where(isNotNull(changelogEntries.repoOwner))
-      .orderBy(asc(changelogEntries.repoDisplayName), asc(changelogEntries._id)),
+      // No `_id` tiebreaker here, unlike every other list: this projection is
+      // already DISTINCT, so ordering by a column outside the select list is
+      // rejected outright — and a unique id would defeat the DISTINCT anyway.
+      .orderBy(asc(changelogEntries.repoDisplayName)),
   ])
   const total = Number(totals?.value ?? 0)
   const entries = await populate(rows, { media })

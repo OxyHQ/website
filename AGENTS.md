@@ -23,6 +23,19 @@ bun run sync-changelog  # sync changelog to src/
 
 - **Frontend**: CF Pages project `oxy-website` (`dist/` output) via `.github/workflows/deploy.yml`. `VITE_API_URL=https://website-api.oxy.so`.
 - **Backend**: ECS Fargate (`~/Oxy/oxy-infra`) at `website-api.oxy.so` / `api.website.oxy.so`. Dockerfile `oven/bun:1.3.14-alpine`; CMD `bun server/index.ts` (TypeScript runs directly via Bun — no compile step).
+- **A green deploy job is not a deploy.** The service carries a deployment
+  circuit breaker with rollback, so when tasks fail to start ECS reverts and the
+  service is stable again — on the OLD image — and `ecs wait services-stable`
+  exits 0. Confirm what is actually serving (`describe-services` PRIMARY
+  deployment id + `rolloutState`, or the running tasks' image digest) before
+  believing a green run.
+- **Editing `.github/workflows/` can block every subsequent run.** GitHub
+  rescans a changed workflow and can decide it "may be malicious", after which
+  runs sit at `action_required` until someone with write access clicks approve
+  in the UI — there is no API for it (`/actions/runs/<id>/approve` is the
+  fork-PR endpoint and answers 403). The scan is per file version, so reverting
+  to bytes that already ran gets deploys moving again. Worth knowing before
+  editing this file with a broken production waiting on the next deploy.
 
 ## Database
 
@@ -59,6 +72,26 @@ missing URL should fail at boot rather than quietly connect somewhere else.
   In production it runs as a one-off ECS task via the **Copy Mongo to Postgres**
   workflow, because neither database is reachable from a laptop or a GitHub
   runner. Steps and the cutover order: `docs/POSTGRES-CUTOVER.md`.
+- **Every list query ends on `_id`.** Mongo broke ties on the sort keys by
+  insertion order, so a list sorted on `order` alone came back in a fixed
+  sequence; Postgres returns heap order, which moves when a row is rewritten. An
+  edit in /admin could therefore reshuffle a list, and on a tied sort with
+  `offset`/`limit` a row can appear on two pages or on neither. `_id` is unique
+  and, being an ObjectId, ascends with creation — the order Mongo was giving.
+- **Never bind a JS array into a raw `sql` fragment.** `sql\`x = ANY(${ids})\``
+  sends the array as ONE scalar parameter and Postgres reads the first element
+  as an array literal (`malformed array literal`, 22P02) — it 500'd every
+  newsroom request for the first hour on Postgres. Use `inArray`. A scalar into
+  `@> ARRAY[${tag}]::text[]` is fine and is how the tag/category filters work.
+- **Mongo cast away values that Postgres passes through.** A newsroom cover
+  holding an absolute URL, a job description holding text where the Mongoose
+  schema declared blocks: Mongo served `null` and `[]`, Postgres serves the
+  value. The frontend already tolerates both shapes (`resolveMediaUrl`,
+  `Array.isArray(job.description)`), so this reads as content appearing rather
+  than breaking — but check the shape before assuming a field is what the old
+  schema said. The copier resolves foreign-key columns for the same reason: an
+  id-shaped value goes through, anything else is copied as null and named in the
+  log.
 - **`mongodb` is pinned to 6, and is a runtime dependency, only for that copy.**
   Driver 7 pulls a `bson` that calls `v8.startupSnapshot.isBuildingSnapshot()`
   at import time, which Bun does not implement — the copier dies before it opens
