@@ -24,6 +24,7 @@ const de: Translations = {
     next: 'Weiter',
     previous: 'Zurück',
     search: 'Suchen',
+    searchApps: 'Apps, Anleitungen und mehr durchsuchen',
     closeSearch: 'Suche schließen',
     noResults: 'Keine Ergebnisse.',
     contactUs: 'Kontakt',

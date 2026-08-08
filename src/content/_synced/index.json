@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-07T13:23:17.517Z",
+  "generatedAt": "2026-08-08T09:49:15.310Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -11171,6 +11171,13 @@
               "slug": "astro-next/baseline/security-baseline",
               "title": "WebUI security baseline",
               "file": "astro/master/astro-next/baseline/security-baseline.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "astro-next/baseline/settings-parity",
+              "title": "Settings parity",
+              "file": "astro/master/astro-next/baseline/settings-parity.md",
               "order": 1000,
               "section": "guides"
             },

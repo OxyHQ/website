@@ -6,7 +6,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HeroCarousel from '../components/homepage/HeroCarousel'
 import { heroCarouselSlots } from '../data/heroCarousel'
-import { useHero, usePage, type HeroMediaRef, type PageSection, useProducts, resolveProductLogoUrl, type ProductRecord } from '../api/hooks'
+import { useHero, usePage, type HeroMediaRef, type PageSection, useProducts, type ProductRecord } from '../api/hooks'
 import { getStaticChangelog } from '../content/changelog-loader'
 import RollingNumber from '../components/ui/RollingNumber'
 import { FEATURES } from '../constants'
@@ -860,44 +860,6 @@ const TESTIMONIALS = [
 /* ------------------------------------------------------------------ */
 
 /** A product's own logo, or its letter on its brand colour. */
-function ProductMark({ product }: { product: ProductRecord }) {
-  const logo = resolveProductLogoUrl(product)
-  if (logo) {
-    return (
-      <img
-        src={logo}
-        alt=""
-        aria-hidden="true"
-        width={44}
-        height={44}
-        loading="lazy"
-        decoding="async"
-        className="size-11 shrink-0 rounded-xl object-cover"
-      />
-    )
-  }
-  return (
-    <span
-      aria-hidden="true"
-      className="flex size-11 shrink-0 items-center justify-center rounded-xl font-semibold text-lg"
-      style={{ backgroundColor: product.brand, color: product.brandForeground ?? '#fff' }}
-    >
-      {product.mark}
-    </span>
-  )
-}
-
-/**
- * The ecosystem, as the list of apps it actually is.
- *
- * This replaces a tabbed panel that showed one app at a time behind a stock
- * photo, a typewriter animation and a description: six of the nine apps shared
- * three photos between them, the inactive tabs sat at 30% opacity, and every
- * one of them linked to the same page. The products come from the same records
- * that drive /technologies, the navbar and /status, so nothing here can drift
- * out of sync with them, and each card opens the app it names.
- */
-/** Category order first, then the product's own, the same sequence /technologies uses. */
 function ecosystemOrder(product: ProductRecord): [number, number] {
   const category = typeof product.category === 'object' && product.category !== null ? product.category : null
   return [category?.order ?? Number.MAX_SAFE_INTEGER, product.order ?? 0]

@@ -24,6 +24,7 @@ const ko: Translations = {
     next: '다음',
     previous: '이전',
     search: '검색',
+    searchApps: '앱, 가이드 등 검색',
     closeSearch: '검색 닫기',
     noResults: '결과 없음.',
     contactUs: '문의하기',

@@ -24,6 +24,7 @@ const pt: Translations = {
     next: 'Seguinte',
     previous: 'Anterior',
     search: 'Pesquisar',
+    searchApps: 'Pesquisar apps, guias e mais',
     closeSearch: 'Fechar pesquisa',
     noResults: 'Sem resultados.',
     contactUs: 'Contacte-nos',
