@@ -209,7 +209,7 @@ function ConnectStep() {
                 <span className="text-sm font-semibold text-foreground">
                   {connectorLabel(connector.name, connector.id)}
                 </span>
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-body-xs text-muted-foreground">
                   {connectorHint(connector.id)}
                 </span>
               </span>
@@ -432,7 +432,7 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
             className="w-full bg-transparent text-[44px] font-semibold leading-[1.05] tracking-tight text-foreground placeholder:text-muted-foreground/40 focus:outline-none sm:text-[52px]"
           />
           <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-label-sm font-bold text-white">
               W
             </span>
             <span className="text-sm font-semibold text-foreground">WFAIR</span>
@@ -443,7 +443,7 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
             type="button"
             onClick={handleMax}
             disabled={balanceWei === 0n}
-            className="rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary transition-colors hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full bg-primary/10 px-2.5 py-1 text-body-xs font-semibold text-primary transition-colors hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Max
           </button>
@@ -456,7 +456,7 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
                 type="button"
                 onClick={() => setAmount(display)}
                 disabled={balanceWei === 0n}
-                className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-full bg-muted px-2.5 py-1 text-body-xs font-semibold text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {pct}%
               </button>
@@ -485,13 +485,13 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
             {amount.trim().length > 0 && amountValid ? amount : '0'}
           </span>
           <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
+            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-body-xs font-bold text-primary-foreground">
               F
             </span>
             <span className="text-sm font-semibold text-foreground">FAIR</span>
           </div>
         </div>
-        <p className="mt-2 text-[11px] text-muted-foreground">
+        <p className="mt-2 text-body-xs text-muted-foreground">
           1 WFAIR = 1 FAIR. No fees from the bridge, only Base network gas to sign the burn.
         </p>
       </div>
@@ -515,10 +515,10 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
             value={destination}
             onChange={(e) => setDestination(e.target.value)}
             onBlur={() => setTouched((t) => ({ ...t, destination: true }))}
-            className="w-full bg-transparent font-mono text-[13px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+            className="w-full bg-transparent font-mono text-body-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
           />
         </div>
-        <div className="mt-2 flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+        <div className="mt-2 flex items-center justify-between gap-2 text-body-xs text-muted-foreground">
           <span>
             No wallet?{' '}
             <a
@@ -615,7 +615,7 @@ function StatusStep({ burn, onReset }: StatusStepProps) {
             {formatUnits(burn.amountWei, WFAIR_DECIMALS)}
           </span>
           <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-label-sm font-bold text-white">
               W
             </span>
             <span className="text-sm font-semibold text-foreground">WFAIR</span>
@@ -633,7 +633,7 @@ function StatusStep({ burn, onReset }: StatusStepProps) {
       </div>
 
       <div className="rounded-2xl border border-border bg-background/40 p-3.5">
-        <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        <div className="text-label-sm font-medium uppercase tracking-wider text-muted-foreground">
           Burn transaction
         </div>
         <a
@@ -670,7 +670,7 @@ function UnwrapFailed({
     <div className="flex flex-col gap-4">
       <ErrorBanner message="The bridge marked this redemption as FAILED. Reach out to support with your burn tx hash." />
       <div className="rounded-2xl border border-border bg-background/60 p-3.5">
-        <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        <div className="text-label-sm font-medium uppercase tracking-wider text-muted-foreground">
           Burn transaction
         </div>
         <p className="mt-1 break-all font-mono text-xs text-foreground">{burn.txHash}</p>
@@ -714,7 +714,7 @@ function UnwrapSuccess({
       </div>
 
       <div className="w-full rounded-2xl border border-border bg-background/60 p-3.5 text-left">
-        <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        <div className="text-label-sm font-medium uppercase tracking-wider text-muted-foreground">
           Sent to
         </div>
         <p className="mt-1 break-all font-mono text-xs text-foreground">
@@ -851,7 +851,7 @@ function UnwrapTimeline({ status }: { status: WithdrawalStatusResponse | null | 
                   href={`${FAIR_EXPLORER_BASE}/tx/${encodeURIComponent(status.fairTxid)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-1 inline-flex items-center gap-1 font-mono text-[11px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                  className="mt-1 inline-flex items-center gap-1 font-mono text-body-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
                 >
                   {shortHash(status.fairTxid)}
                   <ExternalLink aria-hidden className="h-2.5 w-2.5" />
@@ -909,7 +909,7 @@ function ConnectedPill({
 
 function LiveDot({ active }: { active: boolean }) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+    <span className="inline-flex items-center gap-1.5 text-label-sm uppercase tracking-wider">
       <span className="relative flex h-2 w-2">
         {active ? (
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />

@@ -61,7 +61,7 @@ export default function AppShell({
         {/* Header */}
         <header className="mb-5 flex flex-col items-center text-center sm:mb-6">
           {eyebrow ? (
-            <span className="mb-2.5 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
+            <span className="mb-2.5 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-label-sm font-semibold uppercase tracking-wider text-primary">
               {eyebrow}
             </span>
           ) : null}
@@ -69,7 +69,7 @@ export default function AppShell({
             {title}
           </h1>
           {subtitle ? (
-            <p className="mt-1.5 max-w-[380px] text-pretty text-[13px] text-muted-foreground">
+            <p className="mt-1.5 max-w-[380px] text-pretty text-body-sm text-muted-foreground">
               {subtitle}
             </p>
           ) : null}
@@ -80,7 +80,7 @@ export default function AppShell({
         {steps && steps.length > 1 ? (
           <nav
             aria-label="Progress"
-            className="mb-3 flex items-center justify-center gap-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
+            className="mb-3 flex items-center justify-center gap-2 text-label-sm font-medium uppercase tracking-wider text-muted-foreground"
           >
             {steps.map((step, idx) => {
               const done = idx < currentStep
@@ -97,8 +97,8 @@ export default function AppShell({
                           : 'border-border bg-background/60 text-muted-foreground/70',
                     ].join(' ')}
                   >
-                    <span className="text-[10px]">{idx + 1}</span>
-                    <span className="ml-1.5 hidden text-[10px] sm:inline">{step.label}</span>
+                    <span className="text-label-sm">{idx + 1}</span>
+                    <span className="ml-1.5 hidden text-label-sm sm:inline">{step.label}</span>
                   </span>
                   {idx < steps.length - 1 ? (
                     <span

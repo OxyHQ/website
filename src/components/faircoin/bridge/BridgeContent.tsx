@@ -115,7 +115,7 @@ function BridgeHero() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary"
+            className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-label-sm font-semibold uppercase tracking-[0.18em] text-primary"
           >
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
@@ -195,7 +195,7 @@ function BridgeFlowSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-label-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground"
             >
               How it works
             </motion.span>
@@ -241,7 +241,7 @@ function ApiBrowser() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-label-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground"
           >
             HTTP API
           </motion.span>
@@ -324,7 +324,7 @@ function MethodChip({ method }: { method: Method }) {
       : 'border-blue-500/30 bg-blue-500/15 text-blue-700 dark:text-blue-300'
   return (
     <span
-      className={`inline-flex h-6 items-center rounded-md border px-2 font-mono text-[11px] font-bold tracking-wider ${tone}`}
+      className={`inline-flex h-6 items-center rounded-md border px-2 font-mono text-body-xs font-bold tracking-wider ${tone}`}
     >
       {method}
     </span>
@@ -345,7 +345,7 @@ function CurlBlock({ value }: { value: string }) {
   }, [value])
   return (
     <div className="flex items-start justify-between gap-3 px-5 py-3">
-      <pre className="flex-1 overflow-x-auto font-mono text-[11px] leading-relaxed text-foreground/80">
+      <pre className="flex-1 overflow-x-auto font-mono text-body-xs leading-relaxed text-foreground/80">
         <code>{value}</code>
       </pre>
       <button

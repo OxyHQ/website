@@ -304,7 +304,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
             className="w-full bg-transparent text-[44px] font-semibold leading-[1.05] tracking-tight text-foreground placeholder:text-muted-foreground/40 focus:outline-none sm:text-[52px]"
           />
           <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
+            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-body-xs font-bold text-primary-foreground">
               F
             </span>
             <span className="text-sm font-semibold text-foreground">FAIR</span>
@@ -320,7 +320,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
                   type="button"
                   onClick={() => setAmount(preset)}
                   className={[
-                    'rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors',
+                    'rounded-full px-2.5 py-1 text-body-xs font-semibold transition-colors',
                     active
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground',
@@ -372,7 +372,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
                 ].join(' ')}
               >
                 <span className="text-sm font-semibold text-foreground">{option.label}</span>
-                <span className="text-[11px] text-muted-foreground">{option.hint}</span>
+                <span className="text-body-xs text-muted-foreground">{option.hint}</span>
               </button>
             )
           })}
@@ -398,10 +398,10 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             onBlur={() => setTouched((t) => ({ ...t, address: true }))}
-            className="w-full bg-transparent font-mono text-[13px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+            className="w-full bg-transparent font-mono text-body-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
           />
         </div>
-        <div className="mt-2 flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+        <div className="mt-2 flex items-center justify-between gap-2 text-body-xs text-muted-foreground">
           <span>
             No wallet?{' '}
             <a
@@ -493,13 +493,13 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
             {quote.paymentAmountFormatted}
           </span>
           <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-popover/80 py-1.5 pl-1.5 pr-3">
-            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+            <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-label-sm font-bold text-white">
               $
             </span>
             <span className="text-sm font-semibold text-foreground">{quote.paymentSymbol}</span>
           </div>
         </div>
-        <p className="mt-2 text-[11px] text-muted-foreground">
+        <p className="mt-2 text-body-xs text-muted-foreground">
           On {quote.paymentNetworkLabel}. Other networks will be lost.
         </p>
       </div>
@@ -559,9 +559,9 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
 
       {/* Footer destination + reset */}
       <div className="flex flex-col gap-2.5 rounded-2xl border border-border bg-background/40 p-3.5">
-        <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted-foreground">
+        <div className="flex items-center justify-between text-label-sm uppercase tracking-wider text-muted-foreground">
           <span>Destination</span>
-          <span className="font-mono text-[11px] text-foreground/80">
+          <span className="font-mono text-body-xs text-foreground/80">
             {shortAddress(quote.fairDestinationAddress)}
           </span>
         </div>
@@ -614,7 +614,7 @@ function SuccessStep({
       </div>
 
       <div className="w-full rounded-2xl border border-border bg-background/60 p-3.5 text-left">
-        <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        <div className="text-label-sm font-medium uppercase tracking-wider text-muted-foreground">
           Sent to
         </div>
         <p className="mt-1 break-all font-mono text-xs text-foreground">
@@ -703,7 +703,7 @@ function Countdown({ secondsRemaining }: { secondsRemaining: number }) {
   return (
     <span
       className={[
-        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold tabular-nums',
+        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-body-xs font-semibold tabular-nums',
         warn
           ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300'
           : 'bg-muted text-muted-foreground',
@@ -717,7 +717,7 @@ function Countdown({ secondsRemaining }: { secondsRemaining: number }) {
 
 function LiveDot({ active }: { active: boolean }) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+    <span className="inline-flex items-center gap-1.5 text-label-sm uppercase tracking-wider">
       <span className="relative flex h-2 w-2">
         {active ? (
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
@@ -754,7 +754,7 @@ function CopyableValue({ label, value, monospace }: CopyableValueProps) {
   }, [value])
   return (
     <div className="w-full rounded-xl border border-border bg-popover/60 p-3">
-      <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+      <div className="text-label-sm font-medium uppercase tracking-wider text-muted-foreground">
         {label}
       </div>
       <div className="mt-1 flex items-center gap-2">
@@ -873,7 +873,7 @@ function TxHashLink({ hash, chain }: { hash: string; chain: 'base' | 'fair' }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="mt-1 inline-flex items-center gap-1 font-mono text-[11px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+      className="mt-1 inline-flex items-center gap-1 font-mono text-body-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
     >
       {shortHash(hash)}
       <ExternalLink aria-hidden className="h-2.5 w-2.5" />

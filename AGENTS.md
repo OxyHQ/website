@@ -196,5 +196,15 @@ rendered through the app's own `ArticleMarkdown`.
 
 ## Rules
 
+- **`tsc --noEmit` is NOT the check this project builds with.** `bun run build`
+  runs `tsc -b`, which builds the referenced projects, and it sees errors the
+  flat check does not — a locale missing a key the shared type requires
+  (TS2741), an unused declaration (TS6133). The frontend build failed on `main`
+  for four commits while `tsc --noEmit` passed locally every time. Run
+  `bunx tsc -b`, or the whole `bun run build`, before pushing.
+- **Adding a key to `src/lib/i18n/locales/` means adding it to all eleven.** The
+  locale type requires every key, so en/es/ca alone is a build failure, not a
+  fallback. Translate it: a placeholder or a label is read by whoever opens the
+  thing.
 - **MCP auth token**: passed as a request header ONLY — never as a query string parameter.
 - **Backend auth middleware**: do not add new local auth middleware. Use `@oxyhq/core/server` (`createOxyAuthMiddleware` / `getRequiredOxyUserId`) for all new protected routes.
