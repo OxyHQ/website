@@ -26,7 +26,7 @@ function NewBadge() {
 function NewBadgeInner() {
   const { t } = useTranslation()
   return (
-    <div className="ml-1.5 rounded-[10px] bg-primary px-1.5 py-1 font-normal text-[10px] text-primary-foreground leading-[7px] tracking-normal">
+    <div className="ml-1.5 rounded-[10px] bg-primary px-1.5 py-1 font-normal text-label-sm text-primary-foreground leading-[7px] tracking-normal">
       {t('common.new')}
     </div>
   )

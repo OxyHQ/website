@@ -165,11 +165,11 @@ export default function MediaAdmin() {
                 ) : (
                   <div className="flex size-full flex-col items-center justify-center gap-1 p-2">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="size-8 text-muted-foreground"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
-                    <span className="text-[10px] text-muted-foreground truncate w-full text-center">{item.filename}</span>
+                    <span className="text-label-sm text-muted-foreground truncate w-full text-center">{item.filename}</span>
                   </div>
                 )}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2 opacity-0 transition-opacity group-hover:opacity-100">
-                  <p className="truncate text-[10px] text-white">{item.filename}</p>
+                  <p className="truncate text-label-sm text-white">{item.filename}</p>
                 </div>
               </button>
             )

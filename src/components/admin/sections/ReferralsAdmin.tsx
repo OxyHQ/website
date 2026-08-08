@@ -303,7 +303,7 @@ export default function ReferralsAdmin() {
                       <div className="flex items-center gap-2">
                         <span className="truncate text-sm font-medium text-foreground">{referral.name}</span>
                         {referral.status !== 'active' && (
-                          <span className="rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                          <span className="rounded-full border border-border px-2 py-0.5 text-label-sm uppercase tracking-wider text-muted-foreground">
                             {referral.status}
                           </span>
                         )}

@@ -29,7 +29,7 @@ export default function Badge({ variant = 'default', children }: BadgeProps) {
   return (
     <span
       className={cn(
-        'not-prose ml-2 inline-flex items-center rounded-full border px-2 py-0.5 align-middle text-[10px] font-semibold uppercase tracking-wider',
+        'not-prose ml-2 inline-flex items-center rounded-full border px-2 py-0.5 align-middle text-label-sm font-semibold uppercase tracking-wider',
         STYLES[variant],
       )}
     >

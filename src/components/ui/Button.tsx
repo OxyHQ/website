@@ -23,7 +23,7 @@ type ButtonProps = ButtonAsButton | ButtonAsLink
 
 const sizeClasses: Record<Size, string> = {
   sm: 'h-8 gap-x-1.5 rounded-full px-3 text-sm',
-  md: 'h-9 gap-x-1.5 rounded-full px-4 text-[15px]',
+  md: 'h-9 gap-x-1.5 rounded-full px-4 text-body-md',
   lg: 'h-11.5 gap-x-2 rounded-full px-5 text-base',
 }
 

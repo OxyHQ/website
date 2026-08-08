@@ -23,7 +23,7 @@ export default function HomiioFAQ() {
                 aria-expanded={isOpen}
                 className="flex w-full items-center justify-between gap-4 px-5 py-3.5 text-left"
               >
-                <span className="text-[15px] font-semibold text-neutral-900">{faq.question}</span>
+                <span className="text-body-md font-semibold text-neutral-900">{faq.question}</span>
                 <motion.span animate={{ rotate: isOpen ? 45 : 0 }} transition={{ duration: 0.2 }} className="shrink-0">
                   <Plus weight="bold" className="h-4 w-4 text-neutral-700" />
                 </motion.span>

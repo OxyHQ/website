@@ -292,7 +292,7 @@ function SimilarMatch({ match }: { match: FeatureRequestData }) {
         }`}
       >
         <ChevronUp className="h-4 w-4" />
-        <span className="text-[11px] font-semibold">{match.totalVotes}</span>
+        <span className="text-body-xs font-semibold">{match.totalVotes}</span>
       </button>
 
       <div className="min-w-0 flex-1">

@@ -45,7 +45,7 @@ export default function FeatureCard({ feature, onVote, hideApp = false }: Featur
         >
           <ChevronUp className="h-5 w-5" />
         </button>
-        <span className={`text-[13px] font-semibold ${feature.userVoted ? 'text-primary' : 'text-muted-foreground'}`}>
+        <span className={`text-body-sm font-semibold ${feature.userVoted ? 'text-primary' : 'text-muted-foreground'}`}>
           {feature.totalVotes}
         </span>
       </div>

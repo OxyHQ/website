@@ -82,7 +82,7 @@ export default function DocsIntroPage() {
                         <div className="flex items-center justify-between mb-1">
                           <span className="font-semibold text-foreground">{pkg.displayName}</span>
                           {pkg.versioned ? (
-                            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                            <span className="text-label-sm uppercase tracking-wider text-muted-foreground">
                               v{pkg.latestVersion}
                             </span>
                           ) : null}

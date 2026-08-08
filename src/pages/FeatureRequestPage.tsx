@@ -209,7 +209,7 @@ function VoteControl({ feature }: { feature: FeatureRequestData }) {
       <span className={`text-base font-semibold ${feature.userVoted ? 'text-primary' : 'text-muted-foreground'}`}>
         {feature.totalVotes}
       </span>
-      <span className="text-[11px] text-muted-foreground">
+      <span className="text-body-xs text-muted-foreground">
         {feature.totalVotes === 1 ? 'vote' : 'votes'}
       </span>
     </div>

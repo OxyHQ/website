@@ -89,7 +89,7 @@ export default function SettingsAppearance() {
                       }`}
                       style={{ backgroundColor: preset.hex }}
                     />
-                    <span className="text-[11px] capitalize text-muted-foreground leading-none">
+                    <span className="text-body-xs capitalize text-muted-foreground leading-none">
                       {name}
                     </span>
                   </button>

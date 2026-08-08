@@ -90,7 +90,7 @@ export default function FeatureBoardPage() {
   const proposeButton = canPropose ? (
     <button
       onClick={handleProposeClick}
-      className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+      className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
     >
       <Plus className="h-3.5 w-3.5" />
       Propose

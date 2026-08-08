@@ -39,7 +39,7 @@ export function SettingsPanel({
 
   return (
     <div className={`${className} p-2`}>
-      <p className="mb-1 px-2 pt-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <p className="mb-1 px-2 pt-1 text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
         {t('common.theme')}
       </p>
       <div className="grid grid-cols-2 gap-1.5">

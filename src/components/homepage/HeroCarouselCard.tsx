@@ -62,7 +62,7 @@ function NewsroomFace({ card, size }: { card: Extract<HeroCard, { type: 'newsroo
       <img src={card.image} alt={card.title} className="absolute inset-0 h-full w-full object-cover" width={800} height={600} loading="lazy" decoding="async" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-purple-900/30" />
       <div className={`absolute bottom-0 left-0 right-0 ${large ? 'p-4 lg:p-5' : 'p-2.5 lg:p-3'}`}>
-        <span className={`mb-0.5 block truncate font-bold uppercase tracking-wider text-purple-200 ${large ? 'text-[10px] lg:text-xs' : 'text-[9px] lg:text-[10px]'}`}>{card.category}</span>
+        <span className={`mb-0.5 block truncate font-bold uppercase tracking-wider text-purple-200 ${large ? 'text-label-sm lg:text-xs' : 'text-[9px] lg:text-[10px]'}`}>{card.category}</span>
         <p className={`font-display line-clamp-4 font-bold leading-snug ${large ? 'text-lg lg:text-xl' : 'text-sm lg:text-base'}`}>{card.title}</p>
       </div>
     </Link>
@@ -222,7 +222,7 @@ function FairCoinFace() {
             decoding="async"
           />
           <div className="flex flex-1 flex-col justify-end p-3 lg:p-4">
-            <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-green-400 lg:text-[11px]">
+            <span className="mb-0.5 block text-label-sm font-bold uppercase tracking-wider text-green-400 lg:text-label-sm">
               {newsDate}
             </span>
             <p className="font-display line-clamp-3 text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
@@ -242,7 +242,7 @@ function FairCoinFace() {
             decoding="async"
           />
           <div className="flex flex-1 flex-col justify-end p-3 lg:p-4">
-            <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-green-400 lg:text-[11px]">
+            <span className="mb-0.5 block text-label-sm font-bold uppercase tracking-wider text-green-400 lg:text-label-sm">
               {newsDate}
             </span>
             <p className="font-display line-clamp-3 text-xl font-semibold leading-snug text-green-100 lg:text-2xl">

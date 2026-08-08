@@ -29,7 +29,7 @@ export default function HomiioPropertyCard({ listing, className = '' }: HomiioPr
         draggable={false}
         className="h-[112px] w-full rounded-xl object-cover"
       />
-      <h4 className="mt-2 line-clamp-2 px-1 text-[11px] font-semibold leading-tight text-neutral-900">
+      <h4 className="mt-2 line-clamp-2 px-1 text-body-xs font-semibold leading-tight text-neutral-900">
         {listing.title}
       </h4>
       <div className="mt-1 flex items-center gap-1 px-1 pb-1">
@@ -37,7 +37,7 @@ export default function HomiioPropertyCard({ listing, className = '' }: HomiioPr
         <span className="text-base font-extrabold tracking-tight text-neutral-900">
           {listing.monthlyAmount.toLocaleString('en-GB')}
         </span>
-        <span className="text-[10px] font-semibold text-neutral-500">/mo</span>
+        <span className="text-label-sm font-semibold text-neutral-500">/mo</span>
       </div>
     </a>
   )
