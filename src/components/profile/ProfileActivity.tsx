@@ -53,7 +53,7 @@ function CommentItem({ data, createdAt }: { data: ActivityItemData; createdAt: s
       <div className="flex items-start gap-3">
         <MessageCircle size={16} className="mt-0.5 shrink-0 text-muted-foreground" />
         <div className="min-w-0 flex-1">
-          <p className="text-[15px] leading-relaxed text-foreground">{preview || 'No content'}</p>
+          <p className="text-body-md leading-relaxed text-foreground">{preview || 'No content'}</p>
           <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
             {item.targetType && <span className="capitalize">{item.targetType}</span>}
             <span>{formatRelativeTime(createdAt)}</span>
@@ -73,7 +73,7 @@ function PostItem({ post }: { post: { slug: string; title: string; resume?: stri
       <div className="flex items-start gap-3">
         <FileText size={16} className="mt-0.5 shrink-0 text-muted-foreground" />
         <div className="min-w-0 flex-1">
-          <p className="text-[15px] font-medium text-foreground">{post.title}</p>
+          <p className="text-body-md font-medium text-foreground">{post.title}</p>
           {post.resume && (
             <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{post.resume}</p>
           )}

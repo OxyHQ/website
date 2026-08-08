@@ -14,7 +14,7 @@ export function Code({ language, children }: CodeProps) {
   return (
     <pre className="not-prose my-4 overflow-x-auto rounded-2xl border border-border bg-surface p-4 text-sm leading-relaxed text-foreground">
       {language ? (
-        <div className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+        <div className="mb-2 text-label-sm uppercase tracking-wider text-muted-foreground">
           {language}
         </div>
       ) : null}
@@ -129,7 +129,7 @@ export function MdxPre({ children }: { children?: ReactNode }) {
     <figure className="not-prose group relative my-5 overflow-hidden rounded-xl border border-border bg-surface">
       <div className="absolute right-2 top-2 z-10 flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
         {language ? (
-          <span className="rounded bg-background/80 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <span className="rounded bg-background/80 px-1.5 py-0.5 text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
             {language}
           </span>
         ) : null}
@@ -137,7 +137,7 @@ export function MdxPre({ children }: { children?: ReactNode }) {
           type="button"
           onClick={() => copy(text)}
           aria-label="Copy code to clipboard"
-          className="inline-flex items-center gap-1 rounded-md border border-border bg-background/80 px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex items-center gap-1 rounded-md border border-border bg-background/80 px-2 py-1 text-body-xs text-muted-foreground transition-colors hover:text-foreground"
         >
           {copied ? (
             <>

@@ -91,7 +91,7 @@ function DashboardContent({ referral }: { referral: ReferralDashboard }) {
   return (
     <div className="flex flex-col gap-10">
       <header className="flex flex-col gap-3">
-        <span className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        <span className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-label-sm font-medium uppercase tracking-wider text-muted-foreground">
           {PROGRAM_LABEL[referral.type]}
         </span>
         <h1 className="text-heading-responsive-lg text-foreground">
@@ -164,7 +164,7 @@ function CodePrompt({ initialCode, onSubmit, error }: { initialCode: string; onS
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-3">
-        <span className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        <span className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-label-sm font-medium uppercase tracking-wider text-muted-foreground">
           Referrer dashboard
         </span>
         <h1 className="text-heading-responsive-lg text-foreground">

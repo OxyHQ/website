@@ -19,8 +19,8 @@ export function PanelHeader({ title, subtitle, action }: {
       style={{ height: PANEL_HEADER_HEIGHT }}
     >
       <div className="min-w-0">
-        <h1 className="truncate text-[15px] font-semibold leading-tight text-foreground">{title}</h1>
-        {subtitle && <p className="truncate text-[12px] leading-tight text-muted-foreground">{subtitle}</p>}
+        <h1 className="truncate text-body-md font-semibold leading-tight text-foreground">{title}</h1>
+        {subtitle && <p className="truncate text-body-xs leading-tight text-muted-foreground">{subtitle}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
@@ -57,7 +57,7 @@ export function PanelTabs({ tabs, active, onSelect }: {
             role="tab"
             aria-selected={selected}
             onClick={() => onSelect(tab.key)}
-            className={`relative flex flex-1 cursor-pointer items-center justify-center text-[14px] font-medium transition-colors ${
+            className={`relative flex flex-1 cursor-pointer items-center justify-center text-body-md font-medium transition-colors ${
               selected ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
             }`}
           >

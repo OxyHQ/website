@@ -39,7 +39,7 @@ export default function BoardRail({ query, onQueryChange, statusCounts, onOpenRo
 
       {summary.length > 0 && (
         <section className="rounded-2xl border border-border bg-card p-4">
-          <h2 className="text-[15px] font-semibold text-foreground">Roadmap at a glance</h2>
+          <h2 className="text-body-md font-semibold text-foreground">Roadmap at a glance</h2>
           <ul className="mt-3 flex flex-col gap-2">
             {summary.map((group) => (
               <li key={group.status} className="flex items-center justify-between gap-3 text-sm">
@@ -61,7 +61,7 @@ export default function BoardRail({ query, onQueryChange, statusCounts, onOpenRo
       )}
 
       <section className="rounded-2xl border border-border bg-card p-4">
-        <h2 className="text-[15px] font-semibold text-foreground">How this works</h2>
+        <h2 className="text-body-md font-semibold text-foreground">How this works</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Every proposal here is a real issue on GitHub. Votes from this site and reactions there are
           counted together, and the total sets a priority label on the issue, so what you vote for is
@@ -84,13 +84,13 @@ export default function BoardRail({ query, onQueryChange, statusCounts, onOpenRo
             <Link
               key={link.label}
               to={link.to}
-              className="pb-1 pr-3 text-[12.5px] text-muted-foreground transition-colors hover:text-foreground"
+              className="pb-1 pr-3 text-body-xs text-muted-foreground transition-colors hover:text-foreground"
             >
               {link.label}
             </Link>
           ))}
         </div>
-        <p className="pt-0.5 text-[12.5px] text-muted-foreground">Made with love in the world by Oxy.</p>
+        <p className="pt-0.5 text-body-xs text-muted-foreground">Made with love in the world by Oxy.</p>
       </footer>
     </div>
   )
