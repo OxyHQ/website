@@ -28,10 +28,10 @@ function UserRow({ user }: { user: User }) {
           <Avatar source={user.avatar ?? undefined} size={48} variant="thumb" placeholderColor={user.color ?? undefined} />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[15px] font-bold text-foreground">{displayName}</p>
-          <p className="truncate text-[15px] text-muted-foreground">@{user.username}</p>
+          <p className="truncate text-body-md font-bold text-foreground">{displayName}</p>
+          <p className="truncate text-body-md text-muted-foreground">@{user.username}</p>
           {user.bio && (
-            <p className="mt-1 text-[15px] text-foreground line-clamp-2">{user.bio}</p>
+            <p className="mt-1 text-body-md text-foreground line-clamp-2">{user.bio}</p>
           )}
         </div>
       </div>
@@ -119,7 +119,7 @@ export default function UserFollowersPage() {
               )}
               <div className="min-w-0">
                 <h1 className="truncate text-xl font-bold text-foreground">{displayName}</h1>
-                <p className="truncate text-[13px] text-muted-foreground">@{username}</p>
+                <p className="truncate text-body-sm text-muted-foreground">@{username}</p>
               </div>
             </Link>
 

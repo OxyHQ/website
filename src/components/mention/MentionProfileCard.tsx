@@ -18,12 +18,12 @@ export default function MentionProfileCard({ profile, className = '' }: MentionP
       </button>
       <img src={profile.avatar} alt={profile.name} draggable={false} className="size-12 rounded-full object-cover" />
       <div className="mt-2 flex items-center gap-1">
-        <h4 className="text-[15px] font-bold text-foreground">{profile.name}</h4>
+        <h4 className="text-body-md font-bold text-foreground">{profile.name}</h4>
         <SealCheck weight="fill" className="size-4 text-sky-500" />
       </div>
-      <p className="text-[13px] text-muted-foreground">@{profile.handle}</p>
-      <p className="mt-1.5 text-[12px] leading-snug text-muted-foreground">{profile.bio}</p>
-      <div className="mt-2.5 flex gap-4 text-[12px] text-muted-foreground">
+      <p className="text-body-sm text-muted-foreground">@{profile.handle}</p>
+      <p className="mt-1.5 text-body-xs leading-snug text-muted-foreground">{profile.bio}</p>
+      <div className="mt-2.5 flex gap-4 text-body-xs text-muted-foreground">
         <span><span className="font-bold text-foreground">{profile.following}</span> Following</span>
         <span><span className="font-bold text-foreground">{profile.followers}</span> Followers</span>
       </div>

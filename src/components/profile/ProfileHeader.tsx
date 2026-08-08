@@ -54,12 +54,12 @@ export default function ProfileHeader({ profile, isOwnProfile, onEditBio }: Prof
       {/* Name + username */}
       <div className="mt-2">
         <h1 className="text-xl font-bold text-foreground">{displayName}</h1>
-        <p className="text-[15px] text-muted-foreground">@{user.username}</p>
+        <p className="text-body-md text-muted-foreground">@{user.username}</p>
       </div>
 
       {/* Bio */}
       {displayBio && (
-        <p className="mt-3 text-[15px] leading-normal text-foreground">{displayBio}</p>
+        <p className="mt-3 text-body-md leading-normal text-foreground">{displayBio}</p>
       )}
 
       {/* Badges */}
@@ -70,14 +70,14 @@ export default function ProfileHeader({ profile, isOwnProfile, onEditBio }: Prof
       )}
 
       {/* Joined */}
-      <div className="mt-3 flex items-center gap-1.5 text-[15px] text-muted-foreground">
+      <div className="mt-3 flex items-center gap-1.5 text-body-md text-muted-foreground">
         <CalendarDays size={16} />
         <span>Joined Oxy{user.createdAt ? ` ${formatJoinedDate(user.createdAt)}` : ''}</span>
       </div>
 
       {/* Stats row - Twitter style */}
       {stats && (
-        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[15px]">
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-body-md">
           <Link
             to={`/u/${user.username}/following`}
             className="hover:underline"
