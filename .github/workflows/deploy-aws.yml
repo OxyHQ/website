@@ -40,25 +40,49 @@ jobs:
           role-to-assume: arn:aws:iam::237343248947:role/oxy-github-deploy
           aws-region: ${{ env.AWS_REGION }}
 
+      # The secrets are enumerated one at a time, on purpose.
+      #
+      # This step used to expand the entire `secrets` context with
+      # `toJSON(secrets)`, and that is what held the deploys. A workflow that
+      # walks every repository secret into a shell loop is shaped exactly like
+      # an exfiltration payload, so GitHub creates the run with conclusion
+      # `action_required` and ZERO jobs until a human clicks "Approve and run"
+      # in the UI. The REST approve endpoint only serves fork pull requests, so
+      # it cannot be automated, and the approval is per run — every deploy needs
+      # a person. The comment on the ECS step below records the same gate biting
+      # this repo before.
+      #
+      # Enumerating is also least privilege. The old loop copied every secret
+      # visible to the repo, so the org-wide CI credentials (NPM_TOKEN,
+      # CLOUDFLARE_API_TOKEN, ADD_TO_PROJECT_TOKEN) ended up in this app's SSM
+      # namespace, and this repo could overwrite the /oxy/_shared/* parameters
+      # that other services read.
+      #
+      # The list is the secrets the website-api task definition actually
+      # consumes. Adding a new one means adding it here, or it never reaches SSM.
       - name: Sync GitHub secrets -> SSM (GitHub is the source of truth)
         env:
-          SECRETS_JSON: ${{ toJSON(secrets) }}
+          APP_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          APP_MONGO_URI: ${{ secrets.MONGO_URI }}
+          APP_FEATURE_BOARD_GITHUB_TOKEN: ${{ secrets.FEATURE_BOARD_GITHUB_TOKEN }}
+          SHARED_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          SHARED_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          SHARED="AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY REDIS_URL LIVEKIT_API_KEY LIVEKIT_API_SECRET"
-          echo "$SECRETS_JSON" | jq -r 'to_entries[] | select((.key|ascii_upcase) as $k | ($k=="GITHUB_TOKEN" or ($k|startswith("ACTIONS_")))|not) | [.key,.value]|@tsv' | \
-          while IFS=$'\t' read -r k v; do
-            [ -z "$k" ] && continue
-            if [ -z "$v" ] || [ "$v" = "-" ]; then
-              echo "::warning::skip empty/placeholder secret $k; SSM unchanged"
-              continue
+          sync_secret() {
+            name="$1"; value="$2"; path="$3"
+            if [ -z "$value" ] || [ "$value" = "-" ]; then
+              echo "::warning::skip empty/placeholder secret $name; SSM unchanged"
+              return 0
             fi
-            if [ "$k" = "REDIS_URL" ] && [ "$AWS_REGION" = "us-west-2" ] && ! printf '%s' "$v" | grep -q '\.usw2\.cache\.amazonaws\.com'; then
-              echo "::warning::skip REDIS_URL because it does not point at the us-west-2 Valkey endpoint; SSM unchanged"
-              continue
-            fi
-            case " $SHARED " in *" $k "*) path="/oxy/_shared/$k";; *) path="/oxy/$APP/$k";; esac
-            aws ssm put-parameter --name "$path" --value "$v" --type SecureString --overwrite >/dev/null && echo "synced -> $path"
-          done
+            aws ssm put-parameter --name "$path" --value "$value" --type SecureString --overwrite >/dev/null
+            echo "synced -> $path"
+          }
+
+          sync_secret DATABASE_URL "$APP_DATABASE_URL" "/oxy/$APP/DATABASE_URL"
+          sync_secret MONGO_URI "$APP_MONGO_URI" "/oxy/$APP/MONGO_URI"
+          sync_secret FEATURE_BOARD_GITHUB_TOKEN "$APP_FEATURE_BOARD_GITHUB_TOKEN" "/oxy/$APP/FEATURE_BOARD_GITHUB_TOKEN"
+          sync_secret AWS_ACCESS_KEY_ID "$SHARED_AWS_ACCESS_KEY_ID" "/oxy/_shared/AWS_ACCESS_KEY_ID"
+          sync_secret AWS_SECRET_ACCESS_KEY "$SHARED_AWS_SECRET_ACCESS_KEY" "/oxy/_shared/AWS_SECRET_ACCESS_KEY"
 
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v2
