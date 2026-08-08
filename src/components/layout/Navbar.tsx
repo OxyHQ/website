@@ -75,7 +75,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
           </svg>
           {dropdown.sidePanel.heading ? (
             <li className="contents">
-              <p className="mt-3 mb-0.5 inline-block px-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <p className="mt-3 mb-0.5 inline-block px-2.5 text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
                 {dropdown.sidePanel.heading}
               </p>
             </li>
@@ -434,7 +434,7 @@ export default function Navbar({
   const transparentColor = onLight ? 'black' : 'white'
 
   const linkClassName = (isTp: boolean) =>
-    `inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${
+    `inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-link-md transition-colors duration-300 ${
       isTp ? transparentInk : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
     }`
 
@@ -462,7 +462,7 @@ export default function Navbar({
                 className="group relative flex size-full items-center justify-center gap-1.5 text-white max-md:justify-start"
                 to={banner?.href ?? '/inbox'}
               >
-                <span className="attio-group-hover-underline relative truncate text-[13px]/5">
+                <span className="attio-group-hover-underline relative truncate text-body-sm">
                   {banner?.text ?? t('navbar.bannerDefault')}
                 </span>
                 <ArrowRightIcon className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50" />
@@ -526,7 +526,7 @@ export default function Navbar({
                     <li key={dd.label}>
                       <button
                         ref={(el) => { triggerRefs.current[dd.label] = el }}
-                        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-[15px] transition-colors duration-300 ${isTransparent ? transparentHover : 'hover:bg-foreground/5 hover:text-foreground'}`}
+                        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-link-md transition-colors duration-300 ${isTransparent ? transparentHover : 'hover:bg-foreground/5 hover:text-foreground'}`}
                         style={{
                           background: activeDropdown === dd.label ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
                           color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? transparentColor : 'var(--color-muted-foreground)',
@@ -619,7 +619,7 @@ export default function Navbar({
                         return (
                           <Fragment key={r.id}>
                             {showHeader ? (
-                              <div className="px-3 pb-1 pt-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground first:pt-1">
+                              <div className="px-3 pb-1 pt-2 text-label-sm font-medium uppercase tracking-wider text-muted-foreground first:pt-1">
                                 {GROUP_LABELS[r.group] ?? r.group}
                               </div>
                             ) : null}
@@ -633,7 +633,7 @@ export default function Navbar({
                               className={`block w-full cursor-pointer rounded-xl px-3 py-2 text-left transition-colors ${isActive ? 'bg-foreground/5' : ''}`}
                             >
                               <div className="truncate text-sm text-foreground">{r.title}</div>
-                              <div className="truncate text-[11px] text-muted-foreground">{r.subtitle}</div>
+                              <div className="truncate text-body-xs text-muted-foreground">{r.subtitle}</div>
                             </button>
                           </Fragment>
                         )
@@ -827,7 +827,7 @@ export default function Navbar({
                       {dd.sections.map((section) => (
                         <div key={section.heading} className="flex flex-col gap-1">
                           {section.heading ? (
-                            <p className="mt-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                            <p className="mt-2 px-2 text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
                               {section.heading}
                             </p>
                           ) : null}

@@ -52,8 +52,8 @@ function AvatarWithAnimation({ avatarSource, avatarColor, size }: { avatarSource
 }
 
 /* ─── Shared styles ─── */
-const chipClass = 'flex shrink-0 items-center gap-1.5 rounded-full border border-border px-2 py-1.5 text-[13px] font-medium text-foreground transition-colors hover:bg-surface'
-const groupItemClass = 'flex w-full cursor-pointer items-center gap-3 p-4 text-left text-[14px] text-foreground transition-colors hover:bg-surface'
+const chipClass = 'flex shrink-0 items-center gap-1.5 rounded-full border border-border px-2 py-1.5 text-link-sm text-foreground transition-colors hover:bg-surface'
+const groupItemClass = 'flex w-full cursor-pointer items-center gap-3 p-4 text-left text-body-md text-foreground transition-colors hover:bg-surface'
 
 /**
  * Solid-colour circular badge with a MaterialCommunityIcons glyph, matching the
@@ -156,9 +156,9 @@ export default function AccountPanel() {
               {user?.username && <div className="mt-0.5 text-sm text-muted-foreground">@{user.username}</div>}
               <div className="mt-2 flex gap-2">
                 {user?.username && (
-                  <Link to={`/u/${user.username}`} className="inline-block rounded-full border border-border px-4 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-surface hover:text-foreground">View profile</Link>
+                  <Link to={`/u/${user.username}`} className="inline-block rounded-full border border-border px-4 py-1.5 text-link-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground">View profile</Link>
                 )}
-                <a href="https://accounts.oxy.so" target="_blank" rel="noopener noreferrer" className="inline-block rounded-full border border-border px-4 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-surface hover:text-foreground">Manage account</a>
+                <a href="https://accounts.oxy.so" target="_blank" rel="noopener noreferrer" className="inline-block rounded-full border border-border px-4 py-1.5 text-link-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground">Manage account</a>
               </div>
             </div>
           </div>
@@ -180,14 +180,14 @@ export default function AccountPanel() {
             <div className="rounded-2xl border border-border p-4">
               <IconBadge name="account-outline" color={iconColor('personal')} size={36} />
               <div className="mt-4">
-                <div className="text-[11px] font-medium text-muted-foreground">Full name</div>
+                <div className="text-label-sm text-muted-foreground">Full name</div>
                 <div className="mt-0.5 text-base font-bold text-foreground">{displayName || '—'}</div>
               </div>
             </div>
             <div className="rounded-2xl border border-border p-4">
               <IconBadge name="at" color={iconColor('personal')} size={36} />
               <div className="mt-4">
-                <div className="text-[11px] font-medium text-muted-foreground">Username</div>
+                <div className="text-label-sm text-muted-foreground">Username</div>
                 <div className="mt-0.5 text-base font-bold text-foreground">{user?.username ? `@${user.username}` : '—'}</div>
               </div>
             </div>
