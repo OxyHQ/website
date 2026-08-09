@@ -66,12 +66,13 @@ missing URL should fail at boot rather than quietly connect somewhere else.
 - **Wholesale replacements run in a transaction** (pricing, testimonials,
   navigation, backup import). The admin sends the full list, and a delete that
   succeeded without its insert would leave the site with no navigation.
-- `server/db/copyFromMongo.ts` (`bun run db:copy`) copies a Mongo database in,
-  keyed on `_id`, idempotent and re-runnable, and never deletes. It verifies by
-  reading counts back out of Postgres rather than trusting what the loop did.
-  In production it runs as a one-off ECS task via the **Copy Mongo to Postgres**
-  workflow, because neither database is reachable from a laptop or a GitHub
-  runner. Steps and the cutover order: `docs/POSTGRES-CUTOVER.md`.
+- **There is no copier any more, and there is nothing left to copy from.** The
+  `oxy-website` Mongo database was archived and dropped on 2026-08-09, so
+  `server/db/copyFromMongo.ts`, the `db:copy` script and the **Copy Mongo to
+  Postgres** workflow were removed with it — a copy keyed on `_id` cannot be
+  re-run against a database that no longer exists. What the cutover did, and
+  what the next Oxy app moving the same way should expect:
+  `docs/POSTGRES-CUTOVER.md`.
 - **Every list query ends on `_id`.** Mongo broke ties on the sort keys by
   insertion order, so a list sorted on `order` alone came back in a fixed
   sequence; Postgres returns heap order, which moves when a row is rewritten. An
@@ -89,14 +90,14 @@ missing URL should fail at boot rather than quietly connect somewhere else.
   value. The frontend already tolerates both shapes (`resolveMediaUrl`,
   `Array.isArray(job.description)`), so this reads as content appearing rather
   than breaking — but check the shape before assuming a field is what the old
-  schema said. The copier resolves foreign-key columns for the same reason: an
-  id-shaped value goes through, anything else is copied as null and named in the
-  log.
-- **`mongodb` is pinned to 6, and is a runtime dependency, only for that copy.**
-  Driver 7 pulls a `bson` that calls `v8.startupSnapshot.isBuildingSnapshot()`
-  at import time, which Bun does not implement — the copier dies before it opens
-  a connection, and the production image runs Bun. Both the pin and the
-  dependency come out once the cutover is done.
+  schema said. The copier resolved foreign-key columns for the same reason: an
+  id-shaped value went through, anything else was copied as null and named in
+  the log.
+- **No Mongo driver is a dependency any more.** `mongodb` was pinned to 6 and
+  existed only for the copier; both are gone. If one is ever reintroduced, note
+  that driver 7 pulls a `bson` calling
+  `v8.startupSnapshot.isBuildingSnapshot()` at import time, which Bun does not
+  implement, and this image runs Bun.
 
 ## Theme tokens
 
