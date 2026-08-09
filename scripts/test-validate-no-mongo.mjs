@@ -111,11 +111,6 @@ function filler(extra = {}) {
       "",
     ].join("\n"),
     "packages/backend/src/db/postgres.ts": "export const dialect = 'postgres';\n",
-    ".github/workflows/deploy-aws.yml":
-      "        env:\n"
-      + "          APP_MONGO_URI: ${{ secrets.MONGO_URI }}\n"
-      + "        run: |\n"
-      + '          sync_secret MONGO_URI "$APP_MONGO_URI" "/oxy/$APP/MONGO_URI"\n',
     ...extra,
   };
 }
@@ -500,17 +495,15 @@ const cases = [
     expectOutput: "below the 400 floor",
   },
   {
-    name: "a KNOWN_EXCEPTIONS entry that matches nothing FAILS the run",
-    // Both live entries excuse lines in the deploy workflow that come out with
-    // the oxy-infra change. This tree omits that file, so they go stale and the
-    // shrink discipline must fire — which is what forces their deletion once
-    // that change lands, rather than leaving them to rot.
-    files: {
-      "package.json": `${JSON.stringify({ name: "fixture" }, null, 2)}\n`,
-      "packages/backend/src/db/postgres.ts": "export const dialect = 'postgres';\n",
-    },
-    expectFailure: true,
-    expectOutput: "no longer matches anything",
+    // THE STALE-EXCEPTION CASE IS GONE ON PURPOSE, and this replaces it.
+    //
+    // It cannot be written against an empty list: with nothing to go stale it
+    // can never fail, and a case that cannot fail reads as coverage while
+    // providing none. So this asserts the list IS empty. Add a first entry and
+    // this goes red, and the fix is to restore the real case from Mercaria's
+    // copy of this file rather than to delete this one.
+    name: "KNOWN_EXCEPTIONS is empty, so the stale-exception case is not applicable",
+    assertGuardSource: (source) => /const KNOWN_EXCEPTIONS = \[\];/.test(source),
   },
   {
     // THE DISTINGUISHING SHAPE for this repo, and the reason the env pattern

@@ -131,27 +131,15 @@ const MONGO_PROSE = /\bmongo(?:db|ose)?\b/i;
  * for the same reason — a stale exception is indistinguishable from a real one
  * until somebody audits the list, and nobody audits the list.
  */
-const KNOWN_EXCEPTIONS = [
-  {
-    file: ".github/workflows/deploy-aws.yml",
-    pattern: "APP_MONGO_URI: ${{ secrets.MONGO_URI }}",
-    reason:
-      "The deploy still syncs MONGO_URI to SSM because the LIVE task definition still declares "
-      + "it. The allowlist must match that definition — a name dropped from here while the "
-      + "definition still carries it stops syncing silently — so these two lines come out in the "
-      + "same oxy-infra Terraform change that removes the task-definition entry, not before. "
-      + "Nothing in the image reads the value: the copier was its only consumer and it is gone. "
-      + "PENDING: delete this entry when that change lands; the shrink rule will demand it.",
-  },
-  {
-    file: ".github/workflows/deploy-aws.yml",
-    pattern: 'sync_secret MONGO_URI',
-    reason:
-      "The second half of the same pending removal — see the entry above. Listed separately "
-      + "because each entry excuses one matched line, so a single entry would leave the other "
-      + "line unexcused and the run red.",
-  },
-];
+// Empty, and it should stay that way. Both entries here excused lines in
+// `deploy-aws.yml` that synced a MONGO_URI the live task definition no longer
+// declares; they were deleted the moment those lines went, because the shrink
+// rule fails the run on an entry that matches nothing — which is what turned
+// "remember to clean this up" into a red build nobody can ignore.
+//
+// If a first entry is ever added back, restore the stale-exception case from
+// Mercaria's copy of the self-test: it cannot be written against an empty list.
+const KNOWN_EXCEPTIONS = [];
 
 const MINIMUM_MANIFESTS = fixtureFloors ? 1 : 2;
 const MINIMUM_SOURCE_FILES = fixtureFloors ? 1 : 400;
