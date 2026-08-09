@@ -2,11 +2,12 @@
 
 **Done on 2026-08-07.** `website-api` serves from Postgres — database `website`
 on `oxy-postgres`, owned by its own role, task definition `oxy-website-api:4`.
-The Mongo database is untouched and still holds a copy of everything.
 
-This file is kept as the record of what was done, because the next Oxy app to
-make the same move will hit the same four things, and because the rollback below
-is only true while the Mongo copy is still there.
+**The `oxy-website` Mongo database was archived and dropped on 2026-08-09**, so
+Postgres is now the sole authority for every byte this service owns, and there
+is no longer a rollback to Mongo (see "Rolling back" below). This file is kept
+as the record of what was done, because the next Oxy app to make the same move
+will hit the same four things.
 
 ## What was done
 
@@ -56,21 +57,33 @@ is only true while the Mongo copy is still there.
 
 ## Rolling back
 
-While the Mongo database exists, the way back is a task definition carrying
-`MONGO_URI` and the last Mongo image — `oxy/website-api@sha256:e93b0917f405c1b52c18078771838ede38e9a0d224bb061e8d3f2f0691f89e72`,
-the digest the service was running before the cutover. `:latest` is not a
-rollback: it has pointed at Postgres code since 2026-08-07.
+**There is no rollback to Mongo.** The `oxy-website` database was dropped on
+2026-08-09. Until then the way back was a task definition carrying `MONGO_URI`
+and the pre-cutover image digest
+`oxy/website-api@sha256:e93b0917f405c1b52c18078771838ede38e9a0d224bb061e8d3f2f0691f89e72`;
+that image still exists, but the database it reads does not, so deploying it
+now yields a service that boots and serves nothing.
 
-## Still to retire
+The only remaining copy of the pre-cutover data is the verified archive
+`s3://oxy-mongo-backups-usw2-237343248947/operations/oxy-website-final-2026-08-09.archive.gz`
+(sha256 `a5b8ec28afff7305f334bb2d23621b92af4116c9620c60eb542338c45d96a97d`, 29
+collections, 209 documents, restore-tested). Recovering from it means standing
+up a Mongo instance and restoring into it first — an incident response, not a
+rollback.
 
-- `MONGO_URI` on the task definition, and the `mongodb` dependency pinned to 6
-  (driver 7 pulls a `bson` that calls `v8.startupSnapshot.isBuildingSnapshot()`
-  at import, which Bun does not implement). Both exist only for the copy.
-- The `oxy-website` database on the Mongo instance, once the copy has proven
-  itself for long enough to be worth deleting.
+Forward recovery is Postgres's own: `oxy-postgres` automated backups and
+point-in-time restore, per `~/Oxy/oxy-infra`.
 
-Locally, against your own pair of databases, the copy is:
+## Retired
 
-```bash
-MONGO_URI='<mongo>' DATABASE_URL='<postgres>' bun run db:copy
-```
+- `server/db/copyFromMongo.ts`, the `db:copy` script and the **Copy Mongo to
+  Postgres** workflow — removed 2026-08-09; there is nothing left to copy from.
+- The `mongodb` dependency (pinned to 6) and `server/package.json`'s `mongoose`,
+  which no file ever imported.
+- The `oxy-website` database itself, archived and dropped 2026-08-09.
+
+Still to retire, and owned by `oxy-infra` rather than this repo: `MONGO_URI` on
+the task definition and the `/oxy/website-api/MONGO_URI` SSM parameter. Nothing
+in this image reads either one — the copier was their only consumer — so they
+are inert, but they must come out through Terraform, because an undeclared
+secret left in place is how a targeted apply silently drops one.
