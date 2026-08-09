@@ -3,7 +3,7 @@
  * publish Homiio Tips with English as the canonical (default-locale) body,
  * and upsert es/ca translation rows. Safe for production (nothing is wiped).
  *
- * Usage: MONGO_URI=... bun server/seedHomiioTips.ts
+ * Usage: DATABASE_URL=... bun server/seedHomiioTips.ts
  */
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'

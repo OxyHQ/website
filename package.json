@@ -14,6 +14,7 @@
     "prerender": "bun scripts/prerender.ts",
     "analyze": "ANALYZE=1 vite build && echo \"open node_modules/.tmp/bundle-stats.html\"",
     "lint": "eslint .",
+    "validate:no-mongo": "bun ./scripts/validate-no-mongo.mjs && bun ./scripts/test-validate-no-mongo.mjs",
     "preview": "vite preview",
     "server": "bun server/index.ts",
     "typecheck:server": "tsc -p tsconfig.server.json",
