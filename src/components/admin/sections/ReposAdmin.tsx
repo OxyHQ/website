@@ -29,7 +29,7 @@ interface NewRepoDraft {
 }
 
 function emptyDraft(): NewRepoDraft {
-  return { owner: '', repo: '', displayName: '', active: false, featureBoard: true, acceptsProposals: true }
+  return { owner: '', repo: '', displayName: '', active: false, featureBoard: false, acceptsProposals: false }
 }
 
 /**

@@ -274,7 +274,12 @@ router.get('/:owner/:repo/:number', optionalAuth, async (req, res) => {
   if (!app) return res.status(404).json({ error: 'Issue not found' })
 
   try {
-    const issue = await githubRequest<GitHubIssue>(`/repos/${app.owner}/${app.repo}/issues/${number}`)
+    // Public route: an unauthenticated GitHub read fails closed for private
+    // repositories even when the server's write token can access them.
+    const issue = await githubRequest<GitHubIssue>(
+      `/repos/${app.owner}/${app.repo}/issues/${number}`,
+      { publicRead: true },
+    )
     if (!issue.labels.some((label) => label.name.toLowerCase() === FEATURE_LABEL)) {
       return res.status(404).json({ error: 'Issue not found' })
     }
