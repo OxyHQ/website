@@ -70,9 +70,41 @@ jobs:
           docker push "$IMG:${{ github.sha }}"
           docker push "$IMG:latest"
 
-      # The check lives in `scripts/deploy-ecs.sh`, where it can be read and run
-      # outside a workflow run — and where editing it does not re-open the
-      # workflow file for GitHub's scanner, which blocked every deploy on this
-      # repo for a day the last time this logic lived here.
       - name: Deploy to ECS (rolling; skipped until the service exists)
-        run: ./scripts/deploy-ecs.sh "$CLUSTER" "$APP"
+        run: |
+          STATUS=$(aws ecs describe-services --cluster "$CLUSTER" --services "$APP" \
+            --query 'services[0].status' --output text 2>/dev/null || echo NONE)
+          if [ "$STATUS" != "ACTIVE" ]; then
+            echo "ECS service $APP not created yet — image is in ECR, skipping deploy"
+            exit 0
+          fi
+
+          read -r ID STARTED <<<"$(aws ecs update-service --cluster "$CLUSTER" --service "$APP" \
+            --force-new-deployment \
+            --query 'service.deployments[?status==`PRIMARY`].[id,createdAt] | [0]' --output text)"
+          echo "deployment $ID started $STARTED"
+
+          # The circuit breaker can roll back and make the service stable on the
+          # old image, so the waiter succeeding is not itself proof of a deploy.
+          aws ecs wait services-stable --cluster "$CLUSTER" --services "$APP" || true
+
+          # Free text last: `read` puts the remainder in the final variable.
+          read -r LIVE STATE LIVE_AT REASON <<<"$(aws ecs describe-services --cluster "$CLUSTER" --services "$APP" \
+            --query 'services[0].deployments[?status==`PRIMARY`].[id,rolloutState,createdAt,rolloutStateReason] | [0]' --output text)"
+
+          if [ "$LIVE" = "$ID" ]; then
+            if [ "$STATE" != "COMPLETED" ]; then
+              echo "::error::deploy did not take: $ID is $STATE — $REASON"
+              aws ecs describe-services --cluster "$CLUSTER" --services "$APP" \
+                --query 'services[0].events[0:8].message' --output text
+              exit 1
+            fi
+            echo "deployed $APP ($STATE)"
+          elif [ "$(date -d "$LIVE_AT" +%s)" -gt "$(date -d "$STARTED" +%s)" ]; then
+            echo "::notice::superseded by $LIVE, started after this one; that run reports its own result"
+          else
+            echo "::error::rolled back to $LIVE (started $LIVE_AT, before this deploy) — the old image is serving"
+            aws ecs describe-services --cluster "$CLUSTER" --services "$APP" \
+              --query 'services[0].events[0:8].message' --output text
+            exit 1
+          fi
