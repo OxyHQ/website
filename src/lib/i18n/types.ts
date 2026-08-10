@@ -1,6 +1,6 @@
 /* ──────────────────────────────────────────────
  * Locale + translation primitives for the Oxy
- * marketing website. The 11 supported locales
+ * marketing website. The 15 supported locales
  * mirror the rest of the Oxy ecosystem (accounts
  * app, @oxyhq/core). Two-letter codes are used
  * to match the CMS `/locales` API which already
@@ -22,9 +22,14 @@ export type Locale =
   | 'ar'
   | 'ca'
   | 'it'
+  | 'hi'
+  | 'bn'
+  | 'ru'
+  | 'id'
 
 export const SUPPORTED_LOCALES: readonly Locale[] = [
   'en', 'es', 'fr', 'de', 'ja', 'ko', 'zh', 'pt', 'ar', 'ca', 'it',
+  'hi', 'bn', 'ru', 'id',
 ] as const
 
 export const DEFAULT_LOCALE: Locale = 'en'
@@ -55,6 +60,10 @@ export const LOCALE_DISPLAY: readonly LocaleDisplayMeta[] = [
   { code: 'ko', name: 'Korean', nativeName: '한국어' },
   { code: 'zh', name: 'Chinese', nativeName: '中文' },
   { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
+  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी' },
+  { code: 'bn', name: 'Bengali', nativeName: 'বাংলা' },
+  { code: 'ru', name: 'Russian', nativeName: 'Русский' },
+  { code: 'id', name: 'Indonesian', nativeName: 'Bahasa Indonesia' },
 ] as const
 
 /** Recursive JSON-shaped value for a website locale dictionary. */

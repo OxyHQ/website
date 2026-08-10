@@ -31,6 +31,10 @@ import ja from './locales/ja'
 import ko from './locales/ko'
 import zh from './locales/zh'
 import ar from './locales/ar'
+import hi from './locales/hi'
+import bn from './locales/bn'
+import ru from './locales/ru'
+import id from './locales/id'
 
 /* ──────────────────────────────────────────────
  * LocaleProvider
@@ -68,6 +72,10 @@ const DICTS: Record<Locale, LocaleDict> = {
   ko: ko as unknown as LocaleDict,
   zh: zh as unknown as LocaleDict,
   ar: ar as unknown as LocaleDict,
+  hi: hi as unknown as LocaleDict,
+  bn: bn as unknown as LocaleDict,
+  ru: ru as unknown as LocaleDict,
+  id: id as unknown as LocaleDict,
 }
 
 /** Coerce any candidate string ('es-419', 'pt-BR', 'EN', ...) to a supported `Locale` or `null`. */
