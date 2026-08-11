@@ -1,11 +1,12 @@
--- The hero's background footage was replaced, and the old files are gone. A
--- stored row still naming them is a 404 behind the panel rather than an error,
--- so the rows move with the files. Rows an editor has since pointed elsewhere
--- are left alone.
+-- The hero's background footage was replaced, so the stored rows move with the
+-- files. These columns are jsonb, not text: a media reference can be an object,
+-- and a static path is stored as a JSON string. `#>> '{}'` reads the scalar out
+-- of one and returns NULL for the other, so an object reference never matches
+-- and is left alone, and so is any row an editor has since pointed elsewhere.
 UPDATE "hero_contents"
-SET "background_video_webm" = '/images/landing/hero-panel.webm'
-WHERE "background_video_webm" = '/images/landing/hero-background.webm';
+SET "background_video_webm" = to_jsonb('/images/landing/hero-panel.webm'::text)
+WHERE "background_video_webm" #>> '{}' = '/images/landing/hero-background.webm';
 
 UPDATE "hero_contents"
-SET "background_video_mp4" = '/images/landing/hero-panel.mp4'
-WHERE "background_video_mp4" = '/images/landing/hero-background.mp4';
+SET "background_video_mp4" = to_jsonb('/images/landing/hero-panel.mp4'::text)
+WHERE "background_video_mp4" #>> '{}' = '/images/landing/hero-background.mp4';
