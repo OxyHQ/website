@@ -39,7 +39,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
   if (dropdown.featureGrid) return <NavFeatureGrid grid={dropdown.featureGrid} />
 
   return (
-    <div className="flex w-full gap-space-lg">
+    <div className="flex w-full">
       {/*
         `auto-fit` decides the column count from the width the band actually has,
         so the panel gains columns on a wide viewport with no breakpoint table to
@@ -47,7 +47,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
         neighbour leaves. No horizontal padding: an item's box then starts on the
         container edge, where the trigger's box above it already is.
       */}
-      <div className="grid flex-1 grid-cols-[repeat(auto-fit,minmax(240px,1fr))] items-start gap-space-lg py-space-md [grid-auto-flow:dense]">
+      <div className="-ms-px grid flex-1 grid-cols-[repeat(auto-fit,minmax(240px,1fr))] items-start [grid-auto-flow:dense]">
         {dropdown.sections.map((section, si) => {
           /**
            * Column units this section claims. A section is kept whole and given
@@ -58,8 +58,8 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
            */
           const span = (section.items?.length ?? 0) > 3 ? 2 : 1
           return (
-            <div key={`section-${si}`} style={{ gridColumn: `span ${span}` }}>
-              <p className="inline-block px-space-sm pt-space-xs pb-space-sm text-body-sm text-muted-foreground opacity-60">
+            <div key={`section-${si}`} className="border-l border-border" style={{ gridColumn: `span ${span}` }}>
+              <p className="block p-space-lg pb-space-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
                 {section.heading}
               </p>
               {/*
@@ -68,7 +68,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
                 section in three columns with one item orphaned on its own row.
               */}
               <ul
-                className="grid items-start gap-space-sm"
+                className="grid items-start"
                 style={{ gridTemplateColumns: `repeat(${span}, minmax(0,1fr))` }}
               >
                 {section.items.map((item, ii) => (
@@ -83,13 +83,13 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
       </div>
 
       {dropdown.card && (
-        <div className="w-80 shrink-0 py-space-md">
+        <div className="w-80 shrink-0 border-l border-border p-space-lg">
           <NavCard card={dropdown.card} />
         </div>
       )}
 
       {dropdown.sidePanel && (
-        <ul className="flex w-48 shrink-0 flex-col gap-space-sm py-space-md">
+        <ul className="flex w-48 shrink-0 flex-col border-l border-border py-space-md">
           {dropdown.sidePanel.heading ? (
             <li className="contents">
               <p className="inline-block px-space-sm pt-space-xs pb-space-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">

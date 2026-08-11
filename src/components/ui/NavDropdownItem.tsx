@@ -78,7 +78,7 @@ interface NavDropdownItemProps {
   item: NavDropdownItemType
 }
 
-const linkClass = "group relative flex h-fit w-full items-start justify-start gap-space-md rounded-xl px-space-sm py-space-xs transition-colors duration-300 hover:bg-foreground/5 before:absolute before:-top-0.75 before:-right-1 before:-bottom-0.75 before:-left-1"
+const linkClass = "group relative flex h-fit w-full items-start justify-start gap-space-md border-t border-border p-space-lg transition-colors duration-300 hover:bg-foreground/5"
 
 function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const IconComponent = item.icon ? iconMap[item.icon] : null
@@ -127,7 +127,7 @@ function ItemContent({ item }: { item: NavDropdownItemType }) {
       {/* Text content */}
       <div className="flex w-full min-w-0 flex-col gap-space-3xs pr-space-sm">
         <div className="flex w-full items-baseline justify-between gap-1.5 text-foreground">
-          <span className="text-heading-md">{item.title}</span>
+          <span className="text-body-lg font-medium">{item.title}</span>
           {/* Arrow icon — shows on hover */}
           <svg
             width="12"
