@@ -50,6 +50,14 @@ const CARDS: MemoryCard[] = DEAL.map((pair, position) => ({
   label: DIGITS[position],
 }))
 
+/**
+ * Three tones a shade apart, dealt by position. The covers overlap the card
+ * borders — a hairline between two covers read as a gap prising the board in
+ * half — so this is what carries the grid while everything is face down. The
+ * lines come back around a card as soon as it turns.
+ */
+const COVER_TONES = ['bg-surface', 'bg-muted', 'bg-background']
+
 /** How long a mismatched pair stays face up before it turns back. */
 const PEEK_MS = 750
 
@@ -134,9 +142,9 @@ export default function MemoryBoard() {
 
               <span
                 aria-hidden="true"
-                className={`absolute inset-0 flex items-center justify-center bg-surface transition-transform duration-[650ms] ease-[cubic-bezier(0.76,0,0.24,1)] will-change-transform ${
-                  revealed ? '-translate-y-full' : 'translate-y-0'
-                }`}
+                className={`absolute -inset-px flex items-center justify-center transition-transform duration-[650ms] ease-[cubic-bezier(0.76,0,0.24,1)] will-change-transform ${
+                  COVER_TONES[index % COVER_TONES.length]
+                } ${revealed ? '-translate-y-full' : 'translate-y-0'}`}
               >
                 {card.label ? (
                   <span className="font-display text-[clamp(3.5rem,10vw,10.625rem)] font-medium leading-none tracking-[-0.06em] text-foreground">

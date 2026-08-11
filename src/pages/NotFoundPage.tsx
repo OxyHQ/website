@@ -1,10 +1,7 @@
-import { useMemo } from 'react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
-import Button from '../components/ui/Button'
 import { isFairCoinHost } from '../lib/host'
-import { fc } from '../lib/faircoin-links'
 import {
   useFairCoinDropdowns,
   useFairCoinFooterBrand,
@@ -101,7 +98,6 @@ const FAIRCOIN_HELP: readonly FaqEntry[] = [
 
 export default function NotFoundPage() {
   const onFairCoinHost = isFairCoinHost()
-  const homeHref = useMemo(() => fc('/'), [])
   // Each FairCoin chrome hook returns `undefined` off-host, so the Navbar /
   // Footer naturally fall back to the Oxy defaults — no prop branching needed.
   const navbarBrand = useFairCoinNavbarBrand()
@@ -133,34 +129,8 @@ export default function NotFoundPage() {
       <main className="flex-1">
         <MemoryBoard />
 
-        <div className="container py-10 lg:py-16">
-          {/*
-            The board says 404 in the only way this page needs to. The heading
-            stays for whoever is not looking at it — a screen reader, a crawler
-            — because a page still needs one.
-          */}
-          <h1 className="sr-only">Page not found</h1>
-          <div className="flex flex-wrap items-center gap-2.5">
-            <Button variant="primary" size="md" href={homeHref}>
-              Go to homepage
-            </Button>
-            {onFairCoinHost ? (
-              <Button
-                variant="outline"
-                size="md"
-                href="https://explorer.fairco.in"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Open Explorer
-              </Button>
-            ) : (
-              <Button variant="outline" size="md" href="/help">
-                Visit help center
-              </Button>
-            )}
-          </div>
-        </div>
+        {/* The board, then the way out. Nothing in between. */}
+        <h1 className="sr-only">Page not found</h1>
 
         {/*
           The same disclosure band the home page's questions use, so a visitor
