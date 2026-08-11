@@ -52,25 +52,54 @@ const NAV_COLUMN_GAP = 16
 /** Columns to assume before the band has been measured (prerender, first paint). */
 const NAV_FALLBACK_COLUMNS = 4
 
-/**
- * About how many items a column should carry before the panel opens another.
- * Not a limit — the packing goes over it rather than splitting a section — but
- * it is what decides how many columns a dropdown uses at all.
- */
-const IDEAL_COLUMN_ITEMS = 7
+/** Items plus one for the heading: every item is a row, and a heading is about one. */
+function sectionWeight(section: NavDropdownSection): number {
+  return (section.items?.length ?? 0) + 1
+}
 
 /**
- * Sections packed into columns, in order, aiming for columns of about the same
- * height. Sections are wildly different lengths — six items, then five, then
- * one — so one section per column leaves a ragged panel with a column of white
- * space beside a full one. A column carries as many sections as fit under the
- * average, and the next section opens the next column.
+ * Sections dealt into `columns` columns, longest first, each one going to the
+ * column that is shortest at the time.
  *
- * The number of columns comes from the content, not from the room available:
- * spreading four sections over six columns is what left each one alone in its
- * own column with nothing gathered. Weight is items plus one for the heading —
- * near enough, since every item is the same height and a heading is about one
- * item tall.
+ * The order sections arrive in is given up here, and deliberately: keeping it
+ * means the columns have to be consecutive runs, and consecutive runs of six,
+ * five, three and one can only ever be cut into 6/5/3/1 or 11/4 — a ragged
+ * panel or a tall one. Dealing them out gives 6/5/4 instead: three columns of
+ * the same length. Within a column the sections go back into the order they
+ * came in, so a column still reads the way the CMS wrote it.
+ */
+function dealSections(
+  sections: readonly NavDropdownSection[],
+  columns: number,
+): number[][] {
+  const dealt: number[][] = Array.from({ length: columns }, () => [])
+  const heights = new Array<number>(columns).fill(0)
+
+  const longestFirst = sections
+    .map((section, index) => ({ index, weight: sectionWeight(section) }))
+    .sort((a, b) => b.weight - a.weight || a.index - b.index)
+
+  for (const { index, weight } of longestFirst) {
+    let shortest = 0
+    for (let column = 1; column < columns; column += 1) {
+      if (heights[column] < heights[shortest]) shortest = column
+    }
+    dealt[shortest].push(index)
+    heights[shortest] += weight
+  }
+
+  return dealt.filter((column) => column.length > 0).map((column) => column.sort((a, b) => a - b))
+}
+
+/**
+ * Sections packed into columns so the columns come out about the same height.
+ *
+ * Two things are being traded off, and each alone gives the wrong answer. Fewer
+ * columns balance more easily, but taken to its end that argument stacks
+ * everything into one tall column beside a band of empty space. So each column
+ * count is scored by how tall its longest column is PLUS how far apart its
+ * longest and shortest are, and the best score wins: the panel spreads into the
+ * width it has for as long as the columns still read as the same length.
  */
 function packSections(
   sections: readonly NavDropdownSection[],
@@ -78,25 +107,21 @@ function packSections(
 ): NavDropdownSection[][] {
   if (sections.length === 0) return []
 
-  const weigh = (section: NavDropdownSection) => (section.items?.length ?? 0) + 1
-  const total = sections.reduce((sum, section) => sum + weigh(section), 0)
-  const columns = Math.min(available, Math.max(1, Math.ceil(total / IDEAL_COLUMN_ITEMS)))
-  const target = total / columns
+  const most = Math.min(available, sections.length)
+  let best: number[][] = [sections.map((_, index) => index)]
+  let bestScore = Infinity
 
-  const packed: NavDropdownSection[][] = [[]]
-  let height = 0
-  for (const section of sections) {
-    const weight = weigh(section)
-    // A column that already holds something and would go past the average hands
-    // the section on — as long as there are columns left to hand it to.
-    if (height > 0 && height + weight > target && packed.length < columns) {
-      packed.push([])
-      height = 0
+  for (let columns = 1; columns <= most; columns += 1) {
+    const dealt = dealSections(sections, columns)
+    const heights = dealt.map((column) => column.reduce((sum, index) => sum + sectionWeight(sections[index]), 0))
+    const score = Math.max(...heights) + (Math.max(...heights) - Math.min(...heights))
+    if (score < bestScore) {
+      bestScore = score
+      best = dealt
     }
-    packed[packed.length - 1].push(section)
-    height += weight
   }
-  return packed
+
+  return best.map((column) => column.map((index) => sections[index]))
 }
 
 /** A headless list cut into as many columns as it was given, in order. */
