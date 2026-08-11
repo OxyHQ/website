@@ -104,7 +104,13 @@ function ItemIcon({ item }: { item: NavDropdownItemType }) {
   if (IconComponent) {
     return <IconComponent className="nav-icon mt-0.5 size-5 shrink-0 text-muted-foreground" />
   }
-  return null
+  // Neither: the initial, so an item with no artwork still has a mark and its
+  // title still lines up with the titles above and below it.
+  return (
+    <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-foreground/10 text-[10px] font-semibold text-muted-foreground">
+      {item.title.charAt(0)}
+    </span>
+  )
 }
 
 function ItemContent({ item }: { item: NavDropdownItemType }) {
