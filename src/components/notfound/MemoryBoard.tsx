@@ -113,8 +113,16 @@ export default function MemoryBoard() {
               aria-label={revealed ? card.sprite : 'Face-down card'}
               aria-pressed={revealed}
               onClick={() => turn(index)}
-              className={`group relative aspect-square cursor-pointer overflow-hidden border-b border-r border-border transition-colors duration-500 ${card.tone}`}
+              className="group relative aspect-square cursor-pointer overflow-hidden border-b border-r border-border"
             >
+              {/*
+                The face carries the colour, not the button. `inset-0` is the
+                PADDING box, so a tone on the button showed through as a
+                coloured hairline down the right of every card — the border's
+                own width, wearing the card's colour.
+              */}
+              <span aria-hidden="true" className={`absolute inset-0 ${card.tone}`} />
+
               <img
                 src={card.image}
                 alt=""
