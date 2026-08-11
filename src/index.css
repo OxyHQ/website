@@ -341,15 +341,15 @@ body {
   --layout-gutter: 1.25rem;
 
   /*
-   * The header's brand cell: the mark, with its own padding either side. From
-   * `lg` up this IS the page gutter, so a page's first column starts exactly
-   * where the nav's first trigger does instead of somewhere further in.
+   * One square, used three times: the brand cell that opens the header, the
+   * space that closes it, and — from `lg` up — the page gutter. So the mark, the
+   * controls at the other end and a page's first column all sit the same
+   * distance from their edge, and every cell in the bar is the same square.
    *
-   * `Navbar`'s brand cell takes its width from this same variable, so the cell
-   * and the gutter cannot drift apart — the mark is centred in whatever it
-   * resolves to.
+   * It is the bar's own height, which is what makes the cells square rather
+   * than merely equal.
    */
-  --brand-cell-width: calc(var(--spacing-space-lg) * 2 + 28px);
+  --header-cell-size: 3rem;
 }
 @media (min-width: 640px) {
   :root {
@@ -360,7 +360,7 @@ body {
   :root {
     /* Below `lg` the nav is a hamburger and there are no cells to line up with,
      * and a 61px gutter on a phone would leave the content under 300px wide. */
-    --layout-gutter: var(--brand-cell-width);
+    --layout-gutter: var(--header-cell-size);
   }
 }
 

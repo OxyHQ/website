@@ -78,7 +78,7 @@ interface NavDropdownItemProps {
   item: NavDropdownItemType
 }
 
-const linkClass = "group relative flex h-fit w-full items-start justify-start gap-space-md border-t border-border p-space-lg transition-colors duration-300 hover:bg-foreground/5"
+const linkClass = "group relative flex h-fit w-full items-start justify-start gap-space-md border-t border-border px-space-sm py-space-md transition-colors duration-300 hover:bg-foreground/5"
 
 function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const IconComponent = item.icon ? iconMap[item.icon] : null

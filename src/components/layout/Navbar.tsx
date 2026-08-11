@@ -47,7 +47,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
         neighbour leaves. No horizontal padding: an item's box then starts on the
         container edge, where the trigger's box above it already is.
       */}
-      <div className="-ms-px grid flex-1 grid-cols-[repeat(auto-fit,minmax(240px,1fr))] items-start [grid-auto-flow:dense]">
+      <div className="grid flex-1 grid-cols-[repeat(auto-fit,minmax(240px,1fr))] items-start gap-x-space-xl py-space-sm [grid-auto-flow:dense]">
         {dropdown.sections.map((section, si) => {
           /**
            * Column units this section claims. A section is kept whole and given
@@ -58,8 +58,8 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
            */
           const span = (section.items?.length ?? 0) > 3 ? 2 : 1
           return (
-            <div key={`section-${si}`} className="border-l border-border" style={{ gridColumn: `span ${span}` }}>
-              <p className="block p-space-lg pb-space-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            <div key={`section-${si}`} style={{ gridColumn: `span ${span}` }}>
+              <p className="block px-space-sm pb-space-xs pt-space-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
                 {section.heading}
               </p>
               {/*
@@ -83,13 +83,13 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
       </div>
 
       {dropdown.card && (
-        <div className="w-80 shrink-0 border-l border-border p-space-lg">
+        <div className="w-80 shrink-0 py-space-sm ps-space-xl">
           <NavCard card={dropdown.card} />
         </div>
       )}
 
       {dropdown.sidePanel && (
-        <ul className="flex w-48 shrink-0 flex-col border-l border-border py-space-md">
+        <ul className="flex w-48 shrink-0 flex-col py-space-sm ps-space-xl">
           {dropdown.sidePanel.heading ? (
             <li className="contents">
               <p className="inline-block px-space-sm pt-space-xs pb-space-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
@@ -571,14 +571,14 @@ export default function Navbar({
             the bar is transparent — there was nothing marking where it ended.
           */}
           {/*
-            The trailing space mirrors the brand cell that opens the row, so the
-            controls end as far from the right edge as the mark sits from the
-            left. Same token, so they cannot drift.
+            The row opens and closes on the same square: the brand cell at one
+            end, that much space at the other, so the mark and the controls sit
+            the same distance from their edge.
           */}
-          <div className="flex items-stretch divide-x divide-border border-b border-border pe-(--brand-cell-width)">
+          <div className="flex items-stretch divide-x divide-border border-b border-border pe-(--header-cell-size)">
             <Link
               to={brand?.homeHref ?? '/'}
-              className="grid h-12 w-(--brand-cell-width) shrink-0 place-content-center transition-colors hover:bg-foreground/5"
+              className="grid size-(--header-cell-size) shrink-0 place-content-center transition-colors hover:bg-foreground/5"
               aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
