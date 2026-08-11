@@ -10,6 +10,21 @@ import type { FairCoinStats } from '../../api/faircoinStore'
 import 'swiper/css'
 import 'swiper/css/effect-cube'
 
+/*
+ * Short forms, the way a balance is written: 378,995,651 reads as a length
+ * before it reads as a number. Below a thousand there is nothing to shorten,
+ * so those keep their digits — and their decimals, which is the only place a
+ * difficulty's fraction still means anything.
+ */
+const COMPACT = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 })
+
+function formatStat(value: number, decimals: number): string {
+  if (Math.abs(value) >= 1000) return COMPACT.format(value)
+  // `maximumFractionDigits`, not `toFixed`: the count-up starts at zero, and a
+  // difficulty declaring four decimals would open on "0.0000".
+  return new Intl.NumberFormat('en-US', { maximumFractionDigits: decimals }).format(value)
+}
+
 function AnimatedStat({ end, decimals, duration = 2000 }: { end: number; decimals: number; duration?: number }) {
   const [value, setValue] = useState(0)
   const ref = useRef<HTMLSpanElement>(null)
@@ -38,9 +53,7 @@ function AnimatedStat({ end, decimals, duration = 2000 }: { end: number; decimal
   }, [end, decimals, duration])
 
   return (
-    <span ref={ref}>
-      {decimals > 0 ? value.toFixed(decimals) : value.toLocaleString()}
-    </span>
+    <span ref={ref}>{formatStat(value, decimals)}</span>
   )
 }
 
@@ -151,6 +164,10 @@ function toDisplayValues(stats: FairCoinStats | null): Record<FairCoinStatKey, n
 
 const FAIRCOIN_NEWS_DATE_FORMAT: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' }
 
+/** The news cell: last column of the FairCoin face, flush to its three edges. */
+const NEWS_CELL_CLASS =
+  'group flex h-full w-[260px] flex-col overflow-hidden border-l border-white/15 bg-[#14532d] lg:w-[300px]'
+
 function FairCoinFace() {
   const stats = useFairCoinStats()
   const values = toDisplayValues(stats)
@@ -167,6 +184,27 @@ function FairCoinFace() {
     ? new Date(post.publishedAt).toLocaleDateString('en-US', FAIRCOIN_NEWS_DATE_FORMAT)
     : ''
   const newsHref = post?.slug ? `/newsroom/${post.slug}` : null
+  const newsCell = (
+    <>
+      <img
+        src={newsImage}
+        alt=""
+        className="w-full min-h-0 flex-1 object-cover transition-transform duration-500 group-hover:scale-105"
+        width={600}
+        height={400}
+        loading="lazy"
+        decoding="async"
+      />
+      <div className="flex shrink-0 flex-col p-3 lg:p-4">
+        <span className="mb-0.5 block text-label-sm font-bold uppercase tracking-wider text-green-400">
+          {newsDate}
+        </span>
+        <p className="font-display line-clamp-3 text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
+          {newsTitle}
+        </p>
+      </div>
+    </>
+  )
   return (
     <div className="grid h-full w-full grid-cols-[1fr_1fr_auto] bg-[#166534]">
       {/* Col 1: title + buttons */}
@@ -186,70 +224,38 @@ function FairCoinFace() {
           </a>
         </div>
       </div>
-      {/* Col 2: stats grid */}
-      <div className="flex items-center py-4 px-3 lg:py-5 lg:px-4">
-        <div className="flex w-full flex-col gap-1.5 lg:gap-2">
-          {FAIRCOIN_STAT_META.map((stat, i) => {
-            const value = values[stat.key]
-            return (
-              <div key={stat.label} className="cursor-pointer select-none border border-white/15 bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5" onClick={() => setRuns(r => r.map((v, j) => j === i ? v + 1 : v))}>
-                <div className="flex items-center gap-2">
-                  <stat.Icon size={16} className="text-white/70" weight="bold" />
-                  <div>
-                    <span className="block text-[9px] font-semibold uppercase tracking-wider text-white/70 lg:text-[10px]">
-                      {stat.label}
-                    </span>
-                    <span className="block text-xl font-bold text-white lg:text-2xl">
-                      <AnimatedStat key={`${runs[i]}-${value}`} end={value} decimals={stat.decimals} />
-                    </span>
-                  </div>
-                </div>
+      {/* Col 2: stats. Four cells filling the column, edge to edge. */}
+      <div className="flex flex-col border-l border-white/15">
+        {FAIRCOIN_STAT_META.map((stat, i) => {
+          const value = values[stat.key]
+          return (
+            <div
+              key={stat.label}
+              className="flex flex-1 cursor-pointer select-none items-center gap-2 border-t border-white/15 px-3 first:border-t-0 lg:px-4"
+              onClick={() => setRuns(r => r.map((v, j) => j === i ? v + 1 : v))}
+            >
+              <stat.Icon size={16} className="text-white/70" weight="bold" />
+              <div>
+                <span className="block text-[9px] font-semibold uppercase tracking-wider text-white/70 lg:text-[10px]">
+                  {stat.label}
+                </span>
+                <span className="block text-3xl font-bold leading-tight text-white lg:text-4xl">
+                  <AnimatedStat key={`${runs[i]}-${value}`} end={value} decimals={stat.decimals} />
+                </span>
               </div>
-            )
-          })}
-        </div>
+            </div>
+          )
+        })}
       </div>
-      {/* Col 3: news card — CMS-driven, latest post tagged "FairCoin" */}
+      {/* Col 3: news — CMS-driven, latest post tagged "FairCoin". Same cell
+          whether or not there is a post to link to, so the two readings of it
+          cannot drift apart. */}
       {newsHref ? (
-        <Link to={newsHref} className="group m-2.5 flex w-[260px] flex-col overflow-hidden border border-white/15 bg-[#14532d] lg:m-3 lg:w-[300px]">
-          <img
-            src={newsImage}
-            alt=""
-            className="h-3/5 w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            width={600}
-            height={400}
-            loading="lazy"
-            decoding="async"
-          />
-          <div className="flex flex-1 flex-col justify-end p-3 lg:p-4">
-            <span className="mb-0.5 block text-label-sm font-bold uppercase tracking-wider text-green-400 lg:text-label-sm">
-              {newsDate}
-            </span>
-            <p className="font-display line-clamp-3 text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
-              {newsTitle}
-            </p>
-          </div>
+        <Link to={newsHref} className={NEWS_CELL_CLASS}>
+          {newsCell}
         </Link>
       ) : (
-        <div className="m-2.5 flex w-[260px] flex-col overflow-hidden border border-white/15 bg-[#14532d] lg:m-3 lg:w-[300px]">
-          <img
-            src={newsImage}
-            alt=""
-            className="h-3/5 w-full object-cover"
-            width={600}
-            height={400}
-            loading="lazy"
-            decoding="async"
-          />
-          <div className="flex flex-1 flex-col justify-end p-3 lg:p-4">
-            <span className="mb-0.5 block text-label-sm font-bold uppercase tracking-wider text-green-400 lg:text-label-sm">
-              {newsDate}
-            </span>
-            <p className="font-display line-clamp-3 text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
-              {newsTitle}
-            </p>
-          </div>
-        </div>
+        <div className={NEWS_CELL_CLASS}>{newsCell}</div>
       )}
     </div>
   )
