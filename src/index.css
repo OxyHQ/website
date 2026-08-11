@@ -339,6 +339,17 @@ body {
 :root {
   --layout-max-width: 110rem; /* 1760px */
   --layout-gutter: 1.25rem;
+
+  /*
+   * The header's brand cell: the mark, with its own padding either side. From
+   * `lg` up this IS the page gutter, so a page's first column starts exactly
+   * where the nav's first trigger does instead of somewhere further in.
+   *
+   * `Navbar`'s brand cell takes its width from this same variable, so the cell
+   * and the gutter cannot drift apart — the mark is centred in whatever it
+   * resolves to.
+   */
+  --brand-cell-width: calc(var(--spacing-space-lg) * 2 + 28px);
 }
 @media (min-width: 640px) {
   :root {
@@ -347,12 +358,9 @@ body {
 }
 @media (min-width: 1024px) {
   :root {
-    --layout-gutter: 4rem;
-  }
-}
-@media (min-width: 1280px) {
-  :root {
-    --layout-gutter: 6rem;
+    /* Below `lg` the nav is a hamburger and there are no cells to line up with,
+     * and a 61px gutter on a phone would leave the content under 300px wide. */
+    --layout-gutter: var(--brand-cell-width);
   }
 }
 

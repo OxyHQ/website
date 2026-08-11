@@ -572,7 +572,7 @@ export default function Navbar({
           >
             <Link
               to={brand?.homeHref ?? '/'}
-              className="grid h-12 shrink-0 place-content-center px-4 transition-colors hover:bg-foreground/5"
+              className="grid h-12 w-(--brand-cell-width) shrink-0 place-content-center transition-colors hover:bg-foreground/5"
               aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
