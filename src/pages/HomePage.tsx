@@ -8,7 +8,7 @@ import HeroCarousel from '../components/homepage/HeroCarousel'
 import { heroCarouselSlots } from '../data/heroCarousel'
 import { homeFaqs } from '../data/homepage'
 import FaqSection from '../components/sections/FaqSection'
-import { useHero, usePage, type HeroMediaRef, type PageSection, useProducts, type ProductRecord } from '../api/hooks'
+import { useHero, usePage, type PageSection, useProducts, type ProductRecord } from '../api/hooks'
 import { FEATURES } from '../constants'
 import { usePageChromeStore } from '../stores/pageChromeStore'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -44,12 +44,6 @@ const DEFAULT_ALL_IN_ONE_HEADING_LINE_1 = 'Build for everyone,'
 const DEFAULT_ALL_IN_ONE_HEADING_LINE_2 = 'not just yourself.'
 const DEFAULT_ALL_IN_ONE_BODY = 'Oxy exists because we believe technology should serve humanity, not exploit it. Through community-driven projects and open-source tools, we prove that helping people and building sustainable systems aren\u2019t competing goals. They\u2019re the same mission.'
 
-function heroMediaUrl(ref: HeroMediaRef | undefined): string {
-  if (!ref) return ''
-  if (typeof ref === 'string') return ref
-  return ref.thumbnails?.lg || ref.url || ''
-}
-
 const IMG = '/images/landing'
 
 const BTN = 'inline-flex items-center cursor-pointer text-base leading-relaxed font-[450] rounded-full px-4 py-2 max-h-[38px] transition-opacity duration-200 hover:opacity-60'
@@ -70,9 +64,6 @@ const REVEAL = {
 // second mission sentence, which read as a second headline; that copy and the
 // CMS field behind it are gone rather than restyled.
 const DEFAULT_HERO_TITLE = 'Creating a future where technology empowers individuals\nto live connected, fulfilling, and sustainable lives.'
-const DEFAULT_HERO_BG_WEBM = `${IMG}/hero-background.webm`
-const DEFAULT_HERO_BG_MP4 = `${IMG}/hero-background.mp4`
-const DEFAULT_HERO_POSTER = `${IMG}/hero-bg.avif`
 
 /* ------------------------------------------------------------------ */
 /*  Hero                                                               */
@@ -82,9 +73,6 @@ function HeroSection() {
   const setHeroVisible = usePageChromeStore((s) => s.setHeroVisible)
 
   const title = hero?.title || DEFAULT_HERO_TITLE
-  const webm = heroMediaUrl(hero?.backgroundVideoWebm) || DEFAULT_HERO_BG_WEBM
-  const mp4 = heroMediaUrl(hero?.backgroundVideoMp4) || DEFAULT_HERO_BG_MP4
-  const poster = heroMediaUrl(hero?.backgroundPoster) || DEFAULT_HERO_POSTER
   // Fall back to the static slot list if the CMS doc hasn't populated it yet.
   // Empty arrays count as "not set" so admins can't accidentally clear the grid.
   const slots = hero?.carouselSlots && hero.carouselSlots.length > 0
@@ -101,34 +89,6 @@ function HeroSection() {
       onViewportLeave={() => setHeroVisible(false)}
       viewport={{ amount: 0 }}
     >
-      {/*
-        The poster is what the browser paints first and is almost always the
-        LCP element, but it is discovered only once the video element is parsed
-        and laid out. This starts the fetch earlier, at high priority. React 19
-        hoists `<link>` into <head> itself, so this needs no helmet — and it
-        follows the CMS-resolved `poster`, so an editor swapping the hero image
-        can't leave a stale preload pointing at the old file.
-      */}
-      <link rel="preload" as="image" href={poster} fetchPriority="high" />
-
-      {/* Background video — decorative; the headline beside it carries the meaning. */}
-      <div className="absolute inset-0 z-[1] overflow-hidden [transform:translateZ(0)]">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          aria-hidden="true"
-          preload="none"
-          poster={poster}
-          className="size-full object-cover object-center"
-        >
-          {webm && <source src={webm} type="video/webm" />}
-          <source src={mp4} type="video/mp4" />
-        </video>
-        <div className="hero-oxy-overlay absolute inset-0" />
-      </div>
-
       {/* Text overlay */}
       <div className="relative z-[5] flex-1 flex items-end text-foreground">
         <div className="container pb-5 pt-[100px] max-[950px]:pt-20">

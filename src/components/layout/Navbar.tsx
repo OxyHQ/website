@@ -242,7 +242,8 @@ export default function Navbar({
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [prevDropdown, setPrevDropdown] = useState<string | null>(null)
   const [direction, setDirection] = useState<'left' | 'right' | null>(null)
-  const [mobileAccordion, setMobileAccordion] = useState<string | null>(null)
+  /** Which dropdown's subpanel is showing over the mobile panel. */
+  const [mobilePanel, setMobilePanel] = useState<string | null>(null)
 
   /**
    * Panel heights, measured from the hidden off-screen copies. Only the height
@@ -399,6 +400,24 @@ export default function Navbar({
    * `--layout-max-width` and `--layout-gutter`, so the breakpointed gutter and
    * the scrollbar are already accounted for.
    */
+  /**
+   * The band's container publishes the width the hidden measurement panels are
+   * laid out at. It is measured here rather than on the bar, because the bar is
+   * full-bleed and the band is not.
+   */
+  const measureBandWidth = useCallback((node: HTMLElement | null) => {
+    if (!node) return
+    const publish = () => {
+      const style = getComputedStyle(node)
+      const padding = (Number.parseFloat(style.paddingLeft) || 0) + (Number.parseFloat(style.paddingRight) || 0)
+      setNavContentWidth(node.getBoundingClientRect().width - padding)
+    }
+    publish()
+    const observer = new ResizeObserver(publish)
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
   const measureNavRow = useCallback((node: HTMLElement | null) => {
     if (!node) return
     const publish = () => {
@@ -409,9 +428,7 @@ export default function Navbar({
         '--site-header-height',
         `${Math.round(rect.height + border)}px`,
       )
-      const style = getComputedStyle(node)
-      const padding = (Number.parseFloat(style.paddingLeft) || 0) + (Number.parseFloat(style.paddingRight) || 0)
-      setNavContentWidth(rect.width - padding)
+
     }
     publish()
     const observer = new ResizeObserver(publish)
@@ -454,12 +471,12 @@ export default function Navbar({
   const transparentColor = onLight ? 'black' : 'white'
 
   const linkClassName = (isTp: boolean) =>
-    `inline-flex h-9 items-center justify-center rounded-full border border-transparent px-3 text-link-md transition-colors duration-300 ${
+    `inline-flex h-12 items-center justify-center px-4 text-link-md transition-colors duration-300 ${
       isTp ? transparentInk : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
     }`
 
   // Shared styling for the round icon buttons (search + settings).
-  const iconButtonClass = `group inline-flex h-9 w-9 cursor-pointer select-none items-center justify-center rounded-full border border-transparent transition-colors duration-300 ${isTransparent ? transparentInk : 'hover:bg-foreground/5 hover:text-foreground'}`
+  const iconButtonClass = `group inline-flex size-12 cursor-pointer select-none items-center justify-center transition-colors duration-300 ${isTransparent ? transparentInk : 'hover:bg-foreground/5 hover:text-foreground'}`
   const iconButtonStyle = (active: boolean) => ({
     background: active ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
     color: active ? 'var(--color-foreground)' : isTransparent ? transparentColor : 'var(--color-muted-foreground)',
@@ -502,7 +519,7 @@ export default function Navbar({
       )}
 
     <header
-      className={`fixed left-0 right-0 z-50 transition-[border-color,backdrop-filter] duration-300 ${isTransparent ? 'border-b border-transparent' : 'border-b border-border backdrop-blur-md'}`}
+      className={`fixed left-0 right-0 z-50 transition-[border-color,backdrop-filter] duration-300 ${isTransparent ? '' : 'backdrop-blur-md'}`}
       style={{
         top: bannerOffset,
         background: isTransparent
@@ -540,17 +557,23 @@ export default function Navbar({
       </div>
 
       {/* ─── Main nav ─── */}
-      <div ref={measureNavRow} className="container max-lg:!max-w-full max-lg:!px-4">
-        <nav className="py-[5px]">
+      <div ref={measureNavRow} className="w-full">
+        <nav>
           {/*
-            Brand first, then the triggers, then the controls. The brand takes
-            only the width it needs and the middle track takes the rest, so the
-            dropdown triggers have the whole span between them to grow into.
+            A row of full-height cells rather than pills floating in a bar: each
+            one runs the height of the header and the rules between them carry
+            the structure. The container keeps its measure but gives up its
+            gutter, so the first cell starts on the container edge — the same
+            place the dropdown band's first item lands.
           */}
-          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4">
+          <div
+            className={`flex items-stretch divide-x divide-border border-b transition-colors duration-300 ${
+              isTransparent ? 'border-transparent' : 'border-border'
+            }`}
+          >
             <Link
               to={brand?.homeHref ?? '/'}
-              className="-mx-1.5 justify-self-start rounded-xl px-1.5"
+              className="grid h-12 shrink-0 place-content-center px-4 transition-colors hover:bg-foreground/5"
               aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
@@ -558,14 +581,14 @@ export default function Navbar({
             </Link>
 
             {/* Middle: the dropdown triggers, or the search field while it is open */}
-            <div className="min-w-0">
-            <div ref={escapeRef} className="relative z-10" onMouseLeave={scheduleClose}>
-                <ul className={`hidden items-center gap-x-1.5 ${searchOpen ? '' : 'lg:flex'}`}>
+            <div className="flex min-w-0 flex-1 items-stretch">
+            <div ref={escapeRef} className="relative z-10 flex items-stretch" onMouseLeave={scheduleClose}>
+                <ul className={`hidden items-stretch divide-x divide-border ${searchOpen ? '' : 'lg:flex'}`}>
                   {dropdowns.map((dd) => (
                     <li key={dd.label}>
                       <button
                         ref={(el) => { triggerRefs.current[dd.label] = el }}
-                        className={`group inline-flex h-9 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full border border-transparent px-3 text-link-md transition-colors duration-300 ${isTransparent ? transparentHover : 'hover:bg-foreground/5 hover:text-foreground'}`}
+                        className={`group inline-flex h-12 cursor-pointer select-none items-center justify-center gap-x-1.5 px-4 text-link-md transition-colors duration-300 ${isTransparent ? transparentHover : 'hover:bg-foreground/5 hover:text-foreground'}`}
                         style={{
                           background: activeDropdown === dd.label ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
                           color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? transparentColor : 'var(--color-muted-foreground)',
@@ -684,9 +707,9 @@ export default function Navbar({
             </div>
 
             {/* Right controls (mobile + desktop) */}
-            <div className="flex items-center justify-self-end gap-x-2">
+            <div className="ms-auto flex items-stretch divide-x divide-border">
               {/* Mobile controls */}
-              <div className="flex items-center gap-x-2 lg:hidden">
+              <div className="flex items-stretch divide-x divide-border lg:hidden">
               {/* The avatar is the only child of these toggles, and it renders
                   no text, so without a label the button has no accessible name
                   at all — Lighthouse's `button-name` audit fails outright. */}
@@ -698,10 +721,13 @@ export default function Navbar({
                 />
               )}
               <button
-                className={`inline-flex h-9 w-9 items-center justify-center rounded-full ${isTransparent ? (onLight ? 'text-black' : 'text-white') : 'text-muted-foreground'}`}
+                className={`inline-flex size-12 items-center justify-center transition-colors hover:bg-foreground/5 ${isTransparent ? (onLight ? 'text-black' : 'text-white') : 'text-muted-foreground'}`}
                 aria-label={mobileOpen ? t('common.closeMenu') : t('common.openMenu')}
                 aria-expanded={mobileOpen}
-                onClick={() => setMobileOpen(!mobileOpen)}
+                onClick={() => {
+                  setMobileOpen((open) => !open)
+                  setMobilePanel(null)
+                }}
               >
                 {mobileOpen ? (
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="24" height="24" fill="none">
@@ -716,7 +742,7 @@ export default function Navbar({
             </div>
 
             {/* Desktop buttons */}
-            <div className="hidden items-center gap-x-2.5 lg:flex">
+            <div className="hidden items-stretch divide-x divide-border lg:flex">
               <button
                 type="button"
                 className={iconButtonClass}
@@ -768,7 +794,7 @@ export default function Navbar({
       */}
       {measured && (
         <div
-          className="w-full"
+          className={`w-full ${isOpen ? 'border-b border-border' : ''}`}
           style={{
             pointerEvents: isOpen ? 'auto' : 'none',
             opacity: isOpen ? 1 : 0,
@@ -779,7 +805,7 @@ export default function Navbar({
           onMouseEnter={cancelClose}
           onMouseLeave={scheduleClose}
         >
-          <div className="container max-lg:!max-w-full max-lg:!px-4">
+          <div ref={measureBandWidth} className="container max-lg:!max-w-full max-lg:!px-4">
             <div className="relative">
               {dropdowns.map((dd) => {
                 const isActive = dd.label === activeDropdown
@@ -831,110 +857,117 @@ export default function Navbar({
         </div>
       )}
 
-      {/* ─── Mobile drawer ─── */}
-      {mobileOpen && (
-        <div
-          className="border-t border-border bg-background lg:hidden overflow-y-auto overscroll-contain"
-          style={{ maxHeight: `calc(100dvh - ${bannerOffset}px - var(--site-header-height))` }}
-        >
-          <div className="container max-lg:!max-w-full max-lg:!px-4">
-            <div className="flex flex-col gap-1 py-4">
-              {dropdowns.map((dd) => (
-                <div key={dd.label}>
-                  <button
-                    className="flex w-full items-center justify-between rounded-xl px-2 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
-                    onClick={() => setMobileAccordion(mobileAccordion === dd.label ? null : dd.label)}
-                    aria-expanded={mobileAccordion === dd.label}
-                  >
-                    {dd.label}
-                    <ChevronDown className={`transition-transform duration-200 ${mobileAccordion === dd.label ? 'rotate-180' : ''}`} />
-                  </button>
-                  {mobileAccordion === dd.label && (
-                    // Same components as desktop, stacked vertically; the wrapper
-                    // click closes the drawer when any link inside is tapped.
-                    <div className="flex flex-col gap-1 pb-3" onClick={() => setMobileOpen(false)}>
-                      {dd.featureGrid?.features.map((item) => (
-                        <NavDropdownItem key={item.href} item={item} />
-                      ))}
-                      {dd.sections.map((section) => (
-                        <div key={section.heading} className="flex flex-col gap-1">
-                          {section.heading ? (
-                            <p className="mt-2 px-2 text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                              {section.heading}
-                            </p>
-                          ) : null}
-                          {section.items.map((item) => (
-                            <NavDropdownItem key={`${section.heading}-${item.title}`} item={item} />
-                          ))}
-                        </div>
-                      ))}
-                      {(dd.featureGrid?.cards?.length || dd.card) ? (
-                        <div className="mt-2 flex flex-col gap-3">
-                          {[...(dd.featureGrid?.cards ?? []), ...(dd.card ? [dd.card] : [])].map((card) => (
-                            <div key={card.href} className="aspect-[4/3] overflow-hidden rounded-xl">
-                              <NavCard card={card} />
-                            </div>
-                          ))}
-                        </div>
-                      ) : null}
-                      {dd.sidePanel?.links.map((link) => (
-                        link.href.startsWith('/') ? (
-                          <Link key={link.label} to={link.href} className="rounded-xl px-2 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground">
-                            {link.label}
-                          </Link>
-                        ) : (
-                          <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="rounded-xl px-2 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground">
-                            {link.label}
-                          </a>
-                        )
-                      ))}
-                    </div>
-                  )}
+      {/* ─── Mobile panel ─── */}
+      {/*
+        One panel that slides in from the right, and one subpanel per dropdown
+        sliding in on top of it. An accordion made every section push the ones
+        below it down the page; this keeps each level on its own plane, so a tap
+        never moves what you were reading.
+      */}
+      <div
+        className={`fixed left-0 z-40 w-full overflow-hidden border-t border-border bg-background transition-transform duration-300 ease-out lg:hidden ${
+          mobileOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+        style={{
+          top: `calc(${bannerOffset}px + var(--site-header-height))`,
+          height: `calc(100dvh - ${bannerOffset}px - var(--site-header-height))`,
+        }}
+        aria-hidden={!mobileOpen}
+      >
+        <div className="absolute inset-0 flex flex-col">
+          <div className="flex-1 divide-y divide-border overflow-y-auto overscroll-contain">
+            {dropdowns.map((dd) => (
+              <button
+                key={dd.label}
+                type="button"
+                className="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-foreground/5"
+                onClick={() => setMobilePanel(dd.label)}
+              >
+                <span className="text-title-sm text-foreground">{dd.label}</span>
+                <ChevronDown className="size-5 shrink-0 -rotate-90 text-muted-foreground" />
+              </button>
+            ))}
+            {flatLinks.map((link) =>
+              link.href.startsWith('/') && !link.external ? (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className="flex w-full items-center justify-between p-4 text-title-sm text-foreground transition-colors hover:bg-foreground/5"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  className="flex w-full items-center justify-between p-4 text-title-sm text-foreground transition-colors hover:bg-foreground/5"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {link.label}
+                </a>
+              ),
+            )}
+          </div>
+
+          {ctaButtons ? (
+            <div className="flex shrink-0 flex-col gap-2 border-t border-border p-4">{ctaButtons}</div>
+          ) : null}
+        </div>
+
+        {dropdowns.map((dd) => (
+          <div
+            key={dd.label}
+            className={`absolute inset-0 overflow-y-auto overscroll-contain bg-background transition-transform duration-300 ease-out ${
+              mobilePanel === dd.label ? 'translate-x-0' : 'translate-x-full'
+            }`}
+          >
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 border-b border-border p-4 text-left transition-colors hover:bg-foreground/5"
+              onClick={() => setMobilePanel(null)}
+            >
+              <ChevronDown className="size-5 shrink-0 rotate-90 text-muted-foreground" />
+              <span className="text-title-sm text-foreground">{dd.label}</span>
+            </button>
+
+            <div className="flex flex-col gap-2 p-4" onClick={() => setMobileOpen(false)}>
+              {dd.featureGrid?.features.map((item) => (
+                <NavDropdownItem key={item.href} item={item} />
+              ))}
+              {dd.sections.map((section) => (
+                <div key={section.heading} className="flex flex-col gap-2">
+                  {section.heading ? (
+                    <p className="px-space-sm pt-space-sm text-body-sm text-muted-foreground opacity-60">
+                      {section.heading}
+                    </p>
+                  ) : null}
+                  {section.items.map((item) => (
+                    <NavDropdownItem key={`${section.heading}-${item.title}`} item={item} />
+                  ))}
                 </div>
               ))}
-              {flatLinks.map((link) =>
-                link.href.startsWith('/') && !link.external ? (
-                  <Link
-                    key={link.label}
-                    to={link.href}
-                    className="rounded-xl px-2 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
-                    onClick={() => setMobileOpen(false)}
-                  >
+              {[...(dd.featureGrid?.cards ?? []), ...(dd.card ? [dd.card] : [])].map((card) => (
+                <div key={card.href} className="aspect-[4/3] overflow-hidden rounded-xl">
+                  <NavCard card={card} />
+                </div>
+              ))}
+              {dd.sidePanel?.links.map((link) =>
+                link.href.startsWith('/') ? (
+                  <Link key={link.label} to={link.href} className="px-space-sm py-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
                     {link.label}
                   </Link>
                 ) : (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                    className="rounded-xl px-2 py-3 text-base text-foreground transition-colors hover:bg-foreground/5"
-                    onClick={() => setMobileOpen(false)}
-                  >
+                  <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="px-space-sm py-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
                     {link.label}
                   </a>
                 ),
               )}
-              <hr className="my-2 border-border" />
-              {/* Settings — same component as the desktop gear (theme + language) */}
-              <SettingsPanel showLanguage={showLanguageInSettings} className="w-full" />
-              {ctaButtons ? (
-                <div className="flex flex-col gap-2 px-2 pt-2">
-                  {ctaButtons}
-                </div>
-              ) : null}
-              {!hideAuth && (
-                <div className="px-2 pt-2">
-                  <ProfileButton
-                    expanded
-                    menuItems={isAdmin ? [{ key: 'admin', label: 'Admin', icon: 'shield-account-outline', onPress: () => navigate('/admin') }] : []}
-                    className="w-full"
-                  />
-                </div>
-              )}
             </div>
           </div>
-        </div>
-      )}
+        ))}
+      </div>
     </header>
 
     {!transparent && <div style={{ height: `calc(var(--site-header-height) + ${bannerOffset}px)` }} />}
