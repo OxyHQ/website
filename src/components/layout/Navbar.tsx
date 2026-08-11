@@ -4,6 +4,7 @@ import { LogoIcon, ProfileButton } from '@oxyhq/services'
 import {
   simpleNavLinks,
   platformNavCard,
+  platformNavDropdown,
   resourcesNavCard,
   productNavDropdown,
   type NavDropdown,
@@ -311,9 +312,14 @@ export default function Navbar({
     if (useCustomNav) return customDropdowns ?? []
     // Hardcoded bridges until both are modelled in the CMS navigation document:
     // the `Product` feature-grid dropdown, and the Resources promo card.
+    const stored = navigationData ?? []
+    // The repo's Platform dropdown, unless a stored one of that name exists.
+    const platform = stored.some((dd) => dd.label === 'Platform') ? [] : [platformNavDropdown]
+
     return [
       productNavDropdown,
-      ...(navigationData ?? []).map((dd) =>
+      ...platform,
+      ...stored.map((dd) =>
         dd.label === 'Resources'
           ? { ...dd, card: resourcesNavCard }
           : dd.label === 'Platform'

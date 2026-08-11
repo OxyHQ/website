@@ -170,6 +170,66 @@ export const productNavDropdown: NavDropdown = {
  * Promo card injected into the `Resources` dropdown. Hardcoded for now; move to
  * the CMS navigation document when the card needs to be editor-managed.
  */
+/**
+ * The Platform dropdown, in the repo.
+ *
+ * Everything else in the nav comes from the CMS, and this could too — but the
+ * stored one was a leftover from the template this site started as, and half of
+ * it pointed at `#`. It lives here so the header cannot serve that again, and
+ * a stored dropdown of the same name still wins if an editor writes one.
+ */
+export const platformNavDropdown: NavDropdown = {
+  label: 'Platform',
+  sections: [
+    {
+      heading: 'Platform',
+      items: [
+        {
+          title: 'Oxy ID',
+          description: 'The identity layer every app signs in with',
+          href: '/developers/docs',
+          icon: 'data',
+        },
+        { title: 'Oxy AI', description: 'Private models, API and SDKs', href: '/ai', icon: 'ai' },
+        {
+          title: 'Bloom',
+          description: 'The design system behind every app',
+          href: '/developers/docs/bloom/playground',
+          image: '/images/apps/bloom.png',
+        },
+      ],
+    },
+    {
+      heading: 'Build',
+      items: [
+        { title: 'Developer platform', description: 'Build on Oxy', href: '/developers/docs', icon: 'developers' },
+        {
+          title: 'API reference',
+          description: 'Every endpoint, versioned',
+          href: '/developers/docs/api',
+          icon: 'contract',
+        },
+        { title: 'Status', description: 'Live health of every service', href: '/status', icon: 'network' },
+        {
+          title: 'Open source',
+          description: 'Read and run what we ship',
+          href: 'https://github.com/OxyHQ',
+          icon: 'github',
+        },
+      ],
+    },
+  ],
+  sidePanel: {
+    heading: 'Get started',
+    links: [
+      { label: 'Academy', href: '/academy' },
+      { label: 'Help center', href: '/help' },
+      { label: 'Pricing', href: '/pricing' },
+      { label: 'Partner programs', href: '/partners' },
+    ],
+  },
+}
+
 /** Promo card injected into the `Platform` dropdown. */
 export const platformNavCard: NavDropdownCard = {
   href: '/apps',
