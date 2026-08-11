@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useFooter } from '../../api/hooks'
 import { useTranslation } from '../../lib/i18n'
-import Logo from '../ui/Logo'
 import { ArrowRightIcon } from '../icons'
 import { usePageChromeStore } from '../../stores/pageChromeStore'
 import { type FooterLink } from '../../data/content'
+import { LogoText } from '@oxyhq/services'
 
 /* ─── Shared small components ─── */
 
@@ -221,7 +221,7 @@ export default function Footer({
           <div className="flex flex-wrap items-center justify-between gap-6 px-px pt-4 pb-4">
             <div className="flex flex-col gap-3">
               <Link className="-m-1.5 inline-block w-fit rounded-lg p-1.5" aria-label={ariaLabel} to={homeHref} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                {brand?.logo ?? <Logo className="h-11" />}
+                {brand?.logo ?? <LogoText height={44} />}
               </Link>
               <p className="max-w-lg text-sm text-muted-foreground">{description}</p>
             </div>

@@ -1,6 +1,6 @@
 import { Fragment, useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { ProfileButton } from '@oxyhq/services'
+import { LogoIcon, ProfileButton } from '@oxyhq/services'
 import {
   simpleNavLinks,
   resourcesNavCard,
@@ -14,7 +14,6 @@ import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '
 import { useTranslation, useLocaleContext } from '../../lib/i18n'
 import { searchSite, groupResults, searchContextGroups, GROUP_LABELS, type SearchResult } from '../../lib/site-search'
 import NavDropdownItem from '../ui/NavDropdownItem'
-import Logo from '../ui/Logo'
 import { SettingsPanel } from '../ui/SettingsPanel'
 import { Settings, Search, X } from 'lucide-react'
 import { ArrowRightIcon } from '../icons'
@@ -577,7 +576,7 @@ export default function Navbar({
               aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
-              {brand?.logo ?? <Logo className="h-6" />}
+              {brand?.logo ?? <LogoIcon height={28} />}
             </Link>
 
             {/* Middle: the dropdown triggers, or the search field while it is open */}
@@ -707,9 +706,9 @@ export default function Navbar({
             </div>
 
             {/* Right controls (mobile + desktop) */}
-            <div className="ms-auto flex items-stretch divide-x divide-border">
+            <div className="ms-auto flex items-stretch">
               {/* Mobile controls */}
-              <div className="flex items-stretch divide-x divide-border lg:hidden">
+              <div className="flex items-stretch divide-x divide-border border-l border-border lg:hidden">
               {/* The avatar is the only child of these toggles, and it renders
                   no text, so without a label the button has no accessible name
                   at all — Lighthouse's `button-name` audit fails outright. */}
@@ -742,7 +741,7 @@ export default function Navbar({
             </div>
 
             {/* Desktop buttons */}
-            <div className="hidden items-stretch divide-x divide-border lg:flex">
+            <div className="hidden items-stretch divide-x divide-border border-l border-border lg:flex">
               <button
                 type="button"
                 className={iconButtonClass}
