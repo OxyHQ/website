@@ -17,13 +17,26 @@ interface TableOfContentsProps {
   /** The article's headings, in document order. */
   headings: MdxHeading[]
   /**
+   * Which half renders, and at which widths.
+   *
+   * `'responsive'` carries both and switches at `lg` — right for a page whose
+   * contents have one home. Docs put the list in a rail that appears at `xl`
+   * and the select above the article below it, so each half is asked for by
+   * name and the caller owns when it shows.
+   */
+  variant?: 'responsive' | 'list' | 'select'
+  /**
    * Whether the list pins itself while the body scrolls. Off when the caller
    * already pins the column it sits in, so the two do not fight.
    */
   sticky?: boolean
 }
 
-export default function TableOfContents({ headings, sticky = true }: TableOfContentsProps) {
+export default function TableOfContents({
+  headings,
+  sticky = true,
+  variant = 'responsive',
+}: TableOfContentsProps) {
   const items = headings.filter((heading) => heading.level <= 3)
   const [activeId, setActiveId] = useState<string | null>(items[0]?.id ?? null)
 
@@ -76,7 +89,7 @@ export default function TableOfContents({ headings, sticky = true }: TableOfCont
   return (
     <>
       {/* Mobile: a "Jump to" select. */}
-      <div className="lg:hidden mb-6">
+      <div className={variant === 'list' ? 'hidden' : variant === 'select' ? 'mb-6' : 'lg:hidden mb-6'}>
         <label htmlFor="article-toc-mobile" className="block text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">
           On this page
         </label>
@@ -97,7 +110,9 @@ export default function TableOfContents({ headings, sticky = true }: TableOfCont
 
       {/* Desktop: sticky sidebar TOC. */}
       <nav
-        className={`max-lg:hidden self-start ${sticky ? 'sticky top-24' : ''}`}
+        className={`self-start ${variant === 'responsive' ? 'max-lg:hidden' : ''} ${
+          variant === 'select' ? 'hidden' : ''
+        } ${sticky ? 'sticky top-24' : ''}`}
         aria-label="Table of contents"
       >
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">

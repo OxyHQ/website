@@ -2,6 +2,9 @@ import type { SyncedPackage } from '../../../scripts/types'
 import { FEATURES } from '../../constants'
 import VersionSelector from '../docs-platform/VersionSelector'
 import VersionBanner from '../docs-platform/VersionBanner'
+import TableOfContents from '../ui/TableOfContents'
+import { useContentHeadings } from '../../hooks/useContentHeadings'
+import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom'
 import DocsSubNav from './DocsSubNav'
 import { DocsCopyPageMenu } from './DocsCopyPageMenu'
 import { DocsPackageSidebar } from './DocsPackageSidebar'
@@ -50,6 +53,17 @@ export function DocsShell({
   hideSidebar,
   children,
 }: DocsShellProps) {
+  const { headings, contentRef } = useContentHeadings()
+  // The rail pins under the header AND the docs sub-nav, both of which move
+  // while the promo banner scrolls away. Same measured bottom the sub-nav
+  // parks on, plus its own 48px row.
+  const railTop = useSiteHeaderBottom() + 48
+  /*
+   * Scalar renders its own nav, its own contents and its own measure, so the
+   * REST route mounts the shell bare: no rail, no page cap. Everything else
+   * gets the three columns.
+   */
+  const showRail = !hideSidebar
   // The version selector only makes sense for packages that opted into
   // versioning AND ship more than one version. Non-versioned packages
   // never show it; single-version versioned packages also hide it so the
@@ -80,8 +94,31 @@ export function DocsShell({
             )
             : null}
 
-        <div className="relative grow box-border flex-col w-full py-10 px-6 lg:px-12 min-w-0">
+        <main className="relative grow box-border flex-col w-full py-10 px-6 lg:px-12 min-w-0">
+        <div
+          className={
+            showRail
+              ? 'mx-auto grid w-full max-w-4xl grid-cols-1 gap-x-12 xl:grid-cols-[minmax(0,1fr)_200px]'
+              : 'w-full'
+          }
+        >
+          {/*
+            The contents rail. `col-start-2 row-start-1` puts it beside the
+            article rather than after it, so it pins against the whole column
+            instead of scrolling away with its own height.
+          */}
+          {showRail ? (
+            <aside
+              className="sticky hidden self-start pb-6 xl:col-start-2 xl:row-start-1 xl:block"
+              style={{ top: railTop + 24, maxHeight: `calc(100vh - ${railTop + 24}px)` }}
+            >
+              <div className="min-h-0 overflow-y-auto pr-1">
+                <TableOfContents headings={headings} variant="list" sticky={false} />
+              </div>
+            </aside>
+          ) : null}
 
+          <div className="min-w-0 xl:col-start-1 xl:row-start-1">
           {hideHeader ? null : (
             <header className="relative leading-none">
               <div className="mt-0.5 space-y-2.5">
@@ -104,11 +141,18 @@ export function DocsShell({
           <div
             className={
               hideHeader
-                ? 'relative mb-14 [contain:inline-size] isolate prose prose-neutral dark:prose-invert text-foreground'
-                : 'relative mt-8 mb-14 [contain:inline-size] isolate max-w-3xl prose prose-neutral dark:prose-invert text-foreground'
+                ? 'relative mb-14 [contain:inline-size] isolate prose max-w-none prose-neutral dark:prose-invert text-foreground'
+                : 'relative mt-8 mb-14 [contain:inline-size] isolate prose max-w-none prose-neutral dark:prose-invert text-foreground'
             }
             data-docs-content
+            ref={contentRef}
           >
+            {/* Below the rail's breakpoint the contents become a jump-to. */}
+            {showRail ? (
+              <div className="not-prose xl:hidden">
+                <TableOfContents headings={headings} variant="select" />
+              </div>
+            ) : null}
             {pkg && currentVersion ? (
               <VersionBanner pkg={pkg} currentVersion={currentVersion} slug={slug} />
             ) : null}
@@ -116,7 +160,7 @@ export function DocsShell({
           </div>
 
           {FEATURES.SHOW_ARTICLE_FEEDBACK ? (
-            <div className="pb-16 w-full flex flex-col gap-y-8 max-w-3xl">
+            <div className="pb-16 w-full flex flex-col gap-y-8">
               <div className="flex flex-row flex-wrap gap-4 items-center justify-between">
                 <p className="inline-block text-sm text-muted-foreground whitespace-nowrap">
                   Was this page helpful?
@@ -142,7 +186,9 @@ export function DocsShell({
               </div>
             </div>
           ) : null}
-        </div>
+          </div>
+         </div>
+        </main>
       </div>
     </div>
   )
