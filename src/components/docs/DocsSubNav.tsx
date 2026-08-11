@@ -1,4 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom'
+import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom'
 
 interface DocsTab {
   label: string
@@ -40,11 +41,20 @@ const tabs: DocsTab[] = [
 ]
 
 export default function DocsSubNav() {
+  const headerBottom = useSiteHeaderBottom()
   const { pathname } = useLocation()
+  /*
+   * Parked on the header's measured BOTTOM, not on its height. The header sits
+   * below a banner that scrolls away over its first 40px, so its bottom edge
+   * moves and lands on fractional pixels — a height-derived offset left a
+   * hairline of the page showing through between the two while scrolling.
+   */
   return (
-    <div className="sticky top-[var(--site-header-height,64px)] z-40 border-b border-border bg-background">
-      <div className="container">
-        <div className="hidden lg:flex h-12 lg:pl-[19.5rem]">
+    <div className="sticky z-40 border-b border-border bg-background" style={{ top: headerBottom }}>
+      <div className="w-full">
+        {/* Docs run edge to edge, so the tabs start where the content column
+            does: past the sidebar, not past a page gutter as well. */}
+        <div className="hidden h-12 lg:flex lg:pl-[19.5rem]">
           <div className="h-full flex text-sm gap-x-6">
             {tabs.map((tab) => {
               const active = tab.isActive(pathname)
