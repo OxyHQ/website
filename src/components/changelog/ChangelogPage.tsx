@@ -45,8 +45,12 @@ export default function ChangelogContent() {
     <>
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        {/* Background gradient */}
-        <div className="container relative">
+        {/*
+          The dot field and the closing gradient span the page; only the copy is
+          held by the container. Inside it, both stopped at the gutter and the
+          section read as a panel floating in the middle of the page.
+        */}
+        <div className="relative">
           <div className="relative isolate">
             <div className="absolute bottom-0 left-0 z-10 w-full h-[200px] bg-[linear-gradient(to_bottom,transparent,var(--color-border))]" aria-hidden="true" />
             {/* Dot pattern background */}
@@ -63,51 +67,54 @@ export default function ChangelogContent() {
               <rect width="100%" height="100%" fill="url(#changelog-hero-dots)" />
             </svg>
 
-            <div className="relative z-20 grid grid-cols-12">
-              <div className="relative col-span-full">
-                <header
-                  className="flex w-full flex-col pt-30 max-xl:pt-25 max-lg:pt-20 items-center pb-30 max-lg:pb-25"
-                  style={{ '--animate-delay': '0ms', '--animate-delay-mobile': '0ms' } as React.CSSProperties}
-                >
-                  <div className="inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground mb-6">
-                    <h1>Changelog</h1>
-                  </div>
-                  <AnimatedTitle as="h2" className="max-w-[15em] text-balance text-heading-responsive-lg text-center">
+            <div className="container relative z-20">
+              {/*
+                Split row, vertical rules only: a horizontal one here would run
+                straight into the gradient that closes the section.
+              */}
+              <div className="flex w-full flex-col border-border lg:flex-row lg:border-x">
+                <div className="flex w-full flex-col justify-end gap-10 p-10 pt-30 max-xl:pt-25 max-lg:p-6 max-lg:pt-20 lg:w-[70%] lg:border-r lg:border-border">
+                  <p className="font-mono text-xs uppercase text-muted-foreground">Changelog</p>
+
+                  <AnimatedTitle as="h1" className="text-heading-responsive-lg">
                     What&apos;s new?
                   </AnimatedTitle>
-                  <p className="mt-4 max-w-xl text-balance text-lg text-foreground lg:text-xl text-center">
+                </div>
+
+                <div className="flex flex-col justify-end gap-6 p-10 pb-30 max-lg:p-6 max-lg:pb-16 max-lg:pt-0 lg:w-[30%]">
+                  <p className="text-balance text-lg text-foreground lg:text-xl">
                     A rundown of the latest Oxy feature releases, product enhancements, design updates, and important bug fixes.
                   </p>
-                  {FEATURES.SHOW_NEWSLETTER_FORMS && (
-                    <form
-                      className="flex flex-col gap-2 mt-6 w-full max-w-xs"
-                      onSubmit={(e) => e.preventDefault()}
-                    >
-                      <div className="flex flex-col gap-y-1.5">
-                        <div>
-                          <input
-                            className="block w-full rounded-[10px] bg-background p-[10px_13px] outline-hidden transition-all duration-300 ease-out text-foreground placeholder:text-muted-foreground border border-input hover:border-input hover:shadow-[0px_1px_4px_rgba(56,_62,_71,_0.1)] focus:border-primary focus:ring-[3px] focus:ring-ring/30 placeholder:max-w-full placeholder:text-base placeholder-shown:truncate"
-                            placeholder="Your email address"
-                            type="text"
-                            name="email"
-                          />
-                        </div>
+                {FEATURES.SHOW_NEWSLETTER_FORMS && (
+                  <form
+                    className="flex flex-col gap-2 mt-6 w-full max-w-xs"
+                    onSubmit={(e) => e.preventDefault()}
+                  >
+                    <div className="flex flex-col gap-y-1.5">
+                      <div>
+                        <input
+                          className="block w-full rounded-[10px] bg-background p-[10px_13px] outline-hidden transition-all duration-300 ease-out text-foreground placeholder:text-muted-foreground border border-input hover:border-input hover:shadow-[0px_1px_4px_rgba(56,_62,_71,_0.1)] focus:border-primary focus:ring-[3px] focus:ring-ring/30 placeholder:max-w-full placeholder:text-base placeholder-shown:truncate"
+                          placeholder="Your email address"
+                          type="text"
+                          name="email"
+                        />
                       </div>
-                      <button
-                        className="inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-11.5 gap-x-2 rounded-full px-3.5 text-base has-[>svg:last-child,>img:last-child]:pr-3 has-[>svg:first-child,>img:first-child]:pl-3 button-primary relative"
-                        type="submit"
-                      >
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="animate-spin opacity-0 transition-opacity duration-150">
-                            <circle cx="9" cy="9" r="8" stroke="currentColor" strokeOpacity="0.1" strokeWidth="1.5" />
-                            <path d="M17 9C17 10.0506 16.7931 11.0909 16.391 12.0615C15.989 13.0321 15.3997 13.914 14.6569 14.6569C13.914 15.3997 13.0321 15.989 12.0615 16.391C11.0909 16.7931 10.0506 17 9 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </div>
-                        <span className="transition-opacity duration-150">Subscribe</span>
-                      </button>
-                    </form>
-                  )}
-                </header>
+                    </div>
+                    <button
+                      className="inline-flex cursor-pointer items-center justify-center text-nowrap border transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default h-11.5 gap-x-2 rounded-full px-3.5 text-base has-[>svg:last-child,>img:last-child]:pr-3 has-[>svg:first-child,>img:first-child]:pl-3 button-primary relative"
+                      type="submit"
+                    >
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="animate-spin opacity-0 transition-opacity duration-150">
+                          <circle cx="9" cy="9" r="8" stroke="currentColor" strokeOpacity="0.1" strokeWidth="1.5" />
+                          <path d="M17 9C17 10.0506 16.7931 11.0909 16.391 12.0615C15.989 13.0321 15.3997 13.914 14.6569 14.6569C13.914 15.3997 13.0321 15.989 12.0615 16.391C11.0909 16.7931 10.0506 17 9 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                      <span className="transition-opacity duration-150">Subscribe</span>
+                    </button>
+                  </form>
+                )}
+                </div>
               </div>
             </div>
           </div>

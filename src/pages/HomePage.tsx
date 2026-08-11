@@ -6,6 +6,8 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HeroCarousel from '../components/homepage/HeroCarousel'
 import { heroCarouselSlots } from '../data/heroCarousel'
+import { homeFaqs } from '../data/homepage'
+import FaqSection from '../components/sections/FaqSection'
 import { useHero, usePage, type HeroMediaRef, type PageSection, useProducts, type ProductRecord } from '../api/hooks'
 import { FEATURES } from '../constants'
 import { usePageChromeStore } from '../stores/pageChromeStore'
@@ -1293,6 +1295,7 @@ export default function HomePage() {
         <AIResearchSection />
         <CommonsAppSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}
+        <FaqSection title="Frequently asked questions." items={homeFaqs} />
       </main>
       <Footer />
     </>

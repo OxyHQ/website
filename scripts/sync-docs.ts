@@ -267,9 +267,20 @@ function slugFromFile(relPath: string): string {
  * what the SPA actually serves. Handles both markdown link targets
  * (the ](path) form) and bold link captions (the [**path**] form).
  */
-function rewriteDocsLinks(source: string): string {
+/**
+ * MDX has no HTML comments. `<!-- … -->` is ordinary markdown upstream, and the
+ * repos we sync from use it for their own tooling directives, but the MDX
+ * compiler stops at the `!` and the whole build fails on a file nobody here
+ * wrote. Converting rather than deleting keeps the note readable for anyone who
+ * opens the synced copy.
+ */
+function convertHtmlComments(source: string): string {
+  return source.replace(/<!--([\s\S]*?)-->/g, (_match, body: string) => `{/*${body}*/}`);
+}
+
+function rewriteDocsLinks(source: string, isMdx = false): string {
   return (
-    source
+    (isMdx ? convertHtmlComments(source) : source)
       // Link captions like `[**/docs/api**]` or `[/docs/x]` — the bracketed
       // display text that authors hand-write to mirror the URL.
       .replace(/(\[(?:\*\*)?)\/docs(\/[^\]\s)]*?)((?:\*\*)?\])/g, '$1/developers/docs$2$3')
@@ -280,7 +291,7 @@ function rewriteDocsLinks(source: string): string {
 
 async function rewriteMdxLinksInPlace(filePath: string): Promise<void> {
   const original = await readFile(filePath, 'utf8');
-  const rewritten = rewriteDocsLinks(original);
+  const rewritten = rewriteDocsLinks(original, /\.mdx$/i.test(filePath));
   if (rewritten !== original) {
     await writeFile(filePath, rewritten);
   }
@@ -448,7 +459,7 @@ async function copyVersionFromGitTag(
     }
     const dest = path.join(outDir, relUnderDocs);
     await mkdir(path.dirname(dest), { recursive: true });
-    const rewritten = rewriteDocsLinks(contents.toString('utf8'));
+    const rewritten = rewriteDocsLinks(contents.toString('utf8'), /\.mdx$/i.test(dest));
     await writeFile(dest, rewritten);
     const { data, body } = parseFrontMatter(rewritten);
     const slug = slugFromFile(relUnderDocs);

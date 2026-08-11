@@ -32,6 +32,10 @@ const OG_LOCALES: Record<Locale, string> = {
   ko: 'ko_KR',
   zh: 'zh_CN',
   ar: 'ar_SA',
+  hi: 'hi_IN',
+  bn: 'bn_BD',
+  ru: 'ru_RU',
+  id: 'id_ID',
 }
 
 /** Build the canonical URL for a given path + locale on a brand origin. The
