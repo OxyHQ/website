@@ -26,7 +26,6 @@ import {
   trackedRepos,
 } from './db/schema/index.js'
 import {
-  DEFAULT_CAROUSEL_SLOTS,
   DEFAULT_HERO_BG_MP4,
   DEFAULT_HERO_BG_WEBM,
   DEFAULT_HERO_POSTER,
@@ -306,7 +305,6 @@ async function seed() {
     backgroundVideoWebm: DEFAULT_HERO_BG_WEBM,
     backgroundVideoMp4: DEFAULT_HERO_BG_MP4,
     backgroundPoster: DEFAULT_HERO_POSTER,
-    carouselSlots: DEFAULT_CAROUSEL_SLOTS as unknown as Record<string, unknown>[],
   })
   console.log('Seeded hero')
 

@@ -20,8 +20,6 @@ interface HeroForm {
   backgroundVideoWebm: string
   backgroundVideoMp4: string
   backgroundPoster: string
-  /** Carousel slots are edited as raw JSON for now — admins rarely touch them. */
-  carouselSlotsJson: string
 }
 
 function toForm(data: HeroContent | undefined): HeroForm {
@@ -30,7 +28,6 @@ function toForm(data: HeroContent | undefined): HeroForm {
     backgroundVideoWebm: mediaId(data?.backgroundVideoWebm),
     backgroundVideoMp4: mediaId(data?.backgroundVideoMp4),
     backgroundPoster: mediaId(data?.backgroundPoster),
-    carouselSlotsJson: JSON.stringify(data?.carouselSlots ?? [], null, 2),
   }
 }
 
@@ -40,7 +37,6 @@ export default function HeroAdmin() {
   const [form, setForm] = useState<HeroForm>(() => toForm(data))
   const [lastSyncedData, setLastSyncedData] = useState(data)
   const [saving, setSaving] = useState(false)
-  const [jsonError, setJsonError] = useState<string | null>(null)
   const [statusMessage, setStatusMessage] = useState<string | null>(null)
 
   if (data !== lastSyncedData) {
@@ -49,22 +45,7 @@ export default function HeroAdmin() {
   }
 
   const save = async () => {
-    setJsonError(null)
     setStatusMessage(null)
-
-    let parsedSlots: HeroContent['carouselSlots']
-    try {
-      const parsed: unknown = JSON.parse(form.carouselSlotsJson)
-      if (!Array.isArray(parsed)) {
-        setJsonError('Carousel slots must be a JSON array.')
-        return
-      }
-      parsedSlots = parsed as HeroContent['carouselSlots']
-    } catch (err) {
-      setJsonError(err instanceof Error ? err.message : 'Invalid JSON')
-      return
-    }
-
     setSaving(true)
     try {
       await updateHero.mutateAsync({
@@ -72,7 +53,6 @@ export default function HeroAdmin() {
         backgroundVideoWebm: form.backgroundVideoWebm,
         backgroundVideoMp4: form.backgroundVideoMp4,
         backgroundPoster: form.backgroundPoster,
-        carouselSlots: parsedSlots,
       })
       await refetch()
       setStatusMessage('Saved.')
@@ -87,8 +67,8 @@ export default function HeroAdmin() {
     <div>
       <h2 className="text-xl font-semibold text-foreground">Hero</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Homepage hero section: title, background video and poster, plus the
-        carousel slot grid below the headline.
+        Homepage hero section: the headline, and the ambient video and poster
+        that play in the panel below it.
       </p>
 
       <div className="mt-6 flex flex-col gap-4">
@@ -132,25 +112,6 @@ export default function HeroAdmin() {
               accept="image/*"
             />
           </div>
-        </div>
-
-        <div className="rounded-xl border border-border p-4">
-          <h3 className="text-sm font-medium text-foreground">Carousel slots</h3>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Raw JSON of the slot grid. Each slot has a <code className="font-mono">size</code>,
-            an array of <code className="font-mono">faces</code>, and optional rotation/styling
-            flags. Newsroom and careers face arrays are auto-populated from live data at
-            render time.
-          </p>
-          <Textarea
-            value={form.carouselSlotsJson}
-            onChange={(e) => setForm({ ...form, carouselSlotsJson: e.target.value })}
-            rows={20}
-            className="mt-3 font-mono text-xs"
-          />
-          {jsonError && (
-            <p className="mt-2 text-xs text-destructive">JSON error: {jsonError}</p>
-          )}
         </div>
 
         <div className="flex items-center gap-3 self-start">

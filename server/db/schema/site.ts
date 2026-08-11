@@ -47,7 +47,6 @@ export const heroContents = pgTable('hero_contents', {
   backgroundVideoMp4: jsonb().$type<unknown>(),
   backgroundPoster: jsonb().$type<unknown>(),
   /** `{ size, faces, rotateInterval?, rounded?, roundedLeft? }[]` */
-  carouselSlots: jsonb().$type<Record<string, unknown>[]>().notNull().default([]),
   ...timestamps,
 })
 

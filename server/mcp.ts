@@ -36,7 +36,6 @@ import {
   translations,
 } from './db/schema/index.js'
 import {
-  DEFAULT_CAROUSEL_SLOTS,
   DEFAULT_HERO_BG_MP4,
   DEFAULT_HERO_BG_WEBM,
   DEFAULT_HERO_POSTER,
@@ -306,8 +305,7 @@ async function readHero(): Promise<Record<string, unknown>> {
       backgroundVideoWebm: DEFAULT_HERO_BG_WEBM,
       backgroundVideoMp4: DEFAULT_HERO_BG_MP4,
       backgroundPoster: DEFAULT_HERO_POSTER,
-      carouselSlots: DEFAULT_CAROUSEL_SLOTS as unknown as Record<string, unknown>[],
-    })
+      })
     .returning()
   return withHeroMedia(created)
 }
@@ -318,7 +316,7 @@ server.tool('get_hero', 'Get the homepage hero singleton: title, background vide
   } catch (e) { return err(e) }
 })
 
-server.tool('update_hero', 'Update the homepage hero. Pass any subset of: title (supports newlines), background video/poster (Media _id or static URL like "/images/landing/hero-background.webm"), or carouselSlots (full replacement of the grid). Only provided fields are changed.', heroUpdateRawShape, async (params: HeroUpdate) => {
+server.tool('update_hero', 'Update the homepage hero. Pass any subset of: title (supports newlines), background video/poster (Media _id or static URL like "/images/landing/hero-background.webm"). Only provided fields are changed.', heroUpdateRawShape, async (params: HeroUpdate) => {
   try {
     // Re-validate via the same schema the REST route uses so the MCP and the
     // HTTP path stay in lockstep on shape, defaults, and rejections.
@@ -333,7 +331,6 @@ server.tool('update_hero', 'Update the homepage hero. Pass any subset of: title 
       if (value === undefined) continue
       update[field] = value || null
     }
-    if (body.carouselSlots !== undefined) update.carouselSlots = body.carouselSlots
 
     const hero = (await upsertSingleton(heroContents, update)) as Record<string, unknown> | undefined
     if (!hero) return err(new Error('Failed to update hero content'))

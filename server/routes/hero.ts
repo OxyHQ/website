@@ -49,7 +49,6 @@ function applyHeroUpdate(update: HeroUpdate): Record<string, unknown> {
   if (update.backgroundVideoWebm !== undefined) next.backgroundVideoWebm = update.backgroundVideoWebm || null
   if (update.backgroundVideoMp4 !== undefined) next.backgroundVideoMp4 = update.backgroundVideoMp4 || null
   if (update.backgroundPoster !== undefined) next.backgroundPoster = update.backgroundPoster || null
-  if (update.carouselSlots !== undefined) next.carouselSlots = update.carouselSlots
   return next
 }
 

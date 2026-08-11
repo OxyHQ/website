@@ -36,6 +36,13 @@
       "when": 1786449600000,
       "tag": "0004_hero_drop_faircoin_slot",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1786453200000,
+      "tag": "0005_hero_drop_carousel_slots",
+      "breakpoints": true
     }
   ]
 }

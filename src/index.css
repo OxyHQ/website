@@ -529,6 +529,12 @@ body {
   animation: search-bar-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* The hero's three scroll arrows, each one a beat behind the last. */
+@keyframes hero-scroll-arrow {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
 /* Typing cursor blink */
 @keyframes cursor-blink {
   0%, 100% { opacity: 1; }

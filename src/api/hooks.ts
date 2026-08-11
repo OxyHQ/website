@@ -173,7 +173,6 @@ export function useFooter() {
 }
 
 // ── Hero ──
-import type { CarouselSlot } from '../data/heroCarousel'
 
 /** Populated Media ref from the server, or a plain URL string, or null. */
 export type HeroMediaRef =
@@ -191,7 +190,6 @@ export interface HeroContent {
   backgroundVideoWebm: HeroMediaRef
   backgroundVideoMp4: HeroMediaRef
   backgroundPoster: HeroMediaRef
-  carouselSlots: CarouselSlot[]
 }
 
 export function useHero() {
@@ -361,7 +359,6 @@ export function useUpdateHero() {
       backgroundVideoWebm: string | null
       backgroundVideoMp4: string | null
       backgroundPoster: string | null
-      carouselSlots: CarouselSlot[]
     }>) => apiFetch<HeroContent>('/hero', { method: 'PUT', body: JSON.stringify(data) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['hero'] }),
   })
