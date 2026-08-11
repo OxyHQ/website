@@ -9,6 +9,7 @@ import {
   setMode,
   setColorPreset,
 } from '../../theme'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 const ALL_PRESETS: AppColorName[] = [...APP_COLOR_NAMES, 'oxy']
 
@@ -30,7 +31,7 @@ export default function SettingsAppearance() {
     <div className="container py-16 lg:py-24">
       <div className="mx-auto max-w-2xl">
         {/* Page header */}
-        <h1 className="text-heading-responsive-md">Settings</h1>
+        <AnimatedTitle as="h1" className="text-heading-responsive-md">Settings</AnimatedTitle>
         <p className="mt-3 text-base text-muted-foreground">
           Customize the look and feel of the website.
         </p>

@@ -5,6 +5,7 @@ import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useTeamMembers } from '../api/hooks'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 function DashedHLine() {
   return (
@@ -42,9 +43,9 @@ export default function TeamPage() {
                 <div className="inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground mb-6">
                   Our Team
                 </div>
-                <h1 className="text-balance text-heading-responsive-lg max-w-[15em]">
+                <AnimatedTitle as="h1" className="text-balance text-heading-responsive-lg max-w-[15em]">
                   The people behind Oxy
-                </h1>
+                </AnimatedTitle>
                 <p className="mt-4 max-w-xl text-balance text-lg text-foreground lg:text-xl">
                   A global, remote-first team building ethical technology and open-source tools.
                 </p>

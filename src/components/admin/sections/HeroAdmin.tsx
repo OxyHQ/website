@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useHero, useUpdateHero, type HeroContent } from '../../../api/hooks'
 import { PrimaryButton } from '@oxyhq/bloom/button'
 import { Textarea } from '../../ui/shadcn/textarea'
-import { Input } from '../../ui/shadcn/input'
 import { Label } from '../../ui/shadcn/label'
 import MediaPicker from '../MediaPicker'
 
@@ -18,7 +17,6 @@ function mediaId(image: unknown): string {
 
 interface HeroForm {
   title: string
-  eyebrow: string
   backgroundVideoWebm: string
   backgroundVideoMp4: string
   backgroundPoster: string
@@ -29,7 +27,6 @@ interface HeroForm {
 function toForm(data: HeroContent | undefined): HeroForm {
   return {
     title: data?.title ?? '',
-    eyebrow: data?.eyebrow ?? '',
     backgroundVideoWebm: mediaId(data?.backgroundVideoWebm),
     backgroundVideoMp4: mediaId(data?.backgroundVideoMp4),
     backgroundPoster: mediaId(data?.backgroundPoster),
@@ -72,7 +69,6 @@ export default function HeroAdmin() {
     try {
       await updateHero.mutateAsync({
         title: form.title,
-        eyebrow: form.eyebrow,
         backgroundVideoWebm: form.backgroundVideoWebm,
         backgroundVideoMp4: form.backgroundVideoMp4,
         backgroundPoster: form.backgroundPoster,
@@ -91,7 +87,7 @@ export default function HeroAdmin() {
     <div>
       <h2 className="text-xl font-semibold text-foreground">Hero</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Homepage hero section: title, eyebrow text, background video and poster, plus the
+        Homepage hero section: title, background video and poster, plus the
         carousel slot grid below the headline.
       </p>
 
@@ -103,14 +99,6 @@ export default function HeroAdmin() {
             onChange={(e) => setForm({ ...form, title: e.target.value })}
             rows={3}
             placeholder="Use a newline (Enter) for visual line breaks"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <Label>Eyebrow (small caps line)</Label>
-          <Input
-            value={form.eyebrow}
-            onChange={(e) => setForm({ ...form, eyebrow: e.target.value })}
           />
         </div>
 

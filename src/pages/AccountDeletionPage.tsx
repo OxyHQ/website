@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────
  * /account-deletion
@@ -75,7 +76,7 @@ export default function AccountDeletionPage() {
       />
       <Navbar />
       <main className="container max-w-3xl py-16">
-        <h1 className="text-heading-responsive-lg text-foreground">Delete your Oxy account</h1>
+        <AnimatedTitle as="h1" className="text-heading-responsive-lg text-foreground">Delete your Oxy account</AnimatedTitle>
         <p className="mt-4 text-lg text-muted-foreground">
           You can delete your Oxy account at any time, from your own device, without asking anyone
           for permission. This page explains how, and exactly what happens to your data.

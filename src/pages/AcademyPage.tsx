@@ -24,6 +24,7 @@ import { loadCourses, type CourseWithLessons } from '../content/academy-loader'
 import { courseGradient, courseInitials, COURSE_LEVELS } from '../components/academy/courseVisual'
 import { useAcademyAllProgress } from '../components/academy/useAcademyProgress'
 import type { CourseProgress } from '../components/academy/progressStorage'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────
  * /academy — Oxy Academy
@@ -330,9 +331,9 @@ export default function AcademyPage() {
             <div className="flex items-center text-sm before:mr-2 before:inline-block before:size-2.5 before:shrink-0 before:bg-current">
               <div className="shrink-0">Education Center</div>
             </div>
-            <h1 className="mt-2 mb-10 max-w-[28ch] text-heading-responsive-lg">
+            <AnimatedTitle as="h1" className="mt-2 mb-10 max-w-[28ch] text-heading-responsive-lg">
               Making sense of Oxy: identity, the platform, and running it yourself.
-            </h1>
+            </AnimatedTitle>
             <div className="w-full max-w-[680px]">
               <BloomSearch
                 value={query}

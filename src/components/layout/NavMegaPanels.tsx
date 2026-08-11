@@ -22,23 +22,27 @@ export function NavCard({ card, className = '' }: { card: NavDropdownCard; class
 /* ─── Feature grid ─── */
 
 /**
- * Three-column dropdown: a feature column followed by promo cards. Features reuse
- * `NavDropdownItem` so they match the other dropdowns; width fits content up to a
- * max so the panel grows/shrinks with what it holds.
+ * Feature dropdown: a block of links beside the promo cards, each half taking an
+ * equal share of the band and deciding its own column count from what it gets.
+ * `auto-fit` is what makes that automatic — no breakpoint table, and no width
+ * hardcoded here; the band is bounded by the site container and nothing else.
+ * Features reuse `NavDropdownItem` so they match the other dropdowns.
  */
 export function NavFeatureGrid({ grid }: { grid: NavFeatureGridContent }) {
   return (
-    <div className="grid w-fit max-w-[1024px] grid-cols-[360px_300px_300px] gap-3 p-4 max-xl:grid-cols-[320px_260px_260px]">
-      <ul className="flex flex-col gap-1">
+    <div className="flex w-full gap-space-lg py-space-md">
+      <ul className="grid flex-1 grid-cols-[repeat(auto-fit,minmax(240px,1fr))] items-start gap-space-sm">
         {grid.features.map((item) => (
           <li key={item.href} className="contents">
             <NavDropdownItem item={item} />
           </li>
         ))}
       </ul>
-      {grid.cards.map((card) => (
-        <NavCard key={card.href} card={card} className="h-full" />
-      ))}
+      <div className="grid flex-1 grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-space-lg">
+        {grid.cards.map((card) => (
+          <NavCard key={card.href} card={card} className="h-full" />
+        ))}
+      </div>
     </div>
   )
 }

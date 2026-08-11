@@ -14,6 +14,7 @@ import ShareWithMention from '../components/social/ShareWithMention'
 import { courseGradient, courseInitials, COURSE_LEVELS } from '../components/academy/courseVisual'
 import { useAcademyProgress } from '../components/academy/useAcademyProgress'
 import type { CourseProgress } from '../components/academy/progressStorage'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────
  * /academy/:slug
@@ -235,7 +236,7 @@ export default function CourseDetailPage() {
                   ) : null}
                 </div>
 
-                <h1 className="text-balance text-heading-responsive-lg text-foreground">{course.title}</h1>
+                <AnimatedTitle as="h1" className="text-balance text-heading-responsive-lg text-foreground">{course.title}</AnimatedTitle>
                 {course.summary && (
                   <p className="max-w-xl text-pretty leading-relaxed text-muted-foreground">{course.summary}</p>
                 )}

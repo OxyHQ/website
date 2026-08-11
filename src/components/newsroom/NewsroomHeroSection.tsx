@@ -3,6 +3,7 @@ import * as Skeleton from '@oxyhq/bloom/skeleton'
 import { NewsCardFeatured, NewsCardGrid } from './NewsCard'
 import { useNewsroomPosts } from '../../api/hooks'
 import { newsCategories, type NewsCategory } from '../../data/newsroom'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 interface NewsroomHeroSectionProps {
   title?: string
@@ -71,9 +72,9 @@ export default function NewsroomHeroSection({ title = 'Newsroom', category }: Ne
     <section className="container pt-[5rem] md:pt-10">
       {/* ── Title ── */}
       <div className="flex flex-col gap-1">
-        <h1 className="shrink-0 text-heading-responsive-lg text-foreground">
+        <AnimatedTitle as="h1" className="shrink-0 text-heading-responsive-lg text-foreground">
           {title}
-        </h1>
+        </AnimatedTitle>
       </div>
 
       {/* ── Category nav ──

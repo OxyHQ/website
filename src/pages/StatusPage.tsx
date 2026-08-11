@@ -4,6 +4,7 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import { useServiceStatus, type ServiceStatusEntry, type ServiceStatusValue } from '../api/hooks'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 const STATUS_LABEL: Record<ServiceStatusValue, string> = {
   operational: 'Operational',
@@ -238,9 +239,9 @@ export default function StatusPage() {
                     <StatusDot status={overall} pulse size="md" />
                     System status
                   </span>
-                  <h1 className="max-w-[18em] text-balance text-heading-responsive-lg text-foreground">
+                  <AnimatedTitle as="h1" className="max-w-[18em] text-balance text-heading-responsive-lg text-foreground">
                     {headline}
-                  </h1>
+                  </AnimatedTitle>
                   <p className="max-w-2xl text-pretty text-lg text-muted-foreground">{kicker}</p>
 
                   <div className="flex flex-wrap items-center gap-3 pt-1">

@@ -15,6 +15,7 @@ import {
   useFairCoinNavbarBrand,
   useFairCoinSimpleNavLinks,
 } from '../lib/faircoin-chrome'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 export default function NotFoundPage() {
   const onFairCoinHost = isFairCoinHost()
@@ -53,7 +54,7 @@ export default function NotFoundPage() {
             {/* Text */}
             <div className="col-span-full flex flex-col items-center text-center lg:col-[2/8] lg:items-start lg:text-left">
               <p className="text-overline text-muted-foreground">/ Status: 404</p>
-              <h1 className="mt-3 text-heading-responsive-lg">Page not found.</h1>
+              <AnimatedTitle as="h1" className="mt-3 text-heading-responsive-lg">Page not found.</AnimatedTitle>
               <p className="mt-3 max-w-sm text-pretty text-muted-foreground">
                 The page you're looking for doesn't exist or has been moved.
               </p>

@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 const IMAGES = '/images/astro'
 
@@ -315,9 +316,9 @@ export default function AstroPageContent() {
                 </div>
               </div>
 
-              <h1 className="text-heading-responsive-lg text-center text-white">
+              <AnimatedTitle as="h1" className="text-heading-responsive-lg text-center text-white">
                 Astro
-              </h1>
+              </AnimatedTitle>
 
               <button
                 onClick={openDownload}

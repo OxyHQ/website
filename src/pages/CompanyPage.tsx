@@ -8,6 +8,7 @@ import RollingNumber from '../components/ui/RollingNumber'
 import { useJobs, useProducts } from '../api/hooks'
 import { getStaticChangelog } from '../content/changelog-loader'
 import { useTranslation } from '../lib/i18n'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────
  * /company
@@ -561,7 +562,7 @@ function MoreSection() {
         <div className="col-span-full min-w-0">
           <div className="flex flex-col gap-0">
             <div className="flex w-full flex-col gap-4">
-              <h2 className="w-full text-heading-responsive-md">More</h2>
+              <AnimatedTitle as="h2" className="w-full text-heading-responsive-md">More</AnimatedTitle>
               <p className="w-full text-muted-foreground">
                 The documents this page summarises, the people behind them, and the code underneath.
               </p>

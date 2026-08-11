@@ -13,6 +13,7 @@ import {
   productsTag, productsHeading, productCards,
   globeTextLeft, globeTextRight,
 } from '../../data/ai'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 const GlobeScene = lazy(() => import('./GlobeScene'))
 
@@ -237,7 +238,7 @@ export default function AIPageContent() {
         <div className="container space-y-16 sm:space-y-32">
           <div>
             <div className="mono-tag flex items-center gap-2 text-sm text-muted-foreground"><span>[ </span><span> {productsTag} </span><span> ]</span></div>
-            <h1 className="text-heading-responsive-lg text-balance mt-4 text-foreground">{productsHeading}</h1>
+            <AnimatedTitle as="h1" className="text-heading-responsive-lg text-balance mt-4 text-foreground">{productsHeading}</AnimatedTitle>
           </div>
           <div className="grid gap-0 lg:grid-cols-3 lg:-space-x-px">
             {/* Card 1: Oxy Chat */}

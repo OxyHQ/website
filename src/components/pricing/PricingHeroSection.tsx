@@ -3,6 +3,7 @@ import { FEATURES } from '../../constants'
 import Button from '../ui/Button'
 import BillingToggle from './BillingToggle'
 import { ArrowRightIcon } from '../icons'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 interface Props {
   isAnnual: boolean
@@ -15,7 +16,7 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
   return (
     <div className="container">
       <div className="flex flex-col items-center pt-[116px]">
-        <h1 className="text-center text-heading-responsive-lg">Pricing for the Oxy ecosystem.</h1>
+        <AnimatedTitle as="h1" className="text-center text-heading-responsive-lg">Pricing for the Oxy ecosystem.</AnimatedTitle>
         <p className="mt-4 max-w-md text-balance text-center text-muted-foreground text-xl">
           Most Oxy apps are free and open source. Paid plans add hosting, support, and team features. Start today, no credit card required.
         </p>

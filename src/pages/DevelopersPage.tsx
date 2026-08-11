@@ -31,6 +31,7 @@ import {
   ctaHeading,
   ctaDescription,
 } from '../data/developers'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /**
  * Canonical landing URL for a package card. Mirrors `pageHref` in
@@ -64,9 +65,9 @@ function DevelopersHero() {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           {heroEyebrow}
         </p>
-        <h1 className="text-balance text-heading-responsive-lg text-foreground">
+        <AnimatedTitle as="h1" className="text-balance text-heading-responsive-lg text-foreground">
           {heroTitle}
-        </h1>
+        </AnimatedTitle>
         <p className="text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
           {heroDescription}
         </p>
@@ -231,9 +232,9 @@ function FinalCTA() {
   return (
     <PageSection spacing="lg" tone="surface">
       <div className="flex flex-col items-center gap-6 text-center">
-        <h2 className="text-balance text-heading-responsive-lg text-foreground">
+        <AnimatedTitle as="h2" className="text-balance text-heading-responsive-lg text-foreground">
           {ctaHeading}
-        </h2>
+        </AnimatedTitle>
         <p className="max-w-xl text-pretty text-lg text-muted-foreground">{ctaDescription}</p>
         <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
           <Button variant="primary" size="lg" href={heroPrimaryCta.href}>

@@ -3,6 +3,7 @@ import { readTime } from '../../../lib/userUtils'
 import ArticleAuthors from '../../social/ArticleAuthor'
 import BackToNewsroomButton from './BackToNewsroomButton'
 import ShareLinkButton from './ShareLinkButton'
+import { AnimatedTitle } from '../../ui/AnimatedTitle'
 
 /**
  * The article's opening screen: category, title, byline, and the two controls
@@ -34,7 +35,7 @@ export default function ArticleHero({ post, url }: { post: NewsroomPost; url: st
                 {post.categories[0]}
               </p>
             )}
-            <h1 className="text-heading-responsive-lg">{post.title}</h1>
+            <AnimatedTitle as="h1" className="text-heading-responsive-lg">{post.title}</AnimatedTitle>
             <div className="flex flex-wrap items-center justify-center gap-6">
               <time className="text-sm" dateTime={post.publishedAt}>
                 {formatDate(post.publishedAt)}

@@ -39,7 +39,6 @@ import {
   DEFAULT_CAROUSEL_SLOTS,
   DEFAULT_HERO_BG_MP4,
   DEFAULT_HERO_BG_WEBM,
-  DEFAULT_HERO_EYEBROW,
   DEFAULT_HERO_POSTER,
   DEFAULT_HERO_TITLE,
 } from './constants/hero.js'
@@ -304,7 +303,6 @@ async function readHero(): Promise<Record<string, unknown>> {
     .insert(heroContents)
     .values({
       title: DEFAULT_HERO_TITLE,
-      eyebrow: DEFAULT_HERO_EYEBROW,
       backgroundVideoWebm: DEFAULT_HERO_BG_WEBM,
       backgroundVideoMp4: DEFAULT_HERO_BG_MP4,
       backgroundPoster: DEFAULT_HERO_POSTER,
@@ -314,13 +312,13 @@ async function readHero(): Promise<Record<string, unknown>> {
   return withHeroMedia(created)
 }
 
-server.tool('get_hero', 'Get the homepage hero singleton: title, eyebrow text, background video/poster, and the carousel slot grid that sits below the hero copy. Returns sensible defaults the first time it is called so the site renders identically before any edits.', {}, async () => {
+server.tool('get_hero', 'Get the homepage hero singleton: title, background video/poster, and the carousel slot grid that sits below the hero copy. Returns sensible defaults the first time it is called so the site renders identically before any edits.', {}, async () => {
   try {
     return ok(await readHero())
   } catch (e) { return err(e) }
 })
 
-server.tool('update_hero', 'Update the homepage hero. Pass any subset of: title (supports newlines), eyebrow, background video/poster (Media _id or static URL like "/images/landing/hero-background.webm"), or carouselSlots (full replacement of the grid). Only provided fields are changed.', heroUpdateRawShape, async (params: HeroUpdate) => {
+server.tool('update_hero', 'Update the homepage hero. Pass any subset of: title (supports newlines), background video/poster (Media _id or static URL like "/images/landing/hero-background.webm"), or carouselSlots (full replacement of the grid). Only provided fields are changed.', heroUpdateRawShape, async (params: HeroUpdate) => {
   try {
     // Re-validate via the same schema the REST route uses so the MCP and the
     // HTTP path stay in lockstep on shape, defaults, and rejections.
@@ -328,8 +326,7 @@ server.tool('update_hero', 'Update the homepage hero. Pass any subset of: title 
 
     const update: Record<string, unknown> = {}
     if (body.title !== undefined) update.title = body.title
-    if (body.eyebrow !== undefined) update.eyebrow = body.eyebrow
-    // A media field holds either a Media `_id` or a static URL; both are
+        // A media field holds either a Media `_id` or a static URL; both are
     // stored as given and resolved on read.
     for (const field of ['backgroundVideoWebm', 'backgroundVideoMp4', 'backgroundPoster'] as const) {
       const value = body[field]

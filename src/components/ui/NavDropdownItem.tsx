@@ -78,7 +78,7 @@ interface NavDropdownItemProps {
   item: NavDropdownItemType
 }
 
-const linkClass = "group relative flex h-fit w-full max-w-[340px] items-start justify-start gap-space-md rounded-xl border border-transparent p-space-sm transition-colors duration-300 hover:bg-foreground/5 before:absolute before:-top-0.75 before:-right-1.75 before:-bottom-0.75 before:-left-1.75"
+const linkClass = "group relative flex h-fit w-full items-start justify-start gap-space-md rounded-xl px-space-sm py-space-xs transition-colors duration-300 hover:bg-foreground/5 before:absolute before:-top-0.75 before:-right-1 before:-bottom-0.75 before:-left-1"
 
 function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const IconComponent = item.icon ? iconMap[item.icon] : null
@@ -87,7 +87,7 @@ function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const hasImage = Boolean(imageUrl)
 
   return (
-    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-[13px] border border-border md:rounded-none md:border-0">
+    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full">
       {showGrid && (
         <svg width="40" height="40" fill="none" className="absolute inset-0 z-0">
           <g

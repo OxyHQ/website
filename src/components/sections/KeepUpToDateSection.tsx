@@ -1,5 +1,6 @@
 import { keepUpToDateCards } from '../../data/content'
 import { ArrowRightIcon } from '../icons'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 function CardIcon({ type }: { type: string }) {
   switch (type) {
@@ -53,9 +54,9 @@ export default function KeepUpToDateSection() {
         {/* Header */}
         <header className="grid grid-cols-12 justify-items-start pb-15 pt-40 max-xl:pb-16 max-xl:pt-30 max-lg:pb-15 max-lg:pt-25">
           <div className="col-span-full flex max-w-xl flex-col gap-4 text-start max-lg:gap-3">
-            <h2 className="text-pretty text-heading-responsive-md">
+            <AnimatedTitle as="h2" className="text-pretty text-heading-responsive-md">
               Keep up to date.
-            </h2>
+            </AnimatedTitle>
             <p className="text-pretty text-xl text-muted-foreground">
               Get the latest updates on what we&apos;re building.
             </p>

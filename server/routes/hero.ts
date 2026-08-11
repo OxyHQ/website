@@ -46,7 +46,6 @@ async function readHero(): Promise<Record<string, unknown>> {
 function applyHeroUpdate(update: HeroUpdate): Record<string, unknown> {
   const next: Record<string, unknown> = {}
   if (update.title !== undefined) next.title = update.title
-  if (update.eyebrow !== undefined) next.eyebrow = update.eyebrow
   if (update.backgroundVideoWebm !== undefined) next.backgroundVideoWebm = update.backgroundVideoWebm || null
   if (update.backgroundVideoMp4 !== undefined) next.backgroundVideoMp4 = update.backgroundVideoMp4 || null
   if (update.backgroundPoster !== undefined) next.backgroundPoster = update.backgroundPoster || null

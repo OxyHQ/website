@@ -6,6 +6,7 @@ import { useJob } from '../../api/hooks'
 import { type DescriptionBlock } from '../../data/careers'
 import SEO from '../SEO'
 import StructuredData from '../StructuredData'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────
  * /company/careers/:slug
@@ -133,7 +134,7 @@ export default function CareerDetailContent() {
           noIndex
         />
         <div className="container py-40">
-          <h1 className="text-heading-responsive-lg">Position not found.</h1>
+          <AnimatedTitle as="h1" className="text-heading-responsive-lg">Position not found.</AnimatedTitle>
           <p className="pt-6 text-muted-foreground">This role doesn&apos;t exist or has been filled.</p>
           <p className="pt-8">
             <Link to="/company/careers#open-positions" className="underline underline-offset-4">
@@ -184,7 +185,7 @@ export default function CareerDetailContent() {
                 </Link>
               </div>
               <div className="inline-block rounded-sm bg-surface px-1.5 py-0.5 text-sm">{engagement}</div>
-              <h1 className="mb-10 mt-2 max-w-[450px] text-heading-responsive-md">{job.title}</h1>
+              <AnimatedTitle as="h1" className="mb-10 mt-2 max-w-[450px] text-heading-responsive-md">{job.title}</AnimatedTitle>
               <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-8 sm:flex-row sm:gap-16 md:flex-col md:gap-8">
                   <div className="flex flex-col gap-1">

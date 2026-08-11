@@ -14,6 +14,7 @@ import {
 import HelpProductBadge from './HelpProductBadge'
 import { ArrowRightIcon } from '../icons'
 import { getHelpProductLogo } from './getHelpProductLogo'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────
  * /help — landing
@@ -253,7 +254,7 @@ function HelpContent({
             <div className="inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground">
               {HERO_BADGE}
             </div>
-            <h1 className="mt-6 text-title-lg">{HERO_TITLE}</h1>
+            <AnimatedTitle as="h1" className="mt-6 text-title-lg">{HERO_TITLE}</AnimatedTitle>
             <div className="mt-4 max-w-[20em] text-pretty text-foreground text-xl">
               {HERO_SUBTITLE}
             </div>
@@ -332,7 +333,7 @@ function HelpContent({
           {groups.length > 0 && (
             <div className="mt-20 w-full self-stretch md:mt-25">
               <div className="mb-8 flex flex-col gap-2">
-                <h2 className="text-title-md">Browse by product</h2>
+                <AnimatedTitle as="h2" className="text-title-md">Browse by product</AnimatedTitle>
                 <p className="text-muted-foreground">
                   Articles organized by the Oxy app or service they cover.
                 </p>

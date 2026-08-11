@@ -42,7 +42,6 @@ export const footers = pgTable('footers', {
 export const heroContents = pgTable('hero_contents', {
   _id: objectId(),
   title: text().notNull().default(''),
-  eyebrow: text().notNull().default(''),
   /** Media refs, kept loose: legacy rows store a URL string rather than an id. */
   backgroundVideoWebm: jsonb().$type<unknown>(),
   backgroundVideoMp4: jsonb().$type<unknown>(),

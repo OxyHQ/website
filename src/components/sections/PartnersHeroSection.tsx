@@ -1,5 +1,6 @@
 import Button from '../ui/Button'
 import { usePage, type PageSection } from '../../api/hooks'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 // Fallback copy — used when the CMS `pages/partners` document is missing the
 // hero section. Copy matches the pre-CMS markup exactly.
@@ -57,9 +58,9 @@ export default function PartnersHeroSection() {
               </p>
 
               {/* Title */}
-              <h1 className="max-w-[15em] text-balance text-center text-heading-responsive-lg">
+              <AnimatedTitle as="h1" className="max-w-[15em] text-balance text-center text-heading-responsive-lg">
                 {heroTitle}
-              </h1>
+              </AnimatedTitle>
 
               {/* Subtitle */}
               <p className="mt-4 max-w-2xl text-balance text-center text-lg text-foreground lg:text-xl">

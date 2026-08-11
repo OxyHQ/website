@@ -80,7 +80,6 @@ const mediaRefSchema = z.string()
 
 export const heroUpdateSchema = z.object({
   title: z.string().optional(),
-  eyebrow: z.string().optional(),
   backgroundVideoWebm: mediaRefSchema.optional(),
   backgroundVideoMp4: mediaRefSchema.optional(),
   backgroundPoster: mediaRefSchema.optional(),
@@ -93,7 +92,6 @@ export const heroUpdateSchema = z.object({
  */
 export const heroUpdateRawShape = {
   title: z.string().optional(),
-  eyebrow: z.string().optional(),
   backgroundVideoWebm: mediaRefSchema.optional(),
   backgroundVideoMp4: mediaRefSchema.optional(),
   backgroundPoster: mediaRefSchema.optional(),

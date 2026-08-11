@@ -13,6 +13,7 @@ import { mdxContentComponents } from '../content/_components'
 import ShareWithMention from '../components/social/ShareWithMention'
 import { useAcademyProgress } from '../components/academy/useAcademyProgress'
 import type { CourseProgress } from '../components/academy/progressStorage'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────
  * /academy/:slug/:lesson
@@ -317,9 +318,9 @@ export default function LessonPage() {
               ) : null}
             </div>
 
-            <h1 className="mt-6 max-w-3xl text-balance text-heading-responsive-lg text-foreground">
+            <AnimatedTitle as="h1" className="mt-6 max-w-3xl text-balance text-heading-responsive-lg text-foreground">
               {lesson.frontmatter.title}
-            </h1>
+            </AnimatedTitle>
             {lesson.frontmatter.description && (
               <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
                 {lesson.frontmatter.description}
@@ -480,9 +481,9 @@ export default function LessonPage() {
               <span className="grid size-12 place-items-center rounded-full border border-border bg-background text-foreground">
                 <Check className="size-5" aria-hidden="true" />
               </span>
-              <h2 className="text-heading-responsive-md text-foreground">
+              <AnimatedTitle as="h2" className="text-heading-responsive-md text-foreground">
                 You finished the course.
-              </h2>
+              </AnimatedTitle>
               <p className="max-w-md text-pretty text-muted-foreground">
                 Nice work. Pick another course or open the developer docs to keep building.
               </p>

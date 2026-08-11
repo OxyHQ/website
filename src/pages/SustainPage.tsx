@@ -7,6 +7,7 @@ import Button from '../components/ui/Button'
 import DotPattern from '../components/ui/DotPattern'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { usePage, useFundingProgress, type PageSection, type FundingProgress } from '../api/hooks'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────
  * /sustain
@@ -268,9 +269,9 @@ export default function SustainPage() {
                 <div className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground">
                   {heroBadge}
                 </div>
-                <h1 className="max-w-[18em] text-balance text-heading-responsive-lg">
+                <AnimatedTitle as="h1" className="max-w-[18em] text-balance text-heading-responsive-lg">
                   {heroTitle}
-                </h1>
+                </AnimatedTitle>
                 <p className="mt-4 max-w-2xl text-balance text-lg text-foreground lg:text-xl">
                   {heroSubtitle}
                 </p>
@@ -471,7 +472,7 @@ export default function SustainPage() {
             <div className="grid grid-cols-12">
               <div className="col-span-full py-20 max-lg:py-16">
                 <div className="mx-auto flex max-w-3xl flex-col items-center gap-5 text-center">
-                  <h2 className="text-balance text-heading-responsive-md">{ctaHeading}.</h2>
+                  <AnimatedTitle as="h2" className="text-balance text-heading-responsive-md">{`${ctaHeading}.`}</AnimatedTitle>
                   <p className="max-w-xl text-pretty text-muted-foreground">
                     {ctaSubheading}
                   </p>

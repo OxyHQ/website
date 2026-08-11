@@ -2,6 +2,7 @@ import type React from 'react'
 import { useState, useCallback } from 'react'
 import { hero } from '../../data/content'
 import Button from '../ui/Button'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 const cardShadow =
   'var(--color-border) 0px 0px 0px 1px, var(--color-input) 0px 1px 1px 0px'
@@ -67,11 +68,9 @@ export default function HeroSection() {
             <div className="pointer-events-auto">
               {/* Header with staggered animations */}
               <header className="flex w-full flex-col pt-30 pb-15 max-xl:pt-25 max-lg:pt-20 items-center" style={{ '--animate-delay': '0ms', '--animate-delay-mobile': '0ms' } as React.CSSProperties}>
-                <h1
-                  className="max-w-[15em] text-balance text-heading-responsive-lg fade-in-from-bottom-1 animate-in fill-mode-both transition-[opacity,translate,transform] delay-[calc(var(--animate-delay)+200ms)] duration-1000 ease-in-out will-change-[translate,transform] max-lg:delay-[calc(var(--animate-delay-mobile)+200ms)] text-center"
-                >
+                <AnimatedTitle as="h1" className="max-w-[15em] text-balance text-heading-responsive-lg fade-in-from-bottom-1 animate-in fill-mode-both transition-[opacity,translate,transform] delay-[calc(var(--animate-delay)+200ms)] duration-1000 ease-in-out will-change-[translate,transform] max-lg:delay-[calc(var(--animate-delay-mobile)+200ms)] text-center">
                   {hero.title}
-                </h1>
+                </AnimatedTitle>
                 <p
                   className="mt-4 max-w-xl text-balance text-lg text-foreground lg:text-xl fade-in-from-bottom-1 animate-in fill-mode-both transition-[opacity,translate,transform] delay-[calc(var(--animate-delay)+300ms)] duration-1000 ease-in-out will-change-[translate,transform] max-lg:delay-[calc(var(--animate-delay-mobile)+300ms)] text-center"
                 >

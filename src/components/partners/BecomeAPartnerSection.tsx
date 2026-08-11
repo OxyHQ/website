@@ -1,4 +1,5 @@
 import Button from '../ui/Button'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 const PARTNER_EMAIL = 'partners@oxy.so'
 
@@ -71,9 +72,9 @@ export default function BecomeAPartnerSection() {
             <p className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 text-[13px]/[1.4em] font-medium text-foreground">
               Become a partner
             </p>
-            <h2 className="max-w-[18em] text-balance text-heading-responsive-md">
+            <AnimatedTitle as="h2" className="max-w-[18em] text-balance text-heading-responsive-md">
               Tell us what you want to build, and we&rsquo;ll help you ship it.
-            </h2>
+            </AnimatedTitle>
             <p className="mt-4 max-w-xl text-balance text-lg text-muted-foreground lg:text-xl">
               Send a short note to our partnerships team. We read every application and reply within a few business days.
             </p>

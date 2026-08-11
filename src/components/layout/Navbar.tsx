@@ -35,47 +35,65 @@ function ChevronDown({ className = '' }: { className?: string }) {
 }
 
 /* ─── Dropdown Content Panel ─── */
+
 function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
   if (dropdown.featureGrid) return <NavFeatureGrid grid={dropdown.featureGrid} />
 
-  const itemCount = (dropdown.sections ?? []).reduce((n, s) => n + (s.items?.length ?? 0), 0)
-  const useGrid = itemCount > 6
-
   return (
-    <div className="flex w-max">
-      <ul
-        className={`relative shrink-0 flex-col gap-space-xs p-space-lg pt-space-md ${
-          useGrid ? 'grid w-[720px] grid-cols-2 gap-space-xl max-xl:w-[576px]' : 'flex w-96'
-        }`}
-      >
-        {dropdown.sections.flatMap((section, si) => [
-          <li key={`heading-${si}`} className="contents">
-            <p className={`inline-block px-space-sm pt-space-sm pb-space-sm text-body-sm text-muted-foreground opacity-60 ${useGrid ? 'col-span-2' : ''}`}>
-              {section.heading}
-            </p>
-          </li>,
-          ...section.items.map((item, ii) => (
-            <li key={`item-${si}-${ii}`} className="contents">
-              <NavDropdownItem item={item} />
-            </li>
-          )),
-        ])}
-      </ul>
+    <div className="flex w-full gap-space-lg">
+      {/*
+        `auto-fit` decides the column count from the width the band actually has,
+        so the panel gains columns on a wide viewport with no breakpoint table to
+        keep in sync. `dense` lets a one-item section backfill the hole a wider
+        neighbour leaves. No horizontal padding: an item's box then starts on the
+        container edge, where the trigger's box above it already is.
+      */}
+      <div className="grid flex-1 grid-cols-[repeat(auto-fit,minmax(240px,1fr))] items-start gap-space-lg py-space-md [grid-auto-flow:dense]">
+        {dropdown.sections.map((section, si) => {
+          /**
+           * Column units this section claims. A section is kept whole and given
+           * width in proportion to what it holds, so a six-app section reads as
+           * a block rather than a queue down one column. Two is the cap: a wider
+           * block leaves the short sections nothing to fill the row with, and
+           * `dense` packing is what closes those gaps.
+           */
+          const span = (section.items?.length ?? 0) > 3 ? 2 : 1
+          return (
+            <div key={`section-${si}`} style={{ gridColumn: `span ${span}` }}>
+              <p className="inline-block px-space-sm pt-space-xs pb-space-sm text-body-sm text-muted-foreground opacity-60">
+                {section.heading}
+              </p>
+              {/*
+                One column per unit the section spans, NOT another `auto-fit`:
+                fitting as many columns as the block is wide left a four-item
+                section in three columns with one item orphaned on its own row.
+              */}
+              <ul
+                className="grid items-start gap-space-sm"
+                style={{ gridTemplateColumns: `repeat(${span}, minmax(0,1fr))` }}
+              >
+                {section.items.map((item, ii) => (
+                  <li key={`item-${si}-${ii}`} className="contents">
+                    <NavDropdownItem item={item} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        })}
+      </div>
 
       {dropdown.card && (
-        <div className="relative w-80 shrink-0 p-4 pt-3">
+        <div className="w-80 shrink-0 py-space-md">
           <NavCard card={dropdown.card} />
         </div>
       )}
 
       {dropdown.sidePanel && (
-        <ul className="relative flex w-48 shrink-0 flex-col gap-1.5 p-4 pt-3">
-          <svg width="1" height="100%" className="absolute inset-y-0 left-0 text-foreground/20">
-            <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeLinecap="round" />
-          </svg>
+        <ul className="flex w-48 shrink-0 flex-col gap-space-sm py-space-md">
           {dropdown.sidePanel.heading ? (
             <li className="contents">
-              <p className="mt-3 mb-0.5 inline-block px-2.5 text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              <p className="inline-block px-space-sm pt-space-xs pb-space-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
                 {dropdown.sidePanel.heading}
               </p>
             </li>
@@ -85,14 +103,14 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
               {link.href.startsWith('/') ? (
                 <Link
                   to={link.href}
-                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-full border border-transparent px-2.5 text-sm text-foreground transition-colors duration-300 hover:bg-foreground/5"
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-xl px-space-sm text-sm text-foreground transition-colors duration-300 hover:bg-foreground/5"
                 >
                   {link.label}
                 </Link>
               ) : (
                 <a
                   href={link.href}
-                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-full border border-transparent px-2.5 text-sm text-foreground transition-colors duration-300 hover:bg-foreground/5"
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-xl px-space-sm text-sm text-foreground transition-colors duration-300 hover:bg-foreground/5"
                 >
                   {link.label}
                 </a>
@@ -226,10 +244,18 @@ export default function Navbar({
   const [direction, setDirection] = useState<'left' | 'right' | null>(null)
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null)
 
-  // Cached panel sizes (measured once on mount from hidden off-screen panels)
-  const [panelSizes, setPanelSizes] = useState<Record<string, { w: number; h: number }>>({})
-  const [dropdownLeft, setDropdownLeft] = useState(0)
-  const [hasMeasured, setHasMeasured] = useState(false)
+  /**
+   * Panel heights, measured from the hidden off-screen copies. Only the height
+   * is measured: the panels fill the band's width, so what the open/close
+   * animation needs is how tall each one comes out at that width.
+   */
+  const [panelHeights, setPanelHeights] = useState<Record<string, number>>({})
+  /**
+   * The nav container's content width, published by {@link measureNavRow}. The
+   * hidden copies are laid out at exactly this width, so their measured height
+   * is the height the panel will have once it is on screen.
+   */
+  const [navContentWidth, setNavContentWidth] = useState<number | null>(null)
 
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const measureRefs = useRef<Record<string, HTMLDivElement | null>>({})
@@ -252,15 +278,14 @@ export default function Navbar({
   // rather than directly in the effect body.
   useLayoutEffect(() => {
     const measure = () => {
-      const sizes: Record<string, { w: number; h: number }> = {}
+      const heights: Record<string, number> = {}
       for (const dd of dropdowns) {
         const el = measureRefs.current[dd.label]
-        if (el) sizes[dd.label] = { w: el.scrollWidth, h: el.scrollHeight }
+        if (el) heights[dd.label] = el.scrollHeight
       }
       const settingsEl = measureRefs.current[SETTINGS_DROPDOWN_KEY]
-      if (settingsEl) sizes[SETTINGS_DROPDOWN_KEY] = { w: settingsEl.scrollWidth, h: settingsEl.scrollHeight }
-      setPanelSizes(sizes)
-      setHasMeasured(true)
+      if (settingsEl) heights[SETTINGS_DROPDOWN_KEY] = settingsEl.scrollHeight
+      setPanelHeights(heights)
     }
     const observer = new ResizeObserver(measure)
     for (const dd of dropdowns) {
@@ -271,21 +296,6 @@ export default function Navbar({
     if (settingsEl) observer.observe(settingsEl)
     return () => observer.disconnect()
   }, [dropdowns, showLanguageInSettings])
-
-  // Align the panel with the active trigger: left edge for left-nav dropdowns,
-  // right edge for the right-aligned language picker.
-  useLayoutEffect(() => {
-    if (!activeDropdown) return
-    const trigger = triggerRefs.current[activeDropdown]
-    if (!trigger) return
-    const rect = trigger.getBoundingClientRect()
-    if (activeDropdown === SETTINGS_DROPDOWN_KEY) {
-      const w = panelSizes[SETTINGS_DROPDOWN_KEY]?.w ?? 0
-      setDropdownLeft(rect.right - w)
-    } else {
-      setDropdownLeft(rect.left)
-    }
-  }, [activeDropdown, panelSizes])
 
   const openDropdown = useCallback(
     (label: string) => {
@@ -362,7 +372,8 @@ export default function Navbar({
   }
 
   const isOpen = activeDropdown !== null
-  const activeSize = activeDropdown ? panelSizes[activeDropdown] : null
+  const measured = Object.keys(panelHeights).length > 0
+  const activeHeight = activeDropdown ? panelHeights[activeDropdown] : undefined
   const easing = 'cubic-bezier(0.65,0,0.35,1)'
 
   // Derived from scrollY — no extra state needed
@@ -371,7 +382,8 @@ export default function Navbar({
   const bannerOffset = bannerVisible ? Math.max(0, bannerHeight - scrollY) : 0
 
   /**
-   * Publish the bar's real height as `--site-header-height`.
+   * Publish two facts about the nav row: its real height as
+   * `--site-header-height`, and its content width as {@link navContentWidth}.
    *
    * Every sticky on the site parks against that token, and the static value can
    * only ever be one number: the bar is 55px on a phone and 59px from `lg`, so
@@ -382,16 +394,24 @@ export default function Navbar({
    * lives inside the header and makes it several hundred pixels tall, which
    * would publish that as the header height and push every page with a spacer
    * down the moment a menu opened.
+   *
+   * The content width is read off the live element rather than recomputed from
+   * `--layout-max-width` and `--layout-gutter`, so the breakpointed gutter and
+   * the scrollbar are already accounted for.
    */
-  const measureHeaderHeight = useCallback((node: HTMLElement | null) => {
+  const measureNavRow = useCallback((node: HTMLElement | null) => {
     if (!node) return
     const publish = () => {
       const header = node.closest('header')
       const border = header ? Number.parseFloat(getComputedStyle(header).borderBottomWidth) || 0 : 0
+      const rect = node.getBoundingClientRect()
       document.documentElement.style.setProperty(
         '--site-header-height',
-        `${Math.round(node.getBoundingClientRect().height + border)}px`,
+        `${Math.round(rect.height + border)}px`,
       )
+      const style = getComputedStyle(node)
+      const padding = (Number.parseFloat(style.paddingLeft) || 0) + (Number.parseFloat(style.paddingRight) || 0)
+      setNavContentWidth(rect.width - padding)
     }
     publish()
     const observer = new ResizeObserver(publish)
@@ -502,25 +522,44 @@ export default function Navbar({
           top: -9999,
           visibility: 'hidden',
           pointerEvents: 'none',
+          // Laid out at the container's width, not the viewport's: this sits
+          // inside the full-width header, and a panel whose columns are decided
+          // by `auto-fit` comes out a different height at a different width.
+          width: navContentWidth ?? undefined,
           // Don't use display:none or opacity:0 — need real layout
         }}
       >
         {dropdowns.map((dd) => (
-          <div key={dd.label} ref={(el) => { measureRefs.current[dd.label] = el }} style={{ display: 'inline-block' }}>
+          <div key={dd.label} ref={(el) => { measureRefs.current[dd.label] = el }}>
             <DropdownContent dropdown={dd} />
           </div>
         ))}
-        <div ref={(el) => { measureRefs.current[SETTINGS_DROPDOWN_KEY] = el }} style={{ display: 'inline-block' }}>
+        <div ref={(el) => { measureRefs.current[SETTINGS_DROPDOWN_KEY] = el }}>
           <SettingsPanel showLanguage={showLanguageInSettings} />
         </div>
       </div>
 
       {/* ─── Main nav ─── */}
-      <div ref={measureHeaderHeight} className="container max-lg:!max-w-full max-lg:!px-4">
+      <div ref={measureNavRow} className="container max-lg:!max-w-full max-lg:!px-4">
         <nav className="py-[5px]">
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-4">
-            {/* Desktop nav (left) */}
-            <div ref={escapeRef} className="relative z-10 justify-self-start" onMouseLeave={scheduleClose}>
+          {/*
+            Brand first, then the triggers, then the controls. The brand takes
+            only the width it needs and the middle track takes the rest, so the
+            dropdown triggers have the whole span between them to grow into.
+          */}
+          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4">
+            <Link
+              to={brand?.homeHref ?? '/'}
+              className="-mx-1.5 justify-self-start rounded-xl px-1.5"
+              aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            >
+              {brand?.logo ?? <Logo className="h-6" />}
+            </Link>
+
+            {/* Middle: the dropdown triggers, or the search field while it is open */}
+            <div className="min-w-0">
+            <div ref={escapeRef} className="relative z-10" onMouseLeave={scheduleClose}>
                 <ul className={`hidden items-center gap-x-1.5 ${searchOpen ? '' : 'lg:flex'}`}>
                   {dropdowns.map((dd) => (
                     <li key={dd.label}>
@@ -565,9 +604,8 @@ export default function Navbar({
 
               </div>
 
-            {/* Center: logo, or the search field (Google Photos-style) when open */}
-            {searchOpen ? (
-              <div className="relative w-[min(500px,42vw)] justify-self-center lg:max-w-[31.25rem]">
+            {searchOpen && (
+              <div className="relative w-[min(500px,42vw)] lg:max-w-[31.25rem]">
                 <Search className="pointer-events-none absolute start-space-lg top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
                 <input
                   autoFocus
@@ -642,16 +680,8 @@ export default function Navbar({
                   </div>
                 ) : null}
               </div>
-            ) : (
-              <Link
-                to={brand?.homeHref ?? '/'}
-                className="justify-self-center -mx-1.5 rounded-xl px-1.5"
-                aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              >
-                {brand?.logo ?? <Logo className="h-6" />}
-              </Link>
             )}
+            </div>
 
             {/* Right controls (mobile + desktop) */}
             <div className="flex items-center justify-self-end gap-x-2">
@@ -727,31 +757,29 @@ export default function Navbar({
         </nav>
       </div>
 
-      {/* ─── Shared Dropdown Viewport ─── */}
-      {hasMeasured && (
+      {/*
+        ─── Shared Dropdown Band ───
+
+        Full-bleed: the panels sit directly on the header's own surface rather
+        than in a card of their own, so there is no second border or blur layer
+        stacked inside the bar. The band spans the header; the copy inside it is
+        held by the same container as the nav row, so an item lines up with the
+        trigger that opened it.
+      */}
+      {measured && (
         <div
-          className={`flex w-full ${isOpen ? 'pb-3 pt-3' : ''}`}
+          className="w-full"
           style={{
-            paddingLeft: dropdownLeft,
             pointerEvents: isOpen ? 'auto' : 'none',
             opacity: isOpen ? 1 : 0,
-            maxHeight: isOpen && activeSize ? activeSize.h + 24 : 0,
+            maxHeight: isOpen && activeHeight ? activeHeight : 0,
             overflow: 'hidden',
-            transition: `opacity ${isOpen ? '0.15s' : '0.12s'} ease-out, max-height 0.2s ${easing}, padding-left 0.2s ${easing}`,
+            transition: `opacity ${isOpen ? '0.15s' : '0.12s'} ease-out, max-height 0.2s ${easing}`,
           }}
           onMouseEnter={cancelClose}
           onMouseLeave={scheduleClose}
         >
-          <div
-            className="overflow-hidden rounded-2xl border border-border"
-            style={{
-              width: activeSize ? activeSize.w : 0,
-              height: activeSize ? activeSize.h : 0,
-              transition: `width 0.2s ${easing}, height 0.2s ${easing}`,
-              background: 'color-mix(in srgb, var(--background) 85%, transparent)',
-              backdropFilter: 'blur(12px)',
-            }}
-          >
+          <div className="container max-lg:!max-w-full max-lg:!px-4">
             <div className="relative">
               {dropdowns.map((dd) => {
                 const isActive = dd.label === activeDropdown
@@ -766,7 +794,7 @@ export default function Navbar({
                       position: isActive ? 'relative' : 'absolute',
                       top: 0,
                       left: 0,
-                      width: panelSizes[dd.label]?.w,
+                      right: 0,
                       visibility: show ? 'visible' : 'hidden',
                       pointerEvents: isActive ? 'auto' : 'none',
                     }}
@@ -778,14 +806,18 @@ export default function Navbar({
               {(() => {
                 const isActive = activeDropdown === SETTINGS_DROPDOWN_KEY
                 const show = isActive || prevDropdown === SETTINGS_DROPDOWN_KEY
+                // Right-aligned, unlike the nav panels: it is opened from the
+                // settings button at the far end of the bar, and a 340px panel
+                // parked at the container's left edge would sit nowhere near the
+                // control that opened it.
                 return (
                   <div
-                    className={isActive ? 'animate-nav-fade-in' : ''}
+                    className={`flex justify-end ${isActive ? 'animate-nav-fade-in' : ''}`}
                     style={{
                       position: isActive ? 'relative' : 'absolute',
                       top: 0,
                       left: 0,
-                      width: panelSizes[SETTINGS_DROPDOWN_KEY]?.w,
+                      right: 0,
                       visibility: show ? 'visible' : 'hidden',
                       pointerEvents: isActive ? 'auto' : 'none',
                     }}

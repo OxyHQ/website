@@ -188,7 +188,6 @@ export type HeroMediaRef =
 export interface HeroContent {
   _id?: string
   title: string
-  eyebrow: string
   backgroundVideoWebm: HeroMediaRef
   backgroundVideoMp4: HeroMediaRef
   backgroundPoster: HeroMediaRef
@@ -359,7 +358,6 @@ export function useUpdateHero() {
   return useMutation({
     mutationFn: (data: Partial<{
       title: string
-      eyebrow: string
       backgroundVideoWebm: string | null
       backgroundVideoMp4: string | null
       backgroundPoster: string | null

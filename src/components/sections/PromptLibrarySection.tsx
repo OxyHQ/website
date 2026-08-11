@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { promptLibraryCards } from '../../data/content'
 import type { PromptLibraryCard } from '../../data/content'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 function getIcon(iconType: PromptLibraryCard['iconType']) {
   const props = { width: 20, height: 20, viewBox: '0 0 20 20', fill: 'none' as const, stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
@@ -96,7 +97,7 @@ export default function PromptLibrarySection() {
         <div className="flex w-full flex-1 flex-col">
           <header className="grid grid-cols-12 pt-40 pb-20 max-xl:pt-30 max-xl:pb-16 max-lg:pt-25 max-lg:pb-15 justify-items-center">
             <div className="col-span-full max-w-lg text-center">
-              <h2 className="text-pretty text-heading-responsive-md">From one expert to everyone.</h2>
+              <AnimatedTitle as="h2" className="text-pretty text-heading-responsive-md">From one expert to everyone.</AnimatedTitle>
               <p className="text-pretty text-tertiary text-xl">Best practice becomes standard practice with the prompt library.</p>
             </div>
           </header>

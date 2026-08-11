@@ -22,6 +22,13 @@
       "when": 1786088411871,
       "tag": "0002_newsroom_cover_nullable",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786423678276,
+      "tag": "0003_hero_drop_eyebrow",
+      "breakpoints": true
     }
   ]
 }

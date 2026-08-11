@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { usePricing } from '../../api/hooks'
 import { featureCategories, type PricingPlan } from '../../data/pricing'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 const CheckIcon = () => (
   <span className="flex h-5 items-center">
@@ -66,7 +67,7 @@ export default function PricingCompareSection() {
   return (
     <div className="container pt-12 lg:hidden">
       <div className="flex flex-col items-center text-center">
-        <h2 className="font-bold text-title-md">Compare plans.</h2>
+        <AnimatedTitle as="h2" className="font-bold text-title-md">Compare plans.</AnimatedTitle>
         <p className="mt-2 text-muted-foreground">
           Everything you need to build, run, and scale on top of the Oxy ecosystem.
         </p>

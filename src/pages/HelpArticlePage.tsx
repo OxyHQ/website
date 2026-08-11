@@ -20,6 +20,7 @@ import { mdxContentComponents } from '../content/_components'
 import ShareWithMention from '../components/social/ShareWithMention'
 import HelpProductBadge from '../components/help/HelpProductBadge'
 import TableOfContents from '../components/ui/TableOfContents'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────
  * /help/* — single help-center article
@@ -226,9 +227,9 @@ export default function HelpArticlePage() {
               </div>
             )}
 
-            <h1 className="max-w-[18em] text-balance text-heading-responsive-lg text-foreground">
+            <AnimatedTitle as="h1" className="max-w-[18em] text-balance text-heading-responsive-lg text-foreground">
               {frontmatter.title}
-            </h1>
+            </AnimatedTitle>
             {frontmatter.description && (
               <p className="max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
                 {frontmatter.description}

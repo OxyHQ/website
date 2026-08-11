@@ -192,6 +192,7 @@ export interface FooterColumn {
 }
 
 export const simpleNavLinks: NavItem[] = [
+  { label: 'Newsroom', href: '/newsroom' },
   { label: 'Pricing', href: '/pricing' },
 ]
 

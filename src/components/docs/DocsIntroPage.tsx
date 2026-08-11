@@ -4,6 +4,7 @@ import type { SyncedPackage } from '../../../scripts/types'
 import DocsSubNav from './DocsSubNav'
 import { DocsPackageSidebar, buildSidebar } from './DocsPackageSidebar'
 import docsHeroBg from './docs-hero-bg.svg?raw'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 interface CategoryConfig {
   category: SyncedPackage['category']
@@ -52,9 +53,9 @@ export default function DocsIntroPage() {
 
           {/* Hero content */}
           <div className="relative z-10 mx-auto w-full max-w-3xl px-[var(--layout-gutter)] py-16 lg:py-32 lg:pb-16">
-            <h1 className="block text-heading-responsive-lg text-center text-foreground">
+            <AnimatedTitle as="h1" className="block text-heading-responsive-lg text-center text-foreground">
               Documentation
-            </h1>
+            </AnimatedTitle>
             <div className="max-w-xl mx-auto px-4 mt-4 text-lg text-center text-muted-foreground">
               Everything you need to build on the Oxy platform: open source, no vendor lock-in.
             </div>

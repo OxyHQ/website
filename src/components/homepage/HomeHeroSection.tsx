@@ -1,5 +1,6 @@
 import Button from '../ui/Button'
 import { homeHero } from '../../data/homepage'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 export default function HomeHeroSection() {
   return (
@@ -33,9 +34,9 @@ export default function HomeHeroSection() {
               Open-source ecosystem
             </p>
 
-            <h1 className="mt-6 max-w-[14ch] text-center text-title-md md:text-title-lg lg:text-title-xl text-foreground">
+            <AnimatedTitle as="h1" className="mt-6 max-w-[14ch] text-center text-title-md md:text-title-lg lg:text-title-xl text-foreground">
               {homeHero.title}
-            </h1>
+            </AnimatedTitle>
 
             <p className="mt-4 max-w-md text-pretty text-center text-lg text-muted-foreground md:text-xl">
               {homeHero.subtitle}

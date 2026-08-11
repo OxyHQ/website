@@ -6,6 +6,7 @@ import { getStaticChangelog } from '../../content/changelog-loader'
 import RollingNumber from '../ui/RollingNumber'
 import Button from '../ui/Button'
 import JobBoard, { type JobListing } from '../slices/JobBoard'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────
  * /company/careers
@@ -119,7 +120,7 @@ function ValuesSection() {
   return (
     <div>
       <div className="container py-10 md:py-20">
-        <h2 className="relative block pb-1 text-heading-responsive-md">Our values</h2>
+        <AnimatedTitle as="h2" className="relative block pb-1 text-heading-responsive-md">Our values</AnimatedTitle>
       </div>
       {VALUES.map((value, i) => (
         <div
@@ -220,7 +221,7 @@ function BeliefsSection() {
   return (
     <div className="overflow-hidden bg-surface pb-20 text-foreground">
       <div className="container py-10 md:py-20">
-        <h2 className="mb-6 text-heading-responsive-md">Our beliefs</h2>
+        <AnimatedTitle as="h2" className="mb-6 text-heading-responsive-md">Our beliefs</AnimatedTitle>
         <p className="max-w-[60ch] text-balance text-muted-foreground">
           Beliefs are the convictions behind the work: what we think is wrong with how software is built today, and what
           has to be true of anything we put in its place.
@@ -304,7 +305,7 @@ function HowWeWorkSection() {
   return (
     <div>
       <div className="container py-10 md:py-20">
-        <h2 className="relative block pb-1 text-heading-responsive-md">How we work</h2>
+        <AnimatedTitle as="h2" className="relative block pb-1 text-heading-responsive-md">How we work</AnimatedTitle>
       </div>
       <div className="container">
         <div className="mb-28 md:mb-30 md:grid md:h-[630px] md:grid-cols-3">
@@ -432,7 +433,7 @@ function PlacesSection() {
   return (
     <div className="bg-surface pb-20 text-foreground md:pb-32">
       <div className="container py-10 md:py-20">
-        <h2 className="relative block pb-1 text-heading-responsive-md">Where we are</h2>
+        <AnimatedTitle as="h2" className="relative block pb-1 text-heading-responsive-md">Where we are</AnimatedTitle>
       </div>
       <div ref={ref} className="flex w-full flex-col gap-2 overflow-hidden md:gap-4">
         <PlaceRow places={PLACES.filter((_, i) => i % 2 === 0)} x={reduceMotion ? undefined : firstRowX} />
@@ -461,7 +462,7 @@ function SpotlightSection() {
   return (
     <div className="py-20">
       <div className="container">
-        <h2 className="mb-4 text-heading-responsive-md">Team spotlight</h2>
+        <AnimatedTitle as="h2" className="mb-4 text-heading-responsive-md">Team spotlight</AnimatedTitle>
         <p className="text-muted-foreground">Where the work happens, and who it happens with.</p>
         <div className="grid grid-rows-2 gap-8 pt-12 lg:grid-cols-2 lg:grid-rows-1">
           {SPOTLIGHTS.map((item) => (

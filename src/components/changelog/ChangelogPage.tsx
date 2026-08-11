@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { getStaticChangelog, type StaticChangelogEntry } from '../../content/changelog-loader'
 import { FEATURES } from '../../constants'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 const PAGE_SIZE = 10
 
@@ -71,9 +72,9 @@ export default function ChangelogContent() {
                   <div className="inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 font-medium text-[13px]/[1.4em] text-foreground mb-6">
                     <h1>Changelog</h1>
                   </div>
-                  <h2 className="max-w-[15em] text-balance text-heading-responsive-lg text-center">
+                  <AnimatedTitle as="h2" className="max-w-[15em] text-balance text-heading-responsive-lg text-center">
                     What&apos;s new?
-                  </h2>
+                  </AnimatedTitle>
                   <p className="mt-4 max-w-xl text-balance text-lg text-foreground lg:text-xl text-center">
                     A rundown of the latest Oxy feature releases, product enhancements, design updates, and important bug fixes.
                   </p>

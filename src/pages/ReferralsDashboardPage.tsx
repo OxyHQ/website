@@ -7,6 +7,7 @@ import Button from '../components/ui/Button'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useReferralDashboard, type ReferralDashboard } from '../api/hooks'
 import { brandConfig } from '../lib/seo'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────
  * /referrals/dashboard
@@ -94,9 +95,9 @@ function DashboardContent({ referral }: { referral: ReferralDashboard }) {
         <span className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-label-sm font-medium uppercase tracking-wider text-muted-foreground">
           {PROGRAM_LABEL[referral.type]}
         </span>
-        <h1 className="text-heading-responsive-lg text-foreground">
-          Welcome back, {referral.name}.
-        </h1>
+        <AnimatedTitle as="h1" className="text-heading-responsive-lg text-foreground">
+          {`Welcome back, ${referral.name}.`}
+        </AnimatedTitle>
         <p className="max-w-2xl text-pretty text-lg text-muted-foreground">
           {PROGRAM_BLURB[referral.type]}
         </p>
@@ -167,9 +168,9 @@ function CodePrompt({ initialCode, onSubmit, error }: { initialCode: string; onS
         <span className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-label-sm font-medium uppercase tracking-wider text-muted-foreground">
           Referrer dashboard
         </span>
-        <h1 className="text-heading-responsive-lg text-foreground">
+        <AnimatedTitle as="h1" className="text-heading-responsive-lg text-foreground">
           Check your referral stats.
-        </h1>
+        </AnimatedTitle>
         <p className="max-w-2xl text-pretty text-lg text-muted-foreground">
           Paste the code from your referral confirmation email, or open this page with <span className="font-mono">?code=YOUR_CODE</span>.
         </p>

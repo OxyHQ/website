@@ -9,6 +9,7 @@ import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { HorizontalLine, DashedVLines } from '../components/ui/GridDecoration'
 import { API_BASE } from '../api/client'
 import { useReferral, usePage, type PageSection } from '../api/hooks'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────────────────────────────────
  * /referrals — public referral landing
@@ -240,9 +241,9 @@ export default function ReferralsPage() {
                 <div className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 text-[13px]/[1.4em] font-medium text-foreground">
                   {heroBadge}
                 </div>
-                <h1 className="max-w-[18em] text-balance text-heading-responsive-lg">
+                <AnimatedTitle as="h1" className="max-w-[18em] text-balance text-heading-responsive-lg">
                   {heroTitle}
-                </h1>
+                </AnimatedTitle>
                 <p className="mt-4 max-w-2xl text-balance text-lg text-muted-foreground lg:text-xl">
                   {heroSubtitle}
                 </p>
@@ -396,9 +397,9 @@ export default function ReferralsPage() {
                 <p className="mb-6 inline-block w-fit rounded-[13px] border border-border bg-background px-3 py-1.5 text-[13px]/[1.4em] font-medium text-foreground">
                   Become a partner
                 </p>
-                <h2 className="max-w-[18em] text-balance text-heading-responsive-md">
+                <AnimatedTitle as="h2" className="max-w-[18em] text-balance text-heading-responsive-md">
                   Want a custom deal? Let&rsquo;s talk.
-                </h2>
+                </AnimatedTitle>
                 <p className="mt-4 max-w-xl text-balance text-lg text-muted-foreground lg:text-xl">
                   Bigger audience, a specific niche, or an idea we haven&rsquo;t thought of yet? Reach out and we&rsquo;ll set up the program that fits.
                 </p>

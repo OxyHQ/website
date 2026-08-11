@@ -3,6 +3,7 @@ import { inboxHero, inboxDemoTabs, inboxFeatureCards } from '../../data/inbox'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 import AnimatedLineGrid from './AnimatedLineGrid'
 import Button from '../ui/Button'
+import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 /* ───────────────────────── Tab Videos Map ───────────────────────── */
 
@@ -225,9 +226,9 @@ export default function InboxPage() {
                 <h6 className="text-lg font-medium text-white">{inboxHero.badge}</h6>
 
                 {/* Title */}
-                <h1 className="text-heading-responsive-lg mt-4 max-w-80 text-white sm:max-w-none">
+                <AnimatedTitle as="h1" className="text-heading-responsive-lg mt-4 max-w-80 text-white sm:max-w-none">
                   {inboxHero.title}
-                </h1>
+                </AnimatedTitle>
 
                 {/* Feature list with icons */}
                 <div className="mt-6 flex flex-col gap-3">
@@ -364,9 +365,9 @@ export default function InboxPage() {
             >
               <div className="relative mx-auto flex h-full w-full flex-col pl-10 pt-10 pb-0">
                 <div className="shrink-0 mb-10 flex flex-col gap-1.5">
-                  <h3 className="text-heading-responsive-md text-white">
+                  <AnimatedTitle as="h3" className="text-heading-responsive-md text-white">
                     {tab.label}
-                  </h3>
+                  </AnimatedTitle>
                   <p className="body-lg pr-10 text-base text-white/70">
                     {tab.description}
                   </p>

@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { motion, useScroll, useTransform, useReducedMotion, useInView } from 'framer-motion'
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { ArrowUpRight } from '@phosphor-icons/react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
@@ -7,8 +7,6 @@ import SEO from '../components/SEO'
 import HeroCarousel from '../components/homepage/HeroCarousel'
 import { heroCarouselSlots } from '../data/heroCarousel'
 import { useHero, usePage, type HeroMediaRef, type PageSection, useProducts, type ProductRecord } from '../api/hooks'
-import { getStaticChangelog } from '../content/changelog-loader'
-import RollingNumber from '../components/ui/RollingNumber'
 import { FEATURES } from '../constants'
 import { usePageChromeStore } from '../stores/pageChromeStore'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -21,6 +19,7 @@ import AppCard from '../components/apps/AppCard'
 import { Link } from 'react-router-dom'
 import { getPackages, buildDocsHref } from '../content/docs-loader'
 import { getPackageLogo } from '../components/docs/getPackageLogo'
+import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /**
  * Pulls a heading, subheading or content string out of a Page document's
@@ -63,10 +62,12 @@ const REVEAL = {
 }
 
 // Hero defaults — used both when the API returns no data and as the fallback
-// for individual fields. These match the original hardcoded markup so the
-// site renders identically when the CMS hasn't been touched.
+// for individual fields.
+//
+// The hero carries ONE title and nothing else. It used to be followed by a
+// second mission sentence, which read as a second headline; that copy and the
+// CMS field behind it are gone rather than restyled.
 const DEFAULT_HERO_TITLE = 'Creating a future where technology empowers individuals\nto live connected, fulfilling, and sustainable lives.'
-const DEFAULT_HERO_EYEBROW = 'Built by people who believe in change. Ethical, open, and deeply human.'
 const DEFAULT_HERO_BG_WEBM = `${IMG}/hero-background.webm`
 const DEFAULT_HERO_BG_MP4 = `${IMG}/hero-background.mp4`
 const DEFAULT_HERO_POSTER = `${IMG}/hero-bg.avif`
@@ -79,7 +80,6 @@ function HeroSection() {
   const setHeroVisible = usePageChromeStore((s) => s.setHeroVisible)
 
   const title = hero?.title || DEFAULT_HERO_TITLE
-  const eyebrow = hero?.eyebrow || DEFAULT_HERO_EYEBROW
   const webm = heroMediaUrl(hero?.backgroundVideoWebm) || DEFAULT_HERO_BG_WEBM
   const mp4 = heroMediaUrl(hero?.backgroundVideoMp4) || DEFAULT_HERO_BG_MP4
   const poster = heroMediaUrl(hero?.backgroundPoster) || DEFAULT_HERO_POSTER
@@ -88,10 +88,6 @@ function HeroSection() {
   const slots = hero?.carouselSlots && hero.carouselSlots.length > 0
     ? hero.carouselSlots
     : heroCarouselSlots
-
-  // Render `\n` in the title as visual line breaks while keeping the underlying
-  // string CMS-friendly. This avoids dangerouslySetInnerHTML.
-  const titleLines = title.split('\n')
 
   // Publish hero visibility to the shared UI-chrome store so the floating
   // prompt bar hides while the hero is on screen. Callback-ref-equivalent
@@ -134,17 +130,12 @@ function HeroSection() {
       {/* Text overlay */}
       <div className="relative z-[5] flex-1 flex items-end text-foreground">
         <div className="container pb-5 pt-[100px] max-[950px]:pt-20">
-          <h1 className="font-display font-medium tracking-[-0.015em] text-[1.9rem] leading-[2.15rem] lg:text-[2.6rem] lg:leading-[2.9rem] max-w-[560px]">
-            {titleLines.map((line, i) => (
-              <span key={i}>
-                {line}
-                {i < titleLines.length - 1 && <br />}
-              </span>
-            ))}
-          </h1>
-          <p className="text-lg font-normal leading-relaxed mt-4 max-w-[440px] opacity-80">
-            {eyebrow}
-          </p>
+          <AnimatedTitle
+            as="h1"
+            className="font-display text-[clamp(1.9rem,3.4vw,3.25rem)] font-medium leading-[1.14] tracking-[-0.03em]"
+          >
+            {title}
+          </AnimatedTitle>
         </div>
       </div>
 
@@ -356,7 +347,7 @@ function ValuesSection() {
         <div className="grid grid-cols-12 gap-6">
           <motion.div className="col-span-full py-16 max-[950px]:py-10" {...REVEAL}>
             <div className="flex items-end justify-between gap-6 mb-8">
-              <h2 className="text-heading-responsive-lg max-w-[440px]">What we stand for.</h2>
+              <AnimatedTitle as="h2" className="text-heading-responsive-lg max-w-[440px]">What we stand for.</AnimatedTitle>
               <div className="flex items-center gap-3 shrink-0">
                 <button
                   type="button"
@@ -430,9 +421,9 @@ function IndependentEcosystemSection() {
           >
             {/* Left — text + buttons */}
             <div>
-              <h2 className="text-heading-responsive-lg max-w-[560px]">
+              <AnimatedTitle as="h2" className="text-heading-responsive-lg max-w-[560px]">
                 An independent ecosystem of ethical technology. Radically transparent, fiercely human.
-              </h2>
+              </AnimatedTitle>
               <p className="mt-5 max-w-[460px] opacity-80">
                 No ads. No data selling. No venture capital strings. Just purpose-driven AI tools designed for real-world impact.
               </p>
@@ -912,89 +903,6 @@ function EcosystemSection() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  By the numbers                                                     */
-/* ------------------------------------------------------------------ */
-
-/**
- * The ecosystem in figures, on the source template's own layout: the copy in a
- * narrow left column, one headline figure over a rule, then a two-by-two grid
- * of smaller ones, and a card pinned to the bottom of the left column.
- *
- * Every number is one the site can stand behind: the apps and the repositories
- * are counted from the records that drive /technologies and the changelog, and
- * the two that are not counted are commitments from the Founding Charter.
- */
-function ByTheNumbersSection() {
-  const ref = useRef<HTMLElement>(null)
-  const inView = useInView(ref, { once: true, amount: 0.3 })
-  const { data: products = [] } = useProducts({ surface: 'products' })
-  const { repos } = getStaticChangelog()
-
-  const stats = [
-    { value: String(products.length || 18), label: 'Apps in the ecosystem' },
-    { value: String(repos.length), label: 'Repositories you can read' },
-    { value: '1', label: 'Identity, held on your device' },
-    { value: '100', suffix: '%', label: 'Of the core code, open source' },
-  ]
-
-  return (
-    <section ref={ref} className="bg-surface text-foreground">
-      <div className="container grid gap-8 pt-14 pb-16 md:grid-cols-12">
-        <div className="col-span-full max-w-[360px] md:col-[1/6]">
-          <p className="w-full">By the numbers</p>
-          <div className="h-2" />
-          <h2 className="w-full text-heading-responsive-md">Built in the open</h2>
-          <div className="h-4" />
-          <p className="w-full text-muted-foreground">
-            Everything here is countable from what we already publish: the apps that share one identity, the
-            repositories behind them, and the commitments that decide how the rest gets built.
-          </p>
-        </div>
-
-        <div className="col-span-full flex flex-col justify-between pt-2 md:col-[7/-1] md:row-span-2">
-          <div className="border-border border-t pt-6 pr-4 pb-12 md:pb-32">
-            <div className="flex pb-4 font-display leading-[0.9] tracking-[-0.04em] text-[min(max(15vw,100px),216px)] md:pb-6">
-              <RollingNumber value="0" active={inView} />
-            </div>
-            <p>Ads served, ever</p>
-          </div>
-
-          <div className="grid grid-cols-2 border-border border-b">
-            {stats.map((stat) => (
-              <div key={stat.label} className="border-border border-t pt-3 pr-4 pb-10 md:pb-12">
-                <div className="flex font-display leading-[1.1] tracking-[-0.04em] text-[min(max(6.25vw,45px),100px)]">
-                  <RollingNumber value={`${stat.value}${stat.suffix ?? ''}`} active={inView} />
-                </div>
-                <p>{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="col-span-full mt-4 w-full max-w-[288px] self-end md:col-[1/6] md:max-w-[348px]">
-          <a href="/company/charter" className="group flex w-full flex-col items-start gap-4 border-border border-b pb-3">
-            <span className="flex w-full flex-col gap-3">
-              <span className="relative block aspect-[2/1] w-full overflow-hidden">
-                <img
-                  src="/images/nav-ecosystem-card.webp"
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 size-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                />
-              </span>
-              <span>The Oxy Founding Charter</span>
-            </span>
-            <span className="rounded-sm bg-foreground/10 px-2 py-0.5 text-xs">Document</span>
-          </a>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ------------------------------------------------------------------ */
 /*  Enterprise Partnership Services                                    */
 /* ------------------------------------------------------------------ */
 const PARTNERSHIP_ITEMS = [
@@ -1025,7 +933,7 @@ function PartnershipSection() {
           <div className="col-span-full py-10 max-[950px]:py-6">
             <div className="text-center mb-8">
               <p className="mb-6 text-primary"><strong>Join the mission</strong></p>
-              <h2 className="text-heading-responsive-lg mb-5">Build the future with us</h2>
+              <AnimatedTitle as="h2" className="text-heading-responsive-lg mb-5">Build the future with us</AnimatedTitle>
               <p className="opacity-80 max-w-[500px] mx-auto">Whether you&apos;re a developer, designer, activist, or dreamer — there&apos;s a place for you in the Oxy ecosystem.</p>
             </div>
             <div className="grid grid-cols-12 gap-6">
@@ -1187,7 +1095,7 @@ function IntegrationsSecuritySection() {
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-full py-10 max-[950px]:py-6">
             <div className="text-center mb-8">
-              <h2 className="text-heading-responsive-lg mb-5 max-w-[500px] mx-auto">Everything you need, all in one place</h2>
+              <AnimatedTitle as="h2" className="text-heading-responsive-lg mb-5 max-w-[500px] mx-auto">Everything you need, all in one place</AnimatedTitle>
               <p className="opacity-80 max-w-[350px] mx-auto">Explore our documentation, contribute to our codebase, and connect with the community.</p>
             </div>
             <div>
@@ -1271,7 +1179,7 @@ function CommonsAppSection() {
       <div className="container pt-20 lg:pt-28">
         <div className="grid grid-cols-12 items-end gap-6">
           <div className="col-span-full pb-20 text-white max-lg:text-center lg:col-span-5 lg:pb-28">
-            <h2 className="text-heading-responsive-lg mb-5">Commons app by Oxy</h2>
+            <AnimatedTitle as="h2" className="text-heading-responsive-lg mb-5">Commons app by Oxy</AnimatedTitle>
             <p className="max-w-[500px] opacity-80 max-lg:mx-auto">
               Self-custody identity for everything Oxy. Your keys never leave your phone, so no company can lock you
               out, track you, or sell your data.
@@ -1380,12 +1288,11 @@ export default function HomePage() {
         {(FEATURES.SHOW_HOMEPAGE_STATS || FEATURES.SHOW_TESTIMONIALS) && <StatsAndTestimonialsSection />}
         <IndependentEcosystemSection />
         <EcosystemSection />
-        <ByTheNumbersSection />
         <PartnershipSection />
         <IntegrationsSecuritySection />
+        <AIResearchSection />
         <CommonsAppSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}
-        <AIResearchSection />
       </main>
       <Footer />
     </>

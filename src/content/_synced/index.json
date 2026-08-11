@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-08T11:48:41.271Z",
+  "generatedAt": "2026-08-11T07:31:08.864Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -10604,7 +10604,7 @@
             {
               "slug": "",
               "title": "Homiio",
-              "description": "Real estate platform with ethical pricing, AI tenant-rights assistant, Stripe billing, and marketplace analytics — Expo/RN + Node + Oxy.",
+              "description": "The housing trust and transparency layer — find a place, research its history, understand the real cost, and manage or defend the tenancy.",
               "file": "homiio/main/index.mdx",
               "order": 0,
               "section": "guides"
@@ -10620,17 +10620,41 @@
             {
               "slug": "architecture",
               "title": "Architecture",
-              "description": "Workspace layout, tech stack, request lifecycle, and the data model that anchors the rest of the system.",
+              "description": "Packages, request lifecycle on PostgreSQL, the frontend provider tree, PostGIS search, identity, the worker, and the id serialization contract.",
               "file": "homiio/main/architecture.mdx",
               "order": 2,
               "section": "guides"
             },
             {
+              "slug": "glossary",
+              "title": "Glossary",
+              "description": "What listing, housing place, building, unit, address candidate, place, review, verification, precision, source and snapshot mean in Homiio — one definition each.",
+              "file": "homiio/main/glossary.mdx",
+              "order": 3,
+              "section": "guides"
+            },
+            {
+              "slug": "source-of-truth",
+              "title": "Source of truth",
+              "description": "Which module owns each domain, which tables back it, and the chokepoints that must not be bypassed — so nobody builds a second authority.",
+              "file": "homiio/main/source-of-truth.mdx",
+              "order": 4,
+              "section": "guides"
+            },
+            {
+              "slug": "routes",
+              "title": "Routes",
+              "description": "Every mounted backend route with its auth requirement, every frontend screen, the /search to /explore redirect, and the response, pagination and error contracts.",
+              "file": "homiio/main/routes.mdx",
+              "order": 5,
+              "section": "guides"
+            },
+            {
               "slug": "listings",
               "title": "Listings",
-              "description": "The Property schema, search and discovery, accommodation types beyond apartments, and external sourcing.",
+              "description": "The real Property DTO, offerings and priced blocks, the address relation, search and filters, and external listings with their provenance and expiry.",
               "file": "homiio/main/listings.mdx",
-              "order": 3,
+              "order": 6,
               "section": "guides"
             },
             {
@@ -10638,15 +10662,15 @@
               "title": "Payments",
               "description": "Stripe Checkout, idempotent webhooks, customer portal, file credits, and the Homiio+ / Founder subscription tiers.",
               "file": "homiio/main/payments.mdx",
-              "order": 4,
+              "order": 7,
               "section": "guides"
             },
             {
               "slug": "analytics",
               "title": "Analytics",
-              "description": "The /api/analytics insights endpoint, the public marketplace stats aggregator, and how the Insights screen consumes both.",
+              "description": "The owner insights endpoint, the public marketplace aggregates, the privacy-safe product observability pipeline, and the ban on geographic PII.",
               "file": "homiio/main/analytics.mdx",
-              "order": 5,
+              "order": 8,
               "section": "guides"
             },
             {
@@ -10654,15 +10678,15 @@
               "title": "Auth",
               "description": "How Homiio integrates with Oxy on React Native and on the server, the automatic profile bootstrap, and the per-request flow.",
               "file": "homiio/main/auth.mdx",
-              "order": 6,
+              "order": 9,
               "section": "guides"
             },
             {
               "slug": "deployment",
               "title": "Deployment",
-              "description": "AWS ECS Fargate for the backend, Cloudflare Pages for the frontend web build, and serverless/persistent-process concerns (Mongo, cron).",
+              "description": "AWS ECS Fargate for the backend, Cloudflare Pages for the frontend web build, and serverless/persistent-process concerns (the Postgres pool, cron).",
               "file": "homiio/main/deployment.mdx",
-              "order": 7,
+              "order": 10,
               "section": "guides"
             },
             {
@@ -10670,7 +10694,50 @@
               "title": "Contributing",
               "description": "Repo layout, the agent-first workflow, code conventions, and the rules that keep the monorepo healthy.",
               "file": "homiio/main/contributing.mdx",
-              "order": 8,
+              "order": 11,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/README",
+              "title": "Architecture decision records",
+              "description": "The index of Homiio's ADRs — what each one decides, what it binds, and how to add another.",
+              "file": "homiio/main/adr/README.md",
+              "order": 12,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0001-canonical-housing-graph",
+              "title": "ADR 0001 — The canonical housing graph: street, building, unit and listing",
+              "file": "homiio/main/adr/0001-canonical-housing-graph.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0002-location-and-search-contract",
+              "title": "ADR 0002 — One location and search contract for Home, Explore, reviews and evictions",
+              "file": "homiio/main/adr/0002-location-and-search-contract.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0003-privacy-verification-publication",
+              "title": "3. Privacy, verification and publication rules for addresses, reviews and evictions",
+              "file": "homiio/main/adr/0003-privacy-verification-publication.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0004-local-explainable-pricing",
+              "title": "ADR 0004 — Local, explainable, versioned pricing assessments",
+              "file": "homiio/main/adr/0004-local-explainable-pricing.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "qa/location-and-housing-identity-e2e-matrix",
+              "title": "End-to-end matrix: location and housing identity",
+              "file": "homiio/main/qa/location-and-housing-identity-e2e-matrix.md",
+              "order": 1000,
               "section": "guides"
             },
             {
@@ -11021,7 +11088,7 @@
             {
               "slug": "architecture",
               "title": "Architecture",
-              "description": "Patch model, source overlay, Mojo IPC pipeline, WebUI controllers, and the Rust adblock engine.",
+              "description": "Patch model, source overlay, WebUI controllers, and the Rust adblock engine.",
               "file": "astro/master/architecture.mdx",
               "order": 2,
               "section": "guides"
@@ -11032,6 +11099,14 @@
               "description": "How Astro talks to the Oxy platform — auth, cookies, Alia AI, and the update server.",
               "file": "astro/master/oxy-integration.mdx",
               "order": 3,
+              "section": "guides"
+            },
+            {
+              "slug": "agent-collaboration",
+              "title": "Working in a shared checkout",
+              "description": "Several agents commit to one clone at once — the index, attribution, the commit-versus-working-tree gates, and the resources two runs cannot share.",
+              "file": "astro/master/agent-collaboration.mdx",
+              "order": 1000,
               "section": "guides"
             },
             {
@@ -11217,6 +11292,22 @@
               "section": "guides"
             },
             {
+              "slug": "known-defects",
+              "title": "Known defects",
+              "description": "Defects declared rather than hidden — what each one is, what was measured, and the durable lessons that outlive the fix.",
+              "file": "astro/master/known-defects.mdx",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "pipeline-guards",
+              "title": "Pipeline guards",
+              "description": "What each build-pipeline guard measures, what it cost to learn, and the ways each one is misread.",
+              "file": "astro/master/pipeline-guards.mdx",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "recovery",
               "title": "Recovery",
               "description": "Recovering from an interrupted or failed legacy patch application.",
@@ -11229,6 +11320,30 @@
               "title": "Reproducibility",
               "description": "The source lock, deterministic sync, and build provenance.",
               "file": "astro/master/reproducibility.mdx",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "theming",
+              "title": "Theming",
+              "description": "How a colour change in settings reaches the native browser UI, and the five things that make it look like it did not.",
+              "file": "astro/master/theming.mdx",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "verification",
+              "title": "Verification",
+              "description": "Measuring a running browser without fooling yourself — navigation, negative controls, and telling your own process, window and tab from somebody else's.",
+              "file": "astro/master/verification.mdx",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "webui",
+              "title": "WebUI pages",
+              "description": "Settings out of the pak, the new tab page's typed data plane, adding a page, the host table, and the ten places the WebUI scheme is spelled.",
+              "file": "astro/master/webui.mdx",
               "order": 1000,
               "section": "guides"
             }
