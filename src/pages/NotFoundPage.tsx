@@ -15,7 +15,6 @@ import {
   useFairCoinNavbarBrand,
   useFairCoinSimpleNavLinks,
 } from '../lib/faircoin-chrome'
-import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 import MemoryBoard from '../components/notfound/MemoryBoard'
 import FaqSection, { type FaqEntry } from '../components/sections/FaqSection'
 
@@ -135,14 +134,13 @@ export default function NotFoundPage() {
         <MemoryBoard />
 
         <div className="container py-10 lg:py-16">
-          <p className="text-overline text-muted-foreground">/ Status: 404</p>
-          <AnimatedTitle as="h1" className="mt-3 text-heading-responsive-lg">
-            Page not found.
-          </AnimatedTitle>
-          <p className="mt-3 max-w-sm text-pretty text-muted-foreground">
-            The page you're looking for doesn't exist or has been moved.
-          </p>
-          <div className="mt-6 flex flex-wrap items-center gap-2.5">
+          {/*
+            The board says 404 in the only way this page needs to. The heading
+            stays for whoever is not looking at it — a screen reader, a crawler
+            — because a page still needs one.
+          */}
+          <h1 className="sr-only">Page not found</h1>
+          <div className="flex flex-wrap items-center gap-2.5">
             <Button variant="primary" size="md" href={homeHref}>
               Go to homepage
             </Button>
