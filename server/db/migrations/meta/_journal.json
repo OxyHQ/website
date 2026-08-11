@@ -64,6 +64,13 @@
       "when": 1786464000000,
       "tag": "0008_drop_stale_platform_nav",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1786467600000,
+      "tag": "0009_product_categories",
+      "breakpoints": true
     }
   ]
 }
