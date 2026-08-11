@@ -67,8 +67,14 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
                 fitting as many columns as the block is wide left a four-item
                 section in three columns with one item orphaned on its own row.
               */}
+              {/*
+                No rules between items: the same gap on both axes carries the
+                structure. A rule on one axis only stopped mid-panel and read as
+                a stray underline, and a full grid of them made a menu look like
+                a table.
+              */}
               <ul
-                className="grid items-start"
+                className="grid items-start gap-space-xs"
                 style={{ gridTemplateColumns: `repeat(${span}, minmax(0,1fr))` }}
               >
                 {section.items.map((item, ii) => (
