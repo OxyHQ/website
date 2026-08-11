@@ -265,7 +265,7 @@ export default function HomeHero() {
     >
       <div
         ref={stickyRef}
-        className="sticky top-0 mx-auto flex h-auto w-full max-w-(--layout-max-width) overflow-x-hidden border-x border-border bg-background max-lg:min-h-svh max-lg:flex-col lg:min-h-dvh lg:flex-wrap"
+        className="sticky top-0 mx-auto flex h-auto w-full max-w-(--layout-max-width) overflow-hidden border-x border-border bg-background max-lg:min-h-svh max-lg:flex-col lg:min-h-dvh lg:flex-wrap"
       >
         {/* Top band — 60dvh */}
         <div className="flex w-full max-lg:flex-1 max-lg:pt-28 lg:h-[60dvh]">
@@ -353,11 +353,6 @@ export default function HomeHero() {
                 fade, one thing to keep in step. The scrim over it is what keeps
                 the copy readable once it is showing.
 
-                It is sized to the hero and pinned to the panel's TOP-RIGHT —
-                the one corner that does not move. The panel's left edge travels
-                to 0 as the column beside it collapses and its bottom drops to
-                100dvh, so anchoring there is what makes the panel a window
-                opening onto a still frame instead of a box stretching one.
               */}
               <div className="pointer-events-none absolute inset-0 z-[3] overflow-hidden">
                 <video
@@ -368,7 +363,7 @@ export default function HomeHero() {
                   aria-hidden="true"
                   preload="none"
                   poster={PANEL_POSTER}
-                  className="absolute right-0 top-0 h-dvh w-screen max-w-(--layout-max-width) object-cover"
+                  className="size-full object-cover"
                 >
                   {webm && <source src={webm} type="video/webm" />}
                   <source src={mp4} type="video/mp4" />
@@ -384,16 +379,21 @@ export default function HomeHero() {
         {/* Bottom band — 40dvh */}
         <div className="flex w-full max-lg:h-[32svh] lg:h-[40dvh]">
           <div ref={leftBottomRef} className="h-full w-full shrink-0 will-change-transform lg:w-[70%]">
-            <div className="relative flex size-full items-center justify-center overflow-hidden">
+            <div className="relative flex size-full items-center justify-center">
               {/*
                 The still, not the video. The CMS still holds both, so this is
                 one element away from moving again.
+
+                A hero tall rather than a cell tall, hanging out of the bottom of
+                its own cell. The cell rises half a viewport during the morph,
+                and a picture that ended at the cell's edge would take the floor
+                with it and leave the space below empty.
               */}
               <img
                 src={poster}
                 alt=""
                 aria-hidden="true"
-                className="absolute inset-0 z-[2] size-full object-cover"
+                className="absolute left-0 top-0 z-[2] h-full w-full object-cover lg:h-dvh"
                 width={1920}
                 height={1080}
                 fetchPriority="high"
@@ -401,7 +401,13 @@ export default function HomeHero() {
             </div>
           </div>
 
-          <div className="hidden w-full max-w-[30%] lg:block">
+          {/*
+            Thirty per cent at rest, and it TAKES the width the column beside it
+            gives up — a fixed `max-w-[30%]` would hold its size while that
+            column collapsed and leave a growing strip of nothing along the
+            band's right edge.
+          */}
+          <div className="hidden w-[30%] grow lg:block">
             <div className="relative z-[3] hidden size-full flex-col justify-between overflow-hidden lg:flex">
               {/*
                 Fixed to the cell, not to the two blocks inside it: those slide
