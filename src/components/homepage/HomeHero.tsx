@@ -352,6 +352,12 @@ export default function HomeHero() {
                 by the panel opening rather than by a tween of its own: one
                 fade, one thing to keep in step. The scrim over it is what keeps
                 the copy readable once it is showing.
+
+                It is sized to the hero and pinned to the panel's TOP-RIGHT —
+                the one corner that does not move. The panel's left edge travels
+                to 0 as the column beside it collapses and its bottom drops to
+                100dvh, so anchoring there is what makes the panel a window
+                opening onto a still frame instead of a box stretching one.
               */}
               <div className="pointer-events-none absolute inset-0 z-[3] overflow-hidden">
                 <video
@@ -362,7 +368,7 @@ export default function HomeHero() {
                   aria-hidden="true"
                   preload="none"
                   poster={PANEL_POSTER}
-                  className="size-full object-cover"
+                  className="absolute right-0 top-0 h-dvh w-screen max-w-(--layout-max-width) object-cover"
                 >
                   {webm && <source src={webm} type="video/webm" />}
                   <source src={mp4} type="video/mp4" />
