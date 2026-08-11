@@ -261,7 +261,7 @@ export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
 
   if (slot.faces.length <= 1) {
     return (
-      <div className={`overflow-hidden cursor-pointer ${radiusClass} ${sizeClass}`}>
+      <div className={`overflow-hidden cursor-pointer border border-border ${radiusClass} ${sizeClass}`}>
         <CardFace card={slot.faces[0]} size={slot.size} />
       </div>
     )
@@ -284,7 +284,7 @@ function CubeCard({ sizeClass, size, faces, interval }: {
   interval: number
 }) {
   return (
-    <div className={`relative overflow-hidden ${sizeClass}`}>
+    <div className={`relative overflow-hidden border border-border ${sizeClass}`}>
       <Swiper
         modules={[EffectCube, Autoplay]}
         effect="cube"

@@ -59,17 +59,22 @@
   grid-template-rows: repeat(2, 200px);
   grid-auto-flow: column dense;
   grid-auto-columns: 200px;
-  gap: 10px;
-  padding-inline: 5px;
-  --pill-r: 205px; /* (2×200+10)/2 — exact half-height so border-radius overflow-reduction doesn't kill the 20px right corners */
+  /*
+   * No gap: the cards carry a border and sit against each other, so the row
+   * reads as a strip of items rather than as tiles floating on the hero. The
+   * padding has to go with it — it sits between the track's two copies, where
+   * it would show up as the one seam the loop is meant to hide.
+   */
+  gap: 0;
+  --pill-r: 200px; /* Half the two-row height, so the pill's right corners survive the overflow reduction. */
 }
 
 @media screen and (max-width: 950px) {
   .oxy-landing .hero-carousel-grid {
     grid-template-rows: repeat(2, 150px);
     grid-auto-columns: 150px;
-    gap: 8px;
-    --pill-r: 154px; /* (2×150+8)/2 */
+    gap: 0;
+    --pill-r: 150px;
   }
 }
 
@@ -77,8 +82,8 @@
   .oxy-landing .hero-carousel-grid {
     grid-template-rows: repeat(2, 120px);
     grid-auto-columns: 120px;
-    gap: 6px;
-    --pill-r: 123px; /* (2×120+6)/2 */
+    gap: 0;
+    --pill-r: 120px;
   }
 }
 
