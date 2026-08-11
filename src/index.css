@@ -529,6 +529,44 @@ body {
   animation: search-bar-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* ──────────────────────────────────────────────
+ * The stack diagram's blocks: each arrives a beat after the one before it, in
+ * the order they read. `--i` is a block's place in that queue.
+ * ──────────────────────────────────────────── */
+.stack-block {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--i) * 55ms);
+}
+.stack-section.in-view .stack-block {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .stack-block {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* The square pinned to a block's corner, where two edges meet. */
+.stack-dot-top-left::before,
+.stack-dot-top-right::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  width: 5px;
+  height: 5px;
+  background: var(--color-foreground);
+  z-index: 30;
+}
+.stack-dot-top-left::before { left: -2px; }
+.stack-dot-top-right::before { right: -2px; }
+
 /* The hero's three scroll arrows, each one a beat behind the last. */
 @keyframes hero-scroll-arrow {
   0%, 100% { opacity: 0.2; }

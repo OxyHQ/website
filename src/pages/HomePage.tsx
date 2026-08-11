@@ -6,6 +6,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HomeHero from '../components/homepage/HomeHero'
 import { homeFaqs } from '../data/homepage'
+import EcosystemStack from '../components/sections/EcosystemStack'
 import FairCoinSection from '../components/sections/FairCoinSection'
 import FaqSection from '../components/sections/FaqSection'
 import { usePage, type PageSection, useProducts, type ProductRecord } from '../api/hooks'
@@ -18,8 +19,6 @@ import '../styles/landing.css'
 import AIResearchSection from '../components/ai/AIResearchSection'
 import AppCard from '../components/apps/AppCard'
 import { Link } from 'react-router-dom'
-import { getPackages, buildDocsHref } from '../content/docs-loader'
-import { getPackageLogo } from '../components/docs/getPackageLogo'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /**
@@ -875,189 +874,7 @@ function PartnershipSection() {
 /* ------------------------------------------------------------------ */
 /*  For Developers card                                                */
 /* ------------------------------------------------------------------ */
-const FEATURED_DEV_SHORTNAMES = [
-  'services',
-  'core',
-  'auth-sdk',
-  'bloom',
-  'api',
-  'mention',
-  'inbox',
-  'accounts',
-]
 
-function ForDevelopersCard() {
-  const packages = getPackages()
-  const map = new Map(packages.map((p) => [p.shortName, p]))
-  const featured = FEATURED_DEV_SHORTNAMES.map((name) => map.get(name)).filter(
-    (pkg): pkg is NonNullable<typeof pkg> => pkg !== undefined,
-  )
-
-  return (
-    <div className="relative p-8 rounded-3xl bg-foreground/[0.03]">
-      <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-4 max-[950px]:col-span-full">
-          <p className="mb-2 text-lg"><strong>For developers</strong></p>
-          <p className="text-sm opacity-70 max-w-[280px]">
-            SDKs, REST APIs, and an OpenAPI playground — all open source.
-          </p>
-          <pre className="hidden lg:block mt-4 text-[12px] leading-relaxed rounded-xl bg-background/60 border border-border px-3 py-2 font-mono overflow-x-auto">
-            <code>bun add @oxyhq/services</code>
-          </pre>
-        </div>
-        <div className="col-span-7 max-[950px]:col-span-full">
-          <div className="grid grid-cols-2 max-[1100px]:grid-cols-1 max-[950px]:grid-cols-2 max-[520px]:grid-cols-1 gap-2">
-            {featured.map((pkg) => {
-              const logo = getPackageLogo(pkg.shortName)
-              const letter = pkg.displayName.replace(/^@[^/]+\//, '').charAt(0).toUpperCase()
-              const href = buildDocsHref(pkg, pkg.latestVersion, '')
-              return (
-                <Link
-                  key={pkg.shortName}
-                  to={href}
-                  className="group flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-foreground/[0.04] transition-colors"
-                >
-                  {logo ? (
-                    <img
-                      src={logo}
-                      width={36}
-                      height={36}
-                      alt=""
-                      className="w-9 h-9 rounded-[10px] object-contain bg-background shadow-sm"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <span
-                      aria-hidden
-                      className="w-9 h-9 rounded-[10px] inline-flex items-center justify-center bg-primary/15 text-primary text-sm font-medium shadow-sm"
-                    >
-                      {letter}
-                    </span>
-                  )}
-                  <span className="flex-1 min-w-0">
-                    <span className="block text-sm font-medium truncate">{pkg.displayName}</span>
-                    <span className="block text-[11px] opacity-60 truncate font-mono">
-                      {pkg.package}
-                    </span>
-                  </span>
-                </Link>
-              )
-            })}
-          </div>
-        </div>
-      </div>
-      <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm opacity-80">
-        <Link to="/changelog" className="hover:opacity-100 hover:underline">Changelog</Link>
-        <Link to="/status" className="hover:opacity-100 hover:underline">Status</Link>
-        <Link to="/academy" className="hover:opacity-100 hover:underline">Academy</Link>
-        <a
-          href="https://github.com/OxyHQ"
-          target="_blank"
-          rel="noreferrer"
-          className="hover:opacity-100 hover:underline"
-        >
-          Issues
-        </a>
-        <Link to="/help" className="hover:opacity-100 hover:underline">Help center</Link>
-      </div>
-      <div className="mt-6 flex flex-wrap gap-2">
-        <Link to="/developers/docs" className={`${BTN} bg-foreground text-background hover:bg-foreground/90`}>
-          Read the docs
-        </Link>
-        <Link to="/developers/docs/api" className={`${BTN} bg-foreground/5`}>
-          Browse the API
-        </Link>
-        <a
-          href="https://github.com/OxyHQ"
-          target="_blank"
-          rel="noreferrer"
-          className={`${BTN} bg-foreground/5`}
-        >
-          GitHub
-        </a>
-      </div>
-    </div>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-/*  Security & Trust                                                   */
-/* ------------------------------------------------------------------ */
-const SECURITY_ITEMS = [
-  { name: 'Help Center', icon: 'agents-security-icons-01.svg', size: 16 },
-  { name: 'Community Guidelines', icon: 'agents-security-icons-02.svg', size: 16 },
-  { name: 'Privacy Policy', icon: 'agents-security-icons-03.svg', size: 16 },
-  { name: 'Terms of Service', icon: 'agents-security-icons-04.svg', size: 16 },
-  { name: 'Transparency Center', icon: 'agents-security-icons-05.svg', size: 20 },
-  { name: 'Accessibility', icon: 'agents-security-icons-06.svg', size: 25 },
-  { name: 'Data Protection', icon: 'agents-security-icons-07.svg', size: 23 },
-  { name: 'Cookie Policy', icon: 'agents-security-icons-08.svg', size: 16 },
-  { name: 'Content Policy', icon: 'agents-security-icons-09.svg', size: 16 },
-  { name: 'Safety Center', icon: 'agents-security-icons-10.svg', size: 16 },
-  { name: 'Report Abuse', icon: 'agents-security-icons-11.svg', size: 16 },
-  { name: 'Contact Us', icon: 'agents-security-icons-12.svg', size: 16 },
-]
-
-function IntegrationsSecuritySection() {
-  return (
-    <section className="container">
-      <div>
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-full py-10 max-[950px]:py-6">
-            <div className="text-center mb-8">
-              <AnimatedTitle as="h2" className="text-heading-responsive-lg mb-5 max-w-[500px] mx-auto">Everything you need, all in one place</AnimatedTitle>
-              <p className="opacity-80 max-w-[350px] mx-auto">Explore our documentation, contribute to our codebase, and connect with the community.</p>
-            </div>
-            <div>
-              <ForDevelopersCard />
-
-              <div className="relative p-8 rounded-3xl bg-foreground/[0.03] mt-4">
-                <div className="grid grid-cols-12 gap-6">
-                  <div className="col-span-4 max-[950px]:col-span-full"><p><strong>For Everyone</strong></p></div>
-                  <div className="col-span-7 max-[950px]:col-span-full">
-                    <div className="columns-3 max-[950px]:columns-1 max-[950px]:max-h-[350px] max-[950px]:overflow-hidden text-sm leading-4 tracking-wide font-[450]">
-                      {SECURITY_ITEMS.map((item) => (
-                        <div key={item.name} className="grid grid-cols-[40px_1fr] items-center gap-x-3.5 [&+&]:mt-3">
-                          <div className="w-10 h-10 bg-background rounded-[14px] flex items-center justify-center shadow-sm">
-                            <img src={`${IMG}/${item.icon}`} width={item.size} height={item.size} alt="security icon" className="w-auto h-auto max-w-5 max-h-5 object-contain dark:invert" loading="lazy" decoding="async" />
-                          </div>
-                          <span>{item.name}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <a className={`${BTN} bg-foreground/5 max-[950px]:static absolute bottom-8 left-8`} href="/help">Visit Help Center</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-/*  Commons app                                                        */
-/* ------------------------------------------------------------------ */
-
-/** The App Store badge, lifted out so the section below stays readable. */
-
-/**
- * The Play badge, drawn to match the App Store one beside it: same 144x48
- * lockup, same outline, both taking their colour from the text around them.
- */
-
-/**
- * One band for the Commons app: the night illustration behind everything, the
- * phone floating over it, the copy beside it and the download below.
- *
- * Both layers drift as the band crosses the viewport, at different rates, which
- * is what reads as depth. The illustration is taller than the band so the drift
- * never exposes an edge, and both layers hold still when the visitor asks for
- * reduced motion.
- */
 function CommonsAppSection() {
   const ref = useRef<HTMLElement>(null)
   const reduce = useReducedMotion()
@@ -1198,10 +1015,10 @@ export default function HomePage() {
         <FeaturesSection />
         {(FEATURES.SHOW_HOMEPAGE_STATS || FEATURES.SHOW_TESTIMONIALS) && <StatsAndTestimonialsSection />}
         <IndependentEcosystemSection />
+        <EcosystemStack />
         <EcosystemSection />
         <FairCoinSection />
         <PartnershipSection />
-        <IntegrationsSecuritySection />
         <AIResearchSection />
         <CommonsAppSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}
