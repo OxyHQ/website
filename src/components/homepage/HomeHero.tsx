@@ -33,6 +33,8 @@ const IMG = '/images/landing'
 
 const DEFAULT_TITLE = 'Creating a future where technology empowers individuals\nto live connected, fulfilling, and sustainable lives.'
 const DEFAULT_POSTER = `${IMG}/hero-bg.avif`
+const DEFAULT_BG_WEBM = `${IMG}/hero-background.webm`
+const DEFAULT_BG_MP4 = `${IMG}/hero-background.mp4`
 
 /**
  * The panel's copy, one line per element: each is centred on its own.
@@ -67,6 +69,8 @@ export default function HomeHero() {
 
   const title = hero?.title || DEFAULT_TITLE
   const poster = heroMediaUrl(hero?.backgroundPoster) || DEFAULT_POSTER
+  const webm = heroMediaUrl(hero?.backgroundVideoWebm) || DEFAULT_BG_WEBM
+  const mp4 = heroMediaUrl(hero?.backgroundVideoMp4) || DEFAULT_BG_MP4
 
   const sectionRef = useRef<HTMLElement>(null)
   const stickyRef = useRef<HTMLDivElement>(null)
@@ -323,6 +327,29 @@ export default function HomeHero() {
                     </p>
                   ))}
                 </div>
+              </div>
+
+              {/*
+                The video sits UNDER the layer that fades out, so it is revealed
+                by the panel opening rather than by a tween of its own: one
+                fade, one thing to keep in step. The scrim over it is what keeps
+                the copy readable once it is showing.
+              */}
+              <div className="pointer-events-none absolute inset-0 z-[3] overflow-hidden">
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  aria-hidden="true"
+                  preload="none"
+                  poster={poster}
+                  className="size-full object-cover"
+                >
+                  {webm && <source src={webm} type="video/webm" />}
+                  <source src={mp4} type="video/mp4" />
+                </video>
+                <div className="absolute inset-0 bg-background/55" />
               </div>
 
               <div ref={panelBackdropRef} className="pointer-events-none absolute left-0 top-0 z-[4] size-full bg-surface" />
