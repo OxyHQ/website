@@ -36,10 +36,6 @@ const photoCardSchema = z.object({
   alt: z.string(),
 })
 
-const faircoinCardSchema = z.object({
-  type: z.literal('faircoin'),
-})
-
 const valuesCardSchema = z.object({
   type: z.literal('values'),
   heading: z.string(),
@@ -56,7 +52,6 @@ export const heroCardSchema = z.discriminatedUnion('type', [
   careersCardSchema,
   brandCardSchema,
   photoCardSchema,
-  faircoinCardSchema,
   valuesCardSchema,
   videoCardSchema,
 ])

@@ -1,61 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { CardSize, CarouselSlot, HeroCard } from '../../data/heroCarousel'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCube, Autoplay } from 'swiper/modules'
-import { StarFour, PlugsConnected, Unite, Cpu } from '@phosphor-icons/react'
-import { useFairCoinStats, useNewsroomPosts } from '../../api/hooks'
 import { PromoCard } from '../ui/PromoCard'
-import type { FairCoinStats } from '../../api/faircoinStore'
 import 'swiper/css'
 import 'swiper/css/effect-cube'
-
-/*
- * Short forms, the way a balance is written: 378,995,651 reads as a length
- * before it reads as a number. Below a thousand there is nothing to shorten,
- * so those keep their digits — and their decimals, which is the only place a
- * difficulty's fraction still means anything.
- */
-const COMPACT = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 })
-
-function formatStat(value: number, decimals: number): string {
-  if (Math.abs(value) >= 1000) return COMPACT.format(value)
-  // `maximumFractionDigits`, not `toFixed`: the count-up starts at zero, and a
-  // difficulty declaring four decimals would open on "0.0000".
-  return new Intl.NumberFormat('en-US', { maximumFractionDigits: decimals }).format(value)
-}
-
-function AnimatedStat({ end, decimals, duration = 2000 }: { end: number; decimals: number; duration?: number }) {
-  const [value, setValue] = useState(0)
-  const ref = useRef<HTMLSpanElement>(null)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    let rafId = 0
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return
-      observer.disconnect()
-      const start = performance.now()
-      const tick = (now: number) => {
-        const t = Math.min((now - start) / duration, 1)
-        const ease = 1 - Math.pow(1 - t, 3)
-        setValue(parseFloat((ease * end).toFixed(decimals)))
-        if (t < 1) rafId = requestAnimationFrame(tick)
-      }
-      rafId = requestAnimationFrame(tick)
-    })
-    observer.observe(el)
-    return () => {
-      observer.disconnect()
-      if (rafId) cancelAnimationFrame(rafId)
-    }
-  }, [end, decimals, duration])
-
-  return (
-    <span ref={ref}>{formatStat(value, decimals)}</span>
-  )
-}
 
 const sizeClasses: Record<CardSize, string> = {
   '1x1': 'row-span-1 col-span-1',
@@ -134,131 +83,10 @@ function CardFace({ card, size }: { card: HeroCard; size: CardSize }) {
     case 'careers': return <CareersFace card={card} size={size} />
     case 'brand': return <BrandFace card={card} />
     case 'photo': return <PhotoFace card={card} />
-    case 'faircoin': return <FairCoinFace />
     case 'video': return <VideoFace card={card} />
     case 'values': return <ValuesFace card={card} size={size} />
     case 'promo': return <PromoCard image={card.image} title={card.title} description={card.description} href={card.href} alt={card.alt} />
   }
-}
-
-const FAIRCOIN_STORE_IMAGE = '/images/landing/faircoin-store.png'
-
-type FairCoinStatKey = 'blocks' | 'hashrate' | 'peers' | 'difficulty'
-
-const FAIRCOIN_STAT_META: { key: FairCoinStatKey; label: string; decimals: number; Icon: typeof StarFour }[] = [
-  { key: 'blocks', label: 'Current Blocks', decimals: 0, Icon: StarFour },
-  { key: 'hashrate', label: 'Network (KH/s)', decimals: 0, Icon: PlugsConnected },
-  { key: 'peers', label: 'Active Peers', decimals: 0, Icon: Unite },
-  { key: 'difficulty', label: 'Difficulty', decimals: 4, Icon: Cpu },
-]
-
-function toDisplayValues(stats: FairCoinStats | null): Record<FairCoinStatKey, number> {
-  if (!stats) return { blocks: 0, hashrate: 0, peers: 0, difficulty: 0 }
-  return {
-    blocks: stats.blocks,
-    hashrate: stats.networkHashPs / 1000,
-    peers: stats.connections,
-    difficulty: stats.difficulty,
-  }
-}
-
-const FAIRCOIN_NEWS_DATE_FORMAT: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' }
-
-/** The news cell: last column of the FairCoin face, flush to its three edges. */
-const NEWS_CELL_CLASS =
-  'group flex h-full w-[260px] flex-col overflow-hidden border-l border-white/15 bg-[#14532d] lg:w-[300px]'
-
-function FairCoinFace() {
-  const stats = useFairCoinStats()
-  const values = toDisplayValues(stats)
-  const [runs, setRuns] = useState(() => FAIRCOIN_STAT_META.map(() => 0))
-
-  // Pull the latest FairCoin-tagged newsroom post from the CMS for the
-  // right-hand news card. Falls back to the static image + copy when the
-  // query hasn't resolved or there's nothing tagged yet.
-  const { data: newsData } = useNewsroomPosts({ tag: 'FairCoin', limit: 1 })
-  const post = newsData?.posts?.[0]
-  const newsImage = (post && typeof post.coverImage === 'string' && post.coverImage) || FAIRCOIN_STORE_IMAGE
-  const newsTitle = post?.title ?? 'Empowering local stores with FairCoin'
-  const newsDate = post?.publishedAt
-    ? new Date(post.publishedAt).toLocaleDateString('en-US', FAIRCOIN_NEWS_DATE_FORMAT)
-    : ''
-  const newsHref = post?.slug ? `/newsroom/${post.slug}` : null
-  const newsCell = (
-    <>
-      <img
-        src={newsImage}
-        alt=""
-        className="w-full min-h-0 flex-1 object-cover transition-transform duration-500 group-hover:scale-105"
-        width={600}
-        height={400}
-        loading="lazy"
-        decoding="async"
-      />
-      <div className="flex shrink-0 flex-col p-3 lg:p-4">
-        <span className="mb-0.5 block text-label-sm font-bold uppercase tracking-wider text-green-400">
-          {newsDate}
-        </span>
-        <p className="font-display line-clamp-3 text-xl font-semibold leading-snug text-green-100 lg:text-2xl">
-          {newsTitle}
-        </p>
-      </div>
-    </>
-  )
-  return (
-    <div className="grid h-full w-full grid-cols-[1fr_1fr_auto] bg-[#166534]">
-      {/* Col 1: title + buttons */}
-      <div className="flex flex-col justify-center gap-3 pl-10 py-4 pr-3 lg:pl-14 lg:py-5 lg:pr-4">
-        <h3 className="font-display text-5xl font-extrabold uppercase tracking-wider text-white">
-          FairCoin <span className="font-normal italic text-green-200">Today</span>
-        </h3>
-        <div className="flex flex-wrap gap-2">
-          <a href="https://buy.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-[#166534]">
-            Buy
-          </a>
-          <a href="https://explorer.fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white hover:bg-white/10">
-            Explorer
-          </a>
-          <a href="https://fairco.in" target="_blank" rel="noopener noreferrer" className="rounded-full border border-white/30 px-4 py-1.5 text-sm font-bold text-white hover:bg-white/10">
-            Learn more
-          </a>
-        </div>
-      </div>
-      {/* Col 2: stats. Four cells filling the column, edge to edge. */}
-      <div className="flex flex-col border-l border-white/15">
-        {FAIRCOIN_STAT_META.map((stat, i) => {
-          const value = values[stat.key]
-          return (
-            <div
-              key={stat.label}
-              className="flex flex-1 cursor-pointer select-none items-center gap-2 border-t border-white/15 px-3 first:border-t-0 lg:px-4"
-              onClick={() => setRuns(r => r.map((v, j) => j === i ? v + 1 : v))}
-            >
-              <stat.Icon size={16} className="text-white/70" weight="bold" />
-              <div>
-                <span className="block text-[9px] font-semibold uppercase tracking-wider text-white/70 lg:text-[10px]">
-                  {stat.label}
-                </span>
-                <span className="block text-3xl font-bold leading-tight text-white lg:text-4xl">
-                  <AnimatedStat key={`${runs[i]}-${value}`} end={value} decimals={stat.decimals} />
-                </span>
-              </div>
-            </div>
-          )
-        })}
-      </div>
-      {/* Col 3: news — CMS-driven, latest post tagged "FairCoin". Same cell
-          whether or not there is a post to link to, so the two readings of it
-          cannot drift apart. */}
-      {newsHref ? (
-        <Link to={newsHref} className={NEWS_CELL_CLASS}>
-          {newsCell}
-        </Link>
-      ) : (
-        <div className={NEWS_CELL_CLASS}>{newsCell}</div>
-      )}
-    </div>
-  )
 }
 
 export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {

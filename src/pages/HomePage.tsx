@@ -7,6 +7,7 @@ import SEO from '../components/SEO'
 import HeroCarousel from '../components/homepage/HeroCarousel'
 import { heroCarouselSlots } from '../data/heroCarousel'
 import { homeFaqs } from '../data/homepage'
+import FairCoinSection from '../components/sections/FairCoinSection'
 import FaqSection from '../components/sections/FaqSection'
 import { useHero, usePage, type PageSection, useProducts, type ProductRecord } from '../api/hooks'
 import { FEATURES } from '../constants'
@@ -1250,6 +1251,7 @@ export default function HomePage() {
         {(FEATURES.SHOW_HOMEPAGE_STATS || FEATURES.SHOW_TESTIMONIALS) && <StatsAndTestimonialsSection />}
         <IndependentEcosystemSection />
         <EcosystemSection />
+        <FairCoinSection />
         <PartnershipSection />
         <IntegrationsSecuritySection />
         <AIResearchSection />

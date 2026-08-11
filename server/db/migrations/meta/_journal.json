@@ -29,6 +29,13 @@
       "when": 1786423678276,
       "tag": "0003_hero_drop_eyebrow",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786449600000,
+      "tag": "0004_hero_drop_faircoin_slot",
+      "breakpoints": true
     }
   ]
 }

@@ -1,5 +1,5 @@
 import { useRef, useCallback, useMemo } from 'react'
-import type { CarouselSlot } from '../../data/heroCarousel'
+import { RENDERABLE_FACE_TYPES, type CarouselSlot } from '../../data/heroCarousel'
 import { useJobs, useNewsroomPosts } from '../../api/hooks'
 import CarouselSlotRenderer from './HeroCarouselCard'
 
@@ -33,7 +33,11 @@ export default function HeroCarousel({ slots }: HeroCarouselProps) {
 
     let newsroomOffset = 0
 
-    return slots.map(slot => {
+    const renderable = slots
+      .map(slot => ({ ...slot, faces: slot.faces.filter(face => RENDERABLE_FACE_TYPES.has(face.type)) }))
+      .filter(slot => slot.faces.length > 0)
+
+    return renderable.map(slot => {
       const firstFaceType = slot.faces[0]?.type
 
       if (firstFaceType === 'newsroom' && newsroomFaces.length > 0) {

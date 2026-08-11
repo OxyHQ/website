@@ -38,9 +38,6 @@ export type HeroCard =
       alt: string
     }
   | {
-      type: 'faircoin'
-    }
-  | {
       type: 'values'
       heading: string
       body: string
@@ -67,6 +64,24 @@ export interface CarouselSlot {
   /** If true, renders the card as a circle. Every other slot is a rectangle. */
   rounded?: boolean
 }
+
+/**
+ * The face types this build renders.
+ *
+ * The hero's slots come from the CMS, which stores whatever it was given, so a
+ * slot authored against an older build can name a face that no longer exists —
+ * as the FairCoin dashboard did when it moved to its own home section. The
+ * carousel drops those rather than laying out an empty cell where the card was.
+ */
+export const RENDERABLE_FACE_TYPES: ReadonlySet<HeroCard['type']> = new Set([
+  'newsroom',
+  'careers',
+  'brand',
+  'photo',
+  'values',
+  'video',
+  'promo',
+])
 
 export const heroCarouselSlots: CarouselSlot[] = [
   // Brand circle
@@ -95,11 +110,6 @@ export const heroCarouselSlots: CarouselSlot[] = [
         src: '/images/landing/hero-video.mp4',
       },
     ],
-  },
-  // FairCoin dashboard
-  {
-    size: '4x2',
-    faces: [{ type: 'faircoin' }],
   },
   // Promo card — the ecosystem map
   {
