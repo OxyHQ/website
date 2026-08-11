@@ -66,7 +66,6 @@
    * it would show up as the one seam the loop is meant to hide.
    */
   gap: 0;
-  --pill-r: 200px; /* Half the two-row height, so the pill's right corners survive the overflow reduction. */
 }
 
 @media screen and (max-width: 950px) {
@@ -74,7 +73,6 @@
     grid-template-rows: repeat(2, 150px);
     grid-auto-columns: 150px;
     gap: 0;
-    --pill-r: 150px;
   }
 }
 
@@ -83,12 +81,7 @@
     grid-template-rows: repeat(2, 120px);
     grid-auto-columns: 120px;
     gap: 0;
-    --pill-r: 120px;
   }
-}
-
-.oxy-landing .hero-card-pill-left {
-  border-radius: var(--pill-r) 24px 24px var(--pill-r);
 }
 
 /* Swiper cube card */

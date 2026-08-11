@@ -64,14 +64,12 @@ export interface CarouselSlot {
   faces: HeroCard[]
   /** Rotation interval in ms (only matters if faces.length > 1) */
   rotateInterval?: number
-  /** If true, renders the card as a full pill/circle */
+  /** If true, renders the card as a circle. Every other slot is a rectangle. */
   rounded?: boolean
-  /** If true, only the left side is fully rounded */
-  roundedLeft?: boolean
 }
 
 export const heroCarouselSlots: CarouselSlot[] = [
-  // Brand pill
+  // Brand circle
   {
     size: '1x1',
     rounded: true,
@@ -101,7 +99,6 @@ export const heroCarouselSlots: CarouselSlot[] = [
   // FairCoin dashboard
   {
     size: '4x2',
-    roundedLeft: true,
     faces: [{ type: 'faircoin' }],
   },
   // Promo card — the ecosystem map

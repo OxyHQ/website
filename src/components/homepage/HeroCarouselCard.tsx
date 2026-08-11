@@ -124,7 +124,7 @@ function CardFace({ card, size }: { card: HeroCard; size: CardSize }) {
     case 'faircoin': return <FairCoinFace />
     case 'video': return <VideoFace card={card} />
     case 'values': return <ValuesFace card={card} size={size} />
-    case 'promo': return <PromoCard image={card.image} title={card.title} description={card.description} href={card.href} alt={card.alt} className="rounded-[24px]" />
+    case 'promo': return <PromoCard image={card.image} title={card.title} description={card.description} href={card.href} alt={card.alt} />
   }
 }
 
@@ -192,7 +192,7 @@ function FairCoinFace() {
           {FAIRCOIN_STAT_META.map((stat, i) => {
             const value = values[stat.key]
             return (
-              <div key={stat.label} className="cursor-pointer select-none rounded-full bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5" onClick={() => setRuns(r => r.map((v, j) => j === i ? v + 1 : v))}>
+              <div key={stat.label} className="cursor-pointer select-none border border-white/15 bg-white/10 px-2.5 py-2 lg:px-3 lg:py-2.5" onClick={() => setRuns(r => r.map((v, j) => j === i ? v + 1 : v))}>
                 <div className="flex items-center gap-2">
                   <stat.Icon size={16} className="text-white/70" weight="bold" />
                   <div>
@@ -211,7 +211,7 @@ function FairCoinFace() {
       </div>
       {/* Col 3: news card — CMS-driven, latest post tagged "FairCoin" */}
       {newsHref ? (
-        <Link to={newsHref} className="group m-2.5 flex w-[260px] flex-col overflow-hidden rounded-2xl bg-[#14532d] lg:m-3 lg:w-[300px]">
+        <Link to={newsHref} className="group m-2.5 flex w-[260px] flex-col overflow-hidden border border-white/15 bg-[#14532d] lg:m-3 lg:w-[300px]">
           <img
             src={newsImage}
             alt=""
@@ -231,7 +231,7 @@ function FairCoinFace() {
           </div>
         </Link>
       ) : (
-        <div className="m-2.5 flex w-[260px] flex-col overflow-hidden rounded-2xl bg-[#14532d] lg:m-3 lg:w-[300px]">
+        <div className="m-2.5 flex w-[260px] flex-col overflow-hidden border border-white/15 bg-[#14532d] lg:m-3 lg:w-[300px]">
           <img
             src={newsImage}
             alt=""
@@ -257,7 +257,9 @@ function FairCoinFace() {
 
 export default function CarouselSlotRenderer({ slot }: { slot: CarouselSlot }) {
   const sizeClass = sizeClasses[slot.size]
-  const radiusClass = slot.rounded ? 'rounded-full' : slot.roundedLeft ? 'hero-card-pill-left' : 'rounded-[24px]'
+  // Circles, rectangles and squares — nothing in between. A slot is round
+  // only when round is the whole shape.
+  const radiusClass = slot.rounded ? 'rounded-full' : ''
 
   if (slot.faces.length <= 1) {
     return (
