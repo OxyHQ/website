@@ -4,7 +4,6 @@ import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { Fingerprint, Sparkle, Globe } from '@phosphor-icons/react'
 import { useHero, useNewsroomPosts, type HeroMediaRef } from '../../api/hooks'
 import { usePageChromeStore } from '../../stores/pageChromeStore'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
@@ -30,6 +29,7 @@ import { AnimatedTitle } from '../ui/AnimatedTitle'
  * ──────────────────────────────────────────── */
 
 const IMG = '/images/landing'
+const IMG_HERO = '/images/hero'
 
 const DEFAULT_TITLE = 'Creating a future where technology empowers individuals\nto live connected, fulfilling, and sustainable lives.'
 const DEFAULT_POSTER = `${IMG}/hero-bg.avif`
@@ -50,7 +50,17 @@ const SENTENCES = [
   'Technology is where we start.',
 ]
 
-const PANEL_ICONS = [Fingerprint, Sparkle, Globe]
+/*
+ * Read left to right as the charter reads: people first, what grows out of
+ * that, and the scale it is meant to reach. The raised fist was the fifth
+ * candidate and is left out on purpose — a single skin tone on a fist reads as
+ * a specific signal rather than as "everyone".
+ */
+const PANEL_ICONS = [
+  { src: `${IMG_HERO}/emoji-handshake.png`, alt: 'Handshake' },
+  { src: `${IMG_HERO}/emoji-seedling.png`, alt: 'Seedling' },
+  { src: `${IMG_HERO}/emoji-globe.png`, alt: 'Globe showing the Americas' },
+]
 
 /** How the icons enter once the panel has begun to open. */
 const ICON_ANIMATION = { duration: 1, ease: 'power4.out' }
@@ -304,13 +314,17 @@ export default function HomeHero() {
                 className="relative z-[5] flex origin-bottom-left flex-col items-start justify-end p-20 antialiased will-change-transform"
               >
                 <div className="hidden w-full justify-center gap-4 lg:flex">
-                  {PANEL_ICONS.map((Icon) => (
-                    <div key={Icon.displayName} className="flex size-14 overflow-hidden">
-                      <Icon
+                  {PANEL_ICONS.map((icon) => (
+                    <div key={icon.src} className="flex size-14 overflow-hidden">
+                      <img
                         data-hero-icon
-                        weight="thin"
-                        aria-hidden="true"
-                        className="block size-full text-foreground will-change-transform"
+                        src={icon.src}
+                        alt={icon.alt}
+                        width={160}
+                        height={160}
+                        loading="lazy"
+                        decoding="async"
+                        className="block size-full object-contain will-change-transform"
                       />
                     </div>
                   ))}
