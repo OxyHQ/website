@@ -677,7 +677,17 @@ export default function Navbar({
             gutter is that square, so a page's first column starts where the
             brand cell ends and its last ends where the final control begins.
           */}
-          <div className="flex items-stretch divide-x divide-border border-b border-border">
+          {/*
+            The rule under the bar goes transparent while a panel is open, so
+            the trigger and the panel it opened read as one surface instead of
+            being cut apart by a line through the middle. The border box stays,
+            or the row would move a pixel every time a menu opened.
+          */}
+          <div
+            className={`flex items-stretch divide-x divide-border border-b ${
+              activeDropdown ? 'border-transparent bg-foreground/5' : 'border-border'
+            }`}
+          >
             <Link
               to={brand?.homeHref ?? '/'}
               className="grid size-(--header-cell-size) shrink-0 place-content-center transition-colors hover:bg-foreground/5"
@@ -901,7 +911,9 @@ export default function Navbar({
       */}
       {measured && (
         <div
-          className={`w-full ${isOpen ? 'border-b border-border' : ''}`}
+          // The panel wears the trigger's hover tint, so opening one reads as that
+          // cell growing rather than as a sheet dropping over the page.
+          className={`w-full bg-foreground/5 ${isOpen ? 'border-b border-border' : ''}`}
           style={{
             pointerEvents: isOpen ? 'auto' : 'none',
             opacity: isOpen ? 1 : 0,
