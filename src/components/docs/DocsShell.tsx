@@ -63,7 +63,7 @@ export function DocsShell({
     <div className="relative antialiased">
       <DocsSubNav />
 
-      <div className="container flex">
+      <div className="flex w-full">
         {hideSidebar
           ? null
           : sections

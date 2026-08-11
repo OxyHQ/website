@@ -37,7 +37,7 @@ export default function DocsIntroPage() {
       <DocsSubNav />
 
       {/* Sidebar (shared with detail pages) + Content */}
-      <div className="container flex">
+      <div className="flex w-full">
         <DocsPackageSidebar sections={sections} />
 
         {/* Main content */}

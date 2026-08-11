@@ -571,11 +571,12 @@ export default function Navbar({
             the bar is transparent — there was nothing marking where it ended.
           */}
           {/*
-            The row opens and closes on the same square: the brand cell at one
-            end, that much space at the other, so the mark and the controls sit
-            the same distance from their edge.
+            The row opens and closes on the same square, each flush to its own
+            edge: the brand at the left, the last control at the right. The page
+            gutter is that square, so a page's first column starts where the
+            brand cell ends and its last ends where the final control begins.
           */}
-          <div className="flex items-stretch divide-x divide-border border-b border-border pe-(--header-cell-size)">
+          <div className="flex items-stretch divide-x divide-border border-b border-border">
             <Link
               to={brand?.homeHref ?? '/'}
               className="grid size-(--header-cell-size) shrink-0 place-content-center transition-colors hover:bg-foreground/5"
@@ -633,8 +634,8 @@ export default function Navbar({
               </div>
 
             {searchOpen && (
-              <div className="relative w-[min(500px,42vw)] lg:max-w-[31.25rem]">
-                <Search className="pointer-events-none absolute start-space-lg top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute start-space-lg top-1/2 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
                 <input
                   autoFocus
                   type="text"
@@ -663,21 +664,21 @@ export default function Navbar({
                   }}
                   placeholder={t('common.searchApps')}
                   aria-label={t('common.search')}
-                  className="h-12 w-full rounded-2xl border border-border bg-foreground/5 ps-[44px] pe-10 text-body-md text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground/25 focus:bg-background"
+                  className="h-12 w-full bg-transparent ps-[44px] pe-12 text-body-md text-foreground outline-none placeholder:text-muted-foreground"
                 />
                 <button
                   type="button"
                   onClick={closeSearch}
                   aria-label={t('common.closeSearch')}
-                  className="absolute right-2 top-1/2 inline-flex size-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                  className="absolute end-0 top-0 inline-flex size-12 cursor-pointer items-center justify-center border-l border-border text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
                 >
                   <X className="size-4" />
                 </button>
 
                 {searchQuery.trim() ? (
-                  <div className="absolute left-0 right-0 top-full mt-2 max-h-[min(70vh,520px)] overflow-y-auto rounded-2xl border border-border bg-background p-2 text-left shadow-xl">
+                  <div className="absolute inset-x-0 top-full z-50 max-h-[min(70vh,520px)] overflow-y-auto border-b border-border bg-background text-left">
                     {flatResults.length === 0 ? (
-                      <div className="px-3 py-6 text-center text-sm text-muted-foreground">{t('common.noResults')}</div>
+                      <div className="px-space-sm py-space-2xl text-center text-sm text-muted-foreground">{t('common.noResults')}</div>
                     ) : (
                       flatResults.map((r, i) => {
                         const showHeader = i === 0 || flatResults[i - 1].group !== r.group
@@ -685,7 +686,7 @@ export default function Navbar({
                         return (
                           <Fragment key={r.id}>
                             {showHeader ? (
-                              <div className="px-3 pb-1 pt-2 text-label-sm font-medium uppercase tracking-wider text-muted-foreground first:pt-1">
+                              <div className="px-space-sm pb-space-xs pt-space-md text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
                                 {GROUP_LABELS[r.group] ?? r.group}
                               </div>
                             ) : null}
@@ -696,7 +697,7 @@ export default function Navbar({
                                 closeSearch()
                                 navigate(r.url)
                               }}
-                              className={`block w-full cursor-pointer rounded-xl px-3 py-2 text-left transition-colors ${isActive ? 'bg-foreground/5' : ''}`}
+                              className={`block w-full cursor-pointer border-t border-border px-space-sm py-space-md text-left transition-colors ${isActive ? 'bg-foreground/5' : ''}`}
                             >
                               <div className="truncate text-sm text-foreground">{r.title}</div>
                               <div className="truncate text-body-xs text-muted-foreground">{r.subtitle}</div>
