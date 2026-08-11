@@ -156,7 +156,9 @@ function DropdownContent({ dropdown, width }: { dropdown: NavDropdown; width: nu
 
   return (
     <div
-      className="grid w-full items-start gap-space-lg py-space-sm grid-cols-[repeat(var(--nav-cols),minmax(0,var(--nav-col)))] [--nav-col:14rem]"
+      // The panel starts a clear step below the row, so the first heading does not
+      // sit against the trigger that opened it.
+      className="grid w-full items-start gap-space-lg pt-space-xl pb-space-2xl grid-cols-[repeat(var(--nav-cols),minmax(0,var(--nav-col)))] [--nav-col:14rem]"
       style={{ '--nav-cols': packed.length + reserved } as CSSProperties}
     >
       {packed.map((column, ci) => (
