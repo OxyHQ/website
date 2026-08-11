@@ -17,7 +17,7 @@ const MEDIA_FIELDS = ['backgroundVideoWebm', 'backgroundVideoMp4', 'backgroundPo
 
 /**
  * A media field is either a Media `_id` or a static URL like
- * `/images/landing/hero-background.webm`. Only the first kind is looked up;
+ * `/images/landing/hero-panel.webm`. Only the first kind is looked up;
  * the second is handed back untouched, which is why these are not foreign keys.
  */
 function isMediaId(value: unknown): value is string {

@@ -43,6 +43,13 @@
       "when": 1786453200000,
       "tag": "0005_hero_drop_carousel_slots",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1786456800000,
+      "tag": "0006_hero_panel_video",
+      "breakpoints": true
     }
   ]
 }

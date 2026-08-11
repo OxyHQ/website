@@ -316,7 +316,7 @@ server.tool('get_hero', 'Get the homepage hero singleton: title, background vide
   } catch (e) { return err(e) }
 })
 
-server.tool('update_hero', 'Update the homepage hero. Pass any subset of: title (supports newlines), background video/poster (Media _id or static URL like "/images/landing/hero-background.webm"). Only provided fields are changed.', heroUpdateRawShape, async (params: HeroUpdate) => {
+server.tool('update_hero', 'Update the homepage hero. Pass any subset of: title (supports newlines), background video/poster (Media _id or static URL like "/images/landing/hero-panel.webm"). Only provided fields are changed.', heroUpdateRawShape, async (params: HeroUpdate) => {
   try {
     // Re-validate via the same schema the REST route uses so the MCP and the
     // HTTP path stay in lockstep on shape, defaults, and rejections.

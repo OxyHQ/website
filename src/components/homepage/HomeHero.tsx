@@ -33,8 +33,12 @@ const IMG_HERO = '/images/hero'
 
 const DEFAULT_TITLE = 'Creating a future where technology empowers individuals\nto live connected, fulfilling, and sustainable lives.'
 const DEFAULT_POSTER = `${IMG}/hero-bg.avif`
-const DEFAULT_BG_WEBM = `${IMG}/hero-background.webm`
-const DEFAULT_BG_MP4 = `${IMG}/hero-background.mp4`
+const DEFAULT_BG_WEBM = `${IMG}/hero-panel.webm`
+const DEFAULT_BG_MP4 = `${IMG}/hero-panel.mp4`
+/** The video's own first frame. The still below the panel is a different picture. */
+const PANEL_POSTER = `${IMG}/hero-panel-poster.webp`
+/** Behind the newsroom cell, under a scrim. */
+const NEWS_CELL_BACKDROP = `${IMG}/4lffisf9oaY443RqgB8sCKLHJc.avif`
 
 /**
  * The panel's copy, one line per element: each is centred on its own.
@@ -357,7 +361,7 @@ export default function HomeHero() {
                   playsInline
                   aria-hidden="true"
                   preload="none"
-                  poster={poster}
+                  poster={PANEL_POSTER}
                   className="size-full object-cover"
                 >
                   {webm && <source src={webm} type="video/webm" />}
@@ -393,6 +397,24 @@ export default function HomeHero() {
 
           <div className="hidden w-full max-w-[30%] lg:block">
             <div className="relative z-[3] hidden size-full flex-col justify-between overflow-hidden lg:flex">
+              {/*
+                Fixed to the cell, not to the two blocks inside it: those slide
+                out on scroll and the picture has to stay where it is.
+              */}
+              <img
+                src={NEWS_CELL_BACKDROP}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 -z-10 size-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+              {/* Heavier at the foot, where the card and the label sit. */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 -z-10 bg-gradient-to-b from-background/65 via-background/80 to-background/92"
+              />
+
               <button
                 ref={arrowsRef}
                 type="button"

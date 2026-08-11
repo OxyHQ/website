@@ -6,6 +6,6 @@
  * ──────────────────────────────────────────── */
 
 export const DEFAULT_HERO_TITLE = 'Creating a future where technology empowers individuals\nto live connected, fulfilling, and sustainable lives.'
-export const DEFAULT_HERO_BG_WEBM = '/images/landing/hero-background.webm'
-export const DEFAULT_HERO_BG_MP4 = '/images/landing/hero-background.mp4'
+export const DEFAULT_HERO_BG_WEBM = '/images/landing/hero-panel.webm'
+export const DEFAULT_HERO_BG_MP4 = '/images/landing/hero-panel.mp4'
 export const DEFAULT_HERO_POSTER = '/images/landing/hero-bg.avif'
