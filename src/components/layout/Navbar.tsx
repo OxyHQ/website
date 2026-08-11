@@ -565,11 +565,17 @@ export default function Navbar({
             gutter, so the first cell starts on the container edge — the same
             place the dropdown band's first item lands.
           */}
-          <div
-            className={`flex items-stretch divide-x divide-border border-b transition-colors duration-300 ${
-              isTransparent ? 'border-transparent' : 'border-border'
-            }`}
-          >
+          {/*
+            The rule stays on even over a transparent bar: it is what separates
+            the header from the page, and at the top of a page — exactly where
+            the bar is transparent — there was nothing marking where it ended.
+          */}
+          {/*
+            The trailing space mirrors the brand cell that opens the row, so the
+            controls end as far from the right edge as the mark sits from the
+            left. Same token, so they cannot drift.
+          */}
+          <div className="flex items-stretch divide-x divide-border border-b border-border pe-(--brand-cell-width)">
             <Link
               to={brand?.homeHref ?? '/'}
               className="grid h-12 w-(--brand-cell-width) shrink-0 place-content-center transition-colors hover:bg-foreground/5"

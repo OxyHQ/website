@@ -21,6 +21,62 @@ function resolveReleaseLink(href: string | undefined, entry: StaticChangelogEntr
   return `https://github.com/${entry.repoOwner}/${entry.repoName}/${kind}/HEAD/${path}`
 }
 
+/**
+ * A release body written on GitHub usually opens with its own title, because
+ * there the title is not otherwise on the page. Here it sits directly above the
+ * body, so the same words landed twice — and matching the two strings does not
+ * catch it, since the release title carries a version the heading leaves out.
+ *
+ * So the rule is structural: a body's leading LEVEL-ONE heading is the release
+ * announcing itself and comes off. Every heading below that is a real section
+ * of the note and stays.
+ */
+function withoutLeadingTitle(content: string): string {
+  const lines = content.split('\n')
+  const first = lines.findIndex((line) => line.trim() !== '')
+  if (first === -1 || !/^#\s+/.test(lines[first])) return content
+  return lines.slice(first + 1).join('\n').replace(/^\s+/, '')
+}
+
+interface ChangelogMonth {
+  /** Anchor id, e.g. `june-2026`. */
+  id: string
+  /** Full label for the aside, e.g. `June`. */
+  month: string
+  year: number
+  /** Short label for the rail, e.g. `Jun 26`. */
+  rail: string
+  entries: StaticChangelogEntry[]
+}
+
+/**
+ * The releases, grouped by the month they went out.
+ *
+ * A changelog is read by when things happened, so the month is the structure
+ * and the entries hang off it. Built from the page being shown rather than from
+ * every entry: the aside links to anchors, and an anchor on another page is a
+ * link that goes nowhere.
+ */
+function groupByMonth(entries: StaticChangelogEntry[]): ChangelogMonth[] {
+  const groups = new Map<string, ChangelogMonth>()
+  for (const entry of entries) {
+    const date = new Date(entry.date)
+    const month = date.toLocaleDateString('en-US', { month: 'long' })
+    const year = date.getFullYear()
+    const id = `${month.toLowerCase()}-${year}`
+    const group = groups.get(id) ?? {
+      id,
+      month,
+      year,
+      rail: `${date.toLocaleDateString('en-US', { month: 'short' })} ${String(year).slice(2)}`,
+      entries: [],
+    }
+    group.entries.push(entry)
+    groups.set(id, group)
+  }
+  return [...groups.values()]
+}
+
 export default function ChangelogContent() {
   const { entries: allEntries, repos } = getStaticChangelog()
 
@@ -40,6 +96,8 @@ export default function ChangelogContent() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const safePage = Math.min(Math.max(1, currentPage), totalPages)
   const entries = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
+  const months = groupByMonth(entries)
+  const years = [...new Set(months.map((m) => m.year))].sort((a, b) => b - a)
 
   return (
     <>
@@ -168,102 +226,152 @@ export default function ChangelogContent() {
         </div>
       )}
 
-      {/* Article List */}
-      <div className="container pb-[60px] lg:pb-[90px]">
-        <div>
-          <div className="grid grid-cols-12">
-            <div className="col-span-full">
-              {entries.length === 0 && (
-                <div className="py-20 text-center text-muted-foreground">
-                  <p className="text-lg">No changelog entries yet.</p>
-                </div>
-              )}
+      {/* ─── Timeline ─── */}
+      {/*
+        Two columns from `xl`: the month label rides along on the left while its
+        releases scroll past on the right, so you always know where in the year
+        you are. Below that width the label sits above its entries instead —
+        there is no room for a rail and prose side by side.
+      */}
+      <div className="container flex gap-10 pb-[60px] lg:pb-[90px]">
+        <div className="min-w-0 flex-1">
+          {entries.length === 0 && (
+            <div className="py-20 text-center text-muted-foreground">
+              <p className="text-lg">No changelog entries yet.</p>
+            </div>
+          )}
 
-              {entries.map((entry) => (
-                <article
-                  key={entry._id}
-                  className="relative grid border-border border-b py-[60px] lg:grid-cols-[1fr_minmax(0,600px)_1fr] lg:py-[90px]"
-                >
-                  {/* Sticky date - desktop */}
-                  <time className="sticky top-32 hidden text-nowrap text-muted-foreground text-sm lg:flex">
-                    {new Date(entry.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                  </time>
+          {months.map((group) => (
+            <section
+              key={group.id}
+              id={group.id}
+              className="scroll-mt-[calc(var(--site-header-height)+2rem)] xl:grid xl:grid-cols-[max-content_minmax(0,1fr)]"
+            >
+              <h3 className="hidden xl:block">
+                <span className="sticky top-[calc(var(--site-header-height)+2rem)] block pr-6 pt-1 text-right font-mono text-label-sm font-semibold uppercase tracking-wider text-primary">
+                  {group.rail}
+                </span>
+              </h3>
 
-                  {/* Tags row */}
-                  <aside className="flex flex-wrap gap-x-[18px] gap-y-1 lg:col-start-2 lg:gap-x-5">
-                    {entry.tags.map((tag) => (
-                      <div key={tag} className="flex items-center gap-x-1.5">
-                        <div
-                          className="h-3 w-3 rounded-full"
-                          style={{ backgroundColor: tagColor(tag) }}
-                        />
-                        <div className="text-muted-foreground text-xs lg:text-sm">
-                          {tag}
-                        </div>
-                      </div>
-                    ))}
-                    {entry.repoDisplayName && (
-                      <div className="flex items-center gap-x-1.5">
-                        <div className="text-muted-foreground text-xs lg:text-sm">
-                          {entry.repoDisplayName}
-                        </div>
-                      </div>
-                    )}
-                  </aside>
+              <div className="min-w-0">
+                {group.entries.map((entry) => (
+                  <article key={entry._id} className="flex">
+                    {/*
+                      The dot marks the release and the line carries the eye to
+                      the next one. It is `aria-hidden` because the date beside
+                      it already says everything the drawing does.
+                    */}
+                    <div className="relative flex items-start" aria-hidden="true">
+                      <span className="z-10 inline-block size-3 translate-y-2 bg-primary" />
+                      <div className="absolute left-1/2 top-3 h-full w-px -translate-x-1/2 bg-gradient-to-b from-primary/50 to-foreground/10" />
+                    </div>
 
-                  {/* Content */}
-                  <div className="mt-6 lg:col-start-2">
-                    <div className="flex items-center gap-2">
-                      <h2
-                        className="font-semibold text-foreground text-xl lg:font-semibold lg:text-2xl"
-                        id={entry._id}
-                      >
-                        {entry.title}
-                      </h2>
-                      {entry.tagName && (
-                        <span className="inline-flex items-center rounded-lg border border-border bg-surface px-2 py-0.5 text-xs text-muted-foreground">
-                          {entry.tagName}
+                    <div className="ml-4 flex-1 pb-14 xl:ml-6">
+                      <div className="flex flex-wrap items-center gap-3 pb-6">
+                        <h2 className="text-title-sm text-foreground" id={entry._id}>
+                          {new Date(entry.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
+                        </h2>
+                        <span className="font-mono text-label-sm uppercase tracking-wider text-muted-foreground">
+                          {group.year}
                         </span>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2 pb-4">
+                        {entry.repoDisplayName && (
+                          <span className="rounded-sm border border-border px-2 py-0.5 font-mono text-label-sm uppercase tracking-wider text-muted-foreground">
+                            {entry.repoDisplayName}
+                          </span>
+                        )}
+                        {entry.tagName && (
+                          <span className="rounded-sm border border-border px-2 py-0.5 font-mono text-label-sm text-muted-foreground">
+                            {entry.tagName}
+                          </span>
+                        )}
+                        {entry.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-sm px-2 py-0.5 font-mono text-label-sm font-semibold uppercase tracking-wider text-background"
+                            style={{ backgroundColor: tagColor(tag) }}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <h4 className="pb-3 text-heading-lg text-foreground">{entry.title}</h4>
+
+                      <div className="prose prose-sm max-w-none font-normal leading-6.5 text-muted-foreground prose-headings:text-foreground prose-a:text-[var(--color-blue-500)] prose-code:rounded-md prose-code:bg-surface prose-code:px-1 prose-code:text-foreground prose-li:marker:text-muted-foreground">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            a: ({ href, children }) => (
+                              <a href={resolveReleaseLink(href, entry)} target="_blank" rel="noopener noreferrer">
+                                {children}
+                              </a>
+                            ),
+                          }}
+                        >
+                          {withoutLeadingTitle(entry.content)}
+                        </ReactMarkdown>
+                      </div>
+
+                      {entry.htmlUrl && (
+                        <a
+                          href={entry.htmlUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-3 inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          View on GitHub &rarr;
+                        </a>
                       )}
                     </div>
-
-                    <div className="font-normal leading-6.5 mt-5 text-muted-foreground prose prose-sm max-w-none prose-headings:text-foreground prose-a:text-[var(--color-blue-500)] prose-code:text-foreground prose-code:bg-surface prose-code:px-1 prose-code:rounded-md prose-li:marker:text-muted-foreground">
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          a: ({ href, children }) => (
-                            <a href={resolveReleaseLink(href, entry)} target="_blank" rel="noopener noreferrer">
-                              {children}
-                            </a>
-                          ),
-                        }}
-                      >
-                        {entry.content}
-                      </ReactMarkdown>
-                    </div>
-
-                    {entry.htmlUrl && (
-                      <a
-                        href={entry.htmlUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-                      >
-                        View on GitHub &rarr;
-                      </a>
-                    )}
-
-                    {/* Mobile date */}
-                    <time className="mt-5 text-muted-foreground text-xs lg:hidden" aria-hidden="true">
-                      {new Date(entry.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                    </time>
-                  </div>
-                </article>
-              ))}
-
-            </div>
-          </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ))}
         </div>
+
+        {/* Where you are in the year, and a way to jump. */}
+        {months.length > 0 && (
+          <aside className="hidden w-56 shrink-0 xl:block">
+            <nav className="sticky top-[calc(var(--site-header-height)+3rem)] space-y-4">
+              <h3 className="font-mono text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                Year
+              </h3>
+              <div className="flex">
+                <div className="w-4">
+                  <div className="h-[calc(100%-1rem)] w-px translate-y-1 bg-border" />
+                </div>
+                <ul className="flex flex-col gap-3">
+                  {years.map((year) => (
+                    <li key={year}>
+                      <p className="relative w-fit px-2.5 py-0.5 text-sm font-medium text-foreground">
+                        <span className="absolute -left-5 top-1 z-10 inline-block size-2 bg-primary" />
+                        {year}
+                      </p>
+                      <ul className="ml-2.5 space-y-1 pt-1">
+                        {months
+                          .filter((m) => m.year === year)
+                          .map((m) => (
+                            <li key={m.id}>
+                              <a
+                                href={`#${m.id}`}
+                                className="block py-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                              >
+                                {m.month}
+                              </a>
+                            </li>
+                          ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </nav>
+          </aside>
+        )}
       </div>
 
       {/* Pagination */}
