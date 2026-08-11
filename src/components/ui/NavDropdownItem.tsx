@@ -78,7 +78,12 @@ interface NavDropdownItemProps {
   item: NavDropdownItemType
 }
 
-const linkClass = "group relative flex h-full w-full items-center justify-start gap-space-lg px-space-md py-space-md transition-colors duration-300 hover:bg-foreground/5"
+/*
+ * `p-space-sm` is the same inset the section heading above carries, so the
+ * heading's text and the item's mark start on one line rather than four pixels
+ * apart.
+ */
+const linkClass = "group relative flex h-full w-full items-center justify-start gap-space-md p-space-sm transition-colors duration-300 hover:bg-foreground/5"
 
 function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const IconComponent = item.icon ? iconMap[item.icon] : null
@@ -87,7 +92,7 @@ function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const hasImage = Boolean(imageUrl)
 
   return (
-    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full">
+    <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full">
       {showGrid && (
         <svg width="40" height="40" fill="none" className="absolute inset-0 z-0">
           <g
@@ -111,7 +116,7 @@ function ItemIcon({ item }: { item: NavDropdownItemType }) {
       ) : IconComponent ? (
         <IconComponent className="nav-icon isolate size-10 text-muted-foreground" />
       ) : (
-        <div className="isolate flex h-10 w-10 items-center justify-center text-sm font-semibold text-primary">
+        <div className="isolate flex h-8 w-8 items-center justify-center text-sm font-semibold text-primary">
           {item.title.charAt(0)}
         </div>
       )}

@@ -41,52 +41,29 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
   return (
     <div className="flex w-full">
       {/*
-        `auto-fit` decides the column count from the width the band actually has,
-        so the panel gains columns on a wide viewport with no breakpoint table to
-        keep in sync. `dense` lets a one-item section backfill the hole a wider
-        neighbour leaves. No horizontal padding: an item's box then starts on the
-        container edge, where the trigger's box above it already is.
+        One grid for the whole panel, with a FIXED cell width rather than
+        stretchy tracks. Every item is the same size wherever it sits, the row
+        fills left to right and breaks only when the next cell no longer fits,
+        and a heading takes a row of its own to open its group. Sub-grids per
+        section were what split a four-item group into two-and-two while its
+        row still had room.
       */}
-      <div className="grid flex-1 grid-cols-[repeat(auto-fit,minmax(240px,1fr))] items-start gap-x-space-xl py-space-sm [grid-auto-flow:dense]">
-        {dropdown.sections.map((section, si) => {
-          /**
-           * Column units this section claims. A section is kept whole and given
-           * width in proportion to what it holds, so a six-app section reads as
-           * a block rather than a queue down one column. Two is the cap: a wider
-           * block leaves the short sections nothing to fill the row with, and
-           * `dense` packing is what closes those gaps.
-           */
-          const span = (section.items?.length ?? 0) > 3 ? 2 : 1
-          return (
-            <div key={`section-${si}`} style={{ gridColumn: `span ${span}` }}>
-              <p className="block px-space-sm pb-space-xs pt-space-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
+      <ul className="grid flex-1 content-start grid-cols-[repeat(auto-fill,var(--nav-item-width))] gap-1 py-space-sm [--nav-item-width:17.5rem]">
+        {dropdown.sections.map((section, si) => (
+          <Fragment key={`section-${si}`}>
+            <li className="col-span-full">
+              <p className="block px-space-sm pb-space-2xs pt-space-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
                 {section.heading}
               </p>
-              {/*
-                One column per unit the section spans, NOT another `auto-fit`:
-                fitting as many columns as the block is wide left a four-item
-                section in three columns with one item orphaned on its own row.
-              */}
-              {/*
-                No rules between items: the same gap on both axes carries the
-                structure. A rule on one axis only stopped mid-panel and read as
-                a stray underline, and a full grid of them made a menu look like
-                a table.
-              */}
-              <ul
-                className="grid items-start gap-space-xs"
-                style={{ gridTemplateColumns: `repeat(${span}, minmax(0,1fr))` }}
-              >
-                {section.items.map((item, ii) => (
-                  <li key={`item-${si}-${ii}`} className="contents">
-                    <NavDropdownItem item={item} />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )
-        })}
-      </div>
+            </li>
+            {section.items.map((item, ii) => (
+              <li key={`item-${si}-${ii}`} className="contents">
+                <NavDropdownItem item={item} />
+              </li>
+            ))}
+          </Fragment>
+        ))}
+      </ul>
 
       {dropdown.card && (
         <div className="w-80 shrink-0 py-space-sm ps-space-xl">

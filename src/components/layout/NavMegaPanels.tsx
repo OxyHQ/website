@@ -30,8 +30,9 @@ export function NavCard({ card, className = '' }: { card: NavDropdownCard; class
  */
 export function NavFeatureGrid({ grid }: { grid: NavFeatureGridContent }) {
   return (
-    <div className="flex w-full gap-space-lg py-space-md">
-      <ul className="grid flex-1 grid-cols-[repeat(auto-fit,minmax(240px,1fr))] items-start gap-space-sm">
+    <div className="flex w-full gap-space-lg py-space-sm">
+      {/* Same gap the sectioned panels use: one rhythm across every dropdown. */}
+      <ul className="grid flex-1 grid-cols-[repeat(auto-fit,minmax(240px,1fr))] items-start gap-1">
         {grid.features.map((item) => (
           <li key={item.href} className="contents">
             <NavDropdownItem item={item} />
