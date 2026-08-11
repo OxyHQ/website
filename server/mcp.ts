@@ -218,7 +218,6 @@ const navItemSchema = z.object({
   href: z.string(),
   icon: z.string().optional(),
   section: z.string().optional(),
-  showGrid: z.boolean().optional(),
 })
 const navDropdownSchema = z.object({
   label: z.string(),

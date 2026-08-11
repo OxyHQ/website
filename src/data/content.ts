@@ -54,7 +54,6 @@ export interface NavDropdownItem {
   href: string
   icon?: string
   image?: string | NavDropdownItemImage | null
-  showGrid?: boolean
 }
 
 export interface NavDropdownSection {
@@ -171,6 +170,15 @@ export const productNavDropdown: NavDropdown = {
  * Promo card injected into the `Resources` dropdown. Hardcoded for now; move to
  * the CMS navigation document when the card needs to be editor-managed.
  */
+/** Promo card injected into the `Platform` dropdown. */
+export const platformNavCard: NavDropdownCard = {
+  href: '/apps',
+  image: '/images/nav-ecosystem-card.webp',
+  title: 'One account, every app',
+  description: 'Sign in once and carry the same identity across everything Oxy builds',
+  alt: 'The Oxy ecosystem',
+}
+
 export const resourcesNavCard: NavDropdownCard = {
   href: '/academy',
   image: '/images/nav-resources-card.jpg',

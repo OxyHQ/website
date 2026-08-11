@@ -19,7 +19,6 @@ const navItemSchema = z.object({
   icon: z.string().optional(),
   image: z.union([z.string(), z.null()]).optional().transform(v => (v && v.length > 0 ? v : null)),
   section: z.string().optional(),
-  showGrid: z.boolean().optional(),
 })
 
 const navigationBodySchema = z.array(z.object({
@@ -53,7 +52,6 @@ function productToNavItem(product: Record<string, unknown>, categoryLabel: strin
     href,
     image: imageRef ?? null,
     section: categoryLabel,
-    showGrid: true,
   }
 }
 

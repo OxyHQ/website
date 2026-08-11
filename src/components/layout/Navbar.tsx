@@ -1,14 +1,17 @@
-import { Fragment, useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
+import { Fragment, useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore, type CSSProperties } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { LogoIcon, ProfileButton } from '@oxyhq/services'
 import {
   simpleNavLinks,
+  platformNavCard,
   resourcesNavCard,
   productNavDropdown,
   type NavDropdown,
+  type NavDropdownSection,
+  type NavDropdownItem as NavDropdownItemType,
   type NavItem,
 } from '../../data/content'
-import { NavCard, NavFeatureGrid } from './NavMegaPanels'
+import { NavCard } from './NavMegaPanels'
 import { useNavigation, useSiteSettings } from '../../api/hooks'
 import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '../../api/scrollStore'
 import { useTranslation, useLocaleContext } from '../../lib/i18n'
@@ -35,68 +38,133 @@ function ChevronDown({ className = '' }: { className?: string }) {
 
 /* ─── Dropdown Content Panel ─── */
 
-function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
-  if (dropdown.featureGrid) return <NavFeatureGrid grid={dropdown.featureGrid} />
+/*
+ * The panel is one grid and nothing else — no flex row holding grids, which is
+ * what put the side panel and the card on a different rhythm from the sections.
+ *
+ * Columns are a FIXED width and the row holds as many as the band fits, so a
+ * column is the same size in every dropdown and at every viewport; only the
+ * count changes. The card takes two of them, because a picture in a single
+ * column is a stamp.
+ */
+const NAV_COLUMN_WIDTH = 224
+const NAV_COLUMN_GAP = 16
+/** Columns to assume before the band has been measured (prerender, first paint). */
+const NAV_FALLBACK_COLUMNS = 4
+
+/**
+ * About how many items a column should carry before the panel opens another.
+ * Not a limit — the packing goes over it rather than splitting a section — but
+ * it is what decides how many columns a dropdown uses at all.
+ */
+const IDEAL_COLUMN_ITEMS = 7
+
+/**
+ * Sections packed into columns, in order, aiming for columns of about the same
+ * height. Sections are wildly different lengths — six items, then five, then
+ * one — so one section per column leaves a ragged panel with a column of white
+ * space beside a full one. A column carries as many sections as fit under the
+ * average, and the next section opens the next column.
+ *
+ * The number of columns comes from the content, not from the room available:
+ * spreading four sections over six columns is what left each one alone in its
+ * own column with nothing gathered. Weight is items plus one for the heading —
+ * near enough, since every item is the same height and a heading is about one
+ * item tall.
+ */
+function packSections(
+  sections: readonly NavDropdownSection[],
+  available: number,
+): NavDropdownSection[][] {
+  if (sections.length === 0) return []
+
+  const weigh = (section: NavDropdownSection) => (section.items?.length ?? 0) + 1
+  const total = sections.reduce((sum, section) => sum + weigh(section), 0)
+  const columns = Math.min(available, Math.max(1, Math.ceil(total / IDEAL_COLUMN_ITEMS)))
+  const target = total / columns
+
+  const packed: NavDropdownSection[][] = [[]]
+  let height = 0
+  for (const section of sections) {
+    const weight = weigh(section)
+    // A column that already holds something and would go past the average hands
+    // the section on — as long as there are columns left to hand it to.
+    if (height > 0 && height + weight > target && packed.length < columns) {
+      packed.push([])
+      height = 0
+    }
+    packed[packed.length - 1].push(section)
+    height += weight
+  }
+  return packed
+}
+
+/** A headless list cut into as many columns as it was given, in order. */
+function chunkItems(items: readonly NavDropdownItemType[], columns: number): NavDropdownSection[][] {
+  const perColumn = Math.ceil(items.length / Math.max(1, columns))
+  const chunks: NavDropdownSection[][] = []
+  for (let i = 0; i < items.length; i += perColumn) {
+    chunks.push([{ heading: '', items: items.slice(i, i + perColumn) }])
+  }
+  return chunks
+}
+
+function DropdownContent({ dropdown, width }: { dropdown: NavDropdown; width: number | null }) {
+  const columns = width
+    ? Math.max(1, Math.floor((width + NAV_COLUMN_GAP) / (NAV_COLUMN_WIDTH + NAV_COLUMN_GAP)))
+    : NAV_FALLBACK_COLUMNS
+
+  /*
+   * A feature dropdown is the same panel with a different filling: one headless
+   * list instead of headed sections, and more than one card. It went through a
+   * layout of its own, which is why its columns sized themselves from their
+   * content while every other dropdown's were fixed.
+   */
+  const cards = dropdown.featureGrid?.cards ?? (dropdown.card ? [dropdown.card] : [])
+  // Cards and the side panel take their columns off the top; the items share
+  // what is left.
+  const reserved = cards.length * 2 + (dropdown.sidePanel ? 1 : 0)
+  const itemColumns = Math.max(1, columns - reserved)
+  const packed = dropdown.featureGrid
+    ? chunkItems(dropdown.featureGrid.features, itemColumns)
+    : packSections(dropdown.sections ?? [], itemColumns)
 
   return (
-    <div className="flex w-full">
-      {/*
-        `auto-fit` decides the column count from the width the band actually has,
-        so the panel gains columns on a wide viewport with no breakpoint table to
-        keep in sync. `dense` lets a one-item section backfill the hole a wider
-        neighbour leaves. No horizontal padding: an item's box then starts on the
-        container edge, where the trigger's box above it already is.
-      */}
-      <div className="grid flex-1 grid-cols-[repeat(auto-fit,minmax(240px,1fr))] items-start gap-x-space-xl py-space-sm [grid-auto-flow:dense]">
-        {dropdown.sections.map((section, si) => {
-          /**
-           * Column units this section claims. A section is kept whole and given
-           * width in proportion to what it holds, so a six-app section reads as
-           * a block rather than a queue down one column. Two is the cap: a wider
-           * block leaves the short sections nothing to fill the row with, and
-           * `dense` packing is what closes those gaps.
-           */
-          const span = (section.items?.length ?? 0) > 3 ? 2 : 1
-          return (
-            <div key={`section-${si}`} style={{ gridColumn: `span ${span}` }}>
-              <p className="block px-space-sm pb-space-2xs pt-space-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                {section.heading}
-              </p>
-              {/*
-                Cells of a FIXED width, filled left to right, breaking only when
-                the next one no longer fits the section's own width. Tracks in
-                fractions were what split a four-item section two-and-two while
-                its row still had room, and what left items in one section out of
-                line with items in the next.
-
-                No rules between them: the same gap on both axes carries the
-                structure. A rule on one axis only stopped mid-panel and read as
-                a stray underline, and a full grid of them made a menu look like
-                a table.
-              */}
-              <ul className="grid items-start gap-1 grid-cols-[repeat(auto-fill,var(--nav-item-width))] [--nav-item-width:17.5rem]">
+    <div
+      className="grid w-full items-start gap-space-lg py-space-sm grid-cols-[repeat(var(--nav-cols),minmax(0,var(--nav-col)))] [--nav-col:14rem]"
+      style={{ '--nav-cols': packed.length + reserved } as CSSProperties}
+    >
+      {packed.map((column, ci) => (
+        <div key={`column-${ci}`} className="flex flex-col gap-space-md">
+          {column.map((section, si) => (
+            <div key={`section-${ci}-${si}`}>
+              {section.heading ? (
+                <p className="block px-space-sm pb-space-2xs text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  {section.heading}
+                </p>
+              ) : null}
+              {/* Items down the column. No rules between: the gap is the structure. */}
+              <ul className="grid items-start gap-1">
                 {section.items.map((item, ii) => (
-                  <li key={`item-${si}-${ii}`} className="contents">
+                  <li key={`item-${ci}-${si}-${ii}`} className="contents">
                     <NavDropdownItem item={item} />
                   </li>
                 ))}
               </ul>
             </div>
-          )
-        })}
-      </div>
-
-      {dropdown.card && (
-        <div className="w-80 shrink-0 py-space-sm ps-space-xl">
-          <NavCard card={dropdown.card} />
+          ))}
         </div>
-      )}
+      ))}
+
+      {cards.map((card) => (
+        <NavCard key={card.href} card={card} className="[grid-column:span_2]" />
+      ))}
 
       {dropdown.sidePanel && (
-        <ul className="flex w-48 shrink-0 flex-col py-space-sm ps-space-xl">
+        <ul className="grid items-start gap-space-3xs">
           {dropdown.sidePanel.heading ? (
             <li className="contents">
-              <p className="inline-block px-space-sm pt-space-xs pb-space-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              <p className="inline-block px-space-sm pb-space-2xs text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
                 {dropdown.sidePanel.heading}
               </p>
             </li>
@@ -106,14 +174,14 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
               {link.href.startsWith('/') ? (
                 <Link
                   to={link.href}
-                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-xl px-space-sm text-sm text-foreground transition-colors duration-300 hover:bg-foreground/5"
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-md px-space-sm text-body-md text-foreground transition-colors duration-150 hover:bg-foreground/5"
                 >
                   {link.label}
                 </Link>
               ) : (
                 <a
                   href={link.href}
-                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-xl px-space-sm text-sm text-foreground transition-colors duration-300 hover:bg-foreground/5"
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-md px-space-sm text-body-md text-foreground transition-colors duration-150 hover:bg-foreground/5"
                 >
                   {link.label}
                 </a>
@@ -219,7 +287,11 @@ export default function Navbar({
     return [
       productNavDropdown,
       ...(navigationData ?? []).map((dd) =>
-        dd.label === 'Resources' ? { ...dd, card: resourcesNavCard } : dd,
+        dd.label === 'Resources'
+          ? { ...dd, card: resourcesNavCard }
+          : dd.label === 'Platform'
+            ? { ...dd, card: platformNavCard }
+            : dd,
       ),
     ]
   }, [useCustomNav, customDropdowns, navigationData])
@@ -551,7 +623,7 @@ export default function Navbar({
       >
         {dropdowns.map((dd) => (
           <div key={dd.label} ref={(el) => { measureRefs.current[dd.label] = el }}>
-            <DropdownContent dropdown={dd} />
+            <DropdownContent dropdown={dd} width={navContentWidth} />
           </div>
         ))}
         <div ref={(el) => { measureRefs.current[SETTINGS_DROPDOWN_KEY] = el }}>
@@ -835,7 +907,7 @@ export default function Navbar({
                       pointerEvents: isActive ? 'auto' : 'none',
                     }}
                   >
-                    <DropdownContent dropdown={dd} />
+                    <DropdownContent dropdown={dd} width={navContentWidth} />
                   </div>
                 )
               })}

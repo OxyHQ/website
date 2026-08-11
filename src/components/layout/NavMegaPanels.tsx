@@ -1,49 +1,46 @@
-import type { NavDropdownCard, NavFeatureGrid as NavFeatureGridContent } from '../../data/content'
-import NavDropdownItem from '../ui/NavDropdownItem'
-import { PromoCard } from '../ui/PromoCard'
+import type { NavDropdownCard } from '../../data/content'
+import { Link } from 'react-router-dom'
 
 /* ─── Promo card ─── */
 
-/** Nav adapter around the reusable {@link PromoCard} — keeps the rounded-xl shape
- *  used by the dropdown panels. */
-export function NavCard({ card, className = '' }: { card: NavDropdownCard; className?: string }) {
-  return (
-    <PromoCard
-      image={card.image}
-      title={card.title}
-      description={card.description}
-      href={card.href}
-      alt={card.alt}
-      className={`rounded-xl ${className}`}
-    />
-  )
-}
-
-/* ─── Feature grid ─── */
-
 /**
- * Feature dropdown: a block of links beside the promo cards, each half taking an
- * equal share of the band and deciding its own column count from what it gets.
- * `auto-fit` is what makes that automatic — no breakpoint table, and no width
- * hardcoded here; the band is bounded by the site container and nothing else.
- * Features reuse `NavDropdownItem` so they match the other dropdowns.
+ * The panel's large item: a picture over its own copy, sitting on the same grid
+ * as the plain items and hovering the same way. There used to be a second shape
+ * — one full-bleed image with the words laid over it — which at nav size read
+ * as an advert and made the words fight the picture.
  */
-export function NavFeatureGrid({ grid }: { grid: NavFeatureGridContent }) {
+export function NavCard({ card, className = '' }: { card: NavDropdownCard; className?: string }) {
+  const inner = (
+    <>
+      <span className="block h-40 w-full overflow-hidden rounded-md border border-border bg-surface">
+        <img
+          src={card.image}
+          alt={card.alt ?? ''}
+          loading="lazy"
+          decoding="async"
+          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      </span>
+      <span className="flex flex-col gap-space-3xs">
+        <span className="text-body-md font-medium text-foreground">{card.title}</span>
+        <span className="text-body-xs text-muted-foreground transition-colors duration-150 group-hover:text-foreground/80">
+          {card.description}
+        </span>
+      </span>
+    </>
+  )
+  const cardClass = `group flex h-fit flex-col gap-space-sm rounded-md p-space-sm transition-colors duration-150 hover:bg-foreground/5 active:bg-foreground/10 ${className}`
+
+  if (card.href.startsWith('/')) {
+    return (
+      <Link to={card.href} className={cardClass}>
+        {inner}
+      </Link>
+    )
+  }
   return (
-    <div className="flex w-full gap-space-lg py-space-sm">
-      {/* Same gap the sectioned panels use: one rhythm across every dropdown. */}
-      <ul className="grid flex-1 grid-cols-[repeat(auto-fit,minmax(240px,1fr))] items-start gap-1">
-        {grid.features.map((item) => (
-          <li key={item.href} className="contents">
-            <NavDropdownItem item={item} />
-          </li>
-        ))}
-      </ul>
-      <div className="grid flex-1 grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-space-lg">
-        {grid.cards.map((card) => (
-          <NavCard key={card.href} card={card} className="h-full" />
-        ))}
-      </div>
-    </div>
+    <a href={card.href} target="_blank" rel="noopener noreferrer" className={cardClass}>
+      {inner}
+    </a>
   )
 }

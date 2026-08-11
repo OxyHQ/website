@@ -21,7 +21,7 @@ export const navigationDropdowns = pgTable('navigation_dropdowns', {
   label: text().notNull(),
   /** 'manual' | 'apps' */
   kind: text().notNull().default('manual'),
-  /** `{ title, description, href, icon?, image?, section?, showGrid }[]` */
+  /** `{ title, description, href, icon?, image?, section? }[]` */
   items: jsonb().$type<Record<string, unknown>[]>().notNull().default([]),
   /** `{ heading?, links: { label, href }[] }` */
   sidePanel: jsonb().$type<Record<string, unknown> | null>(),

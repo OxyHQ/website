@@ -79,49 +79,32 @@ interface NavDropdownItemProps {
 }
 
 /*
- * `p-space-sm` is the same inset the section heading above carries, so the
- * heading's text and the item's mark start on one line rather than four pixels
- * apart.
+ * `px-space-sm` is the inset the section heading above carries, so the heading's
+ * text and the item's mark start on one line. `h-fit`, not `h-full`: an item is
+ * as tall as what it holds, and a two-line description next door no longer
+ * stretches its neighbours to match.
  */
-const linkClass = "group relative flex h-full w-full items-center justify-start gap-space-md p-space-sm transition-colors duration-300 hover:bg-foreground/5"
+const linkClass = "group flex h-fit w-full items-start gap-space-sm rounded-md px-space-sm py-space-xs transition-colors duration-150 hover:bg-foreground/5 active:bg-foreground/10"
 
 function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const IconComponent = item.icon ? iconMap[item.icon] : null
-  const showGrid = item.showGrid !== false
   const imageUrl = resolveImageUrl(item.image)
-  const hasImage = Boolean(imageUrl)
 
-  return (
-    <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full">
-      {showGrid && (
-        <svg width="40" height="40" fill="none" className="absolute inset-0 z-0">
-          <g
-            className="transition-colors duration-150 ease-out stroke-border/40 group-hover:stroke-border/70 dark:stroke-muted/40 dark:group-hover:stroke-muted/70"
-            strokeWidth=".7"
-            strokeMiterlimit="10"
-          >
-            <path d="M40 14H0M40 26H0M19.947 0 20 40" strokeDasharray="1.6 1.6" />
-            <path d="M35 0v40M5 0v40M0 5h40M0 35h40" />
-          </g>
-        </svg>
-      )}
-      {hasImage ? (
-        <img
-          src={imageUrl}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="relative z-10 h-full w-full object-contain p-1"
-        />
-      ) : IconComponent ? (
-        <IconComponent className="nav-icon isolate size-10 text-muted-foreground" />
-      ) : (
-        <div className="isolate flex h-8 w-8 items-center justify-center text-sm font-semibold text-primary">
-          {item.title.charAt(0)}
-        </div>
-      )}
-    </div>
-  )
+  if (imageUrl) {
+    return (
+      <img
+        src={imageUrl}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className="mt-0.5 size-5 shrink-0 rounded-full object-contain"
+      />
+    )
+  }
+  if (IconComponent) {
+    return <IconComponent className="nav-icon mt-0.5 size-5 shrink-0 text-muted-foreground" />
+  }
+  return null
 }
 
 function ItemContent({ item }: { item: NavDropdownItemType }) {
@@ -129,28 +112,12 @@ function ItemContent({ item }: { item: NavDropdownItemType }) {
     <>
       <ItemIcon item={item} />
 
-      {/* Text content */}
-      <div className="flex w-full min-w-0 flex-col pr-space-sm">
-        <div className="flex w-full items-baseline justify-between gap-1.5 text-foreground">
-          <span className="text-body-lg font-medium">{item.title}</span>
-          {/* Arrow icon — shows on hover */}
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            className="relative shrink-0 text-foreground opacity-0 max-lg:hidden -translate-x-0.25 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-300 group-active:translate-0 group-active:opacity-100 group-active:duration-50"
-          >
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M10.3536 6.35356C10.5488 6.1583 10.5488 5.84171 10.3536 5.64645L7.85355 3.14645C7.65829 2.95118 7.34171 2.95118 7.14645 3.14645C6.95118 3.34171 6.95118 3.65829 7.14645 3.85355L8.79289 5.5L2 5.50001C1.72386 5.50001 1.5 5.72386 1.5 6.00001C1.5 6.27615 1.72386 6.50001 2 6.50001L8.79289 6.5L7.14645 8.14645C6.95118 8.34171 6.95118 8.65829 7.14645 8.85355C7.34171 9.04882 7.65829 9.04882 7.85355 8.85355L10.3536 6.35356Z"
-              fill="currentColor"
-            />
-          </svg>
-        </div>
-        <p className="text-body-xs text-muted-foreground">{item.description}</p>
-      </div>
+      <span className="flex min-w-0 flex-col gap-space-3xs">
+        <span className="text-body-md font-medium text-foreground">{item.title}</span>
+        <span className="text-body-xs text-muted-foreground transition-colors duration-150 group-hover:text-foreground/80">
+          {item.description}
+        </span>
+      </span>
     </>
   )
 }
