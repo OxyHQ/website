@@ -2,7 +2,7 @@
 
 Vite + React + react-router-dom + Tailwind v4 marketing/web presence. Single flat package, no workspaces. Uses `@oxyhq/core`, `@oxyhq/bloom`, `@oxyhq/services`.
 
-> Universal standards live in `~/AGENTS.md`, Oxy-wide gotchas in `~/Oxy/AGENTS.md`. **Procedures live in `docs/`; history lives in git.** This file holds only RULES. **Budget: under 10 KB.**
+> Universal standards live in `~/AGENTS.md`, Oxy-wide gotchas in `~/Oxy/AGENTS.md`. **Procedures live in `docs/`; history lives in git.** This file holds only RULES. **Budget: under 10 KB**, enforced by `scripts/check-agents-md-size.mjs` (`bun run validate:agents-md`).
 
 `src/` is the SPA, `server/` the Express API plus MCP server, `scripts/` the build-time steps (docs and changelog sync, prerender, pagefind, OG images).
 
