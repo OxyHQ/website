@@ -132,7 +132,7 @@ export default function FairCoinSection() {
       <div className="border-t border-border">
         <div className="container">
           <div className="grid border-border lg:grid-cols-[minmax(0,1fr)_380px] lg:border-x">
-            <div className="flex flex-col justify-center gap-6 py-14 pr-0 lg:py-20 lg:pr-14">
+            <div className="flex flex-col justify-center gap-5 px-6 py-12 lg:px-12 lg:py-16">
               <p className="text-label-sm font-bold uppercase tracking-widest text-primary">FairCoin</p>
               <AnimatedTitle as="h2" className="text-heading-responsive-lg">
                 FairCoin today.
