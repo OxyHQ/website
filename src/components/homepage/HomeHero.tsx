@@ -258,15 +258,18 @@ export default function HomeHero() {
   return (
     <motion.section
       ref={sectionRef}
-      className="block w-full max-lg:min-h-svh lg:min-h-[200dvh]"
+      className="block w-full border-b border-border max-lg:min-h-svh lg:min-h-[200dvh]"
       onViewportEnter={() => setHeroVisible(true)}
       onViewportLeave={() => setHeroVisible(false)}
       viewport={{ amount: 0 }}
     >
       <div
-        ref={stickyRef}
-        className="sticky top-0 mx-auto flex h-auto w-full max-w-(--layout-max-width) overflow-hidden border-x border-border bg-background max-lg:min-h-svh max-lg:flex-col lg:min-h-dvh lg:flex-wrap"
+        className="container max-lg:!max-w-full max-lg:!px-0 lg:min-h-[200dvh]"
       >
+        <div
+          ref={stickyRef}
+          className="sticky top-0 flex h-auto overflow-hidden bg-background before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:top-[var(--site-header-occlusion-bottom)] before:z-20 before:border-x before:border-border before:content-[''] max-lg:min-h-svh max-lg:flex-col lg:min-h-dvh lg:flex-wrap"
+        >
         {/* Top band — 60dvh */}
         <div className="flex w-full max-lg:flex-1 max-lg:pt-28 lg:h-[60dvh]">
           <div ref={leftTopRef} className="w-full shrink-0 lg:w-[70%]">
@@ -447,6 +450,7 @@ export default function HomeHero() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </motion.section>

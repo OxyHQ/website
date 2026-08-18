@@ -160,13 +160,12 @@ function BuildForEveryoneSection() {
   const body = pageContent(sections, 'all-in-one', DEFAULT_ALL_IN_ONE_BODY)
 
   return (
-    <section className="container">
-      <div>
-        <div className="grid grid-cols-12 gap-6">
-          <motion.div
-            className="col-span-full py-16 max-[950px]:py-10 grid grid-cols-2 gap-x-16 gap-y-10 items-start max-[950px]:grid-cols-1"
-            {...REVEAL}
-          >
+    <section className="border-b border-border">
+      <div className="container">
+        <motion.div
+          className="grid grid-cols-1 items-start gap-y-10 border-border px-4 py-10 min-[951px]:grid-cols-2 min-[951px]:gap-x-16 min-[951px]:border-x min-[951px]:px-10 min-[951px]:py-16"
+          {...REVEAL}
+        >
             {/* Left — heading + body */}
             <div>
               <h2 className="text-heading-responsive-lg">
@@ -209,8 +208,7 @@ function BuildForEveryoneSection() {
                 )
               })}
             </ul>
-          </motion.div>
-        </div>
+        </motion.div>
       </div>
     </section>
   )
@@ -1022,9 +1020,9 @@ export default function HomePage() {
         <AIResearchSection />
         <CommonsAppSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}
-        <FaqSection title="Frequently asked questions." items={homeFaqs} />
+        <FaqSection title="Frequently asked questions." items={homeFaqs} borderBottom />
       </main>
-      <Footer />
+      <Footer hideTopDivider />
     </>
   )
 }

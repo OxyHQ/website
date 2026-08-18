@@ -144,6 +144,8 @@ interface FooterProps {
   socialLinks?: readonly SocialLink[]
   legalLinks?: readonly LegalLink[]
   copyright?: string
+  /** Lets a preceding page section own the single boundary rule. */
+  hideTopDivider?: boolean
 }
 
 export default function Footer({
@@ -152,6 +154,7 @@ export default function Footer({
   socialLinks,
   legalLinks,
   copyright,
+  hideTopDivider = false,
 }: FooterProps = {}) {
   const { t } = useTranslation()
   const useCmsColumns = columns === undefined
@@ -188,7 +191,7 @@ export default function Footer({
       onViewportLeave={() => setFooterVisible(false)}
       viewport={{ amount: 0 }}
     >
-      <Divider />
+      {!hideTopDivider && <Divider />}
 
       {/* Columns */}
       {footerColumns.length > 0 && (
@@ -215,7 +218,7 @@ export default function Footer({
       {/* Bottom bar */}
       <div className="w-full">
         <div className="container">
-          <Divider />
+          {footerColumns.length > 0 && <Divider />}
 
           {/* Logo + Social row */}
           <div className="flex flex-wrap items-center justify-between gap-6 px-px pt-4 pb-4">

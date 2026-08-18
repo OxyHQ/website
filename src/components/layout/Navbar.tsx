@@ -489,6 +489,8 @@ export default function Navbar({
   const scrolled = scrollY > 50
   const bannerHeight = 40 // matches --site-header-banner-visible-height
   const bannerOffset = bannerVisible ? Math.max(0, bannerHeight - scrollY) : 0
+  const bannerOffsetRef = useRef(bannerOffset)
+  bannerOffsetRef.current = bannerOffset
 
   /**
    * Publish two facts about the nav row: its real height as
@@ -536,6 +538,10 @@ export default function Navbar({
         '--site-header-height',
         `${Math.round(rect.height + border)}px`,
       )
+      document.documentElement.style.setProperty(
+        '--site-header-occlusion-bottom',
+        `${Math.round(bannerOffsetRef.current + rect.height + border)}px`,
+      )
 
     }
     publish()
@@ -543,6 +549,21 @@ export default function Navbar({
     observer.observe(node)
     return () => observer.disconnect()
   }, [])
+
+  // The transparent home navbar sits over the hero. Keep the hero's frame
+  // lines below the current banner + navbar stack so they do not double the
+  // logo/control separators while the banner scrolls away.
+  useLayoutEffect(() => {
+    const headerHeight = Number.parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue('--site-header-height'),
+    ) || 0
+    if (headerHeight > 0) {
+      document.documentElement.style.setProperty(
+        '--site-header-occlusion-bottom',
+        `${Math.round(bannerOffset + headerHeight)}px`,
+      )
+    }
+  }, [bannerOffset])
   const isTransparent = transparent && !scrolled && !isOpen && !mobileOpen && !searchOpen
 
   const closeSearch = useCallback(() => {
@@ -627,7 +648,7 @@ export default function Navbar({
       )}
 
     <header
-      className={`fixed left-0 right-0 z-50 transition-[border-color,backdrop-filter] duration-300 ${isTransparent ? '' : 'backdrop-blur-md'}`}
+      className={`fixed left-0 right-0 z-50 border-b transition-[border-color,backdrop-filter] duration-300 ${activeDropdown ? 'border-transparent' : 'border-border'} ${isTransparent ? '' : 'backdrop-blur-md'}`}
       style={{
         top: bannerOffset,
         background: isTransparent
@@ -665,14 +686,14 @@ export default function Navbar({
       </div>
 
       {/* ─── Main nav ─── */}
-      <div ref={measureNavRow} className="w-full">
+      <div ref={measureNavRow} className="container max-lg:!max-w-full !px-0">
         <nav>
           {/*
             A row of full-height cells rather than pills floating in a bar: each
             one runs the height of the header and the rules between them carry
-            the structure. The container keeps its measure but gives up its
-            gutter, so the first cell starts on the container edge — the same
-            place the dropdown band's first item lands.
+            the structure. The row uses the same capped frame as the page, but
+            gives up the container's gutter so the brand cell starts on the
+            frame edge and the first trigger starts on the page content edge.
           */}
           {/*
             The rule stays on even over a transparent bar: it is what separates
@@ -692,9 +713,7 @@ export default function Navbar({
             or the row would move a pixel every time a menu opened.
           */}
           <div
-            className={`flex items-stretch divide-x divide-border border-b ${
-              activeDropdown ? 'border-transparent bg-foreground/5' : 'border-border'
-            }`}
+            className={`flex items-stretch ${activeDropdown ? 'bg-foreground/5' : ''}`}
           >
             <Link
               to={brand?.homeHref ?? '/'}
@@ -706,7 +725,7 @@ export default function Navbar({
             </Link>
 
             {/* Middle: the dropdown triggers, or the search field while it is open */}
-            <div className="flex min-w-0 flex-1 items-stretch">
+            <div className="flex min-w-0 flex-1 items-stretch border-x border-border">
             <div ref={escapeRef} className="relative z-10 flex items-stretch" onMouseLeave={scheduleClose}>
                 <ul className={`hidden items-stretch divide-x divide-border ${searchOpen ? '' : 'lg:flex'}`}>
                   {dropdowns.map((dd) => (
@@ -834,7 +853,7 @@ export default function Navbar({
             {/* Right controls (mobile + desktop) */}
             <div className="ms-auto flex items-stretch">
               {/* Mobile controls */}
-              <div className="flex items-stretch divide-x divide-border border-l border-border lg:hidden">
+              <div className="flex items-stretch divide-x divide-border lg:hidden">
               {/* The avatar is the only child of these toggles, and it renders
                   no text, so without a label the button has no accessible name
                   at all — Lighthouse's `button-name` audit fails outright. */}
@@ -867,7 +886,7 @@ export default function Navbar({
             </div>
 
             {/* Desktop buttons */}
-            <div className="hidden items-stretch divide-x divide-border border-l border-border lg:flex">
+            <div className="hidden items-stretch divide-x divide-border lg:flex">
               <button
                 type="button"
                 className={iconButtonClass}
@@ -911,11 +930,9 @@ export default function Navbar({
       {/*
         ─── Shared Dropdown Band ───
 
-        Full-bleed: the panels sit directly on the header's own surface rather
-        than in a card of their own, so there is no second border or blur layer
-        stacked inside the bar. The band spans the header; the copy inside it is
-        held by the same container as the nav row, so an item lines up with the
-        trigger that opened it.
+        The panel stays on the header's surface and runs edge to edge. Only the
+        panel content is held inside the same site frame as the nav row, so an
+        item lines up with its trigger without centring the whole band.
       */}
       {measured && (
         <div

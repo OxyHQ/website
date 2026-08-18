@@ -339,6 +339,7 @@ body {
 :root {
   --layout-max-width: 110rem; /* 1760px */
   --layout-gutter: 1.25rem;
+  --site-header-occlusion-bottom: calc(var(--site-header-banner-visible-height) + var(--site-header-height));
 
   /*
    * One square, used three times: the brand cell that opens the header, the
