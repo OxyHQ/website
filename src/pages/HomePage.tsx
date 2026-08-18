@@ -835,32 +835,46 @@ function TickFilledIcon({ className }: { className?: string }) {
 
 function PartnershipSection() {
   return (
-    <section className="container">
-      <div>
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-full py-10 max-[950px]:py-6">
-            <div className="text-center mb-8">
-              <p className="mb-6 text-primary"><strong>Join the mission</strong></p>
+    <section className="relative isolate overflow-hidden border-y border-border text-foreground">
+      <img
+        src="/images/landing/partnerships-banner.avif"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 -z-20 size-full object-cover object-[50%_30%]"
+        width={1440}
+        height={900}
+        loading="lazy"
+        decoding="async"
+      />
+      <div className="absolute inset-0 -z-10 bg-background/75" />
+
+      <div className="container">
+        <div className="border-x border-border px-4 py-12 lg:px-10 lg:py-16">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-end lg:gap-16">
+            <div>
+              <p className="mb-5 text-primary"><strong>Join the mission</strong></p>
               <AnimatedTitle as="h2" className="text-heading-responsive-lg mb-5">Build the future with us</AnimatedTitle>
-              <p className="opacity-80 max-w-[500px] mx-auto">Whether you&apos;re a developer, designer, activist, or dreamer — there&apos;s a place for you in the Oxy ecosystem.</p>
+              <p className="max-w-[500px] text-muted-foreground">
+                Whether you&apos;re a developer, designer, activist, or dreamer — there&apos;s a place for you in the Oxy ecosystem.
+              </p>
             </div>
-            <div className="grid grid-cols-12 gap-6">
-              <div className="col-span-6 max-[950px]:col-span-full">
-                <div className="min-[951px]:h-full overflow-hidden rounded-3xl">
-                  <img src={`${IMG}/partnerships-banner.avif`} alt="Partnerships" className="w-full h-full object-cover" style={{ objectPosition: '50% 30%' }} width={1440} height={900} loading="lazy" decoding="async" />
+
+            <div className="grid grid-cols-2 gap-px border border-border bg-border max-[650px]:grid-cols-1">
+              {PARTNERSHIP_ITEMS.map((item) => (
+                <div
+                  key={item}
+                  className="flex min-h-24 flex-col justify-between gap-5 bg-background/75 p-4 text-sm transition-colors hover:bg-background/90"
+                >
+                  <TickFilledIcon className="size-5 text-muted-foreground" />
+                  <span>{item}</span>
                 </div>
-              </div>
-              <div className="col-span-6 max-[950px]:col-span-full">
-                <div className="grid grid-cols-2 max-[650px]:grid-cols-1 gap-6">
-                  {PARTNERSHIP_ITEMS.map((item) => (
-                    <div key={item} className="p-5 px-6 rounded-3xl bg-foreground/5 flex flex-col gap-[26px]">
-                      <TickFilledIcon className="inline-block w-[1em] h-[1em] fill-current stroke-current stroke-0 opacity-40" />
-                      {item}
-                    </div>
-                  ))}
-                  <a href="/sustain" className="bg-primary text-primary-foreground p-5 px-6 rounded-3xl flex flex-col gap-[26px] justify-end transition-opacity duration-400 hover:opacity-60">Get Involved</a>
-                </div>
-              </div>
+              ))}
+              <a
+                href="/sustain"
+                className="flex min-h-24 flex-col justify-end bg-primary p-4 text-primary-foreground transition-opacity duration-300 hover:opacity-80"
+              >
+                Get Involved
+              </a>
             </div>
           </div>
         </div>
@@ -1017,9 +1031,7 @@ export default function HomePage() {
         <EcosystemSection />
         <FairCoinSection />
         <PartnershipSection />
-        <div className="border-t border-border">
-          <AIResearchSection />
-        </div>
+        <AIResearchSection />
         <CommonsAppSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}
         <FaqSection
