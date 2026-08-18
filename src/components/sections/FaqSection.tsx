@@ -26,6 +26,8 @@ interface FaqSectionProps {
   /** Heading level. One `h1` per page, so a section defaults to `h2`. */
   as?: 'h2' | 'h3'
   className?: string
+  /** Draw the opening rule unless the preceding section already owns it. */
+  borderTop?: boolean
   /** Draw the closing rule here when the following footer omits its divider. */
   borderBottom?: boolean
 }
@@ -69,11 +71,18 @@ function FaqRow({ item }: { item: FaqEntry }) {
   )
 }
 
-export default function FaqSection({ title, items, as = 'h2', className = '', borderBottom = false }: FaqSectionProps) {
+export default function FaqSection({
+  title,
+  items,
+  as = 'h2',
+  className = '',
+  borderTop = true,
+  borderBottom = false,
+}: FaqSectionProps) {
   return (
     <section className={className}>
       {/* The home page can own the closing rule when the footer omits its divider. */}
-      <div className={`border-t border-border ${borderBottom ? 'border-b' : ''}`}>
+      <div className={`${borderTop ? 'border-t' : ''} border-border ${borderBottom ? 'border-b' : ''}`}>
         <div className="container">
           <div className="relative flex w-full flex-col border-border lg:flex-row lg:border-x">
             <div className="w-full shrink-0 border-b border-border p-4 md:py-10 md:pr-10 lg:w-lg lg:border-b-0 lg:border-r">

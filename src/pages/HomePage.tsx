@@ -885,7 +885,7 @@ function CommonsAppSection() {
   const phoneY = useTransform(scrollYProgress, [0, 1], ['22%', '0%'])
 
   return (
-    <section ref={ref} className="relative isolate overflow-hidden">
+    <section ref={ref} className="relative isolate overflow-hidden border-y border-border">
       <motion.img
         src={`${IMG}/commons-night.webp`}
         alt=""
@@ -1017,10 +1017,17 @@ export default function HomePage() {
         <EcosystemSection />
         <FairCoinSection />
         <PartnershipSection />
-        <AIResearchSection />
+        <div className="border-t border-border">
+          <AIResearchSection />
+        </div>
         <CommonsAppSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}
-        <FaqSection title="Frequently asked questions." items={homeFaqs} borderBottom />
+        <FaqSection
+          title="Frequently asked questions."
+          items={homeFaqs}
+          borderTop={FEATURES.SHOW_TRUSTED_LOGOS}
+          borderBottom
+        />
       </main>
       <Footer hideTopDivider />
     </>
