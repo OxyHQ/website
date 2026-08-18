@@ -849,8 +849,8 @@ function PartnershipSection() {
       <div className="absolute inset-0 -z-10 bg-background/75" />
 
       <div className="container">
-        <div className="border-x border-border px-4 py-12 lg:px-10 lg:py-16">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-end lg:gap-16">
+        <div className="border-x border-border px-4 py-8 lg:px-10 lg:py-10">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-end lg:gap-12">
             <div>
               <p className="mb-5 text-primary"><strong>Join the mission</strong></p>
               <AnimatedTitle as="h2" className="text-heading-responsive-lg mb-5">Build the future with us</AnimatedTitle>
@@ -863,7 +863,7 @@ function PartnershipSection() {
               {PARTNERSHIP_ITEMS.map((item) => (
                 <div
                   key={item}
-                  className="flex min-h-24 flex-col justify-between gap-5 bg-background/75 p-4 text-sm transition-colors hover:bg-background/90"
+                  className="flex min-h-20 flex-col justify-between gap-3 bg-background/75 p-3 text-sm transition-colors hover:bg-background/90"
                 >
                   <TickFilledIcon className="size-5 text-muted-foreground" />
                   <span>{item}</span>
@@ -871,7 +871,7 @@ function PartnershipSection() {
               ))}
               <a
                 href="/sustain"
-                className="flex min-h-24 flex-col justify-end bg-primary p-4 text-primary-foreground transition-opacity duration-300 hover:opacity-80"
+                className="flex min-h-20 flex-col justify-end bg-primary p-3 text-primary-foreground transition-opacity duration-300 hover:opacity-80"
               >
                 Get Involved
               </a>
