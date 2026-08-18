@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
-import { ArrowUpRight } from '@phosphor-icons/react'
+import { ArrowUpRight, BookOpenText, Bug, Code, HandHeart, Megaphone, Translate, UsersThree } from '@phosphor-icons/react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -814,24 +814,14 @@ function EcosystemSection() {
 /*  Enterprise Partnership Services                                    */
 /* ------------------------------------------------------------------ */
 const PARTNERSHIP_ITEMS = [
-  'Contribute to open-source projects',
-  'Join our developer community',
-  'Report bugs and suggest features',
-  'Translate Oxy for your language',
-  'Write documentation and tutorials',
-  'Volunteer for community initiatives',
-  'Spread the word',
+  { label: 'Contribute to open-source projects', Icon: Code },
+  { label: 'Join our developer community', Icon: UsersThree },
+  { label: 'Report bugs and suggest features', Icon: Bug },
+  { label: 'Translate Oxy for your language', Icon: Translate },
+  { label: 'Write documentation and tutorials', Icon: BookOpenText },
+  { label: 'Volunteer for community initiatives', Icon: HandHeart },
+  { label: 'Spread the word', Icon: Megaphone },
 ]
-
-{/* tick-filled-white from SVG icon */}
-function TickFilledIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 32 32" fill="currentColor">
-      <path d="M32 16c0 8.837-7.163 16-16 16s-16-7.163-16-16c0-8.837 7.163-16 16-16s16 7.163 16 16z" />
-      <path fill="#fff" d="M14.386 22.634c0.507 0 0.938-0.235 1.245-0.69l7.024-10.553c0.184-0.294 0.369-0.616 0.369-0.939 0-0.66-0.615-1.086-1.245-1.086-0.399 0-0.784 0.235-1.076 0.661l-6.379 9.775-3.028-3.743c-0.369-0.47-0.707-0.587-1.122-0.587-0.676 0-1.199 0.514-1.199 1.159 0 0.323 0.138 0.631 0.354 0.91l3.75 4.403c0.384 0.484 0.799 0.69 1.306 0.69z" />
-    </svg>
-  )
-}
 
 function PartnershipSection() {
   return (
@@ -849,24 +839,24 @@ function PartnershipSection() {
       <div className="absolute inset-0 -z-10 bg-background/75" />
 
       <div className="container">
-        <div className="border-x border-border px-4 py-8 lg:px-10 lg:py-10">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-end lg:gap-12">
-            <div>
-              <p className="mb-5 text-primary"><strong>Join the mission</strong></p>
-              <AnimatedTitle as="h2" className="text-heading-responsive-lg mb-5">Build the future with us</AnimatedTitle>
+        <div className="border-x border-border">
+          <div className="grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+            <div className="px-4 py-8 lg:px-10 lg:py-10">
+              <p className="mb-4 text-primary"><strong>Join the mission</strong></p>
+              <AnimatedTitle as="h2" className="text-heading-responsive-lg mb-4">Build the future with us</AnimatedTitle>
               <p className="max-w-[500px] text-muted-foreground">
                 Whether you&apos;re a developer, designer, activist, or dreamer — there&apos;s a place for you in the Oxy ecosystem.
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-px border border-border bg-border max-[650px]:grid-cols-1">
-              {PARTNERSHIP_ITEMS.map((item) => (
+            <div className="grid grid-cols-2 gap-px border-t border-border bg-border lg:border-l lg:border-t-0 max-[650px]:grid-cols-1">
+              {PARTNERSHIP_ITEMS.map(({ label, Icon }) => (
                 <div
-                  key={item}
-                  className="flex min-h-20 flex-col justify-between gap-3 bg-background/75 p-3 text-sm transition-colors hover:bg-background/90"
+                  key={label}
+                  className="flex min-h-20 flex-col justify-between gap-3 bg-background/75 p-3 text-base leading-snug transition-colors hover:bg-background/90"
                 >
-                  <TickFilledIcon className="size-5 text-muted-foreground" />
-                  <span>{item}</span>
+                  <Icon size={20} weight="regular" className="text-muted-foreground" aria-hidden="true" />
+                  <span>{label}</span>
                 </div>
               ))}
               <a
