@@ -820,7 +820,7 @@ const PARTNERSHIP_ITEMS = [
 
 function PartnershipSection() {
   return (
-    <section className="relative isolate overflow-hidden border-y border-border text-foreground">
+    <section className="relative isolate overflow-hidden text-foreground">
       <img
         src="/images/landing/partnerships-banner.avif"
         alt=""
@@ -834,33 +834,31 @@ function PartnershipSection() {
       <div className="absolute inset-0 -z-10 bg-background/75" />
 
       <div className="container">
-        <div className="border-x border-border">
-          <div className="grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-            <div className="px-4 py-8 lg:px-10 lg:py-10">
-              <p className="mb-4 text-primary"><strong>Join the mission</strong></p>
-              <AnimatedTitle as="h2" className="text-heading-responsive-lg mb-4">Build the future with us</AnimatedTitle>
-              <p className="max-w-[500px] text-muted-foreground">
-                Whether you&apos;re a developer, designer, activist, or dreamer — there&apos;s a place for you in the Oxy ecosystem.
-              </p>
-            </div>
+        <div className="grid gap-8 py-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:py-10">
+          <div className="px-4 lg:px-2">
+            <p className="mb-4 text-primary"><strong>Join the mission</strong></p>
+            <AnimatedTitle as="h2" className="text-heading-responsive-lg mb-4">Build the future with us</AnimatedTitle>
+            <p className="max-w-[500px] text-muted-foreground">
+              Whether you&apos;re a developer, designer, activist, or dreamer — there&apos;s a place for you in the Oxy ecosystem.
+            </p>
+          </div>
 
-            <div className="grid grid-cols-2 gap-px border-t border-border bg-border lg:border-l lg:border-t-0 max-[650px]:grid-cols-1">
-              {PARTNERSHIP_ITEMS.map(({ label, Icon }) => (
-                <div
-                  key={label}
-                  className="flex min-h-20 items-center gap-3 rounded-full bg-background/75 px-5 py-4 text-base leading-snug transition-colors hover:bg-background/90"
-                >
-                  <Icon size={20} weight="regular" className="text-muted-foreground" aria-hidden="true" />
-                  <span>{label}</span>
-                </div>
-              ))}
-              <a
-                href="/sustain"
-                className="flex min-h-20 items-center rounded-full bg-primary px-5 py-4 text-base font-semibold text-primary-foreground transition-opacity duration-300 hover:opacity-80"
+          <div className="grid grid-cols-2 gap-3 max-[650px]:grid-cols-1">
+            {PARTNERSHIP_ITEMS.map(({ label, Icon }) => (
+              <div
+                key={label}
+                className="flex min-h-20 items-center gap-3 rounded-full bg-background/75 px-5 py-4 text-base leading-snug transition-colors hover:bg-background/90"
               >
-                Get Involved
-              </a>
-            </div>
+                <Icon size={20} weight="regular" className="text-muted-foreground" aria-hidden="true" />
+                <span>{label}</span>
+              </div>
+            ))}
+            <a
+              href="/sustain"
+              className="flex min-h-20 items-center rounded-full bg-primary px-5 py-4 text-base font-semibold text-primary-foreground transition-opacity duration-300 hover:opacity-80"
+            >
+              Get Involved
+            </a>
           </div>
         </div>
       </div>

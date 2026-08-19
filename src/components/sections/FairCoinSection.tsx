@@ -134,73 +134,66 @@ export default function FairCoinSection() {
 
   return (
     <section className="faircoin-theme bg-background text-foreground">
-      <div className="border-t border-border">
-        <div className="container">
-          <div className="grid gap-px border-border bg-border lg:grid-cols-4 lg:border-x">
-            <div className="flex flex-col justify-center gap-5 bg-background px-6 py-12 lg:col-span-3 lg:px-12 lg:py-16">
-              <p className="text-label-sm font-bold uppercase tracking-widest text-primary">FairCoin</p>
-              <AnimatedTitle as="h2" className="text-heading-responsive-lg">
-                FairCoin today.
-              </AnimatedTitle>
-              <p className="max-w-[540px] text-muted-foreground">
-                A currency built for cooperation rather than speculation: mined without a race to burn power, held by
-                the people who use it, and open for anyone to audit block by block.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {LINKS.map((link) => (
-                  <BloomButton
-                    key={link.label}
-                    asChild
-                    variant={link.solid ? 'primary' : 'outline'}
-                    size="md"
-                  >
-                    <a href={link.href} target="_blank" rel="noopener noreferrer">
-                      {link.label}
-                    </a>
-                  </BloomButton>
-                ))}
-              </div>
+      <div className="container">
+        <div className="grid gap-6 lg:grid-cols-4">
+          <div className="flex flex-col justify-center gap-5 bg-background px-6 py-12 lg:col-span-3 lg:px-12 lg:py-16">
+            <p className="text-label-sm font-bold uppercase tracking-widest text-primary">FairCoin</p>
+            <AnimatedTitle as="h2" className="text-heading-responsive-lg">
+              FairCoin today.
+            </AnimatedTitle>
+            <p className="max-w-[540px] text-muted-foreground">
+              A currency built for cooperation rather than speculation: mined without a race to burn power, held by
+              the people who use it, and open for anyone to audit block by block.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              {LINKS.map((link) => (
+                <BloomButton
+                  key={link.label}
+                  asChild
+                  variant={link.solid ? 'primary' : 'outline'}
+                  size="md"
+                >
+                  <a href={link.href} target="_blank" rel="noopener noreferrer">
+                    {link.label}
+                  </a>
+                </BloomButton>
+              ))}
             </div>
-
-            {newsHref ? (
-              <Link
-                to={newsHref}
-                className={`${newsCellClass} lg:col-span-1`}
-              >
-                {newsCell}
-              </Link>
-            ) : (
-              <div className={`${newsCellClass} lg:col-span-1`}>
-                {newsCell}
-              </div>
-            )}
           </div>
 
-          {/*
-            One hairline between every pair of cells, whichever way they wrap:
-            the grid's own gap shows the rule through, so two columns and four
-            columns need no separate border rules.
-          */}
-          <div className="grid grid-cols-2 gap-px border-t border-border bg-border lg:grid-cols-4 lg:border-x">
-            {STAT_META.map((stat, i) => (
-              <button
-                type="button"
-                key={stat.key}
-                className="flex cursor-pointer select-none items-center gap-3 rounded-full bg-background px-5 py-5 text-left transition-colors hover:bg-foreground/5 lg:px-6 lg:py-6"
-                onClick={() => setRuns((r) => r.map((v, j) => (j === i ? v + 1 : v)))}
-              >
-                <stat.Icon size={20} className="shrink-0 text-primary" weight="bold" />
-                <span className="min-w-0">
-                  <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    {stat.label}
-                  </span>
-                  <span className="block text-3xl font-bold leading-tight lg:text-3xl">
-                    <AnimatedStat key={`${runs[i]}-${values[stat.key]}`} end={values[stat.key]} decimals={stat.decimals} />
-                  </span>
+          {newsHref ? (
+            <Link
+              to={newsHref}
+              className={`${newsCellClass} lg:col-span-1`}
+            >
+              {newsCell}
+            </Link>
+          ) : (
+            <div className={`${newsCellClass} lg:col-span-1`}>
+              {newsCell}
+            </div>
+          )}
+        </div>
+
+        <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {STAT_META.map((stat, i) => (
+            <button
+              type="button"
+              key={stat.key}
+              className="flex cursor-pointer select-none items-center gap-3 rounded-full bg-background px-5 py-5 text-left transition-colors hover:bg-foreground/5 lg:px-6 lg:py-6"
+              onClick={() => setRuns((r) => r.map((v, j) => (j === i ? v + 1 : v)))}
+            >
+              <stat.Icon size={20} className="shrink-0 text-primary" weight="bold" />
+              <span className="min-w-0">
+                <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  {stat.label}
                 </span>
-              </button>
-            ))}
-          </div>
+                <span className="block text-3xl font-bold leading-tight lg:text-3xl">
+                  <AnimatedStat key={`${runs[i]}-${values[stat.key]}`} end={values[stat.key]} decimals={stat.decimals} />
+                </span>
+              </span>
+            </button>
+          ))}
         </div>
       </div>
     </section>
