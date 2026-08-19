@@ -186,7 +186,7 @@ export default function FairCoinSection() {
               <button
                 type="button"
                 key={stat.key}
-                className="flex cursor-pointer select-none items-center gap-3 bg-background px-5 py-5 text-left transition-colors hover:bg-foreground/5 lg:px-6 lg:py-6"
+                className="flex cursor-pointer select-none items-center gap-3 rounded-full bg-background px-5 py-5 text-left transition-colors hover:bg-foreground/5 lg:px-6 lg:py-6"
                 onClick={() => setRuns((r) => r.map((v, j) => (j === i ? v + 1 : v)))}
               >
                 <stat.Icon size={20} className="shrink-0 text-primary" weight="bold" />
