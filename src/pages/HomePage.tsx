@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
-import { ArrowUpRight, BookOpenText, Bug, Code, HandHeart, Megaphone, Translate, UsersThree } from '@phosphor-icons/react'
+import { ArrowUpRight, BookOpenText, Bug, Code, HandHeart, Megaphone, Pause, Play, Translate, UsersThree } from '@phosphor-icons/react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -43,8 +43,6 @@ const DEFAULT_ALL_IN_ONE_HEADING_LINE_2 = 'not just yourself.'
 const DEFAULT_ALL_IN_ONE_BODY = 'Oxy exists because we believe technology should serve humanity, not exploit it. Through community-driven projects and open-source tools, we prove that helping people and building sustainable systems aren\u2019t competing goals. They\u2019re the same mission.'
 
 const IMG = '/images/landing'
-
-const BTN = 'inline-flex items-center cursor-pointer text-base leading-relaxed font-[450] rounded-full px-4 py-2 max-h-[38px] transition-opacity duration-200 hover:opacity-60'
 
 // Scroll-reveal preset shared by every reshaped section so the page animates
 // in with one consistent, subtle motion.
@@ -320,47 +318,46 @@ function ValuesSection() {
 /* ------------------------------------------------------------------ */
 function IndependentEcosystemSection() {
   return (
-    <section className="container">
-      <div>
-        <div className="grid grid-cols-12 gap-6">
-          <motion.div
-            className="col-span-full py-16 max-[950px]:py-10 grid grid-cols-2 gap-12 items-center max-[950px]:grid-cols-1"
-            {...REVEAL}
-          >
-            {/* Left — text + buttons */}
-            <div>
-              <AnimatedTitle as="h2" className="text-heading-responsive-lg max-w-[560px]">
-                An independent ecosystem of ethical technology. Radically transparent, fiercely human.
-              </AnimatedTitle>
-              <p className="mt-5 max-w-[460px] opacity-80">
-                No ads. No data selling. No venture capital strings. Just purpose-driven AI tools designed for real-world impact.
-              </p>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Link to="/newsroom" className={`${BTN} bg-foreground text-background`}>Newsroom</Link>
-                <Link to="/company/business" className={`${BTN} bg-primary text-primary-foreground`}>For Investors</Link>
+    <section className="border-y border-border bg-surface text-foreground">
+      <div className="container">
+        <div className="border-x border-border">
+          <div className="grid gap-px bg-border lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            <div className="flex flex-col justify-between gap-8 bg-surface px-6 py-10 lg:px-10 lg:py-12">
+              <div>
+                <p className="mb-4 text-label-sm font-bold uppercase tracking-widest text-primary">The Oxy approach</p>
+                <AnimatedTitle as="h2" className="max-w-[14em] text-heading-responsive-lg">
+                  An independent ecosystem of ethical technology. Radically transparent, fiercely human.
+                </AnimatedTitle>
+                <p className="mt-5 max-w-[34rem] text-muted-foreground">
+                  No ads, no data selling, and no venture capital strings. We build open tools that keep people in control.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-px bg-border">
+                <Link to="/newsroom" className="bg-background px-4 py-3 text-sm font-semibold transition-colors hover:bg-foreground/5">
+                  Newsroom
+                </Link>
+                <Link to="/company/business" className="bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90">
+                  For investors
+                </Link>
               </div>
             </div>
-
-            {/* Right — rounded image */}
-            <div className="relative overflow-hidden rounded-[40px] aspect-[3/2]">
+            <div className="group relative min-h-80 overflow-hidden bg-background">
               <img
                 src={`${IMG}/agents-model-agnostic.webp`}
                 alt="Oxy ecosystem"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 width={2400}
                 height={1600}
                 loading="lazy"
                 decoding="async"
               />
-              <div className="absolute inset-0 bg-black/10" />
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
   )
 }
-
 /* ------------------------------------------------------------------ */
 /*  Features Tabs                                                      */
 /* ------------------------------------------------------------------ */
@@ -410,11 +407,6 @@ function FeaturesSection() {
   const [progress, setProgress] = useState(0)
   const [playing, setPlaying] = useState(true)
 
-  // Drive the auto-advance progress bar with requestAnimationFrame. Progress is
-  // computed from elapsed wall-clock time and applied inside the rAF callback
-  // (async), so no setState happens synchronously in the effect body. While
-  // paused the loop simply doesn't run; the rendered width is derived as 0
-  // below, so there's no need to reset state on pause.
   useEffect(() => {
     if (!playing) return
     let frame = 0
@@ -432,8 +424,8 @@ function FeaturesSection() {
     return () => cancelAnimationFrame(frame)
   }, [active, playing])
 
-  // Derived: the active tab's timer fills with progress only while playing.
   const displayedProgress = playing ? progress : 0
+  const activeFeature = FEATURE_TABS[active] ?? FEATURE_TABS[0]
 
   const handleTabClick = (i: number) => {
     setActive(i)
@@ -445,92 +437,82 @@ function FeaturesSection() {
   }
 
   return (
-    <section className="py-0">
-      <div className="agents-features-section">
-        <div className="agents-features-bg">
-          {/* Decorative: the section's meaning is carried by the text below it,
-              so an alt string here would just be noise in a screen reader. */}
-          <img
-            src={`${IMG}/agents-features-bg.webp`}
-            alt=""
-            aria-hidden="true"
-            width={2400}
-            height={2943}
-            style={{ objectPosition: '50% 0%' }}
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div className="agents-features-icons">
-          <img
-            src={`${IMG}/agents-features-icons.svg`}
-            alt=""
-            aria-hidden="true"
-            width={1512}
-            height={1145}
-            style={{ objectPosition: '50% 50%' }}
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        {/* The band bleeds (it carries a full-width backdrop); its content
-            sits in the site container like every other section. */}
-        <div className="agents-features-content container text-white text-center pt-[56px]">
-          <div className="agents-features-tabs-nav tabs-nav">
-            {FEATURE_TABS.map((t, i) => (
-              <button
-                key={t.id}
-                type="button"
-                className={i === active ? 'active' : undefined}
-                data-tab={t.id}
-                onClick={() => handleTabClick(i)}
-              >
-                <strong>{t.label}</strong>
-                <div
-                  className="timer"
-                  style={{ width: i === active ? `${displayedProgress}%` : '0%' }}
-                />
-              </button>
-            ))}
-            <button
-              type="button"
-              className={`toggle-autoplay${playing ? ' playing' : ''}`}
-              onClick={toggleAutoplay}
-              aria-label={playing ? 'Pause autoplay' : 'Play autoplay'}
-            >
-              <svg width="8" height="12" className="pause" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0.895149 12C0.594679 12 0.369327 11.9157 0.219092 11.7471C0.0730308 11.5785 0 11.3255 0 10.9883V1.00468C0 0.672131 0.0751174 0.421546 0.225352 0.252927C0.375587 0.0843091 0.598852 0 0.895149 0H2.3662C2.65832 0 2.8795 0.0819672 3.02973 0.245902C3.18414 0.409836 3.26135 0.662763 3.26135 1.00468V10.9883C3.26135 11.3255 3.18414 11.5785 3.02973 11.7471C2.8795 11.9157 2.65832 12 2.3662 12H0.895149ZM5.64006 12C5.33959 12 5.11424 11.9157 4.96401 11.7471C4.81377 11.5785 4.73865 11.3255 4.73865 10.9883V1.00468C4.73865 0.672131 4.81377 0.421546 4.96401 0.252927C5.11424 0.0843091 5.33959 0 5.64006 0H7.09859C7.39906 0 7.62441 0.0819672 7.77465 0.245902C7.92488 0.409836 8 0.662763 8 1.00468V10.9883C8 11.3255 7.92488 11.5785 7.77465 11.7471C7.62441 11.9157 7.39906 12 7.09859 12H5.64006Z" fill="currentColor"/>
-              </svg>
-              <svg width="10" height="11" className="play" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 9.96835V1.03165C0 0.681435 0.0904393 0.421941 0.271318 0.253165C0.452196 0.0843882 0.667528 0 0.917313 0C1.14126 0 1.3652 0.0611814 1.58915 0.183544L9.21835 4.55063C9.49397 4.70675 9.69208 4.85443 9.81266 4.99367C9.93755 5.13291 10 5.30169 10 5.5C10 5.69409 9.93755 5.86287 9.81266 6.00633C9.69208 6.14557 9.49397 6.29325 9.21835 6.44937L1.58915 10.8165C1.3652 10.9388 1.14126 11 0.917313 11C0.667528 11 0.452196 10.9135 0.271318 10.7405C0.0904393 10.5717 0 10.3143 0 9.96835Z" fill="currentColor"/>
-              </svg>
-            </button>
-          </div>
-          <div className="agents-features-tabs tabs">
-            {FEATURE_TABS.map((t, i) => (
-              <div
-                key={t.id}
-                className={`agents-features-tab tab${i === active ? ' active' : ''}`}
-                data-tab={t.id}
-              >
-                <h2 dangerouslySetInnerHTML={{ __html: t.heading }} />
-                <div className="agent-features-tab-ui">
-                  <div className="screen">
-                    <img src={`${IMG}/browser-frame.svg`} alt="Browser UI" className="screen-frame" width={1200} height={800} loading="lazy" decoding="async" />
-                    <div className="screen-content">
-                      <img src={t.thumb} alt={t.label} width={1200} height={800} loading="lazy" decoding="async" />
-                    </div>
-                  </div>
+    <section className="border-y border-border bg-surface text-foreground">
+      <div className="container">
+        <div className="border-x border-border">
+          <div className="grid gap-px bg-border lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+            <div className="flex flex-col justify-between gap-8 bg-surface px-6 py-10 lg:px-10 lg:py-12">
+              <div>
+                <p className="mb-4 text-label-sm font-bold uppercase tracking-widest text-primary">Products with a point</p>
+                <AnimatedTitle as="h2" className="max-w-[13em] text-heading-responsive-lg">
+                  Tools for living, building, and connecting.
+                </AnimatedTitle>
+                <p className="mt-5 max-w-[34rem] text-muted-foreground">
+                  Every Oxy product shares the same open foundation: identity, privacy, and technology that stays in your hands.
+                </p>
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">{activeFeature.label}</span>
+                <button
+                  type="button"
+                  className="flex size-10 shrink-0 cursor-pointer items-center justify-center border border-border bg-background text-foreground transition-colors hover:bg-foreground/5"
+                  onClick={toggleAutoplay}
+                  aria-label={playing ? 'Pause autoplay' : 'Play autoplay'}
+                >
+                  {playing ? <Pause size={16} weight="bold" aria-hidden="true" /> : <Play size={16} weight="fill" aria-hidden="true" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-background p-4 sm:p-6 lg:p-8">
+              <div className="grid grid-cols-2 gap-px bg-border sm:grid-cols-3">
+                {FEATURE_TABS.map((t, i) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    className={[
+                      'relative min-h-16 cursor-pointer overflow-hidden px-4 py-3 text-left text-sm font-semibold transition-colors sm:min-h-20',
+                      i === active ? 'bg-surface text-foreground' : 'bg-background text-muted-foreground hover:bg-surface',
+                    ].join(' ')}
+                    onClick={() => handleTabClick(i)}
+                    aria-pressed={i === active}
+                  >
+                    <span className="relative z-10">{t.label}</span>
+                    {i === active && (
+                      <span
+                        className="absolute inset-x-0 bottom-0 h-0.5 bg-primary transition-[width]"
+                        style={{ width: displayedProgress + '%' }}
+                      />
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-6">
+                <h3 className="max-w-[16em] text-heading-responsive-md">
+                  {activeFeature.heading.split('<br>').map((line) => (
+                    <span key={line} className="block">{line}</span>
+                  ))}
+                </h3>
+                <div className="group relative mt-6 aspect-[16/10] overflow-hidden border border-border bg-surface">
+                  <img
+                    src={activeFeature.thumb}
+                    alt={activeFeature.label + ' product preview'}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    width={1200}
+                    height={800}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
     </section>
   )
 }
-
 /* ------------------------------------------------------------------ */
 /*  ROI Stats                                                          */
 /* ------------------------------------------------------------------ */
@@ -778,32 +760,45 @@ function EcosystemSection() {
     .slice(0, ECOSYSTEM_LIMIT)
 
   return (
-    <section className="container my-space-xl md:my-space-2xl lg:my-space-3xl">
-      <div className="flex w-full flex-col gap-space-gutter lg:gap-x-space-gutter-lg">
-        <div className="flex flex-wrap items-end justify-between gap-space-lg pb-space-sm">
-          <div className="flex flex-col md:gap-space-xs sm:gap-space-2xs">
-            <p className="text-heading-md text-primary">Explore the Oxy ecosystem</p>
-            <h2 className="max-w-[16em] text-balance text-heading-xl">
-              Many apps, one identity, one platform underneath
-            </h2>
-          </div>
-          <a href="/apps" className="text-link-md text-muted-foreground transition-colors hover:text-foreground">
-            All technologies &rarr;
-          </a>
-        </div>
+    <section className="border-y border-border bg-surface text-foreground">
+      <div className="container">
+        <div className="border-x border-border">
+          <div className="grid gap-px bg-border lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+            <div className="flex flex-col justify-between gap-8 bg-surface px-6 py-10 lg:px-10 lg:py-12">
+              <div>
+                <p className="mb-4 text-label-sm font-bold uppercase tracking-widest text-primary">
+                  Explore the Oxy ecosystem
+                </p>
+                <AnimatedTitle as="h2" className="max-w-[14em] text-heading-responsive-lg">
+                  Many apps, one identity, one platform underneath
+                </AnimatedTitle>
+              </div>
+              <a href="/apps" className="w-fit text-link-md text-muted-foreground transition-colors hover:text-foreground">
+                All technologies <span aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
 
-        <div className="col-span-full grid grid-flow-dense grid-cols-1 gap-space-gutter md:grid-cols-2 lg:gap-x-space-gutter-lg xl:grid-cols-3">
-          {isPending
-            ? Array.from({ length: 8 }, (_, i) => (
-                <div key={i} className="flex items-start gap-space-md">
-                  <div className="size-space-app-icon-sm shrink-0 animate-pulse rounded-radius-8 bg-surface" />
-                  <div className="flex w-full flex-col gap-space-3xs">
-                    <div className="h-4 w-2/5 animate-pulse rounded bg-surface" />
-                    <div className="h-3 w-4/5 animate-pulse rounded bg-surface" />
-                  </div>
-                </div>
-              ))
-            : shown.map((product) => <AppCard key={product.productId} product={product} />)}
+            <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-2 xl:grid-cols-3">
+              {isPending
+                ? Array.from({ length: 8 }, (_, i) => (
+                    <div key={i} className="min-h-36 bg-background p-5">
+                      <div className="flex items-start gap-3">
+                        <div className="size-12 shrink-0 animate-pulse rounded bg-surface" />
+                        <div className="flex min-w-0 flex-1 flex-col gap-2 pt-1">
+                          <div className="h-4 w-2/5 animate-pulse rounded bg-surface" />
+                          <div className="h-3 w-4/5 animate-pulse rounded bg-surface" />
+                          <div className="h-3 w-full animate-pulse rounded bg-surface" />
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                : shown.map((product) => (
+                    <div key={product.productId} className="min-h-36 bg-background p-5 transition-colors hover:bg-foreground/5">
+                      <AppCard product={product} />
+                    </div>
+                  ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

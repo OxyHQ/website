@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Button as BloomButton } from '@oxyhq/bloom/button'
 import { StarFour, PlugsConnected, Unite, Cpu } from '@phosphor-icons/react'
 import { useFairCoinStats, useNewsroomPosts } from '../../api/hooks'
 import type { FairCoinStats } from '../../api/faircoinStore'
@@ -97,7 +98,9 @@ export default function FairCoinSection() {
   // replays its own number.
   const [runs, setRuns] = useState(() => STAT_META.map(() => 0))
 
-  const { data: newsData } = useNewsroomPosts({ tag: 'FairCoin', limit: 1 })
+  // The newsroom endpoint orders filtered posts by publishedAt descending, so
+  // the first result is always the latest published FairCoin story.
+  const { data: newsData } = useNewsroomPosts({ tag: 'faircoin', limit: 1 })
   const post = newsData?.posts?.[0]
   const newsImage = (post && typeof post.coverImage === 'string' && post.coverImage) || FALLBACK_NEWS_IMAGE
   const newsTitle = post?.title ?? 'Empowering local stores with FairCoin'
@@ -108,15 +111,17 @@ export default function FairCoinSection() {
 
   const newsCell = (
     <>
-      <img
-        src={newsImage}
-        alt=""
-        className="min-h-0 w-full flex-1 object-cover transition-transform duration-500 group-hover:scale-105"
-        width={600}
-        height={400}
-        loading="lazy"
-        decoding="async"
-      />
+      <div className="min-h-0 flex-1 overflow-hidden">
+        <img
+          src={newsImage}
+          alt=""
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          width={600}
+          height={400}
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
       <div className="flex shrink-0 flex-col p-5 lg:p-6">
         <span className="mb-1 block text-label-sm font-bold uppercase tracking-wider text-primary">{newsDate}</span>
         <p className="font-display line-clamp-3 text-xl font-semibold leading-snug lg:text-2xl">{newsTitle}</p>
@@ -131,8 +136,8 @@ export default function FairCoinSection() {
     <section className="faircoin-theme bg-background text-foreground">
       <div className="border-t border-border">
         <div className="container">
-          <div className="grid border-border lg:grid-cols-[minmax(0,1fr)_380px] lg:border-x">
-            <div className="flex flex-col justify-center gap-5 px-6 py-12 lg:px-12 lg:py-16">
+          <div className="grid gap-px border-border bg-border lg:grid-cols-4 lg:border-x">
+            <div className="flex flex-col justify-center gap-5 bg-background px-6 py-12 lg:col-span-3 lg:px-12 lg:py-16">
               <p className="text-label-sm font-bold uppercase tracking-widest text-primary">FairCoin</p>
               <AnimatedTitle as="h2" className="text-heading-responsive-lg">
                 FairCoin today.
@@ -143,19 +148,16 @@ export default function FairCoinSection() {
               </p>
               <div className="flex flex-wrap gap-3">
                 {LINKS.map((link) => (
-                  <a
+                  <BloomButton
                     key={link.label}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`px-5 py-2.5 text-sm font-bold transition-colors ${
-                      link.solid
-                        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                        : 'border border-border hover:bg-foreground/5'
-                    }`}
+                    asChild
+                    variant={link.solid ? 'primary' : 'outline'}
+                    size="md"
                   >
-                    {link.label}
-                  </a>
+                    <a href={link.href} target="_blank" rel="noopener noreferrer">
+                      {link.label}
+                    </a>
+                  </BloomButton>
                 ))}
               </div>
             </div>
@@ -163,12 +165,12 @@ export default function FairCoinSection() {
             {newsHref ? (
               <Link
                 to={newsHref}
-                className={`${newsCellClass} border-t border-border lg:border-t-0 lg:border-l`}
+                className={`${newsCellClass} lg:col-span-1`}
               >
                 {newsCell}
               </Link>
             ) : (
-              <div className={`${newsCellClass} border-t border-border lg:border-t-0 lg:border-l`}>
+              <div className={`${newsCellClass} lg:col-span-1`}>
                 {newsCell}
               </div>
             )}
@@ -184,7 +186,7 @@ export default function FairCoinSection() {
               <button
                 type="button"
                 key={stat.key}
-                className="flex cursor-pointer select-none items-center gap-3 bg-background px-5 py-6 text-left transition-colors hover:bg-foreground/5 lg:px-6 lg:py-8"
+                className="flex cursor-pointer select-none items-center gap-3 bg-background px-5 py-5 text-left transition-colors hover:bg-foreground/5 lg:px-6 lg:py-6"
                 onClick={() => setRuns((r) => r.map((v, j) => (j === i ? v + 1 : v)))}
               >
                 <stat.Icon size={20} className="shrink-0 text-primary" weight="bold" />
@@ -192,7 +194,7 @@ export default function FairCoinSection() {
                   <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                     {stat.label}
                   </span>
-                  <span className="block text-3xl font-bold leading-tight lg:text-4xl">
+                  <span className="block text-3xl font-bold leading-tight lg:text-3xl">
                     <AnimatedStat key={`${runs[i]}-${values[stat.key]}`} end={values[stat.key]} decimals={stat.decimals} />
                   </span>
                 </span>
