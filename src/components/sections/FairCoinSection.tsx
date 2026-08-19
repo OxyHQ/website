@@ -134,7 +134,7 @@ export default function FairCoinSection() {
 
   return (
     <section className="faircoin-theme bg-background text-foreground">
-      <div className="container flex flex-col gap-4">
+      <div className="container flex flex-col gap-4 pb-4 lg:pb-6">
         <div className="grid gap-4 lg:grid-cols-4">
           <div className="flex flex-col justify-center gap-4 bg-background px-5 py-8 lg:col-span-3 lg:px-8 lg:py-10">
             <p className="text-label-sm font-bold uppercase tracking-widest text-primary">FairCoin</p>
@@ -180,7 +180,7 @@ export default function FairCoinSection() {
             <button
               type="button"
               key={stat.key}
-              className="flex cursor-pointer select-none items-center gap-3 rounded-full bg-background px-4 py-4 text-left transition-colors hover:bg-foreground/5 lg:px-5 lg:py-5"
+              className="flex cursor-pointer select-none items-center gap-3 rounded-full bg-surface px-4 py-4 text-left transition-colors hover:bg-foreground/5 lg:px-5 lg:py-5"
               onClick={() => setRuns((r) => r.map((v, j) => (j === i ? v + 1 : v)))}
             >
               <stat.Icon size={20} className="shrink-0 text-primary" weight="bold" />
