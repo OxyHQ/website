@@ -158,10 +158,10 @@ function BuildForEveryoneSection() {
   const body = pageContent(sections, 'all-in-one', DEFAULT_ALL_IN_ONE_BODY)
 
   return (
-    <section className="border-b border-border">
+    <section>
       <div className="container">
         <motion.div
-          className="grid grid-cols-1 items-start gap-y-10 border-border px-4 py-10 min-[951px]:grid-cols-2 min-[951px]:gap-x-16 min-[951px]:border-x min-[951px]:px-10 min-[951px]:py-16"
+          className="grid grid-cols-1 items-start gap-8 py-8 min-[951px]:grid-cols-2 min-[951px]:gap-12 min-[951px]:py-12"
           {...REVEAL}
         >
             {/* Left — heading + body */}
@@ -175,13 +175,13 @@ function BuildForEveryoneSection() {
                   </>
                 )}
               </h2>
-              <p className="max-w-[460px] mt-5 opacity-80">{body}</p>
+              <p className="mt-4 max-w-[460px] opacity-80">{body}</p>
             </div>
 
             {/* Right — resource links */}
-            <ul className="flex flex-col">
+            <ul className="flex flex-col gap-2">
               {BUILD_FOR_EVERYONE_LINKS.map((link) => {
-                const rowClass = `group flex items-center justify-between gap-4 py-5 font-display text-2xl font-[450] transition-opacity duration-200 hover:opacity-60`
+                const rowClass = `group flex items-center justify-between gap-4 rounded-full bg-surface px-5 py-3 font-display text-xl font-[450] transition-opacity duration-200 hover:opacity-60`
                 const arrow = (
                   <ArrowUpRight
                     weight="regular"
@@ -318,30 +318,29 @@ function ValuesSection() {
 /* ------------------------------------------------------------------ */
 function IndependentEcosystemSection() {
   return (
-    <section className="border-y border-border bg-surface text-foreground">
+    <section className="bg-surface text-foreground">
       <div className="container">
-        <div className="border-x border-border">
-          <div className="grid gap-px bg-border lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-            <div className="flex flex-col justify-between gap-8 bg-surface px-6 py-10 lg:px-10 lg:py-12">
+        <div className="grid gap-4 py-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-6 lg:py-10">
+            <div className="flex flex-col justify-between gap-6 bg-surface py-2 lg:py-0">
               <div>
                 <p className="mb-4 text-label-sm font-bold uppercase tracking-widest text-primary">The Oxy approach</p>
                 <AnimatedTitle as="h2" className="max-w-[14em] text-heading-responsive-lg">
                   An independent ecosystem of ethical technology. Radically transparent, fiercely human.
                 </AnimatedTitle>
-                <p className="mt-5 max-w-[34rem] text-muted-foreground">
+                <p className="mt-4 max-w-[34rem] text-muted-foreground">
                   No ads, no data selling, and no venture capital strings. We build open tools that keep people in control.
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-px bg-border">
-                <Link to="/newsroom" className="bg-background px-4 py-3 text-sm font-semibold transition-colors hover:bg-foreground/5">
+              <div className="grid grid-cols-2 gap-2">
+                <Link to="/newsroom" className="rounded-full bg-background px-4 py-3 text-center text-sm font-semibold transition-colors hover:bg-foreground/5">
                   Newsroom
                 </Link>
-                <Link to="/company/business" className="bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90">
+                <Link to="/company/business" className="rounded-full bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90">
                   For investors
                 </Link>
               </div>
             </div>
-            <div className="group relative min-h-80 overflow-hidden bg-background">
+            <div className="group relative min-h-72 overflow-hidden rounded-3xl bg-background">
               <img
                 src={`${IMG}/agents-model-agnostic.webp`}
                 alt="Oxy ecosystem"
@@ -353,7 +352,6 @@ function IndependentEcosystemSection() {
               />
             </div>
           </div>
-        </div>
       </div>
     </section>
   )
@@ -437,17 +435,16 @@ function FeaturesSection() {
   }
 
   return (
-    <section className="border-y border-border bg-surface text-foreground">
+    <section className="bg-surface text-foreground">
       <div className="container">
-        <div className="border-x border-border">
-          <div className="grid gap-px bg-border lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-            <div className="flex flex-col justify-between gap-8 bg-surface px-6 py-10 lg:px-10 lg:py-12">
+        <div className="grid items-start gap-4 py-5 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-6 lg:py-6">
+            <div className="flex flex-col gap-6 bg-surface py-2 lg:self-stretch lg:justify-center lg:py-0">
               <div>
                 <p className="mb-4 text-label-sm font-bold uppercase tracking-widest text-primary">Products with a point</p>
                 <AnimatedTitle as="h2" className="max-w-[13em] text-heading-responsive-lg">
                   Tools for living, building, and connecting.
                 </AnimatedTitle>
-                <p className="mt-5 max-w-[34rem] text-muted-foreground">
+                <p className="mt-4 max-w-[34rem] text-muted-foreground">
                   Every Oxy product shares the same open foundation: identity, privacy, and technology that stays in your hands.
                 </p>
               </div>
@@ -455,7 +452,7 @@ function FeaturesSection() {
                 <span className="text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">{activeFeature.label}</span>
                 <button
                   type="button"
-                  className="flex size-10 shrink-0 cursor-pointer items-center justify-center border border-border bg-background text-foreground transition-colors hover:bg-foreground/5"
+                  className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-background text-foreground transition-colors hover:bg-foreground/5"
                   onClick={toggleAutoplay}
                   aria-label={playing ? 'Pause autoplay' : 'Play autoplay'}
                 >
@@ -464,14 +461,14 @@ function FeaturesSection() {
               </div>
             </div>
 
-            <div className="bg-background p-4 sm:p-6 lg:p-8">
-              <div className="grid grid-cols-2 gap-px bg-border sm:grid-cols-3">
+            <div className="rounded-3xl bg-background p-4 sm:p-5 lg:p-6">
+              <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
                 {FEATURE_TABS.map((t, i) => (
                   <button
                     key={t.id}
                     type="button"
                     className={[
-                      'relative min-h-16 cursor-pointer overflow-hidden px-4 py-3 text-left text-sm font-semibold transition-colors sm:min-h-20',
+                      'relative min-h-12 cursor-pointer overflow-hidden rounded-xl px-4 py-2.5 text-left text-sm font-semibold transition-colors sm:min-h-14',
                       i === active ? 'bg-surface text-foreground' : 'bg-background text-muted-foreground hover:bg-surface',
                     ].join(' ')}
                     onClick={() => handleTabClick(i)}
@@ -488,13 +485,13 @@ function FeaturesSection() {
                 ))}
               </div>
 
-              <div className="mt-6">
+              <div className="mt-4">
                 <h3 className="max-w-[16em] text-heading-responsive-md">
                   {activeFeature.heading.split('<br>').map((line) => (
                     <span key={line} className="block">{line}</span>
                   ))}
                 </h3>
-                <div className="group relative mt-6 aspect-[16/10] overflow-hidden border border-border bg-surface">
+                <div className="group relative mt-4 aspect-[16/8] overflow-hidden rounded-2xl bg-surface">
                   <img
                     src={activeFeature.thumb}
                     alt={activeFeature.label + ' product preview'}
@@ -508,7 +505,6 @@ function FeaturesSection() {
               </div>
             </div>
           </div>
-        </div>
       </div>
     </section>
   )
@@ -591,16 +587,16 @@ function StatsAndTestimonialsSection() {
               <Swiper
                 modules={[Autoplay]}
                 slidesPerView="auto"
-                spaceBetween={0}
+                spaceBetween={16}
                 grabCursor
                 className="roi-stats-swiper my-6"
                 breakpoints={{
-                  1460: { slidesPerView: STATS.length, spaceBetween: 0 },
+                  1460: { slidesPerView: STATS.length, spaceBetween: 24 },
                 }}
               >
-                {STATS.map((s, i) => (
+                {STATS.map((s) => (
                   <SwiperSlide key={s.label} className="!w-auto">
-                    <div className={`min-w-[230px] px-6 max-[1460px]:min-w-[250px] max-[950px]:min-w-[150px]${i < STATS.length - 1 ? ' border-r border-foreground/10' : ''}`}>
+                    <div className="min-w-[230px] px-6 max-[1460px]:min-w-[250px] max-[950px]:min-w-[150px]">
                       <div>
                         <p className="text-sm leading-4 tracking-wide font-[450] opacity-80 mb-[34px]"><strong>{s.label}</strong></p>
                       </div>
@@ -760,11 +756,10 @@ function EcosystemSection() {
     .slice(0, ECOSYSTEM_LIMIT)
 
   return (
-    <section className="border-y border-border bg-surface text-foreground">
+    <section className="bg-surface text-foreground">
       <div className="container">
-        <div className="border-x border-border">
-          <div className="grid gap-px bg-border lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-            <div className="flex flex-col justify-between gap-8 bg-surface px-6 py-10 lg:px-10 lg:py-12">
+        <div className="grid gap-4 py-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-6 lg:py-10">
+            <div className="flex flex-col justify-between gap-6 bg-surface py-2 lg:py-0">
               <div>
                 <p className="mb-4 text-label-sm font-bold uppercase tracking-widest text-primary">
                   Explore the Oxy ecosystem
@@ -778,10 +773,10 @@ function EcosystemSection() {
               </a>
             </div>
 
-            <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {isPending
                 ? Array.from({ length: 8 }, (_, i) => (
-                    <div key={i} className="min-h-36 bg-background p-5">
+                    <div key={i} className="min-h-32 rounded-2xl bg-background p-5">
                       <div className="flex items-start gap-3">
                         <div className="size-12 shrink-0 animate-pulse rounded bg-surface" />
                         <div className="flex min-w-0 flex-1 flex-col gap-2 pt-1">
@@ -793,13 +788,12 @@ function EcosystemSection() {
                     </div>
                   ))
                 : shown.map((product) => (
-                    <div key={product.productId} className="min-h-36 bg-background p-5 transition-colors hover:bg-foreground/5">
+                    <div key={product.productId} className="min-h-32 rounded-2xl bg-background p-5 transition-colors hover:bg-foreground/5">
                       <AppCard product={product} />
                     </div>
                   ))}
             </div>
           </div>
-        </div>
       </div>
     </section>
   )
@@ -819,13 +813,19 @@ const PARTNERSHIP_ITEMS = [
 ]
 
 function PartnershipSection() {
+  const ref = useRef<HTMLElement>(null)
+  const reduce = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['-8%', '8%'])
+
   return (
-    <section className="relative isolate overflow-hidden text-foreground">
-      <img
+    <section ref={ref} className="relative isolate overflow-hidden text-foreground">
+      <motion.img
         src="/images/landing/partnerships-banner.avif"
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 -z-20 size-full object-cover object-[50%_30%]"
+        style={reduce ? undefined : { y: backgroundY }}
+        className="absolute -top-[12%] -z-20 h-[124%] w-full object-cover object-[50%_30%]"
         width={1440}
         height={900}
         loading="lazy"
@@ -882,7 +882,7 @@ function CommonsAppSection() {
   const phoneY = useTransform(scrollYProgress, [0, 1], ['22%', '0%'])
 
   return (
-    <section ref={ref} className="relative isolate overflow-hidden border-y border-border">
+    <section ref={ref} className="relative isolate overflow-hidden">
       <motion.img
         src={`${IMG}/commons-night.webp`}
         alt=""
