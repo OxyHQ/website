@@ -848,7 +848,7 @@ function PartnershipSection() {
               {PARTNERSHIP_ITEMS.map(({ label, Icon }) => (
                 <div
                   key={label}
-                  className="flex min-h-20 flex-col justify-between gap-3 bg-background/75 p-3 text-base leading-snug transition-colors hover:bg-background/90"
+                  className="flex min-h-20 items-center gap-3 rounded-full bg-background/75 px-5 py-4 text-base leading-snug transition-colors hover:bg-background/90"
                 >
                   <Icon size={20} weight="regular" className="text-muted-foreground" aria-hidden="true" />
                   <span>{label}</span>
@@ -856,7 +856,7 @@ function PartnershipSection() {
               ))}
               <a
                 href="/sustain"
-                className="flex min-h-20 flex-col justify-end bg-primary p-3 text-primary-foreground transition-opacity duration-300 hover:opacity-80"
+                className="flex min-h-20 items-center rounded-full bg-primary px-5 py-4 text-base font-semibold text-primary-foreground transition-opacity duration-300 hover:opacity-80"
               >
                 Get Involved
               </a>
