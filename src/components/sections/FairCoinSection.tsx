@@ -136,7 +136,7 @@ export default function FairCoinSection() {
     <section className="faircoin-theme bg-background text-foreground">
       <div className="container flex flex-col gap-4 pb-4 lg:pb-6">
         <div className="grid gap-4 lg:grid-cols-4">
-          <div className="flex flex-col justify-center gap-4 bg-background px-5 py-8 lg:col-span-3 lg:px-8 lg:py-10">
+          <div className="flex flex-col justify-center gap-4 bg-background py-8 lg:col-span-3 lg:py-10">
             <p className="text-label-sm font-bold uppercase tracking-widest text-primary">FairCoin</p>
             <AnimatedTitle as="h2" className="text-heading-responsive-lg">
               FairCoin today.
