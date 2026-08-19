@@ -130,13 +130,13 @@ export default function FairCoinSection() {
   )
   // Same cell whether or not there is a post to link to, so the two readings of
   // it cannot drift apart.
-  const newsCellClass = 'group flex min-h-[320px] flex-col overflow-hidden bg-surface'
+  const newsCellClass = 'group flex min-h-[280px] flex-col overflow-hidden bg-surface'
 
   return (
     <section className="faircoin-theme bg-background text-foreground">
-      <div className="container">
-        <div className="grid gap-6 lg:grid-cols-4">
-          <div className="flex flex-col justify-center gap-5 bg-background px-6 py-12 lg:col-span-3 lg:px-12 lg:py-16">
+      <div className="container flex flex-col gap-4">
+        <div className="grid gap-4 lg:grid-cols-4">
+          <div className="flex flex-col justify-center gap-4 bg-background px-5 py-8 lg:col-span-3 lg:px-8 lg:py-10">
             <p className="text-label-sm font-bold uppercase tracking-widest text-primary">FairCoin</p>
             <AnimatedTitle as="h2" className="text-heading-responsive-lg">
               FairCoin today.
@@ -175,12 +175,12 @@ export default function FairCoinSection() {
           )}
         </div>
 
-        <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {STAT_META.map((stat, i) => (
             <button
               type="button"
               key={stat.key}
-              className="flex cursor-pointer select-none items-center gap-3 rounded-full bg-background px-5 py-5 text-left transition-colors hover:bg-foreground/5 lg:px-6 lg:py-6"
+              className="flex cursor-pointer select-none items-center gap-3 rounded-full bg-background px-4 py-4 text-left transition-colors hover:bg-foreground/5 lg:px-5 lg:py-5"
               onClick={() => setRuns((r) => r.map((v, j) => (j === i ? v + 1 : v)))}
             >
               <stat.Icon size={20} className="shrink-0 text-primary" weight="bold" />

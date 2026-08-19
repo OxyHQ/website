@@ -834,7 +834,7 @@ function PartnershipSection() {
       <div className="absolute inset-0 -z-10 bg-background/75" />
 
       <div className="container">
-        <div className="grid gap-8 py-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:py-10">
+        <div className="grid gap-6 py-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-8 lg:py-8">
           <div className="px-4 lg:px-2">
             <p className="mb-4 text-primary"><strong>Join the mission</strong></p>
             <AnimatedTitle as="h2" className="text-heading-responsive-lg mb-4">Build the future with us</AnimatedTitle>
@@ -843,11 +843,11 @@ function PartnershipSection() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 max-[650px]:grid-cols-1">
+          <div className="grid grid-cols-2 gap-2.5 max-[650px]:grid-cols-1">
             {PARTNERSHIP_ITEMS.map(({ label, Icon }) => (
               <div
                 key={label}
-                className="flex min-h-20 items-center gap-3 rounded-full bg-background/75 px-5 py-4 text-base leading-snug transition-colors hover:bg-background/90"
+                className="flex min-h-16 items-center gap-3 rounded-full bg-background/75 px-4 py-3 text-base leading-snug transition-colors hover:bg-background/90"
               >
                 <Icon size={20} weight="regular" className="text-muted-foreground" aria-hidden="true" />
                 <span>{label}</span>
@@ -855,7 +855,7 @@ function PartnershipSection() {
             ))}
             <a
               href="/sustain"
-              className="flex min-h-20 items-center rounded-full bg-primary px-5 py-4 text-base font-semibold text-primary-foreground transition-opacity duration-300 hover:opacity-80"
+              className="flex min-h-16 items-center rounded-full bg-primary px-4 py-3 text-base font-semibold text-primary-foreground transition-opacity duration-300 hover:opacity-80"
             >
               Get Involved
             </a>
