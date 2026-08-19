@@ -320,38 +320,38 @@ function IndependentEcosystemSection() {
   return (
     <section className="bg-surface text-foreground">
       <div className="container">
-        <div className="grid gap-4 py-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-6 lg:py-10">
-            <div className="flex flex-col justify-between gap-6 bg-surface py-2 lg:py-0">
-              <div>
-                <p className="mb-4 text-label-sm font-bold uppercase tracking-widest text-primary">The Oxy approach</p>
-                <AnimatedTitle as="h2" className="max-w-[14em] text-heading-responsive-lg">
-                  An independent ecosystem of ethical technology. Radically transparent, fiercely human.
-                </AnimatedTitle>
-                <p className="mt-4 max-w-[34rem] text-muted-foreground">
-                  No ads, no data selling, and no venture capital strings. We build open tools that keep people in control.
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <Link to="/newsroom" className="rounded-full bg-background px-4 py-3 text-center text-sm font-semibold transition-colors hover:bg-foreground/5">
-                  Newsroom
-                </Link>
-                <Link to="/company/business" className="rounded-full bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90">
-                  For investors
-                </Link>
-              </div>
+        <div className="flex flex-col gap-4 py-4 lg:gap-5 lg:py-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <p className="mb-3 text-label-sm font-bold uppercase tracking-widest text-primary">The Oxy approach</p>
+              <AnimatedTitle as="h2" className="max-w-[22em] text-2xl lg:text-3xl">
+                An independent ecosystem of ethical technology. Radically transparent, fiercely human.
+              </AnimatedTitle>
+              <p className="mt-2 max-w-2xl text-sm text-muted-foreground lg:text-base">
+                No ads, no data selling, and no venture capital strings. We build open tools that keep people in control.
+              </p>
             </div>
-            <div className="group relative min-h-72 overflow-hidden rounded-3xl bg-background">
-              <img
-                src={`${IMG}/agents-model-agnostic.webp`}
-                alt="Oxy ecosystem"
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                width={2400}
-                height={1600}
-                loading="lazy"
-                decoding="async"
-              />
+            <div className="grid shrink-0 grid-cols-2 gap-2 lg:w-80">
+              <Link to="/newsroom" className="rounded-full bg-background px-4 py-3 text-center text-sm font-semibold transition-colors hover:bg-foreground/5">
+                Newsroom
+              </Link>
+              <Link to="/company/business" className="rounded-full bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90">
+                For investors
+              </Link>
             </div>
           </div>
+          <div className="group relative aspect-[16/8] min-h-32 overflow-hidden rounded-3xl bg-background lg:aspect-[16/4.5]">
+            <img
+              src={`${IMG}/agents-model-agnostic.webp`}
+              alt="Oxy ecosystem"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              width={2400}
+              height={1600}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </div>
       </div>
     </section>
   )
@@ -437,74 +437,73 @@ function FeaturesSection() {
   return (
     <section className="bg-surface text-foreground">
       <div className="container">
-        <div className="grid items-start gap-4 py-5 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-6 lg:py-6">
-            <div className="flex flex-col gap-6 bg-surface py-2 lg:self-stretch lg:justify-center lg:py-0">
-              <div>
-                <p className="mb-4 text-label-sm font-bold uppercase tracking-widest text-primary">Products with a point</p>
-                <AnimatedTitle as="h2" className="max-w-[13em] text-heading-responsive-lg">
-                  Tools for living, building, and connecting.
-                </AnimatedTitle>
-                <p className="mt-4 max-w-[34rem] text-muted-foreground">
-                  Every Oxy product shares the same open foundation: identity, privacy, and technology that stays in your hands.
-                </p>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">{activeFeature.label}</span>
-                <button
-                  type="button"
-                  className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-background text-foreground transition-colors hover:bg-foreground/5"
-                  onClick={toggleAutoplay}
-                  aria-label={playing ? 'Pause autoplay' : 'Play autoplay'}
-                >
-                  {playing ? <Pause size={16} weight="bold" aria-hidden="true" /> : <Play size={16} weight="fill" aria-hidden="true" />}
-                </button>
-              </div>
+        <div className="flex flex-col gap-3 py-4 lg:gap-4 lg:py-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <p className="mb-3 text-label-sm font-bold uppercase tracking-widest text-primary">Products with a point</p>
+              <AnimatedTitle as="h2" className="max-w-[22em] text-2xl lg:text-3xl">
+                Tools for living, building, and connecting.
+              </AnimatedTitle>
+              <p className="mt-2 max-w-2xl text-sm text-muted-foreground lg:text-base">
+                Every Oxy product shares the same open foundation: identity, privacy, and technology that stays in your hands.
+              </p>
             </div>
-
-            <div className="rounded-3xl bg-background p-4 sm:p-5 lg:p-6">
-              <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-                {FEATURE_TABS.map((t, i) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    className={[
-                      'relative min-h-12 cursor-pointer overflow-hidden rounded-xl px-4 py-2.5 text-left text-sm font-semibold transition-colors sm:min-h-14',
-                      i === active ? 'bg-surface text-foreground' : 'bg-background text-muted-foreground hover:bg-surface',
-                    ].join(' ')}
-                    onClick={() => handleTabClick(i)}
-                    aria-pressed={i === active}
-                  >
-                    <span className="relative z-10">{t.label}</span>
-                    {i === active && (
-                      <span
-                        className="absolute inset-x-0 bottom-0 h-0.5 bg-primary transition-[width]"
-                        style={{ width: displayedProgress + '%' }}
-                      />
-                    )}
-                  </button>
-                ))}
+            <div className="flex items-center gap-3 lg:pb-1">
+              <span className="text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">{activeFeature.label}</span>
+              <div className="h-1 w-20 overflow-hidden rounded-full bg-foreground/10" aria-hidden="true">
+                <span className="block h-full bg-primary transition-[width]" style={{ width: displayedProgress + '%' }} />
               </div>
+              <button
+                type="button"
+                className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-background text-foreground transition-colors hover:bg-foreground/5"
+                onClick={toggleAutoplay}
+                aria-label={playing ? 'Pause autoplay' : 'Play autoplay'}
+              >
+                {playing ? <Pause size={15} weight="bold" aria-hidden="true" /> : <Play size={15} weight="fill" aria-hidden="true" />}
+              </button>
+            </div>
+          </div>
 
-              <div className="mt-4">
-                <h3 className="max-w-[16em] text-heading-responsive-md">
+          <div className="grid grid-cols-3 gap-1.5 lg:grid-cols-6">
+            {FEATURE_TABS.map((t, i) => (
+              <button
+                key={t.id}
+                type="button"
+                className={`min-h-10 cursor-pointer rounded-full px-4 py-1.5 text-left text-sm font-semibold transition-colors ${
+                  i === active ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground hover:bg-foreground/5'
+                }`}
+                onClick={() => handleTabClick(i)}
+                aria-pressed={i === active}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid gap-3 rounded-3xl bg-background p-2 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,1.4fr)] lg:p-3">
+            <div className="flex flex-col justify-between gap-3 p-2">
+              <div>
+                <p className="mb-3 text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">{activeFeature.label}</p>
+                <h3 className="max-w-[16em] text-xl lg:text-2xl">
                   {activeFeature.heading.split('<br>').map((line) => (
                     <span key={line} className="block">{line}</span>
                   ))}
                 </h3>
-                <div className="group relative mt-4 aspect-[16/8] overflow-hidden rounded-2xl bg-surface">
-                  <img
-                    src={activeFeature.thumb}
-                    alt={activeFeature.label + ' product preview'}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    width={1200}
-                    height={800}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
               </div>
             </div>
+            <div className="group relative aspect-[16/9] overflow-hidden rounded-2xl bg-surface lg:aspect-[16/5]">
+              <img
+                src={activeFeature.thumb}
+                alt={activeFeature.label + ' product preview'}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                width={1200}
+                height={800}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
           </div>
+        </div>
       </div>
     </section>
   )
