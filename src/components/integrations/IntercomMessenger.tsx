@@ -8,6 +8,9 @@ type IntercomSettings = {
   app_id: string
   current_url?: string
   intercom_user_jwt?: string
+  auth_tokens?: {
+    security_token: string
+  }
 }
 
 type IntercomFunction = ((command: string, ...args: unknown[]) => void) & {
@@ -106,6 +109,10 @@ export default function IntercomMessenger() {
           app_id: appId,
           current_url: window.location.href,
           intercom_user_jwt: token,
+          // Fin Data connectors use a dedicated User authentication token.
+          // It is refreshed alongside Messenger Security and is intentionally
+          // sent through auth_tokens rather than relying on intercom_user_jwt.
+          auth_tokens: { security_token: token },
         }
 
         // A visitor session may already be booted by the loader. Intercom
@@ -119,6 +126,7 @@ export default function IntercomMessenger() {
           // authenticated without exposing the Messenger secret to the client.
           window.Intercom?.('update', settings)
         }
+        window.Intercom?.('setAuthTokens', { security_token: token })
       } catch (error) {
         // A missing production secret should not break the website or turn
         // into a noisy console error for visitors. The backend returns 503

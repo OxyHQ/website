@@ -235,4 +235,18 @@ router.get('/', localeMiddleware, async (req, res) => {
   }
 })
 
+/**
+ * Machine-readable status snapshot for trusted integrations such as Fin.
+ * Keep the internal product document id out of the connector response just
+ * as the public route does.
+ */
+export async function getStatusSnapshot(): Promise<StatusPayload> {
+  const payload = await getStatus()
+  return {
+    generatedAt: payload.generatedAt,
+    overall: payload.overall,
+    services: payload.services.map(stripDocId),
+  }
+}
+
 export default router
