@@ -307,7 +307,14 @@ export function useProduct(productId: string) {
   })
 }
 
+const LOCAL_PRODUCT_LOGOS: Readonly<Record<string, string>> = {
+  faircoin: '/images/apps/faircoin.svg',
+  'faircoin-wallet': '/images/apps/faircoin-wallet.svg',
+}
+
 export function resolveProductLogoUrl(product: ProductRecord): string {
+  if (LOCAL_PRODUCT_LOGOS[product.productId]) return LOCAL_PRODUCT_LOGOS[product.productId]
+
   const logo = product.logo
   if (!logo) return ''
   if (typeof logo === 'string') return logo

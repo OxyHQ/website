@@ -26,7 +26,7 @@ const PAIRS: { sprite: string; image: string; tone: string }[] = [
   { sprite: 'mention', image: '/images/apps/mention.png', tone: 'bg-chart-1' },
   { sprite: 'inbox', image: '/images/apps/inbox.png', tone: 'bg-chart-2' },
   { sprite: 'alia', image: '/images/apps/alia.svg', tone: 'bg-chart-3' },
-  { sprite: 'faircoin', image: '/images/apps/faircoin.jpg', tone: 'bg-chart-4' },
+  { sprite: 'faircoin', image: '/images/apps/faircoin.svg', tone: 'bg-chart-4' },
   { sprite: 'bloom', image: '/images/apps/bloom.png', tone: 'bg-chart-5' },
   { sprite: 'clarity', image: '/images/apps/clarity.png', tone: 'bg-chart-1' },
   { sprite: 'codea', image: '/images/apps/codea.png', tone: 'bg-chart-2' },

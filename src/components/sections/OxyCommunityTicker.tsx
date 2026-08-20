@@ -11,6 +11,7 @@ type ImageCard = {
 type ProfileCard = {
   type: 'profile'
   image: string
+  logo?: string
   name: string
   role: string
 }
@@ -47,9 +48,10 @@ const TICKER_CARDS: TickerCard[] = [
   },
   {
     type: 'profile',
-    image: '/images/landing/hero-photo-01.avif',
+    image: '/images/screenshots/mention-app.png',
+    logo: '/images/apps/mention.png',
     name: 'Mention',
-    role: 'Open social network',
+    role: 'An open social network for genuine connection',
   },
   {
     type: 'quote',
@@ -62,8 +64,9 @@ const TICKER_CARDS: TickerCard[] = [
   {
     type: 'profile',
     image: '/images/landing/hero-photo-02.avif',
+    logo: '/images/apps/allo.png',
     name: 'Allo',
-    role: 'Think better, together',
+    role: 'Private conversations, built together',
   },
   {
     type: 'stat',
@@ -79,9 +82,10 @@ const TICKER_CARDS: TickerCard[] = [
   },
   {
     type: 'profile',
-    image: '/images/landing/hero-photo-04.avif',
+    image: '/ai/research/faircoin-stage.png',
+    logo: '/images/apps/faircoin.svg',
     name: 'FairCoin',
-    role: 'Currency that cares',
+    role: 'A community-run currency for cooperation',
   },
   {
     type: 'quote-pair',
@@ -139,9 +143,12 @@ function ProfileCardView({ card }: { card: ProfileCard }) {
     <article className="relative h-[360px] w-[225px] shrink-0 overflow-hidden rounded-2xl bg-foreground md:h-[480px] md:w-[300px]">
       <img src={card.image} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover object-top" loading="lazy" />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/10 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-0.5 p-5 text-left text-foreground md:p-6">
-        <span className="text-[15px] font-medium">{card.name}</span>
-        <span className="text-[13px] text-muted-foreground">{card.role}</span>
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-5 text-left text-foreground md:gap-2 md:p-6">
+        {card.logo ? (
+          <img src={card.logo} alt="" aria-hidden="true" className="mb-1 size-10 object-contain md:size-12" />
+        ) : null}
+        <span className="text-xl font-semibold leading-tight md:text-2xl">{card.name}</span>
+        <span className="max-w-[18rem] text-base leading-snug text-muted-foreground md:text-lg">{card.role}</span>
       </div>
     </article>
   )

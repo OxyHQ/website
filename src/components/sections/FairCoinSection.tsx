@@ -88,6 +88,18 @@ const LINKS = [
   { href: 'https://fairco.in', label: 'Learn more', solid: false },
 ]
 
+const FAIRCOIN_PRIMARY_BUTTON_STYLE = {
+  backgroundColor: 'var(--color-primary)',
+  borderColor: 'var(--color-primary)',
+  color: 'var(--color-primary-foreground)',
+}
+
+const FAIRCOIN_OUTLINE_BUTTON_STYLE = {
+  backgroundColor: 'transparent',
+  borderColor: 'var(--color-border)',
+  color: 'var(--color-foreground)',
+}
+
 const NEWS_DATE_FORMAT: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' }
 const FALLBACK_NEWS_IMAGE = '/images/landing/faircoin-store.png'
 
@@ -137,7 +149,15 @@ export default function FairCoinSection() {
       <div className="container flex flex-col gap-4 pb-4 lg:pb-6">
         <div className="grid gap-4 lg:grid-cols-4">
           <div className="flex flex-col justify-center gap-4 bg-background py-8 lg:col-span-3 lg:py-10">
-            <p className="text-label-sm font-bold uppercase tracking-widest text-primary">FairCoin</p>
+            <img
+              src="/images/apps/faircoin.svg"
+              alt="FairCoin"
+              className="size-8 object-contain"
+              width={32}
+              height={32}
+              loading="lazy"
+              decoding="async"
+            />
             <AnimatedTitle as="h2" className="text-heading-responsive-lg">
               FairCoin today.
             </AnimatedTitle>
@@ -152,6 +172,7 @@ export default function FairCoinSection() {
                   asChild
                   variant={link.solid ? 'primary' : 'outline'}
                   size="md"
+                  style={link.solid ? FAIRCOIN_PRIMARY_BUTTON_STYLE : FAIRCOIN_OUTLINE_BUTTON_STYLE}
                 >
                   <a href={link.href} target="_blank" rel="noopener noreferrer">
                     {link.label}

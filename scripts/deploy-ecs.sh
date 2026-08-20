@@ -20,6 +20,7 @@ set -euo pipefail
 
 CLUSTER="${1:?cluster required}"
 SERVICE="${2:?service required}"
+AWS_REGION="${AWS_REGION:?AWS_REGION required}"
 
 STATUS=$(aws ecs describe-services --cluster "$CLUSTER" --services "$SERVICE" \
   --query 'services[0].status' --output text 2>/dev/null || echo NONE)
@@ -28,7 +29,46 @@ if [ "$STATUS" != "ACTIVE" ]; then
   exit 0
 fi
 
+# The website API's Intercom secret is synced to SSM by the deploy workflow,
+# but older live task definitions predate that secret. Keep the task definition
+# update narrowly scoped to this service and clone the live definition so that
+# fields managed outside the current Terraform checkout are preserved.
+TASK_DEFINITION=$(aws ecs describe-services --cluster "$CLUSTER" --services "$SERVICE" \
+  --region "$AWS_REGION" --query 'services[0].taskDefinition' --output text)
+if [ "$SERVICE" = "website-api" ]; then
+  SECRET_ARN=$(aws ssm get-parameter \
+    --name "/oxy/$SERVICE/INTERCOM_MESSENGER_SECRET" \
+    --region "$AWS_REGION" --query 'Parameter.ARN' --output text)
+  WORK_DIR=$(mktemp -d)
+  trap 'rm -rf "$WORK_DIR"' EXIT
+  aws ecs describe-task-definition --task-definition "$TASK_DEFINITION" \
+    --region "$AWS_REGION" --query 'taskDefinition' \
+    > "$WORK_DIR/task-definition.json"
+
+  if ! jq -e --arg name "INTERCOM_MESSENGER_SECRET" \
+    '.containerDefinitions[] | (.secrets // [])[]? | .name == $name' \
+    "$WORK_DIR/task-definition.json" >/dev/null; then
+    jq --arg container "$SERVICE" --arg name "INTERCOM_MESSENGER_SECRET" \
+      --arg valueFrom "$SECRET_ARN" '
+      del(.taskDefinitionArn, .revision, .status, .requiresAttributes,
+          .compatibilities, .registeredAt, .registeredBy, .tags)
+      | .containerDefinitions |= map(
+          if .name == $container then
+            .secrets = ((.secrets // []) + [{name: $name, valueFrom: $valueFrom}])
+          else . end
+        )
+    ' "$WORK_DIR/task-definition.json" > "$WORK_DIR/task-definition-updated.json"
+    TASK_DEFINITION=$(aws ecs register-task-definition \
+      --region "$AWS_REGION" \
+      --cli-input-json "file://$WORK_DIR/task-definition-updated.json" \
+      --query 'taskDefinition.taskDefinitionArn' --output text)
+    echo "registered $TASK_DEFINITION with Intercom secret"
+  fi
+fi
+
 read -r ID STARTED <<<"$(aws ecs update-service --cluster "$CLUSTER" --service "$SERVICE" \
+  --region "$AWS_REGION" \
+  --task-definition "$TASK_DEFINITION" \
   --force-new-deployment \
   --query 'service.deployments[?status==`PRIMARY`].[id,createdAt] | [0]' --output text)"
 echo "deployment $ID started $STARTED"

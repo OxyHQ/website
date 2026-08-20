@@ -18,6 +18,7 @@ import '../styles/landing.css'
 import AIResearchSection from '../components/ai/AIResearchSection'
 import AIResearchFeatureGrid from '../components/ai/AIResearchFeatureGrid'
 import OxyCommunityTicker from '../components/sections/OxyCommunityTicker'
+import PhotoCardCarousel, { type PhotoCard } from '../components/sections/PhotoCardCarousel'
 import AppCard, { AppIcon } from '../components/apps/AppCard'
 import { Link } from 'react-router-dom'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
@@ -216,102 +217,31 @@ function BuildForEveryoneSection() {
 /* ------------------------------------------------------------------ */
 /*  Values (photo-card carousel)                                       */
 /* ------------------------------------------------------------------ */
-interface ValueCard {
-  img: string
-  title: string
-  body: string
-}
-
-const VALUES: ValueCard[] = [
+const VALUES: PhotoCard[] = [
   {
-    img: '/images/hero/hero-4.webp',
+    image: '/images/hero/hero-4.webp',
     title: 'Human-first design.',
-    body: 'We design tools that empower people, not manipulate them. Every decision starts with the question: does this serve the user?',
+    description: 'We design tools that empower people, not manipulate them. Every decision starts with the question: does this serve the user?',
   },
   {
-    img: '/images/hero/hero-1.webp',
+    image: '/images/hero/hero-1.webp',
     title: 'Your data stays yours.',
-    body: 'No ads, no data brokers, no hidden monetization. Privacy isn’t a feature we bolt on. It’s the foundation everything is built on.',
+    description: 'No ads, no data brokers, no hidden monetization. Privacy isn’t a feature we bolt on. It’s the foundation everything is built on.',
   },
   {
-    img: '/images/hero/hero-5.jpg',
+    image: '/images/hero/hero-5.jpg',
     title: 'AI with a purpose.',
-    body: 'Every product we ship is built to advance justice, inclusion, or sustainability. If it doesn’t move the needle on what matters, we don’t build it.',
+    description: 'Every product we ship is built to advance justice, inclusion, or sustainability. If it doesn’t move the needle on what matters, we don’t build it.',
   },
   {
-    img: '/images/hero/hero-3.webp',
+    image: '/images/hero/hero-3.webp',
     title: 'Open by default.',
-    body: 'Every Oxy tool is open source. We believe transparency isn’t optional, it’s how you earn trust. Inspect the code, fork it, improve it.',
+    description: 'Every Oxy tool is open source. We believe transparency isn’t optional, it’s how you earn trust. Inspect the code, fork it, improve it.',
   },
 ]
 
 function ValuesSection() {
-  const swiperRef = useRef<SwiperType | null>(null)
-
-  return (
-    <section className="container">
-      <div>
-        <div className="grid grid-cols-12 gap-6">
-          <motion.div className="col-span-full py-16 max-[950px]:py-10" {...REVEAL}>
-            <div className="flex items-end justify-between gap-6 mb-8">
-              <AnimatedTitle as="h2" className="text-heading-responsive-lg max-w-[440px]">What we stand for.</AnimatedTitle>
-              <div className="flex items-center gap-3 shrink-0">
-                <button
-                  type="button"
-                  aria-label="Previous value"
-                  onClick={() => swiperRef.current?.slidePrev()}
-                  className="values-nav-btn"
-                >
-                  <ArrowUpRight weight="regular" className="-rotate-[135deg]" aria-hidden />
-                </button>
-                <button
-                  type="button"
-                  aria-label="Next value"
-                  onClick={() => swiperRef.current?.slideNext()}
-                  className="values-nav-btn"
-                >
-                  <ArrowUpRight weight="regular" className="rotate-45" aria-hidden />
-                </button>
-              </div>
-            </div>
-            <Swiper
-              onSwiper={(s) => { swiperRef.current = s }}
-              slidesPerView={1.15}
-              spaceBetween={24}
-              grabCursor
-              className="values-swiper"
-              breakpoints={{
-                640: { slidesPerView: 2, spaceBetween: 24 },
-                950: { slidesPerView: 2.5, spaceBetween: 24 },
-                1200: { slidesPerView: 3.2, spaceBetween: 24 },
-              }}
-            >
-              {VALUES.map((value) => (
-                <SwiperSlide key={value.title} style={{ height: 'auto' }}>
-                  <article className="flex flex-col h-full">
-                    <div className="overflow-hidden rounded-3xl aspect-[4/5]">
-                      <img
-                        src={value.img}
-                        alt=""
-                        aria-hidden="true"
-                        className="h-full w-full object-cover"
-                        width={800}
-                        height={1000}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </div>
-                    <h3 className="mt-5 text-xl font-medium tracking-tight">{value.title}</h3>
-                    <p className="mt-2 opacity-60 leading-relaxed">{value.body}</p>
-                  </article>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  )
+  return <PhotoCardCarousel title="What we stand for." cards={VALUES} />
 }
 
 /* ------------------------------------------------------------------ */
@@ -346,7 +276,7 @@ const FEATURE_TABS = [
     id: 'faircoin',
     label: 'FairCoin',
     description: 'Currency that cares',
-    icon: '/images/apps/faircoin.jpg',
+    icon: '/images/apps/faircoin.svg',
     heading: 'Currency that cares.<br>Commerce that\'s fair.',
     thumb: `${IMG}/video-thumb-analyze.webp`,
   },
