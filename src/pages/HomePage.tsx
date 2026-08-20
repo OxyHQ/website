@@ -1,6 +1,6 @@
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
-import { ArrowUpRight, BookOpenText, Bug, Code, HandHeart, HouseSimple, Megaphone, Pause, Play, Star, Translate, UsersThree } from '@phosphor-icons/react'
+import { ArrowUpRight, BookOpenText, Bug, Code, HandHeart, Megaphone, Translate, UsersThree } from '@phosphor-icons/react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -8,7 +8,7 @@ import HomeHero from '../components/homepage/HomeHero'
 import { homeFaqs } from '../data/homepage'
 import FairCoinSection from '../components/sections/FairCoinSection'
 import FaqSection from '../components/sections/FaqSection'
-import { usePage, type PageSection, useProducts, type ProductRecord } from '../api/hooks'
+import { usePage, type PageSection } from '../api/hooks'
 import { FEATURES } from '../constants'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
@@ -18,8 +18,8 @@ import '../styles/landing.css'
 import AIResearchSection from '../components/ai/AIResearchSection'
 import AIResearchFeatureGrid from '../components/ai/AIResearchFeatureGrid'
 import OxyCommunityTicker from '../components/sections/OxyCommunityTicker'
+import OxyUseCasesRolo from '../components/sections/OxyUseCasesRolo'
 import PhotoCardCarousel, { type PhotoCard } from '../components/sections/PhotoCardCarousel'
-import AppCard, { AppIcon } from '../components/apps/AppCard'
 import { Link } from 'react-router-dom'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
@@ -247,184 +247,6 @@ function ValuesSection() {
 /* ------------------------------------------------------------------ */
 /*  Features Tabs                                                      */
 /* ------------------------------------------------------------------ */
-const FEATURE_TABS = [
-  {
-    id: 'mention',
-    label: 'Mention',
-    description: 'Open social network',
-    icon: '/images/apps/mention.png',
-    heading: 'Connect authentically.<br>Share what matters.',
-    thumb: '/images/screenshots/mention-app.png',
-  },
-  {
-    id: 'allo',
-    label: 'Allo',
-    description: 'Think better, together',
-    icon: '/images/apps/allo.png',
-    heading: 'Private messaging.<br>Open by design.',
-    thumb: `${IMG}/video-thumb-customer-support.webp`,
-  },
-  {
-    id: 'inbox',
-    label: 'Inbox',
-    description: 'Unified messaging',
-    icon: '/images/apps/inbox.png',
-    heading: 'All your messages.<br>One place.',
-    thumb: '/images/screenshots/inbox-app.png',
-  },
-  {
-    id: 'faircoin',
-    label: 'FairCoin',
-    description: 'Currency that cares',
-    icon: '/images/apps/faircoin.svg',
-    heading: 'Currency that cares.<br>Commerce that\'s fair.',
-    thumb: `${IMG}/video-thumb-analyze.webp`,
-  },
-  {
-    id: 'homiio',
-    label: 'Homiio',
-    description: 'Rental made easy',
-    heading: 'Home for everyone.<br>Affordable by design.',
-    thumb: `${IMG}/video-thumb-act.webp`,
-  },
-  {
-    id: 'alia',
-    label: 'Alia',
-    description: 'Intelligent assistant',
-    icon: '/images/apps/alia.svg',
-    heading: 'Intelligence with integrity.<br>AI for good.',
-    thumb: '/images/screenshots/alia-app.png',
-  },
-]
-
-const FEATURES_AUTO_DURATION = 6000
-
-function FeaturesSection() {
-  const [active, setActive] = useState(0)
-  const [progress, setProgress] = useState(0)
-  const [playing, setPlaying] = useState(true)
-  const { data: products = [] } = useProducts({ surface: 'products' })
-
-  useEffect(() => {
-    if (!playing) return
-    let frame = 0
-    const start = performance.now()
-    const tick = (now: number) => {
-      const pct = Math.min(((now - start) / FEATURES_AUTO_DURATION) * 100, 100)
-      setProgress(pct)
-      if (pct >= 100) {
-        setActive((prev) => (prev + 1) % FEATURE_TABS.length)
-        return
-      }
-      frame = requestAnimationFrame(tick)
-    }
-    frame = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(frame)
-  }, [active, playing])
-
-  const displayedProgress = playing ? progress : 0
-  const activeFeature = FEATURE_TABS[active] ?? FEATURE_TABS[0]
-
-  const handleTabClick = (i: number) => {
-    setActive(i)
-    setPlaying(true)
-  }
-
-  const toggleAutoplay = () => {
-    setPlaying((prev) => !prev)
-  }
-
-  return (
-    <section className="bg-surface text-foreground">
-      <div className="container">
-        <div className="grid gap-5 py-4 md:grid-cols-2 lg:grid-cols-3 lg:items-start lg:gap-6 lg:py-8">
-          <div className="flex flex-col gap-4">
-            <div className="max-w-3xl">
-              <p className="mb-3 text-label-sm font-bold uppercase tracking-widest text-primary">Products with a point</p>
-              <AnimatedTitle as="h2" className="max-w-[22em] text-2xl lg:text-3xl">
-                Tools for living, building, and connecting.
-              </AnimatedTitle>
-              <p className="mt-2 max-w-2xl text-sm text-muted-foreground lg:text-base">
-                Every Oxy product shares the same open foundation: identity, privacy, and technology that stays in your hands.
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">{activeFeature.label}</span>
-              <div className="h-1 w-20 overflow-hidden rounded-full bg-foreground/10" aria-hidden="true">
-                <span className="block h-full bg-primary transition-[width]" style={{ width: displayedProgress + '%' }} />
-              </div>
-              <button
-                type="button"
-                className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-background text-foreground transition-colors hover:bg-foreground/5"
-                onClick={toggleAutoplay}
-                aria-label={playing ? 'Pause autoplay' : 'Play autoplay'}
-              >
-                {playing ? <Pause size={15} weight="bold" aria-hidden="true" /> : <Play size={15} weight="fill" aria-hidden="true" />}
-              </button>
-            </div>
-
-          </div>
-
-          <div className="grid min-w-0 grid-cols-2 content-start gap-x-5 gap-y-4">
-            {FEATURE_TABS.map((t, i) => {
-              const product = products.find((item) => item.productId === t.id)
-              const selected = i === active
-
-              return (
-                <button
-                  key={t.id}
-                  type="button"
-                  className={`group flex min-w-0 cursor-pointer items-start gap-2.5 text-left transition-opacity ${
-                    selected ? 'text-primary' : 'text-foreground hover:opacity-65'
-                  }`}
-                  onClick={() => handleTabClick(i)}
-                  aria-pressed={selected}
-                >
-                  <span className={`size-10 shrink-0 overflow-hidden rounded-xl ${t.id === 'alia' ? 'bg-white' : 'bg-surface'}`}>
-                    {product ? <AppIcon product={product} /> : t.icon ? <img src={t.icon} alt="" aria-hidden="true" className="size-full object-cover" /> : t.id === 'homiio' ? <span className="flex size-full items-center justify-center text-primary"><HouseSimple size={22} weight="duotone" aria-hidden="true" /></span> : <span className="flex size-full items-center justify-center font-display text-sm">{t.label.charAt(0)}</span>}
-                  </span>
-                  <span className="flex min-w-0 flex-col gap-0.5 pt-0.5">
-                    <span className="block text-sm font-medium leading-4">{t.label}</span>
-                    <span className="flex items-center gap-0.5 text-primary" aria-label="Featured app">
-                      {Array.from({ length: 5 }, (_, star) => <Star key={star} size={8} weight="fill" aria-hidden="true" />)}
-                    </span>
-                    <span className="block text-[11px] leading-4 text-muted-foreground">
-                      {product?.tagline || t.description}
-                    </span>
-                  </span>
-                </button>
-              )
-            })}
-          </div>
-
-          <div className="flex min-w-0 flex-col">
-            <div className="grid gap-3 rounded-3xl bg-background p-2 lg:p-3">
-              <div className="p-2">
-                <p className="mb-3 text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">{activeFeature.label}</p>
-                <h3 className="text-xl lg:text-2xl">
-                  {activeFeature.heading.split('<br>').map((line) => (
-                    <span key={line} className="block">{line}</span>
-                  ))}
-                </h3>
-              </div>
-              <div className="group relative aspect-[16/5] overflow-hidden rounded-2xl bg-surface">
-                <img
-                  src={activeFeature.thumb}
-                  alt={activeFeature.label + ' product preview'}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  width={1200}
-                  height={900}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
 /* ------------------------------------------------------------------ */
 /*  ROI Stats                                                          */
 /* ------------------------------------------------------------------ */
@@ -649,73 +471,6 @@ const TESTIMONIALS = [
 ]
 
 /* ------------------------------------------------------------------ */
-/*  Ecosystem                                                          */
-/* ------------------------------------------------------------------ */
-
-/** A product's own logo, or its letter on its brand colour. */
-function ecosystemOrder(product: ProductRecord): [number, number] {
-  const category = typeof product.category === 'object' && product.category !== null ? product.category : null
-  return [category?.order ?? Number.MAX_SAFE_INTEGER, product.order ?? 0]
-}
-
-/** A landing shows the shape of the ecosystem; the full list lives on /technologies. */
-const ECOSYSTEM_LIMIT = 12
-
-function EcosystemSection() {
-  const { data: products = [], isPending } = useProducts({ surface: 'products' })
-  const shown = [...products]
-    .sort((a, b) => {
-      const [categoryA, orderA] = ecosystemOrder(a)
-      const [categoryB, orderB] = ecosystemOrder(b)
-      return categoryA - categoryB || orderA - orderB
-    })
-    .slice(0, ECOSYSTEM_LIMIT)
-
-  return (
-    <section className="bg-surface text-foreground">
-      <div className="container">
-        <div className="grid gap-4 py-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-6 lg:py-10">
-            <div className="flex flex-col justify-between gap-6 bg-surface py-2 lg:py-0">
-              <div>
-                <p className="mb-4 text-label-sm font-bold uppercase tracking-widest text-primary">
-                  Explore the Oxy ecosystem
-                </p>
-                <AnimatedTitle as="h2" className="max-w-[14em] text-heading-responsive-lg">
-                  Many apps, one identity, one platform underneath
-                </AnimatedTitle>
-              </div>
-              <a href="/apps" className="w-fit text-link-md text-muted-foreground transition-colors hover:text-foreground">
-                All technologies <span aria-hidden="true">&rarr;</span>
-              </a>
-            </div>
-
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {isPending
-                ? Array.from({ length: 8 }, (_, i) => (
-                    <div key={i} className="min-h-32 rounded-2xl bg-background p-5">
-                      <div className="flex items-start gap-3">
-                        <div className="size-12 shrink-0 animate-pulse rounded bg-surface" />
-                        <div className="flex min-w-0 flex-1 flex-col gap-2 pt-1">
-                          <div className="h-4 w-2/5 animate-pulse rounded bg-surface" />
-                          <div className="h-3 w-4/5 animate-pulse rounded bg-surface" />
-                          <div className="h-3 w-full animate-pulse rounded bg-surface" />
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                : shown.map((product) => (
-                    <div key={product.productId} className="min-h-32 rounded-2xl bg-background p-5 transition-colors hover:bg-foreground/5">
-                      <AppCard product={product} />
-                    </div>
-                  ))}
-            </div>
-          </div>
-      </div>
-    </section>
-  )
-}
-
-/* ------------------------------------------------------------------ */
 /*  Enterprise Partnership Services                                    */
 /* ------------------------------------------------------------------ */
 const PARTNERSHIP_ITEMS = [
@@ -922,10 +677,9 @@ export default function HomePage() {
         <HomeHero />
         {FEATURES.SHOW_TRUSTED_LOGOS && <PartnerLogos />}
         <BuildForEveryoneSection />
+        <OxyUseCasesRolo />
         <ValuesSection />
-        <FeaturesSection />
         {(FEATURES.SHOW_HOMEPAGE_STATS || FEATURES.SHOW_TESTIMONIALS) && <StatsAndTestimonialsSection />}
-        <EcosystemSection />
         <FairCoinSection />
         <AIResearchFeatureGrid />
         <OxyCommunityTicker />

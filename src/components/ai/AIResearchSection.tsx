@@ -15,7 +15,7 @@ import {
  */
 export default function AIResearchSection({ framed = true }: { framed?: boolean }) {
   return (
-    <div className="relative w-full overflow-hidden">
+    <div className="relative w-full overflow-hidden bg-[url('/ai/research/ai-research-bg.png')] bg-cover bg-center text-foreground">
       <div className="grid min-h-[420px] grid-cols-[clamp(56px,12vw,360px)_minmax(0,1fr)_clamp(56px,12vw,360px)] items-center justify-center gap-4 py-6 lg:min-h-[480px] lg:grid-cols-[360px_minmax(0,40%)_360px]">
         <div className="flex h-full min-w-0 items-center justify-end overflow-hidden">
           <img

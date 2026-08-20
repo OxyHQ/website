@@ -36,7 +36,7 @@ function FaqRow({ item }: { item: FaqEntry }) {
     <div className="w-full border-t border-border/60 first:border-t-0">
       <button
         type="button"
-        className="flex w-full cursor-pointer items-center justify-between gap-4 px-4 py-6 text-left transition-colors duration-300 hover:bg-foreground/5"
+        className="flex w-full cursor-pointer items-center justify-between gap-4 py-5 text-left transition-colors duration-300 hover:bg-foreground/5 md:py-6"
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((current) => !current)}
@@ -60,7 +60,7 @@ function FaqRow({ item }: { item: FaqEntry }) {
         }`}
       >
         <div className="min-h-0">
-          <div className="max-w-3xl px-4 pb-6 text-body-lg text-muted-foreground">{item.answer}</div>
+          <div className="max-w-3xl pb-5 pr-10 text-body-lg text-muted-foreground md:pb-6">{item.answer}</div>
         </div>
       </div>
     </div>
@@ -75,20 +75,18 @@ export default function FaqSection({
 }: FaqSectionProps) {
   return (
     <section className={className}>
-      <div>
-        <div className="container">
-          <div className="relative flex w-full flex-col lg:flex-row">
-            <div className="w-full shrink-0 p-4 md:py-10 md:pr-10 lg:w-lg">
-              <AnimatedTitle as={as} className="text-title-md">
-                {title}
-              </AnimatedTitle>
-            </div>
+      <div className="container">
+        <div className="grid w-full gap-8 py-12 md:gap-12 md:py-16 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
+          <div className="min-w-0 self-start">
+            <AnimatedTitle as={as} className="text-title-md">
+              {title}
+            </AnimatedTitle>
+          </div>
 
-            <div className="w-full">
-              {items.map((item) => (
-                <FaqRow key={item.question} item={item} />
-              ))}
-            </div>
+          <div className="min-w-0">
+            {items.map((item) => (
+              <FaqRow key={item.question} item={item} />
+            ))}
           </div>
         </div>
       </div>
