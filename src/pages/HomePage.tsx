@@ -1,12 +1,11 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
-import { ArrowUpRight, BookOpenText, Bug, Code, HandHeart, Megaphone, Pause, Play, Translate, UsersThree } from '@phosphor-icons/react'
+import { ArrowUpRight, BookOpenText, Bug, Code, HandHeart, HouseSimple, Megaphone, Pause, Play, Star, Translate, UsersThree } from '@phosphor-icons/react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HomeHero from '../components/homepage/HomeHero'
 import { homeFaqs } from '../data/homepage'
-import EcosystemStack from '../components/sections/EcosystemStack'
 import FairCoinSection from '../components/sections/FairCoinSection'
 import FaqSection from '../components/sections/FaqSection'
 import { usePage, type PageSection, useProducts, type ProductRecord } from '../api/hooks'
@@ -17,7 +16,9 @@ import type SwiperType from 'swiper'
 import 'swiper/css'
 import '../styles/landing.css'
 import AIResearchSection from '../components/ai/AIResearchSection'
-import AppCard from '../components/apps/AppCard'
+import AIResearchFeatureGrid from '../components/ai/AIResearchFeatureGrid'
+import OxyCommunityTicker from '../components/sections/OxyCommunityTicker'
+import AppCard, { AppIcon } from '../components/apps/AppCard'
 import { Link } from 'react-router-dom'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
@@ -314,85 +315,53 @@ function ValuesSection() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Independent ecosystem                                              */
-/* ------------------------------------------------------------------ */
-function IndependentEcosystemSection() {
-  return (
-    <section className="bg-surface text-foreground">
-      <div className="container">
-        <div className="flex flex-col gap-4 py-4 lg:gap-5 lg:py-5">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-3xl">
-              <p className="mb-3 text-label-sm font-bold uppercase tracking-widest text-primary">The Oxy approach</p>
-              <AnimatedTitle as="h2" className="max-w-[22em] text-2xl lg:text-3xl">
-                An independent ecosystem of ethical technology. Radically transparent, fiercely human.
-              </AnimatedTitle>
-              <p className="mt-2 max-w-2xl text-sm text-muted-foreground lg:text-base">
-                No ads, no data selling, and no venture capital strings. We build open tools that keep people in control.
-              </p>
-            </div>
-            <div className="grid shrink-0 grid-cols-2 gap-2 lg:w-80">
-              <Link to="/newsroom" className="rounded-full bg-background px-4 py-3 text-center text-sm font-semibold transition-colors hover:bg-foreground/5">
-                Newsroom
-              </Link>
-              <Link to="/company/business" className="rounded-full bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90">
-                For investors
-              </Link>
-            </div>
-          </div>
-          <div className="group relative aspect-[16/8] min-h-32 overflow-hidden rounded-3xl bg-background lg:aspect-[16/4.5]">
-            <img
-              src={`${IMG}/agents-model-agnostic.webp`}
-              alt="Oxy ecosystem"
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-              width={2400}
-              height={1600}
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-/* ------------------------------------------------------------------ */
 /*  Features Tabs                                                      */
 /* ------------------------------------------------------------------ */
 const FEATURE_TABS = [
   {
     id: 'mention',
     label: 'Mention',
+    description: 'Open social network',
+    icon: '/images/apps/mention.png',
     heading: 'Connect authentically.<br>Share what matters.',
     thumb: '/images/screenshots/mention-app.png',
   },
   {
     id: 'allo',
     label: 'Allo',
+    description: 'Think better, together',
+    icon: '/images/apps/allo.png',
     heading: 'Private messaging.<br>Open by design.',
     thumb: `${IMG}/video-thumb-customer-support.webp`,
   },
   {
     id: 'inbox',
     label: 'Inbox',
+    description: 'Unified messaging',
+    icon: '/images/apps/inbox.png',
     heading: 'All your messages.<br>One place.',
     thumb: '/images/screenshots/inbox-app.png',
   },
   {
     id: 'faircoin',
     label: 'FairCoin',
+    description: 'Currency that cares',
+    icon: '/images/apps/faircoin.jpg',
     heading: 'Currency that cares.<br>Commerce that\'s fair.',
     thumb: `${IMG}/video-thumb-analyze.webp`,
   },
   {
     id: 'homiio',
     label: 'Homiio',
+    description: 'Rental made easy',
     heading: 'Home for everyone.<br>Affordable by design.',
     thumb: `${IMG}/video-thumb-act.webp`,
   },
   {
     id: 'alia',
     label: 'Alia',
+    description: 'Intelligent assistant',
+    icon: '/images/apps/alia.svg',
     heading: 'Intelligence with integrity.<br>AI for good.',
     thumb: '/images/screenshots/alia-app.png',
   },
@@ -404,6 +373,7 @@ function FeaturesSection() {
   const [active, setActive] = useState(0)
   const [progress, setProgress] = useState(0)
   const [playing, setPlaying] = useState(true)
+  const { data: products = [] } = useProducts({ surface: 'products' })
 
   useEffect(() => {
     if (!playing) return
@@ -437,8 +407,8 @@ function FeaturesSection() {
   return (
     <section className="bg-surface text-foreground">
       <div className="container">
-        <div className="flex flex-col gap-3 py-4 lg:gap-4 lg:py-5">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="grid gap-5 py-4 md:grid-cols-2 lg:grid-cols-3 lg:items-start lg:gap-6 lg:py-8">
+          <div className="flex flex-col gap-4">
             <div className="max-w-3xl">
               <p className="mb-3 text-label-sm font-bold uppercase tracking-widest text-primary">Products with a point</p>
               <AnimatedTitle as="h2" className="max-w-[22em] text-2xl lg:text-3xl">
@@ -448,7 +418,7 @@ function FeaturesSection() {
                 Every Oxy product shares the same open foundation: identity, privacy, and technology that stays in your hands.
               </p>
             </div>
-            <div className="flex items-center gap-3 lg:pb-1">
+            <div className="flex items-center gap-3">
               <span className="text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">{activeFeature.label}</span>
               <div className="h-1 w-20 overflow-hidden rounded-full bg-foreground/10" aria-hidden="true">
                 <span className="block h-full bg-primary transition-[width]" style={{ width: displayedProgress + '%' }} />
@@ -462,45 +432,62 @@ function FeaturesSection() {
                 {playing ? <Pause size={15} weight="bold" aria-hidden="true" /> : <Play size={15} weight="fill" aria-hidden="true" />}
               </button>
             </div>
+
           </div>
 
-          <div className="grid grid-cols-3 gap-1.5 lg:grid-cols-6">
-            {FEATURE_TABS.map((t, i) => (
-              <button
-                key={t.id}
-                type="button"
-                className={`min-h-10 cursor-pointer rounded-full px-4 py-1.5 text-left text-sm font-semibold transition-colors ${
-                  i === active ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground hover:bg-foreground/5'
-                }`}
-                onClick={() => handleTabClick(i)}
-                aria-pressed={i === active}
-              >
-                {t.label}
-              </button>
-            ))}
+          <div className="grid min-w-0 grid-cols-2 content-start gap-x-5 gap-y-4">
+            {FEATURE_TABS.map((t, i) => {
+              const product = products.find((item) => item.productId === t.id)
+              const selected = i === active
+
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  className={`group flex min-w-0 cursor-pointer items-start gap-2.5 text-left transition-opacity ${
+                    selected ? 'text-primary' : 'text-foreground hover:opacity-65'
+                  }`}
+                  onClick={() => handleTabClick(i)}
+                  aria-pressed={selected}
+                >
+                  <span className={`size-10 shrink-0 overflow-hidden rounded-xl ${t.id === 'alia' ? 'bg-white' : 'bg-surface'}`}>
+                    {product ? <AppIcon product={product} /> : t.icon ? <img src={t.icon} alt="" aria-hidden="true" className="size-full object-cover" /> : t.id === 'homiio' ? <span className="flex size-full items-center justify-center text-primary"><HouseSimple size={22} weight="duotone" aria-hidden="true" /></span> : <span className="flex size-full items-center justify-center font-display text-sm">{t.label.charAt(0)}</span>}
+                  </span>
+                  <span className="flex min-w-0 flex-col gap-0.5 pt-0.5">
+                    <span className="block text-sm font-medium leading-4">{t.label}</span>
+                    <span className="flex items-center gap-0.5 text-primary" aria-label="Featured app">
+                      {Array.from({ length: 5 }, (_, star) => <Star key={star} size={8} weight="fill" aria-hidden="true" />)}
+                    </span>
+                    <span className="block text-[11px] leading-4 text-muted-foreground">
+                      {product?.tagline || t.description}
+                    </span>
+                  </span>
+                </button>
+              )
+            })}
           </div>
 
-          <div className="grid gap-3 rounded-3xl bg-background p-2 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,1.4fr)] lg:p-3">
-            <div className="flex flex-col justify-between gap-3 p-2">
-              <div>
+          <div className="flex min-w-0 flex-col">
+            <div className="grid gap-3 rounded-3xl bg-background p-2 lg:p-3">
+              <div className="p-2">
                 <p className="mb-3 text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">{activeFeature.label}</p>
-                <h3 className="max-w-[16em] text-xl lg:text-2xl">
+                <h3 className="text-xl lg:text-2xl">
                   {activeFeature.heading.split('<br>').map((line) => (
                     <span key={line} className="block">{line}</span>
                   ))}
                 </h3>
               </div>
-            </div>
-            <div className="group relative aspect-[16/9] overflow-hidden rounded-2xl bg-surface lg:aspect-[16/5]">
-              <img
-                src={activeFeature.thumb}
-                alt={activeFeature.label + ' product preview'}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                width={1200}
-                height={800}
-                loading="lazy"
-                decoding="async"
-              />
+              <div className="group relative aspect-[16/5] overflow-hidden rounded-2xl bg-surface">
+                <img
+                  src={activeFeature.thumb}
+                  alt={activeFeature.label + ' product preview'}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  width={1200}
+                  height={900}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -1008,10 +995,10 @@ export default function HomePage() {
         <ValuesSection />
         <FeaturesSection />
         {(FEATURES.SHOW_HOMEPAGE_STATS || FEATURES.SHOW_TESTIMONIALS) && <StatsAndTestimonialsSection />}
-        <IndependentEcosystemSection />
-        <EcosystemStack />
         <EcosystemSection />
         <FairCoinSection />
+        <AIResearchFeatureGrid />
+        <OxyCommunityTicker />
         <PartnershipSection />
         <AIResearchSection />
         <CommonsAppSection />
@@ -1019,8 +1006,6 @@ export default function HomePage() {
         <FaqSection
           title="Frequently asked questions."
           items={homeFaqs}
-          borderTop={FEATURES.SHOW_TRUSTED_LOGOS}
-          borderBottom
         />
       </main>
       <Footer hideTopDivider />

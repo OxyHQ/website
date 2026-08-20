@@ -10,6 +10,7 @@ import { LocaleProvider, DEFAULT_LOCALE, SUPPORTED_LOCALES } from './lib/i18n'
 import { setOxyServices } from './api/client'
 import { isFairCoinHost } from './lib/host'
 import ErrorBoundary from './components/ErrorBoundary'
+import IntercomMessenger from './components/integrations/IntercomMessenger'
 
 import HomePage from './pages/HomePage'
 // Lazy on purpose, and it must stay that way. `FairCoinLandingContent` pulls in
@@ -23,7 +24,6 @@ const FairCoinBridgePage = lazy(() => import('./pages/FairCoinBridge'))
 const FairCoinBuyPage = lazy(() => import('./pages/FairCoinBuy'))
 const FairCoinUnwrapPage = lazy(() => import('./pages/FairCoinUnwrap'))
 const FairCoinWalletPage = lazy(() => import('./pages/FairCoinWallet'))
-const FixedPromptInput = lazy(() => import('./components/ui/FixedPromptInput'))
 
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 const PartnersPage = lazy(() => import('./pages/PartnersPage'))
@@ -385,6 +385,7 @@ export default function App() {
           <AppSetup>
             <BrowserRouter>
               <ScrollToTop />
+              <IntercomMessenger />
               <Suspense fallback={<div className="min-h-screen" />}>
                   <Routes>
                     {/* Guarded: /admin/* is a top-level route with no shared
@@ -427,7 +428,6 @@ export default function App() {
                     ))}
                     <Route path={`${DEFAULT_LOCALE}/*`} element={<CollapseDefaultLocalePrefix />} />
                   </Routes>
-                  <FixedPromptInput />
               </Suspense>
             </BrowserRouter>
           </AppSetup>

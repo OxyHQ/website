@@ -18,6 +18,10 @@ export const config = {
    */
   databaseUrl: process.env.DATABASE_URL || '',
   oxyApiBase: process.env.OXY_API_BASE || 'https://api.oxy.so',
+  // Server-only secret used to sign Intercom Messenger JWTs for authenticated
+  // Oxy users. It is optional so visitors keep working before the workspace
+  // security setting and production secret are enabled.
+  intercomMessengerSecret: process.env.INTERCOM_MESSENGER_SECRET || '',
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   // Canonical public origin used to build absolute URLs (sitemap, feeds).
   siteUrl: process.env.SITE_URL || 'https://oxy.so',

@@ -57,10 +57,8 @@ export const globeTextRight = 'Your World'
 /* ── Section 4: Research CTA ── */
 
 export const researchHeading = 'AI for Research'
-export const researchParagraphs = [
-  "At Oxy, we want AI to help advance research across science, healthcare, and human understanding — the problems that matter most.",
-  'From scientific computing and data analysis to modeling and the social sciences, {highlight} is designed to help researchers push the boundaries of what\'s possible.',
-]
+export const researchParagraph =
+  'At Oxy, we combine external models from providers like OpenAI, Anthropic, and Meta with the development of our own models. With {highlight}, we work to advance scientific research, healthcare, and human understanding through technology that is open, transparent, and ethical, keeping people in control.'
 export const researchHighlight = 'Oxy AI'
 export const researchCta = 'Learn more'
 export const researchCtaHref = '/initiative'

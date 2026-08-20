@@ -50,6 +50,14 @@ function XIcon() {
   )
 }
 
+function FacebookIcon() {
+  return (
+    <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 0C5.373 0 0 5.373 0 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.356c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.514c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 22.954 24 17.99 24 12C24 5.373 18.627 0 12 0z" />
+    </svg>
+  )
+}
+
 function MentionFooterIcon() {
   return (
     <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
@@ -74,6 +82,7 @@ interface SocialLink {
 const SOCIAL_URLS = {
   linkedIn: 'https://www.linkedin.com/company/oxyhq/',
   x: 'https://x.com/oxyhqinc',
+  facebook: 'https://facebook.com/OxyHQ',
   mention: 'https://mention.earth',
 } as const
 
@@ -165,6 +174,7 @@ export default function Footer({
   const defaultSocial: readonly SocialLink[] = [
     { label: t('footer.socialLinkedIn'), icon: LinkedInIcon, href: SOCIAL_URLS.linkedIn },
     { label: t('footer.socialX'), icon: XIcon, href: SOCIAL_URLS.x },
+    { label: 'Facebook', icon: FacebookIcon, href: SOCIAL_URLS.facebook },
     { label: t('footer.socialMention'), icon: MentionFooterIcon, href: SOCIAL_URLS.mention },
   ]
   const defaultLegal: readonly LegalLink[] = [

@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom'
 export function NavCard({ card, className = '' }: { card: NavDropdownCard; className?: string }) {
   const inner = (
     <>
-      <span className="block h-40 w-full overflow-hidden rounded-md border border-border bg-surface">
+      <span className="block h-40 w-full overflow-hidden rounded-md bg-surface">
         <img
           src={card.image}
           alt={card.alt ?? ''}

@@ -1,74 +1,60 @@
-interface ResearchFeature {
-  image: string
-  title: string
-  description: string
-}
-
-const RESEARCH_FEATURES: ResearchFeature[] = [
-  {
-    image: '/ai/pro-left.avif',
-    title: 'All the models, one accurate answer',
-    description:
-      'Choose the right model for the question. Oxy AI brings different capabilities together so every search can be answered with more context and clarity.',
-  },
-  {
-    image: '/ai/cta-desktop-bg.png',
-    title: 'See the source behind every answer',
-    description:
-      'Research should be easy to verify. Follow the evidence, understand the context, and keep control of the conclusions you draw.',
-  },
-  {
-    image: '/ai/feature-integrations.png',
-    title: 'Deep Research for a complete report',
-    description:
-      'Ask the bigger question. Oxy AI can connect the dots across your work and help turn a broad investigation into a clear next step.',
-  },
-]
+import Button from '../ui/Button'
+import {
+  researchHeading, researchParagraph, researchHighlight,
+  researchCta, researchCtaHref,
+} from '../../data/ai'
 
 /**
- * Compact research feature grid shared by the home page and the AI page.
- * `framed` keeps the existing composition API for callers that already own a
- * page frame, while the section itself remains full bleed.
+ * Reusable "AI for Research" section.
+ * Renders as a `<div>` (not `<section>`) so it can be composed
+ * inside a parent `<section>` wrapper with additional effects.
+ *
+ * It brings its own page frame by default. Pass `framed={false}` when the
+ * caller already provides one: a `container` inside a `container` applies the
+ * gutter twice and pushes the block a full gutter inside every other section.
  */
 export default function AIResearchSection({ framed = true }: { framed?: boolean }) {
   return (
-    <section className="bg-background text-foreground">
-      <div className={framed ? 'container' : undefined}>
-        <div className="mx-auto w-full max-w-[90rem] py-12 md:py-16 lg:py-20">
-          <div className="mx-auto max-w-4xl text-center">
-            <h2 className="mx-auto max-w-4xl text-balance text-3xl font-medium tracking-tight sm:text-4xl lg:text-5xl">
-              Engineered to get it right
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-pretty text-base text-muted-foreground sm:text-lg">
-              The best models, the recent data, and a source behind every claim.
-            </p>
-          </div>
+    <div className="relative w-full overflow-hidden">
+      <div className="grid min-h-[420px] grid-cols-[clamp(56px,12vw,360px)_minmax(0,1fr)_clamp(56px,12vw,360px)] items-center justify-center gap-4 py-6 lg:min-h-[480px] lg:grid-cols-[360px_minmax(0,40%)_360px]">
+        <div className="flex h-full min-w-0 items-center justify-end overflow-hidden">
+          <img
+            src="/ai/pro-left.avif"
+            alt="AI research visualization"
+            className="pointer-events-none aspect-[3/4] w-[360px] max-w-none shrink-0 object-contain"
+            loading="lazy"
+            width={360}
+            height={480}
+          />
+        </div>
 
-          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3 lg:mt-12">
-            {RESEARCH_FEATURES.map((feature) => (
-              <article key={feature.title} className="flex min-w-0 flex-col gap-5 lg:gap-7">
-                <div className="aspect-square w-full overflow-hidden rounded-2xl bg-foreground/[0.04]">
-                  <img
-                    src={feature.image}
-                    alt=""
-                    aria-hidden="true"
-                    className="size-full object-cover transition-transform duration-500 hover:scale-[1.03]"
-                    loading="lazy"
-                    width={800}
-                    height={800}
-                  />
-                </div>
-                <div className="flex w-full flex-col gap-3 px-1 lg:gap-4">
-                  <h3 className="text-xl font-medium tracking-tight">{feature.title}</h3>
-                  <p className="text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
-                    {feature.description}
-                  </p>
-                </div>
-              </article>
-            ))}
+        <div className="flex min-w-0 w-full justify-center">
+          <div className={`flex w-full flex-col items-center space-y-8 text-center ${framed ? 'max-w-[560px]' : 'max-w-[640px]'}`}>
+            <h2 className="text-foreground text-balance text-3xl tracking-tight md:text-4xl lg:text-5xl">{researchHeading}</h2>
+
+            <p className="text-justify text-muted-foreground text-lg sm:text-xl">
+              {researchParagraph.split('{highlight}')[0]}
+              <span className="text-foreground font-medium">{researchHighlight}</span>
+              {researchParagraph.split('{highlight}')[1]}
+            </p>
+
+            <Button variant="outline" size="md" href={researchCtaHref}>
+              {researchCta}
+            </Button>
           </div>
         </div>
+
+        <div className="flex h-full min-w-0 items-center justify-start overflow-hidden">
+          <img
+            src="/ai/pro-right.avif"
+            alt="AI research visualization"
+            className="pointer-events-none aspect-[3/4] w-[360px] max-w-none shrink-0 object-contain"
+            loading="lazy"
+            width={360}
+            height={480}
+          />
+        </div>
       </div>
-    </section>
+    </div>
   )
 }

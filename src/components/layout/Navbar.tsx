@@ -531,16 +531,14 @@ export default function Navbar({
   const measureNavRow = useCallback((node: HTMLElement | null) => {
     if (!node) return
     const publish = () => {
-      const header = node.closest('header')
-      const border = header ? Number.parseFloat(getComputedStyle(header).borderBottomWidth) || 0 : 0
       const rect = node.getBoundingClientRect()
       document.documentElement.style.setProperty(
         '--site-header-height',
-        `${Math.round(rect.height + border)}px`,
+        `${Math.round(rect.height)}px`,
       )
       document.documentElement.style.setProperty(
         '--site-header-occlusion-bottom',
-        `${Math.round(bannerOffsetRef.current + rect.height + border)}px`,
+        `${Math.round(bannerOffsetRef.current + rect.height)}px`,
       )
 
     }
@@ -634,7 +632,7 @@ export default function Navbar({
                 <ArrowRightIcon className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50" />
               </Link>
               <button
-                className="inline-flex cursor-pointer items-center justify-center text-nowrap border text-base transition-colors duration-300 ease-in-out hover:duration-50 active:duration-50 disabled:pointer-events-none disabled:cursor-default size-8 rounded-full button-outline !bg-transparent !border-transparent dark absolute top-1/2 right-0 -translate-y-1/2 hover:!border-muted-foreground"
+                className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full text-base transition-colors duration-300 hover:bg-white/10 disabled:pointer-events-none dark absolute top-1/2 right-0 -translate-y-1/2"
                 aria-label={t('common.dismissBanner')}
                 onClick={() => setBannerDismissed(true)}
               >
@@ -648,7 +646,7 @@ export default function Navbar({
       )}
 
     <header
-      className={`fixed left-0 right-0 z-50 border-b transition-[border-color,backdrop-filter] duration-300 ${activeDropdown ? 'border-transparent' : 'border-border'} ${isTransparent ? '' : 'backdrop-blur-md'}`}
+      className={`fixed left-0 right-0 z-50 transition-[backdrop-filter] duration-300 ${isTransparent ? '' : 'backdrop-blur-md'}`}
       style={{
         top: bannerOffset,
         background: isTransparent
@@ -689,29 +687,12 @@ export default function Navbar({
       <div ref={measureNavRow} className="container max-lg:!max-w-full !px-0">
         <nav>
           {/*
-            A row of full-height cells rather than pills floating in a bar: each
-            one runs the height of the header and the rules between them carry
-            the structure. The row uses the same capped frame as the page, but
-            gives up the container's gutter so the brand cell starts on the
-            frame edge and the first trigger starts on the page content edge.
-          */}
-          {/*
-            The rule stays on even over a transparent bar: it is what separates
-            the header from the page, and at the top of a page — exactly where
-            the bar is transparent — there was nothing marking where it ended.
-          */}
-          {/*
             The row opens and closes on the same square, each flush to its own
             edge: the brand at the left, the last control at the right. The page
             gutter is that square, so a page's first column starts where the
             brand cell ends and its last ends where the final control begins.
           */}
-          {/*
-            The rule under the bar goes transparent while a panel is open, so
-            the trigger and the panel it opened read as one surface instead of
-            being cut apart by a line through the middle. The border box stays,
-            or the row would move a pixel every time a menu opened.
-          */}
+          {/* The shared surface stays continuous while a panel is open. */}
           <div
             className={`flex items-stretch ${activeDropdown ? 'bg-foreground/5' : ''}`}
           >
@@ -725,9 +706,9 @@ export default function Navbar({
             </Link>
 
             {/* Middle: the dropdown triggers, or the search field while it is open */}
-            <div className="flex min-w-0 flex-1 items-stretch border-x border-border">
+            <div className="flex min-w-0 flex-1 items-stretch">
             <div ref={escapeRef} className="relative z-10 flex items-stretch" onMouseLeave={scheduleClose}>
-                <ul className={`hidden items-stretch divide-x divide-border ${searchOpen ? '' : 'lg:flex'}`}>
+                <ul className={`hidden items-stretch gap-1 ${searchOpen ? '' : 'lg:flex'}`}>
                   {dropdowns.map((dd) => (
                     <li key={dd.label}>
                       <button
@@ -808,13 +789,13 @@ export default function Navbar({
                   type="button"
                   onClick={closeSearch}
                   aria-label={t('common.closeSearch')}
-                  className="absolute end-0 top-0 inline-flex size-12 cursor-pointer items-center justify-center border-l border-border text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                  className="absolute end-0 top-0 inline-flex size-12 cursor-pointer items-center justify-center text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
                 >
                   <X className="size-4" />
                 </button>
 
                 {searchQuery.trim() ? (
-                  <div className="absolute inset-x-0 top-full z-50 max-h-[min(70vh,520px)] overflow-y-auto border-b border-border bg-background text-left">
+                  <div className="absolute inset-x-0 top-full z-50 max-h-[min(70vh,520px)] overflow-y-auto bg-background text-left">
                     {flatResults.length === 0 ? (
                       <div className="px-space-sm py-space-2xl text-center text-sm text-muted-foreground">{t('common.noResults')}</div>
                     ) : (
@@ -835,7 +816,7 @@ export default function Navbar({
                                 closeSearch()
                                 navigate(r.url)
                               }}
-                              className={`block w-full cursor-pointer border-t border-border px-space-sm py-space-md text-left transition-colors ${isActive ? 'bg-foreground/5' : ''}`}
+                              className={`block w-full cursor-pointer px-space-sm py-space-md text-left transition-colors ${isActive ? 'bg-foreground/5' : ''}`}
                             >
                               <div className="truncate text-sm text-foreground">{r.title}</div>
                               <div className="truncate text-body-xs text-muted-foreground">{r.subtitle}</div>
@@ -853,7 +834,7 @@ export default function Navbar({
             {/* Right controls (mobile + desktop) */}
             <div className="ms-auto flex items-stretch">
               {/* Mobile controls */}
-              <div className="flex items-stretch divide-x divide-border lg:hidden">
+            <div className="flex items-stretch gap-1 lg:hidden">
               {/* The avatar is the only child of these toggles, and it renders
                   no text, so without a label the button has no accessible name
                   at all — Lighthouse's `button-name` audit fails outright. */}
@@ -886,7 +867,7 @@ export default function Navbar({
             </div>
 
             {/* Desktop buttons */}
-            <div className="hidden items-stretch divide-x divide-border lg:flex">
+            <div className="hidden items-stretch gap-1 lg:flex">
               <button
                 type="button"
                 className={iconButtonClass}
@@ -938,7 +919,7 @@ export default function Navbar({
         <div
           // The panel wears the trigger's hover tint, so opening one reads as that
           // cell growing rather than as a sheet dropping over the page.
-          className={`w-full bg-foreground/5 ${isOpen ? 'border-b border-border' : ''}`}
+          className="w-full bg-foreground/5"
           style={{
             pointerEvents: isOpen ? 'auto' : 'none',
             opacity: isOpen ? 1 : 0,
@@ -1009,7 +990,7 @@ export default function Navbar({
         never moves what you were reading.
       */}
       <div
-        className={`fixed left-0 z-40 w-full overflow-hidden border-t border-border bg-background transition-transform duration-300 ease-out lg:hidden ${
+          className={`fixed left-0 z-40 w-full overflow-hidden bg-background transition-transform duration-300 ease-out lg:hidden ${
           mobileOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{
@@ -1019,7 +1000,7 @@ export default function Navbar({
         aria-hidden={!mobileOpen}
       >
         <div className="absolute inset-0 flex flex-col">
-          <div className="flex-1 divide-y divide-border overflow-y-auto overscroll-contain">
+          <div className="flex-1 overflow-y-auto overscroll-contain">
             {dropdowns.map((dd) => (
               <button
                 key={dd.label}
@@ -1056,7 +1037,7 @@ export default function Navbar({
           </div>
 
           {ctaButtons ? (
-            <div className="flex shrink-0 flex-col gap-2 border-t border-border p-4">{ctaButtons}</div>
+            <div className="flex shrink-0 flex-col gap-2 p-4">{ctaButtons}</div>
           ) : null}
         </div>
 
@@ -1069,7 +1050,7 @@ export default function Navbar({
           >
             <button
               type="button"
-              className="flex w-full items-center gap-2 border-b border-border p-4 text-left transition-colors hover:bg-foreground/5"
+              className="flex w-full items-center gap-2 p-4 text-left transition-colors hover:bg-foreground/5"
               onClick={() => setMobilePanel(null)}
             >
               <ChevronDown className="size-5 shrink-0 rotate-90 text-muted-foreground" />

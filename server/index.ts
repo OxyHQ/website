@@ -45,6 +45,7 @@ import mediaRouter from './routes/media.js'
 import referralsRouter from './routes/referrals.js'
 import fundingRouter from './routes/funding.js'
 import adminAccessRouter from './routes/adminAccess.js'
+import intercomRouter from './routes/intercom.js'
 import { mountMcp } from './mcp.js'
 
 /** Migrations ship beside the server sources, so this resolves in dev and in the image alike. */
@@ -107,6 +108,7 @@ app.use('/api/locales', localesRouter)
 app.use('/api/translations', translationsRouter)
 app.use('/api/backup', backupRouter)
 app.use('/api/upload', uploadRouter)
+app.use('/api/intercom', intercomRouter)
 
 // Admin identity — the SPA's admin gate asks this instead of matching usernames.
 app.use('/api/admin', adminAccessRouter)

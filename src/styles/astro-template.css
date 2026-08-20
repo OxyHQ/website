@@ -1,0 +1,171 @@
+/* Local equivalents for the semantic classes used by the supplied marketing template. */
+.astro-template .bg-base {
+  background-color: var(--color-background);
+}
+
+.astro-template .bg-inverse {
+  background-color: var(--color-background);
+}
+
+.astro-template .bg-button-bg {
+  background-color: var(--color-foreground);
+}
+
+.astro-template .text-primary,
+.astro-template [data-color-scheme='dark'] .text-primary {
+  color: var(--color-foreground);
+}
+
+.astro-template .text-secondary {
+  color: var(--color-muted-foreground);
+}
+
+.astro-template .text-light,
+.astro-template [data-color-scheme='dark'] .text-light {
+  color: var(--color-foreground);
+}
+
+.astro-template .text-inverse {
+  color: var(--color-background);
+}
+
+.astro-template .border-subtle {
+  border-color: color-mix(in srgb, var(--color-foreground) 20%, transparent);
+}
+
+.astro-template .bg-subtle {
+  background-color: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+}
+
+.astro-template .nimbus-headline-xl,
+.astro-template .nimbus-headline-m,
+.astro-template .nimbus-headline-s,
+.astro-template .nimbus-headline-2xs,
+.astro-template .nimbus-body,
+.astro-template .nimbus-body-s,
+.astro-template .nimbus-label-l,
+.astro-template .nimbus-label-s {
+  font-family: var(--font-sans);
+}
+
+.astro-template .nimbus-headline-xl {
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: -0.06em;
+}
+
+.astro-template .nimbus-headline-m {
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.astro-template .nimbus-headline-s {
+  font-size: clamp(1.75rem, 3vw, 3rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+.astro-template .nimbus-headline-2xs {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+.astro-template .nimbus-body {
+  font-size: 1.125rem;
+  line-height: 1.45;
+}
+
+.astro-template .nimbus-body-s {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.astro-template .nimbus-label-l,
+.astro-template .nimbus-label-s {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+}
+
+.astro-template ._root_hbqvj_1 {
+  width: 100%;
+  overflow: hidden;
+}
+
+.astro-template ._track_hbqvj_27 {
+  display: flex;
+  width: max-content;
+}
+
+.astro-template ._segment_hbqvj_40 {
+  display: flex;
+}
+
+.astro-template .astro-hero-background {
+  opacity: 0.32;
+}
+
+.astro-template .astro-cta-background {
+  opacity: 0.32;
+}
+
+.astro-template [data-astro-parallax] {
+  transform: translate3d(0, var(--astro-parallax-y, 0px), 0);
+  will-change: transform;
+}
+
+.astro-template.astro-motion-ready [data-astro-reveal] {
+  opacity: 0;
+  transform: translate3d(0, calc(24px + var(--astro-parallax-y, 0px)), 0);
+  transition: opacity 700ms ease-out, transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.astro-template.astro-motion-ready [data-astro-reveal].astro-is-visible {
+  opacity: 1;
+  transform: translate3d(0, var(--astro-parallax-y, 0px), 0);
+}
+
+.astro-template.astro-motion-ready [data-astro-delay='1'] {
+  transition-delay: 90ms;
+}
+
+.astro-template.astro-motion-ready [data-astro-delay='2'] {
+  transition-delay: 180ms;
+}
+
+.astro-template.astro-motion-ready [data-astro-delay='3'] {
+  transition-delay: 270ms;
+}
+
+.astro-template.astro-motion-ready [data-astro-delay='4'] {
+  transition-delay: 360ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .astro-template [data-astro-parallax],
+  .astro-template.astro-motion-ready [data-astro-reveal],
+  .astro-template.astro-motion-ready [data-astro-reveal].astro-is-visible {
+    transform: none;
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .astro-template ._track_hbqvj_27 {
+    animation: astro-template-marquee 60s linear infinite;
+  }
+}
+
+@keyframes astro-template-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}

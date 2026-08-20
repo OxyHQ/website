@@ -3,6 +3,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_OXY_CLIENT_ID?: string
+  readonly VITE_INTERCOM_APP_ID?: string
 }
 
 declare module 'swiper/css' { const content: string; export default content }
@@ -19,4 +20,3 @@ declare module '*.md' {
   const MDXComponent: ComponentType<Record<string, unknown>>
   export default MDXComponent
 }
-

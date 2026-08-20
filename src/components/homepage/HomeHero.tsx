@@ -180,12 +180,7 @@ export default function HomeHero() {
           .set(heading, { width: heading.offsetWidth })
           .to(heading, { y: '-50dvh', duration: 1 }, 0)
           .to([leftTop, leftBottom], { width: 0, y: '-50dvh', duration: 1 }, 0)
-          .to(
-            rightTopInner,
-            { borderLeftWidth: 0, borderBottomWidth: 0, width: geometry.width, height: '100dvh', duration: 1 },
-            0,
-          )
-          .to(rightTop, { borderBottomWidth: 0, duration: 1 }, 0)
+          .to(rightTopInner, { width: geometry.width, height: '100dvh', duration: 1 }, 0)
           .fromTo(
             copy,
             { x: 0, y: 0, scale: geometry.scale },
@@ -258,28 +253,29 @@ export default function HomeHero() {
   return (
     <motion.section
       ref={sectionRef}
-      className="block w-full border-b border-border max-lg:min-h-svh lg:min-h-[200dvh]"
+      className="block w-full bg-background max-lg:min-h-svh lg:min-h-[200dvh]"
       onViewportEnter={() => setHeroVisible(true)}
       onViewportLeave={() => setHeroVisible(false)}
       viewport={{ amount: 0 }}
     >
-      <div
-        className="container max-lg:!max-w-full max-lg:!px-0 lg:min-h-[200dvh]"
-      >
+      <div className="w-full max-w-none px-0 lg:min-h-[200dvh]">
         <div
           ref={stickyRef}
-          className="sticky top-0 flex h-auto overflow-hidden bg-background before:pointer-events-none before:absolute before:inset-x-0 before:bottom-0 before:top-[var(--site-header-occlusion-bottom)] before:z-20 before:border-x before:border-border before:content-[''] max-lg:min-h-svh max-lg:flex-col lg:min-h-dvh lg:flex-wrap"
+          className="sticky top-0 flex h-auto overflow-hidden bg-background max-lg:min-h-svh max-lg:flex-col lg:min-h-dvh lg:flex-wrap"
         >
         {/* Top band — 60dvh */}
         <div className="flex w-full max-lg:flex-1 max-lg:pt-28 lg:h-[60dvh]">
           <div ref={leftTopRef} className="w-full shrink-0 lg:w-[70%]">
             <div className="flex size-full flex-col justify-end">
-              <div ref={titleRef} className="flex flex-col justify-end px-4 will-change-transform lg:pb-10 lg:pl-10 lg:pr-0">
+              <div
+                ref={titleRef}
+                className="flex flex-col justify-end px-[var(--layout-gutter)] will-change-transform lg:px-0 lg:pb-10 lg:pe-0 lg:ps-[max(var(--layout-gutter),calc((100vw-var(--layout-max-width))/2+var(--layout-gutter)))]"
+              >
                 <AnimatedTitle
                   as="h1"
                   randomness={1}
                   grow
-                  className="font-display text-[clamp(2.25rem,4.4vw,5.25rem)] font-medium leading-[0.95] tracking-[-0.04em]"
+                  className="font-display text-[clamp(2.25rem,3.6vw,4rem)] font-medium leading-[0.95] tracking-[-0.04em]"
                 >
                   {title}
                 </AnimatedTitle>
@@ -290,7 +286,7 @@ export default function HomeHero() {
                 they read here instead — one step down in size, because on this
                 width they sit under the headline rather than beside it.
               */}
-              <div className="flex flex-col items-start gap-6 px-4 pb-8 pt-6 lg:hidden">
+              <div className="flex flex-col items-start gap-6 px-[var(--layout-gutter)] pb-8 pt-6 lg:hidden">
                 <div className="flex flex-col items-start text-body-lg text-muted-foreground">
                   {SENTENCES.map((sentence) => (
                     <p key={sentence}>{sentence}</p>
@@ -308,7 +304,7 @@ export default function HomeHero() {
           <div ref={rightTopRef} className="hidden w-full max-w-[30%] lg:block">
             <div
               ref={rightTopInnerRef}
-              className="relative z-[5] flex size-full items-end justify-start border-b border-l border-border bg-background"
+              className="relative z-[5] flex size-full items-end justify-start bg-background"
             >
               {/*
                 No width here on purpose. As a flex item holding `nowrap`
@@ -483,7 +479,7 @@ function FeaturedNews() {
   if (!post) return null
 
   return (
-    <div className="flex w-full overflow-hidden border border-border bg-background">
+    <div className="flex w-full overflow-hidden bg-background">
       <Link
         to={`/newsroom/${post.slug}`}
         className="flex w-full min-w-0 items-center justify-between gap-4 p-2 transition-colors hover:bg-foreground/5"

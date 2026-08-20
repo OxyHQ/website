@@ -34,6 +34,7 @@ jobs:
           # it is public by construction, and a secret would only make it
           # unreadable — costing the ability to verify what production uses.
           VITE_OXY_CLIENT_ID: ${{ vars.VITE_OXY_CLIENT_ID }}
+          VITE_INTERCOM_APP_ID: ${{ vars.VITE_INTERCOM_APP_ID }}
 
       - uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd
         with:
