@@ -88,6 +88,10 @@ const zh: Translations = {
   },
   home: {
     ...en.home,
+    appsFeaturesTitle: '以人为本的应用',
+    appsFeaturesDescription: '探索专为协同工作而打造的 Oxy 应用，让你在日常生活中拥有更多选择、隐私与掌控力。',
+    valuePeopleTitle: '人，才是改变的力量。',
+    valuePeopleDescription: '科技真正重要，是因为它让人们拥有更多自主权、连接和共同成长的空间。',
     heroTitleDefault: '创造一个未来,让技术赋能个人\n过上连接、充实、可持续的生活。',
     allInOneHeadingLine1: '为所有人构建,',
     allInOneHeadingLine2: '不仅仅是为你自己。',

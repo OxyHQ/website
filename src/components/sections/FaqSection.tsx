@@ -19,17 +19,33 @@ export interface FaqEntry {
   answer: ReactNode
 }
 
+export interface FaqGroup {
+  title?: string
+  items: readonly FaqEntry[]
+}
+
 interface FaqSectionProps {
   /** The heading over the set. */
   title: string
-  items: readonly FaqEntry[]
+  items?: readonly FaqEntry[]
+  groups?: readonly FaqGroup[]
   /** Heading level. One `h1` per page, so a section defaults to `h2`. */
   as?: 'h2' | 'h3'
   className?: string
 }
 
-function FaqRow({ item }: { item: FaqEntry }) {
-  const [open, setOpen] = useState(false)
+function FaqRow({
+  item,
+  rowId,
+  openId,
+  onToggle,
+}: {
+  item: FaqEntry
+  rowId: string
+  openId: string | null
+  onToggle: (rowId: string) => void
+}) {
+  const open = openId === rowId
   const panelId = useId()
 
   return (
@@ -39,7 +55,7 @@ function FaqRow({ item }: { item: FaqEntry }) {
         className="flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-3.5 text-left transition-[background-color,color] duration-300 hover:bg-primary/10 md:py-4"
         aria-expanded={open}
         aria-controls={panelId}
-        onClick={() => setOpen((current) => !current)}
+        onClick={() => onToggle(rowId)}
       >
         <span className="text-lg font-medium leading-snug text-primary-text md:text-xl">{item.question}</span>
         <ChevronDown
@@ -70,22 +86,46 @@ function FaqRow({ item }: { item: FaqEntry }) {
 export default function FaqSection({
   title,
   items,
+  groups: groupsProp,
   as = 'h2',
   className = '',
 }: FaqSectionProps) {
+  const groups = groupsProp ?? [{ items: items ?? [] }]
+  const [openId, setOpenId] = useState<string | null>(null)
+
+  const toggleRow = (rowId: string) => {
+    setOpenId((current) => current === rowId ? null : rowId)
+  }
+
   return (
     <section className={`w-full ${className}`}>
       <div className="container">
         <div className="grid w-full gap-6 py-8 md:gap-8 md:py-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-12">
-          <div className="min-w-0 self-start lg:pt-2 lg:sticky lg:top-[calc(var(--site-header-height)+2rem)]">
-            <AnimatedTitle as={as} className="text-heading-responsive-lg font-medium text-tertiary [&>p]:font-medium">
+          <div className="min-w-0 self-start lg:pt-2 lg:sticky lg:top-[40vh]">
+            <AnimatedTitle as={as} className="text-heading-responsive-lg !text-[3rem] !leading-[3.25rem] font-medium text-tertiary [&>p]:font-medium">
               {title}
             </AnimatedTitle>
           </div>
 
-          <div className="min-w-0 overflow-hidden rounded-[2rem] bg-[color-mix(in_srgb,var(--background)_84%,var(--primary))]">
-            {items.map((item) => (
-              <FaqRow key={item.question} item={item} />
+          <div className="min-w-0 space-y-8">
+            {groups.map((group, groupIndex) => (
+              <div key={group.title ?? `faq-group-${groupIndex}`}>
+                {group.title && <h3 className="mb-3 px-1 text-sm font-medium uppercase tracking-[0.08em] text-tertiary">{group.title}</h3>}
+                <div className="overflow-hidden rounded-[2rem] bg-[color-mix(in_srgb,var(--background)_84%,var(--primary))]">
+                  {group.items.map((item, itemIndex) => {
+                    const rowId = `${groupIndex}-${itemIndex}`
+                    return (
+                    <FaqRow
+                      key={rowId}
+                      item={item}
+                      rowId={rowId}
+                      openId={openId}
+                      onToggle={toggleRow}
+                    />
+                    )
+                  })}
+                </div>
+              </div>
             ))}
           </div>
         </div>

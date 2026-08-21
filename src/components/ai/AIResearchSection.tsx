@@ -16,8 +16,9 @@ export default function AIResearchSection({ framed = true }: { framed?: boolean 
   const researchParagraph = t('home.researchParagraph')
   const researchHighlight = t('home.researchHighlight')
   return (
-    <div className="relative w-full overflow-hidden bg-[url('/ai/research/ai-research-bg.png')] bg-cover bg-center text-foreground">
-      <div className="grid min-h-[420px] grid-cols-[clamp(56px,12vw,360px)_minmax(0,1fr)_clamp(56px,12vw,360px)] items-center justify-center gap-4 py-6 lg:min-h-[480px] lg:grid-cols-[360px_minmax(0,40%)_360px]">
+    <div className="relative w-full overflow-hidden bg-[url('/ai/research/06.webp')] bg-cover bg-top text-foreground">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-black/20 backdrop-blur-[6px]" />
+      <div className="relative z-10 grid min-h-[420px] grid-cols-[clamp(56px,12vw,360px)_minmax(0,1fr)_clamp(56px,12vw,360px)] items-center justify-center gap-4 py-6 lg:min-h-[480px] lg:grid-cols-[360px_minmax(0,40%)_360px]">
         <div className="flex h-full min-w-0 items-center justify-end overflow-hidden">
           <img
             src="/ai/pro-left.avif"
@@ -39,7 +40,7 @@ export default function AIResearchSection({ framed = true }: { framed?: boolean 
               {researchParagraph.split('{highlight}')[1]}
             </p>
 
-            <Button variant="outline" size="md" href={researchCtaHref}>
+            <Button variant="inverse" size="md" href={researchCtaHref} className="!bg-primary !text-foreground">
               {t('home.researchCta')}
             </Button>
           </div>

@@ -88,6 +88,10 @@ const ca: Translations = {
   },
   home: {
     ...en.home,
+    appsFeaturesTitle: 'Aplicacions que posen les persones al davant',
+    appsFeaturesDescription: 'Descobreix les aplicacions d’Oxy dissenyades per treballar juntes i donar-te més opcions, privadesa i control en el dia a dia.',
+    valuePeopleTitle: 'Les persones marquen la diferència.',
+    valuePeopleDescription: 'La tecnologia importa més quan dona a les persones més autonomia, connexió i espai per créixer juntes.',
     heroTitleDefault: 'Creant un futur on la tecnologia empodera les persones\nper viure vides connectades, plenes i sostenibles.',
     allInOneHeadingLine1: 'Construït per a tothom,',
     allInOneHeadingLine2: 'no només per a tu.',

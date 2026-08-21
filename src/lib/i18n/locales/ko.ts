@@ -88,6 +88,10 @@ const ko: Translations = {
   },
   home: {
     ...en.home,
+    appsFeaturesTitle: '사람을 가장 먼저 생각하는 앱',
+    appsFeaturesDescription: '함께 작동하도록 설계된 Oxy 앱을 만나보세요. 일상에서 더 많은 선택권과 개인정보 보호, 통제력을 제공합니다.',
+    valuePeopleTitle: '사람이 차이를 만듭니다.',
+    valuePeopleDescription: '기술은 사람들에게 더 많은 주도권과 연결, 함께 성장할 여지를 줄 때 가장 큰 의미를 가집니다.',
     heroTitleDefault: '기술이 개인에게 힘을 실어\n연결되고 충만하며 지속 가능한 삶을 살 수 있는 미래를 만듭니다.',
     allInOneHeadingLine1: '자신만이 아니라,',
     allInOneHeadingLine2: '모두를 위해 만듭니다.',

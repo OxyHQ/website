@@ -2,7 +2,7 @@ import type { ReactNode, AnchorHTMLAttributes, ButtonHTMLAttributes } from 'reac
 import { Link } from 'react-router-dom'
 import { Button as BloomButton } from '@oxyhq/bloom/button'
 
-type Variant = 'primary' | 'outline' | 'ghost'
+type Variant = 'primary' | 'outline' | 'ghost' | 'inverse'
 type Size = 'sm' | 'md' | 'lg'
 
 interface ButtonBaseProps {

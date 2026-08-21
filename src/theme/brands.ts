@@ -63,8 +63,21 @@ export interface BrandSurface {
 export const BRAND_SURFACES: readonly BrandSurface[] = [
   { selector: '.cursor-theme', seed: '#7c5aed', mode: 'dark', label: 'Codea' },
   { selector: '.oxyos-theme', seed: '#8b6fc0', mode: 'dark', label: 'OxyOS' },
+  {
+    selector: '.oxyos-card-theme',
+    seed: APP_COLOR_PRESETS[SITE_PRESET].hex,
+    mode: 'auto',
+    label: 'OxyOS app cards',
+  },
   { selector: '.tnp-theme', seed: '#10b981', mode: 'dark', label: 'TNP' },
   { selector: '.astro-theme', seed: '#1d9bf0', mode: 'auto', label: 'Astro' },
+  {
+    selector: '.astro-card-theme',
+    seed: APP_COLOR_PRESETS.azure.hex,
+    tertiarySeed: APP_COLOR_PRESETS.azure.tertiaryHex,
+    mode: 'auto',
+    label: 'Astro app cards',
+  },
   {
     selector: '.faircoin-theme',
     seed: APP_COLOR_PRESETS[FAIRCOIN_PRESET].hex,
@@ -89,6 +102,12 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     seed: APP_COLOR_PRESETS.yellow.hex,
     mode: 'auto',
     label: 'Homiio ticker cards',
+  },
+  {
+    selector: '.inbox-theme',
+    seed: APP_COLOR_PRESETS.blue.hex,
+    mode: 'auto',
+    label: 'Inbox app cards',
   },
   {
     selector: '.build-theme',

@@ -88,6 +88,10 @@ const pt: Translations = {
   },
   home: {
     ...en.home,
+    appsFeaturesTitle: 'Apps que colocam as pessoas em primeiro lugar',
+    appsFeaturesDescription: 'Descubra as apps Oxy concebidas para trabalhar em conjunto e dar-lhe mais escolha, privacidade e controlo no dia a dia.',
+    valuePeopleTitle: 'As pessoas fazem a diferença.',
+    valuePeopleDescription: 'A tecnologia importa mais quando dá às pessoas mais autonomia, conexão e espaço para crescerem juntas.',
     heroTitleDefault: 'Criar um futuro em que a tecnologia capacita as pessoas\npara viverem vidas ligadas, plenas e sustentáveis.',
     allInOneHeadingLine1: 'Construído para todos,',
     allInOneHeadingLine2: 'não apenas para si.',

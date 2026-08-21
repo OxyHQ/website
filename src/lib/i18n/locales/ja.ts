@@ -88,6 +88,10 @@ const ja: Translations = {
   },
   home: {
     ...en.home,
+    appsFeaturesTitle: '人を第一に考えるアプリ',
+    appsFeaturesDescription: '日々の暮らしに、より多くの選択肢とプライバシー、コントロールをもたらす、連携して使えるOxyのアプリをご紹介します。',
+    valuePeopleTitle: '人が違いを生む。',
+    valuePeopleDescription: 'テクノロジーは、人々により多くの主体性とつながり、共に成長する余白を与えてこそ意味を持ちます。',
     heroTitleDefault: 'テクノロジーが個人を支え、\nつながり、満たされ、持続可能な人生を送れる未来を創る。',
     allInOneHeadingLine1: '自分のためだけでなく、',
     allInOneHeadingLine2: 'みんなのために作る。',

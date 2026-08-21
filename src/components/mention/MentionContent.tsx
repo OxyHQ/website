@@ -18,6 +18,7 @@ import mediumLogo from '../../assets/mention/integrations/medium.svg'
 import MentionPostCard from './MentionPostCard'
 import MentionProfileCard from './MentionProfileCard'
 import MentionPhone from './MentionPhone'
+import MentionFAQ from './MentionFAQ'
 import { MENTION_POSTS, MENTION_PROFILES, MENTION_HANDLES, type MentionPost } from './data'
 
 const post = (id: string): MentionPost => MENTION_POSTS.find((p) => p.id === id) ?? MENTION_POSTS[0]
@@ -368,6 +369,7 @@ export default function MentionContent() {
         <TypographySection />
         <IntegrationsSection />
         <UniqueLinkSection />
+        <MentionFAQ />
         <JoinSection />
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { useState, useCallback, useLayoutEffect, useRef } from 'react'
 import { motion, useScroll, useSpring, useTransform, useReducedMotion } from 'framer-motion'
-import { ArrowUpRight, BookOpenText, Bug, Code, HandHeart, Megaphone, Translate, UsersThree } from '@phosphor-icons/react'
+import { ArrowUpRight, BookOpenText, Bug, Code, HandHeart, MagnifyingGlass, Megaphone, Newspaper, Translate, UsersThree } from '@phosphor-icons/react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -16,7 +16,7 @@ import 'swiper/css'
 import '../styles/landing.css'
 import AIResearchSection from '../components/ai/AIResearchSection'
 import AIResearchFeatureGrid from '../components/ai/AIResearchFeatureGrid'
-import OxyCommunityTicker from '../components/sections/OxyCommunityTicker'
+import OxyAppsFeatureGrid from '../components/sections/OxyAppsFeatureGrid'
 import OxyUseCasesRolo from '../components/sections/OxyUseCasesRolo'
 import PhotoCardCarousel, { type PhotoCard } from '../components/sections/PhotoCardCarousel'
 import { Link } from 'react-router-dom'
@@ -241,6 +241,9 @@ const VALUES: Array<Pick<PhotoCard, 'image'>> = [
   {
     image: '/images/hero/hero-3.webp',
   },
+  {
+    image: '/images/landing/value-people.avif',
+  },
 ]
 
 function ValuesSection() {
@@ -250,6 +253,7 @@ function ValuesSection() {
     { image: VALUES[1].image, title: t('home.valueDataTitle'), description: t('home.valueDataDescription') },
     { image: VALUES[2].image, title: t('home.valuePurposeTitle'), description: t('home.valuePurposeDescription') },
     { image: VALUES[3].image, title: t('home.valueOpenTitle'), description: t('home.valueOpenDescription') },
+    { image: VALUES[4].image, title: t('home.valuePeopleTitle'), description: t('home.valuePeopleDescription') },
   ]
   return <PhotoCardCarousel title={t('home.valuesHeading')} cards={cards} />
 }
@@ -488,6 +492,8 @@ const PARTNERSHIP_ITEMS = [
   { key: 'home.partnershipDocs', Icon: BookOpenText },
   { key: 'home.partnershipVolunteer', Icon: HandHeart },
   { key: 'home.partnershipSpread', Icon: Megaphone },
+  { key: 'home.buildLinkNewsroom', Icon: Newspaper },
+  { key: 'home.buildLinkDocs', Icon: MagnifyingGlass },
 ]
 
 function PartnershipSection() {
@@ -522,7 +528,7 @@ function PartnershipSection() {
   }, [])
 
   return (
-    <section ref={ref} className="partnership-theme relative isolate overflow-hidden text-foreground">
+    <section ref={ref} className="partnership-theme relative isolate min-h-[560px] overflow-hidden text-foreground md:min-h-[680px]">
       <motion.img
         ref={backgroundRef}
         src="/images/landing/spacex-launch.jpg"
@@ -538,7 +544,7 @@ function PartnershipSection() {
       <div className="absolute inset-0 z-0 bg-background/55" />
 
       <div className="container relative z-10">
-        <div className="grid gap-6 py-8 min-[951px]:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] min-[951px]:items-center min-[951px]:gap-10 min-[951px]:py-10">
+        <div className="grid items-start gap-6 py-7 min-[951px]:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] min-[951px]:gap-10 min-[951px]:py-8">
           <div>
             <AnimatedTitle static as="h2" className="text-heading-responsive-lg mb-4 font-[550] lg:text-[3.25rem] lg:leading-[1.08]">{t('home.partnershipTitle')}</AnimatedTitle>
             <p className="max-w-[500px] text-foreground/80">
@@ -546,21 +552,22 @@ function PartnershipSection() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 max-[650px]:grid-cols-1">
+          <div className="grid grid-cols-2 items-center gap-x-6 gap-y-1.5 max-[650px]:grid-cols-1">
             {PARTNERSHIP_ITEMS.map(({ key, Icon }) => (
               <div
                 key={key}
-                className="flex min-h-12 items-center gap-2 rounded-full bg-card px-3 py-2 text-sm font-medium leading-snug text-card-foreground transition-[background-color,transform] hover:-translate-y-0.5 hover:bg-card/90"
+                className="flex min-h-7 items-center gap-2 px-1 py-0.5 text-sm font-medium leading-snug text-foreground/90"
               >
-                <Icon size={18} weight="regular" className="text-primary" aria-hidden="true" />
+                <Icon size={18} weight="regular" className="text-current" aria-hidden="true" />
                 <span>{t(key)}</span>
               </div>
             ))}
             <a
               href="/sustain"
-              className="flex min-h-12 items-center rounded-full bg-tertiary px-3 py-2 text-sm font-semibold text-tertiary-foreground transition-[filter,transform] duration-300 hover:-translate-y-0.5 hover:brightness-110"
+              className="flex min-h-8 items-center gap-2 px-1 py-0.5 text-base font-semibold text-tertiary transition-colors duration-200 hover:text-tertiary/80 md:text-lg"
             >
               {t('home.partnershipCta')}
+              <ArrowUpRight size={18} weight="regular" aria-hidden="true" />
             </a>
           </div>
         </div>
@@ -705,6 +712,12 @@ export default function HomePage() {
     { question: t('home.faq4Question'), answer: t('home.faq4Answer') },
     { question: t('home.faq5Question'), answer: t('home.faq5Answer') },
     { question: t('home.faq6Question'), answer: t('home.faq6Answer') },
+    { question: t('home.faq7Question'), answer: t('home.faq7Answer') },
+    { question: t('home.faq8Question'), answer: t('home.faq8Answer') },
+    { question: t('home.faq9Question'), answer: t('home.faq9Answer') },
+    { question: t('home.faq10Question'), answer: t('home.faq10Answer') },
+    { question: t('home.faq11Question'), answer: t('home.faq11Answer') },
+    { question: t('home.faq12Question'), answer: t('home.faq12Answer') },
   ]
   return (
     <>
@@ -723,16 +736,33 @@ export default function HomePage() {
         {(FEATURES.SHOW_HOMEPAGE_STATS || FEATURES.SHOW_TESTIMONIALS) && <StatsAndTestimonialsSection />}
         <FairCoinSection />
         <AIResearchFeatureGrid />
-        <OxyCommunityTicker />
+        <OxyAppsFeatureGrid />
         <PartnershipSection />
         <AIResearchSection />
-        <CommonsAppSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}
         <FaqSection
           title={t('home.faqHeading')}
-          items={homeFaqs}
-          className="faq-theme bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
+          groups={[
+            {
+              title: t('home.faqGroupAbout'),
+              items: [homeFaqs[0], homeFaqs[2], homeFaqs[3]],
+            },
+            {
+              title: t('home.faqGroupControl'),
+              items: [homeFaqs[4], homeFaqs[6], homeFaqs[7]],
+            },
+            {
+              title: t('home.faqGroupProducts'),
+              items: [homeFaqs[1], homeFaqs[8], homeFaqs[9]],
+            },
+            {
+              title: t('home.faqGroupCommunity'),
+              items: [homeFaqs[5], homeFaqs[10], homeFaqs[11]],
+            },
+          ]}
+          className="faq-theme flex min-h-[100svh] items-center bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
         />
+        <CommonsAppSection />
       </main>
       <Footer hideTopDivider />
     </>

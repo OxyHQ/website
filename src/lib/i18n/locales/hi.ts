@@ -72,6 +72,11 @@ const hi: Translations = {
     resources: 'संसाधन',
     bannerDefault: 'Alia। साथ मिलकर बेहतर सोचें।',
   },
+  home: {
+    ...en.home,
+    appsFeaturesTitle: 'लोगों को सबसे पहले रखने वाले ऐप्स',
+    appsFeaturesDescription: 'Oxy के उन ऐप्स को जानें जो साथ मिलकर काम करते हैं और रोज़मर्रा की ज़िंदगी में आपको अधिक विकल्प, निजता और नियंत्रण देते हैं।',
+  },
   errors: {
     notFoundTitle: '404 — पृष्ठ नहीं मिला',
     notFoundDescription: 'क्षमा करें, हमें वह पृष्ठ नहीं मिला। हो सकता है उसे स्थानांतरित या हटा दिया गया हो।',

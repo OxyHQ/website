@@ -72,6 +72,11 @@ const id: Translations = {
     resources: 'Sumber daya',
     bannerDefault: 'Alia. Berpikir lebih baik, bersama.',
   },
+  home: {
+    ...en.home,
+    appsFeaturesTitle: 'Aplikasi yang mengutamakan manusia',
+    appsFeaturesDescription: 'Jelajahi aplikasi Oxy yang dirancang untuk bekerja bersama, memberi Anda lebih banyak pilihan, privasi, dan kendali dalam keseharian.',
+  },
   errors: {
     notFoundTitle: '404 — Halaman tidak ditemukan',
     notFoundDescription: 'Maaf, kami tidak dapat menemukan halaman tersebut. Halaman mungkin telah dipindahkan atau dihapus.',

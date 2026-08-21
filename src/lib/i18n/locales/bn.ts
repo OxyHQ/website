@@ -72,6 +72,11 @@ const bn: Translations = {
     resources: 'রিসোর্স',
     bannerDefault: 'Alia। একসাথে আরও ভালো ভাবুন।',
   },
+  home: {
+    ...en.home,
+    appsFeaturesTitle: 'মানুষকে সবার আগে রাখা অ্যাপ',
+    appsFeaturesDescription: 'Oxy-এর এমন অ্যাপগুলো আবিষ্কার করুন যেগুলো একসঙ্গে কাজ করে এবং দৈনন্দিন জীবনে আপনাকে আরও পছন্দ, গোপনীয়তা ও নিয়ন্ত্রণ দেয়।',
+  },
   errors: {
     notFoundTitle: '404 — পৃষ্ঠা পাওয়া যায়নি',
     notFoundDescription: 'দুঃখিত, আমরা পৃষ্ঠাটি খুঁজে পাইনি। এটি সরানো বা মুছে ফেলা হয়ে থাকতে পারে।',
