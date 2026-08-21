@@ -316,7 +316,7 @@ export default function HomeHero() {
                   as="h1"
                   randomness={1}
                   grow
-                  className="font-display text-[clamp(2.25rem,3.6vw,4rem)] font-medium leading-[0.95] tracking-[-0.04em]"
+                  className="w-full max-w-[760px] text-balance font-display text-[clamp(2.25rem,3.6vw,4rem)] font-medium leading-[0.95] tracking-[-0.04em]"
                 >
                   {title}
                 </AnimatedTitle>
