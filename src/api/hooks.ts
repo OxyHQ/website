@@ -1568,3 +1568,48 @@ export function useHomiioListings() {
     staleTime: 5 * 60_000,
   })
 }
+
+// ── 404 memory game ──
+/**
+ * A signed-in visitor's history on the 404 board (`server/routes/games.ts`).
+ * The score, the round a run ended on and the account level all come from the
+ * server, which is the only side that can add up runs it has actually stored.
+ */
+export interface MemoryGameStats {
+  runs: number
+  bestScore: number
+  bestLevel: number
+  totalPoints: number
+  accountLevel: number
+  pointsToNextLevel: number
+}
+
+export interface MemoryGameRun {
+  score: number
+  level: number
+  moves: number
+  pairsFound: number
+  clearedAll: boolean
+  durationMs: number
+}
+
+export function useMemoryGameStats(enabled: boolean) {
+  return useQuery({
+    queryKey: ['memory-game-stats'],
+    queryFn: () => apiFetch<MemoryGameStats>('/games/memory/stats'),
+    enabled,
+    staleTime: 60_000,
+  })
+}
+
+export function useSaveMemoryGameRun() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (run: MemoryGameRun) =>
+      apiFetch<{ stats: MemoryGameStats }>('/games/memory/runs', {
+        method: 'POST',
+        body: JSON.stringify(run),
+      }),
+    onSuccess: (data) => qc.setQueryData(['memory-game-stats'], data.stats),
+  })
+}

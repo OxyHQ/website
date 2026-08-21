@@ -36,6 +36,7 @@ import translationsRouter from './routes/translations.js'
 import backupRouter from './routes/backup.js'
 import uploadRouter from './routes/upload.js'
 import likesRouter from './routes/likes.js'
+import gamesRouter from './routes/games.js'
 import commentsRouter from './routes/comments.js'
 import featuresRouter from './routes/features.js'
 import profilesRouter from './routes/profiles.js'
@@ -115,6 +116,7 @@ app.use('/api/admin', adminAccessRouter)
 
 // Social features
 app.use('/api/likes', likesRouter)
+app.use('/api/games', gamesRouter)
 app.use('/api/comments', commentsRouter)
 app.use('/api/features', featuresRouter)
 app.use('/api/profiles', profilesRouter)
