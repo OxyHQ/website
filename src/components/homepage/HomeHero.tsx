@@ -284,7 +284,6 @@ export default function HomeHero() {
       onViewportEnter={() => {
         setHeroVisible(true)
         setHeroInView(true)
-        setShowScrollCta(window.scrollY <= SCROLL_CTA_TOP_THRESHOLD)
       }}
       onViewportLeave={() => {
         setHeroVisible(false)
@@ -295,7 +294,7 @@ export default function HomeHero() {
     >
       <AnimatePresence>
         {showScrollCta && (
-          <div className="pointer-events-none fixed inset-x-0 bottom-6 z-40 flex justify-center px-4">
+          <div className="pointer-events-none fixed inset-x-0 bottom-8 z-40 flex justify-center px-4">
             <motion.button
               type="button"
               onClick={scrollToBuildForEveryone}
