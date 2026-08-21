@@ -68,7 +68,7 @@ function heroMediaUrl(ref: HeroMediaRef | undefined): string {
 }
 
 export default function HomeHero() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const { data: hero } = useHero()
   const setHeroVisible = usePageChromeStore((s) => s.setHeroVisible)
   const [heroInView, setHeroInView] = useState(false)
@@ -80,7 +80,7 @@ export default function HomeHero() {
     [0, SCROLL_CTA_SCROLL_DISTANCE],
   )
 
-  const title = hero?.title || t('home.heroTitleDefault')
+  const title = locale === 'en' ? (hero?.title || t('home.heroTitleDefault')) : t('home.heroTitleDefault')
   const sentences = [
     t('home.heroPanelSentence1'),
     t('home.heroPanelSentence2'),

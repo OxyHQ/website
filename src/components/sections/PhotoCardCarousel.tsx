@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useRef } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import type SwiperType from 'swiper'
+import { useTranslation } from '../../lib/i18n'
 
 export interface PhotoCard {
   image: string
@@ -25,6 +26,7 @@ const REVEAL = {
 }
 
 export default function PhotoCardCarousel({ title, description, cards, variant = 'portrait' }: PhotoCardCarouselProps) {
+  const { t } = useTranslation()
   const swiperRef = useRef<SwiperType | null>(null)
 
   return (
@@ -39,7 +41,7 @@ export default function PhotoCardCarousel({ title, description, cards, variant =
             <div className="flex shrink-0 items-center gap-3">
               <button
                 type="button"
-                aria-label="Previous card"
+                aria-label={t('common.previous')}
                 onClick={() => swiperRef.current?.slidePrev()}
                 className="values-nav-btn"
               >
@@ -47,7 +49,7 @@ export default function PhotoCardCarousel({ title, description, cards, variant =
               </button>
               <button
                 type="button"
-                aria-label="Next card"
+                aria-label={t('common.next')}
                 onClick={() => swiperRef.current?.slideNext()}
                 className="values-nav-btn"
               >

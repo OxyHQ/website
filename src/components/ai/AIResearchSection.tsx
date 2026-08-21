@@ -21,7 +21,7 @@ export default function AIResearchSection({ framed = true }: { framed?: boolean 
         <div className="flex h-full min-w-0 items-center justify-end overflow-hidden">
           <img
             src="/ai/pro-left.avif"
-            alt="AI research visualization"
+            alt={t('home.researchImageAlt')}
             className="pointer-events-none aspect-[3/4] w-[360px] max-w-none shrink-0 object-contain"
             loading="lazy"
             width={360}
@@ -48,7 +48,7 @@ export default function AIResearchSection({ framed = true }: { framed?: boolean 
         <div className="flex h-full min-w-0 items-center justify-start overflow-hidden">
           <img
             src="/ai/pro-right.avif"
-            alt="AI research visualization"
+            alt={t('home.researchImageAlt')}
             className="pointer-events-none aspect-[3/4] w-[360px] max-w-none shrink-0 object-contain"
             loading="lazy"
             width={360}

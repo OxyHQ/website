@@ -143,18 +143,22 @@ const BUILD_FOR_EVERYONE_LINKS: Array<Omit<ResourceLink, 'label'> & { key: strin
 ]
 
 function BuildForEveryoneSection() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const { data: pageData } = usePage('home')
   const sections = pageData?.sections
   // Heading is stored as a single string with a pipe separator so the CMS can
   // drive line-breaks at the exact point used by the current layout. Fall
   // back to the pre-CMS two-line split when nothing has been published yet.
   const headingFallback = `${t('home.allInOneHeadingLine1')}|${t('home.allInOneHeadingLine2')}`
-  const headingRaw = pageHeading(sections, 'all-in-one', headingFallback)
+  const headingRaw = locale === 'en'
+    ? pageHeading(sections, 'all-in-one', headingFallback)
+    : headingFallback
   const [headingLine1, headingLine2] = headingRaw.includes('|')
     ? headingRaw.split('|', 2)
     : [headingRaw, '']
-  const body = pageContent(sections, 'all-in-one', t('home.allInOneBody'))
+  const body = locale === 'en'
+    ? pageContent(sections, 'all-in-one', t('home.allInOneBody'))
+    : t('home.allInOneBody')
 
   return (
     <section id="build-for-everyone" className="scroll-mt-[var(--site-header-height)]">
@@ -214,26 +218,18 @@ function BuildForEveryoneSection() {
 /* ------------------------------------------------------------------ */
 /*  Values (photo-card carousel)                                       */
 /* ------------------------------------------------------------------ */
-const VALUES: PhotoCard[] = [
+const VALUES: Array<Pick<PhotoCard, 'image'>> = [
   {
     image: '/images/hero/hero-4.webp',
-    title: 'Human-first design.',
-    description: 'We design tools that empower people, not manipulate them. Every decision starts with the question: does this serve the user?',
   },
   {
     image: '/images/hero/hero-1.webp',
-    title: 'Your data stays yours.',
-    description: 'No ads, no data brokers, no hidden monetization. Privacy isn’t a feature we bolt on. It’s the foundation everything is built on.',
   },
   {
     image: '/images/hero/hero-5.jpg',
-    title: 'AI with a purpose.',
-    description: 'Every product we ship is built to advance justice, inclusion, or sustainability. If it doesn’t move the needle on what matters, we don’t build it.',
   },
   {
     image: '/images/hero/hero-3.webp',
-    title: 'Open by default.',
-    description: 'Every Oxy tool is open source. We believe transparency isn’t optional, it’s how you earn trust. Inspect the code, fork it, improve it.',
   },
 ]
 
@@ -452,21 +448,18 @@ const TESTIMONIALS = [
     light: true,
   },
   {
-    quote: 'No ads, no data brokers, no hidden monetization. Your information belongs to you \u2014 period.',
     quoteKey: 'home.valueDataDescription',
     roleKey: 'home.valueDataTitle',
     bg: `${IMG}/agents-quote-bg-02.webp`,
     light: false,
   },
   {
-    quote: 'Every product we ship is built to advance justice, inclusion, or sustainability. If it doesn\u2019t move the needle on what matters, we don\u2019t build it.',
     quoteKey: 'home.valuePurposeDescription',
     roleKey: 'home.valuePurposeTitle',
     bg: `${IMG}/agents-quote-bg-03.webp`,
     light: true,
   },
   {
-    quote: 'Every Oxy tool is open source. We believe transparency isn\u2019t optional \u2014 it\u2019s the foundation of trust.',
     quoteKey: 'home.valueOpenDescription',
     roleKey: 'home.valueOpenTitle',
     bg: `${IMG}/agents-quote-bg-04.webp`,
@@ -682,8 +675,8 @@ export default function HomePage() {
   return (
     <>
       <SEO
-        title={t('navbar.homepage')}
-        description={t('footer.description')}
+        title={t('home.seoTitle')}
+        description={t('home.seoDescription')}
         canonicalPath="/"
       />
       <Navbar transparent />

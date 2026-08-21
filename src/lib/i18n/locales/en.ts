@@ -107,16 +107,13 @@ const en = {
 
   // ── Homepage ──────────────────────────────────────────────
   home: {
+    seoTitle: 'Oxy — Technology that empowers people',
+    seoDescription: 'An open ecosystem of technology built to serve people, protect their data, and give communities more control.',
     heroTitleDefault: 'Creating a future where technology empowers individuals\nto live connected, fulfilling, and sustainable lives.',
-    heroEyebrowDefault: 'Built by people who believe in change. Ethical, open, and deeply human.',
     allInOneHeadingLine1: 'Build for everyone,',
     allInOneHeadingLine2: 'not just yourself.',
     allInOneBody:
       'Oxy exists because we believe technology should serve humanity, not exploit it. Through community-driven projects and open-source tools, we prove that helping people and building sustainable systems aren’t competing goals.',
-    allInOneCta: 'Explore the Ecosystem',
-    independentEcosystem: 'Independent Ecosystem',
-    independentEcosystemBody:
-      'Radically transparent, fiercely human. No ads. No data selling. No venture capital strings. Just purpose-driven tools designed for real-world impact.',
     statsOpenSource: 'Open Source',
     statsOpenSourceDesc: 'of our code is public',
     statsCommunity: 'Community',
@@ -127,20 +124,6 @@ const en = {
     statsDataSoldDesc: 'we never sell user data',
     statsCountries: 'Countries',
     statsCountriesDesc: 'communities worldwide',
-    productMentionLabel: 'Mention',
-    productAlloLabel: 'Allo',
-    productInboxLabel: 'Inbox',
-    productFairCoinLabel: 'FairCoin',
-    productHomiioLabel: 'Homiio',
-    productAliaLabel: 'Alia',
-    productCodeaLabel: 'Codea',
-    productOxyAILabel: 'Oxy AI',
-    productTNPLabel: 'TNP',
-    productOxyOSLabel: 'Oxy OS',
-    coreValueDataYours: 'Your Data Stays Yours',
-    coreValueHumanFirst: 'Human-first Design',
-    coreValueAIPurpose: 'AI with a Purpose',
-    coreValueOpenDefault: 'Open by Default',
 
     // ── Current homepage sections ──────────────────────────
     heroPanelSentence1: 'Practical alternatives to',
@@ -205,6 +188,7 @@ const en = {
     researchParagraph: 'At Oxy, we combine external models from providers like OpenAI, Anthropic, and Meta with the development of our own models. With {highlight}, we work to advance scientific research, healthcare, and human understanding through technology that is open, transparent, and ethical, keeping people in control.',
     researchHighlight: 'Oxy AI',
     researchCta: 'Learn more',
+    researchImageAlt: 'AI research visualization',
     tickerImage1: 'Build technology with people, not around them.',
     tickerRoleMention: 'An open social network for genuine connection',
     tickerQuote1: 'Open source gives people the right to understand, improve, and leave the technology they use.',
