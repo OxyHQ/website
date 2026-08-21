@@ -304,7 +304,7 @@ export default function HomeHero() {
               animate={{ y: 0 }}
               exit={{ y: 28 }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="pointer-events-auto inline-flex cursor-pointer animate-[hero-scroll-cta_1.9s_ease-in-out_infinite] items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-[15px] font-medium text-black shadow-lg transition-transform duration-200 hover:scale-[1.03] motion-reduce:animate-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
+              className="pointer-events-auto inline-flex cursor-pointer animate-[hero-scroll-cta_2.2s_cubic-bezier(0.22,1,0.36,1)_infinite] items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-[15px] font-medium text-black shadow-lg transition-transform duration-200 will-change-transform hover:scale-[1.03] motion-reduce:animate-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
             >
               <span>Build for everyone</span>
               <ScrollArrow delay={0} className="text-black" sizeClass="size-[18px]" animated={false} />
