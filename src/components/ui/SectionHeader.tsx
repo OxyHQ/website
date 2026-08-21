@@ -1,4 +1,4 @@
-import Badge from './Badge'
+import { Badge } from '@oxyhq/bloom/badge'
 
 interface SectionHeaderProps {
   badge?: string
@@ -22,7 +22,11 @@ export default function SectionHeader({
 
   return (
     <header className={`flex w-full flex-col ${alignment} ${className}`}>
-      {badge && <Badge className="mb-4">{badge}</Badge>}
+      {badge && (
+        <div className="mb-4">
+          <Badge content={badge} variant="outlined" color="default" size="large" />
+        </div>
+      )}
       <h2 className={`${headingClass} text-pretty text-foreground`}>
         {title}
       </h2>

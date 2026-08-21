@@ -115,8 +115,8 @@ export default function BackupAdmin() {
         <div
           className={`mt-4 rounded-lg border px-4 py-3 text-sm ${
             status.type === 'success'
-              ? 'border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-950 dark:text-green-200'
-              : 'border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200'
+              ? 'border-success/30 bg-success-subtle text-success-text'
+              : 'border-error/30 bg-error-subtle text-error-text'
           }`}
         >
           {status.message}

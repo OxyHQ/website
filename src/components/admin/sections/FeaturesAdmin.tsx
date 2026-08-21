@@ -12,12 +12,12 @@ interface ReconcileReport {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  open: 'bg-zinc-500/10 text-zinc-400',
-  under_review: 'bg-blue-500/10 text-blue-500',
-  planned: 'bg-indigo-500/10 text-indigo-500',
-  in_progress: 'bg-amber-500/10 text-amber-500',
-  completed: 'bg-green-500/10 text-green-500',
-  declined: 'bg-red-500/10 text-red-500',
+  open: 'bg-muted text-muted-foreground',
+  under_review: 'bg-info-subtle text-info-text',
+  planned: 'bg-primary-subtle text-primary-text',
+  in_progress: 'bg-warning-subtle text-warning-text',
+  completed: 'bg-success-subtle text-success-text',
+  declined: 'bg-error-subtle text-error-text',
 }
 
 export default function FeaturesAdmin() {
@@ -82,7 +82,7 @@ export default function FeaturesAdmin() {
       </div>
 
       {reconcile.isError && (
-        <p className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+        <p className="mt-4 rounded-lg border border-error/30 bg-error-subtle px-3 py-2 text-sm text-error-text">
           {reconcile.error.message}
         </p>
       )}
@@ -102,7 +102,7 @@ export default function FeaturesAdmin() {
             </p>
           ))}
           {reconcile.data.errors.map((error) => (
-            <p key={error.scope} className="mt-1 font-mono text-xs text-red-400">
+            <p key={error.scope} className="mt-1 font-mono text-xs text-error-text">
               {error.scope}: {error.message}
             </p>
           ))}

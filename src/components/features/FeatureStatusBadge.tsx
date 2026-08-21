@@ -1,10 +1,10 @@
 const STATUS_STYLES: Record<string, string> = {
-  open: 'border-gray-500/30 bg-gray-500/10 text-gray-400',
-  under_review: 'border-blue-500/30 bg-blue-500/10 text-blue-400',
-  planned: 'border-indigo-500/30 bg-indigo-500/10 text-indigo-400',
-  in_progress: 'border-amber-500/30 bg-amber-500/10 text-amber-400',
-  completed: 'border-green-500/30 bg-green-500/10 text-green-400',
-  declined: 'border-red-500/30 bg-red-500/10 text-red-400',
+  open: 'border-border bg-muted text-muted-foreground',
+  under_review: 'border-info/30 bg-info-subtle text-info-text',
+  planned: 'border-primary/30 bg-primary-subtle text-primary-text',
+  in_progress: 'border-warning/30 bg-warning-subtle text-warning-text',
+  completed: 'border-success/30 bg-success-subtle text-success-text',
+  declined: 'border-error/30 bg-error-subtle text-error-text',
 }
 
 const STATUS_LABELS: Record<string, string> = {

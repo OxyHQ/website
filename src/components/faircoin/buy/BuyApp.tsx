@@ -336,7 +336,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
           </span>
         </div>
         {amountError ? (
-          <p className="mt-2 text-xs font-medium text-destructive">{amountError}</p>
+          <p className="mt-2 text-xs font-medium text-error-text">{amountError}</p>
         ) : null}
       </div>
 
@@ -414,7 +414,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
             </a>
           </span>
           {addressError ? (
-            <span className="text-right font-medium text-destructive">{addressError}</span>
+            <span className="text-right font-medium text-error-text">{addressError}</span>
           ) : null}
         </div>
       </div>
@@ -439,7 +439,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
       </button>
 
       {submissionError ? (
-        <div className="flex items-start gap-2 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-xs text-destructive">
+        <div className="flex items-start gap-2 rounded-xl border border-error/40 bg-error-subtle px-3 py-2.5 text-xs text-error-text">
           <ShieldAlert aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           <span>{submissionError}</span>
         </div>
@@ -532,7 +532,7 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
       ) : null}
 
       {/* Network warning */}
-      <div className="flex items-start gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-3.5 py-2.5 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+      <div className="flex items-start gap-2 rounded-2xl border border-warning/30 bg-warning-subtle px-3.5 py-2.5 text-xs leading-relaxed text-warning-text">
         <ShieldAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
         <span>
           Send <strong>{quote.paymentSymbol}</strong> on{' '}
@@ -551,7 +551,7 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
           <StatusTimeline status={effectiveStatus} status_data={status} />
         </div>
         {quoteExpired ? (
-          <p className="mt-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+          <p className="mt-3.5 rounded-xl border border-warning/30 bg-warning-subtle px-3 py-2 text-xs text-warning-text">
             Quote expired before payment was detected. Generate a new quote to continue.
           </p>
         ) : null}
@@ -678,7 +678,7 @@ function FailedStep({
 }) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-start gap-2.5 rounded-2xl border border-destructive/40 bg-destructive/10 p-3.5 text-sm text-destructive">
+      <div className="flex items-start gap-2.5 rounded-2xl border border-error/40 bg-error-subtle p-3.5 text-sm text-error-text">
         <ShieldAlert aria-hidden className="mt-0.5 h-5 w-5 shrink-0" />
         <span>{message ?? 'No further detail was provided. Try a fresh quote.'}</span>
       </div>
@@ -705,7 +705,7 @@ function Countdown({ secondsRemaining }: { secondsRemaining: number }) {
       className={[
         'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-body-xs font-semibold tabular-nums',
         warn
-          ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300'
+          ? 'bg-warning-subtle text-warning-text'
           : 'bg-muted text-muted-foreground',
       ].join(' ')}
     >

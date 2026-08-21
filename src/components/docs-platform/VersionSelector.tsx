@@ -75,7 +75,7 @@ export default function VersionSelector({ pkg, currentVersion, slug }: VersionSe
                     latest
                   </span>
                 ) : isDeprecated ? (
-                  <span className="rounded-full bg-red-500/15 px-1.5 py-px text-label-sm font-semibold text-red-500">
+                  <span className="rounded-full bg-error-subtle px-1.5 py-px text-label-sm font-semibold text-error-text">
                     deprecated
                   </span>
                 ) : null}

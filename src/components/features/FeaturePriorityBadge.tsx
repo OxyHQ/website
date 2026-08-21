@@ -1,7 +1,7 @@
 const PRIORITY_STYLES: Record<string, string> = {
-  medium: 'border-yellow-500/30 bg-yellow-500/10 text-yellow-500',
-  high: 'border-orange-500/30 bg-orange-500/10 text-orange-400',
-  critical: 'border-red-500/30 bg-red-500/10 text-red-400',
+  medium: 'border-warning/30 bg-warning-subtle text-warning-text',
+  high: 'border-tertiary/30 bg-tertiary-subtle text-tertiary-text',
+  critical: 'border-error/30 bg-error-subtle text-error-text',
 }
 
 interface FeaturePriorityBadgeProps {

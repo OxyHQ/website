@@ -30,14 +30,11 @@
  *   --sidebar --sidebar-foreground --sidebar-primary --sidebar-primary-foreground
  *   --sidebar-accent --sidebar-accent-foreground --sidebar-border --sidebar-ring
  *
- * Two gaps are deliberate on Bloom's side, and are the only values below that
- * are not a straight `var()`:
+ * One gap is deliberate on Bloom's side, and is the only value below that is
+ * not a straight `var()`:
  *  - No third text level ships as a CSS var (`theme.colors.textTertiary` is the
  *    engine's `outline` role, JS-only), so the tertiary text is mixed down from
  *    `--muted-foreground` toward the page background.
- *  - Status colours (`STATUS_COLORS` in Bloom's `build-theme`) are JS-only and
- *    preset-INDEPENDENT by design, so semantic intent stays stable across
- *    themes. `--pay-fg-success` mirrors Bloom's `success` (#10B981) literally.
  */
 :root {
   --pay-bg-primary: var(--background);
@@ -49,7 +46,7 @@
   --pay-fg-tertiary: color-mix(in srgb, var(--muted-foreground) 68%, var(--background));
   --pay-fg-inverted: var(--primary-foreground);
   --pay-fg-brand: var(--primary);
-  --pay-fg-success: #10b981;
+  --pay-fg-success: var(--success);
   --pay-border-normal: var(--border);
   --pay-button-primary: var(--primary);
   --pay-button-primary-hover: color-mix(in srgb, var(--primary) 88%, black);

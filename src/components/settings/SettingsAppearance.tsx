@@ -1,31 +1,13 @@
-import { useState } from 'react'
-import {
-  APP_COLOR_PRESETS,
-  APP_COLOR_NAMES,
-  type AppColorName,
-  type ThemeMode,
-  getSavedMode,
-  getSavedPreset,
-  setMode,
-  setColorPreset,
-} from '../../theme'
+import { useBloomTheme } from '@oxyhq/bloom/theme'
+import { getPresetVars } from '@oxyhq/bloom/design-tokens'
+import { type ColorPresetRecipe } from '@oxyhq/bloom/color-presets'
+import { type AppColorName } from '../../theme'
+import { PUBLIC_COLOR_PRESET_GROUPS } from '../../theme/preset-catalog'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
 
-const ALL_PRESETS: AppColorName[] = [...APP_COLOR_NAMES, 'oxy']
-
 export default function SettingsAppearance() {
-  const [currentMode, setCurrentMode] = useState<ThemeMode>(getSavedMode)
-  const [currentPreset, setCurrentPreset] = useState<AppColorName>(getSavedPreset)
-
-  const handleMode = (mode: ThemeMode) => {
-    setMode(mode)
-    setCurrentMode(mode)
-  }
-
-  const handlePreset = (preset: AppColorName) => {
-    setColorPreset(preset)
-    setCurrentPreset(preset)
-  }
+  const { mode: currentMode, colorPreset: currentPreset, setMode, setColorPreset } = useBloomTheme()
+  const previewMode = currentMode === 'dark' ? 'dark' : 'light'
 
   return (
     <div className="container py-16 lg:py-24">
@@ -50,16 +32,16 @@ export default function SettingsAppearance() {
               <ModeCard
                 label="Light"
                 active={currentMode === 'light'}
-                onClick={() => handleMode('light')}
+                onClick={() => setMode('light')}
               >
-                <LightPreview />
+                <ThemePreview preset={currentPreset} mode="light" />
               </ModeCard>
               <ModeCard
                 label="Dark"
                 active={currentMode === 'dark'}
-                onClick={() => handleMode('dark')}
+                onClick={() => setMode('dark')}
               >
-                <DarkPreview />
+                <ThemePreview preset={currentPreset} mode="dark" />
               </ModeCard>
             </div>
           </div>
@@ -67,40 +49,74 @@ export default function SettingsAppearance() {
           {/* Color presets */}
           <div className="mt-10">
             <h3 className="text-sm font-medium text-foreground">Accent color</h3>
-            <div className="mt-3 grid grid-cols-5 gap-3 sm:grid-cols-6 md:grid-cols-11">
-              {ALL_PRESETS.map((name) => {
-                const preset = APP_COLOR_PRESETS[name]
-                if (!preset) return null
-                return (
-                  <button
-                    key={name}
-                    onClick={() => handlePreset(name)}
-                    className={`group flex flex-col items-center gap-2 rounded-xl p-2 transition-colors duration-200 ${
-                      currentPreset === name
-                        ? 'bg-surface ring-2 ring-primary'
-                        : 'hover:bg-surface'
-                    }`}
-                    title={name}
-                  >
-                    <div
-                      className={`size-8 rounded-full border-2 transition-shadow duration-200 ${
-                        currentPreset === name
-                          ? 'border-primary shadow-[0_0_0_2px_var(--background)]'
-                          : 'border-transparent group-hover:border-border'
-                      }`}
-                      style={{ backgroundColor: preset.hex }}
-                    />
-                    <span className="text-body-xs capitalize text-muted-foreground leading-none">
-                      {name}
-                    </span>
-                  </button>
-                )
-              })}
+            <p className="mt-1 text-sm text-muted-foreground">
+              Each recipe resolves its own surfaces and supporting action colors in light and dark mode.
+            </p>
+            <div className="mt-6 space-y-8">
+              {PUBLIC_COLOR_PRESET_GROUPS.map((group) => (
+                <section key={group.name} aria-labelledby={`preset-family-${group.name}`}>
+                  <div className="mb-3">
+                    <h4 id={`preset-family-${group.name}`} className="text-sm font-semibold text-foreground">
+                      {group.displayName}
+                    </h4>
+                    <p className="text-body-xs text-muted-foreground">{group.description}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {group.presets.map((recipe) => (
+                      <PresetChoice
+                        key={recipe.name}
+                        recipe={recipe}
+                        mode={previewMode}
+                        active={currentPreset === recipe.name}
+                        onClick={() => setColorPreset(recipe.name)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              ))}
             </div>
           </div>
         </section>
       </div>
     </div>
+  )
+}
+
+function PresetChoice({
+  recipe,
+  mode,
+  active,
+  onClick,
+}: {
+  recipe: ColorPresetRecipe
+  mode: 'light' | 'dark'
+  active: boolean
+  onClick: () => void
+}) {
+  const tokens = getPresetVars(recipe.name, mode)
+  return (
+    <button
+      type="button"
+      data-color-preset={recipe.name}
+      onClick={onClick}
+      className={`group flex min-w-0 items-center gap-3 rounded-2xl p-2.5 text-left transition-colors duration-200 ${
+        active ? 'bg-surface ring-2 ring-primary' : 'hover:bg-surface'
+      }`}
+      title={`${recipe.displayName}: ${recipe.description}`}
+      aria-pressed={active}
+    >
+      <span className="relative size-10 shrink-0 overflow-hidden rounded-xl shadow-s" aria-hidden="true">
+        <span className="absolute inset-y-0 left-0 w-1/2" style={{ backgroundColor: tokens['--primary'] }} />
+        <span className="absolute top-0 right-0 h-1/2 w-1/2" style={{ backgroundColor: tokens['--secondary'] }} />
+        <span className="absolute right-0 bottom-0 h-1/2 w-1/2" style={{ backgroundColor: tokens['--tertiary'] }} />
+      </span>
+      <span className="min-w-0">
+        <span className="block text-sm font-medium leading-tight text-foreground">{recipe.displayName}</span>
+        <span className="mt-0.5 block text-body-xs leading-tight text-muted-foreground">
+          {recipe.pairing === 'curated' ? 'Curated pairing' : 'Dynamic pairing'}
+        </span>
+      </span>
+    </button>
   )
 }
 
@@ -153,46 +169,24 @@ function ModeCard({
 
 /* ── Theme preview thumbnails ── */
 
-function LightPreview() {
+function ThemePreview({ preset, mode }: { preset: AppColorName; mode: 'light' | 'dark' }) {
+  const tokens = getPresetVars(preset, mode)
   return (
-    <div className="flex h-full w-full flex-col bg-[hsl(0_0%_97%)] p-2.5">
-      <div className="flex items-center gap-1.5 rounded-md bg-white p-1.5 shadow-sm">
-        <div className="h-1.5 w-6 rounded-full bg-gray-300" />
-        <div className="h-1.5 w-4 rounded-full bg-gray-200" />
-        <div className="ml-auto h-1.5 w-1.5 rounded-full bg-gray-300" />
+    <div className="flex h-full w-full flex-col p-2.5" style={{ backgroundColor: tokens['--background'] }}>
+      <div className="flex items-center gap-1.5 rounded-md p-1.5 shadow-sm" style={{ backgroundColor: tokens['--card'] }}>
+        <div className="h-1.5 w-6 rounded-full" style={{ backgroundColor: tokens['--primary'] }} />
+        <div className="h-1.5 w-4 rounded-full" style={{ backgroundColor: tokens['--muted'] }} />
+        <div className="ml-auto h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tokens['--secondary'] }} />
       </div>
       <div className="mt-2 flex flex-1 gap-1.5">
-        <div className="w-1/3 rounded-md bg-gray-100 p-1.5">
-          <div className="h-1 w-full rounded-full bg-gray-200" />
-          <div className="mt-1 h-1 w-3/4 rounded-full bg-gray-200" />
+        <div className="w-1/3 rounded-md p-1.5" style={{ backgroundColor: tokens['--surface'] }}>
+          <div className="h-1 w-full rounded-full" style={{ backgroundColor: tokens['--muted-foreground'] }} />
+          <div className="mt-1 h-1 w-3/4 rounded-full" style={{ backgroundColor: tokens['--border'] }} />
         </div>
-        <div className="flex-1 rounded-md bg-white p-1.5 shadow-sm">
-          <div className="h-1 w-3/4 rounded-full bg-gray-200" />
-          <div className="mt-1 h-1 w-1/2 rounded-full bg-gray-100" />
-          <div className="mt-2 h-3 w-full rounded bg-gray-50" />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function DarkPreview() {
-  return (
-    <div className="flex h-full w-full flex-col bg-[hsl(0_0%_8%)] p-2.5">
-      <div className="flex items-center gap-1.5 rounded-md bg-[hsl(0_0%_12%)] p-1.5">
-        <div className="h-1.5 w-6 rounded-full bg-[hsl(0_0%_25%)]" />
-        <div className="h-1.5 w-4 rounded-full bg-[hsl(0_0%_20%)]" />
-        <div className="ml-auto h-1.5 w-1.5 rounded-full bg-[hsl(0_0%_25%)]" />
-      </div>
-      <div className="mt-2 flex flex-1 gap-1.5">
-        <div className="w-1/3 rounded-md bg-[hsl(0_0%_12%)] p-1.5">
-          <div className="h-1 w-full rounded-full bg-[hsl(0_0%_20%)]" />
-          <div className="mt-1 h-1 w-3/4 rounded-full bg-[hsl(0_0%_20%)]" />
-        </div>
-        <div className="flex-1 rounded-md bg-[hsl(0_0%_12%)] p-1.5">
-          <div className="h-1 w-3/4 rounded-full bg-[hsl(0_0%_22%)]" />
-          <div className="mt-1 h-1 w-1/2 rounded-full bg-[hsl(0_0%_18%)]" />
-          <div className="mt-2 h-3 w-full rounded bg-[hsl(0_0%_15%)]" />
+        <div className="flex-1 rounded-md p-1.5 shadow-sm" style={{ backgroundColor: tokens['--card'] }}>
+          <div className="h-1 w-3/4 rounded-full" style={{ backgroundColor: tokens['--foreground'] }} />
+          <div className="mt-1 h-1 w-1/2 rounded-full" style={{ backgroundColor: tokens['--muted-foreground'] }} />
+          <div className="mt-2 h-3 w-full rounded" style={{ backgroundColor: tokens['--primary-subtle'] }} />
         </div>
       </div>
     </div>

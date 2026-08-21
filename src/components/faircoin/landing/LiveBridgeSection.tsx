@@ -222,9 +222,9 @@ function PegHealthTile({
         : 'Awaiting first snapshot'
   const dotClass =
     status === 'healthy'
-      ? 'bg-emerald-500'
+      ? 'bg-success'
       : status === 'attention'
-        ? 'bg-destructive'
+        ? 'bg-error'
         : 'bg-muted-foreground/40'
   return (
     <div className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-background/60 p-5 backdrop-blur-sm">

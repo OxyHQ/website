@@ -379,7 +379,7 @@ export default function TeamAdmin() {
             </div>
           </div>
 
-          {error && <p className="text-sm text-rose-600 dark:text-rose-400">{error}</p>}
+          {error && <p className="text-sm text-error-text">{error}</p>}
 
           <div className="flex items-center gap-2">
             <PrimaryButton onPress={save} disabled={saving || !editing.name || !editing.role}>
@@ -404,7 +404,7 @@ export default function TeamAdmin() {
         <PrimaryButton onPress={() => setEditing(emptyMember())}>Add member</PrimaryButton>
       </div>
 
-      {error && <p className="mt-4 text-sm text-rose-600 dark:text-rose-400">{error}</p>}
+      {error && <p className="mt-4 text-sm text-error-text">{error}</p>}
 
       {grouped.length === 0 ? (
         <p className="mt-8 text-sm text-muted-foreground">No team members yet.</p>

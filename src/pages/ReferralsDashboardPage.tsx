@@ -200,7 +200,7 @@ function CodePrompt({ initialCode, onSubmit, error }: { initialCode: string; onS
       </form>
 
       {error && (
-        <p className="text-sm text-rose-600 dark:text-rose-400">{error}</p>
+        <p className="text-sm text-error-text">{error}</p>
       )}
 
       <p className="text-xs text-muted-foreground">

@@ -68,7 +68,7 @@ function LessonRow({
     >
       <span
         className={`grid size-9 shrink-0 place-items-center rounded-lg font-mono text-xs font-semibold ${
-          isCompleted ? 'bg-emerald-500 text-white' : 'border border-border bg-surface text-foreground'
+          isCompleted ? 'bg-success text-success-foreground' : 'border border-border bg-surface text-foreground'
         }`}
         aria-hidden="true"
       >

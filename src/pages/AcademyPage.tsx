@@ -182,7 +182,7 @@ function CourseCard({ course, progress }: { course: CourseWithLessons; progress:
           </span>
         ) : null}
         {s.status === 'completed' ? (
-          <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white shadow-sm">
+          <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-success px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-success-foreground shadow-sm">
             <Check className="size-2.5" aria-hidden="true" />
             Done
           </span>

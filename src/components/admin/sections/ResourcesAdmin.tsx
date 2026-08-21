@@ -261,7 +261,7 @@ export default function ResourcesAdmin() {
             </div>
           </div>
 
-          {error && <p className="text-sm text-rose-600 dark:text-rose-400">{error}</p>}
+          {error && <p className="text-sm text-error-text">{error}</p>}
 
           <div className="mt-2 flex gap-3">
             <PrimaryButton onPress={save} disabled={saving}>

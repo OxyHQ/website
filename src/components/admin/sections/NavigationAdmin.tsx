@@ -264,7 +264,7 @@ export default function NavigationAdmin() {
                 />
                 <div className="flex items-center gap-2">
                   {dropdown.kind === 'apps' && (
-                    <span className="rounded-full border border-emerald-500/40 bg-emerald-500/5 px-2 py-0.5 text-label-sm font-medium uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                    <span className="rounded-full border border-success/40 bg-success-subtle px-2 py-0.5 text-label-sm font-medium uppercase tracking-wider text-success-text">
                       From Products CMS
                     </span>
                   )}

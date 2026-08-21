@@ -17,6 +17,7 @@
 import {
   APP_COLOR_PRESETS,
   APP_COLOR_NAMES,
+  FREE_COLOR_NAMES,
   applyPresetVarsToDocument,
   hexToAppColorName,
   type AppColorName,
@@ -33,6 +34,7 @@ export type ThemeMode = 'light' | 'dark'
 
 const STORAGE_KEY_MODE = 'theme'
 const STORAGE_KEY_PRESET = 'colorPreset'
+const PUBLIC_PRESET_NAMES = new Set<AppColorName>(FREE_COLOR_NAMES)
 
 export const DEFAULT_PRESET: AppColorName = SITE_PRESET
 export const DEFAULT_MODE: ThemeMode = 'dark'
@@ -47,28 +49,30 @@ export function getSavedMode(): ThemeMode {
 export function getSavedPreset(): AppColorName {
   if (isFairCoinHost()) return FAIRCOIN_PRESET
   const saved = localStorage.getItem(STORAGE_KEY_PRESET) as AppColorName | null
-  if (saved && APP_COLOR_PRESETS[saved]) return saved
+  // The website has no handle/subscription entitlement signal. Keep persisted
+  // state aligned with the public picker and its generated prepaint CSS.
+  if (saved && PUBLIC_PRESET_NAMES.has(saved)) return saved
   return DEFAULT_PRESET
 }
 
-/* ── Setters ── */
+/* ── Persistence ── */
 
-export function setMode(mode: ThemeMode) {
+/** Persist only. Once React mounts, BloomThemeProvider is the sole paint authority. */
+export function saveModePreference(mode: ThemeMode) {
   localStorage.setItem(STORAGE_KEY_MODE, mode)
-  document.documentElement.classList.toggle('dark', mode === 'dark')
-  // Re-apply preset to pick up light/dark variant
-  applyPreset(getSavedPreset(), mode)
 }
 
-export function setColorPreset(preset: AppColorName) {
+/** Persist only. BloomThemeProvider applies the controlled preset. */
+export function saveColorPresetPreference(preset: AppColorName) {
   localStorage.setItem(STORAGE_KEY_PRESET, preset)
-  applyPreset(preset, getSavedMode())
 }
 
 /* ── Core: inject Bloom CSS variables onto :root ── */
 
 export function applyPreset(preset: AppColorName, mode: ThemeMode) {
   if (!APP_COLOR_PRESETS[preset]) return
+
+  document.documentElement.setAttribute('data-color-preset', preset)
 
   // Delegate to Bloom's canonical writer (0.8.0+). It resolves the preset's
   // tokens to full `rgb(...)` colors via getResolvedTokens and writes both the
@@ -87,7 +91,7 @@ export function applyUserColor(userColorHex?: string | null) {
   if (isFairCoinHost()) return
   if (userColorHex) {
     const presetName = hexToAppColorName(userColorHex)
-    setColorPreset(presetName)
+    saveColorPresetPreference(presetName)
   }
 }
 

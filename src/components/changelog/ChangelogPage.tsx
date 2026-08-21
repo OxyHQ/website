@@ -409,16 +409,16 @@ export default function ChangelogContent() {
 /** Map tag name strings to colors for entries */
 function tagColor(tag: string): string {
   const colors: Record<string, string> = {
-    Feature: 'rgb(38, 109, 240)',
-    Enhancement: 'rgb(125, 96, 255)',
-    Design: 'rgb(255, 201, 90)',
-    Fix: 'rgb(34, 197, 94)',
-    Reports: 'rgb(34, 197, 94)',
-    'Bug Fix': 'rgb(34, 197, 94)',
-    Breaking: 'rgb(239, 68, 68)',
-    Docs: 'rgb(148, 163, 184)',
-    Performance: 'rgb(168, 85, 247)',
-    Security: 'rgb(239, 68, 68)',
+    Feature: 'var(--info-text)',
+    Enhancement: 'var(--primary-text)',
+    Design: 'var(--warning-text)',
+    Fix: 'var(--success-text)',
+    Reports: 'var(--success-text)',
+    'Bug Fix': 'var(--success-text)',
+    Breaking: 'var(--error-text)',
+    Docs: 'var(--muted-foreground)',
+    Performance: 'var(--tertiary-text)',
+    Security: 'var(--error-text)',
   }
-  return colors[tag] || 'rgb(156, 163, 175)'
+  return colors[tag] || 'var(--muted-foreground)'
 }

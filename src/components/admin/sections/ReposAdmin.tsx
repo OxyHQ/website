@@ -114,7 +114,7 @@ export default function ReposAdmin() {
         {!draft && <PrimaryButton onPress={() => setDraft(emptyDraft())}>Add repository</PrimaryButton>}
       </div>
 
-      {error && <p className="mt-4 text-sm text-rose-600 dark:text-rose-400">{error}</p>}
+      {error && <p className="mt-4 text-sm text-error-text">{error}</p>}
 
       {draft && (
         <div className="mt-6 rounded-2xl border border-border p-4">
@@ -205,7 +205,7 @@ export default function ReposAdmin() {
                   {repo.owner}/{repo.repo}
                 </div>
                 {repo.lastSyncError && (
-                  <div className="truncate text-xs text-rose-600 dark:text-rose-400">{repo.lastSyncError}</div>
+                  <div className="truncate text-xs text-error-text">{repo.lastSyncError}</div>
                 )}
               </div>
 
