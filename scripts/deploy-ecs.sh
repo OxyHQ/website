@@ -36,9 +36,6 @@ fi
 TASK_DEFINITION=$(aws ecs describe-services --cluster "$CLUSTER" --services "$SERVICE" \
   --region "$AWS_REGION" --query 'services[0].taskDefinition' --output text)
 if [ "$SERVICE" = "website-api" ]; then
-  SECRET_ARN=$(aws ssm get-parameter \
-    --name "/oxy/$SERVICE/INTERCOM_MESSENGER_SECRET" \
-    --region "$AWS_REGION" --query 'Parameter.ARN' --output text)
   WORK_DIR=$(mktemp -d)
   trap 'rm -rf "$WORK_DIR"' EXIT
   aws ecs describe-task-definition --task-definition "$TASK_DEFINITION" \
@@ -48,6 +45,13 @@ if [ "$SERVICE" = "website-api" ]; then
   if ! jq -e --arg name "INTERCOM_MESSENGER_SECRET" \
     '.containerDefinitions[] | (.secrets // [])[]? | .name == $name' \
     "$WORK_DIR/task-definition.json" >/dev/null; then
+    # The ARN is spelled out rather than read back: the deploy role may WRITE
+    # /oxy/* (the sync step above just put this parameter there) but not read
+    # it, and `ssm:GetParameter` was failing the whole deploy for the sake of a
+    # string this line can build. ECS resolves it at task start; if the sync
+    # skipped an empty secret, that is where it surfaces.
+    ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
+    SECRET_ARN="arn:aws:ssm:$AWS_REGION:$ACCOUNT_ID:parameter/oxy/$SERVICE/INTERCOM_MESSENGER_SECRET"
     jq --arg container "$SERVICE" --arg name "INTERCOM_MESSENGER_SECRET" \
       --arg valueFrom "$SECRET_ARN" '
       del(.taskDefinitionArn, .revision, .status, .requiresAttributes,
