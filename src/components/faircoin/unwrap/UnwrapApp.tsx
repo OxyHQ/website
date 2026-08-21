@@ -224,7 +224,7 @@ function ConnectStep() {
       })}
 
       {connectError ? (
-        <div className="flex items-start gap-2 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-xs text-destructive">
+        <div className="flex items-start gap-2 rounded-xl border border-error/40 bg-error-subtle px-3 py-2.5 text-xs text-error-text">
           <AlertTriangle aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           <span>
             {connectError.message.length > 0
@@ -391,7 +391,7 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {onWrongChain ? (
-        <div className="flex flex-col gap-2.5 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-3.5 text-amber-700 dark:text-amber-300">
+        <div className="flex flex-col gap-2.5 rounded-2xl border border-warning/40 bg-warning-subtle p-3.5 text-warning-text">
           <div className="flex items-start gap-2 text-sm">
             <ShieldAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
             <span>
@@ -403,7 +403,7 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
             type="button"
             disabled={isSwitchingChain}
             onClick={() => switchChain({ chainId: base.id })}
-            className="h-10 rounded-xl bg-amber-500 text-sm font-semibold text-white transition-all hover:brightness-110 disabled:opacity-60"
+            className="h-10 rounded-xl bg-warning text-sm font-semibold text-warning-foreground transition-all hover:brightness-110 disabled:opacity-60"
           >
             {isSwitchingChain ? 'Switching network…' : 'Switch to Base'}
           </button>
@@ -464,7 +464,7 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
           })}
         </div>
         {amountErrorMsg ? (
-          <p className="mt-2 text-xs font-medium text-destructive">{amountErrorMsg}</p>
+          <p className="mt-2 text-xs font-medium text-error-text">{amountErrorMsg}</p>
         ) : null}
       </div>
 
@@ -531,13 +531,13 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
             </a>
           </span>
           {destinationErrorMsg ? (
-            <span className="text-right font-medium text-destructive">{destinationErrorMsg}</span>
+            <span className="text-right font-medium text-error-text">{destinationErrorMsg}</span>
           ) : null}
         </div>
       </div>
 
       {isPaused ? (
-        <div className="flex items-start gap-2 rounded-2xl border border-destructive/40 bg-destructive/10 p-3.5 text-sm text-destructive">
+        <div className="flex items-start gap-2 rounded-2xl border border-error/40 bg-error-subtle p-3.5 text-sm text-error-text">
           <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
           <span>The WFAIR contract is currently paused. Redemptions are disabled.</span>
         </div>
@@ -885,7 +885,7 @@ function ConnectedPill({
   }, [address])
   return (
     <div className="inline-flex items-center gap-1 rounded-full border border-border bg-popover/80 p-0.5 pl-3">
-      <span aria-hidden className="flex h-2 w-2 rounded-full bg-emerald-500" />
+      <span aria-hidden className="flex h-2 w-2 rounded-full bg-success" />
       <span className="font-mono text-xs text-foreground">{shortAddress(address)}</span>
       <button
         type="button"
@@ -928,7 +928,7 @@ function LiveDot({ active }: { active: boolean }) {
 
 function ErrorBanner({ message }: { message: string }) {
   return (
-    <div className="flex items-start gap-2 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-xs text-destructive">
+    <div className="flex items-start gap-2 rounded-xl border border-error/40 bg-error-subtle px-3 py-2.5 text-xs text-error-text">
       <ShieldAlert aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0" />
       <span className="break-words">{message}</span>
     </div>

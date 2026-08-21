@@ -145,7 +145,7 @@ export default function SeoAdmin() {
         ))}
       </div>
 
-      {error && <p className="mt-4 text-sm text-rose-600 dark:text-rose-400">{error}</p>}
+      {error && <p className="mt-4 text-sm text-error-text">{error}</p>}
 
       <div className="mt-6 rounded-xl border border-border p-4">
         <div className="flex items-center justify-between">

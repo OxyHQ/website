@@ -155,7 +155,7 @@ function FollowButton({ userId }: { userId: string }) {
         disabled={toggleFollow.isPending}
         className={`min-w-[100px] rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors ${
           hovering
-            ? 'border-red-500/50 bg-red-500/10 text-red-500'
+            ? 'border-error/50 bg-error-subtle text-error-text'
             : 'border-border text-foreground'
         }`}
       >

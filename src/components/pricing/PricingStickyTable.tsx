@@ -70,7 +70,7 @@ export default function PricingStickyTable({ isAnnual, onToggle }: Props) {
                     <div className="flex items-center gap-x-2">
                       <h3 className="text-2xl text-muted-foreground">{plan.name}</h3>
                       {plan.highlighted && (
-                        <div className="rounded-lg border border-blue-200 bg-blue-100 px-2 py-1 text-center text-blue-450 text-xs">Popular</div>
+                        <div className="rounded-lg border border-info/30 bg-info-subtle px-2 py-1 text-center text-info-text text-xs">Popular</div>
                       )}
                     </div>
                     <div className="mt-2">

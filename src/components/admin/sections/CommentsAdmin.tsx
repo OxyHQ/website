@@ -80,9 +80,9 @@ export default function CommentsAdmin() {
                     on {comment.targetType}/{comment.targetId}
                   </span>
                   <span className={`rounded px-1.5 py-0.5 text-xs ${
-                    comment.status === 'visible' ? 'bg-green-500/10 text-green-500' :
-                    comment.status === 'hidden' ? 'bg-yellow-500/10 text-yellow-500' :
-                    'bg-red-500/10 text-red-500'
+                    comment.status === 'visible' ? 'bg-success-subtle text-success-text' :
+                    comment.status === 'hidden' ? 'bg-warning-subtle text-warning-text' :
+                    'bg-error-subtle text-error-text'
                   }`}>
                     {comment.status}
                   </span>

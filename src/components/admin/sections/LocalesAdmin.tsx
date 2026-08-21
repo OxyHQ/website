@@ -74,10 +74,10 @@ export default function LocalesAdmin() {
                 <span className="text-sm text-muted-foreground">({locale.nativeName})</span>
               )}
               {locale.isDefault && (
-                <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">Default</span>
+                <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs font-medium text-primary-text">Default</span>
               )}
               {!locale.enabled && (
-                <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">Disabled</span>
+                <span className="rounded-full bg-warning-subtle px-2 py-0.5 text-xs font-medium text-warning-text">Disabled</span>
               )}
             </div>
             <div className="flex items-center gap-2">
@@ -85,7 +85,7 @@ export default function LocalesAdmin() {
                 Edit
               </button>
               {!locale.isDefault && (
-                <button onClick={() => deleteAction.request(locale)} className="rounded-md p-1.5 text-muted-foreground hover:text-red-500">
+                <button onClick={() => deleteAction.request(locale)} className="rounded-md p-1.5 text-muted-foreground hover:text-error-text">
                   <Trash2 className="size-4" />
                 </button>
               )}

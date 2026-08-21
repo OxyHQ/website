@@ -1,5 +1,6 @@
 import { Badge } from '@oxyhq/bloom/badge'
-import type { BadgeColor, BadgeSize, BadgeVariant } from '@oxyhq/bloom/badge'
+import type { BadgeSize } from '@oxyhq/bloom/badge'
+import type { AccentFill, AccentTone } from '@oxyhq/bloom/theme'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {
@@ -19,8 +20,8 @@ export default function BadgeDemo() {
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const variant = values.variant as BadgeVariant
-  const color = values.color as BadgeColor
+  const variant = values.variant as AccentFill
+  const color = values.color as AccentTone
   const size = values.size as BadgeSize
   const content = typeof values.content === 'string' ? values.content : ''
   const dot = values.dot === true

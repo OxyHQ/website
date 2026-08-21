@@ -136,7 +136,7 @@ export default function CategoriesAdmin() {
             </div>
           </div>
 
-          {error && <p className="text-sm text-rose-600 dark:text-rose-400">{error}</p>}
+          {error && <p className="text-sm text-error-text">{error}</p>}
 
           <div className="flex items-center gap-2">
             <PrimaryButton onPress={save} disabled={saving}>

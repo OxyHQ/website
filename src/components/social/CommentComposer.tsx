@@ -62,7 +62,7 @@ export default function CommentComposer({
       />
       <div className="flex items-center justify-between">
         <span
-          className={`text-xs ${remaining < 100 ? 'text-red-400' : 'text-muted-foreground'}`}
+          className={`text-xs ${remaining < 100 ? 'text-error-text' : 'text-muted-foreground'}`}
         >
           {remaining.toLocaleString()} characters remaining
         </span>

@@ -115,7 +115,7 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
             <span className="text-xs text-muted-foreground">(edited)</span>
           )}
           {isHidden && isAdmin && (
-            <span className="rounded bg-red-500/20 px-1.5 py-0.5 text-xs text-red-400">
+            <span className="rounded bg-error-subtle px-1.5 py-0.5 text-xs text-error-text">
               hidden
             </span>
           )}
@@ -185,7 +185,7 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
               <button
                 type="button"
                 onClick={() => setConfirmDelete(true)}
-                className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-red-400"
+                className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-error-text"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 Delete
@@ -193,12 +193,12 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
             )}
             {confirmDelete && (
               <span className="inline-flex items-center gap-2 text-xs">
-                <span className="text-red-400">Delete this comment?</span>
+                <span className="text-error-text">Delete this comment?</span>
                 <button
                   type="button"
                   onClick={handleDelete}
                   disabled={deleteComment.isPending}
-                  className="cursor-pointer font-medium text-red-400 hover:text-red-300 disabled:opacity-50"
+                  className="cursor-pointer font-medium text-error-text hover:opacity-80 disabled:opacity-50"
                 >
                   Yes
                 </button>
@@ -216,7 +216,7 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
                 type="button"
                 onClick={() => handleModerate('hidden')}
                 disabled={moderateComment.isPending}
-                className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-yellow-400 disabled:opacity-50"
+                className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-warning-text disabled:opacity-50"
               >
                 <EyeOff className="h-3.5 w-3.5" />
                 Hide
@@ -227,7 +227,7 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
                 type="button"
                 onClick={() => handleModerate('visible')}
                 disabled={moderateComment.isPending}
-                className="inline-flex cursor-pointer items-center gap-1 text-xs text-yellow-400 transition-colors hover:text-foreground disabled:opacity-50"
+                className="inline-flex cursor-pointer items-center gap-1 text-xs text-warning-text transition-colors hover:text-foreground disabled:opacity-50"
               >
                 <Eye className="h-3.5 w-3.5" />
                 Unhide

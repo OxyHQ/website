@@ -20,9 +20,9 @@ interface BadgeProps {
 
 const STYLES: Record<BadgeVariant, string> = {
   default: 'bg-surface text-muted-foreground border-border',
-  new: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30',
-  deprecated: 'bg-red-500/15 text-red-700 dark:text-red-300 border-red-500/30',
-  preview: 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30',
+  new: 'bg-success-subtle text-success-text border-success/30',
+  deprecated: 'bg-error-subtle text-error-text border-error/30',
+  preview: 'bg-warning-subtle text-warning-text border-warning/30',
 }
 
 export default function Badge({ variant = 'default', children }: BadgeProps) {

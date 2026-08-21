@@ -139,7 +139,7 @@ function CategoryCardIcon({
 
 function ArticleNumber({ index }: { index: number }) {
   return (
-    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground text-sm shadow-[0px_2px_4px_0px_rgba(28,40,64,0.04),0px_1px_2px_-1px_rgba(28,40,64,0.08)] transition-[border-color] group-hover:border-input">
+    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground text-sm shadow-s transition-[border-color] group-hover:border-input">
       {index + 1}
     </div>
   )
@@ -269,7 +269,7 @@ function HelpContent({
               disabled
               aria-disabled="true"
               title="Search is coming soon"
-              className="relative inline-flex items-center justify-center text-nowrap border transition-colors h-11.5 gap-x-2 rounded-full px-3.5 button-outline w-full pr-2.5 text-sm shadow-[0px_1px_2px_-1px_rgba(28,40,64,0.08),_0px_2px_4px_0px_rgba(28,40,64,0.04)] opacity-60 cursor-not-allowed"
+              className="relative inline-flex h-11.5 w-full cursor-not-allowed items-center justify-center gap-x-2 text-nowrap rounded-full border pr-2.5 pl-3.5 text-sm opacity-60 shadow-s transition-colors button-outline"
             >
               <SearchIcon />
               <p className="w-full truncate text-left text-muted-foreground">

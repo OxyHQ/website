@@ -94,8 +94,6 @@
    * chart and sidebar families, the type scale, radii and shadows. The values
    * behind those aliases come from `styles/theme.generated.css`. */
 
-  --color-blue-450: #3977e8;
-
   /* Typography — powered by @oxyhq/bloom fonts.
    * Bloom's <BloomThemeProvider> injects --bloom-font-display / --bloom-font-sans /
    * --bloom-font-mono onto :root at startup. The display family is BlomusModernus
