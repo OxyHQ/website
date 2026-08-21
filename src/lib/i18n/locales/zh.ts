@@ -1,4 +1,4 @@
-import type { Translations } from './en'
+import en, { type Translations } from './en'
 
 const zh: Translations = {
   common: {
@@ -84,6 +84,7 @@ const zh: Translations = {
     socialMention: 'Mention',
   },
   home: {
+    ...en.home,
     heroTitleDefault: '创造一个未来,让技术赋能个人\n过上连接、充实、可持续的生活。',
     heroEyebrowDefault: '由相信变革的人们打造。道德、开放、深具人性。',
     allInOneHeadingLine1: '为所有人构建,',

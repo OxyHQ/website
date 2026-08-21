@@ -1,8 +1,6 @@
 import Button from '../ui/Button'
-import {
-  researchHeading, researchParagraph, researchHighlight,
-  researchCta, researchCtaHref,
-} from '../../data/ai'
+import { researchCtaHref } from '../../data/ai'
+import { useTranslation } from '../../lib/i18n'
 
 /**
  * Reusable "AI for Research" section.
@@ -14,6 +12,9 @@ import {
  * gutter twice and pushes the block a full gutter inside every other section.
  */
 export default function AIResearchSection({ framed = true }: { framed?: boolean }) {
+  const { t } = useTranslation()
+  const researchParagraph = t('home.researchParagraph')
+  const researchHighlight = t('home.researchHighlight')
   return (
     <div className="relative w-full overflow-hidden bg-[url('/ai/research/ai-research-bg.png')] bg-cover bg-center text-foreground">
       <div className="grid min-h-[420px] grid-cols-[clamp(56px,12vw,360px)_minmax(0,1fr)_clamp(56px,12vw,360px)] items-center justify-center gap-4 py-6 lg:min-h-[480px] lg:grid-cols-[360px_minmax(0,40%)_360px]">
@@ -30,7 +31,7 @@ export default function AIResearchSection({ framed = true }: { framed?: boolean 
 
         <div className="flex min-w-0 w-full justify-center">
           <div className={`flex w-full flex-col items-center space-y-8 text-center ${framed ? 'max-w-[560px]' : 'max-w-[640px]'}`}>
-            <h2 className="text-foreground text-balance text-3xl tracking-tight md:text-4xl lg:text-5xl">{researchHeading}</h2>
+            <h2 className="text-foreground text-balance text-3xl tracking-tight md:text-4xl lg:text-5xl">{t('home.researchTitle')}</h2>
 
             <p className="text-justify text-muted-foreground text-lg sm:text-xl">
               {researchParagraph.split('{highlight}')[0]}
@@ -39,7 +40,7 @@ export default function AIResearchSection({ framed = true }: { framed?: boolean 
             </p>
 
             <Button variant="outline" size="md" href={researchCtaHref}>
-              {researchCta}
+              {t('home.researchCta')}
             </Button>
           </div>
         </div>

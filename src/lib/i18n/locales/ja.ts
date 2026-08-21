@@ -1,4 +1,4 @@
-import type { Translations } from './en'
+import en, { type Translations } from './en'
 
 const ja: Translations = {
   common: {
@@ -84,6 +84,7 @@ const ja: Translations = {
     socialMention: 'Mention',
   },
   home: {
+    ...en.home,
     heroTitleDefault: 'テクノロジーが個人を支え、\nつながり、満たされ、持続可能な人生を送れる未来を創る。',
     heroEyebrowDefault: '変化を信じる人々によって作られています。倫理的でオープン、そして深く人間的に。',
     allInOneHeadingLine1: '自分のためだけでなく、',

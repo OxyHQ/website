@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { useHero, useNewsroomPosts, type HeroMediaRef } from '../../api/hooks'
 import { usePageChromeStore } from '../../stores/pageChromeStore'
+import { useTranslation } from '../../lib/i18n'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────
@@ -31,7 +32,6 @@ import { AnimatedTitle } from '../ui/AnimatedTitle'
 const IMG = '/images/landing'
 const IMG_HERO = '/images/hero'
 
-const DEFAULT_TITLE = 'Creating a future where technology empowers individuals\nto live connected, fulfilling, and sustainable lives.'
 const DEFAULT_POSTER = `${IMG}/hero-bg.avif`
 const DEFAULT_BG_WEBM = `${IMG}/hero-panel.webm`
 const DEFAULT_BG_MP4 = `${IMG}/hero-panel.mp4`
@@ -48,24 +48,12 @@ const NEWS_CELL_BACKDROP = `${IMG}/4lffisf9oaY443RqgB8sCKLHJc.avif`
  * its final boundary. So the last line says where the work starts rather than
  * claiming the whole of it is software.
  */
-const SENTENCES = [
-  'Practical alternatives to',
-  'systems built on extraction.',
-  'Technology is where we start.',
-]
-
 /*
  * Read left to right as the charter reads: people first, what grows out of
  * that, and the scale it is meant to reach. The raised fist was the fifth
  * candidate and is left out on purpose — a single skin tone on a fist reads as
  * a specific signal rather than as "everyone".
  */
-const PANEL_ICONS = [
-  { src: `${IMG_HERO}/emoji-handshake.png`, alt: 'Handshake' },
-  { src: `${IMG_HERO}/emoji-seedling.png`, alt: 'Seedling' },
-  { src: `${IMG_HERO}/emoji-globe.png`, alt: 'Globe showing the Americas' },
-]
-
 /** How the icons enter once the panel has begun to open. */
 const ICON_ANIMATION = { duration: 1, ease: 'power4.out' }
 const SCROLL_CTA_TOP_THRESHOLD = 32
@@ -80,6 +68,7 @@ function heroMediaUrl(ref: HeroMediaRef | undefined): string {
 }
 
 export default function HomeHero() {
+  const { t } = useTranslation()
   const { data: hero } = useHero()
   const setHeroVisible = usePageChromeStore((s) => s.setHeroVisible)
   const [heroInView, setHeroInView] = useState(false)
@@ -91,7 +80,17 @@ export default function HomeHero() {
     [0, SCROLL_CTA_SCROLL_DISTANCE],
   )
 
-  const title = hero?.title || DEFAULT_TITLE
+  const title = hero?.title || t('home.heroTitleDefault')
+  const sentences = [
+    t('home.heroPanelSentence1'),
+    t('home.heroPanelSentence2'),
+    t('home.heroPanelSentence3'),
+  ]
+  const panelIcons = [
+    { src: `${IMG_HERO}/emoji-handshake.png`, alt: t('home.heroIconHandshake') },
+    { src: `${IMG_HERO}/emoji-seedling.png`, alt: t('home.heroIconSeedling') },
+    { src: `${IMG_HERO}/emoji-globe.png`, alt: t('home.heroIconGlobe') },
+  ]
   const poster = heroMediaUrl(hero?.backgroundPoster) || DEFAULT_POSTER
   const webm = heroMediaUrl(hero?.backgroundVideoWebm) || DEFAULT_BG_WEBM
   const mp4 = heroMediaUrl(hero?.backgroundVideoMp4) || DEFAULT_BG_MP4
@@ -290,11 +289,11 @@ export default function HomeHero() {
             <motion.button
               type="button"
               onClick={scrollToBuildForEveryone}
-              aria-label="Scroll to Build for everyone"
+              aria-label={t('home.heroScrollCta')}
               style={{ y: scrollCtaY }}
-              className="pointer-events-auto inline-flex cursor-pointer animate-[hero-scroll-cta_2.2s_cubic-bezier(0.22,1,0.36,1)_infinite] items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-[15px] font-medium text-black shadow-lg transition-transform duration-200 will-change-transform hover:scale-[1.03] motion-reduce:animate-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
+              className="pointer-events-auto inline-flex cursor-pointer animate-[hero-scroll-cta_2.2s_cubic-bezier(0.22,1,0.36,1)_infinite] items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-[15px] font-medium text-black shadow-lg motion-reduce:animate-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
             >
-              <span>Build for everyone</span>
+              <span>{t('home.heroScrollCta')}</span>
               <ScrollArrow delay={0} className="text-black" sizeClass="size-[18px]" animated={false} />
             </motion.button>
           </div>
@@ -330,13 +329,13 @@ export default function HomeHero() {
               */}
               <div className="flex flex-col items-start gap-6 px-[var(--layout-gutter)] pb-8 pt-6 lg:hidden">
                 <div className="flex flex-col items-start text-body-lg text-muted-foreground">
-                  {SENTENCES.map((sentence) => (
+                  {sentences.map((sentence) => (
                     <p key={sentence}>{sentence}</p>
                   ))}
                 </div>
 
                 <div className="flex w-full flex-col gap-2">
-                  <p className="font-mono text-label-sm uppercase text-muted-foreground">Newsroom</p>
+                  <p className="font-mono text-label-sm uppercase text-muted-foreground">{t('home.heroNewsroom')}</p>
                   <FeaturedNews />
                 </div>
               </div>
@@ -359,7 +358,7 @@ export default function HomeHero() {
                 className="relative z-[5] flex origin-bottom-left flex-col items-start justify-end p-20 antialiased will-change-transform"
               >
                 <div className="hidden w-full justify-center gap-4 lg:flex">
-                  {PANEL_ICONS.map((icon) => (
+                  {panelIcons.map((icon) => (
                     <div key={icon.src} className="flex size-14 overflow-hidden">
                       <img
                         data-hero-icon
@@ -376,7 +375,7 @@ export default function HomeHero() {
                 </div>
 
                 <div className="flex flex-col items-start">
-                  {SENTENCES.map((sentence) => (
+                  {sentences.map((sentence) => (
                     <p
                       key={sentence}
                       data-hero-sentence
@@ -472,7 +471,7 @@ export default function HomeHero() {
                 ref={arrowsRef}
                 type="button"
                 onClick={scrollToBuildForEveryone}
-                aria-label="Scroll to Build for everyone"
+                aria-label={t('home.heroScrollCta')}
                 className="hidden w-fit cursor-pointer flex-col gap-2 p-10 transition-opacity will-change-transform hover:opacity-70 lg:flex"
               >
                 <ScrollArrow delay={0} />
@@ -482,7 +481,7 @@ export default function HomeHero() {
 
               <div className="flex w-full justify-end">
                 <div ref={newsRef} className="relative flex w-full flex-col gap-2 p-10 will-change-transform">
-                  <p className="font-mono text-label-sm uppercase text-muted-foreground">Newsroom</p>
+                  <p className="font-mono text-label-sm uppercase text-muted-foreground">{t('home.heroNewsroom')}</p>
                   <FeaturedNews />
                 </div>
               </div>

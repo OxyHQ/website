@@ -1,4 +1,5 @@
 import PhotoCardCarousel, { type PhotoCard } from '../sections/PhotoCardCarousel'
+import { useTranslation } from '../../lib/i18n'
 
 const RESEARCH_FEATURES: PhotoCard[] = [
   {
@@ -40,11 +41,17 @@ const RESEARCH_FEATURES: PhotoCard[] = [
 ]
 
 export default function AIResearchFeatureGrid() {
+  const { t } = useTranslation()
+  const cards = RESEARCH_FEATURES.map((card, index) => ({
+    image: card.image,
+    title: t(`home.aiFeature${index + 1}Title`),
+    description: t(`home.aiFeature${index + 1}Description`),
+  }))
   return (
     <PhotoCardCarousel
-      title="Technology with people at the center"
-      description="Open tools, shared identity, and responsible technology you can understand and control."
-      cards={RESEARCH_FEATURES}
+      title={t('home.aiFeaturesTitle')}
+      description={t('home.aiFeaturesDescription')}
+      cards={cards}
       variant="square"
     />
   )

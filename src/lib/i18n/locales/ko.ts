@@ -1,4 +1,4 @@
-import type { Translations } from './en'
+import en, { type Translations } from './en'
 
 const ko: Translations = {
   common: {
@@ -84,6 +84,7 @@ const ko: Translations = {
     socialMention: 'Mention',
   },
   home: {
+    ...en.home,
     heroTitleDefault: '기술이 개인에게 힘을 실어\n연결되고 충만하며 지속 가능한 삶을 살 수 있는 미래를 만듭니다.',
     heroEyebrowDefault: '변화를 믿는 사람들이 만들었습니다. 윤리적이고, 개방적이며, 깊이 인간적인.',
     allInOneHeadingLine1: '자신만이 아니라,',

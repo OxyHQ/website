@@ -5,6 +5,7 @@ import { StarFour, PlugsConnected, Unite, Cpu } from '@phosphor-icons/react'
 import { useFairCoinStats, useNewsroomPosts } from '../../api/hooks'
 import type { FairCoinStats } from '../../api/faircoinStore'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
+import { useTranslation } from '../../lib/i18n'
 
 /**
  * FairCoin on the home page: the live chain, the latest post, and the three
@@ -65,11 +66,11 @@ function AnimatedStat({ end, decimals, duration = 2000 }: { end: number; decimal
 
 type FairCoinStatKey = 'blocks' | 'hashrate' | 'peers' | 'difficulty'
 
-const STAT_META: { key: FairCoinStatKey; label: string; decimals: number; Icon: typeof StarFour }[] = [
-  { key: 'blocks', label: 'Current blocks', decimals: 0, Icon: StarFour },
-  { key: 'hashrate', label: 'Network (KH/s)', decimals: 0, Icon: PlugsConnected },
-  { key: 'peers', label: 'Active peers', decimals: 0, Icon: Unite },
-  { key: 'difficulty', label: 'Difficulty', decimals: 4, Icon: Cpu },
+const STAT_META: { key: FairCoinStatKey; labelKey: string; decimals: number; Icon: typeof StarFour }[] = [
+  { key: 'blocks', labelKey: 'home.faircoinBlocks', decimals: 0, Icon: StarFour },
+  { key: 'hashrate', labelKey: 'home.faircoinNetwork', decimals: 0, Icon: PlugsConnected },
+  { key: 'peers', labelKey: 'home.faircoinPeers', decimals: 0, Icon: Unite },
+  { key: 'difficulty', labelKey: 'home.faircoinDifficulty', decimals: 4, Icon: Cpu },
 ]
 
 function toDisplayValues(stats: FairCoinStats | null): Record<FairCoinStatKey, number> {
@@ -83,9 +84,9 @@ function toDisplayValues(stats: FairCoinStats | null): Record<FairCoinStatKey, n
 }
 
 const LINKS = [
-  { href: 'https://buy.fairco.in', label: 'Buy', solid: true },
-  { href: 'https://explorer.fairco.in', label: 'Explorer', solid: false },
-  { href: 'https://fairco.in', label: 'Learn more', solid: false },
+  { href: 'https://buy.fairco.in', labelKey: 'home.faircoinBuy', solid: true },
+  { href: 'https://explorer.fairco.in', labelKey: 'home.faircoinExplorer', solid: false },
+  { href: 'https://fairco.in', labelKey: 'home.faircoinLearnMore', solid: false },
 ]
 
 const FAIRCOIN_PRIMARY_BUTTON_STYLE = {
@@ -104,6 +105,7 @@ const NEWS_DATE_FORMAT: Intl.DateTimeFormatOptions = { month: 'short', day: 'num
 const FALLBACK_NEWS_IMAGE = '/images/landing/faircoin-store.png'
 
 export default function FairCoinSection() {
+  const { t, locale } = useTranslation()
   const stats = useFairCoinStats()
   const values = toDisplayValues(stats)
   // Re-running the count-up is the whole interaction: a cell is a button that
@@ -115,9 +117,9 @@ export default function FairCoinSection() {
   const { data: newsData } = useNewsroomPosts({ tag: 'faircoin', limit: 1 })
   const post = newsData?.posts?.[0]
   const newsImage = (post && typeof post.coverImage === 'string' && post.coverImage) || FALLBACK_NEWS_IMAGE
-  const newsTitle = post?.title ?? 'Empowering local stores with FairCoin'
+  const newsTitle = post?.title ?? t('home.faircoinNewsFallback')
   const newsDate = post?.publishedAt
-    ? new Date(post.publishedAt).toLocaleDateString('en-US', NEWS_DATE_FORMAT)
+    ? new Date(post.publishedAt).toLocaleDateString(locale, NEWS_DATE_FORMAT)
     : ''
   const newsHref = post?.slug ? `/newsroom/${post.slug}` : null
 
@@ -159,23 +161,22 @@ export default function FairCoinSection() {
               decoding="async"
             />
             <AnimatedTitle as="h2" className="text-heading-responsive-lg">
-              FairCoin today.
+              {t('home.faircoinTitle')}
             </AnimatedTitle>
             <p className="max-w-[540px] text-muted-foreground">
-              A currency built for cooperation rather than speculation: mined without a race to burn power, held by
-              the people who use it, and open for anyone to audit block by block.
+              {t('home.faircoinDescription')}
             </p>
             <div className="flex flex-wrap gap-3">
               {LINKS.map((link) => (
                 <BloomButton
-                  key={link.label}
+                  key={link.labelKey}
                   asChild
                   variant={link.solid ? 'primary' : 'outline'}
                   size="md"
                   style={link.solid ? FAIRCOIN_PRIMARY_BUTTON_STYLE : FAIRCOIN_OUTLINE_BUTTON_STYLE}
                 >
                   <a href={link.href} target="_blank" rel="noopener noreferrer">
-                    {link.label}
+                    {t(link.labelKey)}
                   </a>
                 </BloomButton>
               ))}
@@ -207,7 +208,7 @@ export default function FairCoinSection() {
               <stat.Icon size={20} className="shrink-0 text-primary" weight="bold" />
               <span className="min-w-0">
                 <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  {stat.label}
+                  {t(stat.labelKey)}
                 </span>
                 <span className="block text-3xl font-bold leading-tight lg:text-3xl">
                   <AnimatedStat key={`${runs[i]}-${values[stat.key]}`} end={values[stat.key]} decimals={stat.decimals} />

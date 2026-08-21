@@ -1,22 +1,21 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from '../../lib/i18n'
 
-const USE_CASES = [
-  'Research and discovery',
-  'Private conversations',
-  'Open-source collaboration',
-  'AI-powered workflows',
-  'Shared identity',
-  'Everyday payments',
-  'Community building',
-  'Ethical technology',
-  'Personal knowledge',
-  'Building for people',
+const USE_CASE_KEYS = [
+  'home.useCase1',
+  'home.useCase2',
+  'home.useCase3',
+  'home.useCase4',
+  'home.useCase5',
+  'home.useCase6',
+  'home.useCase7',
+  'home.useCase8',
+  'home.useCase9',
+  'home.useCase10',
 ] as const
 
-const ROLO_ITEMS = [...USE_CASES, ...USE_CASES, ...USE_CASES]
 const ITEM_HEIGHT = 64
 const ROLO_HEIGHT = 576
-const START_INDEX = USE_CASES.length + Math.floor(USE_CASES.length / 2)
 
 function itemOpacity(distance: number) {
   if (distance === 0) return 1
@@ -27,7 +26,10 @@ function itemOpacity(distance: number) {
 }
 
 export default function OxyUseCasesRolo() {
-  const [activeIndex, setActiveIndex] = useState(START_INDEX)
+  const { t } = useTranslation()
+  const useCases = USE_CASE_KEYS.map((key) => t(key))
+  const roloItems = [...useCases, ...useCases, ...useCases]
+  const [activeIndex, setActiveIndex] = useState(useCases.length + Math.floor(useCases.length / 2))
   const [paused, setPaused] = useState(false)
   const [transitionEnabled, setTransitionEnabled] = useState(true)
 
@@ -38,10 +40,10 @@ export default function OxyUseCasesRolo() {
   }, [paused])
 
   useEffect(() => {
-    if (activeIndex < USE_CASES.length * 2) return
+    if (activeIndex < useCases.length * 2) return
     const resetTimer = window.setTimeout(() => {
       setTransitionEnabled(false)
-      setActiveIndex(USE_CASES.length)
+      setActiveIndex(useCases.length)
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => setTransitionEnabled(true))
       })
@@ -54,7 +56,7 @@ export default function OxyUseCasesRolo() {
   return (
     <section
       className="section w-full overflow-hidden bg-background text-foreground"
-      aria-label="Where you use Oxy"
+      aria-label={t('home.useCasesHeading')}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -63,7 +65,7 @@ export default function OxyUseCasesRolo() {
       <div className="container">
         <div className="grid min-h-[40rem] grid-cols-1 items-center gap-8 py-16 md:grid-cols-[minmax(0,0.28fr)_minmax(0,0.72fr)] md:gap-4 md:py-20 lg:min-h-[48rem] lg:grid-cols-[minmax(0,0.3fr)_minmax(0,0.7fr)] lg:gap-6">
           <p className="text-xl font-medium tracking-tight md:text-2xl">
-            People use Oxy for
+            {t('home.useCasesHeading')}
           </p>
 
           <div
@@ -75,7 +77,7 @@ export default function OxyUseCasesRolo() {
               className={`absolute inset-x-0 top-0 flex flex-col ${transitionEnabled ? 'transition-transform duration-[620ms] ease-[cubic-bezier(0.22,1,0.36,1)]' : ''}`}
               style={{ transform: `translateY(${translateY}px)` }}
             >
-              {ROLO_ITEMS.map((item, index) => {
+              {roloItems.map((item, index) => {
                 const distance = Math.abs(index - activeIndex)
                 return (
                   <li
@@ -92,7 +94,7 @@ export default function OxyUseCasesRolo() {
           </div>
 
           <ul className="sr-only">
-            {USE_CASES.map((item) => <li key={item}>{item}</li>)}
+            {useCases.map((item) => <li key={item}>{item}</li>)}
           </ul>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { Pause, Play } from '@phosphor-icons/react'
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from '../../lib/i18n'
 
 type ImageCard = {
   type: 'image'
@@ -217,11 +218,40 @@ function TickerCardView({ card }: { card: TickerCard }) {
 }
 
 export default function OxyCommunityTicker() {
+  const { t } = useTranslation()
   const trackRef = useRef<HTMLDivElement>(null)
   const loopWidthRef = useRef(0)
   const scrollPositionRef = useRef(0)
   const isHoveredRef = useRef(false)
   const [playing, setPlaying] = useState(true)
+
+  const cards = TICKER_CARDS.map((card, index) => {
+    if (index === 0 && card.type === 'image') return { ...card, title: t('home.tickerImage1') }
+    if (index === 1 && card.type === 'profile') return { ...card, role: t('home.tickerRoleMention') }
+    if (index === 2 && card.type === 'quote') {
+      return { ...card, quote: t('home.tickerQuote1'), name: t('home.tickerCommunity'), role: t('home.tickerBuilders') }
+    }
+    if (index === 3 && card.type === 'profile') return { ...card, role: t('home.tickerRoleAllo') }
+    if (index === 4 && card.type === 'stat') return { ...card, value: t('home.tickerOpen'), label: t('home.tickerByDesign') }
+    if (index === 5 && card.type === 'image') return { ...card, title: t('home.tickerImage2') }
+    if (index === 6 && card.type === 'profile') return { ...card, role: t('home.tickerRoleFairCoin') }
+    if (index === 7 && card.type === 'quote-pair') {
+      return {
+        ...card,
+        quotes: [
+          { quote: t('home.tickerQuote2'), name: t('home.tickerValues'), role: t('home.tickerHumanFirst') },
+          { quote: t('home.tickerQuote3'), name: t('home.tickerValues'), role: t('home.tickerOpenDefault') },
+        ],
+      }
+    }
+    if (index === 8 && card.type === 'profile') return { ...card, role: t('home.tickerRoleHomiio') }
+    if (index === 9 && card.type === 'stat') return { ...card, value: t('home.tickerHuman'), label: t('home.tickerAtCenter') }
+    if (index === 10 && card.type === 'quote') {
+      return { ...card, quote: t('home.tickerQuote4'), name: t('home.tickerEcosystem'), role: t('home.tickerOneAccount') }
+    }
+    if (index === 11 && card.type === 'image') return { ...card, title: t('home.tickerImage3') }
+    return card
+  })
 
   useEffect(() => {
     const track = trackRef.current
@@ -262,7 +292,7 @@ export default function OxyCommunityTicker() {
 
   const renderCards = (clone = false) => (
     <div className="flex shrink-0 gap-4 pe-4" aria-hidden={clone || undefined}>
-      {TICKER_CARDS.map((card, index) => (
+      {cards.map((card, index) => (
         <TickerCardView key={`${clone ? 'clone' : 'original'}-${card.type}-${index}`} card={card} />
       ))}
     </div>
@@ -275,7 +305,7 @@ export default function OxyCommunityTicker() {
           type="button"
           onClick={() => setPlaying((value) => !value)}
           className="pointer-events-none absolute bottom-4 right-4 z-10 hidden size-11 items-center justify-center rounded-full bg-background/90 text-foreground opacity-0 shadow-lg transition-[opacity,background-color] hover:bg-background group-hover/ticker:pointer-events-auto group-hover/ticker:opacity-100 focus-visible:pointer-events-auto focus-visible:opacity-100 group-focus-within/ticker:pointer-events-auto group-focus-within/ticker:opacity-100 md:flex"
-          aria-label={playing ? 'Pause auto-scrolling' : 'Play auto-scrolling'}
+          aria-label={playing ? t('home.tickerPause') : t('home.tickerPlay')}
         >
           {playing ? <Pause size={16} aria-hidden="true" /> : <Play size={16} weight="fill" aria-hidden="true" />}
         </button>

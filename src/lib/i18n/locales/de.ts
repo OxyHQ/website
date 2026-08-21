@@ -1,4 +1,4 @@
-import type { Translations } from './en'
+import en, { type Translations } from './en'
 
 const de: Translations = {
   common: {
@@ -84,6 +84,7 @@ const de: Translations = {
     socialMention: 'Mention',
   },
   home: {
+    ...en.home,
     heroTitleDefault: 'Wir gestalten eine Zukunft, in der Technologie Menschen befähigt,\nverbunden, erfüllt und nachhaltig zu leben.',
     heroEyebrowDefault: 'Gebaut von Menschen, die an Veränderung glauben. Ethisch, offen und zutiefst menschlich.',
     allInOneHeadingLine1: 'Gebaut für alle,',
