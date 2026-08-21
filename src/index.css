@@ -534,6 +534,13 @@ body {
   50% { opacity: 1; }
 }
 
+@keyframes hero-scroll-cta {
+  0%, 16%, 100% { translate: 0 0; }
+  34% { translate: 0 10px; }
+  46% { translate: 0 -2px; }
+  60% { translate: 0 0; }
+}
+
 /* Typing cursor blink */
 @keyframes cursor-blink {
   0%, 100% { opacity: 1; }

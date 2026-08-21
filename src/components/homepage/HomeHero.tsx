@@ -68,6 +68,7 @@ const PANEL_ICONS = [
 
 /** How the icons enter once the panel has begun to open. */
 const ICON_ANIMATION = { duration: 1, ease: 'power4.out' }
+const SCROLL_CTA_TOP_THRESHOLD = 72
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
@@ -81,6 +82,7 @@ export default function HomeHero() {
   const { data: hero } = useHero()
   const setHeroVisible = usePageChromeStore((s) => s.setHeroVisible)
   const [heroInView, setHeroInView] = useState(false)
+  const [buildSectionInView, setBuildSectionInView] = useState(false)
   const [showScrollCta, setShowScrollCta] = useState(false)
 
   const title = hero?.title || DEFAULT_TITLE
@@ -119,13 +121,25 @@ export default function HomeHero() {
     if (!target) return
 
     const observer = new IntersectionObserver(
-      ([entry]) => setShowScrollCta(heroInView && !entry.isIntersecting),
-      { rootMargin: '0px 0px 96px 0px', threshold: 0.01 },
+      ([entry]) => setBuildSectionInView(entry.isIntersecting),
+      { rootMargin: '0px 0px 144px 0px', threshold: 0.01 },
     )
     observer.observe(target)
 
     return () => observer.disconnect()
-  }, [heroInView])
+  }, [])
+
+  useEffect(() => {
+    const updateScrollCta = () => {
+      setShowScrollCta(
+        heroInView && !buildSectionInView && window.scrollY <= SCROLL_CTA_TOP_THRESHOLD,
+      )
+    }
+
+    updateScrollCta()
+    window.addEventListener('scroll', updateScrollCta, { passive: true })
+    return () => window.removeEventListener('scroll', updateScrollCta)
+  }, [buildSectionInView, heroInView])
 
   useGSAP(
     () => {
@@ -270,7 +284,7 @@ export default function HomeHero() {
       onViewportEnter={() => {
         setHeroVisible(true)
         setHeroInView(true)
-        setShowScrollCta(true)
+        setShowScrollCta(window.scrollY <= SCROLL_CTA_TOP_THRESHOLD)
       }}
       onViewportLeave={() => {
         setHeroVisible(false)
@@ -286,11 +300,11 @@ export default function HomeHero() {
               type="button"
               onClick={scrollToBuildForEveryone}
               aria-label="Scroll to Build for everyone"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 12 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="pointer-events-auto inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-[15px] font-medium text-black shadow-lg transition-transform duration-200 hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
+              initial={{ y: 28 }}
+              animate={{ y: 0 }}
+              exit={{ y: 28 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="pointer-events-auto inline-flex cursor-pointer animate-[hero-scroll-cta_1.9s_ease-in-out_infinite] items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-[15px] font-medium text-black shadow-lg transition-transform duration-200 hover:scale-[1.03] motion-reduce:animate-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
             >
               <span>Build for everyone</span>
               <ScrollArrow delay={0} className="text-black" sizeClass="size-[18px]" animated={false} />
