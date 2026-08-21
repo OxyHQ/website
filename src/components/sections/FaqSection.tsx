@@ -110,7 +110,7 @@ export default function FaqSection({
           <div className="min-w-0 space-y-8">
             {groups.map((group, groupIndex) => (
               <div key={group.title ?? `faq-group-${groupIndex}`}>
-                {group.title && <h3 className="mb-3 px-1 text-sm font-medium uppercase tracking-[0.08em] text-tertiary">{group.title}</h3>}
+                {group.title && <h3 className="mb-3 px-1 text-base font-medium leading-6 tracking-normal text-black dark:text-white">{group.title}</h3>}
                 <div className="overflow-hidden rounded-[2rem] bg-[color-mix(in_srgb,var(--background)_84%,var(--primary))]">
                   {group.items.map((item, itemIndex) => {
                     const rowId = `${groupIndex}-${itemIndex}`

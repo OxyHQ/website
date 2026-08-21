@@ -6,6 +6,7 @@ import { ArrowRightIcon } from '../icons'
 import { usePageChromeStore } from '../../stores/pageChromeStore'
 import { type FooterLink } from '../../data/content'
 import { LogoText } from '@oxyhq/services'
+import MentionIcon from '../social/MentionIcon'
 
 /* ─── Shared small components ─── */
 
@@ -58,23 +59,13 @@ function FacebookIcon() {
   )
 }
 
-function MentionFooterIcon() {
-  return (
-    <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M8 12a4 4 0 1 1 8 0c0 2.5-2 3-2 3" strokeLinecap="round" />
-      <circle cx="12" cy="18" r="0.5" fill="currentColor" />
-    </svg>
-  )
-}
-
 
 
 /* ─── Data ─── */
 
 interface SocialLink {
   label: string
-  icon: () => React.JSX.Element
+  icon: React.ComponentType<{ className?: string }>
   href: string
 }
 
@@ -175,7 +166,7 @@ export default function Footer({
     { label: t('footer.socialLinkedIn'), icon: LinkedInIcon, href: SOCIAL_URLS.linkedIn },
     { label: t('footer.socialX'), icon: XIcon, href: SOCIAL_URLS.x },
     { label: 'Facebook', icon: FacebookIcon, href: SOCIAL_URLS.facebook },
-    { label: t('footer.socialMention'), icon: MentionFooterIcon, href: SOCIAL_URLS.mention },
+    { label: t('footer.socialMention'), icon: MentionIcon, href: SOCIAL_URLS.mention },
   ]
   const defaultLegal: readonly LegalLink[] = [
     { label: t('footer.legal'), to: '/legal' },

@@ -1,4 +1,4 @@
-import { Fragment, useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore, type CSSProperties } from 'react'
+import { useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore, type CSSProperties } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { LogoIcon, ProfileButton } from '@oxyhq/services'
 import {
@@ -19,7 +19,7 @@ import { useTranslation, useLocaleContext } from '../../lib/i18n'
 import { searchSite, groupResults, searchContextGroups, GROUP_LABELS, type SearchResult } from '../../lib/site-search'
 import NavDropdownItem from '../ui/NavDropdownItem'
 import { SettingsPanel } from '../ui/SettingsPanel'
-import { Settings, Search, X } from 'lucide-react'
+import { FileText, Search, Settings, X } from 'lucide-react'
 import { ArrowRightIcon } from '../icons'
 import { useAdminAccess } from '../../hooks/useAdminAccess'
 
@@ -33,6 +33,52 @@ const NAV_LABEL_KEYS: Record<string, string> = {
   Platform: 'navbar.platform',
   Newsroom: 'navbar.newsroom',
   Pricing: 'navbar.pricing',
+}
+
+const SEARCH_APP_ICONS: Record<string, string> = {
+  '/mention': '/images/apps/mention.png',
+  '/homiio': '/images/landing/homiio-phone.png',
+  '/faircoin': '/images/apps/faircoin.svg',
+  '/inbox': '/images/apps/inbox.png',
+  '/astro': '/images/apps/astro.svg',
+  '/os': '/images/apps/oxyos.png',
+  '/apps/allo': '/images/apps/allo.png',
+}
+
+function searchAppIcon(url: string): string | undefined {
+  return SEARCH_APP_ICONS[url.replace(/\/$/, '')]
+}
+
+function SearchResultLeading({ result }: { result: SearchResult }) {
+  const kind = result.kind ?? (result.avatar ? 'user' : searchAppIcon(result.url) || result.group === 'apps' ? 'app' : result.group === 'pages' ? 'page' : 'doc')
+
+  if (kind === 'user') {
+    return result.avatar ? (
+      <img src={result.avatar} alt="" aria-hidden="true" className="size-10 shrink-0 rounded-full object-cover" />
+    ) : (
+      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-foreground/10 text-sm font-medium text-foreground">
+        {result.title.trim().charAt(0).toUpperCase()}
+      </span>
+    )
+  }
+
+  if (kind === 'app') {
+    const icon = result.icon ?? searchAppIcon(result.url)
+    return icon ? (
+      <img src={icon} alt="" aria-hidden="true" className="size-10 shrink-0 rounded-xl object-cover" loading="lazy" decoding="async" />
+    ) : (
+      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-foreground/10 text-sm font-medium text-foreground">
+        {result.title.trim().charAt(0).toUpperCase()}
+      </span>
+    )
+  }
+
+  const Icon = kind === 'page' ? Search : FileText
+  return (
+    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-foreground/5 text-muted-foreground">
+      <Icon className="size-4" aria-hidden="true" />
+    </span>
+  )
 }
 
 function translatedNavLabel(label: string, t: (key: string) => string): string {
@@ -575,6 +621,9 @@ export default function Navbar({
     }
   }, [bannerOffset])
   const isTransparent = transparent && !scrolled && !isOpen && !mobileOpen && !searchOpen
+  const headerSurface = mobileOpen
+    ? 'var(--background)'
+    : 'color-mix(in srgb, var(--background) 80%, transparent)'
 
   const closeSearch = useCallback(() => {
     setSearchOpen(false)
@@ -595,13 +644,13 @@ export default function Navbar({
       })
     }, 120)
   }, [])
-  // Group-ordered flat list: keyboard nav indexes into it, and the dropdown
-  // renders straight from it (inserting a header when the group changes), so the
-  // flat order has a single source of truth.
-  const flatResults = useMemo(
-    () => groupResults(searchResults, searchContextGroups(searchPath)).flatMap((g) => g.items),
+  // Group-ordered results are the source of truth for both the accordion and
+  // keyboard navigation. The active result always opens its own group.
+  const groupedResults = useMemo(
+    () => groupResults(searchResults, searchContextGroups(searchPath)),
     [searchResults, searchPath],
   )
+  const flatResults = useMemo(() => groupedResults.flatMap((g) => g.items), [groupedResults])
 
   // The ink the transparent bar writes in, and the wash its hovers use.
   const onLight = transparentOn === 'light'
@@ -610,12 +659,12 @@ export default function Navbar({
   const transparentColor = onLight ? 'black' : 'white'
 
   const linkClassName = (isTp: boolean) =>
-    `inline-flex h-12 items-center justify-center px-4 text-link-md transition-colors duration-300 ${
+    `inline-flex h-10 items-center justify-center rounded-full px-4 text-link-md transition-colors duration-300 ${
       isTp ? transparentInk : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
     }`
 
   // Shared styling for the round icon buttons (search + settings).
-  const iconButtonClass = `group inline-flex size-12 cursor-pointer select-none items-center justify-center transition-colors duration-300 ${isTransparent ? transparentInk : 'hover:bg-foreground/5 hover:text-foreground'}`
+  const iconButtonClass = `group inline-flex size-10 cursor-pointer select-none items-center justify-center rounded-full transition-colors duration-300 ${isTransparent ? transparentInk : 'hover:bg-foreground/5 hover:text-foreground'}`
   const iconButtonStyle = (active: boolean) => ({
     background: active ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
     color: active ? 'var(--color-foreground)' : isTransparent ? transparentColor : 'var(--color-muted-foreground)',
@@ -661,11 +710,7 @@ export default function Navbar({
       className={`fixed left-0 right-0 z-50 transition-[backdrop-filter] duration-300 ${isTransparent ? '' : 'backdrop-blur-md'}`}
       style={{
         top: bannerOffset,
-        background: isTransparent
-          ? 'transparent'
-          : mobileOpen
-            ? 'var(--background)'
-            : 'color-mix(in srgb, var(--background) 80%, transparent)',
+        background: isTransparent ? 'transparent' : headerSurface,
       }}
     >
 
@@ -696,7 +741,7 @@ export default function Navbar({
       </div>
 
       {/* ─── Main nav ─── */}
-      <div ref={measureNavRow} className="container max-lg:!max-w-full !px-0">
+      <div ref={measureNavRow} className="container max-lg:!max-w-full">
         <nav>
           {/*
             The row opens and closes on the same square, each flush to its own
@@ -705,12 +750,10 @@ export default function Navbar({
             brand cell ends and its last ends where the final control begins.
           */}
           {/* The shared surface stays continuous while a panel is open. */}
-          <div
-            className={`flex items-stretch ${activeDropdown ? 'bg-foreground/5' : ''}`}
-          >
+          <div className="relative flex min-h-12 items-center">
             <Link
               to={brand?.homeHref ?? '/'}
-              className="grid size-(--header-cell-size) shrink-0 place-content-center transition-colors hover:bg-foreground/5"
+              className={`grid size-10 shrink-0 place-content-center rounded-full transition-[inset-inline-start,transform,background-color] duration-300 ease-out hover:bg-foreground/5 lg:absolute lg:start-1/2 lg:top-1/2 lg:z-20 lg:-translate-y-1/2 ${searchOpen ? 'lg:start-4 lg:translate-x-0' : 'lg:-translate-x-1/2'}`}
               aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
@@ -720,12 +763,12 @@ export default function Navbar({
             {/* Middle: the dropdown triggers, or the search field while it is open */}
             <div className="flex min-w-0 flex-1 items-stretch">
             <div ref={escapeRef} className="relative z-10 flex items-stretch" onMouseLeave={scheduleClose}>
-                <ul className={`hidden items-stretch gap-1 ${searchOpen ? '' : 'lg:flex'}`}>
+                <ul className={`hidden items-stretch gap-3 transition-[opacity,transform] duration-200 ease-out lg:flex ${searchOpen ? 'lg:pointer-events-none lg:invisible lg:absolute lg:start-0 lg:top-0 lg:-translate-x-2 lg:opacity-0' : 'lg:translate-x-0 lg:opacity-100'}`}>
                   {dropdowns.map((dd) => (
                     <li key={dd.label}>
                       <button
                         ref={(el) => { triggerRefs.current[dd.label] = el }}
-                        className={`group inline-flex h-12 cursor-pointer select-none items-center justify-center gap-x-1.5 px-4 text-link-md transition-colors duration-300 ${isTransparent ? transparentHover : 'hover:bg-foreground/5 hover:text-foreground'}`}
+                        className={`group inline-flex h-10 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full px-4 text-link-md transition-colors duration-300 ${isTransparent ? transparentHover : 'hover:bg-foreground/5 hover:text-foreground'}`}
                         style={{
                           background: activeDropdown === dd.label ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
                           color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? transparentColor : 'var(--color-muted-foreground)',
@@ -765,8 +808,8 @@ export default function Navbar({
               </div>
 
             {searchOpen && (
-              <div className="relative flex-1">
-                <Search className="pointer-events-none absolute start-space-lg top-1/2 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+              <div className="relative mx-auto w-full max-w-[42rem]">
+                <Search className="pointer-events-none absolute start-5 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
                 <input
                   autoFocus
                   type="text"
@@ -795,47 +838,59 @@ export default function Navbar({
                   }}
                   placeholder={t('common.searchApps')}
                   aria-label={t('common.search')}
-                  className="h-12 w-full bg-transparent ps-[44px] pe-12 text-body-md text-foreground outline-none placeholder:text-muted-foreground"
+                  className={`h-11 w-full ps-12 pe-12 text-body-md text-foreground outline-none placeholder:text-muted-foreground ${searchQuery.trim() ? 'rounded-t-2xl border border-foreground/10 border-b-0 bg-background/60 shadow-none backdrop-blur-md' : 'rounded-full border border-foreground/10 bg-background/60 shadow-sm backdrop-blur-md'}`}
                 />
                 <button
                   type="button"
                   onClick={closeSearch}
                   aria-label={t('common.closeSearch')}
-                  className="absolute end-0 top-0 inline-flex size-12 cursor-pointer items-center justify-center text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                  className="absolute end-0 top-0 inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
                 >
                   <X className="size-4" />
                 </button>
 
                 {searchQuery.trim() ? (
-                  <div className="absolute inset-x-0 top-full z-50 max-h-[min(70vh,520px)] overflow-y-auto bg-background text-left">
+                  <div className="absolute inset-x-0 top-[calc(100%-1px)] z-50 max-h-[min(70vh,520px)] overflow-y-auto rounded-b-2xl border border-foreground/10 border-t-0 bg-background p-2 text-left shadow-sm">
                     {flatResults.length === 0 ? (
                       <div className="px-space-sm py-space-2xl text-center text-sm text-muted-foreground">{t('common.noResults')}</div>
                     ) : (
-                      flatResults.map((r, i) => {
-                        const showHeader = i === 0 || flatResults[i - 1].group !== r.group
-                        const isActive = i === activeResult
-                        return (
-                          <Fragment key={r.id}>
-                            {showHeader ? (
-                              <div className="px-space-sm pb-space-xs pt-space-md text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                                {GROUP_LABELS[r.group] ?? r.group}
+                      <div>
+                        {groupedResults.map((group) => {
+                          return (
+                            <div key={group.group} className="mb-4 last:mb-0">
+                              <div className="px-1 pb-2 pt-3 text-label-sm font-medium uppercase tracking-wider text-muted-foreground">
+                                {GROUP_LABELS[group.group] ?? group.group}
                               </div>
-                            ) : null}
-                            <button
-                              type="button"
-                              onMouseEnter={() => setActiveResult(i)}
-                              onClick={() => {
-                                closeSearch()
-                                navigate(r.url)
-                              }}
-                              className={`block w-full cursor-pointer px-space-sm py-space-md text-left transition-colors ${isActive ? 'bg-foreground/5' : ''}`}
-                            >
-                              <div className="truncate text-sm text-foreground">{r.title}</div>
-                              <div className="truncate text-body-xs text-muted-foreground">{r.subtitle}</div>
-                            </button>
-                          </Fragment>
-                        )
-                      })
+                              <div className="overflow-hidden rounded-2xl bg-foreground/[0.03]">
+                                {group.items.map((r) => {
+                                const i = flatResults.indexOf(r)
+                                const isActive = i === activeResult
+                                return (
+                                  <button
+                                    key={r.id}
+                                    type="button"
+                                    onMouseEnter={() => setActiveResult(i)}
+                                    onClick={() => {
+                                      closeSearch()
+                                      navigate(r.url)
+                                    }}
+                                    className={`block w-full cursor-pointer border-t border-foreground/10 px-space-sm py-space-md text-left transition-colors first:border-t-0 ${isActive ? 'bg-foreground/5' : 'hover:bg-foreground/5'}`}
+                                  >
+                                    <div className="flex min-w-0 items-center gap-3">
+                                      <SearchResultLeading result={r} />
+                                      <div className="min-w-0">
+                                        <div className="truncate text-sm text-foreground">{r.title}</div>
+                                        <div className="truncate text-body-xs text-muted-foreground">{r.subtitle}</div>
+                                      </div>
+                                    </div>
+                                  </button>
+                                )
+                                })}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
                     )}
                   </div>
                 ) : null}
@@ -844,9 +899,9 @@ export default function Navbar({
             </div>
 
             {/* Right controls (mobile + desktop) */}
-            <div className="ms-auto flex items-stretch">
+            <div className={`ms-auto flex items-stretch ${searchOpen ? 'lg:hidden' : ''}`}>
               {/* Mobile controls */}
-            <div className="flex items-stretch gap-1 lg:hidden">
+            <div className="flex items-stretch gap-2 lg:hidden">
               {/* The avatar is the only child of these toggles, and it renders
                   no text, so without a label the button has no accessible name
                   at all — Lighthouse's `button-name` audit fails outright. */}
@@ -858,7 +913,7 @@ export default function Navbar({
                 />
               )}
               <button
-                className={`inline-flex size-12 items-center justify-center transition-colors hover:bg-foreground/5 ${isTransparent ? (onLight ? 'text-black' : 'text-white') : 'text-muted-foreground'}`}
+                className={`inline-flex size-10 items-center justify-center rounded-full transition-colors hover:bg-foreground/5 ${isTransparent ? (onLight ? 'text-black' : 'text-white') : 'text-muted-foreground'}`}
                 aria-label={mobileOpen ? t('common.closeMenu') : t('common.openMenu')}
                 aria-expanded={mobileOpen}
                 onClick={() => {
@@ -879,7 +934,7 @@ export default function Navbar({
             </div>
 
             {/* Desktop buttons */}
-            <div className="hidden items-stretch gap-1 lg:flex">
+            <div className="hidden items-stretch gap-3 lg:flex">
               <button
                 type="button"
                 className={iconButtonClass}
@@ -929,9 +984,10 @@ export default function Navbar({
       */}
       {measured && (
         <div
-          // The panel wears the trigger's hover tint, so opening one reads as that
-          // cell growing rather than as a sheet dropping over the page.
-          className="w-full bg-foreground/5"
+          // The header owns the single translucent surface and its blur. Keep
+          // the panel transparent so it does not darken that surface a second
+          // time when it opens.
+          className="w-full bg-transparent"
           style={{
             pointerEvents: isOpen ? 'auto' : 'none',
             opacity: isOpen ? 1 : 0,

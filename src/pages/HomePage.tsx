@@ -737,8 +737,8 @@ export default function HomePage() {
         <FairCoinSection />
         <AIResearchFeatureGrid />
         <OxyAppsFeatureGrid />
-        <PartnershipSection />
         <AIResearchSection />
+        <PartnershipSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}
         <FaqSection
           title={t('home.faqHeading')}

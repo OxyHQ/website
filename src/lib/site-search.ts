@@ -24,13 +24,17 @@ export interface SearchResult {
   /** Shown under the title: the package name, or "Oxy" for marketing pages. */
   subtitle: string
   snippet?: string
+  /** Optional presentation hint for richer result rows (apps, people, etc.). */
+  kind?: 'app' | 'user' | 'page' | 'doc'
+  icon?: string
+  avatar?: string
 }
 
 // `pages` (marketing) first, then the docs categories in their canonical order
 // and labels — shared with the docs sidebar/hub via docsTypes so they can't drift.
-const GROUP_ORDER: string[] = ['pages', 'blog', ...categoryOrder]
+const GROUP_ORDER: string[] = ['pages', 'users', 'blog', ...categoryOrder]
 
-export const GROUP_LABELS: Record<string, string> = { pages: 'Pages', blog: 'Newsroom', ...categoryLabels }
+export const GROUP_LABELS: Record<string, string> = { pages: 'Pages', users: 'People', blog: 'Newsroom', ...categoryLabels }
 
 interface PagefindResult {
   id: string
@@ -53,9 +57,16 @@ interface PagefindAPI {
  * Pagefind (full coverage), so this only needs the primary destinations to keep
  * local search useful beyond docs.
  */
-const SITE_PAGES: Array<{ url: string; title: string }> = [
+const SITE_PAGES: Array<{ url: string; title: string; group?: string }> = [
   { url: '/', title: 'Home' },
-  { url: '/apps', title: 'Technologies' },
+  { url: '/apps', title: 'Technologies', group: 'apps' },
+  { url: '/mention', title: 'Mention', group: 'apps' },
+  { url: '/homiio', title: 'Homiio', group: 'apps' },
+  { url: '/faircoin', title: 'FairCoin', group: 'apps' },
+  { url: '/inbox', title: 'Inbox', group: 'apps' },
+  { url: '/astro', title: 'Astro', group: 'apps' },
+  { url: '/os', title: 'OxyOS', group: 'apps' },
+  { url: '/apps/allo', title: 'Allo', group: 'apps' },
   { url: '/pricing', title: 'Pricing' },
   { url: '/developers/docs', title: 'Developer docs' },
   { url: '/company', title: 'Company' },
@@ -67,7 +78,6 @@ const SITE_PAGES: Array<{ url: string; title: string }> = [
   { url: '/partners', title: 'Partners' },
   { url: '/referrals', title: 'Referrals' },
   { url: '/status', title: 'Status' },
-  { url: '/faircoin', title: 'FairCoin' },
 ]
 
 interface IndexDoc {
@@ -82,7 +92,7 @@ interface IndexDoc {
 function buildSearchDocuments(index: SyncedIndex): IndexDoc[] {
   const documents: IndexDoc[] = []
   for (const page of SITE_PAGES) {
-    documents.push({ id: page.url, title: page.title, subtitle: 'Oxy', group: 'pages', url: page.url, body: page.title })
+    documents.push({ id: page.url, title: page.title, subtitle: 'Oxy', group: page.group ?? 'pages', url: page.url, body: page.title })
   }
   for (const pkg of index.packages) {
     for (const ver of pkg.versions) {
@@ -153,7 +163,15 @@ async function searchDev(query: string): Promise<SearchResult[]> {
   const ms = await getMiniSearch()
   return ms.search(query).slice(0, 20).map((m) => {
     const s = m as unknown as { id: string; url: string; title: string; subtitle: string; group: string; body: string }
-    return { id: s.id, url: s.url, title: s.title, group: s.group, subtitle: s.subtitle, snippet: s.body }
+    return {
+      id: s.id,
+      url: s.url,
+      title: s.title,
+      group: s.group,
+      subtitle: s.subtitle,
+      snippet: s.body,
+      kind: s.group === 'apps' ? 'app' : s.group === 'users' ? 'user' : s.group === 'pages' ? 'page' : 'doc',
+    }
   })
 }
 
@@ -197,7 +215,11 @@ async function searchProd(query: string): Promise<SearchResult[] | null> {
 function classifyResult(url: string, packages: SyncedPackage[]): { group: string; subtitle: string } {
   const docPkg = packages.find((p) => url.includes(`/developers/docs/${p.shortName}`))
   if (docPkg) return { group: docPkg.category, subtitle: docPkg.displayName }
+  if (url.startsWith('/u/')) return { group: 'users', subtitle: 'Profile' }
   if (url.startsWith('/newsroom')) return { group: 'blog', subtitle: 'Newsroom' }
+  if (['/apps', '/mention', '/homiio', '/faircoin', '/inbox', '/astro', '/os', '/apps/allo'].includes(url.replace(/\/$/, ''))) {
+    return { group: 'apps', subtitle: 'Oxy app' }
+  }
   if (url.startsWith('/academy')) return { group: 'pages', subtitle: 'Academy' }
   if (url.startsWith('/help')) return { group: 'pages', subtitle: 'Help' }
   return { group: 'pages', subtitle: 'Oxy' }
@@ -226,7 +248,11 @@ export function groupResults(
     list.push(r)
     groups.set(r.group, list)
   }
-  const order = [...priority, ...GROUP_ORDER.filter((g) => !priority.includes(g))]
+  const order = [
+    ...priority,
+    ...GROUP_ORDER.filter((g) => !priority.includes(g)),
+    ...[...groups.keys()].filter((g) => !priority.includes(g) && !GROUP_ORDER.includes(g)),
+  ]
   return order.filter((g) => groups.has(g)).map((g) => ({ group: g, items: groups.get(g) ?? [] }))
 }
 
