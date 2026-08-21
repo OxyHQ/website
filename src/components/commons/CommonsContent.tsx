@@ -1,6 +1,7 @@
 import CardGrid from '../slices/CardGrid'
 import CtaBlock from '../slices/CtaBlock'
-import FaqAccordion from '../slices/FaqAccordion'
+import FaqSection from '../sections/FaqSection'
+import UnderlineLink from '../slices/UnderlineLink'
 import type { CardItem } from '../slices/InfoCard'
 import LogoMarquee, { type MarqueeLogo } from '../slices/LogoMarquee'
 import MediaBlock from '../slices/MediaBlock'
@@ -141,7 +142,17 @@ export default function CommonsContent() {
 
       <UpdatesCarousel title="More from Oxy" items={UPDATES} />
 
-      <FaqAccordion items={commonsFaqItems} footerLink={{ label: 'Visit the help centre', href: '/help' }} />
+      <FaqSection
+        title="Frequently asked questions"
+        items={commonsFaqItems}
+        className="faq-theme flex min-h-[100svh] items-center bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
+      />
+
+      <div className="layout-px-large mt-8 lg:mt-10">
+        <UnderlineLink href="/help" className="text-b1">
+          Visit the help centre
+        </UnderlineLink>
+      </div>
     </>
   )
 }

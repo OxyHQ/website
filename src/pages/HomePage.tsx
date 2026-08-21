@@ -22,6 +22,7 @@ import PhotoCardCarousel, { type PhotoCard } from '../components/sections/PhotoC
 import { Link } from 'react-router-dom'
 import { AlertDialog } from '@oxyhq/bloom/alert-dialog'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import { APP_CARD_IMAGES } from '../data/appCardImages'
 import { useTranslation } from '../lib/i18n'
 
 /**
@@ -665,7 +666,7 @@ function CommonsAppSection() {
             className="col-span-full self-end max-lg:mt-4 lg:col-span-6 lg:col-start-7"
           >
             <img
-              src={`${IMG}/identity-app.webp`}
+              src={APP_CARD_IMAGES['/commons']}
               alt={t('home.commonsImageAlt')}
               className="mx-auto h-auto w-full max-w-[320px] object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)] sm:max-w-[440px] lg:max-w-none"
               width={577}

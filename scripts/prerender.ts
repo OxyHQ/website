@@ -224,6 +224,7 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     description:
       'Oxy ID lives on your device, not in our database. Sign in across every Oxy app by proving possession of a key nobody else holds.',
     canonicalPath: '/commons',
+    ogImage: `${SITE_URL}${APP_CARD_IMAGES['/commons']}`,
   },
   '/faqs': {
     title: 'Frequently asked questions',

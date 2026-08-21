@@ -1,10 +1,10 @@
 /**
- * One piece of artwork per app, keyed by the app's route.
+ * One piece of artwork per product route.
  *
- * The homepage "Apps that put people first" cards render it, each app's page
- * uses it as its OG image, and `scripts/prerender.ts` emits the same URL into
- * the static `<head>` — so what someone sees on the card is what a link
- * preview shows.
+ * The homepage renders it (the "Apps that put people first" cards, and the
+ * Commons band), the route's own page uses it as its OG image, and
+ * `scripts/prerender.ts` emits the same URL into the static `<head>` — so what
+ * someone sees on the page is what a link preview shows.
  */
 export const APP_CARD_IMAGES: Record<string, string> = {
   '/mention': '/images/landing/mention-laptop.png',
@@ -14,4 +14,5 @@ export const APP_CARD_IMAGES: Record<string, string> = {
   '/inbox': '/images/landing/inbox-phone.png',
   '/astro': '/images/landing/astro-desktop.png',
   '/os': '/images/landing/oxyos-laptop.png',
+  '/commons': '/images/landing/identity-app.webp',
 }
