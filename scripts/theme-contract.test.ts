@@ -29,6 +29,27 @@ const PREVIEW_ROLES = [
   '--tertiary',
 ] as const
 
+type ProjectScripts = Record<string, string>
+
+const BROWSER_INSTALL_COMMAND = 'bunx playwright install --with-deps chromium'
+const CLOUDFLARE_BUILD_COMMAND = '- run: bun run build'
+
+const hasProvisionedCloudflareBrowserGate = (
+  scripts: ProjectScripts,
+  workflow: string,
+): boolean => {
+  const installOffset = workflow.indexOf(BROWSER_INSTALL_COMMAND)
+  const buildOffset = workflow.indexOf(CLOUDFLARE_BUILD_COMMAND)
+  const installCount = [...workflow.matchAll(new RegExp(BROWSER_INSTALL_COMMAND, 'g'))].length
+
+  return scripts.postbuild.includes('bun run test:theme:browser')
+    && scripts['test:theme:browser'] === 'bun scripts/theme-prepaint.browser.test.ts'
+    && installCount === 1
+    && installOffset > -1
+    && buildOffset > -1
+    && installOffset < buildOffset
+}
+
 describe('Bloom theme contract', () => {
   test('publishes every preset name exactly once', () => {
     expect(COLOR_PRESET_REGISTRY).toHaveLength(34)
@@ -85,5 +106,31 @@ describe('Bloom theme contract', () => {
       }
       expect(light['--background'], `${name} light/dark background`).not.toBe(dark['--background'])
     }
+  })
+
+  test('provisions Chromium before Cloudflare runs the browser-gated build', () => {
+    const packageJson = JSON.parse(
+      readFileSync(join(import.meta.dir, '..', 'package.json'), 'utf8'),
+    ) as { scripts: ProjectScripts }
+    const workflow = readFileSync(
+      join(import.meta.dir, '..', '.github', 'workflows', 'deploy.yml'),
+      'utf8',
+    )
+
+    expect(hasProvisionedCloudflareBrowserGate(packageJson.scripts, workflow)).toBe(true)
+    expect(hasProvisionedCloudflareBrowserGate(
+      packageJson.scripts,
+      workflow.replace(BROWSER_INSTALL_COMMAND, ''),
+    )).toBe(false)
+    expect(hasProvisionedCloudflareBrowserGate(
+      packageJson.scripts,
+      workflow
+        .replace(`        run: ${BROWSER_INSTALL_COMMAND}\n`, '')
+        .replace(CLOUDFLARE_BUILD_COMMAND, `${CLOUDFLARE_BUILD_COMMAND}\n\n      - run: ${BROWSER_INSTALL_COMMAND}`),
+    )).toBe(false)
+    expect(hasProvisionedCloudflareBrowserGate(
+      { ...packageJson.scripts, postbuild: packageJson.scripts.postbuild.replace('bun run test:theme:browser', '') },
+      workflow,
+    )).toBe(false)
   })
 })
