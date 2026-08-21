@@ -5,6 +5,21 @@
 @import "@oxyhq/bloom/design-tokens/theme.css";
 @plugin "@tailwindcss/typography";
 
+/*
+ * Emoji are an optional fallback, not a render-critical webfont. Keeping the
+ * font out of preload and using `optional` means the first paint, text layout,
+ * indexing and Lighthouse do not wait for a 40 MB bitmap colour font. The
+ * browser only requests it when a matching emoji glyph is actually present.
+ */
+@font-face {
+  font-family: 'Noto Color Emoji';
+  src: url('/fonts/NotoColorEmoji-subset.ttf') format('truetype');
+  font-display: optional;
+  font-style: normal;
+  font-weight: 400;
+  unicode-range: U+200D, U+20E3, U+2300-23FF, U+2600-27BF, U+FE0E-FE0F, U+1F000-1FAFF;
+}
+
 /* Scan the Oxy SDK packages so their react-native-css className LAYOUT utilities
  * (flex-1 / flex-row / gap-* / arbitrary [Npx]) are generated on web. Tailwind v4
  * auto-detects this app's own src/ but excludes node_modules by default, so without
@@ -316,7 +331,7 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--font-sans);
+  font-family: 'Noto Color Emoji', var(--font-sans), sans-serif;
   background-color: var(--color-background);
   color: var(--color-foreground);
   -webkit-font-smoothing: antialiased;

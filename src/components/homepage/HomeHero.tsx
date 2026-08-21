@@ -33,10 +33,10 @@ const IMG = '/images/landing'
 const IMG_HERO = '/images/hero'
 
 const DEFAULT_POSTER = `${IMG}/hero-bg.avif`
-const DEFAULT_BG_WEBM = `${IMG}/hero-panel.webm`
-const DEFAULT_BG_MP4 = `${IMG}/hero-panel.mp4`
+const DEFAULT_BG_WEBM = `${IMG}/hero-panel-14953520.webm`
+const DEFAULT_BG_MP4 = `${IMG}/hero-panel-14953520.mp4`
 /** The video's own first frame. The still below the panel is a different picture. */
-const PANEL_POSTER = `${IMG}/hero-panel-poster.webp`
+const PANEL_POSTER = `${IMG}/hero-panel-14953520-poster.webp`
 /** Behind the newsroom cell, under a scrim. */
 const NEWS_CELL_BACKDROP = `${IMG}/4lffisf9oaY443RqgB8sCKLHJc.avif`
 
