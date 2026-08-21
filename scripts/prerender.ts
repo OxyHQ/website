@@ -285,6 +285,13 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     canonicalPath: '/astro',
     ogImage: `${SITE_URL}${APP_CARD_IMAGES['/astro']}`,
   },
+  '/mercaria': {
+    title: 'Mercaria',
+    description:
+      'A marketplace for new goods from shops and secondhand items from people, with the same identity and trust you already have across Oxy.',
+    canonicalPath: '/mercaria',
+    ogImage: `${SITE_URL}${APP_CARD_IMAGES['/mercaria']}`,
+  },
   '/codea': {
     title: 'Codea, an open-source AI code editor',
     description:

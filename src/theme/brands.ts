@@ -79,6 +79,13 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     label: 'Astro app cards',
   },
   {
+    selector: '.not-found-theme',
+    seed: APP_COLOR_PRESETS.grove.hex,
+    tertiarySeed: APP_COLOR_PRESETS.grove.tertiaryHex,
+    mode: 'auto',
+    label: '404 page',
+  },
+  {
     selector: '.faircoin-theme',
     seed: APP_COLOR_PRESETS[FAIRCOIN_PRESET].hex,
     mode: 'auto',

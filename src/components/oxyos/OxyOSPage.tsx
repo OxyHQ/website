@@ -1,4 +1,5 @@
 import Button from '../ui/Button'
+import FaqSection, { type FaqEntry } from '../sections/FaqSection'
 import { FEATURES } from '../../constants'
 
 const featureCards = [
@@ -68,7 +69,7 @@ const screenshots = [
 // quotes can be sourced.
 const testimonials: { quote: string; author: string; role: string; hidden?: boolean }[] = []
 
-const faqItems: Array<{ question: string; answer: string; code?: string; answerEnd?: string; link?: { label: string; href: string } }> = [
+const faqItems: readonly FaqEntry[] = [
   {
     question: 'What are the login credentials for the live image?',
     answer: "The username and password are both 'live' without the quotes.",
@@ -83,8 +84,17 @@ const faqItems: Array<{ question: string; answer: string; code?: string; answerE
   },
   {
     question: 'Where are the direct downloads?',
-    answer: 'All images are available on our downloads page and via GitHub Releases.',
-    link: { label: 'GitHub Releases \u2192', href: 'https://github.com/OxyHQ/OxyOS/releases' },
+    answer: (
+      <>
+        All images are available on our downloads page and via GitHub Releases.{' '}
+        <a
+          href="https://github.com/OxyHQ/OxyOS/releases"
+          className="font-medium text-primary-text underline decoration-primary/30 underline-offset-4 transition-colors hover:text-primary"
+        >
+          GitHub Releases &rarr;
+        </a>
+      </>
+    ),
   },
 ]
 
@@ -401,47 +411,23 @@ export default function OxyOSContent() {
       </section>
 
       {/* ── 9. FAQ ── */}
-      <section className="section bg-background text-foreground">
-        <div className="container">
-          <div className="grid-cursor gap-0">
-            <div className="col-span-full md:col-start-1 md:col-end-7 lg:col-start-1 lg:col-end-9 xl:col-start-1 xl:col-end-7">
-              <h2 className="type-md-lg text-balance mb-v1">Frequently asked questions</h2>
-              <p className="type-base text-muted-foreground mb-v1 lg:mb-0">
-                Can&apos;t find the answer you&apos;re looking for? Reach out on our{' '}
-                <Button variant="ghost" href="https://github.com/OxyHQ/OxyOS/issues">
-                  GitHub issues
-                </Button>.
-              </p>
-            </div>
-            <div className="col-span-full md:col-start-7 md:col-end-25 lg:col-start-9 lg:col-end-25 xl:col-start-7 xl:col-end-19">
-              {faqItems.map((item) => (
-                <div key={item.question} className="mb-g1">
-                  <div className="card card--text">
-                    <div className="type-base text-foreground mb-v8/12">{item.question}</div>
-                    <div className="type-base text-muted-foreground">
-                      {item.answer}
-                      {item.code && (
-                        <code className="mx-1 rounded bg-card px-1.5 py-0.5 text-sm text-foreground">
-                          {item.code}
-                        </code>
-                      )}
-                      {item.answerEnd && ` ${item.answerEnd}`}
-                      {item.link && (
-                        <>
-                          {' '}
-                          <Button variant="ghost" href={item.link.href}>
-                            {item.link.label}
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <FaqSection
+        title="Frequently asked questions"
+        items={faqItems}
+        description={
+          <p>
+            Can&apos;t find the answer you&apos;re looking for? Reach out on our{' '}
+            <a
+              href="https://github.com/OxyHQ/OxyOS/issues"
+              className="font-medium text-primary-text underline decoration-primary/30 underline-offset-4 transition-colors hover:text-primary"
+            >
+              GitHub issues
+            </a>
+            .
+          </p>
+        }
+        className="oxyos-theme flex min-h-[100svh] items-center bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
+      />
 
       {/* ── 10. Recent Highlights ── */}
       <section className="section bg-surface text-foreground">

@@ -112,6 +112,18 @@
   opacity: 0.32;
 }
 
+.astro-template .astro-video-scroll-scene {
+  height: 280svh;
+  position: relative;
+}
+
+.astro-template .astro-video-scroll-hero {
+  height: 100svh;
+  max-height: none;
+  position: sticky;
+  top: 0;
+}
+
 .astro-template .astro-cta-background {
   opacity: 0.32;
 }

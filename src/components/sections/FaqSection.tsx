@@ -27,6 +27,8 @@ export interface FaqGroup {
 interface FaqSectionProps {
   /** The heading over the set. */
   title: string
+  /** Optional supporting copy or action shown with the heading. */
+  description?: ReactNode
   items?: readonly FaqEntry[]
   groups?: readonly FaqGroup[]
   /** Heading level. One `h1` per page, so a section defaults to `h2`. */
@@ -46,6 +48,7 @@ function FaqRow({
   onToggle: (rowId: string) => void
 }) {
   const open = openId === rowId
+  const buttonId = useId()
   const panelId = useId()
 
   return (
@@ -55,6 +58,7 @@ function FaqRow({
         className="flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-3.5 text-left transition-[background-color,color] duration-300 hover:bg-primary/10 md:py-4"
         aria-expanded={open}
         aria-controls={panelId}
+        id={buttonId}
         onClick={() => onToggle(rowId)}
       >
         <span className="text-lg font-medium leading-snug text-primary-text md:text-xl">{item.question}</span>
@@ -71,6 +75,10 @@ function FaqRow({
       */}
       <div
         id={panelId}
+        role="region"
+        aria-labelledby={buttonId}
+        aria-hidden={!open}
+        inert={!open}
         className={`grid overflow-hidden transition-[grid-template-rows] duration-300 ease-out ${
           open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
         }`}
@@ -85,6 +93,7 @@ function FaqRow({
 
 export default function FaqSection({
   title,
+  description,
   items,
   groups: groupsProp,
   as = 'h2',
@@ -105,6 +114,11 @@ export default function FaqSection({
             <AnimatedTitle as={as} className="text-heading-responsive-lg !text-[3rem] !leading-[3.25rem] font-medium text-tertiary [&>p]:font-medium">
               {title}
             </AnimatedTitle>
+            {description && (
+              <div className="mt-5 max-w-lg text-base leading-7 text-foreground/75 md:text-lg">
+                {description}
+              </div>
+            )}
           </div>
 
           <div className="min-w-0 space-y-8">

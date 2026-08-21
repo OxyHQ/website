@@ -144,8 +144,8 @@ function CoverageSeal() {
 
 export default function PayContent() {
   return (
-    <article className="pay-surface container flex flex-1 flex-col gap-14">
-      <div className="flex flex-col max-tablet-lg:gap-[50px]">
+    <article className="pay-surface flex flex-1 flex-col">
+      <div className="container flex flex-col max-tablet-lg:gap-[50px]">
         {/* ── Hero ─────────────────────────────────────────────── */}
         <section className="-mx-4 flex flex-col items-center py-20 tablet-lg:mx-0 tablet-lg:pt-20 tablet-lg:pb-16">
           <div className="flex w-full flex-col items-center gap-10 tablet-lg:w-164 tablet-lg:max-w-full">
@@ -299,9 +299,10 @@ export default function PayContent() {
           </div>
         </section>
 
-        {/* ── FAQ ──────────────────────────────────────────────── */}
-        <PayFAQ />
       </div>
+
+      {/* ── FAQ ──────────────────────────────────────────────── */}
+      <PayFAQ />
     </article>
   )
 }

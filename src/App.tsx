@@ -77,6 +77,7 @@ const UserFollowersPage = lazy(() => import('./pages/UserFollowersPage'))
 const FeatureBoardPage = lazy(() => import('./pages/FeatureBoardPage'))
 const FeatureRequestPage = lazy(() => import('./pages/FeatureRequestPage'))
 const AstroPage = lazy(() => import('./pages/AstroPage'))
+const MercariaPage = lazy(() => import('./pages/MercariaPage'))
 const AIPage = lazy(() => import('./pages/AIPage'))
 const CompanyPage = lazy(() => import('./pages/CompanyPage'))
 const TeamPage = lazy(() => import('./pages/TeamPage'))
@@ -351,6 +352,7 @@ function PublicRoutes() {
       <Route path="u/:username/followers" element={<UserFollowersPage />} />
       <Route path="u/:username/following" element={<UserFollowersPage />} />
       <Route path="astro" element={<AstroPage />} />
+      <Route path="mercaria" element={<MercariaPage />} />
       <Route path="features" element={<FeatureBoardPage />} />
       <Route path="features/:owner/:repo/:number" element={<FeatureRequestPage />} />
       <Route path="sustain" element={<SustainPage />} />

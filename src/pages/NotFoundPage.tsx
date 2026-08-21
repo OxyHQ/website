@@ -110,7 +110,7 @@ export default function NotFoundPage() {
   const footerCopyright = useFairCoinFooterCopyright()
 
   return (
-    <div className={`flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background ${onFairCoinHost ? 'faircoin-theme' : ''}`}>
+    <div className={`not-found-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background ${onFairCoinHost ? 'faircoin-theme' : ''}`}>
       <SEO
         title="Page Not Found"
         description="The page you're looking for doesn't exist."

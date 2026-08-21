@@ -142,29 +142,195 @@ function useAstroMotion() {
   return rootRef
 }
 
-export default function AstroPageContent() {
+function useHeroVideoScroll(scrollStart?: number) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const sceneRef = useRef<HTMLDivElement>(null)
+  const heroRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    const scene = sceneRef.current
+    const hero = heroRef.current
+    if (!video || !scene || !hero || scrollStart === undefined) return
+
+    let introFrame = 0
+    let scrollFrame = 0
+    let introComplete = false
+    let sceneTop = 0
+    let scrollRange = 0
+    let releaseDistance = 0
+    let scrubOrigin = 0
+    let geometryDirty = true
+
+    const clamp = (value: number, minimum: number, maximum: number) =>
+      Math.max(minimum, Math.min(maximum, value))
+
+    const measureScene = () => {
+      sceneTop = scene.getBoundingClientRect().top + window.scrollY
+      scrollRange = Math.max(0, scene.offsetHeight - hero.offsetHeight)
+      releaseDistance = Math.min(120, window.innerHeight * 0.12)
+      geometryDirty = false
+    }
+
+    const updateFromScroll = () => {
+      scrollFrame = 0
+      if (!introComplete || !Number.isFinite(video.duration)) return
+
+      if (geometryDirty) measureScene()
+
+      const startTime = clamp(scrollStart, 0, video.duration)
+      const extendedScrollRange = scrollRange + releaseDistance
+      const sceneScroll = clamp(window.scrollY - sceneTop, 0, extendedScrollRange)
+      const availableRange = Math.max(0, extendedScrollRange - scrubOrigin)
+      const progress = availableRange === 0
+        ? Number(sceneScroll >= extendedScrollRange)
+        : clamp((sceneScroll - scrubOrigin) / availableRange, 0, 1)
+      video.currentTime = clamp(
+        startTime + (video.duration - startTime) * progress,
+        startTime,
+        video.duration,
+      )
+    }
+
+    const requestScrollUpdate = () => {
+      if (scrollFrame) return
+      scrollFrame = window.requestAnimationFrame(updateFromScroll)
+    }
+
+    const finishIntro = () => {
+      measureScene()
+      scrubOrigin = clamp(window.scrollY - sceneTop, 0, scrollRange + releaseDistance)
+      video.pause()
+      video.currentTime = clamp(scrollStart, 0, video.duration)
+      introComplete = true
+      requestScrollUpdate()
+    }
+
+    const watchIntro = () => {
+      if (video.currentTime >= scrollStart || video.ended) {
+        finishIntro()
+        return
+      }
+      introFrame = window.requestAnimationFrame(watchIntro)
+    }
+
+    const startIntro = () => {
+      video.currentTime = 0
+      void video.play().catch(() => undefined)
+      introFrame = window.requestAnimationFrame(watchIntro)
+    }
+
+    const handleResize = () => {
+      geometryDirty = true
+      requestScrollUpdate()
+    }
+
+    if (video.readyState >= HTMLMediaElement.HAVE_METADATA) startIntro()
+    else video.addEventListener('loadedmetadata', startIntro, { once: true })
+
+    window.addEventListener('scroll', requestScrollUpdate, { passive: true })
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      video.removeEventListener('loadedmetadata', startIntro)
+      window.removeEventListener('scroll', requestScrollUpdate)
+      window.removeEventListener('resize', handleResize)
+      if (introFrame) window.cancelAnimationFrame(introFrame)
+      if (scrollFrame) window.cancelAnimationFrame(scrollFrame)
+      video.pause()
+    }
+  }, [scrollStart])
+
+  return { heroRef, sceneRef, videoRef }
+}
+
+interface AstroPageContentProps {
+  heroBackgroundVideo?: string
+  heroVideoScrollStart?: number
+  heroIconSrc?: string
+  heroIconAlt?: string
+  heroTitle?: string
+  heroTitleClassName?: string
+  heroSubtitle?: string
+  centerHeroContent?: boolean
+  heroCtaLabel?: string
+  heroCtaHref?: string
+  showHeroPlatformAvailability?: boolean
+  showHeroBrowserMockup?: boolean
+  heroOnly?: boolean
+}
+
+export default function AstroPageContent({
+  heroBackgroundVideo,
+  heroVideoScrollStart,
+  heroIconSrc = `${IMAGES}/icon.png`,
+  heroIconAlt = 'Astro icon',
+  heroTitle = 'Browse the web with AI by your side.',
+  heroTitleClassName = '',
+  heroSubtitle = 'Instant answers, smarter suggestions, and help with tasks — with privacy settings you control.',
+  centerHeroContent = false,
+  heroCtaLabel = 'Download Astro',
+  heroCtaHref,
+  showHeroPlatformAvailability = true,
+  showHeroBrowserMockup = true,
+  heroOnly = false,
+}: AstroPageContentProps) {
   const [downloadOpen, setDownloadOpen] = useState(false)
   const motionRootRef = useAstroMotion()
+  const { heroRef, sceneRef, videoRef: heroVideoRef } = useHeroVideoScroll(heroVideoScrollStart)
   const openDownload = useCallback(() => setDownloadOpen(true), [])
-  return (
-    <div ref={motionRootRef} className="astro-template relative min-h-screen bg-base">
-      <DownloadDialog open={downloadOpen} onClose={() => setDownloadOpen(false)} />
-
-      <section className="relative isolate h-[760px] w-full overflow-hidden bg-inverse md:h-[860px] lg:h-[95vh] lg:max-h-[960px]" data-color-scheme="dark" data-header-color-mode="dark">
-        <img src={APP_CARD_IMAGES['/astro']} alt="" aria-hidden="true" data-astro-parallax="hero" className="astro-hero-background pointer-events-none absolute inset-x-0 bottom-0 h-[1100px] w-full object-cover object-bottom" />
+  const heroSection = (
+      <section
+        ref={heroRef}
+        className={`relative isolate h-[760px] w-full overflow-hidden bg-inverse md:h-[860px] lg:h-[95vh] lg:max-h-[960px]${heroVideoScrollStart === undefined ? '' : ' astro-video-scroll-hero'}`}
+        data-color-scheme="dark"
+        data-header-color-mode="dark"
+      >
+        {heroBackgroundVideo ? (
+          <video
+            ref={heroVideoRef}
+            src={heroBackgroundVideo}
+            aria-hidden="true"
+            className="astro-hero-background pointer-events-none absolute inset-x-0 bottom-0 h-[1100px] w-full object-cover object-bottom"
+            autoPlay
+            loop={heroVideoScrollStart === undefined}
+            muted
+            playsInline
+            preload="auto"
+          />
+        ) : (
+          <img src={APP_CARD_IMAGES['/astro']} alt="" aria-hidden="true" data-astro-parallax="hero" className="astro-hero-background pointer-events-none absolute inset-x-0 bottom-0 h-[1100px] w-full object-cover object-bottom" />
+        )}
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[140px] bg-gradient-to-t from-black/45 via-black/15 to-transparent" />
-        <div className="relative mx-auto flex h-full w-full max-w-[1440px] flex-col items-center px-4 pt-28 text-center md:px-10 md:pt-32 lg:px-16 lg:pt-36">
+        <div className={`relative mx-auto flex h-full w-full max-w-[1440px] flex-col items-center px-4 text-center md:px-10 lg:px-16${centerHeroContent ? ' justify-center' : ' pt-28 md:pt-32 lg:pt-36'}`}>
           <div data-astro-reveal className="relative z-10 flex flex-col items-center">
-            <div className="mb-8 h-auto group w-20 md:w-24"><img alt="Astro icon" src={`${IMAGES}/icon.png`} className="h-auto w-full rounded-[24%]" width={1024} height={1024} /></div>
-            <AnimatedTitle as="h1" className="nimbus-headline-xl max-w-[880px] text-balance text-box-edge-cap-alphabetic text-box-trim-both text-light">Browse the web with AI by your side.</AnimatedTitle>
-            <p className="nimbus-headline-2xs mt-8 max-w-[620px] text-balance text-box-edge-cap-alphabetic text-box-trim-both text-light">Instant answers, smarter suggestions, and help with tasks — with privacy settings you control.</p>
-            <button type="button" onClick={openDownload} className={`${primaryButton} mt-8`}>Download Astro</button>
-            <p className="mt-3 text-sm text-light">Available on Linux, Windows, and macOS</p>
+            <div className="mb-8 h-auto group w-20 md:w-24"><img alt={heroIconAlt} src={heroIconSrc} className="h-auto w-full rounded-[24%]" width={1024} height={1024} /></div>
+            <AnimatedTitle as="h1" className={`nimbus-headline-xl max-w-[880px] text-balance text-box-edge-cap-alphabetic text-box-trim-both text-light ${heroTitleClassName}`}>{heroTitle}</AnimatedTitle>
+            <p className="nimbus-headline-2xs mt-8 max-w-[620px] text-balance text-box-edge-cap-alphabetic text-box-trim-both text-light">{heroSubtitle}</p>
+            {heroCtaHref ? (
+              <a href={heroCtaHref} className={`${primaryButton} mt-8`}>{heroCtaLabel}</a>
+            ) : (
+              <button type="button" onClick={openDownload} className={`${primaryButton} mt-8`}>{heroCtaLabel}</button>
+            )}
+            {showHeroPlatformAvailability && <p className="mt-3 text-sm text-light">Available on Linux, Windows, and macOS</p>}
           </div>
         </div>
-        <img src={`${IMAGES}/astro-newtab-window.png`} alt="Astro new tab in the real browser" data-astro-reveal data-astro-parallax="hero-window" className="pointer-events-none absolute inset-x-4 bottom-[-270px] z-0 mx-auto h-[420px] w-[calc(100%-2rem)] max-w-[1120px] rounded-2xl object-cover object-top md:bottom-[-285px] md:h-[460px] md:w-[calc(100%-5rem)] lg:bottom-[-300px] lg:h-[470px] lg:w-[calc(100%-8rem)]" loading="eager" decoding="async" />
+        {showHeroBrowserMockup && <img src={`${IMAGES}/astro-newtab-window.png`} alt="Astro new tab in the real browser" data-astro-reveal data-astro-parallax="hero-window" className="pointer-events-none absolute inset-x-4 bottom-[-270px] z-0 mx-auto h-[420px] w-[calc(100%-2rem)] max-w-[1120px] rounded-2xl object-cover object-top md:bottom-[-285px] md:h-[460px] md:w-[calc(100%-5rem)] lg:bottom-[-300px] lg:h-[470px] lg:w-[calc(100%-8rem)]" loading="eager" decoding="async" />}
       </section>
+  )
 
+  return (
+    <div ref={motionRootRef} className={`astro-template relative bg-base${heroOnly ? '' : ' min-h-screen'}`}>
+      <DownloadDialog open={downloadOpen} onClose={() => setDownloadOpen(false)} />
+
+      {heroVideoScrollStart === undefined ? heroSection : (
+        <div ref={sceneRef} data-video-scroll-scene className="astro-video-scroll-scene">
+          {heroSection}
+        </div>
+      )}
+
+      {!heroOnly && (
+        <>
       <section className="w-full bg-base py-16 md:py-24" data-color-scheme="dark" data-header-color-mode="dark">
         <div className="mx-auto w-full max-w-[1440px] px-4 md:px-10 lg:px-16">
           <div data-astro-reveal className="mx-auto max-w-[936px] text-center"><h2 className="nimbus-headline-m mx-auto max-w-[850px] text-balance text-primary text-box-trim-both text-box-edge-cap-alphabetic">A calmer way to move from question to action.</h2><div className="mx-auto mt-6 max-w-[648px]"><p className="nimbus-body text-box-trim-both text-box-edge-cap-alphabetic text-pretty text-secondary">Astro brings assistance into the browser you already use, so research, context, and next steps stay close together.</p></div></div>
@@ -187,6 +353,8 @@ export default function AstroPageContent() {
       <section data-color-scheme="dark" data-header-color-mode="dark" className="relative flex min-h-[560px] w-full items-center justify-center overflow-hidden bg-inverse px-4 py-20 text-center md:min-h-[760px] md:px-10"><div data-astro-parallax="cta" aria-hidden="true" className="astro-cta-background absolute inset-0 z-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${IMAGES}/hero-bg.jpg)` }} /><div data-astro-reveal className="relative z-10 flex max-w-[523px] flex-col items-center"><div className="mb-7 size-16 overflow-hidden rounded-[24%]"><img alt="Astro icon" src={`${IMAGES}/icon.png`} width={1024} height={1024} /></div><h2 className="text-balance nimbus-headline-m text-box-edge-cap-alphabetic text-box-trim-both text-light">Make the web work better for you.</h2><div className="marketing-cta-shimmer mt-8 inline-flex"><button type="button" onClick={openDownload} className={primaryButton}>Download Astro</button></div></div></section>
 
       <section className="w-full bg-base py-16 md:py-20 lg:py-[120px]" data-color-scheme="dark" data-header-color-mode="dark"><div className="mx-auto w-full max-w-[1440px] px-4 md:px-10 lg:px-16"><div data-astro-reveal className="mx-auto max-w-[936px] text-center"><h2 className="nimbus-headline-m mx-auto max-w-[850px] text-balance text-primary text-box-trim-both text-box-edge-cap-alphabetic">More features</h2></div><div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">{extras.map(([title, description, image], index) => <article key={title} data-astro-reveal data-astro-delay={index + 1} className="group flex min-w-0 flex-col gap-6 lg:gap-10"><div className="aspect-square w-full overflow-hidden rounded-2xl bg-white/[0.04]"><img src={image} alt={title} className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025]" loading="lazy" /></div><div className="flex w-full flex-col gap-4 pb-1 pl-1 pr-1 lg:gap-6"><h3 className="nimbus-body text-box-edge-cap-alphabetic text-box-trim-both text-light">{title}</h3><p className="nimbus-body-s text-box-edge-cap-alphabetic text-box-trim-both text-pretty text-secondary">{description}</p></div></article>)}</div></div></section>
+        </>
+      )}
     </div>
   )
 }
