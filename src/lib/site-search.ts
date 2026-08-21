@@ -30,11 +30,28 @@ export interface SearchResult {
   avatar?: string
 }
 
-// `pages` (marketing) first, then the docs categories in their canonical order
-// and labels — shared with the docs sidebar/hub via docsTypes so they can't drift.
-const GROUP_ORDER: string[] = ['pages', 'users', 'blog', ...categoryOrder]
+// Dedicated product landings win over the generic app detail route. Products
+// without a local landing intentionally fall back to `/apps/:productId`.
+export const APP_SEARCH_DESTINATIONS: Readonly<Record<string, string>> = {
+  mention: '/mention',
+  homiio: '/homiio',
+  inbox: '/inbox',
+  astro: '/astro',
+  oxyos: '/os',
+  codea: '/codea',
+  tnp: '/tnp',
+  pay: '/pay',
+}
 
-export const GROUP_LABELS: Record<string, string> = { pages: 'Pages', users: 'People', blog: 'Newsroom', ...categoryLabels }
+export function appSearchDestination(productId: string): string {
+  return APP_SEARCH_DESTINATIONS[productId] ?? `/apps/${productId}`
+}
+
+// Apps, pages, people and newsroom are kept separate from documentation. The
+// app group comes first so a product result reads like a launcher result.
+const GROUP_ORDER: string[] = ['apps', 'pages', 'users', 'blog', ...categoryOrder]
+
+export const GROUP_LABELS: Record<string, string> = { apps: 'Apps', pages: 'Pages', users: 'People', blog: 'Newsroom', ...categoryLabels }
 
 interface PagefindResult {
   id: string
@@ -62,11 +79,14 @@ const SITE_PAGES: Array<{ url: string; title: string; group?: string }> = [
   { url: '/apps', title: 'Technologies', group: 'apps' },
   { url: '/mention', title: 'Mention', group: 'apps' },
   { url: '/homiio', title: 'Homiio', group: 'apps' },
-  { url: '/faircoin', title: 'FairCoin', group: 'apps' },
+  { url: appSearchDestination('faircoin'), title: 'FairCoin', group: 'apps' },
   { url: '/inbox', title: 'Inbox', group: 'apps' },
   { url: '/astro', title: 'Astro', group: 'apps' },
   { url: '/os', title: 'OxyOS', group: 'apps' },
-  { url: '/apps/allo', title: 'Allo', group: 'apps' },
+  { url: appSearchDestination('allo'), title: 'Allo', group: 'apps' },
+  { url: '/codea', title: 'Codea', group: 'apps' },
+  { url: '/tnp', title: 'TNP', group: 'apps' },
+  { url: '/pay', title: 'Oxy Pay', group: 'apps' },
   { url: '/pricing', title: 'Pricing' },
   { url: '/developers/docs', title: 'Developer docs' },
   { url: '/company', title: 'Company' },
@@ -213,11 +233,12 @@ async function searchProd(query: string): Promise<SearchResult[] | null> {
 
 /** Map a result URL to its display group + subtitle (docs package, blog, …). */
 function classifyResult(url: string, packages: SyncedPackage[]): { group: string; subtitle: string } {
+  const normalizedUrl = url.replace(/\/$/, '') || '/'
   const docPkg = packages.find((p) => url.includes(`/developers/docs/${p.shortName}`))
   if (docPkg) return { group: docPkg.category, subtitle: docPkg.displayName }
   if (url.startsWith('/u/')) return { group: 'users', subtitle: 'Profile' }
   if (url.startsWith('/newsroom')) return { group: 'blog', subtitle: 'Newsroom' }
-  if (['/apps', '/mention', '/homiio', '/faircoin', '/inbox', '/astro', '/os', '/apps/allo'].includes(url.replace(/\/$/, ''))) {
+  if (normalizedUrl === '/apps' || normalizedUrl.startsWith('/apps/') || Object.values(APP_SEARCH_DESTINATIONS).includes(normalizedUrl)) {
     return { group: 'apps', subtitle: 'Oxy app' }
   }
   if (url.startsWith('/academy')) return { group: 'pages', subtitle: 'Academy' }

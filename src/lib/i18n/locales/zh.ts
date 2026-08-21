@@ -88,6 +88,8 @@ const zh: Translations = {
   },
   home: {
     ...en.home,
+    commonsIosSoonTitle: 'iOS 版即将推出',
+    commonsIosSoonBody: 'Commons 尚未上架 App Store。目前可在 Google Play 下载，iOS 版本即将推出。',
     appsFeaturesTitle: '以人为本的应用',
     appsFeaturesDescription: '探索专为协同工作而打造的 Oxy 应用，让你在日常生活中拥有更多选择、隐私与掌控力。',
     valuePeopleTitle: '人，才是改变的力量。',

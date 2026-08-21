@@ -5,6 +5,7 @@ import { useProduct, useProducts, resolveProductCategoryId, type ProductRecord }
 import { getStaticChangelog } from '../../content/changelog-loader'
 import Button from '../ui/Button'
 import SEO from '../SEO'
+import { APP_CARD_IMAGES } from '../../data/appCardImages'
 import StructuredData from '../StructuredData'
 import AppCard, { AppIcon, categoryLabel } from './AppCard'
 
@@ -115,6 +116,7 @@ export default function AppDetailContent() {
         title={`${product.name}, ${category || 'Oxy'}`}
         description={product.tagline || product.description}
         canonicalPath={`/apps/${product.productId}`}
+        ogImage={APP_CARD_IMAGES[`/apps/${product.productId}`]}
       />
       <StructuredData
         data={{

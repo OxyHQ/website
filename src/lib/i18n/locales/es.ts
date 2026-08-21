@@ -213,6 +213,8 @@ const es: Translations = {
     commonsFree: 'Gratis y de código abierto.',
     appStore: 'Descargar en App Store',
     googlePlay: 'Disponible en Google Play',
+    commonsIosSoonTitle: 'Muy pronto en iOS',
+    commonsIosSoonBody: 'Commons todavía no está en la App Store. Ya puedes descargarlo en Google Play y la versión para iOS llegará pronto.',
     commonsImageAlt: 'Identidad bajo el control del usuario de Oxy en iOS',
     trustedHeading: 'Construido por la comunidad, para la comunidad.',
     faqHeading: 'Preguntas frecuentes.',

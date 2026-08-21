@@ -20,6 +20,7 @@ import OxyAppsFeatureGrid from '../components/sections/OxyAppsFeatureGrid'
 import OxyUseCasesRolo from '../components/sections/OxyUseCasesRolo'
 import PhotoCardCarousel, { type PhotoCard } from '../components/sections/PhotoCardCarousel'
 import { Link } from 'react-router-dom'
+import { AlertDialog } from '@oxyhq/bloom/alert-dialog'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 import { useTranslation } from '../lib/i18n'
 
@@ -582,6 +583,7 @@ function PartnershipSection() {
 
 function CommonsAppSection() {
   const { t } = useTranslation()
+  const [iosSoonOpen, setIosSoonOpen] = useState(false)
   const ref = useRef<HTMLElement>(null)
   const reduce = useReducedMotion()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
@@ -626,12 +628,17 @@ function CommonsAppSection() {
                 {t('home.commonsFree')}
               </p>
               {/* Official store artwork, served as files. Commons is live on
-                  Google Play; the App Store link waits on the iOS listing and
-                  points at the ecosystem page until then. */}
+                  Google Play; there is no iOS listing yet, so the App Store
+                  badge says so instead of sending people to a dead end. */}
               <div className="flex flex-wrap items-center gap-3 max-lg:justify-center">
-                <a href="/apps" aria-label={t('home.appStore')} className="inline-flex w-fit overflow-hidden rounded-full border-0 bg-black leading-none transition-opacity hover:opacity-80">
+                <button
+                  type="button"
+                  onClick={() => setIosSoonOpen(true)}
+                  aria-label={t('home.appStore')}
+                  className="inline-flex w-fit cursor-pointer overflow-hidden rounded-full border-0 bg-black leading-none transition-opacity hover:opacity-80"
+                >
                   <img className="block" src="/images/badges/app-store.svg" alt={t('home.appStore')} width={128} height={38} />
-                </a>
+                </button>
                 <a
                   href="https://play.google.com/store/apps/details?id=so.oxy.commons"
                   target="_blank"
@@ -643,6 +650,14 @@ function CommonsAppSection() {
                 </a>
               </div>
             </div>
+            <AlertDialog
+              visible={iosSoonOpen}
+              onClose={() => setIosSoonOpen(false)}
+              title={t('home.commonsIosSoonTitle')}
+              description={t('home.commonsIosSoonBody')}
+              confirmLabel={t('common.close')}
+              hideCancel
+            />
           </div>
 
           <motion.div

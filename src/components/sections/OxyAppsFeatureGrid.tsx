@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import type SwiperType from 'swiper'
 import { useTranslation } from '../../lib/i18n'
+import { APP_CARD_IMAGES } from '../../data/appCardImages'
 import {
   APP_PROFILE_CARDS,
   CommunityProfileCardView,
@@ -36,7 +37,7 @@ export default function OxyAppsFeatureGrid() {
   const additionalCards: CommunityProfileCard[] = [
     {
       type: 'profile',
-      image: '/images/landing/inbox-phone.png',
+      image: APP_CARD_IMAGES['/inbox'],
       logo: '/images/apps/inbox.png',
       name: 'Inbox',
       role: t('products.inboxDescription'),
@@ -45,7 +46,7 @@ export default function OxyAppsFeatureGrid() {
     },
     {
       type: 'profile',
-      image: '/images/landing/astro-desktop.png',
+      image: APP_CARD_IMAGES['/astro'],
       logo: '/images/apps/astro.svg',
       name: 'Astro',
       role: t('products.astroDescription'),
@@ -54,7 +55,7 @@ export default function OxyAppsFeatureGrid() {
     },
     {
       type: 'profile',
-      image: '/images/landing/oxyos-laptop.png',
+      image: APP_CARD_IMAGES['/os'],
       logo: '/images/apps/oxyos.png',
       name: 'OxyOS',
       role: t('products.oxyOSDescription'),

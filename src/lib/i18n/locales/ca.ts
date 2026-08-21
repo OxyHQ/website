@@ -88,6 +88,8 @@ const ca: Translations = {
   },
   home: {
     ...en.home,
+    commonsIosSoonTitle: 'Molt aviat a iOS',
+    commonsIosSoonBody: 'Commons encara no és a l’App Store. Ja el pots descarregar a Google Play i la versió per a iOS arribarà aviat.',
     appsFeaturesTitle: 'Aplicacions que posen les persones al davant',
     appsFeaturesDescription: 'Descobreix les aplicacions d’Oxy dissenyades per treballar juntes i donar-te més opcions, privadesa i control en el dia a dia.',
     valuePeopleTitle: 'Les persones marquen la diferència.',

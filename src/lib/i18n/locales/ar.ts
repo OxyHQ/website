@@ -88,6 +88,8 @@ const ar: Translations = {
   },
   home: {
     ...en.home,
+    commonsIosSoonTitle: 'قريبًا على iOS',
+    commonsIosSoonBody: 'لم يصل Commons إلى App Store بعد. التطبيق متاح الآن على Google Play، وإصدار iOS في الطريق.',
     appsFeaturesTitle: 'تطبيقات تضع الناس أولًا',
     appsFeaturesDescription: 'اكتشف تطبيقات Oxy المصممة للعمل معًا، لتمنحك مزيدًا من الخيارات والخصوصية والتحكم في حياتك اليومية.',
     valuePeopleTitle: 'الناس هم من يصنعون الفرق.',

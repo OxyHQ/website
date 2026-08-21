@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { APP_CARD_IMAGES } from '../../data/appCardImages'
 
 export type CommunityProfileCard = {
   type: 'profile'
@@ -15,7 +16,7 @@ export type CommunityProfileCard = {
 export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
   {
     type: 'profile',
-    image: '/images/landing/mention-laptop.png',
+    image: APP_CARD_IMAGES['/mention'],
     logo: '/images/apps/mention.png',
     name: 'Mention',
     role: 'An open social network for genuine connection',
@@ -25,7 +26,7 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
   },
   {
     type: 'profile',
-    image: '/images/landing/hero-photo-02.avif',
+    image: APP_CARD_IMAGES['/apps/allo'],
     logo: '/images/apps/allo.png',
     name: 'Allo',
     role: 'Private conversations, built together',
@@ -34,16 +35,16 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
   },
   {
     type: 'profile',
-    image: '/images/landing/faircoin-phone.png',
+    image: APP_CARD_IMAGES['/apps/faircoin'],
     logo: '/images/apps/faircoin.svg',
     name: 'FairCoin',
     role: 'A community-run currency for cooperation',
-    href: '/faircoin',
+    href: '/apps/faircoin',
     theme: 'faircoin-theme',
   },
   {
     type: 'profile',
-    image: '/images/landing/homiio-phone.png',
+    image: APP_CARD_IMAGES['/homiio'],
     name: 'Homiio',
     role: 'Housing made fair',
     href: '/homiio',

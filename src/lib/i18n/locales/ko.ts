@@ -88,6 +88,8 @@ const ko: Translations = {
   },
   home: {
     ...en.home,
+    commonsIosSoonTitle: 'iOS 버전 출시 예정',
+    commonsIosSoonBody: 'Commons는 아직 App Store에 없습니다. Google Play에서는 이용할 수 있으며 iOS 버전도 곧 출시됩니다.',
     appsFeaturesTitle: '사람을 가장 먼저 생각하는 앱',
     appsFeaturesDescription: '함께 작동하도록 설계된 Oxy 앱을 만나보세요. 일상에서 더 많은 선택권과 개인정보 보호, 통제력을 제공합니다.',
     valuePeopleTitle: '사람이 차이를 만듭니다.',

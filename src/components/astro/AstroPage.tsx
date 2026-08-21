@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import '../../styles/astro-template.css'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
+import { APP_CARD_IMAGES } from '../../data/appCardImages'
 
 const IMAGES = '/images/astro'
 type Platform = 'macos' | 'windows' | 'linux'
@@ -150,7 +151,7 @@ export default function AstroPageContent() {
       <DownloadDialog open={downloadOpen} onClose={() => setDownloadOpen(false)} />
 
       <section className="relative isolate h-[760px] w-full overflow-hidden bg-inverse md:h-[860px] lg:h-[95vh] lg:max-h-[960px]" data-color-scheme="dark" data-header-color-mode="dark">
-        <img src={`${IMAGES}/hero-bg.jpg`} alt="" aria-hidden="true" data-astro-parallax="hero" className="astro-hero-background pointer-events-none absolute inset-x-0 bottom-0 h-[1100px] w-full object-cover object-bottom" />
+        <img src={APP_CARD_IMAGES['/astro']} alt="" aria-hidden="true" data-astro-parallax="hero" className="astro-hero-background pointer-events-none absolute inset-x-0 bottom-0 h-[1100px] w-full object-cover object-bottom" />
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[140px] bg-gradient-to-t from-black/45 via-black/15 to-transparent" />
         <div className="relative mx-auto flex h-full w-full max-w-[1440px] flex-col items-center px-4 pt-28 text-center md:px-10 md:pt-32 lg:px-16 lg:pt-36">
           <div data-astro-reveal className="relative z-10 flex flex-col items-center">

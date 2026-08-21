@@ -74,6 +74,8 @@ const ru: Translations = {
   },
   home: {
     ...en.home,
+    commonsIosSoonTitle: 'Скоро на iOS',
+    commonsIosSoonBody: 'Commons пока нет в App Store. Приложение уже доступно в Google Play, версия для iOS появится скоро.',
     appsFeaturesTitle: 'Приложения, где люди на первом месте',
     appsFeaturesDescription: 'Познакомьтесь с приложениями Oxy, созданными для совместной работы и дающими больше выбора, приватности и контроля каждый день.',
   },

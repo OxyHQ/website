@@ -73,6 +73,13 @@ export interface ResolvedSeo {
   ogImage: string
   siteName: string
   brand: SeoBrand
+  /**
+   * True when the CMS had an entry for this exact route, false when the result
+   * came from the brand-wide `*` entry. A wildcard entry is a floor for routes
+   * that carry no meta of their own; it must not overwrite what a page states
+   * about itself.
+   */
+  matchedRoute: boolean
 }
 
 /** Trailing-slash-normalize a path (`/a/` → `/a`, `/` stays `/`). */
@@ -95,7 +102,8 @@ export function resolveSeo(data: SeoData | null, pathname: string, host?: string
   const brand = brandForHost(host)
   const identity = BRANDS[brand]
   const table = data?.[brand]
-  const entry = table?.routes[normalizePath(pathname)] ?? table?.default ?? null
+  const routeEntry = table?.routes[normalizePath(pathname)] ?? null
+  const entry = routeEntry ?? table?.default ?? null
   if (!entry) return null
   const ogImage = entry.ogImage || table?.default?.ogImage || identity.fallbackOgImage
   return {
@@ -105,6 +113,7 @@ export function resolveSeo(data: SeoData | null, pathname: string, host?: string
     ogImage: toAbsolute(identity.origin, ogImage),
     siteName: identity.siteName,
     brand,
+    matchedRoute: routeEntry !== null,
   }
 }
 
@@ -144,5 +153,6 @@ export function resolveSeoOrDefault(data: SeoData | null, pathname: string, host
     ogImage: identity.origin + identity.fallbackOgImage,
     siteName: identity.siteName,
     brand,
+    matchedRoute: false,
   }
 }

@@ -18,4 +18,6 @@
 export { ArrowRightIcon } from './ArrowRightIcon'
 export { CheckIcon } from './CheckIcon'
 export { ChevronDownIcon } from './ChevronDownIcon'
+export { DocsIcon } from './DocsIcon'
+export { ModelingIcon } from './ModelingIcon'
 export { SearchIcon } from './SearchIcon'

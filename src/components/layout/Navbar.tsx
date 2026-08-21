@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore, type CSSProperties } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { LogoIcon, ProfileButton } from '@oxyhq/services'
+import { LogoIcon, ProfileButton, useOxy } from '@oxyhq/services'
 import {
   simpleNavLinks,
   platformNavCard,
@@ -16,10 +16,11 @@ import { NavCard } from './NavMegaPanels'
 import { useNavigation, useSiteSettings } from '../../api/hooks'
 import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '../../api/scrollStore'
 import { useTranslation, useLocaleContext } from '../../lib/i18n'
-import { searchSite, groupResults, searchContextGroups, GROUP_LABELS, type SearchResult } from '../../lib/site-search'
+import { searchSite, groupResults, searchContextGroups, type SearchResult } from '../../lib/site-search'
 import NavDropdownItem from '../ui/NavDropdownItem'
 import { SettingsPanel } from '../ui/SettingsPanel'
-import { FileText, Search, Settings, X } from 'lucide-react'
+import NavbarSearchResults from './NavbarSearchResults'
+import { Search, Settings, X } from 'lucide-react'
 import { ArrowRightIcon } from '../icons'
 import { useAdminAccess } from '../../hooks/useAdminAccess'
 
@@ -33,52 +34,6 @@ const NAV_LABEL_KEYS: Record<string, string> = {
   Platform: 'navbar.platform',
   Newsroom: 'navbar.newsroom',
   Pricing: 'navbar.pricing',
-}
-
-const SEARCH_APP_ICONS: Record<string, string> = {
-  '/mention': '/images/apps/mention.png',
-  '/homiio': '/images/landing/homiio-phone.png',
-  '/faircoin': '/images/apps/faircoin.svg',
-  '/inbox': '/images/apps/inbox.png',
-  '/astro': '/images/apps/astro.svg',
-  '/os': '/images/apps/oxyos.png',
-  '/apps/allo': '/images/apps/allo.png',
-}
-
-function searchAppIcon(url: string): string | undefined {
-  return SEARCH_APP_ICONS[url.replace(/\/$/, '')]
-}
-
-function SearchResultLeading({ result }: { result: SearchResult }) {
-  const kind = result.kind ?? (result.avatar ? 'user' : searchAppIcon(result.url) || result.group === 'apps' ? 'app' : result.group === 'pages' ? 'page' : 'doc')
-
-  if (kind === 'user') {
-    return result.avatar ? (
-      <img src={result.avatar} alt="" aria-hidden="true" className="size-10 shrink-0 rounded-full object-cover" />
-    ) : (
-      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-foreground/10 text-sm font-medium text-foreground">
-        {result.title.trim().charAt(0).toUpperCase()}
-      </span>
-    )
-  }
-
-  if (kind === 'app') {
-    const icon = result.icon ?? searchAppIcon(result.url)
-    return icon ? (
-      <img src={icon} alt="" aria-hidden="true" className="size-10 shrink-0 rounded-xl object-cover" loading="lazy" decoding="async" />
-    ) : (
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-foreground/10 text-sm font-medium text-foreground">
-        {result.title.trim().charAt(0).toUpperCase()}
-      </span>
-    )
-  }
-
-  const Icon = kind === 'page' ? Search : FileText
-  return (
-    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-foreground/5 text-muted-foreground">
-      <Icon className="size-4" aria-hidden="true" />
-    </span>
-  )
 }
 
 function translatedNavLabel(label: string, t: (key: string) => string): string {
@@ -357,6 +312,7 @@ export default function Navbar({
 }: NavbarProps = {}) {
   const { t } = useTranslation()
   const { locales } = useLocaleContext()
+  const { oxyServices } = useOxy()
   // The settings gear (theme + language) always shows; the language section
   // inside it only when more than one locale is offered.
   const showLanguageInSettings = !hideLocalePicker && locales.length > 1
@@ -400,6 +356,7 @@ export default function Navbar({
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [activeResult, setActiveResult] = useState(0)
   const searchDebounce = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const searchRequest = useRef(0)
   const navigate = useNavigate()
   const { isAdmin } = useAdminAccess()
   const searchPath = useLocation().pathname
@@ -626,26 +583,55 @@ export default function Navbar({
     : 'color-mix(in srgb, var(--background) 80%, transparent)'
 
   const closeSearch = useCallback(() => {
+    searchRequest.current += 1
     setSearchOpen(false)
     setSearchQuery('')
     setSearchResults([])
     setActiveResult(0)
   }, [])
   const runSearch = useCallback((q: string) => {
+    const requestId = ++searchRequest.current
     if (searchDebounce.current) clearTimeout(searchDebounce.current)
     if (!q.trim()) {
       setSearchResults([])
       return
     }
     searchDebounce.current = setTimeout(() => {
-      searchSite(q).then((r) => {
-        setSearchResults(r)
+      // A remote handle is a federation lookup, not a native-user search.
+      // Avoid sending it through Core at all; native profile search remains
+      // available for ordinary names and usernames.
+      const looksLikeFederatedHandle = /^@?[^@\s]+@[^@\s]+$/.test(q.trim())
+      const profileSearch = looksLikeFederatedHandle
+        ? Promise.resolve([])
+        : oxyServices.searchProfiles(q, { limit: 8 }).then((response) => response.data).catch(() => [])
+      void Promise.all([
+        searchSite(q).catch(() => [] as SearchResult[]),
+        profileSearch,
+      ]).then(([siteResults, users]) => {
+        if (requestId !== searchRequest.current) return
+        const nativeUsers = users.filter((user) =>
+          user.type === 'local' ||
+          (!user.type && !user.isFederated && !user.instance && !user.federation),
+        )
+        const userResults: SearchResult[] = nativeUsers.map((user) => ({
+          id: `user:${user.id}`,
+          url: `/u/${user.username}`,
+          title: user.name.displayName?.trim() || user.username,
+          group: 'users',
+          subtitle: `@${user.username}`,
+          kind: 'user',
+          avatar: user.avatar
+            ? user.avatar.startsWith('http')
+              ? user.avatar
+              : oxyServices.getFileDownloadUrl(user.avatar, 'thumb')
+            : undefined,
+        }))
+        setSearchResults([...siteResults, ...userResults])
         setActiveResult(0)
       })
-    }, 120)
-  }, [])
-  // Group-ordered results are the source of truth for both the accordion and
-  // keyboard navigation. The active result always opens its own group.
+    }, 160)
+  }, [oxyServices])
+  // Group-ordered results are the source of truth for keyboard navigation.
   const groupedResults = useMemo(
     () => groupResults(searchResults, searchContextGroups(searchPath)),
     [searchResults, searchPath],
@@ -838,7 +824,7 @@ export default function Navbar({
                   }}
                   placeholder={t('common.searchApps')}
                   aria-label={t('common.search')}
-                  className={`h-11 w-full ps-12 pe-12 text-body-md text-foreground outline-none placeholder:text-muted-foreground ${searchQuery.trim() ? 'rounded-t-2xl border border-foreground/10 border-b-0 bg-background/60 shadow-none backdrop-blur-md' : 'rounded-full border border-foreground/10 bg-background/60 shadow-sm backdrop-blur-md'}`}
+                  className={`h-11 w-full ps-12 pe-12 text-body-md text-foreground outline-none placeholder:text-muted-foreground ${searchQuery.trim() ? 'rounded-t-[2rem] border border-foreground/10 border-b-0 bg-background/60 shadow-none backdrop-blur-md' : 'rounded-full border border-foreground/10 bg-background/60 shadow-sm backdrop-blur-md'}`}
                 />
                 <button
                   type="button"
@@ -850,49 +836,17 @@ export default function Navbar({
                 </button>
 
                 {searchQuery.trim() ? (
-                  <div className="absolute inset-x-0 top-[calc(100%-1px)] z-50 max-h-[min(70vh,520px)] overflow-y-auto rounded-b-2xl border border-foreground/10 border-t-0 bg-background p-2 text-left shadow-sm">
-                    {flatResults.length === 0 ? (
-                      <div className="px-space-sm py-space-2xl text-center text-sm text-muted-foreground">{t('common.noResults')}</div>
-                    ) : (
-                      <div>
-                        {groupedResults.map((group) => {
-                          return (
-                            <div key={group.group} className="mb-4 last:mb-0">
-                              <div className="px-1 pb-2 pt-3 text-label-sm font-medium uppercase tracking-wider text-muted-foreground">
-                                {GROUP_LABELS[group.group] ?? group.group}
-                              </div>
-                              <div className="overflow-hidden rounded-2xl bg-foreground/[0.03]">
-                                {group.items.map((r) => {
-                                const i = flatResults.indexOf(r)
-                                const isActive = i === activeResult
-                                return (
-                                  <button
-                                    key={r.id}
-                                    type="button"
-                                    onMouseEnter={() => setActiveResult(i)}
-                                    onClick={() => {
-                                      closeSearch()
-                                      navigate(r.url)
-                                    }}
-                                    className={`block w-full cursor-pointer border-t border-foreground/10 px-space-sm py-space-md text-left transition-colors first:border-t-0 ${isActive ? 'bg-foreground/5' : 'hover:bg-foreground/5'}`}
-                                  >
-                                    <div className="flex min-w-0 items-center gap-3">
-                                      <SearchResultLeading result={r} />
-                                      <div className="min-w-0">
-                                        <div className="truncate text-sm text-foreground">{r.title}</div>
-                                        <div className="truncate text-body-xs text-muted-foreground">{r.subtitle}</div>
-                                      </div>
-                                    </div>
-                                  </button>
-                                )
-                                })}
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )}
-                  </div>
+                  <NavbarSearchResults
+                    groups={groupedResults}
+                    flatResults={flatResults}
+                    activeResult={activeResult}
+                    noResultsLabel={t('common.noResults')}
+                    onHover={setActiveResult}
+                    onSelect={(result) => {
+                      closeSearch()
+                      navigate(result.url)
+                    }}
+                  />
                 ) : null}
               </div>
             )}

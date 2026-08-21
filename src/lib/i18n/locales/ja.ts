@@ -88,6 +88,8 @@ const ja: Translations = {
   },
   home: {
     ...en.home,
+    commonsIosSoonTitle: 'iOS版は近日公開',
+    commonsIosSoonBody: 'Commons はまだ App Store にありません。Google Play では公開中で、iOS 版も近日中に登場します。',
     appsFeaturesTitle: '人を第一に考えるアプリ',
     appsFeaturesDescription: '日々の暮らしに、より多くの選択肢とプライバシー、コントロールをもたらす、連携して使えるOxyのアプリをご紹介します。',
     valuePeopleTitle: '人が違いを生む。',

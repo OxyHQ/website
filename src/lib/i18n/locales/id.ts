@@ -74,6 +74,8 @@ const id: Translations = {
   },
   home: {
     ...en.home,
+    commonsIosSoonTitle: 'Segera hadir di iOS',
+    commonsIosSoonBody: 'Commons belum tersedia di App Store. Aplikasinya sudah ada di Google Play dan versi iOS segera menyusul.',
     appsFeaturesTitle: 'Aplikasi yang mengutamakan manusia',
     appsFeaturesDescription: 'Jelajahi aplikasi Oxy yang dirancang untuk bekerja bersama, memberi Anda lebih banyak pilihan, privasi, dan kendali dalam keseharian.',
   },

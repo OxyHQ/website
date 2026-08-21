@@ -74,9 +74,19 @@ export default function SEO({
   const { data: seoData } = useSeo(canonicalPath, brand)
   const cms = resolveSeo(seoData ?? null, canonicalPath, host)
 
-  const metaTitle = cms?.title ?? title
-  const metaDescription = cms?.description ?? description
-  const image = cms?.ogImage ?? ogImage ?? defaultOgImage
+  // A CMS entry for THIS route is editorial intent and wins. The brand-wide
+  // `*` entry is only a floor: it fills in for a page that states nothing of
+  // its own, and never overwrites the page's title, description or OG image.
+  const cmsRoute = cms?.matchedRoute ? cms : null
+
+  const metaTitle = cmsRoute?.title ?? title
+  const metaDescription = cmsRoute?.description ?? description
+  // A page hands over a site-relative path (the same artwork its card shows);
+  // og:image has to be absolute.
+  const pageImage = cmsRoute?.ogImage ?? ogImage ?? cms?.ogImage
+  const image = pageImage
+    ? (pageImage.startsWith('/') ? `${origin}${pageImage}` : pageImage)
+    : defaultOgImage
 
   const fullTitle = canonicalPath === '/' ? metaTitle : `${metaTitle} | ${siteName}`
   const canonicalUrl = buildLocalizedUrl(origin, canonicalPath, locale)

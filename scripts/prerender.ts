@@ -52,6 +52,7 @@ import type { SEOLocaleSeed } from '../src/entry-server'
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, isRtlLocale, type Locale } from '../src/lib/i18n/types'
 import { featureRequestDescription, featureRequestPath } from '../src/lib/featureRequest'
 import { ACADEMY_COURSES } from '../src/content/academy-courses'
+import { APP_CARD_IMAGES } from '../src/data/appCardImages'
 
 /** Course metadata by slug, so academy titles match what the SPA renders. */
 const COURSE_BY_SLUG = new Map(ACADEMY_COURSES.map((course) => [course.slug, course]))
@@ -241,18 +242,21 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     description:
       'A social network on the fediverse, without engagement-maxxing algorithms or surveillance ads. Your posts travel through ActivityPub.',
     canonicalPath: '/mention',
+    ogImage: `${SITE_URL}${APP_CARD_IMAGES['/mention']}`,
   },
   '/homiio': {
     title: 'Homiio, renting made transparent',
     description:
       'Transparent listings, values-based matching, an Oxy-powered trust signal and an assistant that knows tenant rights.',
     canonicalPath: '/homiio',
+    ogImage: `${SITE_URL}${APP_CARD_IMAGES['/homiio']}`,
   },
   '/inbox': {
     title: 'Inbox, end-to-end encrypted email',
     description:
       'Email, chat and federated messages in one calm place. Encrypted by default, with triage that surfaces what actually matters.',
     canonicalPath: '/inbox',
+    ogImage: `${SITE_URL}${APP_CARD_IMAGES['/inbox']}`,
   },
   '/ai': {
     title: 'Oxy AI',
@@ -271,12 +275,14 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     description:
       'An operating system designed around privacy and user freedom. No telemetry, no tracking, built on battle-tested open source.',
     canonicalPath: '/os',
+    ogImage: `${SITE_URL}${APP_CARD_IMAGES['/os']}`,
   },
   '/astro': {
     title: 'Astro Browser',
     description:
       'Browse with AI beside you: instant answers, smarter suggestions and help with tasks, with the privacy controls on your side.',
     canonicalPath: '/astro',
+    ogImage: `${SITE_URL}${APP_CARD_IMAGES['/astro']}`,
   },
   '/codea': {
     title: 'Codea, an open-source AI code editor',
@@ -957,6 +963,9 @@ function buildAppRoutes(products: ProductApiEntry[]): Array<{ url: string; seo: 
         title: `${product.name}, ${category || 'Oxy'}`,
         description: product.tagline || product.description || '',
         canonicalPath: `/apps/${product.productId}`,
+        ogImage: APP_CARD_IMAGES[`/apps/${product.productId}`]
+          ? `${SITE_URL}${APP_CARD_IMAGES[`/apps/${product.productId}`]}`
+          : undefined,
       },
     }
   })
@@ -1092,14 +1101,14 @@ async function loadShellHtml(): Promise<string> {
  */
 const STRIP_PATTERNS: ReadonlyArray<RegExp> = [
   /<title[^>]*>[\s\S]*?<\/title>\s*/gi,
-  /<meta\s+name=["']description["'][^>]*>\s*/gi,
-  /<meta\s+property=["']og:[^"']*["'][^>]*>\s*/gi,
-  /<meta\s+name=["']twitter:[^"']*["'][^>]*>\s*/gi,
-  /<link\s+rel=["']canonical["'][^>]*>\s*/gi,
-  /<link\s+rel=["']alternate["'][^>]*hreflang=[^>]*>\s*/gi,
-  /<meta\s+name=["']theme-color["'][^>]*>\s*/gi,
-  /<meta\s+property=["']article:[^"']*["'][^>]*>\s*/gi,
-  /<meta\s+name=["']robots["'][^>]*>\s*/gi,
+  /<meta\b[^>]*\sname=["']description["'][^>]*>\s*/gi,
+  /<meta\b[^>]*\sproperty=["']og:[^"']*["'][^>]*>\s*/gi,
+  /<meta\b[^>]*\sname=["']twitter:[^"']*["'][^>]*>\s*/gi,
+  /<link\b[^>]*\srel=["']canonical["'][^>]*>\s*/gi,
+  /<link\b[^>]*\srel=["']alternate["'][^>]*hreflang=[^>]*>\s*/gi,
+  /<meta\b[^>]*\sname=["']theme-color["'][^>]*>\s*/gi,
+  /<meta\b[^>]*\sproperty=["']article:[^"']*["'][^>]*>\s*/gi,
+  /<meta\b[^>]*\sname=["']robots["'][^>]*>\s*/gi,
 ]
 
 function stripExistingMeta(shell: string): string {
@@ -1188,10 +1197,20 @@ function injectBody(
   return `${shell.slice(0, idx)}<div id="root">${article}</div>${shell.slice(idx + root.length)}`
 }
 
+/**
+ * Mark every spliced tag `data-static-seo`. The app renders its own `<title>`,
+ * OG and Twitter tags once React mounts, and it drops the marked ones at boot
+ * — without the marker a prerendered page serves two of each to any crawler
+ * that runs JavaScript.
+ */
+function markStaticSeo(headHtml: string): string {
+  return headHtml.replace(/<(title|meta|link)\b/gi, '<$1 data-static-seo')
+}
+
 function injectHead(shell: string, headHtml: string): string {
   const idx = shell.indexOf('</head>')
   if (idx < 0) throw new Error('[prerender] shell missing </head>')
-  return `${shell.slice(0, idx)}    ${headHtml}\n  ${shell.slice(idx)}`
+  return `${shell.slice(0, idx)}    ${markStaticSeo(headHtml)}\n  ${shell.slice(idx)}`
 }
 
 function assertSafeRoutePath(routePath: string): string {

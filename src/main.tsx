@@ -16,6 +16,12 @@ import App from './App.tsx'
 // Apply saved color preset + dark/light mode before first render
 initTheme()
 
+// The static shell and the prerender both ship a full SEO head for crawlers
+// that don't run JavaScript. React renders the same tags from `<SEO>` once it
+// mounts, so these are dropped first — otherwise every page serves two
+// `og:title`, `og:image`, `twitter:*` and `<title>` tags.
+for (const tag of document.head.querySelectorAll('[data-static-seo]')) tag.remove()
+
 const rootElement = document.getElementById('root')
 if (!rootElement) throw new Error('Root element #root not found')
 

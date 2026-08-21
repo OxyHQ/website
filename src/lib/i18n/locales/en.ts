@@ -237,6 +237,8 @@ const en = {
     commonsFree: 'Free and open source.',
     appStore: 'Download on the App Store',
     googlePlay: 'Get it on Google Play',
+    commonsIosSoonTitle: 'Coming soon on iOS',
+    commonsIosSoonBody: 'Commons is not on the App Store yet. It is live on Google Play today, and the iOS release is on the way.',
     commonsImageAlt: 'Oxy self-custody identity on iOS',
     trustedHeading: 'Built by the community, for the community.',
     faqHeading: 'Frequently asked questions.',

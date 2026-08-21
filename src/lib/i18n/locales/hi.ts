@@ -74,6 +74,8 @@ const hi: Translations = {
   },
   home: {
     ...en.home,
+    commonsIosSoonTitle: 'iOS पर जल्द आ रहा है',
+    commonsIosSoonBody: 'Commons अभी App Store पर नहीं है। यह Google Play पर उपलब्ध है और iOS संस्करण जल्द आ रहा है।',
     appsFeaturesTitle: 'लोगों को सबसे पहले रखने वाले ऐप्स',
     appsFeaturesDescription: 'Oxy के उन ऐप्स को जानें जो साथ मिलकर काम करते हैं और रोज़मर्रा की ज़िंदगी में आपको अधिक विकल्प, निजता और नियंत्रण देते हैं।',
   },
