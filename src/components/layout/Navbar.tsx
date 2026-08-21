@@ -28,6 +28,18 @@ import { useAdminAccess } from '../../hooks/useAdminAccess'
  *  with a CMS label. */
 const SETTINGS_DROPDOWN_KEY = '__settings__'
 
+const NAV_LABEL_KEYS: Record<string, string> = {
+  'Why Oxy': 'navbar.whyOxy',
+  Platform: 'navbar.platform',
+  Newsroom: 'navbar.newsroom',
+  Pricing: 'navbar.pricing',
+}
+
+function translatedNavLabel(label: string, t: (key: string) => string): string {
+  const key = NAV_LABEL_KEYS[label]
+  return key ? t(key) : label
+}
+
 /* ─── SVG Icons ─── */
 function ChevronDown({ className = '' }: { className?: string }) {
   return (
@@ -721,7 +733,7 @@ export default function Navbar({
                         onMouseEnter={() => openDropdown(dd.label)}
                         aria-expanded={activeDropdown === dd.label}
                       >
-                        <span>{dd.label}</span>
+                        <span>{translatedNavLabel(dd.label, t)}</span>
                         <ChevronDown className={`transition-transform duration-300 ${activeDropdown === dd.label ? 'translate-y-px' : ''}`} />
                       </button>
                     </li>
@@ -734,7 +746,7 @@ export default function Navbar({
                           className={linkClassName(isTransparent ?? false)}
                           onMouseEnter={scheduleClose}
                         >
-                          {link.label}
+                          {translatedNavLabel(link.label, t)}
                         </Link>
                       ) : (
                         <a
@@ -743,7 +755,7 @@ export default function Navbar({
                           className={linkClassName(isTransparent ?? false)}
                           onMouseEnter={scheduleClose}
                         >
-                          {link.label}
+                          {translatedNavLabel(link.label, t)}
                         </a>
                       )}
                     </li>
@@ -1008,7 +1020,7 @@ export default function Navbar({
                 className="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-foreground/5"
                 onClick={() => setMobilePanel(dd.label)}
               >
-                <span className="text-title-sm text-foreground">{dd.label}</span>
+                <span className="text-title-sm text-foreground">{translatedNavLabel(dd.label, t)}</span>
                 <ChevronDown className="size-5 shrink-0 -rotate-90 text-muted-foreground" />
               </button>
             ))}
@@ -1020,7 +1032,7 @@ export default function Navbar({
                   className="flex w-full items-center justify-between p-4 text-title-sm text-foreground transition-colors hover:bg-foreground/5"
                   onClick={() => setMobileOpen(false)}
                 >
-                  {link.label}
+                  {translatedNavLabel(link.label, t)}
                 </Link>
               ) : (
                 <a
@@ -1030,7 +1042,7 @@ export default function Navbar({
                   className="flex w-full items-center justify-between p-4 text-title-sm text-foreground transition-colors hover:bg-foreground/5"
                   onClick={() => setMobileOpen(false)}
                 >
-                  {link.label}
+                  {translatedNavLabel(link.label, t)}
                 </a>
               ),
             )}
@@ -1054,7 +1066,7 @@ export default function Navbar({
               onClick={() => setMobilePanel(null)}
             >
               <ChevronDown className="size-5 shrink-0 rotate-90 text-muted-foreground" />
-              <span className="text-title-sm text-foreground">{dd.label}</span>
+              <span className="text-title-sm text-foreground">{translatedNavLabel(dd.label, t)}</span>
             </button>
 
             <div className="flex flex-col gap-2 p-4" onClick={() => setMobileOpen(false)}>
@@ -1081,11 +1093,11 @@ export default function Navbar({
               {dd.sidePanel?.links.map((link) =>
                 link.href.startsWith('/') ? (
                   <Link key={link.label} to={link.href} className="px-space-sm py-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
-                    {link.label}
+                    {translatedNavLabel(link.label, t)}
                   </Link>
                 ) : (
                   <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="px-space-sm py-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
-                    {link.label}
+                    {translatedNavLabel(link.label, t)}
                   </a>
                 ),
               )}

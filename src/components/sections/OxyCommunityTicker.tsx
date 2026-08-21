@@ -15,6 +15,7 @@ type ProfileCard = {
   logo?: string
   name: string
   role: string
+  theme: 'mention-theme' | 'allo-theme' | 'faircoin-theme' | 'homiio-theme'
 }
 
 type QuoteCard = {
@@ -53,6 +54,7 @@ const TICKER_CARDS: TickerCard[] = [
     logo: '/images/apps/mention.png',
     name: 'Mention',
     role: 'An open social network for genuine connection',
+    theme: 'mention-theme',
   },
   {
     type: 'quote',
@@ -68,6 +70,7 @@ const TICKER_CARDS: TickerCard[] = [
     logo: '/images/apps/allo.png',
     name: 'Allo',
     role: 'Private conversations, built together',
+    theme: 'allo-theme',
   },
   {
     type: 'stat',
@@ -87,6 +90,7 @@ const TICKER_CARDS: TickerCard[] = [
     logo: '/images/apps/faircoin.svg',
     name: 'FairCoin',
     role: 'A community-run currency for cooperation',
+    theme: 'faircoin-theme',
   },
   {
     type: 'quote-pair',
@@ -100,6 +104,7 @@ const TICKER_CARDS: TickerCard[] = [
     image: '/images/landing/company-band.jpg',
     name: 'Homiio',
     role: 'Housing made fair',
+    theme: 'homiio-theme',
   },
   {
     type: 'stat',
@@ -141,15 +146,22 @@ function MediaCard({ card }: { card: ImageCard }) {
 
 function ProfileCardView({ card }: { card: ProfileCard }) {
   return (
-    <article className="relative h-[360px] w-[225px] shrink-0 overflow-hidden rounded-2xl bg-foreground md:h-[480px] md:w-[300px]">
-      <img src={card.image} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover object-top" loading="lazy" />
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/10 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-5 text-left text-foreground md:gap-2 md:p-6">
-        {card.logo ? (
-          <img src={card.logo} alt="" aria-hidden="true" className="mb-1 size-10 object-contain md:size-12" />
-        ) : null}
-        <span className="text-xl font-semibold leading-tight md:text-2xl">{card.name}</span>
-        <span className="max-w-[18rem] text-base leading-snug text-muted-foreground md:text-lg">{card.role}</span>
+    <article className={`${card.theme} relative flex h-[360px] w-full shrink-0 flex-col overflow-hidden rounded-[32px] bg-[color-mix(in_srgb,var(--primary)_32%,var(--background))] p-8 md:h-[480px] md:w-96`}>
+      <div className="relative z-20 flex flex-col gap-1">
+        <p className="heading-3xl text-[32px] font-semibold text-primary-text">{card.name}</p>
+        <p className="heading-xl text-sm font-medium text-secondary-text">{card.role}</p>
+      </div>
+      <div className="relative -mx-8 -mb-8 min-h-0 flex-1">
+        <img
+          src={card.image}
+          alt={card.name}
+          className="absolute inset-0 size-full select-none object-cover object-center"
+          width={768}
+          height={480}
+          loading="lazy"
+          decoding="async"
+        />
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[60%] bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--primary)_32%,var(--background))_0%,color-mix(in_srgb,var(--primary)_24%,transparent)_60%,transparent_100%)]" />
       </div>
     </article>
   )

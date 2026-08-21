@@ -1,5 +1,5 @@
-import { useState, useCallback, useRef } from 'react'
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { useState, useCallback, useLayoutEffect, useRef } from 'react'
+import { motion, useScroll, useSpring, useTransform, useReducedMotion } from 'framer-motion'
 import { ArrowUpRight, BookOpenText, Bug, Code, HandHeart, Megaphone, Translate, UsersThree } from '@phosphor-icons/react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
@@ -142,6 +142,13 @@ const BUILD_FOR_EVERYONE_LINKS: Array<Omit<ResourceLink, 'label'> & { key: strin
   { key: 'home.buildLinkTeam', href: '/company/team' },
 ]
 
+const BUILD_FOR_EVERYONE_LINK_CLASSES = [
+  'bg-[color-mix(in_srgb,var(--background)_88%,var(--primary))] text-foreground',
+  'bg-[color-mix(in_srgb,var(--background)_84%,var(--primary))] text-foreground',
+  'bg-[color-mix(in_srgb,var(--background)_80%,var(--primary))] text-foreground',
+  'bg-secondary text-secondary-foreground',
+] as const
+
 function BuildForEveryoneSection() {
   const { t, locale } = useTranslation()
   const { data: pageData } = usePage('home')
@@ -161,15 +168,18 @@ function BuildForEveryoneSection() {
     : t('home.allInOneBody')
 
   return (
-    <section id="build-for-everyone" className="scroll-mt-[var(--site-header-height)]">
+    <section
+      id="build-for-everyone"
+      className="build-theme scroll-mt-[var(--site-header-height)] bg-[color-mix(in_srgb,var(--primary)_10%,var(--background))]"
+    >
       <div className="container">
         <motion.div
-          className="grid grid-cols-1 items-start gap-8 py-8 min-[951px]:grid-cols-2 min-[951px]:gap-12 min-[951px]:py-12"
+          className="grid grid-cols-1 items-start gap-8 py-10 min-[951px]:grid-cols-2 min-[951px]:gap-12 min-[951px]:py-14"
           {...REVEAL}
         >
             {/* Left — heading + body */}
             <div>
-              <h2 className="text-heading-responsive-lg">
+              <h2 className="text-heading-responsive-lg text-primary-text">
                 {headingLine1}
                 {headingLine2 && (
                   <>
@@ -178,13 +188,13 @@ function BuildForEveryoneSection() {
                   </>
                 )}
               </h2>
-              <p className="mt-4 max-w-[460px] opacity-80">{body}</p>
+              <p className="mt-4 max-w-[460px] text-foreground/70">{body}</p>
             </div>
 
             {/* Right — resource links */}
             <ul className="flex flex-col gap-2">
-              {BUILD_FOR_EVERYONE_LINKS.map((link) => {
-                const rowClass = `group flex items-center justify-between gap-4 rounded-full bg-surface px-5 py-3 font-display text-xl font-[450] transition-opacity duration-200 hover:opacity-60`
+              {BUILD_FOR_EVERYONE_LINKS.map((link, index) => {
+                const rowClass = `group flex items-center justify-between gap-4 rounded-full px-5 py-3 font-display text-xl font-[450] transition-[filter,transform] duration-200 hover:-translate-y-0.5 hover:brightness-110 ${BUILD_FOR_EVERYONE_LINK_CLASSES[index]}`
                 const arrow = (
                   <ArrowUpRight
                     weight="regular"
@@ -483,48 +493,72 @@ const PARTNERSHIP_ITEMS = [
 function PartnershipSection() {
   const { t } = useTranslation()
   const ref = useRef<HTMLElement>(null)
-  const reduce = useReducedMotion()
+  const backgroundRef = useRef<HTMLImageElement>(null)
+  const [backgroundTravel, setBackgroundTravel] = useState(0)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ['-8%', '8%'])
+  const visibleTravel = Math.min(backgroundTravel * 0.2, 120)
+  const backgroundOffset = useTransform(scrollYProgress, [0, 1], [0, -visibleTravel])
+  const backgroundY = useSpring(backgroundOffset, { stiffness: 90, damping: 24, mass: 0.45 })
+
+  useLayoutEffect(() => {
+    const section = ref.current
+    const image = backgroundRef.current
+    if (!section || !image) return
+
+    const measureTravel = () => {
+      setBackgroundTravel(Math.max(image.getBoundingClientRect().height - section.getBoundingClientRect().height, 0))
+    }
+
+    measureTravel()
+    image.addEventListener('load', measureTravel)
+    const observer = new ResizeObserver(measureTravel)
+    observer.observe(section)
+    observer.observe(image)
+
+    return () => {
+      image.removeEventListener('load', measureTravel)
+      observer.disconnect()
+    }
+  }, [])
 
   return (
-    <section ref={ref} className="relative isolate overflow-hidden text-foreground">
+    <section ref={ref} className="partnership-theme relative isolate overflow-hidden text-foreground">
       <motion.img
-        src="/images/landing/partnerships-banner.avif"
+        ref={backgroundRef}
+        src="/images/landing/spacex-launch.jpg"
         alt=""
         aria-hidden="true"
-        style={reduce ? undefined : { y: backgroundY }}
-        className="absolute -top-[12%] -z-20 h-[124%] w-full object-cover object-[50%_30%]"
+        style={{ y: backgroundY }}
+        className="absolute left-0 top-0 z-0 h-auto min-h-full w-full object-cover object-[50%_0%] will-change-transform"
         width={1440}
         height={900}
         loading="lazy"
         decoding="async"
       />
-      <div className="absolute inset-0 -z-10 bg-background/75" />
+      <div className="absolute inset-0 z-0 bg-background/55" />
 
-      <div className="container">
-        <div className="grid gap-6 py-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-8 lg:py-8">
-          <div className="px-4 lg:px-2">
-            <p className="mb-4 text-primary">{t('home.partnershipEyebrow')}</p>
-            <AnimatedTitle as="h2" className="text-heading-responsive-lg mb-4">{t('home.partnershipTitle')}</AnimatedTitle>
-            <p className="max-w-[500px] text-muted-foreground">
+      <div className="container relative z-10">
+        <div className="grid gap-6 py-8 min-[951px]:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] min-[951px]:items-center min-[951px]:gap-10 min-[951px]:py-10">
+          <div>
+            <AnimatedTitle static as="h2" className="text-heading-responsive-lg mb-4 font-[550] lg:text-[3.25rem] lg:leading-[1.08]">{t('home.partnershipTitle')}</AnimatedTitle>
+            <p className="max-w-[500px] text-foreground/80">
               {t('home.partnershipDescription')}
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5 max-[650px]:grid-cols-1">
+          <div className="grid grid-cols-2 gap-2 max-[650px]:grid-cols-1">
             {PARTNERSHIP_ITEMS.map(({ key, Icon }) => (
               <div
                 key={key}
-                className="flex min-h-16 items-center gap-3 rounded-full bg-background/75 px-4 py-3 text-base leading-snug transition-colors hover:bg-background/90"
+                className="flex min-h-12 items-center gap-2 rounded-full bg-card px-3 py-2 text-sm font-medium leading-snug text-card-foreground transition-[background-color,transform] hover:-translate-y-0.5 hover:bg-card/90"
               >
-                <Icon size={20} weight="regular" className="text-muted-foreground" aria-hidden="true" />
+                <Icon size={18} weight="regular" className="text-primary" aria-hidden="true" />
                 <span>{t(key)}</span>
               </div>
             ))}
             <a
               href="/sustain"
-              className="flex min-h-16 items-center rounded-full bg-primary px-4 py-3 text-base font-semibold text-primary-foreground transition-opacity duration-300 hover:opacity-80"
+              className="flex min-h-12 items-center rounded-full bg-tertiary px-3 py-2 text-sm font-semibold text-tertiary-foreground transition-[filter,transform] duration-300 hover:-translate-y-0.5 hover:brightness-110"
             >
               {t('home.partnershipCta')}
             </a>
@@ -588,17 +622,17 @@ function CommonsAppSection() {
                   Google Play; the App Store link waits on the iOS listing and
                   points at the ecosystem page until then. */}
               <div className="flex flex-wrap items-center gap-3 max-lg:justify-center">
-                <a href="/apps" aria-label={t('home.appStore')} className="inline-flex w-fit overflow-hidden rounded-full transition-opacity hover:opacity-80">
-                  <img src="/images/badges/app-store.svg" alt={t('home.appStore')} width={128} height={38} />
+                <a href="/apps" aria-label={t('home.appStore')} className="inline-flex w-fit overflow-hidden rounded-full border-0 bg-black leading-none transition-opacity hover:opacity-80">
+                  <img className="block" src="/images/badges/app-store.svg" alt={t('home.appStore')} width={128} height={38} />
                 </a>
                 <a
                   href="https://play.google.com/store/apps/details?id=so.oxy.commons"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={t('home.googlePlay')}
-                  className="inline-flex w-fit overflow-hidden rounded-full transition-opacity hover:opacity-80"
+                  className="inline-flex w-fit overflow-hidden rounded-full border-0 bg-black leading-none transition-opacity hover:opacity-80"
                 >
-                  <img src="/images/badges/google-play.svg" alt={t('home.googlePlay')} width={128} height={38} />
+                  <img className="block" src="/images/badges/google-play.svg" alt={t('home.googlePlay')} width={128} height={38} />
                 </a>
               </div>
             </div>
@@ -697,6 +731,7 @@ export default function HomePage() {
         <FaqSection
           title={t('home.faqHeading')}
           items={homeFaqs}
+          className="faq-theme bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))]"
         />
       </main>
       <Footer hideTopDivider />

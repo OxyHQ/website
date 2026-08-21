@@ -56,8 +56,14 @@ function rootBlock(selector: string, preset: Parameters<typeof getPresetVars>[0]
 }
 
 /** A scoped block: carries the `--color-x` aliases too, or utilities miss it. */
-function scopeBlock(selector: string, seed: string, mode: 'light' | 'dark', extra?: string): string {
-  return block(selector, buildSeedScopeVars({ seed, mode }), extra)
+function scopeBlock(
+  selector: string,
+  seed: string,
+  mode: 'light' | 'dark',
+  extra?: string,
+  accents?: Pick<BrandSurface, 'secondarySeed' | 'tertiarySeed'>,
+): string {
+  return block(selector, buildSeedScopeVars({ seed, mode, ...accents }), extra)
 }
 
 /**
@@ -78,12 +84,18 @@ function mediaScopeBlock(query: string, selector: string, seed: string, extra?: 
 
 function brandBlocks(surface: BrandSurface): string[] {
   const heading = `/* ${surface.label} — seed ${surface.seed} */`
+  const accents = {
+    secondarySeed: surface.secondarySeed,
+    tertiarySeed: surface.tertiarySeed,
+  }
   if (surface.mode === 'dark') {
-    return [`${heading}\n${scopeBlock(surface.selector, surface.seed, 'dark', 'color-scheme: dark;')}`]
+    return [
+      `${heading}\n${scopeBlock(surface.selector, surface.seed, 'dark', 'color-scheme: dark;', accents)}`,
+    ]
   }
   return [
-    `${heading}\n${scopeBlock(surface.selector, surface.seed, 'light')}`,
-    scopeBlock(`${surface.selector}:is(.dark, .dark *)`, surface.seed, 'dark'),
+    `${heading}\n${scopeBlock(surface.selector, surface.seed, 'light', undefined, accents)}`,
+    scopeBlock(`${surface.selector}:is(.dark, .dark *)`, surface.seed, 'dark', undefined, accents),
   ]
 }
 

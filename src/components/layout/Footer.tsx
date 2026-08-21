@@ -97,7 +97,7 @@ interface LegalLink {
 
 /* ─── Footer link (handles internal/external, badge, arrow) ─── */
 
-const LINK_CLASS = 'group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-muted-foreground transition-[color] duration-150 ease-out hover:text-foreground focus-visible:text-foreground active:text-foreground active:duration-50'
+const LINK_CLASS = 'group -mx-1 flex w-fit items-center rounded-lg p-1 font-normal text-sm text-muted-foreground transition-[background-color,color] duration-150 ease-out hover:bg-primary-subtle hover:text-primary-text focus-visible:text-primary-text active:text-primary-text active:duration-50'
 
 function FooterLinkItem({ link }: { link: FooterLink }) {
   const content = (
@@ -196,7 +196,7 @@ export default function Footer({
 
   return (
     <motion.footer
-      className="relative flex w-full flex-col justify-between bg-background"
+      className="relative flex w-full flex-col justify-between bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))] text-foreground"
       onViewportEnter={() => setFooterVisible(true)}
       onViewportLeave={() => setFooterVisible(false)}
       viewport={{ amount: 0 }}
@@ -210,7 +210,7 @@ export default function Footer({
             <div className="columns-4 gap-0 max-xl:columns-3 max-lg:columns-2 max-xs:columns-1">
               {footerColumns.map((column) => (
                 <div key={column.title} className="break-inside-avoid pb-5">
-                  <h2 className="py-1 text-foreground text-sm font-medium">{column.title}</h2>
+                  <h2 className="py-1 text-primary-text text-sm font-semibold">{column.title}</h2>
                   <ul className="flex flex-col">
                     {column.links.map((link: FooterLink) => (
                       <li key={link.label}>
@@ -246,7 +246,7 @@ export default function Footer({
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-400 ease-in-out hover:text-foreground hover:duration-150 active:text-foreground active:duration-50"
+                    className="group flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-400 ease-in-out hover:bg-primary-subtle hover:text-primary-text hover:duration-150 active:text-primary-text active:duration-50"
                     aria-label={`${ariaLabel.replace(/ homepage$/i, '')} on ${label}`}
                   >
                     <Icon />
@@ -262,7 +262,7 @@ export default function Footer({
               {legal.map((item) => {
                 if (item.to) {
                   return (
-                    <Link key={item.label} className="transition-colors duration-150 hover:text-foreground" to={item.to}>
+                    <Link key={item.label} className="transition-colors duration-150 hover:text-primary-text" to={item.to}>
                       {item.label}
                     </Link>
                   )
@@ -272,7 +272,7 @@ export default function Footer({
                     key={item.label}
                     href={item.href}
                     {...(item.isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                    className="transition-colors duration-150 hover:text-foreground"
+                    className="transition-colors duration-150 hover:text-primary-text"
                   >
                     {item.label}
                   </a>

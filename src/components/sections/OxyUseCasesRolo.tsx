@@ -55,7 +55,7 @@ export default function OxyUseCasesRolo() {
 
   return (
     <section
-      className="section w-full overflow-hidden bg-background text-foreground"
+      className="section w-full overflow-hidden bg-[color-mix(in_srgb,var(--primary)_4%,var(--background))] text-foreground"
       aria-label={t('home.useCasesHeading')}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -64,7 +64,7 @@ export default function OxyUseCasesRolo() {
     >
       <div className="container">
         <div className="grid min-h-[40rem] grid-cols-1 items-center gap-8 py-16 md:grid-cols-[minmax(0,0.28fr)_minmax(0,0.72fr)] md:gap-4 md:py-20 lg:min-h-[48rem] lg:grid-cols-[minmax(0,0.3fr)_minmax(0,0.7fr)] lg:gap-6">
-          <p className="text-xl font-medium tracking-tight md:text-2xl">
+          <p className="text-xl font-medium tracking-tight text-primary-text md:text-2xl">
             {t('home.useCasesHeading')}
           </p>
 
@@ -82,7 +82,7 @@ export default function OxyUseCasesRolo() {
                 return (
                   <li
                     key={`${item}-${index}`}
-                    className="flex h-16 shrink-0 items-center text-3xl font-medium leading-none tracking-tight transition-opacity duration-[620ms] md:text-5xl lg:text-6xl"
+                    className={`flex h-16 shrink-0 items-center text-3xl font-medium leading-none tracking-tight transition-[color,opacity] duration-[620ms] md:text-5xl lg:text-6xl ${distance === 0 ? 'text-primary-text' : 'text-foreground'}`}
                     data-dist={Math.min(distance, 4)}
                     style={{ opacity: itemOpacity(distance) }}
                   >

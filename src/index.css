@@ -331,7 +331,7 @@ html {
 
 body {
   margin: 0;
-  font-family: 'Noto Color Emoji', var(--font-sans), sans-serif;
+  font-family: var(--font-sans), 'Noto Color Emoji', sans-serif;
   background-color: var(--color-background);
   color: var(--color-foreground);
   -webkit-font-smoothing: antialiased;

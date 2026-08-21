@@ -42,6 +42,9 @@ export interface BrandSurface {
   selector: string
   /** The brand colour, `#rrggbb`. */
   seed: string
+  /** Optional Bloom accent seeds for curated multi-colour presets. */
+  secondarySeed?: string
+  tertiarySeed?: string
   mode: BrandMode
   /** What the surface is, for whoever reads the generated file. */
   label: string
@@ -67,6 +70,45 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     seed: APP_COLOR_PRESETS[FAIRCOIN_PRESET].hex,
     mode: 'auto',
     label: 'FairCoin sections on oxy.so',
+  },
+  {
+    selector: '.mention-theme',
+    seed: APP_COLOR_PRESETS.cobalt.hex,
+    tertiarySeed: APP_COLOR_PRESETS.cobalt.tertiaryHex,
+    mode: 'auto',
+    label: 'Mention ticker cards',
+  },
+  {
+    selector: '.allo-theme',
+    seed: APP_COLOR_PRESETS.purple.hex,
+    mode: 'auto',
+    label: 'Allo ticker cards',
+  },
+  {
+    selector: '.homiio-theme',
+    seed: APP_COLOR_PRESETS.yellow.hex,
+    mode: 'auto',
+    label: 'Homiio ticker cards',
+  },
+  {
+    selector: '.build-theme',
+    seed: APP_COLOR_PRESETS.sky.hex,
+    mode: 'auto',
+    label: 'Build for everyone section',
+  },
+  {
+    selector: '.faq-theme',
+    seed: APP_COLOR_PRESETS.grove.hex,
+    tertiarySeed: APP_COLOR_PRESETS.grove.tertiaryHex,
+    mode: 'auto',
+    label: 'Homepage FAQ section',
+  },
+  {
+    selector: '.partnership-theme',
+    seed: APP_COLOR_PRESETS.navy.hex,
+    tertiarySeed: APP_COLOR_PRESETS.navy.tertiaryHex,
+    mode: 'auto',
+    label: 'Build the future section',
   },
   {
     // The device frame in `PhoneMockup.tsx` reproduces the FAIRWallet home
