@@ -68,7 +68,7 @@ const PANEL_ICONS = [
 
 /** How the icons enter once the panel has begun to open. */
 const ICON_ANIMATION = { duration: 1, ease: 'power4.out' }
-const SCROLL_CTA_TOP_THRESHOLD = 72
+const SCROLL_CTA_TOP_THRESHOLD = 32
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
