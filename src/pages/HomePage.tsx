@@ -160,7 +160,7 @@ function BuildForEveryoneSection() {
   const body = pageContent(sections, 'all-in-one', DEFAULT_ALL_IN_ONE_BODY)
 
   return (
-    <section>
+    <section id="build-for-everyone" className="scroll-mt-[var(--site-header-height)]">
       <div className="container">
         <motion.div
           className="grid grid-cols-1 items-start gap-8 py-8 min-[951px]:grid-cols-2 min-[951px]:gap-12 min-[951px]:py-12"

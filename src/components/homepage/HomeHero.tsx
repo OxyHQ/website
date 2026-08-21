@@ -1,6 +1,6 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -80,6 +80,8 @@ function heroMediaUrl(ref: HeroMediaRef | undefined): string {
 export default function HomeHero() {
   const { data: hero } = useHero()
   const setHeroVisible = usePageChromeStore((s) => s.setHeroVisible)
+  const [heroInView, setHeroInView] = useState(false)
+  const [showScrollCta, setShowScrollCta] = useState(false)
 
   const title = hero?.title || DEFAULT_TITLE
   const poster = heroMediaUrl(hero?.backgroundPoster) || DEFAULT_POSTER
@@ -104,15 +106,26 @@ export default function HomeHero() {
    * follows it frame for frame — and `auto` for anyone who asked for less
    * motion, since the whole point of the trip is the animation.
    */
-  const scrollPastHero = () => {
-    const section = sectionRef.current
-    if (!section) return
+  const scrollToBuildForEveryone = () => {
+    const target = document.getElementById('build-for-everyone')
+    if (!target) return
+    setShowScrollCta(false)
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    window.scrollTo({
-      top: section.offsetTop + section.offsetHeight - window.innerHeight,
-      behavior: reduce ? 'auto' : 'smooth',
-    })
+    target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'end' })
   }
+
+  useEffect(() => {
+    const target = document.getElementById('build-for-everyone')
+    if (!target) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowScrollCta(heroInView && !entry.isIntersecting),
+      { rootMargin: '0px 0px 96px 0px', threshold: 0.01 },
+    )
+    observer.observe(target)
+
+    return () => observer.disconnect()
+  }, [heroInView])
 
   useGSAP(
     () => {
@@ -254,10 +267,37 @@ export default function HomeHero() {
     <motion.section
       ref={sectionRef}
       className="block w-full bg-background max-lg:min-h-svh lg:min-h-[200dvh]"
-      onViewportEnter={() => setHeroVisible(true)}
-      onViewportLeave={() => setHeroVisible(false)}
+      onViewportEnter={() => {
+        setHeroVisible(true)
+        setHeroInView(true)
+        setShowScrollCta(true)
+      }}
+      onViewportLeave={() => {
+        setHeroVisible(false)
+        setHeroInView(false)
+        setShowScrollCta(false)
+      }}
       viewport={{ amount: 0 }}
     >
+      <AnimatePresence>
+        {showScrollCta && (
+          <div className="pointer-events-none fixed inset-x-0 bottom-6 z-40 flex justify-center px-4">
+            <motion.button
+              type="button"
+              onClick={scrollToBuildForEveryone}
+              aria-label="Scroll to Build for everyone"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="pointer-events-auto inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-[15px] font-medium text-black shadow-lg transition-transform duration-200 hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
+            >
+              <span>Build for everyone</span>
+              <ScrollArrow delay={0} className="text-black" sizeClass="size-[18px]" animated={false} />
+            </motion.button>
+          </div>
+        )}
+      </AnimatePresence>
       <div className="w-full max-w-none px-0 lg:min-h-[200dvh]">
         <div
           ref={stickyRef}
@@ -429,8 +469,8 @@ export default function HomeHero() {
               <button
                 ref={arrowsRef}
                 type="button"
-                onClick={scrollPastHero}
-                aria-label="Skip to the end of the hero"
+                onClick={scrollToBuildForEveryone}
+                aria-label="Scroll to Build for everyone"
                 className="hidden w-fit cursor-pointer flex-col gap-2 p-10 transition-opacity will-change-transform hover:opacity-70 lg:flex"
               >
                 <ScrollArrow delay={0} />
@@ -453,11 +493,21 @@ export default function HomeHero() {
   )
 }
 
-function ScrollArrow({ delay }: { delay: number }) {
+function ScrollArrow({
+  delay,
+  className = 'text-foreground',
+  sizeClass = 'size-4',
+  animated = true,
+}: {
+  delay: number
+  className?: string
+  sizeClass?: string
+  animated?: boolean
+}) {
   return (
     <span
       aria-hidden="true"
-      className="relative block size-4 animate-[hero-scroll-arrow_1.5s_ease-in-out_infinite] text-foreground"
+      className={`relative block ${sizeClass} ${animated ? 'animate-[hero-scroll-arrow_1.5s_ease-in-out_infinite]' : ''} ${className}`}
       style={{ animationDelay: `${delay}s` }}
     >
       <svg viewBox="0 0 30 30" fill="none">
