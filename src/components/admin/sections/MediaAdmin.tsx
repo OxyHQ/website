@@ -81,7 +81,7 @@ export default function MediaAdmin() {
               <p><strong>Size:</strong> {formatBytes(editing.size)}</p>
               {editing.width && editing.height && <p><strong>Dimensions:</strong> {editing.width} &times; {editing.height}</p>}
               <p><strong>Uploaded:</strong> {formatDate(editing.createdAt)}</p>
-              <p><strong>URL:</strong> <a href={editing.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline break-all">{editing.url}</a></p>
+              <p><strong>URL:</strong> <a href={editing.url} target="_blank" rel="noopener noreferrer" className="break-all text-primary-text underline">{editing.url}</a></p>
             </div>
 
             <div className="space-y-1.5">

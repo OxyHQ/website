@@ -417,15 +417,15 @@ function PegHealthTile({ healthy, snapshotAt, isLoading }: PegHealthTileProps) {
         : 'Awaiting snapshot'
   const dotClass =
     status === 'healthy'
-      ? 'bg-emerald-500'
+      ? 'bg-success'
       : status === 'attention'
-        ? 'bg-destructive'
+        ? 'bg-error'
         : 'bg-muted-foreground/40'
   const valueColor =
     status === 'healthy'
-      ? 'text-emerald-600 dark:text-emerald-400'
+      ? 'text-success-text'
       : status === 'attention'
-        ? 'text-destructive'
+        ? 'text-error-text'
         : 'text-muted-foreground'
 
   return (

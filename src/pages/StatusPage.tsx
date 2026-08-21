@@ -14,16 +14,16 @@ const STATUS_LABEL: Record<ServiceStatusValue, string> = {
 }
 
 const STATUS_DOT: Record<ServiceStatusValue, string> = {
-  operational: 'bg-emerald-500',
-  degraded: 'bg-amber-500',
-  down: 'bg-rose-500',
+  operational: 'bg-success',
+  degraded: 'bg-warning',
+  down: 'bg-error',
   unknown: 'bg-muted-foreground/50',
 }
 
 const STATUS_SURFACE: Record<ServiceStatusValue, string> = {
-  operational: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-  degraded: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-  down: 'bg-rose-500/10 text-rose-600 dark:text-rose-400',
+  operational: 'bg-success-subtle text-success-text',
+  degraded: 'bg-warning-subtle text-warning-text',
+  down: 'bg-error-subtle text-error-text',
   unknown: 'bg-muted-foreground/10 text-muted-foreground',
 }
 
@@ -318,7 +318,7 @@ export default function StatusPage() {
               <div className="col-span-full flex flex-col gap-5 pb-20">
                 {/* Error state */}
                 {isError && !data && (
-                  <div className="rounded-2xl border border-rose-500/40 bg-rose-500/5 p-5 text-sm text-rose-600 dark:text-rose-400">
+                  <div className="rounded-2xl border border-error/40 bg-error-subtle p-5 text-sm text-error-text">
                     Couldn't reach the status API. It may itself be down — try again in a moment.
                   </div>
                 )}

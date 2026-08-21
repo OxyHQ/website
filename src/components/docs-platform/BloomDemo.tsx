@@ -21,7 +21,7 @@ export function BloomDemo({ name }: BloomDemoProps) {
   const demo = getBloomDemo(name)
   if (!demo) {
     return (
-      <div className="not-prose my-6 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 text-sm text-foreground">
+      <div className="not-prose my-6 rounded-2xl border border-warning/30 bg-warning-subtle p-4 text-sm text-foreground">
         Demo <code className="font-mono">{name}</code> not found. Add{' '}
         <code className="font-mono">src/content/bloom-demos/{name}.tsx</code>.
       </div>

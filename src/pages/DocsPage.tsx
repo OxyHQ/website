@@ -1,9 +1,9 @@
 import { useParams, useLocation } from 'react-router-dom'
-import { useLayoutEffect, useMemo } from 'react'
-import { useBloomTheme } from '@oxyhq/bloom/theme'
+import { useMemo } from 'react'
+import { BloomColorScope } from '@oxyhq/bloom/theme'
 import PageShell from '../components/layout/PageShell'
 import DocsPageContent from '../components/docs/DocsPage'
-import { applyPreset, type AppColorName } from '../theme'
+import type { AppColorName } from '../theme'
 import {
   buildDocsHref,
   getPackage,
@@ -13,25 +13,17 @@ import {
 } from '../content/docs-loader'
 
 /**
- * Brand-themed docs: render a package's docs in its own Bloom color preset.
- * FairCoin docs adopt the `faircoin` preset (accent + surfaces) while you're on
- * them, then restore the site preset on the way out. Color presets live as CSS
- * vars on :root, so we apply/restore them imperatively here — a nested
- * BloomThemeProvider can't unset them when it unmounts.
+ * Brand-themed docs: render a package's docs in its own Bloom color scope.
+ * The scope writes both canonical tokens and Tailwind aliases on its subtree,
+ * then disappears with that subtree. The document-level provider remains the
+ * single authority for the rest of the site throughout.
  */
-function useDocsBrandPreset() {
+function useDocsBrandPreset(): AppColorName | undefined {
   const params = useParams<{ package?: string }>()
-  const { theme, colorPreset } = useBloomTheme()
-  const resolved: 'light' | 'dark' = theme.mode === 'dark' ? 'dark' : 'light'
-  const brandPreset = useMemo<AppColorName | null>(() => {
+  return useMemo<AppColorName | undefined>(() => {
     const pkg = params.package ? getPackage(params.package) : undefined
-    return pkg?.shortName === 'faircoin' ? 'faircoin' : null
+    return pkg?.shortName === 'faircoin' ? 'faircoin' : undefined
   }, [params.package])
-  useLayoutEffect(() => {
-    if (!brandPreset) return
-    applyPreset(brandPreset, resolved)
-    return () => applyPreset(colorPreset, resolved)
-  }, [brandPreset, resolved, colorPreset])
 }
 
 interface DocsRouteMeta {
@@ -106,10 +98,12 @@ function useDocsRouteMeta(): DocsRouteMeta {
 
 export default function DocsPage() {
   const meta = useDocsRouteMeta()
-  useDocsBrandPreset()
+  const brandPreset = useDocsBrandPreset()
   return (
-    <PageShell seo={meta} mainClassName="flex-1 bg-background text-muted-foreground">
-      <DocsPageContent />
-    </PageShell>
+    <BloomColorScope colorPreset={brandPreset}>
+      <PageShell seo={meta} mainClassName="flex-1 bg-background text-muted-foreground">
+        <DocsPageContent />
+      </PageShell>
+    </BloomColorScope>
   )
 }

@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react'
 import { View } from 'react-native'
 import { Dialog, type DialogControlProps } from '@oxyhq/bloom/dialog'
-import { Button, PrimaryButton } from '@oxyhq/bloom/button'
+import { Button } from '@oxyhq/bloom/button'
 
 interface ConfirmDialogProps {
   /** Control returned by `useDialogControl()`. */
@@ -81,18 +81,18 @@ export default function ConfirmDialog({
           {description && (
             <div className="text-sm text-muted-foreground">{description}</div>
           )}
-          {error && <p className="text-sm text-rose-600 dark:text-rose-400">{error}</p>}
+          {error && <p className="text-sm text-error-text">{error}</p>}
           <div className="mt-4 flex items-center justify-end gap-2">
             <Button variant="ghost" size="small" onPress={() => control.close()} disabled={busy}>
               {cancelLabel}
             </Button>
-            <PrimaryButton
+            <Button
+              variant={tone === 'danger' ? 'destructive' : 'primary'}
               onPress={() => { void onConfirm() }}
               disabled={busy}
-              className={tone === 'danger' ? '!bg-rose-600 hover:!bg-rose-700' : undefined}
             >
               {busy ? 'Working…' : confirmLabel}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </View>

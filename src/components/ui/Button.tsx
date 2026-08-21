@@ -1,5 +1,6 @@
 import type { ReactNode, AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react'
 import { Link } from 'react-router-dom'
+import { Button as BloomButton } from '@oxyhq/bloom/button'
 
 type Variant = 'primary' | 'outline' | 'ghost'
 type Size = 'sm' | 'md' | 'lg'
@@ -21,12 +22,6 @@ type ButtonAsLink = ButtonBaseProps &
 
 type ButtonProps = ButtonAsButton | ButtonAsLink
 
-const sizeClasses: Record<Size, string> = {
-  sm: 'h-8 gap-x-1.5 rounded-full px-3 text-sm',
-  md: 'h-9 gap-x-1.5 rounded-full px-4 text-body-md',
-  lg: 'h-11.5 gap-x-2 rounded-full px-5 text-base',
-}
-
 export default function Button({
   variant = 'primary',
   size = 'md',
@@ -35,14 +30,8 @@ export default function Button({
   className = '',
   ...props
 }: ButtonProps) {
-  const base =
-    'inline-flex cursor-pointer items-center justify-center text-nowrap border font-medium transition-colors duration-300 ease-in-out hover:duration-150 active:duration-50 disabled:pointer-events-none disabled:cursor-default select-none'
-
   const classes = [
-    base,
-    `button-${variant}`,
-    sizeClasses[size],
-    responsive && 'max-lg:h-11.5 max-lg:gap-x-2 max-lg:px-3.5 max-lg:text-base',
+    responsive && 'max-lg:!min-h-[46px] max-lg:!px-3.5 max-lg:!text-base',
     className,
   ].filter(Boolean).join(' ')
 
@@ -50,21 +39,28 @@ export default function Button({
     const { href, ...rest } = props as ButtonAsLink
     if (href.startsWith('/')) {
       return (
-        <Link className={classes} to={href} {...rest}>
-          {children}
-        </Link>
+        <BloomButton asChild variant={variant} size={size} className={classes}>
+          <Link to={href} {...rest}>{children}</Link>
+        </BloomButton>
       )
     }
     return (
-      <a className={classes} href={href} {...rest}>
-        {children}
-      </a>
+      <BloomButton asChild variant={variant} size={size} className={classes}>
+        <a href={href} {...rest}>{children}</a>
+      </BloomButton>
     )
   }
 
+  const buttonProps = props as ButtonHTMLAttributes<HTMLButtonElement>
   return (
-    <button className={classes} {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}>
-      {children}
-    </button>
+    <BloomButton
+      asChild
+      variant={variant}
+      size={size}
+      className={classes}
+      disabled={buttonProps.disabled}
+    >
+      <button {...buttonProps}>{children}</button>
+    </BloomButton>
   )
 }

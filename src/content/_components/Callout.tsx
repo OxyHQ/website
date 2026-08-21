@@ -23,20 +23,20 @@ interface CalloutProps {
 
 const STYLES: Record<CalloutType, { container: string; icon: string }> = {
   info: {
-    container: 'border-primary/30 bg-primary/5 text-foreground',
-    icon: 'text-primary',
+    container: 'border-info/30 bg-info-subtle text-foreground',
+    icon: 'text-info-text',
   },
   warning: {
-    container: 'border-amber-500/30 bg-amber-500/5 text-foreground',
-    icon: 'text-amber-600 dark:text-amber-400',
+    container: 'border-warning/30 bg-warning-subtle text-foreground',
+    icon: 'text-warning-text',
   },
   tip: {
-    container: 'border-emerald-500/30 bg-emerald-500/5 text-foreground',
-    icon: 'text-emerald-600 dark:text-emerald-400',
+    container: 'border-success/30 bg-success-subtle text-foreground',
+    icon: 'text-success-text',
   },
   danger: {
-    container: 'border-red-500/30 bg-red-500/5 text-foreground',
-    icon: 'text-red-600 dark:text-red-400',
+    container: 'border-error/30 bg-error-subtle text-foreground',
+    icon: 'text-error-text',
   },
 }
 

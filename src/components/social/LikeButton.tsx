@@ -30,9 +30,9 @@ export default function LikeButton({ targetType, targetId }: LikeButtonProps) {
       className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-surface disabled:opacity-50"
     >
       <Heart
-        className={`h-4 w-4 transition-colors ${liked ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`}
+        className={`h-4 w-4 transition-colors ${liked ? 'fill-tertiary text-tertiary-text' : 'text-muted-foreground'}`}
       />
-      <span className={liked ? 'text-red-500' : 'text-muted-foreground'}>
+      <span className={liked ? 'text-tertiary-text' : 'text-muted-foreground'}>
         {count > 0 ? count : 'Like'}
       </span>
     </button>

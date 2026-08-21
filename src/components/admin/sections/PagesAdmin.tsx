@@ -77,7 +77,7 @@ function PageEditor({ slug }: { slug: string }) {
                   />
                   <button
                     onClick={() => { const next = [...phrases]; next.splice(i, 1); setPhrases(next) }}
-                    className="text-xs text-muted-foreground hover:text-destructive"
+                    className="text-xs text-muted-foreground hover:text-error-text"
                   >
                     Remove
                   </button>

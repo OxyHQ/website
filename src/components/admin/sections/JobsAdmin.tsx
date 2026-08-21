@@ -256,7 +256,7 @@ export default function JobsAdmin() {
               ) : (
                 <Button variant="ghost" size="small" onPress={() => setTranslatingJob(j)}>Translate</Button>
               )}
-              <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${j.active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-muted text-muted-foreground'}`}>{j.active ? 'Active' : 'Inactive'}</span>
+              <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${j.active ? 'bg-success-subtle text-success-text' : 'bg-muted text-muted-foreground'}`}>{j.active ? 'Active' : 'Inactive'}</span>
             </div>
           </div>
         ))}

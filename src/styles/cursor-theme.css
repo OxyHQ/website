@@ -123,7 +123,9 @@
   color: var(--color-foreground);
   border: 1px solid var(--color-border);
 }
-.cursor-theme .btn--secondary:hover { background: rgba(255,255,255,0.05); }
+.cursor-theme .btn--secondary:hover {
+  background: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+}
 .cursor-theme .btn-tertiary {
   color: var(--color-foreground);
   font-weight: 500;

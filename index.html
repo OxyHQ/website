@@ -85,12 +85,18 @@
   </head>
   <body>
     <script>
-      // Apply saved theme mode + color preset before React renders (prevents FOUC).
-      // Values are sourced from @oxyhq/bloom APP_COLOR_PRESETS at runtime by src/theme/.
+      // Apply the saved mode + public preset before React renders. The preset
+      // declarations live in generated theme CSS, derived from Bloom's
+      // FREE_COLOR_NAMES; this script carries no palette or allow-list that can
+      // drift from it. An unknown/gated value matches no selector and safely
+      // falls back to the generated Oxy root palette.
       (function(){
         const mode = localStorage.getItem('theme');
         if (mode === 'light') document.documentElement.classList.remove('dark');
         else document.documentElement.classList.add('dark');
+        const preset = localStorage.getItem('colorPreset');
+        if (preset) document.documentElement.setAttribute('data-color-preset', preset);
+        else document.documentElement.removeAttribute('data-color-preset');
       })();
     </script>
     <div id="root"></div>

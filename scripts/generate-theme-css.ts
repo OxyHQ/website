@@ -31,7 +31,7 @@
 import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-import { APP_COLOR_PRESETS } from '@oxyhq/bloom/color-presets'
+import { APP_COLOR_PRESETS, FREE_COLOR_NAMES } from '@oxyhq/bloom/color-presets'
 import { getPresetVars, buildSeedScopeVars } from '@oxyhq/bloom/design-tokens'
 
 import {
@@ -96,6 +96,21 @@ const sections: string[] = [
   `/* The site palette, before BloomThemeProvider applies the same one. */\n${rootBlock(':root', SITE_PRESET, 'light')}`,
   rootBlock('.dark', SITE_PRESET, 'dark'),
 ]
+
+// The public picker persists one of Bloom's free recipes. Emit those recipes
+// into the same committed stylesheet as the default/brand palettes, so the
+// tiny inline prepaint script only needs to stamp the saved name on <html>.
+// There is no second hand-maintained palette table in index.html.
+for (const preset of FREE_COLOR_NAMES) {
+  sections.push(
+    `/* Public ${preset} preset — selected pre-React via data-color-preset. */\n${rootBlock(
+      `:root[data-color-preset='${preset}']`,
+      preset,
+      'light',
+    )}`,
+    rootBlock(`:root[data-color-preset='${preset}'].dark`, preset, 'dark'),
+  )
+}
 
 for (const [brand, preset] of Object.entries(HOST_BRANDS)) {
   sections.push(

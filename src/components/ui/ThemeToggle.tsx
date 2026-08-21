@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { setMode, getSavedMode } from '../../theme'
+import { useBloomTheme } from '@oxyhq/bloom/theme'
 
 function SunIcon() {
   return (
@@ -26,12 +25,11 @@ function MoonIcon() {
 }
 
 export default function ThemeToggle() {
-  const [isDark, setIsDark] = useState(() => getSavedMode() === 'dark')
+  const { theme, setMode } = useBloomTheme()
+  const isDark = theme.mode === 'dark'
 
   const toggle = () => {
-    const next = isDark ? 'light' : 'dark'
-    setMode(next)
-    setIsDark(!isDark)
+    setMode(isDark ? 'light' : 'dark')
   }
 
   return (

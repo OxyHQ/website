@@ -5,7 +5,7 @@ export const props: PlaygroundProp[] = [
   {
     name: 'variant',
     kind: 'select',
-    options: ['solid', 'outlined', 'soft'],
+    options: ['solid', 'subtle', 'outlined'],
     default: 'solid',
   },
   {

@@ -12,29 +12,19 @@ import welcomeAnimation from '../../assets/lottie/welcomeheader_background.json'
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name']
 
-/* ─── Icon palette — mirrors `sidebarIcon*` in the Accounts app
-       (OxyHQServices/packages/accounts/constants/theme.ts) ─── */
+/* Explicit Bloom fill/foreground pairs. Never derive a foreground by darkening
+ * its fill: that loses contrast as soon as the active recipe changes. */
 const ICON_COLORS = {
-  home: { light: '#1A73E8', dark: '#8AB4F8' },
-  personal: { light: '#34A853', dark: '#81C995' },
-  security: { light: '#4285F4', dark: '#8AB4F8' },
-  devices: { light: '#4285F4', dark: '#8AB4F8' },
-  data: { light: '#9C27B0', dark: '#CE93D8' },
-  sharing: { light: '#EA4335', dark: '#F28B82' },
-  payments: { light: '#FBBC04', dark: '#FDD663' },
+  home: { background: 'var(--info-subtle)', foreground: 'var(--info-text)' },
+  personal: { background: 'var(--success-subtle)', foreground: 'var(--success-text)' },
+  security: { background: 'var(--primary-subtle)', foreground: 'var(--primary-text)' },
+  devices: { background: 'var(--secondary-subtle)', foreground: 'var(--secondary-text)' },
+  data: { background: 'var(--tertiary-subtle)', foreground: 'var(--tertiary-text)' },
+  sharing: { background: 'var(--error-subtle)', foreground: 'var(--error-text)' },
+  payments: { background: 'var(--warning-subtle)', foreground: 'var(--warning-text)' },
 } as const
 
 type IconRole = keyof typeof ICON_COLORS
-
-/** Same formula as the Accounts app's `darkenColor` (utils/color-utils.ts). */
-function darkenColor(color: string, factor = 0.6): string {
-  const hex = color.replace('#', '')
-  const channel = (start: number) =>
-    Math.max(0, Math.round(parseInt(hex.substring(start, start + 2), 16) * (1 - factor)))
-      .toString(16)
-      .padStart(2, '0')
-  return `#${channel(0)}${channel(2)}${channel(4)}`
-}
 
 function AvatarWithAnimation({ avatarSource, avatarColor, size }: { avatarSource?: string; avatarColor?: string; size: number }) {
   const { View: LottieView } = useLottie(
@@ -60,13 +50,14 @@ const groupItemClass = 'flex w-full cursor-pointer items-center gap-3 p-4 text-l
  * Accounts app (chips/menu rows use 32px, info cards 36px; glyph is always 20px
  * in a darkened shade of the badge colour).
  */
-function IconBadge({ name, color, size = 32 }: { name: IconName; color: string; size?: number }) {
+function IconBadge({ name, role, size = 32 }: { name: IconName; role: IconRole; size?: number }) {
+  const colors = ICON_COLORS[role]
   return (
     <div
       className="flex shrink-0 items-center justify-center rounded-full"
-      style={{ width: size, height: size, backgroundColor: color }}
+      style={{ width: size, height: size, backgroundColor: colors.background }}
     >
-      <MaterialCommunityIcons name={name} size={20} color={darkenColor(color)} />
+      <MaterialCommunityIcons name={name} size={20} color={colors.foreground} />
     </div>
   )
 }
@@ -100,7 +91,7 @@ export default function AccountPanel() {
   const { user, signOut } = useAuth()
   const { isAdmin } = useAdminAccess()
   const location = useLocation()
-  const { mode, colors } = useTheme()
+  const { colors } = useTheme()
 
   // Derived-state pattern: close the panel on route change without useEffect.
   // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
@@ -122,14 +113,13 @@ export default function AccountPanel() {
   }, [close])
 
   const displayName = user?.name.displayName ?? ''
-  const iconColor = (role: IconRole) => ICON_COLORS[role][mode]
-
   return (
     <>
       {isOpen && <span ref={escapeSentinelRef} aria-hidden hidden />}
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 z-[60] bg-black/40 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+        className={`fixed inset-0 z-[60] transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+        style={{ backgroundColor: colors.overlay }}
         onClick={close}
         aria-hidden="true"
       />
@@ -168,7 +158,7 @@ export default function AccountPanel() {
             <div className="flex gap-1.5 overflow-x-auto px-4 pb-1 hide-scrollbar">
               {quickActions.map((a) => (
                 <a key={a.label} href={a.href} target="_blank" rel="noopener noreferrer" className={chipClass}>
-                  <IconBadge name={a.icon} color={iconColor(a.role)} />
+                  <IconBadge name={a.icon} role={a.role} />
                   <span className="whitespace-nowrap">{a.label}</span>
                 </a>
               ))}
@@ -178,14 +168,14 @@ export default function AccountPanel() {
           {/* ─── Account info grid ─── */}
           <div className="grid grid-cols-2 gap-3 px-4 pb-4">
             <div className="rounded-2xl border border-border p-4">
-              <IconBadge name="account-outline" color={iconColor('personal')} size={36} />
+              <IconBadge name="account-outline" role="personal" size={36} />
               <div className="mt-4">
                 <div className="text-label-sm text-muted-foreground">Full name</div>
                 <div className="mt-0.5 text-base font-bold text-foreground">{displayName || '—'}</div>
               </div>
             </div>
             <div className="rounded-2xl border border-border p-4">
-              <IconBadge name="at" color={iconColor('personal')} size={36} />
+              <IconBadge name="at" role="personal" size={36} />
               <div className="mt-4">
                 <div className="text-label-sm text-muted-foreground">Username</div>
                 <div className="mt-0.5 text-base font-bold text-foreground">{user?.username ? `@${user.username}` : '—'}</div>
@@ -199,13 +189,13 @@ export default function AccountPanel() {
               {menuItems.map((item) =>
                 item.external ? (
                   <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" className={groupItemClass}>
-                    <IconBadge name={item.icon} color={iconColor(item.role)} />
+                    <IconBadge name={item.icon} role={item.role} />
                     <span>{item.label}</span>
                     <Chevron color={colors.textTertiary} />
                   </a>
                 ) : (
                   <Link key={item.label} to={item.href} className={groupItemClass}>
-                    <IconBadge name={item.icon} color={iconColor(item.role)} />
+                    <IconBadge name={item.icon} role={item.role} />
                     <span>{item.label}</span>
                     <Chevron color={colors.textTertiary} />
                   </Link>
@@ -213,7 +203,7 @@ export default function AccountPanel() {
               )}
               {isAdmin && (
                 <Link to="/admin" className={groupItemClass}>
-                  <IconBadge name="shield-account-outline" color={iconColor('payments')} />
+                  <IconBadge name="shield-account-outline" role="payments" />
                   <span>Admin</span>
                   <Chevron color={colors.textTertiary} />
                 </Link>
@@ -222,7 +212,7 @@ export default function AccountPanel() {
 
             <SettingsListGroup>
               <button onClick={() => { signOut(); close() }} className={groupItemClass} style={{ color: colors.error }}>
-                <IconBadge name="logout" color={iconColor('sharing')} />
+                <IconBadge name="logout" role="sharing" />
                 <span>Sign out</span>
               </button>
             </SettingsListGroup>

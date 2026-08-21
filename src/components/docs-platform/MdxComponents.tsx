@@ -32,10 +32,10 @@ interface CalloutProps {
 }
 
 const calloutStyles: Record<NonNullable<CalloutProps['variant']>, string> = {
-  info: 'border-primary/30 bg-primary/5 text-foreground',
-  warning: 'border-amber-500/30 bg-amber-500/5 text-foreground',
-  danger: 'border-red-500/30 bg-red-500/5 text-foreground',
-  success: 'border-emerald-500/30 bg-emerald-500/5 text-foreground',
+  info: 'border-info/30 bg-info-subtle text-foreground',
+  warning: 'border-warning/30 bg-warning-subtle text-foreground',
+  danger: 'border-error/30 bg-error-subtle text-foreground',
+  success: 'border-success/30 bg-success-subtle text-foreground',
 }
 
 export function Callout({ variant = 'info', title, children }: CalloutProps) {
@@ -61,9 +61,9 @@ interface BadgeProps {
 
 const badgeStyles: Record<NonNullable<BadgeProps['variant']>, string> = {
   default: 'bg-muted text-muted-foreground',
-  success: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
-  warning: 'bg-amber-500/15 text-amber-700 dark:text-amber-300',
-  danger: 'bg-red-500/15 text-red-700 dark:text-red-300',
+  success: 'bg-success-subtle text-success-text',
+  warning: 'bg-warning-subtle text-warning-text',
+  danger: 'bg-error-subtle text-error-text',
 }
 
 export function Badge({ variant = 'default', children }: BadgeProps) {
@@ -156,4 +156,3 @@ export function MdxPre({ children }: { children?: ReactNode }) {
     </figure>
   )
 }
-

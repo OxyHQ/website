@@ -65,8 +65,8 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
               key={plan.name}
               className={`flex flex-col justify-between rounded-3xl border border-solid px-[23px] pt-[21px] pb-[23px] ${
                 plan.highlighted
-                  ? 'border-blue-300 shadow-[0px_0px_0px_4px_rgba(83,_139,_243,_0.10),_0px_1px_2px_-1px_rgba(28,_40,_64,_0.10),_0px_2px_4px_0px_rgba(28,_40,_64,_0.06)]'
-                  : 'border-border shadow-[0px_1px_2px_-1px_rgba(28,_40,_64,_0.08),_0px_2px_4px_0px_rgba(28,_40,_64,_0.04)]'
+                  ? 'border-primary ring-4 ring-primary-subtle shadow-s'
+                  : 'border-border shadow-s'
               }`}
             >
               <div className="flex flex-col">
@@ -84,7 +84,7 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
                       )}
                     </div>
                     {plan.price && plan.price.annual < plan.price.monthly && isAnnual && (
-                      <div className="rounded-lg border border-blue-200 bg-blue-100 px-[7px] py-[3px] text-center text-blue-450 text-xs mt-[6px]">
+                      <div className="mt-[6px] rounded-lg border border-success/30 bg-success-subtle px-[7px] py-[3px] text-center text-success-text text-xs">
                         Save 20%
                       </div>
                     )}

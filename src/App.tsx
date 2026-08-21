@@ -3,9 +3,17 @@ import { BrowserRouter, Routes, Route, Outlet, useLocation, Navigate } from 'rea
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { OxyProvider, useOxy } from '@oxyhq/services'
 import type { User } from '@oxyhq/core'
-import { BloomThemeProvider } from '@oxyhq/bloom/theme'
+import { BloomThemeProvider, type ThemeMode as BloomThemeMode } from '@oxyhq/bloom/theme'
 import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
-import { getSavedMode, getSavedPreset, applyUserColor, type ThemeMode, type AppColorName } from './theme'
+import {
+  getSavedMode,
+  getSavedPreset,
+  saveModePreference,
+  saveColorPresetPreference,
+  applyUserColor,
+  type ThemeMode,
+  type AppColorName,
+} from './theme'
 import { LocaleProvider, DEFAULT_LOCALE, SUPPORTED_LOCALES } from './lib/i18n'
 import { setOxyServices } from './api/client'
 import { isFairCoinHost } from './lib/host'
@@ -350,8 +358,9 @@ function PublicRoutes() {
   )
 }
 
-export default function App() {
-  const [mode] = useState<ThemeMode>(getSavedMode)
+function AppProviders() {
+  const location = useLocation()
+  const [mode, setThemeMode] = useState<ThemeMode>(getSavedMode)
   // `getSavedPreset()` is host-aware — on the FairCoin apex it always returns
   // `'faircoin'`, ignoring the localStorage value. So Bloom's faircoin preset
   // is what gets written to `:root` for the entire document. On oxy.so the
@@ -360,13 +369,37 @@ export default function App() {
   // theme, only the page body shows FairCoin content. The full FairCoin
   // brand (green Bloom theme + dedicated nav/footer) only takes over on
   // fairco.in itself.
-  const [preset] = useState<AppColorName>(getSavedPreset)
+  const [preset, setThemePreset] = useState<AppColorName>(getSavedPreset)
   // `applyUserColor()` is also host-aware (no-op on FairCoin), but we forward
   // it through here so the auth event still fires for any future hooks.
   const handleAuthChange = useCallback(
-    (user: unknown) => applyUserColor((user as User | null)?.color),
+    (user: unknown) => {
+      applyUserColor((user as User | null)?.color)
+      setThemePreset(getSavedPreset())
+    },
     [],
   )
+  const handleModeChange = useCallback((next: BloomThemeMode) => {
+    if (next !== 'light' && next !== 'dark') return
+    saveModePreference(next)
+    setThemeMode(next)
+  }, [])
+  const handlePresetChange = useCallback((next: AppColorName) => {
+    saveColorPresetPreference(next)
+    setThemePreset(next)
+  }, [])
+
+  // Thumbnail captures are the one route that can request a mode different
+  // from the saved site preference. Keep that override on the ONE app-wide
+  // provider: its layout effect owns the document class/tokens, and changing
+  // routes automatically restores the persisted mode held in state. The
+  // thumbnail itself must never mount a second provider or mutate <html>
+  // during render.
+  const isThumbnailRoute = location.pathname.includes('/developers/docs/_thumbnail/')
+  const thumbnailMode = new URLSearchParams(location.search).get('theme') === 'dark'
+    ? 'dark'
+    : 'light'
+  const renderedMode = isThumbnailRoute ? thumbnailMode : mode
 
   // BloomThemeProvider must wrap OxyProvider: OxyProvider mounts
   // OxyAccountDialog + ToastOutlet as siblings of `children`, and those
@@ -375,7 +408,12 @@ export default function App() {
   // <BloomThemeProvider>".
   return (
     <QueryClientProvider client={queryClient}>
-      <BloomThemeProvider mode={mode} colorPreset={preset}>
+      <BloomThemeProvider
+        mode={renderedMode}
+        colorPreset={preset}
+        onModeChange={handleModeChange}
+        onColorPresetChange={handlePresetChange}
+      >
         <OxyProvider
           baseURL={OXY_API}
           clientId={OXY_CLIENT_ID}
@@ -383,11 +421,10 @@ export default function App() {
           onAuthStateChange={handleAuthChange}
         >
           <AppSetup>
-            <BrowserRouter>
-              <ScrollToTop />
-              <IntercomMessenger />
-              <Suspense fallback={<div className="min-h-screen" />}>
-                  <Routes>
+            <ScrollToTop />
+            <IntercomMessenger />
+            <Suspense fallback={<div className="min-h-screen" />}>
+                <Routes>
                     {/* Guarded: /admin/* is a top-level route with no shared
                         layout, so an unhandled render error here would blank the
                         whole document instead of a section of a page. */}
@@ -427,12 +464,21 @@ export default function App() {
                       </Route>
                     ))}
                     <Route path={`${DEFAULT_LOCALE}/*`} element={<CollapseDefaultLocalePrefix />} />
-                  </Routes>
-              </Suspense>
-            </BrowserRouter>
+                </Routes>
+            </Suspense>
           </AppSetup>
         </OxyProvider>
       </BloomThemeProvider>
     </QueryClientProvider>
+  )
+}
+
+export default function App() {
+  // BrowserRouter sits outside the providers so the single Bloom authority can
+  // resolve route-scoped rendering modes before it paints its descendants.
+  return (
+    <BrowserRouter>
+      <AppProviders />
+    </BrowserRouter>
   )
 }

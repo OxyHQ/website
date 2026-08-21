@@ -1,5 +1,6 @@
 import { Chip } from '@oxyhq/bloom/chip'
-import type { ChipColor, ChipSize, ChipVariant } from '@oxyhq/bloom/chip'
+import type { ChipSize } from '@oxyhq/bloom/chip'
+import type { AccentFill, AccentTone } from '@oxyhq/bloom/theme'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {
@@ -11,7 +12,7 @@ export default function ChipDemo() {
     <div className="flex flex-wrap items-center gap-2">
       <Chip>Default</Chip>
       <Chip color="primary">Primary</Chip>
-      <Chip color="success" variant="soft">
+      <Chip color="success" variant="subtle">
         Success
       </Chip>
       <Chip color="warning" variant="outlined">
@@ -29,8 +30,8 @@ export default function ChipDemo() {
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const variant = values.variant as ChipVariant
-  const color = values.color as ChipColor
+  const variant = values.variant as AccentFill
+  const color = values.color as AccentTone
   const size = values.size as ChipSize
   const selected = values.selected === true
   const disabled = values.disabled === true

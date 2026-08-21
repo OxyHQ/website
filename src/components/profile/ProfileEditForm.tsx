@@ -45,7 +45,7 @@ export default function ProfileEditForm({ currentBio, currentShowActivity, onSuc
           className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           placeholder="Tell the community about yourself..."
         />
-        <p className={`text-right text-xs ${charsRemaining < 20 ? 'text-red-400' : 'text-muted-foreground'}`}>
+        <p className={`text-right text-xs ${charsRemaining < 20 ? 'text-error-text' : 'text-muted-foreground'}`}>
           {charsRemaining} characters remaining
         </p>
       </div>
@@ -64,7 +64,7 @@ export default function ProfileEditForm({ currentBio, currentShowActivity, onSuc
 
       {/* Error message */}
       {updateProfile.isError && (
-        <p className="text-sm text-red-400">
+        <p className="text-sm text-error-text">
           Failed to save changes. Please try again.
         </p>
       )}

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { Sun, Moon, Globe } from 'lucide-react'
-import { setMode, getSavedMode, type ThemeMode } from '../../theme'
+import { useBloomTheme, type ThemeMode } from '@oxyhq/bloom/theme'
 import { useLocaleContext, useTranslation } from '../../lib/i18n'
 import LanguageDialog from './LanguageDialog'
 
@@ -23,13 +23,12 @@ export function SettingsPanel({
 }) {
   const { t } = useTranslation()
   const { locale, locales } = useLocaleContext()
-  const [mode, setThemeMode] = useState<ThemeMode>(() => getSavedMode())
+  const { mode, setMode } = useBloomTheme()
   const [languageOpen, setLanguageOpen] = useState(false)
   const current = locales.find((entry) => entry.code === locale)
 
   const choose = (next: ThemeMode) => {
     setMode(next)
-    setThemeMode(next)
   }
 
   const themeOptions: { value: ThemeMode; label: string; icon: ReactNode }[] = [

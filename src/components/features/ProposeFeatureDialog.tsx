@@ -186,7 +186,7 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
                 </label>
 
                 {propose.isError && (
-                  <p className="text-sm text-red-400">{propose.error.message}</p>
+                  <p className="text-sm text-error-text">{propose.error.message}</p>
                 )}
 
                 <div className="flex items-center justify-end gap-3">

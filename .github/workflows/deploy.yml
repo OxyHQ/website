@@ -22,6 +22,12 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
+      # `bun run build` ends with the real-browser theme prepaint/SPA gate.
+      # Playwright ships the driver as a package, but its Chromium binary is a
+      # separate runner dependency and is not present on ubuntu-latest.
+      - name: Install Chromium for the postbuild browser gate
+        run: bunx playwright install --with-deps chromium
+
       - run: bun run build
         env:
           VITE_API_URL: https://website-api.oxy.so
