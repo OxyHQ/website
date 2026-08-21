@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
@@ -69,6 +69,7 @@ const PANEL_ICONS = [
 /** How the icons enter once the panel has begun to open. */
 const ICON_ANIMATION = { duration: 1, ease: 'power4.out' }
 const SCROLL_CTA_TOP_THRESHOLD = 32
+const SCROLL_CTA_SCROLL_DISTANCE = 80
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
@@ -83,7 +84,12 @@ export default function HomeHero() {
   const setHeroVisible = usePageChromeStore((s) => s.setHeroVisible)
   const [heroInView, setHeroInView] = useState(false)
   const [buildSectionInView, setBuildSectionInView] = useState(false)
-  const [showScrollCta, setShowScrollCta] = useState(false)
+  const { scrollY } = useScroll()
+  const scrollCtaY = useTransform(
+    scrollY,
+    [0, SCROLL_CTA_TOP_THRESHOLD],
+    [0, SCROLL_CTA_SCROLL_DISTANCE],
+  )
 
   const title = hero?.title || DEFAULT_TITLE
   const poster = heroMediaUrl(hero?.backgroundPoster) || DEFAULT_POSTER
@@ -111,7 +117,6 @@ export default function HomeHero() {
   const scrollToBuildForEveryone = () => {
     const target = document.getElementById('build-for-everyone')
     if (!target) return
-    setShowScrollCta(false)
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'end' })
   }
@@ -128,18 +133,6 @@ export default function HomeHero() {
 
     return () => observer.disconnect()
   }, [])
-
-  useEffect(() => {
-    const updateScrollCta = () => {
-      setShowScrollCta(
-        heroInView && !buildSectionInView && window.scrollY <= SCROLL_CTA_TOP_THRESHOLD,
-      )
-    }
-
-    updateScrollCta()
-    window.addEventListener('scroll', updateScrollCta, { passive: true })
-    return () => window.removeEventListener('scroll', updateScrollCta)
-  }, [buildSectionInView, heroInView])
 
   useGSAP(
     () => {
@@ -288,21 +281,17 @@ export default function HomeHero() {
       onViewportLeave={() => {
         setHeroVisible(false)
         setHeroInView(false)
-        setShowScrollCta(false)
       }}
       viewport={{ amount: 0 }}
     >
-      <AnimatePresence>
-        {showScrollCta && (
-          <div className="pointer-events-none fixed inset-x-0 bottom-8 z-40 flex justify-center px-4">
+      <AnimatePresence initial={false}>
+        {heroInView && !buildSectionInView && (
+          <div className="pointer-events-none fixed inset-x-0 bottom-7 z-40 flex justify-center px-4">
             <motion.button
               type="button"
               onClick={scrollToBuildForEveryone}
               aria-label="Scroll to Build for everyone"
-              initial={{ y: 28 }}
-              animate={{ y: 0 }}
-              exit={{ y: 28 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              style={{ y: scrollCtaY }}
               className="pointer-events-auto inline-flex cursor-pointer animate-[hero-scroll-cta_2.2s_cubic-bezier(0.22,1,0.36,1)_infinite] items-center gap-2.5 rounded-full bg-white px-4 py-2.5 text-[15px] font-medium text-black shadow-lg transition-transform duration-200 will-change-transform hover:scale-[1.03] motion-reduce:animate-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
             >
               <span>Build for everyone</span>
