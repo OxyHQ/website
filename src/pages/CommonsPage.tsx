@@ -13,7 +13,7 @@ export default function CommonsPage() {
         ogImage: APP_CARD_IMAGES['/commons'],
       }}
       className="slice-theme bg-background"
-      mainClassName="flex-1 pb-20 lg:pb-32"
+      mainClassName="flex-1"
     >
       <CommonsContent />
     </PageShell>
