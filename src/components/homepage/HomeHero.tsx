@@ -86,6 +86,7 @@ export default function HomeHero() {
     t('home.heroPanelSentence2'),
     t('home.heroPanelSentence3'),
   ]
+  const panelSentenceSignature = sentences.join('|')
   const panelIcons = [
     { src: `${IMG_HERO}/emoji-handshake.png`, alt: t('home.heroIconHandshake') },
     { src: `${IMG_HERO}/emoji-seedling.png`, alt: t('home.heroIconSeedling') },
@@ -266,7 +267,7 @@ export default function HomeHero() {
 
       return () => media.revert()
     },
-    { scope: sectionRef },
+    { scope: sectionRef, dependencies: [locale, title, panelSentenceSignature] },
   )
 
   return (
