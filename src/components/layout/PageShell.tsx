@@ -19,6 +19,12 @@ interface PageShellProps {
   navbar?: ReactNode
   /** Classes for the `<main>` element. Omitted entirely when not supplied. */
   mainClassName?: string
+  /**
+   * Drops the footer's top rule, for a page whose last section already ends on
+   * a boundary of its own — a rule between two surfaces of the same colour
+   * reads as leftover, not as structure.
+   */
+  hideFooterDivider?: boolean
   children: ReactNode
 }
 
@@ -34,6 +40,7 @@ export default function PageShell({
   className = 'bg-background',
   navbar,
   mainClassName,
+  hideFooterDivider = false,
   children,
 }: PageShellProps) {
   return (
@@ -41,7 +48,7 @@ export default function PageShell({
       <SEO {...seo} />
       {navbar ?? <Navbar />}
       <main className={mainClassName}>{children}</main>
-      <Footer />
+      <Footer hideTopDivider={hideFooterDivider} />
     </div>
   )
 }

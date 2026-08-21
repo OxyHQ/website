@@ -14,6 +14,7 @@ export default function CommonsPage() {
       }}
       className="slice-theme bg-background"
       mainClassName="flex-1"
+      hideFooterDivider
     >
       <CommonsContent />
     </PageShell>
