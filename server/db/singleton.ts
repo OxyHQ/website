@@ -5,10 +5,9 @@ import { db } from './postgres.js'
 /* ──────────────────────────────────────────────
  * The one-row tables — site settings, the footer, the hero.
  *
- * Mongo expressed these as `findOneAndUpdate({}, body, { upsert: true })`: the
- * collection holds exactly one document and nobody addresses it by id. This
- * keeps that behaviour honestly: update the row that is there, insert one if
- * the table is empty.
+ * The table holds exactly one row and nobody addresses it by id, so this is
+ * the whole contract: update the row that is there, insert one if the table is
+ * empty.
  * ──────────────────────────────────────────── */
 
 export async function upsertSingleton(table: PgTable, values: Record<string, unknown>): Promise<unknown> {

@@ -3,7 +3,7 @@ import type { PgTable } from 'drizzle-orm/pg-core'
 import { db } from './postgres.js'
 
 /* ──────────────────────────────────────────────
- * What `.populate()` did, without Mongoose.
+ * Reference expansion: a row hands over the referenced ROW, not its id.
  *
  * A row stores a reference as the `_id` of another table. The API has always
  * handed the frontend the referenced ROW in that field, not the id, so every

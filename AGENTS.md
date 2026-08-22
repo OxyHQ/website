@@ -22,14 +22,14 @@ bun run dev / build / server / mcp / sync-docs / sync-changelog
 
 `DATABASE_URL` is the only knob and there is no fallback host — a missing URL must fail at boot rather than quietly connect somewhere else. Schema in `server/db/schema/`, one file per domain; `bun run db:generate` writes SQL into `server/db/migrations/`, which are committed and applied by `connectWithRetry` at boot, so a task can never serve a schema older than its code.
 
-- **Primary keys are ObjectIds under the name `_id`** — the admin UI, every API response and every cross-table reference speak in them. New rows get the same shape from `newObjectId()`.
+- **Primary keys are 24-character hex ids under the name `_id`** — the admin UI, every API response and every cross-table reference speak in them. New rows get the same shape from `newObjectId()`.
 - **`.populate()` is `server/db/refs.ts`** — one query per referenced TABLE for a whole page of rows, never one per row. The API hands the frontend the referenced ROW in that field.
 - **Sub-documents read and written as a unit are `jsonb`** (a page's sections, a job's description blocks). Splitting them into child tables buys joins nobody asked for.
 - **Every list query ends on `_id`.** Postgres returns heap order, which moves when a row is rewritten — so a list sorted on `order` alone reshuffles after an edit, and on a tied sort with `offset`/`limit` a row can appear on two pages or on neither. `_id` is unique and ascends with creation.
 - **Never bind a JS array into a raw `sql` fragment** — `x = ANY(${ids})` sends it as ONE scalar and Postgres reads the first element as an array literal (`22P02`). Use `inArray`. A scalar into `@> ARRAY[${tag}]::text[]` is fine and is how the tag filters work.
-- **A duplicate key is SQLSTATE `23505`, via `isUniqueViolation` in `server/db/pgErrors.ts`** — a route still checking Mongo's `11000` answers 500 where it should answer 409.
+- **A duplicate key is SQLSTATE `23505`, via `isUniqueViolation` in `server/db/pgErrors.ts`** — a route that does not check it answers 500 where it should answer 409.
 - **Wholesale replacements run in a transaction** (pricing, testimonials, navigation, backup import) — the admin sends the full list, and a delete that succeeded without its insert leaves the site with no navigation.
-- **Postgres passes through values Mongo cast away** (an absolute URL where the old schema declared a file id, text where it declared blocks). The frontend tolerates both shapes, so this reads as content appearing rather than breaking — but check the shape rather than trusting what the old schema said.
+- **A column holds shapes its declared type suggests it should not** (an absolute URL in a media-id field, text where blocks were declared). The frontend tolerates both, so this reads as content appearing rather than breaking — check the rows rather than trusting the declaration.
 
 ## Theme tokens
 

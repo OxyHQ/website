@@ -32,7 +32,7 @@ interface ServiceResult {
   lastChecked: string
 }
 
-// Internal variant: adds the Mongo document id so the per-locale response
+// Internal variant: adds the row id so the per-locale response
 // builder can look up a Translation override for name/description without
 // re-probing or re-querying the product collection. The `productDocId` field
 // is stripped before the payload is written to the wire.

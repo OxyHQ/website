@@ -243,7 +243,7 @@ app.get('/api/infra-status', async (_req, res) => {
 
 /**
  * Liveness. Answers as soon as the process is listening, deliberately without
- * touching MongoDB.
+ * touching the database.
  *
  * This is the probe the load balancer must be pointed at. Making liveness
  * depend on the database is what turns a database blip into a total outage: the
@@ -330,8 +330,8 @@ async function migrateProductCategoryRefs() {
  * forever.
  *
  * Deliberately not awaited before `listen()`: `/api/health` answers throughout,
- * which is what keeps the task alive long enough to get here. Unlike Mongoose,
- * postgres.js does not buffer statements issued before the pool is up, so a
+ * which is what keeps the task alive long enough to get here. postgres.js does
+ * not buffer statements issued before the pool is up, so a
  * request arriving during an outage fails fast with a 500 rather than hanging —
  * `/api/ready` is what tells the load balancer to stop sending them.
  *
@@ -376,7 +376,7 @@ async function connectWithRetry(): Promise<void> {
  * Listen first, connect second.
  *
  * The previous order — connect, migrate, then listen — meant the process never
- * opened a port until MongoDB answered and three migrations completed. A slow
+ * opened a port until the database answered and the migrations completed. A slow
  * or unreachable database therefore failed the load balancer's health check,
  * the orchestrator replaced the task, the replacement failed the same way, and
  * the target group drained to zero: every route 503s, and the CORS headers go
@@ -391,7 +391,7 @@ async function connectWithRetry(): Promise<void> {
  *
  * Deliberately here, before anything starts, and deliberately not inside
  * `connectWithRetry`: a throw in there is caught by the reconnect loop, which
- * reports a configuration error as "MongoDB unavailable" and re-runs the
+ * reports a configuration error as a database outage and re-runs the
  * migrations and `startSyncInterval` on every retry. This is a deploy-time
  * mistake in an environment variable, so exiting is right. A task that exits
  * immediately never takes traffic, and the one already running keeps serving

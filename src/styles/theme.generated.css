@@ -4262,6 +4262,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(210 193 210);
+  --color-accent-primary: rgb(240 176 255);
+  --color-accent-secondary: rgb(0 224 177);
+  --color-accent-tertiary: rgb(144 217 104);
   --color-border-image: rgb(79 67 80);
   --color-border-secondary: rgb(79 67 80);
   --color-border-input: rgb(79 67 80);
@@ -4405,6 +4408,9 @@
     --color-text-inverse: rgb(0 0 0);
     --color-text-fixed-light: rgb(0 0 0);
     --color-text-placeholder: rgb(210 193 210);
+    --color-accent-primary: rgb(240 176 255);
+    --color-accent-secondary: rgb(0 224 177);
+    --color-accent-tertiary: rgb(144 217 104);
     --color-border-image: rgb(79 67 80);
     --color-border-secondary: rgb(79 67 80);
     --color-border-input: rgb(79 67 80);
@@ -4548,6 +4554,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(202 196 213);
+  --color-accent-primary: rgb(204 190 255);
+  --color-accent-secondary: rgb(250 189 2);
+  --color-accent-tertiary: rgb(122 220 121);
   --color-border-image: rgb(72 69 83);
   --color-border-secondary: rgb(72 69 83);
   --color-border-input: rgb(72 69 83);
@@ -4690,6 +4699,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(204 195 213);
+  --color-accent-primary: rgb(211 187 255);
+  --color-accent-secondary: rgb(239 193 6);
+  --color-accent-tertiary: rgb(134 219 112);
   --color-border-image: rgb(74 68 83);
   --color-border-secondary: rgb(74 68 83);
   --color-border-input: rgb(74 68 83);
@@ -4832,6 +4844,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(79 67 80);
+  --color-accent-primary: rgb(156 0 200);
+  --color-accent-secondary: rgb(0 107 84);
+  --color-accent-tertiary: rgb(42 108 0);
   --color-border-image: rgb(210 193 210);
   --color-border-secondary: rgb(210 193 210);
   --color-border-input: rgb(210 193 210);
@@ -4972,6 +4987,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(210 193 210);
+  --color-accent-primary: rgb(240 176 255);
+  --color-accent-secondary: rgb(0 224 177);
+  --color-accent-tertiary: rgb(144 217 104);
   --color-border-image: rgb(79 67 80);
   --color-border-secondary: rgb(79 67 80);
   --color-border-input: rgb(79 67 80);
@@ -5113,6 +5131,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(186 203 191);
+  --color-accent-primary: rgb(0 226 157);
+  --color-accent-secondary: rgb(255 178 182);
+  --color-accent-tertiary: rgb(227 181 255);
   --color-border-image: rgb(59 74 65);
   --color-border-secondary: rgb(59 74 65);
   --color-border-input: rgb(59 74 65);
@@ -5255,6 +5276,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(62 72 82);
+  --color-accent-primary: rgb(0 98 157);
+  --color-accent-secondary: rgb(167 56 44);
+  --color-accent-tertiary: rgb(109 94 0);
   --color-border-image: rgb(190 199 212);
   --color-border-secondary: rgb(190 199 212);
   --color-border-input: rgb(190 199 212);
@@ -5395,6 +5419,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(190 199 212);
+  --color-accent-primary: rgb(153 203 255);
+  --color-accent-secondary: rgb(255 180 169);
+  --color-accent-tertiary: rgb(226 198 21);
   --color-border-image: rgb(62 72 82);
   --color-border-secondary: rgb(62 72 82);
   --color-border-input: rgb(62 72 82);
@@ -5536,6 +5563,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(60 72 81);
+  --color-accent-primary: rgb(0 101 141);
+  --color-accent-secondary: rgb(167 57 42);
+  --color-accent-tertiary: rgb(167 57 38);
   --color-border-image: rgb(188 200 211);
   --color-border-secondary: rgb(188 200 211);
   --color-border-input: rgb(188 200 211);
@@ -5676,6 +5706,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(188 200 211);
+  --color-accent-primary: rgb(131 207 255);
+  --color-accent-secondary: rgb(255 180 167);
+  --color-accent-tertiary: rgb(255 180 166);
   --color-border-image: rgb(60 72 81);
   --color-border-secondary: rgb(60 72 81);
   --color-border-input: rgb(60 72 81);
@@ -5817,6 +5850,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(67 70 84);
+  --color-accent-primary: rgb(0 79 229);
+  --color-accent-secondary: rgb(139 80 0);
+  --color-accent-tertiary: rgb(114 92 0);
   --color-border-image: rgb(196 197 214);
   --color-border-secondary: rgb(196 197 214);
   --color-border-input: rgb(196 197 214);
@@ -5957,6 +5993,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(196 197 214);
+  --color-accent-primary: rgb(182 196 255);
+  --color-accent-secondary: rgb(255 184 112);
+  --color-accent-tertiary: rgb(238 194 7);
   --color-border-image: rgb(67 70 84);
   --color-border-secondary: rgb(67 70 84);
   --color-border-input: rgb(67 70 84);
@@ -6098,6 +6137,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(61 74 62);
+  --color-accent-primary: rgb(0 109 54);
+  --color-accent-secondary: rgb(165 52 90);
+  --color-accent-tertiary: rgb(128 86 0);
   --color-border-image: rgb(188 202 187);
   --color-border-secondary: rgb(188 202 187);
   --color-border-input: rgb(188 202 187);
@@ -6238,6 +6280,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(188 202 187);
+  --color-accent-primary: rgb(0 228 120);
+  --color-accent-secondary: rgb(255 177 195);
+  --color-accent-tertiary: rgb(255 186 67);
   --color-border-image: rgb(61 74 62);
   --color-border-secondary: rgb(61 74 62);
   --color-border-input: rgb(61 74 62);
@@ -6379,6 +6424,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(61 74 62);
+  --color-accent-primary: rgb(0 109 54);
+  --color-accent-secondary: rgb(165 52 90);
+  --color-accent-tertiary: rgb(128 86 0);
   --color-border-image: rgb(188 202 187);
   --color-border-secondary: rgb(188 202 187);
   --color-border-input: rgb(188 202 187);
@@ -6519,6 +6567,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(188 202 187);
+  --color-accent-primary: rgb(0 228 120);
+  --color-accent-secondary: rgb(255 177 195);
+  --color-accent-tertiary: rgb(255 186 67);
   --color-border-image: rgb(61 74 62);
   --color-border-secondary: rgb(61 74 62);
   --color-border-input: rgb(61 74 62);
@@ -6660,6 +6711,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(65 73 57);
+  --color-accent-primary: rgb(55 107 0);
+  --color-accent-secondary: rgb(78 80 195);
+  --color-accent-tertiary: rgb(156 54 127);
   --color-border-image: rgb(193 202 180);
   --color-border-secondary: rgb(193 202 180);
   --color-border-input: rgb(193 202 180);
@@ -6800,6 +6854,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(193 202 180);
+  --color-accent-primary: rgb(120 223 0);
+  --color-accent-secondary: rgb(192 193 255);
+  --color-accent-tertiary: rgb(255 174 223);
   --color-border-image: rgb(65 73 57);
   --color-border-secondary: rgb(65 73 57);
   --color-border-input: rgb(65 73 57);
@@ -6941,6 +6998,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(67 70 84);
+  --color-accent-primary: rgb(0 79 229);
+  --color-accent-secondary: rgb(139 80 0);
+  --color-accent-tertiary: rgb(114 92 0);
   --color-border-image: rgb(196 197 214);
   --color-border-secondary: rgb(196 197 214);
   --color-border-input: rgb(196 197 214);
@@ -7081,6 +7141,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(196 197 214);
+  --color-accent-primary: rgb(182 196 255);
+  --color-accent-secondary: rgb(255 184 112);
+  --color-accent-tertiary: rgb(238 194 7);
   --color-border-image: rgb(67 70 84);
   --color-border-secondary: rgb(67 70 84);
   --color-border-input: rgb(67 70 84);
@@ -7222,6 +7285,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(76 68 82);
+  --color-accent-primary: rgb(140 0 229);
+  --color-accent-secondary: rgb(107 95 0);
+  --color-accent-tertiary: rgb(23 109 15);
   --color-border-image: rgb(207 194 212);
   --color-border-secondary: rgb(207 194 212);
   --color-border-input: rgb(207 194 212);
@@ -7362,6 +7428,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(207 194 212);
+  --color-accent-primary: rgb(223 183 255);
+  --color-accent-secondary: rgb(222 199 27);
+  --color-accent-tertiary: rgb(133 219 113);
   --color-border-image: rgb(76 68 82);
   --color-border-secondary: rgb(76 68 82);
   --color-border-input: rgb(76 68 82);
@@ -7503,6 +7572,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(77 70 50);
+  --color-accent-primary: rgb(113 93 0);
+  --color-accent-secondary: rgb(0 100 151);
+  --color-accent-tertiary: rgb(115 68 183);
   --color-border-image: rgb(208 198 171);
   --color-border-secondary: rgb(208 198 171);
   --color-border-input: rgb(208 198 171);
@@ -7643,6 +7715,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(208 198 171);
+  --color-accent-primary: rgb(235 195 0);
+  --color-accent-secondary: rgb(146 204 255);
+  --color-accent-tertiary: rgb(215 186 255);
   --color-border-image: rgb(77 70 50);
   --color-border-secondary: rgb(77 70 50);
   --color-border-input: rgb(77 70 50);
@@ -7784,6 +7859,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(57 74 73);
+  --color-accent-primary: rgb(0 106 103);
+  --color-accent-secondary: rgb(161 64 0);
+  --color-accent-tertiary: rgb(167 56 42);
   --color-border-image: rgb(184 202 200);
   --color-border-secondary: rgb(184 202 200);
   --color-border-input: rgb(184 202 200);
@@ -7924,6 +8002,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(184 202 200);
+  --color-accent-primary: rgb(0 221 215);
+  --color-accent-secondary: rgb(255 182 148);
+  --color-accent-tertiary: rgb(255 180 168);
   --color-border-image: rgb(57 74 73);
   --color-border-secondary: rgb(57 74 73);
   --color-border-input: rgb(57 74 73);
@@ -8065,6 +8146,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(62 72 82);
+  --color-accent-primary: rgb(0 98 157);
+  --color-accent-secondary: rgb(167 56 44);
+  --color-accent-tertiary: rgb(109 94 0);
   --color-border-image: rgb(190 199 212);
   --color-border-secondary: rgb(190 199 212);
   --color-border-input: rgb(190 199 212);
@@ -8205,6 +8289,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(190 199 212);
+  --color-accent-primary: rgb(153 203 255);
+  --color-accent-secondary: rgb(255 180 169);
+  --color-accent-tertiary: rgb(226 198 21);
   --color-border-image: rgb(62 72 82);
   --color-border-secondary: rgb(62 72 82);
   --color-border-input: rgb(62 72 82);
@@ -8346,6 +8433,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(61 72 82);
+  --color-accent-primary: rgb(0 100 147);
+  --color-accent-secondary: rgb(167 56 44);
+  --color-accent-tertiary: rgb(115 92 0);
   --color-border-image: rgb(189 200 211);
   --color-border-secondary: rgb(189 200 211);
   --color-border-input: rgb(189 200 211);
@@ -8486,6 +8576,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(189 200 211);
+  --color-accent-primary: rgb(141 205 255);
+  --color-accent-secondary: rgb(255 180 169);
+  --color-accent-tertiary: rgb(239 193 5);
   --color-border-image: rgb(61 72 82);
   --color-border-secondary: rgb(61 72 82);
   --color-border-input: rgb(61 72 82);
@@ -8627,6 +8720,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(61 74 62);
+  --color-accent-primary: rgb(0 109 54);
+  --color-accent-secondary: rgb(165 52 90);
+  --color-accent-tertiary: rgb(128 86 0);
   --color-border-image: rgb(188 202 187);
   --color-border-secondary: rgb(188 202 187);
   --color-border-input: rgb(188 202 187);
@@ -8767,6 +8863,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(188 202 187);
+  --color-accent-primary: rgb(0 228 120);
+  --color-accent-secondary: rgb(255 177 195);
+  --color-accent-tertiary: rgb(255 186 67);
   --color-border-image: rgb(61 74 62);
   --color-border-secondary: rgb(61 74 62);
   --color-border-input: rgb(61 74 62);
@@ -8908,6 +9007,9 @@
   --color-text-inverse: rgb(255 255 255);
   --color-text-fixed-light: rgb(255 255 255);
   --color-text-placeholder: rgb(67 70 84);
+  --color-accent-primary: rgb(0 83 218);
+  --color-accent-secondary: rgb(141 79 0);
+  --color-accent-tertiary: rgb(163 62 5);
   --color-border-image: rgb(195 198 214);
   --color-border-secondary: rgb(195 198 214);
   --color-border-input: rgb(195 198 214);
@@ -9048,6 +9150,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(195 198 214);
+  --color-accent-primary: rgb(180 197 255);
+  --color-accent-secondary: rgb(255 184 117);
+  --color-accent-tertiary: rgb(255 181 151);
   --color-border-image: rgb(67 70 84);
   --color-border-secondary: rgb(67 70 84);
   --color-border-input: rgb(67 70 84);
@@ -9189,6 +9294,9 @@
   --color-text-inverse: rgb(0 0 0);
   --color-text-fixed-light: rgb(0 0 0);
   --color-text-placeholder: rgb(193 202 180);
+  --color-accent-primary: rgb(120 223 0);
+  --color-accent-secondary: rgb(192 193 255);
+  --color-accent-tertiary: rgb(255 174 223);
   --color-border-image: rgb(65 73 57);
   --color-border-secondary: rgb(65 73 57);
   --color-border-input: rgb(65 73 57);

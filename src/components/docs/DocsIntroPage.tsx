@@ -118,14 +118,14 @@ export default function DocsIntroPage() {
                       <h2 className="text-2xl font-semibold tracking-tight text-primary">{cfg.title}</h2>
                       <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">{cfg.description}</p>
                     </div>
-                  <div className="grid self-start gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className="grid self-start gap-2 sm:grid-cols-2 xl:grid-cols-3">
                     {pkgs.map((pkg) => {
                       const logo = getPackageLogo(pkg.shortName)
                       return (
                         <Link
                           key={pkg.shortName}
                           to={pageHref(pkg)}
-                          className={`group grid min-h-20 grid-cols-[2.25rem_minmax(0,1fr)_1.5rem] items-center gap-x-3 overflow-hidden rounded-xl bg-card px-3 py-3 text-card-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${visual.hover}`}
+                          className={`group grid min-h-[84px] grid-cols-[2.25rem_minmax(0,1fr)_1.5rem] items-center gap-x-2 overflow-hidden rounded-2xl bg-card px-2.5 py-2.5 text-card-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${visual.hover}`}
                           data-docs-package-card
                         >
                           {logo ? (
@@ -148,21 +148,21 @@ export default function DocsIntroPage() {
                             </span>
                           )}
                           <div className="min-w-0" data-docs-package-copy>
-                            <div className="truncate text-sm font-semibold leading-5 tracking-tight text-card-foreground">
+                            <div className="truncate text-base font-semibold leading-5 tracking-tight text-card-foreground">
                               {pkg.displayName}
                             </div>
                             <div className="flex min-w-0 items-center gap-1.5">
-                              <span className="min-w-0 truncate font-mono text-[10px] leading-4 text-muted-foreground">
+                              <span className="min-w-0 truncate font-mono text-[11px] leading-4 text-muted-foreground">
                                 {pkg.package}
                               </span>
                               {pkg.versioned ? (
-                                <span className="shrink-0 rounded-full bg-background/70 px-1.5 py-0.5 text-[9px] font-medium uppercase leading-3 tracking-wider text-muted-foreground">
+                                <span className="shrink-0 rounded-full bg-background/70 px-1.5 py-0.5 text-[11px] font-medium uppercase leading-4 tracking-wider text-muted-foreground">
                                   v{pkg.latestVersion}
                                 </span>
                               ) : null}
                             </div>
                             {pkg.description ? (
-                              <p className="mt-0.5 truncate text-xs leading-4 text-muted-foreground">{pkg.description}</p>
+                              <p className="mt-0.5 truncate text-sm leading-5 text-muted-foreground">{pkg.description}</p>
                             ) : null}
                           </div>
                           <span

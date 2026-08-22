@@ -37,7 +37,7 @@ router.get('/', requireAuth, adminOnly, async (req, res) => {
   const { pageNum, limitNum, skip } = parsePagination(page, limit, MAX_MEDIA_PAGE_SIZE)
 
   const filters: SQL[] = []
-  // Mongo ran this through a `$text` index over filename and alt. Postgres
+  // The previous store ran this through a text index over filename and alt. Postgres
   // gets a case-insensitive substring match on the same two fields: the
   // library is a few thousand rows and the admin types partial filenames,
   // which a stemmed full-text index would match worse, not better.

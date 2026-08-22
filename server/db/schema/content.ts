@@ -4,8 +4,8 @@ import { objectId, timestamps } from './columns.js'
 /* ──────────────────────────────────────────────
  * The editorial tables: what the CMS writes and the site reads.
  *
- * Mongo sub-documents (a page's sections, a job's description blocks, a hero's
- * carousel slots) stay whole as `jsonb`. They are read and written as a unit by
+ * Sub-documents (a page's sections, a job's description blocks, a hero's
+ * carousel slots) are `jsonb`. They are read and written as a unit by
  * both the admin and the site, never queried field by field, so splitting them
  * into child tables would buy joins nobody asked for.
  * ──────────────────────────────────────────── */
@@ -96,9 +96,8 @@ export const newsroomPosts = pgTable(
     content: text().notNull().default(''),
     // Nullable, like every other cover on this file: five of the 47 posts
     // imported from the old Framer site hold an absolute framerusercontent URL
-    // here rather than a media id, and Mongo already served those as `null`
-    // (Mongoose cannot cast a URL to an ObjectId ref). A `not null` column
-    // would have made the copy fail on data the site has been serving for
+    // here rather than a media id, and the site has always served those as
+    // `null`. A `not null` column would reject data that has been live for
     // years.
     coverImage: text().references(() => media._id, { onDelete: 'set null' }),
     imageAlt: text(),
@@ -280,9 +279,9 @@ export const pricingPlans = pgTable('pricing_plans', {
   features: text().array().notNull().default([]),
   cta: text().notNull().default('Get started'),
   /**
-   * Where the plan's button goes. The Mongoose schema never declared this, so
-   * strict mode dropped it on every write and the table rendered a button with
-   * an undefined href; the seed has always sent a value.
+   * Where the plan's button goes. It went undeclared for a long time, so the
+   * table rendered a button with an undefined href; the seed has always sent a
+   * value.
    */
   ctaHref: text().notNull().default(''),
   highlighted: boolean().notNull().default(false),

@@ -41,8 +41,8 @@ const slugParamsSchema = z.object({ slug: z.string().min(1) })
 const postBodySchema = z.object({}).passthrough()
 
 /**
- * `products` is an array of product ids. Mongo populated it with `productId`
- * and `name` only; this does the same in one query for the whole page.
+ * `products` is an array of product ids, expanded to `productId` and `name`
+ * only, in one query for the whole page.
  */
 async function attachProducts(posts: Record<string, unknown>[]): Promise<Record<string, unknown>[]> {
   const ids = [...new Set(posts.flatMap((post) => (post.products as string[] | null) ?? []))]
@@ -90,8 +90,7 @@ router.get('/', localeMiddleware, optionalAuth, async (req, res) => {
   filters.push(eq(newsroomPosts.status, isAdminUser(req.user) && status ? status : 'published'))
 
   // Search on title and excerpt. `ilike` takes the pattern as a bound
-  // parameter, so the user's string is never interpolated into SQL and the
-  // regex escaping the Mongo version needed has no equivalent here.
+  // parameter, so the user's string is never interpolated into SQL.
   if (search) {
     const pattern = `%${search}%`
     const searchFilter = or(ilike(newsroomPosts.title, pattern), ilike(newsroomPosts.resume, pattern))

@@ -4,16 +4,14 @@ import { text, timestamp } from 'drizzle-orm/pg-core'
 /* ──────────────────────────────────────────────
  * The two shapes every table in this schema repeats.
  *
- * Primary keys are the Mongo ObjectId hex string, kept under its Mongo name
- * `_id`. That is deliberate: the admin UI, every API response and every
- * cross-collection reference already speak in those ids, so keeping them means
- * the copy from Mongo is a straight insert and the DTOs the frontend receives
- * do not change at all during the cutover. New rows get a fresh ObjectId-shaped
- * id from `newObjectId()` rather than a uuid, so the two kinds are
- * indistinguishable to anything downstream.
+ * Primary keys are a 24-character hex id under the name `_id`. That is
+ * deliberate: the admin UI, every API response and every cross-table reference
+ * speak in those ids, so a row written years ago and one written today are the
+ * same shape to everything downstream. New rows get one from `newObjectId()`
+ * rather than a uuid, for the same reason.
  * ──────────────────────────────────────────── */
 
-/** 24-character hex, the same shape Mongo's `_id` has. */
+/** 24-character hex. */
 export const objectId = () =>
   text('_id')
     .primaryKey()
@@ -25,9 +23,8 @@ export const timestamps = {
 }
 
 /**
- * A fresh ObjectId: 4 bytes of seconds, 5 random, 3 from a counter — the same
- * layout Mongo uses, so ids stay sortable by creation time and no consumer can
- * tell a Postgres-born id from a copied one.
+ * A fresh id: 4 bytes of seconds, 5 random, 3 from a counter, so ids stay
+ * sortable by creation time and every row carries the same shape.
  */
 let counter = Math.floor(Math.random() * 0xffffff)
 const MACHINE = Array.from({ length: 5 }, () => Math.floor(Math.random() * 256))

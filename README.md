@@ -55,7 +55,7 @@ That means the first paint a visitor sees comes from static HTML, before any Jav
 | Content | MDX, with docs and changelog synced in at build time, and Pagefind for site search |
 | Wallet | wagmi and viem, on the FairCoin surfaces |
 | Motion and 3D | Framer Motion, Three.js with React Three Fiber |
-| Server | Express 5 and Mongoose 9 under `server/`, plus an MCP server at `server/mcp.ts` |
+| Server | Express 5 with drizzle over PostgreSQL under `server/`, plus an MCP server at `server/mcp.ts` |
 
 Identity is the platform's job, not this repo's. See [github.com/OxyHQ/oxy](https://github.com/OxyHQ/oxy).
 

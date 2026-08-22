@@ -45,7 +45,6 @@ import { syncAllRepos, syncSingleRepo } from './services/githubSync.js'
 import { deleteFromSpaces, uploadToSpaces } from './services/s3.js'
 import { processImage } from './services/thumbnails.js'
 import { heroUpdateRawShape, heroUpdateSchema, type HeroUpdate } from './validation/hero.js'
-import { escapeRegex } from './utils/escapeRegex.js'
 import { TRANSLATABLE_COLLECTIONS } from './constants/translations.js'
 import { isNewsroomThemePreset, newsroomThemeForSlug } from './constants/newsroomThemes.js'
 

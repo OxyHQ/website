@@ -9,7 +9,7 @@ import {
 } from './featureBoard.js'
 import { toErrorMessage } from '../utils/errorMessage.js'
 
-/** Wait this long after boot before the first reconcile, so MongoDB is up. */
+/** Wait this long after boot before the first reconcile, so the database is up. */
 const INITIAL_DELAY_MS = 30_000
 
 /**

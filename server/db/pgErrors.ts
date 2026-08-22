@@ -1,9 +1,8 @@
 /* ──────────────────────────────────────────────
  * Postgres error codes the routes actually branch on.
  *
- * Mongo signalled a duplicate key with `err.code === 11000`; Postgres uses
- * SQLSTATE `23505`. Every route that used to check the former checks this
- * instead, so a slug collision still answers 409 rather than 500.
+ * A duplicate key is SQLSTATE `23505`. Every route that can collide on a
+ * unique key checks this, so a slug collision answers 409 rather than 500.
  * ──────────────────────────────────────────── */
 
 /** `unique_violation` — a row already exists for that unique key. */
