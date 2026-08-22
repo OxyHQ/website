@@ -98,6 +98,14 @@ try {
     'latest component playground must not expose historical docs version controls',
   )
 
+  await openRoute('/developers/docs/bloom/playground/')
+  invariant(
+    new URL(page.url()).pathname === '/developers/docs/bloom/playground/',
+    'trailing-slash component playground must remain canonical instead of redirecting',
+  )
+  await page.getByRole('heading', { name: 'Playground', exact: true }).waitFor()
+  await assertCurrentSidebarLink('/developers/docs/bloom/playground')
+
   await openRoute(`/developers/docs/bloom/${bloom.latestVersion}/playground`)
   await page.waitForURL(`${origin}/developers/docs/bloom/playground`)
   await page.getByRole('heading', { name: 'Playground', exact: true }).waitFor()
@@ -133,6 +141,14 @@ try {
   )
   await page.getByRole('button', { name: 'Public view', exact: true }).click()
   await page.getByText("Don't miss what's happening", { exact: true }).first().waitFor()
+
+  await openRoute('/developers/docs/bloom/color-system/')
+  invariant(
+    new URL(page.url()).pathname === '/developers/docs/bloom/color-system/',
+    'trailing-slash canonical route must remain canonical instead of redirecting',
+  )
+  await page.locator('[data-testid="color-system-playground"]').waitFor()
+  await assertCurrentSidebarLink('/developers/docs/bloom/color-system')
 
   await openRoute(`/developers/docs/bloom/${bloom.latestVersion}/color-system`)
   await page.waitForURL(`${origin}/developers/docs/bloom/color-system`)
