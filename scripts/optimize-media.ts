@@ -197,6 +197,13 @@ const IMAGES: ImageTarget[] = [
   { file: 'public/images/astro/cursor.png', maxWidth: 1200, format: 'png' },
   { file: 'public/ai/cta-desktop-bg.png', maxWidth: 1920, format: 'png' },
   { file: 'public/ai/shadow-bg.png', maxWidth: 1920, format: 'png' },
+  // Research cards are rendered below their source dimensions on the home
+  // page. Keep the supplied PNG paths, but resize and palette-compress them
+  // so the first viewport does not carry multi-megabyte originals.
+  { file: 'public/ai/research/oxy-open-design.png', maxWidth: 1200, format: 'png', quality: 90 },
+  { file: 'public/ai/research/oxy-ai-models.png', maxWidth: 1400, format: 'png', quality: 90 },
+  { file: 'public/ai/research/mention-people.png', maxWidth: 1400, format: 'png', quality: 90 },
+  { file: 'public/ai/research/faircoin-stage.png', maxWidth: 1400, format: 'png', quality: 90 },
   // Avatars rendered at ~40 px.
   { file: 'src/assets/mention/avatar-joan.jpg', maxWidth: 160, format: 'jpeg', quality: 82 },
   { file: 'src/assets/mention/avatar-athina.jpg', maxWidth: 160, format: 'jpeg', quality: 82 },

@@ -54,6 +54,8 @@ export interface NavDropdownItem {
   href: string
   icon?: string
   image?: string | NavDropdownItemImage | null
+  logoColor?: string
+  preserveImageColors?: boolean
 }
 
 export interface NavDropdownSection {
@@ -106,7 +108,7 @@ export const productNavDropdown: NavDropdown = {
   // Not "Product": the apps live in the Technologies dropdown, which is
   // generated from the product records, so listing them here would be the same
   // menu twice. This one carries what Oxy stands for instead.
-  label: 'Why Oxy',
+  label: 'About',
   sections: [],
   featureGrid: {
     features: [
@@ -150,7 +152,7 @@ export const productNavDropdown: NavDropdown = {
     cards: [
       {
         href: '/apps',
-        image: '/images/nav-ecosystem-card.webp',
+        image: '/ai/research/oxy-open-design.png',
         title: 'The whole ecosystem',
         description: 'Every app and service, and how they share one identity and one platform',
         alt: 'The Oxy ecosystem',
@@ -162,6 +164,15 @@ export const productNavDropdown: NavDropdown = {
         description: 'Open roles across engineering, design and community',
         alt: 'Working at Oxy',
       },
+    ],
+  },
+  sidePanel: {
+    heading: 'Company',
+    links: [
+      { label: 'Changelog', href: '/changelog' },
+      { label: 'Newsroom', href: '/newsroom' },
+      { label: 'Engineering blog', href: '/company/news' },
+      { label: 'Careers', href: '/company/careers' },
     ],
   },
 }
@@ -203,21 +214,21 @@ export const resourcesNavDropdown: NavDropdown = {
  * items with the current products marked `showInNav`.
  */
 export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: string }> = [
-  { title: 'Inbox by Oxy', description: 'Email app', href: '/inbox', image: '/images/apps/inbox.svg', section: 'Social & Communication' },
-  { title: 'Mention', description: 'Decentralized social media', href: '/mention', image: '/images/apps/mention.png', section: 'Social & Communication' },
-  { title: 'Alia', description: 'AI-Powered assistant', href: '/ai', image: '/images/apps/alia.svg', section: 'Social & Communication' },
-  { title: 'FairCoin Explorer', description: '', href: 'https://explorer.fairco.in', image: '/images/apps/faircoin-explorer.png', section: 'Finance & Commerce' },
+  { title: 'Inbox by Oxy', description: 'Email app', href: '/inbox', image: '/images/apps/inbox.svg', logoColor: '#bf40ed', section: 'Social & Communication' },
+  { title: 'Mention', description: 'Decentralized social media', href: '/mention', image: '/images/apps/mention.png', logoColor: '#40c2ed', section: 'Social & Communication' },
+  { title: 'Alia', description: 'AI-Powered assistant', href: '/ai', image: '/images/apps/alia-mark.svg', logoColor: '#fab8ff', section: 'Social & Communication' },
+  { title: 'FairCoin Explorer', description: '', href: 'https://explorer.fairco.in', image: '/images/apps/faircoin-explorer.png', logoColor: '#185c00', section: 'Finance & Commerce' },
   { title: 'Pay', description: '', href: '/pay', section: 'Finance & Commerce' },
-  { title: 'Mercaria', description: '', href: '/marketplace', image: '/images/apps/mercaria.svg', section: 'Finance & Commerce' },
-  { title: 'FairCoin', description: 'Ethical Digital Currency', href: 'https://fairco.in', image: '/images/apps/faircoin.svg', section: 'Finance & Commerce' },
-  { title: 'FAIRWallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', image: '/images/apps/faircoin-wallet.svg', section: 'Finance & Commerce' },
+  { title: 'Mercaria', description: '', href: '/marketplace', image: '/images/apps/mercaria.svg', logoColor: '#ed4040', section: 'Finance & Commerce' },
+  { title: 'FairCoin', description: 'Ethical Digital Currency', href: 'https://fairco.in', image: '/images/apps/faircoin.svg', logoColor: '#204700', preserveImageColors: true, section: 'Finance & Commerce' },
+  { title: 'FAIRWallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', image: '/images/apps/faircoin-wallet.svg', logoColor: '#0c6600', preserveImageColors: true, section: 'Finance & Commerce' },
   { title: 'Moovo', description: '', href: '/moovo', section: 'Apps' },
   { title: 'Kaana', description: '', href: '/', section: 'Apps' },
   { title: 'Horizon', description: '', href: '/', section: 'Apps' },
   { title: 'Homiio', description: 'Rental made easy', href: '/homiio', section: 'Apps' },
-  { title: 'Clarity', description: 'AI-Powered search engine', href: '/clarity', image: '/images/apps/clarity.png', section: 'Apps' },
-  { title: 'Astro Browser', description: '', href: '/astro', image: '/images/apps/astro.svg', section: 'Apps' },
-  { title: 'TNP', description: 'The network protocol', href: '/tnp', image: '/images/apps/tnp.png', section: 'Infrastructure' },
+  { title: 'Clarity', description: 'AI-Powered search engine', href: '/clarity', image: '/images/apps/clarity.png', logoColor: '#664100', section: 'Apps' },
+  { title: 'Astro Browser', description: '', href: '/astro', image: '/images/apps/astro.svg', logoColor: '#009699', section: 'Apps' },
+  { title: 'TNP', description: 'The network protocol', href: '/tnp', image: '/images/apps/tnp.png', logoColor: '#2f9e00', section: 'Infrastructure' },
 ];
 
 export const technologiesNavSidePanel: NavSidePanel = {
@@ -317,7 +328,6 @@ export const platformNavDropdown: NavDropdown = {
     links: [
       { label: 'Academy', href: '/academy' },
       { label: 'Help center', href: '/help' },
-      { label: 'Pricing', href: '/pricing' },
       { label: 'Partner programs', href: '/partners' },
     ],
   },
@@ -354,7 +364,6 @@ export interface FooterColumn {
 
 export const simpleNavLinks: NavItem[] = [
   { label: 'Newsroom', href: '/newsroom' },
-  { label: 'Pricing', href: '/pricing' },
 ]
 
 // Hero

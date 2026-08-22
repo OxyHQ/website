@@ -160,7 +160,7 @@ export default function NewsroomIndex() {
       <div className="container @container flex flex-col gap-5 pb-20 pt-20 md:pb-28 md:pt-10">
         <header className="flex flex-col gap-1">
           <AnimatedTitle as="h1" className="text-heading-responsive-lg text-foreground">
-            {t('newsroom.recentNewsHeading')}
+            {t('newsroom.heading')}
           </AnimatedTitle>
         </header>
 

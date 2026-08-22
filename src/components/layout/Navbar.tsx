@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore, type CSSProperties } from 'react'
+import { useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { LogoIcon, ProfileButton, useOxy } from '@oxyhq/services'
 import {
@@ -9,9 +9,8 @@ import {
   makeTechnologiesNavDropdown,
   resourcesNavDropdown,
   technologiesNavFallbackItems,
+  technologiesNavSidePanel,
   type NavDropdown,
-  type NavDropdownSection,
-  type NavDropdownItem as NavDropdownItemType,
   type NavItem,
 } from '../../data/content'
 import { NavCard } from './NavMegaPanels'
@@ -32,7 +31,6 @@ import { useAdminAccess } from '../../hooks/useAdminAccess'
 const SETTINGS_DROPDOWN_KEY = '__settings__'
 
 const NAV_LABEL_KEYS: Record<string, string> = {
-  'Why Oxy': 'navbar.whyOxy',
   Platform: 'navbar.platform',
   Newsroom: 'navbar.newsroom',
   Pricing: 'navbar.pricing',
@@ -54,153 +52,68 @@ function ChevronDown({ className = '' }: { className?: string }) {
 
 /* ─── Dropdown Content Panel ─── */
 
-/*
- * The panel is one grid and nothing else — no flex row holding grids, which is
- * what put the side panel and the card on a different rhythm from the sections.
- *
- * Columns are a FIXED width and the row holds as many as the band fits, so a
- * column is the same size in every dropdown and at every viewport; only the
- * count changes. The card takes two of them, because a picture in a single
- * column is a stamp.
- */
-const NAV_COLUMN_WIDTH = 224
-const NAV_COLUMN_GAP = 16
-/** Columns to assume before the band has been measured (prerender, first paint). */
-const NAV_FALLBACK_COLUMNS = 4
-
-/** Items plus one for the heading: every item is a row, and a heading is about one. */
-function sectionWeight(section: NavDropdownSection): number {
-  return (section.items?.length ?? 0) + 1
-}
-
-/**
- * Sections dealt into `columns` columns, longest first, each one going to the
- * column that is shortest at the time.
- *
- * The order sections arrive in is given up here, and deliberately: keeping it
- * means the columns have to be consecutive runs, and consecutive runs of six,
- * five, three and one can only ever be cut into 6/5/3/1 or 11/4 — a ragged
- * panel or a tall one. Dealing them out gives 6/5/4 instead: three columns of
- * the same length. Within a column the sections go back into the order they
- * came in, so a column still reads the way the CMS wrote it.
- */
-function dealSections(
-  sections: readonly NavDropdownSection[],
-  columns: number,
-): number[][] {
-  const dealt: number[][] = Array.from({ length: columns }, () => [])
-  const heights = new Array<number>(columns).fill(0)
-
-  const longestFirst = sections
-    .map((section, index) => ({ index, weight: sectionWeight(section) }))
-    .sort((a, b) => b.weight - a.weight || a.index - b.index)
-
-  for (const { index, weight } of longestFirst) {
-    let shortest = 0
-    for (let column = 1; column < columns; column += 1) {
-      if (heights[column] < heights[shortest]) shortest = column
-    }
-    dealt[shortest].push(index)
-    heights[shortest] += weight
-  }
-
-  return dealt.filter((column) => column.length > 0).map((column) => column.sort((a, b) => a - b))
-}
-
-/**
- * Sections packed into columns so the columns come out about the same height.
- *
- * Two things are being traded off, and each alone gives the wrong answer. Fewer
- * columns balance more easily, but taken to its end that argument stacks
- * everything into one tall column beside a band of empty space. So each column
- * count is scored by how tall its longest column is PLUS how far apart its
- * longest and shortest are, and the best score wins: the panel spreads into the
- * width it has for as long as the columns still read as the same length.
- */
-function packSections(
-  sections: readonly NavDropdownSection[],
-  available: number,
-): NavDropdownSection[][] {
-  if (sections.length === 0) return []
-
-  const most = Math.min(available, sections.length)
-  let best: number[][] = [sections.map((_, index) => index)]
-  let bestScore = Infinity
-
-  for (let columns = 1; columns <= most; columns += 1) {
-    const dealt = dealSections(sections, columns)
-    const heights = dealt.map((column) => column.reduce((sum, index) => sum + sectionWeight(sections[index]), 0))
-    const score = Math.max(...heights) + (Math.max(...heights) - Math.min(...heights))
-    if (score < bestScore) {
-      bestScore = score
-      best = dealt
-    }
-  }
-
-  return best.map((column) => column.map((index) => sections[index]))
-}
-
-/** A headless list cut into as many columns as it was given, in order. */
-function chunkItems(items: readonly NavDropdownItemType[], columns: number): NavDropdownSection[][] {
-  const perColumn = Math.ceil(items.length / Math.max(1, columns))
-  const chunks: NavDropdownSection[][] = []
-  for (let i = 0; i < items.length; i += perColumn) {
-    chunks.push([{ heading: '', items: items.slice(i, i + perColumn) }])
-  }
-  return chunks
-}
-
-function DropdownContent({ dropdown, width }: { dropdown: NavDropdown; width: number | null }) {
-  const columns = width
-    ? Math.max(1, Math.floor((width + NAV_COLUMN_GAP) / (NAV_COLUMN_WIDTH + NAV_COLUMN_GAP)))
-    : NAV_FALLBACK_COLUMNS
+function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
 
   /*
    * A feature dropdown is the same panel with a different filling: one headless
    * list instead of headed sections, and more than one card. It went through a
    * layout of its own, which is why its columns sized themselves from their
    * content while every other dropdown's were fixed.
-   */
-  const cards = dropdown.featureGrid?.cards ?? (dropdown.card ? [dropdown.card] : [])
-  // Cards and the side panel take their columns off the top; the items share
-  // what is left.
-  const reserved = cards.length * 2 + (dropdown.sidePanel ? 1 : 0)
-  const itemColumns = Math.max(1, columns - reserved)
-  const packed = dropdown.featureGrid
-    ? chunkItems(dropdown.featureGrid.features, itemColumns)
-    : packSections(dropdown.sections ?? [], itemColumns)
-
+  */
+  const featureGrid = dropdown.featureGrid
+  const cards = dropdown.card ? [dropdown.card] : []
+  const wideMenu = Boolean(dropdown.sidePanel && (featureGrid || dropdown.card))
+  const sectionContent = (dropdown.sections ?? []).map((section) => (
+    <div key={section.heading} className="flex min-w-0 flex-col gap-space-md">
+      {section.heading ? (
+        <p className="block px-space-sm pb-space-2xs text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          {section.heading}
+        </p>
+      ) : null}
+      <ul className="grid items-start gap-1">
+        {section.items.map((item) => (
+          <li key={item.href} className="contents">
+            <NavDropdownItem item={item} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))
   return (
     <div
       // The panel starts a clear step below the row, so the first heading does not
       // sit against the trigger that opened it.
-      className="grid w-full items-start gap-space-lg pt-space-xl pb-space-2xl grid-cols-[repeat(var(--nav-cols),minmax(0,var(--nav-col)))] [--nav-col:14rem]"
-      style={{ '--nav-cols': packed.length + reserved } as CSSProperties}
+      className={`grid w-full auto-rows-min items-start gap-space-lg pt-space-xl pb-space-2xl ${
+        wideMenu ? 'grid-cols-5' : 'grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]'
+      }`}
     >
-      {packed.map((column, ci) => (
-        <div key={`column-${ci}`} className="flex flex-col gap-space-md">
-          {column.map((section, si) => (
-            <div key={`section-${ci}-${si}`}>
-              {section.heading ? (
-                <p className="block px-space-sm pb-space-2xs text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                  {section.heading}
-                </p>
-              ) : null}
-              {/* Items down the column. No rules between: the gap is the structure. */}
-              <ul className="grid items-start gap-1">
-                {section.items.map((item, ii) => (
-                  <li key={`item-${ci}-${si}-${ii}`} className="contents">
-                    <NavDropdownItem item={item} />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+      {wideMenu && !featureGrid ? (
+        <div className="col-span-2 grid min-w-0 grid-cols-2 items-start gap-space-lg">
+          {sectionContent}
         </div>
-      ))}
+      ) : (
+        sectionContent
+      )}
+
+      {featureGrid ? (
+        <>
+          <div className="col-span-2 grid min-w-0 grid-cols-2 items-start gap-space-lg">
+            {featureGrid.features.map((item) => (
+              <div key={item.href} className="min-w-0">
+                <NavDropdownItem item={item} />
+              </div>
+            ))}
+          </div>
+          <div className="col-span-2 grid min-w-0 grid-cols-2 items-start gap-space-lg">
+            {featureGrid.cards.map((card) => (
+              <NavCard key={card.href} card={card} />
+            ))}
+          </div>
+        </>
+      ) : null}
 
       {cards.map((card) => (
-        <NavCard key={card.href} card={card} className="[grid-column:span_2]" />
+        <NavCard key={card.href} card={card} className={wideMenu ? '[grid-column:span_2]' : ''} />
       ))}
 
       {dropdown.sidePanel && (
@@ -328,16 +241,30 @@ export default function Navbar({
       description: product.tagline || product.description || '',
       href: product.navOpensApp ? product.href : (product.landingUrl || product.href),
       image: resolveProductLogoUrl(product) || undefined,
+      logoColor: product.brand,
+      preserveImageColors: product.productId === 'faircoin' || product.productId === 'fairwallet' || product.productId === 'faircoin-wallet',
       section: product.section,
     }))
   }, [navProducts])
   const dropdowns: readonly NavDropdown[] = useMemo(() => {
     if (useCustomNav) return customDropdowns ?? []
+    const technologies = makeTechnologiesNavDropdown(productItems)
+    const platformLinks = platformNavDropdown.sidePanel?.links ?? []
+    const technologyLinks = technologiesNavSidePanel.links.filter(
+      (link) => !platformLinks.some((existing) => existing.href === link.href),
+    )
+    const platform = {
+      ...platformNavDropdown,
+      sections: [...platformNavDropdown.sections, ...technologies.sections],
+      sidePanel: {
+        heading: 'Explore',
+        links: [...platformLinks, ...technologyLinks],
+      },
+    }
     return [
       productNavDropdown,
-      platformNavDropdown,
+      platform,
       { ...resourcesNavDropdown, card: resourcesNavCard },
-      makeTechnologiesNavDropdown(productItems),
     ]
   }, [useCustomNav, customDropdowns, productItems])
   const flatLinks: readonly NavItem[] = useMemo(
@@ -716,7 +643,7 @@ export default function Navbar({
       >
         {dropdowns.map((dd) => (
           <div key={dd.label} ref={(el) => { measureRefs.current[dd.label] = el }}>
-            <DropdownContent dropdown={dd} width={navContentWidth} />
+            <DropdownContent dropdown={dd} />
           </div>
         ))}
         <div ref={(el) => { measureRefs.current[SETTINGS_DROPDOWN_KEY] = el }}>
@@ -970,7 +897,7 @@ export default function Navbar({
                       pointerEvents: isActive ? 'auto' : 'none',
                     }}
                   >
-                    <DropdownContent dropdown={dd} width={navContentWidth} />
+                    <DropdownContent dropdown={dd} />
                   </div>
                 )
               })}

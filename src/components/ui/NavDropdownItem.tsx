@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { NavDropdownItem as NavDropdownItemType } from '../../data/content'
-import type { ComponentType, SVGProps } from 'react'
+import type { ComponentType, CSSProperties, SVGProps } from 'react'
 
 function resolveImageUrl(image: NavDropdownItemType['image']): string {
   if (!image) return ''
@@ -12,6 +12,10 @@ function resolveImageUrl(image: NavDropdownItemType['image']): string {
   if (image.thumbnails?.md) return image.thumbnails.md
   if (image.thumbnails?.sm) return image.thumbnails.sm
   return ''
+}
+
+function isSvgImage(url: string): boolean {
+  return url.toLowerCase().split(/[?#]/, 1)[0].endsWith('.svg')
 }
 
 // Import all nav icons as React components (inline SVG)
@@ -84,30 +88,44 @@ interface NavDropdownItemProps {
  * as tall as what it holds, and a two-line description next door no longer
  * stretches its neighbours to match.
  */
-const linkClass = "group flex h-fit w-full items-start gap-space-sm rounded-md px-space-sm py-space-xs transition-colors duration-150 hover:bg-foreground/5 active:bg-foreground/10"
+const linkClass = "group flex h-fit w-full items-start gap-space-sm rounded-full px-space-sm py-space-xs transition-colors duration-150 hover:bg-foreground/5 active:bg-foreground/10"
 
 function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const IconComponent = item.icon ? iconMap[item.icon] : null
   const imageUrl = resolveImageUrl(item.image)
+  const shouldMaskLogo = Boolean(imageUrl && item.logoColor && isSvgImage(imageUrl) && !item.preserveImageColors)
 
   if (imageUrl) {
+    if (shouldMaskLogo) {
+      return (
+        <span
+          aria-hidden="true"
+          className="mt-0.5 size-6 shrink-0 bg-[var(--nav-logo-color)] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
+          style={{
+            '--nav-logo-color': item.logoColor,
+            maskImage: `url("${imageUrl}")`,
+            WebkitMaskImage: `url("${imageUrl}")`,
+          } as CSSProperties}
+        />
+      )
+    }
     return (
       <img
         src={imageUrl}
         alt=""
         loading="lazy"
         decoding="async"
-        className="mt-0.5 size-5 shrink-0 rounded-full object-contain"
+        className="mt-0.5 size-6 shrink-0 rounded-full object-contain"
       />
     )
   }
   if (IconComponent) {
-    return <IconComponent className="nav-icon mt-0.5 size-5 shrink-0 text-muted-foreground" />
+    return <IconComponent className="nav-icon mt-0.5 size-6 shrink-0 text-muted-foreground" />
   }
   // Neither: the initial, so an item with no artwork still has a mark and its
   // title still lines up with the titles above and below it.
   return (
-    <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-foreground/10 text-[10px] font-semibold text-muted-foreground">
+    <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-foreground/10 text-[10px] font-semibold text-muted-foreground">
       {item.title.charAt(0)}
     </span>
   )
