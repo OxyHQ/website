@@ -57,7 +57,7 @@ function NewsMeta({ article }: { article: NewsroomPost }) {
   })
 
   return (
-    <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+    <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-body-sm text-muted-foreground">
       {article.categories[0] && <span>{article.categories[0]}</span>}
       {article.categories[0] && <span aria-hidden>·</span>}
       <time className="whitespace-nowrap" dateTime={article.publishedAt}>{date}</time>
@@ -74,7 +74,7 @@ export function NewsCardFeatured({ article }: { article: NewsroomPost }) {
       >
         <NewsImage article={article} priority className="aspect-[4/5] w-full @lg:aspect-video" />
         <div className="mt-5 flex max-w-4xl flex-col gap-2 @lg:pe-10">
-          <h2 className="text-heading-responsive-md text-foreground transition-colors group-hover:text-muted-foreground">
+          <h2 className="text-heading-3xl text-foreground transition-colors group-hover:text-muted-foreground">
             {article.title}
           </h2>
           <NewsMeta article={article} />
@@ -93,7 +93,7 @@ export function NewsCardGrid({ article }: { article: NewsroomPost }) {
       >
         <NewsImage article={article} className="aspect-square w-full" />
         <div className="mt-3 flex flex-col gap-1.5">
-          <h3 className="text-base font-semibold leading-snug tracking-[-0.01em] text-foreground transition-colors group-hover:text-muted-foreground">
+          <h3 className="text-heading-xl text-foreground transition-colors group-hover:text-muted-foreground">
             {article.title}
           </h3>
           <NewsMeta article={article} />
@@ -112,7 +112,7 @@ export function NewsCardCarousel({ article }: { article: NewsroomPost }) {
       >
         <NewsImage article={article} className="aspect-square w-full" />
         <div className="mt-3 flex flex-col gap-1.5 md:pe-6">
-          <h3 className="text-base font-semibold leading-snug tracking-[-0.01em] text-foreground transition-colors group-hover:text-muted-foreground">
+          <h3 className="text-heading-xl text-foreground transition-colors group-hover:text-muted-foreground">
             {article.title}
           </h3>
           <NewsMeta article={article} />
@@ -143,5 +143,49 @@ export function NewsCardRow({ article }: { article: NewsroomPost }) {
         </div>
       </Link>
     </ThemedCard>
+  )
+}
+
+export function NewsCardListRow({ article }: { article: NewsroomPost }) {
+  const locale = useCurrentLocale()
+  const date = new Date(article.publishedAt).toLocaleDateString(locale, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+
+  return (
+    <article className="group relative border-b border-border py-8 transition-colors hover:border-muted-foreground">
+      <div className="flex w-full flex-col items-baseline overflow-hidden md:flex-row">
+        <div className="mb-6 w-full text-body-sm md:mb-0 md:flex-[0_0_17.813rem]">
+          {article.categories[0] && (
+            <div className="me-4 inline text-foreground md:mb-4 md:me-0 md:block">
+              {article.categories[0]}
+            </div>
+          )}
+          <time
+            className="me-4 inline whitespace-nowrap text-muted-foreground md:me-0 md:block"
+            dateTime={article.publishedAt}
+          >
+            {date}
+          </time>
+        </div>
+
+        <Link
+          to={`/newsroom/${article.slug}`}
+          aria-label={`${article.title} - ${article.categories[0] ?? ''} - ${date}`}
+          className="w-full max-w-[40.4375rem] flex-auto rounded-sm text-foreground after:absolute after:inset-0 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary md:ps-8"
+        >
+          <h2 className="text-heading-xl transition-colors group-hover:text-muted-foreground">
+            {article.title}
+          </h2>
+          {article.resume && (
+            <p className="mt-3 line-clamp-2 text-body-md text-muted-foreground">
+              {article.resume}
+            </p>
+          )}
+        </Link>
+      </div>
+    </article>
   )
 }

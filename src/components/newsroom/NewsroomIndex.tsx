@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   ArrowDownUp,
   Check,
@@ -12,10 +13,11 @@ import { useNewsroomPosts, usePage, type PageSection } from '../../api/hooks'
 import { newsCategories, type NewsCategory, type NewsroomPost } from '../../data/newsroom'
 import { useTranslation } from '../../lib/i18n'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
-import { NewsCardFeatured, NewsCardGrid, NewsCardRow } from './NewsCard'
+import { NewsCardFeatured, NewsCardGrid, NewsCardListRow } from './NewsCard'
 
 interface NewsroomUI {
   filter: string
+  sort: string
   newest: string
   oldest: string
   loadMore: string
@@ -26,6 +28,7 @@ interface NewsroomUI {
 
 const DEFAULT_UI: NewsroomUI = {
   filter: 'Filter',
+  sort: 'Sort',
   newest: 'Newest',
   oldest: 'Oldest',
   loadMore: 'Load more',
@@ -34,7 +37,7 @@ const DEFAULT_UI: NewsroomUI = {
   clearFilters: 'Clear filters',
 }
 
-const INITIAL_ARTICLE_COUNT = 6
+const INITIAL_ARTICLE_COUNT = 10
 const ARTICLE_COUNT_INCREMENT = 6
 
 type SortOption = 'newest' | 'oldest'
@@ -48,6 +51,7 @@ function parseUI(sections: PageSection[]): NewsroomUI {
   const values = new Map(items.map((item) => [item.key, item.value]))
   return {
     filter: values.get('filter') ?? DEFAULT_UI.filter,
+    sort: values.get('sort') ?? DEFAULT_UI.sort,
     newest: values.get('newest') ?? DEFAULT_UI.newest,
     oldest: values.get('oldest') ?? DEFAULT_UI.oldest,
     loadMore: values.get('loadMore') ?? DEFAULT_UI.loadMore,
@@ -61,22 +65,31 @@ function articleKey(article: NewsroomPost): string {
   return article._id ?? article.slug
 }
 
+function isNewsCategory(value: string | null): value is NewsCategory {
+  return value !== null && newsCategories.includes(value as NewsCategory)
+}
+
 export default function NewsroomIndex() {
   const { t } = useTranslation()
   const { data: pageData } = usePage('newsroom')
   const { data, isPending } = useNewsroomPosts({ limit: 50 })
-  const [activeCategory, setActiveCategory] = useState<NewsCategory>('All')
-  const [activeFilters, setActiveFilters] = useState<NewsCategory[]>([])
-  const [sortBy, setSortBy] = useState<SortOption>('newest')
-  const [view, setView] = useState<ViewOption>('grid')
+  const [searchParams, setSearchParams] = useSearchParams()
   const [openMenu, setOpenMenu] = useState<OpenMenu>(null)
   const [visibleCount, setVisibleCount] = useState(INITIAL_ARTICLE_COUNT)
+  const toolbarRef = useRef<HTMLDivElement>(null)
 
-  const toolbarRef = useCallback((node: HTMLDivElement | null) => {
-    if (!node) return
+  const categoryParam = searchParams.get('category')
+  const activeCategory: NewsCategory = isNewsCategory(categoryParam) ? categoryParam : 'All'
+  const activeFilters = searchParams
+    .getAll('filter')
+    .filter((value): value is NewsCategory => isNewsCategory(value) && value !== 'All')
+  const sortBy: SortOption = searchParams.get('sort') === 'oldest' ? 'oldest' : 'newest'
+  const view: ViewOption = searchParams.get('display') === 'list' ? 'list' : 'grid'
+  const filterKey = activeFilters.join('|')
 
+  useEffect(() => {
     const closeOnOutsideClick = (event: MouseEvent) => {
-      if (!node.contains(event.target as Node)) setOpenMenu(null)
+      if (!toolbarRef.current?.contains(event.target as Node)) setOpenMenu(null)
     }
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpenMenu(null)
@@ -89,6 +102,10 @@ export default function NewsroomIndex() {
       document.removeEventListener('keydown', closeOnEscape)
     }
   }, [])
+
+  useEffect(() => {
+    setVisibleCount(INITIAL_ARTICLE_COUNT)
+  }, [activeCategory, filterKey, sortBy, view])
 
   const posts = data?.posts ?? []
   const ui = parseUI(pageData?.sections ?? [])
@@ -122,11 +139,11 @@ export default function NewsroomIndex() {
         ...sortedArticles.slice(featuredIndex + 1),
       ]
     : sortedArticles
-  const featuredArticle = orderedArticles[0]
-  const railArticles = orderedArticles.slice(1, 4)
-  const remainingArticles = orderedArticles.slice(4)
-  const visibleArticles = remainingArticles.slice(0, visibleCount)
-  const hasMore = visibleCount < remainingArticles.length
+  const visibleArticles = orderedArticles.slice(0, visibleCount)
+  const featuredArticle = visibleArticles[0]
+  const railArticles = visibleArticles.slice(1, 4)
+  const gridArticles = visibleArticles.slice(4)
+  const hasMore = visibleCount < orderedArticles.length
   const filterCategories = availableCategories.filter((category) => category !== 'All')
   const sortLabels: Record<SortOption, string> = {
     newest: ui.newest,
@@ -134,25 +151,44 @@ export default function NewsroomIndex() {
   }
 
   function selectCategory(category: NewsCategory) {
-    setActiveCategory(category)
-    setActiveFilters([])
-    setVisibleCount(INITIAL_ARTICLE_COUNT)
+    const next = new URLSearchParams(searchParams)
+    next.delete('filter')
+    if (category === 'All') next.delete('category')
+    else next.set('category', category)
+    setSearchParams(next)
   }
 
   function toggleFilter(category: NewsCategory) {
-    setActiveCategory('All')
-    setActiveFilters((current) =>
-      current.includes(category)
-        ? current.filter((item) => item !== category)
-        : [...current, category],
-    )
-    setVisibleCount(INITIAL_ARTICLE_COUNT)
+    const next = new URLSearchParams(searchParams)
+    const filters = activeFilters.includes(category)
+      ? activeFilters.filter((item) => item !== category)
+      : [...activeFilters, category]
+    next.delete('category')
+    next.delete('filter')
+    filters.forEach((item) => next.append('filter', item))
+    setSearchParams(next)
   }
 
   function clearFilters() {
-    setActiveCategory('All')
-    setActiveFilters([])
-    setVisibleCount(INITIAL_ARTICLE_COUNT)
+    const next = new URLSearchParams(searchParams)
+    next.delete('category')
+    next.delete('filter')
+    setSearchParams(next)
+  }
+
+  function selectSort(option: SortOption) {
+    const next = new URLSearchParams(searchParams)
+    if (option === 'newest') next.delete('sort')
+    else next.set('sort', option)
+    setSearchParams(next)
+    setOpenMenu(null)
+  }
+
+  function selectView(option: ViewOption) {
+    const next = new URLSearchParams(searchParams)
+    if (option === 'grid') next.delete('display')
+    else next.set('display', option)
+    setSearchParams(next)
   }
 
   return (
@@ -206,6 +242,7 @@ export default function NewsroomIndex() {
                       type="button"
                       aria-controls="newsroom-filter-menu"
                       aria-expanded={openMenu === 'filter'}
+                      aria-haspopup="menu"
                       onClick={() => setOpenMenu((current) => current === 'filter' ? null : 'filter')}
                       className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full px-1 text-sm font-medium text-foreground transition-colors hover:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
@@ -223,27 +260,26 @@ export default function NewsroomIndex() {
                     </button>
 
                     {openMenu === 'filter' && (
-                      <fieldset
+                      <div
                         id="newsroom-filter-menu"
+                        role="menu"
+                        aria-label={ui.filter}
                         className="absolute left-0 top-full z-50 mt-2 w-56 rounded-xl border border-border bg-background p-2 shadow-lg"
                       >
-                        <legend className="sr-only">{ui.filter}</legend>
                         {filterCategories.map((category) => {
                           const checked = activeFilters.includes(category)
                           return (
-                            <label
+                            <button
+                              type="button"
+                              role="menuitemcheckbox"
+                              aria-checked={checked}
                               key={category}
-                              className="flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground"
+                              onClick={() => toggleFilter(category)}
+                              className="flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-left text-body-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary"
                             >
-                              <input
-                                type="checkbox"
-                                checked={checked}
-                                onChange={() => toggleFilter(category)}
-                                className="sr-only"
-                              />
                               <span>{category}</span>
                               {checked && <Check aria-hidden className="size-4 text-foreground" />}
-                            </label>
+                            </button>
                           )
                         })}
                         {activeFilters.length > 0 && (
@@ -255,7 +291,7 @@ export default function NewsroomIndex() {
                             {ui.clearAll}
                           </button>
                         )}
-                      </fieldset>
+                      </div>
                     )}
                   </div>
 
@@ -265,11 +301,12 @@ export default function NewsroomIndex() {
                       aria-controls="newsroom-sort-menu"
                       aria-expanded={openMenu === 'sort'}
                       aria-label={`Sort articles: ${sortLabels[sortBy]}`}
+                      aria-haspopup="menu"
                       onClick={() => setOpenMenu((current) => current === 'sort' ? null : 'sort')}
                       className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full px-1 text-sm font-medium text-foreground transition-colors hover:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
                       <ArrowDownUp aria-hidden className="size-4" />
-                      <span>{sortLabels[sortBy]}</span>
+                      <span>{ui.sort}</span>
                       <ChevronDown
                         aria-hidden
                         className={`size-3.5 transition-transform ${openMenu === 'sort' ? 'rotate-180' : ''}`}
@@ -277,67 +314,54 @@ export default function NewsroomIndex() {
                     </button>
 
                     {openMenu === 'sort' && (
-                      <fieldset
+                      <div
                         id="newsroom-sort-menu"
+                        role="menu"
+                        aria-label={ui.sort}
                         className="absolute right-0 top-full z-50 mt-2 w-44 rounded-xl border border-border bg-background p-2 shadow-lg"
                       >
-                        <legend className="sr-only">Sort articles</legend>
                         {(Object.keys(sortLabels) as SortOption[]).map((option) => (
-                          <label
+                          <button
+                            type="button"
+                            role="menuitemradio"
+                            aria-checked={sortBy === option}
                             key={option}
-                            className="flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground"
+                            onClick={() => selectSort(option)}
+                            className="flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-left text-body-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary"
                           >
-                            <input
-                              type="radio"
-                              name="newsroom-sort"
-                              value={option}
-                              checked={sortBy === option}
-                              onChange={() => {
-                                setSortBy(option)
-                                setVisibleCount(INITIAL_ARTICLE_COUNT)
-                                setOpenMenu(null)
-                              }}
-                              className="sr-only"
-                            />
                             <span>{sortLabels[option]}</span>
                             {sortBy === option && <Check aria-hidden className="size-4 text-foreground" />}
-                          </label>
+                          </button>
                         ))}
-                      </fieldset>
+                      </div>
                     )}
                   </div>
                 </div>
 
-                <fieldset className="flex items-center rounded-full bg-surface p-1">
-                  <legend className="sr-only">Article view</legend>
+                <div role="group" aria-label="Article view" className="flex items-center gap-1">
                   {([
                     { value: 'grid', label: 'Grid view', icon: LayoutGrid },
                     { value: 'list', label: 'List view', icon: List },
                   ] as const).map((option) => {
                     const Icon = option.icon
                     return (
-                      <label
+                      <button
+                        type="button"
+                        aria-label={option.label}
+                        aria-pressed={view === option.value}
                         key={option.value}
-                        className={`flex size-8 cursor-pointer items-center justify-center rounded-full transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary ${
+                        onClick={() => selectView(option.value)}
+                        className={`flex size-8 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                           view === option.value
-                            ? 'bg-background text-foreground shadow-sm'
+                            ? 'text-foreground'
                             : 'text-muted-foreground hover:text-foreground'
                         }`}
                       >
-                        <input
-                          type="radio"
-                          name="newsroom-view"
-                          value={option.value}
-                          checked={view === option.value}
-                          onChange={() => setView(option.value)}
-                          className="sr-only"
-                        />
-                        <span className="sr-only">{option.label}</span>
                         <Icon aria-hidden className="size-4" />
-                      </label>
+                      </button>
                     )
                   })}
-                </fieldset>
+                </div>
               </div>
             </div>
 
@@ -375,33 +399,35 @@ export default function NewsroomIndex() {
               </div>
             ) : featuredArticle ? (
               <>
-                <div className="mt-12 grid w-full grid-cols-1 gap-6 @lg:grid-cols-4">
-                  <div className="self-start @lg:sticky @lg:top-[calc(var(--site-header-occlusion-bottom)+1rem)] @lg:col-span-3">
-                    <NewsCardFeatured article={featuredArticle} />
-                  </div>
+                {view === 'grid' ? (
+                  <>
+                    <div className="mt-12 grid w-full grid-cols-1 gap-6 @lg:grid-cols-4">
+                      <div className="self-start @lg:sticky @lg:top-[calc(var(--site-header-occlusion-bottom)+1rem)] @lg:col-span-3">
+                        <NewsCardFeatured article={featuredArticle} />
+                      </div>
 
-                  <aside aria-label={t('newsroom.featuredHeading')} className="grid grid-cols-2 gap-x-4 gap-y-10 @sm:grid-cols-3 @lg:grid-cols-1 @lg:gap-x-0 @lg:gap-y-12">
-                    {railArticles.map((article) => (
-                      <NewsCardGrid key={articleKey(article)} article={article} />
+                      <aside aria-label={t('newsroom.featuredHeading')} className="grid grid-cols-2 gap-x-4 gap-y-10 @sm:grid-cols-3 @lg:grid-cols-1 @lg:gap-x-0 @lg:gap-y-12">
+                        {railArticles.map((article) => (
+                          <NewsCardGrid key={articleKey(article)} article={article} />
+                        ))}
+                      </aside>
+                    </div>
+
+                    {gridArticles.length > 0 && (
+                      <div className="mt-20 grid grid-cols-1 gap-x-6 gap-y-20 @sm:grid-cols-2 @md:grid-cols-3">
+                        {gridArticles.map((article) => (
+                          <NewsCardGrid key={articleKey(article)} article={article} />
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="mt-8 grid w-full grid-cols-1">
+                    {visibleArticles.map((article) => (
+                      <NewsCardListRow key={articleKey(article)} article={article} />
                     ))}
-                  </aside>
-                </div>
-
-                <div
-                  className={
-                    view === 'grid'
-                      ? 'mt-20 grid grid-cols-1 gap-x-6 gap-y-20 @sm:grid-cols-2 @md:grid-cols-3'
-                      : 'mt-20 grid grid-cols-1 gap-y-10'
-                  }
-                >
-                  {visibleArticles.map((article) =>
-                    view === 'grid' ? (
-                      <NewsCardGrid key={articleKey(article)} article={article} />
-                    ) : (
-                      <NewsCardRow key={articleKey(article)} article={article} />
-                    ),
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {hasMore && (
                   <div className="flex justify-center pt-20">

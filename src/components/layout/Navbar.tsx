@@ -65,13 +65,16 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
   const wideMenu = Boolean(dropdown.sidePanel && (featureGrid || dropdown.card))
   const sectionMenu = Boolean(dropdown.sidePanel && !featureGrid && !dropdown.card)
   const sectionContent = (dropdown.sections ?? []).map((section) => (
-    <div key={section.heading} className="flex min-w-0 flex-col gap-space-md">
+    <div
+      key={section.heading}
+      className={`flex min-w-0 flex-col gap-space-md ${sectionMenu && section.heading === 'Apps' ? 'col-span-2' : ''}`}
+    >
       {section.heading ? (
         <p className="block px-space-sm pb-space-2xs text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
           {section.heading}
         </p>
       ) : null}
-      <ul className="grid items-start gap-1">
+      <ul className={`grid items-start gap-1 ${sectionMenu && section.heading === 'Apps' ? 'grid-cols-2 gap-x-space-lg' : ''}`}>
         {section.items.map((item) => (
           <li key={item.href} className="contents">
             <NavDropdownItem item={item} />
@@ -85,7 +88,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
       // The panel starts a clear step below the row, so the first heading does not
       // sit against the trigger that opened it.
       className={`grid w-full auto-rows-min items-start gap-space-lg pt-space-xl pb-space-2xl ${
-        wideMenu ? 'grid-cols-5' : sectionMenu ? 'grid-cols-4' : 'grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]'
+        wideMenu ? 'grid-cols-5' : sectionMenu ? 'grid-cols-5' : 'grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]'
       }`}
     >
       {wideMenu && !featureGrid ? (
@@ -93,7 +96,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
           {sectionContent}
         </div>
       ) : sectionMenu ? (
-        <div className="col-span-3 grid min-w-0 grid-cols-3 items-start gap-space-lg">
+        <div className="col-span-4 grid min-w-0 grid-cols-4 items-start gap-space-lg">
           {sectionContent}
         </div>
       ) : (
