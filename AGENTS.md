@@ -14,6 +14,7 @@ bun run dev / build / server / mcp / sync-docs / sync-changelog
 
 - **`tsc --noEmit` is NOT the check this project builds with.** `bun run build` runs `tsc -b`, which builds the referenced projects and sees errors the flat check does not (a locale missing a key, an unused declaration). The frontend build failed on `main` for four commits while `tsc --noEmit` passed locally every time. Run `bunx tsc -b`, or the whole build, before pushing.
 - **Adding a key to `src/lib/i18n/locales/` means adding it to all eleven.** The locale type requires every key, so three locales is a build failure, not a fallback. Translate it — a placeholder is read by whoever opens the thing.
+- **Public `/developers/docs/**` special routes keep `PageShell` around their docs layout.** `DocsShell`/`DocsSubNav` are inner chrome, never replacements for the global header and footer.
 - **The MCP auth token is a request HEADER only**, never a query-string parameter.
 - **Do not add local auth middleware** — `@oxyhq/core/server` for every new protected route.
 - **Validate deploy-time configuration BEFORE `app.listen()`, never inside `connectWithRetry`.** Anything thrown in that loop is caught and reported as a database problem, the migrations re-run, and every retry stacks another sync interval.

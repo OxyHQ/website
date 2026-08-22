@@ -95,6 +95,16 @@ export interface ResourceCard {
 export const resourcesHeading = 'Keep building'
 export const resources: ResourceCard[] = [
   {
+    title: 'Bloom color system',
+    description: 'Compare every dynamic color combination in light and dark product interfaces.',
+    href: '/developers/docs/bloom/color-system',
+  },
+  {
+    title: 'Bloom component playground',
+    description: 'Try live component props and inspect the generated code.',
+    href: '/developers/docs/bloom/playground',
+  },
+  {
     title: 'Changelog',
     description: 'New releases, breaking changes, and migration notes.',
     href: '/changelog',

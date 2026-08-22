@@ -12,6 +12,7 @@ export default function DocsIntroPage() {
         canonicalPath: '/developers/docs',
       }}
       mainClassName="flex-1 bg-background text-muted-foreground"
+      mainAsDiv
     >
       <DocsIntroContent />
     </PageShell>

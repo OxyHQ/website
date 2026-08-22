@@ -10,6 +10,7 @@ import {
   type PlaygroundValues,
 } from '../../content/bloom-demos/_playground'
 import { getPackage, resolveVersion } from '../../content/docs-loader'
+import PageShell from '../layout/PageShell'
 import { DocsShell } from './DocsShell'
 import { buildSidebar } from './DocsPackageSidebar'
 
@@ -47,34 +48,46 @@ export default function BloomPlayground() {
   )
 
   return (
-    <DocsShell
-      sections={sections}
-      eyebrow="Bloom"
-      title="Playground"
-      subtitle="Pick a component and tweak its props to see the live preview update."
-      pkg={pkg ?? undefined}
-      currentVersion={versionString}
-      slug="playground"
-      activePkg={pkg ?? undefined}
+    <PageShell
+      className="docs-theme bg-background"
+      seo={{
+        title: 'Bloom component playground',
+        description: 'Try Bloom components with live props, previews and generated code.',
+        canonicalPath: '/developers/docs/bloom/playground',
+      }}
+      mainClassName="flex-1 bg-background text-muted-foreground"
+      mainAsDiv
     >
-      <div className="not-prose flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Component
-          </span>
-          <DemoPicker
-            value={selected}
-            options={demoOptions}
-            onChange={(next) => setSelected(next)}
-          />
+      <DocsShell
+        sections={sections}
+        eyebrow="Bloom"
+        title="Playground"
+        subtitle="Pick a component and tweak its props to see the live preview update."
+        pkg={pkg ?? undefined}
+        currentVersion={versionString}
+        slug="playground"
+        activePkg={pkg ?? undefined}
+        versionAgnostic
+      >
+        <div className="not-prose flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Component
+            </span>
+            <DemoPicker
+              value={selected}
+              options={demoOptions}
+              onChange={(next) => setSelected(next)}
+            />
+          </div>
+          {activeDemo ? (
+            <PlaygroundBody demo={activeDemo} />
+          ) : (
+            <EmptyState />
+          )}
         </div>
-        {activeDemo ? (
-          <PlaygroundBody demo={activeDemo} />
-        ) : (
-          <EmptyState />
-        )}
-      </div>
-    </DocsShell>
+      </DocsShell>
+    </PageShell>
   )
 }
 
