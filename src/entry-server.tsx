@@ -7,7 +7,7 @@
  *     every meta tag the site ships) and returns a `<head>` fragment.
  *   - `renderMarkdownBody(markdown)` renders a page's prose with the same
  *     article components the browser uses, for the routes whose content IS
- *     markdown — newsroom posts and the synced documentation.
+ *     markdown — newsroom posts, long-form company documents and synced docs.
  *
  * Why this entry does not mount whole pages
  * -----------------------------------------

@@ -10,14 +10,20 @@ export default function ArticleListenControl({
   resume,
   content,
   locale,
+  contentRootId,
+  durationLabel,
 }: {
   title: string
   resume: string
   content: string
   locale: string
+  /** Read rendered prose when the source itself is supplied as an MDX module. */
+  contentRootId?: string
+  /** Optional editorial duration used before rendered prose can be measured. */
+  durationLabel?: string
 }) {
   const text = useMemo(() => articleSpeechText(title, resume, content), [content, resume, title])
-  const duration = useMemo(() => estimatedSpeechDuration(text), [text])
+  const duration = useMemo(() => durationLabel ?? estimatedSpeechDuration(text), [durationLabel, text])
   const supported = typeof window !== 'undefined'
     && 'speechSynthesis' in window
     && 'SpeechSynthesisUtterance' in window
@@ -45,7 +51,16 @@ export default function ArticleListenControl({
     }
 
     window.speechSynthesis.cancel()
-    const utterance = new SpeechSynthesisUtterance(text)
+    let speechText = text
+    if (contentRootId) {
+      const articleBody = document.getElementById(contentRootId)
+      if (articleBody) {
+        const readableBody = articleBody.cloneNode(true) as HTMLElement
+        readableBody.querySelectorAll('nav, [data-toc-skip]').forEach((element) => element.remove())
+        speechText = articleSpeechText(title, resume, readableBody.textContent ?? '')
+      }
+    }
+    const utterance = new SpeechSynthesisUtterance(speechText)
     utterance.lang = locale
     utterance.onend = () => setState('idle')
     utterance.onerror = () => setState('idle')

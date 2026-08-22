@@ -65,6 +65,7 @@ const SYNCED_INDEX = path.join(WEBSITE_ROOT, 'src', 'content', '_synced', 'index
 const SYNCED_DIR = path.join(WEBSITE_ROOT, 'src', 'content', '_synced')
 const HELP_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'help')
 const ACADEMY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'academy')
+const COMPANY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'company')
 /**
  * Backend origin for the CMS-driven content baked into the prerendered HTML.
  * Reads the same `VITE_API_URL` the SPA does (`src/api/client.ts`) so a staging
@@ -831,6 +832,57 @@ async function enumerateDocsRoutes(): Promise<RouteEntry[]> {
   return Array.from(out.values())
 }
 
+/**
+ * The browser compiles these files as MDX and replaces the article components
+ * with their interactive equivalents. The no-JavaScript document only needs
+ * the surrounding prose: omit self-contained visual blocks, remove citation
+ * markers, and keep the markdown inside the Takeaways wrapper.
+ */
+function companyMdxToPrerenderMarkdown(source: string): string {
+  return stripFrontmatter(source)
+    .replace(/<ArticleCitation\b[^>]*>[\s\S]*?<\/ArticleCitation>/g, '')
+    .replace(/<Article[A-Z][A-Za-z0-9]*\b[\s\S]*?\/>/g, '')
+    .replace(/<\/?Takeaways>/g, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
+/** Long-form company documents whose source of truth is local MDX. */
+async function enumerateCompanyArticleRoutes(): Promise<RouteEntry[]> {
+  const slugs = ['manifesto', 'charter', 'transparency', 'business'] as const
+  const routes: RouteEntry[] = []
+
+  for (const slug of slugs) {
+    const url = `/company/${slug}`
+    const fallbackSeo = STATIC_ROUTE_SEO[url]
+    const file = path.join(COMPANY_DIR, `${slug}.mdx`)
+    if (!fallbackSeo || !existsSync(file)) continue
+
+    const source = await readFile(file, 'utf8')
+    const frontmatter = parseFrontmatter(source)
+    const title = typeof frontmatter.title === 'string' ? frontmatter.title : fallbackSeo.title
+    const description = typeof frontmatter.description === 'string'
+      ? frontmatter.description
+      : fallbackSeo.description
+    const date = typeof frontmatter.date === 'string' ? frontmatter.date : undefined
+    const readingTime = typeof frontmatter.readingTime === 'string' ? frontmatter.readingTime : undefined
+    const ogImage = typeof frontmatter.ogImage === 'string' ? frontmatter.ogImage : fallbackSeo.ogImage
+
+    routes.push({
+      url,
+      seo: { ...fallbackSeo, title, description, ogImage },
+      body: {
+        heading: title,
+        meta: [date, readingTime].filter(Boolean).join(' · ') || undefined,
+        standfirst: description,
+        markdown: companyMdxToPrerenderMarkdown(source),
+      },
+    })
+  }
+
+  return routes
+}
+
 async function enumerateHelpRoutes(): Promise<Array<{ url: string; seo: SEOProps }>> {
   const entries = await walkMdxEntries(HELP_DIR)
   const helpOgRoot = path.join(WEBSITE_ROOT, 'public', 'images', 'help-og')
@@ -1089,13 +1141,14 @@ async function enumerateAllRoutes(): Promise<RouteEntry[]> {
     result.set(url, { url, seo })
   }
 
-  const [news, jobs, apps, features, helpRoutes, academyRoutes, docsRoutes] = await Promise.all([
+  const [news, jobs, apps, features, helpRoutes, academyRoutes, companyRoutes, docsRoutes] = await Promise.all([
     fetchNewsroomPosts(),
     fetchJobs(),
     fetchProducts(),
     fetchFeatureRequests(),
     enumerateHelpRoutes(),
     enumerateAcademyRoutes(),
+    enumerateCompanyArticleRoutes(),
     enumerateDocsRoutes(),
   ])
 
@@ -1105,6 +1158,7 @@ async function enumerateAllRoutes(): Promise<RouteEntry[]> {
   for (const { url, seo } of buildFeatureRoutes(features)) result.set(url, { url, seo })
   for (const { url, seo } of helpRoutes) result.set(url, { url, seo })
   for (const { url, seo } of academyRoutes) result.set(url, { url, seo })
+  for (const entry of companyRoutes) result.set(entry.url, entry)
   for (const entry of docsRoutes) result.set(entry.url, entry)
 
   return Array.from(result.values())
@@ -1278,10 +1332,10 @@ function pathToFile(routePath: string): string {
 /**
  * The prose a route can put in the document it serves.
  *
- * Only the two families whose content IS markdown carry one — newsroom posts
- * and the synced documentation. A marketing page is built from components, so
- * there is no honest text to emit for it and it keeps the empty shell rather
- * than gaining a heading that repeats its own `<title>`.
+ * Only routes whose content IS prose carry one — newsroom posts, long-form
+ * company documents and synced documentation. A marketing page is built from
+ * components, so there is no honest text to emit for it and it keeps the empty
+ * shell rather than gaining a heading that repeats its own `<title>`.
  */
 interface PageBody {
   /** The page's own H1. */

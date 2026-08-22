@@ -2,7 +2,7 @@
 title: 'The Oxy Manifesto: Alternatives, Not Slogans'
 description: Why we build the way we do, what we refuse to trade away, and how to hold us to it. The short version of the Oxy Founding Charter.
 eyebrow: The Oxy Manifesto
-ogImage: /og/manifesto.jpg
+ogImage: /images/landing/commons-night.webp
 date: August 2026
 readingTime: 9 minute read
 ---
@@ -26,7 +26,16 @@ Most of what is wrong with modern software is not a bug. It is a business model 
 
 Oxy is an attempt to prove the other path is real. Not a manifesto about ethics attached to an ordinary company, but products whose architecture makes the promises checkable: identity you hold on your own device, source anyone can read, open protocols that let you leave, and a revenue model with no reason to keep you scrolling.
 
-This page is the short version. It says what we believe and what we refuse. The [Founding Charter](/company/charter) is the long one: what Oxy is trying to become, what it must protect while it grows, and what should be hardest to change.
+This page is the short version. It says what we believe and what we refuse. The [Founding Charter](/company/charter) is the long one: what Oxy is trying to become, what it must protect while it grows, and what should be hardest to change.<ArticleCitation id="charter-status">1</ArticleCitation>
+
+<ArticleMedia
+  type="image"
+  src="/images/landing/commons-night.webp"
+  alt="Homes at night connected by beams carrying the Oxy and Commons symbols."
+  caption="One institution, many doors: shared public-interest infrastructure should connect communities without enclosing them."
+  width="wide"
+  aspect="video"
+/>
 
 ## 1. It started as a refusal
 
@@ -35,6 +44,14 @@ At twelve years old, Nate Isern Álvarez looked at what had become normal online
 The project kept growing because the original problem was never isolated. The same pattern showed up in housing, in music, in commerce, in public conversation, in the tools people use to work: technology treating people as inventory, markets rewarding extraction, and platforms concentrating power in the hands of whoever owns the servers. Oxy stopped being one app and became a response to the pattern.
 
 We have a company because servers, contracts, employment and responsibility require one. The corporate form is the instrument, not the point.
+
+<ArticleCallout
+  eyebrow="The refusal"
+  title="The corporate form is the instrument, not the point."
+  body="Oxy uses a company to carry responsibility, employ people and operate infrastructure. The mission remains the standard against which that instrument is judged."
+  tone="tertiary"
+  width="prose"
+/>
 
 ## 2. The pattern, stated plainly
 
@@ -53,6 +70,22 @@ Lock in is rarely announced. It accumulates: an identity that exists only inside
 ### 2.4 Why the usual corrections do not reach it
 
 Regulation sets a floor, and the floor matters, but it mostly governs disclosure rather than architecture: the same collection continues, now with a banner in front of it. Privacy features inside an extractive product are real and bounded, because the boundary is always drawn where it would start costing revenue. And moving to a smaller company helps right up until that company needs to grow and rediscovers why the incumbents behave the way they do. What is left is the part all three route around: who holds the keys, who can read the code, and where the money comes from.
+
+<ArticleComparison
+  eyebrow="Two architectures"
+  title="The incentives change when the person is no longer the inventory."
+  panels={[
+    {
+      label: 'Extractive platform',
+      content: '**Attention is the inventory.** Identity, history and relationships stay inside one operator, while revenue rewards more collection and more time on screen.',
+    },
+    {
+      label: 'The Oxy alternative',
+      content: '**The service is the product.** Identity is portable, the source is inspectable, protocols remain open and payment is connected to visible value or cost.',
+    },
+  ]}
+  width="wide"
+/>
 
 ## 3. What we are building instead
 
@@ -80,6 +113,28 @@ Where an open protocol exists, we speak it. Someone on a different server, runni
 
 By conventional measures that is worse for us. It caps network effects, complicates moderation and hands part of the experience to operators we do not control. We do it because the alternative is the exact structure that makes every later abuse possible. If leaving is cheap, we have to keep earning the stay.
 
+<ArticleTabs
+  label="How the alternative works"
+  tabs={[
+    {
+      id: 'identity',
+      label: 'Identity',
+      content: '**You hold the proof.** Authentication should prove possession of your identity without requiring Oxy to impersonate or permanently contain it.',
+    },
+    {
+      id: 'open-source',
+      label: 'Open source',
+      content: '**Claims become checkable.** Source, APIs, protocols and infrastructure are open wherever privacy, security and law allow.',
+    },
+    {
+      id: 'federation',
+      label: 'Federation',
+      content: '**Leaving stays possible.** Compatible services and first-class participation across servers keep loyalty voluntary.',
+    },
+  ]}
+  width="wide"
+/>
+
 ## 4. What is not for sale
 
 Some decisions can change as technology, culture and law change. These cannot, and they are written down so that breaking them is visible.
@@ -93,6 +148,18 @@ Some decisions can change as technology, culture and law change. These cannot, a
 - **Freedom to connect and to leave.** Open protocols, interoperability and portability, so nothing about your identity, relationships or history traps you.
 - **Power with limits.** Nobody holds unreviewable authority over the rights, speech, identity or livelihood of others here. Not the founder, not investors, not employees, not automated systems.
 
+<ArticleStats
+  eyebrow="Non-negotiable"
+  title="The commitments are concrete enough to audit."
+  items={[
+    { value: '8', label: 'commitments that are not for sale' },
+    { value: '0', label: 'personal data sales or surveillance ads' },
+    { value: '1', label: 'portable identity across the ecosystem' },
+    { value: 'Every', label: 'person protected by the same basic dignity' },
+  ]}
+  width="wide"
+/>
+
 ## 5. Money, without making you the product
 
 A mission that cannot pay for infrastructure, security, maintenance and people ends up dependent on someone whose interests are not yours. So Oxy earns money on purpose: premium plans, managed hosting, support and professional tools, institutional plans, clearly disclosed fees, ethical commerce, licensing consistent with our open source commitments, grants and research partnerships.
@@ -100,6 +167,17 @@ A mission that cannot pay for infrastructure, security, maintenance and people e
 The test is never whether money changes hands. It is whether the exchange is clear, voluntary, proportionate and connected to real value or real cost. We do not create an obstacle and then charge you to remove it, and we do not turn safety, privacy or ordinary respect into premium features.
 
 Capital is welcome on the same terms. It may buy an economic interest. It may not buy the right to require advertising, the sale of personal data, manipulative growth or the removal of open source commitments. Money may sustain the mission. It may not own it.
+
+<ArticleTable
+  caption="A revenue model is acceptable when the exchange stays clear and connected to real value."
+  columns={['Can sustain the mission', 'Cannot become the price']}
+  rows={[
+    ['Premium capacity, hosting and professional tools', 'Privacy, safety or ordinary respect'],
+    ['Institutional plans, disclosed fees and ethical commerce', 'Access obtained through manufactured dependency'],
+    ['Grants, research partnerships and aligned capital', 'Authority to rewrite the mission'],
+  ]}
+  width="wide"
+/>
 
 ## 6. Built for fallible people
 
@@ -116,6 +194,39 @@ CrowdSource is our first serious attempt at that shape: reports become cases, ev
 Read the source. Watch the requests. Export everything and go somewhere else, then come back if we earn it. Tell us publicly when a product contradicts something on this page, and name the decision rather than the vibe.
 
 We will get things wrong. Some of this will look naive in five years, and some of it we will fail under pressure we have not met yet. The useful response is specific and public, which is why the commitments above are written as refusals: a principle only becomes credible when violating it is difficult, visible and costly.
+
+<ArticleTestimonialCarousel
+  label="Manifesto commitments"
+  items={[
+    {
+      quote: 'Loyalty that depends on the cost of leaving is not loyalty.',
+      name: 'Freedom to leave',
+      role: 'Oxy Manifesto',
+    },
+    {
+      quote: 'Money may sustain the mission. It may not own it.',
+      name: 'Mission-protecting finance',
+      role: 'Oxy Manifesto',
+    },
+    {
+      quote: 'Good intentions are not a governance system.',
+      name: 'Power with limits',
+      role: 'Oxy Manifesto',
+    },
+  ]}
+  width="wide"
+/>
+
+<ArticleFootnotes
+  title="Notes"
+  items={[
+    {
+      id: 'charter-status',
+      text: 'The Founding Charter is a founding draft and moral constitution for the work ahead; it is not presented as a complete technical specification or corporate bylaw.',
+    },
+  ]}
+  width="prose"
+/>
 
 ## Our pledge
 
