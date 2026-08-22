@@ -212,37 +212,15 @@ server.tool('get_navigation', 'Get all navigation dropdowns', {}, async () => {
 
 // ── Footer ──────────────────────────────────────────────────────────────────
 
-server.tool('get_footer', 'Get footer content', {}, async () => {
+server.tool('get_footer', 'Get the legacy footer snapshot', {}, async () => {
   try {
     const [footer] = await db.select().from(footers).limit(1)
     return ok(footer ?? { columns: [], socialLinks: [], copyright: '' })
   } catch (e) { return err(e) }
 })
 
-const footerLinkSchema = z.object({
-  label: z.string(),
-  href: z.string(),
-  isNewBadge: z.boolean().optional(),
-  isExternal: z.boolean().optional(),
-})
-const footerColumnSchema = z.object({ title: z.string(), links: z.array(footerLinkSchema) })
-const socialLinkSchema = z.object({ label: z.string(), icon: z.string(), href: z.string() })
-
-server.tool('update_footer', 'Update footer content', {
-  columns: z.array(footerColumnSchema).optional(),
-  socialLinks: z.array(socialLinkSchema).optional(),
-  copyright: z.string().optional(),
-}, async (params) => {
-  try {
-    // Only the fields that were sent, exactly as before: an omitted column
-    // list must not blank the footer.
-    const update: Record<string, unknown> = {}
-    if (params.columns !== undefined) update.columns = params.columns
-    if (params.socialLinks !== undefined) update.socialLinks = params.socialLinks
-    if (params.copyright !== undefined) update.copyright = params.copyright
-    return ok(await upsertSingleton(footers, update))
-  } catch (e) { return err(e) }
-})
+// The live footer is code-owned. The legacy read-only snapshot remains useful
+// for audit and recovery, but there is intentionally no update tool.
 
 // ── Hero ────────────────────────────────────────────────────────────────────
 

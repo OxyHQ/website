@@ -19,7 +19,6 @@ import {
 } from '../ui/shadcn/sidebar'
 import {
   Settings,
-  LayoutTemplate,
   FileText,
   Package,
   FolderTree,
@@ -56,7 +55,6 @@ interface AdminSection {
 const sections: AdminSection[] = [
   { id: 'settings', label: 'Site Settings', icon: <Settings className="size-4" />, group: 'Configuration' },
   { id: 'seo', label: 'SEO', icon: <Search className="size-4" />, group: 'Configuration' },
-  { id: 'footer', label: 'Footer', icon: <LayoutTemplate className="size-4" />, group: 'Configuration' },
   { id: 'hero', label: 'Hero', icon: <Sparkles className="size-4" />, group: 'Content' },
   { id: 'pages', label: 'Pages', icon: <FileText className="size-4" />, group: 'Content' },
   { id: 'products', label: 'Products', icon: <Package className="size-4" />, group: 'Content' },

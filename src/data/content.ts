@@ -248,7 +248,7 @@ export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: st
   { title: 'Pay', description: 'Simple payments across Oxy', href: '/pay', section: 'Finance' },
   { title: 'FairCoin', description: 'Ethical Digital Currency', href: 'https://fairco.in', image: '/images/apps/faircoin.svg', logoColor: '#204700', preserveImageColors: true, section: 'Finance' },
   { title: 'FAIRWallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', image: '/images/apps/faircoin-wallet.svg', logoColor: '#0c6600', preserveImageColors: true, section: 'Finance' },
-  { title: 'Mercaria', description: 'An open marketplace for people and goods', href: '/marketplace', image: '/images/apps/mercaria.svg', logoColor: '#ed4040', section: 'Commerce' },
+  { title: 'Mercaria', description: 'An open marketplace for people and goods', href: '/mercaria', image: '/images/apps/mercaria.svg', logoColor: '#ed4040', section: 'Commerce' },
   { title: 'Wholesale by Mercaria', description: 'Manage products, suppliers and wholesale sales', href: 'https://dashboard.mercaria.co', image: '/images/apps/wholesale.svg', preserveImageColors: true, section: 'Commerce' },
   { title: 'Homiio', description: 'Rental made easy', href: '/homiio', section: 'Housing' },
   { title: 'Moovo', description: 'Mobility and urban transport', href: '/moovo', section: 'Mobility' },
@@ -429,6 +429,76 @@ export interface FooterColumn {
   title: string
   links: FooterLink[]
 }
+
+/**
+ * The public footer is part of the website shell, so its structure is owned
+ * by the source code rather than by the CMS. Keep the legacy-compatible shape
+ * so product-specific footer variants can still override these columns.
+ */
+export const defaultFooterColumns: FooterColumn[] = [
+  {
+    title: 'Platform',
+    links: [
+      { label: 'Commons', href: '/commons' },
+      { label: 'Oxy AI', href: '/ai' },
+      { label: 'Bloom UI', href: '/developers/docs/bloom/playground' },
+      { label: 'All apps', href: '/apps' },
+      { label: 'Changelog', href: '/changelog' },
+      { label: 'Status', href: '/status' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'About us', href: '/company' },
+      { label: 'How Our Business Works', href: '/company/business' },
+      { label: 'Careers', href: '/company/careers' },
+      { label: 'Transparency Center', href: '/company/transparency' },
+      { label: 'Manifesto', href: '/company/manifesto' },
+      { label: 'Founding Charter', href: '/company/charter' },
+      { label: 'The Initiative', href: '/initiative' },
+      { label: 'Partner programs', href: '/partners' },
+    ],
+  },
+  {
+    title: 'Community',
+    links: [
+      { label: 'Newsroom', href: '/newsroom' },
+      { label: 'Engineering blog', href: '/company/news' },
+      { label: 'Feature board', href: '/features' },
+      { label: 'Help center', href: '/help' },
+    ],
+  },
+  {
+    title: 'Developers',
+    links: [
+      { label: 'Documentation', href: '/developers/docs' },
+      { label: 'API reference', href: '/developers/docs/api' },
+      { label: 'Academy', href: '/academy' },
+      { label: 'Bloom playground', href: '/developers/docs/bloom/playground' },
+      { label: 'Open source', href: 'https://github.com/OxyHQ', isExternal: true },
+    ],
+  },
+  {
+    title: 'Apps',
+    links: [
+      { label: 'OxyOS', href: '/os' },
+      { label: 'Mention', href: '/mention' },
+      { label: 'Inbox', href: '/inbox' },
+      { label: 'Noted', href: 'https://noted.oxy.so', isExternal: true },
+      { label: 'Alia', href: 'https://alia.onl/', isExternal: true },
+      { label: 'Astro', href: '/astro' },
+      { label: 'Allo', href: 'https://allo.oxy.so/', isExternal: true },
+      { label: 'FairCoin', href: 'https://fairco.in', isExternal: true },
+      { label: 'FAIRWallet', href: 'https://fairco.in/wallet', isExternal: true },
+      { label: 'Marketplace', href: '/mercaria' },
+      { label: 'Wholesale by Mercaria', href: 'https://dashboard.mercaria.co', isExternal: true },
+      { label: 'Homiio', href: '/homiio' },
+      { label: 'TNP', href: '/tnp' },
+      { label: 'Oxy Pay', href: '/pay' },
+    ],
+  },
+]
 
 export const simpleNavLinks: NavItem[] = [
   { label: 'Newsroom', href: '/newsroom' },

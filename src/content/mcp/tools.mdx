@@ -70,7 +70,7 @@ backups, but it cannot be replaced through the MCP server.
 
 ## Footer
 
-Mongo collection: `footers`. Singleton.
+Mongo collection: `footers`. Singleton legacy snapshot.
 
 ### `get_footer`
 
@@ -79,17 +79,8 @@ input: {}
 output: { columns, socialLinks, copyright } | { columns: [], socialLinks: [], copyright: '' }
 ```
 
-### `update_footer`
-
-Patches the singleton. Only provided fields are changed.
-
-```ts
-input: {
-  columns?: Array<{ title, links: Array<{ label, href, isNewBadge?, isExternal? }> }>
-  socialLinks?: Array<{ label, icon, href }>
-  copyright?: string
-}
-```
+The live footer is defined in the website source code and is not editable
+through the CMS or MCP. This read-only snapshot remains available for audit.
 
 ## Hero
 

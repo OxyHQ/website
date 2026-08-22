@@ -68,7 +68,7 @@ Or, when you only need to backfill cover images on posts that already exist:
 
 A nightly cron (configured in `services/githubSync.startSyncInterval`) runs `sync_all_repos` automatically — these manual triggers are for hot fixes and new-repo onboarding.
 
-## Translate the navbar and footer into Catalan
+## Translate the navbar into Catalan
 
 **Goal:** add a new locale and translate every navigation surface.
 
@@ -80,15 +80,15 @@ A nightly cron (configured in `services/githubSync.startSyncInterval`) runs `syn
 
 2. **Fetch the source content.**
 
-   > Get the navigation, the footer, and the hero, and print their JSON so I can translate it.
+   > Get the navigation and the hero, and print their JSON so I can translate it.
 
-   Calls `get_navigation`, `get_footer`, `get_hero` in sequence.
+   Calls `get_navigation` and `get_hero` in sequence.
 
 3. **Upsert translations.**
 
    > For navigation document &lt;ID&gt;, set the Catalan translation to `{ items, sidePanel }` with every label translated.
 
-   Calls `upsert_translation` with `collection: 'navigation'`, the document `_id`, `locale: 'ca-ES'`, and the translated `fields` map. Repeat for `footer` and `hero`.
+   Calls `upsert_translation` with `collection: 'navigation'`, the document `_id`, `locale: 'ca-ES'`, and the translated `fields` map. Repeat for `hero`.
 
 4. **Verify.**
 

@@ -1,14 +1,18 @@
 import { ArrowUpRight } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
 import { useRef } from 'react'
+import type { ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import type SwiperType from 'swiper'
 import { useTranslation } from '../../lib/i18n'
 
 export interface PhotoCard {
-  image: string
+  image?: string
+  visual?: ReactNode
   title: string
   description: string
+  link?: { label: string; href: string; external?: boolean }
 }
 
 interface PhotoCardCarouselProps {
@@ -16,6 +20,7 @@ interface PhotoCardCarouselProps {
   description?: string
   cards: readonly PhotoCard[]
   variant?: 'portrait' | 'square'
+  id?: string
 }
 
 const REVEAL = {
@@ -25,12 +30,12 @@ const REVEAL = {
   transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
 }
 
-export default function PhotoCardCarousel({ title, description, cards, variant = 'portrait' }: PhotoCardCarouselProps) {
+export default function PhotoCardCarousel({ title, description, cards, variant = 'portrait', id }: PhotoCardCarouselProps) {
   const { t } = useTranslation()
   const swiperRef = useRef<SwiperType | null>(null)
 
   return (
-    <section className="container">
+    <section id={id} className="container">
       <div className="grid grid-cols-12 gap-6">
         <motion.div className="col-span-full py-16 max-[950px]:py-10" {...REVEAL}>
           <div className="mb-8 flex items-end justify-between gap-6">
@@ -74,19 +79,48 @@ export default function PhotoCardCarousel({ title, description, cards, variant =
               <SwiperSlide key={card.title} style={{ height: 'auto' }}>
                 <article className="flex h-full flex-col">
                   <div className={`${variant === 'square' ? 'aspect-square' : 'aspect-[4/5]'} overflow-hidden rounded-3xl`}>
-                    <img
-                      src={card.image}
-                      alt=""
-                      aria-hidden="true"
-                      className="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
-                      width={800}
-                      height={1000}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                    {card.image ? (
+                      <img
+                        src={card.image}
+                        alt=""
+                        aria-hidden="true"
+                        className="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
+                        width={800}
+                        height={1000}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-surface text-primary transition-transform duration-500 hover:scale-[1.03]">
+                        {card.visual}
+                      </div>
+                    )}
                   </div>
                   <h3 className="mt-5 text-xl font-semibold tracking-tight">{card.title}</h3>
                   <p className="mt-2 leading-relaxed text-muted-foreground">{card.description}</p>
+                  {card.link && (
+                    <div className="mt-4">
+                      {card.link.external ? (
+                        <a
+                          href={card.link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-sm text-primary transition-opacity hover:opacity-70"
+                        >
+                          {card.link.label}
+                          <ArrowUpRight size={15} weight="regular" aria-hidden />
+                        </a>
+                      ) : (
+                        <Link
+                          to={card.link.href}
+                          className="inline-flex items-center gap-1 text-sm text-primary transition-opacity hover:opacity-70"
+                        >
+                          {card.link.label}
+                          <ArrowUpRight size={15} weight="regular" aria-hidden />
+                        </Link>
+                      )}
+                    </div>
+                  )}
                 </article>
               </SwiperSlide>
             ))}

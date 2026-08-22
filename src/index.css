@@ -385,6 +385,29 @@ body {
   padding-inline: var(--layout-gutter);
 }
 
+/* Shared by the visual card carousels used across marketing pages. */
+.values-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--foreground) 4%, transparent);
+  cursor: pointer;
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.values-nav-btn:hover {
+  background: color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+
+.values-swiper.swiper {
+  overflow: visible;
+}
+
 /* Heading utilities */
 .text-heading-sm {
   font-family: var(--font-display);

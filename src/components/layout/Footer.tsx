@@ -1,10 +1,9 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { useFooter } from '../../api/hooks'
 import { useTranslation } from '../../lib/i18n'
 import { ArrowRightIcon } from '../icons'
 import { usePageChromeStore } from '../../stores/pageChromeStore'
-import { type FooterLink } from '../../data/content'
+import { defaultFooterColumns, type FooterLink } from '../../data/content'
 import { LogoText } from '@oxyhq/services'
 import MentionIcon from '../social/MentionIcon'
 
@@ -127,7 +126,7 @@ export interface FooterBrand {
   description: string
 }
 
-/** A single footer column. Mirrors the CMS shape so it's easy to swap later. */
+/** A single footer column. Product pages can still provide their own variant. */
 export interface FooterColumnConfig {
   title: string
   links: readonly FooterLink[]
@@ -137,8 +136,8 @@ interface FooterProps {
   /** Override the brand block. Defaults to Oxy logo + description. */
   brand?: FooterBrand
   /**
-   * Override the column data. When omitted, columns come from the CMS via
-   * `useFooter()` — preserving existing Oxy behavior.
+   * Override the column data for a product-specific footer variant. When
+   * omitted, the public website footer uses the code-owned defaults.
    */
   columns?: readonly FooterColumnConfig[]
   socialLinks?: readonly SocialLink[]
@@ -157,11 +156,7 @@ export default function Footer({
   hideTopDivider = false,
 }: FooterProps = {}) {
   const { t } = useTranslation()
-  const useCmsColumns = columns === undefined
-  const { data: footerData } = useFooter()
-  const footerColumns: readonly { title: string; links: readonly FooterLink[] }[] = useCmsColumns
-    ? footerData?.columns ?? []
-    : columns ?? []
+  const footerColumns: readonly { title: string; links: readonly FooterLink[] }[] = columns ?? defaultFooterColumns
   const defaultSocial: readonly SocialLink[] = [
     { label: t('footer.socialLinkedIn'), icon: LinkedInIcon, href: SOCIAL_URLS.linkedIn },
     { label: t('footer.socialX'), icon: XIcon, href: SOCIAL_URLS.x },

@@ -74,7 +74,7 @@ export function NewsCardFeatured({ article }: { article: NewsroomPost }) {
       >
         <NewsImage article={article} priority className="aspect-[4/5] w-full @lg:aspect-video" />
         <div className="mt-5 flex max-w-4xl flex-col gap-2 @lg:pe-10">
-          <h2 className="text-heading-3xl text-foreground transition-colors group-hover:text-muted-foreground">
+          <h2 className="text-display-6 text-foreground transition-colors group-hover:text-muted-foreground">
             {article.title}
           </h2>
           <NewsMeta article={article} />

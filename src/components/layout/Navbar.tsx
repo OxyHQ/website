@@ -300,7 +300,9 @@ export default function Navbar({
       return {
         title: product.name,
         description: product.tagline || product.description || NAV_PRODUCT_DESCRIPTION_FALLBACKS[productKey] || 'Explore this Oxy product',
-        href: product.navOpensApp ? product.href : (product.landingUrl || product.href),
+        href: productKey === 'marketplace' || productKey === 'mercaria'
+          ? '/mercaria'
+          : (product.navOpensApp ? product.href : (product.landingUrl || product.href)),
         image: product.productId === 'alia' ? '/images/apps/alia-dropdown.svg' : (resolveProductLogoUrl(product) || undefined),
         logoColor: product.brand,
         preserveImageColors: product.productId === 'alia' || product.productId === 'faircoin' || product.productId === 'fairwallet' || product.productId === 'faircoin-wallet',

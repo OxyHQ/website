@@ -16,7 +16,7 @@ import {
   type ActivityEvent,
 } from './platformStatsStore'
 
-import { type Testimonial, type FooterColumn } from '../data/content'
+import { type Testimonial } from '../data/content'
 import { type PricingPlan } from '../data/pricing'
 import { type NewsroomPost } from '../data/newsroom'
 import { type DescriptionBlock } from '../data/careers'
@@ -105,17 +105,6 @@ export function usePromptPhrases(slug: string, enabled = true) {
     enabled,
     retry: false,
     staleTime: Infinity,
-  })
-}
-
-// ── Footer ──
-export function useFooter() {
-  const locale = useCurrentLocale()
-  return useQuery({
-    queryKey: ['footer', locale],
-    queryFn: () => apiFetch<{ _id?: string; columns: FooterColumn[]; socialLinks: unknown[]; copyright: string }>('/footer', { locale }),
-    staleTime: 5 * 60_000,
-    placeholderData: keepPreviousData,
   })
 }
 

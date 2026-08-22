@@ -1,21 +1,37 @@
 import { closingSection, engagementSection, introSection, pillarsSection } from '../../data/initiative'
-import CardGrid from '../slices/CardGrid'
+import { Drop, HandHeart, Handshake, Heart, Lightbulb, Plant, UsersThree, Waves } from '@phosphor-icons/react'
+import PhotoCardCarousel, { type PhotoCard } from '../sections/PhotoCardCarousel'
 import CtaBlock from '../slices/CtaBlock'
-import type { CardItem } from '../slices/InfoCard'
 import PageHero from '../slices/PageHero'
 
-/** The four pillars, as cards: the emoji is the mark, the number is the label. */
-const pillarCards: CardItem[] = pillarsSection.pillars.map((pillar) => ({
-  icon: <span className="text-3xl">{pillar.emoji}</span>,
-  title: pillar.title,
-  body: pillar.description,
-}))
+const pillarVisuals = [Handshake, Plant, Drop, Waves]
 
-const pathwayCards: CardItem[] = engagementSection.pathways.map((pathway) => ({
-  title: pathway.title,
-  body: pathway.description,
-  link: { label: pathway.ctaText, href: pathway.ctaHref, external: pathway.ctaHref.startsWith('http') },
-}))
+/** The four pillars, rendered through the same visual card carousel as Home. */
+const pillarCards: PhotoCard[] = pillarsSection.pillars.map((pillar, index) => {
+  const Icon = pillarVisuals[index]
+  return {
+    visual: <Icon size={64} weight="duotone" aria-hidden />,
+    title: pillar.title,
+    description: pillar.description,
+  }
+})
+
+const pathwayVisuals = {
+  idea: Lightbulb,
+  volunteer: HandHeart,
+  donate: Heart,
+  community: UsersThree,
+} as const
+
+const pathwayCards: PhotoCard[] = engagementSection.pathways.map((pathway) => {
+  const Icon = pathwayVisuals[pathway.iconType]
+  return {
+    visual: <Icon size={64} weight="duotone" aria-hidden />,
+    title: pathway.title,
+    description: pathway.description,
+    link: { label: pathway.ctaText, href: pathway.ctaHref, external: pathway.ctaHref.startsWith('http') },
+  }
+})
 
 export default function InitiativeContent() {
   return (
@@ -36,19 +52,17 @@ export default function InitiativeContent() {
         ))}
       </nav>
 
-      <CardGrid
+      <PhotoCardCarousel
+        id="who-we-are"
         title={pillarsSection.heading}
         description={pillarsSection.subtitle}
         cards={pillarCards}
-        cardHeightClassName="min-h-50 lg:min-h-70"
       />
 
       <div id="get-involved" className="scroll-mt-24">
-        <CardGrid
+        <PhotoCardCarousel
           title={engagementSection.heading}
           cards={pathwayCards}
-          columnsClassName="md:grid-cols-2 xl:grid-cols-4"
-          cardHeightClassName="min-h-50 lg:min-h-70"
         />
       </div>
 
