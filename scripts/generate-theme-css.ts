@@ -50,9 +50,28 @@ function block(selector: string, vars: Record<string, string>, extra?: string): 
   return `${selector} {\n${body}${extra ? `\n  ${extra}` : ''}\n}`
 }
 
+/**
+ * The logo's inner mark is intentionally white on most brand fills. Bloom's
+ * button contrast role changes to black earlier than the logo needs, which
+ * makes bright-but-not-light recipes look wrong in the header and footer.
+ * Derive a separate role from Bloom's resolved primary instead of maintaining
+ * a page-by-page colour list.
+ */
+function logoLetterColor(vars: Record<string, string>): string {
+  const match = vars['--primary']?.match(/rgb\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)/)
+  if (!match) return 'rgb(255 255 255)'
+
+  const luminance = (0.299 * Number(match[1]) + 0.587 * Number(match[2]) + 0.114 * Number(match[3])) / 255
+  return luminance > 0.9 ? 'rgb(0 0 0)' : 'rgb(255 255 255)'
+}
+
+function withLogoLetterColor(vars: Record<string, string>): Record<string, string> {
+  return { ...vars, '--logo-letter-color': logoLetterColor(vars) }
+}
+
 /** A document-root block: the alias layer at `:root` already resolves against it. */
 function rootBlock(selector: string, preset: Parameters<typeof getPresetVars>[0], mode: 'light' | 'dark'): string {
-  return block(selector, getPresetVars(preset, mode))
+  return block(selector, withLogoLetterColor(getPresetVars(preset, mode)))
 }
 
 /** A scoped block: carries the `--color-x` aliases too, or utilities miss it. */
@@ -63,7 +82,7 @@ function scopeBlock(
   extra?: string,
   accents?: Pick<BrandSurface, 'secondarySeed' | 'tertiarySeed'>,
 ): string {
-  return block(selector, buildSeedScopeVars({ seed, mode, ...accents }), extra)
+  return block(selector, withLogoLetterColor(buildSeedScopeVars({ seed, mode, ...accents })), extra)
 }
 
 /**

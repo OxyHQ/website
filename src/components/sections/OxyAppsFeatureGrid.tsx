@@ -23,11 +23,12 @@ export default function OxyAppsFeatureGrid() {
   const swiperRef = useRef<SwiperType | null>(null)
 
   const appCards = APP_PROFILE_CARDS.map((card) => {
-    const roleKey: Record<string, 'products.mentionDescription' | 'products.alloDescription' | 'products.faircoinDescription' | 'products.homiioDescription'> = {
+    const roleKey: Record<string, 'products.mentionDescription' | 'products.alloDescription' | 'products.faircoinDescription' | 'products.homiioDescription' | 'products.mercariaDescription'> = {
       Mention: 'products.mentionDescription',
       Allo: 'products.alloDescription',
       FairCoin: 'products.faircoinDescription',
       Homiio: 'products.homiioDescription',
+      Mercaria: 'products.mercariaDescription',
     } as const
     const role = t(roleKey[card.name])
 

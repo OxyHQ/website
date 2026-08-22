@@ -9,7 +9,7 @@ export type CommunityProfileCard = {
   role: string
   href: string
   descriptionClassName?: string
-  theme?: 'mention-theme' | 'allo-theme' | 'faircoin-theme' | 'homiio-theme' | 'inbox-theme' | 'astro-card-theme' | 'oxyos-card-theme'
+  theme?: 'mention-theme' | 'allo-theme' | 'faircoin-theme' | 'homiio-theme' | 'mercaria-theme' | 'inbox-theme' | 'astro-card-theme' | 'oxyos-card-theme'
 }
 
 /** App cards reused by the homepage app showcase. */
@@ -21,7 +21,7 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
     name: 'Mention',
     role: 'An open social network for genuine connection',
     href: '/mention',
-    descriptionClassName: 'text-tertiary-text',
+    descriptionClassName: 'text-accent-tertiary',
     theme: 'mention-theme',
   },
   {
@@ -31,6 +31,7 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
     name: 'Allo',
     role: 'Private conversations, built together',
     href: '/apps/allo',
+    descriptionClassName: 'text-accent-tertiary',
     theme: 'allo-theme',
   },
   {
@@ -39,7 +40,8 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
     logo: '/images/apps/faircoin.svg',
     name: 'FairCoin',
     role: 'A community-run currency for cooperation',
-    href: '/apps/faircoin',
+    href: '/faircoin',
+    descriptionClassName: 'text-accent-tertiary',
     theme: 'faircoin-theme',
   },
   {
@@ -48,7 +50,18 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
     name: 'Homiio',
     role: 'Housing made fair',
     href: '/homiio',
+    descriptionClassName: 'text-accent-secondary',
     theme: 'homiio-theme',
+  },
+  {
+    type: 'profile',
+    image: APP_CARD_IMAGES['/mercaria'],
+    logo: '/images/apps/mercaria.svg',
+    name: 'Mercaria',
+    role: 'An open marketplace for fair, human-centered commerce',
+    href: '/mercaria',
+    descriptionClassName: 'text-accent-primary',
+    theme: 'mercaria-theme',
   },
 ]
 

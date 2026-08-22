@@ -4,6 +4,7 @@ import DocsIntroContent from '../components/docs/DocsIntroPage'
 export default function DocsIntroPage() {
   return (
     <PageShell
+      className="docs-theme bg-background"
       seo={{
         title: 'Documentation',
         description:

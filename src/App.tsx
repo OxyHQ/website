@@ -271,7 +271,7 @@ function PublicRoutes() {
           <CompanyArticlePage
             slug="business"
             canonicalPath="/company/business"
-            cta={{ title: 'Check the rest of it.', label: 'Transparency Center', href: '/company/transparency' }}
+            cta={{ title: 'See the full picture.', label: 'Open the Transparency Center', href: '/company/transparency' }}
           />
         }
       />

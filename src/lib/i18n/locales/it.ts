@@ -286,6 +286,7 @@ const it: Translations = {
     codeaDescription: 'Un editor di codice moderno basato sul web con assistenza IA.',
     homiioDescription: 'Casa accessibile resa possibile dalla tecnologia aperta.',
     faircoinDescription: 'Una valuta digitale costruita per la sostenibilità e lo scambio equo.',
+    mercariaDescription: 'Un marketplace aperto per un commercio equo e incentrato sulle persone.',
     tnpDescription: "The New Protocol — un sistema di nomi alternativo per l'identità digitale.",
     oxyOSDescription: "Un sistema operativo attento alla privacy costruito attorno all'ecosistema Oxy.",
     astroDescription: 'Un browser attento alla privacy profondamente integrato con Oxy.',

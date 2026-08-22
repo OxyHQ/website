@@ -5,6 +5,7 @@ import { DocsIcon, ModelingIcon } from '../icons'
 const SEARCH_APP_ICONS: Record<string, string> = {
   '/mention': '/images/apps/mention.png',
   '/homiio': '/images/landing/homiio-phone.png',
+  '/mercaria': '/images/apps/mercaria.svg',
   '/faircoin': '/images/apps/faircoin.svg',
   '/apps/faircoin': '/images/apps/faircoin.svg',
   '/inbox': '/images/apps/inbox.png',

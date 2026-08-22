@@ -580,7 +580,7 @@ export function DocsPackageSidebar({
   }
 
   return (
-    <aside className="hidden lg:block w-[19.5rem] shrink-0 border-r border-border">
+    <aside className="hidden w-[19.5rem] shrink-0 border-r border-border/60 bg-[color-mix(in_srgb,var(--primary)_3%,var(--background))] lg:block">
       <div className="sticky top-[calc(var(--site-header-height,64px)+48px)] h-[calc(100vh-var(--site-header-height,64px)-48px)] overflow-y-auto relative text-sm leading-6 pt-6 pb-10 pl-6 pr-6">
         {versionSelector ? <div className="mb-5 pl-1">{versionSelector}</div> : null}
         {sections.map((section, sectionIdx) => {
@@ -591,9 +591,9 @@ export function DocsPackageSidebar({
                 type="button"
                 onClick={() => toggle(section.category)}
                 aria-expanded={isOpen}
-                className="w-full mb-2.5 flex items-center justify-between pl-4 pr-3 py-1 rounded-lg hover:bg-surface group"
+                className="group mb-2.5 flex w-full items-center justify-between rounded-lg py-1 pl-4 pr-3 hover:bg-primary/8"
               >
-                <span className="font-semibold text-foreground text-left">{section.title}</span>
+                <span className="text-left font-semibold text-primary">{section.title}</span>
                 <ChevronDownIcon
                   className={
                     isOpen

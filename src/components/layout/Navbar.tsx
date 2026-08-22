@@ -645,7 +645,7 @@ export default function Navbar({
   const transparentColor = onLight ? 'black' : 'white'
 
   const linkClassName = (isTp: boolean) =>
-    `inline-flex h-10 items-center justify-center rounded-full px-4 text-link-md transition-colors duration-300 ${
+      `inline-flex h-10 items-center justify-center rounded-full px-3 text-link-md transition-colors duration-300 ${
       isTp ? transparentInk : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
     }`
 
@@ -661,7 +661,7 @@ export default function Navbar({
       {/* ─── Banner ─── */}
       {bannerVisible && (
         <div
-          className="site-banner dark fixed top-0 left-0 right-0 z-[51] flex h-(--site-header-banner-visible-height) items-center justify-center bg-(--color-banner-background)"
+          className="site-banner fixed top-0 left-0 right-0 z-[51] flex h-(--site-header-banner-visible-height) items-center justify-center bg-primary text-primary-foreground"
           style={{
             boxShadow: '0px 1px 2px 0px rgba(0,0,0,0.01), 0px 2px 4px -1px rgba(0,0,0,0.02), 0px 4px 8px -2px rgba(0,0,0,0.03)',
             transform: `translateY(${-Math.min(scrollY, bannerHeight)}px)`,
@@ -670,7 +670,7 @@ export default function Navbar({
           <div className="container flex h-full items-center justify-center">
             <div className="relative flex size-full items-stretch justify-center px-12 max-md:justify-start max-md:pl-0">
               <Link
-                className="group relative flex size-full items-center justify-center gap-1.5 text-white max-md:justify-start"
+                className="group relative flex size-full items-center justify-center gap-1.5 text-primary-foreground max-md:justify-start"
                 to={banner?.href ?? '/inbox'}
               >
                 <span className="attio-group-hover-underline relative truncate text-body-sm">
@@ -679,11 +679,11 @@ export default function Navbar({
                 <ArrowRightIcon className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50" />
               </Link>
               <button
-                className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full text-base transition-colors duration-300 hover:bg-white/10 disabled:pointer-events-none dark absolute top-1/2 right-0 -translate-y-1/2"
+                className="absolute top-1/2 right-0 inline-flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full text-base text-primary-foreground/70 transition-colors duration-300 hover:bg-primary-foreground/10 disabled:pointer-events-none"
                 aria-label={t('common.dismissBanner')}
                 onClick={() => setBannerDismissed(true)}
               >
-                <svg className="text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" fill="none">
+                  <svg className="text-primary-foreground/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" fill="none">
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="m12.5 5.5-7 7m7 0-7-7" />
                 </svg>
               </button>
@@ -743,18 +743,18 @@ export default function Navbar({
               aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
-              {brand?.logo ?? <LogoIcon height={28} />}
+              {brand?.logo ?? <LogoIcon height={28} color="var(--primary)" letterColor="var(--logo-letter-color, var(--primary-foreground))" />}
             </Link>
 
             {/* Middle: the dropdown triggers, or the search field while it is open */}
             <div className="flex min-w-0 flex-1 items-stretch">
             <div ref={escapeRef} className="relative z-10 flex items-stretch" onMouseLeave={scheduleClose}>
-                <ul className={`hidden items-stretch gap-3 transition-[opacity,transform] duration-200 ease-out lg:flex ${searchOpen ? 'lg:pointer-events-none lg:invisible lg:absolute lg:start-0 lg:top-0 lg:-translate-x-2 lg:opacity-0' : 'lg:translate-x-0 lg:opacity-100'}`}>
+                <ul className={`hidden items-stretch gap-1 transition-[opacity,transform] duration-200 ease-out lg:flex ${searchOpen ? 'lg:pointer-events-none lg:invisible lg:absolute lg:start-0 lg:top-0 lg:-translate-x-2 lg:opacity-0' : 'lg:translate-x-0 lg:opacity-100'}`}>
                   {dropdowns.map((dd) => (
                     <li key={dd.label}>
                       <button
                         ref={(el) => { triggerRefs.current[dd.label] = el }}
-                        className={`group inline-flex h-10 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full px-4 text-link-md transition-colors duration-300 ${isTransparent ? transparentHover : 'hover:bg-foreground/5 hover:text-foreground'}`}
+                        className={`group inline-flex h-10 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full px-3 text-link-md transition-colors duration-300 ${isTransparent ? transparentHover : 'hover:bg-foreground/5 hover:text-foreground'}`}
                         style={{
                           background: activeDropdown === dd.label ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
                           color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? transparentColor : 'var(--color-muted-foreground)',

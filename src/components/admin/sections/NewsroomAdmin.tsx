@@ -13,6 +13,7 @@ import { useConfirmAction } from '../useConfirmAction'
 import LocaleSwitcher from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 import MediaPicker from '../MediaPicker'
+import { NEWSROOM_THEME_PRESETS } from '../../../lib/newsroom-theme'
 
 function productIdOf(ref: string | NewsroomProductRef): string {
   if (typeof ref === 'string') return ref
@@ -50,6 +51,7 @@ export default function NewsroomAdmin() {
     categories: ['General'],
     products: [],
     featured: false,
+    themePreset: NEWSROOM_THEME_PRESETS[posts.length % NEWSROOM_THEME_PRESETS.length] ?? 'oxy',
     status: 'published',
     oxyUserId: '',
     publishedAt: new Date().toISOString(),
@@ -111,6 +113,18 @@ export default function NewsroomAdmin() {
           />
           <Field label="Categories (comma-separated)" value={(editing.categories ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, categories: v.split(',').map((c: string) => c.trim()).filter(Boolean) })} />
           <Field label="Tags (comma-separated)" value={(editing.tags ?? []).join(', ')} onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t: string) => t.trim()).filter(Boolean) })} />
+
+          <div className="flex flex-col gap-1.5">
+            <Label>Bloom recipe</Label>
+            <select
+              value={editing.themePreset ?? 'oxy'}
+              onChange={(event) => setEditing({ ...editing, themePreset: event.target.value })}
+              className="h-10 rounded-md border border-border bg-background px-3 text-sm text-foreground"
+            >
+              {NEWSROOM_THEME_PRESETS.map((preset) => <option key={preset} value={preset}>{preset}</option>)}
+            </select>
+            <p className="text-xs text-muted-foreground">Each post keeps its own Bloom recipe across cards and article pages.</p>
+          </div>
 
           <div className="flex flex-col gap-1.5">
             <Label>Products</Label>

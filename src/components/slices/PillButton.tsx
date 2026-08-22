@@ -12,8 +12,8 @@ interface PillButtonProps {
 }
 
 const VARIANTS = {
-  solid: 'bg-gray-a1 text-gray-a10 hover:bg-gray-a3',
-  outline: 'border border-gray-a6 text-gray-a1 hover:bg-gray-a9',
+  solid: 'bg-primary text-primary-foreground hover:bg-primary/90',
+  outline: 'border border-primary/45 text-primary hover:bg-primary/10',
 } as const
 
 const SIZES = {

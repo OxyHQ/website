@@ -12,6 +12,7 @@ import { toErrorMessage } from '../utils/errorMessage.js'
 import { parsePagination } from '../utils/parsePagination.js'
 import { validate } from '../utils/validate.js'
 import { isAdminUser } from '../utils/adminAccess.js'
+import { isNewsroomThemePreset, newsroomThemeForSlug } from '../constants/newsroomThemes.js'
 
 const router = Router()
 
@@ -131,11 +132,20 @@ router.post('/', requireAuth, adminOnly, async (req, res) => {
   if (!user) return res.status(401).json({ error: 'Authentication required' })
 
   const body = validate(postBodySchema, req.body)
+  if (body.themePreset !== undefined && !isNewsroomThemePreset(body.themePreset)) {
+    return res.status(400).json({ error: 'Invalid newsroom theme preset' })
+  }
 
   try {
     const [post] = await db
       .insert(newsroomPosts)
-      .values({ ...body, oxyUserId: user.id } as never)
+      .values({
+        ...body,
+        themePreset: isNewsroomThemePreset(body.themePreset)
+          ? body.themePreset
+          : newsroomThemeForSlug(typeof body.slug === 'string' ? body.slug : ''),
+        oxyUserId: user.id,
+      } as never)
       .returning()
     res.status(201).json(post)
   } catch (err) {
@@ -146,6 +156,9 @@ router.post('/', requireAuth, adminOnly, async (req, res) => {
 router.put('/:slug', requireAuth, adminOnly, async (req, res) => {
   const { slug } = validate(slugParamsSchema, req.params)
   const body = validate(postBodySchema, req.body)
+  if (body.themePreset !== undefined && !isNewsroomThemePreset(body.themePreset)) {
+    return res.status(400).json({ error: 'Invalid newsroom theme preset' })
+  }
   try {
     const [post] = await db
       .update(newsroomPosts)

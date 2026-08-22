@@ -19,7 +19,7 @@ export function Takeaways({ children }: { children: ReactNode }) {
       // own placement: `ARTICLE_BLOCK` ends in a negative inline-start margin
       // that only makes sense against a grid area, and against this section it
       // pulled every row a sixth of the column left of the heading above it.
-      className={`${ARTICLE_BLOCK} flex w-full flex-col items-start [&_li]:mb-0 [&_li]:border-t [&_li]:border-gray-a6 [&_li]:py-2 [&_li]:first-of-type:border-t-0 [&_li]:first-of-type:pt-0 [&_li]:last-of-type:pb-0 [&_ul]:mt-0 [&_ul]:ms-0 [&_ul]:me-0 [&_ul]:w-full [&_ul]:list-none [&_ul]:ps-0 [&_ul]:text-blog-body`}
+      className={`${ARTICLE_BLOCK} flex w-full flex-col items-start text-foreground [&_li]:mb-0 [&_li]:border-t [&_li]:border-primary/30 [&_li]:py-2 [&_li]:first-of-type:border-t-0 [&_li]:first-of-type:pt-0 [&_li]:last-of-type:pb-0 [&_ul]:mt-0 [&_ul]:ms-0 [&_ul]:me-0 [&_ul]:w-full [&_ul]:list-none [&_ul]:ps-0 [&_ul]:text-blog-body`}
     >
       {children}
     </section>
@@ -35,8 +35,8 @@ export function Takeaways({ children }: { children: ReactNode }) {
 export function Footnotes({ children }: { children: ReactNode }) {
   return (
     <div data-toc-skip className={`${ARTICLE_BLOCK} mt-10 grid w-full gap-y-16`}>
-      <div className="grid grid-rows-[1fr_auto] gap-y-4 border-t border-t-gray-a8 pt-6 text-alt-gray-e1">
-        <h3 className="text-body-3">Notes</h3>
+      <div className="grid grid-rows-[1fr_auto] gap-y-4 border-t border-t-border pt-6 text-muted-foreground">
+        <h3 className="text-primary text-body-3">Notes</h3>
         {/* Same reason as the takeaways: the list is inside this block now, so
             it drops the block's grid placement and negative pull. */}
         <div className="text-b4 [&_li]:mb-2 [&_li]:last:mb-0 [&_ol]:mt-0 [&_ol]:ms-0 [&_ol]:me-0 [&_ol]:w-full [&_ol]:ps-5 [&_ol]:text-b4 [&_p]:m-0">

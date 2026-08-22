@@ -22,6 +22,8 @@ export interface NewsroomPost {
   featured: boolean
   colorPrimary?: string
   colorSecondary?: string
+  /** Bloom recipe persisted per post; legacy rows may omit it until migrated. */
+  themePreset?: string
   dark?: boolean
   status: 'draft' | 'published'
   metaTitle?: string

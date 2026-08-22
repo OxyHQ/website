@@ -50,7 +50,7 @@ export default function DocsSubNav() {
    * hairline of the page showing through between the two while scrolling.
    */
   return (
-    <div className="sticky z-40 border-b border-border bg-background" style={{ top: headerBottom }}>
+    <div className="sticky z-40 border-b border-border/60 bg-background/90 backdrop-blur-md" style={{ top: headerBottom }}>
       <div className="w-full">
         {/* Docs run edge to edge, so the tabs start where the content column
             does: past the sidebar, not past a page gutter as well. */}

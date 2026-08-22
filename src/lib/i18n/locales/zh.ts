@@ -286,6 +286,7 @@ const zh: Translations = {
     codeaDescription: '带有 AI 辅助的现代化基于 Web 的代码编辑器。',
     homiioDescription: '通过开放技术让可负担住房触手可及。',
     faircoinDescription: '为可持续性和公平交换而构建的数字货币。',
+    mercariaDescription: '面向公平、以人为本商业的开放市场。',
     tnpDescription: 'The New Protocol——为数字身份提供的替代命名系统。',
     oxyOSDescription: '一款围绕 Oxy 生态系统构建的、以隐私为先的操作系统。',
     astroDescription: '一款与 Oxy 深度集成的、以隐私为先的浏览器。',

@@ -17,6 +17,8 @@ import ArticleMarkdown from '../components/newsroom/article/ArticleMarkdown'
 import ArticleSidebar from '../components/newsroom/article/ArticleSidebar'
 import ArticleScrollProgress from '../components/newsroom/article/ArticleScrollProgress'
 import { extractHeadings } from '../components/newsroom/article/headings'
+import { BloomColorScope } from '@oxyhq/bloom/theme'
+import { newsroomThemeFor } from '../lib/newsroom-theme'
 
 export default function NewsroomPostPage() {
   const { slug = '' } = useParams<{ slug: string }>()
@@ -69,7 +71,8 @@ export default function NewsroomPostPage() {
   const url = `${origin}/newsroom/${post.slug}`
 
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
+    <BloomColorScope colorPreset={newsroomThemeFor(post)}>
+      <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
       <SEO
         title={post.metaTitle || post.title}
         description={post.description || post.resume}
@@ -141,6 +144,7 @@ export default function NewsroomPostPage() {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </BloomColorScope>
   )
 }

@@ -469,6 +469,7 @@ const en = {
     codeaDescription: 'A modern web-based code editor with AI assistance.',
     homiioDescription: 'Affordable housing made accessible through open technology.',
     faircoinDescription: 'A digital currency built for sustainability and fair exchange.',
+    mercariaDescription: 'An open marketplace for fair, human-centered commerce.',
     tnpDescription: 'The New Protocol — an alternative namespace for digital identity.',
     oxyOSDescription: 'A privacy-first operating system built around the Oxy ecosystem.',
     astroDescription: 'A privacy-first browser deeply integrated with Oxy.',

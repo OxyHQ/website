@@ -41,6 +41,8 @@ export const APP_SEARCH_DESTINATIONS: Readonly<Record<string, string>> = {
   codea: '/codea',
   tnp: '/tnp',
   pay: '/pay',
+  mercaria: '/mercaria',
+  faircoin: '/faircoin',
 }
 
 export function appSearchDestination(productId: string): string {
@@ -79,6 +81,7 @@ const SITE_PAGES: Array<{ url: string; title: string; group?: string }> = [
   { url: '/apps', title: 'Technologies', group: 'apps' },
   { url: '/mention', title: 'Mention', group: 'apps' },
   { url: '/homiio', title: 'Homiio', group: 'apps' },
+  { url: appSearchDestination('mercaria'), title: 'Mercaria', group: 'apps' },
   { url: appSearchDestination('faircoin'), title: 'FairCoin', group: 'apps' },
   { url: '/inbox', title: 'Inbox', group: 'apps' },
   { url: '/astro', title: 'Astro', group: 'apps' },

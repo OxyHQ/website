@@ -29,12 +29,10 @@ export default function FairCoinLanding() {
   const footerLegalLinks = useFairCoinFooterLegalLinks()
   const footerCopyright = useFairCoinFooterCopyright()
 
-  // On fairco.in we re-skin everything: Bloom theme, navbar, footer, CSS vars.
-  // On oxy.so the same routes render as Oxy subpages — Oxy chrome and Oxy
-  // theme variables — so the only override here is the page content.
-  const rootClass = onFairCoinHost
-    ? 'faircoin-surface faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
-    : 'faircoin-surface flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
+  // The FairCoin landing page owns its visual identity on both hosts. The
+  // chrome changes on fairco.in, but the content surface always follows the
+  // FairCoin Bloom recipe instead of inheriting Oxy's saved preset.
+  const rootClass = 'faircoin-surface faircoin-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background'
 
   return (
     <div className={rootClass}>

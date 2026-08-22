@@ -26,6 +26,7 @@ interface CompanyArticlePageProps {
 export default function CompanyArticlePage({ slug, canonicalPath, cta }: CompanyArticlePageProps) {
   const locale = useCurrentLocale()
   const entry = loadCompanyPage(slug, locale)
+  const pageTheme = slug === 'manifesto' ? 'manifesto-theme slice-theme' : 'slice-theme'
 
   if (!entry) {
     // The MDX file is required — a hard failure during build/dev so missing
@@ -33,10 +34,10 @@ export default function CompanyArticlePage({ slug, canonicalPath, cta }: Company
     return (
       <PageShell
         seo={{ title: 'Oxy', description: 'This page is missing its copy.', canonicalPath }}
-        className="slice-theme bg-background"
+        className={`${pageTheme} bg-background text-foreground`}
         mainClassName="flex flex-1 items-center justify-center"
       >
-        <p className="text-b3 text-alt-gray-e1">
+        <p className="text-b3 text-muted-foreground">
           Copy missing — see <code>src/content/company/{slug}.mdx</code>.
         </p>
       </PageShell>
@@ -53,7 +54,7 @@ export default function CompanyArticlePage({ slug, canonicalPath, cta }: Company
         canonicalPath,
         ogImage: frontmatter.ogImage,
       }}
-      className="slice-theme bg-background"
+      className={`${pageTheme} bg-background text-foreground`}
       mainClassName="flex-1"
     >
       <LongformArticle
@@ -65,7 +66,7 @@ export default function CompanyArticlePage({ slug, canonicalPath, cta }: Company
         cta={cta}
       >
         <MDXProvider components={articleMdxComponents}>
-          <Suspense fallback={<p className="text-b3 text-alt-gray-e1">Loading…</p>}>{createElement(Component)}</Suspense>
+          <Suspense fallback={<p className="text-b3 text-muted-foreground">Loading…</p>}>{createElement(Component)}</Suspense>
         </MDXProvider>
       </LongformArticle>
     </PageShell>

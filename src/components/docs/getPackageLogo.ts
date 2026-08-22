@@ -7,14 +7,19 @@
 export function getPackageLogo(shortName: string): string | undefined {
   const map: Record<string, string> = {
     accounts: '/images/apps/accounts.png',
-    alia: '/images/apps/alia.svg',
+    alia: '/images/apps/alia-mark.svg',
     allo: '/images/apps/allo.png',
     astro: '/images/apps/astro.svg',
     auth: '/images/apps/auth.svg',
+    bloom: '/images/apps/bloom.png',
     clarity: '/images/apps/clarity.png',
+    console: '/images/apps/console.svg',
+    faircoin: '/images/apps/faircoin.svg',
+    homiio: '/images/apps/homiio.png',
     inbox: '/images/apps/inbox.png',
     mention: '/images/apps/mention.png',
     oxyos: '/images/apps/oxyos.png',
+    tnp: '/images/apps/tnp.png',
   }
   return map[shortName]
 }

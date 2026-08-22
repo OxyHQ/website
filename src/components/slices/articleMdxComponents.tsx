@@ -25,26 +25,26 @@ export const articleMdxComponents = {
   h2: (props: ComponentPropsWithoutRef<'h2'>) => (
     <h2
       {...props}
-      className={`${ARTICLE_BLOCK} scroll-m-20 pb-4 pt-16 first-of-type:pt-0 max-lg:first-of-type:pt-10 text-subheading-3`}
+      className={`${ARTICLE_BLOCK} scroll-m-20 pb-4 pt-16 first-of-type:pt-0 max-lg:first-of-type:pt-10 text-primary text-subheading-3`}
     />
   ),
   // A subsection that opens its section sits directly under the section
   // heading, which already carries the space between them.
   h3: (props: ComponentPropsWithoutRef<'h3'>) => (
-    <h3 {...props} className={`${ARTICLE_BLOCK} scroll-m-20 pb-4 pt-10 [h2+&]:pt-0 text-body-1`} />
+    <h3 {...props} className={`${ARTICLE_BLOCK} scroll-m-20 pb-4 pt-10 [h2+&]:pt-0 text-foreground text-body-1`} />
   ),
   h4: (props: ComponentPropsWithoutRef<'h4'>) => (
-    <h4 {...props} className={`${ARTICLE_BLOCK} scroll-m-20 pb-4 pt-8 text-blog-body`} />
+    <h4 {...props} className={`${ARTICLE_BLOCK} scroll-m-20 pb-4 pt-8 text-foreground text-blog-body`} />
   ),
 
   p: (props: ComponentPropsWithoutRef<'p'>) => (
-    <p {...props} className={`${ARTICLE_BLOCK} mt-4 first:mt-0 text-blog-body`} />
+    <p {...props} className={`${ARTICLE_BLOCK} mt-4 first:mt-0 text-foreground text-blog-body`} />
   ),
   ul: (props: ComponentPropsWithoutRef<'ul'>) => (
-    <ul {...props} className={`${ARTICLE_BLOCK} mt-4 grid list-disc ps-5 text-blog-body leading-[140%]`} />
+    <ul {...props} className={`${ARTICLE_BLOCK} mt-4 grid list-disc ps-5 text-foreground text-blog-body leading-[140%]`} />
   ),
   ol: (props: ComponentPropsWithoutRef<'ol'>) => (
-    <ol {...props} className={`${ARTICLE_BLOCK} mt-4 grid list-decimal ps-5 text-blog-body leading-[140%]`} />
+    <ol {...props} className={`${ARTICLE_BLOCK} mt-4 grid list-decimal ps-5 text-foreground text-blog-body leading-[140%]`} />
   ),
   li: (props: ComponentPropsWithoutRef<'li'>) => <li {...props} className="mb-2 last:mb-0" />,
   // The shared map wraps a table in a plain div, which the article grid then
@@ -52,19 +52,19 @@ export const articleMdxComponents = {
   // column to the right of the text. It has to carry the block like everything
   // else, and scroll inside it rather than widening the page.
   table: (props: ComponentPropsWithoutRef<'table'>) => (
-    <div className={`${ARTICLE_BLOCK} my-6 w-full overflow-x-auto border border-gray-a6`}>
+    <div className={`${ARTICLE_BLOCK} my-6 w-full overflow-x-auto border border-border`}>
       <table {...props} className="w-full text-b4" />
     </div>
   ),
   th: (props: ComponentPropsWithoutRef<'th'>) => (
-    <th {...props} className="border-b border-gray-a6 px-4 py-2 text-start font-medium text-gray-a1" />
+    <th {...props} className="border-b border-border bg-surface/50 px-4 py-2 text-start font-medium text-foreground" />
   ),
   td: (props: ComponentPropsWithoutRef<'td'>) => (
-    <td {...props} className="border-b border-gray-a6 px-4 py-2 text-alt-gray-e1 last:text-gray-a1" />
+    <td {...props} className="border-b border-border px-4 py-2 text-muted-foreground last:text-foreground" />
   ),
-  hr: (props: ComponentPropsWithoutRef<'hr'>) => <hr {...props} className={`${ARTICLE_BLOCK} my-8 border-gray-a6`} />,
+  hr: (props: ComponentPropsWithoutRef<'hr'>) => <hr {...props} className={`${ARTICLE_BLOCK} my-8 border-border`} />,
   blockquote: (props: ComponentPropsWithoutRef<'blockquote'>) => (
-    <blockquote {...props} className={`${ARTICLE_BLOCK} mt-4 border-s-2 border-gray-a6 ps-4 text-blog-body italic`} />
+    <blockquote {...props} className={`${ARTICLE_BLOCK} mt-4 border-s-2 border-tertiary ps-4 text-foreground text-blog-body italic`} />
   ),
 
   // Prose links wipe their underline in on hover, like every other inline link

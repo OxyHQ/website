@@ -101,7 +101,11 @@ export default function DocsPage() {
   const brandPreset = useDocsBrandPreset()
   return (
     <BloomColorScope colorPreset={brandPreset}>
-      <PageShell seo={meta} mainClassName="flex-1 bg-background text-muted-foreground">
+      <PageShell
+        className="docs-theme bg-background"
+        seo={meta}
+        mainClassName="flex-1 bg-background text-muted-foreground"
+      >
         <DocsPageContent />
       </PageShell>
     </BloomColorScope>

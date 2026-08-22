@@ -1,5 +1,15 @@
 import { Link } from 'react-router-dom'
+import { BloomColorScope } from '@oxyhq/bloom/theme'
 import type { NewsroomPost } from '../../data/newsroom'
+import { newsroomThemeFor } from '../../lib/newsroom-theme'
+
+function ThemedCard({ article, children }: { article: NewsroomPost; children: React.ReactElement }) {
+  return (
+    <BloomColorScope colorPreset={newsroomThemeFor(article)} asChild>
+      {children}
+    </BloomColorScope>
+  )
+}
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr)
@@ -17,7 +27,8 @@ function formatDate(dateStr: string): string {
  * ─────────────────────────────────────────────── */
 export function NewsCardFeatured({ article }: { article: NewsroomPost }) {
   return (
-    <Link to={`/newsroom/${article.slug}`} className="group relative block">
+    <ThemedCard article={article}>
+      <Link to={`/newsroom/${article.slug}`} className="group relative block">
       <div className="group relative">
         {/* Placeholder bg behind image */}
         <div
@@ -55,7 +66,8 @@ export function NewsCardFeatured({ article }: { article: NewsroomPost }) {
           </span>
         </p>
       </div>
-    </Link>
+      </Link>
+    </ThemedCard>
   )
 }
 
@@ -66,7 +78,8 @@ export function NewsCardFeatured({ article }: { article: NewsroomPost }) {
  * ─────────────────────────────────────────────── */
 export function NewsCardGrid({ article }: { article: NewsroomPost }) {
   return (
-    <Link to={`/newsroom/${article.slug}`} className="group relative">
+    <ThemedCard article={article}>
+      <Link to={`/newsroom/${article.slug}`} className="group relative">
       <div className="group relative">
         <div
           className="absolute top-0 w-full rounded-md bg-surface"
@@ -102,7 +115,8 @@ export function NewsCardGrid({ article }: { article: NewsroomPost }) {
           </span>
         </p>
       </div>
-    </Link>
+      </Link>
+    </ThemedCard>
   )
 }
 
@@ -112,7 +126,8 @@ export function NewsCardGrid({ article }: { article: NewsroomPost }) {
  * ─────────────────────────────────────────────── */
 export function NewsCardCarousel({ article }: { article: NewsroomPost }) {
   return (
-    <Link to={`/newsroom/${article.slug}`} className="group relative block">
+    <ThemedCard article={article}>
+      <Link to={`/newsroom/${article.slug}`} className="group relative block">
       <div className="group relative">
         <div
           className="absolute top-0 w-full rounded-md bg-surface"
@@ -147,7 +162,8 @@ export function NewsCardCarousel({ article }: { article: NewsroomPost }) {
           </span>
         </p>
       </div>
-    </Link>
+      </Link>
+    </ThemedCard>
   )
 }
 
@@ -160,10 +176,11 @@ export function NewsCardCarousel({ article }: { article: NewsroomPost }) {
  * ─────────────────────────────────────────────── */
 export function NewsCardRow({ article }: { article: NewsroomPost }) {
   return (
-    <Link
-      to={`/newsroom/${article.slug}`}
-      className="group flex w-full items-center overflow-hidden"
-    >
+    <ThemedCard article={article}>
+      <Link
+        to={`/newsroom/${article.slug}`}
+        className="group flex w-full items-center overflow-hidden"
+      >
       {/* Image — fixed width square thumbnail */}
       <div className="relative flex-[0_0_7.5rem] overflow-hidden md:flex-[0_0_11.563rem]">
         <div className="group relative">
@@ -200,6 +217,7 @@ export function NewsCardRow({ article }: { article: NewsroomPost }) {
           </span>
         </p>
       </div>
-    </Link>
+      </Link>
+    </ThemedCard>
   )
 }

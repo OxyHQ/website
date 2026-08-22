@@ -111,6 +111,8 @@ export const newsroomPosts = pgTable(
     featured: boolean().notNull().default(false),
     colorPrimary: text(),
     colorSecondary: text(),
+    /** Bloom recipe used by the newsroom article and its cards. */
+    themePreset: text().notNull().default('oxy'),
     dark: boolean().notNull().default(false),
     /** 'draft' | 'published' */
     status: text().notNull().default('published'),

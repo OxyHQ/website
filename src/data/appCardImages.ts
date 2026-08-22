@@ -13,7 +13,7 @@ export const APP_CARD_IMAGES: Record<string, string> = {
   '/homiio': '/images/landing/homiio-phone.png',
   '/inbox': '/images/landing/inbox-phone.png',
   '/astro': '/images/landing/astro-desktop.png',
-  '/mercaria': '/images/apps/mercaria.png',
+  '/mercaria': '/images/landing/mercaria-card.png',
   '/os': '/images/landing/oxyos-laptop.png',
   '/commons': '/images/landing/identity-app.webp',
 }

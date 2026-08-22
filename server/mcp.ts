@@ -47,6 +47,7 @@ import { processImage } from './services/thumbnails.js'
 import { heroUpdateRawShape, heroUpdateSchema, type HeroUpdate } from './validation/hero.js'
 import { escapeRegex } from './utils/escapeRegex.js'
 import { TRANSLATABLE_COLLECTIONS } from './constants/translations.js'
+import { isNewsroomThemePreset, newsroomThemeForSlug } from './constants/newsroomThemes.js'
 
 // ── SSRF-safe URL download helper ────────────────────────────────────────────
 
@@ -412,6 +413,7 @@ server.tool('create_post', 'Create a new newsroom post. If slug is not provided,
   featured: z.boolean().optional().describe('Whether this post appears in the featured/hero section'),
   colorPrimary: z.string().optional().describe('Primary color for post theming (hex or CSS color)'),
   colorSecondary: z.string().optional().describe('Secondary color for post theming (hex or CSS color)'),
+  themePreset: z.string().refine(isNewsroomThemePreset, 'Must be a Bloom newsroom recipe').optional(),
   dark: z.boolean().optional().describe('Whether the post uses dark mode styling'),
   status: z.enum(['draft', 'published']).optional().describe('Publication status. Defaults to published.'),
   oxyUserId: z.string().optional().describe('Oxy user ID of the author'),
@@ -431,6 +433,7 @@ server.tool('create_post', 'Create a new newsroom post. If slug is not provided,
       .values({
         ...params,
         slug,
+        themePreset: isNewsroomThemePreset(params.themePreset) ? params.themePreset : newsroomThemeForSlug(slug),
         publishedAt: params.publishedAt ? new Date(params.publishedAt) : new Date(),
         oxyUserId: params.oxyUserId || 'mcp-admin',
       } as never)
@@ -453,6 +456,7 @@ server.tool('update_post', 'Update an existing newsroom post by slug. Only the f
   featured: z.boolean().optional().describe('Whether this post appears in the featured/hero section'),
   colorPrimary: z.string().optional().describe('Primary color for post theming (hex or CSS color)'),
   colorSecondary: z.string().optional().describe('Secondary color for post theming (hex or CSS color)'),
+  themePreset: z.string().refine(isNewsroomThemePreset, 'Must be a Bloom newsroom recipe').optional(),
   dark: z.boolean().optional().describe('Whether the post uses dark mode styling'),
   status: z.enum(['draft', 'published']).optional().describe('Publication status'),
   oxyUserId: z.string().optional().describe('Oxy user ID of the author'),

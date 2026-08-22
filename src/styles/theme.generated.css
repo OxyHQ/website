@@ -64,6 +64,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 .dark {
@@ -125,6 +126,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public teal preset — selected pre-React via data-color-preset. */
@@ -187,6 +189,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='teal'].dark {
@@ -248,6 +251,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public blue preset — selected pre-React via data-color-preset. */
@@ -310,6 +314,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='blue'].dark {
@@ -371,6 +376,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public green preset — selected pre-React via data-color-preset. */
@@ -433,6 +439,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='green'].dark {
@@ -494,6 +501,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public yellow preset — selected pre-React via data-color-preset. */
@@ -556,6 +564,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='yellow'].dark {
@@ -617,6 +626,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public red preset — selected pre-React via data-color-preset. */
@@ -679,6 +689,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='red'].dark {
@@ -740,6 +751,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public purple preset — selected pre-React via data-color-preset. */
@@ -802,6 +814,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='purple'].dark {
@@ -863,6 +876,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public pink preset — selected pre-React via data-color-preset. */
@@ -925,6 +939,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='pink'].dark {
@@ -986,6 +1001,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public sky preset — selected pre-React via data-color-preset. */
@@ -1048,6 +1064,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='sky'].dark {
@@ -1109,6 +1126,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public orange preset — selected pre-React via data-color-preset. */
@@ -1171,6 +1189,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='orange'].dark {
@@ -1232,6 +1251,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public mint preset — selected pre-React via data-color-preset. */
@@ -1294,6 +1314,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='mint'].dark {
@@ -1355,6 +1376,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public pumpkin preset — selected pre-React via data-color-preset. */
@@ -1417,6 +1439,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='pumpkin'].dark {
@@ -1478,6 +1501,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public gray preset — selected pre-React via data-color-preset. */
@@ -1540,6 +1564,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='gray'].dark {
@@ -1601,6 +1626,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public brown preset — selected pre-React via data-color-preset. */
@@ -1663,6 +1689,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='brown'].dark {
@@ -1724,6 +1751,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public peach preset — selected pre-React via data-color-preset. */
@@ -1786,6 +1814,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='peach'].dark {
@@ -1847,6 +1876,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public rose preset — selected pre-React via data-color-preset. */
@@ -1909,6 +1939,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='rose'].dark {
@@ -1970,6 +2001,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public grove preset — selected pre-React via data-color-preset. */
@@ -2032,6 +2064,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='grove'].dark {
@@ -2093,6 +2126,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public ember preset — selected pre-React via data-color-preset. */
@@ -2155,6 +2189,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='ember'].dark {
@@ -2216,6 +2251,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public merlot preset — selected pre-React via data-color-preset. */
@@ -2278,6 +2314,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='merlot'].dark {
@@ -2339,6 +2376,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public cobalt preset — selected pre-React via data-color-preset. */
@@ -2401,6 +2439,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='cobalt'].dark {
@@ -2462,6 +2501,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public jade preset — selected pre-React via data-color-preset. */
@@ -2524,6 +2564,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='jade'].dark {
@@ -2585,6 +2626,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public pine preset — selected pre-React via data-color-preset. */
@@ -2647,6 +2689,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='pine'].dark {
@@ -2708,6 +2751,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public olive preset — selected pre-React via data-color-preset. */
@@ -2770,6 +2814,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='olive'].dark {
@@ -2831,6 +2876,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public lagoon preset — selected pre-React via data-color-preset. */
@@ -2893,6 +2939,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='lagoon'].dark {
@@ -2954,6 +3001,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public navy preset — selected pre-React via data-color-preset. */
@@ -3016,6 +3064,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='navy'].dark {
@@ -3077,6 +3126,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public azure preset — selected pre-React via data-color-preset. */
@@ -3139,6 +3189,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='azure'].dark {
@@ -3200,6 +3251,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public violet preset — selected pre-React via data-color-preset. */
@@ -3262,6 +3314,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='violet'].dark {
@@ -3323,6 +3376,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public lavender preset — selected pre-React via data-color-preset. */
@@ -3385,6 +3439,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='lavender'].dark {
@@ -3446,6 +3501,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public plum preset — selected pre-React via data-color-preset. */
@@ -3508,6 +3564,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='plum'].dark {
@@ -3569,6 +3626,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public cherry preset — selected pre-React via data-color-preset. */
@@ -3631,6 +3689,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='cherry'].dark {
@@ -3692,6 +3751,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public chocolate preset — selected pre-React via data-color-preset. */
@@ -3754,6 +3814,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='chocolate'].dark {
@@ -3815,6 +3876,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Public graphite preset — selected pre-React via data-color-preset. */
@@ -3877,6 +3939,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-color-preset='graphite'].dark {
@@ -3938,6 +4001,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(0 0 0);
 }
 
 /* faircoin apex — index.html stamps data-brand from the hostname pre-paint. */
@@ -4000,6 +4064,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(1 90 194);
   --info-subtle: rgba(59, 130, 246, 0.13);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 :root[data-brand='faircoin'].dark {
@@ -4061,6 +4126,7 @@
   --info-foreground: rgb(255 255 255);
   --info-text: rgb(173 198 255);
   --info-subtle: rgba(59, 130, 246, 0.24);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* A region that stays dark inside a light page (hero art, product shots). */
@@ -4201,6 +4267,7 @@
   --color-border-input: rgb(79 67 80);
   --color-border-input-active: rgb(240 176 255);
   --color-divider: rgb(79 67 80);
+  --logo-letter-color: rgb(255 255 255);
   color-scheme: dark;
 }
 
@@ -4343,6 +4410,7 @@
     --color-border-input: rgb(79 67 80);
     --color-border-input-active: rgb(240 176 255);
     --color-divider: rgb(79 67 80);
+    --logo-letter-color: rgb(255 255 255);
     color-scheme: dark;
   }
 }
@@ -4485,6 +4553,7 @@
   --color-border-input: rgb(72 69 83);
   --color-border-input-active: rgb(204 190 255);
   --color-divider: rgb(72 69 83);
+  --logo-letter-color: rgb(255 255 255);
   color-scheme: dark;
 }
 
@@ -4626,6 +4695,7 @@
   --color-border-input: rgb(74 68 83);
   --color-border-input-active: rgb(211 187 255);
   --color-divider: rgb(74 68 83);
+  --logo-letter-color: rgb(255 255 255);
   color-scheme: dark;
 }
 
@@ -4767,6 +4837,7 @@
   --color-border-input: rgb(210 193 210);
   --color-border-input-active: rgb(156 0 200);
   --color-divider: rgb(210 193 210);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 .oxyos-card-theme:is(.dark, .dark *) {
@@ -4906,6 +4977,7 @@
   --color-border-input: rgb(79 67 80);
   --color-border-input-active: rgb(240 176 255);
   --color-divider: rgb(79 67 80);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* TNP — seed #10b981 */
@@ -5046,6 +5118,7 @@
   --color-border-input: rgb(59 74 65);
   --color-border-input-active: rgb(0 226 157);
   --color-divider: rgb(59 74 65);
+  --logo-letter-color: rgb(255 255 255);
   color-scheme: dark;
 }
 
@@ -5187,6 +5260,7 @@
   --color-border-input: rgb(190 199 212);
   --color-border-input-active: rgb(0 98 157);
   --color-divider: rgb(190 199 212);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 .astro-theme:is(.dark, .dark *) {
@@ -5326,6 +5400,7 @@
   --color-border-input: rgb(62 72 82);
   --color-border-input-active: rgb(153 203 255);
   --color-divider: rgb(62 72 82);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Astro app cards — seed #006a94 */
@@ -5466,6 +5541,7 @@
   --color-border-input: rgb(188 200 211);
   --color-border-input-active: rgb(0 101 141);
   --color-divider: rgb(188 200 211);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 .astro-card-theme:is(.dark, .dark *) {
@@ -5605,6 +5681,569 @@
   --color-border-input: rgb(60 72 81);
   --color-border-input-active: rgb(131 207 255);
   --color-divider: rgb(60 72 81);
+  --logo-letter-color: rgb(255 255 255);
+}
+
+/* Developer docs — seed #154fd7 */
+.docs-theme {
+  --background: rgb(245 243 247);
+  --foreground: rgb(25 27 37);
+  --surface: rgb(234 231 236);
+  --surface-foreground: rgb(25 27 37);
+  --popover: rgb(222 220 224);
+  --popover-foreground: rgb(25 27 37);
+  --primary: rgb(35 87 223);
+  --primary-foreground: rgb(255 255 255);
+  --secondary: rgb(154 90 0);
+  --secondary-foreground: rgb(255 255 255);
+  --tertiary: rgb(254 207 0);
+  --tertiary-foreground: rgb(0 0 0);
+  --muted: rgb(211 209 213);
+  --muted-foreground: rgb(67 70 84);
+  --accent: rgb(211 209 213);
+  --accent-foreground: rgb(67 70 84);
+  --destructive: rgb(186 26 26);
+  --border: rgb(196 197 214);
+  --input: rgb(196 197 214);
+  --ring: rgb(0 79 229);
+  --sidebar: rgb(234 231 236);
+  --card: rgb(255 255 255);
+  --card-foreground: rgb(25 27 37);
+  --chart-1: rgb(72 107 217);
+  --chart-2: rgb(181 74 145);
+  --chart-3: rgb(173 93 0);
+  --chart-4: rgb(83 126 0);
+  --chart-5: rgb(0 127 133);
+  --content-area: rgb(250 248 255);
+  --sidebar-foreground: rgb(25 27 37);
+  --sidebar-primary: rgb(0 79 229);
+  --sidebar-primary-foreground: rgb(255 255 255);
+  --sidebar-accent: rgb(227 223 255);
+  --sidebar-accent-foreground: rgb(61 47 178);
+  --sidebar-border: rgb(196 197 214);
+  --sidebar-ring: rgb(0 79 229);
+  --primary-text: rgb(0 79 229);
+  --primary-subtle: rgba(102, 138, 255, 0.13);
+  --secondary-text: rgb(139 80 0);
+  --secondary-subtle: rgba(210, 124, 0, 0.13);
+  --tertiary-text: rgb(114 92 0);
+  --tertiary-subtle: rgba(174, 141, 0, 0.13);
+  --success: rgb(0 121 82);
+  --success-foreground: rgb(255 255 255);
+  --success-text: rgb(0 108 73);
+  --success-subtle: rgba(16, 185, 129, 0.13);
+  --error: rgb(191 31 39);
+  --error-foreground: rgb(255 255 255);
+  --error-text: rgb(167 55 53);
+  --error-subtle: rgba(239, 68, 68, 0.13);
+  --warning: rgb(148 93 0);
+  --warning-foreground: rgb(255 255 255);
+  --warning-text: rgb(133 83 0);
+  --warning-subtle: rgba(245, 158, 11, 0.13);
+  --info: rgb(0 100 213);
+  --info-foreground: rgb(255 255 255);
+  --info-text: rgb(1 90 194);
+  --info-subtle: rgba(59, 130, 246, 0.13);
+  --color-background: rgb(245 243 247);
+  --color-foreground: rgb(25 27 37);
+  --color-surface: rgb(234 231 236);
+  --color-surface-foreground: rgb(25 27 37);
+  --color-popover: rgb(222 220 224);
+  --color-popover-foreground: rgb(25 27 37);
+  --color-primary: rgb(35 87 223);
+  --color-primary-foreground: rgb(255 255 255);
+  --color-secondary: rgb(154 90 0);
+  --color-secondary-foreground: rgb(255 255 255);
+  --color-tertiary: rgb(254 207 0);
+  --color-tertiary-foreground: rgb(0 0 0);
+  --color-muted: rgb(211 209 213);
+  --color-muted-foreground: rgb(67 70 84);
+  --color-accent: rgb(211 209 213);
+  --color-accent-foreground: rgb(67 70 84);
+  --color-destructive: rgb(186 26 26);
+  --color-border: rgb(196 197 214);
+  --color-input: rgb(196 197 214);
+  --color-ring: rgb(0 79 229);
+  --color-sidebar: rgb(234 231 236);
+  --color-card: rgb(255 255 255);
+  --color-card-foreground: rgb(25 27 37);
+  --color-chart-1: rgb(72 107 217);
+  --color-chart-2: rgb(181 74 145);
+  --color-chart-3: rgb(173 93 0);
+  --color-chart-4: rgb(83 126 0);
+  --color-chart-5: rgb(0 127 133);
+  --color-content-area: rgb(250 248 255);
+  --color-sidebar-foreground: rgb(25 27 37);
+  --color-sidebar-primary: rgb(0 79 229);
+  --color-sidebar-primary-foreground: rgb(255 255 255);
+  --color-sidebar-accent: rgb(227 223 255);
+  --color-sidebar-accent-foreground: rgb(61 47 178);
+  --color-sidebar-border: rgb(196 197 214);
+  --color-sidebar-ring: rgb(0 79 229);
+  --color-primary-text: rgb(0 79 229);
+  --color-primary-subtle: rgba(102, 138, 255, 0.13);
+  --color-secondary-text: rgb(139 80 0);
+  --color-secondary-subtle: rgba(210, 124, 0, 0.13);
+  --color-tertiary-text: rgb(114 92 0);
+  --color-tertiary-subtle: rgba(174, 141, 0, 0.13);
+  --color-success: rgb(0 121 82);
+  --color-success-foreground: rgb(255 255 255);
+  --color-success-text: rgb(0 108 73);
+  --color-success-subtle: rgba(16, 185, 129, 0.13);
+  --color-error: rgb(191 31 39);
+  --color-error-foreground: rgb(255 255 255);
+  --color-error-text: rgb(167 55 53);
+  --color-error-subtle: rgba(239, 68, 68, 0.13);
+  --color-warning: rgb(148 93 0);
+  --color-warning-foreground: rgb(255 255 255);
+  --color-warning-text: rgb(133 83 0);
+  --color-warning-subtle: rgba(245, 158, 11, 0.13);
+  --color-info: rgb(0 100 213);
+  --color-info-foreground: rgb(255 255 255);
+  --color-info-text: rgb(1 90 194);
+  --color-info-subtle: rgba(59, 130, 246, 0.13);
+  --color-bg: rgb(245 243 247);
+  --color-fill: rgb(255 255 255);
+  --color-fill-secondary: rgb(211 209 213);
+  --color-fill-hover: rgb(211 209 213);
+  --color-fill-brand: rgb(35 87 223);
+  --color-fill-brand-hover: rgb(0 79 229);
+  --color-fill-inverse: rgb(25 27 37);
+  --color-fill-inverse-hover: rgb(67 70 84);
+  --color-fill-placeholder: rgb(211 209 213);
+  --color-text: rgb(25 27 37);
+  --color-text-secondary: rgb(67 70 84);
+  --color-text-tertiary: rgb(67 70 84);
+  --color-text-inverse: rgb(255 255 255);
+  --color-text-fixed-light: rgb(255 255 255);
+  --color-text-placeholder: rgb(67 70 84);
+  --color-border-image: rgb(196 197 214);
+  --color-border-secondary: rgb(196 197 214);
+  --color-border-input: rgb(196 197 214);
+  --color-border-input-active: rgb(0 79 229);
+  --color-divider: rgb(196 197 214);
+  --logo-letter-color: rgb(255 255 255);
+}
+
+.docs-theme:is(.dark, .dark *) {
+  --background: rgb(13 14 17);
+  --foreground: rgb(225 225 239);
+  --surface: rgb(27 27 31);
+  --surface-foreground: rgb(225 225 239);
+  --popover: rgb(35 35 39);
+  --popover-foreground: rgb(225 225 239);
+  --primary: rgb(93 132 255);
+  --primary-foreground: rgb(0 0 0);
+  --secondary: rgb(172 101 0);
+  --secondary-foreground: rgb(255 255 255);
+  --tertiary: rgb(254 207 0);
+  --tertiary-foreground: rgb(0 0 0);
+  --muted: rgb(44 44 47);
+  --muted-foreground: rgb(196 197 214);
+  --accent: rgb(44 44 47);
+  --accent-foreground: rgb(196 197 214);
+  --destructive: rgb(255 180 171);
+  --border: rgb(67 70 84);
+  --input: rgb(67 70 84);
+  --ring: rgb(182 196 255);
+  --sidebar: rgb(27 27 31);
+  --card: rgb(50 52 63);
+  --card-foreground: rgb(225 225 239);
+  --chart-1: rgb(151 173 255);
+  --chart-2: rgb(255 136 210);
+  --chart-3: rgb(255 151 52);
+  --chart-4: rgb(142 192 67);
+  --chart-5: rgb(0 196 204);
+  --content-area: rgb(17 19 28);
+  --sidebar-foreground: rgb(225 225 239);
+  --sidebar-primary: rgb(182 196 255);
+  --sidebar-primary-foreground: rgb(0 40 125);
+  --sidebar-accent: rgb(61 47 178);
+  --sidebar-accent-foreground: rgb(227 223 255);
+  --sidebar-border: rgb(67 70 84);
+  --sidebar-ring: rgb(182 196 255);
+  --primary-text: rgb(182 196 255);
+  --primary-subtle: rgba(102, 138, 255, 0.24);
+  --secondary-text: rgb(255 184 112);
+  --secondary-subtle: rgba(210, 124, 0, 0.24);
+  --tertiary-text: rgb(238 194 7);
+  --tertiary-subtle: rgba(174, 141, 0, 0.24);
+  --success: rgb(0 135 92);
+  --success-foreground: rgb(255 255 255);
+  --success-text: rgb(59 224 161);
+  --success-subtle: rgba(16, 185, 129, 0.24);
+  --error: rgb(209 45 50);
+  --error-foreground: rgb(255 255 255);
+  --error-text: rgb(255 179 173);
+  --error-subtle: rgba(239, 68, 68, 0.24);
+  --warning: rgb(165 104 0);
+  --warning-foreground: rgb(255 255 255);
+  --warning-text: rgb(255 185 95);
+  --warning-subtle: rgba(245, 158, 11, 0.24);
+  --info: rgb(33 112 228);
+  --info-foreground: rgb(255 255 255);
+  --info-text: rgb(173 198 255);
+  --info-subtle: rgba(59, 130, 246, 0.24);
+  --color-background: rgb(13 14 17);
+  --color-foreground: rgb(225 225 239);
+  --color-surface: rgb(27 27 31);
+  --color-surface-foreground: rgb(225 225 239);
+  --color-popover: rgb(35 35 39);
+  --color-popover-foreground: rgb(225 225 239);
+  --color-primary: rgb(93 132 255);
+  --color-primary-foreground: rgb(0 0 0);
+  --color-secondary: rgb(172 101 0);
+  --color-secondary-foreground: rgb(255 255 255);
+  --color-tertiary: rgb(254 207 0);
+  --color-tertiary-foreground: rgb(0 0 0);
+  --color-muted: rgb(44 44 47);
+  --color-muted-foreground: rgb(196 197 214);
+  --color-accent: rgb(44 44 47);
+  --color-accent-foreground: rgb(196 197 214);
+  --color-destructive: rgb(255 180 171);
+  --color-border: rgb(67 70 84);
+  --color-input: rgb(67 70 84);
+  --color-ring: rgb(182 196 255);
+  --color-sidebar: rgb(27 27 31);
+  --color-card: rgb(50 52 63);
+  --color-card-foreground: rgb(225 225 239);
+  --color-chart-1: rgb(151 173 255);
+  --color-chart-2: rgb(255 136 210);
+  --color-chart-3: rgb(255 151 52);
+  --color-chart-4: rgb(142 192 67);
+  --color-chart-5: rgb(0 196 204);
+  --color-content-area: rgb(17 19 28);
+  --color-sidebar-foreground: rgb(225 225 239);
+  --color-sidebar-primary: rgb(182 196 255);
+  --color-sidebar-primary-foreground: rgb(0 40 125);
+  --color-sidebar-accent: rgb(61 47 178);
+  --color-sidebar-accent-foreground: rgb(227 223 255);
+  --color-sidebar-border: rgb(67 70 84);
+  --color-sidebar-ring: rgb(182 196 255);
+  --color-primary-text: rgb(182 196 255);
+  --color-primary-subtle: rgba(102, 138, 255, 0.24);
+  --color-secondary-text: rgb(255 184 112);
+  --color-secondary-subtle: rgba(210, 124, 0, 0.24);
+  --color-tertiary-text: rgb(238 194 7);
+  --color-tertiary-subtle: rgba(174, 141, 0, 0.24);
+  --color-success: rgb(0 135 92);
+  --color-success-foreground: rgb(255 255 255);
+  --color-success-text: rgb(59 224 161);
+  --color-success-subtle: rgba(16, 185, 129, 0.24);
+  --color-error: rgb(209 45 50);
+  --color-error-foreground: rgb(255 255 255);
+  --color-error-text: rgb(255 179 173);
+  --color-error-subtle: rgba(239, 68, 68, 0.24);
+  --color-warning: rgb(165 104 0);
+  --color-warning-foreground: rgb(255 255 255);
+  --color-warning-text: rgb(255 185 95);
+  --color-warning-subtle: rgba(245, 158, 11, 0.24);
+  --color-info: rgb(33 112 228);
+  --color-info-foreground: rgb(255 255 255);
+  --color-info-text: rgb(173 198 255);
+  --color-info-subtle: rgba(59, 130, 246, 0.24);
+  --color-bg: rgb(13 14 17);
+  --color-fill: rgb(50 52 63);
+  --color-fill-secondary: rgb(44 44 47);
+  --color-fill-hover: rgb(44 44 47);
+  --color-fill-brand: rgb(93 132 255);
+  --color-fill-brand-hover: rgb(182 196 255);
+  --color-fill-inverse: rgb(225 225 239);
+  --color-fill-inverse-hover: rgb(196 197 214);
+  --color-fill-placeholder: rgb(44 44 47);
+  --color-text: rgb(225 225 239);
+  --color-text-secondary: rgb(196 197 214);
+  --color-text-tertiary: rgb(196 197 214);
+  --color-text-inverse: rgb(0 0 0);
+  --color-text-fixed-light: rgb(0 0 0);
+  --color-text-placeholder: rgb(196 197 214);
+  --color-border-image: rgb(67 70 84);
+  --color-border-secondary: rgb(67 70 84);
+  --color-border-input: rgb(67 70 84);
+  --color-border-input-active: rgb(182 196 255);
+  --color-divider: rgb(67 70 84);
+  --logo-letter-color: rgb(255 255 255);
+}
+
+/* Oxy Manifesto — seed #087a3e */
+.manifesto-theme {
+  --background: rgb(243 244 239);
+  --foreground: rgb(20 30 22);
+  --surface: rgb(231 233 227);
+  --surface-foreground: rgb(20 30 22);
+  --popover: rgb(220 221 216);
+  --popover-foreground: rgb(20 30 22);
+  --primary: rgb(0 113 56);
+  --primary-foreground: rgb(255 255 255);
+  --secondary: rgb(197 34 98);
+  --secondary-foreground: rgb(255 255 255);
+  --tertiary: rgb(253 175 0);
+  --tertiary-foreground: rgb(0 0 0);
+  --muted: rgb(209 210 205);
+  --muted-foreground: rgb(61 74 62);
+  --accent: rgb(209 210 205);
+  --accent-foreground: rgb(61 74 62);
+  --destructive: rgb(186 26 26);
+  --border: rgb(188 202 187);
+  --input: rgb(188 202 187);
+  --ring: rgb(0 109 54);
+  --sidebar: rgb(231 233 227);
+  --card: rgb(255 255 255);
+  --card-foreground: rgb(20 30 22);
+  --chart-1: rgb(0 132 66);
+  --chart-2: rgb(0 124 156);
+  --chart-3: rgb(123 93 210);
+  --chart-4: rgb(192 72 97);
+  --chart-5: rgb(149 106 0);
+  --content-area: rgb(241 252 239);
+  --sidebar-foreground: rgb(20 30 22);
+  --sidebar-primary: rgb(0 109 54);
+  --sidebar-primary-foreground: rgb(255 255 255);
+  --sidebar-accent: rgb(57 255 194);
+  --sidebar-accent-foreground: rgb(0 81 59);
+  --sidebar-border: rgb(188 202 187);
+  --sidebar-ring: rgb(0 109 54);
+  --primary-text: rgb(0 109 54);
+  --primary-subtle: rgba(0, 167, 86, 0.13);
+  --secondary-text: rgb(165 52 90);
+  --secondary-subtle: rgba(255, 75, 138, 0.13);
+  --tertiary-text: rgb(128 86 0);
+  --tertiary-subtle: rgba(194, 133, 0, 0.13);
+  --success: rgb(0 121 82);
+  --success-foreground: rgb(255 255 255);
+  --success-text: rgb(0 108 73);
+  --success-subtle: rgba(16, 185, 129, 0.13);
+  --error: rgb(191 31 39);
+  --error-foreground: rgb(255 255 255);
+  --error-text: rgb(167 55 53);
+  --error-subtle: rgba(239, 68, 68, 0.13);
+  --warning: rgb(148 93 0);
+  --warning-foreground: rgb(255 255 255);
+  --warning-text: rgb(133 83 0);
+  --warning-subtle: rgba(245, 158, 11, 0.13);
+  --info: rgb(0 100 213);
+  --info-foreground: rgb(255 255 255);
+  --info-text: rgb(1 90 194);
+  --info-subtle: rgba(59, 130, 246, 0.13);
+  --color-background: rgb(243 244 239);
+  --color-foreground: rgb(20 30 22);
+  --color-surface: rgb(231 233 227);
+  --color-surface-foreground: rgb(20 30 22);
+  --color-popover: rgb(220 221 216);
+  --color-popover-foreground: rgb(20 30 22);
+  --color-primary: rgb(0 113 56);
+  --color-primary-foreground: rgb(255 255 255);
+  --color-secondary: rgb(197 34 98);
+  --color-secondary-foreground: rgb(255 255 255);
+  --color-tertiary: rgb(253 175 0);
+  --color-tertiary-foreground: rgb(0 0 0);
+  --color-muted: rgb(209 210 205);
+  --color-muted-foreground: rgb(61 74 62);
+  --color-accent: rgb(209 210 205);
+  --color-accent-foreground: rgb(61 74 62);
+  --color-destructive: rgb(186 26 26);
+  --color-border: rgb(188 202 187);
+  --color-input: rgb(188 202 187);
+  --color-ring: rgb(0 109 54);
+  --color-sidebar: rgb(231 233 227);
+  --color-card: rgb(255 255 255);
+  --color-card-foreground: rgb(20 30 22);
+  --color-chart-1: rgb(0 132 66);
+  --color-chart-2: rgb(0 124 156);
+  --color-chart-3: rgb(123 93 210);
+  --color-chart-4: rgb(192 72 97);
+  --color-chart-5: rgb(149 106 0);
+  --color-content-area: rgb(241 252 239);
+  --color-sidebar-foreground: rgb(20 30 22);
+  --color-sidebar-primary: rgb(0 109 54);
+  --color-sidebar-primary-foreground: rgb(255 255 255);
+  --color-sidebar-accent: rgb(57 255 194);
+  --color-sidebar-accent-foreground: rgb(0 81 59);
+  --color-sidebar-border: rgb(188 202 187);
+  --color-sidebar-ring: rgb(0 109 54);
+  --color-primary-text: rgb(0 109 54);
+  --color-primary-subtle: rgba(0, 167, 86, 0.13);
+  --color-secondary-text: rgb(165 52 90);
+  --color-secondary-subtle: rgba(255, 75, 138, 0.13);
+  --color-tertiary-text: rgb(128 86 0);
+  --color-tertiary-subtle: rgba(194, 133, 0, 0.13);
+  --color-success: rgb(0 121 82);
+  --color-success-foreground: rgb(255 255 255);
+  --color-success-text: rgb(0 108 73);
+  --color-success-subtle: rgba(16, 185, 129, 0.13);
+  --color-error: rgb(191 31 39);
+  --color-error-foreground: rgb(255 255 255);
+  --color-error-text: rgb(167 55 53);
+  --color-error-subtle: rgba(239, 68, 68, 0.13);
+  --color-warning: rgb(148 93 0);
+  --color-warning-foreground: rgb(255 255 255);
+  --color-warning-text: rgb(133 83 0);
+  --color-warning-subtle: rgba(245, 158, 11, 0.13);
+  --color-info: rgb(0 100 213);
+  --color-info-foreground: rgb(255 255 255);
+  --color-info-text: rgb(1 90 194);
+  --color-info-subtle: rgba(59, 130, 246, 0.13);
+  --color-bg: rgb(243 244 239);
+  --color-fill: rgb(255 255 255);
+  --color-fill-secondary: rgb(209 210 205);
+  --color-fill-hover: rgb(209 210 205);
+  --color-fill-brand: rgb(0 113 56);
+  --color-fill-brand-hover: rgb(0 109 54);
+  --color-fill-inverse: rgb(20 30 22);
+  --color-fill-inverse-hover: rgb(61 74 62);
+  --color-fill-placeholder: rgb(209 210 205);
+  --color-text: rgb(20 30 22);
+  --color-text-secondary: rgb(61 74 62);
+  --color-text-tertiary: rgb(61 74 62);
+  --color-text-inverse: rgb(255 255 255);
+  --color-text-fixed-light: rgb(255 255 255);
+  --color-text-placeholder: rgb(61 74 62);
+  --color-border-image: rgb(188 202 187);
+  --color-border-secondary: rgb(188 202 187);
+  --color-border-input: rgb(188 202 187);
+  --color-border-input-active: rgb(0 109 54);
+  --color-divider: rgb(188 202 187);
+  --logo-letter-color: rgb(255 255 255);
+}
+
+.manifesto-theme:is(.dark, .dark *) {
+  --background: rgb(12 15 12);
+  --foreground: rgb(218 230 216);
+  --surface: rgb(25 28 25);
+  --surface-foreground: rgb(218 230 216);
+  --popover: rgb(34 36 33);
+  --popover-foreground: rgb(218 230 216);
+  --primary: rgb(144 242 168);
+  --primary-foreground: rgb(0 0 0);
+  --secondary: rgb(214 49 110);
+  --secondary-foreground: rgb(255 255 255);
+  --tertiary: rgb(253 175 0);
+  --tertiary-foreground: rgb(0 0 0);
+  --muted: rgb(42 45 42);
+  --muted-foreground: rgb(188 202 187);
+  --accent: rgb(42 45 42);
+  --accent-foreground: rgb(188 202 187);
+  --destructive: rgb(255 180 171);
+  --border: rgb(61 74 62);
+  --input: rgb(61 74 62);
+  --ring: rgb(0 228 120);
+  --sidebar: rgb(25 28 25);
+  --card: rgb(45 55 46);
+  --card-foreground: rgb(218 230 216);
+  --chart-1: rgb(75 199 118);
+  --chart-2: rgb(0 191 239);
+  --chart-3: rgb(186 163 255);
+  --chart-4: rgb(255 144 161);
+  --chart-5: rgb(229 165 0);
+  --content-area: rgb(12 21 14);
+  --sidebar-foreground: rgb(218 230 216);
+  --sidebar-primary: rgb(0 228 120);
+  --sidebar-primary-foreground: rgb(0 57 25);
+  --sidebar-accent: rgb(0 81 59);
+  --sidebar-accent-foreground: rgb(57 255 194);
+  --sidebar-border: rgb(61 74 62);
+  --sidebar-ring: rgb(0 228 120);
+  --primary-text: rgb(0 228 120);
+  --primary-subtle: rgba(0, 167, 86, 0.24);
+  --secondary-text: rgb(255 177 195);
+  --secondary-subtle: rgba(255, 75, 138, 0.24);
+  --tertiary-text: rgb(255 186 67);
+  --tertiary-subtle: rgba(194, 133, 0, 0.24);
+  --success: rgb(0 135 92);
+  --success-foreground: rgb(255 255 255);
+  --success-text: rgb(59 224 161);
+  --success-subtle: rgba(16, 185, 129, 0.24);
+  --error: rgb(209 45 50);
+  --error-foreground: rgb(255 255 255);
+  --error-text: rgb(255 179 173);
+  --error-subtle: rgba(239, 68, 68, 0.24);
+  --warning: rgb(165 104 0);
+  --warning-foreground: rgb(255 255 255);
+  --warning-text: rgb(255 185 95);
+  --warning-subtle: rgba(245, 158, 11, 0.24);
+  --info: rgb(33 112 228);
+  --info-foreground: rgb(255 255 255);
+  --info-text: rgb(173 198 255);
+  --info-subtle: rgba(59, 130, 246, 0.24);
+  --color-background: rgb(12 15 12);
+  --color-foreground: rgb(218 230 216);
+  --color-surface: rgb(25 28 25);
+  --color-surface-foreground: rgb(218 230 216);
+  --color-popover: rgb(34 36 33);
+  --color-popover-foreground: rgb(218 230 216);
+  --color-primary: rgb(144 242 168);
+  --color-primary-foreground: rgb(0 0 0);
+  --color-secondary: rgb(214 49 110);
+  --color-secondary-foreground: rgb(255 255 255);
+  --color-tertiary: rgb(253 175 0);
+  --color-tertiary-foreground: rgb(0 0 0);
+  --color-muted: rgb(42 45 42);
+  --color-muted-foreground: rgb(188 202 187);
+  --color-accent: rgb(42 45 42);
+  --color-accent-foreground: rgb(188 202 187);
+  --color-destructive: rgb(255 180 171);
+  --color-border: rgb(61 74 62);
+  --color-input: rgb(61 74 62);
+  --color-ring: rgb(0 228 120);
+  --color-sidebar: rgb(25 28 25);
+  --color-card: rgb(45 55 46);
+  --color-card-foreground: rgb(218 230 216);
+  --color-chart-1: rgb(75 199 118);
+  --color-chart-2: rgb(0 191 239);
+  --color-chart-3: rgb(186 163 255);
+  --color-chart-4: rgb(255 144 161);
+  --color-chart-5: rgb(229 165 0);
+  --color-content-area: rgb(12 21 14);
+  --color-sidebar-foreground: rgb(218 230 216);
+  --color-sidebar-primary: rgb(0 228 120);
+  --color-sidebar-primary-foreground: rgb(0 57 25);
+  --color-sidebar-accent: rgb(0 81 59);
+  --color-sidebar-accent-foreground: rgb(57 255 194);
+  --color-sidebar-border: rgb(61 74 62);
+  --color-sidebar-ring: rgb(0 228 120);
+  --color-primary-text: rgb(0 228 120);
+  --color-primary-subtle: rgba(0, 167, 86, 0.24);
+  --color-secondary-text: rgb(255 177 195);
+  --color-secondary-subtle: rgba(255, 75, 138, 0.24);
+  --color-tertiary-text: rgb(255 186 67);
+  --color-tertiary-subtle: rgba(194, 133, 0, 0.24);
+  --color-success: rgb(0 135 92);
+  --color-success-foreground: rgb(255 255 255);
+  --color-success-text: rgb(59 224 161);
+  --color-success-subtle: rgba(16, 185, 129, 0.24);
+  --color-error: rgb(209 45 50);
+  --color-error-foreground: rgb(255 255 255);
+  --color-error-text: rgb(255 179 173);
+  --color-error-subtle: rgba(239, 68, 68, 0.24);
+  --color-warning: rgb(165 104 0);
+  --color-warning-foreground: rgb(255 255 255);
+  --color-warning-text: rgb(255 185 95);
+  --color-warning-subtle: rgba(245, 158, 11, 0.24);
+  --color-info: rgb(33 112 228);
+  --color-info-foreground: rgb(255 255 255);
+  --color-info-text: rgb(173 198 255);
+  --color-info-subtle: rgba(59, 130, 246, 0.24);
+  --color-bg: rgb(12 15 12);
+  --color-fill: rgb(45 55 46);
+  --color-fill-secondary: rgb(42 45 42);
+  --color-fill-hover: rgb(42 45 42);
+  --color-fill-brand: rgb(144 242 168);
+  --color-fill-brand-hover: rgb(0 228 120);
+  --color-fill-inverse: rgb(218 230 216);
+  --color-fill-inverse-hover: rgb(188 202 187);
+  --color-fill-placeholder: rgb(42 45 42);
+  --color-text: rgb(218 230 216);
+  --color-text-secondary: rgb(188 202 187);
+  --color-text-tertiary: rgb(188 202 187);
+  --color-text-inverse: rgb(0 0 0);
+  --color-text-fixed-light: rgb(0 0 0);
+  --color-text-placeholder: rgb(188 202 187);
+  --color-border-image: rgb(61 74 62);
+  --color-border-secondary: rgb(61 74 62);
+  --color-border-input: rgb(61 74 62);
+  --color-border-input-active: rgb(0 228 120);
+  --color-divider: rgb(61 74 62);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* 404 page — seed #087a3e */
@@ -5745,6 +6384,7 @@
   --color-border-input: rgb(188 202 187);
   --color-border-input-active: rgb(0 109 54);
   --color-divider: rgb(188 202 187);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 .not-found-theme:is(.dark, .dark *) {
@@ -5884,6 +6524,7 @@
   --color-border-input: rgb(61 74 62);
   --color-border-input-active: rgb(0 228 120);
   --color-divider: rgb(61 74 62);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* FairCoin sections on oxy.so — seed #9ffb50 */
@@ -6024,6 +6665,7 @@
   --color-border-input: rgb(193 202 180);
   --color-border-input-active: rgb(55 107 0);
   --color-divider: rgb(193 202 180);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 .faircoin-theme:is(.dark, .dark *) {
@@ -6163,6 +6805,7 @@
   --color-border-input: rgb(65 73 57);
   --color-border-input-active: rgb(120 223 0);
   --color-divider: rgb(65 73 57);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Mention ticker cards — seed #154fd7 */
@@ -6303,6 +6946,7 @@
   --color-border-input: rgb(196 197 214);
   --color-border-input-active: rgb(0 79 229);
   --color-divider: rgb(196 197 214);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 .mention-theme:is(.dark, .dark *) {
@@ -6442,6 +7086,7 @@
   --color-border-input: rgb(67 70 84);
   --color-border-input-active: rgb(182 196 255);
   --color-divider: rgb(67 70 84);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Allo ticker cards — seed #b866ff */
@@ -6582,6 +7227,7 @@
   --color-border-input: rgb(207 194 212);
   --color-border-input-active: rgb(140 0 229);
   --color-divider: rgb(207 194 212);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 .allo-theme:is(.dark, .dark *) {
@@ -6721,6 +7367,7 @@
   --color-border-input: rgb(76 68 82);
   --color-border-input-active: rgb(223 183 255);
   --color-divider: rgb(76 68 82);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Homiio ticker cards — seed #ffd400 */
@@ -6861,6 +7508,7 @@
   --color-border-input: rgb(208 198 171);
   --color-border-input-active: rgb(113 93 0);
   --color-divider: rgb(208 198 171);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 .homiio-theme:is(.dark, .dark *) {
@@ -7000,6 +7648,288 @@
   --color-border-input: rgb(77 70 50);
   --color-border-input-active: rgb(235 195 0);
   --color-divider: rgb(77 70 50);
+  --logo-letter-color: rgb(255 255 255);
+}
+
+/* Mercaria app cards — seed #00706d */
+.mercaria-theme {
+  --background: rgb(242 244 243);
+  --foreground: rgb(17 30 29);
+  --surface: rgb(230 233 232);
+  --surface-foreground: rgb(17 30 29);
+  --popover: rgb(219 221 220);
+  --popover-foreground: rgb(17 30 29);
+  --primary: rgb(9 115 112);
+  --primary-foreground: rgb(255 255 255);
+  --secondary: rgb(181 72 0);
+  --secondary-foreground: rgb(255 255 255);
+  --tertiary: rgb(229 69 50);
+  --tertiary-foreground: rgb(0 0 0);
+  --muted: rgb(207 210 209);
+  --muted-foreground: rgb(57 74 73);
+  --accent: rgb(207 210 209);
+  --accent-foreground: rgb(57 74 73);
+  --destructive: rgb(186 26 26);
+  --border: rgb(184 202 200);
+  --input: rgb(184 202 200);
+  --ring: rgb(0 106 103);
+  --sidebar: rgb(230 233 232);
+  --card: rgb(255 255 255);
+  --card-foreground: rgb(17 30 29);
+  --chart-1: rgb(0 128 124);
+  --chart-2: rgb(40 111 215);
+  --chart-3: rgb(174 76 161);
+  --chart-4: rgb(184 86 0);
+  --chart-5: rgb(102 122 0);
+  --content-area: rgb(238 252 251);
+  --sidebar-foreground: rgb(17 30 29);
+  --sidebar-primary: rgb(0 106 103);
+  --sidebar-primary-foreground: rgb(255 255 255);
+  --sidebar-accent: rgb(157 239 255);
+  --sidebar-accent-foreground: rgb(0 78 89);
+  --sidebar-border: rgb(184 202 200);
+  --sidebar-ring: rgb(0 106 103);
+  --primary-text: rgb(0 106 103);
+  --primary-subtle: rgba(0, 162, 157, 0.13);
+  --secondary-text: rgb(161 64 0);
+  --secondary-subtle: rgba(243, 100, 0, 0.13);
+  --tertiary-text: rgb(167 56 42);
+  --tertiary-subtle: rgba(255, 85, 64, 0.13);
+  --success: rgb(0 121 82);
+  --success-foreground: rgb(255 255 255);
+  --success-text: rgb(0 108 73);
+  --success-subtle: rgba(16, 185, 129, 0.13);
+  --error: rgb(191 31 39);
+  --error-foreground: rgb(255 255 255);
+  --error-text: rgb(167 55 53);
+  --error-subtle: rgba(239, 68, 68, 0.13);
+  --warning: rgb(148 93 0);
+  --warning-foreground: rgb(255 255 255);
+  --warning-text: rgb(133 83 0);
+  --warning-subtle: rgba(245, 158, 11, 0.13);
+  --info: rgb(0 100 213);
+  --info-foreground: rgb(255 255 255);
+  --info-text: rgb(1 90 194);
+  --info-subtle: rgba(59, 130, 246, 0.13);
+  --color-background: rgb(242 244 243);
+  --color-foreground: rgb(17 30 29);
+  --color-surface: rgb(230 233 232);
+  --color-surface-foreground: rgb(17 30 29);
+  --color-popover: rgb(219 221 220);
+  --color-popover-foreground: rgb(17 30 29);
+  --color-primary: rgb(9 115 112);
+  --color-primary-foreground: rgb(255 255 255);
+  --color-secondary: rgb(181 72 0);
+  --color-secondary-foreground: rgb(255 255 255);
+  --color-tertiary: rgb(229 69 50);
+  --color-tertiary-foreground: rgb(0 0 0);
+  --color-muted: rgb(207 210 209);
+  --color-muted-foreground: rgb(57 74 73);
+  --color-accent: rgb(207 210 209);
+  --color-accent-foreground: rgb(57 74 73);
+  --color-destructive: rgb(186 26 26);
+  --color-border: rgb(184 202 200);
+  --color-input: rgb(184 202 200);
+  --color-ring: rgb(0 106 103);
+  --color-sidebar: rgb(230 233 232);
+  --color-card: rgb(255 255 255);
+  --color-card-foreground: rgb(17 30 29);
+  --color-chart-1: rgb(0 128 124);
+  --color-chart-2: rgb(40 111 215);
+  --color-chart-3: rgb(174 76 161);
+  --color-chart-4: rgb(184 86 0);
+  --color-chart-5: rgb(102 122 0);
+  --color-content-area: rgb(238 252 251);
+  --color-sidebar-foreground: rgb(17 30 29);
+  --color-sidebar-primary: rgb(0 106 103);
+  --color-sidebar-primary-foreground: rgb(255 255 255);
+  --color-sidebar-accent: rgb(157 239 255);
+  --color-sidebar-accent-foreground: rgb(0 78 89);
+  --color-sidebar-border: rgb(184 202 200);
+  --color-sidebar-ring: rgb(0 106 103);
+  --color-primary-text: rgb(0 106 103);
+  --color-primary-subtle: rgba(0, 162, 157, 0.13);
+  --color-secondary-text: rgb(161 64 0);
+  --color-secondary-subtle: rgba(243, 100, 0, 0.13);
+  --color-tertiary-text: rgb(167 56 42);
+  --color-tertiary-subtle: rgba(255, 85, 64, 0.13);
+  --color-success: rgb(0 121 82);
+  --color-success-foreground: rgb(255 255 255);
+  --color-success-text: rgb(0 108 73);
+  --color-success-subtle: rgba(16, 185, 129, 0.13);
+  --color-error: rgb(191 31 39);
+  --color-error-foreground: rgb(255 255 255);
+  --color-error-text: rgb(167 55 53);
+  --color-error-subtle: rgba(239, 68, 68, 0.13);
+  --color-warning: rgb(148 93 0);
+  --color-warning-foreground: rgb(255 255 255);
+  --color-warning-text: rgb(133 83 0);
+  --color-warning-subtle: rgba(245, 158, 11, 0.13);
+  --color-info: rgb(0 100 213);
+  --color-info-foreground: rgb(255 255 255);
+  --color-info-text: rgb(1 90 194);
+  --color-info-subtle: rgba(59, 130, 246, 0.13);
+  --color-bg: rgb(242 244 243);
+  --color-fill: rgb(255 255 255);
+  --color-fill-secondary: rgb(207 210 209);
+  --color-fill-hover: rgb(207 210 209);
+  --color-fill-brand: rgb(9 115 112);
+  --color-fill-brand-hover: rgb(0 106 103);
+  --color-fill-inverse: rgb(17 30 29);
+  --color-fill-inverse-hover: rgb(57 74 73);
+  --color-fill-placeholder: rgb(207 210 209);
+  --color-text: rgb(17 30 29);
+  --color-text-secondary: rgb(57 74 73);
+  --color-text-tertiary: rgb(57 74 73);
+  --color-text-inverse: rgb(255 255 255);
+  --color-text-fixed-light: rgb(255 255 255);
+  --color-text-placeholder: rgb(57 74 73);
+  --color-border-image: rgb(184 202 200);
+  --color-border-secondary: rgb(184 202 200);
+  --color-border-input: rgb(184 202 200);
+  --color-border-input-active: rgb(0 106 103);
+  --color-divider: rgb(184 202 200);
+  --logo-letter-color: rgb(255 255 255);
+}
+
+.mercaria-theme:is(.dark, .dark *) {
+  --background: rgb(11 15 15);
+  --foreground: rgb(215 229 228);
+  --surface: rgb(25 28 28);
+  --surface-foreground: rgb(215 229 228);
+  --popover: rgb(33 36 36);
+  --popover-foreground: rgb(215 229 228);
+  --primary: rgb(159 244 240);
+  --primary-foreground: rgb(0 0 0);
+  --secondary: rgb(201 81 0);
+  --secondary-foreground: rgb(255 255 255);
+  --tertiary: rgb(246 81 61);
+  --tertiary-foreground: rgb(0 0 0);
+  --muted: rgb(41 45 44);
+  --muted-foreground: rgb(184 202 200);
+  --accent: rgb(41 45 44);
+  --accent-foreground: rgb(184 202 200);
+  --destructive: rgb(255 180 171);
+  --border: rgb(57 74 73);
+  --input: rgb(57 74 73);
+  --ring: rgb(0 221 215);
+  --sidebar: rgb(25 28 28);
+  --card: rgb(42 55 54);
+  --card-foreground: rgb(215 229 228);
+  --chart-1: rgb(0 197 192);
+  --chart-2: rgb(136 176 255);
+  --chart-3: rgb(247 138 228);
+  --chart-4: rgb(255 150 83);
+  --chart-5: rgb(161 188 47);
+  --content-area: rgb(9 22 21);
+  --sidebar-foreground: rgb(215 229 228);
+  --sidebar-primary: rgb(0 221 215);
+  --sidebar-primary-foreground: rgb(0 55 53);
+  --sidebar-accent: rgb(0 78 89);
+  --sidebar-accent-foreground: rgb(157 239 255);
+  --sidebar-border: rgb(57 74 73);
+  --sidebar-ring: rgb(0 221 215);
+  --primary-text: rgb(0 221 215);
+  --primary-subtle: rgba(0, 162, 157, 0.24);
+  --secondary-text: rgb(255 182 148);
+  --secondary-subtle: rgba(243, 100, 0, 0.24);
+  --tertiary-text: rgb(255 180 168);
+  --tertiary-subtle: rgba(255, 85, 64, 0.24);
+  --success: rgb(0 135 92);
+  --success-foreground: rgb(255 255 255);
+  --success-text: rgb(59 224 161);
+  --success-subtle: rgba(16, 185, 129, 0.24);
+  --error: rgb(209 45 50);
+  --error-foreground: rgb(255 255 255);
+  --error-text: rgb(255 179 173);
+  --error-subtle: rgba(239, 68, 68, 0.24);
+  --warning: rgb(165 104 0);
+  --warning-foreground: rgb(255 255 255);
+  --warning-text: rgb(255 185 95);
+  --warning-subtle: rgba(245, 158, 11, 0.24);
+  --info: rgb(33 112 228);
+  --info-foreground: rgb(255 255 255);
+  --info-text: rgb(173 198 255);
+  --info-subtle: rgba(59, 130, 246, 0.24);
+  --color-background: rgb(11 15 15);
+  --color-foreground: rgb(215 229 228);
+  --color-surface: rgb(25 28 28);
+  --color-surface-foreground: rgb(215 229 228);
+  --color-popover: rgb(33 36 36);
+  --color-popover-foreground: rgb(215 229 228);
+  --color-primary: rgb(159 244 240);
+  --color-primary-foreground: rgb(0 0 0);
+  --color-secondary: rgb(201 81 0);
+  --color-secondary-foreground: rgb(255 255 255);
+  --color-tertiary: rgb(246 81 61);
+  --color-tertiary-foreground: rgb(0 0 0);
+  --color-muted: rgb(41 45 44);
+  --color-muted-foreground: rgb(184 202 200);
+  --color-accent: rgb(41 45 44);
+  --color-accent-foreground: rgb(184 202 200);
+  --color-destructive: rgb(255 180 171);
+  --color-border: rgb(57 74 73);
+  --color-input: rgb(57 74 73);
+  --color-ring: rgb(0 221 215);
+  --color-sidebar: rgb(25 28 28);
+  --color-card: rgb(42 55 54);
+  --color-card-foreground: rgb(215 229 228);
+  --color-chart-1: rgb(0 197 192);
+  --color-chart-2: rgb(136 176 255);
+  --color-chart-3: rgb(247 138 228);
+  --color-chart-4: rgb(255 150 83);
+  --color-chart-5: rgb(161 188 47);
+  --color-content-area: rgb(9 22 21);
+  --color-sidebar-foreground: rgb(215 229 228);
+  --color-sidebar-primary: rgb(0 221 215);
+  --color-sidebar-primary-foreground: rgb(0 55 53);
+  --color-sidebar-accent: rgb(0 78 89);
+  --color-sidebar-accent-foreground: rgb(157 239 255);
+  --color-sidebar-border: rgb(57 74 73);
+  --color-sidebar-ring: rgb(0 221 215);
+  --color-primary-text: rgb(0 221 215);
+  --color-primary-subtle: rgba(0, 162, 157, 0.24);
+  --color-secondary-text: rgb(255 182 148);
+  --color-secondary-subtle: rgba(243, 100, 0, 0.24);
+  --color-tertiary-text: rgb(255 180 168);
+  --color-tertiary-subtle: rgba(255, 85, 64, 0.24);
+  --color-success: rgb(0 135 92);
+  --color-success-foreground: rgb(255 255 255);
+  --color-success-text: rgb(59 224 161);
+  --color-success-subtle: rgba(16, 185, 129, 0.24);
+  --color-error: rgb(209 45 50);
+  --color-error-foreground: rgb(255 255 255);
+  --color-error-text: rgb(255 179 173);
+  --color-error-subtle: rgba(239, 68, 68, 0.24);
+  --color-warning: rgb(165 104 0);
+  --color-warning-foreground: rgb(255 255 255);
+  --color-warning-text: rgb(255 185 95);
+  --color-warning-subtle: rgba(245, 158, 11, 0.24);
+  --color-info: rgb(33 112 228);
+  --color-info-foreground: rgb(255 255 255);
+  --color-info-text: rgb(173 198 255);
+  --color-info-subtle: rgba(59, 130, 246, 0.24);
+  --color-bg: rgb(11 15 15);
+  --color-fill: rgb(42 55 54);
+  --color-fill-secondary: rgb(41 45 44);
+  --color-fill-hover: rgb(41 45 44);
+  --color-fill-brand: rgb(159 244 240);
+  --color-fill-brand-hover: rgb(0 221 215);
+  --color-fill-inverse: rgb(215 229 228);
+  --color-fill-inverse-hover: rgb(184 202 200);
+  --color-fill-placeholder: rgb(41 45 44);
+  --color-text: rgb(215 229 228);
+  --color-text-secondary: rgb(184 202 200);
+  --color-text-tertiary: rgb(184 202 200);
+  --color-text-inverse: rgb(0 0 0);
+  --color-text-fixed-light: rgb(0 0 0);
+  --color-text-placeholder: rgb(184 202 200);
+  --color-border-image: rgb(57 74 73);
+  --color-border-secondary: rgb(57 74 73);
+  --color-border-input: rgb(57 74 73);
+  --color-border-input-active: rgb(0 221 215);
+  --color-divider: rgb(57 74 73);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Inbox app cards — seed #1d9bf0 */
@@ -7140,6 +8070,7 @@
   --color-border-input: rgb(190 199 212);
   --color-border-input-active: rgb(0 98 157);
   --color-divider: rgb(190 199 212);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 .inbox-theme:is(.dark, .dark *) {
@@ -7279,6 +8210,7 @@
   --color-border-input: rgb(62 72 82);
   --color-border-input-active: rgb(153 203 255);
   --color-divider: rgb(62 72 82);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Build for everyone section — seed #03a9f4 */
@@ -7419,6 +8351,7 @@
   --color-border-input: rgb(189 200 211);
   --color-border-input-active: rgb(0 100 147);
   --color-divider: rgb(189 200 211);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 .build-theme:is(.dark, .dark *) {
@@ -7558,6 +8491,7 @@
   --color-border-input: rgb(61 72 82);
   --color-border-input-active: rgb(141 205 255);
   --color-divider: rgb(61 72 82);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Homepage FAQ section — seed #087a3e */
@@ -7698,6 +8632,7 @@
   --color-border-input: rgb(188 202 187);
   --color-border-input-active: rgb(0 109 54);
   --color-divider: rgb(188 202 187);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 .faq-theme:is(.dark, .dark *) {
@@ -7837,6 +8772,7 @@
   --color-border-input: rgb(61 74 62);
   --color-border-input-active: rgb(0 228 120);
   --color-divider: rgb(61 74 62);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* Build the future section — seed #0b2c72 */
@@ -7977,6 +8913,7 @@
   --color-border-input: rgb(195 198 214);
   --color-border-input-active: rgb(0 83 218);
   --color-divider: rgb(195 198 214);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 .partnership-theme:is(.dark, .dark *) {
@@ -8116,6 +9053,7 @@
   --color-border-input: rgb(67 70 84);
   --color-border-input-active: rgb(180 197 255);
   --color-divider: rgb(67 70 84);
+  --logo-letter-color: rgb(255 255 255);
 }
 
 /* FAIRWallet phone mockup — seed #9ffb50 */
@@ -8256,5 +9194,6 @@
   --color-border-input: rgb(65 73 57);
   --color-border-input-active: rgb(120 223 0);
   --color-divider: rgb(65 73 57);
+  --logo-letter-color: rgb(255 255 255);
   color-scheme: dark;
 }

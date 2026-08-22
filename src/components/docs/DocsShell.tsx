@@ -74,7 +74,7 @@ export function DocsShell({
     pkg.versioned &&
     pkg.versions.length > 1
   return (
-    <div className="relative antialiased">
+    <div className="docs-theme relative antialiased bg-[color-mix(in_srgb,var(--primary)_4%,var(--background))]">
       <DocsSubNav />
 
       <div className="flex w-full">
@@ -94,7 +94,7 @@ export function DocsShell({
             )
             : null}
 
-        <main className="relative grow box-border flex-col w-full py-10 px-6 lg:px-12 min-w-0">
+        <main className="relative grow box-border flex-col w-full min-w-0 bg-[color-mix(in_srgb,var(--primary)_4%,var(--background))] px-6 py-10 lg:px-12">
         <div
           className={
             showRail
@@ -141,8 +141,8 @@ export function DocsShell({
           <div
             className={
               hideHeader
-                ? 'relative mb-14 [contain:inline-size] isolate prose max-w-none prose-neutral dark:prose-invert text-foreground'
-                : 'relative mt-8 mb-14 [contain:inline-size] isolate prose max-w-none prose-neutral dark:prose-invert text-foreground'
+                ? 'relative isolate mb-14 [contain:inline-size] prose max-w-none prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-foreground prose-pre:bg-card prose-pre:text-card-foreground'
+                : 'relative isolate mt-8 mb-14 [contain:inline-size] prose max-w-none prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-foreground prose-pre:bg-card prose-pre:text-card-foreground'
             }
             data-docs-content
             ref={contentRef}

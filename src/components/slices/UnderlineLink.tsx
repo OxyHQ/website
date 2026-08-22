@@ -11,7 +11,7 @@ interface UnderlineLinkProps {
 }
 
 const UNDERLINE_CLASSES =
-  'text-gray-a1 relative inline cursor-pointer bg-underline bg-size-[220%_0.06em] bg-no-repeat transition-all bg-position-[100%_calc(100%_-_0.06em)] pb-0.5 duration-600 ease-underline hover:bg-position-[0%_calc(100%_-_0.06em)]'
+  'text-primary relative inline cursor-pointer bg-underline bg-size-[220%_0.06em] bg-no-repeat transition-all bg-position-[100%_calc(100%_-_0.06em)] pb-0.5 duration-600 ease-underline hover:bg-position-[0%_calc(100%_-_0.06em)]'
 
 /**
  * The inline link of this layout: a half-painted gradient twice the box width,

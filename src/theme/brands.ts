@@ -79,6 +79,20 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     label: 'Astro app cards',
   },
   {
+    selector: '.docs-theme',
+    seed: APP_COLOR_PRESETS.cobalt.hex,
+    tertiarySeed: APP_COLOR_PRESETS.cobalt.tertiaryHex,
+    mode: 'auto',
+    label: 'Developer docs',
+  },
+  {
+    selector: '.manifesto-theme',
+    seed: APP_COLOR_PRESETS.grove.hex,
+    tertiarySeed: APP_COLOR_PRESETS.grove.tertiaryHex,
+    mode: 'auto',
+    label: 'Oxy Manifesto',
+  },
+  {
     selector: '.not-found-theme',
     seed: APP_COLOR_PRESETS.grove.hex,
     tertiarySeed: APP_COLOR_PRESETS.grove.tertiaryHex,
@@ -109,6 +123,13 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     seed: APP_COLOR_PRESETS.yellow.hex,
     mode: 'auto',
     label: 'Homiio ticker cards',
+  },
+  {
+    selector: '.mercaria-theme',
+    seed: APP_COLOR_PRESETS.lagoon.hex,
+    tertiarySeed: APP_COLOR_PRESETS.lagoon.tertiaryHex,
+    mode: 'auto',
+    label: 'Mercaria app cards',
   },
   {
     selector: '.inbox-theme',
