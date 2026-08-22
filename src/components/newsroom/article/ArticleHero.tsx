@@ -1,86 +1,77 @@
 import type { NewsroomPost } from '../../../data/newsroom'
-import { readTime } from '../../../lib/userUtils'
-import ArticleAuthors from '../../social/ArticleAuthor'
-import BackToNewsroomButton from './BackToNewsroomButton'
+import { useCurrentLocale } from '../../../lib/i18n'
+import { Link } from 'react-router-dom'
+import ArticleListenControl from './ArticleListenControl'
 import ShareLinkButton from './ShareLinkButton'
-import { AnimatedTitle } from '../../ui/AnimatedTitle'
 
 /**
- * The article's opening screen: category, title, byline, and the two controls
- * that frame the read — back to the index, and the link to share.
- *
- * The cover behaves differently by width on purpose. From `lg` the band turns
- * black and the picture sits behind the title, so `force-dark` pins the palette
- * and the type stays light whatever mode the visitor is in. Below `lg` there is
- * not enough height for type over a photograph, so the band keeps the page's own
- * surface and the cover is shown whole, above the body.
+ * An editorial opening with the title, standfirst and cover in one 12-column
+ * composition. The compact hairline row keeps navigation and article metadata
+ * together without turning the hero into application chrome.
  */
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-}
-
 export default function ArticleHero({ post, url }: { post: NewsroomPost; url: string }) {
+  const locale = useCurrentLocale()
+  const date = new Date(post.publishedAt).toLocaleDateString(locale, {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
+
   return (
-    <>
-      <section
-        className={`relative flex overflow-hidden border-b border-border bg-fill-secondary p-6 pt-24 text-text md:min-h-[25rem] lg:min-h-[47.5rem] ${
-          post.coverImage ? 'force-dark-lg lg:bg-black' : ''
-        }`}
-      >
-        <div className="relative z-10 mx-auto flex h-auto w-full max-w-[77.5rem] flex-col items-center justify-between">
-          <div className="flex size-full flex-col items-center justify-center gap-4 py-10 text-center md:py-20">
-            {post.categories[0] && (
-              <p className="inline-block rounded-sm bg-fill-hover px-2 py-1 font-mono text-xs uppercase tracking-wider text-text">
-                {post.categories[0]}
-              </p>
-            )}
-            <AnimatedTitle as="h1" className="text-heading-responsive-lg">{post.title}</AnimatedTitle>
-            <div className="flex flex-wrap items-center justify-center gap-6">
-              <time className="text-sm" dateTime={post.publishedAt}>
-                {formatDate(post.publishedAt)}
-              </time>
-              {post.oxyUserId && <ArticleAuthors userIds={[post.oxyUserId]} />}
-            </div>
+    <header className="w-full text-foreground">
+      <div className="container grid grid-cols-8 gap-x-2.5 sm:grid-cols-12 sm:gap-x-5 md:gap-x-6">
+          <div className="col-span-full mb-8 flex flex-wrap items-center justify-center gap-4 text-center text-body-sm text-muted-foreground">
+            <time dateTime={post.publishedAt}>{date}</time>
+            {post.categories.map((category) => (
+              <Link
+                key={category}
+                to={`/newsroom?category=${encodeURIComponent(category)}`}
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                {category}
+              </Link>
+            ))}
           </div>
 
-          <div className="hidden w-full items-center justify-between md:flex">
-            <div className="flex items-center gap-4">
-              <BackToNewsroomButton />
-              <p className="font-mono text-xs uppercase tracking-wider text-text-secondary">{readTime(post.content)}</p>
-            </div>
+          <h1 className="col-span-full text-balance text-center text-primary text-heading-3 md:col-start-2 md:col-span-10 lg:col-start-3 lg:col-span-8">
+            {post.title}
+          </h1>
+
+          {post.resume && (
+            <p className="col-span-full mt-6 text-balance text-center text-foreground text-body-1 md:col-start-2 md:col-span-10 lg:col-start-3 lg:col-span-8">
+              {post.resume}
+            </p>
+          )}
+      </div>
+
+      <div className="container grid grid-cols-8 gap-x-2.5 pt-20 sm:grid-cols-12 sm:gap-x-5 md:gap-x-6">
+          <div className="col-span-full flex items-center justify-between gap-3 border-t border-border pt-3 lg:col-start-4 lg:col-span-6">
+            <ArticleListenControl
+              title={post.title}
+              resume={post.resume}
+              content={post.content}
+              locale={locale}
+            />
             <ShareLinkButton url={url} />
           </div>
-        </div>
-
-        {post.coverImage && (
-          <div aria-hidden className="absolute top-0 left-0 z-0 hidden size-full opacity-70 lg:block">
-            <img
-              src={post.coverImage}
-              alt=""
-              width={1440}
-              height={800}
-              loading="eager"
-              decoding="async"
-              className="size-full object-cover object-center"
-            />
-          </div>
-        )}
-      </section>
+      </div>
 
       {post.coverImage && (
-        <div className="p-4 pb-0 lg:hidden">
-          <img
-            src={post.coverImage}
-            alt={post.imageAlt ?? ''}
-            width={1440}
-            height={800}
-            loading="eager"
-            decoding="async"
-            className="aspect-video w-full object-cover object-center"
-          />
+        <div className="container mt-12 grid grid-cols-8 gap-x-2.5 sm:grid-cols-12 sm:gap-x-5 md:gap-x-6 md:mt-16">
+          <figure className="col-span-full md:col-start-2 md:col-span-10">
+            <img
+              src={post.coverImage}
+              alt={post.imageAlt ?? ''}
+              width={1440}
+              height={810}
+              loading="eager"
+              decoding="async"
+              className="aspect-video w-full rounded-radius-12 object-cover object-center"
+            />
+          </figure>
         </div>
       )}
-    </>
+    </header>
   )
 }

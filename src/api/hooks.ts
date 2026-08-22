@@ -347,7 +347,15 @@ export function useNewsroomPost(slug: string) {
   const locale = useCurrentLocale()
   return useQuery({
     queryKey: ['newsroom', slug, locale],
-    queryFn: () => apiFetch<NewsroomPost>(`/newsroom/${slug}`, { locale }),
+    queryFn: async () => {
+      if (import.meta.env.DEV && slug === 'article-components-showcase-preview') {
+        const { articleComponentsShowcasePost } = await import(
+          '../content/newsroom-previews/article-components-showcase'
+        )
+        return articleComponentsShowcasePost
+      }
+      return apiFetch<NewsroomPost>(`/newsroom/${slug}`, { locale })
+    },
     select: normalizePostMedia,
     enabled: !!slug,
   })

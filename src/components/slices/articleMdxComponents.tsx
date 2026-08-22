@@ -3,6 +3,17 @@ import { mdxContentComponents } from '../../content/_components'
 import UnderlineLink from './UnderlineLink'
 import { ARTICLE_BLOCK } from './articleBlock'
 import { Footnotes, Takeaways } from './ArticleMdxBlocks'
+import {
+  ArticleCallout,
+  ArticleCitation,
+  ArticleComparison,
+  ArticleFootnotes,
+  ArticleMedia,
+  ArticleStats,
+  ArticleTable,
+  ArticleTabs,
+  ArticleTestimonialCarousel,
+} from './article-blocks/ArticleBlocks'
 
 /**
  * Spacing has exactly one owner per element, as in the source: headings carry
@@ -17,6 +28,15 @@ export const articleMdxComponents = {
 
   Takeaways,
   Footnotes,
+  ArticleMedia,
+  ArticleCallout,
+  ArticleStats,
+  ArticleTabs,
+  ArticleTestimonialCarousel,
+  ArticleComparison,
+  ArticleTable,
+  ArticleFootnotes,
+  ArticleCitation,
 
   // `first-of-type`, not `first`: the contents nav is the article's first
   // child, so `first` never matches a heading and the opening section would
