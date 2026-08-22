@@ -52,6 +52,8 @@ export interface NavDropdownItem {
   title: string
   description: string
   href: string
+  /** Opens outside the website, including links whose path happens to start with `/`. */
+  external?: boolean
   icon?: string
   image?: string | NavDropdownItemImage | null
   logoColor?: string
@@ -96,6 +98,7 @@ export interface NavDropdown {
   label: string
   sections: NavDropdownSection[]
   card?: NavDropdownCard
+  cards?: NavDropdownCard[]
   sidePanel?: NavSidePanel
   featureGrid?: NavFeatureGrid
 }
@@ -116,31 +119,31 @@ export const productNavDropdown: NavDropdown = {
         href: '/company/manifesto',
         title: 'Manifesto',
         description: 'What we believe and what we refuse to trade away',
-        icon: 'academy',
+        image: '/images/apps/manifesto.svg',
       },
       {
         href: '/company/charter',
         title: 'Founding Charter',
         description: 'The commitments we intend to be held to as we grow',
-        icon: 'contract',
+        image: '/images/apps/founding-charter.svg',
       },
       {
         href: '/company/business',
         title: 'How our business works',
         description: 'Where the money comes from, and what we refuse to earn',
-        icon: 'coins',
+        image: '/images/apps/business.svg',
       },
       {
         href: '/company/transparency',
         title: 'Transparency Center',
         description: 'Decisions, data handling and how we stay accountable',
-        icon: 'reporting',
+        image: '/images/apps/transparency.svg',
       },
       {
         href: '/initiative',
         title: 'The Initiative',
         description: 'The community work and projects we support',
-        icon: 'partners',
+        image: '/images/apps/initiative.svg',
       },
       {
         href: 'https://github.com/OxyHQ',
@@ -159,7 +162,7 @@ export const productNavDropdown: NavDropdown = {
       },
       {
         href: '/company/careers',
-        image: '/images/nav-careers-card.webp',
+        image: '/images/nav-build-with-us.jpg',
         title: 'Build it with us',
         description: 'Open roles across engineering, design and community',
         alt: 'Working at Oxy',
@@ -184,8 +187,8 @@ export const resourcesNavDropdown: NavDropdown = {
     {
       heading: 'Support',
       items: [
-        { title: 'Help center', description: "Learn more about Oxy's features", href: '/help', icon: 'help-center' },
-        { title: 'Academy', description: 'Essential Oxy features explained', href: '/academy', icon: 'academy' },
+        { title: 'Help center', description: "Learn more about Oxy's features", href: '/help', image: '/images/apps/help-center.svg' },
+        { title: 'Academy', description: 'Essential Oxy features explained', href: '/academy', image: '/images/apps/academy.svg' },
       ],
     },
     {
@@ -194,7 +197,26 @@ export const resourcesNavDropdown: NavDropdown = {
     },
     {
       heading: 'Partners',
-      items: [{ title: 'Partner programs', description: 'Developers, creators, consultants', href: '/partners', icon: 'partners' }],
+      items: [{ title: 'Partner programs', description: 'Developers, creators, consultants', href: '/partners', image: '/images/apps/partner-programs.svg' }],
+    },
+    {
+      heading: 'Build',
+      items: [
+        { title: 'Developer platform', description: 'Build on Oxy', href: '/developers/docs', image: '/images/apps/developer-platform.svg' },
+        {
+          title: 'API reference',
+          description: 'Every endpoint, versioned',
+          href: '/developers/docs/api',
+          image: '/images/apps/api-reference.svg',
+        },
+        { title: 'Status', description: 'Live health of every service', href: '/status', image: '/images/apps/status.svg' },
+        {
+          title: 'Open source',
+          description: 'Read and run what we ship',
+          href: 'https://github.com/OxyHQ',
+          icon: 'github',
+        },
+      ],
     },
   ],
   sidePanel: {
@@ -216,18 +238,19 @@ export const resourcesNavDropdown: NavDropdown = {
 export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: string }> = [
   { title: 'Inbox by Oxy', description: 'Email app', href: '/inbox', image: '/images/apps/inbox.svg', logoColor: '#bf40ed', section: 'Social & Communication' },
   { title: 'Mention', description: 'Decentralized social media', href: '/mention', image: '/images/apps/mention.png', logoColor: '#40c2ed', section: 'Social & Communication' },
-  { title: 'Alia', description: 'AI-Powered assistant', href: '/ai', image: '/images/apps/alia-mark.svg', logoColor: '#fab8ff', section: 'Social & Communication' },
-  { title: 'FairCoin Explorer', description: '', href: 'https://explorer.fairco.in', image: '/images/apps/faircoin-explorer.png', logoColor: '#185c00', section: 'Finance & Commerce' },
-  { title: 'Pay', description: '', href: '/pay', section: 'Finance & Commerce' },
-  { title: 'Mercaria', description: '', href: '/marketplace', image: '/images/apps/mercaria.svg', logoColor: '#ed4040', section: 'Finance & Commerce' },
+  { title: 'Alia', description: 'AI-Powered assistant', href: '/ai', image: '/images/apps/alia-dropdown.svg', logoColor: '#fab8ff', preserveImageColors: true, section: 'Social & Communication' },
+  { title: 'FairCoin Explorer', description: 'Explore the FairCoin network', href: 'https://explorer.fairco.in', image: '/images/apps/faircoin-explorer.png', logoColor: '#185c00', section: 'Finance & Commerce' },
+  { title: 'Pay', description: 'Simple payments across Oxy', href: '/pay', section: 'Finance & Commerce' },
+  { title: 'Mercaria', description: 'An open marketplace for people and goods', href: '/marketplace', image: '/images/apps/mercaria.svg', logoColor: '#ed4040', section: 'Finance & Commerce' },
+  { title: 'Wholesale by Mercaria', description: 'Manage products, suppliers and wholesale sales', href: 'https://dashboard.mercaria.co', image: '/images/apps/wholesale.svg', preserveImageColors: true, section: 'Finance & Commerce' },
   { title: 'FairCoin', description: 'Ethical Digital Currency', href: 'https://fairco.in', image: '/images/apps/faircoin.svg', logoColor: '#204700', preserveImageColors: true, section: 'Finance & Commerce' },
   { title: 'FAIRWallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', image: '/images/apps/faircoin-wallet.svg', logoColor: '#0c6600', preserveImageColors: true, section: 'Finance & Commerce' },
-  { title: 'Moovo', description: '', href: '/moovo', section: 'Apps' },
-  { title: 'Kaana', description: '', href: '/', section: 'Apps' },
-  { title: 'Horizon', description: '', href: '/', section: 'Apps' },
+  { title: 'Moovo', description: 'Mobility and urban transport', href: '/moovo', section: 'Apps' },
+  { title: 'Kaana', description: 'Tools for everyday life', href: '/', section: 'Apps' },
+  { title: 'Horizon', description: 'A clearer view of what matters', href: '/', section: 'Apps' },
   { title: 'Homiio', description: 'Rental made easy', href: '/homiio', section: 'Apps' },
   { title: 'Clarity', description: 'AI-Powered search engine', href: '/clarity', image: '/images/apps/clarity.png', logoColor: '#664100', section: 'Apps' },
-  { title: 'Astro Browser', description: '', href: '/astro', image: '/images/apps/astro.svg', logoColor: '#009699', section: 'Apps' },
+  { title: 'Astro Browser', description: 'A private browser for the open web', href: '/astro', image: '/images/apps/astro.svg', logoColor: '#009699', section: 'Apps' },
   { title: 'TNP', description: 'The network protocol', href: '/tnp', image: '/images/apps/tnp.png', logoColor: '#2f9e00', section: 'Infrastructure' },
 ];
 
@@ -289,36 +312,17 @@ export const platformNavDropdown: NavDropdown = {
       heading: 'Platform',
       items: [
         {
-          title: 'Oxy ID',
+          title: 'Commons',
           description: 'The identity layer every app signs in with',
-          href: '/developers/docs',
-          icon: 'data',
+          href: '/commons',
+          image: '/images/apps/commons-app.png',
         },
-        { title: 'Oxy AI', description: 'Private models, API and SDKs', href: '/ai', icon: 'ai' },
+        { title: 'Oxy AI', description: 'Private models, API and SDKs', href: '/ai', image: '/images/apps/oxy-ai.svg' },
         {
           title: 'Bloom',
           description: 'The design system behind every app',
           href: '/developers/docs/bloom/playground',
           image: '/images/apps/bloom.png',
-        },
-      ],
-    },
-    {
-      heading: 'Build',
-      items: [
-        { title: 'Developer platform', description: 'Build on Oxy', href: '/developers/docs', icon: 'developers' },
-        {
-          title: 'API reference',
-          description: 'Every endpoint, versioned',
-          href: '/developers/docs/api',
-          icon: 'contract',
-        },
-        { title: 'Status', description: 'Live health of every service', href: '/status', icon: 'network' },
-        {
-          title: 'Open source',
-          description: 'Read and run what we ship',
-          href: 'https://github.com/OxyHQ',
-          icon: 'github',
         },
       ],
     },
@@ -348,6 +352,14 @@ export const resourcesNavCard: NavDropdownCard = {
   title: 'Start with the Academy',
   description: 'Short courses on Oxy ID, building on the platform and running it yourself',
   alt: 'Oxy Academy',
+}
+
+export const resourcesBloomCard: NavDropdownCard = {
+  href: '/developers/docs/bloom/playground',
+  image: '/images/nav-bloom-ui.webp',
+  title: 'Bloom UI',
+  description: 'The open design system behind the Oxy ecosystem',
+  alt: 'Bloom UI design system',
 }
 
 export interface FooterLink {

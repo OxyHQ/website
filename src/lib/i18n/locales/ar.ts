@@ -288,6 +288,7 @@ const ar: Translations = {
     homiioDescription: 'سكن ميسور التكلفة يصبح متاحًا عبر التقنية المفتوحة.',
     faircoinDescription: 'عملة رقمية مصمَّمة للاستدامة والتبادل العادل.',
     mercariaDescription: 'سوق مفتوح لتجارة عادلة تتمحور حول الناس.',
+    wholesaleDescription: 'أدوات تجارة الجملة للمتاجر والمورّدين.',
     tnpDescription: 'The New Protocol — نظام أسماء بديل للهوية الرقمية.',
     oxyOSDescription: 'نظام تشغيل يضع الخصوصية أولًا ومبني حول منظومة Oxy.',
     astroDescription: 'متصفح يضع الخصوصية أولًا ومتكامل بعمق مع Oxy.',

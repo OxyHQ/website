@@ -288,6 +288,7 @@ const ko: Translations = {
     homiioDescription: '오픈 기술로 더 가까워지는 부담 가능한 주거.',
     faircoinDescription: '지속 가능성과 공정한 교환을 위해 만들어진 디지털 통화.',
     mercariaDescription: '공정하고 사람 중심적인 거래를 위한 오픈 마켓플레이스.',
+    wholesaleDescription: '매장과 공급업체를 위한 도매 커머스 도구.',
     tnpDescription: 'The New Protocol — 디지털 정체성을 위한 대안적 이름 체계.',
     oxyOSDescription: 'Oxy 생태계를 중심으로 만들어진 프라이버시 우선 운영체제.',
     astroDescription: 'Oxy와 깊이 통합된 프라이버시 우선 브라우저.',

@@ -288,6 +288,7 @@ const ca: Translations = {
     homiioDescription: 'Habitatge assequible fet accessible amb tecnologia oberta.',
     faircoinDescription: 'Una moneda digital construïda per a la sostenibilitat i l’intercanvi just.',
     mercariaDescription: 'Un mercat obert per a un comerç just i centrat en les persones.',
+    wholesaleDescription: "Eines de comerç a l'engròs per a botigues i proveïdors.",
     tnpDescription: 'The New Protocol — un sistema de noms alternatiu per a la identitat digital.',
     oxyOSDescription: "Un sistema operatiu centrat en la privadesa construït al voltant de l'ecosistema Oxy.",
     astroDescription: 'Un navegador centrat en la privadesa profundament integrat amb Oxy.',

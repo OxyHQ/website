@@ -5,6 +5,7 @@ export type CommunityProfileCard = {
   type: 'profile'
   image: string
   logo?: string
+  cornerIcon?: string
   name: string
   role: string
   href: string
@@ -18,6 +19,7 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
     type: 'profile',
     image: APP_CARD_IMAGES['/mention'],
     logo: '/images/apps/mention.png',
+    cornerIcon: '/images/apps/mention-corner.svg',
     name: 'Mention',
     role: 'An open social network for genuine connection',
     href: '/mention',
@@ -28,6 +30,7 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
     type: 'profile',
     image: APP_CARD_IMAGES['/apps/allo'],
     logo: '/images/apps/allo.png',
+    cornerIcon: '/images/apps/allo-corner.svg',
     name: 'Allo',
     role: 'Private conversations, built together',
     href: '/apps/allo',
@@ -38,6 +41,7 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
     type: 'profile',
     image: APP_CARD_IMAGES['/apps/faircoin'],
     logo: '/images/apps/faircoin.svg',
+    cornerIcon: '/images/apps/faircoin-corner.svg',
     name: 'FairCoin',
     role: 'A community-run currency for cooperation',
     href: '/faircoin',
@@ -57,6 +61,7 @@ export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
     type: 'profile',
     image: APP_CARD_IMAGES['/mercaria'],
     logo: '/images/apps/mercaria.svg',
+    cornerIcon: '/images/apps/mercaria-corner.svg',
     name: 'Mercaria',
     role: 'An open marketplace for fair, human-centered commerce',
     href: '/mercaria',
@@ -84,8 +89,28 @@ export function CommunityProfileCardView({ card, className = '' }: { card: Commu
         />
         <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[60%] bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--primary)_32%,var(--background))_0%,color-mix(in_srgb,var(--primary)_24%,transparent)_60%,transparent_100%)]" />
       </div>
+      {card.cornerIcon ? (
+        <img
+          src={card.cornerIcon}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-5 right-5 z-20 h-6 w-6 object-contain"
+          width={28}
+          height={28}
+        />
+      ) : null}
     </article>
   )
 
-  return <Link to={card.href} className="block h-full rounded-[32px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tertiary">{content}</Link>
+  const linkClassName = 'block h-full rounded-[32px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tertiary'
+
+  if (card.href.startsWith('http')) {
+    return (
+      <a href={card.href} target="_blank" rel="noopener noreferrer" className={linkClassName}>
+        {content}
+      </a>
+    )
+  }
+
+  return <Link to={card.href} className={linkClassName}>{content}</Link>
 }

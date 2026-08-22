@@ -191,6 +191,8 @@ const IMAGES: ImageTarget[] = [
   { file: 'public/images/astro/hero-bg.jpg', maxWidth: 1600, format: 'jpeg', quality: 78 },
   { file: 'public/images/landing/faircoin-store.png', maxWidth: 1400, format: 'png' },
   { file: 'public/images/faircoin/wallet-hero.jpg', maxWidth: 1920, format: 'jpeg', quality: 78 },
+  { file: 'public/images/nav-build-with-us.jpg', maxWidth: 1200, format: 'jpeg', quality: 82 },
+  { file: 'public/images/nav-bloom-ui.webp', maxWidth: 1200, format: 'webp', quality: 82 },
   { file: 'public/images/screenshots/inbox-app.png', maxWidth: 1600, format: 'png' },
   { file: 'public/images/screenshots/mention-app.png', maxWidth: 1600, format: 'png' },
   { file: 'public/images/apps/clarity.png', maxWidth: 1200, format: 'png' },

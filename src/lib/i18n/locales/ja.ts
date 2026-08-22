@@ -288,6 +288,7 @@ const ja: Translations = {
     homiioDescription: 'オープンテクノロジーで、手の届く住まいを身近に。',
     faircoinDescription: '持続可能性と公正な交換のために設計されたデジタル通貨。',
     mercariaDescription: '公正で人を中心にした商取引のためのオープンなマーケットプレイス。',
+    wholesaleDescription: '店舗やサプライヤー向けの卸売コマースツール。',
     tnpDescription: 'The New Protocol — デジタルアイデンティティのための、代替的なネームシステム。',
     oxyOSDescription: 'Oxyエコシステムを中心に構築された、プライバシーファーストなオペレーティングシステム。',
     astroDescription: 'Oxyと深く統合された、プライバシーファーストなブラウザ。',

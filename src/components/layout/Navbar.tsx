@@ -10,6 +10,7 @@ import {
   resourcesNavDropdown,
   technologiesNavFallbackItems,
   technologiesNavSidePanel,
+  resourcesBloomCard,
   type NavDropdown,
   type NavItem,
 } from '../../data/content'
@@ -34,6 +35,16 @@ const NAV_LABEL_KEYS: Record<string, string> = {
   Platform: 'navbar.platform',
   Newsroom: 'navbar.newsroom',
   Pricing: 'navbar.pricing',
+}
+
+const NAV_PRODUCT_DESCRIPTION_FALLBACKS: Record<string, string> = {
+  'faircoin-explorer': 'Explore the FairCoin network',
+  pay: 'Simple payments across Oxy',
+  mercaria: 'An open marketplace for people and goods',
+  moovo: 'Mobility and urban transport',
+  kaana: 'Tools for everyday life',
+  horizon: 'A clearer view of what matters',
+  astro: 'A private browser for the open web',
 }
 
 function translatedNavLabel(label: string, t: (key: string) => string): string {
@@ -61,13 +72,13 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
    * content while every other dropdown's were fixed.
   */
   const featureGrid = dropdown.featureGrid
-  const cards = dropdown.card ? [dropdown.card] : []
-  const wideMenu = Boolean(dropdown.sidePanel && (featureGrid || dropdown.card))
-  const sectionMenu = Boolean(dropdown.sidePanel && !featureGrid && !dropdown.card)
+  const cards = [...(dropdown.cards ?? []), ...(dropdown.card ? [dropdown.card] : [])]
+  const wideMenu = Boolean(dropdown.sidePanel && (featureGrid || cards.length > 0))
+  const sectionMenu = Boolean(dropdown.sidePanel && !featureGrid && cards.length === 0)
   const sectionContent = (dropdown.sections ?? []).map((section) => (
     <div
       key={section.heading}
-      className={`flex min-w-0 flex-col gap-space-md ${sectionMenu && section.heading === 'Apps' ? 'col-span-2' : ''}`}
+      className={`flex min-w-0 flex-col gap-space-md ${sectionMenu && section.heading === 'Apps' ? 'col-span-2' : ''} ${wideMenu && !featureGrid ? 'break-inside-avoid mb-space-lg' : ''}`}
     >
       {section.heading ? (
         <p className="block px-space-sm pb-space-2xs text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
@@ -83,6 +94,28 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
       </ul>
     </div>
   ))
+  const sectionsByHeading = new Map((dropdown.sections ?? []).map((section, index) => [section.heading, sectionContent[index]]))
+  const sectionGroup = (headings: string[], className = '') => (
+    <div className={`flex min-w-0 flex-col gap-space-lg ${className}`}>
+      {headings.map((heading) => sectionsByHeading.get(heading))}
+    </div>
+  )
+  const hasPlatformSectionLayout = sectionMenu && ['Platform', 'Social & Communication', 'Finance & Commerce'].every((heading) => sectionsByHeading.has(heading))
+  const platformSectionLayout = hasPlatformSectionLayout ? (
+    <div className="col-span-4 grid min-w-0 grid-cols-4 items-start gap-space-lg">
+      {sectionGroup(['Platform', 'Apps'])}
+      {sectionGroup(['Social & Communication', 'Infrastructure'])}
+      {sectionGroup(['Finance & Commerce'])}
+      {sectionGroup(['Developers'])}
+    </div>
+  ) : null
+  const hasResourcesSectionLayout = wideMenu && !featureGrid && ['Support', 'Developers', 'Partners', 'Build'].every((heading) => sectionsByHeading.has(heading))
+  const resourcesSectionLayout = hasResourcesSectionLayout ? (
+    <div className="col-span-2 grid min-w-0 grid-cols-2 items-start gap-space-lg">
+      {sectionGroup(['Support', 'Partners'])}
+      {sectionGroup(['Developers', 'Build'])}
+    </div>
+  ) : null
   return (
     <div
       // The panel starts a clear step below the row, so the first heading does not
@@ -91,10 +124,14 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
         wideMenu ? 'grid-cols-5' : sectionMenu ? 'grid-cols-5' : 'grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]'
       }`}
     >
-      {wideMenu && !featureGrid ? (
-        <div className="col-span-2 grid min-w-0 grid-cols-2 items-start gap-space-lg">
+      {wideMenu && !featureGrid && hasResourcesSectionLayout ? (
+        resourcesSectionLayout
+      ) : wideMenu && !featureGrid ? (
+        <div className="col-span-2 min-w-0 columns-2 gap-space-lg">
           {sectionContent}
         </div>
+      ) : sectionMenu && hasPlatformSectionLayout ? (
+        platformSectionLayout
       ) : sectionMenu ? (
         <div className="col-span-4 grid min-w-0 grid-cols-4 items-start gap-space-lg">
           {sectionContent}
@@ -120,9 +157,15 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
         </>
       ) : null}
 
-      {cards.map((card) => (
-        <NavCard key={card.href} card={card} className={wideMenu ? '[grid-column:span_2]' : ''} />
-      ))}
+      {cards.length > 1 ? (
+        <div className={`grid min-w-0 grid-cols-2 items-start gap-space-lg ${wideMenu ? '[grid-column:span_2]' : ''}`}>
+          {cards.map((card) => (
+            <NavCard key={card.href} card={card} />
+          ))}
+        </div>
+      ) : (
+        cards.map((card) => <NavCard key={card.href} card={card} className={wideMenu ? '[grid-column:span_2]' : ''} />)
+      )}
 
       {dropdown.sidePanel && (
         <ul className="grid items-start gap-space-3xs">
@@ -244,15 +287,18 @@ export default function Navbar({
   const { data: siteSettings } = useSiteSettings()
   const productItems = useMemo(() => {
     if (!navProducts || navProducts.length === 0) return technologiesNavFallbackItems
-    return navProducts.map((product) => ({
-      title: product.name,
-      description: product.tagline || product.description || '',
-      href: product.navOpensApp ? product.href : (product.landingUrl || product.href),
-      image: resolveProductLogoUrl(product) || undefined,
-      logoColor: product.brand,
-      preserveImageColors: product.productId === 'faircoin' || product.productId === 'fairwallet' || product.productId === 'faircoin-wallet',
-      section: product.section,
-    }))
+    return navProducts.map((product) => {
+      const productKey = product.productId.toLowerCase()
+      return {
+        title: product.name,
+        description: product.tagline || product.description || NAV_PRODUCT_DESCRIPTION_FALLBACKS[productKey] || 'Explore this Oxy product',
+        href: product.navOpensApp ? product.href : (product.landingUrl || product.href),
+        image: product.productId === 'alia' ? '/images/apps/alia-dropdown.svg' : (resolveProductLogoUrl(product) || undefined),
+        logoColor: product.brand,
+        preserveImageColors: product.productId === 'alia' || product.productId === 'faircoin' || product.productId === 'fairwallet' || product.productId === 'faircoin-wallet',
+        section: product.section,
+      }
+    })
   }, [navProducts])
   const dropdowns: readonly NavDropdown[] = useMemo(() => {
     if (useCustomNav) return customDropdowns ?? []
@@ -272,7 +318,7 @@ export default function Navbar({
     return [
       productNavDropdown,
       platform,
-      { ...resourcesNavDropdown, card: resourcesNavCard },
+      { ...resourcesNavDropdown, cards: [resourcesNavCard, resourcesBloomCard] },
     ]
   }, [useCustomNav, customDropdowns, productItems])
   const flatLinks: readonly NavItem[] = useMemo(
@@ -1028,7 +1074,7 @@ export default function Navbar({
                   ))}
                 </div>
               ))}
-              {[...(dd.featureGrid?.cards ?? []), ...(dd.card ? [dd.card] : [])].map((card) => (
+              {[...(dd.featureGrid?.cards ?? []), ...(dd.cards ?? []), ...(dd.card ? [dd.card] : [])].map((card) => (
                 <div key={card.href} className="aspect-[4/3] overflow-hidden rounded-xl">
                   <NavCard card={card} />
                 </div>

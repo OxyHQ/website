@@ -88,7 +88,24 @@ interface NavDropdownItemProps {
  * as tall as what it holds, and a two-line description next door no longer
  * stretches its neighbours to match.
  */
-const linkClass = "group flex h-fit w-full items-start gap-space-sm rounded-full px-space-sm py-space-xs transition-colors duration-150 hover:bg-foreground/5 active:bg-foreground/10"
+const linkClass = "group relative flex h-fit w-full items-start gap-space-sm rounded-full px-space-sm py-space-xs transition-colors duration-150 hover:bg-foreground/5 active:bg-foreground/10"
+
+function isExternalItem(item: NavDropdownItemType): boolean {
+  return item.external ?? !item.href.startsWith('/')
+}
+
+function ExternalLinkMark() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="pointer-events-none absolute end-2 top-2 size-3.5 text-muted-foreground"
+      viewBox="0 -960 960 960"
+      fill="currentColor"
+    >
+      <path d="M640-624 284-268q-11 11-28 11t-28-11q-11-11-11-28t11-28l356-356H280q-17 0-28.5-11.5T240-720q0-17 11.5-28.5T280-760h400q17 0 28.5 11.5T720-720v400q0 17-11.5 28.5T680-280q-17 0-28.5-11.5T640-320v-304Z" />
+    </svg>
+  )
+}
 
 function ItemIcon({ item }: { item: NavDropdownItemType }) {
   const IconComponent = item.icon ? iconMap[item.icon] : null
@@ -100,7 +117,7 @@ function ItemIcon({ item }: { item: NavDropdownItemType }) {
       return (
         <span
           aria-hidden="true"
-          className="mt-0.5 size-6 shrink-0 bg-[var(--nav-logo-color)] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
+          className="size-6 shrink-0 bg-[var(--nav-logo-color)] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
           style={{
             '--nav-logo-color': item.logoColor,
             maskImage: `url("${imageUrl}")`,
@@ -115,17 +132,17 @@ function ItemIcon({ item }: { item: NavDropdownItemType }) {
         alt=""
         loading="lazy"
         decoding="async"
-        className="mt-0.5 size-6 shrink-0 rounded-full object-contain"
+        className={`size-6 shrink-0 object-contain ${isSvgImage(imageUrl) ? '' : 'rounded-full'}`}
       />
     )
   }
   if (IconComponent) {
-    return <IconComponent className="nav-icon mt-0.5 size-6 shrink-0 text-muted-foreground" />
+    return <IconComponent className="nav-icon size-6 shrink-0 text-muted-foreground" />
   }
   // Neither: the initial, so an item with no artwork still has a mark and its
   // title still lines up with the titles above and below it.
   return (
-    <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-foreground/10 text-[10px] font-semibold text-muted-foreground">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-foreground/10 text-[10px] font-semibold text-muted-foreground">
       {item.title.charAt(0)}
     </span>
   )
@@ -142,21 +159,25 @@ function ItemContent({ item }: { item: NavDropdownItemType }) {
           {item.description}
         </span>
       </span>
+      {isExternalItem(item) ? <ExternalLinkMark /> : null}
     </>
   )
 }
 
 export default function NavDropdownItem({ item }: NavDropdownItemProps) {
-  if (item.href.startsWith('/')) {
+  const external = isExternalItem(item)
+  const className = `${linkClass}${external ? ' pr-7' : ''}`
+
+  if (!external) {
     return (
-      <Link to={item.href} className={linkClass}>
+      <Link to={item.href} className={className}>
         <ItemContent item={item} />
       </Link>
     )
   }
 
   return (
-    <a href={item.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+    <a href={item.href} target="_blank" rel="noopener noreferrer" className={className}>
       <ItemContent item={item} />
     </a>
   )

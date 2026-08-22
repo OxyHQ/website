@@ -58,6 +58,7 @@ export default function OxyAppsFeatureGrid() {
       type: 'profile',
       image: APP_CARD_IMAGES['/ai'],
       logo: '/images/apps/alia.svg',
+      cornerIcon: '/images/apps/alia-corner.svg',
       name: 'Alia',
       role: t('products.aliaDescription'),
       href: '/ai',
@@ -71,6 +72,15 @@ export default function OxyAppsFeatureGrid() {
       role: t('products.oxyOSDescription'),
       href: '/os',
       theme: 'oxyos-card-theme',
+    },
+    {
+      type: 'profile',
+      image: APP_CARD_IMAGES['/mercaria'],
+      cornerIcon: '/images/apps/wholesale.png',
+      name: 'Wholesale by Mercaria',
+      role: t('products.wholesaleDescription'),
+      href: 'https://dashboard.mercaria.co',
+      theme: 'mercaria-theme',
     },
   ]
 
