@@ -87,6 +87,10 @@ async function seed() {
     'faircoin-explorer': '/images/apps/faircoin-explorer.png',
     'faircoin-wallet': '/images/apps/faircoin-wallet.svg',
     inbox: '/images/apps/inbox.png',
+    // The only wordmark in this map. Every other entry is a square app icon and
+    // every slot that renders one is square, so this one letterboxes; the
+    // icon-only mark it wants does not exist yet.
+    kaana: '/images/apps/kaana.png',
     mention: '/images/apps/mention.png',
     mercaria: '/images/apps/mercaria.png',
     oxyos: '/images/apps/oxyos.png',
@@ -287,7 +291,7 @@ async function seed() {
     // Oxy's own inference provider. Identity fields (brand, mark, category,
     // order) match the row already live in production, which had been reserved
     // under the name and left without a tagline, description or destination.
-    { productId: 'kaana', name: 'Kaana', tagline: 'Oxy\'s own inference provider', description: 'The data plane that serves AI model inference to Alia and every other Oxy app, and that external customers buy inference from. It normalizes a request, routes it to a model deployment, streams the result back, propagates cancellation and reports what was technically consumed.', href: 'https://kaana.ai', external: true, cta: 'Open Kaana', brand: '#0033ff', mark: 'K', category: categoryRef('apps'), section: 'apps', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: true, order: 0 },
+    { productId: 'kaana', logo: appIcon('kaana'), name: 'Kaana', tagline: 'Oxy\'s own inference provider', description: 'The data plane that serves AI model inference to Alia and every other Oxy app, and that external customers buy inference from. It normalizes a request, routes it to a model deployment, streams the result back, propagates cancellation and reports what was technically consumed.', href: 'https://kaana.ai', external: true, cta: 'Open Kaana', brand: '#0033ff', mark: 'K', category: categoryRef('apps'), section: 'apps', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: true, order: 0 },
     { productId: 'codea', name: 'Codea', tagline: 'Open-source code editor', description: 'A professional AI code editor that runs in your browser, on your machine, or self-hosted. Write, review and ship — on your terms.', href: '/codea', landingUrl: '/codea', external: false, cta: 'Explore Codea', brand: '#0f172a', mark: 'C', category: categoryRef('developer'), section: 'developer', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: true, order: 2 },
     { productId: 'oxyos', logo: appIcon('oxyos'), name: 'Oxy OS', tagline: 'Operating system', description: 'An operating system designed around privacy and user freedom. Your computer, your data — no telemetry, no tracking, no compromises.', href: 'https://os.oxy.so', landingUrl: '/os', external: false, cta: 'Explore Oxy OS', brand: '#f97316', mark: 'X', category: categoryRef('infrastructure'), section: 'infrastructure', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 3 },
     { productId: 'oxy-ai', name: 'Oxy AI', tagline: 'Models, API and SDKs', description: 'Privacy-first AI for developers. Open models you can inspect, fine-tune and self-host — backed by a fast, multilingual API.', href: '/ai', external: false, cta: 'Explore Oxy AI', brand: '#dc2626', mark: 'O', category: categoryRef('developer'), section: 'developer', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: false, order: 0 },

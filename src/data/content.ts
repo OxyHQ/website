@@ -242,7 +242,7 @@ export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: st
   { title: 'Alia', description: 'AI-Powered assistant', href: '/ai', image: '/images/apps/alia-dropdown.svg', logoColor: '#fab8ff', preserveImageColors: true, section: 'AI & Research' },
   { title: 'Clarity', description: 'AI-Powered search engine', href: '/clarity', image: '/images/apps/clarity.png', logoColor: '#664100', section: 'AI & Research' },
   { title: 'Astro Browser', description: 'A private browser for the open web', href: '/astro', image: '/images/apps/astro.svg', logoColor: '#009699', section: 'AI & Research' },
-  { title: 'Kaana', description: 'Oxy\'s own inference provider', href: 'https://kaana.ai', section: 'AI & Research' },
+  { title: 'Kaana', description: 'Oxy\'s own inference provider', href: 'https://kaana.ai', image: '/images/apps/kaana.png', section: 'AI & Research' },
   { title: 'Horizon', description: 'A clearer view of what matters', href: '/', section: 'Housing' },
   { title: 'FairCoin Explorer', description: 'Explore the FairCoin network', href: 'https://explorer.fairco.in', image: '/images/apps/faircoin-explorer.png', logoColor: '#185c00', section: 'Finance' },
   { title: 'Pay', description: 'Simple payments across Oxy', href: '/pay', section: 'Finance' },
