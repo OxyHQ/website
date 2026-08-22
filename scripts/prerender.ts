@@ -531,7 +531,7 @@ interface NewsroomApiPost {
   description?: string
   resume?: string
   metaTitle?: string
-  ogImage?: string | null
+  ogImage?: string | { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } } | null
   coverImage?: { url?: string } | string | null
   publishedAt?: string
   updatedAt?: string
@@ -908,11 +908,20 @@ function prettifySlug(slug: string): string {
     .join(' ')
 }
 
-function newsroomImage(post: NewsroomApiPost): string | undefined {
-  if (post.ogImage) return post.ogImage
-  if (typeof post.coverImage === 'string') return post.coverImage
-  if (post.coverImage && typeof post.coverImage.url === 'string') return post.coverImage.url
+function newsroomMediaUrl(field: unknown): string | undefined {
+  if (typeof field === 'string' && field.length > 0) return field
+  if (!field || typeof field !== 'object') return undefined
+
+  const media = field as { url?: unknown; thumbnails?: { sm?: unknown; md?: unknown; lg?: unknown } }
+  if (typeof media.url === 'string' && media.url.length > 0) return media.url
+  for (const thumbnail of [media.thumbnails?.lg, media.thumbnails?.md, media.thumbnails?.sm]) {
+    if (typeof thumbnail === 'string' && thumbnail.length > 0) return thumbnail
+  }
   return undefined
+}
+
+function newsroomImage(post: NewsroomApiPost): string | undefined {
+  return newsroomMediaUrl(post.ogImage) ?? newsroomMediaUrl(post.coverImage)
 }
 
 function newsroomDateline(post: NewsroomApiPost): string | undefined {
