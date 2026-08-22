@@ -24,86 +24,86 @@ export interface EngagementPathway {
 // --- Section Data ---
 
 export const introSection = {
-  tagline: 'Dream it, build it.',
+  tagline: 'Dream it. Build it. Share it.',
   description:
-    'Oxy Initiative is dedicated to turning visionary ideas into reality. We believe that the best innovations come from a community of passionate individuals who share a common goal: to build a better future for everyone.',
+    'The Oxy Initiative turns community ideas into practical projects. We support people building open, useful and sustainable alternatives, then give those ideas room to grow.',
   navLinks: [
     { label: 'Who we are', href: '#who-we-are' },
-    { label: 'Our Technologies', href: '#technologies' },
-    { label: 'Our Company', href: '/company' },
+    { label: 'Our ecosystem', href: '/apps' },
+    { label: 'Our company', href: '/company' },
     { label: 'Get involved', href: '#get-involved' },
     { label: 'Explore', href: '#explore' },
   ] as InitiativeNavLink[],
 }
 
 export const pillarsSection = {
-  heading: 'Powerful and empowering.',
+  heading: 'Ideas that become infrastructure.',
   subtitle:
-    'A movement leveraging technology for community and sustainability projects that create lasting, positive change around the world.',
+    'We back the people doing the patient work: strengthening communities, protecting shared resources and making useful technology available to more people.',
   pillars: [
     {
       number: '01',
       label: 'Community',
-      title: 'Community Support and Development',
+      title: 'Strengthening local communities',
       description:
-        'Resources for education, healthcare, disaster relief, and community development programs that create lasting impact.',
+        'Support for education, healthcare, disaster relief and local projects that give people more room to thrive.',
       emoji: '\u{1F91D}',
     },
     {
       number: '02',
       label: 'Agriculture',
-      title: 'Supporting Organic Farming',
+      title: 'Growing food with care',
       description:
-        'Seed provision and sustainable agriculture initiatives that empower local farmers and promote food security.',
+        'Sustainable agriculture initiatives that help local growers build healthier soil, stronger livelihoods and food security.',
       emoji: '\u{1F331}',
     },
     {
       number: '03',
       label: 'Water',
-      title: 'Building Waterholes',
+      title: 'Protecting access to water',
       description:
-        'Access to clean drinking water initiatives that transform communities and improve health outcomes.',
+        'Clean water projects that improve everyday health and give communities a stronger foundation for the future.',
       emoji: '\u{1F4A7}',
     },
     {
       number: '04',
       label: 'Environment',
-      title: 'Cleaning Beaches',
+      title: 'Restoring shared environments',
       description:
-        'Marine ecosystem preservation through community cleanups that protect our oceans and coastlines.',
+        'Community-led action to protect beaches, marine ecosystems and the places people rely on every day.',
       emoji: '\u{1F30A}',
     },
   ] as InitiativePillar[],
 }
 
 export const engagementSection = {
-  heading: 'One ecosystem, a universe of possibilities.',
+  heading: 'There is more than one way to move an idea forward.',
   pathways: [
     {
       title: 'Submit Your Idea',
-      description: 'Have a vision for positive change? Share your idea and we\u2019ll help bring it to life.',
-      ctaText: 'Submit idea',
-      ctaHref: '/feature-board',
+      description: 'Have a concrete proposal for a better product, community or public good? Put it in front of the people who can help shape it.',
+      ctaText: 'Open feature board',
+      ctaHref: '/features',
       iconType: 'idea',
     },
     {
-      title: 'Volunteer',
-      description: 'Join hands with a global community of changemakers and make a direct impact.',
-      ctaText: 'Volunteer',
-      ctaHref: '/company/careers',
+      title: 'Contribute your skills',
+      description: 'Code, design, write, research or help a partner project turn a good idea into something people can use.',
+      ctaText: 'Explore partnerships',
+      ctaHref: '/partners',
       iconType: 'volunteer',
     },
     {
       title: 'Donate',
-      description: 'Every contribution counts. Support projects that are building a better world.',
-      ctaText: 'Donate',
-      ctaHref: '/initiative',
+      description: 'Help keep Oxy independent and make room for projects that put people, privacy and long-term impact first.',
+      ctaText: 'Support the work',
+      ctaHref: 'https://opencollective.com/oxy',
       iconType: 'donate',
     },
     {
       title: 'Join Our Community',
-      description: 'Connect with like-minded individuals on Telegram and Reddit.',
-      ctaText: 'Join community',
+      description: 'Follow the work, open an issue, share feedback and help shape what Oxy builds next in the open.',
+      ctaText: 'Open GitHub',
       ctaHref: 'https://github.com/OxyHQ',
       iconType: 'community',
     },
@@ -111,6 +111,6 @@ export const engagementSection = {
 }
 
 export const closingSection = {
-  heading: 'Build by yourself, not for yourself.',
-  body: 'The future is not built by one person alone. It is built by communities coming together, sharing resources, and working toward a common vision. At the Oxy Initiative, we believe that collective action and sustainability are the foundations of lasting change. Every contribution, no matter how small, creates a ripple that reaches further than we can imagine.',
+  heading: 'Build with others, for everyone.',
+  body: 'The best future is built in public: people bringing different skills, experiences and perspectives to the same table. The Oxy Initiative creates space for that work, from the first proposal to the projects that make a lasting difference. Your contribution can be the next useful connection in the chain.',
 }

@@ -66,12 +66,14 @@ export default function InitiativeContent() {
         />
       </div>
 
-      <CtaBlock
-        title={closingSection.heading}
-        body={closingSection.body}
-        emphasis="supporting"
-        action={{ label: 'Explore the ecosystem', href: '/apps' }}
-      />
+      <div id="explore" className="scroll-mt-24">
+        <CtaBlock
+          title={closingSection.heading}
+          body={closingSection.body}
+          emphasis="supporting"
+          action={{ label: 'Explore the ecosystem', href: '/apps' }}
+        />
+      </div>
     </>
   )
 }
