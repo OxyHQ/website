@@ -1,11 +1,23 @@
+import { type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BloomColorScope } from '@oxyhq/bloom/theme'
 import type { NewsroomPost } from '../../data/newsroom'
 import { newsroomThemeFor } from '../../lib/newsroom-theme'
 
-function ThemedCard({ article, children }: { article: NewsroomPost; children: React.ReactElement }) {
+/**
+ * The post's palette, on a wrapper that generates no box.
+ *
+ * Deliberately NOT `asChild`: that path clones the child with a style ARRAY —
+ * the react-native-web form — and the child here is a router `<Link>`, which
+ * hands its `style` straight to a DOM `<a>`. React DOM then walks the array's
+ * numeric keys, throws `Failed to set an indexed property [0] on
+ * 'CSSStyleDeclaration'`, and the whole newsroom page renders blank.
+ * `display: contents` keeps the wrapper out of the grid while the custom
+ * properties still inherit into the card.
+ */
+function ThemedCard({ article, children }: { article: NewsroomPost; children: ReactNode }) {
   return (
-    <BloomColorScope colorPreset={newsroomThemeFor(article)} asChild>
+    <BloomColorScope colorPreset={newsroomThemeFor(article)} style={{ display: 'contents' }}>
       {children}
     </BloomColorScope>
   )
