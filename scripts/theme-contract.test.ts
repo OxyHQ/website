@@ -14,6 +14,7 @@ import {
 import { getPresetVars } from '@oxyhq/bloom/design-tokens'
 import { FAIRCOIN_PRESET, SITE_PRESET } from '../src/theme/brands'
 import { PUBLIC_COLOR_PRESET_GROUPS } from '../src/theme/preset-catalog'
+import { resolveLabPalette } from '../src/theme/color-lab-palette'
 
 const PREVIEW_ROLES = [
   '--background',
@@ -34,6 +35,9 @@ type ProjectScripts = Record<string, string>
 const BROWSER_INSTALL_COMMAND = 'bunx playwright install --with-deps chromium'
 const CLOUDFLARE_BUILD_COMMAND = '- run: bun run build'
 
+const hasHardcodedColor = (value: string): boolean =>
+  /#[0-9a-f]{3,8}\b|rgba?\(/i.test(value)
+
 const hasProvisionedCloudflareBrowserGate = (
   scripts: ProjectScripts,
   workflow: string,
@@ -52,7 +56,9 @@ const hasProvisionedCloudflareBrowserGate = (
 
 describe('Bloom theme contract', () => {
   test('publishes every preset name exactly once', () => {
-    expect(COLOR_PRESET_REGISTRY).toHaveLength(34)
+    expect(COLOR_PRESET_REGISTRY).toHaveLength(64)
+    expect(COLOR_PRESET_REGISTRY.filter((recipe) => recipe.pairing === 'curated')).toHaveLength(46)
+    expect(COLOR_PRESET_REGISTRY.filter((recipe) => recipe.pairing === 'derived')).toHaveLength(18)
     expect(new Set(APP_COLOR_NAMES).size).toBe(APP_COLOR_NAMES.length)
     for (const name of APP_COLOR_NAMES) expect(APP_COLOR_PRESETS[name]?.name).toBe(name)
   })
@@ -106,6 +112,48 @@ describe('Bloom theme contract', () => {
       }
       expect(light['--background'], `${name} light/dark background`).not.toBe(dark['--background'])
     }
+  }, 15_000)
+
+  test('keeps the color lab role projection on Bloom resolved tokens', () => {
+    for (const recipe of COLOR_PRESET_REGISTRY) {
+      for (const mode of ['light', 'dark'] as const) {
+        const tokens = getPresetVars(recipe.name, mode)
+        expect(resolveLabPalette(recipe.name, mode)).toEqual({
+          canvas: tokens['--background'],
+          shell: tokens['--surface'],
+          surface: tokens['--popover'],
+          raised: tokens['--card'],
+          text: tokens['--foreground'],
+          textMuted: tokens['--muted-foreground'],
+          identity: tokens['--primary'],
+          onIdentity: tokens['--primary-foreground'],
+          action: tokens['--tertiary'],
+          onAction: tokens['--tertiary-foreground'],
+          actionSoft: tokens['--tertiary-subtle'],
+        })
+      }
+    }
+  }, 15_000)
+
+  test('does not add a local palette to the color lab chrome', () => {
+    const source = readFileSync(
+      join(import.meta.dir, '..', 'src', 'components', 'docs', 'ColorSystemPlayground.tsx'),
+      'utf8',
+    )
+    expect(hasHardcodedColor(source)).toBe(false)
+    expect(hasHardcodedColor("const localPalette = { shell: '#f1eee8' }")).toBe(true)
+  })
+
+  test('keeps color lab media on versioned local assets', () => {
+    const source = readFileSync(
+      join(import.meta.dir, '..', 'src', 'components', 'docs', 'ColorSystemPlayground.tsx'),
+      'utf8',
+    )
+    const hardcodedOxyMedia = (value: string): boolean =>
+      /https?:\/\/(?:cloud\.)?oxy\.so\//i.test(value)
+    expect(hardcodedOxyMedia(source)).toBe(false)
+    expect(hardcodedOxyMedia("source={{ uri: 'https://cloud.oxy.so/file-id' }}")).toBe(true)
+    expect(source).toContain("from '../../assets/mention/")
   })
 
   test('provisions Chromium before Cloudflare runs the browser-gated build', () => {

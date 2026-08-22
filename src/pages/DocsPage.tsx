@@ -105,6 +105,7 @@ export default function DocsPage() {
         className="docs-theme bg-background"
         seo={meta}
         mainClassName="flex-1 bg-background text-muted-foreground"
+        mainAsDiv
       >
         <DocsPageContent />
       </PageShell>

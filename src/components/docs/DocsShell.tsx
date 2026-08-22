@@ -37,6 +37,17 @@ export interface DocsShellProps {
    * next to a redundant tag-jump sidebar of our own.
    */
   hideSidebar?: boolean
+  /**
+   * Let an interactive canvas use the full article column while retaining the
+   * package sidebar. The page-level table of contents is omitted because a
+   * wide tool owns its own controls and responsive layout.
+   */
+  wideContent?: boolean
+  /**
+   * Hide historical docs controls for a tool that always runs the Website's
+   * installed Bloom release. Versioned aliases redirect to its canonical URL.
+   */
+  versionAgnostic?: boolean
   children: React.ReactNode
 }
 
@@ -51,6 +62,8 @@ export function DocsShell({
   activePkg,
   hideHeader,
   hideSidebar,
+  wideContent,
+  versionAgnostic,
   children,
 }: DocsShellProps) {
   const { headings, contentRef } = useContentHeadings()
@@ -63,7 +76,7 @@ export function DocsShell({
    * REST route mounts the shell bare: no rail, no page cap. Everything else
    * gets the three columns.
    */
-  const showRail = !hideSidebar
+  const showRail = !hideSidebar && !wideContent
   // The version selector only makes sense for packages that opted into
   // versioning AND ship more than one version. Non-versioned packages
   // never show it; single-version versioned packages also hide it so the
@@ -71,6 +84,7 @@ export function DocsShell({
   const showVersionSelector =
     pkg !== undefined &&
     currentVersion !== undefined &&
+    !versionAgnostic &&
     pkg.versioned &&
     pkg.versions.length > 1
   return (
@@ -99,7 +113,9 @@ export function DocsShell({
           className={
             showRail
               ? 'mx-auto grid w-full max-w-4xl grid-cols-1 gap-x-12 xl:grid-cols-[minmax(0,1fr)_200px]'
-              : 'w-full'
+              : wideContent
+                ? 'mx-auto w-full max-w-[1480px]'
+                : 'w-full'
           }
         >
           {/*
@@ -153,7 +169,7 @@ export function DocsShell({
                 <TableOfContents headings={headings} variant="select" />
               </div>
             ) : null}
-            {pkg && currentVersion ? (
+            {pkg && currentVersion && !versionAgnostic ? (
               <VersionBanner pkg={pkg} currentVersion={currentVersion} slug={slug} />
             ) : null}
             {children}

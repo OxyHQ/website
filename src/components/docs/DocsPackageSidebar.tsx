@@ -235,6 +235,22 @@ export function buildSidebar(
             pkg.versions[0]
       if (!version) continue
       const children = collapseSingleWrapper(buildPageTree(pkg, version))
+      if (pkg.shortName === 'bloom') {
+        children.unshift(
+          {
+            kind: 'leaf',
+            label: 'Color system playground',
+            href: '/developers/docs/bloom/color-system',
+            slug: 'color-system',
+          },
+          {
+            kind: 'leaf',
+            label: 'Component playground',
+            href: '/developers/docs/bloom/playground',
+            slug: 'playground',
+          },
+        )
+      }
       nodes.push({
         kind: 'package',
         label: pkg.displayName,
@@ -370,6 +386,8 @@ function SidebarTreeNode({
     return (
       <li>
         <NavLink
+          end
+          aria-current={isActive ? 'page' : undefined}
           className={
             isActive
               ? `group flex items-start pr-3 py-1.5 ${pad} cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl w-full outline-offset-[-1px] bg-primary/10 text-primary [text-shadow:-0.2px_0_0_currentColor,0.2px_0_0_currentColor]`
@@ -409,6 +427,8 @@ function SidebarTreeNode({
           }
         >
           <NavLink
+            end
+            aria-current={isActive ? 'page' : undefined}
             to={node.href}
             className={`flex-1 min-w-0 flex items-start ${hasChevron ? 'pr-2' : 'pr-3'} py-1.5 ${pad} cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl outline-offset-[-1px]`}
           >
