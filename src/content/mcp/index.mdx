@@ -29,12 +29,12 @@ The Oxy MCP server is a [`McpServer`](https://github.com/modelcontextprotocol/ty
 
 ## What it exposes
 
-The server registers **92 tools** spread across these surfaces of the website CMS:
+The server registers **91 tools** spread across these surfaces of the website CMS:
 
 | Surface | Tools |
 |---------|-------|
 | Pages | `list_pages`, `get_page`, `upsert_page` |
-| Navigation | `get_navigation`, `replace_navigation` |
+| Navigation | `get_navigation` (read-only legacy snapshot) |
 | Footer | `get_footer`, `update_footer` |
 | Hero | `get_hero`, `update_hero` |
 | Newsroom posts | `list_posts`, `get_post`, `create_post`, `update_post`, `delete_post`, `search_posts`, `get_post_with_media` |

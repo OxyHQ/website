@@ -16,7 +16,7 @@ import {
   type ActivityEvent,
 } from './platformStatsStore'
 
-import { type Testimonial, type FooterColumn, type NavDropdown, type NavDropdownItem, type NavDropdownSection, type NavSidePanel } from '../data/content'
+import { type Testimonial, type FooterColumn } from '../data/content'
 import { type PricingPlan } from '../data/pricing'
 import { type NewsroomPost } from '../data/newsroom'
 import { type DescriptionBlock } from '../data/careers'
@@ -105,59 +105,6 @@ export function usePromptPhrases(slug: string, enabled = true) {
     enabled,
     retry: false,
     staleTime: Infinity,
-  })
-}
-
-// ── Navigation ──
-
-interface RawNavDropdown {
-  _id?: string
-  label: string
-  order?: number
-  sections?: NavDropdownSection[]
-  items?: Array<NavDropdownItem & { section?: string }>
-  sidePanel?: NavSidePanel
-}
-
-export type NavigationItem = NavDropdown & { _id?: string; order?: number }
-
-// The DB stores items flat with a `section` string per item; the NavDropdown
-// type expects grouped `sections[]`. Normalize API responses to that shape.
-// _id and order are passed through for the admin editor.
-function normalizeNavItem(dd: RawNavDropdown): NavigationItem {
-  if (Array.isArray(dd.sections)) {
-    return { _id: dd._id, order: dd.order, label: dd.label, sections: dd.sections, sidePanel: dd.sidePanel }
-  }
-  const sectionOrder: string[] = []
-  const sectionMap: Record<string, NavDropdownItem[]> = {}
-  for (const item of (dd.items ?? [])) {
-    const heading: string = item.section ?? ''
-    if (!sectionMap[heading]) {
-      sectionMap[heading] = []
-      sectionOrder.push(heading)
-    }
-    const itemWithoutSection = Object.fromEntries(Object.entries(item).filter(([k]) => k !== "section")) as NavDropdownItem
-    sectionMap[heading].push(itemWithoutSection)
-  }
-  return {
-    _id: dd._id,
-    order: dd.order,
-    label: dd.label,
-    sections: sectionOrder.map((h) => ({ heading: h, items: sectionMap[h] })),
-    sidePanel: dd.sidePanel,
-  }
-}
-
-export function useNavigation() {
-  const locale = useCurrentLocale()
-  return useQuery<NavigationItem[]>({
-    queryKey: ['navigation', locale],
-    queryFn: async () => {
-      const raw = await apiFetch<RawNavDropdown[]>('/navigation', { locale })
-      return raw.map(normalizeNavItem)
-    },
-    staleTime: 5 * 60_000,
-    placeholderData: keepPreviousData,
   })
 }
 

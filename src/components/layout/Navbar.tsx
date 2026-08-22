@@ -3,17 +3,19 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { LogoIcon, ProfileButton, useOxy } from '@oxyhq/services'
 import {
   simpleNavLinks,
-  platformNavCard,
   platformNavDropdown,
   resourcesNavCard,
   productNavDropdown,
+  makeTechnologiesNavDropdown,
+  resourcesNavDropdown,
+  technologiesNavFallbackItems,
   type NavDropdown,
   type NavDropdownSection,
   type NavDropdownItem as NavDropdownItemType,
   type NavItem,
 } from '../../data/content'
 import { NavCard } from './NavMegaPanels'
-import { useNavigation, useSiteSettings } from '../../api/hooks'
+import { resolveProductLogoUrl, useProducts, useSiteSettings } from '../../api/hooks'
 import { subscribeScrollY, getScrollYSnapshot, getScrollYServerSnapshot } from '../../api/scrollStore'
 import { useTranslation, useLocaleContext } from '../../lib/i18n'
 import { searchSite, groupResults, searchContextGroups, type SearchResult } from '../../lib/site-search'
@@ -262,11 +264,10 @@ interface NavbarProps {
   /** Override the brand block. Defaults to the Oxy logo linking to `/`. */
   brand?: NavbarBrand
   /**
-   * Replace CMS-driven dropdowns with the supplied list. Both Oxy (CMS) and
+   * Replace code-driven dropdowns with the supplied list. Both Oxy and
    * sub-brands (FairCoin) render through the SAME pipeline — the same
    * `DropdownContent`, the same measurement + animation, the same
-   * `NavDropdownItem` item layout with icon, title, description. Sub-brands
-   * skip the `useNavigation()` query by supplying this prop.
+   * `NavDropdownItem` item layout with icon, title, description.
    */
   customDropdowns?: readonly NavDropdown[]
   /**
@@ -316,32 +317,29 @@ export default function Navbar({
   // The settings gear (theme + language) always shows; the language section
   // inside it only when more than one locale is offered.
   const showLanguageInSettings = !hideLocalePicker && locales.length > 1
-  // Sub-brand mode: customDropdowns bypasses the CMS queries. The nav renders
-  // the supplied dropdowns + flat links through the SAME pipeline as the CMS
-  // path, so measurement, hover animation, and mobile accordion are identical.
+  // Sub-brand mode: customDropdowns bypasses the global code-owned menu.
   const useCustomNav = customDropdowns !== undefined
-  const { data: navigationData } = useNavigation()
+  const { data: navProducts } = useProducts({ surface: 'nav' })
   const { data: siteSettings } = useSiteSettings()
+  const productItems = useMemo(() => {
+    if (!navProducts || navProducts.length === 0) return technologiesNavFallbackItems
+    return navProducts.map((product) => ({
+      title: product.name,
+      description: product.tagline || product.description || '',
+      href: product.navOpensApp ? product.href : (product.landingUrl || product.href),
+      image: resolveProductLogoUrl(product) || undefined,
+      section: product.section,
+    }))
+  }, [navProducts])
   const dropdowns: readonly NavDropdown[] = useMemo(() => {
     if (useCustomNav) return customDropdowns ?? []
-    // Hardcoded bridges until both are modelled in the CMS navigation document:
-    // the `Product` feature-grid dropdown, and the Resources promo card.
-    const stored = navigationData ?? []
-    // The repo's Platform dropdown, unless a stored one of that name exists.
-    const platform = stored.some((dd) => dd.label === 'Platform') ? [] : [platformNavDropdown]
-
     return [
       productNavDropdown,
-      ...platform,
-      ...stored.map((dd) =>
-        dd.label === 'Resources'
-          ? { ...dd, card: resourcesNavCard }
-          : dd.label === 'Platform'
-            ? { ...dd, card: platformNavCard }
-            : dd,
-      ),
+      platformNavDropdown,
+      { ...resourcesNavDropdown, card: resourcesNavCard },
+      makeTechnologiesNavDropdown(productItems),
     ]
-  }, [useCustomNav, customDropdowns, navigationData])
+  }, [useCustomNav, customDropdowns, productItems])
   const flatLinks: readonly NavItem[] = useMemo(
     () => (useCustomNav ? customNavLinks ?? [] : simpleNavLinks),
     [useCustomNav, customNavLinks],

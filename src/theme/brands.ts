@@ -79,6 +79,13 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     label: 'Astro app cards',
   },
   {
+    selector: '.alia-card-theme',
+    seed: APP_COLOR_PRESETS.violet.hex,
+    tertiarySeed: APP_COLOR_PRESETS.violet.tertiaryHex,
+    mode: 'auto',
+    label: 'Alia app cards',
+  },
+  {
     selector: '.docs-theme',
     seed: APP_COLOR_PRESETS.cobalt.hex,
     tertiarySeed: APP_COLOR_PRESETS.cobalt.tertiaryHex,

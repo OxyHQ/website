@@ -79,6 +79,10 @@ const ru: Translations = {
     appsFeaturesTitle: 'Приложения, где люди на первом месте',
     appsFeaturesDescription: 'Познакомьтесь с приложениями Oxy, созданными для совместной работы и дающими больше выбора, приватности и контроля каждый день.',
   },
+  newsroom: {
+    ...en.newsroom,
+    recentNewsHeading: 'Последние новости',
+  },
   errors: {
     notFoundTitle: '404 — Страница не найдена',
     notFoundDescription: 'К сожалению, мы не нашли эту страницу. Возможно, она была перемещена или удалена.',

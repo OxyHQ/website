@@ -166,17 +166,110 @@ export const productNavDropdown: NavDropdown = {
   },
 }
 
+/** Resources navigation is part of the site shell, so it is intentionally code-owned. */
+export const resourcesNavDropdown: NavDropdown = {
+  label: 'Resources',
+  sections: [
+    {
+      heading: 'Support',
+      items: [
+        { title: 'Help center', description: "Learn more about Oxy's features", href: '/help', icon: 'help-center' },
+        { title: 'Academy', description: 'Essential Oxy features explained', href: '/academy', icon: 'academy' },
+      ],
+    },
+    {
+      heading: 'Developers',
+      items: [{ title: 'Developer docs', description: 'Start building Oxy apps', href: '/developers/docs', icon: 'developers' }],
+    },
+    {
+      heading: 'Partners',
+      items: [{ title: 'Partner programs', description: 'Developers, creators, consultants', href: '/partners', icon: 'partners' }],
+    },
+  ],
+  sidePanel: {
+    heading: 'Company',
+    links: [
+      { label: 'Changelog', href: '/changelog' },
+      { label: 'Newsroom', href: '/newsroom' },
+      { label: 'Engineering blog', href: '/company/news' },
+      { label: 'Careers', href: '/company/careers' },
+    ],
+  },
+};
+
 /**
- * Promo card injected into the `Resources` dropdown. Hardcoded for now; move to
- * the CMS navigation document when the card needs to be editor-managed.
+ * Fallback for the product-backed Technologies menu while the product query is
+ * loading or when the local API is unavailable. The live menu replaces these
+ * items with the current products marked `showInNav`.
  */
+export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: string }> = [
+  { title: 'Inbox by Oxy', description: 'Email app', href: '/inbox', image: '/images/apps/inbox.svg', section: 'Social & Communication' },
+  { title: 'Mention', description: 'Decentralized social media', href: '/mention', image: '/images/apps/mention.png', section: 'Social & Communication' },
+  { title: 'Alia', description: 'AI-Powered assistant', href: '/ai', image: '/images/apps/alia.svg', section: 'Social & Communication' },
+  { title: 'FairCoin Explorer', description: '', href: 'https://explorer.fairco.in', image: '/images/apps/faircoin-explorer.png', section: 'Finance & Commerce' },
+  { title: 'Pay', description: '', href: '/pay', section: 'Finance & Commerce' },
+  { title: 'Mercaria', description: '', href: '/marketplace', image: '/images/apps/mercaria.svg', section: 'Finance & Commerce' },
+  { title: 'FairCoin', description: 'Ethical Digital Currency', href: 'https://fairco.in', image: '/images/apps/faircoin.svg', section: 'Finance & Commerce' },
+  { title: 'FAIRWallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', image: '/images/apps/faircoin-wallet.svg', section: 'Finance & Commerce' },
+  { title: 'Moovo', description: '', href: '/moovo', section: 'Apps' },
+  { title: 'Kaana', description: '', href: '/', section: 'Apps' },
+  { title: 'Horizon', description: '', href: '/', section: 'Apps' },
+  { title: 'Homiio', description: 'Rental made easy', href: '/homiio', section: 'Apps' },
+  { title: 'Clarity', description: 'AI-Powered search engine', href: '/clarity', image: '/images/apps/clarity.png', section: 'Apps' },
+  { title: 'Astro Browser', description: '', href: '/astro', image: '/images/apps/astro.svg', section: 'Apps' },
+  { title: 'TNP', description: 'The network protocol', href: '/tnp', image: '/images/apps/tnp.png', section: 'Infrastructure' },
+];
+
+export const technologiesNavSidePanel: NavSidePanel = {
+  heading: 'Explore',
+  links: [
+    { label: 'All products', href: '/products' },
+    { label: 'Open source', href: 'https://github.com/OxyHQ' },
+    { label: 'Developer platform', href: '/developers/program' },
+    { label: 'Status page', href: '/status' },
+  ],
+};
+
+export const technologiesNavSectionOrder = [
+  'Social & Communication',
+  'Finance & Commerce',
+  'Apps',
+  'Infrastructure',
+  'Developers',
+] as const;
+
+const technologySectionLabels: Record<string, string> = {
+  apps: 'Apps',
+  'social-communication': 'Social & Communication',
+  'finance-commerce': 'Finance & Commerce',
+  infrastructure: 'Infrastructure',
+  developer: 'Developers',
+};
+
+export function makeTechnologiesNavDropdown(items: readonly (NavDropdownItem & { section?: string })[]): NavDropdown {
+  const grouped = new Map<string, NavDropdownItem[]>();
+  for (const item of items) {
+    const section = technologySectionLabels[item.section ?? ''] ?? item.section ?? 'Other';
+    const { section: _section, ...navItem } = item;
+    const current = grouped.get(section) ?? [];
+    current.push(navItem);
+    grouped.set(section, current);
+  }
+
+  const sections = [
+    ...technologiesNavSectionOrder,
+    ...[...grouped.keys()].filter((heading) => !technologiesNavSectionOrder.includes(heading as typeof technologiesNavSectionOrder[number])),
+  ]
+    .filter((heading) => grouped.has(heading))
+    .map((heading) => ({ heading, items: grouped.get(heading)! }));
+
+  return { label: 'Technologies', sections, sidePanel: technologiesNavSidePanel };
+}
+
 /**
  * The Platform dropdown, in the repo.
  *
- * Everything else in the nav comes from the CMS, and this could too — but the
- * stored one was a leftover from the template this site started as, and half of
- * it pointed at `#`. It lives here so the header cannot serve that again, and
- * a stored dropdown of the same name still wins if an editor writes one.
+ * The platform menu is part of the site shell and is deliberately code-owned.
  */
 export const platformNavDropdown: NavDropdown = {
   label: 'Platform',

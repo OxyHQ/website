@@ -9,7 +9,7 @@ export type CommunityProfileCard = {
   role: string
   href: string
   descriptionClassName?: string
-  theme?: 'mention-theme' | 'allo-theme' | 'faircoin-theme' | 'homiio-theme' | 'mercaria-theme' | 'inbox-theme' | 'astro-card-theme' | 'oxyos-card-theme'
+  theme?: 'mention-theme' | 'allo-theme' | 'faircoin-theme' | 'homiio-theme' | 'mercaria-theme' | 'inbox-theme' | 'astro-card-theme' | 'oxyos-card-theme' | 'alia-card-theme'
 }
 
 /** App cards reused by the homepage app showcase. */

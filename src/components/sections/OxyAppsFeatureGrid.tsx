@@ -56,6 +56,15 @@ export default function OxyAppsFeatureGrid() {
     },
     {
       type: 'profile',
+      image: APP_CARD_IMAGES['/ai'],
+      logo: '/images/apps/alia.svg',
+      name: 'Alia',
+      role: t('products.aliaDescription'),
+      href: '/ai',
+      theme: 'alia-card-theme',
+    },
+    {
+      type: 'profile',
       image: APP_CARD_IMAGES['/os'],
       logo: '/images/apps/oxyos.png',
       name: 'OxyOS',

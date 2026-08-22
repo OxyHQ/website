@@ -1,42 +1,15 @@
 import { Router } from 'express'
 import { and, asc, eq, inArray } from 'drizzle-orm'
-import { z } from 'zod'
 import { db } from '../db/postgres.js'
 import { categories, media, navigationDropdowns, products, translations as translationsTable } from '../db/schema/index.js'
 import { populate } from '../db/refs.js'
-import { requireAuth } from '../middleware/auth.js'
-import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
 import { applyTranslations } from '../utils/applyTranslation.js'
-import { validate } from '../utils/validate.js'
 
 const router = Router()
 
-const navItemSchema = z.object({
-  title: z.string(),
-  description: z.string().optional().default(''),
-  href: z.string(),
-  icon: z.string().optional(),
-  image: z.union([z.string(), z.null()]).optional().transform(v => (v && v.length > 0 ? v : null)),
-  section: z.string().optional(),
-})
-
-const navigationBodySchema = z.array(z.object({
-  label: z.string(),
-  kind: z.enum(['manual', 'apps']).optional().default('manual'),
-  order: z.number().optional().default(0),
-  items: z.array(navItemSchema).default([]),
-  sidePanel: z.union([
-    z.object({
-      heading: z.string().optional().default(''),
-      links: z.array(z.object({ label: z.string(), href: z.string() })).default([]),
-    }),
-    z.null(),
-  ]).optional(),
-}))
-
 /**
- * Turn a Product from the CMS into a nav item with the same shape the
+ * Turn a product record into a nav item with the same shape the
  * frontend already expects. By default the dropdown links to the local
  * landing page (oxy.so/<slug>) — admins opt into linking straight to the
  * running app via the navOpensApp toggle.
@@ -115,20 +88,6 @@ router.get('/', localeMiddleware, async (req, res) => {
       ),
     )
   res.json(applyTranslations(hydrated, overlays))
-})
-
-router.put('/', requireAuth, adminOnly, async (req, res) => {
-  const body = validate(navigationBodySchema, req.body)
-  // Replace wholesale in one transaction: the admin sends every dropdown, and
-  // a half-applied replacement would leave the site with no navigation.
-  const docs = await db.transaction(async (tx) => {
-    await tx.delete(navigationDropdowns)
-    if (body.length === 0) return []
-    return tx.insert(navigationDropdowns).values(body as never).returning()
-  })
-  const sorted = [...docs].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-  await populateItemImages(sorted as unknown as Record<string, unknown>[])
-  res.json(sorted)
 })
 
 export default router

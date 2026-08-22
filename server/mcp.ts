@@ -210,36 +210,6 @@ server.tool('get_navigation', 'Get all navigation dropdowns', {}, async () => {
   } catch (e) { return err(e) }
 })
 
-const sidePanelLinkSchema = z.object({ label: z.string(), href: z.string() })
-const sidePanelSchema = z.object({ heading: z.string(), links: z.array(sidePanelLinkSchema) })
-const navItemSchema = z.object({
-  title: z.string(),
-  description: z.string().optional(),
-  href: z.string(),
-  icon: z.string().optional(),
-  section: z.string().optional(),
-})
-const navDropdownSchema = z.object({
-  label: z.string(),
-  items: z.array(navItemSchema),
-  sidePanel: sidePanelSchema.optional(),
-  order: z.number().optional(),
-})
-
-server.tool('replace_navigation', 'Replace all navigation dropdowns', {
-  items: z.array(navDropdownSchema),
-}, async ({ items }) => {
-  try {
-    // One transaction: the site cannot be left without navigation halfway.
-    const nav = await db.transaction(async (tx) => {
-      await tx.delete(navigationDropdowns)
-      if (items.length === 0) return []
-      return tx.insert(navigationDropdowns).values(items as never).returning()
-    })
-    return ok(nav)
-  } catch (e) { return err(e) }
-})
-
 // ── Footer ──────────────────────────────────────────────────────────────────
 
 server.tool('get_footer', 'Get footer content', {}, async () => {

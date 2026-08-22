@@ -118,20 +118,20 @@ export default function DocsIntroPage() {
                       <h2 className="text-2xl font-semibold tracking-tight text-primary">{cfg.title}</h2>
                       <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">{cfg.description}</p>
                     </div>
-                  <div className="grid self-start gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className="grid self-start gap-1.5 sm:grid-cols-2 xl:grid-cols-3">
                     {pkgs.map((pkg) => {
                       const logo = getPackageLogo(pkg.shortName)
                       return (
                         <Link
                           key={pkg.shortName}
                           to={pageHref(pkg)}
-                          className={`group grid min-h-[84px] grid-cols-[2.25rem_minmax(0,1fr)_1.5rem] items-center gap-x-2 overflow-hidden rounded-2xl bg-card px-2.5 py-2.5 text-card-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${visual.hover}`}
+                          className={`group grid grid-cols-[2rem_minmax(0,1fr)_1.5rem] items-center gap-x-2 overflow-hidden rounded-2xl bg-card px-2 py-1.5 text-card-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${visual.hover}`}
                           data-docs-package-card
                         >
                           {logo ? (
                             <span
                               aria-hidden="true"
-                              className="size-9 shrink-0 overflow-hidden rounded-full"
+                              className="size-8 shrink-0 overflow-hidden rounded-full"
                               data-docs-package-logo
                             >
                               <img src={logo} alt="" className="size-full object-cover" loading="lazy" decoding="async" />
@@ -139,10 +139,10 @@ export default function DocsIntroPage() {
                           ) : (
                             <span
                               aria-hidden="true"
-                              className={`flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full ${visual.icon}`}
+                              className={`flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full ${visual.icon}`}
                               data-docs-package-logo
                             >
-                              <span className="text-sm font-semibold">
+                              <span className="text-xs font-semibold">
                                 {pkg.displayName.replace(/^@[^/]+\//, '').charAt(0).toUpperCase() || '?'}
                               </span>
                             </span>
@@ -151,8 +151,8 @@ export default function DocsIntroPage() {
                             <div className="truncate text-base font-semibold leading-5 tracking-tight text-card-foreground">
                               {pkg.displayName}
                             </div>
-                            <div className="flex min-w-0 items-center gap-1.5">
-                              <span className="min-w-0 truncate font-mono text-[11px] leading-4 text-muted-foreground">
+                            <div className="flex min-h-[15px] min-w-0 items-center gap-1.5">
+                              <span className="min-w-0 truncate font-mono text-xs leading-4 text-muted-foreground">
                                 {pkg.package}
                               </span>
                               {pkg.versioned ? (
@@ -162,7 +162,7 @@ export default function DocsIntroPage() {
                               ) : null}
                             </div>
                             {pkg.description ? (
-                              <p className="mt-0.5 truncate text-sm leading-5 text-muted-foreground">{pkg.description}</p>
+                              <p className="mt-0.5 truncate text-sm leading-[15px] text-muted-foreground">{pkg.description}</p>
                             ) : null}
                           </div>
                           <span

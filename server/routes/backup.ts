@@ -74,6 +74,9 @@ router.post('/', requireAuth, adminOnly, async (req, res) => {
   // tables from the backup and the rest from before it.
   await db.transaction(async (tx) => {
     for (const [key, table] of Object.entries(collections)) {
+      // Header navigation is code-owned now. Keep it in exports for audit and
+      // recovery, but never let a CMS backup restore overwrite its live rows.
+      if (key === 'navigation') continue
       const docs = imported[key]
       if (!Array.isArray(docs)) continue
 

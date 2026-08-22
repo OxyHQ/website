@@ -14,6 +14,7 @@ export const APP_CARD_IMAGES: Record<string, string> = {
   '/inbox': '/images/landing/inbox-phone.png',
   '/astro': '/images/landing/astro-desktop.png',
   '/mercaria': '/images/landing/mercaria-card.png',
+  '/ai': '/images/landing/alia-card.png',
   '/os': '/images/landing/oxyos-laptop.png',
   '/commons': '/images/landing/identity-app.webp',
 }

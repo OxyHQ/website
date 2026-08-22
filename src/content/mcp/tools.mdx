@@ -63,20 +63,10 @@ input: {}
 output: Array<NavDropdown>
 ```
 
-### `replace_navigation`
-
-Replaces the entire navigation with the supplied array. Destructive: existing dropdowns are deleted first.
-
-```ts
-input: {
-  items: Array<{
-    label: string
-    items: Array<{ title, description?, href, icon?, section? }>
-    sidePanel?: { heading, links: Array<{ label, href }> }
-    order?: number
-  }>
-}
-```
+Navigation is read-only. The live header is defined in the website source code;
+the product-backed Technologies menu may still include products with
+`showInNav` enabled. The legacy snapshot remains available for audit and
+backups, but it cannot be replaced through the MCP server.
 
 ## Footer
 

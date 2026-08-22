@@ -2,15 +2,15 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import StructuredData from '../components/StructuredData'
-import NewsroomBody from '../components/newsroom/NewsroomBody'
+import NewsroomIndex from '../components/newsroom/NewsroomIndex'
 import { usePage } from '../api/hooks'
 import { brandConfig } from '../lib/seo'
 
 /* ──────────────────────────────────────────────────
  * /newsroom — full unscoped feed
  *
- * Renders the shared NewsroomBody with no category filter. See NewsroomBody
- * for the full structure (hero → grid → recent → carousels).
+ * Renders the newsroom index over the real CMS feed. Article detail pages keep
+ * their own route and reuse the same post records.
  * ────────────────────────────────────────────── */
 export default function NewsroomPage() {
   const { data: pageData } = usePage('newsroom')
@@ -43,7 +43,7 @@ export default function NewsroomPage() {
         }}
       />
       <Navbar />
-      <NewsroomBody />
+      <NewsroomIndex />
       <Footer />
     </div>
   )
