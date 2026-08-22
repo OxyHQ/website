@@ -10,8 +10,10 @@ import {
   resourcesNavDropdown,
   technologiesNavFallbackItems,
   technologiesNavSidePanel,
+  technologyNavSection,
   resourcesBloomCard,
   type NavDropdown,
+  type NavDropdownItem as NavDropdownItemData,
   type NavItem,
 } from '../../data/content'
 import { NavCard } from './NavMegaPanels'
@@ -42,7 +44,8 @@ const NAV_PRODUCT_DESCRIPTION_FALLBACKS: Record<string, string> = {
   pay: 'Simple payments across Oxy',
   mercaria: 'An open marketplace for people and goods',
   moovo: 'Mobility and urban transport',
-  kaana: 'Tools for everyday life',
+  noted: 'A focused space for notes and ideas',
+  kaana: 'An AI agent for everyday life',
   horizon: 'A clearer view of what matters',
   astro: 'A private browser for the open web',
 }
@@ -75,24 +78,29 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
   const cards = [...(dropdown.cards ?? []), ...(dropdown.card ? [dropdown.card] : [])]
   const wideMenu = Boolean(dropdown.sidePanel && (featureGrid || cards.length > 0))
   const sectionMenu = Boolean(dropdown.sidePanel && !featureGrid && cards.length === 0)
-  const sectionContent = (dropdown.sections ?? []).map((section) => (
+  const renderSection = (section: NonNullable<NavDropdown['sections']>[number], items = section.items, listClassName = 'grid items-start gap-1') => (
     <div
       key={section.heading}
-      className={`flex min-w-0 flex-col gap-space-md ${sectionMenu && section.heading === 'Apps' ? 'col-span-2' : ''} ${wideMenu && !featureGrid ? 'break-inside-avoid mb-space-lg' : ''}`}
+      className="flex min-w-0 flex-col gap-space-md"
     >
       {section.heading ? (
         <p className="block px-space-sm pb-space-2xs text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
           {section.heading}
         </p>
       ) : null}
-      <ul className={`grid items-start gap-1 ${sectionMenu && section.heading === 'Apps' ? 'grid-cols-2 gap-x-space-lg' : ''}`}>
-        {section.items.map((item) => (
+      <ul className={listClassName}>
+        {items.map((item) => (
           <li key={item.href} className="contents">
             <NavDropdownItem item={item} />
           </li>
         ))}
       </ul>
     </div>
+  )
+  const sectionContent = (dropdown.sections ?? []).map((section) => renderSection(
+    section,
+    section.items,
+    `grid items-start gap-1 ${sectionMenu && section.heading === 'Apps' ? 'grid-cols-2 gap-x-space-lg' : ''}`,
   ))
   const sectionsByHeading = new Map((dropdown.sections ?? []).map((section, index) => [section.heading, sectionContent[index]]))
   const sectionGroup = (headings: string[], className = '') => (
@@ -100,13 +108,13 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
       {headings.map((heading) => sectionsByHeading.get(heading))}
     </div>
   )
-  const hasPlatformSectionLayout = sectionMenu && ['Platform', 'Social & Communication', 'Finance & Commerce'].every((heading) => sectionsByHeading.has(heading))
+  const hasPlatformSectionLayout = sectionMenu && ['Platform', 'Social & Communication', 'Tools', 'Finance', 'Commerce'].every((heading) => sectionsByHeading.has(heading))
   const platformSectionLayout = hasPlatformSectionLayout ? (
     <div className="col-span-4 grid min-w-0 grid-cols-4 items-start gap-space-lg">
-      {sectionGroup(['Platform', 'Apps'])}
-      {sectionGroup(['Social & Communication', 'Infrastructure'])}
-      {sectionGroup(['Finance & Commerce'])}
-      {sectionGroup(['Developers'])}
+      {sectionGroup(['Platform', 'Tools'])}
+      {sectionGroup(['Social & Communication', 'AI & Research'])}
+      {sectionGroup(['Finance', 'Housing'])}
+      {sectionGroup(['Infrastructure', 'Commerce', 'Mobility', 'Developers'])}
     </div>
   ) : null
   const hasResourcesSectionLayout = wideMenu && !featureGrid && ['Support', 'Developers', 'Partners', 'Build'].every((heading) => sectionsByHeading.has(heading))
@@ -287,7 +295,7 @@ export default function Navbar({
   const { data: siteSettings } = useSiteSettings()
   const productItems = useMemo(() => {
     if (!navProducts || navProducts.length === 0) return technologiesNavFallbackItems
-    return navProducts.map((product) => {
+    const items: Array<NavDropdownItemData & { section: string }> = navProducts.map((product) => {
       const productKey = product.productId.toLowerCase()
       return {
         title: product.name,
@@ -296,9 +304,15 @@ export default function Navbar({
         image: product.productId === 'alia' ? '/images/apps/alia-dropdown.svg' : (resolveProductLogoUrl(product) || undefined),
         logoColor: product.brand,
         preserveImageColors: product.productId === 'alia' || product.productId === 'faircoin' || product.productId === 'fairwallet' || product.productId === 'faircoin-wallet',
-        section: product.section,
+        section: technologyNavSection(product.productId, product.section),
       }
     })
+    for (const fallbackTitle of ['Noted', 'Wholesale by Mercaria']) {
+      if (items.some((item) => item.title === fallbackTitle)) continue
+      const fallbackItem = technologiesNavFallbackItems.find((item) => item.title === fallbackTitle)
+      if (fallbackItem) items.push(fallbackItem)
+    }
+    return items
   }, [navProducts])
   const dropdowns: readonly NavDropdown[] = useMemo(() => {
     if (useCustomNav) return customDropdowns ?? []

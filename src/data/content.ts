@@ -220,12 +220,12 @@ export const resourcesNavDropdown: NavDropdown = {
     },
   ],
   sidePanel: {
-    heading: 'Company',
+    heading: 'Discover',
     links: [
+      { label: 'All products', href: '/products' },
+      { label: 'Open source', href: 'https://github.com/OxyHQ' },
       { label: 'Changelog', href: '/changelog' },
       { label: 'Newsroom', href: '/newsroom' },
-      { label: 'Engineering blog', href: '/company/news' },
-      { label: 'Careers', href: '/company/careers' },
     ],
   },
 };
@@ -236,21 +236,22 @@ export const resourcesNavDropdown: NavDropdown = {
  * items with the current products marked `showInNav`.
  */
 export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: string }> = [
-  { title: 'Inbox by Oxy', description: 'Email app', href: '/inbox', image: '/images/apps/inbox.svg', logoColor: '#bf40ed', section: 'Social & Communication' },
   { title: 'Mention', description: 'Decentralized social media', href: '/mention', image: '/images/apps/mention.png', logoColor: '#40c2ed', section: 'Social & Communication' },
-  { title: 'Alia', description: 'AI-Powered assistant', href: '/ai', image: '/images/apps/alia-dropdown.svg', logoColor: '#fab8ff', preserveImageColors: true, section: 'Social & Communication' },
-  { title: 'FairCoin Explorer', description: 'Explore the FairCoin network', href: 'https://explorer.fairco.in', image: '/images/apps/faircoin-explorer.png', logoColor: '#185c00', section: 'Finance & Commerce' },
-  { title: 'Pay', description: 'Simple payments across Oxy', href: '/pay', section: 'Finance & Commerce' },
-  { title: 'Mercaria', description: 'An open marketplace for people and goods', href: '/marketplace', image: '/images/apps/mercaria.svg', logoColor: '#ed4040', section: 'Finance & Commerce' },
-  { title: 'Wholesale by Mercaria', description: 'Manage products, suppliers and wholesale sales', href: 'https://dashboard.mercaria.co', image: '/images/apps/wholesale.svg', preserveImageColors: true, section: 'Finance & Commerce' },
-  { title: 'FairCoin', description: 'Ethical Digital Currency', href: 'https://fairco.in', image: '/images/apps/faircoin.svg', logoColor: '#204700', preserveImageColors: true, section: 'Finance & Commerce' },
-  { title: 'FAIRWallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', image: '/images/apps/faircoin-wallet.svg', logoColor: '#0c6600', preserveImageColors: true, section: 'Finance & Commerce' },
-  { title: 'Moovo', description: 'Mobility and urban transport', href: '/moovo', section: 'Apps' },
-  { title: 'Kaana', description: 'Tools for everyday life', href: '/', section: 'Apps' },
-  { title: 'Horizon', description: 'A clearer view of what matters', href: '/', section: 'Apps' },
-  { title: 'Homiio', description: 'Rental made easy', href: '/homiio', section: 'Apps' },
-  { title: 'Clarity', description: 'AI-Powered search engine', href: '/clarity', image: '/images/apps/clarity.png', logoColor: '#664100', section: 'Apps' },
-  { title: 'Astro Browser', description: 'A private browser for the open web', href: '/astro', image: '/images/apps/astro.svg', logoColor: '#009699', section: 'Apps' },
+  { title: 'Inbox by Oxy', description: 'A calmer way to handle email', href: '/inbox', image: '/images/apps/inbox.svg', logoColor: '#bf40ed', section: 'Tools' },
+  { title: 'Noted', description: "Oxy's workspace for notes and ideas", href: 'https://noted.oxy.so', section: 'Tools' },
+  { title: 'Alia', description: 'AI-Powered assistant', href: '/ai', image: '/images/apps/alia-dropdown.svg', logoColor: '#fab8ff', preserveImageColors: true, section: 'AI & Research' },
+  { title: 'Clarity', description: 'AI-Powered search engine', href: '/clarity', image: '/images/apps/clarity.png', logoColor: '#664100', section: 'AI & Research' },
+  { title: 'Astro Browser', description: 'A private browser for the open web', href: '/astro', image: '/images/apps/astro.svg', logoColor: '#009699', section: 'AI & Research' },
+  { title: 'Kaana', description: 'An AI agent for everyday life', href: '/', section: 'AI & Research' },
+  { title: 'Horizon', description: 'A clearer view of what matters', href: '/', section: 'Housing' },
+  { title: 'FairCoin Explorer', description: 'Explore the FairCoin network', href: 'https://explorer.fairco.in', image: '/images/apps/faircoin-explorer.png', logoColor: '#185c00', section: 'Finance' },
+  { title: 'Pay', description: 'Simple payments across Oxy', href: '/pay', section: 'Finance' },
+  { title: 'FairCoin', description: 'Ethical Digital Currency', href: 'https://fairco.in', image: '/images/apps/faircoin.svg', logoColor: '#204700', preserveImageColors: true, section: 'Finance' },
+  { title: 'FAIRWallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', image: '/images/apps/faircoin-wallet.svg', logoColor: '#0c6600', preserveImageColors: true, section: 'Finance' },
+  { title: 'Mercaria', description: 'An open marketplace for people and goods', href: '/marketplace', image: '/images/apps/mercaria.svg', logoColor: '#ed4040', section: 'Commerce' },
+  { title: 'Wholesale by Mercaria', description: 'Manage products, suppliers and wholesale sales', href: 'https://dashboard.mercaria.co', image: '/images/apps/wholesale.svg', preserveImageColors: true, section: 'Commerce' },
+  { title: 'Homiio', description: 'Rental made easy', href: '/homiio', section: 'Housing' },
+  { title: 'Moovo', description: 'Mobility and urban transport', href: '/moovo', section: 'Mobility' },
   { title: 'TNP', description: 'The network protocol', href: '/tnp', image: '/images/apps/tnp.png', logoColor: '#2f9e00', section: 'Infrastructure' },
 ];
 
@@ -266,19 +267,70 @@ export const technologiesNavSidePanel: NavSidePanel = {
 
 export const technologiesNavSectionOrder = [
   'Social & Communication',
-  'Finance & Commerce',
-  'Apps',
+  'Tools',
+  'AI & Research',
+  'Finance',
+  'Commerce',
+  'Housing',
+  'Mobility',
   'Infrastructure',
   'Developers',
 ] as const;
 
 const technologySectionLabels: Record<string, string> = {
-  apps: 'Apps',
+  apps: 'Other',
   'social-communication': 'Social & Communication',
-  'finance-commerce': 'Finance & Commerce',
+  'finance-commerce': 'Finance',
   infrastructure: 'Infrastructure',
+  infraestructure: 'Infrastructure',
   developer: 'Developers',
 };
+
+const technologyNavProductSections: Record<string, string> = {
+  alia: 'AI & Research',
+  c: 'AI & Research',
+  clarity: 'AI & Research',
+  i: 'Tools',
+  inbox: 'Tools',
+  noted: 'Tools',
+  faircoin: 'Finance',
+  faircoinexplorer: 'Finance',
+  fairwallet: 'Finance',
+  pay: 'Finance',
+  marketplace: 'Commerce',
+  mercaria: 'Commerce',
+  wholesale: 'Commerce',
+  homiio: 'Housing',
+  horizon: 'Housing',
+  m: 'Mobility',
+  moovo: 'Mobility',
+  kaana: 'AI & Research',
+  astro: 'AI & Research',
+};
+
+const technologyNavProductOrder: Record<string, number> = {
+  Alia: 0,
+  'Alia AI': 0,
+  Mention: 0,
+  'Inbox by Oxy': 1,
+  'Oxy Inbox': 1,
+  Noted: 1,
+  Clarity: 2,
+  'Astro Browser': 3,
+  Kaana: 99,
+  Mercaria: 0,
+  'Wholesale by Mercaria': 1,
+  Homiio: 0,
+  Horizon: 1,
+  Moovo: 0,
+};
+
+export function technologyNavSection(productId: string, section?: string): string {
+  return technologyNavProductSections[productId.toLowerCase()]
+    ?? technologySectionLabels[section?.toLowerCase() ?? '']
+    ?? section
+    ?? 'Other';
+}
 
 export function makeTechnologiesNavDropdown(items: readonly (NavDropdownItem & { section?: string })[]): NavDropdown {
   const grouped = new Map<string, NavDropdownItem[]>();
@@ -288,6 +340,10 @@ export function makeTechnologiesNavDropdown(items: readonly (NavDropdownItem & {
     const current = grouped.get(section) ?? [];
     current.push(navItem);
     grouped.set(section, current);
+  }
+
+  for (const items of grouped.values()) {
+    items.sort((a, b) => (technologyNavProductOrder[a.title] ?? 50) - (technologyNavProductOrder[b.title] ?? 50));
   }
 
   const sections = [
