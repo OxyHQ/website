@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { buildDocsHref, getPackages } from '../../content/docs-loader'
 import type { SyncedPackage, SyncedPage, SyncedVersion } from '../../../scripts/types'
 import { ChevronDownIcon } from '../icons/ChevronDownIcon'
@@ -173,6 +173,10 @@ function countLeaves(nodes: SidebarNode[]): number {
   return total
 }
 
+function normalizeDocsPath(pathname: string): string {
+  return pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname
+}
+
 /**
  * Common-prefix elimination: if a node has exactly one non-leaf child and
  * no leaf children, drop the wrapper and recurse into the child. Applied
@@ -290,9 +294,9 @@ function collectActivePath(nodes: SidebarNode[], activePath: string): Set<string
   }
   function visit(node: SidebarNode): boolean {
     if (node.kind === 'leaf') {
-      return node.href === activePath
+      return normalizeDocsPath(node.href) === activePath
     }
-    const selfMatches = node.kind === 'package' && node.href === activePath
+    const selfMatches = node.kind === 'package' && normalizeDocsPath(node.href) === activePath
     let containsActive = selfMatches
     for (const child of node.children) {
       if (visit(child)) containsActive = true
@@ -381,12 +385,11 @@ function SidebarTreeNode({
   activePath: string
 }) {
   if (node.kind === 'leaf') {
-    const isActive = activePath === node.href
+    const isActive = activePath === normalizeDocsPath(node.href)
     const pad = paddingForDepth(depth)
     return (
       <li>
-        <NavLink
-          end
+        <Link
           aria-current={isActive ? 'page' : undefined}
           className={
             isActive
@@ -398,17 +401,17 @@ function SidebarTreeNode({
           <div className="flex-1 flex items-start space-x-2.5">
             <div className="break-words [word-break:break-word]">{node.label}</div>
           </div>
-        </NavLink>
+        </Link>
       </li>
     )
   }
   if (node.kind === 'package') {
-    // The package row is a NavLink (logo + label) that navigates to the
+    // The package row is a link (logo + label) that navigates to the
     // package overview, with an optional sibling chevron button that
     // toggles the sub-tree in place. The two are siblings (not nested) so
     // clicking the chevron never triggers navigation. Hover styling is
     // shared across the row via a peer-group pattern using `group/row`.
-    const isActive = activePath === node.href
+    const isActive = activePath === normalizeDocsPath(node.href)
     const pad = paddingForDepth(depth)
     // Show a chevron when the package has any non-leaf descendant, or more
     // than one child total — i.e. anything worth expanding. A single leaf
@@ -426,8 +429,7 @@ function SidebarTreeNode({
               : `group/row flex items-stretch rounded-xl hover:bg-surface text-muted-foreground hover:text-foreground`
           }
         >
-          <NavLink
-            end
+          <Link
             aria-current={isActive ? 'page' : undefined}
             to={node.href}
             className={`flex-1 min-w-0 flex items-start ${hasChevron ? 'pr-2' : 'pr-3'} py-1.5 ${pad} cursor-pointer gap-x-3 text-left break-words hyphens-auto rounded-xl outline-offset-[-1px]`}
@@ -436,7 +438,7 @@ function SidebarTreeNode({
               <PackageLogo shortName={node.shortName} label={node.label} />
               <div className="break-words [word-break:break-word]">{node.label}</div>
             </div>
-          </NavLink>
+          </Link>
           {hasChevron ? (
             <button
               type="button"
@@ -537,6 +539,7 @@ export function DocsPackageSidebar({
   versionSelector?: ReactNode
 }) {
   const location = useLocation()
+  const activePath = normalizeDocsPath(location.pathname)
   // Default expansion: only the category containing the active package is
   // expanded; all others collapsed. Computed once per `activePkg`/`sections`
   // shape change via `useMemo` — no `useEffect`.
@@ -570,19 +573,19 @@ export function DocsPackageSidebar({
   const activePathKeys = useMemo<Set<string>>(() => {
     const out = new Set<string>()
     for (const section of sections) {
-      for (const key of collectActivePath(section.nodes, location.pathname)) {
+      for (const key of collectActivePath(section.nodes, activePath)) {
         out.add(key)
       }
     }
     return out
-  }, [sections, location.pathname])
+  }, [sections, activePath])
   const [treeExpanded, setTreeExpanded] = useState<Set<string>>(activePathKeys)
   // Derived-state pattern (no useEffect): on pathname change, merge the new
   // active-path keys into the user's expand set so navigating to a new
   // package auto-expands its tree without clobbering the user's own toggles.
-  const [prevPathname, setPrevPathname] = useState<string>(location.pathname)
-  if (prevPathname !== location.pathname) {
-    setPrevPathname(location.pathname)
+  const [prevActivePath, setPrevActivePath] = useState<string>(activePath)
+  if (prevActivePath !== activePath) {
+    setPrevActivePath(activePath)
     setTreeExpanded((prev) => {
       const next = new Set(prev)
       for (const key of activePathKeys) next.add(key)
@@ -631,7 +634,7 @@ export function DocsPackageSidebar({
                       depth={0}
                       expanded={treeExpanded}
                       toggle={toggleTree}
-                      activePath={location.pathname}
+                      activePath={activePath}
                     />
                   ))}
                 </ul>
