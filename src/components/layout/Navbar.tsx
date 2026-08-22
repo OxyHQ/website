@@ -63,6 +63,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
   const featureGrid = dropdown.featureGrid
   const cards = dropdown.card ? [dropdown.card] : []
   const wideMenu = Boolean(dropdown.sidePanel && (featureGrid || dropdown.card))
+  const sectionMenu = Boolean(dropdown.sidePanel && !featureGrid && !dropdown.card)
   const sectionContent = (dropdown.sections ?? []).map((section) => (
     <div key={section.heading} className="flex min-w-0 flex-col gap-space-md">
       {section.heading ? (
@@ -84,11 +85,15 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
       // The panel starts a clear step below the row, so the first heading does not
       // sit against the trigger that opened it.
       className={`grid w-full auto-rows-min items-start gap-space-lg pt-space-xl pb-space-2xl ${
-        wideMenu ? 'grid-cols-5' : 'grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]'
+        wideMenu ? 'grid-cols-5' : sectionMenu ? 'grid-cols-4' : 'grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]'
       }`}
     >
       {wideMenu && !featureGrid ? (
         <div className="col-span-2 grid min-w-0 grid-cols-2 items-start gap-space-lg">
+          {sectionContent}
+        </div>
+      ) : sectionMenu ? (
+        <div className="col-span-3 grid min-w-0 grid-cols-3 items-start gap-space-lg">
           {sectionContent}
         </div>
       ) : (
