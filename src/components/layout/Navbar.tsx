@@ -45,7 +45,7 @@ const NAV_PRODUCT_DESCRIPTION_FALLBACKS: Record<string, string> = {
   mercaria: 'An open marketplace for people and goods',
   moovo: 'Mobility and urban transport',
   noted: 'A focused space for notes and ideas',
-  kaana: 'An AI agent for everyday life',
+  kaana: 'Oxy\'s own inference provider',
   horizon: 'A clearer view of what matters',
   astro: 'A private browser for the open web',
 }
