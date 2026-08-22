@@ -168,31 +168,49 @@ export function BloomHubGrid() {
     )
   }
   return (
-    <div className="not-prose my-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {bloomDemos.map((demo) => {
+    <div className="not-prose my-8">
+      <div className="mb-8 grid gap-3 sm:grid-cols-2">
+        <Link
+          to="/developers/docs/bloom/color-system"
+          className="rounded-2xl bg-primary p-5 text-primary-foreground transition-opacity hover:opacity-90"
+        >
+          <span className="block text-base font-semibold">Color system playground</span>
+          <span className="mt-1 block text-sm opacity-80">Compare every dynamic recipe in light and dark.</span>
+        </Link>
+        <Link
+          to="/developers/docs/bloom/playground"
+          className="rounded-2xl bg-surface p-5 text-foreground transition-colors hover:bg-muted"
+        >
+          <span className="block text-base font-semibold">Component playground</span>
+          <span className="mt-1 block text-sm text-muted-foreground">Adjust live props and copy the generated code.</span>
+        </Link>
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {bloomDemos.map((demo) => {
         const thumb = versionMap?.get(demo.name)
         const resolvedSlug = slugMap.get(demo.name) ?? demo.docsSlug
         const href = `/developers/docs/bloom/${version}/${resolvedSlug}`
-        return (
-          <Link
-            key={demo.name}
-            to={href}
-            className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition hover:border-primary/40 hover:shadow-lg"
-          >
-            <div className="aspect-[4/3] w-full overflow-hidden bg-background">
-              <ThumbnailImage light={thumb?.light} dark={thumb?.dark} alt={demo.name} />
-            </div>
-            <div className="flex flex-col gap-1 border-t border-border p-4">
-              <span className="text-base font-semibold text-foreground group-hover:text-primary">
-                {demo.name}
-              </span>
-              <span className="text-sm text-muted-foreground line-clamp-2">
-                {demo.description}
-              </span>
-            </div>
-          </Link>
-        )
-      })}
+          return (
+            <Link
+              key={demo.name}
+              to={href}
+              className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition hover:border-primary/40 hover:shadow-lg"
+            >
+              <div className="aspect-[4/3] w-full overflow-hidden bg-background">
+                <ThumbnailImage light={thumb?.light} dark={thumb?.dark} alt={demo.name} />
+              </div>
+              <div className="flex flex-col gap-1 border-t border-border p-4">
+                <span className="text-base font-semibold text-foreground group-hover:text-primary">
+                  {demo.name}
+                </span>
+                <span className="text-sm text-muted-foreground line-clamp-2">
+                  {demo.description}
+                </span>
+              </div>
+            </Link>
+          )
+        })}
+      </div>
     </div>
   )
 }

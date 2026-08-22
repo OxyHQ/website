@@ -68,6 +68,7 @@ const DocsPage = lazy(() => import('./pages/DocsPage'))
 const DocsIntroPage = lazy(() => import('./pages/DocsIntroPage'))
 const DocsThumbnailPage = lazy(() => import('./pages/DocsThumbnailPage'))
 const BloomPlayground = lazy(() => import('./components/docs/BloomPlayground'))
+const BloomColorSystemPage = lazy(() => import('./components/docs/BloomColorSystemPage'))
 const DevelopersPage = lazy(() => import('./pages/DevelopersPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
@@ -300,7 +301,15 @@ function PublicRoutes() {
         with that slug in the typedoc output).
       */}
       <Route path="developers/docs/bloom/playground" element={<BloomPlayground />} />
-      <Route path="developers/docs/bloom/:version/playground" element={<BloomPlayground />} />
+      <Route
+        path="developers/docs/bloom/:version/playground"
+        element={<Navigate to="/developers/docs/bloom/playground" replace />}
+      />
+      <Route path="developers/docs/bloom/color-system" element={<BloomColorSystemPage />} />
+      <Route
+        path="developers/docs/bloom/:version/color-system"
+        element={<Navigate to="/developers/docs/bloom/color-system" replace />}
+      />
       {/*
         Docs routing.
 

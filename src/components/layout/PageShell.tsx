@@ -20,6 +20,11 @@ interface PageShellProps {
   /** Classes for the `<main>` element. Omitted entirely when not supplied. */
   mainClassName?: string
   /**
+   * Render the content frame as a div when the child owns the page's main
+   * landmark, as the documentation shell does.
+   */
+  mainAsDiv?: boolean
+  /**
    * Drops the footer's top rule, for a page whose last section already ends on
    * a boundary of its own — a rule between two surfaces of the same colour
    * reads as leftover, not as structure.
@@ -40,6 +45,7 @@ export default function PageShell({
   className = 'bg-background',
   navbar,
   mainClassName,
+  mainAsDiv = false,
   hideFooterDivider = false,
   children,
 }: PageShellProps) {
@@ -47,7 +53,11 @@ export default function PageShell({
     <div className={`flex min-h-screen max-w-screen flex-col overflow-x-clip ${className}`}>
       <SEO {...seo} />
       {navbar ?? <Navbar />}
-      <main className={mainClassName}>{children}</main>
+      {mainAsDiv ? (
+        <div className={mainClassName}>{children}</div>
+      ) : (
+        <main className={mainClassName}>{children}</main>
+      )}
       <Footer hideTopDivider={hideFooterDivider} />
     </div>
   )

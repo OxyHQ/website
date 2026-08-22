@@ -436,6 +436,12 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       'Try the components behind every Oxy app: live props, theming and the code to paste into your project.',
     canonicalPath: '/developers/docs/bloom/playground',
   },
+  '/developers/docs/bloom/color-system': {
+    title: 'Bloom color system playground',
+    description:
+      'Compare every Bloom color combination across light and dark Mention interfaces.',
+    canonicalPath: '/developers/docs/bloom/color-system',
+  },
   '/features': {
     title: 'Feature requests',
     description: 'What people are asking for across the Oxy apps, what is planned and what already shipped.',
