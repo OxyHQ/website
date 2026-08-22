@@ -78,7 +78,11 @@ export default function LongformArticle({
       </section>
 
       <article className="w-full bg-[color-mix(in_srgb,var(--primary)_6%,var(--background))] text-foreground">
-        <div id="company-article-body" data-article-body className="container grid grid-cols-8 place-items-start gap-x-2.5 pb-24 pt-10 sm:grid-cols-12 sm:gap-x-5 sm:pt-16 md:gap-x-6 md:pb-32 2xl:pb-40">
+        <div
+          id="company-article-body"
+          data-article-body
+          className="container grid grid-cols-8 place-items-start gap-x-2.5 pb-24 pt-10 sm:grid-cols-12 sm:gap-x-5 sm:pt-16 md:gap-x-6 md:pb-32 lg:[&>[data-article-block-width=prose]]:col-start-5 lg:[&>[data-article-block-width=wide]]:col-start-3 2xl:pb-40"
+        >
           <ArticleToc entries={entries} pdfHref={pdfHref} />
 
           {children}

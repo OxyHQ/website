@@ -85,6 +85,7 @@ export function ArticleMedia({
   return (
     <figure
       data-toc-skip
+      data-article-block-width={width}
       {...collisionProps(width)}
       className={`${placement(width)} my-8 w-full`}
     >
@@ -134,6 +135,7 @@ export function ArticleCallout({
   return (
     <aside
       data-toc-skip
+      data-article-block-width={width}
       {...collisionProps(width)}
       className={`${placement(width)} ${surface} my-8 w-full rounded-radius-12 p-6 text-foreground sm:p-8`}
     >
@@ -148,6 +150,7 @@ export function ArticleStats({ eyebrow, title, items, width = 'wide' }: Optional
   return (
     <section
       data-toc-skip
+      data-article-block-width={width}
       {...collisionProps(width)}
       className={`${placement(width)} my-10 w-full rounded-radius-12 bg-primary p-6 text-primary-foreground sm:p-8`}
     >
@@ -183,6 +186,7 @@ export function ArticleTabs({ label = 'Article tabs', tabs, width = 'wide' }: Op
   return (
     <section
       data-toc-skip
+      data-article-block-width={width}
       {...collisionProps(width)}
       className={`${placement(width)} my-10 w-full overflow-hidden rounded-radius-12 bg-surface`}
     >
@@ -241,6 +245,7 @@ export function ArticleTestimonialCarousel({
   return (
     <section
       data-toc-skip
+      data-article-block-width={width}
       {...collisionProps(width)}
       aria-label={label}
       aria-roledescription="carousel"
@@ -284,6 +289,7 @@ export function ArticleComparison({
   return (
     <section
       data-toc-skip
+      data-article-block-width={width}
       {...collisionProps(width)}
       className={`${placement(width)} my-10 w-full`}
     >
@@ -308,6 +314,7 @@ export function ArticleTable({ caption, columns, rows, width = 'wide' }: Optiona
   return (
     <div
       data-toc-skip
+      data-article-block-width={width}
       {...collisionProps(width)}
       className={`${placement(width)} my-10 w-full overflow-x-auto [scrollbar-width:thin]`}
     >
@@ -342,7 +349,7 @@ export function ArticleCitation({ id, children }: { id: string; children?: React
 
 export function ArticleFootnotes({ title = 'Notes', items, width = 'prose' }: OptionalWidth<ArticleFootnotesProps>) {
   return (
-    <section data-toc-skip {...collisionProps(width)} className={`${placement(width)} mt-14 w-full border-t border-border pt-6`}>
+    <section data-toc-skip data-article-block-width={width} {...collisionProps(width)} className={`${placement(width)} mt-14 w-full border-t border-border pt-6`}>
       <h3 className="text-primary text-body-3">{title}</h3>
       <ol className="mt-4 grid gap-3 ps-5 text-body-sm text-muted-foreground">
         {items.map((item) => (
@@ -363,7 +370,7 @@ export function ArticleFootnotes({ title = 'Notes', items, width = 'prose' }: Op
 
 export function ArticleBlockUnavailable({ message = 'This article block is unavailable.' }: { message?: string }) {
   return (
-    <aside data-toc-skip className={`${CENTERED_ARTICLE_BLOCK} my-6 w-full rounded-radius-12 bg-surface p-4 text-body-sm text-muted-foreground`}>
+    <aside data-toc-skip data-article-block-width="prose" className={`${CENTERED_ARTICLE_BLOCK} my-6 w-full rounded-radius-12 bg-surface p-4 text-body-sm text-muted-foreground`}>
       {message}
     </aside>
   )
