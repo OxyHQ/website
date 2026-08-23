@@ -165,6 +165,13 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     label: 'Build the future section',
   },
   {
+    selector: '.partners-theme',
+    seed: APP_COLOR_PRESETS.grove.hex,
+    tertiarySeed: APP_COLOR_PRESETS.grove.tertiaryHex,
+    mode: 'auto',
+    label: 'Partners page',
+  },
+  {
     // The device frame in `PhoneMockup.tsx` reproduces the FAIRWallet home
     // screen, and the real app is always dark — so it stays dark whatever the
     // site's toggle says, rather than following the page around it.
