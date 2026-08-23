@@ -12,7 +12,7 @@ const VALUE_PROPS: readonly { title: string; description: string }[] = [
   {
     title: 'We pick the right program',
     description:
-      'Open source, community, or education: we’ll match you to the program (or combination) that fits.',
+      'Open source, community, education, or startup: we’ll match you to the program (or combination) that fits.',
   },
   {
     title: 'You ship, we co-promote',

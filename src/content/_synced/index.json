@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-22T16:34:57.889Z",
+  "generatedAt": "2026-08-23T13:50:51.925Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -8790,7 +8790,7 @@
             {
               "slug": "chat-runtime",
               "title": "Chat runtime",
-              "description": "How the unified chat endpoint streams SSE events, runs the autonomy loop, and resolves models.",
+              "description": "The Alia product chat runtime: today's request path, the alia.* product stream events, and the Relay boundary recorded in ADR 0001.",
               "file": "alia/main/chat-runtime.mdx",
               "order": 1,
               "section": "guides"
@@ -8798,7 +8798,7 @@
             {
               "slug": "model-abstraction",
               "title": "Model abstraction",
-              "description": "Alia model tiers, provider routing, fallback chains, and the sanitization rules that keep providers private.",
+              "description": "The thirteen alia-* identifiers Alia serves today, what each one actually is, and the vocabulary ADR 0003 replaces them with.",
               "file": "alia/main/model-abstraction.mdx",
               "order": 2,
               "section": "guides"
@@ -8812,6 +8812,55 @@
               "section": "guides"
             },
             {
+              "slug": "adr/0001-alia-oxy-relay-responsibility-boundary",
+              "title": "1. Alia / Oxy / Relay responsibility boundary",
+              "file": "alia/main/adr/0001-alia-oxy-relay-responsibility-boundary.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0002-alia-is-a-relay-consumer-and-future-model-publisher",
+              "title": "2. Alia is a Relay consumer, and a future model publisher",
+              "file": "alia/main/adr/0002-alia-is-a-relay-consumer-and-future-model-publisher.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0003-model-revision-deployment-provider-routing-profile",
+              "title": "3. Model, revision, deployment, provider and routing profile are five distinct things",
+              "file": "alia/main/adr/0003-model-revision-deployment-provider-routing-profile.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0004-product-endpoints-versus-generic-inference-endpoints",
+              "title": "4. Alia product endpoints versus generic inference endpoints",
+              "file": "alia/main/adr/0004-product-endpoints-versus-generic-inference-endpoints.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0005-product-entitlements-versus-financial-ledger",
+              "title": "5. Product entitlements versus the financial ledger",
+              "file": "alia/main/adr/0005-product-entitlements-versus-financial-ledger.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0006-the-destination-of-api-alia-onl-v1-is-recorded-twice",
+              "title": "6. The destination of `api.alia.onl/v1/*` is recorded twice, differently",
+              "file": "alia/main/adr/0006-the-destination-of-api-alia-onl-v1-is-recorded-twice.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/README",
+              "title": "Architecture decision records",
+              "file": "alia/main/adr/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "agents",
               "title": "Alia Agents",
               "file": "alia/main/agents.md",
@@ -8820,21 +8869,21 @@
             },
             {
               "slug": "api-reference",
-              "title": "Alia API Reference",
+              "title": "Alia API reference",
               "file": "alia/main/api-reference.md",
               "order": 1000,
               "section": "guides"
             },
             {
               "slug": "deployment",
-              "title": "Deployment Guide",
+              "title": "Deployment",
               "file": "alia/main/deployment.md",
               "order": 1000,
               "section": "guides"
             },
             {
               "slug": "developers-portal",
-              "title": "Alia AI Developers Portal",
+              "title": "Developer access to Alia",
               "file": "alia/main/developers-portal.md",
               "order": 1000,
               "section": "guides"
@@ -8843,6 +8892,48 @@
               "slug": "memory-system",
               "title": "Memory and Context Graph",
               "file": "alia/main/memory-system.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "migration/compatibility-window",
+              "title": "Compatibility window and sunset criteria",
+              "file": "alia/main/migration/compatibility-window.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "migration/epic-139-decisions",
+              "title": "Epic #139: the decisions only a person can make",
+              "file": "alia/main/migration/epic-139-decisions.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "migration/epic-139-status",
+              "title": "Epic #139 status audit",
+              "file": "alia/main/migration/epic-139-status.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "migration/gateway-admin-archive",
+              "title": "Archive: what an operator did in Gateway Admin, and where it goes now",
+              "file": "alia/main/migration/gateway-admin-archive.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "migration/ownership",
+              "title": "Migration ownership: Alia / Oxy / Relay",
+              "file": "alia/main/migration/ownership.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "migration/relay-client-gap",
+              "title": "Relay client gap analysis",
+              "file": "alia/main/migration/relay-client-gap.md",
               "order": 1000,
               "section": "guides"
             },
@@ -8864,6 +8955,41 @@
               "slug": "proactive-intelligence",
               "title": "Proactive Intelligence",
               "file": "alia/main/proactive-intelligence.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/credential-rotation",
+              "title": "Runbook: rotating and revoking credentials",
+              "file": "alia/main/runbooks/credential-rotation.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/integrations-service-rollout",
+              "title": "Runbook: bringing the integrations service into production",
+              "file": "alia/main/runbooks/integrations-service-rollout.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/provider-credential-exposure",
+              "title": "Runbook: provider credentials in the git history, the logs and `provider_keys`",
+              "file": "alia/main/runbooks/provider-credential-exposure.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/relay-cutover",
+              "title": "Runbook: delivering the Relay cutover variables to production",
+              "file": "alia/main/runbooks/relay-cutover.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/rollback",
+              "title": "Runbook: rolling back a release",
+              "file": "alia/main/runbooks/rollback.md",
               "order": 1000,
               "section": "guides"
             },

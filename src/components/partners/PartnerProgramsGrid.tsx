@@ -1,6 +1,10 @@
+import { useEffect } from 'react'
+import { useDialogControl } from '@oxyhq/bloom/dialog'
+import { RocketLaunch } from '@phosphor-icons/react'
 import PartnerProgramCard from './PartnerProgramCard'
+import StartupProgramDialog from './StartupProgramDialog'
 
-/* ── Icons for the three programs ── */
+/* ── Icons for the partner programs ── */
 
 function OpenSourceIcon() {
   return (
@@ -40,7 +44,7 @@ interface ProgramConfig {
   benefits: readonly string[]
   ctaText: string
   ctaHref: string
-  iconKey: 'open-source' | 'community' | 'education'
+  iconKey: 'open-source' | 'community' | 'education' | 'startup'
 }
 
 const PROGRAMS: readonly ProgramConfig[] = [
@@ -89,6 +93,21 @@ const PROGRAMS: readonly ProgramConfig[] = [
     ctaHref: '#become-a-partner',
     iconKey: 'education',
   },
+  {
+    number: '04',
+    label: 'Startup program',
+    title: 'Startup Program',
+    description:
+      'A focused path for early teams building useful products on open, people-first infrastructure.',
+    benefits: [
+      'Product credits for eligible early-stage teams',
+      'Direct technical guidance as you build',
+      'A place in the Oxy builder community',
+    ],
+    ctaText: 'Apply to the Startup Program',
+    ctaHref: '#startup-program',
+    iconKey: 'startup',
+  },
 ]
 
 function renderIcon(key: ProgramConfig['iconKey']) {
@@ -99,21 +118,38 @@ function renderIcon(key: ProgramConfig['iconKey']) {
       return <CommunityIcon />
     case 'education':
       return <EducationIcon />
+    case 'startup':
+      return <RocketLaunch size={22} weight="duotone" aria-hidden="true" />
   }
 }
 
 export default function PartnerProgramsGrid() {
+  const startupProgramControl = useDialogControl()
+
+  useEffect(() => {
+    const openFromHash = () => {
+      if (window.location.hash !== '#startup-program') return
+
+      window.requestAnimationFrame(() => startupProgramControl.open())
+    }
+
+    openFromHash()
+    window.addEventListener('hashchange', openFromHash)
+    return () => window.removeEventListener('hashchange', openFromHash)
+  }, [startupProgramControl])
+
   return (
-    <section id="programs" className="container scroll-mt-24">
-      <div>
-        <header className="grid grid-cols-12 justify-items-start pb-12 pt-25 max-xl:pb-10 max-xl:pt-20 max-lg:pt-16">
-          <div className="col-span-full max-w-[26em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
-            <h2 className="text-pretty inline">Three ways to partner.</h2>{' '}
-            <p className="text-pretty inline font-medium text-muted-foreground">
-              Pick the program that matches how you build, ship, or teach.
-            </p>
-          </div>
-        </header>
+    <>
+      <section id="programs" className="container scroll-mt-24">
+        <div>
+          <header className="grid grid-cols-12 justify-items-start pb-12 pt-25 max-xl:pb-10 max-xl:pt-20 max-lg:pt-16">
+            <div className="col-span-full max-w-[26em] text-pretty text-heading-responsive-sm text-start mix-blend-multiply dark:mix-blend-screen">
+              <h2 className="text-pretty inline">Four ways to partner.</h2>{' '}
+              <p className="text-pretty inline font-medium text-muted-foreground">
+                Pick the program that matches how you build, ship, teach, or grow an early team.
+              </p>
+            </div>
+          </header>
 
         <div className="relative grid grid-cols-12">
           <div
@@ -136,6 +172,7 @@ export default function PartnerProgramsGrid() {
                 ctaText={program.ctaText}
                 ctaHref={program.ctaHref}
                 icon={renderIcon(program.iconKey)}
+                onActivate={program.iconKey === 'startup' ? startupProgramControl.open : undefined}
               />
             ))}
           </div>
@@ -147,7 +184,9 @@ export default function PartnerProgramsGrid() {
         >
           <div className="col-span-full flex justify-between" />
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+      <StartupProgramDialog control={startupProgramControl} />
+    </>
   )
 }

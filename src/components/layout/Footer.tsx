@@ -193,10 +193,10 @@ export default function Footer({
       {footerColumns.length > 0 && (
         <div className="container flex-1">
           <div className="px-px pt-10 pb-4">
-            <div className="columns-4 gap-0 max-xl:columns-3 max-lg:columns-2 max-xs:columns-1">
+            <div className="grid grid-cols-5 gap-x-8 gap-y-10 max-xl:grid-cols-3 max-md:grid-cols-2 max-[480px]:grid-cols-1">
               {footerColumns.map((column) => (
-                <div key={column.title} className="break-inside-avoid pb-5">
-                  <h2 className="py-1 text-primary-text text-sm font-semibold">{column.title}</h2>
+                <div key={column.title} className="min-w-0">
+                  <h2 className="py-1 text-sm font-medium text-primary-text">{column.title}</h2>
                   <ul className="flex flex-col">
                     {column.links.map((link: FooterLink) => (
                       <li key={link.label}>

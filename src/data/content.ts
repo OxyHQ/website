@@ -458,6 +458,7 @@ export const defaultFooterColumns: FooterColumn[] = [
       { label: 'Founding Charter', href: '/company/charter' },
       { label: 'The Initiative', href: '/initiative' },
       { label: 'Partner programs', href: '/partners' },
+      { label: 'Startup program', href: '/partners#startup-program' },
     ],
   },
   {

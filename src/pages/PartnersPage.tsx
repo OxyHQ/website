@@ -6,6 +6,7 @@ import PartnerProgramsGrid from '../components/partners/PartnerProgramsGrid'
 import PartnerEcosystemStrip from '../components/partners/PartnerEcosystemStrip'
 import PartnerPillarsSection from '../components/partners/PartnerPillarsSection'
 import BecomeAPartnerSection from '../components/partners/BecomeAPartnerSection'
+import PartnerFaqSection from '../components/partners/PartnerFaqSection'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 
 export default function PartnersPage() {
@@ -24,6 +25,7 @@ export default function PartnersPage() {
         <PartnerPillarsSection />
         <BecomeAPartnerSection />
         <KeepUpToDateSection />
+        <PartnerFaqSection />
       </main>
       <Footer />
     </div>
