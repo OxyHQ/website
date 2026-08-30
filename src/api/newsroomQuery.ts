@@ -5,6 +5,19 @@ import { apiFetch, errorStatus } from './client'
 
 export const NEWSROOM_REQUEST_TIMEOUT_MS = 8_000
 
+export interface NewsroomListParams {
+  category?: string
+  tag?: string
+  featured?: boolean
+  limit?: number
+  page?: number
+  author?: string
+}
+
+export function newsroomPostsQueryKey(params: NewsroomListParams | undefined, locale: Locale) {
+  return ['newsroom', params, locale] as const
+}
+
 export function newsroomPostQueryKey(slug: string, locale: Locale) {
   return ['newsroom', slug, locale] as const
 }

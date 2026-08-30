@@ -1,5 +1,10 @@
-import type { NewsroomPost } from '../src/data/newsroom'
-import { NEWSROOM_BOOTSTRAP_ID, newsroomBootstrapPayload } from '../src/lib/newsroom-bootstrap'
+import type { NewsroomPost, NewsroomPostSummary } from '../src/data/newsroom'
+import {
+  NEWSROOM_BOOTSTRAP_ID,
+  NEWSROOM_INDEX_BOOTSTRAP_ID,
+  newsroomBootstrapPayload,
+  newsroomIndexBootstrapPayload,
+} from '../src/lib/newsroom-bootstrap'
 
 export const NEWSROOM_PRERENDER_MARKER = '<meta data-prerender-kind="newsroom-post">'
 
@@ -24,4 +29,9 @@ function escapeHtmlText(value: string): string {
 export function renderNewsroomBootstrapTemplate(post: NewsroomPost): string {
   const payload = JSON.stringify(newsroomBootstrapPayload(post))
   return `<template id="${NEWSROOM_BOOTSTRAP_ID}">${escapeHtmlText(payload)}</template>`
+}
+
+export function renderNewsroomIndexBootstrapTemplate(posts: NewsroomPostSummary[]): string {
+  const payload = JSON.stringify(newsroomIndexBootstrapPayload(posts))
+  return `<template id="${NEWSROOM_INDEX_BOOTSTRAP_ID}">${escapeHtmlText(payload)}</template>`
 }

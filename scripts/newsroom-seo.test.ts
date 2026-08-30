@@ -1,6 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import { renderSEO, renderStructuredData } from '../src/entry-server'
-import { NEWSROOM_PRERENDER_MARKER, renderNewsroomBootstrapTemplate } from './newsroom-prerender'
+import {
+  NEWSROOM_PRERENDER_MARKER,
+  renderNewsroomBootstrapTemplate,
+  renderNewsroomIndexBootstrapTemplate,
+} from './newsroom-prerender'
 import {
   buildNewsroomArticleStructuredData,
   buildNewsroomCollectionStructuredData,
@@ -148,5 +152,21 @@ describe('Newsroom prerender bootstrap', () => {
     expect(template).toContain('&lt;/template&gt;')
     expect(template).not.toContain('<script')
     expect(NEWSROOM_PRERENDER_MARKER).toBe('<meta data-prerender-kind="newsroom-post">')
+  })
+
+  test('emits an inert index payload for the default Newsroom route', () => {
+    const template = renderNewsroomIndexBootstrapTemplate([{
+      slug: post.slug,
+      title: 'A faster <Newsroom>',
+      resume: post.resume,
+      categories: post.categories,
+      featured: false,
+      publishedAt: post.publishedAt,
+    }])
+
+    expect(template).toStartWith('<template id="newsroom-index-bootstrap">')
+    expect(template).toContain('&quot;total&quot;:1')
+    expect(template).toContain('A faster &lt;Newsroom&gt;')
+    expect(template).not.toContain('<script')
   })
 })

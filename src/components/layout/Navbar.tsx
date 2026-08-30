@@ -1015,6 +1015,7 @@ export default function Navbar({
           height: `calc(100dvh - ${bannerOffset}px - var(--site-header-height))`,
         }}
         aria-hidden={!mobileOpen}
+        inert={!mobileOpen}
       >
         <div className="absolute inset-0 flex flex-col">
           <div className="flex-1 overflow-y-auto overscroll-contain">

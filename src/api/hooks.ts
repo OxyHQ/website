@@ -22,12 +22,15 @@ import { type NewsroomPost, type NewsroomPostSummary } from '../data/newsroom'
 import { type DescriptionBlock } from '../data/careers'
 import {
   fetchNewsroomPost,
+  type NewsroomListParams,
   newsroomPostQueryKey,
+  newsroomPostsQueryKey,
   newsroomRequestSignal,
   prefetchNewsroomPost,
   shouldRetryNewsroomRequest,
 } from './newsroomQuery'
 import { preloadNewsroomPostRoute } from '../lib/route-preload'
+import { resolveResponsiveImage } from '../lib/responsiveImage'
 
 /**
  * Resolve a populated Media field to a URL string.
@@ -47,9 +50,11 @@ function resolveMediaUrl(field: unknown, preferThumbnail?: 'sm' | 'md' | 'lg'): 
 
 /** Resolve all media fields on a newsroom post to URL strings */
 function normalizePostMedia<T extends NewsroomPostSummary>(post: T): T {
+  const cover = resolveResponsiveImage(post.coverImage)
   return {
     ...post,
-    coverImage: resolveMediaUrl(post.coverImage, 'lg'),
+    coverImage: cover.src,
+    coverImageSrcSet: cover.srcSet ?? post.coverImageSrcSet,
     ...('products' in post ? { products: post.products ?? [] } : {}),
     ...('ogImage' in post ? { ogImage: resolveMediaUrl(post.ogImage) } : {}),
   } as T
@@ -320,7 +325,7 @@ export function useUpdateHero() {
 
 // ── Newsroom ──
 export function useNewsroomPosts<TPost extends NewsroomPostSummary = NewsroomPostSummary>(
-  params?: { category?: string; tag?: string; featured?: boolean; limit?: number; page?: number; author?: string },
+  params?: NewsroomListParams,
   options?: { enabled?: boolean },
 ) {
   const locale = useCurrentLocale()
@@ -334,7 +339,7 @@ export function useNewsroomPosts<TPost extends NewsroomPostSummary = NewsroomPos
   const qs = searchParams.toString()
 
   return useQuery({
-    queryKey: ['newsroom', params, locale],
+    queryKey: newsroomPostsQueryKey(params, locale),
     queryFn: ({ signal }) => apiFetch<{ posts: TPost[]; total: number; page: number; pages: number }>(
       `/newsroom${qs ? `?${qs}` : ''}`,
       { locale, signal: newsroomRequestSignal(signal) },

@@ -44,10 +44,12 @@ function NewsImage({
   article,
   className,
   priority = false,
+  sizes,
 }: {
   article: NewsroomPostSummary
   className: string
   priority?: boolean
+  sizes: string
 }) {
   return (
     <div className={`relative overflow-hidden rounded-md bg-surface ${className}`}>
@@ -60,6 +62,8 @@ function NewsImage({
       {article.coverImage && (
         <img
           src={article.coverImage}
+          srcSet={article.coverImageSrcSet}
+          sizes={article.coverImageSrcSet ? sizes : undefined}
           alt={article.imageAlt?.trim() ?? ''}
           loading={priority ? 'eager' : 'lazy'}
           fetchPriority={priority ? 'high' : 'auto'}
@@ -100,7 +104,12 @@ export function NewsCardFeatured({ article }: { article: NewsroomPostSummary }) 
         article={article}
         className="group relative block rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
       >
-        <NewsImage article={article} priority className="aspect-[4/5] w-full @lg:aspect-video" />
+        <NewsImage
+          article={article}
+          priority
+          sizes="(min-width: 1024px) 75vw, 100vw"
+          className="aspect-[4/5] w-full @lg:aspect-video"
+        />
         <div className="mt-5 flex max-w-4xl flex-col gap-2 @lg:pe-10">
           <h2 className="text-display-6 text-foreground transition-colors group-hover:text-muted-foreground">
             {article.title}
@@ -119,7 +128,11 @@ export function NewsCardGrid({ article }: { article: NewsroomPostSummary }) {
         article={article}
         className="group relative block rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
       >
-        <NewsImage article={article} className="aspect-square w-full" />
+        <NewsImage
+          article={article}
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+          className="aspect-square w-full"
+        />
         <div className="mt-3 flex flex-col gap-1.5">
           <h3 className="text-heading-xl text-foreground transition-colors group-hover:text-muted-foreground">
             {article.title}
@@ -138,7 +151,11 @@ export function NewsCardCarousel({ article }: { article: NewsroomPostSummary }) 
         article={article}
         className="group relative block rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
       >
-        <NewsImage article={article} className="aspect-square w-full" />
+        <NewsImage
+          article={article}
+          sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 85vw"
+          className="aspect-square w-full"
+        />
         <div className="mt-3 flex flex-col gap-1.5 md:pe-6">
           <h3 className="text-heading-xl text-foreground transition-colors group-hover:text-muted-foreground">
             {article.title}
@@ -157,7 +174,11 @@ export function NewsCardRow({ article }: { article: NewsroomPostSummary }) {
         article={article}
         className="group grid w-full grid-cols-[7.5rem_minmax(0,1fr)] items-center gap-4 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary sm:grid-cols-[11.563rem_minmax(0,1fr)] sm:gap-6"
       >
-        <NewsImage article={article} className="aspect-square w-full" />
+        <NewsImage
+          article={article}
+          sizes="(min-width: 640px) 185px, 120px"
+          className="aspect-square w-full"
+        />
         <div className="flex min-w-0 flex-col gap-2">
           <h3 className="text-base font-semibold leading-snug tracking-[-0.01em] text-foreground transition-colors group-hover:text-muted-foreground sm:text-lg">
             {article.title}

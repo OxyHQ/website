@@ -1,0 +1,16 @@
+# Oxy
+
+> Oxy is an independent, open-source ecosystem of ethical technology built to empower people, not exploit them.
+
+## Primary pages
+
+- [Oxy](https://oxy.so/): Overview of the ecosystem and its principles.
+- [Newsroom](https://oxy.so/newsroom/): Product updates, engineering articles and company announcements.
+- [Developers](https://oxy.so/developers): Developer resources and documentation.
+- [Company](https://oxy.so/company): Information about Oxy and its mission.
+
+## Machine-readable discovery
+
+- [Sitemap](https://oxy.so/sitemap.xml): Canonical public URL inventory.
+- [Newsroom RSS](https://oxy.so/newsroom.xml): Latest Newsroom articles.
+- [Robots](https://oxy.so/robots.txt): Crawler directives.

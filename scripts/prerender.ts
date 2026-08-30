@@ -54,9 +54,14 @@ import { featureRequestDescription, featureRequestPath } from '../src/lib/featur
 import { ACADEMY_COURSES } from '../src/content/academy-courses'
 import { APP_CARD_IMAGES } from '../src/data/appCardImages'
 import { brandConfig } from '../src/lib/seo'
-import type { NewsroomPost } from '../src/data/newsroom'
-import { NEWSROOM_PRERENDER_MARKER, renderNewsroomBootstrapTemplate } from './newsroom-prerender'
+import type { NewsroomPost, NewsroomPostSummary } from '../src/data/newsroom'
+import {
+  NEWSROOM_PRERENDER_MARKER,
+  renderNewsroomBootstrapTemplate,
+  renderNewsroomIndexBootstrapTemplate,
+} from './newsroom-prerender'
 import { buildNewsroomRss } from './newsroom-feed'
+import { resolveResponsiveImage } from '../src/lib/responsiveImage'
 import {
   buildNewsroomArticleStructuredData,
   buildNewsroomCollectionStructuredData,
@@ -994,14 +999,44 @@ function newsroomImage(post: NewsroomApiPost): string | undefined {
 }
 
 function normalizeNewsroomPost(post: NewsroomApiPost): NewsroomPost {
+  const cover = resolveResponsiveImage(post.coverImage)
   return {
     ...post,
     // The cover is an in-page visual, so use the generated 800px variant when
     // available. The original remains the social image below, where crawlers
     // need the largest asset. This avoids bootstrapping multi-megabyte PNGs.
-    coverImage: newsroomMediaUrl(post.coverImage, true),
+    coverImage: cover.src,
+    coverImageSrcSet: cover.srcSet,
     ogImage: newsroomMediaUrl(post.ogImage),
   }
+}
+
+function newsroomSummary(post: NewsroomApiPost): NewsroomPostSummary {
+  const normalized = normalizeNewsroomPost(post)
+  return {
+    _id: normalized._id,
+    slug: normalized.slug,
+    title: normalized.title,
+    resume: normalized.resume,
+    coverImage: normalized.coverImage,
+    coverImageSrcSet: normalized.coverImageSrcSet,
+    imageAlt: normalized.imageAlt,
+    categories: normalized.categories,
+    featured: normalized.featured,
+    themePreset: normalized.themePreset,
+    publishedAt: normalized.publishedAt,
+  }
+}
+
+function orderedNewsroomSummaries(posts: NewsroomApiPost[]): NewsroomPostSummary[] {
+  const sorted = posts
+    .map(newsroomSummary)
+    .sort((left, right) => new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime())
+  const featuredIndex = sorted.findIndex((post) => post.featured)
+  if (featuredIndex <= 0) return sorted
+  const featured = sorted[featuredIndex]
+  if (!featured) return sorted
+  return [featured, ...sorted.slice(0, featuredIndex), ...sorted.slice(featuredIndex + 1)]
 }
 
 function newsroomDateline(post: NewsroomApiPost): string | undefined {
@@ -1198,6 +1233,7 @@ async function enumerateAllRoutes(): Promise<RouteEntry[]> {
   const newsroomIndex = result.get('/newsroom')
   if (newsroomIndex) {
     const brand = brandConfig()
+    newsroomIndex.newsroomIndexPosts = orderedNewsroomSummaries(news).slice(0, 50)
     newsroomIndex.structuredData = buildNewsroomCollectionStructuredData(
       news.map(normalizeNewsroomPost),
       brand,
@@ -1305,6 +1341,13 @@ function capProse(markdown: string, url: string): string {
   const boundary = head.lastIndexOf('\n\n')
   cappedRoutes.push({ url, chars: markdown.length })
   return boundary > MAX_PROSE_CHARS / 2 ? head.slice(0, boundary) : head
+}
+
+function injectRootTemplate(shell: string, template: string): string {
+  const root = '<div id="root"></div>'
+  const idx = shell.indexOf(root)
+  if (idx < 0) throw new Error('[prerender] shell missing an empty #root container')
+  return `${shell.slice(0, idx)}<div id="root">${template}</div>${shell.slice(idx + root.length)}`
 }
 
 function injectBody(
@@ -1416,6 +1459,8 @@ interface RouteEntry {
   body?: PageBody
   /** Route-specific JSON-LD. The global Organization schema stays in the shell. */
   structuredData?: Record<string, unknown>
+  /** Default-locale list data used before the client can fetch the CMS. */
+  newsroomIndexPosts?: NewsroomPostSummary[]
   /** Stable marker read by the Pages middleware before considering an API fallback. */
   prerenderKind?: 'newsroom-post'
 }
@@ -1430,6 +1475,7 @@ interface RenderJob {
   body?: PageBody
   /** Omitted from untranslated locale mirrors along with their English prose. */
   structuredData?: Record<string, unknown>
+  newsroomIndexPosts?: NewsroomPostSummary[]
   prerenderKind?: 'newsroom-post'
 }
 
@@ -1467,9 +1513,12 @@ async function writeRoute(
       console.warn(`[prerender] empty head for ${job.url}`)
     }
     const localized = job.locale ? applyHtmlLang(shell, job.locale) : shell
-    const withBody = job.body
-      ? injectBody(localized, job.body, job.url, ssr.renderMarkdownBody)
+    const withIndexBootstrap = job.newsroomIndexPosts
+      ? injectRootTemplate(localized, renderNewsroomIndexBootstrapTemplate(job.newsroomIndexPosts))
       : localized
+    const withBody = job.body
+      ? injectBody(withIndexBootstrap, job.body, job.url, ssr.renderMarkdownBody)
+      : withIndexBootstrap
     const stripped = stripExistingMeta(withBody)
     const structuredData = job.structuredData
       ? ssr.renderStructuredData(job.structuredData)
@@ -1480,9 +1529,13 @@ async function writeRoute(
     const newsroomFeed = job.seo.canonicalPath === '/newsroom' || job.seo.canonicalPath.startsWith('/newsroom/')
       ? `<link rel="alternate" type="application/rss+xml" title="Oxy Newsroom" href="${SITE_URL}/newsroom.xml">`
       : ''
+    const leadingImage = job.newsroomIndexPosts?.[0]
+    const newsroomImagePreload = leadingImage?.coverImage
+      ? `<link rel="preload" as="image" href="${escapeHtml(leadingImage.coverImage)}" fetchpriority="high"${leadingImage.coverImageSrcSet ? ` imagesrcset="${escapeHtml(leadingImage.coverImageSrcSet)}" imagesizes="(min-width: 1024px) 75vw, 100vw"` : ''}>`
+      : ''
     const html = injectHead(
       stripped,
-      [head, structuredData, prerenderMarker, newsroomFeed].filter(Boolean).join('\n    '),
+      [head, structuredData, prerenderMarker, newsroomFeed, newsroomImagePreload].filter(Boolean).join('\n    '),
     )
     const outFile = pathToFile(job.url)
     await mkdir(path.dirname(outFile), { recursive: true })

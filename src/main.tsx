@@ -22,9 +22,9 @@ initTheme()
 const rootElement = document.getElementById('root')
 if (!rootElement) throw new Error('Root element #root not found')
 
-// A direct Newsroom article request already contains readable prerendered
-// prose. Keep it on screen while the route chunk is fetched, and seed its post
-// before React's first render so mounting never regresses to a loading page.
+// The Newsroom index and direct article requests carry inert build-time data.
+// Seed it before React's first render so the index does not wait on the list
+// API and a direct article never regresses from readable prose to a loader.
 seedNewsroomBootstrap(queryClient)
 if (/^\/(?:[a-z]{2}\/)?newsroom\/[^/]+\/?$/.test(window.location.pathname)) {
   try {

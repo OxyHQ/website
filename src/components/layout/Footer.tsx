@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { useTranslation } from '../../lib/i18n'
 import { ArrowRightIcon } from '../icons'
-import { usePageChromeStore } from '../../stores/pageChromeStore'
 import { defaultFooterColumns, type FooterLink } from '../../data/content'
 import { LogoText } from '@oxyhq/services'
 import MentionIcon from '../social/MentionIcon'
@@ -183,14 +181,9 @@ export default function Footer({
   const description = brand?.description ?? t('footer.description')
   const homeHref = brand?.homeHref ?? '/'
   const ariaLabel = brand?.ariaLabel ?? t('navbar.homepage')
-  const setFooterVisible = usePageChromeStore((s) => s.setFooterVisible)
-
   return (
-    <motion.footer
+    <footer
       className="relative flex w-full flex-col justify-between bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))] text-foreground"
-      onViewportEnter={() => setFooterVisible(true)}
-      onViewportLeave={() => setFooterVisible(false)}
-      viewport={{ amount: 0 }}
     >
       {!hideTopDivider && <Divider />}
 
@@ -278,6 +271,6 @@ export default function Footer({
           </div>
         </div>
       </div>
-    </motion.footer>
+    </footer>
   )
 }
