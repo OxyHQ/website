@@ -1,5 +1,4 @@
-import { useState, type MouseEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { BloomColorScope } from '@oxyhq/bloom/theme'
 import type { NewsroomPostSummary } from '../../data/newsroom'
 import { useCurrentLocale } from '../../lib/i18n'
@@ -18,43 +17,15 @@ function NewsroomLink({
   children: React.ReactNode
 }) {
   const preload = usePrefetchNewsroomPost(article.slug)
-  const navigate = useNavigate()
-  const [navigating, setNavigating] = useState(false)
-  const to = `/newsroom/${article.slug}`
-
-  async function handleClick(event: MouseEvent<HTMLAnchorElement>) {
-    if (
-      event.defaultPrevented ||
-      event.button !== 0 ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.shiftKey ||
-      event.altKey
-    ) return
-
-    event.preventDefault()
-    if (navigating) return
-    setNavigating(true)
-    // Keep the fully rendered index visible while data/code arrive. A hard
-    // ceiling preserves responsiveness during an outage; the destination then
-    // owns its useful skeleton and retry state.
-    await Promise.race([
-      preload(),
-      new Promise<void>((resolve) => window.setTimeout(resolve, 1_200)),
-    ])
-    navigate(to)
-  }
 
   return (
     <Link
-      to={to}
+      to={`/newsroom/${article.slug}`}
       aria-label={ariaLabel}
-      aria-busy={navigating || undefined}
-      onClick={handleClick}
       onPointerEnter={() => void preload()}
+      onPointerDown={() => void preload()}
       onFocus={() => void preload()}
-      onTouchStart={() => void preload()}
-      className={`${className} ${navigating ? 'opacity-80' : ''}`}
+      className={className}
     >
       {children}
     </Link>

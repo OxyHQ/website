@@ -170,6 +170,11 @@ export default function Footer({
     { label: t('footer.accessibility'), to: '/legal/accessibility' },
     { label: t('footer.termsAndConditions'), to: '/legal/terms' },
     { label: t('footer.llms'), to: '/legal/llms' },
+    // These are documents rather than SPA routes, so plain anchors are
+    // intentional: the browser must request the XML instead of React Router
+    // handling the click.
+    { label: 'Sitemap', href: '/sitemap.xml' },
+    { label: 'RSS', href: '/newsroom.xml' },
     { label: t('footer.settings'), to: '/settings' },
   ]
   const social = socialLinks ?? defaultSocial
