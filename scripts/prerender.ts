@@ -551,7 +551,7 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
 type NewsroomApiPost = Omit<NewsroomPost, 'coverImage' | 'ogImage'> & {
   /** The post's body, in markdown. The list endpoint already returns it. */
   ogImage?: string | { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } } | null
-  coverImage?: { url?: string } | string | null
+  coverImage?: string | { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } } | null
 }
 
 interface NewsroomApiResponse {
@@ -976,14 +976,15 @@ function prettifySlug(slug: string): string {
     .join(' ')
 }
 
-function newsroomMediaUrl(field: unknown): string | undefined {
+function newsroomMediaUrl(field: unknown, preferThumbnail = false): string | undefined {
   if (typeof field === 'string' && field.length > 0) return field
   if (!field || typeof field !== 'object') return undefined
 
   const media = field as { url?: unknown; thumbnails?: { sm?: unknown; md?: unknown; lg?: unknown } }
-  if (typeof media.url === 'string' && media.url.length > 0) return media.url
-  for (const thumbnail of [media.thumbnails?.lg, media.thumbnails?.md, media.thumbnails?.sm]) {
-    if (typeof thumbnail === 'string' && thumbnail.length > 0) return thumbnail
+  const thumbnails = [media.thumbnails?.lg, media.thumbnails?.md, media.thumbnails?.sm]
+  const candidates = preferThumbnail ? [...thumbnails, media.url] : [media.url, ...thumbnails]
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.length > 0) return candidate
   }
   return undefined
 }
@@ -995,7 +996,10 @@ function newsroomImage(post: NewsroomApiPost): string | undefined {
 function normalizeNewsroomPost(post: NewsroomApiPost): NewsroomPost {
   return {
     ...post,
-    coverImage: newsroomMediaUrl(post.coverImage),
+    // The cover is an in-page visual, so use the generated 800px variant when
+    // available. The original remains the social image below, where crawlers
+    // need the largest asset. This avoids bootstrapping multi-megabyte PNGs.
+    coverImage: newsroomMediaUrl(post.coverImage, true),
     ogImage: newsroomMediaUrl(post.ogImage),
   }
 }
