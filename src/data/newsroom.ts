@@ -4,32 +4,36 @@ export interface NewsroomProductRef {
   name: string
 }
 
-export interface NewsroomPost {
+/** Lightweight public list shape. Article Markdown and editorial fields stay on detail. */
+export interface NewsroomPostSummary {
   _id?: string
   slug: string
   title: string
   resume: string
-  description?: string
-  content: string
   coverImage?: string
   imageAlt?: string
+  categories: string[]
+  featured: boolean
+  /** Bloom recipe persisted per post; legacy rows may omit it until migrated. */
+  themePreset?: string
+  publishedAt: string
+}
+
+export interface NewsroomPost extends NewsroomPostSummary {
+  description?: string
+  content: string
   oxyUserId?: string
   authorUsername?: string
   tags: string[]
-  categories: string[]
-  /** Product `_id` strings when editing; populated `{ _id, productId, name }` on list/detail. */
+  /** Product `_id` strings when editing; populated `{ _id, productId, name }` on detail. */
   products: Array<string | NewsroomProductRef>
-  featured: boolean
   colorPrimary?: string
   colorSecondary?: string
-  /** Bloom recipe persisted per post; legacy rows may omit it until migrated. */
-  themePreset?: string
   dark?: boolean
   status: 'draft' | 'published'
   metaTitle?: string
   metaDescription?: string
   ogImage?: string
-  publishedAt: string
   createdAt: string
   updatedAt: string
 }

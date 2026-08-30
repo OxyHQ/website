@@ -44,8 +44,8 @@ function ProductCallout({ product }: { product: ProductRecord }) {
 }
 
 export default function ArticleProducts({ post }: { post: NewsroomPost }) {
-  const { data: products } = useProducts()
   const ids = linkedProductIds(post)
+  const { data: products } = useProducts({ enabled: ids.length > 0 })
   const linked = (products ?? []).filter((product) => ids.includes(product.productId))
 
   return <>{linked.map((product) => <ProductCallout key={product.productId} product={product} />)}</>

@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { apiFetch } from './client'
 import { useCurrentLocale } from '../lib/i18n'
@@ -18,8 +18,16 @@ import {
 
 import { type Testimonial } from '../data/content'
 import { type PricingPlan } from '../data/pricing'
-import { type NewsroomPost } from '../data/newsroom'
+import { type NewsroomPost, type NewsroomPostSummary } from '../data/newsroom'
 import { type DescriptionBlock } from '../data/careers'
+import {
+  fetchNewsroomPost,
+  newsroomPostQueryKey,
+  newsroomRequestSignal,
+  prefetchNewsroomPost,
+  shouldRetryNewsroomRequest,
+} from './newsroomQuery'
+import { preloadNewsroomPostRoute } from '../lib/route-preload'
 
 /**
  * Resolve a populated Media field to a URL string.
@@ -38,13 +46,13 @@ function resolveMediaUrl(field: unknown, preferThumbnail?: 'sm' | 'md' | 'lg'): 
 }
 
 /** Resolve all media fields on a newsroom post to URL strings */
-function normalizePostMedia(post: NewsroomPost): NewsroomPost {
+function normalizePostMedia<T extends NewsroomPostSummary>(post: T): T {
   return {
     ...post,
-    products: post.products ?? [],
     coverImage: resolveMediaUrl(post.coverImage, 'lg'),
-    ogImage: resolveMediaUrl(post.ogImage),
-  }
+    ...('products' in post ? { products: post.products ?? [] } : {}),
+    ...('ogImage' in post ? { ogImage: resolveMediaUrl(post.ogImage) } : {}),
+  } as T
 }
 
 /** Resolve media field on a changelog entry */
@@ -214,6 +222,7 @@ export interface UseProductsOptions {
   surface?: 'products' | 'status' | 'nav'
   lifecycle?: ProductLifecycle
   section?: string
+  enabled?: boolean
 }
 
 export function useProducts(options: UseProductsOptions = {}) {
@@ -228,6 +237,7 @@ export function useProducts(options: UseProductsOptions = {}) {
     queryFn: () => apiFetch<ProductRecord[]>(`/products${query ? `?${query}` : ''}`, { locale }),
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
+    enabled: options.enabled ?? true,
   })
 }
 
@@ -309,7 +319,7 @@ export function useUpdateHero() {
 }
 
 // ── Newsroom ──
-export function useNewsroomPosts(
+export function useNewsroomPosts<TPost extends NewsroomPostSummary = NewsroomPostSummary>(
   params?: { category?: string; tag?: string; featured?: boolean; limit?: number; page?: number; author?: string },
   options?: { enabled?: boolean },
 ) {
@@ -325,29 +335,40 @@ export function useNewsroomPosts(
 
   return useQuery({
     queryKey: ['newsroom', params, locale],
-    queryFn: () => apiFetch<{ posts: NewsroomPost[]; total: number; page: number; pages: number }>(`/newsroom${qs ? `?${qs}` : ''}`, { locale }),
+    queryFn: ({ signal }) => apiFetch<{ posts: TPost[]; total: number; page: number; pages: number }>(
+      `/newsroom${qs ? `?${qs}` : ''}`,
+      { locale, signal: newsroomRequestSignal(signal) },
+    ),
     select: (data) => ({ ...data, posts: data.posts.map(normalizePostMedia) }),
     placeholderData: keepPreviousData,
     enabled: options?.enabled ?? true,
+    retry: shouldRetryNewsroomRequest,
   })
 }
 
 export function useNewsroomPost(slug: string) {
   const locale = useCurrentLocale()
   return useQuery({
-    queryKey: ['newsroom', slug, locale],
-    queryFn: async () => {
-      if (import.meta.env.DEV && slug === 'article-components-showcase-preview') {
-        const { articleComponentsShowcasePost } = await import(
-          '../content/newsroom-previews/article-components-showcase'
-        )
-        return articleComponentsShowcasePost
-      }
-      return apiFetch<NewsroomPost>(`/newsroom/${slug}`, { locale })
-    },
+    queryKey: newsroomPostQueryKey(slug, locale),
+    queryFn: ({ signal }) => fetchNewsroomPost(slug, locale, signal),
     select: normalizePostMedia,
     enabled: !!slug,
+    staleTime: 5 * 60_000,
+    retry: shouldRetryNewsroomRequest,
   })
+}
+
+/** Preload both the route code and full post when a card shows click intent. */
+export function usePrefetchNewsroomPost(slug: string) {
+  const locale = useCurrentLocale()
+  const client = useQueryClient()
+
+  return useCallback(async () => {
+    await Promise.allSettled([
+      preloadNewsroomPostRoute(),
+      prefetchNewsroomPost(client, slug, locale),
+    ])
+  }, [client, locale, slug])
 }
 
 export function useCreateNewsroomPost() {

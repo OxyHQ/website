@@ -1,11 +1,11 @@
-import type { NewsroomPost } from '../../data/newsroom'
+import type { NewsroomPostSummary } from '../../data/newsroom'
 import { NewsCardCarousel } from './NewsCard'
 import SectionHeaderWithLink from './SectionHeaderWithLink'
 
 interface CarouselSectionProps {
   title: string
   href: string
-  articles: NewsroomPost[]
+  articles: NewsroomPostSummary[]
   linkText?: string
 }
 

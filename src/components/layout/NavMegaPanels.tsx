@@ -9,17 +9,27 @@ import { Link } from 'react-router-dom'
  * — one full-bleed image with the words laid over it — which at nav size read
  * as an advert and made the words fight the picture.
  */
-export function NavCard({ card, className = '' }: { card: NavDropdownCard; className?: string }) {
+export function NavCard({
+  card,
+  className = '',
+  loadImage = true,
+}: {
+  card: NavDropdownCard
+  className?: string
+  loadImage?: boolean
+}) {
   const inner = (
     <>
       <span className="block h-40 w-full overflow-hidden rounded-md bg-surface">
-        <img
-          src={card.image}
-          alt={card.alt ?? ''}
-          loading="lazy"
-          decoding="async"
-          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+        {loadImage ? (
+          <img
+            src={card.image}
+            alt={card.alt ?? ''}
+            loading="lazy"
+            decoding="async"
+            className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : null}
       </span>
       <span className="flex flex-col gap-space-3xs">
         <span className="text-body-md font-medium text-foreground">{card.title}</span>

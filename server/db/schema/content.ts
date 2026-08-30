@@ -120,7 +120,13 @@ export const newsroomPosts = pgTable(
     publishedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     ...timestamps,
   },
-  (table) => [index('newsroom_posts_status_idx').on(table.status)],
+  (table) => [
+    index('newsroom_posts_status_published_at_id_idx').on(
+      table.status,
+      table.publishedAt.desc(),
+      table._id.asc(),
+    ),
+  ],
 )
 
 export const jobs = pgTable('jobs', {

@@ -5,6 +5,7 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HomeHero from '../components/homepage/HomeHero'
+import HomeTagPhysics from '../components/homepage/HomeTagPhysics'
 import FairCoinSection from '../components/sections/FairCoinSection'
 import FaqSection from '../components/sections/FaqSection'
 import { usePage, type PageSection } from '../api/hooks'
@@ -747,6 +748,7 @@ export default function HomePage() {
         <HomeHero />
         {FEATURES.SHOW_TRUSTED_LOGOS && <PartnerLogos />}
         <BuildForEveryoneSection />
+        <HomeTagPhysics />
         <OxyUseCasesRolo />
         <ValuesSection />
         {(FEATURES.SHOW_HOMEPAGE_STATS || FEATURES.SHOW_TESTIMONIALS) && <StatsAndTestimonialsSection />}

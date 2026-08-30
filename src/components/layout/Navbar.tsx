@@ -66,7 +66,7 @@ function ChevronDown({ className = '' }: { className?: string }) {
 
 /* ─── Dropdown Content Panel ─── */
 
-function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
+function DropdownContent({ dropdown, loadImages = true }: { dropdown: NavDropdown; loadImages?: boolean }) {
 
   /*
    * A feature dropdown is the same panel with a different filling: one headless
@@ -91,7 +91,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
       <ul className={listClassName}>
         {items.map((item) => (
           <li key={item.href} className="contents">
-            <NavDropdownItem item={item} />
+            <NavDropdownItem item={item} loadImage={loadImages} />
           </li>
         ))}
       </ul>
@@ -153,13 +153,13 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
           <div className="col-span-2 grid min-w-0 grid-cols-2 items-start gap-space-lg">
             {featureGrid.features.map((item) => (
               <div key={item.href} className="min-w-0">
-                <NavDropdownItem item={item} />
+                <NavDropdownItem item={item} loadImage={loadImages} />
               </div>
             ))}
           </div>
           <div className="col-span-2 grid min-w-0 grid-cols-2 items-start gap-space-lg">
             {featureGrid.cards.map((card) => (
-              <NavCard key={card.href} card={card} />
+              <NavCard key={card.href} card={card} loadImage={loadImages} />
             ))}
           </div>
         </>
@@ -168,11 +168,11 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
       {cards.length > 1 ? (
         <div className={`grid min-w-0 grid-cols-2 items-start gap-space-lg ${wideMenu ? '[grid-column:span_2]' : ''}`}>
           {cards.map((card) => (
-            <NavCard key={card.href} card={card} />
+            <NavCard key={card.href} card={card} loadImage={loadImages} />
           ))}
         </div>
       ) : (
-        cards.map((card) => <NavCard key={card.href} card={card} className={wideMenu ? '[grid-column:span_2]' : ''} />)
+        cards.map((card) => <NavCard key={card.href} card={card} loadImage={loadImages} className={wideMenu ? '[grid-column:span_2]' : ''} />)
       )}
 
       {dropdown.sidePanel && (
@@ -500,7 +500,6 @@ export default function Navbar({
   const bannerHeight = 40 // matches --site-header-banner-visible-height
   const bannerOffset = bannerVisible ? Math.max(0, bannerHeight - scrollY) : 0
   const bannerOffsetRef = useRef(bannerOffset)
-  bannerOffsetRef.current = bannerOffset
 
   /**
    * Publish two facts about the nav row: its real height as
@@ -562,6 +561,7 @@ export default function Navbar({
   // lines below the current banner + navbar stack so they do not double the
   // logo/control separators while the banner scrolls away.
   useLayoutEffect(() => {
+    bannerOffsetRef.current = bannerOffset
     const headerHeight = Number.parseFloat(
       getComputedStyle(document.documentElement).getPropertyValue('--site-header-height'),
     ) || 0
@@ -713,7 +713,7 @@ export default function Navbar({
       >
         {dropdowns.map((dd) => (
           <div key={dd.label} ref={(el) => { measureRefs.current[dd.label] = el }}>
-            <DropdownContent dropdown={dd} />
+            <DropdownContent dropdown={dd} loadImages={false} />
           </div>
         ))}
         <div ref={(el) => { measureRefs.current[SETTINGS_DROPDOWN_KEY] = el }}>
@@ -967,7 +967,7 @@ export default function Navbar({
                       pointerEvents: isActive ? 'auto' : 'none',
                     }}
                   >
-                    <DropdownContent dropdown={dd} />
+                    <DropdownContent dropdown={dd} loadImages={show} />
                   </div>
                 )
               })}
@@ -1076,7 +1076,7 @@ export default function Navbar({
 
             <div className="flex flex-col gap-2 p-4" onClick={() => setMobileOpen(false)}>
               {dd.featureGrid?.features.map((item) => (
-                <NavDropdownItem key={item.href} item={item} />
+                <NavDropdownItem key={item.href} item={item} loadImage={mobileOpen && mobilePanel === dd.label} />
               ))}
               {dd.sections.map((section) => (
                 <div key={section.heading} className="flex flex-col gap-2">
@@ -1086,13 +1086,13 @@ export default function Navbar({
                     </p>
                   ) : null}
                   {section.items.map((item) => (
-                    <NavDropdownItem key={`${section.heading}-${item.title}`} item={item} />
+                    <NavDropdownItem key={`${section.heading}-${item.title}`} item={item} loadImage={mobileOpen && mobilePanel === dd.label} />
                   ))}
                 </div>
               ))}
               {[...(dd.featureGrid?.cards ?? []), ...(dd.cards ?? []), ...(dd.card ? [dd.card] : [])].map((card) => (
                 <div key={card.href} className="aspect-[4/3] overflow-hidden rounded-xl">
-                  <NavCard card={card} />
+                  <NavCard card={card} loadImage={mobileOpen && mobilePanel === dd.label} />
                 </div>
               ))}
               {dd.sidePanel?.links.map((link) =>

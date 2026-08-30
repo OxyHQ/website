@@ -61,6 +61,23 @@ const BRANDS: Record<SeoBrand, BrandIdentity> = {
 
 const FAIRCOIN_HOSTS: ReadonlySet<string> = new Set(['fairco.in', 'www.fairco.in'])
 
+/**
+ * Return the editorial part of a title before `<SEO>` adds the active brand.
+ * Repeated suffixes are stripped defensively because both CMS route metadata
+ * and content-specific meta-title fields may already contain one.
+ */
+export function normalizeSeoTitle(title: string, siteName: string): string {
+  const original = title.trim()
+  const suffix = ` | ${siteName}`
+  let normalized = original
+
+  while (normalized.toLowerCase().endsWith(suffix.toLowerCase())) {
+    normalized = normalized.slice(0, -suffix.length).trimEnd()
+  }
+
+  return normalized || original
+}
+
 /** Which brand a hostname belongs to. Defaults to Oxy off-browser / unknown hosts. */
 export function brandForHost(host?: string | null): SeoBrand {
   return host && FAIRCOIN_HOSTS.has(host.toLowerCase()) ? 'faircoin' : 'oxy'

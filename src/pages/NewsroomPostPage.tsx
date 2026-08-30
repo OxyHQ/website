@@ -1,9 +1,10 @@
-import { useMemo } from 'react'
+import { lazy, Suspense, useEffect, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { BloomColorScope } from '@oxyhq/bloom/theme'
-import { useNewsroomPost, useNewsroomPosts } from '../api/hooks'
+import { useNewsroomPost } from '../api/hooks'
+import { errorStatus } from '../api/client'
 import PageShell from '../components/layout/PageShell'
-import { NewsCardGrid } from '../components/newsroom/NewsCard'
+import NewsroomRouteFallback from '../components/newsroom/NewsroomRouteFallback'
 import ArticleHero from '../components/newsroom/article/ArticleHero'
 import ArticleMarkdown from '../components/newsroom/article/ArticleMarkdown'
 import ArticleProducts from '../components/newsroom/article/ArticleProducts'
@@ -11,20 +12,17 @@ import ArticleScrollProgress from '../components/newsroom/article/ArticleScrollP
 import { extractHeadings } from '../components/newsroom/article/headings'
 import ArticleToc from '../components/slices/ArticleToc'
 import { WIDE_ARTICLE_BLOCK } from '../components/slices/articleBlock'
-import CommentSection from '../components/social/CommentSection'
-import DiscussOnMention from '../components/social/DiscussOnMention'
-import LikeButton from '../components/social/LikeButton'
 import ArticleAuthors from '../components/social/ArticleAuthor'
 import StructuredData from '../components/StructuredData'
-import { type NewsroomPost } from '../data/newsroom'
 import { newsroomThemeFor } from '../lib/newsroom-theme'
 import { brandConfig } from '../lib/seo'
+import { buildNewsroomArticleStructuredData, normalizeNewsroomSeoTitle } from '../lib/newsroomSeo'
+import { markNewsroomArticleReady } from '../lib/newsroom-performance'
 import BackToNewsroomButton from '../components/newsroom/article/BackToNewsroomButton'
+import DeferredMount from '../components/ui/DeferredMount'
 
-function newsroomSeoTitle(title: string, siteName: string): string {
-  const suffix = ` | ${siteName}`
-  return title.endsWith(suffix) ? title.slice(0, -suffix.length) : title
-}
+const ArticleCommunity = lazy(() => import('../components/newsroom/article/ArticleCommunity'))
+const NewsroomRelatedArticles = lazy(() => import('../components/newsroom/article/NewsroomRelatedArticles'))
 
 export default function NewsroomPostPage() {
   const { slug = '' } = useParams<{ slug: string }>()
@@ -32,40 +30,45 @@ export default function NewsroomPostPage() {
   const { origin, siteName, ogImage } = brandConfig(
     typeof window === 'undefined' ? undefined : window.location.hostname,
   )
-  const { data: post, isLoading } = useNewsroomPost(slug)
-  // Gated on `post`: without `enabled` this fired an unfiltered, unlimited
-  // `/newsroom` request on every article load, only to discard it once the post
-  // arrived and the category-filtered query replaced it.
-  const { data: relatedData } = useNewsroomPosts(
-    { category: post?.categories[0], limit: 4 },
-    { enabled: !!post },
-  )
-
-  const relatedPosts = (relatedData?.posts ?? [])
-    .filter((candidate: NewsroomPost) => candidate.slug !== slug)
-    .slice(0, 3)
+  const { data: post, error, isLoading, isFetching, refetch } = useNewsroomPost(slug)
   const headings = useMemo(() => extractHeadings(post?.content ?? ''), [post?.content])
 
+  useEffect(() => {
+    if (post) markNewsroomArticleReady(post.slug)
+  }, [post])
+
   if (isLoading) {
-    return (
-      <PageShell
-        seo={{ title: 'Newsroom', description: 'Loading an Oxy Newsroom article.', canonicalPath: `/newsroom/${slug}` }}
-        className="slice-theme bg-background text-foreground"
-        mainClassName="flex flex-1 items-center justify-center"
-      >
-        <p className="text-body-3 text-muted-foreground">Loading…</p>
-      </PageShell>
-    )
+    return <NewsroomRouteFallback />
   }
 
   if (!post) {
+    const missing = errorStatus(error) === 404
     return (
       <PageShell
-        seo={{ title: 'Post not found', description: 'This Newsroom article could not be found.', canonicalPath: `/newsroom/${slug}` }}
+        seo={{
+          title: missing ? 'Post not found' : 'Newsroom temporarily unavailable',
+          description: missing
+            ? 'This Newsroom article could not be found.'
+            : 'This Newsroom article could not be loaded right now.',
+          canonicalPath: `/newsroom/${slug}`,
+          noIndex: true,
+        }}
         className="slice-theme bg-background text-foreground"
         mainClassName="flex flex-1 flex-col items-center justify-center gap-4"
       >
-        <h1 className="text-subheading-2 text-foreground">Post not found</h1>
+        <h1 className="text-subheading-2 text-foreground">
+          {missing ? 'Post not found' : 'The article could not be loaded'}
+        </h1>
+        {!missing && (
+          <button
+            type="button"
+            disabled={isFetching}
+            onClick={() => void refetch()}
+            className="rounded-full bg-primary px-5 py-2.5 text-body-3 text-primary-foreground transition-opacity disabled:opacity-50"
+          >
+            {isFetching ? 'Retrying…' : 'Try again'}
+          </button>
+        )}
         <Link to="/newsroom" className="text-body-3 text-primary hover:underline">
           Back to Newsroom
         </Link>
@@ -79,33 +82,19 @@ export default function NewsroomPostPage() {
     <BloomColorScope colorPreset={newsroomThemeFor(post)}>
       <PageShell
         seo={{
-          title: newsroomSeoTitle(post.metaTitle || post.title, siteName),
-          description: post.description || post.resume,
+          title: normalizeNewsroomSeoTitle(post.metaTitle || post.title, siteName),
+          description: post.metaDescription || post.description || post.resume,
           canonicalPath: `/newsroom/${post.slug}`,
           ogImage: post.ogImage || post.coverImage,
           ogType: 'article',
           publishedTime: post.publishedAt,
           modifiedTime: post.updatedAt,
+          author: post.authorUsername,
         }}
         className="slice-theme bg-background text-foreground"
         mainClassName="flex-1"
       >
-        <StructuredData data={{
-          '@context': 'https://schema.org',
-          '@type': 'Article',
-          headline: post.title,
-          description: post.resume,
-          image: post.coverImage || ogImage,
-          datePublished: post.publishedAt,
-          dateModified: post.updatedAt || post.publishedAt,
-          author: { '@type': 'Organization', name: siteName, url: origin },
-          publisher: {
-            '@type': 'Organization',
-            name: siteName,
-            logo: { '@type': 'ImageObject', url: `${origin}/favicon.svg` },
-          },
-          mainEntityOfPage: { '@type': 'WebPage', '@id': url },
-        }} />
+        <StructuredData data={buildNewsroomArticleStructuredData(post, { origin, siteName, ogImage })} />
 
         <article className="mt-10 flex flex-col gap-12 bg-background md:gap-16">
           <ArticleHero post={post} url={url} />
@@ -147,30 +136,24 @@ export default function NewsroomPostPage() {
                   </div>
                 )}
 
-                <div className="flex flex-wrap items-center gap-3">
-                  <LikeButton targetType="newsroom" targetId={post.slug} />
-                  <DiscussOnMention title={post.title} url={url} hashtags={post.tags} via="oxy" />
-                </div>
-
-                <CommentSection targetType="newsroom" targetId={post.slug} />
+                <DeferredMount
+                  fallback={<div className="mt-6 h-24 animate-pulse rounded-radius-12 bg-surface motion-reduce:animate-none" />}
+                >
+                  <Suspense fallback={<div className="mt-6 h-24 rounded-radius-12 bg-surface" />}>
+                    <ArticleCommunity post={post} url={url} />
+                  </Suspense>
+                </DeferredMount>
               </footer>
             </div>
           </div>
           </section>
         </article>
 
-        {relatedPosts.length > 0 && (
-          <section className="w-full bg-[color-mix(in_srgb,var(--primary)_14%,var(--background))] py-20 text-foreground md:py-24">
-            <div className="container">
-              <h2 className="mb-10 text-primary text-subheading-2">Related articles</h2>
-              <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 md:grid-cols-3">
-                {relatedPosts.map((relatedPost) => (
-                  <NewsCardGrid key={relatedPost._id || relatedPost.slug} article={relatedPost} />
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+        <DeferredMount rootMargin="900px 0px">
+          <Suspense fallback={null}>
+            <NewsroomRelatedArticles post={post} />
+          </Suspense>
+        </DeferredMount>
 
         <ArticleScrollProgress />
       </PageShell>

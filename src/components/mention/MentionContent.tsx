@@ -2,7 +2,7 @@ import { useRef, useState, type ReactNode } from 'react'
 import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion'
 import { Lightning, PencilSimple, Cloud } from '@phosphor-icons/react'
 import { Link } from 'react-router-dom'
-import MBrush from '../../assets/mention/m-brush.svg?react'
+import mBrushSvg from '../../assets/mention/m-brush.svg?raw'
 import sky from '../../assets/mention/sky.jpg'
 import logo from '../../assets/mention/logo.png'
 import phoneFrame from '../../assets/mention/phone.png'
@@ -50,7 +50,13 @@ function Reveal({ children, className = '', delay = 0 }: { children: ReactNode; 
 }
 
 function GiantM({ className = '' }: { className?: string }) {
-  return <MBrush className={`[&_path]:fill-[#3a55dd] ${className}`} />
+  return (
+    <span
+      aria-hidden="true"
+      className={`block [&_path]:fill-[#3a55dd] [&_svg]:block [&_svg]:size-full ${className}`}
+      dangerouslySetInnerHTML={{ __html: mBrushSvg }}
+    />
+  )
 }
 
 /* ------------------------------------------------------------------ */

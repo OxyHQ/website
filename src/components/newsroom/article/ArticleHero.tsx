@@ -66,6 +66,7 @@ export default function ArticleHero({ post, url }: { post: NewsroomPost; url: st
               width={1440}
               height={810}
               loading="eager"
+              fetchPriority="high"
               decoding="async"
               className="aspect-video w-full rounded-radius-12 object-cover object-center"
             />

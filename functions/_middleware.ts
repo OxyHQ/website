@@ -1,5 +1,6 @@
 /// <reference types="@cloudflare/workers-types" />
 import { brandForHost, resolveSeoOrDefault, type SeoData } from '../src/lib/seo'
+import { hasPrerenderedNewsroomPost, matchNewsroomPostPath } from './newsroom-status'
 
 /**
  * Cloudflare Pages edge middleware: per-host SEO at request time.
@@ -47,15 +48,58 @@ async function fetchSeoData(
   }
 }
 
+async function newsroomPostExists(
+  apiBase: string,
+  slug: string,
+  locale?: string,
+): Promise<boolean | null> {
+  try {
+    const url = new URL(`${apiBase}/api/newsroom/${encodeURIComponent(slug)}`)
+    if (locale) url.searchParams.set('locale', locale)
+    const res = await fetch(url.toString(), {
+      cf: { cacheTtl: 60, cacheEverything: true },
+    } as RequestInit)
+    if (res.ok) return true
+    if (res.status === 404) return false
+    return null
+  } catch (err) {
+    console.error('[newsroom-status] detail probe failed:', err)
+    return null
+  }
+}
+
+function asNotFound(response: Response, html: string): Response {
+  const headers = new Headers(response.headers)
+  headers.set('Cache-Control', 'public, max-age=60, must-revalidate')
+  headers.set('X-Robots-Tag', 'noindex, nofollow')
+  return new Response(html, { status: 404, statusText: 'Not Found', headers })
+}
+
 const onRequest: PagesFunction<Env> = async (context) => {
   const { request, next, env } = context
-
-  // Oxy is the prerendered default — nothing to rewrite.
   const url = new URL(request.url)
-  if (brandForHost(url.hostname) !== 'faircoin') return next()
-
-  const response = await next()
+  let response = await next()
   if (!(response.headers.get('content-type') ?? '').includes('text/html')) return response
+
+  // Pages' SPA fallback returns index.html with 200 for any unknown path. For
+  // Newsroom detail URLs, preserve valid prerendered files and convert only an
+  // API-confirmed missing slug to a real HTTP 404. Backend failures remain 200
+  // rather than incorrectly de-indexing a live article during an outage.
+  const newsroomPath = matchNewsroomPostPath(url.pathname)
+  if (newsroomPath && response.status === 200) {
+    const html = await response.clone().text()
+    if (!hasPrerenderedNewsroomPost(html)) {
+      const exists = await newsroomPostExists(
+        env.VITE_API_URL || DEFAULT_API_BASE,
+        newsroomPath.slug,
+        newsroomPath.locale,
+      )
+      if (exists === false) return asNotFound(response, html)
+    }
+  }
+
+  // Oxy is the prerendered default — only FairCoin needs host-specific meta.
+  if (brandForHost(url.hostname) !== 'faircoin') return response
 
   try {
     const seoData = await fetchSeoData(env.VITE_API_URL || DEFAULT_API_BASE, url.pathname, 'faircoin')
@@ -65,7 +109,7 @@ const onRequest: PagesFunction<Env> = async (context) => {
         el.setAttribute('content', value)
       },
     })
-    return new HTMLRewriter()
+    response = new HTMLRewriter()
       .on('title', {
         element(el) {
           el.setInnerContent(meta.title)
@@ -86,6 +130,7 @@ const onRequest: PagesFunction<Env> = async (context) => {
         },
       })
       .transform(response)
+    return response
   } catch (err) {
     // Never let a rewrite error break delivery — serve the original document.
     console.error('[seo-middleware] rewrite failed:', err)

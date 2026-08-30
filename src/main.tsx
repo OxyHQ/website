@@ -12,18 +12,34 @@ import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
 import { initTheme } from './theme'
 import App from './App.tsx'
+import { queryClient } from './api/queryClient'
+import { seedNewsroomBootstrap } from './lib/newsroom-bootstrap'
+import { preloadNewsroomPostRoute } from './lib/route-preload'
 
 // Apply saved color preset + dark/light mode before first render
 initTheme()
 
-// The static shell and the prerender both ship a full SEO head for crawlers
-// that don't run JavaScript. React renders the same tags from `<SEO>` once it
-// mounts, so these are dropped first — otherwise every page serves two
-// `og:title`, `og:image`, `twitter:*` and `<title>` tags.
-for (const tag of document.head.querySelectorAll('[data-static-seo]')) tag.remove()
-
 const rootElement = document.getElementById('root')
 if (!rootElement) throw new Error('Root element #root not found')
+
+// A direct Newsroom article request already contains readable prerendered
+// prose. Keep it on screen while the route chunk is fetched, and seed its post
+// before React's first render so mounting never regresses to a loading page.
+seedNewsroomBootstrap(queryClient)
+if (/^\/(?:[a-z]{2}\/)?newsroom\/[^/]+\/?$/.test(window.location.pathname)) {
+  try {
+    await preloadNewsroomPostRoute()
+  } catch {
+    // React's route boundary owns the visible failure state. The static article
+    // has remained readable up to this point, so a failed speculative preload
+    // must not stop the app from attempting its normal render.
+  }
+}
+
+// React is ready to replace the prerendered view now. Drop the static SEO at
+// the last possible moment so a slow route chunk never leaves the document
+// without its canonical/article metadata.
+for (const tag of document.head.querySelectorAll('[data-static-seo]')) tag.remove()
 
 createRoot(rootElement).render(
   <StrictMode>

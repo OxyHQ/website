@@ -270,6 +270,26 @@ const en = {
     faqGroupControl: 'Your data and control',
     faqGroupProducts: 'Products and access',
     faqGroupCommunity: 'Community and contribution',
+
+    // ── The falling-tag card (HomeTagPhysics) ──────────────
+    tagsHeading: 'Everything here is yours to pick up.',
+    tagsBody: 'Identity, privacy, payments, social, AI, research — every piece of Oxy is open source and built to work with the rest. Give one a nudge.',
+    tagsRegionLabel: 'The pieces of the Oxy ecosystem',
+    tagPrivacy: 'Privacy',
+    tagOpenSource: 'Open source',
+    tagIdentity: 'Identity',
+    tagAi: 'Oxy AI',
+    tagFairCoin: 'FairCoin',
+    tagCommunity: 'Community',
+    tagResearch: 'Research',
+    tagMention: 'Mention',
+    tagInbox: 'Inbox',
+    tagHomiio: 'Homiio',
+    tagNoAds: 'No ads',
+    tagSustainability: 'Sustainability',
+    tagCollaboration: 'Collaboration',
+    tagSelfCustody: 'Self-custody',
+    tagOpenWeb: 'Open web',
   },
 
   // ── Pricing ───────────────────────────────────────────────

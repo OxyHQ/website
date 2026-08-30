@@ -85,6 +85,13 @@
       "when": 1787358672516,
       "tag": "0011_dashing_madame_hydra",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1788117417625,
+      "tag": "0012_typical_susan_delgado",
+      "breakpoints": true
     }
   ]
 }

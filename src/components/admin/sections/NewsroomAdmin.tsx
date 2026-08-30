@@ -28,7 +28,7 @@ function stripProductsForEditing(post: NewsroomPost): NewsroomPost {
 }
 
 export default function NewsroomAdmin() {
-  const { data, refetch } = useNewsroomPosts({ limit: 50 })
+  const { data, refetch } = useNewsroomPosts<NewsroomPost>({ limit: 50 })
   const { data: locales } = useLocales()
   const { data: productsData } = useProducts()
   const createPost = useCreateNewsroomPost()

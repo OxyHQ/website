@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 import { useLocaleContext, DEFAULT_LOCALE, type Locale } from '../lib/i18n'
-import { brandConfig, resolveSeo } from '../lib/seo'
+import { brandConfig, normalizeSeoTitle, resolveSeo } from '../lib/seo'
 import { useSeo } from '../api/hooks'
 
 export interface SEOProps {
@@ -88,7 +88,9 @@ export default function SEO({
     ? (pageImage.startsWith('/') ? `${origin}${pageImage}` : pageImage)
     : defaultOgImage
 
-  const fullTitle = canonicalPath === '/' ? metaTitle : `${metaTitle} | ${siteName}`
+  const fullTitle = canonicalPath === '/'
+    ? metaTitle
+    : `${normalizeSeoTitle(metaTitle, siteName)} | ${siteName}`
   const canonicalUrl = buildLocalizedUrl(origin, canonicalPath, locale)
   // Advertise only locales that actually have translations. `enabled` is an
   // editorial "show in the picker" toggle that defaults to true, so it says

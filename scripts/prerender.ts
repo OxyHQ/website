@@ -53,6 +53,21 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES, isRtlLocale, type Locale } from '../
 import { featureRequestDescription, featureRequestPath } from '../src/lib/featureRequest'
 import { ACADEMY_COURSES } from '../src/content/academy-courses'
 import { APP_CARD_IMAGES } from '../src/data/appCardImages'
+import { brandConfig } from '../src/lib/seo'
+import type { NewsroomPost } from '../src/data/newsroom'
+import { NEWSROOM_PRERENDER_MARKER, renderNewsroomBootstrapTemplate } from './newsroom-prerender'
+import { buildNewsroomRss } from './newsroom-feed'
+import {
+  buildNewsroomArticleStructuredData,
+  buildNewsroomCollectionStructuredData,
+  normalizeNewsroomSeoTitle,
+} from '../src/lib/newsroomSeo'
+
+// React 19.2's development JSX runtime expects a development renderer
+// dispatcher. This script imports a production SSR bundle into Bun, so make
+// the runtime mode explicit before that dynamic import; mixing the development
+// JSX runtime with the production server renderer crashes on `getOwner()`.
+process.env.NODE_ENV = 'production'
 
 /** Course metadata by slug, so academy titles match what the SPA renders. */
 const COURSE_BY_SLUG = new Map(ACADEMY_COURSES.map((course) => [course.slug, course]))
@@ -73,7 +88,9 @@ const COMPANY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'company')
  * the fallbacks are the production values used when the var is unset.
  */
 const API_BASE = process.env.VITE_API_URL || 'https://website-api.oxy.so'
-const NEWSROOM_API = `${API_BASE}/api/newsroom?limit=500`
+// Prerender needs article Markdown and editorial SEO fields. The public list is
+// intentionally lightweight; `view=full` is the explicit build-time contract.
+const NEWSROOM_API = `${API_BASE}/api/newsroom?limit=500&view=full`
 const JOBS_API = `${API_BASE}/api/jobs`
 const PRODUCTS_API = `${API_BASE}/api/products?surface=products`
 const FEATURES_API = `${API_BASE}/api/features`
@@ -109,10 +126,12 @@ interface SEOProps {
 
 /** Renders a page's markdown with the app's own article components. */
 type RenderMarkdownFn = (markdown: string) => string
+type RenderStructuredDataFn = (data: Record<string, unknown>) => string
 
 interface SsrRenderers {
   renderSEO: RenderSEOFn
   renderMarkdownBody: RenderMarkdownFn
+  renderStructuredData: RenderStructuredDataFn
 }
 
 interface RenderSEOFn {
@@ -184,7 +203,14 @@ async function buildSsrBundle(): Promise<SsrRenderers> {
   if (typeof mod.renderMarkdownBody !== 'function') {
     throw new Error('[prerender] SSR bundle did not export renderMarkdownBody()')
   }
-  return { renderSEO: mod.renderSEO, renderMarkdownBody: mod.renderMarkdownBody }
+  if (typeof mod.renderStructuredData !== 'function') {
+    throw new Error('[prerender] SSR bundle did not export renderStructuredData()')
+  }
+  return {
+    renderSEO: mod.renderSEO,
+    renderMarkdownBody: mod.renderMarkdownBody,
+    renderStructuredData: mod.renderStructuredData,
+  }
 }
 
 /* ── Static route SEO props ───────────────────────────────────────── */
@@ -522,20 +548,10 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
 
 /* ── Dynamic route resolvers ──────────────────────────────────────── */
 
-interface NewsroomApiPost {
-  slug: string
-  status?: string
-  title: string
+type NewsroomApiPost = Omit<NewsroomPost, 'coverImage' | 'ogImage'> & {
   /** The post's body, in markdown. The list endpoint already returns it. */
-  content?: string
-  categories?: string[]
-  description?: string
-  resume?: string
-  metaTitle?: string
   ogImage?: string | { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } } | null
   coverImage?: { url?: string } | string | null
-  publishedAt?: string
-  updatedAt?: string
 }
 
 interface NewsroomApiResponse {
@@ -976,6 +992,14 @@ function newsroomImage(post: NewsroomApiPost): string | undefined {
   return newsroomMediaUrl(post.ogImage) ?? newsroomMediaUrl(post.coverImage)
 }
 
+function normalizeNewsroomPost(post: NewsroomApiPost): NewsroomPost {
+  return {
+    ...post,
+    coverImage: newsroomMediaUrl(post.coverImage),
+    ogImage: newsroomMediaUrl(post.ogImage),
+  }
+}
+
 function newsroomDateline(post: NewsroomApiPost): string | undefined {
   const published = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString('en-US', {
@@ -988,26 +1012,39 @@ function newsroomDateline(post: NewsroomApiPost): string | undefined {
 }
 
 function buildNewsroomRoutes(posts: NewsroomApiPost[]): RouteEntry[] {
-  return posts.map((post) => ({
-    url: `/newsroom/${post.slug}`,
-    body: post.content
-      ? {
-          heading: post.title,
-          meta: newsroomDateline(post),
-          standfirst: post.resume,
-          markdown: post.content,
-        }
-      : undefined,
-    seo: {
-      title: post.metaTitle || post.title,
-      description: post.description || post.resume || post.title,
-      canonicalPath: `/newsroom/${post.slug}`,
-      ogImage: newsroomImage(post),
-      ogType: 'article',
-      publishedTime: post.publishedAt,
-      modifiedTime: post.updatedAt,
-    },
-  }))
+  const brand = brandConfig()
+
+  return posts.map((post) => {
+    const image = newsroomImage(post)
+    const normalizedPost = normalizeNewsroomPost(post)
+    return {
+      url: `/newsroom/${post.slug}`,
+      body: post.content
+        ? {
+            heading: post.title,
+            meta: newsroomDateline(post),
+            standfirst: post.resume,
+            markdown: post.content,
+            newsroomPost: normalizedPost,
+          }
+        : undefined,
+      seo: {
+        title: normalizeNewsroomSeoTitle(post.metaTitle || post.title, brand.siteName),
+        description: post.metaDescription || post.description || post.resume || post.title,
+        canonicalPath: `/newsroom/${post.slug}`,
+        ogImage: image,
+        ogType: 'article',
+        publishedTime: post.publishedAt,
+        modifiedTime: post.updatedAt,
+        author: post.authorUsername,
+      },
+      structuredData: buildNewsroomArticleStructuredData(
+        normalizedPost,
+        brand,
+      ),
+      prerenderKind: 'newsroom-post' as const,
+    }
+  })
 }
 
 function buildFeatureRoutes(features: FeatureApiEntry[]): Array<{ url: string; seo: SEOProps }> {
@@ -1128,6 +1165,7 @@ function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): 
         url: job.url === '/' ? `/${locale}` : `/${locale}${job.url}`,
         seo: job.seo,
         locale,
+        prerenderKind: job.prerenderKind,
       })
     }
   }
@@ -1153,6 +1191,16 @@ async function enumerateAllRoutes(): Promise<RouteEntry[]> {
   ])
 
   for (const entry of buildNewsroomRoutes(news)) result.set(entry.url, entry)
+  const newsroomIndex = result.get('/newsroom')
+  if (newsroomIndex) {
+    const brand = brandConfig()
+    newsroomIndex.structuredData = buildNewsroomCollectionStructuredData(
+      news.map(normalizeNewsroomPost),
+      brand,
+      newsroomIndex.seo.title,
+      newsroomIndex.seo.description,
+    )
+  }
   for (const { url, seo } of buildJobRoutes(jobs)) result.set(url, { url, seo })
   for (const { url, seo } of buildAppRoutes(apps)) result.set(url, { url, seo })
   for (const { url, seo } of buildFeatureRoutes(features)) result.set(url, { url, seo })
@@ -1261,17 +1309,24 @@ function injectBody(
   url: string,
   renderMarkdownBody: RenderMarkdownFn,
 ): string {
+  const newsroomCover = body.newsroomPost?.coverImage
+    ? `<figure class="mt-10"><img src="${escapeHtml(body.newsroomPost.coverImage)}" alt="${escapeHtml(body.newsroomPost.imageAlt ?? '')}" width="1440" height="810" loading="eager" fetchpriority="high" decoding="async" class="aspect-video w-full rounded-radius-12 object-cover object-center"></figure>`
+    : ''
   const parts = [
     `<h1 class="text-heading-responsive-lg text-text">${escapeHtml(body.heading)}</h1>`,
     body.meta ? `<p class="mt-4 text-sm text-text-secondary">${escapeHtml(body.meta)}</p>` : '',
     body.standfirst ? `<p class="mt-6 text-lg text-text">${escapeHtml(body.standfirst)}</p>` : '',
+    newsroomCover,
     `<div class="mt-10">${renderMarkdownBody(capProse(body.markdown, url))}</div>`,
   ]
   const article = `<article class="mx-auto w-full max-w-[46rem] px-4 py-16">${parts.join('')}</article>`
+  const bootstrap = body.newsroomPost
+    ? renderNewsroomBootstrapTemplate(body.newsroomPost)
+    : ''
   const root = '<div id="root"></div>'
   const idx = shell.indexOf(root)
   if (idx < 0) throw new Error('[prerender] shell missing an empty #root container')
-  return `${shell.slice(0, idx)}<div id="root">${article}</div>${shell.slice(idx + root.length)}`
+  return `${shell.slice(0, idx)}<div id="root">${bootstrap}${article}</div>${shell.slice(idx + root.length)}`
 }
 
 /**
@@ -1281,7 +1336,7 @@ function injectBody(
  * that runs JavaScript.
  */
 function markStaticSeo(headHtml: string): string {
-  return headHtml.replace(/<(title|meta|link)\b/gi, '<$1 data-static-seo')
+  return headHtml.replace(/<(title|meta|link|script)\b/gi, '<$1 data-static-seo')
 }
 
 function injectHead(shell: string, headHtml: string): string {
@@ -1346,6 +1401,8 @@ interface PageBody {
   standfirst?: string
   /** The page's body, in markdown. */
   markdown: string
+  /** Full default-locale row used to seed the detail query before React mounts. */
+  newsroomPost?: NewsroomPost
 }
 
 /** A route the build will write, with the prose it can serve if it has any. */
@@ -1353,6 +1410,10 @@ interface RouteEntry {
   url: string
   seo: SEOProps
   body?: PageBody
+  /** Route-specific JSON-LD. The global Organization schema stays in the shell. */
+  structuredData?: Record<string, unknown>
+  /** Stable marker read by the Pages middleware before considering an API fallback. */
+  prerenderKind?: 'newsroom-post'
 }
 
 interface RenderJob {
@@ -1363,6 +1424,9 @@ interface RenderJob {
   locale?: Locale
   /** Absent for routes with no markdown of their own. */
   body?: PageBody
+  /** Omitted from untranslated locale mirrors along with their English prose. */
+  structuredData?: Record<string, unknown>
+  prerenderKind?: 'newsroom-post'
 }
 
 /**
@@ -1403,7 +1467,19 @@ async function writeRoute(
       ? injectBody(localized, job.body, job.url, ssr.renderMarkdownBody)
       : localized
     const stripped = stripExistingMeta(withBody)
-    const html = injectHead(stripped, head)
+    const structuredData = job.structuredData
+      ? ssr.renderStructuredData(job.structuredData)
+      : ''
+    const prerenderMarker = job.prerenderKind === 'newsroom-post'
+      ? NEWSROOM_PRERENDER_MARKER
+      : ''
+    const newsroomFeed = job.seo.canonicalPath === '/newsroom' || job.seo.canonicalPath.startsWith('/newsroom/')
+      ? `<link rel="alternate" type="application/rss+xml" title="Oxy Newsroom" href="${SITE_URL}/newsroom.xml">`
+      : ''
+    const html = injectHead(
+      stripped,
+      [head, structuredData, prerenderMarker, newsroomFeed].filter(Boolean).join('\n    '),
+    )
     const outFile = pathToFile(job.url)
     await mkdir(path.dirname(outFile), { recursive: true })
     await writeFile(outFile, html, 'utf8')
@@ -1468,6 +1544,20 @@ async function writeSitemap(
   console.log(`[prerender] wrote sitemap.xml (${entries.length} urls, ${locales.length} alternate locales)`)
 }
 
+async function writeNewsroomFeed(routes: readonly RouteEntry[]): Promise<void> {
+  const newsroom = routes.find((route) => route.url === '/newsroom')
+  const posts = routes
+    .map((route) => route.body?.newsroomPost)
+    .filter((post): post is NewsroomPost => Boolean(post))
+  const xml = buildNewsroomRss(posts, {
+    siteUrl: SITE_URL,
+    title: newsroom?.seo.title ?? 'Oxy Newsroom',
+    description: newsroom?.seo.description ?? 'News and updates from Oxy.',
+  })
+  await writeFile(path.join(DIST_DIR, 'newsroom.xml'), xml, 'utf8')
+  console.log(`[prerender] wrote newsroom.xml (${posts.length} articles)`)
+}
+
 async function writeLocaleManifest(locales: readonly Locale[]): Promise<void> {
   const outFile = path.join(DIST_DIR, 'prerendered-locales.json')
   const payload = { defaultLocale: DEFAULT_LOCALE, prerendered: locales }
@@ -1521,7 +1611,10 @@ async function main(): Promise<void> {
   }
 
   await writeLocaleManifest(localeInfo.locales)
-  await writeSitemap(baseRoutes, localeInfo.locales)
+  await Promise.all([
+    writeSitemap(baseRoutes, localeInfo.locales),
+    writeNewsroomFeed(baseRoutes),
+  ])
 
   console.log(`[prerender] rendering ${jobs.length} routes…`)
 

@@ -1,0 +1,2 @@
+DROP INDEX "newsroom_posts_status_idx";--> statement-breakpoint
+CREATE INDEX "newsroom_posts_status_published_at_id_idx" ON "newsroom_posts" USING btree ("status","published_at" DESC NULLS LAST,"_id");

@@ -47,6 +47,7 @@ import { renderToString, renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import SEO from './components/SEO'
+import { serializeStructuredData } from './lib/structuredData'
 import ArticleMarkdown from './components/newsroom/article/ArticleMarkdown'
 import { LocaleProvider } from './lib/i18n'
 import type { SeoData } from './lib/seo'
@@ -72,6 +73,11 @@ import type { SeoData } from './lib/seo'
  */
 export function renderMarkdownBody(markdown: string): string {
   return renderToStaticMarkup(<ArticleMarkdown content={markdown} />)
+}
+
+/** Serialize route-specific JSON-LD with the same escaping as the client. */
+export function renderStructuredData(data: Record<string, unknown>): string {
+  return `<script type="application/ld+json">${serializeStructuredData(data)}</script>`
 }
 
 /**

@@ -1,6 +1,6 @@
 import { useState, useCallback, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { OxyProvider, useOxy } from '@oxyhq/services'
 import type { User } from '@oxyhq/core'
 import { BloomThemeProvider, type ThemeMode as BloomThemeMode } from '@oxyhq/bloom/theme'
@@ -19,6 +19,9 @@ import { setOxyServices } from './api/client'
 import { isFairCoinHost } from './lib/host'
 import ErrorBoundary from './components/ErrorBoundary'
 import IntercomMessenger from './components/integrations/IntercomMessenger'
+import NewsroomRouteFallback from './components/newsroom/NewsroomRouteFallback'
+import { queryClient } from './api/queryClient'
+import { loadNewsroomPage, loadNewsroomPostPage } from './lib/route-preload'
 
 import HomePage from './pages/HomePage'
 // Lazy on purpose, and it must stay that way. `FairCoinLandingContent` pulls in
@@ -37,8 +40,8 @@ const AdminPage = lazy(() => import('./pages/AdminPage'))
 const PartnersPage = lazy(() => import('./pages/PartnersPage'))
 const CareersPage = lazy(() => import('./pages/CareersPage'))
 const PricingPage = lazy(() => import('./pages/PricingPage'))
-const NewsroomPage = lazy(() => import('./pages/NewsroomPage'))
-const NewsroomPostPage = lazy(() => import('./pages/NewsroomPostPage'))
+const NewsroomPage = lazy(loadNewsroomPage)
+const NewsroomPostPage = lazy(loadNewsroomPostPage)
 const AcademyPage = lazy(() => import('./pages/AcademyPage'))
 const CourseDetailPage = lazy(() => import('./pages/CourseDetailPage'))
 const LessonPage = lazy(() => import('./pages/LessonPage'))
@@ -103,10 +106,6 @@ const OXY_API =
 const OXY_CLIENT_ID =
   (import.meta.env.VITE_OXY_CLIENT_ID as string | undefined) ||
   'oxy_dk_e572a3df046f98c2c29098f1349a7927183751e08ca2b757'
-
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { staleTime: 60_000, retry: 1 } },
-})
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation()
@@ -279,8 +278,22 @@ function PublicRoutes() {
       <Route path="company/careers" element={<CareersPage />} />
       <Route path="company/careers/:slug" element={<CareerDetailPage />} />
       <Route path="pricing" element={<PricingPage />} />
-      <Route path="newsroom" element={<NewsroomPage />} />
-      <Route path="newsroom/:slug" element={<NewsroomPostPage />} />
+      <Route
+        path="newsroom"
+        element={(
+          <Suspense fallback={<NewsroomRouteFallback />}>
+            <NewsroomPage />
+          </Suspense>
+        )}
+      />
+      <Route
+        path="newsroom/:slug"
+        element={(
+          <Suspense fallback={<NewsroomRouteFallback />}>
+            <NewsroomPostPage />
+          </Suspense>
+        )}
+      />
       <Route path="academy" element={<AcademyPage />} />
       <Route path="academy/:slug" element={<CourseDetailPage />} />
       <Route path="academy/:slug/:lesson" element={<LessonPage />} />
