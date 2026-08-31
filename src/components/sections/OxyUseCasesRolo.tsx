@@ -49,7 +49,7 @@ export default function OxyUseCasesRolo() {
       })
     }, 620)
     return () => window.clearTimeout(resetTimer)
-  }, [activeIndex])
+  }, [activeIndex, useCases.length])
 
   const translateY = ROLO_HEIGHT / 2 - ITEM_HEIGHT / 2 - activeIndex * ITEM_HEIGHT
 

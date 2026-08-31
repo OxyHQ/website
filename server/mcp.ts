@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import express from 'express'
-import { and, asc, count, desc, eq, gte, ilike, inArray, like, lte, ne, not, or, sql, type SQL } from 'drizzle-orm'
+import { and, asc, count, desc, eq, gte, ilike, like, not, or, sql, type SQL } from 'drizzle-orm'
 import crypto from 'node:crypto'
 import { z } from 'zod'
 import { safeFetch, UpstreamError } from '@oxyhq/core/server'
@@ -710,6 +710,14 @@ server.tool('create_job', 'Create a new job listing. Slug is auto-generated from
   location: z.string().optional().describe('Job location, e.g. "Remote", "New York", "London"'),
   type: z.string().optional().describe('Employment type, e.g. "Full-time", "Part-time", "Contract"'),
   compensation: z.string().optional().describe('Compensation range, e.g. "$80K – $120K · Offers Equity"'),
+  validThrough: z.string().optional().describe('Actual application deadline as an ISO date. Omit for evergreen roles.'),
+  address: z.object({
+    streetAddress: z.string().optional(),
+    addressLocality: z.string().optional(),
+    addressRegion: z.string().optional(),
+    postalCode: z.string().optional(),
+    addressCountry: z.string().length(2).optional(),
+  }).optional().describe('Physical job address fields for JobPosting metadata'),
   description: z.array(descriptionBlockSchema).optional().describe('Job description as content blocks (paragraph, heading, or list)'),
   active: z.boolean().optional().describe('Whether the job is visible on the careers page. Defaults to true.'),
   order: z.number().optional().describe('Display order (lower = first). Defaults to 0.'),
@@ -728,6 +736,14 @@ server.tool('update_job', 'Update an existing job listing by slug. Only provided
   location: z.string().optional().describe('Job location'),
   type: z.string().optional().describe('Employment type'),
   compensation: z.string().optional().describe('Compensation range'),
+  validThrough: z.string().optional().describe('Actual application deadline as an ISO date'),
+  address: z.object({
+    streetAddress: z.string().optional(),
+    addressLocality: z.string().optional(),
+    addressRegion: z.string().optional(),
+    postalCode: z.string().optional(),
+    addressCountry: z.string().length(2).optional(),
+  }).optional().describe('Physical job address fields'),
   description: z.array(descriptionBlockSchema).optional().describe('Job description as content blocks'),
   active: z.boolean().optional().describe('Whether the job is visible'),
   order: z.number().optional().describe('Display order'),
@@ -1022,7 +1038,7 @@ server.tool('get_translations', 'Get all translations for a collection in a spec
       .select()
       .from(translations)
       .where(and(eq(translations.collectionName, collection), eq(translations.locale, locale)))
-    return ok(translations)
+    return ok(rows)
   } catch (e) { return err(e) }
 })
 
@@ -1127,7 +1143,7 @@ server.tool('upload_image', 'Download an image from a URL, upload it to S3, gene
       folder: subfolder,
       uploadedBy: 'mcp',
     })
-    return ok(media)
+    return ok(row)
   } catch (e) { return err(e) }
 })
 

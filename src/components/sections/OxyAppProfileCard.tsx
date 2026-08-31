@@ -14,6 +14,7 @@ export type CommunityProfileCard = {
 }
 
 /** App cards reused by the homepage app showcase. */
+// eslint-disable-next-line react-refresh/only-export-components
 export const APP_PROFILE_CARDS: CommunityProfileCard[] = [
   {
     type: 'profile',

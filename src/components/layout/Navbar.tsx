@@ -1,6 +1,6 @@
-import { useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
+import { lazy, Suspense, useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { LogoIcon, ProfileButton, useOxy } from '@oxyhq/services'
+import { LogoIcon, useAuth, useOxy } from '@oxyhq/services/ui/client'
 import {
   simpleNavLinks,
   platformNavDropdown,
@@ -24,7 +24,7 @@ import { searchSite, groupResults, searchContextGroups, type SearchResult } from
 import NavDropdownItem from '../ui/NavDropdownItem'
 import { SettingsPanel } from '../ui/SettingsPanel'
 import NavbarSearchResults from './NavbarSearchResults'
-import { Search, Settings, X } from 'lucide-react'
+import { LogIn, Search, Settings, X } from 'lucide-react'
 import { ArrowRightIcon } from '../icons'
 import { useAdminAccess } from '../../hooks/useAdminAccess'
 
@@ -32,6 +32,13 @@ import { useAdminAccess } from '../../hooks/useAdminAccess'
  *  the same shared viewport as the nav dropdowns. Prefixed so it never collides
  *  with a CMS label. */
 const SETTINGS_DROPDOWN_KEY = '__settings__'
+
+// ProfileButton pulls in native icon infrastructure. Authenticated visitors
+// still get the full account menu, while anonymous page loads keep it out of
+// the critical bundle and use a small local sign-in control instead.
+const ProfileButton = lazy(() => import('@oxyhq/services').then((module) => ({
+  default: module.ProfileButton,
+})))
 
 const NAV_LABEL_KEYS: Record<string, string> = {
   Platform: 'navbar.platform',
@@ -286,6 +293,7 @@ export default function Navbar({
   const { t } = useTranslation()
   const { locales } = useLocaleContext()
   const { oxyServices } = useOxy()
+  const { isAuthenticated, isAuthResolved, signIn } = useAuth()
   // The settings gear (theme + language) always shows; the language section
   // inside it only when more than one locale is offered.
   const showLanguageInSettings = !hideLocalePicker && locales.length > 1
@@ -650,6 +658,30 @@ export default function Navbar({
     background: active ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
     color: active ? 'var(--color-foreground)' : isTransparent ? transparentColor : 'var(--color-muted-foreground)',
   })
+  const authControl = (avatarSize: number) => {
+    if (!isAuthResolved || !isAuthenticated) {
+      return (
+        <button
+          type="button"
+          className={iconButtonClass}
+          aria-label={t('common.signIn')}
+          disabled={!isAuthResolved}
+          onClick={() => { void signIn() }}
+        >
+          <LogIn className="size-[18px]" aria-hidden="true" />
+        </button>
+      )
+    }
+    return (
+      <Suspense fallback={<span aria-hidden="true" className="block size-10" />}>
+        <ProfileButton
+          expanded={false}
+          avatarSize={avatarSize}
+          menuItems={isAdmin ? [{ key: 'admin', label: 'Admin', icon: 'shield-account-outline', onPress: () => navigate('/admin') }] : []}
+        />
+      </Suspense>
+    )
+  }
 
   return (
     <>
@@ -855,11 +887,7 @@ export default function Navbar({
                   no text, so without a label the button has no accessible name
                   at all — Lighthouse's `button-name` audit fails outright. */}
               {!hideAuth && (
-                <ProfileButton
-                  expanded={false}
-                  avatarSize={28}
-                  menuItems={isAdmin ? [{ key: 'admin', label: 'Admin', icon: 'shield-account-outline', onPress: () => navigate('/admin') }] : []}
-                />
+                authControl(28)
               )}
               <button
                 className={`inline-flex size-10 items-center justify-center rounded-full transition-colors hover:bg-foreground/5 ${isTransparent ? (onLight ? 'text-black' : 'text-white') : 'text-muted-foreground'}`}
@@ -912,11 +940,7 @@ export default function Navbar({
               {rightActions}
               {ctaButtons}
               {!hideAuth && (
-                <ProfileButton
-                  expanded={false}
-                  avatarSize={32}
-                  menuItems={isAdmin ? [{ key: 'admin', label: 'Admin', icon: 'shield-account-outline', onPress: () => navigate('/admin') }] : []}
-                />
+                authControl(32)
               )}
             </div>
             </div>

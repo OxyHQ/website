@@ -1,7 +1,7 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import * as Skeleton from '@oxyhq/bloom/skeleton'
-import { useOxy } from '@oxyhq/services'
+import { useOxy } from '@oxyhq/services/ui/client'
 import { getNormalizedUserHandle, type User } from '@oxyhq/core'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import Navbar from '../components/layout/Navbar'

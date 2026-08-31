@@ -52,6 +52,7 @@ import type { SEOLocaleSeed } from '../src/entry-server'
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, isRtlLocale, type Locale } from '../src/lib/i18n/types'
 import { featureRequestDescription, featureRequestPath } from '../src/lib/featureRequest'
 import { ACADEMY_COURSES } from '../src/content/academy-courses'
+import { bloomComponentRoutes } from './bloom-component-routes.ts'
 import { APP_CARD_IMAGES } from '../src/data/appCardImages'
 import { brandConfig } from '../src/lib/seo'
 import type { NewsroomPost, NewsroomPostSummary } from '../src/data/newsroom'
@@ -1257,6 +1258,12 @@ async function enumerateAllRoutes(): Promise<RouteEntry[]> {
   for (const entry of companyRoutes) result.set(entry.url, entry)
   for (const entry of docsRoutes) result.set(entry.url, entry)
 
+  // A SEVENTH source. Bloom's component hub and its per-surface pages come from
+  // `bloomIndex` rather than from a hand-written list, so a surface added
+  // upstream is prerendered the day it ships. `validate:bloom-catalog` fails if
+  // one ever is not.
+  for (const { url, seo } of bloomComponentRoutes()) result.set(url, { url, seo })
+
   return Array.from(result.values())
 }
 
@@ -1357,6 +1364,15 @@ function injectRootTemplate(shell: string, template: string): string {
   if (idx < 0) throw new Error('[prerender] shell missing an empty #root container')
   return `${shell.slice(0, idx)}<div id="root">${template}</div>${shell.slice(idx + root.length)}`
 }
+
+const HOME_PRERENDER_VISUAL = [
+  '<div class="home-prerender-visual" aria-hidden="true">',
+  '<img src="/images/landing/hero-bg-800.avif"',
+  ' srcset="/images/landing/hero-bg-800.avif 800w, /images/landing/hero-bg-1200.avif 1200w, /images/landing/hero-bg.avif 1600w"',
+  ' sizes="(max-width: 1023px) 100vw, 70vw" alt="" width="1600" height="1200"',
+  ' loading="eager" decoding="async" fetchpriority="high">',
+  '</div>',
+].join('')
 
 function injectBody(
   shell: string,
@@ -1521,9 +1537,12 @@ async function writeRoute(
       console.warn(`[prerender] empty head for ${job.url}`)
     }
     const localized = job.locale ? applyHtmlLang(shell, job.locale) : shell
-    const withIndexBootstrap = job.newsroomIndexPosts
-      ? injectRootTemplate(localized, renderNewsroomIndexBootstrapTemplate(job.newsroomIndexPosts))
+    const withHomeVisual = job.seo.canonicalPath === '/'
+      ? injectRootTemplate(localized, HOME_PRERENDER_VISUAL)
       : localized
+    const withIndexBootstrap = job.newsroomIndexPosts
+      ? injectRootTemplate(withHomeVisual, renderNewsroomIndexBootstrapTemplate(job.newsroomIndexPosts))
+      : withHomeVisual
     const withBody = job.body
       ? injectBody(withIndexBootstrap, job.body, job.url, ssr.renderMarkdownBody)
       : withIndexBootstrap

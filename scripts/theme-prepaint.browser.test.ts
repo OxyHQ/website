@@ -49,7 +49,13 @@ for (let attempt = 0; attempt < 50; attempt += 1) {
 }
 invariant(previewReady, 'Vite preview did not start')
 
-const browser = await chromium.launch({ headless: true })
+const browser = await chromium.launch({
+  headless: true,
+  // Playwright resolves its own pinned Chromium build, which a machine whose
+  // browser cache predates the last `playwright` bump will not have. Point at
+  // a system Chrome to run this locally without re-downloading one.
+  executablePath: process.env.CHROME_EXECUTABLE || undefined,
+})
 const context = await browser.newContext()
 const page = await context.newPage()
 const pageErrors: string[] = []
@@ -110,27 +116,27 @@ try {
     )
   }
 
-  // Exercise an in-app route transition: the thumbnail asks the ONE provider
-  // for dark mode without changing the saved light preference, then leaving it
-  // restores light and the same preset.
+  // Exercise an in-app route transition: the isolated demo route asks the ONE
+  // provider for dark mode without changing the saved light preference, then
+  // leaving it restores light and the same preset.
   await page.evaluate(() => {
-    history.pushState({}, '', '/developers/docs/_thumbnail/Button?theme=dark')
+    history.pushState({}, '', '/developers/docs/bloom/_demo/Button?theme=dark')
     window.dispatchEvent(new PopStateEvent('popstate', { state: history.state }))
   })
-  await page.locator('[data-thumbnail-root]').waitFor()
+  await page.locator('[data-demo-root]').waitFor()
   await page.waitForFunction(() => document.documentElement.classList.contains('dark'))
-  const thumbnailTokens = await page.evaluate((tokens) => {
+  const isolatedDemoTokens = await page.evaluate((tokens) => {
     const styles = getComputedStyle(document.documentElement)
     return Object.fromEntries(tokens.map((token) => [token, styles.getPropertyValue(token).trim()]))
   }, TOKENS)
   const expectedDark = getPresetVars('cobalt', 'dark')
   for (const token of TOKENS) {
     invariant(
-      normalizeColor(thumbnailTokens[token] ?? '') === normalizeColor(expectedDark[token] ?? ''),
-      `thumbnail ${token} does not match Bloom cobalt dark`,
+      normalizeColor(isolatedDemoTokens[token] ?? '') === normalizeColor(expectedDark[token] ?? ''),
+      `isolated demo ${token} does not match Bloom cobalt dark`,
     )
   }
-  invariant(await page.evaluate(() => localStorage.getItem('theme')) === 'light', 'thumbnail persisted its dark override')
+  invariant(await page.evaluate(() => localStorage.getItem('theme')) === 'light', 'the isolated demo route persisted its dark override')
 
   await page.evaluate(() => {
     history.pushState({}, '', '/')
@@ -145,14 +151,14 @@ try {
   for (const token of TOKENS) {
     invariant(
       normalizeColor(restoredTokens[token] ?? '') === normalizeColor(expected[token] ?? ''),
-      `leaving thumbnail did not restore cobalt light ${token}`,
+      `leaving the isolated demo route did not restore cobalt light ${token}`,
     )
   }
-  invariant(await page.evaluate(() => localStorage.getItem('theme')) === 'light', 'leaving thumbnail changed saved mode')
-  invariant(await page.evaluate(() => localStorage.getItem('colorPreset')) === 'cobalt', 'thumbnail changed saved preset')
+  invariant(await page.evaluate(() => localStorage.getItem('theme')) === 'light', 'leaving the isolated demo route changed saved mode')
+  invariant(await page.evaluate(() => localStorage.getItem('colorPreset')) === 'cobalt', 'the isolated demo route changed saved preset')
   invariant(pageErrors.length === 0, `browser page errors: ${pageErrors.join('; ')}`)
 
-  console.log('[theme-prepaint] cobalt prepaint matches React; thumbnail route restores light mode')
+  console.log('[theme-prepaint] cobalt prepaint matches React; the isolated demo route restores light mode')
 } finally {
   await context.close()
   await browser.close()

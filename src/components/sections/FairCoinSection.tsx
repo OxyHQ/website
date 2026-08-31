@@ -102,7 +102,7 @@ const FAIRCOIN_OUTLINE_BUTTON_STYLE = {
 }
 
 const NEWS_DATE_FORMAT: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' }
-const FALLBACK_NEWS_IMAGE = '/images/landing/faircoin-store.png'
+const FALLBACK_NEWS_IMAGE = '/images/landing/faircoin-store.avif'
 
 export default function FairCoinSection() {
   const { t, locale } = useTranslation()
@@ -117,6 +117,7 @@ export default function FairCoinSection() {
   const { data: newsData } = useNewsroomPosts({ tag: 'faircoin', limit: 1 })
   const post = newsData?.posts?.[0]
   const newsImage = (post && typeof post.coverImage === 'string' && post.coverImage) || FALLBACK_NEWS_IMAGE
+  const newsImageSrcSet = post?.coverImageSrcSet
   const newsTitle = post?.title ?? t('home.faircoinNewsFallback')
   const newsDate = post?.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString(locale, NEWS_DATE_FORMAT)
@@ -128,6 +129,8 @@ export default function FairCoinSection() {
       <div className="min-h-0 flex-1 overflow-hidden">
         <img
           src={newsImage}
+          srcSet={newsImageSrcSet}
+          sizes={newsImageSrcSet ? '(min-width: 1024px) 25vw, 100vw' : undefined}
           alt=""
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           width={600}
@@ -177,6 +180,9 @@ export default function FairCoinSection() {
                 >
                   <a href={link.href} target="_blank" rel="noopener noreferrer">
                     {t(link.labelKey)}
+                    {link.labelKey === 'home.faircoinLearnMore' ? (
+                      <span className="sr-only">: {t('home.faircoinTitle')}</span>
+                    ) : null}
                   </a>
                 </BloomButton>
               ))}

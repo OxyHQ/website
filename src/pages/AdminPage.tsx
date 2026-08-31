@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { useAuth } from '@oxyhq/services'
+import { useAuth } from '@oxyhq/services/ui/client'
 import * as Skeleton from '@oxyhq/bloom/skeleton'
 import AdminLayout from '../components/admin/AdminLayout'
 import SEO from '../components/SEO'

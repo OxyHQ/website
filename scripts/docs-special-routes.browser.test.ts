@@ -90,7 +90,9 @@ async function assertContained(selector: string): Promise<void> {
 try {
   await openRoute('/developers/docs/bloom/playground')
   await page.getByRole('heading', { name: 'Playground', exact: true }).waitFor()
-  await page.getByText('Pick a component and tweak its props to see the live preview update.').waitFor()
+  await page.getByText('Edit the code and watch it render. It compiles in your browser.').waitFor()
+  await page.getByRole('textbox', { name: 'Bloom snippet source' }).waitFor()
+  await page.getByText('Preview', { exact: true }).waitFor()
   await page.locator('a[href="/developers/docs/bloom/color-system"]').first().waitFor()
   await assertCurrentSidebarLink('/developers/docs/bloom/playground')
   invariant(

@@ -21,7 +21,7 @@
  * ──────────────────────────────────────────── */
 
 import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from 'react'
-import { useAuth, useOxy } from '@oxyhq/services'
+import { useAuth, useOxy } from '@oxyhq/services/ui/client'
 import {
   useAppData,
   useAppDataNamespace,

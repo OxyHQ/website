@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useAuth } from '@oxyhq/services'
+import { useAuth } from '@oxyhq/services/ui/client'
 import { apiFetch } from '../../api/client'
 import { isFairCoinHost } from '../../lib/host'
 
@@ -66,9 +66,26 @@ export default function IntercomMessenger() {
   const { user, isAuthenticated, isAuthResolved, canUsePrivateApi } = useAuth()
   const appId = (import.meta.env.VITE_INTERCOM_APP_ID as string | undefined)?.trim() || INTERCOM_APP_ID
   const disabled = isFairCoinHost() || pathname === '/admin' || pathname.startsWith('/admin/')
+  const [activated, setActivated] = useState(false)
   const identifiedUserIdRef = useRef<string | null>(null)
   const identityRequestRef = useRef(0)
   const userId = isAuthenticated && user?.id ? String(user.id) : null
+  const ready = activated || isAuthenticated
+
+  useEffect(() => {
+    if (!appId || disabled || ready) return
+
+    // The messenger is support UI, not page content. Anonymous visitors should
+    // not pay its network and parse cost until they show intent to interact.
+    const activate = () => setActivated(true)
+    const events: Array<keyof WindowEventMap> = ['pointerdown', 'keydown', 'scroll', 'touchstart']
+    for (const event of events) {
+      window.addEventListener(event, activate, { once: true, passive: true })
+    }
+    return () => {
+      for (const event of events) window.removeEventListener(event, activate)
+    }
+  }, [appId, disabled, ready])
 
   useEffect(() => {
     if (!appId) return
@@ -82,11 +99,12 @@ export default function IntercomMessenger() {
       return
     }
 
+    if (!ready) return
     installIntercom(appId)
-  }, [appId, disabled])
+  }, [appId, disabled, ready])
 
   useEffect(() => {
-    if (!appId || disabled || !isAuthResolved) return
+    if (!appId || disabled || !ready || !isAuthResolved) return
 
     const requestId = ++identityRequestRef.current
     let cancelled = false
@@ -163,12 +181,12 @@ export default function IntercomMessenger() {
       cancelled = true
       window.clearInterval(refreshTimer)
     }
-  }, [appId, canUsePrivateApi, disabled, isAuthResolved, userId])
+  }, [appId, canUsePrivateApi, disabled, isAuthResolved, ready, userId])
 
   useEffect(() => {
-    if (!appId || disabled) return
+    if (!appId || disabled || !ready) return
     window.Intercom?.('update', { current_url: window.location.href })
-  }, [appId, disabled, pathname])
+  }, [appId, disabled, pathname, ready])
 
   return null
 }

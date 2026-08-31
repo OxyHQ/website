@@ -355,7 +355,15 @@ export function useNewsroomPost(slug: string) {
   const locale = useCurrentLocale()
   return useQuery({
     queryKey: newsroomPostQueryKey(slug, locale),
-    queryFn: ({ signal }) => fetchNewsroomPost(slug, locale, signal),
+    queryFn: async ({ signal }) => {
+      if (import.meta.env.DEV && slug === 'article-components-showcase-preview') {
+        const { articleComponentsShowcasePost } = await import(
+          '../content/newsroom-previews/article-components-showcase'
+        )
+        return articleComponentsShowcasePost
+      }
+      return fetchNewsroomPost(slug, locale, signal)
+    },
     select: normalizePostMedia,
     enabled: !!slug,
     staleTime: 5 * 60_000,
@@ -696,6 +704,14 @@ export interface Job {
   type?: string
   engagement?: string
   compensation?: string
+  validThrough?: string
+  address?: {
+    streetAddress?: string
+    addressLocality?: string
+    addressRegion?: string
+    postalCode?: string
+    addressCountry?: string
+  }
   /** Older rows store Markdown-ish text; current rows use structured blocks. */
   description?: string | DescriptionBlock[]
   active?: boolean

@@ -3,6 +3,14 @@ import { buildLocalizedSeoUrl } from './seoUrl'
 
 export type JobDescription = string | DescriptionBlock[] | null | undefined
 
+export interface JobPostalAddress {
+  streetAddress?: string
+  addressLocality?: string
+  addressRegion?: string
+  postalCode?: string
+  addressCountry?: string
+}
+
 export interface JobPostingInput {
   _id?: string
   slug: string
@@ -12,6 +20,9 @@ export interface JobPostingInput {
   location: string
   type?: string
   engagement?: string
+  compensation?: string
+  validThrough?: string
+  address?: JobPostalAddress
   description?: JobDescription
   createdAt?: string
   updatedAt?: string
@@ -151,15 +162,25 @@ function employmentType(value: string | undefined): string {
   return 'OTHER'
 }
 
-function locationData(location: string): Record<string, unknown> | null {
+function locationData(location: string, supplied?: JobPostalAddress): Record<string, unknown> | null {
   const normalized = location.trim().toLowerCase()
   const remote = normalized === 'remote' || normalized.startsWith('remote ')
   const warsaw = normalized === 'warsaw' || normalized.includes('warsaw,')
-  const address = remote
+  const fallback = remote
     ? { '@type': 'PostalAddress', addressLocality: 'Barcelona', addressCountry: 'ES' }
     : warsaw
       ? { '@type': 'PostalAddress', addressLocality: 'Warsaw', addressCountry: 'PL' }
       : null
+  const suppliedAddress = supplied
+    ? Object.fromEntries(
+      Object.entries(supplied).filter((entry): entry is [string, string] => (
+        typeof entry[1] === 'string' && entry[1].trim().length > 0
+      )).map(([key, value]) => [key, value.trim()]),
+    )
+    : null
+  const address = suppliedAddress?.addressCountry
+    ? { '@type': 'PostalAddress', ...suppliedAddress }
+    : fallback
 
   // A locality without a country is not enough for Google's JobPosting
   // requirements. Keep the page indexable, but suppress its rich-result
@@ -170,6 +191,48 @@ function locationData(location: string): Record<string, unknown> | null {
     ...(remote ? { jobLocationType: 'TELECOMMUTE' } : {}),
     jobLocation: { '@type': 'Place', address },
   }
+}
+
+function salaryScale(suffix: string | undefined): number {
+  if (suffix?.toLowerCase() === 'm') return 1_000_000
+  if (suffix?.toLowerCase() === 'k') return 1_000
+  return 1
+}
+
+function baseSalary(compensation: string | undefined): Record<string, unknown> | null {
+  if (!compensation?.trim()) return null
+  const currency = compensation.includes('€') || /\bEUR\b/i.test(compensation)
+    ? 'EUR'
+    : compensation.includes('£') || /\bGBP\b/i.test(compensation)
+      ? 'GBP'
+      : compensation.includes('$') || /\bUSD\b/i.test(compensation)
+        ? 'USD'
+        : null
+  if (!currency) return null
+
+  const matches = [...compensation.matchAll(/(\d[\d,.]*)(?:\s*([kKmM]))?/g)].slice(0, 2)
+  if (matches.length === 0) return null
+  const sharedScale = salaryScale(matches.find((match) => match[2])?.[2])
+  const values = matches.map((match) => {
+    const numeric = Number((match[1] ?? '').replaceAll(',', ''))
+    return numeric * (match[2] ? salaryScale(match[2]) : sharedScale)
+  }).filter((value) => Number.isFinite(value) && value > 0)
+  if (values.length === 0) return null
+
+  const unitText = /(?:\/|per\s+)(?:h(?:ou)?r)|hourly/i.test(compensation)
+    ? 'HOUR'
+    : /(?:\/|per\s+)day|daily/i.test(compensation)
+      ? 'DAY'
+      : /(?:\/|per\s+)week|weekly/i.test(compensation)
+        ? 'WEEK'
+        : /(?:\/|per\s+)month|monthly/i.test(compensation)
+          ? 'MONTH'
+          : 'YEAR'
+  const value = values.length > 1
+    ? { '@type': 'QuantitativeValue', minValue: Math.min(...values), maxValue: Math.max(...values), unitText }
+    : { '@type': 'QuantitativeValue', value: values[0], unitText }
+
+  return { '@type': 'MonetaryAmount', currency, value }
 }
 
 function normalizeDate(value: string | undefined): string | null {
@@ -190,7 +253,9 @@ export function buildJobPostingStructuredData(
   const origin = (options.origin ?? 'https://oxy.so').replace(/\/+$/, '')
   const description = jobDescriptionToHtml(job.description)
   const datePosted = normalizeDate(job.createdAt)
-  const location = locationData(job.location)
+  const validThrough = normalizeDate(job.validThrough)
+  const location = locationData(job.location, job.address)
+  const salary = baseSalary(job.compensation)
   if (!job.slug || !job.title.trim() || !description || !datePosted || !location) return null
 
   const pageUrl = options.pageUrl
@@ -209,7 +274,9 @@ export function buildJobPostingStructuredData(
       value: job._id ?? job.slug,
     },
     datePosted,
+    ...(validThrough ? { validThrough } : {}),
     employmentType: employmentType(job.engagement ?? job.type),
+    ...(salary ? { baseSalary: salary } : {}),
     hiringOrganization: {
       '@type': 'Organization',
       name: 'Oxy',

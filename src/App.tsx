@@ -1,7 +1,7 @@
 import { useState, useCallback, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { OxyProvider, useOxy } from '@oxyhq/services'
+import { OxyProvider, useOxy } from '@oxyhq/services/ui/client'
 import type { User } from '@oxyhq/core'
 import { BloomThemeProvider, type ThemeMode as BloomThemeMode } from '@oxyhq/bloom/theme'
 import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
@@ -69,9 +69,15 @@ const HelpArticlePage = lazy(() => import('./pages/HelpArticlePage'))
 const ChangelogPage = lazy(() => import('./pages/ChangelogPage'))
 const DocsPage = lazy(() => import('./pages/DocsPage'))
 const DocsIntroPage = lazy(() => import('./pages/DocsIntroPage'))
-const DocsThumbnailPage = lazy(() => import('./pages/DocsThumbnailPage'))
+const BloomDemoIsolationPage = lazy(() => import('./pages/BloomDemoIsolationPage'))
 const BloomPlayground = lazy(() => import('./components/docs/BloomPlayground'))
 const BloomColorSystemPage = lazy(() => import('./components/docs/BloomColorSystemPage'))
+const BloomComponentPage = lazy(() => import('./components/docs/BloomComponentPage'))
+const BloomComponentsHub = lazy(() =>
+  import('./components/docs-platform/BloomComponentsHub').then((m) => ({
+    default: m.BloomComponentsHub,
+  })),
+)
 const DevelopersPage = lazy(() => import('./pages/DevelopersPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
@@ -302,7 +308,8 @@ function PublicRoutes() {
       <Route path="changelog" element={<ChangelogPage />} />
       <Route path="developers" element={<DevelopersPage />} />
       <Route path="developers/docs" element={<DocsIntroPage />} />
-      <Route path="developers/docs/_thumbnail/:name" element={<DocsThumbnailPage />} />
+      <Route path="developers/docs/bloom/_demo" element={<BloomDemoIsolationPage />} />
+      <Route path="developers/docs/bloom/_demo/:name" element={<BloomDemoIsolationPage />} />
       <Route path="developers/docs/api" element={<DocsPage />} />
       <Route path="developers/docs/api/:version" element={<DocsPage />} />
       {/*
@@ -323,6 +330,19 @@ function PublicRoutes() {
         path="developers/docs/bloom/:version/color-system"
         element={<Navigate to="/developers/docs/bloom/color-system" replace />}
       />
+      {/*
+        The Bloom component index, and one page per export subpath — both
+        generated from the installed package's own types.
+
+        The page is a splat because three subpaths carry a slash
+        (`tabs/expo-router`), and both sit under the static `components`
+        segment because react-router ranks by specificity: a `bloom/:subpath`
+        or `bloom/*` route would outrank `:package/:version` below and swallow
+        `/developers/docs/bloom/0.72.1`. The exact index route wins over the
+        splat for the same reason, whatever order they are written in.
+      */}
+      <Route path="developers/docs/bloom/components" element={<BloomComponentsHub />} />
+      <Route path="developers/docs/bloom/components/*" element={<BloomComponentPage />} />
       {/*
         Docs routing.
 
@@ -413,17 +433,17 @@ function AppProviders() {
     setThemePreset(next)
   }, [])
 
-  // Thumbnail captures are the one route that can request a mode different
+  // The isolated demo route is the one route that can request a mode different
   // from the saved site preference. Keep that override on the ONE app-wide
   // provider: its layout effect owns the document class/tokens, and changing
-  // routes automatically restores the persisted mode held in state. The
-  // thumbnail itself must never mount a second provider or mutate <html>
-  // during render.
-  const isThumbnailRoute = location.pathname.includes('/developers/docs/_thumbnail/')
-  const thumbnailMode = new URLSearchParams(location.search).get('theme') === 'dark'
+  // routes automatically restores the persisted mode held in state. The demo
+  // page itself must never mount a second provider or mutate <html> during
+  // render.
+  const isDemoIsolationRoute = location.pathname.includes('/developers/docs/bloom/_demo/')
+  const requestedMode = new URLSearchParams(location.search).get('theme') === 'dark'
     ? 'dark'
     : 'light'
-  const renderedMode = isThumbnailRoute ? thumbnailMode : mode
+  const renderedMode = isDemoIsolationRoute ? requestedMode : mode
 
   // BloomThemeProvider must wrap OxyProvider: OxyProvider mounts
   // OxyAccountDialog + ToastOutlet as siblings of `children`, and those

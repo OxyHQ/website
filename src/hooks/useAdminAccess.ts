@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useAuth } from '@oxyhq/services'
+import { useAuth } from '@oxyhq/services/ui/client'
 import { apiFetch } from '../api/client'
 
 /** Server's answer to "who am I, and am I an admin?" — see server/routes/adminAccess.ts. */

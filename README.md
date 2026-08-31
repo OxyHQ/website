@@ -112,7 +112,6 @@ bun run sync-changelog            # pull changelog content into src/
 bun run prerender                 # prerender routes without a full rebuild
 bun run build:help-og             # OG images for help articles
 bun run build:faircoin-og         # OG images for FairCoin pages
-bun run render:bloom-thumbnails   # component thumbnails
 bun run optimize-media            # compress media in place
 bun run analyze                   # bundle stats
 bun run typecheck:server

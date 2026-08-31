@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
-import { useAuth } from '@oxyhq/services'
+import { useAuth } from '@oxyhq/services/ui/client'
 import * as Skeleton from '@oxyhq/bloom/skeleton'
 import { ArrowLeft, ChevronUp, ExternalLink } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'

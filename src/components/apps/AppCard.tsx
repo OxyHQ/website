@@ -11,11 +11,13 @@ import { resolveProductLogoUrl, type ProductRecord } from '../../api/hooks'
  * counted.
  * ──────────────────────────────────────────── */
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function appPath(product: ProductRecord): string {
   return `/apps/${product.productId}`
 }
 
 /** Category label when the record carries a populated category, else ''. */
+// eslint-disable-next-line react-refresh/only-export-components
 export function categoryLabel(product: ProductRecord): string {
   const category = product.category
   if (!category || typeof category === 'string') return ''

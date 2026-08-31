@@ -73,6 +73,7 @@ export default function HomeHero() {
   const setHeroVisible = usePageChromeStore((s) => s.setHeroVisible)
   const [heroInView, setHeroInView] = useState(false)
   const [buildSectionInView, setBuildSectionInView] = useState(false)
+  const [loadPanelVideo, setLoadPanelVideo] = useState(false)
   const { scrollY } = useScroll()
   const scrollCtaY = useTransform(
     scrollY,
@@ -95,6 +96,7 @@ export default function HomeHero() {
   const poster = heroMediaUrl(hero?.backgroundPoster) || DEFAULT_POSTER
   const webm = heroMediaUrl(hero?.backgroundVideoWebm) || DEFAULT_BG_WEBM
   const mp4 = heroMediaUrl(hero?.backgroundVideoMp4) || DEFAULT_BG_MP4
+  const usesDefaultPoster = poster === DEFAULT_POSTER
 
   const sectionRef = useRef<HTMLElement>(null)
   const stickyRef = useRef<HTMLDivElement>(null)
@@ -133,6 +135,19 @@ export default function HomeHero() {
 
     return () => observer.disconnect()
   }, [])
+
+  useEffect(() => {
+    if (loadPanelVideo) return
+    const desktop = window.matchMedia('(min-width: 1024px)')
+    const activate = () => {
+      if (desktop.matches) setLoadPanelVideo(true)
+    }
+    const events: Array<keyof WindowEventMap> = ['pointerdown', 'keydown', 'scroll', 'touchstart']
+    for (const event of events) window.addEventListener(event, activate, { once: true, passive: true })
+    return () => {
+      for (const event of events) window.removeEventListener(event, activate)
+    }
+  }, [loadPanelVideo])
 
   useGSAP(
     () => {
@@ -396,19 +411,23 @@ export default function HomeHero() {
 
               */}
               <div className="pointer-events-none absolute inset-0 z-[3] overflow-hidden">
-                <video
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  aria-hidden="true"
-                  preload="none"
-                  poster={PANEL_POSTER}
-                  className="size-full object-cover"
-                >
-                  {webm && <source src={webm} type="video/webm" />}
-                  <source src={mp4} type="video/mp4" />
-                </video>
+                {loadPanelVideo ? (
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    aria-hidden="true"
+                    preload="none"
+                    poster={PANEL_POSTER}
+                    className="size-full object-cover"
+                  >
+                    {webm && <source src={webm} type="video/webm" />}
+                    <source src={mp4} type="video/mp4" />
+                  </video>
+                ) : (
+                  <img src={PANEL_POSTER} alt="" aria-hidden="true" className="size-full object-cover" />
+                )}
                 <div className="absolute inset-0 bg-background/55" />
               </div>
 
@@ -432,6 +451,10 @@ export default function HomeHero() {
               */}
               <img
                 src={poster}
+                srcSet={usesDefaultPoster
+                  ? `${IMG}/hero-bg-800.avif 800w, ${IMG}/hero-bg-1200.avif 1200w, ${DEFAULT_POSTER} 1600w`
+                  : undefined}
+                sizes={usesDefaultPoster ? '(max-width: 1023px) 100vw, 70vw' : undefined}
                 alt=""
                 aria-hidden="true"
                 className="absolute left-0 top-0 z-[2] h-full w-full object-cover lg:h-dvh"
@@ -539,6 +562,8 @@ function FeaturedNews() {
         {post.coverImage ? (
           <img
             src={post.coverImage}
+            srcSet={post.coverImageSrcSet}
+            sizes={post.coverImageSrcSet ? '64px' : undefined}
             alt=""
             className="size-16 shrink-0 object-cover"
             width={128}

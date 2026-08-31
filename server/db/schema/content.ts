@@ -138,6 +138,15 @@ export const jobs = pgTable('jobs', {
   location: text().notNull().default('Remote'),
   type: text().notNull().default('Full-time'),
   compensation: text().notNull().default(''),
+  validThrough: text().notNull().default(''),
+  /** Optional physical address fields used verbatim in JobPosting metadata. */
+  address: jsonb().$type<{
+    streetAddress?: string
+    addressLocality?: string
+    addressRegion?: string
+    postalCode?: string
+    addressCountry?: string
+  }>().notNull().default({}),
   /** `{ type: 'paragraph'|'heading'|'list', text?, items? }[]` */
   description: jsonb().$type<Record<string, unknown>[]>().notNull().default([]),
   active: boolean().notNull().default(true),

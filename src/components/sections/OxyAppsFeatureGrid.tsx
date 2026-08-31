@@ -82,7 +82,7 @@ export default function OxyAppsFeatureGrid({ title, description, unifiedTheme = 
     {
       type: 'profile',
       image: APP_CARD_IMAGES['/mercaria'],
-      cornerIcon: '/images/apps/wholesale.png',
+      cornerIcon: '/images/apps/wholesale.svg',
       name: 'Wholesale by Mercaria',
       role: t('products.wholesaleDescription'),
       href: 'https://dashboard.mercaria.co',

@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { CalendarDays } from 'lucide-react'
-import { useAuth, useOxy } from '@oxyhq/services'
+import { useAuth, useOxy } from '@oxyhq/services/ui/client'
 import { getNormalizedUserHandle } from '@oxyhq/core'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'

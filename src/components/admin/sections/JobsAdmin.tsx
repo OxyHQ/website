@@ -21,6 +21,8 @@ const emptyJob = (): Job => ({
   location: 'Remote',
   type: 'Full-time',
   compensation: '',
+  validThrough: '',
+  address: { addressLocality: 'Barcelona', addressCountry: 'ES' },
   description: [] as DescriptionBlock[],
   active: true,
   order: 0,
@@ -142,6 +144,22 @@ export default function JobsAdmin() {
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5"><Label>Type</Label><Input value={editing.type} onChange={(e) => setEditing({ ...editing, type: e.target.value })} /></div>
             <div className="flex flex-col gap-1.5"><Label>Compensation</Label><Input value={editing.compensation} onChange={(e) => setEditing({ ...editing, compensation: e.target.value })} placeholder="e.g. $80K – $120K · Offers Equity" /></div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>Application deadline</Label>
+            <Input
+              type="date"
+              value={editing.validThrough?.slice(0, 10) ?? ''}
+              onChange={(e) => setEditing({ ...editing, validThrough: e.target.value })}
+            />
+            <p className="text-xs text-muted-foreground">Leave empty for roles without a real closing date.</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5"><Label>Street address</Label><Input value={editing.address?.streetAddress ?? ''} onChange={(e) => setEditing({ ...editing, address: { ...editing.address, streetAddress: e.target.value } })} /></div>
+            <div className="flex flex-col gap-1.5"><Label>City</Label><Input value={editing.address?.addressLocality ?? ''} onChange={(e) => setEditing({ ...editing, address: { ...editing.address, addressLocality: e.target.value } })} /></div>
+            <div className="flex flex-col gap-1.5"><Label>Region</Label><Input value={editing.address?.addressRegion ?? ''} onChange={(e) => setEditing({ ...editing, address: { ...editing.address, addressRegion: e.target.value } })} /></div>
+            <div className="flex flex-col gap-1.5"><Label>Postal code</Label><Input value={editing.address?.postalCode ?? ''} onChange={(e) => setEditing({ ...editing, address: { ...editing.address, postalCode: e.target.value } })} /></div>
+            <div className="flex flex-col gap-1.5"><Label>Country code</Label><Input value={editing.address?.addressCountry ?? ''} onChange={(e) => setEditing({ ...editing, address: { ...editing.address, addressCountry: e.target.value.toUpperCase() } })} placeholder="ES" maxLength={2} /></div>
           </div>
 
           {/* Description blocks editor */}

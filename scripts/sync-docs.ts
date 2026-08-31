@@ -696,14 +696,6 @@ async function runTypedoc(
     // Leaving typedoc's stock pages as `.md` avoids parsing failures on prose
     // that happens to contain `{ ... }` literals (common in TS prop docs).
     let injectedMdx = false;
-    // Bloom overview gets a visual component hub grid prepended. The grid is
-    // a custom MDX component (registered in `mdxComponentMap.tsx`) that reads
-    // the bloom-demos registry and renders one card per demoed component with
-    // light/dark thumbnails captured by `scripts/render-bloom-thumbnails.ts`.
-    if (config.shortName === 'bloom' && /(^|\/)README\.mdx?$/i.test(rel)) {
-      cleaned = `<BloomHubGrid />\n\n${cleaned}`;
-      injectedMdx = true;
-    }
     // Prepend a live `<BloomDemo>` block on Bloom API pages that map to a
     // curated demo. The demo name is the file's basename without extension —
     // for namespaced symbols (`Tabs.Tab.md`) we also try the prefix before

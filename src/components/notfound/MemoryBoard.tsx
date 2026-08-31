@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState, type ReactNode } from 'react'
-import { useAuth } from '@oxyhq/services'
+import { useAuth } from '@oxyhq/services/ui/client'
 import { useMemoryGameStats, useSaveMemoryGameRun } from '../../api/hooks'
 
 /* ──────────────────────────────────────────────
@@ -169,7 +169,7 @@ export default function MemoryBoard() {
   const [score, setScore] = useState(0)
   const [result, setResult] = useState<RunResult | null>(null)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const startedAt = useRef(Date.now())
+  const startedAt = useRef(0)
   const pairsFound = useRef(0)
 
   const cards = DEALS[round]
@@ -199,6 +199,7 @@ export default function MemoryBoard() {
   const turn = useCallback(
     (index: number) => {
       if (locked || result || open.includes(index) || matched.includes(index)) return
+      if (startedAt.current === 0) startedAt.current = Date.now()
 
       const next = [...open, index]
       if (next.length < 2) {
@@ -300,7 +301,7 @@ export default function MemoryBoard() {
   if (result) {
     const cleared = result.clearedAll
     const record = isAuthenticated ? stats.data : undefined
-    const tiles: Array<{ label: string; value: ReactNode; onClick?: () => void } | null> = [
+    const baseTiles: Array<{ label: string; value: ReactNode; action?: 'signin' | 'again' }> = [
       { label: 'Points', value: result.score },
       { label: 'Level', value: `${result.level}/${ROUNDS.length}` },
       { label: 'Pairs', value: result.pairsFound },
@@ -313,8 +314,8 @@ export default function MemoryBoard() {
             { label: 'Runs played', value: record.runs },
           ]
         : []),
-      ...(isAuthenticated ? [] : [{ label: 'Keep your points', value: 'Sign in', onClick: () => signIn() }]),
-      { label: 'Again', value: 'Play', onClick: playAgain },
+      ...(isAuthenticated ? [] : [{ label: 'Keep your points', value: 'Sign in', action: 'signin' as const }]),
+      { label: 'Again', value: 'Play', action: 'again' },
     ]
     // The result sits on the grid of the round that just ended, two cells to a
     // tile: same cell height as the cards, so the board does not jump when the
@@ -324,7 +325,8 @@ export default function MemoryBoard() {
     // Every round is two rows deep from `md` up, so the result keeps two rows:
     // blank cards fill whatever the stats leave over, and the board's height
     // stays put when the last card turns.
-    while (tiles.length < perRow * 2 || tiles.length % perRow !== 0) tiles.push(null)
+    const tileCount = Math.max(perRow * 2, Math.ceil(baseTiles.length / perRow) * perRow)
+    const tiles = Array.from({ length: tileCount }, (_, index) => baseTiles[index] ?? null)
     return (
       <section aria-labelledby="memory-board-heading">
         <h2 id="memory-board-heading" className="sr-only">
@@ -350,7 +352,16 @@ export default function MemoryBoard() {
         <div className={`grid w-full grid-cols-4 ${ended.columns}`}>
           {tiles.map((tile, index) =>
             tile ? (
-              <Tile key={tile.label} index={index} label={tile.label} onClick={tile.onClick}>
+              <Tile
+                key={tile.label}
+                index={index}
+                label={tile.label}
+                onClick={tile.action === 'again'
+                  ? playAgain
+                  : tile.action === 'signin'
+                    ? () => { void signIn() }
+                    : undefined}
+              >
                 {tile.value}
               </Tile>
             ) : (

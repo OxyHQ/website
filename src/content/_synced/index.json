@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-23T13:50:51.925Z",
+  "generatedAt": "2026-08-31T01:51:44.439Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -8790,7 +8790,7 @@
             {
               "slug": "chat-runtime",
               "title": "Chat runtime",
-              "description": "The Alia product chat runtime: today's request path, the alia.* product stream events, and the Relay boundary recorded in ADR 0001.",
+              "description": "The Alia product chat runtime: today's request path, the alia.* product stream events, and the Kaana boundary recorded in ADR 0001.",
               "file": "alia/main/chat-runtime.mdx",
               "order": 1,
               "section": "guides"
@@ -8812,16 +8812,40 @@
               "section": "guides"
             },
             {
-              "slug": "adr/0001-alia-oxy-relay-responsibility-boundary",
-              "title": "1. Alia / Oxy / Relay responsibility boundary",
-              "file": "alia/main/adr/0001-alia-oxy-relay-responsibility-boundary.md",
+              "slug": "shows",
+              "title": "Shows",
+              "description": "Generated podcast series, written and voiced by Alia and published to Syra.",
+              "file": "alia/main/shows.mdx",
+              "order": 4,
+              "section": "guides"
+            },
+            {
+              "slug": "alias-layer-audit",
+              "title": "The alia-* layer: audit before removal",
+              "description": "What ALIA_TIERS and the thirteen alia-* identifiers actually do today, measured against production; what breaks if they are removed; what Kaana replaces and what it does not; and the one decision that belongs to the product owner.",
+              "file": "alia/main/alias-layer-audit.mdx",
+              "order": 5,
+              "section": "guides"
+            },
+            {
+              "slug": "skills",
+              "title": "Skills",
+              "description": "Agent Skills in Alia: the format, the three levels of loading, and what an install actually authorises.",
+              "file": "alia/main/skills.mdx",
+              "order": 6,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0001-alia-oxy-kaana-responsibility-boundary",
+              "title": "1. Alia / Oxy / Kaana responsibility boundary",
+              "file": "alia/main/adr/0001-alia-oxy-kaana-responsibility-boundary.md",
               "order": 1000,
               "section": "guides"
             },
             {
-              "slug": "adr/0002-alia-is-a-relay-consumer-and-future-model-publisher",
-              "title": "2. Alia is a Relay consumer, and a future model publisher",
-              "file": "alia/main/adr/0002-alia-is-a-relay-consumer-and-future-model-publisher.md",
+              "slug": "adr/0002-alia-is-a-kaana-consumer-and-future-model-publisher",
+              "title": "2. Alia is a Kaana consumer, and a future model publisher",
+              "file": "alia/main/adr/0002-alia-is-a-kaana-consumer-and-future-model-publisher.md",
               "order": 1000,
               "section": "guides"
             },
@@ -8850,6 +8874,20 @@
               "slug": "adr/0006-the-destination-of-api-alia-onl-v1-is-recorded-twice",
               "title": "6. The destination of `api.alia.onl/v1/*` is recorded twice, differently",
               "file": "alia/main/adr/0006-the-destination-of-api-alia-onl-v1-is-recorded-twice.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0007-a-users-own-machine-as-an-inference-runtime",
+              "title": "7. A user's own machine as an inference runtime",
+              "file": "alia/main/adr/0007-a-users-own-machine-as-an-inference-runtime.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0008-skills-are-agent-skills",
+              "title": "8. A skill is an Agent Skill, not a prompt fragment",
+              "file": "alia/main/adr/0008-skills-are-agent-skills.md",
               "order": 1000,
               "section": "guides"
             },
@@ -8973,16 +9011,16 @@
               "section": "guides"
             },
             {
-              "slug": "runbooks/provider-credential-exposure",
-              "title": "Runbook: provider credentials in the git history, the logs and `provider_keys`",
-              "file": "alia/main/runbooks/provider-credential-exposure.md",
+              "slug": "runbooks/kaana-cutover",
+              "title": "Runbook: delivering the Kaana cutover variables to production",
+              "file": "alia/main/runbooks/kaana-cutover.md",
               "order": 1000,
               "section": "guides"
             },
             {
-              "slug": "runbooks/relay-cutover",
-              "title": "Runbook: delivering the Relay cutover variables to production",
-              "file": "alia/main/runbooks/relay-cutover.md",
+              "slug": "runbooks/provider-credential-exposure",
+              "title": "Runbook: provider credentials in the git history, the logs and `provider_keys`",
+              "file": "alia/main/runbooks/provider-credential-exposure.md",
               "order": 1000,
               "section": "guides"
             },

@@ -337,6 +337,7 @@ export function makeTechnologiesNavDropdown(items: readonly (NavDropdownItem & {
   for (const item of items) {
     const section = technologySectionLabels[item.section ?? ''] ?? item.section ?? 'Other';
     const { section: _section, ...navItem } = item;
+    void _section;
     const current = grouped.get(section) ?? [];
     current.push(navItem);
     grouped.set(section, current);

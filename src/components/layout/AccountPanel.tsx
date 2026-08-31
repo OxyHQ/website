@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '@oxyhq/services'
+import { useAuth } from '@oxyhq/services/ui/client'
 import { Avatar } from '@oxyhq/bloom/avatar'
 import { SettingsListGroup } from '@oxyhq/bloom/settings-list'
 import { useTheme } from '@oxyhq/bloom/theme'

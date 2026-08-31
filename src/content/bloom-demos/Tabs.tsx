@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Tabs, TabsTrigger, TabsContent } from '@oxyhq/bloom/tabs'
+import { Tabs, TabsTrigger } from '@oxyhq/bloom/tabs'
 import type { PlaygroundValues } from './_playground'
 
 type TabsVariant = 'underline' | 'filled' | 'outlined'
@@ -17,11 +17,15 @@ export default function TabsDemo() {
         <TabsTrigger value="activity" label="Activity" />
         <TabsTrigger value="settings" label="Settings" />
       </Tabs>
-      <TabsContent value={tab}>
-        <div className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
-          You are viewing the {tab} panel.
-        </div>
-      </TabsContent>
+      {/*
+        The panel is plain markup driven by the same state. `TabsContent` reads
+        the context `Tabs` provides, and `Tabs` provides it only to its own
+        children — which it lays out as a horizontal strip, so a panel nested
+        there renders beside the triggers rather than under them.
+      */}
+      <div className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
+        You are viewing the {tab} panel.
+      </div>
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useAuth } from '@oxyhq/services'
+import { useAuth } from '@oxyhq/services/ui/client'
 import { getNormalizedUserHandle } from '@oxyhq/core'
 import * as Skeleton from '@oxyhq/bloom/skeleton'
 import Navbar from '../components/layout/Navbar'

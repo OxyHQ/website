@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { useAuth } from '@oxyhq/services'
+import { useAuth } from '@oxyhq/services/ui/client'
 import * as Skeleton from '@oxyhq/bloom/skeleton'
 import { Plus } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'

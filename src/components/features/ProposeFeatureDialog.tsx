@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Dialog } from '@oxyhq/bloom/dialog'
-import { useAuth } from '@oxyhq/services'
+import { useAuth } from '@oxyhq/services/ui/client'
 import { ChevronUp, ExternalLink } from 'lucide-react'
 import Button from '../ui/Button'
 import FeatureStatusBadge from './FeatureStatusBadge'

@@ -2,7 +2,7 @@ import { Navigate, useLocation, useParams } from 'react-router-dom'
 import { buildDocsHref, getPackage, getPage, resolveVersion } from '../../content/docs-loader'
 import { DocsApiBody } from './DocsApiBody'
 import { DocsMdxBody } from './DocsMdxBody'
-import { BloomHubGrid } from '../docs-platform/BloomHubGrid'
+import { BloomOverviewLinks } from '../docs-platform/BloomOverviewLinks'
 import { buildSidebar } from './DocsPackageSidebar'
 import { DocsShell } from './DocsShell'
 import type { DocsRouteParams } from './docsTypes'
@@ -99,7 +99,7 @@ export default function DocsPage() {
       activePkg={pkg}
     >
       <DocsMdxBody file={page.file} />
-      {pkg.shortName === 'bloom' && slug === '' ? <BloomHubGrid /> : null}
+      {pkg.shortName === 'bloom' && slug === '' ? <BloomOverviewLinks /> : null}
     </DocsShell>
   )
 }

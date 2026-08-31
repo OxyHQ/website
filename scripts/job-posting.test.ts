@@ -13,6 +13,7 @@ const remoteJob = {
   department: 'Engineering',
   location: 'Remote',
   engagement: 'Full-time',
+  compensation: '$140K – $180K',
   createdAt: '2026-08-29T10:00:00.000Z',
   description: [
     { type: 'paragraph' as const, text: 'Improve discovery across the open web.' },
@@ -32,6 +33,16 @@ describe('JobPosting structured data', () => {
       title: remoteJob.title,
       datePosted: remoteJob.createdAt,
       employmentType: 'FULL_TIME',
+      baseSalary: {
+        '@type': 'MonetaryAmount',
+        currency: 'USD',
+        value: {
+          '@type': 'QuantitativeValue',
+          minValue: 140000,
+          maxValue: 180000,
+          unitText: 'YEAR',
+        },
+      },
       jobLocationType: 'TELECOMMUTE',
       jobLocation: {
         '@type': 'Place',
@@ -41,6 +52,35 @@ describe('JobPosting structured data', () => {
     expect(data?.description).toBe(
       '<p>Improve discovery across the open web.</p><p>What you will do</p><ul><li>Own technical SEO</li><li>Measure index coverage</li></ul>',
     )
+  })
+
+  test('uses real optional expiry and complete supplied postal fields without inventing them', () => {
+    const data = buildJobPostingStructuredData({
+      ...remoteJob,
+      location: 'Bucharest, Romania',
+      validThrough: '2026-10-31',
+      address: {
+        streetAddress: '10 Example Street',
+        addressLocality: 'Bucharest',
+        addressRegion: 'Bucharest',
+        postalCode: '010101',
+        addressCountry: 'RO',
+      },
+    })
+
+    expect(data).toMatchObject({
+      validThrough: '2026-10-31T00:00:00.000Z',
+      jobLocation: {
+        address: {
+          streetAddress: '10 Example Street',
+          addressLocality: 'Bucharest',
+          addressRegion: 'Bucharest',
+          postalCode: '010101',
+          addressCountry: 'RO',
+        },
+      },
+    })
+    expect(data).not.toHaveProperty('jobLocationType')
   })
 
   test('normalizes live legacy text, escapes HTML and derives useful meta copy', () => {
@@ -57,5 +97,7 @@ describe('JobPosting structured data', () => {
     expect(buildJobPostingStructuredData({ ...remoteJob, description: '' })).toBeNull()
     expect(buildJobPostingStructuredData({ ...remoteJob, createdAt: undefined })).toBeNull()
     expect(buildJobPostingStructuredData({ ...remoteJob, location: 'Somewhere' })).toBeNull()
+    expect(buildJobPostingStructuredData({ ...remoteJob, compensation: 'Competitive' })).not.toHaveProperty('baseSalary')
+    expect(buildJobPostingStructuredData({ ...remoteJob, validThrough: 'unknown' })).not.toHaveProperty('validThrough')
   })
 })

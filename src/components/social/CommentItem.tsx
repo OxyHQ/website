@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MessageSquare, Pencil, Trash2, Eye, EyeOff, X, Check } from 'lucide-react'
-import { useAuth } from '@oxyhq/services'
+import { useAuth } from '@oxyhq/services/ui/client'
 import { useEditComment, useDeleteComment, useModerateComment } from '../../api/hooks'
 import { useAdminAccess } from '../../hooks/useAdminAccess'
 import type { CommentData } from '../../api/hooks'
