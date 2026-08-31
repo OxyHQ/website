@@ -76,7 +76,7 @@ export default function NewsroomPostPage() {
     )
   }
 
-  const url = `${origin}/newsroom/${post.slug}`
+  const url = `${origin}/newsroom/${post.slug}/`
 
   return (
     <BloomColorScope colorPreset={newsroomThemeFor(post)}>

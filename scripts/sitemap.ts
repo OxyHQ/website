@@ -17,6 +17,8 @@
  * the sitemap if and only if a document was written for it.
  */
 
+import { buildLocalizedSeoUrl } from '../src/lib/seoUrl'
+
 /** One canonical URL, as it will appear in the sitemap. */
 export interface SitemapEntry {
   /** Absolute path on the site, e.g. `/pricing`. Bare (no locale prefix). */
@@ -58,8 +60,7 @@ export function toW3CDate(value: string | Date | undefined): string | undefined 
  * always agree.
  */
 function localizedUrl(path: string, locale: string, opts: SitemapOptions): string {
-  if (locale === opts.defaultLocale) return opts.siteUrl + path
-  return `${opts.siteUrl}/${locale}${path === '/' ? '' : path}`
+  return buildLocalizedSeoUrl(opts.siteUrl, path, locale, opts.defaultLocale)
 }
 
 /**
@@ -83,7 +84,7 @@ function buildAlternates(path: string, opts: SitemapOptions): string {
 function buildUrlNode(entry: SitemapEntry, opts: SitemapOptions): string {
   const lastmod = entry.lastmod ? `\n    <lastmod>${entry.lastmod}</lastmod>` : ''
   return `  <url>
-    <loc>${escapeXml(opts.siteUrl + entry.path)}</loc>${lastmod}${buildAlternates(entry.path, opts)}
+    <loc>${escapeXml(localizedUrl(entry.path, opts.defaultLocale, opts))}</loc>${lastmod}${buildAlternates(entry.path, opts)}
     <changefreq>${entry.changefreq}</changefreq>
     <priority>${entry.priority.toFixed(1)}</priority>
   </url>`

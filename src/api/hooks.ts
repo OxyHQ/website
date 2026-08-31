@@ -696,10 +696,12 @@ export interface Job {
   type?: string
   engagement?: string
   compensation?: string
-  description?: DescriptionBlock[]
+  /** Older rows store Markdown-ish text; current rows use structured blocks. */
+  description?: string | DescriptionBlock[]
   active?: boolean
   order?: number
   createdAt?: string
+  updatedAt?: string
 }
 
 export function useJobs() {

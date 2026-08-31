@@ -11,6 +11,7 @@ import { useConfirmAction } from '../useConfirmAction'
 import LocaleSwitcher from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 import { type DescriptionBlock } from '../../../data/careers'
+import { normalizeJobDescription } from '../../../lib/jobPosting'
 
 const emptyJob = (): Job => ({
   title: '',
@@ -71,7 +72,7 @@ export default function JobsAdmin() {
 
   const addBlock = (blockType: 'paragraph' | 'heading' | 'list') => {
     if (!editing) return
-    const desc = [...(Array.isArray(editing.description) ? editing.description : [])]
+    const desc = [...normalizeJobDescription(editing.description)]
     if (blockType === 'list') {
       desc.push({ type: 'list', items: [''] })
     } else {
@@ -82,14 +83,14 @@ export default function JobsAdmin() {
 
   const updateBlock = (idx: number, value: Partial<{ text: string; items: string[] }>) => {
     if (!editing) return
-    const desc = [...(Array.isArray(editing.description) ? editing.description : [])]
+    const desc = [...normalizeJobDescription(editing.description)]
     desc[idx] = { ...desc[idx], ...value }
     setEditing({ ...editing, description: desc })
   }
 
   const removeBlock = (idx: number) => {
     if (!editing) return
-    const desc = (editing.description ?? []).filter((_, i) => i !== idx)
+    const desc = normalizeJobDescription(editing.description).filter((_, i) => i !== idx)
     setEditing({ ...editing, description: desc })
   }
 
@@ -148,7 +149,7 @@ export default function JobsAdmin() {
             <Label>Description</Label>
             <p className="mb-3 text-xs text-muted-foreground">Build the job description using content blocks.</p>
             <div className="flex flex-col gap-3">
-              {(Array.isArray(editing.description) ? editing.description : []).map((block: DescriptionBlock, idx: number) => (
+              {normalizeJobDescription(editing.description).map((block: DescriptionBlock, idx: number) => (
                 <div key={idx} className="rounded-lg border border-border p-3">
                   <div className="mb-2 flex items-center justify-between">
                     <span className="rounded bg-muted px-2 py-0.5 text-xs font-medium">{block.type}</span>
@@ -250,7 +251,7 @@ export default function JobsAdmin() {
               )}
               {isDefault ? (
                 <>
-                  <Button variant="ghost" size="small" onPress={() => setEditing({ ...j, description: Array.isArray(j.description) ? j.description : [] })}>Edit</Button>
+                  <Button variant="ghost" size="small" onPress={() => setEditing({ ...j, description: normalizeJobDescription(j.description) })}>Edit</Button>
                   {j._id && <Button variant="ghost" size="small" onPress={() => deleteAction.request(j)}>Delete</Button>}
                 </>
               ) : (

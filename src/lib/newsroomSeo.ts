@@ -7,6 +7,7 @@
  */
 
 import { normalizeSeoTitle } from './seo'
+import { buildLocalizedSeoUrl } from './seoUrl'
 
 export interface NewsroomSeoBrand {
   origin: string
@@ -43,14 +44,14 @@ function absoluteUrl(origin: string, value: string): string {
 }
 
 function newsroomPostUrl(origin: string, slug: string): string {
-  return `${origin}/newsroom/${slug}`
+  return buildLocalizedSeoUrl(origin, `/newsroom/${slug}`, 'en', 'en')
 }
 
 function publisher(brand: NewsroomSeoBrand): Record<string, unknown> {
   return {
     '@type': 'Organization',
     name: brand.siteName,
-    url: brand.origin,
+    url: `${brand.origin}/`,
     logo: { '@type': 'ImageObject', url: `${brand.origin}/favicon.svg` },
   }
 }
@@ -95,13 +96,13 @@ export function buildNewsroomArticleStructuredData(
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: brand.origin,
+            item: `${brand.origin}/`,
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: 'Newsroom',
-            item: `${brand.origin}/newsroom`,
+            item: buildLocalizedSeoUrl(brand.origin, '/newsroom', 'en', 'en'),
           },
           {
             '@type': 'ListItem',
@@ -121,7 +122,7 @@ export function buildNewsroomCollectionStructuredData(
   title: string,
   description: string,
 ): Record<string, unknown> {
-  const url = `${brand.origin}/newsroom`
+  const url = buildLocalizedSeoUrl(brand.origin, '/newsroom', 'en', 'en')
   const items = posts.map((post, index) => ({
     '@type': 'ListItem',
     position: index + 1,
@@ -138,7 +139,7 @@ export function buildNewsroomCollectionStructuredData(
         name: title,
         description,
         url,
-        isPartOf: { '@type': 'WebSite', name: brand.siteName, url: brand.origin },
+        isPartOf: { '@type': 'WebSite', name: brand.siteName, url: `${brand.origin}/` },
         publisher: publisher(brand),
         mainEntity: { '@id': `${url}#articles` },
       },

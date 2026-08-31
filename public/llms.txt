@@ -6,8 +6,8 @@
 
 - [Oxy](https://oxy.so/): Overview of the ecosystem and its principles.
 - [Newsroom](https://oxy.so/newsroom/): Product updates, engineering articles and company announcements.
-- [Developers](https://oxy.so/developers): Developer resources and documentation.
-- [Company](https://oxy.so/company): Information about Oxy and its mission.
+- [Developers](https://oxy.so/developers/): Developer resources and documentation.
+- [Company](https://oxy.so/company/): Information about Oxy and its mission.
 
 ## Machine-readable discovery
 

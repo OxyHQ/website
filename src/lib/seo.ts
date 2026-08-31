@@ -8,6 +8,8 @@
  * how to *resolve* it, plus the fixed brand identities keyed by host.
  */
 
+import { withDocumentTrailingSlash } from './seoUrl'
+
 export type SeoBrand = 'oxy' | 'faircoin'
 
 export interface SeoMeta {
@@ -126,7 +128,7 @@ export function resolveSeo(data: SeoData | null, pathname: string, host?: string
   return {
     title: entry.title,
     description: entry.description,
-    canonical: identity.origin + pathname,
+    canonical: identity.origin + withDocumentTrailingSlash(pathname),
     ogImage: toAbsolute(identity.origin, ogImage),
     siteName: identity.siteName,
     brand,
@@ -166,7 +168,7 @@ export function resolveSeoOrDefault(data: SeoData | null, pathname: string, host
   return {
     title: identity.fallbackTitle,
     description: identity.fallbackDescription,
-    canonical: identity.origin + pathname,
+    canonical: identity.origin + withDocumentTrailingSlash(pathname),
     ogImage: identity.origin + identity.fallbackOgImage,
     siteName: identity.siteName,
     brand,

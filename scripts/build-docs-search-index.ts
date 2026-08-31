@@ -19,6 +19,7 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import type { SyncedIndex } from './types.ts';
 import { isIndexablePost, type NewsroomPost } from '../src/lib/newsroom-source';
+import { withDocumentTrailingSlash } from '../src/lib/seoUrl';
 
 const WEBSITE_ROOT = path.resolve(import.meta.dir, '..');
 const SYNCED_INDEX = path.join(WEBSITE_ROOT, 'src', 'content', '_synced', 'index.json');
@@ -111,14 +112,15 @@ function escapeHtml(s: string): string {
 }
 
 function wrapHtml(title: string, body: string, canonicalUrl: string): string {
+  const normalizedCanonical = withDocumentTrailingSlash(canonicalUrl);
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <title>${escapeHtml(title)}</title>
 <meta name="pagefind-body" />
-<link rel="canonical" href="${escapeHtml(canonicalUrl)}" />
-<meta data-pagefind-meta="route[content]" content="${escapeHtml(canonicalUrl)}" />
+<link rel="canonical" href="${escapeHtml(normalizedCanonical)}" />
+<meta data-pagefind-meta="route[content]" content="${escapeHtml(normalizedCanonical)}" />
 </head>
 <body>
 <main data-pagefind-body>

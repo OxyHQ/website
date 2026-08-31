@@ -468,7 +468,7 @@ export default function LessonPage() {
         <PageSection spacing="sm" width="narrow">
           <ShareWithMention
             title={`${lesson.frontmatter.title}, ${course.title}`}
-            url={`https://oxy.so/academy/${course.slug}/${lesson.lessonSlug}`}
+            url={`https://oxy.so/academy/${course.slug}/${lesson.lessonSlug}/`}
             hashtags={['oxyacademy', 'learn']}
             via="oxy"
           />

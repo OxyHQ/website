@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async'
 import { useLocaleContext, DEFAULT_LOCALE, type Locale } from '../lib/i18n'
 import { brandConfig, normalizeSeoTitle, resolveSeo } from '../lib/seo'
 import { useSeo } from '../api/hooks'
+import { buildLocalizedSeoUrl } from '../lib/seoUrl'
 
 export interface SEOProps {
   title: string
@@ -42,9 +43,7 @@ const OG_LOCALES: Record<Locale, string> = {
  *  default locale surface lives at the bare URL; non-default locales live under
  *  `/{locale}`. */
 function buildLocalizedUrl(origin: string, canonicalPath: string, locale: Locale): string {
-  const cleanPath = canonicalPath === '/' ? '' : canonicalPath
-  if (locale === DEFAULT_LOCALE) return `${origin}${canonicalPath}`
-  return `${origin}/${locale}${cleanPath}`
+  return buildLocalizedSeoUrl(origin, canonicalPath, locale, DEFAULT_LOCALE)
 }
 
 /**

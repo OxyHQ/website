@@ -125,8 +125,8 @@ export default function AppDetailContent() {
           name: product.name,
           description: product.description || product.tagline,
           applicationCategory: category || undefined,
-          url: `https://oxy.so/apps/${product.productId}`,
-          publisher: { '@type': 'Organization', name: 'Oxy', sameAs: 'https://oxy.so' },
+          url: `https://oxy.so/apps/${product.productId}/`,
+          publisher: { '@type': 'Organization', name: 'Oxy', sameAs: 'https://oxy.so/' },
         }}
       />
 

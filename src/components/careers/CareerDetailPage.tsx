@@ -7,6 +7,15 @@ import { type DescriptionBlock } from '../../data/careers'
 import SEO from '../SEO'
 import StructuredData from '../StructuredData'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
+import { brandConfig } from '../../lib/seo'
+import { DEFAULT_LOCALE, useLocaleContext } from '../../lib/i18n'
+import { buildLocalizedSeoUrl } from '../../lib/seoUrl'
+import {
+  buildJobPostingStructuredData,
+  jobLocationLabel,
+  jobSeoDescription,
+  normalizeJobDescription,
+} from '../../lib/jobPosting'
 
 /* ──────────────────────────────────────────────
  * /company/careers/:slug
@@ -105,6 +114,7 @@ function ApplyActions({ title }: { title: string }) {
 
 export default function CareerDetailContent() {
   const { slug } = useParams<{ slug: string }>()
+  const { locale } = useLocaleContext()
   const { data: job, isPending } = useJob(slug ?? '')
 
   if (isPending) {
@@ -147,32 +157,21 @@ export default function CareerDetailContent() {
   }
 
   const engagement = job.engagement ?? job.type ?? 'Full-time'
+  const canonicalPath = `/company/careers/${job.slug}`
+  const host = typeof window === 'undefined' ? undefined : window.location.hostname
+  const { origin } = brandConfig(host)
+  const pageUrl = buildLocalizedSeoUrl(origin, canonicalPath, locale, DEFAULT_LOCALE)
+  const jobPosting = buildJobPostingStructuredData(job, { origin, pageUrl })
+  const descriptionBlocks = normalizeJobDescription(job.description)
 
   return (
     <section className="mb-12 border-border border-b">
       <SEO
         title={`${job.title}, ${job.department}`}
-        description={job.subtitle || `Join Oxy as ${job.title}. ${job.location}. ${engagement}.`}
-        canonicalPath={`/company/careers/${slug}`}
+        description={jobSeoDescription(job)}
+        canonicalPath={canonicalPath}
       />
-      <StructuredData
-        data={{
-          '@context': 'https://schema.org',
-          '@type': 'JobPosting',
-          title: job.title,
-          description: job.subtitle,
-          datePosted: job.createdAt || new Date().toISOString(),
-          employmentType:
-            engagement === 'Full-time' ? 'FULL_TIME' : engagement === 'Part-time' ? 'PART_TIME' : 'CONTRACTOR',
-          jobLocation: { '@type': 'Place', address: job.location },
-          hiringOrganization: {
-            '@type': 'Organization',
-            name: 'Oxy',
-            sameAs: 'https://oxy.so',
-            logo: 'https://oxy.so/favicon.svg',
-          },
-        }}
-      />
+      {jobPosting && <StructuredData data={jobPosting} />}
 
       <div className="container">
         <div className="grid grid-cols-12 md:gap-8">
@@ -190,7 +189,7 @@ export default function CareerDetailContent() {
                 <div className="flex flex-col gap-8 sm:flex-row sm:gap-16 md:flex-col md:gap-8">
                   <div className="flex flex-col gap-1">
                     <p className="text-muted-foreground text-xs uppercase tracking-wider">Location</p>
-                    <p>{job.location}</p>
+                    <p>{jobLocationLabel(job.location)}</p>
                   </div>
                   <div className="flex flex-col gap-1">
                     <p className="text-muted-foreground text-xs uppercase tracking-wider">Department</p>
@@ -211,11 +210,7 @@ export default function CareerDetailContent() {
           <div className="col-span-12 border-border pb-16 md:col-span-8 md:border-l md:py-8 md:pl-16">
             <div className="max-w-prose">
               {job.subtitle && <p className="pb-6 text-pretty text-xl">{job.subtitle}</p>}
-              {Array.isArray(job.description) ? (
-                <DescriptionContent blocks={job.description} />
-              ) : typeof job.description === 'string' && job.description ? (
-                <p className="whitespace-pre-line text-pretty text-muted-foreground leading-[26px]">{job.description}</p>
-              ) : null}
+              {descriptionBlocks.length > 0 && <DescriptionContent blocks={descriptionBlocks} />}
 
               <div className="mb-8 pt-10">
                 <h3 className="font-medium text-lg">How to apply</h3>

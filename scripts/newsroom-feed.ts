@@ -1,4 +1,5 @@
 import type { NewsroomPost } from '../src/data/newsroom'
+import { buildLocalizedSeoUrl } from '../src/lib/seoUrl'
 
 export interface NewsroomFeedOptions {
   siteUrl: string
@@ -42,7 +43,7 @@ export function buildNewsroomRss(
   )
   const lastBuildDate = sorted[0]?.updatedAt || sorted[0]?.publishedAt
   const items = sorted.map((post) => {
-    const url = `${siteUrl}/newsroom/${encodeURIComponent(post.slug)}`
+    const url = buildLocalizedSeoUrl(siteUrl, `/newsroom/${encodeURIComponent(post.slug)}`, 'en', 'en')
     const categories = post.categories
       .map((category) => `<category>${escapeXml(category)}</category>`)
       .join('')
@@ -67,7 +68,7 @@ export function buildNewsroomRss(
     '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
     '<channel>',
     `<title>${escapeXml(options.title)}</title>`,
-    `<link>${escapeXml(`${siteUrl}/newsroom`)}</link>`,
+    `<link>${escapeXml(buildLocalizedSeoUrl(siteUrl, '/newsroom', 'en', 'en'))}</link>`,
     `<description>${escapeXml(options.description)}</description>`,
     '<language>en</language>',
     `<atom:link href="${escapeXml(feedUrl)}" rel="self" type="application/rss+xml"/>`,

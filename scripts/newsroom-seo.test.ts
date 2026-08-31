@@ -51,9 +51,9 @@ describe('Newsroom SEO title', () => {
 
     expect(head).toContain('<title>A faster Newsroom | Oxy</title>')
     expect(head).not.toContain('| Oxy | Oxy')
-    expect(head).toContain('rel="canonical" href="https://oxy.so/newsroom/a-faster-newsroom"')
-    expect(head).toContain('hreflang="es" href="https://oxy.so/es/newsroom/a-faster-newsroom"')
-    expect(head).toContain('hreflang="x-default" href="https://oxy.so/newsroom/a-faster-newsroom"')
+    expect(head).toContain('rel="canonical" href="https://oxy.so/newsroom/a-faster-newsroom/"')
+    expect(head).toContain('hreflang="es" href="https://oxy.so/es/newsroom/a-faster-newsroom/"')
+    expect(head).toContain('hreflang="x-default" href="https://oxy.so/newsroom/a-faster-newsroom/"')
   })
 
   test('normalizes an exact-route CMS override too', () => {
@@ -109,14 +109,14 @@ describe('Newsroom structured data', () => {
     const collection = graph.find((entry) => entry['@type'] === 'CollectionPage')
     const list = graph.find((entry) => entry['@type'] === 'ItemList')
 
-    expect(collection?.mainEntity).toEqual({ '@id': 'https://oxy.so/newsroom#articles' })
+    expect(collection?.mainEntity).toEqual({ '@id': 'https://oxy.so/newsroom/#articles' })
     expect(list).toMatchObject({ numberOfItems: 1 })
     expect(list?.itemListElement).toEqual([
       {
         '@type': 'ListItem',
         position: 1,
         name: post.title,
-        url: 'https://oxy.so/newsroom/a-faster-newsroom',
+        url: 'https://oxy.so/newsroom/a-faster-newsroom/',
       },
     ])
   })

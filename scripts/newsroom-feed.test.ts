@@ -27,7 +27,7 @@ describe('Newsroom RSS', () => {
     })
 
     expect(xml).toContain('<rss version="2.0"')
-    expect(xml).toContain('https://oxy.so/newsroom/safe-feed')
+    expect(xml).toContain('https://oxy.so/newsroom/safe-feed/')
     expect(xml).toContain('Oxy &amp; the &lt;open&gt; web')
     expect(xml).toContain('https://oxy.so/cover.jpg')
     expect(xml).not.toContain('<open>')

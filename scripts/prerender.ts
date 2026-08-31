@@ -67,6 +67,13 @@ import {
   buildNewsroomCollectionStructuredData,
   normalizeNewsroomSeoTitle,
 } from '../src/lib/newsroomSeo'
+import {
+  buildJobPostingStructuredData,
+  jobDescriptionToMarkdown,
+  jobLocationLabel,
+  jobSeoDescription,
+  type JobPostingInput,
+} from '../src/lib/jobPosting'
 
 // React 19.2's development JSX runtime expects a development renderer
 // dispatcher. This script imports a production SSR bundle into Bun, so make
@@ -563,20 +570,9 @@ interface NewsroomApiResponse {
   posts: NewsroomApiPost[]
 }
 
-/**
- * Subset of `/api/jobs` used for SEO. Mirrors `Job` in `src/api/hooks.ts` —
- * the route returns a bare array (the backend already filters `active: true`).
- * `description` is deliberately absent: the API returns it as a block array,
- * not a string, so it can never be used as meta description text.
- */
-interface JobApiEntry {
-  slug: string
-  title: string
+/** The route returns a bare array already filtered to active vacancies. */
+interface JobApiEntry extends JobPostingInput {
   department: string
-  subtitle?: string
-  location: string
-  type?: string
-  engagement?: string
 }
 
 async function fetchNewsroomPosts(): Promise<NewsroomApiPost[]> {
@@ -1122,19 +1118,31 @@ function buildAppRoutes(products: ProductApiEntry[]): Array<{ url: string; seo: 
   })
 }
 
-function buildJobRoutes(jobs: JobApiEntry[]): Array<{ url: string; seo: SEOProps }> {
-  return jobs.map((job) => ({
-    url: `/company/careers/${job.slug}`,
-    seo: {
-      // Mirrors `CareerDetailPage`'s `<SEO>` props verbatim so the prerendered
-      // <head> and the client-rendered one produce the same title/description.
-      title: `${job.title}, ${job.department}`,
-      description:
-        job.subtitle ||
-        `Join Oxy as ${job.title}. ${job.location}. ${job.engagement ?? job.type ?? 'Full-time'}.`,
-      canonicalPath: `/company/careers/${job.slug}`,
-    },
-  }))
+function buildJobRoutes(jobs: JobApiEntry[]): RouteEntry[] {
+  return jobs.map((job) => {
+    const url = `/company/careers/${job.slug}`
+    const markdown = jobDescriptionToMarkdown(job.description)
+    return {
+      url,
+      seo: {
+        // Mirrors `CareerDetailPage` through the same shared builders.
+        title: `${job.title}, ${job.department}`,
+        description: jobSeoDescription(job),
+        canonicalPath: url,
+        publishedTime: job.createdAt,
+        modifiedTime: job.updatedAt,
+      },
+      body: markdown
+        ? {
+            heading: job.title,
+            meta: `${jobLocationLabel(job.location)} · ${job.engagement ?? job.type ?? 'Full-time'}`,
+            standfirst: job.subtitle,
+            markdown,
+          }
+        : undefined,
+      structuredData: buildJobPostingStructuredData(job, { origin: SITE_URL }) ?? undefined,
+    }
+  })
 }
 
 /* ── All routes ───────────────────────────────────────────────────── */
@@ -1241,7 +1249,7 @@ async function enumerateAllRoutes(): Promise<RouteEntry[]> {
       newsroomIndex.seo.description,
     )
   }
-  for (const { url, seo } of buildJobRoutes(jobs)) result.set(url, { url, seo })
+  for (const entry of buildJobRoutes(jobs)) result.set(entry.url, entry)
   for (const { url, seo } of buildAppRoutes(apps)) result.set(url, { url, seo })
   for (const { url, seo } of buildFeatureRoutes(features)) result.set(url, { url, seo })
   for (const { url, seo } of helpRoutes) result.set(url, { url, seo })
