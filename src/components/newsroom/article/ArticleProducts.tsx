@@ -22,7 +22,7 @@ function ProductCallout({ product }: { product: ProductRecord }) {
     >
       <div className="flex min-w-0 items-center gap-4">
         <span className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-foreground text-primary text-subheading-3">
-          {logo ? <img src={logo} alt="" loading="lazy" decoding="async" className="size-full object-cover" /> : product.mark}
+          {logo ? <img src={logo} alt="" loading="lazy" decoding="async" className={`size-full ${product.productId === 'kaana' ? 'object-contain' : 'object-cover'}`} /> : product.mark}
         </span>
         <div className="min-w-0">
           <p className="text-body-sm text-primary-foreground/70">{category ? `Related ${category.toLowerCase()} product` : 'Related product'}</p>
