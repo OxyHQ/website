@@ -32,7 +32,7 @@ export function AppIcon({ product, className = '' }: { product: ProductRecord; c
         src={logo}
         alt=""
         aria-hidden="true"
-        className={`block size-full rounded-sm object-cover ${className}`}
+        className={`block size-full rounded-sm ${product.productId === 'kaana' ? 'object-contain' : 'object-cover'} ${className}`}
         loading="lazy"
         decoding="async"
       />

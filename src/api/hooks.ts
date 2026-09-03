@@ -262,6 +262,7 @@ const LOCAL_PRODUCT_LOGOS: Readonly<Record<string, string>> = {
   faircoin: '/images/apps/faircoin.svg',
   'faircoin-wallet': '/images/apps/faircoin-wallet.svg',
   fairwallet: '/images/apps/faircoin-wallet.svg',
+  kaana: '/images/apps/kaana.svg',
 }
 
 export function resolveProductLogoUrl(product: ProductRecord): string {

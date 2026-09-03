@@ -128,6 +128,10 @@ export default defineConfig(({ mode }) => ({
     react(),
     babel({ presets: [reactCompilerPreset()] }),
     ViteImageOptimizer({
+      // The canonical Kaana SVG is a byte-pinned source asset. Running it
+      // through SVGO would both invalidate that identity and crash on its
+      // referenced compositing groups.
+      exclude: /kaana\.svg$/,
       jpg: { quality: 80, progressive: true },
       jpeg: { quality: 80, progressive: true },
       png: { quality: 80, effort: 4 },
