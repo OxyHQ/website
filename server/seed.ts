@@ -90,7 +90,7 @@ async function seed() {
     // The only wordmark in this map. Every other entry is a square app icon and
     // every slot that renders one is square, so this one letterboxes; the
     // icon-only mark it wants does not exist yet.
-    kaana: '/images/apps/kaana.png',
+    kaana: '/images/apps/kaana.svg',
     mention: '/images/apps/mention.png',
     mercaria: '/images/apps/mercaria.png',
     oxyos: '/images/apps/oxyos.png',

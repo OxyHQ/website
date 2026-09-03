@@ -313,7 +313,7 @@ export default function Navbar({
           : (product.navOpensApp ? product.href : (product.landingUrl || product.href)),
         image: product.productId === 'alia' ? '/images/apps/alia-dropdown.svg' : (resolveProductLogoUrl(product) || undefined),
         logoColor: product.brand,
-        preserveImageColors: product.productId === 'alia' || product.productId === 'faircoin' || product.productId === 'fairwallet' || product.productId === 'faircoin-wallet',
+        preserveImageColors: product.productId === 'alia' || product.productId === 'faircoin' || product.productId === 'fairwallet' || product.productId === 'faircoin-wallet' || product.productId === 'kaana',
         section: technologyNavSection(product.productId, product.section),
       }
     })
