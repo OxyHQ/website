@@ -1,7 +1,7 @@
 import FaqSection from '../sections/FaqSection'
 import { PAY_FAQS } from './data'
 
-export default function PayFAQ() {
+export default function PeableFAQ() {
   return (
     <FaqSection
       title="Your questions, answered"

@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion'
 import { PAY_FEATURES } from './data'
-import PayAccountsCloud from './PayAccountsCloud'
-import PayFAQ from './PayFAQ'
-import { CashbackIcon, DotField, ShieldCheckIcon, TrendingIcon } from './PayIcons'
-import { ActivityScene, CardArt, CardScene, CashbackScene, SecurityScene, SupportScene, TransfersScene } from './PayScenes'
+import PeableAccountsCloud from './PeableAccountsCloud'
+import PeableFAQ from './PeableFAQ'
+import { CashbackIcon, DotField, ShieldCheckIcon, TrendingIcon } from './PeableIcons'
+import { ActivityScene, CardArt, CardScene, CashbackScene, SecurityScene, SupportScene, TransfersScene } from './PeableScenes'
 
 /** Maps a feature's `scene` key to the mock rendered beside its copy. */
 const SCENES = {
@@ -55,7 +55,7 @@ function HeroHeadline() {
 function HeroEnvelope() {
   return (
     <motion.div
-      aria-label="Envelope with the Oxy Pay Card"
+      aria-label="Envelope with the Peable Card"
       className="relative aspect-3/2 w-full overflow-hidden tablet:aspect-16/9 tablet-lg:aspect-2/1 tablet-lg:w-188 tablet-lg:max-w-none"
       role="img"
       initial={{ opacity: 0, y: 24 }}
@@ -142,7 +142,7 @@ function CoverageSeal() {
   )
 }
 
-export default function PayContent() {
+export default function PeableContent() {
   return (
     <article className="pay-surface flex flex-1 flex-col">
       <div className="container flex flex-col max-tablet-lg:gap-[50px]">
@@ -177,7 +177,7 @@ export default function PayContent() {
             <div className="flex flex-1 flex-col gap-3 tablet-lg:col-start-1 tablet-lg:row-start-1">
               <div className="flex items-center gap-2">
                 <span className="size-1 shrink-0 bg-fg-tertiary" />
-                <span className="font-display text-h4 text-fg-primary [font-feature-settings:'ss11']">Oxy Pay</span>
+                <span className="font-display text-h4 text-fg-primary [font-feature-settings:'ss11']">Peable</span>
               </div>
               <h2 className="text-balance font-display text-h3 [font-feature-settings:'ss11']">
                 <span className="text-fg-primary">Built to be understood</span>
@@ -227,7 +227,7 @@ export default function PayContent() {
               <span className="text-fg-secondary">Named, separate and yours to move</span>
             </h2>
           </div>
-          <PayAccountsCloud />
+          <PeableAccountsCloud />
         </section>
 
         {/* ── One app ──────────────────────────────────────────── */}
@@ -302,7 +302,7 @@ export default function PayContent() {
       </div>
 
       {/* ── FAQ ──────────────────────────────────────────────── */}
-      <PayFAQ />
+      <PeableFAQ />
     </article>
   )
 }

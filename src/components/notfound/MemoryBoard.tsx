@@ -40,7 +40,7 @@ const PAIRS: MemoryCard[] = [
   { sprite: 'clarity', image: '/images/apps/clarity.png', tone: 'bg-chart-1', iconTone: 'bg-tertiary' },
   { sprite: 'codea', image: '/images/apps/codea.png', tone: 'bg-chart-2', iconTone: 'bg-tertiary' },
   { sprite: 'oxyos', image: '/images/apps/oxyos.png', tone: 'bg-chart-3', iconTone: 'bg-primary' },
-  { sprite: 'oxypay', image: '/images/apps/oxypay.png', tone: 'bg-chart-4', iconTone: 'bg-primary' },
+  { sprite: 'peable', image: '/images/apps/peable.png', tone: 'bg-chart-4', iconTone: 'bg-primary' },
   { sprite: 'astro', image: '/images/apps/astro.svg', tone: 'bg-chart-5', iconTone: 'bg-secondary' },
   { sprite: 'mercaria', image: '/images/apps/mercaria.svg', tone: 'bg-chart-1', iconTone: 'bg-tertiary' },
   { sprite: 'tnp', image: '/images/apps/tnp.png', tone: 'bg-chart-2', iconTone: 'bg-tertiary' },

@@ -40,7 +40,7 @@ export const APP_SEARCH_DESTINATIONS: Readonly<Record<string, string>> = {
   oxyos: '/os',
   codea: '/codea',
   tnp: '/tnp',
-  pay: '/pay',
+  peable: '/peable',
   mercaria: '/mercaria',
   faircoin: '/faircoin',
 }
@@ -89,7 +89,7 @@ const SITE_PAGES: Array<{ url: string; title: string; group?: string }> = [
   { url: appSearchDestination('allo'), title: 'Allo', group: 'apps' },
   { url: '/codea', title: 'Codea', group: 'apps' },
   { url: '/tnp', title: 'TNP', group: 'apps' },
-  { url: '/pay', title: 'Oxy Pay', group: 'apps' },
+  { url: '/peable', title: 'Peable', group: 'apps' },
   { url: '/pricing', title: 'Pricing' },
   { url: '/developers/docs', title: 'Developer docs' },
   { url: '/company', title: 'Company' },

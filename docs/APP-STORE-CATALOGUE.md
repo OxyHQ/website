@@ -33,7 +33,7 @@ down rather than derived.
 | `tnp` TNP | TNP |
 | `homiio` Homiio | Homiio |
 | `2` Homiio | Homiio — **the same app, listed twice** (see below) |
-| `pay` Pay | Oxy Pay |
+| `pay` Pay | Peable |
 | `marketplace` Mercaria | Mercaria |
 | `m` Moovo | Moovo |
 | `i` Inbox by Oxy | Oxy Inbox |

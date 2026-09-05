@@ -216,7 +216,7 @@ const HISTORY: { date: string; label: string; lead: string; body: string }[] = [
     date: '2026-06',
     label: 'June 2026',
     lead: 'Payments and commerce arrive together,',
-    body: 'with Oxy Pay and its SDK, Mercaria for sellers and Moovo, plus oxy-infra so the whole platform stops being hand-deployed and starts being reproducible.',
+    body: 'with Peable and its SDK, Mercaria for sellers and Moovo, plus oxy-infra so the whole platform stops being hand-deployed and starts being reproducible.',
   },
   {
     date: '2026-05',

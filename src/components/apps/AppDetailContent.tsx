@@ -29,7 +29,7 @@ const SCREENSHOTS: Record<string, string[]> = {
 
 /**
  * The tracked repository for a product, when one matches by name. Compared on
- * letters only, so `oxy-pay` and `OxyPay` are the same repository.
+ * letters only, so `oxy-pay` and `Peable` are the same repository.
  */
 function findRepo(product: ProductRecord): { owner: string; name: string } | null {
   const letters = (value: string) => value.toLowerCase().replace(/[^a-z]/g, '')

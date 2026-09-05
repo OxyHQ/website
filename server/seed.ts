@@ -94,7 +94,7 @@ async function seed() {
     mention: '/images/apps/mention.png',
     mercaria: '/images/apps/mercaria.png',
     oxyos: '/images/apps/oxyos.png',
-    pay: '/images/apps/oxypay.png',
+    peable: '/images/apps/peable.png',
     tnp: '/images/apps/tnp.png',
   }
 
@@ -238,7 +238,7 @@ async function seed() {
           { label: 'Homiio', href: '/homiio' },
           { label: 'Syra', href: 'https://syra.fm', isExternal: true },
           { label: 'Mercaria', href: 'https://mercaria.co', isExternal: true },
-          { label: 'Oxy Pay', href: '/pay' },
+          { label: 'Peable', href: '/peable' },
           { label: 'FairCoin', href: '/faircoin' },
           { label: 'Codea', href: '/codea' },
           { label: 'Astro', href: '/astro' },
@@ -284,7 +284,7 @@ async function seed() {
     { productId: 'faircoin-bridge', name: 'FairCoin Bridge', tagline: 'FairCoin on Base', description: 'Custodial 1:1 bridge between FairCoin L1 and WFAIR on Base, and the buy-FAIR flow behind it.', href: 'https://bridge.fairco.in', healthUrl: 'https://bridge.fairco.in/health', external: true, cta: 'Bridge status', brand: '#16a34a', mark: 'B', category: categoryRef('finance-commerce'), section: 'finance-commerce', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 3 },
     { productId: 'faircoin-buy', name: 'FairCoin Buy', tagline: 'Buy FAIR with crypto', description: 'Payment-address allocation for buy orders. Separate from the bridge probe: buying can be down while deposits, mints and releases keep working.', href: 'https://buy.fairco.in', healthUrl: 'https://bridge.fairco.in/health/buy', external: true, cta: 'Buy FAIR', brand: '#16a34a', mark: 'B', category: categoryRef('finance-commerce'), section: 'finance-commerce', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 4 },
     { productId: 'faircoin-wallet', logo: appIcon('faircoin-wallet'), name: 'FairCoin Wallet', tagline: 'Manage your FairCoin', description: 'Self-custodied wallet built for everyday FairCoin use — send, receive, and track balances across devices.', href: 'https://fairco.in/wallet', external: true, cta: 'Open wallet', brand: '#16a34a', mark: 'W', category: categoryRef('finance-commerce'), section: 'finance-commerce', lifecycle: 'live', showOnProducts: true, showOnStatus: false, showInNav: true, order: 1 },
-    { productId: 'pay', logo: appIcon('pay'), name: 'Oxy Pay', tagline: 'Money that works harder', description: 'Earn yield, get cashback, send money instantly, and manage it all in one place — with the Oxy Pay Card wherever Visa is accepted.', href: '/pay', landingUrl: '/pay', external: false, cta: 'Explore Oxy Pay', brand: '#16a34a', mark: 'P', category: categoryRef('finance-commerce'), section: 'finance-commerce', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: true, order: 3 },
+    { productId: 'peable', logo: appIcon('peable'), name: 'Peable', tagline: 'Money that works harder', description: 'Earn yield, get cashback, send money instantly, and manage it all in one place — with the Peable Card wherever Visa is accepted.', href: '/peable', landingUrl: '/peable', external: false, cta: 'Explore Peable', brand: '#16a34a', mark: 'P', category: categoryRef('finance-commerce'), section: 'finance-commerce', lifecycle: 'in-development', showOnProducts: true, showOnStatus: false, showInNav: true, order: 3 },
     { productId: 'faircoin-explorer', logo: appIcon('faircoin-explorer'), name: 'FairCoin Explorer', tagline: 'Blockchain explorer', description: 'Browse blocks, transactions and addresses on the FairCoin network.', href: 'https://explorer.fairco.in', healthUrl: 'https://explorer.fairco.in/api/mining-info?network=mainnet', external: true, cta: 'Open explorer', brand: '#16a34a', mark: 'E', category: categoryRef('finance-commerce'), section: 'finance-commerce', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 2 },
     { productId: 'homiio', name: 'Homiio', tagline: 'Rental made easy', description: 'Renting made fair: transparent listings, values-based roommate matching, an Oxy-powered trust score and Sindi, your AI tenant-rights assistant. Affordable housing made accessible through open technology.', href: 'https://homiio.com/', landingUrl: '/homiio', external: false, cta: 'Explore Homiio', brand: '#e11d48', mark: 'H', category: categoryRef('apps'), section: 'apps', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
     { productId: 'clarity', logo: appIcon('clarity'), name: 'Clarity', tagline: 'AI answer engine', description: 'AI-powered answer engine that cites its sources and respects your privacy.', href: 'https://clarity.surf', external: true, cta: 'Open Clarity', brand: '#0ea5e9', mark: 'C', category: categoryRef('apps'), section: 'apps', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 1 },

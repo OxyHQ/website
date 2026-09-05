@@ -1,7 +1,7 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { PAY_ACTIVITY, PAY_TRANSFERS, type PayActivityRow } from './data'
-import { RecipientTick, VerifiedBadge } from './PayIcons'
+import { RecipientTick, VerifiedBadge } from './PeableIcons'
 
 /* ------------------------------------------------------------------ */
 /* Shared frame                                                        */

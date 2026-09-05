@@ -272,11 +272,11 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       'Short answers about Oxy: what it is, what it costs, how the apps fit together, how your data is handled and how to build on the platform.',
     canonicalPath: '/faqs',
   },
-  '/pay': {
-    title: 'Oxy Pay',
+  '/peable': {
+    title: 'Peable',
     description:
       'Payments across the Oxy ecosystem, with every fee shown before you confirm. In development: nothing is open for deposits yet.',
-    canonicalPath: '/pay',
+    canonicalPath: '/peable',
   },
   '/mention': {
     title: 'Mention, an open social network',
