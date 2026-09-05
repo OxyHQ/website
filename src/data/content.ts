@@ -245,7 +245,7 @@ export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: st
   { title: 'Kaana', description: 'Oxy\'s own inference provider', href: 'https://kaana.ai', image: '/images/apps/kaana.svg', preserveImageColors: true, section: 'AI & Research' },
   { title: 'Horizon', description: 'A clearer view of what matters', href: '/', section: 'Housing' },
   { title: 'FairCoin Explorer', description: 'Explore the FairCoin network', href: 'https://explorer.fairco.in', image: '/images/apps/faircoin-explorer.png', logoColor: '#185c00', section: 'Finance' },
-  { title: 'Pay', description: 'Simple payments across Oxy', href: '/pay', section: 'Finance' },
+  { title: 'Peable', description: 'Simple payments across Oxy', href: '/peable', section: 'Finance' },
   { title: 'FairCoin', description: 'Ethical Digital Currency', href: 'https://fairco.in', image: '/images/apps/faircoin.svg', logoColor: '#204700', preserveImageColors: true, section: 'Finance' },
   { title: 'FAIRWallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', image: '/images/apps/faircoin-wallet.svg', logoColor: '#0c6600', preserveImageColors: true, section: 'Finance' },
   { title: 'Mercaria', description: 'An open marketplace for people and goods', href: '/mercaria', image: '/images/apps/mercaria.svg', logoColor: '#ed4040', section: 'Commerce' },
@@ -498,7 +498,7 @@ export const defaultFooterColumns: FooterColumn[] = [
       { label: 'Wholesale by Mercaria', href: 'https://dashboard.mercaria.co', isExternal: true },
       { label: 'Homiio', href: '/homiio' },
       { label: 'TNP', href: '/tnp' },
-      { label: 'Oxy Pay', href: '/pay' },
+      { label: 'Peable', href: '/peable' },
     ],
   },
 ]

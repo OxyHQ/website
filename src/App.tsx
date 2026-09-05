@@ -53,7 +53,7 @@ const TNPPage = lazy(() => import('./pages/TNPPage'))
 const TNPInstallPage = lazy(() => import('./pages/TNPInstallPage'))
 const HomiioPage = lazy(() => import('./pages/HomiioPage'))
 const MentionPage = lazy(() => import('./pages/MentionPage'))
-const PayPage = lazy(() => import('./pages/PayPage'))
+const PeablePage = lazy(() => import('./pages/PeablePage'))
 const CommonsPage = lazy(() => import('./pages/CommonsPage'))
 const AppsPage = lazy(() => import('./pages/AppsPage'))
 const AppDetailPage = lazy(() => import('./pages/AppDetailPage'))
@@ -380,7 +380,10 @@ function PublicRoutes() {
       <Route path="tnp/install" element={<TNPInstallPage />} />
       <Route path="homiio" element={<HomiioPage />} />
       <Route path="mention" element={<MentionPage />} />
-      <Route path="pay" element={<PayPage />} />
+      <Route path="peable" element={<PeablePage />} />
+      {/* The product was Oxy Pay and lived at /pay, which is linked from
+          outside, so the old URL redirects rather than 404s. */}
+      <Route path="pay" element={<Navigate to="/peable" replace />} />
       <Route path="commons" element={<CommonsPage />} />
       <Route path="apps" element={<AppsPage />} />
       <Route path="apps/:name" element={<AppDetailPage />} />

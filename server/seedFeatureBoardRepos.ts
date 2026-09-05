@@ -40,7 +40,7 @@ const REPOS: SeedRepo[] = [
   { owner: 'OxyHQ', repo: 'Alia', displayName: 'Alia' },
   { owner: 'OxyHQ', repo: 'Homiio', displayName: 'Homiio' },
   { owner: 'OxyHQ', repo: 'Mercaria', displayName: 'Mercaria' },
-  { owner: 'OxyHQ', repo: 'OxyPay', displayName: 'Oxy Pay' },
+  { owner: 'OxyHQ', repo: 'Peable', displayName: 'Peable' },
   { owner: 'OxyHQ', repo: 'Moovo', displayName: 'Moovo' },
   { owner: 'OxyHQ', repo: 'Syra', displayName: 'Syra' },
   { owner: 'OxyHQ', repo: 'Space', displayName: 'Space' },

@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import { CashIcon, EmergencyIcon, GiftIcon, GlobeIcon, HomeIcon, MusicIcon, RocketIcon } from './PayIcons'
+import { CashIcon, EmergencyIcon, GiftIcon, GlobeIcon, HomeIcon, MusicIcon, RocketIcon } from './PeableIcons'
 
 /** One of the drifting savings cards in the "Industry-leading interest" scene. */
 export interface PayAccount {
@@ -38,7 +38,7 @@ export interface PayActivityRow {
 
 export const PAY_ACTIVITY: readonly PayActivityRow[] = [
   { merchant: 'July rent', amount: '$3,100.00', date: '17 Jul 2026', method: 'Transfer', verified: false, incoming: false, glyph: 'home' },
-  { merchant: 'Homiio deposit', amount: '$8.00', date: '18 Jul 2026', method: 'Oxy Pay', verified: true, incoming: false, glyph: 'app' },
+  { merchant: 'Homiio deposit', amount: '$8.00', date: '18 Jul 2026', method: 'Peable', verified: true, incoming: false, glyph: 'app' },
   { merchant: 'Invoice paid', amount: '$6,200.00', date: '16 Jul 2026', method: 'FairCoin', verified: true, incoming: true, glyph: 'incoming' },
 ]
 
@@ -146,9 +146,9 @@ export interface PayFaq {
 
 export const PAY_FAQS: readonly PayFaq[] = [
   {
-    question: 'Is Oxy Pay available yet?',
+    question: 'Is Peable available yet?',
     answer:
-      'No. Oxy Pay is in development and nobody can deposit or move money through it today. This page describes what we are building and the rules it has to follow, not a product you can sign up for.',
+      'No. Peable is in development and nobody can deposit or move money through it today. This page describes what we are building and the rules it has to follow, not a product you can sign up for.',
   },
   {
     question: 'What will you publish before it opens?',
@@ -158,7 +158,7 @@ export const PAY_FAQS: readonly PayFaq[] = [
   {
     question: 'How does it relate to FairCoin?',
     answer:
-      'FairCoin is the part of this that already exists: a network, a self-custodied wallet, a public explorer and a bridge. Oxy Pay is meant to make it usable next to ordinary money rather than replace it.',
+      'FairCoin is the part of this that already exists: a network, a self-custodied wallet, a public explorer and a bridge. Peable is meant to make it usable next to ordinary money rather than replace it.',
   },
   {
     question: 'Is my financial activity private?',
@@ -173,6 +173,6 @@ export const PAY_FAQS: readonly PayFaq[] = [
   {
     question: 'Can I self-host or leave?',
     answer:
-      'FairCoin is self-custodied by design, and anything Oxy Pay stores about you is exportable. Leaving should cost you nothing beyond the time it takes to download it.',
+      'FairCoin is self-custodied by design, and anything Peable stores about you is exportable. Leaving should cost you nothing beyond the time it takes to download it.',
   },
 ]

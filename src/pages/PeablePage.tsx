@@ -1,18 +1,18 @@
 import PageShell from '../components/layout/PageShell'
-import PayContent from '../components/pay/PayContent'
+import PeableContent from '../components/peable/PeableContent'
 
-export default function PayPage() {
+export default function PeablePage() {
   return (
     <PageShell
       seo={{
-        title: 'Oxy Pay',
+        title: 'Peable',
         description: 'Payments across the Oxy ecosystem, with every fee shown before you confirm. In development: nothing is open for deposits yet.',
-        canonicalPath: '/pay',
+        canonicalPath: '/peable',
       }}
       className="bg-bg-primary"
       mainClassName="flex-1"
     >
-      <PayContent />
+      <PeableContent />
     </PageShell>
   )
 }

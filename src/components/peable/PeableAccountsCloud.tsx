@@ -34,7 +34,7 @@ function AccountCard({ index }: { index: number }) {
   )
 }
 
-export default function PayAccountsCloud() {
+export default function PeableAccountsCloud() {
   const ref = useRef<HTMLDivElement>(null)
   const reduced = useReducedMotion()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
