@@ -58,17 +58,21 @@ export class GitHubApiError extends Error {
  * allowed to change anything in a tracked repo. Reads prefer the same token
  * (authenticated search allows 30 requests a minute against 10 anonymous) and
  * fall back to the changelog sync token, then to no credential at all.
+ * `publicRead: true` deliberately sends no credential for data that will be
+ * returned by a public website endpoint, so private resources fail closed.
  *
  * A token never reaches the thrown message or a log line: GitHub's error body
  * is echoed, the Authorization header is not.
  */
 export async function githubRequest<T>(
   path: string,
-  options: { method?: string; body?: unknown; write?: boolean } = {},
+  options: { method?: string; body?: unknown; write?: boolean; publicRead?: boolean } = {},
 ): Promise<T> {
-  const token = options.write
-    ? config.featureBoard.githubToken
-    : config.featureBoard.githubToken || config.githubToken
+  const token = options.publicRead
+    ? undefined
+    : (options.write
+        ? config.featureBoard.githubToken
+        : config.featureBoard.githubToken || config.githubToken)
 
   if (options.write && !token) {
     throw new GitHubApiError(503, 'FEATURE_BOARD_GITHUB_TOKEN is not configured')
@@ -114,6 +118,32 @@ export interface FeatureRepo {
   acceptsProposals: boolean
 }
 
+interface RepoVisibilityCacheEntry {
+  public: boolean
+  expires: number
+}
+
+const repoVisibilityCache = new Map<string, RepoVisibilityCacheEntry>()
+
+async function isPublicRepo(repo: FeatureRepo): Promise<boolean> {
+  const cached = repoVisibilityCache.get(repo.key)
+  if (cached && cached.expires > Date.now()) return cached.public
+
+  let isPublic = false
+  try {
+    const response = await githubRequest<{ private: boolean }>(
+      `/repos/${repo.owner}/${repo.repo}`,
+      { publicRead: true },
+    )
+    isPublic = !response.private
+  } catch (err) {
+    if (!(err instanceof GitHubApiError) || err.status !== 404) throw err
+  }
+
+  repoVisibilityCache.set(repo.key, { public: isPublic, expires: Date.now() + CACHE_TTL_MS })
+  return isPublic
+}
+
 function toFeatureRepo(doc: TrackedRepoRow): FeatureRepo {
   return {
     key: repoKey(doc.owner, doc.repo),
@@ -137,7 +167,13 @@ export async function listFeatureRepos(): Promise<FeatureRepo[]> {
     .from(trackedRepos)
     .where(eq(trackedRepos.featureBoard, true))
     .orderBy(asc(trackedRepos.displayName), asc(trackedRepos._id))
-  return docs.map(toFeatureRepo)
+  const repos = docs.map(toFeatureRepo)
+  // The board is a PUBLIC endpoint, so a tracked repo that has gone private
+  // must drop off it. Asking GitHub WITHOUT a credential is what makes that
+  // fail closed: a private repository answers 404 to an anonymous read, so a
+  // visibility change needs no separate signal to take effect here.
+  const visibility = await Promise.all(repos.map(isPublicRepo))
+  return repos.filter((_repo, index) => visibility[index])
 }
 
 /** The tracked repo behind `owner/repo`, or null when it is not on the board. */
@@ -155,7 +191,7 @@ export async function findFeatureRepo(owner: string, repo: string): Promise<Feat
  * five-operator limit that applies to explicit AND/OR/NOT.
  */
 export function buildSearchQueries(repos: FeatureRepo[]): string[] {
-  const base = `label:${FEATURE_LABEL} is:issue`
+  const base = `label:${FEATURE_LABEL} is:issue is:public`
   const queries: string[] = []
   let current = base
 
@@ -288,7 +324,9 @@ export async function fetchFeatureIssues(repos: FeatureRepo[]): Promise<GitHubIs
 
       let data: SearchResponse
       try {
-        data = await githubRequest<SearchResponse>(`/search/issues?${params}`)
+        // This response is returned by a public endpoint, so deliberately do
+        // not let a configured token expand the search into private repos.
+        data = await githubRequest<SearchResponse>(`/search/issues?${params}`, { publicRead: true })
       } catch (err) {
         // A rate limit is the one failure where stale data beats no data: hold
         // what we already have for another window rather than emptying the
@@ -519,7 +557,14 @@ export async function fetchFeatureIssue(repo: FeatureRepo, issueNumber: string):
   return cachedGithubRead(issueDetailCache, `${repo.key}#${issueNumber}`, async () => {
     let issue: GitHubIssue
     try {
-      issue = await githubRequest<GitHubIssue>(`/repos/${repo.owner}/${repo.repo}/issues/${issueNumber}`)
+      // The detail page is PUBLIC, so this read carries no credential: an issue
+      // in a private repository must 404 here exactly as it would for a
+      // stranger, rather than being served because the server happens to hold a
+      // token that can see it.
+      issue = await githubRequest<GitHubIssue>(
+        `/repos/${repo.owner}/${repo.repo}/issues/${issueNumber}`,
+        { publicRead: true },
+      )
     } catch (err) {
       // A miss is cached like any other answer, so a crawler walking issue
       // numbers cannot turn every 404 into a GitHub request.
