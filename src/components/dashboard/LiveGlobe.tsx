@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Globe, { type GlobeMethods } from 'react-globe.gl'
 import {
   BackSide,
@@ -10,7 +10,7 @@ import {
 } from 'three'
 import type { InfraStatusNode, PlatformActivityEvent } from '../../api/hooks'
 import { INFRA_NODES } from '../../data/dashboard/infra-nodes'
-import { activityRegionCoordinates } from '../../data/dashboard/activity-regions'
+import { activityRegionCoordinates, activityRegionLabel } from '../../data/dashboard/activity-regions'
 import { activityCategory, ACTIVITY_CATEGORIES, type ActivityCategory } from '../../data/dashboard/activity-categories'
 
 interface LiveGlobeProps {
@@ -68,6 +68,14 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   const controlsCleanupRef = useRef<(() => void) | null>(null)
   const sceneCleanupRef = useRef<(() => void) | null>(null)
   activityEventsRef.current = activityEvents
+
+  useEffect(() => {
+    const latestOrigin = [...activityEvents].reverse().find((event) => event.sourceRegion)?.sourceRegion
+    const coordinates = latestOrigin ? activityRegionCoordinates(latestOrigin) : undefined
+    if (coordinates && globeRef.current) {
+      globeRef.current.pointOfView({ lat: coordinates[1], lng: coordinates[0], altitude: 1.65 }, 1_200)
+    }
+  }, [activityEvents])
 
   const containerRef = useCallback((node: HTMLDivElement | null) => {
     if (!node) return
@@ -190,13 +198,29 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     return statuses
   }, [infraStatus])
 
-  const points = useMemo(() => INFRA_NODES.map((node) => ({
-    region: node.region,
-    label: node.label,
-    lat: node.coordinates[1],
-    lng: node.coordinates[0],
-    status: statusByRegion.get(node.region) ?? 'online',
-  })), [statusByRegion])
+  const points = useMemo(() => {
+    const infrastructure = INFRA_NODES.map((node) => ({
+      region: node.region,
+      label: node.label,
+      lat: node.coordinates[1],
+      lng: node.coordinates[0],
+      status: statusByRegion.get(node.region) ?? 'online',
+    }))
+    const origins = new Map<string, (typeof infrastructure)[number]>()
+    for (const event of activityEvents) {
+      if (!event.sourceRegion || origins.has(event.sourceRegion)) continue
+      const coordinates = activityRegionCoordinates(event.sourceRegion)
+      if (!coordinates) continue
+      origins.set(event.sourceRegion, {
+        region: event.sourceRegion,
+        label: `${activityRegionLabel(event.sourceRegion)} · live origin`,
+        lat: coordinates[1],
+        lng: coordinates[0],
+        status: 'online',
+      })
+    }
+    return [...infrastructure, ...origins.values()]
+  }, [activityEvents, statusByRegion])
 
   const arcs = useMemo<ActivityArc[]>(() => {
     if (!layout) return []
@@ -220,13 +244,14 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   const rings = useMemo<ActivityRing[]>(() => {
     if (!layout) return []
     return activityEvents.flatMap((event) => {
-      const node = INFRA_NODES.find((candidate) => candidate.region === event.region)
-      return node ? [{
-        id: `${event.region}-${event.emittedAt}`,
-        lat: node.coordinates[1],
-        lng: node.coordinates[0],
+      const region = event.sourceRegion ?? event.region
+      const coordinates = activityRegionCoordinates(region)
+      return coordinates ? [{
+        id: `${region}-${event.emittedAt}`,
+        lat: coordinates[1],
+        lng: coordinates[0],
         color: layout.primary,
-        maxRadius: Math.min(8, 2 + Math.log2(event.requests)),
+        maxRadius: Math.min(10, 3 + Math.log2(event.requests)),
       }] : []
     })
   }, [activityEvents, layout])

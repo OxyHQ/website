@@ -2,7 +2,7 @@ import { useCallback, useMemo, memo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { geoEquirectangular } from "d3-geo";
 import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
-import { activityRegionCoordinates } from "../../data/dashboard/activity-regions";
+import { activityRegionCoordinates, activityRegionLabel } from "../../data/dashboard/activity-regions";
 import { activityCategoryColor } from "../../data/dashboard/activity-categories";
 import type { InfraStatusNode, PlatformActivityEvent } from "../../api/hooks";
 
@@ -133,15 +133,17 @@ export default function DottedMap({
     if (!activityEvents || activityEvents.length === 0) return [];
 
     return activityEvents.map(event => {
-      const node = INFRA_NODES.find(candidate => candidate.region === event.region);
-      if (!node) return null;
-      const coords = projection(node.coordinates);
+      const region = event.sourceRegion ?? event.region;
+      const coordinates = activityRegionCoordinates(region);
+      if (!coordinates) return null;
+      const coords = projection(coordinates);
       if (!coords) return null;
       return {
-        key: `flash-${event.region}-${event.emittedAt}`,
+        key: `flash-${region}-${event.emittedAt}`,
         x: coords[0],
         y: coords[1],
         color: 'var(--color-primary)',
+        label: activityRegionLabel(region),
       };
     }).filter((f): f is NonNullable<typeof f> => f !== null);
   }, [activityEvents, projection]);
@@ -290,7 +292,10 @@ export default function DottedMap({
         <g>
           <AnimatePresence>
             {projectedFlashes.map(f => (
-              <ActivityFlash key={f.key} x={f.x} y={f.y} color={f.color} />
+              <g key={f.key}>
+                <ActivityFlash x={f.x} y={f.y} color={f.color} />
+                <text x={f.x} y={f.y - 10} textAnchor="middle" fill="var(--foreground)" fontSize={9} fontWeight={600}>{f.label}</text>
+              </g>
             ))}
           </AnimatePresence>
         </g>

@@ -18,9 +18,21 @@ const EDGE_COORDINATES: Record<string, Coordinates> = {
   syd: [151.2093, -33.8688],
 }
 
+const EDGE_CITY_NAMES: Record<string, string> = {
+  ams: 'Amsterdam', bcn: 'Barcelona', cdg: 'Paris', fra: 'Frankfurt', lhr: 'London',
+  lis: 'Lisbon', mad: 'Madrid', mrs: 'Marseille', otp: 'Bucharest', sof: 'Sofia',
+}
+
 export function activityRegionCoordinates(region: string): Coordinates | undefined {
   const infrastructure = INFRA_NODES.find((node) => node.region === region)
   if (infrastructure) return infrastructure.coordinates
   if (!region.startsWith('edge-')) return undefined
   return EDGE_COORDINATES[region.slice(5).toLowerCase()]
+}
+
+export function activityRegionLabel(region: string): string {
+  const infrastructure = INFRA_NODES.find((node) => node.region === region)
+  if (infrastructure) return infrastructure.label
+  const code = region.startsWith('edge-') ? region.slice(5).toLowerCase() : region.toLowerCase()
+  return EDGE_CITY_NAMES[code] ?? code.toUpperCase()
 }
