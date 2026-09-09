@@ -3,6 +3,7 @@ import { io, type Socket } from 'socket.io-client'
 export interface PlatformActivityEvent {
   region: string
   requests: number
+  activeClients?: number
   windowStartedAt: string
   emittedAt: string
   direction?: 'inbound' | 'outbound' | 'internal'

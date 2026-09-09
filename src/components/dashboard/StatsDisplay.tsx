@@ -255,10 +255,18 @@ export function TotalRequests({ stats }: { stats: PlatformStats }) {
 
 export function LiveOrigins({ events }: { events: PlatformActivityEvent[] }) {
   const { t, locale } = useTranslation();
+  const latestClientsByOrigin = new Map<string, { country: string; clients: number }>();
+  for (let index = events.length - 1; index >= 0; index -= 1) {
+    const event = events[index];
+    if (!event.sourceCountry || !event.sourceRegion || latestClientsByOrigin.has(event.sourceRegion)) continue;
+    latestClientsByOrigin.set(event.sourceRegion, {
+      country: event.sourceCountry,
+      clients: event.activeClients ?? 0,
+    });
+  }
   const connectionsByCountry = new Map<string, number>();
-  for (const event of events) {
-    if (!event.sourceCountry) continue;
-    connectionsByCountry.set(event.sourceCountry, (connectionsByCountry.get(event.sourceCountry) ?? 0) + 1);
+  for (const { country, clients } of latestClientsByOrigin.values()) {
+    connectionsByCountry.set(country, (connectionsByCountry.get(country) ?? 0) + clients);
   }
   const countries = [...connectionsByCountry.entries()]
     .sort((left, right) => right[1] - left[1])
