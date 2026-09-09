@@ -8,13 +8,6 @@ import {
   getFairCoinStatsServerSnapshot,
   type FairCoinStats,
 } from './faircoinStore'
-import {
-  subscribePlatformStats,
-  getPlatformStatsSnapshot,
-  getPlatformStatsServerSnapshot,
-  type PlatformStats,
-  type ActivityEvent,
-} from './platformStatsStore'
 
 import { type Testimonial } from '../data/content'
 import { type PricingPlan } from '../data/pricing'
@@ -914,19 +907,6 @@ export function useRevokeMcpToken() {
     mutationFn: (id: string) => apiFetch(`/mcp-tokens/${id}`, { method: 'DELETE' }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['mcp-tokens'] }),
   })
-}
-
-// ── Platform Stats (Dashboard) ──
-// Types are owned by ./platformStatsStore and re-exported here so existing
-// callers can keep importing from this module alongside the hook.
-export type { PlatformStats, ActivityEvent }
-
-export function usePlatformStats() {
-  return useSyncExternalStore(
-    subscribePlatformStats,
-    getPlatformStatsSnapshot,
-    getPlatformStatsServerSnapshot,
-  )
 }
 
 // ── Infrastructure Status ──
