@@ -7,9 +7,7 @@ import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
 function InfoIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M8 7V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="8" cy="5" r="0.75" fill="currentColor" />
+      <path d="m6 4 4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -172,13 +170,13 @@ function StatCard({
   const [showInfo, setShowInfo] = useState(false);
 
   const statsContent = (
-    <div className="h-full min-h-[120px] w-full bg-primary/15 p-4 backdrop-blur-lg md:p-6">
+    <div className="h-full min-h-[120px] w-full bg-primary/15 p-5 backdrop-blur-xl md:p-6">
       <div className="space-y-2">
-        <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-foreground pr-6">
+        <h2 className="my-0 pr-8 font-sans text-base font-semibold tracking-tight text-muted-foreground">
           {title}
         </h2>
         {value !== undefined && (
-          <div className="text-3xl md:text-4xl tracking-normal font-mono tabular-nums">
+          <div className="font-sans text-3xl font-semibold leading-none tracking-tight tabular-nums text-foreground md:text-4xl">
             {typeof value === "number" ? formatNumber(value) : value}
           </div>
         )}
@@ -188,7 +186,7 @@ function StatCard({
   );
 
   const infoContentView = (
-    <div className="flex h-full w-full flex-col gap-y-2 overflow-y-auto bg-primary/15 p-4 backdrop-blur-lg md:p-6">
+    <div className="flex h-full w-full flex-col gap-y-2 overflow-y-auto bg-primary/15 p-5 backdrop-blur-xl md:p-6">
       {href ? (
         <a
           href={href}
@@ -212,7 +210,7 @@ function StatCard({
   );
 
   return (
-    <div className={`group relative overflow-hidden rounded-2xl ${className || ""}`}>
+    <div className={`group relative overflow-hidden rounded-[28px] shadow-sm ring-1 ring-border/30 ${className || ""}`}>
       <PixelGridTransition
         firstContent={statsContent}
         secondContent={infoContentView}
@@ -222,12 +220,12 @@ function StatCard({
         className="h-full"
       />
       {infoContent && (
-        <div className={`absolute top-2 right-2 transition-opacity duration-150 z-[20] isolate ${showInfo ? "opacity-100" : "opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"}`}>
+        <div className="absolute right-4 top-4 z-[20] isolate">
           <button
             aria-label={`Learn more about ${title}`}
             type="button"
             onClick={() => setShowInfo(!showInfo)}
-            className="p-1 m-0 bg-transparent text-muted-foreground border-none md:border md:border-solid border-border hover:text-foreground hover:bg-accent transition-colors duration-150 flex items-center justify-center outline-none focus-visible:ring cursor-pointer"
+            className={`m-0 flex size-8 cursor-pointer items-center justify-center rounded-full border border-border/50 p-0 text-muted-foreground outline-none transition-colors duration-150 hover:bg-accent hover:text-foreground focus-visible:ring ${showInfo ? "bg-accent" : "bg-surface/50"}`}
           >
             <InfoIcon />
           </button>
@@ -239,29 +237,73 @@ function StatCard({
 
 function MetricRow({ label, value }: { label: string; value: number }) {
   return (
-    <li className="flex flex-wrap items-center justify-between gap-x-3">
-      <h3 className="m-0 font-mono font-normal text-sm text-muted-foreground uppercase">
+    <div className="flex flex-wrap items-center justify-between gap-x-3">
+      <h3 className="m-0 font-sans text-sm font-medium text-muted-foreground">
         {label}
       </h3>
-      <div className="text-foreground text-sm font-mono tabular-nums">
+      <div className="font-sans text-sm font-medium tabular-nums text-foreground">
         {formatNumber(value)}
       </div>
-    </li>
+    </div>
   );
 }
 
 function MetricTextRow({ label, value }: { label: string; value: string }) {
   return (
-    <li className="flex flex-wrap items-center justify-between gap-x-3">
-      <h3 className="m-0 font-mono text-sm font-normal uppercase text-muted-foreground">{label}</h3>
-      <div className="font-mono text-sm tabular-nums text-foreground">{value}</div>
-    </li>
+    <div className="flex flex-wrap items-center justify-between gap-x-3">
+      <h3 className="m-0 font-sans text-sm font-medium text-muted-foreground">{label}</h3>
+      <div className="font-sans text-sm font-medium tabular-nums text-foreground">{value}</div>
+    </div>
   );
 }
 
 function ratio(numerator: number, denominator: number, suffix = ""): string {
   if (denominator <= 0) return `0${suffix}`;
   return `${(numerator / denominator).toLocaleString(undefined, { maximumFractionDigits: 1 })}${suffix}`;
+}
+
+function ProgressBar({ value, label }: { value: number; label: string }) {
+  const boundedValue = Math.max(0, Math.min(100, value));
+  return (
+    <div className="space-y-1" role="img" aria-label={`${label}: ${boundedValue.toFixed(1)}%`}>
+      <div className="h-2 overflow-hidden rounded-full bg-border/50">
+        <div className="h-full rounded-full bg-primary" style={{ width: `${boundedValue}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function Donut({ value }: { value: number }) {
+  const boundedValue = Math.max(0, Math.min(100, value));
+  return (
+    <div
+      className="grid size-20 shrink-0 place-items-center rounded-full"
+      role="img"
+      aria-label={`${boundedValue.toFixed(1)}% active users`}
+      style={{ background: `conic-gradient(var(--primary) ${boundedValue}%, color-mix(in srgb, var(--border) 60%, transparent) 0)` }}
+    >
+      <div className="grid size-14 place-items-center rounded-full bg-card/90 text-xs tabular-nums text-foreground">
+        {boundedValue.toFixed(1)}%
+      </div>
+    </div>
+  );
+}
+
+function CountryBars({ countries }: { countries: PlatformStats["topCountries"] }) {
+  const visibleCountries = countries.slice(0, 6);
+  const maximum = Math.max(...visibleCountries.map((country) => country.count), 1);
+  return (
+    <div className="mt-2 flex h-10 items-end gap-1.5" aria-label="Activity distribution across leading countries">
+      {visibleCountries.map((country) => (
+        <div
+          key={country.location}
+          className="min-h-1 flex-1 rounded-t-sm bg-primary/70"
+          style={{ height: `${Math.max(12, (country.count / maximum) * 100)}%` }}
+          title={`${country.location}: ${formatNumber(country.count)}`}
+        />
+      ))}
+    </div>
+  );
 }
 
 export function TotalRequests({ stats }: { stats: PlatformStats }) {
@@ -345,13 +387,21 @@ export function RegionCount({ stats }: { stats: PlatformStats }) {
 
 export function StatsGrid({ stats }: { stats: PlatformStats }) {
   const leadingCountry = stats.topCountries[0]?.location ?? "Awaiting data";
+  const activeRate = stats.totalUsers > 0 ? (stats.activeSessions / stats.totalUsers) * 100 : 0;
+  const communicationTotal = stats.totalMessages + stats.totalNotifications;
+  const messageShare = communicationTotal > 0 ? (stats.totalMessages / communicationTotal) * 100 : 0;
+  const contentTotal = stats.totalFiles + stats.totalMessages + stats.totalFollows;
+  const fileShare = contentTotal > 0 ? (stats.totalFiles / contentTotal) * 100 : 0;
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:auto-rows-[126px] lg:grid-cols-12">
         <StatCard title="Total Users" value={stats.totalUsers} infoContent="Registered users across the Oxy ecosystem." className="lg:col-span-3 lg:row-span-2">
-          <div className="mt-5 space-y-2">
-            <MetricTextRow label="Active rate" value={ratio(stats.activeSessions * 100, stats.totalUsers, "%")} />
-            <MetricTextRow label="Follows / 1K users" value={ratio(stats.totalFollows * 1_000, stats.totalUsers)} />
+          <div className="mt-5 flex items-center gap-4">
+            <Donut value={activeRate} />
+            <div className="min-w-0 flex-1 space-y-2">
+              <MetricTextRow label="Active rate" value={ratio(stats.activeSessions * 100, stats.totalUsers, "%")} />
+              <MetricTextRow label="Follows / 1K" value={ratio(stats.totalFollows * 1_000, stats.totalUsers)} />
+            </div>
           </div>
         </StatCard>
         <StatCard title="Communication" value={stats.totalMessages} infoContent="Messages and notifications processed across Oxy communication products." className="lg:col-span-5">
@@ -359,6 +409,7 @@ export function StatsGrid({ stats }: { stats: PlatformStats }) {
             <MetricRow label="Notifications" value={stats.totalNotifications} />
             <MetricTextRow label="Messages / user" value={ratio(stats.totalMessages, stats.totalUsers)} />
           </div>
+          <ProgressBar value={messageShare} label="Share of communication made up by messages" />
         </StatCard>
         <StatCard title="Active Sessions" value={stats.activeSessions} infoContent="User sessions currently active across Oxy products." className="lg:col-span-2">
           <MetricRow label="Active regions" value={stats.regions} />
@@ -370,6 +421,7 @@ export function StatsGrid({ stats }: { stats: PlatformStats }) {
             <MetricTextRow label="Files / user" value={ratio(stats.totalFiles, stats.totalUsers)} />
             <MetricTextRow label="Content share" value={ratio(stats.totalFiles * 100, stats.totalFiles + stats.totalMessages + stats.totalFollows, "%")} />
           </div>
+          <ProgressBar value={fileShare} label="File share of stored and social content" />
         </StatCard>
         <StatCard title="Community" value={stats.totalFollows} infoContent="Social graph connections created across the Oxy ecosystem." className="lg:col-span-2">
           <MetricTextRow label="Follows / user" value={ratio(stats.totalFollows, stats.totalUsers)} />
@@ -382,7 +434,9 @@ export function StatsGrid({ stats }: { stats: PlatformStats }) {
           <MetricTextRow label="Per 1K users" value={ratio(stats.totalDeveloperApps * 1_000, stats.totalUsers)} />
         </StatCard>
         <StatCard title="Active Regions" value={stats.regions} infoContent="Infrastructure regions currently reporting an online or degraded state." className="lg:col-span-3" />
-        <StatCard title="Countries Tracked" value={stats.topCountries.length} infoContent="Countries present in the current privacy-preserving aggregate activity window." className="lg:col-span-3" />
+        <StatCard title="Countries Tracked" value={stats.topCountries.length} infoContent="Countries present in the current privacy-preserving aggregate activity window." className="lg:col-span-3">
+          <CountryBars countries={stats.topCountries} />
+        </StatCard>
         <StatCard title="Leading Country" value={leadingCountry} infoContent="Top country in the current anonymous aggregate activity window." className="lg:col-span-3" />
       </div>
       <p className="m-0 text-right font-mono text-xs text-muted-foreground">
