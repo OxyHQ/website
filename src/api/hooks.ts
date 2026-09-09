@@ -13,8 +13,13 @@ import {
   getPlatformStatsSnapshot,
   getPlatformStatsServerSnapshot,
   type PlatformStats,
-  type ActivityEvent,
 } from './platformStatsStore'
+import {
+  subscribePlatformActivity,
+  getPlatformActivitySnapshot,
+  getPlatformActivityServerSnapshot,
+  type PlatformActivityEvent,
+} from './platformActivityStore'
 
 import { type Testimonial } from '../data/content'
 import { type PricingPlan } from '../data/pricing'
@@ -920,13 +925,21 @@ export function useRevokeMcpToken() {
 // ── Platform Stats (Dashboard) ──
 // Types are owned by ./platformStatsStore and re-exported here so existing
 // callers can keep importing from this module alongside the hook.
-export type { PlatformStats, ActivityEvent }
+export type { PlatformStats, PlatformActivityEvent }
 
 export function usePlatformStats() {
   return useSyncExternalStore(
     subscribePlatformStats,
     getPlatformStatsSnapshot,
     getPlatformStatsServerSnapshot,
+  )
+}
+
+export function usePlatformActivity() {
+  return useSyncExternalStore(
+    subscribePlatformActivity,
+    getPlatformActivitySnapshot,
+    getPlatformActivityServerSnapshot,
   )
 }
 

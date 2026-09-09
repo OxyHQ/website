@@ -7,6 +7,12 @@ export interface InfraNode {
 
 export const INFRA_NODES: InfraNode[] = [
   {
+    region: "us-west-2",
+    label: "Oregon",
+    coordinates: [-122.6765, 45.5231],
+    services: ["oxy-api"],
+  },
+  {
     region: "ams3",
     label: "Amsterdam",
     coordinates: [4.9041, 52.3676],

@@ -1,7 +1,8 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatNumber } from "../../lib/utils";
-import type { PlatformStats } from "../../api/hooks";
+import type { PlatformActivityEvent, PlatformStats } from "../../api/hooks";
+import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
 
 function InfoIcon() {
   return (
@@ -280,15 +281,26 @@ function LocationRow({ location, count }: { location: string; count: number }) {
   );
 }
 
-export function TopCountries({ stats }: { stats: PlatformStats }) {
+export function LiveActivity({ events }: { events: PlatformActivityEvent[] }) {
+  const activityByRegion = new Map<string, number>();
+  for (const event of events) {
+    activityByRegion.set(event.region, (activityByRegion.get(event.region) ?? 0) + event.requests);
+  }
+  const regions = [...activityByRegion.entries()]
+    .sort((left, right) => right[1] - left[1])
+    .map(([region, count]) => ({
+      location: INFRA_NODES.find((node) => node.region === region)?.label ?? region,
+      count,
+    }));
+
   return (
     <div className="space-y-2">
       <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-muted-foreground">
-        Top Locations by Sessions
+        Live Processing Activity
       </h2>
       <ul className="list-none pl-0 space-y-1">
-        {stats.topCountries.length > 0 ? (
-          stats.topCountries.map((entry) => (
+        {regions.length > 0 ? (
+          regions.map((entry) => (
             <LocationRow
               key={entry.location}
               location={entry.location}
@@ -296,7 +308,7 @@ export function TopCountries({ stats }: { stats: PlatformStats }) {
             />
           ))
         ) : (
-          <li className="text-sm text-muted-foreground font-mono">No location data yet</li>
+          <li className="text-sm text-muted-foreground font-mono">Waiting for an anonymous activity bucket…</li>
         )}
       </ul>
     </div>

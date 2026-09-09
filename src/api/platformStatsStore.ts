@@ -21,16 +21,9 @@ export interface PlatformStats {
   timestamp: string
 }
 
-export interface ActivityEvent {
-  countryCode: string
-  delta: number
-  timestamp: number
-}
-
 export interface PlatformStatsState {
   data: PlatformStats
   isConnected: boolean
-  activityEvents: ActivityEvent[]
 }
 
 const DEFAULT_PLATFORM_STATS: PlatformStats = {
@@ -51,18 +44,13 @@ const DEFAULT_PLATFORM_STATS: PlatformStats = {
 const INITIAL_STATE: PlatformStatsState = {
   data: DEFAULT_PLATFORM_STATS,
   isConnected: false,
-  activityEvents: [],
 }
-
-const MAX_ACTIVITY_EVENTS = 15
 const POLL_INTERVAL_MS = 5_000
 
 type Listener = () => void
 
 let state: PlatformStatsState = INITIAL_STATE
 const listeners = new Set<Listener>()
-const prevCountries = new Map<string, number>()
-
 let client: ReturnType<OxyServices['getClient']> | null = null
 let pollTimer: ReturnType<typeof setInterval> | null = null
 
@@ -97,35 +85,9 @@ function ingest(upstream: UpstreamPlatformStats) {
     topCountries: upstream.topCountries ?? [],
     regions: upstream.regions ?? 0,
   }
-  const newEvents: ActivityEvent[] = []
-  const now = Date.now()
-
-  for (const entry of parsed.topCountries) {
-    const code = entry.location?.toUpperCase()
-    if (!code) continue
-    const prevCount = prevCountries.get(code) ?? 0
-    const delta = entry.count - prevCount
-    if (delta > 0 && prevCount > 0) {
-      newEvents.push({ countryCode: code, delta, timestamp: now + newEvents.length })
-    }
-  }
-
-  const nextActivity = newEvents.length > 0
-    ? [...state.activityEvents, ...newEvents].slice(-MAX_ACTIVITY_EVENTS)
-    : state.activityEvents
-
-  const nextMap = new Map<string, number>()
-  for (const entry of parsed.topCountries) {
-    const code = entry.location?.toUpperCase()
-    if (code) nextMap.set(code, entry.count)
-  }
-  prevCountries.clear()
-  nextMap.forEach((count, code) => prevCountries.set(code, count))
-
   setState({
     data: parsed,
     isConnected: true,
-    activityEvents: nextActivity,
   })
 }
 
@@ -154,7 +116,6 @@ function teardown() {
     clearInterval(pollTimer)
     pollTimer = null
   }
-  prevCountries.clear()
 }
 
 export function subscribePlatformStats(listener: Listener): () => void {
