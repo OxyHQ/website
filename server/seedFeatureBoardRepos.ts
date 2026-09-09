@@ -47,6 +47,7 @@ const REPOS: SeedRepo[] = [
   { owner: 'OxyHQ', repo: 'Astro', displayName: 'Astro' },
   { owner: 'OxyHQ', repo: 'Schedio', displayName: 'Schedio' },
   { owner: 'OxyHQ', repo: 'Clarity', displayName: 'Clarity' },
+  { owner: 'OxyHQ', repo: 'Nilo', displayName: 'Nilo' },
   { owner: 'OxyHQ', repo: 'CrowdSource', displayName: 'CrowdSource' },
   { owner: 'OxyHQ', repo: 'Authenticator', displayName: 'Oxy Authenticator' },
   { owner: 'OxyHQ', repo: 'tnp', displayName: 'TNP' },

@@ -68,13 +68,13 @@
       "name": "Clarity",
       "localPath": "/home/nate/Oxy/Clarity",
       "git": "https://github.com/OxyHQ/Clarity.git",
-      "ref": "master"
+      "ref": "main"
     },
     {
       "name": "OxyOS",
       "localPath": "/home/nate/Oxy/OxyOS",
       "git": "https://github.com/OxyHQ/OxyOS.git",
-      "ref": "master"
+      "ref": "main"
     },
     {
       "name": "OxyFont",
