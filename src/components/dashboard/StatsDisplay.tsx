@@ -38,6 +38,7 @@ function StatCard({
   infoContent,
   href,
   className,
+  filledAction = false,
 }: {
   title: string;
   value?: number | string;
@@ -45,17 +46,18 @@ function StatCard({
   infoContent?: string;
   href?: string;
   className?: string;
+  filledAction?: boolean;
 }) {
   const [showInfo, setShowInfo] = useState(false);
 
   const statsContent = (
-    <div className="h-full min-h-[120px] w-full bg-card p-5 md:p-7">
+    <div className="h-full min-h-[120px] w-full bg-surface p-5 md:p-7" style={{ fontFamily: "Arial, sans-serif" }}>
       <div className="space-y-2">
-        <h2 className="my-0 pr-10 font-sans text-lg font-semibold tracking-tight text-muted-foreground">
+        <h2 className="my-0 pr-10 text-lg font-semibold tracking-tight text-muted-foreground/75">
           {title}
         </h2>
         {value !== undefined && (
-          <div className="font-sans text-4xl font-semibold leading-none tracking-tight tabular-nums text-foreground md:text-5xl">
+          <div className="text-4xl font-semibold leading-none tracking-tight tabular-nums text-foreground md:text-[42px]">
             {typeof value === "number" ? formatNumber(value) : value}
           </div>
         )}
@@ -65,7 +67,7 @@ function StatCard({
   );
 
   const infoContentView = (
-    <div className="flex h-full w-full flex-col gap-y-2 overflow-y-auto bg-card p-5 md:p-7">
+    <div className="flex h-full w-full flex-col gap-y-2 overflow-y-auto bg-surface p-5 md:p-7" style={{ fontFamily: "Arial, sans-serif" }}>
       {href ? (
         <a
           href={href}
@@ -82,7 +84,7 @@ function StatCard({
           {title}
         </span>
       )}
-      <span className="tracking-tight text-sm text-muted-foreground leading-relaxed line-clamp-6">
+      <span className="text-sm leading-relaxed tracking-tight text-muted-foreground line-clamp-6">
         {infoContent}
       </span>
     </div>
@@ -99,12 +101,12 @@ function StatCard({
         className="h-full"
       />
       {infoContent && (
-        <div className="absolute right-4 top-4 z-[20] isolate">
+        <div className="absolute right-7 top-7 z-[20] isolate">
           <button
             aria-label={`Learn more about ${title}`}
             type="button"
             onClick={() => setShowInfo(!showInfo)}
-            className={`m-0 flex size-8 cursor-pointer items-center justify-center rounded-full border border-border/50 p-0 text-muted-foreground outline-none transition-colors duration-150 hover:bg-accent hover:text-foreground focus-visible:ring ${showInfo ? "bg-accent" : "bg-surface/50"}`}
+            className={`m-0 flex size-10 cursor-pointer items-center justify-center rounded-full border p-0 text-muted-foreground outline-none transition-colors duration-150 hover:bg-accent hover:text-foreground focus-visible:ring ${filledAction || showInfo ? "border-transparent bg-accent" : "border-transparent bg-transparent"}`}
           >
             <InfoIcon />
           </button>
@@ -117,10 +119,10 @@ function StatCard({
 function MetricRow({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-x-3">
-      <h3 className="m-0 font-sans text-sm font-medium text-muted-foreground">
+      <h3 className="m-0 text-sm font-medium text-muted-foreground">
         {label}
       </h3>
-      <div className="font-sans text-sm font-medium tabular-nums text-foreground">
+      <div className="text-sm font-medium tabular-nums text-foreground">
         {formatNumber(value)}
       </div>
     </div>
@@ -130,8 +132,8 @@ function MetricRow({ label, value }: { label: string; value: number }) {
 function MetricTextRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-x-3">
-      <h3 className="m-0 font-sans text-sm font-medium text-muted-foreground">{label}</h3>
-      <div className="font-sans text-sm font-medium tabular-nums text-foreground">{value}</div>
+      <h3 className="m-0 text-sm font-medium text-muted-foreground">{label}</h3>
+      <div className="text-sm font-medium tabular-nums text-foreground">{value}</div>
     </div>
   );
 }
@@ -141,13 +143,12 @@ function ratio(numerator: number, denominator: number, suffix = ""): string {
   return `${(numerator / denominator).toLocaleString(undefined, { maximumFractionDigits: 1 })}${suffix}`;
 }
 
-function ProgressBar({ value, label }: { value: number; label: string }) {
+function SplitBar({ value, label }: { value: number; label: string }) {
   const boundedValue = Math.max(0, Math.min(100, value));
   return (
-    <div className="space-y-1" role="img" aria-label={`${label}: ${boundedValue.toFixed(1)}%`}>
-      <div className="h-2 overflow-hidden rounded-full bg-border/50">
-        <div className="h-full rounded-full bg-primary" style={{ width: `${boundedValue}%` }} />
-      </div>
+    <div className="flex h-7 overflow-hidden rounded-md" role="img" aria-label={`${label}: ${boundedValue.toFixed(1)}%`}>
+      <span className="h-full bg-primary" style={{ width: `${boundedValue}%` }} />
+      <span className="h-full flex-1 bg-border/60" />
     </div>
   );
 }
@@ -156,14 +157,20 @@ function Donut({ value }: { value: number }) {
   const boundedValue = Math.max(0, Math.min(100, value));
   return (
     <div
-      className="grid size-28 shrink-0 place-items-center rounded-full"
+      className="relative grid size-32 shrink-0 place-items-center rounded-full"
       role="img"
       aria-label={`${boundedValue.toFixed(1)}% active users`}
       style={{ background: `conic-gradient(var(--primary) ${boundedValue}%, color-mix(in srgb, var(--border) 60%, transparent) 0)` }}
     >
-      <div className="grid size-20 place-items-center rounded-full bg-card/90 text-sm font-semibold tabular-nums text-foreground">
+      <div className="grid size-[88px] place-items-center rounded-full bg-surface text-sm font-semibold tabular-nums text-foreground">
         {boundedValue.toFixed(1)}%
       </div>
+      <span aria-hidden="true" className="absolute left-1/2 top-0 h-5 w-1 -translate-x-1/2 bg-surface" />
+      <span
+        aria-hidden="true"
+        className="absolute left-1/2 top-0 h-5 w-1 -translate-x-1/2 origin-[50%_64px] bg-surface"
+        style={{ transform: `translateX(-50%) rotate(${boundedValue * 3.6}deg)` }}
+      />
     </div>
   );
 }
@@ -171,25 +178,31 @@ function Donut({ value }: { value: number }) {
 function CountryBars({ countries }: { countries: PlatformStats["topCountries"] }) {
   const visibleCountries = countries.slice(0, 6);
   const maximum = Math.max(...visibleCountries.map((country) => country.count), 1);
+  const idleHeights = [30, 52, 42, 68, 48, 62, 38, 56, 46, 70, 50, 64, 44, 58, 36, 66, 48, 60, 40, 54];
   return (
-    <div className="mt-4 flex h-16 items-end gap-2" aria-label="Activity distribution across leading countries">
-      {visibleCountries.map((country) => (
-        <div
-          key={country.location}
-          className="min-h-1 flex-1 rounded-t-md bg-primary/70"
-          style={{ height: `${Math.max(12, (country.count / maximum) * 100)}%` }}
-          title={`${country.location}: ${formatNumber(country.count)}`}
-        />
-      ))}
+    <div className="mt-4 flex h-24 items-end gap-2" aria-label="Activity distribution across leading countries">
+      {idleHeights.map((idleHeight, index) => {
+        const country = visibleCountries[index];
+        const height = country ? Math.max(12, (country.count / maximum) * 100) : idleHeight;
+        return (
+          <div
+            key={country?.location ?? index}
+            className={`min-h-1 flex-1 rounded-t-md ${country ? (index === 0 ? "bg-primary" : "bg-primary/45") : "bg-border/30"}`}
+            style={{ height: `${height}%` }}
+            title={country ? `${country.location}: ${formatNumber(country.count)}` : undefined}
+          />
+        );
+      })}
     </div>
   );
 }
 
-function ActivityChart({ events }: { events: PlatformActivityEvent[] }) {
-  const values = events.slice(-16).map((event) => event.requests);
-  if (values.length < 2) {
+function ActivityChart({ events, tone = "var(--chart-1)", id }: { events: PlatformActivityEvent[]; tone?: string; id: string }) {
+  const observedValues = events.slice(-16).map((event) => event.requests);
+  if (observedValues.length === 0) {
     return <div className="mt-8 text-sm font-medium text-muted-foreground">Waiting for live activity…</div>;
   }
+  const values = observedValues.length === 1 ? [observedValues[0], observedValues[0]] : observedValues;
   const maximum = Math.max(...values, 1);
   const points = values.map((value, index) => {
     const x = (index / (values.length - 1)) * 100;
@@ -198,16 +211,30 @@ function ActivityChart({ events }: { events: PlatformActivityEvent[] }) {
   }).join(" ");
   const area = `0,48 ${points} 100,48`;
   return (
-    <svg className="mt-3 h-20 w-full overflow-visible" viewBox="0 0 100 48" preserveAspectRatio="none" role="img" aria-label="Recent anonymous request activity">
+    <svg className="mt-3 h-28 w-full overflow-visible" viewBox="0 0 100 48" preserveAspectRatio="none" role="img" aria-label="Recent anonymous request activity">
       <defs>
-        <linearGradient id="activity-area" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="var(--primary)" stopOpacity="0.35" />
-          <stop offset="1" stopColor="var(--primary)" stopOpacity="0" />
+        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={tone} stopOpacity="0.35" />
+          <stop offset="1" stopColor={tone} stopOpacity="0" />
         </linearGradient>
       </defs>
-      <polygon points={area} fill="url(#activity-area)" />
-      <polyline points={points} fill="none" stroke="var(--primary)" strokeWidth="1.5" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
+      <polygon points={area} fill={`url(#${id})`} />
+      <polyline points={points} fill="none" stroke={tone} strokeWidth="1.5" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
+  );
+}
+
+function SegmentedScale({ value, maximum, label }: { value: number; maximum: number; label: string }) {
+  const segments = 22;
+  const filled = maximum > 0 ? Math.round((value / maximum) * segments) : 0;
+  return (
+    <div className="mt-5" role="img" aria-label={`${label}: ${formatNumber(value)} of ${formatNumber(maximum)}`}>
+      <div className="flex h-16 items-stretch gap-1">
+        {Array.from({ length: segments }, (_, index) => (
+          <span key={index} className={`flex-1 rounded-sm ${index < filled ? "bg-primary" : "bg-border/40"}`} />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -292,7 +319,6 @@ export function RegionCount({ stats }: { stats: PlatformStats }) {
 
 export function StatsGrid({ stats, events }: { stats: PlatformStats; events: PlatformActivityEvent[] }) {
   const leadingCountry = stats.topCountries[0]?.location ?? "Awaiting data";
-  const activeRate = stats.totalUsers > 0 ? (stats.activeSessions / stats.totalUsers) * 100 : 0;
   const communicationTotal = stats.totalMessages + stats.totalNotifications;
   const messageShare = communicationTotal > 0 ? (stats.totalMessages / communicationTotal) * 100 : 0;
   const contentTotal = stats.totalFiles + stats.totalMessages + stats.totalFollows;
@@ -301,12 +327,12 @@ export function StatsGrid({ stats, events }: { stats: PlatformStats; events: Pla
   return (
     <div className="mx-auto max-w-[1000px] space-y-3">
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:auto-rows-[280px] lg:grid-cols-[4fr_4fr_6fr]">
-        <StatCard title="Total Users" value={stats.totalUsers} infoContent="Registered users across the Oxy ecosystem.">
-          <div className="mt-4 space-y-3">
-            <MetricTextRow label="Active now" value={formatNumber(stats.activeSessions)} />
-            <ProgressBar value={activeRate} label="Active users as a share of registered users" />
-            <MetricTextRow label="Community connections" value={formatNumber(stats.totalFollows)} />
+        <StatCard title="Total Users" value={stats.totalUsers} infoContent="Registered users across the Oxy ecosystem." filledAction>
+          <div className="mt-3 flex items-center gap-2 text-sm font-semibold text-primary">
+            <span>{formatNumber(stats.activeSessions)} active now</span>
+            <span aria-hidden="true">↗</span>
           </div>
+          <ActivityChart events={events} tone="var(--success)" id="users-activity-area" />
         </StatCard>
         <StatCard title="Content Value" value={contentTotal} infoContent="Files, messages and community connections represented in the platform totals.">
           <div className="mt-6 space-y-3">
@@ -314,19 +340,20 @@ export function StatsGrid({ stats, events }: { stats: PlatformStats; events: Pla
               <span>Files {fileShare.toFixed(1)}%</span>
               <span>Social {(100 - fileShare).toFixed(1)}%</span>
             </div>
-            <ProgressBar value={fileShare} label="Files compared with messages and community connections" />
+            <SplitBar value={fileShare} label="Files compared with messages and community connections" />
             <MetricTextRow label="Files / user" value={ratio(stats.totalFiles, stats.totalUsers)} />
           </div>
         </StatCard>
         <StatCard title="Live Request Activity" value={recentRequests} infoContent="Anonymous request buckets received over the live socket connection.">
-          <ActivityChart events={events} />
+          <ActivityChart events={events} id="requests-activity-area" />
         </StatCard>
 
-        <StatCard title="Developer Platform" value={stats.totalDeveloperApps} infoContent="Developer applications, transactions and AI models currently available.">
-          <div className="mt-4 space-y-3">
-            <MetricRow label="Transactions" value={stats.totalTransactions} />
-            <MetricRow label="AI models" value={stats.aiModels} />
-            <MetricTextRow label="Apps / 1K users" value={ratio(stats.totalDeveloperApps * 1_000, stats.totalUsers)} />
+        <StatCard title="Developer Platform" value={stats.totalDeveloperApps} infoContent="Developer applications, transactions and AI models currently available." filledAction>
+          <div className="mt-3 text-sm font-semibold text-primary">{formatNumber(stats.totalTransactions)} transactions</div>
+          <SegmentedScale value={stats.totalDeveloperApps} maximum={stats.totalDeveloperApps + stats.aiModels} label="Developer applications" />
+          <div className="mt-3 flex justify-between text-sm text-muted-foreground">
+            <span>{stats.aiModels} AI models</span>
+            <span>{ratio(stats.totalDeveloperApps * 1_000, stats.totalUsers)} / 1K users</span>
           </div>
         </StatCard>
         <StatCard title="Communication Mix" infoContent="Messages and notifications processed across Oxy communication products.">
@@ -339,12 +366,10 @@ export function StatsGrid({ stats, events }: { stats: PlatformStats; events: Pla
           </div>
         </StatCard>
         <StatCard title="Geographic Activity" value={stats.topCountries.length} infoContent="Privacy-preserving aggregate activity across countries and infrastructure regions.">
-          <div className="grid grid-cols-[1fr_auto] gap-5">
-            <CountryBars countries={stats.topCountries} />
-            <div className="mt-4 space-y-3 text-right">
-              <MetricTextRow label="Leader" value={leadingCountry} />
-              <MetricRow label="Regions" value={stats.regions} />
-            </div>
+          <CountryBars countries={stats.topCountries} />
+          <div className="mt-3 flex justify-between text-sm text-muted-foreground">
+            <span>{leadingCountry}</span>
+            <span>{stats.regions} active regions</span>
           </div>
         </StatCard>
       </div>

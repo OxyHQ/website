@@ -120,7 +120,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <section className={`relative z-10 shrink-0 ${isFullscreen ? "pb-6 pt-4" : "pb-12 pt-8 md:pb-16"}`}>
+          <section className={`relative z-10 shrink-0 transform-gpu ${isFullscreen ? "pb-6 pt-4" : "pb-12 pt-8 md:pb-16"}`}>
             <StatsGrid stats={displayedStats} events={activityEvents} />
           </section>
         </div>
