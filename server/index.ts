@@ -130,18 +130,6 @@ app.use('/api/funding-progress', fundingRouter)
 // second, shorter route list on this origin could advertise URLs the build
 // never emitted. See the header of `scripts/sitemap.ts`.
 
-// Platform stats — proxy to Oxy API
-app.get('/api/platform-stats', async (_req, res) => {
-  try {
-    const resp = await fetch(`${config.oxyApiBase}/platform-stats`)
-    if (!resp.ok) throw new Error(`Oxy API returned ${resp.status}`)
-    res.json(await resp.json())
-  } catch (error) {
-    console.error('Platform stats proxy error:', error)
-    res.status(502).json({ error: 'Failed to fetch platform stats' })
-  }
-})
-
 // Infrastructure status — polls DigitalOcean API for droplet/app/db health
 interface InfraStatusNode {
   region: string

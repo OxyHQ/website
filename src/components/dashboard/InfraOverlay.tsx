@@ -2,9 +2,9 @@ import type { InfraStatusNode } from "../../api/hooks";
 import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
 
 const STATUS_COLORS = {
-  online: '#10B981',
-  degraded: '#F59E0B',
-  offline: '#EF4444',
+  online: 'var(--success-text)',
+  degraded: 'var(--warning-text)',
+  offline: 'var(--destructive)',
 } as const;
 
 interface InfraOverlayProps {
