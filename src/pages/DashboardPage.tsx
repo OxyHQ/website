@@ -30,6 +30,10 @@ function getFullscreenServerSnapshot(): boolean {
 export default function DashboardPage() {
   const { data: stats, activityEvents } = usePlatformStats();
   const { data: infraData } = useInfraStatus();
+  const displayedStats = {
+    ...stats,
+    regions: infraData?.nodes.filter((node) => node.status !== 'offline').length ?? stats.regions,
+  };
   const dashboardRef = useRef<HTMLDivElement>(null);
   const isFullscreen = useSyncExternalStore(
     subscribeFullscreen,
@@ -81,7 +85,7 @@ export default function DashboardPage() {
           <div className="relative flex-1 min-h-0">
             <div className="pointer-events-none w-full h-full flex items-center justify-center">
               <MapContainer
-                activeCountries={stats.topCountries}
+                activeCountries={displayedStats.topCountries}
                 infraStatus={infraData?.nodes}
                 activityEvents={activityEvents}
               />
@@ -89,10 +93,10 @@ export default function DashboardPage() {
 
             <div className="min-[961px]:absolute min-[961px]:bottom-0 min-[961px]:left-0 z-10 pb-2">
               <div className="flex flex-col gap-y-4">
-                <TotalRequests stats={stats} />
-                <TopCountries stats={stats} />
+                <TotalRequests stats={displayedStats} />
+                <TopCountries stats={displayedStats} />
               </div>
-              <RegionCount stats={stats} />
+              <RegionCount stats={displayedStats} />
             </div>
 
             <div className="min-[961px]:absolute min-[961px]:bottom-0 min-[961px]:right-0 z-10 pb-2">
@@ -101,7 +105,7 @@ export default function DashboardPage() {
           </div>
 
           <section className="shrink-0 pt-8 pb-6">
-            <StatsGrid stats={stats} />
+            <StatsGrid stats={displayedStats} />
           </section>
         </div>
       </main>

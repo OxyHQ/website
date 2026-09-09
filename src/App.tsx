@@ -16,6 +16,7 @@ import {
 } from './theme'
 import { LocaleProvider, DEFAULT_LOCALE, SUPPORTED_LOCALES } from './lib/i18n'
 import { setOxyServices } from './api/client'
+import { setPlatformStatsOxyServices } from './api/platformStatsStore'
 import { isFairCoinHost } from './lib/host'
 import ErrorBoundary from './components/ErrorBoundary'
 import IntercomMessenger from './components/integrations/IntercomMessenger'
@@ -156,6 +157,7 @@ function AppSetup({ children }: { children: React.ReactNode }) {
   // Wire the website's own-backend fetch client to the SDK session so every
   // /api call carries the current bearer token without manual token plumbing.
   setOxyServices(oxyServices)
+  setPlatformStatsOxyServices(oxyServices)
 
   // Resolve Bloom image file IDs to download URLs. The optional `variant`
   // selects the rendition (e.g. 'thumb') and is forwarded from Avatar's

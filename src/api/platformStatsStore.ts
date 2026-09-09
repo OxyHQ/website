@@ -1,8 +1,10 @@
 /**
- * Module-level store for the Oxy platform stats live stream.
- * Mirrors the faircoinStore pattern: one shared EventSource across
- * all subscribers, with an HTTP fallback on error.
+ * Module-level store for the authenticated Oxy platform stats feed.
+ * The upstream route is staff-only, so requests go through the Oxy SDK's
+ * session-bound client; EventSource cannot carry its Authorization header.
  */
+
+import type { OxyServices } from '@oxyhq/core'
 
 export interface PlatformStats {
   totalUsers: number
@@ -53,12 +55,7 @@ const INITIAL_STATE: PlatformStatsState = {
 }
 
 const MAX_ACTIVITY_EVENTS = 15
-// Oxy platform API base URL. Mirrors the VITE_OXY_API convention used in
-// App.tsx — a deploy can override it; the production URL is the fallback.
-const OXY_API =
-  (import.meta.env.VITE_OXY_API as string | undefined) || 'https://api.oxy.so'
-const INITIAL_RECONNECT_DELAY_MS = 1_000
-const MAX_RECONNECT_DELAY_MS = 30_000
+const POLL_INTERVAL_MS = 5_000
 
 type Listener = () => void
 
@@ -66,9 +63,8 @@ let state: PlatformStatsState = INITIAL_STATE
 const listeners = new Set<Listener>()
 const prevCountries = new Map<string, number>()
 
-let es: EventSource | null = null
-let reconnectTimer: ReturnType<typeof setTimeout> | null = null
-let reconnectAttempts = 0
+let client: ReturnType<OxyServices['getClient']> | null = null
+let pollTimer: ReturnType<typeof setInterval> | null = null
 
 function emit() {
   listeners.forEach((listener) => listener())
@@ -79,7 +75,28 @@ function setState(next: PlatformStatsState) {
   emit()
 }
 
-function ingest(parsed: PlatformStats) {
+interface UpstreamPlatformStats {
+  totalUsers: number
+  activeSessions: number
+  totalMessages: number
+  totalNotifications: number
+  totalFiles: number
+  totalTransactions: number
+  totalApplications: number
+  totalFollows: number
+  aiModels: number
+  timestamp: string
+  topCountries?: Array<{ location: string; count: number }>
+  regions?: number
+}
+
+function ingest(upstream: UpstreamPlatformStats) {
+  const parsed: PlatformStats = {
+    ...upstream,
+    totalDeveloperApps: upstream.totalApplications,
+    topCountries: upstream.topCountries ?? [],
+    regions: upstream.regions ?? 0,
+  }
   const newEvents: ActivityEvent[] = []
   const now = Date.now()
 
@@ -112,97 +129,41 @@ function ingest(parsed: PlatformStats) {
   })
 }
 
-async function fetchFallback() {
+async function fetchStats() {
+  if (!client) return
   try {
-    const resp = await fetch(`${OXY_API}/platform-stats`)
-    if (!resp.ok) return
-    const json = (await resp.json()) as PlatformStats
-    ingest(json)
+    ingest(await client.request<UpstreamPlatformStats>({
+      method: 'GET',
+      url: '/platform-stats',
+      retry: false,
+      deduplicate: false,
+    }))
   } catch (err) {
-    console.warn('[platformStatsStore] HTTP fallback failed:', err)
+    setState({ ...state, isConnected: false })
+    console.warn('[platformStatsStore] authenticated refresh failed:', err)
   }
 }
 
-/**
- * Reconnect the stream with exponential backoff, mirroring `faircoinStore`.
- * Without this a single network blip left the store permanently disconnected:
- * nothing re-opened the EventSource, and `subscribePlatformStats` only opens on
- * an empty→non-empty listener transition, so a dashboard left open froze.
- *
- * Each attempt also refreshes over plain HTTP, so the numbers keep advancing
- * even where the SSE stream itself is unreachable (a proxy stripping
- * `text/event-stream`, for instance).
- */
-function scheduleReconnect() {
-  if (reconnectTimer || listeners.size === 0) return
-  const delay = Math.min(
-    INITIAL_RECONNECT_DELAY_MS * Math.pow(2, reconnectAttempts++),
-    MAX_RECONNECT_DELAY_MS
-  )
-  reconnectTimer = setTimeout(() => {
-    reconnectTimer = null
-    if (listeners.size === 0) return
-    fetchFallback()
-    openStream()
-  }, delay)
-}
-
-function openStream() {
-  if (typeof EventSource === 'undefined') {
-    fetchFallback()
-    return
-  }
-  if (es) return
-
-  try {
-    const source = new EventSource(`${OXY_API}/platform-stats/stream`)
-    es = source
-
-    source.onopen = () => {
-      reconnectAttempts = 0
-    }
-
-    source.onmessage = (event) => {
-      try {
-        ingest(JSON.parse(event.data) as PlatformStats)
-      } catch (err) {
-        console.warn('[platformStatsStore] stream parse failed:', err)
-      }
-    }
-
-    source.onerror = () => {
-      setState({ ...state, isConnected: false })
-      if (es === source) {
-        source.close()
-        es = null
-      }
-      scheduleReconnect()
-    }
-  } catch (err) {
-    console.warn('[platformStatsStore] stream open failed:', err)
-    fetchFallback()
-    scheduleReconnect()
-  }
+export function setPlatformStatsOxyServices(oxyServices: OxyServices): void {
+  client = oxyServices.getClient()
+  if (listeners.size > 0) void fetchStats()
 }
 
 function teardown() {
-  if (es) {
-    const source = es
-    es = null
-    source.close()
+  if (pollTimer) {
+    clearInterval(pollTimer)
+    pollTimer = null
   }
-  if (reconnectTimer) {
-    clearTimeout(reconnectTimer)
-    reconnectTimer = null
-  }
-  reconnectAttempts = 0
   prevCountries.clear()
 }
 
 export function subscribePlatformStats(listener: Listener): () => void {
   const wasEmpty = listeners.size === 0
   listeners.add(listener)
-  if (wasEmpty) openStream()
+  if (wasEmpty) {
+    void fetchStats()
+    pollTimer = setInterval(fetchStats, POLL_INTERVAL_MS)
+  }
   return () => {
     listeners.delete(listener)
     if (listeners.size === 0) teardown()
