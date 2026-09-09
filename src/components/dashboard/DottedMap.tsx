@@ -1,7 +1,6 @@
-import { useMemo, memo } from "react";
+import { useCallback, useMemo, memo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { geoMercator } from "d3-geo";
-import dottedMapData from "../../data/dashboard/dotted-map-data.json";
+import { geoEquirectangular } from "d3-geo";
 import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
 import type { InfraStatusNode, PlatformActivityEvent } from "../../api/hooks";
 
@@ -10,11 +9,6 @@ const STATUS_COLORS = {
   degraded: 'var(--color-warning)',
   offline: 'var(--color-destructive)',
 } as const;
-
-const StaticPixel = memo(({ x, y }: { x: number; y: number }) => (
-  <rect x={x} y={y} width={3} height={3} fill="var(--muted-foreground)" fillOpacity={0.3} />
-));
-StaticPixel.displayName = "StaticPixel";
 
 const InfraNodeMarker = memo(
   ({ x, y, label, status, services }: {
@@ -95,37 +89,19 @@ export default function DottedMap({
   infraStatus,
   activityEvents,
 }: DottedMapProps) {
+  const [viewport, setViewport] = useState({ x: 140, y: 42, width: 720, height: 476 });
+  const viewportRef = useRef(viewport);
+  const dragRef = useRef<{ pointerX: number; pointerY: number; viewX: number; viewY: number } | null>(null);
+  const returnTimerRef = useRef<number | null>(null);
+  const focusFrameRef = useRef<number | null>(null);
+  viewportRef.current = viewport;
   const projection = useMemo(
     () =>
-      geoMercator()
-        .scale(140)
-        .center([15, 25])
-        .rotate([0, 0, 0])
+      geoEquirectangular()
+        .scale(height / Math.PI)
         .translate([width / 2, height / 2]),
     [width, height]
   );
-
-  const staticPixels = useMemo(() => {
-    const staticArr: Array<{ key: string; x: number; y: number }> = [];
-
-    Object.entries(dottedMapData as Record<string, Array<{ lon: number; lat: number; cityDistanceRank: number }>>).forEach(
-      ([countryCode, cities]) => {
-        cities.forEach((city) => {
-          const coords = projection([city.lon, city.lat]);
-          if (!coords) return;
-
-          const [x, y] = coords;
-          if (x < 0 || x > width || y < 0 || y > height) return;
-
-          const key = `${countryCode}-${city.cityDistanceRank}`;
-
-          staticArr.push({ key, x, y });
-        });
-      }
-    );
-
-    return staticArr;
-  }, [projection, width, height]);
 
   // Project infra node positions
   const projectedInfraNodes = useMemo(() => {
@@ -168,11 +144,108 @@ export default function DottedMap({
     }).filter((f): f is NonNullable<typeof f> => f !== null);
   }, [activityEvents, projection]);
 
+  const projectedRoutes = useMemo(() => {
+    if (!activityEvents || activityEvents.length === 0) return [];
+
+    return activityEvents.flatMap(event => {
+      const source = INFRA_NODES.find(node => node.region === event.region);
+      const start = source ? projection(source.coordinates) : null;
+      if (!start) return [];
+
+      return INFRA_NODES
+        .filter(node => node.region !== event.region)
+        .flatMap(target => {
+          const end = projection(target.coordinates);
+          if (!end) return [];
+          const curve = Math.min(80, Math.abs(end[0] - start[0]) * 0.18 + 24);
+          return [{
+            key: `route-${event.region}-${target.region}-${event.emittedAt}`,
+            path: `M ${start[0]} ${start[1]} Q ${(start[0] + end[0]) / 2} ${Math.min(start[1], end[1]) - curve} ${end[0]} ${end[1]}`,
+          }];
+        });
+    });
+  }, [activityEvents, projection]);
+
+  const cancelAutomaticFocus = useCallback(() => {
+    if (returnTimerRef.current !== null) window.clearTimeout(returnTimerRef.current);
+    if (focusFrameRef.current !== null) window.cancelAnimationFrame(focusFrameRef.current);
+    returnTimerRef.current = null;
+    focusFrameRef.current = null;
+  }, []);
+
+  const scheduleAutomaticFocus = useCallback(() => {
+    cancelAutomaticFocus();
+    returnTimerRef.current = window.setTimeout(() => {
+      const requestsByRegion = new Map<string, number>();
+      for (const event of activityEvents ?? []) {
+        requestsByRegion.set(event.region, (requestsByRegion.get(event.region) ?? 0) + event.requests);
+      }
+      const busiestRegion = [...requestsByRegion.entries()]
+        .sort((left, right) => right[1] - left[1])[0]?.[0];
+      const busiestNode = INFRA_NODES.find(node => node.region === busiestRegion);
+      const focus = busiestNode ? projection(busiestNode.coordinates) : null;
+      if (!focus) return;
+
+      const start = viewportRef.current;
+      const targetX = Math.max(0, Math.min(width - start.width, focus[0] - start.width / 2));
+      const targetY = Math.max(0, Math.min(height - start.height, focus[1] - start.height / 2));
+      const startedAt = performance.now();
+      const animateFocus = (now: number) => {
+        const progress = Math.min(1, (now - startedAt) / 900);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setViewport(current => ({
+          ...current,
+          x: start.x + (targetX - start.x) * eased,
+          y: start.y + (targetY - start.y) * eased,
+        }));
+        if (progress < 1) focusFrameRef.current = window.requestAnimationFrame(animateFocus);
+      };
+      focusFrameRef.current = window.requestAnimationFrame(animateFocus);
+    }, 4_000);
+  }, [activityEvents, cancelAutomaticFocus, height, projection, width]);
+
+  const rootRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    return cancelAutomaticFocus;
+  }, [cancelAutomaticFocus]);
+
   return (
-    <div className="relative w-full">
+    <div ref={rootRef} className="relative h-full w-full">
       <svg
-        viewBox={`0 0 ${width} ${height}`}
-        className="w-full h-auto max-h-[50dvh] bg-background"
+        viewBox={`${viewport.x} ${viewport.y} ${viewport.width} ${viewport.height}`}
+        className="h-full w-full cursor-grab touch-none bg-background active:cursor-grabbing"
+        preserveAspectRatio="none"
+        onPointerDown={(event) => {
+          cancelAutomaticFocus();
+          event.currentTarget.setPointerCapture(event.pointerId);
+          dragRef.current = {
+            pointerX: event.clientX,
+            pointerY: event.clientY,
+            viewX: viewport.x,
+            viewY: viewport.y,
+          };
+        }}
+        onPointerMove={(event) => {
+          const drag = dragRef.current;
+          if (!drag) return;
+          const bounds = event.currentTarget.getBoundingClientRect();
+          const nextX = drag.viewX - (event.clientX - drag.pointerX) * viewport.width / bounds.width;
+          const nextY = drag.viewY - (event.clientY - drag.pointerY) * viewport.height / bounds.height;
+          setViewport(current => ({
+            ...current,
+            x: Math.max(0, Math.min(width - current.width, nextX)),
+            y: Math.max(0, Math.min(height - current.height, nextY)),
+          }));
+        }}
+        onPointerUp={(event) => {
+          event.currentTarget.releasePointerCapture(event.pointerId);
+          dragRef.current = null;
+          scheduleAutomaticFocus();
+        }}
+        onPointerCancel={() => {
+          dragRef.current = null;
+          scheduleAutomaticFocus();
+        }}
       >
         <defs>
           <filter id="flash-glow">
@@ -183,11 +256,33 @@ export default function DottedMap({
             </feMerge>
           </filter>
         </defs>
+        <image
+          href="/images/dashboard/earth-night-nasa.webp"
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+          preserveAspectRatio="xMidYMid slice"
+        />
 
-        {/* Static pixels */}
         <g>
-          {staticPixels.map((p) => (
-            <StaticPixel key={p.key} x={p.x} y={p.y} />
+          {projectedRoutes.map(route => (
+            <motion.path
+              key={route.key}
+              d={route.path}
+              fill="none"
+              stroke="var(--color-primary)"
+              strokeWidth={1.4}
+              strokeLinecap="round"
+              strokeDasharray="7 9"
+              initial={{ strokeDashoffset: 0, opacity: 0 }}
+              animate={{ strokeDashoffset: -32, opacity: 0.75 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                strokeDashoffset: { duration: 1.4, repeat: Infinity, ease: "linear" },
+                opacity: { duration: 0.25 },
+              }}
+            />
           ))}
         </g>
 

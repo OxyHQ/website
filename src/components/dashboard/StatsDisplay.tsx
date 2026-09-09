@@ -163,7 +163,7 @@ function StatCard({
   className,
 }: {
   title: string;
-  value?: number;
+  value?: number | string;
   children?: React.ReactNode;
   infoContent?: string;
   href?: string;
@@ -172,14 +172,14 @@ function StatCard({
   const [showInfo, setShowInfo] = useState(false);
 
   const statsContent = (
-    <div className="bg-surface p-4 md:p-6 w-full min-h-[120px] h-full">
+    <div className="h-full min-h-[120px] w-full bg-primary/15 p-4 backdrop-blur-lg md:p-6">
       <div className="space-y-2">
         <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-foreground pr-6">
           {title}
         </h2>
         {value !== undefined && (
           <div className="text-3xl md:text-4xl tracking-normal font-mono tabular-nums">
-            {formatNumber(value)}
+            {typeof value === "number" ? formatNumber(value) : value}
           </div>
         )}
         {children}
@@ -188,7 +188,7 @@ function StatCard({
   );
 
   const infoContentView = (
-    <div className="bg-surface p-4 md:p-6 w-full h-full overflow-y-auto flex flex-col gap-y-2">
+    <div className="flex h-full w-full flex-col gap-y-2 overflow-y-auto bg-primary/15 p-4 backdrop-blur-lg md:p-6">
       {href ? (
         <a
           href={href}
@@ -212,7 +212,7 @@ function StatCard({
   );
 
   return (
-    <div className={`relative group rounded-md overflow-hidden ${className || ""}`}>
+    <div className={`group relative overflow-hidden rounded-2xl ${className || ""}`}>
       <PixelGridTransition
         firstContent={statsContent}
         secondContent={infoContentView}
@@ -248,6 +248,20 @@ function MetricRow({ label, value }: { label: string; value: number }) {
       </div>
     </li>
   );
+}
+
+function MetricTextRow({ label, value }: { label: string; value: string }) {
+  return (
+    <li className="flex flex-wrap items-center justify-between gap-x-3">
+      <h3 className="m-0 font-mono text-sm font-normal uppercase text-muted-foreground">{label}</h3>
+      <div className="font-mono text-sm tabular-nums text-foreground">{value}</div>
+    </li>
+  );
+}
+
+function ratio(numerator: number, denominator: number, suffix = ""): string {
+  if (denominator <= 0) return `0${suffix}`;
+  return `${(numerator / denominator).toLocaleString(undefined, { maximumFractionDigits: 1 })}${suffix}`;
 }
 
 export function TotalRequests({ stats }: { stats: PlatformStats }) {
@@ -330,61 +344,50 @@ export function RegionCount({ stats }: { stats: PlatformStats }) {
 }
 
 export function StatsGrid({ stats }: { stats: PlatformStats }) {
+  const leadingCountry = stats.topCountries[0]?.location ?? "Awaiting data";
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-      <div className="flex flex-col gap-3">
-        <StatCard
-          title="Active Sessions"
-          value={stats.activeSessions}
-          infoContent="The number of currently active user sessions across all platforms and devices."
-          className="flex-1"
-        />
-        <StatCard
-          title="AI Models"
-          infoContent="AI models available in the Oxy ecosystem for intelligent task processing."
-          className="flex-1"
-        >
-          <ul className="space-y-1 list-none pl-0 mt-2">
-            <MetricRow label="Models" value={stats.aiModels} />
-          </ul>
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:auto-rows-[126px] lg:grid-cols-12">
+        <StatCard title="Total Users" value={stats.totalUsers} infoContent="Registered users across the Oxy ecosystem." className="lg:col-span-3 lg:row-span-2">
+          <div className="mt-5 space-y-2">
+            <MetricTextRow label="Active rate" value={ratio(stats.activeSessions * 100, stats.totalUsers, "%")} />
+            <MetricTextRow label="Follows / 1K users" value={ratio(stats.totalFollows * 1_000, stats.totalUsers)} />
+          </div>
         </StatCard>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <StatCard
-          title="Messages"
-          value={stats.totalMessages}
-          infoContent="Total email messages processed by the Oxy platform, including sent, received, and synced messages."
-          className="flex-1"
-        >
-          <ul className="space-y-1 list-none pl-0 mt-4">
+        <StatCard title="Communication" value={stats.totalMessages} infoContent="Messages and notifications processed across Oxy communication products." className="lg:col-span-5">
+          <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2">
             <MetricRow label="Notifications" value={stats.totalNotifications} />
-            <MetricRow label="Files stored" value={stats.totalFiles} />
-            <MetricRow label="Follows" value={stats.totalFollows} />
-          </ul>
+            <MetricTextRow label="Messages / user" value={ratio(stats.totalMessages, stats.totalUsers)} />
+          </div>
         </StatCard>
-      </div>
+        <StatCard title="Active Sessions" value={stats.activeSessions} infoContent="User sessions currently active across Oxy products." className="lg:col-span-2">
+          <MetricRow label="Active regions" value={stats.regions} />
+        </StatCard>
+        <StatCard title="AI Models" value={stats.aiModels} infoContent="AI models currently available through the platform." className="lg:col-span-2" />
 
-      <div className="flex flex-col gap-3">
-        <StatCard
-          title="Platform Activity"
-          infoContent="Transactions and developer integrations across the Oxy platform."
-          className="flex-1"
-        >
-          <ul className="space-y-1 list-none pl-0 mt-2">
-            <MetricRow label="Transactions" value={stats.totalTransactions} />
-            <MetricRow label="Developer Apps" value={stats.totalDeveloperApps} />
-          </ul>
+        <StatCard title="File Storage" value={stats.totalFiles} infoContent="Files stored across avatars, attachments and product media." className="lg:col-span-5">
+          <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2">
+            <MetricTextRow label="Files / user" value={ratio(stats.totalFiles, stats.totalUsers)} />
+            <MetricTextRow label="Content share" value={ratio(stats.totalFiles * 100, stats.totalFiles + stats.totalMessages + stats.totalFollows, "%")} />
+          </div>
         </StatCard>
-        <StatCard
-          title="File Storage"
-          value={stats.totalFiles}
-          infoContent="Total files uploaded and managed across the Oxy platform including avatars, attachments, and media."
-          className="flex-1"
-        >
-          <p className="text-muted-foreground text-sm font-mono mt-1">Files stored</p>
+        <StatCard title="Community" value={stats.totalFollows} infoContent="Social graph connections created across the Oxy ecosystem." className="lg:col-span-2">
+          <MetricTextRow label="Follows / user" value={ratio(stats.totalFollows, stats.totalUsers)} />
         </StatCard>
+        <StatCard title="Transactions" value={stats.totalTransactions} infoContent="Recorded transactions across the developer platform." className="lg:col-span-2">
+          <MetricTextRow label="Per app" value={ratio(stats.totalTransactions, stats.totalDeveloperApps)} />
+        </StatCard>
+
+        <StatCard title="Developer Apps" value={stats.totalDeveloperApps} infoContent="Active developer applications registered with Oxy." className="lg:col-span-3">
+          <MetricTextRow label="Per 1K users" value={ratio(stats.totalDeveloperApps * 1_000, stats.totalUsers)} />
+        </StatCard>
+        <StatCard title="Active Regions" value={stats.regions} infoContent="Infrastructure regions currently reporting an online or degraded state." className="lg:col-span-3" />
+        <StatCard title="Countries Tracked" value={stats.topCountries.length} infoContent="Countries present in the current privacy-preserving aggregate activity window." className="lg:col-span-3" />
+        <StatCard title="Leading Country" value={leadingCountry} infoContent="Top country in the current anonymous aggregate activity window." className="lg:col-span-3" />
       </div>
+      <p className="m-0 text-right font-mono text-xs text-muted-foreground">
+        Updated {new Date(stats.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+      </p>
     </div>
   );
 }
