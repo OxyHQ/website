@@ -311,7 +311,7 @@ export function LiveActivity({ events }: { events: PlatformActivityEvent[] }) {
   return (
     <div className="space-y-2">
       <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-muted-foreground">
-        Live Processing Activity
+        Live Infrastructure Activity
       </h2>
       <ul className="list-none pl-0 space-y-1">
         {regions.length > 0 ? (
