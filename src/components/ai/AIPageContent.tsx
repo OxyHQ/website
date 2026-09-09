@@ -264,7 +264,7 @@ export default function AIPageContent() {
         <RecentNewsSection
           title="Latest news"
           linkText="View all"
-          category="Product"
+          search="AI"
           href="/newsroom"
         />
       </section>

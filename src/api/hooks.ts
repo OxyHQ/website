@@ -337,6 +337,7 @@ export function useNewsroomPosts<TPost extends NewsroomPostSummary = NewsroomPos
   if (params?.limit) searchParams.set('limit', String(params.limit))
   if (params?.page) searchParams.set('page', String(params.page))
   if (params?.author) searchParams.set('author', params.author)
+  if (params?.search) searchParams.set('search', params.search)
   const qs = searchParams.toString()
 
   return useQuery({

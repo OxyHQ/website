@@ -12,6 +12,7 @@ export interface NewsroomListParams {
   limit?: number
   page?: number
   author?: string
+  search?: string
 }
 
 export function newsroomPostsQueryKey(params: NewsroomListParams | undefined, locale: Locale) {

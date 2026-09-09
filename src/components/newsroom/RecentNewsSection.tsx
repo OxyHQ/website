@@ -16,6 +16,8 @@ interface RecentNewsSectionProps {
    * "View more" link target to /company/news for the scoped variant.
    */
   category?: string
+  /** Search title and summary before selecting the recent-news rail. */
+  search?: string
   /** Override target for the section header link (defaults to /newsroom). */
   href?: string
   /**
@@ -30,10 +32,11 @@ export default function RecentNewsSection({
   title = 'Recent news',
   linkText = 'View more',
   category,
+  search,
   href = '/newsroom',
   framed = true,
 }: RecentNewsSectionProps) {
-  const { data, isPending } = useNewsroomPosts({ category, limit: 5 })
+  const { data, isPending } = useNewsroomPosts({ category, search, limit: 5 })
   const recentNewsArticles = data?.posts ?? []
 
   if (!isPending && recentNewsArticles.length === 0) return null
