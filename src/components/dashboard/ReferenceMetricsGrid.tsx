@@ -19,19 +19,6 @@ const METRIC_DETAILS: Record<string, string> = {
   "Platform Activity": "Combined messages, notifications and transactions.",
 };
 
-const METRIC_THEME: Record<string, string> = {
-  "Total Users": "dashboard-users-theme",
-  "Active Sessions": "dashboard-users-theme",
-  Connections: "dashboard-users-theme",
-  "AI Models": "dashboard-ai-theme",
-  Messages: "dashboard-messages-theme",
-  Notifications: "dashboard-messages-theme",
-  "Developer Apps": "dashboard-platform-theme",
-  "Stored Files": "dashboard-platform-theme",
-  Transactions: "dashboard-platform-theme",
-  "Platform Activity": "dashboard-platform-theme",
-};
-
 function Chevron({ circle = false, open, onClick, label }: { circle?: boolean; open: boolean; onClick: () => void; label: string }) {
   return (
     <button type="button" aria-label={`${open ? "Hide" : "Show"} ${label} details`} aria-expanded={open} onClick={onClick} className={`dashboard-chevron absolute z-20 flex cursor-pointer items-center justify-center border-0 p-0 transition-colors ${circle ? "rounded-full bg-muted text-foreground hover:bg-accent" : "bg-transparent text-muted-foreground hover:text-foreground"}`}>
@@ -45,7 +32,7 @@ function Chevron({ circle = false, open, onClick, label }: { circle?: boolean; o
 function Card({ title, children, circle, className = "" }: { title: string; children: ReactNode; circle?: boolean; className?: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <section aria-label={title} className={`dashboard-metric ${METRIC_THEME[title] ?? "dashboard-platform-theme"} relative isolate overflow-hidden bg-background ${className}`}>
+    <section aria-label={title} className={`dashboard-metric relative isolate overflow-hidden bg-background ${className}`}>
       <h2 className="dashboard-card-title absolute font-medium tracking-[-0.035em] text-muted-foreground">{title}</h2>
       <Chevron circle={circle} open={open} onClick={() => setOpen((current) => !current)} label={title} />
       <div className={`dashboard-card-body transition-opacity duration-300 ${open ? "pointer-events-none opacity-0" : "opacity-100"}`}>{children}</div>

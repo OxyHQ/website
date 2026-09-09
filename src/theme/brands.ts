@@ -99,10 +99,6 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     mode: 'dark',
     label: 'Live dashboard metric cards',
   },
-  { selector: '.dashboard-users-theme', seed: APP_COLOR_PRESETS.blue.hex, mode: 'dark', label: 'Dashboard identity metrics' },
-  { selector: '.dashboard-ai-theme', seed: APP_COLOR_PRESETS.violet.hex, mode: 'dark', label: 'Dashboard AI metrics' },
-  { selector: '.dashboard-messages-theme', seed: APP_COLOR_PRESETS.lagoon.hex, mode: 'dark', label: 'Dashboard communication metrics' },
-  { selector: '.dashboard-platform-theme', seed: APP_COLOR_PRESETS.oxy.hex, mode: 'dark', label: 'Dashboard platform metrics' },
   {
     selector: '.manifesto-theme',
     seed: APP_COLOR_PRESETS.grove.hex,
