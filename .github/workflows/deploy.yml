@@ -24,9 +24,12 @@ jobs:
 
       # `bun run build` ends with the real-browser theme prepaint/SPA gate.
       # Playwright ships the driver as a package, but its Chromium binary is a
-      # separate runner dependency and is not present on ubuntu-latest.
+      # separate runner dependency and is not present on ubuntu-latest. Avoid
+      # `--with-deps` here: GitHub's runner already carries Chromium's system
+      # libraries, while refreshing third-party APT indexes can fail the whole
+      # deploy on an unrelated mirror hash mismatch.
       - name: Install Chromium for the postbuild browser gate
-        run: bunx playwright install --with-deps chromium
+        run: bunx playwright install chromium
 
       - run: bun run build
         env:
