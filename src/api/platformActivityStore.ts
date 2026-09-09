@@ -27,12 +27,40 @@ let state = INITIAL_STATE
 let socket: Socket | null = null
 const listeners = new Set<Listener>()
 
+async function addLocalEdgeConnection(): Promise<void> {
+  try {
+    const response = await fetch('/cdn-cgi/trace', { cache: 'no-store' })
+    if (!response.ok) return
+    const trace = await response.text()
+    // Deliberately read only the serving PoP. The trace response also contains
+    // an IP; it must never enter application state, logs or telemetry.
+    const colo = trace.match(/^colo=([a-z]{3})\r?$/im)?.[1]?.toLowerCase()
+    if (!colo) return
+    const emittedAt = new Date().toISOString()
+    const event: PlatformActivityEvent = {
+      region: 'us-west-2',
+      sourceRegion: `edge-${colo}`,
+      targetRegion: 'us-west-2',
+      requests: 1,
+      windowStartedAt: emittedAt,
+      emittedAt,
+      direction: 'inbound',
+      service: 'platform',
+    }
+    state = { ...state, events: [...state.events, event].slice(-MAX_ACTIVITY_EVENTS) }
+    emit()
+  } catch {
+    // Local development and non-Cloudflare mirrors do not expose this route.
+  }
+}
+
 function emit(): void {
   listeners.forEach((listener) => listener())
 }
 
 function connect(): void {
   if (socket) return
+  void addLocalEdgeConnection()
   socket = io(`${OXY_API}/platform-activity`, {
     transports: ['websocket'],
     reconnection: true,
