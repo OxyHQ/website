@@ -30,7 +30,14 @@ let state = INITIAL_STATE
 let socket: Socket | null = null
 let edgeRefreshTimer: ReturnType<typeof setInterval> | null = null
 let localOriginKey = ''
+let localEdgeEvent: PlatformActivityEvent | null = null
+let remoteEvents: PlatformActivityEvent[] = []
 const listeners = new Set<Listener>()
+
+function visibleEvents(): PlatformActivityEvent[] {
+  if (!localEdgeEvent) return remoteEvents.slice(-MAX_ACTIVITY_EVENTS)
+  return [...remoteEvents.slice(-(MAX_ACTIVITY_EVENTS - 1)), localEdgeEvent]
+}
 
 async function addLocalEdgeConnection(): Promise<void> {
   try {
@@ -71,7 +78,8 @@ async function addLocalEdgeConnection(): Promise<void> {
         sourceCountry: edge.cca2,
       } : {}),
     }
-    state = { ...state, events: [...state.events, event].slice(-MAX_ACTIVITY_EVENTS) }
+    localEdgeEvent = event
+    state = { ...state, events: visibleEvents() }
     emit()
   } catch {
     // Local development and non-Cloudflare mirrors do not expose this route.
@@ -104,10 +112,8 @@ function connect(): void {
       typeof event?.requests !== 'number' ||
       typeof event?.emittedAt !== 'string'
     ) return
-    state = {
-      isConnected: true,
-      events: [...state.events, event].slice(-MAX_ACTIVITY_EVENTS),
-    }
+    remoteEvents = [...remoteEvents, event].slice(-MAX_ACTIVITY_EVENTS)
+    state = { isConnected: true, events: visibleEvents() }
     emit()
   })
 }
@@ -123,6 +129,8 @@ export function subscribePlatformActivity(listener: Listener): () => void {
       if (edgeRefreshTimer) clearInterval(edgeRefreshTimer)
       edgeRefreshTimer = null
       localOriginKey = ''
+      localEdgeEvent = null
+      remoteEvents = []
       state = INITIAL_STATE
     }
   }
