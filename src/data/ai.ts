@@ -12,13 +12,30 @@ export interface ProductCard {
 
 /* ── Section 1: Hero ── */
 
-export const heroTagline = 'Oxy AI is here:'
-export const heroDescription =
-  'Intelligent AI that understands your workflow, your data, and your goals.'
-export const heroAnnouncementDesktop = 'Read announcement'
-export const heroAnnouncementMobile = 'Oxy AI is here'
-export const heroAnnouncementHref = '/company/news'
-export const heroPlaceholder = 'What do you want to know?'
+export const conversationHeroVideos = [
+  '/ai/managed-inbox.mp4',
+  '/ai/morning-briefing-results.mp4',
+  '/ai/todo-assign-ai.mp4',
+] as const
+
+export const conversationHeroHeadline = 'Your work, understood.\nYour day, moving.'
+export const conversationHeroCta = 'Meet Alia'
+export const conversationHeroCtaHref = 'https://alia.onl/'
+
+export const conversationHeroMessages: ReadonlyArray<{
+  author: 'alia' | 'person'
+  name: string
+  text: string
+}> = [
+  { author: 'person', name: 'You', text: 'Can everyone make Thursday afternoon?' },
+  { author: 'alia', name: 'Alia', text: 'I checked the team calendars. Three times work for everyone.' },
+  { author: 'person', name: 'You', text: 'Book the earliest one and add the project notes.' },
+  { author: 'alia', name: 'Alia', text: 'Ready. I included the latest brief and left time for questions.' },
+]
+
+export const conversationHeroSlotDay = 'Thursday, 10 September'
+export const conversationHeroSlots = ['14:00', '14:30', '15:00', '15:30', '16:00'] as const
+export const conversationHeroSlotCta = 'Meeting scheduled · 14:00'
 
 /* ── Section 2: Products ── */
 

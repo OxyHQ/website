@@ -1,15 +1,11 @@
-import { useState, useCallback, useEffect, useSyncExternalStore, Suspense, lazy } from 'react'
-import { PromptInput } from '@oxyhq/bloom/prompt-input'
-import HeroCanvas from './HeroCanvas'
+import { useSyncExternalStore, Suspense, lazy } from 'react'
+import ConversationHero from './ConversationHero'
 import ParticleCanvas from './ParticleCanvas'
 import ApiCardCanvas from './ApiCardCanvas'
 import Button from '../ui/Button'
-import { usePromptPhrases } from '../../api/hooks'
 import AIResearchSection from './AIResearchSection'
 import RecentNewsSection from '../newsroom/RecentNewsSection'
 import {
-  heroTagline, heroDescription, heroAnnouncementDesktop, heroAnnouncementMobile,
-  heroAnnouncementHref, heroPlaceholder,
   productsTag, productsHeading, productCards,
   globeTextLeft, globeTextRight,
 } from '../../data/ai'
@@ -65,14 +61,6 @@ function ArrowUpRightIcon({ className }: { className?: string }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true" className={className}>
       <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
-    </svg>
-  )
-}
-
-function ArrowDownIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="my-2 size-6">
-      <path fillRule="evenodd" clipRule="evenodd" d="M12 2.25a.75.75 0 0 1 .75.75v16.19l6.22-6.22a.75.75 0 1 1 1.06 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 1 1 1.06-1.06l6.22 6.22V3a.75.75 0 0 1 .75-.75Z" />
     </svg>
   )
 }
@@ -156,82 +144,11 @@ function CornerDots() {
 
 export default function AIPageContent() {
   const scrollY = useScrollY()
-  const [promptValue, setPromptValue] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-
-  const { data: promptPhrases } = usePromptPhrases('ai')
-  const [phraseIdx, setPhraseIdx] = useState(0)
-  useEffect(() => {
-    if (!promptPhrases?.length) return
-    const id = setInterval(() => {
-      setPhraseIdx((i) => (i + 1) % promptPhrases.length)
-    }, 5000)
-    return () => clearInterval(id)
-  }, [promptPhrases?.length])
-  const currentPlaceholder = promptPhrases?.length ? promptPhrases[phraseIdx % promptPhrases.length] : heroPlaceholder
-
-  const handleSubmit = useCallback(() => {
-    const trimmed = promptValue.trim()
-    if (!trimmed || isLoading) return
-    setIsLoading(true)
-    setTimeout(() => { setIsLoading(false); setPromptValue('') }, 1500)
-  }, [promptValue, isLoading])
 
   return (
     <>
       {/* ═══ SECTION 1: Hero ═══ */}
-      <div className="page-hero border-border relative h-svh w-full overflow-hidden border-b pb-px md:overflow-x-hidden force-dark bg-background text-foreground">
-        <div className="relative h-full w-full">
-          <div className="absolute inset-0 bg-cover bg-center bg-blend-darken" style={{ backgroundImage: 'url(/ai/hero-bg.png)' }} />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="opacity-50"><AliaSvg fill="none" stroke="currentColor" strokeWidth={14} /></div>
-          </div>
-          <HeroCanvas />
-          <div className="container flex h-full flex-col">
-            <div className="relative z-20 mt-20 flex h-full w-full items-center">
-              <hgroup className="space-y-8">
-                <div className="absolute inset-0 top-20 flex grow items-end justify-center">
-                  <div className="w-full max-w-3xl">
-                    <div className="relative w-full items-center gap-3 overflow-hidden rounded-3xl bg-gradient-to-tr p-px from-primary/5 to-primary/20">
-                      <PromptInput
-                        value={promptValue}
-                        onValueChange={setPromptValue}
-                        onSubmit={handleSubmit}
-                        isLoading={isLoading}
-                        onStop={() => setIsLoading(false)}
-                        placeholder={currentPlaceholder}
-                        maxHeight={160}
-                        style={{ minHeight: 48 }}
-                        disableKeyboardAvoidance
-                      />
-                    </div>
-                  </div>
-                </div>
-              </hgroup>
-            </div>
-
-            {/* Bottom bar */}
-            <div className="relative z-10 flex items-end justify-between gap-6 pb-4 pt-4 lg:min-h-[160px] lg:py-10">
-              <button type="button" onClick={() => document.getElementById('ai-products')?.scrollIntoView({ behavior: 'smooth' })} className="cursor-pointer" aria-label="Scroll to products">
-                <ArrowDownIcon />
-              </button>
-              <div className="flex flex-col items-end gap-6 sm:gap-8 md:flex-row lg:gap-12">
-                <div className="max-w-2xl">
-                  <div className="hidden max-w-lg lg:block">{heroTagline}<br /> {heroDescription}</div>
-                </div>
-                <div className="flex flex-col items-end gap-3 sm:flex-row">
-                  <Button variant="outline" size="sm" href={heroAnnouncementHref} className="hidden lg:inline-flex">
-                    {heroAnnouncementDesktop} <ArrowUpRightIcon className="size-3.5" />
-                  </Button>
-                  <Button variant="outline" size="sm" href={heroAnnouncementHref} className="lg:hidden">
-                    {heroAnnouncementMobile} <ArrowUpRightIcon className="size-3.5" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ConversationHero />
 
       {/* ═══ SECTION 2: Products ═══ */}
       <section id="ai-products" className="py-16 sm:py-32">
