@@ -19,7 +19,6 @@ interface LiveGlobeProps {
 interface GlobeLayout {
   width: number
   height: number
-  background: string
   primary: string
   success: string
   warning: string
@@ -74,7 +73,6 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       setLayout({
         width,
         height: Math.max(MIN_GLOBE_HEIGHT, node.clientHeight),
-        background: threeColor(style.getPropertyValue('--background').trim()),
         primary: threeColor(style.getPropertyValue('--primary').trim()),
         success: threeColor(style.getPropertyValue('--success').trim()),
         warning: threeColor(style.getPropertyValue('--warning').trim()),
@@ -222,7 +220,8 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           onGlobeReady={handleGlobeReady}
           width={layout.width}
           height={layout.height}
-          backgroundColor={layout.background}
+          rendererConfig={{ alpha: true, antialias: true }}
+          backgroundColor="rgba(0,0,0,0)"
           globeImageUrl="/images/dashboard/earth-night-nasa.webp"
           showAtmosphere
           atmosphereColor={layout.primary}

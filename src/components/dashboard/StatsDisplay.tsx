@@ -1,5 +1,4 @@
-import { useState, useMemo, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import { formatNumber } from "../../lib/utils";
 import type { PlatformActivityEvent, PlatformStats } from "../../api/hooks";
 import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
@@ -16,8 +15,6 @@ function PixelGridTransition({
   firstContent,
   secondContent,
   isActive,
-  gridSize = 30,
-  animationStepDuration = 0.3,
   className,
 }: {
   firstContent: React.ReactNode;
@@ -27,127 +24,9 @@ function PixelGridTransition({
   animationStepDuration?: number;
   className?: string;
 }) {
-  const [showPixels, setShowPixels] = useState(false);
-  const [animState, setAnimState] = useState<"idle" | "growing" | "shrinking">("idle");
-  const hasActivatedRef = useRef(false);
-
-  // The per-pixel color is randomly assigned once and must stay stable across
-  // re-renders. `Math.random()` is impure and can't run in the render body
-  // (or a `useMemo`), so the grid — including its random colors — is built in
-  // a lazy `useState` initializer that runs a single time on mount.
-  const [pixels] = useState(() => {
-    const total = gridSize * gridSize;
-    const result: { id: number; row: number; col: number; color: string }[] = [];
-    for (let n = 0; n < total; n++) {
-      const row = Math.floor(n / gridSize);
-      const col = n % gridSize;
-      const color = Math.random() > 0.85 ? "var(--primary)" : "var(--border)";
-      result.push({ id: n, row, col, color });
-    }
-    return result;
-  });
-
-  const [shuffledOrder, setShuffledOrder] = useState<number[]>([]);
-
-  // React 19 callback ref — keyed on isActive / animationStepDuration / pixels.
-  // Each transition tears down the prior shrink/hide timers and kicks off new
-  // ones synchronously when the sentinel mounts. The transition is only
-  // armed after the first activation (matches the original gating).
-  const animationTriggerRef = useCallback(
-    (node: HTMLSpanElement | null) => {
-      if (!node) return;
-      if (!hasActivatedRef.current && !isActive) return;
-      if (isActive) hasActivatedRef.current = true;
-
-      const indices = pixels.map((_, i) => i);
-      for (let i = indices.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [indices[i], indices[j]] = [indices[j], indices[i]];
-      }
-      setShuffledOrder(indices);
-      setShowPixels(true);
-      setAnimState("growing");
-
-      const shrinkTimer = setTimeout(() => setAnimState("shrinking"), animationStepDuration * 1000);
-      const hideTimer = setTimeout(() => {
-        setShowPixels(false);
-        setAnimState("idle");
-      }, animationStepDuration * 2000);
-
-      return () => {
-        clearTimeout(shrinkTimer);
-        clearTimeout(hideTimer);
-      };
-    },
-    [isActive, animationStepDuration, pixels],
-  );
-
-  const delayPerPixel = useMemo(() => animationStepDuration / pixels.length, [animationStepDuration, pixels.length]);
-  const orderMap = useMemo(() => {
-    const map = new Map<number, number>();
-    shuffledOrder.forEach((idx, order) => map.set(idx, order));
-    return map;
-  }, [shuffledOrder]);
-
   return (
-    <div className={`w-full overflow-hidden max-w-full relative ${className || ""}`}>
-      <span
-        key={`${isActive ? "on" : "off"}-${pixels.length}`}
-        ref={animationTriggerRef}
-        aria-hidden
-        hidden
-      />
-      <motion.div
-        className="h-full"
-        aria-hidden={isActive}
-        initial={{ opacity: 1 }}
-        animate={{ opacity: isActive ? 0 : 1 }}
-        transition={{ duration: 0, delay: animationStepDuration }}
-      >
-        {firstContent}
-      </motion.div>
-
-      <motion.div
-        className="absolute inset-0 w-full h-full z-[2] overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isActive ? 1 : 0 }}
-        transition={{ duration: 0, delay: animationStepDuration }}
-        style={{ pointerEvents: isActive ? "auto" : "none" }}
-        aria-hidden={!isActive}
-      >
-        {secondContent}
-      </motion.div>
-
-      <div
-        className="absolute inset-0 w-full h-full pointer-events-none z-[3]"
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-        }}
-      >
-        <AnimatePresence>
-          {showPixels &&
-            pixels.map((pixel) => {
-              const order = orderMap.get(pixel.id) ?? 0;
-              return (
-                <motion.div
-                  key={pixel.id}
-                  style={{
-                    backgroundColor: pixel.color,
-                    aspectRatio: "1 / 1",
-                    gridArea: `${pixel.row + 1} / ${pixel.col + 1}`,
-                  }}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{
-                    opacity: animState === "growing" ? 1 : 0,
-                    scale: animState === "growing" ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.01, delay: order * delayPerPixel }}
-                />
-              );
-            })}
-        </AnimatePresence>
-      </div>
+    <div className={`relative h-full w-full max-w-full overflow-hidden ${className || ""}`}>
+      {isActive ? secondContent : firstContent}
     </div>
   );
 }
@@ -170,13 +49,13 @@ function StatCard({
   const [showInfo, setShowInfo] = useState(false);
 
   const statsContent = (
-    <div className="h-full min-h-[120px] w-full bg-primary/15 p-5 backdrop-blur-xl md:p-6">
+    <div className="h-full min-h-[120px] w-full bg-card p-5 md:p-7">
       <div className="space-y-2">
-        <h2 className="my-0 pr-8 font-sans text-base font-semibold tracking-tight text-muted-foreground">
+        <h2 className="my-0 pr-10 font-sans text-lg font-semibold tracking-tight text-muted-foreground">
           {title}
         </h2>
         {value !== undefined && (
-          <div className="font-sans text-3xl font-semibold leading-none tracking-tight tabular-nums text-foreground md:text-4xl">
+          <div className="font-sans text-4xl font-semibold leading-none tracking-tight tabular-nums text-foreground md:text-5xl">
             {typeof value === "number" ? formatNumber(value) : value}
           </div>
         )}
@@ -186,7 +65,7 @@ function StatCard({
   );
 
   const infoContentView = (
-    <div className="flex h-full w-full flex-col gap-y-2 overflow-y-auto bg-primary/15 p-5 backdrop-blur-xl md:p-6">
+    <div className="flex h-full w-full flex-col gap-y-2 overflow-y-auto bg-card p-5 md:p-7">
       {href ? (
         <a
           href={href}
@@ -210,7 +89,7 @@ function StatCard({
   );
 
   return (
-    <div className={`group relative overflow-hidden rounded-[28px] shadow-sm ring-1 ring-border/30 ${className || ""}`}>
+    <div className={`group relative overflow-hidden rounded-[36px] shadow-sm ring-1 ring-border/30 ${className || ""}`}>
       <PixelGridTransition
         firstContent={statsContent}
         secondContent={infoContentView}
@@ -277,12 +156,12 @@ function Donut({ value }: { value: number }) {
   const boundedValue = Math.max(0, Math.min(100, value));
   return (
     <div
-      className="grid size-20 shrink-0 place-items-center rounded-full"
+      className="grid size-28 shrink-0 place-items-center rounded-full"
       role="img"
       aria-label={`${boundedValue.toFixed(1)}% active users`}
       style={{ background: `conic-gradient(var(--primary) ${boundedValue}%, color-mix(in srgb, var(--border) 60%, transparent) 0)` }}
     >
-      <div className="grid size-14 place-items-center rounded-full bg-card/90 text-xs tabular-nums text-foreground">
+      <div className="grid size-20 place-items-center rounded-full bg-card/90 text-sm font-semibold tabular-nums text-foreground">
         {boundedValue.toFixed(1)}%
       </div>
     </div>
@@ -293,16 +172,42 @@ function CountryBars({ countries }: { countries: PlatformStats["topCountries"] }
   const visibleCountries = countries.slice(0, 6);
   const maximum = Math.max(...visibleCountries.map((country) => country.count), 1);
   return (
-    <div className="mt-2 flex h-10 items-end gap-1.5" aria-label="Activity distribution across leading countries">
+    <div className="mt-4 flex h-16 items-end gap-2" aria-label="Activity distribution across leading countries">
       {visibleCountries.map((country) => (
         <div
           key={country.location}
-          className="min-h-1 flex-1 rounded-t-sm bg-primary/70"
+          className="min-h-1 flex-1 rounded-t-md bg-primary/70"
           style={{ height: `${Math.max(12, (country.count / maximum) * 100)}%` }}
           title={`${country.location}: ${formatNumber(country.count)}`}
         />
       ))}
     </div>
+  );
+}
+
+function ActivityChart({ events }: { events: PlatformActivityEvent[] }) {
+  const values = events.slice(-16).map((event) => event.requests);
+  if (values.length < 2) {
+    return <div className="mt-8 text-sm font-medium text-muted-foreground">Waiting for live activity…</div>;
+  }
+  const maximum = Math.max(...values, 1);
+  const points = values.map((value, index) => {
+    const x = (index / (values.length - 1)) * 100;
+    const y = 44 - (value / maximum) * 40;
+    return `${x},${y}`;
+  }).join(" ");
+  const area = `0,48 ${points} 100,48`;
+  return (
+    <svg className="mt-3 h-20 w-full overflow-visible" viewBox="0 0 100 48" preserveAspectRatio="none" role="img" aria-label="Recent anonymous request activity">
+      <defs>
+        <linearGradient id="activity-area" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="var(--primary)" stopOpacity="0.35" />
+          <stop offset="1" stopColor="var(--primary)" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <polygon points={area} fill="url(#activity-area)" />
+      <polyline points={points} fill="none" stroke="var(--primary)" strokeWidth="1.5" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 
@@ -385,59 +290,63 @@ export function RegionCount({ stats }: { stats: PlatformStats }) {
   );
 }
 
-export function StatsGrid({ stats }: { stats: PlatformStats }) {
+export function StatsGrid({ stats, events }: { stats: PlatformStats; events: PlatformActivityEvent[] }) {
   const leadingCountry = stats.topCountries[0]?.location ?? "Awaiting data";
   const activeRate = stats.totalUsers > 0 ? (stats.activeSessions / stats.totalUsers) * 100 : 0;
   const communicationTotal = stats.totalMessages + stats.totalNotifications;
   const messageShare = communicationTotal > 0 ? (stats.totalMessages / communicationTotal) * 100 : 0;
   const contentTotal = stats.totalFiles + stats.totalMessages + stats.totalFollows;
   const fileShare = contentTotal > 0 ? (stats.totalFiles / contentTotal) * 100 : 0;
+  const recentRequests = events.reduce((total, event) => total + event.requests, 0);
   return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:auto-rows-[126px] lg:grid-cols-12">
-        <StatCard title="Total Users" value={stats.totalUsers} infoContent="Registered users across the Oxy ecosystem." className="lg:col-span-3 lg:row-span-2">
-          <div className="mt-5 flex items-center gap-4">
-            <Donut value={activeRate} />
-            <div className="min-w-0 flex-1 space-y-2">
-              <MetricTextRow label="Active rate" value={ratio(stats.activeSessions * 100, stats.totalUsers, "%")} />
-              <MetricTextRow label="Follows / 1K" value={ratio(stats.totalFollows * 1_000, stats.totalUsers)} />
+    <div className="mx-auto max-w-[1000px] space-y-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:auto-rows-[280px] lg:grid-cols-[4fr_4fr_6fr]">
+        <StatCard title="Total Users" value={stats.totalUsers} infoContent="Registered users across the Oxy ecosystem.">
+          <div className="mt-4 space-y-3">
+            <MetricTextRow label="Active now" value={formatNumber(stats.activeSessions)} />
+            <ProgressBar value={activeRate} label="Active users as a share of registered users" />
+            <MetricTextRow label="Community connections" value={formatNumber(stats.totalFollows)} />
+          </div>
+        </StatCard>
+        <StatCard title="Content Value" value={contentTotal} infoContent="Files, messages and community connections represented in the platform totals.">
+          <div className="mt-6 space-y-3">
+            <div className="flex justify-between text-sm font-medium text-muted-foreground">
+              <span>Files {fileShare.toFixed(1)}%</span>
+              <span>Social {(100 - fileShare).toFixed(1)}%</span>
+            </div>
+            <ProgressBar value={fileShare} label="Files compared with messages and community connections" />
+            <MetricTextRow label="Files / user" value={ratio(stats.totalFiles, stats.totalUsers)} />
+          </div>
+        </StatCard>
+        <StatCard title="Live Request Activity" value={recentRequests} infoContent="Anonymous request buckets received over the live socket connection.">
+          <ActivityChart events={events} />
+        </StatCard>
+
+        <StatCard title="Developer Platform" value={stats.totalDeveloperApps} infoContent="Developer applications, transactions and AI models currently available.">
+          <div className="mt-4 space-y-3">
+            <MetricRow label="Transactions" value={stats.totalTransactions} />
+            <MetricRow label="AI models" value={stats.aiModels} />
+            <MetricTextRow label="Apps / 1K users" value={ratio(stats.totalDeveloperApps * 1_000, stats.totalUsers)} />
+          </div>
+        </StatCard>
+        <StatCard title="Communication Mix" infoContent="Messages and notifications processed across Oxy communication products.">
+          <div className="mt-4 flex items-center gap-5">
+            <Donut value={messageShare} />
+            <div className="min-w-0 flex-1 space-y-3">
+              <MetricRow label="Messages" value={stats.totalMessages} />
+              <MetricRow label="Notifications" value={stats.totalNotifications} />
             </div>
           </div>
         </StatCard>
-        <StatCard title="Communication" value={stats.totalMessages} infoContent="Messages and notifications processed across Oxy communication products." className="lg:col-span-5">
-          <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2">
-            <MetricRow label="Notifications" value={stats.totalNotifications} />
-            <MetricTextRow label="Messages / user" value={ratio(stats.totalMessages, stats.totalUsers)} />
+        <StatCard title="Geographic Activity" value={stats.topCountries.length} infoContent="Privacy-preserving aggregate activity across countries and infrastructure regions.">
+          <div className="grid grid-cols-[1fr_auto] gap-5">
+            <CountryBars countries={stats.topCountries} />
+            <div className="mt-4 space-y-3 text-right">
+              <MetricTextRow label="Leader" value={leadingCountry} />
+              <MetricRow label="Regions" value={stats.regions} />
+            </div>
           </div>
-          <ProgressBar value={messageShare} label="Share of communication made up by messages" />
         </StatCard>
-        <StatCard title="Active Sessions" value={stats.activeSessions} infoContent="User sessions currently active across Oxy products." className="lg:col-span-2">
-          <MetricRow label="Active regions" value={stats.regions} />
-        </StatCard>
-        <StatCard title="AI Models" value={stats.aiModels} infoContent="AI models currently available through the platform." className="lg:col-span-2" />
-
-        <StatCard title="File Storage" value={stats.totalFiles} infoContent="Files stored across avatars, attachments and product media." className="lg:col-span-5">
-          <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2">
-            <MetricTextRow label="Files / user" value={ratio(stats.totalFiles, stats.totalUsers)} />
-            <MetricTextRow label="Content share" value={ratio(stats.totalFiles * 100, stats.totalFiles + stats.totalMessages + stats.totalFollows, "%")} />
-          </div>
-          <ProgressBar value={fileShare} label="File share of stored and social content" />
-        </StatCard>
-        <StatCard title="Community" value={stats.totalFollows} infoContent="Social graph connections created across the Oxy ecosystem." className="lg:col-span-2">
-          <MetricTextRow label="Follows / user" value={ratio(stats.totalFollows, stats.totalUsers)} />
-        </StatCard>
-        <StatCard title="Transactions" value={stats.totalTransactions} infoContent="Recorded transactions across the developer platform." className="lg:col-span-2">
-          <MetricTextRow label="Per app" value={ratio(stats.totalTransactions, stats.totalDeveloperApps)} />
-        </StatCard>
-
-        <StatCard title="Developer Apps" value={stats.totalDeveloperApps} infoContent="Active developer applications registered with Oxy." className="lg:col-span-3">
-          <MetricTextRow label="Per 1K users" value={ratio(stats.totalDeveloperApps * 1_000, stats.totalUsers)} />
-        </StatCard>
-        <StatCard title="Active Regions" value={stats.regions} infoContent="Infrastructure regions currently reporting an online or degraded state." className="lg:col-span-3" />
-        <StatCard title="Countries Tracked" value={stats.topCountries.length} infoContent="Countries present in the current privacy-preserving aggregate activity window." className="lg:col-span-3">
-          <CountryBars countries={stats.topCountries} />
-        </StatCard>
-        <StatCard title="Leading Country" value={leadingCountry} infoContent="Top country in the current anonymous aggregate activity window." className="lg:col-span-3" />
       </div>
       <p className="m-0 text-right font-mono text-xs text-muted-foreground">
         Updated {new Date(stats.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
