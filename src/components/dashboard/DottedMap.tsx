@@ -295,18 +295,27 @@ export default function DottedMap({
           {projectedRoutes.map(route => (
             <g key={route.key}>
               <path d={route.path} fill="none" stroke={route.color} strokeWidth={0.8} opacity={0.28} />
-              {Array.from({ length: route.pulseCount }, (_, pulseIndex) => [1, -1].map(direction => (
+              {Array.from({ length: route.pulseCount }, (_, pulseIndex) => ([
+                { direction: 1, phase: pulseIndex / route.pulseCount, color: route.color, opacity: 0.95, width: 2 },
+                {
+                  direction: -1,
+                  phase: (pulseIndex + 0.5) / route.pulseCount,
+                  color: `color-mix(in srgb, ${route.color} 68%, var(--foreground))`,
+                  opacity: 0.72,
+                  width: 1.7,
+                },
+              ]).map(pulse => (
                   <motion.path
-                    key={`${route.key}-${pulseIndex}-${direction}`}
+                    key={`${route.key}-${pulseIndex}-${pulse.direction}`}
                     d={route.path}
                     pathLength={100}
                     fill="none"
-                    stroke={route.color}
-                    strokeWidth={2}
+                    stroke={pulse.color}
+                    strokeWidth={pulse.width}
                     strokeLinecap="round"
                     strokeDasharray={`${route.pulseLength} ${100 - route.pulseLength}`}
-                    initial={{ strokeDashoffset: direction * -100 * pulseIndex / route.pulseCount, opacity: 0 }}
-                    animate={{ strokeDashoffset: direction * -100 * (1 + pulseIndex / route.pulseCount), opacity: direction === 1 ? 0.95 : 0.7 }}
+                    initial={{ strokeDashoffset: pulse.direction * -100 * pulse.phase, opacity: 0 }}
+                    animate={{ strokeDashoffset: pulse.direction * -100 * (1 + pulse.phase), opacity: pulse.opacity }}
                     exit={{ opacity: 0 }}
                     transition={{
                       strokeDashoffset: { duration: route.pulseDuration, repeat: Infinity, ease: "linear" },

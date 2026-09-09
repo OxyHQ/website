@@ -62,6 +62,13 @@ function threeColor(token: string): string {
     : token
 }
 
+function responseColor(color: string): string {
+  const channels = color.match(/^rgb\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)\s*\)$/)
+  if (!channels) return color
+  const tint = (channel: string) => Math.round(Number(channel) * 0.68 + 255 * 0.32)
+  return `rgb(${tint(channels[1])}, ${tint(channels[2])}, ${tint(channels[3])})`
+}
+
 export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlobeProps) {
   const [layout, setLayout] = useState<GlobeLayout | null>(null)
   const globeRef = useRef<GlobeMethods>(undefined)
@@ -251,6 +258,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       const target = activityRegionCoordinates(event.targetRegion)
       if (!source || !target) return []
       const { pulseCount, pulseDurationMs: dashTime, pulseLength: dashLength } = activityMotion(event)
+      const requestColor = layout.activityColors[activityCategory(event.service)]
       return Array.from({ length: pulseCount }, (_, pulseIndex) => [
         {
           id: `${event.sourceRegion}-${event.targetRegion}-${event.emittedAt}-request-${pulseIndex}`,
@@ -258,7 +266,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           startLng: source[0],
           endLat: target[1],
           endLng: target[0],
-          color: layout.activityColors[activityCategory(event.service)],
+          color: requestColor,
           dashTime,
           dashLength,
           dashGap: 1 - dashLength,
@@ -270,7 +278,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           startLng: target[0],
           endLat: source[1],
           endLng: source[0],
-          color: layout.activityColors[activityCategory(event.service)],
+          color: responseColor(requestColor),
           dashTime,
           dashLength,
           dashGap: 1 - dashLength,
