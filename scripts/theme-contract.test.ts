@@ -32,7 +32,7 @@ const PREVIEW_ROLES = [
 
 type ProjectScripts = Record<string, string>
 
-const BROWSER_INSTALL_COMMAND = 'bunx playwright install --with-deps chromium'
+const BROWSER_INSTALL_COMMAND = 'bunx playwright install chromium'
 const CLOUDFLARE_BUILD_COMMAND = '- run: bun run build'
 
 const hasHardcodedColor = (value: string): boolean =>
