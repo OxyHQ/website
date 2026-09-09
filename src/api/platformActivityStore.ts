@@ -22,6 +22,9 @@ interface PlatformActivityState {
 const OXY_API =
   (import.meta.env.VITE_OXY_API as string | undefined) || 'https://api.oxy.so'
 const MAX_ACTIVITY_EVENTS = 20
+const RECONNECT_DELAY_MS = 500
+const MAX_RECONNECT_DELAY_MS = 10_000
+const CONNECTION_TIMEOUT_MS = 10_000
 const INITIAL_STATE: PlatformActivityState = { events: [], isConnected: false }
 
 type Listener = () => void
@@ -81,6 +84,11 @@ function connect(): void {
   socket = io(`${OXY_API}/platform-activity`, {
     transports: ['websocket'],
     reconnection: true,
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: RECONNECT_DELAY_MS,
+    reconnectionDelayMax: MAX_RECONNECT_DELAY_MS,
+    randomizationFactor: 0.5,
+    timeout: CONNECTION_TIMEOUT_MS,
   })
   socket.on('connect', () => {
     state = { ...state, isConnected: true }

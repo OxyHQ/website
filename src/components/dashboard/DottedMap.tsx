@@ -4,6 +4,7 @@ import { geoEquirectangular } from "d3-geo";
 import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
 import { activityRegionCoordinates, activityRegionLabel } from "../../data/dashboard/activity-regions";
 import { activityCategoryColor } from "../../data/dashboard/activity-categories";
+import { activityMotion } from "../../data/dashboard/activity-motion";
 import type { InfraStatusNode, PlatformActivityEvent } from "../../api/hooks";
 
 const STATUS_COLORS = {
@@ -162,15 +163,14 @@ export default function DottedMap({
       const end = target ? projection(target) : null;
       if (!end) return [];
       const curve = Math.min(80, Math.abs(end[0] - start[0]) * 0.18 + 24);
-      const windowMs = Math.max(250, Date.parse(event.emittedAt) - Date.parse(event.windowStartedAt));
-      const requestsPerSecond = event.requests / (windowMs / 1_000);
+      const activity = activityMotion(event);
       return [{
         key: `route-${event.sourceRegion}-${event.targetRegion}-${event.emittedAt}`,
         path: `M ${start[0]} ${start[1]} Q ${(start[0] + end[0]) / 2} ${Math.min(start[1], end[1]) - curve} ${end[0]} ${end[1]}`,
         color: activityCategoryColor(event.service),
-        pulseCount: Math.min(12, Math.max(1, Math.round(event.requests))),
-        pulseDuration: Math.max(0.42, Math.min(2.2, 1.8 / Math.sqrt(Math.max(0.2, requestsPerSecond)))),
-        pulseLength: Math.max(2.5, Math.min(14, 10 / Math.sqrt(Math.max(0.2, requestsPerSecond)))),
+        pulseCount: activity.pulseCount,
+        pulseDuration: activity.pulseDurationMs / 1_000,
+        pulseLength: activity.pulseLength * 100,
       }];
     });
   }, [activityEvents, projection]);

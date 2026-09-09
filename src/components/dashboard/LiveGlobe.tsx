@@ -12,6 +12,7 @@ import type { InfraStatusNode, PlatformActivityEvent } from '../../api/hooks'
 import { INFRA_NODES } from '../../data/dashboard/infra-nodes'
 import { activityRegionCoordinates, activityRegionLabel } from '../../data/dashboard/activity-regions'
 import { activityCategory, ACTIVITY_CATEGORIES, type ActivityCategory } from '../../data/dashboard/activity-categories'
+import { activityMotion } from '../../data/dashboard/activity-motion'
 
 interface LiveGlobeProps {
   infraStatus?: InfraStatusNode[]
@@ -249,11 +250,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       const source = event.sourceCoordinates ?? activityRegionCoordinates(event.sourceRegion)
       const target = activityRegionCoordinates(event.targetRegion)
       if (!source || !target) return []
-      const windowMs = Math.max(250, Date.parse(event.emittedAt) - Date.parse(event.windowStartedAt))
-      const requestsPerSecond = event.requests / (windowMs / 1_000)
-      const pulseCount = Math.min(12, Math.max(1, Math.round(event.requests)))
-      const dashLength = Math.max(0.025, Math.min(0.14, 0.1 / Math.sqrt(Math.max(0.2, requestsPerSecond))))
-      const dashTime = Math.max(420, Math.min(2_200, 1_800 / Math.sqrt(Math.max(0.2, requestsPerSecond))))
+      const { pulseCount, pulseDurationMs: dashTime, pulseLength: dashLength } = activityMotion(event)
       return Array.from({ length: pulseCount }, (_, pulseIndex) => [
         {
           id: `${event.sourceRegion}-${event.targetRegion}-${event.emittedAt}-request-${pulseIndex}`,
