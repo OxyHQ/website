@@ -494,7 +494,7 @@ export const defaultFooterColumns: FooterColumn[] = [
       { label: 'Alia', href: 'https://alia.onl/', isExternal: true },
       { label: 'Kaana', href: 'https://kaana.ai', isExternal: true },
       { label: 'Astro', href: '/astro' },
-      { label: 'Allo', href: 'https://allo.oxy.so/', isExternal: true },
+      { label: 'Allo', href: 'https://allo.you/', isExternal: true },
       { label: 'FairCoin', href: 'https://fairco.in', isExternal: true },
       { label: 'FAIRWallet', href: 'https://fairco.in/wallet', isExternal: true },
       { label: 'Marketplace', href: '/mercaria' },
