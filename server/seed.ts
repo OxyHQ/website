@@ -233,7 +233,7 @@ async function seed() {
           { label: 'Accounts', href: 'https://accounts.oxy.so/', isExternal: true },
           { label: 'Mention', href: '/mention' },
           { label: 'Oxy Inbox', href: '/inbox' },
-          { label: 'Allo', href: 'https://allo.oxy.so/', isExternal: true },
+          { label: 'Allo', href: 'https://allo.you/', isExternal: true },
           { label: 'Alia', href: 'https://alia.onl/', isExternal: true },
           { label: 'Homiio', href: '/homiio' },
           { label: 'Syra', href: 'https://syra.fm', isExternal: true },
