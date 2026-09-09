@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
@@ -6,24 +6,46 @@ import { formatNumber } from "../../lib/utils";
 import type { PlatformStats } from "../../api/hooks";
 import "../../styles/dashboard-metrics.css";
 
-function Chevron({ circle = false }: { circle?: boolean }) {
+const METRIC_DETAILS: Record<string, string> = {
+  "Total Users": "Oxy IDs registered across the whole ecosystem.",
+  "Active Sessions": "Sessions that are active and have not expired.",
+  "Developer Apps": "Active applications connected to the Oxy platform.",
+  "Stored Files": "Private files currently managed by Oxy storage.",
+  Messages: "Messages processed across Oxy communication products.",
+  Notifications: "Notifications created and delivered by the platform.",
+  Transactions: "Transactions recorded by Oxy financial services.",
+  "AI Models": "AI models currently available through Oxy and Kaana.",
+  Connections: "Anonymous aggregate of relationships in the Oxy social graph.",
+  "Platform Activity": "Combined messages, notifications and transactions.",
+};
+
+function Chevron({ circle = false, open, onClick, label }: { circle?: boolean; open: boolean; onClick: () => void; label: string }) {
   return (
-    <span aria-hidden="true" className={`dashboard-chevron absolute flex items-center justify-center ${circle ? "rounded-full bg-muted text-foreground" : "text-muted-foreground"}`}>
-      <svg width="100%" height="100%" viewBox="0 0 60 60" fill="none">
+    <button type="button" aria-label={`${open ? "Hide" : "Show"} ${label} details`} aria-expanded={open} onClick={onClick} className={`dashboard-chevron absolute z-20 flex cursor-pointer items-center justify-center border-0 p-0 transition-colors ${circle ? "rounded-full bg-muted text-foreground hover:bg-accent" : "bg-transparent text-muted-foreground hover:text-foreground"}`}>
+      <svg className={`transition-transform duration-300 ${open ? "rotate-90" : ""}`} width="100%" height="100%" viewBox="0 0 60 60" fill="none">
         <path d="m25 18 12 12-12 12" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
-    </span>
+    </button>
   );
 }
 
 function Card({ title, children, circle, className = "" }: { title: string; children: ReactNode; circle?: boolean; className?: string }) {
+  const [open, setOpen] = useState(false);
   return (
     <section aria-label={title} className={`dashboard-metric relative isolate overflow-hidden bg-background ${className}`}>
       <h2 className="dashboard-card-title absolute font-medium tracking-[-0.035em] text-muted-foreground">{title}</h2>
-      <Chevron circle={circle} />
-      {children}
+      <Chevron circle={circle} open={open} onClick={() => setOpen((current) => !current)} label={title} />
+      <div className={`dashboard-card-body transition duration-300 ${open ? "pointer-events-none translate-y-2 opacity-0" : "translate-y-0 opacity-100"}`}>{children}</div>
+      <div className={`dashboard-card-detail absolute transition duration-300 ${open ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"}`}>
+        <p>{METRIC_DETAILS[title]}</p>
+        <span className="text-primary">Live · refreshes automatically</span>
+      </div>
     </section>
   );
+}
+
+function LiveValue({ children, version, className = "dashboard-metric-value" }: { children: ReactNode; version: string; className?: string }) {
+  return <p key={`${version}-${String(children)}`} className={`${className} dashboard-live-value absolute font-bold tracking-[-0.05em]`}>{children}</p>;
 }
 
 const marketPath = "M0 365 C5 370 9 377 14 378 S31 353 37 350 S53 365 58 364 S70 346 76 352 L93 376 Q97 382 103 372 Q108 365 113 376 Q116 381 121 373 L130 360 L137 309 Q141 297 146 315 L154 348 Q167 364 172 361 C177 357 178 322 185 322 S192 337 198 320 L209 290 Q213 280 218 289 L229 308 Q232 312 236 302 Q240 297 244 305 Q248 308 252 300 Q256 297 259 316 Q262 331 268 322 L276 310 Q279 306 286 311 L296 316 Q301 319 306 314 L315 308 L325 308 L342 297 L348 282 Q352 274 358 283 Q370 300 375 298 C381 294 387 273 392 276 S398 301 404 281 L412 258 Q418 241 421 282";
@@ -57,13 +79,13 @@ export default function ReferenceMetricsGrid({ stats }: { stats: PlatformStats }
     <div className="dashboard-metrics-theme dashboard-metrics-dense mx-auto w-full [container-type:inline-size]">
       <div className="dashboard-reference-grid grid grid-cols-[420fr_420fr_420fr_420fr_632fr] gap-[.69cqw]">
         <Card title="Total Users" circle className="bg-surface">
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.05em]">{formatNumber(stats.totalUsers)}</p>
+          <LiveValue version={stats.timestamp}>{formatNumber(stats.totalUsers)}</LiveValue>
           <p className="dashboard-market-change absolute flex items-center gap-[.6cqw] font-medium tracking-[-0.035em]"><span className="text-success">Oxy ID / <span className="text-muted-foreground">all apps</span></span><svg aria-hidden="true" className="w-[2.55cqw] text-success" viewBox="0 0 38 26" fill="none"><path d="m2 20 10-9 8 7L35 4M24 4h11v11" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg></p>
           <LineChart market />
         </Card>
 
         <Card title="Active Sessions">
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.05em]">{formatNumber(stats.activeSessions)}</p>
+          <LiveValue version={stats.timestamp}>{formatNumber(stats.activeSessions)}</LiveValue>
           <div className="dashboard-allocation absolute">
             <div className="mb-[.5cqw] flex justify-between tracking-[-0.035em]"><span className="text-primary">Live {sessionShare.toFixed(1)}%</span><span className="text-muted-foreground">of users</span></div>
             <div role="img" aria-label={`${sessionShare.toFixed(1)}% of users have an active session`} className="flex h-[2.66cqw] overflow-hidden rounded-[.65cqw] bg-muted"><span style={{ width: `${sessionShare}%` }} className="border-r-[.3cqw] border-background bg-primary" /></div>
@@ -72,26 +94,26 @@ export default function ReferenceMetricsGrid({ stats }: { stats: PlatformStats }
         </Card>
 
         <Card title="Developer Apps">
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.05em]">{formatNumber(stats.totalDeveloperApps)}</p>
+          <LiveValue version={stats.timestamp}>{formatNumber(stats.totalDeveloperApps)}</LiveValue>
           <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Connected / </span><span className="text-muted-foreground">Oxy API</span></p>
           <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.67cqw] rounded-[.25cqw] ${index < Math.min(stats.totalDeveloperApps, 19) ? "bg-primary" : "bg-muted"} h-[3.1cqw]`} />)}</div>
           <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Apps</span><span>19+</span></div>
         </Card>
 
         <Card title="Stored Files">
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.045em]">{formatNumber(stats.totalFiles)}</p>
+          <LiveValue version={stats.timestamp}>{formatNumber(stats.totalFiles)}</LiveValue>
           <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Private / </span><span className="text-muted-foreground">all apps</span></p>
           <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.47cqw] rounded-[.18cqw] ${index < Math.min(19, Math.ceil(stats.totalFiles / 100)) ? "bg-primary" : "bg-muted"} h-[2.15cqw]`} />)}</div>
           <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Files</span><span>1.9K+</span></div>
         </Card>
 
         <Card title="Messages">
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.05em]">{formatNumber(stats.totalMessages)}</p>
+          <LiveValue version={stats.timestamp}>{formatNumber(stats.totalMessages)}</LiveValue>
           <LineChart />
         </Card>
 
         <Card title="Notifications" circle>
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.045em]">{formatNumber(stats.totalNotifications)}</p>
+          <LiveValue version={stats.timestamp}>{formatNumber(stats.totalNotifications)}</LiveValue>
           <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Delivered / </span><span className="text-muted-foreground">total</span></p>
           <div className="dashboard-subnet-bars absolute flex items-center justify-between" role="img" aria-label={`${stats.totalNotifications} notifications delivered`}>{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.85cqw] rounded-[.32cqw] ${index < Math.min(19, Math.ceil(stats.totalNotifications / 10)) ? "bg-primary" : "bg-muted"} ${index === Math.min(18, Math.ceil(stats.totalNotifications / 10) - 1) ? "h-[5.25cqw]" : "h-[3.92cqw]"}`} />)}</div>
           <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Alerts</span><span>190+</span></div>
@@ -103,14 +125,14 @@ export default function ReferenceMetricsGrid({ stats }: { stats: PlatformStats }
         </Card>
 
         <Card title="AI Models">
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.045em]">{formatNumber(stats.aiModels)}</p>
+          <LiveValue version={stats.timestamp}>{formatNumber(stats.aiModels)}</LiveValue>
           <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Available / </span><span className="text-muted-foreground">now</span></p>
           <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.67cqw] rounded-[.25cqw] ${index < stats.aiModels ? "bg-primary" : "bg-muted"} h-[3.1cqw]`} />)}</div>
           <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Models</span><span>19</span></div>
         </Card>
 
         <Card title="Connections">
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.045em]">{formatNumber(stats.totalFollows)}</p>
+          <LiveValue version={stats.timestamp}>{formatNumber(stats.totalFollows)}</LiveValue>
           <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Private graph / </span><span className="text-muted-foreground">total</span></p>
           <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.47cqw] rounded-[.18cqw] ${index < Math.min(19, Math.ceil(stats.totalFollows / 100)) ? "bg-primary" : "bg-muted"} h-[2.15cqw]`} />)}</div>
           <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Follows</span><span>1.9K+</span></div>

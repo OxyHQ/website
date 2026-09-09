@@ -9,6 +9,8 @@
   backdrop-filter: blur(22px) saturate(115%);
 }
 .dashboard-card-title { left: 2.66cqw; top: 2.99cqw; font-size: 2.66cqw; line-height: 1.18; white-space: nowrap; }
+.dashboard-card-detail { left: 2.66cqw; right: 2.66cqw; top: 8.2cqw; font-size: 1.75cqw; line-height: 1.35; color: var(--muted-foreground); }
+.dashboard-card-detail span { display: block; margin-top: 1.5cqw; font-size: 1.45cqw; font-weight: 500; }
 .dashboard-chevron { right: 2.59cqw; top: 2.59cqw; width: 4cqw; height: 4cqw; }
 .dashboard-metric-value { left: 2.66cqw; top: 7.25cqw; font-size: 4cqw; line-height: 1.2; }
 .dashboard-market-change { left: 2.66cqw; top: 12.25cqw; font-size: 2cqw; line-height: 1.2; }
@@ -25,6 +27,8 @@
 
 .dashboard-metrics-dense .dashboard-metric { height: 18.15cqw; border-radius: 2.6cqw; }
 .dashboard-metrics-dense .dashboard-card-title { left: 1.73cqw; top: 1.94cqw; font-size: 1.73cqw; }
+.dashboard-metrics-dense .dashboard-card-detail { left: 1.73cqw; right: 1.73cqw; top: 5.8cqw; font-size: 1.22cqw; }
+.dashboard-metrics-dense .dashboard-card-detail span { margin-top: 1.1cqw; font-size: 1.02cqw; }
 .dashboard-metrics-dense .dashboard-chevron { right: 1.68cqw; top: 1.68cqw; width: 2.6cqw; height: 2.6cqw; }
 .dashboard-metrics-dense .dashboard-metric-value { left: 1.73cqw; top: 4.71cqw; font-size: 2.6cqw; }
 .dashboard-metrics-dense .dashboard-market-change { left: 1.73cqw; top: 7.96cqw; font-size: 1.3cqw; }
@@ -44,11 +48,32 @@
 .dashboard-metrics-dense .dashboard-trading-bars > span { min-width: 0; flex: 1 1 0%; }
 .dashboard-metrics-dense .dashboard-trading-axis { left: 1.73cqw; right: 1.73cqw; top: 15.46cqw; font-size: 1.09cqw; }
 
+.dashboard-live-value { animation: dashboard-metric-update 420ms cubic-bezier(.2,.8,.2,1); }
+.dashboard-subnet-bars > span,
+.dashboard-trading-bars > span { transition: height 420ms ease, background-color 420ms ease, opacity 420ms ease; }
+
+@keyframes dashboard-metric-update {
+  0% { opacity: .45; transform: translateY(5px); }
+  55% { color: var(--primary); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-live-value { animation: none; }
+  .dashboard-card-body,
+  .dashboard-card-detail,
+  .dashboard-chevron svg,
+  .dashboard-subnet-bars > span,
+  .dashboard-trading-bars > span { transition: none; }
+}
+
 @media (max-width: 900px) {
   .dashboard-metrics-theme { width: min(100% - 32px, 480px); }
   .dashboard-reference-grid { grid-template-columns: 1fr; gap: 16px; }
   .dashboard-metric { height: 100cqw; border-radius: 14.32cqw; }
   .dashboard-card-title { left: 9.52cqw; top: 10.7cqw; font-size: 9.52cqw; }
+  .dashboard-card-detail { left: 9.52cqw; right: 9.52cqw; top: 29cqw; font-size: 6.4cqw; }
+  .dashboard-card-detail span { margin-top: 5cqw; font-size: 5.3cqw; }
   .dashboard-chevron { right: 9.28cqw; top: 9.28cqw; width: 14.32cqw; height: 14.32cqw; }
   .dashboard-metric-value { left: 9.52cqw; top: 25.96cqw; font-size: 14.32cqw; }
   .dashboard-market-change { left: 9.52cqw; top: 43.87cqw; font-size: 7.16cqw; }

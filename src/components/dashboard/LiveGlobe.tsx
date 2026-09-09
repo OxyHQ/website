@@ -19,6 +19,7 @@ interface LiveGlobeProps {
 interface GlobeLayout {
   width: number
   height: number
+  highResolution: boolean
   primary: string
   success: string
   warning: string
@@ -58,6 +59,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   const [layout, setLayout] = useState<GlobeLayout | null>(null)
   const globeRef = useRef<GlobeMethods>(undefined)
   const activityEventsRef = useRef(activityEvents)
+  const highResolutionRef = useRef(false)
   const returnTimerRef = useRef<number | null>(null)
   const resumeTimerRef = useRef<number | null>(null)
   const controlsCleanupRef = useRef<(() => void) | null>(null)
@@ -70,9 +72,12 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     const measure = () => {
       const style = getComputedStyle(node)
       const width = Math.max(1, node.clientWidth)
+      const highResolution = width * window.devicePixelRatio >= 2_400
+      highResolutionRef.current = highResolution
       setLayout({
         width,
         height: Math.max(MIN_GLOBE_HEIGHT, node.clientHeight),
+        highResolution,
         primary: threeColor(style.getPropertyValue('--primary').trim()),
         success: threeColor(style.getPropertyValue('--success').trim()),
         warning: threeColor(style.getPropertyValue('--warning').trim()),
@@ -107,8 +112,15 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     controls.minDistance = 150
     controls.maxDistance = 420
 
-    const skyTexture = new TextureLoader().load('/images/dashboard/night-sky.png')
+    const renderer = globe.renderer()
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    const skyTexture = new TextureLoader().load(
+      highResolutionRef.current
+        ? '/images/dashboard/night-sky-8k.webp'
+        : '/images/dashboard/night-sky.png',
+    )
     skyTexture.colorSpace = SRGBColorSpace
+    skyTexture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy())
     const skyGeometry = new SphereGeometry(900, 64, 32)
     const skyMaterial = new MeshBasicMaterial({
       map: skyTexture,
@@ -182,19 +194,19 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   const arcs = useMemo<ActivityArc[]>(() => {
     if (!layout) return []
     return activityEvents.flatMap((event) => {
-      const source = INFRA_NODES.find((node) => node.region === event.region)
-      if (!source) return []
-      return INFRA_NODES
-        .filter((node) => node.region !== event.region)
-        .map((target, index) => ({
-          id: `${event.region}-${event.emittedAt}-${target.region}`,
-          startLat: source.coordinates[1],
-          startLng: source.coordinates[0],
-          endLat: target.coordinates[1],
-          endLng: target.coordinates[0],
-          color: layout.primary,
-          dashTime: 1_600 + index * 240,
-        }))
+      if (!event.sourceRegion || !event.targetRegion || event.sourceRegion === event.targetRegion) return []
+      const source = INFRA_NODES.find((node) => node.region === event.sourceRegion)
+      const target = INFRA_NODES.find((node) => node.region === event.targetRegion)
+      if (!source || !target) return []
+      return [{
+        id: `${event.sourceRegion}-${event.targetRegion}-${event.emittedAt}`,
+        startLat: source.coordinates[1],
+        startLng: source.coordinates[0],
+        endLat: target.coordinates[1],
+        endLng: target.coordinates[0],
+        color: layout.primary,
+        dashTime: 1_600,
+      }]
     })
   }, [activityEvents, layout])
 
@@ -222,7 +234,9 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           height={layout.height}
           rendererConfig={{ alpha: true, antialias: true }}
           backgroundColor="rgba(0,0,0,0)"
-          globeImageUrl="/images/dashboard/earth-night-nasa.webp"
+          globeImageUrl={layout.highResolution
+            ? "/images/dashboard/earth-night-nasa-8k.webp"
+            : "/images/dashboard/earth-night-nasa.webp"}
           showAtmosphere
           atmosphereColor={layout.primary}
           atmosphereAltitude={0.12}

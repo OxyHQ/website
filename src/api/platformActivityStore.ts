@@ -5,6 +5,10 @@ export interface PlatformActivityEvent {
   requests: number
   windowStartedAt: string
   emittedAt: string
+  direction?: 'inbound' | 'outbound' | 'internal'
+  service?: string
+  sourceRegion?: string
+  targetRegion?: string
 }
 
 interface PlatformActivityState {

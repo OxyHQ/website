@@ -148,21 +148,18 @@ export default function DottedMap({
     if (!activityEvents || activityEvents.length === 0) return [];
 
     return activityEvents.flatMap(event => {
-      const source = INFRA_NODES.find(node => node.region === event.region);
+      if (!event.sourceRegion || !event.targetRegion || event.sourceRegion === event.targetRegion) return [];
+      const source = INFRA_NODES.find(node => node.region === event.sourceRegion);
       const start = source ? projection(source.coordinates) : null;
       if (!start) return [];
-
-      return INFRA_NODES
-        .filter(node => node.region !== event.region)
-        .flatMap(target => {
-          const end = projection(target.coordinates);
-          if (!end) return [];
-          const curve = Math.min(80, Math.abs(end[0] - start[0]) * 0.18 + 24);
-          return [{
-            key: `route-${event.region}-${target.region}-${event.emittedAt}`,
-            path: `M ${start[0]} ${start[1]} Q ${(start[0] + end[0]) / 2} ${Math.min(start[1], end[1]) - curve} ${end[0]} ${end[1]}`,
-          }];
-        });
+      const target = INFRA_NODES.find(node => node.region === event.targetRegion);
+      const end = target ? projection(target.coordinates) : null;
+      if (!end) return [];
+      const curve = Math.min(80, Math.abs(end[0] - start[0]) * 0.18 + 24);
+      return [{
+        key: `route-${event.sourceRegion}-${event.targetRegion}-${event.emittedAt}`,
+        path: `M ${start[0]} ${start[1]} Q ${(start[0] + end[0]) / 2} ${Math.min(start[1], end[1]) - curve} ${end[0]} ${end[1]}`,
+      }];
     });
   }, [activityEvents, projection]);
 
