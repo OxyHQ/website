@@ -170,6 +170,7 @@ export default function DottedMap({
         color: activityCategoryColor(event.service),
         pulseCount: Math.min(12, Math.max(1, Math.round(event.requests))),
         pulseDuration: Math.max(0.42, Math.min(2.2, 1.8 / Math.sqrt(Math.max(0.2, requestsPerSecond)))),
+        pulseLength: Math.max(2.5, Math.min(14, 10 / Math.sqrt(Math.max(0.2, requestsPerSecond)))),
       }];
     });
   }, [activityEvents, projection]);
@@ -294,25 +295,25 @@ export default function DottedMap({
           {projectedRoutes.map(route => (
             <g key={route.key}>
               <path d={route.path} fill="none" stroke={route.color} strokeWidth={0.8} opacity={0.28} />
-              {Array.from({ length: route.pulseCount }, (_, pulseIndex) => (
-                <motion.path
-                  key={`${route.key}-${pulseIndex}`}
-                  d={route.path}
-                  pathLength={100}
-                  fill="none"
-                  stroke={route.color}
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeDasharray="2 98"
-                  initial={{ strokeDashoffset: -100 * pulseIndex / route.pulseCount, opacity: 0 }}
-                  animate={{ strokeDashoffset: -100 * (1 + pulseIndex / route.pulseCount), opacity: 0.9 }}
-                  exit={{ opacity: 0 }}
-                  transition={{
-                    strokeDashoffset: { duration: route.pulseDuration, repeat: Infinity, ease: "linear" },
-                    opacity: { duration: 0.2 },
-                  }}
-                />
-              ))}
+              {Array.from({ length: route.pulseCount }, (_, pulseIndex) => [1, -1].map(direction => (
+                  <motion.path
+                    key={`${route.key}-${pulseIndex}-${direction}`}
+                    d={route.path}
+                    pathLength={100}
+                    fill="none"
+                    stroke={route.color}
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeDasharray={`${route.pulseLength} ${100 - route.pulseLength}`}
+                    initial={{ strokeDashoffset: direction * -100 * pulseIndex / route.pulseCount, opacity: 0 }}
+                    animate={{ strokeDashoffset: direction * -100 * (1 + pulseIndex / route.pulseCount), opacity: direction === 1 ? 0.95 : 0.7 }}
+                    exit={{ opacity: 0 }}
+                    transition={{
+                      strokeDashoffset: { duration: route.pulseDuration, repeat: Infinity, ease: "linear" },
+                      opacity: { duration: 0.2 },
+                    }}
+                  />
+                ))) }
             </g>
           ))}
         </g>
