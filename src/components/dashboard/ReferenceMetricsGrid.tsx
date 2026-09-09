@@ -74,6 +74,9 @@ export default function ReferenceMetricsGrid({ stats }: { stats: PlatformStats }
     ? Math.min(100, (stats.totalTransactions / (stats.totalMessages + stats.totalTransactions)) * 100)
     : 0;
   const activityTotal = stats.totalMessages + stats.totalNotifications + stats.totalTransactions;
+  const sessionShareLabel = sessionShare > 0 && sessionShare < 0.1
+    ? `${sessionShare.toFixed(3)}%`
+    : `${sessionShare.toFixed(1)}%`;
 
   return (
     <div className="dashboard-metrics-theme dashboard-metrics-dense mx-auto w-full [container-type:inline-size]">
@@ -87,8 +90,8 @@ export default function ReferenceMetricsGrid({ stats }: { stats: PlatformStats }
         <Card title="Active Sessions">
           <LiveValue version={stats.timestamp}>{formatNumber(stats.activeSessions)}</LiveValue>
           <div className="dashboard-allocation absolute">
-            <div className="mb-[.5cqw] flex justify-between tracking-[-0.035em]"><span className="text-primary">Live {sessionShare.toFixed(1)}%</span><span className="text-muted-foreground">of users</span></div>
-            <div role="img" aria-label={`${sessionShare.toFixed(1)}% of users have an active session`} className="flex h-[2.66cqw] overflow-hidden rounded-[.65cqw] bg-muted"><span style={{ width: `${sessionShare}%` }} className="border-r-[.3cqw] border-background bg-primary" /></div>
+            <div className="mb-[.5cqw] flex justify-between tracking-[-0.035em]"><span className="text-primary">Live {sessionShareLabel}</span><span className="text-muted-foreground">of users</span></div>
+            <div role="img" aria-label={`${sessionShareLabel} of users have an active session`} className="flex h-[2.66cqw] overflow-hidden rounded-[.65cqw] bg-muted"><span style={{ width: sessionShare > 0 ? `${Math.max(1.5, sessionShare)}%` : '0%' }} className="border-r-[.3cqw] border-background bg-primary transition-[width] duration-500" /></div>
             <div className="mt-[1.55cqw] flex justify-between tracking-[-0.045em]"><span>0</span><span>{formatNumber(stats.totalUsers)}</span></div>
           </div>
         </Card>
@@ -120,7 +123,7 @@ export default function ReferenceMetricsGrid({ stats }: { stats: PlatformStats }
         </Card>
 
         <Card title="Transactions">
-          <svg className="dashboard-donut absolute" viewBox="0 0 100 100" role="img" aria-label={`${transactionShare.toFixed(1)}% of message and transaction activity is transactions`}><circle cx="50" cy="50" r="37" fill="none" stroke="var(--border)" strokeWidth="22" /><circle cx="50" cy="50" r="37" pathLength="100" fill="none" stroke="var(--primary)" strokeWidth="22" strokeDasharray={`${Math.max(0, transactionShare - 2)} ${102 - transactionShare}`} transform="rotate(-90 50 50)" /></svg>
+          <svg className="dashboard-donut absolute" viewBox="0 0 100 100" role="img" aria-label={`${formatNumber(stats.totalTransactions)} total transactions`}><circle cx="50" cy="50" r="37" fill="none" stroke="var(--border)" strokeWidth="22" /><circle className="transition-all duration-500" cx="50" cy="50" r="37" pathLength="100" fill="none" stroke="var(--primary)" strokeWidth="22" strokeDasharray={`${transactionShare > 0 ? Math.max(1.5, transactionShare) : 0} 100`} transform="rotate(-90 50 50)" /></svg>
           <div className="dashboard-donut-legend absolute flex items-center justify-between text-muted-foreground tracking-[-0.04em]"><span className="flex items-center gap-[.35cqw]"><i className="inline-block h-[1.95cqw] w-[1cqw] rounded-full bg-border" />Messages</span><span className="flex items-center gap-[.35cqw]"><i className="inline-block h-[1.95cqw] w-[1cqw] rounded-full bg-primary" />Tx {formatNumber(stats.totalTransactions)}</span></div>
         </Card>
 

@@ -9,6 +9,9 @@ export interface PlatformActivityEvent {
   service?: string
   sourceRegion?: string
   targetRegion?: string
+  sourceCoordinates?: [number, number]
+  sourceLabel?: string
+  sourceCountry?: string
 }
 
 interface PlatformActivityState {
@@ -29,13 +32,20 @@ const listeners = new Set<Listener>()
 
 async function addLocalEdgeConnection(): Promise<void> {
   try {
-    const response = await fetch('/cdn-cgi/trace', { cache: 'no-store' })
+    const [response, locationsResponse] = await Promise.all([
+      fetch('/cdn-cgi/trace', { cache: 'no-store' }),
+      fetch('https://speed.cloudflare.com/locations'),
+    ])
     if (!response.ok) return
     const trace = await response.text()
     // Deliberately read only the serving PoP. The trace response also contains
     // an IP; it must never enter application state, logs or telemetry.
     const colo = trace.match(/^colo=([a-z]{3})\r?$/im)?.[1]?.toLowerCase()
     if (!colo) return
+    const locations = locationsResponse.ok
+      ? await locationsResponse.json() as Array<{ iata: string; city: string; cca2: string; lat: number; lon: number }>
+      : []
+    const edge = locations.find((location) => location.iata.toLowerCase() === colo)
     const emittedAt = new Date().toISOString()
     const event: PlatformActivityEvent = {
       region: 'us-west-2',
@@ -46,6 +56,11 @@ async function addLocalEdgeConnection(): Promise<void> {
       emittedAt,
       direction: 'inbound',
       service: 'platform',
+      ...(edge ? {
+        sourceCoordinates: [edge.lon, edge.lat] as [number, number],
+        sourceLabel: edge.city,
+        sourceCountry: edge.cca2,
+      } : {}),
     }
     state = { ...state, events: [...state.events, event].slice(-MAX_ACTIVITY_EVENTS) }
     emit()

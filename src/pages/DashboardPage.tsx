@@ -8,9 +8,9 @@ import {
   TotalRequests,
   LiveActivity,
   RegionCount,
+  LiveOrigins,
 } from "../components/dashboard/StatsDisplay";
 import ReferenceMetricsGrid from "../components/dashboard/ReferenceMetricsGrid";
-import InfraOverlay from "../components/dashboard/InfraOverlay";
 import Logo from "../components/ui/Logo";
 import { usePlatformActivity, usePlatformStats, useInfraStatus } from "../api/hooks";
 import { INFRA_NODES } from "../data/dashboard/infra-nodes";
@@ -116,7 +116,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="min-[961px]:absolute min-[961px]:bottom-0 min-[961px]:right-0 z-10 pb-2">
-              <InfraOverlay nodes={infraData?.nodes} />
+              <LiveOrigins events={activityEvents} />
             </div>
           </div>
 

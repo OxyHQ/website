@@ -134,7 +134,9 @@ export default function DottedMap({
 
     return activityEvents.map(event => {
       const region = event.sourceRegion ?? event.region;
-      const coordinates = activityRegionCoordinates(region);
+      const coordinates = event.sourceRegion === region && event.sourceCoordinates
+        ? event.sourceCoordinates
+        : activityRegionCoordinates(region);
       if (!coordinates) return null;
       const coords = projection(coordinates);
       if (!coords) return null;
@@ -143,7 +145,7 @@ export default function DottedMap({
         x: coords[0],
         y: coords[1],
         color: 'var(--color-primary)',
-        label: activityRegionLabel(region),
+        label: event.sourceLabel ?? activityRegionLabel(region),
       };
     }).filter((f): f is NonNullable<typeof f> => f !== null);
   }, [activityEvents, projection]);
@@ -153,7 +155,7 @@ export default function DottedMap({
 
     return activityEvents.flatMap(event => {
       if (!event.sourceRegion || !event.targetRegion || event.sourceRegion === event.targetRegion) return [];
-      const source = activityRegionCoordinates(event.sourceRegion);
+      const source = event.sourceCoordinates ?? activityRegionCoordinates(event.sourceRegion);
       const start = source ? projection(source) : null;
       if (!start) return [];
       const target = activityRegionCoordinates(event.targetRegion);

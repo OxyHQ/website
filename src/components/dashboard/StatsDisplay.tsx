@@ -239,14 +239,41 @@ function SegmentedScale({ value, maximum, label }: { value: number; maximum: num
 }
 
 export function TotalRequests({ stats }: { stats: PlatformStats }) {
+  const totalActivity = stats.totalMessages + stats.totalNotifications + stats.totalTransactions;
   return (
     <div className="space-y-2">
       <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-muted-foreground">
-        Total Users
+        Total Platform Activity
       </h2>
       <div className="text-4xl md:text-5xl tracking-normal font-mono tabular-nums">
-        {formatNumber(stats.totalUsers)}
+        {formatNumber(totalActivity)}
       </div>
+    </div>
+  );
+}
+
+export function LiveOrigins({ events }: { events: PlatformActivityEvent[] }) {
+  const connectionsByCountry = new Map<string, number>();
+  for (const event of events) {
+    if (!event.sourceCountry) continue;
+    connectionsByCountry.set(event.sourceCountry, (connectionsByCountry.get(event.sourceCountry) ?? 0) + 1);
+  }
+  const countries = [...connectionsByCountry.entries()]
+    .sort((left, right) => right[1] - left[1])
+    .slice(0, 4);
+  const displayNames = typeof Intl.DisplayNames === 'function'
+    ? new Intl.DisplayNames(['en'], { type: 'region' })
+    : null;
+
+  return (
+    <div className="hidden text-right min-[961px]:block">
+      <h2 className="mb-2 font-mono text-sm font-medium uppercase tracking-tight text-muted-foreground">Live Network Origins</h2>
+      {countries.length > 0 ? countries.map(([country, connections]) => (
+        <div key={country} className="flex justify-end gap-4 font-mono text-sm">
+          <span className="text-primary">{displayNames?.of(country) ?? country}</span>
+          <span className="w-[7ch] tabular-nums text-foreground">{formatNumber(connections)}</span>
+        </div>
+      )) : <p className="font-mono text-xs text-muted-foreground">Waiting for live origins…</p>}
     </div>
   );
 }

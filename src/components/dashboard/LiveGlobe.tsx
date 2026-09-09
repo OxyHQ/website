@@ -70,8 +70,9 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   activityEventsRef.current = activityEvents
 
   useEffect(() => {
-    const latestOrigin = [...activityEvents].reverse().find((event) => event.sourceRegion)?.sourceRegion
-    const coordinates = latestOrigin ? activityRegionCoordinates(latestOrigin) : undefined
+    const latestEvent = [...activityEvents].reverse().find((event) => event.sourceRegion)
+    const coordinates = latestEvent?.sourceCoordinates
+      ?? (latestEvent?.sourceRegion ? activityRegionCoordinates(latestEvent.sourceRegion) : undefined)
     if (coordinates && globeRef.current) {
       globeRef.current.pointOfView({ lat: coordinates[1], lng: coordinates[0], altitude: 1.65 }, 1_200)
     }
@@ -209,11 +210,11 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     const origins = new Map<string, (typeof infrastructure)[number]>()
     for (const event of activityEvents) {
       if (!event.sourceRegion || origins.has(event.sourceRegion)) continue
-      const coordinates = activityRegionCoordinates(event.sourceRegion)
+      const coordinates = event.sourceCoordinates ?? activityRegionCoordinates(event.sourceRegion)
       if (!coordinates) continue
       origins.set(event.sourceRegion, {
         region: event.sourceRegion,
-        label: `${activityRegionLabel(event.sourceRegion)} · live origin`,
+        label: `${event.sourceLabel ?? activityRegionLabel(event.sourceRegion)} · live origin`,
         lat: coordinates[1],
         lng: coordinates[0],
         status: 'online',
@@ -226,7 +227,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     if (!layout) return []
     return activityEvents.flatMap((event) => {
       if (!event.sourceRegion || !event.targetRegion || event.sourceRegion === event.targetRegion) return []
-      const source = activityRegionCoordinates(event.sourceRegion)
+      const source = event.sourceCoordinates ?? activityRegionCoordinates(event.sourceRegion)
       const target = activityRegionCoordinates(event.targetRegion)
       if (!source || !target) return []
       return [{
@@ -245,7 +246,9 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     if (!layout) return []
     return activityEvents.flatMap((event) => {
       const region = event.sourceRegion ?? event.region
-      const coordinates = activityRegionCoordinates(region)
+      const coordinates = event.sourceRegion === region && event.sourceCoordinates
+        ? event.sourceCoordinates
+        : activityRegionCoordinates(region)
       return coordinates ? [{
         id: `${region}-${event.emittedAt}`,
         lat: coordinates[1],
