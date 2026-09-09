@@ -28,9 +28,6 @@ type Listener = () => void
 
 let state = INITIAL_STATE
 let socket: Socket | null = null
-let edgeRefreshTimer: ReturnType<typeof setInterval> | null = null
-let localOriginKey = ''
-let localEdgeEvent: PlatformActivityEvent | null = null
 let remoteEvents: PlatformActivityEvent[] = []
 const listeners = new Set<Listener>()
 type EdgeLocation = { iata: string; city: string; cca2: string; lat: number; lon: number }
@@ -71,52 +68,7 @@ function enrichRemoteEvents(): void {
 }
 
 function visibleEvents(): PlatformActivityEvent[] {
-  if (!localEdgeEvent) return remoteEvents.slice(-MAX_ACTIVITY_EVENTS)
-  return [...remoteEvents.slice(-(MAX_ACTIVITY_EVENTS - 1)), localEdgeEvent]
-}
-
-async function addLocalEdgeConnection(): Promise<void> {
-  try {
-    const [response, locations] = await Promise.all([
-      fetch('/cdn-cgi/trace', { cache: 'no-store' }),
-      loadEdgeLocations(),
-    ])
-    if (!response.ok) return
-    const trace = await response.text()
-    // Deliberately read only the serving PoP and country. The trace response
-    // also contains an IP; it must never enter application state or telemetry.
-    const colo = trace.match(/^colo=([a-z]{3})\r?$/im)?.[1]?.toLowerCase()
-    const country = trace.match(/^loc=([a-z]{2})\r?$/im)?.[1]?.toUpperCase()
-    if (!colo) return
-    const servingEdge = locations.find((location) => location.iata.toLowerCase() === colo)
-    const edge = servingEdge?.cca2 === country
-      ? servingEdge
-      : locations.find((location) => location.cca2 === country) ?? servingEdge
-    const originKey = `${colo}:${country ?? ''}:${edge?.iata ?? ''}`
-    if (originKey === localOriginKey) return
-    localOriginKey = originKey
-    const emittedAt = new Date().toISOString()
-    const event: PlatformActivityEvent = {
-      region: 'us-west-2',
-      sourceRegion: `edge-${colo}`,
-      targetRegion: 'us-west-2',
-      requests: 1,
-      windowStartedAt: emittedAt,
-      emittedAt,
-      direction: 'inbound',
-      service: 'platform',
-      ...(edge ? {
-        sourceCoordinates: [edge.lon, edge.lat] as [number, number],
-        sourceLabel: edge.city,
-        sourceCountry: edge.cca2,
-      } : {}),
-    }
-    localEdgeEvent = event
-    state = { ...state, events: visibleEvents() }
-    emit()
-  } catch {
-    // Local development and non-Cloudflare mirrors do not expose this route.
-  }
+  return remoteEvents.slice(-MAX_ACTIVITY_EVENTS)
 }
 
 function emit(): void {
@@ -126,8 +78,6 @@ function emit(): void {
 function connect(): void {
   if (socket) return
   void loadEdgeLocations().then(enrichRemoteEvents)
-  void addLocalEdgeConnection()
-  edgeRefreshTimer = setInterval(() => void addLocalEdgeConnection(), 15_000)
   socket = io(`${OXY_API}/platform-activity`, {
     transports: ['websocket'],
     reconnection: true,
@@ -160,10 +110,6 @@ export function subscribePlatformActivity(listener: Listener): () => void {
     if (listeners.size === 0) {
       socket?.disconnect()
       socket = null
-      if (edgeRefreshTimer) clearInterval(edgeRefreshTimer)
-      edgeRefreshTimer = null
-      localOriginKey = ''
-      localEdgeEvent = null
       remoteEvents = []
       edgeLocations = []
       edgeLocationsPromise = null
