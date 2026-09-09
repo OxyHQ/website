@@ -219,7 +219,7 @@ export default function DottedMap({
     cancelAutomaticFocus();
     returnTimerRef.current = window.setTimeout(() => {
       focusBusiestOrigin();
-    }, 4_000);
+    }, 600);
   }, [cancelAutomaticFocus, focusBusiestOrigin]);
 
   useEffect(() => {

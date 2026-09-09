@@ -51,7 +51,7 @@ interface ActivityRing {
 }
 
 const MIN_GLOBE_HEIGHT = 420
-const RETURN_TO_ACTIVITY_DELAY = 4_000
+const RETURN_TO_ACTIVITY_DELAY = 600
 const FOCUS_TRANSITION_DURATION = 1_200
 
 function threeColor(token: string): string {
@@ -175,26 +175,31 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     const returnToBusiestRegion = () => {
       isInteractingRef.current = false
       returnTimerRef.current = window.setTimeout(() => {
-        const requestsByRegion = new Map<string, number>()
+        const requestsByOrigin = new Map<string, number>()
         for (const event of activityEventsRef.current) {
-          requestsByRegion.set(
-            event.region,
-            (requestsByRegion.get(event.region) ?? 0) + event.requests,
+          if (!event.sourceRegion) continue
+          requestsByOrigin.set(
+            event.sourceRegion,
+            (requestsByOrigin.get(event.sourceRegion) ?? 0) + event.requests,
           )
         }
-        const busiestRegion = [...requestsByRegion.entries()]
+        const busiestOrigin = [...requestsByOrigin.entries()]
           .sort((left, right) => right[1] - left[1])[0]?.[0]
-        const busiestNode = INFRA_NODES.find((node) => node.region === busiestRegion)
-        if (busiestNode) {
+        const busiestEvent = activityEventsRef.current.find(
+          (event) => event.sourceRegion === busiestOrigin,
+        )
+        const coordinates = busiestEvent?.sourceCoordinates
+          ?? (busiestOrigin ? activityRegionCoordinates(busiestOrigin) : undefined)
+        if (coordinates) {
           globe.pointOfView({
-            lat: busiestNode.coordinates[1],
-            lng: busiestNode.coordinates[0],
+            lat: coordinates[1],
+            lng: coordinates[0],
             altitude: 1.55,
           }, FOCUS_TRANSITION_DURATION)
         }
         resumeTimerRef.current = window.setTimeout(() => {
           controls.autoRotate = true
-        }, busiestNode ? FOCUS_TRANSITION_DURATION : 0)
+        }, coordinates ? FOCUS_TRANSITION_DURATION : 0)
       }, RETURN_TO_ACTIVITY_DELAY)
     }
 
