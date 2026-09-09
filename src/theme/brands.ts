@@ -93,6 +93,13 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     label: 'Developer docs',
   },
   {
+    selector: '.dashboard-metrics-theme',
+    seed: APP_COLOR_PRESETS.lagoon.hex,
+    tertiarySeed: APP_COLOR_PRESETS.grove.tertiaryHex,
+    mode: 'dark',
+    label: 'Live dashboard metric cards',
+  },
+  {
     selector: '.manifesto-theme',
     seed: APP_COLOR_PRESETS.grove.hex,
     tertiarySeed: APP_COLOR_PRESETS.grove.tertiaryHex,

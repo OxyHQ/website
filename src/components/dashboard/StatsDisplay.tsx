@@ -211,7 +211,7 @@ function ActivityChart({ events, tone = "var(--chart-1)", id }: { events: Platfo
   }).join(" ");
   const area = `0,48 ${points} 100,48`;
   return (
-    <svg className="mt-3 h-28 w-full overflow-visible" viewBox="0 0 100 48" preserveAspectRatio="none" role="img" aria-label="Recent anonymous request activity">
+    <svg className="-mx-7 -mb-7 mt-3 h-32 w-[calc(100%+3.5rem)] overflow-visible" viewBox="0 0 100 48" preserveAspectRatio="none" role="img" aria-label="Recent anonymous request activity">
       <defs>
         <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor={tone} stopOpacity="0.35" />
@@ -325,7 +325,7 @@ export function StatsGrid({ stats, events }: { stats: PlatformStats; events: Pla
   const fileShare = contentTotal > 0 ? (stats.totalFiles / contentTotal) * 100 : 0;
   const recentRequests = events.reduce((total, event) => total + event.requests, 0);
   return (
-    <div className="mx-auto max-w-[1000px] space-y-3">
+    <div className="dashboard-metrics-theme mx-auto max-w-[1000px] space-y-3">
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:auto-rows-[280px] lg:grid-cols-[4fr_4fr_6fr]">
         <StatCard title="Total Users" value={stats.totalUsers} infoContent="Registered users across the Oxy ecosystem." filledAction>
           <div className="mt-3 flex items-center gap-2 text-sm font-semibold text-primary">
