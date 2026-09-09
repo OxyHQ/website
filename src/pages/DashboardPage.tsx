@@ -13,6 +13,7 @@ import {
 import InfraOverlay from "../components/dashboard/InfraOverlay";
 import Logo from "../components/ui/Logo";
 import { usePlatformActivity, usePlatformStats, useInfraStatus } from "../api/hooks";
+import { INFRA_NODES } from "../data/dashboard/infra-nodes";
 
 function subscribeFullscreen(callback: () => void): () => void {
   document.addEventListener("fullscreenchange", callback);
@@ -33,7 +34,11 @@ export default function DashboardPage() {
   const { data: infraData } = useInfraStatus();
   const displayedStats = {
     ...stats,
-    regions: infraData?.nodes.filter((node) => node.status !== 'offline').length ?? stats.regions,
+    regions: infraData
+      ? INFRA_NODES.filter((node) =>
+          infraData.nodes.find((status) => status.region === node.region)?.status !== 'offline'
+        ).length
+      : stats.regions,
   };
   const dashboardRef = useRef<HTMLDivElement>(null);
   const isFullscreen = useSyncExternalStore(
