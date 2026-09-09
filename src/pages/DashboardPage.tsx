@@ -8,8 +8,8 @@ import {
   TotalRequests,
   LiveActivity,
   RegionCount,
-  StatsGrid,
 } from "../components/dashboard/StatsDisplay";
+import ReferenceMetricsGrid from "../components/dashboard/ReferenceMetricsGrid";
 import InfraOverlay from "../components/dashboard/InfraOverlay";
 import Logo from "../components/ui/Logo";
 import { usePlatformActivity, usePlatformStats, useInfraStatus } from "../api/hooks";
@@ -121,7 +121,7 @@ export default function DashboardPage() {
           </div>
 
           <section className={`relative z-10 shrink-0 transform-gpu ${isFullscreen ? "pb-6 pt-4" : "pb-12 pt-8 md:pb-16"}`}>
-            <StatsGrid stats={displayedStats} events={activityEvents} />
+            <ReferenceMetricsGrid stats={displayedStats} />
           </section>
         </div>
       </main>
