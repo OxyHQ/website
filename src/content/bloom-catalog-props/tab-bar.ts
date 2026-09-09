@@ -8,6 +8,7 @@ export const props: BloomSurfaceProps = {
     'TabBarProps': {
       props: [
         { name: 'activeIndex', type: 'number', optional: true, description: 'CONTROLLED path — the index of the focused tab. The bar owns the sliding highlight and springs it here whenever this changes. Use this when there is no router in play; the router adapter uses the per-button `isFocused` path instead (see TabBarButtonProps.isFocused) and must NOT pass this.' },
+        { name: 'activeProgress', type: 'SharedValue<number>', optional: true, description: "DRIVEN path — the highlight's live position, in TAB UNITS, on the UI thread. A pager writes its own page position here (`1.4` is 40% of the way from the second tab to the third) and the highlight tracks the finger 1:1 instead of springing to a settled index after the navigation commits." },
         { name: 'onIndexChange', type: '(index: number) => void', optional: true, description: 'Called with the chosen index when a tab is picked by tap, by scrub release, or by keyboard/assistive-technology activation of a `TabBarButton`.' },
         { name: 'onIndexLongPress', type: '(index: number) => void', optional: true, description: 'Called with the index under the finger when a tab is pressed and HELD.' },
         { name: 'theme', type: 'Partial<TabBarTheme>', optional: true, description: "Partial override of the theme resolved from Bloom's color tokens." },

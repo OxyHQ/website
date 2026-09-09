@@ -14,7 +14,7 @@ export const props: BloomSurfaceProps = {
         { name: 'size', type: 'number', optional: true, description: 'Avatar size in pixels (defaults to 40)' },
         { name: 'verified', type: 'boolean', optional: true, description: 'Whether to show a verified badge' },
         { name: 'verifiedIcon', type: 'ReactNode', optional: true, description: 'Custom verified badge icon (rendered at bottom-right)' },
-        { name: 'shape', type: 'AvatarShape', options: ['circle', 'squircle'], optional: true, description: "Shape of the avatar (defaults to 'circle'). 'squircle' requires react-native-svg." },
+        { name: 'shape', type: 'AvatarShape | AvatarShapePath', optional: true, description: "Shape of the avatar (defaults to `'circle'`). Accepts a built-in name — `'squircle'`, `'heart'`, `'pentagon'`, … see AvatarShapeName — or an AvatarShapePath with your own outline. Everything except `'circle'` clips through `react-native-svg`; a name that does not resolve falls back to a circle." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Container style' },
         { name: 'imageStyle', type: 'StyleProp<ImageStyle>', optional: true, description: 'Image style (circle shape only)' },
         { name: 'placeholderColor', type: 'string', optional: true, description: 'Custom background color for the placeholder circle (overrides theme default)' },
