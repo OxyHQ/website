@@ -1,4 +1,4 @@
-import { useCallback, useMemo, memo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, memo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { geoEquirectangular } from "d3-geo";
 import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
@@ -162,10 +162,14 @@ export default function DottedMap({
       const end = target ? projection(target) : null;
       if (!end) return [];
       const curve = Math.min(80, Math.abs(end[0] - start[0]) * 0.18 + 24);
+      const windowMs = Math.max(250, Date.parse(event.emittedAt) - Date.parse(event.windowStartedAt));
+      const requestsPerSecond = event.requests / (windowMs / 1_000);
       return [{
         key: `route-${event.sourceRegion}-${event.targetRegion}-${event.emittedAt}`,
         path: `M ${start[0]} ${start[1]} Q ${(start[0] + end[0]) / 2} ${Math.min(start[1], end[1]) - curve} ${end[0]} ${end[1]}`,
         color: activityCategoryColor(event.service),
+        pulseCount: Math.min(12, Math.max(1, Math.round(event.requests))),
+        pulseDuration: Math.max(0.42, Math.min(2.2, 1.8 / Math.sqrt(Math.max(0.2, requestsPerSecond)))),
       }];
     });
   }, [activityEvents, projection]);
@@ -177,36 +181,53 @@ export default function DottedMap({
     focusFrameRef.current = null;
   }, []);
 
+  const focusBusiestOrigin = useCallback(() => {
+    if (dragRef.current) return;
+    const requestsByOrigin = new Map<string, number>();
+    for (const event of activityEvents ?? []) {
+      if (event.sourceRegion) {
+        requestsByOrigin.set(event.sourceRegion, (requestsByOrigin.get(event.sourceRegion) ?? 0) + event.requests);
+      }
+    }
+    const busiestOrigin = [...requestsByOrigin.entries()]
+      .sort((left, right) => right[1] - left[1])[0]?.[0];
+    const busiestEvent = activityEvents?.find(event => event.sourceRegion === busiestOrigin);
+    const coordinates = busiestEvent?.sourceCoordinates
+      ?? (busiestOrigin ? activityRegionCoordinates(busiestOrigin) : undefined);
+    const focus = coordinates ? projection(coordinates) : null;
+    if (!focus) return;
+
+    const start = viewportRef.current;
+    const targetX = Math.max(0, Math.min(width - start.width, focus[0] - start.width / 2));
+    const targetY = Math.max(0, Math.min(height - start.height, focus[1] - start.height / 2));
+    const startedAt = performance.now();
+    const animateFocus = (now: number) => {
+      if (dragRef.current) return;
+      const progress = Math.min(1, (now - startedAt) / 900);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setViewport(current => ({
+        ...current,
+        x: start.x + (targetX - start.x) * eased,
+        y: start.y + (targetY - start.y) * eased,
+      }));
+      if (progress < 1) focusFrameRef.current = window.requestAnimationFrame(animateFocus);
+    };
+    focusFrameRef.current = window.requestAnimationFrame(animateFocus);
+  }, [activityEvents, height, projection, width]);
+
   const scheduleAutomaticFocus = useCallback(() => {
     cancelAutomaticFocus();
     returnTimerRef.current = window.setTimeout(() => {
-      const requestsByRegion = new Map<string, number>();
-      for (const event of activityEvents ?? []) {
-        requestsByRegion.set(event.region, (requestsByRegion.get(event.region) ?? 0) + event.requests);
-      }
-      const busiestRegion = [...requestsByRegion.entries()]
-        .sort((left, right) => right[1] - left[1])[0]?.[0];
-      const busiestNode = INFRA_NODES.find(node => node.region === busiestRegion);
-      const focus = busiestNode ? projection(busiestNode.coordinates) : null;
-      if (!focus) return;
-
-      const start = viewportRef.current;
-      const targetX = Math.max(0, Math.min(width - start.width, focus[0] - start.width / 2));
-      const targetY = Math.max(0, Math.min(height - start.height, focus[1] - start.height / 2));
-      const startedAt = performance.now();
-      const animateFocus = (now: number) => {
-        const progress = Math.min(1, (now - startedAt) / 900);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        setViewport(current => ({
-          ...current,
-          x: start.x + (targetX - start.x) * eased,
-          y: start.y + (targetY - start.y) * eased,
-        }));
-        if (progress < 1) focusFrameRef.current = window.requestAnimationFrame(animateFocus);
-      };
-      focusFrameRef.current = window.requestAnimationFrame(animateFocus);
+      focusBusiestOrigin();
     }, 4_000);
-  }, [activityEvents, cancelAutomaticFocus, height, projection, width]);
+  }, [cancelAutomaticFocus, focusBusiestOrigin]);
+
+  useEffect(() => {
+    if (!dragRef.current) {
+      cancelAutomaticFocus();
+      focusBusiestOrigin();
+    }
+  }, [cancelAutomaticFocus, focusBusiestOrigin]);
 
   const rootRef = useCallback((node: HTMLDivElement | null) => {
     if (!node) return;
@@ -271,22 +292,28 @@ export default function DottedMap({
 
         <g>
           {projectedRoutes.map(route => (
-            <motion.path
-              key={route.key}
-              d={route.path}
-              fill="none"
-              stroke={route.color}
-              strokeWidth={1.4}
-              strokeLinecap="round"
-              strokeDasharray="7 9"
-              initial={{ strokeDashoffset: 0, opacity: 0 }}
-              animate={{ strokeDashoffset: -32, opacity: 0.75 }}
-              exit={{ opacity: 0 }}
-              transition={{
-                strokeDashoffset: { duration: 1.4, repeat: Infinity, ease: "linear" },
-                opacity: { duration: 0.25 },
-              }}
-            />
+            <g key={route.key}>
+              <path d={route.path} fill="none" stroke={route.color} strokeWidth={0.8} opacity={0.28} />
+              {Array.from({ length: route.pulseCount }, (_, pulseIndex) => (
+                <motion.path
+                  key={`${route.key}-${pulseIndex}`}
+                  d={route.path}
+                  pathLength={100}
+                  fill="none"
+                  stroke={route.color}
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeDasharray="2 98"
+                  initial={{ strokeDashoffset: -100 * pulseIndex / route.pulseCount, opacity: 0 }}
+                  animate={{ strokeDashoffset: -100 * (1 + pulseIndex / route.pulseCount), opacity: 0.9 }}
+                  exit={{ opacity: 0 }}
+                  transition={{
+                    strokeDashoffset: { duration: route.pulseDuration, repeat: Infinity, ease: "linear" },
+                    opacity: { duration: 0.2 },
+                  }}
+                />
+              ))}
+            </g>
           ))}
         </g>
 

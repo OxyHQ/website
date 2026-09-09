@@ -37,6 +37,9 @@ interface ActivityArc {
   endLng: number
   color: string
   dashTime: number
+  dashLength: number
+  dashGap: number
+  dashInitialGap: number
 }
 
 interface ActivityRing {
@@ -67,12 +70,21 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   const resumeTimerRef = useRef<number | null>(null)
   const controlsCleanupRef = useRef<(() => void) | null>(null)
   const sceneCleanupRef = useRef<(() => void) | null>(null)
+  const isInteractingRef = useRef(false)
   activityEventsRef.current = activityEvents
 
   useEffect(() => {
-    const latestEvent = [...activityEvents].reverse().find((event) => event.sourceRegion)
-    const coordinates = latestEvent?.sourceCoordinates
-      ?? (latestEvent?.sourceRegion ? activityRegionCoordinates(latestEvent.sourceRegion) : undefined)
+    if (isInteractingRef.current) return
+    const requestsByOrigin = new Map<string, number>()
+    for (const event of activityEvents) {
+      if (event.sourceRegion) {
+        requestsByOrigin.set(event.sourceRegion, (requestsByOrigin.get(event.sourceRegion) ?? 0) + event.requests)
+      }
+    }
+    const busiestOrigin = [...requestsByOrigin.entries()].sort((left, right) => right[1] - left[1])[0]?.[0]
+    const busiestEvent = activityEvents.find((event) => event.sourceRegion === busiestOrigin)
+    const coordinates = busiestEvent?.sourceCoordinates
+      ?? (busiestOrigin ? activityRegionCoordinates(busiestOrigin) : undefined)
     if (coordinates && globeRef.current) {
       globeRef.current.pointOfView({ lat: coordinates[1], lng: coordinates[0], altitude: 1.65 }, 1_200)
     }
@@ -154,12 +166,14 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     }
 
     const pauseAutomaticView = () => {
+      isInteractingRef.current = true
       controls.autoRotate = false
       if (returnTimerRef.current !== null) window.clearTimeout(returnTimerRef.current)
       if (resumeTimerRef.current !== null) window.clearTimeout(resumeTimerRef.current)
     }
 
     const returnToBusiestRegion = () => {
+      isInteractingRef.current = false
       returnTimerRef.current = window.setTimeout(() => {
         const requestsByRegion = new Map<string, number>()
         for (const event of activityEventsRef.current) {
@@ -230,15 +244,22 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       const source = event.sourceCoordinates ?? activityRegionCoordinates(event.sourceRegion)
       const target = activityRegionCoordinates(event.targetRegion)
       if (!source || !target) return []
-      return [{
-        id: `${event.sourceRegion}-${event.targetRegion}-${event.emittedAt}`,
+      const windowMs = Math.max(250, Date.parse(event.emittedAt) - Date.parse(event.windowStartedAt))
+      const requestsPerSecond = event.requests / (windowMs / 1_000)
+      const pulseCount = Math.min(12, Math.max(1, Math.round(event.requests)))
+      const dashLength = 0.035
+      return Array.from({ length: pulseCount }, (_, pulseIndex) => ({
+        id: `${event.sourceRegion}-${event.targetRegion}-${event.emittedAt}-${pulseIndex}`,
         startLat: source[1],
         startLng: source[0],
         endLat: target[1],
         endLng: target[0],
         color: layout.activityColors[activityCategory(event.service)],
-        dashTime: 1_600,
-      }]
+        dashTime: Math.max(420, Math.min(2_200, 1_800 / Math.sqrt(Math.max(0.2, requestsPerSecond)))),
+        dashLength,
+        dashGap: 1 - dashLength,
+        dashInitialGap: pulseIndex / pulseCount,
+      }))
     })
   }, [activityEvents, layout])
 
@@ -296,8 +317,9 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           arcEndLng="endLng"
           arcColor="color"
           arcStroke={0.35}
-          arcDashLength={0.22}
-          arcDashGap={0.08}
+          arcDashLength="dashLength"
+          arcDashGap="dashGap"
+          arcDashInitialGap="dashInitialGap"
           arcDashAnimateTime="dashTime"
           arcsTransitionDuration={0}
           ringsData={rings}
