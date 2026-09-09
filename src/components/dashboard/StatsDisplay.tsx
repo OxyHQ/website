@@ -2,6 +2,7 @@ import { useState } from "react";
 import { formatNumber } from "../../lib/utils";
 import type { PlatformActivityEvent, PlatformStats } from "../../api/hooks";
 import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
+import { useTranslation } from "../../lib/i18n";
 
 function InfoIcon() {
   return (
@@ -239,20 +240,21 @@ function SegmentedScale({ value, maximum, label }: { value: number; maximum: num
 }
 
 export function TotalRequests({ stats }: { stats: PlatformStats }) {
-  const totalActivity = stats.totalMessages + stats.totalNotifications + stats.totalTransactions;
+  const { t } = useTranslation();
   return (
     <div className="space-y-2">
       <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-muted-foreground">
-        Total Platform Activity
+        {t('dashboard.totalUsers')}
       </h2>
       <div className="text-4xl md:text-5xl tracking-normal font-mono tabular-nums">
-        {formatNumber(totalActivity)}
+        {formatNumber(stats.totalUsers)}
       </div>
     </div>
   );
 }
 
 export function LiveOrigins({ events }: { events: PlatformActivityEvent[] }) {
+  const { t, locale } = useTranslation();
   const connectionsByCountry = new Map<string, number>();
   for (const event of events) {
     if (!event.sourceCountry) continue;
@@ -262,18 +264,18 @@ export function LiveOrigins({ events }: { events: PlatformActivityEvent[] }) {
     .sort((left, right) => right[1] - left[1])
     .slice(0, 4);
   const displayNames = typeof Intl.DisplayNames === 'function'
-    ? new Intl.DisplayNames(['en'], { type: 'region' })
+    ? new Intl.DisplayNames([locale], { type: 'region' })
     : null;
 
   return (
     <div className="hidden text-right min-[961px]:block">
-      <h2 className="mb-2 font-mono text-sm font-medium uppercase tracking-tight text-muted-foreground">Live Network Origins</h2>
+      <h2 className="mb-2 font-mono text-sm font-medium uppercase tracking-tight text-muted-foreground">{t('dashboard.networkOrigins')}</h2>
       {countries.length > 0 ? countries.map(([country, connections]) => (
         <div key={country} className="flex justify-end gap-4 font-mono text-sm">
           <span className="text-primary">{displayNames?.of(country) ?? country}</span>
           <span className="w-[7ch] tabular-nums text-foreground">{formatNumber(connections)}</span>
         </div>
-      )) : <p className="font-mono text-xs text-muted-foreground">Waiting for live origins…</p>}
+      )) : <p className="font-mono text-xs text-muted-foreground">{t('dashboard.waitingOrigins')}</p>}
     </div>
   );
 }
@@ -297,6 +299,7 @@ function LocationRow({ location, count }: { location: string; count: number }) {
 }
 
 export function LiveActivity({ events }: { events: PlatformActivityEvent[] }) {
+  const { t } = useTranslation();
   const activityByRegion = new Map<string, number>();
   for (const event of events) {
     activityByRegion.set(event.region, (activityByRegion.get(event.region) ?? 0) + event.requests);
@@ -311,7 +314,7 @@ export function LiveActivity({ events }: { events: PlatformActivityEvent[] }) {
   return (
     <div className="space-y-2">
       <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-muted-foreground">
-        Live Infrastructure Activity
+        {t('dashboard.infrastructureActivity')}
       </h2>
       <ul className="list-none pl-0 space-y-1">
         {regions.length > 0 ? (
@@ -323,7 +326,7 @@ export function LiveActivity({ events }: { events: PlatformActivityEvent[] }) {
             />
           ))
         ) : (
-          <li className="text-sm text-muted-foreground font-mono">Waiting for an anonymous activity bucket…</li>
+          <li className="text-sm text-muted-foreground font-mono">{t('dashboard.waitingActivity')}</li>
         )}
       </ul>
     </div>
@@ -331,6 +334,7 @@ export function LiveActivity({ events }: { events: PlatformActivityEvent[] }) {
 }
 
 export function RegionCount({ stats }: { stats: PlatformStats }) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center w-full md:w-fit justify-between md:justify-start mt-2">
       <span aria-hidden="true" className="inline-block translate-y-[-2px] translate-x-[2px]">
@@ -338,7 +342,7 @@ export function RegionCount({ stats }: { stats: PlatformStats }) {
       </span>
       <div className="text-left">
         <span className="inline-block my-0 font-medium text-[16px]">&nbsp;{stats.regions || 0}</span>
-        <span className="font-medium text-[16px] text-muted-foreground tracking-tight">&nbsp;Active Regions</span>
+        <span className="font-medium text-[16px] text-muted-foreground tracking-tight">&nbsp;{t('dashboard.activeRegions')}</span>
       </div>
     </div>
   );

@@ -316,6 +316,7 @@ const ca: Translations = {
   seo: {
     siteName: 'Oxy',
   },
+  dashboard: { ...en.dashboard, totalUsers: 'Usuaris totals', infrastructureActivity: 'Activitat d’infraestructura en directe', waitingActivity: 'Esperant activitat anònima…', activeRegions: 'Regions actives', networkOrigins: 'Orígens de xarxa en directe', contentPerUser: 'Contingut / usuari', itemsPerUser: 'Elements / usuari', activeSessions: 'Sessions actives', developerApps: 'Apps de desenvolupador', storedFiles: 'Fitxers desats', files: 'Fitxers', messages: 'Missatges', notifications: 'Notificacions', transactions: 'Transaccions', noneYet: 'Encara cap', aiModels: 'Models d’IA', connections: 'Connexions', platformActivity: 'Activitat de plataforma', metricDetail: '{metric} es calcula amb dades reals i s’actualitza automàticament.' },
   errors: {
     notFoundTitle: '404 — Pàgina no trobada',
     notFoundDescription: 'Ho sentim, no hem pogut trobar aquesta pàgina. Pot haver estat moguda o eliminada.',

@@ -83,6 +83,7 @@ const bn: Translations = {
     ...en.newsroom,
     recentNewsHeading: 'সাম্প্রতিক খবর',
   },
+  dashboard: { ...en.dashboard, totalUsers: 'মোট ব্যবহারকারী', infrastructureActivity: 'লাইভ অবকাঠামো কার্যকলাপ', waitingActivity: 'বেনামী কার্যকলাপের অপেক্ষায়…', activeRegions: 'সক্রিয় অঞ্চল', networkOrigins: 'লাইভ নেটওয়ার্ক উৎস', contentPerUser: 'কনটেন্ট / ব্যবহারকারী', itemsPerUser: 'আইটেম / ব্যবহারকারী', activeSessions: 'সক্রিয় সেশন', developerApps: 'ডেভেলপার অ্যাপ', storedFiles: 'সংরক্ষিত ফাইল', files: 'ফাইল', messages: 'বার্তা', notifications: 'বিজ্ঞপ্তি', transactions: 'লেনদেন', noneYet: 'এখনও নেই', aiModels: 'AI মডেল', connections: 'সংযোগ', platformActivity: 'প্ল্যাটফর্ম কার্যকলাপ', metricDetail: '{metric} বাস্তব ডেটা থেকে গণনা করা হয় এবং স্বয়ংক্রিয়ভাবে আপডেট হয়।' },
   errors: {
     notFoundTitle: '404 — পৃষ্ঠা পাওয়া যায়নি',
     notFoundDescription: 'দুঃখিত, আমরা পৃষ্ঠাটি খুঁজে পাইনি। এটি সরানো বা মুছে ফেলা হয়ে থাকতে পারে।',

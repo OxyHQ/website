@@ -19,6 +19,8 @@
 .dashboard-subnet-bars { left: 2.66cqw; right: 2.66cqw; top: 16.76cqw; height: 5.25cqw; }
 .dashboard-subnet-axis { left: 2.66cqw; right: 2.66cqw; top: 23.03cqw; font-size: 2cqw; line-height: 1.2; }
 .dashboard-donut { left: 2.66cqw; top: 7.62cqw; width: 13.5cqw; height: 13.5cqw; }
+.dashboard-transaction-value { left: 17cqw; right: 2.66cqw; top: 9.2cqw; font-size: 3.25cqw; line-height: 1.05; }
+.dashboard-transaction-value span { display: block; margin-top: .7cqw; font-size: 1.35cqw; line-height: 1.2; }
 .dashboard-donut-legend { left: 2.66cqw; right: 3.06cqw; top: 23.2cqw; font-size: 1.68cqw; line-height: 1.2; }
 .dashboard-trading-value { left: 2.66cqw; top: 7.25cqw; font-size: 4cqw; line-height: 1.2; }
 .dashboard-trading-month { font-size: 2cqw; }
@@ -39,6 +41,8 @@
 .dashboard-metrics-dense .dashboard-subnet-bars > span { min-width: 0; flex: 1 1 0%; }
 .dashboard-metrics-dense .dashboard-subnet-axis { left: 1.73cqw; right: 1.73cqw; top: 14.97cqw; font-size: 1.3cqw; }
 .dashboard-metrics-dense .dashboard-donut { left: 1.73cqw; top: 4.95cqw; width: 8.78cqw; height: 8.78cqw; }
+.dashboard-metrics-dense .dashboard-transaction-value { left: 11.1cqw; right: 1.73cqw; top: 6cqw; font-size: 2.1cqw; }
+.dashboard-metrics-dense .dashboard-transaction-value span { margin-top: .45cqw; font-size: .95cqw; }
 .dashboard-metrics-dense .dashboard-donut path { stroke: var(--background); stroke-width: 5; stroke-linejoin: round; }
 .dashboard-metrics-dense .dashboard-donut-legend { left: 1.73cqw; right: 1.99cqw; top: 15.08cqw; gap: .72cqw; font-size: 1.09cqw; }
 .dashboard-metrics-dense .dashboard-donut-legend > span { min-width: 0; line-height: 1.08; }
@@ -83,23 +87,27 @@
 @media (max-width: 900px) {
   .dashboard-metrics-theme { width: min(100% - 16px, 640px); }
   .dashboard-reference-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .dashboard-metrics-dense .dashboard-metric { height: 48cqw; border-radius: 7.16cqw; }
+  /* Keep the desktop widget scale; only the grid reflows on smaller screens. */
+  .dashboard-metrics-dense .dashboard-metric { height: 199px; border-radius: 28px; }
   .dashboard-metrics-dense .dashboard-metric:nth-child(5),
   .dashboard-metrics-dense .dashboard-metric:nth-child(10) { grid-column: 1 / -1; }
-  .dashboard-metrics-dense .dashboard-card-title { left: 4.76cqw; top: 5.35cqw; font-size: 4.76cqw; }
-  .dashboard-metrics-dense .dashboard-card-detail { left: 4.76cqw; right: 4.76cqw; top: 14.5cqw; font-size: 3.2cqw; }
-  .dashboard-metrics-dense .dashboard-card-detail span { margin-top: 2.5cqw; font-size: 2.65cqw; }
-  .dashboard-metrics-dense .dashboard-chevron { right: 4.64cqw; top: 4.64cqw; width: 7.16cqw; height: 7.16cqw; }
-  .dashboard-metrics-dense .dashboard-metric-value { left: 4.76cqw; top: 12.98cqw; font-size: 7.16cqw; }
-  .dashboard-metrics-dense .dashboard-market-change { left: 4.76cqw; top: 21.94cqw; font-size: 3.58cqw; }
-  .dashboard-metrics-dense .dashboard-allocation { left: 5cqw; right: 4.64cqw; top: 27.72cqw; font-size: 3.58cqw; }
-  .dashboard-metrics-dense .dashboard-subnet-change { left: 4.76cqw; top: 23.42cqw; font-size: 3.58cqw; }
-  .dashboard-metrics-dense .dashboard-subnet-bars { left: 4.76cqw; right: 4.76cqw; top: 30.01cqw; height: 9.4cqw; }
-  .dashboard-metrics-dense .dashboard-subnet-axis { left: 4.76cqw; right: 4.76cqw; top: 41.24cqw; font-size: 3.58cqw; }
-  .dashboard-metrics-dense .dashboard-donut { left: 4.76cqw; top: 13.65cqw; width: 24.17cqw; height: 24.17cqw; }
-  .dashboard-metrics-dense .dashboard-donut-legend { left: 4.76cqw; right: 5.48cqw; top: 41.54cqw; font-size: 3.01cqw; }
-  .dashboard-metrics-dense .dashboard-trading-value { left: 4.76cqw; top: 11.5cqw; font-size: 6cqw; }
-  .dashboard-metrics-dense .dashboard-trading-month { font-size: 2.7cqw; }
-  .dashboard-metrics-dense .dashboard-trading-bars { left: 4.76cqw; right: 4.76cqw; top: 20cqw; height: 12.5cqw; }
-  .dashboard-metrics-dense .dashboard-trading-axis { left: 4.76cqw; right: 4.76cqw; top: 33.5cqw; font-size: 2.2cqw; }
+  .dashboard-metrics-dense .dashboard-card-title { left: 19px; top: 21px; font-size: 19px; }
+  .dashboard-metrics-dense .dashboard-card-detail { left: 19px; right: 19px; top: 63px; font-size: 13px; }
+  .dashboard-metrics-dense .dashboard-card-detail span { margin-top: 12px; font-size: 11px; }
+  .dashboard-metrics-dense .dashboard-chevron { right: 18px; top: 18px; width: 28px; height: 28px; }
+  .dashboard-metrics-dense .dashboard-metric-value { left: 19px; top: 52px; font-size: 28px; }
+  .dashboard-metrics-dense .dashboard-market-change { left: 19px; top: 87px; font-size: 14px; }
+  .dashboard-metrics-dense .dashboard-allocation { left: 20px; right: 18px; top: 110px; font-size: 14px; }
+  .dashboard-metrics-dense .dashboard-subnet-change { left: 19px; top: 93px; font-size: 14px; }
+  .dashboard-metrics-dense .dashboard-subnet-bars { left: 19px; right: 19px; top: 119px; height: 37px; gap: 3px; }
+  .dashboard-metrics-dense .dashboard-subnet-bars > span { min-height: 24px; }
+  .dashboard-metrics-dense .dashboard-subnet-axis { left: 19px; right: 19px; top: 164px; font-size: 14px; }
+  .dashboard-metrics-dense .dashboard-donut { left: 19px; top: 54px; width: 96px; height: 96px; }
+  .dashboard-metrics-dense .dashboard-transaction-value { left: 122px; right: 18px; top: 66px; font-size: 23px; }
+  .dashboard-metrics-dense .dashboard-transaction-value span { margin-top: 5px; font-size: 11px; }
+  .dashboard-metrics-dense .dashboard-donut-legend { left: 19px; right: 22px; top: 165px; gap: 8px; font-size: 12px; }
+  .dashboard-metrics-dense .dashboard-trading-value { left: 19px; top: 52px; font-size: 28px; }
+  .dashboard-metrics-dense .dashboard-trading-month { font-size: 14px; }
+  .dashboard-metrics-dense .dashboard-trading-bars { left: 19px; right: 19px; top: 90px; height: 75px; gap: 3px; }
+  .dashboard-metrics-dense .dashboard-trading-axis { left: 19px; right: 19px; top: 169px; font-size: 12px; }
 }

@@ -316,6 +316,7 @@ const ko: Translations = {
   seo: {
     siteName: 'Oxy',
   },
+  dashboard: { ...en.dashboard, totalUsers: '전체 사용자', infrastructureActivity: '실시간 인프라 활동', waitingActivity: '익명 활동 대기 중…', activeRegions: '활성 리전', networkOrigins: '실시간 네트워크 출발지', contentPerUser: '콘텐츠 / 사용자', itemsPerUser: '항목 / 사용자', activeSessions: '활성 세션', developerApps: '개발자 앱', storedFiles: '저장된 파일', files: '파일', messages: '메시지', notifications: '알림', transactions: '거래', noneYet: '아직 없음', aiModels: 'AI 모델', connections: '연결', platformActivity: '플랫폼 활동', metricDetail: '{metric}은 실제 데이터로 계산되며 자동으로 업데이트됩니다.' },
   errors: {
     notFoundTitle: '404 — 페이지를 찾을 수 없음',
     notFoundDescription: '죄송합니다, 해당 페이지를 찾을 수 없습니다. 이동되었거나 삭제되었을 수 있습니다.',

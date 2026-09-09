@@ -3,25 +3,13 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { formatNumber } from "../../lib/utils";
+import { useTranslation } from "../../lib/i18n";
 import type { PlatformStats } from "../../api/hooks";
 import "../../styles/dashboard-metrics.css";
 
-const METRIC_DETAILS: Record<string, string> = {
-  "Total Users": "Oxy IDs registered across the whole ecosystem.",
-  "Active Sessions": "Sessions that are active and have not expired.",
-  "Developer Apps": "Active applications connected to the Oxy platform.",
-  "Stored Files": "Private files currently managed by Oxy storage.",
-  Messages: "Messages processed across Oxy communication products.",
-  Notifications: "Notifications created and delivered by the platform.",
-  Transactions: "Transactions recorded by Oxy financial services.",
-  "AI Models": "AI models currently available through Oxy and Kaana.",
-  Connections: "Anonymous aggregate of relationships in the Oxy social graph.",
-  "Platform Activity": "Combined messages, notifications and transactions.",
-};
-
-function Chevron({ circle = false, open, onClick, label }: { circle?: boolean; open: boolean; onClick: () => void; label: string }) {
+function Chevron({ circle = false, open, onClick, label, action }: { circle?: boolean; open: boolean; onClick: () => void; label: string; action: string }) {
   return (
-    <button type="button" aria-label={`${open ? "Hide" : "Show"} ${label} details`} aria-expanded={open} onClick={onClick} className={`dashboard-chevron absolute z-20 flex cursor-pointer items-center justify-center border-0 p-0 transition-colors ${circle ? "rounded-full bg-muted text-foreground hover:bg-accent" : "bg-transparent text-muted-foreground hover:text-foreground"}`}>
+    <button type="button" aria-label={`${action} ${label}`} aria-expanded={open} onClick={onClick} className={`dashboard-chevron absolute z-20 flex cursor-pointer items-center justify-center border-0 p-0 transition-colors ${circle ? "rounded-full bg-muted text-foreground hover:bg-accent" : "bg-transparent text-muted-foreground hover:text-foreground"}`}>
       <svg className={`transition-transform duration-300 ${open ? "rotate-90" : ""}`} width="100%" height="100%" viewBox="0 0 60 60" fill="none">
         <path d="m25 18 12 12-12 12" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -31,14 +19,14 @@ function Chevron({ circle = false, open, onClick, label }: { circle?: boolean; o
 
 function Card({ title, children, circle, className = "" }: { title: string; children: ReactNode; circle?: boolean; className?: string }) {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
   return (
     <section aria-label={title} className={`dashboard-metric relative isolate overflow-hidden bg-background ${className}`}>
       <h2 className="dashboard-card-title absolute font-medium tracking-[-0.035em] text-muted-foreground">{title}</h2>
-      <Chevron circle={circle} open={open} onClick={() => setOpen((current) => !current)} label={title} />
+      <Chevron circle={circle} open={open} onClick={() => setOpen((current) => !current)} label={title} action={open ? t('dashboard.hideDetails') : t('dashboard.showDetails')} />
       <div className={`dashboard-card-body transition-opacity duration-300 ${open ? "pointer-events-none opacity-0" : "opacity-100"}`}>{children}</div>
       <div className={`dashboard-card-detail absolute transition duration-300 ${open ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"}`}>
-        <p>{METRIC_DETAILS[title]}</p>
-        <span className="text-primary">Live · refreshes automatically</span>
+        <p>{t('dashboard.metricDetail', { metric: title })}</p>
       </div>
     </section>
   );
@@ -69,11 +57,15 @@ function LineChart({ market = false }: { market?: boolean }) {
 const bars = [66, 145, 93, 145, 131, 93, 122, 158, 122, 158, 122, 93, 115, 145, 76, 122, 93, 122, 93, 158, 133, 145, 93];
 
 export default function ReferenceMetricsGrid({ stats }: { stats: PlatformStats }) {
+  const { t } = useTranslation();
   const sessionShare = stats.totalUsers > 0 ? Math.min(100, (stats.activeSessions / stats.totalUsers) * 100) : 0;
   const transactionShare = stats.totalMessages + stats.totalTransactions > 0
     ? Math.min(100, (stats.totalTransactions / (stats.totalMessages + stats.totalTransactions)) * 100)
     : 0;
   const activityTotal = stats.totalMessages + stats.totalNotifications + stats.totalTransactions;
+  const contentPerUser = stats.totalUsers > 0
+    ? (stats.totalFiles + stats.totalMessages + stats.totalNotifications) / stats.totalUsers
+    : 0;
   const sessionShareLabel = sessionShare > 0 && sessionShare < 0.1
     ? `${sessionShare.toFixed(3)}%`
     : `${sessionShare.toFixed(1)}%`;
@@ -81,70 +73,71 @@ export default function ReferenceMetricsGrid({ stats }: { stats: PlatformStats }
   return (
     <div className="dashboard-metrics-theme dashboard-metrics-dense mx-auto w-full [container-type:inline-size]">
       <div className="dashboard-reference-grid grid grid-cols-[420fr_420fr_420fr_420fr_632fr] gap-[.69cqw]">
-        <Card title="Total Users" circle className="bg-surface">
-          <LiveValue version={stats.timestamp}>{formatNumber(stats.totalUsers)}</LiveValue>
-          <p className="dashboard-market-change absolute flex items-center gap-[.6cqw] font-medium tracking-[-0.035em]"><span className="text-success">Oxy ID / <span className="text-muted-foreground">all apps</span></span><svg aria-hidden="true" className="w-[2.55cqw] text-success" viewBox="0 0 38 26" fill="none"><path d="m2 20 10-9 8 7L35 4M24 4h11v11" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg></p>
+        <Card title={t('dashboard.contentPerUser')} circle className="bg-surface">
+          <LiveValue version={stats.timestamp}>{contentPerUser.toFixed(1)}</LiveValue>
+          <p className="dashboard-market-change absolute flex items-center gap-[.6cqw] font-medium tracking-[-0.035em]"><span className="text-success">{t('dashboard.itemsPerUser')}</span><svg aria-hidden="true" className="w-[2.55cqw] text-success" viewBox="0 0 38 26" fill="none"><path d="m2 20 10-9 8 7L35 4M24 4h11v11" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg></p>
           <LineChart market />
         </Card>
 
-        <Card title="Active Sessions">
+        <Card title={t('dashboard.activeSessions')}>
           <LiveValue version={stats.timestamp}>{formatNumber(stats.activeSessions)}</LiveValue>
           <div className="dashboard-allocation absolute">
-            <div className="mb-[.5cqw] flex justify-between tracking-[-0.035em]"><span className="text-primary">Live {sessionShareLabel}</span><span className="text-muted-foreground">of users</span></div>
-            <div role="img" aria-label={`${sessionShareLabel} of users have an active session`} className="flex h-[2.66cqw] overflow-hidden rounded-[.65cqw] bg-muted"><span style={{ width: sessionShare > 0 ? `${Math.max(1.5, sessionShare)}%` : '0%' }} className="border-r-[.3cqw] border-background bg-primary transition-[width] duration-500" /></div>
+            <div className="mb-[.5cqw] flex justify-between tracking-[-0.035em]"><span className="text-primary">{t('dashboard.liveOfUsers', { percent: sessionShareLabel })}</span></div>
+            <div role="img" aria-label={t('dashboard.activeSessionLabel', { percent: sessionShareLabel })} className="flex h-[2.66cqw] overflow-hidden rounded-[.65cqw] bg-muted"><span style={{ width: sessionShare > 0 ? `${Math.max(1.5, sessionShare)}%` : '0%' }} className="border-r-[.3cqw] border-background bg-primary transition-[width] duration-500" /></div>
             <div className="mt-[1.55cqw] flex justify-between tracking-[-0.045em]"><span>0</span><span>{formatNumber(stats.totalUsers)}</span></div>
           </div>
         </Card>
 
-        <Card title="Developer Apps">
+        <Card title={t('dashboard.developerApps')}>
           <LiveValue version={stats.timestamp}>{formatNumber(stats.totalDeveloperApps)}</LiveValue>
-          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Connected / </span><span className="text-muted-foreground">Oxy API</span></p>
+          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">{t('dashboard.connectedApi')}</span></p>
           <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.67cqw] rounded-[.25cqw] ${index < Math.min(stats.totalDeveloperApps, 19) ? "bg-primary" : "bg-muted"} h-[3.1cqw]`} />)}</div>
-          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Apps</span><span>19+</span></div>
+          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>{t('dashboard.apps')}</span><span>19+</span></div>
         </Card>
 
-        <Card title="Stored Files">
+        <Card title={t('dashboard.storedFiles')}>
           <LiveValue version={stats.timestamp}>{formatNumber(stats.totalFiles)}</LiveValue>
-          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Private / </span><span className="text-muted-foreground">all apps</span></p>
+          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">{t('dashboard.privateAllApps')}</span></p>
           <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.47cqw] rounded-[.18cqw] ${index < Math.min(19, Math.ceil(stats.totalFiles / 100)) ? "bg-primary" : "bg-muted"} h-[2.15cqw]`} />)}</div>
-          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Files</span><span>1.9K+</span></div>
+          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>{t('dashboard.files')}</span><span>1.9K+</span></div>
         </Card>
 
-        <Card title="Messages">
+        <Card title={t('dashboard.messages')}>
           <LiveValue version={stats.timestamp}>{formatNumber(stats.totalMessages)}</LiveValue>
           <LineChart />
         </Card>
 
-        <Card title="Notifications" circle>
+        <Card title={t('dashboard.notifications')} circle>
           <LiveValue version={stats.timestamp}>{formatNumber(stats.totalNotifications)}</LiveValue>
-          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Delivered / </span><span className="text-muted-foreground">total</span></p>
-          <div className="dashboard-subnet-bars absolute flex items-center justify-between" role="img" aria-label={`${stats.totalNotifications} notifications delivered`}>{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.85cqw] rounded-[.32cqw] ${index < Math.min(19, Math.ceil(stats.totalNotifications / 10)) ? "bg-primary" : "bg-muted"} ${index === Math.min(18, Math.ceil(stats.totalNotifications / 10) - 1) ? "h-[5.25cqw]" : "h-[3.92cqw]"}`} />)}</div>
-          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Alerts</span><span>190+</span></div>
+          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">{t('dashboard.deliveredTotal')}</span></p>
+          <div className="dashboard-subnet-bars absolute flex items-center justify-between" role="img" aria-label={t('dashboard.notificationsDelivered', { count: stats.totalNotifications })}>{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.85cqw] rounded-[.32cqw] ${index < Math.min(19, Math.ceil(stats.totalNotifications / 10)) ? "bg-primary" : "bg-muted"} ${index === Math.min(18, Math.ceil(stats.totalNotifications / 10) - 1) ? "h-[5.25cqw]" : "h-[3.92cqw]"}`} />)}</div>
+          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>{t('dashboard.alerts')}</span><span>190+</span></div>
         </Card>
 
-        <Card title="Transactions">
-          <svg className="dashboard-donut absolute" viewBox="0 0 100 100" role="img" aria-label={`${formatNumber(stats.totalTransactions)} total transactions`}><circle cx="50" cy="50" r="37" fill="none" stroke="var(--border)" strokeWidth="22" /><circle className="transition-all duration-500" cx="50" cy="50" r="37" pathLength="100" fill="none" stroke="var(--primary)" strokeWidth="22" strokeDasharray={`${transactionShare > 0 ? Math.max(1.5, transactionShare) : 0} 100`} transform="rotate(-90 50 50)" /></svg>
-          <div className="dashboard-donut-legend absolute flex items-center justify-between text-muted-foreground tracking-[-0.04em]"><span className="flex items-center gap-[.35cqw]"><i className="inline-block h-[1.95cqw] w-[1cqw] rounded-full bg-border" />Messages</span><span className="flex items-center gap-[.35cqw]"><i className="inline-block h-[1.95cqw] w-[1cqw] rounded-full bg-primary" />Tx {formatNumber(stats.totalTransactions)}</span></div>
+        <Card title={t('dashboard.transactions')}>
+          <svg className="dashboard-donut absolute" viewBox="0 0 100 100" role="img" aria-label={t('dashboard.totalTransactions', { count: formatNumber(stats.totalTransactions) })}><circle cx="50" cy="50" r="37" fill="none" stroke="var(--border)" strokeWidth="22" /><circle className="transition-all duration-500" cx="50" cy="50" r="37" pathLength="100" fill="none" stroke="var(--primary)" strokeWidth="22" strokeDasharray={`${transactionShare > 0 ? Math.max(1.5, transactionShare) : 0} 100`} transform="rotate(-90 50 50)" /></svg>
+          <p className="dashboard-transaction-value absolute font-bold tracking-[-0.05em]">{formatNumber(stats.totalTransactions)}<span className="font-medium tracking-normal text-muted-foreground">{stats.totalTransactions === 0 ? t('dashboard.noneYet') : t('dashboard.total')}</span></p>
+          <div className="dashboard-donut-legend absolute flex items-center justify-between text-muted-foreground tracking-[-0.04em]"><span className="flex items-center gap-[.35cqw]"><i className="inline-block h-[1.95cqw] w-[1cqw] rounded-full bg-border" />{t('dashboard.messages')}</span><span className="flex items-center gap-[.35cqw]"><i className="inline-block h-[1.95cqw] w-[1cqw] rounded-full bg-primary" />{t('dashboard.tx')} {formatNumber(stats.totalTransactions)}</span></div>
         </Card>
 
-        <Card title="AI Models">
+        <Card title={t('dashboard.aiModels')}>
           <LiveValue version={stats.timestamp}>{formatNumber(stats.aiModels)}</LiveValue>
-          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Available / </span><span className="text-muted-foreground">now</span></p>
+          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">{t('dashboard.availableNow')}</span></p>
           <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.67cqw] rounded-[.25cqw] ${index < stats.aiModels ? "bg-primary" : "bg-muted"} h-[3.1cqw]`} />)}</div>
-          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Models</span><span>19</span></div>
+          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>{t('dashboard.models')}</span><span>19</span></div>
         </Card>
 
-        <Card title="Connections">
+        <Card title={t('dashboard.connections')}>
           <LiveValue version={stats.timestamp}>{formatNumber(stats.totalFollows)}</LiveValue>
-          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Private graph / </span><span className="text-muted-foreground">total</span></p>
+          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">{t('dashboard.privateGraphTotal')}</span></p>
           <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.47cqw] rounded-[.18cqw] ${index < Math.min(19, Math.ceil(stats.totalFollows / 100)) ? "bg-primary" : "bg-muted"} h-[2.15cqw]`} />)}</div>
-          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Follows</span><span>1.9K+</span></div>
+          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>{t('dashboard.follows')}</span><span>1.9K+</span></div>
         </Card>
 
-        <Card title="Platform Activity">
-          <div className="dashboard-trading-value absolute flex items-center gap-[1.6cqw]"><p className="font-bold tracking-[-0.05em]">{formatNumber(activityTotal)}</p><p className="dashboard-trading-month font-medium tracking-[-0.035em] text-muted-foreground">Live totals</p></div>
+        <Card title={t('dashboard.platformActivity')}>
+          <div className="dashboard-trading-value absolute flex items-center gap-[1.6cqw]"><p className="font-bold tracking-[-0.05em]">{formatNumber(activityTotal)}</p><p className="dashboard-trading-month font-medium tracking-[-0.035em] text-muted-foreground">{t('dashboard.liveTotals')}</p></div>
           <div className="dashboard-trading-bars absolute flex items-end justify-between" aria-hidden="true">{bars.map((height, index) => <span key={index} style={{ height: `${height / 158 * 100}%` }} className={`w-[1.33cqw] rounded-[.53cqw] ${index === 4 ? "bg-primary" : "bg-muted"}`} />)}</div>
-          <div className="dashboard-trading-axis absolute flex justify-between font-medium tracking-[-0.04em] text-muted-foreground"><span>Messages</span><span>Alerts</span><span>Tx</span><span>Now</span></div>
+          <div className="dashboard-trading-axis absolute flex justify-between font-medium tracking-[-0.04em] text-muted-foreground"><span>{t('dashboard.messages')}</span><span>{t('dashboard.alerts')}</span><span>{t('dashboard.tx')}</span><span>{t('dashboard.now')}</span></div>
         </Card>
       </div>
     </div>

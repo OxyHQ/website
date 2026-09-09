@@ -497,6 +497,20 @@ const en = {
     astroDescription: 'A privacy-first browser deeply integrated with Oxy.',
   },
 
+  dashboard: {
+    seoDescription: 'Live platform dashboard with anonymous activity and infrastructure status across Oxy regions.',
+    flatMap: 'Show flat map', globe: 'Show globe', enterFullscreen: 'Enter fullscreen', exitFullscreen: 'Exit fullscreen',
+    totalUsers: 'Total Users', infrastructureActivity: 'Live Infrastructure Activity', waitingActivity: 'Waiting for anonymous activity…', activeRegions: 'Active Regions',
+    networkOrigins: 'Live Network Origins', waitingOrigins: 'Waiting for live origins…',
+    showDetails: 'Show details for', hideDetails: 'Hide details for', metricDetail: '{metric} is calculated from real platform data and updates automatically in real time.', liveRefresh: 'Live · refreshes automatically',
+    contentPerUser: 'Content / User', itemsPerUser: 'Items / user', activeSessions: 'Active Sessions', liveOfUsers: 'Live {percent} · of users', activeSessionLabel: '{percent} of users have an active session',
+    developerApps: 'Developer Apps', connectedApi: 'Connected / Oxy API', apps: 'Apps', storedFiles: 'Stored Files', privateAllApps: 'Private / all apps', files: 'Files',
+    messages: 'Messages', notifications: 'Notifications', deliveredTotal: 'Delivered / total', alerts: 'Alerts', notificationsDelivered: '{count} notifications delivered',
+    transactions: 'Transactions', totalTransactions: '{count} total transactions', noneYet: 'None yet', total: 'Total', tx: 'Tx',
+    aiModels: 'AI Models', availableNow: 'Available / now', models: 'Models', connections: 'Connections', privateGraphTotal: 'Private graph / total', follows: 'Follows',
+    platformActivity: 'Platform Activity', liveTotals: 'Live totals', now: 'Now',
+  },
+
   // ── SEO / hreflang generic strings ────────────────────────
   seo: {
     siteName: 'Oxy',

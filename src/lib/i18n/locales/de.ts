@@ -316,6 +316,7 @@ const de: Translations = {
   seo: {
     siteName: 'Oxy',
   },
+  dashboard: { ...en.dashboard, totalUsers: 'Nutzer gesamt', infrastructureActivity: 'Live-Infrastrukturaktivität', waitingActivity: 'Warte auf anonyme Aktivität…', activeRegions: 'Aktive Regionen', networkOrigins: 'Live-Netzwerkursprünge', contentPerUser: 'Inhalt / Nutzer', itemsPerUser: 'Elemente / Nutzer', activeSessions: 'Aktive Sitzungen', developerApps: 'Entwickler-Apps', storedFiles: 'Gespeicherte Dateien', files: 'Dateien', messages: 'Nachrichten', notifications: 'Benachrichtigungen', transactions: 'Transaktionen', noneYet: 'Noch keine', aiModels: 'KI-Modelle', connections: 'Verbindungen', platformActivity: 'Plattformaktivität', metricDetail: '{metric} wird aus echten Daten berechnet und automatisch aktualisiert.' },
   errors: {
     notFoundTitle: '404 — Seite nicht gefunden',
     notFoundDescription: 'Entschuldigung, wir konnten diese Seite nicht finden. Sie wurde möglicherweise verschoben oder entfernt.',
