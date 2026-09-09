@@ -47,53 +47,59 @@ function LineChart({ market = false }: { market?: boolean }) {
 const bars = [66, 145, 93, 145, 131, 93, 122, 158, 122, 158, 122, 93, 115, 145, 76, 122, 93, 122, 93, 158, 133, 145, 93];
 
 export default function ReferenceMetricsGrid({ stats }: { stats: PlatformStats }) {
+  const sessionShare = stats.totalUsers > 0 ? Math.min(100, (stats.activeSessions / stats.totalUsers) * 100) : 0;
+  const transactionShare = stats.totalMessages + stats.totalTransactions > 0
+    ? Math.min(100, (stats.totalTransactions / (stats.totalMessages + stats.totalTransactions)) * 100)
+    : 0;
+  const activityTotal = stats.totalMessages + stats.totalNotifications + stats.totalTransactions;
+
   return (
     <div className="dashboard-metrics-theme dashboard-metrics-dense mx-auto w-full [container-type:inline-size]">
       <div className="dashboard-reference-grid grid grid-cols-[420fr_420fr_420fr_420fr_632fr] gap-[.69cqw]">
-        <Card title="Market Cap" circle className="bg-surface">
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.05em]">$2.19B</p>
-          <p className="dashboard-market-change absolute flex items-center gap-[.6cqw] font-medium tracking-[-0.035em]"><span className="text-success">$120M / <span className="text-muted-foreground">24H</span></span><svg aria-hidden="true" className="w-[2.55cqw] text-success" viewBox="0 0 38 26" fill="none"><path d="m2 20 10-9 8 7L35 4M24 4h11v11" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg></p>
+        <Card title="Total Users" circle className="bg-surface">
+          <p className="dashboard-metric-value absolute font-bold tracking-[-0.05em]">{formatNumber(stats.totalUsers)}</p>
+          <p className="dashboard-market-change absolute flex items-center gap-[.6cqw] font-medium tracking-[-0.035em]"><span className="text-success">Oxy ID / <span className="text-muted-foreground">all apps</span></span><svg aria-hidden="true" className="w-[2.55cqw] text-success" viewBox="0 0 38 26" fill="none"><path d="m2 20 10-9 8 7L35 4M24 4h11v11" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg></p>
           <LineChart market />
-        </Card>
-
-        <Card title="Subnets Value">
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.05em]">1.13τ</p>
-          <div className="dashboard-allocation absolute">
-            <div className="mb-[.5cqw] flex justify-between tracking-[-0.035em]"><span className="text-primary">Root 47%</span><span className="text-muted-foreground">TAO 52%</span></div>
-            <div role="img" aria-label="Root 47%, TAO 52%" className="flex h-[2.66cqw] overflow-hidden rounded-[.65cqw] bg-muted"><span className="w-[44%] border-r-[.3cqw] border-background bg-primary" /></div>
-            <div className="mt-[1.55cqw] flex justify-between tracking-[-0.045em]"><span>1.00</span><span>1.13</span></div>
-          </div>
         </Card>
 
         <Card title="Active Sessions">
           <p className="dashboard-metric-value absolute font-bold tracking-[-0.05em]">{formatNumber(stats.activeSessions)}</p>
-          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">{stats.regions} regions / </span><span className="text-muted-foreground">live</span></p>
-          <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.67cqw] rounded-[.25cqw] ${index < Math.min(stats.regions, 19) ? "bg-primary" : "bg-muted"} h-[3.1cqw]`} />)}</div>
-          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Live</span><span>19</span></div>
+          <div className="dashboard-allocation absolute">
+            <div className="mb-[.5cqw] flex justify-between tracking-[-0.035em]"><span className="text-primary">Live {sessionShare.toFixed(1)}%</span><span className="text-muted-foreground">of users</span></div>
+            <div role="img" aria-label={`${sessionShare.toFixed(1)}% of users have an active session`} className="flex h-[2.66cqw] overflow-hidden rounded-[.65cqw] bg-muted"><span style={{ width: `${sessionShare}%` }} className="border-r-[.3cqw] border-background bg-primary" /></div>
+            <div className="mt-[1.55cqw] flex justify-between tracking-[-0.045em]"><span>0</span><span>{formatNumber(stats.totalUsers)}</span></div>
+          </div>
         </Card>
 
-        <Card title="Total Users">
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.045em]">{formatNumber(stats.totalUsers)}</p>
-          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Registered / </span><span className="text-muted-foreground">all apps</span></p>
-          <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.47cqw] rounded-[.18cqw] ${index < 15 ? "bg-primary" : "bg-muted"} h-[2.15cqw]`} />)}</div>
-          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Users</span><span>100K</span></div>
+        <Card title="Developer Apps">
+          <p className="dashboard-metric-value absolute font-bold tracking-[-0.05em]">{formatNumber(stats.totalDeveloperApps)}</p>
+          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Connected / </span><span className="text-muted-foreground">Oxy API</span></p>
+          <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.67cqw] rounded-[.25cqw] ${index < Math.min(stats.totalDeveloperApps, 19) ? "bg-primary" : "bg-muted"} h-[3.1cqw]`} />)}</div>
+          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Apps</span><span>19+</span></div>
         </Card>
 
-        <Card title="Cumulative Volume dTAO">
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.05em]">$2.19B</p>
+        <Card title="Stored Files">
+          <p className="dashboard-metric-value absolute font-bold tracking-[-0.045em]">{formatNumber(stats.totalFiles)}</p>
+          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Private / </span><span className="text-muted-foreground">all apps</span></p>
+          <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.47cqw] rounded-[.18cqw] ${index < Math.min(19, Math.ceil(stats.totalFiles / 100)) ? "bg-primary" : "bg-muted"} h-[2.15cqw]`} />)}</div>
+          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Files</span><span>1.9K+</span></div>
+        </Card>
+
+        <Card title="Messages">
+          <p className="dashboard-metric-value absolute font-bold tracking-[-0.05em]">{formatNumber(stats.totalMessages)}</p>
           <LineChart />
         </Card>
 
-        <Card title="Total Subnets" circle>
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.045em]">77</p>
-          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">+12 SN / </span><span className="text-muted-foreground">1M</span></p>
-          <div className="dashboard-subnet-bars absolute flex items-center justify-between" role="img" aria-label="77 total subnets on a scale from 0 to 100">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.85cqw] rounded-[.32cqw] ${index <= 12 ? "bg-primary" : "bg-muted"} ${index === 12 ? "h-[5.25cqw]" : "h-[3.92cqw]"}`} />)}</div>
-          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>50</span><span>100</span></div>
+        <Card title="Notifications" circle>
+          <p className="dashboard-metric-value absolute font-bold tracking-[-0.045em]">{formatNumber(stats.totalNotifications)}</p>
+          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Delivered / </span><span className="text-muted-foreground">total</span></p>
+          <div className="dashboard-subnet-bars absolute flex items-center justify-between" role="img" aria-label={`${stats.totalNotifications} notifications delivered`}>{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.85cqw] rounded-[.32cqw] ${index < Math.min(19, Math.ceil(stats.totalNotifications / 10)) ? "bg-primary" : "bg-muted"} ${index === Math.min(18, Math.ceil(stats.totalNotifications / 10) - 1) ? "h-[5.25cqw]" : "h-[3.92cqw]"}`} />)}</div>
+          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Alerts</span><span>190+</span></div>
         </Card>
 
-        <Card title="Staked TAO %">
-          <svg className="dashboard-donut absolute" viewBox="0 0 202 202" role="img" aria-label="Staked TAO: Subnets 7.9%, Root 92.1%"><path d="M108 2 A99 99 0 1 1 46 18 Q51 15 54 20 L72 49 Q75 54 69 58 A52 52 0 1 0 108 50 Q103 49 103 43 L103 8 Q103 2 108 2" fill="var(--primary)"/><path d="M58 13 A99 99 0 0 1 94 2 Q99 2 99 8 L99 42 Q99 48 93 49 A52 52 0 0 0 80 52 Q74 55 71 49 L56 21 Q53 16 58 13" fill="var(--border)" /></svg>
-          <div className="dashboard-donut-legend absolute flex items-center justify-between text-muted-foreground tracking-[-0.04em]"><span className="flex items-center gap-[.35cqw]"><i className="inline-block h-[1.95cqw] w-[1cqw] rounded-full bg-border" />Subnets: 7.9%</span><span className="flex items-center gap-[.35cqw]"><i className="inline-block h-[1.95cqw] w-[1cqw] rounded-full bg-primary" />Root: 92.1%</span></div>
+        <Card title="Transactions">
+          <svg className="dashboard-donut absolute" viewBox="0 0 100 100" role="img" aria-label={`${transactionShare.toFixed(1)}% of message and transaction activity is transactions`}><circle cx="50" cy="50" r="37" fill="none" stroke="var(--border)" strokeWidth="22" /><circle cx="50" cy="50" r="37" pathLength="100" fill="none" stroke="var(--primary)" strokeWidth="22" strokeDasharray={`${Math.max(0, transactionShare - 2)} ${102 - transactionShare}`} transform="rotate(-90 50 50)" /></svg>
+          <div className="dashboard-donut-legend absolute flex items-center justify-between text-muted-foreground tracking-[-0.04em]"><span className="flex items-center gap-[.35cqw]"><i className="inline-block h-[1.95cqw] w-[1cqw] rounded-full bg-border" />Messages</span><span className="flex items-center gap-[.35cqw]"><i className="inline-block h-[1.95cqw] w-[1cqw] rounded-full bg-primary" />Tx {formatNumber(stats.totalTransactions)}</span></div>
         </Card>
 
         <Card title="AI Models">
@@ -103,17 +109,17 @@ export default function ReferenceMetricsGrid({ stats }: { stats: PlatformStats }
           <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Models</span><span>19</span></div>
         </Card>
 
-        <Card title="Messages">
-          <p className="dashboard-metric-value absolute font-bold tracking-[-0.045em]">{formatNumber(stats.totalMessages)}</p>
-          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">{formatNumber(stats.totalNotifications)} alerts / </span><span className="text-muted-foreground">total</span></p>
-          <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.47cqw] rounded-[.18cqw] ${index < 14 ? "bg-primary" : "bg-muted"} h-[2.15cqw]`} />)}</div>
-          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Messages</span><span>2K</span></div>
+        <Card title="Connections">
+          <p className="dashboard-metric-value absolute font-bold tracking-[-0.045em]">{formatNumber(stats.totalFollows)}</p>
+          <p className="dashboard-subnet-change absolute font-medium tracking-[-0.04em]"><span className="text-primary">Private graph / </span><span className="text-muted-foreground">total</span></p>
+          <div className="dashboard-subnet-bars absolute flex items-center justify-between" aria-hidden="true">{Array.from({ length: 19 }, (_, index) => <span key={index} className={`w-[.47cqw] rounded-[.18cqw] ${index < Math.min(19, Math.ceil(stats.totalFollows / 100)) ? "bg-primary" : "bg-muted"} h-[2.15cqw]`} />)}</div>
+          <div className="dashboard-subnet-axis absolute flex justify-between tracking-[-0.03em] text-muted-foreground"><span>0</span><span>Follows</span><span>1.9K+</span></div>
         </Card>
 
-        <Card title="Total Trading Volume">
-          <div className="dashboard-trading-value absolute flex items-center gap-[1.6cqw]"><p className="font-bold tracking-[-0.05em]">$5.2M</p><p className="dashboard-trading-month font-medium tracking-[-0.035em] text-muted-foreground">March 2025</p></div>
+        <Card title="Platform Activity">
+          <div className="dashboard-trading-value absolute flex items-center gap-[1.6cqw]"><p className="font-bold tracking-[-0.05em]">{formatNumber(activityTotal)}</p><p className="dashboard-trading-month font-medium tracking-[-0.035em] text-muted-foreground">Live totals</p></div>
           <div className="dashboard-trading-bars absolute flex items-end justify-between" aria-hidden="true">{bars.map((height, index) => <span key={index} style={{ height: `${height / 158 * 100}%` }} className={`w-[1.33cqw] rounded-[.53cqw] ${index === 4 ? "bg-primary" : "bg-muted"}`} />)}</div>
-          <div className="dashboard-trading-axis absolute flex justify-between font-medium tracking-[-0.04em] text-muted-foreground"><span>Mar 01</span><span>Mar 11</span><span>Mar 21</span><span>Mar 31</span></div>
+          <div className="dashboard-trading-axis absolute flex justify-between font-medium tracking-[-0.04em] text-muted-foreground"><span>Messages</span><span>Alerts</span><span>Tx</span><span>Now</span></div>
         </Card>
       </div>
     </div>
