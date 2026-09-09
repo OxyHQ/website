@@ -10,6 +10,8 @@ import {
 } from 'three'
 import type { InfraStatusNode, PlatformActivityEvent } from '../../api/hooks'
 import { INFRA_NODES } from '../../data/dashboard/infra-nodes'
+import { activityRegionCoordinates } from '../../data/dashboard/activity-regions'
+import { activityCategory, ACTIVITY_CATEGORIES, type ActivityCategory } from '../../data/dashboard/activity-categories'
 
 interface LiveGlobeProps {
   infraStatus?: InfraStatusNode[]
@@ -24,6 +26,7 @@ interface GlobeLayout {
   success: string
   warning: string
   destructive: string
+  activityColors: Record<ActivityCategory, string>
 }
 
 interface ActivityArc {
@@ -82,6 +85,10 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         success: threeColor(style.getPropertyValue('--success').trim()),
         warning: threeColor(style.getPropertyValue('--warning').trim()),
         destructive: threeColor(style.getPropertyValue('--destructive').trim()),
+        activityColors: Object.fromEntries(ACTIVITY_CATEGORIES.map(({ id }) => [
+          id,
+          threeColor(style.getPropertyValue(`--chart-${id === 'identity' ? '5' : id === 'ai' ? '2' : id === 'communication' ? '4' : '1'}`).trim()),
+        ])) as Record<ActivityCategory, string>,
       })
     }
 
@@ -195,16 +202,16 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     if (!layout) return []
     return activityEvents.flatMap((event) => {
       if (!event.sourceRegion || !event.targetRegion || event.sourceRegion === event.targetRegion) return []
-      const source = INFRA_NODES.find((node) => node.region === event.sourceRegion)
-      const target = INFRA_NODES.find((node) => node.region === event.targetRegion)
+      const source = activityRegionCoordinates(event.sourceRegion)
+      const target = activityRegionCoordinates(event.targetRegion)
       if (!source || !target) return []
       return [{
         id: `${event.sourceRegion}-${event.targetRegion}-${event.emittedAt}`,
-        startLat: source.coordinates[1],
-        startLng: source.coordinates[0],
-        endLat: target.coordinates[1],
-        endLng: target.coordinates[0],
-        color: layout.primary,
+        startLat: source[1],
+        startLng: source[0],
+        endLat: target[1],
+        endLng: target[0],
+        color: layout.activityColors[activityCategory(event.service)],
         dashTime: 1_600,
       }]
     })

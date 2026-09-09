@@ -49,6 +49,16 @@
 .dashboard-metrics-dense .dashboard-trading-axis { left: 1.73cqw; right: 1.73cqw; top: 15.46cqw; font-size: 1.09cqw; }
 
 .dashboard-live-value { animation: dashboard-metric-update 420ms cubic-bezier(.2,.8,.2,1); }
+.dashboard-line-chart { z-index: 0; opacity: .92; }
+.dashboard-line-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: dashboard-line-draw 900ms cubic-bezier(.2,.8,.2,1) forwards;
+}
+.dashboard-card-title,
+.dashboard-chevron,
+.dashboard-metric-value,
+.dashboard-market-change { z-index: 2; }
 .dashboard-subnet-bars > span,
 .dashboard-trading-bars > span { transition: height 420ms ease, background-color 420ms ease, opacity 420ms ease; }
 
@@ -58,8 +68,11 @@
   100% { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes dashboard-line-draw { to { stroke-dashoffset: 0; } }
+
 @media (prefers-reduced-motion: reduce) {
   .dashboard-live-value { animation: none; }
+  .dashboard-line-stroke { animation: none; stroke-dashoffset: 0; }
   .dashboard-card-body,
   .dashboard-card-detail,
   .dashboard-chevron svg,

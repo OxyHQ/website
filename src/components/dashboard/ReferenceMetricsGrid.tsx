@@ -35,7 +35,7 @@ function Card({ title, children, circle, className = "" }: { title: string; chil
     <section aria-label={title} className={`dashboard-metric relative isolate overflow-hidden bg-background ${className}`}>
       <h2 className="dashboard-card-title absolute font-medium tracking-[-0.035em] text-muted-foreground">{title}</h2>
       <Chevron circle={circle} open={open} onClick={() => setOpen((current) => !current)} label={title} />
-      <div className={`dashboard-card-body transition duration-300 ${open ? "pointer-events-none translate-y-2 opacity-0" : "translate-y-0 opacity-100"}`}>{children}</div>
+      <div className={`dashboard-card-body transition-opacity duration-300 ${open ? "pointer-events-none opacity-0" : "opacity-100"}`}>{children}</div>
       <div className={`dashboard-card-detail absolute transition duration-300 ${open ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"}`}>
         <p>{METRIC_DETAILS[title]}</p>
         <span className="text-primary">Live · refreshes automatically</span>
@@ -56,12 +56,12 @@ function LineChart({ market = false }: { market?: boolean }) {
   const width = market ? 420 : 632;
   const path = market ? marketPath : volumePath;
   return (
-    <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" viewBox={`0 0 ${width} 420`} preserveAspectRatio="none">
+    <svg aria-hidden="true" className="dashboard-line-chart pointer-events-none absolute inset-0 h-full w-full" viewBox={`0 0 ${width} 420`} preserveAspectRatio="none">
       <defs>
         <linearGradient id={`${id}-fill`} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={market ? "var(--success)" : "var(--primary)"} stopOpacity={market ? ".64" : ".19"} /><stop offset="100%" stopColor="var(--background)" stopOpacity="0" /></linearGradient>
       </defs>
       <path d={`${path} L${width} 420 L0 420 Z`} fill={`url(#${id}-fill)`} />
-      <path d={path} fill="none" stroke={market ? "var(--success)" : "var(--primary)"} strokeWidth={market ? 4.3 : 3.5} strokeLinecap="round" strokeLinejoin="round" />
+      <path className="dashboard-line-stroke" pathLength="1" d={path} fill="none" stroke={market ? "var(--success)" : "var(--primary)"} strokeWidth={market ? 4.3 : 3.5} strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

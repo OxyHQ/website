@@ -2,6 +2,8 @@ import { useCallback, useMemo, memo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { geoEquirectangular } from "d3-geo";
 import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
+import { activityRegionCoordinates } from "../../data/dashboard/activity-regions";
+import { activityCategoryColor } from "../../data/dashboard/activity-categories";
 import type { InfraStatusNode, PlatformActivityEvent } from "../../api/hooks";
 
 const STATUS_COLORS = {
@@ -126,7 +128,7 @@ export default function DottedMap({
   }, [projection, infraStatus]);
 
   // Project anonymous activity buckets at the infrastructure region that
-  // processed them. No user location enters this data path.
+  // processed them. No user IP or user-derived coordinate enters this path.
   const projectedFlashes = useMemo(() => {
     if (!activityEvents || activityEvents.length === 0) return [];
 
@@ -149,16 +151,17 @@ export default function DottedMap({
 
     return activityEvents.flatMap(event => {
       if (!event.sourceRegion || !event.targetRegion || event.sourceRegion === event.targetRegion) return [];
-      const source = INFRA_NODES.find(node => node.region === event.sourceRegion);
-      const start = source ? projection(source.coordinates) : null;
+      const source = activityRegionCoordinates(event.sourceRegion);
+      const start = source ? projection(source) : null;
       if (!start) return [];
-      const target = INFRA_NODES.find(node => node.region === event.targetRegion);
-      const end = target ? projection(target.coordinates) : null;
+      const target = activityRegionCoordinates(event.targetRegion);
+      const end = target ? projection(target) : null;
       if (!end) return [];
       const curve = Math.min(80, Math.abs(end[0] - start[0]) * 0.18 + 24);
       return [{
         key: `route-${event.sourceRegion}-${event.targetRegion}-${event.emittedAt}`,
         path: `M ${start[0]} ${start[1]} Q ${(start[0] + end[0]) / 2} ${Math.min(start[1], end[1]) - curve} ${end[0]} ${end[1]}`,
+        color: activityCategoryColor(event.service),
       }];
     });
   }, [activityEvents, projection]);
@@ -268,7 +271,7 @@ export default function DottedMap({
               key={route.key}
               d={route.path}
               fill="none"
-              stroke="var(--color-primary)"
+              stroke={route.color}
               strokeWidth={1.4}
               strokeLinecap="round"
               strokeDasharray="7 9"
