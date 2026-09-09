@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatNumber } from "../../lib/utils";
-import type { InfraStatusNode } from "../../api/hooks";
+import type { PlatformStats } from "../../api/hooks";
 
 function InfoIcon() {
   return (
@@ -249,83 +249,128 @@ function MetricRow({ label, value }: { label: string; value: number }) {
   );
 }
 
-export function RegionCount({ nodes }: { nodes?: InfraStatusNode[] }) {
-  const activeRegions = nodes?.filter((node) => node.status !== 'offline').length;
+export function TotalRequests({ stats }: { stats: PlatformStats }) {
+  return (
+    <div className="space-y-2">
+      <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-muted-foreground">
+        Total Users
+      </h2>
+      <div className="text-4xl md:text-5xl tracking-normal font-mono tabular-nums">
+        {formatNumber(stats.totalUsers)}
+      </div>
+    </div>
+  );
+}
+
+function LocationRow({ location, count }: { location: string; count: number }) {
+  return (
+    <li className="flex items-center w-full md:w-fit justify-between md:justify-start">
+      <span aria-hidden="true" className="inline-block translate-y-[-2px] translate-x-[2px]">
+        <span className="text-primary" style={{ opacity: 1 }}>■</span>
+      </span>
+      <div className="text-left">
+        <h3 className="inline-block my-0 font-medium text-[16px] text-primary">
+          &nbsp;{location}
+        </h3>
+      </div>
+      <div className="w-[16ch] text-right">
+        <span className="inline-flex tabular-nums">{formatNumber(count)}</span>
+      </div>
+    </li>
+  );
+}
+
+export function TopCountries({ stats }: { stats: PlatformStats }) {
+  return (
+    <div className="space-y-2">
+      <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-muted-foreground">
+        Top Locations by Sessions
+      </h2>
+      <ul className="list-none pl-0 space-y-1">
+        {stats.topCountries.length > 0 ? (
+          stats.topCountries.map((entry) => (
+            <LocationRow
+              key={entry.location}
+              location={entry.location}
+              count={entry.count}
+            />
+          ))
+        ) : (
+          <li className="text-sm text-muted-foreground font-mono">No location data yet</li>
+        )}
+      </ul>
+    </div>
+  );
+}
+
+export function RegionCount({ stats }: { stats: PlatformStats }) {
   return (
     <div className="flex items-center w-full md:w-fit justify-between md:justify-start mt-2">
       <span aria-hidden="true" className="inline-block translate-y-[-2px] translate-x-[2px]">
         <span className="text-[10px]">▲</span>
       </span>
       <div className="text-left">
-        <span className="inline-block my-0 font-medium text-[16px]">&nbsp;{activeRegions ?? '—'}</span>
+        <span className="inline-block my-0 font-medium text-[16px]">&nbsp;{stats.regions || 0}</span>
         <span className="font-medium text-[16px] text-muted-foreground tracking-tight">&nbsp;Active Regions</span>
       </div>
     </div>
   );
 }
 
-export function StatsGrid({ nodes }: { nodes?: InfraStatusNode[] }) {
-  const totals = nodes?.reduce(
-    (result, node) => ({
-      services: result.services + node.droplets + node.apps + node.dbs,
-      compute: result.compute + node.droplets,
-      apps: result.apps + node.apps,
-      databases: result.databases + node.dbs,
-    }),
-    { services: 0, compute: 0, apps: 0, databases: 0 },
-  );
-
+export function StatsGrid({ stats }: { stats: PlatformStats }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
       <div className="flex flex-col gap-3">
         <StatCard
-          title="Active Regions"
-          value={nodes?.filter((node) => node.status !== 'offline').length}
-          infoContent="Oxy infrastructure regions currently reporting online or degraded service."
+          title="Active Sessions"
+          value={stats.activeSessions}
+          infoContent="The number of currently active user sessions across all platforms and devices."
           className="flex-1"
         />
         <StatCard
-          title="Services"
-          infoContent="Total compute, application and database services running across Oxy regions."
+          title="AI Models"
+          infoContent="AI models available in the Oxy ecosystem for intelligent task processing."
           className="flex-1"
         >
           <ul className="space-y-1 list-none pl-0 mt-2">
-            <MetricRow label="Total" value={totals?.services ?? 0} />
+            <MetricRow label="Models" value={stats.aiModels} />
           </ul>
         </StatCard>
       </div>
 
       <div className="flex flex-col gap-3">
         <StatCard
-          title="Compute"
-          value={totals?.compute}
-          infoContent="Compute instances serving the Oxy platform across all active regions."
+          title="Messages"
+          value={stats.totalMessages}
+          infoContent="Total email messages processed by the Oxy platform, including sent, received, and synced messages."
           className="flex-1"
         >
           <ul className="space-y-1 list-none pl-0 mt-4">
-            <MetricRow label="Regions" value={nodes?.length ?? 0} />
+            <MetricRow label="Notifications" value={stats.totalNotifications} />
+            <MetricRow label="Files stored" value={stats.totalFiles} />
+            <MetricRow label="Follows" value={stats.totalFollows} />
           </ul>
         </StatCard>
       </div>
 
       <div className="flex flex-col gap-3">
         <StatCard
-          title="Managed Services"
-          infoContent="Application and database services managed across the Oxy infrastructure."
+          title="Platform Activity"
+          infoContent="Transactions and developer integrations across the Oxy platform."
           className="flex-1"
         >
           <ul className="space-y-1 list-none pl-0 mt-2">
-            <MetricRow label="Applications" value={totals?.apps ?? 0} />
-            <MetricRow label="Databases" value={totals?.databases ?? 0} />
+            <MetricRow label="Transactions" value={stats.totalTransactions} />
+            <MetricRow label="Developer Apps" value={stats.totalDeveloperApps} />
           </ul>
         </StatCard>
         <StatCard
-          title="System Health"
-          value={nodes?.filter((node) => node.status === 'online').length}
-          infoContent="Regions currently reporting healthy service."
+          title="File Storage"
+          value={stats.totalFiles}
+          infoContent="Total files uploaded and managed across the Oxy platform including avatars, attachments, and media."
           className="flex-1"
         >
-          <p className="text-muted-foreground text-sm font-mono mt-1">Healthy regions</p>
+          <p className="text-muted-foreground text-sm font-mono mt-1">Files stored</p>
         </StatCard>
       </div>
     </div>

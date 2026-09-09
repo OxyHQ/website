@@ -1,14 +1,16 @@
 import { lazy, Suspense } from "react";
 import * as Skeleton from "@oxyhq/bloom/skeleton";
-import type { InfraStatusNode } from "../../api/hooks";
+import type { InfraStatusNode, ActivityEvent } from "../../api/hooks";
 
 const DottedMap = lazy(() => import("./DottedMap"));
 
 interface MapContainerProps {
+  activeCountries?: Array<{ location: string; count: number }>;
   infraStatus?: InfraStatusNode[];
+  activityEvents?: ActivityEvent[];
 }
 
-export default function MapContainer({ infraStatus }: MapContainerProps) {
+export default function MapContainer({ activeCountries, infraStatus, activityEvents }: MapContainerProps) {
   return (
     <Suspense
       fallback={
@@ -16,7 +18,9 @@ export default function MapContainer({ infraStatus }: MapContainerProps) {
       }
     >
       <DottedMap
+        activeCountries={activeCountries}
         infraStatus={infraStatus}
+        activityEvents={activityEvents}
       />
     </Suspense>
   );
