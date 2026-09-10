@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-10T01:10:37.356Z",
+  "generatedAt": "2026-09-10T03:06:55.710Z",
   "packages": [
     {
       "package": "@oxy.so/bloom",
@@ -9400,6 +9400,13 @@
               "slug": "adr/0008-skills-are-agent-skills",
               "title": "8. A skill is an Agent Skill, not a prompt fragment",
               "file": "alia/main/adr/0008-skills-are-agent-skills.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "adr/0009-agent-threads-are-durable-execution-units",
+              "title": "ADR 0009: Agent threads are durable execution units",
+              "file": "alia/main/adr/0009-agent-threads-are-durable-execution-units.md",
               "order": 1000,
               "section": "guides"
             },

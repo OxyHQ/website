@@ -383,8 +383,8 @@ function PublicRoutes() {
       <Route path="homiio" element={<HomiioPage />} />
       <Route path="mention" element={<MentionPage />} />
       <Route path="peable" element={<PeablePage />} />
-      {/* The product was Oxy Pay and lived at /pay, which is linked from
-          outside, so the old URL redirects rather than 404s. */}
+      {/* Peable previously lived at /pay, which remains linked externally,
+          so the legacy URL redirects rather than returning a 404. */}
       <Route path="pay" element={<Navigate to="/peable" replace />} />
       <Route path="commons" element={<CommonsPage />} />
       <Route path="apps" element={<AppsPage />} />
