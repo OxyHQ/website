@@ -13,7 +13,7 @@ export const props: BloomSurfaceProps = {
         { name: 'duration', type: 'number', optional: true },
         { name: 'theme', type: 'ToastTheme', options: ['light', 'dark', 'system'], optional: true, description: 'No-op — light/dark comes from `BloomThemeProvider`.' },
         { name: 'visibleToasts', type: 'number', optional: true },
-        { name: 'position', type: 'ToastPosition', options: ['top-center', 'bottom-center', 'center'], optional: true },
+        { name: 'position', type: 'ToastPosition', options: ['top-center', 'bottom-center', 'bottom-right', 'center'], optional: true },
         { name: 'closeButton', type: 'boolean', optional: true },
         { name: 'offset', type: 'number', optional: true },
         { name: 'autoWiggleOnUpdate', type: 'AutoWiggle', options: ['never', 'toast-change', 'always'], optional: true },
