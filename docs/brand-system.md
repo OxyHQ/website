@@ -153,6 +153,9 @@ website's CSP retains its restriction on evaluation.
 The first website pass was rejected for generic composition and damage to
 Homiio. This revision restores Homiio’s original cobalt-to-cream scene, yellow
 wordmark, white property cards and coloured feature tiles from commit 9c80a38.
+The wheel now adapts to viewport width on mobile, the opening headline sits
+inside the ring, and the trust cards fit narrow panels. Supporting scene copy
+uses a darker neutral for legibility.
 Those existing scene colours remain deliberately intact while a faithful Bloom
 recipe migration is assessed visually. The reduced-motion fallback remains.
 

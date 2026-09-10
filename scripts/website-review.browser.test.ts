@@ -78,6 +78,12 @@ try {
     (await page.locator('.brand-type-specimen').innerText()) === 'An open world.',
     'Type specimen did not update',
   )
+  await page.getByLabel('Type size', { exact: true }).press('End')
+  invariant(
+    (await page.locator('.brand-type-specimen').evaluate((el) => getComputedStyle(el).fontSize)) ===
+      '120px',
+    'Type size control did not reach the selected size',
+  )
   await page.getByRole('button', { name: 'Support', exact: true }).click()
   await page
     .getByRole('heading', { name: 'Your message has not been sent.', exact: true })
@@ -105,10 +111,22 @@ try {
     await page.evaluate(() => document.fonts.ready)
     await assertFits(page, `homiio ${width}`)
     await page.screenshot({ path: join(output, `homiio-${width}.png`) })
-    await page
-      .getByRole('heading', { name: 'Transparent listings', exact: true })
-      .scrollIntoViewIfNeeded()
-    await page.screenshot({ path: join(output, `homiio-scene-${width}.png`) })
+    for (const [index, heading] of [
+      'Transparent listings',
+      'Roommate harmony',
+      'Trusted Score system',
+    ].entries()) {
+      await page
+        .getByRole('heading', { name: heading, exact: true })
+        .evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }))
+      await page.evaluate(
+        () =>
+          new Promise<void>((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+          ),
+      )
+      await page.screenshot({ path: join(output, `homiio-scene-${index}-${width}.png`) })
+    }
   }
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto(`${origin}/homiio/`)

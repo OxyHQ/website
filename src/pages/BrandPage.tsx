@@ -292,7 +292,7 @@ export default function BrandPage() {
         canonicalPath: '/brand',
       }}
     >
-      <header className="brand-cover" style={recipeStyle('orange', 'light')}>
+      <header className="brand-cover" style={recipeStyle('orange', 'dark')}>
         <div className="brand-cover-top">
           <span>The Oxy identity</span>
           <span>A living guide / 2026</span>
@@ -382,7 +382,7 @@ export default function BrandPage() {
             <Mark />
             <span>01 / Symbol</span>
           </div>
-          <div className="brand-wordmark-board" style={recipeStyle('yellow', 'light')}>
+          <div className="brand-wordmark-board" style={recipeStyle('yellow', 'dark')}>
             <Mark word />
             <span>02 / Wordmark</span>
           </div>
@@ -602,7 +602,7 @@ export default function BrandPage() {
           </p>
         </div>
         <div className="brand-social-grid">
-          <article className="brand-social" style={recipeStyle('yellow', 'light')}>
+          <article className="brand-social" style={recipeStyle('yellow', 'dark')}>
             <span>Oxy / A principle</span>
             <h3>
               Your
@@ -630,7 +630,7 @@ export default function BrandPage() {
           </article>
           <article className="brand-social brand-social-story">
             <img src={homePhoto} alt="A sunlit Homiio living room" loading="lazy" />
-            <div style={recipeStyle('orange', 'light')}>
+            <div style={recipeStyle('orange', 'dark')}>
               <span>Homiio / A place to start</span>
               <h3>
                 A little room

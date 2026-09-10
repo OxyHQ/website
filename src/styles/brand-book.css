@@ -317,8 +317,8 @@
   width: 4rem;
 }
 .brand-colour-ui {
-  background: var(--secondary-subtle);
-  color: var(--foreground);
+  background: var(--tertiary);
+  color: var(--tertiary-foreground);
   display: flex;
   flex-direction: column;
   gap: 3rem;
@@ -414,7 +414,7 @@
   accent-color: var(--background);
 }
 .brand-type-specimen {
-  font-size: clamp(2.5rem, 7vw, var(--specimen-size));
+  font-size: var(--specimen-size);
   line-height: 1.06;
   letter-spacing: -0.055em;
   overflow-wrap: anywhere;
