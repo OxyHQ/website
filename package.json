@@ -14,6 +14,7 @@
     "prerender": "NODE_ENV=production bun scripts/prerender.ts",
     "analyze": "ANALYZE=1 vite build && echo \"open node_modules/.tmp/bundle-stats.html\"",
     "lint": "eslint .",
+    "test:brand:browser": "bun scripts/brand-experience.browser.test.ts",
     "test:theme": "bun test scripts/theme-contract.test.ts",
     "test:theme:browser": "bun scripts/theme-prepaint.browser.test.ts",
     "test:docs:browser": "bun scripts/docs-special-routes.browser.test.ts",

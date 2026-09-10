@@ -17,6 +17,7 @@
 # request instead of persisting. Revalidation of an unchanged hashed file is a
 # cheap 304.
 /assets/*
+  Access-Control-Allow-Origin: *
   Cache-Control: public, no-cache
 
 # Cache images
@@ -63,3 +64,11 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://widget.intercom.io https://js.intercomcdn.com https://app.intercom.io __CSP_SCRIPT_HASHES__; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data: https://js.intercomcdn.com https://fonts.intercomcdn.com; connect-src 'self' https: wss:; worker-src 'self' blob:; frame-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self' https://intercom.help https://api-iam.intercom.io https://api-iam.eu.intercom.io https://api-iam.au.intercom.io; frame-ancestors 'none'; upgrade-insecure-requests
+
+# A dedicated opaque-origin canvas. Never allow eval in the main application.
+# The iframe has allow-scripts only; CSP also enforces isolation on direct visits.
+/bloom-preview.html
+  ! Content-Security-Policy
+  ! X-Frame-Options
+  X-Robots-Tag: noindex, nofollow
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src data: blob:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'; sandbox allow-scripts

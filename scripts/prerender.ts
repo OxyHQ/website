@@ -292,10 +292,11 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     canonicalPath: '/homiio',
     ogImage: `${SITE_URL}${APP_CARD_IMAGES['/homiio']}`,
   },
+  '/brand': { title: 'Oxy brand guidelines', description: 'The Oxy identity: principles, Bloom colour recipes, typography, motion, voice, imagery and social communication.', canonicalPath: '/brand' },
   '/inbox': {
-    title: 'Inbox, end-to-end encrypted email',
+    title: 'Inbox, email with room to think',
     description:
-      'Email, chat and federated messages in one calm place. Encrypted by default, with triage that surfaces what actually matters.',
+      'Inbox by Oxy. Read, organise and reply to your email in a familiar, open-source client.',
     canonicalPath: '/inbox',
     ogImage: `${SITE_URL}${APP_CARD_IMAGES['/inbox']}`,
   },

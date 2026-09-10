@@ -99,7 +99,7 @@ function HeroSection() {
             >
               {app.name}
             </p>
-            <article className="flex size-full items-center justify-center border border-border bg-background shadow-xl transition-all group-hover/app:-translate-y-10 group-hover/app:scale-110">
+            <article className="flex size-full items-center justify-center border border-border bg-primary-subtle shadow-xl transition-all group-hover/app:-translate-y-10 group-hover/app:scale-110">
               <img className="block w-3/5" src={app.icon} alt="" aria-hidden="true" loading="lazy" decoding="async" />
             </article>
           </div>

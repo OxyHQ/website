@@ -1,480 +1,334 @@
-import { useState, useRef, useCallback } from 'react'
-import { inboxHero, inboxDemoTabs, inboxFeatureCards } from '../../data/inbox'
-import { useScrollReveal } from '../../hooks/useScrollReveal'
-import AnimatedLineGrid from './AnimatedLineGrid'
-import Button from '../ui/Button'
-import { AnimatedTitle } from '../ui/AnimatedTitle'
+import { useRef, useState } from 'react'
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import {
+  MagnifyingGlass,
+  ArrowLeft,
+  ArrowRight,
+  EnvelopeSimple,
+  Tag,
+  ChatCircleText,
+} from '@phosphor-icons/react'
+import { PrimaryButton, TextButton } from '@oxy.so/bloom/button'
+import { Link } from 'react-router-dom'
+import PageSection from '../layout/PageSection'
+import FaqSection from '../sections/FaqSection'
 
-/* ───────────────────────── Tab Videos Map ───────────────────────── */
+const messages = [
+  {
+    id: 'plans',
+    name: 'Alex',
+    subject: 'A little room for big ideas',
+    text: 'I put our notes together. Shall we take a look tomorrow?',
+    label: 'Personal',
+    body: 'I put our notes together after our conversation. There is a lot to explore, and no need to rush it. Shall we take a look tomorrow?',
+  },
+  {
+    id: 'studio',
+    name: 'Studio',
+    subject: 'The next chapter',
+    text: 'A few thoughts for our next conversation.',
+    label: 'Work',
+    body: 'Here are the notes for our next conversation. Let’s start with the things people need most and work from there.',
+  },
+  {
+    id: 'weekend',
+    name: 'Sam',
+    subject: 'See you on Saturday?',
+    text: 'Coffee, a walk, and a good catch-up.',
+    label: 'Personal',
+    body: 'There is a new place around the corner. Coffee on Saturday? We can take a walk afterwards.',
+  },
+]
+const scenes = [
+  {
+    title: 'A clearer view.',
+    text: 'Bring your email into focus. Open a conversation and keep its messages together.',
+    icon: EnvelopeSimple,
+  },
+  {
+    title: 'Find your own order.',
+    text: 'Use search and labels to make room for what you need next.',
+    icon: Tag,
+  },
+  {
+    title: 'Keep the conversation going.',
+    text: 'Read the context, take your time and write a reply.',
+    icon: ChatCircleText,
+  },
+]
 
-const tabVideos: Record<number, string> = {
-  0: '/ai/managed-inbox.mp4',
-  1: '/ai/morning-briefing-start.mp4',
-  2: '/ai/todo.mp4',
-  3: '/ai/catch-up.mp4',
-  4: '/ai/morning-briefing-results.mp4',
-  5: '/ai/todo-assign-ai.mp4',
-  6: '/ai/evening-briefing.mp4',
-}
-
-// Per-section background gradients (from, via, to)
-const sectionGradients: Record<number, [string, string, string]> = {
-  0: ['#4867AF', '#9CAFB8', '#C49577'], // Unified Inbox — blue/teal/warm
-  1: ['#3D5A8F', '#7A9BA8', '#B8926E'], // Smart Triage — deeper blue
-  2: ['#5C4B8A', '#9B8FBB', '#C4A088'], // Quick Replies — purple tint
-  3: ['#2D4A6F', '#6B8FA0', '#A08B70'], // Threads — deep navy
-  4: ['#4A6B8A', '#8BAAB8', '#C4A577'], // Universal Search — steel blue
-  5: ['#3B5E7A', '#7FA0B0', '#B89870'], // Filters & Labels — muted blue
-  6: ['#2E3D5F', '#6A7D90', '#9B8565'], // End-to-End Encryption — evening warm
-}
-
-/* ───────────────────────── Icon components ───────────────────────── */
-
-function SparkleIcon({ className }: { className?: string }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 0 12 12" fill="currentColor" className={className}>
-      <g fill="currentColor">
-        <path d="m11.526,5.803l-3.102-1.227-1.227-3.102c-.113-.286-.39-.474-.697-.474s-.584.188-.697.474l-1.227,3.102-3.102,1.227c-.286.113-.474.39-.474.697s.188.584.474.697l3.102,1.227,1.227,3.102c.113.286.39.474.697.474s.584-.188.697-.474l1.227-3.102,3.102-1.227c.286-.113.474-.39.474-.697s-.188-.584-.474-.697Z" strokeWidth="0" />
-        <path d="m3.492,1.492l-.946-.315-.316-.947c-.102-.306-.609-.306-.711,0l-.316.947-.946.315c-.153.051-.257.194-.257.356s.104.305.257.356l.946.315.316.947c.051.153.194.256.355.256s.305-.104.355-.256l.316-.947.946-.315c.153-.051.257-.194.257-.356s-.104-.305-.257-.356h0Z" fill="currentColor" strokeWidth="0" />
-      </g>
-    </svg>
+function InboxExample() {
+  const [query, setQuery] = useState('')
+  const [label, setLabel] = useState('All')
+  const [selected, setSelected] = useState<string | null>(null)
+  const [reply, setReply] = useState('')
+  const [sent, setSent] = useState(false)
+  const item = messages.find((m) => m.id === selected)
+  const filtered = messages.filter(
+    (m) =>
+      (label === 'All' || m.label === label) &&
+      `${m.name} ${m.subject} ${m.text}`.toLowerCase().includes(query.toLowerCase()),
   )
-}
-
-function ClockIcon({ className }: { className?: string }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 14 14" fill="none" className={className}>
-      <g clipPath="url(#clip-clock)">
-        <path d="M7.00005 13.2218C10.4365 13.2218 13.2223 10.436 13.2223 6.99957C13.2223 3.56313 10.4365 0.777344 7.00005 0.777344C3.56362 0.777344 0.777832 3.56313 0.777832 6.99957C0.777832 10.436 3.56362 13.2218 7.00005 13.2218Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M7 3.76562V7.00118L9.73778 8.7434" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
-      </g>
-      <defs>
-        <clipPath id="clip-clock">
-          <rect width="14" height="14" fill="white" />
-        </clipPath>
-      </defs>
-    </svg>
-  )
-}
-
-function ChatIcon({ className }: { className?: string }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" className={className}>
-      <g fill="currentColor">
-        <path d="M5.707,14.875c.094,.018,.191,.025,.385,.039,.403,.051,.787-.234,.842-.645s-.234-.788-.645-.842c-.067-.009-.136-.014-.204-.018-.035-.002-.069-.002-.101-.008-.605-.115-1.188-.332-1.729-.645-.244-.141-.547-.132-.783,.021-.273,.178-.763,.384-1.295,.531,.333-.887,.424-1.888,.062-2.568-.483-.836-.738-1.785-.738-2.742C1.5,4.966,3.967,2.5,6.998,2.5c1.933,0,3.689,.993,4.698,2.656,.215,.353,.675,.466,1.03,.252,.354-.215,.468-.676,.253-1.03-1.284-2.115-3.52-3.377-5.981-3.377C3.14,1,0,4.139,0,7.998c0,1.221,.325,2.428,.927,3.47,.167,.314-.065,1.605-.707,2.248-.209,.209-.276,.522-.17,.798,.105,.276,.364,.465,.659,.481,.073,.004,.146,.006,.222,.006,.992,0,2.162-.337,2.958-.738,.577,.288,1.187,.494,1.818,.613Z" />
-        <path d="M17.295,14.367c.461-.797,.705-1.704,.705-2.621,0-2.895-2.355-5.25-5.25-5.25s-5.251,2.355-5.251,5.25,2.355,5.25,5.251,5.25c.325,0,.651-.03,.97-.091,.438-.083,.864-.222,1.27-.414,.597,.281,1.425,.508,2.135,.508,.057,0,.112-.001,.166-.004,.296-.016,.555-.205,.66-.481,.106-.276,.039-.589-.17-.798-.376-.376-.547-1.168-.485-1.349Z" />
-      </g>
-    </svg>
-  )
-}
-
-function ShieldIcon({ className }: { className?: string }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none" className={className}>
-      <g clipPath="url(#clip-shield)">
-        <path d="M9.52793 7.00347C9.20593 7.00347 8.94459 6.74214 8.94459 6.42014V3.89236C8.94459 2.82058 8.07193 1.94792 7.00015 1.94792C5.92837 1.94792 5.0557 2.82058 5.0557 3.89236V6.42014C5.0557 6.74214 4.79437 7.00347 4.47237 7.00347C4.15037 7.00347 3.88904 6.74214 3.88904 6.42014V3.89236C3.88904 2.17658 5.28437 0.78125 7.00015 0.78125C8.71593 0.78125 10.1113 2.17658 10.1113 3.89236V6.42014C10.1113 6.74214 9.84993 7.00347 9.52793 7.00347Z" fill="currentColor" />
-        <path d="M9.9168 5.83594H4.08347C2.90358 5.83594 1.94458 6.79494 1.94458 7.97483V11.0859C1.94458 12.2658 2.90358 13.2248 4.08347 13.2248H9.9168C11.0967 13.2248 12.0557 12.2658 12.0557 11.0859V7.97483C12.0557 6.79494 11.0967 5.83594 9.9168 5.83594ZM7.58347 9.91927C7.58347 10.2413 7.32214 10.5026 7.00014 10.5026C6.67814 10.5026 6.4168 10.2413 6.4168 9.91927V9.14149C6.4168 8.81949 6.67814 8.55816 7.00014 8.55816C7.32214 8.55816 7.58347 8.81949 7.58347 9.14149V9.91927Z" fill="currentColor" />
-      </g>
-      <defs>
-        <clipPath id="clip-shield">
-          <rect width="14" height="14" fill="white" />
-        </clipPath>
-      </defs>
-    </svg>
-  )
-}
-
-function ArrowIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 11 11" fill="none">
-      <path d="M0.587891 5.84207V4.55407H8.39989L4.49389 0.914067L5.37589 0.0180664L10.3879 4.79207V5.56207L5.37589 10.3501L4.49389 9.45407L8.37189 5.84207H0.587891Z" fill="currentColor" />
-    </svg>
-  )
-}
-
-const iconMap: Record<string, React.FC<{ className?: string }>> = {
-  sparkle: SparkleIcon,
-  clock: ClockIcon,
-  chat: ChatIcon,
-  shield: ShieldIcon,
-}
-
-/* ───────────────────────── Main Page ───────────────────────── */
-
-export default function InboxPage() {
-  const [activeTab, setActiveTab] = useState(0)
-  const sectionRefs = useRef<(HTMLElement | null)[]>([])
-  const ctaRef = useScrollReveal()
-  const featuresRef = useScrollReveal()
-
-  // Callback ref on the halo element: attach the scroll listener when the element is set,
-  // detach when it's null. No useEffect needed.
-  const haloRef = useCallback((halo: HTMLDivElement | null) => {
-    if (!halo) return
-    const handleScroll = () => {
-      halo.style.opacity = String(Math.min(1, window.scrollY / 500))
-    }
-    handleScroll()
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // Callback ref on the scroll tracker sentinel. Installs one scroll/resize listener
-  // tied to the element lifetime — removed when the sentinel unmounts.
-  const scrollTrackerRef = useCallback((node: HTMLDivElement | null) => {
-    if (!node) return
-    const offsets: number[] = []
-
-    const cacheOffsets = () => {
-      sectionRefs.current.forEach((el, i) => {
-        if (el) offsets[i] = el.offsetTop
-      })
-    }
-
-    const handleScroll = () => {
-      if (offsets.length === 0) cacheOffsets()
-
-      const scrollY = window.scrollY
-      const sections = sectionRefs.current
-
-      // Find current section based on scroll position
-      let currentIdx = 0
-      for (let i = 0; i < offsets.length; i++) {
-        if (offsets[i] !== undefined && scrollY >= offsets[i] - 200) {
-          currentIdx = i
-        }
-      }
-
-      setActiveTab(currentIdx)
-
-      // Three states:
-      // Past sections: fade out + slide up (gone)
-      // Current section: fully visible
-      // Future sections: hidden below (ready to fade in from bottom)
-      for (let i = 0; i < sections.length; i++) {
-        const el = sections[i]
-        if (!el) continue
-
-        if (i < currentIdx) {
-          el.style.opacity = '0'
-          el.style.transform = 'translateY(-30px)'
-          el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out'
-        } else if (i === currentIdx) {
-          el.style.opacity = '1'
-          el.style.transform = 'none'
-          el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out'
-        } else {
-          el.style.opacity = '0'
-          el.style.transform = 'translateY(50px)'
-          el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out'
-        }
-      }
-    }
-
-    requestAnimationFrame(cacheOffsets)
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    window.addEventListener('resize', cacheOffsets)
-    handleScroll()
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('resize', cacheOffsets)
-    }
-  }, [])
-
-  return (
-    <div ref={scrollTrackerRef} className="text-foreground">
-      {/* ── Fixed background layers (stay in place while content scrolls) ── */}
-      <div className="fixed inset-0 z-[-1] pointer-events-none">
-        {/* Layer 1: Gradient — transitions per active section */}
-        <div
-          className="absolute inset-0 transition-all duration-1000 ease-in-out"
-          style={{
-            background: `linear-gradient(to bottom, ${sectionGradients[activeTab]?.[0] ?? '#4867AF'}, ${sectionGradients[activeTab]?.[1] ?? '#9CAFB8'} 62%, ${sectionGradients[activeTab]?.[2] ?? '#C49577'})`,
-          }}
-        />
-
-        {/* Layer 2: Shadow texture (darkens via color-burn) */}
-        <div className="absolute inset-0" style={{ mixBlendMode: 'color-burn' }}>
-          <img src="/ai/shadow-bg.png" alt="" className="h-full w-full object-cover" width={1920} height={1080} loading="eager" decoding="async" />
+    <div className="overflow-hidden rounded-[2rem] border border-border bg-card text-card-foreground shadow-xl">
+      <div className="flex items-center justify-between gap-3 border-b border-border p-5">
+        <div className="flex items-center gap-3">
+          <img src="/images/apps/inbox.png" alt="" className="size-8 object-contain" />
+          <span className="font-display text-xl">Inbox</span>
         </div>
-
-        {/* Layer 3: CSS glow effect (fades in on scroll) */}
-        <div
-          ref={haloRef}
-          className="absolute h-screen w-[12rem] rounded-full right-[40rem] top-0 rotate-45 opacity-0 transition-opacity duration-300 ease-in-out"
-          id="glow-effect"
-          style={{
-            background: 'rgb(255, 255, 255)',
-            boxShadow: 'rgb(255, 255, 255) 0px 6.719px 50.393px 0px inset',
-            filter: 'blur(200px)',
-          }}
-        />
-
-        {/* Layer 4: Animated line grid */}
-        <AnimatedLineGrid />
+        <span className="text-xs text-muted-foreground">Interactive illustration</span>
       </div>
-
-      {/* ── 1. Hero — Split Layout ── */}
-      <div className="relative z-10 mx-auto flex w-full flex-col overflow-clip lg:flex-row">
-
-        {/* Left sticky panel */}
-        <div className="relative overflow-hidden lg:pointer-events-none lg:sticky lg:top-[var(--site-header-height,64px)] lg:z-40 lg:flex lg:px-0 lg:max-h-[calc(100vh-var(--site-header-height,64px))] lg:max-w-[32rem] mt-12 shrink-0 max-lg:snap-start lg:mt-0 lg:min-h-0 lg:border-r-[0.5px] lg:border-black/10">
-          <div className="relative flex w-full lg:pointer-events-auto lg:min-w-[32rem] lg:overflow-y-auto lg:overflow-x-hidden lg:pl-6">
-            <div className="mx-auto max-w-lg lg:mx-0 lg:flex lg:w-[32rem] lg:max-w-none lg:flex-col px-8 sm:px-0 lg:px-4">
-              <div className="pb-8 pt-16 lg:flex lg:h-full lg:flex-col lg:pr-10">
-                {/* Badge */}
-                <h6 className="text-lg font-medium text-white">{inboxHero.badge}</h6>
-
-                {/* Title */}
-                <AnimatedTitle as="h1" className="text-heading-responsive-lg mt-4 max-w-80 text-white sm:max-w-none">
-                  {inboxHero.title}
-                </AnimatedTitle>
-
-                {/* Feature list with icons */}
-                <div className="mt-6 flex flex-col gap-3">
-                  {inboxHero.features.map((f) => {
-                    const Icon = iconMap[f.icon] ?? SparkleIcon
-                    return (
-                      <div key={f.text} className="flex items-start gap-2">
-                        <Icon className="mt-0.5 size-4 shrink-0 text-white" />
-                        <p className="body-lg text-sm text-white">{f.text}</p>
-                      </div>
-                    )
-                  })}
-                </div>
-
-                {/* CTA button */}
-                <div className="mb-4 mt-4 w-fit">
-                  <Button variant="outline" size="sm" href="https://inbox.oxy.so">
-                    Get Started
-                    <ArrowIcon className="size-3" />
-                  </Button>
-                </div>
-
-                {/* Demo navigation tabs (desktop only) */}
-                <div className="mt-auto max-lg:hidden">
-                  <h6 className="heading-md mb-4 text-[18px] font-bold text-white">
-                    What Oxy Inbox brings together
-                  </h6>
-                  <ul className="flex flex-col items-start max-h-80 overflow-y-auto hide-scrollbar">
-                    {inboxDemoTabs.map((tab, i) => (
-                      <li key={tab.label} className="w-full">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            sectionRefs.current[i]?.scrollIntoView({ behavior: 'smooth' })
-                          }}
-                          className={`text-base transition-colors duration-200 flex items-center justify-between text-white select-none w-full rounded-[10px] p-2 ${
-                            activeTab === i ? 'bg-black/5 ring-inset ring-[#73A7FF]' : 'ring-inset ring-[#73A7FF]'
-                          }`}
-                        >
-                          <div className="flex items-center">
-                            {activeTab === i && (
-                              <div className="h-5 w-[3px] rounded-[2px] bg-[#73A7FF] mr-1.5" />
-                            )}
-                            {tab.label}
-                          </div>
-                          <span className="font-mono font-medium text-white/75 mix-blend-plus-lighter">
-                            {tab.number}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right content area — demo screens, fades to transparent at bottom */}
-        <div
-          className="relative z-10 grow bg-black/10"
-        >
-          {/* SVG pattern border on left edge */}
-          <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            <svg className="absolute top-0 z-10 h-full w-2 px-1.5 pt-1 box-content border-r border-white/10" aria-hidden="true">
-              <defs>
-                <pattern id="hero-pattern" width="8" height="16" patternUnits="userSpaceOnUse">
-                  <path d="M0 0H16" className="stroke-white/50" fill="none" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#hero-pattern)" />
-            </svg>
-          </div>
-
-          {/* Right edge gradient fade */}
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-30 w-24 bg-gradient-to-l from-black/40 to-transparent" />
-
-
-          {/* Sticky section header with dot/line — desktop */}
-          <div className="hidden lg:block sticky top-[var(--site-header-height,64px)] z-50">
-            <div
-              className="absolute inset-0 left-5 transition-all duration-1000 ease-in-out"
-              style={{
-                background: `linear-gradient(to bottom, ${sectionGradients[activeTab]?.[0] ?? '#4867AF'}, ${sectionGradients[activeTab]?.[1] ?? '#48649c'})`,
-                opacity: 1,
+      <div className="min-h-[400px] p-5 sm:p-8">
+        {item ? (
+          <div>
+            <TextButton
+              onPress={() => {
+                setSelected(null)
+                setSent(false)
+                setReply('')
               }}
-            />
-            <div className="ml-5 w-[calc(100%-20px)] pt-8 relative">
-              <p className="text-sm pl-5 font-bold uppercase tracking-wide text-white/50 mix-blend-plus-lighter">
-                {`Barcelona - 08:00 - ${inboxDemoTabs[activeTab]?.label ?? 'Unified Inbox'}`}
-              </p>
-              {/* Gradient line with dot */}
-              <div
-                className="relative mt-4 h-[0.5px] w-full"
-                style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.5) 100%)' }}
-              >
-                {/* Dot */}
-                <div className="absolute -left-[4.5px] -top-[5px] z-50 flex items-center justify-center size-2.5 bg-white/5 rounded-full">
-                  <div className="size-1 rounded-full bg-white" />
-                </div>
-                {/* Connecting dash */}
-                <div className="absolute -left-[14px] -top-[5px] z-50 flex items-center justify-center h-2.5">
-                  <div className="h-[0.5px] w-4 bg-white" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Sticky section header — mobile */}
-          <div className="ml-5 w-[calc(100%-20px)] pt-8 block lg:hidden sticky top-[var(--site-header-height,64px)] z-50 bg-transparent backdrop-blur-md">
-            <p className="text-sm pl-5 font-bold uppercase tracking-wide text-white/50 mix-blend-plus-lighter">
-              {`Barcelona - 08:00 - ${inboxDemoTabs[activeTab]?.label ?? 'Unified Inbox'}`}
-            </p>
-            <div
-              className="relative mt-4 h-[0.5px] w-full"
-              style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.5) 100%)' }}
             >
-              <div className="absolute -left-[4.5px] -top-[5px] z-50 flex items-center justify-center size-2.5 bg-white/5 rounded-full">
-                <div className="size-1 rounded-full bg-white" />
-              </div>
-              <div className="absolute -left-[14px] -top-[5px] z-50 flex items-center justify-center h-2.5">
-                <div className="h-[0.5px] w-4 bg-white" />
-              </div>
-            </div>
-          </div>
-
-          {/* All demo sections */}
-          {inboxDemoTabs.map((tab, i) => (
-            <div
-              key={tab.label}
-              id={`demo-${tab.label.toLowerCase().replace(/\s+/g, '-')}`}
-              className="sticky top-[calc(var(--site-header-height,64px)+68px)] scroll-mt-[132px] h-[calc(100vh-var(--site-header-height,64px)-68px)] min-h-[calc(100vh-var(--site-header-height,64px)-68px)] relative flex flex-col pl-5"
-              ref={(el) => { sectionRefs.current[i] = el }}
+              <ArrowLeft size={18} /> Back to messages
+            </TextButton>
+            <p className="mt-8 text-sm text-muted-foreground">{item.name} · Example conversation</p>
+            <h3 className="mt-3 font-display text-3xl leading-tight">{item.subject}</h3>
+            <p className="mt-6 text-base leading-relaxed">{item.body}</p>
+            <form
+              className="mt-8 space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault()
+                if (reply.trim()) setSent(true)
+              }}
             >
-              <div className="relative mx-auto flex h-full w-full flex-col pl-10 pt-10 pb-0">
-                <div className="shrink-0 mb-10 flex flex-col gap-1.5">
-                  <AnimatedTitle as="h3" className="text-heading-responsive-md text-white">
-                    {tab.label}
-                  </AnimatedTitle>
-                  <p className="body-lg pr-10 text-base text-white/70">
-                    {tab.description}
-                  </p>
-                </div>
-                <div className="flex-1 min-h-0 overflow-hidden rounded-t-[19px]">
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    preload="metadata"
-                    src={tabVideos[i]}
-                    className="h-full w-full object-cover object-top rounded-t-[19px]"
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── 2. "One inbox. Every channel. Starts today" CTA ── */}
-      <div ref={ctaRef} className="relative z-10 snap-start rounded-t-[40px] bg-background divide-y divide-border">
-        <div className="relative h-full w-full p-3 sm:p-5 md:p-7">
-          <div className="relative overflow-hidden w-full rounded-t-[24px] flex flex-col items-center justify-center gap-4 px-4 pt-12">
-            {/* Shader bg placeholder — subtle gradient */}
-            <div className="pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-b from-secondary to-background" />
-
-            {/* Content */}
-            <div className="relative z-20 flex flex-col items-center gap-6 w-full max-w-xs text-center sm:max-w-sm">
-              <div className="flex flex-col gap-3">
-                <h5 className="scroll-reveal heading-md uppercase tracking-widest text-primary-foreground/50">Get Started</h5>
-                <h2 className="scroll-reveal heading-3xl text-[40px] font-medium text-primary-foreground sm:text-[50px] sm:leading-[56px]" style={{ transitionDelay: '100ms' }}>
-                  One inbox. Every channel. Starts today.
-                </h2>
-                <p className="scroll-reveal body-md px-4 text-[18px] leading-6 text-primary-foreground/50" style={{ transitionDelay: '200ms' }}>
-                  Connect your accounts. Oxy Inbox unifies them in under a minute.
-                </p>
-              </div>
-              <div className="scroll-reveal" style={{ transitionDelay: '300ms' }}>
-                <Button variant="outline" size="lg" href="https://inbox.oxy.so">
-                  Get started today
-                  <ArrowIcon className="mt-0.5 size-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* CTA background images */}
-            <div className="scroll-reveal relative z-10 mt-2 w-full md:-mt-12" style={{ transitionDelay: '400ms' }}>
-              <div className="relative hidden w-full select-none overflow-hidden md:block md:aspect-[2772/962]">
-                <img alt="CTA Background" src="/ai/cta-desktop-bg.png" className="absolute inset-0 h-full w-full object-cover object-bottom" width={4158} height={1848} loading="lazy" decoding="async" />
-              </div>
-              <img alt="CTA Background" src="/ai/cta-mobile-bg.png" className="mx-auto w-[50vh] max-w-[80vw] select-none md:hidden" width={564} height={529} loading="lazy" decoding="async" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── 3. "Built for messages that matter" — Section IS the scroll container ── */}
-      <div
-        ref={featuresRef}
-        id="features"
-        className="pt-12 sm:pt-14 md:pb-4 lg:pb-14 pb-0 md:overflow-x-auto hide-scrollbar"
-      >
-        <div className="flex flex-col gap-4 px-4 sm:px-6 md:flex-row md:w-max md:items-start md:px-0 md:pl-14 md:pr-8">
-          {/* Left: heading + CTA (scrolls with cards) */}
-          <div className="flex shrink-0 flex-col gap-2 py-8 pr-10 w-72 sm:w-80 md:w-[280px]">
-            <h2 className="scroll-reveal text-5xl font-medium text-foreground">
-              Built for messages that matter.
-            </h2>
-            <div className="scroll-reveal mt-6" style={{ transitionDelay: '100ms' }}>
-              <Button variant="outline" size="sm" href="https://inbox.oxy.so">
-                Get Started
-                <ArrowIcon className="mt-0.5 size-3" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Cards */}
-          {inboxFeatureCards.map((card, i) => (
-            <div
-              key={card.title}
-              className="scroll-reveal relative overflow-hidden p-8 h-[400px] md:h-[520px] w-full md:w-96 md:shrink-0 rounded-[32px] flex flex-col gap-1"
-              style={{ transitionDelay: `${i * 100}ms` }}
-            >
-              <div className={`pointer-events-none absolute inset-0 h-full w-full bg-gradient-to-br ${card.gradient ?? 'from-foreground/5 to-foreground/10'}`} />
-              {/* Title + subtitle on top */}
-              <p className="relative z-20 heading-3xl text-[32px] font-semibold text-white">{card.title}</p>
-              <p className="relative z-20 heading-xl text-sm font-medium text-white opacity-50 mix-blend-plus-lighter">{card.subtitle}</p>
-              {/* Image behind text, anchored to bottom */}
-              {card.image && (
-                <img
-                  alt={card.title}
-                  src={`/ai/${card.image}`}
-                  className="absolute bottom-0 left-0 z-[5] h-auto max-h-[380px] w-full select-none object-contain"
-                  width={768}
-                  height={380}
-                  loading="lazy"
-                  decoding="async"
+              <label className="grid gap-2 text-sm">
+                Try a reply
+                <textarea
+                  className="min-h-24 rounded-xl border border-border bg-background p-4 text-foreground"
+                  value={reply}
+                  onChange={(e) => {
+                    setReply(e.target.value)
+                    setSent(false)
+                  }}
+                  placeholder="Write an example reply…"
                 />
+              </label>
+              <PrimaryButton
+                onPress={() => {
+                  if (reply.trim()) setSent(true)
+                }}
+                disabled={!reply.trim()}
+              >
+                Preview reply
+              </PrimaryButton>
+              <p className="text-sm text-muted-foreground" role="status">
+                {sent
+                  ? 'Example reply added. No message was sent.'
+                  : 'This illustration uses sample messages. It does not connect to your account.'}
+              </p>
+            </form>
+          </div>
+        ) : (
+          <div>
+            <h3 className="font-display text-3xl">A little more space.</h3>
+            <label className="mt-6 flex items-center gap-3 rounded-full border border-border bg-background px-4 py-3">
+              <MagnifyingGlass size={20} />
+              <input
+                aria-label="Search example messages"
+                className="min-w-0 flex-1 bg-transparent text-base outline-none"
+                placeholder="Find a conversation"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </label>
+            <div className="my-5 flex gap-2" role="group" aria-label="Filter sample messages">
+              {['All', 'Personal', 'Work'].map((name) => (
+                <button
+                  key={name}
+                  aria-pressed={name === label}
+                  onClick={() => setLabel(name)}
+                  className={`rounded-full px-4 py-2 text-sm ${name === label ? 'bg-primary text-primary-foreground' : 'bg-surface'}`}
+                >
+                  {name}
+                </button>
+              ))}
+            </div>
+            <div className="divide-y divide-border">
+              {filtered.map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => setSelected(m.id)}
+                  className="flex w-full gap-4 rounded-lg py-5 text-left transition-colors hover:bg-primary-subtle"
+                >
+                  <span className="grid size-10 shrink-0 place-items-center rounded-full bg-secondary text-secondary-foreground">
+                    {m.name[0]}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-sm text-muted-foreground">{m.name}</span>
+                    <span className="mt-1 block text-base font-semibold">{m.subject}</span>
+                    <span className="mt-1 block truncate text-sm text-muted-foreground">
+                      {m.text}
+                    </span>
+                  </span>
+                </button>
+              ))}
+              {!filtered.length && (
+                <p className="py-10 text-base text-muted-foreground">
+                  No example messages match. Try another search or label.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default function InboxPageContent() {
+  const ref = useRef<HTMLDivElement>(null)
+  const reduce = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const y = useTransform(scrollYProgress, [0, 1], [36, -36])
+  const rotate = useTransform(scrollYProgress, [0, 0.5, 1], [-2, 0, 2])
+  return (
+    <>
+      <PageSection spacing="lg" className="inbox-theme bg-background text-foreground">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
+          <div>
+            <p className="oxy-eyebrow mb-8">Inbox by Oxy</p>
+            <h1 className="oxy-display">
+              Email.
+              <br />
+              Room to think.
+            </h1>
+            <p className="oxy-copy mt-8">
+              Your conversations, with space to read, organise and reply.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-6">
+              <a
+                href="https://inbox.oxy.so"
+                className="inline-flex min-h-12 items-center gap-3 rounded-full bg-primary px-7 py-3 text-primary-foreground"
+              >
+                Open Inbox <ArrowRight size={20} />
+              </a>
+              <a className="oxy-link" href="#inbox-story">
+                Take a closer look
+              </a>
+            </div>
+          </div>
+          <div ref={ref}>
+            <motion.div style={reduce ? {} : { y, rotate }}>
+              <InboxExample />
+            </motion.div>
+          </div>
+        </div>
+      </PageSection>
+      <div id="inbox-story" className="oxy-anchor inbox-theme bg-surface text-foreground">
+        <div className="container grid gap-12 py-20 lg:grid-cols-[.8fr_1.2fr]">
+          <div className="self-start lg:sticky lg:top-36">
+            <p className="oxy-eyebrow mb-6">A day in your inbox</p>
+            <h2 className="oxy-title">
+              Less searching.
+              <br />
+              More conversation.
+            </h2>
+            <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">
+              A familiar place for your email, built as part of Oxy.
+            </p>
+          </div>
+          <div>
+            {scenes.map((scene, index) => (
+              <section
+                key={scene.title}
+                className="oxy-reveal flex min-h-[55svh] flex-col justify-center border-t border-border py-16"
+              >
+                <div className="mb-8 flex items-center justify-between">
+                  <span className="font-mono text-sm">0{index + 1}</span>
+                  <scene.icon size={40} weight="regular" className="text-primary" />
+                </div>
+                <h3 className="font-display text-[clamp(2rem,4vw,4rem)] leading-tight tracking-tight">
+                  {scene.title}
+                </h3>
+                <p className="mt-6 max-w-xl text-xl leading-relaxed text-muted-foreground">
+                  {scene.text}
+                </p>
+              </section>
+            ))}
+          </div>
+        </div>
+      </div>
+      <PageSection spacing="lg">
+        <p className="oxy-eyebrow mb-6">Part of Oxy</p>
+        <h2 className="oxy-title max-w-4xl">
+          Familiar foundations.
+          <br />A place of its own.
+        </h2>
+        <div className="mt-12 grid gap-10 md:grid-cols-3">
+          {[
+            ['Oxy account', 'Use your Oxy account to access Inbox.', '/help/account'],
+            [
+              'Built with Bloom',
+              'A shared design foundation across the Oxy ecosystem.',
+              '/developers/docs/bloom/components',
+            ],
+            [
+              'Open source',
+              'Explore the client, follow development and contribute.',
+              'https://github.com/OxyHQ/inbox',
+            ],
+          ].map(([a, b, url]) => (
+            <div key={a}>
+              <h3 className="text-2xl font-display">{a}</h3>
+              <p className="my-4 text-lg text-muted-foreground">{b}</p>
+              {url.startsWith('http') ? (
+                <a href={url} className="oxy-link">
+                  Explore the source
+                </a>
+              ) : (
+                <Link to={url} className="oxy-link">
+                  Learn more
+                </Link>
               )}
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Footer handled by shared Footer in page wrapper */}
-    </div>
+      </PageSection>
+      <FaqSection
+        title="A few things to know."
+        groups={[
+          {
+            title: 'Inbox',
+            items: [
+              {
+                question: 'What is Inbox?',
+                answer:
+                  'Inbox is the email client in the Oxy ecosystem. Open the web app to access your account and see the available features.',
+              },
+              {
+                question: 'Is the example connected to my email?',
+                answer:
+                  'No. The interactive illustration uses sample messages to explain reading, searching and replying. It does not send mail or connect to an account.',
+              },
+              {
+                question: 'Where can I follow development?',
+                answer:
+                  'The Inbox client is open source at github.com/OxyHQ/inbox. You can explore the code and follow changes there.',
+              },
+            ],
+          },
+        ]}
+        className="inbox-theme bg-background"
+      />
+      <PageSection spacing="lg" className="inbox-theme bg-primary text-primary-foreground">
+        <h2 className="oxy-title max-w-4xl">
+          Make room for
+          <br />
+          your next conversation.
+        </h2>
+        <a href="https://inbox.oxy.so" className="oxy-link mt-8 text-xl">
+          Open Inbox <ArrowRight size={24} />
+        </a>
+      </PageSection>
+    </>
   )
 }

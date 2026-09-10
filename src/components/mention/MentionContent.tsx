@@ -29,20 +29,21 @@ const post = (id: string): MentionPost => MENTION_POSTS.find((p) => p.id === id)
 
 function Display({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <h2 className={`font-display font-semibold uppercase leading-[0.95] tracking-tight text-white drop-shadow-[0_2px_24px_rgba(30,60,130,0.35)] ${className}`}>
+    <h2 className={`font-display font-semibold uppercase leading-[0.95] tracking-tight text-foreground drop-shadow-lg ${className}`}>
       {children}
     </h2>
   )
 }
 
 function Reveal({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
+  const reduce = useReducedMotion()
   return (
     <motion.div
       className={`absolute ${className}`}
-      initial={{ opacity: 0, y: 24, scale: 0.96 }}
+      initial={reduce ? false : { opacity: 0, y: 24, scale: 0.96 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.6, delay }}
+      transition={{ duration: reduce ? 0 : 0.6, delay: reduce ? 0 : delay, ease: [0.16, 1, 0.3, 1] }}
     >
       {children}
     </motion.div>
@@ -53,7 +54,7 @@ function GiantM({ className = '' }: { className?: string }) {
   return (
     <span
       aria-hidden="true"
-      className={`block [&_path]:fill-[#3a55dd] [&_svg]:block [&_svg]:size-full ${className}`}
+      className={`block [&_path]:fill-primary [&_svg]:block [&_svg]:size-full ${className}`}
       dangerouslySetInnerHTML={{ __html: mBrushSvg }}
     />
   )
@@ -117,12 +118,12 @@ function HeroCopy({ opacity }: { opacity: MotionValue<number> }) {
         <div className="max-w-[600px]">
           <div className="flex items-center gap-3">
             <img src={logo} alt="" className="size-12 rounded-full object-cover sm:size-14" />
-            <span className="font-display text-3xl font-semibold uppercase tracking-tight text-white sm:text-4xl">Mention</span>
+            <span className="font-display text-3xl font-semibold uppercase tracking-tight text-foreground sm:text-4xl">Mention</span>
           </div>
           <Display className="mt-4 text-left text-[clamp(2rem,4.4vw,3.6rem)]">
             Every one of your posts displayed in an intelligent feed
           </Display>
-          <p className="mt-4 max-w-md font-display text-sm font-semibold uppercase tracking-wide text-white/85 sm:text-base">
+          <p className="mt-4 max-w-md font-display text-sm font-semibold uppercase tracking-wide text-foreground/85 sm:text-base">
             All your posts to loved ones and peers all around
           </p>
         </div>
@@ -199,7 +200,7 @@ function FeedExperience() {
             and dynamic island sit over it like a real device. */}
         <motion.div
           style={{ scale: frameScale, opacity: frameOpacity, width: PHONE_W }}
-          className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_40px_80px_-30px_rgba(20,40,90,0.5)]"
+          className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 drop-shadow-lg"
         >
           <img src={phoneFrame} alt="" draggable={false} className="w-full select-none" />
         </motion.div>
@@ -240,7 +241,7 @@ const INTEGRATIONS = [
 function IntegrationsSection() {
   return (
     <section className="relative px-6 py-[8vh] text-center">
-      <p className="font-display text-lg font-semibold text-white/90">Integrations coming soon…</p>
+      <p className="font-display text-lg font-semibold text-foreground/90">Integrations coming soon…</p>
       <div className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-4">
         {INTEGRATIONS.map(({ src, name }, i) => (
           <motion.div
@@ -249,7 +250,7 @@ function IntegrationsSection() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: i * 0.05 }}
-            className="grid size-12 place-items-center rounded-full bg-white shadow-[0_10px_30px_-12px_rgba(30,60,130,0.45)]"
+            className="grid size-12 place-items-center rounded-full bg-card shadow-xl"
           >
             <img src={src} alt={name} draggable={false} className="size-7" />
           </motion.div>
@@ -314,13 +315,13 @@ function UniqueLinkSection() {
     <section className="relative px-6 py-[12vh]">
       <div className="text-center">
         <Display className="text-[clamp(1.8rem,4.5vw,3.4rem)]">Your unique link.</Display>
-        <p className="mx-auto mt-3 font-display text-sm font-semibold uppercase tracking-wide text-white/85">
+        <p className="mx-auto mt-3 font-display text-sm font-semibold uppercase tracking-wide text-foreground/85">
           And btw, the good ones are still free.
         </p>
       </div>
 
       <div className="relative mx-auto mt-12 w-full max-w-4xl">
-        <div className="mx-auto w-fit max-w-full rounded-full bg-surface px-6 py-5 shadow-[0_50px_140px_-50px_rgba(20,40,90,0.5)] sm:px-12 sm:py-6">
+        <div className="mx-auto w-fit max-w-full rounded-full bg-surface px-6 py-5 shadow-xl sm:px-12 sm:py-6">
           <p className="flex items-baseline justify-center gap-x-[0.08em] font-display text-[clamp(1.5rem,4.5vw,3.25rem)] font-semibold leading-[1.15] tracking-tight">
             <span className="text-muted-foreground">mention.earth/@</span>
             <UsernameRoll />
@@ -336,12 +337,12 @@ function UniqueLinkSection() {
 function JoinSection() {
   return (
     <section className="relative flex min-h-[60vh] flex-col items-center justify-center gap-6 px-6 pb-[12vh] pt-[6vh]">
-      <div className="flex items-center gap-4 text-white/80 sm:gap-6">
+      <div className="flex items-center gap-4 text-foreground/80 sm:gap-6">
         <Lightning weight="fill" className="hidden size-7 sm:block" />
         <PencilSimple weight="bold" className="hidden size-7 sm:block" />
         <Link
           to="/inbox"
-          className="rounded-full bg-white px-7 py-3 font-display text-base font-semibold uppercase tracking-tight text-neutral-900 shadow-[0_18px_50px_-18px_rgba(20,40,90,0.6)] transition-transform hover:scale-105"
+          className="rounded-full bg-card px-7 py-3 font-display text-base font-semibold uppercase tracking-tight text-foreground shadow-xl transition-transform hover:scale-105"
         >
           Join Mention
         </Link>
@@ -361,14 +362,14 @@ function JoinSection() {
 
 export default function MentionContent() {
   return (
-    <div className="relative bg-[#88a6f0] dark:bg-[#070713]">
+    <div className="relative bg-background ">
       {/* Sky — full strength in light mode, dimmed to a night sky in dark mode */}
       <div
         className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat dark:opacity-20"
-        style={{ backgroundImage: `linear-gradient(180deg, rgba(120,150,235,0.15), rgba(190,210,245,0.35)), url(${sky})` }}
+        style={{ backgroundImage: `linear-gradient(180deg, color-mix(in srgb, var(--primary) 15%, transparent), color-mix(in srgb, var(--background) 65%, transparent)), url(${sky})` }}
       />
       {/* Dark wash only in dark mode */}
-      <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-b from-[#0a0a1c]/40 to-[#06060f]/70 dark:block" />
+      <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-b from-background/40 to-background/70 dark:block" />
 
       <div className="relative">
         <FeedExperience />

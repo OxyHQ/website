@@ -20,7 +20,7 @@ export default function HomiioPropertyCard({ listing, className = '' }: HomiioPr
       href={listing.href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`block w-[160px] rounded-2xl bg-white p-2 text-left shadow-[0_10px_30px_-12px_rgba(0,0,0,0.35)] ring-1 ring-black/5 transition-shadow hover:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.45)] ${className}`}
+      className={`block w-[160px] rounded-2xl bg-card p-2 text-left shadow-xl ring-1 ring-border transition-shadow hover:shadow-xl ${className}`}
     >
       <img
         src={listing.imageUrl}
@@ -29,15 +29,15 @@ export default function HomiioPropertyCard({ listing, className = '' }: HomiioPr
         draggable={false}
         className="h-[112px] w-full rounded-xl object-cover"
       />
-      <h4 className="mt-2 line-clamp-2 px-1 text-body-xs font-semibold leading-tight text-neutral-900">
+      <h4 className="mt-2 line-clamp-2 px-1 text-body-xs font-semibold leading-tight text-foreground">
         {listing.title}
       </h4>
       <div className="mt-1 flex items-center gap-1 px-1 pb-1">
-        <CoinGlyph className="h-4 w-4 text-neutral-900" />
-        <span className="text-base font-extrabold tracking-tight text-neutral-900">
+        <CoinGlyph className="h-4 w-4 text-foreground" />
+        <span className="text-base font-extrabold tracking-tight text-foreground">
           {listing.monthlyAmount.toLocaleString('en-GB')}
         </span>
-        <span className="text-label-sm font-semibold text-neutral-500">/mo</span>
+        <span className="text-label-sm font-semibold text-muted-foreground">/mo</span>
       </div>
     </a>
   )

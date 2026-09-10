@@ -61,6 +61,7 @@ export interface BrandSurface {
  * that uses `.cursor-theme` alone.
  */
 export const BRAND_SURFACES: readonly BrandSurface[] = [
+  { selector: '.homiio-landing-theme', seed: APP_COLOR_PRESETS.cobalt.hex, secondarySeed: APP_COLOR_PRESETS.yellow.hex, mode: 'auto', label: 'Homiio landing scenes' },
   { selector: '.cursor-theme', seed: '#7c5aed', mode: 'dark', label: 'Codea' },
   { selector: '.oxyos-theme', seed: '#8b6fc0', mode: 'dark', label: 'OxyOS' },
   {

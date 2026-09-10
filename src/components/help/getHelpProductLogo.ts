@@ -1,3 +1,4 @@
+import { getBrandMark } from '../../data/brand-assets'
 import type { HelpCategoryId } from '../../content/help-loader'
 
 /* ──────────────────────────────────────────────
@@ -11,9 +12,9 @@ import type { HelpCategoryId } from '../../content/help-loader'
  * ──────────────────────────────────────────── */
 
 const HELP_CATEGORY_LOGO: Record<HelpCategoryId, string | undefined> = {
-  account: '/images/apps/accounts.png',
-  inbox: '/images/apps/inbox.png',
-  auth: '/images/apps/auth.svg',
+  account: getBrandMark('accounts'),
+  inbox: getBrandMark('inbox'),
+  auth: getBrandMark('auth'),
   console: undefined,
   'getting-started': undefined,
 }

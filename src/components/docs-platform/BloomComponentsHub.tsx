@@ -1,167 +1,158 @@
-import { Suspense, createElement } from 'react'
+import { Suspense, createElement, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Badge } from '@oxy.so/bloom/badge'
-import { Card } from '@oxy.so/bloom/card'
 import { ErrorBoundary } from '@oxy.so/bloom/error-boundary'
 import { bloomCategories, bloomIndex, bloomVersion } from '../../content/bloom-catalog.generated'
-import { getBloomDemo, type BloomDemo } from '../../content/bloom-demos/registry'
+import { getBloomDemo } from '../../content/bloom-demos/registry'
+import { defaultValues } from '../../content/bloom-demos/_playground'
 import { pascalPath } from '../../content/bloom-catalog'
-import { getPackage, resolveVersion } from '../../content/docs-loader'
 import { DocsShell } from '../docs/DocsShell'
-import { buildSidebar } from '../docs/DocsPackageSidebar'
 import PageShell from '../layout/PageShell'
-import { BloomGridSearch, type BloomGridEntry } from './BloomGridSearch'
 
-/**
- * The Bloom component index at `/developers/docs/bloom/components`: every
- * surface Bloom publishes, grouped by the category its README puts it in, each
- * linking to its component page.
- *
- * Everything here is derived from `bloom-catalog.generated.ts`, so a surface
- * added upstream appears the next time the catalog is regenerated — there is no
- * list to maintain. A surface without a demo still gets a card: the reader needs
- * to know the component exists, and that only its example is missing.
- *
- * Page and grid are one component because the route is the only thing that
- * mounts either. The grid used to be injected into a synced MDX page that
- * supplied the chrome; with that injection gone, a separate bare-grid component
- * would have exactly one caller, which is a wrapper rather than a seam.
- */
-
-/** Providers, tokens and fonts — infrastructure, with nothing to look at. */
-const utilityCategories = new Set(
-  bloomCategories.filter((category) => category.utility).map((category) => category.name),
-)
-
-const entries: readonly BloomGridEntry[] = bloomIndex
-  .filter((surface) => !utilityCategories.has(surface.category))
-  .map((surface) => ({
-    surface,
-    // The `components` segment is load-bearing, not decoration: `bloom/:version`
-    // already serves the versioned docs, and a static segment outranks a dynamic
-    // one at the same depth — without it `/developers/docs/bloom/0.72.1` would
-    // match as a component named `0.72.1`.
-    href: `/developers/docs/bloom/components/${surface.subpath}`,
-    demo: getBloomDemo(pascalPath(surface.subpath)),
-  }))
-
-/** Grouped in Bloom's README order, which reads from most to least prominent. */
-const groups = bloomCategories
-  .filter((category) => !category.utility)
-  .map((category) => ({
-    name: category.name,
-    entries: entries.filter((entry) => entry.surface.category === category.name),
-  }))
-  .filter((group) => group.entries.length > 0)
-
-/**
- * The demo, laid out at twice the card's width and drawn at half size. The two
- * halves of that are one decision: a demo is written for a page, not for a
- * card, so it needs the room — and `200%` paired with `scale-50` lands it back
- * at exactly the card's width, whatever the breakpoint.
- *
- * `inert` takes the whole preview out of the pointer, focus and accessibility
- * trees. A demo is a real component — it has buttons that open dialogs and
- * inputs that take focus — and inside a link none of that should be reachable;
- * the card's own link overlay paints above it and takes the click.
- *
- * The boundary is what keeps the index complete: a demo is live code, and one
- * that throws would otherwise take every other card down with it. This way its
- * own card says so and the rest still render. It is not a licence to leave a
- * demo broken — `scripts/bloom-demos.browser.test.ts` renders every demo
- * WITHOUT a boundary and fails the build if one throws.
- */
-function BloomGridPreview({ demo }: { demo: BloomDemo }) {
-  return (
-    <ErrorBoundary
-      fallback={
-        <Badge content="Example unavailable" variant="subtle" color="warning" size="small" />
-      }
-    >
-      <Suspense fallback={null}>
-        <div inert className="w-[200%] shrink-0 scale-50 text-center">
-          {createElement(demo.Component)}
-        </div>
-      </Suspense>
-    </ErrorBoundary>
-  )
-}
-
-function BloomGridCard({ entry }: { entry: BloomGridEntry }) {
-  const { surface, href, demo } = entry
-  const names = surface.components.map((component) => component.name)
-  return (
-    <li className="relative">
-      <Card variant="outlined" style={{ height: '100%', overflow: 'hidden' }}>
-        <div className="flex h-36 items-center justify-center overflow-hidden border-b border-border bg-background px-4">
-          {demo ? (
-            <BloomGridPreview demo={demo} />
-          ) : (
-            <Badge content="Example pending" variant="subtle" color="default" size="small" />
-          )}
-        </div>
-        <div className="flex flex-col gap-1 p-4">
-          {/*
-            The link stretches over the whole card via its own `::after`, so the
-            card is one target with one accessible name and the preview under it
-            stays inert.
-          */}
-          <Link
-            to={href}
-            className="font-mono text-sm font-semibold text-foreground after:absolute after:inset-0 after:content-[''] hover:text-primary"
-          >
-            {surface.subpath}
-          </Link>
-          {names.length > 0 ? (
-            <p className="line-clamp-2 text-xs text-muted-foreground">{names.join(' · ')}</p>
-          ) : null}
-        </div>
-      </Card>
-    </li>
-  )
-}
-
+/** Visual discovery and complete API inventory share the generated catalog.
+ * Infrastructure and undemonstrated exports remain discoverable without blank
+ * tiles pretending to be previews. */
 export function BloomComponentsHub() {
-  const pkg = getPackage('bloom')
-  const version = pkg ? resolveVersion(pkg) : undefined
+  const [query, setQuery] = useState('')
+  const [category, setCategory] = useState('All')
+  const entries = bloomIndex.filter(
+    (entry) =>
+      (category === 'All' || entry.category === category) &&
+      `${entry.subpath} ${entry.category} ${entry.components.map((c) => c.name).join(' ')}`
+        .toLowerCase()
+        .includes(query.toLowerCase()),
+  )
+  const visual = entries.flatMap((entry) => {
+    const demo = getBloomDemo(pascalPath(entry.subpath))
+    return demo ? [{ entry, demo }] : []
+  })
+  const reference = entries.filter((entry) => !getBloomDemo(pascalPath(entry.subpath)))
   return (
     <PageShell
       className="docs-theme bg-background"
       seo={{
         title: 'Bloom components',
-        description: 'Explore every component surface published by Bloom and the props it declares.',
+        description:
+          'Discover Bloom through live component previews, variants and interactive examples.',
         canonicalPath: '/developers/docs/bloom/components',
       }}
-      mainClassName="flex-1 bg-background text-muted-foreground"
       mainAsDiv
     >
       <DocsShell
-        sections={pkg && version ? buildSidebar(pkg, version) : null}
+        sections={null}
+        hideSidebar
+        wideContent
         eyebrow={`Bloom ${bloomVersion}`}
         title="Components"
-        subtitle="Every surface Bloom publishes, and the props it declares."
-        activePkg={pkg ?? undefined}
+        subtitle="Find the building blocks for your next idea."
+        versionAgnostic
       >
-        <nav aria-label="Bloom components" className="not-prose flex flex-col gap-10">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-muted-foreground">
-              {entries.length} component surfaces across {groups.length} categories.
-            </p>
-            <BloomGridSearch entries={entries} />
+        <div className="not-prose space-y-10">
+          <div className="bloom-toolbar flex flex-wrap items-end gap-4">
+            <label className="grid flex-1 gap-2 text-sm">
+              Find a component
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search buttons, navigation, forms…"
+              />
+            </label>
+            <label className="grid gap-2 text-sm">
+              Category
+              <select value={category} onChange={(e) => setCategory(e.target.value)}>
+                <option>All</option>
+                {bloomCategories.map((c) => (
+                  <option key={c.name}>{c.name}</option>
+                ))}
+              </select>
+            </label>
+            <Link className="oxy-link" to="/developers/docs/bloom/playground">
+              Open playground
+            </Link>
+            <Link className="oxy-link" to="/developers/docs/bloom/color-system">
+              Colour recipes
+            </Link>
           </div>
-          {groups.map((group) => (
-            <section key={group.name} className="flex flex-col gap-4">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {group.name}
-              </h2>
-              <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {group.entries.map((entry) => (
-                  <BloomGridCard key={entry.surface.subpath} entry={entry} />
+          <p className="text-sm text-muted-foreground" role="status">
+            {visual.length} visual examples · {entries.length} matching API entries
+          </p>
+          <ul className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {visual.map(({ entry, demo }) => (
+              <li
+                key={entry.subpath}
+                className="relative overflow-hidden rounded-3xl border border-border bg-card text-card-foreground"
+              >
+                <div
+                  className="flex min-h-64 items-center justify-center overflow-hidden bg-background p-6"
+                  inert
+                >
+                  <ErrorBoundary fallback={<p className="text-sm">This example could not load.</p>}>
+                    <Suspense fallback={<p className="text-sm">Loading example…</p>}>
+                      <div className="w-full max-w-full [&>div]:!max-w-full">
+                        {demo.Playground
+                          ? createElement(demo.Playground, {
+                              values: defaultValues(demo.props ?? []),
+                            })
+                          : createElement(demo.Component)}
+                      </div>
+                    </Suspense>
+                  </ErrorBoundary>
+                </div>
+                <div className="border-t border-border p-6">
+                  <p className="text-sm text-muted-foreground">{entry.category}</p>
+                  <h2 className="mt-2 font-display text-2xl">
+                    <Link
+                      className="after:absolute after:inset-0"
+                      to={`/developers/docs/bloom/components/${entry.subpath}`}
+                    >
+                      {demo.name}
+                    </Link>
+                  </h2>
+                  <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+                    {demo.description}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          {!entries.length && (
+            <div className="oxy-guide-panel">
+              <h2 className="text-xl">No matching components</h2>
+              <p className="mt-3">Try a different name or choose another category.</p>
+              <button
+                className="oxy-link mt-3"
+                onClick={() => {
+                  setQuery('')
+                  setCategory('All')
+                }}
+              >
+                Clear filters
+              </button>
+            </div>
+          )}
+          {reference.length > 0 && (
+            <section className="border-t border-border pt-10">
+              <h2 className="font-display text-3xl">API reference</h2>
+              <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+                Utilities and additional components. Their reference pages document the exported
+                APIs; visual examples are still being added.
+              </p>
+              <ul className="mt-8 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
+                {reference.map((entry) => (
+                  <li key={entry.subpath} className="border-b border-border py-4">
+                    <Link
+                      className="oxy-link font-mono text-sm"
+                      to={`/developers/docs/bloom/components/${entry.subpath}`}
+                    >
+                      {entry.subpath}
+                    </Link>
+                    <p className="text-sm text-muted-foreground">{entry.category}</p>
+                  </li>
                 ))}
               </ul>
             </section>
-          ))}
-        </nav>
+          )}
+        </div>
       </DocsShell>
     </PageShell>
   )

@@ -237,7 +237,7 @@ export const resourcesNavDropdown: NavDropdown = {
  */
 export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: string }> = [
   { title: 'Mention', description: 'Decentralized social media', href: '/mention', image: '/images/apps/mention.png', logoColor: '#40c2ed', section: 'Social & Communication' },
-  { title: 'Inbox by Oxy', description: 'A calmer way to handle email', href: '/inbox', image: '/images/apps/inbox.svg', logoColor: '#bf40ed', section: 'Tools' },
+  { title: 'Inbox by Oxy', description: 'A calmer way to handle email', href: '/inbox', image: '/images/apps/inbox.png', logoColor: '#bf40ed', section: 'Tools' },
   { title: 'Noted', description: "Oxy's workspace for notes and ideas", href: 'https://noted.oxy.so', section: 'Tools' },
   { title: 'Nilo', description: 'Workspace for docs and databases', href: 'https://nilo.so', section: 'Tools' },
   { title: 'Alia', description: 'AI-Powered assistant', href: '/ai', image: '/images/apps/alia-dropdown.svg', logoColor: '#fab8ff', preserveImageColors: true, section: 'AI & Research' },
@@ -458,6 +458,7 @@ export const defaultFooterColumns: FooterColumn[] = [
       { label: 'How Our Business Works', href: '/company/business' },
       { label: 'Careers', href: '/company/careers' },
       { label: 'Transparency Center', href: '/company/transparency' },
+      { label: 'Brand guidelines', href: '/brand' },
       { label: 'Manifesto', href: '/company/manifesto' },
       { label: 'Founding Charter', href: '/company/charter' },
       { label: 'The Initiative', href: '/initiative' },
