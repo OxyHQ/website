@@ -16,7 +16,6 @@ import type SwiperType from 'swiper'
 import 'swiper/css'
 import '../styles/landing.css'
 import AIResearchSection from '../components/ai/AIResearchSection'
-import AIResearchFeatureGrid from '../components/ai/AIResearchFeatureGrid'
 import OxyAppsFeatureGrid from '../components/sections/OxyAppsFeatureGrid'
 import OxyUseCasesRolo from '../components/sections/OxyUseCasesRolo'
 import PhotoCardCarousel, { type PhotoCard } from '../components/sections/PhotoCardCarousel'
@@ -748,13 +747,12 @@ export default function HomePage() {
         <HomeHero />
         {FEATURES.SHOW_TRUSTED_LOGOS && <PartnerLogos />}
         <BuildForEveryoneSection />
+        <OxyAppsFeatureGrid />
         <HomeTagPhysics />
         <OxyUseCasesRolo />
         <ValuesSection />
         {(FEATURES.SHOW_HOMEPAGE_STATS || FEATURES.SHOW_TESTIMONIALS) && <StatsAndTestimonialsSection />}
         <FairCoinSection />
-        <AIResearchFeatureGrid />
-        <OxyAppsFeatureGrid />
         <AIResearchSection />
         <PartnershipSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}

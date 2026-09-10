@@ -1,3 +1,4 @@
+import { MotionConfig } from 'framer-motion'
 import { useState, useCallback, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
@@ -61,6 +62,7 @@ const AppDetailPage = lazy(() => import('./pages/AppDetailPage'))
 const FaqsPage = lazy(() => import('./pages/FaqsPage'))
 const CareerDetailPage = lazy(() => import('./pages/CareerDetailPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
+const BrandPage = lazy(() => import('./pages/BrandPage'))
 const InboxPage = lazy(() => import('./pages/InboxPage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const InitiativePage = lazy(() => import('./pages/InitiativePage'))
@@ -365,6 +367,7 @@ function PublicRoutes() {
       <Route path="company/news" element={<BlogPage />} />
       <Route path="codea" element={<CodeaPage />} />
       <Route path="codea/extension" element={<CodexExtensionPage />} />
+      <Route path="brand" element={<BrandPage />} />
       <Route path="inbox" element={<InboxPage />} />
       <Route path="ai" element={<AIPage />} />
       <Route path="ai/pricing" element={<AIPricingPage />} />
@@ -527,7 +530,7 @@ export default function App() {
   // resolve route-scoped rendering modes before it paints its descendants.
   return (
     <BrowserRouter>
-      <AppProviders />
+      <MotionConfig reducedMotion="user" transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}><AppProviders /></MotionConfig>
     </BrowserRouter>
   )
 }

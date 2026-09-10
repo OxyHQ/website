@@ -240,6 +240,7 @@ export default defineConfig(({ mode }) => ({
     // entry graph pulls in, and that is what `bun run analyze` shows.
     chunkSizeWarningLimit: 1500,
     rollupOptions: {
+      input: { main: path.resolve(import.meta.dirname, 'index.html'), bloomPreview: path.resolve(import.meta.dirname, 'bloom-preview.html') },
       output: {
         /**
          * Split the heavy vendors out of the entry graph.

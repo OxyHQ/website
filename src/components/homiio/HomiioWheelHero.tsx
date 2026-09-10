@@ -44,7 +44,7 @@ function Wheel({ rotate, deck }: { rotate: MotionValue<number>; deck: readonly H
 function Panel({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <div
-      className={`w-full max-w-4xl rounded-[44px] bg-white px-8 py-10 shadow-[0_50px_140px_-50px_rgba(0,0,0,0.4)] sm:rounded-[72px] sm:px-16 sm:py-14 ${className}`}
+      className={`w-full max-w-4xl rounded-[44px] bg-card px-8 py-10 shadow-xl sm:rounded-[72px] sm:px-16 sm:py-14 ${className}`}
     >
       {children}
     </div>
@@ -61,7 +61,7 @@ function Panel({ children, className = '' }: { children: ReactNode; className?: 
 function StadiumPanel({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <div
-      className={`flex w-full max-w-[780px] flex-col items-center justify-center gap-8 rounded-[40px] bg-white px-8 py-10 shadow-[0_50px_140px_-50px_rgba(0,0,0,0.4)] sm:h-[380px] sm:flex-row sm:justify-center sm:gap-12 sm:rounded-full sm:px-12 sm:py-6 ${className}`}
+      className={`flex w-full max-w-[780px] flex-col items-center justify-center gap-8 rounded-[40px] bg-card px-8 py-10 shadow-xl sm:h-[380px] sm:flex-row sm:justify-center sm:gap-12 sm:rounded-full sm:px-12 sm:py-6 ${className}`}
     >
       {children}
     </div>
@@ -79,7 +79,7 @@ function GrayInset({ children, className = '' }: { children: ReactNode; classNam
 
 function SceneHeading({ children }: { children: ReactNode }) {
   return (
-    <h2 className="font-display text-[clamp(1.35rem,2.6vw,2rem)] font-semibold uppercase leading-tight tracking-tight text-neutral-900">
+    <h2 className="font-display text-[clamp(1.35rem,2.6vw,2rem)] font-semibold uppercase leading-tight tracking-tight text-foreground">
       {children}
     </h2>
   )
@@ -91,21 +91,21 @@ function SceneText({ children }: { children: ReactNode }) {
 
 function TrustCard({ listing, ok }: { listing: HomiioListing; ok: boolean }) {
   return (
-    <div className="w-[104px] rounded-2xl bg-white p-1.5 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.4)] ring-1 ring-black/5">
+    <div className="w-[104px] rounded-2xl bg-card p-1.5 shadow-xl ring-1 ring-border">
       <div className="relative overflow-hidden rounded-xl">
         <img src={listing.imageUrl} alt={listing.title} className="h-[78px] w-full object-cover" draggable={false} />
         <div className="absolute inset-0 grid place-items-center">
           {ok ? (
-            <Check weight="bold" className="h-9 w-9 text-emerald-400 drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)]" />
+            <Check weight="bold" className="h-9 w-9 text-success drop-shadow-lg" />
           ) : (
-            <Prohibit weight="bold" className="h-9 w-9 text-red-500 drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)]" />
+            <Prohibit weight="bold" className="h-9 w-9 text-error drop-shadow-lg" />
           )}
         </div>
       </div>
-      <p className="mt-1 line-clamp-2 px-0.5 text-[9px] font-semibold leading-tight text-neutral-900">{listing.title}</p>
+      <p className="mt-1 line-clamp-2 px-0.5 text-[9px] font-semibold leading-tight text-foreground">{listing.title}</p>
       <div className="flex items-center gap-0.5 px-0.5 pb-0.5">
-        <CoinGlyph className="h-3 w-3 text-neutral-900" />
-        <span className="text-xs font-extrabold text-neutral-900">{listing.monthlyAmount.toLocaleString('en-GB')}</span>
+        <CoinGlyph className="h-3 w-3 text-foreground" />
+        <span className="text-xs font-extrabold text-foreground">{listing.monthlyAmount.toLocaleString('en-GB')}</span>
       </div>
     </div>
   )
@@ -117,8 +117,8 @@ function TrustCard({ listing, ok }: { listing: HomiioListing; ok: boolean }) {
 
 function HeroScene() {
   return (
-    <h1 className="mx-auto max-w-2xl text-center font-display text-[clamp(2.25rem,5.5vw,4rem)] font-semibold uppercase leading-[1.05] tracking-tight text-white">
-      <span className="block text-[clamp(3.5rem,9vw,6.5rem)] leading-[0.95] text-[#FFC233]">Homiio.</span>
+    <h1 className="mx-auto max-w-2xl text-center font-display text-[clamp(2.25rem,5.5vw,4rem)] font-semibold uppercase leading-[1.05] tracking-tight text-primary-foreground">
+      <span className="block text-[clamp(3.5rem,9vw,6.5rem)] leading-[0.95] text-secondary">Homiio.</span>
       Rental made easy
     </h1>
   )
@@ -173,7 +173,7 @@ function TrustScene({ deck }: { deck: readonly HomiioListing[] }) {
 function SindiScene() {
   return (
     <div className="mt-[14vh] flex w-full max-w-5xl flex-col items-center">
-      <h2 className="mb-6 text-center font-display text-[clamp(1.75rem,4vw,3rem)] font-semibold uppercase leading-tight tracking-tight text-neutral-900">
+      <h2 className="mb-6 text-center font-display text-[clamp(1.75rem,4vw,3rem)] font-semibold uppercase leading-tight tracking-tight text-foreground">
         Meet Sindi
       </h2>
       <Panel className="sm:py-14">
@@ -187,7 +187,7 @@ function SindiScene() {
 /* Hero (pinned wheel + tightly-stacked panels) + reduced fallback     */
 /* ------------------------------------------------------------------ */
 
-const GRADIENT = 'bg-[linear-gradient(180deg,#0047BD_0%,#1f6fd0_20%,#bcd8ef_36%,#FFF7D8_50%,#FFF7D8_100%)]'
+const GRADIENT = 'bg-[linear-gradient(180deg,var(--primary)_0%,var(--primary-subtle)_36%,var(--background)_62%)]'
 
 /** The feature panels, stacked with ~1rem between them (like the original). */
 function Panels({ deck }: { deck: readonly HomiioListing[] }) {

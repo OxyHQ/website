@@ -22,11 +22,10 @@ import { SNIPPET_MODULES } from './BloomLiveScope.generated'
  * playground speaks the vocabulary the demos are written in, which is the set
  * the picker seeds from.
  *
- * This is the reader's own code in the reader's own tab, so there is no sandbox
- * and nothing here pretends to be one — `new Function` over their input is the
- * devtools console with a nicer editor. What it does owe them is that a mistake
- * stays legible: every failure it can reach comes back as a message, never as a
- * blank route.
+ * Executed only by the opaque-origin Bloom preview document, never by the
+ * authenticated app. Its response policy permits evaluation inside that
+ * sandbox and denies connections, forms and nested frames. The parent sends
+ * local edits through a validated message channel; snippets are not URL input.
  */
 
 /** A compiled snippet, or why it did not compile. */

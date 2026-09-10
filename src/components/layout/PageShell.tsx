@@ -56,7 +56,7 @@ export default function PageShell({
       {mainAsDiv ? (
         <div className={mainClassName}>{children}</div>
       ) : (
-        <main className={mainClassName}>{children}</main>
+        <main className={`oxy-story ${mainClassName ?? ''}`}>{children}</main>
       )}
       <Footer hideTopDivider={hideFooterDivider} />
     </div>

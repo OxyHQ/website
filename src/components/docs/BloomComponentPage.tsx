@@ -130,6 +130,10 @@ export default function BloomComponentPage() {
         activePkg={pkg ?? undefined}
       >
         <div className="not-prose flex flex-col gap-12">
+          <nav className="flex flex-wrap gap-6" aria-label="Component tools">
+            <Link className="oxy-link" to={HUB_PATH}>All components</Link>
+            {getBloomDemo(pascalPath(entry.subpath)) && <Link className="oxy-link" to={`/developers/docs/bloom/playground?component=${encodeURIComponent(pascalPath(entry.subpath))}`}>Try in playground</Link>}
+          </nav>
           <Suspense
             fallback={<p className="text-sm text-muted-foreground">Loading the props for {entry.importPath}…</p>}
           >

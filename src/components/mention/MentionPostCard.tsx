@@ -22,7 +22,7 @@ export default function MentionPostCard({ post, className = '', flat = false }: 
   // it legible on the sky.
   const chrome = flat
     ? 'border-b border-border'
-    : 'rounded-xl shadow-[0_14px_40px_-18px_rgba(20,40,90,0.45)] ring-1 ring-border'
+    : 'rounded-xl shadow-xl ring-1 ring-border'
 
   return (
     <article className={`w-[300px] bg-background px-3 py-2 text-left ${chrome} ${className}`}>
