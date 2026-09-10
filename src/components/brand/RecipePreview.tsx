@@ -20,7 +20,11 @@ export default function RecipePreview() {
       <div className="bloom-toolbar flex flex-wrap gap-4">
         <label className="grid gap-2 text-sm">
           Bloom recipe
-          <select value={preset} onChange={(e) => setPreset(e.target.value as AppColorName)}>
+          <select
+            aria-label="Bloom recipe"
+            value={preset}
+            onChange={(e) => setPreset(e.target.value as AppColorName)}
+          >
             {APP_COLOR_NAMES.map((name) => (
               <option key={name} value={name}>
                 {name}
@@ -30,7 +34,11 @@ export default function RecipePreview() {
         </label>
         <label className="grid gap-2 text-sm">
           Appearance
-          <select value={mode} onChange={(e) => setMode(e.target.value as 'light' | 'dark')}>
+          <select
+            aria-label="Appearance"
+            value={mode}
+            onChange={(e) => setMode(e.target.value as 'light' | 'dark')}
+          >
             <option value="light">Light</option>
             <option value="dark">Dark</option>
           </select>

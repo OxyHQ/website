@@ -75,7 +75,11 @@ export default function BloomPlayground() {
             </Link>
             <label className="grid gap-2 text-sm">
               Recipe
-              <select value={preset} onChange={(e) => update('recipe', e.target.value)}>
+              <select
+                aria-label="Recipe"
+                value={preset}
+                onChange={(e) => update('recipe', e.target.value)}
+              >
                 {APP_COLOR_NAMES.map((n) => (
                   <option key={n} value={n}>
                     {n}
@@ -85,14 +89,18 @@ export default function BloomPlayground() {
             </label>
             <label className="grid gap-2 text-sm">
               Appearance
-              <select value={mode} onChange={(e) => update('mode', e.target.value)}>
+              <select
+                aria-label="Appearance"
+                value={mode}
+                onChange={(e) => update('mode', e.target.value)}
+              >
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
               </select>
             </label>
             <label className="grid gap-2 text-sm">
               Canvas
-              <select value={width} onChange={(e) => setWidth(e.target.value)}>
+              <select aria-label="Canvas" value={width} onChange={(e) => setWidth(e.target.value)}>
                 <option value="full">Responsive</option>
                 <option value="390">Mobile · 390 px</option>
                 <option value="768">Tablet · 768 px</option>
@@ -163,6 +171,7 @@ export default function BloomPlayground() {
                       <span>{prop.name}</span>
                       {prop.kind === 'select' ? (
                         <select
+                          aria-label={prop.name}
                           value={String(values[prop.name])}
                           onChange={(e) =>
                             setValues((v) => ({ ...v, [prop.name]: e.target.value }))
