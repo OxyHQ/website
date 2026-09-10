@@ -354,7 +354,7 @@ export function CardArt({ face }: { face: 'front' | 'back' }) {
             }}
           />
           <span className="absolute font-display text-white/85" style={{ left: '8%', bottom: '10%', fontSize: '6.5%', letterSpacing: '0.14em' }}>
-            OXY PAY
+            PEABLE
           </span>
 
         </>

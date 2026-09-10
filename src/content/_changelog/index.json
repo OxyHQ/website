@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-23T13:50:56.919Z",
+  "generatedAt": "2026-09-10T01:10:43.015Z",
   "repos": [
     {
       "owner": "OxyHQ",
@@ -48,6 +48,84 @@
     }
   ],
   "entries": [
+    {
+      "_id": "gh-385937360",
+      "title": "@oxy.so/bloom@1.0.0",
+      "content": "Bloom is now published under the canonical @oxy.so scope. Replace @oxyhq/bloom imports with @oxy.so/bloom. This release also adds composable UI-thread tab-bar scroll minimization and an explicit focus expansion hook.",
+      "tags": [],
+      "date": "2026-09-10T01:01:15Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 385937360,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxy.so/bloom%401.0.0",
+      "tagName": "@oxy.so/bloom@1.0.0"
+    },
+    {
+      "_id": "gh-383729463",
+      "title": "@oxyhq/bloom@1.14.0",
+      "content": "* feat(tab-bar): dejar que un pager conduzca el resaltado, frame a frame (#46) (33eae63)\n* feat(avatar): recortar el avatar con cualquier forma, no sólo círculo y squircle (#26) (da7011c)\n* Merge pull request #45 from OxyHQ/fix/registry-is-geometry-only (5116fd3)\n* fix(layout): the registry is geometry; the collapse is the app's to drive (7052782)\n* Merge pull request #44 from OxyHQ/feat/fab-hides-on-collapse (e4bb1ce)\n* feat(layout): the FAB leaves when the edge collapses, instead of chasing it (c83e22e)\n* Merge pull request #43 from OxyHQ/feat/fab-follows-collapse (5f72258)\n* feat(layout): a collapsing edge shrinks what it OCCUPIES, not what it reserves (d39c3f8)\n* chore: release @oxyhq/bloom@1.10.1 (f1b4e30)\n* Merge pull request #42 from OxyHQ/feat/bottom-edge-layout (71aac04)\n* chore: release @oxyhq/bloom@1.10.0 (37d2aa2)\n* feat(layout): one window-edge rule, and a registry so floating surfaces stay off each other (35dd618)\n* test(theme): assert the asChild style shape that follows the child (b925b74)\n* fix(theme): asChild must not hand a style array to a DOM child (#35) (086fe72)",
+      "tags": [
+        "Feature",
+        "Bug Fix"
+      ],
+      "date": "2026-09-06T21:58:18Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 383729463,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxyhq/bloom%401.14.0",
+      "tagName": "@oxyhq/bloom@1.14.0"
+    },
+    {
+      "_id": "gh-376615870",
+      "title": "@oxyhq/bloom@1.2.2",
+      "content": "Fixes a flying video pausing the one you just landed on.\n\nexpo-video's web player mirrors pause across every element bound to it, the browser auto-pauses a `<video>` removed from the DOM, and `unmountVideoView` runs only in a passive effect cleanup — so the element on its way out paused the live one. Releasing a video surface now renders one commit with `player={null}` first, unbinding it while the node is still in the DOM. No defensive `play()`.\n\nImage surfaces are unaffected and still release synchronously.\n\nAlso adds a browser gate phase asserting the clip is still playing mid-flight and after landing, and that `currentTime` advanced — geometry and first-frame gates pass a video frozen in the right place.\n\nScope: this closes the terminal pause, which is Bloom's. A freeze mid-flight caused by the consumer's own feed element leaving the DOM needs the same one-commit `player={null}` before navigating on that side.",
+      "tags": [],
+      "date": "2026-08-25T18:21:04Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 376615870,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxyhq/bloom%401.2.2",
+      "tagName": "@oxyhq/bloom@1.2.2"
+    },
+    {
+      "_id": "gh-376409927",
+      "title": "@oxyhq/bloom@1.2.1",
+      "content": "Fixes a flying video sitting at 300x150 while its box animated around it, then jumping when metadata arrived.\n\n- `MediaSurface` now gives the `VideoView` explicit `width`/`height` alongside `absoluteFill`. A DOM `<video>` is a REPLACED element: `position:absolute; inset:0` with `width/height:auto` resolves it to its INTRINSIC size (300x150 before metadata) rather than stretching it. The poster escaped this only because expo-image sizes its own element.\n- New: `provideExpoVideo(module)`. On an ESM web bundler `typeof require` is `undefined`, so the optional-peer require cannot run and video degrades to its poster even when expo-video IS installed. Metro is unaffected. Call it once at startup on Vite:\n\n      import * as ExpoVideo from \"expo-video\";\n      provideExpoVideo(ExpoVideo);\n\nAlso adds browser gate phases for the video arm, the idle layer, paint latency and the no-origin flight.",
+      "tags": [],
+      "date": "2026-08-25T13:03:57Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 376409927,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxyhq/bloom%401.2.1",
+      "tagName": "@oxyhq/bloom@1.2.1"
+    },
+    {
+      "_id": "gh-376144444",
+      "title": "@oxyhq/bloom@1.2.0",
+      "content": "Media flight layer + the gallery becomes media-capable.\n\n- `@oxyhq/bloom/media-flight` — a shared-element media surface that survives the route change, on web and native. `flyTo` resolves on the layer commit so the origin can be torn down without restarting a video; the layer hands off when the destination reports its first frame.\n- `zoomable-image-gallery` -> `zoomable-media-gallery`: the viewer now pages video as well as images, fed by a `VideoPlayer` the consumer owns. `expo-video` is an optional peer.\n\nBREAKING: two symbols renamed — `ZoomableImageGallery` -> `ZoomableMediaGallery`, `ZoomableImageGalleryHandle` -> `ZoomableMediaGalleryHandle`. The `@oxyhq/bloom/zoomable-image-gallery` subpath still resolves, and `GalleryImage` / `MeasuredRect` / `MeasureThumb` keep their names. Migration: docs/migrating-the-media-gallery.mdx",
+      "tags": [],
+      "date": "2026-08-25T04:24:17Z",
+      "items": [],
+      "media": null,
+      "githubReleaseId": 376144444,
+      "repoOwner": "OxyHQ",
+      "repoName": "Bloom",
+      "repoDisplayName": "Bloom",
+      "htmlUrl": "https://github.com/OxyHQ/Bloom/releases/tag/%40oxyhq/bloom%401.2.0",
+      "tagName": "@oxyhq/bloom@1.2.0"
+    },
     {
       "_id": "gh-345863387",
       "title": "Oxy ID v1.0 — self-sovereign civic identity + decentralization",

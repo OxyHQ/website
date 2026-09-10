@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-31T01:51:44.439Z",
+  "generatedAt": "2026-09-10T01:10:37.356Z",
   "packages": [
     {
       "package": "@oxyhq/bloom",
@@ -4026,6 +4026,27 @@
               "section": "api"
             },
             {
+              "slug": "api/classes/OxyInferenceClient",
+              "title": "OxyInferenceClient",
+              "file": "core/main/api/classes/OxyInferenceClient.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/classes/OxyInferenceError",
+              "title": "OxyInferenceError",
+              "file": "core/main/api/classes/OxyInferenceError.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/classes/OxyInferenceProtocolError",
+              "title": "OxyInferenceProtocolError",
+              "file": "core/main/api/classes/OxyInferenceProtocolError.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/classes/OxyServices",
               "title": "OxyServices",
               "file": "core/main/api/classes/OxyServices.md",
@@ -4036,6 +4057,13 @@
               "slug": "api/classes/RecoveryPhraseService",
               "title": "RecoveryPhraseService",
               "file": "core/main/api/classes/RecoveryPhraseService.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/classes/ServiceAssetMetadataError",
+              "title": "ServiceAssetMetadataError",
+              "file": "core/main/api/classes/ServiceAssetMetadataError.md",
               "order": 10000,
               "section": "api"
             },
@@ -4082,9 +4110,23 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/accountCategoryLabel",
+              "title": "accountCategoryLabel()",
+              "file": "core/main/api/functions/accountCategoryLabel.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/accountIdsOf",
               "title": "accountIdsOf()",
               "file": "core/main/api/functions/accountIdsOf.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/accountRoleLabel",
+              "title": "accountRoleLabel()",
+              "file": "core/main/api/functions/accountRoleLabel.md",
               "order": 10000,
               "section": "api"
             },
@@ -4117,20 +4159,6 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/buildHubSyncUrl",
-              "title": "buildHubSyncUrl()",
-              "file": "core/main/api/functions/buildHubSyncUrl.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/buildIdpHubOrigin",
-              "title": "buildIdpHubOrigin()",
-              "file": "core/main/api/functions/buildIdpHubOrigin.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/functions/buildOAuthAuthorizeUrl",
               "title": "buildOAuthAuthorizeUrl()",
               "file": "core/main/api/functions/buildOAuthAuthorizeUrl.md",
@@ -4145,9 +4173,23 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/buildQueryParams",
+              "title": "buildQueryParams()",
+              "file": "core/main/api/functions/buildQueryParams.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/buildSearchParams",
               "title": "buildSearchParams()",
               "file": "core/main/api/functions/buildSearchParams.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/buildSwitcherRows",
+              "title": "buildSwitcherRows()",
+              "file": "core/main/api/functions/buildSwitcherRows.md",
               "order": 10000,
               "section": "api"
             },
@@ -4173,9 +4215,37 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/canActivateContext",
+              "title": "canActivateContext()",
+              "file": "core/main/api/functions/canActivateContext.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/canonicalizeOAuthRedirectUri",
+              "title": "canonicalizeOAuthRedirectUri()",
+              "file": "core/main/api/functions/canonicalizeOAuthRedirectUri.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/canSwitchIntoAccount",
+              "title": "canSwitchIntoAccount()",
+              "file": "core/main/api/functions/canSwitchIntoAccount.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/clearOAuthHandshake",
               "title": "clearOAuthHandshake()",
               "file": "core/main/api/functions/clearOAuthHandshake.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/commonsDeliveryPlatform",
+              "title": "commonsDeliveryPlatform()",
+              "file": "core/main/api/functions/commonsDeliveryPlatform.md",
               "order": 10000,
               "section": "api"
             },
@@ -4285,6 +4355,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/createSharedMirroringAuthStateStore",
+              "title": "createSharedMirroringAuthStateStore()",
+              "file": "core/main/api/functions/createSharedMirroringAuthStateStore.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/createWebAuthStateStore",
               "title": "createWebAuthStateStore()",
               "file": "core/main/api/functions/createWebAuthStateStore.md",
@@ -4302,6 +4379,20 @@
               "slug": "api/functions/darkenColor",
               "title": "darkenColor()",
               "file": "core/main/api/functions/darkenColor.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/decideSharedDeviceJoin",
+              "title": "decideSharedDeviceJoin()",
+              "file": "core/main/api/functions/decideSharedDeviceJoin.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/decideSharedDevicePublish",
+              "title": "decideSharedDevicePublish()",
+              "file": "core/main/api/functions/decideSharedDevicePublish.md",
               "order": 10000,
               "section": "api"
             },
@@ -4330,6 +4421,20 @@
               "slug": "api/functions/deviceStateToClientSessions",
               "title": "deviceStateToClientSessions()",
               "file": "core/main/api/functions/deviceStateToClientSessions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/directoryDisplayName",
+              "title": "directoryDisplayName()",
+              "file": "core/main/api/functions/directoryDisplayName.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/directoryHandle",
+              "title": "directoryHandle()",
+              "file": "core/main/api/functions/directoryHandle.md",
               "order": 10000,
               "section": "api"
             },
@@ -4586,9 +4691,9 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/isIdpHubOrigin",
-              "title": "isIdpHubOrigin()",
-              "file": "core/main/api/functions/isIdpHubOrigin.md",
+              "slug": "api/functions/isHttpRequestError",
+              "title": "isHttpRequestError()",
+              "file": "core/main/api/functions/isHttpRequestError.md",
               "order": 10000,
               "section": "api"
             },
@@ -4691,6 +4796,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/isSelectableAccountCategoryId",
+              "title": "isSelectableAccountCategoryId()",
+              "file": "core/main/api/functions/isSelectableAccountCategoryId.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/isServerError",
               "title": "isServerError()",
               "file": "core/main/api/functions/isServerError.md",
@@ -4701,6 +4813,13 @@
               "slug": "api/functions/isSupportedLocale",
               "title": "isSupportedLocale()",
               "file": "core/main/api/functions/isSupportedLocale.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/isSwitchTargetAccount",
+              "title": "isSwitchTargetAccount()",
+              "file": "core/main/api/functions/isSwitchTargetAccount.md",
               "order": 10000,
               "section": "api"
             },
@@ -4782,13 +4901,6 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/isValidUsername",
-              "title": "isValidUsername()",
-              "file": "core/main/api/functions/isValidUsername.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/functions/isValidUUID",
               "title": "isValidUUID()",
               "file": "core/main/api/functions/isValidUUID.md",
@@ -4806,6 +4918,13 @@
               "slug": "api/functions/isWebBrowser",
               "title": "isWebBrowser()",
               "file": "core/main/api/functions/isWebBrowser.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/kindAcceptsAccountCategories",
+              "title": "kindAcceptsAccountCategories()",
+              "file": "core/main/api/functions/kindAcceptsAccountCategories.md",
               "order": 10000,
               "section": "api"
             },
@@ -4866,16 +4985,16 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/normalizeOfficialReturnOrigin",
-              "title": "normalizeOfficialReturnOrigin()",
-              "file": "core/main/api/functions/normalizeOfficialReturnOrigin.md",
+              "slug": "api/functions/normalizeProfileLinks",
+              "title": "normalizeProfileLinks()",
+              "file": "core/main/api/functions/normalizeProfileLinks.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/functions/normalizeProfileLinks",
-              "title": "normalizeProfileLinks()",
-              "file": "core/main/api/functions/normalizeProfileLinks.md",
+              "slug": "api/functions/normalizeSharedDeviceSessionRead",
+              "title": "normalizeSharedDeviceSessionRead()",
+              "file": "core/main/api/functions/normalizeSharedDeviceSessionRead.md",
               "order": 10000,
               "section": "api"
             },
@@ -4915,9 +5034,9 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/parseHubSyncReturnUrl",
-              "title": "parseHubSyncReturnUrl()",
-              "file": "core/main/api/functions/parseHubSyncReturnUrl.md",
+              "slug": "api/functions/parseHttpErrorBody",
+              "title": "parseHttpErrorBody()",
+              "file": "core/main/api/functions/parseHttpErrorBody.md",
               "order": 10000,
               "section": "api"
             },
@@ -4943,9 +5062,23 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/projectSwitchableAccounts",
-              "title": "projectSwitchableAccounts()",
-              "file": "core/main/api/functions/projectSwitchableAccounts.md",
+              "slug": "api/functions/projectDevicePrincipals",
+              "title": "projectDevicePrincipals()",
+              "file": "core/main/api/functions/projectDevicePrincipals.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/publishProvenDeviceCredential",
+              "title": "publishProvenDeviceCredential()",
+              "file": "core/main/api/functions/publishProvenDeviceCredential.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/pushTargetsFromDelivery",
+              "title": "pushTargetsFromDelivery()",
+              "file": "core/main/api/functions/pushTargetsFromDelivery.md",
               "order": 10000,
               "section": "api"
             },
@@ -4953,6 +5086,13 @@
               "slug": "api/functions/readIdentityMarker",
               "title": "readIdentityMarker()",
               "file": "core/main/api/functions/readIdentityMarker.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/readLocalDeviceCredential",
+              "title": "readLocalDeviceCredential()",
+              "file": "core/main/api/functions/readLocalDeviceCredential.md",
               "order": 10000,
               "section": "api"
             },
@@ -4978,13 +5118,6 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/redeemHubTicketOnHub",
-              "title": "redeemHubTicketOnHub()",
-              "file": "core/main/api/functions/redeemHubTicketOnHub.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/functions/refreshDeviceSecretArm",
               "title": "refreshDeviceSecretArm()",
               "file": "core/main/api/functions/refreshDeviceSecretArm.md",
@@ -5006,9 +5139,37 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/reputationCategoryLabel",
+              "title": "reputationCategoryLabel()",
+              "file": "core/main/api/functions/reputationCategoryLabel.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/resetLoggerConfig",
               "title": "resetLoggerConfig()",
               "file": "core/main/api/functions/resetLoggerConfig.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/resolveAccountDelegationAccess",
+              "title": "resolveAccountDelegationAccess()",
+              "file": "core/main/api/functions/resolveAccountDelegationAccess.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/resolveActiveContext",
+              "title": "resolveActiveContext()",
+              "file": "core/main/api/functions/resolveActiveContext.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/resolveDeviceContext",
+              "title": "resolveDeviceContext()",
+              "file": "core/main/api/functions/resolveDeviceContext.md",
               "order": 10000,
               "section": "api"
             },
@@ -5097,23 +5258,16 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/showsPrincipalHeaders",
+              "title": "showsPrincipalHeaders()",
+              "file": "core/main/api/functions/showsPrincipalHeaders.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/startTokenRefreshScheduler",
               "title": "startTokenRefreshScheduler()",
               "file": "core/main/api/functions/startTokenRefreshScheduler.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/switchableAccountIds",
-              "title": "switchableAccountIds()",
-              "file": "core/main/api/functions/switchableAccountIds.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/syncHubAfterSignIn",
-              "title": "syncHubAfterSignIn()",
-              "file": "core/main/api/functions/syncHubAfterSignIn.md",
               "order": 10000,
               "section": "api"
             },
@@ -5128,6 +5282,13 @@
               "slug": "api/functions/translate",
               "title": "translate()",
               "file": "core/main/api/functions/translate.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/trustTierLabel",
+              "title": "trustTierLabel()",
+              "file": "core/main/api/functions/trustTierLabel.md",
               "order": 10000,
               "section": "api"
             },
@@ -5188,16 +5349,9 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/AccountCredential",
-              "title": "AccountCredential",
-              "file": "core/main/api/interfaces/AccountCredential.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/AccountCredentialWithSecret",
-              "title": "AccountCredentialWithSecret",
-              "file": "core/main/api/interfaces/AccountCredentialWithSecret.md",
+              "slug": "api/interfaces/AccountDelegationAccess",
+              "title": "AccountDelegationAccess",
+              "file": "core/main/api/interfaces/AccountDelegationAccess.md",
               "order": 10000,
               "section": "api"
             },
@@ -5251,6 +5405,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/AddScreenshotInput",
+              "title": "AddScreenshotInput",
+              "file": "core/main/api/interfaces/AddScreenshotInput.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/AeadResult",
               "title": "AeadResult",
               "file": "core/main/api/interfaces/AeadResult.md",
@@ -5275,6 +5436,13 @@
               "slug": "api/interfaces/ApiResponse",
               "title": "ApiResponse\\<T\\>",
               "file": "core/main/api/interfaces/ApiResponse.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AppendedChainRecord",
+              "title": "AppendedChainRecord",
+              "file": "core/main/api/interfaces/AppendedChainRecord.md",
               "order": 10000,
               "section": "api"
             },
@@ -5433,16 +5601,16 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/AuthStateStore",
-              "title": "AuthStateStore",
-              "file": "core/main/api/interfaces/AuthStateStore.md",
+              "slug": "api/interfaces/AuthenticatedResponseRequest",
+              "title": "AuthenticatedResponseRequest",
+              "file": "core/main/api/interfaces/AuthenticatedResponseRequest.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/interfaces/AwardReputationInput",
-              "title": "AwardReputationInput",
-              "file": "core/main/api/interfaces/AwardReputationInput.md",
+              "slug": "api/interfaces/AuthStateStore",
+              "title": "AuthStateStore",
+              "file": "core/main/api/interfaces/AuthStateStore.md",
               "order": 10000,
               "section": "api"
             },
@@ -5506,6 +5674,20 @@
               "slug": "api/interfaces/BulkUnfollowResult",
               "title": "BulkUnfollowResult",
               "file": "core/main/api/interfaces/BulkUnfollowResult.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ChainRecord",
+              "title": "ChainRecord\\<TRecord\\>",
+              "file": "core/main/api/interfaces/ChainRecord.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ChainRecordPage",
+              "title": "ChainRecordPage\\<TRecord\\>",
+              "file": "core/main/api/interfaces/ChainRecordPage.md",
               "order": 10000,
               "section": "api"
             },
@@ -5650,13 +5832,6 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/CreateAccountCredentialInput",
-              "title": "CreateAccountCredentialInput",
-              "file": "core/main/api/interfaces/CreateAccountCredentialInput.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/interfaces/CreateAccountInput",
               "title": "CreateAccountInput",
               "file": "core/main/api/interfaces/CreateAccountInput.md",
@@ -5678,13 +5853,6 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/CreateReputationDisputeInput",
-              "title": "CreateReputationDisputeInput",
-              "file": "core/main/api/interfaces/CreateReputationDisputeInput.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/interfaces/DenyValidationResult",
               "title": "DenyValidationResult",
               "file": "core/main/api/interfaces/DenyValidationResult.md",
@@ -5695,6 +5863,27 @@
               "slug": "api/interfaces/DeviceBootSession",
               "title": "DeviceBootSession",
               "file": "core/main/api/interfaces/DeviceBootSession.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/DeviceContext",
+              "title": "DeviceContext",
+              "file": "core/main/api/interfaces/DeviceContext.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/DeviceContextActor",
+              "title": "DeviceContextActor",
+              "file": "core/main/api/interfaces/DeviceContextActor.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/DeviceContextSubject",
+              "title": "DeviceContextSubject",
+              "file": "core/main/api/interfaces/DeviceContextSubject.md",
               "order": 10000,
               "section": "api"
             },
@@ -5730,6 +5919,13 @@
               "slug": "api/interfaces/DeviceLinkedSessionsResponse",
               "title": "DeviceLinkedSessionsResponse",
               "file": "core/main/api/interfaces/DeviceLinkedSessionsResponse.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/DevicePrincipalGroup",
+              "title": "DevicePrincipalGroup",
+              "file": "core/main/api/interfaces/DevicePrincipalGroup.md",
               "order": 10000,
               "section": "api"
             },
@@ -5797,6 +5993,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/FollowGraphParams",
+              "title": "FollowGraphParams",
+              "file": "core/main/api/interfaces/FollowGraphParams.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/FollowMutationResult",
               "title": "FollowMutationResult",
               "file": "core/main/api/interfaces/FollowMutationResult.md",
@@ -5807,6 +6010,13 @@
               "slug": "api/interfaces/HandleApiErrorOptions",
               "title": "HandleApiErrorOptions",
               "file": "core/main/api/interfaces/HandleApiErrorOptions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/HttpRequestError",
+              "title": "HttpRequestError",
+              "file": "core/main/api/interfaces/HttpRequestError.md",
               "order": 10000,
               "section": "api"
             },
@@ -5972,9 +6182,58 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/OAuthTokenExchangeResult",
+              "title": "OAuthTokenExchangeResult",
+              "file": "core/main/api/interfaces/OAuthTokenExchangeResult.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OAuthUserInfoResponse",
+              "title": "OAuthUserInfoResponse",
+              "file": "core/main/api/interfaces/OAuthUserInfoResponse.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/OxyConfig",
               "title": "OxyConfig",
               "file": "core/main/api/interfaces/OxyConfig.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OxyGenerationReceipt",
+              "title": "OxyGenerationReceipt",
+              "file": "core/main/api/interfaces/OxyGenerationReceipt.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OxyInferenceClientOptions",
+              "title": "OxyInferenceClientOptions",
+              "file": "core/main/api/interfaces/OxyInferenceClientOptions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OxyInferenceRequestOptions",
+              "title": "OxyInferenceRequestOptions",
+              "file": "core/main/api/interfaces/OxyInferenceRequestOptions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OxyInferenceResponse",
+              "title": "OxyInferenceResponse",
+              "file": "core/main/api/interfaces/OxyInferenceResponse.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OxyResponsesRequest",
+              "title": "OxyResponsesRequest",
+              "file": "core/main/api/interfaces/OxyResponsesRequest.md",
               "order": 10000,
               "section": "api"
             },
@@ -5996,6 +6255,13 @@
               "slug": "api/interfaces/ParsedAttestPayload",
               "title": "ParsedAttestPayload",
               "file": "core/main/api/interfaces/ParsedAttestPayload.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ParsedHttpErrorBody",
+              "title": "ParsedHttpErrorBody",
+              "file": "core/main/api/interfaces/ParsedHttpErrorBody.md",
               "order": 10000,
               "section": "api"
             },
@@ -6070,9 +6336,23 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/ProjectSwitchableAccountsInput",
-              "title": "ProjectSwitchableAccountsInput",
-              "file": "core/main/api/interfaces/ProjectSwitchableAccountsInput.md",
+              "slug": "api/interfaces/ProvisionChannelInput",
+              "title": "ProvisionChannelInput",
+              "file": "core/main/api/interfaces/ProvisionChannelInput.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ProvisionChannelMemberInput",
+              "title": "ProvisionChannelMemberInput",
+              "file": "core/main/api/interfaces/ProvisionChannelMemberInput.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ProvisionChannelResult",
+              "title": "ProvisionChannelResult",
+              "file": "core/main/api/interfaces/ProvisionChannelResult.md",
               "order": 10000,
               "section": "api"
             },
@@ -6080,6 +6360,13 @@
               "slug": "api/interfaces/PublicApplication",
               "title": "PublicApplication",
               "file": "core/main/api/interfaces/PublicApplication.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/PublisherListing",
+              "title": "PublisherListing",
+              "file": "core/main/api/interfaces/PublisherListing.md",
               "order": 10000,
               "section": "api"
             },
@@ -6147,93 +6434,9 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/ReputationBalance",
-              "title": "ReputationBalance",
-              "file": "core/main/api/interfaces/ReputationBalance.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/ReputationBalanceBreakdown",
-              "title": "ReputationBalanceBreakdown",
-              "file": "core/main/api/interfaces/ReputationBalanceBreakdown.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/ReputationDispute",
-              "title": "ReputationDispute",
-              "file": "core/main/api/interfaces/ReputationDispute.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/ReputationInfluence",
-              "title": "ReputationInfluence",
-              "file": "core/main/api/interfaces/ReputationInfluence.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/ReputationInfluenceResult",
-              "title": "ReputationInfluenceResult",
-              "file": "core/main/api/interfaces/ReputationInfluenceResult.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/ReputationLeaderboardEntry",
-              "title": "ReputationLeaderboardEntry",
-              "file": "core/main/api/interfaces/ReputationLeaderboardEntry.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/ReputationReliability",
-              "title": "ReputationReliability",
-              "file": "core/main/api/interfaces/ReputationReliability.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/ReputationRule",
-              "title": "ReputationRule",
-              "file": "core/main/api/interfaces/ReputationRule.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/ReputationTransaction",
-              "title": "ReputationTransaction",
-              "file": "core/main/api/interfaces/ReputationTransaction.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/ResolveReputationDisputeInput",
-              "title": "ResolveReputationDisputeInput",
-              "file": "core/main/api/interfaces/ResolveReputationDisputeInput.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/interfaces/RestrictedUser",
               "title": "RestrictedUser",
               "file": "core/main/api/interfaces/RestrictedUser.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/ReverseReputationTransactionInput",
-              "title": "ReverseReputationTransactionInput",
-              "file": "core/main/api/interfaces/ReverseReputationTransactionInput.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/ReverseReputationTransactionResult",
-              "title": "ReverseReputationTransactionResult",
-              "file": "core/main/api/interfaces/ReverseReputationTransactionResult.md",
               "order": 10000,
               "section": "api"
             },
@@ -6252,9 +6455,9 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/RotateAccountCredentialResult",
-              "title": "RotateAccountCredentialResult",
-              "file": "core/main/api/interfaces/RotateAccountCredentialResult.md",
+              "slug": "api/interfaces/RotateApplicationCredentialInput",
+              "title": "RotateApplicationCredentialInput",
+              "file": "core/main/api/interfaces/RotateApplicationCredentialInput.md",
               "order": 10000,
               "section": "api"
             },
@@ -6371,6 +6574,20 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/SharedDeviceCredential",
+              "title": "SharedDeviceCredential",
+              "file": "core/main/api/interfaces/SharedDeviceCredential.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/SharedDeviceCredentialStore",
+              "title": "SharedDeviceCredentialStore",
+              "file": "core/main/api/interfaces/SharedDeviceCredentialStore.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/SignedMessage",
               "title": "SignedMessage",
               "file": "core/main/api/interfaces/SignedMessage.md",
@@ -6392,9 +6609,79 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/StoreCategory",
+              "title": "StoreCategory",
+              "file": "core/main/api/interfaces/StoreCategory.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/StoredDeviceInfo",
               "title": "StoredDeviceInfo",
               "file": "core/main/api/interfaces/StoredDeviceInfo.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/StoreListingDetail",
+              "title": "StoreListingDetail",
+              "file": "core/main/api/interfaces/StoreListingDetail.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/StoreListingSummary",
+              "title": "StoreListingSummary",
+              "file": "core/main/api/interfaces/StoreListingSummary.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/StoreOwnReview",
+              "title": "StoreOwnReview",
+              "file": "core/main/api/interfaces/StoreOwnReview.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/StorePage",
+              "title": "StorePage\\<T\\>",
+              "file": "core/main/api/interfaces/StorePage.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/StorePageOptions",
+              "title": "StorePageOptions",
+              "file": "core/main/api/interfaces/StorePageOptions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/StoreRating",
+              "title": "StoreRating",
+              "file": "core/main/api/interfaces/StoreRating.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/StoreReview",
+              "title": "StoreReview",
+              "file": "core/main/api/interfaces/StoreReview.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/StoreReviewsOptions",
+              "title": "StoreReviewsOptions",
+              "file": "core/main/api/interfaces/StoreReviewsOptions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/StoreScreenshot",
+              "title": "StoreScreenshot",
+              "file": "core/main/api/interfaces/StoreScreenshot.md",
               "order": 10000,
               "section": "api"
             },
@@ -6413,13 +6700,6 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/SwitchableAccount",
-              "title": "SwitchableAccount",
-              "file": "core/main/api/interfaces/SwitchableAccount.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/interfaces/SwitchAccountResult",
               "title": "SwitchAccountResult",
               "file": "core/main/api/interfaces/SwitchAccountResult.md",
@@ -6427,9 +6707,16 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/SyncHubAfterSignInOptions",
-              "title": "SyncHubAfterSignInOptions",
-              "file": "core/main/api/interfaces/SyncHubAfterSignInOptions.md",
+              "slug": "api/interfaces/SwitcherContextRow",
+              "title": "SwitcherContextRow",
+              "file": "core/main/api/interfaces/SwitcherContextRow.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/SwitcherPrincipalRow",
+              "title": "SwitcherPrincipalRow",
+              "file": "core/main/api/interfaces/SwitcherPrincipalRow.md",
               "order": 10000,
               "section": "api"
             },
@@ -6525,9 +6812,9 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/UpsertReputationRuleInput",
-              "title": "UpsertReputationRuleInput",
-              "file": "core/main/api/interfaces/UpsertReputationRuleInput.md",
+              "slug": "api/interfaces/UpdateScreenshotInput",
+              "title": "UpdateScreenshotInput",
+              "file": "core/main/api/interfaces/UpdateScreenshotInput.md",
               "order": 10000,
               "section": "api"
             },
@@ -6609,23 +6896,30 @@
               "section": "api"
             },
             {
-              "slug": "api/types/AccountCredentialEnvironment",
-              "title": "AccountCredentialEnvironment",
-              "file": "core/main/api/types/AccountCredentialEnvironment.md",
+              "slug": "api/interfaces/WriteListingInput",
+              "title": "WriteListingInput",
+              "file": "core/main/api/interfaces/WriteListingInput.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/types/AccountCredentialStatus",
-              "title": "AccountCredentialStatus",
-              "file": "core/main/api/types/AccountCredentialStatus.md",
+              "slug": "api/interfaces/WriteStoreReviewInput",
+              "title": "WriteStoreReviewInput",
+              "file": "core/main/api/interfaces/WriteStoreReviewInput.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/types/AccountCredentialType",
-              "title": "AccountCredentialType",
-              "file": "core/main/api/types/AccountCredentialType.md",
+              "slug": "api/types/AccountCategoryId",
+              "title": "AccountCategoryId",
+              "file": "core/main/api/types/AccountCategoryId.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/AccountDelegationNode",
+              "title": "AccountDelegationNode",
+              "file": "core/main/api/types/AccountDelegationNode.md",
               "order": 10000,
               "section": "api"
             },
@@ -6819,6 +7113,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/FollowGraphSort",
+              "title": "FollowGraphSort",
+              "file": "core/main/api/types/FollowGraphSort.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/IdentityRecordType",
               "title": "IdentityRecordType",
               "file": "core/main/api/types/IdentityRecordType.md",
@@ -6854,9 +7155,16 @@
               "section": "api"
             },
             {
-              "slug": "api/types/OrganizationCategory",
-              "title": "OrganizationCategory",
-              "file": "core/main/api/types/OrganizationCategory.md",
+              "slug": "api/types/OxyInferenceCredential",
+              "title": "OxyInferenceCredential",
+              "file": "core/main/api/types/OxyInferenceCredential.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/OxyInferenceFetch",
+              "title": "OxyInferenceFetch",
+              "file": "core/main/api/types/OxyInferenceFetch.md",
               "order": 10000,
               "section": "api"
             },
@@ -6875,37 +7183,9 @@
               "section": "api"
             },
             {
-              "slug": "api/types/ReputationCategory",
-              "title": "ReputationCategory",
-              "file": "core/main/api/types/ReputationCategory.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/types/ReputationDisputeStatus",
-              "title": "ReputationDisputeStatus",
-              "file": "core/main/api/types/ReputationDisputeStatus.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/types/ReputationInfluenceContext",
-              "title": "ReputationInfluenceContext",
-              "file": "core/main/api/types/ReputationInfluenceContext.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/types/ReputationTargetEntityType",
-              "title": "ReputationTargetEntityType",
-              "file": "core/main/api/types/ReputationTargetEntityType.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/types/ReputationTransactionStatus",
-              "title": "ReputationTransactionStatus",
-              "file": "core/main/api/types/ReputationTransactionStatus.md",
+              "slug": "api/types/ResolveAvatarUrl",
+              "title": "ResolveAvatarUrl",
+              "file": "core/main/api/types/ResolveAvatarUrl.md",
               "order": 10000,
               "section": "api"
             },
@@ -6945,6 +7225,48 @@
               "section": "api"
             },
             {
+              "slug": "api/types/SharedDeviceCredentialRead",
+              "title": "SharedDeviceCredentialRead",
+              "file": "core/main/api/types/SharedDeviceCredentialRead.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/SharedDeviceJoinDecision",
+              "title": "SharedDeviceJoinDecision",
+              "file": "core/main/api/types/SharedDeviceJoinDecision.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/SharedDeviceJoinSkipReason",
+              "title": "SharedDeviceJoinSkipReason",
+              "file": "core/main/api/types/SharedDeviceJoinSkipReason.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/SharedDevicePublishDecision",
+              "title": "SharedDevicePublishDecision",
+              "file": "core/main/api/types/SharedDevicePublishDecision.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/SharedDevicePublishOutcome",
+              "title": "SharedDevicePublishOutcome",
+              "file": "core/main/api/types/SharedDevicePublishOutcome.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/SharedDevicePublishSkipReason",
+              "title": "SharedDevicePublishSkipReason",
+              "file": "core/main/api/types/SharedDevicePublishSkipReason.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/SignedOutReason",
               "title": "SignedOutReason",
               "file": "core/main/api/types/SignedOutReason.md",
@@ -6973,9 +7295,16 @@
               "section": "api"
             },
             {
-              "slug": "api/types/SwitchableAccountUser",
-              "title": "SwitchableAccountUser",
-              "file": "core/main/api/types/SwitchableAccountUser.md",
+              "slug": "api/types/StoreListingStatus",
+              "title": "StoreListingStatus",
+              "file": "core/main/api/types/StoreListingStatus.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/StoreScreenshotPlatform",
+              "title": "StoreScreenshotPlatform",
+              "file": "core/main/api/types/StoreScreenshotPlatform.md",
               "order": 10000,
               "section": "api"
             },
@@ -6983,13 +7312,6 @@
               "slug": "api/types/ThemeValue",
               "title": "ThemeValue",
               "file": "core/main/api/types/ThemeValue.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/types/TrustTier",
-              "title": "TrustTier",
-              "file": "core/main/api/types/TrustTier.md",
               "order": 10000,
               "section": "api"
             },
@@ -7018,6 +7340,13 @@
               "slug": "api/types/UserNodeMode",
               "title": "UserNodeMode",
               "file": "core/main/api/types/UserNodeMode.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/ACCOUNT_CATEGORY_IDS",
+              "title": "ACCOUNT\\_CATEGORY\\_IDS",
+              "file": "core/main/api/variables/ACCOUNT_CATEGORY_IDS.md",
               "order": 10000,
               "section": "api"
             },
@@ -7085,9 +7414,23 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/DISPLAY_NAME_INVALID_MESSAGE",
+              "title": "DISPLAY\\_NAME\\_INVALID\\_MESSAGE",
+              "file": "core/main/api/variables/DISPLAY_NAME_INVALID_MESSAGE.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/DISPLAY_NAME_ORPHANED_MARK_SOURCE",
               "title": "DISPLAY\\_NAME\\_ORPHANED\\_MARK\\_SOURCE",
               "file": "core/main/api/variables/DISPLAY_NAME_ORPHANED_MARK_SOURCE.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/DISPLAY_NAME_UNFLANKED_SEPARATOR_SOURCE",
+              "title": "DISPLAY\\_NAME\\_UNFLANKED\\_SEPARATOR\\_SOURCE",
+              "file": "core/main/api/variables/DISPLAY_NAME_UNFLANKED_SEPARATOR_SOURCE.md",
               "order": 10000,
               "section": "api"
             },
@@ -7141,9 +7484,16 @@
               "section": "api"
             },
             {
-              "slug": "api/variables/ORGANIZATION_CATEGORIES",
-              "title": "ORGANIZATION\\_CATEGORIES",
-              "file": "core/main/api/variables/ORGANIZATION_CATEGORIES.md",
+              "slug": "api/variables/MAX_ACCOUNT_CATEGORIES",
+              "title": "MAX\\_ACCOUNT\\_CATEGORIES",
+              "file": "core/main/api/variables/MAX_ACCOUNT_CATEGORIES.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/MAX_DISPLAY_NAME_LENGTH",
+              "title": "MAX\\_DISPLAY\\_NAME\\_LENGTH",
+              "file": "core/main/api/variables/MAX_DISPLAY_NAME_LENGTH.md",
               "order": 10000,
               "section": "api"
             },
@@ -7162,9 +7512,9 @@
               "section": "api"
             },
             {
-              "slug": "api/variables/OXY_CROSS_ORIGIN_RESTORE_ATTEMPTED_KEY",
-              "title": "OXY\\_CROSS\\_ORIGIN\\_RESTORE\\_ATTEMPTED\\_KEY",
-              "file": "core/main/api/variables/OXY_CROSS_ORIGIN_RESTORE_ATTEMPTED_KEY.md",
+              "slug": "api/variables/OXY_INFERENCE_BASE_URL",
+              "title": "OXY\\_INFERENCE\\_BASE\\_URL",
+              "file": "core/main/api/variables/OXY_INFERENCE_BASE_URL.md",
               "order": 10000,
               "section": "api"
             },
@@ -7172,6 +7522,13 @@
               "slug": "api/variables/OXY_OAUTH_CODE_VERIFIER_STORAGE_KEY",
               "title": "OXY\\_OAUTH\\_CODE\\_VERIFIER\\_STORAGE\\_KEY",
               "file": "core/main/api/variables/OXY_OAUTH_CODE_VERIFIER_STORAGE_KEY.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/OXY_OAUTH_REDIRECT_URI_STORAGE_KEY",
+              "title": "OXY\\_OAUTH\\_REDIRECT\\_URI\\_STORAGE\\_KEY",
+              "file": "core/main/api/variables/OXY_OAUTH_REDIRECT_URI_STORAGE_KEY.md",
               "order": 10000,
               "section": "api"
             },
@@ -7186,13 +7543,6 @@
               "slug": "api/variables/OXY_OAUTH_STATE_STORAGE_KEY",
               "title": "OXY\\_OAUTH\\_STATE\\_STORAGE\\_KEY",
               "file": "core/main/api/variables/OXY_OAUTH_STATE_STORAGE_KEY.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/variables/OXY_SILENT_OAUTH_ATTEMPTED_KEY",
-              "title": "OXY\\_SILENT\\_OAUTH\\_ATTEMPTED\\_KEY",
-              "file": "core/main/api/variables/OXY_SILENT_OAUTH_ATTEMPTED_KEY.md",
               "order": 10000,
               "section": "api"
             },
@@ -7225,6 +7575,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/SELECTABLE_ACCOUNT_CATEGORY_IDS",
+              "title": "SELECTABLE\\_ACCOUNT\\_CATEGORY\\_IDS",
+              "file": "core/main/api/variables/SELECTABLE_ACCOUNT_CATEGORY_IDS.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/SUPPORTED_LANGUAGES",
               "title": "SUPPORTED\\_LANGUAGES",
               "file": "core/main/api/variables/SUPPORTED_LANGUAGES.md",
@@ -7235,13 +7592,6 @@
               "slug": "api/variables/TOKEN_REFRESH_LEAD_MS",
               "title": "TOKEN\\_REFRESH\\_LEAD\\_MS",
               "file": "core/main/api/variables/TOKEN_REFRESH_LEAD_MS.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/variables/USERNAME_REGEX",
-              "title": "USERNAME\\_REGEX",
-              "file": "core/main/api/variables/USERNAME_REGEX.md",
               "order": 10000,
               "section": "api"
             }
@@ -7366,6 +7716,41 @@
               "section": "api"
             },
             {
+              "slug": "api/classes/OxyProviderMissingError",
+              "title": "OxyProviderMissingError",
+              "file": "services/main/api/classes/OxyProviderMissingError.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/classes/OxyRuntimeMissingError",
+              "title": "OxyRuntimeMissingError",
+              "file": "services/main/api/classes/OxyRuntimeMissingError.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/buildFollowMenuItems",
+              "title": "buildFollowMenuItems()",
+              "file": "services/main/api/functions/buildFollowMenuItems.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/clearedFieldsFromAccountUpdate",
+              "title": "clearedFieldsFromAccountUpdate()",
+              "file": "services/main/api/functions/clearedFieldsFromAccountUpdate.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/clearedFieldsFromProfileUpdate",
+              "title": "clearedFieldsFromProfileUpdate()",
+              "file": "services/main/api/functions/clearedFieldsFromProfileUpdate.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/closeAccountDialog",
               "title": "closeAccountDialog()",
               "file": "services/main/api/functions/closeAccountDialog.md",
@@ -7376,6 +7761,13 @@
               "slug": "api/functions/closeBottomSheet",
               "title": "closeBottomSheet()",
               "file": "services/main/api/functions/closeBottomSheet.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/createDeferredProductAnalytics",
+              "title": "createDeferredProductAnalytics()",
+              "file": "services/main/api/functions/createDeferredProductAnalytics.md",
               "order": 10000,
               "section": "api"
             },
@@ -7401,9 +7793,16 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/getExpoPushToken",
-              "title": "getExpoPushToken()",
-              "file": "services/main/api/functions/getExpoPushToken.md",
+              "slug": "api/functions/followRecordsToStatusMap",
+              "title": "followRecordsToStatusMap()",
+              "file": "services/main/api/functions/followRecordsToStatusMap.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/followRecordToStatus",
+              "title": "followRecordToStatus()",
+              "file": "services/main/api/functions/followRecordToStatus.md",
               "order": 10000,
               "section": "api"
             },
@@ -7411,20 +7810,6 @@
               "slug": "api/functions/handleAuthError",
               "title": "handleAuthError()",
               "file": "services/main/api/functions/handleAuthError.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/hasNotificationPermission",
-              "title": "hasNotificationPermission()",
-              "file": "services/main/api/functions/hasNotificationPermission.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/installForegroundNotificationHandler",
-              "title": "installForegroundNotificationHandler()",
-              "file": "services/main/api/functions/installForegroundNotificationHandler.md",
               "order": 10000,
               "section": "api"
             },
@@ -7499,6 +7884,20 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/isCompleteFollowStatus",
+              "title": "isCompleteFollowStatus()",
+              "file": "services/main/api/functions/isCompleteFollowStatus.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/isFollowedGlobally",
+              "title": "isFollowedGlobally()",
+              "file": "services/main/api/functions/isFollowedGlobally.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/isInvalidSessionError",
               "title": "isInvalidSessionError()",
               "file": "services/main/api/functions/isInvalidSessionError.md",
@@ -7541,16 +7940,9 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/pushTokenPlatform",
-              "title": "pushTokenPlatform()",
-              "file": "services/main/api/functions/pushTokenPlatform.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/requestNotificationPermission",
-              "title": "requestNotificationPermission()",
-              "file": "services/main/api/functions/requestNotificationPermission.md",
+              "slug": "api/functions/resolveFollowPrimaryAction",
+              "title": "resolveFollowPrimaryAction()",
+              "file": "services/main/api/functions/resolveFollowPrimaryAction.md",
               "order": 10000,
               "section": "api"
             },
@@ -7576,20 +7968,6 @@
               "section": "api"
             },
             {
-              "slug": "api/functions/subscribeToNotificationResponses",
-              "title": "subscribeToNotificationResponses()",
-              "file": "services/main/api/functions/subscribeToNotificationResponses.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/takeLaunchNotificationData",
-              "title": "takeLaunchNotificationData()",
-              "file": "services/main/api/functions/takeLaunchNotificationData.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/functions/upsertCachedUser",
               "title": "upsertCachedUser()",
               "file": "services/main/api/functions/upsertCachedUser.md",
@@ -7607,6 +7985,13 @@
               "slug": "api/functions/useAccountStorageUsage",
               "title": "useAccountStorageUsage()",
               "file": "services/main/api/functions/useAccountStorageUsage.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useActiveAccount",
+              "title": "useActiveAccount()",
+              "file": "services/main/api/functions/useActiveAccount.md",
               "order": 10000,
               "section": "api"
             },
@@ -7695,9 +8080,23 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/useDeviceDirectory",
+              "title": "useDeviceDirectory()",
+              "file": "services/main/api/functions/useDeviceDirectory.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/useDeviceSessions",
               "title": "useDeviceSessions()",
               "file": "services/main/api/functions/useDeviceSessions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useDeviceSwitcher",
+              "title": "useDeviceSwitcher()",
+              "file": "services/main/api/functions/useDeviceSwitcher.md",
               "order": 10000,
               "section": "api"
             },
@@ -7726,6 +8125,13 @@
               "slug": "api/functions/useFollowerCounts",
               "title": "useFollowerCounts()",
               "file": "services/main/api/functions/useFollowerCounts.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useFollowTarget",
+              "title": "useFollowTarget()",
+              "file": "services/main/api/functions/useFollowTarget.md",
               "order": 10000,
               "section": "api"
             },
@@ -7772,6 +8178,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/useOptionalOxy",
+              "title": "useOptionalOxy()",
+              "file": "services/main/api/functions/useOptionalOxy.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/useOxy",
               "title": "useOxy()",
               "file": "services/main/api/functions/useOxy.md",
@@ -7782,6 +8195,20 @@
               "slug": "api/functions/useOxyEvent",
               "title": "useOxyEvent()",
               "file": "services/main/api/functions/useOxyEvent.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useOxyRuntime",
+              "title": "useOxyRuntime()",
+              "file": "services/main/api/functions/useOxyRuntime.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/useOxySnapshot",
+              "title": "useOxySnapshot()",
+              "file": "services/main/api/functions/useOxySnapshot.md",
               "order": 10000,
               "section": "api"
             },
@@ -7859,13 +8286,6 @@
               "slug": "api/functions/useSurfaceHeader",
               "title": "useSurfaceHeader()",
               "file": "services/main/api/functions/useSurfaceHeader.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/functions/useSwitchableAccounts",
-              "title": "useSwitchableAccounts()",
-              "file": "services/main/api/functions/useSwitchableAccounts.md",
               "order": 10000,
               "section": "api"
             },
@@ -8010,6 +8430,27 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/withApplicationMode",
+              "title": "withApplicationMode()",
+              "file": "services/main/api/functions/withApplicationMode.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/AccountDialogMenuItem",
+              "title": "AccountDialogMenuItem",
+              "file": "services/main/api/interfaces/AccountDialogMenuItem.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/ActiveAccount",
+              "title": "ActiveAccount",
+              "file": "services/main/api/interfaces/ActiveAccount.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/AuthActions",
               "title": "AuthActions",
               "file": "services/main/api/interfaces/AuthActions.md",
@@ -8027,6 +8468,27 @@
               "slug": "api/interfaces/CacheableUser",
               "title": "CacheableUser",
               "file": "services/main/api/interfaces/CacheableUser.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/FollowDuration",
+              "title": "FollowDuration",
+              "file": "services/main/api/interfaces/FollowDuration.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/FollowLabels",
+              "title": "FollowLabels",
+              "file": "services/main/api/interfaces/FollowLabels.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/FollowTargetButtonProps",
+              "title": "FollowTargetButtonProps",
+              "file": "services/main/api/interfaces/FollowTargetButtonProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -8122,6 +8584,27 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/OxyRuntime",
+              "title": "OxyRuntime",
+              "file": "services/main/api/interfaces/OxyRuntime.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OxyRuntimeError",
+              "title": "OxyRuntimeError",
+              "file": "services/main/api/interfaces/OxyRuntimeError.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OxyRuntimeSnapshot",
+              "title": "OxyRuntimeSnapshot",
+              "file": "services/main/api/interfaces/OxyRuntimeSnapshot.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/OxySignInButtonProps",
               "title": "OxySignInButtonProps",
               "file": "services/main/api/interfaces/OxySignInButtonProps.md",
@@ -8150,6 +8633,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/ProductAnalytics",
+              "title": "ProductAnalytics",
+              "file": "services/main/api/interfaces/ProductAnalytics.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/ProfileButtonProps",
               "title": "ProfileButtonProps",
               "file": "services/main/api/interfaces/ProfileButtonProps.md",
@@ -8160,6 +8650,13 @@
               "slug": "api/interfaces/ProfileMutationConfig",
               "title": "ProfileMutationConfig\\<TData, TVariables\\>",
               "file": "services/main/api/interfaces/ProfileMutationConfig.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/RequestOAuthConsentOptions",
+              "title": "RequestOAuthConsentOptions",
+              "file": "services/main/api/interfaces/RequestOAuthConsentOptions.md",
               "order": 10000,
               "section": "api"
             },
@@ -8206,9 +8703,30 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/UpsertCachedUserOptions",
+              "title": "UpsertCachedUserOptions",
+              "file": "services/main/api/interfaces/UpsertCachedUserOptions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/UseAuthReturn",
               "title": "UseAuthReturn",
               "file": "services/main/api/interfaces/UseAuthReturn.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/UseDeviceSwitcherResult",
+              "title": "UseDeviceSwitcherResult",
+              "file": "services/main/api/interfaces/UseDeviceSwitcherResult.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/UseFollowTargetResult",
+              "title": "UseFollowTargetResult",
+              "file": "services/main/api/interfaces/UseFollowTargetResult.md",
               "order": 10000,
               "section": "api"
             },
@@ -8223,13 +8741,6 @@
               "slug": "api/interfaces/UseStorageResult",
               "title": "UseStorageResult",
               "file": "services/main/api/interfaces/UseStorageResult.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/interfaces/UseSwitchableAccountsResult",
-              "title": "UseSwitchableAccountsResult",
-              "file": "services/main/api/interfaces/UseSwitchableAccountsResult.md",
               "order": 10000,
               "section": "api"
             },
@@ -8262,6 +8773,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/ClearableUserField",
+              "title": "ClearableUserField",
+              "file": "services/main/api/types/ClearableUserField.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/FollowButtonProps",
               "title": "FollowButtonProps",
               "file": "services/main/api/types/FollowButtonProps.md",
@@ -8269,9 +8787,51 @@
               "section": "api"
             },
             {
-              "slug": "api/types/ForegroundPresentation",
-              "title": "ForegroundPresentation",
-              "file": "services/main/api/types/ForegroundPresentation.md",
+              "slug": "api/types/FollowVerb",
+              "title": "FollowVerb",
+              "file": "services/main/api/types/FollowVerb.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/OAuthConsentFailureReason",
+              "title": "OAuthConsentFailureReason",
+              "file": "services/main/api/types/OAuthConsentFailureReason.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/OAuthConsentResult",
+              "title": "OAuthConsentResult",
+              "file": "services/main/api/types/OAuthConsentResult.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/OAuthConsentUnsupportedReason",
+              "title": "OAuthConsentUnsupportedReason",
+              "file": "services/main/api/types/OAuthConsentUnsupportedReason.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/OxyProductEvent",
+              "title": "OxyProductEvent",
+              "file": "services/main/api/types/OxyProductEvent.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/OxyRuntimeStatus",
+              "title": "OxyRuntimeStatus",
+              "file": "services/main/api/types/OxyRuntimeStatus.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/OxyTokenStatus",
+              "title": "OxyTokenStatus",
+              "file": "services/main/api/types/OxyTokenStatus.md",
               "order": 10000,
               "section": "api"
             },
@@ -8286,6 +8846,13 @@
               "slug": "api/types/RouteName",
               "title": "RouteName",
               "file": "services/main/api/types/RouteName.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/SignInOutcome",
+              "title": "SignInOutcome",
+              "file": "services/main/api/types/SignInOutcome.md",
               "order": 10000,
               "section": "api"
             },
@@ -8381,30 +8948,16 @@
               "section": "api"
             },
             {
-              "slug": "api/variables/AccountMembersScreen",
-              "title": "AccountMembersScreen",
-              "file": "services/main/api/variables/AccountMembersScreen.md",
+              "slug": "api/variables/CLEARABLE_USER_FIELDS",
+              "title": "CLEARABLE\\_USER\\_FIELDS",
+              "file": "services/main/api/variables/CLEARABLE_USER_FIELDS.md",
               "order": 10000,
               "section": "api"
             },
             {
-              "slug": "api/variables/AccountSettingsScreen",
-              "title": "AccountSettingsScreen",
-              "file": "services/main/api/variables/AccountSettingsScreen.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/variables/ConnectedAppsScreen",
-              "title": "ConnectedAppsScreen",
-              "file": "services/main/api/variables/ConnectedAppsScreen.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/variables/CreateAccountScreen",
-              "title": "CreateAccountScreen",
-              "file": "services/main/api/variables/CreateAccountScreen.md",
+              "slug": "api/variables/FOLLOW_ACTION_LEAVES_ACTIVE",
+              "title": "FOLLOW\\_ACTION\\_LEAVES\\_ACTIVE",
+              "file": "services/main/api/variables/FOLLOW_ACTION_LEAVES_ACTIVE.md",
               "order": 10000,
               "section": "api"
             },
@@ -8412,6 +8965,13 @@
               "slug": "api/variables/FollowButton",
               "title": "FollowButton",
               "file": "services/main/api/variables/FollowButton.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/FollowTargetButton",
+              "title": "FollowTargetButton",
+              "file": "services/main/api/variables/FollowTargetButton.md",
               "order": 10000,
               "section": "api"
             },
@@ -8430,23 +8990,9 @@
               "section": "api"
             },
             {
-              "slug": "api/variables/ManageAccountScreen",
-              "title": "ManageAccountScreen",
-              "file": "services/main/api/variables/ManageAccountScreen.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/variables/mutationKeys",
               "title": "mutationKeys",
               "file": "services/main/api/variables/mutationKeys.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/variables/NotificationsScreen",
-              "title": "NotificationsScreen",
-              "file": "services/main/api/variables/NotificationsScreen.md",
               "order": 10000,
               "section": "api"
             },
@@ -8507,23 +9053,9 @@
               "section": "api"
             },
             {
-              "slug": "api/variables/PreferencesScreen",
-              "title": "PreferencesScreen",
-              "file": "services/main/api/variables/PreferencesScreen.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/variables/ProfileButton",
               "title": "ProfileButton",
               "file": "services/main/api/variables/ProfileButton.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
-              "slug": "api/variables/ProfileScreen",
-              "title": "ProfileScreen",
-              "file": "services/main/api/variables/ProfileScreen.md",
               "order": 10000,
               "section": "api"
             },
@@ -8549,9 +9081,9 @@
               "section": "api"
             },
             {
-              "slug": "api/variables/useAccountStore",
-              "title": "useAccountStore",
-              "file": "services/main/api/variables/useAccountStore.md",
+              "slug": "api/variables/UNKNOWN_FOLLOW_STATUS",
+              "title": "UNKNOWN\\_FOLLOW\\_STATUS",
+              "file": "services/main/api/variables/UNKNOWN_FOLLOW_STATUS.md",
               "order": 10000,
               "section": "api"
             },
@@ -8566,6 +9098,13 @@
               "slug": "api/variables/useAuthStore",
               "title": "useAuthStore",
               "file": "services/main/api/variables/useAuthStore.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/useFollowTargetStore",
+              "title": "useFollowTargetStore",
+              "file": "services/main/api/variables/useFollowTargetStore.md",
               "order": 10000,
               "section": "api"
             }
@@ -8594,6 +9133,14 @@
               "description": "The Oxy platform REST API — authentication, accounts, files, billing, federation. OpenAPI 3.1, rendered with Scalar.",
               "file": "api/main/index.mdx",
               "order": 0,
+              "section": "guides"
+            },
+            {
+              "slug": "store",
+              "title": "App store",
+              "description": "The storefront's public reads, the reviews people write, and the endpoints a publisher uses to put an app on a shelf.",
+              "file": "api/main/store.mdx",
+              "order": 1,
               "section": "guides"
             }
           ]
@@ -8647,49 +9194,6 @@
       "deprecatedVersions": []
     },
     {
-      "package": "@oxyhq/inbox",
-      "displayName": "Inbox",
-      "shortName": "inbox",
-      "repo": "https://github.com/OxyHQ/OxyHQServices",
-      "category": "app",
-      "description": "Email app with end-to-end encryption and offline-first sync.",
-      "defaultVersion": "main",
-      "versions": [
-        {
-          "version": "main",
-          "pages": [
-            {
-              "slug": "",
-              "title": "Inbox",
-              "description": "End-to-end encrypted email, offline-first, PWA-ready.",
-              "file": "inbox/main/index.mdx",
-              "order": 0,
-              "section": "guides"
-            },
-            {
-              "slug": "encryption",
-              "title": "Encryption",
-              "description": "How Inbox encrypts message bodies, attachments, and search indices.",
-              "file": "inbox/main/encryption.mdx",
-              "order": 2,
-              "section": "guides"
-            },
-            {
-              "slug": "sync",
-              "title": "Offline & sync",
-              "description": "How Inbox stays usable without a network, and how it reconciles when one returns.",
-              "file": "inbox/main/sync.mdx",
-              "order": 3,
-              "section": "guides"
-            }
-          ]
-        }
-      ],
-      "versioned": false,
-      "latestVersion": "main",
-      "deprecatedVersions": []
-    },
-    {
       "package": "@oxyhq/console",
       "displayName": "Console",
       "shortName": "console",
@@ -8704,7 +9208,7 @@
             {
               "slug": "",
               "title": "Console",
-              "description": "Developer console — apps, API keys, webhooks, usage.",
+              "description": "Developer console — applications, credentials, webhooks, usage.",
               "file": "console/main/index.mdx",
               "order": 0,
               "section": "guides"
@@ -8723,6 +9227,14 @@
               "description": "Registering apps, scopes, redirect URIs, and the difference between public and confidential clients.",
               "file": "console/main/apps.mdx",
               "order": 3,
+              "section": "guides"
+            },
+            {
+              "slug": "store",
+              "title": "Listing on the app store",
+              "description": "Writing your app's store page, submitting it for review, screenshots, and replying to reviews.",
+              "file": "console/main/store.mdx",
+              "order": 4,
               "section": "guides"
             }
           ]
@@ -8790,15 +9302,15 @@
             {
               "slug": "chat-runtime",
               "title": "Chat runtime",
-              "description": "The Alia product chat runtime: today's request path, the alia.* product stream events, and the Kaana boundary recorded in ADR 0001.",
+              "description": "Alia's product runtime and its Kaana inference boundary.",
               "file": "alia/main/chat-runtime.mdx",
               "order": 1,
               "section": "guides"
             },
             {
               "slug": "model-abstraction",
-              "title": "Model abstraction",
-              "description": "The thirteen alia-* identifiers Alia serves today, what each one actually is, and the vocabulary ADR 0003 replaces them with.",
+              "title": "Kaana model abstraction",
+              "description": "How Alia names product choices while Oxy authorizes routes and Kaana executes them.",
               "file": "alia/main/model-abstraction.mdx",
               "order": 2,
               "section": "guides"
@@ -8821,8 +9333,8 @@
             },
             {
               "slug": "alias-layer-audit",
-              "title": "The alia-* layer: audit before removal",
-              "description": "What ALIA_TIERS and the thirteen alia-* identifiers actually do today, measured against production; what breaks if they are removed; what Kaana replaces and what it does not; and the one decision that belongs to the product owner.",
+              "title": "Kaana routing-profile cleanup",
+              "description": "The completed identity cut from Alia-owned provider aliases to Kaana routing profiles.",
               "file": "alia/main/alias-layer-audit.mdx",
               "order": 5,
               "section": "guides"
@@ -8962,16 +9474,23 @@
               "section": "guides"
             },
             {
+              "slug": "migration/kaana-client-gap",
+              "title": "Kaana client gap analysis",
+              "file": "alia/main/migration/kaana-client-gap.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "migration/ownership",
-              "title": "Migration ownership: Alia / Oxy / Relay",
+              "title": "Migration ownership: Alia / Oxy / Kaana",
               "file": "alia/main/migration/ownership.md",
               "order": 1000,
               "section": "guides"
             },
             {
-              "slug": "migration/relay-client-gap",
-              "title": "Relay client gap analysis",
-              "file": "alia/main/migration/relay-client-gap.md",
+              "slug": "mongodb-runtime-boundary",
+              "title": "PostgreSQL-only runtime and the optional Mongo lock entry",
+              "file": "alia/main/mongodb-runtime-boundary.md",
               "order": 1000,
               "section": "guides"
             },
@@ -8998,35 +9517,35 @@
             },
             {
               "slug": "runbooks/credential-rotation",
-              "title": "Runbook: rotating and revoking credentials",
+              "title": "Runbook: rotating and revoking Alia credentials",
               "file": "alia/main/runbooks/credential-rotation.md",
               "order": 1000,
               "section": "guides"
             },
             {
               "slug": "runbooks/integrations-service-rollout",
-              "title": "Runbook: bringing the integrations service into production",
+              "title": "Runbook: Alia integrations service rollout",
               "file": "alia/main/runbooks/integrations-service-rollout.md",
               "order": 1000,
               "section": "guides"
             },
             {
               "slug": "runbooks/kaana-cutover",
-              "title": "Runbook: delivering the Kaana cutover variables to production",
+              "title": "Runbook: Alia to Kaana cutover",
               "file": "alia/main/runbooks/kaana-cutover.md",
               "order": 1000,
               "section": "guides"
             },
             {
               "slug": "runbooks/provider-credential-exposure",
-              "title": "Runbook: provider credentials in the git history, the logs and `provider_keys`",
+              "title": "Runbook: upstream provider credential exposure",
               "file": "alia/main/runbooks/provider-credential-exposure.md",
               "order": 1000,
               "section": "guides"
             },
             {
               "slug": "runbooks/rollback",
-              "title": "Runbook: rolling back a release",
+              "title": "Runbook: rolling Alia back",
               "file": "alia/main/runbooks/rollback.md",
               "order": 1000,
               "section": "guides"
@@ -9212,6 +9731,13 @@
               "section": "guides"
             },
             {
+              "slug": "architecture-boundary-gate",
+              "title": "The architecture boundary gate",
+              "file": "mention/main/architecture-boundary-gate.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "AWS_DEPLOYMENT",
               "title": "Production deployment",
               "file": "mention/main/AWS_DEPLOYMENT.md",
@@ -9219,9 +9745,51 @@
               "section": "guides"
             },
             {
+              "slug": "channels-and-lanes",
+              "title": "Lanes and Channels",
+              "file": "mention/main/channels-and-lanes.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "COMPATIBILITY_RETIREMENT",
               "title": "Compatibility retirement register",
               "file": "mention/main/COMPATIBILITY_RETIREMENT.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "development",
+              "title": "Development",
+              "file": "mention/main/development.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "federation-behaviors",
+              "title": "Federation behaviors and edge cases",
+              "file": "mention/main/federation-behaviors.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "feed-ranking",
+              "title": "Feed ranking, classification, safety and interstitials",
+              "file": "mention/main/feed-ranking.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "frontend-compiler-notes",
+              "title": "React Compiler and web virtualization — measured findings",
+              "file": "mention/main/frontend-compiler-notes.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "frontend-rules",
+              "title": "Frontend rules",
+              "file": "mention/main/frontend-rules.md",
               "order": 1000,
               "section": "guides"
             },
@@ -9247,9 +9815,44 @@
               "section": "guides"
             },
             {
+              "slug": "moderation-crowdsource",
+              "title": "Moderation (CrowdSource) — design detail",
+              "file": "mention/main/moderation-crowdsource.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "MONGO-TO-POSTGRES-CUTOVER",
-              "title": "Mongo → Postgres cutover runbook",
+              "title": "Mongo → Postgres cutover (historical)",
               "file": "mention/main/MONGO-TO-POSTGRES-CUTOVER.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "multilingual-trends",
+              "title": "Deterministic multilingual trends",
+              "file": "mention/main/multilingual-trends.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "PERFORMANCE_BUDGETS",
+              "title": "Performance budgets",
+              "file": "mention/main/PERFORMANCE_BUDGETS.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "post-lifecycle",
+              "title": "Post lifecycle and identity",
+              "file": "mention/main/post-lifecycle.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "PRODUCT_POSITIONING",
+              "title": "Product positioning",
+              "file": "mention/main/PRODUCT_POSITIONING.md",
               "order": 1000,
               "section": "guides"
             },
@@ -9257,6 +9860,13 @@
               "slug": "README",
               "title": "Mention documentation",
               "file": "mention/main/README.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "seo",
+              "title": "Public search indexing",
+              "file": "mention/main/seo.md",
               "order": 1000,
               "section": "guides"
             },
@@ -9401,6 +10011,20 @@
               "section": "guides"
             },
             {
+              "slug": "superpowers/specs/2026-08-30-backend-efficiency-design",
+              "title": "Backend efficiency and structure — programme design",
+              "file": "mention/main/superpowers/specs/2026-08-30-backend-efficiency-design.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "superpowers/specs/2026-09-05-frontend-and-oxy-efficiency-design",
+              "title": "Efficiency and structure, round two — Oxy egress and the frontend",
+              "file": "mention/main/superpowers/specs/2026-09-05-frontend-and-oxy-efficiency-design.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "THEMING",
               "title": "Theming",
               "file": "mention/main/THEMING.md",
@@ -9509,7 +10133,7 @@
             {
               "slug": "deployment",
               "title": "Deployment",
-              "description": "AWS ECS Fargate for the backend, Cloudflare Pages for the frontend web build, and serverless/persistent-process concerns (the Postgres pool, cron).",
+              "description": "AWS ECS Fargate for the backend, a Cloudflare Worker for the frontend web build, and serverless/persistent-process concerns (the Postgres pool, cron).",
               "file": "homiio/main/deployment.mdx",
               "order": 10,
               "section": "guides"
@@ -9555,6 +10179,34 @@
               "slug": "adr/0004-local-explainable-pricing",
               "title": "ADR 0004 — Local, explainable, versioned pricing assessments",
               "file": "homiio/main/adr/0004-local-explainable-pricing.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "cold-start",
+              "title": "The cold-start check, and the known react-hooks findings",
+              "file": "homiio/main/cold-start.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "frontend-conventions",
+              "title": "Frontend conventions: layout shell, tokens and the primitives",
+              "file": "homiio/main/frontend-conventions.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "listing-providers",
+              "title": "Listing provider plugins (the market aggregator)",
+              "file": "homiio/main/listing-providers.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "postgres",
+              "title": "Data storage: PostgreSQL, and nothing else",
+              "file": "homiio/main/postgres.md",
               "order": 1000,
               "section": "guides"
             },
@@ -10117,6 +10769,34 @@
               "section": "guides"
             },
             {
+              "slug": "engineering/branding",
+              "title": "Branding",
+              "file": "astro/master/engineering/branding.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "engineering/build-pipeline",
+              "title": "The build pipeline: rules and the defects behind them",
+              "file": "astro/master/engineering/build-pipeline.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "engineering/file-paths",
+              "title": "Key file paths and the overlay layout",
+              "file": "astro/master/engineering/file-paths.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "engineering/webui",
+              "title": "The WebUI surfaces: settings, the new tab page, adding a page",
+              "file": "astro/master/engineering/webui.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "known-defects",
               "title": "Known defects",
               "description": "Defects declared rather than hidden — what each one is, what was measured, and the durable lessons that outlive the fix.",
@@ -10186,96 +10866,82 @@
       "repo": "https://github.com/OxyHQ/Clarity",
       "category": "app",
       "description": "AI-powered search engine by Oxy — cited answers, deep research, and proactive agents.",
-      "defaultVersion": "master",
+      "defaultVersion": "main",
       "versions": [
         {
-          "version": "master",
+          "version": "main",
           "pages": [
             {
               "slug": "",
-              "title": "Clarity",
-              "description": "AI-powered search engine by Oxy — cited answers, deep research, and proactive agents.",
-              "file": "clarity/master/index.mdx",
-              "order": 0,
-              "section": "guides"
-            },
-            {
-              "slug": "chat-api",
-              "title": "Chat API",
-              "description": "OpenAI-compatible POST /v1/chat/completions with SSE streaming, deep research, and Clarity-specific events.",
-              "file": "clarity/master/chat-api.mdx",
-              "order": 1,
-              "section": "guides"
-            },
-            {
-              "slug": "model-abstraction",
-              "title": "Model abstraction",
-              "description": "How Clarity routes user-facing model tiers to underlying providers without leaking provider identity.",
-              "file": "clarity/master/model-abstraction.mdx",
-              "order": 2,
-              "section": "guides"
-            },
-            {
-              "slug": "oxy-service-connector",
-              "title": "Oxy service connector",
-              "description": "Manifest-driven protocol for registering tools, events, and context endpoints from any Oxy ecosystem app.",
-              "file": "clarity/master/oxy-service-connector.mdx",
-              "order": 3,
-              "section": "guides"
-            },
-            {
-              "slug": "agents",
-              "title": "Clarity Agents",
-              "file": "clarity/master/agents.md",
+              "title": "Clarity architecture",
+              "description": "Product state in PostgreSQL and the Clarity agent in Alia.",
+              "file": "clarity/main/index.mdx",
               "order": 1000,
               "section": "guides"
             },
             {
               "slug": "api-reference",
-              "title": "Clarity API Reference",
-              "file": "clarity/master/api-reference.md",
+              "title": "API reference",
+              "file": "clarity/main/api-reference.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "chat-api",
+              "title": "Chat API",
+              "description": "Clarity product IDs over a fixed Alia agent boundary.",
+              "file": "clarity/main/chat-api.mdx",
               "order": 1000,
               "section": "guides"
             },
             {
               "slug": "deployment",
-              "title": "Deployment Guide",
-              "file": "clarity/master/deployment.md",
+              "title": "Deployment",
+              "file": "clarity/main/deployment.md",
               "order": 1000,
               "section": "guides"
             },
             {
-              "slug": "developers-portal",
-              "title": "Clarity AI Developers Portal",
-              "file": "clarity/master/developers-portal.md",
+              "slug": "jobs",
+              "title": "Clarity Jobs",
+              "description": "The Oxy-wide employment search vertical built on Clarity's crawling, extraction and hybrid ranking.",
+              "file": "clarity/main/jobs.mdx",
               "order": 1000,
               "section": "guides"
             },
             {
-              "slug": "memory-system",
-              "title": "Memory and Context Graph",
-              "file": "clarity/master/memory-system.md",
+              "slug": "model-abstraction",
+              "title": "Clarity model IDs",
+              "description": "Exact product IDs mapped to Alia profiles, never to deployments.",
+              "file": "clarity/main/model-abstraction.mdx",
               "order": 1000,
               "section": "guides"
             },
             {
               "slug": "onboarding",
-              "title": "Clarity Developer Onboarding",
-              "file": "clarity/master/onboarding.md",
+              "title": "Developer onboarding",
+              "file": "clarity/main/onboarding.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "oxy-link-preview-migration",
+              "title": "Oxy link preview migration",
+              "file": "clarity/main/oxy-link-preview-migration.md",
               "order": 1000,
               "section": "guides"
             },
             {
               "slug": "oxyhq-auth",
               "title": "OxyHQ Authentication & Packages Guide",
-              "file": "clarity/master/oxyhq-auth.md",
+              "file": "clarity/main/oxyhq-auth.md",
               "order": 1000,
               "section": "guides"
             },
             {
-              "slug": "proactive-intelligence",
-              "title": "Proactive Intelligence",
-              "file": "clarity/master/proactive-intelligence.md",
+              "slug": "postgres-alia-migration",
+              "title": "PostgreSQL and Alia cutover",
+              "file": "clarity/main/postgres-alia-migration.md",
               "order": 1000,
               "section": "guides"
             }
@@ -10283,7 +10949,7 @@
         }
       ],
       "versioned": false,
-      "latestVersion": "master",
+      "latestVersion": "main",
       "deprecatedVersions": []
     },
     {
