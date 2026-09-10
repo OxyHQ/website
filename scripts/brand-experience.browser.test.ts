@@ -54,13 +54,16 @@ try {
     new URL(route.request().url()).origin === origin ? route.continue() : route.abort(),
   )
   await page.goto(`${origin}/brand/`)
-  await page.getByRole('heading', { name: 'Many ideas. One Oxy.' }).waitFor()
+  await page.getByRole('heading', { name: 'Technology belongs to people.' }).waitFor()
   await page.getByRole('button', { name: 'Support', exact: true }).click()
   await page
-    .getByText('Your message has not been sent. Check your connection and try again.')
+    .getByRole('heading', { name: 'Your message has not been sent.', exact: true })
     .waitFor()
-  await page.getByLabel('Bloom recipe', { exact: true }).selectOption('grove')
-  await page.getByText('Oxy / grove', { exact: true }).waitFor()
+  await page.getByRole('button', { name: 'Orange recipe', exact: true }).click()
+  invariant(
+    (await page.getByTestId('brand-colour-composition').getAttribute('data-recipe')) === 'orange',
+    'Colour studio did not apply the selected recipe',
+  )
   console.log('PASS brand guide: chapters, voice examples and recipes')
 
   await page.goto(`${origin}/developers/docs/bloom/components/`)

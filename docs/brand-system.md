@@ -21,7 +21,8 @@ Use shared foundations to make their relationship visible.
 | Product surfaces | `src/theme/brands.ts` |
 | Generated colour CSS | `scripts/generate-theme-css.ts` |
 | Colour recipes and component behaviour | `@oxy.so/bloom` |
-| Web composition and motion vocabulary | `src/styles/brand-system.css` |
+| Brand guide composition | `src/styles/brand-book.css` |
+| Landing motion | Each scene owns its timing; the app only provides reduced-motion preference |
 | Public brand, voice and social guidance | `/brand` |
 | Bloom demo sources and property controls | `src/content/bloom-demos/` |
 | Complete published API catalog | Generated Bloom catalog |
@@ -64,8 +65,9 @@ brand surface as a seed in `brands.ts`, then generate the CSS. Never keep a
 second palette in a product component. Text, controls and status cues use their
 semantic roles; success and error must not change meaning with a recipe.
 
-Display: Blomus Modernus. Reading and controls: Inter. Code and precise data:
-Geist Mono. Web headlines have their own fluid composition scale; compact app
+Bloom provides the shared type families. The brand guide uses the shared sans
+family at an editorial scale; expressive product scenes retain their deliberate
+display treatments. Code and precise data use the shared monospace family. Web headlines have their own fluid composition scale; compact app
 heading tokens must not accidentally shrink a marketing heading at a breakpoint.
 Use sentence case. Capitalisation in existing expressive compositions can be
 retained when it is deliberate and readable.
@@ -148,13 +150,33 @@ website's CSP retains its restriction on evaluation.
 
 ## Remaining rollout
 
-This change establishes the system, adds the guide, rebuilds Inbox, improves
-Bloom discovery and experimentation, migrates Homiio/Mention colours and adjusts
-home ordering. It is not a claim that every existing landing has completed a
-bespoke art-direction review. Continue page by page using these same rules.
+The first website pass was rejected for generic composition and damage to
+Homiio. This revision restores Homiio’s original cobalt-to-cream scene, yellow
+wordmark, white property cards and coloured feature tiles from commit 9c80a38.
+The wheel now adapts to viewport width on mobile, the opening headline sits
+inside the ring, and the trust cards fit narrow panels. Supporting scene copy
+uses a darker neutral for legibility.
+Those existing scene colours remain deliberately intact while a faithful Bloom
+recipe migration is assessed visually. The reduced-motion fallback remains.
+
+The brand guide now demonstrates the identity through full-bleed compositions,
+interactive recipe and type studios, motion examples, voice examples and three
+social applications. Its visual approach draws on the user’s references: Dropbox
+and OKO for expressive systems and colour relationships, OpenAI for editorial
+clarity, and Cash App for applied identity. These are direction references, not
+assets to copy. The guide is a working direction, not a claim that every landing
+has completed its visual review. Continue page by page.
 
 Further work includes remaining component demos, complete small-screen review
 of every complex existing scene, a full product/CMS naming inventory, authentic
 recordings for each product, prose localisation and final social asset production.
 Keep availability checks attached to content changes. Do not publish placeholders
 as completed demonstrations or metrics.
+
+## Review before rollout
+
+The Website review pull-request workflow runs the full build and existing browser
+gates, then exercises the guide at four widths and Homiio with motion enabled
+and reduced. Its screenshot artifact makes compositions reviewable before merge.
+Inspect these captures as well as the automated results; a passing build alone
+does not establish design quality.

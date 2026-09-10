@@ -13,7 +13,7 @@ export default function HomiioPage() {
         canonicalPath: '/homiio',
         ogImage: APP_CARD_IMAGES['/homiio'],
       }}
-      className="homiio-landing-theme bg-background text-foreground"
+      className="bg-[#FFF7D8]"
       navbar={<Navbar transparent />}
       mainClassName="flex-1"
     >

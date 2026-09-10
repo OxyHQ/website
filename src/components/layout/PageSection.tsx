@@ -73,7 +73,6 @@ export default function PageSection({
   const innerClasses = [
     WIDTH[width],
     SPACING[spacing],
-    'oxy-reveal',
     innerClassName,
   ]
     .filter(Boolean)
