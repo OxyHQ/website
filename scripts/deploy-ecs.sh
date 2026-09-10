@@ -79,9 +79,19 @@ echo "deployment $ID started $STARTED"
 
 aws ecs wait services-stable --cluster "$CLUSTER" --services "$SERVICE" || true
 
-# Free text last: `read` puts the remainder in the final variable.
-read -r LIVE STATE LIVE_AT REASON <<<"$(aws ecs describe-services --cluster "$CLUSTER" --services "$SERVICE" \
-  --query 'services[0].deployments[?status==`PRIMARY`].[id,rolloutState,createdAt,rolloutStateReason] | [0]' --output text)"
+# The waiter can exhaust its fixed attempt budget while ECS is completing the
+# final drain (observed one second before rolloutState became COMPLETED). Give
+# only the same deployment a short final grace window; a rollback or supersede
+# exits the loop immediately and is classified below.
+for _ in {1..6}; do
+  # Free text last: `read` puts the remainder in the final variable.
+  read -r LIVE STATE LIVE_AT REASON <<<"$(aws ecs describe-services --cluster "$CLUSTER" --services "$SERVICE" \
+    --query 'services[0].deployments[?status==`PRIMARY`].[id,rolloutState,createdAt,rolloutStateReason] | [0]' --output text)"
+  if [ "$LIVE" != "$ID" ] || [ "$STATE" != "IN_PROGRESS" ]; then
+    break
+  fi
+  sleep 10
+done
 
 if [ "$LIVE" = "$ID" ]; then
   if [ "$STATE" != "COMPLETED" ]; then
