@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMedia, type MediaItem } from '../../../api/hooks'
-import { PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
+import { PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Label } from '../../ui/shadcn/label'
 import { apiFetch } from '../../../api/client'

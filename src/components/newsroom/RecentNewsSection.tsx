@@ -1,4 +1,4 @@
-import * as Skeleton from '@oxyhq/bloom/skeleton'
+import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { NewsCardRow } from './NewsCard'
 import SectionHeaderWithLink from './SectionHeaderWithLink'
 import { useNewsroomPosts } from '../../api/hooks'

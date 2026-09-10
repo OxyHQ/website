@@ -15,7 +15,7 @@ import {
   type ColorPresetFamily,
   type ColorPresetPairing,
   type ColorPresetRecipe,
-} from '@oxyhq/bloom/color-presets';
+} from '@oxy.so/bloom/color-presets';
 import {
   resolveLabPalette,
   type ColorMode,

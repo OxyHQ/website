@@ -4,7 +4,7 @@ import express from 'express'
 import { and, asc, count, desc, eq, gte, ilike, like, not, or, sql, type SQL } from 'drizzle-orm'
 import crypto from 'node:crypto'
 import { z } from 'zod'
-import { safeFetch, UpstreamError } from '@oxyhq/core/server'
+import { safeFetch, UpstreamError } from '@oxy.so/core/server'
 
 // Models
 import type { PgTable } from 'drizzle-orm/pg-core'

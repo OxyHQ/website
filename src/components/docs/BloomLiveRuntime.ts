@@ -14,9 +14,9 @@ import { SNIPPET_MODULES } from './BloomLiveScope.generated'
  *
  * That map is GENERATED from what the demos in `src/content/bloom-demos/`
  * import, by `scripts/generate-bloom-live-scope.ts`, and it is not the whole of
- * `@oxyhq/bloom` on purpose: the barrel would have added 260.90 kB (75.82 kB
+ * `@oxy.so/bloom` on purpose: the barrel would have added 260.90 kB (75.82 kB
  * gzipped) to the first paint of every page of the site, because
- * `vite.config.ts` sends every `@oxyhq/*` module to the entry-preloaded
+ * `vite.config.ts` sends every `@oxy.so/*` module to the entry-preloaded
  * `vendor-oxy` chunk and chunk assignment is static. The generator's own
  * comment carries the reasoning; the rule a reader can hold is that the
  * playground speaks the vocabulary the demos are written in, which is the set

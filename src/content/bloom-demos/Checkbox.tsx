@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Checkbox } from '@oxyhq/bloom/checkbox'
-import type { CheckboxSize } from '@oxyhq/bloom/checkbox'
+import { Checkbox } from '@oxy.so/bloom/checkbox'
+import type { CheckboxSize } from '@oxy.so/bloom/checkbox'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

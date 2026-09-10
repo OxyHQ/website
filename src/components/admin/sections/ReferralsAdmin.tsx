@@ -8,7 +8,7 @@ import {
   type ReferralType,
   type ReferralStatus,
 } from '../../../api/hooks'
-import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
+import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'

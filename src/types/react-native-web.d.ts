@@ -3,7 +3,7 @@
  * `.d.ts` types. The website's `src/lib/reactNativeWebExtended.ts` shim
  * enumerates every named export it forwards to the Vite alias, so we
  * declare each one as a permissive `unknown` here. Consumers that need
- * proper typing pull primitives from `@oxyhq/bloom`'s typed subpaths
+ * proper typing pull primitives from `@oxy.so/bloom`'s typed subpaths
  * instead, never directly from `react-native`.
  */
 declare module 'react-native-web' {

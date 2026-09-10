@@ -13,7 +13,7 @@
  * -----------------------------------------
  * In principle we want to mount each page so its `<SEO>` call inside the
  * page body fires the same way it would at runtime. In practice the page
- * tree pulls in heavy React-Native-flavored libraries (`@oxyhq/bloom`,
+ * tree pulls in heavy React-Native-flavored libraries (`@oxy.so/bloom`,
  * `react-native-svg`, `react-native-reanimated`, `react-three-fiber`,
  * `wagmi`) whose SSR/Node story is brittle to non-existent. Bundling them
  * just to throw the body away costs minutes and breaks on every dep bump.

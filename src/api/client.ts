@@ -1,4 +1,4 @@
-import type { OxyServices, LinkedHttpClient } from '@oxyhq/core'
+import type { OxyServices, LinkedHttpClient } from '@oxy.so/core'
 
 export const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api'
 

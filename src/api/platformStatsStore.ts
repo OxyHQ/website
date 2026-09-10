@@ -4,7 +4,7 @@
  * session-bound client; EventSource cannot carry its Authorization header.
  */
 
-import type { OxyServices } from '@oxyhq/core'
+import type { OxyServices } from '@oxy.so/core'
 
 export interface PlatformStats {
   totalUsers: number

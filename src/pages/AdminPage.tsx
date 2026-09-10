@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { useAuth } from '@oxyhq/services/ui/client'
-import * as Skeleton from '@oxyhq/bloom/skeleton'
+import { useAuth } from '@oxy.so/services/ui/client'
+import * as Skeleton from '@oxy.so/bloom/skeleton'
 import AdminLayout from '../components/admin/AdminLayout'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'

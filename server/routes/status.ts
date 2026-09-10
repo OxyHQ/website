@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { safeFetch } from '@oxyhq/core/server'
+import { safeFetch } from '@oxy.so/core/server'
 import { and, asc, eq, inArray } from 'drizzle-orm'
 import { db } from '../db/postgres.js'
 import { categories, media, products, translations } from '../db/schema/index.js'

@@ -2,7 +2,7 @@
  * Locale + translation primitives for the Oxy
  * marketing website. The 15 supported locales
  * mirror the rest of the Oxy ecosystem (accounts
- * app, @oxyhq/core). Two-letter codes are used
+ * app, @oxy.so/core). Two-letter codes are used
  * to match the CMS `/locales` API which already
  * powers the `LocaleContext`.
  *

@@ -199,10 +199,10 @@ async function buildSsrBundle(): Promise<SsrRenderers> {
     ssr: {
       // Bundle our internal packages so Vite resolves their submodule
       // re-exports correctly. External packages from Node's resolver
-      // can't follow `@oxyhq/services/dist/.../OxyProvider`-style imports.
+      // can't follow `@oxy.so/services/dist/.../OxyProvider`-style imports.
       noExternal: [
-        '@oxyhq/services',
-        '@oxyhq/core',
+        '@oxy.so/services',
+        '@oxy.so/core',
         'react-helmet-async',
       ],
     },

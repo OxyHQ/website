@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient, type UseQueryResult } from '@tanstack/react-query'
-import { authenticatedApiCall } from '@oxyhq/core'
-import { useOxy } from '@oxyhq/services/ui/client'
+import { authenticatedApiCall } from '@oxy.so/core'
+import { useOxy } from '@oxy.so/services/ui/client'
 
 export const appDataQueryKeys = {
   all: ['appData'] as const,

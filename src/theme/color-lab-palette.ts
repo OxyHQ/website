@@ -1,5 +1,5 @@
-import type { AppColorName } from '@oxyhq/bloom/color-presets'
-import { getPresetVars } from '@oxyhq/bloom/design-tokens'
+import type { AppColorName } from '@oxy.so/bloom/color-presets'
+import { getPresetVars } from '@oxy.so/bloom/design-tokens'
 
 export type ColorMode = 'light' | 'dark'
 

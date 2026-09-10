@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@oxyhq/bloom/accordion'
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@oxy.so/bloom/accordion'
 import type { PlaygroundValues } from './_playground'
 
 type AccordionType = 'single' | 'multiple'

@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '@oxyhq/services/ui/client'
-import { Avatar } from '@oxyhq/bloom/avatar'
+import { useAuth } from '@oxy.so/services/ui/client'
+import { Avatar } from '@oxy.so/bloom/avatar'
 import {
   SidebarProvider,
   Sidebar,

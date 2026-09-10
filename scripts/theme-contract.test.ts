@@ -10,8 +10,8 @@ import {
   FREE_COLOR_NAMES,
   HANDLE_COLOR_NAMES,
   PREMIUM_COLOR_NAMES,
-} from '@oxyhq/bloom/color-presets'
-import { getPresetVars } from '@oxyhq/bloom/design-tokens'
+} from '@oxy.so/bloom/color-presets'
+import { getPresetVars } from '@oxy.so/bloom/design-tokens'
 import { FAIRCOIN_PRESET, SITE_PRESET } from '../src/theme/brands'
 import { PUBLIC_COLOR_PRESET_GROUPS } from '../src/theme/preset-catalog'
 import { resolveLabPalette } from '../src/theme/color-lab-palette'

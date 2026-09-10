@@ -1,5 +1,5 @@
 import { Sparkles, CircleDollarSign, Megaphone } from 'lucide-react'
-import * as Skeleton from '@oxyhq/bloom/skeleton'
+import * as Skeleton from '@oxy.so/bloom/skeleton'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'

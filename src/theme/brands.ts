@@ -14,7 +14,7 @@
  * with one palette and hydrate into another.
  */
 
-import { APP_COLOR_PRESETS, type AppColorName } from '@oxyhq/bloom/color-presets'
+import { APP_COLOR_PRESETS, type AppColorName } from '@oxy.so/bloom/color-presets'
 
 /** The palette on oxy.so, and the floor every other surface sits on. */
 export const SITE_PRESET: AppColorName = 'oxy'

@@ -1050,7 +1050,7 @@ export interface UserProfileData {
     _id: string
     username: string
     /**
-     * `displayName` is OPTIONAL in the SDK (`@oxyhq/core`), and
+     * `displayName` is OPTIONAL in the SDK (`@oxy.so/core`), and
      * `server/routes/profiles.ts` passes the SDK shape straight through, so a
      * federated actor can arrive without one. Render the normalized handle as
      * the fallback (`getNormalizedUserHandle`) instead of recomposing a name.

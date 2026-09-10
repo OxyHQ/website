@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Tabs, TabsTrigger } from '@oxyhq/bloom/tabs'
+import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs'
 import type { PlaygroundValues } from './_playground'
 
 type TabsVariant = 'underline' | 'filled' | 'outlined'

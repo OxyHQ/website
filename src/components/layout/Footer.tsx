@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from '../../lib/i18n'
 import { ArrowRightIcon } from '../icons'
 import { defaultFooterColumns, type FooterLink } from '../../data/content'
-import { LogoText } from '@oxyhq/services/ui/client'
+import { LogoText } from '@oxy.so/services/ui/client'
 import MentionIcon from '../social/MentionIcon'
 
 /* ─── Shared small components ─── */

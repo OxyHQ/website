@@ -1,6 +1,6 @@
 # Website (`~/Oxy/website`)
 
-Vite + React + react-router-dom + Tailwind v4 marketing/web presence. Single flat package, no workspaces. Uses `@oxyhq/core`, `@oxyhq/bloom`, `@oxyhq/services`.
+Vite + React + react-router-dom + Tailwind v4 marketing/web presence. Single flat package, no workspaces. Uses `@oxy.so/core`, `@oxy.so/bloom`, `@oxy.so/services`.
 
 > Universal standards live in `~/AGENTS.md`, Oxy-wide gotchas in `~/Oxy/AGENTS.md`. **Procedures live in `docs/`; history lives in git.** This file holds only RULES. **Budget: under 10 KB**, enforced by `scripts/check-agents-md-size.mjs` (`bun run validate:agents-md`).
 
@@ -16,7 +16,7 @@ bun run dev / build / server / mcp / sync-docs / sync-changelog
 - **Adding a key to `src/lib/i18n/locales/` means adding it to all eleven.** The locale type requires every key, so three locales is a build failure, not a fallback. Translate it — a placeholder is read by whoever opens the thing.
 - **Public `/developers/docs/**` special routes keep `PageShell` around their docs layout.** `DocsShell`/`DocsSubNav` are inner chrome, never replacements for the global header and footer.
 - **The MCP auth token is a request HEADER only**, never a query-string parameter.
-- **Do not add local auth middleware** — `@oxyhq/core/server` for every new protected route.
+- **Do not add local auth middleware** — `@oxy.so/core/server` for every new protected route.
 - **Validate deploy-time configuration BEFORE `app.listen()`, never inside `connectWithRetry`.** Anything thrown in that loop is caught and reported as a database problem, the migrations re-run, and every retry stacks another sync interval.
 
 ## Database (PostgreSQL, drizzle + postgres.js)
@@ -34,7 +34,7 @@ bun run dev / build / server / mcp / sync-docs / sync-changelog
 
 ## Theme tokens
 
-**Bloom is the only source of colour.** `src/index.css` imports `@oxyhq/bloom/design-tokens/theme.css` for the `--color-x` vocabulary and declares none of it locally — that import also brings `card`, `tertiary`, the status, chart and sidebar families, the type scale, radii and shadows, so reach for those before inventing a name.
+**Bloom is the only source of colour.** `src/index.css` imports `@oxy.so/bloom/design-tokens/theme.css` for the `--color-x` vocabulary and declares none of it locally — that import also brings `card`, `tertiary`, the status, chart and sidebar families, the type scale, radii and shadows, so reach for those before inventing a name.
 
 - **Never hand-write a palette.** `src/styles/theme.generated.css` holds every resolved value and is written by `scripts/generate-theme-css.ts` from Bloom's own `getPresetVars` / `buildSeedScopeVars` (wired into `predev`/`prebuild`). The hand-written file it replaced claimed to mirror a preset and had drifted into a different palette, with no `--card` at all — and every page here is PRERENDERED, so that gap is what visitors saw first.
 - **A brand surface is one seed in `src/theme/brands.ts`** and Bloom's engine derives the ramp. A product stylesheet may hold type scale, rhythm and shape — **never a colour**; every value in one is a `var()` or a `color-mix()` over Bloom tokens.

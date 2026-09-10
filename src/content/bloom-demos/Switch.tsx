@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Switch } from '@oxyhq/bloom/switch'
+import { Switch } from '@oxy.so/bloom/switch'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

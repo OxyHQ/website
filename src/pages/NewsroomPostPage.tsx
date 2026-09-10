@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { BloomColorScope } from '@oxyhq/bloom/theme'
+import { BloomColorScope } from '@oxy.so/bloom/theme'
 import { useNewsroomPost } from '../api/hooks'
 import { errorStatus } from '../api/client'
 import PageShell from '../components/layout/PageShell'

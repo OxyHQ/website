@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { SecondaryButton } from '@oxyhq/bloom/button'
-import { Command, type CommandItem } from '@oxyhq/bloom/command'
-import { Kbd } from '@oxyhq/bloom/kbd'
+import { SecondaryButton } from '@oxy.so/bloom/button'
+import { Command, type CommandItem } from '@oxy.so/bloom/command'
+import { Kbd } from '@oxy.so/bloom/kbd'
 import type { BloomSurfaceEntry } from '../../content/bloom-catalog'
 import type { BloomDemo } from '../../content/bloom-demos/registry'
 

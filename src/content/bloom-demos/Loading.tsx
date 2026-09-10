@@ -1,5 +1,5 @@
-import { Loading } from '@oxyhq/bloom/loading'
-import type { LoadingSize } from '@oxyhq/bloom/loading'
+import { Loading } from '@oxy.so/bloom/loading'
+import type { LoadingSize } from '@oxy.so/bloom/loading'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

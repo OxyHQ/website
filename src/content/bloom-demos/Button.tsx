@@ -1,5 +1,5 @@
-import { Button, PrimaryButton, SecondaryButton, GhostButton, TextButton } from '@oxyhq/bloom/button'
-import type { ButtonSize, ButtonVariant } from '@oxyhq/bloom/button'
+import { Button, PrimaryButton, SecondaryButton, GhostButton, TextButton } from '@oxy.so/bloom/button'
+import type { ButtonSize, ButtonVariant } from '@oxy.so/bloom/button'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

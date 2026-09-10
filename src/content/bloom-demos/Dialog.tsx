@@ -1,5 +1,5 @@
-import { Dialog, useDialogControl } from '@oxyhq/bloom/dialog'
-import { PrimaryButton } from '@oxyhq/bloom/button'
+import { Dialog, useDialogControl } from '@oxy.so/bloom/dialog'
+import { PrimaryButton } from '@oxy.so/bloom/button'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

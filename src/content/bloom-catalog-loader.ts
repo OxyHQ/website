@@ -30,7 +30,7 @@ export async function loadBloomSurfaceProps(subpath: string): Promise<BloomSurfa
   const load = propModules[`./bloom-catalog-props/${subpath}.ts`]
   if (!load) {
     throw new Error(
-      `No generated prop module for @oxyhq/bloom/${subpath}. Run \`bun run generate:bloom-catalog\`.`,
+      `No generated prop module for @oxy.so/bloom/${subpath}. Run \`bun run generate:bloom-catalog\`.`,
     )
   }
   return (await load()).props

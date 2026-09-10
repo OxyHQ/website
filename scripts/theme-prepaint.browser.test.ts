@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import { chromium } from 'playwright'
-import { getPresetVars } from '@oxyhq/bloom/design-tokens'
+import { getPresetVars } from '@oxy.so/bloom/design-tokens'
 
 const ROOT = join(import.meta.dir, '..')
 const TOKENS = ['--background', '--card', '--primary', '--secondary', '--tertiary'] as const

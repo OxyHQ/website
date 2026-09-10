@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useAuth } from '@oxyhq/services/ui/client'
+import { useAuth } from '@oxy.so/services/ui/client'
 import { apiFetch } from '../../api/client'
 import { isFairCoinHost } from '../../lib/host'
 

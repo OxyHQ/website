@@ -1,4 +1,4 @@
-import * as Skeleton from '@oxyhq/bloom/skeleton'
+import * as Skeleton from '@oxy.so/bloom/skeleton'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

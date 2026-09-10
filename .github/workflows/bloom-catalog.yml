@@ -2,7 +2,7 @@ name: Bloom catalog
 
 # `src/content/bloom-catalog.generated.ts` is committed, so a plain `vite build`
 # is never left without a catalog. That leaves exactly one silent way for it to
-# go wrong: somebody bumps `@oxyhq/bloom` and does not re-run the generator.
+# go wrong: somebody bumps `@oxy.so/bloom` and does not re-run the generator.
 # Nothing breaks — the docs keep rendering the PREVIOUS version's component
 # list, which is the failure the catalog was built to end, wearing a hat.
 #

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import * as Skeleton from '@oxyhq/bloom/skeleton'
+import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { useProduct, useProducts, resolveProductCategoryId, type ProductRecord } from '../../api/hooks'
 import { getStaticChangelog } from '../../content/changelog-loader'
 import Button from '../ui/Button'

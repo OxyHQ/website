@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Dialog, type DialogControlProps } from '@oxyhq/bloom/dialog'
+import { Dialog, type DialogControlProps } from '@oxy.so/bloom/dialog'
 import { X } from 'lucide-react'
 
 interface StartupProgramDialogProps {

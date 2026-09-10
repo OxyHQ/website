@@ -1,5 +1,5 @@
 import { useEffect, useState, type ComponentType } from 'react'
-import { ErrorBoundary } from '@oxyhq/bloom/error-boundary'
+import { ErrorBoundary } from '@oxy.so/bloom/error-boundary'
 import { evaluateSnippet } from './BloomLiveRuntime'
 
 /**

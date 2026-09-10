@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMcpTokens, useCreateMcpToken, useRevokeMcpToken, type McpToken } from '../../../api/hooks'
-import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
-import { Badge } from '@oxyhq/bloom/badge'
+import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Badge } from '@oxy.so/bloom/badge'
 import { Input } from '../../ui/shadcn/input'
 import { Label } from '../../ui/shadcn/label'
 

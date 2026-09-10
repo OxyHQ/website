@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { TextButton } from '@oxyhq/bloom/button'
+import { TextButton } from '@oxy.so/bloom/button'
 import {
   Select,
   SelectTrigger,
@@ -10,7 +10,7 @@ import {
   SelectItem,
   SelectItemText,
   SelectItemIndicator,
-} from '@oxyhq/bloom/select'
+} from '@oxy.so/bloom/select'
 import { bloomDemos, getBloomDemo } from '../../content/bloom-demos/registry'
 import { getPackage, resolveVersion } from '../../content/docs-loader'
 import PageShell from '../layout/PageShell'

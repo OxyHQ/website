@@ -1,10 +1,10 @@
 import { useState, useCallback, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { OxyProvider, useOxy } from '@oxyhq/services/ui/client'
-import type { User } from '@oxyhq/core'
-import { BloomThemeProvider, type ThemeMode as BloomThemeMode } from '@oxyhq/bloom/theme'
-import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
+import { OxyProvider, useOxy } from '@oxy.so/services/ui/client'
+import type { User } from '@oxy.so/core'
+import { BloomThemeProvider, type ThemeMode as BloomThemeMode } from '@oxy.so/bloom/theme'
+import { ImageResolverProvider } from '@oxy.so/bloom/image-resolver'
 import {
   getSavedMode,
   getSavedPreset,

@@ -2,7 +2,7 @@
   "generatedAt": "2026-09-10T01:10:37.356Z",
   "packages": [
     {
-      "package": "@oxyhq/bloom",
+      "package": "@oxy.so/bloom",
       "displayName": "Bloom",
       "shortName": "bloom",
       "repo": "https://github.com/OxyHQ/Bloom",
@@ -3899,8 +3899,8 @@
       "deprecatedVersions": []
     },
     {
-      "package": "@oxyhq/core",
-      "displayName": "@oxyhq/core",
+      "package": "@oxy.so/core",
+      "displayName": "@oxy.so/core",
       "shortName": "core",
       "repo": "https://github.com/OxyHQ/OxyHQServices",
       "category": "sdk",
@@ -3912,7 +3912,7 @@
           "pages": [
             {
               "slug": "",
-              "title": "@oxyhq/core",
+              "title": "@oxy.so/core",
               "description": "Platform-agnostic OxyServices client, session engine, and cryptographic primitives.",
               "file": "core/main/index.mdx",
               "order": 0,
@@ -3936,7 +3936,7 @@
             },
             {
               "slug": "api",
-              "title": "@oxyhq/core",
+              "title": "@oxy.so/core",
               "file": "core/main/api/README.md",
               "order": 10000,
               "section": "api"
@@ -7603,8 +7603,8 @@
       "deprecatedVersions": []
     },
     {
-      "package": "@oxyhq/services",
-      "displayName": "@oxyhq/services",
+      "package": "@oxy.so/services",
+      "displayName": "@oxy.so/services",
       "shortName": "services",
       "repo": "https://github.com/OxyHQ/OxyHQServices",
       "category": "sdk",
@@ -7616,7 +7616,7 @@
           "pages": [
             {
               "slug": "",
-              "title": "@oxyhq/services",
+              "title": "@oxy.so/services",
               "description": "Expo / React Native SDK with components, screens, and bottom-sheet navigation.",
               "file": "services/main/index.mdx",
               "order": 0,
@@ -7625,7 +7625,7 @@
             {
               "slug": "bottom-sheets",
               "title": "Bottom Sheets",
-              "description": "The bottom-sheet navigation system used across @oxyhq/services, plus the full route registry.",
+              "description": "The bottom-sheet navigation system used across @oxy.so/services, plus the full route registry.",
               "file": "services/main/bottom-sheets.mdx",
               "order": 2,
               "section": "guides"
@@ -7633,7 +7633,7 @@
             {
               "slug": "offline",
               "title": "Offline & sync",
-              "description": "How @oxyhq/services persists queries, queues mutations, and reflects online status.",
+              "description": "How @oxy.so/services persists queries, queues mutations, and reflects online status.",
               "file": "services/main/offline.mdx",
               "order": 3,
               "section": "guides"
@@ -7647,7 +7647,7 @@
             },
             {
               "slug": "ARCHITECTURE",
-              "title": "@oxyhq/services — Architecture",
+              "title": "@oxy.so/services — Architecture",
               "file": "services/main/ARCHITECTURE.md",
               "order": 1000,
               "section": "guides"
@@ -7703,7 +7703,7 @@
             },
             {
               "slug": "api",
-              "title": "@oxyhq/services",
+              "title": "@oxy.so/services",
               "file": "services/main/api/README.md",
               "order": 10000,
               "section": "api"
@@ -9116,7 +9116,7 @@
       "deprecatedVersions": []
     },
     {
-      "package": "@oxyhq/api",
+      "package": "@oxy.so/api",
       "displayName": "Oxy REST API",
       "shortName": "api",
       "repo": "https://github.com/OxyHQ/OxyHQServices",
@@ -9151,7 +9151,7 @@
       "deprecatedVersions": []
     },
     {
-      "package": "@oxyhq/accounts",
+      "package": "@oxy.so/accounts",
       "displayName": "Accounts",
       "shortName": "accounts",
       "repo": "https://github.com/OxyHQ/OxyHQServices",
@@ -9194,7 +9194,7 @@
       "deprecatedVersions": []
     },
     {
-      "package": "@oxyhq/console",
+      "package": "@oxy.so/console",
       "displayName": "Console",
       "shortName": "console",
       "repo": "https://github.com/OxyHQ/OxyHQServices",
@@ -9245,7 +9245,7 @@
       "deprecatedVersions": []
     },
     {
-      "package": "@oxyhq/auth-app",
+      "package": "@oxy.so/auth-app",
       "displayName": "Auth App",
       "shortName": "auth",
       "repo": "https://github.com/OxyHQ/OxyHQServices",

@@ -3,7 +3,7 @@ import {
   COLOR_PRESET_GROUPS,
   FREE_COLOR_NAMES,
   type ColorPresetRecipe,
-} from '@oxyhq/bloom/color-presets'
+} from '@oxy.so/bloom/color-presets'
 
 export interface PublicColorPresetGroup {
   name: string

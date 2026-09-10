@@ -2,15 +2,15 @@
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css";
 @import "nativewind/theme";
-@import "@oxyhq/bloom/design-tokens/theme.css";
+@import "@oxy.so/bloom/design-tokens/theme.css";
 @plugin "@tailwindcss/typography";
 
 /* Scan the Oxy SDK packages so their react-native-css className LAYOUT utilities
  * (flex-1 / flex-row / gap-* / arbitrary [Npx]) are generated on web. Tailwind v4
  * auto-detects this app's own src/ but excludes node_modules by default, so without
  * these the SDK screens fall back to the RN-Web base View reset (inert layout). */
-@source "../node_modules/@oxyhq/services/lib/**/*.{js,jsx}";
-@source "../node_modules/@oxyhq/bloom/lib/**/*.{js,jsx}";
+@source "../node_modules/@oxy.so/services/lib/**/*.{js,jsx}";
+@source "../node_modules/@oxy.so/bloom/lib/**/*.{js,jsx}";
 
 :root {
   --build-tag: '2026-04-16T11-cachebust-2';
@@ -88,17 +88,17 @@
 
 @theme {
   /* Semantic colours are NOT declared here.
-   * `@oxyhq/bloom/design-tokens/theme.css` (imported above) is the single
+   * `@oxy.so/bloom/design-tokens/theme.css` (imported above) is the single
    * authority for the `--color-x` alias vocabulary, and it ships more of it than
    * this file ever aliased — card, tertiary, success/error/warning/info, the
    * chart and sidebar families, the type scale, radii and shadows. The values
    * behind those aliases come from `styles/theme.generated.css`. */
 
-  /* Typography — powered by @oxyhq/bloom fonts.
+  /* Typography — powered by @oxy.so/bloom fonts.
    * Bloom's <BloomThemeProvider> injects --bloom-font-display / --bloom-font-sans /
    * --bloom-font-mono onto :root at startup. The display family is BlomusModernus
    * (Oxy's MIT custom font), sans is Inter Variable, mono is Geist Mono Variable.
-   * All three font files ship inside @oxyhq/bloom — no separate font assets needed. */
+   * All three font files ship inside @oxy.so/bloom — no separate font assets needed. */
   --font-sans: var(--bloom-font-sans);
   --font-display: var(--bloom-font-display);
   --font-serif: var(--bloom-font-display);

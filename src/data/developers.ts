@@ -57,9 +57,9 @@ export const quickStartHeading = 'Up and running in 60 seconds'
 export const quickStartDescription =
   'Install the React Native SDK and wrap your app — that is the whole setup.'
 
-export const quickStartInstall = 'bun add @oxyhq/services @oxyhq/core'
+export const quickStartInstall = 'bun add @oxy.so/services @oxy.so/core'
 
-export const quickStartUsage = `import { OxyProvider, useOxy } from '@oxyhq/services'
+export const quickStartUsage = `import { OxyProvider, useOxy } from '@oxy.so/services'
 
 export default function App() {
   return (

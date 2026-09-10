@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { BloomColorScope } from '@oxyhq/bloom/theme'
+import { BloomColorScope } from '@oxy.so/bloom/theme'
 import type { NewsroomPostSummary } from '../../data/newsroom'
 import { useCurrentLocale } from '../../lib/i18n'
 import { newsroomThemeFor } from '../../lib/newsroom-theme'

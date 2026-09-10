@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useDialogControl } from '@oxyhq/bloom/dialog'
+import { useDialogControl } from '@oxy.so/bloom/dialog'
 import { RocketLaunch } from '@phosphor-icons/react'
 import PhotoCardCarousel, { type PhotoCard } from '../sections/PhotoCardCarousel'
 import StartupProgramDialog from './StartupProgramDialog'

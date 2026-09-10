@@ -11,8 +11,8 @@ content, and writes a unified `_synced/index.json` consumed by the SPA.
 ```jsonc
 {
   // Required
-  "package": "@oxyhq/services",           // npm name (used for tag resolution)
-  "displayName": "@oxyhq/services",       // human-readable label
+  "package": "@oxy.so/services",           // npm name (used for tag resolution)
+  "displayName": "@oxy.so/services",       // human-readable label
   "shortName": "services",                // URL slug — must be unique across the site
   "repo": "https://github.com/OxyHQ/OxyHQServices",
   "category": "sdk",                      // "sdk" | "app" | "service" | "ui-library"
@@ -39,7 +39,7 @@ content, and writes a unified `_synced/index.json` consumed by the SPA.
 | ------------- | ---------------------------------- | ------------------------------- |
 | `versioned`   | `true`                             | `false` (or omitted)            |
 | When to use   | SDKs, libraries, REST APIs         | End-user apps (no API surface)  |
-| Example       | `@oxyhq/services`, `@oxyhq/bloom`  | `@oxyhq/accounts`, `mention`    |
+| Example       | `@oxy.so/services`, `@oxy.so/bloom`  | `@oxy.so/accounts`, `mention`    |
 | URL shape     | `/developers/docs/<pkg>/<v>/<slug>`| `/developers/docs/<pkg>/<slug>` |
 | Version selector shown? | Yes (when `>1` version)  | No                              |
 | Version banner shown?   | Old & deprecated versions| No                              |
@@ -55,8 +55,8 @@ vs `accounts@1.4` for a user to choose between — only one app is shipped.
 
 ```jsonc
 {
-  "package": "@oxyhq/services",
-  "displayName": "@oxyhq/services",
+  "package": "@oxy.so/services",
+  "displayName": "@oxy.so/services",
   "shortName": "services",
   "repo": "https://github.com/OxyHQ/OxyHQServices",
   "category": "sdk",
@@ -74,7 +74,7 @@ vs `accounts@1.4` for a user to choose between — only one app is shipped.
 
 ```jsonc
 {
-  "package": "@oxyhq/accounts",
+  "package": "@oxy.so/accounts",
   "displayName": "Accounts",
   "shortName": "accounts",
   "repo": "https://github.com/OxyHQ/OxyHQServices",
@@ -92,7 +92,7 @@ vs `accounts@1.4` for a user to choose between — only one app is shipped.
 The convention for releasing versioned docs is:
 
 ```
-@oxyhq/<package>@<version>     # for npm-scoped packages
+@oxy.so/<package>@<version>     # for npm-scoped packages
 <package>@<version>            # for non-scoped repos (e.g. mention, allo)
 v<version>                     # fallback for older / non-conforming tags
 ```
@@ -104,7 +104,7 @@ refs/tags/<candidate>`) wins. This matches the format already produced by
 release tagger, so most projects need no changes.
 
 Examples:
-- `@oxyhq/services` version `6.10.0` resolves to tag `@oxyhq/services@6.10.0`
+- `@oxy.so/services` version `6.10.0` resolves to tag `@oxy.so/services@6.10.0`
 - `mention` version `0.4.2` resolves to tag `mention@0.4.2` or `v0.4.2`
 - `tnp` version `1.0.0` resolves to tag `tnp@1.0.0` or `v1.0.0`
 

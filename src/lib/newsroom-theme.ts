@@ -1,4 +1,4 @@
-import { APP_COLOR_PRESETS, type AppColorName } from '@oxyhq/bloom/color-presets'
+import { APP_COLOR_PRESETS, type AppColorName } from '@oxy.so/bloom/color-presets'
 import type { NewsroomPost } from '../data/newsroom'
 
 /** Bloom owns the available recipe names; newsroom only chooses among them. */

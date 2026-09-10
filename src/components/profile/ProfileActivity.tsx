@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import * as Skeleton from '@oxyhq/bloom/skeleton'
+import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { MessageCircle, FileText, Lock } from 'lucide-react'
 import { useUserActivity, useUserProfile, useNewsroomPosts } from '../../api/hooks'
 

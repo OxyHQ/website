@@ -27,7 +27,7 @@
 
 ### 🎨 Colour has exactly one source
 
-Every token comes from [`@oxyhq/bloom`](https://www.npmjs.com/package/@oxyhq/bloom). `src/index.css` imports the design token stylesheet and declares no palette of its own, and `src/styles/theme.generated.css` is written by `scripts/generate-theme-css.ts` from Bloom's own engine.
+Every token comes from [`@oxy.so/bloom`](https://www.npmjs.com/package/@oxy.so/bloom). `src/index.css` imports the design token stylesheet and declares no palette of its own, and `src/styles/theme.generated.css` is written by `scripts/generate-theme-css.ts` from Bloom's own engine.
 
 A brand surface is one seed in `src/theme/brands.ts`. Product stylesheets may hold type scale, rhythm and shape, never a colour.
 
@@ -50,7 +50,7 @@ That means the first paint a visitor sees comes from static HTML, before any Jav
 |---|---|
 | App | React 19, Vite 8, TypeScript 6, React Router 7, the React Compiler |
 | Styling | Tailwind 4, NativeWind, Bloom design tokens |
-| Cross platform UI | React Native Web through `vite-plugin-react-native-web`, with [`@oxyhq/services`](https://www.npmjs.com/package/@oxyhq/services), [`@oxyhq/core`](https://www.npmjs.com/package/@oxyhq/core) and [`@oxyhq/bloom`](https://www.npmjs.com/package/@oxyhq/bloom) |
+| Cross platform UI | React Native Web through `vite-plugin-react-native-web`, with [`@oxy.so/services`](https://www.npmjs.com/package/@oxy.so/services), [`@oxy.so/core`](https://www.npmjs.com/package/@oxy.so/core) and [`@oxy.so/bloom`](https://www.npmjs.com/package/@oxy.so/bloom) |
 | Data | TanStack Query with persisted cache, hooks in `src/api/` |
 | Content | MDX, with docs and changelog synced in at build time, and Pagefind for site search |
 | Wallet | wagmi and viem, on the FairCoin surfaces |
@@ -137,7 +137,7 @@ bun run seed                      # seed the database
 - No hardcoded customer logos or testimonials. They stay behind `FEATURES.SHOW_TRUSTED_LOGOS` and `FEATURES.SHOW_TESTIMONIALS` until real, verified ones exist.
 - Never hand write a palette. Change the seed, regenerate, and check the result in a browser with JavaScript blocked as well as with it on. Every page here is prerendered, so a token that only resolves after hydration is a token the visitor saw wrong first.
 - The MCP auth token is passed as a request header, never as a query string parameter.
-- New protected routes on the server use `createOxyAuthMiddleware` and `getRequiredOxyUserId` from `@oxyhq/core/server`. Do not add local auth middleware.
+- New protected routes on the server use `createOxyAuthMiddleware` and `getRequiredOxyUserId` from `@oxy.so/core/server`. Do not add local auth middleware.
 
 <br>
 

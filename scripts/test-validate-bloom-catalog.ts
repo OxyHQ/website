@@ -46,7 +46,7 @@ const FIXTURE_FLOORS = { surfaces: 1, props: 1 }
 type Files = Record<string, string>
 
 const MANIFEST = {
-  name: '@oxyhq/bloom',
+  name: '@oxy.so/bloom',
   version: '0.0.0-fixture',
   exports: {
     // The barrel. Its `types` file is deliberately NOT created: `.` must be
@@ -523,7 +523,7 @@ const cases: TestCase[] = [
     files: baseFiles(),
     commit: 'stale-version',
     expectFailure: true,
-    expectOutput: 'documents @oxyhq/bloom 0.0.0-older, but the installed package is 0.0.0-fixture',
+    expectOutput: 'documents @oxy.so/bloom 0.0.0-older, but the installed package is 0.0.0-fixture',
   },
   {
     name: 'a catalog that was never generated fails',

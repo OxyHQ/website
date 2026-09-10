@@ -1,6 +1,6 @@
 import type { ReactNode, AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react'
 import { Link } from 'react-router-dom'
-import { Button as BloomButton } from '@oxyhq/bloom/button'
+import { Button as BloomButton } from '@oxy.so/bloom/button'
 
 type Variant = 'primary' | 'outline' | 'ghost' | 'inverse'
 type Size = 'sm' | 'md' | 'lg'

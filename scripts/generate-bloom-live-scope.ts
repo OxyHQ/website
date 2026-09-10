@@ -8,10 +8,10 @@
  *
  * The playground compiles the reader's snippet in the browser and answers its
  * `require` calls from a fixed map of specifier → module namespace. That map
- * cannot be the whole of `@oxyhq/bloom`: `vite.config.ts` sends every
- * `node_modules/@oxyhq/*` module to the `vendor-oxy` chunk, the entry HTML
+ * cannot be the whole of `@oxy.so/bloom`: `vite.config.ts` sends every
+ * `node_modules/@oxy.so/*` module to the `vendor-oxy` chunk, the entry HTML
  * preloads that chunk on every route, and chunk assignment is static — so even
- * a lazy `import('@oxyhq/bloom')` reached only from that page lands there.
+ * a lazy `import('@oxy.so/bloom')` reached only from that page lands there.
  * Measured, importing the barrel added 260.90 kB (75.82 kB gzipped) to the
  * first paint of every page of the site, to serve one docs page.
  *
@@ -132,7 +132,7 @@ export function valueImportsOf(fileName: string, source: string): string[] {
 
 /**
  * The local name a specifier is imported under: its path with any npm scope
- * dropped, camel-cased. `@oxyhq/bloom/text-field` → `bloomTextField`,
+ * dropped, camel-cased. `@oxy.so/bloom/text-field` → `bloomTextField`,
  * `react/jsx-runtime` → `reactJsxRuntime`, `react` → `react`.
  *
  * Two specifiers can in principle derive the same name (`a/b` and `a-b`), so
@@ -213,7 +213,7 @@ export function buildBloomLiveScope(options: BuildOptions = {}): BuildResult {
     `// The modules a playground snippet may import: every one the ${files.length} demos in`,
     '// src/content/bloom-demos/ import as a VALUE, plus the JSX runtime Sucrase\'s',
     '// output requires. See scripts/generate-bloom-live-scope.ts for why the scope is',
-    '// this set and not the whole of @oxyhq/bloom.',
+    '// this set and not the whole of @oxy.so/bloom.',
     '',
     ...imports,
     '',

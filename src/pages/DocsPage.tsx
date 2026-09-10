@@ -1,6 +1,6 @@
 import { useParams, useLocation } from 'react-router-dom'
 import { useMemo } from 'react'
-import { BloomColorScope } from '@oxyhq/bloom/theme'
+import { BloomColorScope } from '@oxy.so/bloom/theme'
 import PageShell from '../components/layout/PageShell'
 import DocsPageContent from '../components/docs/DocsPage'
 import type { AppColorName } from '../theme'

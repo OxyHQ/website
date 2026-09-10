@@ -381,7 +381,7 @@ function isWorkingTreeVersion(version: string): boolean {
  * Resolve a version string to the actual git tag in the source repo.
  *
  * Convention (documented in `scripts/README.md`): tags are
- * `@oxyhq/<package>@<version>` for npm-scoped packages, or `<package>@<version>`
+ * `@oxy.so/<package>@<version>` for npm-scoped packages, or `<package>@<version>`
  * / `v<version>` as fallbacks for non-scoped repos (Mention, Allo, etc.).
  *
  * We try candidates in order and return the first one that exists. Returns
@@ -523,12 +523,12 @@ function findNearestTsconfig(startDir: string, stopAt: string): string | null {
  */
 function normalizeTypedocMarkdown(source: string): string {
   let body = source;
-  // Drop the leading `**@oxyhq/foo**\n\n***\n\n` block typedoc-plugin-markdown
+  // Drop the leading `**@oxy.so/foo**\n\n***\n\n` block typedoc-plugin-markdown
   // prepends to every file — it's a no-op breadcrumb that just creates noise.
   body = body.replace(/^\*\*[^*\n]+\*\*\n\n\*\*\*\n\n/, '');
-  // Some pages prepend a `[**@oxyhq/foo**](../README.md)\n\n***\n\n` link.
+  // Some pages prepend a `[**@oxy.so/foo**](../README.md)\n\n***\n\n` link.
   body = body.replace(/^\[\*\*[^*\n]+\*\*\]\([^)]+\)\n\n\*\*\*\n\n/, '');
-  // Drop the breadcrumb line `[@oxyhq/foo](href) / SymbolName` that the link
+  // Drop the breadcrumb line `[@oxy.so/foo](href) / SymbolName` that the link
   // rewriter leaves behind. Followed by a blank line.
   body = body.replace(/^\[[^\]]+\]\([^)]+\)\s*\/\s*[^\n]+\n+/, '');
   return body;

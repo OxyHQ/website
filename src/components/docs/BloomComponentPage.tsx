@@ -1,6 +1,6 @@
 import { Suspense, createElement, use, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Button } from '@oxyhq/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import {
   Select,
   SelectContent,
@@ -10,9 +10,9 @@ import {
   SelectItemText,
   SelectTrigger,
   SelectValue,
-} from '@oxyhq/bloom/select'
-import { Switch } from '@oxyhq/bloom/switch'
-import { TextField, TextFieldInput } from '@oxyhq/bloom/text-field'
+} from '@oxy.so/bloom/select'
+import { Switch } from '@oxy.so/bloom/switch'
+import { TextField, TextFieldInput } from '@oxy.so/bloom/text-field'
 import { bloomIndex, bloomVersion } from '../../content/bloom-catalog.generated'
 import { loadBloomSurfaceProps } from '../../content/bloom-catalog-loader'
 import { knobFor, pascalPath } from '../../content/bloom-catalog'

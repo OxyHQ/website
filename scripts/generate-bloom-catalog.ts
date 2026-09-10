@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 /**
- * Writes the generated Bloom catalog: every surface `@oxyhq/bloom` publishes,
+ * Writes the generated Bloom catalog: every surface `@oxy.so/bloom` publishes,
  * what it exports and what props those exports take.
  *
  * ## Why generated
@@ -133,14 +133,14 @@ export interface CatalogStats {
 }
 
 export interface BuildOptions {
-  /** Root of the `@oxyhq/bloom` package to read. Defaults to the installed one. */
+  /** Root of the `@oxy.so/bloom` package to read. Defaults to the installed one. */
   bloomDir?: string
   /** Vacuity floors. Fixtures relax them; nothing else should. */
   floors?: { surfaces: number; props: number }
 }
 
 export interface BuildResult {
-  /** The `@oxyhq/bloom` version the catalog was built from. */
+  /** The `@oxy.so/bloom` version the catalog was built from. */
   version: string
   /** Source of the eager index module. */
   index: string
@@ -153,7 +153,7 @@ export interface BuildResult {
 
 export function resolveInstalledBloomDir(): string {
   const require = createRequire(import.meta.url)
-  return dirname(require.resolve('@oxyhq/bloom/package.json'))
+  return dirname(require.resolve('@oxy.so/bloom/package.json'))
 }
 
 // --------------------------------------------------------------- exports ---
@@ -805,7 +805,7 @@ function emitIndex(
   const lines = [
     DO_NOT_EDIT,
     '//',
-    `// Source: @oxyhq/bloom@${version} — its exports map, its README component`,
+    `// Source: @oxy.so/bloom@${version} — its exports map, its README component`,
     '// table and its shipped .d.ts files.',
     `// ${stats.surfaces} surfaces, ${stats.components} components, ${stats.propTypes} distinct`,
     `// props types carrying ${stats.props} props`,
@@ -818,7 +818,7 @@ function emitIndex(
     "import type { BloomCategory, BloomSurfaceEntry } from './bloom-catalog'",
     '',
     '/**',
-    ' * The `@oxyhq/bloom` version every component page below describes.',
+    ' * The `@oxy.so/bloom` version every component page below describes.',
     ' *',
     " * The docs sidebar's version selector reads a separate typedoc sync that can",
     ' * lag the installed package by whole majors, and a reader has no way to tell',
@@ -889,7 +889,7 @@ export function buildBloomCatalog(options: BuildOptions = {}): BuildResult {
 
   if (unresolved.length > 0) {
     throw new Error(
-      `${unresolved.length} @oxyhq/bloom export(s) declare a types path that does not resolve:\n`
+      `${unresolved.length} @oxy.so/bloom export(s) declare a types path that does not resolve:\n`
       + unresolved.map((line) => `    - ${line}`).join('\n'),
     )
   }
@@ -944,7 +944,7 @@ export function buildBloomCatalog(options: BuildOptions = {}): BuildResult {
 
     surfaces.push({
       subpath,
-      importPath: `@oxyhq/bloom/${subpath}`,
+      importPath: `@oxy.so/bloom/${subpath}`,
       category: categoryFor(subpath, table.categoryOf) ?? UNCATEGORIZED_GROUP,
       components: components.map((component) => component.entry),
     })

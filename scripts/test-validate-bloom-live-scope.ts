@@ -35,8 +35,8 @@ const FIXTURE_FLOORS = { demos: 1, specifiers: 1 }
 
 type Files = Record<string, string>
 
-const BUTTON_DEMO = `import { Button } from '@oxyhq/bloom/button'
-import type { ButtonSize } from '@oxyhq/bloom/button'
+const BUTTON_DEMO = `import { Button } from '@oxy.so/bloom/button'
+import type { ButtonSize } from '@oxy.so/bloom/button'
 import { useState } from 'react'
 
 export default function ButtonDemo() {
@@ -46,7 +46,7 @@ export default function ButtonDemo() {
 }
 `
 
-const CARD_DEMO = `import { Card } from '@oxyhq/bloom/card'
+const CARD_DEMO = `import { Card } from '@oxy.so/bloom/card'
 
 export default function CardDemo() {
   return <Card />
@@ -120,8 +120,8 @@ let failed = 0
   // gate that failed on everything would look like a working gate.
   failed += report(
     'the derivation finds the value imports it should',
-    specifiers.includes('@oxyhq/bloom/button') &&
-      specifiers.includes('@oxyhq/bloom/card') &&
+    specifiers.includes('@oxy.so/bloom/button') &&
+      specifiers.includes('@oxy.so/bloom/card') &&
       specifiers.includes('react')
       ? null
       : `expected button, card and react; got ${specifiers.join(', ')}`,
@@ -140,8 +140,8 @@ let failed = 0
   // entry-preloaded chunk for types that never reach the browser.
   const { failures, specifiers } = await verdict({
     ...BASE,
-    'Typed.tsx': `import type { ComboboxProps } from '@oxyhq/bloom/combobox'
-import { type ChipSize, Chip } from '@oxyhq/bloom/chip'
+    'Typed.tsx': `import type { ComboboxProps } from '@oxy.so/bloom/combobox'
+import { type ChipSize, Chip } from '@oxy.so/bloom/chip'
 
 export default function TypedDemo(props: ComboboxProps) {
   const size: ChipSize = 'small'
@@ -151,13 +151,13 @@ export default function TypedDemo(props: ComboboxProps) {
   })
   failed += report(
     'a type-only import stays out of the scope',
-    !specifiers.includes('@oxyhq/bloom/combobox')
+    !specifiers.includes('@oxy.so/bloom/combobox')
       ? null
       : 'combobox entered the scope from an `import type`',
   )
   failed += report(
     'a value binding beside a `type` one still enters the scope',
-    specifiers.includes('@oxyhq/bloom/chip')
+    specifiers.includes('@oxy.so/bloom/chip')
       ? null
       : 'chip was dropped because the declaration also had a `type` specifier',
   )
@@ -172,7 +172,7 @@ export default function TypedDemo(props: ComboboxProps) {
   // containing it needs it resolvable.
   const { specifiers } = await verdict({
     ...BASE,
-    'SideEffect.tsx': `import '@oxyhq/bloom/fonts'
+    'SideEffect.tsx': `import '@oxy.so/bloom/fonts'
 
 export default function SideEffectDemo() {
   return null
@@ -181,7 +181,7 @@ export default function SideEffectDemo() {
   })
   failed += report(
     'a side-effect import enters the scope',
-    specifiers.includes('@oxyhq/bloom/fonts')
+    specifiers.includes('@oxy.so/bloom/fonts')
       ? null
       : 'a bare `import "..."` was dropped, so the snippet could not run it',
   )
@@ -197,8 +197,8 @@ export default function SideEffectDemo() {
   const { failures } = await verdict(BASE, async (dir) => {
     await writeFile(
       join(dir, 'Card.tsx'),
-      `import { Card } from '@oxyhq/bloom/card'
-import { Combobox } from '@oxyhq/bloom/combobox'
+      `import { Card } from '@oxy.so/bloom/card'
+import { Combobox } from '@oxy.so/bloom/combobox'
 
 export default function CardDemo() {
   return <Card><Combobox /></Card>
@@ -230,12 +230,12 @@ export default function CardDemo() {
   const { failures } = await verdict(BASE, (_dir, scopePath) => {
     const committed = readFileSync(scopePath, 'utf8')
       .replace(
-        "import * as bloomCard from '@oxyhq/bloom/card'",
-        "import * as bloomCard from '@oxyhq/bloom/card'\nimport * as bloomMenubar from '@oxyhq/bloom/menubar'",
+        "import * as bloomCard from '@oxy.so/bloom/card'",
+        "import * as bloomCard from '@oxy.so/bloom/card'\nimport * as bloomMenubar from '@oxy.so/bloom/menubar'",
       )
       .replace(
-        "  '@oxyhq/bloom/card': bloomCard,",
-        "  '@oxyhq/bloom/card': bloomCard,\n  '@oxyhq/bloom/menubar': bloomMenubar,",
+        "  '@oxy.so/bloom/card': bloomCard,",
+        "  '@oxy.so/bloom/card': bloomCard,\n  '@oxy.so/bloom/menubar': bloomMenubar,",
       )
     writeFileSync(scopePath, committed)
   })
@@ -272,8 +272,8 @@ export default function RelativeDemo() {
   // other would type-check and ship a scope missing a module.
   const { failures } = await verdict({
     ...BASE,
-    'Collide.tsx': `import { A } from '@oxyhq/bloom/x-y'
-import { B } from '@oxyhq/bloom/x/y'
+    'Collide.tsx': `import { A } from '@oxy.so/bloom/x-y'
+import { B } from '@oxy.so/bloom/x/y'
 
 export default function CollideDemo() {
   return <A><B /></A>
@@ -323,7 +323,7 @@ export default function CollideDemo() {
   failed += report(
     'the real scope carries the JSX runtime and more than one Bloom surface',
     (built?.specifiers ?? []).includes('react/jsx-runtime') &&
-      (built?.specifiers ?? []).filter((s) => s.startsWith('@oxyhq/bloom/')).length > 1
+      (built?.specifiers ?? []).filter((s) => s.startsWith('@oxy.so/bloom/')).length > 1
       ? null
       : `the real scope looks empty: ${built?.specifiers.join(', ')}`,
   )

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
+import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { apiFetch } from '../../../api/client'
 import { Input } from '../../ui/shadcn/input'
 import { Label } from '../../ui/shadcn/label'

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Select, SelectTrigger, SelectValue, SelectIcon, SelectContent, SelectItem, SelectItemText, SelectItemIndicator } from '@oxyhq/bloom/select'
+import { Select, SelectTrigger, SelectValue, SelectIcon, SelectContent, SelectItem, SelectItemText, SelectItemIndicator } from '@oxy.so/bloom/select'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

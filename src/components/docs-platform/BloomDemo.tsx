@@ -1,5 +1,5 @@
 import { Suspense, createElement } from 'react'
-import { ErrorBoundary } from '@oxyhq/bloom/error-boundary'
+import { ErrorBoundary } from '@oxy.so/bloom/error-boundary'
 import { getBloomDemo } from '../../content/bloom-demos/registry'
 
 interface BloomDemoProps {

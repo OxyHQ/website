@@ -1,6 +1,6 @@
 import { lazy, Suspense, useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { LogoIcon, useAuth, useOxy } from '@oxyhq/services/ui/client'
+import { LogoIcon, useAuth, useOxy } from '@oxy.so/services/ui/client'
 import {
   simpleNavLinks,
   platformNavDropdown,
@@ -36,7 +36,7 @@ const SETTINGS_DROPDOWN_KEY = '__settings__'
 // ProfileButton pulls in native icon infrastructure. Authenticated visitors
 // still get the full account menu, while anonymous page loads keep it out of
 // the critical bundle and use a small local sign-in control instead.
-const ProfileButton = lazy(() => import('@oxyhq/services').then((module) => ({
+const ProfileButton = lazy(() => import('@oxy.so/services').then((module) => ({
   default: module.ProfileButton,
 })))
 

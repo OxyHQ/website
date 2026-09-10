@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import * as Skeleton from '@oxyhq/bloom/skeleton'
+import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { NewsCardFeatured, NewsCardGrid } from './NewsCard'
 import { useNewsroomPosts } from '../../api/hooks'
 import { newsCategories, type NewsCategory } from '../../data/newsroom'

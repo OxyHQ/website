@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMediaItem, type MediaItem } from '../../api/hooks'
-import { SecondaryButton } from '@oxyhq/bloom/button'
+import { SecondaryButton } from '@oxy.so/bloom/button'
 import MediaPickerDialog from './MediaPickerDialog'
 
 interface MediaPickerProps {

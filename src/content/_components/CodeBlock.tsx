@@ -12,7 +12,7 @@ import { reactNodeToText, useCopyToClipboard } from '../../lib/useCopyToClipboar
  * primitive owns the chrome only.
  *
  *   <CodeBlock language="ts" filename="login.ts">
- *     {`import { OxyServices } from '@oxyhq/core'\nconst oxy = new OxyServices(...)`}
+ *     {`import { OxyServices } from '@oxy.so/core'\nconst oxy = new OxyServices(...)`}
  *   </CodeBlock>
  * ──────────────────────────────────────────── */
 

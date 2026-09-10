@@ -1,4 +1,4 @@
-import { useAuth } from '@oxyhq/services/ui/client'
+import { useAuth } from '@oxy.so/services/ui/client'
 import FeatureCard from './FeatureCard'
 import { useToggleFeatureVote, type FeatureRequestData } from '../../api/hooks'
 

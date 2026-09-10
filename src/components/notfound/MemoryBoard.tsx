@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState, type ReactNode } from 'react'
-import { useAuth } from '@oxyhq/services/ui/client'
+import { useAuth } from '@oxy.so/services/ui/client'
 import { useMemoryGameStats, useSaveMemoryGameRun } from '../../api/hooks'
 
 /* ──────────────────────────────────────────────

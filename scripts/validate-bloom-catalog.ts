@@ -2,7 +2,7 @@
 
 /**
  * Fails the build when the generated Bloom catalog no longer describes the
- * installed `@oxyhq/bloom`.
+ * installed `@oxy.so/bloom`.
  *
  * ## What it measures
  *
@@ -164,7 +164,7 @@ function compare(path: string, rebuilt: string): string | null {
   if (!existsSync(path)) return `${path} does not exist.\n    ${REGENERATE}`
   const difference = firstDifference(readFileSync(path, 'utf8'), rebuilt)
   if (!difference) return null
-  return `${path} is stale — it does not match a rebuild from the installed @oxyhq/bloom.\n`
+  return `${path} is stale — it does not match a rebuild from the installed @oxy.so/bloom.\n`
     + `    First difference at line ${difference.line}:\n`
     + `      committed: ${difference.committed.slice(0, 160)}\n`
     + `      rebuilt:   ${difference.rebuilt.slice(0, 160)}\n`
@@ -191,7 +191,7 @@ export function validateBloomCatalog(options: ValidateOptions = {}): ValidateRes
     const committedVersion = readFileSync(index, 'utf8').match(/^export const bloomVersion = '([^']*)'$/m)?.[1]
     if (committedVersion !== built.version) {
       failures.push(
-        `${index} documents @oxyhq/bloom ${committedVersion ?? '(no bloomVersion export)'}, `
+        `${index} documents @oxy.so/bloom ${committedVersion ?? '(no bloomVersion export)'}, `
         + `but the installed package is ${built.version}.\n    ${REGENERATE}`,
       )
     }

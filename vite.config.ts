@@ -28,7 +28,7 @@ const oxyhqWorkletPath =
   /[/\\]node_modules[/\\]@oxyhq[/\\](?:bloom|services)[/\\]/
 
 /**
- * Transform `@oxyhq/bloom` / `@oxyhq/services` with the Reanimated Babel
+ * Transform `@oxy.so/bloom` / `@oxy.so/services` with the Reanimated Babel
  * plugin. Implemented as a dedicated Vite plugin (not `@rolldown/plugin-babel`)
  * so we can strip Vite's `?v=` query from `filename` — Reanimated's plugin
  * `fs.readFileSync`s the filename and ENOENTs on query-suffixed paths.
@@ -307,14 +307,14 @@ export default defineConfig(({ mode }) => ({
     // the JSX in reanimated's `lib/module/` files directly via rolldown.
     //
     // `debug`, `expo-modules-core`, `fontfaceobserver` and `color` are CJS-only
-    // packages reached through the excluded `@oxyhq/services` subtree below.
+    // packages reached through the excluded `@oxy.so/services` subtree below.
     // `exclude` stops Vite prebundling that subtree, so in dev they are served
     // unbundled and `import x from 'cjs-pkg'` fails with "does not provide an
     // export named 'default'". Listing them lets esbuild resolve the interop up
     // front. Production is unaffected — rolldown bundles the whole graph.
     //
     // `@expo/vector-icons` and `react-native-qrcode-svg` are required peers of
-    // `@oxyhq/services` that ship untransformed JSX in `.js` files. Served
+    // `@oxy.so/services` that ship untransformed JSX in `.js` files. Served
     // unbundled they fail Vite's import-analysis parse ("invalid JS syntax").
     // Prebundling them here transforms the JSX up front, scoped to these two
     // packages (not a global loader), so their CJS interop stays intact.
@@ -352,8 +352,8 @@ export default defineConfig(({ mode }) => ({
     exclude: [
       '@react-native-async-storage/async-storage',
       'react-native-safe-area-context',
-      '@oxyhq/bloom',
-      '@oxyhq/services',
+      '@oxy.so/bloom',
+      '@oxy.so/services',
     ],
   },
   server: {

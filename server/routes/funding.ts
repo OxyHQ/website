@@ -1,4 +1,4 @@
-import { safeFetch } from '@oxyhq/core/server'
+import { safeFetch } from '@oxy.so/core/server'
 import { Router } from 'express'
 import type { IncomingMessage } from 'node:http'
 import { z } from 'zod'

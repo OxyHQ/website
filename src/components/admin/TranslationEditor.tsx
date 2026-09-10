@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../api/client'
-import { PrimaryButton } from '@oxyhq/bloom/button'
+import { PrimaryButton } from '@oxy.so/bloom/button'
 import { Input } from '../ui/shadcn/input'
 import { Textarea } from '../ui/shadcn/textarea'
 import { Label } from '../ui/shadcn/label'

@@ -3,45 +3,45 @@
 // The modules a playground snippet may import: every one the 16 demos in
 // src/content/bloom-demos/ import as a VALUE, plus the JSX runtime Sucrase's
 // output requires. See scripts/generate-bloom-live-scope.ts for why the scope is
-// this set and not the whole of @oxyhq/bloom.
+// this set and not the whole of @oxy.so/bloom.
 
-import * as bloomAccordion from '@oxyhq/bloom/accordion'
-import * as bloomAvatar from '@oxyhq/bloom/avatar'
-import * as bloomBadge from '@oxyhq/bloom/badge'
-import * as bloomButton from '@oxyhq/bloom/button'
-import * as bloomCard from '@oxyhq/bloom/card'
-import * as bloomCheckbox from '@oxyhq/bloom/checkbox'
-import * as bloomChip from '@oxyhq/bloom/chip'
-import * as bloomDialog from '@oxyhq/bloom/dialog'
-import * as bloomDivider from '@oxyhq/bloom/divider'
-import * as bloomLoading from '@oxyhq/bloom/loading'
-import * as bloomSelect from '@oxyhq/bloom/select'
-import * as bloomSkeleton from '@oxyhq/bloom/skeleton'
-import * as bloomSwitch from '@oxyhq/bloom/switch'
-import * as bloomTabs from '@oxyhq/bloom/tabs'
-import * as bloomTextField from '@oxyhq/bloom/text-field'
-import * as bloomTooltip from '@oxyhq/bloom/tooltip'
+import * as bloomAccordion from '@oxy.so/bloom/accordion'
+import * as bloomAvatar from '@oxy.so/bloom/avatar'
+import * as bloomBadge from '@oxy.so/bloom/badge'
+import * as bloomButton from '@oxy.so/bloom/button'
+import * as bloomCard from '@oxy.so/bloom/card'
+import * as bloomCheckbox from '@oxy.so/bloom/checkbox'
+import * as bloomChip from '@oxy.so/bloom/chip'
+import * as bloomDialog from '@oxy.so/bloom/dialog'
+import * as bloomDivider from '@oxy.so/bloom/divider'
+import * as bloomLoading from '@oxy.so/bloom/loading'
+import * as bloomSelect from '@oxy.so/bloom/select'
+import * as bloomSkeleton from '@oxy.so/bloom/skeleton'
+import * as bloomSwitch from '@oxy.so/bloom/switch'
+import * as bloomTabs from '@oxy.so/bloom/tabs'
+import * as bloomTextField from '@oxy.so/bloom/text-field'
+import * as bloomTooltip from '@oxy.so/bloom/tooltip'
 import * as react from 'react'
 import * as reactJsxRuntime from 'react/jsx-runtime'
 
 /** Specifier → module namespace, exactly as a bundler would resolve it. */
 export const SNIPPET_MODULES: Readonly<Record<string, object>> = {
-  '@oxyhq/bloom/accordion': bloomAccordion,
-  '@oxyhq/bloom/avatar': bloomAvatar,
-  '@oxyhq/bloom/badge': bloomBadge,
-  '@oxyhq/bloom/button': bloomButton,
-  '@oxyhq/bloom/card': bloomCard,
-  '@oxyhq/bloom/checkbox': bloomCheckbox,
-  '@oxyhq/bloom/chip': bloomChip,
-  '@oxyhq/bloom/dialog': bloomDialog,
-  '@oxyhq/bloom/divider': bloomDivider,
-  '@oxyhq/bloom/loading': bloomLoading,
-  '@oxyhq/bloom/select': bloomSelect,
-  '@oxyhq/bloom/skeleton': bloomSkeleton,
-  '@oxyhq/bloom/switch': bloomSwitch,
-  '@oxyhq/bloom/tabs': bloomTabs,
-  '@oxyhq/bloom/text-field': bloomTextField,
-  '@oxyhq/bloom/tooltip': bloomTooltip,
+  '@oxy.so/bloom/accordion': bloomAccordion,
+  '@oxy.so/bloom/avatar': bloomAvatar,
+  '@oxy.so/bloom/badge': bloomBadge,
+  '@oxy.so/bloom/button': bloomButton,
+  '@oxy.so/bloom/card': bloomCard,
+  '@oxy.so/bloom/checkbox': bloomCheckbox,
+  '@oxy.so/bloom/chip': bloomChip,
+  '@oxy.so/bloom/dialog': bloomDialog,
+  '@oxy.so/bloom/divider': bloomDivider,
+  '@oxy.so/bloom/loading': bloomLoading,
+  '@oxy.so/bloom/select': bloomSelect,
+  '@oxy.so/bloom/skeleton': bloomSkeleton,
+  '@oxy.so/bloom/switch': bloomSwitch,
+  '@oxy.so/bloom/tabs': bloomTabs,
+  '@oxy.so/bloom/text-field': bloomTextField,
+  '@oxy.so/bloom/tooltip': bloomTooltip,
   react,
   'react/jsx-runtime': reactJsxRuntime,
 }

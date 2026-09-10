@@ -10,9 +10,9 @@ import {
   type CourseStatus,
 } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
-import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
-import { Switch } from '@oxyhq/bloom/switch'
-import { Badge } from '@oxyhq/bloom/badge'
+import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Switch } from '@oxy.so/bloom/switch'
+import { Badge } from '@oxy.so/bloom/badge'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'

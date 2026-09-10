@@ -1,4 +1,4 @@
-import { Divider } from '@oxyhq/bloom/divider'
+import { Divider } from '@oxy.so/bloom/divider'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

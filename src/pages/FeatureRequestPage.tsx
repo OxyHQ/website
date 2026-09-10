@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
-import { useAuth } from '@oxyhq/services/ui/client'
-import * as Skeleton from '@oxyhq/bloom/skeleton'
+import { useAuth } from '@oxy.so/services/ui/client'
+import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { ArrowLeft, ChevronUp, ExternalLink } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'

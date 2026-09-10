@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import * as Skeleton from "@oxyhq/bloom/skeleton";
+import * as Skeleton from "@oxy.so/bloom/skeleton";
 import type { InfraStatusNode, PlatformActivityEvent } from "../../api/hooks";
 
 const LiveGlobe = lazy(() => import("./LiveGlobe"));

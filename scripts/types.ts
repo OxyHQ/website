@@ -7,7 +7,7 @@
 export type DocsCategory = 'sdk' | 'app' | 'service' | 'ui-library';
 
 export interface DocsConfig {
-  /** npm name, e.g. "@oxyhq/bloom". */
+  /** npm name, e.g. "@oxy.so/bloom". */
   package: string;
   /** Human-friendly name, e.g. "Bloom". */
   displayName: string;
