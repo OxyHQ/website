@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-10T03:18:10.070Z",
+  "generatedAt": "2026-09-10T10:57:05.035Z",
   "packages": [
     {
       "package": "@oxy.so/bloom",
@@ -12787,6 +12787,13 @@
               "slug": "api-reference",
               "title": "Alia API reference",
               "file": "alia/main/api-reference.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "dependencies",
+              "title": "Dependency updates",
+              "file": "alia/main/dependencies.md",
               "order": 1000,
               "section": "guides"
             },

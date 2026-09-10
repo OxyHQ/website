@@ -16,6 +16,20 @@ import { queryClient } from './api/queryClient'
 import { seedNewsroomBootstrap } from './lib/newsroom-bootstrap'
 import { preloadNewsroomPostRoute } from './lib/route-preload'
 
+// An already-open tab can request a lazy chunk from the previous deployment
+// after Cloudflare has atomically switched the site to the new asset set. Vite
+// reports that specific case before the route boundary sees it; reload once
+// for each failed asset so the tab picks up the matching HTML and manifest.
+window.addEventListener('vite:preloadError', (event) => {
+  event.preventDefault()
+  const payload = (event as Event & { payload?: unknown }).payload
+  const failedAsset = payload instanceof Error ? payload.message : String(payload)
+  const reloadKey = 'oxy:last-failed-deploy-asset'
+  if (sessionStorage.getItem(reloadKey) === failedAsset) return
+  sessionStorage.setItem(reloadKey, failedAsset)
+  window.location.reload()
+})
+
 // Apply saved color preset + dark/light mode before first render
 initTheme()
 
