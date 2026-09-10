@@ -24,8 +24,8 @@ const emptyModule = path.resolve(import.meta.dirname, 'src/lib/empty-module.js')
 // `useAnimatedScrollHandler` in Bloom's BottomSheet) rejects plain functions
 // even on web, so we must run `react-native-reanimated/plugin` over those
 // packages.
-const oxyhqWorkletPath =
-  /[/\\]node_modules[/\\]@oxyhq[/\\](?:bloom|services)[/\\]/
+const oxySoWorkletPath =
+  /[/\\]node_modules[/\\]@oxy\.so[/\\](?:bloom|services)[/\\]/
 
 /**
  * Transform `@oxy.so/bloom` / `@oxy.so/services` with the Reanimated Babel
@@ -33,18 +33,18 @@ const oxyhqWorkletPath =
  * so we can strip Vite's `?v=` query from `filename` — Reanimated's plugin
  * `fs.readFileSync`s the filename and ENOENTs on query-suffixed paths.
  */
-function oxyhqReanimatedWorklets() {
+function oxySoReanimatedWorklets() {
   // Lazy-require so config evaluation doesn't pay the Babel cost until first
   // transform, and so CJS `react-native-reanimated/plugin` loads cleanly.
   let babelTransform: typeof import('@babel/core').transformSync | undefined
   let reanimatedPlugin: import('@babel/core').PluginTarget | undefined
 
   return {
-    name: 'oxyhq-reanimated-worklets',
+    name: 'oxy-so-reanimated-worklets',
     enforce: 'pre' as const,
     transform(code: string, id: string) {
       const file = id.split('?', 1)[0]
-      if (!oxyhqWorkletPath.test(file)) return null
+      if (!oxySoWorkletPath.test(file)) return null
       if (!/\.[cm]?[jt]sx?$/.test(file)) return null
 
       if (!babelTransform) {
@@ -124,7 +124,7 @@ export default defineConfig(({ mode }) => ({
       },
     },
     // Workletize Bloom/services before other transforms see them.
-    oxyhqReanimatedWorklets(),
+    oxySoReanimatedWorklets(),
     react(),
     babel({ presets: [reactCompilerPreset()] }),
     ViteImageOptimizer({
@@ -273,7 +273,7 @@ export default defineConfig(({ mode }) => ({
           // every route mounts OxyProvider + BloomThemeProvider, and rolldown
           // merges the rnw modules in here anyway since Bloom is their only
           // consumer. Confirmed with `bun run analyze`.
-          if (inPkg('@oxyhq', 'react-native-web', 'react-native-reanimated', 'react-native-gesture-handler', 'react-native-svg', '@expo/vector-icons', 'expo-modules-core')) {
+          if (inPkg('@oxy.so', 'react-native-web', 'react-native-reanimated', 'react-native-gesture-handler', 'react-native-svg', '@expo/vector-icons', 'expo-modules-core')) {
             return 'vendor-oxy'
           }
           if (inPkg('framer-motion', 'motion-dom', 'motion-utils')) return 'vendor-motion'
