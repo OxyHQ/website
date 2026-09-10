@@ -58,7 +58,15 @@ const COUNT = Math.round(PATH_LEN / 122) // ≈ card-width spacing (overlap, no 
 const STEP = PATH_LEN / COUNT // exact divisor → seamless
 const TRAVEL = 720
 
-function FlowCard({ index, progress, deck }: { index: number; progress: MotionValue<number>; deck: readonly HomiioListing[] }) {
+function FlowCard({
+  index,
+  progress,
+  deck,
+}: {
+  index: number
+  progress: MotionValue<number>
+  deck: readonly HomiioListing[]
+}) {
   const transform = useTransform(progress, (v) => {
     const p = pointAt(index * STEP + v * TRAVEL)
     return `translate(-50%, -50%) translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px) rotate(${p.rot.toFixed(1)}deg) scale(0.9)`
@@ -75,9 +83,18 @@ export default function HomiioSpiral() {
   const ref = useRef<HTMLDivElement>(null)
   const deck = useHomiioDeck()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  if (reduce) return <section className="bg-background px-6 py-16"><div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-6">{deck.slice(0,6).map((listing,index)=><HomiioPropertyCard key={index} listing={listing} />)}</div></section>
+  if (reduce)
+    return (
+      <section className="bg-[#FFF7D8] px-6 py-16">
+        <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-6">
+          {deck.slice(0, 6).map((listing, index) => (
+            <HomiioPropertyCard key={index} listing={listing} />
+          ))}
+        </div>
+      </section>
+    )
   return (
-    <section ref={ref} className="relative overflow-hidden bg-background py-[7vh]">
+    <section ref={ref} className="relative overflow-hidden bg-[#FFF7D8] py-[7vh]">
       <div className="relative mx-auto flex h-[clamp(440px,62vh,720px)] items-center justify-center">
         <div className="relative h-0 w-0 scale-[0.5] sm:scale-75 lg:scale-100">
           {Array.from({ length: COUNT }, (_, i) => (

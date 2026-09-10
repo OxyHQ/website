@@ -7,7 +7,7 @@ export default function HomiioContent() {
     <>
       <HomiioWheelHero />
       <HomiioSpiral />
-      <div className="bg-background">
+      <div className="bg-[#FFF7D8]">
         <HomiioFAQ />
       </div>
     </>

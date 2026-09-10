@@ -1,418 +1,690 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
+import { motion, useReducedMotion } from 'framer-motion'
+import { ArrowUpRight, ArrowDown, Plus, Minus } from '@phosphor-icons/react'
 import { LogoIcon, LogoText } from '@oxy.so/services/ui/client'
-import { TextButton } from '@oxy.so/bloom/button'
+import { APP_COLOR_PRESETS, type AppColorName } from '@oxy.so/bloom/color-presets'
 import PageShell from '../components/layout/PageShell'
-import PageSection from '../components/layout/PageSection'
-import RecipePreview from '../components/brand/RecipePreview'
+import { recipeStyle } from '../components/brand/RecipePreview'
+import { useSiteHeaderBottom } from '../hooks/useSiteHeaderBottom'
 import { BRAND_MARKS } from '../data/brand-assets'
+import homePhoto from '../assets/homiio/industria.jpg'
+import '../styles/brand-book.css'
 
 const chapters = [
-  ['principles', 'Principles'],
+  ['idea', 'The idea'],
   ['identity', 'Identity'],
   ['colour', 'Colour'],
-  ['type', 'Typography'],
+  ['type', 'Type & icons'],
+  ['imagery', 'Imagery'],
   ['motion', 'Motion'],
   ['voice', 'Voice'],
-  ['imagery', 'Imagery'],
-  ['social', 'Social'],
+  ['applications', 'In the world'],
   ['resources', 'Resources'],
 ] as const
-const voiceExamples = {
-  Product: {
-    principle: 'Start with what a person can do. Show the feature, then explain the detail.',
-    before: 'Experience a revolutionary, seamless ecosystem.',
-    after: 'One account for the Oxy apps you use.',
-    note: 'A concrete benefit. Add the supported apps and a useful next step.',
-  },
+const recipes: AppColorName[] = ['orange', 'cobalt', 'grove', 'pink', 'yellow', 'oxy']
+const voices = {
   Principles: {
-    principle: 'State a belief plainly. Connect it to a decision people can inspect.',
-    before: 'We are the most ethical platform in the world.',
-    after: 'Your attention belongs to you.',
-    note: 'Follow the principle with the relevant product policy or a specific design decision.',
+    headline: 'Your attention belongs to you.',
+    body: 'Mention has no ads. Your feed is a place for the people and conversations you choose.',
+    rule: 'Connect a belief to a product decision. Let people judge the decision for themselves.',
+    avoid: 'The world’s most ethical social platform.',
+  },
+  Product: {
+    headline: 'One account. Your Oxy apps.',
+    body: 'Use your Oxy account to sign in to Mention, Inbox and the other Oxy apps you use.',
+    rule: 'Explain what someone can do. Name the product and the practical benefit.',
+    avoid: 'Experience a revolutionary, seamless ecosystem.',
   },
   Support: {
-    principle: 'Acknowledge the problem, explain what is known and give the next step.',
-    before: 'Oops! Something went wrong. Try again later.',
-    after: 'Your message has not been sent. Check your connection and try again.',
-    note: 'Use this wording only when the failure is a connection problem and retry is safe.',
+    headline: 'Your message has not been sent.',
+    body: 'Check your connection and try again.',
+    rule: 'Explain what happened and what to do next. Use this example only for a confirmed connection problem.',
+    avoid: 'Oops! Something went wrong.',
   },
   Release: {
-    principle: 'Name the change and its availability. Make it easy to see the difference.',
-    before: 'Big things are coming. Get ready for the future.',
-    after: 'You can now preview Bloom recipes on a complete interface.',
-    note: 'Example launch copy. Publish only after the feature is available, with a link to try it.',
+    headline: 'A closer look at Bloom.',
+    body: 'Browse the components. Change a colour recipe. Try an example in the playground.',
+    rule: 'Show the change, say where it is available and give people a way to try it.',
+    avoid: 'Big things are coming. The future is here.',
   },
 } as const
-const social = [
-  [
-    'A principle',
-    'Your attention belongs to you.',
-    'A short statement, followed by the product decision that supports it.',
-  ],
-  [
-    'A useful detail',
-    'Small details. More control.',
-    'Show one setting or interaction in a short, readable demonstration.',
-  ],
-  [
-    'Work in progress',
-    'Here is what we are working on.',
-    'Share the actual change, the question being explored and a way to contribute.',
-  ],
-]
 
-export default function BrandPage() {
-  const [voice, setVoice] = useState<keyof typeof voiceExamples>('Product')
-  const [replay, setReplay] = useState(0)
-  const example = voiceExamples[voice]
+function Chapter({ number, title }: { number: string; title: string }) {
   return (
-    <PageShell
-      seo={{
-        title: 'Oxy brand guidelines',
-        description:
-          'The Oxy identity: principles, Bloom colour recipes, typography, motion, voice, imagery and social communication.',
-        canonicalPath: '/brand',
-      }}
-      className="oxy-guide bg-background text-foreground"
-    >
-      <PageSection spacing="lg">
-        <div className="grid items-end gap-12 lg:grid-cols-[1.5fr_1fr]">
-          <div>
-            <p className="oxy-eyebrow mb-8">Oxy / Brand guidelines</p>
-            <h1 className="oxy-display">
-              Many ideas.
-              <br />
-              One Oxy.
-            </h1>
-            <p className="oxy-copy mt-8">
-              How we look, move and speak. A shared language for everything we build.
-            </p>
-          </div>
-          <div className="flex min-h-64 items-center justify-center rounded-[3rem] bg-primary-subtle p-12">
-            <LogoIcon height={160} color="var(--primary)" letterColor="var(--primary-foreground)" />
-          </div>
-        </div>
-      </PageSection>
-      <nav
-        aria-label="Brand chapters"
-        className="container flex flex-wrap gap-x-6 gap-y-2 border-y border-border py-5"
-      >
-        {chapters.map(([id, label]) => (
-          <a className="oxy-link text-sm" key={id} href={`#${id}`}>
-            {label}
-          </a>
-        ))}
-      </nav>
-      <PageSection id="principles" className="oxy-anchor" spacing="lg">
-        <p className="oxy-eyebrow mb-6">01 / Principles</p>
-        <h2 className="oxy-title max-w-4xl">Make room for people.</h2>
-        <p className="oxy-copy mt-8">
-          Oxy builds around people's ability to choose, understand and participate. Our identity
-          should make those intentions tangible, from a small control to a whole product.
-        </p>
-        <div className="oxy-guide-grid mt-12">
-          {[
-            ['Human', 'Begin with a recognisable need. Speak to a person. Show real situations.'],
-            [
-              'Open',
-              'Explain how things work and where the limits are. Make room for contribution.',
-            ],
-            [
-              'Considered',
-              'Give every colour, word and transition a purpose. Keep the next step clear.',
-            ],
-          ].map(([title, body]) => (
-            <div key={title} className="oxy-guide-panel">
-              <h3 className="text-2xl font-display">{title}</h3>
-              <p className="mt-4 text-lg leading-relaxed">{body}</p>
-            </div>
-          ))}
-        </div>
-        <Link className="oxy-link mt-8" to="/company/charter">
-          Read our founding charter
-        </Link>
-      </PageSection>
-      <PageSection id="identity" className="oxy-anchor" tone="surface" spacing="lg">
-        <p className="oxy-eyebrow mb-6">02 / Identity</p>
-        <h2 className="oxy-title">A recognisable family.</h2>
-        <div className="mt-12 grid gap-8 md:grid-cols-2">
-          <div className="oxy-guide-panel flex min-h-72 items-center justify-center">
-            <LogoIcon height={120} color="var(--primary)" letterColor="var(--primary-foreground)" />
-          </div>
-          <div className="oxy-guide-panel flex min-h-72 items-center justify-center">
-            <LogoText height={72} color="var(--foreground)" />
-          </div>
-        </div>
-        <div className="oxy-guide-grid mt-8">
-          {[
-            [
-              'Keep the geometry',
-              'Use the original artwork. Preserve its proportions, orientation and internal spacing. Do not reconstruct the mark with type or new shapes.',
-            ],
-            [
-              'Give it space',
-              'Keep text, borders and other marks clear of the silhouette. As a working minimum, leave one quarter of the mark height on each side. Check small uses at their actual size.',
-            ],
-            [
-              'Protect recognition',
-              'Use the symbol for compact spaces and the wordmark when the name needs to be read. Place it on a calm surface with clear contrast. Animate the whole mark; keep its geometry intact.',
-            ],
-            [
-              'Let products belong',
-              'Products keep their own names and marks. Shared type, colour recipes, icon rules and movement make the relationship with Oxy visible.',
-            ],
-          ].map(([title, body]) => (
-            <div key={title}>
-              <h3 className="text-xl font-semibold">{title}</h3>
-              <p className="mt-3 text-lg leading-relaxed text-muted-foreground">{body}</p>
-            </div>
-          ))}
-        </div>
-      </PageSection>
-      <PageSection id="colour" className="oxy-anchor" spacing="lg">
-        <p className="oxy-eyebrow mb-6">03 / Colour</p>
-        <h2 className="oxy-title">Colour, in relationship.</h2>
-        <p className="oxy-copy my-8">
-          Bloom is the design foundation of Oxy. Its recipes connect backgrounds, text, actions and
-          supporting colours. Choose a recipe for the story, then keep its roles consistent.
-        </p>
-        <RecipePreview />
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {[
-            ['Identity', 'The primary colour establishes the product or editorial context.'],
-            [
-              'Hierarchy',
-              'Supporting colours distinguish actions and surfaces without competing for attention.',
-            ],
-            [
-              'Meaning',
-              'Success, warning and error keep their semantic roles across every recipe. Colour always has a second cue.',
-            ],
-          ].map(([a, b]) => (
-            <p key={a} className="text-lg">
-              <strong>{a}.</strong> {b}
-            </p>
-          ))}
-        </div>
-        <Link to="/developers/docs/bloom/color-system" className="oxy-link mt-8">
-          Explore the Bloom colour system
-        </Link>
-      </PageSection>
-      <PageSection id="type" className="oxy-anchor" tone="surface" spacing="lg">
-        <p className="oxy-eyebrow mb-6">04 / Typography & icons</p>
-        <h2 className="oxy-title">
-          Big ideas.
-          <br />
-          Clear details.
-        </h2>
-        <div className="mt-12 space-y-8">
-          <div className="border-b border-border pb-8">
-            <p className="text-sm mb-4">Blomus Modernus / Display</p>
-            <p className="font-display text-[clamp(2.5rem,6vw,6rem)] leading-tight">
-              Build for everyone.
-            </p>
-          </div>
-          <div className="grid gap-8 md:grid-cols-2">
-            <div>
-              <p className="text-sm mb-4">Inter / Reading & interface</p>
-              <p className="font-sans text-2xl leading-relaxed">
-                Give each sentence one job. Leave enough space to read it.
-              </p>
-            </div>
-            <div>
-              <p className="text-sm mb-4">Geist Mono / Code & precise data</p>
-              <p className="font-mono text-xl">
-                import &#123; Button &#125; from '@oxy.so/bloom/button'
-              </p>
-            </div>
-          </div>
-        </div>
-        <p className="oxy-copy mt-10">
-          Use sentence case, a clear reading order and responsive sizes. Keep interface labels
-          legible. Use Bloom's icon vocabulary for controls, with consistent weight, alignment and
-          optical size. Product marks remain distinct from interface icons.
-        </p>
-      </PageSection>
-      <PageSection id="motion" className="oxy-anchor" spacing="lg">
-        <p className="oxy-eyebrow mb-6">05 / Motion</p>
-        <h2 className="oxy-title">A story that moves.</h2>
-        <p className="oxy-copy mt-8">
-          Every landing page has a sequence of scenes. Movement reveals relationships, brings the
-          product forward and carries the story into the next section.
-        </p>
-        <div className="mt-12 grid items-center gap-10 md:grid-cols-2">
-          <div className="flex min-h-80 items-center justify-center rounded-3xl bg-primary-subtle">
-            <div key={replay} className="oxy-motion-sample">
-              <LogoIcon
-                height={100}
-                color="var(--primary)"
-                letterColor="var(--primary-foreground)"
-              />
-            </div>
-          </div>
-          <div className="space-y-6">
-            <h3 className="text-2xl font-display">Responsive. Expressive. Recognisable.</h3>
-            <p className="text-lg">
-              Quick feedback for a press. A softer arrival for content. More time for a product
-              scene. Use the same easing language across pages, while giving each story its own
-              choreography.
-            </p>
-            <dl className="grid grid-cols-2 gap-3 text-sm">
-              <dt>Feedback</dt>
-              <dd>160 ms</dd>
-              <dt>Content arrival</dt>
-              <dd>600 ms</dd>
-              <dt>Scene transition</dt>
-              <dd>900 ms</dd>
-            </dl>
-            <TextButton onPress={() => setReplay((n) => n + 1)}>Replay motion</TextButton>
-          </div>
-        </div>
-        <p className="oxy-copy mt-8">
-          Keep scrolling under the visitor's control. Essential content stays available when
-          animation is reduced. On smaller screens, simplify the scene while preserving the story
-          and its actions.
-        </p>
-      </PageSection>
-      <PageSection id="voice" className="oxy-anchor" tone="surface" spacing="lg">
-        <p className="oxy-eyebrow mb-6">06 / Voice & tone</p>
-        <h2 className="oxy-title">
-          Say something.
-          <br />
-          Mean it.
-        </h2>
-        <p className="oxy-copy mt-8">
-          Our voice is clear, warm and direct. We are confident about our principles and precise
-          about what a product can do. We explain limitations as carefully as benefits.
-        </p>
-        <div className="mt-10 flex flex-wrap gap-3" role="group" aria-label="Writing context">
-          {(Object.keys(voiceExamples) as (keyof typeof voiceExamples)[]).map((key) => (
+    <div className="brand-chapter">
+      <span>{number}</span>
+      <span>{title}</span>
+    </div>
+  )
+}
+function Mark({ word = false, className = '' }: { word?: boolean; className?: string }) {
+  return (
+    <div aria-hidden="true" className={`brand-mark ${className}`}>
+      {word ? (
+        <LogoText height={220} color="currentColor" letterColor="var(--primary)" />
+      ) : (
+        <LogoIcon height={220} color="currentColor" letterColor="var(--primary)" />
+      )}
+    </div>
+  )
+}
+function Rules({ items }: { items: [string, string][] }) {
+  return (
+    <div className="brand-rules">
+      {items.map(([title, body]) => (
+        <article key={title}>
+          <h3>{title}</h3>
+          <p>{body}</p>
+        </article>
+      ))}
+    </div>
+  )
+}
+function ColourStudio() {
+  const [recipe, setRecipe] = useState<AppColorName>('cobalt')
+  const [mode, setMode] = useState<'light' | 'dark'>('light')
+  return (
+    <>
+      <div className="brand-studio-controls">
+        <div className="brand-recipe-buttons" role="group" aria-label="Colour recipes">
+          {recipes.map((name) => (
             <button
-              key={key}
-              onClick={() => setVoice(key)}
-              aria-pressed={voice === key}
-              className={`rounded-full border border-border px-6 py-3 text-base ${voice === key ? 'bg-primary text-primary-foreground' : 'bg-background'}`}
+              key={name}
+              type="button"
+              aria-pressed={recipe === name}
+              onClick={() => setRecipe(name)}
+              aria-label={`${name.charAt(0).toUpperCase() + name.slice(1)} recipe`}
             >
-              {key}
+              <span style={{ background: APP_COLOR_PRESETS[name].hex }} />
+              {name.charAt(0).toUpperCase() + name.slice(1)}
             </button>
           ))}
         </div>
-        <div className="oxy-guide-panel mt-6" aria-live="polite">
-          <h3 className="text-xl font-semibold">{example.principle}</h3>
-          <div className="mt-8 grid gap-8 md:grid-cols-2">
-            <div>
-              <p className="text-sm text-muted-foreground">Rewrite</p>
-              <p className="mt-3 text-xl text-muted-foreground">{example.before}</p>
-            </div>
-            <div>
-              <p className="text-sm text-primary-text">Oxy voice</p>
-              <p className="mt-3 text-2xl font-display">{example.after}</p>
-            </div>
+        <label className="brand-select-label">
+          Appearance
+          <select
+            aria-label="Colour studio appearance"
+            value={mode}
+            onChange={(e) => setMode(e.target.value as 'light' | 'dark')}
+          >
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+      </div>
+      <div
+        className="brand-colour-composition"
+        style={recipeStyle(recipe, mode)}
+        data-testid="brand-colour-composition"
+        data-recipe={recipe}
+        data-mode={mode}
+      >
+        <div className="brand-colour-poster">
+          <span className="brand-meta">Oxy / An open invitation</span>
+          <p>
+            There’s
+            <br />
+            room for
+            <br />
+            <em>you.</em>
+          </p>
+          <div className="brand-poster-bottom">
+            <span>
+              Make something
+              <br />
+              that matters.
+            </span>
+            <Mark />
           </div>
-          <p className="mt-8 text-base text-muted-foreground">{example.note}</p>
         </div>
-        <ul className="mt-10 grid gap-5 text-lg md:grid-cols-2">
-          <li>Lead with the useful point. Prefer familiar words and active verbs.</li>
-          <li>Use “you” for the person and “we” when Oxy owns a decision.</li>
-          <li>
-            Explain one benefit with a concrete example. Remove superlatives and vague promises.
-          </li>
-          <li>
-            Use humour sparingly. Errors, privacy and account access need calm, specific language.
-          </li>
-          <li>
-            Distinguish available features, experiments and ambitions. Date time-sensitive claims.
-          </li>
-          <li>
-            Translate the intention naturally. Preserve product names and verify every CTA
-            destination.
-          </li>
-        </ul>
-      </PageSection>
-      <PageSection id="imagery" className="oxy-anchor" spacing="lg">
-        <p className="oxy-eyebrow mb-6">07 / Imagery & product</p>
-        <h2 className="oxy-title">Show what matters.</h2>
-        <div className="oxy-guide-grid mt-10">
-          {[
-            [
-              'Product first',
-              'Show the actual product, at a readable scale. Build demonstrations around one task. Use prepared example data and identify illustrative concepts.',
-            ],
-            [
-              'People and context',
-              'Use situations that explain why the product matters. Choose images with a clear subject and room for the composition to breathe.',
-            ],
-            [
-              'Objects and materials',
-              'Carry the identity into packaging and physical objects through scale, placement, colour and finish. Keep the mark legible on the actual material.',
-            ],
-          ].map(([a, b]) => (
-            <div className="oxy-guide-panel" key={a}>
-              <h3 className="text-2xl font-display">{a}</h3>
-              <p className="mt-4 text-lg leading-relaxed">{b}</p>
-            </div>
-          ))}
-        </div>
-      </PageSection>
-      <PageSection id="social" className="oxy-anchor" tone="surface" spacing="lg">
-        <p className="oxy-eyebrow mb-6">08 / Social communication</p>
-        <h2 className="oxy-title">
-          Give people something
-          <br />
-          worth their time.
-        </h2>
-        <p className="oxy-copy mt-8">
-          A useful detail. A belief made concrete. An honest look at work in progress. Each post
-          should stand on its own and offer a reason to explore further.
-        </p>
-        <div className="oxy-guide-grid mt-10">
-          {social.map(([label, title, note]) => (
-            <div key={label} className="oxy-guide-panel flex min-h-80 flex-col justify-between">
-              <p className="text-sm">{label} / Example</p>
-              <p className="my-8 font-display text-4xl leading-tight">{title}</p>
-              <p className="text-base text-muted-foreground">{note}</p>
-            </div>
-          ))}
-        </div>
-        <p className="oxy-copy mt-8">
-          Keep a recognisable type hierarchy, a deliberate Bloom recipe and consistent logo
-          placement. Caption video, respect safe areas and write useful alternative text. Adapt the
-          crop and pacing to each channel.
-        </p>
-      </PageSection>
-      <PageSection id="resources" className="oxy-anchor" spacing="lg">
-        <p className="oxy-eyebrow mb-6">09 / Resources</p>
-        <h2 className="oxy-title">Build from the same place.</h2>
-        <p className="oxy-copy mt-8">
-          These product marks are the shared assets used by the website's documentation. Preserve
-          the original artwork when applying them.
-        </p>
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-          {Object.entries(BRAND_MARKS).map(([name, url]) => (
-            <a
-              key={name}
-              href={url}
-              download
-              className="oxy-guide-panel flex flex-col items-center gap-6 text-center"
+        <div className="brand-colour-ui">
+          <div className="brand-meta">Same recipe. Different job.</div>
+          <div className="brand-ui-example">
+            <span className="brand-meta">Bloom / Components</span>
+            <h3>Make it yours.</h3>
+            <p>Explore the details that make an interface feel right.</p>
+            <Link
+              to={`/developers/docs/bloom/playground?component=Button&recipe=${recipe}&mode=${mode}`}
             >
-              <img src={url} alt="" className="size-16 object-contain" loading="lazy" />
-              <span className="text-sm">{name} ↓</span>
+              Try this recipe <ArrowUpRight size={20} />
+            </Link>
+            <div className="brand-ui-secondary">Built with Bloom.</div>
+          </div>
+          <div className="brand-role-strip">
+            {['primary', 'secondary', 'tertiary', 'background'].map((role) => (
+              <div
+                key={role}
+                style={{
+                  background: `var(--${role})`,
+                  color: `var(--${role === 'background' ? 'foreground' : `${role}-foreground`})`,
+                }}
+              >
+                <span>{role}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="brand-note-row">
+        <p>
+          Choose a relationship, then compose with it. A campaign can give colour the whole canvas.
+          A working interface reserves stronger colour for actions and emphasis.
+        </p>
+        <Link to="/developers/docs/bloom/color-system">
+          Explore all Bloom recipes <ArrowUpRight size={18} />
+        </Link>
+      </div>
+    </>
+  )
+}
+function TypeStudio() {
+  const [text, setText] = useState('Made for everyone.')
+  const [size, setSize] = useState(96)
+  return (
+    <div className="brand-type-studio">
+      <div className="brand-type-controls">
+        <label>
+          Try a headline
+          <input
+            aria-label="Try a headline"
+            maxLength={65}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+        </label>
+        <label>
+          Type size
+          <input
+            aria-label="Type size"
+            type="range"
+            min="40"
+            max="120"
+            value={size}
+            onChange={(e) => setSize(Number(e.target.value))}
+          />
+        </label>
+      </div>
+      <div
+        className="brand-type-specimen"
+        style={{ '--specimen-size': `${size / 16}rem` } as CSSProperties}
+        aria-live="polite"
+      >
+        {text || 'Made for everyone.'}
+      </div>
+      <div className="brand-type-foot">
+        <span>Aa Bb Cc Dd Ee Ff Gg</span>
+        <span>0123456789?!&</span>
+      </div>
+    </div>
+  )
+}
+function MotionStudio() {
+  const [replay, setReplay] = useState(0)
+  const [open, setOpen] = useState(false)
+  const reduce = useReducedMotion()
+  return (
+    <div className="brand-motion-studio" style={recipeStyle('grove', 'light')}>
+      <div className="brand-motion-stage">
+        <motion.div
+          key={replay}
+          className="brand-moving-mark"
+          initial={reduce ? false : { y: 90, rotate: -25, opacity: 0 }}
+          animate={{ y: 0, rotate: 0, opacity: 1 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <Mark />
+        </motion.div>
+        <button className="brand-text-button" onClick={() => setReplay((r) => r + 1)}>
+          Replay entrance <span aria-hidden="true">↻</span>
+        </button>
+      </div>
+      <div className="brand-motion-example">
+        <span className="brand-meta">Motion that answers you.</span>
+        <button
+          className="brand-disclosure"
+          aria-expanded={open}
+          aria-controls="brand-motion-answer"
+          onClick={() => setOpen((v) => !v)}
+        >
+          What changes when I open this? {open ? <Minus size={28} /> : <Plus size={28} />}
+        </button>
+        <div id="brand-motion-answer" hidden={!open} className="brand-disclosure-answer">
+          The answer stays connected to the question. The control changes state. Nothing else on the
+          page needs to move.
+        </div>
+        <p>
+          Use movement to reveal, connect and respond. Give large scenes time to settle; keep
+          everyday controls immediate.
+        </p>
+        <div className="brand-timing">
+          <span>
+            Feedback
+            <br />
+            <strong>160 ms</strong>
+          </span>
+          <span>
+            Entrance
+            <br />
+            <strong>600–900 ms</strong>
+          </span>
+        </div>
+        <small>
+          Reduced motion keeps the same content and controls, with spatial movement removed.
+        </small>
+      </div>
+    </div>
+  )
+}
+
+export default function BrandPage() {
+  const [voice, setVoice] = useState<keyof typeof voices>('Principles')
+  const headerBottom = useSiteHeaderBottom()
+  const example = voices[voice]
+  return (
+    <PageShell
+      className="brand-book bg-background text-foreground"
+      hideFooterDivider
+      seo={{
+        title: 'The Oxy identity',
+        description:
+          'A visual guide to the Oxy identity. Our principles, colour, typography, imagery, motion and voice, working together.',
+        canonicalPath: '/brand',
+      }}
+    >
+      <header className="brand-cover" style={recipeStyle('orange', 'light')}>
+        <div className="brand-cover-top">
+          <span>The Oxy identity</span>
+          <span>A living guide / 2026</span>
+        </div>
+        <h1 className="brand-cover-title">
+          Technology belongs
+          <br />
+          to people.
+        </h1>
+        <Mark word className="brand-cover-wordmark" />
+        <div className="brand-cover-bottom">
+          <p>
+            How we look.
+            <br />
+            How we speak.
+            <br />
+            What we stand for.
+          </p>
+          <a href="#idea">
+            Explore the identity <ArrowDown size={22} />
+          </a>
+        </div>
+      </header>
+      <nav className="brand-index" aria-label="Brand chapters" style={{ top: headerBottom }}>
+        <span className="brand-index-label">Oxy / Identity</span>
+        <div>
+          {chapters.map(([id, name]) => (
+            <a key={id} href={`#${id}`}>
+              {name}
             </a>
           ))}
         </div>
-        <div className="mt-10 flex flex-wrap gap-8">
-          <Link className="oxy-link" to="/developers/docs/bloom/components">
-            Bloom components
-          </Link>
-          <Link className="oxy-link" to="/developers/docs/bloom/playground">
-            Open playground
-          </Link>
-          <a className="oxy-link" href="https://github.com/OxyHQ/website">
-            Website source
-          </a>
+      </nav>
+      <section id="idea" className="brand-section brand-idea">
+        <Chapter number="01" title="The idea" />
+        <h2>
+          Progress means
+          <br />
+          more when
+          <br />
+          <span>it’s for everyone.</span>
+        </h2>
+        <div className="brand-editorial-row">
+          <p>
+            Oxy is a collection of tools, products and ideas built around people’s ability to
+            choose, create and participate.
+          </p>
+          <div>
+            <p>
+              That belief should be visible in the things we make. In the way a product gives you
+              control. In the way a sentence tells you the truth. In the space we leave for someone
+              else’s ideas.
+            </p>
+            <Link to="/company/charter">
+              Read our charter <ArrowUpRight size={18} />
+            </Link>
+          </div>
         </div>
-      </PageSection>
+        <Rules
+          items={[
+            [
+              'Open by intention',
+              'Explain the decisions. Make room for contribution. Be clear about what is available and what is still being built.',
+            ],
+            [
+              'Human in the details',
+              'Use familiar words, readable type and useful interactions. Show people and their lives with care.',
+            ],
+            [
+              'Distinct, together',
+              'Let each product have character. Connect them through shared craft, clear language and the original Oxy identity.',
+            ],
+          ]}
+        />
+      </section>
+      <section id="identity" className="brand-section">
+        <Chapter number="02" title="Identity" />
+        <div className="brand-section-intro">
+          <h2>A familiar face.</h2>
+          <p>
+            The Oxy symbol carries the identity from an app icon to a whole page. Give it a clear
+            place in the composition.
+          </p>
+        </div>
+        <div className="brand-identity-boards">
+          <div className="brand-symbol-board" style={recipeStyle('cobalt', 'light')}>
+            <Mark />
+            <span>01 / Symbol</span>
+          </div>
+          <div className="brand-wordmark-board" style={recipeStyle('yellow', 'light')}>
+            <Mark word />
+            <span>02 / Wordmark</span>
+          </div>
+        </div>
+        <Rules
+          items={[
+            [
+              'Keep the original.',
+              'Use the supplied artwork. Preserve the outline, letterforms and proportions. Keep the complete mark visible when it identifies Oxy.',
+            ],
+            [
+              'Give it room.',
+              'Keep surrounding type and imagery clear of the silhouette. Check the mark at the size people will actually see, especially in avatars and navigation.',
+            ],
+            [
+              'Let the family be a family.',
+              'Homiio, Mention and the other products keep their own marks. Shared composition, colour recipes and language make the connection to Oxy.',
+            ],
+          ]}
+        />
+        <div className="brand-family">
+          {Object.entries(BRAND_MARKS).map(([name, src]) => (
+            <div key={name}>
+              <img src={src} alt="" loading="lazy" />
+              <span>{name}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+      <section id="colour" className="brand-section">
+        <Chapter number="03" title="Colour" />
+        <div className="brand-section-intro">
+          <h2>
+            Different colours.
+            <br />
+            Same character.
+          </h2>
+          <p>
+            Bloom gives us a shared colour language. The composition gives each story its own
+            expression.
+          </p>
+        </div>
+        <ColourStudio />
+      </section>
+      <section id="type" className="brand-section">
+        <Chapter number="04" title="Type & icons" />
+        <div className="brand-section-intro">
+          <h2>
+            Make the words
+            <br />
+            worth looking at.
+          </h2>
+          <p>
+            Set a clear hierarchy. Use scale to give an idea presence, then give the explanation
+            space to be read.
+          </p>
+        </div>
+        <TypeStudio />
+        <Rules
+          items={[
+            [
+              'Editorial type',
+              'Use the shared sans serif for clear, open headlines and prose. Expressive display type belongs to deliberate product scenes, such as Homiio’s existing landing.',
+            ],
+            [
+              'Readable rhythm',
+              'Write short headings. Break lines by meaning. Keep paragraphs comfortably narrow and body text at least 16 px. Small screens deserve their own composition.',
+            ],
+            [
+              'Icons with a job',
+              'Use the shared Phosphor family consistently. Match weight and optical size. Label unfamiliar actions and reserve product marks for identity.',
+            ],
+          ]}
+        />
+        <div className="brand-icon-specimen" aria-label="Interface icon examples">
+          <ArrowUpRight />
+          <ArrowDown />
+          <Plus />
+          <Minus />
+        </div>
+      </section>
+      <section id="imagery" className="brand-section">
+        <Chapter number="05" title="Imagery" />
+        <div className="brand-section-intro">
+          <h2>
+            Show what
+            <br />
+            it means.
+          </h2>
+          <p>
+            Every image has a purpose: bring an idea to life, put a product in context or make a
+            useful detail easier to understand.
+          </p>
+        </div>
+        <figure className="brand-campaign-image">
+          <img
+            src="/images/landing/commons-night.webp"
+            alt="An Oxy illustration of homes at night with illuminated symbols projected into the sky"
+            loading="lazy"
+          />
+          <figcaption>
+            <span>Ideas / An existing Oxy campaign illustration</span>
+            <span>A recognisable world, beyond the interface.</span>
+          </figcaption>
+        </figure>
+        <div className="brand-image-pair">
+          <figure>
+            <img
+              src={homePhoto}
+              alt="A bright living room with a sofa, window and natural light"
+              loading="lazy"
+            />
+            <figcaption>
+              <strong>Life around the product.</strong>
+              <p>
+                For Homiio, show a place someone could call home. Use images that help people
+                understand the space.
+              </p>
+            </figcaption>
+          </figure>
+          <figure className="brand-product-figure" style={recipeStyle('cobalt', 'light')}>
+            <div>
+              <img
+                src="/images/screenshots/mention-app.png"
+                alt="Mention product interface"
+                loading="lazy"
+              />
+            </div>
+            <figcaption>
+              <strong>The product, in focus.</strong>
+              <p>
+                Show the actual interface. Crop for the feature being discussed and keep its text
+                readable.
+              </p>
+            </figcaption>
+          </figure>
+        </div>
+        <p className="brand-image-note">
+          Photography documents real situations. Illustration explores ideas. Product imagery shows
+          what the product does. Label concept imagery and examples when they could be mistaken for
+          a real person, place or available feature.
+        </p>
+      </section>
+      <section id="motion" className="brand-section">
+        <Chapter number="06" title="Motion" />
+        <div className="brand-section-intro">
+          <h2>
+            Movement
+            <br />
+            with meaning.
+          </h2>
+          <p>
+            A landing page can unfold as a story. A control should respond to your hand. Both should
+            feel deliberate.
+          </p>
+        </div>
+        <MotionStudio />
+      </section>
+      <section id="voice" className="brand-section">
+        <Chapter number="07" title="Voice" />
+        <h2>
+          Sound like someone
+          <br />
+          you can talk to.
+        </h2>
+        <div className="brand-voice-tabs" role="group" aria-label="Voice examples">
+          {Object.keys(voices).map((name) => (
+            <button
+              key={name}
+              aria-pressed={voice === name}
+              onClick={() => setVoice(name as keyof typeof voices)}
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+        <div className="brand-voice-spread">
+          <div aria-live="polite">
+            <span className="brand-meta">Oxy / {voice}</span>
+            <h3>{example.headline}</h3>
+            <p>{example.body}</p>
+          </div>
+          <aside>
+            <h4>Why it sounds like Oxy</h4>
+            <p>{example.rule}</p>
+            <h4>Leave this behind</h4>
+            <p className="brand-voice-avoid">{example.avoid}</p>
+          </aside>
+        </div>
+        <Rules
+          items={[
+            [
+              'Say something specific.',
+              'Name the change, the choice or the consequence. Explain ethical principles through decisions people can inspect.',
+            ],
+            [
+              'Keep your feet on the ground.',
+              'Be ambitious about the work and precise about what it can do today. Avoid superlatives, vague promises and invented numbers.',
+            ],
+            [
+              'Meet the moment.',
+              'Warmth in an invitation. Clarity in a release. Calm in support. Translate the meaning and tone, not just the words.',
+            ],
+          ]}
+        />
+      </section>
+      <section id="applications" className="brand-section">
+        <Chapter number="08" title="In the world" />
+        <div className="brand-section-intro">
+          <h2>
+            One identity.
+            <br />A lot to say.
+          </h2>
+          <p>
+            Bring the same craft to a launch, a post and a product detail. These are composition
+            examples for Oxy’s channels.
+          </p>
+        </div>
+        <div className="brand-social-grid">
+          <article className="brand-social" style={recipeStyle('yellow', 'light')}>
+            <span>Oxy / A principle</span>
+            <h3>
+              Your
+              <br />
+              attention
+              <br />
+              belongs
+              <br />
+              to you.
+            </h3>
+            <Mark />
+          </article>
+          <article className="brand-social" style={recipeStyle('cobalt', 'light')}>
+            <span>Bloom / An invitation</span>
+            <h3>
+              Ideas take
+              <br />
+              shape.
+            </h3>
+            <div className="brand-social-marks">
+              <Mark />
+              <Mark />
+            </div>
+            <span>Explore the components.</span>
+          </article>
+          <article className="brand-social brand-social-story">
+            <img src={homePhoto} alt="A sunlit Homiio living room" loading="lazy" />
+            <div style={recipeStyle('orange', 'light')}>
+              <span>Homiio / A place to start</span>
+              <h3>
+                A little room
+                <br />
+                for your life.
+              </h3>
+            </div>
+          </article>
+        </div>
+        <div className="brand-note-row">
+          <p>
+            Start a conversation with a belief, demonstrate one useful thing, or share work in
+            progress. Keep the subject visible at phone size. Give each post a reason to exist.
+          </p>
+          <span className="brand-meta">Editorial examples / Not scheduled posts</span>
+        </div>
+      </section>
+      <section id="resources" className="brand-section brand-resources">
+        <Chapter number="09" title="Resources" />
+        <h2>
+          Make it
+          <br />
+          <em>Oxy.</em>
+        </h2>
+        <div className="brand-resource-links">
+          <Link to="/developers/docs/bloom/components">
+            Bloom components <ArrowUpRight />
+          </Link>
+          <Link to="/developers/docs/bloom/playground">
+            Interactive playground <ArrowUpRight />
+          </Link>
+          <Link to="/company/charter">
+            Our charter <ArrowUpRight />
+          </Link>
+        </div>
+        <details>
+          <summary>
+            Product marks <Plus size={22} />
+          </summary>
+          <div className="brand-download-list">
+            {Object.entries(BRAND_MARKS).map(([name, src]) => (
+              <a key={name} href={src} download>
+                <img src={src} alt="" loading="lazy" />
+                <span>{name}</span>
+                <span>Download</span>
+              </a>
+            ))}
+          </div>
+        </details>
+        <p className="brand-resource-note">
+          Use the original assets. Check small sizes, contrast and clear space in the actual
+          composition. This guide evolves alongside the products.
+        </p>
+      </section>
     </PageShell>
   )
 }

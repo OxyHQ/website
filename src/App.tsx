@@ -530,7 +530,7 @@ export default function App() {
   // resolve route-scoped rendering modes before it paints its descendants.
   return (
     <BrowserRouter>
-      <MotionConfig reducedMotion="user" transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}><AppProviders /></MotionConfig>
+      <MotionConfig reducedMotion="user"><AppProviders /></MotionConfig>
     </BrowserRouter>
   )
 }
