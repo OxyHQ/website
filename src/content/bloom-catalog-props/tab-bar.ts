@@ -14,7 +14,7 @@ export const props: BloomSurfaceProps = {
         { name: 'theme', type: 'Partial<TabBarTheme>', optional: true, description: "Partial override of the theme resolved from Bloom's color tokens." },
         { name: 'haptics', type: 'boolean', optional: true, description: "Haptic tick as the scrub crosses tab boundaries. Defaults to `true`. Runs through Bloom's `useHaptics`, so it is already a no-op on web and when the optional `expo-haptics` peer is absent." },
         { name: 'blur', type: 'boolean | { intensity?: number; }', optional: true, description: 'The progressive blur rising from the bottom edge of the screen behind the pill. Defaults to `true`; `{ intensity }` tunes its strength.' },
-        { name: 'maxWidth', type: 'number', optional: true, description: 'Maximum width of the pill, in points. No default — omit it and the bar spans the window exactly as it always has.' },
+        { name: 'maxWidth', type: 'number', optional: true, description: 'Maximum width of the pill, in points. By default the pill already grows with its tab count, up to a comfortable per-item width and the viewport.' },
       ],
       inheritsFrom: ['ViewProps'],
     },
