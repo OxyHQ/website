@@ -16,6 +16,7 @@ export const props: BloomSurfaceProps = {
         { name: 'verified', type: 'boolean', optional: true, description: 'Whether to show the verified badge next to the display name.' },
         { name: 'onPressProfile', type: '() => void', optional: true, description: 'Makes the identity area (avatar + name + handle) pressable.' },
         { name: 'action', type: 'ReactNode', optional: true, description: "Slot for a consumer-injected action — typically the app's SDK FollowButton. Bloom does NOT implement follow logic; it only renders the card." },
+        { name: 'badge', type: 'ReactNode', optional: true, description: 'Marker slot in the handle row, rendered after `@username` — an account-kind or federation marker, the kind of quiet glyph that says what this account IS. Renders even when `username` is absent, because it describes the account rather than the handle. A long handle truncates to make room; the marker never shrinks.' },
         { name: 'footer', type: 'ReactNode', optional: true, description: 'Trailing content region, rendered after the stats row and spanning the full inner width — the slot for whatever this app knows about a person that Bloom does not (a contribution graph, a shared-followers strip, a mutual-friends line). Bloom adds the vertical rhythm and nothing else: no label, no divider, no clip.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Container style override.' },
         { name: 'testID', type: 'string', optional: true },
