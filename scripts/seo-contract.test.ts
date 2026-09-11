@@ -1,10 +1,11 @@
 import { describe, expect, test } from 'bun:test'
 import { canonicalTo, canonicalHref } from '../src/lib/canonicalPath'
 import { hasLocalizedVariants } from '../src/lib/localizedRoute'
-import { buildRedirectsFile, SPA_FALLBACK_PATTERNS } from './redirects'
+import { buildRedirectsFile } from './redirects'
+import { isSpaFallbackPath } from '../src/lib/spaFallback'
 import { buildSitemapXml } from './sitemap'
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '../src/lib/i18n/types'
-import { rewriteSiblingDocLinks } from './docs-links'
+import { rewriteSiblingDocLinks, rewriteStaleDocsVersionLinks } from './docs-links'
 
 describe('internal links point at the canonical URL', () => {
   test('adds the trailing slash Cloudflare would 308 to', () => {
@@ -95,23 +96,35 @@ describe('_redirects', () => {
     expect(contents).not.toContain('/index.html')
   })
 
-  test('answers live-data and signed-in surfaces with the neutral shell', () => {
-    for (const pattern of SPA_FALLBACK_PATTERNS) {
-      expect(rules).toContainEqual([pattern, '/app-shell.html', '200'])
+  test('contains no rewrite rule that could shadow a document', () => {
+    // A `200` rewrite is matched BEFORE the static asset, so any such rule over
+    // a prefix that has documents hides them. `/newsroom/*  /app-shell.html  200`
+    // shadowed all fifteen prerendered Newsroom posts in production, and
+    // `/developers/docs/*` shadowed 2,087. The SPA fallback lives in the edge
+    // middleware now; nothing here may rewrite to the shell.
+    expect(rules.filter(([, to]) => to === '/app-shell.html')).toHaveLength(0)
+    const rewrites = rules.filter(([, , status]) => status === '200')
+    expect(rewrites).toHaveLength(0)
+  })
+
+  test('the only splat that can reach a document is the catch-all Pages skips', () => {
+    const splats = rules.filter(([from]) => from?.endsWith('/*'))
+    for (const [from, , status] of splats) {
+      // Every other splat covers a prefix this build writes no documents under.
+      expect(from === '/*' || from?.startsWith('/assets') || from?.startsWith('/images') ||
+        from?.startsWith('/fonts') || from?.startsWith('/models') || /^\/[a-z]{2}\//.test(from ?? '')).toBe(true)
+      expect(status === '404' || status === '301').toBe(true)
     }
-    expect(rules).toContainEqual(['/es/newsroom/*', '/app-shell.html', '200'])
   })
 
   test('covers the trailing-slash form of every literal rule', () => {
-    // Every link on the site now points at `/dashboard/`, and Cloudflare matches
-    // a source literally — a rule written only as `/dashboard` would let a
-    // reload fall through to the catch-all.
-    expect(rules).toContainEqual(['/dashboard', '/app-shell.html', '200'])
-    expect(rules).toContainEqual(['/dashboard/', '/app-shell.html', '200'])
+    // Every link on the site now points at `/technologies/`, and Cloudflare
+    // matches a source literally — a rule written only as `/technologies` would
+    // let that form fall through to the catch-all.
+    expect(rules).toContainEqual(['/technologies', '/apps/', '301'])
     expect(rules).toContainEqual(['/technologies/', '/apps/', '301'])
     // A splat already matches the slash, so it is not doubled.
-    expect(rules.filter(([from]) => from === '/u/*')).toHaveLength(1)
-    expect(rules).not.toContainEqual(['/u/*/', '/app-shell.html', '200'])
+    expect(rules.filter(([from]) => from === '/en/*')).toHaveLength(1)
   })
 
   test('collapses locale prefixes this build wrote no documents for', () => {
@@ -160,14 +173,31 @@ describe('_redirects', () => {
     expect(dynamic.length).toBeLessThanOrEqual(100)
   })
 
+  test('the real locale list stays well inside the ceiling', () => {
+    const everyLocaleMirrored = buildRedirectsFile({
+      supportedLocales: SUPPORTED_LOCALES,
+      defaultLocale: DEFAULT_LOCALE,
+      mirroredLocales: SUPPORTED_LOCALES.filter((code) => code !== DEFAULT_LOCALE),
+      localeReadinessKnown: true,
+    })
+    const dynamic = everyLocaleMirrored
+      .split('\n')
+      .filter((line) => line.trim() && !line.startsWith('#'))
+      .map((line) => line.trim().split(/\s+/)[0] ?? '')
+      .filter((from) => from.includes('*') || from.includes(':'))
+    expect(dynamic.length).toBeLessThanOrEqual(100)
+  })
+
   test('refuses to emit a file Cloudflare would reject', () => {
-    // Every locale mirrored at once. Each adds a dynamic rule per fallback
-    // family, and the deploy — not the build — is what would otherwise fail.
+    // Each mirrored locale contributes a splat rule, so enough of them would
+    // push the file past a limit the DEPLOY enforces, not the build. Failing
+    // here names the cause instead.
+    const many = Array.from({ length: 150 }, (_, i) => `l${i}`)
     expect(() =>
       buildRedirectsFile({
-        supportedLocales: SUPPORTED_LOCALES,
-        defaultLocale: DEFAULT_LOCALE,
-        mirroredLocales: SUPPORTED_LOCALES.filter((code) => code !== DEFAULT_LOCALE),
+        supportedLocales: ['en', ...many],
+        defaultLocale: 'en',
+        mirroredLocales: many,
         localeReadinessKnown: true,
       }),
     ).toThrow(/exceeds Cloudflare/)
@@ -195,5 +225,80 @@ describe('synced docs links', () => {
     expect(rewriteSiblingDocLinks('[Pricing](/pricing)', slugs, base)).toBe('[Pricing](/pricing)')
     expect(rewriteSiblingDocLinks('[Docs](/developers/docs/)', slugs, base)).toBe('[Docs](/developers/docs/)')
     expect(rewriteSiblingDocLinks('[Up](../architecture)', slugs, base)).toBe('[Up](../architecture)')
+  })
+})
+
+describe('SPA fallback (edge middleware)', () => {
+  test('claims the surfaces that have no build-time document', () => {
+    for (const path of [
+      '/dashboard', '/dashboard/', '/settings/', '/admin', '/admin/categories',
+      '/u/nate/', '/u/nate/followers', '/referrals/dashboard/',
+      '/newsroom/a-post-published-after-the-deploy/',
+      '/company/careers/a-new-opening/', '/apps/a-new-product/',
+      '/features/OxyHQ/oxy/999/',
+      '/developers/docs/bloom/playground/', '/developers/docs/bloom/1.0.0/color-system/',
+      '/developers/docs/bloom/_demo/button/', '/developers/docs/api/v1/',
+      '/faircoin/redeem/', '/buy/', '/wallet',
+      '/es/u/nate/', '/es/newsroom/a-post/',
+    ]) {
+      expect({ path, claimed: isSpaFallbackPath(path) }).toEqual({ path, claimed: true })
+    }
+  })
+
+  test('leaves everything else to the 404', () => {
+    for (const path of [
+      '/', '/pricing/', '/definitely-not-a-page/', '/newsroom/', '/apps/',
+      '/developers/docs/bloom/1.0.0/', '/help/auth/2fa-setup/', '/legal/privacy/',
+      '/newsroom/a/b/', '/app-shell',
+    ]) {
+      expect({ path, claimed: isSpaFallbackPath(path) }).toEqual({ path, claimed: false })
+    }
+  })
+})
+
+describe('synced docs links that name a version this site does not serve', () => {
+  const slugs = new Set(['label', 'input-group', 'api/variables/Z_INDEX'])
+  const base = '/developers/docs/bloom/1.0.0'
+
+  test('repoints an upstream branch name onto the synced version', () => {
+    expect(
+      rewriteStaleDocsVersionLinks('[Label](/developers/docs/bloom/main/label)', slugs, 'bloom', base),
+    ).toBe('[Label](/developers/docs/bloom/1.0.0/label)')
+    expect(
+      rewriteStaleDocsVersionLinks('[G](/developers/docs/bloom/main/input-group#api)', slugs, 'bloom', base),
+    ).toBe('[G](/developers/docs/bloom/1.0.0/input-group#api)')
+  })
+
+  test('leaves a link alone when dropping the segment does not name a page', () => {
+    const gone = '[X](/developers/docs/bloom/main/not-a-component)'
+    expect(rewriteStaleDocsVersionLinks(gone, slugs, 'bloom', base)).toBe(gone)
+    const other = '[Y](/developers/docs/core/main/label)'
+    expect(rewriteStaleDocsVersionLinks(other, slugs, 'bloom', base)).toBe(other)
+  })
+
+  test('a link already on the right version is normalised, not mangled', () => {
+    expect(
+      rewriteStaleDocsVersionLinks('[Z](/developers/docs/bloom/api/variables/Z_INDEX)', slugs, 'bloom', base),
+    ).toBe('[Z](/developers/docs/bloom/1.0.0/api/variables/Z_INDEX)')
+  })
+
+  test('recovers a link that dropped the package segment', () => {
+    // Allo writes `](/developers/docs/matrix/data-model)` for a page this build
+    // serves under `allo/`.
+    const alloSlugs = new Set(['matrix/data-model'])
+    expect(
+      rewriteStaleDocsVersionLinks(
+        '[Model](/developers/docs/matrix/data-model)',
+        alloSlugs,
+        'allo',
+        '/developers/docs/allo',
+      ),
+    ).toBe('[Model](/developers/docs/allo/matrix/data-model)')
+  })
+
+  test('never captures a genuine cross-package link', () => {
+    // `core` is another package, and nothing in this slug set claims it.
+    const untouched = '[Core](/developers/docs/core/main/api)'
+    expect(rewriteStaleDocsVersionLinks(untouched, slugs, 'bloom', base)).toBe(untouched)
   })
 })

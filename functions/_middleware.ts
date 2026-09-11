@@ -1,6 +1,7 @@
 /// <reference types="@cloudflare/workers-types" />
 import { brandForHost, resolveSeoOrDefault, type SeoData } from '../src/lib/seo'
 import { hasPrerenderedNewsroomPost, matchNewsroomPostPath } from './newsroom-status'
+import { isSpaFallbackPath } from '../src/lib/spaFallback'
 
 /**
  * Cloudflare Pages edge middleware: per-host SEO at request time.
@@ -81,10 +82,27 @@ const onRequest: PagesFunction<Env> = async (context) => {
   let response = await next()
   if (!(response.headers.get('content-type') ?? '').includes('text/html')) return response
 
-  // Pages' SPA fallback returns index.html with 200 for any unknown path. For
-  // Newsroom detail URLs, preserve valid prerendered files and convert only an
-  // API-confirmed missing slug to a real HTTP 404. Backend failures remain 200
-  // rather than incorrectly de-indexing a live article during an outage.
+  // `_redirects` ends in `/*  /404.html  404`, so an unknown path arrives here
+  // as a 404. Some of those paths are real surfaces with no build-time document:
+  // a signed-in dashboard, a profile, a Newsroom post published after the
+  // deploy. Serving them from `_redirects` instead is what broke production once
+  // already — a `200` rewrite rule is matched BEFORE the static asset, so a
+  // `/newsroom/*` rule shadowed every prerendered Newsroom document. Upgrading
+  // the 404 here cannot: by the time this runs, Cloudflare has already looked
+  // for a document and not found one.
+  if (response.status === 404 && isSpaFallbackPath(url.pathname)) {
+    const shell = await next(new Request(new URL('/app-shell', url).toString(), request))
+    if (shell.status === 200) {
+      const headers = new Headers(shell.headers)
+      headers.set('Cache-Control', 'public, max-age=0, must-revalidate')
+      response = new Response(shell.body, { status: 200, statusText: 'OK', headers })
+    }
+  }
+
+  // A Newsroom detail URL that reached the shell above has no document. That is
+  // normal for a post published since the deploy, so ask the API which it is and
+  // convert only an API-confirmed missing slug to a real 404. A backend failure
+  // stays 200 rather than de-indexing a live article during an outage.
   const newsroomPath = matchNewsroomPostPath(url.pathname)
   if (newsroomPath && response.status === 200) {
     const html = await response.clone().text()

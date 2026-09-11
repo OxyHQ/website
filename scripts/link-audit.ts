@@ -16,10 +16,15 @@
  * A link that answers 301/308 is a finding, not just a 404: a redirect
  * advertised as this site's own idea of where a page lives is what put 725
  * URLs in Search Console under "Page with redirect".
+ *
+ * The edge middleware's fallback counts as resolving — those surfaces have no
+ * document by design, and `scripts/routing-contract.test.ts` is what checks the
+ * list itself stays honest.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import path from 'node:path'
 import { canonicalTo } from '../src/lib/canonicalPath'
+import { isSpaFallbackPath } from '../src/lib/spaFallback'
 
 const ROOT = path.resolve(import.meta.dir, '..')
 const DIST = path.join(ROOT, 'dist')
@@ -69,9 +74,15 @@ function resolve(pathname: string, rules: readonly Rule[]): Resolution {
     return pathname.endsWith('/') ? { status: 200 } : { status: 308, detail: `${pathname}/` }
   }
   for (const rule of rules) {
-    if (ruleMatches(rule.from, pathname)) return { status: rule.status, detail: rule.to }
+    if (ruleMatches(rule.from, pathname)) {
+      // `functions/_middleware.ts` upgrades the catch-all 404 to the app shell
+      // for the surfaces the SPA owns. Those resolve; they just do not have a
+      // document.
+      if (rule.status === 404 && isSpaFallbackPath(pathname)) return { status: 200 }
+      return { status: rule.status, detail: rule.to }
+    }
   }
-  return { status: 404 }
+  return isSpaFallbackPath(pathname) ? { status: 200 } : { status: 404 }
 }
 
 function walk(dir: string, match: (file: string) => boolean): string[] {

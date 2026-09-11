@@ -3,7 +3,7 @@
  * The build now answers an unknown path with a real 404 instead of the home
  * page (see scripts/redirects.ts). That is only safe while every route the app
  * declares still resolves — a route family that is neither prerendered nor
- * listed in `SPA_FALLBACK_PATTERNS` would 404 in production while working
+ * matched by `isSpaFallbackPath` would 404 in production while working
  * perfectly in `bun run dev`, and nothing else in the build would notice.
  *
  * So this reads the route table out of `src/App.tsx`, the documents out of
@@ -15,6 +15,7 @@
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import path from 'node:path'
+import { isSpaFallbackPath } from '../src/lib/spaFallback'
 
 const ROOT = path.resolve(import.meta.dir, '..')
 const DIST = path.join(ROOT, 'dist')
@@ -123,7 +124,10 @@ function main(): void {
   const resolves = (pathname: string): boolean => {
     const bare = pathname.replace(/\/+$/, '') || '/'
     if (documents.has(bare)) return true
-    return reachable.some((rule) => ruleMatches(rule, pathname))
+    if (reachable.some((rule) => ruleMatches(rule, pathname))) return true
+    // The catch-all 404 is where the edge middleware picks the request up and
+    // serves the shell. Coverage there counts as reachable.
+    return isSpaFallbackPath(pathname)
   }
 
   const unreachable: string[] = []
@@ -147,14 +151,16 @@ function main(): void {
     throw new Error(
       `[routing-contract] ${unreachable.length} declared route(s) would answer 404 in production:\n` +
         unreachable.map((route) => `  ${route}`).join('\n') +
-        '\n\nEither prerender them, or add the family to SPA_FALLBACK_PATTERNS in scripts/redirects.ts.',
+        '\n\nEither prerender them, or add the family to SPA_FALLBACK_PATTERNS in src/lib/spaFallback.ts.',
     )
   }
 
   // The other half of the contract: a path the app does not route must NOT be
   // absorbed by a fallback rule, or the 404 is decorative.
   const mustNotMatch = ['/definitely-not-a-page', '/pricing-old', '/newsroom-old/thing']
-  const absorbed = mustNotMatch.filter((p) => reachable.some((rule) => ruleMatches(rule, p)))
+  const absorbed = mustNotMatch.filter(
+    (p) => reachable.some((rule) => ruleMatches(rule, p)) || isSpaFallbackPath(p),
+  )
   if (absorbed.length > 0) {
     throw new Error(`[routing-contract] fallback rules swallow unknown paths: ${absorbed.join(', ')}`)
   }

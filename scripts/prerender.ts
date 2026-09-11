@@ -800,6 +800,26 @@ async function enumerateDocsRoutes(): Promise<RouteEntry[]> {
       },
     })
 
+    // The unversioned landing, for a versioned package, is a real route
+    // (`developers/docs/:package`) that the SPA redirects to the latest
+    // version — and synced docs link to it across packages
+    // (`](/developers/docs/core)` from the services tree). Without a document
+    // those links 404 now that `_redirects` no longer rewrites the docs tree.
+    // It canonicalises to the versioned landing, so the sitemap filter drops
+    // it and it competes with nothing.
+    if (versioned) {
+      const unversioned = `/developers/docs/${pkg.shortName}`
+      out.set(unversioned, {
+        url: unversioned,
+        seo: {
+          title: `${pkg.displayName}, Oxy Docs`,
+          description:
+            pkg.description ?? `Documentation for ${pkg.displayName}, part of the Oxy ecosystem.`,
+          canonicalPath: landingUrl,
+        },
+      })
+    }
+
     for (const version of pkg.versions) {
       for (const page of version.pages as DocsPageMeta[]) {
         // Resolve the URL for this (package, version, slug) tuple.
@@ -1680,7 +1700,11 @@ async function writeNewsroomFeed(routes: readonly RouteEntry[]): Promise<void> {
  * no canonical, no `og:url`, a neutral title. It backs the surfaces whose
  * document legitimately cannot exist at build time — a Newsroom post published
  * an hour after the deploy, a job opening, a feature request, a signed-in
- * dashboard. React mounts and `<SEO>` writes the real meta.
+ * dashboard. React mounts and `<SEO>` writes the real meta. `_redirects` does
+ * NOT point at it: a rewrite rule there is matched before the static asset, so
+ * a `/newsroom/*` rule shadowed every prerendered Newsroom document. It is
+ * served by `functions/_middleware.ts`, which only sees requests that already
+ * failed to find one.
  *
  * Neither carries a static `<meta name="robots">`. Helmet only manages tags it
  * emits itself, so a `noindex` baked into the shell would survive React's

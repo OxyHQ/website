@@ -26,3 +26,52 @@ export function rewriteSiblingDocLinks(
     },
   );
 }
+
+/**
+ * Repoint a link that already aims at this package's docs tree but names a
+ * version this site does not serve.
+ *
+ * The Bloom repo writes `[Label](/developers/docs/bloom/main/label)` — `main`
+ * is its own branch, while the synced tree here is `1.0.0`. Forty-four of those
+ * links shipped, and the `/developers/docs/*` rewrite in `_redirects` hid every
+ * one behind a 200 until it was removed.
+ *
+ * Conservative by construction: the segment is only dropped when what remains
+ * is a real page of this package. A link to a slug that genuinely does not
+ * exist is left alone to be reported, not silently pointed somewhere plausible.
+ */
+export function rewriteStaleDocsVersionLinks(
+  source: string,
+  slugs: ReadonlySet<string>,
+  shortName: string,
+  baseUrl: string,
+): string {
+  const pattern = new RegExp(
+    `(\\]\\()\\/developers\\/docs\\/${shortName}\\/([^)\\s#]+)(#[^)\\s]*)?\\)`,
+    'g',
+  );
+  const withinPackage = source.replace(
+    pattern,
+    (match, open: string, rest: string, anchor: string | undefined) => {
+      const target = rest.replace(/\/+$/, '');
+      if (slugs.has(target)) return `${open}${baseUrl}/${target}${anchor ?? ''})`;
+      const withoutFirstSegment = target.split('/').slice(1).join('/');
+      if (!withoutFirstSegment || !slugs.has(withoutFirstSegment)) return match;
+      return `${open}${baseUrl}/${withoutFirstSegment}${anchor ?? ''})`;
+    },
+  );
+
+  // A link that drops the package segment entirely: Allo's docs write
+  // `](/developers/docs/matrix/data-model)` for a page this build serves at
+  // `/developers/docs/allo/matrix/data-model`. Only rewritten when the whole
+  // remainder is a page of THIS package, so a genuine cross-package link is
+  // never captured by it.
+  return withinPackage.replace(
+    /(\]\()\/developers\/docs\/([^)\s#]+)(#[^)\s]*)?\)/g,
+    (match, open: string, rest: string, anchor: string | undefined) => {
+      const target = rest.replace(/\/+$/, '');
+      if (!slugs.has(target)) return match;
+      return `${open}${baseUrl}/${target}${anchor ?? ''})`;
+    },
+  );
+}

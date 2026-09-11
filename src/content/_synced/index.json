@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-10T10:57:05.035Z",
+  "generatedAt": "2026-09-11T03:42:46.153Z",
   "packages": [
     {
       "package": "@oxy.so/bloom",
@@ -6610,7 +6610,7 @@
             {
               "slug": "api/variables/Slider",
               "title": "Slider",
-              "file": "bloom/1.0.0/api/variables/Slider.md",
+              "file": "bloom/1.0.0/api/variables/Slider.mdx",
               "order": 10000,
               "section": "api"
             },
@@ -8197,6 +8197,13 @@
               "section": "api"
             },
             {
+              "slug": "api/functions/isSelectableAccountCategoryId",
+              "title": "isSelectableAccountCategoryId()",
+              "file": "core/main/api/functions/isSelectableAccountCategoryId.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/functions/isServerError",
               "title": "isServerError()",
               "file": "core/main/api/functions/isServerError.md",
@@ -8312,6 +8319,13 @@
               "slug": "api/functions/isWebBrowser",
               "title": "isWebBrowser()",
               "file": "core/main/api/functions/isWebBrowser.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/functions/kindAcceptsAccountCategories",
+              "title": "kindAcceptsAccountCategories()",
+              "file": "core/main/api/functions/kindAcceptsAccountCategories.md",
               "order": 10000,
               "section": "api"
             },
@@ -8736,6 +8750,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/AccountCapabilityPolicy",
+              "title": "AccountCapabilityPolicy",
+              "file": "core/main/api/interfaces/AccountCapabilityPolicy.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/AccountDelegationAccess",
               "title": "AccountDelegationAccess",
               "file": "core/main/api/interfaces/AccountDelegationAccess.md",
@@ -9002,6 +9023,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/AvailableCapabilityCatalog",
+              "title": "AvailableCapabilityCatalog",
+              "file": "core/main/api/interfaces/AvailableCapabilityCatalog.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/BackupMaterial",
               "title": "BackupMaterial",
               "file": "core/main/api/interfaces/BackupMaterial.md",
@@ -9061,6 +9089,13 @@
               "slug": "api/interfaces/BulkUnfollowResult",
               "title": "BulkUnfollowResult",
               "file": "core/main/api/interfaces/BulkUnfollowResult.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/CapabilityExecutionAuthorization",
+              "title": "CapabilityExecutionAuthorization",
+              "file": "core/main/api/interfaces/CapabilityExecutionAuthorization.md",
               "order": 10000,
               "section": "api"
             },
@@ -9198,6 +9233,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/ConnectedMcpClient",
+              "title": "ConnectedMcpClient",
+              "file": "core/main/api/interfaces/ConnectedMcpClient.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/ContactDiscoveryMatch",
               "title": "ContactDiscoveryMatch",
               "file": "core/main/api/interfaces/ContactDiscoveryMatch.md",
@@ -9236,6 +9278,13 @@
               "slug": "api/interfaces/CreateApplicationInput",
               "title": "CreateApplicationInput",
               "file": "core/main/api/interfaces/CreateApplicationInput.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/CreateDelegationGrantInput",
+              "title": "CreateDelegationGrantInput",
+              "file": "core/main/api/interfaces/CreateDelegationGrantInput.md",
               "order": 10000,
               "section": "api"
             },
@@ -9772,6 +9821,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/PutAccountCapabilityPolicyInput",
+              "title": "PutAccountCapabilityPolicyInput",
+              "file": "core/main/api/interfaces/PutAccountCapabilityPolicyInput.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/QuickAccount",
               "title": "QuickAccount",
               "file": "core/main/api/interfaces/QuickAccount.md",
@@ -10297,6 +10353,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/AccountCategoryId",
+              "title": "AccountCategoryId",
+              "file": "core/main/api/types/AccountCategoryId.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/AccountDelegationNode",
               "title": "AccountDelegationNode",
               "file": "core/main/api/types/AccountDelegationNode.md",
@@ -10461,6 +10524,20 @@
               "slug": "api/types/CommonsSignInPurpose",
               "title": "CommonsSignInPurpose",
               "file": "core/main/api/types/CommonsSignInPurpose.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/DelegationCatalogBinding",
+              "title": "DelegationCatalogBinding",
+              "file": "core/main/api/types/DelegationCatalogBinding.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/DelegationGrantView",
+              "title": "DelegationGrantView",
+              "file": "core/main/api/types/DelegationGrantView.md",
               "order": 10000,
               "section": "api"
             },
@@ -10703,6 +10780,13 @@
               "section": "api"
             },
             {
+              "slug": "api/types/UpdateDelegationGrantInput",
+              "title": "UpdateDelegationGrantInput",
+              "file": "core/main/api/types/UpdateDelegationGrantInput.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/types/UserNodeController",
               "title": "UserNodeController",
               "file": "core/main/api/types/UserNodeController.md",
@@ -10720,6 +10804,13 @@
               "slug": "api/types/UserNodeMode",
               "title": "UserNodeMode",
               "file": "core/main/api/types/UserNodeMode.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/ACCOUNT_CATEGORY_IDS",
+              "title": "ACCOUNT\\_CATEGORY\\_IDS",
+              "file": "core/main/api/variables/ACCOUNT_CATEGORY_IDS.md",
               "order": 10000,
               "section": "api"
             },
@@ -10857,6 +10948,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/MAX_ACCOUNT_CATEGORIES",
+              "title": "MAX\\_ACCOUNT\\_CATEGORIES",
+              "file": "core/main/api/variables/MAX_ACCOUNT_CATEGORIES.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/MAX_DISPLAY_NAME_LENGTH",
               "title": "MAX\\_DISPLAY\\_NAME\\_LENGTH",
               "file": "core/main/api/variables/MAX_DISPLAY_NAME_LENGTH.md",
@@ -10937,6 +11035,13 @@
               "slug": "api/variables/SECURITY_EVENT_SEVERITY_MAP",
               "title": "SECURITY\\_EVENT\\_SEVERITY\\_MAP",
               "file": "core/main/api/variables/SECURITY_EVENT_SEVERITY_MAP.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/SELECTABLE_ACCOUNT_CATEGORY_IDS",
+              "title": "SELECTABLE\\_ACCOUNT\\_CATEGORY\\_IDS",
+              "file": "core/main/api/variables/SELECTABLE_ACCOUNT_CATEGORY_IDS.md",
               "order": 10000,
               "section": "api"
             },
@@ -11908,6 +12013,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/OxyConsentResource",
+              "title": "OxyConsentResource",
+              "file": "services/main/api/interfaces/OxyConsentResource.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/OxyConsentScreenProps",
               "title": "OxyConsentScreenProps",
               "file": "services/main/api/interfaces/OxyConsentScreenProps.md",
@@ -12363,6 +12475,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/OXY_OAUTH_CODE_VERIFIER_STORAGE_KEY",
+              "title": "OXY\\_OAUTH\\_CODE\\_VERIFIER\\_STORAGE\\_KEY",
+              "file": "services/main/api/variables/OXY_OAUTH_CODE_VERIFIER_STORAGE_KEY.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/OXY_OAUTH_STATE_STORAGE_KEY",
               "title": "OXY\\_OAUTH\\_STATE\\_STORAGE\\_KEY",
               "file": "services/main/api/variables/OXY_OAUTH_STATE_STORAGE_KEY.md",
@@ -12770,6 +12889,13 @@
               "section": "guides"
             },
             {
+              "slug": "adr/0010-alia-keeps-a-product-api-credentials-come-from-oxy-console",
+              "title": "10. Alia keeps a product API; credentials come from Oxy Console",
+              "file": "alia/main/adr/0010-alia-keeps-a-product-api-credentials-come-from-oxy-console.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "adr/README",
               "title": "Architecture decision records",
               "file": "alia/main/adr/README.md",
@@ -13128,6 +13254,13 @@
               "slug": "COMPATIBILITY_RETIREMENT",
               "title": "Compatibility retirement register",
               "file": "mention/main/COMPATIBILITY_RETIREMENT.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "dependencies",
+              "title": "Dependency updates",
+              "file": "mention/main/dependencies.md",
               "order": 1000,
               "section": "guides"
             },
@@ -13559,6 +13692,13 @@
               "slug": "cold-start",
               "title": "The cold-start check, and the known react-hooks findings",
               "file": "homiio/main/cold-start.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "dependencies",
+              "title": "Dependency updates",
+              "file": "homiio/main/dependencies.md",
               "order": 1000,
               "section": "guides"
             },
@@ -14332,16 +14472,16 @@
       "repo": "https://github.com/OxyHQ/OxyOS",
       "category": "app",
       "description": "Lightweight, elegant desktop Linux distribution built on Debian — live-build ISO plus a React + Tauri v2 desktop shell.",
-      "defaultVersion": "master",
+      "defaultVersion": "main",
       "versions": [
         {
-          "version": "master",
+          "version": "main",
           "pages": [
             {
               "slug": "",
               "title": "OxyOS",
               "description": "Lightweight, elegant desktop Linux distribution built on Debian — live-build ISO plus a React + Tauri v2 desktop shell.",
-              "file": "oxyos/master/index.mdx",
+              "file": "oxyos/main/index.mdx",
               "order": 0,
               "section": "guides"
             },
@@ -14349,7 +14489,7 @@
               "slug": "shell-architecture",
               "title": "Shell architecture",
               "description": "Native multi-window layout, IPC contract, Tauri command surface, and Wayland integration for the OxyOS desktop shell.",
-              "file": "oxyos/master/shell-architecture.mdx",
+              "file": "oxyos/main/shell-architecture.mdx",
               "order": 1,
               "section": "guides"
             },
@@ -14357,7 +14497,7 @@
               "slug": "iso-build",
               "title": "ISO build pipeline",
               "description": "How live-build assembles the OxyOS ISO — stages, hooks, branding, archive sources, and installer integration.",
-              "file": "oxyos/master/iso-build.mdx",
+              "file": "oxyos/main/iso-build.mdx",
               "order": 2,
               "section": "guides"
             },
@@ -14365,7 +14505,7 @@
               "slug": "customizing",
               "title": "Customizing OxyOS",
               "description": "Add packages, change the shell binary, replace branding, add a hook, or rebuild from a fork.",
-              "file": "oxyos/master/customizing.mdx",
+              "file": "oxyos/main/customizing.mdx",
               "order": 3,
               "section": "guides"
             }
@@ -14373,50 +14513,7 @@
         }
       ],
       "versioned": false,
-      "latestVersion": "master",
-      "deprecatedVersions": []
-    },
-    {
-      "package": "oxyfont",
-      "displayName": "OxyFont",
-      "shortName": "oxyfont",
-      "repo": "https://github.com/OxyHQ/OxyFont",
-      "category": "ui-library",
-      "description": "Oxy font family (BlomusModernus + variants)",
-      "defaultVersion": "0.1.0",
-      "versions": [
-        {
-          "version": "0.1.0",
-          "pages": [
-            {
-              "slug": "",
-              "title": "OxyFont",
-              "description": "The Oxy display + text font family. BlomusModernus in TrueType and WOFF2.",
-              "file": "oxyfont/0.1.0/index.mdx",
-              "order": 0,
-              "section": "guides"
-            },
-            {
-              "slug": "usage",
-              "title": "Usage",
-              "description": "Load BlomusModernus in web, React Native, and Expo projects.",
-              "file": "oxyfont/0.1.0/usage.mdx",
-              "order": 1,
-              "section": "guides"
-            },
-            {
-              "slug": "specimens",
-              "title": "Specimens",
-              "description": "Live preview of BlomusModernus Regular and Bold across display, body, and caption sizes.",
-              "file": "oxyfont/0.1.0/specimens.mdx",
-              "order": 2,
-              "section": "guides"
-            }
-          ]
-        }
-      ],
-      "versioned": true,
-      "latestVersion": "0.1.0",
+      "latestVersion": "main",
       "deprecatedVersions": []
     },
     {

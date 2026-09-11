@@ -32,38 +32,6 @@
  * locales this build actually mirrored — a fact only the prerender knows.
  */
 
-/**
- * Route families the SPA must answer itself. Each is either user-specific or
- * driven by content created between deploys, so the absence of a prerendered
- * document says nothing about whether the page exists.
- *
- * `/developers/docs/*` is here for a different reason: the docs tree is synced
- * at build time, but it also hosts the client-only Bloom playground, colour
- * system and `_demo` isolation routes, which have no document by design.
- */
-export const SPA_FALLBACK_PATTERNS: readonly string[] = [
-  '/admin',
-  '/admin/*',
-  '/dashboard',
-  '/settings',
-  '/u/*',
-  '/newsroom/*',
-  '/company/careers/*',
-  '/apps/*',
-  '/features/*',
-  '/referrals/dashboard',
-  '/developers/docs/*',
-  '/faircoin/*',
-  // The fairco.in apex mounts the FairCoin dApp at the ROOT of this same build
-  // (`isFairCoinHost()` in src/App.tsx), so these five paths are that site's
-  // real pages even though no document is written for them here.
-  '/buy',
-  '/unwrap',
-  '/redeem',
-  '/bridge',
-  '/wallet',
-]
-
 /** Retired URLs that are still linked from outside. */
 const LEGACY_REDIRECTS: ReadonlyArray<readonly [from: string, to: string]> = [
   ['/technologies', '/apps/'],
@@ -191,19 +159,17 @@ export function buildRedirectsFile(opts: RedirectsOptions): string {
     push('')
   }
 
-  push('# Surfaces the SPA renders from live data or behind a sign-in.')
-  for (const pattern of SPA_FALLBACK_PATTERNS) push(...rule(pattern, '/app-shell.html', 200))
-  for (const code of mirrored) {
-    for (const pattern of SPA_FALLBACK_PATTERNS) {
-      if (pattern.startsWith('/developers/docs')) continue
-      push(...rule(`/${code}${pattern}`, '/app-shell.html', 200))
-    }
-  }
-  push('')
-
   push(
     '# Anything else is not a page on this site. A real 404 status is what stops a',
     '# retired URL from being re-crawled forever as a home-page duplicate.',
+    '#',
+    '# Surfaces the SPA has to answer itself are deliberately NOT listed above as',
+    '# `200` rewrites. Cloudflare matches a rewrite rule BEFORE it looks for the',
+    '# static asset, so `/newsroom/*  /app-shell.html  200` shadowed all fifteen',
+    '# prerendered Newsroom documents and `/developers/docs/*` shadowed 2,087 —',
+    '# each answered with a 308 to `/app-shell`. `/*` is the one splat Pages skips',
+    '# when an asset matches, which is why it can stay. The fallback lives in',
+    '# functions/_middleware.ts, which upgrades the 404 this rule produces.',
     ...rule('/*', '/404.html', 404),
     '',
   )
@@ -237,7 +203,7 @@ function assertWithinCloudflareLimits(contents: string, opts: RedirectsOptions):
     `[redirects] ${sources.length} rules (${dynamic.length} with a splat or placeholder) ` +
       `exceeds Cloudflare's ${CF_MAX_RULES}/${CF_MAX_DYNAMIC_RULES} limits, which would ` +
       `reject the deploy. ${opts.mirroredLocales.length} locale(s) are mirrored and each ` +
-      `adds one dynamic rule per entry in SPA_FALLBACK_PATTERNS — mirror fewer locales, or ` +
-      `fold the per-locale fallbacks into one ':locale' placeholder rule.`,
+      `adds two — mirror fewer locales, or fold the per-locale rules into one ` +
+      `':locale' placeholder rule.`,
   )
 }
