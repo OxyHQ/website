@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { describe, it } from 'node:test'
-import { applyFunctionalSignals, statusFromAlarm, type FunctionalSignal } from './functionalStatus.js'
+import {
+  applyFunctionalSignals,
+  authoritativeProbeUrl,
+  statusFromAlarm,
+  type FunctionalSignal,
+} from './functionalStatus.js'
 
 const signal = (state: FunctionalSignal['state']): FunctionalSignal => ({
   alarmName: 'exact-alarm',
@@ -31,19 +36,39 @@ describe('public functional status', () => {
     ).some((service) => service.id === 'alia' && service.status === 'down'))
   })
 
-  it('preserves reachability status for services without a functional alarm', () => {
-    assert.deepEqual(
-      applyFunctionalSignals([{ id: 'mention', status: 'degraded' }], new Map()),
-      [{ id: 'mention', status: 'degraded' }],
-    )
+  it('never treats a landing page as an authoritative probe', () => {
+    for (const productId of ['mention', 'inbox', 'homiio', 'accounts', 'faircoin', 'oxyos']) {
+      assert.equal(authoritativeProbeUrl(productId), null)
+    }
+    assert.equal(authoritativeProbeUrl('nilo'), 'https://api.nilo.so/health/ready')
+  })
+
+  it('propagates shared platform failure without improving an unknown app', () => {
+    const services = [
+      { id: 'mention', status: 'unknown' as const },
+      { id: 'oxy-api', status: 'down' as const },
+    ]
+    assert.deepEqual(applyFunctionalSignals(services, new Map()), [
+      { id: 'mention', status: 'down' },
+      { id: 'oxy-api', status: 'down' },
+    ])
   })
 
   it('migrates every audited public app and backend onto the board', () => {
     const migration = readFileSync(new URL('../db/migrations/0015_public_status_inventory.sql', import.meta.url), 'utf8')
-    for (const productId of [
+    const audited = [
       'alia', 'allo', 'astro', 'clarity', 'codea', 'codex-extension', 'crowdsource',
-      'faircoin-wallet', 'kaana', 'mercaria', 'moovo', 'nilo', 'noted', 'oxy-ai',
-      'peable', 'syra', 'tnp',
-    ]) assert.ok(migration.includes(`'${productId}'`), `missing public status product ${productId}`)
+      'faircoin', 'faircoin-bridge', 'faircoin-buy', 'faircoin-explorer',
+      'faircoin-wallet', 'homiio', 'inbox', 'kaana', 'mention', 'mercaria', 'moovo',
+      'nilo', 'noted', 'oxy-ai', 'oxy-api', 'oxyos', 'peable', 'syra', 'tnp',
+      'website-api', 'accounts',
+    ].sort()
+    const postcondition = migration.slice(migration.indexOf('WITH expected(product_id)'))
+    const declared = [...postcondition.matchAll(/\('([a-z0-9-]+)'\)/g)]
+      .map((match) => match[1])
+      .sort()
+    assert.deepEqual(declared, audited)
+    assert.match(postcondition, /"show_on_status" = true/)
+    assert.match(postcondition, /RAISE EXCEPTION 'public status inventory is incomplete:/)
   })
 })

@@ -7,6 +7,7 @@ import { populate } from '../db/refs.js'
 import { localeMiddleware } from '../middleware/locale.js'
 import {
   applyFunctionalSignals,
+  authoritativeProbeUrl,
   readFunctionalSignals,
   type PublicServiceStatus,
 } from '../services/functionalStatus.js'
@@ -88,7 +89,7 @@ function resolveLogoUrl(logo: unknown): string | null {
 }
 
 async function probeService(product: ProductRow): Promise<CachedServiceResult> {
-  const target = product.healthUrl || product.href
+  const target = authoritativeProbeUrl(product.productId)
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS)
   const start = Date.now()
@@ -105,8 +106,17 @@ async function probeService(product: ProductRow): Promise<CachedServiceResult> {
     mark: product.mark,
     logoUrl: resolveLogoUrl(product.logo),
   }
+  if (target === null) {
+    return {
+      ...base,
+      status: 'unknown',
+      latencyMs: null,
+      httpStatus: null,
+      lastChecked: new Date().toISOString(),
+    }
+  }
   try {
-    // healthUrl/href are CMS-supplied, so the probe must be SSRF-safe.
+    // Targets are audited above, and safeFetch remains the SSRF boundary.
     const result = await safeFetch(target, {
       method: 'GET',
       signal: controller.signal,

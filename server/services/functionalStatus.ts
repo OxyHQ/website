@@ -19,8 +19,45 @@ const SERVICE_ALARMS = {
   kaana: 'oxy-kaana-routing-readiness-not-confirmed',
 } as const
 
+/**
+ * Audited machine endpoints. A public page, app shell or API root is not a
+ * health signal and therefore never belongs here. Products absent from this
+ * map remain `unknown` instead of manufacturing a green state from a landing
+ * page. Keep each entry paired with the owning service's documented contract.
+ */
+const AUTHORITATIVE_PROBES: Readonly<Record<string, string>> = {
+  alia: 'https://api.alia.onl/health/ready',
+  allo: 'https://api.allo.you/api/health',
+  clarity: 'https://api.clarity.surf/health/ready',
+  crowdsource: 'https://api.crowdsource.oxy.so/health/ready',
+  'faircoin-bridge': 'https://bridge.fairco.in/health',
+  'faircoin-buy': 'https://bridge.fairco.in/health/buy',
+  'faircoin-explorer': 'https://explorer.fairco.in/api/mining-info?network=mainnet',
+  kaana: 'https://kaana.ai/livez',
+  mercaria: 'https://api.mercaria.co/health/ready',
+  moovo: 'https://api.moovo.now/health/ready',
+  nilo: 'https://api.nilo.so/health/ready',
+  noted: 'https://api.noted.oxy.so/health/ready',
+  'oxy-api': 'https://api.oxy.so/health',
+  'website-api': 'https://website-api.oxy.so/api/health',
+}
+
 const SERVICE_DEPENDENCIES: Readonly<Record<string, readonly string[]>> = {
   alia: ['oxy-api', 'kaana'],
+  accounts: ['oxy-api'],
+  allo: ['oxy-api'],
+  clarity: ['oxy-api', 'kaana'],
+  crowdsource: ['oxy-api'],
+  homiio: ['oxy-api'],
+  inbox: ['oxy-api'],
+  mention: ['oxy-api'],
+  mercaria: ['oxy-api'],
+  moovo: ['oxy-api'],
+  nilo: ['oxy-api'],
+  noted: ['oxy-api'],
+  'oxy-ai': ['kaana'],
+  peable: ['oxy-api'],
+  syra: ['oxy-api'],
 }
 
 let client: CloudWatchClient | null = null
@@ -40,6 +77,10 @@ export function statusFromAlarm(state: FunctionalSignal['state']): PublicService
   if (state === 'OK') return 'operational'
   if (state === 'ALARM') return 'down'
   return 'unknown'
+}
+
+export function authoritativeProbeUrl(serviceId: string): string | null {
+  return AUTHORITATIVE_PROBES[serviceId] ?? null
 }
 
 export async function readFunctionalSignals(): Promise<ReadonlyMap<string, FunctionalSignal>> {
