@@ -39,7 +39,9 @@ const AUTHORITATIVE_PROBES: Readonly<Record<string, string>> = {
   nilo: 'https://api.nilo.so/health/ready',
   noted: 'https://api.noted.oxy.so/health/ready',
   'oxy-api': 'https://api.oxy.so/health',
-  'website-api': 'https://website-api.oxy.so/api/health',
+  // The ALB deliberately uses /api/health, which stays live after bootstrap.
+  // Public status needs the dynamic database-aware contract instead.
+  'website-api': 'https://website-api.oxy.so/api/ready',
 }
 
 const SERVICE_DEPENDENCIES: Readonly<Record<string, readonly string[]>> = {

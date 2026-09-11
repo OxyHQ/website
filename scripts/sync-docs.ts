@@ -25,7 +25,11 @@ import { readFile, writeFile, mkdir, rm, readdir, rename, cp } from 'node:fs/pro
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { rewriteSiblingDocLinks, rewriteStaleDocsVersionLinks } from './docs-links.ts';
+import {
+  rewriteCrossPackageDocRootLinks,
+  rewriteSiblingDocLinks,
+  rewriteStaleDocsVersionLinks,
+} from './docs-links.ts';
 import type {
   DocsConfig,
   DocsRegistry,
@@ -309,6 +313,27 @@ async function rewriteSiblingLinksInPlace(
       baseUrl,
     );
     if (rewritten !== original) await writeFile(full, rewritten);
+  }
+}
+
+async function rewriteCrossPackageRootsInPlace(packages: readonly SyncedPackage[]): Promise<void> {
+  const canonicalRoots = new Map(packages.map((pkg) => [
+    pkg.shortName,
+    pkg.versioned
+      ? `/developers/docs/${pkg.shortName}/${pkg.latestVersion}`
+      : `/developers/docs/${pkg.shortName}`,
+  ]))
+  for (const pkg of packages) {
+    for (const version of pkg.versions) {
+      for (const page of version.pages) {
+        if (!page.file) continue
+        const full = path.join(SYNCED_DIR, page.file)
+        if (!existsSync(full)) continue
+        const original = await readFile(full, 'utf8')
+        const rewritten = rewriteCrossPackageDocRootLinks(original, canonicalRoots)
+        if (rewritten !== original) await writeFile(full, rewritten)
+      }
+    }
   }
 }
 
@@ -920,6 +945,7 @@ async function main(): Promise<void> {
     const synced = await syncRepo(entry);
     packages.push(...synced);
   }
+  await rewriteCrossPackageRootsInPlace(packages);
   const index: SyncedIndex = {
     generatedAt: new Date().toISOString(),
     packages,

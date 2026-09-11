@@ -27,6 +27,7 @@ import changelogRouter from './routes/changelog.js'
 import { startSyncInterval } from './services/githubSync.js'
 import { startFeaturePriorityInterval } from './services/featurePriority.js'
 import { getPriorityTiers } from './constants/featurePriority.js'
+import { isBootstrapComplete, markBootstrapComplete } from './services/startupState.js'
 import jobsRouter from './routes/jobs.js'
 import settingsRouter from './routes/settings.js'
 import seoRouter from './routes/seo.js'
@@ -230,17 +231,23 @@ app.get('/api/infra-status', async (_req, res) => {
 })
 
 /**
- * Liveness. Answers as soon as the process is listening, deliberately without
- * touching the database.
+ * Load-balancer startup gate. It becomes healthy only after schema migrations
+ * and the one-shot data repairs have completed successfully.
  *
- * This is the probe the load balancer must be pointed at. Making liveness
- * depend on the database is what turns a database blip into a total outage: the
- * probe fails, the orchestrator kills the task, the replacement hits the same
- * database and is killed too, and the load balancer ends up with no healthy
- * targets and serves 503 for everything — including after the database
- * recovers, because nothing is left alive to notice.
+ * Once bootstrap completes this remains a liveness response: a later database
+ * interruption does not drain every existing task. `/api/ready` remains the
+ * dynamic database-aware diagnostic. During a rolling deploy, ECS keeps the
+ * old healthy task because the service requires 100% minimum healthy capacity.
  */
-app.get('/api/health', (_req, res) => res.json({ ok: true }))
+app.get('/api/health', (_req, res) => {
+  if (!isBootstrapComplete()) {
+    return res.status(503).json({ ok: false, ready: false, reason: 'database bootstrap pending' })
+  }
+  return res.json({ ok: true, ready: true })
+})
+
+/** Process liveness for diagnostics; unlike the ALB probe this never gates traffic. */
+app.get('/api/live', (_req, res) => res.json({ alive: true }))
 
 /**
  * Readiness — can this process actually serve data right now?
@@ -251,6 +258,9 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }))
  * connected but cannot answer a query is exactly the state this must catch.
  */
 app.get('/api/ready', async (_req, res) => {
+  if (!isBootstrapComplete()) {
+    return res.status(503).json({ ready: false, db: 'bootstrap-pending' })
+  }
   try {
     await pgClient`select 1`
     res.json({ ready: true, db: 'connected' })
@@ -347,14 +357,12 @@ async function connectWithRetry(): Promise<void> {
 
       startSyncInterval()
       startFeaturePriorityInterval()
+      markBootstrapComplete()
       return
     } catch (err) {
       attempt++
       const delay = Math.min(1000 * 2 ** (attempt - 1), MAX_DELAY_MS)
-      console.error(
-        `PostgreSQL unavailable (attempt ${attempt}), retrying in ${delay}ms:`,
-        (err as Error).message,
-      )
+      console.error(`Database bootstrap failed (attempt ${attempt}), retrying in ${delay}ms:`, err)
       await new Promise((resolve) => setTimeout(resolve, delay))
     }
   }
@@ -371,8 +379,9 @@ async function connectWithRetry(): Promise<void> {
  * with them, so callers see an opaque CORS error rather than the outage. That
  * state does not clear on its own once the database recovers.
  *
- * Opening the port first means an unreachable database degrades this service
- * instead of removing it, and it heals by itself.
+ * Opening the port first lets the process retry and heal itself. `/api/health`
+ * stays 503 until bootstrap succeeds, so a replacement cannot receive traffic
+ * with an old schema or partially reconciled inventory.
  */
 /**
  * Fail fast on a malformed `FEATURE_PRIORITY_TIERS`.

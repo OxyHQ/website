@@ -75,3 +75,24 @@ export function rewriteStaleDocsVersionLinks(
     },
   );
 }
+
+/**
+ * Resolve branch-named links to another synced package's documentation root.
+ *
+ * A package-local pass cannot resolve these: while syncing OxyFont, for
+ * example, Bloom's published version is not part of OxyFont's page index. Run
+ * this after the complete package index exists, using that index as the only
+ * authority for valid cross-package targets.
+ */
+export function rewriteCrossPackageDocRootLinks(
+  source: string,
+  canonicalRoots: ReadonlyMap<string, string>,
+): string {
+  return source.replace(
+    /(\]\()\/developers\/docs\/([a-z0-9-]+)\/(?:main|master)\/?(#[^)\s]*)?\)/g,
+    (match, open: string, shortName: string, anchor: string | undefined) => {
+      const root = canonicalRoots.get(shortName)
+      return root === undefined ? match : `${open}${root}/${anchor ?? ''})`
+    },
+  )
+}
