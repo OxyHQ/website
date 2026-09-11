@@ -5,7 +5,7 @@ import { buildRedirectsFile } from './redirects'
 import { isSpaFallbackPath } from '../src/lib/spaFallback'
 import { buildSitemapXml } from './sitemap'
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '../src/lib/i18n/types'
-import { rewriteSiblingDocLinks } from './docs-links'
+import { rewriteSiblingDocLinks, rewriteStaleDocsVersionLinks } from './docs-links'
 
 describe('internal links point at the canonical URL', () => {
   test('adds the trailing slash Cloudflare would 308 to', () => {
@@ -253,5 +253,52 @@ describe('SPA fallback (edge middleware)', () => {
     ]) {
       expect({ path, claimed: isSpaFallbackPath(path) }).toEqual({ path, claimed: false })
     }
+  })
+})
+
+describe('synced docs links that name a version this site does not serve', () => {
+  const slugs = new Set(['label', 'input-group', 'api/variables/Z_INDEX'])
+  const base = '/developers/docs/bloom/1.0.0'
+
+  test('repoints an upstream branch name onto the synced version', () => {
+    expect(
+      rewriteStaleDocsVersionLinks('[Label](/developers/docs/bloom/main/label)', slugs, 'bloom', base),
+    ).toBe('[Label](/developers/docs/bloom/1.0.0/label)')
+    expect(
+      rewriteStaleDocsVersionLinks('[G](/developers/docs/bloom/main/input-group#api)', slugs, 'bloom', base),
+    ).toBe('[G](/developers/docs/bloom/1.0.0/input-group#api)')
+  })
+
+  test('leaves a link alone when dropping the segment does not name a page', () => {
+    const gone = '[X](/developers/docs/bloom/main/not-a-component)'
+    expect(rewriteStaleDocsVersionLinks(gone, slugs, 'bloom', base)).toBe(gone)
+    const other = '[Y](/developers/docs/core/main/label)'
+    expect(rewriteStaleDocsVersionLinks(other, slugs, 'bloom', base)).toBe(other)
+  })
+
+  test('a link already on the right version is normalised, not mangled', () => {
+    expect(
+      rewriteStaleDocsVersionLinks('[Z](/developers/docs/bloom/api/variables/Z_INDEX)', slugs, 'bloom', base),
+    ).toBe('[Z](/developers/docs/bloom/1.0.0/api/variables/Z_INDEX)')
+  })
+
+  test('recovers a link that dropped the package segment', () => {
+    // Allo writes `](/developers/docs/matrix/data-model)` for a page this build
+    // serves under `allo/`.
+    const alloSlugs = new Set(['matrix/data-model'])
+    expect(
+      rewriteStaleDocsVersionLinks(
+        '[Model](/developers/docs/matrix/data-model)',
+        alloSlugs,
+        'allo',
+        '/developers/docs/allo',
+      ),
+    ).toBe('[Model](/developers/docs/allo/matrix/data-model)')
+  })
+
+  test('never captures a genuine cross-package link', () => {
+    // `core` is another package, and nothing in this slug set claims it.
+    const untouched = '[Core](/developers/docs/core/main/api)'
+    expect(rewriteStaleDocsVersionLinks(untouched, slugs, 'bloom', base)).toBe(untouched)
   })
 })

@@ -25,7 +25,7 @@ import { readFile, writeFile, mkdir, rm, readdir, rename, cp } from 'node:fs/pro
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { rewriteSiblingDocLinks } from './docs-links.ts';
+import { rewriteSiblingDocLinks, rewriteStaleDocsVersionLinks } from './docs-links.ts';
 import type {
   DocsConfig,
   DocsRegistry,
@@ -292,6 +292,7 @@ function rewriteDocsLinks(source: string, isMdx = false): string {
 
 async function rewriteSiblingLinksInPlace(
   pages: readonly SyncedPage[],
+  shortName: string,
   baseUrl: string,
 ): Promise<void> {
   const slugs = new Set(pages.map((page) => page.slug).filter((slug) => slug.length > 0));
@@ -301,7 +302,12 @@ async function rewriteSiblingLinksInPlace(
     const full = path.join(SYNCED_DIR, page.file);
     if (!existsSync(full)) continue;
     const original = await readFile(full, 'utf8');
-    const rewritten = rewriteSiblingDocLinks(original, slugs, baseUrl);
+    const rewritten = rewriteStaleDocsVersionLinks(
+      rewriteSiblingDocLinks(original, slugs, baseUrl),
+      slugs,
+      shortName,
+      baseUrl,
+    );
     if (rewritten !== original) await writeFile(full, rewritten);
   }
 }
@@ -571,8 +577,10 @@ function rewriteTypedocLinks(source: string, pkgBaseUrl: string, fileRelativeDir
       const fromDir = fileRelativeDir ? `/${fileRelativeDir}/` : '/';
       const resolved = path.posix.normalize(`${fromDir}${targetUnix}`).replace(/^\/+/, '');
       const noExt = resolved.replace(/\.(mdx?|md)$/i, '');
-      // README → the api/ index page (empty trailing slug).
-      const slug = noExt.replace(/\/?README$/i, '').replace(/\/?index$/i, '');
+      // README → the api/ index page (empty trailing slug). Anchored to a whole
+      // SEGMENT: unanchored, `/index$/i` also ate the tail of a symbol named
+      // `Z_INDEX`, and the link shipped pointing at `api/variables/Z_`.
+      const slug = noExt.replace(/(^|\/)(?:README|index)$/i, '');
       const href = slug ? `${pkgBaseUrl}/${slug}` : pkgBaseUrl;
       return `](${href}${anchor ?? ''})`;
     },
@@ -821,6 +829,7 @@ async function syncPackage(
     // Second pass, now that every sibling slug in this version is known.
     await rewriteSiblingLinksInPlace(
       pages,
+      config.shortName,
       versioned
         ? `/developers/docs/${config.shortName}/${version}`
         : `/developers/docs/${config.shortName}`,
