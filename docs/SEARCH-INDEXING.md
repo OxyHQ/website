@@ -39,22 +39,43 @@ It ends in `/*  /404.html  404`. Before this change it ended in
 every misspelling and every retired URL answered 200 with a byte-exact copy of
 the home page, carrying `<link rel="canonical" href="https://oxy.so/">`.
 
-Three kinds of path escape the 404:
+Two kinds of path escape the 404 in that file:
 
-- **`SPA_FALLBACK_PATTERNS`** — surfaces whose document legitimately may not
-  exist yet (a Newsroom post published after the deploy, a job, a feature
-  request) or is user-specific (`/u/*`, `/dashboard`). These rewrite to
-  `app-shell.html`: the same bundle with the home page's identity stripped out,
-  so React mounts and `<SEO>` writes the real meta. Neither fallback document
-  carries a static `<meta name="robots">` — Helmet only manages tags it emits,
-  so a baked-in `noindex` would survive React's mount forever.
 - **Retired URLs** — `/technologies`, `/products`, `/pay` 301 at the edge
   instead of 200-ing into a client-side `<Navigate>`.
 - **Locale prefixes** — see below.
 
+## What a `_redirects` rule actually beats
+
+This cost a production outage, so it is worth stating precisely. Cloudflare
+Pages does **not** simply serve a static asset ahead of `_redirects`:
+
+| Rule | Asset exists at that path | Result |
+| --- | --- | --- |
+| `200` rewrite | yes | **the rule wins** — the asset is shadowed |
+| `404` | yes | the asset wins |
+| bare `/*` (any status) | yes | the asset wins |
+
+The first release of this change used `200` rewrites for the SPA fallback
+families — `/newsroom/*`, `/apps/*`, `/developers/docs/*` and so on. Every one
+of them shadowed the documents underneath it: all fifteen prerendered Newsroom
+posts, 2,087 docs pages, every job and app page, each answered with a 308 to
+`/app-shell` (Pages' own `.html` stripping applied to the rewrite target).
+
+So the SPA fallback moved to `functions/_middleware.ts`. `src/lib/spaFallback.ts`
+holds the patterns; the middleware sees the 404 the catch-all produced and
+upgrades it to the shell. A document always wins now, because by the time that
+code runs Cloudflare has already looked for one and not found it. Neither
+fallback document carries a static `<meta name="robots">` — Helmet only manages
+tags it emits, so a baked-in `noindex` would survive React's mount forever.
+
+**Never add a `200` rewrite to `_redirects` over a prefix that has documents.**
+`scripts/seo-contract.test.ts` fails on any `200` rule in that file at all.
+
 `scripts/routing-contract.test.ts` runs in `postbuild` and fails the build if a
-route declared in `src/App.tsx` is neither prerendered nor covered by a rule, so
-the 404 can never quietly swallow a real page. `scripts/link-audit.ts` then
+route declared in `src/App.tsx` is neither prerendered, nor covered by a rule,
+nor claimed by `isSpaFallbackPath` — so the 404 can never quietly swallow a real
+page. `scripts/link-audit.ts` then
 resolves every URL the build publishes — literal `to=`/`href=` in `src/`, every
 `<a href>` in every prerendered document, and every `<loc>` and hreflang in the
 sitemap — against `dist/`, and fails on anything that is not a 200. It is strict

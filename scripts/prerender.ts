@@ -1680,7 +1680,11 @@ async function writeNewsroomFeed(routes: readonly RouteEntry[]): Promise<void> {
  * no canonical, no `og:url`, a neutral title. It backs the surfaces whose
  * document legitimately cannot exist at build time — a Newsroom post published
  * an hour after the deploy, a job opening, a feature request, a signed-in
- * dashboard. React mounts and `<SEO>` writes the real meta.
+ * dashboard. React mounts and `<SEO>` writes the real meta. `_redirects` does
+ * NOT point at it: a rewrite rule there is matched before the static asset, so
+ * a `/newsroom/*` rule shadowed every prerendered Newsroom document. It is
+ * served by `functions/_middleware.ts`, which only sees requests that already
+ * failed to find one.
  *
  * Neither carries a static `<meta name="robots">`. Helmet only manages tags it
  * emits itself, so a `noindex` baked into the shell would survive React's
