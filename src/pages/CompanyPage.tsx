@@ -546,6 +546,7 @@ function QuoteSection() {
 
 const MORE_LINKS = [
   { href: '/company/charter', label: 'The Oxy Founding Charter', kind: 'Document' },
+  { href: '/company/influence/', label: 'Influence and Responsibility', kind: 'Document' },
   { href: '/company/manifesto', label: 'The Oxy Manifesto', kind: 'Document' },
   { href: '/company/business', label: 'How our business works', kind: 'Document' },
   { href: '/company/transparency', label: 'Transparency Center', kind: 'Document' },

@@ -257,6 +257,16 @@ function PublicRoutes() {
         }
       />
       <Route
+        path="company/influence"
+        element={
+          <CompanyArticlePage
+            slug="influence"
+            canonicalPath="/company/influence"
+            cta={{ title: 'Read the founding commitments.', label: 'Open the charter', href: '/company/charter/' }}
+          />
+        }
+      />
+      <Route
         path="company/charter"
         element={
           <CompanyArticlePage

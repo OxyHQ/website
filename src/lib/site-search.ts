@@ -96,6 +96,7 @@ const SITE_PAGES: Array<{ url: string; title: string; group?: string }> = [
   { url: '/company/team', title: 'Team' },
   { url: '/company/careers', title: 'Careers' },
   { url: '/company/manifesto', title: 'Manifesto' },
+  { url: '/company/influence/', title: 'Influence and Responsibility' },
   { url: '/academy', title: 'Academy' },
   { url: '/newsroom', title: 'Newsroom' },
   { url: '/partners', title: 'Partners' },

@@ -20,7 +20,12 @@
  * mirrors, hreflang annotations and sitemap alternates all come back together,
  * because all three read this function.
  */
-const UNTRANSLATED_PREFIXES: readonly string[] = ['/developers/docs']
+const UNTRANSLATED_PREFIXES: readonly string[] = [
+  '/developers/docs',
+  // The declaration currently has English copy only. Add locale siblings before
+  // advertising translated routes or reciprocal hreflang alternatives.
+  '/company/influence',
+]
 
 /**
  * True when `path` (a bare, default-locale route path) has a real translation

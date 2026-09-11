@@ -404,6 +404,12 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       'Why we build the way we do, what we refuse to trade away, and how to hold us to it. The short version of the Founding Charter.',
     canonicalPath: '/company/manifesto',
   },
+  '/company/influence': {
+    title: 'The Oxy Declaration on Influence and Responsibility',
+    description:
+      'Freedom to create, responsibility for consequences, and fair treatment for the people affected by public influence. A founding draft for Oxy and Mention.',
+    canonicalPath: '/company/influence',
+  },
   '/company/charter': {
     title: 'Founding Charter',
     description:
@@ -890,7 +896,7 @@ function companyMdxToPrerenderMarkdown(source: string): string {
 
 /** Long-form company documents whose source of truth is local MDX. */
 async function enumerateCompanyArticleRoutes(): Promise<RouteEntry[]> {
-  const slugs = ['manifesto', 'charter', 'transparency', 'business'] as const
+  const slugs = ['manifesto', 'charter', 'influence', 'transparency', 'business'] as const
   const routes: RouteEntry[] = []
 
   for (const slug of slugs) {

@@ -222,7 +222,7 @@ const CONTENT_SURFACES: ContentSurface[] = [
       const slug = slugFromRelativePath(relativeFile);
       // Only the known prose pages have routes today. Any new MDX file under
       // `content/company/` without a route will simply not be indexed.
-      const known = new Set(['manifesto', 'charter', 'transparency', 'business']);
+      const known = new Set(['manifesto', 'charter', 'influence', 'transparency', 'business']);
       return known.has(slug) ? `/company/${slug}` : null;
     },
   },

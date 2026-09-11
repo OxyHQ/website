@@ -461,6 +461,7 @@ export const defaultFooterColumns: FooterColumn[] = [
       { label: 'Brand guidelines', href: '/brand' },
       { label: 'Manifesto', href: '/company/manifesto' },
       { label: 'Founding Charter', href: '/company/charter' },
+      { label: 'Influence and Responsibility', href: '/company/influence/' },
       { label: 'The Initiative', href: '/initiative' },
       { label: 'Partner programs', href: '/partners' },
       { label: 'Startup program', href: '/partners#startup-program' },
