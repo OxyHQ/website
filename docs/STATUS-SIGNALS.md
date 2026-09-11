@@ -38,3 +38,16 @@ private MCP/ECS components are excluded because they have no independent public
 contract to probe. Adding a public app or independently failing service requires an explicit product row
 with `showOnStatus=true`, its own probe URL, and a documented signal here. Do not
 represent multiple independently failing services with one row.
+
+## Website API rollout readiness
+
+The ECS target group probes `/api/health`. A new task returns 503 there until
+PostgreSQL is reachable, every Drizzle migration has committed, and startup
+data repairs have completed. It then stays healthy through later database
+interruptions so one shared dependency cannot drain every running task.
+
+`/api/ready` is the dynamic database-aware diagnostic and `/api/live` reports
+process liveness. With ECS `minimumHealthyPercent = 100` and circuit-breaker
+rollback enabled, a broken migration stalls the replacement while the previous
+task continues serving instead of publishing an old schema as a successful
+deployment.

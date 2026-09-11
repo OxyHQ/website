@@ -63,12 +63,12 @@ describe('public functional status', () => {
       'nilo', 'noted', 'oxy-ai', 'oxy-api', 'oxyos', 'peable', 'syra', 'tnp',
       'website-api', 'accounts',
     ].sort()
-    const postcondition = migration.slice(migration.indexOf('WITH expected(product_id)'))
-    const declared = [...postcondition.matchAll(/\('([a-z0-9-]+)'\)/g)]
+    const inventory = migration.match(/VALUES\n([\s\S]+?)\nON CONFLICT \("product_id"\)/)?.[1] ?? ''
+    const declared = [...inventory.matchAll(/^\s*\('[a-f0-9]{24}', '([a-z0-9-]+)'/gm)]
       .map((match) => match[1])
       .sort()
     assert.deepEqual(declared, audited)
-    assert.match(postcondition, /"show_on_status" = true/)
-    assert.match(postcondition, /RAISE EXCEPTION 'public status inventory is incomplete:/)
+    assert.match(migration, /"show_on_status" = true/)
+    assert.match(migration, /RAISE EXCEPTION 'public status inventory has % canonical rows, expected 28'/)
   })
 })
