@@ -22,6 +22,24 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // Cloudflare answers `/pricing` with a 308 to `/pricing/`, so react-router's
+      // own Link publishes a redirect as this site's idea of where the page is.
+      // `src/lib/navigation` normalises `to` with the same helper the canonical
+      // tag and the sitemap use. See scripts/internal-links.test.ts.
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'react-router-dom',
+              importNames: ['Link', 'NavLink', 'Navigate', 'useNavigate'],
+              message: "Import Link/NavLink/Navigate/useNavigate from 'src/lib/navigation' so the URLs they publish carry the canonical trailing slash.",
+            },
+          ],
+        },
+      ],
+    },
   },
   {
     // Build scripts (Bun), the Express backend (Bun), and the Cloudflare Pages
@@ -31,6 +49,21 @@ export default defineConfig([
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.node,
+    },
+  },
+  {
+    // The wrapper itself has to import what it wraps.
+    files: ['src/lib/navigation.tsx', 'src/lib/canonicalPath.ts'],
+    rules: { 'no-restricted-imports': 'off' },
+  },
+  {
+    // `useNavigate` belongs next to the components it mirrors: all four
+    // replacements for react-router's URL-publishing APIs are imported from one
+    // module, which is what makes the `no-restricted-imports` rule above a
+    // single, obvious redirect rather than a scavenger hunt.
+    files: ['src/lib/navigation.tsx'],
+    rules: {
+      'react-refresh/only-export-components': ['error', { allowExportNames: ['useNavigate'] }],
     },
   },
   {

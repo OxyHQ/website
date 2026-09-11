@@ -1,5 +1,6 @@
 import { Suspense, createElement, use, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { Button } from '@oxy.so/bloom/button'
 import {
   Select,

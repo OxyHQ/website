@@ -25,6 +25,7 @@ import { readFile, writeFile, mkdir, rm, readdir, rename, cp } from 'node:fs/pro
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { rewriteSiblingDocLinks } from './docs-links.ts';
 import type {
   DocsConfig,
   DocsRegistry,
@@ -287,6 +288,22 @@ function rewriteDocsLinks(source: string, isMdx = false): string {
       // Link targets like `](/docs/...)`.
       .replace(/(\]\()\/docs(\/|\))/g, '$1/developers/docs$2')
   );
+}
+
+async function rewriteSiblingLinksInPlace(
+  pages: readonly SyncedPage[],
+  baseUrl: string,
+): Promise<void> {
+  const slugs = new Set(pages.map((page) => page.slug).filter((slug) => slug.length > 0));
+  if (slugs.size === 0) return;
+  for (const page of pages) {
+    if (!page.file) continue;
+    const full = path.join(SYNCED_DIR, page.file);
+    if (!existsSync(full)) continue;
+    const original = await readFile(full, 'utf8');
+    const rewritten = rewriteSiblingDocLinks(original, slugs, baseUrl);
+    if (rewritten !== original) await writeFile(full, rewritten);
+  }
 }
 
 async function rewriteMdxLinksInPlace(filePath: string): Promise<void> {
@@ -801,6 +818,13 @@ async function syncPackage(
     for (const page of pages) {
       page.section = 'guides';
     }
+    // Second pass, now that every sibling slug in this version is known.
+    await rewriteSiblingLinksInPlace(
+      pages,
+      versioned
+        ? `/developers/docs/${config.shortName}/${version}`
+        : `/developers/docs/${config.shortName}`,
+    );
     // Auto-generate TypeDoc API reference. We only run TypeDoc for the
     // configured `latestVersion` (or the lone version on non-versioned
     // packages) because TypeDoc reads from the *working tree* — running

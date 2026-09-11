@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/navigation'
 import { ArrowLeft, ArrowRight, BookOpen, Check, Clock, PlayCircle, Sparkles } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'

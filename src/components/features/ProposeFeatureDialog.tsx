@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { Dialog } from '@oxy.so/bloom/dialog'
 import { useAuth } from '@oxy.so/services/ui/client'
 import { ChevronUp, ExternalLink } from 'lucide-react'

@@ -47,6 +47,8 @@ import path from 'node:path'
 import { build as viteBuild } from 'vite'
 import type { SyncedIndex } from './types.ts'
 import { buildSitemapXml, classifyRoute, toW3CDate, type SitemapEntry } from './sitemap.ts'
+import { hasLocalizedVariants } from '../src/lib/localizedRoute'
+import { buildRedirectsFile } from './redirects.ts'
 import type { SeoData } from '../src/lib/seo'
 import type { SEOLocaleSeed } from '../src/entry-server'
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, isRtlLocale, type Locale } from '../src/lib/i18n/types'
@@ -1167,18 +1169,25 @@ function buildJobRoutes(jobs: JobApiEntry[]): RouteEntry[] {
 async function fetchTranslationReadyLocales(): Promise<{
   locales: Locale[]
   seed: SEOLocaleSeed[]
+  /**
+   * False when the API did not answer. `locales` is `[]` either way, but the
+   * two cases mean opposite things to `_redirects`: "no locale has pages" is a
+   * reason to 301 `/es/…` onto the bare path, and "we could not find out" very
+   * much is not. See `RedirectsOptions.localeReadinessKnown`.
+   */
+  known: boolean
 }> {
   let entries: SEOLocaleSeed[]
   try {
     const res = await fetch(LOCALES_API)
     if (!res.ok) {
       console.warn(`[prerender] locales API returned ${res.status} — no locale-prefixed pages.`)
-      return { locales: [], seed: [] }
+      return { locales: [], seed: [], known: false }
     }
     entries = (await res.json()) as SEOLocaleSeed[]
   } catch (err) {
     console.warn('[prerender] locales fetch failed — no locale-prefixed pages:', (err as Error).message)
-    return { locales: [], seed: [] }
+    return { locales: [], seed: [], known: false }
   }
 
   const locales: Locale[] = []
@@ -1193,7 +1202,7 @@ async function fetchTranslationReadyLocales(): Promise<{
     if (code === DEFAULT_LOCALE) continue
     if (!locales.includes(code)) locales.push(code)
   }
-  return { locales, seed: entries }
+  return { locales, seed: entries, known: true }
 }
 
 /**
@@ -1205,8 +1214,15 @@ async function fetchTranslationReadyLocales(): Promise<{
 function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): RenderJob[] {
   if (locales.length === 0) return base
   const expanded: RenderJob[] = [...base]
+  // A route is mirrored only where a mirror would say something new. Synced
+  // developer docs have no translated source (`hasLocalizedVariants`), and a
+  // superseded docs version already canonicalizes to the current one — a
+  // `/es/…/0.6.8/…` document is then a duplicate of a duplicate.
+  const mirrorable = base.filter(
+    (job) => hasLocalizedVariants(job.url) && job.seo.canonicalPath === job.url,
+  )
   for (const locale of locales) {
-    for (const job of base) {
+    for (const job of mirrorable) {
       expanded.push({
         // No `body`: the markdown behind it is the default locale's text, and a
         // `/es/` URL serving English prose reads worse to a crawler than one
@@ -1613,6 +1629,12 @@ async function writeSitemap(
 ): Promise<void> {
   const entries: SitemapEntry[] = routes
     .filter((route) => !route.seo.noIndex)
+    // A superseded docs version canonicalizes to the latest one. Listing it
+    // here anyway told Google "index this URL" while the page itself said
+    // "index that other one" — a contradiction Search Console reports as
+    // "Alternate page with proper canonical tag". The canonical target is in
+    // the sitemap under its own entry; this URL does not belong in it.
+    .filter((route) => route.seo.canonicalPath === route.url)
     .map((route) => ({
       path: route.url,
       lastmod: toW3CDate(route.seo.modifiedTime ?? route.seo.publishedTime),
@@ -1641,6 +1663,69 @@ async function writeNewsroomFeed(routes: readonly RouteEntry[]): Promise<void> {
   })
   await writeFile(path.join(DIST_DIR, 'newsroom.xml'), xml, 'utf8')
   console.log(`[prerender] wrote newsroom.xml (${posts.length} articles)`)
+}
+
+/**
+ * Two documents that are not routes: the shell the SPA falls back to, and the
+ * one Cloudflare serves with a real 404.
+ *
+ * Until now `_redirects` answered every unmatched path with `/index.html` — the
+ * *homepage document*, complete with `<title>Oxy, an open-source ecosystem…`
+ * and `<link rel="canonical" href="https://oxy.so/">`, at HTTP 200. So
+ * `/anything-at-all/` was a byte-identical copy of the home page claiming the
+ * home page's canonical, which is what Search Console was reporting as "Soft
+ * 404" and as duplicates without a user-selected canonical.
+ *
+ * `app-shell.html` is the same bundle with the home page's identity stripped:
+ * no canonical, no `og:url`, a neutral title. It backs the surfaces whose
+ * document legitimately cannot exist at build time — a Newsroom post published
+ * an hour after the deploy, a job opening, a feature request, a signed-in
+ * dashboard. React mounts and `<SEO>` writes the real meta.
+ *
+ * Neither carries a static `<meta name="robots">`. Helmet only manages tags it
+ * emits itself, so a `noindex` baked into the shell would survive React's
+ * mount and permanently de-index every page served through the fallback. The
+ * 404 document does not need one: it is only ever served with a 404 status, and
+ * `NotFoundPage` adds `noindex` at runtime.
+ */
+async function writeFallbackDocuments(shell: string): Promise<void> {
+  const bare = stripExistingMeta(shell)
+
+  const appShell = injectHead(
+    bare,
+    ['<title>Oxy</title>', '<meta name="description" content="Oxy, an open-source ecosystem of ethical technology.">'].join(
+      '\n    ',
+    ),
+  )
+  await writeFile(path.join(DIST_DIR, 'app-shell.html'), appShell, 'utf8')
+
+  const notFoundHead = [
+    '<title>Page not found | Oxy</title>',
+    '<meta name="description" content="This page does not exist. Search the Oxy site or start from the home page.">',
+  ].join('\n    ')
+  const notFoundBody =
+    '<main class="prerender-prose"><h1>Page not found</h1>' +
+    '<p>The page you asked for does not exist on oxy.so.</p>' +
+    `<p><a href="${SITE_URL}/">Go to the home page</a></p></main>`
+  const notFound = injectHead(injectRootTemplate(bare, notFoundBody), notFoundHead)
+  await writeFile(path.join(DIST_DIR, '404.html'), notFound, 'utf8')
+
+  console.log('[prerender] wrote app-shell.html + 404.html')
+}
+
+/** Emit `dist/_redirects` for the locales this build actually mirrored. */
+async function writeRedirects(
+  mirroredLocales: readonly Locale[],
+  localeReadinessKnown: boolean,
+): Promise<void> {
+  const contents = buildRedirectsFile({
+    supportedLocales: SUPPORTED_LOCALES,
+    defaultLocale: DEFAULT_LOCALE,
+    mirroredLocales,
+    localeReadinessKnown,
+  })
+  await writeFile(path.join(DIST_DIR, '_redirects'), contents, 'utf8')
+  console.log(`[prerender] wrote _redirects (${contents.trim().split('\n').filter((l) => l && !l.startsWith('#')).length} rules)`)
 }
 
 async function writeLocaleManifest(locales: readonly Locale[]): Promise<void> {
@@ -1696,6 +1781,8 @@ async function main(): Promise<void> {
   }
 
   await writeLocaleManifest(localeInfo.locales)
+  await writeFallbackDocuments(shell)
+  await writeRedirects(localeInfo.locales, localeInfo.known)
   await Promise.all([
     writeSitemap(baseRoutes, localeInfo.locales),
     writeNewsroomFeed(baseRoutes),

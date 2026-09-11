@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import type { SyncedPackage } from '../../../scripts/types'
 import { buildDocsHref, isVersionDeprecated, isVersionOutdated } from '../../content/docs-loader'
 

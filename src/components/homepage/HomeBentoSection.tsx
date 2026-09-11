@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { bentoCards } from '../../data/homepage'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 import { ArrowRightIcon } from '../icons'

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '../../lib/navigation'
 import { SecondaryButton } from '@oxy.so/bloom/button'
 import { Command, type CommandItem } from '@oxy.so/bloom/command'
 import { Kbd } from '@oxy.so/bloom/kbd'

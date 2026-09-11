@@ -1,5 +1,6 @@
 import { Suspense, createElement, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { TextButton } from '@oxy.so/bloom/button'
 import { bloomDemos, getBloomDemo } from '../../content/bloom-demos/registry'
 import { defaultValues, type PlaygroundValues } from '../../content/bloom-demos/_playground'

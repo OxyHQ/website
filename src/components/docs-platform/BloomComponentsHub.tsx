@@ -1,5 +1,5 @@
 import { Suspense, createElement, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { ErrorBoundary } from '@oxy.so/bloom/error-boundary'
 import { bloomCategories, bloomIndex, bloomVersion } from '../../content/bloom-catalog.generated'
 import { getBloomDemo } from '../../content/bloom-demos/registry'

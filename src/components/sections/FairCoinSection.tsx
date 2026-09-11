@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { Button as BloomButton } from '@oxy.so/bloom/button'
 import { StarFour, PlugsConnected, Unite, Cpu } from '@phosphor-icons/react'
 import { useFairCoinStats, useNewsroomPosts } from '../../api/hooks'

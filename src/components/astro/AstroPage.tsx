@@ -49,7 +49,7 @@ function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void 
         </div>
         <a href={DOWNLOAD_LINKS[CURRENT_PLATFORM]} className="mt-6 flex w-full items-center justify-center gap-2.5 rounded-full bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-600"><PlatformIcon platform={CURRENT_PLATFORM} className="h-5 w-5" />Download for {PLATFORM_META[CURRENT_PLATFORM].label}</a>
         <div className="mt-6 border-t border-neutral-200 pt-5 dark:border-neutral-700"><p className="mb-3 text-center text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Other platforms</p><div className="flex justify-center gap-3">{OTHER_PLATFORMS.map((platform) => <a key={platform} href={DOWNLOAD_LINKS[platform]} className="flex items-center gap-2 rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"><PlatformIcon platform={platform} className="h-4 w-4" />{PLATFORM_META[platform].label}</a>)}</div></div>
-        <p className="mt-5 text-center text-[11px] leading-relaxed text-neutral-400 dark:text-neutral-500">By downloading, you agree to the Astro <a href="/legal/terms" className="underline">Terms of Service</a> and <a href="/legal/privacy" className="underline">Privacy Policy</a>.</p>
+        <p className="mt-5 text-center text-[11px] leading-relaxed text-neutral-400 dark:text-neutral-500">By downloading, you agree to the Astro <a href="/legal/terms/" className="underline">Terms of Service</a> and <a href="/legal/privacy/" className="underline">Privacy Policy</a>.</p>
       </div>
     </div>
   )

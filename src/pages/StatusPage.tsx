@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../lib/navigation'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'

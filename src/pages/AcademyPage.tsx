@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../lib/navigation'
 import { Search as BloomSearch } from '@oxy.so/bloom/search'
 import {
   ArrowRight,

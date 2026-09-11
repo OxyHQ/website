@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../../../lib/navigation'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { motion } from 'framer-motion'
 import { ArrowRight, Activity, ShieldCheck, Coins } from 'lucide-react'

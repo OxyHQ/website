@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/navigation'
 import { BloomColorScope } from '@oxy.so/bloom/theme'
 import { useNewsroomPost } from '../api/hooks'
 import { errorStatus } from '../api/client'

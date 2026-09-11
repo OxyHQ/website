@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { useProducts, type ProductRecord } from '../../api/hooks'
 import Button from '../ui/Button'
 import AppCard from './AppCard'

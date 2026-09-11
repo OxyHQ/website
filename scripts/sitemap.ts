@@ -18,6 +18,7 @@
  */
 
 import { buildLocalizedSeoUrl } from '../src/lib/seoUrl'
+import { hasLocalizedVariants } from '../src/lib/localizedRoute'
 
 /** One canonical URL, as it will appear in the sitemap. */
 export interface SitemapEntry {
@@ -70,6 +71,10 @@ function localizedUrl(path: string, locale: string, opts: SitemapOptions): strin
  */
 function buildAlternates(path: string, opts: SitemapOptions): string {
   if (opts.localeCodes.length === 0) return ''
+  // No locale mirror is written for these, so an alternate here would point at
+  // a URL that does not exist. `hasLocalizedVariants` is the same authority the
+  // prerender and `<SEO>` read, so the three cannot disagree.
+  if (!hasLocalizedVariants(path)) return ''
   const codes = [opts.defaultLocale, ...opts.localeCodes]
   const links = codes.map(
     (code) =>

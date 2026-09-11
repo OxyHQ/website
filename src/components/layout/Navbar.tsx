@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { Link, useNavigate } from '../../lib/navigation'
 import { LogoIcon, useAuth, useOxy } from '@oxy.so/services/ui/client'
 import {
   simpleNavLinks,

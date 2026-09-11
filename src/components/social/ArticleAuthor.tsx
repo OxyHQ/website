@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { Avatar } from '@oxy.so/bloom/avatar'
 import { getNormalizedUserHandle } from '@oxy.so/core'
 import { useUserById } from '../../api/hooks'

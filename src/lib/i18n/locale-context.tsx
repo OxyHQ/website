@@ -5,7 +5,8 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { useNavigate } from '../navigation'
 import { useQuery } from '@tanstack/react-query'
 import { apiFetch } from '../../api/client'
 import {

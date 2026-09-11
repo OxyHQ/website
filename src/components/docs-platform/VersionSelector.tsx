@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '../../lib/navigation'
 import type { SyncedPackage } from '../../../scripts/types'
 import { buildDocsHref } from '../../content/docs-loader'
 import { cn } from '../../lib/utils'

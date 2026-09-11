@@ -1,5 +1,6 @@
 import { Suspense, createElement, useEffect, useRef } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/navigation'
 import { MDXProvider } from '@mdx-js/react'
 import { ArrowLeft, ArrowRight, BookOpen, Check, Clock } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'

@@ -8,9 +8,9 @@
     "predev": "bun scripts/generate-theme-css.ts && bun scripts/generate-bloom-catalog.ts && bun scripts/generate-bloom-live-scope.ts && bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts",
     "dev": "bun server/index.ts & vite",
     "dev:client": "vite",
-    "prebuild": "bun scripts/generate-theme-css.ts && bun run test:theme && bun test scripts/kaana-brand.test.ts && bun scripts/generate-bloom-catalog.ts && bun scripts/generate-bloom-live-scope.ts && bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts && bun scripts/build-help-og-images.ts && rm -rf node_modules/.tmp",
+    "prebuild": "bun scripts/generate-theme-css.ts && bun run test:theme && bun run test:links && bun test scripts/seo-contract.test.ts scripts/sitemap.test.ts && bun test scripts/kaana-brand.test.ts && bun scripts/generate-bloom-catalog.ts && bun scripts/generate-bloom-live-scope.ts && bun scripts/sync-docs.ts && bun scripts/sync-changelog.ts && bun scripts/build-help-og-images.ts && rm -rf node_modules/.tmp",
     "build": "tsc -b && vite build",
-    "postbuild": "bun scripts/build-docs-search-index.ts && NODE_ENV=production bun scripts/prerender.ts && bun scripts/build-csp-headers.ts && bun scripts/run-pagefind.ts && bun run test:theme:browser && bun run test:docs:browser && bun run test:bloom-demos:browser",
+    "postbuild": "bun scripts/build-docs-search-index.ts && NODE_ENV=production bun scripts/prerender.ts && bun scripts/build-csp-headers.ts && bun run test:routing && bun run test:link-audit && bun scripts/run-pagefind.ts && bun run test:theme:browser && bun run test:docs:browser && bun run test:bloom-demos:browser",
     "prerender": "NODE_ENV=production bun scripts/prerender.ts",
     "analyze": "ANALYZE=1 vite build && echo \"open node_modules/.tmp/bundle-stats.html\"",
     "lint": "eslint .",
@@ -40,7 +40,10 @@
     "generate:bloom-catalog": "bun scripts/generate-bloom-catalog.ts",
     "generate:bloom-live-scope": "bun scripts/generate-bloom-live-scope.ts",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "bun server/db/migrate.ts"
+    "db:migrate": "bun server/db/migrate.ts",
+    "test:links": "bun scripts/internal-links.test.ts",
+    "test:routing": "bun scripts/routing-contract.test.ts",
+    "test:link-audit": "bun scripts/link-audit.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1087.0",

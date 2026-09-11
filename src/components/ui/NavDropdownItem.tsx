@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import type { NavDropdownItem as NavDropdownItemType } from '../../data/content'
 import type { CSSProperties } from 'react'
 

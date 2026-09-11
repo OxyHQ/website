@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom'
-
+import { Link } from '../../lib/navigation'
 interface BannerAction {
   label: string
   href: string

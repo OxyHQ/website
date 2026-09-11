@@ -1,6 +1,7 @@
 import { MotionConfig } from 'framer-motion'
 import { useState, useCallback, lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
+import { Navigate } from './lib/navigation'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { OxyProvider, useOxy } from '@oxy.so/services/ui/client'
 import type { User } from '@oxy.so/core'

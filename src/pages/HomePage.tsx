@@ -19,7 +19,7 @@ import AIResearchSection from '../components/ai/AIResearchSection'
 import OxyAppsFeatureGrid from '../components/sections/OxyAppsFeatureGrid'
 import OxyUseCasesRolo from '../components/sections/OxyUseCasesRolo'
 import PhotoCardCarousel, { type PhotoCard } from '../components/sections/PhotoCardCarousel'
-import { Link } from 'react-router-dom'
+import { Link } from '../lib/navigation'
 import { AlertDialog } from '@oxy.so/bloom/alert-dialog'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 import { APP_CARD_IMAGES } from '../data/appCardImages'
@@ -565,7 +565,7 @@ function PartnershipSection() {
               </div>
             ))}
             <a
-              href="/sustain"
+              href="/sustain/"
               className="flex min-h-8 items-center gap-2 px-1 py-0.5 text-base font-semibold text-tertiary transition-colors duration-200 hover:text-tertiary/80 md:text-lg"
             >
               {t('home.partnershipCta')}

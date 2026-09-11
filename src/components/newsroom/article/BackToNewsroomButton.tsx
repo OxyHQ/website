@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../../lib/navigation'
 import { ArrowLeft } from '@phosphor-icons/react'
 
 /** A quiet secondary action beside the article's primary share control. */

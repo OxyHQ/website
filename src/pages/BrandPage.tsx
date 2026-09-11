@@ -1,5 +1,5 @@
 import { useState, type CSSProperties } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../lib/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowUpRight, ArrowDown, Plus, Minus } from '@phosphor-icons/react'
 import { LogoIcon, LogoText } from '@oxy.so/services/ui/client'

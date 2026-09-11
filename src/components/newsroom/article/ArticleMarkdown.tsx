@@ -9,6 +9,7 @@ import {
 } from '../../slices/article-blocks/ArticleBlocks'
 import { expandArticleCitations, parseArticleFence } from '../../slices/article-blocks/schema'
 import { slugify } from './headings'
+import { canonicalHref } from '../../../lib/canonicalPath'
 
 /**
  * The article body.
@@ -69,7 +70,7 @@ export default function ArticleMarkdown({ content }: { content: string }) {
           <ArticleCitation id={href.slice('#fn-'.length)}>{children}</ArticleCitation>
         ) : (
           <a
-            href={href}
+            href={canonicalHref(href)}
             target={href?.startsWith('http') ? '_blank' : undefined}
             rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
             className="font-medium text-primary underline decoration-primary/35 underline-offset-4 transition-colors hover:decoration-primary"

@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { useInView, useReducedMotion, useScroll, useTransform, motion, type MotionValue } from 'framer-motion'
 import { useJobs, useProducts } from '../../api/hooks'
 import { getStaticChangelog } from '../../content/changelog-loader'
