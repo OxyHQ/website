@@ -5,10 +5,15 @@ import { db } from '../db/postgres.js'
 import { categories, media, products, translations } from '../db/schema/index.js'
 import { populate } from '../db/refs.js'
 import { localeMiddleware } from '../middleware/locale.js'
+import {
+  applyFunctionalSignals,
+  readFunctionalSignals,
+  type PublicServiceStatus,
+} from '../services/functionalStatus.js'
 
 const router = Router()
 
-type ServiceStatus = 'operational' | 'degraded' | 'down' | 'unknown'
+type ServiceStatus = PublicServiceStatus
 
 interface LogoRef {
   url?: string
@@ -143,7 +148,10 @@ async function buildPayload(): Promise<CachedStatusPayload> {
     .where(eq(products.showOnStatus, true))
     .orderBy(asc(products.section), asc(products.order), asc(products._id))
   const probed = (await populate(rows, { logo: media, category: categories })) as unknown as ProductRow[]
-  const services = await Promise.all(probed.map(probeService))
+  const services = applyFunctionalSignals(
+    await Promise.all(probed.map(probeService)),
+    await readFunctionalSignals(),
+  )
   return {
     generatedAt: new Date().toISOString(),
     overall: computeOverall(services),
