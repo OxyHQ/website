@@ -17,7 +17,8 @@ WHERE legacy."product_id" = aliases.legacy
 
 UPDATE "products"
 SET "show_on_status" = false, "updated_at" = now()
-WHERE "product_id" IN ('c', 'i', 'fairwallet', 'faircoinexplorer', 'marketplace');
+WHERE "product_id" IN ('c', 'i', 'fairwallet', 'faircoinexplorer', 'marketplace')
+  AND "show_on_status" IS DISTINCT FROM false;
 
 -- This is a data migration, not a seed assertion: old production databases
 -- may contain only the original ten rows. Insert the complete canonical census
@@ -48,7 +49,7 @@ VALUES
   ('1c8485f575e547e80dc4074f', 'oxyos', 'Oxy OS', 'Operating system', 'An operating system built around privacy.', 'https://os.oxy.so', NULL, false, 'Explore Oxy OS', '#f97316', 'X', 'infrastructure', 'live', true, true, true, 3),
   ('bf2c07aa843daefbee31b9d9', 'oxy-ai', 'Oxy AI', 'Models, API and SDKs', 'Privacy-first AI for developers.', '/ai', NULL, false, 'Explore Oxy AI', '#dc2626', 'O', 'developer', 'live', true, true, false, 0),
   ('8eae4819466242bf9b1b8b9d', 'oxy-api', 'Oxy API', 'Core identity and platform API', 'The core Oxy API.', 'https://api.oxy.so', 'https://api.oxy.so/health', true, 'API reference', '#475569', 'A', 'infrastructure', 'live', false, true, false, 0),
-  ('538f1001d76d2efab13c7aad', 'website-api', 'Website API', 'Powers oxy.so content and MCP', 'The oxy.so content API.', 'https://website-api.oxy.so', 'https://website-api.oxy.so/api/health', true, 'Status', '#475569', 'W', 'infrastructure', 'live', false, true, false, 1),
+  ('538f1001d76d2efab13c7aad', 'website-api', 'Website API', 'Powers oxy.so content and MCP', 'The oxy.so content API.', 'https://website-api.oxy.so', 'https://website-api.oxy.so/api/ready', true, 'Status', '#475569', 'W', 'infrastructure', 'live', false, true, false, 1),
   ('90990b495116adc8c5d3c71a', 'accounts', 'Accounts', 'Sign-in, profile and billing', 'Manage your Oxy identity.', 'https://accounts.oxy.so', NULL, true, 'Open accounts', '#475569', 'A', 'infrastructure', 'live', false, true, false, 2),
   ('6ebd66838ff27f723725f207', 'tnp', 'TNP', 'Alternative namespace', 'The Network Protocol.', '/tnp', NULL, false, 'Explore TNP', '#10b981', 'T', 'infrastructure', 'live', true, true, true, 3),
   ('ab902563ee2cb9aae64d2f2b', 'astro', 'Astro', 'AI browser', 'Browse the web with AI.', '/astro', NULL, false, 'Explore Astro', '#a855f7', 'A', 'apps', 'in-development', true, true, true, 0),
@@ -59,7 +60,9 @@ VALUES
 ON CONFLICT ("product_id") DO UPDATE SET
   "health_url" = EXCLUDED."health_url",
   "show_on_status" = true,
-  "updated_at" = now();
+  "updated_at" = now()
+WHERE "products"."health_url" IS DISTINCT FROM EXCLUDED."health_url"
+   OR "products"."show_on_status" IS DISTINCT FROM true;
 
 DO $$
 DECLARE actual_count integer;

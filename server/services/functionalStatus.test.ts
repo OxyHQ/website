@@ -41,6 +41,7 @@ describe('public functional status', () => {
       assert.equal(authoritativeProbeUrl(productId), null)
     }
     assert.equal(authoritativeProbeUrl('nilo'), 'https://api.nilo.so/health/ready')
+    assert.equal(authoritativeProbeUrl('website-api'), 'https://website-api.oxy.so/api/ready')
   })
 
   it('propagates shared platform failure without improving an unknown app', () => {

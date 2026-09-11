@@ -17,7 +17,8 @@ alarm in `OK`; a missing alarm, an unreadable CloudWatch response or
 | Moovo | `GET https://api.moovo.now/health/ready` | Store readiness | Oxy API |
 | Mercaria | `GET https://api.mercaria.co/health/ready` | Database and migration readiness | Oxy API |
 | FairCoin bridge / buy / explorer | Their dedicated `/health`, `/health/buy`, or mining-info API endpoint | Public backend contract | none declared |
-| Oxy API / Website API | Their dedicated health endpoint | Public backend contract | none declared |
+| Oxy API | `GET https://api.oxy.so/health` | Public backend contract | none declared |
+| Website API | `GET https://website-api.oxy.so/api/ready` | Dynamic PostgreSQL readiness; its ALB separately uses the stable post-bootstrap `/api/health` probe | none declared |
 | Every other public board entry | No probe | `unknown` until the owner publishes and documents a non-billable authoritative signal | Declared dependencies may still worsen it to `down` |
 
 The status backend reads only the two exact CloudWatch metric alarms through its

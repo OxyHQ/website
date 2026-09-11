@@ -5,7 +5,11 @@ import { buildRedirectsFile } from './redirects'
 import { isSpaFallbackPath } from '../src/lib/spaFallback'
 import { buildSitemapXml } from './sitemap'
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '../src/lib/i18n/types'
-import { rewriteSiblingDocLinks, rewriteStaleDocsVersionLinks } from './docs-links'
+import {
+  rewriteCrossPackageDocRootLinks,
+  rewriteSiblingDocLinks,
+  rewriteStaleDocsVersionLinks,
+} from './docs-links'
 
 describe('internal links point at the canonical URL', () => {
   test('adds the trailing slash Cloudflare would 308 to', () => {
@@ -300,5 +304,30 @@ describe('synced docs links that name a version this site does not serve', () =>
     // `core` is another package, and nothing in this slug set claims it.
     const untouched = '[Core](/developers/docs/core/main/api)'
     expect(rewriteStaleDocsVersionLinks(untouched, slugs, 'bloom', base)).toBe(untouched)
+  })
+})
+
+describe('cross-package documentation roots', () => {
+  const roots = new Map([
+    ['bloom', '/developers/docs/bloom/1.0.0'],
+    ['mention', '/developers/docs/mention'],
+  ])
+
+  test('repoints a branch-named package root using the complete synced index', () => {
+    expect(rewriteCrossPackageDocRootLinks(
+      '[Bloom](/developers/docs/bloom/main)',
+      roots,
+    )).toBe('[Bloom](/developers/docs/bloom/1.0.0/)')
+    expect(rewriteCrossPackageDocRootLinks(
+      '[Mention](/developers/docs/mention/master/#setup)',
+      roots,
+    )).toBe('[Mention](/developers/docs/mention/#setup)')
+  })
+
+  test('does not invent a destination for an unsynced package or nested page', () => {
+    const absent = '[Other](/developers/docs/other/main)'
+    const nested = '[Bloom label](/developers/docs/bloom/main/label)'
+    expect(rewriteCrossPackageDocRootLinks(absent, roots)).toBe(absent)
+    expect(rewriteCrossPackageDocRootLinks(nested, roots)).toBe(nested)
   })
 })
