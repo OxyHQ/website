@@ -38,7 +38,13 @@ for (let attempt = 0; attempt < 50; attempt += 1) {
 }
 invariant(previewReady, 'Vite preview did not start')
 
-const browser = await chromium.launch({ headless: true })
+const browser = await chromium.launch({
+  headless: true,
+  // Same escape hatch the other two browser suites carry: Playwright resolves
+  // its own pinned Chromium build, which a machine whose browser cache predates
+  // the last `playwright` bump does not have.
+  executablePath: process.env.CHROME_EXECUTABLE || undefined,
+})
 const context = await browser.newContext({ viewport: { width: 1440, height: 900 } })
 const page = await context.newPage()
 const pageErrors: string[] = []
@@ -59,7 +65,7 @@ async function assertGlobalChrome(activePage: Page): Promise<void> {
 
 async function assertGlobalDocsChrome(activePage: Page): Promise<void> {
   await assertGlobalChrome(activePage)
-  await activePage.locator('a[href="/developers/docs/services"]').waitFor({ state: 'attached' })
+  await activePage.locator('a[href="/developers/docs/services/"]').waitFor({ state: 'attached' })
 }
 
 async function openRoute(path: string): Promise<void> {
@@ -121,12 +127,12 @@ try {
   await assertComponentWorkbench(page)
 
   await openRoute(`/developers/docs/bloom/${bloom.latestVersion}/playground`)
-  await page.waitForURL(`${origin}/developers/docs/bloom/playground`)
+  await page.waitForURL(`${origin}/developers/docs/bloom/playground/`)
   await assertComponentWorkbench(page)
 
   await openRoute('/developers/docs/bloom/color-system')
   await page.locator('[data-testid="color-system-playground"]').waitFor()
-  await assertCurrentSidebarLink('/developers/docs/bloom/color-system')
+  await assertCurrentSidebarLink('/developers/docs/bloom/color-system/')
   invariant(
     await page.getByRole('button', { name: /^Switch version/ }).count() === 0,
     'latest color playground must not expose historical docs version controls',
@@ -161,19 +167,19 @@ try {
     'trailing-slash canonical route must remain canonical instead of redirecting',
   )
   await page.locator('[data-testid="color-system-playground"]').waitFor()
-  await assertCurrentSidebarLink('/developers/docs/bloom/color-system')
+  await assertCurrentSidebarLink('/developers/docs/bloom/color-system/')
 
   await openRoute(`/developers/docs/bloom/${bloom.latestVersion}/color-system`)
-  await page.waitForURL(`${origin}/developers/docs/bloom/color-system`)
+  await page.waitForURL(`${origin}/developers/docs/bloom/color-system/`)
   await page.locator('[data-testid="color-system-playground"]').waitFor()
-  await assertCurrentSidebarLink('/developers/docs/bloom/color-system')
+  await assertCurrentSidebarLink('/developers/docs/bloom/color-system/')
 
   await openRoute(`/developers/docs/bloom/${bloom.latestVersion}`)
   invariant(
-    await page.locator('main a[href="/developers/docs/bloom/color-system"]').count() === 1,
+    await page.locator('main a[href="/developers/docs/bloom/color-system/"]').count() === 1,
     'Bloom overview must render one color-system hub link',
   )
-  await page.locator('main a[href="/developers/docs/bloom/playground"]').waitFor()
+  await page.locator('main a[href="/developers/docs/bloom/playground/"]').waitFor()
 
   await page.goto(`${origin}/developers`, { waitUntil: 'domcontentloaded' })
   await assertGlobalChrome(page)

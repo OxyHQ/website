@@ -153,7 +153,7 @@ export default function AIPricingPage() {
               </button>
               <a
                 className="inline-flex h-10 items-center justify-center rounded-full border border-border px-5 text-sm font-medium text-foreground hover:bg-accent"
-                href="/pricing"
+                href="/pricing/"
               >
                 See ecosystem pricing
               </a>

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { CalendarDays } from 'lucide-react'
 import { useAuth, useOxy } from '@oxy.so/services/ui/client'
 import { getNormalizedUserHandle } from '@oxy.so/core'

@@ -1,6 +1,5 @@
 import type { NavDropdownCard } from '../../data/content'
-import { Link } from 'react-router-dom'
-
+import { Link } from '../../lib/navigation'
 /* ─── Promo card ─── */
 
 /**

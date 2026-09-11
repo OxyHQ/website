@@ -1,4 +1,5 @@
-import { Navigate, useLocation, useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
+import { Navigate } from '../../lib/navigation'
 import { buildDocsHref, getPackage, getPage, resolveVersion } from '../../content/docs-loader'
 import { DocsApiBody } from './DocsApiBody'
 import { DocsMdxBody } from './DocsMdxBody'

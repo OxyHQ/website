@@ -1,4 +1,5 @@
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/navigation'
 import { useAuth } from '@oxy.so/services/ui/client'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { ArrowLeft, ChevronUp, ExternalLink } from 'lucide-react'
@@ -43,15 +44,15 @@ export default function FeatureRequestPage() {
   const { owner = '', repo = '', number = '' } = useParams<{ owner: string; repo: string; number: string }>()
   const { data: feature, isPending, error } = useFeatureRequest(owner, repo, number)
 
+  // No `<SEO>` while the request is in flight, matching every other detail page
+  // here. A skeleton knows nothing about whether the page exists, and the
+  // `noIndex` this branch used to emit was a real directive the moment a
+  // crawler's render snapshot caught the loading state — on a page that then
+  // resolved perfectly well. Saying nothing leaves the prerendered document's
+  // meta standing until the answer arrives.
   if (isPending) {
     return (
       <PageShell>
-        <SEO
-          title="Feature request"
-          description="A proposal on the Oxy feature board."
-          canonicalPath={featureRequestPath(owner, repo, number)}
-          noIndex
-        />
         <BackToBoard />
         <div className="mt-8 flex flex-col gap-4">
           <Skeleton.Box width="70%" height={32} borderRadius={6} />

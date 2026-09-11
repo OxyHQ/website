@@ -2,6 +2,7 @@ import type { ComponentPropsWithoutRef } from 'react'
 import { cn } from '../../lib/utils'
 import { BloomDemo } from './BloomDemo'
 import { Badge, Callout, Code, LiveExample, MdxPre } from './MdxComponents'
+import { canonicalHref } from '../../lib/canonicalPath'
 
 /**
  * Default tag map handed to `<MDXProvider components={mdxComponents}>` so
@@ -67,6 +68,7 @@ export const mdxComponents = {
   a: (props: ComponentPropsWithoutRef<'a'>) => (
     <a
       {...props}
+      href={canonicalHref(props.href)}
       className={cn('font-medium text-primary underline-offset-4 hover:underline', props.className)}
     />
   ),

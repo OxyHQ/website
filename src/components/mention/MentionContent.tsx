@@ -1,7 +1,7 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion'
 import { Lightning, PencilSimple, Cloud } from '@phosphor-icons/react'
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import mBrushSvg from '../../assets/mention/m-brush.svg?raw'
 import sky from '../../assets/mention/sky.jpg'
 import logo from '../../assets/mention/logo.png'

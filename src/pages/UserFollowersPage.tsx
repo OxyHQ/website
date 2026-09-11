@@ -1,4 +1,5 @@
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
+import { Link } from '../lib/navigation'
 import { useQuery } from '@tanstack/react-query'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { useOxy } from '@oxy.so/services/ui/client'

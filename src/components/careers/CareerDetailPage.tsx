@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
 import Button from '../ui/Button'
 import { useJob } from '../../api/hooks'

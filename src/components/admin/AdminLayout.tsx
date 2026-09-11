@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { useAuth } from '@oxy.so/services/ui/client'
 import { Avatar } from '@oxy.so/bloom/avatar'
 import {

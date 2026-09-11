@@ -1,4 +1,5 @@
-import { NavLink, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { NavLink } from '../../lib/navigation'
 import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom'
 
 interface DocsTab {

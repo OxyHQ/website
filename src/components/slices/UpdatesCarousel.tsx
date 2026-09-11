@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import SliceIcon from './SliceIcon'
 
 export interface UpdateItem {

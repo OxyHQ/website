@@ -123,7 +123,11 @@ function buildSearchDocuments(index: SyncedIndex): IndexDoc[] {
       // index small and avoids old-version duplicates.
       if (ver.version !== pkg.latestVersion) continue
       for (const page of ver.pages) {
-        const url = buildDocsHref(pkg, 'latest', page.slug)
+        // The versioned URL is the canonical one (`DocsPage` canonicalises to
+        // it), and the only one with a prerendered document. Surfacing the
+        // no-version form sent every search click through a page that points
+        // its canonical somewhere else.
+        const url = buildDocsHref(pkg, pkg.latestVersion, page.slug)
         documents.push({
           id: url,
           title: page.title,

@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom'
-
+import { Link } from '../../lib/navigation'
 const links = [
   {
     href: '/developers/docs/bloom/components',

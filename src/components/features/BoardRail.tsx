@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { ExternalLink } from 'lucide-react'
 import FeatureSearch from './FeatureSearch'
 import { ORG_ROADMAP_PROJECT_URL, ROADMAP_GROUPS } from './roadmapGroups'

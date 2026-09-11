@@ -9,7 +9,7 @@ import {
   ChatCircleText,
 } from '@phosphor-icons/react'
 import { PrimaryButton, TextButton } from '@oxy.so/bloom/button'
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import PageSection from '../layout/PageSection'
 import FaqSection from '../sections/FaqSection'
 

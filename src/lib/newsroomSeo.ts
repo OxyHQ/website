@@ -67,7 +67,9 @@ export function buildNewsroomArticleStructuredData(
     ? {
         '@type': 'Person',
         name: post.authorUsername,
-        url: `${brand.origin}/u/${encodeURIComponent(post.authorUsername)}`,
+        // Trailing slash for the same reason as every other URL this file
+        // publishes: the bare form is a 308.
+        url: `${brand.origin}/u/${encodeURIComponent(post.authorUsername)}/`,
       }
     : publisher(brand)
 

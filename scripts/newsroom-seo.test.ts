@@ -98,7 +98,7 @@ describe('Newsroom structured data', () => {
     expect(article?.author).toMatchObject({
       '@type': 'Person',
       name: 'nate',
-      url: 'https://oxy.so/u/nate',
+      url: 'https://oxy.so/u/nate/',
     })
     expect(breadcrumbs?.itemListElement).toHaveLength(3)
   })

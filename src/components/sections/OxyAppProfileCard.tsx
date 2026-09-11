@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { APP_CARD_IMAGES } from '../../data/appCardImages'
 
 export type CommunityProfileCard = {

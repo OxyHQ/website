@@ -1,6 +1,6 @@
 import type { NewsroomPost } from '../../../data/newsroom'
 import { useCurrentLocale } from '../../../lib/i18n'
-import { Link } from 'react-router-dom'
+import { Link } from '../../../lib/navigation'
 import ArticleListenControl from './ArticleListenControl'
 import ShareLinkButton from './ShareLinkButton'
 

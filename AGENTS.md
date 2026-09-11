@@ -44,13 +44,15 @@ bun run dev / build / server / mcp / sync-docs / sync-changelog
 
 ## Prerendering and SEO
 
-`scripts/prerender.ts` writes `dist/<route>/index.html` for every route it can enumerate, plus `sitemap.xml` from that same list. The `<head>` comes from the real `<SEO>` component through the SSR bundle, and markdown routes additionally render their prose through the app's own `ArticleMarkdown`.
+`scripts/prerender.ts` writes `dist/<route>/index.html` for every route it enumerates, plus `sitemap.xml`, `_redirects`, `404.html` and `app-shell.html` from that same list. The `<head>` is the real `<SEO>` component's output through the SSR bundle; markdown routes also render prose through the app's `ArticleMarkdown`, capped per document and reported at the end of the build. **Procedure and the Search Console findings behind these rules: `docs/SEARCH-INDEXING.md`.**
 
-- **A route serves prose only where prose is what it HAS** — newsroom posts and synced docs. A marketing page is built from components, and emitting a heading that repeats its `<title>` is boilerplate, not content.
-- **Locale mirrors deliberately keep the shell** — the markdown behind them is the default locale's text, and a `/es/` URL serving English prose reads worse than one serving none.
-- The app mounts with `createRoot`, which empties `#root` first, so prerendered prose is never markup React must reconcile. **Do not switch to `hydrateRoot`** without making the markup match the full page tree.
-- Prose is capped per document, cut on a blank line, and every capped route is reported at the end of the build.
-- **Verify with JavaScript blocked, and mind the trailing slash** — `vite preview` answers the slashless form with the SPA fallback, so a probe without it reads an empty shell and reports that nothing changed.
+- **A document's canonical URL ends in `/`, and so must every link to it.** Cloudflare 308s the bare form, so a react-router `<Link to="/pricing">` publishes a redirect as this site's idea of where the page is (725 URLs under "Page with redirect"). Import `Link`/`NavLink` from `src/lib/navigation`; `withDocumentTrailingSlash` is the one authority: links, canonical, hreflang, sitemap, feeds.
+- **`_redirects` must never end in `/*  /index.html  200`** — `dist/index.html` is the prerendered HOME PAGE, canonical included, so that answered every retired URL with a 200 home-page duplicate. Unknown paths get `404.html`; only `SPA_FALLBACK_PATTERNS` gets `app-shell.html`. Neither fallback may carry a static `<meta name="robots">`: Helmet manages only tags it emits, so a baked-in `noindex` outlives React's mount.
+- **A locale mirror exists only where a translation does** (`src/lib/localizedRoute.ts`, one authority for `<SEO>`, sitemap and prerender). hreflang is reciprocal and must carry the DEFAULT locale's self-reference, which `translationReady` alone never yields. An unreachable `/api/locales` is not "no locales": `_redirects` takes `localeReadinessKnown` apart, or a timeout 301s every live `/es/…` URL away.
+- **A route serves prose only where prose is what it HAS** — newsroom posts and synced docs. A marketing page is built from components; a heading repeating its `<title>` is boilerplate, not content.
+- **A locale mirror keeps the shell and drops the prose**: the markdown behind it is the default locale's text, and a `/es/` URL serving English prose reads worse than one serving none.
+- The app mounts with `createRoot`, which empties `#root` first, so prerendered prose is never markup React must reconcile. **Do not switch to `hydrateRoot`** without making the markup match the page tree.
+- **Verify with JavaScript blocked, and mind the trailing slash** — `vite preview` answers the slashless form with the SPA fallback, so a probe without it reads an empty shell.
 
 ## Feature board
 

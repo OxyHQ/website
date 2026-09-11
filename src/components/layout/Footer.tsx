@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { useTranslation } from '../../lib/i18n'
 import { ArrowRightIcon } from '../icons'
 import { defaultFooterColumns, type FooterLink } from '../../data/content'
