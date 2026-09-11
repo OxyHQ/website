@@ -90,9 +90,6 @@ function resolveLogoUrl(logo: unknown): string | null {
 
 async function probeService(product: ProductRow): Promise<CachedServiceResult> {
   const target = authoritativeProbeUrl(product.productId)
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS)
-  const start = Date.now()
   const base: Omit<CachedServiceResult, 'status' | 'latencyMs' | 'httpStatus' | 'lastChecked'> = {
     id: product.productId,
     productDocId: product._id,
@@ -115,6 +112,9 @@ async function probeService(product: ProductRow): Promise<CachedServiceResult> {
       lastChecked: new Date().toISOString(),
     }
   }
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS)
+  const start = Date.now()
   try {
     // Targets are audited above, and safeFetch remains the SSRF boundary.
     const result = await safeFetch(target, {
