@@ -5,10 +5,16 @@ import { db } from '../db/postgres.js'
 import { categories, media, products, translations } from '../db/schema/index.js'
 import { populate } from '../db/refs.js'
 import { localeMiddleware } from '../middleware/locale.js'
+import {
+  applyFunctionalSignals,
+  authoritativeProbeUrl,
+  readFunctionalSignals,
+  type PublicServiceStatus,
+} from '../services/functionalStatus.js'
 
 const router = Router()
 
-type ServiceStatus = 'operational' | 'degraded' | 'down' | 'unknown'
+type ServiceStatus = PublicServiceStatus
 
 interface LogoRef {
   url?: string
@@ -83,10 +89,7 @@ function resolveLogoUrl(logo: unknown): string | null {
 }
 
 async function probeService(product: ProductRow): Promise<CachedServiceResult> {
-  const target = product.healthUrl || product.href
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS)
-  const start = Date.now()
+  const target = authoritativeProbeUrl(product.productId)
   const base: Omit<CachedServiceResult, 'status' | 'latencyMs' | 'httpStatus' | 'lastChecked'> = {
     id: product.productId,
     productDocId: product._id,
@@ -100,8 +103,20 @@ async function probeService(product: ProductRow): Promise<CachedServiceResult> {
     mark: product.mark,
     logoUrl: resolveLogoUrl(product.logo),
   }
+  if (target === null) {
+    return {
+      ...base,
+      status: 'unknown',
+      latencyMs: null,
+      httpStatus: null,
+      lastChecked: new Date().toISOString(),
+    }
+  }
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS)
+  const start = Date.now()
   try {
-    // healthUrl/href are CMS-supplied, so the probe must be SSRF-safe.
+    // Targets are audited above, and safeFetch remains the SSRF boundary.
     const result = await safeFetch(target, {
       method: 'GET',
       signal: controller.signal,
@@ -143,7 +158,10 @@ async function buildPayload(): Promise<CachedStatusPayload> {
     .where(eq(products.showOnStatus, true))
     .orderBy(asc(products.section), asc(products.order), asc(products._id))
   const probed = (await populate(rows, { logo: media, category: categories })) as unknown as ProductRow[]
-  const services = await Promise.all(probed.map(probeService))
+  const services = applyFunctionalSignals(
+    await Promise.all(probed.map(probeService)),
+    await readFunctionalSignals(),
+  )
   return {
     generatedAt: new Date().toISOString(),
     overall: computeOverall(services),
