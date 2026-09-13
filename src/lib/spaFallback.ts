@@ -27,6 +27,9 @@ const SPA_FALLBACK_PATTERNS: readonly RegExp[] = [
   /^\/company\/careers\/[^/]+$/,
   /^\/apps\/[^/]+$/,
   /^\/features\/[^/]+\/[^/]+\/[^/]+$/,
+  // Status incident history, paginated by month — new pages exist between
+  // deploys, so it can't be prerendered like /status itself.
+  /^\/history\/[^/]+$/,
   // Client-only docs surfaces: the Bloom playground, colour system and the
   // `_demo` isolation route have no document by design.
   /^\/developers\/docs\/api(?:\/[^/]+)?$/,
