@@ -3,11 +3,15 @@ import { observeMapContrast } from './map-contrast'
 import { createSolarMaterial } from './solar-material'
 import Globe, { type GlobeMethods } from 'react-globe.gl'
 import {
+  AdditiveBlending,
   BackSide,
+  CanvasTexture,
   Mesh,
   MeshBasicMaterial,
   type ShaderMaterial,
   SphereGeometry,
+  Sprite,
+  SpriteMaterial,
   SRGBColorSpace,
   TextureLoader,
 } from 'three'
@@ -18,6 +22,7 @@ import { ACTIVITY_CATEGORIES, type ActivityCategory } from '../../data/dashboard
 import { activityRoute } from '../../data/dashboard/activity-routes'
 import { activityMotion, activityFlows, retainFlowObjects } from '../../data/dashboard/activity-motion'
 import { cameraMotion, stepCameraMotion, selectCameraFocus, CAMERA_MANUAL_PAUSE_MS, type CameraFocus, type CameraTarget } from '../../data/dashboard/camera-motion'
+import { solarDirection } from '../../data/dashboard/solar-position'
 
 interface LiveGlobeProps {
   infraStatus?: InfraStatusNode[]
@@ -60,12 +65,36 @@ interface ActivityRing {
 }
 
 const MIN_GLOBE_HEIGHT = 420
+/** Pale Rayleigh-scattering blue for the limb glow — a physical property of the
+ * atmosphere, not a brand color, so it stays fixed across themes. */
+const ATMOSPHERE_COLOR = 'rgb(80, 150, 230)'
+const SUN_DISTANCE = 850
 
 function threeColor(token: string): string {
   const channels = token.match(/^rgb\(\s*(\d+)\s+(\d+)\s+(\d+)\s*\)$/)
   return channels
     ? `rgb(${channels[1]}, ${channels[2]}, ${channels[3]})`
     : token
+}
+
+/** Soft radial glow, no ring/hexagon flare artifacts — reads as a real sun, not a camera effect. */
+function createSunTexture(): CanvasTexture {
+  const size = 256
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  const center = size / 2
+  const gradient = ctx.createRadialGradient(center, center, 0, center, center, center)
+  gradient.addColorStop(0, 'rgba(255,252,240,0.95)')
+  gradient.addColorStop(0.12, 'rgba(255,247,222,0.6)')
+  gradient.addColorStop(0.35, 'rgba(255,238,198,0.2)')
+  gradient.addColorStop(1, 'rgba(255,238,198,0)')
+  ctx.fillStyle = gradient
+  ctx.fillRect(0, 0, size, size)
+  const texture = new CanvasTexture(canvas)
+  texture.colorSpace = SRGBColorSpace
+  return texture
 }
 
 export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlobeProps) {
@@ -152,12 +181,28 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     sceneCleanupRef.current?.()
     const solar = createSolarMaterial(highResolutionRef.current)
     setSolarMaterial(solar.material)
+
+    const sunTexture = createSunTexture()
+    const sunMaterial = new SpriteMaterial({
+      map: sunTexture,
+      transparent: true,
+      depthWrite: false,
+      blending: AdditiveBlending,
+      toneMapped: false,
+    })
+    const sunSprite = new Sprite(sunMaterial)
+    sunSprite.scale.set(260, 260, 1)
+    globe.scene().add(sunSprite)
+
     sceneCleanupRef.current = () => {
       solar.dispose()
       globe.scene().remove(sky)
       skyTexture.dispose()
       skyGeometry.dispose()
       skyMaterial.dispose()
+      globe.scene().remove(sunSprite)
+      sunTexture.dispose()
+      sunMaterial.dispose()
     }
 
     controlsCleanupRef.current?.()
@@ -179,6 +224,8 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       const elapsed = (now - previousFrame) / 1_000
       previousFrame = now
       solar.update(Date.now())
+      const [sunX, sunY, sunZ] = solarDirection(Date.now())
+      sunSprite.position.set(sunX * SUN_DISTANCE, sunY * SUN_DISTANCE, sunZ * SUN_DISTANCE)
       if (previousEvents !== activityEventsRef.current) {
         previousEvents = activityEventsRef.current
         const origins = new Map<string, CameraTarget>()
@@ -251,11 +298,11 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     marker.title = `Oxy · ${point.label}`
     marker.style.pointerEvents = 'none'
     const logo = document.createElement('img')
-    logo.src = '/favicon.svg'
+    logo.src = '/logo-mark.svg'
     logo.alt = `Oxy · ${point.label}`
-    logo.width = 24
-    logo.height = 13
-    logo.style.transform = 'translateY(-12px)'
+    logo.width = 20
+    logo.height = 20
+    logo.style.transform = 'translateY(-16px)'
     logo.style.opacity = point.status === 'offline' ? '0.5' : '0.95'
     marker.appendChild(logo)
     return marker
@@ -325,8 +372,8 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           backgroundColor="rgba(0,0,0,0)"
           globeMaterial={solarMaterial}
           showAtmosphere
-          atmosphereColor={layout.primary}
-          atmosphereAltitude={0.12}
+          atmosphereColor={ATMOSPHERE_COLOR}
+          atmosphereAltitude={0.14}
           showGraticules
           htmlElementsData={infrastructureLogos}
           htmlLat="lat"
