@@ -50,6 +50,7 @@ import referralsRouter from './routes/referrals.js'
 import fundingRouter from './routes/funding.js'
 import adminAccessRouter from './routes/adminAccess.js'
 import intercomRouter from './routes/intercom.js'
+import salesRouter, { purgeExpiredInquiries } from './routes/sales.js'
 import { mountMcp } from './mcp.js'
 
 /** Migrations ship beside the server sources, so this resolves in dev and in the image alike. */
@@ -128,6 +129,9 @@ app.use('/api/profiles', profilesRouter)
 app.use('/api/badges', badgesRouter)
 app.use('/api/referrals', referralsRouter)
 app.use('/api/funding-progress', fundingRouter)
+
+// Sales and private-evaluation requests from /contact/sales.
+app.use('/api/sales-inquiries', salesRouter)
 
 // Sitemap: generated at build time into `dist/sitemap.xml` by
 // `scripts/prerender.ts`, from the exact route list it renders. It is not
@@ -272,6 +276,7 @@ async function connectWithRetry(): Promise<void> {
 
       startSyncInterval()
       startFeaturePriorityInterval()
+      startInquiryRetentionSweep()
       markBootstrapComplete()
       return
     } catch (err) {
@@ -281,6 +286,25 @@ async function connectWithRetry(): Promise<void> {
       await new Promise((resolve) => setTimeout(resolve, delay))
     }
   }
+}
+
+/**
+ * Delete sales inquiries past their retention date, daily.
+ *
+ * Started here rather than inside `connectWithRetry`'s try block for the same
+ * reason the other intervals are: every retry of that loop would stack another
+ * timer. It runs once at boot so a task that restarts more often than daily
+ * still sweeps, and the handler tolerates a database that is briefly away.
+ */
+function startInquiryRetentionSweep(): void {
+  const DAY_MS = 24 * 60 * 60 * 1000
+  const sweep = () => {
+    purgeExpiredInquiries().catch((error: unknown) => {
+      console.error('[sales] retention sweep failed:', error)
+    })
+  }
+  sweep()
+  setInterval(sweep, DAY_MS).unref()
 }
 
 /**

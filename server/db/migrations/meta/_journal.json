@@ -113,6 +113,20 @@
       "when": 1789092000000,
       "tag": "0015_public_status_inventory",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1789178400000,
+      "tag": "0016_sales_inquiries",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1789178500000,
+      "tag": "0017_ai_taxonomy_copy",
+      "breakpoints": true
     }
   ]
 }

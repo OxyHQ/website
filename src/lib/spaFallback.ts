@@ -27,6 +27,12 @@ const SPA_FALLBACK_PATTERNS: readonly RegExp[] = [
   /^\/company\/careers\/[^/]+$/,
   /^\/apps\/[^/]+$/,
   /^\/features\/[^/]+\/[^/]+\/[^/]+$/,
+  // Public model pages. The build writes a document for every entry in the
+  // catalogue snapshot, but the catalogue is published by the Oxy control plane
+  // and can gain a model between deploys — the same shape as a newsroom post.
+  // While the snapshot is empty this is the only thing making the route family
+  // resolve, which is what `scripts/routing-contract.test.ts` checks.
+  /^\/ai\/models\/[^/]+\/[^/]+$/,
   // Client-only docs surfaces: the Bloom playground, colour system and the
   // `_demo` isolation route have no document by design.
   /^\/developers\/docs\/api(?:\/[^/]+)?$/,
