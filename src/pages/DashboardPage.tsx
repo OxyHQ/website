@@ -1,4 +1,6 @@
 import { useRef, useState, useSyncExternalStore } from "react";
+import { useSearchParams } from "react-router-dom";
+import { dashboardPresentation } from "../lib/dashboardPresentation";
 import { Maximize2, Minimize2 } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
@@ -32,6 +34,8 @@ function getFullscreenServerSnapshot(): boolean {
 export default function DashboardPage() {
   const { t } = useTranslation();
   const [isGlobe, setIsGlobe] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [windowFullscreen, setWindowFullscreen] = useState(false);
   const { data: stats } = usePlatformStats();
   const { events: activityEvents } = usePlatformActivity();
   const { data: infraData } = useInfraStatus();
@@ -44,17 +48,34 @@ export default function DashboardPage() {
       : stats.regions,
   };
   const dashboardRef = useRef<HTMLDivElement>(null);
-  const isFullscreen = useSyncExternalStore(
+  const nativeFullscreen = useSyncExternalStore(
     subscribeFullscreen,
     getFullscreenSnapshot,
     getFullscreenServerSnapshot,
   );
 
-  function toggleFullscreen() {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else {
-      dashboardRef.current?.requestFullscreen();
+  const { fullscreen: isFullscreen, fullscreenLayout, widgetRows } = dashboardPresentation(searchParams, nativeFullscreen, windowFullscreen);
+
+  async function toggleFullscreen() {
+    if (isFullscreen) {
+      if (document.fullscreenElement) await document.exitFullscreen().catch(() => {});
+      setWindowFullscreen(false);
+      if (searchParams.get('fullscreen') === 'true') {
+        const next = new URLSearchParams(searchParams);
+        next.delete('fullscreen');
+        setSearchParams(next, { replace: true });
+      }
+      return;
+    }
+    try {
+      if (!dashboardRef.current?.requestFullscreen) {
+        setWindowFullscreen(true);
+        return;
+      }
+      await dashboardRef.current.requestFullscreen();
+    } catch {
+      // Browsers may deny native fullscreen; the dashboard still fills the window.
+      setWindowFullscreen(true);
     }
   }
 
@@ -68,7 +89,8 @@ export default function DashboardPage() {
       <h1 className="sr-only">Oxy · {t('dashboard.platformActivity')}</h1>
       {!isFullscreen && <Navbar />}
       <main className="flex-1">
-        <div ref={dashboardRef} className={`container relative isolate font-mono flex flex-col bg-background ${isFullscreen ? "h-screen overflow-hidden px-8" : "min-h-[calc(100dvh-var(--site-header-height))]"}`}>
+        <div ref={dashboardRef} data-dashboard-fullscreen={isFullscreen} data-fullscreen-layout={fullscreenLayout} className={isFullscreen ? "fixed inset-0 z-[100] h-dvh overflow-y-auto bg-background" : undefined}>
+        <div className={`container relative isolate font-mono flex flex-col bg-background ${isFullscreen ? "h-dvh" : "min-h-[calc(100dvh-var(--site-header-height))]"} ${fullscreenLayout ? "max-w-none px-8" : ""}`}>
           <div className="absolute inset-y-0 left-1/2 z-0 w-screen -translate-x-1/2 touch-none cursor-grab active:cursor-grabbing">
             <MapContainer
               isGlobe={isGlobe}
@@ -122,9 +144,10 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <section className={`relative z-10 shrink-0 transform-gpu ${isFullscreen ? "pb-6 pt-4" : "pb-12 pt-8 md:pb-16"}`}>
-            <ReferenceMetricsGrid stats={displayedStats} compact={isFullscreen} />
+          <section className={`relative z-10 shrink-0 transform-gpu ${fullscreenLayout ? "pb-6 pt-4" : "pb-12 pt-8 md:pb-16"}`}>
+            <ReferenceMetricsGrid stats={displayedStats} compact={widgetRows === 1} />
           </section>
+        </div>
         </div>
       </main>
       {!isFullscreen && <Footer />}
