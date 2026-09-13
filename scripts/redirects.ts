@@ -37,6 +37,10 @@ const LEGACY_REDIRECTS: ReadonlyArray<readonly [from: string, to: string]> = [
   ['/technologies', '/apps/'],
   ['/products', '/apps/'],
   ['/pay', '/peable/'],
+  // `/contact` is what people type and what gets printed on a slide. The SPA
+  // also routes it, but a client-side <Navigate> never runs on a URL the edge
+  // answered with a 404 — so the hop has to exist here.
+  ['/contact', '/contact/sales/'],
 ]
 
 export interface RedirectsOptions {

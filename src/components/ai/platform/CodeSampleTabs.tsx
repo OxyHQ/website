@@ -16,9 +16,9 @@ interface CodeSampleTabsProps {
  *
  * Implemented as a real tab list rather than a styled radio group so a keyboard
  * user gets arrow-key movement and a screen reader is told which panel is
- * showing. Every panel is in the DOM and the inactive ones are `hidden`, which
- * is also what puts all three snippets into the prerendered HTML — a reader
- * with JavaScript blocked still gets the code, not an empty frame.
+ * showing. Every panel is in the DOM and the inactive ones are `hidden` rather
+ * than unmounted, so switching language is instant and a browser's find-in-page
+ * can reach a snippet the reader has not selected.
  */
 export default function CodeSampleTabs({ samples, caption, className = '' }: CodeSampleTabsProps) {
   const { t } = useTranslation()

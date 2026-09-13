@@ -63,6 +63,19 @@ No AI marketing URL was retired, so no redirect was added. A redirect for a URL
 that still resolves is what put 725 URLs in Search Console under "Page with
 redirect", and `_redirects` carries no `200` rewrite ever.
 
+## What lands with the catalogue, not before
+
+These are real items from the epic that need catalogue entries to act on. Each
+would otherwise be machinery with nothing to run over, which is harder to review
+and impossible to test.
+
+| Item | Why it waits |
+|---|---|
+| Model-detail prose in the prerendered body | `scripts/prerender.ts` splices the `<head>` for a component page and renders prose only where a route HAS prose — newsroom posts and synced docs. A model page is a document, so it qualifies; with zero entries there is nothing to render. |
+| Generated OG images per model | `scripts/build-help-og-images.ts` is the pipeline to extend. Zero entries means zero images, and an unexercised image build is a silent failure waiting for the first model. |
+| Sorting by latency or throughput | Needs a stated measurement method and enough samples to be stable. A sortable column implies both. |
+| Pagination or virtualisation of the catalogue | Decided by how large the catalogue turns out to be; paginating a short list costs crawlability for nothing. |
+
 ## What deliberately did not move here
 
 - Account, application and credential creation — Oxy Console.

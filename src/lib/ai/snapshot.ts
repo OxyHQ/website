@@ -1,10 +1,17 @@
 /**
  * Getting catalogue data onto the page, and keeping it there.
  *
- * The committed snapshot is the last-known-good copy: the prerender paints from
- * it, so the catalogue is in the HTML before any JavaScript runs, and a crawler
- * or a reader with scripts blocked sees the same models a browser does. After
- * hydration the page asks the public endpoint for something newer.
+ * The committed snapshot is the last-known-good copy, bundled with the app. It
+ * is the value every catalogue surface STARTS from, so the first render has the
+ * models in it — no loading state, no flash of "no models" before the first
+ * fetch answers. After mount the page asks the public endpoint for something
+ * newer.
+ *
+ * It is not, on its own, what a crawler reads: `scripts/prerender.ts` splices
+ * the `<head>` into the shell for a component page and leaves the body to the
+ * SPA, which is the rule the rest of this site follows. Prose for model detail
+ * pages lands with the catalogue that gives them something to say —
+ * `docs/AI-MIGRATION-MATRIX.md`.
  *
  * The rule that shapes every function below: **a failed or empty response never
  * replaces a valid snapshot.** An outage upstream reads as "prices from

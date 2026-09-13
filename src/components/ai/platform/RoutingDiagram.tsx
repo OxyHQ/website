@@ -2,11 +2,11 @@
  * The platform visual: what happens between a request and an answer.
  *
  * Inline SVG rather than canvas or Three.js, for three reasons that all matter
- * on this page. It is in the prerendered HTML, so the shape of the product is
- * visible before any JavaScript runs. It costs nothing on a phone. And it says
- * something true — request, route, model, deployment, stream, receipt are the
- * six objects the rest of the site names — where the giant Alia mark it
- * replaced said "Oxy AI is Alia".
+ * on this page. It paints with the first frame instead of after a canvas
+ * initialises. It costs nothing on a phone, and nothing at all on a route that
+ * does not render it. And it says something true — request, route, model,
+ * deployment, stream, receipt are the six objects the rest of the site names —
+ * where the giant Alia mark it replaced said "Oxy AI is Alia".
  *
  * Colours are Bloom tokens via `var(--color-…)`, so the diagram follows the
  * theme instead of carrying a palette of its own. The one animation is a dash

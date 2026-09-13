@@ -174,6 +174,8 @@ export default function ContactSalesPage() {
   }))
   const [accounts, setAccounts] = useState<ReadonlyArray<{ id: string; label: string }>>([])
   const [applications, setApplications] = useState<ReadonlyArray<{ id: string; label: string }>>([])
+  /** Fields the visitor has edited. Until then the session prefill is shown. */
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
   const [failure, setFailure] = useState<string | undefined>()
@@ -181,17 +183,25 @@ export default function ContactSalesPage() {
   const summaryRef = useRef<HTMLDivElement>(null)
   const formId = useId()
 
-  // Prefill from the session when there is one. Deliberately only fills BLANK
-  // fields, so a visitor who typed a different address keeps it.
-  useEffect(() => {
-    if (!isAuthenticated || !user) return
-    setForm((current) => ({
-      ...current,
-      // `displayName` is optional; the one sanctioned fallback is the handle.
-      name: current.name || user.name?.displayName || getNormalizedUserHandle(user) || '',
-      email: current.email || user.email || '',
-    }))
-  }, [isAuthenticated, user])
+  /**
+   * Prefill from the session, DERIVED during render rather than written into
+   * state by an effect.
+   *
+   * An effect that copies props into state re-renders the page twice and
+   * fights the user for the field: the session resolves late, and a visitor who
+   * had already typed would see their text replaced. Deriving it means the
+   * prefill is what the field shows until the visitor touches it, and after
+   * that it is theirs — including when they clear it, which a
+   * `form.name || sessionName` fallback would silently undo.
+   */
+  const sessionName =
+    isAuthenticated && user
+      ? // `displayName` is optional; the one sanctioned fallback is the handle.
+        user.name?.displayName || getNormalizedUserHandle(user) || ''
+      : ''
+  const sessionEmail = isAuthenticated && user ? user.email || '' : ''
+  const nameValue = touched.name ? form.name : form.name || sessionName
+  const emailValue = touched.email ? form.email : form.email || sessionEmail
 
   /**
    * The accounts this visitor can actually see.
@@ -225,10 +235,11 @@ export default function ContactSalesPage() {
   }, [isAuthenticated, oxyServices])
 
   useEffect(() => {
-    if (!oxyServices || !form.accountId) {
-      setApplications([])
-      return
-    }
+    // No synchronous setState in the effect body: clearing the list when the
+    // account changes is the CHANGE HANDLER's job (it resets `applicationId` in
+    // the same breath), and rendering reads `form.accountId` anyway, so a stale
+    // list cannot be shown while a new one loads.
+    if (!oxyServices || !form.accountId) return
     let cancelled = false
     oxyServices
       .listAccountApps(form.accountId)
@@ -236,14 +247,18 @@ export default function ContactSalesPage() {
         if (cancelled) return
         setApplications(apps.map((app) => ({ id: app._id, label: app.name })))
       })
-      .catch(() => setApplications([]))
+      .catch(() => {
+        if (!cancelled) setApplications([])
+      })
     return () => {
       cancelled = true
     }
   }, [oxyServices, form.accountId])
 
-  const update = <K extends keyof FormState>(key: K, value: FormState[K]) =>
+  const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
+    setTouched((current) => (current[key as string] ? current : { ...current, [key]: true }))
     setForm((current) => ({ ...current, [key]: value }))
+  }
 
   const toggleIn = (key: 'modalities' | 'privacyRequirements', value: string) =>
     setForm((current) => ({
@@ -259,6 +274,8 @@ export default function ContactSalesPage() {
 
     const payload = {
       ...form,
+      name: nameValue,
+      email: emailValue,
       role: form.role || undefined,
       country: form.country || undefined,
       companySize: form.companySize || undefined,
@@ -403,7 +420,7 @@ export default function ContactSalesPage() {
               <Field id={`${formId}-name`} label={t('contactSales.name')} error={errors.name}>
                 <input
                   id={`${formId}-name`}
-                  value={form.name}
+                  value={nameValue}
                   onChange={(event) => update('name', event.target.value)}
                   autoComplete="name"
                   className={inputClass}
@@ -413,7 +430,7 @@ export default function ContactSalesPage() {
                 <input
                   id={`${formId}-email`}
                   type="email"
-                  value={form.email}
+                  value={emailValue}
                   onChange={(event) => update('email', event.target.value)}
                   autoComplete="email"
                   className={inputClass}
@@ -489,16 +506,17 @@ export default function ContactSalesPage() {
                   <select
                     id={`${formId}-accountId`}
                     value={form.accountId}
-                    onChange={(event) =>
+                    onChange={(event) => {
+                      // An application belongs to one account; keeping the old
+                      // selection — or the old list — after switching would
+                      // submit a pair the server is about to reject.
+                      setApplications([])
                       setForm((current) => ({
                         ...current,
                         accountId: event.target.value,
-                        // An application belongs to one account; keeping the old
-                        // selection after switching would submit a pair the
-                        // server is about to reject.
                         applicationId: '',
                       }))
-                    }
+                    }}
                     className={inputClass}
                   >
                     <option value="">{t('contactSales.accountNone')}</option>
@@ -509,7 +527,7 @@ export default function ContactSalesPage() {
                     ))}
                   </select>
                 </Field>
-                {applications.length > 0 && (
+                {form.accountId && applications.length > 0 && (
                   <Field id={`${formId}-applicationId`} label="Application" optional>
                     <select
                       id={`${formId}-applicationId`}

@@ -220,7 +220,44 @@ Rolling back never means restoring "Alia alias = Oxy model" messaging. The
 acceptable rollback is to an earlier signed snapshot or to a more conservative
 availability state.
 
-## 8. Parallel-work contracts
+## 8. Conversion measurement
+
+No analytics collector is wired up by this change, and that is deliberate: this
+site ships no third-party tracking, and adding one is a decision for the people
+who own Oxy's privacy position rather than a side effect of building a funnel.
+
+What is defined here is the **event vocabulary**, so that when an approved
+first-party collector exists the funnel is a wiring job rather than a naming
+argument.
+
+| Event | Fires when |
+|---|---|
+| `ai_landing_view` | `/ai` rendered |
+| `ai_inference_view` | `/ai/inference` rendered |
+| `ai_models_search` | catalogue search or filter changed |
+| `ai_model_view` | a model detail page rendered |
+| `ai_pricing_interact` | a pricing table or handoff link used |
+| `ai_estimator_use` | the estimator produced a total |
+| `ai_console_cta` | a Console deep link followed |
+| `ai_docs_cta` | a documentation link followed |
+| `sales_form_start` | first field of `/contact/sales` edited |
+| `sales_form_submit` | a submission accepted |
+| `sales_preview_request` | a submission with a private-preview interest |
+
+Rules that hold whatever collector is chosen:
+
+- **Never record content.** No prompt text, no sales-message body, no API key,
+  no form field value. An event carries that something happened, and which
+  surface it happened on.
+- **No user-level cross-site tracking**, and no IP address — the same invariant
+  the rest of the Oxy stack holds to.
+- Campaign attribution only through privacy-safe parameters already on the URL.
+- Each event's purpose and retention is documented before it is collected.
+- Catalogue and pricing fetch failures, and sales-form submission failures, are
+  worth error monitoring; they are the two places where a silent failure looks
+  identical to "there is nothing here".
+
+## 9. Parallel-work contracts
 
 - One operational schema (`src/lib/ai/catalog.ts`). No page-local copies.
 - One availability vocabulary (`src/lib/ai/availability.ts`).

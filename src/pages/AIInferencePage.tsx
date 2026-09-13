@@ -27,10 +27,11 @@ import {
  * for access.
  *
  * Everything a reader needs to judge the service is static text and static
- * code: nothing on this page waits for a fetch, so it is complete in the
- * prerendered HTML and complete with JavaScript blocked. The only dynamic thing
- * an inference page could offer is a live model list, and that belongs on
- * `/ai/models` where its empty state can be explained rather than implied.
+ * code: nothing on this page waits for a fetch, so it is complete on first
+ * render and cannot show a half-loaded answer to "can this serve my workload".
+ * The only dynamic thing an inference page could offer is a live model list, and
+ * that belongs on `/ai/models`, where an empty catalogue can be explained rather
+ * than implied.
  */
 export default function AIInferencePage() {
   const { t } = useTranslation()

@@ -5,12 +5,13 @@ import PageShell from '../components/layout/PageShell'
 import Button from '../components/ui/Button'
 import AiBreadcrumbs from '../components/ai/platform/AiBreadcrumbs'
 import ModelCard from '../components/ai/platform/ModelCard'
-import ModelFilters, {
+import ModelFilters from '../components/ai/platform/ModelFilters'
+import {
   applyFilters,
   filtersFromSearchParams,
   filtersToSearchParams,
   type ModelFilterState,
-} from '../components/ai/platform/ModelFilters'
+} from '../lib/ai/modelFilters'
 import { CatalogEmptyState, CatalogFreshness } from '../components/ai/platform/CatalogNotice'
 import { useTranslation } from '../lib/i18n'
 import { useCatalog } from '../lib/ai/useCatalog'
@@ -20,11 +21,11 @@ import { isCatalogUnpublished } from '../lib/ai/snapshot'
 /**
  * `/ai/models` — the public catalogue.
  *
- * The list renders from the build-time snapshot first, so the models are in the
- * prerendered HTML and a crawler or a reader with scripts blocked sees the same
- * catalogue a browser does. Filtering is client-side over that same list: the
- * catalogue is small enough that paginating it would cost more in crawlability
- * than it saves in bytes.
+ * The list renders from the build-time snapshot on the FIRST render, so the page
+ * never shows a spinner or an empty state it is about to contradict; the live
+ * refresh replaces it only when it returns something better. Filtering is
+ * client-side over that same list: the catalogue is small enough that paginating
+ * it would cost more in crawlability than it saves in bytes.
  *
  * `useSearchParams` comes straight from react-router here rather than through
  * `src/lib/navigation`: that module normalises the trailing slash on link
