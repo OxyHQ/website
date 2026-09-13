@@ -18,10 +18,16 @@ export default function ServiceCard({ service }: { service: AiService }) {
   const { t } = useTranslation()
   const intent = ctaIntentFor(service.availability)
   const ctaLabel = t(`ai.cta.${camel(intent)}`)
-  // `request_access` and `join_waitlist` are conversations, not self-service.
+  // `request_access` is a conversation, and it goes to the form with the right
+  // option preselected — `salesInterest`, never `key`, because the form's
+  // options are a server contract with their own spelling.
+  //
+  // `join_waitlist` deliberately does NOT open the form: nothing is for sale
+  // yet, and a sales conversation about an unreleased model wastes both sides'
+  // time. It goes to the section that explains the state instead.
   const href =
-    intent === 'request_access' || intent === 'join_waitlist'
-      ? `/contact/sales?interest=${encodeURIComponent(service.key)}`
+    intent === 'request_access' && service.salesInterest
+      ? `/contact/sales?interest=${service.salesInterest}`
       : service.href
 
   return (

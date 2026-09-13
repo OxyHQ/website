@@ -7,6 +7,7 @@
  * nobody signed. What the page can say is what is negotiable, and who to ask.
  */
 import type { Availability } from '../../lib/ai/availability'
+import type { InquiryInterest } from '../../../server/contracts/salesInquiry'
 
 export interface EnterpriseCapability {
   key: string
@@ -96,6 +97,8 @@ export interface EnterpriseService {
   availability: Availability
   href: string
   external?: boolean
+  /** Sales-form option to preselect. Omitted where sales is not the next step. */
+  salesInterest?: InquiryInterest
 }
 
 /**
@@ -112,6 +115,7 @@ export const enterpriseServices: EnterpriseService[] = [
     description:
       'Shared, managed and dedicated inference, with policy controls, attribution and invoicing per organization.',
     availability: 'private_preview',
+    salesInterest: 'dedicated_inference',
     href: '/ai/enterprise',
   },
   {
@@ -120,6 +124,7 @@ export const enterpriseServices: EnterpriseService[] = [
     description:
       'The identity layer every Oxy app signs in with, available to applications outside Oxy through the same platform.',
     availability: 'available',
+    salesInterest: 'enterprise_platform',
     href: '/commons',
   },
   {
@@ -128,6 +133,7 @@ export const enterpriseServices: EnterpriseService[] = [
     description:
       'The documented REST API and the TypeScript, React and React Native SDKs the Oxy products themselves are built on.',
     availability: 'available',
+    salesInterest: 'enterprise_platform',
     href: '/developers',
   },
   {

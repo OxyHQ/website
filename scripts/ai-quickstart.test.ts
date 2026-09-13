@@ -5,7 +5,29 @@ import {
   advancedSamples,
   quickstartSamples,
 } from '../src/data/ai/quickstart'
-import { INFERENCE_API_BASE, consoleLinks, CONSOLE_URL } from '../src/data/ai/taxonomy'
+import { readFileSync, readdirSync } from 'node:fs'
+import path from 'node:path'
+import {
+  INFERENCE_API_BASE,
+  aiServices,
+  consoleLinks,
+  CONSOLE_URL,
+} from '../src/data/ai/taxonomy'
+import { enterpriseServices } from '../src/data/ai/enterprise'
+import { INQUIRY_INTERESTS } from '../server/contracts/salesInquiry'
+
+const ROOT = path.resolve(import.meta.dir, '..')
+
+/** Every `.ts`/`.tsx` under a directory. */
+function sourceFiles(dir: string): string[] {
+  const out: string[] = []
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const abs = path.join(dir, entry.name)
+    if (entry.isDirectory()) out.push(...sourceFiles(abs))
+    else if (/\.tsx?$/.test(entry.name)) out.push(abs)
+  }
+  return out
+}
 
 /**
  * The published snippets are a contract, and a snippet that drifts is a
@@ -81,5 +103,34 @@ describe('console deep links', () => {
     for (const url of Object.values(consoleLinks)) {
       expect(url).not.toMatch(/[?&](token|key|secret|credential)=/i)
     }
+  })
+})
+
+describe('sales links preselect an option the form actually has', () => {
+  const interests: readonly string[] = INQUIRY_INTERESTS
+
+  test('every service that routes to sales names a real interest', () => {
+    for (const service of aiServices) {
+      if (service.salesInterest === undefined) continue
+      expect(interests).toContain(service.salesInterest)
+    }
+    for (const service of enterpriseServices) {
+      if (service.salesInterest === undefined) continue
+      expect(interests).toContain(service.salesInterest)
+    }
+  })
+
+  test('no page hand-writes a `?interest=` the form would silently drop', () => {
+    // The form falls back to its default for an unknown value, so a typo here
+    // produces an inquiry with the wrong subject from a link that looked right.
+    const findings: string[] = []
+    for (const file of sourceFiles(path.join(ROOT, 'src'))) {
+      const contents = readFileSync(file, 'utf8')
+      for (const match of contents.matchAll(/\/contact\/sales\?interest=([a-z_]+)/g)) {
+        const value = match[1] ?? ''
+        if (!interests.includes(value)) findings.push(`${path.relative(ROOT, file)}: ${value}`)
+      }
+    }
+    expect(findings).toEqual([])
   })
 })

@@ -14,6 +14,7 @@
  * deliberately a decision someone makes, never a side effect of a page shipping.
  */
 import type { Availability } from '../../lib/ai/availability'
+import type { InquiryInterest } from '../../../server/contracts/salesInquiry'
 
 /**
  * The state of the public inference service, named once.
@@ -51,6 +52,19 @@ export type ServiceAudience = 'developers' | 'organizations' | 'people'
 export interface AiService {
   /** Stable key, used for anchors and analytics event names. */
   key: string
+  /**
+   * Which sales-form option this service preselects.
+   *
+   * A separate field from `key` on purpose: the form's options are a server
+   * contract with its own spelling (`oxy_inference`), and passing the card's key
+   * through as `?interest=oxy-inference` silently fell back to the default —
+   * a sales inquiry arriving with the wrong subject line, from a link that
+   * looked right.
+   *
+   * Absent where talking to sales is not the next step, which is what keeps a
+   * `coming_soon` service from opening a form about something nobody can buy.
+   */
+  salesInterest?: InquiryInterest
   name: string
   /** One line: what it is. */
   summary: string
@@ -81,6 +95,7 @@ export const aiServices: AiService[] = [
     audience: 'developers',
     audienceLabel: 'For developers and teams building on the API',
     availability: OXY_INFERENCE_AVAILABILITY,
+    salesInterest: 'oxy_inference',
     href: '/ai/inference',
     docs: { label: 'Read the quickstart', href: '/ai/inference#quickstart' },
   },
@@ -92,6 +107,7 @@ export const aiServices: AiService[] = [
     audience: 'organizations',
     audienceLabel: 'For teams with placement or policy constraints',
     availability: 'private_preview',
+    salesInterest: 'managed_inference',
     href: '/ai/enterprise#managed',
   },
   {
@@ -102,6 +118,7 @@ export const aiServices: AiService[] = [
     audience: 'organizations',
     audienceLabel: 'For production workloads with capacity commitments',
     availability: 'private_preview',
+    salesInterest: 'dedicated_inference',
     href: '/ai/enterprise#dedicated',
   },
   {

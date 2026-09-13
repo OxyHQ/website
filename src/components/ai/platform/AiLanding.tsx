@@ -250,18 +250,43 @@ export default function AiLanding() {
       </AiSection>
 
       {/* ── Products built on the platform ───────────────────────────── */}
+      {/*
+        Links rather than a second set of service cards. Alia and Codea are
+        already in the chooser above; repeating the same two cards halfway down
+        the page reads as a layout mistake, not as emphasis. What this section
+        adds is the SENTENCE — that Oxy builds its own products on the platform
+        it sells, and that neither of them owns the infrastructure.
+      */}
       <AiSection
         id="products"
         heading={t('ai.sections.products')}
         description={productsOnPlatform.body}
       >
-        <div className="grid gap-4 sm:grid-cols-2">
+        <ul className="flex flex-wrap gap-x-8 gap-y-3">
           {aiServices
             .filter((service) => service.audience === 'people')
             .map((service) => (
-              <ServiceCard key={service.key} service={service} />
+              <li key={service.key}>
+                {service.external ? (
+                  <a
+                    className="text-base text-foreground underline underline-offset-4 hover:text-muted-foreground"
+                    href={service.href}
+                    rel="noreferrer"
+                  >
+                    {service.name}
+                  </a>
+                ) : (
+                  <Link
+                    className="text-base text-foreground underline underline-offset-4 hover:text-muted-foreground"
+                    to={service.href}
+                  >
+                    {service.name}
+                  </Link>
+                )}
+                <span className="ms-2 text-sm text-muted-foreground">{service.audienceLabel}</span>
+              </li>
             ))}
-        </div>
+        </ul>
       </AiSection>
 
       {/* ── Alia Models ──────────────────────────────────────────────── */}

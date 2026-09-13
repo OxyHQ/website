@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import Navbar from '../components/layout/Navbar'
 import PageShell from '../components/layout/PageShell'
 import Button from '../components/ui/Button'
@@ -66,9 +67,12 @@ export default function EnterprisePage() {
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {enterpriseServices.map((service) => {
             const intent = ctaIntentFor(service.availability)
+            // Same rule as the AI service cards: the form's option spelling is a
+            // server contract, and a `coming_soon` service opens its own page
+            // rather than a sales form about something nobody can buy.
             const href =
-              intent === 'request_access' || intent === 'join_waitlist'
-                ? `/contact/sales?interest=${encodeURIComponent(service.key)}`
+              intent === 'request_access' && service.salesInterest
+                ? `/contact/sales?interest=${service.salesInterest}`
                 : service.href
             return (
               <li key={service.key}>
@@ -81,16 +85,13 @@ export default function EnterprisePage() {
                     {service.description}
                   </p>
                   {intent !== 'none' && (
-                    <Link
-                      to={href}
-                      className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
-                    >
+                    <ServiceLink href={href} external={service.external}>
                       <span className="absolute inset-0" aria-hidden="true" />
                       <span className="relative">
                         {t(`ai.cta.${camel(intent)}`)}
                         <span className="sr-only"> — {service.name}</span>
                       </span>
-                    </Link>
+                    </ServiceLink>
                   )}
                 </article>
               </li>
@@ -113,6 +114,36 @@ export default function EnterprisePage() {
         </div>
       </section>
     </PageShell>
+  )
+}
+
+/**
+ * A card link that survives an off-site `href`.
+ *
+ * `EnterpriseService.href` may leave the site, and `<Link to>` would treat an
+ * absolute URL as a router path — a card that looks right and goes nowhere.
+ */
+function ServiceLink({
+  href,
+  external,
+  children,
+}: {
+  href: string
+  external?: boolean
+  children: ReactNode
+}) {
+  const className = 'text-sm font-medium text-foreground underline-offset-4 hover:underline'
+  if (external || !href.startsWith('/')) {
+    return (
+      <a className={className} href={href} rel="noreferrer">
+        {children}
+      </a>
+    )
+  }
+  return (
+    <Link className={className} to={href}>
+      {children}
+    </Link>
   )
 }
 

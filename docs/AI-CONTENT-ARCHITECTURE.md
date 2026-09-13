@@ -91,20 +91,28 @@ Rules:
 - Availability is **supplied by the content or catalogue source**. It is never
   inferred from "a frontend route exists".
 - `internal_only` objects are stripped before anything is rendered, indexed,
-  sitemapped or written into structured data. `scripts/ai-catalog.test.ts`
-  and `scripts/ai-snapshot-guard.ts` are the automated halves of that rule.
+  sitemapped or written into structured data. `scripts/ai-catalog.test.ts` checks
+  the filter, and `scripts/ai-dist-guard.ts` re-checks the built artifact — the
+  first guards the path the data is supposed to take, the second catches the
+  paths nobody thought of.
 - Before a service moves to `available`, the checklist in §7 has to pass.
 
 ### Prohibited and qualified terms
 
-These may not appear unqualified anywhere in AI copy. `scripts/ai-claims.test.ts`
-fails the build on the unqualified forms:
+These may not appear unqualified anywhere in AI copy.
+**`PROHIBITED_UNQUALIFIED_TERMS` in `src/data/ai/claims.ts` is the enforced list**
+— `scripts/ai-claims.test.ts` fails the build on any of them appearing in
+published copy without a qualifier from `SCOPE_QUALIFIERS` in the same sentence.
+It currently covers zero retention, no training, self-hosting, EU-only hosting,
+`unlimited`, the compliance certifications, guaranteed uptime and uptime
+percentages.
 
-`our model` · `private` (of a model) · `open model` · `zero retention` ·
-`no training` · `self-hosted` · `EU hosted` · `unlimited` · `real time` ·
-`SLA` · `SOC 2` · `HIPAA` · `guaranteed` · `99.9%`
+Two more are prohibited by review rather than by the test, because they are too
+ordinary a word to grep for: **`our model`** of a model Oxy did not publish, and
+**`private`** or **`open model`** of a model, where the licence term is what
+should be named instead.
 
-Each of them is either route-specific or contractual. A route-level policy is
+Each of these is either route-specific or contractual. A route-level policy is
 never promoted to a platform-wide promise: "this deployment is zero-retention"
 is a fact about a deployment; "Oxy AI is zero-retention" is a claim about
 every third-party route the platform can reach, which nobody can make.
@@ -156,12 +164,16 @@ build   OXY_PUBLIC_CATALOG_URL set?  ── yes ─▶ fetch ─▶ validate ─
                 │                                            │
                 └────────── keep the committed last-known-good snapshot ◀──┘
 
-runtime  prerendered snapshot paints first ─▶ client refresh ─▶ newer data replaces it
+runtime  committed snapshot renders first ─▶ client refresh ─▶ newer data replaces it
                                                     │
                                                  failure ─▶ snapshot stays on screen
 ```
 
 - A failed or empty response never replaces a valid snapshot.
+- The snapshot is what the FIRST render shows, so a catalogue surface never
+  starts on a spinner or an empty state it is about to contradict. The
+  prerenderer writes the `<head>`, not the body: prose for model detail pages
+  lands with the catalogue (`docs/AI-MIGRATION-MATRIX.md`).
 - The snapshot records `schemaVersion`, `generatedAt` and `priceVersion`.
 - An unknown `schemaVersion` is rejected outright rather than rendered as
   partial data.
