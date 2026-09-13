@@ -123,7 +123,7 @@ export default function DashboardPage() {
           </div>
 
           <section className={`relative z-10 shrink-0 transform-gpu ${isFullscreen ? "pb-6 pt-4" : "pb-12 pt-8 md:pb-16"}`}>
-            <ReferenceMetricsGrid stats={displayedStats} />
+            <ReferenceMetricsGrid stats={displayedStats} compact={isFullscreen} />
           </section>
         </div>
       </main>
