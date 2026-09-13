@@ -5,7 +5,9 @@ import { infrastructureNodes } from "../../data/dashboard/infra-nodes";
 import { activityRegionCoordinates, activityRegionLabel } from "../../data/dashboard/activity-regions";
 import { ACTIVITY_CATEGORIES } from "../../data/dashboard/activity-categories";
 import { activityRoute } from "../../data/dashboard/activity-routes";
-import { activityMotion } from "../../data/dashboard/activity-motion";
+import { observeMapContrast } from "./map-contrast";
+import ActivityPulse from "./ActivityPulse";
+import { activityMotion, activityFlows } from "../../data/dashboard/activity-motion";
 import type { InfraStatusNode, PlatformActivityEvent } from "../../api/hooks";
 
 const STATUS_COLORS = {
@@ -159,27 +161,29 @@ export default function DottedMap({
   const projectedRoutes = useMemo(() => {
     if (!activityEvents || activityEvents.length === 0) return [];
 
-    return activityEvents.flatMap(event => {
+    const now = Date.now();
+    return activityFlows(activityEvents).flatMap(event => {
       const route = activityRoute(event, infrastructureNodes(infraStatus));
       if (!route) return [];
       const start = projection(route.source);
       const end = projection(route.target);
       if (!start || !end) return [];
       const curve = Math.min(80, Math.abs(end[0] - start[0]) * 0.18 + 24);
-      const activity = activityMotion(event);
+      const activity = activityMotion(event, route.key, now);
       return [{
         key: route.key,
         path: route.local
           ? `M ${start[0]} ${start[1]} c ${route.outbound ? 32 : -32} -36 ${route.outbound ? -32 : 32} -36 0 0`
           : `M ${start[0]} ${start[1]} Q ${(start[0] + end[0]) / 2} ${Math.min(start[1], end[1]) - curve} ${end[0]} ${end[1]}`,
         color: ACTIVITY_CATEGORIES.find(item => item.id === route.category)!.color,
-        trackColor: route.internal ? 'var(--foreground)' : ACTIVITY_CATEGORIES.find(item => item.id === route.category)!.color,
+        trackColor: route.internal ? 'var(--map-internal)' : ACTIVITY_CATEGORIES.find(item => item.id === route.category)!.color,
         direction: route.outbound ? 'outbound' : 'inbound',
         category: route.category,
         internal: route.internal,
-        pulseCount: activity.pulseCount,
-        pulseDuration: activity.pulseDurationMs / 1_000,
-        pulseLength: activity.pulseLength * 100,
+        pulseDuration: activity.pulseDurationMs,
+        pulseLength: route.internal ? activity.pulseLength / 2 : activity.pulseLength,
+        pulseGap: activity.pulseGap + (route.internal ? activity.pulseLength / 2 : 0),
+        phase: activity.initialPhase,
       }];
     });
   }, [activityEvents, projection, infraStatus]);
@@ -241,7 +245,8 @@ export default function DottedMap({
 
   const rootRef = useCallback((node: HTMLDivElement | null) => {
     if (!node) return;
-    return cancelAutomaticFocus;
+    const stopContrast = observeMapContrast(node);
+    return () => { stopContrast(); cancelAutomaticFocus(); };
   }, [cancelAutomaticFocus]);
 
   return (
@@ -304,25 +309,7 @@ export default function DottedMap({
           {projectedRoutes.map(route => (
             <g key={route.key} data-traffic-direction={route.direction} data-traffic-scope={route.internal ? "internal" : "external"} data-traffic-type={route.category}>
               <path d={route.path} fill="none" stroke={route.trackColor} strokeWidth={route.internal ? 2 : 0.8} strokeDasharray={route.internal ? "3 3" : undefined} opacity={route.internal ? 0.9 : 0.28} />
-              {Array.from({ length: route.pulseCount }, (_, pulseIndex) => (
-                <motion.path
-                  key={`${route.key}-${pulseIndex}`}
-                  d={route.path}
-                  pathLength={100}
-                  fill="none"
-                  stroke={route.color}
-                  strokeWidth={route.internal ? 1.5 : 2}
-                  strokeLinecap="round"
-                  strokeDasharray={`${route.internal ? route.pulseLength / 2 : route.pulseLength} ${100 - route.pulseLength}`}
-                  initial={{ strokeDashoffset: -100 * pulseIndex / route.pulseCount, opacity: 0 }}
-                  animate={{ strokeDashoffset: -100 * (1 + pulseIndex / route.pulseCount), opacity: 0.95 }}
-                  exit={{ opacity: 0 }}
-                  transition={{
-                    strokeDashoffset: { duration: route.pulseDuration, repeat: Infinity, ease: "linear" },
-                    opacity: { duration: 0.2 },
-                  }}
-                />
-              ))}
+              <ActivityPulse path={route.path} color={route.color} internal={route.internal} length={route.pulseLength} gap={route.pulseGap} duration={route.pulseDuration} phase={route.phase} />
 
             </g>
           ))}
