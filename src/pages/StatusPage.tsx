@@ -3,29 +3,11 @@ import * as Skeleton from '@oxy.so/bloom/skeleton'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
-import { useServiceStatus, type ServiceStatusEntry, type ServiceStatusValue } from '../api/hooks'
+import { useServiceStatus, useServiceUptime, useIncidentHistory, type ServiceStatusEntry, type ServiceStatusValue, type UptimeDay } from '../api/hooks'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
-
-const STATUS_LABEL: Record<ServiceStatusValue, string> = {
-  operational: 'Operational',
-  degraded: 'Degraded',
-  down: 'Outage',
-  unknown: 'Checking…',
-}
-
-const STATUS_DOT: Record<ServiceStatusValue, string> = {
-  operational: 'bg-success',
-  degraded: 'bg-warning',
-  down: 'bg-error',
-  unknown: 'bg-muted-foreground/50',
-}
-
-const STATUS_SURFACE: Record<ServiceStatusValue, string> = {
-  operational: 'bg-success-subtle text-success-text',
-  degraded: 'bg-warning-subtle text-warning-text',
-  down: 'bg-error-subtle text-error-text',
-  unknown: 'bg-muted-foreground/10 text-muted-foreground',
-}
+import { STATUS_DOT, STATUS_LABEL, STATUS_SURFACE } from '../lib/statusTheme'
+import UptimeBar from '../components/status/UptimeBar'
+import IncidentCard from '../components/status/IncidentCard'
 
 const OVERALL_HEADLINE: Record<ServiceStatusValue, string> = {
   operational: 'All systems operational.',
@@ -107,53 +89,60 @@ function formatRelative(iso: string): string {
   return new Date(iso).toLocaleDateString()
 }
 
-function ServiceRow({ service }: { service: ServiceStatusEntry }) {
+function ServiceRow({ service, uptimeDays }: { service: ServiceStatusEntry; uptimeDays?: UptimeDay[] }) {
   return (
-    <div className="group relative flex items-center gap-4 px-5 py-4 transition-colors duration-200 hover:bg-foreground/5">
+    <div className="group relative transition-colors duration-200 hover:bg-foreground/5">
       {/* brand accent strip on hover */}
       <span
         className="absolute inset-y-0 left-0 w-1 origin-top scale-y-0 transition-transform duration-300 group-hover:scale-y-100"
         style={{ backgroundColor: service.brand }}
         aria-hidden="true"
       />
-      <ServiceLogo service={service} />
-      <div className="min-w-0 flex-1">
-        <div className="flex items-baseline gap-2">
-          <span className="truncate text-sm font-medium text-foreground">{service.name}</span>
-          {service.landingUrl && (
-            <Link
-              to={service.landingUrl}
-              className="hidden text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline sm:inline"
-            >
-              Learn more
-            </Link>
+      <div className="flex items-center gap-4 px-5 py-4">
+        <ServiceLogo service={service} />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline gap-2">
+            <span className="truncate text-sm font-medium text-foreground">{service.name}</span>
+            {service.landingUrl && (
+              <Link
+                to={service.landingUrl}
+                className="hidden text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline sm:inline"
+              >
+                Learn more
+              </Link>
+            )}
+          </div>
+          <div className="mt-0.5 truncate text-xs text-muted-foreground">{service.description}</div>
+        </div>
+        <div className="hidden shrink-0 text-right sm:block">
+          <div className="text-xs font-mono tabular-nums text-muted-foreground">{formatLatency(service.latencyMs)}</div>
+          {service.httpStatus != null && (
+            <div className="text-[10px] font-mono tabular-nums text-muted-foreground/70">HTTP {service.httpStatus}</div>
           )}
         </div>
-        <div className="mt-0.5 truncate text-xs text-muted-foreground">{service.description}</div>
+        <span
+          className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${STATUS_SURFACE[service.status]}`}
+        >
+          <StatusDot status={service.status} size="sm" />
+          {STATUS_LABEL[service.status]}
+        </span>
+        <a
+          href={service.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden shrink-0 rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-background md:inline-flex md:items-center md:gap-1"
+        >
+          Open
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="size-3" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+          </svg>
+        </a>
       </div>
-      <div className="hidden shrink-0 text-right sm:block">
-        <div className="text-xs font-mono tabular-nums text-muted-foreground">{formatLatency(service.latencyMs)}</div>
-        {service.httpStatus != null && (
-          <div className="text-[10px] font-mono tabular-nums text-muted-foreground/70">HTTP {service.httpStatus}</div>
-        )}
-      </div>
-      <span
-        className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${STATUS_SURFACE[service.status]}`}
-      >
-        <StatusDot status={service.status} size="sm" />
-        {STATUS_LABEL[service.status]}
-      </span>
-      <a
-        href={service.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hidden shrink-0 rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-background md:inline-flex md:items-center md:gap-1"
-      >
-        Open
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="size-3" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
-        </svg>
-      </a>
+      {uptimeDays && uptimeDays.length > 0 && (
+        <div className="px-5 pb-4">
+          <UptimeBar days={uptimeDays} />
+        </div>
+      )}
     </div>
   )
 }
@@ -206,6 +195,9 @@ function SkeletonCard() {
 
 export default function StatusPage() {
   const { data, isLoading, isError, refetch, isFetching } = useServiceStatus()
+  const { data: uptimeData } = useServiceUptime()
+  const { data: incidentData } = useIncidentHistory(1)
+  const uptimeByProductId = new Map((uptimeData?.services ?? []).map((s) => [s.productId, s.days]))
   const overall: ServiceStatusValue = data?.overall ?? 'unknown'
   const headline = OVERALL_HEADLINE[overall]
   const kicker = OVERALL_KICKER[overall]
@@ -348,7 +340,7 @@ export default function StatusPage() {
                     </header>
                     <div className="divide-y divide-border">
                       {services.map((service) => (
-                        <ServiceRow key={service.id} service={service} />
+                        <ServiceRow key={service.id} service={service} uptimeDays={uptimeByProductId.get(service.id)} />
                       ))}
                     </div>
                   </section>
@@ -361,6 +353,28 @@ export default function StatusPage() {
                   <span className="inline-flex items-center gap-2"><StatusDot status="down" size="sm" /> Outage</span>
                   <span className="ml-auto">Data refreshes automatically every 60 seconds.</span>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══ Recent incidents ═══ */}
+        <section className="container">
+          <div>
+            <div className="grid grid-cols-12 pb-20">
+              <div className="col-span-full flex items-center justify-between pb-6">
+                <h2 className="text-heading-responsive-sm text-foreground">Recent incidents</h2>
+                <Link to="/history/1" className="text-sm font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
+                  View full history →
+                </Link>
+              </div>
+              <div className="col-span-full flex flex-col gap-4">
+                {incidentData && incidentData.incidents.length === 0 && (
+                  <p className="text-sm text-muted-foreground">No incidents reported this month.</p>
+                )}
+                {(incidentData?.incidents ?? []).map((incident) => (
+                  <IncidentCard key={incident._id} incident={incident} />
+                ))}
               </div>
             </div>
           </div>
