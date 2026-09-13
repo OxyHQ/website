@@ -364,7 +364,7 @@ export default function StatusPage() {
             <div className="grid grid-cols-12 pb-20">
               <div className="col-span-full flex items-center justify-between pb-6">
                 <h2 className="text-heading-responsive-sm text-foreground">Recent incidents</h2>
-                <Link to="/history/1" className="text-sm font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
+                <Link to="/status/history/1" className="text-sm font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
                   View full history →
                 </Link>
               </div>

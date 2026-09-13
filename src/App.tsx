@@ -245,7 +245,7 @@ function PublicRoutes() {
       <Route path="technologies" element={<Navigate to="/apps" replace />} />
       <Route path="products" element={<Navigate to="/apps" replace />} />
       <Route path="status" element={<StatusPage />} />
-      <Route path="history/:page" element={<StatusHistoryPage />} />
+      <Route path="status/history/:page" element={<StatusHistoryPage />} />
       <Route path="company" element={<CompanyPage />} />
       <Route path="company/team" element={<TeamPage />} />
       <Route

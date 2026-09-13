@@ -16,7 +16,7 @@ export default function StatusHistoryPage() {
       <SEO
         title="Notice history"
         description="Monthly history of every Oxy incident and notice, with dated updates from investigation to resolution."
-        canonicalPath={`/history/${page}`}
+        canonicalPath={`/status/history/${page}`}
       />
       <Navbar />
 
@@ -44,7 +44,7 @@ export default function StatusHistoryPage() {
 
               <div className="col-span-full mt-4 flex items-center justify-between border-t border-border pt-6">
                 <Link
-                  to={`/history/${page + 1}`}
+                  to={`/status/history/${page + 1}`}
                   className="text-sm font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                 >
                   ← Older
@@ -54,7 +54,7 @@ export default function StatusHistoryPage() {
                 </span>
                 {page > 1 ? (
                   <Link
-                    to={`/history/${page - 1}`}
+                    to={`/status/history/${page - 1}`}
                     className="text-sm font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                   >
                     Newer →
