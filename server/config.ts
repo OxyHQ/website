@@ -54,6 +54,12 @@ export const config = {
     // Compute and report the label changes without sending them to GitHub.
     priorityDryRun: process.env.FEATURE_PRIORITY_DRY_RUN === 'true',
   },
+  statusHistory: {
+    // How often the background job snapshots the live /status probe cache into
+    // daily uptime rollups, and how long those rollups are kept.
+    snapshotIntervalMinutes: parsePositiveIntEnv(process.env.STATUS_HISTORY_INTERVAL_MINUTES, 5),
+    retentionDays: parsePositiveIntEnv(process.env.STATUS_HISTORY_RETENTION_DAYS, 90),
+  },
   s3: {
     // Leave endpoint unset for native AWS S3; set AWS_ENDPOINT_URL for an S3-compatible
     // provider.

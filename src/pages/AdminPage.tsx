@@ -11,6 +11,7 @@ import SeoAdmin from '../components/admin/sections/SeoAdmin'
 import HeroAdmin from '../components/admin/sections/HeroAdmin'
 import PagesAdmin from '../components/admin/sections/PagesAdmin'
 import ProductsAdmin from '../components/admin/sections/ProductsAdmin'
+import IncidentsAdmin from '../components/admin/sections/IncidentsAdmin'
 import CategoriesAdmin from '../components/admin/sections/CategoriesAdmin'
 import NewsroomAdmin from '../components/admin/sections/NewsroomAdmin'
 import CoursesAdmin from '../components/admin/sections/CoursesAdmin'
@@ -124,6 +125,7 @@ export default function AdminPage() {
       <Route path="hero" element={<AdminLayout><HeroAdmin /></AdminLayout>} />
       <Route path="pages" element={<AdminLayout><PagesAdmin /></AdminLayout>} />
       <Route path="products" element={<AdminLayout><ProductsAdmin /></AdminLayout>} />
+      <Route path="incidents" element={<AdminLayout><IncidentsAdmin /></AdminLayout>} />
       <Route path="categories" element={<AdminLayout><CategoriesAdmin /></AdminLayout>} />
       <Route path="newsroom" element={<AdminLayout><NewsroomAdmin /></AdminLayout>} />
       <Route path="courses" element={<AdminLayout><CoursesAdmin /></AdminLayout>} />

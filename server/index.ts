@@ -16,6 +16,7 @@ import navigationRouter from './routes/navigation.js'
 import footerRouter from './routes/footer.js'
 import heroRouter from './routes/hero.js'
 import statusRouter from './routes/status.js'
+import statusHistoryRouter from './routes/statusHistory.js'
 import productsRouter from './routes/products.js'
 import homiioRouter from './routes/homiio.js'
 import categoriesRouter from './routes/categories.js'
@@ -28,6 +29,7 @@ import testimonialsRouter from './routes/testimonials.js'
 import changelogRouter from './routes/changelog.js'
 import { startSyncInterval } from './services/githubSync.js'
 import { startFeaturePriorityInterval } from './services/featurePriority.js'
+import { startStatusSnapshotInterval } from './services/statusSnapshot.js'
 import { getPriorityTiers } from './constants/featurePriority.js'
 import { isBootstrapComplete, markBootstrapComplete } from './services/startupState.js'
 import jobsRouter from './routes/jobs.js'
@@ -94,6 +96,7 @@ app.use('/api/navigation', navigationRouter)
 app.use('/api/footer', footerRouter)
 app.use('/api/hero', heroRouter)
 app.use('/api/status', statusRouter)
+app.use('/api/status', statusHistoryRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/homiio', homiioRouter)
 app.use('/api/categories', categoriesRouter)
@@ -272,6 +275,7 @@ async function connectWithRetry(): Promise<void> {
 
       startSyncInterval()
       startFeaturePriorityInterval()
+      startStatusSnapshotInterval()
       markBootstrapComplete()
       return
     } catch (err) {

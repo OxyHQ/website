@@ -316,6 +316,77 @@ export function useServiceStatus() {
   })
 }
 
+// ── Status history: daily uptime + incidents ──
+export type UptimeDayStatus = 'operational' | 'degraded' | 'down' | 'no-data'
+
+export interface UptimeDay {
+  date: string
+  status: UptimeDayStatus
+  uptimePct: number | null
+}
+
+export interface ServiceUptime {
+  productId: string
+  name: string
+  days: UptimeDay[]
+}
+
+export interface ServiceUptimePayload {
+  days: number
+  services: ServiceUptime[]
+}
+
+export function useServiceUptime(days = 90) {
+  return useQuery<ServiceUptimePayload>({
+    queryKey: ['status-uptime', days],
+    queryFn: () => apiFetch<ServiceUptimePayload>(`/status/uptime?days=${days}`),
+    staleTime: 5 * 60_000,
+  })
+}
+
+export type IncidentSeverity = 'minor' | 'major' | 'critical'
+export type IncidentUpdateStatus = 'investigating' | 'identified' | 'monitoring' | 'resolved'
+
+export interface IncidentUpdateRecord {
+  _id: string
+  status: IncidentUpdateStatus
+  body: string
+  createdAt: string
+}
+
+export interface IncidentHistoryEntry {
+  _id: string
+  title: string
+  severity: IncidentSeverity
+  status: IncidentUpdateStatus
+  products: string[]
+  startedAt: string
+  resolvedAt: string | null
+  affectedServices: { _id: string; productId: string; name: string }[]
+  updates: IncidentUpdateRecord[]
+}
+
+export interface IncidentHistoryPayload {
+  page: number
+  pages: number
+  year: number
+  month: number
+  label: string
+  incidents: IncidentHistoryEntry[]
+}
+
+export function useIncidentHistory(page = 1) {
+  return useQuery<IncidentHistoryPayload>({
+    queryKey: ['status-incidents', page],
+    queryFn: () => apiFetch<IncidentHistoryPayload>(`/status/incidents?page=${page}`),
+    staleTime: 5 * 60_000,
+  })
+}
+
+export function useIncidentsAdmin(page = 1) {
+  return useIncidentHistory(page)
+}
+
 export function useUpdateHero() {
   const qc = useQueryClient()
   return useMutation({
