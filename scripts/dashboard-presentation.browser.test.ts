@@ -49,6 +49,17 @@ try {
   await page.getByRole('button', { name: /exit full/i }).click();
   await page.waitForFunction(() => document.querySelector('[data-dashboard-fullscreen]')?.getAttribute('data-dashboard-fullscreen') === 'false');
   assert.ok(Math.abs(tvWidth - (await page.locator('.dashboard-metric').first().boundingBox())!.width) < 1);
+  await page.goto(`${baseURL}/dashboard/?fullscreen=true&fullscreenLayout=false&widgetRows=2&hideControls=true`, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-widget-rows="2"]').waitFor({ timeout: 60_000 });
+  assert.equal(await dashboard.locator('header button').count(), 0, 'both map and fullscreen controls are hidden');
+  assert.equal(await page.locator('.dashboard-metric').count(), 10);
+  await page.keyboard.press('Escape');
+  await page.waitForFunction(() => document.querySelector('[data-dashboard-fullscreen]')?.getAttribute('data-dashboard-fullscreen') === 'false');
+  assert.equal(new URL(page.url()).searchParams.get('hideControls'), 'true');
+  assert.equal(await dashboard.locator('header button').count(), 0);
+  await page.goto(`${baseURL}/dashboard/?hideControls=false`, { waitUntil: 'domcontentloaded' });
+  await dashboard.waitFor();
+  assert.equal(await dashboard.locator('header button').count(), 2, 'controls remain visible by default');
   console.log('PASS: URL fullscreen without browser permission, independent normal scale/two rows, exit and denied native fallback');
 } finally {
   await browser.close();

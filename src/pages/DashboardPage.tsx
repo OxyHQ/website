@@ -1,4 +1,4 @@
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useSearchParams } from "react-router-dom";
 import { dashboardPresentation } from "../lib/dashboardPresentation";
 import { Maximize2, Minimize2 } from "lucide-react";
@@ -54,7 +54,23 @@ export default function DashboardPage() {
     getFullscreenServerSnapshot,
   );
 
-  const { fullscreen: isFullscreen, fullscreenLayout, widgetRows } = dashboardPresentation(searchParams, nativeFullscreen, windowFullscreen);
+  const { fullscreen: isFullscreen, fullscreenLayout, widgetRows, hideControls } = dashboardPresentation(searchParams, nativeFullscreen, windowFullscreen);
+
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setWindowFullscreen(false);
+      if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
+      setSearchParams((current) => {
+        const next = new URLSearchParams(current);
+        next.delete('fullscreen');
+        return next;
+      }, { replace: true });
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isFullscreen, setSearchParams]);
 
   async function toggleFullscreen() {
     if (isFullscreen) {
@@ -109,7 +125,7 @@ export default function DashboardPage() {
                 <Logo className="h-8" />
               </div>
             )}
-            <div className="flex items-center gap-2">
+            {!hideControls && <div className="flex items-center gap-2">
               <button
                 type="button"
                 aria-label={isGlobe ? t('dashboard.flatMap') : t('dashboard.globe')}
@@ -127,7 +143,7 @@ export default function DashboardPage() {
               >
                 {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
               </button>
-            </div>
+            </div>}
           </header>
 
           <div className={`pointer-events-none relative z-10 flex-1 ${isFullscreen ? "min-h-0" : "min-h-[520px]"}`}>
