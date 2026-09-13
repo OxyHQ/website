@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import Globe, { type GlobeMethods } from 'react-globe.gl'
 import {
   BackSide,
@@ -14,6 +14,7 @@ import { activityRegionCoordinates, activityRegionLabel } from '../../data/dashb
 import { ACTIVITY_CATEGORIES, type ActivityCategory } from '../../data/dashboard/activity-categories'
 import { activityRoute } from '../../data/dashboard/activity-routes'
 import { activityMotion } from '../../data/dashboard/activity-motion'
+import { cameraMotion, stepCameraMotion, selectCameraFocus, CAMERA_MANUAL_PAUSE_MS, type CameraFocus, type CameraTarget } from '../../data/dashboard/camera-motion'
 
 interface LiveGlobeProps {
   infraStatus?: InfraStatusNode[]
@@ -55,8 +56,6 @@ interface ActivityRing {
 }
 
 const MIN_GLOBE_HEIGHT = 420
-const RETURN_TO_ACTIVITY_DELAY = 600
-const FOCUS_TRANSITION_DURATION = 1_200
 
 function threeColor(token: string): string {
   const channels = token.match(/^rgb\(\s*(\d+)\s+(\d+)\s+(\d+)\s*\)$/)
@@ -70,29 +69,10 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   const globeRef = useRef<GlobeMethods>(undefined)
   const activityEventsRef = useRef(activityEvents)
   const highResolutionRef = useRef(false)
-  const returnTimerRef = useRef<number | null>(null)
-  const resumeTimerRef = useRef<number | null>(null)
   const controlsCleanupRef = useRef<(() => void) | null>(null)
   const sceneCleanupRef = useRef<(() => void) | null>(null)
   const isInteractingRef = useRef(false)
   activityEventsRef.current = activityEvents
-
-  useEffect(() => {
-    if (isInteractingRef.current) return
-    const requestsByOrigin = new Map<string, number>()
-    for (const event of activityEvents) {
-      if (event.sourceRegion) {
-        requestsByOrigin.set(event.sourceRegion, (requestsByOrigin.get(event.sourceRegion) ?? 0) + event.requests)
-      }
-    }
-    const busiestOrigin = [...requestsByOrigin.entries()].sort((left, right) => right[1] - left[1])[0]?.[0]
-    const busiestEvent = activityEvents.find((event) => event.sourceRegion === busiestOrigin)
-    const coordinates = busiestEvent?.sourceCoordinates
-      ?? (busiestOrigin ? activityRegionCoordinates(busiestOrigin) : undefined)
-    if (coordinates && globeRef.current) {
-      globeRef.current.pointOfView({ lat: coordinates[1], lng: coordinates[0], altitude: 1.65 }, 1_200)
-    }
-  }, [activityEvents])
 
   const containerRef = useCallback((node: HTMLDivElement | null) => {
     if (!node) return
@@ -128,8 +108,6 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       controlsCleanupRef.current = null
       sceneCleanupRef.current?.()
       sceneCleanupRef.current = null
-      if (returnTimerRef.current !== null) window.clearTimeout(returnTimerRef.current)
-      if (resumeTimerRef.current !== null) window.clearTimeout(resumeTimerRef.current)
     }
   }, [])
 
@@ -138,8 +116,8 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     if (!globe) return
     globe.pointOfView({ lat: 28, lng: -28, altitude: 1.7 }, 0)
     const controls = globe.controls()
-    controls.autoRotate = true
-    controls.autoRotateSpeed = 0.35
+    controls.autoRotate = false
+    controls.enableDamping = false
     controls.enableRotate = true
     controls.enableZoom = false
     controls.enablePan = false
@@ -171,50 +149,53 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       skyMaterial.dispose()
     }
 
+    controlsCleanupRef.current?.()
+    let motion = cameraMotion(globe.pointOfView())
+    let focus: CameraFocus = { selectedAt: 0, challengerSince: 0 }
+    let resumeAt = 0
+    let previousFrame = performance.now()
+    let frame = 0
+    let previousEvents: PlatformActivityEvent[] | undefined
+    let candidates: CameraTarget[] = []
     const pauseAutomaticView = () => {
       isInteractingRef.current = true
-      controls.autoRotate = false
-      if (returnTimerRef.current !== null) window.clearTimeout(returnTimerRef.current)
-      if (resumeTimerRef.current !== null) window.clearTimeout(resumeTimerRef.current)
     }
-
-    const returnToBusiestRegion = () => {
+    const releaseAutomaticView = () => {
       isInteractingRef.current = false
-      returnTimerRef.current = window.setTimeout(() => {
-        const requestsByOrigin = new Map<string, number>()
-        for (const event of activityEventsRef.current) {
-          if (!event.sourceRegion) continue
-          requestsByOrigin.set(
-            event.sourceRegion,
-            (requestsByOrigin.get(event.sourceRegion) ?? 0) + event.requests,
-          )
-        }
-        const busiestOrigin = [...requestsByOrigin.entries()]
-          .sort((left, right) => right[1] - left[1])[0]?.[0]
-        const busiestEvent = activityEventsRef.current.find(
-          (event) => event.sourceRegion === busiestOrigin,
-        )
-        const coordinates = busiestEvent?.sourceCoordinates
-          ?? (busiestOrigin ? activityRegionCoordinates(busiestOrigin) : undefined)
-        if (coordinates) {
-          globe.pointOfView({
-            lat: coordinates[1],
-            lng: coordinates[0],
-            altitude: 1.55,
-          }, FOCUS_TRANSITION_DURATION)
-        }
-        resumeTimerRef.current = window.setTimeout(() => {
-          controls.autoRotate = true
-        }, coordinates ? FOCUS_TRANSITION_DURATION : 0)
-      }, RETURN_TO_ACTIVITY_DELAY)
+      resumeAt = performance.now() + CAMERA_MANUAL_PAUSE_MS
     }
-
+    const animateCamera = (now: number) => {
+      const elapsed = (now - previousFrame) / 1_000
+      previousFrame = now
+      if (previousEvents !== activityEventsRef.current) {
+        previousEvents = activityEventsRef.current
+        const origins = new Map<string, CameraTarget>()
+        for (const event of previousEvents) {
+          const region = event.sourceRegion ?? event.region
+          const coordinates = event.sourceRegion ? event.sourceCoordinates ?? activityRegionCoordinates(region) : activityRegionCoordinates(region)
+          if (!coordinates) continue
+          const origin = origins.get(region)
+          origins.set(region, { key: region, lng: coordinates[0], lat: coordinates[1], requests: (origin?.requests ?? 0) + event.requests })
+        }
+        candidates = [...origins.values()]
+      }
+      focus = selectCameraFocus(focus, candidates, now)
+      if (isInteractingRef.current || now < resumeAt) {
+        motion = cameraMotion(globe.pointOfView())
+      } else {
+        motion = stepCameraMotion(motion, focus.target, elapsed)
+        const next = { lat: motion.lat, lng: motion.lng, altitude: motion.altitude }
+        globe.pointOfView(next, 0)
+      }
+      frame = requestAnimationFrame(animateCamera)
+    }
     controls.addEventListener('start', pauseAutomaticView)
-    controls.addEventListener('end', returnToBusiestRegion)
-    controlsCleanupRef.current?.()
+    controls.addEventListener('end', releaseAutomaticView)
+    frame = requestAnimationFrame(animateCamera)
     controlsCleanupRef.current = () => {
+      cancelAnimationFrame(frame)
       controls.removeEventListener('start', pauseAutomaticView)
-      controls.removeEventListener('end', returnToBusiestRegion)
+      controls.removeEventListener('end', releaseAutomaticView)
     }
   }, [])
 
