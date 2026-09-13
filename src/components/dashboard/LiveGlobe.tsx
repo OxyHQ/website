@@ -1,10 +1,12 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { observeMapContrast } from './map-contrast'
+import { createSolarMaterial } from './solar-material'
 import Globe, { type GlobeMethods } from 'react-globe.gl'
 import {
   BackSide,
   Mesh,
   MeshBasicMaterial,
+  type ShaderMaterial,
   SphereGeometry,
   SRGBColorSpace,
   TextureLoader,
@@ -67,6 +69,7 @@ function threeColor(token: string): string {
 }
 
 export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlobeProps) {
+  const [solarMaterial, setSolarMaterial] = useState<ShaderMaterial | undefined>(undefined)
   const [layout, setLayout] = useState<GlobeLayout | null>(null)
   const globeRef = useRef<GlobeMethods>(undefined)
   const activityEventsRef = useRef(activityEvents)
@@ -147,7 +150,10 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     const sky = new Mesh(skyGeometry, skyMaterial)
     globe.scene().add(sky)
     sceneCleanupRef.current?.()
+    const solar = createSolarMaterial(highResolutionRef.current)
+    setSolarMaterial(solar.material)
     sceneCleanupRef.current = () => {
+      solar.dispose()
       globe.scene().remove(sky)
       skyTexture.dispose()
       skyGeometry.dispose()
@@ -172,6 +178,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     const animateCamera = (now: number) => {
       const elapsed = (now - previousFrame) / 1_000
       previousFrame = now
+      solar.update(Date.now())
       if (previousEvents !== activityEventsRef.current) {
         previousEvents = activityEventsRef.current
         const origins = new Map<string, CameraTarget>()
@@ -316,9 +323,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           height={layout.height}
           rendererConfig={{ alpha: true, antialias: true }}
           backgroundColor="rgba(0,0,0,0)"
-          globeImageUrl={layout.highResolution
-            ? "/images/dashboard/earth-night-nasa-8k.webp"
-            : "/images/dashboard/earth-night-nasa.webp"}
+          globeMaterial={solarMaterial}
           showAtmosphere
           atmosphereColor={layout.primary}
           atmosphereAltitude={0.12}
