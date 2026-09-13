@@ -452,6 +452,7 @@ const es: Translations = {
   },
   dashboard: {
     ...en.dashboard,
+    traffic: {"identity": "Identidad", "ai": "IA", "communication": "Mensajes", "media": "Multimedia", "platform": "Plataforma", "internal": "Interno", "external": "Externo", "inbound": "Entrante", "outbound": "Saliente"},
     seoDescription: 'Panel en tiempo real con actividad anónima y estado de la infraestructura en las regiones de Oxy.',
     flatMap: 'Mostrar mapa plano', globe: 'Mostrar globo', enterFullscreen: 'Pantalla completa', exitFullscreen: 'Salir de pantalla completa',
     totalUsers: 'Usuarios totales', infrastructureActivity: 'Actividad de infraestructura en vivo', waitingActivity: 'Esperando actividad anónima…', activeRegions: 'Regiones activas',

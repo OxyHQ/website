@@ -83,7 +83,8 @@ const id: Translations = {
     ...en.newsroom,
     recentNewsHeading: 'Berita terbaru',
   },
-  dashboard: { ...en.dashboard, totalUsers: 'Total pengguna', infrastructureActivity: 'Aktivitas infrastruktur langsung', waitingActivity: 'Menunggu aktivitas anonim…', activeRegions: 'Wilayah aktif', networkOrigins: 'Asal jaringan langsung', contentPerUser: 'Konten / pengguna', itemsPerUser: 'Item / pengguna', activeSessions: 'Sesi aktif', developerApps: 'Aplikasi pengembang', storedFiles: 'File tersimpan', files: 'File', messages: 'Pesan', notifications: 'Notifikasi', transactions: 'Transaksi', noneYet: 'Belum ada', aiModels: 'Model AI', connections: 'Koneksi', platformActivity: 'Aktivitas platform', metricDetail: '{metric} dihitung dari data nyata dan diperbarui secara otomatis.' },
+  dashboard: { ...en.dashboard,
+    traffic: {"identity": "Identitas", "ai": "AI", "communication": "Pesan", "media": "Media", "platform": "Platform", "internal": "Internal", "external": "Eksternal", "inbound": "Masuk", "outbound": "Keluar"}, totalUsers: 'Total pengguna', infrastructureActivity: 'Aktivitas infrastruktur langsung', waitingActivity: 'Menunggu aktivitas anonim…', activeRegions: 'Wilayah aktif', networkOrigins: 'Asal jaringan langsung', contentPerUser: 'Konten / pengguna', itemsPerUser: 'Item / pengguna', activeSessions: 'Sesi aktif', developerApps: 'Aplikasi pengembang', storedFiles: 'File tersimpan', files: 'File', messages: 'Pesan', notifications: 'Notifikasi', transactions: 'Transaksi', noneYet: 'Belum ada', aiModels: 'Model AI', connections: 'Koneksi', platformActivity: 'Aktivitas platform', metricDetail: '{metric} dihitung dari data nyata dan diperbarui secara otomatis.' },
   errors: {
     notFoundTitle: '404 — Halaman tidak ditemukan',
     notFoundDescription: 'Maaf, kami tidak dapat menemukan halaman tersebut. Halaman mungkin telah dipindahkan atau dihapus.',

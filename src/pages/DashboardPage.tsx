@@ -5,6 +5,7 @@ import { Maximize2, Minimize2 } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import SEO from "../components/SEO";
+import TrafficLegend from "../components/dashboard/TrafficLegend";
 import MapContainer from "../components/dashboard/MapContainer";
 import {
   TotalRequests,
@@ -15,7 +16,6 @@ import {
 import ReferenceMetricsGrid from "../components/dashboard/ReferenceMetricsGrid";
 import Logo from "../components/ui/Logo";
 import { usePlatformActivity, usePlatformStats, useInfraStatus } from "../api/hooks";
-import { INFRA_NODES } from "../data/dashboard/infra-nodes";
 import { useTranslation } from "../lib/i18n";
 
 function subscribeFullscreen(callback: () => void): () => void {
@@ -37,14 +37,13 @@ export default function DashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [windowFullscreen, setWindowFullscreen] = useState(false);
   const { data: stats } = usePlatformStats();
-  const { events: activityEvents } = usePlatformActivity();
+  const { events: activityEvents, infrastructure } = usePlatformActivity();
   const { data: infraData } = useInfraStatus();
+  const infraNodes = infrastructure ?? infraData?.nodes;
   const displayedStats = {
     ...stats,
-    regions: infraData
-      ? INFRA_NODES.filter((node) =>
-          infraData.nodes.find((status) => status.region === node.region)?.status !== 'offline'
-        ).length
+    regions: infraNodes
+      ? infraNodes.filter(node => node.status !== 'offline').length
       : stats.regions,
   };
   const dashboardRef = useRef<HTMLDivElement>(null);
@@ -110,10 +109,12 @@ export default function DashboardPage() {
           <div className="absolute inset-y-0 left-1/2 z-0 w-screen -translate-x-1/2 touch-none cursor-grab active:cursor-grabbing">
             <MapContainer
               isGlobe={isGlobe}
-              infraStatus={infraData?.nodes}
+              infraStatus={infraNodes}
               activityEvents={activityEvents}
             />
           </div>
+
+          <TrafficLegend />
 
           <header className="relative z-10 flex items-center justify-between font-mono text-sm uppercase gap-2 pt-6 mb-4 shrink-0">
             <span className="inline-flex items-center gap-2 rounded-full bg-error px-3 py-1.5 font-sans text-xs font-bold tracking-wide text-error-foreground">

@@ -316,7 +316,8 @@ const ar: Translations = {
   seo: {
     siteName: 'Oxy',
   },
-  dashboard: { ...en.dashboard, totalUsers: 'إجمالي المستخدمين', infrastructureActivity: 'نشاط البنية التحتية المباشر', waitingActivity: 'بانتظار نشاط مجهول…', activeRegions: 'المناطق النشطة', networkOrigins: 'مصادر الشبكة المباشرة', contentPerUser: 'المحتوى / المستخدم', itemsPerUser: 'العناصر / المستخدم', activeSessions: 'الجلسات النشطة', developerApps: 'تطبيقات المطورين', storedFiles: 'الملفات المخزنة', files: 'الملفات', messages: 'الرسائل', notifications: 'الإشعارات', transactions: 'المعاملات', noneYet: 'لا يوجد بعد', aiModels: 'نماذج الذكاء الاصطناعي', connections: 'الاتصالات', platformActivity: 'نشاط المنصة', metricDetail: 'يُحسب {metric} من بيانات حقيقية ويُحدّث تلقائياً.' },
+  dashboard: { ...en.dashboard,
+    traffic: {"identity": "الهوية", "ai": "الذكاء الاصطناعي", "communication": "الرسائل", "media": "الوسائط", "platform": "المنصة", "internal": "داخلي", "external": "خارجي", "inbound": "وارد", "outbound": "صادر"}, totalUsers: 'إجمالي المستخدمين', infrastructureActivity: 'نشاط البنية التحتية المباشر', waitingActivity: 'بانتظار نشاط مجهول…', activeRegions: 'المناطق النشطة', networkOrigins: 'مصادر الشبكة المباشرة', contentPerUser: 'المحتوى / المستخدم', itemsPerUser: 'العناصر / المستخدم', activeSessions: 'الجلسات النشطة', developerApps: 'تطبيقات المطورين', storedFiles: 'الملفات المخزنة', files: 'الملفات', messages: 'الرسائل', notifications: 'الإشعارات', transactions: 'المعاملات', noneYet: 'لا يوجد بعد', aiModels: 'نماذج الذكاء الاصطناعي', connections: 'الاتصالات', platformActivity: 'نشاط المنصة', metricDetail: 'يُحسب {metric} من بيانات حقيقية ويُحدّث تلقائياً.' },
   errors: {
     notFoundTitle: '404 — الصفحة غير موجودة',
     notFoundDescription: 'نأسف، لم نتمكّن من العثور على هذه الصفحة. ربما تم نقلها أو حذفها.',
