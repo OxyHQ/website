@@ -1,3 +1,4 @@
+import { startWebsiteActivity } from './services/ecosystemActivity.js'
 import { readInfrastructureStatus } from './services/infrastructureStatus.js'
 import express, { type NextFunction, type Request, type Response } from 'express'
 import cors from 'cors'
@@ -55,6 +56,8 @@ import { mountMcp } from './mcp.js'
 const MIGRATIONS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'db', 'migrations')
 
 const app = express()
+const activity = startWebsiteActivity(isBootstrapComplete)
+if (activity) app.use(activity.middleware)
 
 const ALWAYS_ALLOWED_ORIGINS = new Set([
   'https://oxy.so',
@@ -308,7 +311,23 @@ async function connectWithRetry(): Promise<void> {
  */
 getPriorityTiers()
 
-app.listen(config.port, () => {
+const server = app.listen(config.port, () => {
   console.log(`Server listening on http://localhost:${config.port}`)
   void connectWithRetry()
 })
+
+
+let shuttingDown = false
+async function shutdown() {
+  if (shuttingDown) return
+  shuttingDown = true
+  const deadline = setTimeout(() => process.exit(1), 15_000)
+  deadline.unref()
+  await new Promise<void>(resolve => server.close(() => resolve()))
+  await activity?.stop()
+  await pgClient.end({ timeout: 2 })
+  clearTimeout(deadline)
+  process.exit(0)
+}
+process.once('SIGTERM', () => { void shutdown() })
+process.once('SIGINT', () => { void shutdown() })
