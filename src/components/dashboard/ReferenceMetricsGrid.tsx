@@ -71,7 +71,7 @@ export default function ReferenceMetricsGrid({ stats, compact = false }: { stats
     : `${sessionShare.toFixed(1)}%`;
 
   return (
-    <div className="dashboard-metrics-theme dashboard-metrics-dense mx-auto w-full [container-type:inline-size]">
+    <div data-widget-rows={compact ? 1 : 2} className="dashboard-metrics-theme dashboard-metrics-dense mx-auto w-full [container-type:inline-size]">
       <div className="dashboard-reference-grid grid grid-cols-[420fr_420fr_420fr_420fr_632fr] gap-[.69cqw]">
         {!compact && (
           <Card title={t('dashboard.contentPerUser')} circle className="bg-surface">
