@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
+import { observeMapContrast } from './map-contrast'
 import Globe, { type GlobeMethods } from 'react-globe.gl'
 import {
   BackSide,
@@ -13,7 +14,7 @@ import { infrastructureNodes } from '../../data/dashboard/infra-nodes'
 import { activityRegionCoordinates, activityRegionLabel } from '../../data/dashboard/activity-regions'
 import { ACTIVITY_CATEGORIES, type ActivityCategory } from '../../data/dashboard/activity-categories'
 import { activityRoute } from '../../data/dashboard/activity-routes'
-import { activityMotion } from '../../data/dashboard/activity-motion'
+import { activityMotion, activityFlows, retainFlowObjects } from '../../data/dashboard/activity-motion'
 import { cameraMotion, stepCameraMotion, selectCameraFocus, CAMERA_MANUAL_PAUSE_MS, type CameraFocus, type CameraTarget } from '../../data/dashboard/camera-motion'
 
 interface LiveGlobeProps {
@@ -69,6 +70,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   const [layout, setLayout] = useState<GlobeLayout | null>(null)
   const globeRef = useRef<GlobeMethods>(undefined)
   const activityEventsRef = useRef(activityEvents)
+  const arcCacheRef = useRef(new Map<string, ActivityArc>())
   const highResolutionRef = useRef(false)
   const controlsCleanupRef = useRef<(() => void) | null>(null)
   const sceneCleanupRef = useRef<(() => void) | null>(null)
@@ -92,7 +94,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         success: threeColor(style.getPropertyValue('--success').trim()),
         warning: threeColor(style.getPropertyValue('--warning').trim()),
         destructive: threeColor(style.getPropertyValue('--destructive').trim()),
-        internal: threeColor(style.getPropertyValue('--foreground').trim()),
+        internal: threeColor((style.getPropertyValue('--map-internal') || style.getPropertyValue('--foreground')).trim()),
         activityColors: Object.fromEntries(ACTIVITY_CATEGORIES.map(({ id }) => [
           id,
           threeColor(style.getPropertyValue(`--chart-${id === 'identity' ? '5' : id === 'ai' ? '2' : id === 'communication' ? '4' : id === 'media' ? '3' : '1'}`).trim()),
@@ -100,11 +102,13 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       })
     }
 
+    const stopContrast = observeMapContrast(node, measure)
     measure()
     const observer = new ResizeObserver(measure)
     observer.observe(node)
     return () => {
       observer.disconnect()
+      stopContrast()
       controlsCleanupRef.current?.()
       controlsCleanupRef.current = null
       sceneCleanupRef.current?.()
@@ -232,16 +236,17 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
 
   const arcs = useMemo<ActivityArc[]>(() => {
     if (!layout) return []
-    return activityEvents.flatMap((event) => {
+    const now = Date.now()
+    const nextArcs = activityFlows(activityEvents).flatMap((event) => {
       const route = activityRoute(event, infrastructureNodes(infraStatus))
       if (!route) return []
       const { source, target } = route
-      const { pulseCount, pulseDurationMs: dashTime, pulseLength: dashLength } = activityMotion(event)
+      const { pulseDurationMs: dashTime, pulseLength: dashLength, pulseGap, initialPhase } = activityMotion(event, route.key, now)
       // Co-located services get a short schematic arc around their shared
       // infrastructure marker; it does not claim a second geographic location.
       const localOffset = route.local ? (route.outbound ? 0.7 : -0.7) : 0
-      const pulses: ActivityArc[] = Array.from({ length: pulseCount }, (_, pulseIndex) => ({
-        id: `${route.key}-${pulseIndex}`,
+      const pulses: ActivityArc[] = [{
+        id: route.key,
         startLat: source[1],
         startLng: source[0] - localOffset,
         endLat: target[1],
@@ -250,9 +255,9 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         stroke: route.internal ? 0.6 : 0.35,
         dashTime,
         dashLength: route.internal ? dashLength / 2 : dashLength,
-        dashGap: 1 - dashLength,
-        dashInitialGap: pulseIndex / pulseCount,
-      }))
+        dashGap: pulseGap + (route.internal ? dashLength / 2 : 0),
+        dashInitialGap: arcCacheRef.current.get(route.key)?.dashInitialGap ?? -initialPhase,
+      }]
       if (!route.internal) return pulses
       // A persistent high-contrast dashed backbone distinguishes internal hops.
       // The moving category-coloured pulses still identify operation type/direction.
@@ -261,6 +266,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         stroke: 0.45, dashTime: 0, dashLength: 0.035, dashGap: 0.035, dashInitialGap: 0,
       }, ...pulses]
     })
+    return retainFlowObjects(arcCacheRef.current, nextArcs)
   }, [activityEvents, layout, infraStatus])
 
   const rings = useMemo<ActivityRing[]>(() => {
