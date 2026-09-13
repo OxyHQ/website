@@ -1,3 +1,4 @@
+import { getBrowserTelemetryHeaders } from '@oxy.so/telemetry/browser'
 import type { OxyServices, LinkedHttpClient } from '@oxy.so/core'
 
 export const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api'
@@ -30,8 +31,9 @@ export function setOxyServices(oxy: OxyServices) {
  * not a hand-rolled credential.
  */
 export async function getAuthHeaders(): Promise<Record<string, string>> {
+  const telemetry = await getBrowserTelemetryHeaders()
   const token = oxyServices ? oxyServices.getAccessToken() : null
-  return token ? { Authorization: `Bearer ${token}` } : {}
+  return token ? { ...telemetry, Authorization: `Bearer ${token}` } : telemetry
 }
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'

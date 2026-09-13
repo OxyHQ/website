@@ -1,4 +1,5 @@
 /// <reference types="@cloudflare/workers-types" />
+import { observeEdgeRequest, type EdgeActivityEnv } from '@oxy.so/telemetry/edge'
 import { brandForHost, resolveSeoOrDefault, type SeoData } from '../src/lib/seo'
 import { hasPrerenderedNewsroomPost, matchNewsroomPostPath } from './newsroom-status'
 import { isSpaFallbackPath } from '../src/lib/spaFallback'
@@ -18,7 +19,7 @@ import { isSpaFallbackPath } from '../src/lib/spaFallback'
  */
 
 /** Cloudflare Pages runtime bindings this middleware reads. */
-interface Env {
+interface Env extends EdgeActivityEnv {
   /**
    * Website backend origin, mirroring the `VITE_API_URL` the SPA reads. Set it
    * as a Pages environment variable to point a preview deployment at a staging
@@ -76,7 +77,7 @@ function asNotFound(response: Response, html: string): Response {
   return new Response(html, { status: 404, statusText: 'Not Found', headers })
 }
 
-const onRequest: PagesFunction<Env> = async (context) => {
+const handleRequest: PagesFunction<Env> = async (context) => {
   const { request, next, env } = context
   const url = new URL(request.url)
   let response = await next()
@@ -155,5 +156,10 @@ const onRequest: PagesFunction<Env> = async (context) => {
     return response
   }
 }
+
+const onRequest: PagesFunction<Env> = (context) => observeEdgeRequest({
+  service: 'website', request: context.request, env: context.env, ctx: context,
+  next: () => Promise.resolve(handleRequest(context)),
+})
 
 export { onRequest }
