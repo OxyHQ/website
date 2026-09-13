@@ -1,4 +1,7 @@
+import { parseInfrastructureSnapshot } from '../../server/contracts/platformInfrastructure'
 import { io, type Socket } from 'socket.io-client'
+import type { InfraStatusNode } from './hooks'
+import { activityWindow } from './platformActivityWindow'
 
 export interface PlatformActivityEvent {
   region: string
@@ -7,6 +10,11 @@ export interface PlatformActivityEvent {
   windowStartedAt: string
   emittedAt: string
   direction?: 'inbound' | 'outbound' | 'internal'
+  scope?: 'internal' | 'external'
+  activityType?: 'identity' | 'ai' | 'communication' | 'media' | 'platform'
+  sourceService?: string
+  targetService?: string
+  targetCoordinates?: [number, number]
   service?: string
   sourceRegion?: string
   targetRegion?: string
@@ -18,20 +26,22 @@ export interface PlatformActivityEvent {
 interface PlatformActivityState {
   events: PlatformActivityEvent[]
   isConnected: boolean
+  infrastructure: InfraStatusNode[] | null
 }
 
 const OXY_API =
   (import.meta.env.VITE_OXY_API as string | undefined) || 'https://api.oxy.so'
-const MAX_ACTIVITY_EVENTS = 20
 const RECONNECT_DELAY_MS = 500
 const MAX_RECONNECT_DELAY_MS = 10_000
 const CONNECTION_TIMEOUT_MS = 10_000
-const INITIAL_STATE: PlatformActivityState = { events: [], isConnected: false }
+const INITIAL_STATE: PlatformActivityState = { events: [], isConnected: false, infrastructure: null }
 
 type Listener = () => void
 
 let state = INITIAL_STATE
 let socket: Socket | null = null
+let expiryTimer: ReturnType<typeof setInterval> | null = null
+let infrastructureTimestamp = 0
 let remoteEvents: PlatformActivityEvent[] = []
 const listeners = new Set<Listener>()
 type EdgeLocation = { iata: string; city: string; cca2: string; lat: number; lon: number }
@@ -40,25 +50,39 @@ let edgeLocationsPromise: Promise<EdgeLocation[]> | null = null
 
 function loadEdgeLocations(): Promise<EdgeLocation[]> {
   edgeLocationsPromise ??= fetch('https://speed.cloudflare.com/locations')
-    .then((response) => response.ok ? response.json() as Promise<EdgeLocation[]> : [])
+    .then((response) => {
+      if (!response.ok) throw new Error('Edge locations unavailable')
+      return response.json() as Promise<EdgeLocation[]>
+    })
     .then((locations) => {
       edgeLocations = locations
       return locations
     })
-    .catch(() => [])
+    .catch(() => {
+      edgeLocationsPromise = null
+      return []
+    })
   return edgeLocationsPromise
 }
 
 function enrichEdgeOrigin(event: PlatformActivityEvent): PlatformActivityEvent {
-  if (!event.sourceRegion?.startsWith('edge-') || event.sourceCoordinates) return event
-  const iata = event.sourceRegion.slice(5).toLowerCase()
-  const edge = edgeLocations.find((location) => location.iata.toLowerCase() === iata)
-  if (!edge) return event
+  const source = event.sourceRegion?.startsWith('edge-')
+    ? edgeLocations.find(location => location.iata.toLowerCase() === event.sourceRegion!.slice(5).toLowerCase())
+    : undefined
+  const target = event.targetRegion?.startsWith('edge-')
+    ? edgeLocations.find(location => location.iata.toLowerCase() === event.targetRegion!.slice(5).toLowerCase())
+    : undefined
+  if ((!source || event.sourceCoordinates) && (!target || event.targetCoordinates)) return event
   return {
     ...event,
-    sourceCoordinates: [edge.lon, edge.lat],
-    sourceLabel: edge.city,
-    sourceCountry: edge.cca2,
+    ...(source && !event.sourceCoordinates ? {
+      sourceCoordinates: [source.lon, source.lat] as [number, number],
+      sourceLabel: source.city,
+      sourceCountry: source.cca2,
+    } : {}),
+    ...(target && !event.targetCoordinates ? {
+      targetCoordinates: [target.lon, target.lat] as [number, number],
+    } : {}),
   }
 }
 
@@ -72,7 +96,7 @@ function enrichRemoteEvents(): void {
 }
 
 function visibleEvents(): PlatformActivityEvent[] {
-  return remoteEvents.slice(-MAX_ACTIVITY_EVENTS)
+  return activityWindow(remoteEvents)
 }
 
 function emit(): void {
@@ -96,19 +120,34 @@ function connect(): void {
     emit()
   })
   socket.on('disconnect', () => {
-    state = { ...state, isConnected: false }
+    state = { ...state, isConnected: false, infrastructure: state.infrastructure?.map(node => ({ ...node, status: 'unknown' })) ?? null }
+    emit()
+  })
+  socket.on('platform_infrastructure', (value: unknown) => {
+    const snapshot = parseInfrastructureSnapshot(value)
+    if (!snapshot || Date.parse(snapshot.emittedAt) < infrastructureTimestamp) return
+    infrastructureTimestamp = Date.parse(snapshot.emittedAt)
+    state = { ...state, infrastructure: snapshot.nodes }
     emit()
   })
   socket.on('platform_activity', (event: PlatformActivityEvent) => {
     if (
       typeof event?.region !== 'string' ||
-      typeof event?.requests !== 'number' ||
+      typeof event?.requests !== 'number' || !Number.isFinite(event.requests) || event.requests < 1 ||
       typeof event?.emittedAt !== 'string'
     ) return
-    remoteEvents = [...remoteEvents, enrichEdgeOrigin(event)].slice(-MAX_ACTIVITY_EVENTS)
-    state = { isConnected: true, events: visibleEvents() }
+    remoteEvents = activityWindow([...remoteEvents, enrichEdgeOrigin(event)])
+    state = { ...state, isConnected: true, events: visibleEvents() }
     emit()
   })
+  expiryTimer = setInterval(() => {
+    if (edgeLocations.length === 0) void loadEdgeLocations().then(enrichRemoteEvents)
+    const current = visibleEvents()
+    if (current.length === remoteEvents.length) return
+    remoteEvents = current
+    state = { ...state, events: current }
+    emit()
+  }, 2_000)
 }
 
 export function subscribePlatformActivity(listener: Listener): () => void {
@@ -117,8 +156,11 @@ export function subscribePlatformActivity(listener: Listener): () => void {
   return () => {
     listeners.delete(listener)
     if (listeners.size === 0) {
+      if (expiryTimer) clearInterval(expiryTimer)
+      expiryTimer = null
       socket?.disconnect()
       socket = null
+      infrastructureTimestamp = 0
       remoteEvents = []
       edgeLocations = []
       edgeLocationsPromise = null

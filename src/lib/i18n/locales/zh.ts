@@ -316,7 +316,8 @@ const zh: Translations = {
   seo: {
     siteName: 'Oxy',
   },
-  dashboard: { ...en.dashboard, totalUsers: '用户总数', infrastructureActivity: '实时基础设施活动', waitingActivity: '正在等待匿名活动…', activeRegions: '活跃区域', networkOrigins: '实时网络来源', contentPerUser: '内容 / 用户', itemsPerUser: '项目 / 用户', activeSessions: '活跃会话', developerApps: '开发者应用', storedFiles: '已存文件', files: '文件', messages: '消息', notifications: '通知', transactions: '交易', noneYet: '暂无', aiModels: 'AI 模型', connections: '连接', platformActivity: '平台活动', metricDetail: '{metric} 根据真实数据计算并自动更新。' },
+  dashboard: { ...en.dashboard,
+    traffic: {"identity": "身份", "ai": "人工智能", "communication": "消息", "media": "媒体", "platform": "平台", "internal": "内部", "external": "外部", "inbound": "传入", "outbound": "传出"}, totalUsers: '用户总数', infrastructureActivity: '实时基础设施活动', waitingActivity: '正在等待匿名活动…', activeRegions: '活跃区域', networkOrigins: '实时网络来源', contentPerUser: '内容 / 用户', itemsPerUser: '项目 / 用户', activeSessions: '活跃会话', developerApps: '开发者应用', storedFiles: '已存文件', files: '文件', messages: '消息', notifications: '通知', transactions: '交易', noneYet: '暂无', aiModels: 'AI 模型', connections: '连接', platformActivity: '平台活动', metricDetail: '{metric} 根据真实数据计算并自动更新。' },
   errors: {
     notFoundTitle: '404 — 页面未找到',
     notFoundDescription: '抱歉,我们找不到这个页面。它可能已被移动或删除。',

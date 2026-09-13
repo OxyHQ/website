@@ -9,9 +9,10 @@ import {
   TextureLoader,
 } from 'three'
 import type { InfraStatusNode, PlatformActivityEvent } from '../../api/hooks'
-import { INFRA_NODES } from '../../data/dashboard/infra-nodes'
+import { infrastructureNodes } from '../../data/dashboard/infra-nodes'
 import { activityRegionCoordinates, activityRegionLabel } from '../../data/dashboard/activity-regions'
-import { activityCategory, ACTIVITY_CATEGORIES, type ActivityCategory } from '../../data/dashboard/activity-categories'
+import { ACTIVITY_CATEGORIES, type ActivityCategory } from '../../data/dashboard/activity-categories'
+import { activityRoute } from '../../data/dashboard/activity-routes'
 import { activityMotion } from '../../data/dashboard/activity-motion'
 
 interface LiveGlobeProps {
@@ -24,9 +25,11 @@ interface GlobeLayout {
   height: number
   highResolution: boolean
   primary: string
+  muted: string
   success: string
   warning: string
   destructive: string
+  internal: string
   activityColors: Record<ActivityCategory, string>
 }
 
@@ -36,7 +39,7 @@ interface ActivityArc {
   startLng: number
   endLat: number
   endLng: number
-  color: string
+  color: string | string[]
   dashTime: number
   dashLength: number
   dashGap: number
@@ -60,13 +63,6 @@ function threeColor(token: string): string {
   return channels
     ? `rgb(${channels[1]}, ${channels[2]}, ${channels[3]})`
     : token
-}
-
-function responseColor(color: string): string {
-  const channels = color.match(/^rgb\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)\s*\)$/)
-  if (!channels) return color
-  const tint = (channel: string) => Math.round(Number(channel) * 0.68 + 255 * 0.32)
-  return `rgb(${tint(channels[1])}, ${tint(channels[2])}, ${tint(channels[3])})`
 }
 
 export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlobeProps) {
@@ -110,13 +106,15 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         width,
         height: Math.max(MIN_GLOBE_HEIGHT, node.clientHeight),
         highResolution,
+        muted: threeColor(style.getPropertyValue('--muted-foreground').trim()),
         primary: threeColor(style.getPropertyValue('--primary').trim()),
         success: threeColor(style.getPropertyValue('--success').trim()),
         warning: threeColor(style.getPropertyValue('--warning').trim()),
         destructive: threeColor(style.getPropertyValue('--destructive').trim()),
+        internal: threeColor(style.getPropertyValue('--tertiary').trim()),
         activityColors: Object.fromEntries(ACTIVITY_CATEGORIES.map(({ id }) => [
           id,
-          threeColor(style.getPropertyValue(`--chart-${id === 'identity' ? '5' : id === 'ai' ? '2' : id === 'communication' ? '4' : '1'}`).trim()),
+          threeColor(style.getPropertyValue(`--chart-${id === 'identity' ? '5' : id === 'ai' ? '2' : id === 'communication' ? '4' : id === 'media' ? '3' : '1'}`).trim()),
         ])) as Record<ActivityCategory, string>,
       })
     }
@@ -227,16 +225,16 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   }, [infraStatus])
 
   const points = useMemo(() => {
-    const infrastructure = INFRA_NODES.map((node) => ({
+    const infrastructure = infrastructureNodes(infraStatus).map((node) => ({
       region: node.region,
       label: node.label,
       lat: node.coordinates[1],
       lng: node.coordinates[0],
-      status: statusByRegion.get(node.region) ?? 'online',
+      status: statusByRegion.get(node.region) ?? 'unknown',
     }))
     const origins = new Map<string, (typeof infrastructure)[number]>()
     for (const event of activityEvents) {
-      if (!event.sourceRegion || origins.has(event.sourceRegion)) continue
+      if (!event.sourceRegion?.startsWith('edge-') || origins.has(event.sourceRegion)) continue
       const coordinates = event.sourceCoordinates ?? activityRegionCoordinates(event.sourceRegion)
       if (!coordinates) continue
       origins.set(event.sourceRegion, {
@@ -248,45 +246,32 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       })
     }
     return [...infrastructure, ...origins.values()]
-  }, [activityEvents, statusByRegion])
+  }, [activityEvents, statusByRegion, infraStatus])
 
   const arcs = useMemo<ActivityArc[]>(() => {
     if (!layout) return []
     return activityEvents.flatMap((event) => {
-      if (!event.sourceRegion || !event.targetRegion || event.sourceRegion === event.targetRegion) return []
-      const source = event.sourceCoordinates ?? activityRegionCoordinates(event.sourceRegion)
-      const target = activityRegionCoordinates(event.targetRegion)
-      if (!source || !target) return []
+      const route = activityRoute(event, infrastructureNodes(infraStatus))
+      if (!route) return []
+      const { source, target } = route
       const { pulseCount, pulseDurationMs: dashTime, pulseLength: dashLength } = activityMotion(event)
-      const requestColor = layout.activityColors[activityCategory(event.service)]
-      return Array.from({ length: pulseCount }, (_, pulseIndex) => [
-        {
-          id: `${event.sourceRegion}-${event.targetRegion}-${event.emittedAt}-request-${pulseIndex}`,
-          startLat: source[1],
-          startLng: source[0],
-          endLat: target[1],
-          endLng: target[0],
-          color: requestColor,
-          dashTime,
-          dashLength,
-          dashGap: 1 - dashLength,
-          dashInitialGap: pulseIndex / pulseCount,
-        },
-        {
-          id: `${event.sourceRegion}-${event.targetRegion}-${event.emittedAt}-response-${pulseIndex}`,
-          startLat: target[1],
-          startLng: target[0],
-          endLat: source[1],
-          endLng: source[0],
-          color: responseColor(requestColor),
-          dashTime,
-          dashLength,
-          dashGap: 1 - dashLength,
-          dashInitialGap: (pulseIndex + 0.5) / pulseCount,
-        },
-      ]).flat()
+      // Co-located services get a short schematic arc around their shared
+      // infrastructure marker; it does not claim a second geographic location.
+      const localOffset = route.local ? (route.outbound ? 0.7 : -0.7) : 0
+      return Array.from({ length: pulseCount }, (_, pulseIndex) => ({
+        id: `${route.key}-${pulseIndex}`,
+        startLat: source[1],
+        startLng: source[0] - localOffset,
+        endLat: target[1],
+        endLng: target[0] + localOffset,
+        color: route.internal ? [layout.internal, layout.activityColors[route.category], layout.internal] : layout.activityColors[route.category],
+        dashTime,
+        dashLength: route.internal ? dashLength / 2 : dashLength,
+        dashGap: 1 - dashLength,
+        dashInitialGap: pulseIndex / pulseCount,
+      }))
     })
-  }, [activityEvents, layout])
+  }, [activityEvents, layout, infraStatus])
 
   const rings = useMemo<ActivityRing[]>(() => {
     if (!layout) return []
@@ -294,7 +279,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       const region = event.sourceRegion ?? event.region
       const coordinates = event.sourceRegion === region && event.sourceCoordinates
         ? event.sourceCoordinates
-        : activityRegionCoordinates(region)
+        : region.startsWith('edge-') ? activityRegionCoordinates(region) : infrastructureNodes(infraStatus).find(node => node.region === region)?.coordinates
       return coordinates ? [{
         id: `${region}-${event.emittedAt}`,
         lat: coordinates[1],
@@ -303,7 +288,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         maxRadius: Math.min(10, 3 + Math.log2(event.requests)),
       }] : []
     })
-  }, [activityEvents, layout])
+  }, [activityEvents, layout, infraStatus])
 
   return (
     <div ref={containerRef} className="relative h-full min-h-[420px] w-full overflow-hidden">
@@ -329,6 +314,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           pointRadius={0.34}
           pointColor={(point) => {
             const status = (point as { status: InfraStatusNode['status'] }).status
+            if (status === 'unknown') return layout.muted
             if (status === 'offline') return layout.destructive
             if (status === 'degraded') return layout.warning
             return layout.success

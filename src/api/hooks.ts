@@ -946,10 +946,11 @@ export function usePlatformActivity() {
 // ── Infrastructure Status ──
 export interface InfraStatusNode {
   region: string
-  status: 'online' | 'degraded' | 'offline'
-  droplets: number
-  apps: number
-  dbs: number
+  label?: string
+  coordinates?: [number, number]
+  services?: string[]
+  status: 'online' | 'degraded' | 'offline' | 'unknown'
+  instances?: number
 }
 
 export function useInfraStatus() {

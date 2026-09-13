@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useMemo, memo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { geoEquirectangular } from "d3-geo";
-import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
+import { infrastructureNodes } from "../../data/dashboard/infra-nodes";
 import { activityRegionCoordinates, activityRegionLabel } from "../../data/dashboard/activity-regions";
-import { activityCategoryColor } from "../../data/dashboard/activity-categories";
+import { ACTIVITY_CATEGORIES } from "../../data/dashboard/activity-categories";
+import { activityRoute } from "../../data/dashboard/activity-routes";
 import { activityMotion } from "../../data/dashboard/activity-motion";
 import type { InfraStatusNode, PlatformActivityEvent } from "../../api/hooks";
 
 const STATUS_COLORS = {
+  unknown: 'var(--muted-foreground)',
   online: 'var(--color-success)',
   degraded: 'var(--color-warning)',
   offline: 'var(--color-destructive)',
@@ -18,7 +20,7 @@ const InfraNodeMarker = memo(
     x: number;
     y: number;
     label: string;
-    status: 'online' | 'degraded' | 'offline';
+    status: 'online' | 'degraded' | 'offline' | 'unknown';
     services: number;
   }) => {
     const color = STATUS_COLORS[status];
@@ -113,7 +115,7 @@ export default function DottedMap({
       for (const node of infraStatus) statusMap.set(node.region, node);
     }
 
-    return INFRA_NODES.map(node => {
+    return infrastructureNodes(infraStatus).map(node => {
       const coords = projection(node.coordinates);
       if (!coords) return null;
       const status = statusMap.get(node.region);
@@ -122,7 +124,7 @@ export default function DottedMap({
         x: coords[0],
         y: coords[1],
         label: node.label,
-        status: status?.status ?? 'online' as const,
+        status: status?.status ?? 'unknown' as const,
         services: node.services.length,
       };
     }).filter((n): n is NonNullable<typeof n> => n !== null);
@@ -133,11 +135,14 @@ export default function DottedMap({
   const projectedFlashes = useMemo(() => {
     if (!activityEvents || activityEvents.length === 0) return [];
 
+    const seenRegions = new Set<string>();
     return activityEvents.map(event => {
       const region = event.sourceRegion ?? event.region;
+      if (seenRegions.has(region)) return null;
+      seenRegions.add(region);
       const coordinates = event.sourceRegion === region && event.sourceCoordinates
         ? event.sourceCoordinates
-        : activityRegionCoordinates(region);
+        : region.startsWith('edge-') ? activityRegionCoordinates(region) : infrastructureNodes(infraStatus).find(node => node.region === region)?.coordinates;
       if (!coordinates) return null;
       const coords = projection(coordinates);
       if (!coords) return null;
@@ -149,31 +154,35 @@ export default function DottedMap({
         label: event.sourceLabel ?? activityRegionLabel(region),
       };
     }).filter((f): f is NonNullable<typeof f> => f !== null);
-  }, [activityEvents, projection]);
+  }, [activityEvents, projection, infraStatus]);
 
   const projectedRoutes = useMemo(() => {
     if (!activityEvents || activityEvents.length === 0) return [];
 
     return activityEvents.flatMap(event => {
-      if (!event.sourceRegion || !event.targetRegion || event.sourceRegion === event.targetRegion) return [];
-      const source = event.sourceCoordinates ?? activityRegionCoordinates(event.sourceRegion);
-      const start = source ? projection(source) : null;
-      if (!start) return [];
-      const target = activityRegionCoordinates(event.targetRegion);
-      const end = target ? projection(target) : null;
-      if (!end) return [];
+      const route = activityRoute(event, infrastructureNodes(infraStatus));
+      if (!route) return [];
+      const start = projection(route.source);
+      const end = projection(route.target);
+      if (!start || !end) return [];
       const curve = Math.min(80, Math.abs(end[0] - start[0]) * 0.18 + 24);
       const activity = activityMotion(event);
       return [{
-        key: `route-${event.sourceRegion}-${event.targetRegion}-${event.emittedAt}`,
-        path: `M ${start[0]} ${start[1]} Q ${(start[0] + end[0]) / 2} ${Math.min(start[1], end[1]) - curve} ${end[0]} ${end[1]}`,
-        color: activityCategoryColor(event.service),
+        key: route.key,
+        path: route.local
+          ? `M ${start[0]} ${start[1]} c ${route.outbound ? 32 : -32} -36 ${route.outbound ? -32 : 32} -36 0 0`
+          : `M ${start[0]} ${start[1]} Q ${(start[0] + end[0]) / 2} ${Math.min(start[1], end[1]) - curve} ${end[0]} ${end[1]}`,
+        color: ACTIVITY_CATEGORIES.find(item => item.id === route.category)!.color,
+        trackColor: route.internal ? 'var(--tertiary)' : ACTIVITY_CATEGORIES.find(item => item.id === route.category)!.color,
+        direction: route.outbound ? 'outbound' : 'inbound',
+        category: route.category,
+        internal: route.internal,
         pulseCount: activity.pulseCount,
         pulseDuration: activity.pulseDurationMs / 1_000,
         pulseLength: activity.pulseLength * 100,
       }];
     });
-  }, [activityEvents, projection]);
+  }, [activityEvents, projection, infraStatus]);
 
   const cancelAutomaticFocus = useCallback(() => {
     if (returnTimerRef.current !== null) window.clearTimeout(returnTimerRef.current);
@@ -293,36 +302,28 @@ export default function DottedMap({
 
         <g>
           {projectedRoutes.map(route => (
-            <g key={route.key}>
-              <path d={route.path} fill="none" stroke={route.color} strokeWidth={0.8} opacity={0.28} />
-              {Array.from({ length: route.pulseCount }, (_, pulseIndex) => ([
-                { direction: 1, phase: pulseIndex / route.pulseCount, color: route.color, opacity: 0.95, width: 2 },
-                {
-                  direction: -1,
-                  phase: (pulseIndex + 0.5) / route.pulseCount,
-                  color: `color-mix(in srgb, ${route.color} 68%, var(--foreground))`,
-                  opacity: 0.72,
-                  width: 1.7,
-                },
-              ]).map(pulse => (
-                  <motion.path
-                    key={`${route.key}-${pulseIndex}-${pulse.direction}`}
-                    d={route.path}
-                    pathLength={100}
-                    fill="none"
-                    stroke={pulse.color}
-                    strokeWidth={pulse.width}
-                    strokeLinecap="round"
-                    strokeDasharray={`${route.pulseLength} ${100 - route.pulseLength}`}
-                    initial={{ strokeDashoffset: pulse.direction * -100 * pulse.phase, opacity: 0 }}
-                    animate={{ strokeDashoffset: pulse.direction * -100 * (1 + pulse.phase), opacity: pulse.opacity }}
-                    exit={{ opacity: 0 }}
-                    transition={{
-                      strokeDashoffset: { duration: route.pulseDuration, repeat: Infinity, ease: "linear" },
-                      opacity: { duration: 0.2 },
-                    }}
-                  />
-                ))) }
+            <g key={route.key} data-traffic-direction={route.direction} data-traffic-scope={route.internal ? "internal" : "external"} data-traffic-type={route.category}>
+              <path d={route.path} fill="none" stroke={route.trackColor} strokeWidth={route.internal ? 1.4 : 0.8} strokeDasharray={route.internal ? "3 3" : undefined} opacity={route.internal ? 0.65 : 0.28} />
+              {Array.from({ length: route.pulseCount }, (_, pulseIndex) => (
+                <motion.path
+                  key={`${route.key}-${pulseIndex}`}
+                  d={route.path}
+                  pathLength={100}
+                  fill="none"
+                  stroke={route.color}
+                  strokeWidth={route.internal ? 1.5 : 2}
+                  strokeLinecap="round"
+                  strokeDasharray={`${route.internal ? route.pulseLength / 2 : route.pulseLength} ${100 - route.pulseLength}`}
+                  initial={{ strokeDashoffset: -100 * pulseIndex / route.pulseCount, opacity: 0 }}
+                  animate={{ strokeDashoffset: -100 * (1 + pulseIndex / route.pulseCount), opacity: 0.95 }}
+                  exit={{ opacity: 0 }}
+                  transition={{
+                    strokeDashoffset: { duration: route.pulseDuration, repeat: Infinity, ease: "linear" },
+                    opacity: { duration: 0.2 },
+                  }}
+                />
+              ))}
+
             </g>
           ))}
         </g>
