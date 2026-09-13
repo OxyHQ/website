@@ -779,3 +779,24 @@ body {
   right: auto;
   left: 0;
 }
+
+/* ──────────────────────────────────────────────
+ * Oxy AI routing diagram.
+ *
+ * The dashes travel along the request path on `/ai`. Declared here rather than
+ * in a component `<style>` block so the keyframes exist once for the document
+ * and the reduced-motion opt-out lives beside every other motion rule.
+ * ──────────────────────────────────────────── */
+@keyframes ai-routing-dash {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+.ai-routing-flow {
+  animation: ai-routing-dash 3s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-routing-flow {
+    animation: none;
+  }
+}
