@@ -44,6 +44,7 @@ interface ActivityArc {
   dashLength: number
   dashGap: number
   dashInitialGap: number
+  stroke: number
 }
 
 interface ActivityRing {
@@ -111,7 +112,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         success: threeColor(style.getPropertyValue('--success').trim()),
         warning: threeColor(style.getPropertyValue('--warning').trim()),
         destructive: threeColor(style.getPropertyValue('--destructive').trim()),
-        internal: threeColor(style.getPropertyValue('--tertiary').trim()),
+        internal: threeColor(style.getPropertyValue('--foreground').trim()),
         activityColors: Object.fromEntries(ACTIVITY_CATEGORIES.map(({ id }) => [
           id,
           threeColor(style.getPropertyValue(`--chart-${id === 'identity' ? '5' : id === 'ai' ? '2' : id === 'communication' ? '4' : id === 'media' ? '3' : '1'}`).trim()),
@@ -258,18 +259,26 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       // Co-located services get a short schematic arc around their shared
       // infrastructure marker; it does not claim a second geographic location.
       const localOffset = route.local ? (route.outbound ? 0.7 : -0.7) : 0
-      return Array.from({ length: pulseCount }, (_, pulseIndex) => ({
+      const pulses: ActivityArc[] = Array.from({ length: pulseCount }, (_, pulseIndex) => ({
         id: `${route.key}-${pulseIndex}`,
         startLat: source[1],
         startLng: source[0] - localOffset,
         endLat: target[1],
         endLng: target[0] + localOffset,
-        color: route.internal ? [layout.internal, layout.activityColors[route.category], layout.internal] : layout.activityColors[route.category],
+        color: layout.activityColors[route.category],
+        stroke: route.internal ? 0.6 : 0.35,
         dashTime,
         dashLength: route.internal ? dashLength / 2 : dashLength,
         dashGap: 1 - dashLength,
         dashInitialGap: pulseIndex / pulseCount,
       }))
+      if (!route.internal) return pulses
+      // A persistent high-contrast dashed backbone distinguishes internal hops.
+      // The moving category-coloured pulses still identify operation type/direction.
+      return [{
+        ...pulses[0], id: `${route.key}-internal-track`, color: layout.internal,
+        stroke: 0.45, dashTime: 0, dashLength: 0.035, dashGap: 0.035, dashInitialGap: 0,
+      }, ...pulses]
     })
   }, [activityEvents, layout, infraStatus])
 
@@ -327,7 +336,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           arcEndLat="endLat"
           arcEndLng="endLng"
           arcColor="color"
-          arcStroke={0.35}
+          arcStroke="stroke"
           arcDashLength="dashLength"
           arcDashGap="dashGap"
           arcDashInitialGap="dashInitialGap"

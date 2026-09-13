@@ -11,7 +11,8 @@ export default function TrafficLegend() {
           {t(`dashboard.traffic.${category.id}`)}
         </span>
       ))}
-      <span className="inline-flex items-center gap-1.5"><span className="w-4 border-t-2 border-dashed border-tertiary" />{t('dashboard.traffic.internal')}</span>
+      <span className="inline-flex items-center gap-1.5"><span className="w-4 border-t-2 border-primary" />{t('dashboard.traffic.external')}</span>
+      <span className="inline-flex items-center gap-1.5"><span className="w-4 border-t-2 border-dashed border-foreground" />{t('dashboard.traffic.internal')}</span>
       <span>{t('dashboard.traffic.inbound')} → ◇ · ◇ → {t('dashboard.traffic.outbound')}</span>
     </div>
   )

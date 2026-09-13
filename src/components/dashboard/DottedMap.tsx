@@ -173,7 +173,7 @@ export default function DottedMap({
           ? `M ${start[0]} ${start[1]} c ${route.outbound ? 32 : -32} -36 ${route.outbound ? -32 : 32} -36 0 0`
           : `M ${start[0]} ${start[1]} Q ${(start[0] + end[0]) / 2} ${Math.min(start[1], end[1]) - curve} ${end[0]} ${end[1]}`,
         color: ACTIVITY_CATEGORIES.find(item => item.id === route.category)!.color,
-        trackColor: route.internal ? 'var(--tertiary)' : ACTIVITY_CATEGORIES.find(item => item.id === route.category)!.color,
+        trackColor: route.internal ? 'var(--foreground)' : ACTIVITY_CATEGORIES.find(item => item.id === route.category)!.color,
         direction: route.outbound ? 'outbound' : 'inbound',
         category: route.category,
         internal: route.internal,
@@ -303,7 +303,7 @@ export default function DottedMap({
         <g>
           {projectedRoutes.map(route => (
             <g key={route.key} data-traffic-direction={route.direction} data-traffic-scope={route.internal ? "internal" : "external"} data-traffic-type={route.category}>
-              <path d={route.path} fill="none" stroke={route.trackColor} strokeWidth={route.internal ? 1.4 : 0.8} strokeDasharray={route.internal ? "3 3" : undefined} opacity={route.internal ? 0.65 : 0.28} />
+              <path d={route.path} fill="none" stroke={route.trackColor} strokeWidth={route.internal ? 2 : 0.8} strokeDasharray={route.internal ? "3 3" : undefined} opacity={route.internal ? 0.9 : 0.28} />
               {Array.from({ length: route.pulseCount }, (_, pulseIndex) => (
                 <motion.path
                   key={`${route.key}-${pulseIndex}`}
