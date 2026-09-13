@@ -67,3 +67,22 @@ The browser fixture checks actual 2D flow groups, movement directions, media
 classification, internal loops, React console errors and 3D rendering. It writes
 screenshots under `/tmp/oxy-activity-*.png`. SDK tests additionally cover changing
 PoPs, malformed aggregates, infrastructure expiry and real socket reconnects.
+
+### Solar illumination
+
+The 3D Earth blends a daytime NASA Blue Marble texture and the existing NASA
+night-lights texture using the actual UTC solar direction. The NOAA fractional-year,
+equation-of-time and declination equations match `SolarPosition.kt` in the Android
+wallpaper. Longitude is east-positive; the shader derives its surface normal from
+geographic UVs, so moving the camera cannot move the illuminated hemisphere.
+The solar uniform updates once per minute inside the existing render lifecycle;
+there is no location permission or additional network request for time/position.
+
+Day texture: NASA Earth Observatory, Blue Marble Next Generation, September 2004,
+2048 × 1024 derivative of
+https://assets.science.nasa.gov/dynamicimage/assets/science/esd/eo/images/bmng/bmng-base/september/world.200409.3x5400x2700.jpg?w=2048&h=1024&fit=clip
+Solar equations: https://gml.noaa.gov/grad/solcalc/solareqns.PDF
+The texture is a satellite composite, not live cloud/weather data.
+
+Validation: `bun test scripts/solar-position.test.ts` and
+`DASHBOARD_TEST_BASE_URL=http://127.0.0.1:5191 bun scripts/dashboard-solar.browser.test.ts`.
