@@ -1,6 +1,7 @@
-import { boolean, integer, jsonb, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
+import { boolean, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
 import { objectId, timestamps } from './columns.js'
-import { media } from './content.js'
+import { media, products } from './content.js'
 
 /* ──────────────────────────────────────────────
  * Site chrome, community records and operational tables.
@@ -174,6 +175,59 @@ export const mcpTokens = pgTable('mcp_tokens', {
   revoked: boolean().notNull().default(false),
   ...timestamps,
 })
+
+export const incidents = pgTable(
+  'incidents',
+  {
+    _id: objectId(),
+    title: text().notNull(),
+    /** 'minor' | 'major' | 'critical' */
+    severity: text().notNull().default('minor'),
+    // Denormalized copy of updates[updates.length - 1].status, so list/filter
+    // reads (including the public banner's open-incident check) never need to
+    // read jsonb just to know where an incident currently stands.
+    /** 'investigating' | 'identified' | 'monitoring' | 'resolved' */
+    status: text().notNull().default('investigating'),
+    /** Affected product `_id`s. A plain array: [] means site-wide, and the join
+     * table would only ever be read whole — same shape as newsroomPosts.products. */
+    products: text().array().notNull().default([]),
+    startedAt: timestamp({ withTimezone: true }).notNull().default(sql`now()`),
+    resolvedAt: timestamp({ withTimezone: true }),
+    /** Chronological (oldest-first) append log. Each element:
+     * `{ _id, status: 'investigating'|'identified'|'monitoring'|'resolved', body, createdAt }` */
+    updates: jsonb().$type<Record<string, unknown>[]>().notNull().default([]),
+    ...timestamps,
+  },
+  (table) => [
+    index('incidents_started_at_id_idx').on(table.startedAt.desc(), table._id.asc()),
+    index('incidents_status_idx').on(table.status),
+  ],
+)
+
+export const serviceUptimeDaily = pgTable(
+  'service_uptime_daily',
+  {
+    _id: objectId(),
+    product: text()
+      .notNull()
+      .references(() => products._id, { onDelete: 'cascade' }),
+    // 'YYYY-MM-DD', UTC day key. Plain text, not pg's `date` type: the key is
+    // always computed in JS (UTC) before writing, so there is no
+    // timezone-conversion benefit to a native date column here.
+    date: text().notNull(),
+    totalChecks: integer().notNull().default(0),
+    operationalChecks: integer().notNull().default(0),
+    degradedChecks: integer().notNull().default(0),
+    downChecks: integer().notNull().default(0),
+    unknownChecks: integer().notNull().default(0),
+    avgLatencyMs: integer(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex('service_uptime_daily_product_date_idx').on(table.product, table.date),
+    index('service_uptime_daily_date_idx').on(table.date),
+  ],
+)
 
 /**
  * Sales and private-evaluation requests submitted from `/contact/sales`.

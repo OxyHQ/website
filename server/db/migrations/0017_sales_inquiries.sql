@@ -4,6 +4,9 @@
 -- generator needs a live database to diff against, and this table is a plain
 -- addition with no dependency on existing rows.
 --
+-- Numbered 0017 rather than 0016: main took that index first, and a migration
+-- that has already been applied keeps its number.
+--
 -- `delete_after` is NOT NULL: the retention rule is a property of the row, so a
 -- record cannot be written without one and a later cleanup job never has to
 -- guess what an old row's policy was.

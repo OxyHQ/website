@@ -44,6 +44,7 @@ import {
   LifeBuoy,
   Search,
   GitBranch,
+  AlertTriangle,
 } from 'lucide-react'
 
 interface AdminSection {
@@ -59,6 +60,7 @@ const sections: AdminSection[] = [
   { id: 'hero', label: 'Hero', icon: <Sparkles className="size-4" />, group: 'Content' },
   { id: 'pages', label: 'Pages', icon: <FileText className="size-4" />, group: 'Content' },
   { id: 'products', label: 'Products', icon: <Package className="size-4" />, group: 'Content' },
+  { id: 'incidents', label: 'Incidents', icon: <AlertTriangle className="size-4" />, group: 'Content' },
   { id: 'categories', label: 'Categories', icon: <FolderTree className="size-4" />, group: 'Content' },
   { id: 'newsroom', label: 'Newsroom', icon: <PenSquare className="size-4" />, group: 'Content' },
   { id: 'courses', label: 'Courses', icon: <GraduationCap className="size-4" />, group: 'Content' },

@@ -27,6 +27,9 @@ const SPA_FALLBACK_PATTERNS: readonly RegExp[] = [
   /^\/company\/careers\/[^/]+$/,
   /^\/apps\/[^/]+$/,
   /^\/features\/[^/]+\/[^/]+\/[^/]+$/,
+  // Status incident history, paginated by month — new pages exist between
+  // deploys, so it can't be prerendered like /status itself.
+  /^\/status\/history\/[^/]+$/,
   // Public model pages. The build writes a document for every entry in the
   // catalogue snapshot, but the catalogue is published by the Oxy control plane
   // and can gain a model between deploys — the same shape as a newsroom post.

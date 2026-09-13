@@ -104,6 +104,7 @@ const CompanyPage = lazy(() => import('./pages/CompanyPage'))
 const TeamPage = lazy(() => import('./pages/TeamPage'))
 const CompanyArticlePage = lazy(() => import('./pages/CompanyArticlePage'))
 const StatusPage = lazy(() => import('./pages/StatusPage'))
+const StatusHistoryPage = lazy(() => import('./pages/StatusHistoryPage'))
 const ReferralsPage = lazy(() => import('./pages/ReferralsPage'))
 const ReferralsDashboardPage = lazy(() => import('./pages/ReferralsDashboardPage'))
 const SustainPage = lazy(() => import('./pages/SustainPage'))
@@ -251,6 +252,7 @@ function PublicRoutes() {
       <Route path="technologies" element={<Navigate to="/apps" replace />} />
       <Route path="products" element={<Navigate to="/apps" replace />} />
       <Route path="status" element={<StatusPage />} />
+      <Route path="status/history/:page" element={<StatusHistoryPage />} />
       <Route path="company" element={<CompanyPage />} />
       <Route path="company/team" element={<TeamPage />} />
       <Route
