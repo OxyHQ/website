@@ -5,7 +5,6 @@ import { Maximize2, Minimize2 } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import SEO from "../components/SEO";
-import TrafficLegend from "../components/dashboard/TrafficLegend";
 import MapContainer from "../components/dashboard/MapContainer";
 import {
   TotalRequests,
@@ -114,7 +113,6 @@ export default function DashboardPage() {
             />
           </div>
 
-          <TrafficLegend />
 
           <header className="relative z-10 flex items-center justify-between font-mono text-sm uppercase gap-2 pt-6 mb-4 shrink-0">
             <span className="inline-flex items-center gap-2 rounded-full bg-error px-3 py-1.5 font-sans text-xs font-bold tracking-wide text-error-foreground">

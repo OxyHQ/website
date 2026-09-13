@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { observeMapContrast } from './map-contrast'
 import Globe, { type GlobeMethods } from 'react-globe.gl'
 import {
   BackSide,
@@ -13,7 +14,8 @@ import { infrastructureNodes } from '../../data/dashboard/infra-nodes'
 import { activityRegionCoordinates, activityRegionLabel } from '../../data/dashboard/activity-regions'
 import { ACTIVITY_CATEGORIES, type ActivityCategory } from '../../data/dashboard/activity-categories'
 import { activityRoute } from '../../data/dashboard/activity-routes'
-import { activityMotion } from '../../data/dashboard/activity-motion'
+import { activityMotion, activityFlows, retainFlowObjects } from '../../data/dashboard/activity-motion'
+import { cameraMotion, stepCameraMotion, selectCameraFocus, CAMERA_MANUAL_PAUSE_MS, type CameraFocus, type CameraTarget } from '../../data/dashboard/camera-motion'
 
 interface LiveGlobeProps {
   infraStatus?: InfraStatusNode[]
@@ -44,6 +46,7 @@ interface ActivityArc {
   dashLength: number
   dashGap: number
   dashInitialGap: number
+  stroke: number
 }
 
 interface ActivityRing {
@@ -55,8 +58,6 @@ interface ActivityRing {
 }
 
 const MIN_GLOBE_HEIGHT = 420
-const RETURN_TO_ACTIVITY_DELAY = 600
-const FOCUS_TRANSITION_DURATION = 1_200
 
 function threeColor(token: string): string {
   const channels = token.match(/^rgb\(\s*(\d+)\s+(\d+)\s+(\d+)\s*\)$/)
@@ -69,30 +70,12 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   const [layout, setLayout] = useState<GlobeLayout | null>(null)
   const globeRef = useRef<GlobeMethods>(undefined)
   const activityEventsRef = useRef(activityEvents)
+  const arcCacheRef = useRef(new Map<string, ActivityArc>())
   const highResolutionRef = useRef(false)
-  const returnTimerRef = useRef<number | null>(null)
-  const resumeTimerRef = useRef<number | null>(null)
   const controlsCleanupRef = useRef<(() => void) | null>(null)
   const sceneCleanupRef = useRef<(() => void) | null>(null)
   const isInteractingRef = useRef(false)
   activityEventsRef.current = activityEvents
-
-  useEffect(() => {
-    if (isInteractingRef.current) return
-    const requestsByOrigin = new Map<string, number>()
-    for (const event of activityEvents) {
-      if (event.sourceRegion) {
-        requestsByOrigin.set(event.sourceRegion, (requestsByOrigin.get(event.sourceRegion) ?? 0) + event.requests)
-      }
-    }
-    const busiestOrigin = [...requestsByOrigin.entries()].sort((left, right) => right[1] - left[1])[0]?.[0]
-    const busiestEvent = activityEvents.find((event) => event.sourceRegion === busiestOrigin)
-    const coordinates = busiestEvent?.sourceCoordinates
-      ?? (busiestOrigin ? activityRegionCoordinates(busiestOrigin) : undefined)
-    if (coordinates && globeRef.current) {
-      globeRef.current.pointOfView({ lat: coordinates[1], lng: coordinates[0], altitude: 1.65 }, 1_200)
-    }
-  }, [activityEvents])
 
   const containerRef = useCallback((node: HTMLDivElement | null) => {
     if (!node) return
@@ -111,7 +94,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         success: threeColor(style.getPropertyValue('--success').trim()),
         warning: threeColor(style.getPropertyValue('--warning').trim()),
         destructive: threeColor(style.getPropertyValue('--destructive').trim()),
-        internal: threeColor(style.getPropertyValue('--tertiary').trim()),
+        internal: threeColor((style.getPropertyValue('--map-internal') || style.getPropertyValue('--foreground')).trim()),
         activityColors: Object.fromEntries(ACTIVITY_CATEGORIES.map(({ id }) => [
           id,
           threeColor(style.getPropertyValue(`--chart-${id === 'identity' ? '5' : id === 'ai' ? '2' : id === 'communication' ? '4' : id === 'media' ? '3' : '1'}`).trim()),
@@ -119,17 +102,17 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       })
     }
 
+    const stopContrast = observeMapContrast(node, measure)
     measure()
     const observer = new ResizeObserver(measure)
     observer.observe(node)
     return () => {
       observer.disconnect()
+      stopContrast()
       controlsCleanupRef.current?.()
       controlsCleanupRef.current = null
       sceneCleanupRef.current?.()
       sceneCleanupRef.current = null
-      if (returnTimerRef.current !== null) window.clearTimeout(returnTimerRef.current)
-      if (resumeTimerRef.current !== null) window.clearTimeout(resumeTimerRef.current)
     }
   }, [])
 
@@ -138,8 +121,8 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     if (!globe) return
     globe.pointOfView({ lat: 28, lng: -28, altitude: 1.7 }, 0)
     const controls = globe.controls()
-    controls.autoRotate = true
-    controls.autoRotateSpeed = 0.35
+    controls.autoRotate = false
+    controls.enableDamping = false
     controls.enableRotate = true
     controls.enableZoom = false
     controls.enablePan = false
@@ -171,50 +154,53 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       skyMaterial.dispose()
     }
 
+    controlsCleanupRef.current?.()
+    let motion = cameraMotion(globe.pointOfView())
+    let focus: CameraFocus = { selectedAt: 0, challengerSince: 0 }
+    let resumeAt = 0
+    let previousFrame = performance.now()
+    let frame = 0
+    let previousEvents: PlatformActivityEvent[] | undefined
+    let candidates: CameraTarget[] = []
     const pauseAutomaticView = () => {
       isInteractingRef.current = true
-      controls.autoRotate = false
-      if (returnTimerRef.current !== null) window.clearTimeout(returnTimerRef.current)
-      if (resumeTimerRef.current !== null) window.clearTimeout(resumeTimerRef.current)
     }
-
-    const returnToBusiestRegion = () => {
+    const releaseAutomaticView = () => {
       isInteractingRef.current = false
-      returnTimerRef.current = window.setTimeout(() => {
-        const requestsByOrigin = new Map<string, number>()
-        for (const event of activityEventsRef.current) {
-          if (!event.sourceRegion) continue
-          requestsByOrigin.set(
-            event.sourceRegion,
-            (requestsByOrigin.get(event.sourceRegion) ?? 0) + event.requests,
-          )
-        }
-        const busiestOrigin = [...requestsByOrigin.entries()]
-          .sort((left, right) => right[1] - left[1])[0]?.[0]
-        const busiestEvent = activityEventsRef.current.find(
-          (event) => event.sourceRegion === busiestOrigin,
-        )
-        const coordinates = busiestEvent?.sourceCoordinates
-          ?? (busiestOrigin ? activityRegionCoordinates(busiestOrigin) : undefined)
-        if (coordinates) {
-          globe.pointOfView({
-            lat: coordinates[1],
-            lng: coordinates[0],
-            altitude: 1.55,
-          }, FOCUS_TRANSITION_DURATION)
-        }
-        resumeTimerRef.current = window.setTimeout(() => {
-          controls.autoRotate = true
-        }, coordinates ? FOCUS_TRANSITION_DURATION : 0)
-      }, RETURN_TO_ACTIVITY_DELAY)
+      resumeAt = performance.now() + CAMERA_MANUAL_PAUSE_MS
     }
-
+    const animateCamera = (now: number) => {
+      const elapsed = (now - previousFrame) / 1_000
+      previousFrame = now
+      if (previousEvents !== activityEventsRef.current) {
+        previousEvents = activityEventsRef.current
+        const origins = new Map<string, CameraTarget>()
+        for (const event of previousEvents) {
+          const region = event.sourceRegion ?? event.region
+          const coordinates = event.sourceRegion ? event.sourceCoordinates ?? activityRegionCoordinates(region) : activityRegionCoordinates(region)
+          if (!coordinates) continue
+          const origin = origins.get(region)
+          origins.set(region, { key: region, lng: coordinates[0], lat: coordinates[1], requests: (origin?.requests ?? 0) + event.requests })
+        }
+        candidates = [...origins.values()]
+      }
+      focus = selectCameraFocus(focus, candidates, now)
+      if (isInteractingRef.current || now < resumeAt) {
+        motion = cameraMotion(globe.pointOfView())
+      } else {
+        motion = stepCameraMotion(motion, focus.target, elapsed)
+        const next = { lat: motion.lat, lng: motion.lng, altitude: motion.altitude }
+        globe.pointOfView(next, 0)
+      }
+      frame = requestAnimationFrame(animateCamera)
+    }
     controls.addEventListener('start', pauseAutomaticView)
-    controls.addEventListener('end', returnToBusiestRegion)
-    controlsCleanupRef.current?.()
+    controls.addEventListener('end', releaseAutomaticView)
+    frame = requestAnimationFrame(animateCamera)
     controlsCleanupRef.current = () => {
+      cancelAnimationFrame(frame)
       controls.removeEventListener('start', pauseAutomaticView)
-      controls.removeEventListener('end', returnToBusiestRegion)
+      controls.removeEventListener('end', releaseAutomaticView)
     }
   }, [])
 
@@ -231,6 +217,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       lat: node.coordinates[1],
       lng: node.coordinates[0],
       status: statusByRegion.get(node.region) ?? 'unknown',
+      infrastructure: true,
     }))
     const origins = new Map<string, (typeof infrastructure)[number]>()
     for (const event of activityEvents) {
@@ -243,34 +230,63 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         lat: coordinates[1],
         lng: coordinates[0],
         status: 'online',
+        infrastructure: false,
       })
     }
     return [...infrastructure, ...origins.values()]
   }, [activityEvents, statusByRegion, infraStatus])
 
+  const infrastructureLogos = useMemo(() => points.filter(point => point.infrastructure), [points])
+  const infrastructureLogoElement = useCallback((value: object) => {
+    const point = value as (typeof points)[number]
+    const marker = document.createElement('span')
+    marker.dataset.oxyInfrastructureLogo = point.region
+    marker.title = `Oxy · ${point.label}`
+    marker.style.pointerEvents = 'none'
+    const logo = document.createElement('img')
+    logo.src = '/favicon.svg'
+    logo.alt = `Oxy · ${point.label}`
+    logo.width = 24
+    logo.height = 13
+    logo.style.transform = 'translateY(-12px)'
+    logo.style.opacity = point.status === 'offline' ? '0.5' : '0.95'
+    marker.appendChild(logo)
+    return marker
+  }, [])
+
   const arcs = useMemo<ActivityArc[]>(() => {
     if (!layout) return []
-    return activityEvents.flatMap((event) => {
+    const now = Date.now()
+    const nextArcs = activityFlows(activityEvents).flatMap((event) => {
       const route = activityRoute(event, infrastructureNodes(infraStatus))
       if (!route) return []
       const { source, target } = route
-      const { pulseCount, pulseDurationMs: dashTime, pulseLength: dashLength } = activityMotion(event)
+      const { pulseDurationMs: dashTime, pulseLength: dashLength, pulseGap, initialPhase } = activityMotion(event, route.key, now)
       // Co-located services get a short schematic arc around their shared
       // infrastructure marker; it does not claim a second geographic location.
       const localOffset = route.local ? (route.outbound ? 0.7 : -0.7) : 0
-      return Array.from({ length: pulseCount }, (_, pulseIndex) => ({
-        id: `${route.key}-${pulseIndex}`,
+      const pulses: ActivityArc[] = [{
+        id: route.key,
         startLat: source[1],
         startLng: source[0] - localOffset,
         endLat: target[1],
         endLng: target[0] + localOffset,
-        color: route.internal ? [layout.internal, layout.activityColors[route.category], layout.internal] : layout.activityColors[route.category],
+        color: layout.activityColors[route.category],
+        stroke: route.internal ? 0.6 : 0.35,
         dashTime,
         dashLength: route.internal ? dashLength / 2 : dashLength,
-        dashGap: 1 - dashLength,
-        dashInitialGap: pulseIndex / pulseCount,
-      }))
+        dashGap: pulseGap + (route.internal ? dashLength / 2 : 0),
+        dashInitialGap: arcCacheRef.current.get(route.key)?.dashInitialGap ?? -initialPhase,
+      }]
+      if (!route.internal) return pulses
+      // A persistent high-contrast dashed backbone distinguishes internal hops.
+      // The moving category-coloured pulses still identify operation type/direction.
+      return [{
+        ...pulses[0], id: `${route.key}-internal-track`, color: layout.internal,
+        stroke: 0.45, dashTime: 0, dashLength: 0.035, dashGap: 0.035, dashInitialGap: 0,
+      }, ...pulses]
     })
+    return retainFlowObjects(arcCacheRef.current, nextArcs)
   }, [activityEvents, layout, infraStatus])
 
   const rings = useMemo<ActivityRing[]>(() => {
@@ -307,6 +323,12 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           atmosphereColor={layout.primary}
           atmosphereAltitude={0.12}
           showGraticules
+          htmlElementsData={infrastructureLogos}
+          htmlLat="lat"
+          htmlLng="lng"
+          htmlAltitude={0.04}
+          htmlElement={infrastructureLogoElement}
+          htmlTransitionDuration={0}
           pointsData={points}
           pointLat="lat"
           pointLng="lng"
@@ -327,7 +349,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           arcEndLat="endLat"
           arcEndLng="endLng"
           arcColor="color"
-          arcStroke={0.35}
+          arcStroke="stroke"
           arcDashLength="dashLength"
           arcDashGap="dashGap"
           arcDashInitialGap="dashInitialGap"

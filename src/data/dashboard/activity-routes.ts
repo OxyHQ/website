@@ -1,5 +1,6 @@
 import type { PlatformActivityEvent } from '../../api/platformActivityStore'
 import type { InfraNode } from './infra-nodes'
+import { activityFlowKey } from './activity-motion'
 import { activityRegionCoordinates } from './activity-regions'
 import { ACTIVITY_CATEGORIES, activityCategory } from './activity-categories'
 
@@ -21,6 +22,6 @@ export function activityRoute(event: PlatformActivityEvent, infrastructure?: Inf
     internal: event.scope === 'internal' || event.direction === 'internal',
     outbound: event.direction === 'outbound',
     category: ACTIVITY_CATEGORIES.find(category => category.id === event.activityType)?.id ?? activityCategory(event.service),
-    key: JSON.stringify([event.sourceRegion, event.targetRegion, event.sourceService, event.targetService, event.service, event.scope, event.direction, event.activityType, event.emittedAt]),
+    key: activityFlowKey(event),
   }
 }
