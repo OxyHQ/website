@@ -17,4 +17,6 @@ function Fixture() {
   const [isGlobe, setGlobe] = useState(false)
   return <><button onClick={() => setGlobe(!isGlobe)}>Toggle map</button><div style={{ width: 1200, height: 760 }}><MapContainer isGlobe={isGlobe} activityEvents={events} /></div></>
 }
-createRoot(document.getElementById('root')!).render(<BloomThemeProvider mode="dark"><Fixture /></BloomThemeProvider>)
+const root = import.meta.hot?.data.root ?? createRoot(document.getElementById('root')!)
+if (import.meta.hot) import.meta.hot.data.root = root
+root.render(<BloomThemeProvider mode="dark"><Fixture /></BloomThemeProvider>)
