@@ -217,6 +217,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       lat: node.coordinates[1],
       lng: node.coordinates[0],
       status: statusByRegion.get(node.region) ?? 'unknown',
+      infrastructure: true,
     }))
     const origins = new Map<string, (typeof infrastructure)[number]>()
     for (const event of activityEvents) {
@@ -229,10 +230,29 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         lat: coordinates[1],
         lng: coordinates[0],
         status: 'online',
+        infrastructure: false,
       })
     }
     return [...infrastructure, ...origins.values()]
   }, [activityEvents, statusByRegion, infraStatus])
+
+  const infrastructureLogos = useMemo(() => points.filter(point => point.infrastructure), [points])
+  const infrastructureLogoElement = useCallback((value: object) => {
+    const point = value as (typeof points)[number]
+    const marker = document.createElement('span')
+    marker.dataset.oxyInfrastructureLogo = point.region
+    marker.title = `Oxy · ${point.label}`
+    marker.style.pointerEvents = 'none'
+    const logo = document.createElement('img')
+    logo.src = '/favicon.svg'
+    logo.alt = `Oxy · ${point.label}`
+    logo.width = 24
+    logo.height = 13
+    logo.style.transform = 'translateY(-12px)'
+    logo.style.opacity = point.status === 'offline' ? '0.5' : '0.95'
+    marker.appendChild(logo)
+    return marker
+  }, [])
 
   const arcs = useMemo<ActivityArc[]>(() => {
     if (!layout) return []
@@ -303,6 +323,12 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           atmosphereColor={layout.primary}
           atmosphereAltitude={0.12}
           showGraticules
+          htmlElementsData={infrastructureLogos}
+          htmlLat="lat"
+          htmlLng="lng"
+          htmlAltitude={0.04}
+          htmlElement={infrastructureLogoElement}
+          htmlTransitionDuration={0}
           pointsData={points}
           pointLat="lat"
           pointLng="lng"

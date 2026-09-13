@@ -20,6 +20,7 @@ try {
   assert.equal(await page.locator('[data-traffic-direction="inbound"]').count(), 2)
   assert.equal(await page.locator('[data-traffic-direction="outbound"]').count(), 2)
   assert.equal(await page.locator('[data-traffic-type="media"]').count(), 2)
+  assert.equal(await page.locator('[data-oxy-infrastructure-logo]').count(), 1, 'only the infrastructure centre gets an Oxy logo')
   const internal = page.locator('[data-traffic-scope="internal"]')
   assert.equal(await internal.count(), 2)
   for (const group of await internal.all()) {
@@ -77,6 +78,9 @@ try {
     }), true, `${theme} keeps 3D internal backbones bright`)
   }
   await page.screenshot({ path: '/tmp/oxy-activity-globe.png' })
+  assert.equal(await page.locator('[data-oxy-infrastructure-logo]').count(), 1, 'globe shows the same infrastructure logo')
+  await page.getByRole('button', { name: 'Remove infrastructure' }).click()
+  await page.waitForFunction(() => document.querySelectorAll('[data-oxy-infrastructure-logo]').length === 0)
   assert.deepEqual(errors, [])
   console.log('PASS: 2D/3D directions, persistent phases across batches, bounded geometry, light/dark internal contrast')
 } finally {
