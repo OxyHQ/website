@@ -73,8 +73,12 @@ const MIN_GLOBE_HEIGHT = 420
  * atmosphere, not a brand color, so it stays fixed across themes. */
 const ATMOSPHERE_COLOR = 'rgb(80, 150, 230)'
 const SUN_DISTANCE = 850
-const MOON_RADIUS = 22
-const MOON_ORBIT_RADIUS = 260
+const MOON_RADIUS = 45
+// Clear of the camera's whole operating range (controls.minDistance/maxDistance
+// below, 150–420) — orbiting at 260 put it on almost the same shell as the
+// camera itself, so whenever their angles lined up the moon sat right on top
+// of the camera and filled the screen instead of being a distant object.
+const MOON_ORBIT_RADIUS = 550
 const MOON_ORBIT_TILT = 0.35
 const MOON_ORBIT_SPEED = 0.015
 
@@ -85,8 +89,13 @@ function threeColor(token: string): string {
     : token
 }
 
-/** A soft core glow plus faint alternating-length rays, additively blended so
- * they read as light spilling outward rather than a solid stamped shape. */
+/**
+ * A camera-style flare: thin, sharp diffraction spikes crossing straight
+ * through a pale white-hot core, the way a real lens renders a bright point
+ * of light — not a stamped photo of the sun's surface (which only shows
+ * granular texture at telescope range, never at this distance) and not a
+ * cartoon sunburst of stubby wedges.
+ */
 function createSunTexture(): CanvasTexture {
   const size = 256
   const canvas = document.createElement('canvas')
@@ -96,60 +105,32 @@ function createSunTexture(): CanvasTexture {
   const center = size / 2
 
   ctx.globalCompositeOperation = 'lighter'
-  const rayCount = 12
-  for (let i = 0; i < rayCount; i++) {
-    const angle = (i / rayCount) * Math.PI * 2
-    const length = center * (i % 2 === 0 ? 0.99 : 0.68)
-    const halfWidth = (i % 2 === 0 ? 0.05 : 0.028) * length
+  // Four lines through the center, each spanning both directions — an
+  // eight-point star, the classic diffraction-spike shape.
+  for (const degrees of [0, 45, 90, 135]) {
     ctx.save()
     ctx.translate(center, center)
-    ctx.rotate(angle)
-    const rayGradient = ctx.createLinearGradient(0, 0, length, 0)
-    rayGradient.addColorStop(0, 'rgba(255,250,225,0.4)')
-    rayGradient.addColorStop(1, 'rgba(255,250,225,0)')
-    ctx.fillStyle = rayGradient
-    ctx.beginPath()
-    ctx.moveTo(0, -halfWidth)
-    ctx.lineTo(length, 0)
-    ctx.lineTo(0, halfWidth)
-    ctx.closePath()
-    ctx.fill()
+    ctx.rotate((degrees * Math.PI) / 180)
+    const half = center * 0.97
+    const spike = ctx.createLinearGradient(-half, 0, half, 0)
+    spike.addColorStop(0, 'rgba(255,255,250,0)')
+    spike.addColorStop(0.46, 'rgba(255,255,250,0.45)')
+    spike.addColorStop(0.5, 'rgba(255,255,250,0.9)')
+    spike.addColorStop(0.54, 'rgba(255,255,250,0.45)')
+    spike.addColorStop(1, 'rgba(255,255,250,0)')
+    ctx.fillStyle = spike
+    ctx.fillRect(-half, -0.9, half * 2, 1.8)
     ctx.restore()
   }
 
-  const gradient = ctx.createRadialGradient(center, center, 0, center, center, center)
-  gradient.addColorStop(0, 'rgba(255,252,240,0.95)')
-  gradient.addColorStop(0.12, 'rgba(255,247,222,0.6)')
-  gradient.addColorStop(0.35, 'rgba(255,238,198,0.2)')
-  gradient.addColorStop(1, 'rgba(255,238,198,0)')
-  ctx.fillStyle = gradient
+  const glow = ctx.createRadialGradient(center, center, 0, center, center, center)
+  glow.addColorStop(0, 'rgba(255,255,250,0.95)')
+  glow.addColorStop(0.08, 'rgba(255,253,240,0.7)')
+  glow.addColorStop(0.25, 'rgba(255,248,225,0.28)')
+  glow.addColorStop(1, 'rgba(255,248,225,0)')
+  ctx.fillStyle = glow
   ctx.fillRect(0, 0, size, size)
 
-  const texture = new CanvasTexture(canvas)
-  texture.colorSpace = SRGBColorSpace
-  return texture
-}
-
-/** Center-crops the sun photo square and fades it to transparent at the edge,
- * so it reads as a disc sitting inside the glow rather than a hard square. */
-function createSunSurfaceTexture(image: HTMLImageElement | ImageBitmap): CanvasTexture {
-  const size = 256
-  const canvas = document.createElement('canvas')
-  canvas.width = size
-  canvas.height = size
-  const ctx = canvas.getContext('2d')!
-  const cropSize = Math.min(image.width, image.height)
-  const sx = (image.width - cropSize) / 2
-  const sy = (image.height - cropSize) / 2
-  ctx.drawImage(image, sx, sy, cropSize, cropSize, 0, 0, size, size)
-  ctx.globalCompositeOperation = 'destination-in'
-  const center = size / 2
-  const mask = ctx.createRadialGradient(center, center, size * 0.25, center, center, size * 0.5)
-  mask.addColorStop(0, 'rgba(255,255,255,1)')
-  mask.addColorStop(0.7, 'rgba(255,255,255,1)')
-  mask.addColorStop(1, 'rgba(255,255,255,0)')
-  ctx.fillStyle = mask
-  ctx.fillRect(0, 0, size, size)
   const texture = new CanvasTexture(canvas)
   texture.colorSpace = SRGBColorSpace
   return texture
@@ -238,8 +219,6 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     const solar = createSolarMaterial()
     setSolarMaterial(solar.material)
 
-    // Soft warm glow, always visible, plus the real sun photo faded in once it
-    // loads — layered so the photo reads as sitting inside the glow's core.
     const sunTexture = createSunTexture()
     const sunMaterial = new SpriteMaterial({
       map: sunTexture,
@@ -250,26 +229,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     })
     const sunSprite = new Sprite(sunMaterial)
     sunSprite.scale.set(260, 260, 1)
-    sunSprite.renderOrder = 0
     globe.scene().add(sunSprite)
-
-    const sunSurfaceMaterial = new SpriteMaterial({
-      transparent: true,
-      depthWrite: false,
-      toneMapped: false,
-    })
-    const sunSurfaceSprite = new Sprite(sunSurfaceMaterial)
-    sunSurfaceSprite.scale.set(150, 150, 1)
-    sunSurfaceSprite.renderOrder = 1
-    globe.scene().add(sunSurfaceSprite)
-    let sunSurfaceTexture: CanvasTexture | null = null
-    const sunPhotoLoader = new TextureLoader()
-    sunPhotoLoader.load('/images/dashboard/sun.jpg', (loaded) => {
-      sunSurfaceTexture = createSunSurfaceTexture(loaded.image as HTMLImageElement)
-      sunSurfaceMaterial.map = sunSurfaceTexture
-      sunSurfaceMaterial.needsUpdate = true
-      loaded.dispose()
-    })
 
     const moon = createMoonMaterial()
     const moonGeometry = new SphereGeometry(MOON_RADIUS, 48, 32)
@@ -285,9 +245,6 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       globe.scene().remove(sunSprite)
       sunTexture.dispose()
       sunMaterial.dispose()
-      globe.scene().remove(sunSurfaceSprite)
-      sunSurfaceTexture?.dispose()
-      sunSurfaceMaterial.dispose()
       globe.scene().remove(moonMesh)
       moonGeometry.dispose()
       moon.dispose()
@@ -318,7 +275,6 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       const sunDirection = solarDirection(Date.now())
       const [sunX, sunY, sunZ] = sunDirection
       sunSprite.position.set(sunX * SUN_DISTANCE, sunY * SUN_DISTANCE, sunZ * SUN_DISTANCE)
-      sunSurfaceSprite.position.copy(sunSprite.position)
       moonOrbitAngle += elapsed * MOON_ORBIT_SPEED
       const moonBaseX = Math.cos(moonOrbitAngle) * MOON_ORBIT_RADIUS
       const moonBaseZ = Math.sin(moonOrbitAngle) * MOON_ORBIT_RADIUS
@@ -415,6 +371,11 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     logo.alt = `Oxy · ${point.label}`
     logo.width = 20
     logo.height = 20
+    // An inline <img> reserves a couple of descender pixels below itself for
+    // text baseline alignment, which quietly shifts the visible icon up from
+    // this marker's true center (the library centers on the marker's own box,
+    // via CSS2DObject's default (0.5, 0.5) anchor) — block removes that gap.
+    logo.style.display = 'block'
     // Status is still legible without reintroducing a colour shape: full
     // strength online, faded the worse things get.
     logo.style.opacity = point.status === 'offline' ? '0.35' : point.status === 'degraded' ? '0.6' : point.status === 'unknown' ? '0.75' : '1'
