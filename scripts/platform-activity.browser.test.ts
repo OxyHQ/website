@@ -47,7 +47,7 @@ try {
   await page.screenshot({ path: '/tmp/oxy-activity-flat.png' })
   await page.getByRole('button', { name: 'Toggle map' }).click()
   await page.locator('canvas').waitFor({ state: 'attached', timeout: 60_000 })
-  await page.waitForFunction(() => performance.getEntriesByType('resource').some(entry => entry.name.includes('/images/dashboard/earth-night-nasa') && entry.duration > 0), undefined, { timeout: 60_000 })
+  await page.waitForFunction(() => performance.getEntriesByType('resource').some(entry => entry.name.includes('/images/dashboard/earth-night') && entry.duration > 0), undefined, { timeout: 60_000 })
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
   await page.waitForFunction(() => {
     let count = 0

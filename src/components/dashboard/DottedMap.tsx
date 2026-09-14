@@ -307,7 +307,7 @@ export default function DottedMap({
           </filter>
         </defs>
         <image
-          href="/images/dashboard/earth-night-nasa.webp"
+          href="/images/dashboard/earth-night.jpg"
           x={0}
           y={0}
           width={width}

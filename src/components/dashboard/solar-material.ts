@@ -2,10 +2,10 @@ import { ShaderMaterial, TextureLoader, Vector3 } from 'three'
 import { solarDirection } from '../../data/dashboard/solar-position'
 
 /** Texture UVs map directly to Earth longitude/latitude, independently of camera rotation. */
-export function createSolarMaterial(highResolution: boolean) {
+export function createSolarMaterial() {
   const loader = new TextureLoader()
-  const day = loader.load('/images/dashboard/earth-day-nasa.jpg')
-  const night = loader.load(highResolution ? '/images/dashboard/earth-night-nasa-8k.webp' : '/images/dashboard/earth-night-nasa.webp')
+  const day = loader.load('/images/dashboard/earth-day.jpg')
+  const night = loader.load('/images/dashboard/earth-night.jpg')
   // Keep the same sRGB texture arithmetic as the native GLES wallpaper.
   const material = new ShaderMaterial({
     uniforms: {

@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { observeMapContrast } from './map-contrast'
 import { createSolarMaterial } from './solar-material'
+import { createMoonMaterial } from './moon-material'
 import Globe, { type GlobeMethods } from 'react-globe.gl'
 import {
   AdditiveBlending,
@@ -32,7 +33,6 @@ interface LiveGlobeProps {
 interface GlobeLayout {
   width: number
   height: number
-  highResolution: boolean
   primary: string
   muted: string
   success: string
@@ -69,6 +69,10 @@ const MIN_GLOBE_HEIGHT = 420
  * atmosphere, not a brand color, so it stays fixed across themes. */
 const ATMOSPHERE_COLOR = 'rgb(80, 150, 230)'
 const SUN_DISTANCE = 850
+const MOON_RADIUS = 22
+const MOON_ORBIT_RADIUS = 260
+const MOON_ORBIT_TILT = 0.35
+const MOON_ORBIT_SPEED = 0.015
 
 function threeColor(token: string): string {
   const channels = token.match(/^rgb\(\s*(\d+)\s+(\d+)\s+(\d+)\s*\)$/)
@@ -97,13 +101,37 @@ function createSunTexture(): CanvasTexture {
   return texture
 }
 
+/** Center-crops the sun photo square and fades it to transparent at the edge,
+ * so it reads as a disc sitting inside the glow rather than a hard square. */
+function createSunSurfaceTexture(image: HTMLImageElement | ImageBitmap): CanvasTexture {
+  const size = 256
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  const cropSize = Math.min(image.width, image.height)
+  const sx = (image.width - cropSize) / 2
+  const sy = (image.height - cropSize) / 2
+  ctx.drawImage(image, sx, sy, cropSize, cropSize, 0, 0, size, size)
+  ctx.globalCompositeOperation = 'destination-in'
+  const center = size / 2
+  const mask = ctx.createRadialGradient(center, center, size * 0.25, center, center, size * 0.5)
+  mask.addColorStop(0, 'rgba(255,255,255,1)')
+  mask.addColorStop(0.7, 'rgba(255,255,255,1)')
+  mask.addColorStop(1, 'rgba(255,255,255,0)')
+  ctx.fillStyle = mask
+  ctx.fillRect(0, 0, size, size)
+  const texture = new CanvasTexture(canvas)
+  texture.colorSpace = SRGBColorSpace
+  return texture
+}
+
 export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlobeProps) {
   const [solarMaterial, setSolarMaterial] = useState<ShaderMaterial | undefined>(undefined)
   const [layout, setLayout] = useState<GlobeLayout | null>(null)
   const globeRef = useRef<GlobeMethods>(undefined)
   const activityEventsRef = useRef(activityEvents)
   const arcCacheRef = useRef(new Map<string, ActivityArc>())
-  const highResolutionRef = useRef(false)
   const controlsCleanupRef = useRef<(() => void) | null>(null)
   const sceneCleanupRef = useRef<(() => void) | null>(null)
   const isInteractingRef = useRef(false)
@@ -115,12 +143,9 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     const measure = () => {
       const style = getComputedStyle(node)
       const width = Math.max(1, node.clientWidth)
-      const highResolution = width * window.devicePixelRatio >= 2_400
-      highResolutionRef.current = highResolution
       setLayout({
         width,
         height: Math.max(MIN_GLOBE_HEIGHT, node.clientHeight),
-        highResolution,
         muted: threeColor(style.getPropertyValue('--muted-foreground').trim()),
         primary: threeColor(style.getPropertyValue('--primary').trim()),
         success: threeColor(style.getPropertyValue('--success').trim()),
@@ -163,11 +188,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
 
     const renderer = globe.renderer()
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    const skyTexture = new TextureLoader().load(
-      highResolutionRef.current
-        ? '/images/dashboard/night-sky-8k.webp'
-        : '/images/dashboard/night-sky.png',
-    )
+    const skyTexture = new TextureLoader().load('/images/dashboard/stars-milky-way.jpg')
     skyTexture.colorSpace = SRGBColorSpace
     skyTexture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy())
     const skyGeometry = new SphereGeometry(900, 64, 32)
@@ -179,9 +200,11 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     const sky = new Mesh(skyGeometry, skyMaterial)
     globe.scene().add(sky)
     sceneCleanupRef.current?.()
-    const solar = createSolarMaterial(highResolutionRef.current)
+    const solar = createSolarMaterial()
     setSolarMaterial(solar.material)
 
+    // Soft warm glow, always visible, plus the real sun photo faded in once it
+    // loads — layered so the photo reads as sitting inside the glow's core.
     const sunTexture = createSunTexture()
     const sunMaterial = new SpriteMaterial({
       map: sunTexture,
@@ -192,7 +215,31 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     })
     const sunSprite = new Sprite(sunMaterial)
     sunSprite.scale.set(260, 260, 1)
+    sunSprite.renderOrder = 0
     globe.scene().add(sunSprite)
+
+    const sunSurfaceMaterial = new SpriteMaterial({
+      transparent: true,
+      depthWrite: false,
+      toneMapped: false,
+    })
+    const sunSurfaceSprite = new Sprite(sunSurfaceMaterial)
+    sunSurfaceSprite.scale.set(150, 150, 1)
+    sunSurfaceSprite.renderOrder = 1
+    globe.scene().add(sunSurfaceSprite)
+    let sunSurfaceTexture: CanvasTexture | null = null
+    const sunPhotoLoader = new TextureLoader()
+    sunPhotoLoader.load('/images/dashboard/sun.jpg', (loaded) => {
+      sunSurfaceTexture = createSunSurfaceTexture(loaded.image as HTMLImageElement)
+      sunSurfaceMaterial.map = sunSurfaceTexture
+      sunSurfaceMaterial.needsUpdate = true
+      loaded.dispose()
+    })
+
+    const moon = createMoonMaterial()
+    const moonGeometry = new SphereGeometry(MOON_RADIUS, 48, 32)
+    const moonMesh = new Mesh(moonGeometry, moon.material)
+    globe.scene().add(moonMesh)
 
     sceneCleanupRef.current = () => {
       solar.dispose()
@@ -203,6 +250,12 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       globe.scene().remove(sunSprite)
       sunTexture.dispose()
       sunMaterial.dispose()
+      globe.scene().remove(sunSurfaceSprite)
+      sunSurfaceTexture?.dispose()
+      sunSurfaceMaterial.dispose()
+      globe.scene().remove(moonMesh)
+      moonGeometry.dispose()
+      moon.dispose()
     }
 
     controlsCleanupRef.current?.()
@@ -213,6 +266,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     let frame = 0
     let previousEvents: PlatformActivityEvent[] | undefined
     let candidates: CameraTarget[] = []
+    let moonOrbitAngle = Math.random() * Math.PI * 2
     const pauseAutomaticView = () => {
       isInteractingRef.current = true
     }
@@ -224,8 +278,15 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       const elapsed = (now - previousFrame) / 1_000
       previousFrame = now
       solar.update(Date.now())
-      const [sunX, sunY, sunZ] = solarDirection(Date.now())
+      const sunDirection = solarDirection(Date.now())
+      const [sunX, sunY, sunZ] = sunDirection
       sunSprite.position.set(sunX * SUN_DISTANCE, sunY * SUN_DISTANCE, sunZ * SUN_DISTANCE)
+      sunSurfaceSprite.position.copy(sunSprite.position)
+      moon.setSunDirection(sunDirection)
+      moonOrbitAngle += elapsed * MOON_ORBIT_SPEED
+      const moonBaseX = Math.cos(moonOrbitAngle) * MOON_ORBIT_RADIUS
+      const moonBaseZ = Math.sin(moonOrbitAngle) * MOON_ORBIT_RADIUS
+      moonMesh.position.set(moonBaseX, moonBaseZ * Math.sin(MOON_ORBIT_TILT), moonBaseZ * Math.cos(MOON_ORBIT_TILT))
       if (previousEvents !== activityEventsRef.current) {
         previousEvents = activityEventsRef.current
         const origins = new Map<string, CameraTarget>()
@@ -290,23 +351,41 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     return [...infrastructure, ...origins.values()]
   }, [activityEvents, statusByRegion, infraStatus])
 
+  // Infrastructure nodes render only this chip — the status colour that used to
+  // be a separate dot floating below the logo is now the chip's own background,
+  // so a location reads as one mark, not two overlapping shapes.
   const infrastructureLogos = useMemo(() => points.filter(point => point.infrastructure), [points])
+  // Live traffic origins still render as a plain coloured dot — only Oxy's own
+  // infrastructure gets the logo chip above.
+  const liveOriginPoints = useMemo(() => points.filter(point => !point.infrastructure), [points])
   const infrastructureLogoElement = useCallback((value: object) => {
     const point = value as (typeof points)[number]
     const marker = document.createElement('span')
     marker.dataset.oxyInfrastructureLogo = point.region
     marker.title = `Oxy · ${point.label}`
     marker.style.pointerEvents = 'none'
+    marker.style.display = 'flex'
+    marker.style.alignItems = 'center'
+    marker.style.justifyContent = 'center'
+    marker.style.width = '24px'
+    marker.style.height = '24px'
+    marker.style.borderRadius = '9999px'
+    marker.style.border = '1.5px solid rgba(255,255,255,0.85)'
+    marker.style.boxShadow = '0 0 4px rgba(0,0,0,0.45)'
+    marker.style.background = layout
+      ? point.status === 'unknown' ? layout.muted
+        : point.status === 'offline' ? layout.destructive
+          : point.status === 'degraded' ? layout.warning
+            : layout.success
+      : '#22c55e'
     const logo = document.createElement('img')
     logo.src = '/logo-mark.svg'
     logo.alt = `Oxy · ${point.label}`
-    logo.width = 20
-    logo.height = 20
-    logo.style.transform = 'translateY(-16px)'
-    logo.style.opacity = point.status === 'offline' ? '0.5' : '0.95'
+    logo.width = 14
+    logo.height = 14
     marker.appendChild(logo)
     return marker
-  }, [])
+  }, [layout])
 
   const arcs = useMemo<ActivityArc[]>(() => {
     if (!layout) return []
@@ -381,7 +460,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           htmlAltitude={0.04}
           htmlElement={infrastructureLogoElement}
           htmlTransitionDuration={0}
-          pointsData={points}
+          pointsData={liveOriginPoints}
           pointLat="lat"
           pointLng="lng"
           pointAltitude={0.025}
