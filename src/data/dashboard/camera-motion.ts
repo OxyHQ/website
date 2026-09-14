@@ -1,17 +1,26 @@
 export interface CameraPosition { lat: number; lng: number; altitude: number }
-export interface CameraMotion extends CameraPosition { latVelocity: number; lngVelocity: number }
+export interface CameraMotion extends CameraPosition { latVelocity: number; lngVelocity: number; wanderPhase: number }
 export interface CameraTarget { key: string; lat: number; lng: number; requests: number }
 export interface CameraFocus { target?: CameraTarget; selectedAt: number; challenger?: string; challengerSince: number }
 export const CAMERA_SPEED_LIMIT = 12
 export const CAMERA_ACCELERATION_LIMIT = 8
 export const CAMERA_MANUAL_PAUSE_MS = 2_000
+// A settled target is never approached exactly — the setpoint itself keeps
+// drifting in a slow Lissajous loop around it, so the view stays subtly alive
+// instead of freezing once the spring below catches up. Small amplitude and a
+// multi-minute period keep it a wander, not a visible oscillation.
+const WANDER_LAT_DEGREES = 4
+const WANDER_LNG_DEGREES = 6
+const WANDER_SPEED = 0.045
+const WANDER_LNG_FREQUENCY = 0.63
+const WANDER_LNG_PHASE = 1.7
 
 export function shortestLongitude(delta: number): number {
   return ((delta + 180) % 360 + 360) % 360 - 180
 }
 
 export function cameraMotion(position: CameraPosition): CameraMotion {
-  return { ...position, latVelocity: 0, lngVelocity: 0 }
+  return { ...position, latVelocity: 0, lngVelocity: 0, wanderPhase: 0 }
 }
 
 /** Fixed short integration steps make motion independent of display refresh rate.
@@ -21,8 +30,11 @@ export function stepCameraMotion(previous: CameraMotion, target: CameraTarget | 
   let remaining = Math.min(0.1, Math.max(0, elapsedSeconds))
   while (remaining > 1e-8) {
     const dt = Math.min(1 / 120, remaining)
-    let latAcceleration = target ? 4 * (target.lat - next.lat) - 4 * next.latVelocity : -4 * next.latVelocity
-    let lngAcceleration = target ? 4 * shortestLongitude(target.lng - next.lng) - 4 * next.lngVelocity : 4 * (1.05 - next.lngVelocity)
+    next.wanderPhase = (next.wanderPhase + dt * WANDER_SPEED) % (Math.PI * 2)
+    const wanderedLat = target ? target.lat + WANDER_LAT_DEGREES * Math.sin(next.wanderPhase) : 0
+    const wanderedLng = target ? target.lng + WANDER_LNG_DEGREES * Math.sin(next.wanderPhase * WANDER_LNG_FREQUENCY + WANDER_LNG_PHASE) : 0
+    let latAcceleration = target ? 4 * (wanderedLat - next.lat) - 4 * next.latVelocity : -4 * next.latVelocity
+    let lngAcceleration = target ? 4 * shortestLongitude(wanderedLng - next.lng) - 4 * next.lngVelocity : 4 * (1.05 - next.lngVelocity)
     const acceleration = Math.hypot(latAcceleration, lngAcceleration)
     if (acceleration > CAMERA_ACCELERATION_LIMIT) {
       latAcceleration *= CAMERA_ACCELERATION_LIMIT / acceleration
