@@ -82,19 +82,29 @@ const MOON_ORBIT_RADIUS = 550
 const MOON_ORBIT_TILT = 0.35
 const MOON_ORBIT_SPEED = 0.015
 
-/** Ghost reflections along the sun→screen-center line, the way a real lens
- * scatters a bright point source into a trail of small translucent circles —
- * the part of a "camera flare" the sun's own glow/spikes don't cover, since
- * those sit only at the light source itself. `t` is the fraction of the
- * sun→center distance (values past 1 land beyond center, toward the far
- * edge, matching real flare trails). */
-const FLARE_GHOSTS: { t: number; size: number; color: string }[] = [
-  { t: 0.15, size: 8, color: 'rgba(255,214,170,0.4)' },
-  { t: 0.32, size: 16, color: 'rgba(190,225,255,0.22)' },
-  { t: 0.5, size: 6, color: 'rgba(255,255,255,0.35)' },
-  { t: 0.72, size: 26, color: 'rgba(255,200,150,0.16)' },
-  { t: 1.05, size: 12, color: 'rgba(180,210,255,0.24)' },
-  { t: 1.35, size: 34, color: 'rgba(255,255,255,0.1)' },
+/** Ghost reflections the way a real lens actually makes them: light bounces
+ * between internal elements and lands as a handful of small discs and thin
+ * rings strung from the light source toward the frame center — several of
+ * them close enough together to overlap and glow into one another, not
+ * spaced out flat along a single line. `t` is the fraction of the
+ * sun→center distance; `offset` nudges a ghost a few pixels sideways off
+ * that line so a cluster reads as discs layered in front of each other
+ * instead of beads on a string. `ring` draws a thin hollow halo — a lens-
+ * element reflection — instead of a soft filled glow. Kept small and faint:
+ * this should read as "the sun is a real lens" at a glance, not as a row of
+ * visible shapes. */
+interface FlareGhost { t: number; offset: number; size: number; color: string; ring?: boolean }
+const FLARE_GHOSTS: FlareGhost[] = [
+  // Tight cluster right off the sun — the first internal reflections stack
+  // almost on top of the source itself.
+  { t: 0.09, offset: 0, size: 14, color: 'rgba(255,224,180,0.16)' },
+  { t: 0.15, offset: 4, size: 7, color: 'rgba(255,255,255,0.2)' },
+  { t: 0.22, offset: -5, size: 11, color: 'rgba(205,226,255,0.12)', ring: true },
+  // A single ghost drifting alone through the middle of the frame.
+  { t: 0.5, offset: 2, size: 6, color: 'rgba(255,255,255,0.13)' },
+  // A second, looser pair past center.
+  { t: 0.78, offset: -4, size: 18, color: 'rgba(184,212,255,0.08)', ring: true },
+  { t: 0.87, offset: 5, size: 6, color: 'rgba(255,232,208,0.12)' },
 ]
 
 function threeColor(token: string): string {
@@ -309,8 +319,10 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
 
       // Ghost reflections: project the sun's real position to screen space
       // each frame and lay the ghosts out along the line to the viewport
-      // center, fading them out once the sun swings off-screen or around
-      // the back of the globe.
+      // center, offset a few pixels perpendicular to that line so clusters
+      // overlap into layered discs rather than sitting flat in a row, fading
+      // them out once the sun swings off-screen or around the back of the
+      // globe.
       const flareWidth = renderer.domElement.clientWidth
       const flareHeight = renderer.domElement.clientHeight
       sunProjected.copy(sunSprite.position).project(flareCamera)
@@ -322,14 +334,19 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         const sy = (-sunProjected.y * 0.5 + 0.5) * flareHeight
         const dx = flareWidth / 2 - sx
         const dy = flareHeight / 2 - sy
+        const lineLength = Math.hypot(dx, dy) || 1
+        const perpX = -dy / lineLength
+        const perpY = dx / lineLength
         const edgeFade = 1 - Math.max(Math.abs(sunProjected.x), Math.abs(sunProjected.y))
         const strength = Math.max(0, Math.min(1, edgeFade))
         for (let i = 0; i < FLARE_GHOSTS.length; i++) {
           const el = flareGhostRefs.current[i]
           if (!el) continue
-          const { t } = FLARE_GHOSTS[i]
-          el.style.transform = `translate(${sx + dx * t}px, ${sy + dy * t}px)`
-          el.style.opacity = String(strength * 0.9)
+          const { t, offset } = FLARE_GHOSTS[i]
+          const px = sx + dx * t + perpX * offset
+          const py = sy + dy * t + perpY * offset
+          el.style.transform = `translate(${px}px, ${py}px)`
+          el.style.opacity = String(strength * 0.6)
         }
       } else {
         for (const el of flareGhostRefs.current) {
@@ -552,7 +569,9 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
                 height: ghost.size,
                 marginLeft: -ghost.size / 2,
                 marginTop: -ghost.size / 2,
-                background: `radial-gradient(circle, ${ghost.color} 0%, rgba(255,255,255,0) 75%)`,
+                background: ghost.ring
+                  ? `radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 55%, ${ghost.color} 68%, rgba(255,255,255,0) 80%)`
+                  : `radial-gradient(circle, ${ghost.color} 0%, rgba(255,255,255,0) 75%)`,
                 mixBlendMode: 'screen',
               }}
             />
