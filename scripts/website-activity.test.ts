@@ -3,11 +3,11 @@ import { startWebsiteActivity } from '../server/services/ecosystemActivity'
 import type { createEcosystemTraffic } from '@oxy.so/core/server'
 
 describe('website activity bootstrap', () => {
-  test('does not start a publisher when disabled and rejects incomplete enabled configuration', () => {
+  test('does not start a publisher when credentials are absent and rejects an incomplete credentialed configuration', () => {
     const create = () => { throw new Error('must not run') }
     expect(startWebsiteActivity(() => true, {}, create)).toBeUndefined()
-    expect(() => startWebsiteActivity(() => true, { OXY_ECOSYSTEM_ACTIVITY_ENABLED: 'true' }, create)).toThrow('credentials')
-    expect(() => startWebsiteActivity(() => true, { OXY_ECOSYSTEM_ACTIVITY_ENABLED: 'yes' }, create)).toThrow('true or false')
+    expect(startWebsiteActivity(() => true, { OXY_SERVICE_API_KEY: 'fixture' }, create)).toBeUndefined()
+    expect(() => startWebsiteActivity(() => true, { OXY_SERVICE_API_KEY: 'fixture', OXY_SERVICE_API_SECRET: 'fixture' }, create)).toThrow('credentials')
   })
   test('installs observation once at boot with actual readiness, independent of dashboard requests', () => {
     let installations = 0
@@ -20,7 +20,7 @@ describe('website activity bootstrap', () => {
       expect(options.ready?.()).toBe(true)
       return { installFetch() { installations++ } } as ReturnType<typeof createEcosystemTraffic>
     }) as typeof createEcosystemTraffic
-    startWebsiteActivity(() => ready, { OXY_ECOSYSTEM_ACTIVITY_ENABLED: 'true', AWS_REGION: 'us-west-2', OXY_SERVICE_API_KEY: 'fixture', OXY_SERVICE_API_SECRET: 'fixture' }, create)
+    startWebsiteActivity(() => ready, { AWS_REGION: 'us-west-2', OXY_SERVICE_API_KEY: 'fixture', OXY_SERVICE_API_SECRET: 'fixture' }, create)
     expect(installations).toBe(1)
   })
 })
