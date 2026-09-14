@@ -9,6 +9,30 @@
 - [Developers](https://oxy.so/developers/): Developer resources and documentation.
 - [Company](https://oxy.so/company/): Information about Oxy and its mission.
 
+## Oxy AI
+
+Oxy AI is the umbrella for Oxy's AI platform, products and services. It is not a
+model, and it is not the same thing as Alia.
+
+- [Oxy AI](https://oxy.so/ai/): The umbrella landing — what the platform is made of.
+- [Oxy Inference](https://oxy.so/ai/inference/): The public inference service. One OpenAI-compatible API for every model Oxy is approved to serve. Currently in private preview.
+- [Models](https://oxy.so/ai/models/): The public model catalogue — publisher, capabilities, serving regions, data policy, price and availability per model.
+- [Pricing](https://oxy.so/ai/pricing/): Per-model, per-unit inference pricing, from the Oxy pricing source.
+- [For organizations](https://oxy.so/ai/enterprise/): Shared, managed and dedicated inference, policy controls, invoicing and auditability.
+- [Data and policy](https://oxy.so/ai/trust/): What Oxy does with what you send, and what the provider serving a routed request does with it.
+- [Oxy for organizations](https://oxy.so/enterprise/): The cross-Oxy B2B hub.
+- [Talk to sales](https://oxy.so/contact/sales/): Sales and private-evaluation requests.
+
+Distinctions that matter when summarising this site:
+
+- **Oxy AI** is the platform, not a model.
+- **Oxy Inference** is the public API. It is not a second account system: accounts, applications, credentials and billing live in Oxy Console.
+- **Managed Inference** means Oxy serves a model on its own infrastructure. **Dedicated Inference** means a private endpoint and reserved capacity.
+- **Alia** is a product built on the platform, with its own plans sold on alia.onl. Alia is not the inference API.
+- **Codea** is the coding and agent product.
+- **Alia Models** is a future model family. Nothing is released; `alia-v1`, `alia-v1-pro` and `alia-lite` were routing aliases, not models.
+- Retention and upstream-training policies are properties of the ROUTE serving a request, not platform-wide guarantees.
+
 ## Machine-readable discovery
 
 - [Sitemap](https://oxy.so/sitemap.xml): Canonical public URL inventory.

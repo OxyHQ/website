@@ -228,3 +228,69 @@ export const serviceUptimeDaily = pgTable(
     index('service_uptime_daily_date_idx').on(table.date),
   ],
 )
+
+/**
+ * Sales and private-evaluation requests submitted from `/contact/sales`.
+ *
+ * Deliberately a small, flat record: this repository is a marketing site, not a
+ * CRM, and every field beyond "enough to reply, route and qualify" is a field
+ * somebody has to keep accurate and delete on request.
+ *
+ * Three things are absent on purpose.
+ *
+ *  - **No IP address**, raw, hashed or turned into a location. The rest of the
+ *    Oxy stack holds to that invariant and a lead form is not the place to
+ *    break it; the abuse controls in `server/routes/sales.ts` are in-memory and
+ *    per-instance instead.
+ *  - **No secrets.** The form never asks for an API key, a credential, a
+ *    provider key or a prompt, and there is no column one could be typed into.
+ *  - **No account ownership taken on trust.** `accountId`/`applicationId` are
+ *    written only after the server has verified the submitter can see them.
+ */
+export const salesInquiries = pgTable(
+  'sales_inquiries',
+  {
+    _id: objectId(),
+    /** One of `INQUIRY_INTERESTS` in `server/contracts/salesInquiry.ts`. */
+    interest: text().notNull(),
+    name: text().notNull(),
+    email: text().notNull(),
+    company: text().notNull(),
+    role: text(),
+    country: text(),
+    companySize: text(),
+    website: text(),
+    useCase: text().notNull(),
+    monthlyVolume: text(),
+    budget: text(),
+    /** Modality keys the submitter ticked. */
+    modalities: jsonb().$type<string[]>().notNull().default([]),
+    preferredRegion: text(),
+    privacyRequirements: jsonb().$type<string[]>().notNull().default([]),
+    deploymentPreference: text(),
+    launchTimeline: text(),
+    message: text(),
+    marketingConsent: boolean().notNull().default(false),
+    /** Verified server-side before it is written. Never trusted from the client. */
+    oxyUserId: text(),
+    accountId: text(),
+    applicationId: text(),
+    /** One of `INQUIRY_STATUSES`. */
+    status: text().notNull().default('new'),
+    /** Who last changed the status, for the audit line in the admin view. */
+    statusChangedBy: text(),
+    statusChangedAt: timestamp({ withTimezone: true }),
+    internalNote: text(),
+    /**
+     * Content-derived key that collapses a double click, a retry after a flaky
+     * connection and a refresh-and-resubmit into one inquiry. Unique, so the
+     * collapse is enforced by the database rather than by a read-then-write
+     * race in the handler.
+     */
+    idempotencyKey: text().notNull().unique(),
+    /** When the row becomes deletable absent a contract. */
+    deleteAfter: timestamp({ withTimezone: true }).notNull(),
+    ...timestamps,
+  },
+  (table) => [uniqueIndex('sales_inquiries_idempotency_idx').on(table.idempotencyKey)],
+)

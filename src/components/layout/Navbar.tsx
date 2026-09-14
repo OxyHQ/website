@@ -4,6 +4,8 @@ import { Link, useNavigate } from '../../lib/navigation'
 import { LogoIcon, useAuth, useOxy } from '@oxy.so/services/ui/client'
 import {
   simpleNavLinks,
+  aiNavCard,
+  aiNavDropdown,
   platformNavDropdown,
   resourcesNavCard,
   productNavDropdown,
@@ -343,6 +345,10 @@ export default function Navbar({
     return [
       productNavDropdown,
       platform,
+      // AI is its own top-level menu, ahead of Resources: it is an umbrella over
+      // six services in six different states, and the single `Oxy AI` line it
+      // replaced inside Platform could describe none of them correctly.
+      { ...aiNavDropdown, card: aiNavCard },
       { ...resourcesNavDropdown, cards: [resourcesNavCard, resourcesBloomCard] },
     ]
   }, [useCustomNav, customDropdowns, productItems])

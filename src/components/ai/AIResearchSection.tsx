@@ -1,5 +1,5 @@
 import Button from '../ui/Button'
-import { researchCtaHref } from '../../data/ai'
+import { researchCtaHref } from '../../data/ai/research'
 import { useTranslation } from '../../lib/i18n'
 
 /**

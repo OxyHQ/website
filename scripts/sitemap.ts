@@ -113,6 +113,10 @@ ${entries.map((entry) => buildUrlNode(entry, opts)).join('\n')}
  * most-specific-first.
  */
 const ROUTE_WEIGHTS: ReadonlyArray<{ prefix: string; changefreq: string; priority: number }> = [
+  // One public model page. The catalogue moves when the control plane
+  // publishes, which is more often than a marketing page and less often than
+  // the newsroom; depth alone would rate it as an obscure third-level page.
+  { prefix: '/ai/models/', changefreq: 'weekly', priority: 0.6 },
   { prefix: '/newsroom/', changefreq: 'monthly', priority: 0.7 },
   // One feature request. It changes whenever someone votes or a maintainer
   // moves it, and depth alone would rate it as an obscure fourth-level page.
@@ -126,6 +130,10 @@ const ROUTE_WEIGHTS: ReadonlyArray<{ prefix: string; changefreq: string; priorit
   { prefix: '/company/careers', changefreq: 'weekly', priority: 0.7 },
   { prefix: '/company/news', changefreq: 'weekly', priority: 0.7 },
   { prefix: '/developers/docs', changefreq: 'monthly', priority: 0.7 },
+  { prefix: '/ai/models', changefreq: 'daily', priority: 0.9 },
+  { prefix: '/ai/pricing', changefreq: 'weekly', priority: 0.9 },
+  { prefix: '/ai/inference', changefreq: 'monthly', priority: 0.9 },
+  { prefix: '/ai', changefreq: 'weekly', priority: 0.9 },
   { prefix: '/pricing', changefreq: 'monthly', priority: 0.9 },
   { prefix: '/codea', changefreq: 'monthly', priority: 0.9 },
 ]
