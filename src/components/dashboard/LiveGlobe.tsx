@@ -82,6 +82,21 @@ const MOON_ORBIT_RADIUS = 550
 const MOON_ORBIT_TILT = 0.35
 const MOON_ORBIT_SPEED = 0.015
 
+/** Ghost reflections along the sun→screen-center line, the way a real lens
+ * scatters a bright point source into a trail of small translucent circles —
+ * the part of a "camera flare" the sun's own glow/spikes don't cover, since
+ * those sit only at the light source itself. `t` is the fraction of the
+ * sun→center distance (values past 1 land beyond center, toward the far
+ * edge, matching real flare trails). */
+const FLARE_GHOSTS: { t: number; size: number; color: string }[] = [
+  { t: 0.15, size: 8, color: 'rgba(255,214,170,0.4)' },
+  { t: 0.32, size: 16, color: 'rgba(190,225,255,0.22)' },
+  { t: 0.5, size: 6, color: 'rgba(255,255,255,0.35)' },
+  { t: 0.72, size: 26, color: 'rgba(255,200,150,0.16)' },
+  { t: 1.05, size: 12, color: 'rgba(180,210,255,0.24)' },
+  { t: 1.35, size: 34, color: 'rgba(255,255,255,0.1)' },
+]
+
 function threeColor(token: string): string {
   const channels = token.match(/^rgb\(\s*(\d+)\s+(\d+)\s+(\d+)\s*\)$/)
   return channels
@@ -145,6 +160,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   const controlsCleanupRef = useRef<(() => void) | null>(null)
   const sceneCleanupRef = useRef<(() => void) | null>(null)
   const isInteractingRef = useRef(false)
+  const flareGhostRefs = useRef<(HTMLSpanElement | null)[]>([])
   activityEventsRef.current = activityEvents
 
   const containerRef = useCallback((node: HTMLDivElement | null) => {
@@ -261,6 +277,9 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     let moonOrbitAngle = Math.random() * Math.PI * 2
     const moonSunLocal = new Vector3()
     const moonInverseQuaternion = new Quaternion()
+    const flareCamera = globe.camera()
+    const sunProjected = new Vector3()
+    const cameraDirection = new Vector3()
     const pauseAutomaticView = () => {
       isInteractingRef.current = true
     }
@@ -287,6 +306,37 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       moonInverseQuaternion.copy(moonMesh.quaternion).invert()
       moonSunLocal.set(sunX, sunY, sunZ).applyQuaternion(moonInverseQuaternion)
       moon.setSunDirection([moonSunLocal.x, moonSunLocal.y, moonSunLocal.z])
+
+      // Ghost reflections: project the sun's real position to screen space
+      // each frame and lay the ghosts out along the line to the viewport
+      // center, fading them out once the sun swings off-screen or around
+      // the back of the globe.
+      const flareWidth = renderer.domElement.clientWidth
+      const flareHeight = renderer.domElement.clientHeight
+      sunProjected.copy(sunSprite.position).project(flareCamera)
+      cameraDirection.copy(flareCamera.position).normalize()
+      const towardSun = cameraDirection.dot(sunSprite.position) / SUN_DISTANCE
+      const onScreen = sunProjected.z < 1 && Math.abs(sunProjected.x) < 1.3 && Math.abs(sunProjected.y) < 1.3
+      if (flareWidth > 0 && flareHeight > 0 && onScreen && towardSun > -0.15) {
+        const sx = (sunProjected.x * 0.5 + 0.5) * flareWidth
+        const sy = (-sunProjected.y * 0.5 + 0.5) * flareHeight
+        const dx = flareWidth / 2 - sx
+        const dy = flareHeight / 2 - sy
+        const edgeFade = 1 - Math.max(Math.abs(sunProjected.x), Math.abs(sunProjected.y))
+        const strength = Math.max(0, Math.min(1, edgeFade))
+        for (let i = 0; i < FLARE_GHOSTS.length; i++) {
+          const el = flareGhostRefs.current[i]
+          if (!el) continue
+          const { t } = FLARE_GHOSTS[i]
+          el.style.transform = `translate(${sx + dx * t}px, ${sy + dy * t}px)`
+          el.style.opacity = String(strength * 0.9)
+        }
+      } else {
+        for (const el of flareGhostRefs.current) {
+          if (el) el.style.opacity = '0'
+        }
+      }
+
       if (previousEvents !== activityEventsRef.current) {
         previousEvents = activityEventsRef.current
         const origins = new Map<string, CameraTarget>()
@@ -489,6 +539,25 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           ringPropagationSpeed={4}
           ringRepeatPeriod={900}
         />
+      )}
+      {layout && (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          {FLARE_GHOSTS.map((ghost, i) => (
+            <span
+              key={i}
+              ref={(el) => { flareGhostRefs.current[i] = el }}
+              className="absolute rounded-full opacity-0"
+              style={{
+                width: ghost.size,
+                height: ghost.size,
+                marginLeft: -ghost.size / 2,
+                marginTop: -ghost.size / 2,
+                background: `radial-gradient(circle, ${ghost.color} 0%, rgba(255,255,255,0) 75%)`,
+                mixBlendMode: 'screen',
+              }}
+            />
+          ))}
+        </div>
       )}
     </div>
   )
