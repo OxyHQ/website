@@ -7,14 +7,18 @@ import {
   AdditiveBlending,
   BackSide,
   CanvasTexture,
+  Color,
   Mesh,
   MeshBasicMaterial,
+  NearestFilter,
+  Quaternion,
   type ShaderMaterial,
   SphereGeometry,
   Sprite,
   SpriteMaterial,
   SRGBColorSpace,
   TextureLoader,
+  Vector3,
 } from 'three'
 import type { InfraStatusNode, PlatformActivityEvent } from '../../api/hooks'
 import { infrastructureNodes } from '../../data/dashboard/infra-nodes'
@@ -81,7 +85,8 @@ function threeColor(token: string): string {
     : token
 }
 
-/** Soft radial glow, no ring/hexagon flare artifacts — reads as a real sun, not a camera effect. */
+/** A soft core glow plus faint alternating-length rays, additively blended so
+ * they read as light spilling outward rather than a solid stamped shape. */
 function createSunTexture(): CanvasTexture {
   const size = 256
   const canvas = document.createElement('canvas')
@@ -89,6 +94,29 @@ function createSunTexture(): CanvasTexture {
   canvas.height = size
   const ctx = canvas.getContext('2d')!
   const center = size / 2
+
+  ctx.globalCompositeOperation = 'lighter'
+  const rayCount = 12
+  for (let i = 0; i < rayCount; i++) {
+    const angle = (i / rayCount) * Math.PI * 2
+    const length = center * (i % 2 === 0 ? 0.99 : 0.68)
+    const halfWidth = (i % 2 === 0 ? 0.05 : 0.028) * length
+    ctx.save()
+    ctx.translate(center, center)
+    ctx.rotate(angle)
+    const rayGradient = ctx.createLinearGradient(0, 0, length, 0)
+    rayGradient.addColorStop(0, 'rgba(255,250,225,0.4)')
+    rayGradient.addColorStop(1, 'rgba(255,250,225,0)')
+    ctx.fillStyle = rayGradient
+    ctx.beginPath()
+    ctx.moveTo(0, -halfWidth)
+    ctx.lineTo(length, 0)
+    ctx.lineTo(0, halfWidth)
+    ctx.closePath()
+    ctx.fill()
+    ctx.restore()
+  }
+
   const gradient = ctx.createRadialGradient(center, center, 0, center, center, center)
   gradient.addColorStop(0, 'rgba(255,252,240,0.95)')
   gradient.addColorStop(0.12, 'rgba(255,247,222,0.6)')
@@ -96,6 +124,7 @@ function createSunTexture(): CanvasTexture {
   gradient.addColorStop(1, 'rgba(255,238,198,0)')
   ctx.fillStyle = gradient
   ctx.fillRect(0, 0, size, size)
+
   const texture = new CanvasTexture(canvas)
   texture.colorSpace = SRGBColorSpace
   return texture
@@ -190,10 +219,16 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     const skyTexture = new TextureLoader().load('/images/dashboard/stars-milky-way.jpg')
     skyTexture.colorSpace = SRGBColorSpace
-    skyTexture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy())
+    // Nearest, not linear: a handful of single-texel stars smeared across
+    // neighbouring pixels by linear magnification is what read as "giant
+    // blurry blobs" instead of small points once wrapped around a 900-unit
+    // sphere the camera sits well inside of.
+    skyTexture.magFilter = NearestFilter
     const skyGeometry = new SphereGeometry(900, 64, 32)
     const skyMaterial = new MeshBasicMaterial({
       map: skyTexture,
+      // Dimmed well below full brightness — a backdrop, not the subject.
+      color: new Color(0x555566),
       side: BackSide,
       depthWrite: false,
     })
@@ -267,6 +302,8 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     let previousEvents: PlatformActivityEvent[] | undefined
     let candidates: CameraTarget[] = []
     let moonOrbitAngle = Math.random() * Math.PI * 2
+    const moonSunLocal = new Vector3()
+    const moonInverseQuaternion = new Quaternion()
     const pauseAutomaticView = () => {
       isInteractingRef.current = true
     }
@@ -282,11 +319,18 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       const [sunX, sunY, sunZ] = sunDirection
       sunSprite.position.set(sunX * SUN_DISTANCE, sunY * SUN_DISTANCE, sunZ * SUN_DISTANCE)
       sunSurfaceSprite.position.copy(sunSprite.position)
-      moon.setSunDirection(sunDirection)
       moonOrbitAngle += elapsed * MOON_ORBIT_SPEED
       const moonBaseX = Math.cos(moonOrbitAngle) * MOON_ORBIT_RADIUS
       const moonBaseZ = Math.sin(moonOrbitAngle) * MOON_ORBIT_RADIUS
       moonMesh.position.set(moonBaseX, moonBaseZ * Math.sin(MOON_ORBIT_TILT), moonBaseZ * Math.cos(MOON_ORBIT_TILT))
+      // Tidally locked, like the real Moon: the same face always points at
+      // Earth. The shader shades in the mesh's own local space, so the sun
+      // direction has to be rotated into that space too, or the lit face
+      // would drift out of sync with the orbit instead of tracking it.
+      moonMesh.lookAt(0, 0, 0)
+      moonInverseQuaternion.copy(moonMesh.quaternion).invert()
+      moonSunLocal.set(sunX, sunY, sunZ).applyQuaternion(moonInverseQuaternion)
+      moon.setSunDirection([moonSunLocal.x, moonSunLocal.y, moonSunLocal.z])
       if (previousEvents !== activityEventsRef.current) {
         previousEvents = activityEventsRef.current
         const origins = new Map<string, CameraTarget>()
@@ -352,11 +396,12 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   }, [activityEvents, statusByRegion, infraStatus])
 
   // Infrastructure nodes render only this chip — the status colour that used to
-  // be a separate dot floating below the logo is now the chip's own background,
-  // so a location reads as one mark, not two overlapping shapes.
+  // be a separate dot below the logo — the logo alone is the mark now, no
+  // colour chip behind it, so a location reads as one plain icon, not a
+  // colour shape with an icon stuck on top of it.
   const infrastructureLogos = useMemo(() => points.filter(point => point.infrastructure), [points])
   // Live traffic origins still render as a plain coloured dot — only Oxy's own
-  // infrastructure gets the logo chip above.
+  // infrastructure gets the logo above.
   const liveOriginPoints = useMemo(() => points.filter(point => !point.infrastructure), [points])
   const infrastructureLogoElement = useCallback((value: object) => {
     const point = value as (typeof points)[number]
@@ -364,28 +409,18 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     marker.dataset.oxyInfrastructureLogo = point.region
     marker.title = `Oxy · ${point.label}`
     marker.style.pointerEvents = 'none'
-    marker.style.display = 'flex'
-    marker.style.alignItems = 'center'
-    marker.style.justifyContent = 'center'
-    marker.style.width = '24px'
-    marker.style.height = '24px'
-    marker.style.borderRadius = '9999px'
-    marker.style.border = '1.5px solid rgba(255,255,255,0.85)'
-    marker.style.boxShadow = '0 0 4px rgba(0,0,0,0.45)'
-    marker.style.background = layout
-      ? point.status === 'unknown' ? layout.muted
-        : point.status === 'offline' ? layout.destructive
-          : point.status === 'degraded' ? layout.warning
-            : layout.success
-      : '#22c55e'
+    marker.style.display = 'block'
     const logo = document.createElement('img')
     logo.src = '/logo-mark.svg'
     logo.alt = `Oxy · ${point.label}`
-    logo.width = 14
-    logo.height = 14
+    logo.width = 20
+    logo.height = 20
+    // Status is still legible without reintroducing a colour shape: full
+    // strength online, faded the worse things get.
+    logo.style.opacity = point.status === 'offline' ? '0.35' : point.status === 'degraded' ? '0.6' : point.status === 'unknown' ? '0.75' : '1'
     marker.appendChild(logo)
     return marker
-  }, [layout])
+  }, [])
 
   const arcs = useMemo<ActivityArc[]>(() => {
     if (!layout) return []
@@ -453,7 +488,6 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           showAtmosphere
           atmosphereColor={ATMOSPHERE_COLOR}
           atmosphereAltitude={0.14}
-          showGraticules
           htmlElementsData={infrastructureLogos}
           htmlLat="lat"
           htmlLng="lng"
