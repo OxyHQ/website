@@ -42,8 +42,12 @@ if [ "$SERVICE" = "website-api" ]; then
     --region "$AWS_REGION" --query 'taskDefinition' \
     > "$WORK_DIR/task-definition.json"
 
+  # `any` folds every secret into ONE boolean. The previous filter emitted one
+  # per secret and `jq -e` judged only the last, so a definition that already
+  # carried the secret anywhere but last got it appended again, and ECS refused
+  # the duplicate — every website-api deploy failed from 2026-09-14.
   if ! jq -e --arg name "INTERCOM_MESSENGER_SECRET" \
-    '.containerDefinitions[] | (.secrets // [])[]? | .name == $name' \
+    'any(.containerDefinitions[] | (.secrets // [])[]?; .name == $name)' \
     "$WORK_DIR/task-definition.json" >/dev/null; then
     # The ARN is spelled out rather than read back: the deploy role may WRITE
     # /oxy/* (the sync step above just put this parameter there) but not read
