@@ -1,52 +1,200 @@
 ---
 title: Tools
-description: The categories of tools the Oxy MCP server exposes, who can call them, and how results and errors come back.
+description: Every tool the Oxy MCP server exposes, who can call it, and how inputs, results, errors, retries and previews work.
 order: 2
 ---
 
 # Tools
 
-The Oxy MCP server's tools are declared once in the server and published to Oxy as the website's capability catalog. Your MCP client receives the current list, with each tool's description and input schema, when it connects — that list is always the authoritative reference.
+The Oxy MCP server's tools are declared once in the server and published to Oxy as the website's capability catalog. Your MCP client receives the current list, with each tool's description and input and output schemas, when it connects. The reference below is generated from that same catalog.
 
-{/* TOOL_REFERENCE */}
-
-## Categories
-
-Tools cover these areas of the website:
-
-| Category | What it covers |
-|---|---|
-| Newsroom | Posts, search and cover images |
-| Pages and site chrome | Marketing pages, hero, navigation and footer |
-| Products and categories | The products and technologies catalog |
-| Academy | Courses and resources |
-| Help Center | Help articles |
-| Careers and team | Jobs and team members |
-| Pricing and testimonials | Pricing plans and testimonials |
-| Changelog | Changelog entries and the GitHub repositories they sync from |
-| Media | The media library and image uploads |
-| Localization | Locales and translations |
-| Settings | Site-wide settings |
-| Referrals | Referral codes |
+Call `describe_access` first: it tells you whether the connected account is a website admin, which tools it can use, and which options each one takes.
 
 ## Access classes
 
-Every tool belongs to one of three classes:
-
 | Class | Scope | Who can call it |
 |---|---|---|
-| Public read | `website.read` | Any Oxy account. Non-admins get the site's public data; admins get the full data. |
-| Admin read | `website.read` | Website admins only — data with no public equivalent, such as drafts, media, translations, referrals and tracked repositories. |
-| Write | `website.write` | Website admins only. |
+| Read | `website.read` | Any Oxy account. Non-admins get exactly what the public site serves (published content only), through the site's public API. |
+| Read (admin) | `website.read` | Website admins only — data with no public equivalent, such as the media library, translations, referrals and tracked repositories. |
+| Write (admin) | `website.write` | Website admins only. |
 
-A non-admin's public read is answered from the site's public API. A filter that API does not support is refused with an error rather than ignored. See [Authentication](/developers/docs/mcp/authentication) for the full rules.
+A filter a non-admin cannot use (drafts, inactive listings, `featured: false`, admin-only filters) is refused with `permission_denied` rather than ignored, so a result never looks complete when it is not. See [Authentication](/developers/docs/mcp/authentication) for the full rules.
 
 ## Inputs
 
-Inputs are validated against each tool's schema before anything runs, so a call with the wrong shape is rejected without touching any data. Identifiers are 24-character hexadecimal `_id` strings.
+Inputs are validated before anything runs, so a call with the wrong shape changes nothing. Identifiers are 24-character hexadecimal `_id` strings; slugs are lower-case words joined by dashes; dates are ISO dates; links are a site path starting with `/` or an `http(s)` URL. Lists take `page` (from 1) and `limit` (1–100, default 20).
 
-## Results and errors
+- **`locale`** — reads that take it return content in that locale, with its translations applied, exactly as the site's localized pages do. A locale the site does not serve is an error, not a silent fallback.
+- **`expectedUpdatedAt`** — pass the `updatedAt` you read. If someone changed the record since, nothing is written and the error `precondition_failed` carries the current `updatedAt`.
+- **`dryRun`** — deletes and whole-list replacements report exactly what they would do (the record, the translations or references it would take with it, the list diff) without writing.
+- **`idempotencyKey`** — every write accepts one. Retrying with the same key and the same input returns the first result without writing again, for 24 hours, even if the retry reaches another server; the same key with different input is refused with `idempotency_conflict`.
 
-A successful call returns a text content block whose body is JSON.
+## Results
 
-A failed call returns a tool result with `isError: true`, a stable error code and a short, human-readable message — for example, a tool that is only available to website admins, a refused filter, or an item that was not found. Errors never contain stack traces or internal details, so they are safe to show to the person using the client.
+A successful call returns JSON as text and as structured content. A list is `{ items }` or a paginated envelope such as `{ posts, total, page, pages }`; admins and non-admins get the same shape. Listings carry summaries without full article bodies unless you ask for `view: "full"`.
+
+## Errors
+
+A failed call returns `isError: true` with an `error` object: a stable `code`, a human-readable `message`, whether it is `retryable`, and sometimes `details` (for example the fields that failed validation, or the references that stop a delete). An unexpected failure carries a `reference` to quote instead of internal details — errors never contain stack traces, SQL or credentials.
+
+| Code | Meaning |
+|---|---|
+| `invalid_request` | The input is not valid for this tool |
+| `not_found` | The record does not exist, or is not visible to this account |
+| `permission_denied` | This account cannot use this tool or filter |
+| `conflict` | A unique value (such as a slug) is taken, or the record is in use |
+| `idempotency_conflict` | The idempotency key was used with different input |
+| `precondition_failed` | The record changed since the `expectedUpdatedAt` you sent |
+| `request_too_large` | A file or payload is over its limit |
+| `rate_limited` | Too many requests; retry later |
+| `service_unavailable` | A dependency (such as a remote download) failed; retry later |
+| `internal_error` | Unexpected failure; retry, and quote the reference if it persists |
+
+{/* TOOL_REFERENCE:START — generated by server/scripts/generate-mcp-tool-reference.ts; do not edit */}
+
+## Discovery and status
+
+| Tool | Access | Options | What it does |
+|---|---|---|---|
+| `describe_access` | Read (any account) | — | Describe what this connection can do: whether the acting account is a website admin, the scopes granted, and every tool grouped by domain with whether it is available to this account, whether it writes, whether it accepts an idempotency key, whether a plain repeat is safe, how to undo it, and the input limits. Call this first instead of discovering permissions by trial and error. |
+| `get_mcp_status` | Read (any account) | — | Report whether the MCP service is healthy on the task answering: database readiness, capability catalog registration with Oxy (state, version, hash, last error) and the configured authorization server. Contains no secrets. |
+
+## Pages, navigation, hero and settings
+
+| Tool | Access | Options | What it does |
+|---|---|---|---|
+| `list_pages` | Read (admin) | — | List the CMS pages: _id, slug and title. |
+| `get_page` | Read | `locale` | Get a CMS page by slug, optionally in another locale. |
+| `upsert_page` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Create a page, or update the page with this slug. Only the fields you pass are written on an update. Pass expectedUpdatedAt when editing an existing page to refuse the write if it changed since you read it. |
+| `get_navigation` | Read | `locale` | Get the navigation dropdowns, in display order, optionally in another locale. |
+| `get_footer` | Read | — | Get the legacy footer snapshot. The live footer is code, not CMS content, so there is intentionally no tool to edit it. |
+| `get_hero` | Read | `locale` | Get the homepage hero: title and background video/poster (media fields resolved). Before the hero has ever been edited this returns the shipped defaults with `_id: null`; reading never creates the row. |
+| `update_hero` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update the homepage hero. Pass any subset of: title (supports newlines) and the background video/poster fields (a Media _id, or a static path such as "/images/landing/hero-panel.webm"; an empty string clears it). Only provided fields change. |
+| `get_settings` | Read | `locale` | Get the site settings (title, description, OG image resolved, banner), optionally in another locale. |
+| `update_settings` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update site settings. Only the fields you pass change; `banner` is replaced as a whole. |
+
+## Newsroom
+
+| Tool | Access | Options | What it does |
+|---|---|---|---|
+| `list_posts` | Read | `locale` | List newsroom posts, newest first, with filters and pagination. Returns \{ posts, total, page, pages \}; posts are summaries unless view is "full". |
+| `search_posts` | Read | `locale` | Search newsroom posts by title or summary text. Same result shape and filters as list_posts. |
+| `get_post` | Read | `locale` | Get one newsroom post by slug: full content, cover and OG images resolved, products expanded. Readers only see published posts. |
+| `get_post_with_media` | Read | `locale` | Deprecated alias of get_post, kept for existing clients; use get_post. |
+| `create_post` | Write (admin) | `idempotencyKey` | Create a newsroom post. It is published immediately unless status is "draft" — send status deliberately. If slug is omitted it is generated from the title (a numeric suffix is added if taken); an explicit slug that is taken is refused. `oxyUserId` sets the editorial author and defaults to the acting account, which is also who the change is attributed to. |
+| `update_post` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update a newsroom post by slug. Only the fields you pass change. Pass expectedUpdatedAt (from get_post) to refuse the write if someone changed the post since. |
+| `delete_post` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Permanently delete a newsroom post and its translations. dryRun: true reports the post and how many translations would go, without deleting. |
+
+## Academy and Help Center
+
+| Tool | Access | Options | What it does |
+|---|---|---|---|
+| `list_courses` | Read | `locale` | List Academy courses: order ascending, then newest. Returns \{ courses, total, page, pages \}. Readers always get published entries. |
+| `get_course` | Read | `locale` | Get one Academy course by slug, cover image and category resolved. Readers only see published entries. |
+| `create_course` | Write (admin) | `idempotencyKey` | Create a Academy course. Published immediately unless status is "draft". If slug is omitted it is generated from the title (a numeric suffix is added if taken); an explicit slug that is taken is refused. |
+| `update_course` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update a Academy course by slug. Only the fields you pass change. |
+| `delete_course` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Permanently delete a Academy course and its translations. dryRun: true shows what would go. To unpublish, set status: "draft" instead. |
+| `list_resources` | Read | `locale` | List Academy resource (guide, paper, video, tool, template or link)s: order ascending, then newest. Returns \{ resources, total, page, pages \}. Readers always get published entries. |
+| `get_resource` | Read | `locale` | Get one Academy resource (guide, paper, video, tool, template or link) by slug, cover image and category resolved. Readers only see published entries. |
+| `create_resource` | Write (admin) | `idempotencyKey` | Create a Academy resource (guide, paper, video, tool, template or link). Published immediately unless status is "draft". If slug is omitted it is generated from the title (a numeric suffix is added if taken); an explicit slug that is taken is refused. |
+| `update_resource` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update a Academy resource (guide, paper, video, tool, template or link) by slug. Only the fields you pass change. |
+| `delete_resource` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Permanently delete a Academy resource (guide, paper, video, tool, template or link) and its translations. dryRun: true shows what would go. To unpublish, set status: "draft" instead. |
+| `list_help_articles` | Read | `locale` | List Help Center articles: order ascending, then newest. Returns \{ articles, total, page, pages \}. Readers always get published entries. |
+| `get_help_article` | Read | `locale` | Get one Help Center article by slug, cover image and category resolved. Readers only see published entries. |
+| `create_help_article` | Write (admin) | `idempotencyKey` | Create a Help Center article. Published immediately unless status is "draft". If slug is omitted it is generated from the title (a numeric suffix is added if taken); an explicit slug that is taken is refused. |
+| `update_help_article` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update a Help Center article by slug. Only the fields you pass change. |
+| `delete_help_article` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Permanently delete a Help Center article and its translations. dryRun: true shows what would go. To unpublish, set status: "draft" instead. |
+
+## Careers and team
+
+| Tool | Access | Options | What it does |
+|---|---|---|---|
+| `list_jobs` | Read | `locale` | List job listings in display order. Active listings by default; active: false lists every listing, active or not (admins only). |
+| `get_job` | Read | `locale` | Get a job listing by slug. Readers only see active listings. |
+| `create_job` | Write (admin) | `idempotencyKey` | Create a job listing. If slug is omitted it is generated from title + location (a numeric suffix is added if taken); an explicit slug that is taken is refused. |
+| `update_job` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update a job listing by slug. Only the fields you pass change. |
+| `delete_job` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Permanently delete a job listing and its translations. dryRun: true shows what would go. To hide a listing without losing it, set active: false instead. |
+| `list_team_members` | Read | `locale` | List team members in display order, avatars resolved. Active members by default; active: false lists everyone (admins only). |
+| `get_team_member` | Read | `locale` | Get a team member by slug, avatar resolved. |
+| `create_team_member` | Write (admin) | `idempotencyKey` | Create a team member. If slug is omitted it is generated from the name (a numeric suffix is added if taken); an explicit slug that is taken is refused. |
+| `update_team_member` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update a team member by slug. Only the fields you pass change. |
+| `delete_team_member` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Permanently delete a team member and their translations. dryRun: true shows what would go. To hide someone, set active: false instead. |
+
+## Products and categories
+
+| Tool | Access | Options | What it does |
+|---|---|---|---|
+| `list_categories` | Read | `locale` | List categories in display order, optionally one scope. |
+| `get_category` | Read | `locale` | Get a category by slug. |
+| `create_category` | Write (admin) | `idempotencyKey` | Create a category: a reusable grouping label for products, navbar dropdowns and Academy content. |
+| `update_category` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update a category by slug. Only the fields you pass change; the slug is permanent. |
+| `delete_category` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Permanently delete a category. Products and Academy content pointing at it lose their category. dryRun: true counts what points at it. |
+| `list_products` | Read | `locale` | List products, logo and category resolved, filtered by lifecycle, section or surface. `category` is an admin filter. |
+| `get_product` | Read | `locale` | Get a product by productId, logo and category resolved. |
+| `create_product` | Write (admin) | `idempotencyKey` | Create a product. By default it appears on /technologies, /status and the navbar. |
+| `update_product` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update a product by productId. Only the fields you pass change. |
+| `delete_product` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Permanently delete a product. Newsroom posts that mention it stop listing it. dryRun: true shows it and how many posts mention it. To take a product off the site, turn its surfaces off instead. |
+
+## Pricing and testimonials
+
+| Tool | Access | Options | What it does |
+|---|---|---|---|
+| `get_pricing` | Read | `locale` | Get all pricing plans in display order, optionally in another locale. |
+| `replace_pricing` | Write (admin) | `dryRun`, `idempotencyKey` | Replace ALL pricing plans with this list, in one transaction. Pass each plan you keep with its _id and every field you want to keep (read get_pricing first): an omitted field takes its default. Plans left out are deleted with their translations. dryRun: true returns what would be added, removed and changed. An empty list needs confirmEmpty: true. To change one plan, use update_pricing_plan. |
+| `update_pricing_plan` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Change fields of one pricing plan by _id. Only the fields you pass change; everything else, including ctaHref, is kept. |
+| `get_testimonials` | Read | `locale` | Get all testimonials in display order, optionally in another locale. |
+| `replace_testimonials` | Write (admin) | `dryRun`, `idempotencyKey` | Replace ALL testimonials with this list, in one transaction. Pass the ones you keep with their _id; the rest are deleted with their translations. dryRun: true returns what would change. An empty list needs confirmEmpty: true. |
+
+## Changelog and tracked repositories
+
+| Tool | Access | Options | What it does |
+|---|---|---|---|
+| `list_changelog` | Read | `locale` | List changelog entries, newest first. Returns \{ entries, total, page, pages, repos \} where repos are the repositories that have entries. `search` is admin-only. |
+| `create_changelog_entry` | Write (admin) | `idempotencyKey` | Create a manual changelog entry. |
+| `update_changelog_entry` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update a changelog entry by _id. Only the fields you pass change. |
+| `delete_changelog_entry` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Permanently delete a changelog entry by _id. dryRun: true shows the entry without deleting. An entry synced from a GitHub release comes back on the next sync while its repo is active. |
+| `list_tracked_repos` | Read (admin) | — | List the GitHub repos tracked for changelog sync and the feature board, with their sync state. |
+| `add_tracked_repo` | Write (admin) | `idempotencyKey` | Track a GitHub repo. Its releases sync as changelog entries while active; it joins the public feature board only with featureBoard: true. |
+| `update_tracked_repo` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update a tracked repo: display name, default tags, sync switch, feature board and proposals. Turning the feature board off also turns proposals off. |
+| `remove_tracked_repo` | Write (admin) | `dryRun`, `idempotencyKey` | Stop tracking a repo. Its existing changelog entries stay. dryRun: true shows the repo and how many entries it has. |
+| `sync_repo` | Write (admin) | `idempotencyKey` | Fetch new GitHub releases for one active tracked repo now and add them as changelog entries. Returns how many were added. |
+| `sync_all_repos` | Write (admin) | `idempotencyKey` | Fetch new GitHub releases for every active tracked repo now. Waits for the sync to finish. |
+
+## Media
+
+| Tool | Access | Options | What it does |
+|---|---|---|---|
+| `list_media` | Read (admin) | — | List the media library, newest first, with search, type, tag and folder filters. Returns \{ items, total, page, pages \}. |
+| `get_media` | Read | — | Get one media item by _id. |
+| `update_media` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update media metadata: alt text, tags, folder. The stored file does not move. |
+| `delete_media` | Write (admin) | `dryRun`, `idempotencyKey` | Delete a media item and the stored objects only it owns. Media still referenced (a post cover, a product logo, the hero…) is refused with the list of references unless force is true, which clears them. dryRun: true lists the references and the objects that would be deleted or kept. A storage delete that fails is queued and retried; the result says whether cleanup is complete or pending. |
+| `upload_image` | Write (admin) | `idempotencyKey` | Download an image from a URL and add it to the media library. The bytes must be a JPEG, PNG, GIF, WebP or AVIF (checked from the file itself, not the declared type; SVG is refused), at most 25 MiB and 40 megapixels. Identical bytes already in the same folder under the same name are reused instead of uploaded again (`reused: true`). `warnings` reports thumbnails that could not be generated. |
+| `upload_and_set_post_cover` | Write (admin) | `idempotencyKey` | Download an image, add it to the media library and set it as a newsroom post's coverImage, in one step. The post is checked before anything is downloaded; the media row and the post update commit together, and if the post disappears meanwhile nothing is left behind. |
+| `upload_and_set_team_avatar` | Write (admin) | `idempotencyKey` | Download an image, add it to the media library and set it as a team member's avatar, in one step. The member is checked before anything is downloaded; the media row and the member update commit together. |
+| `bulk_upload_post_covers` | Write (admin) | `idempotencyKey` | Set cover images for up to 20 newsroom posts in one call, one post at a time. Every item gets its own status: "ok" (cover set), "unchanged" (the post already had exactly this image), "error" (with a code and message) or "skipped" (not started: the call ran out of time or was cancelled). Re-running the same list is safe: finished items come back "unchanged" and are not uploaded again. |
+
+## Locales and translations
+
+| Tool | Access | Options | What it does |
+|---|---|---|---|
+| `list_locales` | Read | — | List locales in display order. Admins get every locale, enabled or not; readers get the enabled ones the public site serves, each with translation readiness. |
+| `create_locale` | Write (admin) | `idempotencyKey` | Create a locale. isDefault: true moves the default here atomically; if the create fails the previous default is untouched. |
+| `update_locale` | Write (admin) | `idempotencyKey` | Update a locale by code. Only the fields you pass change. isDefault: true moves the default here atomically; the current default cannot be unset or disabled directly — make another locale the default instead. |
+| `delete_locale` | Write (admin) | `dryRun`, `idempotencyKey` | Delete a locale and all its translations, in one transaction. The default locale cannot be deleted. dryRun: true reports how many translations would go. |
+| `list_translation_collections` | Read (any account) | — | List the collections that support translations, with the fields each lets a translation override. |
+| `get_translations` | Read (admin) | — | List the translations of one collection in one locale, ordered by document. Returns \{ translations, total, page, pages \}. |
+| `get_translation` | Read (admin) | — | Get the translation of one document in one locale. includeSource: true adds the source values of the translated fields and the source fields not translated yet, for review. |
+| `upsert_translation` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Write translation overrides for one document in one locale. By default the fields you send are MERGED into the existing overrides, so other translated fields are kept; removeFields drops specific overrides; mode: "replace" sets exactly the fields sent. Only content fields can be translated (list_translation_collections shows which), the document must exist and the locale must not be the default. dryRun: true returns the resulting overrides without saving. |
+| `delete_translation` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Delete the translation of one document in one locale; the document falls back to its default-locale text there. dryRun: true shows the overrides that would go. |
+
+## Referrals
+
+| Tool | Access | Options | What it does |
+|---|---|---|---|
+| `list_referrals` | Read (admin) | — | List referral codes, filtered by program type or status. |
+| `get_referral` | Read (admin) | — | Get a referral by code. |
+| `create_referral` | Write (admin) | `idempotencyKey` | Create a referral code. Defaults to type "user" and status "active". |
+| `update_referral` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update a referral by code. Only the fields you pass change. |
+| `delete_referral` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Permanently delete a referral code and its click/signup counts. To stop a code working, set status "revoked" instead. dryRun: true shows it without deleting. |
+
+{/* TOOL_REFERENCE:END */}

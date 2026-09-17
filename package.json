@@ -27,6 +27,7 @@
     "server": "bun server/index.ts",
     "typecheck:server": "tsc -p tsconfig.server.json",
     "test:server": "bun test --preload ./server/test/setup.ts server/",
+    "generate:mcp-tool-reference": "bun server/scripts/generate-mcp-tool-reference.ts",
     "start:server": "bun server/index.ts",
     "seed": "bun server/seed.ts",
     "seed:homiio-tips": "bun server/seedHomiioTips.ts",

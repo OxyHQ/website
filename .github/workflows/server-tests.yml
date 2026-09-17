@@ -8,6 +8,7 @@ on:
   pull_request:
     paths:
       - 'server/**'
+      - 'src/content/mcp/**'
       - 'package.json'
       - 'bun.lock'
       - 'tsconfig.server.json'

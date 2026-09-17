@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
 import { db } from '../db/postgres.js'
+import { invalidateLocaleCache } from '../middleware/locale.js'
 import type { ToolContext } from '../mcp.js'
 import type { ToolResult } from '../mcp/results.js'
 
@@ -32,6 +33,9 @@ export async function resetDatabase(): Promise<void> {
   if (tables.length > 0) await db.execute(sql.raw(`truncate ${tables.join(', ')} restart identity cascade`))
   storage.reset()
   remote.reset()
+  // The public routes cache the locale list for a few seconds; a wiped database
+  // must not be answered from the previous test's locales.
+  invalidateLocaleCache()
 }
 
 export function data<T = Record<string, unknown>>(result: ToolResult): T {

@@ -58,10 +58,13 @@ export async function localeMiddleware(req: Request, _res: Response, next: NextF
   const { defaultLocale, enabledLocales } = await getLocaleInfo()
   const raw = req.query.locale
   const requested = typeof raw === 'string' ? raw.toLowerCase() : undefined
+  // Codes are stored as written ("pt-BR") and requested in any case: match
+  // without case, then use the stored code, which is what translation rows carry.
+  const matched = requested ? [...enabledLocales].find((code) => code.toLowerCase() === requested) : undefined
 
-  if (requested && enabledLocales.has(requested)) {
-    req.locale = requested
-    req.isDefaultLocale = requested === defaultLocale
+  if (matched) {
+    req.locale = matched
+    req.isDefaultLocale = matched === defaultLocale
   } else {
     req.locale = defaultLocale
     req.isDefaultLocale = true
