@@ -474,6 +474,24 @@ export interface DeleteMediaResult {
   warnings: string[]
 }
 
+/** What `deleteMedia` would do, without doing it. */
+export async function previewMediaDelete(id: string): Promise<Record<string, unknown>> {
+  const [row] = await db.select().from(media).where(eq(media._id, id)).limit(1)
+  if (!row) throw new MediaError('not_found', 'Media not found')
+  const references = await findMediaReferences(row)
+  const { keys, unparseable } = objectKeysOf(row)
+  const shared: string[] = []
+  for (const key of keys) if (await isKeyInUse(key, db, row._id)) shared.push(key)
+  return {
+    deleted: false,
+    dryRun: true,
+    target: { _id: row._id, filename: row.filename, url: row.url, updatedAt: row.updatedAt },
+    references,
+    requiresForce: references.length > 0,
+    storage: { keysToDelete: keys.filter((key) => !shared.includes(key)), sharedKeysKept: shared, unparseableThumbnails: unparseable },
+  }
+}
+
 /**
  * Delete a media row and the objects only it owned.
  *

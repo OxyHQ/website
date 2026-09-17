@@ -17,7 +17,7 @@ const settingsBodySchema = z.object({}).passthrough()
 router.get('/', localeMiddleware, async (req, res) => {
   const [row] = await db.select().from(siteSettings).limit(1)
   const settings = await populateOne(row, { ogImage: media })
-  if (!settings) return res.json({ siteTitle: 'Oxy', siteDescription: '', ogImage: '' })
+  if (!settings) return res.json({ _id: null, siteTitle: 'Oxy', siteDescription: '', ogImage: '', banner: null })
   res.json(await localizeOne(req, 'settings', settings))
 })
 

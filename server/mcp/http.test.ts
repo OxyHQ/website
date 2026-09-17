@@ -3,10 +3,9 @@ import http from 'node:http'
 import type { AddressInfo } from 'node:net'
 import { db } from '../db/postgres.js'
 import { newsroomPosts } from '../db/schema/index.js'
-import { createApp } from '../app.js'
+import { ensureApp } from '../test/app.js'
 import { config } from '../config.js'
 import { invokeTool, oxyService } from '../mcp.js'
-import { disabledMcpCatalogRegistrationStatus } from '../services/mcpCatalogRegistration.js'
 import { countRows, errorCode, reader, resetDatabase } from '../test/helpers.js'
 
 /* The MCP endpoint through the real Express composition: site CORS, the SDK's
@@ -72,17 +71,14 @@ beforeAll(async () => {
   oxyService.getServiceToken = async () => 'service-token'
   oxyService.invalidateServiceToken = () => undefined
 
-  const express = createApp({ catalogRegistrationStatus: () => disabledMcpCatalogRegistrationStatus() })
   // All interfaces, as in production: the public-read bridge calls 127.0.0.1,
   // while `localhost` may resolve to ::1 on the runner.
-  app = express.listen(config.port)
-  await new Promise<void>((resolve) => app.once('listening', resolve))
+  app = await ensureApp()
 })
 
 afterAll(async () => {
-  app.closeAllConnections()
+  app.closeIdleConnections()
   fakeOxy.closeAllConnections()
-  await new Promise<void>((resolve) => app.close(() => resolve()))
   await new Promise<void>((resolve) => fakeOxy.close(() => resolve()))
 })
 

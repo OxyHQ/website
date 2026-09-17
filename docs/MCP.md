@@ -54,9 +54,18 @@ it is acting as.
 - **Public docs** live in `src/content/mcp/`; `scripts/mcp-docs.test.ts` fails
   the build if they describe the retired static-token architecture outside a
   migration section.
-- **Adding a tool** means a `server.tool(...)` in `server/mcp.ts`, a row in
-  `MCP_TOOL_ACCESS` and, for a write, a row in `MCP_WRITE_EFFECTS`. The boot
-  fails if any is missing.
+- **Layout.** `server/mcp.ts` mounts the transport. Tools are declared by domain
+  in `server/mcp/tools/*.ts` (listed in `tools/index.ts`), compiled into the
+  catalog and dispatched by `server/mcp/catalog.ts`; shared input building blocks
+  are `server/mcp/schemas.ts`, write patterns `server/mcp/writes.ts`, locale
+  overlays `server/mcp/localized.ts`, errors `server/mcp/results.ts`. Business
+  rules shared with REST live in `server/services/` (slugs, locales, media,
+  translations, hero, newsroom).
+- **Adding a tool** means a `server.tool(name, description, shape, handler,
+  options)` in its domain file, a row in `MCP_TOOL_ACCESS` and, for a write, a
+  row in `MCP_WRITE_EFFECTS`. The boot fails if any is missing. Then run
+  `bun server/scripts/generate-mcp-tool-reference.ts`: `server/mcp/reference.test.ts`
+  fails while `src/content/mcp/tools.mdx` disagrees with the catalog.
 
 ## Contracts a tool must keep
 
@@ -83,6 +92,27 @@ it is acting as.
   key is harmless. `rollback: 'manual'` must name the real `undo` tool.
   Limitation: `@oxy.so/mcp` maps `idempotency !== 'none'` to MCP's
   `idempotentHint`, which for a create is only true when a key is sent.
+- **One output contract.** A tool declares `outputSchema` (and `output: 'items'`
+  for an array, sent as `{ items }`); admin and reader results are validated
+  against the same schema. Lists take `page` (≥1) and `limit` (1–100, default
+  20); newsroom listings are summaries unless `view: 'full'`.
+- **Reader semantics.** A reader's read goes to the public route. A filter it
+  cannot express (`status`, `featured: false`, `active: false`, admin filters)
+  throws `PublicReadRefused` in `mcpAccess.ts` → `permission_denied`. A tool
+  with `localized: true` takes `locale`; an unknown locale is `invalid_request`
+  on both paths, and admins get the same `applyTranslations` overlay readers do.
+- **Concurrency and previews.** Updates take `expectedUpdatedAt`, checked inside
+  the UPDATE (`writes.ts`, millisecond precision) → `precondition_failed` with
+  the current value. Deletes and whole-list replaces take `dryRun`, which runs
+  the same lookup and precondition and writes nothing; deleting a document also
+  deletes its translations in the same unit of work.
+- **Translations** (`services/translations.ts`): the document must exist, the
+  locale must be configured and not the default, and only content columns can
+  be overridden (identity, state, ordering, references and dates are refused),
+  with the column's type. `upsert_translation` merges by default; `mode:
+  'replace'` and `removeFields` are explicit.
+- **Discovery.** `describe_access` lists every tool with availability for the
+  acting account and its options; `get_mcp_status` reads `/api/mcp/status`.
 - **Reads never write.** `get_hero` returns the shipped defaults (`_id: null`)
   when the table is empty rather than inserting.
 - **Slugs** (`server/services/slugs.ts`): generated from the title when omitted,

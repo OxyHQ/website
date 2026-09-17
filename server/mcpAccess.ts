@@ -57,45 +57,74 @@ function publicRead(publicPath: (input: Record<string, unknown>) => string): Mcp
   return { kind: 'public-read', publicPath }
 }
 
+/** `featured: false` ("only posts that are not featured") has no public equivalent. */
+function refuseNotFeatured(input: Record<string, unknown>): void {
+  if (input.featured === false) {
+    throw new PublicReadRefused('Filtering to entries that are not featured is only available to website admins.')
+  }
+}
+
+/** Public lists hold active rows only; asking for inactive ones must not look like "there are none". */
+function refuseInactive(input: Record<string, unknown>): void {
+  if (input.active === false) {
+    throw new PublicReadRefused('Inactive entries are only visible to website admins.')
+  }
+}
+
+const featuredQuery = (input: Record<string, unknown>) => (input.featured === true ? 'true' : undefined)
+
 export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
+  describe_access: { kind: 'public' },
+  get_mcp_status: { kind: 'public' },
   debug_upload_test: write,
 
   list_pages: adminRead,
-  get_page: publicRead((input) => `/pages/${segment(input.slug)}`),
+  get_page: publicRead((input) => withQuery(`/pages/${segment(input.slug)}`, { locale: input.locale })),
   upsert_page: write,
 
-  get_navigation: publicRead(() => '/navigation'),
+  get_navigation: publicRead((input) => withQuery('/navigation', { locale: input.locale })),
   get_footer: publicRead(() => '/footer'),
-  get_hero: publicRead(() => '/hero'),
+  get_hero: publicRead((input) => withQuery('/hero', { locale: input.locale })),
   update_hero: write,
 
   list_posts: publicRead((input) => {
     refuseDrafts(input)
+    refuseNotFeatured(input)
     return withQuery('/newsroom', {
       category: input.category,
       tag: input.tag,
-      featured: input.featured === true ? 'true' : undefined,
+      featured: featuredQuery(input),
       search: input.search,
+      product: input.product,
+      author: input.author,
+      view: input.view,
+      locale: input.locale,
       limit: input.limit,
       page: input.page,
     })
   }),
-  get_post: publicRead((input) => `/newsroom/${segment(input.slug)}`),
-  get_post_with_media: publicRead((input) => `/newsroom/${segment(input.slug)}`),
-  search_posts: publicRead((input) => withQuery('/newsroom', { search: input.query, limit: input.limit ?? 10 })),
+  get_post: publicRead((input) => withQuery(`/newsroom/${segment(input.slug)}`, { locale: input.locale })),
+  get_post_with_media: publicRead((input) => withQuery(`/newsroom/${segment(input.slug)}`, { locale: input.locale })),
+  search_posts: publicRead((input) => withQuery('/newsroom', {
+    search: input.query,
+    view: input.view,
+    locale: input.locale,
+    limit: input.limit,
+    page: input.page,
+  })),
   create_post: write,
   update_post: write,
   delete_post: write,
 
-  get_pricing: publicRead(() => '/pricing'),
+  get_pricing: publicRead((input) => withQuery('/pricing', { locale: input.locale })),
   replace_pricing: write,
   update_pricing_plan: write,
-  get_testimonials: publicRead(() => '/testimonials'),
+  get_testimonials: publicRead((input) => withQuery('/testimonials', { locale: input.locale })),
   replace_testimonials: write,
 
   list_changelog: publicRead((input) => {
     refuseFilters(input, ['search'])
-    return withQuery('/changelog', { repo: input.repo, limit: input.limit, page: input.page })
+    return withQuery('/changelog', { repo: input.repo, locale: input.locale, limit: input.limit, page: input.page })
   }),
   create_changelog_entry: write,
   update_changelog_entry: write,
@@ -108,14 +137,20 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
   sync_repo: write,
   sync_all_repos: write,
 
-  list_jobs: publicRead(() => '/jobs'),
-  get_job: publicRead((input) => `/jobs/${segment(input.slug)}`),
+  list_jobs: publicRead((input) => {
+    refuseInactive(input)
+    return withQuery('/jobs', { locale: input.locale })
+  }),
+  get_job: publicRead((input) => withQuery(`/jobs/${segment(input.slug)}`, { locale: input.locale })),
   create_job: write,
   update_job: write,
   delete_job: write,
 
-  list_team_members: publicRead(() => '/team'),
-  get_team_member: publicRead((input) => `/team/${segment(input.slug)}`),
+  list_team_members: publicRead((input) => {
+    refuseInactive(input)
+    return withQuery('/team', { locale: input.locale })
+  }),
+  get_team_member: publicRead((input) => withQuery(`/team/${segment(input.slug)}`, { locale: input.locale })),
   create_team_member: write,
   update_team_member: write,
   delete_team_member: write,
@@ -125,7 +160,7 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
   update_media: write,
   delete_media: write,
 
-  get_settings: publicRead(() => '/settings'),
+  get_settings: publicRead((input) => withQuery('/settings', { locale: input.locale })),
   update_settings: write,
 
   list_locales: publicRead(() => '/locales'),
@@ -144,65 +179,75 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
   upload_and_set_team_avatar: write,
   bulk_upload_post_covers: write,
 
-  list_categories: publicRead((input) => withQuery('/categories', { scope: input.scope })),
-  get_category: publicRead((input) => `/categories/${segment(input.slug)}`),
+  list_categories: publicRead((input) => withQuery('/categories', { scope: input.scope, locale: input.locale })),
+  get_category: publicRead((input) => withQuery(`/categories/${segment(input.slug)}`, { locale: input.locale })),
   create_category: write,
   update_category: write,
   delete_category: write,
 
-  list_products: publicRead((input) => withQuery('/products', {
-    lifecycle: input.lifecycle,
-    section: input.section,
-    surface: input.surface,
-  })),
-  get_product: publicRead((input) => `/products/${segment(input.productId)}`),
+  list_products: publicRead((input) => {
+    refuseFilters(input, ['category'])
+    return withQuery('/products', {
+      lifecycle: input.lifecycle,
+      section: input.section,
+      surface: input.surface,
+      locale: input.locale,
+    })
+  }),
+  get_product: publicRead((input) => withQuery(`/products/${segment(input.productId)}`, { locale: input.locale })),
   create_product: write,
   update_product: write,
   delete_product: write,
 
   list_courses: publicRead((input) => {
     refuseDrafts(input)
+    refuseNotFeatured(input)
     refuseFilters(input, ['level'])
     return withQuery('/courses', {
       category: input.category,
       tag: input.tag,
-      featured: input.featured === true ? 'true' : undefined,
+      featured: featuredQuery(input),
+      locale: input.locale,
       limit: input.limit,
       page: input.page,
     })
   }),
-  get_course: publicRead((input) => `/courses/${segment(input.slug)}`),
+  get_course: publicRead((input) => withQuery(`/courses/${segment(input.slug)}`, { locale: input.locale })),
   create_course: write,
   update_course: write,
   delete_course: write,
 
   list_resources: publicRead((input) => {
     refuseDrafts(input)
+    refuseNotFeatured(input)
     return withQuery('/resources', {
       category: input.category,
       tag: input.tag,
       type: input.type,
-      featured: input.featured === true ? 'true' : undefined,
+      featured: featuredQuery(input),
+      locale: input.locale,
       limit: input.limit,
       page: input.page,
     })
   }),
-  get_resource: publicRead((input) => `/resources/${segment(input.slug)}`),
+  get_resource: publicRead((input) => withQuery(`/resources/${segment(input.slug)}`, { locale: input.locale })),
   create_resource: write,
   update_resource: write,
   delete_resource: write,
 
   list_help_articles: publicRead((input) => {
     refuseDrafts(input)
+    refuseNotFeatured(input)
     return withQuery('/help', {
       category: input.category,
       tag: input.tag,
-      featured: input.featured === true ? 'true' : undefined,
+      featured: featuredQuery(input),
+      locale: input.locale,
       limit: input.limit,
       page: input.page,
     })
   }),
-  get_help_article: publicRead((input) => `/help/${segment(input.slug)}`),
+  get_help_article: publicRead((input) => withQuery(`/help/${segment(input.slug)}`, { locale: input.locale })),
   create_help_article: write,
   update_help_article: write,
   delete_help_article: write,
