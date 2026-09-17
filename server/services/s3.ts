@@ -32,6 +32,42 @@ function extFromMime(contentType: string): string {
 }
 
 /**
+ * The logical key an upload of these bytes under this name would get.
+ *
+ * Content-addressed (an md5 prefix of the bytes), so the same file uploaded
+ * twice to the same folder under the same name lands on the same key — which
+ * is why a key can be shared by more than one media row, and why nothing may
+ * delete an object without first checking that no other row still uses it.
+ */
+export function buildObjectKey(
+  buffer: Buffer,
+  originalName: string,
+  contentType: string,
+  folder = 'oxy-website/images',
+): string {
+  const urlExt = path.extname(originalName)
+  const ext = urlExt || extFromMime(contentType) || '.bin'
+  const hash = crypto.createHash('md5').update(buffer).digest('hex').slice(0, 8)
+  const baseName = urlExt ? path.basename(originalName, urlExt) : originalName
+  const safeName = (baseName.replace(/[^a-z0-9_-]/gi, '-').slice(0, 60)) || 'image'
+  return `${folder}/${safeName}-${hash}${ext}`
+}
+
+/** The public CDN URL for a logical key. */
+export function publicUrlForKey(key: string): string {
+  return `${config.s3.cdnBaseUrl}/${key}`
+}
+
+/** The logical key behind a stored CDN URL, or `null` when the URL is not parseable. */
+export function keyFromPublicUrl(url: string): string | null {
+  try {
+    return new URL(url).pathname.slice(1) || null
+  } catch {
+    return null
+  }
+}
+
+/**
  * Upload a buffer to object storage. Returns the public CDN URL.
  *
  * The logical key (`folder/file`) is what callers persist and pass back to
@@ -44,12 +80,7 @@ export async function uploadToSpaces(
   contentType: string,
   folder = 'oxy-website/images',
 ): Promise<string> {
-  const urlExt = path.extname(originalName)
-  const ext = urlExt || extFromMime(contentType) || '.bin'
-  const hash = crypto.createHash('md5').update(buffer).digest('hex').slice(0, 8)
-  const baseName = urlExt ? path.basename(originalName, urlExt) : originalName
-  const safeName = (baseName.replace(/[^a-z0-9_-]/gi, '-').slice(0, 60)) || 'image'
-  const key = `${folder}/${safeName}-${hash}${ext}`
+  const key = buildObjectKey(buffer, originalName, contentType, folder)
 
   await s3.send(new PutObjectCommand({
     Bucket: config.s3.bucket,
@@ -58,7 +89,7 @@ export async function uploadToSpaces(
     ContentType: contentType,
   }))
 
-  return `${config.s3.cdnBaseUrl}/${key}`
+  return publicUrlForKey(key)
 }
 
 /**

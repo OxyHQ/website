@@ -283,3 +283,30 @@ export const salesInquiries = pgTable(
   },
   (table) => [uniqueIndex('sales_inquiries_idempotency_idx').on(table.idempotencyKey)],
 )
+
+/**
+ * Idempotency records for MCP writes (issue #108, F07). One row per
+ * (acting account, tool, key): the first call with a key commits its writes and
+ * this row in ONE transaction, so a retry — on this task or another — either
+ * finds the row and replays the stored result, or finds nothing because the
+ * original never committed. The key itself is stored only as a hash.
+ */
+export const mcpIdempotencyKeys = pgTable(
+  'mcp_idempotency_keys',
+  {
+    _id: objectId(),
+    accountId: text().notNull(),
+    tool: text().notNull(),
+    keyHash: text().notNull(),
+    /** sha256 of the canonical input without the key: same key, different input is a conflict. */
+    requestHash: text().notNull(),
+    /** The tool result exactly as first returned. */
+    result: jsonb().$type<Record<string, unknown>>().notNull(),
+    expiresAt: timestamp({ withTimezone: true }).notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex('mcp_idempotency_keys_scope_idx').on(table.accountId, table.tool, table.keyHash),
+    index('mcp_idempotency_keys_expires_idx').on(table.expiresAt),
+  ],
+)

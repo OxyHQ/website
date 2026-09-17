@@ -2,7 +2,6 @@ import express from 'express'
 import { and, asc, count, desc, eq, ilike, like, not, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
 import { OxyServices } from '@oxy.so/core'
-import { safeFetch, UpstreamError } from '@oxy.so/core/server'
 import { appCapabilityCatalogSchema, type AppCapabilityCatalog, type CatalogTool } from '@oxy.so/contracts'
 import {
   createCatalogMcpHttpService,
@@ -12,7 +11,9 @@ import {
   type CatalogToolResult,
 } from '@oxy.so/mcp'
 import { config } from './config.js'
-import { isIrreversible, MCP_TOOL_ACCESS, PublicReadRefused, type McpToolAccess } from './mcpAccess.js'
+import { effectsFor, MCP_TOOL_ACCESS, PublicReadRefused, type McpToolAccess } from './mcpAccess.js'
+import { conflict, errorOf, invalid, notFound, ok, toolError, type ToolResult } from './mcp/results.js'
+import { idempotencyKeyInput, withIdempotency } from './mcp/idempotency.js'
 
 // Models
 import type { PgTable } from 'drizzle-orm/pg-core'
@@ -42,74 +43,38 @@ import {
   trackedRepos,
   translations,
 } from './db/schema/index.js'
-import {
-  DEFAULT_HERO_BG_MP4,
-  DEFAULT_HERO_BG_WEBM,
-  DEFAULT_HERO_POSTER,
-  DEFAULT_HERO_TITLE,
-} from './constants/hero.js'
 import { syncAllRepos, syncSingleRepo } from './services/githubSync.js'
-import { deleteFromSpaces, uploadToSpaces } from './services/s3.js'
-import { processImage } from './services/thumbnails.js'
+import { deleteFromSpaces, keyFromPublicUrl, uploadToSpaces } from './services/s3.js'
+import { downloadRemote } from './services/remoteDownload.js'
+import { deleteMedia, ingestImage, MEDIA_FOLDER_PATTERN, type MediaRow } from './services/media.js'
+import { createLocale, deleteLocale, updateLocale } from './services/locales.js'
+import { insertWithSlug, slugBase, SLUG_PATTERN, MAX_SLUG_LENGTH } from './services/slugs.js'
+import { HERO_MEDIA_FIELDS, readHero, withHeroMedia } from './services/hero.js'
 import { heroUpdateRawShape, heroUpdateSchema, type HeroUpdate } from './validation/hero.js'
 import { TRANSLATABLE_COLLECTIONS } from './constants/translations.js'
 import { isNewsroomThemePreset, newsroomThemeForSlug } from './constants/newsroomThemes.js'
-
-// ── SSRF-safe URL download helper ────────────────────────────────────────────
-
-const MAX_DOWNLOAD_BYTES = 25 * 1024 * 1024 // 25 MB
-
-async function downloadUrl(url: string, maxBytes = MAX_DOWNLOAD_BYTES): Promise<{ buffer: Buffer; contentType: string }> {
-  const result = await safeFetch(url)
-  if (result.status < 200 || result.status >= 300) {
-    result.response.destroy()
-    throw new UpstreamError(`Upstream returned ${result.status}`)
-  }
-  const rawContentType = result.headers['content-type']
-  const contentType = Array.isArray(rawContentType)
-    ? rawContentType[0] ?? 'application/octet-stream'
-    : rawContentType ?? 'application/octet-stream'
-
-  return new Promise<{ buffer: Buffer; contentType: string }>((resolve, reject) => {
-    const chunks: Buffer[] = []
-    let totalBytes = 0
-
-    result.response.on('data', (chunk: Buffer) => {
-      totalBytes += chunk.length
-      if (totalBytes > maxBytes) {
-        result.response.destroy()
-        reject(new UpstreamError(`Response exceeds ${maxBytes} byte limit`))
-        return
-      }
-      chunks.push(chunk)
-    })
-
-    result.response.on('end', () => {
-      resolve({ buffer: Buffer.concat(chunks), contentType })
-    })
-
-    result.response.on('error', (err: Error) => {
-      reject(new UpstreamError(`Stream error: ${err.message}`))
-    })
-  })
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 
 // ── Tool registration ───────────────────────────────────────────────────────
 
 type ToolShape = Record<string, z.ZodType>
 
-interface ToolResult {
-  content: { type: 'text'; text: string }[]
-  isError?: true
+/**
+ * Who is acting and on which request. `actorId` is the connection's active Oxy
+ * account as Oxy reported it on introspection — never a value from the tool
+ * input — so it is what audit fields record. Editorial fields such as a post's
+ * author stay separate and may name someone else.
+ */
+export interface ToolContext {
+  actorId: string
+  signal?: AbortSignal
+  requestId?: string | number
 }
 
 interface ToolDefinition {
   name: string
   description: string
   shape: ToolShape
-  handler: (args: Record<string, unknown>) => Promise<ToolResult>
+  handler: (args: Record<string, unknown>, context: ToolContext) => Promise<ToolResult>
 }
 
 /**
@@ -121,8 +86,19 @@ interface ToolRegistrar {
     name: string,
     description: string,
     shape: Shape,
-    handler: (args: z.infer<z.ZodObject<Shape>>) => Promise<ToolResult>,
+    handler: (args: z.infer<z.ZodObject<Shape>>, context: ToolContext) => Promise<ToolResult>,
   ): void
+}
+
+/**
+ * Maintenance-only tools, absent from the catalog unless switched on for a
+ * deploy. They still need an access policy, which the boot check accepts for
+ * a disabled tool.
+ */
+export const OPTIONAL_TOOLS: ReadonlySet<string> = new Set(['debug_upload_test'])
+
+function diagnosticsEnabled(): boolean {
+  return process.env.MCP_ENABLE_DIAGNOSTICS === 'true'
 }
 
 function collectTools(): ToolDefinition[] {
@@ -132,10 +108,14 @@ function collectTools(): ToolDefinition[] {
       if (definitions.some((definition) => definition.name === name)) {
         throw new Error(`Duplicate MCP tool: ${name}`)
       }
+      if (OPTIONAL_TOOLS.has(name) && !diagnosticsEnabled()) return
+      // Every write accepts an idempotency key: that is what the catalog's
+      // `idempotency: 'supported'` promises (see mcp/idempotency.ts).
+      const writes = MCP_TOOL_ACCESS[name]?.kind === 'write'
       definitions.push({
         name,
         description,
-        shape,
+        shape: writes ? { ...shape, idempotencyKey: idempotencyKeyInput.optional() } : shape,
         handler: handler as ToolDefinition['handler'],
       })
     },
@@ -143,59 +123,71 @@ function collectTools(): ToolDefinition[] {
   return definitions
 }
 
-// ── Helper ──────────────────────────────────────────────────────────────────
+// ── Helpers ─────────────────────────────────────────────────────────────────
 
-function ok(data: unknown) {
-  return { content: [{ type: 'text' as const, text: JSON.stringify(data, null, 2) }] }
+/** A slug a caller may pass explicitly: lower-case words joined by single dashes. */
+const slugInput = z.string().min(1).max(MAX_SLUG_LENGTH).regex(SLUG_PATTERN, 'Use lower-case letters, digits and single dashes')
+
+/** Media folder under `oxy-website/`: one lower-case segment. */
+const folderInput = z.string().regex(MEDIA_FOLDER_PATTERN, 'One lower-case segment of letters, digits and dashes, e.g. "newsroom"')
+
+/** Source URL for a download; `safeFetch` still validates every hop. */
+const sourceUrlInput = z.string().url().max(2048).refine((value) => /^https?:\/\//i.test(value), 'Must be an http(s) URL')
+
+function filenameFromUrl(url: string): string | undefined {
+  try {
+    return new URL(url).pathname.split('/').pop() || undefined
+  } catch {
+    return undefined
+  }
 }
 
-function err(e: unknown) {
-  const msg = e instanceof Error ? `${e.message}\n${e.stack}` : String(e)
-  return { content: [{ type: 'text' as const, text: msg }], isError: true as const }
+/** The media fields tools hand back after an upload, without internal storage keys. */
+function mediaSummary(row: MediaRow): Record<string, unknown> {
+  return row as unknown as Record<string, unknown>
 }
 
 function registerTools(server: ToolRegistrar) {
 
 // ── Diagnostics ─────────────────────────────────────────────────────────────
 
-server.tool('debug_upload_test', 'Test each step of the upload pipeline and report what fails. Use this to diagnose upload_image failures.', {
-  url: z.string().describe('URL to test downloading'),
-}, async ({ url }) => {
-  const steps: string[] = []
+server.tool('debug_upload_test', 'Maintenance only (enabled with MCP_ENABLE_DIAGNOSTICS). Downloads a URL, stores it under a diagnostics prefix, writes and removes a media row, and deletes the stored object again, reporting which step failed.', {
+  url: sourceUrlInput.describe('URL to test downloading'),
+}, async ({ url }, context) => {
+  const steps: { step: string; ok: boolean }[] = []
+  let storedKey: string | null = null
+  let mediaId: string | null = null
   try {
-    steps.push('1. Starting fetch...')
-    const { buffer, contentType } = await downloadUrl(url)
-    steps.push(`2. Fetch done: content-type=${contentType}`)
-    steps.push(`3. Buffer: ${buffer.length} bytes`)
-    
-    steps.push('4. Testing S3 upload...')
-    const cdnUrl = await uploadToSpaces(buffer, 'debug-test.jpg', 'image/jpeg', 'oxy-website/debug')
-    steps.push(`5. S3 upload OK: ${cdnUrl}`)
-    
-    steps.push('6. Testing media insert...')
-    const mediaRow = await insertOne(media, {
+    const { buffer } = await downloadRemote(url, { signal: context.signal })
+    steps.push({ step: `download (${buffer.length} bytes)`, ok: true })
+    const cdnUrl = await uploadToSpaces(buffer, 'debug-test.bin', 'application/octet-stream', 'oxy-website/debug')
+    storedKey = keyFromPublicUrl(cdnUrl)
+    steps.push({ step: 'storage upload', ok: true })
+    const [row] = await db.insert(media).values({
       url: cdnUrl, thumbnails: { sm: '', md: '', lg: '' },
-      filename: 'debug-test.jpg', key: new URL(cdnUrl).pathname.slice(1),
-      mimeType: 'image/jpeg', size: buffer.length,
-      alt: '', tags: ['debug'], folder: 'debug', uploadedBy: 'mcp',
-    })
-    steps.push(`7. Media created: ${mediaRow._id}`)
-
-    // Cleanup
-    await db.delete(media).where(eq(media._id, mediaRow._id as string))
-    steps.push('8. Cleanup done')
-    
+      filename: 'debug-test.bin', key: storedKey ?? '',
+      mimeType: 'application/octet-stream', size: buffer.length,
+      alt: '', tags: ['debug'], folder: 'debug', uploadedBy: context.actorId,
+    }).returning({ id: media._id })
+    mediaId = row.id
+    steps.push({ step: 'media insert', ok: true })
     return ok({ success: true, steps })
   } catch (e) {
-    const msg = e instanceof Error ? `${e.message}\n${e.stack}` : String(e)
-    steps.push(`FAILED: ${msg}`)
-    return ok({ success: false, steps })
+    const failure = toolError(e)
+    steps.push({ step: 'failed', ok: false })
+    return { ...failure, structuredContent: { ...failure.structuredContent, steps } }
+  } finally {
+    // Cleanup runs whatever happened above, and its own failure is logged, not
+    // swallowed into a success.
+    if (mediaId) await db.delete(media).where(eq(media._id, mediaId)).catch((e) => console.error('[mcp] debug_upload_test: media cleanup failed', e))
+    if (storedKey) await deleteFromSpaces(storedKey).catch((e) => console.error('[mcp] debug_upload_test: storage cleanup failed', e))
   }
 })
 
 /** `Model.create(values)` became one insert that hands the row back. */
 async function insertOne(table: PgTable, values: Record<string, unknown>): Promise<Record<string, unknown>> {
   const [row] = await db.insert(table).values(values as never).returning()
+  if (!row) throw new Error('Insert returned no row')
   return row as Record<string, unknown>
 }
 
@@ -205,15 +197,15 @@ server.tool('list_pages', 'List all page slugs', {}, async () => {
   try {
     const rows = await db.select({ _id: pages._id, slug: pages.slug, title: pages.title }).from(pages).orderBy(asc(pages.slug), asc(pages._id))
     return ok(rows)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('get_page', 'Get a page by slug', { slug: z.string() }, async ({ slug }) => {
   try {
     const [page] = await db.select().from(pages).where(eq(pages.slug, slug)).limit(1)
-    if (!page) return err('Page not found')
+    if (!page) return toolError(notFound('Page'))
     return ok(page)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 const sectionSchema = z.object({
@@ -239,7 +231,7 @@ server.tool('upsert_page', 'Create or update a page', {
       .onConflictDoUpdate({ target: pages.slug, set: { ...params, updatedAt: new Date() } as never })
       .returning()
     return ok(page)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Navigation ──────────────────────────────────────────────────────────────
@@ -248,7 +240,7 @@ server.tool('get_navigation', 'Get all navigation dropdowns', {}, async () => {
   try {
     const nav = await db.select().from(navigationDropdowns).orderBy(asc(navigationDropdowns.order), asc(navigationDropdowns._id))
     return ok(nav)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Footer ──────────────────────────────────────────────────────────────────
@@ -257,7 +249,7 @@ server.tool('get_footer', 'Get the legacy footer snapshot', {}, async () => {
   try {
     const [footer] = await db.select().from(footers).limit(1)
     return ok(footer ?? { columns: [], socialLinks: [], copyright: '' })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // The live footer is code-owned. The legacy read-only snapshot remains useful
@@ -265,43 +257,10 @@ server.tool('get_footer', 'Get the legacy footer snapshot', {}, async () => {
 
 // ── Hero ────────────────────────────────────────────────────────────────────
 
-/** A hero media field is either a Media `_id` or a static URL. */
-function isMediaId(value: unknown): value is string {
-  return typeof value === 'string' && /^[0-9a-f]{24}$/i.test(value)
-}
-
-/** Resolves the three media fields, leaving static URLs untouched. */
-async function withHeroMedia(hero: Record<string, unknown>): Promise<Record<string, unknown>> {
-  const populated = { ...hero }
-  for (const field of ['backgroundVideoWebm', 'backgroundVideoMp4', 'backgroundPoster'] as const) {
-    const value = populated[field]
-    if (!isMediaId(value)) continue
-    const resolved = await populateOne({ ref: value }, { ref: media })
-    populated[field] = resolved?.ref ?? value
-  }
-  return populated
-}
-
-/** The hero singleton, created with the shipped defaults on first read. */
-async function readHero(): Promise<Record<string, unknown>> {
-  const [row] = await db.select().from(heroContents).limit(1)
-  if (row) return withHeroMedia(row)
-  const [created] = await db
-    .insert(heroContents)
-    .values({
-      title: DEFAULT_HERO_TITLE,
-      backgroundVideoWebm: DEFAULT_HERO_BG_WEBM,
-      backgroundVideoMp4: DEFAULT_HERO_BG_MP4,
-      backgroundPoster: DEFAULT_HERO_POSTER,
-      })
-    .returning()
-  return withHeroMedia(created)
-}
-
-server.tool('get_hero', 'Get the homepage hero singleton: title, background video/poster, and the carousel slot grid that sits below the hero copy. Returns sensible defaults the first time it is called so the site renders identically before any edits.', {}, async () => {
+server.tool('get_hero', 'Get the homepage hero singleton: title and background video/poster. Before the hero has ever been edited this returns the shipped defaults with `_id: null`; reading never creates the row.', {}, async () => {
   try {
-    return ok(await readHero())
-  } catch (e) { return err(e) }
+    return ok(await withHeroMedia(await readHero()))
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_hero', 'Update the homepage hero. Pass any subset of: title (supports newlines), background video/poster (Media _id or static URL like "/images/landing/hero-panel.webm"). Only provided fields are changed.', heroUpdateRawShape, async (params: HeroUpdate) => {
@@ -312,20 +271,19 @@ server.tool('update_hero', 'Update the homepage hero. Pass any subset of: title 
 
     const update: Record<string, unknown> = {}
     if (body.title !== undefined) update.title = body.title
-        // A media field holds either a Media `_id` or a static URL; both are
+    // A media field holds either a Media `_id` or a static URL; both are
     // stored as given and resolved on read.
-    for (const field of ['backgroundVideoWebm', 'backgroundVideoMp4', 'backgroundPoster'] as const) {
+    for (const field of HERO_MEDIA_FIELDS) {
       const value = body[field]
       if (value === undefined) continue
       update[field] = value || null
     }
 
     const hero = (await upsertSingleton(heroContents, update)) as Record<string, unknown> | undefined
-    if (!hero) return err(new Error('Failed to update hero content'))
-    // Selective populate: Mixed fields may hold static URLs that CastError
-    // under a blanket `.populate(...)`.
+    if (!hero) throw new Error('Hero upsert returned no row')
+    // Selective populate: the media fields may hold static URLs, not ids.
     return ok(await withHeroMedia(hero))
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Newsroom ────────────────────────────────────────────────────────────────
@@ -370,7 +328,7 @@ server.tool('list_posts', 'List newsroom posts with optional filtering by catego
     const total = Number(totals?.value ?? 0)
     const posts = await populate(rows, POST_REFS)
     return ok({ posts, total, page, pages: Math.ceil(total / limit) })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('get_post', 'Get a single newsroom post by its URL slug. Returns full post content including markdown body.', {
@@ -379,18 +337,14 @@ server.tool('get_post', 'Get a single newsroom post by its URL slug. Returns ful
   try {
     const [row] = await db.select().from(newsroomPosts).where(eq(newsroomPosts.slug, slug)).limit(1)
     const post = await populateOne(row, POST_REFS)
-    if (!post) return err('Post not found')
+    if (!post) return toolError(notFound('Post'))
     return ok(post)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
-function generateSlug(title: string): string {
-  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-}
-
-server.tool('create_post', 'Create a new newsroom post. If slug is not provided, it is auto-generated from the title.', {
-  title: z.string().describe('Post headline'),
-  slug: z.string().optional().describe('URL slug. Auto-generated from title if omitted. Must be unique and URL-safe.'),
+server.tool('create_post', 'Create a new newsroom post. If slug is omitted it is generated from the title (a numeric suffix is added if taken). An explicit slug that is already taken is refused with a conflict rather than changed. `oxyUserId` sets the editorial author; it defaults to the acting account, which is also what the change is attributed to.', {
+  title: z.string().min(1).describe('Post headline'),
+  slug: slugInput.optional().describe('URL slug. Generated from the title if omitted. An explicit slug must be unused.'),
   resume: z.string().optional().describe('Short summary for cards/listings (1-2 sentences)'),
   description: z.string().optional().describe('Longer description of the post'),
   content: z.string().optional().describe('Full post body in Markdown'),
@@ -408,26 +362,26 @@ server.tool('create_post', 'Create a new newsroom post. If slug is not provided,
   metaTitle: z.string().optional().describe('SEO title override. Falls back to post title if not set.'),
   ogImage: z.string().optional().describe('Media document ID for the Open Graph image. Falls back to coverImage if not set.'),
   publishedAt: z.string().optional().describe('Publication date as ISO string (e.g. "2026-03-20"). Defaults to now.'),
-}, async (params) => {
+}, async (params, context) => {
   try {
-    let slug = params.slug || generateSlug(params.title)
-    // Check uniqueness, append suffix on collision
-    const [existing] = await db.select({ id: newsroomPosts._id }).from(newsroomPosts).where(eq(newsroomPosts.slug, slug)).limit(1)
-    if (existing) {
-      slug = `${slug}-${Date.now().toString(36)}`
-    }
-    const [post] = await db
-      .insert(newsroomPosts)
-      .values({
-        ...params,
-        slug,
-        themePreset: isNewsroomThemePreset(params.themePreset) ? params.themePreset : newsroomThemeForSlug(slug),
-        publishedAt: params.publishedAt ? new Date(params.publishedAt) : new Date(),
-        oxyUserId: params.oxyUserId || 'mcp-admin',
-      } as never)
-      .returning()
+    const post = await insertWithSlug({ explicit: params.slug, base: slugBase(params.title, 'post') }, async (slug) => {
+      const [row] = await db
+        .insert(newsroomPosts)
+        .values({
+          ...params,
+          slug,
+          coverImage: params.coverImage || null,
+          ogImage: params.ogImage || null,
+          themePreset: isNewsroomThemePreset(params.themePreset) ? params.themePreset : newsroomThemeForSlug(slug),
+          publishedAt: params.publishedAt ? new Date(params.publishedAt) : new Date(),
+          oxyUserId: params.oxyUserId || context.actorId,
+        } as never)
+        .returning()
+      return row
+    })
+    auditLog(context, 'create_post', { id: post._id, slug: post.slug })
     return ok(await populateOne(post, POST_REFS))
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_post', 'Update an existing newsroom post by slug. Only the fields you provide will be changed; omitted fields remain unchanged.', {
@@ -463,9 +417,9 @@ server.tool('update_post', 'Update an existing newsroom post by slug. Only the f
       .where(eq(newsroomPosts.slug, slug))
       .returning()
     const post = await populateOne(row, POST_REFS)
-    if (!post) return err('Post not found')
+    if (!post) return toolError(notFound('Post'))
     return ok(post)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('delete_post', 'Permanently delete a newsroom post by slug. This action cannot be undone.', {
@@ -473,9 +427,9 @@ server.tool('delete_post', 'Permanently delete a newsroom post by slug. This act
 }, async ({ slug }) => {
   try {
     const [post] = await db.delete(newsroomPosts).where(eq(newsroomPosts.slug, slug)).returning({ id: newsroomPosts._id })
-    if (!post) return err('Post not found')
+    if (!post) return toolError(notFound('Post'))
     return ok({ deleted: true, slug })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('search_posts', 'Search newsroom posts by title or resume text. Returns posts matching the search query.', {
@@ -493,7 +447,7 @@ server.tool('search_posts', 'Search newsroom posts by title or resume text. Retu
       .orderBy(desc(newsroomPosts.publishedAt), asc(newsroomPosts._id))
       .limit(params.limit ?? 10)
     return ok(posts)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Pricing ─────────────────────────────────────────────────────────────────
@@ -502,30 +456,77 @@ server.tool('get_pricing', 'Get all pricing plans', {}, async () => {
   try {
     const plans = await db.select().from(pricingPlans).orderBy(asc(pricingPlans.order), asc(pricingPlans._id))
     return ok(plans)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
+
+/** A button destination: a site path or an absolute http(s) URL. Empty means no link. */
+const ctaHrefInput = z
+  .string()
+  .max(2048)
+  .refine((value) => value === '' || value.startsWith('/') || /^https?:\/\//i.test(value), 'Use a path starting with "/" or an http(s) URL')
+
+const objectIdInput = z.string().regex(/^[0-9a-f]{24}$/i, 'Must be a 24-character hex _id')
+
+const pricingPlanFields = {
+  name: z.string().min(1).max(120),
+  price: z.object({ monthly: z.number().min(0), annual: z.number().min(0) }),
+  description: z.string().max(2000).optional(),
+  features: z.array(z.string().max(300)).max(50).optional(),
+  cta: z.string().max(80).optional(),
+  ctaHref: ctaHrefInput.optional().describe('Where the plan button goes: "/contact/sales" or "https://…"'),
+  highlighted: z.boolean().optional(),
+  order: z.number().int().optional(),
+}
 
 const pricingPlanSchema = z.object({
-  name: z.string(),
-  price: z.object({ monthly: z.number(), annual: z.number() }),
-  description: z.string().optional(),
-  features: z.array(z.string()).optional(),
-  cta: z.string().optional(),
-  highlighted: z.boolean().optional(),
-  order: z.number().optional(),
+  _id: objectIdInput.optional().describe('Keep an existing plan\'s _id (as returned by get_pricing) so its translations stay attached. Omit for a new plan.'),
+  ...pricingPlanFields,
 })
 
-server.tool('replace_pricing', 'Replace all pricing plans', {
-  plans: z.array(pricingPlanSchema),
-}, async ({ plans }) => {
+/**
+ * Wholesale replacement, for when the list itself changes. Every field the
+ * table has is in the schema — a field the contract omitted was silently reset
+ * to its default on every replace, which is how plan buttons lost their links.
+ */
+server.tool('replace_pricing', 'Replace ALL pricing plans with this list, in one transaction. Pass each existing plan back with its _id and every field you want to keep (get_pricing first): a field you omit takes its default. To change one plan, use update_pricing_plan instead. An empty list deletes every plan and requires confirmEmpty: true.', {
+  plans: z.array(pricingPlanSchema).max(20),
+  confirmEmpty: z.boolean().optional().describe('Required, and must be true, to replace the plans with an empty list'),
+}, async ({ plans, confirmEmpty }, context) => {
   try {
+    if (plans.length === 0 && confirmEmpty !== true) {
+      throw invalid('An empty list would delete every pricing plan; pass confirmEmpty: true if that is intended')
+    }
+    const ids = plans.map((plan) => plan._id).filter(Boolean)
+    if (new Set(ids).size !== ids.length) throw invalid('The same _id appears more than once')
     const result = await db.transaction(async (tx) => {
       await tx.delete(pricingPlans)
       if (plans.length === 0) return []
       return tx.insert(pricingPlans).values(plans as never).returning()
     })
-    return ok(result)
-  } catch (e) { return err(e) }
+    auditLog(context, 'replace_pricing', { count: result.length })
+    return ok({ plans: result })
+  } catch (e) { return toolError(e) }
+})
+
+server.tool('update_pricing_plan', 'Change fields of one pricing plan by _id. Only the fields you pass change; everything else, including ctaHref, is kept.', {
+  id: objectIdInput.describe('The plan _id from get_pricing'),
+  name: pricingPlanFields.name.optional(),
+  price: pricingPlanFields.price.optional(),
+  description: pricingPlanFields.description,
+  features: pricingPlanFields.features,
+  cta: pricingPlanFields.cta,
+  ctaHref: pricingPlanFields.ctaHref,
+  highlighted: pricingPlanFields.highlighted,
+  order: pricingPlanFields.order,
+}, async ({ id, ...patch }, context) => {
+  try {
+    const set = Object.fromEntries(Object.entries(patch).filter(([, value]) => value !== undefined))
+    if (Object.keys(set).length === 0) throw invalid('Pass at least one field to change')
+    const [plan] = await db.update(pricingPlans).set({ ...set, updatedAt: new Date() } as never).where(eq(pricingPlans._id, id)).returning()
+    if (!plan) throw notFound('Pricing plan')
+    auditLog(context, 'update_pricing_plan', { id })
+    return ok(plan)
+  } catch (e) { return toolError(e) }
 })
 
 // ── Testimonials ────────────────────────────────────────────────────────────
@@ -534,10 +535,11 @@ server.tool('get_testimonials', 'Get all testimonials', {}, async () => {
   try {
     const rows = await db.select().from(testimonialsTable).orderBy(asc(testimonialsTable.order), asc(testimonialsTable._id))
     return ok(rows)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 const testimonialSchema = z.object({
+  _id: objectIdInput.optional().describe('Keep an existing testimonial\'s _id so its translations stay attached'),
   quote: z.string(),
   author: z.string(),
   role: z.string().optional(),
@@ -546,17 +548,22 @@ const testimonialSchema = z.object({
   order: z.number().optional(),
 })
 
-server.tool('replace_testimonials', 'Replace all testimonials', {
-  testimonials: z.array(testimonialSchema),
-}, async ({ testimonials }) => {
+server.tool('replace_testimonials', 'Replace ALL testimonials with this list, in one transaction. Pass existing ones back with their _id. An empty list deletes every testimonial and requires confirmEmpty: true.', {
+  testimonials: z.array(testimonialSchema).max(100),
+  confirmEmpty: z.boolean().optional().describe('Required, and must be true, to replace with an empty list'),
+}, async ({ testimonials, confirmEmpty }, context) => {
   try {
+    if (testimonials.length === 0 && confirmEmpty !== true) {
+      throw invalid('An empty list would delete every testimonial; pass confirmEmpty: true if that is intended')
+    }
     const result = await db.transaction(async (tx) => {
       await tx.delete(testimonialsTable)
       if (testimonials.length === 0) return []
       return tx.insert(testimonialsTable).values(testimonials as never).returning()
     })
-    return ok(result)
-  } catch (e) { return err(e) }
+    auditLog(context, 'replace_testimonials', { count: result.length })
+    return ok({ testimonials: result })
+  } catch (e) { return toolError(e) }
 })
 
 // ── Changelog ───────────────────────────────────────────────────────────────
@@ -592,7 +599,7 @@ server.tool('list_changelog', 'List changelog entries with optional repo filter,
     ])
     const total = Number(totals?.value ?? 0)
     return ok({ entries, total, page, pages: Math.ceil(total / limit) })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('create_changelog_entry', 'Create a new manual changelog entry.', {
@@ -606,7 +613,7 @@ server.tool('create_changelog_entry', 'Create a new manual changelog entry.', {
   try {
     const entry = await insertOne(changelogEntries, { ...params, date: new Date(params.date) })
     return ok(entry)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_changelog_entry', 'Update a changelog entry by ID. Only provided fields are changed.', {
@@ -622,9 +629,9 @@ server.tool('update_changelog_entry', 'Update a changelog entry by ID. Only prov
     const patch: Record<string, unknown> = { ...updates }
     if (updates.date) patch.date = new Date(updates.date)
     const entry = (await db.update(changelogEntries).set({ ...patch, updatedAt: new Date() } as never).where(eq(changelogEntries._id, id)).returning())[0]
-    if (!entry) return err('Changelog entry not found')
+    if (!entry) return toolError(notFound('Changelog entry'))
     return ok(entry)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('delete_changelog_entry', 'Permanently delete a changelog entry by ID.', {
@@ -632,9 +639,9 @@ server.tool('delete_changelog_entry', 'Permanently delete a changelog entry by I
 }, async ({ id }) => {
   try {
     const entry = (await db.delete(changelogEntries).where(eq(changelogEntries._id, id)).returning({ id: changelogEntries._id }))[0]
-    if (!entry) return err('Changelog entry not found')
+    if (!entry) return toolError(notFound('Changelog entry'))
     return ok({ deleted: true, id })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Tracked Repos (GitHub Sync) ─────────────────────────────────────────────
@@ -643,7 +650,7 @@ server.tool('list_tracked_repos', 'List GitHub repos tracked for automatic chang
   try {
     const repos = await db.select().from(trackedRepos).orderBy(asc(trackedRepos.displayName), asc(trackedRepos._id))
     return ok(repos)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('add_tracked_repo', 'Add a GitHub repo to track. New releases will be automatically synced as changelog entries, and the repo can additionally be put on the public feature board.', {
@@ -665,7 +672,7 @@ server.tool('add_tracked_repo', 'Add a GitHub repo to track. New releases will b
       acceptsProposals: params.acceptsProposals === true,
     })
     return ok(tracked)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_tracked_repo', 'Update a tracked GitHub repo: its display name, its changelog sync switch, and whether it appears on the feature board or accepts proposals from the website.', {
@@ -684,9 +691,9 @@ server.tool('update_tracked_repo', 'Update a tracked GitHub repo: its display na
     if (update.featureBoard === false) update.acceptsProposals = false
 
     const tracked = (await db.update(trackedRepos).set({ ...update, updatedAt: new Date() } as never).where(eq(trackedRepos._id, id)).returning())[0]
-    if (!tracked) return err('Tracked repo not found')
+    if (!tracked) return toolError(notFound('Tracked repo'))
     return ok(tracked)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('remove_tracked_repo', 'Remove a tracked GitHub repo. Does not delete existing changelog entries from that repo.', {
@@ -694,9 +701,9 @@ server.tool('remove_tracked_repo', 'Remove a tracked GitHub repo. Does not delet
 }, async ({ id }) => {
   try {
     const tracked = (await db.delete(trackedRepos).where(eq(trackedRepos._id, id)).returning({ id: trackedRepos._id }))[0]
-    if (!tracked) return err('Tracked repo not found')
+    if (!tracked) return toolError(notFound('Tracked repo'))
     return ok({ deleted: true, id })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('sync_repo', 'Manually trigger a sync for a single tracked repo. Fetches new GitHub releases and creates changelog entries.', {
@@ -705,14 +712,14 @@ server.tool('sync_repo', 'Manually trigger a sync for a single tracked repo. Fet
   try {
     const count = await syncSingleRepo(id)
     return ok({ synced: count })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('sync_all_repos', 'Manually trigger a sync for all active tracked repos.', {}, async () => {
   try {
     await syncAllRepos()
     return ok({ ok: true, message: 'Sync complete' })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Jobs ────────────────────────────────────────────────────────────────────
@@ -730,7 +737,7 @@ server.tool('list_jobs', 'List job listings on the careers page. By default retu
     const where = params.active !== false ? eq(jobs.active, true) : undefined
     const rows = await db.select().from(jobs).where(where).orderBy(asc(jobs.order), asc(jobs.department), asc(jobs._id))
     return ok(rows)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('get_job', 'Get a single job listing by its URL slug.', {
@@ -738,15 +745,15 @@ server.tool('get_job', 'Get a single job listing by its URL slug.', {
 }, async ({ slug }) => {
   try {
     const job = (await db.select().from(jobs).where(eq(jobs.slug, slug)).limit(1))[0]
-    if (!job) return err('Job not found')
+    if (!job) return toolError(notFound('Job'))
     return ok(job)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
-server.tool('create_job', 'Create a new job listing. Slug is auto-generated from title + location if not provided.', {
-  title: z.string().describe('Job title, e.g. "Senior Frontend Engineer"'),
-  department: z.string().describe('Department, e.g. "Engineering", "Design", "Sales"'),
-  slug: z.string().optional().describe('URL slug. Auto-generated from title + location if omitted.'),
+server.tool('create_job', 'Create a new job listing. If slug is omitted it is generated from title + location (a numeric suffix is added if taken); an explicit slug that is already taken is refused.', {
+  title: z.string().min(1).describe('Job title, e.g. "Senior Frontend Engineer"'),
+  department: z.string().min(1).describe('Department, e.g. "Engineering", "Design", "Sales"'),
+  slug: slugInput.optional().describe('URL slug. Generated from title + location if omitted.'),
   subtitle: z.string().optional().describe('Short tagline for the role'),
   location: z.string().optional().describe('Job location, e.g. "Remote", "New York", "London"'),
   type: z.string().optional().describe('Employment type, e.g. "Full-time", "Part-time", "Contract"'),
@@ -762,11 +769,13 @@ server.tool('create_job', 'Create a new job listing. Slug is auto-generated from
   description: z.array(descriptionBlockSchema).optional().describe('Job description as content blocks (paragraph, heading, or list)'),
   active: z.boolean().optional().describe('Whether the job is visible on the careers page. Defaults to true.'),
   order: z.number().optional().describe('Display order (lower = first). Defaults to 0.'),
-}, async (params) => {
+}, async (params, context) => {
   try {
-    const job = await insertOne(jobs, params)
+    const base = slugBase([params.title, params.location].filter(Boolean).join(' '), 'job')
+    const job = await insertWithSlug({ explicit: params.slug, base }, (slug) => insertOne(jobs, { ...params, slug }))
+    auditLog(context, 'create_job', { id: job._id, slug: job.slug })
     return ok(job)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_job', 'Update an existing job listing by slug. Only provided fields are changed.', {
@@ -791,9 +800,9 @@ server.tool('update_job', 'Update an existing job listing by slug. Only provided
 }, async ({ slug, ...updates }) => {
   try {
     const job = (await db.update(jobs).set({ ...updates, updatedAt: new Date() } as never).where(eq(jobs.slug, slug)).returning())[0]
-    if (!job) return err('Job not found')
+    if (!job) return toolError(notFound('Job'))
     return ok(job)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('delete_job', 'Permanently delete a job listing by slug.', {
@@ -801,9 +810,9 @@ server.tool('delete_job', 'Permanently delete a job listing by slug.', {
 }, async ({ slug }) => {
   try {
     const job = (await db.delete(jobs).where(eq(jobs.slug, slug)).returning({ id: jobs._id }))[0]
-    if (!job) return err('Job not found')
+    if (!job) return toolError(notFound('Job'))
     return ok({ deleted: true, slug })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Team Members ────────────────────────────────────────────────────────────
@@ -816,7 +825,7 @@ server.tool('list_team_members', 'List team members. Returns active members by d
     const rows = await db.select().from(teamMembers).where(where).orderBy(asc(teamMembers.order), asc(teamMembers.name), asc(teamMembers._id))
     const members = await populate(rows, { avatar: media })
     return ok(members)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('get_team_member', 'Get a team member by slug.', {
@@ -825,14 +834,14 @@ server.tool('get_team_member', 'Get a team member by slug.', {
   try {
     const [row] = await db.select().from(teamMembers).where(eq(teamMembers.slug, slug)).limit(1)
     const member = await populateOne(row, { avatar: media })
-    if (!member) return err('Team member not found')
+    if (!member) return toolError(notFound('Team member'))
     return ok(member)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
-server.tool('create_team_member', 'Create a new team member.', {
-  name: z.string().describe('Full name'),
-  slug: z.string().optional().describe('URL slug. Auto-generated from name if omitted.'),
+server.tool('create_team_member', 'Create a new team member. If slug is omitted it is generated from the name (a numeric suffix is added if taken); an explicit slug that is already taken is refused.', {
+  name: z.string().min(1).describe('Full name'),
+  slug: slugInput.optional().describe('URL slug. Generated from the name if omitted.'),
   role: z.string().describe('Job title/role'),
   department: z.string().optional().describe('Department, e.g. "Engineering", "Design"'),
   bio: z.string().optional().describe('Short biography'),
@@ -845,11 +854,12 @@ server.tool('create_team_member', 'Create a new team member.', {
     github: z.string().optional(),
     website: z.string().optional(),
   }).optional().describe('Social media links'),
-}, async (params) => {
+}, async (params, context) => {
   try {
-    const member = await insertOne(teamMembers, params)
+    const member = await insertWithSlug({ explicit: params.slug, base: slugBase(params.name, 'member') }, (slug) => insertOne(teamMembers, { ...params, slug }))
+    auditLog(context, 'create_team_member', { id: member._id, slug: member.slug })
     return ok(member)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_team_member', 'Update a team member by slug.', {
@@ -870,9 +880,9 @@ server.tool('update_team_member', 'Update a team member by slug.', {
 }, async ({ slug, ...updates }) => {
   try {
     const member = (await db.update(teamMembers).set({ ...updates, updatedAt: new Date() } as never).where(eq(teamMembers.slug, slug)).returning())[0]
-    if (!member) return err('Team member not found')
+    if (!member) return toolError(notFound('Team member'))
     return ok(member)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('delete_team_member', 'Delete a team member by slug.', {
@@ -880,9 +890,9 @@ server.tool('delete_team_member', 'Delete a team member by slug.', {
 }, async ({ slug }) => {
   try {
     const member = (await db.delete(teamMembers).where(eq(teamMembers.slug, slug)).returning({ id: teamMembers._id }))[0]
-    if (!member) return err('Team member not found')
+    if (!member) return toolError(notFound('Team member'))
     return ok({ deleted: true, slug })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Media ───────────────────────────────────────────────────────────────────
@@ -922,7 +932,7 @@ server.tool('list_media', 'List media files with optional search and type filter
     ])
     const total = Number(totals?.value ?? 0)
     return ok({ items, total, page, pages: Math.ceil(total / limit) })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('get_media', 'Get a single media item by ID.', {
@@ -930,9 +940,9 @@ server.tool('get_media', 'Get a single media item by ID.', {
 }, async ({ id }) => {
   try {
     const [row] = await db.select().from(media).where(eq(media._id, id)).limit(1)
-    if (!row) return err('Media not found')
+    if (!row) return toolError(notFound('Media'))
     return ok(row)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_media', 'Update media metadata (alt text, tags, folder).', {
@@ -943,36 +953,20 @@ server.tool('update_media', 'Update media metadata (alt text, tags, folder).', {
 }, async ({ id, ...updates }) => {
   try {
     const [row] = await db.update(media).set({ ...updates, updatedAt: new Date() } as never).where(eq(media._id, id)).returning()
-    if (!row) return err('Media not found')
+    if (!row) return toolError(notFound('Media'))
     return ok(row)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
-server.tool('delete_media', 'Delete a media item from S3 and the database.', {
-  id: z.string().describe('The _id of the media item to delete'),
-}, async ({ id }) => {
+server.tool('delete_media', 'Delete a media item and the stored objects only it owns. A media item still referenced (a post cover, a product logo, the hero…) is refused with the list of references unless force is true, which clears those references. A storage delete that fails is queued and retried; the result says whether storage cleanup is complete or pending. An object another media item shares is kept.', {
+  id: objectIdInput.describe('The _id of the media item to delete'),
+  force: z.boolean().optional().describe('Delete even if referenced, clearing the references'),
+}, async ({ id, force }, context) => {
   try {
-    const [row] = await db.select().from(media).where(eq(media._id, id)).limit(1)
-    if (!row) return err('Media not found')
-
-    // Thumbnails are stored as absolute CDN URLs; derive each S3 object key from
-    // the URL path. An unparseable URL has no key to delete, so record it —
-    // silently skipping would orphan the object in the bucket.
-    const keys = [row.key]
-    for (const url of [row.thumbnails?.sm, row.thumbnails?.md, row.thumbnails?.lg]) {
-      if (!url) continue
-      try {
-        const key = new URL(url).pathname.slice(1)
-        if (key) keys.push(key)
-      } catch {
-        console.warn(`[mcp] delete_media: unparseable thumbnail URL for media ${id}, object may be orphaned: ${url}`)
-      }
-    }
-
-    await Promise.allSettled(keys.map(k => deleteFromSpaces(k)))
-    await db.delete(media).where(eq(media._id, id))
-    return ok({ deleted: true, id })
-  } catch (e) { return err(e) }
+    const result = await deleteMedia(id, { force: force === true })
+    auditLog(context, 'delete_media', { id, force: force === true, storage: result.storage.status })
+    return ok(result)
+  } catch (e) { return toolError(e) }
 })
 
 // ── Settings ────────────────────────────────────────────────────────────────
@@ -981,7 +975,7 @@ server.tool('get_settings', 'Get site settings', {}, async () => {
   try {
     const [settings] = await db.select().from(siteSettings).limit(1)
     return ok(settings ?? { siteTitle: 'Oxy', siteDescription: '', ogImage: '', banner: null })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_settings', 'Update site settings', {
@@ -997,7 +991,7 @@ server.tool('update_settings', 'Update site settings', {
   try {
     const settings = await upsertSingleton(siteSettings, params)
     return ok(settings)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Locales ─────────────────────────────────────────────────────────────────
@@ -1006,62 +1000,49 @@ server.tool('list_locales', 'List all locales (both enabled and disabled). Local
   try {
     const rows = await db.select().from(locales).orderBy(asc(locales.order), asc(locales._id))
     return ok(rows)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
-server.tool('create_locale', 'Create a new locale for the site. Translations can then be added for this locale.', {
-  code: z.string().describe('BCP-47 language code, e.g. "en-US", "es-ES", "ca-ES", "fr-FR", "ja-JP"'),
-  slug: z.string().optional().describe('URL slug for this locale. Auto-generated from code if omitted (e.g. "en-us").'),
-  name: z.string().describe('English name of the language, e.g. "Spanish"'),
-  nativeName: z.string().describe('Name in the native language, e.g. "Español"'),
-  isDefault: z.boolean().optional().describe('Set as the default locale. Only one locale can be default.'),
+server.tool('create_locale', 'Create a new locale for the site. Translations can then be added for this locale. Setting isDefault moves the default here atomically; if the create fails, the previous default is untouched.', {
+  code: z.string().min(2).max(35).regex(/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/, 'A BCP-47 code such as "es" or "pt-BR"').describe('BCP-47 language code, e.g. "es", "pt-BR"'),
+  slug: slugInput.optional().describe('URL slug for this locale. Defaults to the code in lower case (e.g. "pt-br").'),
+  name: z.string().min(1).max(80).describe('English name of the language, e.g. "Spanish"'),
+  nativeName: z.string().min(1).max(80).optional().describe('Name in the native language, e.g. "Español". Defaults to name.'),
+  isDefault: z.boolean().optional().describe('Make this the default locale. Exactly one enabled locale is always the default.'),
   enabled: z.boolean().optional().describe('Whether this locale is active on the site. Defaults to true.'),
-  order: z.number().optional().describe('Display order in locale switcher (lower = first)'),
-}, async (params) => {
+  order: z.number().int().optional().describe('Display order in locale switcher (lower = first)'),
+}, async (params, context) => {
   try {
-    if (params.isDefault) {
-      await db.update(locales).set({ isDefault: false })
-    }
-    const locale = await insertOne(locales, params)
+    const locale = await createLocale(params)
+    auditLog(context, 'create_locale', { code: locale.code, isDefault: locale.isDefault })
     return ok(locale)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
-server.tool('update_locale', 'Update a locale by its code. Only provided fields are changed.', {
-  code: z.string().describe('The locale code to update, e.g. "es-ES"'),
-  slug: z.string().optional().describe('URL slug for this locale'),
-  name: z.string().optional().describe('English name'),
-  nativeName: z.string().optional().describe('Native name'),
+server.tool('update_locale', 'Update a locale by its code. Only provided fields are changed. Setting isDefault: true moves the default here atomically; the current default cannot be unset or disabled directly — make another locale the default instead.', {
+  code: z.string().min(1).describe('The locale code to update, e.g. "es"'),
+  slug: slugInput.optional().describe('URL slug for this locale'),
+  name: z.string().min(1).max(80).optional().describe('English name'),
+  nativeName: z.string().min(1).max(80).optional().describe('Native name'),
   isDefault: z.boolean().optional().describe('Set as default locale'),
   enabled: z.boolean().optional().describe('Enable or disable this locale'),
-  order: z.number().optional().describe('Display order'),
-}, async ({ code, ...updates }) => {
+  order: z.number().int().optional().describe('Display order'),
+}, async ({ code, ...updates }, context) => {
   try {
-    if (updates.isDefault) {
-      await db.update(locales).set({ isDefault: false })
-    }
-    const locale = (await db.update(locales).set({ ...updates, updatedAt: new Date() } as never).where(eq(locales.code, code)).returning())[0]
-    if (!locale) return err('Locale not found')
+    const locale = await updateLocale(code, updates)
+    auditLog(context, 'update_locale', { code, isDefault: locale.isDefault })
     return ok(locale)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
-server.tool('delete_locale', 'Delete a locale and all its translations. Cannot delete the default locale.', {
-  code: z.string().describe('The locale code to delete, e.g. "es"'),
-}, async ({ code }) => {
+server.tool('delete_locale', 'Delete a locale and all its translations, in one transaction. The default locale cannot be deleted.', {
+  code: z.string().min(1).describe('The locale code to delete, e.g. "es"'),
+}, async ({ code }, context) => {
   try {
-    const locale = (await db.select().from(locales).where(eq(locales.code, code)).limit(1))[0]
-    if (!locale) return err('Locale not found')
-    if (locale.isDefault) return err('Cannot delete the default locale')
-    // One transaction: a locale row without its translations, or the reverse,
-    // leaves the admin listing content that is already gone.
-    const removed = await db.transaction(async (tx) => {
-      await tx.delete(locales).where(eq(locales.code, code))
-      return tx.delete(translations).where(eq(translations.locale, code)).returning({ id: translations._id })
-    })
-    const deletedCount = removed.length
-    return ok({ deleted: true, code, translationsRemoved: deletedCount })
-  } catch (e) { return err(e) }
+    const result = await deleteLocale(code)
+    auditLog(context, 'delete_locale', result)
+    return ok({ deleted: true, ...result })
+  } catch (e) { return toolError(e) }
 })
 
 // ── Translations ────────────────────────────────────────────────────────────
@@ -1080,7 +1061,7 @@ server.tool('get_translations', 'Get all translations for a collection in a spec
       .from(translations)
       .where(and(eq(translations.collectionName, collection), eq(translations.locale, locale)))
     return ok(rows)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('get_translation', 'Get the translation for a specific document in a collection.', {
@@ -1100,9 +1081,9 @@ server.tool('get_translation', 'Get the translation for a specific document in a
         ),
       )
       .limit(1)
-    if (!translation) return err('Translation not found')
+    if (!translation) return toolError(notFound('Translation'))
     return ok(translation)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('upsert_translation', 'Create or update a translation. The fields object contains key-value overrides that replace the original document fields for the given locale.', {
@@ -1121,7 +1102,7 @@ server.tool('upsert_translation', 'Create or update a translation. The fields ob
       })
       .returning()
     return ok(translation)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('delete_translation', 'Delete a translation for a specific document and locale.', {
@@ -1140,187 +1121,165 @@ server.tool('delete_translation', 'Delete a translation for a specific document 
         ),
       )
       .returning({ id: translations._id })
-    if (!translation) return err('Translation not found')
+    if (!translation) return toolError(notFound('Translation'))
     return ok({ deleted: true })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Upload ──────────────────────────────────────────────────────────────────
 
-server.tool('upload_image', 'Download an image from a URL, upload it to S3, generate thumbnails, and create a Media document. Returns the full Media object.', {
-  url: z.string().describe('Source URL of the image to download'),
-  filename: z.string().optional().describe('Desired filename. Auto-derived from URL if omitted.'),
-  folder: z.string().optional().describe('Subfolder within oxy-website/ (e.g. "newsroom"). Defaults to "images".'),
-  alt: z.string().optional().describe('Alt text for the image'),
-  tags: z.array(z.string()).optional().describe('Tags for organization'),
-}, async (params) => {
+/** Most items one bulk call processes; larger batches are split by the caller and resumed. */
+const MAX_BULK_ITEMS = 20
+/** Wall-clock budget for one bulk call; items not started in time come back as `skipped`. */
+const BULK_TIME_BUDGET_MS = 4 * 60 * 1000
+
+server.tool('upload_image', 'Download an image from a URL and add it to the media library. The bytes must be a JPEG, PNG, GIF, WebP or AVIF (checked from the file itself, not the declared type; SVG is refused), at most 25 MiB and 40 megapixels. Identical bytes already in the same folder under the same name are reused instead of uploaded again (`reused: true`). `warnings` reports thumbnails that could not be generated.', {
+  url: sourceUrlInput.describe('Source URL of the image to download'),
+  filename: z.string().max(120).optional().describe('Desired filename; the extension is set from the detected type. Derived from the URL if omitted.'),
+  folder: folderInput.optional().describe('Folder within the library, e.g. "newsroom". Defaults to "images".'),
+  alt: z.string().max(500).optional().describe('Alt text for the image'),
+  tags: z.array(z.string().max(60)).max(20).optional().describe('Tags for organization'),
+}, async (params, context) => {
   try {
-    const { buffer, contentType } = await downloadUrl(params.url)
-    const filename = params.filename || new URL(params.url).pathname.split('/').pop() || 'image'
-    const subfolder = params.folder || 'images'
-    const folder = `oxy-website/${subfolder}`
-
-    const cdnUrl = await uploadToSpaces(buffer, filename, contentType, folder)
-    const key = new URL(cdnUrl).pathname.slice(1)
-
-    let width: number | undefined
-    let height: number | undefined
-    let thumbnails = { sm: '', md: '', lg: '' }
-    try {
-      const result = await processImage(buffer, filename, contentType, folder)
-      width = result.width
-      height = result.height
-      thumbnails = result.thumbnails
-    } catch {
-      // Thumbnail generation is optional
-    }
-
-    const row = await insertOne(media, {
-      url: cdnUrl, thumbnails, filename, key,
-      mimeType: contentType, size: buffer.length,
-      width, height,
-      alt: params.alt || '',
-      tags: params.tags || [],
-      folder: subfolder,
-      uploadedBy: 'mcp',
+    const { buffer } = await downloadRemote(params.url, { signal: context.signal })
+    const result = await ingestImage({
+      buffer,
+      filename: params.filename ?? filenameFromUrl(params.url),
+      folder: params.folder ?? 'images',
+      alt: params.alt,
+      tags: params.tags,
+      uploadedBy: context.actorId,
     })
-    return ok(row)
-  } catch (e) { return err(e) }
+    auditLog(context, 'upload_image', { mediaId: result.media._id, reused: result.reused })
+    return ok({ ...mediaSummary(result.media), reused: result.reused, warnings: result.warnings })
+  } catch (e) { return toolError(e) }
 })
 
-server.tool('upload_and_set_post_cover', 'Download an image from URL, upload to S3, create Media document, and set it as the coverImage on a newsroom post. All in one step.', {
-  postSlug: z.string().describe('Slug of the post to update'),
-  imageUrl: z.string().describe('Source URL of the image to download'),
-  filename: z.string().optional().describe('Desired filename. Auto-derived from URL if omitted.'),
-  alt: z.string().optional().describe('Alt text for the image'),
-}, async (params) => {
+server.tool('upload_and_set_post_cover', 'Download an image, add it to the media library and set it as a newsroom post\'s coverImage, in one step. The post is checked before anything is downloaded; the media row and the post update commit together, and if the post disappears meanwhile nothing is left behind.', {
+  postSlug: z.string().min(1).describe('Slug of the post to update'),
+  imageUrl: sourceUrlInput.describe('Source URL of the image to download'),
+  filename: z.string().max(120).optional().describe('Desired filename. Derived from the URL if omitted.'),
+  alt: z.string().max(500).optional().describe('Alt text for the image'),
+}, async (params, context) => {
   try {
-    // 1. Download
-    const { buffer, contentType } = await downloadUrl(params.imageUrl)
-    const filename = params.filename || new URL(params.imageUrl).pathname.split('/').pop() || 'cover.jpg'
+    const [target] = await db.select({ id: newsroomPosts._id }).from(newsroomPosts).where(eq(newsroomPosts.slug, params.postSlug)).limit(1)
+    if (!target) throw notFound('Post', { slug: params.postSlug })
 
-    // 2. Upload to S3
-    const cdnUrl = await uploadToSpaces(buffer, filename, contentType, 'oxy-website/newsroom')
-    const key = new URL(cdnUrl).pathname.slice(1)
-
-    // 3. Thumbnails (optional)
-    let width: number | undefined
-    let height: number | undefined
-    let thumbnails = { sm: '', md: '', lg: '' }
-    try {
-      const result = await processImage(buffer, filename, contentType, 'oxy-website/newsroom')
-      width = result.width; height = result.height; thumbnails = result.thumbnails
-    } catch { /* thumbnails are optional */ }
-
-    // 4. Create Media document
-    const [mediaRow] = await db
-      .insert(media)
-      .values({
-        url: cdnUrl, thumbnails, filename, key,
-        mimeType: contentType, size: buffer.length, width, height,
-        alt: params.alt || '', tags: ['newsroom'], folder: 'newsroom',
-        uploadedBy: 'mcp',
-      })
-      .returning()
-
-    // 5. Update the post
-    const [row] = await db
-      .update(newsroomPosts)
-      .set({ coverImage: mediaRow._id, imageAlt: params.alt || '', updatedAt: new Date() })
-      .where(eq(newsroomPosts.slug, params.postSlug))
-      .returning()
-    const post = await populateOne(row, POST_REFS)
-    if (!post) return err(`Post not found: ${params.postSlug}`)
-
-    return ok({ media: mediaRow, post })
-  } catch (e) { return err(e) }
+    const { buffer } = await downloadRemote(params.imageUrl, { signal: context.signal })
+    const result = await ingestImage(
+      { buffer, filename: params.filename ?? filenameFromUrl(params.imageUrl) ?? 'cover', folder: 'newsroom', alt: params.alt, tags: ['newsroom'], uploadedBy: context.actorId },
+      async (tx, mediaRow) => {
+        const [row] = await tx
+          .update(newsroomPosts)
+          .set({ coverImage: mediaRow._id, imageAlt: params.alt || '', updatedAt: new Date() })
+          .where(eq(newsroomPosts._id, target.id))
+          .returning()
+        if (!row) throw notFound('Post', { slug: params.postSlug })
+        return row
+      },
+    )
+    auditLog(context, 'upload_and_set_post_cover', { postId: target.id, mediaId: result.media._id, reused: result.reused })
+    const post = await populateOne(result.attached, POST_REFS)
+    return ok({ media: result.media, post, reused: result.reused, warnings: result.warnings })
+  } catch (e) { return toolError(e) }
 })
 
-server.tool('upload_and_set_team_avatar', 'Download an image, upload to S3, create Media document, and set it as a team member avatar.', {
-  memberSlug: z.string().describe('Slug of the team member to update'),
-  imageUrl: z.string().describe('Source URL of the image to download'),
-  filename: z.string().optional(),
-  alt: z.string().optional(),
-}, async (params) => {
+server.tool('upload_and_set_team_avatar', 'Download an image, add it to the media library and set it as a team member\'s avatar, in one step. The member is checked before anything is downloaded; the media row and the member update commit together.', {
+  memberSlug: z.string().min(1).describe('Slug of the team member to update'),
+  imageUrl: sourceUrlInput.describe('Source URL of the image to download'),
+  filename: z.string().max(120).optional(),
+  alt: z.string().max(500).optional(),
+}, async (params, context) => {
   try {
-    const { buffer, contentType } = await downloadUrl(params.imageUrl)
-    const filename = params.filename || new URL(params.imageUrl).pathname.split('/').pop() || 'avatar.jpg'
+    const [target] = await db.select({ id: teamMembers._id }).from(teamMembers).where(eq(teamMembers.slug, params.memberSlug)).limit(1)
+    if (!target) throw notFound('Team member', { slug: params.memberSlug })
 
-    const cdnUrl = await uploadToSpaces(buffer, filename, contentType, 'oxy-website/team')
-    const key = new URL(cdnUrl).pathname.slice(1)
-
-    let width: number | undefined
-    let height: number | undefined
-    let thumbnails = { sm: '', md: '', lg: '' }
-    try {
-      const result = await processImage(buffer, filename, contentType, 'oxy-website/team')
-      width = result.width; height = result.height; thumbnails = result.thumbnails
-    } catch { /* optional */ }
-
-    const mediaRow = await insertOne(media, {
-      url: cdnUrl, thumbnails, filename, key,
-      mimeType: contentType, size: buffer.length, width, height,
-      alt: params.alt || '', tags: ['team'], folder: 'team',
-      uploadedBy: 'mcp',
-    })
-
-    const [row] = await db
-      .update(teamMembers)
-      .set({ avatar: mediaRow._id as string, updatedAt: new Date() })
-      .where(eq(teamMembers.slug, params.memberSlug))
-      .returning()
-    const member = await populateOne(row, { avatar: media })
-    if (!member) return err(`Team member not found: ${params.memberSlug}`)
-
-    return ok({ media: mediaRow, member })
-  } catch (e) { return err(e) }
+    const { buffer } = await downloadRemote(params.imageUrl, { signal: context.signal })
+    const result = await ingestImage(
+      { buffer, filename: params.filename ?? filenameFromUrl(params.imageUrl) ?? 'avatar', folder: 'team', alt: params.alt, tags: ['team'], uploadedBy: context.actorId },
+      async (tx, mediaRow) => {
+        const [row] = await tx
+          .update(teamMembers)
+          .set({ avatar: mediaRow._id, updatedAt: new Date() })
+          .where(eq(teamMembers._id, target.id))
+          .returning()
+        if (!row) throw notFound('Team member', { slug: params.memberSlug })
+        return row
+      },
+    )
+    auditLog(context, 'upload_and_set_team_avatar', { memberId: target.id, mediaId: result.media._id, reused: result.reused })
+    const member = await populateOne(result.attached, { avatar: media })
+    return ok({ media: result.media, member, reused: result.reused, warnings: result.warnings })
+  } catch (e) { return toolError(e) }
 })
 
-server.tool('bulk_upload_post_covers', 'Upload cover images for multiple posts in one call. Each entry maps a post slug to an image URL.', {
+type BulkItemStatus = 'ok' | 'unchanged' | 'error' | 'skipped'
+
+interface BulkItemResult {
+  slug: string
+  status: BulkItemStatus
+  mediaId?: string
+  reused?: boolean
+  warnings?: string[]
+  error?: { code: string; message: string }
+}
+
+server.tool('bulk_upload_post_covers', `Set cover images for up to ${MAX_BULK_ITEMS} newsroom posts in one call, one post at a time. Every item gets its own status: "ok" (cover set), "unchanged" (the post already had exactly this image), "error" (with a code and message) or "skipped" (not started: the call ran out of time or was cancelled). Re-running the same list is safe: finished items come back "unchanged" and are not uploaded again.`, {
   posts: z.array(z.object({
-    slug: z.string().describe('Post slug'),
-    imageUrl: z.string().describe('Source URL of the cover image'),
-    alt: z.string().optional().describe('Alt text'),
-  })).describe('Array of posts with their cover image URLs'),
-}, async ({ posts }) => {
-  const results: { slug: string; status: string; mediaId?: string; error?: string }[] = []
-  for (const p of posts) {
-    try {
-      const { buffer, contentType } = await downloadUrl(p.imageUrl)
-      const filename = new URL(p.imageUrl).pathname.split('/').pop() || 'cover.jpg'
+    slug: z.string().min(1).describe('Post slug'),
+    imageUrl: sourceUrlInput.describe('Source URL of the cover image'),
+    alt: z.string().max(500).optional().describe('Alt text'),
+  })).min(1).max(MAX_BULK_ITEMS).describe('Posts with their cover image URLs'),
+}, async ({ posts }, context) => {
+  try {
+    const slugs = posts.map((p) => p.slug)
+    if (new Set(slugs).size !== slugs.length) throw invalid('Each post slug may appear only once')
 
-      const cdnUrl = await uploadToSpaces(buffer, filename, contentType, 'oxy-website/newsroom')
-      const key = new URL(cdnUrl).pathname.slice(1)
+    const found = await db
+      .select({ id: newsroomPosts._id, slug: newsroomPosts.slug, coverImage: newsroomPosts.coverImage })
+      .from(newsroomPosts)
+      .where(or(...slugs.map((slug) => eq(newsroomPosts.slug, slug))))
+    const bySlug = new Map(found.map((row) => [row.slug, row]))
+    const startedAt = Date.now()
 
-      let width: number | undefined, height: number | undefined, thumbnails = { sm: '', md: '', lg: '' }
-      try {
-        const r = await processImage(buffer, filename, contentType, 'oxy-website/newsroom')
-        width = r.width
-        height = r.height
-        thumbnails = r.thumbnails
-      } catch {
-        // Thumbnail generation is optional
+    const results: BulkItemResult[] = []
+    for (const item of posts) {
+      if (context.signal?.aborted || Date.now() - startedAt > BULK_TIME_BUDGET_MS) {
+        results.push({ slug: item.slug, status: 'skipped' })
+        continue
       }
-
-      const [mediaRow] = await db
-        .insert(media)
-        .values({
-          url: cdnUrl, thumbnails, filename, key,
-          mimeType: contentType, size: buffer.length, width, height,
-          alt: p.alt || '', tags: ['newsroom'], folder: 'newsroom', uploadedBy: 'mcp',
-        })
-        .returning()
-
-      await db
-        .update(newsroomPosts)
-        .set({ coverImage: mediaRow._id, imageAlt: p.alt || '', updatedAt: new Date() })
-        .where(eq(newsroomPosts.slug, p.slug))
-      results.push({ slug: p.slug, status: 'ok', mediaId: mediaRow._id })
-    } catch (e) {
-      results.push({ slug: p.slug, status: 'error', error: e instanceof Error ? e.message : String(e) })
+      const target = bySlug.get(item.slug)
+      if (!target) {
+        results.push({ slug: item.slug, status: 'error', error: { code: 'not_found', message: 'Post not found' } })
+        continue
+      }
+      try {
+        const { buffer } = await downloadRemote(item.imageUrl, { signal: context.signal })
+        const result = await ingestImage(
+          { buffer, filename: filenameFromUrl(item.imageUrl) ?? 'cover', folder: 'newsroom', alt: item.alt, tags: ['newsroom'], uploadedBy: context.actorId },
+          async (tx, mediaRow) => {
+            const [row] = await tx
+              .update(newsroomPosts)
+              .set({ coverImage: mediaRow._id, imageAlt: item.alt || '', updatedAt: new Date() })
+              .where(eq(newsroomPosts._id, target.id))
+              .returning({ id: newsroomPosts._id })
+            if (!row) throw notFound('Post', { slug: item.slug })
+            return row
+          },
+        )
+        const unchanged = result.reused && target.coverImage === result.media._id
+        results.push({ slug: item.slug, status: unchanged ? 'unchanged' : 'ok', mediaId: result.media._id, reused: result.reused, warnings: result.warnings })
+      } catch (e) {
+        const { error } = toolError(e).structuredContent as { error: { code: string; message: string } }
+        results.push({ slug: item.slug, status: 'error', error: { code: error.code, message: error.message } })
+      }
     }
-  }
-  return ok(results)
+
+    const summary = Object.fromEntries((['ok', 'unchanged', 'error', 'skipped'] as const).map((status) => [status, results.filter((r) => r.status === status).length]))
+    auditLog(context, 'bulk_upload_post_covers', summary)
+    const complete = summary.error === 0 && summary.skipped === 0
+    return ok({ complete, summary, results })
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('get_post_with_media', 'Get a newsroom post with its cover image and OG image fully resolved to URLs.', {
@@ -1329,9 +1288,9 @@ server.tool('get_post_with_media', 'Get a newsroom post with its cover image and
   try {
     const [row] = await db.select().from(newsroomPosts).where(eq(newsroomPosts.slug, slug)).limit(1)
     const post = await populateOne(row, POST_REFS)
-    if (!post) return err('Post not found')
+    if (!post) return toolError(notFound('Post'))
     return ok(post)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Categories ────────────────────────────────────────────────────────────
@@ -1354,7 +1313,7 @@ server.tool('list_categories', 'List all categories. Optionally filter by scope.
       .where(scope ? eq(categories.scope, scope) : undefined)
       .orderBy(asc(categories.order), asc(categories.label), asc(categories._id))
     return ok(rows)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('get_category', 'Get a single category by slug.', {
@@ -1362,18 +1321,18 @@ server.tool('get_category', 'Get a single category by slug.', {
 }, async ({ slug }) => {
   try {
     const doc = (await db.select().from(categories).where(eq(categories.slug, slug)).limit(1))[0]
-    if (!doc) return err('Category not found')
+    if (!doc) return toolError(notFound('Category'))
     return ok(doc)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('create_category', 'Create a new category. Categories are reusable grouping labels referenced by products, navbar dropdowns, etc.', categoryRawShape, async (input) => {
   try {
     const [existing] = await db.select({ id: categories._id }).from(categories).where(eq(categories.slug, input.slug)).limit(1)
-    if (existing) return err(`Category "${input.slug}" already exists`)
+    if (existing) return toolError(conflict(`Category "${input.slug}" already exists`))
     const doc = await insertOne(categories, input)
     return ok(doc)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_category', 'Update an existing category. Only the fields you provide are changed. The slug cannot be changed after creation.', {
@@ -1385,9 +1344,9 @@ server.tool('update_category', 'Update an existing category. Only the fields you
 }, async ({ slug, ...patch }) => {
   try {
     const doc = (await db.update(categories).set({ ...patch, updatedAt: new Date() } as never).where(eq(categories.slug, slug)).returning())[0]
-    if (!doc) return err('Category not found')
+    if (!doc) return toolError(notFound('Category'))
     return ok(doc)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('delete_category', 'Permanently delete a category. Products or nav items still pointing at it will need to be re-assigned.', {
@@ -1395,9 +1354,9 @@ server.tool('delete_category', 'Permanently delete a category. Products or nav i
 }, async ({ slug }) => {
   try {
     const doc = (await db.delete(categories).where(eq(categories.slug, slug)).returning({ id: categories._id }))[0]
-    if (!doc) return err('Category not found')
+    if (!doc) return toolError(notFound('Category'))
     return ok({ deleted: true, slug })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Products ──────────────────────────────────────────────────────────────
@@ -1443,7 +1402,7 @@ server.tool('list_products', 'List every product. Supports filtering by lifecycl
       .where(filters.length > 0 ? and(...filters) : undefined)
       .orderBy(asc(products.lifecycle), asc(products.section), asc(products.order), asc(products._id))
     return ok(await populate(rows, { logo: media }))
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('get_product', 'Get a single product by its productId.', {
@@ -1452,18 +1411,18 @@ server.tool('get_product', 'Get a single product by its productId.', {
   try {
     const [row] = await db.select().from(products).where(eq(products.productId, productId)).limit(1)
     const product = await populateOne(row, { logo: media })
-    if (!product) return err('Product not found')
+    if (!product) return toolError(notFound('Product'))
     return ok(product)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('create_product', 'Create a new product. By default it appears on /technologies, /status, and the ecosystem navbar dropdown.', productRawShape, async (input) => {
   try {
     const [existing] = await db.select({ id: products._id }).from(products).where(eq(products.productId, input.productId)).limit(1)
-    if (existing) return err(`Product "${input.productId}" already exists`)
+    if (existing) return toolError(conflict(`Product "${input.productId}" already exists`))
     const product = await insertOne(products, input)
     return ok(product)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_product', 'Update an existing product. Only the fields you provide are changed.', {
@@ -1497,9 +1456,9 @@ server.tool('update_product', 'Update an existing product. Only the fields you p
       .where(eq(products.productId, productId))
       .returning()
     const product = await populateOne(row, { logo: media })
-    if (!product) return err('Product not found')
+    if (!product) return toolError(notFound('Product'))
     return ok(product)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('delete_product', 'Permanently delete a product. This action cannot be undone.', {
@@ -1507,9 +1466,9 @@ server.tool('delete_product', 'Permanently delete a product. This action cannot 
 }, async ({ productId }) => {
   try {
     const doc = (await db.delete(products).where(eq(products.productId, productId)).returning({ id: products._id }))[0]
-    if (!doc) return err('Product not found')
+    if (!doc) return toolError(notFound('Product'))
     return ok({ deleted: true, productId })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Academy: Courses ────────────────────────────────────────────────────────
@@ -1552,7 +1511,7 @@ server.tool('list_courses', 'List Academy courses with optional filtering by cat
     const total = Number(totals?.value ?? 0)
     const items = await populate(rows, CONTENT_REFS)
     return ok({ courses: items, total, page, pages: Math.ceil(total / limit) })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('get_course', 'Get a single Academy course by its URL slug, including its lessons and populated cover image / category.', {
@@ -1561,14 +1520,14 @@ server.tool('get_course', 'Get a single Academy course by its URL slug, includin
   try {
     const [courseRow] = await db.select().from(courses).where(eq(courses.slug, slug)).limit(1)
     const course = await populateOne(courseRow, CONTENT_REFS)
-    if (!course) return err('Course not found')
+    if (!course) return toolError(notFound('Course'))
     return ok(course)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
-server.tool('create_course', 'Create a new Academy course. Auto-generates the slug from the title if none is provided.', {
+server.tool('create_course', 'Create a new Academy course. If slug is omitted it is generated from the title (a numeric suffix is added if taken); an explicit slug that is already taken is refused.', {
   title: z.string().describe('Course title'),
-  slug: z.string().optional().describe('URL slug. Auto-generated from title if omitted.'),
+  slug: slugInput.optional().describe('URL slug. Generated from the title if omitted.'),
   summary: z.string().optional().describe('Short summary shown on cards (1-2 sentences)'),
   description: z.string().optional().describe('Longer description shown on the detail page (Markdown)'),
   coverImage: z.string().optional().describe('Media document ID for the cover image'),
@@ -1581,22 +1540,25 @@ server.tool('create_course', 'Create a new Academy course. Auto-generates the sl
   status: z.enum(['draft', 'published']).optional().describe('Publication status. Defaults to published.'),
   publishedAt: z.string().optional().describe('Publication date as ISO string'),
   order: z.number().optional().describe('Display order (lower = first)'),
-}, async (params) => {
+}, async (params, context) => {
   try {
-    let slug = params.slug || generateSlug(params.title)
-    const [existing] = await db.select({ id: courses._id }).from(courses).where(eq(courses.slug, slug)).limit(1)
-    if (existing) slug = `${slug}-${Date.now().toString(36)}`
-    const { publishedAt, coverImage, category, ...rest } = params
-    const [courseCreated] = await db.insert(courses).values({
-      ...rest,
-      slug,
-      coverImage: coverImage && coverImage.length > 0 ? coverImage : null,
-      category: category && category.length > 0 ? category : null,
-      publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
+    const { publishedAt, coverImage, category, slug: explicitSlug, ...rest } = params
+    // `.returning()` is what hands the row back: without it the insert
+    // resolves to a driver result, and the tool answered success with null.
+    const courseCreated = await insertWithSlug({ explicit: explicitSlug, base: slugBase(params.title, 'course') }, async (slug) => {
+      const [row] = await db.insert(courses).values({
+        ...rest,
+        slug,
+        coverImage: coverImage && coverImage.length > 0 ? coverImage : null,
+        category: category && category.length > 0 ? category : null,
+        publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
+      }).returning()
+      if (!row) throw new Error('Insert returned no row')
+      return row
     })
-    const populated = await populateOne(courseCreated, CONTENT_REFS)
-    return ok(populated)
-  } catch (e) { return err(e) }
+    auditLog(context, 'create_course', { id: courseCreated._id, slug: courseCreated.slug })
+    return ok(await populateOne(courseCreated, CONTENT_REFS))
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_course', 'Update an existing Academy course by slug. Only provided fields are changed.', {
@@ -1632,9 +1594,9 @@ server.tool('update_course', 'Update an existing Academy course by slug. Only pr
     }
     const [courseUpdated] = await db.update(courses).set({ ...patch, updatedAt: new Date() } as never).where(eq(courses.slug, slug)).returning()
     const course = await populateOne(courseUpdated, CONTENT_REFS)
-    if (!course) return err('Course not found')
+    if (!course) return toolError(notFound('Course'))
     return ok(course)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('delete_course', 'Permanently delete an Academy course by slug. Cannot be undone.', {
@@ -1642,9 +1604,9 @@ server.tool('delete_course', 'Permanently delete an Academy course by slug. Cann
 }, async ({ slug }) => {
   try {
     const [course] = await db.delete(courses).where(eq(courses.slug, slug)).returning({ id: courses._id })
-    if (!course) return err('Course not found')
+    if (!course) return toolError(notFound('Course'))
     return ok({ deleted: true, slug })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Academy: Resources ──────────────────────────────────────────────────────
@@ -1678,7 +1640,7 @@ server.tool('list_resources', 'List Academy resources (guides, papers, videos, t
     const total = Number(totals?.value ?? 0)
     const items = await populate(rows, CONTENT_REFS)
     return ok({ resources: items, total, page, pages: Math.ceil(total / limit) })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('get_resource', 'Get a single Academy resource by its URL slug.', {
@@ -1687,14 +1649,14 @@ server.tool('get_resource', 'Get a single Academy resource by its URL slug.', {
   try {
     const [resourceRow] = await db.select().from(resources).where(eq(resources.slug, slug)).limit(1)
     const resource = await populateOne(resourceRow, CONTENT_REFS)
-    if (!resource) return err('Resource not found')
+    if (!resource) return toolError(notFound('Resource'))
     return ok(resource)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
-server.tool('create_resource', 'Create a new Academy resource. Auto-generates the slug from the title if none is provided.', {
+server.tool('create_resource', 'Create a new Academy resource. If slug is omitted it is generated from the title (a numeric suffix is added if taken); an explicit slug that is already taken is refused.', {
   title: z.string().describe('Resource title'),
-  slug: z.string().optional().describe('URL slug. Auto-generated from title if omitted.'),
+  slug: slugInput.optional().describe('URL slug. Generated from the title if omitted.'),
   summary: z.string().optional().describe('Short summary shown on cards'),
   type: z.enum(['guide', 'paper', 'video', 'tool', 'template', 'link']).optional().describe('Resource type. Defaults to "guide".'),
   coverImage: z.string().optional().describe('Media document ID for the cover image'),
@@ -1706,22 +1668,25 @@ server.tool('create_resource', 'Create a new Academy resource. Auto-generates th
   status: z.enum(['draft', 'published']).optional().describe('Publication status. Defaults to published.'),
   publishedAt: z.string().optional().describe('Publication date as ISO string'),
   order: z.number().optional().describe('Display order (lower = first)'),
-}, async (params) => {
+}, async (params, context) => {
   try {
-    let slug = params.slug || generateSlug(params.title)
-    const [existing] = await db.select({ id: resources._id }).from(resources).where(eq(resources.slug, slug)).limit(1)
-    if (existing) slug = `${slug}-${Date.now().toString(36)}`
-    const { publishedAt, coverImage, category, ...rest } = params
-    const [resourceCreated] = await db.insert(resources).values({
-      ...rest,
-      slug,
-      coverImage: coverImage && coverImage.length > 0 ? coverImage : null,
-      category: category && category.length > 0 ? category : null,
-      publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
+    const { publishedAt, coverImage, category, slug: explicitSlug, ...rest } = params
+    // `.returning()` is what hands the row back: without it the insert
+    // resolves to a driver result, and the tool answered success with null.
+    const resourceCreated = await insertWithSlug({ explicit: explicitSlug, base: slugBase(params.title, 'resource') }, async (slug) => {
+      const [row] = await db.insert(resources).values({
+        ...rest,
+        slug,
+        coverImage: coverImage && coverImage.length > 0 ? coverImage : null,
+        category: category && category.length > 0 ? category : null,
+        publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
+      }).returning()
+      if (!row) throw new Error('Insert returned no row')
+      return row
     })
-    const populated = await populateOne(resourceCreated, CONTENT_REFS)
-    return ok(populated)
-  } catch (e) { return err(e) }
+    auditLog(context, 'create_resource', { id: resourceCreated._id, slug: resourceCreated.slug })
+    return ok(await populateOne(resourceCreated, CONTENT_REFS))
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_resource', 'Update an existing Academy resource by slug. Only provided fields are changed.', {
@@ -1756,9 +1721,9 @@ server.tool('update_resource', 'Update an existing Academy resource by slug. Onl
     }
     const [resourceUpdated] = await db.update(resources).set({ ...patch, updatedAt: new Date() } as never).where(eq(resources.slug, slug)).returning()
     const resource = await populateOne(resourceUpdated, CONTENT_REFS)
-    if (!resource) return err('Resource not found')
+    if (!resource) return toolError(notFound('Resource'))
     return ok(resource)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('delete_resource', 'Permanently delete an Academy resource by slug. Cannot be undone.', {
@@ -1766,9 +1731,9 @@ server.tool('delete_resource', 'Permanently delete an Academy resource by slug. 
 }, async ({ slug }) => {
   try {
     const [resource] = await db.delete(resources).where(eq(resources.slug, slug)).returning({ id: resources._id })
-    if (!resource) return err('Resource not found')
+    if (!resource) return toolError(notFound('Resource'))
     return ok({ deleted: true, slug })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Help Center: Articles ──────────────────────────────────────────────────
@@ -1800,7 +1765,7 @@ server.tool('list_help_articles', 'List Help Center articles with optional filte
     const total = Number(totals?.value ?? 0)
     const articles = await populate(rows, CONTENT_REFS)
     return ok({ articles, total, page, pages: Math.ceil(total / limit) })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('get_help_article', 'Get a single Help Center article by its URL slug, including populated cover image and category.', {
@@ -1809,14 +1774,14 @@ server.tool('get_help_article', 'Get a single Help Center article by its URL slu
   try {
     const [articleRow] = await db.select().from(helpArticles).where(eq(helpArticles.slug, slug)).limit(1)
     const article = await populateOne(articleRow, CONTENT_REFS)
-    if (!article) return err('Help article not found')
+    if (!article) return toolError(notFound('Help article'))
     return ok(article)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
-server.tool('create_help_article', 'Create a new Help Center article. Auto-generates the slug from the title if none is provided.', {
+server.tool('create_help_article', 'Create a new Help Center article. If slug is omitted it is generated from the title (a numeric suffix is added if taken); an explicit slug that is already taken is refused.', {
   title: z.string().describe('Article title'),
-  slug: z.string().optional().describe('URL slug. Auto-generated from title if omitted.'),
+  slug: slugInput.optional().describe('URL slug. Generated from the title if omitted.'),
   summary: z.string().optional().describe('Short summary shown on cards (1-2 sentences)'),
   content: z.string().optional().describe('Full article body shown on the detail page (Markdown)'),
   category: z.string().optional().describe('Category _id (generic scope)'),
@@ -1827,22 +1792,25 @@ server.tool('create_help_article', 'Create a new Help Center article. Auto-gener
   status: z.enum(['draft', 'published']).optional().describe('Publication status. Defaults to published.'),
   publishedAt: z.string().optional().describe('Publication date as ISO string'),
   order: z.number().optional().describe('Display order (lower = first)'),
-}, async (params) => {
+}, async (params, context) => {
   try {
-    let slug = params.slug || generateSlug(params.title)
-    const [existing] = await db.select({ id: helpArticles._id }).from(helpArticles).where(eq(helpArticles.slug, slug)).limit(1)
-    if (existing) slug = `${slug}-${Date.now().toString(36)}`
-    const { publishedAt, coverImage, category, ...rest } = params
-    const [articleCreated] = await db.insert(helpArticles).values({
-      ...rest,
-      slug,
-      coverImage: coverImage && coverImage.length > 0 ? coverImage : null,
-      category: category && category.length > 0 ? category : null,
-      publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
+    const { publishedAt, coverImage, category, slug: explicitSlug, ...rest } = params
+    // `.returning()` is what hands the row back: without it the insert
+    // resolves to a driver result, and the tool answered success with null.
+    const articleCreated = await insertWithSlug({ explicit: explicitSlug, base: slugBase(params.title, 'article') }, async (slug) => {
+      const [row] = await db.insert(helpArticles).values({
+        ...rest,
+        slug,
+        coverImage: coverImage && coverImage.length > 0 ? coverImage : null,
+        category: category && category.length > 0 ? category : null,
+        publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
+      }).returning()
+      if (!row) throw new Error('Insert returned no row')
+      return row
     })
-    const populated = await populateOne(articleCreated, CONTENT_REFS)
-    return ok(populated)
-  } catch (e) { return err(e) }
+    auditLog(context, 'create_help_article', { id: articleCreated._id, slug: articleCreated.slug })
+    return ok(await populateOne(articleCreated, CONTENT_REFS))
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_help_article', 'Update an existing Help Center article by slug. Only provided fields are changed.', {
@@ -1876,9 +1844,9 @@ server.tool('update_help_article', 'Update an existing Help Center article by sl
     }
     const [articleUpdated] = await db.update(helpArticles).set({ ...patch, updatedAt: new Date() } as never).where(eq(helpArticles.slug, slug)).returning()
     const article = await populateOne(articleUpdated, CONTENT_REFS)
-    if (!article) return err('Help article not found')
+    if (!article) return toolError(notFound('Help article'))
     return ok(article)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('delete_help_article', 'Permanently delete a Help Center article by slug. Cannot be undone.', {
@@ -1886,9 +1854,9 @@ server.tool('delete_help_article', 'Permanently delete a Help Center article by 
 }, async ({ slug }) => {
   try {
     const [article] = await db.delete(helpArticles).where(eq(helpArticles.slug, slug)).returning({ id: helpArticles._id })
-    if (!article) return err('Help article not found')
+    if (!article) return toolError(notFound('Help article'))
     return ok({ deleted: true, slug })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 // ── Referrals ──────────────────────────────────────────────────────────────
@@ -1919,7 +1887,7 @@ server.tool('list_referrals', 'List every referral. Supports filtering by progra
       .where(filters.length > 0 ? and(...filters) : undefined)
       .orderBy(asc(referrals.type), desc(referrals.createdAt), asc(referrals._id))
     return ok(rows)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('get_referral', 'Get a single referral by its code.', {
@@ -1927,18 +1895,18 @@ server.tool('get_referral', 'Get a single referral by its code.', {
 }, async ({ code }) => {
   try {
     const [referral] = await db.select().from(referrals).where(eq(referrals.code, code)).limit(1)
-    if (!referral) return err('Referral not found')
+    if (!referral) return toolError(notFound('Referral'))
     return ok(referral)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('create_referral', 'Create a new referral code. Defaults to type="user" and status="active".', referralRawShape, async (input) => {
   try {
     const [existing] = await db.select({ id: referrals._id }).from(referrals).where(eq(referrals.code, input.code)).limit(1)
-    if (existing) return err(`Referral "${input.code}" already exists`)
+    if (existing) return toolError(conflict(`Referral "${input.code}" already exists`))
     const referral = await insertOne(referrals, input)
     return ok(referral)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('update_referral', 'Update an existing referral. Only the fields you provide are changed.', {
@@ -1958,9 +1926,9 @@ server.tool('update_referral', 'Update an existing referral. Only the fields you
       .set({ ...patch, updatedAt: new Date() } as never)
       .where(eq(referrals.code, code))
       .returning()
-    if (!referral) return err('Referral not found')
+    if (!referral) return toolError(notFound('Referral'))
     return ok(referral)
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 server.tool('delete_referral', 'Permanently delete a referral code. This action cannot be undone.', {
@@ -1968,12 +1936,23 @@ server.tool('delete_referral', 'Permanently delete a referral code. This action 
 }, async ({ code }) => {
   try {
     const [doc] = await db.delete(referrals).where(eq(referrals.code, code)).returning({ id: referrals._id })
-    if (!doc) return err('Referral not found')
+    if (!doc) return toolError(notFound('Referral'))
     return ok({ deleted: true, code })
-  } catch (e) { return err(e) }
+  } catch (e) { return toolError(e) }
 })
 
 } // end registerTools
+
+// ── Audit ───────────────────────────────────────────────────────────────────
+
+/**
+ * One line per completed write: which tool, which account, which record. The
+ * actor is the authenticated account, never an input field, and the target is
+ * the minimum that identifies the record — no bodies, no URLs, no personal data.
+ */
+function auditLog(context: ToolContext, tool: string, target: Record<string, unknown>): void {
+  console.log(`[mcp:audit] ${JSON.stringify({ tool, actor: context.actorId, request: context.requestId, target })}`)
+}
 
 // ── Capability catalog ──────────────────────────────────────────────────────
 
@@ -1990,11 +1969,13 @@ function accessFor(toolName: string): McpToolAccess {
 }
 
 function catalogTool(definition: ToolDefinition): CatalogTool {
-  const { $schema: _schema, ...inputSchema } = z.toJSONSchema(z.object(definition.shape), {
+  const inputSchema: Record<string, unknown> = z.toJSONSchema(z.object(definition.shape), {
     target: 'draft-7',
     io: 'input',
   })
+  delete inputSchema.$schema
   const writes = accessFor(definition.name).kind === 'write'
+  const effects = effectsFor(definition.name)
   return {
     name: definition.name,
     version: '1.0.0',
@@ -2004,8 +1985,8 @@ function catalogTool(definition: ToolDefinition): CatalogTool {
     requiredCapabilities: [writes ? WRITE_SCOPE : READ_SCOPE],
     resourceTypes: ['website_content'],
     effect: writes ? 'write' : 'read',
-    idempotency: writes ? 'supported' : 'none',
-    rollback: writes && !isIrreversible(definition.name) ? 'manual' : 'none',
+    idempotency: effects.idempotency,
+    rollback: effects.rollback,
     exposure: ['mcp'],
     limitKeys: [],
     // The catalog is exposed to external MCP only; the internal capability lane
@@ -2015,7 +1996,7 @@ function catalogTool(definition: ToolDefinition): CatalogTool {
 }
 
 function buildCatalog(): AppCapabilityCatalog {
-  const unpoliced = Object.keys(MCP_TOOL_ACCESS).filter((name) => !TOOLS.some((tool) => tool.name === name))
+  const unpoliced = Object.keys(MCP_TOOL_ACCESS).filter((name) => !OPTIONAL_TOOLS.has(name) && !TOOLS.some((tool) => tool.name === name))
   if (unpoliced.length > 0) {
     throw new Error(`MCP access policies without a tool: ${unpoliced.join(', ')}`)
   }
@@ -2053,10 +2034,6 @@ async function authorize(
   return { allowed: true, effectiveAccountId: principal.activeAccountId }
 }
 
-function textResult(text: string, isError = false): CatalogToolResult {
-  return { content: [{ type: 'text', text }], ...(isError ? { isError: true } : {}) }
-}
-
 /**
  * Answer a non-admin's read from the site's own public route, with no
  * credentials — exactly what an anonymous visitor would receive.
@@ -2064,35 +2041,73 @@ function textResult(text: string, isError = false): CatalogToolResult {
 async function readPublicRoute(
   access: Extract<McpToolAccess, { kind: 'public-read' }>,
   input: Record<string, unknown>,
-): Promise<CatalogToolResult> {
+  signal?: AbortSignal,
+): Promise<ToolResult> {
   let path: string
   try {
     path = access.publicPath(input)
   } catch (error) {
-    if (error instanceof PublicReadRefused) return textResult(error.message, true)
+    if (error instanceof PublicReadRefused) return errorOf('permission_denied', error.message)
     throw error
   }
+  const timeout = AbortSignal.timeout(15_000)
   const response = await fetch(`http://127.0.0.1:${config.port}/api${path}`, {
     headers: { accept: 'application/json' },
-    signal: AbortSignal.timeout(15_000),
+    signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
   })
-  if (response.status === 404) return textResult('Not found', true)
-  if (!response.ok) return textResult(`The public API answered ${response.status}`, true)
-  return textResult(JSON.stringify(await response.json(), null, 2))
+  if (response.status === 404) return errorOf('not_found', 'Not found')
+  if (response.status === 400) return errorOf('invalid_request', 'The public API rejected the request')
+  if (!response.ok) return errorOf('service_unavailable', `The public API answered ${response.status}`)
+  return ok(await response.json())
+}
+
+/**
+ * Run one tool: validate with its own Zod schema (the catalog's JSON Schema
+ * round trip checks shape, but defaults and refinements live only here), hand
+ * it the authenticated context, and turn anything thrown into a safe error.
+ * Exported for the integration tests, which call it without the transport.
+ */
+export async function invokeTool(name: string, input: Record<string, unknown>, context: ToolContext): Promise<ToolResult> {
+  const definition = TOOLS.find((tool) => tool.name === name)
+  if (!definition) return errorOf('not_found', `Unknown tool ${name}`)
+  const startedAt = Date.now()
+  let result: ToolResult
+  try {
+    const access = accessFor(name)
+    if (access.kind === 'public-read' && !isWebsiteAdmin(context.actorId)) {
+      result = await readPublicRoute(access, { ...input }, context.signal)
+    } else {
+      const { idempotencyKey, ...args } = z.object(definition.shape).parse(input) as Record<string, unknown>
+      const run = async () => {
+        try {
+          return await definition.handler(args, context)
+        } catch (error) {
+          return toolError(error)
+        }
+      }
+      result = typeof idempotencyKey === 'string'
+        ? await withIdempotency({ accountId: context.actorId, tool: name, key: idempotencyKey, input: args }, run)
+        : await run()
+    }
+  } catch (error) {
+    result = toolError(error)
+  }
+  const code = result.isError ? (result.structuredContent as { error?: { code?: string } } | undefined)?.error?.code : undefined
+  console.log(`[mcp:call] ${JSON.stringify({ tool: name, actor: context.actorId, request: context.requestId, ok: !result.isError, code, ms: Date.now() - startedAt })}`)
+  return result
 }
 
 const handlers: CatalogToolHandlers = Object.fromEntries(TOOLS.map((definition) => [
   definition.name,
-  async (input: Readonly<Record<string, unknown>>, context: CatalogInvocationContext) => {
-    const access = accessFor(definition.name)
-    if (access.kind === 'public-read' && !isWebsiteAdmin(context.principal.activeAccountId)) {
-      return readPublicRoute(access, { ...input })
-    }
-    // Re-parse with the tool's own schema: the catalog's JSON Schema round trip
-    // validates shape, but defaults and transforms live only in the Zod original.
-    return definition.handler(z.object(definition.shape).parse(input))
-  },
+  async (input: Readonly<Record<string, unknown>>, context: CatalogInvocationContext): Promise<CatalogToolResult> =>
+    invokeTool(definition.name, { ...input }, {
+      actorId: context.principal.activeAccountId,
+      signal: context.request.signal,
+      requestId: context.request.requestId,
+    }),
 ]))
+
+export const WEBSITE_MCP_TOOL_NAMES: readonly string[] = TOOLS.map((tool) => tool.name)
 
 // ── Mount on Express app ────────────────────────────────────────────────────
 

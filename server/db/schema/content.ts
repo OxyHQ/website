@@ -344,3 +344,29 @@ export const locales = pgTable('locales', {
   order: integer().notNull().default(0),
   ...timestamps,
 })
+
+/**
+ * Object-storage deletions still owed. A media row is removed in the same
+ * transaction that records its objects here, so a storage outage after the
+ * commit leaves a durable to-do rather than an object nobody knows about. A
+ * row is deleted once its object is gone, or once another media row turns out
+ * to use the same key (the upload key is content-addressed, so two rows can).
+ */
+export const storageCleanups = pgTable(
+  'storage_cleanups',
+  {
+    _id: objectId(),
+    key: text().notNull(),
+    /** Why the object became unowned: 'media_deleted' | 'upload_compensation' | 'diagnostic'. */
+    reason: text().notNull(),
+    mediaId: text(),
+    attempts: integer().notNull().default(0),
+    lastError: text(),
+    nextAttemptAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex('storage_cleanups_key_idx').on(table.key),
+    index('storage_cleanups_next_attempt_idx').on(table.nextAttemptAt),
+  ],
+)
