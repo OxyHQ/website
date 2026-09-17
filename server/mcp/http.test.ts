@@ -73,11 +73,15 @@ beforeAll(async () => {
   oxyService.invalidateServiceToken = () => undefined
 
   const express = createApp({ catalogRegistrationStatus: () => disabledMcpCatalogRegistrationStatus() })
-  app = express.listen(config.port, 'localhost')
+  // All interfaces, as in production: the public-read bridge calls 127.0.0.1,
+  // while `localhost` may resolve to ::1 on the runner.
+  app = express.listen(config.port)
   await new Promise<void>((resolve) => app.once('listening', resolve))
 })
 
 afterAll(async () => {
+  app.closeAllConnections()
+  fakeOxy.closeAllConnections()
   await new Promise<void>((resolve) => app.close(() => resolve()))
   await new Promise<void>((resolve) => fakeOxy.close(() => resolve()))
 })
@@ -157,29 +161,6 @@ describe('transport composition', () => {
     const body = await response.json() as { resource: string; authorization_servers: string[] }
     expect(body.resource).toBe(RESOURCE)
     expect(body.authorization_servers).toContain(ISSUER)
-  })
-
-  test('an oversized body is refused before any tool runs', async () => {
-    const response = await fetch(`${BASE}/mcp`, {
-      method: 'POST',
-      headers: { authorization: 'Bearer admin', 'content-type': 'application/json', accept: 'application/json, text/event-stream' },
-      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'create_course', arguments: { title: 'x'.repeat(5 * 1024 * 1024) } } }),
-    })
-    expect(response.status).toBe(413)
-    expect(await countRows('courses')).toBe(0)
-  })
-
-  test('a request for another host is refused', async () => {
-    const status = await new Promise<number>((resolve, reject) => {
-      const address = app.address() as AddressInfo
-      const req = http.request({ host: 'localhost', port: address.port, path: '/mcp', method: 'POST', headers: { host: 'other.test', 'content-type': 'application/json' } }, (res) => {
-        res.resume()
-        resolve(res.statusCode ?? 0)
-      })
-      req.on('error', reject)
-      req.end('{}')
-    })
-    expect(status).toBe(421)
   })
 
   test('calls are stateless: consecutive calls need no session and each is introspected', async () => {
@@ -264,5 +245,32 @@ describe('readers get exactly what the public site serves', () => {
   test('admin-only reads are refused to readers over the transport', async () => {
     const { json } = await callTool('list_media', {}, 'reader')
     expect(json?.result?.isError ?? Boolean(json?.error)).toBe(true)
+  })
+})
+
+// Last: responses sent before the request body is read, or for a foreign Host,
+// can leave a pooled client connection unusable for the next test.
+describe('connection-level refusals', () => {
+  test('an oversized body is refused before any tool runs', async () => {
+    const response = await fetch(`${BASE}/mcp`, {
+      method: 'POST',
+      headers: { authorization: 'Bearer admin', 'content-type': 'application/json', accept: 'application/json, text/event-stream' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'create_course', arguments: { title: 'x'.repeat(5 * 1024 * 1024) } } }),
+    })
+    expect(response.status).toBe(413)
+    expect(await countRows('courses')).toBe(0)
+  })
+
+  test('a request for another host is refused', async () => {
+    const status = await new Promise<number>((resolve, reject) => {
+      const address = app.address() as AddressInfo
+      const req = http.request({ host: '127.0.0.1', port: address.port, path: '/mcp', method: 'POST', agent: false, headers: { host: 'other.test', 'content-type': 'application/json', 'content-length': '2', connection: 'close' } }, (res) => {
+        res.resume()
+        resolve(res.statusCode ?? 0)
+      })
+      req.on('error', reject)
+      req.end('{}')
+    })
+    expect(status).toBe(421)
   })
 })
