@@ -12,7 +12,7 @@ export const props: BloomSurfaceProps = {
         { name: 'htmlFor', type: 'string', optional: true, description: 'Web-only convenience: the `id` of the form control this label is for. Defaults to `nativeID` when omitted. Ignored on native.' },
         { name: 'required', type: 'boolean', optional: true, description: "Render a required marker (an asterisk in the theme's negative color) after the label text. Defaults to `false`." },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Visually subdued label (e.g. for optional fields). Defaults to `false`.' },
-        { name: 'size', type: "'xs' | 'sm' | 'md'", options: ['xs', 'sm', 'md'], optional: true, description: "Typography size token. Defaults to `'sm'`." },
+        { name: 'size', type: "'xs' | 'sm' | 'md'", options: ['xs', 'sm', 'md'], optional: true, description: 'Type-ramp step: `xs` body-2-medium, `sm` body-medium (the default), `md` headline-medium.' },
         { name: 'style', type: 'StyleProp<TextStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

@@ -7,8 +7,13 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'DividerProps': {
       props: [
-        { name: 'color', type: 'string', optional: true, description: 'Custom color (defaults to theme.colors.border)' },
-        { name: 'thickness', type: 'number', optional: true, description: 'Line thickness (defaults to StyleSheet.hairlineWidth)' },
+        { name: 'variant', type: 'DividerVariant', options: ['single', 'double', 'fill'], optional: true, description: '`single` (default) hairline, `double` framing hairlines, or a `fill` strip. Horizontal only.' },
+        { name: 'align', type: 'DividerAlign', options: ['start', 'center', 'end'], optional: true, description: 'Positions `children` along the divider. Default `center`.' },
+        { name: 'children', type: 'ReactNode', optional: true, description: 'A label (string, 14/20 medium, secondary text) or any compact control placed in the divider.' },
+        { name: 'contentStyle', type: 'StyleProp<ViewStyle>', optional: true, description: 'Style for the content wrapper.' },
+        { name: 'textStyle', type: 'StyleProp<TextStyle>', optional: true, description: 'Style for a string label.' },
+        { name: 'color', type: 'string', optional: true, description: 'Custom line color (defaults to the neutral separator stop: neutral-200 light, neutral-800 dark).' },
+        { name: 'thickness', type: 'number', optional: true, description: 'Line thickness of a `single` divider (defaults to 1).' },
         { name: 'vertical', type: 'boolean', optional: true, description: 'If true, renders a vertical divider' },
         { name: 'spacing', type: 'number', optional: true, description: 'Spacing around the divider (marginVertical for horizontal, marginHorizontal for vertical)' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Custom style' },

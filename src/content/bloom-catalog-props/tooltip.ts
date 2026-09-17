@@ -22,6 +22,13 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: false },
         { name: 'label', type: 'string', optional: false },
+        { name: 'size', type: 'TooltipSize', options: ['sm', 'md'], optional: true },
+      ],
+    },
+    'TooltipTextBubble': {
+      props: [
+        { name: 'children', type: 'React.ReactNode', optional: false },
+        { name: 'size', type: 'TooltipSize', options: ['sm', 'md'], optional: true },
       ],
     },
   },
@@ -29,6 +36,6 @@ export const props: BloomSurfaceProps = {
     { name: 'Tooltip', propsType: 'Tooltip' },
     { name: 'TooltipTrigger', propsType: 'TooltipTrigger' },
     { name: 'TooltipContent', propsType: 'TooltipContent' },
-    { name: 'TooltipTextBubble', propsType: 'TooltipTrigger' },
+    { name: 'TooltipTextBubble', propsType: 'TooltipTextBubble' },
   ],
 }

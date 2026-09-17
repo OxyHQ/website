@@ -432,9 +432,9 @@ const cases: TestCase[] = [
     // A rename upstream must fail loudly. Silently, it publishes providers,
     // tokens and fonts as component cards.
     name: 'a renamed utility group fails rather than promoting its exports to cards',
-    files: baseFiles({ 'bloom/README.md': README.replace('| Assets |', '| Asset files |') }),
+    files: baseFiles({ 'bloom/README.md': README.replace('| Providers and theme |', '| Providers |') }),
     expectFailure: true,
-    expectOutput: 'utility group(s): Assets',
+    expectOutput: 'utility group(s): Providers and theme',
   },
 
   // --------------------------------------------------------- the sources ---
