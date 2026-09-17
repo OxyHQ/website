@@ -1,7 +1,7 @@
 import type express from 'express'
-import { OxyServices } from '@oxy.so/core'
 import { createCatalogMcpHttpService } from '@oxy.so/mcp'
 import { config } from './config.js'
+import { oxyService } from './services/oxyService.js'
 import { authorize, handlers, WEBSITE_MCP_CATALOG } from './mcp/catalog.js'
 
 /* ──────────────────────────────────────────────
@@ -17,16 +17,6 @@ export type { ToolContext } from './mcp/registry.js'
 
 /** Browser clients that may call the endpoint directly; server-side connectors send no Origin. */
 const CLAUDE_ORIGINS = ['https://claude.ai', 'https://www.claude.ai', 'https://api.anthropic.com']
-
-/**
- * The website's Oxy service identity. Oxy answers token introspection only for
- * the application that registered the resource, so this is the same credential
- * that registers the catalog.
- */
-export const oxyService = new OxyServices({ baseURL: config.oxyApiBase })
-if (config.oxyServiceApiKey && config.oxyServiceApiSecret) {
-  oxyService.configureServiceAuth(config.oxyServiceApiKey, config.oxyServiceApiSecret)
-}
 
 /**
  * Sign-in is Oxy's MCP OAuth: every request carries a short-lived token Oxy
