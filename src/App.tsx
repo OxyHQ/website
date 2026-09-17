@@ -306,7 +306,7 @@ function PublicRoutes() {
         }
       />
       <Route path="company/careers" element={<CareersPage />} />
-      <Route path="company/careers/:slug" element={<CareerDetailPage />} />
+      <Route path="company/careers/:id" element={<CareerDetailPage />} />
       <Route path="pricing" element={<PricingPage />} />
       <Route
         path="newsroom"

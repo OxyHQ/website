@@ -2,7 +2,7 @@ import { beforeAll, beforeEach, describe, expect, test } from 'bun:test'
 import { eq } from 'drizzle-orm'
 import { db } from '../db/postgres.js'
 import {
-  categories, courses, helpArticles, jobs, locales, newsroomPosts, pages, pricingPlans, products, resources, teamMembers, translations,
+  categories, courses, helpArticles, locales, newsroomPosts, pages, pricingPlans, products, resources, teamMembers, translations,
 } from '../db/schema/index.js'
 import { invokeTool, WEBSITE_MCP_CATALOG } from '../mcp.js'
 import { MCP_TOOL_ACCESS } from '../mcpAccess.js'
@@ -34,7 +34,6 @@ async function seed(): Promise<Seed> {
   const [draft] = await db.insert(newsroomPosts).values({ title: 'Secret', slug: 'secret', status: 'draft' }).returning()
   await db.insert(newsroomPosts).values({ title: 'Plain', slug: 'plain', featured: false })
   await db.insert(pages).values({ slug: 'home', title: 'Home' })
-  await db.insert(jobs).values([{ title: 'Engineer', slug: 'engineer', department: 'Eng' }, { title: 'Old role', slug: 'old-role', department: 'Eng', active: false }])
   await db.insert(teamMembers).values([{ name: 'Ada', slug: 'ada', role: 'Eng' }, { name: 'Gone', slug: 'gone', role: 'Eng', active: false }])
   await db.insert(courses).values({ title: 'Intro', slug: 'intro' })
   await db.insert(resources).values({ title: 'Kit', slug: 'kit', href: '/kit' })
@@ -49,7 +48,6 @@ const READ_SAMPLES: Record<string, Record<string, unknown>> = {
   get_post: { slug: 'launch' },
   get_post_with_media: { slug: 'launch' },
   search_posts: { query: 'Launch' },
-  get_job: { slug: 'engineer' },
   get_team_member: { slug: 'ada' },
   get_category: { slug: 'social' },
   get_product: { productId: 'mention' },
@@ -99,7 +97,7 @@ describe('one output contract for admins and readers', () => {
   test('array reads are structured as { items }', async () => {
     await seed()
     for (const context of [admin, reader]) {
-      const result = await invokeTool('list_jobs', {}, context)
+      const result = await invokeTool('list_team_members', {}, context)
       expect(Array.isArray((result.structuredContent as { items: unknown[] }).items)).toBe(true)
     }
   })
@@ -139,9 +137,8 @@ describe('filters mean one thing and are never silently dropped', () => {
 
   test('active: false lists inactive rows for admins and is refused for readers', async () => {
     await seed()
-    const all = data<{ slug: string }[]>(await invokeTool('list_jobs', { active: false }, admin))
-    expect(all.map((job) => job.slug).sort()).toEqual(['engineer', 'old-role'])
-    expect(errorCode(await invokeTool('list_jobs', { active: false }, reader))).toBe('permission_denied')
+    const all = data<{ slug: string }[]>(await invokeTool('list_team_members', { active: false }, admin))
+    expect(all.map((member) => member.slug).sort()).toEqual(['ada', 'gone'])
     expect(errorCode(await invokeTool('list_team_members', { active: false }, reader))).toBe('permission_denied')
   })
 
@@ -271,8 +268,8 @@ describe('concurrent edits and previews', () => {
 
   test('the precondition works on rows created by the database default timestamp', async () => {
     await seed()
-    const job = data<{ updatedAt: string }>(await invokeTool('get_job', { slug: 'engineer' }, admin))
-    data(await invokeTool('update_job', { slug: 'engineer', subtitle: 'Now hiring', expectedUpdatedAt: job.updatedAt }, admin))
+    const member = data<{ updatedAt: string }>(await invokeTool('get_team_member', { slug: 'ada' }, admin))
+    data(await invokeTool('update_team_member', { slug: 'ada', bio: 'Builds things', expectedUpdatedAt: member.updatedAt }, admin))
   })
 
   test('a delete dry run changes nothing and reports the translations that would go', async () => {

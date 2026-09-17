@@ -20,7 +20,6 @@ import HelpAdmin from '../components/admin/sections/HelpAdmin'
 import PricingAdmin from '../components/admin/sections/PricingAdmin'
 import TestimonialsAdmin from '../components/admin/sections/TestimonialsAdmin'
 import ChangelogAdmin from '../components/admin/sections/ChangelogAdmin'
-import JobsAdmin from '../components/admin/sections/JobsAdmin'
 import TeamAdmin from '../components/admin/sections/TeamAdmin'
 import LocalesAdmin from '../components/admin/sections/LocalesAdmin'
 import BackupAdmin from '../components/admin/sections/BackupAdmin'
@@ -133,7 +132,6 @@ export default function AdminPage() {
       <Route path="pricing" element={<AdminLayout><PricingAdmin /></AdminLayout>} />
       <Route path="testimonials" element={<AdminLayout><TestimonialsAdmin /></AdminLayout>} />
       <Route path="changelog" element={<AdminLayout><ChangelogAdmin /></AdminLayout>} />
-      <Route path="jobs" element={<AdminLayout><JobsAdmin /></AdminLayout>} />
       <Route path="team" element={<AdminLayout><TeamAdmin /></AdminLayout>} />
       <Route path="locales" element={<AdminLayout><LocalesAdmin /></AdminLayout>} />
       <Route path="backup" element={<AdminLayout><BackupAdmin /></AdminLayout>} />

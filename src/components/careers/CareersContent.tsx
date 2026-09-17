@@ -7,12 +7,13 @@ import RollingNumber from '../ui/RollingNumber'
 import Button from '../ui/Button'
 import JobBoard, { type JobListing } from '../slices/JobBoard'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
+import { careerJobPath, careerLocationLabel, careerTeam } from '../../lib/careers'
 
 /* ──────────────────────────────────────────────
  * /company/careers
  *
  * Hero, the figures, what we hold ourselves to, what we believe, how we work,
- * where we are, and every open role grouped by department.
+ * where we are, and every open role grouped by team.
  *
  * The values and beliefs are the Founding Charter's own words rather than copy
  * written for a careers page, and the figures count records the site already
@@ -504,12 +505,11 @@ function OpenPositionsSection() {
   const listings = useMemo<JobListing[]>(
     () =>
       (jobs ?? [])
-        .filter((job) => job.slug)
         .map((job) => ({
           title: job.title,
-          team: job.department || 'Other',
-          location: job.location,
-          href: `/company/careers/${job.slug}`,
+          team: careerTeam(job),
+          location: careerLocationLabel(job) ?? '',
+          href: careerJobPath(job),
         })),
     [jobs],
   )

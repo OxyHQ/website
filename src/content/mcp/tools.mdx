@@ -111,15 +111,10 @@ A failed call returns `isError: true` with an `error` object: a stable `code`, a
 | `update_help_article` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update a Help Center article by slug. Only the fields you pass change. |
 | `delete_help_article` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Permanently delete a Help Center article and its translations. dryRun: true shows what would go. To unpublish, set status: "draft" instead. |
 
-## Careers and team
+## Team
 
 | Tool | Access | Options | What it does |
 |---|---|---|---|
-| `list_jobs` | Read | `locale` | List job listings in display order. Active listings by default; active: false lists every listing, active or not (admins only). |
-| `get_job` | Read | `locale` | Get a job listing by slug. Readers only see active listings. |
-| `create_job` | Write (admin) | `idempotencyKey` | Create a job listing. If slug is omitted it is generated from title + location (a numeric suffix is added if taken); an explicit slug that is taken is refused. |
-| `update_job` | Write (admin) | `expectedUpdatedAt`, `idempotencyKey` | Update a job listing by slug. Only the fields you pass change. |
-| `delete_job` | Write (admin) | `expectedUpdatedAt`, `dryRun`, `idempotencyKey` | Permanently delete a job listing and its translations. dryRun: true shows what would go. To hide a listing without losing it, set active: false instead. |
 | `list_team_members` | Read | `locale` | List team members in display order, avatars resolved. Active members by default; active: false lists everyone (admins only). |
 | `get_team_member` | Read | `locale` | Get a team member by slug, avatar resolved. |
 | `create_team_member` | Write (admin) | `idempotencyKey` | Create a team member. If slug is omitted it is generated from the name (a numeric suffix is added if taken); an explicit slug that is taken is refused. |

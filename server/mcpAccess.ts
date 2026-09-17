@@ -137,15 +137,6 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
   sync_repo: write,
   sync_all_repos: write,
 
-  list_jobs: publicRead((input) => {
-    refuseInactive(input)
-    return withQuery('/jobs', { locale: input.locale })
-  }),
-  get_job: publicRead((input) => withQuery(`/jobs/${segment(input.slug)}`, { locale: input.locale })),
-  create_job: write,
-  update_job: write,
-  delete_job: write,
-
   list_team_members: publicRead((input) => {
     refuseInactive(input)
     return withQuery('/team', { locale: input.locale })
@@ -314,10 +305,6 @@ export const MCP_WRITE_EFFECTS: Readonly<Record<string, McpToolEffects>> = {
   remove_tracked_repo: naturallyIdempotent,
   sync_repo: irreversible,
   sync_all_repos: irreversible,
-
-  create_job: undoneBy('delete_job'),
-  update_job: naturallyIdempotent,
-  delete_job: naturallyIdempotent,
 
   create_team_member: undoneBy('delete_team_member'),
   update_team_member: naturallyIdempotent,

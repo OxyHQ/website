@@ -1,6 +1,6 @@
 # MCP server
 
-`website-api.oxy.so/mcp` exposes the site's content tools (newsroom, pages, jobs,
+`website-api.oxy.so/mcp` exposes the site's content tools (newsroom, pages,
 team, products, Academy, help, pricing, locales, media and the rest) to MCP
 clients such as Claude. Code: `server/mcp.ts` (tools, catalog, transport) and
 `server/mcpAccess.ts` (who may call what).

@@ -1,6 +1,5 @@
 import type { ToolRegistrar } from '../registry.js'
 import { registerAcademyTools } from './academy.js'
-import { registerCareersTools } from './careers.js'
 import { registerChangelogTools } from './changelog.js'
 import { registerDiscoveryTools } from './discovery.js'
 import { registerLocaleTools } from './locales.js'
@@ -10,6 +9,7 @@ import { registerPricingTools } from './pricing.js'
 import { registerProductTools } from './products.js'
 import { registerReferralTools } from './referrals.js'
 import { registerSiteTools } from './site.js'
+import { registerTeamTools } from './team.js'
 
 /** Every domain, in the order `describe_access` lists them. */
 export const TOOL_DOMAINS: readonly [string, (server: ToolRegistrar) => void][] = [
@@ -17,7 +17,7 @@ export const TOOL_DOMAINS: readonly [string, (server: ToolRegistrar) => void][] 
   ['site', registerSiteTools],
   ['newsroom', registerNewsroomTools],
   ['academy-and-help', registerAcademyTools],
-  ['careers', registerCareersTools],
+  ['team', registerTeamTools],
   ['products', registerProductTools],
   ['pricing', registerPricingTools],
   ['changelog', registerChangelogTools],

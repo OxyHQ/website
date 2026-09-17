@@ -4,8 +4,7 @@ import { objectId, timestamps } from './columns.js'
 /* ──────────────────────────────────────────────
  * The editorial tables: what the CMS writes and the site reads.
  *
- * Sub-documents (a page's sections, a job's description blocks, a hero's
- * carousel slots) are `jsonb`. They are read and written as a unit by
+ * Sub-documents (a page's sections, a hero's carousel slots) are `jsonb`. They are read and written as a unit by
  * both the admin and the site, never queried field by field, so splitting them
  * into child tables would buy joins nobody asked for.
  * ──────────────────────────────────────────── */
@@ -128,31 +127,6 @@ export const newsroomPosts = pgTable(
     ),
   ],
 )
-
-export const jobs = pgTable('jobs', {
-  _id: objectId(),
-  title: text().notNull(),
-  slug: text().notNull().unique(),
-  subtitle: text().notNull().default(''),
-  department: text().notNull(),
-  location: text().notNull().default('Remote'),
-  type: text().notNull().default('Full-time'),
-  compensation: text().notNull().default(''),
-  validThrough: text().notNull().default(''),
-  /** Optional physical address fields used verbatim in JobPosting metadata. */
-  address: jsonb().$type<{
-    streetAddress?: string
-    addressLocality?: string
-    addressRegion?: string
-    postalCode?: string
-    addressCountry?: string
-  }>().notNull().default({}),
-  /** `{ type: 'paragraph'|'heading'|'list', text?, items? }[]` */
-  description: jsonb().$type<Record<string, unknown>[]>().notNull().default([]),
-  active: boolean().notNull().default(true),
-  order: integer().notNull().default(0),
-  ...timestamps,
-})
 
 export const courses = pgTable(
   'courses',

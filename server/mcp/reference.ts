@@ -18,7 +18,7 @@ const DOMAIN_TITLES: Record<string, string> = {
   site: 'Pages, navigation, hero and settings',
   newsroom: 'Newsroom',
   'academy-and-help': 'Academy and Help Center',
-  careers: 'Careers and team',
+  team: 'Team',
   products: 'Products and categories',
   pricing: 'Pricing and testimonials',
   changelog: 'Changelog and tracked repositories',

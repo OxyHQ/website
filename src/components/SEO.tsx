@@ -15,6 +15,12 @@ export interface SEOProps {
   publishedTime?: string
   modifiedTime?: string
   author?: string
+  /**
+   * Absolute canonical URL, for a page whose content is published on another
+   * site (an open role written in Mention). It replaces the path-derived
+   * canonical and suppresses hreflang: the page speaks for no locale set.
+   */
+  canonicalUrl?: string
 }
 
 /**
@@ -67,6 +73,7 @@ export default function SEO({
   publishedTime,
   modifiedTime,
   author,
+  canonicalUrl: externalCanonicalUrl,
 }: SEOProps) {
   const { locale, locales } = useLocaleContext()
   const host = typeof window === 'undefined' ? undefined : window.location.hostname
@@ -91,7 +98,7 @@ export default function SEO({
   const fullTitle = canonicalPath === '/'
     ? metaTitle
     : `${normalizeSeoTitle(metaTitle, siteName)} | ${siteName}`
-  const canonicalUrl = buildLocalizedUrl(origin, canonicalPath, locale)
+  const canonicalUrl = externalCanonicalUrl ?? buildLocalizedUrl(origin, canonicalPath, locale)
   // Advertise only locales that actually have translations. `enabled` is an
   // editorial "show in the picker" toggle that defaults to true, so it says
   // nothing about whether `/<code>/…` would render anything but an English
@@ -108,7 +115,7 @@ export default function SEO({
   // set whose members serve the same English bytes tells Google the URLs are
   // equivalent translations when they are plain duplicates, and it answers by
   // picking its own canonical.
-  const localized = hasLocalizedVariants(canonicalPath)
+  const localized = !externalCanonicalUrl && hasLocalizedVariants(canonicalPath)
   const alternateCodes: readonly Locale[] = localized
     ? locales.filter((l) => l.translationReady).map((l) => l.code)
     : []

@@ -2,7 +2,7 @@ import { and, eq } from 'drizzle-orm'
 import { getTableConfig, type PgColumn, type PgTable } from 'drizzle-orm/pg-core'
 import { db } from '../db/postgres.js'
 import {
-  categories, changelogEntries, courses, footers, helpArticles, heroContents, jobs, locales, navigationDropdowns, newsroomPosts, pages,
+  categories, changelogEntries, courses, footers, helpArticles, heroContents, locales, navigationDropdowns, newsroomPosts, pages,
   pricingPlans, products, resources, siteSettings, teamMembers, testimonials, translations,
 } from '../db/schema/index.js'
 import { TRANSLATABLE_COLLECTIONS } from '../constants/translations.js'
@@ -36,7 +36,6 @@ export const COLLECTION_TABLES: Record<TranslatableCollection, PgTable & { _id: 
   settings: siteSettings,
   pages,
   newsroom: newsroomPosts,
-  jobs,
   hero: heroContents,
   products,
   categories,
