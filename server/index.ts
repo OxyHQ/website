@@ -53,7 +53,11 @@ import adminAccessRouter from './routes/adminAccess.js'
 import intercomRouter from './routes/intercom.js'
 import salesRouter, { purgeExpiredInquiries } from './routes/sales.js'
 import { mountMcp, oxyService, WEBSITE_MCP_CATALOG } from './mcp.js'
-import { registerMcpCatalog } from './services/mcpCatalogRegistration.js'
+import {
+  createMcpCatalogRegistration,
+  disabledMcpCatalogRegistrationStatus,
+  type McpCatalogRegistration,
+} from './services/mcpCatalogRegistration.js'
 
 /** Migrations ship beside the server sources, so this resolves in dev and in the image alike. */
 const MIGRATIONS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'db', 'migrations')
@@ -188,6 +192,44 @@ app.get('/api/ready', async (_req, res) => {
   } catch (err) {
     res.status(503).json({ ready: false, db: 'disconnected', error: (err as Error).message })
   }
+})
+
+/**
+ * Only the deployed service registers: a local run would otherwise replace
+ * production's catalog with whatever is on a developer's branch. Created here
+ * and started after `listen()`.
+ */
+const mcpCatalogRegistration: McpCatalogRegistration | null =
+  process.env.NODE_ENV === 'production' && config.oxyServiceApiKey && config.oxyServiceApiSecret
+    ? createMcpCatalogRegistration({ catalog: WEBSITE_MCP_CATALOG, oxy: oxyService, oxyApiBase: config.oxyApiBase })
+    : null
+
+/**
+ * MCP diagnostics: is this task's MCP actually usable, beyond the site being
+ * up? Read-only and unauthenticated, so it carries no secrets — the catalog
+ * registration state is sanitized at the source and the authorization server
+ * is reported as configured, never probed per request.
+ *
+ * Deliberately separate from `/api/health`: an MCP problem must never drain a
+ * task that serves the website perfectly well. The HTTP status is always 200;
+ * the body says what is wrong.
+ */
+app.get('/api/mcp/status', async (_req, res) => {
+  let database: 'bootstrap-pending' | 'connected' | 'disconnected' = 'bootstrap-pending'
+  if (isBootstrapComplete()) {
+    try {
+      await pgClient`select 1`
+      database = 'connected'
+    } catch {
+      database = 'disconnected'
+    }
+  }
+  res.set('cache-control', 'no-store').json({
+    alive: true,
+    database,
+    catalogRegistration: mcpCatalogRegistration?.status() ?? disabledMcpCatalogRegistrationStatus(WEBSITE_MCP_CATALOG),
+    authorizationServer: { configured: Boolean(config.oxyApiBase), baseUrl: config.oxyApiBase || null },
+  })
 })
 
 // Validation error handler — must come after all routes so it catches
@@ -341,11 +383,7 @@ getPriorityTiers()
 const server = app.listen(config.port, () => {
   console.log(`Server listening on http://localhost:${config.port}`)
   void connectWithRetry()
-  // Only the deployed service registers: a local run would otherwise replace
-  // production's catalog with whatever is on a developer's branch.
-  if (process.env.NODE_ENV === 'production' && config.oxyServiceApiKey && config.oxyServiceApiSecret) {
-    void registerMcpCatalog({ catalog: WEBSITE_MCP_CATALOG, oxy: oxyService, oxyApiBase: config.oxyApiBase })
-  }
+  void mcpCatalogRegistration?.start()
 })
 
 
@@ -355,6 +393,7 @@ async function shutdown() {
   shuttingDown = true
   const deadline = setTimeout(() => process.exit(1), 15_000)
   deadline.unref()
+  mcpCatalogRegistration?.stop()
   await new Promise<void>(resolve => server.close(() => resolve()))
   await activity?.stop()
   await pgClient.end({ timeout: 2 })

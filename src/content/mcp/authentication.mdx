@@ -1,140 +1,64 @@
 ---
 title: Authentication
-description: Mint, rotate, and revoke MCP API tokens for the Oxy server.
+description: How the Oxy MCP server signs you in with Oxy OAuth, which scopes it uses, and how access is decided.
 order: 3
 ---
 
 # Authentication
 
-Every request to the Oxy MCP server requires a valid token. Tokens are bearer credentials — anyone who holds the raw string can impersonate it until you revoke it. Treat them like passwords.
+The Oxy MCP server uses **Oxy as its authorization server**. You connect by approving the client on auth.oxy.so; the client then sends a short-lived access token that Oxy issued for this server alone. The website never issues, stores or accepts tokens of its own.
 
-## Token model
+## How sign-in works
 
-| Field | Description |
-|-------|-------------|
-| `_id` | Mongo `ObjectId`. Used to revoke. Safe to log. |
-| `name` | Human label, e.g. `Claude Desktop — Alex`. Safe to log. |
-| `tokenHash` | SHA-256 of the raw token. Stored server-side; never returned. |
-| `createdBy` | Admin username that minted the token. |
-| `createdAt` | ISO timestamp. |
-| `lastUsedAt` | Updated on each accepted request. Helps audit dormant tokens. |
-| `expiresAt` | Optional ISO timestamp. Omit for non-expiring tokens. |
-| `revoked` | Boolean. Once `true`, the token is rejected on the next request. |
+1. **The client calls the server without a token.** `POST https://website-api.oxy.so/mcp` answers `401` with a `WWW-Authenticate` header that points at the protected resource metadata.
+2. **The client reads the metadata** at `https://website-api.oxy.so/.well-known/oauth-protected-resource/mcp`. It names the resource and Oxy as the authorization server.
+3. **The client registers itself with Oxy** and sends you to **auth.oxy.so**, where you sign in and approve the connection and the scopes it asks for.
+4. **The client retries with the access token.** Tokens are short-lived and bound to this resource: a token issued for another Oxy MCP server is not accepted here.
+5. **Every request is checked live.** The server asks Oxy about the token on each call, so a revoked connection stops working on its next request.
 
-The raw token is a **32-byte random hex string** (`crypto.randomBytes(32).toString('hex')` → 64 hex characters). It is returned **once** — at creation time — and never again. If you lose it, mint a new one.
+Tokens travel only in the `Authorization: Bearer` header. A token in a query string is never read.
 
-## Minting a token
+## Scopes
 
-Two equivalent paths.
+| Scope | Grants |
+|---|---|
+| `website.read` | Read tools |
+| `website.write` | Write tools — create, update, delete, upload and sync |
 
-### Admin UI
+A scope is necessary but not sufficient: what a call may actually do also depends on the account behind the connection.
 
-Sign in to oxy.so as an admin, open **Admin → MCP Tokens**, fill in the name (and optional expiry), and copy the raw token from the success modal.
+## The active account
 
-### REST API
+Oxy lets one connection hold more than one account. Every call is judged on the connection's **active account** — the account Oxy reports for the token at that moment — never on another account the connection could switch to.
 
-```bash
-curl -X POST https://api.oxy.so/api/mcp-tokens \
-  -H "Authorization: Bearer <admin-session-jwt>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "CI/CD — release-bot",
-    "expiresAt": "2027-01-01T00:00:00Z"
-  }'
-```
+## Who can do what
 
-Response:
+| Active account | Reads | Writes |
+|---|---|---|
+| A website admin | Every read, including drafts and admin-only data | Every write |
+| Any other Oxy account | Public reads only | None |
 
-```json
-{
-  "_id": "65fa1234abcd5678ef901234",
-  "name": "CI/CD — release-bot",
-  "token": "a1b2c3d4e5f6...64-hex-chars-total",
-  "createdAt": "2026-05-25T12:34:56.000Z",
-  "expiresAt": "2027-01-01T00:00:00.000Z"
-}
-```
+**Admins** are the accounts listed in the website's admin configuration. Everyone else gets reads answered by the site's own public API, requested with no credentials — exactly what an anonymous visitor to oxy.so receives, not a filtered copy of admin data. That means:
 
-The `Authorization` header on this request is a normal **user session JWT** (not an MCP token). The endpoint is guarded by `requireAuth` plus `adminOnly` — only signed-in admins may mint tokens.
+- **Admin-only reads.** Reads with no public equivalent are admin-only: drafts, the media library, pages listings, translations, referrals and tracked repositories.
+- **Refused filters.** A filter the public API does not implement (for example, asking for drafts) is refused with an error rather than silently dropped, so a result never looks complete when it is not.
+- **No writes.** Write tools return an error saying they are only available to website admins.
 
-### From within MCP itself
+## Errors
 
-Once you have one token, you can ask Claude to mint more via the `create_mcp_token` tool:
+Authentication problems are answered at the HTTP level, before any tool runs:
 
-> Create a new MCP token called "Release bot" with no expiry.
+| Status | JSON-RPC code | Meaning |
+|---|---|---|
+| `401` | `-32001` | No token, or the token is inactive, expired, revoked or issued for another resource. The `WWW-Authenticate` header tells the client to sign in again. |
+| `503` | `-32000` | Oxy could not be reached to check the token. Retry later. |
 
-This calls `create_mcp_token` and returns the raw secret in the chat. Treat the output as sensitive — Claude will show the raw token in the response.
+Once a tool runs, a failure comes back as a normal tool result with `isError: true`, a stable error code and a short message — for example, a tool that is only available to website admins, or a refused filter. Tool errors never include stack traces or internal details.
 
-## Using a token
+## Revoking access
 
-The server accepts the token in either of two places on `POST /mcp`:
+Open your **Oxy account settings** and remove the connection. The next request from that client fails with `401` and the client asks you to sign in again. Removing the connector from the client also stops it from calling the server, but only revoking it in Oxy invalidates the access it was granted.
 
-```
-Authorization: Bearer <token>
-```
+## Migration from static tokens
 
-…or, for clients that cannot set headers (rare for HTTP MCP clients):
-
-```
-POST /mcp?token=<token>
-```
-
-The header form is strongly preferred. The query-string form exists because some early MCP clients did not yet support custom headers — log scrubbing pipelines will leak query-string tokens far more often than headers.
-
-On every accepted request the server bumps `lastUsedAt`. This is a useful signal for dormant-token cleanup — anything with a `lastUsedAt` older than a few months is likely safe to revoke.
-
-## Validation rules
-
-A token is **valid** when all of the following are true:
-
-1. SHA-256 of the bearer string matches a stored `tokenHash`.
-2. The matched document has `revoked: false`.
-3. Either `expiresAt` is unset, or `expiresAt > now`.
-
-Any failure returns:
-
-```json
-{ "error": "Invalid or expired token" }
-```
-
-…with HTTP `401`. The server does not distinguish between revoked, expired, and unknown tokens — clients only learn that the credential is no longer good.
-
-## Revoking a token
-
-You have three options — pick whichever matches the situation.
-
-### Admin UI
-
-**Admin → MCP Tokens → Revoke** marks the token as `revoked: true`.
-
-### REST API
-
-```bash
-curl -X DELETE https://api.oxy.so/api/mcp-tokens/<id> \
-  -H "Authorization: Bearer <admin-session-jwt>"
-```
-
-The `<id>` is the token's `_id` (returned at creation, also visible from `list_mcp_tokens`).
-
-### From within MCP
-
-> Revoke MCP token 65fa1234abcd5678ef901234.
-
-Calls `revoke_mcp_token`. Useful for ad-hoc rotations from inside a Claude session.
-
-## Rotation pattern
-
-There is no built-in "rotate" call — rotation is three steps:
-
-1. **Mint a replacement.** `create_mcp_token` with the same name (any name is allowed; uniqueness is not enforced).
-2. **Roll over the client.** Drop the new token into your client config and reload. Send one test request.
-3. **Revoke the old one.** `revoke_mcp_token` against the previous `_id`. The next request from any client still holding the old token fails with `401`.
-
-For automated rotations, run all three steps from a single MCP session — the create/revoke pair is atomic-enough that downtime is measured in milliseconds.
-
-## Operational notes
-
-- **No per-tool scopes.** A token grants access to every registered tool. If you need limited capabilities, run a proxy in front of `/mcp` that filters tool calls.
-- **No per-user delegation.** Tokens act on the Mongo database as a single privileged actor (`createdBy: 'mcp-admin'` for direct MCP calls, the admin's username for REST-created ones). They do not impersonate end users.
-- **No rate limiting yet.** The MCP route does not currently enforce per-token rate limits. Pair the token with an outer reverse proxy if you need throttling.
-- **Storage.** Token hashes live in the `mcptokens` collection on the same MongoDB instance that backs the rest of the CMS.
+Earlier versions of this server used static API tokens that admins minted in the website (`create_mcp_token`, `revoke_mcp_token`), sent either as a bearer header or as `?token=` in the URL, at `https://api.oxy.so/mcp`, with token hashes stored in MongoDB. All of that has been removed: those tokens are no longer accepted and those tools no longer exist. To migrate, delete the old server entry and any stored token from your client, then add `https://website-api.oxy.so/mcp` following the [Quickstart](/developers/docs/mcp/quickstart).
