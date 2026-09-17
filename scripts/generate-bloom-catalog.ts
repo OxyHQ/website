@@ -100,11 +100,16 @@ export const PROPS_DIR = join(CONTENT_DIR, 'bloom-catalog-props')
 /**
  * The README groups that publish infrastructure rather than surfaces a reader
  * can look at. Group NAMES, deliberately — membership comes from the table, so
- * moving `fonts` out of `Assets` upstream moves it here too. Each name must
- * still appear in the table, or a rename upstream would silently promote a
- * dozen utility exports into component cards.
+ * moving `preset-vars` out of `Providers and theme` upstream moves it here too.
+ * Each name must still appear in the table, or a rename upstream would silently
+ * promote a dozen utility exports into component cards.
+ *
+ * Bloom 2.0 folded its old `Assets` group into `Motion and assets`, next to
+ * `animated-check`, `icon-circle` and `radio-indicator` — components a reader
+ * looks at. Marking that whole group a utility would hide them from the hub,
+ * so it is carded, and `icons`, `typography` and `fonts` card with it.
  */
-const UTILITY_GROUPS = ['Providers and theme', 'Assets']
+const UTILITY_GROUPS = ['Providers and theme']
 const UNCATEGORIZED_GROUP = 'Uncategorized'
 
 /**

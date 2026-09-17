@@ -32,6 +32,21 @@ export const props: BloomSurfaceProps = {
         { name: 'color', type: 'string', optional: true, description: 'Colour of the selected indicator. Uses the theme primary by default.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'labelStyle', type: 'StyleProp<TextStyle>', optional: true },
+        { name: 'variant', type: "'default' | 'card'", options: ['default', 'card'], optional: true, description: "`default` renders each option as a `Radio` row; `card` as a `RadioCard` (title + description left, the dot right, the whole card selectable). A card's title is the option's `label`." },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'RadioCardProps<Value>': {
+      props: [
+        { name: 'value', type: 'Value', optional: false, description: 'The value this card stands for.' },
+        { name: 'selected', type: 'boolean', optional: false, description: 'Whether this card is the selected one.' },
+        { name: 'onSelect', type: '(value: Value) => void', optional: false, description: 'Called with `value` when the card is chosen. Re-choosing it is a no-op.' },
+        { name: 'title', type: 'string', optional: false, description: "The card's title (one line); also its accessible name." },
+        { name: 'description', type: 'string', optional: true, description: 'Optional one-line description under the title.' },
+        { name: 'disabled', type: 'boolean', optional: true, description: 'Dims the whole card and stops it selecting.' },
+        { name: 'color', type: 'string', optional: true, description: 'Accent for the selected dot. Uses the theme primary by default.' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'accessibilityLabel', type: 'string', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
     },
@@ -39,5 +54,6 @@ export const props: BloomSurfaceProps = {
   components: [
     { name: 'Radio', propsType: 'RadioProps<Value>' },
     { name: 'RadioGroup', propsType: 'RadioGroupProps<Value>' },
+    { name: 'RadioCard', propsType: 'RadioCardProps<Value>' },
   ],
 }

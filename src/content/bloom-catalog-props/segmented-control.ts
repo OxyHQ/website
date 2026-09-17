@@ -9,7 +9,8 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'label', type: 'string', optional: false },
         { name: 'type', type: "'tabs' | 'radio'", options: ['tabs', 'radio'], optional: false },
-        { name: 'size', type: "'small' | 'large'", options: ['small', 'large'], optional: true },
+        { name: 'size', type: 'SegmentedControlSize', options: ['small', 'medium', 'large'], optional: true, description: '`medium` (default); `small` and `large` step around it.' },
+        { name: 'variant', type: 'SegmentedControlVariant', options: ['solid', 'plain'], optional: true, description: '`solid` (default) draws the track and sliding thumb; `plain` draws neither.' },
         { name: 'value', type: 'T', optional: false },
         { name: 'onChange', type: '(value: T) => void', optional: false },
         { name: 'children', type: 'React.ReactNode', optional: false },
@@ -33,6 +34,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: false },
         { name: 'style', type: 'StyleProp<TextStyle>', optional: true },
+        { name: 'className', type: 'string', optional: true },
       ],
       inheritsFrom: ['{ children: React.ReactNode; style?: StyleProp<TextStyle>; } & Omit<React.Compo…'],
     },

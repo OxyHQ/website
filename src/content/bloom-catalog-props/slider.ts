@@ -5,6 +5,29 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'slider',
   propTypes: {
+    'RangeSliderProps': {
+      props: [
+        { name: 'value', type: '[number, number]', optional: false, description: 'The lower and upper values (controlled). The thumbs cannot pass each other.' },
+        { name: 'onValueChange', type: '(value: [number, number]) => void', optional: false, description: 'Fired continuously as either thumb is dragged or stepped.' },
+        { name: 'onSlidingComplete', type: '(value: [number, number]) => void', optional: true, description: 'Fired once when a drag gesture ends.' },
+        { name: 'formatValue', type: '(value: number, index: number) => string', optional: true, description: "Formats the value in each thumb's bubble; `index` is 0 (lower) or 1 (upper)." },
+        { name: 'thumbLabels', type: '[string, string]', optional: true, description: "Accessible names for the lower and upper thumbs. Default `['Minimum', 'Maximum']`." },
+        { name: 'disabled', type: 'boolean', optional: true },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: "The slider's accessible NAME — what the value applies to." },
+        { name: 'testID', type: 'string', optional: true },
+        { name: 'label', type: 'string', optional: true, description: 'A visible label above the track. It also serves as the accessible name when `accessibilityLabel` is not given.' },
+        { name: 'min', type: 'number', optional: true, description: 'Minimum value. Defaults to `0`.' },
+        { name: 'max', type: 'number', optional: true, description: 'Maximum value. Defaults to `100`.' },
+        { name: 'step', type: 'number', optional: true, description: 'Step granularity. Defaults to `1`. Use a fractional step for fine control.' },
+        { name: 'trackHeight', type: 'number', optional: true, description: 'Track thickness in px. Defaults to `6`.' },
+        { name: 'thumbSize', type: 'number', optional: true, description: 'Thumb diameter in px. Defaults to `20`.' },
+        { name: 'minimumTrackTintColor', type: 'string', optional: true, description: 'Override the filled-track colour (a flat fill). Defaults to the accent gradient.' },
+        { name: 'maximumTrackTintColor', type: 'string', optional: true, description: 'Override the unfilled-track colour. Defaults to the neutral-200 rail.' },
+        { name: 'thumbTintColor', type: 'string', optional: true, description: "Override the thumb's inner dot colour. Defaults to the accent gradient." },
+        { name: 'showTooltip', type: 'boolean', optional: true, description: 'Show the exact value in a persistent bubble above the thumb. Defaults to `true`; the bubble reserves 32px above the track.' },
+      ],
+    },
     'SliderProps': {
       props: [
         { name: 'value', type: 'number', optional: false, description: 'Current value (controlled).' },
@@ -14,11 +37,14 @@ export const props: BloomSurfaceProps = {
         { name: 'max', type: 'number', optional: true, description: 'Maximum value. Defaults to `100`.' },
         { name: 'step', type: 'number', optional: true, description: 'Step granularity. Defaults to `1`. Use a fractional step for fine control.' },
         { name: 'disabled', type: 'boolean', optional: true },
-        { name: 'trackHeight', type: 'number', optional: true, description: 'Track thickness in px. Defaults to `4`.' },
+        { name: 'trackHeight', type: 'number', optional: true, description: 'Track thickness in px. Defaults to `6`.' },
         { name: 'thumbSize', type: 'number', optional: true, description: 'Thumb diameter in px. Defaults to `20`.' },
-        { name: 'minimumTrackTintColor', type: 'string', optional: true, description: 'Override the filled-track color. Defaults to the theme primary.' },
-        { name: 'maximumTrackTintColor', type: 'string', optional: true, description: 'Override the unfilled-track color. Defaults to the theme border.' },
-        { name: 'thumbTintColor', type: 'string', optional: true, description: 'Override the thumb color. Defaults to the theme primary.' },
+        { name: 'minimumTrackTintColor', type: 'string', optional: true, description: 'Override the filled-track colour (a flat fill). Defaults to the accent gradient.' },
+        { name: 'maximumTrackTintColor', type: 'string', optional: true, description: 'Override the unfilled-track colour. Defaults to the neutral-200 rail.' },
+        { name: 'thumbTintColor', type: 'string', optional: true, description: "Override the thumb's inner dot colour. Defaults to the accent gradient." },
+        { name: 'label', type: 'string', optional: true, description: 'A visible label above the track. It also serves as the accessible name when `accessibilityLabel` is not given.' },
+        { name: 'showTooltip', type: 'boolean', optional: true, description: 'Show the exact value in a persistent bubble above the thumb. Defaults to `true`; the bubble reserves 32px above the track.' },
+        { name: 'formatValue', type: '(value: number) => string', optional: true, description: 'Formats the value shown in the bubble. Defaults to `String(value)`.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: "The slider's accessible NAME — what the value applies to." },
         { name: 'testID', type: 'string', optional: true },
@@ -26,6 +52,7 @@ export const props: BloomSurfaceProps = {
     },
   },
   components: [
+    { name: 'RangeSlider', propsType: 'RangeSliderProps' },
     { name: 'Slider', propsType: 'SliderProps' },
   ],
 }

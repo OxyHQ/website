@@ -7,8 +7,8 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'ToasterProps': {
       props: [
-        { name: 'unstyled', type: 'boolean', optional: true },
         { name: 'styles', type: 'ToastStyles', optional: true },
+        { name: 'unstyled', type: 'boolean', optional: true },
         { name: 'backgroundComponent', type: 'React.ReactNode', optional: true },
         { name: 'duration', type: 'number', optional: true },
         { name: 'theme', type: 'ToastTheme', options: ['light', 'dark', 'system'], optional: true, description: 'No-op — light/dark comes from `BloomThemeProvider`.' },

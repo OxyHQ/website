@@ -2016,7 +2016,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(197 34 98);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(253 175 0);
+  --tertiary: rgb(239 165 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(209 210 205);
   --muted-foreground: rgb(61 74 62);
@@ -2141,7 +2141,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 112 163);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(253 175 0);
+  --tertiary: rgb(239 165 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(220 207 204);
   --muted-foreground: rgb(88 65 60);
@@ -2266,7 +2266,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 115 139);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(238 79 43);
+  --tertiary: rgb(224 69 34);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(219 207 207);
   --muted-foreground: rgb(87 65 68);
@@ -2391,7 +2391,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(154 90 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(254 207 0);
+  --tertiary: rgb(241 197 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(211 209 213);
   --muted-foreground: rgb(67 70 84);
@@ -2516,7 +2516,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(193 31 77);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(252 97 15);
+  --tertiary: rgb(238 87 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(208 210 206);
   --muted-foreground: rgb(60 74 64);
@@ -2641,7 +2641,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(194 32 101);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(233 64 104);
+  --tertiary: rgb(219 54 94);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(209 210 205);
   --muted-foreground: rgb(61 74 62);
@@ -2766,7 +2766,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 103 209);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(125 45 229);
+  --tertiary: rgb(122 41 227);
   --tertiary-foreground: rgb(255 255 255);
   --muted: rgb(212 209 201);
   --muted-foreground: rgb(71 72 52);
@@ -2891,8 +2891,8 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(181 72 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(229 69 50);
-  --tertiary-foreground: rgb(0 0 0);
+  --tertiary: rgb(214 59 42);
+  --tertiary-foreground: rgb(255 255 255);
   --muted: rgb(207 210 209);
   --muted-foreground: rgb(57 74 73);
   --accent: rgb(207 210 209);
@@ -3016,7 +3016,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(156 89 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(252 97 5);
+  --tertiary: rgb(235 89 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(211 209 213);
   --muted-foreground: rgb(67 70 84);
@@ -3141,7 +3141,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(193 43 27);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(232 72 46);
+  --tertiary: rgb(217 62 38);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(209 209 212);
   --muted-foreground: rgb(60 72 81);
@@ -3266,7 +3266,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(124 104 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(165 249 69);
+  --tertiary: rgb(154 237 58);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(214 208 213);
   --muted-foreground: rgb(75 68 82);
@@ -3391,7 +3391,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(135 102 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(254 161 0);
+  --tertiary: rgb(239 152 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(213 208 213);
   --muted-foreground: rgb(73 69 83);
@@ -3516,7 +3516,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 117 122);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(0 241 254);
+  --tertiary: rgb(0 229 241);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(218 207 209);
   --muted-foreground: rgb(84 66 73);
@@ -3641,8 +3641,8 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 115 141);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(1 125 255);
-  --tertiary-foreground: rgb(0 0 0);
+  --tertiary: rgb(0 115 236);
+  --tertiary-foreground: rgb(255 255 255);
   --muted: rgb(219 207 207);
   --muted-foreground: rgb(87 65 67);
   --accent: rgb(219 207 207);
@@ -3766,7 +3766,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 120 114);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(0 227 253);
+  --tertiary: rgb(0 215 240);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(219 207 203);
   --muted-foreground: rgb(88 66 57);
@@ -3891,7 +3891,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(85 85 85);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(165 249 69);
+  --tertiary: rgb(154 237 58);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(209 209 209);
   --muted-foreground: rgb(59 74 65);
@@ -4016,7 +4016,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(186 24 74);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(254 179 0);
+  --tertiary: rgb(239 169 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(208 210 206);
   --muted-foreground: rgb(60 74 63);
@@ -4141,7 +4141,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(182 69 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(0 86 255);
+  --tertiary: rgb(0 78 233);
   --tertiary-foreground: rgb(255 255 255);
   --muted: rgb(208 210 206);
   --muted-foreground: rgb(60 74 64);
@@ -4266,7 +4266,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 117 128);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(228 85 220);
+  --tertiary: rgb(215 74 208);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(211 210 202);
   --muted-foreground: rgb(68 73 54);
@@ -4391,7 +4391,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(128 55 238);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(255 138 0);
+  --tertiary: rgb(239 129 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(208 210 207);
   --muted-foreground: rgb(58 74 68);
@@ -4516,7 +4516,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 77 234);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(233 72 172);
+  --tertiary: rgb(220 61 161);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(211 210 202);
   --muted-foreground: rgb(68 73 55);
@@ -4766,7 +4766,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(173 77 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(233 66 136);
+  --tertiary: rgb(219 54 125);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(208 210 210);
   --muted-foreground: rgb(57 73 76);
@@ -4891,7 +4891,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(124 42 228);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(163 249 71);
+  --tertiary: rgb(153 238 59);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(211 209 213);
   --muted-foreground: rgb(67 70 84);
@@ -5016,7 +5016,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 101 216);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(232 69 162);
+  --tertiary: rgb(218 57 151);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(208 210 211);
   --muted-foreground: rgb(59 73 79);
@@ -5141,7 +5141,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(192 58 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(255 191 6);
+  --tertiary: rgb(241 180 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(211 209 213);
   --muted-foreground: rgb(69 70 84);
@@ -5266,7 +5266,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 119 108);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(253 113 0);
+  --tertiary: rgb(237 105 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(212 208 213);
   --muted-foreground: rgb(70 69 84);
@@ -5391,7 +5391,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 107 191);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(255 215 0);
+  --tertiary: rgb(242 204 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(220 207 204);
   --muted-foreground: rgb(88 65 60);
@@ -5516,7 +5516,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(185 24 127);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(0 217 254);
+  --tertiary: rgb(0 205 240);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(219 207 203);
   --muted-foreground: rgb(88 66 56);
@@ -5641,7 +5641,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(100 111 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(0 244 255);
+  --tertiary: rgb(0 232 242);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(220 207 204);
   --muted-foreground: rgb(88 65 60);
@@ -5766,7 +5766,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 117 126);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(190 252 51);
+  --tertiary: rgb(180 240 36);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(219 207 206);
   --muted-foreground: rgb(88 65 66);
@@ -5891,7 +5891,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 119 100);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(254 191 0);
+  --tertiary: rgb(240 181 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(219 207 205);
   --muted-foreground: rgb(88 65 64);
@@ -6016,7 +6016,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(174 24 159);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(2 106 255);
+  --tertiary: rgb(0 97 235);
   --tertiary-foreground: rgb(255 255 255);
   --muted: rgb(218 208 201);
   --muted-foreground: rgb(85 68 51);
@@ -6141,7 +6141,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(154 90 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(231 76 191);
+  --tertiary: rgb(218 65 180);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(219 207 203);
   --muted-foreground: rgb(88 66 58);
@@ -6266,7 +6266,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 121 70);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(232 66 141);
+  --tertiary: rgb(218 54 131);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(218 208 201);
   --muted-foreground: rgb(85 68 51);
@@ -6391,7 +6391,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 121 83);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(0 87 253);
+  --tertiary: rgb(0 78 230);
   --tertiary-foreground: rgb(255 255 255);
   --muted: rgb(219 207 202);
   --muted-foreground: rgb(87 66 56);
@@ -6516,7 +6516,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 116 133);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(254 187 0);
+  --tertiary: rgb(240 177 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(219 207 202);
   --muted-foreground: rgb(87 66 54);
@@ -6641,7 +6641,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(148 93 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(0 253 139);
+  --tertiary: rgb(0 240 131);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(214 208 212);
   --muted-foreground: rgb(76 68 82);
@@ -6766,7 +6766,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(131 56 238);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(0 253 236);
+  --tertiary: rgb(0 241 224);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(219 207 207);
   --muted-foreground: rgb(87 65 66);
@@ -6891,7 +6891,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(177 74 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(0 230 255);
+  --tertiary: rgb(0 218 242);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(217 207 210);
   --muted-foreground: rgb(83 66 75);
@@ -7016,7 +7016,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(37 67 249);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(179 250 60);
+  --tertiary: rgb(168 239 47);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(219 207 208);
   --muted-foreground: rgb(87 65 69);
@@ -7141,7 +7141,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(186 65 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(0 255 217);
+  --tertiary: rgb(0 242 206);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(212 208 213);
   --muted-foreground: rgb(71 69 83);
@@ -7266,7 +7266,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(137 99 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(0 99 254);
+  --tertiary: rgb(0 90 232);
   --tertiary-foreground: rgb(255 255 255);
   --muted: rgb(218 207 209);
   --muted-foreground: rgb(86 65 71);
@@ -7391,7 +7391,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(148 51 226);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(249 93 21);
+  --tertiary: rgb(235 83 5);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(210 209 213);
   --muted-foreground: rgb(64 71 83);
@@ -7516,7 +7516,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(0 91 229);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(175 251 64);
+  --tertiary: rgb(164 239 52);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(208 210 207);
   --muted-foreground: rgb(59 74 67);
@@ -7641,7 +7641,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(136 49 230);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(0 255 218);
+  --tertiary: rgb(0 242 207);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(209 209 212);
   --muted-foreground: rgb(62 72 82);
@@ -9479,7 +9479,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(193 43 27);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(232 72 46);
+  --tertiary: rgb(217 62 38);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(209 209 212);
   --muted-foreground: rgb(60 72 81);
@@ -9537,7 +9537,7 @@
   --color-primary-foreground: rgb(255 255 255);
   --color-secondary: rgb(193 43 27);
   --color-secondary-foreground: rgb(255 255 255);
-  --color-tertiary: rgb(232 72 46);
+  --color-tertiary: rgb(217 62 38);
   --color-tertiary-foreground: rgb(0 0 0);
   --color-muted: rgb(209 209 212);
   --color-muted-foreground: rgb(60 72 81);
@@ -9766,7 +9766,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(124 104 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(165 249 69);
+  --tertiary: rgb(154 237 58);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(214 208 213);
   --muted-foreground: rgb(75 68 82);
@@ -9824,7 +9824,7 @@
   --color-primary-foreground: rgb(255 255 255);
   --color-secondary: rgb(124 104 0);
   --color-secondary-foreground: rgb(255 255 255);
-  --color-tertiary: rgb(165 249 69);
+  --color-tertiary: rgb(154 237 58);
   --color-tertiary-foreground: rgb(0 0 0);
   --color-muted: rgb(214 208 213);
   --color-muted-foreground: rgb(75 68 82);
@@ -10053,7 +10053,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(154 90 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(254 207 0);
+  --tertiary: rgb(241 197 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(211 209 213);
   --muted-foreground: rgb(67 70 84);
@@ -10111,7 +10111,7 @@
   --color-primary-foreground: rgb(255 255 255);
   --color-secondary: rgb(154 90 0);
   --color-secondary-foreground: rgb(255 255 255);
-  --color-tertiary: rgb(254 207 0);
+  --color-tertiary: rgb(241 197 0);
   --color-tertiary-foreground: rgb(0 0 0);
   --color-muted: rgb(211 209 213);
   --color-muted-foreground: rgb(67 70 84);
@@ -10485,7 +10485,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(197 34 98);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(253 175 0);
+  --tertiary: rgb(239 165 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(209 210 205);
   --muted-foreground: rgb(61 74 62);
@@ -10543,7 +10543,7 @@
   --color-primary-foreground: rgb(255 255 255);
   --color-secondary: rgb(197 34 98);
   --color-secondary-foreground: rgb(255 255 255);
-  --color-tertiary: rgb(253 175 0);
+  --color-tertiary: rgb(239 165 0);
   --color-tertiary-foreground: rgb(0 0 0);
   --color-muted: rgb(209 210 205);
   --color-muted-foreground: rgb(61 74 62);
@@ -10772,7 +10772,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(197 34 98);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(253 175 0);
+  --tertiary: rgb(239 165 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(209 210 205);
   --muted-foreground: rgb(61 74 62);
@@ -10830,7 +10830,7 @@
   --color-primary-foreground: rgb(255 255 255);
   --color-secondary: rgb(197 34 98);
   --color-secondary-foreground: rgb(255 255 255);
-  --color-tertiary: rgb(253 175 0);
+  --color-tertiary: rgb(239 165 0);
   --color-tertiary-foreground: rgb(0 0 0);
   --color-muted: rgb(209 210 205);
   --color-muted-foreground: rgb(61 74 62);
@@ -11346,7 +11346,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(154 90 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(254 207 0);
+  --tertiary: rgb(241 197 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(211 209 213);
   --muted-foreground: rgb(67 70 84);
@@ -11404,7 +11404,7 @@
   --color-primary-foreground: rgb(255 255 255);
   --color-secondary: rgb(154 90 0);
   --color-secondary-foreground: rgb(255 255 255);
-  --color-tertiary: rgb(254 207 0);
+  --color-tertiary: rgb(241 197 0);
   --color-tertiary-foreground: rgb(0 0 0);
   --color-muted: rgb(211 209 213);
   --color-muted-foreground: rgb(67 70 84);
@@ -12207,8 +12207,8 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(181 72 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(229 69 50);
-  --tertiary-foreground: rgb(0 0 0);
+  --tertiary: rgb(214 59 42);
+  --tertiary-foreground: rgb(255 255 255);
   --muted: rgb(207 210 209);
   --muted-foreground: rgb(57 74 73);
   --accent: rgb(207 210 209);
@@ -12265,8 +12265,8 @@
   --color-primary-foreground: rgb(255 255 255);
   --color-secondary: rgb(181 72 0);
   --color-secondary-foreground: rgb(255 255 255);
-  --color-tertiary: rgb(229 69 50);
-  --color-tertiary-foreground: rgb(0 0 0);
+  --color-tertiary: rgb(214 59 42);
+  --color-tertiary-foreground: rgb(255 255 255);
   --color-muted: rgb(207 210 209);
   --color-muted-foreground: rgb(57 74 73);
   --color-accent: rgb(207 210 209);
@@ -13068,7 +13068,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(197 34 98);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(253 175 0);
+  --tertiary: rgb(239 165 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(209 210 205);
   --muted-foreground: rgb(61 74 62);
@@ -13126,7 +13126,7 @@
   --color-primary-foreground: rgb(255 255 255);
   --color-secondary: rgb(197 34 98);
   --color-secondary-foreground: rgb(255 255 255);
-  --color-tertiary: rgb(253 175 0);
+  --color-tertiary: rgb(239 165 0);
   --color-tertiary-foreground: rgb(0 0 0);
   --color-muted: rgb(209 210 205);
   --color-muted-foreground: rgb(61 74 62);
@@ -13355,7 +13355,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(156 89 0);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(252 97 5);
+  --tertiary: rgb(235 89 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(211 209 213);
   --muted-foreground: rgb(67 70 84);
@@ -13413,7 +13413,7 @@
   --color-primary-foreground: rgb(255 255 255);
   --color-secondary: rgb(156 89 0);
   --color-secondary-foreground: rgb(255 255 255);
-  --color-tertiary: rgb(252 97 5);
+  --color-tertiary: rgb(235 89 0);
   --color-tertiary-foreground: rgb(0 0 0);
   --color-muted: rgb(211 209 213);
   --color-muted-foreground: rgb(67 70 84);
@@ -13642,7 +13642,7 @@
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(197 34 98);
   --secondary-foreground: rgb(255 255 255);
-  --tertiary: rgb(253 175 0);
+  --tertiary: rgb(239 165 0);
   --tertiary-foreground: rgb(0 0 0);
   --muted: rgb(209 210 205);
   --muted-foreground: rgb(61 74 62);
@@ -13700,7 +13700,7 @@
   --color-primary-foreground: rgb(255 255 255);
   --color-secondary: rgb(197 34 98);
   --color-secondary-foreground: rgb(255 255 255);
-  --color-tertiary: rgb(253 175 0);
+  --color-tertiary: rgb(239 165 0);
   --color-tertiary-foreground: rgb(0 0 0);
   --color-muted: rgb(209 210 205);
   --color-muted-foreground: rgb(61 74 62);

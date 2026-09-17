@@ -151,6 +151,20 @@ describe('_redirects', () => {
     expect(rules).toContainEqual(['/pay', '/peable/', '301'])
   })
 
+  test('sends Bloom surfaces removed in 2.0 to their named successor only', () => {
+    const base = '/developers/docs/bloom/components'
+    for (const from of [`${base}/prompt-input`, `${base}/prompt-input/`]) {
+      expect(rules).toContainEqual([from, `${base}/composer-panel/`, '301'])
+    }
+    for (const from of [`${base}/combobox`, `${base}/combobox/`]) {
+      expect(rules).toContainEqual([from, `${base}/select/`, '301'])
+    }
+    // No successor: these fall through to the 404 catch-all, not the hub.
+    for (const retired of ['benefit-list', 'level-picker', 'profile-card']) {
+      expect(rules.some(([from]) => from.startsWith(`${base}/${retired}`))).toBe(false)
+    }
+  })
+
   test('never 301s a locale away because the readiness API timed out', () => {
     const blind = buildRedirectsFile({
       supportedLocales: ['en', 'es', 'ca', 'fr'],
