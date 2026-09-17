@@ -165,17 +165,6 @@ export const referrals = pgTable('referrals', {
   ...timestamps,
 })
 
-export const mcpTokens = pgTable('mcp_tokens', {
-  _id: objectId(),
-  name: text().notNull(),
-  tokenHash: text().notNull().unique(),
-  createdBy: text().notNull(),
-  lastUsedAt: timestamp({ withTimezone: true }),
-  expiresAt: timestamp({ withTimezone: true }),
-  revoked: boolean().notNull().default(false),
-  ...timestamps,
-})
-
 export const incidents = pgTable(
   'incidents',
   {

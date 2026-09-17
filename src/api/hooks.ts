@@ -956,43 +956,6 @@ export function useDeleteSeo() {
   })
 }
 
-// ── MCP Tokens ──
-export interface McpToken {
-  _id: string
-  name: string
-  createdBy: string
-  createdAt: string
-  lastUsedAt: string | null
-  expiresAt: string | null
-  revoked: boolean
-}
-
-export function useMcpTokens(enabled = true) {
-  return useQuery({
-    queryKey: ['mcp-tokens'],
-    queryFn: () => apiFetch<McpToken[]>('/mcp-tokens'),
-    enabled,
-    retry: false,
-  })
-}
-
-export function useCreateMcpToken() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (data: { name: string; expiresAt?: string }) =>
-      apiFetch<{ token: string }>('/mcp-tokens', { method: 'POST', body: JSON.stringify(data) }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['mcp-tokens'] }),
-  })
-}
-
-export function useRevokeMcpToken() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (id: string) => apiFetch(`/mcp-tokens/${id}`, { method: 'DELETE' }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['mcp-tokens'] }),
-  })
-}
-
 // ── Platform Stats (Dashboard) ──
 // Types are owned by ./platformStatsStore and re-exported here so existing
 // callers can keep importing from this module alongside the hook.

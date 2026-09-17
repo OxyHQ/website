@@ -115,7 +115,6 @@ bun run build:faircoin-og         # OG images for FairCoin pages
 bun run optimize-media            # compress media in place
 bun run analyze                   # bundle stats
 bun run typecheck:server
-bun run mcp                       # run the MCP server
 bun run seed                      # seed the database
 ```
 
@@ -136,7 +135,7 @@ bun run seed                      # seed the database
 - Team, blog, changelog, job and testimonial content comes from the CMS through hooks such as `useTeamMembers`, `useNewsroomPosts` and `useJobs`. The static fallbacks under `src/data/` stay empty or generic.
 - No hardcoded customer logos or testimonials. They stay behind `FEATURES.SHOW_TRUSTED_LOGOS` and `FEATURES.SHOW_TESTIMONIALS` until real, verified ones exist.
 - Never hand write a palette. Change the seed, regenerate, and check the result in a browser with JavaScript blocked as well as with it on. Every page here is prerendered, so a token that only resolves after hydration is a token the visitor saw wrong first.
-- The MCP auth token is passed as a request header, never as a query string parameter.
+- The MCP server signs people in with Oxy's MCP OAuth; its bearer token travels in the `Authorization` header only. See `docs/MCP.md`.
 - New protected routes on the server use `createOxyAuthMiddleware` and `getRequiredOxyUserId` from `@oxy.so/core/server`. Do not add local auth middleware.
 
 <br>

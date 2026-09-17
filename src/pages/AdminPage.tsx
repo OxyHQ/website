@@ -22,7 +22,6 @@ import TestimonialsAdmin from '../components/admin/sections/TestimonialsAdmin'
 import ChangelogAdmin from '../components/admin/sections/ChangelogAdmin'
 import JobsAdmin from '../components/admin/sections/JobsAdmin'
 import TeamAdmin from '../components/admin/sections/TeamAdmin'
-import McpTokensAdmin from '../components/admin/sections/McpTokensAdmin'
 import LocalesAdmin from '../components/admin/sections/LocalesAdmin'
 import BackupAdmin from '../components/admin/sections/BackupAdmin'
 import CommentsAdmin from '../components/admin/sections/CommentsAdmin'
@@ -137,7 +136,6 @@ export default function AdminPage() {
       <Route path="jobs" element={<AdminLayout><JobsAdmin /></AdminLayout>} />
       <Route path="team" element={<AdminLayout><TeamAdmin /></AdminLayout>} />
       <Route path="locales" element={<AdminLayout><LocalesAdmin /></AdminLayout>} />
-      <Route path="mcp-tokens" element={<AdminLayout><McpTokensAdmin /></AdminLayout>} />
       <Route path="backup" element={<AdminLayout><BackupAdmin /></AdminLayout>} />
       <Route path="comments" element={<AdminLayout><CommentsAdmin /></AdminLayout>} />
       <Route path="features" element={<AdminLayout><FeaturesAdmin /></AdminLayout>} />

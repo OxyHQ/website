@@ -35,7 +35,6 @@ import { isBootstrapComplete, markBootstrapComplete } from './services/startupSt
 import jobsRouter from './routes/jobs.js'
 import settingsRouter from './routes/settings.js'
 import seoRouter from './routes/seo.js'
-import mcpTokensRouter from './routes/mcp-tokens.js'
 import localesRouter from './routes/locales.js'
 import translationsRouter from './routes/translations.js'
 import backupRouter from './routes/backup.js'
@@ -53,7 +52,8 @@ import fundingRouter from './routes/funding.js'
 import adminAccessRouter from './routes/adminAccess.js'
 import intercomRouter from './routes/intercom.js'
 import salesRouter, { purgeExpiredInquiries } from './routes/sales.js'
-import { mountMcp } from './mcp.js'
+import { mountMcp, oxyService, WEBSITE_MCP_CATALOG } from './mcp.js'
+import { registerMcpCatalog } from './services/mcpCatalogRegistration.js'
 
 /** Migrations ship beside the server sources, so this resolves in dev and in the image alike. */
 const MIGRATIONS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'db', 'migrations')
@@ -113,7 +113,6 @@ app.use('/api/team', teamRouter)
 app.use('/api/media', mediaRouter)
 app.use('/api/settings', settingsRouter)
 app.use('/api/seo', seoRouter)
-app.use('/api/mcp-tokens', mcpTokensRouter)
 app.use('/api/locales', localesRouter)
 app.use('/api/translations', translationsRouter)
 app.use('/api/backup', backupRouter)
@@ -342,6 +341,11 @@ getPriorityTiers()
 const server = app.listen(config.port, () => {
   console.log(`Server listening on http://localhost:${config.port}`)
   void connectWithRetry()
+  // Only the deployed service registers: a local run would otherwise replace
+  // production's catalog with whatever is on a developer's branch.
+  if (process.env.NODE_ENV === 'production' && config.oxyServiceApiKey && config.oxyServiceApiSecret) {
+    void registerMcpCatalog({ catalog: WEBSITE_MCP_CATALOG, oxy: oxyService, oxyApiBase: config.oxyApiBase })
+  }
 })
 
 

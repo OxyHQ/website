@@ -18,6 +18,25 @@ export const config = {
    */
   databaseUrl: process.env.DATABASE_URL || '',
   oxyApiBase: process.env.OXY_API_BASE || 'https://api.oxy.so',
+  /**
+   * This backend's Oxy service credential. It authenticates MCP token
+   * introspection and the MCP catalog registration, and it is what activates
+   * ecosystem activity (`services/ecosystemActivity.ts` reads the same pair).
+   */
+  oxyServiceApiKey: process.env.OXY_SERVICE_API_KEY?.trim() || '',
+  oxyServiceApiSecret: process.env.OXY_SERVICE_API_SECRET?.trim() || '',
+  mcp: {
+    /**
+     * The MCP endpoint's canonical URL. Oxy binds every access token to it, so
+     * it must match the host clients connect to exactly.
+     */
+    resource: process.env.MCP_RESOURCE_URL
+      || (process.env.NODE_ENV === 'production'
+        ? 'https://website-api.oxy.so/mcp'
+        : `http://localhost:${process.env.PORT || '4000'}/mcp`),
+    /** Browser origins allowed to call the endpoint, on top of Claude's. */
+    allowedOrigins: parseCsvEnv(process.env.MCP_ALLOWED_ORIGINS),
+  },
   // Server-only secret used to sign Intercom Messenger JWTs for authenticated
   // Oxy users. It is optional so visitors keep working before the workspace
   // security setting and production secret are enabled.
