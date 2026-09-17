@@ -1,10 +1,18 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import express from 'express'
-import { and, asc, count, desc, eq, gte, ilike, like, not, or, sql, type SQL } from 'drizzle-orm'
-import crypto from 'node:crypto'
+import { and, asc, count, desc, eq, ilike, like, not, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
+import { OxyServices } from '@oxy.so/core'
 import { safeFetch, UpstreamError } from '@oxy.so/core/server'
+import { appCapabilityCatalogSchema, type AppCapabilityCatalog, type CatalogTool } from '@oxy.so/contracts'
+import {
+  createCatalogMcpHttpService,
+  type CatalogMcpAuthorizationDecision,
+  type CatalogInvocationContext,
+  type CatalogToolHandlers,
+  type CatalogToolResult,
+} from '@oxy.so/mcp'
+import { config } from './config.js'
+import { isIrreversible, MCP_TOOL_ACCESS, PublicReadRefused, type McpToolAccess } from './mcpAccess.js'
 
 // Models
 import type { PgTable } from 'drizzle-orm/pg-core'
@@ -20,7 +28,6 @@ import {
   heroContents,
   jobs,
   locales,
-  mcpTokens,
   media,
   navigationDropdowns,
   newsroomPosts,
@@ -89,17 +96,51 @@ async function downloadUrl(url: string, maxBytes = MAX_DOWNLOAD_BYTES): Promise<
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-function createMcpServer() {
-  const server = new McpServer({
-    name: 'oxy-website',
-    version: '1.0.0',
-  }, {
-    capabilities: {
-      tools: {},
+// ── Tool registration ───────────────────────────────────────────────────────
+
+type ToolShape = Record<string, z.ZodType>
+
+interface ToolResult {
+  content: { type: 'text'; text: string }[]
+  isError?: true
+}
+
+interface ToolDefinition {
+  name: string
+  description: string
+  shape: ToolShape
+  handler: (args: Record<string, unknown>) => Promise<ToolResult>
+}
+
+/**
+ * The surface `registerTools` writes against. A tool is declared once here and
+ * compiled into both the Oxy capability catalog and the MCP handler table.
+ */
+interface ToolRegistrar {
+  tool<Shape extends ToolShape>(
+    name: string,
+    description: string,
+    shape: Shape,
+    handler: (args: z.infer<z.ZodObject<Shape>>) => Promise<ToolResult>,
+  ): void
+}
+
+function collectTools(): ToolDefinition[] {
+  const definitions: ToolDefinition[] = []
+  registerTools({
+    tool(name, description, shape, handler) {
+      if (definitions.some((definition) => definition.name === name)) {
+        throw new Error(`Duplicate MCP tool: ${name}`)
+      }
+      definitions.push({
+        name,
+        description,
+        shape,
+        handler: handler as ToolDefinition['handler'],
+      })
     },
   })
-  registerTools(server)
-  return server
+  return definitions
 }
 
 // ── Helper ──────────────────────────────────────────────────────────────────
@@ -113,7 +154,7 @@ function err(e: unknown) {
   return { content: [{ type: 'text' as const, text: msg }], isError: true as const }
 }
 
-function registerTools(server: McpServer) {
+function registerTools(server: ToolRegistrar) {
 
 // ── Diagnostics ─────────────────────────────────────────────────────────────
 
@@ -1934,142 +1975,166 @@ server.tool('delete_referral', 'Permanently delete a referral code. This action 
 
 } // end registerTools
 
-// ── Mount on Express app ────────────────────────────────────────────────────
+// ── Capability catalog ──────────────────────────────────────────────────────
 
-async function validateToken(token: string): Promise<boolean> {
-  const tokenHash = crypto.createHash('sha256').update(token).digest('hex')
-  const now = new Date()
-  const [mcpToken] = await db
-    .select({ id: mcpTokens._id })
-    .from(mcpTokens)
-    .where(
-      and(
-        eq(mcpTokens.tokenHash, tokenHash),
-        eq(mcpTokens.revoked, false),
-        // A token with no expiry never expires; one with an expiry must still
-        // be in the future.
-        or(sql`${mcpTokens.expiresAt} is null`, gte(mcpTokens.expiresAt, now)),
-      ),
-    )
-    .limit(1)
-  if (!mcpToken) return false
-  await db.update(mcpTokens).set({ lastUsedAt: now }).where(eq(mcpTokens._id, mcpToken.id))
-  return true
+const TOOLS = collectTools()
+
+/** Scopes a person grants the connector on Oxy's consent screen. */
+const READ_SCOPE = 'website.read'
+const WRITE_SCOPE = 'website.write'
+
+function accessFor(toolName: string): McpToolAccess {
+  const access = MCP_TOOL_ACCESS[toolName]
+  if (!access) throw new Error(`MCP tool ${toolName} has no access policy in mcpAccess.ts`)
+  return access
+}
+
+function catalogTool(definition: ToolDefinition): CatalogTool {
+  const { $schema: _schema, ...inputSchema } = z.toJSONSchema(z.object(definition.shape), {
+    target: 'draft-7',
+    io: 'input',
+  })
+  const writes = accessFor(definition.name).kind === 'write'
+  return {
+    name: definition.name,
+    version: '1.0.0',
+    description: definition.description,
+    inputSchema,
+    capabilityPackage: writes ? 'publish' : 'read',
+    requiredCapabilities: [writes ? WRITE_SCOPE : READ_SCOPE],
+    resourceTypes: ['website_content'],
+    effect: writes ? 'write' : 'read',
+    idempotency: writes ? 'supported' : 'none',
+    rollback: writes && !isIrreversible(definition.name) ? 'manual' : 'none',
+    exposure: ['mcp'],
+    limitKeys: [],
+    // The catalog is exposed to external MCP only; the internal capability lane
+    // never invokes this path.
+    invocation: { method: 'POST', path: `/_oxy/capabilities/${definition.name}` },
+  }
+}
+
+function buildCatalog(): AppCapabilityCatalog {
+  const unpoliced = Object.keys(MCP_TOOL_ACCESS).filter((name) => !TOOLS.some((tool) => tool.name === name))
+  if (unpoliced.length > 0) {
+    throw new Error(`MCP access policies without a tool: ${unpoliced.join(', ')}`)
+  }
+  return appCapabilityCatalogSchema.parse({
+    schemaVersion: '1',
+    appId: 'website',
+    version: '1.0.0',
+    audience: 'website-api',
+    internalBaseUrl: new URL(config.mcp.resource).origin,
+    accountResourceType: 'oxy_account',
+    externalMcp: { resource: config.mcp.resource },
+    tools: TOOLS.map(catalogTool),
+    events: [],
+  })
+}
+
+/** Built at import, so a tool missing its policy or schema fails the boot rather than a request. */
+export const WEBSITE_MCP_CATALOG = buildCatalog()
+
+// ── Authorization ───────────────────────────────────────────────────────────
+
+function isWebsiteAdmin(accountId: string): boolean {
+  return config.adminUserIds.includes(accountId)
+}
+
+async function authorize(
+  _input: Readonly<Record<string, unknown>>,
+  { tool, principal }: CatalogInvocationContext,
+): Promise<CatalogMcpAuthorizationDecision> {
+  const access = accessFor(tool.name)
+  const adminOnly = access.kind === 'write' || access.kind === 'admin-read'
+  if (adminOnly && !isWebsiteAdmin(principal.activeAccountId)) {
+    return { allowed: false, reason: `${tool.name} is only available to website admins` }
+  }
+  return { allowed: true, effectiveAccountId: principal.activeAccountId }
+}
+
+function textResult(text: string, isError = false): CatalogToolResult {
+  return { content: [{ type: 'text', text }], ...(isError ? { isError: true } : {}) }
 }
 
 /**
- * Validates the bearer token carried in the Authorization header. Responds 401
- * and returns false when it is missing or invalid, so callers can bail early.
- * The token is only ever read from the header — never from the query string.
+ * Answer a non-admin's read from the site's own public route, with no
+ * credentials — exactly what an anonymous visitor would receive.
  */
-async function requireMcpToken(req: express.Request, res: express.Response): Promise<boolean> {
-  const token = req.headers.authorization?.replace('Bearer ', '')
-  if (!token || !(await validateToken(token))) {
-    res.status(401).json({ error: 'Invalid or expired token' })
-    return false
+async function readPublicRoute(
+  access: Extract<McpToolAccess, { kind: 'public-read' }>,
+  input: Record<string, unknown>,
+): Promise<CatalogToolResult> {
+  let path: string
+  try {
+    path = access.publicPath(input)
+  } catch (error) {
+    if (error instanceof PublicReadRefused) return textResult(error.message, true)
+    throw error
   }
-  return true
+  const response = await fetch(`http://127.0.0.1:${config.port}/api${path}`, {
+    headers: { accept: 'application/json' },
+    signal: AbortSignal.timeout(15_000),
+  })
+  if (response.status === 404) return textResult('Not found', true)
+  if (!response.ok) return textResult(`The public API answered ${response.status}`, true)
+  return textResult(JSON.stringify(await response.json(), null, 2))
 }
 
-/** Sessions untouched for longer than this are swept along with their McpServer. */
-const MCP_SESSION_TTL_MS = 30 * 60 * 1000
-
-interface McpSession {
-  transport: StreamableHTTPServerTransport
-  lastSeen: number
-}
-
-const SESSION_NOT_FOUND = {
-  jsonrpc: '2.0',
-  error: {
-    code: -32001,
-    message: 'Session not found. Re-initialize the MCP connection.',
+const handlers: CatalogToolHandlers = Object.fromEntries(TOOLS.map((definition) => [
+  definition.name,
+  async (input: Readonly<Record<string, unknown>>, context: CatalogInvocationContext) => {
+    const access = accessFor(definition.name)
+    if (access.kind === 'public-read' && !isWebsiteAdmin(context.principal.activeAccountId)) {
+      return readPublicRoute(access, { ...input })
+    }
+    // Re-parse with the tool's own schema: the catalog's JSON Schema round trip
+    // validates shape, but defaults and transforms live only in the Zod original.
+    return definition.handler(z.object(definition.shape).parse(input))
   },
-  id: null,
-} as const
+]))
+
+// ── Mount on Express app ────────────────────────────────────────────────────
+
+/** Browser clients that may call the endpoint directly; server-side connectors send no Origin. */
+const CLAUDE_ORIGINS = ['https://claude.ai', 'https://www.claude.ai', 'https://api.anthropic.com']
+
+/**
+ * The website's Oxy service identity. Oxy answers token introspection only for
+ * the application that registered the resource, so this is the same credential
+ * that registers the catalog.
+ */
+export const oxyService = new OxyServices({ baseURL: config.oxyApiBase })
+if (config.oxyServiceApiKey && config.oxyServiceApiSecret) {
+  oxyService.configureServiceAuth(config.oxyServiceApiKey, config.oxyServiceApiSecret)
+}
+
+/**
+ * Sign-in is Oxy's MCP OAuth: every request carries a short-lived token Oxy
+ * issued for this exact resource, checked live against Oxy on each call. The
+ * transport is stateless — every task behind the load balancer can answer
+ * every request, so there is no session to lose between them.
+ */
+const service = createCatalogMcpHttpService({
+  catalog: WEBSITE_MCP_CATALOG,
+  handlers,
+  authorize,
+  authorizationServer: config.oxyApiBase,
+  getServiceToken: () => oxyService.getServiceToken(),
+  invalidateServiceToken: () => oxyService.invalidateServiceToken(),
+  allowedOrigins: [...CLAUDE_ORIGINS, ...config.mcp.allowedOrigins],
+  serverName: 'oxy-website',
+  logger: { error: (message, error) => console.error(`[mcp] ${message}:`, error) },
+})
 
 export function mountMcp(app: express.Express) {
-  const sessions = new Map<string, McpSession>()
-
-  /** Returns the live transport for a session id, refreshing its last-seen stamp. */
-  const touch = (sessionId: string | undefined): StreamableHTTPServerTransport | undefined => {
-    const session = sessionId ? sessions.get(sessionId) : undefined
-    if (!session) return undefined
-    session.lastSeen = Date.now()
-    return session.transport
-  }
-
-  // An unclean disconnect never fires onclose, so entries would otherwise pin a
-  // transport plus its per-session McpServer forever. Swept on each new session.
-  const sweepExpiredSessions = () => {
-    const cutoff = Date.now() - MCP_SESSION_TTL_MS
-    for (const [id, session] of sessions) {
-      if (session.lastSeen < cutoff) {
-        sessions.delete(id)
-        session.transport.close().catch(e => {
-          console.error(`[mcp] failed to close expired transport ${id}:`, e)
-        })
-      }
-    }
-  }
-
-  app.post('/mcp', async (req, res) => {
-    if (!(await requireMcpToken(req, res))) return
-
-    const sessionId = req.headers['mcp-session-id'] as string | undefined
-
-    // Existing session — route to its live transport
-    const existing = touch(sessionId)
-    if (existing) {
-      await existing.handleRequest(req, res)
-      return
-    }
-
-    // mountMcp runs before express.json(), so req.body is always undefined here
-    // and this handler cannot tell an initialize request from any other one.
-    // Consequently a request bearing a session id we don't know about (server
-    // restart, transport GC, unclean disconnect) always gets the re-initialize
-    // error; only a request with no session id at all opens a new session.
-    if (sessionId) {
-      res.status(404).json(SESSION_NOT_FOUND)
-      return
-    }
-
-    // Fresh initialize request — spin up a new transport and register it
-    sweepExpiredSessions()
-    const mcpServer = createMcpServer()
-    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID() })
-    transport.onclose = () => {
-      if (transport.sessionId) sessions.delete(transport.sessionId)
-    }
-    await mcpServer.connect(transport)
-    await transport.handleRequest(req, res)
-    if (transport.sessionId) {
-      sessions.set(transport.sessionId, { transport, lastSeen: Date.now() })
-    }
+  // Mounted before express.json(): the transport reads the raw body itself.
+  app.all('/mcp', (req, res) => {
+    void service.handleMcp(req, res)
   })
-
-  app.get('/mcp', async (req, res) => {
-    if (!(await requireMcpToken(req, res))) return
-
-    const transport = touch(req.headers['mcp-session-id'] as string | undefined)
-    if (transport) {
-      await transport.handleRequest(req, res)
-      return
-    }
-    res.status(404).json(SESSION_NOT_FOUND)
-  })
-
-  app.delete('/mcp', async (req, res) => {
-    if (!(await requireMcpToken(req, res))) return
-
-    const sessionId = req.headers['mcp-session-id'] as string | undefined
-    const transport = touch(sessionId)
-    if (!sessionId || !transport) {
-      res.status(400).json({ error: 'Invalid session' })
-      return
-    }
-    await transport.handleRequest(req, res)
-    sessions.delete(sessionId)
+  // RFC 9728 places a path-bearing resource's metadata under its path; the bare
+  // well-known path is served too for clients that look there first.
+  app.all([service.protectedResourceMetadataPath, '/.well-known/oauth-protected-resource'], (req, res) => {
+    service.handleProtectedResourceMetadata(req, res)
   })
 }
