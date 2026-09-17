@@ -244,6 +244,112 @@ describe('readers get exactly what the public site serves', () => {
   })
 })
 
+describe('protocol revisions', () => {
+  // The installed transport (@modelcontextprotocol/sdk 1.30) speaks up to
+  // 2025-11-25. 2026-07-28 is not supported yet; a client announcing it must get
+  // a clear refusal, not a half-working session.
+  for (const version of ['2025-11-25', '2025-06-18', '2025-03-26']) {
+    test(`${version} is accepted`, async () => {
+      const { response, json } = await callTool('describe_access', {}, 'reader', { 'mcp-protocol-version': version })
+      expect(response.status).toBe(200)
+      expect(json?.result?.isError).toBeUndefined()
+    })
+  }
+
+  test('an unsupported revision is refused with 400', async () => {
+    const { response, text } = await callTool('describe_access', {}, 'reader', { 'mcp-protocol-version': '2026-07-28' })
+    expect(response.status).toBe(400)
+    expect(text).toMatch(/protocol version/i)
+  })
+})
+
+describe('structured results through the transport', () => {
+  test('a paginated read passes the SDK\'s own output schema check', async () => {
+    const { json } = await callTool('list_posts', { limit: 5 }, 'admin')
+    expect(json?.result?.isError).toBeUndefined()
+    expect(json?.result?.structuredContent).toMatchObject({ posts: [], total: 0, page: 1, pages: 0 })
+  })
+
+  test('an array read arrives as { items }', async () => {
+    const { json } = await callTool('list_jobs', {}, 'reader')
+    expect(Array.isArray((json?.result?.structuredContent as { items: unknown[] }).items)).toBe(true)
+  })
+})
+
+describe('two tasks, no session affinity', () => {
+  let second: http.Server
+
+  beforeAll(async () => {
+    const { createApp } = await import('../app.js')
+    const { disabledMcpCatalogRegistrationStatus } = await import('../services/mcpCatalogRegistration.js')
+    second = createApp({ catalogRegistrationStatus: () => disabledMcpCatalogRegistrationStatus() }).listen(0)
+    await new Promise<void>((resolve) => second.once('listening', resolve))
+  })
+
+  afterAll(async () => {
+    second.closeAllConnections()
+    await new Promise<void>((resolve) => second.close(() => resolve()))
+  })
+
+  /** A call to either task, addressed to the public resource host as a load balancer would. */
+  function callOn(server: http.Server, name: string, args: Record<string, unknown>, token: string) {
+    return new Promise<{ status: number; body: { result?: { isError?: boolean; structuredContent?: Record<string, unknown> } } }>((resolve, reject) => {
+      const payload = JSON.stringify({ jsonrpc: '2.0', id: ++rpcId, method: 'tools/call', params: { name, arguments: args } })
+      const req = http.request({
+        host: '127.0.0.1',
+        port: (server.address() as AddressInfo).port,
+        path: '/mcp',
+        method: 'POST',
+        agent: false,
+        headers: {
+          host: new URL(RESOURCE).host,
+          authorization: `Bearer ${token}`,
+          accept: 'application/json, text/event-stream',
+          'content-type': 'application/json',
+          'content-length': Buffer.byteLength(payload),
+          connection: 'close',
+        },
+      }, (res) => {
+        let text = ''
+        res.on('data', (chunk) => (text += chunk))
+        res.on('end', () => resolve({ status: res.statusCode ?? 0, body: JSON.parse(text) }))
+      })
+      req.on('error', reject)
+      req.end(payload)
+    })
+  }
+
+  test('consecutive calls alternate between tasks and all succeed', async () => {
+    for (const [index, server] of [app, second, app, second].entries()) {
+      const { status, body } = await callOn(server, 'create_course', { title: `Course ${index}` }, 'admin')
+      expect([index, status, body.result?.isError]).toEqual([index, 200, undefined])
+    }
+    expect(await countRows('courses')).toBe(4)
+  })
+
+  test('a retry that lands on the other task replays instead of writing twice', async () => {
+    const first = await callOn(app, 'create_course', { title: 'Once', idempotencyKey: 'cross-task-0001' }, 'admin')
+    const retry = await callOn(second, 'create_course', { title: 'Once', idempotencyKey: 'cross-task-0001' }, 'admin')
+    expect(retry.body.result?.structuredContent?._id).toBe(first.body.result?.structuredContent?._id)
+    expect(await countRows('courses')).toBe(1)
+  })
+
+  test('the usage limit is shared by both tasks', async () => {
+    const previous = config.mcp.rateLimitPerMinute
+    config.mcp.rateLimitPerMinute = 3
+    try {
+      const results = []
+      for (const server of [app, second, app, second]) results.push(await callOn(server, 'list_jobs', {}, 'reader'))
+      expect(results.map((result) => result.body.result?.isError ?? false)).toEqual([false, false, false, true])
+      expect(JSON.stringify(results[3].body)).toContain('rate_limited')
+      // Another account has its own allowance.
+      expect((await callOn(second, 'list_jobs', {}, 'admin')).body.result?.isError).toBeUndefined()
+    } finally {
+      config.mcp.rateLimitPerMinute = previous
+    }
+  })
+})
+
 // Last: responses sent before the request body is read, or for a foreign Host,
 // can leave a pooled client connection unusable for the next test.
 describe('connection-level refusals', () => {

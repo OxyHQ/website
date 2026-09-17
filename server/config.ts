@@ -36,6 +36,12 @@ export const config = {
         : `http://localhost:${process.env.PORT || '4000'}/mcp`),
     /** Browser origins allowed to call the endpoint, on top of Claude's. */
     allowedOrigins: parseCsvEnv(process.env.MCP_ALLOWED_ORIGINS),
+    /**
+     * Cost units one account may spend per minute across every task (a read
+     * costs 1, a write 5, an upload, bulk upload or sync 25). Counted in
+     * Postgres, so the limit holds however many tasks serve the endpoint.
+     */
+    rateLimitPerMinute: parsePositiveIntEnv(process.env.MCP_RATE_LIMIT_PER_MINUTE, 600),
   },
   // Server-only secret used to sign Intercom Messenger JWTs for authenticated
   // Oxy users. It is optional so visitors keep working before the workspace

@@ -310,3 +310,19 @@ export const mcpIdempotencyKeys = pgTable(
     index('mcp_idempotency_keys_expires_idx').on(table.expiresAt),
   ],
 )
+
+/**
+ * Per-account MCP usage, one row per account per minute (issue #108). A shared
+ * counter rather than a per-process one: the endpoint is served by several ECS
+ * tasks, and a limit each task counts alone is a limit multiplied by the task
+ * count. Holds an account id and a number — no IPs, no request content.
+ */
+export const mcpRateLimits = pgTable(
+  'mcp_rate_limits',
+  {
+    accountId: text().notNull(),
+    windowStart: timestamp({ withTimezone: true }).notNull(),
+    cost: integer().notNull().default(0),
+  },
+  (table) => [uniqueIndex('mcp_rate_limits_account_window_idx').on(table.accountId, table.windowStart)],
+)
