@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
 import { eq } from 'drizzle-orm'
 import { db } from '../db/postgres.js'
-import { courses, helpArticles, heroContents, jobs, locales, media, newsroomPosts, pricingPlans, resources, storageCleanups, teamMembers, testimonials, translations } from '../db/schema/index.js'
+import { courses, helpArticles, heroContents, locales, media, newsroomPosts, pricingPlans, resources, storageCleanups, teamMembers, testimonials, translations } from '../db/schema/index.js'
 import { invokeTool, WEBSITE_MCP_CATALOG } from '../mcp.js'
 import { MCP_TOOL_ACCESS, MCP_WRITE_EFFECTS } from '../mcpAccess.js'
 import { admin, countRows, data, errorCode, omit, png, remote, resetDatabase, storage } from '../test/helpers.js'
@@ -51,9 +51,9 @@ describe('F01 · creates hand back the row they wrote', () => {
 })
 
 describe('F02 · slugs are generated, unique, and an explicit one is never rewritten', () => {
-  test('create_job and create_team_member work without a slug', async () => {
-    const job = data<{ slug: string }>(await invokeTool('create_job', { title: 'Senior Frontend Engineer', department: 'Engineering', location: 'Remote' }, admin))
-    expect(job.slug).toBe('senior-frontend-engineer-remote')
+  test('create_course and create_team_member work without a slug', async () => {
+    const course = data<{ slug: string }>(await invokeTool('create_course', { title: 'Senior Frontend Engineering' }, admin))
+    expect(course.slug).toBe('senior-frontend-engineering')
     const member = data<{ slug: string }>(await invokeTool('create_team_member', { name: 'Núria Ålvarez-Øre', role: 'Design' }, admin))
     expect(member.slug).toBe('nuria-alvarez-ore')
   })
@@ -70,11 +70,11 @@ describe('F02 · slugs are generated, unique, and an explicit one is never rewri
   })
 
   test('an explicit duplicate slug is a conflict and writes nothing', async () => {
-    data(await invokeTool('create_job', { title: 'A', department: 'X', slug: 'role' }, admin))
-    const duplicate = await invokeTool('create_job', { title: 'B', department: 'X', slug: 'role' }, admin)
+    data(await invokeTool('create_course', { title: 'A', slug: 'role' }, admin))
+    const duplicate = await invokeTool('create_course', { title: 'B', slug: 'role' }, admin)
     expect(errorCode(duplicate)).toBe('conflict')
-    expect(await countRows('jobs')).toBe(1)
-    const [row] = await db.select().from(jobs)
+    expect(await countRows('courses')).toBe(1)
+    const [row] = await db.select().from(courses)
     expect(row.title).toBe('A')
   })
 
@@ -429,10 +429,10 @@ describe('F07 · idempotency keys', () => {
   })
 
   test('concurrent duplicates with one key write once', async () => {
-    const results = await Promise.all(Array.from({ length: 5 }, () => invokeTool('create_job', { title: 'Race', department: 'Eng', idempotencyKey: 'key-00000003' }, admin)))
+    const results = await Promise.all(Array.from({ length: 5 }, () => invokeTool('create_course', { title: 'Race', idempotencyKey: 'key-00000003' }, admin)))
     const ids = new Set(results.map((result) => data<{ _id: string }>(result)._id))
     expect(ids.size).toBe(1)
-    expect(await countRows('jobs')).toBe(1)
+    expect(await countRows('courses')).toBe(1)
   })
 
   test('the key is scoped to the acting account', async () => {
@@ -451,7 +451,7 @@ describe('F07 · idempotency keys', () => {
   })
 
   test('a failing keyed call rolls back its partial writes and replays the same error', async () => {
-    const first = await invokeTool('create_job', { title: 'Dup', department: 'Eng', slug: 'taken', idempotencyKey: 'key-00000005' }, admin)
+    const first = await invokeTool('create_course', { title: 'Dup', slug: 'taken', idempotencyKey: 'key-00000005' }, admin)
     expect(first.isError).toBeUndefined()
     const conflictCall = await invokeTool('create_team_member', { name: 'X', role: 'Y', slug: 'bad slug!', idempotencyKey: 'key-00000006' }, admin)
     expect(errorCode(conflictCall)).toBe('invalid_request')
@@ -491,14 +491,14 @@ describe('F11 · errors are safe and the actor comes from authentication', () =>
 })
 
 async function tableCounts(): Promise<Record<string, number>> {
-  const tables = ['courses', 'help_articles', 'hero_contents', 'jobs', 'locales', 'media', 'newsroom_posts', 'pricing_plans', 'resources', 'storage_cleanups', 'team_members', 'testimonials', 'translations', 'site_settings', 'pages']
+  const tables = ['courses', 'help_articles', 'hero_contents', 'locales', 'media', 'newsroom_posts', 'pricing_plans', 'resources', 'storage_cleanups', 'team_members', 'testimonials', 'translations', 'site_settings', 'pages']
   return Object.fromEntries(await Promise.all(tables.map(async (table) => [table, await countRows(table)] as const)))
 }
 
 function sampleReadInput(name: string): Record<string, unknown> {
   const samples: Record<string, Record<string, unknown>> = {
     get_page: { slug: 'x' }, get_post: { slug: 'x' }, get_post_with_media: { slug: 'x' }, search_posts: { query: 'x' },
-    get_job: { slug: 'x' }, get_team_member: { slug: 'x' }, get_media: { id: 'x' }, get_translations: { collection: 'pages', locale: 'es' },
+    get_team_member: { slug: 'x' }, get_media: { id: 'x' }, get_translations: { collection: 'pages', locale: 'es' },
     get_translation: { collection: 'pages', documentId: 'x', locale: 'es' }, get_category: { slug: 'x' }, get_product: { productId: 'x' },
     get_course: { slug: 'x' }, get_resource: { slug: 'x' }, get_help_article: { slug: 'x' }, get_referral: { code: 'x' },
   }

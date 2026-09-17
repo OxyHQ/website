@@ -12,7 +12,6 @@ import {
   footers,
   helpArticles,
   heroContents,
-  jobs,
   media,
   navigationDropdowns,
   newsroomPosts,
@@ -39,7 +38,7 @@ async function seed() {
   await db.transaction(async (tx) => {
     for (const table of [
       navigationDropdowns, footers, heroContents, products, pricingPlans, testimonials,
-      changelogEntries, jobs, siteSettings, pages, newsroomPosts, courses, resources,
+      changelogEntries, siteSettings, pages, newsroomPosts, courses, resources,
       helpArticles, trackedRepos, teamMembers, categories, media,
     ]) {
       await tx.delete(table as never)
@@ -397,101 +396,6 @@ async function seed() {
     },
   ])
   console.log('Seeded tracked repos')
-
-  // ── Jobs (sample) ──
-  await db.insert(jobs).values([
-    {
-      title: 'Senior Frontend Engineer',
-      slug: 'senior-frontend-engineer-remote',
-      department: 'Engineering',
-      location: 'Remote',
-      type: 'Full-time',
-      compensation: '$140K – $180K',
-      subtitle: 'Build the next generation of Oxy products.',
-      description: [
-        { type: 'heading', text: 'About the role' },
-        { type: 'paragraph', text: 'We are looking for a Senior Frontend Engineer to help build and scale the Oxy platform. You will work closely with design and product to ship polished, performant interfaces used by millions of people worldwide.' },
-        { type: 'heading', text: 'What you will do' },
-        { type: 'list', items: [
-          'Architect and implement core UI components using React and TypeScript',
-          'Drive frontend performance improvements across the platform',
-          'Collaborate with designers to translate Figma specs into pixel-perfect interfaces',
-          'Mentor junior engineers and contribute to engineering standards',
-          'Participate in code reviews and architectural design discussions',
-        ] },
-        { type: 'heading', text: 'What we look for' },
-        { type: 'list', items: [
-          '5+ years of professional frontend development experience',
-          'Deep expertise in React, TypeScript, and modern CSS',
-          'Experience with state management, SSR, and performance optimization',
-          'Strong understanding of web accessibility (WCAG 2.1 AA)',
-          'Excellent written and verbal communication skills',
-        ] },
-      ],
-      active: true,
-    },
-    {
-      title: 'AI/ML Engineer',
-      slug: 'ai-ml-engineer-remote',
-      department: 'Engineering',
-      location: 'Remote',
-      type: 'Full-time',
-      compensation: '$160K – $210K',
-      subtitle: 'Work on Alia and the AI infrastructure behind it.',
-      description: [
-        { type: 'heading', text: 'About the role' },
-        { type: 'paragraph', text: 'Join the team building Alia, the assistant that runs across the Oxy ecosystem. You will design and deploy models that help people get real work done, without their data feeding somebody else\u2019s training set.' },
-        { type: 'heading', text: 'What you will do' },
-        { type: 'list', items: [
-          'Design and train ML models for natural language understanding and entity extraction',
-          'Build retrieval-augmented generation (RAG) pipelines over user-controlled data',
-          'Optimize inference latency and cost across production workloads',
-          'Develop evaluation frameworks for model quality and safety',
-          'Collaborate with product engineers to integrate AI features end-to-end',
-        ] },
-        { type: 'heading', text: 'What we look for' },
-        { type: 'list', items: [
-          '3+ years of experience in applied ML or NLP',
-          'Proficiency in Python, PyTorch or JAX, and transformer architectures',
-          'Experience with LLM fine-tuning, prompt engineering, and RAG systems',
-          'Familiarity with ML infrastructure (model serving, monitoring, A/B testing)',
-          'Publication track record or equivalent industry experience is a plus',
-        ] },
-      ],
-      active: true,
-    },
-    {
-      title: 'Product Designer',
-      slug: 'product-designer-remote',
-      department: 'Design',
-      location: 'Remote',
-      type: 'Full-time',
-      compensation: '$120K – $155K',
-      subtitle: 'Design beautiful, accessible experiences.',
-      description: [
-        { type: 'heading', text: 'About the role' },
-        { type: 'paragraph', text: 'We are hiring a Product Designer to shape the future of the Oxy experience. You will own end-to-end design for key product surfaces, from discovery research through high-fidelity prototyping and production handoff.' },
-        { type: 'heading', text: 'What you will do' },
-        { type: 'list', items: [
-          'Lead design for one or more product areas across web and mobile',
-          'Conduct user research, usability testing, and competitive analysis',
-          'Create wireframes, interaction flows, and high-fidelity Figma prototypes',
-          'Contribute to and evolve the Oxy design system',
-          'Partner with engineering to ensure design intent is preserved in production',
-        ] },
-        { type: 'heading', text: 'What we look for' },
-        { type: 'list', items: [
-          '4+ years of product design experience at a technology company',
-          'Strong portfolio demonstrating systems thinking and attention to detail',
-          'Proficiency in Figma and modern prototyping tools',
-          'Experience designing for complex data-rich applications',
-          'Passion for accessibility and inclusive design practices',
-        ] },
-      ],
-      active: true,
-    },
-  ])
-  console.log('Seeded jobs')
 
   // ── Newsroom Posts (sample) ──
   const newsroomImages = await Promise.all([

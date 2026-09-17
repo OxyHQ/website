@@ -1,6 +1,6 @@
 import { useCallback, useSyncExternalStore } from 'react'
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
-import { apiFetch } from './client'
+import { apiFetch, errorStatus } from './client'
 import { useCurrentLocale } from '../lib/i18n'
 import {
   subscribeFairCoinStats,
@@ -24,7 +24,7 @@ import {
 import { type Testimonial } from '../data/content'
 import { type PricingPlan } from '../data/pricing'
 import { type NewsroomPost, type NewsroomPostSummary } from '../data/newsroom'
-import { type DescriptionBlock } from '../data/careers'
+import type { CareerJob } from '../lib/careers'
 import {
   fetchNewsroomPost,
   type NewsroomListParams,
@@ -772,37 +772,11 @@ export function useChangelog(params?: { repo?: string; page?: number; limit?: nu
 }
 
 // ── Jobs ──
-export interface Job {
-  _id?: string
-  slug: string
-  title: string
-  department: string
-  subtitle?: string
-  location: string
-  type?: string
-  engagement?: string
-  compensation?: string
-  validThrough?: string
-  address?: {
-    streetAddress?: string
-    addressLocality?: string
-    addressRegion?: string
-    postalCode?: string
-    addressCountry?: string
-  }
-  /** Older rows store Markdown-ish text; current rows use structured blocks. */
-  description?: string | DescriptionBlock[]
-  active?: boolean
-  order?: number
-  createdAt?: string
-  updatedAt?: string
-}
-
+/** Oxy's open roles, read from Clarity Jobs. Not localized: a listing is in the language it was written in. */
 export function useJobs() {
-  const locale = useCurrentLocale()
   return useQuery({
-    queryKey: ['jobs', locale],
-    queryFn: () => apiFetch<Job[]>('/jobs', { locale }),
+    queryKey: ['jobs'],
+    queryFn: () => apiFetch<CareerJob[]>('/jobs'),
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
   })
@@ -881,12 +855,13 @@ export function useMediaItem(id: string) {
   })
 }
 
-export function useJob(slug: string) {
-  const locale = useCurrentLocale()
+export function useJob(id: string) {
   return useQuery({
-    queryKey: ['job', slug, locale],
-    queryFn: () => apiFetch<Job>(`/jobs/${slug}`, { locale }),
-    enabled: !!slug,
+    queryKey: ['job', id],
+    queryFn: () => apiFetch<CareerJob>(`/jobs/${encodeURIComponent(id)}`),
+    enabled: !!id,
+    // A role that is not open answers 404 every time; only an outage is worth a retry.
+    retry: (failures, error) => errorStatus(error) !== 404 && failures < 2,
   })
 }
 

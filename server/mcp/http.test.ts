@@ -5,7 +5,8 @@ import { db } from '../db/postgres.js'
 import { newsroomPosts } from '../db/schema/index.js'
 import { ensureApp } from '../test/app.js'
 import { config } from '../config.js'
-import { invokeTool, oxyService } from '../mcp.js'
+import { invokeTool } from '../mcp.js'
+import { oxyService } from '../services/oxyService.js'
 import { countRows, errorCode, reader, resetDatabase } from '../test/helpers.js'
 
 /* The MCP endpoint through the real Express composition: site CORS, the SDK's
@@ -271,7 +272,7 @@ describe('structured results through the transport', () => {
   })
 
   test('an array read arrives as { items }', async () => {
-    const { json } = await callTool('list_jobs', {}, 'reader')
+    const { json } = await callTool('list_team_members', {}, 'reader')
     expect(Array.isArray((json?.result?.structuredContent as { items: unknown[] }).items)).toBe(true)
   })
 })
@@ -339,11 +340,11 @@ describe('two tasks, no session affinity', () => {
     config.mcp.rateLimitPerMinute = 3
     try {
       const results = []
-      for (const server of [app, second, app, second]) results.push(await callOn(server, 'list_jobs', {}, 'reader'))
+      for (const server of [app, second, app, second]) results.push(await callOn(server, 'list_team_members', {}, 'reader'))
       expect(results.map((result) => result.body.result?.isError ?? false)).toEqual([false, false, false, true])
       expect(JSON.stringify(results[3].body)).toContain('rate_limited')
       // Another account has its own allowance.
-      expect((await callOn(second, 'list_jobs', {}, 'admin')).body.result?.isError).toBeUndefined()
+      expect((await callOn(second, 'list_team_members', {}, 'admin')).body.result?.isError).toBeUndefined()
     } finally {
       config.mcp.rateLimitPerMinute = previous
     }

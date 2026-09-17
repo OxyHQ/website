@@ -21,7 +21,7 @@ describe('tool results', () => {
   })
 
   test('a wrapped unique violation is a conflict', () => {
-    const wrapped = Object.assign(new Error('Failed query: insert …'), { cause: { code: '23505', constraint_name: 'jobs_slug_unique' } })
+    const wrapped = Object.assign(new Error('Failed query: insert …'), { cause: { code: '23505', constraint_name: 'courses_slug_unique' } })
     expect(classifyError(wrapped).error.code).toBe('conflict')
   })
 

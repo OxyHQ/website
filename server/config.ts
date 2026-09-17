@@ -25,6 +25,21 @@ export const config = {
    */
   oxyServiceApiKey: process.env.OXY_SERVICE_API_KEY?.trim() || '',
   oxyServiceApiSecret: process.env.OXY_SERVICE_API_SECRET?.trim() || '',
+  /**
+   * Clarity Jobs, the only source of the careers page. Oxy's openings are
+   * authored in Mention and indexed by Clarity; this site stores none of them.
+   */
+  clarity: {
+    apiUrl: process.env.CLARITY_API_URL || 'https://api.clarity.surf',
+    /** The employer name Clarity's `employers` filter matches exactly. */
+    careersEmployer: process.env.CAREERS_EMPLOYER?.trim() || 'Oxy',
+    /**
+     * Where Oxy publishes its openings. Both filters apply together, so a
+     * listing elsewhere that merely calls its employer "Oxy" never lands on
+     * oxy.so.
+     */
+    careersSourceDomains: parseCsvEnv(process.env.CAREERS_SOURCE_DOMAINS ?? 'mention.earth'),
+  },
   mcp: {
     /**
      * The MCP endpoint's canonical URL. Oxy binds every access token to it, so

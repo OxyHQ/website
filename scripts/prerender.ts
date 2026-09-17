@@ -23,8 +23,8 @@
  *          with per-lesson metadata from MDX frontmatter.
  *        • Newsroom posts — fetched from the live website API
  *          (`https://website-api.oxy.so/api/newsroom`).
- *        • Careers — fetched from `/api/jobs` (skipped gracefully if the
- *          endpoint isn't deployed).
+ *        • Careers — Oxy's open roles from `/api/jobs`, which reads Clarity
+ *          Jobs (skipped gracefully if it is unreachable).
  *        • Docs — every `(package, version, slug)` from
  *          `src/content/_synced/index.json`, using the page's title and
  *          description from the synced metadata.
@@ -74,12 +74,14 @@ import {
   normalizeNewsroomSeoTitle,
 } from '../src/lib/newsroomSeo'
 import {
-  buildJobPostingStructuredData,
-  jobDescriptionToMarkdown,
-  jobLocationLabel,
-  jobSeoDescription,
-  type JobPostingInput,
-} from '../src/lib/jobPosting'
+  careerEmploymentLabel,
+  careerJobMarkdown,
+  careerJobPath,
+  careerLocationLabel,
+  careerSeoDescription,
+  careerTeam,
+  type CareerJob,
+} from '../src/lib/careers'
 
 // React 19.2's development JSX runtime expects a development renderer
 // dispatcher. This script imports a production SSR bundle into Bun, so make
@@ -140,6 +142,8 @@ interface SEOProps {
   modifiedTime?: string
   author?: string
   noIndex?: boolean
+  /** Absolute canonical for a page whose content is published on another site. */
+  canonicalUrl?: string
 }
 
 /** Renders a page's markdown with the app's own article components. */
@@ -619,11 +623,6 @@ interface NewsroomApiResponse {
   posts: NewsroomApiPost[]
 }
 
-/** The route returns a bare array already filtered to active vacancies. */
-interface JobApiEntry extends JobPostingInput {
-  department: string
-}
-
 async function fetchNewsroomPosts(): Promise<NewsroomApiPost[]> {
   try {
     const res = await fetch(NEWSROOM_API)
@@ -714,14 +713,15 @@ async function fetchProducts(): Promise<ProductApiEntry[]> {
   }
 }
 
-async function fetchJobs(): Promise<JobApiEntry[]> {
+/** The route returns a bare array of Oxy's active openings. */
+async function fetchJobs(): Promise<CareerJob[]> {
   try {
     const res = await fetch(JOBS_API)
     if (!res.ok) return []
-    const jobs = (await res.json()) as JobApiEntry[]
+    const jobs = (await res.json()) as CareerJob[]
     // Skip malformed entries rather than interpolating `undefined` into a
     // <title>; every field below is required to build the SEO props.
-    return jobs.filter((job) => job.slug && job.title && job.department && job.location)
+    return jobs.filter((job) => job.id && job.title && job.canonicalUrl)
   } catch (err) {
     console.warn('[prerender] jobs fetch failed:', (err as Error).message)
     return []
@@ -1187,29 +1187,32 @@ function buildAppRoutes(products: ProductApiEntry[]): Array<{ url: string; seo: 
   })
 }
 
-function buildJobRoutes(jobs: JobApiEntry[]): RouteEntry[] {
+/**
+ * One document per open role. The role is published in Mention, so its canonical
+ * points there, it carries no JobPosting schema of its own (the publisher's page
+ * does), and it stays out of the sitemap and the locale mirrors.
+ */
+function buildJobRoutes(jobs: CareerJob[]): RouteEntry[] {
   return jobs.map((job) => {
-    const url = `/company/careers/${job.slug}`
-    const markdown = jobDescriptionToMarkdown(job.description)
+    const url = careerJobPath(job)
+    const markdown = careerJobMarkdown(job)
     return {
       url,
       seo: {
         // Mirrors `CareerDetailPage` through the same shared builders.
-        title: `${job.title}, ${job.department}`,
-        description: jobSeoDescription(job),
+        title: `${job.title}, ${careerTeam(job)}`,
+        description: careerSeoDescription(job),
         canonicalPath: url,
-        publishedTime: job.createdAt,
-        modifiedTime: job.updatedAt,
+        canonicalUrl: job.canonicalUrl,
+        publishedTime: job.publishedAt,
       },
       body: markdown
         ? {
             heading: job.title,
-            meta: `${jobLocationLabel(job.location)} · ${job.engagement ?? job.type ?? 'Full-time'}`,
-            standfirst: job.subtitle,
+            meta: [careerLocationLabel(job), careerEmploymentLabel(job)].filter(Boolean).join(' · ') || undefined,
             markdown,
           }
         : undefined,
-      structuredData: buildJobPostingStructuredData(job, { origin: SITE_URL }) ?? undefined,
     }
   })
 }
@@ -1284,7 +1287,7 @@ function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): 
   // superseded docs version already canonicalizes to the current one — a
   // `/es/…/0.6.8/…` document is then a duplicate of a duplicate.
   const mirrorable = base.filter(
-    (job) => hasLocalizedVariants(job.url) && job.seo.canonicalPath === job.url,
+    (job) => hasLocalizedVariants(job.url) && job.seo.canonicalPath === job.url && !job.seo.canonicalUrl,
   )
   for (const locale of locales) {
     for (const job of mirrorable) {
@@ -1726,6 +1729,9 @@ async function writeSitemap(
     // "Alternate page with proper canonical tag". The canonical target is in
     // the sitemap under its own entry; this URL does not belong in it.
     .filter((route) => route.seo.canonicalPath === route.url)
+    // A page whose canonical is on another site (an open role published in
+    // Mention) is that site's to advertise.
+    .filter((route) => !route.seo.canonicalUrl)
     .map((route) => ({
       path: route.url,
       lastmod: toW3CDate(route.seo.modifiedTime ?? route.seo.publishedTime),

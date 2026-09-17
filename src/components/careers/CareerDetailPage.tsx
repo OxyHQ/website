@@ -1,67 +1,92 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { Link } from '../../lib/navigation'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
 import Button from '../ui/Button'
 import { useJob } from '../../api/hooks'
-import { type DescriptionBlock } from '../../data/careers'
+import { errorStatus } from '../../api/client'
 import SEO from '../SEO'
-import StructuredData from '../StructuredData'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
-import { brandConfig } from '../../lib/seo'
-import { DEFAULT_LOCALE, useLocaleContext } from '../../lib/i18n'
-import { buildLocalizedSeoUrl } from '../../lib/seoUrl'
+import { useLocaleContext } from '../../lib/i18n'
 import {
-  buildJobPostingStructuredData,
-  jobLocationLabel,
-  jobSeoDescription,
-  normalizeJobDescription,
-} from '../../lib/jobPosting'
+  careerEmploymentLabel,
+  careerJobMarkdown,
+  careerJobPath,
+  careerLocationLabel,
+  careerSalaryLabel,
+  careerSeoDescription,
+  careerSourceHost,
+  careerTeam,
+} from '../../lib/careers'
 
 /* ──────────────────────────────────────────────
- * /company/careers/:slug
+ * /company/careers/:id
+ *
+ * One of Oxy's open roles, read from Clarity Jobs. The role is written and
+ * applied to in Mention, so the canonical URL and the apply button both point
+ * there; this page is the same listing in the site's own frame.
  *
  * Two columns: the role's identity pinned on the left while the description
  * scrolls on the right, with the same apply pair repeated at the end of the
  * text so it is never more than a screen away.
  * ──────────────────────────────────────────── */
 
-const APPLY_EMAIL = 'careers@oxy.so'
+function SectionHeading({ children }: { children?: ReactNode }) {
+  return <h3 className="relative not-first:mt-7 not-last:mb-3 font-medium text-lg">{children}</h3>
+}
 
-function DescriptionContent({ blocks }: { blocks: DescriptionBlock[] }) {
+/**
+ * Clarity serves listing text as Markdown with no raw HTML, and react-markdown
+ * renders none either, so nothing in a listing reaches the DOM as markup.
+ */
+function JobDescription({ markdown }: { markdown: string }) {
   return (
-    <>
-      {blocks.map((block, i) => {
-        if (block.type === 'paragraph') {
-          return (
-            <p key={i} className="not-first:mt-[13px] text-pretty text-muted-foreground leading-[26px]">
-              {block.text}
-            </p>
-          )
-        }
-        if (block.type === 'heading') {
-          return (
-            <h3 key={i} className="relative not-first:mt-7 not-last:mb-3 font-medium text-lg">
-              {block.text}
-            </h3>
-          )
-        }
-        return (
-          <ul key={i} className="not-first:mt-1.5 list-[square] pl-3.5 marker:text-muted-foreground">
-            {block.items.map((item, j) => (
-              <li key={j} className="pt-1 pl-1.5 first:pt-1.5 [&:not(:has(ul,li))]:pb-1.5">
-                <p className="text-pretty text-muted-foreground leading-[26px]">{item}</p>
-              </li>
-            ))}
-          </ul>
-        )
-      })}
-    </>
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      components={{
+        p: ({ children }) => (
+          <p className="not-first:mt-[13px] text-pretty text-muted-foreground leading-[26px]">{children}</p>
+        ),
+        // The page's h1 is the role title, so a listing's own headings start below it.
+        h1: SectionHeading,
+        h2: SectionHeading,
+        h3: SectionHeading,
+        h4: ({ children }) => <h4 className="relative not-first:mt-5 not-last:mb-2 font-medium">{children}</h4>,
+        ul: ({ children }) => (
+          <ul className="not-first:mt-1.5 list-[square] pl-3.5 marker:text-muted-foreground">{children}</ul>
+        ),
+        ol: ({ children }) => (
+          <ol className="not-first:mt-1.5 list-decimal pl-5 marker:text-muted-foreground">{children}</ol>
+        ),
+        li: ({ children }) => (
+          <li className="pt-1 pl-1.5 text-pretty text-muted-foreground leading-[26px] first:pt-1.5">{children}</li>
+        ),
+        strong: ({ children }) => <strong className="font-medium text-foreground">{children}</strong>,
+        a: ({ href, children }) => (
+          <a className="underline underline-offset-4" href={href} target="_blank" rel="noopener noreferrer">
+            {children}
+          </a>
+        ),
+      }}
+    >
+      {markdown}
+    </ReactMarkdown>
   )
 }
 
-/** Apply, plus the copy-link button and its confirmation. */
-function ApplyActions({ title }: { title: string }) {
+function Fact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="text-muted-foreground text-xs uppercase tracking-wider">{label}</p>
+      <p>{value}</p>
+    </div>
+  )
+}
+
+/** Apply where the role is published, plus the copy-link button and its confirmation. */
+function ApplyActions({ href }: { href: string }) {
   const [copied, setCopied] = useState(false)
 
   const copyLink = async () => {
@@ -72,11 +97,7 @@ function ApplyActions({ title }: { title: string }) {
 
   return (
     <div className="flex gap-2">
-      <Button
-        variant="primary"
-        size="md"
-        href={`mailto:${APPLY_EMAIL}?subject=${encodeURIComponent(`Application: ${title}`)}`}
-      >
+      <Button variant="primary" size="md" href={href} target="_blank" rel="noopener noreferrer">
         Apply now
       </Button>
       <div className="relative">
@@ -114,9 +135,9 @@ function ApplyActions({ title }: { title: string }) {
 }
 
 export default function CareerDetailContent() {
-  const { slug } = useParams<{ slug: string }>()
+  const { id = '' } = useParams<{ id: string }>()
   const { locale } = useLocaleContext()
-  const { data: job, isPending } = useJob(slug ?? '')
+  const { data: job, isPending, error } = useJob(id)
 
   if (isPending) {
     return (
@@ -136,17 +157,24 @@ export default function CareerDetailContent() {
   }
 
   if (!job) {
+    const unavailable = error !== null && errorStatus(error) !== 404
     return (
       <>
         <SEO
-          title="Position not found"
-          description="This job posting doesn't exist or may have been removed."
-          canonicalPath={`/company/careers/${slug}`}
+          title={unavailable ? 'Open roles unavailable' : 'Position not found'}
+          description={unavailable
+            ? 'Open roles could not be loaded right now.'
+            : "This job posting doesn't exist or may have been removed."}
+          canonicalPath={careerJobPath({ id })}
           noIndex
         />
         <div className="container py-40">
-          <AnimatedTitle as="h1" className="text-heading-responsive-lg">Position not found.</AnimatedTitle>
-          <p className="pt-6 text-muted-foreground">This role doesn&apos;t exist or has been filled.</p>
+          <AnimatedTitle as="h1" className="text-heading-responsive-lg">
+            {unavailable ? 'Open roles are unavailable.' : 'Position not found.'}
+          </AnimatedTitle>
+          <p className="pt-6 text-muted-foreground">
+            {unavailable ? 'Please try again in a few minutes.' : 'This role doesn’t exist or has been filled.'}
+          </p>
           <p className="pt-8">
             <Link to="/company/careers#open-positions" className="underline underline-offset-4">
               View all open positions
@@ -157,22 +185,23 @@ export default function CareerDetailContent() {
     )
   }
 
-  const engagement = job.engagement ?? job.type ?? 'Full-time'
-  const canonicalPath = `/company/careers/${job.slug}`
-  const host = typeof window === 'undefined' ? undefined : window.location.hostname
-  const { origin } = brandConfig(host)
-  const pageUrl = buildLocalizedSeoUrl(origin, canonicalPath, locale, DEFAULT_LOCALE)
-  const jobPosting = buildJobPostingStructuredData(job, { origin, pageUrl })
-  const descriptionBlocks = normalizeJobDescription(job.description)
+  const team = careerTeam(job)
+  const employment = careerEmploymentLabel(job)
+  const location = careerLocationLabel(job)
+  const salary = careerSalaryLabel(job.salary, locale)
+  const sourceHost = careerSourceHost(job)
+  const applyHref = job.applyUrl ?? job.canonicalUrl
+  const markdown = careerJobMarkdown(job)
 
   return (
     <section className="mb-12 border-border border-b">
       <SEO
-        title={`${job.title}, ${job.department}`}
-        description={jobSeoDescription(job)}
-        canonicalPath={canonicalPath}
+        title={`${job.title}, ${team}`}
+        description={careerSeoDescription(job)}
+        canonicalPath={careerJobPath(job)}
+        canonicalUrl={job.canonicalUrl}
+        publishedTime={job.publishedAt}
       />
-      {jobPosting && <StructuredData data={jobPosting} />}
 
       <div className="container">
         <div className="grid grid-cols-12 md:gap-8">
@@ -184,48 +213,46 @@ export default function CareerDetailContent() {
                   Careers
                 </Link>
               </div>
-              <div className="inline-block rounded-sm bg-surface px-1.5 py-0.5 text-sm">{engagement}</div>
+              {employment && <div className="inline-block rounded-sm bg-surface px-1.5 py-0.5 text-sm">{employment}</div>}
               <AnimatedTitle as="h1" className="mb-10 mt-2 max-w-[450px] text-heading-responsive-md">{job.title}</AnimatedTitle>
               <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-8 sm:flex-row sm:gap-16 md:flex-col md:gap-8">
-                  <div className="flex flex-col gap-1">
-                    <p className="text-muted-foreground text-xs uppercase tracking-wider">Location</p>
-                    <p>{jobLocationLabel(job.location)}</p>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <p className="text-muted-foreground text-xs uppercase tracking-wider">Department</p>
-                    <p>{job.department}</p>
-                  </div>
-                  {job.compensation && (
-                    <div className="flex flex-col gap-1">
-                      <p className="text-muted-foreground text-xs uppercase tracking-wider">Compensation</p>
-                      <p>{job.compensation}</p>
-                    </div>
-                  )}
+                  {location && <Fact label="Location" value={location} />}
+                  <Fact label="Team" value={team} />
+                  {salary && <Fact label="Compensation" value={salary} />}
                 </div>
-                <ApplyActions title={job.title} />
+                <ApplyActions href={applyHref} />
               </div>
             </div>
           </div>
 
           <div className="col-span-12 border-border pb-16 md:col-span-8 md:border-l md:py-8 md:pl-16">
             <div className="max-w-prose">
-              {job.subtitle && <p className="pb-6 text-pretty text-xl">{job.subtitle}</p>}
-              {descriptionBlocks.length > 0 && <DescriptionContent blocks={descriptionBlocks} />}
+              {markdown && <JobDescription markdown={markdown} />}
+
+              {job.skills.length > 0 && (
+                <div className="pt-10">
+                  <h3 className="font-medium text-lg">Skills</h3>
+                  <ul className="mt-3 flex flex-wrap gap-2">
+                    {job.skills.map((skill) => (
+                      <li key={skill} className="rounded-sm bg-surface px-2 py-1 text-sm">{skill}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               <div className="mb-8 pt-10">
                 <h3 className="font-medium text-lg">How to apply</h3>
                 <p className="mt-3 text-pretty text-muted-foreground leading-[26px]">
-                  Send your CV, a short note about why you&rsquo;d like to join Oxy, and any relevant work (GitHub,
-                  portfolio, links) to{' '}
-                  <a className="underline underline-offset-4" href={`mailto:${APPLY_EMAIL}`}>
-                    {APPLY_EMAIL}
+                  Applications for this role are handled on{' '}
+                  <a className="underline underline-offset-4" href={applyHref} target="_blank" rel="noopener noreferrer">
+                    {sourceHost}
                   </a>
-                  . We read every application.
+                  , where the listing is published. We read every application.
                 </p>
               </div>
 
-              <ApplyActions title={job.title} />
+              <ApplyActions href={applyHref} />
             </div>
           </div>
         </div>

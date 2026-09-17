@@ -8,7 +8,7 @@ import { Label } from '../ui/shadcn/label'
 
 /**
  * Locale override values keyed by field path. Translations mirror the shape of
- * the source document (which varies per collection: jobs, navigation, footer,
+ * the source document (which varies per collection: navigation, footer,
  * pricing, testimonials…), so the map is a tree of primitives, arrays, and
  * nested maps. Editors navigate it dynamically (`fields.items?.[i]?.title`)
  * without knowing the concrete document type, so each node is freely indexable.
