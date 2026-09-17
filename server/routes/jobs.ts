@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { db } from '../db/postgres.js'
 import { jobs } from '../db/schema/index.js'
 import { isUniqueViolation } from '../db/pgErrors.js'
+import { insertWithSlug, SlugConflictError, slugBase } from '../services/slugs.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
@@ -42,10 +43,16 @@ router.get('/:slug', localeMiddleware, async (req, res) => {
 router.post('/', requireAuth, adminOnly, async (req, res) => {
   const body = validate(jobBodySchema, req.body)
   try {
-    const [job] = await db.insert(jobs).values(body as never).returning()
+    // Same slug rule as the MCP tools: generated when omitted, an explicit one
+    // never rewritten (a collision is the 409 below).
+    const explicit = typeof body.slug === 'string' && body.slug ? body.slug : undefined
+    const job = await insertWithSlug({ explicit, base: slugBase([body.title, body.location].filter((part) => typeof part === 'string' && part).join(' '), 'job') }, async (slug) => {
+      const [row] = await db.insert(jobs).values({ ...body, slug } as never).returning()
+      return row
+    })
     res.status(201).json(job)
   } catch (err: unknown) {
-    if (isUniqueViolation(err)) {
+    if (err instanceof SlugConflictError || isUniqueViolation(err)) {
       return res.status(409).json({ error: 'A job with this slug already exists' })
     }
     throw err

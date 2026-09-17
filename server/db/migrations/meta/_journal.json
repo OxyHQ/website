@@ -141,6 +141,20 @@
       "when": 1789337662779,
       "tag": "0019_drop_mcp_tokens",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1789337722779,
+      "tag": "0020_storage_cleanups",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1789337782779,
+      "tag": "0021_mcp_idempotency_keys",
+      "breakpoints": true
     }
   ]
 }

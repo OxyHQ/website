@@ -24,10 +24,6 @@ function readUpdates(row: typeof incidents.$inferSelect): IncidentUpdate[] {
   return Array.isArray(row.updates) ? (row.updates as unknown as IncidentUpdate[]) : []
 }
 
-function todayUtc(): string {
-  return new Date().toISOString().slice(0, 10)
-}
-
 function dayKeysBack(days: number): string[] {
   const keys: string[] = []
   for (let i = days - 1; i >= 0; i--) {

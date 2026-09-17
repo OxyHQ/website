@@ -89,6 +89,7 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
 
   get_pricing: publicRead(() => '/pricing'),
   replace_pricing: write,
+  update_pricing_plan: write,
   get_testimonials: publicRead(() => '/testimonials'),
   replace_testimonials: write,
 
@@ -213,7 +214,117 @@ export const MCP_TOOL_ACCESS: Readonly<Record<string, McpToolAccess>> = {
   delete_referral: write,
 }
 
-/** Rollback metadata for the catalog: a delete or wholesale replace cannot be undone from here. */
-export function isIrreversible(toolName: string): boolean {
-  return /^(delete|remove|replace)_/.test(toolName)
+// ── Effects ────────────────────────────────────────────────────────────────
+
+/**
+ * What the catalog promises about a write, declared per tool rather than
+ * derived from its name.
+ *
+ * `idempotency` is Oxy's contract field, and there it means "accepts an
+ * idempotency key" — the contract refuses an effectful tool without one. Every
+ * write here accepts `idempotencyKey` (server/mcp/idempotency.ts), so every
+ * write is `'supported'`. Whether a repeat WITHOUT a key is harmless is a
+ * separate fact, recorded as `repeatSafe`: setting fields on a record found by
+ * its key is; a create, an upload or a wholesale replace is not.
+ *
+ * `rollback: 'manual'` means a real procedure undoes the change, named in
+ * `undo` (the delete tool for a create). Anything that overwrites or removes
+ * data is `'none'` — there is no history to restore from — which is what makes
+ * MCP mark it destructive.
+ */
+export interface McpToolEffects {
+  idempotency: 'none' | 'supported'
+  /** A repeat of the identical call, without a key, creates or changes nothing more. */
+  repeatSafe: boolean
+  rollback: 'none' | 'manual'
+  /** For `rollback: 'manual'`: the tool that undoes this one. */
+  undo?: string
+}
+
+const READ_EFFECTS: McpToolEffects = { idempotency: 'none', repeatSafe: true, rollback: 'none' }
+const naturallyIdempotent: McpToolEffects = { idempotency: 'supported', repeatSafe: true, rollback: 'none' }
+const irreversible: McpToolEffects = { idempotency: 'supported', repeatSafe: false, rollback: 'none' }
+const undoneBy = (undo: string): McpToolEffects => ({ idempotency: 'supported', repeatSafe: false, rollback: 'manual', undo })
+
+export const MCP_WRITE_EFFECTS: Readonly<Record<string, McpToolEffects>> = {
+  debug_upload_test: irreversible,
+
+  upsert_page: naturallyIdempotent,
+  update_hero: naturallyIdempotent,
+
+  create_post: undoneBy('delete_post'),
+  update_post: naturallyIdempotent,
+  delete_post: naturallyIdempotent,
+
+  replace_pricing: irreversible,
+  update_pricing_plan: naturallyIdempotent,
+  replace_testimonials: irreversible,
+
+  create_changelog_entry: undoneBy('delete_changelog_entry'),
+  update_changelog_entry: naturallyIdempotent,
+  delete_changelog_entry: naturallyIdempotent,
+
+  add_tracked_repo: undoneBy('remove_tracked_repo'),
+  update_tracked_repo: naturallyIdempotent,
+  remove_tracked_repo: naturallyIdempotent,
+  sync_repo: irreversible,
+  sync_all_repos: irreversible,
+
+  create_job: undoneBy('delete_job'),
+  update_job: naturallyIdempotent,
+  delete_job: naturallyIdempotent,
+
+  create_team_member: undoneBy('delete_team_member'),
+  update_team_member: naturallyIdempotent,
+  delete_team_member: naturallyIdempotent,
+
+  update_media: naturallyIdempotent,
+  delete_media: naturallyIdempotent,
+
+  update_settings: naturallyIdempotent,
+
+  create_locale: undoneBy('delete_locale'),
+  update_locale: naturallyIdempotent,
+  delete_locale: naturallyIdempotent,
+
+  upsert_translation: naturallyIdempotent,
+  delete_translation: naturallyIdempotent,
+
+  upload_image: undoneBy('delete_media'),
+  upload_and_set_post_cover: irreversible,
+  upload_and_set_team_avatar: irreversible,
+  bulk_upload_post_covers: irreversible,
+
+  create_category: undoneBy('delete_category'),
+  update_category: naturallyIdempotent,
+  delete_category: naturallyIdempotent,
+
+  create_product: undoneBy('delete_product'),
+  update_product: naturallyIdempotent,
+  delete_product: naturallyIdempotent,
+
+  create_course: undoneBy('delete_course'),
+  update_course: naturallyIdempotent,
+  delete_course: naturallyIdempotent,
+
+  create_resource: undoneBy('delete_resource'),
+  update_resource: naturallyIdempotent,
+  delete_resource: naturallyIdempotent,
+
+  create_help_article: undoneBy('delete_help_article'),
+  update_help_article: naturallyIdempotent,
+  delete_help_article: naturallyIdempotent,
+
+  create_referral: undoneBy('delete_referral'),
+  update_referral: naturallyIdempotent,
+  delete_referral: naturallyIdempotent,
+}
+
+/** The effects a tool declares; a write without a declaration fails the boot. */
+export function effectsFor(toolName: string): McpToolEffects {
+  const access = MCP_TOOL_ACCESS[toolName]
+  if (access?.kind !== 'write') return READ_EFFECTS
+  const effects = MCP_WRITE_EFFECTS[toolName]
+  if (!effects) throw new Error(`MCP write tool ${toolName} declares no effects in mcpAccess.ts`)
+  return effects
 }

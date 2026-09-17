@@ -18,7 +18,13 @@ declare global {
 let cachedDefault: string | null = null
 let cachedEnabled: Set<string> | null = null
 let cacheTime = 0
-const CACHE_TTL = 60_000 // 1 minute
+/**
+ * Every task keeps its own copy, and a locale change only invalidates the copy
+ * on the task that made it. This TTL is therefore how long ANOTHER task can
+ * keep serving the previous default — short, because the query behind it reads
+ * a handful of rows.
+ */
+const CACHE_TTL = 10_000
 
 async function getLocaleInfo() {
   const now = Date.now()
