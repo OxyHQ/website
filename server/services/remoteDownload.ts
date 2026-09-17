@@ -23,13 +23,13 @@ export interface DownloadedFile {
 
 export async function downloadRemote(
   url: string,
-  options: { maxBytes?: number; timeoutMs?: number; signal?: AbortSignal } = {},
+  options: { maxBytes?: number; timeoutMs?: number; signal?: AbortSignal; fetcher?: typeof safeFetch } = {},
 ): Promise<DownloadedFile> {
   const maxBytes = options.maxBytes ?? MAX_DOWNLOAD_BYTES
   const deadline = AbortSignal.timeout(options.timeoutMs ?? DOWNLOAD_TIMEOUT_MS)
   const signal = options.signal ? AbortSignal.any([options.signal, deadline]) : deadline
 
-  const result = await safeFetch(url, { signal })
+  const result = await (options.fetcher ?? safeFetch)(url, { signal })
   if (result.status < 200 || result.status >= 300) {
     result.response.destroy()
     throw new UpstreamError(`Upstream returned ${result.status}`)

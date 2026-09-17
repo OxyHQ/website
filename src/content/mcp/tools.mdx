@@ -29,6 +29,12 @@ Inputs are validated before anything runs, so a call with the wrong shape change
 - **`dryRun`** — deletes and whole-list replacements report exactly what they would do (the record, the translations or references it would take with it, the list diff) without writing.
 - **`idempotencyKey`** — every write accepts one. Retrying with the same key and the same input returns the first result without writing again, for 24 hours, even if the retry reaches another server; the same key with different input is refused with `idempotency_conflict`.
 
+## Limits
+
+Each account has a per-minute allowance shared by every server: a read costs 1, a write 5, and an upload, bulk upload or repository sync 25 (600 per minute by default). A call over the allowance fails with `rate_limited` and `retryAfterSeconds`. `describe_access` reports the current limits.
+
+The server speaks MCP protocol revisions up to `2025-11-25`; a client that only speaks a newer revision is refused with a clear error.
+
 ## Results
 
 A successful call returns JSON as text and as structured content. A list is `{ items }` or a paginated envelope such as `{ posts, total, page, pages }`; admins and non-admins get the same shape. Listings carry summaries without full article bodies unless you ask for `view: "full"`.

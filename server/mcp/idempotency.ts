@@ -135,11 +135,17 @@ export async function purgeExpiredIdempotencyKeys(): Promise<number> {
 
 let purge: ReturnType<typeof setInterval> | null = null
 
-/** Started once after bootstrap, like the other intervals in `server/index.ts`. */
+/**
+ * Started once after bootstrap, like the other intervals in `server/index.ts`.
+ * Also drops rate-limit windows older than ten minutes.
+ */
 export function startIdempotencyPurge(intervalMs = 60 * 60 * 1000): void {
   if (purge) return
   const run = () => {
     purgeExpiredIdempotencyKeys().catch((error: unknown) => console.error('[mcp] idempotency purge failed:', error))
+    import('./rateLimit.js')
+      .then(({ purgeOldRateLimitWindows }) => purgeOldRateLimitWindows())
+      .catch((error: unknown) => console.error('[mcp] rate limit purge failed:', error))
   }
   run()
   purge = setInterval(run, intervalMs)

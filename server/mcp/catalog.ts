@@ -7,6 +7,7 @@ import { MAX_BULK_ITEMS } from './tools/media.js'
 import { TOOL_DOMAINS } from './tools/index.js'
 import { idempotencyKeyInput, withIdempotency } from './idempotency.js'
 import { resolveReadLocale } from './localized.js'
+import { costOf, spend, TOOL_COST } from './rateLimit.js'
 import type { ToolContext, ToolDefinition, ToolRegistrar } from './registry.js'
 import { errorOf, MCP_ERROR_CODES, ok, toolError, type ToolResult } from './results.js'
 import { MAX_PAGE_SIZE } from './schemas.js'
@@ -168,7 +169,14 @@ export function describeAccess(context: ToolContext): Record<string, unknown> {
       'Writes accept idempotencyKey: retrying with the same key and input replays the first result.',
       'Updates accept expectedUpdatedAt; deletes and whole-list replaces accept dryRun.',
     ],
-    limits: { maxPageSize: MAX_PAGE_SIZE, maxBulkItems: MAX_BULK_ITEMS, maxImageBytes: 25 * 1024 * 1024, maxImagePixels: 40_000_000 },
+    limits: {
+      maxPageSize: MAX_PAGE_SIZE,
+      maxBulkItems: MAX_BULK_ITEMS,
+      maxImageBytes: 25 * 1024 * 1024,
+      maxImagePixels: 40_000_000,
+      costUnitsPerMinute: config.mcp.rateLimitPerMinute,
+      callCost: TOOL_COST,
+    },
     errorCodes: MCP_ERROR_CODES,
     domains,
   }
@@ -225,6 +233,7 @@ export async function invokeTool(name: string, input: Record<string, unknown>, c
   let result: ToolResult
   try {
     const access = accessFor(name)
+    await spend(context.actorId, costOf(name, access.kind === 'write'))
     const { idempotencyKey, ...args } = z.object(definition.shape).parse(input) as Record<string, unknown>
     if (definition.options.localized) await resolveReadLocale(args.locale as string | undefined)
 
@@ -254,7 +263,8 @@ export async function invokeTool(name: string, input: Record<string, unknown>, c
     result = toolError(error)
   }
   const code = result.isError ? (result.structuredContent as { error?: { code?: string } } | undefined)?.error?.code : undefined
-  console.log(`[mcp:call] ${JSON.stringify({ tool: name, actor: context.actorId, request: context.requestId, ok: !result.isError, code, ms: Date.now() - startedAt })}`)
+  const bytes = result.content.reduce((total, block) => total + Buffer.byteLength(block.text), 0)
+  console.log(`[mcp:call] ${JSON.stringify({ tool: name, actor: context.actorId, request: context.requestId, ok: !result.isError, code, ms: Date.now() - startedAt, bytes })}`)
   return result
 }
 

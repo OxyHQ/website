@@ -132,6 +132,26 @@ it is acting as.
 - **Diagnostics.** `debug_upload_test` exists only with
   `MCP_ENABLE_DIAGNOSTICS=true`, and cleans up its row and object in `finally`.
 
+## Limits, protocol and telemetry
+
+- **Usage limits.** Each account spends cost units per minute (read 1, write 5,
+  upload/bulk/sync 25; `MCP_RATE_LIMIT_PER_MINUTE`, default 600), counted in
+  `mcp_rate_limits` so the limit holds across tasks. Over the limit a call is
+  `rate_limited` with `retryAfterSeconds`. Only the account id and a count are
+  stored; a counter failure lets the call through rather than failing all traffic.
+- **Protocol revisions.** The transport is `@oxy.so/mcp` 1.0.0 over
+  `@modelcontextprotocol/sdk` 1.30.0, which accepts `2025-11-25`, `2025-06-18`,
+  `2025-03-26`, `2024-11-05` and `2024-10-07`. **`2026-07-28` is not supported**:
+  a request announcing it gets 400 (`server/mcp/http.test.ts`). Support belongs
+  in `OxyHQ/oxy/packages/mcp`, then a version bump here — never hand-written
+  framing in this repo.
+- **Telemetry.** One `[mcp:call]` line per call (tool, acting account, request id,
+  ok, error code, duration, response bytes) and one `[mcp:audit]` line per applied
+  write. No tokens, bodies, URLs or IPs.
+- **Known SDK limitations** (tracked in OxyHQ/oxy): `idempotentHint` is derived
+  from key support rather than repeat safety, and the transport rebuilds the
+  McpServer and converts every tool schema on each request.
+
 ## Tests
 
 `bun run test:server` runs the server suite against a real PostgreSQL
