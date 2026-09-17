@@ -10,7 +10,7 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'React.ReactNode', optional: false, description: 'Group children. Place `InputGroupAddon` elements before/after the input (a Bloom `TextFieldInput`, a `Search`, or any control). The middle child stretches to fill.' },
         { name: 'isInvalid', type: 'boolean', optional: true, description: 'Invalid state — renders the error-colored border.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Disabled styling.' },
-        { name: 'size', type: "'sm' | 'md' | 'lg'", options: ['sm', 'md', 'lg'], optional: true, description: "Size affects height + horizontal padding. Defaults to `'md'`." },
+        { name: 'size', type: "'sm' | 'md' | 'lg'", options: ['sm', 'md', 'lg'], optional: true, description: '`sm` is the `small` input (32 tall), `md` the `medium` (36, the default), `lg` extends the ramp (44).' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

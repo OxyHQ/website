@@ -30,6 +30,7 @@ import {
   rewriteSiblingDocLinks,
   rewriteStaleDocsVersionLinks,
 } from './docs-links.ts';
+import { escapeUnclosedProseTags } from './mdx-literal-tags.ts';
 import type {
   DocsConfig,
   DocsRegistry,
@@ -337,9 +338,25 @@ async function rewriteCrossPackageRootsInPlace(packages: readonly SyncedPackage[
   }
 }
 
+/**
+ * Everything a synced doc goes through before the site compiles it: link
+ * rewriting, plus — for MDX — escaping prose placeholders like `<Brand>` that
+ * MDX would otherwise read as an unclosed element (see `mdx-literal-tags.ts`).
+ */
+function prepareSyncedSource(source: string, filePath: string): string {
+  const isMdx = /\.mdx$/i.test(filePath);
+  const rewritten = rewriteDocsLinks(source, isMdx);
+  if (!isMdx) return rewritten;
+  const { source: escapedSource, escaped } = escapeUnclosedProseTags(rewritten);
+  if (escaped.length > 0) {
+    console.warn(`[sync-docs] ${path.relative(SYNCED_DIR, filePath)}: escaped prose tag(s) ${escaped.join(', ')} that MDX would read as unclosed elements.`);
+  }
+  return escapedSource;
+}
+
 async function rewriteMdxLinksInPlace(filePath: string): Promise<void> {
   const original = await readFile(filePath, 'utf8');
-  const rewritten = rewriteDocsLinks(original, /\.mdx$/i.test(filePath));
+  const rewritten = prepareSyncedSource(original, filePath);
   if (rewritten !== original) {
     await writeFile(filePath, rewritten);
   }
@@ -507,7 +524,7 @@ async function copyVersionFromGitTag(
     }
     const dest = path.join(outDir, relUnderDocs);
     await mkdir(path.dirname(dest), { recursive: true });
-    const rewritten = rewriteDocsLinks(contents.toString('utf8'), /\.mdx$/i.test(dest));
+    const rewritten = prepareSyncedSource(contents.toString('utf8'), dest);
     await writeFile(dest, rewritten);
     const { data, body } = parseFrontMatter(rewritten);
     const slug = slugFromFile(relUnderDocs);
