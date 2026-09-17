@@ -41,6 +41,18 @@ it is acting as.
   declares. In production the API registers `WEBSITE_MCP_CATALOG` at boot
   (`server/services/mcpCatalogRegistration.ts`) with its service credential,
   which needs the `catalogs:write` scope and the `catalog:website` capability on
-  the **Oxy Website** application (`OxyHQServices` seed specs).
+  the **Oxy Website** application (`OxyHQServices` seed specs). It keeps
+  retrying a registry outage with capped, jittered backoff (honouring
+  `Retry-After`) until it lands, stops on a configuration refusal (a 4xx other
+  than 401/408/429), and never re-registers once registered. Oxy keeps the last
+  successful registration as the active one, so an old task still retrying
+  during a deploy can reactivate the older catalog — compare `catalogHash`
+  across tasks if MCP sign-in misbehaves after a deploy.
+- **Status.** `GET /api/mcp/status` (public, no secrets) reports database
+  readiness, the registration state, catalog version and hash, attempts, last
+  success and a sanitized last error. It never affects `/api/health`.
+- **Public docs** live in `src/content/mcp/`; `scripts/mcp-docs.test.ts` fails
+  the build if they describe the retired static-token architecture outside a
+  migration section.
 - **Adding a tool** means a `server.tool(...)` in `server/mcp.ts` and a row in
   `MCP_TOOL_ACCESS`. The boot fails if either is missing.
