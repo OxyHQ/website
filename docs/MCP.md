@@ -148,7 +148,7 @@ it is acting as.
 - **Telemetry.** One `[mcp:call]` line per call (tool, acting account, request id,
   ok, error code, duration, response bytes) and one `[mcp:audit]` line per applied
   write. No tokens, bodies, URLs or IPs.
-- **Known SDK limitations** (tracked in OxyHQ/oxy): `idempotentHint` is derived
+- **Known SDK limitations** (OxyHQ/oxy#1314): `idempotentHint` is derived
   from key support rather than repeat safety, and the transport rebuilds the
   McpServer and converts every tool schema on each request.
 
