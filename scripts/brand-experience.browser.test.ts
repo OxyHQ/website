@@ -5,7 +5,7 @@ import { chromium } from 'playwright'
 // Unlike vite preview, this serves the dedicated canvas CSP and asset CORS.
 const root = resolve(import.meta.dir, '..', 'dist')
 const headers = await Bun.file(join(root, '_headers')).text()
-const policies = [...headers.matchAll(/^  Content-Security-Policy: (.+)$/gm)].map((m) => m[1])
+const policies = [...headers.matchAll(/^ {2}Content-Security-Policy: (.+)$/gm)].map((m) => m[1])
 if (policies.length !== 2 || policies[0].includes("'unsafe-eval'"))
   throw new Error('Unexpected main/canvas CSP policies')
 const mime: Record<string, string> = {

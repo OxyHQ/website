@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { observeMapContrast } from './map-contrast'
 import { createSolarMaterial } from './solar-material'
 import { createMoonMaterial } from './moon-material'
@@ -25,7 +25,7 @@ import { infrastructureNodes } from '../../data/dashboard/infra-nodes'
 import { activityRegionCoordinates, activityRegionLabel } from '../../data/dashboard/activity-regions'
 import { ACTIVITY_CATEGORIES, type ActivityCategory } from '../../data/dashboard/activity-categories'
 import { activityRoute } from '../../data/dashboard/activity-routes'
-import { activityMotion, activityFlows, retainFlowObjects } from '../../data/dashboard/activity-motion'
+import { activityClock, activityMotion, activityFlows, retainFlowObjects } from '../../data/dashboard/activity-motion'
 import { cameraMotion, stepCameraMotion, selectCameraFocus, CAMERA_MANUAL_PAUSE_MS, type CameraFocus, type CameraTarget } from '../../data/dashboard/camera-motion'
 import { solarDirection } from '../../data/dashboard/solar-position'
 
@@ -171,7 +171,9 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
   const sceneCleanupRef = useRef<(() => void) | null>(null)
   const isInteractingRef = useRef(false)
   const flareGhostRefs = useRef<(HTMLSpanElement | null)[]>([])
-  activityEventsRef.current = activityEvents
+  // The camera loop reads the latest batch from its own frame callback; the ref
+  // is synced after the render rather than during it.
+  useEffect(() => { activityEventsRef.current = activityEvents }, [activityEvents])
 
   const containerRef = useCallback((node: HTMLDivElement | null) => {
     if (!node) return
@@ -450,9 +452,19 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     return marker
   }, [])
 
+  /**
+   * three-globe binds the arc objects it is given and animates them in its own
+   * shader, so a batch must hand back the SAME objects for the flows that are
+   * still running — new objects restart every dash mid-flight. `arcCacheRef`
+   * holds that binding and `retainFlowObjects` updates it in place, which is a
+   * ref write during render and is why the two lines below are excepted: the
+   * cache is not render state, it is the identity three-globe already holds,
+   * and it is derived from exactly this memo's inputs.
+   */
   const arcs = useMemo<ActivityArc[]>(() => {
     if (!layout) return []
-    const now = Date.now()
+    const now = activityClock(activityEvents)
+    // eslint-disable-next-line react-hooks/refs -- the cache read below is the identity three-globe holds; see the comment above this memo
     const nextArcs = activityFlows(activityEvents).flatMap((event) => {
       const route = activityRoute(event, infrastructureNodes(infraStatus))
       if (!route) return []
@@ -482,6 +494,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         stroke: 0.45, dashTime: 0, dashLength: 0.035, dashGap: 0.035, dashInitialGap: 0,
       }, ...pulses]
     })
+    // eslint-disable-next-line react-hooks/refs -- see the comment above this memo
     return retainFlowObjects(arcCacheRef.current, nextArcs)
   }, [activityEvents, layout, infraStatus])
 

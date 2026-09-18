@@ -1,16 +1,6 @@
-import { useState, type CSSProperties } from 'react'
-import { getPresetVars } from '@oxy.so/bloom/design-tokens'
+import { useState } from 'react'
 import { APP_COLOR_NAMES, type AppColorName } from '@oxy.so/bloom/color-presets'
-
-export function recipeStyle(preset: AppColorName, mode: 'light' | 'dark'): CSSProperties {
-  const vars = getPresetVars(preset, mode)
-  return {
-    ...vars,
-    ...Object.fromEntries(
-      Object.entries(vars).map(([key, value]) => [`--color-${key.slice(2)}`, value]),
-    ),
-  } as CSSProperties
-}
+import { recipeStyle } from './recipe-style'
 
 export default function RecipePreview() {
   const [preset, setPreset] = useState<AppColorName>('oxy')

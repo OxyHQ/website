@@ -1,11 +1,23 @@
 import { describe, expect, test } from 'bun:test'
-import { activityMotion, activityFlows, activityFlowKey, retainFlowObjects } from '../src/data/dashboard/activity-motion'
+import { activityClock, activityMotion, activityFlows, activityFlowKey, retainFlowObjects } from '../src/data/dashboard/activity-motion'
 import { activityRoute } from '../src/data/dashboard/activity-routes'
 import type { PlatformActivityEvent } from '../src/api/platformActivityStore'
 
 const emittedAt = '2026-09-10T00:00:02.000Z'
 const windowStartedAt = '2026-09-10T00:00:00.000Z'
 const base: PlatformActivityEvent = { service: 'oxy-api', region: 'us-west-2', sourceRegion: 'edge-mad', targetRegion: 'us-west-2', direction: 'inbound', scope: 'external', activityType: 'media', requests: 2, emittedAt, windowStartedAt }
+
+describe('activityClock', () => {
+  test('is the newest emission in the batch, so a re-render cannot move the phase', () => {
+    const older = { ...base, emittedAt: '2026-09-10T00:00:01.000Z' }
+    expect(activityClock([older, base])).toBe(Date.parse(emittedAt))
+    expect(activityClock([base, older])).toBe(Date.parse(emittedAt))
+  })
+  test('ignores unreadable timestamps and answers 0 for an empty batch', () => {
+    expect(activityClock([{ ...base, emittedAt: 'not a date' }])).toBe(0)
+    expect(activityClock([])).toBe(0)
+  })
+})
 
 describe('activityMotion', () => {
   test('makes higher request rates denser, shorter and faster in a single train', () => {

@@ -7,7 +7,7 @@ import { ACTIVITY_CATEGORIES } from "../../data/dashboard/activity-categories";
 import { activityRoute } from "../../data/dashboard/activity-routes";
 import { observeMapContrast } from "./map-contrast";
 import ActivityPulse from "./ActivityPulse";
-import { activityMotion, activityFlows } from "../../data/dashboard/activity-motion";
+import { activityClock, activityMotion, activityFlows } from "../../data/dashboard/activity-motion";
 import type { InfraStatusNode, PlatformActivityEvent } from "../../api/hooks";
 
 const STATUS_COLORS = {
@@ -111,7 +111,10 @@ export default function DottedMap({
   const dragRef = useRef<{ pointerX: number; pointerY: number; viewX: number; viewY: number } | null>(null);
   const returnTimerRef = useRef<number | null>(null);
   const focusFrameRef = useRef<number | null>(null);
-  viewportRef.current = viewport;
+  // Synced after the render, not during it: the automatic focus animation reads
+  // the latest viewport from callbacks, and writing a ref while rendering is
+  // what React Compiler cannot see.
+  useEffect(() => { viewportRef.current = viewport; }, [viewport]);
   const projection = useMemo(
     () =>
       geoEquirectangular()
@@ -171,7 +174,7 @@ export default function DottedMap({
   const projectedRoutes = useMemo(() => {
     if (!activityEvents || activityEvents.length === 0) return [];
 
-    const now = Date.now();
+    const now = activityClock(activityEvents);
     return activityFlows(activityEvents).flatMap(event => {
       const route = activityRoute(event, infrastructureNodes(infraStatus));
       if (!route) return [];
