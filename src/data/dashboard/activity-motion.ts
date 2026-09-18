@@ -25,6 +25,22 @@ export function activityFlows(events: PlatformActivityEvent[]): PlatformActivity
   return [...flows.values()]
 }
 
+/**
+ * The instant a batch is animated from: its newest emission, not the wall
+ * clock. A component cannot read `Date.now()` while rendering — it makes the
+ * render impure, so the same data would produce a different phase on every
+ * re-render (and React Compiler is free to reuse either). Deriving the clock
+ * from the batch keeps the phase stable for as long as the batch is.
+ */
+export function activityClock(events: Pick<PlatformActivityEvent, 'emittedAt'>[]): number {
+  let latest = 0
+  for (const event of events) {
+    const emitted = Date.parse(event.emittedAt)
+    if (Number.isFinite(emitted) && emitted > latest) latest = emitted
+  }
+  return latest
+}
+
 /** Phase staggering is visual deconfliction, not an inferred request/response timeline. */
 export function activityMotion(event: Pick<PlatformActivityEvent, 'requests' | 'windowStartedAt' | 'emittedAt'> & Partial<PlatformActivityEvent>, flowKey = '', now = Date.now()): ActivityMotion {
   const elapsed = Date.parse(event.emittedAt) - Date.parse(event.windowStartedAt)

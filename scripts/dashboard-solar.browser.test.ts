@@ -1,6 +1,8 @@
 import { chromium } from 'playwright'
 import assert from 'node:assert/strict'
 
+import './dashboard-test-globals'
+
 const baseURL = process.env.DASHBOARD_TEST_BASE_URL ?? 'http://127.0.0.1:5173'
 const browser = await chromium.launch({ headless: true, args: ['--enable-unsafe-swiftshader', '--disable-features=LocalNetworkAccessChecks'] })
 try {
@@ -18,14 +20,14 @@ try {
   await page.getByRole('button', { name: 'Toggle map' }).click()
   await page.waitForFunction(() => {
     let ready = false
-    ;(window as any).__testGlobe?.scene().traverse((object: any) => {
+    window.__testGlobe?.scene().traverse((object) => {
       const uniforms = object.material?.uniforms
       if (uniforms?.dayImage?.value.image?.width && uniforms?.nightImage?.value.image?.width) ready = true
     })
     return ready
   })
   await page.evaluate(() => {
-    const globe = (window as any).__testGlobe
+    const globe = window.__testGlobe!
     globe.controls().dispatchEvent({ type: 'start' })
     globe.pointOfView({ lat: 0, lng: 0, altitude: 1.7 }, 0)
   })
@@ -34,8 +36,9 @@ try {
     await page.waitForTimeout(150)
     const sun = await page.evaluate(() => {
       let result: number[] = []
-      ;(window as any).__testGlobe.scene().traverse((object: any) => {
-        if (object.material?.uniforms?.sun) result = object.material.uniforms.sun.value.toArray()
+      window.__testGlobe!.scene().traverse((object) => {
+        const sun = object.material?.uniforms?.sun
+        if (sun?.value.toArray) result = sun.value.toArray()
       })
       return result
     })
