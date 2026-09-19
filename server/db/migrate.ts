@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
-import { closeDatabase, db } from './postgres.js'
+import { closeDatabase, rootDb } from './postgres.js'
 
 /**
  * Applies every pending migration, then exits. Run by `bun run db:migrate` and
@@ -10,6 +10,6 @@ import { closeDatabase, db } from './postgres.js'
  */
 const migrationsFolder = path.join(path.dirname(fileURLToPath(import.meta.url)), 'migrations')
 
-await migrate(db, { migrationsFolder })
+await migrate(rootDb, { migrationsFolder })
 console.log('[db] migrations applied')
 await closeDatabase()

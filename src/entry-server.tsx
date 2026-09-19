@@ -101,6 +101,8 @@ export interface SEORenderInput {
   publishedTime?: string
   modifiedTime?: string
   author?: string
+  /** Absolute canonical for a page whose content is published on another site. */
+  canonicalUrl?: string
 }
 
 /** One entry of `GET /api/locales`, as far as `<SEO>`'s hreflang block cares. */
@@ -190,6 +192,7 @@ export function renderSEO(
               publishedTime={input.publishedTime}
               modifiedTime={input.modifiedTime}
               author={input.author}
+              canonicalUrl={input.canonicalUrl}
             />
           </LocaleProvider>
         </MemoryRouter>

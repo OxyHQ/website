@@ -5,6 +5,7 @@ import { db } from '../db/postgres.js'
 import { media, teamMembers } from '../db/schema/index.js'
 import { populate, populateOne } from '../db/refs.js'
 import { isUniqueViolation } from '../db/pgErrors.js'
+import { insertWithSlug, SlugConflictError, slugBase } from '../services/slugs.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { localeMiddleware } from '../middleware/locale.js'
@@ -40,10 +41,16 @@ router.get('/:slug', localeMiddleware, async (req, res) => {
 router.post('/', requireAuth, adminOnly, async (req, res) => {
   const body = validate(teamMemberBodySchema, req.body)
   try {
-    const [member] = await db.insert(teamMembers).values(body as never).returning()
+    // Same slug rule as the MCP tools: generated when omitted, an explicit one
+    // never rewritten (a collision is the 409 below).
+    const explicit = typeof body.slug === 'string' && body.slug ? body.slug : undefined
+    const member = await insertWithSlug({ explicit, base: slugBase(typeof body.name === 'string' ? body.name : '', 'member') }, async (slug) => {
+      const [row] = await db.insert(teamMembers).values({ ...body, slug } as never).returning()
+      return row
+    })
     res.status(201).json(member)
   } catch (err: unknown) {
-    if (isUniqueViolation(err)) {
+    if (err instanceof SlugConflictError || isUniqueViolation(err)) {
       return res.status(409).json({ error: 'A team member with this slug already exists' })
     }
     throw err

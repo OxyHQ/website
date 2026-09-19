@@ -37,6 +37,17 @@ const LEGACY_REDIRECTS: ReadonlyArray<readonly [from: string, to: string]> = [
   ['/technologies', '/apps/'],
   ['/products', '/apps/'],
   ['/pay', '/peable/'],
+  // `/contact` is what people type and what gets printed on a slide. The SPA
+  // also routes it, but a client-side <Navigate> never runs on a URL the edge
+  // answered with a 404 — so the hop has to exist here.
+  ['/contact', '/contact/sales/'],
+  // Bloom 2.0 removed these surfaces and named a successor for each, so the
+  // component page a reader bookmarked has a real equivalent to land on.
+  // `benefit-list`, `level-picker` and `profile-card` were removed with no
+  // successor: they 404 through the catch-all, because pointing them at the
+  // hub would publish an unrelated page as their replacement (a soft 404).
+  ['/developers/docs/bloom/components/prompt-input', '/developers/docs/bloom/components/composer-panel/'],
+  ['/developers/docs/bloom/components/combobox', '/developers/docs/bloom/components/select/'],
 ]
 
 export interface RedirectsOptions {

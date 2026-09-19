@@ -7,17 +7,18 @@ Vite + React + react-router-dom + Tailwind v4 marketing/web presence. Single fla
 `src/` is the SPA, `server/` the Express API plus MCP server, `scripts/` the build-time steps (docs and changelog sync, prerender, pagefind, OG images).
 
 ```bash
-bun run dev / build / server / mcp / sync-docs / sync-changelog
+bun run dev / build / server / sync-docs / sync-changelog
 ```
 
 ## Rules
 
-- **`tsc --noEmit` is NOT the check this project builds with.** `bun run build` runs `tsc -b`, which builds the referenced projects and sees errors the flat check does not (a locale missing a key, an unused declaration). The frontend build failed on `main` for four commits while `tsc --noEmit` passed locally every time. Run `bunx tsc -b`, or the whole build, before pushing.
+- **`tsc --noEmit` is NOT the check this project builds with.** `bun run build` runs `tsc -b`, which builds the referenced projects and sees errors the flat check does not (a locale missing a key, an unused declaration). `main` failed to build for four commits while `tsc --noEmit` passed. Run `bunx tsc -b`.
 - **Adding a key to `src/lib/i18n/locales/` means adding it to all eleven.** The locale type requires every key, so three locales is a build failure, not a fallback. Translate it — a placeholder is read by whoever opens the thing.
 - **Public `/developers/docs/**` special routes keep `PageShell` around their docs layout.** `DocsShell`/`DocsSubNav` are inner chrome, never replacements for the global header and footer.
-- **The MCP auth token is a request HEADER only**, never a query-string parameter.
+- **MCP non-admins read only via public REST routes**, else admin-only (`docs/MCP.md`).
+- **Careers are read-only Clarity Jobs** (`server/services/careers.ts`), written in Mention. No jobs table here.
 - **Do not add local auth middleware** — `@oxy.so/core/server` for every new protected route.
-- **Validate deploy-time configuration BEFORE `app.listen()`, never inside `connectWithRetry`.** Anything thrown in that loop is caught and reported as a database problem, the migrations re-run, and every retry stacks another sync interval.
+- **Validate deploy-time configuration BEFORE `app.listen()`, never inside `connectWithRetry`** — a throw there reads as a database problem, re-runs migrations and stacks another sync interval per retry.
 
 ## Database (PostgreSQL, drizzle + postgres.js)
 
@@ -25,7 +26,7 @@ bun run dev / build / server / mcp / sync-docs / sync-changelog
 
 - **Primary keys are 24-character hex ids under the name `_id`** — the admin UI, every API response and every cross-table reference speak in them. New rows get the same shape from `newObjectId()`.
 - **`.populate()` is `server/db/refs.ts`** — one query per referenced TABLE for a whole page of rows, never one per row. The API hands the frontend the referenced ROW in that field.
-- **Sub-documents read and written as a unit are `jsonb`** (a page's sections, a job's description blocks). Splitting them into child tables buys joins nobody asked for.
+- **Sub-documents read and written as a unit are `jsonb`** (a page's sections, a hero's slots). Splitting them into child tables buys joins nobody asked for.
 - **Every list query ends on `_id`.** Postgres returns heap order, which moves when a row is rewritten — so a list sorted on `order` alone reshuffles after an edit, and on a tied sort with `offset`/`limit` a row can appear on two pages or on neither. `_id` is unique and ascends with creation.
 - **Never bind a JS array into a raw `sql` fragment** — `x = ANY(${ids})` sends it as ONE scalar and Postgres reads the first element as an array literal (`22P02`). Use `inArray`. A scalar into `@> ARRAY[${tag}]::text[]` is fine and is how the tag filters work.
 - **A duplicate key is SQLSTATE `23505`, via `isUniqueViolation` in `server/db/pgErrors.ts`** — a route that does not check it answers 500 where it should answer 409.

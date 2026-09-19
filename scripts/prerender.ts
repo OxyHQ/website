@@ -23,8 +23,8 @@
  *          with per-lesson metadata from MDX frontmatter.
  *        • Newsroom posts — fetched from the live website API
  *          (`https://website-api.oxy.so/api/newsroom`).
- *        • Careers — fetched from `/api/jobs` (skipped gracefully if the
- *          endpoint isn't deployed).
+ *        • Careers — Oxy's open roles from `/api/jobs`, which reads Clarity
+ *          Jobs (skipped gracefully if it is unreachable).
  *        • Docs — every `(package, version, slug)` from
  *          `src/content/_synced/index.json`, using the page's title and
  *          description from the synced metadata.
@@ -55,6 +55,9 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES, isRtlLocale, type Locale } from '../
 import { featureRequestDescription, featureRequestPath } from '../src/lib/featureRequest'
 import { ACADEMY_COURSES } from '../src/content/academy-courses'
 import { bloomComponentRoutes } from './bloom-component-routes.ts'
+import { BUILD_SNAPSHOT } from '../src/lib/ai/snapshot'
+import { modelPath } from '../src/lib/ai/modelId'
+import { publisherName } from '../src/lib/ai/catalog'
 import { APP_CARD_IMAGES } from '../src/data/appCardImages'
 import { brandConfig } from '../src/lib/seo'
 import type { NewsroomPost, NewsroomPostSummary } from '../src/data/newsroom'
@@ -71,12 +74,14 @@ import {
   normalizeNewsroomSeoTitle,
 } from '../src/lib/newsroomSeo'
 import {
-  buildJobPostingStructuredData,
-  jobDescriptionToMarkdown,
-  jobLocationLabel,
-  jobSeoDescription,
-  type JobPostingInput,
-} from '../src/lib/jobPosting'
+  careerEmploymentLabel,
+  careerJobMarkdown,
+  careerJobPath,
+  careerLocationLabel,
+  careerSeoDescription,
+  careerTeam,
+  type CareerJob,
+} from '../src/lib/careers'
 
 // React 19.2's development JSX runtime expects a development renderer
 // dispatcher. This script imports a production SSR bundle into Bun, so make
@@ -137,6 +142,8 @@ interface SEOProps {
   modifiedTime?: string
   author?: string
   noIndex?: boolean
+  /** Absolute canonical for a page whose content is published on another site. */
+  canonicalUrl?: string
 }
 
 /** Renders a page's markdown with the app's own article components. */
@@ -305,14 +312,50 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
   '/ai': {
     title: 'Oxy AI',
     description:
-      'Private AI for people and developers: open models you can inspect, fine-tune and self-host, with conversations that never train anyone else.',
+      'One platform for AI models, inference and intelligent products. A unified API, a public model catalogue, managed and dedicated serving, and the products Oxy builds on top of it.',
     canonicalPath: '/ai',
   },
-  '/ai/pricing': {
-    title: 'Oxy AI pricing',
+  '/ai/inference': {
+    title: 'Oxy Inference',
     description:
-      'What Oxy AI costs per plan, what each tier includes and how usage is measured. Bring your own model on the higher tiers.',
+      'One OpenAI-compatible API for every model Oxy is approved to serve, with routing, revision pinning, usage receipts and per-application attribution.',
+    canonicalPath: '/ai/inference',
+  },
+  '/ai/models': {
+    title: 'AI models',
+    description:
+      'The public Oxy AI model catalogue: publisher, capabilities, serving regions, data policy, pricing and availability for every model Oxy is approved to serve.',
+    canonicalPath: '/ai/models',
+  },
+  '/ai/pricing': {
+    title: 'Oxy Inference pricing',
+    description:
+      'What Oxy Inference costs: per-model, per-unit pricing from the Oxy pricing source, with the price version it belongs to and an estimator for a monthly workload.',
     canonicalPath: '/ai/pricing',
+  },
+  '/ai/enterprise': {
+    title: 'Oxy AI for organizations',
+    description:
+      'Shared, managed and dedicated inference for organizations: private endpoints, reserved capacity, region and provider policy, bring your own key, invoicing and auditability.',
+    canonicalPath: '/ai/enterprise',
+  },
+  '/ai/trust': {
+    title: 'Oxy AI — data and policy',
+    description:
+      'What Oxy does with what you send, what the provider serving a routed request does with it, and which of the two any given statement is about.',
+    canonicalPath: '/ai/trust',
+  },
+  '/enterprise': {
+    title: 'Oxy for organizations',
+    description:
+      'What Oxy sells to organizations — AI and inference, Oxy ID, the platform and SDKs — with the state each of them is genuinely in.',
+    canonicalPath: '/enterprise',
+  },
+  '/contact/sales': {
+    title: 'Talk to Oxy sales',
+    description:
+      'Request a scoped answer about Oxy AI, managed or dedicated inference, or the Oxy platform for your organization.',
+    canonicalPath: '/contact/sales',
   },
   '/os': {
     title: 'Oxy OS',
@@ -580,11 +623,6 @@ interface NewsroomApiResponse {
   posts: NewsroomApiPost[]
 }
 
-/** The route returns a bare array already filtered to active vacancies. */
-interface JobApiEntry extends JobPostingInput {
-  department: string
-}
-
 async function fetchNewsroomPosts(): Promise<NewsroomApiPost[]> {
   try {
     const res = await fetch(NEWSROOM_API)
@@ -675,14 +713,15 @@ async function fetchProducts(): Promise<ProductApiEntry[]> {
   }
 }
 
-async function fetchJobs(): Promise<JobApiEntry[]> {
+/** The route returns a bare array of Oxy's active openings. */
+async function fetchJobs(): Promise<CareerJob[]> {
   try {
     const res = await fetch(JOBS_API)
     if (!res.ok) return []
-    const jobs = (await res.json()) as JobApiEntry[]
+    const jobs = (await res.json()) as CareerJob[]
     // Skip malformed entries rather than interpolating `undefined` into a
     // <title>; every field below is required to build the SEO props.
-    return jobs.filter((job) => job.slug && job.title && job.department && job.location)
+    return jobs.filter((job) => job.id && job.title && job.canonicalUrl)
   } catch (err) {
     console.warn('[prerender] jobs fetch failed:', (err as Error).message)
     return []
@@ -1148,29 +1187,32 @@ function buildAppRoutes(products: ProductApiEntry[]): Array<{ url: string; seo: 
   })
 }
 
-function buildJobRoutes(jobs: JobApiEntry[]): RouteEntry[] {
+/**
+ * One document per open role. The role is published in Mention, so its canonical
+ * points there, it carries no JobPosting schema of its own (the publisher's page
+ * does), and it stays out of the sitemap and the locale mirrors.
+ */
+function buildJobRoutes(jobs: CareerJob[]): RouteEntry[] {
   return jobs.map((job) => {
-    const url = `/company/careers/${job.slug}`
-    const markdown = jobDescriptionToMarkdown(job.description)
+    const url = careerJobPath(job)
+    const markdown = careerJobMarkdown(job)
     return {
       url,
       seo: {
         // Mirrors `CareerDetailPage` through the same shared builders.
-        title: `${job.title}, ${job.department}`,
-        description: jobSeoDescription(job),
+        title: `${job.title}, ${careerTeam(job)}`,
+        description: careerSeoDescription(job),
         canonicalPath: url,
-        publishedTime: job.createdAt,
-        modifiedTime: job.updatedAt,
+        canonicalUrl: job.canonicalUrl,
+        publishedTime: job.publishedAt,
       },
       body: markdown
         ? {
             heading: job.title,
-            meta: `${jobLocationLabel(job.location)} · ${job.engagement ?? job.type ?? 'Full-time'}`,
-            standfirst: job.subtitle,
+            meta: [careerLocationLabel(job), careerEmploymentLabel(job)].filter(Boolean).join(' · ') || undefined,
             markdown,
           }
         : undefined,
-      structuredData: buildJobPostingStructuredData(job, { origin: SITE_URL }) ?? undefined,
     }
   })
 }
@@ -1245,7 +1287,7 @@ function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): 
   // superseded docs version already canonicalizes to the current one — a
   // `/es/…/0.6.8/…` document is then a duplicate of a duplicate.
   const mirrorable = base.filter(
-    (job) => hasLocalizedVariants(job.url) && job.seo.canonicalPath === job.url,
+    (job) => hasLocalizedVariants(job.url) && job.seo.canonicalPath === job.url && !job.seo.canonicalUrl,
   )
   for (const locale of locales) {
     for (const job of mirrorable) {
@@ -1261,6 +1303,24 @@ function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): 
     }
   }
   return expanded
+}
+
+/** One document per public catalogue entry. Empty while the catalogue is unpublished. */
+function buildModelRoutes(): Array<{ url: string; seo: SEOProps }> {
+  const routes: Array<{ url: string; seo: SEOProps }> = []
+  for (const entry of BUILD_SNAPSHOT.entries) {
+    const url = modelPath(entry.id)
+    if (!url) continue
+    routes.push({
+      url,
+      seo: {
+        title: `${entry.name} — ${publisherName(BUILD_SNAPSHOT, entry.publisherId)}`,
+        description: entry.description.slice(0, 300),
+        canonicalPath: url,
+      },
+    })
+  }
+  return routes
 }
 
 async function enumerateAllRoutes(): Promise<RouteEntry[]> {
@@ -1300,6 +1360,14 @@ async function enumerateAllRoutes(): Promise<RouteEntry[]> {
   for (const { url, seo } of academyRoutes) result.set(url, { url, seo })
   for (const entry of companyRoutes) result.set(entry.url, entry)
   for (const entry of docsRoutes) result.set(entry.url, entry)
+
+  // The public model catalogue. Every customer-safe entry in the committed
+  // snapshot gets a document, so a model page is in the HTML before any
+  // JavaScript runs and is in the sitemap. `internal_only` objects were already
+  // dropped by `toCustomerSafeCatalog` on the way in, so nothing filtered here
+  // can reach this loop — which is the point: the filter lives at the schema
+  // boundary, not in the emitter.
+  for (const { url, seo } of buildModelRoutes()) result.set(url, { url, seo })
 
   // A SEVENTH source. Bloom's component hub and its per-surface pages come from
   // `bloomIndex` rather than from a hand-written list, so a surface added
@@ -1661,6 +1729,9 @@ async function writeSitemap(
     // "Alternate page with proper canonical tag". The canonical target is in
     // the sitemap under its own entry; this URL does not belong in it.
     .filter((route) => route.seo.canonicalPath === route.url)
+    // A page whose canonical is on another site (an open role published in
+    // Mention) is that site's to advertise.
+    .filter((route) => !route.seo.canonicalUrl)
     .map((route) => ({
       path: route.url,
       lastmod: toW3CDate(route.seo.modifiedTime ?? route.seo.publishedTime),

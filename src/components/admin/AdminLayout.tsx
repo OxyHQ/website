@@ -27,8 +27,6 @@ import {
   Tag,
   Quote,
   Clock,
-  Briefcase,
-  KeyRound,
   Languages,
   HardDriveDownload,
   ArrowLeft,
@@ -44,6 +42,7 @@ import {
   LifeBuoy,
   Search,
   GitBranch,
+  AlertTriangle,
 } from 'lucide-react'
 
 interface AdminSection {
@@ -59,6 +58,7 @@ const sections: AdminSection[] = [
   { id: 'hero', label: 'Hero', icon: <Sparkles className="size-4" />, group: 'Content' },
   { id: 'pages', label: 'Pages', icon: <FileText className="size-4" />, group: 'Content' },
   { id: 'products', label: 'Products', icon: <Package className="size-4" />, group: 'Content' },
+  { id: 'incidents', label: 'Incidents', icon: <AlertTriangle className="size-4" />, group: 'Content' },
   { id: 'categories', label: 'Categories', icon: <FolderTree className="size-4" />, group: 'Content' },
   { id: 'newsroom', label: 'Newsroom', icon: <PenSquare className="size-4" />, group: 'Content' },
   { id: 'courses', label: 'Courses', icon: <GraduationCap className="size-4" />, group: 'Content' },
@@ -67,12 +67,10 @@ const sections: AdminSection[] = [
   { id: 'pricing', label: 'Pricing', icon: <Tag className="size-4" />, group: 'Content' },
   { id: 'testimonials', label: 'Testimonials', icon: <Quote className="size-4" />, group: 'Content' },
   { id: 'changelog', label: 'Changelog', icon: <Clock className="size-4" />, group: 'Content' },
-  { id: 'jobs', label: 'Jobs', icon: <Briefcase className="size-4" />, group: 'Content' },
   { id: 'team', label: 'Team', icon: <Users className="size-4" />, group: 'Content' },
   { id: 'media', label: 'Media', icon: <ImageIcon className="size-4" />, group: 'Content' },
   { id: 'locales', label: 'Locales', icon: <Languages className="size-4" />, group: 'Configuration' },
   { id: 'repos', label: 'Repositories', icon: <GitBranch className="size-4" />, group: 'Developer' },
-  { id: 'mcp-tokens', label: 'API Tokens', icon: <KeyRound className="size-4" />, group: 'Developer' },
   { id: 'backup', label: 'Backup', icon: <HardDriveDownload className="size-4" />, group: 'Developer' },
   { id: 'comments', label: 'Comments', icon: <MessageSquare className="size-4" />, group: 'Community' },
   { id: 'features', label: 'Feature Board', icon: <Lightbulb className="size-4" />, group: 'Community' },

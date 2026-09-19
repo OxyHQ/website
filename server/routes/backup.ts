@@ -5,7 +5,6 @@ import { db } from '../db/postgres.js'
 import {
   changelogEntries,
   footers,
-  jobs,
   locales,
   navigationDropdowns,
   newsroomPosts,
@@ -33,7 +32,6 @@ const collections: Record<string, PgTable> = {
   testimonials,
   siteSettings,
   newsroomPosts,
-  jobs,
   changelogEntries,
   pages,
   trackedRepos,

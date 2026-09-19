@@ -7,7 +7,7 @@ import { ACTIVITY_CATEGORIES } from "../../data/dashboard/activity-categories";
 import { activityRoute } from "../../data/dashboard/activity-routes";
 import { observeMapContrast } from "./map-contrast";
 import ActivityPulse from "./ActivityPulse";
-import { activityMotion, activityFlows } from "../../data/dashboard/activity-motion";
+import { activityClock, activityMotion, activityFlows } from "../../data/dashboard/activity-motion";
 import type { InfraStatusNode, PlatformActivityEvent } from "../../api/hooks";
 
 const STATUS_COLORS = {
@@ -41,15 +41,22 @@ const InfraNodeMarker = memo(
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           style={{ transformOrigin: `${x}px ${y}px` }}
         />
-        <svg
+        {/* The square mark, not `/favicon.svg`. Neither was distorted — the
+            favicon is 41x22 and 24x13 matched it — but LiveGlobe marks a region
+            with `/logo-mark.svg`, and two views of one infrastructure map should
+            not disagree about the logo. The box keeps its bottom edge at y-6,
+            clear of the diamond at y±4, so going 24x13 -> 20x20 does not drop
+            the icon onto the node it labels. */}
+        <image
           data-oxy-infrastructure-logo="true"
+          href="/logo-mark.svg"
           x={x - 10}
           y={y - 26}
           width={20}
           height={20}
           opacity={status === 'offline' ? 0.5 : 0.95}
           aria-label={`Oxy · ${label}`}
-        ><use href="/icons/oxy.svg#oxy-icon" /></svg>
+        />
         {/* Diamond shape */}
         <polygon
           points={`${x},${y - 4} ${x + 4},${y} ${x},${y + 4} ${x - 4},${y}`}
@@ -110,7 +117,10 @@ export default function DottedMap({
   const dragRef = useRef<{ pointerX: number; pointerY: number; viewX: number; viewY: number } | null>(null);
   const returnTimerRef = useRef<number | null>(null);
   const focusFrameRef = useRef<number | null>(null);
-  viewportRef.current = viewport;
+  // Synced after the render, not during it: the automatic focus animation reads
+  // the latest viewport from callbacks, and writing a ref while rendering is
+  // what React Compiler cannot see.
+  useEffect(() => { viewportRef.current = viewport; }, [viewport]);
   const projection = useMemo(
     () =>
       geoEquirectangular()
@@ -170,7 +180,7 @@ export default function DottedMap({
   const projectedRoutes = useMemo(() => {
     if (!activityEvents || activityEvents.length === 0) return [];
 
-    const now = Date.now();
+    const now = activityClock(activityEvents);
     return activityFlows(activityEvents).flatMap(event => {
       const route = activityRoute(event, infrastructureNodes(infraStatus));
       if (!route) return [];
@@ -306,7 +316,7 @@ export default function DottedMap({
           </filter>
         </defs>
         <image
-          href="/images/dashboard/earth-night-nasa.webp"
+          href="/images/dashboard/earth-night.jpg"
           x={0}
           y={0}
           width={width}

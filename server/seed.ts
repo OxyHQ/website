@@ -12,7 +12,6 @@ import {
   footers,
   helpArticles,
   heroContents,
-  jobs,
   media,
   navigationDropdowns,
   newsroomPosts,
@@ -39,7 +38,7 @@ async function seed() {
   await db.transaction(async (tx) => {
     for (const table of [
       navigationDropdowns, footers, heroContents, products, pricingPlans, testimonials,
-      changelogEntries, jobs, siteSettings, pages, newsroomPosts, courses, resources,
+      changelogEntries, siteSettings, pages, newsroomPosts, courses, resources,
       helpArticles, trackedRepos, teamMembers, categories, media,
     ]) {
       await tx.delete(table as never)
@@ -128,7 +127,7 @@ async function seed() {
       // product records. This one is the layer underneath them.
       items: [
         { title: 'Oxy ID', description: 'The identity layer every app signs in with', href: '/developers/docs', icon: 'data', section: 'Platform' },
-        { title: 'Oxy AI', description: 'Private models, API and SDKs', href: '/ai', icon: 'ai', section: 'Platform' },
+        { title: 'Oxy AI', description: 'Models, inference and the products built on them', href: '/ai', icon: 'ai', section: 'Platform' },
         { title: 'Bloom', description: 'The design system behind every app', href: '/developers/docs/bloom/playground', image: appIcon('bloom'), section: 'Platform' },
         { title: 'Developer platform', description: 'Build on Oxy', href: '/developers/docs', icon: 'developers', section: 'Build' },
         { title: 'API reference', description: 'Every endpoint, versioned', href: '/developers/docs/api', icon: 'contract', section: 'Build' },
@@ -277,7 +276,7 @@ async function seed() {
   // `category` is the ObjectId ref to a Category; `section` stays populated
   // with the matching slug for backwards compatibility / fallback grouping.
   await db.insert(products).values([
-    { productId: 'alia', logo: appIcon('alia'), name: 'Alia AI', tagline: 'Intelligent assistant', description: 'Your private AI assistant on web, iOS and Android. Ask anything, get answers, automate work — without your data feeding a training set.', href: 'https://alia.onl/', landingUrl: '/alia', healthUrl: 'https://api.alia.onl/health/ready', external: true, cta: 'Open Alia', brand: '#7c3aed', mark: 'A', category: categoryRef('apps'), section: 'apps', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
+    { productId: 'alia', logo: appIcon('alia'), name: 'Alia', tagline: 'The Oxy assistant for people and teams', description: 'The assistant for people and teams, on web, iOS and Android. A product built on Oxy AI, with its own plans — it is not the inference API.', href: 'https://alia.onl/', landingUrl: '/alia', healthUrl: 'https://api.alia.onl/health/ready', external: true, cta: 'Open Alia', brand: '#7c3aed', mark: 'A', category: categoryRef('apps'), section: 'apps', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
     { productId: 'mention', logo: appIcon('mention'), name: 'Mention', tagline: 'Open social network', description: 'A social network built on respect. No engagement-maxxing algorithms, no surveillance ads — just genuine connection on the open fediverse. Your profile, your content, your unique link.', href: 'https://mention.earth/', landingUrl: '/mention', external: false, cta: 'Explore Mention', brand: '#0ea5e9', mark: 'M', category: categoryRef('social-communication'), section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 1 },
     { productId: 'allo', name: 'Allo', tagline: 'Private communication', description: 'Messaging and calling across the Oxy ecosystem.', href: 'https://allo.you', healthUrl: 'https://api.allo.you/api/health', external: true, cta: 'Open Allo', brand: '#2563eb', mark: 'A', category: categoryRef('social-communication'), section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 2 },
     { productId: 'inbox', logo: appIcon('inbox'), name: 'Oxy Inbox', tagline: 'Unified messaging', description: 'All your email, chat and federated messages in one calm place. Smart triage surfaces what matters, end-to-end encrypted by default.', href: 'https://inbox.oxy.so', landingUrl: '/inbox', external: false, cta: 'Explore Inbox', brand: '#1e40af', mark: 'I', category: categoryRef('social-communication'), section: 'social-communication', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 2 },
@@ -298,7 +297,13 @@ async function seed() {
     { productId: 'kaana', logo: appIcon('kaana'), name: 'Kaana', tagline: 'Oxy\'s own inference provider', description: 'The data plane that serves AI model inference to Alia and every other Oxy app, and that external customers buy inference from. It normalizes a request, routes it to a model deployment, streams the result back, propagates cancellation and reports what was technically consumed.', href: 'https://kaana.ai', healthUrl: 'https://kaana.ai/livez', external: true, cta: 'Open Kaana', brand: '#0033ff', mark: 'K', category: categoryRef('apps'), section: 'apps', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 0 },
     { productId: 'codea', name: 'Codea', tagline: 'Open-source code editor', description: 'A professional AI code editor that runs in your browser, on your machine, or self-hosted. Write, review and ship — on your terms.', href: '/codea', landingUrl: '/codea', external: false, cta: 'Explore Codea', brand: '#0f172a', mark: 'C', category: categoryRef('developer'), section: 'developer', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 2 },
     { productId: 'oxyos', logo: appIcon('oxyos'), name: 'Oxy OS', tagline: 'Operating system', description: 'An operating system designed around privacy and user freedom. Your computer, your data — no telemetry, no tracking, no compromises.', href: 'https://os.oxy.so', landingUrl: '/os', external: false, cta: 'Explore Oxy OS', brand: '#f97316', mark: 'X', category: categoryRef('infrastructure'), section: 'infrastructure', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: true, order: 3 },
-    { productId: 'oxy-ai', name: 'Oxy AI', tagline: 'Models, API and SDKs', description: 'Privacy-first AI for developers. Open models you can inspect, fine-tune and self-host — backed by a fast, multilingual API.', href: '/ai', external: false, cta: 'Explore Oxy AI', brand: '#dc2626', mark: 'O', category: categoryRef('developer'), section: 'developer', lifecycle: 'live', showOnProducts: true, showOnStatus: true, showInNav: false, order: 0 },
+    // Oxy AI is the UMBRELLA, not an app: it is what Alia, Codea and the
+    // inference API all sit under. It stays out of the apps catalogue
+    // (`showOnProducts: false`) so it cannot appear beside its own members as if
+    // it were a peer; `/ai` is where it is described. `showOnStatus` stays true
+    // to match migration 0015's canonical census, which is what an existing
+    // database is already holding to.
+    { productId: 'oxy-ai', name: 'Oxy AI', tagline: 'The platform behind Oxy\'s AI', description: 'The umbrella for Oxy\'s AI platform, products and services: Oxy Inference, managed and dedicated serving, and the products built on them.', href: '/ai', external: false, cta: 'Explore Oxy AI', brand: '#dc2626', mark: 'O', category: categoryRef('developer'), section: 'developer', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 0 },
     { productId: 'oxy-api', name: 'Oxy API', tagline: 'Core identity + platform API', description: 'The core API that powers sign-in, sessions and the Oxy ecosystem.', href: 'https://api.oxy.so', healthUrl: 'https://api.oxy.so/health', external: true, cta: 'API reference', brand: '#475569', mark: 'A', category: categoryRef('infrastructure'), section: 'infrastructure', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 0 },
     { productId: 'website-api', name: 'Website API', tagline: 'Powers oxy.so content + MCP', description: 'Content API and MCP server for oxy.so.', href: 'https://website-api.oxy.so', healthUrl: 'https://website-api.oxy.so/api/health', external: true, cta: 'Status', brand: '#475569', mark: 'W', category: categoryRef('infrastructure'), section: 'infrastructure', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 1 },
     { productId: 'accounts', logo: appIcon('accounts'), name: 'Accounts', tagline: 'Sign-in, profile, billing', description: 'Central hub for managing your Oxy identity, devices and billing.', href: 'https://accounts.oxy.so', external: true, cta: 'Open accounts', brand: '#475569', mark: 'A', category: categoryRef('infrastructure'), section: 'infrastructure', lifecycle: 'live', showOnProducts: false, showOnStatus: true, showInNav: false, order: 2 },
@@ -391,101 +396,6 @@ async function seed() {
     },
   ])
   console.log('Seeded tracked repos')
-
-  // ── Jobs (sample) ──
-  await db.insert(jobs).values([
-    {
-      title: 'Senior Frontend Engineer',
-      slug: 'senior-frontend-engineer-remote',
-      department: 'Engineering',
-      location: 'Remote',
-      type: 'Full-time',
-      compensation: '$140K – $180K',
-      subtitle: 'Build the next generation of Oxy products.',
-      description: [
-        { type: 'heading', text: 'About the role' },
-        { type: 'paragraph', text: 'We are looking for a Senior Frontend Engineer to help build and scale the Oxy platform. You will work closely with design and product to ship polished, performant interfaces used by millions of people worldwide.' },
-        { type: 'heading', text: 'What you will do' },
-        { type: 'list', items: [
-          'Architect and implement core UI components using React and TypeScript',
-          'Drive frontend performance improvements across the platform',
-          'Collaborate with designers to translate Figma specs into pixel-perfect interfaces',
-          'Mentor junior engineers and contribute to engineering standards',
-          'Participate in code reviews and architectural design discussions',
-        ] },
-        { type: 'heading', text: 'What we look for' },
-        { type: 'list', items: [
-          '5+ years of professional frontend development experience',
-          'Deep expertise in React, TypeScript, and modern CSS',
-          'Experience with state management, SSR, and performance optimization',
-          'Strong understanding of web accessibility (WCAG 2.1 AA)',
-          'Excellent written and verbal communication skills',
-        ] },
-      ],
-      active: true,
-    },
-    {
-      title: 'AI/ML Engineer',
-      slug: 'ai-ml-engineer-remote',
-      department: 'Engineering',
-      location: 'Remote',
-      type: 'Full-time',
-      compensation: '$160K – $210K',
-      subtitle: 'Work on Alia and the AI infrastructure behind it.',
-      description: [
-        { type: 'heading', text: 'About the role' },
-        { type: 'paragraph', text: 'Join the team building Alia, the assistant that runs across the Oxy ecosystem. You will design and deploy models that help people get real work done, without their data feeding somebody else\u2019s training set.' },
-        { type: 'heading', text: 'What you will do' },
-        { type: 'list', items: [
-          'Design and train ML models for natural language understanding and entity extraction',
-          'Build retrieval-augmented generation (RAG) pipelines over user-controlled data',
-          'Optimize inference latency and cost across production workloads',
-          'Develop evaluation frameworks for model quality and safety',
-          'Collaborate with product engineers to integrate AI features end-to-end',
-        ] },
-        { type: 'heading', text: 'What we look for' },
-        { type: 'list', items: [
-          '3+ years of experience in applied ML or NLP',
-          'Proficiency in Python, PyTorch or JAX, and transformer architectures',
-          'Experience with LLM fine-tuning, prompt engineering, and RAG systems',
-          'Familiarity with ML infrastructure (model serving, monitoring, A/B testing)',
-          'Publication track record or equivalent industry experience is a plus',
-        ] },
-      ],
-      active: true,
-    },
-    {
-      title: 'Product Designer',
-      slug: 'product-designer-remote',
-      department: 'Design',
-      location: 'Remote',
-      type: 'Full-time',
-      compensation: '$120K – $155K',
-      subtitle: 'Design beautiful, accessible experiences.',
-      description: [
-        { type: 'heading', text: 'About the role' },
-        { type: 'paragraph', text: 'We are hiring a Product Designer to shape the future of the Oxy experience. You will own end-to-end design for key product surfaces, from discovery research through high-fidelity prototyping and production handoff.' },
-        { type: 'heading', text: 'What you will do' },
-        { type: 'list', items: [
-          'Lead design for one or more product areas across web and mobile',
-          'Conduct user research, usability testing, and competitive analysis',
-          'Create wireframes, interaction flows, and high-fidelity Figma prototypes',
-          'Contribute to and evolve the Oxy design system',
-          'Partner with engineering to ensure design intent is preserved in production',
-        ] },
-        { type: 'heading', text: 'What we look for' },
-        { type: 'list', items: [
-          '4+ years of product design experience at a technology company',
-          'Strong portfolio demonstrating systems thinking and attention to detail',
-          'Proficiency in Figma and modern prototyping tools',
-          'Experience designing for complex data-rich applications',
-          'Passion for accessibility and inclusive design practices',
-        ] },
-      ],
-      active: true,
-    },
-  ])
-  console.log('Seeded jobs')
 
   // ── Newsroom Posts (sample) ──
   const newsroomImages = await Promise.all([

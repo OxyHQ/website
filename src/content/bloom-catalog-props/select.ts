@@ -8,6 +8,7 @@ export const props: BloomSurfaceProps = {
     'SelectProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true },
+        { name: 'size', type: 'SelectSize', options: ['sm', 'md'], optional: true, description: "`md` (default) or `sm` for compact contexts — the trigger's padding, type and chevron, and the option rows' padding and type." },
         { name: 'value', type: 'string', optional: true },
         { name: 'onValueChange', type: '(value: string) => void', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
@@ -20,13 +21,15 @@ export const props: BloomSurfaceProps = {
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'label', type: 'string', optional: false },
         { name: 'className', type: 'string', optional: true, description: "Utility classes APPENDED to the part's own — never substituted for them, so a single layout class cannot strip the chrome." },
-        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Style for the TRIGGER BOX (the slot around the field). To restyle the bordered field itself, use `fieldStyle`.' },
+        { name: 'fieldStyle', type: 'StyleProp<ViewStyle>', optional: true, description: "Inline style on the bordered field itself, applied after its own — the unambiguous override for a trigger embedded in another control (the phone input's country code uses `rounded-lg px-1.5 py-1`). Use longhands (`paddingLeft`, not `paddingHorizontal`), which is what outranks the field's own padding classes on web." },
         { name: 'testID', type: 'string', optional: true },
       ],
     },
     'SelectValueProps': {
       props: [
         { name: 'children', type: '(value: unknown) => React.ReactNode', optional: true, description: 'Extracts the display text from the currently-selected item. Defaults to `item => item.label`.' },
+        { name: 'leading', type: 'React.ReactNode | ((item: unknown) => React.ReactNode)', optional: true, description: 'A node before the value — a status dot, an icon — laid out `gap-[5px]` (`gap-1` on `sm`), the way the trigger shows an option whose content leads with one. A function receives the selected item (`undefined` while nothing is chosen), so the mark can follow the value.' },
         { name: 'placeholder', type: 'string', optional: true },
         { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'TextStyle', optional: true },
@@ -40,10 +43,11 @@ export const props: BloomSurfaceProps = {
     'SelectContentProps<T>': {
       props: [
         { name: 'label', type: 'string', optional: true, description: 'Label displayed at the top of the selection sheet (native) or used as an ARIA label (web).' },
-        { name: 'items', type: 'T[]', optional: false, description: 'The array of items to choose from.' },
+        { name: 'items', type: 'readonly T[]', optional: false, description: 'The array of items to choose from.' },
         { name: 'renderItem', type: '(item: T, index: number, selectedValue?: string | null) => React.ReactElement', optional: false, description: 'Renders a single item. Use `SelectItem` inside this callback.' },
         { name: 'valueExtractor', type: '(item: T) => string', optional: true, description: 'Extracts a unique string key from an item. Defaults to `item => item.value`.' },
-        { name: 'maxHeight', type: 'number', optional: true, description: 'Tallest the anchored dropdown grows before its options scroll (web only — the native sheet sizes itself). Defaults to 320.' },
+        { name: 'maxHeight', type: 'number', optional: true, description: 'Tallest the anchored dropdown grows before its options scroll (web only — the native sheet sizes itself). Defaults to 240.' },
+        { name: 'width', type: 'number', optional: true, description: 'A FIXED width for the web dropdown (`popoverClassName="w-[220px]"`). By default the panel is at least 266px and at least the trigger\'s width. The native sheet sizes itself and ignores it.' },
         { name: 'className', type: 'string', optional: true, description: "Appended to the dropdown panel's own chrome." },
       ],
     },
@@ -52,6 +56,8 @@ export const props: BloomSurfaceProps = {
         { name: 'ref', type: 'React.Ref<View>', optional: true },
         { name: 'value', type: 'string', optional: false },
         { name: 'label', type: 'string', optional: false },
+        { name: 'disabled', type: 'boolean', optional: true, description: 'Not choosable: `text-disabled`, `cursor-not-allowed`, no press.' },
+        { name: 'leading', type: 'React.ReactNode', optional: true, description: "A node before the option's content — a status dot, an icon — 8px from it." },
         { name: 'children', type: 'React.ReactNode', optional: false },
         { name: 'className', type: 'string', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
@@ -83,6 +89,10 @@ export const props: BloomSurfaceProps = {
         { name: 'style', type: 'StyleProp<TextStyle>', optional: true },
       ],
     },
+    'ProviderProps<SelectScrollContextValue | null>': {
+      props: [],
+      inheritsFrom: ['ProviderProps<SelectScrollContextValue | null>'],
+    },
     'Omit<SelectScrollButtonProps, "direction">': {
       props: [
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
@@ -102,6 +112,7 @@ export const props: BloomSurfaceProps = {
     { name: 'SelectSeparator' },
     { name: 'SelectGroup', propsType: 'SelectGroupProps' },
     { name: 'SelectLabel', propsType: 'SelectLabelProps' },
+    { name: 'SelectScrollProvider', propsType: 'ProviderProps<SelectScrollContextValue | null>' },
     { name: 'SelectScrollUpButton', propsType: 'Omit<SelectScrollButtonProps, "direction">' },
     { name: 'SelectScrollDownButton', propsType: 'Omit<SelectScrollButtonProps, "direction">' },
   ],

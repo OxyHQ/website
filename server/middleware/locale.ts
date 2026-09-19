@@ -18,7 +18,13 @@ declare global {
 let cachedDefault: string | null = null
 let cachedEnabled: Set<string> | null = null
 let cacheTime = 0
-const CACHE_TTL = 60_000 // 1 minute
+/**
+ * Every task keeps its own copy, and a locale change only invalidates the copy
+ * on the task that made it. This TTL is therefore how long ANOTHER task can
+ * keep serving the previous default — short, because the query behind it reads
+ * a handful of rows.
+ */
+const CACHE_TTL = 10_000
 
 async function getLocaleInfo() {
   const now = Date.now()
@@ -52,10 +58,13 @@ export async function localeMiddleware(req: Request, _res: Response, next: NextF
   const { defaultLocale, enabledLocales } = await getLocaleInfo()
   const raw = req.query.locale
   const requested = typeof raw === 'string' ? raw.toLowerCase() : undefined
+  // Codes are stored as written ("pt-BR") and requested in any case: match
+  // without case, then use the stored code, which is what translation rows carry.
+  const matched = requested ? [...enabledLocales].find((code) => code.toLowerCase() === requested) : undefined
 
-  if (requested && enabledLocales.has(requested)) {
-    req.locale = requested
-    req.isDefaultLocale = requested === defaultLocale
+  if (matched) {
+    req.locale = matched
+    req.isDefaultLocale = matched === defaultLocale
   } else {
     req.locale = defaultLocale
     req.isDefaultLocale = true

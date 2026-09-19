@@ -1,23 +1,33 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { observeMapContrast } from './map-contrast'
 import { createSolarMaterial } from './solar-material'
+import { createMoonMaterial } from './moon-material'
 import Globe, { type GlobeMethods } from 'react-globe.gl'
 import {
+  AdditiveBlending,
   BackSide,
+  CanvasTexture,
+  Color,
   Mesh,
   MeshBasicMaterial,
+  NearestFilter,
+  Quaternion,
   type ShaderMaterial,
   SphereGeometry,
+  Sprite,
+  SpriteMaterial,
   SRGBColorSpace,
   TextureLoader,
+  Vector3,
 } from 'three'
 import type { InfraStatusNode, PlatformActivityEvent } from '../../api/hooks'
 import { infrastructureNodes } from '../../data/dashboard/infra-nodes'
 import { activityRegionCoordinates, activityRegionLabel } from '../../data/dashboard/activity-regions'
 import { ACTIVITY_CATEGORIES, type ActivityCategory } from '../../data/dashboard/activity-categories'
 import { activityRoute } from '../../data/dashboard/activity-routes'
-import { activityMotion, activityFlows, retainFlowObjects } from '../../data/dashboard/activity-motion'
+import { activityClock, activityMotion, activityFlows, retainFlowObjects } from '../../data/dashboard/activity-motion'
 import { cameraMotion, stepCameraMotion, selectCameraFocus, CAMERA_MANUAL_PAUSE_MS, type CameraFocus, type CameraTarget } from '../../data/dashboard/camera-motion'
+import { solarDirection } from '../../data/dashboard/solar-position'
 
 interface LiveGlobeProps {
   infraStatus?: InfraStatusNode[]
@@ -27,7 +37,6 @@ interface LiveGlobeProps {
 interface GlobeLayout {
   width: number
   height: number
-  highResolution: boolean
   primary: string
   muted: string
   success: string
@@ -60,6 +69,43 @@ interface ActivityRing {
 }
 
 const MIN_GLOBE_HEIGHT = 420
+/** Pale Rayleigh-scattering blue for the limb glow — a physical property of the
+ * atmosphere, not a brand color, so it stays fixed across themes. */
+const ATMOSPHERE_COLOR = 'rgb(80, 150, 230)'
+const SUN_DISTANCE = 850
+const MOON_RADIUS = 45
+// Clear of the camera's whole operating range (controls.minDistance/maxDistance
+// below, 150–420) — orbiting at 260 put it on almost the same shell as the
+// camera itself, so whenever their angles lined up the moon sat right on top
+// of the camera and filled the screen instead of being a distant object.
+const MOON_ORBIT_RADIUS = 550
+const MOON_ORBIT_TILT = 0.35
+const MOON_ORBIT_SPEED = 0.015
+
+/** Ghost reflections the way a real lens actually makes them: light bounces
+ * between internal elements and lands as a handful of small discs and thin
+ * rings strung from the light source toward the frame center — several of
+ * them close enough together to overlap and glow into one another, not
+ * spaced out flat along a single line. `t` is the fraction of the
+ * sun→center distance; `offset` nudges a ghost a few pixels sideways off
+ * that line so a cluster reads as discs layered in front of each other
+ * instead of beads on a string. `ring` draws a thin hollow halo — a lens-
+ * element reflection — instead of a soft filled glow. Kept small and faint:
+ * this should read as "the sun is a real lens" at a glance, not as a row of
+ * visible shapes. */
+interface FlareGhost { t: number; offset: number; size: number; color: string; ring?: boolean }
+const FLARE_GHOSTS: FlareGhost[] = [
+  // Tight cluster right off the sun — the first internal reflections stack
+  // almost on top of the source itself.
+  { t: 0.09, offset: 0, size: 14, color: 'rgba(255,224,180,0.16)' },
+  { t: 0.15, offset: 4, size: 7, color: 'rgba(255,255,255,0.2)' },
+  { t: 0.22, offset: -5, size: 11, color: 'rgba(205,226,255,0.12)', ring: true },
+  // A single ghost drifting alone through the middle of the frame.
+  { t: 0.5, offset: 2, size: 6, color: 'rgba(255,255,255,0.13)' },
+  // A second, looser pair past center.
+  { t: 0.78, offset: -4, size: 18, color: 'rgba(184,212,255,0.08)', ring: true },
+  { t: 0.87, offset: 5, size: 6, color: 'rgba(255,232,208,0.12)' },
+]
 
 function threeColor(token: string): string {
   const channels = token.match(/^rgb\(\s*(\d+)\s+(\d+)\s+(\d+)\s*\)$/)
@@ -68,17 +114,66 @@ function threeColor(token: string): string {
     : token
 }
 
+/**
+ * A camera-style flare: thin, sharp diffraction spikes crossing straight
+ * through a pale white-hot core, the way a real lens renders a bright point
+ * of light — not a stamped photo of the sun's surface (which only shows
+ * granular texture at telescope range, never at this distance) and not a
+ * cartoon sunburst of stubby wedges.
+ */
+function createSunTexture(): CanvasTexture {
+  const size = 256
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  const center = size / 2
+
+  ctx.globalCompositeOperation = 'lighter'
+  // Four lines through the center, each spanning both directions — an
+  // eight-point star, the classic diffraction-spike shape.
+  for (const degrees of [0, 45, 90, 135]) {
+    ctx.save()
+    ctx.translate(center, center)
+    ctx.rotate((degrees * Math.PI) / 180)
+    const half = center * 0.97
+    const spike = ctx.createLinearGradient(-half, 0, half, 0)
+    spike.addColorStop(0, 'rgba(255,255,250,0)')
+    spike.addColorStop(0.46, 'rgba(255,255,250,0.45)')
+    spike.addColorStop(0.5, 'rgba(255,255,250,0.9)')
+    spike.addColorStop(0.54, 'rgba(255,255,250,0.45)')
+    spike.addColorStop(1, 'rgba(255,255,250,0)')
+    ctx.fillStyle = spike
+    ctx.fillRect(-half, -0.9, half * 2, 1.8)
+    ctx.restore()
+  }
+
+  const glow = ctx.createRadialGradient(center, center, 0, center, center, center)
+  glow.addColorStop(0, 'rgba(255,255,250,0.95)')
+  glow.addColorStop(0.08, 'rgba(255,253,240,0.7)')
+  glow.addColorStop(0.25, 'rgba(255,248,225,0.28)')
+  glow.addColorStop(1, 'rgba(255,248,225,0)')
+  ctx.fillStyle = glow
+  ctx.fillRect(0, 0, size, size)
+
+  const texture = new CanvasTexture(canvas)
+  texture.colorSpace = SRGBColorSpace
+  return texture
+}
+
 export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlobeProps) {
   const [solarMaterial, setSolarMaterial] = useState<ShaderMaterial | undefined>(undefined)
   const [layout, setLayout] = useState<GlobeLayout | null>(null)
   const globeRef = useRef<GlobeMethods>(undefined)
   const activityEventsRef = useRef(activityEvents)
   const arcCacheRef = useRef(new Map<string, ActivityArc>())
-  const highResolutionRef = useRef(false)
   const controlsCleanupRef = useRef<(() => void) | null>(null)
   const sceneCleanupRef = useRef<(() => void) | null>(null)
   const isInteractingRef = useRef(false)
-  activityEventsRef.current = activityEvents
+  const flareGhostRefs = useRef<(HTMLSpanElement | null)[]>([])
+  // The camera loop reads the latest batch from its own frame callback; the ref
+  // is synced after the render rather than during it.
+  useEffect(() => { activityEventsRef.current = activityEvents }, [activityEvents])
 
   const containerRef = useCallback((node: HTMLDivElement | null) => {
     if (!node) return
@@ -86,12 +181,9 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     const measure = () => {
       const style = getComputedStyle(node)
       const width = Math.max(1, node.clientWidth)
-      const highResolution = width * window.devicePixelRatio >= 2_400
-      highResolutionRef.current = highResolution
       setLayout({
         width,
         height: Math.max(MIN_GLOBE_HEIGHT, node.clientHeight),
-        highResolution,
         muted: threeColor(style.getPropertyValue('--muted-foreground').trim()),
         primary: threeColor(style.getPropertyValue('--primary').trim()),
         success: threeColor(style.getPropertyValue('--success').trim()),
@@ -134,30 +226,56 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
 
     const renderer = globe.renderer()
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    const skyTexture = new TextureLoader().load(
-      highResolutionRef.current
-        ? '/images/dashboard/night-sky-8k.webp'
-        : '/images/dashboard/night-sky.png',
-    )
+    const skyTexture = new TextureLoader().load('/images/dashboard/stars-milky-way.jpg')
     skyTexture.colorSpace = SRGBColorSpace
-    skyTexture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy())
+    // Nearest, not linear: a handful of single-texel stars smeared across
+    // neighbouring pixels by linear magnification is what read as "giant
+    // blurry blobs" instead of small points once wrapped around a 900-unit
+    // sphere the camera sits well inside of.
+    skyTexture.magFilter = NearestFilter
     const skyGeometry = new SphereGeometry(900, 64, 32)
     const skyMaterial = new MeshBasicMaterial({
       map: skyTexture,
+      // Dimmed well below full brightness — a backdrop, not the subject.
+      color: new Color(0x555566),
       side: BackSide,
       depthWrite: false,
     })
     const sky = new Mesh(skyGeometry, skyMaterial)
     globe.scene().add(sky)
     sceneCleanupRef.current?.()
-    const solar = createSolarMaterial(highResolutionRef.current)
+    const solar = createSolarMaterial()
     setSolarMaterial(solar.material)
+
+    const sunTexture = createSunTexture()
+    const sunMaterial = new SpriteMaterial({
+      map: sunTexture,
+      transparent: true,
+      depthWrite: false,
+      blending: AdditiveBlending,
+      toneMapped: false,
+    })
+    const sunSprite = new Sprite(sunMaterial)
+    sunSprite.scale.set(260, 260, 1)
+    globe.scene().add(sunSprite)
+
+    const moon = createMoonMaterial()
+    const moonGeometry = new SphereGeometry(MOON_RADIUS, 48, 32)
+    const moonMesh = new Mesh(moonGeometry, moon.material)
+    globe.scene().add(moonMesh)
+
     sceneCleanupRef.current = () => {
       solar.dispose()
       globe.scene().remove(sky)
       skyTexture.dispose()
       skyGeometry.dispose()
       skyMaterial.dispose()
+      globe.scene().remove(sunSprite)
+      sunTexture.dispose()
+      sunMaterial.dispose()
+      globe.scene().remove(moonMesh)
+      moonGeometry.dispose()
+      moon.dispose()
     }
 
     controlsCleanupRef.current?.()
@@ -168,6 +286,12 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     let frame = 0
     let previousEvents: PlatformActivityEvent[] | undefined
     let candidates: CameraTarget[] = []
+    let moonOrbitAngle = Math.random() * Math.PI * 2
+    const moonSunLocal = new Vector3()
+    const moonInverseQuaternion = new Quaternion()
+    const flareCamera = globe.camera()
+    const sunProjected = new Vector3()
+    const cameraDirection = new Vector3()
     const pauseAutomaticView = () => {
       isInteractingRef.current = true
     }
@@ -179,6 +303,59 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
       const elapsed = (now - previousFrame) / 1_000
       previousFrame = now
       solar.update(Date.now())
+      const sunDirection = solarDirection(Date.now())
+      const [sunX, sunY, sunZ] = sunDirection
+      sunSprite.position.set(sunX * SUN_DISTANCE, sunY * SUN_DISTANCE, sunZ * SUN_DISTANCE)
+      moonOrbitAngle += elapsed * MOON_ORBIT_SPEED
+      const moonBaseX = Math.cos(moonOrbitAngle) * MOON_ORBIT_RADIUS
+      const moonBaseZ = Math.sin(moonOrbitAngle) * MOON_ORBIT_RADIUS
+      moonMesh.position.set(moonBaseX, moonBaseZ * Math.sin(MOON_ORBIT_TILT), moonBaseZ * Math.cos(MOON_ORBIT_TILT))
+      // Tidally locked, like the real Moon: the same face always points at
+      // Earth. The shader shades in the mesh's own local space, so the sun
+      // direction has to be rotated into that space too, or the lit face
+      // would drift out of sync with the orbit instead of tracking it.
+      moonMesh.lookAt(0, 0, 0)
+      moonInverseQuaternion.copy(moonMesh.quaternion).invert()
+      moonSunLocal.set(sunX, sunY, sunZ).applyQuaternion(moonInverseQuaternion)
+      moon.setSunDirection([moonSunLocal.x, moonSunLocal.y, moonSunLocal.z])
+
+      // Ghost reflections: project the sun's real position to screen space
+      // each frame and lay the ghosts out along the line to the viewport
+      // center, offset a few pixels perpendicular to that line so clusters
+      // overlap into layered discs rather than sitting flat in a row, fading
+      // them out once the sun swings off-screen or around the back of the
+      // globe.
+      const flareWidth = renderer.domElement.clientWidth
+      const flareHeight = renderer.domElement.clientHeight
+      sunProjected.copy(sunSprite.position).project(flareCamera)
+      cameraDirection.copy(flareCamera.position).normalize()
+      const towardSun = cameraDirection.dot(sunSprite.position) / SUN_DISTANCE
+      const onScreen = sunProjected.z < 1 && Math.abs(sunProjected.x) < 1.3 && Math.abs(sunProjected.y) < 1.3
+      if (flareWidth > 0 && flareHeight > 0 && onScreen && towardSun > -0.15) {
+        const sx = (sunProjected.x * 0.5 + 0.5) * flareWidth
+        const sy = (-sunProjected.y * 0.5 + 0.5) * flareHeight
+        const dx = flareWidth / 2 - sx
+        const dy = flareHeight / 2 - sy
+        const lineLength = Math.hypot(dx, dy) || 1
+        const perpX = -dy / lineLength
+        const perpY = dx / lineLength
+        const edgeFade = 1 - Math.max(Math.abs(sunProjected.x), Math.abs(sunProjected.y))
+        const strength = Math.max(0, Math.min(1, edgeFade))
+        for (let i = 0; i < FLARE_GHOSTS.length; i++) {
+          const el = flareGhostRefs.current[i]
+          if (!el) continue
+          const { t, offset } = FLARE_GHOSTS[i]
+          const px = sx + dx * t + perpX * offset
+          const py = sy + dy * t + perpY * offset
+          el.style.transform = `translate(${px}px, ${py}px)`
+          el.style.opacity = String(strength * 0.6)
+        }
+      } else {
+        for (const el of flareGhostRefs.current) {
+          if (el) el.style.opacity = '0'
+        }
+      }
+
       if (previousEvents !== activityEventsRef.current) {
         previousEvents = activityEventsRef.current
         const origins = new Map<string, CameraTarget>()
@@ -243,29 +420,51 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     return [...infrastructure, ...origins.values()]
   }, [activityEvents, statusByRegion, infraStatus])
 
+  // Infrastructure nodes render only this chip — the status colour that used to
+  // be a separate dot below the logo — the logo alone is the mark now, no
+  // colour chip behind it, so a location reads as one plain icon, not a
+  // colour shape with an icon stuck on top of it.
   const infrastructureLogos = useMemo(() => points.filter(point => point.infrastructure), [points])
+  // Live traffic origins still render as a plain coloured dot — only Oxy's own
+  // infrastructure gets the logo above.
+  const liveOriginPoints = useMemo(() => points.filter(point => !point.infrastructure), [points])
   const infrastructureLogoElement = useCallback((value: object) => {
     const point = value as (typeof points)[number]
     const marker = document.createElement('span')
     marker.dataset.oxyInfrastructureLogo = point.region
     marker.title = `Oxy · ${point.label}`
     marker.style.pointerEvents = 'none'
-    const logo = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    logo.setAttribute('width', '20')
-    logo.setAttribute('height', '20')
-    logo.setAttribute('aria-label', `Oxy · ${point.label}`)
-    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-    icon.setAttribute('href', '/icons/oxy.svg#oxy-icon')
-    logo.appendChild(icon)
-    logo.style.transform = 'translateY(-16px)'
-    logo.style.opacity = point.status === 'offline' ? '0.5' : '0.95'
+    marker.style.display = 'block'
+    const logo = document.createElement('img')
+    logo.src = '/logo-mark.svg'
+    logo.alt = `Oxy · ${point.label}`
+    logo.width = 20
+    logo.height = 20
+    // An inline <img> reserves a couple of descender pixels below itself for
+    // text baseline alignment, which quietly shifts the visible icon up from
+    // this marker's true center (the library centers on the marker's own box,
+    // via CSS2DObject's default (0.5, 0.5) anchor) — block removes that gap.
+    logo.style.display = 'block'
+    // Status is still legible without reintroducing a colour shape: full
+    // strength online, faded the worse things get.
+    logo.style.opacity = point.status === 'offline' ? '0.35' : point.status === 'degraded' ? '0.6' : point.status === 'unknown' ? '0.75' : '1'
     marker.appendChild(logo)
     return marker
   }, [])
 
+  /**
+   * three-globe binds the arc objects it is given and animates them in its own
+   * shader, so a batch must hand back the SAME objects for the flows that are
+   * still running — new objects restart every dash mid-flight. `arcCacheRef`
+   * holds that binding and `retainFlowObjects` updates it in place, which is a
+   * ref write during render and is why the two lines below are excepted: the
+   * cache is not render state, it is the identity three-globe already holds,
+   * and it is derived from exactly this memo's inputs.
+   */
   const arcs = useMemo<ActivityArc[]>(() => {
     if (!layout) return []
-    const now = Date.now()
+    const now = activityClock(activityEvents)
+    // eslint-disable-next-line react-hooks/refs -- the cache read below is the identity three-globe holds; see the comment above this memo
     const nextArcs = activityFlows(activityEvents).flatMap((event) => {
       const route = activityRoute(event, infrastructureNodes(infraStatus))
       if (!route) return []
@@ -295,6 +494,7 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
         stroke: 0.45, dashTime: 0, dashLength: 0.035, dashGap: 0.035, dashInitialGap: 0,
       }, ...pulses]
     })
+    // eslint-disable-next-line react-hooks/refs -- see the comment above this memo
     return retainFlowObjects(arcCacheRef.current, nextArcs)
   }, [activityEvents, layout, infraStatus])
 
@@ -327,16 +527,15 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           backgroundColor="rgba(0,0,0,0)"
           globeMaterial={solarMaterial}
           showAtmosphere
-          atmosphereColor={layout.primary}
-          atmosphereAltitude={0.12}
-          showGraticules
+          atmosphereColor={ATMOSPHERE_COLOR}
+          atmosphereAltitude={0.14}
           htmlElementsData={infrastructureLogos}
           htmlLat="lat"
           htmlLng="lng"
           htmlAltitude={0.04}
           htmlElement={infrastructureLogoElement}
           htmlTransitionDuration={0}
-          pointsData={points}
+          pointsData={liveOriginPoints}
           pointLat="lat"
           pointLng="lng"
           pointAltitude={0.025}
@@ -370,6 +569,27 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
           ringPropagationSpeed={4}
           ringRepeatPeriod={900}
         />
+      )}
+      {layout && (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          {FLARE_GHOSTS.map((ghost, i) => (
+            <span
+              key={i}
+              ref={(el) => { flareGhostRefs.current[i] = el }}
+              className="absolute rounded-full opacity-0"
+              style={{
+                width: ghost.size,
+                height: ghost.size,
+                marginLeft: -ghost.size / 2,
+                marginTop: -ghost.size / 2,
+                background: ghost.ring
+                  ? `radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 55%, ${ghost.color} 68%, rgba(255,255,255,0) 80%)`
+                  : `radial-gradient(circle, ${ghost.color} 0%, rgba(255,255,255,0) 75%)`,
+                mixBlendMode: 'screen',
+              }}
+            />
+          ))}
+        </div>
       )}
     </div>
   )

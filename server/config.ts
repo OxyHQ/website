@@ -18,6 +18,46 @@ export const config = {
    */
   databaseUrl: process.env.DATABASE_URL || '',
   oxyApiBase: process.env.OXY_API_BASE || 'https://api.oxy.so',
+  /**
+   * This backend's Oxy service credential. It authenticates MCP token
+   * introspection and the MCP catalog registration, and it is what activates
+   * ecosystem activity (`services/ecosystemActivity.ts` reads the same pair).
+   */
+  oxyServiceApiKey: process.env.OXY_SERVICE_API_KEY?.trim() || '',
+  oxyServiceApiSecret: process.env.OXY_SERVICE_API_SECRET?.trim() || '',
+  /**
+   * Clarity Jobs, the only source of the careers page. Oxy's openings are
+   * authored in Mention and indexed by Clarity; this site stores none of them.
+   */
+  clarity: {
+    apiUrl: process.env.CLARITY_API_URL || 'https://api.clarity.surf',
+    /** The employer name Clarity's `employers` filter matches exactly. */
+    careersEmployer: process.env.CAREERS_EMPLOYER?.trim() || 'Oxy',
+    /**
+     * Where Oxy publishes its openings. Both filters apply together, so a
+     * listing elsewhere that merely calls its employer "Oxy" never lands on
+     * oxy.so.
+     */
+    careersSourceDomains: parseCsvEnv(process.env.CAREERS_SOURCE_DOMAINS ?? 'mention.earth'),
+  },
+  mcp: {
+    /**
+     * The MCP endpoint's canonical URL. Oxy binds every access token to it, so
+     * it must match the host clients connect to exactly.
+     */
+    resource: process.env.MCP_RESOURCE_URL
+      || (process.env.NODE_ENV === 'production'
+        ? 'https://website-api.oxy.so/mcp'
+        : `http://localhost:${process.env.PORT || '4000'}/mcp`),
+    /** Browser origins allowed to call the endpoint, on top of Claude's. */
+    allowedOrigins: parseCsvEnv(process.env.MCP_ALLOWED_ORIGINS),
+    /**
+     * Cost units one account may spend per minute across every task (a read
+     * costs 1, a write 5, an upload, bulk upload or sync 25). Counted in
+     * Postgres, so the limit holds however many tasks serve the endpoint.
+     */
+    rateLimitPerMinute: parsePositiveIntEnv(process.env.MCP_RATE_LIMIT_PER_MINUTE, 600),
+  },
   // Server-only secret used to sign Intercom Messenger JWTs for authenticated
   // Oxy users. It is optional so visitors keep working before the workspace
   // security setting and production secret are enabled.
@@ -53,6 +93,12 @@ export const config = {
     priorityReconcileMinutes: parsePositiveIntEnv(process.env.FEATURE_PRIORITY_RECONCILE_MINUTES, 60),
     // Compute and report the label changes without sending them to GitHub.
     priorityDryRun: process.env.FEATURE_PRIORITY_DRY_RUN === 'true',
+  },
+  statusHistory: {
+    // How often the background job snapshots the live /status probe cache into
+    // daily uptime rollups, and how long those rollups are kept.
+    snapshotIntervalMinutes: parsePositiveIntEnv(process.env.STATUS_HISTORY_INTERVAL_MINUTES, 5),
+    retentionDays: parsePositiveIntEnv(process.env.STATUS_HISTORY_RETENTION_DAYS, 90),
   },
   s3: {
     // Leave endpoint unset for native AWS S3; set AWS_ENDPOINT_URL for an S3-compatible

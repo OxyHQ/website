@@ -68,6 +68,13 @@ const InboxPage = lazy(() => import('./pages/InboxPage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const InitiativePage = lazy(() => import('./pages/InitiativePage'))
 const AIPricingPage = lazy(() => import('./pages/AIPricingPage'))
+const AIInferencePage = lazy(() => import('./pages/AIInferencePage'))
+const AIModelsPage = lazy(() => import('./pages/AIModelsPage'))
+const AIModelDetailPage = lazy(() => import('./pages/AIModelDetailPage'))
+const AIEnterprisePage = lazy(() => import('./pages/AIEnterprisePage'))
+const AITrustPage = lazy(() => import('./pages/AITrustPage'))
+const EnterprisePage = lazy(() => import('./pages/EnterprisePage'))
+const ContactSalesPage = lazy(() => import('./pages/ContactSalesPage'))
 const HelpPage = lazy(() => import('./pages/HelpPage'))
 const HelpArticlePage = lazy(() => import('./pages/HelpArticlePage'))
 const ChangelogPage = lazy(() => import('./pages/ChangelogPage'))
@@ -97,6 +104,7 @@ const CompanyPage = lazy(() => import('./pages/CompanyPage'))
 const TeamPage = lazy(() => import('./pages/TeamPage'))
 const CompanyArticlePage = lazy(() => import('./pages/CompanyArticlePage'))
 const StatusPage = lazy(() => import('./pages/StatusPage'))
+const StatusHistoryPage = lazy(() => import('./pages/StatusHistoryPage'))
 const ReferralsPage = lazy(() => import('./pages/ReferralsPage'))
 const ReferralsDashboardPage = lazy(() => import('./pages/ReferralsDashboardPage'))
 const SustainPage = lazy(() => import('./pages/SustainPage'))
@@ -244,6 +252,7 @@ function PublicRoutes() {
       <Route path="technologies" element={<Navigate to="/apps" replace />} />
       <Route path="products" element={<Navigate to="/apps" replace />} />
       <Route path="status" element={<StatusPage />} />
+      <Route path="status/history/:page" element={<StatusHistoryPage />} />
       <Route path="company" element={<CompanyPage />} />
       <Route path="company/team" element={<TeamPage />} />
       <Route
@@ -297,7 +306,7 @@ function PublicRoutes() {
         }
       />
       <Route path="company/careers" element={<CareersPage />} />
-      <Route path="company/careers/:slug" element={<CareerDetailPage />} />
+      <Route path="company/careers/:id" element={<CareerDetailPage />} />
       <Route path="pricing" element={<PricingPage />} />
       <Route
         path="newsroom"
@@ -381,7 +390,22 @@ function PublicRoutes() {
       <Route path="brand" element={<BrandPage />} />
       <Route path="inbox" element={<InboxPage />} />
       <Route path="ai" element={<AIPage />} />
+      <Route path="ai/inference" element={<AIInferencePage />} />
+      <Route path="ai/models" element={<AIModelsPage />} />
+      {/*
+        A catalogue id is `publisher/model`, and the model half can carry a
+        second slash, an `@` or a version string. Two segments plus the encoding
+        in `src/lib/ai/modelId.ts` keeps one id in one route param — a splat
+        would swallow `/ai/models` itself.
+      */}
+      <Route path="ai/models/:publisher/:model" element={<AIModelDetailPage />} />
       <Route path="ai/pricing" element={<AIPricingPage />} />
+      <Route path="ai/enterprise" element={<AIEnterprisePage />} />
+      <Route path="ai/trust" element={<AITrustPage />} />
+      <Route path="enterprise" element={<EnterprisePage />} />
+      <Route path="contact/sales" element={<ContactSalesPage />} />
+      {/* `/contact` on its own is what people type; sales is the one desk it has. */}
+      <Route path="contact" element={<Navigate to="/contact/sales" replace />} />
       <Route path="dashboard" element={<DashboardPage />} />
       <Route
         path="initiative"

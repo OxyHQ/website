@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-11T03:42:46.153Z",
+  "generatedAt": "2026-09-13T23:24:25.435Z",
   "packages": [
     {
       "package": "@oxy.so/bloom",
@@ -13015,9 +13015,23 @@
               "section": "guides"
             },
             {
+              "slug": "runbooks/clarity-search-2026-09-13",
+              "title": "Clarity search outage observed on 2026-09-13",
+              "file": "alia/main/runbooks/clarity-search-2026-09-13.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "runbooks/credential-rotation",
               "title": "Runbook: rotating and revoking Alia credentials",
               "file": "alia/main/runbooks/credential-rotation.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/groq-token-capacity-2026-09-13",
+              "title": "Long-context refusal recovered on 2026-09-13",
+              "file": "alia/main/runbooks/groq-token-capacity-2026-09-13.md",
               "order": 1000,
               "section": "guides"
             },
@@ -13039,6 +13053,13 @@
               "slug": "runbooks/provider-credential-exposure",
               "title": "Runbook: upstream provider credential exposure",
               "file": "alia/main/runbooks/provider-credential-exposure.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "runbooks/provider-unavailable-2026-09-12",
+              "title": "Provider unavailability on 2026-09-12",
+              "file": "alia/main/runbooks/provider-unavailable-2026-09-12.md",
               "order": 1000,
               "section": "guides"
             },
@@ -13112,6 +13133,13 @@
               "description": "REST endpoints and Socket.IO events exposed by @allo/backend.",
               "file": "allo/main/api.mdx",
               "order": 3,
+              "section": "guides"
+            },
+            {
+              "slug": "ecosystem-activity",
+              "title": "Ecosystem activity",
+              "file": "allo/main/ecosystem-activity.md",
+              "order": 1000,
               "section": "guides"
             },
             {
@@ -13349,6 +13377,13 @@
               "section": "guides"
             },
             {
+              "slug": "platform-activity",
+              "title": "Ecosystem activity",
+              "file": "mention/main/platform-activity.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "post-lifecycle",
               "title": "Post lifecycle and identity",
               "file": "mention/main/post-lifecycle.md",
@@ -13373,6 +13408,13 @@
               "slug": "seo",
               "title": "Public search indexing",
               "file": "mention/main/seo.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "source-identity-reconciliation",
+              "title": "Repairing cached source identities",
+              "file": "mention/main/source-identity-reconciliation.md",
               "order": 1000,
               "section": "guides"
             },
@@ -13717,6 +13759,13 @@
               "section": "guides"
             },
             {
+              "slug": "platform-activity",
+              "title": "Ecosystem activity",
+              "file": "homiio/main/platform-activity.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
               "slug": "postgres",
               "title": "Data storage: PostgreSQL, and nothing else",
               "file": "homiio/main/postgres.md",
@@ -14037,6 +14086,13 @@
               "slug": "architecture/vpn",
               "title": "VPN",
               "file": "tnp/main/architecture/vpn.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "ecosystem-activity",
+              "title": "Ecosystem activity",
+              "file": "tnp/main/ecosystem-activity.md",
               "order": 1000,
               "section": "guides"
             }
@@ -14448,6 +14504,13 @@
               "slug": "oxyhq-auth",
               "title": "OxyHQ Authentication & Packages Guide",
               "file": "clarity/main/oxyhq-auth.md",
+              "order": 1000,
+              "section": "guides"
+            },
+            {
+              "slug": "platform-activity",
+              "title": "Ecosystem activity",
+              "file": "clarity/main/platform-activity.md",
               "order": 1000,
               "section": "guides"
             },

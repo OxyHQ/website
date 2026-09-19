@@ -21,8 +21,23 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'CheckboxCardProps': {
+      props: [
+        { name: 'checked', type: 'boolean', optional: false, description: "Whether the card's checkbox is checked." },
+        { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: false, description: 'Called when the checked state changes. A press anywhere on the card toggles it.' },
+        { name: 'title', type: 'string', optional: false, description: "The card's title (one line); also its accessible name." },
+        { name: 'description', type: 'string', optional: true, description: 'Optional one-line description under the title.' },
+        { name: 'disabled', type: 'boolean', optional: true, description: 'Dims the whole card and stops it toggling.' },
+        { name: 'indeterminate', type: 'boolean', optional: true, description: 'Whether the checkbox is in an indeterminate state.' },
+        { name: 'color', type: 'string', optional: true, description: 'Accent for the checked box. Uses the theme primary by default.' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'accessibilityLabel', type: 'string', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'Checkbox', propsType: 'CheckboxProps' },
+    { name: 'CheckboxCard', propsType: 'CheckboxCardProps' },
   ],
 }

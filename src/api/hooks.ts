@@ -1,6 +1,6 @@
 import { useCallback, useSyncExternalStore } from 'react'
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
-import { apiFetch } from './client'
+import { apiFetch, errorStatus } from './client'
 import { useCurrentLocale } from '../lib/i18n'
 import {
   subscribeFairCoinStats,
@@ -24,7 +24,7 @@ import {
 import { type Testimonial } from '../data/content'
 import { type PricingPlan } from '../data/pricing'
 import { type NewsroomPost, type NewsroomPostSummary } from '../data/newsroom'
-import { type DescriptionBlock } from '../data/careers'
+import type { CareerJob } from '../lib/careers'
 import {
   fetchNewsroomPost,
   type NewsroomListParams,
@@ -314,6 +314,77 @@ export function useServiceStatus() {
     refetchInterval: 60_000,
     retry: 1,
   })
+}
+
+// ── Status history: daily uptime + incidents ──
+export type UptimeDayStatus = 'operational' | 'degraded' | 'down' | 'no-data'
+
+export interface UptimeDay {
+  date: string
+  status: UptimeDayStatus
+  uptimePct: number | null
+}
+
+export interface ServiceUptime {
+  productId: string
+  name: string
+  days: UptimeDay[]
+}
+
+export interface ServiceUptimePayload {
+  days: number
+  services: ServiceUptime[]
+}
+
+export function useServiceUptime(days = 90) {
+  return useQuery<ServiceUptimePayload>({
+    queryKey: ['status-uptime', days],
+    queryFn: () => apiFetch<ServiceUptimePayload>(`/status/uptime?days=${days}`),
+    staleTime: 5 * 60_000,
+  })
+}
+
+export type IncidentSeverity = 'minor' | 'major' | 'critical'
+export type IncidentUpdateStatus = 'investigating' | 'identified' | 'monitoring' | 'resolved'
+
+export interface IncidentUpdateRecord {
+  _id: string
+  status: IncidentUpdateStatus
+  body: string
+  createdAt: string
+}
+
+export interface IncidentHistoryEntry {
+  _id: string
+  title: string
+  severity: IncidentSeverity
+  status: IncidentUpdateStatus
+  products: string[]
+  startedAt: string
+  resolvedAt: string | null
+  affectedServices: { _id: string; productId: string; name: string }[]
+  updates: IncidentUpdateRecord[]
+}
+
+export interface IncidentHistoryPayload {
+  page: number
+  pages: number
+  year: number
+  month: number
+  label: string
+  incidents: IncidentHistoryEntry[]
+}
+
+export function useIncidentHistory(page = 1) {
+  return useQuery<IncidentHistoryPayload>({
+    queryKey: ['status-incidents', page],
+    queryFn: () => apiFetch<IncidentHistoryPayload>(`/status/incidents?page=${page}`),
+    staleTime: 5 * 60_000,
+  })
+}
+
+export function useIncidentsAdmin(page = 1) {
+  return useIncidentHistory(page)
 }
 
 export function useUpdateHero() {
@@ -701,37 +772,11 @@ export function useChangelog(params?: { repo?: string; page?: number; limit?: nu
 }
 
 // ── Jobs ──
-export interface Job {
-  _id?: string
-  slug: string
-  title: string
-  department: string
-  subtitle?: string
-  location: string
-  type?: string
-  engagement?: string
-  compensation?: string
-  validThrough?: string
-  address?: {
-    streetAddress?: string
-    addressLocality?: string
-    addressRegion?: string
-    postalCode?: string
-    addressCountry?: string
-  }
-  /** Older rows store Markdown-ish text; current rows use structured blocks. */
-  description?: string | DescriptionBlock[]
-  active?: boolean
-  order?: number
-  createdAt?: string
-  updatedAt?: string
-}
-
+/** Oxy's open roles, read from Clarity Jobs. Not localized: a listing is in the language it was written in. */
 export function useJobs() {
-  const locale = useCurrentLocale()
   return useQuery({
-    queryKey: ['jobs', locale],
-    queryFn: () => apiFetch<Job[]>('/jobs', { locale }),
+    queryKey: ['jobs'],
+    queryFn: () => apiFetch<CareerJob[]>('/jobs'),
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
   })
@@ -810,12 +855,13 @@ export function useMediaItem(id: string) {
   })
 }
 
-export function useJob(slug: string) {
-  const locale = useCurrentLocale()
+export function useJob(id: string) {
   return useQuery({
-    queryKey: ['job', slug, locale],
-    queryFn: () => apiFetch<Job>(`/jobs/${slug}`, { locale }),
-    enabled: !!slug,
+    queryKey: ['job', id],
+    queryFn: () => apiFetch<CareerJob>(`/jobs/${encodeURIComponent(id)}`),
+    enabled: !!id,
+    // A role that is not open answers 404 every time; only an outage is worth a retry.
+    retry: (failures, error) => errorStatus(error) !== 404 && failures < 2,
   })
 }
 
@@ -882,43 +928,6 @@ export function useDeleteSeo() {
         { method: 'DELETE' },
       ),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['seo'] }),
-  })
-}
-
-// ── MCP Tokens ──
-export interface McpToken {
-  _id: string
-  name: string
-  createdBy: string
-  createdAt: string
-  lastUsedAt: string | null
-  expiresAt: string | null
-  revoked: boolean
-}
-
-export function useMcpTokens(enabled = true) {
-  return useQuery({
-    queryKey: ['mcp-tokens'],
-    queryFn: () => apiFetch<McpToken[]>('/mcp-tokens'),
-    enabled,
-    retry: false,
-  })
-}
-
-export function useCreateMcpToken() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (data: { name: string; expiresAt?: string }) =>
-      apiFetch<{ token: string }>('/mcp-tokens', { method: 'POST', body: JSON.stringify(data) }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['mcp-tokens'] }),
-  })
-}
-
-export function useRevokeMcpToken() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (id: string) => apiFetch(`/mcp-tokens/${id}`, { method: 'DELETE' }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['mcp-tokens'] }),
   })
 }
 

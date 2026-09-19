@@ -4,11 +4,13 @@ The world map consumes the central API's public aggregate stream and live
 infrastructure snapshots. Opening the dashboard does not start collection.
 
 The website API installs the shared `@oxy.so/core/server` publisher once during
-boot when `OXY_ECOSYSTEM_ACTIVITY_ENABLED=true`. Set `AWS_REGION` and the
-server-only `OXY_SERVICE_API_KEY` / `OXY_SERVICE_API_SECRET` pair before enabling
-it. Missing enabled configuration fails before the listener starts. Leave the
-flag false in local environments. Infrastructure readiness follows database
-bootstrap, and graceful shutdown removes the instance registration.
+boot, activated purely by the presence of the server-only `OXY_SERVICE_API_KEY`
+/ `OXY_SERVICE_API_SECRET` pair — there is no separate enable flag. Set
+`AWS_REGION` alongside them before setting the credentials. A credential set
+that is present but incomplete (missing `AWS_REGION`) fails before the
+listener starts. Leave both credential variables empty in local environments.
+Infrastructure readiness follows database bootstrap, and graceful shutdown
+removes the instance registration.
 
 The publisher observes incoming HTTP requests, actual outgoing responses, and
 outbound fetch/Node HTTP calls. It sends bounded category/count aggregates, not

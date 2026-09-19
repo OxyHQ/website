@@ -8,7 +8,7 @@ const router = Router()
 
 router.get('/', localeMiddleware, async (req, res) => {
   const [footer] = await db.select().from(footers).limit(1)
-  if (!footer) return res.json({ columns: [], socialLinks: [], copyright: '' })
+  if (!footer) return res.json({ _id: null, columns: [], socialLinks: [], copyright: '' })
   res.json(await localizeOne(req, 'footer', footer))
 })
 

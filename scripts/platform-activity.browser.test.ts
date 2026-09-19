@@ -1,6 +1,8 @@
 import { chromium } from 'playwright'
 import assert from 'node:assert/strict'
 
+import type { TestArcObject } from './dashboard-test-globals'
+
 const baseURL = process.env.DASHBOARD_TEST_BASE_URL ?? 'http://127.0.0.1:5173'
 const browser = await chromium.launch({ headless: true, args: ['--enable-unsafe-swiftshader', '--disable-features=LocalNetworkAccessChecks'] })
 try {
@@ -38,33 +40,33 @@ try {
   }
   assert.equal(await page.locator('[data-traffic-pulse]').count(), 4, 'one train per observed flow')
   await page.evaluate(() => {
-    (window as any).__pulseAnimations = [...document.querySelectorAll('[data-traffic-pulse]')].map(node => node.getAnimations()[0])
+    window.__pulseAnimations = [...document.querySelectorAll('[data-traffic-pulse]')].map(node => node.getAnimations()[0])
   })
   await page.getByRole('button', { name: 'Next bucket' }).click()
   await page.waitForTimeout(200)
   assert.equal(await page.locator('[data-traffic-direction]').count(), 4, 'buckets consolidate into persistent flows')
-  assert.equal(await page.evaluate(() => [...document.querySelectorAll('[data-traffic-pulse]')].every((node, index) => node.getAnimations()[0] === (window as any).__pulseAnimations[index])), true, '2D animations survive new batches')
+  assert.equal(await page.evaluate(() => [...document.querySelectorAll('[data-traffic-pulse]')].every((node, index) => node.getAnimations()[0] === window.__pulseAnimations[index])), true, '2D animations survive new batches')
   await page.screenshot({ path: '/tmp/oxy-activity-flat.png' })
   await page.getByRole('button', { name: 'Toggle map' }).click()
   await page.locator('canvas').waitFor({ state: 'attached', timeout: 60_000 })
-  await page.waitForFunction(() => performance.getEntriesByType('resource').some(entry => entry.name.includes('/images/dashboard/earth-night-nasa') && entry.duration > 0), undefined, { timeout: 60_000 })
+  await page.waitForFunction(() => performance.getEntriesByType('resource').some(entry => entry.name.includes('/images/dashboard/earth-night') && entry.duration > 0), undefined, { timeout: 60_000 })
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
   await page.waitForFunction(() => {
     let count = 0
-    ;(window as any).__testGlobe?.scene().traverse((object: any) => { if (object.__globeObjType === 'arc' && object.children.length) count++ })
+    window.__testGlobe?.scene().traverse((object) => { if (object.__globeObjType === 'arc' && object.children.length) count++ })
     return count === 6
   })
   await page.evaluate(() => {
-    const arcs: any[] = []
-    ;(window as any).__testGlobe.scene().traverse((object: any) => { if (object.__globeObjType === 'arc') arcs.push(object.children[0]) })
-    ;(window as any).__arcSnapshot = arcs.map(object => ({ uuid: object.uuid, phase: object.material.uniforms.dashTranslate.value, moving: object.__dashAnimateStep > 0 }))
+    const arcs: TestArcObject[] = []
+    window.__testGlobe!.scene().traverse((object) => { if (object.__globeObjType === 'arc') arcs.push(object.children[0]) })
+    window.__arcSnapshot = arcs.map(object => ({ uuid: object.uuid, phase: object.material.uniforms.dashTranslate.value, moving: (object.__dashAnimateStep ?? 0) > 0 }))
   })
   await page.getByRole('button', { name: 'Next bucket' }).click()
   await page.waitForTimeout(300)
   assert.equal(await page.evaluate(() => {
-    const arcs: any[] = []
-    ;(window as any).__testGlobe.scene().traverse((object: any) => { if (object.__globeObjType === 'arc') arcs.push(object.children[0]) })
-    return arcs.length === 6 && (window as any).__arcSnapshot.every((previous: any) => {
+    const arcs: TestArcObject[] = []
+    window.__testGlobe!.scene().traverse((object) => { if (object.__globeObjType === 'arc') arcs.push(object.children[0]) })
+    return arcs.length === 6 && window.__arcSnapshot.every((previous) => {
       const object = arcs.find(object => object.uuid === previous.uuid)
       return object && (!previous.moving || object.material.uniforms.dashTranslate.value > previous.phase)
     })
@@ -73,7 +75,7 @@ try {
     if (theme === 'dark') { await page.getByRole('button', { name: 'Toggle theme' }).click(); await page.waitForTimeout(200) }
     assert.equal(await page.evaluate(() => {
       const colors: string[] = []
-      ;(window as any).__testArcs.forEach((arc: any) => { if (arc.id.endsWith('-internal-track')) colors.push(arc.color) })
+      window.__testArcs.forEach((arc) => { if (arc.id.endsWith('-internal-track')) colors.push(arc.color) })
       return colors.length === 2 && colors.every(color => Math.min(...color.match(/[\d.]+/g)!.slice(0, 3).map(Number)) > 180)
     }), true, `${theme} keeps 3D internal backbones bright`)
   }

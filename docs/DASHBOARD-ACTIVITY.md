@@ -70,19 +70,21 @@ PoPs, malformed aggregates, infrastructure expiry and real socket reconnects.
 
 ### Solar illumination
 
-The 3D Earth blends a daytime NASA Blue Marble texture and the existing NASA
-night-lights texture using the actual UTC solar direction. The NOAA fractional-year,
-equation-of-time and declination equations match `SolarPosition.kt` in the Android
-wallpaper. Longitude is east-positive; the shader derives its surface normal from
+The 3D Earth blends a daytime texture and a night-lights texture using the
+actual UTC solar direction. The NOAA fractional-year, equation-of-time and
+declination equations match `SolarPosition.kt` in the Android wallpaper.
+Longitude is east-positive; the shader derives its surface normal from
 geographic UVs, so moving the camera cannot move the illuminated hemisphere.
 The solar uniform updates once per minute inside the existing render lifecycle;
 there is no location permission or additional network request for time/position.
 
-Day texture: NASA Earth Observatory, Blue Marble Next Generation, September 2004,
-2048 × 1024 derivative of
-https://assets.science.nasa.gov/dynamicimage/assets/science/esd/eo/images/bmng/bmng-base/september/world.200409.3x5400x2700.jpg?w=2048&h=1024&fit=clip
+Day/night/starfield/sun/moon textures: Solar System Scope's free 2k texture
+set (https://www.solarsystemscope.com/textures/), chosen because its day and
+night maps are colour-graded as a matched pair — mixing NASA's Blue Marble
+(day) with Black Marble (night) put two different exposures/white balances
+on the same globe, which read as a mismatch across the terminator.
 Solar equations: https://gml.noaa.gov/grad/solcalc/solareqns.PDF
-The texture is a satellite composite, not live cloud/weather data.
+The day texture is a satellite composite, not live cloud/weather data.
 
 Validation: `bun test scripts/solar-position.test.ts` and
 `DASHBOARD_TEST_BASE_URL=http://127.0.0.1:5191 bun scripts/dashboard-solar.browser.test.ts`.
