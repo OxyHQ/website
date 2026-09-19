@@ -250,12 +250,14 @@ export default function LiveGlobe({ infraStatus, activityEvents = [] }: LiveGlob
     marker.dataset.oxyInfrastructureLogo = point.region
     marker.title = `Oxy · ${point.label}`
     marker.style.pointerEvents = 'none'
-    const logo = document.createElement('img')
-    logo.src = '/favicon.svg'
-    logo.alt = `Oxy · ${point.label}`
-    logo.width = 24
-    logo.height = 13
-    logo.style.transform = 'translateY(-12px)'
+    const logo = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    logo.setAttribute('width', '20')
+    logo.setAttribute('height', '20')
+    logo.setAttribute('aria-label', `Oxy · ${point.label}`)
+    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+    icon.setAttribute('href', '/icons/oxy.svg#oxy-icon')
+    logo.appendChild(icon)
+    logo.style.transform = 'translateY(-16px)'
     logo.style.opacity = point.status === 'offline' ? '0.5' : '0.95'
     marker.appendChild(logo)
     return marker

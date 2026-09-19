@@ -41,16 +41,15 @@ const InfraNodeMarker = memo(
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           style={{ transformOrigin: `${x}px ${y}px` }}
         />
-        <image
+        <svg
           data-oxy-infrastructure-logo="true"
-          href="/favicon.svg"
-          x={x - 12}
-          y={y - 19}
-          width={24}
-          height={13}
+          x={x - 10}
+          y={y - 26}
+          width={20}
+          height={20}
           opacity={status === 'offline' ? 0.5 : 0.95}
           aria-label={`Oxy · ${label}`}
-        />
+        ><use href="/icons/oxy.svg#oxy-icon" /></svg>
         {/* Diamond shape */}
         <polygon
           points={`${x},${y - 4} ${x + 4},${y} ${x},${y + 4} ${x - 4},${y}`}
