@@ -1,0 +1,167 @@
+Some stories need more than paragraphs and headings. This showcase walks through Newsroom's typed-block vocabulary without leaving Markdown: each block remains versionable text, while its data is validated before it reaches the interface. [[cite:implementation]]
+
+```article-callout
+{
+  "eyebrow": "Editorial principle",
+  "title": "Content remains the source of truth",
+  "body": "Rich blocks support a story when its information calls for a distinct composition. They do not replace a clear argument: headings, paragraphs, and links still carry the narrative.",
+  "tone": "primary",
+  "width": "prose"
+}
+```
+
+## A small, deliberate system
+
+Every component shares the article's editorial grid. Authors choose one of three widths; the layout determines how the block and the table of contents coexist. [[cite:widths]]
+
+```article-stats
+{
+  "eyebrow": "Authoring contract",
+  "title": "Limits we can verify",
+  "items": [
+    {
+      "value": "8",
+      "label": "typed block families",
+      "detail": "Media, callout, stats, tabs, testimonials, comparison, table, and footnotes"
+    },
+    {
+      "value": "3",
+      "label": "editorial widths",
+      "detail": "Prose, wide, and full"
+    },
+    {
+      "value": "100",
+      "label": "maximum table rows",
+      "detail": "An explicit limit in the schema"
+    }
+  ],
+  "width": "wide"
+}
+```
+
+```article-media
+{
+  "type": "image",
+  "src": "/images/landing/oxy-logo.jpg",
+  "alt": "A white letter O over a violet flower-like form on a dark purple background",
+  "caption": "A local Oxy asset served from the same repository as the article.",
+  "aspect": "square",
+  "width": "wide"
+}
+```
+
+## One story, several ways to read it
+
+Tabs can present related perspectives without repeating a complete section. The control keeps the `tab` and `tabpanel` relationships and supports Arrow keys, Home, and End. [[cite:accessibility]]
+
+```article-tabs
+{
+  "label": "Explore the editorial flow",
+  "tabs": [
+    {
+      "id": "write",
+      "label": "Write",
+      "content": "The author keeps **readable Markdown** and adds a fence only where the story needs a distinct composition."
+    },
+    {
+      "id": "validate",
+      "label": "Validate",
+      "content": "The renderer checks the JSON against a schema. An invalid payload does not become partial or executable HTML."
+    },
+    {
+      "id": "publish",
+      "label": "Publish",
+      "content": "The same content passes through the Newsroom article renderer and inherits its **Bloom** color recipe."
+    }
+  ],
+  "width": "wide"
+}
+```
+
+## Institutional voice still needs context
+
+This carousel does not present customer endorsements or business outcomes. These are Oxy editorial principles, labeled as such so a demonstration never turns example copy into a real recommendation.
+
+```article-testimonials
+{
+  "label": "Oxy Editorial principles",
+  "items": [
+    {
+      "quote": "A component earns its place when it clarifies a relationship that prose alone would force the reader to reconstruct.",
+      "name": "Oxy Editorial",
+      "role": "Editorial design principle"
+    },
+    {
+      "quote": "The theme can change; hierarchy, semantics, and legibility must remain.",
+      "name": "Oxy Editorial",
+      "role": "Editorial design principle"
+    }
+  ],
+  "width": "wide"
+}
+```
+
+## Choose the block for the information
+
+```article-comparison
+{
+  "eyebrow": "Before and after",
+  "title": "Two layers of the same system",
+  "panels": [
+    {
+      "label": "Base Markdown",
+      "content": "Headings, paragraphs, lists, links, quotations, and GFM tables for most of the narrative."
+    },
+    {
+      "label": "Typed blocks",
+      "content": "Reusable compositions for media, metrics, perspectives, comparisons, attributed editorial quotations, and notes."
+    }
+  ],
+  "width": "wide"
+}
+```
+
+The typed table is intended for CMS-authored data. On a narrow screen, its container preserves the columns with horizontal scrolling.
+
+```article-table
+{
+  "caption": "Reusable vocabulary included in this article",
+  "columns": ["Block", "Editorial use", "Behavior"],
+  "rows": [
+    ["article-media", "Image, video, or embed", "Safe URL and editorial width"],
+    ["article-callout", "Highlighted context", "Three tones derived from the theme"],
+    ["article-stats", "Comparable measures", "Between one and eight entries"],
+    ["article-tabs", "Related perspectives", "Keyboard control and associated panels"],
+    ["article-testimonials", "Attributed quotations", "Previous, next, and position controls"],
+    ["article-comparison", "Two states or approaches", "Exactly two panels"],
+    ["article-table", "Tabular CMS data", "Consistent columns and narrow-screen scrolling"],
+    ["article-footnotes", "Notes and sources", "Local links in both directions"]
+  ],
+  "width": "wide"
+}
+```
+
+## Notes
+
+Inline references link to an identified note, and each note lets the reader return to their place. Raw HTML does not need to be enabled to support that journey.
+
+```article-footnotes
+{
+  "title": "Implementation notes",
+  "items": [
+    {
+      "id": "implementation",
+      "text": "Fences are parsed as JSON and validated by the article-block schemas before rendering."
+    },
+    {
+      "id": "widths",
+      "text": "The contract provides prose, wide, and full; the renderer maps those options onto the article's editorial grid."
+    },
+    {
+      "id": "accessibility",
+      "text": "The tabs component implements tab and tabpanel roles, selected state, and the documented keyboard navigation."
+    }
+  ],
+  "width": "prose"
+}
+```
