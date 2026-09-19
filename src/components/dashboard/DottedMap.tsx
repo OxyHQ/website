@@ -41,13 +41,19 @@ const InfraNodeMarker = memo(
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           style={{ transformOrigin: `${x}px ${y}px` }}
         />
+        {/* The square mark, not `/favicon.svg`. Neither was distorted — the
+            favicon is 41x22 and 24x13 matched it — but LiveGlobe marks a region
+            with `/logo-mark.svg`, and two views of one infrastructure map should
+            not disagree about the logo. The box keeps its bottom edge at y-6,
+            clear of the diamond at y±4, so going 24x13 -> 20x20 does not drop
+            the icon onto the node it labels. */}
         <image
           data-oxy-infrastructure-logo="true"
-          href="/favicon.svg"
-          x={x - 12}
-          y={y - 19}
-          width={24}
-          height={13}
+          href="/logo-mark.svg"
+          x={x - 10}
+          y={y - 26}
+          width={20}
+          height={20}
           opacity={status === 'offline' ? 0.5 : 0.95}
           aria-label={`Oxy · ${label}`}
         />
