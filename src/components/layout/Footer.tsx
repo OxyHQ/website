@@ -1,11 +1,8 @@
-import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { useFooter } from '../../api/hooks'
+import { Link } from '../../lib/navigation'
 import { useTranslation } from '../../lib/i18n'
 import { ArrowRightIcon } from '../icons'
-import { usePageChromeStore } from '../../stores/pageChromeStore'
-import { type FooterLink } from '../../data/content'
-import { LogoText } from '@oxyhq/services'
+import { defaultFooterColumns, type FooterLink } from '../../data/content'
+import { LogoText } from '@oxy.so/services/ui/client'
 import MentionIcon from '../social/MentionIcon'
 
 /* ─── Shared small components ─── */
@@ -127,7 +124,7 @@ export interface FooterBrand {
   description: string
 }
 
-/** A single footer column. Mirrors the CMS shape so it's easy to swap later. */
+/** A single footer column. Product pages can still provide their own variant. */
 export interface FooterColumnConfig {
   title: string
   links: readonly FooterLink[]
@@ -137,8 +134,8 @@ interface FooterProps {
   /** Override the brand block. Defaults to Oxy logo + description. */
   brand?: FooterBrand
   /**
-   * Override the column data. When omitted, columns come from the CMS via
-   * `useFooter()` — preserving existing Oxy behavior.
+   * Override the column data for a product-specific footer variant. When
+   * omitted, the public website footer uses the code-owned defaults.
    */
   columns?: readonly FooterColumnConfig[]
   socialLinks?: readonly SocialLink[]
@@ -157,11 +154,7 @@ export default function Footer({
   hideTopDivider = false,
 }: FooterProps = {}) {
   const { t } = useTranslation()
-  const useCmsColumns = columns === undefined
-  const { data: footerData } = useFooter()
-  const footerColumns: readonly { title: string; links: readonly FooterLink[] }[] = useCmsColumns
-    ? footerData?.columns ?? []
-    : columns ?? []
+  const footerColumns: readonly { title: string; links: readonly FooterLink[] }[] = columns ?? defaultFooterColumns
   const defaultSocial: readonly SocialLink[] = [
     { label: t('footer.socialLinkedIn'), icon: LinkedInIcon, href: SOCIAL_URLS.linkedIn },
     { label: t('footer.socialX'), icon: XIcon, href: SOCIAL_URLS.x },
@@ -175,6 +168,11 @@ export default function Footer({
     { label: t('footer.accessibility'), to: '/legal/accessibility' },
     { label: t('footer.termsAndConditions'), to: '/legal/terms' },
     { label: t('footer.llms'), to: '/legal/llms' },
+    // These are documents rather than SPA routes, so plain anchors are
+    // intentional: the browser must request the XML instead of React Router
+    // handling the click.
+    { label: 'Sitemap', href: '/sitemap.xml' },
+    { label: 'RSS', href: '/newsroom.xml' },
     { label: t('footer.settings'), to: '/settings' },
   ]
   const social = socialLinks ?? defaultSocial
@@ -183,14 +181,9 @@ export default function Footer({
   const description = brand?.description ?? t('footer.description')
   const homeHref = brand?.homeHref ?? '/'
   const ariaLabel = brand?.ariaLabel ?? t('navbar.homepage')
-  const setFooterVisible = usePageChromeStore((s) => s.setFooterVisible)
-
   return (
-    <motion.footer
+    <footer
       className="relative flex w-full flex-col justify-between bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))] text-foreground"
-      onViewportEnter={() => setFooterVisible(true)}
-      onViewportLeave={() => setFooterVisible(false)}
-      viewport={{ amount: 0 }}
     >
       {!hideTopDivider && <Divider />}
 
@@ -198,10 +191,10 @@ export default function Footer({
       {footerColumns.length > 0 && (
         <div className="container flex-1">
           <div className="px-px pt-10 pb-4">
-            <div className="columns-4 gap-0 max-xl:columns-3 max-lg:columns-2 max-xs:columns-1">
+            <div className="grid grid-cols-5 gap-x-8 gap-y-10 max-xl:grid-cols-3 max-md:grid-cols-2 max-[480px]:grid-cols-1">
               {footerColumns.map((column) => (
-                <div key={column.title} className="break-inside-avoid pb-5">
-                  <h2 className="py-1 text-primary-text text-sm font-semibold">{column.title}</h2>
+                <div key={column.title} className="min-w-0">
+                  <h2 className="py-1 text-sm font-medium text-primary-text">{column.title}</h2>
                   <ul className="flex flex-col">
                     {column.links.map((link: FooterLink) => (
                       <li key={link.label}>
@@ -278,6 +271,6 @@ export default function Footer({
           </div>
         </div>
       </div>
-    </motion.footer>
+    </footer>
   )
 }

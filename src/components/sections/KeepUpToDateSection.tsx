@@ -47,7 +47,37 @@ function CardIcon({ type }: { type: string }) {
   }
 }
 
-export default function KeepUpToDateSection() {
+interface KeepUpToDateSectionProps {
+  compact?: boolean
+}
+
+export default function KeepUpToDateSection({ compact = false }: KeepUpToDateSectionProps = {}) {
+  if (compact) {
+    const tones = [
+      'bg-[color-mix(in_srgb,var(--primary)_18%,var(--background))]',
+      'bg-[color-mix(in_srgb,var(--secondary)_22%,var(--background))]',
+      'bg-[color-mix(in_srgb,var(--tertiary)_20%,var(--background))]',
+      'bg-[color-mix(in_srgb,var(--accent)_22%,var(--background))]',
+    ]
+
+    return (
+      <section className="container py-16 md:py-24">
+        <div className="mb-8 grid gap-4 md:mb-10 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] md:items-end md:gap-12">
+          <AnimatedTitle as="h2" className="text-pretty text-heading-responsive-lg text-primary-text">Keep up to date.</AnimatedTitle>
+          <p className="max-w-xl text-pretty text-base leading-7 text-foreground/70 md:justify-self-end md:text-lg">Get the latest updates on what we&apos;re building.</p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {keepUpToDateCards.map((card, index) => (
+            <a key={card.title} href={card.href} className={`group flex min-h-[150px] flex-col justify-between gap-6 rounded-3xl p-6 text-primary-text transition-[filter,transform] duration-300 hover:-translate-y-0.5 hover:brightness-105 ${tones[index % tones.length]}`}>
+              <div className="flex items-center justify-between"><CardIcon type={card.iconType} /><ArrowRightIcon className="-rotate-45 shrink-0 text-primary-text/70 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></div>
+              <div><h3 className="font-semibold text-primary-text">{card.title}</h3><p className="mt-1 text-balance text-sm text-primary-text/70">{card.description}</p></div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="container">
       <div>

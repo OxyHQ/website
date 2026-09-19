@@ -1,5 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { buildDocsHref, getPackages } from '../../content/docs-loader'
 import type { SyncedPackage, SyncedPage, SyncedVersion } from '../../../scripts/types'
 import { ChevronDownIcon } from '../icons/ChevronDownIcon'

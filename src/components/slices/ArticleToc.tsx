@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import SliceIcon from './SliceIcon'
 
 export interface TocEntry {
@@ -52,7 +52,7 @@ function Row({
       onClick={onNavigate}
       aria-current={active ? 'location' : undefined}
       className={`flex-1 cursor-pointer ${spacing} transition duration-100 ${
-        active ? 'text-[var(--logo-letter-color)]' : 'text-muted-foreground hover:text-primary'
+        active ? 'text-primary' : 'text-muted-foreground hover:text-primary'
       } ${
         number ? 'grid grid-cols-[auto_1fr] gap-x-2' : ''
       }`}
@@ -75,6 +75,9 @@ export default function ArticleToc({ entries, pdfHref }: ArticleTocProps) {
   const [openOnMobile, setOpenOnMobile] = useState(false)
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   const [activeId, setActiveId] = useState(entries[0]?.id)
+  const [colliding, setColliding] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
+  const desktopRailRef = useRef<HTMLDivElement>(null)
   const sections = toSections(entries)
 
   useEffect(() => {
@@ -115,6 +118,80 @@ export default function ArticleToc({ entries, pdfHref }: ArticleTocProps) {
     }
   }, [entries])
 
+  useEffect(() => {
+    const nav = navRef.current
+    const rail = desktopRailRef.current
+    const articleBody = nav?.closest('[data-article-body]')
+    if (!nav || !rail || !articleBody) return
+
+    let frame: number | undefined
+    let targets: HTMLElement[] = []
+    const desktop = window.matchMedia('(min-width: 64rem)')
+
+    const updateCollision = () => {
+      frame = undefined
+      if (!desktop.matches) {
+        setColliding(false)
+        return
+      }
+
+      const railRect = rail.getBoundingClientRect()
+      const next = targets.some((target) => {
+        const targetRect = target.getBoundingClientRect()
+        const verticalOverlap = targetRect.top < railRect.bottom && targetRect.bottom > railRect.top
+        const horizontalOverlap = targetRect.left < railRect.right && targetRect.right > railRect.left
+        return verticalOverlap && horizontalOverlap
+      })
+      setColliding((previous) => (previous === next ? previous : next))
+    }
+
+    const scheduleUpdate = () => {
+      if (frame === undefined) frame = window.requestAnimationFrame(updateCollision)
+    }
+
+    const intersectionObserver = new IntersectionObserver(scheduleUpdate)
+    const resizeObserver = new ResizeObserver(scheduleUpdate)
+    const observedTargets = new Set<HTMLElement>()
+    const syncTargets = () => {
+      const nextTargets = Array.from(articleBody.querySelectorAll<HTMLElement>('[data-toc-collision-target]'))
+      const nextSet = new Set(nextTargets)
+
+      observedTargets.forEach((target) => {
+        if (nextSet.has(target)) return
+        intersectionObserver.unobserve(target)
+        resizeObserver.unobserve(target)
+        observedTargets.delete(target)
+      })
+      nextTargets.forEach((target) => {
+        if (observedTargets.has(target)) return
+        observedTargets.add(target)
+        intersectionObserver.observe(target)
+        resizeObserver.observe(target)
+      })
+
+      targets = nextTargets
+      scheduleUpdate()
+    }
+    const mutationObserver = new MutationObserver(syncTargets)
+    mutationObserver.observe(articleBody, { childList: true, subtree: true })
+    syncTargets()
+    resizeObserver.observe(rail)
+    desktop.addEventListener('change', scheduleUpdate)
+    window.addEventListener('scroll', scheduleUpdate, { passive: true })
+    window.addEventListener('resize', scheduleUpdate, { passive: true })
+    updateCollision()
+
+    return () => {
+      intersectionObserver.disconnect()
+      resizeObserver.disconnect()
+      mutationObserver.disconnect()
+      desktop.removeEventListener('change', scheduleUpdate)
+      window.removeEventListener('scroll', scheduleUpdate)
+      window.removeEventListener('resize', scheduleUpdate)
+      if (frame !== undefined) window.cancelAnimationFrame(frame)
+    }
+  }, [entries])
+
   const pdfLink = (className: string) =>
     pdfHref && (
       <a
@@ -129,7 +206,11 @@ export default function ArticleToc({ entries, pdfHref }: ArticleTocProps) {
     )
 
   return (
-    <nav className="sticky top-[var(--header-height)] col-span-full text-b4 max-lg:z-10 max-lg:w-full max-lg:bg-background/95 lg:col-start-1 lg:col-span-2 lg:row-span-99 lg:row-start-1 lg:top-[calc(var(--header-height)+5rem)] lg:w-full lg:max-w-[13rem] lg:min-h-0 lg:overflow-clip">
+    <nav
+      ref={navRef}
+      aria-label="Table of contents"
+      className="sticky top-[var(--header-height)] col-span-full text-b4 max-lg:z-10 max-lg:w-full max-lg:bg-background/95 lg:col-start-1 lg:col-span-2 lg:row-span-99 lg:row-start-1 lg:top-[calc(var(--header-height)+5rem)] lg:w-full lg:max-w-[13rem] lg:min-h-0 lg:overflow-clip"
+    >
       {/* Narrow: one disclosure so the article starts at the top of the screen. */}
       <div className="lg:hidden">
         <div className="flex items-center gap-3 pb-2">
@@ -162,7 +243,7 @@ export default function ArticleToc({ entries, pdfHref }: ArticleTocProps) {
                     aria-current={activeId === entry.id ? 'location' : undefined}
                     className={`cursor-pointer py-1.5 text-start transition duration-100 ${
                       activeId === entry.id
-                        ? 'text-[var(--logo-letter-color)]'
+                        ? 'text-primary'
                         : 'text-muted-foreground hover:text-primary'
                     } ${
                       number ? 'grid grid-cols-[auto_1fr] gap-x-2' : 'block'
@@ -178,7 +259,15 @@ export default function ArticleToc({ entries, pdfHref }: ArticleTocProps) {
         </div>
       </div>
 
-      <div className="hidden lg:block lg:max-h-[calc(100vh-var(--header-height)-5rem)] lg:overflow-x-hidden lg:overflow-y-auto [scrollbar-width:none]">
+      <div
+        ref={desktopRailRef}
+        data-toc-rail
+        aria-hidden={colliding || undefined}
+        inert={colliding ? true : undefined}
+        className={`hidden transition-[opacity,transform] duration-200 lg:block lg:max-h-[calc(100vh-var(--header-height)-5rem)] lg:overflow-x-hidden lg:overflow-y-auto [scrollbar-width:none] ${
+          colliding ? 'pointer-events-none -translate-x-2 opacity-0' : 'translate-x-0 opacity-100'
+        }`}
+      >
         {pdfLink('mb-8 w-fit justify-self-start bg-background')}
         {sections.map(({ entry, children }, index) => (
           <div key={entry.id}>

@@ -9,6 +9,7 @@ export interface PartnerProgramCardProps {
   ctaText: string
   ctaHref: string
   icon: ReactNode
+  onActivate?: () => void
 }
 
 function ArrowRightIcon() {
@@ -57,12 +58,18 @@ export default function PartnerProgramCard({
   ctaText,
   ctaHref,
   icon,
+  onActivate,
 }: PartnerProgramCardProps) {
   return (
     <a
       href={ctaHref}
       className="group relative flex h-full flex-col gap-6 bg-background p-8 transition-colors duration-300 hover:bg-surface lg:p-10"
       aria-label={`${title}: ${ctaText}`}
+      aria-haspopup={onActivate ? 'dialog' : undefined}
+      onClick={onActivate ? (event) => {
+        event.preventDefault()
+        onActivate()
+      } : undefined}
     >
       <div className="flex items-start justify-between gap-4">
         <span

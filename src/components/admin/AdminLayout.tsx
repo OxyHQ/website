@@ -1,7 +1,8 @@
 import { type ReactNode } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '@oxyhq/services'
-import { Avatar } from '@oxyhq/bloom/avatar'
+import { useLocation } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
+import { useAuth } from '@oxy.so/services/ui/client'
+import { Avatar } from '@oxy.so/bloom/avatar'
 import {
   SidebarProvider,
   Sidebar,
@@ -19,7 +20,6 @@ import {
 } from '../ui/shadcn/sidebar'
 import {
   Settings,
-  LayoutTemplate,
   FileText,
   Package,
   FolderTree,
@@ -27,8 +27,6 @@ import {
   Tag,
   Quote,
   Clock,
-  Briefcase,
-  KeyRound,
   Languages,
   HardDriveDownload,
   ArrowLeft,
@@ -44,6 +42,7 @@ import {
   LifeBuoy,
   Search,
   GitBranch,
+  AlertTriangle,
 } from 'lucide-react'
 
 interface AdminSection {
@@ -56,10 +55,10 @@ interface AdminSection {
 const sections: AdminSection[] = [
   { id: 'settings', label: 'Site Settings', icon: <Settings className="size-4" />, group: 'Configuration' },
   { id: 'seo', label: 'SEO', icon: <Search className="size-4" />, group: 'Configuration' },
-  { id: 'footer', label: 'Footer', icon: <LayoutTemplate className="size-4" />, group: 'Configuration' },
   { id: 'hero', label: 'Hero', icon: <Sparkles className="size-4" />, group: 'Content' },
   { id: 'pages', label: 'Pages', icon: <FileText className="size-4" />, group: 'Content' },
   { id: 'products', label: 'Products', icon: <Package className="size-4" />, group: 'Content' },
+  { id: 'incidents', label: 'Incidents', icon: <AlertTriangle className="size-4" />, group: 'Content' },
   { id: 'categories', label: 'Categories', icon: <FolderTree className="size-4" />, group: 'Content' },
   { id: 'newsroom', label: 'Newsroom', icon: <PenSquare className="size-4" />, group: 'Content' },
   { id: 'courses', label: 'Courses', icon: <GraduationCap className="size-4" />, group: 'Content' },
@@ -68,12 +67,10 @@ const sections: AdminSection[] = [
   { id: 'pricing', label: 'Pricing', icon: <Tag className="size-4" />, group: 'Content' },
   { id: 'testimonials', label: 'Testimonials', icon: <Quote className="size-4" />, group: 'Content' },
   { id: 'changelog', label: 'Changelog', icon: <Clock className="size-4" />, group: 'Content' },
-  { id: 'jobs', label: 'Jobs', icon: <Briefcase className="size-4" />, group: 'Content' },
   { id: 'team', label: 'Team', icon: <Users className="size-4" />, group: 'Content' },
   { id: 'media', label: 'Media', icon: <ImageIcon className="size-4" />, group: 'Content' },
   { id: 'locales', label: 'Locales', icon: <Languages className="size-4" />, group: 'Configuration' },
   { id: 'repos', label: 'Repositories', icon: <GitBranch className="size-4" />, group: 'Developer' },
-  { id: 'mcp-tokens', label: 'API Tokens', icon: <KeyRound className="size-4" />, group: 'Developer' },
   { id: 'backup', label: 'Backup', icon: <HardDriveDownload className="size-4" />, group: 'Developer' },
   { id: 'comments', label: 'Comments', icon: <MessageSquare className="size-4" />, group: 'Community' },
   { id: 'features', label: 'Feature Board', icon: <Lightbulb className="size-4" />, group: 'Community' },

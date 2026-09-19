@@ -1,6 +1,7 @@
-import { boolean, integer, jsonb, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
+import { boolean, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
 import { objectId, timestamps } from './columns.js'
-import { media } from './content.js'
+import { media, products } from './content.js'
 
 /* ──────────────────────────────────────────────
  * Site chrome, community records and operational tables.
@@ -164,13 +165,164 @@ export const referrals = pgTable('referrals', {
   ...timestamps,
 })
 
-export const mcpTokens = pgTable('mcp_tokens', {
-  _id: objectId(),
-  name: text().notNull(),
-  tokenHash: text().notNull().unique(),
-  createdBy: text().notNull(),
-  lastUsedAt: timestamp({ withTimezone: true }),
-  expiresAt: timestamp({ withTimezone: true }),
-  revoked: boolean().notNull().default(false),
-  ...timestamps,
-})
+export const incidents = pgTable(
+  'incidents',
+  {
+    _id: objectId(),
+    title: text().notNull(),
+    /** 'minor' | 'major' | 'critical' */
+    severity: text().notNull().default('minor'),
+    // Denormalized copy of updates[updates.length - 1].status, so list/filter
+    // reads (including the public banner's open-incident check) never need to
+    // read jsonb just to know where an incident currently stands.
+    /** 'investigating' | 'identified' | 'monitoring' | 'resolved' */
+    status: text().notNull().default('investigating'),
+    /** Affected product `_id`s. A plain array: [] means site-wide, and the join
+     * table would only ever be read whole — same shape as newsroomPosts.products. */
+    products: text().array().notNull().default([]),
+    startedAt: timestamp({ withTimezone: true }).notNull().default(sql`now()`),
+    resolvedAt: timestamp({ withTimezone: true }),
+    /** Chronological (oldest-first) append log. Each element:
+     * `{ _id, status: 'investigating'|'identified'|'monitoring'|'resolved', body, createdAt }` */
+    updates: jsonb().$type<Record<string, unknown>[]>().notNull().default([]),
+    ...timestamps,
+  },
+  (table) => [
+    index('incidents_started_at_id_idx').on(table.startedAt.desc(), table._id.asc()),
+    index('incidents_status_idx').on(table.status),
+  ],
+)
+
+export const serviceUptimeDaily = pgTable(
+  'service_uptime_daily',
+  {
+    _id: objectId(),
+    product: text()
+      .notNull()
+      .references(() => products._id, { onDelete: 'cascade' }),
+    // 'YYYY-MM-DD', UTC day key. Plain text, not pg's `date` type: the key is
+    // always computed in JS (UTC) before writing, so there is no
+    // timezone-conversion benefit to a native date column here.
+    date: text().notNull(),
+    totalChecks: integer().notNull().default(0),
+    operationalChecks: integer().notNull().default(0),
+    degradedChecks: integer().notNull().default(0),
+    downChecks: integer().notNull().default(0),
+    unknownChecks: integer().notNull().default(0),
+    avgLatencyMs: integer(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex('service_uptime_daily_product_date_idx').on(table.product, table.date),
+    index('service_uptime_daily_date_idx').on(table.date),
+  ],
+)
+
+/**
+ * Sales and private-evaluation requests submitted from `/contact/sales`.
+ *
+ * Deliberately a small, flat record: this repository is a marketing site, not a
+ * CRM, and every field beyond "enough to reply, route and qualify" is a field
+ * somebody has to keep accurate and delete on request.
+ *
+ * Three things are absent on purpose.
+ *
+ *  - **No IP address**, raw, hashed or turned into a location. The rest of the
+ *    Oxy stack holds to that invariant and a lead form is not the place to
+ *    break it; the abuse controls in `server/routes/sales.ts` are in-memory and
+ *    per-instance instead.
+ *  - **No secrets.** The form never asks for an API key, a credential, a
+ *    provider key or a prompt, and there is no column one could be typed into.
+ *  - **No account ownership taken on trust.** `accountId`/`applicationId` are
+ *    written only after the server has verified the submitter can see them.
+ */
+export const salesInquiries = pgTable(
+  'sales_inquiries',
+  {
+    _id: objectId(),
+    /** One of `INQUIRY_INTERESTS` in `server/contracts/salesInquiry.ts`. */
+    interest: text().notNull(),
+    name: text().notNull(),
+    email: text().notNull(),
+    company: text().notNull(),
+    role: text(),
+    country: text(),
+    companySize: text(),
+    website: text(),
+    useCase: text().notNull(),
+    monthlyVolume: text(),
+    budget: text(),
+    /** Modality keys the submitter ticked. */
+    modalities: jsonb().$type<string[]>().notNull().default([]),
+    preferredRegion: text(),
+    privacyRequirements: jsonb().$type<string[]>().notNull().default([]),
+    deploymentPreference: text(),
+    launchTimeline: text(),
+    message: text(),
+    marketingConsent: boolean().notNull().default(false),
+    /** Verified server-side before it is written. Never trusted from the client. */
+    oxyUserId: text(),
+    accountId: text(),
+    applicationId: text(),
+    /** One of `INQUIRY_STATUSES`. */
+    status: text().notNull().default('new'),
+    /** Who last changed the status, for the audit line in the admin view. */
+    statusChangedBy: text(),
+    statusChangedAt: timestamp({ withTimezone: true }),
+    internalNote: text(),
+    /**
+     * Content-derived key that collapses a double click, a retry after a flaky
+     * connection and a refresh-and-resubmit into one inquiry. Unique, so the
+     * collapse is enforced by the database rather than by a read-then-write
+     * race in the handler.
+     */
+    idempotencyKey: text().notNull().unique(),
+    /** When the row becomes deletable absent a contract. */
+    deleteAfter: timestamp({ withTimezone: true }).notNull(),
+    ...timestamps,
+  },
+  (table) => [uniqueIndex('sales_inquiries_idempotency_idx').on(table.idempotencyKey)],
+)
+
+/**
+ * Idempotency records for MCP writes (issue #108, F07). One row per
+ * (acting account, tool, key): the first call with a key commits its writes and
+ * this row in ONE transaction, so a retry — on this task or another — either
+ * finds the row and replays the stored result, or finds nothing because the
+ * original never committed. The key itself is stored only as a hash.
+ */
+export const mcpIdempotencyKeys = pgTable(
+  'mcp_idempotency_keys',
+  {
+    _id: objectId(),
+    accountId: text().notNull(),
+    tool: text().notNull(),
+    keyHash: text().notNull(),
+    /** sha256 of the canonical input without the key: same key, different input is a conflict. */
+    requestHash: text().notNull(),
+    /** The tool result exactly as first returned. */
+    result: jsonb().$type<Record<string, unknown>>().notNull(),
+    expiresAt: timestamp({ withTimezone: true }).notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex('mcp_idempotency_keys_scope_idx').on(table.accountId, table.tool, table.keyHash),
+    index('mcp_idempotency_keys_expires_idx').on(table.expiresAt),
+  ],
+)
+
+/**
+ * Per-account MCP usage, one row per account per minute (issue #108). A shared
+ * counter rather than a per-process one: the endpoint is served by several ECS
+ * tasks, and a limit each task counts alone is a limit multiplied by the task
+ * count. Holds an account id and a number — no IPs, no request content.
+ */
+export const mcpRateLimits = pgTable(
+  'mcp_rate_limits',
+  {
+    accountId: text().notNull(),
+    windowStart: timestamp({ withTimezone: true }).notNull(),
+    cost: integer().notNull().default(0),
+  },
+  (table) => [uniqueIndex('mcp_rate_limits_account_window_idx').on(table.accountId, table.windowStart)],
+)

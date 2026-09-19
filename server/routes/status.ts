@@ -1,168 +1,22 @@
 import { Router } from 'express'
-import { safeFetch } from '@oxyhq/core/server'
-import { and, asc, eq, inArray } from 'drizzle-orm'
+import { and, eq, inArray } from 'drizzle-orm'
 import { db } from '../db/postgres.js'
-import { categories, media, products, translations } from '../db/schema/index.js'
-import { populate } from '../db/refs.js'
+import { translations } from '../db/schema/index.js'
 import { localeMiddleware } from '../middleware/locale.js'
+import {
+  getStatus,
+  type CachedServiceResult,
+  type CachedStatusPayload,
+  type ServiceResult,
+  type ServiceStatus,
+} from '../services/statusProbe.js'
 
 const router = Router()
 
-type ServiceStatus = 'operational' | 'degraded' | 'down' | 'unknown'
-
-interface LogoRef {
-  url?: string
-  thumbnails?: { sm?: string; md?: string; lg?: string }
-}
-
-interface ServiceResult {
-  id: string
-  name: string
-  description: string
-  section: string
-  url: string
-  landingUrl: string | null
-  brand: string
-  brandForeground?: string
-  mark: string
-  logoUrl: string | null
-  status: ServiceStatus
-  latencyMs: number | null
-  httpStatus: number | null
-  lastChecked: string
-}
-
-// Internal variant: adds the row id so the per-locale response
-// builder can look up a Translation override for name/description without
-// re-probing or re-querying the product collection. The `productDocId` field
-// is stripped before the payload is written to the wire.
-interface CachedServiceResult extends ServiceResult {
-  productDocId: string
-}
-
-interface CachedStatusPayload {
-  generatedAt: string
-  overall: ServiceStatus
-  services: CachedServiceResult[]
-}
-
-interface StatusPayload {
+export interface StatusPayload {
   generatedAt: string
   overall: ServiceStatus
   services: ServiceResult[]
-}
-
-const PROBE_TIMEOUT_MS = 5_000
-const SLOW_LATENCY_MS = 1_500
-const CACHE_TTL_MS = 60_000
-
-/** A product row with its logo already resolved, which is what a probe reads. */
-type ProductRow = typeof products.$inferSelect & { logo: unknown; category: unknown }
-
-/**
- * The heading a group of services is shown under.
- *
- * `section` holds a category SLUG — that is what /admin writes and what it
- * resolves against the category list — so rendering it raw put a lowercase
- * `apps` on the page. The category's own label is the human string; the slug
- * stands in only for a product that has no category.
- */
-function resolveSectionLabel(product: ProductRow): string {
-  const category = product.category as { label?: string } | null
-  return category?.label || product.section || 'Other'
-}
-
-let cached: CachedStatusPayload | null = null
-let cachedAt = 0
-let inFlight: Promise<CachedStatusPayload> | null = null
-
-function resolveLogoUrl(logo: unknown): string | null {
-  if (!logo || typeof logo !== 'object') return null
-  const obj = logo as LogoRef
-  return obj.url || obj.thumbnails?.lg || obj.thumbnails?.md || obj.thumbnails?.sm || null
-}
-
-async function probeService(product: ProductRow): Promise<CachedServiceResult> {
-  const target = product.healthUrl || product.href
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS)
-  const start = Date.now()
-  const base: Omit<CachedServiceResult, 'status' | 'latencyMs' | 'httpStatus' | 'lastChecked'> = {
-    id: product.productId,
-    productDocId: product._id,
-    name: product.name,
-    description: product.tagline || product.description || '',
-    section: resolveSectionLabel(product),
-    url: product.href,
-    landingUrl: product.landingUrl || null,
-    brand: product.brand,
-    brandForeground: product.brandForeground,
-    mark: product.mark,
-    logoUrl: resolveLogoUrl(product.logo),
-  }
-  try {
-    // healthUrl/href are CMS-supplied, so the probe must be SSRF-safe.
-    const result = await safeFetch(target, {
-      method: 'GET',
-      signal: controller.signal,
-      headers: { 'User-Agent': 'OxyStatusBot/1.0 (+https://oxy.so/status)' },
-    })
-    const latencyMs = Date.now() - start
-    const httpStatus = result.status
-    // Only the status line matters for a health probe — discard the body.
-    result.response.destroy()
-    const status: ServiceStatus = httpStatus >= 200 && httpStatus < 400
-      ? (latencyMs > SLOW_LATENCY_MS ? 'degraded' : 'operational')
-      : 'down'
-    return { ...base, status, latencyMs, httpStatus, lastChecked: new Date().toISOString() }
-  } catch {
-    return {
-      ...base,
-      status: 'down',
-      latencyMs: null,
-      httpStatus: null,
-      lastChecked: new Date().toISOString(),
-    }
-  } finally {
-    clearTimeout(timer)
-  }
-}
-
-function computeOverall(services: CachedServiceResult[]): ServiceStatus {
-  if (services.length === 0) return 'unknown'
-  if (services.some(s => s.status === 'down')) return 'down'
-  if (services.some(s => s.status === 'degraded')) return 'degraded'
-  if (services.every(s => s.status === 'operational')) return 'operational'
-  return 'unknown'
-}
-
-async function buildPayload(): Promise<CachedStatusPayload> {
-  const rows = await db
-    .select()
-    .from(products)
-    .where(eq(products.showOnStatus, true))
-    .orderBy(asc(products.section), asc(products.order), asc(products._id))
-  const probed = (await populate(rows, { logo: media, category: categories })) as unknown as ProductRow[]
-  const services = await Promise.all(probed.map(probeService))
-  return {
-    generatedAt: new Date().toISOString(),
-    overall: computeOverall(services),
-    services,
-  }
-}
-
-async function getStatus(): Promise<CachedStatusPayload> {
-  const fresh = cached && Date.now() - cachedAt < CACHE_TTL_MS
-  if (fresh && cached) return cached
-  if (inFlight) return inFlight
-  inFlight = buildPayload()
-    .then((payload) => {
-      cached = payload
-      cachedAt = Date.now()
-      return payload
-    })
-    .finally(() => { inFlight = null })
-  return inFlight
 }
 
 function stripDocId({ productDocId: _docId, ...rest }: CachedServiceResult): ServiceResult {

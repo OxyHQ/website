@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
+import { PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { API_BASE, getAuthHeaders } from '../../../api/client'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'

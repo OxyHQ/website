@@ -270,6 +270,26 @@ const en = {
     faqGroupControl: 'Your data and control',
     faqGroupProducts: 'Products and access',
     faqGroupCommunity: 'Community and contribution',
+
+    // ── The falling-tag card (HomeTagPhysics) ──────────────
+    tagsHeading: 'Everything here is yours to pick up.',
+    tagsBody: 'Identity, privacy, payments, social, AI, research — every piece of Oxy is open source and built to work with the rest. Give one a nudge.',
+    tagsRegionLabel: 'The pieces of the Oxy ecosystem',
+    tagPrivacy: 'Privacy',
+    tagOpenSource: 'Open source',
+    tagIdentity: 'Identity',
+    tagAi: 'Oxy AI',
+    tagFairCoin: 'FairCoin',
+    tagCommunity: 'Community',
+    tagResearch: 'Research',
+    tagMention: 'Mention',
+    tagInbox: 'Inbox',
+    tagHomiio: 'Homiio',
+    tagNoAds: 'No ads',
+    tagSustainability: 'Sustainability',
+    tagCollaboration: 'Collaboration',
+    tagSelfCustody: 'Self-custody',
+    tagOpenWeb: 'Open web',
   },
 
   // ── Pricing ───────────────────────────────────────────────
@@ -446,19 +466,378 @@ const en = {
     learnMore: 'Learn more',
   },
 
-  // ── AI (Alia & friends) ───────────────────────────────────
+  // ── Oxy AI ────────────────────────────────────────────────
+  // The umbrella platform, its services and the pages under /ai.
+  // Brand terms (Oxy AI, Oxy Inference, Managed Inference, Dedicated
+  // Inference, Alia, Codea, Alia Models, Oxy Console) are never translated,
+  // and neither are model, publisher or provider identifiers.
   ai: {
     seoTitle: 'Oxy AI',
     seoDescription:
-      'Oxy AI — intelligent assistance that respects your privacy. Powered by Alia, our open-source AI assistant.',
+      'One platform for AI models, inference and intelligent products. A unified API, a public model catalogue, managed and dedicated serving, and the products Oxy builds on top of it.',
     heroEyebrow: 'Oxy AI',
-    heroTitle: 'Intelligence with integrity.',
+    heroTitle: 'One platform for AI models, inference and intelligent products.',
     heroSubtitle:
-      'Alia is your private, open-source AI assistant. Built to help, never to harvest. Available across the Oxy ecosystem and on its own.',
-    tryAlia: 'Try Alia',
-    seePricing: 'See pricing',
-    pricingHeading: 'AI pricing',
-    pricingSubheading: 'Predictable plans for individuals and teams. Bring your own keys if you prefer.',
+      'Oxy Inference gives you one API, one credential and one bill for every model Oxy is approved to serve. Alia and Codea are what we built on it.',
+
+    availability: {
+      available: 'Available',
+      beta: 'Beta',
+      privatePreview: 'Private preview',
+      comingSoon: 'Coming soon',
+      internalOnly: 'Internal only',
+      deprecated: 'Deprecated',
+    },
+
+    cta: {
+      startBuilding: 'Start building',
+      tryBeta: 'Try the beta',
+      requestAccess: 'Request access',
+      joinWaitlist: 'Get notified',
+      seeReplacement: 'See the replacement',
+      none: '',
+      exploreModels: 'Explore models',
+      viewAllModels: 'View all models',
+      talkToSales: 'Talk to sales',
+      requestEvaluation: 'Request a private evaluation',
+      viewPricing: 'View pricing',
+      openConsole: 'Open Oxy Console',
+      readDocs: 'Read the documentation',
+      readQuickstart: 'Read the quickstart',
+    },
+
+    sections: {
+      services: 'What Oxy AI is made of',
+      servicesLead:
+        'Six things with six different jobs. Each one says what it is, who it is for and what state it is genuinely in.',
+      quickstart: 'Call it',
+      models: 'Models',
+      routing: 'Routing and control',
+      infrastructure: 'Routed, managed and dedicated',
+      enterprise: 'For organizations',
+      trust: 'Data and policy',
+      pricing: 'Pricing',
+      products: 'Products built on Oxy AI',
+      aliaModels: 'Alia Models',
+      news: 'Latest from Oxy AI',
+    },
+
+    quickstart: {
+      heading: 'One base URL, one credential',
+      description:
+        'The API is OpenAI-compatible, so an existing client points at it by changing two lines. Credentials are issued in Oxy Console and scoped to an application.',
+      tabsLabel: 'Code examples',
+      copy: 'Copy',
+      copied: 'Copied',
+      modelPlaceholderNote:
+        'The model id is a placeholder: no model is published until the catalogue is, and a snippet naming one would be inventing it.',
+      advancedHeading: 'Streaming, tools and structured output',
+      advancedDescription:
+        'The first snippet stays the shortest thing that works. These are the next three questions.',
+    },
+
+    routing: {
+      lead:
+        'What the platform does between your request and a model, and how much of it you control.',
+      implemented: 'Available',
+      planned: 'Planned',
+    },
+
+    infrastructure: {
+      lead:
+        'Oxy-hosted means Oxy serves a model. It does not mean Oxy created it, and it is not the same thing as routing your request to somebody else who serves it.',
+    },
+
+    models: {
+      seoTitle: 'AI models',
+      seoDescription:
+        'The public Oxy AI model catalogue: publisher, capabilities, serving regions, data policy, pricing and availability for every model Oxy is approved to serve.',
+      heading: 'Model catalogue',
+      lead:
+        'Every model Oxy is approved to serve publicly, with the publisher, the capabilities, the serving options, the policy and the price that apply to it.',
+      emptyTitle: 'The public catalogue is not published yet',
+      emptyBody:
+        'Oxy Inference is in private preview, and the model catalogue is published with it. Rather than list models nobody can call yet, this page stays empty until the catalogue is real.',
+      emptySecondary: 'Read about Oxy Inference',
+      priceVersion: 'Price version {version} · catalogue generated {date}',
+      staleNotice: 'This snapshot is more than two weeks old; prices may have moved.',
+      count: '{count} models',
+      searchLabel: 'Search models',
+      searchPlaceholder: 'Publisher, model id or name',
+      filtersLabel: 'Filters',
+      clearFilters: 'Clear filters',
+      noMatches: 'No models match these filters.',
+      typeModel: 'Model',
+      typeRoutingProfile: 'Routing profile',
+      routingProfileNote: 'A routing profile is a policy over models, not a model.',
+      columnModel: 'Model',
+      columnPublisher: 'Publisher',
+      columnContext: 'Context',
+      columnInput: 'Input',
+      columnOutput: 'Output',
+      columnAvailability: 'Availability',
+      sortLabel: 'Sort by',
+      sortName: 'Name',
+      sortPriceInput: 'Input price',
+      sortContext: 'Context length',
+      filterPublisher: 'Publisher',
+      filterCapability: 'Capability',
+      filterType: 'Type',
+      filterAvailability: 'Availability',
+      filterProvider: 'Serving provider',
+      filterRegion: 'Region',
+      filterZeroRetention: 'Retention-constrained routes only',
+      all: 'All',
+    },
+
+    model: {
+      notFoundTitle: 'No such model',
+      notFoundBody:
+        'This model is not in the public catalogue. It may never have been public, or it may have been retired.',
+      backToCatalogue: 'Back to the catalogue',
+      canonicalId: 'Canonical id',
+      description: 'About',
+      capabilities: 'Capabilities',
+      limits: 'Limits',
+      contextWindow: 'Context window',
+      maxOutput: 'Maximum output',
+      tokens: '{count} tokens',
+      revisions: 'Revisions',
+      noRevisions: 'No pinnable revisions are published for this model.',
+      serving: 'Serving',
+      noDeployments: 'No public deployment is published for this model.',
+      regions: 'Regions',
+      dataPolicy: 'Data policy',
+      retention: 'Retention',
+      retentionNone: 'Not retained',
+      retentionTransient: 'Held only for the request',
+      retentionRetained: 'Retained',
+      retentionUnknown: 'Not disclosed by the provider',
+      training: 'Upstream training',
+      trainingNo: 'Not used for training',
+      trainingYes: 'May be used for training',
+      trainingOptOut: 'Opt-out available',
+      trainingUnknown: 'Not disclosed by the provider',
+      zeroRetention: 'Retention-constrained route available',
+      pricing: 'Pricing',
+      noPricing: 'No public price is published for this model.',
+      licence: 'Licence',
+      attribution: 'Attribution',
+      provenance: 'Based on',
+      modelCard: 'Model card',
+      evaluations: 'Evaluations',
+      knownLimitations: 'Known limitations',
+      deprecated: 'Deprecated',
+      sunset: 'Sunset {date}',
+      replacement: 'Use {model} instead',
+      exampleHeading: 'Call this model',
+    },
+
+    pricing: {
+      seoTitle: 'Oxy Inference pricing',
+      seoDescription:
+        'What Oxy Inference costs: per-model, per-unit pricing from the Oxy pricing source, with the price version it belongs to and an estimator for a monthly workload.',
+      heading: 'Inference pricing',
+      lead:
+        'Priced per model and per unit. Prices come from the Oxy pricing source with a published price version — this page never restates one of its own.',
+      aliaHandoffTitle: 'Looking for Alia plans?',
+      aliaHandoffBody:
+        'Alia is a product with its own subscription, sold by Alia. Its plans are not inference pricing.',
+      aliaHandoffCta: 'See Alia plans',
+      ecosystemHandoffTitle: 'Looking for Oxy app plans?',
+      ecosystemHandoffBody: 'Per-seat plans for the Oxy apps are priced separately from inference.',
+      ecosystemHandoffCta: 'See ecosystem pricing',
+      tableHeading: 'Per-model pricing',
+      estimatorHeading: 'Estimate a monthly bill',
+      estimatorLead:
+        'An estimate, computed exactly and rounded down. It does not authorise or charge anything — spend is configured in Oxy Console.',
+      estimatorModel: 'Model',
+      estimatorRequests: 'Requests per month',
+      estimatorInput: 'Input tokens per request',
+      estimatorCachedInput: 'Cached input tokens per request',
+      estimatorOutput: 'Output tokens per request',
+      estimatorReasoning: 'Reasoning tokens per request',
+      estimatorTotal: 'Estimated monthly cost',
+      estimatorUnpriced:
+        'No published price for: {units}. Those units are left out of the total rather than counted as free.',
+      estimatorEmpty: 'Pick a model to estimate a workload.',
+      unitInputToken: 'Input',
+      unitCachedInputToken: 'Cached input',
+      unitOutputToken: 'Output',
+      unitReasoningToken: 'Reasoning',
+      unitEmbeddingToken: 'Embeddings',
+      unitAudioSecond: 'Audio (per second)',
+      unitImage: 'Image',
+      unitRequest: 'Request',
+      unitRerankDocument: 'Rerank (per document)',
+      perMillion: 'per 1M tokens',
+      perUnit: 'per unit',
+      termsHeading: 'Taxes, balance and invoices',
+      termsBody:
+        'Prices are exclusive of tax. Self-service usage draws on a prepaid balance held in Oxy Console; invoiced terms are agreed per organization.',
+      pathsHeading: 'Which path is yours',
+      pathSelfServe: 'Pay as you go, self-service',
+      pathSelfServeBody: 'Add funds and issue a credential in Oxy Console.',
+      pathDedicated: 'Dedicated or reserved capacity',
+      pathDedicatedBody: 'Priced per agreement, because it is capacity rather than usage.',
+      pathAlia: 'Alia product plans',
+      pathAliaBody: 'Sold by Alia, on Alia.',
+      pathEcosystem: 'Oxy ecosystem plans',
+      pathEcosystemBody: 'Per-seat plans for the Oxy apps.',
+    },
+
+    inference: {
+      seoTitle: 'Oxy Inference',
+      seoDescription:
+        'One OpenAI-compatible API for every model Oxy is approved to serve, with routing, revision pinning, usage receipts and per-application attribution.',
+      heroEyebrow: 'Oxy Inference',
+      heroTitle: 'One API for every model we are approved to serve.',
+      heroSubtitle:
+        'Point an OpenAI-compatible client at one base URL, send a catalogue model id, and get back an answer with a receipt saying what served it and what it cost.',
+      startHeading: 'Account, application, credential, call',
+      startLead:
+        'Four objects, all of them owned by Oxy Console. This site explains them; it does not create them.',
+      capabilitiesHeading: 'What the API does',
+      capabilitiesLead:
+        'Each capability carries its own state. "Supports vision" and "will support vision" are different answers to the question you came with.',
+      conceptsHeading: 'The vocabulary',
+      conceptsLead:
+        'Six distinctions that change behaviour when they blur. Pinning a model instead of a revision, or treating a routing profile as a model, changes what you get without changing what you sent.',
+      operationsHeading: 'Running it in production',
+    },
+
+    enterprise: {
+      seoTitle: 'Oxy AI for organizations',
+      seoDescription:
+        'Shared, managed and dedicated inference for organizations: private endpoints, reserved capacity, region and provider policy, bring your own key, invoicing and auditability.',
+      heroEyebrow: 'Oxy AI',
+      heroTitle: 'Inference your security review can read.',
+      heroSubtitle:
+        'Shared routing, managed deployments or a private endpoint, with the provider, the region and the retention rule written down rather than assumed.',
+      capabilitiesHeading: 'What is on the table',
+      evaluationHeading: 'Start with an evaluation, not a contract',
+      evaluationBody:
+        'A scoped evaluation with the models, regions and constraints you actually need comes before any commitment. Tell us the workload and we will tell you whether the platform can serve it today.',
+    },
+
+    trust: {
+      seoTitle: 'Oxy AI — data and policy',
+      seoDescription:
+        "What Oxy does with what you send, what the provider serving a routed request does with it, and which of the two any given statement is about.",
+      heroEyebrow: 'Oxy AI',
+      heroTitle: 'Data, policy and what applies where.',
+      scopeOxy: "Oxy's own handling",
+      scopeRoute: 'Depends on the route',
+      scopeContract: 'Agreed per contract',
+      reviewedBy: 'Owned by {owner} · reviewed by {date}',
+      documentsHeading: 'The documents',
+      documentsLead: 'Only the ones that exist. A link to a policy that has not been written is worse than no link.',
+    },
+
+    aliaModels: {
+      inDevelopment: 'In development',
+    },
+
+    breadcrumbHome: 'Oxy AI',
+  },
+
+  // ── Oxy for organizations ─────────────────────────────────
+  enterprisePage: {
+    seoTitle: 'Oxy for organizations',
+    seoDescription:
+      'What Oxy sells to organizations — AI and inference, Oxy ID, the platform and SDKs — with the state each of them is genuinely in.',
+    heroEyebrow: 'Enterprise',
+    heroTitle: 'Oxy for organizations.',
+    servicesHeading: 'Services',
+    contactHeading: 'Talk to someone who knows the answer',
+    contactBody:
+      'Tell us the workload, the constraints and the timeline. You will get a scoped answer rather than a brochure.',
+  },
+
+  // ── Sales and private-evaluation requests ─────────────────
+  contactSales: {
+    seoTitle: 'Talk to Oxy sales',
+    seoDescription:
+      'Request a scoped answer about Oxy AI, managed or dedicated inference, or the Oxy platform for your organization.',
+    heroTitle: 'Talk to sales',
+    heroSubtitle:
+      'Tell us what you are building and what has to be true about it. Someone who can actually answer will reply.',
+    sectionAbout: 'What this is about',
+    sectionYou: 'About you',
+    sectionWorkload: 'About the workload',
+    sectionMessage: 'Anything else',
+    interest: 'What are you interested in?',
+    interestOxyInference: 'Oxy Inference (the API)',
+    interestManagedInference: 'Managed Inference',
+    interestDedicatedInference: 'Dedicated Inference',
+    interestByok: 'Bring your own key',
+    interestEnterprisePlatform: 'The Oxy platform for our organization',
+    interestAliaForTeams: 'Alia for a team',
+    interestOther: 'Something else',
+    name: 'Your name',
+    email: 'Work email',
+    company: 'Company or organization',
+    role: 'Your role',
+    country: 'Country or region',
+    companySize: 'Company size',
+    website: 'Website',
+    useCase: 'What are you building?',
+    useCaseHelp: 'A couple of sentences is enough.',
+    monthlyVolume: 'Expected monthly volume',
+    volumeEvaluating: 'Still evaluating',
+    volumeUnder1m: 'Under 1M tokens',
+    volume1m50m: '1M – 50M tokens',
+    volume50m500m: '50M – 500M tokens',
+    volumeOver500m: 'Over 500M tokens',
+    budget: 'Monthly budget',
+    budgetUndisclosed: 'Rather not say',
+    budgetUnder1k: 'Under $1,000',
+    budget1k10k: '$1,000 – $10,000',
+    budget10k50k: '$10,000 – $50,000',
+    budgetOver50k: 'Over $50,000',
+    modalities: 'Models and modalities of interest',
+    preferredRegion: 'Preferred region',
+    privacyRequirements: 'Privacy and compliance requirements',
+    requirementRegion: 'Requests must stay in a named region',
+    requirementRetention: 'Retention has to be constrained',
+    requirementNoTraining: 'No upstream training on our content',
+    requirementDpa: 'We need a data processing agreement',
+    requirementSecurityReview: 'We have a security review to pass',
+    requirementNone: 'None of these yet',
+    deploymentPreference: 'Shared, dedicated or your own key?',
+    deploymentShared: 'Shared routing',
+    deploymentManaged: 'Managed deployment',
+    deploymentDedicated: 'Dedicated endpoint',
+    deploymentByok: 'Bring our own key',
+    deploymentUnsure: 'Not sure yet',
+    launchTimeline: 'When do you want to be live?',
+    timelineEvaluating: 'Still evaluating',
+    timelineWithin1Month: 'Within a month',
+    timelineWithin3Months: 'Within three months',
+    timelineWithin6Months: 'Within six months',
+    timelineLater: 'Later than that',
+    message: 'Anything else we should know',
+    marketingConsent: 'You can also send me occasional Oxy product updates.',
+    accountSection: 'Your Oxy account',
+    accountHelp:
+      'You are signed in, so we have prefilled your name and email. Attach an Oxy Account or Application if this request is about a specific one.',
+    accountNone: 'Do not attach an account',
+    applicationNone: 'Do not attach an application',
+    optional: 'optional',
+    submit: 'Send request',
+    submitting: 'Sending…',
+    privacyNotice:
+      'We use what you send here to reply to you and nothing else. It is kept for a year unless a contract starts, and we do not store your IP address. Do not send API keys, credentials, prompts or regulated data.',
+    successTitle: 'Request received',
+    successBody:
+      'Reference {reference}. Someone who can answer your question will reply to the address you gave us.',
+    successBack: 'Back to Oxy AI',
+    errorTitle: "That didn't send",
+    errorBody:
+      'Nothing you typed was lost. Try again, or write to {email} and we will pick it up from there.',
+    retry: 'Try again',
+    requiredFieldsMissing: 'Check the highlighted fields and try again.',
+    errorSummaryTitle: 'There is a problem with this form',
   },
 
   // ── Common product card / link surfaces ───────────────────
@@ -475,6 +854,21 @@ const en = {
     tnpDescription: 'The New Protocol — an alternative namespace for digital identity.',
     oxyOSDescription: 'A privacy-first operating system built around the Oxy ecosystem.',
     astroDescription: 'A privacy-first browser deeply integrated with Oxy.',
+  },
+
+  dashboard: {
+    traffic: {"identity": "Identity", "ai": "AI", "communication": "Messages", "media": "Media", "platform": "Platform", "internal": "Internal", "external": "External", "inbound": "Inbound", "outbound": "Outbound"},
+    seoDescription: 'Live platform dashboard with anonymous activity and infrastructure status across Oxy regions.',
+    flatMap: 'Show flat map', globe: 'Show globe', enterFullscreen: 'Enter fullscreen', exitFullscreen: 'Exit fullscreen',
+    totalUsers: 'Total Users', infrastructureActivity: 'Live Infrastructure Activity', waitingActivity: 'Waiting for anonymous activity…', activeRegions: 'Active Regions',
+    networkOrigins: 'Live Network Origins', waitingOrigins: 'Waiting for live origins…',
+    showDetails: 'Show details for', hideDetails: 'Hide details for', metricDetail: '{metric} is calculated from real platform data and updates automatically in real time.', liveRefresh: 'Live · refreshes automatically',
+    contentPerUser: 'Content / User', itemsPerUser: 'Items / user', activeSessions: 'Active Sessions', liveOfUsers: 'Live {percent} · of users', activeSessionLabel: '{percent} of users have an active session',
+    developerApps: 'Developer Apps', connectedApi: 'Connected / Oxy API', apps: 'Apps', storedFiles: 'Stored Files', privateAllApps: 'Private / all apps', files: 'Files',
+    messages: 'Messages', notifications: 'Notifications', deliveredTotal: 'Delivered / total', alerts: 'Alerts', notificationsDelivered: '{count} notifications delivered',
+    transactions: 'Transactions', totalTransactions: '{count} total transactions', noneYet: 'None yet', total: 'Total', tx: 'Tx',
+    aiModels: 'AI Models', availableNow: 'Available / now', models: 'Models', connections: 'Connections', privateGraphTotal: 'Private graph / total', follows: 'Follows',
+    platformActivity: 'Platform Activity', liveTotals: 'Live totals', now: 'Now',
   },
 
   // ── SEO / hreflang generic strings ────────────────────────

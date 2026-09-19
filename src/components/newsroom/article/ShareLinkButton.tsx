@@ -30,9 +30,9 @@ export default function ShareLinkButton({ url }: { url: string }) {
       type="button"
       onClick={copy}
       aria-live="polite"
-      className="flex h-10 items-center justify-between gap-2 rounded-radius-max border-0 bg-fill-inverse px-4 text-bg transition-opacity hover:opacity-90"
+      className="flex min-h-10 items-center justify-between gap-2 rounded-full px-2 py-2 text-body-sm text-foreground outline-none transition-colors hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
-      <span className="text-sm font-semibold">{copied ? 'Link copied' : 'Share this post'}</span>
+      <span>{copied ? 'Copied' : 'Share'}</span>
       {copied ? <Check size={16} weight="bold" /> : <LinkSimple size={16} weight="bold" />}
     </button>
   )

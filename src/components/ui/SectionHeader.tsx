@@ -1,4 +1,4 @@
-import { Badge } from '@oxyhq/bloom/badge'
+import { Badge } from '@oxy.so/bloom/badge'
 
 interface SectionHeaderProps {
   badge?: string

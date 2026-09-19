@@ -35,10 +35,17 @@ export default function ArticleScrollProgress() {
   }, [])
 
   return (
-    <div className="sticky bottom-0 mx-auto hidden w-full max-w-[108rem] items-start p-4 lg:flex">
-      <div className="flex items-center gap-2 rounded-radius-12 bg-fill-inverse p-1 pl-2 text-bg">
-        <BookOpen size={16} weight="bold" />
-        <p className="rounded-radius-8 bg-black/20 px-1.5 py-1 text-sm font-semibold tabular-nums">{percent}%</p>
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 hidden lg:block">
+      <div className="container flex items-start pb-4">
+        <div className="flex items-center gap-2 rounded-radius-12 bg-primary p-1 ps-2 text-primary-foreground shadow-md">
+          <BookOpen size={16} weight="bold" />
+          <p
+            aria-label={`${percent}% read`}
+            className="rounded-radius-8 bg-primary-foreground/15 px-1.5 py-1 text-body-sm tabular-nums"
+          >
+            {percent}%
+          </p>
+        </div>
       </div>
     </div>
   )

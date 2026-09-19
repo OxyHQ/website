@@ -1,6 +1,6 @@
-import { Badge } from '@oxyhq/bloom/badge'
-import type { BadgeSize } from '@oxyhq/bloom/badge'
-import type { AccentFill, AccentTone } from '@oxyhq/bloom/theme'
+import { Badge } from '@oxy.so/bloom/badge'
+import type { BadgeSize } from '@oxy.so/bloom/badge'
+import type { AccentFill, AccentTone } from '@oxy.so/bloom/theme'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

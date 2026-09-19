@@ -237,18 +237,19 @@ export const resourcesNavDropdown: NavDropdown = {
  */
 export const technologiesNavFallbackItems: Array<NavDropdownItem & { section: string }> = [
   { title: 'Mention', description: 'Decentralized social media', href: '/mention', image: '/images/apps/mention.png', logoColor: '#40c2ed', section: 'Social & Communication' },
-  { title: 'Inbox by Oxy', description: 'A calmer way to handle email', href: '/inbox', image: '/images/apps/inbox.svg', logoColor: '#bf40ed', section: 'Tools' },
+  { title: 'Inbox by Oxy', description: 'A calmer way to handle email', href: '/inbox', image: '/images/apps/inbox.png', logoColor: '#bf40ed', section: 'Tools' },
   { title: 'Noted', description: "Oxy's workspace for notes and ideas", href: 'https://noted.oxy.so', section: 'Tools' },
-  { title: 'Alia', description: 'AI-Powered assistant', href: '/ai', image: '/images/apps/alia-dropdown.svg', logoColor: '#fab8ff', preserveImageColors: true, section: 'AI & Research' },
+  { title: 'Nilo', description: 'Workspace for docs and databases', href: 'https://nilo.so', section: 'Tools' },
+  { title: 'Alia', description: 'The Oxy assistant for people and teams', href: 'https://alia.onl/', image: '/images/apps/alia-dropdown.svg', logoColor: '#fab8ff', preserveImageColors: true, section: 'AI & Research' },
   { title: 'Clarity', description: 'AI-Powered search engine', href: '/clarity', image: '/images/apps/clarity.png', logoColor: '#664100', section: 'AI & Research' },
   { title: 'Astro Browser', description: 'A private browser for the open web', href: '/astro', image: '/images/apps/astro.svg', logoColor: '#009699', section: 'AI & Research' },
-  { title: 'Kaana', description: 'An AI agent for everyday life', href: '/', section: 'AI & Research' },
+  { title: 'Kaana', description: 'Oxy\'s own inference provider', href: 'https://kaana.ai', image: '/images/apps/kaana.svg', preserveImageColors: true, section: 'AI & Research' },
   { title: 'Horizon', description: 'A clearer view of what matters', href: '/', section: 'Housing' },
   { title: 'FairCoin Explorer', description: 'Explore the FairCoin network', href: 'https://explorer.fairco.in', image: '/images/apps/faircoin-explorer.png', logoColor: '#185c00', section: 'Finance' },
-  { title: 'Pay', description: 'Simple payments across Oxy', href: '/pay', section: 'Finance' },
+  { title: 'Peable', description: 'Simple payments across Oxy', href: '/peable', section: 'Finance' },
   { title: 'FairCoin', description: 'Ethical Digital Currency', href: 'https://fairco.in', image: '/images/apps/faircoin.svg', logoColor: '#204700', preserveImageColors: true, section: 'Finance' },
   { title: 'FAIRWallet', description: 'Manage your FairCoin', href: 'https://fairco.in/wallet', image: '/images/apps/faircoin-wallet.svg', logoColor: '#0c6600', preserveImageColors: true, section: 'Finance' },
-  { title: 'Mercaria', description: 'An open marketplace for people and goods', href: '/marketplace', image: '/images/apps/mercaria.svg', logoColor: '#ed4040', section: 'Commerce' },
+  { title: 'Mercaria', description: 'An open marketplace for people and goods', href: '/mercaria', image: '/images/apps/mercaria.svg', logoColor: '#ed4040', section: 'Commerce' },
   { title: 'Wholesale by Mercaria', description: 'Manage products, suppliers and wholesale sales', href: 'https://dashboard.mercaria.co', image: '/images/apps/wholesale.svg', preserveImageColors: true, section: 'Commerce' },
   { title: 'Homiio', description: 'Rental made easy', href: '/homiio', section: 'Housing' },
   { title: 'Moovo', description: 'Mobility and urban transport', href: '/moovo', section: 'Mobility' },
@@ -293,6 +294,7 @@ const technologyNavProductSections: Record<string, string> = {
   i: 'Tools',
   inbox: 'Tools',
   noted: 'Tools',
+  nilo: 'Tools',
   faircoin: 'Finance',
   faircoinexplorer: 'Finance',
   fairwallet: 'Finance',
@@ -315,6 +317,7 @@ const technologyNavProductOrder: Record<string, number> = {
   'Inbox by Oxy': 1,
   'Oxy Inbox': 1,
   Noted: 1,
+  Nilo: 2,
   Clarity: 2,
   'Astro Browser': 3,
   Kaana: 99,
@@ -337,6 +340,7 @@ export function makeTechnologiesNavDropdown(items: readonly (NavDropdownItem & {
   for (const item of items) {
     const section = technologySectionLabels[item.section ?? ''] ?? item.section ?? 'Other';
     const { section: _section, ...navItem } = item;
+    void _section;
     const current = grouped.get(section) ?? [];
     current.push(navItem);
     grouped.set(section, current);
@@ -357,6 +361,111 @@ export function makeTechnologiesNavDropdown(items: readonly (NavDropdownItem & {
 }
 
 /**
+ * The `AI` dropdown.
+ *
+ * A first-class top-level menu rather than one line inside `Platform`, because
+ * Oxy AI is an umbrella over six things with six different states and one
+ * `Oxy AI — Private models, API and SDKs` entry could describe none of them
+ * correctly.
+ *
+ * Code-owned like the rest of the shell. The CMS `navigation` document can add
+ * dropdowns of its own; this one is not among them, so a CMS edit cannot
+ * produce a second AI menu beside it.
+ */
+export const aiNavDropdown: NavDropdown = {
+  label: 'AI',
+  sections: [
+    {
+      heading: 'Platform',
+      items: [
+        {
+          title: 'Oxy Inference',
+          description: 'One API for every model we are approved to serve',
+          href: '/ai/inference',
+        },
+        {
+          title: 'Models',
+          description: 'The public catalogue, with policy and pricing per model',
+          href: '/ai/models',
+        },
+        {
+          title: 'Pricing',
+          description: 'Per-model, per-unit inference pricing',
+          href: '/ai/pricing',
+        },
+        {
+          title: 'Documentation',
+          description: 'Quickstarts, SDKs and the REST API',
+          href: '/developers/docs',
+        },
+      ],
+    },
+    {
+      heading: 'Infrastructure',
+      items: [
+        {
+          title: 'Managed inference',
+          description: 'Selected models served on infrastructure Oxy operates',
+          href: '/ai/enterprise#managed',
+        },
+        {
+          title: 'Dedicated inference',
+          description: 'Private endpoints and reserved capacity',
+          href: '/ai/enterprise#dedicated',
+        },
+        {
+          title: 'Bring your own key',
+          description: 'Keep your provider contract, use one integration',
+          href: '/ai/enterprise#capabilities',
+        },
+        {
+          title: 'Enterprise',
+          description: 'Policy controls, invoicing and auditability',
+          href: '/ai/enterprise',
+        },
+      ],
+    },
+    {
+      heading: 'Products',
+      items: [
+        {
+          title: 'Alia',
+          description: 'The assistant for people and teams',
+          href: 'https://alia.onl/',
+        },
+        {
+          title: 'Codea',
+          description: 'The coding and agent product',
+          href: '/codea',
+        },
+        {
+          title: 'Alia Models',
+          description: 'In development — no release yet',
+          href: '/ai#alia-models',
+        },
+      ],
+    },
+  ],
+  sidePanel: {
+    heading: 'Start here',
+    links: [
+      { label: 'Oxy AI overview', href: '/ai' },
+      { label: 'Trust and data policy', href: '/ai/trust' },
+      { label: 'Talk to sales', href: '/contact/sales' },
+    ],
+  },
+}
+
+/** Promo card injected into the `AI` dropdown. */
+export const aiNavCard: NavDropdownCard = {
+  href: '/ai/models',
+  image: '/images/nav-ecosystem-card.webp',
+  title: 'One API, every approved model',
+  description: 'One credential and one bill for the whole catalogue',
+  alt: 'The Oxy AI model catalogue',
+}
+
+/**
  * The Platform dropdown, in the repo.
  *
  * The platform menu is part of the site shell and is deliberately code-owned.
@@ -373,7 +482,7 @@ export const platformNavDropdown: NavDropdown = {
           href: '/commons',
           image: '/images/apps/commons-app.png',
         },
-        { title: 'Oxy AI', description: 'Private models, API and SDKs', href: '/ai', image: '/images/apps/oxy-ai.svg' },
+        { title: 'Oxy AI', description: 'Models, inference and the products built on them', href: '/ai', image: '/images/apps/oxy-ai.svg' },
         {
           title: 'Bloom',
           description: 'The design system behind every app',
@@ -430,6 +539,93 @@ export interface FooterColumn {
   links: FooterLink[]
 }
 
+/**
+ * The public footer is part of the website shell, so its structure is owned
+ * by the source code rather than by the CMS. Keep the legacy-compatible shape
+ * so product-specific footer variants can still override these columns.
+ */
+export const defaultFooterColumns: FooterColumn[] = [
+  {
+    title: 'Platform',
+    links: [
+      { label: 'Commons', href: '/commons' },
+      { label: 'Bloom UI', href: '/developers/docs/bloom/playground' },
+      { label: 'All apps', href: '/apps' },
+      { label: 'Changelog', href: '/changelog' },
+      { label: 'Status', href: '/status' },
+    ],
+  },
+  {
+    title: 'AI',
+    links: [
+      { label: 'Oxy AI', href: '/ai' },
+      { label: 'Oxy Inference', href: '/ai/inference' },
+      { label: 'Models', href: '/ai/models' },
+      { label: 'Pricing', href: '/ai/pricing' },
+      { label: 'For organizations', href: '/ai/enterprise' },
+      { label: 'Trust and data policy', href: '/ai/trust' },
+      { label: 'Alia', href: 'https://alia.onl/', isExternal: true },
+      { label: 'Codea', href: '/codea' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'About us', href: '/company' },
+      { label: 'For organizations', href: '/enterprise' },
+      { label: 'How Our Business Works', href: '/company/business' },
+      { label: 'Careers', href: '/company/careers' },
+      { label: 'Transparency Center', href: '/company/transparency' },
+      { label: 'Brand guidelines', href: '/brand' },
+      { label: 'Manifesto', href: '/company/manifesto' },
+      { label: 'Founding Charter', href: '/company/charter' },
+      { label: 'Influence and Responsibility', href: '/company/influence/' },
+      { label: 'The Initiative', href: '/initiative' },
+      { label: 'Partner programs', href: '/partners' },
+      { label: 'Startup program', href: '/partners#startup-program' },
+    ],
+  },
+  {
+    title: 'Community',
+    links: [
+      { label: 'Newsroom', href: '/newsroom' },
+      { label: 'Engineering blog', href: '/company/news' },
+      { label: 'Feature board', href: '/features' },
+      { label: 'Help center', href: '/help' },
+    ],
+  },
+  {
+    title: 'Developers',
+    links: [
+      { label: 'Documentation', href: '/developers/docs' },
+      { label: 'API reference', href: '/developers/docs/api' },
+      { label: 'Academy', href: '/academy' },
+      { label: 'Bloom playground', href: '/developers/docs/bloom/playground' },
+      { label: 'Open source', href: 'https://github.com/OxyHQ', isExternal: true },
+    ],
+  },
+  {
+    title: 'Apps',
+    links: [
+      { label: 'OxyOS', href: '/os' },
+      { label: 'Mention', href: '/mention' },
+      { label: 'Inbox', href: '/inbox' },
+      { label: 'Noted', href: 'https://noted.oxy.so', isExternal: true },
+      { label: 'Alia', href: 'https://alia.onl/', isExternal: true },
+      { label: 'Kaana', href: 'https://kaana.ai', isExternal: true },
+      { label: 'Astro', href: '/astro' },
+      { label: 'Allo', href: 'https://allo.you/', isExternal: true },
+      { label: 'FairCoin', href: 'https://fairco.in', isExternal: true },
+      { label: 'FAIRWallet', href: 'https://fairco.in/wallet', isExternal: true },
+      { label: 'Marketplace', href: '/mercaria' },
+      { label: 'Wholesale by Mercaria', href: 'https://dashboard.mercaria.co', isExternal: true },
+      { label: 'Homiio', href: '/homiio' },
+      { label: 'TNP', href: '/tnp' },
+      { label: 'Peable', href: '/peable' },
+    ],
+  },
+]
+
 export const simpleNavLinks: NavItem[] = [
   { label: 'Newsroom', href: '/newsroom' },
 ]
@@ -459,13 +655,13 @@ export const capabilities: Capability[] = [
   {
     title: 'AI Assistance',
     description:
-      'Oxy AI puts powerful, privacy-respecting artificial intelligence at your fingertips.',
+      'Oxy AI is the platform: one API for the models Oxy is approved to serve, and the products built on it.',
     features: [
       'Get intelligent answers, summaries, and creative help without sacrificing your privacy',
-      'Run AI models locally or through Oxy\'s privacy-first cloud infrastructure',
+      'Call every approved model through one API, with the serving provider and region disclosed per route',
       'Open-source models you can inspect, fine-tune, and self-host',
       'Context-aware assistance that works across the Oxy ecosystem',
-      'No data harvesting — your conversations are never used to train models',
+      'Oxy does not use API content to train Oxy models; each route publishes the upstream policy that applies to it',
     ],
   },
   {

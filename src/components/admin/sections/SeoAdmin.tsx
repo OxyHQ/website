@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAdminSeo, useUpsertSeo, useDeleteSeo, type SeoBrand, type SeoMeta, type SeoData } from '../../../api/hooks'
-import { PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
+import { PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'

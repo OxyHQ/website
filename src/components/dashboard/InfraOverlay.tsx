@@ -1,10 +1,11 @@
 import type { InfraStatusNode } from "../../api/hooks";
-import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
+import { infrastructureNodes } from "../../data/dashboard/infra-nodes";
 
 const STATUS_COLORS = {
-  online: '#10B981',
-  degraded: '#F59E0B',
-  offline: '#EF4444',
+  unknown: 'var(--muted-foreground)',
+  online: 'var(--color-success)',
+  degraded: 'var(--color-warning)',
+  offline: 'var(--color-destructive)',
 } as const;
 
 interface InfraOverlayProps {
@@ -23,10 +24,12 @@ export default function InfraOverlay({ nodes }: InfraOverlayProps) {
         Infrastructure
       </h2>
       <ul className="list-none pl-0 space-y-1">
-        {INFRA_NODES.map(infra => {
+        {infrastructureNodes(nodes).map(infra => {
           const status = statusMap.get(infra.region);
-          const state = status?.status ?? 'online';
-          const totalServices = (status?.droplets ?? 0) + (status?.apps ?? 0) + (status?.dbs ?? 0);
+          const state = status?.status ?? 'unknown';
+          const totalServices = status
+            ? status.instances ?? infra.services.length
+            : infra.services.length;
 
           return (
             <li key={infra.region} className="flex items-center w-full md:w-fit justify-between md:justify-start">

@@ -1,14 +1,13 @@
-import { useState, useMemo, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import { formatNumber } from "../../lib/utils";
-import type { PlatformStats } from "../../api/hooks";
+import type { PlatformActivityEvent, PlatformStats } from "../../api/hooks";
+import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
+import { useTranslation } from "../../lib/i18n";
 
 function InfoIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M8 7V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="8" cy="5" r="0.75" fill="currentColor" />
+      <path d="m6 4 4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -17,8 +16,6 @@ function PixelGridTransition({
   firstContent,
   secondContent,
   isActive,
-  gridSize = 30,
-  animationStepDuration = 0.3,
   className,
 }: {
   firstContent: React.ReactNode;
@@ -28,127 +25,9 @@ function PixelGridTransition({
   animationStepDuration?: number;
   className?: string;
 }) {
-  const [showPixels, setShowPixels] = useState(false);
-  const [animState, setAnimState] = useState<"idle" | "growing" | "shrinking">("idle");
-  const hasActivatedRef = useRef(false);
-
-  // The per-pixel color is randomly assigned once and must stay stable across
-  // re-renders. `Math.random()` is impure and can't run in the render body
-  // (or a `useMemo`), so the grid — including its random colors — is built in
-  // a lazy `useState` initializer that runs a single time on mount.
-  const [pixels] = useState(() => {
-    const total = gridSize * gridSize;
-    const result: { id: number; row: number; col: number; color: string }[] = [];
-    for (let n = 0; n < total; n++) {
-      const row = Math.floor(n / gridSize);
-      const col = n % gridSize;
-      const color = Math.random() > 0.85 ? "var(--primary)" : "var(--border)";
-      result.push({ id: n, row, col, color });
-    }
-    return result;
-  });
-
-  const [shuffledOrder, setShuffledOrder] = useState<number[]>([]);
-
-  // React 19 callback ref — keyed on isActive / animationStepDuration / pixels.
-  // Each transition tears down the prior shrink/hide timers and kicks off new
-  // ones synchronously when the sentinel mounts. The transition is only
-  // armed after the first activation (matches the original gating).
-  const animationTriggerRef = useCallback(
-    (node: HTMLSpanElement | null) => {
-      if (!node) return;
-      if (!hasActivatedRef.current && !isActive) return;
-      if (isActive) hasActivatedRef.current = true;
-
-      const indices = pixels.map((_, i) => i);
-      for (let i = indices.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [indices[i], indices[j]] = [indices[j], indices[i]];
-      }
-      setShuffledOrder(indices);
-      setShowPixels(true);
-      setAnimState("growing");
-
-      const shrinkTimer = setTimeout(() => setAnimState("shrinking"), animationStepDuration * 1000);
-      const hideTimer = setTimeout(() => {
-        setShowPixels(false);
-        setAnimState("idle");
-      }, animationStepDuration * 2000);
-
-      return () => {
-        clearTimeout(shrinkTimer);
-        clearTimeout(hideTimer);
-      };
-    },
-    [isActive, animationStepDuration, pixels],
-  );
-
-  const delayPerPixel = useMemo(() => animationStepDuration / pixels.length, [animationStepDuration, pixels.length]);
-  const orderMap = useMemo(() => {
-    const map = new Map<number, number>();
-    shuffledOrder.forEach((idx, order) => map.set(idx, order));
-    return map;
-  }, [shuffledOrder]);
-
   return (
-    <div className={`w-full overflow-hidden max-w-full relative ${className || ""}`}>
-      <span
-        key={`${isActive ? "on" : "off"}-${pixels.length}`}
-        ref={animationTriggerRef}
-        aria-hidden
-        hidden
-      />
-      <motion.div
-        className="h-full"
-        aria-hidden={isActive}
-        initial={{ opacity: 1 }}
-        animate={{ opacity: isActive ? 0 : 1 }}
-        transition={{ duration: 0, delay: animationStepDuration }}
-      >
-        {firstContent}
-      </motion.div>
-
-      <motion.div
-        className="absolute inset-0 w-full h-full z-[2] overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isActive ? 1 : 0 }}
-        transition={{ duration: 0, delay: animationStepDuration }}
-        style={{ pointerEvents: isActive ? "auto" : "none" }}
-        aria-hidden={!isActive}
-      >
-        {secondContent}
-      </motion.div>
-
-      <div
-        className="absolute inset-0 w-full h-full pointer-events-none z-[3]"
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-        }}
-      >
-        <AnimatePresence>
-          {showPixels &&
-            pixels.map((pixel) => {
-              const order = orderMap.get(pixel.id) ?? 0;
-              return (
-                <motion.div
-                  key={pixel.id}
-                  style={{
-                    backgroundColor: pixel.color,
-                    aspectRatio: "1 / 1",
-                    gridArea: `${pixel.row + 1} / ${pixel.col + 1}`,
-                  }}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{
-                    opacity: animState === "growing" ? 1 : 0,
-                    scale: animState === "growing" ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.01, delay: order * delayPerPixel }}
-                />
-              );
-            })}
-        </AnimatePresence>
-      </div>
+    <div className={`relative h-full w-full max-w-full overflow-hidden ${className || ""}`}>
+      {isActive ? secondContent : firstContent}
     </div>
   );
 }
@@ -160,25 +39,27 @@ function StatCard({
   infoContent,
   href,
   className,
+  filledAction = false,
 }: {
   title: string;
-  value?: number;
+  value?: number | string;
   children?: React.ReactNode;
   infoContent?: string;
   href?: string;
   className?: string;
+  filledAction?: boolean;
 }) {
   const [showInfo, setShowInfo] = useState(false);
 
   const statsContent = (
-    <div className="bg-surface p-4 md:p-6 w-full min-h-[120px] h-full">
+    <div className="h-full min-h-[120px] w-full bg-surface p-5 md:p-7" style={{ fontFamily: "Arial, sans-serif" }}>
       <div className="space-y-2">
-        <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-foreground pr-6">
+        <h2 className="my-0 pr-10 text-lg font-semibold tracking-tight text-muted-foreground/75">
           {title}
         </h2>
         {value !== undefined && (
-          <div className="text-3xl md:text-4xl tracking-normal font-mono tabular-nums">
-            {formatNumber(value)}
+          <div className="text-4xl font-semibold leading-none tracking-tight tabular-nums text-foreground md:text-[42px]">
+            {typeof value === "number" ? formatNumber(value) : value}
           </div>
         )}
         {children}
@@ -187,7 +68,7 @@ function StatCard({
   );
 
   const infoContentView = (
-    <div className="bg-surface p-4 md:p-6 w-full h-full overflow-y-auto flex flex-col gap-y-2">
+    <div className="flex h-full w-full flex-col gap-y-2 overflow-y-auto bg-surface p-5 md:p-7" style={{ fontFamily: "Arial, sans-serif" }}>
       {href ? (
         <a
           href={href}
@@ -204,14 +85,14 @@ function StatCard({
           {title}
         </span>
       )}
-      <span className="tracking-tight text-sm text-muted-foreground leading-relaxed line-clamp-6">
+      <span className="text-sm leading-relaxed tracking-tight text-muted-foreground line-clamp-6">
         {infoContent}
       </span>
     </div>
   );
 
   return (
-    <div className={`relative group rounded-md overflow-hidden ${className || ""}`}>
+    <div className={`group relative overflow-hidden rounded-[36px] shadow-sm ring-1 ring-border/30 ${className || ""}`}>
       <PixelGridTransition
         firstContent={statsContent}
         secondContent={infoContentView}
@@ -221,12 +102,12 @@ function StatCard({
         className="h-full"
       />
       {infoContent && (
-        <div className={`absolute top-2 right-2 transition-opacity duration-150 z-[20] isolate ${showInfo ? "opacity-100" : "opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"}`}>
+        <div className="absolute right-7 top-7 z-[20] isolate">
           <button
             aria-label={`Learn more about ${title}`}
             type="button"
             onClick={() => setShowInfo(!showInfo)}
-            className="p-1 m-0 bg-transparent text-muted-foreground border-none md:border md:border-solid border-border hover:text-foreground hover:bg-accent transition-colors duration-150 flex items-center justify-center outline-none focus-visible:ring cursor-pointer"
+            className={`m-0 flex size-10 cursor-pointer items-center justify-center rounded-full border p-0 text-muted-foreground outline-none transition-colors duration-150 hover:bg-accent hover:text-foreground focus-visible:ring ${filledAction || showInfo ? "border-transparent bg-accent" : "border-transparent bg-transparent"}`}
           >
             <InfoIcon />
           </button>
@@ -238,26 +119,171 @@ function StatCard({
 
 function MetricRow({ label, value }: { label: string; value: number }) {
   return (
-    <li className="flex flex-wrap items-center justify-between gap-x-3">
-      <h3 className="m-0 font-mono font-normal text-sm text-muted-foreground uppercase">
+    <div className="flex flex-wrap items-center justify-between gap-x-3">
+      <h3 className="m-0 text-sm font-medium text-muted-foreground">
         {label}
       </h3>
-      <div className="text-foreground text-sm font-mono tabular-nums">
+      <div className="text-sm font-medium tabular-nums text-foreground">
         {formatNumber(value)}
       </div>
-    </li>
+    </div>
+  );
+}
+
+function MetricTextRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-x-3">
+      <h3 className="m-0 text-sm font-medium text-muted-foreground">{label}</h3>
+      <div className="text-sm font-medium tabular-nums text-foreground">{value}</div>
+    </div>
+  );
+}
+
+function ratio(numerator: number, denominator: number, suffix = ""): string {
+  if (denominator <= 0) return `0${suffix}`;
+  return `${(numerator / denominator).toLocaleString(undefined, { maximumFractionDigits: 1 })}${suffix}`;
+}
+
+function SplitBar({ value, label }: { value: number; label: string }) {
+  const boundedValue = Math.max(0, Math.min(100, value));
+  return (
+    <div className="flex h-7 overflow-hidden rounded-md" role="img" aria-label={`${label}: ${boundedValue.toFixed(1)}%`}>
+      <span className="h-full bg-primary" style={{ width: `${boundedValue}%` }} />
+      <span className="h-full flex-1 bg-border/60" />
+    </div>
+  );
+}
+
+function Donut({ value }: { value: number }) {
+  const boundedValue = Math.max(0, Math.min(100, value));
+  return (
+    <div
+      className="relative grid size-32 shrink-0 place-items-center rounded-full"
+      role="img"
+      aria-label={`${boundedValue.toFixed(1)}% active users`}
+      style={{ background: `conic-gradient(var(--primary) ${boundedValue}%, color-mix(in srgb, var(--border) 60%, transparent) 0)` }}
+    >
+      <div className="grid size-[88px] place-items-center rounded-full bg-surface text-sm font-semibold tabular-nums text-foreground">
+        {boundedValue.toFixed(1)}%
+      </div>
+      <span aria-hidden="true" className="absolute left-1/2 top-0 h-5 w-1 -translate-x-1/2 bg-surface" />
+      <span
+        aria-hidden="true"
+        className="absolute left-1/2 top-0 h-5 w-1 -translate-x-1/2 origin-[50%_64px] bg-surface"
+        style={{ transform: `translateX(-50%) rotate(${boundedValue * 3.6}deg)` }}
+      />
+    </div>
+  );
+}
+
+function CountryBars({ countries }: { countries: PlatformStats["topCountries"] }) {
+  const visibleCountries = countries.slice(0, 6);
+  const maximum = Math.max(...visibleCountries.map((country) => country.count), 1);
+  const idleHeights = [30, 52, 42, 68, 48, 62, 38, 56, 46, 70, 50, 64, 44, 58, 36, 66, 48, 60, 40, 54];
+  return (
+    <div className="mt-4 flex h-24 items-end gap-2" aria-label="Activity distribution across leading countries">
+      {idleHeights.map((idleHeight, index) => {
+        const country = visibleCountries[index];
+        const height = country ? Math.max(12, (country.count / maximum) * 100) : idleHeight;
+        return (
+          <div
+            key={country?.location ?? index}
+            className={`min-h-1 flex-1 rounded-t-md ${country ? (index === 0 ? "bg-primary" : "bg-primary/45") : "bg-border/30"}`}
+            style={{ height: `${height}%` }}
+            title={country ? `${country.location}: ${formatNumber(country.count)}` : undefined}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function ActivityChart({ events, tone = "var(--chart-1)", id }: { events: PlatformActivityEvent[]; tone?: string; id: string }) {
+  const observedValues = events.slice(-16).map((event) => event.requests);
+  if (observedValues.length === 0) {
+    return <div className="mt-8 text-sm font-medium text-muted-foreground">Waiting for live activity…</div>;
+  }
+  const values = observedValues.length === 1 ? [observedValues[0], observedValues[0]] : observedValues;
+  const maximum = Math.max(...values, 1);
+  const points = values.map((value, index) => {
+    const x = (index / (values.length - 1)) * 100;
+    const y = 44 - (value / maximum) * 40;
+    return `${x},${y}`;
+  }).join(" ");
+  const area = `0,48 ${points} 100,48`;
+  return (
+    <svg className="-mx-7 -mb-7 mt-3 h-32 w-[calc(100%+3.5rem)] overflow-visible" viewBox="0 0 100 48" preserveAspectRatio="none" role="img" aria-label="Recent anonymous request activity">
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={tone} stopOpacity="0.35" />
+          <stop offset="1" stopColor={tone} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <polygon points={area} fill={`url(#${id})`} />
+      <polyline points={points} fill="none" stroke={tone} strokeWidth="1.5" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SegmentedScale({ value, maximum, label }: { value: number; maximum: number; label: string }) {
+  const segments = 22;
+  const filled = maximum > 0 ? Math.round((value / maximum) * segments) : 0;
+  return (
+    <div className="mt-5" role="img" aria-label={`${label}: ${formatNumber(value)} of ${formatNumber(maximum)}`}>
+      <div className="flex h-16 items-stretch gap-1">
+        {Array.from({ length: segments }, (_, index) => (
+          <span key={index} className={`flex-1 rounded-sm ${index < filled ? "bg-primary" : "bg-border/40"}`} />
+        ))}
+      </div>
+    </div>
   );
 }
 
 export function TotalRequests({ stats }: { stats: PlatformStats }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-2">
       <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-muted-foreground">
-        Total Users
+        {t('dashboard.totalUsers')}
       </h2>
       <div className="text-4xl md:text-5xl tracking-normal font-mono tabular-nums">
         {formatNumber(stats.totalUsers)}
       </div>
+    </div>
+  );
+}
+
+export function LiveOrigins({ events }: { events: PlatformActivityEvent[] }) {
+  const { t, locale } = useTranslation();
+  const latestClientsByOrigin = new Map<string, { country: string; clients: number }>();
+  for (let index = events.length - 1; index >= 0; index -= 1) {
+    const event = events[index];
+    if (!event.sourceCountry || !event.sourceRegion || latestClientsByOrigin.has(event.sourceRegion)) continue;
+    latestClientsByOrigin.set(event.sourceRegion, {
+      country: event.sourceCountry,
+      clients: event.activeClients ?? 0,
+    });
+  }
+  const connectionsByCountry = new Map<string, number>();
+  for (const { country, clients } of latestClientsByOrigin.values()) {
+    connectionsByCountry.set(country, (connectionsByCountry.get(country) ?? 0) + clients);
+  }
+  const countries = [...connectionsByCountry.entries()]
+    .sort((left, right) => right[1] - left[1])
+    .slice(0, 4);
+  const displayNames = typeof Intl.DisplayNames === 'function'
+    ? new Intl.DisplayNames([locale], { type: 'region' })
+    : null;
+
+  return (
+    <div className="hidden text-right min-[961px]:block">
+      <h2 className="mb-2 font-mono text-sm font-medium uppercase tracking-tight text-muted-foreground">{t('dashboard.networkOrigins')}</h2>
+      {countries.length > 0 ? countries.map(([country, connections]) => (
+        <div key={country} className="flex justify-end gap-4 font-mono text-sm">
+          <span className="text-primary">{displayNames?.of(country) ?? country}</span>
+          <span className="w-[7ch] tabular-nums text-foreground">{formatNumber(connections)}</span>
+        </div>
+      )) : <p className="font-mono text-xs text-muted-foreground">{t('dashboard.waitingOrigins')}</p>}
     </div>
   );
 }
@@ -280,15 +306,27 @@ function LocationRow({ location, count }: { location: string; count: number }) {
   );
 }
 
-export function TopCountries({ stats }: { stats: PlatformStats }) {
+export function LiveActivity({ events }: { events: PlatformActivityEvent[] }) {
+  const { t } = useTranslation();
+  const activityByRegion = new Map<string, number>();
+  for (const event of events) {
+    activityByRegion.set(event.region, (activityByRegion.get(event.region) ?? 0) + event.requests);
+  }
+  const regions = [...activityByRegion.entries()]
+    .sort((left, right) => right[1] - left[1])
+    .map(([region, count]) => ({
+      location: INFRA_NODES.find((node) => node.region === region)?.label ?? region,
+      count,
+    }));
+
   return (
     <div className="space-y-2">
       <h2 className="my-0 font-mono font-medium text-sm tracking-tight uppercase text-muted-foreground">
-        Top Locations by Sessions
+        {t('dashboard.infrastructureActivity')}
       </h2>
       <ul className="list-none pl-0 space-y-1">
-        {stats.topCountries.length > 0 ? (
-          stats.topCountries.map((entry) => (
+        {regions.length > 0 ? (
+          regions.map((entry) => (
             <LocationRow
               key={entry.location}
               location={entry.location}
@@ -296,7 +334,7 @@ export function TopCountries({ stats }: { stats: PlatformStats }) {
             />
           ))
         ) : (
-          <li className="text-sm text-muted-foreground font-mono">No location data yet</li>
+          <li className="text-sm text-muted-foreground font-mono">{t('dashboard.waitingActivity')}</li>
         )}
       </ul>
     </div>
@@ -304,6 +342,7 @@ export function TopCountries({ stats }: { stats: PlatformStats }) {
 }
 
 export function RegionCount({ stats }: { stats: PlatformStats }) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center w-full md:w-fit justify-between md:justify-start mt-2">
       <span aria-hidden="true" className="inline-block translate-y-[-2px] translate-x-[2px]">
@@ -311,68 +350,71 @@ export function RegionCount({ stats }: { stats: PlatformStats }) {
       </span>
       <div className="text-left">
         <span className="inline-block my-0 font-medium text-[16px]">&nbsp;{stats.regions || 0}</span>
-        <span className="font-medium text-[16px] text-muted-foreground tracking-tight">&nbsp;Active Regions</span>
+        <span className="font-medium text-[16px] text-muted-foreground tracking-tight">&nbsp;{t('dashboard.activeRegions')}</span>
       </div>
     </div>
   );
 }
 
-export function StatsGrid({ stats }: { stats: PlatformStats }) {
+export function StatsGrid({ stats, events }: { stats: PlatformStats; events: PlatformActivityEvent[] }) {
+  const leadingCountry = stats.topCountries[0]?.location ?? "Awaiting data";
+  const communicationTotal = stats.totalMessages + stats.totalNotifications;
+  const messageShare = communicationTotal > 0 ? (stats.totalMessages / communicationTotal) * 100 : 0;
+  const contentTotal = stats.totalFiles + stats.totalMessages + stats.totalFollows;
+  const fileShare = contentTotal > 0 ? (stats.totalFiles / contentTotal) * 100 : 0;
+  const recentRequests = events.reduce((total, event) => total + event.requests, 0);
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-      <div className="flex flex-col gap-3">
-        <StatCard
-          title="Active Sessions"
-          value={stats.activeSessions}
-          infoContent="The number of currently active user sessions across all platforms and devices."
-          className="flex-1"
-        />
-        <StatCard
-          title="AI Models"
-          infoContent="AI models available in the Oxy ecosystem for intelligent task processing."
-          className="flex-1"
-        >
-          <ul className="space-y-1 list-none pl-0 mt-2">
-            <MetricRow label="Models" value={stats.aiModels} />
-          </ul>
+    <div className="dashboard-metrics-theme mx-auto max-w-[1000px] space-y-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:auto-rows-[280px] lg:grid-cols-[4fr_4fr_6fr]">
+        <StatCard title="Total Users" value={stats.totalUsers} infoContent="Registered users across the Oxy ecosystem." filledAction>
+          <div className="mt-3 flex items-center gap-2 text-sm font-semibold text-primary">
+            <span>{formatNumber(stats.activeSessions)} active now</span>
+            <span aria-hidden="true">↗</span>
+          </div>
+          <ActivityChart events={events} tone="var(--success)" id="users-activity-area" />
         </StatCard>
-      </div>
+        <StatCard title="Content Value" value={contentTotal} infoContent="Files, messages and community connections represented in the platform totals.">
+          <div className="mt-6 space-y-3">
+            <div className="flex justify-between text-sm font-medium text-muted-foreground">
+              <span>Files {fileShare.toFixed(1)}%</span>
+              <span>Social {(100 - fileShare).toFixed(1)}%</span>
+            </div>
+            <SplitBar value={fileShare} label="Files compared with messages and community connections" />
+            <MetricTextRow label="Files / user" value={ratio(stats.totalFiles, stats.totalUsers)} />
+          </div>
+        </StatCard>
+        <StatCard title="Live Request Activity" value={recentRequests} infoContent="Anonymous request buckets received over the live socket connection.">
+          <ActivityChart events={events} id="requests-activity-area" />
+        </StatCard>
 
-      <div className="flex flex-col gap-3">
-        <StatCard
-          title="Messages"
-          value={stats.totalMessages}
-          infoContent="Total email messages processed by the Oxy platform, including sent, received, and synced messages."
-          className="flex-1"
-        >
-          <ul className="space-y-1 list-none pl-0 mt-4">
-            <MetricRow label="Notifications" value={stats.totalNotifications} />
-            <MetricRow label="Files stored" value={stats.totalFiles} />
-            <MetricRow label="Follows" value={stats.totalFollows} />
-          </ul>
+        <StatCard title="Developer Platform" value={stats.totalDeveloperApps} infoContent="Developer applications, transactions and AI models currently available." filledAction>
+          <div className="mt-3 text-sm font-semibold text-primary">{formatNumber(stats.totalTransactions)} transactions</div>
+          <SegmentedScale value={stats.totalDeveloperApps} maximum={stats.totalDeveloperApps + stats.aiModels} label="Developer applications" />
+          <div className="mt-3 flex justify-between text-sm text-muted-foreground">
+            <span>{stats.aiModels} AI models</span>
+            <span>{ratio(stats.totalDeveloperApps * 1_000, stats.totalUsers)} / 1K users</span>
+          </div>
+        </StatCard>
+        <StatCard title="Communication Mix" infoContent="Messages and notifications processed across Oxy communication products.">
+          <div className="mt-4 flex items-center gap-5">
+            <Donut value={messageShare} />
+            <div className="min-w-0 flex-1 space-y-3">
+              <MetricRow label="Messages" value={stats.totalMessages} />
+              <MetricRow label="Notifications" value={stats.totalNotifications} />
+            </div>
+          </div>
+        </StatCard>
+        <StatCard title="Geographic Activity" value={stats.topCountries.length} infoContent="Privacy-preserving aggregate activity across countries and infrastructure regions.">
+          <CountryBars countries={stats.topCountries} />
+          <div className="mt-3 flex justify-between text-sm text-muted-foreground">
+            <span>{leadingCountry}</span>
+            <span>{stats.regions} active regions</span>
+          </div>
         </StatCard>
       </div>
-
-      <div className="flex flex-col gap-3">
-        <StatCard
-          title="Platform Activity"
-          infoContent="Transactions and developer integrations across the Oxy platform."
-          className="flex-1"
-        >
-          <ul className="space-y-1 list-none pl-0 mt-2">
-            <MetricRow label="Transactions" value={stats.totalTransactions} />
-            <MetricRow label="Developer Apps" value={stats.totalDeveloperApps} />
-          </ul>
-        </StatCard>
-        <StatCard
-          title="File Storage"
-          value={stats.totalFiles}
-          infoContent="Total files uploaded and managed across the Oxy platform including avatars, attachments, and media."
-          className="flex-1"
-        >
-          <p className="text-muted-foreground text-sm font-mono mt-1">Files stored</p>
-        </StatCard>
-      </div>
+      <p className="m-0 text-right font-mono text-xs text-muted-foreground">
+        Updated {new Date(stats.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+      </p>
     </div>
   );
 }

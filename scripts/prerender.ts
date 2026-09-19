@@ -23,8 +23,8 @@
  *          with per-lesson metadata from MDX frontmatter.
  *        • Newsroom posts — fetched from the live website API
  *          (`https://website-api.oxy.so/api/newsroom`).
- *        • Careers — fetched from `/api/jobs` (skipped gracefully if the
- *          endpoint isn't deployed).
+ *        • Careers — Oxy's open roles from `/api/jobs`, which reads Clarity
+ *          Jobs (skipped gracefully if it is unreachable).
  *        • Docs — every `(package, version, slug)` from
  *          `src/content/_synced/index.json`, using the page's title and
  *          description from the synced metadata.
@@ -47,12 +47,47 @@ import path from 'node:path'
 import { build as viteBuild } from 'vite'
 import type { SyncedIndex } from './types.ts'
 import { buildSitemapXml, classifyRoute, toW3CDate, type SitemapEntry } from './sitemap.ts'
+import { hasLocalizedVariants } from '../src/lib/localizedRoute'
+import { buildRedirectsFile } from './redirects.ts'
 import type { SeoData } from '../src/lib/seo'
 import type { SEOLocaleSeed } from '../src/entry-server'
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, isRtlLocale, type Locale } from '../src/lib/i18n/types'
 import { featureRequestDescription, featureRequestPath } from '../src/lib/featureRequest'
 import { ACADEMY_COURSES } from '../src/content/academy-courses'
+import { bloomComponentRoutes } from './bloom-component-routes.ts'
+import { BUILD_SNAPSHOT } from '../src/lib/ai/snapshot'
+import { modelPath } from '../src/lib/ai/modelId'
+import { publisherName } from '../src/lib/ai/catalog'
 import { APP_CARD_IMAGES } from '../src/data/appCardImages'
+import { brandConfig } from '../src/lib/seo'
+import type { NewsroomPost, NewsroomPostSummary } from '../src/data/newsroom'
+import {
+  NEWSROOM_PRERENDER_MARKER,
+  renderNewsroomBootstrapTemplate,
+  renderNewsroomIndexBootstrapTemplate,
+} from './newsroom-prerender'
+import { buildNewsroomRss } from './newsroom-feed'
+import { resolveResponsiveImage } from '../src/lib/responsiveImage'
+import {
+  buildNewsroomArticleStructuredData,
+  buildNewsroomCollectionStructuredData,
+  normalizeNewsroomSeoTitle,
+} from '../src/lib/newsroomSeo'
+import {
+  careerEmploymentLabel,
+  careerJobMarkdown,
+  careerJobPath,
+  careerLocationLabel,
+  careerSeoDescription,
+  careerTeam,
+  type CareerJob,
+} from '../src/lib/careers'
+
+// React 19.2's development JSX runtime expects a development renderer
+// dispatcher. This script imports a production SSR bundle into Bun, so make
+// the runtime mode explicit before that dynamic import; mixing the development
+// JSX runtime with the production server renderer crashes on `getOwner()`.
+process.env.NODE_ENV = 'production'
 
 /** Course metadata by slug, so academy titles match what the SPA renders. */
 const COURSE_BY_SLUG = new Map(ACADEMY_COURSES.map((course) => [course.slug, course]))
@@ -65,6 +100,7 @@ const SYNCED_INDEX = path.join(WEBSITE_ROOT, 'src', 'content', '_synced', 'index
 const SYNCED_DIR = path.join(WEBSITE_ROOT, 'src', 'content', '_synced')
 const HELP_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'help')
 const ACADEMY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'academy')
+const COMPANY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'company')
 /**
  * Backend origin for the CMS-driven content baked into the prerendered HTML.
  * Reads the same `VITE_API_URL` the SPA does (`src/api/client.ts`) so a staging
@@ -72,7 +108,9 @@ const ACADEMY_DIR = path.join(WEBSITE_ROOT, 'src', 'content', 'academy')
  * the fallbacks are the production values used when the var is unset.
  */
 const API_BASE = process.env.VITE_API_URL || 'https://website-api.oxy.so'
-const NEWSROOM_API = `${API_BASE}/api/newsroom?limit=500`
+// Prerender needs article Markdown and editorial SEO fields. The public list is
+// intentionally lightweight; `view=full` is the explicit build-time contract.
+const NEWSROOM_API = `${API_BASE}/api/newsroom?limit=500&view=full`
 const JOBS_API = `${API_BASE}/api/jobs`
 const PRODUCTS_API = `${API_BASE}/api/products?surface=products`
 const FEATURES_API = `${API_BASE}/api/features`
@@ -104,14 +142,18 @@ interface SEOProps {
   modifiedTime?: string
   author?: string
   noIndex?: boolean
+  /** Absolute canonical for a page whose content is published on another site. */
+  canonicalUrl?: string
 }
 
 /** Renders a page's markdown with the app's own article components. */
 type RenderMarkdownFn = (markdown: string) => string
+type RenderStructuredDataFn = (data: Record<string, unknown>) => string
 
 interface SsrRenderers {
   renderSEO: RenderSEOFn
   renderMarkdownBody: RenderMarkdownFn
+  renderStructuredData: RenderStructuredDataFn
 }
 
 interface RenderSEOFn {
@@ -166,10 +208,10 @@ async function buildSsrBundle(): Promise<SsrRenderers> {
     ssr: {
       // Bundle our internal packages so Vite resolves their submodule
       // re-exports correctly. External packages from Node's resolver
-      // can't follow `@oxyhq/services/dist/.../OxyProvider`-style imports.
+      // can't follow `@oxy.so/services/dist/.../OxyProvider`-style imports.
       noExternal: [
-        '@oxyhq/services',
-        '@oxyhq/core',
+        '@oxy.so/services',
+        '@oxy.so/core',
         'react-helmet-async',
       ],
     },
@@ -183,7 +225,14 @@ async function buildSsrBundle(): Promise<SsrRenderers> {
   if (typeof mod.renderMarkdownBody !== 'function') {
     throw new Error('[prerender] SSR bundle did not export renderMarkdownBody()')
   }
-  return { renderSEO: mod.renderSEO, renderMarkdownBody: mod.renderMarkdownBody }
+  if (typeof mod.renderStructuredData !== 'function') {
+    throw new Error('[prerender] SSR bundle did not export renderStructuredData()')
+  }
+  return {
+    renderSEO: mod.renderSEO,
+    renderMarkdownBody: mod.renderMarkdownBody,
+    renderStructuredData: mod.renderStructuredData,
+  }
 }
 
 /* ── Static route SEO props ───────────────────────────────────────── */
@@ -232,11 +281,11 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
       'Short answers about Oxy: what it is, what it costs, how the apps fit together, how your data is handled and how to build on the platform.',
     canonicalPath: '/faqs',
   },
-  '/pay': {
-    title: 'Oxy Pay',
+  '/peable': {
+    title: 'Peable',
     description:
       'Payments across the Oxy ecosystem, with every fee shown before you confirm. In development: nothing is open for deposits yet.',
-    canonicalPath: '/pay',
+    canonicalPath: '/peable',
   },
   '/mention': {
     title: 'Mention, an open social network',
@@ -252,24 +301,61 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     canonicalPath: '/homiio',
     ogImage: `${SITE_URL}${APP_CARD_IMAGES['/homiio']}`,
   },
+  '/brand': { title: 'Oxy brand guidelines', description: 'The Oxy identity: principles, Bloom colour recipes, typography, motion, voice, imagery and social communication.', canonicalPath: '/brand' },
   '/inbox': {
-    title: 'Inbox, end-to-end encrypted email',
+    title: 'Inbox, email with room to think',
     description:
-      'Email, chat and federated messages in one calm place. Encrypted by default, with triage that surfaces what actually matters.',
+      'Inbox by Oxy. Read, organise and reply to your email in a familiar, open-source client.',
     canonicalPath: '/inbox',
     ogImage: `${SITE_URL}${APP_CARD_IMAGES['/inbox']}`,
   },
   '/ai': {
     title: 'Oxy AI',
     description:
-      'Private AI for people and developers: open models you can inspect, fine-tune and self-host, with conversations that never train anyone else.',
+      'One platform for AI models, inference and intelligent products. A unified API, a public model catalogue, managed and dedicated serving, and the products Oxy builds on top of it.',
     canonicalPath: '/ai',
   },
-  '/ai/pricing': {
-    title: 'Oxy AI pricing',
+  '/ai/inference': {
+    title: 'Oxy Inference',
     description:
-      'What Oxy AI costs per plan, what each tier includes and how usage is measured. Bring your own model on the higher tiers.',
+      'One OpenAI-compatible API for every model Oxy is approved to serve, with routing, revision pinning, usage receipts and per-application attribution.',
+    canonicalPath: '/ai/inference',
+  },
+  '/ai/models': {
+    title: 'AI models',
+    description:
+      'The public Oxy AI model catalogue: publisher, capabilities, serving regions, data policy, pricing and availability for every model Oxy is approved to serve.',
+    canonicalPath: '/ai/models',
+  },
+  '/ai/pricing': {
+    title: 'Oxy Inference pricing',
+    description:
+      'What Oxy Inference costs: per-model, per-unit pricing from the Oxy pricing source, with the price version it belongs to and an estimator for a monthly workload.',
     canonicalPath: '/ai/pricing',
+  },
+  '/ai/enterprise': {
+    title: 'Oxy AI for organizations',
+    description:
+      'Shared, managed and dedicated inference for organizations: private endpoints, reserved capacity, region and provider policy, bring your own key, invoicing and auditability.',
+    canonicalPath: '/ai/enterprise',
+  },
+  '/ai/trust': {
+    title: 'Oxy AI — data and policy',
+    description:
+      'What Oxy does with what you send, what the provider serving a routed request does with it, and which of the two any given statement is about.',
+    canonicalPath: '/ai/trust',
+  },
+  '/enterprise': {
+    title: 'Oxy for organizations',
+    description:
+      'What Oxy sells to organizations — AI and inference, Oxy ID, the platform and SDKs — with the state each of them is genuinely in.',
+    canonicalPath: '/enterprise',
+  },
+  '/contact/sales': {
+    title: 'Talk to Oxy sales',
+    description:
+      'Request a scoped answer about Oxy AI, managed or dedicated inference, or the Oxy platform for your organization.',
+    canonicalPath: '/contact/sales',
   },
   '/os': {
     title: 'Oxy OS',
@@ -360,6 +446,12 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     description:
       'Why we build the way we do, what we refuse to trade away, and how to hold us to it. The short version of the Founding Charter.',
     canonicalPath: '/company/manifesto',
+  },
+  '/company/influence': {
+    title: 'The Oxy Declaration on Influence and Responsibility',
+    description:
+      'Freedom to create, responsibility for consequences, and fair treatment for the people affected by public influence. A founding draft for Oxy and Mention.',
+    canonicalPath: '/company/influence',
   },
   '/company/charter': {
     title: 'Founding Charter',
@@ -521,40 +613,14 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
 
 /* ── Dynamic route resolvers ──────────────────────────────────────── */
 
-interface NewsroomApiPost {
-  slug: string
-  status?: string
-  title: string
+type NewsroomApiPost = Omit<NewsroomPost, 'coverImage' | 'ogImage'> & {
   /** The post's body, in markdown. The list endpoint already returns it. */
-  content?: string
-  categories?: string[]
-  description?: string
-  resume?: string
-  metaTitle?: string
   ogImage?: string | { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } } | null
-  coverImage?: { url?: string } | string | null
-  publishedAt?: string
-  updatedAt?: string
+  coverImage?: string | { url?: string; thumbnails?: { sm?: string; md?: string; lg?: string } } | null
 }
 
 interface NewsroomApiResponse {
   posts: NewsroomApiPost[]
-}
-
-/**
- * Subset of `/api/jobs` used for SEO. Mirrors `Job` in `src/api/hooks.ts` —
- * the route returns a bare array (the backend already filters `active: true`).
- * `description` is deliberately absent: the API returns it as a block array,
- * not a string, so it can never be used as meta description text.
- */
-interface JobApiEntry {
-  slug: string
-  title: string
-  department: string
-  subtitle?: string
-  location: string
-  type?: string
-  engagement?: string
 }
 
 async function fetchNewsroomPosts(): Promise<NewsroomApiPost[]> {
@@ -647,14 +713,15 @@ async function fetchProducts(): Promise<ProductApiEntry[]> {
   }
 }
 
-async function fetchJobs(): Promise<JobApiEntry[]> {
+/** The route returns a bare array of Oxy's active openings. */
+async function fetchJobs(): Promise<CareerJob[]> {
   try {
     const res = await fetch(JOBS_API)
     if (!res.ok) return []
-    const jobs = (await res.json()) as JobApiEntry[]
+    const jobs = (await res.json()) as CareerJob[]
     // Skip malformed entries rather than interpolating `undefined` into a
     // <title>; every field below is required to build the SEO props.
-    return jobs.filter((job) => job.slug && job.title && job.department && job.location)
+    return jobs.filter((job) => job.id && job.title && job.canonicalUrl)
   } catch (err) {
     console.warn('[prerender] jobs fetch failed:', (err as Error).message)
     return []
@@ -778,6 +845,26 @@ async function enumerateDocsRoutes(): Promise<RouteEntry[]> {
       },
     })
 
+    // The unversioned landing, for a versioned package, is a real route
+    // (`developers/docs/:package`) that the SPA redirects to the latest
+    // version — and synced docs link to it across packages
+    // (`](/developers/docs/core)` from the services tree). Without a document
+    // those links 404 now that `_redirects` no longer rewrites the docs tree.
+    // It canonicalises to the versioned landing, so the sitemap filter drops
+    // it and it competes with nothing.
+    if (versioned) {
+      const unversioned = `/developers/docs/${pkg.shortName}`
+      out.set(unversioned, {
+        url: unversioned,
+        seo: {
+          title: `${pkg.displayName}, Oxy Docs`,
+          description:
+            pkg.description ?? `Documentation for ${pkg.displayName}, part of the Oxy ecosystem.`,
+          canonicalPath: landingUrl,
+        },
+      })
+    }
+
     for (const version of pkg.versions) {
       for (const page of version.pages as DocsPageMeta[]) {
         // Resolve the URL for this (package, version, slug) tuple.
@@ -829,6 +916,57 @@ async function enumerateDocsRoutes(): Promise<RouteEntry[]> {
   }
 
   return Array.from(out.values())
+}
+
+/**
+ * The browser compiles these files as MDX and replaces the article components
+ * with their interactive equivalents. The no-JavaScript document only needs
+ * the surrounding prose: omit self-contained visual blocks, remove citation
+ * markers, and keep the markdown inside the Takeaways wrapper.
+ */
+function companyMdxToPrerenderMarkdown(source: string): string {
+  return stripFrontmatter(source)
+    .replace(/<ArticleCitation\b[^>]*>[\s\S]*?<\/ArticleCitation>/g, '')
+    .replace(/<Article[A-Z][A-Za-z0-9]*\b[\s\S]*?\/>/g, '')
+    .replace(/<\/?Takeaways>/g, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
+/** Long-form company documents whose source of truth is local MDX. */
+async function enumerateCompanyArticleRoutes(): Promise<RouteEntry[]> {
+  const slugs = ['manifesto', 'charter', 'influence', 'transparency', 'business'] as const
+  const routes: RouteEntry[] = []
+
+  for (const slug of slugs) {
+    const url = `/company/${slug}`
+    const fallbackSeo = STATIC_ROUTE_SEO[url]
+    const file = path.join(COMPANY_DIR, `${slug}.mdx`)
+    if (!fallbackSeo || !existsSync(file)) continue
+
+    const source = await readFile(file, 'utf8')
+    const frontmatter = parseFrontmatter(source)
+    const title = typeof frontmatter.title === 'string' ? frontmatter.title : fallbackSeo.title
+    const description = typeof frontmatter.description === 'string'
+      ? frontmatter.description
+      : fallbackSeo.description
+    const date = typeof frontmatter.date === 'string' ? frontmatter.date : undefined
+    const readingTime = typeof frontmatter.readingTime === 'string' ? frontmatter.readingTime : undefined
+    const ogImage = typeof frontmatter.ogImage === 'string' ? frontmatter.ogImage : fallbackSeo.ogImage
+
+    routes.push({
+      url,
+      seo: { ...fallbackSeo, title, description, ogImage },
+      body: {
+        heading: title,
+        meta: [date, readingTime].filter(Boolean).join(' · ') || undefined,
+        standfirst: description,
+        markdown: companyMdxToPrerenderMarkdown(source),
+      },
+    })
+  }
+
+  return routes
 }
 
 async function enumerateHelpRoutes(): Promise<Array<{ url: string; seo: SEOProps }>> {
@@ -908,20 +1046,62 @@ function prettifySlug(slug: string): string {
     .join(' ')
 }
 
-function newsroomMediaUrl(field: unknown): string | undefined {
+function newsroomMediaUrl(field: unknown, preferThumbnail = false): string | undefined {
   if (typeof field === 'string' && field.length > 0) return field
   if (!field || typeof field !== 'object') return undefined
 
   const media = field as { url?: unknown; thumbnails?: { sm?: unknown; md?: unknown; lg?: unknown } }
-  if (typeof media.url === 'string' && media.url.length > 0) return media.url
-  for (const thumbnail of [media.thumbnails?.lg, media.thumbnails?.md, media.thumbnails?.sm]) {
-    if (typeof thumbnail === 'string' && thumbnail.length > 0) return thumbnail
+  const thumbnails = [media.thumbnails?.lg, media.thumbnails?.md, media.thumbnails?.sm]
+  const candidates = preferThumbnail ? [...thumbnails, media.url] : [media.url, ...thumbnails]
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.length > 0) return candidate
   }
   return undefined
 }
 
 function newsroomImage(post: NewsroomApiPost): string | undefined {
   return newsroomMediaUrl(post.ogImage) ?? newsroomMediaUrl(post.coverImage)
+}
+
+function normalizeNewsroomPost(post: NewsroomApiPost): NewsroomPost {
+  const cover = resolveResponsiveImage(post.coverImage)
+  return {
+    ...post,
+    // The cover is an in-page visual, so use the generated 800px variant when
+    // available. The original remains the social image below, where crawlers
+    // need the largest asset. This avoids bootstrapping multi-megabyte PNGs.
+    coverImage: cover.src,
+    coverImageSrcSet: cover.srcSet,
+    ogImage: newsroomMediaUrl(post.ogImage),
+  }
+}
+
+function newsroomSummary(post: NewsroomApiPost): NewsroomPostSummary {
+  const normalized = normalizeNewsroomPost(post)
+  return {
+    _id: normalized._id,
+    slug: normalized.slug,
+    title: normalized.title,
+    resume: normalized.resume,
+    coverImage: normalized.coverImage,
+    coverImageSrcSet: normalized.coverImageSrcSet,
+    imageAlt: normalized.imageAlt,
+    categories: normalized.categories,
+    featured: normalized.featured,
+    themePreset: normalized.themePreset,
+    publishedAt: normalized.publishedAt,
+  }
+}
+
+function orderedNewsroomSummaries(posts: NewsroomApiPost[]): NewsroomPostSummary[] {
+  const sorted = posts
+    .map(newsroomSummary)
+    .sort((left, right) => new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime())
+  const featuredIndex = sorted.findIndex((post) => post.featured)
+  if (featuredIndex <= 0) return sorted
+  const featured = sorted[featuredIndex]
+  if (!featured) return sorted
+  return [featured, ...sorted.slice(0, featuredIndex), ...sorted.slice(featuredIndex + 1)]
 }
 
 function newsroomDateline(post: NewsroomApiPost): string | undefined {
@@ -936,26 +1116,39 @@ function newsroomDateline(post: NewsroomApiPost): string | undefined {
 }
 
 function buildNewsroomRoutes(posts: NewsroomApiPost[]): RouteEntry[] {
-  return posts.map((post) => ({
-    url: `/newsroom/${post.slug}`,
-    body: post.content
-      ? {
-          heading: post.title,
-          meta: newsroomDateline(post),
-          standfirst: post.resume,
-          markdown: post.content,
-        }
-      : undefined,
-    seo: {
-      title: post.metaTitle || post.title,
-      description: post.description || post.resume || post.title,
-      canonicalPath: `/newsroom/${post.slug}`,
-      ogImage: newsroomImage(post),
-      ogType: 'article',
-      publishedTime: post.publishedAt,
-      modifiedTime: post.updatedAt,
-    },
-  }))
+  const brand = brandConfig()
+
+  return posts.map((post) => {
+    const image = newsroomImage(post)
+    const normalizedPost = normalizeNewsroomPost(post)
+    return {
+      url: `/newsroom/${post.slug}`,
+      body: post.content
+        ? {
+            heading: post.title,
+            meta: newsroomDateline(post),
+            standfirst: post.resume,
+            markdown: post.content,
+            newsroomPost: normalizedPost,
+          }
+        : undefined,
+      seo: {
+        title: normalizeNewsroomSeoTitle(post.metaTitle || post.title, brand.siteName),
+        description: post.metaDescription || post.description || post.resume || post.title,
+        canonicalPath: `/newsroom/${post.slug}`,
+        ogImage: image,
+        ogType: 'article',
+        publishedTime: post.publishedAt,
+        modifiedTime: post.updatedAt,
+        author: post.authorUsername,
+      },
+      structuredData: buildNewsroomArticleStructuredData(
+        normalizedPost,
+        brand,
+      ),
+      prerenderKind: 'newsroom-post' as const,
+    }
+  })
 }
 
 function buildFeatureRoutes(features: FeatureApiEntry[]): Array<{ url: string; seo: SEOProps }> {
@@ -994,19 +1187,34 @@ function buildAppRoutes(products: ProductApiEntry[]): Array<{ url: string; seo: 
   })
 }
 
-function buildJobRoutes(jobs: JobApiEntry[]): Array<{ url: string; seo: SEOProps }> {
-  return jobs.map((job) => ({
-    url: `/company/careers/${job.slug}`,
-    seo: {
-      // Mirrors `CareerDetailPage`'s `<SEO>` props verbatim so the prerendered
-      // <head> and the client-rendered one produce the same title/description.
-      title: `${job.title}, ${job.department}`,
-      description:
-        job.subtitle ||
-        `Join Oxy as ${job.title}. ${job.location}. ${job.engagement ?? job.type ?? 'Full-time'}.`,
-      canonicalPath: `/company/careers/${job.slug}`,
-    },
-  }))
+/**
+ * One document per open role. The role is published in Mention, so its canonical
+ * points there, it carries no JobPosting schema of its own (the publisher's page
+ * does), and it stays out of the sitemap and the locale mirrors.
+ */
+function buildJobRoutes(jobs: CareerJob[]): RouteEntry[] {
+  return jobs.map((job) => {
+    const url = careerJobPath(job)
+    const markdown = careerJobMarkdown(job)
+    return {
+      url,
+      seo: {
+        // Mirrors `CareerDetailPage` through the same shared builders.
+        title: `${job.title}, ${careerTeam(job)}`,
+        description: careerSeoDescription(job),
+        canonicalPath: url,
+        canonicalUrl: job.canonicalUrl,
+        publishedTime: job.publishedAt,
+      },
+      body: markdown
+        ? {
+            heading: job.title,
+            meta: [careerLocationLabel(job), careerEmploymentLabel(job)].filter(Boolean).join(' · ') || undefined,
+            markdown,
+          }
+        : undefined,
+    }
+  })
 }
 
 /* ── All routes ───────────────────────────────────────────────────── */
@@ -1029,18 +1237,25 @@ function buildJobRoutes(jobs: JobApiEntry[]): Array<{ url: string; seo: SEOProps
 async function fetchTranslationReadyLocales(): Promise<{
   locales: Locale[]
   seed: SEOLocaleSeed[]
+  /**
+   * False when the API did not answer. `locales` is `[]` either way, but the
+   * two cases mean opposite things to `_redirects`: "no locale has pages" is a
+   * reason to 301 `/es/…` onto the bare path, and "we could not find out" very
+   * much is not. See `RedirectsOptions.localeReadinessKnown`.
+   */
+  known: boolean
 }> {
   let entries: SEOLocaleSeed[]
   try {
     const res = await fetch(LOCALES_API)
     if (!res.ok) {
       console.warn(`[prerender] locales API returned ${res.status} — no locale-prefixed pages.`)
-      return { locales: [], seed: [] }
+      return { locales: [], seed: [], known: false }
     }
     entries = (await res.json()) as SEOLocaleSeed[]
   } catch (err) {
     console.warn('[prerender] locales fetch failed — no locale-prefixed pages:', (err as Error).message)
-    return { locales: [], seed: [] }
+    return { locales: [], seed: [], known: false }
   }
 
   const locales: Locale[] = []
@@ -1055,7 +1270,7 @@ async function fetchTranslationReadyLocales(): Promise<{
     if (code === DEFAULT_LOCALE) continue
     if (!locales.includes(code)) locales.push(code)
   }
-  return { locales, seed: entries }
+  return { locales, seed: entries, known: true }
 }
 
 /**
@@ -1067,8 +1282,15 @@ async function fetchTranslationReadyLocales(): Promise<{
 function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): RenderJob[] {
   if (locales.length === 0) return base
   const expanded: RenderJob[] = [...base]
+  // A route is mirrored only where a mirror would say something new. Synced
+  // developer docs have no translated source (`hasLocalizedVariants`), and a
+  // superseded docs version already canonicalizes to the current one — a
+  // `/es/…/0.6.8/…` document is then a duplicate of a duplicate.
+  const mirrorable = base.filter(
+    (job) => hasLocalizedVariants(job.url) && job.seo.canonicalPath === job.url && !job.seo.canonicalUrl,
+  )
   for (const locale of locales) {
-    for (const job of base) {
+    for (const job of mirrorable) {
       expanded.push({
         // No `body`: the markdown behind it is the default locale's text, and a
         // `/es/` URL serving English prose reads worse to a crawler than one
@@ -1076,10 +1298,29 @@ function expandRoutesForLocales(base: RenderJob[], locales: readonly Locale[]): 
         url: job.url === '/' ? `/${locale}` : `/${locale}${job.url}`,
         seo: job.seo,
         locale,
+        prerenderKind: job.prerenderKind,
       })
     }
   }
   return expanded
+}
+
+/** One document per public catalogue entry. Empty while the catalogue is unpublished. */
+function buildModelRoutes(): Array<{ url: string; seo: SEOProps }> {
+  const routes: Array<{ url: string; seo: SEOProps }> = []
+  for (const entry of BUILD_SNAPSHOT.entries) {
+    const url = modelPath(entry.id)
+    if (!url) continue
+    routes.push({
+      url,
+      seo: {
+        title: `${entry.name} — ${publisherName(BUILD_SNAPSHOT, entry.publisherId)}`,
+        description: entry.description.slice(0, 300),
+        canonicalPath: url,
+      },
+    })
+  }
+  return routes
 }
 
 async function enumerateAllRoutes(): Promise<RouteEntry[]> {
@@ -1089,23 +1330,50 @@ async function enumerateAllRoutes(): Promise<RouteEntry[]> {
     result.set(url, { url, seo })
   }
 
-  const [news, jobs, apps, features, helpRoutes, academyRoutes, docsRoutes] = await Promise.all([
+  const [news, jobs, apps, features, helpRoutes, academyRoutes, companyRoutes, docsRoutes] = await Promise.all([
     fetchNewsroomPosts(),
     fetchJobs(),
     fetchProducts(),
     fetchFeatureRequests(),
     enumerateHelpRoutes(),
     enumerateAcademyRoutes(),
+    enumerateCompanyArticleRoutes(),
     enumerateDocsRoutes(),
   ])
 
   for (const entry of buildNewsroomRoutes(news)) result.set(entry.url, entry)
-  for (const { url, seo } of buildJobRoutes(jobs)) result.set(url, { url, seo })
+  const newsroomIndex = result.get('/newsroom')
+  if (newsroomIndex) {
+    const brand = brandConfig()
+    newsroomIndex.newsroomIndexPosts = orderedNewsroomSummaries(news).slice(0, 50)
+    newsroomIndex.structuredData = buildNewsroomCollectionStructuredData(
+      news.map(normalizeNewsroomPost),
+      brand,
+      newsroomIndex.seo.title,
+      newsroomIndex.seo.description,
+    )
+  }
+  for (const entry of buildJobRoutes(jobs)) result.set(entry.url, entry)
   for (const { url, seo } of buildAppRoutes(apps)) result.set(url, { url, seo })
   for (const { url, seo } of buildFeatureRoutes(features)) result.set(url, { url, seo })
   for (const { url, seo } of helpRoutes) result.set(url, { url, seo })
   for (const { url, seo } of academyRoutes) result.set(url, { url, seo })
+  for (const entry of companyRoutes) result.set(entry.url, entry)
   for (const entry of docsRoutes) result.set(entry.url, entry)
+
+  // The public model catalogue. Every customer-safe entry in the committed
+  // snapshot gets a document, so a model page is in the HTML before any
+  // JavaScript runs and is in the sitemap. `internal_only` objects were already
+  // dropped by `toCustomerSafeCatalog` on the way in, so nothing filtered here
+  // can reach this loop — which is the point: the filter lives at the schema
+  // boundary, not in the emitter.
+  for (const { url, seo } of buildModelRoutes()) result.set(url, { url, seo })
+
+  // A SEVENTH source. Bloom's component hub and its per-surface pages come from
+  // `bloomIndex` rather than from a hand-written list, so a surface added
+  // upstream is prerendered the day it ships. `validate:bloom-catalog` fails if
+  // one ever is not.
+  for (const { url, seo } of bloomComponentRoutes()) result.set(url, { url, seo })
 
   return Array.from(result.values())
 }
@@ -1201,23 +1469,46 @@ function capProse(markdown: string, url: string): string {
   return boundary > MAX_PROSE_CHARS / 2 ? head.slice(0, boundary) : head
 }
 
+function injectRootTemplate(shell: string, template: string): string {
+  const root = '<div id="root"></div>'
+  const idx = shell.indexOf(root)
+  if (idx < 0) throw new Error('[prerender] shell missing an empty #root container')
+  return `${shell.slice(0, idx)}<div id="root">${template}</div>${shell.slice(idx + root.length)}`
+}
+
+const HOME_PRERENDER_VISUAL = [
+  '<div class="home-prerender-visual" aria-hidden="true">',
+  '<img src="/images/landing/hero-bg-800.avif"',
+  ' srcset="/images/landing/hero-bg-800.avif 800w, /images/landing/hero-bg-1200.avif 1200w, /images/landing/hero-bg.avif 1600w"',
+  ' sizes="(max-width: 1023px) 100vw, 70vw" alt="" width="1600" height="1200"',
+  ' loading="eager" decoding="async" fetchpriority="high">',
+  '</div>',
+].join('')
+
 function injectBody(
   shell: string,
   body: PageBody,
   url: string,
   renderMarkdownBody: RenderMarkdownFn,
 ): string {
+  const newsroomCover = body.newsroomPost?.coverImage
+    ? `<figure class="mt-10"><img src="${escapeHtml(body.newsroomPost.coverImage)}" alt="${escapeHtml(body.newsroomPost.imageAlt ?? '')}" width="1440" height="810" loading="eager" fetchpriority="high" decoding="async" class="aspect-video w-full rounded-radius-12 object-cover object-center"></figure>`
+    : ''
   const parts = [
     `<h1 class="text-heading-responsive-lg text-text">${escapeHtml(body.heading)}</h1>`,
     body.meta ? `<p class="mt-4 text-sm text-text-secondary">${escapeHtml(body.meta)}</p>` : '',
     body.standfirst ? `<p class="mt-6 text-lg text-text">${escapeHtml(body.standfirst)}</p>` : '',
+    newsroomCover,
     `<div class="mt-10">${renderMarkdownBody(capProse(body.markdown, url))}</div>`,
   ]
   const article = `<article class="mx-auto w-full max-w-[46rem] px-4 py-16">${parts.join('')}</article>`
+  const bootstrap = body.newsroomPost
+    ? renderNewsroomBootstrapTemplate(body.newsroomPost)
+    : ''
   const root = '<div id="root"></div>'
   const idx = shell.indexOf(root)
   if (idx < 0) throw new Error('[prerender] shell missing an empty #root container')
-  return `${shell.slice(0, idx)}<div id="root">${article}</div>${shell.slice(idx + root.length)}`
+  return `${shell.slice(0, idx)}<div id="root">${bootstrap}${article}</div>${shell.slice(idx + root.length)}`
 }
 
 /**
@@ -1227,7 +1518,7 @@ function injectBody(
  * that runs JavaScript.
  */
 function markStaticSeo(headHtml: string): string {
-  return headHtml.replace(/<(title|meta|link)\b/gi, '<$1 data-static-seo')
+  return headHtml.replace(/<(title|meta|link|script)\b/gi, '<$1 data-static-seo')
 }
 
 function injectHead(shell: string, headHtml: string): string {
@@ -1278,10 +1569,10 @@ function pathToFile(routePath: string): string {
 /**
  * The prose a route can put in the document it serves.
  *
- * Only the two families whose content IS markdown carry one — newsroom posts
- * and the synced documentation. A marketing page is built from components, so
- * there is no honest text to emit for it and it keeps the empty shell rather
- * than gaining a heading that repeats its own `<title>`.
+ * Only routes whose content IS prose carry one — newsroom posts, long-form
+ * company documents and synced documentation. A marketing page is built from
+ * components, so there is no honest text to emit for it and it keeps the empty
+ * shell rather than gaining a heading that repeats its own `<title>`.
  */
 interface PageBody {
   /** The page's own H1. */
@@ -1292,6 +1583,8 @@ interface PageBody {
   standfirst?: string
   /** The page's body, in markdown. */
   markdown: string
+  /** Full default-locale row used to seed the detail query before React mounts. */
+  newsroomPost?: NewsroomPost
 }
 
 /** A route the build will write, with the prose it can serve if it has any. */
@@ -1299,6 +1592,12 @@ interface RouteEntry {
   url: string
   seo: SEOProps
   body?: PageBody
+  /** Route-specific JSON-LD. The global Organization schema stays in the shell. */
+  structuredData?: Record<string, unknown>
+  /** Default-locale list data used before the client can fetch the CMS. */
+  newsroomIndexPosts?: NewsroomPostSummary[]
+  /** Stable marker read by the Pages middleware before considering an API fallback. */
+  prerenderKind?: 'newsroom-post'
 }
 
 interface RenderJob {
@@ -1309,6 +1608,10 @@ interface RenderJob {
   locale?: Locale
   /** Absent for routes with no markdown of their own. */
   body?: PageBody
+  /** Omitted from untranslated locale mirrors along with their English prose. */
+  structuredData?: Record<string, unknown>
+  newsroomIndexPosts?: NewsroomPostSummary[]
+  prerenderKind?: 'newsroom-post'
 }
 
 /**
@@ -1345,11 +1648,33 @@ async function writeRoute(
       console.warn(`[prerender] empty head for ${job.url}`)
     }
     const localized = job.locale ? applyHtmlLang(shell, job.locale) : shell
-    const withBody = job.body
-      ? injectBody(localized, job.body, job.url, ssr.renderMarkdownBody)
+    const withHomeVisual = job.seo.canonicalPath === '/'
+      ? injectRootTemplate(localized, HOME_PRERENDER_VISUAL)
       : localized
+    const withIndexBootstrap = job.newsroomIndexPosts
+      ? injectRootTemplate(withHomeVisual, renderNewsroomIndexBootstrapTemplate(job.newsroomIndexPosts))
+      : withHomeVisual
+    const withBody = job.body
+      ? injectBody(withIndexBootstrap, job.body, job.url, ssr.renderMarkdownBody)
+      : withIndexBootstrap
     const stripped = stripExistingMeta(withBody)
-    const html = injectHead(stripped, head)
+    const structuredData = job.structuredData
+      ? ssr.renderStructuredData(job.structuredData)
+      : ''
+    const prerenderMarker = job.prerenderKind === 'newsroom-post'
+      ? NEWSROOM_PRERENDER_MARKER
+      : ''
+    const newsroomFeed = job.seo.canonicalPath === '/newsroom' || job.seo.canonicalPath.startsWith('/newsroom/')
+      ? `<link rel="alternate" type="application/rss+xml" title="Oxy Newsroom" href="${SITE_URL}/newsroom.xml">`
+      : ''
+    const leadingImage = job.newsroomIndexPosts?.[0]
+    const newsroomImagePreload = leadingImage?.coverImage
+      ? `<link rel="preload" as="image" href="${escapeHtml(leadingImage.coverImage)}" fetchpriority="high"${leadingImage.coverImageSrcSet ? ` imagesrcset="${escapeHtml(leadingImage.coverImageSrcSet)}" imagesizes="(min-width: 1024px) 75vw, 100vw"` : ''}>`
+      : ''
+    const html = injectHead(
+      stripped,
+      [head, structuredData, prerenderMarker, newsroomFeed, newsroomImagePreload].filter(Boolean).join('\n    '),
+    )
     const outFile = pathToFile(job.url)
     await mkdir(path.dirname(outFile), { recursive: true })
     await writeFile(outFile, html, 'utf8')
@@ -1398,6 +1723,15 @@ async function writeSitemap(
 ): Promise<void> {
   const entries: SitemapEntry[] = routes
     .filter((route) => !route.seo.noIndex)
+    // A superseded docs version canonicalizes to the latest one. Listing it
+    // here anyway told Google "index this URL" while the page itself said
+    // "index that other one" — a contradiction Search Console reports as
+    // "Alternate page with proper canonical tag". The canonical target is in
+    // the sitemap under its own entry; this URL does not belong in it.
+    .filter((route) => route.seo.canonicalPath === route.url)
+    // A page whose canonical is on another site (an open role published in
+    // Mention) is that site's to advertise.
+    .filter((route) => !route.seo.canonicalUrl)
     .map((route) => ({
       path: route.url,
       lastmod: toW3CDate(route.seo.modifiedTime ?? route.seo.publishedTime),
@@ -1412,6 +1746,87 @@ async function writeSitemap(
   })
   await writeFile(path.join(DIST_DIR, 'sitemap.xml'), xml, 'utf8')
   console.log(`[prerender] wrote sitemap.xml (${entries.length} urls, ${locales.length} alternate locales)`)
+}
+
+async function writeNewsroomFeed(routes: readonly RouteEntry[]): Promise<void> {
+  const newsroom = routes.find((route) => route.url === '/newsroom')
+  const posts = routes
+    .map((route) => route.body?.newsroomPost)
+    .filter((post): post is NewsroomPost => Boolean(post))
+  const xml = buildNewsroomRss(posts, {
+    siteUrl: SITE_URL,
+    title: newsroom?.seo.title ?? 'Oxy Newsroom',
+    description: newsroom?.seo.description ?? 'News and updates from Oxy.',
+  })
+  await writeFile(path.join(DIST_DIR, 'newsroom.xml'), xml, 'utf8')
+  console.log(`[prerender] wrote newsroom.xml (${posts.length} articles)`)
+}
+
+/**
+ * Two documents that are not routes: the shell the SPA falls back to, and the
+ * one Cloudflare serves with a real 404.
+ *
+ * Until now `_redirects` answered every unmatched path with `/index.html` — the
+ * *homepage document*, complete with `<title>Oxy, an open-source ecosystem…`
+ * and `<link rel="canonical" href="https://oxy.so/">`, at HTTP 200. So
+ * `/anything-at-all/` was a byte-identical copy of the home page claiming the
+ * home page's canonical, which is what Search Console was reporting as "Soft
+ * 404" and as duplicates without a user-selected canonical.
+ *
+ * `app-shell.html` is the same bundle with the home page's identity stripped:
+ * no canonical, no `og:url`, a neutral title. It backs the surfaces whose
+ * document legitimately cannot exist at build time — a Newsroom post published
+ * an hour after the deploy, a job opening, a feature request, a signed-in
+ * dashboard. React mounts and `<SEO>` writes the real meta. `_redirects` does
+ * NOT point at it: a rewrite rule there is matched before the static asset, so
+ * a `/newsroom/*` rule shadowed every prerendered Newsroom document. It is
+ * served by `functions/_middleware.ts`, which only sees requests that already
+ * failed to find one.
+ *
+ * Neither carries a static `<meta name="robots">`. Helmet only manages tags it
+ * emits itself, so a `noindex` baked into the shell would survive React's
+ * mount and permanently de-index every page served through the fallback. The
+ * 404 document does not need one: it is only ever served with a 404 status, and
+ * `NotFoundPage` adds `noindex` at runtime.
+ */
+async function writeFallbackDocuments(shell: string): Promise<void> {
+  const bare = stripExistingMeta(shell)
+
+  const appShell = injectHead(
+    bare,
+    ['<title>Oxy</title>', '<meta name="description" content="Oxy, an open-source ecosystem of ethical technology.">'].join(
+      '\n    ',
+    ),
+  )
+  await writeFile(path.join(DIST_DIR, 'app-shell.html'), appShell, 'utf8')
+
+  const notFoundHead = [
+    '<title>Page not found | Oxy</title>',
+    '<meta name="description" content="This page does not exist. Search the Oxy site or start from the home page.">',
+  ].join('\n    ')
+  const notFoundBody =
+    '<main class="prerender-prose"><h1>Page not found</h1>' +
+    '<p>The page you asked for does not exist on oxy.so.</p>' +
+    `<p><a href="${SITE_URL}/">Go to the home page</a></p></main>`
+  const notFound = injectHead(injectRootTemplate(bare, notFoundBody), notFoundHead)
+  await writeFile(path.join(DIST_DIR, '404.html'), notFound, 'utf8')
+
+  console.log('[prerender] wrote app-shell.html + 404.html')
+}
+
+/** Emit `dist/_redirects` for the locales this build actually mirrored. */
+async function writeRedirects(
+  mirroredLocales: readonly Locale[],
+  localeReadinessKnown: boolean,
+): Promise<void> {
+  const contents = buildRedirectsFile({
+    supportedLocales: SUPPORTED_LOCALES,
+    defaultLocale: DEFAULT_LOCALE,
+    mirroredLocales,
+    localeReadinessKnown,
+  })
+  await writeFile(path.join(DIST_DIR, '_redirects'), contents, 'utf8')
+  console.log(`[prerender] wrote _redirects (${contents.trim().split('\n').filter((l) => l && !l.startsWith('#')).length} rules)`)
 }
 
 async function writeLocaleManifest(locales: readonly Locale[]): Promise<void> {
@@ -1467,7 +1882,12 @@ async function main(): Promise<void> {
   }
 
   await writeLocaleManifest(localeInfo.locales)
-  await writeSitemap(baseRoutes, localeInfo.locales)
+  await writeFallbackDocuments(shell)
+  await writeRedirects(localeInfo.locales, localeInfo.known)
+  await Promise.all([
+    writeSitemap(baseRoutes, localeInfo.locales),
+    writeNewsroomFeed(baseRoutes),
+  ])
 
   console.log(`[prerender] rendering ${jobs.length} routes…`)
 

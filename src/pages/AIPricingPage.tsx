@@ -1,322 +1,305 @@
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { Check } from 'lucide-react'
-import SEO from '../components/SEO'
+import { useMemo } from 'react'
 import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
+import PageShell from '../components/layout/PageShell'
+import Button from '../components/ui/Button'
+import AiBreadcrumbs from '../components/ai/platform/AiBreadcrumbs'
+import AvailabilityBadge from '../components/ai/platform/AvailabilityBadge'
+import CostEstimator from '../components/ai/platform/CostEstimator'
+import { CatalogEmptyState, CatalogFreshness } from '../components/ai/platform/CatalogNotice'
+import { Link } from '../lib/navigation'
+import { useTranslation } from '../lib/i18n'
+import { useCatalog } from '../lib/ai/useCatalog'
+import { isCatalogUnpublished } from '../lib/ai/snapshot'
+import { entriesForListing, publisherName, type UnitPrice } from '../lib/ai/catalog'
+import { displayPrice, isPerMillionUnit } from '../lib/ai/estimator'
+import { modelPath } from '../lib/ai/modelId'
+import { OXY_INFERENCE_AVAILABILITY, consoleLinks } from '../data/ai/taxonomy'
 
-interface FeatureItem { label: string; description: string }
-interface FeatureCategory { category: string; items: FeatureItem[] }
-interface APIPlan {
-  id: string; name: string; monthlyPrice: number; annualPrice: number
-  creditsPerMonth: number; creditsLabel: string; isFeatured: boolean
-  isFree: boolean; features: FeatureCategory[]; sortOrder: number
-}
+/**
+ * `/ai/pricing` — what INFERENCE costs.
+ *
+ * The page this replaced fetched `api.alia.onl/billing/plans?product=alia` and
+ * rendered Alia's subscription tiers, credit allowances and channel counts under
+ * the heading "Oxy AI pricing". Those are a product's plans, sold by a different
+ * team on a different site, and presenting them as the platform's API pricing
+ * made the two look like one purchase. Alia now gets a visible handoff instead
+ * of a table.
+ *
+ * What replaces it renders per-model, per-unit prices straight from the
+ * catalogue snapshot — never a price written here — with the price version they
+ * belong to, and an estimator that computes in integers.
+ */
+export default function AIPricingPage() {
+  const { t } = useTranslation()
+  const { catalog } = useCatalog()
+  const unpublished = isCatalogUnpublished(catalog)
 
-function formatPrice(cents: number) {
-  if (cents === 0) return '$0'
-  const d = cents / 100
-  return `$${d % 1 === 0 ? d : d.toFixed(2)}`
-}
+  const rows = useMemo(() => {
+    return entriesForListing(catalog)
+      .filter((entry) => entry.prices.length > 0)
+      .map((entry) => ({
+        entry,
+        input: entry.prices.find((price) => price.unit === 'input_token'),
+        cached: entry.prices.find((price) => price.unit === 'cached_input_token'),
+        output: entry.prices.find((price) => price.unit === 'output_token'),
+        reasoning: entry.prices.find((price) => price.unit === 'reasoning_token'),
+        other: entry.prices.filter(
+          (price) =>
+            !['input_token', 'cached_input_token', 'output_token', 'reasoning_token'].includes(
+              price.unit,
+            ),
+        ),
+      }))
+  }, [catalog])
 
-function CellValue({ value }: { value: string }) {
-  if (value === '✓') return <Check className="size-4 mt-0.5" />
-  if (value === '—') return <span className="text-muted-foreground text-sm md:text-base flex-none">﹣</span>
-  const lines = value.split('\n')
   return (
-    <div className="text-sm md:text-base flex-none leading-tight w-fit">
-      {lines[0]}
-      {lines[1] && <div className="text-muted-foreground">{lines[1]}</div>}
+    <PageShell
+      seo={{
+        title: t('ai.pricing.seoTitle'),
+        description: t('ai.pricing.seoDescription'),
+        canonicalPath: '/ai/pricing',
+      }}
+      navbar={<Navbar />}
+      mainClassName="flex-1"
+    >
+      <AiBreadcrumbs
+        crumbs={[
+          { label: t('ai.breadcrumbHome'), href: '/ai' },
+          { label: t('ai.pricing.seoTitle') },
+        ]}
+      />
+
+      <section className="container pt-10 pb-8">
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-heading-responsive-lg text-balance text-foreground">
+            {t('ai.pricing.heading')}
+          </h1>
+          <AvailabilityBadge availability={OXY_INFERENCE_AVAILABILITY} />
+        </div>
+        <p className="mt-4 max-w-3xl text-pretty text-lg text-muted-foreground">
+          {t('ai.pricing.lead')}
+        </p>
+        <div className="mt-4">
+          <CatalogFreshness catalog={catalog} />
+        </div>
+      </section>
+
+      {/* ── Handoffs, before the table ───────────────────────────────────
+          Someone who arrived looking for Alia's plans should find out in the
+          first screen, not after reading a token price list. */}
+      <section className="container pb-10">
+        <div className="grid gap-4 md:grid-cols-2">
+          <Handoff
+            title={t('ai.pricing.aliaHandoffTitle')}
+            body={t('ai.pricing.aliaHandoffBody')}
+            cta={t('ai.pricing.aliaHandoffCta')}
+            href="https://alia.onl/pricing"
+            external
+          />
+          <Handoff
+            title={t('ai.pricing.ecosystemHandoffTitle')}
+            body={t('ai.pricing.ecosystemHandoffBody')}
+            cta={t('ai.pricing.ecosystemHandoffCta')}
+            href="/pricing"
+          />
+        </div>
+      </section>
+
+      {/* ── Per-model price table ────────────────────────────────────── */}
+      <section id="table" className="container scroll-mt-24 pb-16">
+        <h2 className="text-heading-responsive-md text-foreground">{t('ai.pricing.tableHeading')}</h2>
+        <div className="mt-6">
+          {unpublished || rows.length === 0 ? (
+            <CatalogEmptyState />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[760px] border-collapse text-sm">
+                <caption className="sr-only">{t('ai.pricing.tableHeading')}</caption>
+                <thead>
+                  <tr className="border-b border-border text-left text-muted-foreground">
+                    <th scope="col" className="py-2 pe-4 font-normal">
+                      {t('ai.models.columnModel')}
+                    </th>
+                    <th scope="col" className="py-2 pe-4 font-normal">
+                      {t('ai.models.columnPublisher')}
+                    </th>
+                    <th scope="col" className="py-2 pe-4 text-end font-normal">
+                      {t('ai.pricing.unitInputToken')}
+                    </th>
+                    <th scope="col" className="py-2 pe-4 text-end font-normal">
+                      {t('ai.pricing.unitCachedInputToken')}
+                    </th>
+                    <th scope="col" className="py-2 pe-4 text-end font-normal">
+                      {t('ai.pricing.unitOutputToken')}
+                    </th>
+                    <th scope="col" className="py-2 text-end font-normal">
+                      {t('ai.pricing.unitReasoningToken')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row) => {
+                    const href = modelPath(row.entry.id)
+                    return (
+                      <tr key={row.entry.id} className="border-b border-border/60">
+                        <th scope="row" className="py-2 pe-4 text-start font-normal">
+                          {href ? (
+                            <Link to={href} className="text-foreground underline-offset-4 hover:underline">
+                              {row.entry.name}
+                            </Link>
+                          ) : (
+                            <span className="text-foreground">{row.entry.name}</span>
+                          )}
+                          <span className="block font-mono text-xs text-muted-foreground">
+                            {row.entry.id}
+                          </span>
+                        </th>
+                        <td className="py-2 pe-4 text-muted-foreground">
+                          {publisherName(catalog, row.entry.publisherId)}
+                        </td>
+                        <PriceCell price={row.input} />
+                        <PriceCell price={row.cached} />
+                        <PriceCell price={row.output} />
+                        <PriceCell price={row.reasoning} last />
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+              {rows.some((row) => row.other.length > 0) && (
+                <p className="mt-4 text-sm text-muted-foreground">
+                  Audio, image, embedding and rerank units are priced per model and shown on the
+                  model page.
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ── Estimator ────────────────────────────────────────────────── */}
+      <section id="estimator" className="container scroll-mt-24 pb-16">
+        <h2 className="text-heading-responsive-md text-foreground">
+          {t('ai.pricing.estimatorHeading')}
+        </h2>
+        <p className="mt-3 max-w-3xl text-muted-foreground">{t('ai.pricing.estimatorLead')}</p>
+        <div className="mt-6">
+          <CostEstimator catalog={catalog} />
+        </div>
+      </section>
+
+      {/* ── Terms ────────────────────────────────────────────────────── */}
+      <section className="container pb-16">
+        <h2 className="text-heading-responsive-md text-foreground">{t('ai.pricing.termsHeading')}</h2>
+        <p className="mt-3 max-w-3xl text-pretty text-muted-foreground">
+          {t('ai.pricing.termsBody')}
+        </p>
+      </section>
+
+      {/* ── Which path is yours ──────────────────────────────────────── */}
+      <section className="container pb-24">
+        <h2 className="text-heading-responsive-md text-foreground">{t('ai.pricing.pathsHeading')}</h2>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <PathCard
+            title={t('ai.pricing.pathSelfServe')}
+            body={t('ai.pricing.pathSelfServeBody')}
+            cta={t('ai.cta.openConsole')}
+            href={consoleLinks.billing}
+            external
+          />
+          <PathCard
+            title={t('ai.pricing.pathDedicated')}
+            body={t('ai.pricing.pathDedicatedBody')}
+            cta={t('ai.cta.talkToSales')}
+            href="/contact/sales?interest=dedicated_inference"
+          />
+          <PathCard
+            title={t('ai.pricing.pathAlia')}
+            body={t('ai.pricing.pathAliaBody')}
+            cta={t('ai.pricing.aliaHandoffCta')}
+            href="https://alia.onl/pricing"
+            external
+          />
+          <PathCard
+            title={t('ai.pricing.pathEcosystem')}
+            body={t('ai.pricing.pathEcosystemBody')}
+            cta={t('ai.pricing.ecosystemHandoffCta')}
+            href="/pricing"
+          />
+        </div>
+      </section>
+    </PageShell>
+  )
+}
+
+function PriceCell({ price, last = false }: { price?: UnitPrice; last?: boolean }) {
+  const { t } = useTranslation()
+  return (
+    <td className={`py-2 text-end ${last ? '' : 'pe-4'}`}>
+      {price ? (
+        <>
+          <span className="text-foreground">${displayPrice(price)}</span>{' '}
+          <span className="text-xs text-muted-foreground">
+            {isPerMillionUnit(price.unit) ? t('ai.pricing.perMillion') : t('ai.pricing.perUnit')}
+          </span>
+        </>
+      ) : (
+        // An em dash, not "$0": a unit this model does not charge for and a unit
+        // whose price is not published both belong here, and neither is free.
+        <span className="text-muted-foreground" aria-label="Not published">
+          —
+        </span>
+      )}
+    </td>
+  )
+}
+
+function Handoff({
+  title,
+  body,
+  cta,
+  href,
+  external = false,
+}: {
+  title: string
+  body: string
+  cta: string
+  href: string
+  external?: boolean
+}) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-5">
+      <h2 className="text-lg text-foreground">{title}</h2>
+      <p className="mt-2 text-sm text-muted-foreground">{body}</p>
+      <Button href={href} variant="outline" size="sm" className="mt-4">
+        {cta}
+        {external && <span className="sr-only"> (external)</span>}
+      </Button>
     </div>
   )
 }
 
-function getCardStyle(index: number, total: number, isFeatured: boolean) {
-  if (isFeatured) return { bg: 'bg-primary text-primary-foreground', dot: 'bg-primary-foreground', border: 'border-primary-foreground/20', accent: 'text-primary-foreground/70', cta: 'bg-primary-foreground text-primary' }
-  if (index === total - 1) return { bg: 'bg-foreground text-background', dot: 'bg-background/60', border: 'border-background/20', accent: 'text-background/70', cta: 'bg-background text-foreground' }
-  return { bg: 'bg-muted text-muted-foreground', dot: 'bg-primary', border: 'border-primary/20', accent: 'text-primary', cta: 'bg-primary text-primary-foreground hover:bg-primary/90' }
-}
-
-function buildComparison(plans: APIPlan[]) {
-  const allCategories = [...new Map(plans.flatMap((p) => p.features).map((f) => [f.category, f])).values()]
-  return allCategories.map((cat) => {
-    const allItems = new Map<string, FeatureItem>()
-    plans.forEach((plan) => {
-      plan.features.find((f) => f.category === cat.category)?.items.forEach((item) => {
-        if (!allItems.has(item.label)) allItems.set(item.label, item)
-      })
-    })
-    return {
-      title: cat.category,
-      rows: [...allItems.values()].map((item) => ({
-        label: item.label,
-        values: plans.map((plan) =>
-          plan.features.find((f) => f.category === cat.category)?.items.some((i) => i.label === item.label) ? '✓' : '—'
-        ),
-      })),
-    }
-  })
-}
-
-export default function AIPricingPage() {
-  const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
-
-  const { data: plans = [], isPending, isError, error, refetch } = useQuery<APIPlan[]>({
-    queryKey: ['alia-billing-plans'],
-    queryFn: async ({ signal }) => {
-      // Abort hung requests after 8s so the page never sits in `isPending`
-      // forever when api.alia.onl is unreachable, CORS-broken, or slow.
-      const controller = new AbortController()
-      const timeout = setTimeout(() => controller.abort(new Error('Request timed out')), 8000)
-      // Chain react-query's own AbortSignal so navigation also cancels the fetch.
-      signal?.addEventListener('abort', () => controller.abort(signal.reason))
-      try {
-        const res = await fetch('https://api.alia.onl/billing/plans?product=alia', {
-          signal: controller.signal,
-        })
-        if (!res.ok) throw new Error(`alia billing HTTP ${res.status}`)
-        const data = await res.json()
-        const list: APIPlan[] = Array.isArray(data.plans) ? data.plans : []
-        return [...list].sort((a, b) => a.sortOrder - b.sortOrder)
-      } finally {
-        clearTimeout(timeout)
-      }
-    },
-    staleTime: 5 * 60_000,
-    // The nearest QueryClientProvider sets `networkMode: 'offlineFirst'` (in
-    // `<OxyProvider>`) or `'online'` (the App-level default). Both park
-    // failed requests instead of transitioning to `isError`, which is why the
-    // page used to sit in `isPending` forever. Force `always` so the failure
-    // surfaces synchronously, and disable retries — the user can retry
-    // explicitly via the "Try again" button in the error state.
-    networkMode: 'always',
-    retry: false,
-  })
-
-  const comparison = plans.length > 0 ? buildComparison(plans) : []
-  const sidebarLabels = ['Credits', 'Models', 'Channels', 'Limits']
-  // Rendered from every branch so client-side navigation updates the head even
-  // while the plans request is pending or has failed.
-  const seo = (
-    <SEO
-      title="Oxy AI pricing"
-      description="What Oxy AI costs per plan, what each tier includes and how usage is measured. Bring your own model on the higher tiers."
-      canonicalPath="/ai/pricing"
-    />
-  )
-
-  if (isPending) {
-    return (
-      <div className="flex min-h-screen flex-col bg-background">
-        {seo}
-        <Navbar />
-        <main className="flex-1 flex items-center justify-center px-6 py-24">
-          <div
-            className="flex items-center gap-3 text-muted-foreground"
-            role="status"
-            aria-live="polite"
-          >
-            <span
-              className="size-4 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-foreground"
-              aria-hidden="true"
-            />
-            <span>Loading plans…</span>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
-
-  if (isError || plans.length === 0) {
-    return (
-      <div className="flex min-h-screen flex-col bg-background">
-        {seo}
-        <Navbar />
-        <main className="flex-1 flex items-center justify-center px-6 py-24">
-          <div className="max-w-md text-center" role="alert">
-            <h1 className="text-2xl font-semibold text-foreground">
-              Couldn&rsquo;t load AI pricing
-            </h1>
-            <p className="mt-3 text-muted-foreground">
-              {isError && error instanceof Error
-                ? error.message
-                : 'No plans were returned from the billing service.'}
-            </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <button
-                type="button"
-                onClick={() => refetch()}
-                className="inline-flex h-10 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background hover:bg-foreground/90 cursor-pointer"
-              >
-                Try again
-              </button>
-              <a
-                className="inline-flex h-10 items-center justify-center rounded-full border border-border px-5 text-sm font-medium text-foreground hover:bg-accent"
-                href="/pricing"
-              >
-                See ecosystem pricing
-              </a>
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
-
+function PathCard({
+  title,
+  body,
+  cta,
+  href,
+  external = false,
+}: {
+  title: string
+  body: string
+  cta: string
+  href: string
+  external?: boolean
+}) {
   return (
-    <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background">
-      {seo}
-      <Navbar />
-      <main>
-        {/* Hero + Cards */}
-        <div className="overflow-x-hidden">
-          <div className="mx-auto w-full max-w-5xl px-[var(--layout-gutter)]">
-            {/* Hero */}
-            <section className="mt-24 mb-8 lg:mb-0">
-              <h1 className="text-heading-responsive-lg text-balance text-foreground">
-                Predictable pricing. <span className="text-muted-foreground">Designed to scale.</span>
-              </h1>
-            </section>
-
-            {/* Billing toggle */}
-            <div className="flex mt-6 mb-4 lg:mb-0">
-              <div className="inline-flex rounded-full bg-surface p-1 gap-1">
-                <button
-                  onClick={() => setBilling('monthly')}
-                  className={`px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer ${billing === 'monthly' ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                  Monthly
-                </button>
-                <button
-                  onClick={() => setBilling('annual')}
-                  className={`px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer ${billing === 'annual' ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                  Annual · Save 20%
-                </button>
-              </div>
-            </div>
-
-            {/* Pricing Cards */}
-            <section className="mb-6 flex md:mt-12 md:mb-10 lg:mt-12 lg:mb-15">
-              <div id="pricing-plans" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 w-full">
-                {/* Left sidebar (desktop only) — same column as table label */}
-                <div className="hidden lg:flex flex-col pt-[100px] xl:pt-[116px] mt-1 pr-3 col-span-1">
-                  <div className="pb-4 text-xl">Start building for free</div>
-                  <div className="flex-1">
-                    {sidebarLabels.map((label) => (
-                      <div key={label} className="flex items-center justify-between flex-none mt-1 pt-1 text-sm border-t border-muted-foreground/30">
-                        <div className="flex items-center gap-1 font-normal text-pretty text-muted-foreground">{label}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* All plan cards — each card is flex-1, same as sidebar and table columns */}
-                {plans.map((plan, index) => {
-                    const style = getCardStyle(index, plans.length, plan.isFeatured)
-                    const price = billing === 'monthly' ? plan.monthlyPrice : Math.round(plan.annualPrice / 12)
-                    const credits = plan.features.find((f) => f.category === 'Credits')?.items[0]?.label || plan.creditsLabel
-                    const models = plan.features.find((f) => f.category === 'Models')
-                    const channels = plan.features.find((f) => f.category === 'Channels')
-                    const limits = plan.features.find((f) => f.category === 'Limits')
-
-                    return (
-                      <div key={plan.id} className={`relative flex flex-1 flex-col rounded-2xl p-3 xl:p-4 ${style.bg}`}>
-                          <div className="size-4 flex items-center mb-2">
-                            <div className={`${style.dot} size-3 rounded-full`} />
-                          </div>
-                          <h2 className="text-lg font-normal normal-case">{plan.name}</h2>
-                          <p className="mb-3 text-sm opacity-50">
-                            {plan.isFree ? 'For everyone' : plan.isFeatured ? 'Most popular' : plan.creditsLabel}
-                          </p>
-                          <div className="pb-3 text-2xl xl:text-3xl font-normal">
-                            {plan.isFree ? 'Free' : formatPrice(price)}
-                            {!plan.isFree && <span className="text-sm"> /mo</span>}
-                          </div>
-                          <div className="flex-1">
-                            {credits && (
-                              <div className={`flex items-center justify-between flex-none mt-1 pt-1 text-sm border-t ${style.border}`}>
-                                <div className="flex items-center gap-1 font-normal text-pretty leading-tight">{credits}</div>
-                              </div>
-                            )}
-                            {models && (
-                              <div className={`flex items-center justify-between flex-none mt-1 pt-1 text-sm border-t ${style.border}`}>
-                                <div className="flex items-center gap-1 font-normal text-pretty leading-tight">{models.items.length} AI models</div>
-                              </div>
-                            )}
-                            {channels && (
-                              <div className={`flex items-center justify-between flex-none mt-1 pt-1 text-sm border-t ${style.border}`}>
-                                <div className="flex items-center gap-1 font-normal text-pretty leading-tight">{channels.items.length} channels</div>
-                              </div>
-                            )}
-                            {limits && (
-                              <div className={`flex items-center justify-between flex-none mt-1 pt-1 text-sm border-t ${style.border}`}>
-                                <div className="flex items-center gap-1 font-normal text-pretty leading-tight">{limits.items[0]?.label}</div>
-                              </div>
-                            )}
-                          </div>
-                          <a
-                            className={`inline-flex flex-none items-center justify-center cursor-pointer font-medium px-3 py-1.5 mt-5 w-fit h-8 rounded-[2rem] hover:rounded-none transition-all duration-200 text-sm ${style.cta}`}
-                            href={plan.isFree ? '/signup' : `/signup?plan=${plan.id}`}
-                          >
-                            {plan.isFree ? 'Get started' : plan.isFeatured ? `Get ${plan.name}` : 'Upgrade'}
-                          </a>
-                      </div>
-                    )
-                  })}
-              </div>
-            </section>
-          </div>
-        </div>
-
-        {/* Comparison Table */}
-        <div className="overflow-x-clip bg-background">
-          <div className="mx-auto flex w-full max-w-5xl flex-col gap-12 px-[var(--layout-gutter)]">
-            <div className="w-full text-lg">
-              {/* Sticky header */}
-              <div className="flex sticky top-14 gap-3 bg-background border-b border-border z-10">
-                <div className="flex-1 hidden md:block" />
-                {plans.map((plan) => (
-                  <div key={plan.id} className="flex-1 pt-2 pb-3 flex flex-col items-start gap-1">
-                    <div className="font-semibold flex items-center gap-2">
-                      <span className={`size-2.5 flex-none rounded-full ${plan.isFeatured ? 'bg-primary' : 'bg-muted-foreground'}`} />
-                      <span>{plan.name}</span>
-                    </div>
-                    <a
-                      className={`rounded-2xl px-3 py-1 text-sm md:text-base font-normal hover:rounded-none transition-all duration-200 ${
-                        plan.isFeatured ? 'bg-primary text-primary-foreground' : 'bg-surface text-foreground'
-                      }`}
-                      href={plan.isFree ? '/signup' : `/signup?plan=${plan.id}`}
-                    >
-                      {plan.isFree ? 'Sign up' : plan.isFeatured ? `Get ${plan.name}` : 'Upgrade'}
-                    </a>
-                  </div>
-                ))}
-              </div>
-
-              {/* Categories */}
-              {comparison.map((cat) => (
-                <div key={cat.title}>
-                  <div className="pb-4 pt-12 border-b border-border">
-                    <h4 className="text-2xl font-semibold flex items-center gap-2 mb-1">{cat.title}</h4>
-                  </div>
-                  {cat.rows.map((row) => (
-                    <div key={row.label} className="flex gap-3 py-2 md:items-center border-b border-border/50 text-base hover:bg-accent bg-transparent flex-wrap md:flex-nowrap">
-                      <div className="w-full md:flex-1 md:w-auto md:text-foreground/70 font-semibold md:font-normal flex items-center gap-1.5">{row.label}</div>
-                      {row.values.map((val, i) => (
-                        <div key={i} className="flex-1 leading-tight"><CellValue value={val} /></div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-      <Footer />
+    <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-5">
+      <h3 className="text-base text-foreground">{title}</h3>
+      <p className="mt-2 flex-1 text-sm text-muted-foreground">{body}</p>
+      <Button href={href} variant="ghost" size="sm" className="mt-4 w-fit">
+        {cta}
+        {external && <span className="sr-only"> (external)</span>}
+      </Button>
     </div>
   )
 }

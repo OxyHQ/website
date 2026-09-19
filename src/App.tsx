@@ -1,10 +1,12 @@
+import { MotionConfig } from 'framer-motion'
 import { useState, useCallback, lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { OxyProvider, useOxy } from '@oxyhq/services'
-import type { User } from '@oxyhq/core'
-import { BloomThemeProvider, type ThemeMode as BloomThemeMode } from '@oxyhq/bloom/theme'
-import { ImageResolverProvider } from '@oxyhq/bloom/image-resolver'
+import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
+import { Navigate } from './lib/navigation'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { OxyProvider, useOxy } from '@oxy.so/services/ui/client'
+import type { User } from '@oxy.so/core'
+import { BloomThemeProvider, type ThemeMode as BloomThemeMode } from '@oxy.so/bloom/theme'
+import { ImageResolverProvider } from '@oxy.so/bloom/image-resolver'
 import {
   getSavedMode,
   getSavedPreset,
@@ -16,9 +18,13 @@ import {
 } from './theme'
 import { LocaleProvider, DEFAULT_LOCALE, SUPPORTED_LOCALES } from './lib/i18n'
 import { setOxyServices } from './api/client'
+import { setPlatformStatsOxyServices } from './api/platformStatsStore'
 import { isFairCoinHost } from './lib/host'
 import ErrorBoundary from './components/ErrorBoundary'
 import IntercomMessenger from './components/integrations/IntercomMessenger'
+import NewsroomRouteFallback from './components/newsroom/NewsroomRouteFallback'
+import { queryClient } from './api/queryClient'
+import { loadNewsroomPage, loadNewsroomPostPage } from './lib/route-preload'
 
 import HomePage from './pages/HomePage'
 // Lazy on purpose, and it must stay that way. `FairCoinLandingContent` pulls in
@@ -37,8 +43,8 @@ const AdminPage = lazy(() => import('./pages/AdminPage'))
 const PartnersPage = lazy(() => import('./pages/PartnersPage'))
 const CareersPage = lazy(() => import('./pages/CareersPage'))
 const PricingPage = lazy(() => import('./pages/PricingPage'))
-const NewsroomPage = lazy(() => import('./pages/NewsroomPage'))
-const NewsroomPostPage = lazy(() => import('./pages/NewsroomPostPage'))
+const NewsroomPage = lazy(loadNewsroomPage)
+const NewsroomPostPage = lazy(loadNewsroomPostPage)
 const AcademyPage = lazy(() => import('./pages/AcademyPage'))
 const CourseDetailPage = lazy(() => import('./pages/CourseDetailPage'))
 const LessonPage = lazy(() => import('./pages/LessonPage'))
@@ -50,25 +56,39 @@ const TNPPage = lazy(() => import('./pages/TNPPage'))
 const TNPInstallPage = lazy(() => import('./pages/TNPInstallPage'))
 const HomiioPage = lazy(() => import('./pages/HomiioPage'))
 const MentionPage = lazy(() => import('./pages/MentionPage'))
-const PayPage = lazy(() => import('./pages/PayPage'))
+const PeablePage = lazy(() => import('./pages/PeablePage'))
 const CommonsPage = lazy(() => import('./pages/CommonsPage'))
 const AppsPage = lazy(() => import('./pages/AppsPage'))
 const AppDetailPage = lazy(() => import('./pages/AppDetailPage'))
 const FaqsPage = lazy(() => import('./pages/FaqsPage'))
 const CareerDetailPage = lazy(() => import('./pages/CareerDetailPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
+const BrandPage = lazy(() => import('./pages/BrandPage'))
 const InboxPage = lazy(() => import('./pages/InboxPage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const InitiativePage = lazy(() => import('./pages/InitiativePage'))
 const AIPricingPage = lazy(() => import('./pages/AIPricingPage'))
+const AIInferencePage = lazy(() => import('./pages/AIInferencePage'))
+const AIModelsPage = lazy(() => import('./pages/AIModelsPage'))
+const AIModelDetailPage = lazy(() => import('./pages/AIModelDetailPage'))
+const AIEnterprisePage = lazy(() => import('./pages/AIEnterprisePage'))
+const AITrustPage = lazy(() => import('./pages/AITrustPage'))
+const EnterprisePage = lazy(() => import('./pages/EnterprisePage'))
+const ContactSalesPage = lazy(() => import('./pages/ContactSalesPage'))
 const HelpPage = lazy(() => import('./pages/HelpPage'))
 const HelpArticlePage = lazy(() => import('./pages/HelpArticlePage'))
 const ChangelogPage = lazy(() => import('./pages/ChangelogPage'))
 const DocsPage = lazy(() => import('./pages/DocsPage'))
 const DocsIntroPage = lazy(() => import('./pages/DocsIntroPage'))
-const DocsThumbnailPage = lazy(() => import('./pages/DocsThumbnailPage'))
+const BloomDemoIsolationPage = lazy(() => import('./pages/BloomDemoIsolationPage'))
 const BloomPlayground = lazy(() => import('./components/docs/BloomPlayground'))
 const BloomColorSystemPage = lazy(() => import('./components/docs/BloomColorSystemPage'))
+const BloomComponentPage = lazy(() => import('./components/docs/BloomComponentPage'))
+const BloomComponentsHub = lazy(() =>
+  import('./components/docs-platform/BloomComponentsHub').then((m) => ({
+    default: m.BloomComponentsHub,
+  })),
+)
 const DevelopersPage = lazy(() => import('./pages/DevelopersPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
@@ -84,6 +104,7 @@ const CompanyPage = lazy(() => import('./pages/CompanyPage'))
 const TeamPage = lazy(() => import('./pages/TeamPage'))
 const CompanyArticlePage = lazy(() => import('./pages/CompanyArticlePage'))
 const StatusPage = lazy(() => import('./pages/StatusPage'))
+const StatusHistoryPage = lazy(() => import('./pages/StatusHistoryPage'))
 const ReferralsPage = lazy(() => import('./pages/ReferralsPage'))
 const ReferralsDashboardPage = lazy(() => import('./pages/ReferralsDashboardPage'))
 const SustainPage = lazy(() => import('./pages/SustainPage'))
@@ -103,10 +124,6 @@ const OXY_API =
 const OXY_CLIENT_ID =
   (import.meta.env.VITE_OXY_CLIENT_ID as string | undefined) ||
   'oxy_dk_e572a3df046f98c2c29098f1349a7927183751e08ca2b757'
-
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { staleTime: 60_000, retry: 1 } },
-})
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation()
@@ -151,6 +168,7 @@ function AppSetup({ children }: { children: React.ReactNode }) {
   // Wire the website's own-backend fetch client to the SDK session so every
   // /api call carries the current bearer token without manual token plumbing.
   setOxyServices(oxyServices)
+  setPlatformStatsOxyServices(oxyServices)
 
   // Resolve Bloom image file IDs to download URLs. The optional `variant`
   // selects the rendition (e.g. 'thumb') and is forwarded from Avatar's
@@ -234,6 +252,7 @@ function PublicRoutes() {
       <Route path="technologies" element={<Navigate to="/apps" replace />} />
       <Route path="products" element={<Navigate to="/apps" replace />} />
       <Route path="status" element={<StatusPage />} />
+      <Route path="status/history/:page" element={<StatusHistoryPage />} />
       <Route path="company" element={<CompanyPage />} />
       <Route path="company/team" element={<TeamPage />} />
       <Route
@@ -243,6 +262,16 @@ function PublicRoutes() {
             slug="manifesto"
             canonicalPath="/company/manifesto"
             cta={{ title: 'Read the founding charter.', label: 'Open the charter', href: '/company/charter' }}
+          />
+        }
+      />
+      <Route
+        path="company/influence"
+        element={
+          <CompanyArticlePage
+            slug="influence"
+            canonicalPath="/company/influence"
+            cta={{ title: 'Read the founding commitments.', label: 'Open the charter', href: '/company/charter/' }}
           />
         }
       />
@@ -277,10 +306,24 @@ function PublicRoutes() {
         }
       />
       <Route path="company/careers" element={<CareersPage />} />
-      <Route path="company/careers/:slug" element={<CareerDetailPage />} />
+      <Route path="company/careers/:id" element={<CareerDetailPage />} />
       <Route path="pricing" element={<PricingPage />} />
-      <Route path="newsroom" element={<NewsroomPage />} />
-      <Route path="newsroom/:slug" element={<NewsroomPostPage />} />
+      <Route
+        path="newsroom"
+        element={(
+          <Suspense fallback={<NewsroomRouteFallback />}>
+            <NewsroomPage />
+          </Suspense>
+        )}
+      />
+      <Route
+        path="newsroom/:slug"
+        element={(
+          <Suspense fallback={<NewsroomRouteFallback />}>
+            <NewsroomPostPage />
+          </Suspense>
+        )}
+      />
       <Route path="academy" element={<AcademyPage />} />
       <Route path="academy/:slug" element={<CourseDetailPage />} />
       <Route path="academy/:slug/:lesson" element={<LessonPage />} />
@@ -289,7 +332,8 @@ function PublicRoutes() {
       <Route path="changelog" element={<ChangelogPage />} />
       <Route path="developers" element={<DevelopersPage />} />
       <Route path="developers/docs" element={<DocsIntroPage />} />
-      <Route path="developers/docs/_thumbnail/:name" element={<DocsThumbnailPage />} />
+      <Route path="developers/docs/bloom/_demo" element={<BloomDemoIsolationPage />} />
+      <Route path="developers/docs/bloom/_demo/:name" element={<BloomDemoIsolationPage />} />
       <Route path="developers/docs/api" element={<DocsPage />} />
       <Route path="developers/docs/api/:version" element={<DocsPage />} />
       {/*
@@ -311,6 +355,19 @@ function PublicRoutes() {
         element={<Navigate to="/developers/docs/bloom/color-system" replace />}
       />
       {/*
+        The Bloom component index, and one page per export subpath — both
+        generated from the installed package's own types.
+
+        The page is a splat because three subpaths carry a slash
+        (`tabs/expo-router`), and both sit under the static `components`
+        segment because react-router ranks by specificity: a `bloom/:subpath`
+        or `bloom/*` route would outrank `:package/:version` below and swallow
+        `/developers/docs/bloom/0.72.1`. The exact index route wins over the
+        splat for the same reason, whatever order they are written in.
+      */}
+      <Route path="developers/docs/bloom/components" element={<BloomComponentsHub />} />
+      <Route path="developers/docs/bloom/components/*" element={<BloomComponentPage />} />
+      {/*
         Docs routing.
 
         Versioned packages (SDKs, libraries, REST APIs) use the explicit
@@ -330,9 +387,25 @@ function PublicRoutes() {
       <Route path="company/news" element={<BlogPage />} />
       <Route path="codea" element={<CodeaPage />} />
       <Route path="codea/extension" element={<CodexExtensionPage />} />
+      <Route path="brand" element={<BrandPage />} />
       <Route path="inbox" element={<InboxPage />} />
       <Route path="ai" element={<AIPage />} />
+      <Route path="ai/inference" element={<AIInferencePage />} />
+      <Route path="ai/models" element={<AIModelsPage />} />
+      {/*
+        A catalogue id is `publisher/model`, and the model half can carry a
+        second slash, an `@` or a version string. Two segments plus the encoding
+        in `src/lib/ai/modelId.ts` keeps one id in one route param — a splat
+        would swallow `/ai/models` itself.
+      */}
+      <Route path="ai/models/:publisher/:model" element={<AIModelDetailPage />} />
       <Route path="ai/pricing" element={<AIPricingPage />} />
+      <Route path="ai/enterprise" element={<AIEnterprisePage />} />
+      <Route path="ai/trust" element={<AITrustPage />} />
+      <Route path="enterprise" element={<EnterprisePage />} />
+      <Route path="contact/sales" element={<ContactSalesPage />} />
+      {/* `/contact` on its own is what people type; sales is the one desk it has. */}
+      <Route path="contact" element={<Navigate to="/contact/sales" replace />} />
       <Route path="dashboard" element={<DashboardPage />} />
       <Route
         path="initiative"
@@ -347,7 +420,10 @@ function PublicRoutes() {
       <Route path="tnp/install" element={<TNPInstallPage />} />
       <Route path="homiio" element={<HomiioPage />} />
       <Route path="mention" element={<MentionPage />} />
-      <Route path="pay" element={<PayPage />} />
+      <Route path="peable" element={<PeablePage />} />
+      {/* Peable previously lived at /pay, which remains linked externally,
+          so the legacy URL redirects rather than returning a 404. */}
+      <Route path="pay" element={<Navigate to="/peable" replace />} />
       <Route path="commons" element={<CommonsPage />} />
       <Route path="apps" element={<AppsPage />} />
       <Route path="apps/:name" element={<AppDetailPage />} />
@@ -400,17 +476,17 @@ function AppProviders() {
     setThemePreset(next)
   }, [])
 
-  // Thumbnail captures are the one route that can request a mode different
+  // The isolated demo route is the one route that can request a mode different
   // from the saved site preference. Keep that override on the ONE app-wide
   // provider: its layout effect owns the document class/tokens, and changing
-  // routes automatically restores the persisted mode held in state. The
-  // thumbnail itself must never mount a second provider or mutate <html>
-  // during render.
-  const isThumbnailRoute = location.pathname.includes('/developers/docs/_thumbnail/')
-  const thumbnailMode = new URLSearchParams(location.search).get('theme') === 'dark'
+  // routes automatically restores the persisted mode held in state. The demo
+  // page itself must never mount a second provider or mutate <html> during
+  // render.
+  const isDemoIsolationRoute = location.pathname.includes('/developers/docs/bloom/_demo/')
+  const requestedMode = new URLSearchParams(location.search).get('theme') === 'dark'
     ? 'dark'
     : 'light'
-  const renderedMode = isThumbnailRoute ? thumbnailMode : mode
+  const renderedMode = isDemoIsolationRoute ? requestedMode : mode
 
   // BloomThemeProvider must wrap OxyProvider: OxyProvider mounts
   // OxyAccountDialog + ToastOutlet as siblings of `children`, and those
@@ -489,7 +565,7 @@ export default function App() {
   // resolve route-scoped rendering modes before it paints its descendants.
   return (
     <BrowserRouter>
-      <AppProviders />
+      <MotionConfig reducedMotion="user"><AppProviders /></MotionConfig>
     </BrowserRouter>
   )
 }

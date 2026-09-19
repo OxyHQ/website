@@ -1,5 +1,5 @@
 import Button from '../ui/Button'
-import { researchCtaHref } from '../../data/ai'
+import { researchCtaHref } from '../../data/ai/research'
 import { useTranslation } from '../../lib/i18n'
 
 /**
@@ -40,8 +40,9 @@ export default function AIResearchSection({ framed = true }: { framed?: boolean 
               {researchParagraph.split('{highlight}')[1]}
             </p>
 
-            <Button variant="inverse" size="md" href={researchCtaHref} className="!bg-primary !text-foreground">
+            <Button variant="inverse" size="md" href={researchCtaHref} className="!bg-primary !text-primary-foreground">
               {t('home.researchCta')}
+              <span className="sr-only">: {t('home.researchTitle')}</span>
             </Button>
           </div>
         </div>

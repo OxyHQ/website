@@ -1,6 +1,6 @@
-import { Chip } from '@oxyhq/bloom/chip'
-import type { ChipSize } from '@oxyhq/bloom/chip'
-import type { AccentFill, AccentTone } from '@oxyhq/bloom/theme'
+import { Chip } from '@oxy.so/bloom/chip'
+import type { ChipSize } from '@oxy.so/bloom/chip'
+import type { AccentFill, AccentTone } from '@oxy.so/bloom/theme'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

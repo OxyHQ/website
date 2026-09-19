@@ -1,10 +1,38 @@
-import { Link } from 'react-router-dom'
-import { BloomColorScope } from '@oxyhq/bloom/theme'
-import type { NewsroomPost } from '../../data/newsroom'
+import { Link } from '../../lib/navigation'
+import { BloomColorScope } from '@oxy.so/bloom/theme'
+import type { NewsroomPostSummary } from '../../data/newsroom'
 import { useCurrentLocale } from '../../lib/i18n'
 import { newsroomThemeFor } from '../../lib/newsroom-theme'
+import { usePrefetchNewsroomPost } from '../../api/hooks'
 
-function ThemedCard({ article, children }: { article: NewsroomPost; children: React.ReactElement }) {
+function NewsroomLink({
+  article,
+  className,
+  ariaLabel,
+  children,
+}: {
+  article: NewsroomPostSummary
+  className: string
+  ariaLabel?: string
+  children: React.ReactNode
+}) {
+  const preload = usePrefetchNewsroomPost(article.slug)
+
+  return (
+    <Link
+      to={`/newsroom/${article.slug}`}
+      aria-label={ariaLabel}
+      onPointerEnter={() => void preload()}
+      onPointerDown={() => void preload()}
+      onFocus={() => void preload()}
+      className={className}
+    >
+      {children}
+    </Link>
+  )
+}
+
+function ThemedCard({ article, children }: { article: NewsroomPostSummary; children: React.ReactElement }) {
   return (
     <BloomColorScope colorPreset={newsroomThemeFor(article)}>
       {children}
@@ -16,10 +44,12 @@ function NewsImage({
   article,
   className,
   priority = false,
+  sizes,
 }: {
-  article: NewsroomPost
+  article: NewsroomPostSummary
   className: string
   priority?: boolean
+  sizes: string
 }) {
   return (
     <div className={`relative overflow-hidden rounded-md bg-surface ${className}`}>
@@ -32,6 +62,8 @@ function NewsImage({
       {article.coverImage && (
         <img
           src={article.coverImage}
+          srcSet={article.coverImageSrcSet}
+          sizes={article.coverImageSrcSet ? sizes : undefined}
           alt={article.imageAlt?.trim() ?? ''}
           loading={priority ? 'eager' : 'lazy'}
           fetchPriority={priority ? 'high' : 'auto'}
@@ -48,7 +80,7 @@ function NewsImage({
   )
 }
 
-function NewsMeta({ article }: { article: NewsroomPost }) {
+function NewsMeta({ article }: { article: NewsroomPostSummary }) {
   const locale = useCurrentLocale()
   const date = new Date(article.publishedAt).toLocaleDateString(locale, {
     month: 'short',
@@ -65,71 +97,88 @@ function NewsMeta({ article }: { article: NewsroomPost }) {
   )
 }
 
-export function NewsCardFeatured({ article }: { article: NewsroomPost }) {
+export function NewsCardFeatured({ article }: { article: NewsroomPostSummary }) {
   return (
     <ThemedCard article={article}>
-      <Link
-        to={`/newsroom/${article.slug}`}
+      <NewsroomLink
+        article={article}
         className="group relative block rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
       >
-        <NewsImage article={article} priority className="aspect-[4/5] w-full @lg:aspect-video" />
+        <NewsImage
+          article={article}
+          priority
+          sizes="(min-width: 1024px) 75vw, 100vw"
+          className="aspect-[4/5] w-full @lg:aspect-video"
+        />
         <div className="mt-5 flex max-w-4xl flex-col gap-2 @lg:pe-10">
-          <h2 className="text-heading-3xl text-foreground transition-colors group-hover:text-muted-foreground">
+          <h2 className="text-display-6 text-foreground transition-colors group-hover:text-muted-foreground">
             {article.title}
           </h2>
           <NewsMeta article={article} />
         </div>
-      </Link>
+      </NewsroomLink>
     </ThemedCard>
   )
 }
 
-export function NewsCardGrid({ article }: { article: NewsroomPost }) {
+export function NewsCardGrid({ article }: { article: NewsroomPostSummary }) {
   return (
     <ThemedCard article={article}>
-      <Link
-        to={`/newsroom/${article.slug}`}
+      <NewsroomLink
+        article={article}
         className="group relative block rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
       >
-        <NewsImage article={article} className="aspect-square w-full" />
+        <NewsImage
+          article={article}
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+          className="aspect-square w-full"
+        />
         <div className="mt-3 flex flex-col gap-1.5">
           <h3 className="text-heading-xl text-foreground transition-colors group-hover:text-muted-foreground">
             {article.title}
           </h3>
           <NewsMeta article={article} />
         </div>
-      </Link>
+      </NewsroomLink>
     </ThemedCard>
   )
 }
 
-export function NewsCardCarousel({ article }: { article: NewsroomPost }) {
+export function NewsCardCarousel({ article }: { article: NewsroomPostSummary }) {
   return (
     <ThemedCard article={article}>
-      <Link
-        to={`/newsroom/${article.slug}`}
+      <NewsroomLink
+        article={article}
         className="group relative block rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
       >
-        <NewsImage article={article} className="aspect-square w-full" />
+        <NewsImage
+          article={article}
+          sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 85vw"
+          className="aspect-square w-full"
+        />
         <div className="mt-3 flex flex-col gap-1.5 md:pe-6">
           <h3 className="text-heading-xl text-foreground transition-colors group-hover:text-muted-foreground">
             {article.title}
           </h3>
           <NewsMeta article={article} />
         </div>
-      </Link>
+      </NewsroomLink>
     </ThemedCard>
   )
 }
 
-export function NewsCardRow({ article }: { article: NewsroomPost }) {
+export function NewsCardRow({ article }: { article: NewsroomPostSummary }) {
   return (
     <ThemedCard article={article}>
-      <Link
-        to={`/newsroom/${article.slug}`}
+      <NewsroomLink
+        article={article}
         className="group grid w-full grid-cols-[7.5rem_minmax(0,1fr)] items-center gap-4 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary sm:grid-cols-[11.563rem_minmax(0,1fr)] sm:gap-6"
       >
-        <NewsImage article={article} className="aspect-square w-full" />
+        <NewsImage
+          article={article}
+          sizes="(min-width: 640px) 185px, 120px"
+          className="aspect-square w-full"
+        />
         <div className="flex min-w-0 flex-col gap-2">
           <h3 className="text-base font-semibold leading-snug tracking-[-0.01em] text-foreground transition-colors group-hover:text-muted-foreground sm:text-lg">
             {article.title}
@@ -141,12 +190,12 @@ export function NewsCardRow({ article }: { article: NewsroomPost }) {
           )}
           <NewsMeta article={article} />
         </div>
-      </Link>
+      </NewsroomLink>
     </ThemedCard>
   )
 }
 
-export function NewsCardListRow({ article }: { article: NewsroomPost }) {
+export function NewsCardListRow({ article }: { article: NewsroomPostSummary }) {
   const locale = useCurrentLocale()
   const date = new Date(article.publishedAt).toLocaleDateString(locale, {
     month: 'short',
@@ -171,9 +220,9 @@ export function NewsCardListRow({ article }: { article: NewsroomPost }) {
           </time>
         </div>
 
-        <Link
-          to={`/newsroom/${article.slug}`}
-          aria-label={`${article.title} - ${article.categories[0] ?? ''} - ${date}`}
+        <NewsroomLink
+          article={article}
+          ariaLabel={`${article.title} - ${article.categories[0] ?? ''} - ${date}`}
           className="w-full max-w-[40.4375rem] flex-auto rounded-sm text-foreground after:absolute after:inset-0 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary md:ps-8"
         >
           <h2 className="text-heading-xl transition-colors group-hover:text-muted-foreground">
@@ -184,7 +233,7 @@ export function NewsCardListRow({ article }: { article: NewsroomPost }) {
               {article.resume}
             </p>
           )}
-        </Link>
+        </NewsroomLink>
       </div>
     </article>
   )

@@ -4,8 +4,7 @@ import { objectId, timestamps } from './columns.js'
 /* ──────────────────────────────────────────────
  * The editorial tables: what the CMS writes and the site reads.
  *
- * Sub-documents (a page's sections, a job's description blocks, a hero's
- * carousel slots) are `jsonb`. They are read and written as a unit by
+ * Sub-documents (a page's sections, a hero's carousel slots) are `jsonb`. They are read and written as a unit by
  * both the admin and the site, never queried field by field, so splitting them
  * into child tables would buy joins nobody asked for.
  * ──────────────────────────────────────────── */
@@ -120,24 +119,14 @@ export const newsroomPosts = pgTable(
     publishedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     ...timestamps,
   },
-  (table) => [index('newsroom_posts_status_idx').on(table.status)],
+  (table) => [
+    index('newsroom_posts_status_published_at_id_idx').on(
+      table.status,
+      table.publishedAt.desc(),
+      table._id.asc(),
+    ),
+  ],
 )
-
-export const jobs = pgTable('jobs', {
-  _id: objectId(),
-  title: text().notNull(),
-  slug: text().notNull().unique(),
-  subtitle: text().notNull().default(''),
-  department: text().notNull(),
-  location: text().notNull().default('Remote'),
-  type: text().notNull().default('Full-time'),
-  compensation: text().notNull().default(''),
-  /** `{ type: 'paragraph'|'heading'|'list', text?, items? }[]` */
-  description: jsonb().$type<Record<string, unknown>[]>().notNull().default([]),
-  active: boolean().notNull().default(true),
-  order: integer().notNull().default(0),
-  ...timestamps,
-})
 
 export const courses = pgTable(
   'courses',
@@ -329,3 +318,29 @@ export const locales = pgTable('locales', {
   order: integer().notNull().default(0),
   ...timestamps,
 })
+
+/**
+ * Object-storage deletions still owed. A media row is removed in the same
+ * transaction that records its objects here, so a storage outage after the
+ * commit leaves a durable to-do rather than an object nobody knows about. A
+ * row is deleted once its object is gone, or once another media row turns out
+ * to use the same key (the upload key is content-addressed, so two rows can).
+ */
+export const storageCleanups = pgTable(
+  'storage_cleanups',
+  {
+    _id: objectId(),
+    key: text().notNull(),
+    /** Why the object became unowned: 'media_deleted' | 'upload_compensation' | 'diagnostic'. */
+    reason: text().notNull(),
+    mediaId: text(),
+    attempts: integer().notNull().default(0),
+    lastError: text(),
+    nextAttemptAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex('storage_cleanups_key_idx').on(table.key),
+    index('storage_cleanups_next_attempt_idx').on(table.nextAttemptAt),
+  ],
+)

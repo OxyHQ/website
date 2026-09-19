@@ -1,101 +1,28 @@
-import { useMemo, memo } from "react";
+import { useCallback, useEffect, useMemo, memo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { geoMercator } from "d3-geo";
-import dottedMapData from "../../data/dashboard/dotted-map-data.json";
-import { INFRA_NODES } from "../../data/dashboard/infra-nodes";
-import type { InfraStatusNode, ActivityEvent } from "../../api/hooks";
-
-const BLOOM_COLORS = [
-  '#005c67', // teal
-  '#1D9BF0', // blue
-  '#10B981', // green
-  '#F59E0B', // amber
-  '#EF4444', // red
-  '#8B5CF6', // purple
-  '#EC4899', // pink
-  '#0EA5E9', // sky
-  '#F97316', // orange
-  '#14B8A6', // mint
-  '#c46ede', // oxy
-];
+import { geoEquirectangular } from "d3-geo";
+import { infrastructureNodes } from "../../data/dashboard/infra-nodes";
+import { activityRegionCoordinates, activityRegionLabel } from "../../data/dashboard/activity-regions";
+import { ACTIVITY_CATEGORIES } from "../../data/dashboard/activity-categories";
+import { activityRoute } from "../../data/dashboard/activity-routes";
+import { observeMapContrast } from "./map-contrast";
+import ActivityPulse from "./ActivityPulse";
+import { activityClock, activityMotion, activityFlows } from "../../data/dashboard/activity-motion";
+import type { InfraStatusNode, PlatformActivityEvent } from "../../api/hooks";
 
 const STATUS_COLORS = {
-  online: '#10B981',
-  degraded: '#F59E0B',
-  offline: '#EF4444',
+  unknown: 'var(--muted-foreground)',
+  online: 'var(--color-success)',
+  degraded: 'var(--color-warning)',
+  offline: 'var(--color-destructive)',
 } as const;
-
-const StaticPixel = memo(({ x, y }: { x: number; y: number }) => (
-  <rect x={x} y={y} width={3} height={3} fill="var(--muted-foreground)" fillOpacity={0.3} />
-));
-StaticPixel.displayName = "StaticPixel";
-
-const AnimatedPixel = memo(
-  ({
-    x,
-    y,
-    color,
-    canPulse,
-    cityDistanceRank,
-  }: {
-    x: number;
-    y: number;
-    color: string;
-    canPulse: boolean;
-    cityDistanceRank: number;
-  }) => {
-    const delay = useMemo(() => cityDistanceRank * 0.1, [cityDistanceRank]);
-
-    const animate = canPulse
-      ? {
-          scale: [1, 1.8, 1],
-          opacity: [0.8, 1, 0.8],
-        }
-      : { scale: 1, opacity: 1 };
-
-    const transition = canPulse
-      ? {
-          opacity: {
-            duration: 1,
-            repeat: Infinity,
-            ease: "easeInOut" as const,
-            delay,
-            repeatDelay: delay,
-          },
-          scale: {
-            duration: 1.5,
-            repeat: Infinity,
-            ease: "easeInOut" as const,
-            delay,
-            repeatDelay: delay,
-          },
-        }
-      : { type: "spring" as const, stiffness: 260, damping: 20 };
-
-    return (
-      <motion.rect
-        x={x}
-        y={y}
-        width={3}
-        height={3}
-        fill={color}
-        animate={animate}
-        transition={transition}
-        style={{
-          willChange: canPulse && cityDistanceRank < 10 ? "transform, opacity" : undefined,
-        }}
-      />
-    );
-  }
-);
-AnimatedPixel.displayName = "AnimatedPixel";
 
 const InfraNodeMarker = memo(
   ({ x, y, label, status, services }: {
     x: number;
     y: number;
     label: string;
-    status: 'online' | 'degraded' | 'offline';
+    status: 'online' | 'degraded' | 'offline' | 'unknown';
     services: number;
   }) => {
     const color = STATUS_COLORS[status];
@@ -113,6 +40,16 @@ const InfraNodeMarker = memo(
           animate={{ scale: [1, 2, 1], opacity: [0.6, 0, 0.6] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           style={{ transformOrigin: `${x}px ${y}px` }}
+        />
+        <image
+          data-oxy-infrastructure-logo="true"
+          href="/favicon.svg"
+          x={x - 12}
+          y={y - 19}
+          width={24}
+          height={13}
+          opacity={status === 'offline' ? 0.5 : 0.95}
+          aria-label={`Oxy · ${label}`}
         />
         {/* Diamond shape */}
         <polygon
@@ -156,102 +93,35 @@ const ActivityFlash = memo(
 );
 ActivityFlash.displayName = "ActivityFlash";
 
-function haversineDistance(a: [number, number], b: [number, number]): number {
-  const toRad = (deg: number) => deg * Math.PI / 180;
-  const dLat = toRad(b[1] - a[1]);
-  const dLon = toRad(b[0] - a[0]);
-  const lat1 = toRad(a[1]);
-  const lat2 = toRad(b[1]);
-  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
-  return 2 * Math.asin(Math.sqrt(h));
-}
-
 interface DottedMapProps {
   width?: number;
   height?: number;
-  activeCountries?: Array<{ location: string; count: number }>;
   infraStatus?: InfraStatusNode[];
-  activityEvents?: ActivityEvent[];
+  activityEvents?: PlatformActivityEvent[];
 }
 
 export default function DottedMap({
   width = 1000,
   height = 560,
-  activeCountries,
   infraStatus,
   activityEvents,
 }: DottedMapProps) {
+  const [viewport, setViewport] = useState({ x: 140, y: 42, width: 720, height: 476 });
+  const viewportRef = useRef(viewport);
+  const dragRef = useRef<{ pointerX: number; pointerY: number; viewX: number; viewY: number } | null>(null);
+  const returnTimerRef = useRef<number | null>(null);
+  const focusFrameRef = useRef<number | null>(null);
+  // Synced after the render, not during it: the automatic focus animation reads
+  // the latest viewport from callbacks, and writing a ref while rendering is
+  // what React Compiler cannot see.
+  useEffect(() => { viewportRef.current = viewport; }, [viewport]);
   const projection = useMemo(
     () =>
-      geoMercator()
-        .scale(140)
-        .center([15, 25])
-        .rotate([0, 0, 0])
+      geoEquirectangular()
+        .scale(height / Math.PI)
         .translate([width / 2, height / 2]),
     [width, height]
   );
-
-  const activityMap = useMemo(() => {
-    const map = new Map<string, { count: number; color: string; dotsToShow: number; rank: number }>();
-    if (!activeCountries || activeCountries.length === 0) return map;
-
-    const maxCount = activeCountries[0]?.count || 1;
-    activeCountries.forEach((entry, index) => {
-      const code = entry.location?.toUpperCase();
-      if (!code) return;
-      const dotsToShow = Math.max(5, Math.floor(35 * (entry.count / maxCount)));
-      map.set(code, {
-        count: entry.count,
-        color: BLOOM_COLORS[index % BLOOM_COLORS.length],
-        dotsToShow,
-        rank: index,
-      });
-    });
-    return map;
-  }, [activeCountries]);
-
-  const { staticPixels, animatedPixels } = useMemo(() => {
-    const staticArr: Array<{ key: string; x: number; y: number }> = [];
-    const animatedArr: Array<{
-      key: string;
-      x: number;
-      y: number;
-      color: string;
-      canPulse: boolean;
-      cityDistanceRank: number;
-    }> = [];
-
-    Object.entries(dottedMapData as Record<string, Array<{ lon: number; lat: number; cityDistanceRank: number }>>).forEach(
-      ([countryCode, cities]) => {
-        const activity = activityMap.get(countryCode);
-
-        cities.forEach((city) => {
-          const coords = projection([city.lon, city.lat]);
-          if (!coords) return;
-
-          const [x, y] = coords;
-          if (x < 0 || x > width || y < 0 || y > height) return;
-
-          const key = `${countryCode}-${city.cityDistanceRank}`;
-
-          if (activity && city.cityDistanceRank < activity.dotsToShow) {
-            animatedArr.push({
-              key,
-              x,
-              y,
-              color: activity.color,
-              canPulse: activity.rank < 3 && city.cityDistanceRank < 5,
-              cityDistanceRank: city.cityDistanceRank,
-            });
-          } else {
-            staticArr.push({ key, x, y });
-          }
-        });
-      }
-    );
-
-    return { staticPixels: staticArr, animatedPixels: animatedArr };
-  }, [projection, width, height, activityMap]);
 
   // Project infra node positions
   const projectedInfraNodes = useMemo(() => {
@@ -260,7 +130,7 @@ export default function DottedMap({
       for (const node of infraStatus) statusMap.set(node.region, node);
     }
 
-    return INFRA_NODES.map(node => {
+    return infrastructureNodes(infraStatus).map(node => {
       const coords = projection(node.coordinates);
       if (!coords) return null;
       const status = statusMap.get(node.region);
@@ -269,86 +139,166 @@ export default function DottedMap({
         x: coords[0],
         y: coords[1],
         label: node.label,
-        status: status?.status ?? 'online' as const,
+        status: status?.status ?? 'unknown' as const,
         services: node.services.length,
       };
     }).filter((n): n is NonNullable<typeof n> => n !== null);
   }, [projection, infraStatus]);
 
-  // Project activity flash positions using country centroids
+  // Project anonymous activity buckets at the infrastructure region that
+  // processed them. No user IP or user-derived coordinate enters this path.
   const projectedFlashes = useMemo(() => {
     if (!activityEvents || activityEvents.length === 0) return [];
 
-    const mapData = dottedMapData as Record<string, Array<{ lon: number; lat: number; cityDistanceRank: number }>>;
-
+    const seenRegions = new Set<string>();
     return activityEvents.map(event => {
-      const countryDots = mapData[event.countryCode];
-      if (!countryDots || countryDots.length === 0) return null;
-
-      // Use the centroid (first city entry)
-      const centroid = countryDots.find(d => d.cityDistanceRank === 0) ?? countryDots[0];
-      const coords = projection([centroid.lon, centroid.lat]);
+      const region = event.sourceRegion ?? event.region;
+      if (seenRegions.has(region)) return null;
+      seenRegions.add(region);
+      const coordinates = event.sourceRegion === region && event.sourceCoordinates
+        ? event.sourceCoordinates
+        : region.startsWith('edge-') ? activityRegionCoordinates(region) : infrastructureNodes(infraStatus).find(node => node.region === region)?.coordinates;
+      if (!coordinates) return null;
+      const coords = projection(coordinates);
       if (!coords) return null;
-
-      const activity = activityMap.get(event.countryCode);
       return {
-        key: `flash-${event.timestamp}`,
+        key: `flash-${region}-${event.emittedAt}`,
         x: coords[0],
         y: coords[1],
-        color: activity?.color ?? BLOOM_COLORS[0],
+        color: 'var(--color-primary)',
+        label: event.sourceLabel ?? activityRegionLabel(region),
       };
     }).filter((f): f is NonNullable<typeof f> => f !== null);
-  }, [activityEvents, projection, activityMap]);
+  }, [activityEvents, projection, infraStatus]);
 
-  // Connection lines: top 3 active countries → nearest infra node
-  const connectionLines = useMemo(() => {
-    if (!activeCountries || activeCountries.length === 0 || projectedInfraNodes.length === 0) return [];
+  const projectedRoutes = useMemo(() => {
+    if (!activityEvents || activityEvents.length === 0) return [];
 
-    const mapData = dottedMapData as Record<string, Array<{ lon: number; lat: number; cityDistanceRank: number }>>;
-    const top3 = activeCountries.slice(0, 3);
+    const now = activityClock(activityEvents);
+    return activityFlows(activityEvents).flatMap(event => {
+      const route = activityRoute(event, infrastructureNodes(infraStatus));
+      if (!route) return [];
+      const start = projection(route.source);
+      const end = projection(route.target);
+      if (!start || !end) return [];
+      const curve = Math.min(80, Math.abs(end[0] - start[0]) * 0.18 + 24);
+      const activity = activityMotion(event, route.key, now);
+      return [{
+        key: route.key,
+        path: route.local
+          ? `M ${start[0]} ${start[1]} c ${route.outbound ? 32 : -32} -36 ${route.outbound ? -32 : 32} -36 0 0`
+          : `M ${start[0]} ${start[1]} Q ${(start[0] + end[0]) / 2} ${Math.min(start[1], end[1]) - curve} ${end[0]} ${end[1]}`,
+        color: ACTIVITY_CATEGORIES.find(item => item.id === route.category)!.color,
+        trackColor: route.internal ? 'var(--map-internal)' : ACTIVITY_CATEGORIES.find(item => item.id === route.category)!.color,
+        direction: route.outbound ? 'outbound' : 'inbound',
+        category: route.category,
+        internal: route.internal,
+        pulseDuration: activity.pulseDurationMs,
+        pulseLength: route.internal ? activity.pulseLength / 2 : activity.pulseLength,
+        pulseGap: activity.pulseGap + (route.internal ? activity.pulseLength / 2 : 0),
+        phase: activity.initialPhase,
+      }];
+    });
+  }, [activityEvents, projection, infraStatus]);
 
-    return top3.map((entry, idx) => {
-      const code = entry.location?.toUpperCase();
-      if (!code) return null;
+  const cancelAutomaticFocus = useCallback(() => {
+    if (returnTimerRef.current !== null) window.clearTimeout(returnTimerRef.current);
+    if (focusFrameRef.current !== null) window.cancelAnimationFrame(focusFrameRef.current);
+    returnTimerRef.current = null;
+    focusFrameRef.current = null;
+  }, []);
 
-      const countryDots = mapData[code];
-      if (!countryDots || countryDots.length === 0) return null;
-
-      const centroid = countryDots.find(d => d.cityDistanceRank === 0) ?? countryDots[0];
-      const countryCoords = projection([centroid.lon, centroid.lat]);
-      if (!countryCoords) return null;
-
-      // Find nearest infra node by geographic distance
-      let nearest = INFRA_NODES[0];
-      let minDist = Infinity;
-      for (const node of INFRA_NODES) {
-        const dist = haversineDistance([centroid.lon, centroid.lat], node.coordinates);
-        if (dist < minDist) {
-          minDist = dist;
-          nearest = node;
-        }
+  const focusBusiestOrigin = useCallback(() => {
+    if (dragRef.current) return;
+    const requestsByOrigin = new Map<string, number>();
+    for (const event of activityEvents ?? []) {
+      if (event.sourceRegion) {
+        requestsByOrigin.set(event.sourceRegion, (requestsByOrigin.get(event.sourceRegion) ?? 0) + event.requests);
       }
+    }
+    const busiestOrigin = [...requestsByOrigin.entries()]
+      .sort((left, right) => right[1] - left[1])[0]?.[0];
+    const busiestEvent = activityEvents?.find(event => event.sourceRegion === busiestOrigin);
+    const coordinates = busiestEvent?.sourceCoordinates
+      ?? (busiestOrigin ? activityRegionCoordinates(busiestOrigin) : undefined);
+    const focus = coordinates ? projection(coordinates) : null;
+    if (!focus) return;
 
-      const nodeCoords = projection(nearest.coordinates);
-      if (!nodeCoords) return null;
+    const start = viewportRef.current;
+    const targetX = Math.max(0, Math.min(width - start.width, focus[0] - start.width / 2));
+    const targetY = Math.max(0, Math.min(height - start.height, focus[1] - start.height / 2));
+    const startedAt = performance.now();
+    const animateFocus = (now: number) => {
+      if (dragRef.current) return;
+      const progress = Math.min(1, (now - startedAt) / 900);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setViewport(current => ({
+        ...current,
+        x: start.x + (targetX - start.x) * eased,
+        y: start.y + (targetY - start.y) * eased,
+      }));
+      if (progress < 1) focusFrameRef.current = window.requestAnimationFrame(animateFocus);
+    };
+    focusFrameRef.current = window.requestAnimationFrame(animateFocus);
+  }, [activityEvents, height, projection, width]);
 
-      const activity = activityMap.get(code);
-      return {
-        key: `conn-${code}`,
-        x1: countryCoords[0],
-        y1: countryCoords[1],
-        x2: nodeCoords[0],
-        y2: nodeCoords[1],
-        color: activity?.color ?? BLOOM_COLORS[idx % BLOOM_COLORS.length],
-      };
-    }).filter((l): l is NonNullable<typeof l> => l !== null);
-  }, [activeCountries, projectedInfraNodes, projection, activityMap]);
+  const scheduleAutomaticFocus = useCallback(() => {
+    cancelAutomaticFocus();
+    returnTimerRef.current = window.setTimeout(() => {
+      focusBusiestOrigin();
+    }, 600);
+  }, [cancelAutomaticFocus, focusBusiestOrigin]);
+
+  useEffect(() => {
+    if (!dragRef.current) {
+      cancelAutomaticFocus();
+      focusBusiestOrigin();
+    }
+  }, [cancelAutomaticFocus, focusBusiestOrigin]);
+
+  const rootRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    const stopContrast = observeMapContrast(node);
+    return () => { stopContrast(); cancelAutomaticFocus(); };
+  }, [cancelAutomaticFocus]);
 
   return (
-    <div className="relative w-full">
+    <div ref={rootRef} className="relative h-full w-full">
       <svg
-        viewBox={`0 0 ${width} ${height}`}
-        className="w-full h-auto max-h-[50dvh] bg-background"
+        viewBox={`${viewport.x} ${viewport.y} ${viewport.width} ${viewport.height}`}
+        className="h-full w-full cursor-grab touch-none bg-background active:cursor-grabbing"
+        preserveAspectRatio="none"
+        onPointerDown={(event) => {
+          cancelAutomaticFocus();
+          event.currentTarget.setPointerCapture(event.pointerId);
+          dragRef.current = {
+            pointerX: event.clientX,
+            pointerY: event.clientY,
+            viewX: viewport.x,
+            viewY: viewport.y,
+          };
+        }}
+        onPointerMove={(event) => {
+          const drag = dragRef.current;
+          if (!drag) return;
+          const bounds = event.currentTarget.getBoundingClientRect();
+          const nextX = drag.viewX - (event.clientX - drag.pointerX) * viewport.width / bounds.width;
+          const nextY = drag.viewY - (event.clientY - drag.pointerY) * viewport.height / bounds.height;
+          setViewport(current => ({
+            ...current,
+            x: Math.max(0, Math.min(width - current.width, nextX)),
+            y: Math.max(0, Math.min(height - current.height, nextY)),
+          }));
+        }}
+        onPointerUp={(event) => {
+          event.currentTarget.releasePointerCapture(event.pointerId);
+          dragRef.current = null;
+          scheduleAutomaticFocus();
+        }}
+        onPointerCancel={() => {
+          dragRef.current = null;
+          scheduleAutomaticFocus();
+        }}
       >
         <defs>
           <filter id="flash-glow">
@@ -359,56 +309,22 @@ export default function DottedMap({
             </feMerge>
           </filter>
         </defs>
+        <image
+          href="/images/dashboard/earth-night.jpg"
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+          preserveAspectRatio="xMidYMid slice"
+        />
 
-        {/* Connection lines (behind everything) */}
         <g>
-          <AnimatePresence>
-            {connectionLines.map(line => (
-              <motion.line
-                key={line.key}
-                x1={line.x1}
-                y1={line.y1}
-                x2={line.x2}
-                y2={line.y2}
-                stroke={line.color}
-                strokeOpacity={0.2}
-                strokeWidth={1}
-                strokeDasharray="4 4"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1, ease: "easeOut" }}
-              >
-                <animate
-                  attributeName="stroke-dashoffset"
-                  from="0"
-                  to="-8"
-                  dur="1s"
-                  repeatCount="indefinite"
-                />
-              </motion.line>
-            ))}
-          </AnimatePresence>
-        </g>
+          {projectedRoutes.map(route => (
+            <g key={route.key} data-traffic-direction={route.direction} data-traffic-scope={route.internal ? "internal" : "external"} data-traffic-type={route.category}>
+              <path d={route.path} fill="none" stroke={route.trackColor} strokeWidth={route.internal ? 2 : 0.8} strokeDasharray={route.internal ? "3 3" : undefined} opacity={route.internal ? 0.9 : 0.28} />
+              <ActivityPulse path={route.path} color={route.color} internal={route.internal} length={route.pulseLength} gap={route.pulseGap} duration={route.pulseDuration} phase={route.phase} />
 
-        {/* Static pixels */}
-        <g>
-          {staticPixels.map((p) => (
-            <StaticPixel key={p.key} x={p.x} y={p.y} />
-          ))}
-        </g>
-
-        {/* Animated pixels */}
-        <g>
-          {animatedPixels.map((p) => (
-            <AnimatedPixel
-              key={p.key}
-              x={p.x}
-              y={p.y}
-              color={p.color}
-              canPulse={p.canPulse}
-              cityDistanceRank={p.cityDistanceRank}
-            />
+            </g>
           ))}
         </g>
 
@@ -416,7 +332,10 @@ export default function DottedMap({
         <g>
           <AnimatePresence>
             {projectedFlashes.map(f => (
-              <ActivityFlash key={f.key} x={f.x} y={f.y} color={f.color} />
+              <g key={f.key}>
+                <ActivityFlash x={f.x} y={f.y} color={f.color} />
+                <text x={f.x} y={f.y - 10} textAnchor="middle" fill="var(--foreground)" fontSize={9} fontWeight={600}>{f.label}</text>
+              </g>
             ))}
           </AnimatePresence>
         </g>

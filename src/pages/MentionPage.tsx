@@ -13,7 +13,7 @@ export default function MentionPage() {
         canonicalPath: '/mention',
         ogImage: APP_CARD_IMAGES['/mention'],
       }}
-      className="bg-[#88a6f0]"
+      className="mention-theme bg-background text-foreground"
       navbar={<Navbar transparent />}
       mainClassName="flex-1"
     >

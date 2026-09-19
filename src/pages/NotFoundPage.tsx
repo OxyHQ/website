@@ -22,19 +22,19 @@ const OXY_HELP: readonly FaqEntry[] = [
     answer: (
       <ul className="list-disc space-y-2 pl-5">
         <li>
-          <a className="underline underline-offset-2 hover:text-foreground" href="/help">
+          <a className="underline underline-offset-2 hover:text-foreground" href="/help/">
             Help center
           </a>{' '}
           — guides, troubleshooting and answers to the questions that come up most.
         </li>
         <li>
-          <a className="underline underline-offset-2 hover:text-foreground" href="/status">
+          <a className="underline underline-offset-2 hover:text-foreground" href="/status/">
             Status
           </a>{' '}
           — whether the thing you were looking for is simply down right now.
         </li>
         <li>
-          <a className="underline underline-offset-2 hover:text-foreground" href="/newsroom">
+          <a className="underline underline-offset-2 hover:text-foreground" href="/newsroom/">
             Newsroom
           </a>{' '}
           — a page that moved is usually a page that changed, and that is where we say so.
@@ -47,13 +47,13 @@ const OXY_HELP: readonly FaqEntry[] = [
     answer: (
       <ul className="list-disc space-y-2 pl-5">
         <li>
-          <a className="underline underline-offset-2 hover:text-foreground" href="/developers/docs">
+          <a className="underline underline-offset-2 hover:text-foreground" href="/developers/docs/">
             Read the docs
           </a>{' '}
           — guides and references for building on Oxy.
         </li>
         <li>
-          <a className="underline underline-offset-2 hover:text-foreground" href="/developers/docs/api">
+          <a className="underline underline-offset-2 hover:text-foreground" href="/developers/docs/api/">
             REST API reference
           </a>{' '}
           — every endpoint, versioned.
@@ -86,7 +86,7 @@ const FAIRCOIN_HELP: readonly FaqEntry[] = [
           — browse blocks, transactions and addresses.
         </li>
         <li>
-          <a className="underline underline-offset-2 hover:text-foreground" href="https://fairco.in/wallet">
+          <a className="underline underline-offset-2 hover:text-foreground" href="https://fairco.in/wallet/">
             Wallet
           </a>{' '}
           — send, receive and track balances.

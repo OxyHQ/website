@@ -25,6 +25,12 @@ import { readFile, writeFile, mkdir, rm, readdir, rename, cp } from 'node:fs/pro
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import {
+  rewriteCrossPackageDocRootLinks,
+  rewriteSiblingDocLinks,
+  rewriteStaleDocsVersionLinks,
+} from './docs-links.ts';
+import { escapeUnclosedProseTags } from './mdx-literal-tags.ts';
 import type {
   DocsConfig,
   DocsRegistry,
@@ -289,9 +295,68 @@ function rewriteDocsLinks(source: string, isMdx = false): string {
   );
 }
 
+async function rewriteSiblingLinksInPlace(
+  pages: readonly SyncedPage[],
+  shortName: string,
+  baseUrl: string,
+): Promise<void> {
+  const slugs = new Set(pages.map((page) => page.slug).filter((slug) => slug.length > 0));
+  if (slugs.size === 0) return;
+  for (const page of pages) {
+    if (!page.file) continue;
+    const full = path.join(SYNCED_DIR, page.file);
+    if (!existsSync(full)) continue;
+    const original = await readFile(full, 'utf8');
+    const rewritten = rewriteStaleDocsVersionLinks(
+      rewriteSiblingDocLinks(original, slugs, baseUrl),
+      slugs,
+      shortName,
+      baseUrl,
+    );
+    if (rewritten !== original) await writeFile(full, rewritten);
+  }
+}
+
+async function rewriteCrossPackageRootsInPlace(packages: readonly SyncedPackage[]): Promise<void> {
+  const canonicalRoots = new Map(packages.map((pkg) => [
+    pkg.shortName,
+    pkg.versioned
+      ? `/developers/docs/${pkg.shortName}/${pkg.latestVersion}`
+      : `/developers/docs/${pkg.shortName}`,
+  ]))
+  for (const pkg of packages) {
+    for (const version of pkg.versions) {
+      for (const page of version.pages) {
+        if (!page.file) continue
+        const full = path.join(SYNCED_DIR, page.file)
+        if (!existsSync(full)) continue
+        const original = await readFile(full, 'utf8')
+        const rewritten = rewriteCrossPackageDocRootLinks(original, canonicalRoots)
+        if (rewritten !== original) await writeFile(full, rewritten)
+      }
+    }
+  }
+}
+
+/**
+ * Everything a synced doc goes through before the site compiles it: link
+ * rewriting, plus — for MDX — escaping prose placeholders like `<Brand>` that
+ * MDX would otherwise read as an unclosed element (see `mdx-literal-tags.ts`).
+ */
+function prepareSyncedSource(source: string, filePath: string): string {
+  const isMdx = /\.mdx$/i.test(filePath);
+  const rewritten = rewriteDocsLinks(source, isMdx);
+  if (!isMdx) return rewritten;
+  const { source: escapedSource, escaped } = escapeUnclosedProseTags(rewritten);
+  if (escaped.length > 0) {
+    console.warn(`[sync-docs] ${path.relative(SYNCED_DIR, filePath)}: escaped prose tag(s) ${escaped.join(', ')} that MDX would read as unclosed elements.`);
+  }
+  return escapedSource;
+}
+
 async function rewriteMdxLinksInPlace(filePath: string): Promise<void> {
   const original = await readFile(filePath, 'utf8');
-  const rewritten = rewriteDocsLinks(original, /\.mdx$/i.test(filePath));
+  const rewritten = prepareSyncedSource(original, filePath);
   if (rewritten !== original) {
     await writeFile(filePath, rewritten);
   }
@@ -381,7 +446,7 @@ function isWorkingTreeVersion(version: string): boolean {
  * Resolve a version string to the actual git tag in the source repo.
  *
  * Convention (documented in `scripts/README.md`): tags are
- * `@oxyhq/<package>@<version>` for npm-scoped packages, or `<package>@<version>`
+ * `@oxy.so/<package>@<version>` for npm-scoped packages, or `<package>@<version>`
  * / `v<version>` as fallbacks for non-scoped repos (Mention, Allo, etc.).
  *
  * We try candidates in order and return the first one that exists. Returns
@@ -459,7 +524,7 @@ async function copyVersionFromGitTag(
     }
     const dest = path.join(outDir, relUnderDocs);
     await mkdir(path.dirname(dest), { recursive: true });
-    const rewritten = rewriteDocsLinks(contents.toString('utf8'), /\.mdx$/i.test(dest));
+    const rewritten = prepareSyncedSource(contents.toString('utf8'), dest);
     await writeFile(dest, rewritten);
     const { data, body } = parseFrontMatter(rewritten);
     const slug = slugFromFile(relUnderDocs);
@@ -523,12 +588,12 @@ function findNearestTsconfig(startDir: string, stopAt: string): string | null {
  */
 function normalizeTypedocMarkdown(source: string): string {
   let body = source;
-  // Drop the leading `**@oxyhq/foo**\n\n***\n\n` block typedoc-plugin-markdown
+  // Drop the leading `**@oxy.so/foo**\n\n***\n\n` block typedoc-plugin-markdown
   // prepends to every file — it's a no-op breadcrumb that just creates noise.
   body = body.replace(/^\*\*[^*\n]+\*\*\n\n\*\*\*\n\n/, '');
-  // Some pages prepend a `[**@oxyhq/foo**](../README.md)\n\n***\n\n` link.
+  // Some pages prepend a `[**@oxy.so/foo**](../README.md)\n\n***\n\n` link.
   body = body.replace(/^\[\*\*[^*\n]+\*\*\]\([^)]+\)\n\n\*\*\*\n\n/, '');
-  // Drop the breadcrumb line `[@oxyhq/foo](href) / SymbolName` that the link
+  // Drop the breadcrumb line `[@oxy.so/foo](href) / SymbolName` that the link
   // rewriter leaves behind. Followed by a blank line.
   body = body.replace(/^\[[^\]]+\]\([^)]+\)\s*\/\s*[^\n]+\n+/, '');
   return body;
@@ -554,8 +619,10 @@ function rewriteTypedocLinks(source: string, pkgBaseUrl: string, fileRelativeDir
       const fromDir = fileRelativeDir ? `/${fileRelativeDir}/` : '/';
       const resolved = path.posix.normalize(`${fromDir}${targetUnix}`).replace(/^\/+/, '');
       const noExt = resolved.replace(/\.(mdx?|md)$/i, '');
-      // README → the api/ index page (empty trailing slug).
-      const slug = noExt.replace(/\/?README$/i, '').replace(/\/?index$/i, '');
+      // README → the api/ index page (empty trailing slug). Anchored to a whole
+      // SEGMENT: unanchored, `/index$/i` also ate the tail of a symbol named
+      // `Z_INDEX`, and the link shipped pointing at `api/variables/Z_`.
+      const slug = noExt.replace(/(^|\/)(?:README|index)$/i, '');
       const href = slug ? `${pkgBaseUrl}/${slug}` : pkgBaseUrl;
       return `](${href}${anchor ?? ''})`;
     },
@@ -696,14 +763,6 @@ async function runTypedoc(
     // Leaving typedoc's stock pages as `.md` avoids parsing failures on prose
     // that happens to contain `{ ... }` literals (common in TS prop docs).
     let injectedMdx = false;
-    // Bloom overview gets a visual component hub grid prepended. The grid is
-    // a custom MDX component (registered in `mdxComponentMap.tsx`) that reads
-    // the bloom-demos registry and renders one card per demoed component with
-    // light/dark thumbnails captured by `scripts/render-bloom-thumbnails.ts`.
-    if (config.shortName === 'bloom' && /(^|\/)README\.mdx?$/i.test(rel)) {
-      cleaned = `<BloomHubGrid />\n\n${cleaned}`;
-      injectedMdx = true;
-    }
     // Prepend a live `<BloomDemo>` block on Bloom API pages that map to a
     // curated demo. The demo name is the file's basename without extension —
     // for namespaced symbols (`Tabs.Tab.md`) we also try the prefix before
@@ -809,6 +868,14 @@ async function syncPackage(
     for (const page of pages) {
       page.section = 'guides';
     }
+    // Second pass, now that every sibling slug in this version is known.
+    await rewriteSiblingLinksInPlace(
+      pages,
+      config.shortName,
+      versioned
+        ? `/developers/docs/${config.shortName}/${version}`
+        : `/developers/docs/${config.shortName}`,
+    );
     // Auto-generate TypeDoc API reference. We only run TypeDoc for the
     // configured `latestVersion` (or the lone version on non-versioned
     // packages) because TypeDoc reads from the *working tree* — running
@@ -895,6 +962,7 @@ async function main(): Promise<void> {
     const synced = await syncRepo(entry);
     packages.push(...synced);
   }
+  await rewriteCrossPackageRootsInPlace(packages);
   const index: SyncedIndex = {
     generatedAt: new Date().toISOString(),
     packages,

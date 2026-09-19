@@ -24,27 +24,27 @@ const emptyModule = path.resolve(import.meta.dirname, 'src/lib/empty-module.js')
 // `useAnimatedScrollHandler` in Bloom's BottomSheet) rejects plain functions
 // even on web, so we must run `react-native-reanimated/plugin` over those
 // packages.
-const oxyhqWorkletPath =
-  /[/\\]node_modules[/\\]@oxyhq[/\\](?:bloom|services)[/\\]/
+const oxySoWorkletPath =
+  /[/\\]node_modules[/\\]@oxy\.so[/\\](?:bloom|services)[/\\]/
 
 /**
- * Transform `@oxyhq/bloom` / `@oxyhq/services` with the Reanimated Babel
+ * Transform `@oxy.so/bloom` / `@oxy.so/services` with the Reanimated Babel
  * plugin. Implemented as a dedicated Vite plugin (not `@rolldown/plugin-babel`)
  * so we can strip Vite's `?v=` query from `filename` — Reanimated's plugin
  * `fs.readFileSync`s the filename and ENOENTs on query-suffixed paths.
  */
-function oxyhqReanimatedWorklets() {
+function oxySoReanimatedWorklets() {
   // Lazy-require so config evaluation doesn't pay the Babel cost until first
   // transform, and so CJS `react-native-reanimated/plugin` loads cleanly.
   let babelTransform: typeof import('@babel/core').transformSync | undefined
   let reanimatedPlugin: import('@babel/core').PluginTarget | undefined
 
   return {
-    name: 'oxyhq-reanimated-worklets',
+    name: 'oxy-so-reanimated-worklets',
     enforce: 'pre' as const,
     transform(code: string, id: string) {
       const file = id.split('?', 1)[0]
-      if (!oxyhqWorkletPath.test(file)) return null
+      if (!oxySoWorkletPath.test(file)) return null
       if (!/\.[cm]?[jt]sx?$/.test(file)) return null
 
       if (!babelTransform) {
@@ -124,10 +124,14 @@ export default defineConfig(({ mode }) => ({
       },
     },
     // Workletize Bloom/services before other transforms see them.
-    oxyhqReanimatedWorklets(),
+    oxySoReanimatedWorklets(),
     react(),
     babel({ presets: [reactCompilerPreset()] }),
     ViteImageOptimizer({
+      // The canonical Kaana SVG is a byte-pinned source asset. Running it
+      // through SVGO would both invalidate that identity and crash on its
+      // referenced compositing groups.
+      exclude: /kaana\.svg$/,
       jpg: { quality: 80, progressive: true },
       jpeg: { quality: 80, progressive: true },
       png: { quality: 80, effort: 4 },
@@ -236,6 +240,7 @@ export default defineConfig(({ mode }) => ({
     // entry graph pulls in, and that is what `bun run analyze` shows.
     chunkSizeWarningLimit: 1500,
     rollupOptions: {
+      input: { main: path.resolve(import.meta.dirname, 'index.html'), bloomPreview: path.resolve(import.meta.dirname, 'bloom-preview.html') },
       output: {
         /**
          * Split the heavy vendors out of the entry graph.
@@ -268,7 +273,7 @@ export default defineConfig(({ mode }) => ({
           // every route mounts OxyProvider + BloomThemeProvider, and rolldown
           // merges the rnw modules in here anyway since Bloom is their only
           // consumer. Confirmed with `bun run analyze`.
-          if (inPkg('@oxyhq', 'react-native-web', 'react-native-reanimated', 'react-native-gesture-handler', 'react-native-svg', '@expo/vector-icons', 'expo-modules-core')) {
+          if (inPkg('@oxy.so', 'react-native-web', 'react-native-reanimated', 'react-native-gesture-handler', 'react-native-svg', '@expo/vector-icons', 'expo-modules-core')) {
             return 'vendor-oxy'
           }
           if (inPkg('framer-motion', 'motion-dom', 'motion-utils')) return 'vendor-motion'
@@ -303,14 +308,14 @@ export default defineConfig(({ mode }) => ({
     // the JSX in reanimated's `lib/module/` files directly via rolldown.
     //
     // `debug`, `expo-modules-core`, `fontfaceobserver` and `color` are CJS-only
-    // packages reached through the excluded `@oxyhq/services` subtree below.
+    // packages reached through the excluded `@oxy.so/services` subtree below.
     // `exclude` stops Vite prebundling that subtree, so in dev they are served
     // unbundled and `import x from 'cjs-pkg'` fails with "does not provide an
     // export named 'default'". Listing them lets esbuild resolve the interop up
     // front. Production is unaffected — rolldown bundles the whole graph.
     //
     // `@expo/vector-icons` and `react-native-qrcode-svg` are required peers of
-    // `@oxyhq/services` that ship untransformed JSX in `.js` files. Served
+    // `@oxy.so/services` that ship untransformed JSX in `.js` files. Served
     // unbundled they fail Vite's import-analysis parse ("invalid JS syntax").
     // Prebundling them here transforms the JSX up front, scoped to these two
     // packages (not a global loader), so their CJS interop stays intact.
@@ -348,8 +353,8 @@ export default defineConfig(({ mode }) => ({
     exclude: [
       '@react-native-async-storage/async-storage',
       'react-native-safe-area-context',
-      '@oxyhq/bloom',
-      '@oxyhq/services',
+      '@oxy.so/bloom',
+      '@oxy.so/services',
     ],
   },
   server: {

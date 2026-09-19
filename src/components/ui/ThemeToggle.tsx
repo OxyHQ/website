@@ -1,4 +1,4 @@
-import { useBloomTheme } from '@oxyhq/bloom/theme'
+import { useBloomTheme } from '@oxy.so/bloom/theme'
 
 function SunIcon() {
   return (

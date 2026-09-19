@@ -9,7 +9,7 @@ interface MentionProfileCardProps {
 /** Floating profile preview used in the "your unique link" section. */
 export default function MentionProfileCard({ profile, className = '' }: MentionProfileCardProps) {
   return (
-    <article className={`relative w-[270px] rounded-2xl bg-surface p-4 text-left shadow-[0_22px_60px_-22px_rgba(20,40,90,0.5)] ring-1 ring-border ${className}`}>
+    <article className={`relative w-[270px] rounded-2xl bg-surface p-4 text-left shadow-xl ring-1 ring-border ${className}`}>
       <button
         type="button"
         className="absolute right-3 top-3 rounded-full bg-foreground px-3.5 py-1 text-xs font-semibold text-background"

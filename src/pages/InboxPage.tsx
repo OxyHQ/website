@@ -6,9 +6,9 @@ export default function InboxPage() {
   return (
     <PageShell
       seo={{
-        title: 'Inbox, end-to-end encrypted email',
+        title: 'Inbox, email with room to think',
         description:
-          'A modern, end-to-end encrypted inbox built on Oxy ID. Your keys, your data, no scanning.',
+          'Inbox by Oxy. Read, organise and reply to your email in a familiar, open-source client.',
         canonicalPath: '/inbox',
         ogImage: APP_CARD_IMAGES['/inbox'],
       }}

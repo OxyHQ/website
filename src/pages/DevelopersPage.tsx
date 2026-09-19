@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../lib/navigation'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -26,12 +26,17 @@ import {
   apiHeading,
   apiDescription,
   apiCta,
+  aiEyebrow,
+  aiSectionHeading,
+  aiSectionDescription,
+  aiEntryPoints,
   resourcesHeading,
   resources,
   ctaHeading,
   ctaDescription,
 } from '../data/developers'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import { consoleLinks } from '../data/ai/taxonomy'
 
 /**
  * Canonical landing URL for a package card. Mirrors `pageHref` in
@@ -172,6 +177,50 @@ function QuickStart() {
   )
 }
 
+/* ─── Build with AI ─── */
+function BuildWithAI() {
+  return (
+    <PageSection spacing="md" tone="surface">
+      <SectionHeading
+        eyebrow={aiEyebrow}
+        title={aiSectionHeading}
+        description={aiSectionDescription}
+      />
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {aiEntryPoints.map((entry) => (
+          <Link
+            key={entry.title}
+            to={entry.href}
+            className="group rounded-2xl border border-border bg-background p-5 transition-colors hover:bg-accent/40"
+          >
+            <h3 className="flex items-center gap-1.5 text-base text-foreground">
+              {entry.title}
+              <ArrowRightIcon className="size-3.5 opacity-0 transition-opacity group-hover:opacity-100" />
+            </h3>
+            <p className="mt-2 text-sm text-muted-foreground">{entry.description}</p>
+          </Link>
+        ))}
+      </div>
+      <div className="mt-8 flex flex-wrap gap-3">
+        <Button href="/ai/inference" variant="outline" size="sm">
+          Oxy Inference
+        </Button>
+        {/*
+          Creating an application, issuing a credential and adding funds are
+          Oxy Console operations. This page links to them; it never implements
+          one, and it never claims one happened.
+        */}
+        <Button href={consoleLinks.createApplication} variant="ghost" size="sm">
+          Create an application in Oxy Console
+        </Button>
+        <Button href={consoleLinks.playground} variant="ghost" size="sm">
+          Open the playground
+        </Button>
+      </div>
+    </PageSection>
+  )
+}
+
 /* ─── REST API promo ─── */
 function APIPromo() {
   return (
@@ -256,7 +305,7 @@ export default function DevelopersPage() {
     <div className="flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background text-foreground">
       <SEO
         title="Developers"
-        description="Build on Oxy: one identity layer, open APIs, SDKs for web and native, and a design system shared by every app."
+        description="Build on Oxy: one identity layer, open APIs, SDKs for web and native, one inference API for every approved model, and a design system shared by every app."
         canonicalPath="/developers"
       />
       <Navbar />
@@ -264,6 +313,7 @@ export default function DevelopersPage() {
         <DevelopersHero />
         <SDKGrid packages={packages} />
         <QuickStart />
+        <BuildWithAI />
         <APIPromo />
         <Resources />
         <FinalCTA />

@@ -1,6 +1,6 @@
-import { useSyncExternalStore } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
-import { apiFetch } from './client'
+import { apiFetch, errorStatus } from './client'
 import { useCurrentLocale } from '../lib/i18n'
 import {
   subscribeFairCoinStats,
@@ -13,13 +13,29 @@ import {
   getPlatformStatsSnapshot,
   getPlatformStatsServerSnapshot,
   type PlatformStats,
-  type ActivityEvent,
 } from './platformStatsStore'
+import {
+  subscribePlatformActivity,
+  getPlatformActivitySnapshot,
+  getPlatformActivityServerSnapshot,
+  type PlatformActivityEvent,
+} from './platformActivityStore'
 
-import { type Testimonial, type FooterColumn } from '../data/content'
+import { type Testimonial } from '../data/content'
 import { type PricingPlan } from '../data/pricing'
-import { type NewsroomPost } from '../data/newsroom'
-import { type DescriptionBlock } from '../data/careers'
+import { type NewsroomPost, type NewsroomPostSummary } from '../data/newsroom'
+import type { CareerJob } from '../lib/careers'
+import {
+  fetchNewsroomPost,
+  type NewsroomListParams,
+  newsroomPostQueryKey,
+  newsroomPostsQueryKey,
+  newsroomRequestSignal,
+  prefetchNewsroomPost,
+  shouldRetryNewsroomRequest,
+} from './newsroomQuery'
+import { preloadNewsroomPostRoute } from '../lib/route-preload'
+import { resolveResponsiveImage } from '../lib/responsiveImage'
 
 /**
  * Resolve a populated Media field to a URL string.
@@ -38,13 +54,15 @@ function resolveMediaUrl(field: unknown, preferThumbnail?: 'sm' | 'md' | 'lg'): 
 }
 
 /** Resolve all media fields on a newsroom post to URL strings */
-function normalizePostMedia(post: NewsroomPost): NewsroomPost {
+function normalizePostMedia<T extends NewsroomPostSummary>(post: T): T {
+  const cover = resolveResponsiveImage(post.coverImage)
   return {
     ...post,
-    products: post.products ?? [],
-    coverImage: resolveMediaUrl(post.coverImage, 'lg'),
-    ogImage: resolveMediaUrl(post.ogImage),
-  }
+    coverImage: cover.src,
+    coverImageSrcSet: cover.srcSet ?? post.coverImageSrcSet,
+    ...('products' in post ? { products: post.products ?? [] } : {}),
+    ...('ogImage' in post ? { ogImage: resolveMediaUrl(post.ogImage) } : {}),
+  } as T
 }
 
 /** Resolve media field on a changelog entry */
@@ -105,17 +123,6 @@ export function usePromptPhrases(slug: string, enabled = true) {
     enabled,
     retry: false,
     staleTime: Infinity,
-  })
-}
-
-// ── Footer ──
-export function useFooter() {
-  const locale = useCurrentLocale()
-  return useQuery({
-    queryKey: ['footer', locale],
-    queryFn: () => apiFetch<{ _id?: string; columns: FooterColumn[]; socialLinks: unknown[]; copyright: string }>('/footer', { locale }),
-    staleTime: 5 * 60_000,
-    placeholderData: keepPreviousData,
   })
 }
 
@@ -225,6 +232,7 @@ export interface UseProductsOptions {
   surface?: 'products' | 'status' | 'nav'
   lifecycle?: ProductLifecycle
   section?: string
+  enabled?: boolean
 }
 
 export function useProducts(options: UseProductsOptions = {}) {
@@ -239,6 +247,7 @@ export function useProducts(options: UseProductsOptions = {}) {
     queryFn: () => apiFetch<ProductRecord[]>(`/products${query ? `?${query}` : ''}`, { locale }),
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
+    enabled: options.enabled ?? true,
   })
 }
 
@@ -258,6 +267,7 @@ const LOCAL_PRODUCT_LOGOS: Readonly<Record<string, string>> = {
   faircoin: '/images/apps/faircoin.svg',
   'faircoin-wallet': '/images/apps/faircoin-wallet.svg',
   fairwallet: '/images/apps/faircoin-wallet.svg',
+  kaana: '/images/apps/kaana.svg',
 }
 
 export function resolveProductLogoUrl(product: ProductRecord): string {
@@ -306,6 +316,77 @@ export function useServiceStatus() {
   })
 }
 
+// ── Status history: daily uptime + incidents ──
+export type UptimeDayStatus = 'operational' | 'degraded' | 'down' | 'no-data'
+
+export interface UptimeDay {
+  date: string
+  status: UptimeDayStatus
+  uptimePct: number | null
+}
+
+export interface ServiceUptime {
+  productId: string
+  name: string
+  days: UptimeDay[]
+}
+
+export interface ServiceUptimePayload {
+  days: number
+  services: ServiceUptime[]
+}
+
+export function useServiceUptime(days = 90) {
+  return useQuery<ServiceUptimePayload>({
+    queryKey: ['status-uptime', days],
+    queryFn: () => apiFetch<ServiceUptimePayload>(`/status/uptime?days=${days}`),
+    staleTime: 5 * 60_000,
+  })
+}
+
+export type IncidentSeverity = 'minor' | 'major' | 'critical'
+export type IncidentUpdateStatus = 'investigating' | 'identified' | 'monitoring' | 'resolved'
+
+export interface IncidentUpdateRecord {
+  _id: string
+  status: IncidentUpdateStatus
+  body: string
+  createdAt: string
+}
+
+export interface IncidentHistoryEntry {
+  _id: string
+  title: string
+  severity: IncidentSeverity
+  status: IncidentUpdateStatus
+  products: string[]
+  startedAt: string
+  resolvedAt: string | null
+  affectedServices: { _id: string; productId: string; name: string }[]
+  updates: IncidentUpdateRecord[]
+}
+
+export interface IncidentHistoryPayload {
+  page: number
+  pages: number
+  year: number
+  month: number
+  label: string
+  incidents: IncidentHistoryEntry[]
+}
+
+export function useIncidentHistory(page = 1) {
+  return useQuery<IncidentHistoryPayload>({
+    queryKey: ['status-incidents', page],
+    queryFn: () => apiFetch<IncidentHistoryPayload>(`/status/incidents?page=${page}`),
+    staleTime: 5 * 60_000,
+  })
+}
+
+export function useIncidentsAdmin(page = 1) {
+  return useIncidentHistory(page)
+}
+
 export function useUpdateHero() {
   const qc = useQueryClient()
   return useMutation({
@@ -320,8 +401,8 @@ export function useUpdateHero() {
 }
 
 // ── Newsroom ──
-export function useNewsroomPosts(
-  params?: { category?: string; tag?: string; featured?: boolean; limit?: number; page?: number; author?: string },
+export function useNewsroomPosts<TPost extends NewsroomPostSummary = NewsroomPostSummary>(
+  params?: NewsroomListParams,
   options?: { enabled?: boolean },
 ) {
   const locale = useCurrentLocale()
@@ -332,33 +413,53 @@ export function useNewsroomPosts(
   if (params?.limit) searchParams.set('limit', String(params.limit))
   if (params?.page) searchParams.set('page', String(params.page))
   if (params?.author) searchParams.set('author', params.author)
+  if (params?.search) searchParams.set('search', params.search)
   const qs = searchParams.toString()
 
   return useQuery({
-    queryKey: ['newsroom', params, locale],
-    queryFn: () => apiFetch<{ posts: NewsroomPost[]; total: number; page: number; pages: number }>(`/newsroom${qs ? `?${qs}` : ''}`, { locale }),
+    queryKey: newsroomPostsQueryKey(params, locale),
+    queryFn: ({ signal }) => apiFetch<{ posts: TPost[]; total: number; page: number; pages: number }>(
+      `/newsroom${qs ? `?${qs}` : ''}`,
+      { locale, signal: newsroomRequestSignal(signal) },
+    ),
     select: (data) => ({ ...data, posts: data.posts.map(normalizePostMedia) }),
     placeholderData: keepPreviousData,
     enabled: options?.enabled ?? true,
+    retry: shouldRetryNewsroomRequest,
   })
 }
 
 export function useNewsroomPost(slug: string) {
   const locale = useCurrentLocale()
   return useQuery({
-    queryKey: ['newsroom', slug, locale],
-    queryFn: async () => {
+    queryKey: newsroomPostQueryKey(slug, locale),
+    queryFn: async ({ signal }) => {
       if (import.meta.env.DEV && slug === 'article-components-showcase-preview') {
         const { articleComponentsShowcasePost } = await import(
           '../content/newsroom-previews/article-components-showcase'
         )
         return articleComponentsShowcasePost
       }
-      return apiFetch<NewsroomPost>(`/newsroom/${slug}`, { locale })
+      return fetchNewsroomPost(slug, locale, signal)
     },
     select: normalizePostMedia,
     enabled: !!slug,
+    staleTime: 5 * 60_000,
+    retry: shouldRetryNewsroomRequest,
   })
+}
+
+/** Preload both the route code and full post when a card shows click intent. */
+export function usePrefetchNewsroomPost(slug: string) {
+  const locale = useCurrentLocale()
+  const client = useQueryClient()
+
+  return useCallback(async () => {
+    await Promise.allSettled([
+      preloadNewsroomPostRoute(),
+      prefetchNewsroomPost(client, slug, locale),
+    ])
+  }, [client, locale, slug])
 }
 
 export function useCreateNewsroomPost() {
@@ -671,27 +772,11 @@ export function useChangelog(params?: { repo?: string; page?: number; limit?: nu
 }
 
 // ── Jobs ──
-export interface Job {
-  _id?: string
-  slug: string
-  title: string
-  department: string
-  subtitle?: string
-  location: string
-  type?: string
-  engagement?: string
-  compensation?: string
-  description?: DescriptionBlock[]
-  active?: boolean
-  order?: number
-  createdAt?: string
-}
-
+/** Oxy's open roles, read from Clarity Jobs. Not localized: a listing is in the language it was written in. */
 export function useJobs() {
-  const locale = useCurrentLocale()
   return useQuery({
-    queryKey: ['jobs', locale],
-    queryFn: () => apiFetch<Job[]>('/jobs', { locale }),
+    queryKey: ['jobs'],
+    queryFn: () => apiFetch<CareerJob[]>('/jobs'),
     staleTime: 5 * 60_000,
     placeholderData: keepPreviousData,
   })
@@ -770,12 +855,13 @@ export function useMediaItem(id: string) {
   })
 }
 
-export function useJob(slug: string) {
-  const locale = useCurrentLocale()
+export function useJob(id: string) {
   return useQuery({
-    queryKey: ['job', slug, locale],
-    queryFn: () => apiFetch<Job>(`/jobs/${slug}`, { locale }),
-    enabled: !!slug,
+    queryKey: ['job', id],
+    queryFn: () => apiFetch<CareerJob>(`/jobs/${encodeURIComponent(id)}`),
+    enabled: !!id,
+    // A role that is not open answers 404 every time; only an outage is worth a retry.
+    retry: (failures, error) => errorStatus(error) !== 404 && failures < 2,
   })
 }
 
@@ -845,47 +931,10 @@ export function useDeleteSeo() {
   })
 }
 
-// ── MCP Tokens ──
-export interface McpToken {
-  _id: string
-  name: string
-  createdBy: string
-  createdAt: string
-  lastUsedAt: string | null
-  expiresAt: string | null
-  revoked: boolean
-}
-
-export function useMcpTokens(enabled = true) {
-  return useQuery({
-    queryKey: ['mcp-tokens'],
-    queryFn: () => apiFetch<McpToken[]>('/mcp-tokens'),
-    enabled,
-    retry: false,
-  })
-}
-
-export function useCreateMcpToken() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (data: { name: string; expiresAt?: string }) =>
-      apiFetch<{ token: string }>('/mcp-tokens', { method: 'POST', body: JSON.stringify(data) }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['mcp-tokens'] }),
-  })
-}
-
-export function useRevokeMcpToken() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (id: string) => apiFetch(`/mcp-tokens/${id}`, { method: 'DELETE' }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['mcp-tokens'] }),
-  })
-}
-
 // ── Platform Stats (Dashboard) ──
 // Types are owned by ./platformStatsStore and re-exported here so existing
 // callers can keep importing from this module alongside the hook.
-export type { PlatformStats, ActivityEvent }
+export type { PlatformStats, PlatformActivityEvent }
 
 export function usePlatformStats() {
   return useSyncExternalStore(
@@ -895,13 +944,22 @@ export function usePlatformStats() {
   )
 }
 
+export function usePlatformActivity() {
+  return useSyncExternalStore(
+    subscribePlatformActivity,
+    getPlatformActivitySnapshot,
+    getPlatformActivityServerSnapshot,
+  )
+}
+
 // ── Infrastructure Status ──
 export interface InfraStatusNode {
   region: string
-  status: 'online' | 'degraded' | 'offline'
-  droplets: number
-  apps: number
-  dbs: number
+  label?: string
+  coordinates?: [number, number]
+  services?: string[]
+  status: 'online' | 'degraded' | 'offline' | 'unknown'
+  instances?: number
 }
 
 export function useInfraStatus() {
@@ -1002,7 +1060,7 @@ export interface UserProfileData {
     _id: string
     username: string
     /**
-     * `displayName` is OPTIONAL in the SDK (`@oxyhq/core`), and
+     * `displayName` is OPTIONAL in the SDK (`@oxy.so/core`), and
      * `server/routes/profiles.ts` passes the SDK shape straight through, so a
      * federated actor can arrive without one. Render the normalized handle as
      * the fallback (`getNormalizedUserHandle`) instead of recomposing a name.

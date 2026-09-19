@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import * as Skeleton from '@oxyhq/bloom/skeleton'
+import { useParams } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
+import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { useProduct, useProducts, resolveProductCategoryId, type ProductRecord } from '../../api/hooks'
 import { getStaticChangelog } from '../../content/changelog-loader'
 import Button from '../ui/Button'
@@ -28,8 +29,8 @@ const SCREENSHOTS: Record<string, string[]> = {
 }
 
 /**
- * The tracked repository for a product, when one matches by name. Compared on
- * letters only, so `oxy-pay` and `OxyPay` are the same repository.
+ * The tracked repository for a product when its canonical name matches after
+ * removing punctuation and casing differences.
  */
 function findRepo(product: ProductRecord): { owner: string; name: string } | null {
   const letters = (value: string) => value.toLowerCase().replace(/[^a-z]/g, '')
@@ -125,8 +126,8 @@ export default function AppDetailContent() {
           name: product.name,
           description: product.description || product.tagline,
           applicationCategory: category || undefined,
-          url: `https://oxy.so/apps/${product.productId}`,
-          publisher: { '@type': 'Organization', name: 'Oxy', sameAs: 'https://oxy.so' },
+          url: `https://oxy.so/apps/${product.productId}/`,
+          publisher: { '@type': 'Organization', name: 'Oxy', sameAs: 'https://oxy.so/' },
         }}
       />
 

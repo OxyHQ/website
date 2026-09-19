@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TextField, TextFieldInput } from '@oxyhq/bloom/text-field'
+import { TextField, TextFieldInput } from '@oxy.so/bloom/text-field'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

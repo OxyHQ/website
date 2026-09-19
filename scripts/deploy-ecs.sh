@@ -42,8 +42,12 @@ if [ "$SERVICE" = "website-api" ]; then
     --region "$AWS_REGION" --query 'taskDefinition' \
     > "$WORK_DIR/task-definition.json"
 
+  # `any` folds every secret into ONE boolean. The previous filter emitted one
+  # per secret and `jq -e` judged only the last, so a definition that already
+  # carried the secret anywhere but last got it appended again, and ECS refused
+  # the duplicate — every website-api deploy failed from 2026-09-14.
   if ! jq -e --arg name "INTERCOM_MESSENGER_SECRET" \
-    '.containerDefinitions[] | (.secrets // [])[]? | .name == $name' \
+    'any(.containerDefinitions[] | (.secrets // [])[]?; .name == $name)' \
     "$WORK_DIR/task-definition.json" >/dev/null; then
     # The ARN is spelled out rather than read back: the deploy role may WRITE
     # /oxy/* (the sync step above just put this parameter there) but not read
@@ -79,9 +83,19 @@ echo "deployment $ID started $STARTED"
 
 aws ecs wait services-stable --cluster "$CLUSTER" --services "$SERVICE" || true
 
-# Free text last: `read` puts the remainder in the final variable.
-read -r LIVE STATE LIVE_AT REASON <<<"$(aws ecs describe-services --cluster "$CLUSTER" --services "$SERVICE" \
-  --query 'services[0].deployments[?status==`PRIMARY`].[id,rolloutState,createdAt,rolloutStateReason] | [0]' --output text)"
+# The waiter can exhaust its fixed attempt budget while ECS is completing the
+# final drain (observed one second before rolloutState became COMPLETED). Give
+# only the same deployment a short final grace window; a rollback or supersede
+# exits the loop immediately and is classified below.
+for _ in {1..6}; do
+  # Free text last: `read` puts the remainder in the final variable.
+  read -r LIVE STATE LIVE_AT REASON <<<"$(aws ecs describe-services --cluster "$CLUSTER" --services "$SERVICE" \
+    --query 'services[0].deployments[?status==`PRIMARY`].[id,rolloutState,createdAt,rolloutStateReason] | [0]' --output text)"
+  if [ "$LIVE" != "$ID" ] || [ "$STATE" != "IN_PROGRESS" ]; then
+    break
+  fi
+  sleep 10
+done
 
 if [ "$LIVE" = "$ID" ]; then
   if [ "$STATE" != "COMPLETED" ]; then

@@ -1,341 +1,248 @@
-import { Suspense, createElement, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { Switch } from '@oxyhq/bloom/switch'
-import { Select, SelectTrigger, SelectValue, SelectIcon, SelectContent, SelectItem, SelectItemText, SelectItemIndicator } from '@oxyhq/bloom/select'
-import { bloomDemos, getBloomDemo, type BloomDemo } from '../../content/bloom-demos/registry'
-import {
-  defaultValues,
-  type PlaygroundProp,
-  type PlaygroundValue,
-  type PlaygroundValues,
-} from '../../content/bloom-demos/_playground'
-import { getPackage, resolveVersion } from '../../content/docs-loader'
+import { Suspense, createElement, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
+import { TextButton } from '@oxy.so/bloom/button'
+import { bloomDemos, getBloomDemo } from '../../content/bloom-demos/registry'
+import { defaultValues, type PlaygroundValues } from '../../content/bloom-demos/_playground'
+import { bloomVersion } from '../../content/bloom-catalog.generated'
 import PageShell from '../layout/PageShell'
 import { DocsShell } from './DocsShell'
-import { buildSidebar } from './DocsPackageSidebar'
+import { BloomLiveEditor } from './BloomLiveEditor'
+import { BloomLivePreview } from './BloomLivePreview'
+import { APP_COLOR_NAMES, type AppColorName } from '@oxy.so/bloom/color-presets'
 
-/**
- * Interactive playground for Bloom components.
- *
- * Mounts at `/developers/docs/bloom/:version/playground`. Surfaces every
- * registered Bloom demo that opts into the playground (by exporting a
- * `Playground` named function from its demo file) and offers a live prop
- * editor next to a rendered preview + generated code snippet.
- */
+/** The standalone canvas owns its Bloom provider. Recipe changes never write
+ * over the theme of the surrounding website. */
 export default function BloomPlayground() {
-  const params = useParams<{ version?: string }>()
-  const pkg = getPackage('bloom')
-  const resolvedVersion = pkg ? resolveVersion(pkg, params.version) : undefined
-  const versionString = resolvedVersion?.version ?? pkg?.latestVersion ?? params.version ?? 'main'
-
-  const interactiveDemos = useMemo(
-    () => bloomDemos.filter((d) => Boolean(d.Playground) && Boolean(d.props && d.props.length > 0)),
-    [],
-  )
-  const initialName = interactiveDemos[0]?.name ?? bloomDemos[0]?.name ?? ''
-  const [selected, setSelected] = useState(initialName)
-
-  const sections = pkg && resolvedVersion ? buildSidebar(pkg, resolvedVersion) : null
-
-  const activeDemo = getBloomDemo(selected)
-  const demoOptions = useMemo(
-    () =>
-      interactiveDemos.map((d) => ({
-        value: d.name,
-        label: d.name,
-      })),
-    [interactiveDemos],
-  )
-
+  const [params, setParams] = useSearchParams()
+  const selected = getBloomDemo(params.get('component') ?? 'Button') ?? bloomDemos[0]
+  const presetValue = params.get('recipe') ?? 'oxy'
+  const preset: AppColorName = APP_COLOR_NAMES.includes(presetValue as AppColorName)
+    ? (presetValue as AppColorName)
+    : 'oxy'
+  const mode = params.get('mode') === 'dark' ? 'dark' : 'light'
+  const [query, setQuery] = useState('')
+  const [values, setValues] = useState<PlaygroundValues>(() => defaultValues(selected?.props ?? []))
+  const [source, setSource] = useState(selected?.source ?? '')
+  const [editing, setEditing] = useState(false)
+  const [width, setWidth] = useState('full')
+  const [lastName, setLastName] = useState(selected?.name)
+  if (lastName !== selected?.name) {
+    setLastName(selected?.name)
+    setValues(defaultValues(selected?.props ?? []))
+    setSource(selected?.source ?? '')
+    setEditing(false)
+  }
+  const update = (key: string, value: string) =>
+    setParams(
+      (previous) => {
+        const next = new URLSearchParams(previous)
+        next.set(key, value)
+        return next
+      },
+      { replace: true },
+    )
+  const reset = () => {
+    setValues(defaultValues(selected?.props ?? []))
+    setSource(selected?.source ?? '')
+    setEditing(false)
+  }
+  const matches = bloomDemos.filter((d) => d.name.toLowerCase().includes(query.toLowerCase()))
+  if (!selected) return null
   return (
     <PageShell
       className="docs-theme bg-background"
       seo={{
-        title: 'Bloom component playground',
-        description: 'Try Bloom components with live props, previews and generated code.',
+        title: 'Bloom playground',
+        description:
+          'Explore Bloom components, change their properties and try colour recipes on a live canvas.',
         canonicalPath: '/developers/docs/bloom/playground',
       }}
-      mainClassName="flex-1 bg-background text-muted-foreground"
       mainAsDiv
     >
       <DocsShell
-        sections={sections}
-        eyebrow="Bloom"
+        sections={null}
+        hideSidebar
+        wideContent
+        eyebrow={`Bloom ${bloomVersion}`}
         title="Playground"
-        subtitle="Pick a component and tweak its props to see the live preview update."
-        pkg={pkg ?? undefined}
-        currentVersion={versionString}
-        slug="playground"
-        activePkg={pkg ?? undefined}
+        subtitle="Choose a component. Make it yours."
         versionAgnostic
       >
-        <div className="not-prose flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Component
-            </span>
-            <DemoPicker
-              value={selected}
-              options={demoOptions}
-              onChange={(next) => setSelected(next)}
-            />
+        <div className="not-prose space-y-6">
+          <div className="bloom-toolbar flex flex-wrap items-end gap-4">
+            <Link className="oxy-link mr-auto" to="/developers/docs/bloom/components">
+              All components
+            </Link>
+            <label className="grid gap-2 text-sm">
+              Recipe
+              <select
+                aria-label="Recipe"
+                value={preset}
+                onChange={(e) => update('recipe', e.target.value)}
+              >
+                {APP_COLOR_NAMES.map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-2 text-sm">
+              Appearance
+              <select
+                aria-label="Appearance"
+                value={mode}
+                onChange={(e) => update('mode', e.target.value)}
+              >
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </label>
+            <label className="grid gap-2 text-sm">
+              Canvas
+              <select aria-label="Canvas" value={width} onChange={(e) => setWidth(e.target.value)}>
+                <option value="full">Responsive</option>
+                <option value="390">Mobile · 390 px</option>
+                <option value="768">Tablet · 768 px</option>
+              </select>
+            </label>
+            <TextButton onPress={reset}>Reset example</TextButton>
           </div>
-          {activeDemo ? (
-            <PlaygroundBody demo={activeDemo} />
-          ) : (
-            <EmptyState />
-          )}
+          <div className="bloom-workbench">
+            <aside
+              className="bloom-workbench-rail bloom-workbench-library border-b border-border xl:border-r xl:border-b-0"
+              aria-label="Component library"
+            >
+              <label className="mb-4 grid gap-2 text-sm">
+                Find a component
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search components"
+                />
+              </label>
+              <div className="flex flex-wrap gap-1 xl:flex-col">
+                {matches.map((d) => (
+                  <button
+                    key={d.name}
+                    aria-pressed={selected.name === d.name}
+                    onClick={() => update('component', d.name)}
+                    className={`rounded-lg px-3 py-3 text-left text-sm ${selected.name === d.name ? 'bg-primary text-primary-foreground' : 'hover:bg-primary-subtle'}`}
+                  >
+                    {d.name}
+                  </button>
+                ))}
+                {!matches.length && <p className="text-sm p-3">No components match your search.</p>}
+              </div>
+            </aside>
+            <div className="min-w-0 bg-surface p-3 md:p-6">
+              <div className="mb-4 flex flex-wrap justify-between gap-2 text-sm">
+                <h2 className="font-semibold">{selected.name}</h2>
+                <span>{editing ? 'Code preview' : 'Interactive preview'}</span>
+              </div>
+              <div
+                style={{ maxWidth: width === 'full' ? undefined : Number(width) }}
+                className="mx-auto w-full"
+              >
+                <BloomLivePreview
+                  source={editing ? source : undefined}
+                  demo={selected.name}
+                  values={values}
+                  preset={preset}
+                  mode={mode}
+                />
+              </div>
+            </div>
+            <aside
+              className="bloom-workbench-rail border-t border-border sm:border-l sm:border-t-0"
+              aria-label="Component properties"
+            >
+              <h2 className="mb-6 font-semibold">Properties</h2>
+              {editing ? (
+                <p className="text-sm leading-relaxed">
+                  You are editing the example's code. Reset the example to use the property controls
+                  again.
+                </p>
+              ) : (
+                <div className="space-y-5">
+                  {selected.props?.map((prop) => (
+                    <label key={prop.name} className="grid gap-2 text-sm">
+                      <span>{prop.name}</span>
+                      {prop.kind === 'select' ? (
+                        <select
+                          aria-label={prop.name}
+                          value={String(values[prop.name])}
+                          onChange={(e) =>
+                            setValues((v) => ({ ...v, [prop.name]: e.target.value }))
+                          }
+                        >
+                          {prop.options.map((o) => (
+                            <option key={o}>{o}</option>
+                          ))}
+                        </select>
+                      ) : prop.kind === 'boolean' ? (
+                        <input
+                          type="checkbox"
+                          checked={values[prop.name] === true}
+                          onChange={(e) =>
+                            setValues((v) => ({ ...v, [prop.name]: e.target.checked }))
+                          }
+                        />
+                      ) : (
+                        <input
+                          type={prop.kind === 'number' ? 'number' : 'text'}
+                          value={String(values[prop.name] ?? '')}
+                          {...(prop.kind === 'number'
+                            ? { min: prop.min, max: prop.max, step: prop.step }
+                            : {})}
+                          onChange={(e) =>
+                            setValues((v) => ({
+                              ...v,
+                              [prop.name]:
+                                prop.kind === 'number' ? Number(e.target.value) : e.target.value,
+                            }))
+                          }
+                        />
+                      )}
+                    </label>
+                  ))}
+                  {!selected.props?.length && (
+                    <p className="text-sm">
+                      This example has no configurable properties. Try the component on the canvas
+                      or edit its source.
+                    </p>
+                  )}
+                </div>
+              )}
+            </aside>
+          </div>
+          <details className="rounded-2xl border border-border p-5">
+            <summary className="cursor-pointer text-base font-semibold">Example source</summary>
+            <p className="my-4 text-sm text-muted-foreground">
+              The complete component example. Editing starts from this example; changes in the
+              property inspector are independent.
+            </p>
+            <BloomLiveEditor
+              value={source}
+              onChange={(value) => {
+                setSource(value)
+                setEditing(true)
+              }}
+              label="Bloom example source"
+            />
+          </details>
+          <details className="rounded-2xl border border-border p-5">
+            <summary className="cursor-pointer text-base font-semibold">All variants</summary>
+            <div className="py-8">
+              <Suspense fallback={<p>Loading examples…</p>}>
+                {createElement(selected.Component)}
+              </Suspense>
+            </div>
+          </details>
         </div>
       </DocsShell>
     </PageShell>
   )
-}
-
-interface DemoPickerOption {
-  value: string
-  label: string
-}
-
-function DemoPicker({
-  value,
-  options,
-  onChange,
-}: {
-  value: string
-  options: readonly DemoPickerOption[]
-  onChange: (value: string) => void
-}) {
-  return (
-    <div style={{ maxWidth: 320 }}>
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger label="Component">
-          <SelectValue placeholder="Select component">
-            {(selected) =>
-              selected && typeof selected === 'object' && 'label' in selected
-                ? (selected as DemoPickerOption).label
-                : 'Select component'
-            }
-          </SelectValue>
-          <SelectIcon />
-        </SelectTrigger>
-        <SelectContent
-          items={[...options]}
-          label="Component"
-          renderItem={(item) => (
-            <SelectItem value={item.value} label={item.label}>
-              <SelectItemText>{item.label}</SelectItemText>
-              <SelectItemIndicator />
-            </SelectItem>
-          )}
-        />
-      </Select>
-    </div>
-  )
-}
-
-const EMPTY_PROPS: readonly PlaygroundProp[] = []
-
-function PlaygroundBody({ demo }: { demo: BloomDemo }) {
-  // Stable reference for the props list — `demo.props` is undefined for demos
-  // without a knob descriptor file. Falling back to a module-level constant
-  // (rather than `demo.props ?? []`) keeps the array identity stable across
-  // renders so memoization hooks downstream don't churn.
-  const props = demo.props ?? EMPTY_PROPS
-  // Reset values whenever the demo identity changes. Derived-state pattern
-  // mirrors the demo's name into a local slot so we only recompute when it
-  // actually flips (not on every render).
-  const [lastName, setLastName] = useState(demo.name)
-  const [values, setValues] = useState<PlaygroundValues>(() => defaultValues(props))
-  if (lastName !== demo.name) {
-    setLastName(demo.name)
-    setValues(defaultValues(props))
-  }
-
-  const updateValue = (name: string, value: PlaygroundValue) => {
-    setValues((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const code = useMemo(() => buildCodeSnippet(demo.name, props, values), [demo.name, props, values])
-
-  return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-      <div className="flex flex-col gap-4">
-        <div className="overflow-hidden rounded-2xl border border-border bg-background">
-          <header className="flex items-center justify-between border-b border-border bg-surface px-4 py-2 text-xs uppercase tracking-wider text-muted-foreground">
-            <span>Preview</span>
-            <span className="font-mono normal-case tracking-normal">{demo.name}</span>
-          </header>
-          <div className="flex min-h-[220px] items-center justify-center p-8">
-            {demo.Playground ? (
-              <Suspense fallback={null}>
-                {createElement(demo.Playground, { values })}
-              </Suspense>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                This demo doesn't expose a Playground export yet.
-              </p>
-            )}
-          </div>
-          <details className="group border-t border-border bg-surface">
-            <summary className="cursor-pointer select-none px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground">
-              <span className="group-open:hidden">Show source</span>
-              <span className="hidden group-open:inline">Hide source</span>
-            </summary>
-            <pre className="overflow-x-auto border-t border-border bg-background px-4 py-3 text-xs leading-relaxed text-foreground">
-              <code className="font-mono">{code}</code>
-            </pre>
-          </details>
-        </div>
-      </div>
-      <aside className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-4">
-        <h2 className="text-sm font-semibold text-foreground">Props</h2>
-        <PropControls props={props} values={values} onChange={updateValue} />
-      </aside>
-    </div>
-  )
-}
-
-function EmptyState() {
-  return (
-    <div className="rounded-2xl border border-border bg-surface p-6 text-sm text-muted-foreground">
-      No interactive playground demos registered yet. Drop a
-      <code className="mx-1 font-mono">Playground</code>
-      export into a
-      <code className="ml-1 font-mono">src/content/bloom-demos/&lt;Name&gt;.tsx</code>
-      file to surface it here.
-    </div>
-  )
-}
-
-interface PropControlsProps {
-  props: readonly PlaygroundProp[]
-  values: PlaygroundValues
-  onChange: (name: string, value: PlaygroundValue) => void
-}
-
-function PropControls({ props, values, onChange }: PropControlsProps) {
-  if (props.length === 0) {
-    return (
-      <p className="text-xs text-muted-foreground">This component has no playground knobs.</p>
-    )
-  }
-  return (
-    <div className="flex flex-col gap-4">
-      {props.map((prop) => (
-        <PropControl key={prop.name} prop={prop} value={values[prop.name]} onChange={onChange} />
-      ))}
-    </div>
-  )
-}
-
-interface PropControlProps {
-  prop: PlaygroundProp
-  value: PlaygroundValue | undefined
-  onChange: (name: string, value: PlaygroundValue) => void
-}
-
-function PropControl({ prop, value, onChange }: PropControlProps) {
-  if (prop.kind === 'boolean') {
-    const checked = value === true
-    return (
-      <label className="flex items-center justify-between gap-3 text-sm text-foreground">
-        <span className="font-mono text-xs text-muted-foreground">{prop.name}</span>
-        <Switch value={checked} onValueChange={(next) => onChange(prop.name, next)} size="sm" />
-      </label>
-    )
-  }
-  if (prop.kind === 'select') {
-    const current = typeof value === 'string' ? value : prop.default
-    return (
-      <div className="flex flex-col gap-1">
-        <span className="font-mono text-xs text-muted-foreground">{prop.name}</span>
-        <Select value={current} onValueChange={(next) => onChange(prop.name, next)}>
-          <SelectTrigger label={prop.name}>
-            <SelectValue placeholder={prop.name}>{() => current}</SelectValue>
-            <SelectIcon />
-          </SelectTrigger>
-          <SelectContent
-            label={prop.name}
-            items={prop.options.map((opt) => ({ value: opt, label: opt }))}
-            renderItem={(item) => (
-              <SelectItem value={item.value} label={item.label}>
-                <SelectItemText>{item.label}</SelectItemText>
-                <SelectItemIndicator />
-              </SelectItem>
-            )}
-          />
-        </Select>
-      </div>
-    )
-  }
-  if (prop.kind === 'number') {
-    const current = typeof value === 'number' ? value : prop.default
-    return (
-      <label className="flex flex-col gap-1 text-sm text-foreground">
-        <span className="font-mono text-xs text-muted-foreground">{prop.name}</span>
-        <input
-          type="number"
-          value={current}
-          min={prop.min}
-          max={prop.max}
-          step={prop.step ?? 1}
-          onChange={(e) => {
-            const n = Number(e.target.value)
-            if (Number.isFinite(n)) onChange(prop.name, n)
-          }}
-          className="rounded-lg border border-border bg-background px-2 py-1 text-sm text-foreground"
-        />
-      </label>
-    )
-  }
-  // text
-  const current = typeof value === 'string' ? value : prop.default
-  return (
-    <label className="flex flex-col gap-1 text-sm text-foreground">
-      <span className="font-mono text-xs text-muted-foreground">{prop.name}</span>
-      <input
-        type="text"
-        value={current}
-        onChange={(e) => onChange(prop.name, e.target.value)}
-        className="rounded-lg border border-border bg-background px-2 py-1 text-sm text-foreground"
-      />
-    </label>
-  )
-}
-
-/**
- * Serialize the current knob state to a JSX-ish snippet. This is a best-
- * effort reflection — components with structured children render with the
- * relevant text props as JSX attributes. Good enough for "copy what I see".
- */
-function buildCodeSnippet(
-  name: string,
-  props: readonly PlaygroundProp[],
-  values: PlaygroundValues,
-): string {
-  const attrs: string[] = []
-  let inner = ''
-  for (const prop of props) {
-    const v = values[prop.name]
-    if (v === undefined || v === prop.default || v === '') continue
-    if (prop.name === 'children') {
-      inner = String(v)
-      continue
-    }
-    if (prop.name === 'body') continue
-    if (typeof v === 'boolean') {
-      if (v) attrs.push(prop.name)
-      continue
-    }
-    if (typeof v === 'number') {
-      attrs.push(`${prop.name}={${v}}`)
-      continue
-    }
-    attrs.push(`${prop.name}="${String(v).replace(/"/g, '\\"')}"`)
-  }
-  const attrsStr = attrs.length ? ` ${attrs.join(' ')}` : ''
-  if (inner) {
-    return `<${name}${attrsStr}>${inner}</${name}>`
-  }
-  return `<${name}${attrsStr} />`
 }

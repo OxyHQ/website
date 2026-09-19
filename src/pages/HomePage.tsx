@@ -5,6 +5,7 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import HomeHero from '../components/homepage/HomeHero'
+import HomeTagPhysics from '../components/homepage/HomeTagPhysics'
 import FairCoinSection from '../components/sections/FairCoinSection'
 import FaqSection from '../components/sections/FaqSection'
 import { usePage, type PageSection } from '../api/hooks'
@@ -15,12 +16,12 @@ import type SwiperType from 'swiper'
 import 'swiper/css'
 import '../styles/landing.css'
 import AIResearchSection from '../components/ai/AIResearchSection'
-import AIResearchFeatureGrid from '../components/ai/AIResearchFeatureGrid'
+import HomeAiSection from '../components/homepage/HomeAiSection'
 import OxyAppsFeatureGrid from '../components/sections/OxyAppsFeatureGrid'
 import OxyUseCasesRolo from '../components/sections/OxyUseCasesRolo'
 import PhotoCardCarousel, { type PhotoCard } from '../components/sections/PhotoCardCarousel'
-import { Link } from 'react-router-dom'
-import { AlertDialog } from '@oxyhq/bloom/alert-dialog'
+import { Link } from '../lib/navigation'
+import { AlertDialog } from '@oxy.so/bloom/alert-dialog'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 import { APP_CARD_IMAGES } from '../data/appCardImages'
 import { useTranslation } from '../lib/i18n'
@@ -565,7 +566,7 @@ function PartnershipSection() {
               </div>
             ))}
             <a
-              href="/sustain"
+              href="/sustain/"
               className="flex min-h-8 items-center gap-2 px-1 py-0.5 text-base font-semibold text-tertiary transition-colors duration-200 hover:text-tertiary/80 md:text-lg"
             >
               {t('home.partnershipCta')}
@@ -747,12 +748,13 @@ export default function HomePage() {
         <HomeHero />
         {FEATURES.SHOW_TRUSTED_LOGOS && <PartnerLogos />}
         <BuildForEveryoneSection />
+        <OxyAppsFeatureGrid />
+        <HomeTagPhysics />
         <OxyUseCasesRolo />
         <ValuesSection />
         {(FEATURES.SHOW_HOMEPAGE_STATS || FEATURES.SHOW_TESTIMONIALS) && <StatsAndTestimonialsSection />}
         <FairCoinSection />
-        <AIResearchFeatureGrid />
-        <OxyAppsFeatureGrid />
+        <HomeAiSection />
         <AIResearchSection />
         <PartnershipSection />
         {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}

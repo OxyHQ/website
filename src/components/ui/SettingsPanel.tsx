@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { Sun, Moon, Globe } from 'lucide-react'
-import { useBloomTheme, type ThemeMode } from '@oxyhq/bloom/theme'
+import { useBloomTheme, type ThemeMode } from '@oxy.so/bloom/theme'
 import { useLocaleContext, useTranslation } from '../../lib/i18n'
 import LanguageDialog from './LanguageDialog'
 

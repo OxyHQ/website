@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import * as Dialog from '@oxyhq/bloom/dialog'
+import * as Dialog from '@oxy.so/bloom/dialog'
 
 interface UseConfirmActionOptions<T> {
   /** Called once the user confirms. Should perform the destructive action. */

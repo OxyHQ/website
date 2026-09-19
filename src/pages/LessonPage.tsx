@@ -1,5 +1,6 @@
 import { Suspense, createElement, useEffect, useRef } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { Link } from '../lib/navigation'
 import { MDXProvider } from '@mdx-js/react'
 import { ArrowLeft, ArrowRight, BookOpen, Check, Clock } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
@@ -468,7 +469,7 @@ export default function LessonPage() {
         <PageSection spacing="sm" width="narrow">
           <ShareWithMention
             title={`${lesson.frontmatter.title}, ${course.title}`}
-            url={`https://oxy.so/academy/${course.slug}/${lesson.lessonSlug}`}
+            url={`https://oxy.so/academy/${course.slug}/${lesson.lessonSlug}/`}
             hashtags={['oxyacademy', 'learn']}
             via="oxy"
           />

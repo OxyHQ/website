@@ -1,9 +1,9 @@
-import { OxyServices } from '@oxyhq/core'
+import { OxyServices } from '@oxy.so/core'
 import {
   createOxyAuthMiddleware,
   createOptionalOxyAuth,
   type OxyRequestUser,
-} from '@oxyhq/core/server'
+} from '@oxy.so/core/server'
 import { config } from '../config.js'
 
 // Single shared OxyServices instance for the whole backend — constructed once.

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipTextBubble } from '@oxyhq/bloom/tooltip'
-import { PrimaryButton } from '@oxyhq/bloom/button'
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipTextBubble } from '@oxy.so/bloom/tooltip'
+import { PrimaryButton } from '@oxy.so/bloom/button'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

@@ -1,0 +1,186 @@
+/* Composition and motion. Every colour comes from Bloom. Content remains
+   visible without JS or view-timeline support. */
+:root {
+  --oxy-motion-quick: 160ms;
+  --oxy-motion-enter: 600ms;
+  --oxy-motion-scene: 900ms;
+  --oxy-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --oxy-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+.oxy-display {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 8rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.oxy-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 5vw, 5rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.oxy-copy {
+  max-width: 42rem;
+  font-size: clamp(1.125rem, 1.5vw, 1.5rem);
+  line-height: 1.55;
+}
+.oxy-eyebrow {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  font-weight: 600;
+}
+.oxy-anchor {
+  scroll-margin-top: 10rem;
+}
+.oxy-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1.5rem;
+}
+.oxy-guide-panel {
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  background: var(--card);
+  color: var(--card-foreground);
+  padding: clamp(1.5rem, 3vw, 3rem);
+}
+.oxy-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+.oxy-link:focus-visible,
+.oxy-story a:focus-visible,
+.oxy-guide button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 5px;
+}
+.oxy-recipe-swatch {
+  display: flex;
+  min-height: 10rem;
+  align-items: flex-end;
+  padding: 1.5rem;
+  border-radius: 1rem;
+}
+.oxy-motion-sample {
+  animation: oxy-arrive var(--oxy-motion-scene) var(--oxy-ease-out) both;
+}
+@keyframes oxy-arrive {
+  from {
+    opacity: 0.2;
+    transform: translateY(2rem) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes oxy-page-arrive {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes oxy-scroll-arrive {
+  from {
+    opacity: 0.35;
+    translate: 0 3rem;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .oxy-story {
+    animation: oxy-page-arrive var(--oxy-motion-enter) var(--oxy-ease-out);
+  }
+  @supports (animation-timeline: view()) {
+    .oxy-reveal,
+    .oxy-story > section > h2,
+    .oxy-story > section > header {
+      animation: oxy-scroll-arrive linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 85%;
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .oxy-motion-sample,
+  .oxy-story,
+  .oxy-reveal {
+    animation: none;
+  }
+  .oxy-guide *,
+  .oxy-story a,
+  .oxy-story button {
+    scroll-behavior: auto;
+  }
+}
+.bloom-workbench {
+  display: grid;
+  grid-template-columns: 13rem minmax(0, 1fr) 16rem;
+  min-height: 34rem;
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  background: var(--background);
+}
+.bloom-workbench-rail {
+  padding: 1rem;
+  background: var(--surface);
+}
+.bloom-workbench-canvas {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  overflow: auto;
+}
+.bloom-workbench input,
+.bloom-workbench select,
+.bloom-toolbar select,
+.bloom-toolbar input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+}
+.bloom-workbench input[type='checkbox'] {
+  width: 1.25rem;
+  min-height: 1.25rem;
+  accent-color: var(--primary);
+}
+@media (max-width: 1100px) {
+  .bloom-workbench {
+    grid-template-columns: minmax(0, 1fr) 15rem;
+  }
+  .bloom-workbench-library {
+    grid-column: 1 / -1;
+    max-height: 12rem;
+    overflow: auto;
+  }
+}
+@media (max-width: 640px) {
+  .bloom-workbench {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bloom-workbench-canvas {
+    min-height: 24rem;
+    padding: 1rem;
+  }
+}

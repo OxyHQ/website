@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 
 /* ──────────────────────────────────────────────

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import * as Skeleton from '@oxyhq/bloom/skeleton'
+import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { formatUnits } from 'viem'
 import { useReadContract } from 'wagmi'
 import { base } from 'wagmi/chains'

@@ -99,7 +99,7 @@ function HeroSection() {
             >
               {app.name}
             </p>
-            <article className="flex size-full items-center justify-center border border-border bg-background shadow-xl transition-all group-hover/app:-translate-y-10 group-hover/app:scale-110">
+            <article className="flex size-full items-center justify-center border border-border bg-primary-subtle shadow-xl transition-all group-hover/app:-translate-y-10 group-hover/app:scale-110">
               <img className="block w-3/5" src={app.icon} alt="" aria-hidden="true" loading="lazy" decoding="async" />
             </article>
           </div>
@@ -216,7 +216,7 @@ const HISTORY: { date: string; label: string; lead: string; body: string }[] = [
     date: '2026-06',
     label: 'June 2026',
     lead: 'Payments and commerce arrive together,',
-    body: 'with Oxy Pay and its SDK, Mercaria for sellers and Moovo, plus oxy-infra so the whole platform stops being hand-deployed and starts being reproducible.',
+    body: 'with Peable and its SDK, Mercaria for sellers and Moovo, plus oxy-infra so the whole platform stops being hand-deployed and starts being reproducible.',
   },
   {
     date: '2026-05',
@@ -546,6 +546,7 @@ function QuoteSection() {
 
 const MORE_LINKS = [
   { href: '/company/charter', label: 'The Oxy Founding Charter', kind: 'Document' },
+  { href: '/company/influence/', label: 'Influence and Responsibility', kind: 'Document' },
   { href: '/company/manifesto', label: 'The Oxy Manifesto', kind: 'Document' },
   { href: '/company/business', label: 'How our business works', kind: 'Document' },
   { href: '/company/transparency', label: 'Transparency Center', kind: 'Document' },

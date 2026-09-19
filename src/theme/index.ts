@@ -1,5 +1,5 @@
 /**
- * Theme system powered by @oxyhq/bloom color presets.
+ * Theme system powered by @oxy.so/bloom color presets.
  *
  * Reads the "oxy" preset (or any preset) from Bloom's APP_COLOR_PRESETS
  * and injects CSS custom properties on <html>. Tailwind @theme references
@@ -21,7 +21,7 @@ import {
   applyPresetVarsToDocument,
   hexToAppColorName,
   type AppColorName,
-} from '@oxyhq/bloom/theme'
+} from '@oxy.so/bloom/theme'
 import { isFairCoinHost } from '../lib/host'
 // The same two names the build-time stylesheet is generated from, so a page
 // cannot boot on one palette and hydrate into another.

@@ -12,18 +12,48 @@ import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
 import { initTheme } from './theme'
 import App from './App.tsx'
+import { queryClient } from './api/queryClient'
+import { seedNewsroomBootstrap } from './lib/newsroom-bootstrap'
+import { preloadNewsroomPostRoute } from './lib/route-preload'
+
+// An already-open tab can request a lazy chunk from the previous deployment
+// after Cloudflare has atomically switched the site to the new asset set. Vite
+// reports that specific case before the route boundary sees it; reload once
+// for each failed asset so the tab picks up the matching HTML and manifest.
+window.addEventListener('vite:preloadError', (event) => {
+  event.preventDefault()
+  const payload = (event as Event & { payload?: unknown }).payload
+  const failedAsset = payload instanceof Error ? payload.message : String(payload)
+  const reloadKey = 'oxy:last-failed-deploy-asset'
+  if (sessionStorage.getItem(reloadKey) === failedAsset) return
+  sessionStorage.setItem(reloadKey, failedAsset)
+  window.location.reload()
+})
 
 // Apply saved color preset + dark/light mode before first render
 initTheme()
 
-// The static shell and the prerender both ship a full SEO head for crawlers
-// that don't run JavaScript. React renders the same tags from `<SEO>` once it
-// mounts, so these are dropped first — otherwise every page serves two
-// `og:title`, `og:image`, `twitter:*` and `<title>` tags.
-for (const tag of document.head.querySelectorAll('[data-static-seo]')) tag.remove()
-
 const rootElement = document.getElementById('root')
 if (!rootElement) throw new Error('Root element #root not found')
+
+// The Newsroom index and direct article requests carry inert build-time data.
+// Seed it before React's first render so the index does not wait on the list
+// API and a direct article never regresses from readable prose to a loader.
+seedNewsroomBootstrap(queryClient)
+if (/^\/(?:[a-z]{2}\/)?newsroom\/[^/]+\/?$/.test(window.location.pathname)) {
+  try {
+    await preloadNewsroomPostRoute()
+  } catch {
+    // React's route boundary owns the visible failure state. The static article
+    // has remained readable up to this point, so a failed speculative preload
+    // must not stop the app from attempting its normal render.
+  }
+}
+
+// React is ready to replace the prerendered view now. Drop the static SEO at
+// the last possible moment so a slow route chunk never leaves the document
+// without its canonical/article metadata.
+for (const tag of document.head.querySelectorAll('[data-static-seo]')) tag.remove()
 
 createRoot(rootElement).render(
   <StrictMode>

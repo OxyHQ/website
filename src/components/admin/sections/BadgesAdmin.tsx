@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../../api/client'
 import { BADGE_DEFINITIONS } from '../../../data/badges'
-import { Button, PrimaryButton } from '@oxyhq/bloom/button'
+import { Button, PrimaryButton } from '@oxy.so/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 
 export default function BadgesAdmin() {

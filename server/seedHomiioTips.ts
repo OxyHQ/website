@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { and, count, eq, ne, sql } from 'drizzle-orm'
-import { config } from './config.js'
+import './config.js'
 import { closeDatabase, db } from './db/postgres.js'
 import { locales, media, newsroomPosts, products, translations } from './db/schema/index.js'
 

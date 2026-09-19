@@ -8,6 +8,8 @@
  * how to *resolve* it, plus the fixed brand identities keyed by host.
  */
 
+import { withDocumentTrailingSlash } from './seoUrl'
+
 export type SeoBrand = 'oxy' | 'faircoin'
 
 export interface SeoMeta {
@@ -61,6 +63,23 @@ const BRANDS: Record<SeoBrand, BrandIdentity> = {
 
 const FAIRCOIN_HOSTS: ReadonlySet<string> = new Set(['fairco.in', 'www.fairco.in'])
 
+/**
+ * Return the editorial part of a title before `<SEO>` adds the active brand.
+ * Repeated suffixes are stripped defensively because both CMS route metadata
+ * and content-specific meta-title fields may already contain one.
+ */
+export function normalizeSeoTitle(title: string, siteName: string): string {
+  const original = title.trim()
+  const suffix = ` | ${siteName}`
+  let normalized = original
+
+  while (normalized.toLowerCase().endsWith(suffix.toLowerCase())) {
+    normalized = normalized.slice(0, -suffix.length).trimEnd()
+  }
+
+  return normalized || original
+}
+
 /** Which brand a hostname belongs to. Defaults to Oxy off-browser / unknown hosts. */
 export function brandForHost(host?: string | null): SeoBrand {
   return host && FAIRCOIN_HOSTS.has(host.toLowerCase()) ? 'faircoin' : 'oxy'
@@ -109,7 +128,7 @@ export function resolveSeo(data: SeoData | null, pathname: string, host?: string
   return {
     title: entry.title,
     description: entry.description,
-    canonical: identity.origin + pathname,
+    canonical: identity.origin + withDocumentTrailingSlash(pathname),
     ogImage: toAbsolute(identity.origin, ogImage),
     siteName: identity.siteName,
     brand,
@@ -149,7 +168,7 @@ export function resolveSeoOrDefault(data: SeoData | null, pathname: string, host
   return {
     title: identity.fallbackTitle,
     description: identity.fallbackDescription,
-    canonical: identity.origin + pathname,
+    canonical: identity.origin + withDocumentTrailingSlash(pathname),
     ogImage: identity.origin + identity.fallbackOgImage,
     siteName: identity.siteName,
     brand,

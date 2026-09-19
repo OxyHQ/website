@@ -1,8 +1,11 @@
-import { useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { LogoIcon, ProfileButton, useOxy } from '@oxyhq/services'
+import { lazy, Suspense, useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
+import { useLocation } from 'react-router-dom'
+import { Link, useNavigate } from '../../lib/navigation'
+import { LogoIcon, useAuth, useOxy } from '@oxy.so/services/ui/client'
 import {
   simpleNavLinks,
+  aiNavCard,
+  aiNavDropdown,
   platformNavDropdown,
   resourcesNavCard,
   productNavDropdown,
@@ -24,7 +27,7 @@ import { searchSite, groupResults, searchContextGroups, type SearchResult } from
 import NavDropdownItem from '../ui/NavDropdownItem'
 import { SettingsPanel } from '../ui/SettingsPanel'
 import NavbarSearchResults from './NavbarSearchResults'
-import { Search, Settings, X } from 'lucide-react'
+import { LogIn, Search, Settings, X } from 'lucide-react'
 import { ArrowRightIcon } from '../icons'
 import { useAdminAccess } from '../../hooks/useAdminAccess'
 
@@ -32,6 +35,13 @@ import { useAdminAccess } from '../../hooks/useAdminAccess'
  *  the same shared viewport as the nav dropdowns. Prefixed so it never collides
  *  with a CMS label. */
 const SETTINGS_DROPDOWN_KEY = '__settings__'
+
+// ProfileButton pulls in native icon infrastructure. Authenticated visitors
+// still get the full account menu, while anonymous page loads keep it out of
+// the critical bundle and use a small local sign-in control instead.
+const ProfileButton = lazy(() => import('@oxy.so/services').then((module) => ({
+  default: module.ProfileButton,
+})))
 
 const NAV_LABEL_KEYS: Record<string, string> = {
   Platform: 'navbar.platform',
@@ -45,7 +55,7 @@ const NAV_PRODUCT_DESCRIPTION_FALLBACKS: Record<string, string> = {
   mercaria: 'An open marketplace for people and goods',
   moovo: 'Mobility and urban transport',
   noted: 'A focused space for notes and ideas',
-  kaana: 'An AI agent for everyday life',
+  kaana: 'Oxy\'s own inference provider',
   horizon: 'A clearer view of what matters',
   astro: 'A private browser for the open web',
 }
@@ -66,7 +76,7 @@ function ChevronDown({ className = '' }: { className?: string }) {
 
 /* ─── Dropdown Content Panel ─── */
 
-function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
+function DropdownContent({ dropdown, loadImages = true }: { dropdown: NavDropdown; loadImages?: boolean }) {
 
   /*
    * A feature dropdown is the same panel with a different filling: one headless
@@ -91,7 +101,7 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
       <ul className={listClassName}>
         {items.map((item) => (
           <li key={item.href} className="contents">
-            <NavDropdownItem item={item} />
+            <NavDropdownItem item={item} loadImage={loadImages} />
           </li>
         ))}
       </ul>
@@ -153,13 +163,13 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
           <div className="col-span-2 grid min-w-0 grid-cols-2 items-start gap-space-lg">
             {featureGrid.features.map((item) => (
               <div key={item.href} className="min-w-0">
-                <NavDropdownItem item={item} />
+                <NavDropdownItem item={item} loadImage={loadImages} />
               </div>
             ))}
           </div>
           <div className="col-span-2 grid min-w-0 grid-cols-2 items-start gap-space-lg">
             {featureGrid.cards.map((card) => (
-              <NavCard key={card.href} card={card} />
+              <NavCard key={card.href} card={card} loadImage={loadImages} />
             ))}
           </div>
         </>
@@ -168,11 +178,11 @@ function DropdownContent({ dropdown }: { dropdown: NavDropdown }) {
       {cards.length > 1 ? (
         <div className={`grid min-w-0 grid-cols-2 items-start gap-space-lg ${wideMenu ? '[grid-column:span_2]' : ''}`}>
           {cards.map((card) => (
-            <NavCard key={card.href} card={card} />
+            <NavCard key={card.href} card={card} loadImage={loadImages} />
           ))}
         </div>
       ) : (
-        cards.map((card) => <NavCard key={card.href} card={card} className={wideMenu ? '[grid-column:span_2]' : ''} />)
+        cards.map((card) => <NavCard key={card.href} card={card} loadImage={loadImages} className={wideMenu ? '[grid-column:span_2]' : ''} />)
       )}
 
       {dropdown.sidePanel && (
@@ -286,6 +296,7 @@ export default function Navbar({
   const { t } = useTranslation()
   const { locales } = useLocaleContext()
   const { oxyServices } = useOxy()
+  const { isAuthenticated, isAuthResolved, signIn } = useAuth()
   // The settings gear (theme + language) always shows; the language section
   // inside it only when more than one locale is offered.
   const showLanguageInSettings = !hideLocalePicker && locales.length > 1
@@ -300,10 +311,12 @@ export default function Navbar({
       return {
         title: product.name,
         description: product.tagline || product.description || NAV_PRODUCT_DESCRIPTION_FALLBACKS[productKey] || 'Explore this Oxy product',
-        href: product.navOpensApp ? product.href : (product.landingUrl || product.href),
+        href: productKey === 'marketplace' || productKey === 'mercaria'
+          ? '/mercaria'
+          : (product.navOpensApp ? product.href : (product.landingUrl || product.href)),
         image: product.productId === 'alia' ? '/images/apps/alia-dropdown.svg' : (resolveProductLogoUrl(product) || undefined),
         logoColor: product.brand,
-        preserveImageColors: product.productId === 'alia' || product.productId === 'faircoin' || product.productId === 'fairwallet' || product.productId === 'faircoin-wallet',
+        preserveImageColors: product.productId === 'alia' || product.productId === 'faircoin' || product.productId === 'fairwallet' || product.productId === 'faircoin-wallet' || product.productId === 'kaana',
         section: technologyNavSection(product.productId, product.section),
       }
     })
@@ -332,6 +345,10 @@ export default function Navbar({
     return [
       productNavDropdown,
       platform,
+      // AI is its own top-level menu, ahead of Resources: it is an umbrella over
+      // six services in six different states, and the single `Oxy AI` line it
+      // replaced inside Platform could describe none of them correctly.
+      { ...aiNavDropdown, card: aiNavCard },
       { ...resourcesNavDropdown, cards: [resourcesNavCard, resourcesBloomCard] },
     ]
   }, [useCustomNav, customDropdowns, productItems])
@@ -498,7 +515,6 @@ export default function Navbar({
   const bannerHeight = 40 // matches --site-header-banner-visible-height
   const bannerOffset = bannerVisible ? Math.max(0, bannerHeight - scrollY) : 0
   const bannerOffsetRef = useRef(bannerOffset)
-  bannerOffsetRef.current = bannerOffset
 
   /**
    * Publish two facts about the nav row: its real height as
@@ -560,6 +576,7 @@ export default function Navbar({
   // lines below the current banner + navbar stack so they do not double the
   // logo/control separators while the banner scrolls away.
   useLayoutEffect(() => {
+    bannerOffsetRef.current = bannerOffset
     const headerHeight = Number.parseFloat(
       getComputedStyle(document.documentElement).getPropertyValue('--site-header-height'),
     ) || 0
@@ -648,6 +665,30 @@ export default function Navbar({
     background: active ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
     color: active ? 'var(--color-foreground)' : isTransparent ? transparentColor : 'var(--color-muted-foreground)',
   })
+  const authControl = (avatarSize: number) => {
+    if (!isAuthResolved || !isAuthenticated) {
+      return (
+        <button
+          type="button"
+          className={iconButtonClass}
+          aria-label={t('common.signIn')}
+          disabled={!isAuthResolved}
+          onClick={() => { void signIn() }}
+        >
+          <LogIn className="size-[18px]" aria-hidden="true" />
+        </button>
+      )
+    }
+    return (
+      <Suspense fallback={<span aria-hidden="true" className="block size-10" />}>
+        <ProfileButton
+          expanded={false}
+          avatarSize={avatarSize}
+          menuItems={isAdmin ? [{ key: 'admin', label: 'Admin', icon: 'shield-account-outline', onPress: () => navigate('/admin') }] : []}
+        />
+      </Suspense>
+    )
+  }
 
   return (
     <>
@@ -664,7 +705,7 @@ export default function Navbar({
             <div className="relative flex size-full items-stretch justify-center px-12 max-md:justify-start max-md:pl-0">
               <Link
                 className="group relative flex size-full items-center justify-center gap-1.5 text-primary-foreground max-md:justify-start"
-                to={banner?.href ?? '/inbox'}
+                to={banner?.href ?? '/ai'}
               >
                 <span className="attio-group-hover-underline relative truncate text-body-sm">
                   {banner?.text ?? t('navbar.bannerDefault')}
@@ -711,7 +752,7 @@ export default function Navbar({
       >
         {dropdowns.map((dd) => (
           <div key={dd.label} ref={(el) => { measureRefs.current[dd.label] = el }}>
-            <DropdownContent dropdown={dd} />
+            <DropdownContent dropdown={dd} loadImages={false} />
           </div>
         ))}
         <div ref={(el) => { measureRefs.current[SETTINGS_DROPDOWN_KEY] = el }}>
@@ -853,11 +894,7 @@ export default function Navbar({
                   no text, so without a label the button has no accessible name
                   at all — Lighthouse's `button-name` audit fails outright. */}
               {!hideAuth && (
-                <ProfileButton
-                  expanded={false}
-                  avatarSize={28}
-                  menuItems={isAdmin ? [{ key: 'admin', label: 'Admin', icon: 'shield-account-outline', onPress: () => navigate('/admin') }] : []}
-                />
+                authControl(28)
               )}
               <button
                 className={`inline-flex size-10 items-center justify-center rounded-full transition-colors hover:bg-foreground/5 ${isTransparent ? (onLight ? 'text-black' : 'text-white') : 'text-muted-foreground'}`}
@@ -910,11 +947,7 @@ export default function Navbar({
               {rightActions}
               {ctaButtons}
               {!hideAuth && (
-                <ProfileButton
-                  expanded={false}
-                  avatarSize={32}
-                  menuItems={isAdmin ? [{ key: 'admin', label: 'Admin', icon: 'shield-account-outline', onPress: () => navigate('/admin') }] : []}
-                />
+                authControl(32)
               )}
             </div>
             </div>
@@ -965,7 +998,7 @@ export default function Navbar({
                       pointerEvents: isActive ? 'auto' : 'none',
                     }}
                   >
-                    <DropdownContent dropdown={dd} />
+                    <DropdownContent dropdown={dd} loadImages={show} />
                   </div>
                 )
               })}
@@ -1013,6 +1046,7 @@ export default function Navbar({
           height: `calc(100dvh - ${bannerOffset}px - var(--site-header-height))`,
         }}
         aria-hidden={!mobileOpen}
+        inert={!mobileOpen}
       >
         <div className="absolute inset-0 flex flex-col">
           <div className="flex-1 overflow-y-auto overscroll-contain">
@@ -1074,7 +1108,7 @@ export default function Navbar({
 
             <div className="flex flex-col gap-2 p-4" onClick={() => setMobileOpen(false)}>
               {dd.featureGrid?.features.map((item) => (
-                <NavDropdownItem key={item.href} item={item} />
+                <NavDropdownItem key={item.href} item={item} loadImage={mobileOpen && mobilePanel === dd.label} />
               ))}
               {dd.sections.map((section) => (
                 <div key={section.heading} className="flex flex-col gap-2">
@@ -1084,13 +1118,13 @@ export default function Navbar({
                     </p>
                   ) : null}
                   {section.items.map((item) => (
-                    <NavDropdownItem key={`${section.heading}-${item.title}`} item={item} />
+                    <NavDropdownItem key={`${section.heading}-${item.title}`} item={item} loadImage={mobileOpen && mobilePanel === dd.label} />
                   ))}
                 </div>
               ))}
               {[...(dd.featureGrid?.cards ?? []), ...(dd.cards ?? []), ...(dd.card ? [dd.card] : [])].map((card) => (
                 <div key={card.href} className="aspect-[4/3] overflow-hidden rounded-xl">
-                  <NavCard card={card} />
+                  <NavCard card={card} loadImage={mobileOpen && mobilePanel === dd.label} />
                 </div>
               ))}
               {dd.sidePanel?.links.map((link) =>

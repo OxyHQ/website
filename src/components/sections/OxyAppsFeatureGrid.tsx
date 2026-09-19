@@ -18,7 +18,13 @@ const REVEAL = {
   transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
 }
 
-export default function OxyAppsFeatureGrid() {
+interface OxyAppsFeatureGridProps {
+  title?: string
+  description?: string
+  unifiedTheme?: boolean
+}
+
+export default function OxyAppsFeatureGrid({ title, description, unifiedTheme = false }: OxyAppsFeatureGridProps = {}) {
   const { t } = useTranslation()
   const swiperRef = useRef<SwiperType | null>(null)
 
@@ -76,7 +82,7 @@ export default function OxyAppsFeatureGrid() {
     {
       type: 'profile',
       image: APP_CARD_IMAGES['/mercaria'],
-      cornerIcon: '/images/apps/wholesale.png',
+      cornerIcon: '/images/apps/wholesale.svg',
       name: 'Wholesale by Mercaria',
       role: t('products.wholesaleDescription'),
       href: 'https://dashboard.mercaria.co',
@@ -84,7 +90,9 @@ export default function OxyAppsFeatureGrid() {
     },
   ]
 
-  const cards = [...appCards, ...additionalCards]
+  const cards = [...appCards, ...additionalCards].map((card) => unifiedTheme
+    ? { ...card, theme: undefined, descriptionClassName: undefined }
+    : card)
 
   return (
     <section className="container">
@@ -92,9 +100,9 @@ export default function OxyAppsFeatureGrid() {
         <motion.div className="col-span-full py-16 max-[950px]:py-10" {...REVEAL}>
           <div className="mb-8 flex items-end justify-between gap-6">
             <div className="max-w-[560px]">
-              <h2 className="text-heading-responsive-lg">{t('home.appsFeaturesTitle')}</h2>
+              <h2 className="text-heading-responsive-lg">{title ?? t('home.appsFeaturesTitle')}</h2>
               <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                {t('home.appsFeaturesDescription')}
+                {description ?? t('home.appsFeaturesDescription')}
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-3">

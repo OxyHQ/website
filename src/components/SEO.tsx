@@ -1,7 +1,9 @@
 import { Helmet } from 'react-helmet-async'
 import { useLocaleContext, DEFAULT_LOCALE, type Locale } from '../lib/i18n'
-import { brandConfig, resolveSeo } from '../lib/seo'
+import { brandConfig, normalizeSeoTitle, resolveSeo } from '../lib/seo'
 import { useSeo } from '../api/hooks'
+import { buildLocalizedSeoUrl } from '../lib/seoUrl'
+import { hasLocalizedVariants } from '../lib/localizedRoute'
 
 export interface SEOProps {
   title: string
@@ -13,6 +15,12 @@ export interface SEOProps {
   publishedTime?: string
   modifiedTime?: string
   author?: string
+  /**
+   * Absolute canonical URL, for a page whose content is published on another
+   * site (an open role written in Mention). It replaces the path-derived
+   * canonical and suppresses hreflang: the page speaks for no locale set.
+   */
+  canonicalUrl?: string
 }
 
 /**
@@ -42,9 +50,7 @@ const OG_LOCALES: Record<Locale, string> = {
  *  default locale surface lives at the bare URL; non-default locales live under
  *  `/{locale}`. */
 function buildLocalizedUrl(origin: string, canonicalPath: string, locale: Locale): string {
-  const cleanPath = canonicalPath === '/' ? '' : canonicalPath
-  if (locale === DEFAULT_LOCALE) return `${origin}${canonicalPath}`
-  return `${origin}/${locale}${cleanPath}`
+  return buildLocalizedSeoUrl(origin, canonicalPath, locale, DEFAULT_LOCALE)
 }
 
 /**
@@ -67,6 +73,7 @@ export default function SEO({
   publishedTime,
   modifiedTime,
   author,
+  canonicalUrl: externalCanonicalUrl,
 }: SEOProps) {
   const { locale, locales } = useLocaleContext()
   const host = typeof window === 'undefined' ? undefined : window.location.hostname
@@ -88,8 +95,10 @@ export default function SEO({
     ? (pageImage.startsWith('/') ? `${origin}${pageImage}` : pageImage)
     : defaultOgImage
 
-  const fullTitle = canonicalPath === '/' ? metaTitle : `${metaTitle} | ${siteName}`
-  const canonicalUrl = buildLocalizedUrl(origin, canonicalPath, locale)
+  const fullTitle = canonicalPath === '/'
+    ? metaTitle
+    : `${normalizeSeoTitle(metaTitle, siteName)} | ${siteName}`
+  const canonicalUrl = externalCanonicalUrl ?? buildLocalizedUrl(origin, canonicalPath, locale)
   // Advertise only locales that actually have translations. `enabled` is an
   // editorial "show in the picker" toggle that defaults to true, so it says
   // nothing about whether `/<code>/…` would render anything but an English
@@ -101,9 +110,24 @@ export default function SEO({
   // entry is translationReady:false, so a cold render advertises nothing rather
   // than all 11 locales. Cold render is exactly when a crawler is most likely
   // to be looking.
-  const alternateCodes: readonly Locale[] = locales
-    .filter((l) => l.translationReady)
-    .map((l) => l.code)
+  //
+  // A route with no translated variant gets no annotations at all. An hreflang
+  // set whose members serve the same English bytes tells Google the URLs are
+  // equivalent translations when they are plain duplicates, and it answers by
+  // picking its own canonical.
+  const localized = !externalCanonicalUrl && hasLocalizedVariants(canonicalPath)
+  const alternateCodes: readonly Locale[] = localized
+    ? locales.filter((l) => l.translationReady).map((l) => l.code)
+    : []
+  // hreflang is reciprocal: every page in the set must list the whole set,
+  // itself included. The default locale is `translationReady: false` by
+  // construction (it lives at the bare path and has nothing to translate), so
+  // it never came out of the filter above and the set shipped without its own
+  // member — leaving `x-default` as the only pointer at the English URL, which
+  // is not a substitute. An hreflang set missing a self-reference is invalid
+  // and Google drops it whole.
+  const hreflangCodes: readonly Locale[] =
+    alternateCodes.length > 0 ? [DEFAULT_LOCALE, ...alternateCodes] : []
 
   return (
     <Helmet>
@@ -116,9 +140,10 @@ export default function SEO({
           host. A second, brand-blind copy emitted from here would land after it
           in <head> and win — repainting FairCoin's chrome with Oxy's color. */}
 
-      {/* hreflang — one entry per translation-ready locale, plus x-default →
-          the bare (default-locale) path. */}
-      {alternateCodes.map((code) => (
+      {/* hreflang — the default locale's self-reference, one entry per
+          translation-ready locale, and x-default → the bare path. Emitted only
+          for routes that have translated variants. */}
+      {hreflangCodes.map((code) => (
         <link
           key={`hreflang-${code}`}
           rel="alternate"
@@ -126,7 +151,9 @@ export default function SEO({
           href={buildLocalizedUrl(origin, canonicalPath, code)}
         />
       ))}
-      <link rel="alternate" hrefLang="x-default" href={buildLocalizedUrl(origin, canonicalPath, DEFAULT_LOCALE)} />
+      {hreflangCodes.length > 0 && (
+        <link rel="alternate" hrefLang="x-default" href={buildLocalizedUrl(origin, canonicalPath, DEFAULT_LOCALE)} />
+      )}
 
       {/* Open Graph */}
       <meta property="og:title" content={fullTitle} />

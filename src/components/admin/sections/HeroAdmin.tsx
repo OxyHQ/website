@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useHero, useUpdateHero, type HeroContent } from '../../../api/hooks'
-import { PrimaryButton } from '@oxyhq/bloom/button'
+import { PrimaryButton } from '@oxy.so/bloom/button'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'
 import MediaPicker from '../MediaPicker'

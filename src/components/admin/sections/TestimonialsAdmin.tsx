@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTestimonials, useLocales } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
-import { Button, PrimaryButton } from '@oxyhq/bloom/button'
+import { Button, PrimaryButton } from '@oxy.so/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import LocaleSwitcher from '../LocaleSwitcher'

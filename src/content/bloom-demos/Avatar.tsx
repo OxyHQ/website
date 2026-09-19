@@ -1,5 +1,5 @@
-import { Avatar } from '@oxyhq/bloom/avatar'
-import type { AvatarShape } from '@oxyhq/bloom/avatar'
+import { Avatar } from '@oxy.so/bloom/avatar'
+import type { AvatarShape } from '@oxy.so/bloom/avatar'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

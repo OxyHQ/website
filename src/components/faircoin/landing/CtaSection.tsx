@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../../lib/navigation'
 import { motion } from 'framer-motion'
 import Button from '../../ui/Button'
 import { fc } from '../../../lib/faircoin-links'

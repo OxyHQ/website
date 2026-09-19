@@ -7,13 +7,13 @@
  *     every meta tag the site ships) and returns a `<head>` fragment.
  *   - `renderMarkdownBody(markdown)` renders a page's prose with the same
  *     article components the browser uses, for the routes whose content IS
- *     markdown — newsroom posts and the synced documentation.
+ *     markdown — newsroom posts, long-form company documents and synced docs.
  *
  * Why this entry does not mount whole pages
  * -----------------------------------------
  * In principle we want to mount each page so its `<SEO>` call inside the
  * page body fires the same way it would at runtime. In practice the page
- * tree pulls in heavy React-Native-flavored libraries (`@oxyhq/bloom`,
+ * tree pulls in heavy React-Native-flavored libraries (`@oxy.so/bloom`,
  * `react-native-svg`, `react-native-reanimated`, `react-three-fiber`,
  * `wagmi`) whose SSR/Node story is brittle to non-existent. Bundling them
  * just to throw the body away costs minutes and breaks on every dep bump.
@@ -47,6 +47,7 @@ import { renderToString, renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import SEO from './components/SEO'
+import { serializeStructuredData } from './lib/structuredData'
 import ArticleMarkdown from './components/newsroom/article/ArticleMarkdown'
 import { LocaleProvider } from './lib/i18n'
 import type { SeoData } from './lib/seo'
@@ -74,6 +75,11 @@ export function renderMarkdownBody(markdown: string): string {
   return renderToStaticMarkup(<ArticleMarkdown content={markdown} />)
 }
 
+/** Serialize route-specific JSON-LD with the same escaping as the client. */
+export function renderStructuredData(data: Record<string, unknown>): string {
+  return `<script type="application/ld+json">${serializeStructuredData(data)}</script>`
+}
+
 /**
  * Mirrors the props of `<SEO>` exactly. Kept inline (not imported from
  * `SEO.tsx`) so the prerender contract is visible in one place and the
@@ -95,6 +101,8 @@ export interface SEORenderInput {
   publishedTime?: string
   modifiedTime?: string
   author?: string
+  /** Absolute canonical for a page whose content is published on another site. */
+  canonicalUrl?: string
 }
 
 /** One entry of `GET /api/locales`, as far as `<SEO>`'s hreflang block cares. */
@@ -184,6 +192,7 @@ export function renderSEO(
               publishedTime={input.publishedTime}
               modifiedTime={input.modifiedTime}
               author={input.author}
+              canonicalUrl={input.canonicalUrl}
             />
           </LocaleProvider>
         </MemoryRouter>

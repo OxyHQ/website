@@ -14,7 +14,7 @@
  * with one palette and hydrate into another.
  */
 
-import { APP_COLOR_PRESETS, type AppColorName } from '@oxyhq/bloom/color-presets'
+import { APP_COLOR_PRESETS, type AppColorName } from '@oxy.so/bloom/color-presets'
 
 /** The palette on oxy.so, and the floor every other surface sits on. */
 export const SITE_PRESET: AppColorName = 'oxy'
@@ -61,6 +61,7 @@ export interface BrandSurface {
  * that uses `.cursor-theme` alone.
  */
 export const BRAND_SURFACES: readonly BrandSurface[] = [
+  { selector: '.homiio-landing-theme', seed: APP_COLOR_PRESETS.cobalt.hex, secondarySeed: APP_COLOR_PRESETS.yellow.hex, mode: 'auto', label: 'Homiio landing scenes' },
   { selector: '.cursor-theme', seed: '#7c5aed', mode: 'dark', label: 'Codea' },
   { selector: '.oxyos-theme', seed: '#8b6fc0', mode: 'dark', label: 'OxyOS' },
   {
@@ -91,6 +92,13 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     tertiarySeed: APP_COLOR_PRESETS.cobalt.tertiaryHex,
     mode: 'auto',
     label: 'Developer docs',
+  },
+  {
+    selector: '.dashboard-metrics-theme',
+    seed: APP_COLOR_PRESETS.lagoon.hex,
+    tertiarySeed: APP_COLOR_PRESETS.grove.tertiaryHex,
+    mode: 'dark',
+    label: 'Live dashboard metric cards',
   },
   {
     selector: '.manifesto-theme',
@@ -163,6 +171,13 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     tertiarySeed: APP_COLOR_PRESETS.navy.tertiaryHex,
     mode: 'auto',
     label: 'Build the future section',
+  },
+  {
+    selector: '.partners-theme',
+    seed: APP_COLOR_PRESETS.grove.hex,
+    tertiarySeed: APP_COLOR_PRESETS.grove.tertiaryHex,
+    mode: 'auto',
+    label: 'Partners page',
   },
   {
     // The device frame in `PhoneMockup.tsx` reproduces the FAIRWallet home

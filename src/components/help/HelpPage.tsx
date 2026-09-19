@@ -1,5 +1,5 @@
 import { createElement, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import * as LucideIcons from 'lucide-react'
 import { useCurrentLocale } from '../../lib/i18n'
 import {

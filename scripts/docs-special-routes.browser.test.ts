@@ -38,7 +38,13 @@ for (let attempt = 0; attempt < 50; attempt += 1) {
 }
 invariant(previewReady, 'Vite preview did not start')
 
-const browser = await chromium.launch({ headless: true })
+const browser = await chromium.launch({
+  headless: true,
+  // Same escape hatch the other two browser suites carry: Playwright resolves
+  // its own pinned Chromium build, which a machine whose browser cache predates
+  // the last `playwright` bump does not have.
+  executablePath: process.env.CHROME_EXECUTABLE || undefined,
+})
 const context = await browser.newContext({ viewport: { width: 1440, height: 900 } })
 const page = await context.newPage()
 const pageErrors: string[] = []
@@ -59,7 +65,7 @@ async function assertGlobalChrome(activePage: Page): Promise<void> {
 
 async function assertGlobalDocsChrome(activePage: Page): Promise<void> {
   await assertGlobalChrome(activePage)
-  await activePage.locator('a[href="/developers/docs/services"]').waitFor({ state: 'attached' })
+  await activePage.locator('a[href="/developers/docs/services/"]').waitFor({ state: 'attached' })
 }
 
 async function openRoute(path: string): Promise<void> {
@@ -76,6 +82,22 @@ async function assertCurrentSidebarLink(href: string): Promise<void> {
   )
 }
 
+async function assertComponentWorkbench(activePage: Page): Promise<void> {
+  await activePage.getByRole('heading', { name: 'Playground', exact: true }).waitFor()
+  await activePage.getByRole('link', { name: 'All components', exact: true }).waitFor()
+  const library = activePage.getByRole('complementary', { name: 'Component library' })
+  await library.getByRole('button', { name: 'Button', exact: true, pressed: true }).waitFor()
+  invariant(
+    await library.getByRole('button', { pressed: true }).count() === 1,
+    `expected exactly one selected component at ${activePage.url()}`,
+  )
+  await activePage.getByRole('complementary', { name: 'Component properties' }).waitFor()
+  await activePage.getByLabel('Recipe', { exact: true }).waitFor()
+  await activePage.getByLabel('Appearance', { exact: true }).waitFor()
+  await activePage.getByLabel('Canvas', { exact: true }).waitFor()
+  await activePage.locator('iframe[title="Interactive Bloom preview"]').waitFor()
+}
+
 async function assertContained(selector: string): Promise<void> {
   const measurement = await page.locator(selector).evaluate((element) => {
     const rect = element.getBoundingClientRect()
@@ -89,10 +111,9 @@ async function assertContained(selector: string): Promise<void> {
 
 try {
   await openRoute('/developers/docs/bloom/playground')
-  await page.getByRole('heading', { name: 'Playground', exact: true }).waitFor()
-  await page.getByText('Pick a component and tweak its props to see the live preview update.').waitFor()
-  await page.locator('a[href="/developers/docs/bloom/color-system"]').first().waitFor()
-  await assertCurrentSidebarLink('/developers/docs/bloom/playground')
+  await assertComponentWorkbench(page)
+  await page.getByText('Example source', { exact: true }).click()
+  await page.getByRole('textbox', { name: 'Bloom example source' }).waitFor()
   invariant(
     await page.getByRole('button', { name: /^Switch version/ }).count() === 0,
     'latest component playground must not expose historical docs version controls',
@@ -103,17 +124,15 @@ try {
     new URL(page.url()).pathname === '/developers/docs/bloom/playground/',
     'trailing-slash component playground must remain canonical instead of redirecting',
   )
-  await page.getByRole('heading', { name: 'Playground', exact: true }).waitFor()
-  await assertCurrentSidebarLink('/developers/docs/bloom/playground')
+  await assertComponentWorkbench(page)
 
   await openRoute(`/developers/docs/bloom/${bloom.latestVersion}/playground`)
-  await page.waitForURL(`${origin}/developers/docs/bloom/playground`)
-  await page.getByRole('heading', { name: 'Playground', exact: true }).waitFor()
-  await assertCurrentSidebarLink('/developers/docs/bloom/playground')
+  await page.waitForURL(`${origin}/developers/docs/bloom/playground/`)
+  await assertComponentWorkbench(page)
 
   await openRoute('/developers/docs/bloom/color-system')
   await page.locator('[data-testid="color-system-playground"]').waitFor()
-  await assertCurrentSidebarLink('/developers/docs/bloom/color-system')
+  await assertCurrentSidebarLink('/developers/docs/bloom/color-system/')
   invariant(
     await page.getByRole('button', { name: /^Switch version/ }).count() === 0,
     'latest color playground must not expose historical docs version controls',
@@ -148,19 +167,19 @@ try {
     'trailing-slash canonical route must remain canonical instead of redirecting',
   )
   await page.locator('[data-testid="color-system-playground"]').waitFor()
-  await assertCurrentSidebarLink('/developers/docs/bloom/color-system')
+  await assertCurrentSidebarLink('/developers/docs/bloom/color-system/')
 
   await openRoute(`/developers/docs/bloom/${bloom.latestVersion}/color-system`)
-  await page.waitForURL(`${origin}/developers/docs/bloom/color-system`)
+  await page.waitForURL(`${origin}/developers/docs/bloom/color-system/`)
   await page.locator('[data-testid="color-system-playground"]').waitFor()
-  await assertCurrentSidebarLink('/developers/docs/bloom/color-system')
+  await assertCurrentSidebarLink('/developers/docs/bloom/color-system/')
 
   await openRoute(`/developers/docs/bloom/${bloom.latestVersion}`)
   invariant(
-    await page.locator('main a[href="/developers/docs/bloom/color-system"]').count() === 1,
+    await page.locator('main a[href="/developers/docs/bloom/color-system/"]').count() === 1,
     'Bloom overview must render one color-system hub link',
   )
-  await page.locator('main a[href="/developers/docs/bloom/playground"]').waitFor()
+  await page.locator('main a[href="/developers/docs/bloom/playground/"]').waitFor()
 
   await page.goto(`${origin}/developers`, { waitUntil: 'domcontentloaded' })
   await assertGlobalChrome(page)
@@ -204,7 +223,7 @@ try {
   }
 
   await openRoute('/developers/docs/bloom/playground')
-  await page.getByRole('heading', { name: 'Playground', exact: true }).waitFor()
+  await assertComponentWorkbench(page)
 
   invariant(pageErrors.length === 0, `browser page errors: ${pageErrors.join('; ')}`)
   console.info('[docs-special-routes] global chrome, both playgrounds, 64/46/18 filters and responsive overflow passed')

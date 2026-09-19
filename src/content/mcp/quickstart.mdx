@@ -1,135 +1,76 @@
 ---
 title: Quickstart
-description: Connect Claude Desktop or Claude Code to the Oxy MCP server in five minutes.
+description: Connect Claude or any MCP client to the Oxy MCP server and sign in with your Oxy account.
 order: 1
 ---
 
 # Quickstart
 
-Connect Claude to the Oxy MCP server so it can read and modify your CMS content directly. The server speaks the [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports) transport, mounted at `https://api.oxy.so/mcp`.
+Connect an MCP client to `https://website-api.oxy.so/mcp` and approve the connection with your Oxy account. There is no token to create or paste: the client handles sign-in for you.
 
 <Callout variant="info" title="You will need">
-  - An **admin** account on oxy.so (only admins can mint MCP tokens).
-  - **Claude Desktop** (macOS / Windows) or **Claude Code** (any platform).
-  - About five minutes.
+  - An **Oxy account**. Any account can read public content; writes need an account that is a website admin.
+  - An MCP client that supports remote servers with OAuth sign-in — Claude on the web, Claude Desktop, Claude Code, or an MCP SDK client.
 </Callout>
 
-## 1. Mint a token
+## 1. Add the server
 
-Tokens are 32-byte random hex strings, hashed before storage. The raw token is shown **once** at creation time — there is no way to recover it later. If you lose it, mint a new one and revoke the old.
+### Claude (web and desktop)
 
-You have two ways to mint a token.
+1. Open **Settings → Connectors** and choose **Add custom connector**.
+2. Enter the URL `https://website-api.oxy.so/mcp`. Leave any client ID and secret fields empty — the client registers itself automatically.
+3. Select **Connect**. Claude opens auth.oxy.so; sign in if needed and approve the connection.
 
-### Option A — admin console
-
-1. **Open the admin console.** Go to **oxy.so → Admin → MCP Tokens** while signed in as an admin.
-2. **Create a token.** Give it a descriptive name (e.g. `Claude Desktop — Alex`) and optionally an expiry date. Hit **Create**.
-3. **Copy the raw token.** A long hex string (`a1b2c3...`) appears in the response. Copy it now — it will not be shown again.
-
-### Option B — REST API
-
-If you prefer the shell, the same operation is available as `POST /api/mcp-tokens`:
-
-```bash
-curl -X POST https://api.oxy.so/api/mcp-tokens \
-  -H "Authorization: Bearer <your-admin-session-jwt>" \
-  -H "Content-Type: application/json" \
-  -d '{ "name": "Claude Desktop — Alex" }'
-```
-
-Response:
-
-```json
-{
-  "_id": "65fa…",
-  "name": "Claude Desktop — Alex",
-  "token": "a1b2c3d4e5f6…",
-  "createdAt": "2026-05-25T12:34:56.000Z"
-}
-```
-
-The `token` field is the raw secret. Save it in your password manager.
-
-## 2. Connect a client
-
-Pick the client you use most.
-
-### Claude Desktop
-
-Claude Desktop expects an entry under `mcpServers` in its config file:
-
-- **macOS** — `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Windows** — `%APPDATA%\Claude\claude_desktop_config.json`
-
-The Oxy MCP server is reached over HTTP, so use the `url` form (Claude Desktop 0.7+):
-
-```json
-{
-  "mcpServers": {
-    "oxy": {
-      "url": "https://api.oxy.so/mcp",
-      "headers": {
-        "Authorization": "Bearer YOUR_TOKEN_HERE"
-      }
-    }
-  }
-}
-```
-
-Save the file and restart Claude Desktop. The MCP plug icon at the bottom of the chat composer should now list **oxy** with **92 tools** available.
+The connector then lists the tools your account can use.
 
 ### Claude Code
 
-Claude Code (the CLI) uses the same MCP protocol. Register the server with `claude mcp add`:
+Register the server over HTTP, then sign in from inside a session:
 
 ```bash
-claude mcp add oxy \
-  --transport http \
-  --url https://api.oxy.so/mcp \
-  --header "Authorization: Bearer YOUR_TOKEN_HERE"
+claude mcp add --transport http oxy-website https://website-api.oxy.so/mcp
 ```
 
-Restart the Claude Code session. Run `/mcp` in any session to confirm the `oxy` server is connected.
+Run `/mcp` in Claude Code, select **oxy-website** and choose to authenticate. Your browser opens auth.oxy.so; approve the connection and return to the terminal.
 
 ### Any MCP client
 
-Programmatic clients that speak the [Streamable HTTP transport](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) (TypeScript SDK 1.x and equivalents) can connect directly:
+Point a client that implements [MCP authorization](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization) at the endpoint. On the first request the server answers `401` with a `WWW-Authenticate` header naming its protected resource metadata:
 
-```ts
-import { Client } from '@modelcontextprotocol/sdk/client/index.js'
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
-
-const transport = new StreamableHTTPClientTransport(
-  new URL('https://api.oxy.so/mcp'),
-  { requestInit: { headers: { Authorization: `Bearer ${process.env.OXY_MCP_TOKEN}` } } },
-)
-const client = new Client({ name: 'my-agent', version: '1.0.0' }, { capabilities: {} })
-await client.connect(transport)
-
-const { tools } = await client.listTools()
-console.log(`Connected, ${tools.length} tools available`)
+```
+WWW-Authenticate: Bearer realm="website-mcp", resource_metadata="https://website-api.oxy.so/.well-known/oauth-protected-resource/mcp"
 ```
 
-The server only advertises `tools` capabilities, so `client.listResources()` and `client.listPrompts()` both return empty arrays.
+The metadata names Oxy as the authorization server. The client registers itself with Oxy, sends the person through the approval on auth.oxy.so, and retries with the access token it receives. With the official SDKs this is handled by the transport's OAuth support; you do not set an `Authorization` header by hand.
 
-## 3. Try your first call
+## 2. Try your first call
 
 Ask Claude:
 
 > List the five most recent newsroom posts and show me their titles.
 
-Claude will pick the `list_posts` tool, call it with `{ limit: 5 }`, and render the returned JSON as a table. You should see exactly the same posts that appear on the [oxy.so newsroom](https://oxy.so/newsroom).
+Claude calls the newsroom listing tool and renders the result. You should see the same posts that appear on the [oxy.so newsroom](https://oxy.so/newsroom/).
 
-If Claude reports `Invalid or expired token`, double-check that:
+If your account is a website admin, try a write:
 
-- The token is the **raw** secret you copied at creation time (not the `_id`).
-- The token has not been revoked or expired (see `list_mcp_tokens`).
-- The `Authorization` header reads `Bearer <token>`, not `<token>` alone.
+> Create a draft newsroom post titled "Hello from MCP". Do not publish it.
 
-See [Authentication](/developers/docs/mcp/authentication) for the full token lifecycle.
+On any other account the same request is refused with a clear message: writes are admin-only.
+
+## 3. If something goes wrong
+
+| What you see | What it means | What to do |
+|---|---|---|
+| The client asks you to sign in again | Your access token expired or was revoked | Reconnect and approve again on auth.oxy.so |
+| `Authorization service unavailable.` (HTTP `503`) | The server could not reach Oxy to check your token | Retry shortly; nothing is wrong with your connection |
+| A tool result marked as an error saying the tool is only available to website admins | The connection's active account is not a website admin | Switch to an admin account, or use a read |
+| A tool result marked as an error refusing a filter | The public read does not support that filter | Remove the filter, or use an admin account |
+
+See [Authentication](/developers/docs/mcp/authentication) for how access is decided and how to revoke a connection.
 
 ## What's next
 
-- [Tools](/developers/docs/mcp/tools) — reference for every callable tool.
-- [Transports](/developers/docs/mcp/transports) — when to use HTTP vs the local CLI.
+- [Authentication](/developers/docs/mcp/authentication) — sign-in, scopes, the active account and revocation.
+- [Tools](/developers/docs/mcp/tools) — tool categories and error handling.
+- [Transports](/developers/docs/mcp/transports) — how requests travel.
 - [Examples](/developers/docs/mcp/examples) — full workflows.

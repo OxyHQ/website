@@ -3,8 +3,9 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import StructuredData from '../components/StructuredData'
 import NewsroomIndex from '../components/newsroom/NewsroomIndex'
-import { usePage } from '../api/hooks'
+import { useNewsroomPosts, usePage } from '../api/hooks'
 import { brandConfig } from '../lib/seo'
+import { buildNewsroomCollectionStructuredData } from '../lib/newsroomSeo'
 
 /* ──────────────────────────────────────────────────
  * /newsroom — full unscoped feed
@@ -14,6 +15,9 @@ import { brandConfig } from '../lib/seo'
  * ────────────────────────────────────────────── */
 export default function NewsroomPage() {
   const { data: pageData } = usePage('newsroom')
+  // Uses the exact query key consumed by `NewsroomIndex`, so React Query
+  // deduplicates the request while letting the page describe real articles.
+  const { data: newsroomData } = useNewsroomPosts({ limit: 50 })
   // Host-aware so a page served on fairco.in never emits oxy.so JSON-LD.
   const { origin, siteName } = brandConfig(typeof window === 'undefined' ? undefined : window.location.hostname)
   const title = pageData?.title ?? 'Newsroom'
@@ -27,20 +31,12 @@ export default function NewsroomPage() {
         canonicalPath="/newsroom"
       />
       <StructuredData
-        data={{
-          '@context': 'https://schema.org',
-          '@type': 'CollectionPage',
-          name: title,
+        data={buildNewsroomCollectionStructuredData(
+          newsroomData?.posts ?? [],
+          { origin, siteName, ogImage: `${origin}/og-default.png` },
+          title,
           description,
-          url: `${origin}/newsroom`,
-          isPartOf: { '@type': 'WebSite', name: siteName, url: origin },
-          publisher: {
-            '@type': 'Organization',
-            name: siteName,
-            url: origin,
-            logo: { '@type': 'ImageObject', url: `${origin}/favicon.svg` },
-          },
-        }}
+        )}
       />
       <Navbar />
       <NewsroomIndex />

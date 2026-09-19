@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { resolveProductLogoUrl, type ProductRecord } from '../../api/hooks'
 
 /* ──────────────────────────────────────────────
@@ -11,11 +11,13 @@ import { resolveProductLogoUrl, type ProductRecord } from '../../api/hooks'
  * counted.
  * ──────────────────────────────────────────── */
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function appPath(product: ProductRecord): string {
   return `/apps/${product.productId}`
 }
 
 /** Category label when the record carries a populated category, else ''. */
+// eslint-disable-next-line react-refresh/only-export-components
 export function categoryLabel(product: ProductRecord): string {
   const category = product.category
   if (!category || typeof category === 'string') return ''
@@ -30,7 +32,7 @@ export function AppIcon({ product, className = '' }: { product: ProductRecord; c
         src={logo}
         alt=""
         aria-hidden="true"
-        className={`block size-full rounded-sm object-cover ${className}`}
+        className={`block size-full rounded-sm ${product.productId === 'kaana' ? 'object-contain' : 'object-cover'} ${className}`}
         loading="lazy"
         decoding="async"
       />

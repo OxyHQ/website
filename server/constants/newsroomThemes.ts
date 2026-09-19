@@ -1,4 +1,4 @@
-import { APP_COLOR_PRESETS, type AppColorName } from '@oxyhq/bloom/color-presets'
+import { APP_COLOR_PRESETS, type AppColorName } from '@oxy.so/bloom/color-presets'
 
 /** Bloom is the source of truth for newsroom recipe names. */
 export const NEWSROOM_THEME_PRESETS = Object.keys(APP_COLOR_PRESETS) as AppColorName[]

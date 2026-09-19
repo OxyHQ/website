@@ -40,7 +40,7 @@ export const APP_SEARCH_DESTINATIONS: Readonly<Record<string, string>> = {
   oxyos: '/os',
   codea: '/codea',
   tnp: '/tnp',
-  pay: '/pay',
+  peable: '/peable',
   mercaria: '/mercaria',
   faircoin: '/faircoin',
 }
@@ -89,13 +89,14 @@ const SITE_PAGES: Array<{ url: string; title: string; group?: string }> = [
   { url: appSearchDestination('allo'), title: 'Allo', group: 'apps' },
   { url: '/codea', title: 'Codea', group: 'apps' },
   { url: '/tnp', title: 'TNP', group: 'apps' },
-  { url: '/pay', title: 'Oxy Pay', group: 'apps' },
+  { url: '/peable', title: 'Peable', group: 'apps' },
   { url: '/pricing', title: 'Pricing' },
   { url: '/developers/docs', title: 'Developer docs' },
   { url: '/company', title: 'Company' },
   { url: '/company/team', title: 'Team' },
   { url: '/company/careers', title: 'Careers' },
   { url: '/company/manifesto', title: 'Manifesto' },
+  { url: '/company/influence/', title: 'Influence and Responsibility' },
   { url: '/academy', title: 'Academy' },
   { url: '/newsroom', title: 'Newsroom' },
   { url: '/partners', title: 'Partners' },
@@ -123,7 +124,11 @@ function buildSearchDocuments(index: SyncedIndex): IndexDoc[] {
       // index small and avoids old-version duplicates.
       if (ver.version !== pkg.latestVersion) continue
       for (const page of ver.pages) {
-        const url = buildDocsHref(pkg, 'latest', page.slug)
+        // The versioned URL is the canonical one (`DocsPage` canonicalises to
+        // it), and the only one with a prerendered document. Surfacing the
+        // no-version form sent every search click through a page that points
+        // its canonical somewhere else.
+        const url = buildDocsHref(pkg, pkg.latestVersion, page.slug)
         documents.push({
           id: url,
           title: page.title,

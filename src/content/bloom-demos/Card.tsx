@@ -1,6 +1,6 @@
-import { Card, CardHeader, CardBody, CardFooter, CardTitle, CardDescription } from '@oxyhq/bloom/card'
-import { PrimaryButton } from '@oxyhq/bloom/button'
-import type { CardVariant } from '@oxyhq/bloom/card'
+import { Card, CardHeader, CardBody, CardFooter, CardTitle, CardDescription } from '@oxy.so/bloom/card'
+import { PrimaryButton } from '@oxy.so/bloom/button'
+import type { CardVariant } from '@oxy.so/bloom/card'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {

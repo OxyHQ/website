@@ -45,6 +45,7 @@ export default function CompanyArticlePage({ slug, canonicalPath, cta }: Company
   }
 
   const { frontmatter, headings, Component } = entry
+  const shareUrl = typeof window === 'undefined' ? canonicalPath : window.location.href
 
   return (
     <PageShell
@@ -59,9 +60,13 @@ export default function CompanyArticlePage({ slug, canonicalPath, cta }: Company
     >
       <LongformArticle
         title={frontmatter.title}
+        eyebrow={frontmatter.eyebrow}
+        description={frontmatter.description}
         entries={headings}
         date={frontmatter.date}
         readingTime={frontmatter.readingTime}
+        locale={locale}
+        shareUrl={shareUrl}
         pdfHref={frontmatter.pdfHref}
         cta={cta}
       >

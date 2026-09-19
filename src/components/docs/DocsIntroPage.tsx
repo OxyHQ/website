@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { useReducedMotion } from 'framer-motion'
 import { useLottie } from 'lottie-react'
 import docsHeroAnimation from '../../assets/lottie/docs-hero.json'

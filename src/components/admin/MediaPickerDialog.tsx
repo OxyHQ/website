@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react'
 import { useMedia, type MediaItem } from '../../api/hooks'
-import { SecondaryButton } from '@oxyhq/bloom/button'
+import { SecondaryButton } from '@oxy.so/bloom/button'
 import { Input } from '../ui/shadcn/input'
 import { API_BASE, getAuthHeaders } from '../../api/client'
 import { useQueryClient } from '@tanstack/react-query'

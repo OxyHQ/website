@@ -3,7 +3,7 @@ import { and, asc, count, desc, eq, ilike, like, not, or, sql, type SQL } from '
 import { z } from 'zod'
 import { db } from '../db/postgres.js'
 import { media as mediaTable } from '../db/schema/index.js'
-import { deleteFromSpaces } from '../services/s3.js'
+import { deleteMedia, MediaError } from '../services/media.js'
 import { requireAuth } from '../middleware/auth.js'
 import { adminOnly } from '../middleware/adminOnly.js'
 import { validate } from '../utils/validate.js'
@@ -88,32 +88,18 @@ router.patch('/:id', requireAuth, adminOnly, async (req, res) => {
   res.json(row)
 })
 
-// Delete media (admin) — removes from S3 + DB
+// Delete media (admin). The admin library has always deleted regardless of
+// where the file is used, so this forces; the shared service still keeps an
+// object another row uses and records any storage delete that fails.
 router.delete('/:id', requireAuth, adminOnly, async (req, res) => {
   const { id } = validate(idParamsSchema, req.params)
-  const [row] = await db.select().from(mediaTable).where(eq(mediaTable._id, id)).limit(1)
-  if (!row) return res.status(404).json({ error: 'Media not found' })
-
-  // Delete original + thumbnails from S3
-  const keysToDelete = [row.key]
-  if (row.thumbnails?.sm) keysToDelete.push(extractKey(row.thumbnails.sm))
-  if (row.thumbnails?.md) keysToDelete.push(extractKey(row.thumbnails.md))
-  if (row.thumbnails?.lg) keysToDelete.push(extractKey(row.thumbnails.lg))
-
-  await Promise.allSettled(keysToDelete.filter(Boolean).map(k => deleteFromSpaces(k)))
-  await db.delete(mediaTable).where(eq(mediaTable._id, id))
-
-  res.json({ ok: true })
-})
-
-/** Extract S3 key from a CDN URL */
-function extractKey(url: string): string {
   try {
-    const u = new URL(url)
-    return u.pathname.slice(1) // remove leading /
-  } catch {
-    return ''
+    const result = await deleteMedia(id, { force: true })
+    res.json({ ok: true, storage: result.storage.status, referencesCleared: result.referencesCleared.length })
+  } catch (error) {
+    if (error instanceof MediaError && error.kind === 'not_found') return res.status(404).json({ error: 'Media not found' })
+    throw error
   }
-}
+})
 
 export default router

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { ChevronUp, MessageSquare, ExternalLink } from 'lucide-react'
 import FeatureStatusBadge from './FeatureStatusBadge'
 import FeaturePriorityBadge from './FeaturePriorityBadge'

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '../../../lib/navigation'
 import {
   useProducts,
   useCategories,
@@ -9,7 +9,7 @@ import {
   type ProductLifecycle,
 } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
-import { Button, PrimaryButton, SecondaryButton } from '@oxyhq/bloom/button'
+import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { Input } from '../../ui/shadcn/input'
 import { Textarea } from '../../ui/shadcn/textarea'
 import { Label } from '../../ui/shadcn/label'

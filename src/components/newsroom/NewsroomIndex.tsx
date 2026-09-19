@@ -10,7 +10,7 @@ import {
   X,
 } from 'lucide-react'
 import { useNewsroomPosts, usePage, type PageSection } from '../../api/hooks'
-import { newsCategories, type NewsCategory, type NewsroomPost } from '../../data/newsroom'
+import { newsCategories, type NewsCategory, type NewsroomPostSummary } from '../../data/newsroom'
 import { useTranslation } from '../../lib/i18n'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
 import { NewsCardFeatured, NewsCardGrid, NewsCardListRow } from './NewsCard'
@@ -61,7 +61,7 @@ function parseUI(sections: PageSection[]): NewsroomUI {
   }
 }
 
-function articleKey(article: NewsroomPost): string {
+function articleKey(article: NewsroomPostSummary): string {
   return article._id ?? article.slug
 }
 
@@ -75,7 +75,6 @@ export default function NewsroomIndex() {
   const { data, isPending } = useNewsroomPosts({ limit: 50 })
   const [searchParams, setSearchParams] = useSearchParams()
   const [openMenu, setOpenMenu] = useState<OpenMenu>(null)
-  const [visibleCount, setVisibleCount] = useState(INITIAL_ARTICLE_COUNT)
   const toolbarRef = useRef<HTMLDivElement>(null)
 
   const categoryParam = searchParams.get('category')
@@ -86,6 +85,14 @@ export default function NewsroomIndex() {
   const sortBy: SortOption = searchParams.get('sort') === 'oldest' ? 'oldest' : 'newest'
   const view: ViewOption = searchParams.get('display') === 'list' ? 'list' : 'grid'
   const filterKey = activeFilters.join('|')
+  const paginationKey = `${activeCategory}\u0000${filterKey}\u0000${sortBy}\u0000${view}`
+  const [pagination, setPagination] = useState({
+    key: paginationKey,
+    count: INITIAL_ARTICLE_COUNT,
+  })
+  const visibleCount = pagination.key === paginationKey
+    ? pagination.count
+    : INITIAL_ARTICLE_COUNT
 
   useEffect(() => {
     const closeOnOutsideClick = (event: MouseEvent) => {
@@ -102,10 +109,6 @@ export default function NewsroomIndex() {
       document.removeEventListener('keydown', closeOnEscape)
     }
   }, [])
-
-  useEffect(() => {
-    setVisibleCount(INITIAL_ARTICLE_COUNT)
-  }, [activeCategory, filterKey, sortBy, view])
 
   const posts = data?.posts ?? []
   const ui = parseUI(pageData?.sections ?? [])
@@ -433,7 +436,10 @@ export default function NewsroomIndex() {
                   <div className="flex justify-center pt-20">
                     <button
                       type="button"
-                      onClick={() => setVisibleCount((count) => count + ARTICLE_COUNT_INCREMENT)}
+                      onClick={() => setPagination({
+                        key: paginationKey,
+                        count: visibleCount + ARTICLE_COUNT_INCREMENT,
+                      })}
                       className="button-primary inline-flex h-11 cursor-pointer items-center justify-center rounded-full px-6 text-sm font-medium transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
                       {ui.loadMore}

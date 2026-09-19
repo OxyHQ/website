@@ -1,5 +1,6 @@
-import { Dialog } from '@oxyhq/bloom/dialog'
-import { Link, useLocation } from 'react-router-dom'
+import { Dialog } from '@oxy.so/bloom/dialog'
+import { useLocation } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { DEFAULT_LOCALE, useLocaleContext, type Locale } from '../../lib/i18n'
 import SliceIcon from '../slices/SliceIcon'
 

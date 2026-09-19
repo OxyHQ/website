@@ -28,12 +28,12 @@ export default function BlogPage() {
           '@type': 'CollectionPage',
           name: title,
           description,
-          url: 'https://oxy.so/company/news',
-          isPartOf: { '@type': 'WebSite', name: 'Oxy', url: 'https://oxy.so' },
+          url: 'https://oxy.so/company/news/',
+          isPartOf: { '@type': 'WebSite', name: 'Oxy', url: 'https://oxy.so/' },
           publisher: {
             '@type': 'Organization',
             name: 'Oxy',
-            url: 'https://oxy.so',
+            url: 'https://oxy.so/',
             logo: { '@type': 'ImageObject', url: 'https://oxy.so/favicon.svg' },
           },
         }}

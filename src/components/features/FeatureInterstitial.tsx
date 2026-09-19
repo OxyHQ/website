@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/navigation'
 import { ArrowRight } from 'lucide-react'
 import type { FeatureAppOption } from '../../api/hooks'
 
