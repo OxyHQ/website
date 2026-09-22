@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../../api/client'
 import { BADGE_DEFINITIONS } from '../../../data/badges'
 import { Button, PrimaryButton } from '@oxy.so/bloom/button'
-import { Input } from '../../ui/shadcn/input'
+import { LabeledTextField } from '../LabeledTextField'
 
 export default function BadgesAdmin() {
   const queryClient = useQueryClient()
@@ -76,11 +76,12 @@ export default function BadgesAdmin() {
         <div className="mt-3 flex items-end gap-3">
           <div className="flex flex-col gap-1.5">
             <label className="text-xs text-muted-foreground">Username</label>
-            <Input
+            <LabeledTextField
+              label="Username"
               value={username}
-              onChange={e => setUsername(e.target.value)}
+              onValueChange={setUsername}
               placeholder="username"
-              className="w-48"
+              style={{ width: 192 }}
             />
           </div>
           <div className="flex flex-col gap-1.5">
@@ -113,11 +114,12 @@ export default function BadgesAdmin() {
       <div className="mt-8">
         <h3 className="text-sm font-medium text-foreground">Lookup User Badges</h3>
         <div className="mt-3 flex items-center gap-3">
-          <Input
+          <LabeledTextField
+            label="Search by username"
             value={searchUser}
-            onChange={e => setSearchUser(e.target.value)}
+            onValueChange={setSearchUser}
             placeholder="Search by username"
-            className="w-48"
+            style={{ width: 192 }}
           />
         </div>
 

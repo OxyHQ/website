@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useHero, useUpdateHero, type HeroContent } from '../../../api/hooks'
 import { PrimaryButton } from '@oxy.so/bloom/button'
-import { Textarea } from '../../ui/shadcn/textarea'
-import { Label } from '../../ui/shadcn/label'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import MediaPicker from '../MediaPicker'
 
 function mediaId(image: unknown): string {
@@ -72,15 +71,13 @@ export default function HeroAdmin() {
       </p>
 
       <div className="mt-6 flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
-          <Label>Title</Label>
-          <Textarea
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            rows={3}
-            placeholder="Use a newline (Enter) for visual line breaks"
-          />
-        </div>
+        <Textarea
+          label="Title"
+          value={form.title}
+          onValueChange={(title) => setForm({ ...form, title })}
+          rows={3}
+          placeholder="Use a newline (Enter) for visual line breaks"
+        />
 
         <div className="rounded-xl border border-border p-4">
           <h3 className="text-sm font-medium text-foreground">Background media</h3>

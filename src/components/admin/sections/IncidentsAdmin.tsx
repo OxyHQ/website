@@ -8,8 +8,8 @@ import {
 } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
-import { Input } from '../../ui/shadcn/input'
-import { Textarea } from '../../ui/shadcn/textarea'
+import { LabeledTextField } from '../LabeledTextField'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '../../ui/shadcn/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
@@ -140,10 +140,12 @@ export default function IncidentsAdmin() {
 
         <div className="mt-6 flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
-              <Label>Title</Label>
-              <Input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} placeholder="Elevated API latency" />
-            </div>
+            <LabeledTextField
+              label="Title"
+              value={editing.title}
+              onValueChange={(v) => setEditing({ ...editing, title: v })}
+              placeholder="Elevated API latency"
+            />
             <div className="flex flex-col gap-1.5">
               <Label>Severity</Label>
               <select
@@ -207,10 +209,12 @@ export default function IncidentsAdmin() {
                   {UPDATE_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>Message (markdown)</Label>
-                <Textarea value={newUpdateBody} onChange={(e) => setNewUpdateBody(e.target.value)} rows={3} />
-              </div>
+              <Textarea
+                label="Message (markdown)"
+                value={newUpdateBody}
+                onValueChange={setNewUpdateBody}
+                rows={3}
+              />
               {!isNew && (
                 <div>
                   <SecondaryButton onPress={postUpdate} disabled={postingUpdate || !newUpdateBody.trim()}>

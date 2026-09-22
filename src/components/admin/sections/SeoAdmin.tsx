@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAdminSeo, useUpsertSeo, useDeleteSeo, type SeoBrand, type SeoMeta, type SeoData } from '../../../api/hooks'
 import { PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
-import { TextFieldInput } from '@oxy.so/bloom/text-field'
+import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
@@ -245,7 +245,7 @@ function Field({
     return <Textarea label={label} value={value} onValueChange={onChange} rows={3} placeholder={placeholder} />
   }
   return (
-    <TextFieldInput
+    <LabeledTextField
       label={label}
       value={value}
       onValueChange={onChange}

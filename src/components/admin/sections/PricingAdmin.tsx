@@ -4,8 +4,8 @@ import { apiFetch } from '../../../api/client'
 import { type PricingPlan } from '../../../data/pricing'
 import { PrimaryButton } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
-import { Input } from '../../ui/shadcn/input'
-import { Textarea } from '../../ui/shadcn/textarea'
+import { LabeledTextField } from '../LabeledTextField'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '../../ui/shadcn/label'
 import LocaleSwitcher from '../LocaleSwitcher'
 import { BatchTranslationEditor } from '../TranslationEditor'
@@ -70,28 +70,16 @@ export default function PricingAdmin() {
               <div className="rounded-xl border border-border p-4">
                 <h3 className="mb-3 text-sm font-medium text-foreground">Plan: {doc.name}</h3>
                 <div className="flex flex-col gap-3">
-                  <div className="flex flex-col gap-1.5">
-                    <Label>Name</Label>
-                    <Input value={fields.name ?? ''} onChange={(e) => updateField('name', e.target.value)} placeholder={doc.name} />
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <Label>Description</Label>
-                    <Textarea value={fields.description ?? ''} onChange={(e) => updateField('description', e.target.value)} placeholder={doc.description} rows={2} />
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <Label>CTA</Label>
-                    <Input value={fields.cta ?? ''} onChange={(e) => updateField('cta', e.target.value)} placeholder={doc.cta} />
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <Label>Features (one per line)</Label>
-                    <Textarea
-                      value={(fields.features ?? []).join('\n')}
-                      onChange={(e) => updateField('features', e.target.value.split('\n'))}
-                      placeholder={(doc.features ?? []).join('\n')}
-                      rows={4}
-                      className="font-mono"
-                    />
-                  </div>
+                  <LabeledTextField label="Name" value={fields.name ?? ''} onValueChange={(value) => updateField('name', value)} placeholder={doc.name} />
+                  <Textarea label="Description" value={fields.description ?? ''} onValueChange={(value) => updateField('description', value)} placeholder={doc.description} rows={2} />
+                  <LabeledTextField label="CTA" value={fields.cta ?? ''} onValueChange={(value) => updateField('cta', value)} placeholder={doc.cta} />
+                  <Textarea
+                    label="Features (one per line)"
+                    value={(fields.features ?? []).join('\n')}
+                    onValueChange={(value) => updateField('features', value.split('\n'))}
+                    placeholder={(doc.features ?? []).join('\n')}
+                    rows={4}
+                  />
                 </div>
               </div>
             )}
@@ -102,15 +90,19 @@ export default function PricingAdmin() {
           {plans.map((plan, i) => (
             <div key={i} className="rounded-xl border border-border p-4">
               <div className="flex items-center gap-3">
-                <Input value={plan.name} onChange={(e) => update(i, 'name', e.target.value)} className="text-lg font-medium text-foreground bg-transparent border-none outline-none shadow-none" />
+                <LabeledTextField label="Plan name" value={plan.name} onValueChange={(name) => update(i, 'name', name)} />
                 <div className="flex items-center gap-2"><Switch value={plan.highlighted ?? false} onValueChange={(val) => update(i, 'highlighted', val)} /><Label>Highlighted</Label></div>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1"><Label className="text-xs text-muted-foreground">Monthly ($)</Label><Input type="number" value={plan.price?.monthly ?? 0} onChange={(e) => update(i, 'price.monthly', +e.target.value)} /></div>
-                <div className="flex flex-col gap-1"><Label className="text-xs text-muted-foreground">Annual ($)</Label><Input type="number" value={plan.price?.annual ?? 0} onChange={(e) => update(i, 'price.annual', +e.target.value)} /></div>
+                <LabeledTextField label="Monthly ($)" inputMode="numeric" value={String(plan.price?.monthly ?? 0)} onValueChange={(value) => update(i, 'price.monthly', +value)} />
+                <LabeledTextField label="Annual ($)" inputMode="numeric" value={String(plan.price?.annual ?? 0)} onValueChange={(value) => update(i, 'price.annual', +value)} />
               </div>
-              <Textarea value={plan.description} onChange={(e) => update(i, 'description', e.target.value)} placeholder="Description" className="mt-3" rows={2} />
-              <Textarea value={(plan.features ?? []).join('\n')} onChange={(e) => update(i, 'features', e.target.value.split('\n'))} placeholder="Features (one per line)" className="mt-2 font-mono" rows={4} />
+              <div className="mt-3">
+                <Textarea label="Description" value={plan.description} onValueChange={(description) => update(i, 'description', description)} placeholder="Description" rows={2} />
+              </div>
+              <div className="mt-2">
+                <Textarea label="Features (one per line)" value={(plan.features ?? []).join('\n')} onValueChange={(value) => update(i, 'features', value.split('\n'))} placeholder="Features (one per line)" rows={4} />
+              </div>
             </div>
           ))}
           <div className="self-start">

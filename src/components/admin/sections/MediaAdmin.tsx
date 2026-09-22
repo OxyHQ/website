@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useMedia, type MediaItem } from '../../../api/hooks'
 import { PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
-import { Input } from '../../ui/shadcn/input'
-import { Label } from '../../ui/shadcn/label'
+import { LabeledTextField } from '../LabeledTextField'
 import { apiFetch } from '../../../api/client'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
@@ -84,15 +83,19 @@ export default function MediaAdmin() {
               <p><strong>URL:</strong> <a href={editing.url} target="_blank" rel="noopener noreferrer" className="break-all text-primary-text underline">{editing.url}</a></p>
             </div>
 
-            <div className="space-y-1.5">
-              <Label>Alt Text</Label>
-              <Input value={editing.alt} onChange={e => setEditing({ ...editing, alt: e.target.value })} placeholder="Describe this image..." />
-            </div>
+            <LabeledTextField
+              label="Alt Text"
+              value={editing.alt}
+              onValueChange={(v) => setEditing({ ...editing, alt: v })}
+              placeholder="Describe this image..."
+            />
 
-            <div className="space-y-1.5">
-              <Label>Tags (comma-separated)</Label>
-              <Input value={editing.tags.join(', ')} onChange={e => setEditing({ ...editing, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean) })} placeholder="hero, team, product" />
-            </div>
+            <LabeledTextField
+              label="Tags (comma-separated)"
+              value={editing.tags.join(', ')}
+              onValueChange={(v) => setEditing({ ...editing, tags: v.split(',').map(t => t.trim()).filter(Boolean) })}
+              placeholder="hero, team, product"
+            />
 
             <div className="flex gap-2 pt-2">
               <PrimaryButton onPress={handleSave} disabled={saving}>
@@ -130,7 +133,13 @@ export default function MediaAdmin() {
 
       {/* Search + filters */}
       <div className="flex gap-3">
-        <Input placeholder="Search..." value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} className="max-w-xs" />
+        <LabeledTextField
+          label="Search"
+          placeholder="Search..."
+          value={search}
+          onValueChange={(v) => { setSearch(v); setPage(1) }}
+          style={{ maxWidth: 320 }}
+        />
         <div className="flex gap-1">
           {[['', 'All'], ['image', 'Images'], ['video', 'Videos'], ['document', 'Docs']].map(([val, label]) => (
             <button

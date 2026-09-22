@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { apiFetch } from '../../../api/client'
-import { Input } from '../../ui/shadcn/input'
-import { Label } from '../../ui/shadcn/label'
+import { LabeledTextField } from '../LabeledTextField'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
 
@@ -119,32 +118,26 @@ export default function ReposAdmin() {
       {draft && (
         <div className="mt-6 rounded-2xl border border-border p-4">
           <div className="grid grid-cols-3 gap-3">
-            <div className="flex flex-col gap-1.5">
-              <Label>Owner</Label>
-              <Input
-                value={draft.owner}
-                onChange={(e) => setDraft({ ...draft, owner: e.target.value.trim() })}
-                placeholder="OxyHQ"
-                className="font-mono"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Repository</Label>
-              <Input
-                value={draft.repo}
-                onChange={(e) => setDraft({ ...draft, repo: e.target.value.trim() })}
-                placeholder="Mention"
-                className="font-mono"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Display name</Label>
-              <Input
-                value={draft.displayName}
-                onChange={(e) => setDraft({ ...draft, displayName: e.target.value })}
-                placeholder="Mention"
-              />
-            </div>
+            <LabeledTextField
+              label="Owner"
+              value={draft.owner}
+              onValueChange={(v) => setDraft({ ...draft, owner: v.trim() })}
+              placeholder="OxyHQ"
+              style={{ fontFamily: 'monospace' }}
+            />
+            <LabeledTextField
+              label="Repository"
+              value={draft.repo}
+              onValueChange={(v) => setDraft({ ...draft, repo: v.trim() })}
+              placeholder="Mention"
+              style={{ fontFamily: 'monospace' }}
+            />
+            <LabeledTextField
+              label="Display name"
+              value={draft.displayName}
+              onValueChange={(v) => setDraft({ ...draft, displayName: v })}
+              placeholder="Mention"
+            />
           </div>
 
           <div className="mt-4 flex flex-wrap gap-4">

@@ -3,8 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../../api/client'
 import { useLocales, type Locale } from '../../../api/hooks'
 import { PrimaryButton } from '@oxy.so/bloom/button'
-import { Input } from '../../ui/shadcn/input'
-import { Label } from '../../ui/shadcn/label'
+import { LabeledTextField } from '../LabeledTextField'
 import { Switch } from '@oxy.so/bloom/switch'
 import { Trash2, Plus } from 'lucide-react'
 import ConfirmDialog from '../ConfirmDialog'
@@ -107,27 +106,25 @@ export default function LocalesAdmin() {
             <h3 className="mb-3 text-sm font-medium text-foreground">{editingCode ? 'Edit' : 'New'} Locale</h3>
             <div className="flex flex-col gap-3">
               <div className="flex gap-3">
-                <div className="flex flex-1 flex-col gap-1.5">
-                  <Label>Code</Label>
-                  <Input
+                <div className="flex-1">
+                  <LabeledTextField
+                    label="Code"
                     value={form.code}
-                    onChange={(e) => setForm({ ...form, code: e.target.value.toLowerCase() })}
+                    onValueChange={(v) => setForm({ ...form, code: v.toLowerCase() })}
                     placeholder="es"
                     disabled={!!editingCode}
                   />
                 </div>
-                <div className="flex flex-1 flex-col gap-1.5">
-                  <Label>Name</Label>
-                  <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Spanish" />
+                <div className="flex-1">
+                  <LabeledTextField label="Name" value={form.name} onValueChange={(v) => setForm({ ...form, name: v })} placeholder="Spanish" />
                 </div>
-                <div className="flex flex-1 flex-col gap-1.5">
-                  <Label>Native Name</Label>
-                  <Input value={form.nativeName} onChange={(e) => setForm({ ...form, nativeName: e.target.value })} placeholder="Espanol" />
+                <div className="flex-1">
+                  <LabeledTextField label="Native Name" value={form.nativeName} onValueChange={(v) => setForm({ ...form, nativeName: v })} placeholder="Espanol" />
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2"><Switch value={form.enabled} onValueChange={(v) => setForm({ ...form, enabled: v })} /><Label>Enabled</Label></div>
-                <div className="flex items-center gap-2"><Switch value={form.isDefault} onValueChange={(v) => setForm({ ...form, isDefault: v })} /><Label>Default</Label></div>
+                <div className="flex items-center gap-2"><Switch value={form.enabled} onValueChange={(v) => setForm({ ...form, enabled: v })} /><span className="text-sm font-medium text-foreground">Enabled</span></div>
+                <div className="flex items-center gap-2"><Switch value={form.isDefault} onValueChange={(v) => setForm({ ...form, isDefault: v })} /><span className="text-sm font-medium text-foreground">Default</span></div>
               </div>
               <div className="flex gap-2">
                 <PrimaryButton onPress={save} disabled={saving || !form.code || !form.name}>

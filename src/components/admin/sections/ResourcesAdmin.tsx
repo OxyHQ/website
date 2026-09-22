@@ -12,8 +12,8 @@ import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
 import { Badge } from '@oxy.so/bloom/badge'
-import { Input } from '../../ui/shadcn/input'
-import { Textarea } from '../../ui/shadcn/textarea'
+import { LabeledTextField } from '../LabeledTextField'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '../../ui/shadcn/label'
 import LocaleSwitcher from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
@@ -209,12 +209,12 @@ export default function ResourcesAdmin() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label>URL</Label>
-            <Input
+            <LabeledTextField
+              label="URL"
               value={editing.href}
-              onChange={(e) => setEditing({ ...editing, href: e.target.value })}
+              onValueChange={(v) => setEditing({ ...editing, href: v })}
               placeholder="/academy/… or https://…"
-              className="font-mono"
+              style={{ fontFamily: 'monospace' }}
             />
             <p className="text-xs text-muted-foreground">Canonical destination: local path or external URL.</p>
           </div>
@@ -233,14 +233,12 @@ export default function ResourcesAdmin() {
               value={editing.tags.join(', ')}
               onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t) => t.trim()).filter(Boolean) })}
             />
-            <div className="flex flex-col gap-1.5">
-              <Label>Order</Label>
-              <Input
-                type="number"
-                value={editing.order}
-                onChange={(e) => setEditing({ ...editing, order: Number(e.target.value) })}
-              />
-            </div>
+            <LabeledTextField
+              label="Order"
+              value={String(editing.order)}
+              onValueChange={(v) => setEditing({ ...editing, order: Number(v) || 0 })}
+              keyboardType="numeric"
+            />
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
@@ -377,13 +375,8 @@ function Field({ label, value, onChange, textarea, rows }: {
   textarea?: boolean
   rows?: number
 }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <Label>{label}</Label>
-      {textarea
-        ? <Textarea value={value} onChange={(e) => onChange(e.target.value)} rows={rows ?? 3} />
-        : <Input value={value} onChange={(e) => onChange(e.target.value)} />
-      }
-    </div>
-  )
+  if (textarea) {
+    return <Textarea label={label} value={value} onValueChange={onChange} rows={rows ?? 3} />
+  }
+  return <LabeledTextField label={label} value={value} onValueChange={onChange} />
 }
