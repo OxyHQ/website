@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { useAdminSeo, useUpsertSeo, useDeleteSeo, type SeoBrand, type SeoMeta, type SeoData } from '../../../api/hooks'
 import { PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
-import { Input } from '../../ui/shadcn/input'
-import { Textarea } from '../../ui/shadcn/textarea'
-import { Label } from '../../ui/shadcn/label'
+import { TextFieldInput } from '@oxy.so/bloom/text-field'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
 
@@ -242,14 +241,16 @@ function Field({
   placeholder?: string
   mono?: boolean
 }) {
+  if (textarea) {
+    return <Textarea label={label} value={value} onValueChange={onChange} rows={3} placeholder={placeholder} />
+  }
   return (
-    <div className="flex flex-col gap-1.5">
-      <Label>{label}</Label>
-      {textarea ? (
-        <Textarea value={value} onChange={(e) => onChange(e.target.value)} rows={3} placeholder={placeholder} />
-      ) : (
-        <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className={mono ? 'font-mono' : undefined} />
-      )}
-    </div>
+    <TextFieldInput
+      label={label}
+      value={value}
+      onValueChange={onChange}
+      placeholder={placeholder}
+      style={mono ? { fontFamily: 'monospace' } : undefined}
+    />
   )
 }
