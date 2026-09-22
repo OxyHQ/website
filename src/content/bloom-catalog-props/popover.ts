@@ -40,10 +40,58 @@ export const props: BloomSurfaceProps = {
         { name: 'alignOffset', type: 'number', optional: true, description: 'Shift along the `align` axis, applied before the viewport clamp.' },
       ],
     },
+    'PopoverHeaderProps': {
+      props: [
+        { name: 'leading', type: 'React.ReactNode', optional: true },
+        { name: 'children', type: 'React.ReactNode', optional: true },
+        { name: 'className', type: 'string', optional: true, description: "Utility classes on the part's own node." },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'PopoverTitleProps': {
+      props: [
+        { name: 'children', type: 'React.ReactNode', optional: true },
+        { name: 'tone', type: "'primary' | 'secondary'", options: ['primary', 'secondary'], optional: true, description: '`\'secondary\'` is the group-label colour panels use above a list ("Users with access", "Local Folders"). Defaults to `\'primary\'`.' },
+        { name: 'numberOfLines', type: 'number', optional: true },
+        { name: 'className', type: 'string', optional: true },
+        { name: 'style', type: 'StyleProp<TextStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'PopoverDescriptionProps': {
+      props: [
+        { name: 'children', type: 'React.ReactNode', optional: true },
+        { name: 'numberOfLines', type: 'number', optional: true },
+        { name: 'className', type: 'string', optional: true },
+        { name: 'style', type: 'StyleProp<TextStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'PopoverPartProps': {
+      props: [
+        { name: 'children', type: 'React.ReactNode', optional: true },
+        { name: 'className', type: 'string', optional: true, description: "Utility classes on the part's own node." },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'PopoverSeparatorProps': {
+      props: [
+        { name: 'className', type: 'string', optional: true },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'Popover', propsType: 'PopoverProps' },
     { name: 'PopoverTrigger', propsType: 'OverlayTriggerProps' },
     { name: 'PopoverContent', propsType: 'OverlaySurfaceProps' },
+    { name: 'PopoverHeader', propsType: 'PopoverHeaderProps' },
+    { name: 'PopoverTitle', propsType: 'PopoverTitleProps' },
+    { name: 'PopoverDescription', propsType: 'PopoverDescriptionProps' },
+    { name: 'PopoverFooter', propsType: 'PopoverPartProps' },
+    { name: 'PopoverSeparator', propsType: 'PopoverSeparatorProps' },
   ],
 }

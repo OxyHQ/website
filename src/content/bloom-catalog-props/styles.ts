@@ -5,7 +5,15 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'styles',
   propTypes: {
+    'SurfaceLevelProviderProps': {
+      props: [
+        { name: 'level', type: 'SurfaceLevel', optional: false, description: 'The rung the children are sitting ON. A card on a page publishes `1`.' },
+        { name: 'fill', type: 'string', optional: true, description: "The colour this container actually painted, when it is not the rung's own fill. `ContentPanel` paints `theme.colors.card`, which in dark mode is NOT rung 1 — chrome that must vanish into the panel needs the fact, not the derivation (module comment). Everything derived below is then computed off this colour, so a hairline or a field inside still steps off the real parent. Omit it and the rung answers, exactly as before." },
+        { name: 'children', type: 'ReactNode', optional: true },
+      ],
+    },
   },
   components: [
+    { name: 'SurfaceLevelProvider', propsType: 'SurfaceLevelProviderProps' },
   ],
 }

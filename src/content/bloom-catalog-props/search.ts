@@ -7,10 +7,12 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'Search': {
       props: [
-        { name: 'size', type: 'TextFieldSize', options: ['medium', 'small'], optional: true, description: 'Size of the self-wrapped field when rendered without a `TextField`.' },
+        { name: 'size', type: 'TextFieldSize', options: ['medium', 'sm', 'md', 'lg', 'xs', 'small'], optional: true, description: 'Size of the self-wrapped field when rendered without a `TextField`.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Disable the input; the field around it paints disabled.' },
         { name: 'value', type: 'string', optional: true },
         { name: 'placeholder', type: 'string | null', optional: true },
+        { name: 'onValueChange', type: '(value: string) => void', optional: true },
+        { name: 'invalid', type: 'boolean', optional: true },
         { name: 'inputRef', type: 'React.RefObject<TextInput | null> | React.ForwardedRef<TextInput>', optional: true },
         { name: 'onChangeText', type: '(value: string) => void', optional: true },
         { name: 'isInvalid', type: 'boolean', optional: true },

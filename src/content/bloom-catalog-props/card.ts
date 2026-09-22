@@ -8,10 +8,12 @@ export const props: BloomSurfaceProps = {
     'CardProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true },
-        { name: 'variant', type: 'CardVariant', options: ['plain', 'elevated', 'outlined', 'filled'], optional: true, description: 'Preset background + border + elevation. Default `elevated`.' },
+        { name: 'appearance', type: 'BloomAppearance', options: ['solid', 'subtle', 'outline', 'plain'], optional: true, description: 'Preset background + border + elevation. Default `solid` with small elevation.' },
+        { name: 'variant', type: 'CardVariant', options: ['plain', 'elevated', 'outlined', 'filled'], optional: true, description: 'Compatibility preset. An explicit appearance takes precedence.' },
+        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
         { name: 'radius', type: 'CardRadius', options: ['radius-2', 'radius-4', 'radius-8', 'radius-12', 'radius-16', 'radius-20', 'radius-24', 'radius-28', 'radius-max'], optional: true, description: 'Corner rung. Default `radius-12`.' },
-        { name: 'elevation', type: 'CardElevation', options: ['none', 's', 'm', 'glass'], optional: true, description: "Overrides the variant's elevation." },
-        { name: 'border', type: 'CardBorder', options: ['none', 'hairline', 'thin'], optional: true, description: "Overrides the variant's border width." },
+        { name: 'elevation', type: 'CardElevation', options: ['none', 'glass', 's', 'm'], optional: true, description: "Overrides the appearance's elevation." },
+        { name: 'border', type: 'CardBorder', options: ['none', 'hairline', 'thin'], optional: true, description: "Overrides the appearance's border width." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'className', type: 'string', optional: true },
         { name: 'onPress', type: '() => void', optional: true },

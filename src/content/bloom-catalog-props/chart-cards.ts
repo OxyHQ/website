@@ -153,6 +153,21 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
       ],
     },
+    'SparklineProps': {
+      props: [
+        { name: 'data', type: 'readonly number[]', optional: false, description: 'Values left to right. Fewer than two draws nothing.' },
+        { name: 'width', type: 'number', optional: true, description: 'Default 72.' },
+        { name: 'height', type: 'number', optional: true, description: 'Default 28.' },
+        { name: 'tone', type: 'SparklineTone', options: ['accent', 'positive', 'negative', 'neutral'], optional: true, description: "Default `'accent'` (`chart-6-active`)." },
+        { name: 'color', type: 'string', optional: true, description: 'Any colour; wins over `tone`.' },
+        { name: 'fill', type: 'boolean', optional: true, description: 'A soft gradient under the line (the line colour, 24% → 0%). Default `true`.' },
+        { name: 'shape', type: "'curved' | 'sharp'", options: ['curved', 'sharp'], optional: true, description: '`curved` (monotone) or `sharp` (straight segments). Default `curved`.' },
+        { name: 'strokeWidth', type: 'number', optional: true, description: 'Default 1.5.' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the sparkline as an image (`role="img"`). Without it the sparkline is decorative and hidden from assistive tech — the usual case beside a value and delta that already say the same thing.' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
     'LineChartCardProps': {
       props: [
         { name: 'shape', type: 'LineChartShape', options: ['curved', 'sharp'], optional: true, description: '`curved` (monotone spline, default) or `sharp` (straight segments).' },
@@ -358,7 +373,7 @@ export const props: BloomSurfaceProps = {
         { name: 'format', type: '(value: number) => string', optional: true, description: 'Headline and source values. Default hours: `32h`, `10.4h`.' },
         { name: 'axisLabels', type: 'readonly [string, string]', optional: true, description: 'Small captions under the left and right columns.' },
         { name: 'linkColor', type: "'source' | 'target'", options: ['source', 'target'], optional: true, description: "Which end's colour a ribbon takes. `source` (default) makes every flow out of a node share its colour." },
-        { name: 'height', type: 'number', optional: true, description: 'Card height. Default 480 — a flow needs more room than the 329 chart cards.' },
+        { name: 'height', type: 'number', optional: true, description: 'Card height on wide layouts (default 480). Narrow cards may grow to fit wrapped adjacent labels.' },
         { name: 'activeItem', type: 'SankeyActiveItem | null', optional: true, description: 'The hovered node or link. Controlled when set (`null` = none).' },
         { name: 'onActiveItemChange', type: '(item: SankeyActiveItem | null) => void', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the diagram for assistive tech. Defaults to a summary of its sources and sinks.' },
@@ -619,6 +634,7 @@ export const props: BloomSurfaceProps = {
     { name: 'ChartRangePill', propsType: 'ChartRangePillProps' },
     { name: 'ChartRangeSelect', propsType: 'ChartRangeSelectProps' },
     { name: 'ChartStatTiles', propsType: 'ChartStatTilesProps' },
+    { name: 'Sparkline', propsType: 'SparklineProps' },
     { name: 'LineChartCard', propsType: 'LineChartCardProps' },
     { name: 'ComboChartCard', propsType: 'ComboChartCardProps' },
     { name: 'EarningsChartCard', propsType: 'EarningsChartCardProps' },

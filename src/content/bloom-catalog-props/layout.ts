@@ -9,8 +9,29 @@ export const props: BloomSurfaceProps = {
       props: [],
       inheritsFrom: ['PropsWithChildren'],
     },
+    'ProviderProps<SharedValue<number> | null>': {
+      props: [],
+      inheritsFrom: ['ProviderProps<SharedValue<number> | null>'],
+    },
+    'PropsWithChildren<{ scrollY?: SharedValue<number> | undefined; }>': {
+      props: [
+        { name: 'scrollY', type: 'SharedValue<number>', optional: true },
+      ],
+      inheritsFrom: ['PropsWithChildren<{ scrollY?: SharedValue<number>; }>'],
+    },
+    'StickySectionProps': {
+      props: [
+        { name: 'offset', type: 'number', optional: true, description: "Native: this sticky child's Y in the list content, measured by its owner." },
+      ],
+      inheritsFrom: ['ViewProps'],
+    },
   },
   components: [
     { name: 'BottomEdgeProvider', propsType: 'BottomEdgeProvider' },
+    { name: 'TopEdgeProvider', propsType: 'BottomEdgeProvider' },
+    { name: 'ScrollOffsetProvider', propsType: 'ProviderProps<SharedValue<number> | null>' },
+    { name: 'ScreenScope', propsType: 'BottomEdgeProvider' },
+    { name: 'HeaderDockProvider', propsType: 'PropsWithChildren<{ scrollY?: SharedValue<number> | undefined; }>' },
+    { name: 'StickySection', propsType: 'StickySectionProps' },
   ],
 }

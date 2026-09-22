@@ -5,9 +5,44 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'stat-bar',
   propTypes: {
+    'AnyMeterProps': {
+      props: [
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'What the bar measures. Required: ARIA never computes a name for `progressbar` from its contents, and the bar draws no text of its own, so without this it announces "progress bar, 40%" with no subject.' },
+        { name: 'valueText', type: 'string', optional: true, description: '`aria-valuetext` — the reading a screen reader says instead of the raw number, which is otherwise announced as a percentage ("4 of 5" vs "80%").' },
+        { name: 'decorative', type: 'false', optional: true },
+        { name: 'value', type: 'number', optional: false, description: 'Current value. Clamped into `[0, max]`; `NaN` reads as empty.' },
+        { name: 'max', type: 'number', optional: true, description: 'The full track.' },
+        { name: 'height', type: 'number', optional: true, description: 'Track height in px.' },
+        { name: 'radius', type: 'number', optional: true, description: 'Corner radius of both the track and the fill.' },
+        { name: 'fill', type: 'string', optional: true, description: "The filled portion's colour." },
+        { name: 'track', type: 'string', optional: true, description: 'The rail behind the fill.' },
+        { name: 'width', type: 'number', optional: true, description: "A fixed width. Without one the bar fills its parent (`width: '100%'`), so a caller that wants it to flex passes `style={{ flex: 1 }}` instead." },
+        { name: 'transitionMs', type: 'number', optional: true, description: 'Milliseconds the fill eases its width over, on WEB only — native snaps. Ignored under `prefers-reduced-motion`.' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Container style override. Applied to the track.' },
+        { name: 'testID', type: 'string', optional: true },
+        { name: 'fillTestID', type: 'string', optional: true, description: "The fill's own `testID`." },
+      ],
+    },
+    'MeterRingProps': {
+      props: [
+        { name: 'value', type: 'number', optional: false, description: 'Current value. Clamped into `[0, max]`.' },
+        { name: 'max', type: 'number', optional: true },
+        { name: 'size', type: 'number', optional: true, description: 'Outer diameter in px. The stroke is drawn INSIDE it, so the ring occupies exactly `size × size`.' },
+        { name: 'thickness', type: 'number', optional: true, description: 'Stroke width in px.' },
+        { name: 'fill', type: 'string', optional: true, description: "The arc's colour." },
+        { name: 'track', type: 'string', optional: true, description: 'The ring behind it.' },
+        { name: 'cap', type: "'round' | 'butt'", options: ['round', 'butt'], optional: true, description: "The arc's end cap. `'round'` reads as a needle tip; at value 0 it would draw a dot on an empty ring, so `'round'` degrades to `'butt'` there." },
+        { name: 'accessibilityLabel', type: 'string', optional: false, description: 'What the ring measures. Required, for the reason `Meter` states.' },
+        { name: 'valueText', type: 'string', optional: true, description: '`aria-valuetext`.' },
+        { name: 'transitionMs', type: 'number', optional: true, description: 'Milliseconds the arc eases over, on WEB only — native snaps. Ignored under `prefers-reduced-motion`.' },
+        { name: 'children', type: 'ReactNode', optional: true, description: 'Centred content — the score, a glyph. Hidden from assistive technology.' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Container style override.' },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
     'StatBarProps': {
       props: [
-        { name: 'variant', type: "'progress'", options: ['progress', 'split'], optional: true },
+        { name: 'variant', type: "'progress'", options: ['split', 'progress'], optional: true },
         { name: 'label', type: 'string', optional: false, description: 'Label shown at the top-left of the bar.' },
         { name: 'fillColor', type: 'string', optional: true, description: 'Fill color of the (active portion of the) track.' },
         { name: 'trackColor', type: 'string', optional: true, description: 'Color of the empty/track portion.' },
@@ -19,6 +54,8 @@ export const props: BloomSurfaceProps = {
     },
   },
   components: [
+    { name: 'Meter', propsType: 'AnyMeterProps' },
+    { name: 'MeterRing', propsType: 'MeterRingProps' },
     { name: 'StatBar', propsType: 'StatBarProps' },
   ],
 }

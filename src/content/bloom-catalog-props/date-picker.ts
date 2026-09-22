@@ -106,6 +106,23 @@ export const props: BloomSurfaceProps = {
         { name: 'locale', type: 'string', optional: true, description: "BCP 47 locale for month, weekday and trigger text. Defaults to the runtime's." },
       ],
     },
+    'TimeFieldProps': {
+      props: [
+        { name: 'value', type: 'string | null', optional: false, description: 'The time as a 24h `"HH:mm"` string, or `null` while the field is empty. Fully controlled. The same shape `MeetingScheduler` uses, so a value drops straight into one of its `timeSlots`.' },
+        { name: 'onChange', type: '(value: string | null) => void', optional: false, description: 'Called with the committed time — on blur, on submit, or on an arrow key. `null` when the field has been emptied. Never called while typing.' },
+        { name: 'min', type: 'string', optional: true, description: 'Earliest time, 24h `"HH:mm"`. A typed time before it is pulled up to it.' },
+        { name: 'max', type: 'string', optional: true, description: 'Latest time, 24h `"HH:mm"`. A typed time after it is pulled back to it.' },
+        { name: 'step', type: 'number', optional: true, description: 'Minutes one arrow press moves, and the grid a typed time snaps to. Default `1` (no snapping); pass `15` or `30` for a booking grid. Counted from midnight, so 15 always means :00 :15 :30 :45.' },
+        { name: 'hourFormat', type: 'HourFormat', options: ['12h', '24h'], optional: true, description: "How the time is DRAWN. Default `'24h'`; the value stays 24h either way." },
+        { name: 'size', type: 'TimeFieldSize', options: ['small', 'medium'], optional: true, description: 'Default `medium`.' },
+        { name: 'disabled', type: 'boolean', optional: true },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'The NAME of the time ("Viewing time", "Check-in").' },
+        { name: 'placeholder', type: 'string', optional: true, description: 'The text while empty. Default `"--:--"`, or `"--:-- --"` in 12h.' },
+        { name: 'width', type: 'number', optional: true, description: 'Fixed width. Default: 104 at `medium`, 96 at `small`.' },
+        { name: 'style', type: 'StyleProp<TextStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'Calendar', propsType: 'CalendarProps' },
@@ -113,5 +130,6 @@ export const props: BloomSurfaceProps = {
     { name: 'DatePicker', propsType: 'DatePickerProps' },
     { name: 'DateRangePicker', propsType: 'DateRangePickerProps' },
     { name: 'MeetingScheduler', propsType: 'MeetingSchedulerProps' },
+    { name: 'TimeField', propsType: 'TimeFieldProps' },
   ],
 }

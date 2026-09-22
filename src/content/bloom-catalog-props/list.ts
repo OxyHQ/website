@@ -7,6 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'VirtualList': {
       props: [
+        { name: 'screen', type: "import('../screen/types').ScreenScrollOptions", optional: true, description: 'Opt into the nearest Screen geometry/motion without wrapping this list in a ScrollView.' },
         { name: 'data', type: 'readonly T[] | null', optional: true, description: 'Row data.' },
         { name: 'renderItem', type: 'VirtualListRenderItem<T>', optional: true, description: 'Renders one row.' },
         { name: 'keyExtractor', type: '(item: T, index: number) => string', optional: true, description: 'Stable key for a row; strongly recommended for correct virtualization.' },

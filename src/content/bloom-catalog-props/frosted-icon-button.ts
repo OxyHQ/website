@@ -8,9 +8,10 @@ export const props: BloomSurfaceProps = {
     'FrostedIconButtonProps': {
       props: [
         { name: 'onPress', type: '() => void', optional: true, description: 'Press handler.' },
-        { name: 'icon', type: 'React.ReactNode', optional: true, description: 'The icon to render, centered inside the circle. Typically a Bloom icon element (`<Icons.RiArrowLeftLine />` — icon exports carry their full style and corner suffix). If the icon does not set its own `fill`, the button injects the theme-aware icon color (foreground when frosted, `primaryForeground` when `active`) as a fallback so a bare icon is colored correctly out of the box; an explicit `fill` on the icon always wins.' },
-        { name: 'children', type: 'React.ReactNode', optional: true },
-        { name: 'active', type: 'boolean', optional: true, description: 'Solid "on" state for toggles. When true the button drops its translucency and backdrop blur and fills with the brand `primary` token (icon tinted `primaryForeground`), so an enabled toggle reads unmistakably as active. Exposed to assistive tech as `aria-pressed` (web) / the selected a11y state.' },
+        { name: 'icon', type: 'ButtonIconComponent', optional: true, description: 'Icon component; Bloom supplies its size and resolved foreground.' },
+        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
+        { name: 'checked', type: 'boolean', optional: true, description: 'Solid "on" state for toggles. When true the button drops its translucency and backdrop blur and fills with the brand `primary` token (icon tinted `primaryForeground`), so an enabled toggle reads unmistakably as active. Exposed to assistive tech as `aria-pressed` (web) / the selected a11y state.' },
+        { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'size', type: 'FrostedIconButtonSize | number', optional: true, description: "A preset (`'sm' | 'md'`) or a raw pixel diameter (`number`). Defaults to `'md'` (36px). See FrostedIconButtonSize." },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Required for icon-only buttons so screen readers announce the action.' },

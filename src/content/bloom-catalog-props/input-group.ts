@@ -8,9 +8,10 @@ export const props: BloomSurfaceProps = {
     'InputGroupProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: false, description: 'Group children. Place `InputGroupAddon` elements before/after the input (a Bloom `TextFieldInput`, a `Search`, or any control). The middle child stretches to fill.' },
-        { name: 'isInvalid', type: 'boolean', optional: true, description: 'Invalid state — renders the error-colored border.' },
+        { name: 'invalid', type: 'boolean', optional: true, description: 'Invalid state — renders the error-colored border.' },
+        { name: 'isInvalid', type: 'boolean', optional: true },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Disabled styling.' },
-        { name: 'size', type: "'sm' | 'md' | 'lg'", options: ['sm', 'md', 'lg'], optional: true, description: '`sm` is the `small` input (32 tall), `md` the `medium` (36, the default), `lg` extends the ramp (44).' },
+        { name: 'size', type: "BloomSize | 'small' | 'medium' | 'large' | 'default'", options: ['medium', 'default', 'sm', 'md', 'lg', 'xs', 'small', 'large'], optional: true, description: '`sm` is the `small` input (32 tall), `md` the `medium` (36, the default), `lg` extends the ramp (44).' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

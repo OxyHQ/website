@@ -19,7 +19,7 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'asChild', type: 'boolean', optional: true, description: "Render the single element child AS the trigger, merging the open handler and a11y props into it. Without it the children render inside Bloom's own pressable. The same escape hatch every anchored Bloom family offers." },
         { name: 'disabled', type: 'boolean', optional: true },
-        { name: 'label', type: 'string', optional: false },
+        { name: 'label', type: 'string', optional: true, description: "The trigger's accessible name." },
         { name: 'className', type: 'string', optional: true, description: "Utility classes APPENDED to the part's own — never substituted for them, so a single layout class cannot strip the chrome." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Style for the TRIGGER BOX (the slot around the field). To restyle the bordered field itself, use `fieldStyle`.' },
         { name: 'fieldStyle', type: 'StyleProp<ViewStyle>', optional: true, description: "Inline style on the bordered field itself, applied after its own — the unambiguous override for a trigger embedded in another control (the phone input's country code uses `rounded-lg px-1.5 py-1`). Use longhands (`paddingLeft`, not `paddingHorizontal`), which is what outranks the field's own padding classes on web." },

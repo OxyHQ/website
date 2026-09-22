@@ -7,10 +7,13 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'BadgeProps': {
       props: [
+        { name: 'appearance', type: 'BloomAppearance', options: ['solid', 'subtle', 'outline', 'plain'], optional: true },
+        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
         { name: 'content', type: 'string | number', optional: true, description: 'Text or number to display in the badge.' },
-        { name: 'variant', type: 'AccentFill', options: ['solid', 'subtle', 'outlined'], optional: true, description: 'How loudly the badge is painted.' },
-        { name: 'color', type: 'AccentTone', options: ['default', 'primary', 'success', 'warning', 'error', 'info'], optional: true, description: 'Semantic color.' },
-        { name: 'size', type: 'BadgeSize', options: ['small', 'medium', 'large'], optional: true, description: 'Size preset. `medium` is the counter size: 18 tall, 12/16 semibold.' },
+        { name: 'variant', type: 'BadgeVariant', options: ['solid', 'subtle', 'outlined', 'onMedia'], optional: true, description: 'How loudly the badge is painted.' },
+        { name: 'color', type: 'AccentTone', options: ['default', 'primary', 'secondary', 'tertiary', 'success', 'warning', 'error', 'info'], optional: true, description: 'Semantic color. Ignored by `onMedia`, which is a fixed neutral pill.' },
+        { name: 'size', type: 'BadgeSize', options: ['medium', 'sm', 'md', 'lg', 'xs', 'small', 'large', 'label-small', 'label-medium'], optional: true, description: 'Size preset. `medium` is the counter size: 18 tall, 12/16 semibold.' },
+        { name: 'icon', type: 'BadgeIcon', optional: true, description: "An icon before the label, drawn at the rung's icon size in the label's own colour and hidden from assistive technology — the badge reads as its text. Its testID is `<testID>-icon`." },
         { name: 'dot', type: 'boolean', optional: true, description: "If true, renders a dot without content — standalone, a status dot (a solid centre on the tone's tint halo); attached, a plain marker. A dot always paints the tone's fill, whatever the `variant`." },
         { name: 'max', type: 'number', optional: true, description: 'Maximum number to display. Values above this show "{max}+".' },
         { name: 'invisible', type: 'boolean', optional: true, description: 'If true, the badge is hidden.' },
