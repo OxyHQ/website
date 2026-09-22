@@ -11,8 +11,8 @@ import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
 import { Badge } from '@oxy.so/bloom/badge'
-import { Input } from '../../ui/shadcn/input'
-import { Textarea } from '../../ui/shadcn/textarea'
+import { LabeledTextField } from '../LabeledTextField'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '../../ui/shadcn/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
@@ -168,12 +168,12 @@ export default function HelpAdmin() {
               })}
             />
             <div className="flex flex-col gap-1.5">
-              <Label>Slug</Label>
-              <Input
+              <LabeledTextField
+                label="Slug"
                 value={editing.slug}
-                onChange={(e) => setEditing({ ...editing, slug: slugify(e.target.value) })}
+                onValueChange={(v) => setEditing({ ...editing, slug: slugify(v) })}
                 disabled={!isNew}
-                className="font-mono"
+                style={{ fontFamily: 'monospace' }}
               />
               {!isNew && <p className="text-xs text-muted-foreground">Slug cannot be changed after creation.</p>}
             </div>
@@ -218,20 +218,19 @@ export default function HelpAdmin() {
               </select>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label>Icon</Label>
-              <Input
+              <LabeledTextField
+                label="Icon"
                 value={editing.icon ?? ''}
-                onChange={(e) => setEditing({ ...editing, icon: e.target.value })}
+                onValueChange={(v) => setEditing({ ...editing, icon: v })}
                 placeholder="rocket"
               />
               <p className="text-xs text-muted-foreground">Lucide icon name in kebab-case (e.g. <span className="font-mono">rocket</span>, <span className="font-mono">credit-card</span>).</p>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label>Order</Label>
-              <Input
-                type="number"
-                value={editing.order}
-                onChange={(e) => setEditing({ ...editing, order: Number(e.target.value) })}
+              <LabeledTextField
+                label="Order"
+                value={String(editing.order)}
+                onValueChange={(v) => setEditing({ ...editing, order: Number(v) })}
               />
             </div>
           </div>
@@ -243,14 +242,13 @@ export default function HelpAdmin() {
               onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t) => t.trim()).filter(Boolean) })}
             />
             <div className="flex flex-col gap-1.5">
-              <Label>Published at</Label>
-              <Input
-                type="date"
+              <LabeledTextField
+                label="Published at"
+                placeholder="YYYY-MM-DD"
                 value={toDateInputValue(editing.publishedAt)}
-                onChange={(e) => {
-                  const value = e.target.value
-                  if (!value) return
-                  setEditing({ ...editing, publishedAt: new Date(value).toISOString() })
+                onValueChange={(v) => {
+                  if (!v) return
+                  setEditing({ ...editing, publishedAt: new Date(v).toISOString() })
                 }}
               />
             </div>
@@ -386,13 +384,8 @@ function Field({ label, value, onChange, textarea, rows }: {
   textarea?: boolean
   rows?: number
 }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <Label>{label}</Label>
-      {textarea
-        ? <Textarea value={value} onChange={(e) => onChange(e.target.value)} rows={rows ?? 3} />
-        : <Input value={value} onChange={(e) => onChange(e.target.value)} />
-      }
-    </div>
-  )
+  if (textarea) {
+    return <Textarea label={label} value={value} onValueChange={onChange} rows={rows ?? 3} />
+  }
+  return <LabeledTextField label={label} value={value} onValueChange={onChange} />
 }

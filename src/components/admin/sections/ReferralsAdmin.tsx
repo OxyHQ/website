@@ -9,8 +9,8 @@ import {
   type ReferralStatus,
 } from '../../../api/hooks'
 import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
-import { Input } from '../../ui/shadcn/input'
-import { Textarea } from '../../ui/shadcn/textarea'
+import { LabeledTextField } from '../LabeledTextField'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '../../ui/shadcn/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
@@ -120,11 +120,10 @@ export default function ReferralsAdmin() {
         <div className="mt-6 flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label>Referrer name</Label>
-              <Input
+              <LabeledTextField
+                label="Referrer name"
                 value={editing.name}
-                onChange={(e) => {
-                  const name = e.target.value
+                onValueChange={(name) => {
                   setEditing({
                     ...editing,
                     name,
@@ -135,12 +134,12 @@ export default function ReferralsAdmin() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label>Code</Label>
-              <Input
+              <LabeledTextField
+                label="Code"
                 value={editing.code}
-                onChange={(e) => setEditing({ ...editing, code: slugifyCode(e.target.value) })}
+                onValueChange={(v) => setEditing({ ...editing, code: slugifyCode(v) })}
                 disabled={!isNew}
-                className="font-mono"
+                style={{ fontFamily: 'var(--font-mono)' }}
                 placeholder="ALEX-2026"
               />
               {!isNew && <p className="text-xs text-muted-foreground">Code cannot be changed after creation.</p>}
@@ -148,11 +147,12 @@ export default function ReferralsAdmin() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label>Contact email (admin-only)</Label>
-            <Input
-              type="email"
+            <LabeledTextField
+              label="Contact email (admin-only)"
+              autoComplete="email"
+              inputMode="email"
               value={editing.email ?? ''}
-              onChange={(e) => setEditing({ ...editing, email: e.target.value })}
+              onValueChange={(v) => setEditing({ ...editing, email: v })}
               placeholder="alex@example.com"
             />
             <p className="text-xs text-muted-foreground">Never exposed on the public /referrals endpoint. Admin tracking only.</p>
@@ -191,16 +191,13 @@ export default function ReferralsAdmin() {
             <div className="rounded-xl border border-border p-4">
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Commission</div>
               <div className="mt-3 flex flex-col gap-1.5">
-                <Label>Commission percent</Label>
                 <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    min={0}
-                    max={100}
-                    step={0.5}
-                    value={editing.commissionPercent ?? 0}
-                    onChange={(e) => setEditing({ ...editing, commissionPercent: Number(e.target.value) })}
-                    className="w-32"
+                  <LabeledTextField
+                    label="Commission percent"
+                    inputMode="decimal"
+                    value={String(editing.commissionPercent ?? 0)}
+                    onValueChange={(v) => setEditing({ ...editing, commissionPercent: Number(v) })}
+                    style={{ width: 128 }}
                   />
                   <span className="text-sm text-muted-foreground">% of plan value per signup</span>
                 </div>
@@ -209,31 +206,31 @@ export default function ReferralsAdmin() {
           )}
 
           <div className="flex flex-col gap-1.5">
-            <Label>Custom landing URL (optional)</Label>
-            <Input
+            <LabeledTextField
+              label="Custom landing URL (optional)"
               value={editing.customLandingUrl ?? ''}
-              onChange={(e) => setEditing({ ...editing, customLandingUrl: e.target.value })}
+              onValueChange={(v) => setEditing({ ...editing, customLandingUrl: v })}
               placeholder="/pricing"
-              className="font-mono"
+              style={{ fontFamily: 'var(--font-mono)' }}
             />
             <p className="text-xs text-muted-foreground">Where the code sends visitors. Defaults to /referrals?ref=CODE.</p>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label>Linked Oxy user id (optional)</Label>
-            <Input
+            <LabeledTextField
+              label="Linked Oxy user id (optional)"
               value={editing.oxyUserId ?? ''}
-              onChange={(e) => setEditing({ ...editing, oxyUserId: e.target.value })}
-              className="font-mono"
+              onValueChange={(v) => setEditing({ ...editing, oxyUserId: v })}
+              style={{ fontFamily: 'var(--font-mono)' }}
               placeholder="64f1e2…"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label>Admin notes</Label>
             <Textarea
+              label="Admin notes"
               value={editing.notes ?? ''}
-              onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
+              onValueChange={(v) => setEditing({ ...editing, notes: v })}
               rows={3}
               placeholder="Deal terms, attribution window, payout cadence…"
             />

@@ -2,11 +2,10 @@ import { useState } from 'react'
 import { useTestimonials, useLocales } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton } from '@oxy.so/bloom/button'
-import { Input } from '../../ui/shadcn/input'
-import { Textarea } from '../../ui/shadcn/textarea'
+import { LabeledTextField } from '../LabeledTextField'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import LocaleSwitcher from '../LocaleSwitcher'
 import { BatchTranslationEditor } from '../TranslationEditor'
-import { Label } from '../../ui/shadcn/label'
 
 interface AdminTestimonial {
   _id?: string
@@ -78,19 +77,10 @@ export default function TestimonialsAdmin() {
               <div className="rounded-xl border border-border p-4">
                 <p className="mb-2 text-xs text-muted-foreground">By: {doc.author}</p>
                 <div className="flex flex-col gap-3">
-                  <div className="flex flex-col gap-1.5">
-                    <Label>Quote</Label>
-                    <Textarea value={fields.quote ?? ''} onChange={(e) => updateField('quote', e.target.value)} placeholder={doc.quote} rows={3} />
-                  </div>
+                  <Textarea label="Quote" value={fields.quote ?? ''} onValueChange={(value) => updateField('quote', value)} placeholder={doc.quote} rows={3} />
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="flex flex-col gap-1.5">
-                      <Label>Role</Label>
-                      <Input value={fields.role ?? ''} onChange={(e) => updateField('role', e.target.value)} placeholder={doc.role} />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <Label>Company</Label>
-                      <Input value={fields.company ?? ''} onChange={(e) => updateField('company', e.target.value)} placeholder={doc.company} />
-                    </div>
+                    <LabeledTextField label="Role" value={fields.role ?? ''} onValueChange={(value) => updateField('role', value)} placeholder={doc.role} />
+                    <LabeledTextField label="Company" value={fields.company ?? ''} onValueChange={(value) => updateField('company', value)} placeholder={doc.company} />
                   </div>
                 </div>
               </div>
@@ -101,11 +91,11 @@ export default function TestimonialsAdmin() {
         <div className="mt-6 flex flex-col gap-4">
           {items.map((t, i) => (
             <div key={i} className="rounded-xl border border-border p-4">
-              <Textarea value={t.quote} onChange={(e) => update(i, 'quote', e.target.value)} placeholder="Quote" className="bg-transparent border-none text-sm text-foreground shadow-none" rows={3} />
+              <Textarea label="Quote" value={t.quote} onValueChange={(value) => update(i, 'quote', value)} placeholder="Quote" rows={3} />
               <div className="mt-2 grid grid-cols-3 gap-2">
-                <Input value={t.author} onChange={(e) => update(i, 'author', e.target.value)} placeholder="Name" className="bg-transparent border-none text-sm text-foreground shadow-none" />
-                <Input value={t.role} onChange={(e) => update(i, 'role', e.target.value)} placeholder="Role" className="bg-transparent border-none text-sm text-muted-foreground shadow-none" />
-                <Input value={t.company} onChange={(e) => update(i, 'company', e.target.value)} placeholder="Company" className="bg-transparent border-none text-sm text-muted-foreground shadow-none" />
+                <LabeledTextField label="Name" value={t.author} onValueChange={(value) => update(i, 'author', value)} placeholder="Name" />
+                <LabeledTextField label="Role" value={t.role} onValueChange={(value) => update(i, 'role', value)} placeholder="Role" />
+                <LabeledTextField label="Company" value={t.company} onValueChange={(value) => update(i, 'company', value)} placeholder="Company" />
               </div>
               <div className="mt-2"><Button variant="ghost" size="small" onPress={() => remove(i)}>Remove</Button></div>
             </div>

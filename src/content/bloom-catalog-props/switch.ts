@@ -7,12 +7,16 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'SwitchProps': {
       props: [
-        { name: 'value', type: 'boolean', optional: false, description: 'Current on/off state' },
-        { name: 'onValueChange', type: '(value: boolean) => void', optional: false, description: 'Called when the user toggles the switch' },
+        { name: 'checked', type: 'boolean', optional: true, description: 'Current on/off state' },
+        { name: 'value', type: 'boolean', optional: true },
+        { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: true, description: 'Called when the user toggles the switch' },
+        { name: 'onValueChange', type: '(value: boolean) => void', optional: true },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Whether the switch is disabled' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Container style' },
-        { name: 'size', type: "'default' | 'sm'", options: ['default', 'sm'], optional: true, description: 'Size variant' },
+        { name: 'size', type: "BloomSize | 'small' | 'medium' | 'large' | 'default'", options: ['medium', 'default', 'sm', 'md', 'lg', 'xs', 'small', 'large'], optional: true, description: 'Size variant' },
+        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: "The switch's accessible NAME, and the only way to give it one." },
+        { name: 'nativeID', type: 'string', optional: true, description: "The switch's id. Inside a `Field` the field supplies one, so the label's `htmlFor` points at the control on web." },
         { name: 'testID', type: 'string', optional: true },
       ],
       inheritsFrom: ['RefAttributes<View>'],

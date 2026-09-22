@@ -13,8 +13,8 @@ import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
 import { Badge } from '@oxy.so/bloom/badge'
-import { Input } from '../../ui/shadcn/input'
-import { Textarea } from '../../ui/shadcn/textarea'
+import { LabeledTextField } from '../LabeledTextField'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '../../ui/shadcn/label'
 import LocaleSwitcher from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
@@ -273,17 +273,15 @@ export default function CoursesAdmin() {
                 <option value="advanced">Advanced</option>
               </select>
             </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Duration (minutes)</Label>
-              <Input
-                type="number"
-                value={editing.durationMinutes ?? ''}
-                onChange={(e) => setEditing({
-                  ...editing,
-                  durationMinutes: e.target.value ? Number(e.target.value) : undefined,
-                })}
-              />
-            </div>
+            <LabeledTextField
+              label="Duration (minutes)"
+              inputMode="numeric"
+              value={editing.durationMinutes != null ? String(editing.durationMinutes) : ''}
+              onValueChange={(v) => setEditing({
+                ...editing,
+                durationMinutes: v ? Number(v) : undefined,
+              })}
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -292,14 +290,12 @@ export default function CoursesAdmin() {
               value={editing.tags.join(', ')}
               onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t) => t.trim()).filter(Boolean) })}
             />
-            <div className="flex flex-col gap-1.5">
-              <Label>Order</Label>
-              <Input
-                type="number"
-                value={editing.order}
-                onChange={(e) => setEditing({ ...editing, order: Number(e.target.value) })}
-              />
-            </div>
+            <LabeledTextField
+              label="Order"
+              inputMode="numeric"
+              value={String(editing.order)}
+              onValueChange={(v) => setEditing({ ...editing, order: Number(v) })}
+            />
           </div>
 
           <div className="flex items-center gap-4">
@@ -368,24 +364,21 @@ export default function CoursesAdmin() {
                       value={lesson.videoUrl ?? ''}
                       onChange={(v) => updateLesson(index, { videoUrl: v })}
                     />
-                    <div className="flex flex-col gap-1.5">
-                      <Label>Duration (minutes)</Label>
-                      <Input
-                        type="number"
-                        value={lesson.durationMinutes ?? ''}
-                        onChange={(e) => updateLesson(index, {
-                          durationMinutes: e.target.value ? Number(e.target.value) : undefined,
-                        })}
-                      />
-                    </div>
+                    <LabeledTextField
+                      label="Duration (minutes)"
+                      inputMode="numeric"
+                      value={lesson.durationMinutes != null ? String(lesson.durationMinutes) : ''}
+                      onValueChange={(v) => updateLesson(index, {
+                        durationMinutes: v ? Number(v) : undefined,
+                      })}
+                    />
                   </div>
                   <div className="mt-3">
-                    <Label>Content (Markdown)</Label>
                     <Textarea
+                      label="Content (Markdown)"
                       value={lesson.content}
-                      onChange={(e) => updateLesson(index, { content: e.target.value })}
+                      onValueChange={(v) => updateLesson(index, { content: v })}
                       rows={6}
-                      className="mt-1"
                     />
                   </div>
                 </div>
@@ -510,13 +503,8 @@ function Field({ label, value, onChange, textarea, rows }: {
   textarea?: boolean
   rows?: number
 }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <Label>{label}</Label>
-      {textarea
-        ? <Textarea value={value} onChange={(e) => onChange(e.target.value)} rows={rows ?? 3} />
-        : <Input value={value} onChange={(e) => onChange(e.target.value)} />
-      }
-    </div>
-  )
+  if (textarea) {
+    return <Textarea label={label} value={value} onValueChange={onChange} rows={rows ?? 3} />
+  }
+  return <LabeledTextField label={label} value={value} onValueChange={onChange} />
 }

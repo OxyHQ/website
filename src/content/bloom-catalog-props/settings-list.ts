@@ -9,6 +9,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'icon', type: 'React.ReactNode', optional: true, description: 'Icon element (e.g. SVG icon component) or Ionicons-style string' },
         { name: 'title', type: 'string', optional: false, description: 'Primary label' },
+        { name: 'titleNumberOfLines', type: 'number', optional: true, description: 'How many lines the title may take before it truncates. Default `1`.' },
         { name: 'description', type: 'string', optional: true, description: 'Secondary description text below title' },
         { name: 'value', type: 'string', optional: true, description: 'Right-side value text (e.g. "English", "On")' },
         { name: 'rightElement', type: 'React.ReactNode', optional: true, description: 'Custom right-side element (toggle, badge, etc.)' },
@@ -28,6 +29,7 @@ export const props: BloomSurfaceProps = {
         { name: 'footer', type: 'string', optional: true, description: 'Optional section footer text' },
         { name: 'children', type: 'React.ReactNode', optional: false, description: 'Group items' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: 'Override group container style' },
+        { name: 'variant', type: 'SettingsListGroupVariant', options: ['plain', 'filled'], optional: true, description: "The surface the group's card paints, named after `Card`'s own variants. `plain` is the `card` colour, which reads as a raised card on a page painted in `background`; `filled` is `backgroundSecondary`." },
       ],
     },
     'SettingsListDividerProps': {

@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react'
 import { useMedia, type MediaItem } from '../../api/hooks'
 import { SecondaryButton } from '@oxy.so/bloom/button'
-import { Input } from '../ui/shadcn/input'
+import { LabeledTextField } from './LabeledTextField'
 import { API_BASE, getAuthHeaders } from '../../api/client'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -129,11 +129,12 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
             <>
               {/* Search + filters */}
               <div className="mb-4 flex gap-3">
-                <Input
+                <LabeledTextField
+                  label="Search media"
                   placeholder="Search media..."
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="flex-1"
+                  onValueChange={setSearch}
+                  style={{ flex: 1 }}
                 />
                 <div className="flex gap-1">
                   {['', 'image', 'video', 'document'].map((t) => (

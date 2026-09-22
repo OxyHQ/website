@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs'
+import type { TabsVariant } from '@oxy.so/bloom/tabs'
 import type { PlaygroundValues } from './_playground'
-
-type TabsVariant = 'underline' | 'filled' | 'outlined'
 
 export const meta = {
   description: 'Horizontally-scrollable tab bar with three visual variants.',

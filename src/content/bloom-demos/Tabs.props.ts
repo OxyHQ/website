@@ -4,7 +4,7 @@ export const props: PlaygroundProp[] = [
   {
     name: 'variant',
     kind: 'select',
-    options: ['underline', 'filled', 'outlined'],
+    options: ['underline', 'pill', 'filled'],
     default: 'underline',
   },
   {

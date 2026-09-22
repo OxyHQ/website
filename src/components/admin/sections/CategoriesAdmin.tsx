@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useCategories, type CategoryRecord, type CategoryScope } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
-import { Input } from '../../ui/shadcn/input'
-import { Textarea } from '../../ui/shadcn/textarea'
+import { LabeledTextField } from '../LabeledTextField'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '../../ui/shadcn/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
@@ -77,11 +77,10 @@ export default function CategoriesAdmin() {
         <div className="mt-6 flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label>Label</Label>
-              <Input
+              <LabeledTextField
+                label="Label"
                 value={editing.label}
-                onChange={(e) => {
-                  const label = e.target.value
+                onValueChange={(label) => {
                   setEditing({
                     ...editing,
                     label,
@@ -93,25 +92,23 @@ export default function CategoriesAdmin() {
               <p className="text-xs text-muted-foreground">Human-readable label shown on /apps, /status, and navbar headings.</p>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label>Slug</Label>
-              <Input
+              <LabeledTextField
+                label="Slug"
                 value={editing.slug}
-                onChange={(e) => setEditing({ ...editing, slug: slugify(e.target.value) })}
+                onValueChange={(v) => setEditing({ ...editing, slug: slugify(v) })}
                 disabled={!isNew}
-                className="font-mono"
+                style={{ fontFamily: 'monospace' }}
               />
               {!isNew && <p className="text-xs text-muted-foreground">Slug cannot be changed after creation.</p>}
             </div>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label>Description (optional)</Label>
-            <Textarea
-              value={editing.description ?? ''}
-              onChange={(e) => setEditing({ ...editing, description: e.target.value })}
-              rows={2}
-            />
-          </div>
+          <Textarea
+            label="Description (optional)"
+            value={editing.description ?? ''}
+            onValueChange={(v) => setEditing({ ...editing, description: v })}
+            rows={2}
+          />
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
@@ -126,14 +123,12 @@ export default function CategoriesAdmin() {
                 ))}
               </select>
             </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Order</Label>
-              <Input
-                type="number"
-                value={editing.order}
-                onChange={(e) => setEditing({ ...editing, order: Number(e.target.value) })}
-              />
-            </div>
+            <LabeledTextField
+              label="Order"
+              value={String(editing.order)}
+              onValueChange={(v) => setEditing({ ...editing, order: Number(v) || 0 })}
+              keyboardType="numeric"
+            />
           </div>
 
           {error && <p className="text-sm text-error-text">{error}</p>}

@@ -7,15 +7,19 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'SegmentedControl': {
       props: [
-        { name: 'label', type: 'string', optional: false },
+        { name: 'label', type: 'string', optional: true, description: "The control's accessible name — it is a `radiogroup`/`tablist`, and the segment texts name the OPTIONS rather than the choice. Inside a `Field` the field's label supplies it." },
         { name: 'type', type: "'tabs' | 'radio'", options: ['tabs', 'radio'], optional: false },
-        { name: 'size', type: 'SegmentedControlSize', options: ['small', 'medium', 'large'], optional: true, description: '`medium` (default); `small` and `large` step around it.' },
+        { name: 'size', type: 'SegmentedControlSize', options: ['medium', 'sm', 'md', 'lg', 'xs', 'small', 'large'], optional: true, description: '`medium` (default); `small` and `large` step around it.' },
         { name: 'variant', type: 'SegmentedControlVariant', options: ['solid', 'plain'], optional: true, description: '`solid` (default) draws the track and sliding thumb; `plain` draws neither.' },
         { name: 'value', type: 'T', optional: false },
-        { name: 'onChange', type: '(value: T) => void', optional: false },
+        { name: 'onValueChange', type: '(value: T) => void', optional: true },
+        { name: 'onChange', type: '(value: T) => void', optional: true },
         { name: 'children', type: 'React.ReactNode', optional: false },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'disabled', type: 'boolean', optional: true, description: 'Disables every segment.' },
         { name: 'accessibilityHint', type: 'string', optional: true },
+        { name: 'nativeID', type: 'string', optional: true, description: "The group's id. Supplied by an enclosing `Field` when there is one." },
+        { name: 'testID', type: 'string', optional: true },
       ],
     },
     'SegmentedControlItem': {

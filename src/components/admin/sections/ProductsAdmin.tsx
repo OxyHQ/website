@@ -10,8 +10,8 @@ import {
 } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
-import { Input } from '../../ui/shadcn/input'
-import { Textarea } from '../../ui/shadcn/textarea'
+import { LabeledTextField } from '../LabeledTextField'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '../../ui/shadcn/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
@@ -166,93 +166,80 @@ export default function ProductsAdmin() {
 
         <div className="mt-6 flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
+            <LabeledTextField
+              label="Name"
+              value={editing.name}
+              onValueChange={(name) => {
+                setEditing({
+                  ...editing,
+                  name,
+                  ...(isNew && !editing.productId ? { productId: slugify(name) } : {}),
+                  ...(isNew && !editing.mark ? { mark: name.charAt(0).toUpperCase() } : {}),
+                })
+              }}
+            />
             <div className="flex flex-col gap-1.5">
-              <Label>Name</Label>
-              <Input
-                value={editing.name}
-                onChange={(e) => {
-                  const name = e.target.value
-                  setEditing({
-                    ...editing,
-                    name,
-                    ...(isNew && !editing.productId ? { productId: slugify(name) } : {}),
-                    ...(isNew && !editing.mark ? { mark: name.charAt(0).toUpperCase() } : {}),
-                  })
-                }}
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Product id</Label>
-              <Input
+              <LabeledTextField
+                label="Product id"
                 value={editing.productId}
-                onChange={(e) => setEditing({ ...editing, productId: slugify(e.target.value) })}
+                onValueChange={(value) => setEditing({ ...editing, productId: slugify(value) })}
                 disabled={!isNew}
-                className="font-mono"
               />
               {!isNew && <p className="text-xs text-muted-foreground">Id cannot be changed after creation.</p>}
             </div>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label>Tagline</Label>
-            <Input
-              value={editing.tagline}
-              onChange={(e) => setEditing({ ...editing, tagline: e.target.value })}
-              placeholder="Single-line tag shown above the title"
-            />
-          </div>
+          <LabeledTextField
+            label="Tagline"
+            value={editing.tagline}
+            onValueChange={(tagline) => setEditing({ ...editing, tagline })}
+            placeholder="Single-line tag shown above the title"
+          />
 
-          <div className="flex flex-col gap-1.5">
-            <Label>Description</Label>
-            <Textarea
-              value={editing.description}
-              onChange={(e) => setEditing({ ...editing, description: e.target.value })}
-              rows={3}
-            />
-          </div>
+          <Textarea
+            label="Description"
+            value={editing.description}
+            onValueChange={(description) => setEditing({ ...editing, description })}
+            rows={3}
+          />
 
           <div className="grid grid-cols-1 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label>App URL</Label>
-              <Input
+              <LabeledTextField
+                label="App URL"
                 value={editing.href}
-                onChange={(e) => setEditing({ ...editing, href: e.target.value })}
+                onValueChange={(href) => setEditing({ ...editing, href })}
                 placeholder="https://alia.onl/"
-                className="font-mono"
               />
               <p className="text-xs text-muted-foreground">The actual running app, where "Open" buttons go. External URL or internal path.</p>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label>Landing page on oxy.so (optional)</Label>
-              <Input
+              <LabeledTextField
+                label="Landing page on oxy.so (optional)"
                 value={editing.landingUrl ?? ''}
-                onChange={(e) => setEditing({ ...editing, landingUrl: e.target.value })}
+                onValueChange={(landingUrl) => setEditing({ ...editing, landingUrl })}
                 placeholder="/alia"
-                className="font-mono"
               />
               <p className="text-xs text-muted-foreground">Local marketing/learn-more page on this site. When set, the /apps card and navbar link here first.</p>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label>Health URL (optional)</Label>
-              <Input
+              <LabeledTextField
+                label="Health URL (optional)"
                 value={editing.healthUrl ?? ''}
-                onChange={(e) => setEditing({ ...editing, healthUrl: e.target.value })}
+                onValueChange={(healthUrl) => setEditing({ ...editing, healthUrl })}
                 placeholder="Defaults to App URL if empty"
-                className="font-mono"
               />
               <p className="text-xs text-muted-foreground">Used by /status. Point at an unauthenticated health endpoint when possible.</p>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
-              <Label>CTA label</Label>
-              <Input
-                value={editing.cta}
-                onChange={(e) => setEditing({ ...editing, cta: e.target.value })}
-                placeholder="Explore Alia"
-              />
-            </div>
+            <LabeledTextField
+              label="CTA label"
+              value={editing.cta}
+              onValueChange={(cta) => setEditing({ ...editing, cta })}
+              placeholder="Explore Alia"
+            />
             <div className="flex items-center gap-2 pt-6">
               <input
                 id="product-external"
@@ -287,32 +274,27 @@ export default function ProductsAdmin() {
                   onChange={(e) => setEditing({ ...editing, brand: e.target.value })}
                   className="h-9 w-12 rounded border border-border"
                 />
-                <Input
+                <LabeledTextField
+                  label="Brand color"
                   value={editing.brand}
-                  onChange={(e) => setEditing({ ...editing, brand: e.target.value })}
+                  onValueChange={(brand) => setEditing({ ...editing, brand })}
                   placeholder="#7c3aed"
-                  className="font-mono"
                 />
               </div>
             </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Brand foreground (optional)</Label>
-              <Input
-                value={editing.brandForeground ?? ''}
-                onChange={(e) => setEditing({ ...editing, brandForeground: e.target.value })}
-                placeholder="#ffffff"
-                className="font-mono"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Mark letter (fallback)</Label>
-              <Input
-                value={editing.mark}
-                maxLength={2}
-                onChange={(e) => setEditing({ ...editing, mark: e.target.value })}
-                placeholder="A"
-              />
-            </div>
+            <LabeledTextField
+              label="Brand foreground (optional)"
+              value={editing.brandForeground ?? ''}
+              onValueChange={(brandForeground) => setEditing({ ...editing, brandForeground })}
+              placeholder="#ffffff"
+            />
+            <LabeledTextField
+              label="Mark letter (fallback)"
+              value={editing.mark}
+              maxLength={2}
+              onValueChange={(mark) => setEditing({ ...editing, mark })}
+              placeholder="A"
+            />
           </div>
 
           <div className="grid grid-cols-3 gap-3">
@@ -344,14 +326,12 @@ export default function ProductsAdmin() {
                 <option value="in-development">In development (new)</option>
               </select>
             </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Order</Label>
-              <Input
-                type="number"
-                value={editing.order}
-                onChange={(e) => setEditing({ ...editing, order: Number(e.target.value) })}
-              />
-            </div>
+            <LabeledTextField
+              label="Order"
+              inputMode="numeric"
+              value={String(editing.order)}
+              onValueChange={(value) => setEditing({ ...editing, order: Number(value) })}
+            />
           </div>
 
           {/* Surface toggles */}

@@ -5,8 +5,8 @@ import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
 import { Badge } from '@oxy.so/bloom/badge'
-import { Input } from '../../ui/shadcn/input'
-import { Textarea } from '../../ui/shadcn/textarea'
+import { LabeledTextField } from '../LabeledTextField'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '../../ui/shadcn/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
@@ -283,10 +283,8 @@ export default function NewsroomAdmin() {
 }
 
 function Field({ label, value, onChange, textarea, rows }: { label: string; value: string; onChange: (v: string) => void; textarea?: boolean; rows?: number }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <Label>{label}</Label>
-      {textarea ? <Textarea value={value} onChange={(e) => onChange(e.target.value)} rows={rows ?? 3} /> : <Input value={value} onChange={(e) => onChange(e.target.value)} />}
-    </div>
-  )
+  if (textarea) {
+    return <Textarea label={label} value={value} onValueChange={onChange} rows={rows ?? 3} />
+  }
+  return <LabeledTextField label={label} value={value} onValueChange={onChange} />
 }

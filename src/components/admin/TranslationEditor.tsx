@@ -2,9 +2,8 @@ import { useState, type ReactNode } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../api/client'
 import { PrimaryButton } from '@oxy.so/bloom/button'
-import { Input } from '../ui/shadcn/input'
-import { Textarea } from '../ui/shadcn/textarea'
-import { Label } from '../ui/shadcn/label'
+import { LabeledTextField } from './LabeledTextField'
+import { Textarea } from '@oxy.so/bloom/textarea'
 
 /**
  * Locale override values keyed by field path. Translations mirror the shape of
@@ -127,18 +126,19 @@ export function TranslationFields<O extends object>({
 
         return (
           <div key={field.key} className="flex flex-col gap-1.5">
-            <Label>{field.label}</Label>
             {field.type === 'textarea' ? (
               <Textarea
+                label={field.label}
                 value={translatedValue}
-                onChange={(e) => setFields(setVal(fields, field.key, e.target.value))}
+                onValueChange={(v) => setFields(setVal(fields, field.key, v))}
                 placeholder={typeof originalValue === 'string' ? originalValue : ''}
                 rows={3}
               />
             ) : (
-              <Input
+              <LabeledTextField
+                label={field.label}
                 value={translatedValue}
-                onChange={(e) => setFields(setVal(fields, field.key, e.target.value))}
+                onValueChange={(v) => setFields(setVal(fields, field.key, v))}
                 placeholder={typeof originalValue === 'string' ? originalValue : ''}
               />
             )}

@@ -4,9 +4,8 @@ import { useMediaItem } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
-import { Input } from '../../ui/shadcn/input'
-import { Textarea } from '../../ui/shadcn/textarea'
-import { Label } from '../../ui/shadcn/label'
+import { Textarea } from '@oxy.so/bloom/textarea'
+import { LabeledTextField } from '../LabeledTextField'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
 import MediaPicker from '../MediaPicker'
@@ -133,13 +132,6 @@ export default function TeamAdmin() {
   })
 
   const members = useMemo(() => data ?? [], [data])
-  const departments = useMemo(() => {
-    const set = new Set<string>()
-    for (const m of members) {
-      if (m.department) set.add(m.department)
-    }
-    return [...set].sort()
-  }, [members])
 
   const grouped = useMemo(() => {
     const map = new Map<string, TeamMemberRaw[]>()
@@ -232,72 +224,59 @@ export default function TeamAdmin() {
 
         <div className="mt-6 flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
+            <LabeledTextField
+              label="Name"
+              value={editing.name}
+              onValueChange={(name) => {
+                setEditing({
+                  ...editing,
+                  name,
+                  ...(isNew ? { slug: slugify(name) } : {}),
+                })
+              }}
+              placeholder="Ada Lovelace"
+            />
             <div className="flex flex-col gap-1.5">
-              <Label>Name</Label>
-              <Input
-                value={editing.name}
-                onChange={(e) => {
-                  const name = e.target.value
-                  setEditing({
-                    ...editing,
-                    name,
-                    ...(isNew ? { slug: slugify(name) } : {}),
-                  })
-                }}
-                placeholder="Ada Lovelace"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Slug</Label>
-              <Input
+              <LabeledTextField
+                label="Slug"
                 value={editing.slug}
-                onChange={(e) => setEditing({ ...editing, slug: slugify(e.target.value) })}
+                onValueChange={(v) => setEditing({ ...editing, slug: slugify(v) })}
                 disabled={!isNew}
-                className="font-mono"
+                style={{ fontFamily: 'monospace' }}
               />
               {!isNew && <p className="text-xs text-muted-foreground">Slug is locked after creation.</p>}
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
+            <LabeledTextField
+              label="Role"
+              value={editing.role}
+              onValueChange={(role) => setEditing({ ...editing, role })}
+              placeholder="Software Engineer"
+            />
             <div className="flex flex-col gap-1.5">
-              <Label>Role</Label>
-              <Input
-                value={editing.role}
-                onChange={(e) => setEditing({ ...editing, role: e.target.value })}
-                placeholder="Software Engineer"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Department</Label>
-              <Input
-                list="team-departments"
+              <LabeledTextField
+                label="Department"
                 value={editing.department}
-                onChange={(e) => setEditing({ ...editing, department: e.target.value })}
+                onValueChange={(department) => setEditing({ ...editing, department })}
                 placeholder="Engineering"
               />
-              <datalist id="team-departments">
-                {departments.map((d) => (
-                  <option key={d} value={d} />
-                ))}
-              </datalist>
               <p className="text-xs text-muted-foreground">Used to group members on the public /company/team page.</p>
             </div>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label>Bio</Label>
-            <Textarea
-              value={editing.bio}
-              onChange={(e) => setEditing({ ...editing, bio: e.target.value })}
-              rows={4}
-              placeholder="Short paragraph describing this person's background and focus."
-            />
-          </div>
+          <Textarea
+            label="Bio"
+            value={editing.bio}
+            onValueChange={(bio) => setEditing({ ...editing, bio })}
+            rows={4}
+            placeholder="Short paragraph describing this person's background and focus."
+          />
 
           <div className="flex flex-col gap-1.5">
-            <Label>Avatar</Label>
             <MediaPicker
+              label="Avatar"
               value={mediaId(editing.avatar) || ''}
               onChange={(id) => setEditing({ ...editing, avatar: id ?? null })}
               folder="team"
@@ -309,57 +288,49 @@ export default function TeamAdmin() {
           <div className="rounded-xl border border-border p-4">
             <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Socials</div>
             <div className="mt-3 grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1.5">
-                <Label>LinkedIn</Label>
-                <Input
-                  value={editing.socials?.linkedin ?? ''}
-                  onChange={(e) => setEditing({ ...editing, socials: { ...editing.socials, linkedin: e.target.value } })}
-                  placeholder="https://linkedin.com/in/…"
-                  className="font-mono text-xs"
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>Twitter / X</Label>
-                <Input
-                  value={editing.socials?.twitter ?? ''}
-                  onChange={(e) => setEditing({ ...editing, socials: { ...editing.socials, twitter: e.target.value } })}
-                  placeholder="https://x.com/…"
-                  className="font-mono text-xs"
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>GitHub</Label>
-                <Input
-                  value={editing.socials?.github ?? ''}
-                  onChange={(e) => setEditing({ ...editing, socials: { ...editing.socials, github: e.target.value } })}
-                  placeholder="https://github.com/…"
-                  className="font-mono text-xs"
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>Website</Label>
-                <Input
-                  value={editing.socials?.website ?? ''}
-                  onChange={(e) => setEditing({ ...editing, socials: { ...editing.socials, website: e.target.value } })}
-                  placeholder="https://…"
-                  className="font-mono text-xs"
-                />
-              </div>
+              <LabeledTextField
+                label="LinkedIn"
+                value={editing.socials?.linkedin ?? ''}
+                onValueChange={(v) => setEditing({ ...editing, socials: { ...editing.socials, linkedin: v } })}
+                placeholder="https://linkedin.com/in/…"
+                style={{ fontFamily: 'monospace', fontSize: 12 }}
+              />
+              <LabeledTextField
+                label="Twitter / X"
+                value={editing.socials?.twitter ?? ''}
+                onValueChange={(v) => setEditing({ ...editing, socials: { ...editing.socials, twitter: v } })}
+                placeholder="https://x.com/…"
+                style={{ fontFamily: 'monospace', fontSize: 12 }}
+              />
+              <LabeledTextField
+                label="GitHub"
+                value={editing.socials?.github ?? ''}
+                onValueChange={(v) => setEditing({ ...editing, socials: { ...editing.socials, github: v } })}
+                placeholder="https://github.com/…"
+                style={{ fontFamily: 'monospace', fontSize: 12 }}
+              />
+              <LabeledTextField
+                label="Website"
+                value={editing.socials?.website ?? ''}
+                onValueChange={(v) => setEditing({ ...editing, socials: { ...editing.socials, website: v } })}
+                placeholder="https://…"
+                style={{ fontFamily: 'monospace', fontSize: 12 }}
+              />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label>Order</Label>
-              <Input
-                type="number"
-                value={editing.order}
-                onChange={(e) => setEditing({ ...editing, order: Number(e.target.value) })}
+              <LabeledTextField
+                label="Order"
+                keyboardType="numeric"
+                value={String(editing.order)}
+                onValueChange={(v) => setEditing({ ...editing, order: Number(v) })}
               />
               <p className="text-xs text-muted-foreground">Lower numbers appear first within a department.</p>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label>Visibility</Label>
+              <span className="text-sm font-medium text-foreground">Visibility</span>
               <div className="flex h-9 items-center gap-2">
                 <Switch value={editing.active} onValueChange={(val) => setEditing({ ...editing, active: val })} />
                 <span className="text-sm text-muted-foreground">{editing.active ? 'Shown on /company/team' : 'Hidden'}</span>
@@ -369,7 +340,7 @@ export default function TeamAdmin() {
 
           {/* Live preview */}
           <div className="mt-2 flex flex-col gap-2">
-            <Label>Preview</Label>
+            <span className="text-sm font-medium text-foreground">Preview</span>
             <div className="inline-flex items-center gap-3 rounded-2xl border border-border bg-background p-4">
               <MemberAvatar member={editing} />
               <div>

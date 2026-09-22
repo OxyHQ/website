@@ -3,9 +3,8 @@ import { useChangelog, type ChangelogEntry } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { Badge } from '@oxy.so/bloom/badge'
-import { Input } from '../../ui/shadcn/input'
-import { Textarea } from '../../ui/shadcn/textarea'
-import { Label } from '../../ui/shadcn/label'
+import { LabeledTextField } from '../LabeledTextField'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
 import MediaPicker from '../MediaPicker'
@@ -48,11 +47,11 @@ export default function ChangelogAdmin() {
           </p>
         )}
         <div className="mt-6 flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5"><Label>Title</Label><Input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} /></div>
-          <div className="flex flex-col gap-1.5"><Label>Date</Label><Input type="date" value={editing.date?.slice(0, 10) ?? ''} onChange={(e) => setEditing({ ...editing, date: e.target.value })} /></div>
-          <div className="flex flex-col gap-1.5"><Label>Content (Markdown)</Label><Textarea value={editing.content} onChange={(e) => setEditing({ ...editing, content: e.target.value })} rows={6} /></div>
-          <div className="flex flex-col gap-1.5"><Label>Tags (comma-separated)</Label><Input value={(editing.tags ?? []).join(', ')} onChange={(e) => setEditing({ ...editing, tags: e.target.value.split(',').map((t: string) => t.trim()).filter(Boolean) })} /></div>
-          <div className="flex flex-col gap-1.5"><Label>Items (one per line)</Label><Textarea value={(editing.items ?? []).join('\n')} onChange={(e) => setEditing({ ...editing, items: e.target.value.split('\n').filter(Boolean) })} rows={4} className="font-mono" /></div>
+          <LabeledTextField label="Title" value={editing.title} onValueChange={(v) => setEditing({ ...editing, title: v })} />
+          <LabeledTextField label="Date" placeholder="YYYY-MM-DD" value={editing.date?.slice(0, 10) ?? ''} onValueChange={(v) => setEditing({ ...editing, date: v })} />
+          <Textarea label="Content (Markdown)" value={editing.content} onValueChange={(v) => setEditing({ ...editing, content: v })} rows={6} />
+          <LabeledTextField label="Tags (comma-separated)" value={(editing.tags ?? []).join(', ')} onValueChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t: string) => t.trim()).filter(Boolean) })} />
+          <Textarea label="Items (one per line)" value={(editing.items ?? []).join('\n')} onValueChange={(v) => setEditing({ ...editing, items: v.split('\n').filter(Boolean) })} rows={4} inputStyle={{ fontFamily: 'monospace' }} />
           <MediaPicker
             value={editing.media}
             onChange={(id) => setEditing({ ...editing, media: id || '' })}

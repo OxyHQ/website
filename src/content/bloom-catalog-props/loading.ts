@@ -9,8 +9,9 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'variant', type: "'spinner'", options: ['inline', 'top', 'spinner'], optional: true, description: 'Variant type' },
         { name: 'spinnerIcon', type: 'ReactNode', optional: true, description: 'Custom spinner icon (defaults to ActivityIndicator)' },
-        { name: 'size', type: 'LoadingSize', options: ['small', 'medium', 'large'], optional: true, description: 'Size of the loading indicator' },
+        { name: 'size', type: 'LoadingSize', options: ['medium', 'default', 'sm', 'md', 'lg', 'xs', 'small', 'large'], optional: true, description: 'Size of the loading indicator' },
         { name: 'color', type: 'string', optional: true, description: 'Custom color (defaults to theme primary)' },
+        { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
         { name: 'className', type: 'string', optional: true, description: 'NativeWind className for spinner color (e.g. "text-primary"). Overrides color prop.' },
         { name: 'style', type: 'ViewStyle', optional: true, description: 'Custom container style' },
         { name: 'showLoading', type: 'boolean', optional: true, description: 'Whether loading is active (for animated variants)' },

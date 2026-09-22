@@ -7,8 +7,8 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'ThemeToggleProps': {
       props: [
-        { name: 'collapsed', type: 'boolean', optional: true, description: 'Compact 36px icon button for a collapsed sidebar rail. Only applies to the `sidebar` appearance.' },
-        { name: 'appearance', type: 'ThemeToggleAppearance', options: ['sidebar', 'segmented', 'sidebar-segmented', 'glass-segmented'], optional: true, description: 'Visual treatment. Defaults to `sidebar`.' },
+        { name: 'collapsed', type: 'boolean', optional: true, description: 'Compact 36px icon button for a collapsed sidebar rail. Only applies to the `sidebar` variant.' },
+        { name: 'variant', type: 'ThemeToggleVariant', options: ['sidebar', 'segmented', 'sidebar-segmented', 'glass-segmented'], optional: true, description: 'Visual treatment. Defaults to `sidebar`.' },
         { name: 'transitionDuration', type: 'number', optional: true, description: 'Circular reveal duration on web, in ms. Defaults to 820.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: "Root style. On the segmented appearances this is the TRACK, so a host can repaint it (the sidebar's flat mobile variant does)." },
         { name: 'testID', type: 'string', optional: true },
