@@ -1,5 +1,5 @@
 import { useSyncExternalStore, type ReactNode } from 'react'
-import { BloomSeedScope } from '@oxy.so/bloom/theme'
+import { BloomSeedScope, useTheme } from '@oxy.so/bloom/theme'
 import { BRAND_SURFACES, type BrandSurface } from './brands'
 
 /**
@@ -30,13 +30,19 @@ const subscribeNever = () => () => {}
  * CURRENT mode, and the prerendered HTML cannot know the visitor's mode — an
  * inline light palette would outrank the `.dark` block until the app booted.
  * The app mounts with `createRoot`, so there is no hydration to mismatch.
- * Only `auto` surfaces are scoped: a surface that stays dark whatever the
- * toggle says would get a JS theme in the toggle's mode.
+ * `BloomSeedScope` builds its theme in the PARENT's mode, so a surface is
+ * scoped only where that mode is the surface's own: an `auto` surface always,
+ * and a `light` one while the site is light. In dark mode a light surface is
+ * left unscoped rather than handed a dark JS theme (and a dark inline palette
+ * that would outrank its generated light block). `dark` surfaces keep their
+ * old rule and are never scoped.
  */
 export function BrandScope({ className, children }: { className: string; children: ReactNode }) {
   const onClient = useSyncExternalStore(subscribeNever, () => true, () => false)
+  const { isDark } = useTheme()
   const surface = brandSurfaceFor(className)
-  if (!onClient || !surface || surface.mode !== 'auto') return children
+  const scoped = surface?.mode === 'auto' || (surface?.mode === 'light' && !isDark)
+  if (!onClient || !surface || !scoped) return children
   return (
     <BloomSeedScope
       seed={surface.seed}

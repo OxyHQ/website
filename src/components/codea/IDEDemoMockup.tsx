@@ -1,6 +1,9 @@
 // Static IDE demo mockup — recreates an Oxy Codea-style hero IDE window.
 // Purely visual, no interactivity.
 
+import { useMemo } from 'react'
+import { useHighlightedLines } from './codeTokens'
+
 export default function IDEDemoMockup() {
   return (
     <div
@@ -126,16 +129,7 @@ export default function IDEDemoMockup() {
                 </svg>
                 <span>Dashboard.tsx</span>
               </div>
-              <div className="font-mono leading-5">
-                <DiffLine type="context" lineNum="14" content="  return (" />
-                <DiffLine type="deletion" lineNum="15" content='    <div className="bg-white text-gray-900">' />
-                <DiffLine type="addition" lineNum="15" content='    <div className="bg-background text-foreground">' />
-                <DiffLine type="context" lineNum="16" content="      <Sidebar />" />
-                <DiffLine type="context" lineNum="17" content="      <main>" />
-                <DiffLine type="deletion" lineNum="18" content='        <h1 className="text-black">Dashboard</h1>' />
-                <DiffLine type="addition" lineNum="18" content='        <h1 className="text-foreground">Dashboard</h1>' />
-                <DiffLine type="context" lineNum="19" content="      </main>" />
-              </div>
+              <DiffPreview hunk={DASHBOARD_HUNK} />
             </div>
           </div>
         </div>
@@ -236,34 +230,68 @@ function StatusStep({ done, active, label }: { done?: boolean; active?: boolean;
   )
 }
 
-function DiffLine({
-  type,
-  lineNum,
-  content,
-}: {
-  type: 'context' | 'addition' | 'deletion'
-  lineNum: string
-  content: string
-}) {
-  const bg =
-    type === 'addition'
-      ? 'bg-success/10'
-      : type === 'deletion'
-        ? 'bg-error/10'
-        : ''
-  const prefix = type === 'addition' ? '+' : type === 'deletion' ? '-' : ' '
-  const textColor =
-    type === 'addition'
-      ? 'text-success-text'
-      : type === 'deletion'
-        ? 'text-error-text'
-        : 'text-foreground/55'
+/**
+ * A unified-diff hunk: the line both sides start on, then each line prefixed
+ * with ' ' (context), '-' (deletion) or '+' (addition), exactly as `git diff`
+ * prints it.
+ */
+interface DiffHunk {
+  oldStart: number
+  newStart: number
+  lines: string
+}
+
+const DASHBOARD_HUNK: DiffHunk = {
+  oldStart: 14,
+  newStart: 14,
+  lines: `   return (
+-    <div className="bg-white text-gray-900">
++    <div className="bg-background text-foreground">
+       <Sidebar />
+       <main>
+-        <h1 className="text-black">Dashboard</h1>
++        <h1 className="text-foreground">Dashboard</h1>
+       </main>`,
+}
+
+const DIFF_ROW = {
+  ' ': '',
+  '-': 'bg-error/10',
+  '+': 'bg-success/10',
+} as const
+
+function DiffPreview({ hunk }: { hunk: DiffHunk }) {
+  const rows = useMemo(() => {
+    let oldLine = hunk.oldStart
+    let newLine = hunk.newStart
+    return hunk.lines.split('\n').map((line) => {
+      const marker = line[0] as keyof typeof DIFF_ROW
+      // A deletion is numbered on the old side, an addition on the new, and a
+      // context line advances both.
+      const num = marker === '-' ? oldLine : newLine
+      if (marker !== '+') oldLine++
+      if (marker !== '-') newLine++
+      return { marker, num, code: line.slice(1) }
+    })
+  }, [hunk])
+  // Tokenized as one source, so a line reads in the context of the ones around it.
+  const highlighted = useHighlightedLines(rows.map((row) => row.code).join('\n'))
 
   return (
-    <div className={`flex ${bg}`}>
-      <span className="w-10 shrink-0 select-none pr-2 text-right text-foreground/25">{lineNum}</span>
-      <span className="w-4 shrink-0 select-none text-center text-foreground/35">{prefix}</span>
-      <span className={textColor}>{content}</span>
+    <div className="font-mono leading-5 [font-variant-ligatures:none]">
+      {rows.map((row, i) => (
+        <div key={i} className={`flex ${DIFF_ROW[row.marker]}`}>
+          <span className="w-10 shrink-0 select-none pr-2 text-right text-foreground/25">{row.num}</span>
+          <span
+            className={`w-4 shrink-0 select-none text-center ${
+              row.marker === '+' ? 'text-success-text' : row.marker === '-' ? 'text-error-text' : 'text-foreground/35'
+            }`}
+          >
+            {row.marker}
+          </span>
+          <span className="whitespace-pre">{highlighted[i]}</span>
+        </div>
+      ))}
     </div>
   )
 }
