@@ -775,6 +775,20 @@ const es: Translations = {
     notFoundDescription: 'Lo sentimos, no hemos podido encontrar esa página. Es posible que se haya movido o eliminado.',
     notFoundCta: 'Volver al inicio',
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: 'Acciones de la página',
+    copyPage: 'Copiar página',
+    copied: 'Copiado',
+    pageCopied: 'Página copiada',
+    moreActions: 'Más acciones',
+    copyLink: 'Copiar enlace',
+    linkCopied: 'Enlace copiado',
+    copyMarkdown: 'Copiar como Markdown',
+    markdownCopied: 'Markdown copiado',
+    copyFailed: 'No se pudo copiar al portapapeles',
+  },
 }
 
 export default es

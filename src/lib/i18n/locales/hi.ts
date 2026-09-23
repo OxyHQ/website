@@ -202,6 +202,20 @@ const hi: Translations = {
     notFoundDescription: 'क्षमा करें, हमें वह पृष्ठ नहीं मिला। हो सकता है उसे स्थानांतरित या हटा दिया गया हो।',
     notFoundCta: 'मुखपृष्ठ पर वापस जाएँ',
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: 'पेज की कार्रवाइयाँ',
+    copyPage: 'पेज कॉपी करें',
+    copied: 'कॉपी हो गया',
+    pageCopied: 'पेज कॉपी हो गया',
+    moreActions: 'और कार्रवाइयाँ',
+    copyLink: 'लिंक कॉपी करें',
+    linkCopied: 'लिंक कॉपी हो गया',
+    copyMarkdown: 'Markdown के रूप में कॉपी करें',
+    markdownCopied: 'Markdown कॉपी हो गया',
+    copyFailed: 'क्लिपबोर्ड पर कॉपी नहीं हो सका',
+  },
 }
 
 export default hi

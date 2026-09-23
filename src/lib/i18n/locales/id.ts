@@ -202,6 +202,20 @@ const id: Translations = {
     notFoundDescription: 'Maaf, kami tidak dapat menemukan halaman tersebut. Halaman mungkin telah dipindahkan atau dihapus.',
     notFoundCta: 'Kembali ke beranda',
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: 'Tindakan halaman',
+    copyPage: 'Salin halaman',
+    copied: 'Disalin',
+    pageCopied: 'Halaman disalin',
+    moreActions: 'Tindakan lainnya',
+    copyLink: 'Salin tautan',
+    linkCopied: 'Tautan disalin',
+    copyMarkdown: 'Salin sebagai Markdown',
+    markdownCopied: 'Markdown disalin',
+    copyFailed: 'Tidak dapat menyalin ke papan klip',
+  },
 }
 
 export default id

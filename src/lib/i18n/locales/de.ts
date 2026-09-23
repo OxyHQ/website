@@ -625,6 +625,20 @@ const de: Translations = {
     notFoundDescription: 'Entschuldigung, wir konnten diese Seite nicht finden. Sie wurde möglicherweise verschoben oder entfernt.',
     notFoundCta: 'Zurück zur Startseite',
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: 'Seitenaktionen',
+    copyPage: 'Seite kopieren',
+    copied: 'Kopiert',
+    pageCopied: 'Seite kopiert',
+    moreActions: 'Weitere Aktionen',
+    copyLink: 'Link kopieren',
+    linkCopied: 'Link kopiert',
+    copyMarkdown: 'Als Markdown kopieren',
+    markdownCopied: 'Markdown kopiert',
+    copyFailed: 'Kopieren in die Zwischenablage fehlgeschlagen',
+  },
 }
 
 export default de

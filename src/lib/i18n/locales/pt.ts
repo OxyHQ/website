@@ -625,6 +625,20 @@ const pt: Translations = {
     notFoundDescription: 'Desculpe, não conseguimos encontrar essa página. Pode ter sido movida ou removida.',
     notFoundCta: 'Voltar à página inicial',
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: 'Ações da página',
+    copyPage: 'Copiar página',
+    copied: 'Copiado',
+    pageCopied: 'Página copiada',
+    moreActions: 'Mais ações',
+    copyLink: 'Copiar link',
+    linkCopied: 'Link copiado',
+    copyMarkdown: 'Copiar como Markdown',
+    markdownCopied: 'Markdown copiado',
+    copyFailed: 'Não foi possível copiar para a área de transferência',
+  },
 }
 
 export default pt

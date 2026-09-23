@@ -882,6 +882,20 @@ const en = {
     notFoundDescription: "Sorry, we couldn't find that page. It may have been moved or removed.",
     notFoundCta: 'Back to homepage',
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: 'Page actions',
+    copyPage: 'Copy page',
+    copied: 'Copied',
+    pageCopied: 'Page copied',
+    moreActions: 'More actions',
+    copyLink: 'Copy link',
+    linkCopied: 'Link copied',
+    copyMarkdown: 'Copy as Markdown',
+    markdownCopied: 'Markdown copied',
+    copyFailed: 'Could not copy to the clipboard',
+  },
 }
 
 export default en

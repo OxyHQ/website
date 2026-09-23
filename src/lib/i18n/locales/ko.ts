@@ -625,6 +625,20 @@ const ko: Translations = {
     notFoundDescription: '죄송합니다, 해당 페이지를 찾을 수 없습니다. 이동되었거나 삭제되었을 수 있습니다.',
     notFoundCta: '홈으로 돌아가기',
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: '페이지 작업',
+    copyPage: '페이지 복사',
+    copied: '복사됨',
+    pageCopied: '페이지를 복사했습니다',
+    moreActions: '추가 작업',
+    copyLink: '링크 복사',
+    linkCopied: '링크를 복사했습니다',
+    copyMarkdown: 'Markdown으로 복사',
+    markdownCopied: 'Markdown을 복사했습니다',
+    copyFailed: '클립보드에 복사하지 못했습니다',
+  },
 }
 
 export default ko

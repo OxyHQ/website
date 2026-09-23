@@ -48,6 +48,11 @@ export interface DocsShellProps {
    * installed Bloom release. Versioned aliases redirect to its canonical URL.
    */
   versionAgnostic?: boolean
+  /**
+   * The synced source file behind the page (`SyncedPage.file`). Enables
+   * "Copy as Markdown"; routes with no source of their own leave it unset.
+   */
+  sourceFile?: string
   children: React.ReactNode
 }
 
@@ -64,6 +69,7 @@ export function DocsShell({
   hideSidebar,
   wideContent,
   versionAgnostic,
+  sourceFile,
   children,
 }: DocsShellProps) {
   const { headings, contentRef } = useContentHeadings()
@@ -143,7 +149,7 @@ export function DocsShell({
                   <h1 className="text-2xl sm:text-3xl text-foreground tracking-tight [overflow-wrap:anywhere] font-bold break-all">
                     {title}
                   </h1>
-                  <DocsCopyPageMenu />
+                  <DocsCopyPageMenu title={title} sourceFile={sourceFile} />
                 </div>
               </div>
               {subtitle ? (

@@ -202,6 +202,20 @@ const ru: Translations = {
     notFoundDescription: 'К сожалению, мы не нашли эту страницу. Возможно, она была перемещена или удалена.',
     notFoundCta: 'На главную',
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: 'Действия со страницей',
+    copyPage: 'Копировать страницу',
+    copied: 'Скопировано',
+    pageCopied: 'Страница скопирована',
+    moreActions: 'Другие действия',
+    copyLink: 'Копировать ссылку',
+    linkCopied: 'Ссылка скопирована',
+    copyMarkdown: 'Копировать как Markdown',
+    markdownCopied: 'Markdown скопирован',
+    copyFailed: 'Не удалось скопировать в буфер обмена',
+  },
 }
 
 export default ru

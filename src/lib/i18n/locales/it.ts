@@ -625,6 +625,20 @@ const it: Translations = {
     notFoundDescription: 'Spiacenti, non siamo riusciti a trovare questa pagina. Potrebbe essere stata spostata o rimossa.',
     notFoundCta: 'Torna alla home',
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: 'Azioni della pagina',
+    copyPage: 'Copia pagina',
+    copied: 'Copiato',
+    pageCopied: 'Pagina copiata',
+    moreActions: 'Altre azioni',
+    copyLink: 'Copia link',
+    linkCopied: 'Link copiato',
+    copyMarkdown: 'Copia come Markdown',
+    markdownCopied: 'Markdown copiato',
+    copyFailed: 'Impossibile copiare negli appunti',
+  },
 }
 
 export default it

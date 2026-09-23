@@ -625,6 +625,20 @@ const zh: Translations = {
     notFoundDescription: '抱歉,我们找不到这个页面。它可能已被移动或删除。',
     notFoundCta: '返回首页',
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: '页面操作',
+    copyPage: '复制页面',
+    copied: '已复制',
+    pageCopied: '已复制页面',
+    moreActions: '更多操作',
+    copyLink: '复制链接',
+    linkCopied: '已复制链接',
+    copyMarkdown: '复制为 Markdown',
+    markdownCopied: '已复制 Markdown',
+    copyFailed: '无法复制到剪贴板',
+  },
 }
 
 export default zh

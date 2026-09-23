@@ -625,6 +625,20 @@ const ja: Translations = {
     notFoundDescription: '申し訳ありません、ページが見つかりませんでした。移動または削除された可能性があります。',
     notFoundCta: 'ホームに戻る',
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: 'ページの操作',
+    copyPage: 'ページをコピー',
+    copied: 'コピーしました',
+    pageCopied: 'ページをコピーしました',
+    moreActions: 'その他の操作',
+    copyLink: 'リンクをコピー',
+    linkCopied: 'リンクをコピーしました',
+    copyMarkdown: 'Markdown としてコピー',
+    markdownCopied: 'Markdown をコピーしました',
+    copyFailed: 'クリップボードにコピーできませんでした',
+  },
 }
 
 export default ja
