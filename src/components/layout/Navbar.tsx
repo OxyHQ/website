@@ -648,11 +648,15 @@ export default function Navbar({
   )
   const flatResults = useMemo(() => groupedResults.flatMap((g) => g.items), [groupedResults])
 
-  // The ink the transparent bar writes in, and the wash its hovers use.
+  // The ink the transparent bar writes in, and the wash its hovers use. Over a
+  // dark hero each control takes the `.force-dark` palette, so `foreground` is
+  // light ink whatever the toggle says; a light hero follows the page's own
+  // palette (Astro's backdrop darkens with the theme). The scope sits on the
+  // controls rather than the header so the logo keeps the page's brand colour.
   const onLight = transparentOn === 'light'
-  const transparentInk = onLight ? 'text-black/70 hover:bg-black/5 hover:text-black' : 'text-white/80 hover:bg-white/10 hover:text-white'
-  const transparentHover = onLight ? 'hover:bg-black/5 hover:text-black' : 'hover:bg-white/10 hover:text-white'
-  const transparentColor = onLight ? 'black' : 'white'
+  const transparentInk = onLight ? 'text-foreground/70 hover:bg-foreground/5 hover:text-foreground' : 'force-dark text-foreground/80 hover:bg-foreground/10 hover:text-foreground'
+  const transparentHover = onLight ? 'hover:bg-foreground/5 hover:text-foreground' : 'force-dark hover:bg-foreground/10 hover:text-foreground'
+  const transparentColor = 'var(--color-foreground)'
 
   const linkClassName = (isTp: boolean) =>
       `inline-flex h-10 items-center justify-center rounded-full px-3 text-link-md transition-colors duration-300 ${
@@ -697,7 +701,7 @@ export default function Navbar({
         <div
           className="site-banner fixed top-0 left-0 right-0 z-[51] flex h-(--site-header-banner-visible-height) items-center justify-center bg-primary text-primary-foreground"
           style={{
-            boxShadow: '0px 1px 2px 0px rgba(0,0,0,0.01), 0px 2px 4px -1px rgba(0,0,0,0.02), 0px 4px 8px -2px rgba(0,0,0,0.03)',
+            boxShadow: 'var(--shadow-s)',
             transform: `translateY(${-Math.min(scrollY, bannerHeight)}px)`,
           }}
         >
@@ -897,7 +901,7 @@ export default function Navbar({
                 authControl(28)
               )}
               <button
-                className={`inline-flex size-10 items-center justify-center rounded-full transition-colors hover:bg-foreground/5 ${isTransparent ? (onLight ? 'text-black' : 'text-white') : 'text-muted-foreground'}`}
+                className={`inline-flex size-10 items-center justify-center rounded-full transition-colors hover:bg-foreground/5 ${isTransparent ? (onLight ? 'text-foreground' : 'force-dark text-foreground') : 'text-muted-foreground'}`}
                 aria-label={mobileOpen ? t('common.closeMenu') : t('common.openMenu')}
                 aria-expanded={mobileOpen}
                 onClick={() => {
