@@ -372,6 +372,38 @@ export default function Navbar({
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [activeResult, setActiveResult] = useState(0)
   const searchDebounce = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // The brand sits centred in the bar, but how far the dropdown triggers reach
+  // depends on the window AND the language ("Sala de prensa" is far longer than
+  // "Newsroom"), so no breakpoint can say when a centred brand would land on
+  // them. Measure instead: centre it only while the triggers end short of the
+  // middle. Laid out before paint, so the brand never visibly jumps.
+  const navRowRef = useRef<HTMLDivElement>(null)
+  const navLinksRef = useRef<HTMLUListElement>(null)
+  const brandRef = useRef<HTMLAnchorElement>(null)
+  const [brandCentred, setBrandCentred] = useState(true)
+  useLayoutEffect(() => {
+    const row = navRowRef.current
+    const links = navLinksRef.current
+    const brand = brandRef.current
+    if (!row || !links || !brand || typeof ResizeObserver === 'undefined') return
+    const measure = () => {
+      const bar = row.getBoundingClientRect()
+      const triggers = links.getBoundingClientRect()
+      const cell = brand.getBoundingClientRect().width
+      // Where the triggers would end with the brand centred: when it is not,
+      // its cell is in the row ahead of them and pushes them right by its width.
+      const inFlow = getComputedStyle(brand).position !== 'absolute'
+      const end = triggers.right - (inFlow ? cell : 0)
+      // The centred brand must start at or after the triggers end.
+      setBrandCentred(triggers.width === 0 || end <= bar.left + bar.width / 2 - cell / 2)
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(row)
+    observer.observe(links)
+    observer.observe(brand)
+    return () => observer.disconnect()
+  }, [])
   const searchRequest = useRef(0)
   const navigate = useNavigate()
   const { isAdmin } = useAdminAccess()
@@ -780,10 +812,15 @@ export default function Navbar({
             brand cell ends and its last ends where the final control begins.
           */}
           {/* The shared surface stays continuous while a panel is open. */}
-          <div className="relative flex min-h-12 items-center">
+          {/*
+            The brand centres itself only while the dropdown triggers end short
+            of the middle (brandCentred); otherwise it keeps its cell at the left.
+          */}
+          <div ref={navRowRef} className="relative flex min-h-12 items-center">
             <Link
+              ref={brandRef}
               to={brand?.homeHref ?? '/'}
-              className={`grid size-10 shrink-0 place-content-center rounded-full transition-[inset-inline-start,transform,background-color] duration-300 ease-out hover:bg-foreground/5 lg:absolute lg:start-1/2 lg:top-1/2 lg:z-20 lg:-translate-y-1/2 ${searchOpen ? 'lg:start-4 lg:translate-x-0' : 'lg:-translate-x-1/2'}`}
+              className={`grid size-10 shrink-0 place-content-center rounded-full transition-[inset-inline-start,transform,background-color] duration-300 ease-out hover:bg-foreground/5 ${brandCentred ? `lg:absolute lg:start-1/2 lg:top-1/2 lg:z-20 lg:-translate-y-1/2 ${searchOpen ? 'lg:start-4 lg:translate-x-0' : 'lg:-translate-x-1/2'}` : ''}`}
               aria-label={brand?.ariaLabel ?? t('navbar.homepage')}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
@@ -793,7 +830,7 @@ export default function Navbar({
             {/* Middle: the dropdown triggers, or the search field while it is open */}
             <div className="flex min-w-0 flex-1 items-stretch">
             <div ref={escapeRef} className="relative z-10 flex items-stretch" onMouseLeave={scheduleClose}>
-                <ul className={`hidden items-stretch gap-1 transition-[opacity,transform] duration-200 ease-out lg:flex ${searchOpen ? 'lg:pointer-events-none lg:invisible lg:absolute lg:start-0 lg:top-0 lg:-translate-x-2 lg:opacity-0' : 'lg:translate-x-0 lg:opacity-100'}`}>
+                <ul ref={navLinksRef} className={`hidden items-stretch gap-1 transition-[opacity,transform] duration-200 ease-out lg:flex ${searchOpen ? 'lg:pointer-events-none lg:invisible lg:absolute lg:start-0 lg:top-0 lg:-translate-x-2 lg:opacity-0' : 'lg:translate-x-0 lg:opacity-100'}`}>
                   {dropdowns.map((dd) => (
                     <li key={dd.label}>
                       <button
