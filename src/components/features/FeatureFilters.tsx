@@ -1,3 +1,4 @@
+import OptionSelect from '../ui/OptionSelect'
 import type { FeatureAppOption } from '../../api/hooks'
 
 const STATUS_OPTIONS = [
@@ -56,28 +57,24 @@ export default function FeatureFilters({
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <select
+        <OptionSelect
+          size="sm"
+          label="Filter by app"
           value={app}
-          onChange={(e) => onChangeApp(e.target.value)}
-          aria-label="Filter by app"
-          className="rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground"
-        >
-          <option value="">All apps</option>
-          {apps.map((option) => (
-            <option key={option.key} value={option.key}>{option.displayName}</option>
-          ))}
-        </select>
+          onValueChange={onChangeApp}
+          options={[
+            { value: '', label: 'All apps' },
+            ...apps.map((option) => ({ value: option.key, label: option.displayName })),
+          ]}
+        />
 
-        <select
+        <OptionSelect
+          size="sm"
+          label="Sort feature requests"
           value={sort}
-          onChange={(e) => onChangeSort(e.target.value)}
-          aria-label="Sort feature requests"
-          className="rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground"
-        >
-          {SORT_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
+          onValueChange={onChangeSort}
+          options={SORT_OPTIONS}
+        />
       </div>
     </div>
   )
