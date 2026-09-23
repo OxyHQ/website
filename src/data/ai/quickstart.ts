@@ -17,7 +17,7 @@ import { INFERENCE_API_BASE } from './taxonomy'
 export interface CodeSample {
   key: string
   label: string
-  /** Highlighter hint; the site renders plain `<pre>`, so this is advisory. */
+  /** Highlighter hint: JavaScript/TypeScript dialects are highlighted (Bloom `CodeLines`), anything else renders plain. */
   language: string
   code: string
 }
