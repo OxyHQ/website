@@ -1,3 +1,4 @@
+import { useId, useState } from 'react'
 import {
   Rocket,
   MessageCircle,
@@ -8,6 +9,9 @@ import {
   Shield,
   type LucideIcon,
 } from 'lucide-react'
+import { Chip, resolveChipHueColors, type ChipHue } from '@oxy.so/bloom/chip'
+import { useTheme } from '@oxy.so/bloom/theme'
+import { Tooltip, TooltipTextBubble, TooltipTrigger } from '@oxy.so/bloom/tooltip'
 import { BADGE_DEFINITIONS, type BadgeDefinition } from '../../data/badges'
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -20,8 +24,59 @@ const ICON_MAP: Record<string, LucideIcon> = {
   shield: Shield,
 }
 
+/**
+ * The badge definitions carry a hex colour for the admin catalogue; on the
+ * public profile each badge takes the Bloom data hue nearest to it instead, so
+ * the pill follows the theme (the team badge's black vanished in dark mode).
+ */
+const HUE_MAP: Record<string, ChipHue> = {
+  early_adopter: 'yellow',
+  first_comment: 'blue',
+  prolific_commenter: 'purple',
+  top_voter: 'lime',
+  bug_hunter: 'rose',
+  team_member: 'gray',
+}
+
 interface ProfileBadgesProps {
   badges: Array<{ badgeId: string; awardedAt: string }>
+}
+
+function BadgePill({ badgeId, definition, Icon }: { badgeId: string; definition: BadgeDefinition; Icon: LucideIcon }) {
+  const theme = useTheme()
+  const descriptionId = useId()
+  const [visible, setVisible] = useState(false)
+  const hue = HUE_MAP[badgeId] ?? 'neutral'
+  const show = () => setVisible(true)
+  const hide = () => setVisible(false)
+
+  return (
+    <Tooltip visible={visible} onVisibleChange={setVisible} position="top">
+      <TooltipTrigger>
+        {/* The pill is static, so this wrapper is what makes the description
+         * reachable by keyboard and announces it without the bubble. */}
+        <span
+          tabIndex={0}
+          aria-describedby={descriptionId}
+          onMouseEnter={show}
+          onMouseLeave={hide}
+          onFocus={show}
+          onBlur={hide}
+          className="inline-flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          <Chip
+            size="large"
+            hue={hue}
+            startIcon={<Icon aria-hidden size={14} color={resolveChipHueColors(theme, hue).foreground} />}
+          >
+            {definition.name}
+          </Chip>
+          <span id={descriptionId} className="sr-only">{definition.description}</span>
+        </span>
+      </TooltipTrigger>
+      <TooltipTextBubble>{definition.description}</TooltipTextBubble>
+    </Tooltip>
+  )
 }
 
 export default function ProfileBadges({ badges }: ProfileBadgesProps) {
@@ -40,21 +95,7 @@ export default function ProfileBadges({ badges }: ProfileBadgesProps) {
         const Icon = ICON_MAP[definition.icon]
         if (!Icon) return null
 
-        return (
-          <div
-            key={`${badgeId}-${awardedAt}`}
-            className="group relative flex items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 py-1 text-xs font-medium text-foreground"
-          >
-            <Icon size={14} style={{ color: definition.color }} />
-            <span>{definition.name}</span>
-
-            {/* Tooltip */}
-            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-[200px] -translate-x-1/2 rounded-lg border border-border bg-surface px-3 py-2 text-xs text-muted-foreground opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-              {definition.description}
-              <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-border" />
-            </div>
-          </div>
-        )
+        return <BadgePill key={`${badgeId}-${awardedAt}`} badgeId={badgeId} definition={definition} Icon={Icon} />
       })}
     </div>
   )
