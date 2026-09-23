@@ -1,512 +1,276 @@
-import { Suspense, createElement, useEffect, useRef } from 'react'
+import { Suspense, createElement, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { Link } from '../lib/navigation'
 import { MDXProvider } from '@mdx-js/react'
+import { Card } from '@oxy.so/bloom/card'
+import { Badge } from '@oxy.so/bloom/badge'
+import { Button as BloomButton } from '@oxy.so/bloom/button'
+import { EmptyState } from '@oxy.so/bloom/empty-state'
 import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
 import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
-import { RiBookOpenLine } from '@oxy.so/bloom/icons/RiBookOpenLine'
 import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
+import { RiCompass3Line } from '@oxy.so/bloom/icons/RiCompass3Line'
+import { RiMedalLine } from '@oxy.so/bloom/icons/RiMedalLine'
 import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
-import PageSection from '../components/layout/PageSection'
-import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
-import { useCurrentLocale } from '../lib/i18n'
-import { loadLesson, loadCourse } from '../content/academy-loader'
-import { mdxContentComponents } from '../content/_components'
-import ShareWithMention from '../components/social/ShareWithMention'
+import { useNavigate } from '../lib/navigation'
+import Button from '../components/ui/Button'
+import AcademyShell from '../components/academy/AcademyShell'
+import { AcademyBreadcrumb } from '../components/academy/AcademyBreadcrumb'
+import { LessonOutline } from '../components/academy/LessonOutline'
+import { LessonStatusMark } from '../components/academy/ProgressMarks'
 import { useAcademyProgress } from '../components/academy/useAcademyProgress'
-import type { CourseProgress } from '../components/academy/progressStorage'
-import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import {
+  academyPath,
+  coursePath,
+  lessonPath,
+  nextStep,
+  summarizeCourse,
+} from '../components/academy/academyModel'
+import { useContentHeadings } from '../hooks/useContentHeadings'
+import { useCurrentLocale, useTranslation } from '../lib/i18n'
+import { loadCourses, loadLesson } from '../content/academy-loader'
+import { mdxContentComponents } from '../content/_components'
 
 /* ──────────────────────────────────────────────
- * /academy/:slug/:lesson
+ * /academy/:slug/:lesson/ — the lesson reader.
  *
- * Lesson reader. Layout is a two-column grid on lg+: a sticky course outline
- * (highlights the active lesson, marks earlier lessons "complete" to give
- * users a sense of progress through the course) and the lesson body itself.
- * Below the body sits a progress bar, share controls, and prev/next pagers.
- * On smaller screens the outline collapses into a top progress strip so the
- * lesson body owns the full viewport width.
+ * Breadcrumb, title and meta, the lesson's MDX exactly as authored, then the
+ * end of the lesson: mark it complete, and move on — the next lesson, the
+ * next course's first lesson when this was the course's last, or back to the
+ * course at the very end. "On this page" sits beside the column on xl+.
+ *
+ * Reading to the end of the article also completes the lesson — the button is
+ * the explicit way, the scroll a nudge for readers who skim past it.
  * ──────────────────────────────────────────── */
 
-interface LessonOutlineItem {
-  lessonSlug: string
-  title: string
-  duration?: string
-}
-
-interface LessonSidebarProps {
-  courseSlug: string
-  courseTitle: string
-  outline: LessonOutlineItem[]
-  activeIndex: number
-  progress: CourseProgress
-}
-
-function countCompleted(outline: LessonOutlineItem[], progress: CourseProgress): number {
-  let n = 0
-  for (const item of outline) {
-    if (progress[item.lessonSlug]?.status === 'completed') n += 1
-  }
-  return n
-}
-
-function LessonSidebar({
-  courseSlug,
-  courseTitle,
-  outline,
-  activeIndex,
-  progress,
-}: LessonSidebarProps) {
-  const total = outline.length
-  const completed = countCompleted(outline, progress)
-  const completionPct = total > 0 ? Math.round((completed / total) * 100) : 0
+function LessonNotFound({ courseSlug, lessonSlug }: { courseSlug: string; lessonSlug: string }) {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
   return (
-    <aside className="hidden lg:block lg:col-span-4 xl:col-span-3">
-      <div className="sticky top-24 flex flex-col gap-5 rounded-3xl border border-border bg-surface p-6">
-        <Link
-          to={`/academy/${courseSlug}`}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <RiArrowLeftLine width={14} height={14} fill="currentColor" aria-hidden />
-          Course overview
-        </Link>
-        <h3 className="text-base font-semibold tracking-tight text-foreground">{courseTitle}</h3>
-
-        {/* Progress strip — driven by *actual* completion, not lesson position */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>
-              {completed} / {total} completed
-            </span>
-            <span>{completionPct}%</span>
-          </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-background">
-            <div
-              className="h-full rounded-full bg-foreground transition-[width] duration-500"
-              style={{ width: `${completionPct}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Lesson list */}
-        <nav aria-label={`${courseTitle} lessons`}>
-          <ol className="flex flex-col gap-1">
-            {outline.map((item, index) => {
-              const isActive = index === activeIndex
-              const isCompleted = progress[item.lessonSlug]?.status === 'completed'
-              return (
-                <li key={item.lessonSlug}>
-                  <Link
-                    to={`/academy/${courseSlug}/${item.lessonSlug}`}
-                    aria-current={isActive ? 'page' : undefined}
-                    className={`flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors ${
-                      isActive
-                        ? 'bg-background text-foreground shadow-sm'
-                        : 'text-muted-foreground hover:bg-background/60 hover:text-foreground'
-                    }`}
-                  >
-                    <span
-                      className={`mt-0.5 grid size-6 shrink-0 place-items-center rounded-md font-mono text-[11px] font-semibold ${
-                        isActive
-                          ? 'bg-foreground text-background'
-                          : isCompleted
-                            ? 'bg-foreground/10 text-foreground'
-                            : 'border border-border bg-background text-muted-foreground'
-                      }`}
-                      aria-hidden="true"
-                    >
-                      {isCompleted ? <RiCheckLine width={12} height={12} fill="currentColor" aria-hidden /> : String(index + 1).padStart(2, '0')}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-medium leading-snug">{item.title}</span>
-                      {item.duration ? (
-                        <span className="mt-0.5 inline-flex items-center gap-1 text-[11px] text-muted-foreground">
-                          <RiTimeLine width={12} height={12} fill="currentColor" aria-hidden />
-                          {item.duration}
-                        </span>
-                      ) : null}
-                    </span>
-                  </Link>
-                </li>
-              )
-            })}
-          </ol>
-        </nav>
-      </div>
-    </aside>
+    <AcademyShell
+      seo={{
+        title: 'Lesson not found',
+        description: 'The lesson you are looking for does not exist.',
+        canonicalPath: `/academy/${courseSlug}/${lessonSlug}`,
+        noIndex: true,
+      }}
+      context={t('academy.title')}
+    >
+      <EmptyState
+        icon={RiCompass3Line}
+        media="circle"
+        title={t('academy.notFoundLesson')}
+        description={t('academy.notFoundLessonBody')}
+        action={{ label: t('academy.backToAcademy'), onPress: () => navigate(academyPath) }}
+      />
+    </AcademyShell>
   )
 }
-
-/* ── Mobile progress strip ────────────────────────────────── */
-
-function LessonProgressStrip({
-  courseSlug,
-  courseTitle,
-  completed,
-  total,
-}: {
-  courseSlug: string
-  courseTitle: string
-  completed: number
-  total: number
-}) {
-  const pct = total > 0 ? Math.round((completed / total) * 100) : 0
-  return (
-    <div className="lg:hidden">
-      <Link
-        to={`/academy/${courseSlug}`}
-        className="block rounded-2xl border border-border bg-surface p-4"
-      >
-        <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5">
-            <RiBookOpenLine width={14} height={14} fill="currentColor" aria-hidden />
-            <span className="font-medium uppercase tracking-wider">{courseTitle}</span>
-          </span>
-          <span>
-            {completed} / {total} completed
-          </span>
-        </div>
-        <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-background">
-          <div
-            className="h-full rounded-full bg-foreground transition-[width] duration-500"
-            style={{ width: `${pct}%` }}
-          />
-        </div>
-      </Link>
-    </div>
-  )
-}
-
-/* ── Page ─────────────────────────────────────────────────── */
 
 export default function LessonPage() {
   const params = useParams<{ slug: string; lesson: string }>()
+  const { t } = useTranslation()
+  const navigate = useNavigate()
   const locale = useCurrentLocale()
   const courseSlug = params.slug ?? ''
   const lessonSlug = params.lesson ?? ''
   const data = loadLesson(courseSlug, lessonSlug, locale)
+  const courses = useMemo(() => loadCourses(locale), [locale])
 
-  // The progress hook must always run (Rules of Hooks). When the lesson
-  // doesn't resolve we just don't *use* the data — passing the URL params is
-  // safe because the namespace store happily accepts any kebab-case key.
-  const { data: progress, markLessonStarted, markLessonCompleted } =
-    useAcademyProgress(courseSlug)
+  // Hooks run before the not-found return; an unknown slug is a harmless key.
+  const { data: progress, isAuthenticated, markLessonStarted, markLessonCompleted } = useAcademyProgress(courseSlug)
   const isLessonCompleted = progress[lessonSlug]?.status === 'completed'
+  const { headings, contentRef } = useContentHeadings()
 
-  // Mark the lesson as started the first time this page mounts for this
-  // (course, lesson) pair. Subsequent visits don't downgrade a completed
-  // lesson back to "in-progress" — the markLessonStarted helper guards that.
-  // We tuck the call in a useEffect because the mutation it issues is a DOM
-  // side effect (a network write), not derived state.
+  // Mark the lesson started on arrival. The helper never downgrades a
+  // completed lesson, and its identity changes every render, so it stays out
+  // of the deps.
   useEffect(() => {
-    if (!data) return
-    if (typeof window === 'undefined') return
+    if (!data || typeof window === 'undefined') return
     markLessonStarted(lessonSlug)
-    // We deliberately omit `markLessonStarted` from deps — its identity
-    // changes on every render (different `data` snapshot inside the
-    // closure) and the markLessonStarted helper is idempotent for an
-    // already-started lesson, so this re-runs only on lesson-slug changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, lessonSlug])
 
-  // Auto-mark-on-scroll: once the user has scrolled past 90% of the article
-  // body, we mark the lesson as completed. The button below remains the
-  // primary, explicit action — this is just a nudge for readers who skim
-  // through the bottom CTA without clicking the button.
+  // Reading past 90% of the article completes the lesson.
   const articleRef = useRef<HTMLElement | null>(null)
+  const setArticle = useCallback(
+    (node: HTMLElement | null) => {
+      articleRef.current = node
+      contentRef(node)
+    },
+    [contentRef],
+  )
   useEffect(() => {
-    if (!data) return
-    if (isLessonCompleted) return
-    if (typeof window === 'undefined') return
+    if (!data || isLessonCompleted || typeof window === 'undefined') return
     const article = articleRef.current
     if (!article) return
-
     const onScroll = () => {
-      const rect = article.getBoundingClientRect()
-      // Distance scrolled past the article's top into its body.
-      const scrolledIntoArticle = -rect.top
-      const articleHeight = article.offsetHeight
-      if (articleHeight <= 0) return
-      const ratio = scrolledIntoArticle / articleHeight
-      if (ratio >= 0.9) {
+      const height = article.offsetHeight
+      if (height <= 0) return
+      if (-article.getBoundingClientRect().top / height >= 0.9) {
         markLessonCompleted(lessonSlug)
         window.removeEventListener('scroll', onScroll)
       }
     }
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-    }
+    return () => window.removeEventListener('scroll', onScroll)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isLessonCompleted, lessonSlug])
 
-  if (!data) {
-    return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <SEO
-          title="Lesson not found"
-          description="The lesson you are looking for does not exist."
-          canonicalPath={`/academy/${courseSlug}/${lessonSlug}`}
-          noIndex
-        />
-        <Navbar />
-        <main className="flex flex-1 flex-col items-center justify-center gap-4">
-          <h1 className="text-2xl font-semibold text-foreground">Lesson not found</h1>
-          <Link to="/academy" className="text-sm text-primary hover:underline">
-            Back to Academy
-          </Link>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
+  if (!data) return <LessonNotFound courseSlug={courseSlug} lessonSlug={lessonSlug} />
 
-  const { course, lesson, position, prev, next } = data
-  const fullCourse = loadCourse(course.slug, locale)
-  const outline: LessonOutlineItem[] = (fullCourse?.lessons ?? []).map((l) => ({
-    lessonSlug: l.lessonSlug,
-    title: l.frontmatter.title,
-    duration: l.frontmatter.duration,
-  }))
-  const totalLessons = outline.length
-  const completedCount = countCompleted(outline, progress)
+  const { course: courseMeta, lesson, position, prev } = data
+  const course = courses.find((c) => c.slug === courseMeta.slug)
+  const total = course?.lessons.length ?? 0
+  const summary = course ? summarizeCourse(course, progress) : null
+  const courseDone = summary?.status === 'completed'
+  const next = nextStep(courses, courseMeta.slug, lessonSlug)
+  const nextIsNewCourse = next !== null && next.course.slug !== courseMeta.slug
+  const nextCourseAfterThis = nextStep(courses, courseMeta.slug, course?.lessons[total - 1]?.lessonSlug ?? lessonSlug)
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <SEO
-        title={`${lesson.frontmatter.title}, ${course.title}`}
-        description={lesson.frontmatter.description}
-        canonicalPath={`/academy/${course.slug}/${lesson.lessonSlug}`}
-        ogType="article"
+    <AcademyShell
+      seo={{
+        title: `${lesson.frontmatter.title}, ${courseMeta.title}`,
+        description: lesson.frontmatter.description,
+        canonicalPath: `/academy/${courseMeta.slug}/${lesson.lessonSlug}`,
+        ogType: 'article',
+      }}
+      activeCourse={courseMeta.slug}
+      activeLesson={lesson.lessonSlug}
+      context={
+        <>
+          <span className="font-medium text-foreground">{courseMeta.title}</span>
+          {total > 0 ? ` · ${t('academy.lessonOf', { n: position + 1, total })}` : ''}
+        </>
+      }
+      aside={<LessonOutline headings={headings} />}
+    >
+      <AcademyBreadcrumb
+        items={[
+          { label: t('academy.title'), to: academyPath },
+          { label: courseMeta.title, to: coursePath(courseMeta.slug) },
+          { label: lesson.frontmatter.title },
+        ]}
       />
-      <Navbar />
-      <main>
-        {/* ═══ Hero ═══ */}
-        <section className="relative overflow-hidden">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[320px] bg-gradient-to-b from-surface to-background"
-          />
-          <div className="container pt-28 pb-10 lg:pt-36">
-            <nav
-              className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground"
-              aria-label="Breadcrumb"
-            >
-              <Link to="/academy" className="transition-colors hover:text-foreground">
-                Academy
-              </Link>
-              <span aria-hidden="true">/</span>
-              <Link
-                to={`/academy/${course.slug}`}
-                className="transition-colors hover:text-foreground"
-              >
-                {course.title}
-              </Link>
-              <span aria-hidden="true">/</span>
-              <span className="truncate text-foreground">{lesson.frontmatter.title}</span>
-            </nav>
 
-            <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em]">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-muted-foreground">
-                <span className="inline-flex text-primary" aria-hidden="true"><RiBookOpenLine width={14} height={14} fill="currentColor" /></span>
-                Lesson {position + 1}
-                {totalLessons > 0 ? ` of ${totalLessons}` : ''}
+      <header className="mt-6 mb-8 flex flex-col gap-3 border-b border-border pb-8">
+        <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          {lesson.frontmatter.title}
+        </h1>
+        {lesson.frontmatter.description ? (
+          <p className="max-w-2xl text-pretty text-lg text-muted-foreground">{lesson.frontmatter.description}</p>
+        ) : null}
+        <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+          {total > 0 ? <span>{t('academy.lessonOf', { n: position + 1, total })}</span> : null}
+          {lesson.frontmatter.duration ? (
+            <span className="inline-flex items-center gap-1.5">
+              <span aria-hidden="true" className="inline-flex">
+                <RiTimeLine width={16} height={16} fill="currentColor" />
               </span>
-              {lesson.frontmatter.duration ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-muted-foreground">
-                  <RiTimeLine width={14} height={14} fill="currentColor" aria-hidden />
-                  {lesson.frontmatter.duration}
+              {lesson.frontmatter.duration}
+            </span>
+          ) : null}
+          {isLessonCompleted ? (
+            <Badge content={t('academy.statusCompleted')} variant="subtle" color="success" size="label-small" icon={RiCheckLine} />
+          ) : null}
+        </div>
+      </header>
+
+      <article ref={setArticle} className="min-w-0 text-foreground">
+        <MDXProvider components={mdxContentComponents}>
+          <Suspense fallback={<div className="text-sm text-muted-foreground">{t('common.loading')}</div>}>
+            {createElement(lesson.Component)}
+          </Suspense>
+        </MDXProvider>
+      </article>
+
+      <footer className="mt-12 flex flex-col gap-6 border-t border-border pt-8">
+        {courseDone && position === total - 1 ? null : (
+          <Card appearance="subtle" radius="radius-16">
+            <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 inline-flex">
+                  <LessonStatusMark status={isLessonCompleted ? 'completed' : 'not-started'} size={22} />
                 </span>
-              ) : null}
-            </div>
-
-            <AnimatedTitle as="h1" className="mt-6 max-w-3xl text-balance text-heading-responsive-lg text-foreground">
-              {lesson.frontmatter.title}
-            </AnimatedTitle>
-            {lesson.frontmatter.description && (
-              <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
-                {lesson.frontmatter.description}
-              </p>
-            )}
-          </div>
-        </section>
-
-        {/* ═══ Body + sticky outline ═══ */}
-        <section className="container">
-          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
-            {/* Mobile progress strip (shown above body on <lg) */}
-            <div className="lg:hidden">
-              {totalLessons > 0 ? (
-                <LessonProgressStrip
-                  courseSlug={course.slug}
-                  courseTitle={course.title}
-                  completed={completedCount}
-                  total={totalLessons}
-                />
-              ) : null}
-            </div>
-
-            {/* Body */}
-            <article
-              ref={articleRef}
-              className="min-w-0 pb-4 text-foreground lg:col-span-8 xl:col-span-9 lg:pb-8"
-            >
-              <MDXProvider components={mdxContentComponents}>
-                <Suspense fallback={<div className="text-sm text-muted-foreground">Loading…</div>}>
-                  {createElement(lesson.Component)}
-                </Suspense>
-              </MDXProvider>
-
-              {/* Mark as completed — primary, explicit completion mechanism.
-                  The scroll-based auto-mark above is a nudge, not a replacement. */}
-              <div className="mt-10 flex flex-col items-start gap-3 rounded-2xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`grid size-9 place-items-center rounded-full transition-colors ${
-                      isLessonCompleted
-                        ? 'bg-foreground text-background'
-                        : 'border border-border bg-background text-muted-foreground'
-                    }`}
-                    aria-hidden="true"
-                  >
-                    <RiCheckLine width={16} height={16} fill="currentColor" aria-hidden />
-                  </span>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
-                      {isLessonCompleted ? "You've completed this lesson." : 'Finished this lesson?'}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {isLessonCompleted
-                        ? 'Progress is synced to your Oxy account when signed in.'
-                        : 'Mark it complete to track your progress through the course.'}
-                    </p>
-                  </div>
+                <div role="status">
+                  <p className="text-sm font-semibold text-foreground">
+                    {isLessonCompleted ? t('academy.lessonDone') : t('academy.lessonPrompt')}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {isLessonCompleted
+                      ? isAuthenticated
+                        ? t('academy.savedToAccount')
+                        : t('academy.savedOnDevice')
+                      : t('academy.lessonPromptHint')}
+                  </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => markLessonCompleted(lessonSlug)}
-                  disabled={isLessonCompleted}
-                  className={`inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-sm font-medium transition-colors ${
-                    isLessonCompleted
-                      ? 'cursor-not-allowed border border-border bg-background text-muted-foreground'
-                      : 'bg-foreground text-background hover:bg-foreground/90'
-                  }`}
-                >
-                  {isLessonCompleted ? 'Completed' : 'Mark as completed'}
-                </button>
               </div>
-            </article>
-
-            {/* Sidebar */}
-            {totalLessons > 0 ? (
-              <LessonSidebar
-                courseSlug={course.slug}
-                courseTitle={course.title}
-                outline={outline}
-                activeIndex={position}
-                progress={progress}
-              />
-            ) : null}
-          </div>
-        </section>
-
-        {/* ═══ Prev / Next — compact secondary pagers ═══
-              The sticky outline is the primary navigation. These plain-text
-              pagers sit at the end of the article body for keyboard / mobile
-              users and to surface lesson titles without duplicating the
-              sidebar's card chrome. */}
-        {(prev || next) && (
-          <PageSection spacing="sm" width="narrow">
-            <div className="flex items-stretch justify-between gap-6 border-t border-border pt-6 text-sm">
-              {prev ? (
-                <Link
-                  to={`/academy/${prev.course}/${prev.lessonSlug}`}
-                  className="group inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
-                  rel="prev"
-                >
-                  <span className="inline-flex shrink-0 transition-transform group-hover:-translate-x-0.5" aria-hidden="true"><RiArrowLeftLine width={16} height={16} fill="currentColor" /></span>
-                  <span className="min-w-0">
-                    <span className="block text-xs font-medium uppercase tracking-wider">
-                      Previous
-                    </span>
-                    <span className="block truncate font-medium text-foreground">
-                      {prev.title}
-                    </span>
-                  </span>
-                </Link>
-              ) : (
-                <span aria-hidden="true" />
-              )}
-              {next ? (
-                <Link
-                  to={`/academy/${next.course}/${next.lessonSlug}`}
-                  className="group ml-auto inline-flex items-center gap-2 text-right text-muted-foreground transition-colors hover:text-foreground"
-                  rel="next"
-                >
-                  <span className="min-w-0">
-                    <span className="block text-xs font-medium uppercase tracking-wider">
-                      Next
-                    </span>
-                    <span className="block truncate font-medium text-foreground">
-                      {next.title}
-                    </span>
-                  </span>
-                  <span className="inline-flex shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden="true"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
-                </Link>
-              ) : (
-                <span aria-hidden="true" />
+              {isLessonCompleted ? null : (
+                <BloomButton variant="primary" size="md" leadingIcon={RiCheckLine} onPress={() => markLessonCompleted(lessonSlug)}>
+                  {t('academy.markComplete')}
+                </BloomButton>
               )}
             </div>
-          </PageSection>
+          </Card>
         )}
 
-        {/* ═══ Share ═══ */}
-        <PageSection spacing="sm" width="narrow">
-          <ShareWithMention
-            title={`${lesson.frontmatter.title}, ${course.title}`}
-            url={`https://oxy.so/academy/${course.slug}/${lesson.lessonSlug}/`}
-            hashtags={['oxyacademy', 'learn']}
-            via="oxy"
-          />
-        </PageSection>
+        {courseDone && position === total - 1 ? (
+          <Card appearance="outline" radius="radius-20">
+            <EmptyState
+              icon={RiMedalLine}
+              media="circle"
+              title={t('academy.courseCompleteTitle', { course: courseMeta.title })}
+              description={t('academy.courseCompleteBody')}
+              action={
+                nextCourseAfterThis
+                  ? {
+                      label: `${t('academy.nextCourse')}: ${nextCourseAfterThis.course.title}`,
+                      onPress: () => navigate(coursePath(nextCourseAfterThis.course.slug)),
+                    }
+                  : { label: t('academy.browseCourses'), onPress: () => navigate(academyPath) }
+              }
+              secondaryAction={{ label: t('academy.developerDocs'), onPress: () => navigate('/developers/docs/') }}
+            />
+          </Card>
+        ) : null}
 
-        {/* ═══ Course-complete CTA when no next lesson ═══ */}
-        {!next && (
-          <PageSection spacing="md" width="narrow">
-            <div className="flex flex-col items-center gap-4 rounded-3xl border border-border bg-surface p-8 text-center md:p-10">
-              <span className="grid size-12 place-items-center rounded-full border border-border bg-background text-foreground">
-                <RiCheckLine width={20} height={20} fill="currentColor" aria-hidden />
+        <nav aria-label={t('academy.lessons')} className="grid gap-3 sm:grid-cols-2">
+          <div className="flex min-w-0 flex-col items-start gap-2">
+            <span className="max-w-full truncate text-xs text-muted-foreground">
+              {prev ? prev.title : courseMeta.title}
+            </span>
+            <Button
+              href={prev ? lessonPath(prev.course, prev.lessonSlug) : coursePath(courseMeta.slug)}
+              variant="outline"
+              size="md"
+              rel={prev ? 'prev' : undefined}
+            >
+              <span aria-hidden="true" className="inline-flex">
+                <RiArrowLeftLine width={16} height={16} fill="currentColor" />
               </span>
-              <AnimatedTitle as="h2" className="text-heading-responsive-md text-foreground">
-                You finished the course.
-              </AnimatedTitle>
-              <p className="max-w-md text-pretty text-muted-foreground">
-                Nice work. Pick another course or open the developer docs to keep building.
-              </p>
-              <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
-                <Link
-                  to="/academy"
-                  className="inline-flex h-9 items-center gap-1.5 rounded-full border bg-foreground px-4 text-[15px] font-medium text-background transition-colors button-primary"
-                >
-                  Browse more courses
-                </Link>
-                <Link
-                  to="/developers/docs"
-                  className="inline-flex h-9 items-center gap-1.5 rounded-full border px-4 text-[15px] font-medium transition-colors button-outline"
-                >
-                  Developer docs
-                </Link>
-              </div>
-            </div>
-          </PageSection>
-        )}
-
-        <KeepUpToDateSection />
-      </main>
-      <Footer />
-    </div>
+              {prev ? t('academy.previous') : t('academy.courseOverview')}
+              {prev ? <span className="sr-only">: {prev.title}</span> : null}
+            </Button>
+          </div>
+          <div className="flex min-w-0 flex-col items-start gap-2 sm:items-end">
+            <span className="max-w-full truncate text-xs text-muted-foreground">
+              {next ? (nextIsNewCourse ? `${next.course.title} · ${next.lesson.frontmatter.title}` : next.lesson.frontmatter.title) : courseMeta.title}
+            </span>
+            <Button
+              href={next ? lessonPath(next.course.slug, next.lesson.lessonSlug) : coursePath(courseMeta.slug)}
+              variant={isLessonCompleted ? 'primary' : 'outline'}
+              size="md"
+              rel={next && !nextIsNewCourse ? 'next' : undefined}
+            >
+              {next ? (nextIsNewCourse ? t('academy.nextCourse') : t('academy.next')) : t('academy.courseOverview')}
+              {next ? <span className="sr-only">: {next.lesson.frontmatter.title}</span> : null}
+              <span aria-hidden="true" className="inline-flex">
+                <RiArrowRightLine width={16} height={16} fill="currentColor" />
+              </span>
+            </Button>
+          </div>
+        </nav>
+      </footer>
+    </AcademyShell>
   )
 }
