@@ -78,8 +78,11 @@ try {
   await frame.getByRole('button', { name: 'Click me', exact: true }).waitFor({ timeout: 60000 })
   await page.getByLabel('children', { exact: true }).fill('A working Bloom button')
   await frame.getByRole('button', { name: 'A working Bloom button', exact: true }).waitFor()
-  await page.getByLabel('Recipe', { exact: true }).selectOption('grove')
-  await page.getByLabel('Appearance', { exact: true }).selectOption('dark')
+  // The playground's pickers are Bloom Selects: open the trigger, pick the row.
+  await page.getByLabel('Recipe', { exact: true }).click()
+  await page.getByRole('radio', { name: 'grove', exact: true }).click()
+  await page.getByLabel('Appearance', { exact: true }).click()
+  await page.getByRole('radio', { name: 'Dark', exact: true }).click()
   invariant(
     new URL(page.url()).searchParams.get('recipe') === 'grove',
     'Recipe did not persist in URL',

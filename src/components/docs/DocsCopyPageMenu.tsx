@@ -12,6 +12,7 @@ import { RiLinkM } from '@oxy.so/bloom/icons/RiLinkM'
 import { useTheme } from '@oxy.so/bloom/theme'
 import { loadDocSource } from '../../content/docs-loader'
 import { useTranslation } from '../../lib/i18n'
+import { useBloomMenuKeys } from '../ui/useBloomMenuKeys'
 import { useCopyToClipboard } from '../../lib/useCopyToClipboard'
 
 const FRONTMATTER = /^---\r?\n[\s\S]*?\r?\n---\r?\n*/
@@ -25,6 +26,7 @@ interface DocsCopyPageMenuProps {
 export function DocsCopyPageMenu({ title, sourceFile }: DocsCopyPageMenuProps) {
   const { t } = useTranslation()
   const { colors } = useTheme()
+  const { panelClass, wrapperProps } = useBloomMenuKeys()
   // Two flows so only "Copy page" flips its own label to "Copied"; the menu
   // rows confirm through the toast alone.
   const page = useCopyToClipboard()
@@ -48,7 +50,7 @@ export function DocsCopyPageMenu({ title, sourceFile }: DocsCopyPageMenuProps) {
   const iconProps = { width: 16, height: 16, fill: colors.textSecondary }
 
   return (
-    <div className="ml-auto hidden shrink-0 sm:flex">
+    <div {...wrapperProps} className="ml-auto hidden shrink-0 sm:flex">
       <ButtonGroup size="sm" accessibilityLabel={t('docs.pageActions')}>
         <ButtonGroupItem leadingIcon={RiFileCopyLine} onPress={copyPage}>
           {page.copied ? t('docs.copied') : t('docs.copyPage')}
@@ -57,7 +59,7 @@ export function DocsCopyPageMenu({ title, sourceFile }: DocsCopyPageMenuProps) {
           <DropdownMenuTrigger asChild label={t('docs.moreActions')}>
             <ButtonGroupItem iconOnly leadingIcon={RiArrowDownSLine} accessibilityLabel={t('docs.moreActions')} />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className={panelClass}>
             <DropdownMenuItem
               leading={<RiLinkM {...iconProps} />}
               onPress={() => void copy(window.location.href, t('docs.linkCopied'))}
