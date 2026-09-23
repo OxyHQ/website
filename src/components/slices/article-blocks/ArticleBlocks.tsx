@@ -7,7 +7,6 @@ import {
 } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { ArrowLeft, ArrowRight, ArrowUpRight } from '@phosphor-icons/react'
 import {
   ARTICLE_FRAME_BLOCK,
   CENTERED_ARTICLE_BLOCK,
@@ -25,6 +24,26 @@ import type {
   ParsedArticleFence,
 } from './schema'
 import { isSafeArticleUrl } from './schema'
+
+/*
+ * Remix Icon glyphs, drawn inline. This module is rendered by the prerender's
+ * Node SSR bundle (entry-server.tsx), where importing Bloom's icons pulls in
+ * react-native and crashes the build — so the three arrows it needs are the
+ * same Remix paths Bloom ships, as plain <svg>.
+ */
+const REMIX_PATHS = {
+  arrowLeft: 'M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z',
+  arrowRight: 'M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z',
+  arrowRightUp: 'M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z',
+} as const
+
+function RemixGlyph({ name, size, className }: { name: keyof typeof REMIX_PATHS; size: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d={REMIX_PATHS[name]} />
+    </svg>
+  )
+}
 
 type ArticleWidth = 'prose' | 'wide' | 'full'
 type OptionalWidth<T extends { width: ArticleWidth }> = Omit<T, 'width'> & { width?: ArticleWidth }
@@ -268,10 +287,10 @@ export function ArticleTestimonialCarousel({
           <p className="text-body-sm tabular-nums text-muted-foreground">{index + 1} / {items.length}</p>
           <div className="flex gap-2">
             <button type="button" onClick={() => move(-1)} aria-label="Previous testimonial" className="rounded-full border border-primary/35 p-2 text-primary outline-none hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background">
-              <ArrowLeft size={18} weight="bold" />
+              <RemixGlyph name="arrowLeft" size={18} />
             </button>
             <button type="button" onClick={() => move(1)} aria-label="Next testimonial" className="rounded-full border border-primary/35 p-2 text-primary outline-none hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background">
-              <ArrowRight size={18} weight="bold" />
+              <RemixGlyph name="arrowRight" size={18} />
             </button>
           </div>
         </div>
@@ -357,7 +376,7 @@ export function ArticleFootnotes({ title = 'Notes', items, width = 'prose' }: Op
             <span>{item.text}</span>{' '}
             {item.url && (
               <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
-                {item.linkLabel || 'Source'} <ArrowUpRight aria-hidden className="inline size-3" />
+                {item.linkLabel || 'Source'} <RemixGlyph name="arrowRightUp" size={12} className="inline" />
               </a>
             )}{' '}
             <a href={`#fnref-${item.id}`} aria-label={`Back to citation ${item.id}`} className="text-primary no-underline">↩</a>
