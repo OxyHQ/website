@@ -158,7 +158,7 @@ try {
     await page.locator('[data-testid^="color-recipe-"]').count() === 18,
     'derived filter did not render exactly 18 recipes',
   )
-  await page.getByRole('button', { name: 'Public view', exact: true }).click()
+  await page.getByRole('radio', { name: 'Public view', exact: true }).click()
   await page.getByText("Don't miss what's happening", { exact: true }).first().waitFor()
 
   await openRoute('/developers/docs/bloom/color-system/')
