@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Link } from '../../lib/navigation'
-import { CalendarDays } from 'lucide-react'
+import { RiCalendarLine } from '@oxy.so/bloom/icons/RiCalendarLine'
 import { useAuth, useOxy } from '@oxy.so/services/ui/client'
 import { getNormalizedUserHandle } from '@oxy.so/core'
 import { Avatar } from '@oxy.so/bloom/avatar'
@@ -71,7 +71,7 @@ export default function ProfileHeader({ profile, isOwnProfile, onEditBio }: Prof
 
       {/* Joined */}
       <div className="mt-3 flex items-center gap-1.5 text-body-md text-muted-foreground">
-        <CalendarDays size={16} />
+        <RiCalendarLine width={16} height={16} fill="currentColor" aria-hidden />
         <span>Joined Oxy{user.createdAt ? ` ${formatJoinedDate(user.createdAt)}` : ''}</span>
       </div>
 

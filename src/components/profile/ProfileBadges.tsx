@@ -1,27 +1,25 @@
 import { useId, useState } from 'react'
-import {
-  Rocket,
-  MessageCircle,
-  MessagesSquare,
-  ThumbsUp,
-  Lightbulb,
-  Bug,
-  Shield,
-  type LucideIcon,
-} from 'lucide-react'
+import type { BloomIconComponent } from '@oxy.so/bloom/icons'
+import { RiBugLine } from '@oxy.so/bloom/icons/RiBugLine'
+import { RiChat3Line } from '@oxy.so/bloom/icons/RiChat3Line'
+import { RiDiscussLine } from '@oxy.so/bloom/icons/RiDiscussLine'
+import { RiLightbulbLine } from '@oxy.so/bloom/icons/RiLightbulbLine'
+import { RiRocket2Line } from '@oxy.so/bloom/icons/RiRocket2Line'
+import { RiShieldLine } from '@oxy.so/bloom/icons/RiShieldLine'
+import { RiThumbUpLine } from '@oxy.so/bloom/icons/RiThumbUpLine'
 import { Chip, resolveChipHueColors, type ChipHue } from '@oxy.so/bloom/chip'
 import { useTheme } from '@oxy.so/bloom/theme'
 import { Tooltip, TooltipTextBubble, TooltipTrigger } from '@oxy.so/bloom/tooltip'
 import { BADGE_DEFINITIONS, type BadgeDefinition } from '../../data/badges'
 
-const ICON_MAP: Record<string, LucideIcon> = {
-  rocket: Rocket,
-  'message-circle': MessageCircle,
-  'messages-square': MessagesSquare,
-  'thumbs-up': ThumbsUp,
-  lightbulb: Lightbulb,
-  bug: Bug,
-  shield: Shield,
+const ICON_MAP: Record<string, BloomIconComponent> = {
+  rocket: RiRocket2Line,
+  'message-circle': RiChat3Line,
+  'messages-square': RiDiscussLine,
+  'thumbs-up': RiThumbUpLine,
+  lightbulb: RiLightbulbLine,
+  bug: RiBugLine,
+  shield: RiShieldLine,
 }
 
 /**
@@ -42,7 +40,7 @@ interface ProfileBadgesProps {
   badges: Array<{ badgeId: string; awardedAt: string }>
 }
 
-function BadgePill({ badgeId, definition, Icon }: { badgeId: string; definition: BadgeDefinition; Icon: LucideIcon }) {
+function BadgePill({ badgeId, definition, Icon }: { badgeId: string; definition: BadgeDefinition; Icon: BloomIconComponent }) {
   const theme = useTheme()
   const descriptionId = useId()
   const [visible, setVisible] = useState(false)
@@ -67,7 +65,7 @@ function BadgePill({ badgeId, definition, Icon }: { badgeId: string; definition:
           <Chip
             size="large"
             hue={hue}
-            startIcon={<Icon aria-hidden size={14} color={resolveChipHueColors(theme, hue).foreground} />}
+            startIcon={<Icon width={14} height={14} fill={resolveChipHueColors(theme, hue).foreground} />}
           >
             {definition.name}
           </Chip>
