@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Pause, Play } from '@phosphor-icons/react'
+import { RiPauseFill } from '@oxy.so/bloom/icons/RiPauseFill'
+import { RiPlayFill } from '@oxy.so/bloom/icons/RiPlayFill'
 import { articleSpeechText, estimatedSpeechDuration } from './articleSpeech'
 
 type SpeechState = 'idle' | 'playing' | 'paused'
@@ -80,7 +81,7 @@ export default function ArticleListenControl({
         aria-pressed={active}
         className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-45"
       >
-        {state === 'playing' ? <Pause size={16} weight="fill" /> : <Play size={16} weight="fill" />}
+        {state === 'playing' ? <RiPauseFill width={16} height={16} fill="currentColor" /> : <RiPlayFill width={16} height={16} fill="currentColor" />}
       </button>
       <span className="whitespace-nowrap">{state === 'paused' ? 'Resume article' : state === 'playing' ? 'Pause article' : 'Listen to article'}</span>
       <span aria-hidden className="h-5 w-px bg-border" />
