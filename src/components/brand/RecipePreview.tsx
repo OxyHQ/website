@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { APP_COLOR_NAMES, type AppColorName } from '@oxy.so/bloom/color-presets'
+import OptionSelect from '../ui/OptionSelect'
 import { recipeStyle } from './recipe-style'
 
 export default function RecipePreview() {
@@ -8,31 +9,27 @@ export default function RecipePreview() {
   return (
     <div className="space-y-6">
       <div className="bloom-toolbar flex flex-wrap gap-4">
-        <label className="grid gap-2 text-sm">
-          Bloom recipe
-          <select
-            aria-label="Bloom recipe"
+        <div className="grid gap-2 text-sm">
+          <span aria-hidden="true">Bloom recipe</span>
+          <OptionSelect
+            label="Bloom recipe"
             value={preset}
-            onChange={(e) => setPreset(e.target.value as AppColorName)}
-          >
-            {APP_COLOR_NAMES.map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="grid gap-2 text-sm">
-          Appearance
-          <select
-            aria-label="Appearance"
+            onValueChange={(next) => setPreset(next as AppColorName)}
+            options={APP_COLOR_NAMES.map((name) => ({ value: name, label: name }))}
+          />
+        </div>
+        <div className="grid gap-2 text-sm">
+          <span aria-hidden="true">Appearance</span>
+          <OptionSelect
+            label="Appearance"
             value={mode}
-            onChange={(e) => setMode(e.target.value as 'light' | 'dark')}
-          >
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </label>
+            onValueChange={(next) => setMode(next as 'light' | 'dark')}
+            options={[
+              { value: 'light', label: 'Light' },
+              { value: 'dark', label: 'Dark' },
+            ]}
+          />
+        </div>
       </div>
       <div
         style={recipeStyle(preset, mode)}

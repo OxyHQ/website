@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Dialog, type DialogControlProps } from '@oxy.so/bloom/dialog'
 import { X } from 'lucide-react'
+import OptionSelect from '../ui/OptionSelect'
 
 interface StartupProgramDialogProps {
   control: DialogControlProps
@@ -33,47 +34,31 @@ const INITIAL_APPLICATION: StartupApplication = {
 const inputClasses =
   'flex h-12 w-full rounded-full border border-input bg-background px-4 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
 
-const selectClasses =
-  'h-10 w-full appearance-none rounded-full border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:outline-none'
-
 function StartupSelect({
-  id,
   label,
   value,
   onChange,
   options,
 }: {
-  id: string
   label: string
   value: string
   onChange: (value: string) => void
   options: readonly { value: string; label: string }[]
 }) {
+  // A span, not a <label>: the Bloom trigger is not a labelable element, so it
+  // carries the same words as its accessible name.
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium leading-none text-foreground" htmlFor={id}>
+      <span className="block text-sm font-medium leading-none text-foreground" aria-hidden="true">
         {label}
-      </label>
-      <div className="relative">
-        <select
-          id={id}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          className={`${selectClasses} pr-9 ${value ? 'text-foreground' : 'text-muted-foreground'}`}
-        >
-          <option value="">Select</option>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <span className="pointer-events-none absolute inset-y-0 end-3 flex items-center text-muted-foreground" aria-hidden="true">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </span>
-      </div>
+      </span>
+      <OptionSelect
+        label={label}
+        value={value}
+        onValueChange={onChange}
+        options={[{ value: '', label: 'Select' }, ...options]}
+        emptyIsPlaceholder
+      />
     </div>
   )
 }
@@ -215,7 +200,6 @@ export default function StartupProgramDialog({ control }: StartupProgramDialogPr
             </label>
 
             <StartupSelect
-              id="startup-team-size"
               label="Team size"
               value={application.teamSize}
               onChange={(value) => updateField('teamSize', value)}
@@ -229,7 +213,6 @@ export default function StartupProgramDialog({ control }: StartupProgramDialogPr
           </div>
 
           <StartupSelect
-            id="startup-funding-stage"
             label="Funding stage"
             value={application.fundingStage}
             onChange={(value) => updateField('fundingStage', value)}

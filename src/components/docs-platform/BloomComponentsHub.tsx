@@ -7,6 +7,7 @@ import { defaultValues } from '../../content/bloom-demos/_playground'
 import { pascalPath } from '../../content/bloom-catalog'
 import { DocsShell } from '../docs/DocsShell'
 import PageShell from '../layout/PageShell'
+import OptionSelect from '../ui/OptionSelect'
 
 /** Visual discovery and complete API inventory share the generated catalog.
  * Infrastructure and undemonstrated exports remain discoverable without blank
@@ -57,15 +58,18 @@ export function BloomComponentsHub() {
                 placeholder="Search buttons, navigation, forms…"
               />
             </label>
-            <label className="grid gap-2 text-sm">
-              Category
-              <select value={category} onChange={(e) => setCategory(e.target.value)}>
-                <option>All</option>
-                {bloomCategories.map((c) => (
-                  <option key={c.name}>{c.name}</option>
-                ))}
-              </select>
-            </label>
+            <div className="grid gap-2 text-sm">
+              <span aria-hidden="true">Category</span>
+              <OptionSelect
+                label="Category"
+                value={category}
+                onValueChange={setCategory}
+                options={[
+                  { value: 'All', label: 'All' },
+                  ...bloomCategories.map((c) => ({ value: c.name, label: c.name })),
+                ]}
+              />
+            </div>
             <Link className="oxy-link" to="/developers/docs/bloom/playground">
               Open playground
             </Link>

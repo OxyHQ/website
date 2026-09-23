@@ -5,6 +5,7 @@ import { getNormalizedUserHandle } from '@oxy.so/core'
 import Navbar from '../components/layout/Navbar'
 import PageShell from '../components/layout/PageShell'
 import Button from '../components/ui/Button'
+import OptionSelect, { type SelectOption } from '../components/ui/OptionSelect'
 import { Link } from '../lib/navigation'
 import { useTranslation } from '../lib/i18n'
 import { apiFetch } from '../api/client'
@@ -71,7 +72,7 @@ type FormState = {
  *
  * Written out rather than derived from the value: deriving it turned
  * `under_1m_tokens` into a key that did not exist, and a missing translation
- * key renders as the key itself in a `<select>` a buyer is reading.
+ * key renders as the key itself in a select a buyer is reading.
  */
 const VOLUME_LABEL_KEYS: Record<string, string> = {
   evaluating: 'contactSales.volumeEvaluating',
@@ -394,19 +395,21 @@ export default function ContactSalesPage() {
           {/* ── What this is about ─────────────────────────────────── */}
           <fieldset className="flex flex-col gap-4">
             <legend className="text-xl text-foreground">{t('contactSales.sectionAbout')}</legend>
-            <Field id={`${formId}-interest`} label={t('contactSales.interest')} error={errors.interest}>
-              <select
-                id={`${formId}-interest`}
+            <Field
+              id={`${formId}-interest`}
+              label={t('contactSales.interest')}
+              error={errors.interest}
+              control="select"
+            >
+              <OptionSelect
+                label={t('contactSales.interest')}
                 value={form.interest}
-                onChange={(event) => update('interest', event.target.value as InquiryInterest)}
-                className={inputClass}
-              >
-                {INQUIRY_INTERESTS.map((value) => (
-                  <option key={value} value={value}>
-                    {t(INTEREST_LABEL_KEYS[value] ?? value)}
-                  </option>
-                ))}
-              </select>
+                onValueChange={(next) => update('interest', next as InquiryInterest)}
+                options={INQUIRY_INTERESTS.map((value) => ({
+                  value,
+                  label: t(INTEREST_LABEL_KEYS[value] ?? value),
+                }))}
+              />
             </Field>
           </fieldset>
 
@@ -463,20 +466,19 @@ export default function ContactSalesPage() {
                   className={inputClass}
                 />
               </Field>
-              <Field id={`${formId}-companySize`} label={t('contactSales.companySize')} optional>
-                <select
-                  id={`${formId}-companySize`}
+              <Field
+                id={`${formId}-companySize`}
+                label={t('contactSales.companySize')}
+                optional
+                control="select"
+              >
+                <OptionSelect
+                  label={t('contactSales.companySize')}
                   value={form.companySize}
-                  onChange={(event) => update('companySize', event.target.value)}
-                  className={inputClass}
-                >
-                  <option value="">—</option>
-                  {COMPANY_SIZES.map((size) => (
-                    <option key={size} value={size}>
-                      {size}
-                    </option>
-                  ))}
-                </select>
+                  onValueChange={(next) => update('companySize', next)}
+                  options={withNone(COMPANY_SIZES.map((size) => ({ value: size, label: size })))}
+                  emptyIsPlaceholder
+                />
               </Field>
               <Field
                 id={`${formId}-website`}
@@ -502,46 +504,47 @@ export default function ContactSalesPage() {
                   id={`${formId}-accountId`}
                   label={t('contactSales.accountSection')}
                   optional
+                  control="select"
                 >
-                  <select
-                    id={`${formId}-accountId`}
+                  <OptionSelect
+                    label={t('contactSales.accountSection')}
                     value={form.accountId}
-                    onChange={(event) => {
+                    onValueChange={(next) => {
                       // An application belongs to one account; keeping the old
                       // selection — or the old list — after switching would
                       // submit a pair the server is about to reject.
                       setApplications([])
                       setForm((current) => ({
                         ...current,
-                        accountId: event.target.value,
+                        accountId: next,
                         applicationId: '',
                       }))
                     }}
-                    className={inputClass}
-                  >
-                    <option value="">{t('contactSales.accountNone')}</option>
-                    {accounts.map((account) => (
-                      <option key={account.id} value={account.id}>
-                        {account.label}
-                      </option>
-                    ))}
-                  </select>
+                    options={[
+                      { value: '', label: t('contactSales.accountNone') },
+                      ...accounts.map((account) => ({ value: account.id, label: account.label })),
+                    ]}
+                  />
                 </Field>
                 {form.accountId && applications.length > 0 && (
-                  <Field id={`${formId}-applicationId`} label="Application" optional>
-                    <select
-                      id={`${formId}-applicationId`}
+                  <Field
+                    id={`${formId}-applicationId`}
+                    label="Application"
+                    optional
+                    control="select"
+                  >
+                    <OptionSelect
+                      label="Application"
                       value={form.applicationId}
-                      onChange={(event) => update('applicationId', event.target.value)}
-                      className={inputClass}
-                    >
-                      <option value="">{t('contactSales.applicationNone')}</option>
-                      {applications.map((application) => (
-                        <option key={application.id} value={application.id}>
-                          {application.label}
-                        </option>
-                      ))}
-                    </select>
+                      onValueChange={(next) => update('applicationId', next)}
+                      options={[
+                        { value: '', label: t('contactSales.applicationNone') },
+                        ...applications.map((application) => ({
+                          value: application.id,
+                          label: application.label,
+                        })),
+                      ]}
+                    />
                   </Field>
                 )}
               </div>
@@ -567,69 +570,69 @@ export default function ContactSalesPage() {
             </Field>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field id={`${formId}-monthlyVolume`} label={t('contactSales.monthlyVolume')} optional>
-                <select
-                  id={`${formId}-monthlyVolume`}
+              <Field
+                id={`${formId}-monthlyVolume`}
+                label={t('contactSales.monthlyVolume')}
+                optional
+                control="select"
+              >
+                <OptionSelect
+                  label={t('contactSales.monthlyVolume')}
                   value={form.monthlyVolume}
-                  onChange={(event) => update('monthlyVolume', event.target.value)}
-                  className={inputClass}
-                >
-                  <option value="">—</option>
-                  {MONTHLY_VOLUMES.map((value) => (
-                    <option key={value} value={value}>
-                      {t(VOLUME_LABEL_KEYS[value] ?? value)}
-                    </option>
-                  ))}
-                </select>
+                  onValueChange={(next) => update('monthlyVolume', next)}
+                  options={withNone(
+                    MONTHLY_VOLUMES.map((value) => ({ value, label: t(VOLUME_LABEL_KEYS[value] ?? value) })),
+                  )}
+                  emptyIsPlaceholder
+                />
               </Field>
-              <Field id={`${formId}-budget`} label={t('contactSales.budget')} optional>
-                <select
-                  id={`${formId}-budget`}
+              <Field
+                id={`${formId}-budget`}
+                label={t('contactSales.budget')}
+                optional
+                control="select"
+              >
+                <OptionSelect
+                  label={t('contactSales.budget')}
                   value={form.budget}
-                  onChange={(event) => update('budget', event.target.value)}
-                  className={inputClass}
-                >
-                  <option value="">—</option>
-                  {BUDGET_BANDS.map((value) => (
-                    <option key={value} value={value}>
-                      {t(BUDGET_LABEL_KEYS[value] ?? value)}
-                    </option>
-                  ))}
-                </select>
+                  onValueChange={(next) => update('budget', next)}
+                  options={withNone(
+                    BUDGET_BANDS.map((value) => ({ value, label: t(BUDGET_LABEL_KEYS[value] ?? value) })),
+                  )}
+                  emptyIsPlaceholder
+                />
               </Field>
               <Field
                 id={`${formId}-deploymentPreference`}
                 label={t('contactSales.deploymentPreference')}
                 optional
+                control="select"
               >
-                <select
-                  id={`${formId}-deploymentPreference`}
+                <OptionSelect
+                  label={t('contactSales.deploymentPreference')}
                   value={form.deploymentPreference}
-                  onChange={(event) => update('deploymentPreference', event.target.value)}
-                  className={inputClass}
-                >
-                  <option value="">—</option>
-                  {DEPLOYMENT_PREFERENCES.map((value) => (
-                    <option key={value} value={value}>
-                      {t(DEPLOYMENT_LABEL_KEYS[value] ?? value)}
-                    </option>
-                  ))}
-                </select>
+                  onValueChange={(next) => update('deploymentPreference', next)}
+                  options={withNone(
+                    DEPLOYMENT_PREFERENCES.map((value) => ({ value, label: t(DEPLOYMENT_LABEL_KEYS[value] ?? value) })),
+                  )}
+                  emptyIsPlaceholder
+                />
               </Field>
-              <Field id={`${formId}-launchTimeline`} label={t('contactSales.launchTimeline')} optional>
-                <select
-                  id={`${formId}-launchTimeline`}
+              <Field
+                id={`${formId}-launchTimeline`}
+                label={t('contactSales.launchTimeline')}
+                optional
+                control="select"
+              >
+                <OptionSelect
+                  label={t('contactSales.launchTimeline')}
                   value={form.launchTimeline}
-                  onChange={(event) => update('launchTimeline', event.target.value)}
-                  className={inputClass}
-                >
-                  <option value="">—</option>
-                  {LAUNCH_TIMELINES.map((value) => (
-                    <option key={value} value={value}>
-                      {t(TIMELINE_LABEL_KEYS[value] ?? value)}
-                    </option>
-                  ))}
-                </select>
+                  onValueChange={(next) => update('launchTimeline', next)}
+                  options={withNone(
+                    LAUNCH_TIMELINES.map((value) => ({ value, label: t(TIMELINE_LABEL_KEYS[value] ?? value) })),
+                  )}
+                  emptyIsPlaceholder
+                />
               </Field>
               <Field
                 id={`${formId}-preferredRegion`}
@@ -731,12 +734,18 @@ export default function ContactSalesPage() {
 const inputClass =
   'h-10 w-full rounded-full border border-border bg-background px-4 text-sm text-foreground'
 
+/** The "—" row that leaves an optional select unanswered. */
+function withNone(options: SelectOption[]): SelectOption[] {
+  return [{ value: '', label: '—' }, ...options]
+}
+
 function Field({
   id,
   label,
   hint,
   error,
   optional = false,
+  control = 'input',
   children,
 }: {
   id: string
@@ -744,16 +753,31 @@ function Field({
   hint?: string
   error?: string
   optional?: boolean
+  /**
+   * `select` for a Bloom select. Its trigger is not a labelable element, so
+   * the caption is a span (the trigger carries the same words as its name)
+   * and `id` goes on a wrapper, where the error summary's link still lands.
+   */
+  control?: 'input' | 'select'
   children: ReactNode
 }) {
   const { t } = useTranslation()
+  const caption = (
+    <>
+      {label}
+      {optional && <span className="ms-1 text-muted-foreground">({t('contactSales.optional')})</span>}
+    </>
+  )
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm text-foreground">
-        {label}
-        {optional && <span className="ms-1 text-muted-foreground">({t('contactSales.optional')})</span>}
-      </label>
-      {children}
+      {control === 'select' ? (
+        <span className="text-sm text-foreground">{caption}</span>
+      ) : (
+        <label htmlFor={id} className="text-sm text-foreground">
+          {caption}
+        </label>
+      )}
+      {control === 'select' ? <div id={id}>{children}</div> : children}
       {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
       {error && <p className="text-xs text-error-text">{error}</p>}
     </div>

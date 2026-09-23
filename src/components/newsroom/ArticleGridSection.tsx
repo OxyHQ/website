@@ -1,62 +1,35 @@
 import { useState, useCallback } from 'react'
+import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
+import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
+import { RiEqualizerLine } from '@oxy.so/bloom/icons/RiEqualizerLine'
 import { NewsCardGrid } from './NewsCard'
 import { useNewsroomPosts } from '../../api/hooks'
 import { newsCategories } from '../../data/newsroom'
 
-/* ─── Filter icon SVG ─── */
+/*
+ * Bloom glyphs. Their default fill is the theme's primary, so each takes
+ * `currentColor` to follow the control it sits in, and none of them renders
+ * a `className` onto its <svg>, so the chevron turns inside a span.
+ */
 function FilterIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      className="h-4 w-4 shrink-0"
-    >
-      <path
-        d="M9.667 3.333a1.333 1.333 0 1 0 0 2.667 1.333 1.333 0 0 0 0-2.667ZM7.084 4a2.667 2.667 0 0 1 5.166 0h1.083a.667.667 0 0 1 0 1.333H12.25a2.667 2.667 0 0 1-5.166 0H2.667a.667.667 0 0 1 0-1.333h4.417ZM6.333 10a1.333 1.333 0 1 0 0 2.667 1.333 1.333 0 0 0 0-2.667Zm-2.582.667a2.667 2.667 0 0 1 5.165 0h4.417a.667.667 0 0 1 0 1.333H8.916a2.667 2.667 0 0 1-5.165 0H2.667a.667.667 0 0 1 0-1.333h1.084Z"
-        fill="currentColor"
-      />
-    </svg>
-  )
+  return <RiEqualizerLine width={16} height={16} fill="currentColor" />
 }
 
-/* ─── Chevron icon SVG ─── */
 function ChevronDown({ className = '' }: { className?: string }) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="10"
-      height="16"
-      viewBox="0 0 10 16"
-      fill="none"
-      className={`h-4 w-2.5 shrink-0 ${className}`}
-    >
-      <path
-        d="M.21 5.352a.714.714 0 0 1 1.01 0L5 9.133l3.78-3.78a.714.714 0 1 1 1.01 1.01L5.505 10.65a.714.714 0 0 1-1.01 0L.21 6.363a.714.714 0 0 1 0-1.01Z"
-        fill="currentColor"
-      />
-    </svg>
+    <span className={`inline-flex shrink-0 ${className}`}>
+      <RiArrowDownSLine width={16} height={16} fill="currentColor" />
+    </span>
   )
 }
 
-/* ─── Check icon ─── */
 function CheckIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="h-3.5 w-3.5 shrink-0">
-      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M11.5 3.5 5.5 10 2.5 7" />
-    </svg>
-  )
+  return <RiCheckLine width={14} height={14} fill="currentColor" />
 }
 
-/* ─── X / close icon ─── */
 function CloseIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="h-3 w-3 shrink-0">
-      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="m9 3-6 6m6 0L3 3" />
-    </svg>
-  )
+  return <RiCloseLine width={12} height={12} fill="currentColor" />
 }
 
 type SortOption = 'newest' | 'oldest'

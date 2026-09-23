@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from '../../../lib/navigation'
 import { useTranslation } from '../../../lib/i18n'
+import OptionSelect from '../../ui/OptionSelect'
 import { modelPath } from '../../../lib/ai/modelId'
 import {
   estimateMonthlyCost,
@@ -67,20 +68,20 @@ export default function CostEstimator({ catalog }: { catalog: PublicCatalog }) {
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
       <form className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5">
-        <label className="flex flex-col gap-1">
-          <span className="text-sm text-muted-foreground">{t('ai.pricing.estimatorModel')}</span>
-          <select
+        <div className="flex flex-col gap-1">
+          <span className="text-sm text-muted-foreground" aria-hidden="true">
+            {t('ai.pricing.estimatorModel')}
+          </span>
+          <OptionSelect
+            label={t('ai.pricing.estimatorModel')}
             value={selectedId}
-            onChange={(event) => setSelectedId(event.target.value)}
-            className="h-10 rounded-full border border-border bg-background px-3 text-sm text-foreground"
-          >
-            {priced.map((candidate) => (
-              <option key={candidate.id} value={candidate.id}>
-                {candidate.name} · {candidate.id}
-              </option>
-            ))}
-          </select>
-        </label>
+            onValueChange={setSelectedId}
+            options={priced.map((candidate) => ({
+              value: candidate.id,
+              label: `${candidate.name} · ${candidate.id}`,
+            }))}
+          />
+        </div>
 
         <label className="flex flex-col gap-1">
           <span className="text-sm text-muted-foreground">{t('ai.pricing.estimatorRequests')}</span>

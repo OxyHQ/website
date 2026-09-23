@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from '../../../lib/i18n'
+import OptionSelect from '../../ui/OptionSelect'
 import { AVAILABILITY_STATES } from '../../../lib/ai/availability'
 import type { PublicCatalog } from '../../../lib/ai/catalog'
 import { EMPTY_FILTERS, hasActiveFilters, type ModelFilterState } from '../../../lib/ai/modelFilters'
@@ -179,22 +180,21 @@ function Select({
   allLabel?: string
   includeAll?: boolean
 }) {
+  // The visible caption is a plain span: the trigger is not a labelable
+  // element, so it takes the same words as its accessible name instead.
   return (
-    <label className="flex flex-col gap-1">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <select
+    <div className="flex flex-col gap-1">
+      <span className="text-sm text-muted-foreground" aria-hidden="true">
+        {label}
+      </span>
+      <OptionSelect
+        label={label}
         value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="h-10 rounded-full border border-border bg-background px-3 text-sm text-foreground"
-      >
-        {includeAll && <option value="">{allLabel}</option>}
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </label>
+        onValueChange={onChange}
+        options={includeAll ? [{ value: '', label: allLabel ?? '' }, ...options] : options}
+        className="min-w-36"
+      />
+    </div>
   )
 }
 

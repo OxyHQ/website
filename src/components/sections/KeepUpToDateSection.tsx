@@ -1,3 +1,5 @@
+import { RiFileList2Line } from '@oxy.so/bloom/icons/RiFileList2Line'
+import { RiNewspaperLine } from '@oxy.so/bloom/icons/RiNewspaperLine'
 import { keepUpToDateCards } from '../../data/content'
 import { ArrowRightIcon } from '../icons'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
@@ -24,24 +26,12 @@ function CardIcon({ type }: { type: string }) {
           />
         </svg>
       )
+    // Bloom glyphs, painted from the card's text colour at the same 70% the
+    // brand marks above use. `fill` defaults to the theme's primary otherwise.
     case 'blog':
-      return (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="size-5">
-          <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" opacity="0.7" />
-          <line x1="6" y1="7" x2="14" y2="7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
-          <line x1="6" y1="10" x2="12" y2="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
-          <line x1="6" y1="13" x2="10" y2="13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
-        </svg>
-      )
+      return <RiNewspaperLine width={20} height={20} fill="currentColor" style={{ opacity: 0.7 }} />
     case 'changelog':
-      return (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="size-5">
-          <rect x="3" y="2" width="14" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" opacity="0.7" />
-          <line x1="7" y1="6" x2="13" y2="6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
-          <line x1="7" y1="10" x2="13" y2="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
-          <line x1="7" y1="14" x2="11" y2="14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
-        </svg>
-      )
+      return <RiFileList2Line width={20} height={20} fill="currentColor" style={{ opacity: 0.7 }} />
     default:
       return null
   }

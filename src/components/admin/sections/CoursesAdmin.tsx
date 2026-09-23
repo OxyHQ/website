@@ -21,6 +21,7 @@ import { TranslationFields } from '../TranslationEditor'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
 import MediaPicker from '../MediaPicker'
+import OptionSelect from '../../ui/OptionSelect'
 
 function slugify(input: string): string {
   return input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
@@ -250,28 +251,29 @@ export default function CoursesAdmin() {
           <div className="grid grid-cols-3 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label>Category</Label>
-              <select
+              <OptionSelect
+                label="Category"
                 value={typeof editing.category === 'string' ? editing.category : ''}
-                onChange={(e) => setEditing({ ...editing, category: e.target.value || null })}
-                className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-              >
-                <option value="">Select a category</option>
-                {categories.map((c) => (
-                  <option key={c._id ?? c.slug} value={c._id ?? ''}>{c.label}</option>
-                ))}
-              </select>
+                onValueChange={(value) => setEditing({ ...editing, category: value || null })}
+                options={[
+                  { value: '', label: 'Select a category' },
+                  ...categories.map((c) => ({ value: c._id ?? '', label: c.label })),
+                ]}
+                emptyIsPlaceholder
+              />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>Level</Label>
-              <select
+              <OptionSelect
+                label="Level"
                 value={editing.level}
-                onChange={(e) => setEditing({ ...editing, level: e.target.value as CourseLevel })}
-                className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-              >
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
+                onValueChange={(value) => setEditing({ ...editing, level: value as CourseLevel })}
+                options={[
+                  { value: 'beginner', label: 'Beginner' },
+                  { value: 'intermediate', label: 'Intermediate' },
+                  { value: 'advanced', label: 'Advanced' },
+                ]}
+              />
             </div>
             <LabeledTextField
               label="Duration (minutes)"

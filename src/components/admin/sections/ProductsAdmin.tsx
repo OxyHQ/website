@@ -16,6 +16,7 @@ import { Label } from '@oxy.so/bloom/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
 import MediaPicker from '../MediaPicker'
+import OptionSelect from '../../ui/OptionSelect'
 
 function mediaId(logo: unknown): string {
   if (!logo) return ''
@@ -300,16 +301,16 @@ export default function ProductsAdmin() {
           <div className="grid grid-cols-3 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label>Category</Label>
-              <select
+              <OptionSelect
+                label="Category"
                 value={typeof editing.category === 'string' ? editing.category : ''}
-                onChange={(e) => setEditing({ ...editing, category: e.target.value || null })}
-                className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-              >
-                <option value="">Select a category</option>
-                {categories.map((c) => (
-                  <option key={c._id ?? c.slug} value={c._id ?? ''}>{c.label}</option>
-                ))}
-              </select>
+                onValueChange={(value) => setEditing({ ...editing, category: value || null })}
+                options={[
+                  { value: '', label: 'Select a category' },
+                  ...categories.map((c) => ({ value: c._id ?? '', label: c.label })),
+                ]}
+                emptyIsPlaceholder
+              />
               <p className="text-xs text-muted-foreground">
                 Manage in <Link to="/admin/categories" className="underline underline-offset-2 hover:text-foreground">Categories</Link>.
                 Drives grouping on /apps, /status, and the Ecosystem navbar dropdown.
@@ -317,14 +318,15 @@ export default function ProductsAdmin() {
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>Lifecycle</Label>
-              <select
+              <OptionSelect
+                label="Lifecycle"
                 value={editing.lifecycle}
-                onChange={(e) => setEditing({ ...editing, lifecycle: e.target.value as ProductLifecycle })}
-                className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-              >
-                <option value="live">Live (built and shipped)</option>
-                <option value="in-development">In development (new)</option>
-              </select>
+                onValueChange={(value) => setEditing({ ...editing, lifecycle: value as ProductLifecycle })}
+                options={[
+                  { value: 'live', label: 'Live (built and shipped)' },
+                  { value: 'in-development', label: 'In development (new)' },
+                ]}
+              />
             </div>
             <LabeledTextField
               label="Order"

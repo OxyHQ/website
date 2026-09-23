@@ -9,6 +9,7 @@ import PageShell from '../layout/PageShell'
 import { DocsShell } from './DocsShell'
 import { BloomLiveEditor } from './BloomLiveEditor'
 import { BloomLivePreview } from './BloomLivePreview'
+import OptionSelect from '../ui/OptionSelect'
 import { APP_COLOR_NAMES, type AppColorName } from '@oxy.so/bloom/color-presets'
 
 /** The standalone canvas owns its Bloom provider. Recipe changes never write
@@ -74,39 +75,40 @@ export default function BloomPlayground() {
             <Link className="oxy-link mr-auto" to="/developers/docs/bloom/components">
               All components
             </Link>
-            <label className="grid gap-2 text-sm">
-              Recipe
-              <select
-                aria-label="Recipe"
+            <div className="grid gap-2 text-sm">
+              <span aria-hidden="true">Recipe</span>
+              <OptionSelect
+                label="Recipe"
                 value={preset}
-                onChange={(e) => update('recipe', e.target.value)}
-              >
-                {APP_COLOR_NAMES.map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="grid gap-2 text-sm">
-              Appearance
-              <select
-                aria-label="Appearance"
+                onValueChange={(next) => update('recipe', next)}
+                options={APP_COLOR_NAMES.map((n) => ({ value: n, label: n }))}
+              />
+            </div>
+            <div className="grid gap-2 text-sm">
+              <span aria-hidden="true">Appearance</span>
+              <OptionSelect
+                label="Appearance"
                 value={mode}
-                onChange={(e) => update('mode', e.target.value)}
-              >
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-              </select>
-            </label>
-            <label className="grid gap-2 text-sm">
-              Canvas
-              <select aria-label="Canvas" value={width} onChange={(e) => setWidth(e.target.value)}>
-                <option value="full">Responsive</option>
-                <option value="390">Mobile · 390 px</option>
-                <option value="768">Tablet · 768 px</option>
-              </select>
-            </label>
+                onValueChange={(next) => update('mode', next)}
+                options={[
+                  { value: 'light', label: 'Light' },
+                  { value: 'dark', label: 'Dark' },
+                ]}
+              />
+            </div>
+            <div className="grid gap-2 text-sm">
+              <span aria-hidden="true">Canvas</span>
+              <OptionSelect
+                label="Canvas"
+                value={width}
+                onValueChange={setWidth}
+                options={[
+                  { value: 'full', label: 'Responsive' },
+                  { value: '390', label: 'Mobile · 390 px' },
+                  { value: '768', label: 'Tablet · 768 px' },
+                ]}
+              />
+            </div>
             <TextButton onPress={reset}>Reset example</TextButton>
           </div>
           <div className="bloom-workbench">
@@ -167,47 +169,49 @@ export default function BloomPlayground() {
                 </p>
               ) : (
                 <div className="space-y-5">
-                  {selected.props?.map((prop) => (
-                    <label key={prop.name} className="grid gap-2 text-sm">
-                      <span>{prop.name}</span>
-                      {prop.kind === 'select' ? (
-                        <select
-                          aria-label={prop.name}
+                  {selected.props?.map((prop) =>
+                    prop.kind === 'select' ? (
+                      // A Bloom trigger is not a labelable element, so this row
+                      // is not a <label>: the trigger carries the name itself.
+                      <div key={prop.name} className="grid gap-2 text-sm">
+                        <span aria-hidden="true">{prop.name}</span>
+                        <OptionSelect
+                          label={prop.name}
                           value={String(values[prop.name])}
-                          onChange={(e) =>
-                            setValues((v) => ({ ...v, [prop.name]: e.target.value }))
-                          }
-                        >
-                          {prop.options.map((o) => (
-                            <option key={o}>{o}</option>
-                          ))}
-                        </select>
-                      ) : prop.kind === 'boolean' ? (
-                        <input
-                          type="checkbox"
-                          checked={values[prop.name] === true}
-                          onChange={(e) =>
-                            setValues((v) => ({ ...v, [prop.name]: e.target.checked }))
-                          }
+                          onValueChange={(next) => setValues((v) => ({ ...v, [prop.name]: next }))}
+                          options={prop.options.map((o) => ({ value: o, label: o }))}
                         />
-                      ) : (
-                        <input
-                          type={prop.kind === 'number' ? 'number' : 'text'}
-                          value={String(values[prop.name] ?? '')}
-                          {...(prop.kind === 'number'
-                            ? { min: prop.min, max: prop.max, step: prop.step }
-                            : {})}
-                          onChange={(e) =>
-                            setValues((v) => ({
-                              ...v,
-                              [prop.name]:
-                                prop.kind === 'number' ? Number(e.target.value) : e.target.value,
-                            }))
-                          }
-                        />
-                      )}
-                    </label>
-                  ))}
+                      </div>
+                    ) : (
+                      <label key={prop.name} className="grid gap-2 text-sm">
+                        <span>{prop.name}</span>
+                        {prop.kind === 'boolean' ? (
+                          <input
+                            type="checkbox"
+                            checked={values[prop.name] === true}
+                            onChange={(e) =>
+                              setValues((v) => ({ ...v, [prop.name]: e.target.checked }))
+                            }
+                          />
+                        ) : (
+                          <input
+                            type={prop.kind === 'number' ? 'number' : 'text'}
+                            value={String(values[prop.name] ?? '')}
+                            {...(prop.kind === 'number'
+                              ? { min: prop.min, max: prop.max, step: prop.step }
+                              : {})}
+                            onChange={(e) =>
+                              setValues((v) => ({
+                                ...v,
+                                [prop.name]:
+                                  prop.kind === 'number' ? Number(e.target.value) : e.target.value,
+                              }))
+                            }
+                          />
+                        )}
+                      </label>
+                    ),
+                  )}
                   {!selected.props?.length && (
                     <p className="text-sm">
                       This example has no configurable properties. Try the component on the canvas

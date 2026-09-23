@@ -4,6 +4,7 @@ import { apiFetch } from '../../../api/client'
 import { BADGE_DEFINITIONS } from '../../../data/badges'
 import { Button, PrimaryButton } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
+import OptionSelect from '../../ui/OptionSelect'
 
 export default function BadgesAdmin() {
   const queryClient = useQueryClient()
@@ -85,17 +86,17 @@ export default function BadgesAdmin() {
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs text-muted-foreground">Badge</label>
-            <select
+            <span className="text-xs text-muted-foreground" aria-hidden="true">Badge</span>
+            <OptionSelect
+              label="Badge"
               value={selectedBadge}
-              onChange={e => setSelectedBadge(e.target.value)}
-              className="h-9 rounded-lg border border-border bg-background px-3 text-sm text-foreground"
-            >
-              <option value="">Select badge</option>
-              {badgeIds.map(id => (
-                <option key={id} value={id}>{BADGE_DEFINITIONS[id].name}</option>
-              ))}
-            </select>
+              onValueChange={setSelectedBadge}
+              options={[
+                { value: '', label: 'Select badge' },
+                ...badgeIds.map((id) => ({ value: id, label: BADGE_DEFINITIONS[id].name })),
+              ]}
+              emptyIsPlaceholder
+            />
           </div>
           <PrimaryButton
             onPress={() => {

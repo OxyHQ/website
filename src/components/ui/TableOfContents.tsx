@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { MdxHeading } from '../../../scripts/vite-mdx-headings'
+import OptionSelect from './OptionSelect'
 
 /* ──────────────────────────────────────────────
  * TableOfContents
@@ -75,8 +76,7 @@ export default function TableOfContents({
     return null
   }
 
-  function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>): void {
-    const id = event.target.value
+  function handleSelectChange(id: string): void {
     if (!id) return
     setActiveId(id)
     const el = document.getElementById(id)
@@ -90,22 +90,21 @@ export default function TableOfContents({
     <>
       {/* Mobile: a "Jump to" select. */}
       <div className={variant === 'list' ? 'hidden' : variant === 'select' ? 'mb-6' : 'lg:hidden mb-6'}>
-        <label htmlFor="article-toc-mobile" className="block text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">
-          On this page
-        </label>
-        <select
-          id="article-toc-mobile"
-          value={activeId ?? ''}
-          onChange={handleSelectChange}
-          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground transition-colors hover:border-input focus:border-input focus:outline-none"
+        <p
+          aria-hidden="true"
+          className="block text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2"
         >
-          {items.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.level === 3 ? '  · ' : ''}
-              {item.label}
-            </option>
-          ))}
-        </select>
+          On this page
+        </p>
+        <OptionSelect
+          label="On this page"
+          value={activeId ?? ''}
+          onValueChange={handleSelectChange}
+          options={items.map((item) => ({
+            value: item.id,
+            label: `${item.level === 3 ? '· ' : ''}${item.label}`,
+          }))}
+        />
       </div>
 
       {/* Desktop: sticky sidebar TOC. */}
