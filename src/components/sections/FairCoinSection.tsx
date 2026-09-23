@@ -6,6 +6,7 @@ import { useFairCoinStats, useNewsroomPosts } from '../../api/hooks'
 import type { FairCoinStats } from '../../api/faircoinStore'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
 import { useTranslation } from '../../lib/i18n'
+import { BrandScope } from '../../theme/BrandScope'
 
 /**
  * FairCoin on the home page: the live chain, the latest post, and the three
@@ -150,80 +151,82 @@ export default function FairCoinSection() {
   const newsCellClass = 'group flex min-h-[280px] flex-col overflow-hidden bg-surface'
 
   return (
-    <section className="faircoin-theme bg-background text-foreground">
-      <div className="container flex flex-col gap-4 pb-4 lg:pb-6">
-        <div className="grid gap-4 lg:grid-cols-4">
-          <div className="flex flex-col justify-center gap-4 bg-background py-8 lg:col-span-3 lg:py-10">
-            <img
-              src="/images/apps/faircoin.svg"
-              alt="FairCoin"
-              className="size-8 object-contain"
-              width={32}
-              height={32}
-              loading="lazy"
-              decoding="async"
-            />
-            <AnimatedTitle as="h2" className="text-heading-responsive-lg">
-              {t('home.faircoinTitle')}
-            </AnimatedTitle>
-            <p className="max-w-[540px] text-muted-foreground">
-              {t('home.faircoinDescription')}
-            </p>
-            <div className="flex flex-wrap gap-3">
-              {LINKS.map((link) => (
-                <BloomButton
-                  key={link.labelKey}
-                  asChild
-                  variant={link.solid ? 'primary' : 'outline'}
-                  size="md"
-                  style={link.solid ? FAIRCOIN_PRIMARY_BUTTON_STYLE : FAIRCOIN_OUTLINE_BUTTON_STYLE}
-                >
-                  <a href={link.href} target="_blank" rel="noopener noreferrer">
-                    {t(link.labelKey)}
-                    {link.labelKey === 'home.faircoinLearnMore' ? (
-                      <span className="sr-only">: {t('home.faircoinTitle')}</span>
-                    ) : null}
-                  </a>
-                </BloomButton>
-              ))}
+    <BrandScope className="faircoin-theme">
+      <section className="faircoin-theme bg-background text-foreground">
+        <div className="container flex flex-col gap-4 pb-4 lg:pb-6">
+          <div className="grid gap-4 lg:grid-cols-4">
+            <div className="flex flex-col justify-center gap-4 bg-background py-8 lg:col-span-3 lg:py-10">
+              <img
+                src="/images/apps/faircoin.svg"
+                alt="FairCoin"
+                className="size-8 object-contain"
+                width={32}
+                height={32}
+                loading="lazy"
+                decoding="async"
+              />
+              <AnimatedTitle as="h2" className="text-heading-responsive-lg">
+                {t('home.faircoinTitle')}
+              </AnimatedTitle>
+              <p className="max-w-[540px] text-muted-foreground">
+                {t('home.faircoinDescription')}
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {LINKS.map((link) => (
+                  <BloomButton
+                    key={link.labelKey}
+                    asChild
+                    variant={link.solid ? 'primary' : 'outline'}
+                    size="md"
+                    style={link.solid ? FAIRCOIN_PRIMARY_BUTTON_STYLE : FAIRCOIN_OUTLINE_BUTTON_STYLE}
+                  >
+                    <a href={link.href} target="_blank" rel="noopener noreferrer">
+                      {t(link.labelKey)}
+                      {link.labelKey === 'home.faircoinLearnMore' ? (
+                        <span className="sr-only">: {t('home.faircoinTitle')}</span>
+                      ) : null}
+                    </a>
+                  </BloomButton>
+                ))}
+              </div>
             </div>
+
+            {newsHref ? (
+              <Link
+                to={newsHref}
+                className={`${newsCellClass} lg:col-span-1`}
+              >
+                {newsCell}
+              </Link>
+            ) : (
+              <div className={`${newsCellClass} lg:col-span-1`}>
+                {newsCell}
+              </div>
+            )}
           </div>
 
-          {newsHref ? (
-            <Link
-              to={newsHref}
-              className={`${newsCellClass} lg:col-span-1`}
-            >
-              {newsCell}
-            </Link>
-          ) : (
-            <div className={`${newsCellClass} lg:col-span-1`}>
-              {newsCell}
-            </div>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {STAT_META.map((stat, i) => (
-            <button
-              type="button"
-              key={stat.key}
-              className="flex cursor-pointer select-none items-center gap-3 rounded-full bg-surface px-4 py-4 text-left transition-colors hover:bg-foreground/5 lg:px-5 lg:py-5"
-              onClick={() => setRuns((r) => r.map((v, j) => (j === i ? v + 1 : v)))}
-            >
-              <stat.Icon size={20} className="shrink-0 text-primary" weight="bold" />
-              <span className="min-w-0">
-                <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  {t(stat.labelKey)}
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {STAT_META.map((stat, i) => (
+              <button
+                type="button"
+                key={stat.key}
+                className="flex cursor-pointer select-none items-center gap-3 rounded-full bg-surface px-4 py-4 text-left transition-colors hover:bg-foreground/5 lg:px-5 lg:py-5"
+                onClick={() => setRuns((r) => r.map((v, j) => (j === i ? v + 1 : v)))}
+              >
+                <stat.Icon size={20} className="shrink-0 text-primary" weight="bold" />
+                <span className="min-w-0">
+                  <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    {t(stat.labelKey)}
+                  </span>
+                  <span className="block text-3xl font-bold leading-tight lg:text-3xl">
+                    <AnimatedStat key={`${runs[i]}-${values[stat.key]}`} end={values[stat.key]} decimals={stat.decimals} />
+                  </span>
                 </span>
-                <span className="block text-3xl font-bold leading-tight lg:text-3xl">
-                  <AnimatedStat key={`${runs[i]}-${values[stat.key]}`} end={values[stat.key]} decimals={stat.decimals} />
-                </span>
-              </span>
-            </button>
-          ))}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </BrandScope>
   )
 }

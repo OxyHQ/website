@@ -14,6 +14,7 @@ import {
 } from '../lib/faircoin-chrome'
 import MemoryBoard from '../components/notfound/MemoryBoard'
 import FaqSection, { type FaqEntry } from '../components/sections/FaqSection'
+import { BrandScope } from '../theme/BrandScope'
 
 /** Where to go from a page that is not there. */
 const OXY_HELP: readonly FaqEntry[] = [
@@ -110,41 +111,43 @@ export default function NotFoundPage() {
   const footerCopyright = useFairCoinFooterCopyright()
 
   return (
-    <div className={`not-found-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background ${onFairCoinHost ? 'faircoin-theme' : ''}`}>
-      <SEO
-        title="Page Not Found"
-        description="The page you're looking for doesn't exist."
-        canonicalPath="/404"
-        noIndex
-      />
-      <Navbar
-        brand={navbarBrand}
-        customDropdowns={dropdowns}
-        customNavLinks={simpleNavLinks}
-        ctaButtons={ctaButtons}
-        hideAuth={onFairCoinHost}
-        hideBanner={onFairCoinHost}
-        hideLocalePicker={onFairCoinHost}
-      />
-      <main className="flex-1">
-        <MemoryBoard />
+    <BrandScope className={`not-found-theme ${onFairCoinHost ? 'faircoin-theme' : ''}`}>
+      <div className={`not-found-theme flex min-h-screen max-w-screen flex-col overflow-x-clip bg-background ${onFairCoinHost ? 'faircoin-theme' : ''}`}>
+        <SEO
+          title="Page Not Found"
+          description="The page you're looking for doesn't exist."
+          canonicalPath="/404"
+          noIndex
+        />
+        <Navbar
+          brand={navbarBrand}
+          customDropdowns={dropdowns}
+          customNavLinks={simpleNavLinks}
+          ctaButtons={ctaButtons}
+          hideAuth={onFairCoinHost}
+          hideBanner={onFairCoinHost}
+          hideLocalePicker={onFairCoinHost}
+        />
+        <main className="flex-1">
+          <MemoryBoard />
 
-        {/* The board, then the way out. Nothing in between. */}
-        <h1 className="sr-only">Page not found</h1>
+          {/* The board, then the way out. Nothing in between. */}
+          <h1 className="sr-only">Page not found</h1>
 
-        {/*
-          The same disclosure band the home page's questions use, so a visitor
-          who lands here wrong finds the way out in a shape they have seen.
-        */}
-        <FaqSection title="Find help" items={onFairCoinHost ? FAIRCOIN_HELP : OXY_HELP} />
-      </main>
-      <Footer
-        brand={footerBrand}
-        columns={footerColumns}
-        socialLinks={onFairCoinHost ? [] : undefined}
-        legalLinks={footerLegalLinks}
-        copyright={footerCopyright}
-      />
-    </div>
+          {/*
+            The same disclosure band the home page's questions use, so a visitor
+            who lands here wrong finds the way out in a shape they have seen.
+          */}
+          <FaqSection title="Find help" items={onFairCoinHost ? FAIRCOIN_HELP : OXY_HELP} />
+        </main>
+        <Footer
+          brand={footerBrand}
+          columns={footerColumns}
+          socialLinks={onFairCoinHost ? [] : undefined}
+          legalLinks={footerLegalLinks}
+          copyright={footerCopyright}
+        />
+      </div>
+    </BrandScope>
   )
 }

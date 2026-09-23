@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { BrandScope } from '../../theme/BrandScope'
 
 /* ──────────────────────────────────────────────
  * PageSection
@@ -79,8 +80,10 @@ export default function PageSection({
     .join(' ')
 
   return (
-    <section className={outerClasses || undefined} id={id}>
-      <div className={innerClasses}>{children}</div>
-    </section>
+    <BrandScope className={className}>
+      <section className={outerClasses || undefined} id={id}>
+        <div className={innerClasses}>{children}</div>
+      </section>
+    </BrandScope>
   )
 }

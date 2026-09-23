@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@oxy.so/bloom/accordion'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
+import { BrandScope } from '../../theme/BrandScope'
 
 /**
  * A question-and-answer band: the heading holds its own column on the left, the
@@ -112,38 +113,40 @@ export default function FaqSection({
   const [openId, setOpenId] = useState<FaqOpenValue>(undefined)
 
   return (
-    <section className={`w-full ${className}`}>
-      <div className="container">
-        <div className="grid w-full gap-6 py-8 md:gap-8 md:py-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-12">
-          <div className="min-w-0 self-start lg:pt-2 lg:sticky lg:top-[40vh]">
-            <AnimatedTitle as={as} className="text-heading-responsive-lg !text-[3rem] !leading-[3.25rem] font-medium text-tertiary [&>p]:font-medium">
-              {title}
-            </AnimatedTitle>
-            {description && (
-              <div className="mt-5 max-w-lg text-base leading-7 text-foreground/75 md:text-lg">
-                {description}
-              </div>
-            )}
-          </div>
-
-          <div className="min-w-0 space-y-8">
-            {groups.map((group, groupIndex) => (
-              <div key={group.title ?? `faq-group-${groupIndex}`}>
-                {group.title && <h3 className="mb-3 px-1 text-base font-medium leading-6 tracking-normal text-foreground">{group.title}</h3>}
-                <div className="overflow-hidden rounded-[2rem] bg-[color-mix(in_srgb,var(--background)_84%,var(--primary))]">
-                  <FaqList
-                    items={group.items}
-                    idPrefix={`faq-${groupIndex}`}
-                    value={openId}
-                    onValueChange={setOpenId}
-                    itemStyle={FAQ_ROW_STYLE}
-                  />
+    <BrandScope className={className}>
+      <section className={`w-full ${className}`}>
+        <div className="container">
+          <div className="grid w-full gap-6 py-8 md:gap-8 md:py-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-12">
+            <div className="min-w-0 self-start lg:pt-2 lg:sticky lg:top-[40vh]">
+              <AnimatedTitle as={as} className="text-heading-responsive-lg !text-[3rem] !leading-[3.25rem] font-medium text-tertiary [&>p]:font-medium">
+                {title}
+              </AnimatedTitle>
+              {description && (
+                <div className="mt-5 max-w-lg text-base leading-7 text-foreground/75 md:text-lg">
+                  {description}
                 </div>
-              </div>
-            ))}
+              )}
+            </div>
+
+            <div className="min-w-0 space-y-8">
+              {groups.map((group, groupIndex) => (
+                <div key={group.title ?? `faq-group-${groupIndex}`}>
+                  {group.title && <h3 className="mb-3 px-1 text-base font-medium leading-6 tracking-normal text-foreground">{group.title}</h3>}
+                  <div className="overflow-hidden rounded-[2rem] bg-[color-mix(in_srgb,var(--background)_84%,var(--primary))]">
+                    <FaqList
+                      items={group.items}
+                      idPrefix={`faq-${groupIndex}`}
+                      value={openId}
+                      onValueChange={setOpenId}
+                      itemStyle={FAQ_ROW_STYLE}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </BrandScope>
   )
 }

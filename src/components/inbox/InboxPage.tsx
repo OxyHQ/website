@@ -12,6 +12,7 @@ import { PrimaryButton, TextButton } from '@oxy.so/bloom/button'
 import { Link } from '../../lib/navigation'
 import PageSection from '../layout/PageSection'
 import FaqSection from '../sections/FaqSection'
+import { BrandScope } from '../../theme/BrandScope'
 
 const messages = [
   {
@@ -223,40 +224,42 @@ export default function InboxPageContent() {
           </div>
         </div>
       </PageSection>
-      <div id="inbox-story" className="oxy-anchor inbox-theme bg-surface text-foreground">
-        <div className="container grid gap-12 py-20 lg:grid-cols-[.8fr_1.2fr]">
-          <div className="self-start lg:sticky lg:top-36">
-            <p className="oxy-eyebrow mb-6">A day in your inbox</p>
-            <h2 className="oxy-title">
-              Less searching.
-              <br />
-              More conversation.
-            </h2>
-            <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">
-              A familiar place for your email, built as part of Oxy.
-            </p>
-          </div>
-          <div>
-            {scenes.map((scene, index) => (
-              <section
-                key={scene.title}
-                className="oxy-reveal flex min-h-[55svh] flex-col justify-center border-t border-border py-16"
-              >
-                <div className="mb-8 flex items-center justify-between">
-                  <span className="font-mono text-sm">0{index + 1}</span>
-                  <scene.icon size={40} weight="regular" className="text-primary" />
-                </div>
-                <h3 className="font-display text-[clamp(2rem,4vw,4rem)] leading-tight tracking-tight">
-                  {scene.title}
-                </h3>
-                <p className="mt-6 max-w-xl text-xl leading-relaxed text-muted-foreground">
-                  {scene.text}
-                </p>
-              </section>
-            ))}
+      <BrandScope className="inbox-theme">
+        <div id="inbox-story" className="oxy-anchor inbox-theme bg-surface text-foreground">
+          <div className="container grid gap-12 py-20 lg:grid-cols-[.8fr_1.2fr]">
+            <div className="self-start lg:sticky lg:top-36">
+              <p className="oxy-eyebrow mb-6">A day in your inbox</p>
+              <h2 className="oxy-title">
+                Less searching.
+                <br />
+                More conversation.
+              </h2>
+              <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">
+                A familiar place for your email, built as part of Oxy.
+              </p>
+            </div>
+            <div>
+              {scenes.map((scene, index) => (
+                <section
+                  key={scene.title}
+                  className="oxy-reveal flex min-h-[55svh] flex-col justify-center border-t border-border py-16"
+                >
+                  <div className="mb-8 flex items-center justify-between">
+                    <span className="font-mono text-sm">0{index + 1}</span>
+                    <scene.icon size={40} weight="regular" className="text-primary" />
+                  </div>
+                  <h3 className="font-display text-[clamp(2rem,4vw,4rem)] leading-tight tracking-tight">
+                    {scene.title}
+                  </h3>
+                  <p className="mt-6 max-w-xl text-xl leading-relaxed text-muted-foreground">
+                    {scene.text}
+                  </p>
+                </section>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </BrandScope>
       <PageSection spacing="lg">
         <p className="oxy-eyebrow mb-6">Part of Oxy</p>
         <h2 className="oxy-title max-w-4xl">

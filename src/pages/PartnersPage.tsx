@@ -7,25 +7,28 @@ import PartnerPillarsSection from '../components/partners/PartnerPillarsSection'
 import BecomeAPartnerSection from '../components/partners/BecomeAPartnerSection'
 import PartnerFaqSection from '../components/partners/PartnerFaqSection'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
+import { BrandScope } from '../theme/BrandScope'
 
 export default function PartnersPage() {
   return (
-    <div className="partners-theme flex min-h-screen max-w-screen flex-col justify-between overflow-x-clip bg-background text-foreground">
-      <SEO
-        title="Partners"
-        description="Build with Oxy: education, community and ecosystem programs, with fair revenue splits and no exclusivity traps."
-        canonicalPath="/partners"
-      />
-      <Navbar />
-      <main className="overflow-hidden">
-        <PartnersHeroSection />
-        <PartnerProgramsGrid />
-        <PartnerPillarsSection />
-        <BecomeAPartnerSection />
-        <KeepUpToDateSection compact />
-        <PartnerFaqSection />
-      </main>
-      <Footer />
-    </div>
+    <BrandScope className="partners-theme">
+      <div className="partners-theme flex min-h-screen max-w-screen flex-col justify-between overflow-x-clip bg-background text-foreground">
+        <SEO
+          title="Partners"
+          description="Build with Oxy: education, community and ecosystem programs, with fair revenue splits and no exclusivity traps."
+          canonicalPath="/partners"
+        />
+        <Navbar />
+        <main className="overflow-hidden">
+          <PartnersHeroSection />
+          <PartnerProgramsGrid />
+          <PartnerPillarsSection />
+          <BecomeAPartnerSection />
+          <KeepUpToDateSection compact />
+          <PartnerFaqSection />
+        </main>
+        <Footer />
+      </div>
+    </BrandScope>
   )
 }

@@ -25,6 +25,7 @@ import { AlertDialog } from '@oxy.so/bloom/alert-dialog'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 import { APP_CARD_IMAGES } from '../data/appCardImages'
 import { useTranslation } from '../lib/i18n'
+import { BrandScope } from '../theme/BrandScope'
 
 /**
  * Pulls a heading, subheading or content string out of a Page document's
@@ -171,60 +172,62 @@ function BuildForEveryoneSection() {
     : t('home.allInOneBody')
 
   return (
-    <section
-      id="build-for-everyone"
-      className="build-theme scroll-mt-[var(--site-header-height)] bg-[color-mix(in_srgb,var(--primary)_10%,var(--background))]"
-    >
-      <div className="container">
-        <motion.div
-          className="grid grid-cols-1 items-start gap-8 py-10 min-[951px]:grid-cols-2 min-[951px]:gap-12 min-[951px]:py-14"
-          {...REVEAL}
-        >
-            {/* Left — heading + body */}
-            <div>
-              <h2 className="text-heading-responsive-lg text-primary-text">
-                {headingLine1}
-                {headingLine2 && (
-                  <>
-                    <br />
-                    {headingLine2}
-                  </>
-                )}
-              </h2>
-              <p className="mt-4 max-w-[460px] text-foreground/70">{body}</p>
-            </div>
+    <BrandScope className="build-theme">
+      <section
+        id="build-for-everyone"
+        className="build-theme scroll-mt-[var(--site-header-height)] bg-[color-mix(in_srgb,var(--primary)_10%,var(--background))]"
+      >
+        <div className="container">
+          <motion.div
+            className="grid grid-cols-1 items-start gap-8 py-10 min-[951px]:grid-cols-2 min-[951px]:gap-12 min-[951px]:py-14"
+            {...REVEAL}
+          >
+              {/* Left — heading + body */}
+              <div>
+                <h2 className="text-heading-responsive-lg text-primary-text">
+                  {headingLine1}
+                  {headingLine2 && (
+                    <>
+                      <br />
+                      {headingLine2}
+                    </>
+                  )}
+                </h2>
+                <p className="mt-4 max-w-[460px] text-foreground/70">{body}</p>
+              </div>
 
-            {/* Right — resource links */}
-            <ul className="flex flex-col gap-2">
-              {BUILD_FOR_EVERYONE_LINKS.map((link, index) => {
-                const rowClass = `group flex items-center justify-between gap-4 rounded-full px-5 py-3 font-display text-xl font-[450] transition-[filter,transform] duration-200 hover:-translate-y-0.5 hover:brightness-110 ${BUILD_FOR_EVERYONE_LINK_CLASSES[index]}`
-                const arrow = (
-                  <ArrowUpRight
-                    weight="regular"
-                    className="shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    aria-hidden
-                  />
-                )
-                return (
-                  <li key={link.key}>
-                    {link.external ? (
-                      <a href={link.href} target="_blank" rel="noreferrer" className={rowClass}>
-                        <span>{t(link.key)}</span>
-                        {arrow}
-                      </a>
-                    ) : (
-                      <Link to={link.href} className={rowClass}>
-                        <span>{t(link.key)}</span>
-                        {arrow}
-                      </Link>
-                    )}
-                  </li>
-                )
-              })}
-            </ul>
-        </motion.div>
-      </div>
-    </section>
+              {/* Right — resource links */}
+              <ul className="flex flex-col gap-2">
+                {BUILD_FOR_EVERYONE_LINKS.map((link, index) => {
+                  const rowClass = `group flex items-center justify-between gap-4 rounded-full px-5 py-3 font-display text-xl font-[450] transition-[filter,transform] duration-200 hover:-translate-y-0.5 hover:brightness-110 ${BUILD_FOR_EVERYONE_LINK_CLASSES[index]}`
+                  const arrow = (
+                    <ArrowUpRight
+                      weight="regular"
+                      className="shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      aria-hidden
+                    />
+                  )
+                  return (
+                    <li key={link.key}>
+                      {link.external ? (
+                        <a href={link.href} target="_blank" rel="noreferrer" className={rowClass}>
+                          <span>{t(link.key)}</span>
+                          {arrow}
+                        </a>
+                      ) : (
+                        <Link to={link.href} className={rowClass}>
+                          <span>{t(link.key)}</span>
+                          {arrow}
+                        </Link>
+                      )}
+                    </li>
+                  )
+                })}
+              </ul>
+          </motion.div>
+        </div>
+      </section>
+    </BrandScope>
   )
 }
 
@@ -531,51 +534,53 @@ function PartnershipSection() {
   }, [])
 
   return (
-    <section ref={ref} className="partnership-theme relative isolate min-h-[560px] overflow-hidden text-foreground md:min-h-[680px]">
-      <motion.img
-        ref={backgroundRef}
-        src="/images/landing/spacex-launch.jpg"
-        alt=""
-        aria-hidden="true"
-        style={{ y: backgroundY }}
-        className="absolute left-0 top-0 z-0 h-auto min-h-full w-full object-cover object-[50%_0%] will-change-transform"
-        width={1440}
-        height={900}
-        loading="lazy"
-        decoding="async"
-      />
-      <div className="absolute inset-0 z-0 bg-background/55" />
+    <BrandScope className="partnership-theme">
+      <section ref={ref} className="partnership-theme relative isolate min-h-[560px] overflow-hidden text-foreground md:min-h-[680px]">
+        <motion.img
+          ref={backgroundRef}
+          src="/images/landing/spacex-launch.jpg"
+          alt=""
+          aria-hidden="true"
+          style={{ y: backgroundY }}
+          className="absolute left-0 top-0 z-0 h-auto min-h-full w-full object-cover object-[50%_0%] will-change-transform"
+          width={1440}
+          height={900}
+          loading="lazy"
+          decoding="async"
+        />
+        <div className="absolute inset-0 z-0 bg-background/55" />
 
-      <div className="container relative z-10">
-        <div className="grid items-start gap-6 py-7 min-[951px]:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] min-[951px]:gap-10 min-[951px]:py-8">
-          <div>
-            <AnimatedTitle static as="h2" className="text-heading-responsive-lg mb-4 font-[550] lg:text-[3.25rem] lg:leading-[1.08]">{t('home.partnershipTitle')}</AnimatedTitle>
-            <p className="max-w-[500px] text-foreground/80">
-              {t('home.partnershipDescription')}
-            </p>
-          </div>
+        <div className="container relative z-10">
+          <div className="grid items-start gap-6 py-7 min-[951px]:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] min-[951px]:gap-10 min-[951px]:py-8">
+            <div>
+              <AnimatedTitle static as="h2" className="text-heading-responsive-lg mb-4 font-[550] lg:text-[3.25rem] lg:leading-[1.08]">{t('home.partnershipTitle')}</AnimatedTitle>
+              <p className="max-w-[500px] text-foreground/80">
+                {t('home.partnershipDescription')}
+              </p>
+            </div>
 
-          <div className="grid grid-cols-2 items-center gap-x-6 gap-y-1.5 max-[650px]:grid-cols-1">
-            {PARTNERSHIP_ITEMS.map(({ key, Icon }) => (
-              <div
-                key={key}
-                className="flex min-h-7 items-center gap-2 px-1 py-0.5 text-sm font-medium leading-snug text-foreground/90"
+            <div className="grid grid-cols-2 items-center gap-x-6 gap-y-1.5 max-[650px]:grid-cols-1">
+              {PARTNERSHIP_ITEMS.map(({ key, Icon }) => (
+                <div
+                  key={key}
+                  className="flex min-h-7 items-center gap-2 px-1 py-0.5 text-sm font-medium leading-snug text-foreground/90"
+                >
+                  <Icon size={18} weight="regular" className="text-current" aria-hidden="true" />
+                  <span>{t(key)}</span>
+                </div>
+              ))}
+              <a
+                href="/sustain/"
+                className="flex min-h-8 items-center gap-2 px-1 py-0.5 text-base font-semibold text-tertiary transition-colors duration-200 hover:text-tertiary/80 md:text-lg"
               >
-                <Icon size={18} weight="regular" className="text-current" aria-hidden="true" />
-                <span>{t(key)}</span>
-              </div>
-            ))}
-            <a
-              href="/sustain/"
-              className="flex min-h-8 items-center gap-2 px-1 py-0.5 text-base font-semibold text-tertiary transition-colors duration-200 hover:text-tertiary/80 md:text-lg"
-            >
-              {t('home.partnershipCta')}
-              <ArrowUpRight size={18} weight="regular" aria-hidden="true" />
-            </a>
+                {t('home.partnershipCta')}
+                <ArrowUpRight size={18} weight="regular" aria-hidden="true" />
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </BrandScope>
   )
 }
 
