@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ExternalLink } from 'lucide-react'
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@oxy.so/bloom/accordion'
 import FeatureRow from './FeatureRow'
 import { ORG_ROADMAP_PROJECT_URL, ROADMAP_GROUPS } from './roadmapGroups'
@@ -116,7 +116,7 @@ export default function RoadmapView({ items, statusCounts, isPending, truncated 
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           Engineering detail: every issue across both orgs, on the Oxy Roadmap project
-          <ExternalLink className="h-3.5 w-3.5" />
+          <RiExternalLinkLine width={14} height={14} fill="currentColor" />
         </a>
       </div>
     </div>

@@ -2,7 +2,8 @@ import { useRef, useState } from 'react'
 import { Link } from '../../lib/navigation'
 import { Dialog } from '@oxy.so/bloom/dialog'
 import { useAuth } from '@oxy.so/services/ui/client'
-import { ChevronUp, ExternalLink } from 'lucide-react'
+import { RiArrowUpSLine } from '@oxy.so/bloom/icons/RiArrowUpSLine'
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
 import Button from '../ui/Button'
 import OptionSelect from '../ui/OptionSelect'
 import FeatureStatusBadge from './FeatureStatusBadge'
@@ -113,7 +114,7 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground hover:underline"
               >
                 View it on GitHub
-                <ExternalLink className="h-3.5 w-3.5" />
+                <RiExternalLinkLine width={14} height={14} fill="currentColor" />
               </a>
               <Button variant="outline" size="sm" onClick={handleClose}>Done</Button>
             </div>
@@ -289,7 +290,7 @@ function SimilarMatch({ match }: { match: FeatureRequestData }) {
             : 'border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground'
         }`}
       >
-        <ChevronUp className="h-4 w-4" />
+        <RiArrowUpSLine width={16} height={16} fill="currentColor" />
         <span className="text-body-xs font-semibold">{match.totalVotes}</span>
       </button>
 

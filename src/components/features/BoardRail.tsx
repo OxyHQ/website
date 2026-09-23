@@ -1,5 +1,5 @@
 import { Link } from '../../lib/navigation'
-import { ExternalLink } from 'lucide-react'
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
 import FeatureSearch from './FeatureSearch'
 import { ORG_ROADMAP_PROJECT_URL, ROADMAP_GROUPS } from './roadmapGroups'
 
@@ -74,7 +74,7 @@ export default function BoardRail({ query, onQueryChange, statusCounts, onOpenRo
           className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-opacity hover:opacity-70"
         >
           Engineering detail on GitHub
-          <ExternalLink className="h-3.5 w-3.5" />
+          <RiExternalLinkLine width={14} height={14} fill="currentColor" />
         </a>
       </section>
 
