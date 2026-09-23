@@ -130,11 +130,11 @@ export default function OptionSelect({
           // A native select closes on Tab and focus carries on from it.
           event.preventDefault()
           trigger()?.click()
-          trigger()?.focus()
+          trigger()?.focus({ preventScroll: true })
           return
         case 'Escape':
           // Bloom closes the list; focus would otherwise fall to <body>.
-          requestAnimationFrame(() => trigger()?.focus())
+          requestAnimationFrame(() => trigger()?.focus({ preventScroll: true }))
           return
       }
     }
@@ -179,7 +179,7 @@ export default function OptionSelect({
           onValueChange(fromBloom(next))
           // Like a native select, focus stays on the control once a choice is
           // made instead of falling to <body> with the closed list.
-          requestAnimationFrame(() => trigger()?.focus())
+          requestAnimationFrame(() => trigger()?.focus({ preventScroll: true }))
         }}
         size={size}
         disabled={disabled}
