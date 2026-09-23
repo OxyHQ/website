@@ -1,13 +1,20 @@
-import { useBloomTheme } from '@oxy.so/bloom/theme'
+import { useBloomTheme, useTheme } from '@oxy.so/bloom/theme'
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+  SegmentedControlItemText,
+} from '@oxy.so/bloom/segmented-control'
 import { getPresetVars } from '@oxy.so/bloom/design-tokens'
 import { type ColorPresetRecipe } from '@oxy.so/bloom/color-presets'
 import { type AppColorName } from '../../theme'
 import { PUBLIC_COLOR_PRESET_GROUPS } from '../../theme/preset-catalog'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
+import { BloomSelectionKeys } from '../ui/BloomSelectionKeys'
 
 export default function SettingsAppearance() {
-  const { mode: currentMode, colorPreset: currentPreset, setMode, setColorPreset } = useBloomTheme()
-  const previewMode = currentMode === 'dark' ? 'dark' : 'light'
+  const { colorPreset: currentPreset, setMode, setColorPreset } = useBloomTheme()
+  // The mode on screen: a `system` mode still resolves to one of the two.
+  const previewMode = useTheme().isDark ? 'dark' : 'light'
 
   return (
     <div className="container py-16 lg:py-24">
@@ -25,24 +32,29 @@ export default function SettingsAppearance() {
             Choose your preferred theme mode and accent color.
           </p>
 
-          {/* Mode toggle */}
+          {/* Mode toggle: the choice is Bloom's segmented control; the two
+              thumbnails under it show the current accent in each mode. */}
           <div className="mt-8">
             <h3 className="text-sm font-medium text-foreground">Theme</h3>
-            <div className="mt-3 flex gap-3">
-              <ModeCard
-                label="Light"
-                active={currentMode === 'light'}
-                onClick={() => setMode('light')}
-              >
-                <ThemePreview preset={currentPreset} mode="light" />
-              </ModeCard>
-              <ModeCard
-                label="Dark"
-                active={currentMode === 'dark'}
-                onClick={() => setMode('dark')}
-              >
-                <ThemePreview preset={currentPreset} mode="dark" />
-              </ModeCard>
+            <BloomSelectionKeys item="radio" className="mt-3 flex">
+              <SegmentedControl label="Theme" type="radio" value={previewMode} onValueChange={setMode}>
+                <SegmentedControlItem value="light">
+                  <SegmentedControlItemText>Light</SegmentedControlItemText>
+                </SegmentedControlItem>
+                <SegmentedControlItem value="dark">
+                  <SegmentedControlItemText>Dark</SegmentedControlItemText>
+                </SegmentedControlItem>
+              </SegmentedControl>
+            </BloomSelectionKeys>
+            <div className="mt-4 flex gap-3" aria-hidden="true">
+              {(['light', 'dark'] as const).map((mode) => (
+                <div
+                  key={mode}
+                  className="aspect-[4/3] w-full max-w-[200px] overflow-hidden rounded-xl border border-border"
+                >
+                  <ThemePreview preset={currentPreset} mode={mode} />
+                </div>
+              ))}
             </div>
           </div>
 
@@ -116,53 +128,6 @@ function PresetChoice({
           {recipe.pairing === 'curated' ? 'Curated pairing' : 'Dynamic pairing'}
         </span>
       </span>
-    </button>
-  )
-}
-
-/* ── Mode card ── */
-
-function ModeCard({
-  label,
-  active,
-  onClick,
-  children,
-}: {
-  label: string
-  active: boolean
-  onClick: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex w-full max-w-[200px] cursor-pointer flex-col overflow-hidden rounded-xl border-2 transition-all duration-200 ${
-        active
-          ? 'border-primary shadow-[0_0_0_1px_var(--primary)]'
-          : 'border-border hover:border-muted-foreground'
-      }`}
-    >
-      <div className="aspect-[4/3] w-full overflow-hidden">{children}</div>
-      <div
-        className={`flex w-full items-center justify-center gap-2 border-t px-3 py-2.5 text-sm font-medium transition-colors ${
-          active
-            ? 'border-primary/20 bg-primary/5 text-primary'
-            : 'border-border bg-background text-foreground'
-        }`}
-      >
-        {active && (
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path
-              d="M2.5 7l3 3 6-6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
-        {label}
-      </div>
     </button>
   )
 }

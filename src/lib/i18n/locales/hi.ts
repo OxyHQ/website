@@ -83,7 +83,7 @@ const hi: Translations = {
     ...en.newsroom,
     recentNewsHeading: 'हाल की खबरें',
   },
-  dashboard: { ...en.dashboard,
+  dashboard: { ...en.dashboard, mapView: 'मानचित्र दृश्य', mapFlat: 'समतल मानचित्र', mapGlobe: 'ग्लोब',
     traffic: {"identity": "पहचान", "ai": "एआई", "communication": "संदेश", "media": "मीडिया", "platform": "प्लैटफ़ॉर्म", "internal": "आंतरिक", "external": "बाहरी", "inbound": "आवक", "outbound": "जावक"}, totalUsers: 'कुल उपयोगकर्ता', infrastructureActivity: 'लाइव इन्फ्रास्ट्रक्चर गतिविधि', waitingActivity: 'अनाम गतिविधि की प्रतीक्षा…', activeRegions: 'सक्रिय क्षेत्र', networkOrigins: 'लाइव नेटवर्क स्रोत', contentPerUser: 'कंटेंट / उपयोगकर्ता', itemsPerUser: 'आइटम / उपयोगकर्ता', activeSessions: 'सक्रिय सत्र', developerApps: 'डेवलपर ऐप्स', storedFiles: 'संग्रहीत फ़ाइलें', files: 'फ़ाइलें', messages: 'संदेश', notifications: 'सूचनाएँ', transactions: 'लेन-देन', noneYet: 'अभी कोई नहीं', aiModels: 'AI मॉडल', connections: 'कनेक्शन', platformActivity: 'प्लेटफ़ॉर्म गतिविधि', metricDetail: '{metric} की गणना वास्तविक डेटा से होती है और यह अपने आप अपडेट होता है।' },
   ai: {
     ...en.ai,

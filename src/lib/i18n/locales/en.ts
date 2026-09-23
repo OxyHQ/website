@@ -859,7 +859,7 @@ const en = {
   dashboard: {
     traffic: {"identity": "Identity", "ai": "AI", "communication": "Messages", "media": "Media", "platform": "Platform", "internal": "Internal", "external": "External", "inbound": "Inbound", "outbound": "Outbound"},
     seoDescription: 'Live platform dashboard with anonymous activity and infrastructure status across Oxy regions.',
-    flatMap: 'Show flat map', globe: 'Show globe', enterFullscreen: 'Enter fullscreen', exitFullscreen: 'Exit fullscreen',
+    mapView: 'Map view', mapFlat: 'Flat map', mapGlobe: 'Globe', enterFullscreen: 'Enter fullscreen', exitFullscreen: 'Exit fullscreen',
     totalUsers: 'Total Users', infrastructureActivity: 'Live Infrastructure Activity', waitingActivity: 'Waiting for anonymous activity…', activeRegions: 'Active Regions',
     networkOrigins: 'Live Network Origins', waitingOrigins: 'Waiting for live origins…',
     showDetails: 'Show details for', hideDetails: 'Hide details for', metricDetail: '{metric} is calculated from real platform data and updates automatically in real time.', liveRefresh: 'Live · refreshes automatically',

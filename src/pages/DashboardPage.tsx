@@ -2,6 +2,12 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useSearchParams } from "react-router-dom";
 import { dashboardPresentation } from "../lib/dashboardPresentation";
 import { Maximize2, Minimize2 } from "lucide-react";
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+  SegmentedControlItemText,
+} from "@oxy.so/bloom/segmented-control";
+import { BloomSelectionKeys } from "../components/ui/BloomSelectionKeys";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import SEO from "../components/SEO";
@@ -125,15 +131,22 @@ export default function DashboardPage() {
               </div>
             )}
             {!hideControls && <div className="flex items-center gap-2">
-              <button
-                type="button"
-                aria-label={isGlobe ? t('dashboard.flatMap') : t('dashboard.globe')}
-                aria-pressed={!isGlobe}
-                onClick={() => setIsGlobe((current) => !current)}
-                className="min-w-12 cursor-pointer rounded-full border border-border bg-surface px-3 py-2 font-mono text-xs text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring"
-              >
-                {isGlobe ? "2D" : "3D"}
-              </button>
+              <BloomSelectionKeys item="radio">
+                <SegmentedControl
+                  label={t('dashboard.mapView')}
+                  type="radio"
+                  size="sm"
+                  value={isGlobe ? "globe" : "flat"}
+                  onValueChange={(next) => setIsGlobe(next === "globe")}
+                >
+                  <SegmentedControlItem value="flat" accessibilityLabel={t('dashboard.mapFlat')}>
+                    <SegmentedControlItemText>2D</SegmentedControlItemText>
+                  </SegmentedControlItem>
+                  <SegmentedControlItem value="globe" accessibilityLabel={t('dashboard.mapGlobe')}>
+                    <SegmentedControlItemText>3D</SegmentedControlItemText>
+                  </SegmentedControlItem>
+                </SegmentedControl>
+              </BloomSelectionKeys>
               <button
                 type="button"
                 onClick={toggleFullscreen}
