@@ -11,8 +11,8 @@ export const props: BloomSurfaceProps = {
     },
   },
   components: [
-    { name: 'Portal', propsType: 'PropsWithChildren<object>' },
     { name: 'PortalProvider', propsType: 'PropsWithChildren<object>' },
     { name: 'PortalOutlet' },
+    { name: 'Portal', propsType: 'PropsWithChildren<object>' },
   ],
 }
