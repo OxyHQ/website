@@ -1,5 +1,8 @@
 import type { ReactNode } from 'react'
-import { Smiley, MagnifyingGlass, GlobeHemisphereWest, Lock } from '@phosphor-icons/react'
+import { RiEmotionHappyLine } from '@oxy.so/bloom/icons/RiEmotionHappyLine'
+import { RiSearchFill } from '@oxy.so/bloom/icons/RiSearchFill'
+import { RiEarthLine } from '@oxy.so/bloom/icons/RiEarthLine'
+import { RiLockLine } from '@oxy.so/bloom/icons/RiLockLine'
 
 interface Feature {
   title: string
@@ -14,14 +17,22 @@ const FEATURES: readonly Feature[] = [
   {
     title: 'Meet Sindi',
     description: 'AI assistant gives step-by-step legal guidance, explains tenant rights, and automates defense letters.',
-    icon: <Smiley weight="bold" className="h-1/3 w-1/3 text-white" />,
+    icon: (
+      <span aria-hidden="true" className="inline-flex h-1/3 w-1/3 text-white [&_svg]:size-full">
+        <RiEmotionHappyLine width={24} height={24} fill="currentColor" />
+      </span>
+    ),
     from: '#3b2bd6',
     to: '#ff79b0',
   },
   {
     title: 'Advanced property search',
     description: 'Find properties using a smart map, detailed filters, and search by community standards and ethical pricing.',
-    icon: <MagnifyingGlass weight="bold" className="h-1/3 w-1/3 text-white" />,
+    icon: (
+      <span aria-hidden="true" className="inline-flex h-1/3 w-1/3 text-white [&_svg]:size-full">
+        <RiSearchFill width={24} height={24} fill="currentColor" />
+      </span>
+    ),
     from: '#e7202b',
     to: '#a30f17',
   },
@@ -30,8 +41,12 @@ const FEATURES: readonly Feature[] = [
     description: 'All actions linked to your Oxy account, ensuring privacy, security, and unified identity across the ecosystem.',
     icon: (
       <div className="relative grid h-1/3 w-1/3 place-items-center">
-        <GlobeHemisphereWest weight="bold" className="h-full w-full text-white" />
-        <Lock weight="fill" className="absolute -bottom-1 -right-1 h-1/2 w-1/2 text-white drop-shadow" />
+        <span aria-hidden="true" className="inline-flex h-full w-full text-white [&_svg]:size-full">
+          <RiEarthLine width={24} height={24} fill="currentColor" />
+        </span>
+        <span aria-hidden="true" className="absolute -bottom-1 -right-1 inline-flex h-1/2 w-1/2 text-white drop-shadow [&_svg]:size-full">
+          <RiLockLine width={24} height={24} fill="currentColor" />
+        </span>
       </div>
     ),
     from: '#f2cf00',

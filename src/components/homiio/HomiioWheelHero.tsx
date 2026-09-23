@@ -1,6 +1,7 @@
 import { useRef, type ReactNode } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion, type MotionValue } from 'framer-motion'
-import { Check, Prohibit } from '@phosphor-icons/react'
+import { RiCheckFill } from '@oxy.so/bloom/icons/RiCheckFill'
+import { RiForbidLine } from '@oxy.so/bloom/icons/RiForbidLine'
 import HomiioPropertyCard from './HomiioPropertyCard'
 import HomiioMatchCard from './HomiioMatchCard'
 import HomiioFeatureCards from './HomiioFeatureCards'
@@ -105,15 +106,19 @@ function TrustCard({ listing, ok }: { listing: HomiioListing; ok: boolean }) {
         />
         <div className="absolute inset-0 grid place-items-center">
           {ok ? (
-            <Check
-              weight="bold"
-              className="h-9 w-9 text-emerald-400 drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)]"
-            />
+            <span
+              aria-hidden="true"
+              className="inline-flex text-emerald-400 drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)]"
+            >
+              <RiCheckFill width={36} height={36} fill="currentColor" />
+            </span>
           ) : (
-            <Prohibit
-              weight="bold"
-              className="h-9 w-9 text-red-500 drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)]"
-            />
+            <span
+              aria-hidden="true"
+              className="inline-flex text-red-500 drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)]"
+            >
+              <RiForbidLine width={36} height={36} fill="currentColor" />
+            </span>
           )}
         </div>
       </div>
