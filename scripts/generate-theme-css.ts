@@ -161,6 +161,12 @@ sections.push(
     'dark',
     'color-scheme: dark;',
   )}`,
+  `/* A region that stays light inside a dark page (cover art, colour swatches). */\n${scopeBlock(
+    '.force-light',
+    APP_COLOR_PRESETS[SITE_PRESET].hex,
+    'light',
+    'color-scheme: light;',
+  )}`,
   `/* The same, from the width where a hero can carry type over its cover. */\n${mediaScopeBlock(
     '(min-width: 64rem)',
     '.force-dark-lg',
