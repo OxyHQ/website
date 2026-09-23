@@ -1,7 +1,13 @@
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { Link } from '../lib/navigation'
-import { ArrowLeft, ArrowRight, BookOpen, Check, Clock, PlayCircle, Sparkles } from 'lucide-react'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { RiBookOpenLine } from '@oxy.so/bloom/icons/RiBookOpenLine'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
+import { RiPlayCircleLine } from '@oxy.so/bloom/icons/RiPlayCircleLine'
+import { RiSparklingLine } from '@oxy.so/bloom/icons/RiSparklingLine'
+import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -73,14 +79,14 @@ function LessonRow({
         }`}
         aria-hidden="true"
       >
-        {isCompleted ? <Check className="size-4" /> : String(index + 1).padStart(2, '0')}
+        {isCompleted ? <RiCheckLine width={16} height={16} fill="currentColor" aria-hidden /> : String(index + 1).padStart(2, '0')}
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
           <h3 className="text-[15px] font-medium text-foreground">{lesson.frontmatter.title}</h3>
           {duration ? (
             <span className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground">
-              <Clock className="size-3" aria-hidden="true" />
+              <RiTimeLine width={12} height={12} fill="currentColor" aria-hidden />
               {duration}
             </span>
           ) : null}
@@ -94,10 +100,7 @@ function LessonRow({
           <p className="mt-0.5 line-clamp-1 text-[13px] leading-relaxed text-muted-foreground">{lesson.frontmatter.description}</p>
         ) : null}
       </div>
-      <ArrowRight
-        className="size-4 shrink-0 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-foreground"
-        aria-hidden="true"
-      />
+      <span className="inline-flex shrink-0 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-foreground" aria-hidden="true"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
     </Link>
   )
 }
@@ -125,7 +128,7 @@ function RelatedCourseCard({
         <p className="mt-1.5 line-clamp-2 text-pretty text-sm leading-relaxed text-muted-foreground">{course.summary}</p>
         <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-foreground">
           Open course
-          <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+          <span className="inline-flex transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
         </span>
       </div>
     </Link>
@@ -207,7 +210,7 @@ export default function CourseDetailPage() {
               to="/academy"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              <ArrowLeft className="size-4" aria-hidden="true" />
+              <RiArrowLeftLine width={16} height={16} fill="currentColor" aria-hidden />
               Academy
             </Link>
 
@@ -216,7 +219,7 @@ export default function CourseDetailPage() {
               <div className="flex flex-col gap-4 lg:order-1">
                 <div className="flex flex-wrap items-center gap-2.5 text-xs font-medium text-muted-foreground">
                   <span className="inline-flex items-center gap-1.5 font-semibold uppercase tracking-[0.16em] text-primary">
-                    <Sparkles className="size-3.5" aria-hidden="true" />
+                    <RiSparklingLine width={14} height={14} fill="currentColor" aria-hidden />
                     Course
                   </span>
                   <span className="inline-flex items-center gap-1.5">
@@ -225,13 +228,13 @@ export default function CourseDetailPage() {
                   </span>
                   {duration ? (
                     <span className="inline-flex items-center gap-1.5">
-                      <Clock className="size-3.5" aria-hidden="true" />
+                      <RiTimeLine width={14} height={14} fill="currentColor" aria-hidden />
                       {duration}
                     </span>
                   ) : null}
                   {course.lessons.length > 0 ? (
                     <span className="inline-flex items-center gap-1.5">
-                      <BookOpen className="size-3.5" aria-hidden="true" />
+                      <RiBookOpenLine width={14} height={14} fill="currentColor" aria-hidden />
                       {course.lessons.length} {course.lessons.length === 1 ? 'lesson' : 'lessons'}
                     </span>
                   ) : null}
@@ -256,7 +259,7 @@ export default function CourseDetailPage() {
                 <div className="mt-1 flex flex-wrap items-center gap-2.5">
                   {heroCtaLessonSlug ? (
                     <Button variant="primary" size="md" href={`/academy/${course.slug}/${heroCtaLessonSlug}`}>
-                      <PlayCircle className="size-4" aria-hidden="true" />
+                      <RiPlayCircleLine width={16} height={16} fill="currentColor" aria-hidden />
                       {heroCtaLabel}
                     </Button>
                   ) : null}

@@ -2,7 +2,12 @@ import { Suspense, createElement, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Link } from '../lib/navigation'
 import { MDXProvider } from '@mdx-js/react'
-import { ArrowLeft, ArrowRight, Calendar, Clock, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { RiCalendarLine } from '@oxy.so/bloom/icons/RiCalendarLine'
+import { RiThumbDownLine } from '@oxy.so/bloom/icons/RiThumbDownLine'
+import { RiThumbUpLine } from '@oxy.so/bloom/icons/RiThumbUpLine'
+import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -115,7 +120,7 @@ function FeedbackButtons({ articleSlug }: FeedbackButtonsProps) {
           className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-background px-4 text-sm font-medium text-muted-foreground transition-colors hover:border-input hover:text-foreground"
           aria-label="Mark this article as helpful"
         >
-          <ThumbsUp className="size-4" aria-hidden="true" />
+          <RiThumbUpLine width={16} height={16} fill="currentColor" aria-hidden />
           Yes
         </button>
         <button
@@ -124,7 +129,7 @@ function FeedbackButtons({ articleSlug }: FeedbackButtonsProps) {
           className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-background px-4 text-sm font-medium text-muted-foreground transition-colors hover:border-input hover:text-foreground"
           aria-label="Mark this article as not helpful"
         >
-          <ThumbsDown className="size-4" aria-hidden="true" />
+          <RiThumbDownLine width={16} height={16} fill="currentColor" aria-hidden />
           No
         </button>
       </div>
@@ -240,12 +245,12 @@ export default function HelpArticlePage() {
             {/* Meta row: read time + updated date */}
             <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
-                <Clock className="size-3.5" aria-hidden="true" />
+                <RiTimeLine width={14} height={14} fill="currentColor" aria-hidden />
                 {readMinutes} min read
               </span>
               {updatedLabel && (
                 <span className="inline-flex items-center gap-1.5">
-                  <Calendar className="size-3.5" aria-hidden="true" />
+                  <RiCalendarLine width={14} height={14} fill="currentColor" aria-hidden />
                   Updated {updatedLabel}
                 </span>
               )}
@@ -337,7 +342,7 @@ export default function HelpArticlePage() {
                     className="inline-flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     See all
-                    <ArrowRight className="size-3.5" aria-hidden="true" />
+                    <RiArrowRightLine width={14} height={14} fill="currentColor" aria-hidden />
                   </Link>
                 )}
               </div>
@@ -363,7 +368,7 @@ export default function HelpArticlePage() {
                     </p>
                     <span className="mt-auto inline-flex items-center gap-1.5 text-xs font-medium text-primary">
                       Read article
-                      <ArrowRight className="size-3.5" aria-hidden="true" />
+                      <RiArrowRightLine width={14} height={14} fill="currentColor" aria-hidden />
                     </span>
                   </Link>
                 ))}
@@ -382,7 +387,7 @@ export default function HelpArticlePage() {
                   className="group flex flex-col gap-1 rounded-2xl border border-border bg-background p-5 transition-colors hover:border-input hover:bg-surface"
                 >
                   <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    <ArrowLeft className="size-3.5" aria-hidden="true" />
+                    <RiArrowLeftLine width={14} height={14} fill="currentColor" aria-hidden />
                     Previous
                   </span>
                   <span className="text-base font-semibold text-foreground">
@@ -399,7 +404,7 @@ export default function HelpArticlePage() {
                 >
                   <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     Next
-                    <ArrowRight className="size-3.5" aria-hidden="true" />
+                    <RiArrowRightLine width={14} height={14} fill="currentColor" aria-hidden />
                   </span>
                   <span className="text-base font-semibold text-foreground">
                     {next.frontmatter.title}
