@@ -148,8 +148,6 @@
   overflow: auto;
 }
 .bloom-workbench input,
-.bloom-workbench select,
-.bloom-toolbar select,
 .bloom-toolbar input {
   width: 100%;
   min-height: 44px;
