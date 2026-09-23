@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { MessageSquare } from 'lucide-react'
+import { RiMessage2Line } from '@oxy.so/bloom/icons/RiMessage2Line'
 import { useAuth } from '@oxy.so/services/ui/client'
 import { useComments } from '../../api/hooks'
 import type { CommentData } from '../../api/hooks'
@@ -38,7 +38,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
     <section className="mt-10">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <MessageSquare className="h-5 w-5 text-muted-foreground" />
+        <span className="inline-flex text-muted-foreground" aria-hidden="true"><RiMessage2Line width={20} height={20} fill="currentColor" /></span>
         <h3 className="text-base font-semibold text-foreground">
           {totalCount === 0
             ? 'Comments'

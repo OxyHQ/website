@@ -1,4 +1,5 @@
-import { Heart } from 'lucide-react'
+import { RiHeartFill } from '@oxy.so/bloom/icons/RiHeartFill'
+import { RiHeartLine } from '@oxy.so/bloom/icons/RiHeartLine'
 import { useAuth } from '@oxy.so/services/ui/client'
 import { useLikes, useToggleLike } from '../../api/hooks'
 
@@ -29,9 +30,16 @@ export default function LikeButton({ targetType, targetId }: LikeButtonProps) {
       disabled={toggleLike.isPending}
       className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-surface disabled:opacity-50"
     >
-      <Heart
-        className={`h-4 w-4 transition-colors ${liked ? 'fill-tertiary text-tertiary-text' : 'text-muted-foreground'}`}
-      />
+      <span
+        className={`inline-flex transition-colors ${liked ? 'text-tertiary-text' : 'text-muted-foreground'}`}
+        aria-hidden="true"
+      >
+        {liked ? (
+          <RiHeartFill width={16} height={16} fill="currentColor" />
+        ) : (
+          <RiHeartLine width={16} height={16} fill="currentColor" />
+        )}
+      </span>
       <span className={liked ? 'text-tertiary-text' : 'text-muted-foreground'}>
         {count > 0 ? count : 'Like'}
       </span>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Send, X } from 'lucide-react'
+import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
+import { RiSendPlaneLine } from '@oxy.so/bloom/icons/RiSendPlaneLine'
 import { useCreateComment } from '../../api/hooks'
 
 const MAX_LENGTH = 2000
@@ -73,7 +74,7 @@ export default function CommentComposer({
               onClick={onCancel}
               className="inline-flex cursor-pointer items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              <X className="h-3.5 w-3.5" />
+              <RiCloseLine width={14} height={14} fill="currentColor" aria-hidden />
               Cancel
             </button>
           )}
@@ -83,7 +84,7 @@ export default function CommentComposer({
             disabled={!canSubmit}
             className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <Send className="h-3.5 w-3.5" />
+            <RiSendPlaneLine width={14} height={14} fill="currentColor" aria-hidden />
             {createComment.isPending ? 'Posting...' : 'Post'}
           </button>
         </div>

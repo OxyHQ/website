@@ -1,6 +1,12 @@
 import { useState } from 'react'
 import { Link } from '../../lib/navigation'
-import { MessageSquare, Pencil, Trash2, Eye, EyeOff, X, Check } from 'lucide-react'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
+import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
+import { RiDeleteBinLine } from '@oxy.so/bloom/icons/RiDeleteBinLine'
+import { RiEyeLine } from '@oxy.so/bloom/icons/RiEyeLine'
+import { RiEyeOffLine } from '@oxy.so/bloom/icons/RiEyeOffLine'
+import { RiMessage2Line } from '@oxy.so/bloom/icons/RiMessage2Line'
+import { RiPencilLine } from '@oxy.so/bloom/icons/RiPencilLine'
 import { useAuth } from '@oxy.so/services/ui/client'
 import { useEditComment, useDeleteComment, useModerateComment } from '../../api/hooks'
 import { useAdminAccess } from '../../hooks/useAdminAccess'
@@ -139,7 +145,7 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
                 disabled={editComment.isPending}
                 className="inline-flex cursor-pointer items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
               >
-                <Check className="h-3 w-3" />
+                <RiCheckLine width={12} height={12} fill="currentColor" aria-hidden />
                 Save
               </button>
               <button
@@ -147,7 +153,7 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
                 onClick={() => { setEditing(false); setEditBody(comment.body) }}
                 className="inline-flex cursor-pointer items-center gap-1 rounded-md px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground"
               >
-                <X className="h-3 w-3" />
+                <RiCloseLine width={12} height={12} fill="currentColor" aria-hidden />
                 Cancel
               </button>
             </div>
@@ -167,7 +173,7 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
                 onClick={onReply}
                 className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
               >
-                <MessageSquare className="h-3.5 w-3.5" />
+                <RiMessage2Line width={14} height={14} fill="currentColor" aria-hidden />
                 Reply
               </button>
             )}
@@ -177,7 +183,7 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
                 onClick={() => { setEditing(true); setEditBody(comment.body) }}
                 className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
               >
-                <Pencil className="h-3.5 w-3.5" />
+                <RiPencilLine width={14} height={14} fill="currentColor" aria-hidden />
                 Edit
               </button>
             )}
@@ -187,7 +193,7 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
                 onClick={() => setConfirmDelete(true)}
                 className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-error-text"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <RiDeleteBinLine width={14} height={14} fill="currentColor" aria-hidden />
                 Delete
               </button>
             )}
@@ -218,7 +224,7 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
                 disabled={moderateComment.isPending}
                 className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-warning-text disabled:opacity-50"
               >
-                <EyeOff className="h-3.5 w-3.5" />
+                <RiEyeOffLine width={14} height={14} fill="currentColor" aria-hidden />
                 Hide
               </button>
             )}
@@ -229,7 +235,7 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
                 disabled={moderateComment.isPending}
                 className="inline-flex cursor-pointer items-center gap-1 text-xs text-warning-text transition-colors hover:text-foreground disabled:opacity-50"
               >
-                <Eye className="h-3.5 w-3.5" />
+                <RiEyeLine width={14} height={14} fill="currentColor" aria-hidden />
                 Unhide
               </button>
             )}

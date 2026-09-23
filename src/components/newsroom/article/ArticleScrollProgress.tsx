@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BookOpen } from '@phosphor-icons/react'
+import { RiBookOpenLine } from '@oxy.so/bloom/icons/RiBookOpenLine'
 
 /**
  * How far through the article you are, pinned to the bottom of the page.
@@ -38,7 +38,7 @@ export default function ArticleScrollProgress() {
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 hidden lg:block">
       <div className="container flex items-start pb-4">
         <div className="flex items-center gap-2 rounded-radius-12 bg-primary p-1 ps-2 text-primary-foreground shadow-md">
-          <BookOpen size={16} weight="bold" />
+          <RiBookOpenLine width={16} height={16} fill="currentColor" aria-hidden />
           <p
             aria-label={`${percent}% read`}
             className="rounded-radius-8 bg-primary-foreground/15 px-1.5 py-1 text-body-sm tabular-nums"

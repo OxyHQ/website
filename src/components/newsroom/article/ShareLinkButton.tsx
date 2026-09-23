@@ -1,4 +1,5 @@
-import { Check, LinkSimple } from '@phosphor-icons/react'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
+import { RiLinkM } from '@oxy.so/bloom/icons/RiLinkM'
 import { useTranslation } from '../../../lib/i18n'
 import { useCopyToClipboard } from '../../../lib/useCopyToClipboard'
 
@@ -18,7 +19,11 @@ export default function ShareLinkButton({ url }: { url: string }) {
       className="flex min-h-10 items-center justify-between gap-2 rounded-full px-2 py-2 text-body-sm text-foreground outline-none transition-colors hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <span>{copied ? 'Copied' : 'Share'}</span>
-      {copied ? <Check size={16} weight="bold" /> : <LinkSimple size={16} weight="bold" />}
+      {copied ? (
+        <RiCheckLine width={16} height={16} fill="currentColor" aria-hidden />
+      ) : (
+        <RiLinkM width={16} height={16} fill="currentColor" aria-hidden />
+      )}
     </button>
   )
 }
