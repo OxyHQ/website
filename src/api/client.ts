@@ -107,8 +107,9 @@ export async function apiFetch<T>(path: string, options?: RequestInit & { locale
   const method = normalizeMethod(options?.method)
   const data = toRequestData(options?.body)
 
+  let result: T
   try {
-    return await linked.client.request<T>({
+    result = await linked.client.request<T>({
       method,
       url,
       data,
@@ -139,4 +140,12 @@ export async function apiFetch<T>(path: string, options?: RequestInit & { locale
     }
     throw err instanceof Error ? err : new Error(message, { cause: err })
   }
+  // The website backend answers JSON (or nothing, for a 204). Markup here is a
+  // page — a proxy's or the static host's HTML fallback for an /api path it
+  // doesn't route — and handing it on as data puts `.map` on a string in
+  // whatever renders it, which blanks the page.
+  if (typeof result === 'string' && result.trimStart().startsWith('<')) {
+    throw new Error(`API error: ${url} answered with a non-JSON body`)
+  }
+  return result
 }
