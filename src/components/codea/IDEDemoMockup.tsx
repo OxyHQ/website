@@ -4,23 +4,23 @@
 export default function IDEDemoMockup() {
   return (
     <div
-      className="flex h-full w-full overflow-hidden rounded-[10px] bg-[#1e1e20] text-sm select-none"
+      className="flex h-full w-full overflow-hidden rounded-[10px] bg-surface text-sm select-none"
       style={{
         boxShadow:
-          '0 28px 70px rgba(0,0,0,0.14), 0 14px 32px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.08)',
+          'var(--shadow-m), 0 0 0 1px color-mix(in srgb, var(--foreground) 8%, transparent)',
       }}
     >
       {/* ─── Sidebar ─── */}
-      <aside className="flex w-56 shrink-0 flex-col border-r border-white/[0.06] bg-[#171717] px-2 py-1.5">
+      <aside className="flex w-56 shrink-0 flex-col border-r border-foreground/[0.06] bg-sidebar px-2 py-1.5">
         {/* Mac dots + sidebar toggle */}
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-1.5 pl-1">
-            <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: '#ff5f57' }} />
-            <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: '#febc2e' }} />
-            <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: '#28c840' }} />
+            <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: 'var(--error)' }} />
+            <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: 'var(--warning)' }} />
+            <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: 'var(--success)' }} />
           </div>
           {/* Sidebar toggle icon */}
-          <div className="flex h-7 w-7 items-center justify-center rounded-full text-foreground/80 hover:bg-white/5">
+          <div className="flex h-7 w-7 items-center justify-center rounded-full text-foreground/80 hover:bg-foreground/5">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
               <path d="M5.47 3.2c-.36 0-.66.01-.91.03-.31.03-.53.07-.7.13a2.5 2.5 0 0 0-1.09.95c-.1.2-.16.45-.2.86-.03.42-.03.95-.03 1.71v2.13c0 .76 0 1.29.03 1.71.04.42.1.67.2.87a2.5 2.5 0 0 0 1.09.95c.17.07.39.1.7.13.25.02.55.03.91.03V3.2Zm1.06 9.6h3.2c.76 0 1.29 0 1.71-.03.41-.04.66-.1.86-.2a2.5 2.5 0 0 0 1.1-.95c.09-.2.16-.45.19-.87.03-.42.04-.95.04-1.7V6.93c0-.76-.01-1.29-.04-1.71-.03-.41-.1-.66-.19-.86a2.5 2.5 0 0 0-1.1-.95c-.2-.1-.45-.16-.86-.2-.42-.03-.95-.03-1.71-.03H6.53v9.6Z" />
             </svg>
@@ -71,9 +71,9 @@ export default function IDEDemoMockup() {
       </aside>
 
       {/* ─── Main content area ─── */}
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-[#1a1a1c]">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface">
         {/* Header bar */}
-        <header className="flex items-center justify-between border-b border-white/[0.06] px-3 py-1.5 text-sm">
+        <header className="flex items-center justify-between border-b border-foreground/[0.06] px-3 py-1.5 text-sm">
           <div className="min-w-0 truncate pl-1 font-medium text-foreground/90">Implement dark mode</div>
           <div className="flex items-center gap-1.5">
             <HeaderPill icon={<TerminalIcon />} label="Terminal" />
@@ -84,9 +84,9 @@ export default function IDEDemoMockup() {
         {/* Chat / task content */}
         <div className="flex-1 overflow-hidden px-6 py-5">
           {/* Task card */}
-          <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-4">
+          <div className="rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] p-4">
             <div className="mb-3 flex items-center gap-2 text-foreground/90">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-success-subtle text-success-text">
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
                   <circle cx="5" cy="5" r="4" />
                 </svg>
@@ -119,8 +119,8 @@ export default function IDEDemoMockup() {
             </div>
 
             {/* Diff preview */}
-            <div className="overflow-hidden rounded-md border border-white/[0.06] bg-[#141416] text-xs">
-              <div className="flex items-center gap-2 border-b border-white/[0.06] px-3 py-1.5 text-foreground/55">
+            <div className="overflow-hidden rounded-md border border-foreground/[0.06] bg-background text-xs">
+              <div className="flex items-center gap-2 border-b border-foreground/[0.06] px-3 py-1.5 text-foreground/55">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" className="text-foreground/40">
                   <path d="M2 1h8a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1Z" />
                 </svg>
@@ -190,7 +190,7 @@ function ThreadGroup({
 
 function HeaderPill({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <div className="inline-flex h-7 items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 text-sm text-foreground/80">
+    <div className="inline-flex h-7 items-center gap-1.5 rounded-full border border-foreground/[0.08] bg-foreground/[0.03] px-2.5 text-sm text-foreground/80">
       {icon}
       <span>{label}</span>
     </div>
@@ -207,10 +207,10 @@ function FilePill({
   deletions?: number
 }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-md border border-white/[0.06] bg-white/[0.03] px-2 py-0.5 text-xs text-foreground/70">
+    <span className="inline-flex items-center gap-1.5 rounded-md border border-foreground/[0.06] bg-foreground/[0.03] px-2 py-0.5 text-xs text-foreground/70">
       <span>{name}</span>
-      {additions != null && <span className="text-emerald-400">+{additions}</span>}
-      {deletions != null && <span className="text-red-400">-{deletions}</span>}
+      {additions != null && <span className="text-success-text">+{additions}</span>}
+      {deletions != null && <span className="text-error-text">-{deletions}</span>}
     </span>
   )
 }
@@ -219,17 +219,17 @@ function StatusStep({ done, active, label }: { done?: boolean; active?: boolean;
   return (
     <div className="flex items-center gap-2 text-foreground/70">
       {done ? (
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-emerald-400">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-success-text">
           <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.2" />
           <path d="M4.5 7 6.2 8.7 9.5 5.3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       ) : active ? (
         <span className="relative flex h-3.5 w-3.5 items-center justify-center">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-30" />
-          <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-30" />
+          <span className="inline-flex h-2 w-2 rounded-full bg-success" />
         </span>
       ) : (
-        <span className="h-3.5 w-3.5 rounded-full border border-white/20" />
+        <span className="h-3.5 w-3.5 rounded-full border border-foreground/20" />
       )}
       <span>{label}</span>
     </div>
@@ -247,16 +247,16 @@ function DiffLine({
 }) {
   const bg =
     type === 'addition'
-      ? 'bg-emerald-500/10'
+      ? 'bg-success/10'
       : type === 'deletion'
-        ? 'bg-red-500/10'
+        ? 'bg-error/10'
         : ''
   const prefix = type === 'addition' ? '+' : type === 'deletion' ? '-' : ' '
   const textColor =
     type === 'addition'
-      ? 'text-emerald-300'
+      ? 'text-success-text'
       : type === 'deletion'
-        ? 'text-red-300'
+        ? 'text-error-text'
         : 'text-foreground/55'
 
   return (
