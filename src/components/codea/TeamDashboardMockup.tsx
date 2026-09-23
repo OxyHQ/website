@@ -21,11 +21,11 @@ interface StatCardProps {
 }
 
 const StatCard = ({ label, value, change, direction }: StatCardProps) => (
-  <div className="flex-1 rounded-lg border border-white/[0.06] bg-[#141415] p-4">
+  <div className="flex-1 rounded-lg border border-foreground/[0.06] bg-background p-4">
     <p className="text-xs text-muted-foreground">{label}</p>
     <div className="mt-1 flex items-end gap-2">
       <span className="text-2xl font-bold text-foreground">{value}</span>
-      <span className="mb-0.5 flex items-center gap-0.5 text-xs text-green-400">
+      <span className="mb-0.5 flex items-center gap-0.5 text-xs text-success-text">
         {direction === 'up' ? <ArrowUp /> : <ArrowDown />}
         {change}
       </span>
@@ -42,18 +42,18 @@ interface TeamMember {
 }
 
 const members: TeamMember[] = [
-  { name: 'Teammate A', role: 'Frontend', tasks: 34, activityPct: 92, color: '#6366f1' },
-  { name: 'Teammate B', role: 'Backend', tasks: 28, activityPct: 82, color: '#f59e0b' },
-  { name: 'Teammate C', role: 'Full-stack', tasks: 22, activityPct: 58, color: '#10b981' },
-  { name: 'Teammate D', role: 'DevOps', tasks: 18, activityPct: 50, color: '#f43f5e' },
-  { name: 'Teammate E', role: 'Mobile', tasks: 25, activityPct: 78, color: '#8b5cf6' },
+  { name: 'Teammate A', role: 'Frontend', tasks: 34, activityPct: 92, color: 'var(--chart-5)' },
+  { name: 'Teammate B', role: 'Backend', tasks: 28, activityPct: 82, color: 'var(--chart-7)' },
+  { name: 'Teammate C', role: 'Full-stack', tasks: 22, activityPct: 58, color: 'var(--chart-4)' },
+  { name: 'Teammate D', role: 'DevOps', tasks: 18, activityPct: 50, color: 'var(--chart-6)' },
+  { name: 'Teammate E', role: 'Mobile', tasks: 25, activityPct: 78, color: 'var(--chart-1)' },
 ];
 
 const MemberRow = ({ member }: { member: TeamMember }) => (
-  <div className="flex items-center gap-3 rounded-md px-3 py-2.5 hover:bg-white/[0.02]">
+  <div className="flex items-center gap-3 rounded-md px-3 py-2.5 hover:bg-foreground/[0.02]">
     {/* Avatar */}
     <div
-      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white"
+      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-background"
       style={{ backgroundColor: member.color }}
     >
       {member.name.charAt(0)}
@@ -67,9 +67,9 @@ const MemberRow = ({ member }: { member: TeamMember }) => (
 
     {/* Sparkline bar */}
     <div className="flex-1">
-      <div className="h-2 w-full overflow-hidden rounded-full bg-white/[0.04]">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-foreground/[0.04]">
         <div
-          className="h-full rounded-full bg-blue-500/60"
+          className="h-full rounded-full bg-info/60"
           style={{ width: `${member.activityPct}%` }}
         />
       </div>
@@ -85,16 +85,16 @@ const MemberRow = ({ member }: { member: TeamMember }) => (
 export default function TeamDashboardMockup() {
   return (
     <div
-      className="flex h-full w-full flex-col overflow-hidden rounded-lg bg-[#1a1a1c] text-sm select-none"
+      className="flex h-full w-full flex-col overflow-hidden rounded-lg bg-surface text-sm select-none"
       style={{
         boxShadow:
-          '0 28px 70px rgba(0,0,0,0.14), 0 14px 32px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.08)',
+          'var(--shadow-m), 0 0 0 1px color-mix(in srgb, var(--foreground) 8%, transparent)',
       }}
     >
       {/* ─── Header ─── */}
-      <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-3.5">
+      <div className="flex items-center justify-between border-b border-foreground/[0.06] px-5 py-3.5">
         <h2 className="text-sm font-semibold text-foreground">Team Activity</h2>
-        <span className="rounded-md border border-white/[0.08] bg-white/[0.04] px-2.5 py-1 text-xs text-muted-foreground">
+        <span className="rounded-md border border-foreground/[0.08] bg-foreground/[0.04] px-2.5 py-1 text-xs text-muted-foreground">
           Last 7 days
         </span>
       </div>

@@ -53,7 +53,7 @@ const TRACKS: TrackDef[] = [
     blurb: 'Set up your account and ship your first project on Oxy.',
     tags: ['intro', 'onboarding'],
     Icon: Rocket,
-    accent: 'from-indigo-500 to-violet-600',
+    accent: 'from-chart-5-active to-chart-1-active',
   },
   {
     key: 'identity',
@@ -61,7 +61,7 @@ const TRACKS: TrackDef[] = [
     blurb: 'Own your Oxy ID — keys, sessions and account recovery.',
     tags: ['identity', 'security'],
     Icon: ShieldCheck,
-    accent: 'from-sky-500 to-cyan-600',
+    accent: 'from-chart-5 to-chart-9-active',
   },
   {
     key: 'social',
@@ -69,7 +69,7 @@ const TRACKS: TrackDef[] = [
     blurb: 'Grow your audience with Mention and the fediverse.',
     tags: ['mention', 'publishing', 'fediverse'],
     Icon: Radio,
-    accent: 'from-rose-500 to-orange-500',
+    accent: 'from-chart-6 to-chart-2',
   },
   {
     key: 'developer',
@@ -77,7 +77,7 @@ const TRACKS: TrackDef[] = [
     blurb: 'APIs, SDKs and the developer platform — coming soon.',
     tags: ['developer', 'api', 'sdk'],
     Icon: Code2,
-    accent: 'from-emerald-500 to-teal-600',
+    accent: 'from-chart-4 to-chart-9-active',
   },
 ]
 
@@ -126,9 +126,9 @@ function CourseCover({ course, className }: { course: CourseWithLessons; classNa
   }
   const g = courseGradient(course.slug)
   return (
-    <div className={`${className} relative overflow-hidden bg-gradient-to-br ${g.from} ${g.via} ${g.to}`} aria-hidden="true">
-      <span className="absolute inset-0 bg-[radial-gradient(circle_at_25%_15%,rgba(255,255,255,0.22),transparent_55%)]" />
-      <span className="absolute -right-3 -bottom-5 select-none text-[6rem] font-bold leading-none tracking-tighter text-white/15">
+    <div className={`${className} force-light relative overflow-hidden bg-gradient-to-br ${g.from} ${g.via} ${g.to}`} aria-hidden="true">
+      <span className="absolute inset-0 bg-[radial-gradient(circle_at_25%_15%,color-mix(in_srgb,var(--background)_22%,transparent),transparent_55%)]" />
+      <span className="absolute -right-3 -bottom-5 select-none text-[6rem] font-bold leading-none tracking-tighter text-background/15">
         {courseInitials(course.title)}
       </span>
     </div>
@@ -188,7 +188,7 @@ function CourseCard({ course, progress }: { course: CourseWithLessons; progress:
           </span>
         ) : null}
         {s.status === 'in-progress' ? (
-          <div className="absolute inset-x-0 bottom-0 h-1.5 bg-black/20">
+          <div className="absolute inset-x-0 bottom-0 h-1.5 bg-foreground/20">
             <div className="h-full bg-primary" style={{ width: `${s.pct}%` }} />
           </div>
         ) : null}
@@ -242,7 +242,7 @@ function TrackCard({
             : 'border-border bg-background hover:-translate-y-1 hover:border-input hover:shadow-lg'
       }`}
     >
-      <span className={`grid size-10 place-items-center rounded-xl bg-gradient-to-br ${track.accent} text-white shadow-sm`}>
+      <span className={`grid size-10 place-items-center rounded-xl bg-gradient-to-br ${track.accent} force-light text-background shadow-sm`}>
         <track.Icon className="size-5" aria-hidden="true" />
       </span>
       <div>

@@ -320,8 +320,8 @@ function ApiCard({ endpoint, idx }: { endpoint: ApiEndpoint; idx: number }) {
 function MethodChip({ method }: { method: Method }) {
   const tone =
     method === 'GET'
-      ? 'border-emerald-500/30 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
-      : 'border-blue-500/30 bg-blue-500/15 text-blue-700 dark:text-blue-300'
+      ? 'border-success/30 bg-success-subtle text-success-text'
+      : 'border-info/30 bg-info-subtle text-info-text'
   return (
     <span
       className={`inline-flex h-6 items-center rounded-md border px-2 font-mono text-body-xs font-bold tracking-wider ${tone}`}

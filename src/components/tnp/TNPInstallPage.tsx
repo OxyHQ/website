@@ -70,7 +70,7 @@ export default function TNPInstallContent() {
                   onClick={() => setPlatform(p.id)}
                   className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                     platform === p.id
-                      ? 'bg-primary text-white'
+                      ? 'bg-primary text-primary-foreground'
                       : 'border border-primary-text/25 text-muted-foreground hover:bg-primary-text/10 hover:text-foreground'
                   }`}
                 >
@@ -148,7 +148,7 @@ export default function TNPInstallContent() {
                         href="https://tnp.network"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#34d399] hover:text-[#6ee7b7] transition-colors"
+                        className="text-primary-text hover:text-primary transition-colors"
                       >
                         tnp.network
                       </a>.

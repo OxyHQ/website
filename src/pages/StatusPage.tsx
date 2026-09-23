@@ -45,13 +45,15 @@ function StatusDot({ status, pulse = false, size = 'md' }: { status: ServiceStat
 
 function ServiceLogo({ service }: { service: ServiceStatusEntry }) {
   const hasLogo = Boolean(service.logoUrl)
+  // Without a logo the mark sits on the service's brand colour, not on the
+  // page, so it takes `.force-dark` and `--foreground` is light in either theme.
   const style = hasLogo
     ? undefined
-    : { backgroundColor: service.brand, color: service.brandForeground || '#ffffff' }
+    : { backgroundColor: service.brand, color: service.brandForeground || 'var(--foreground)' }
   return (
     <span
       className={`relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-base font-semibold tracking-tight ${
-        hasLogo ? 'bg-surface border border-border/60' : ''
+        hasLogo ? 'bg-surface border border-border/60' : 'force-dark'
       }`}
       style={style}
       aria-hidden="true"

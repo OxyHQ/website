@@ -44,7 +44,7 @@ const PHUDU_SEMIBOLD: React.CSSProperties = {
 }
 
 const TEXT_SHADOW_LIGHT: React.CSSProperties = {
-  textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+  textShadow: '0 1px 2px color-mix(in srgb, var(--background) 50%, transparent)',
 }
 
 const TAB_ITEMS = [
@@ -126,16 +126,16 @@ const TX_STYLE: Record<
     amountColor: 'text-primary',
   },
   send: {
-    bg: 'bg-red-500/10',
+    bg: 'bg-error/10',
     icon: 'arrow-up',
-    iconColor: 'text-red-400',
-    amountColor: 'text-red-400',
+    iconColor: 'text-error-text',
+    amountColor: 'text-error-text',
   },
   masternode_reward: {
-    bg: 'bg-blue-500/10',
+    bg: 'bg-info/10',
     icon: 'server',
-    iconColor: 'text-blue-400',
-    amountColor: 'text-blue-400',
+    iconColor: 'text-info-text',
+    amountColor: 'text-info-text',
   },
 }
 
@@ -156,20 +156,20 @@ export default function PhoneMockup() {
 
       {/* Phone bezel — separate from the screen so the bezel uses site tokens */}
       <div
-        className="relative overflow-hidden rounded-[44px] border-[10px] border-foreground/90 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.4),0_8px_30px_-10px_rgba(0,0,0,0.2)]"
+        className="relative overflow-hidden rounded-[44px] border-[10px] border-foreground/90 shadow-m"
         style={{ aspectRatio: '9/19.5' }}
       >
         {/* Screen — pinned to the dark FairCoin palette */}
         <div className="phone-mockup-dark relative h-full w-full bg-background text-foreground">
           {/* Dynamic island / notch */}
-          <div className="absolute left-1/2 top-2 z-30 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
+          <div className="absolute left-1/2 top-2 z-30 h-5 w-24 -translate-x-1/2 rounded-full bg-background" />
 
           {/* ---- iOS status bar ---- */}
-          <div className="relative z-20 flex items-center justify-between px-6 pb-1 pt-3 text-[10px] font-semibold text-white">
+          <div className="relative z-20 flex items-center justify-between px-6 pb-1 pt-3 text-[10px] font-semibold text-foreground">
             <span style={TEXT_SHADOW_LIGHT}>9:41</span>
             <span
               className="flex items-center gap-1"
-              style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))' }}
+              style={{ filter: 'drop-shadow(0 1px 2px color-mix(in srgb, var(--background) 50%, transparent))' }}
             >
               <SignalGlyph />
               <WifiGlyph />
@@ -204,13 +204,13 @@ export default function PhoneMockup() {
           <div className="relative z-20 flex items-center justify-between px-5 pt-2 pb-3">
             <button
               type="button"
-              className="flex items-center gap-0.5 text-white"
+              className="flex items-center gap-0.5 text-foreground"
               style={TEXT_SHADOW_LIGHT}
             >
               <span className="text-[15px] font-semibold">Main wallet</span>
               <ChevronDownGlyph />
             </button>
-            <div className="flex items-center gap-1 text-white" style={TEXT_SHADOW_LIGHT}>
+            <div className="flex items-center gap-1 text-foreground" style={TEXT_SHADOW_LIGHT}>
               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               <span className="text-[11px]">Synced</span>
             </div>
@@ -238,8 +238,8 @@ export default function PhoneMockup() {
             <p className="mt-1 text-[13px] text-muted-foreground">
               {'\u2248'} $247.50 USD
             </p>
-            <div className="mt-3 rounded-full bg-green-500/15 px-2 py-0.5">
-              <span className="text-[11px] font-bold text-green-400">+2.0% today</span>
+            <div className="mt-3 rounded-full bg-success-subtle px-2 py-0.5">
+              <span className="text-[11px] font-bold text-success-text">+2.0% today</span>
             </div>
           </div>
 
@@ -505,7 +505,7 @@ function ChevronDownGlyph() {
 
 function SignalGlyph() {
   return (
-    <svg width="14" height="10" viewBox="0 0 14 10" fill="currentColor" className="text-white">
+    <svg width="14" height="10" viewBox="0 0 14 10" fill="currentColor">
       <rect x="0" y="6" width="2" height="4" rx="0.4" />
       <rect x="3.5" y="4" width="2" height="6" rx="0.4" />
       <rect x="7" y="2" width="2" height="8" rx="0.4" />
@@ -516,7 +516,7 @@ function SignalGlyph() {
 
 function WifiGlyph() {
   return (
-    <svg width="12" height="9" viewBox="0 0 12 9" fill="none" className="text-white">
+    <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
       <path
         d="M6 8a1 1 0 100-2 1 1 0 000 2zM2.5 4.5C3.5 3.5 4.7 3 6 3s2.5.5 3.5 1.5M.5 2.5C2 1 4 .25 6 .25s4 .75 5.5 2.25"
         stroke="currentColor"
@@ -529,7 +529,7 @@ function WifiGlyph() {
 
 function BatteryGlyph() {
   return (
-    <svg width="22" height="11" viewBox="0 0 22 11" fill="none" className="text-white">
+    <svg width="22" height="11" viewBox="0 0 22 11" fill="none">
       <rect x="0.5" y="0.5" width="18" height="10" rx="2" stroke="currentColor" />
       <rect x="2" y="2" width="13" height="7" rx="1" fill="currentColor" />
       <rect x="20" y="3.5" width="1.5" height="4" rx="0.4" fill="currentColor" />

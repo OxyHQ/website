@@ -11,22 +11,22 @@ interface CodeLine {
 }
 
 function Kw({ children }: { children: React.ReactNode }) {
-  return <span className="text-purple-400">{children}</span>;
+  return <span className="text-chart-1">{children}</span>;
 }
 function Str({ children }: { children: React.ReactNode }) {
-  return <span className="text-green-400">{children}</span>;
+  return <span className="text-success-text">{children}</span>;
 }
 function Tp({ children }: { children: React.ReactNode }) {
-  return <span className="text-blue-400">{children}</span>;
+  return <span className="text-info-text">{children}</span>;
 }
 function Cm({ children }: { children: React.ReactNode }) {
-  return <span className="text-white/30">{children}</span>;
+  return <span className="text-foreground/30">{children}</span>;
 }
 function Fn({ children }: { children: React.ReactNode }) {
-  return <span className="text-yellow-300">{children}</span>;
+  return <span className="text-chart-3">{children}</span>;
 }
 function Pl({ children }: { children: React.ReactNode }) {
-  return <span className="text-white/70">{children}</span>;
+  return <span className="text-foreground/70">{children}</span>;
 }
 
 const lines: CodeLine[] = [
@@ -256,40 +256,40 @@ const lines: CodeLine[] = [
 
 export default function CodeEditorMockup() {
   return (
-    <div className="w-full overflow-hidden rounded-xl border border-white/[0.06] shadow-2xl">
+    <div className="w-full overflow-hidden rounded-xl border border-foreground/[0.06] shadow-2xl">
       {/* Tab bar */}
-      <div className="flex items-center bg-[#141415]">
+      <div className="flex items-center bg-background">
         {tabs.map((tab) => (
           <button
             key={tab.name}
             className={`px-4 py-2 text-xs font-medium transition-colors ${
               tab.active
-                ? "bg-[#1a1a1c] text-white/80 border-t border-t-purple-500/60"
-                : "bg-[#141415] text-white/35 hover:text-white/50"
+                ? "bg-surface text-foreground/80 border-t border-t-primary/60"
+                : "bg-background text-foreground/35 hover:text-foreground/50"
             }`}
           >
             {tab.name}
           </button>
         ))}
-        <div className="flex-1 bg-[#141415]" />
+        <div className="flex-1 bg-background" />
       </div>
 
       {/* Editor body */}
-      <div className="relative bg-[#1a1a1c] p-0 font-mono text-[13px] leading-[1.65] overflow-x-auto">
+      <div className="relative bg-surface p-0 font-mono text-[13px] leading-[1.65] overflow-x-auto">
         <div className="min-w-[640px]">
           {lines.map((line) => (
             <div
               key={line.num}
               className={`flex ${
                 line.suggestion
-                  ? "bg-green-500/10 border-l-2 border-green-500/40"
+                  ? "bg-success/10 border-l-2 border-success/40"
                   : "border-l-2 border-transparent"
               }`}
             >
-              <span className="inline-block w-12 shrink-0 select-none pr-4 text-right text-white/20">
+              <span className="inline-block w-12 shrink-0 select-none pr-4 text-right text-foreground/20">
                 {line.num}
               </span>
-              <span className="text-white/70 whitespace-pre">
+              <span className="text-foreground/70 whitespace-pre">
                 {line.content}
               </span>
             </div>
@@ -297,22 +297,22 @@ export default function CodeEditorMockup() {
         </div>
 
         {/* Floating tooltip */}
-        <div className="absolute right-4 top-[220px] w-72 rounded-lg border border-white/[0.08] bg-[#232326] px-4 py-3 shadow-xl">
+        <div className="absolute right-4 top-[220px] w-72 rounded-lg border border-foreground/[0.08] bg-popover px-4 py-3 shadow-xl">
           <div className="mb-1.5 flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-[11px] font-semibold tracking-wide text-green-400 uppercase">
+            <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
+            <span className="text-[11px] font-semibold tracking-wide text-success-text uppercase">
               Codea suggestion
             </span>
           </div>
-          <p className="text-xs leading-relaxed text-white/55">
-            <span className="text-white/80 font-medium">Detected:</span> your
+          <p className="text-xs leading-relaxed text-foreground/55">
+            <span className="text-foreground/80 font-medium">Detected:</span> your
             project uses CSS variables for theming. Applied consistent pattern.
           </p>
         </div>
       </div>
 
       {/* Status bar */}
-      <div className="flex items-center justify-between bg-[#141415] px-4 py-1 text-xs text-muted-foreground">
+      <div className="flex items-center justify-between bg-background px-4 py-1 text-xs text-muted-foreground">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5">
             <svg

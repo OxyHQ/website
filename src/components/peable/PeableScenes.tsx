@@ -262,7 +262,7 @@ export function TransfersScene() {
                   scale: 1 - offset * 0.04,
                 }}
                 transition={{ duration: 0.55, ease: [0.4, 0, 0.2, 1] }}
-                style={{ transformOrigin: 'center center', boxShadow: offset === 0 ? '0 4px 14px rgba(0,0,0,0.05)' : 'none' }}
+                style={{ transformOrigin: 'center center', boxShadow: offset === 0 ? 'var(--shadow-s)' : 'none' }}
               >
                 <div
                   className="relative flex flex-col items-start justify-center"
@@ -319,18 +319,19 @@ export function TransfersScene() {
 
 /**
  * The card artwork. Rendered rather than shipped as an image so it inherits the
- * page theme and stays sharp at any size the scene scales it to.
+ * page theme and stays sharp at any size the scene scales it to. The card is a
+ * dark metal object in either theme, so it takes the `.force-dark` palette.
  */
 export function CardArt({ face }: { face: 'front' | 'back' }) {
   return (
     <div
-      className="absolute inset-0 overflow-hidden"
+      className="force-dark absolute inset-0 overflow-hidden"
       style={{
         borderRadius: '5% / 8%',
         background:
           face === 'front'
-            ? 'linear-gradient(150deg, #24252a 0%, #101115 55%, #2b2d34 100%)'
-            : 'linear-gradient(150deg, #16171b 0%, #0b0c0f 60%, #1d1f24 100%)',
+            ? 'linear-gradient(150deg, var(--surface) 0%, var(--background) 55%, var(--popover) 100%)'
+            : 'linear-gradient(150deg, var(--background) 0%, var(--background) 60%, var(--surface) 100%)',
       }}
     >
       {face === 'front' ? (
@@ -350,19 +351,20 @@ export function CardArt({ face }: { face: 'front' | 'back' }) {
               width: '12%',
               height: '15%',
               borderRadius: '10%',
-              background: 'linear-gradient(135deg, #e0cd97, #8d7433)',
+              // A brushed-gold chip: the palette's amber, muted toward its ink and ground.
+              background: 'linear-gradient(135deg, color-mix(in srgb, var(--chart-7-active) 65%, var(--foreground)), color-mix(in srgb, var(--chart-7) 55%, var(--background)))',
             }}
           />
-          <span className="absolute font-display text-white/85" style={{ left: '8%', bottom: '10%', fontSize: '6.5%', letterSpacing: '0.14em' }}>
+          <span className="absolute font-display text-foreground/85" style={{ left: '8%', bottom: '10%', fontSize: '6.5%', letterSpacing: '0.14em' }}>
             PEABLE
           </span>
 
         </>
       ) : (
         <>
-          <div className="absolute inset-x-0 bg-black/80" style={{ top: '14%', height: '22%' }} />
-          <div className="absolute bg-white/85" style={{ left: '8%', right: '26%', top: '48%', height: '14%', borderRadius: '2%' }} />
-          <span className="absolute text-white/60" style={{ right: '8%', top: '49%', fontSize: '7%', letterSpacing: '0.2em' }}>
+          <div className="absolute inset-x-0 bg-background/80" style={{ top: '14%', height: '22%' }} />
+          <div className="absolute bg-foreground/85" style={{ left: '8%', right: '26%', top: '48%', height: '14%', borderRadius: '2%' }} />
+          <span className="absolute text-foreground/60" style={{ right: '8%', top: '49%', fontSize: '7%', letterSpacing: '0.2em' }}>
             123
           </span>
         </>
@@ -461,10 +463,11 @@ export function CashbackScene() {
 
           {/* Phone holding the card */}
           <div className="absolute -translate-x-1/2" style={{ left: '49.6269cqw', top: '45.5224cqw', width: '78.3582cqw' }}>
-            <div className="relative" style={{ width: '100%', aspectRatio: '210 / 430', filter: 'drop-shadow(0 1.4925cqw 3.3582cqw rgba(0,0,0,0.12))' }}>
+            <div className="relative" style={{ width: '100%', aspectRatio: '210 / 430' }}>
+              {/* The handset is dark hardware in either theme: `.force-dark`. */}
               <div
-                className="absolute overflow-hidden bg-black"
-                style={{ inset: 0, borderRadius: '11.194cqw', border: '1.1cqw solid #2a2b30' }}
+                className="force-dark absolute overflow-hidden bg-background"
+                style={{ inset: 0, borderRadius: '11.194cqw', border: '1.1cqw solid var(--popover)', boxShadow: 'var(--shadow-m)' }}
               >
                 <div className="absolute overflow-hidden" style={{ top: '11.5cqw', left: '5.5cqw', width: '61.227cqw', height: '38.68cqw', borderRadius: '2.2388cqw' }}>
                   <div className="relative size-full">
@@ -472,10 +475,10 @@ export function CashbackScene() {
                   </div>
                 </div>
                 <div className="absolute inset-x-0 flex items-center justify-between" style={{ top: '4cqw', paddingInline: '5.9701cqw' }}>
-                  <span className="font-semibold text-white" style={{ fontSize: '2.8806cqw', lineHeight: 1 }}>
+                  <span className="font-semibold text-foreground" style={{ fontSize: '2.8806cqw', lineHeight: 1 }}>
                     4:20
                   </span>
-                  <span className="rounded-full bg-white/70" style={{ width: '7cqw', height: '1.6cqw' }} />
+                  <span className="rounded-full bg-foreground/70" style={{ width: '7cqw', height: '1.6cqw' }} />
                 </div>
               </div>
             </div>
@@ -496,7 +499,7 @@ export function CashbackScene() {
                 padding: '4.4776cqw',
                 background: 'var(--pay-bg-primary)',
                 border: '0.1866cqw solid var(--pay-border-normal)',
-                boxShadow: '0 1.4925cqw 5.2239cqw rgba(0,0,0,0.06)',
+                boxShadow: 'var(--shadow-s)',
               }}
             >
               <div

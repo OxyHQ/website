@@ -39,9 +39,9 @@ const tasks = [
 function StatusIcon({ status }: { status: "completed" | "running" | "queued" }) {
   if (status === "completed") {
     return (
-      <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-500/15">
+      <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success-subtle">
         <svg
-          className="h-3 w-3 text-green-400"
+          className="h-3 w-3 text-success-text"
           viewBox="0 0 12 12"
           fill="none"
           stroke="currentColor"
@@ -58,14 +58,14 @@ function StatusIcon({ status }: { status: "completed" | "running" | "queued" }) 
     return (
       <div className="flex h-5 w-5 shrink-0 items-center justify-center">
         <span className="relative flex h-2.5 w-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-blue-500" />
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-info opacity-75" />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-info" />
         </span>
       </div>
     );
   }
   return (
-    <div className="flex h-5 w-5 shrink-0 items-center justify-center text-white/30">
+    <div className="flex h-5 w-5 shrink-0 items-center justify-center text-foreground/30">
       <svg
         className="h-3.5 w-3.5"
         viewBox="0 0 14 14"
@@ -91,13 +91,13 @@ function ProgressBar({
 }) {
   const fillColor =
     status === "completed"
-      ? "bg-green-500"
+      ? "bg-success"
       : status === "running"
-        ? "bg-blue-500"
+        ? "bg-info"
         : "bg-transparent";
 
   return (
-    <div className="h-1.5 w-full rounded-full bg-white/[0.06]">
+    <div className="h-1.5 w-full rounded-full bg-foreground/[0.06]">
       <div
         className={`h-full rounded-full ${fillColor} transition-all`}
         style={{ width: `${progress}%` }}
@@ -108,11 +108,11 @@ function ProgressBar({
 
 export default function BackgroundTasksMockup() {
   return (
-    <div className="relative w-full rounded-2xl bg-[#1a1a1c] p-5 select-none">
+    <div className="relative w-full rounded-2xl bg-surface p-5 select-none">
       {/* Header */}
       <div className="mb-4 flex items-center gap-3">
-        <span className="text-sm font-medium text-white/80">Background Tasks</span>
-        <span className="rounded-full bg-blue-500/15 px-2.5 py-0.5 text-xs font-medium text-blue-400">
+        <span className="text-sm font-medium text-foreground/80">Background Tasks</span>
+        <span className="rounded-full bg-info-subtle px-2.5 py-0.5 text-xs font-medium text-info-text">
           5 active
         </span>
       </div>
@@ -122,21 +122,21 @@ export default function BackgroundTasksMockup() {
         {tasks.map((task) => (
           <div
             key={task.name}
-            className="rounded-lg border border-white/[0.06] bg-[#141415] p-3"
+            className="rounded-lg border border-foreground/[0.06] bg-background p-3"
           >
             <div className="mb-2 flex items-center gap-2.5">
               <StatusIcon status={task.status} />
-              <span className="flex-1 truncate text-[13px] font-medium text-white/70">
+              <span className="flex-1 truncate text-[13px] font-medium text-foreground/70">
                 {task.name}
               </span>
               {task.files > 0 && (
-                <span className="shrink-0 rounded bg-white/[0.06] px-1.5 py-0.5 text-[11px] text-white/30">
+                <span className="shrink-0 rounded bg-foreground/[0.06] px-1.5 py-0.5 text-[11px] text-foreground/30">
                   {task.files} files
                 </span>
               )}
               <span
                 className={`shrink-0 text-[11px] ${
-                  task.status === "queued" ? "text-white/20" : "text-white/30"
+                  task.status === "queued" ? "text-foreground/20" : "text-foreground/30"
                 }`}
               >
                 {task.time}
@@ -148,11 +148,11 @@ export default function BackgroundTasksMockup() {
       </div>
 
       {/* Notification toast */}
-      <div className="absolute right-5 bottom-5 left-5 rounded-xl border border-white/[0.06] bg-[#141415] p-4 shadow-xl">
+      <div className="absolute right-5 bottom-5 left-5 rounded-xl border border-foreground/[0.06] bg-background p-4 shadow-xl">
         <div className="flex items-start gap-2.5">
-          <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-500/15">
+          <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success-subtle">
             <svg
-              className="h-3 w-3 text-green-400"
+              className="h-3 w-3 text-success-text"
               viewBox="0 0 12 12"
               fill="none"
               stroke="currentColor"
@@ -164,12 +164,12 @@ export default function BackgroundTasksMockup() {
             </svg>
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[13px] leading-snug text-white/60">
-              <span className="font-medium text-white/80">Task completed:</span>{" "}
+            <p className="text-[13px] leading-snug text-foreground/60">
+              <span className="font-medium text-foreground/80">Task completed:</span>{" "}
               Add API rate limiting.{" "}
-              <span className="text-white/40">12 files changed.</span>
+              <span className="text-foreground/40">12 files changed.</span>
             </p>
-            <span className="mt-1 inline-block text-xs font-medium text-blue-400">
+            <span className="mt-1 inline-block text-xs font-medium text-info-text">
               View diff →
             </span>
           </div>

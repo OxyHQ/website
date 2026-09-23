@@ -46,12 +46,15 @@ import { useMediaQuery } from '../../hooks/useMediaQuery'
  * ──────────────────────────────────────────── */
 
 /**
- * The pastel fills are the point of this design, so they are literal rather
- * than theme tokens — they read the same in light and dark, which is why the
- * ink on top of them is a fixed dark neutral too. Everything around the pills
- * (card, heading, body copy, border) uses the site's Bloom tokens.
+ * The pastel fills are the point of this design, so they read the same in
+ * light and dark: each pill carries `.force-light`, and its fill is one of
+ * Bloom's chart hues washed into that palette's card, with the palette's
+ * foreground as ink. Everything around the pills (card, heading, body copy,
+ * border) follows the site's theme as before.
  */
-const TAG_INK = '#1f2430'
+const TAG_INK = 'var(--foreground)'
+const pastel = (chart: number, strength: number) =>
+  `color-mix(in srgb, var(--chart-${chart}) ${strength}%, var(--card))`
 
 interface PhysicsTag {
   id: string
@@ -62,21 +65,21 @@ interface PhysicsTag {
 }
 
 const TAGS: readonly PhysicsTag[] = [
-  { id: 'privacy', labelKey: 'home.tagPrivacy', fill: '#e0f2fe', Glyph: ShieldCheck },
-  { id: 'open-source', labelKey: 'home.tagOpenSource', fill: '#dcfce7', Glyph: GitFork },
-  { id: 'identity', labelKey: 'home.tagIdentity', fill: '#fae8ff', Glyph: Fingerprint },
-  { id: 'ai', labelKey: 'home.tagAi', fill: '#fef9c3', Glyph: Sparkle },
-  { id: 'faircoin', labelKey: 'home.tagFairCoin', fill: '#ffedd5', Glyph: Coins },
-  { id: 'community', labelKey: 'home.tagCommunity', fill: '#ffe4e6', Glyph: UsersThree },
-  { id: 'research', labelKey: 'home.tagResearch', fill: '#e0e7ff', Glyph: Flask },
-  { id: 'mention', labelKey: 'home.tagMention', fill: '#ccfbf1', Glyph: ChatCircleDots },
-  { id: 'inbox', labelKey: 'home.tagInbox', fill: '#ede9fe', Glyph: EnvelopeSimple },
-  { id: 'homiio', labelKey: 'home.tagHomiio', fill: '#d9f99d', Glyph: House },
-  { id: 'no-ads', labelKey: 'home.tagNoAds', fill: '#fecdd3', Glyph: Prohibit },
-  { id: 'sustainability', labelKey: 'home.tagSustainability', fill: '#bbf7d0', Glyph: Leaf },
-  { id: 'collaboration', labelKey: 'home.tagCollaboration', fill: '#fde68a', Glyph: Handshake },
-  { id: 'self-custody', labelKey: 'home.tagSelfCustody', fill: '#cffafe', Glyph: Key },
-  { id: 'open-web', labelKey: 'home.tagOpenWeb', fill: '#bfdbfe', Glyph: GlobeHemisphereWest },
+  { id: 'privacy', labelKey: 'home.tagPrivacy', fill: pastel(5, 18), Glyph: ShieldCheck },
+  { id: 'open-source', labelKey: 'home.tagOpenSource', fill: pastel(8, 18), Glyph: GitFork },
+  { id: 'identity', labelKey: 'home.tagIdentity', fill: pastel(1, 20), Glyph: Fingerprint },
+  { id: 'ai', labelKey: 'home.tagAi', fill: pastel(3, 22), Glyph: Sparkle },
+  { id: 'faircoin', labelKey: 'home.tagFairCoin', fill: pastel(2, 18), Glyph: Coins },
+  { id: 'community', labelKey: 'home.tagCommunity', fill: pastel(6, 16), Glyph: UsersThree },
+  { id: 'research', labelKey: 'home.tagResearch', fill: pastel(5, 10), Glyph: Flask },
+  { id: 'mention', labelKey: 'home.tagMention', fill: pastel(4, 20), Glyph: ChatCircleDots },
+  { id: 'inbox', labelKey: 'home.tagInbox', fill: pastel(1, 11), Glyph: EnvelopeSimple },
+  { id: 'homiio', labelKey: 'home.tagHomiio', fill: pastel(3, 38), Glyph: House },
+  { id: 'no-ads', labelKey: 'home.tagNoAds', fill: pastel(6, 30), Glyph: Prohibit },
+  { id: 'sustainability', labelKey: 'home.tagSustainability', fill: pastel(8, 30), Glyph: Leaf },
+  { id: 'collaboration', labelKey: 'home.tagCollaboration', fill: pastel(7, 32), Glyph: Handshake },
+  { id: 'self-custody', labelKey: 'home.tagSelfCustody', fill: pastel(9, 18), Glyph: Key },
+  { id: 'open-web', labelKey: 'home.tagOpenWeb', fill: pastel(5, 30), Glyph: GlobeHemisphereWest },
 ]
 
 /* ── Simulation constants ─────────────────────────────────────────── */
@@ -447,7 +450,7 @@ export default function HomeTagPhysics() {
                   data-tag-id={tag.id}
                   aria-pressed={isSelected}
                   onClick={() => toggle(tag.id)}
-                  className={`flex h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-4 text-[0.9375rem] font-medium ${
+                  className={`force-light flex h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-4 text-[0.9375rem] font-medium ${
                     simulating ? 'absolute left-0 top-0 opacity-0 will-change-transform' : ''
                   }`}
                   style={{

@@ -516,7 +516,9 @@ function QuoteSection() {
     <section id="quote" className="relative scroll-mt-[var(--site-header-height)] bg-surface">
       {/* Edge to edge: the portrait is the section, and only the words keep to
           the site frame. */}
-      <figure className="relative flex min-h-[28rem] w-full overflow-hidden md:min-h-[38rem]">
+      {/* A dark portrait in either theme: the figure takes the `.force-dark`
+          palette, so the scrim is its background and the words its foreground. */}
+      <figure className="force-dark relative flex min-h-[28rem] w-full overflow-hidden md:min-h-[38rem]">
         <img
           src={`${IMG}/founder-quote.jpg`}
           alt="Nate Isern Álvarez"
@@ -524,16 +526,16 @@ function QuoteSection() {
           loading="lazy"
           decoding="async"
         />
-        <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/40 to-black/10 md:bg-linear-to-l md:from-black/85 md:via-black/50 md:to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-background/85 via-background/40 to-background/10 md:bg-linear-to-l md:from-background/85 md:via-background/50 md:to-transparent" />
 
-        <div className="container relative flex flex-1 flex-col justify-end py-10 text-white md:py-20">
+        <div className="container relative flex flex-1 flex-col justify-end py-10 text-foreground md:py-20">
           <div className="flex flex-col gap-10 md:ml-auto md:max-w-[38rem]">
             <blockquote className="font-display text-[1.75rem]/[1.15] tracking-[-0.01em] md:text-[2.75rem]/[1.1] lg:text-[3.25rem]/[1.08]">
               I built a lot of infrastructure. Now I need to build the human structure around it.
             </blockquote>
             <figcaption>
               <div className="font-bold">Nate Isern Álvarez</div>
-              <div className="text-white/70">Creator and founder of Oxy</div>
+              <div className="text-foreground/70">Creator and founder of Oxy</div>
             </figcaption>
           </div>
         </div>

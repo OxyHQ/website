@@ -10,11 +10,11 @@ const GitHubIcon = () => (
 const ToggleSwitch = ({ enabled }: { enabled: boolean }) => (
   <div
     className={`flex h-4 w-7 items-center rounded-full px-0.5 transition-colors ${
-      enabled ? 'bg-emerald-500' : 'bg-white/10'
+      enabled ? 'bg-success' : 'bg-foreground/10'
     }`}
   >
     <div
-      className={`h-3 w-3 rounded-full bg-white shadow-sm transition-transform ${
+      className={`h-3 w-3 rounded-full bg-foreground shadow-sm transition-transform ${
         enabled ? 'translate-x-3' : 'translate-x-0'
       }`}
     />
@@ -23,9 +23,9 @@ const ToggleSwitch = ({ enabled }: { enabled: boolean }) => (
 
 const StatusDot = ({ color }: { color: 'green' | 'yellow' | 'red' }) => {
   const colors = {
-    green: 'bg-emerald-400',
-    yellow: 'bg-amber-400',
-    red: 'bg-red-400',
+    green: 'bg-success',
+    yellow: 'bg-warning',
+    red: 'bg-error',
   };
   return <span className={`inline-block h-2 w-2 shrink-0 rounded-full ${colors[color]}`} />;
 };
@@ -33,14 +33,14 @@ const StatusDot = ({ color }: { color: 'green' | 'yellow' | 'red' }) => {
 export default function MissionControlMockup() {
   return (
     <div
-      className="flex h-full w-full flex-col overflow-hidden rounded-lg bg-[#1a1a1c] text-sm select-none"
+      className="flex h-full w-full flex-col overflow-hidden rounded-lg bg-surface text-sm select-none"
       style={{
         boxShadow:
-          '0 28px 70px rgba(0,0,0,0.14), 0 14px 32px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.08)',
+          'var(--shadow-m), 0 0 0 1px color-mix(in srgb, var(--foreground) 8%, transparent)',
       }}
     >
       {/* Header */}
-      <div className="border-b border-white/[0.06] px-4 py-3">
+      <div className="border-b border-foreground/[0.06] px-4 py-3">
         <h1 className="m-0 text-[20px] font-bold text-foreground">Mission Control Interface</h1>
       </div>
 
@@ -48,9 +48,9 @@ export default function MissionControlMockup() {
         {/* Trigger section */}
         <div>
           <h2 className="mb-1.5 mt-0 text-[14px] font-semibold text-foreground">Trigger</h2>
-          <div className="rounded-lg border border-white/[0.06] bg-[#141415] p-3">
+          <div className="rounded-lg border border-foreground/[0.06] bg-background p-3">
             <div className="flex items-start gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-white/[0.06] text-foreground/80">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-foreground/[0.06] text-foreground/80">
                 <GitHubIcon />
               </div>
               <div className="min-w-0">
@@ -74,7 +74,7 @@ export default function MissionControlMockup() {
             ].map((item) => (
               <div
                 key={item.label}
-                className="flex items-center justify-between rounded-lg border border-white/[0.06] bg-[#141415] px-3 py-2"
+                className="flex items-center justify-between rounded-lg border border-foreground/[0.06] bg-background px-3 py-2"
               >
                 <div className="min-w-0">
                   <p className="m-0 text-[13px] font-medium text-foreground">{item.label}</p>
@@ -89,7 +89,7 @@ export default function MissionControlMockup() {
         {/* Status panel */}
         <div>
           <h2 className="mb-1.5 mt-0 text-[14px] font-semibold text-foreground">Recent Runs</h2>
-          <div className="rounded-lg border border-white/[0.06] bg-[#141415]">
+          <div className="rounded-lg border border-foreground/[0.06] bg-background">
             {[
               { name: 'feat/auth-flow #247', status: 'green' as const, time: '2m ago' },
               { name: 'fix/nav-links #245', status: 'green' as const, time: '18m ago' },
@@ -100,7 +100,7 @@ export default function MissionControlMockup() {
               <div
                 key={run.name}
                 className={`flex items-center gap-2.5 px-3 py-2 ${
-                  i < arr.length - 1 ? 'border-b border-white/[0.06]' : ''
+                  i < arr.length - 1 ? 'border-b border-foreground/[0.06]' : ''
                 }`}
               >
                 <StatusDot color={run.status} />

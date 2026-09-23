@@ -394,12 +394,12 @@ function StatsAndTestimonialsSection() {
                 {TESTIMONIALS.map((testimonial, i) => (
                   <SwiperSlide key={i} style={{ height: 'auto' }}>
                     <div
-                      className={`relative overflow-hidden rounded-3xl aspect-[4/5] max-[950px]:aspect-[4/6] ${testimonial.light ? 'text-white' : 'text-foreground/80'}`}
+                      className={`relative overflow-hidden rounded-3xl aspect-[4/5] max-[950px]:aspect-[4/6] ${testimonial.light ? 'force-dark text-foreground' : 'text-foreground/80'}`}
                     >
                       {/* Below the fold, inside a carousel — `eager` made every
                           slide's background a blocking request on first paint. */}
                       <img src={testimonial.bg} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" width={800} height={1000} loading="lazy" decoding="async" />
-                      <div className="absolute inset-0 bg-black/10" />
+                      <div className="absolute inset-0 bg-background/10" />
                       <div className="relative z-10 flex flex-col justify-between gap-12 px-7 py-8 max-[950px]:p-8 h-full">
                         <div>
                             <p className="text-base leading-relaxed tracking-tight">&ldquo;{t(testimonial.quoteKey)}&rdquo;</p>
@@ -597,7 +597,7 @@ function CommonsAppSection() {
   const phoneY = useTransform(scrollYProgress, [0, 1], ['22%', '0%'])
 
   return (
-    <section ref={ref} className="relative isolate overflow-hidden">
+    <section ref={ref} className="force-dark relative isolate overflow-hidden">
       <motion.img
         src={`${IMG}/commons-night.webp`}
         alt=""
@@ -609,14 +609,16 @@ function CommonsAppSection() {
         loading="lazy"
         decoding="async"
       />
-      {/* The illustration is busiest on the left, where the copy sits. */}
-      <div className="-z-10 absolute inset-0 bg-[linear-gradient(90deg,rgba(2,10,38,0.88)_0%,rgba(2,10,38,0.72)_45%,rgba(2,10,38,0.35)_100%)] max-lg:bg-[linear-gradient(180deg,rgba(2,10,38,0.85)_0%,rgba(2,10,38,0.6)_60%,rgba(2,10,38,0.85)_100%)]" />
+      {/* The illustration is busiest on the left, where the copy sits. The
+          band is a night scene in either theme, so it takes the `.force-dark`
+          palette and the scrim is that palette's background. */}
+      <div className="-z-10 absolute inset-0 bg-linear-to-r from-background/88 via-background/72 via-45% to-background/35 max-lg:bg-linear-to-b max-lg:from-background/85 max-lg:via-background/60 max-lg:via-60% max-lg:to-background/85" />
 
       {/* No bottom padding on the right: the phone is meant to rise out of the
           band's lower edge rather than float in the middle of it. */}
       <div className="container pt-20 lg:pt-28">
         <div className="grid grid-cols-12 items-end gap-6">
-          <div className="col-span-full pb-20 text-white max-lg:text-center lg:col-span-5 lg:pb-28">
+          <div className="col-span-full pb-20 text-foreground max-lg:text-center lg:col-span-5 lg:pb-28">
             <AnimatedTitle as="h2" className="mb-5 text-heading-responsive-lg lg:text-[4rem] lg:leading-[1.05]">{t('home.commonsTitle')}</AnimatedTitle>
             <p className="max-w-[500px] text-lg leading-relaxed opacity-80 lg:text-xl max-lg:mx-auto">
               {t('home.commonsDescription')}
@@ -631,7 +633,9 @@ function CommonsAppSection() {
               </p>
               {/* Official store artwork, served as files. Commons is live on
                   Google Play; there is no iOS listing yet, so the App Store
-                  badge says so instead of sending people to a dead end. */}
+                  badge says so instead of sending people to a dead end.
+                  The black behind each badge is Apple's and Google's own badge
+                  colour (their guidelines forbid recolouring), not a theme one. */}
               <div className="flex flex-wrap items-center gap-3 max-lg:justify-center">
                 <button
                   type="button"
@@ -669,7 +673,7 @@ function CommonsAppSection() {
             <img
               src={APP_CARD_IMAGES['/commons']}
               alt={t('home.commonsImageAlt')}
-              className="mx-auto h-auto w-full max-w-[320px] object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)] sm:max-w-[440px] lg:max-w-none"
+              className="mx-auto h-auto w-full max-w-[320px] object-contain drop-shadow-[0_30px_60px_color-mix(in_srgb,var(--background)_45%,transparent)] sm:max-w-[440px] lg:max-w-none"
               width={577}
               height={433}
               loading="lazy"
@@ -743,7 +747,9 @@ export default function HomePage() {
         description={t('home.seoDescription')}
         canonicalPath="/"
       />
-      <Navbar transparent />
+      {/* The hero's top band is the page's own background, so the bar writes
+          in the page's ink rather than the light type a dark hero takes. */}
+      <Navbar transparent transparentOn="light" />
       <main className="oxy-landing">
         <HomeHero />
         {FEATURES.SHOW_TRUSTED_LOGOS && <PartnerLogos />}

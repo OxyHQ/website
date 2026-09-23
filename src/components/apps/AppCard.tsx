@@ -39,11 +39,13 @@ export function AppIcon({ product, className = '' }: { product: ProductRecord; c
   }
   // Most records have no uploaded logo, so the brand mark stands in: an empty
   // hole where the icon goes reads as a broken image.
+  // The mark sits on the product's own brand colour, not on the page, so it
+  // takes `.force-dark` and `--foreground` is light ink in either theme.
   return (
     <span
       aria-hidden="true"
-      className={`flex size-full items-center justify-center rounded-sm font-display text-[1.25em] ${className}`}
-      style={{ background: product.brand, color: product.brandForeground ?? '#ffffff' }}
+      className={`force-dark flex size-full items-center justify-center rounded-sm font-display text-[1.25em] ${className}`}
+      style={{ background: product.brand, color: product.brandForeground ?? 'var(--foreground)' }}
     >
       {product.mark}
     </span>
@@ -65,7 +67,7 @@ export default function AppCard({ product, inverted = false }: { product: Produc
       >
         <figure
           className={`relative w-space-app-icon-sm shrink-0 overflow-hidden rounded-radius-8 transition-transform group-hover:scale-[1.025] ${
-            inverted ? 'shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)]' : 'shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)]'
+            inverted ? 'inset-ring inset-ring-background/10' : 'inset-ring inset-ring-foreground/10'
           }`}
         >
           <span className="block aspect-square">
