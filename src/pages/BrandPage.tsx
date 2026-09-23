@@ -1,7 +1,10 @@
 import { useState, type CSSProperties } from 'react'
 import { Link } from '../lib/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowUpRight, ArrowDown, Plus, Minus } from '@phosphor-icons/react'
+import { RiAddLine } from '@oxy.so/bloom/icons/RiAddLine'
+import { RiArrowDownLine } from '@oxy.so/bloom/icons/RiArrowDownLine'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
+import { RiSubtractLine } from '@oxy.so/bloom/icons/RiSubtractLine'
 import { LogoIcon, LogoText } from '@oxy.so/services/ui/client'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@oxy.so/bloom/accordion'
 import { APP_COLOR_PRESETS, type AppColorName } from '@oxy.so/bloom/color-presets'
@@ -158,7 +161,7 @@ function ColourStudio() {
             <Link
               to={`/developers/docs/bloom/playground?component=Button&recipe=${recipe}&mode=${mode}`}
             >
-              Try this recipe <ArrowUpRight size={20} />
+              Try this recipe <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
             </Link>
             <div className="brand-ui-secondary">Built with Bloom.</div>
           </div>
@@ -183,7 +186,7 @@ function ColourStudio() {
           A working interface reserves stronger colour for actions and emphasis.
         </p>
         <Link to="/developers/docs/bloom/color-system">
-          Explore all Bloom recipes <ArrowUpRight size={18} />
+          Explore all Bloom recipes <RiArrowRightUpLine width={18} height={18} fill="currentColor" aria-hidden />
         </Link>
       </div>
     </>
@@ -327,7 +330,7 @@ export default function BrandPage() {
             What we stand for.
           </p>
           <a href="#idea">
-            Explore the identity <ArrowDown size={22} />
+            Explore the identity <RiArrowDownLine width={22} height={22} fill="currentColor" aria-hidden />
           </a>
         </div>
       </header>
@@ -362,7 +365,7 @@ export default function BrandPage() {
               else’s ideas.
             </p>
             <Link to="/company/charter">
-              Read our charter <ArrowUpRight size={18} />
+              Read our charter <RiArrowRightUpLine width={18} height={18} fill="currentColor" aria-hidden />
             </Link>
           </div>
         </div>
@@ -473,10 +476,10 @@ export default function BrandPage() {
           ]}
         />
         <div className="brand-icon-specimen" aria-label="Interface icon examples">
-          <ArrowUpRight />
-          <ArrowDown />
-          <Plus />
-          <Minus />
+          <RiArrowRightUpLine width={32} height={32} fill="currentColor" />
+          <RiArrowDownLine width={32} height={32} fill="currentColor" />
+          <RiAddLine width={32} height={32} fill="currentColor" />
+          <RiSubtractLine width={32} height={32} fill="currentColor" />
         </div>
       </section>
       <section id="imagery" className="brand-section">
@@ -672,18 +675,18 @@ export default function BrandPage() {
         </h2>
         <div className="brand-resource-links">
           <Link to="/developers/docs/bloom/components">
-            Bloom components <ArrowUpRight />
+            Bloom components <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
           </Link>
           <Link to="/developers/docs/bloom/playground">
-            Interactive playground <ArrowUpRight />
+            Interactive playground <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
           </Link>
           <Link to="/company/charter">
-            Our charter <ArrowUpRight />
+            Our charter <RiArrowRightUpLine width={20} height={20} fill="currentColor" aria-hidden />
           </Link>
         </div>
         <details>
           <summary>
-            Product marks <Plus size={22} />
+            Product marks <RiAddLine width={22} height={22} fill="currentColor" aria-hidden />
           </summary>
           <div className="brand-download-list">
             {Object.entries(BRAND_MARKS).map(([name, src]) => (

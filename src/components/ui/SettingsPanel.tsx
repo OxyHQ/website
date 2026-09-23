@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Globe } from 'lucide-react'
+import { RiGlobalLine } from '@oxy.so/bloom/icons/RiGlobalLine'
 import { useBloomTheme, useTheme } from '@oxy.so/bloom/theme'
 import {
   SegmentedControl,
@@ -68,7 +68,7 @@ export function SettingsPanel({
             className="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
           >
             <span className="flex items-center gap-2">
-              <Globe className="size-4" />
+              <RiGlobalLine width={16} height={16} fill="currentColor" aria-hidden />
               {t('common.language')}
             </span>
             <span className="truncate text-foreground">{current?.nativeName ?? locale.toUpperCase()}</span>

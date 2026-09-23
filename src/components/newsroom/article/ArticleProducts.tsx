@@ -1,4 +1,4 @@
-import { ArrowUpRight } from '@phosphor-icons/react'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
 import { resolveProductLogoUrl, useProducts, type ProductRecord } from '../../../api/hooks'
 import type { NewsroomPost } from '../../../data/newsroom'
 import { WIDE_ARTICLE_BLOCK } from '../../slices/articleBlock'
@@ -37,7 +37,7 @@ function ProductCallout({ product }: { product: ProductRecord }) {
         className="flex items-center gap-2 !bg-tertiary !text-tertiary-foreground hover:!bg-tertiary/90"
       >
         {product.cta}
-        <ArrowUpRight size={18} weight="bold" />
+        <RiArrowRightUpLine width={18} height={18} fill="currentColor" aria-hidden />
       </PillButton>
     </aside>
   )

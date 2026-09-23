@@ -1,4 +1,4 @@
-import { ArrowUpRight } from '@phosphor-icons/react'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
 import { usePage, type PageSection } from '../../api/hooks'
 import Button from '../ui/Button'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
@@ -29,7 +29,7 @@ export default function PartnersHeroSection() {
             </AnimatedTitle>
             <p className="mt-4 max-w-2xl text-pretty text-lg text-muted-foreground md:text-xl">{heroSubtitle}</p>
             <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
-              <Button variant="primary" size="md" responsive href="#become-a-partner">Become a partner <ArrowUpRight size={17} aria-hidden="true" /></Button>
+              <Button variant="primary" size="md" responsive href="#become-a-partner">Become a partner <RiArrowRightUpLine width={17} height={17} fill="currentColor" aria-hidden /></Button>
               <Button variant="outline" size="md" responsive href="#programs">Explore programs</Button>
             </div>
           </header>

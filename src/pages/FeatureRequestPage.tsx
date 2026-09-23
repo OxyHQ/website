@@ -2,7 +2,9 @@ import { useParams } from 'react-router-dom'
 import { Link } from '../lib/navigation'
 import { useAuth } from '@oxy.so/services/ui/client'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { ArrowLeft, ChevronUp, ExternalLink } from 'lucide-react'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
+import { RiArrowUpSLine } from '@oxy.so/bloom/icons/RiArrowUpSLine'
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -34,7 +36,7 @@ function BackToBoard() {
       to="/features"
       className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
     >
-      <ArrowLeft className="h-4 w-4" />
+      <RiArrowLeftLine width={16} height={16} fill="currentColor" aria-hidden />
       Feature board
     </Link>
   )
@@ -153,7 +155,7 @@ export default function FeatureRequestPage() {
                 className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
               >
                 View on GitHub
-                <ExternalLink className="h-3 w-3" />
+                <RiExternalLinkLine width={12} height={12} fill="currentColor" aria-hidden />
               </a>
             </div>
           </div>
@@ -205,7 +207,7 @@ function VoteControl({ feature }: { feature: FeatureRequestData }) {
         aria-label={feature.userVoted ? 'Remove vote' : 'Upvote'}
         aria-pressed={feature.userVoted}
       >
-        <ChevronUp className="h-6 w-6" />
+        <RiArrowUpSLine width={24} height={24} fill="currentColor" aria-hidden />
       </button>
       <span className={`text-base font-semibold ${feature.userVoted ? 'text-primary' : 'text-muted-foreground'}`}>
         {feature.totalVotes}

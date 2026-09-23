@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from '../../lib/navigation'
 import { Button as BloomButton } from '@oxy.so/bloom/button'
-import { StarFour, PlugsConnected, Unite, Cpu } from '@phosphor-icons/react'
+import type { BloomIconComponent } from '@oxy.so/bloom/icons'
+import { RiCpuLine } from '@oxy.so/bloom/icons/RiCpuLine'
+import { RiPlugLine } from '@oxy.so/bloom/icons/RiPlugLine'
+import { RiShapesLine } from '@oxy.so/bloom/icons/RiShapesLine'
+import { RiSparklingLine } from '@oxy.so/bloom/icons/RiSparklingLine'
 import { useFairCoinStats, useNewsroomPosts } from '../../api/hooks'
 import type { FairCoinStats } from '../../api/faircoinStore'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
@@ -67,11 +71,11 @@ function AnimatedStat({ end, decimals, duration = 2000 }: { end: number; decimal
 
 type FairCoinStatKey = 'blocks' | 'hashrate' | 'peers' | 'difficulty'
 
-const STAT_META: { key: FairCoinStatKey; labelKey: string; decimals: number; Icon: typeof StarFour }[] = [
-  { key: 'blocks', labelKey: 'home.faircoinBlocks', decimals: 0, Icon: StarFour },
-  { key: 'hashrate', labelKey: 'home.faircoinNetwork', decimals: 0, Icon: PlugsConnected },
-  { key: 'peers', labelKey: 'home.faircoinPeers', decimals: 0, Icon: Unite },
-  { key: 'difficulty', labelKey: 'home.faircoinDifficulty', decimals: 4, Icon: Cpu },
+const STAT_META: { key: FairCoinStatKey; labelKey: string; decimals: number; Icon: BloomIconComponent }[] = [
+  { key: 'blocks', labelKey: 'home.faircoinBlocks', decimals: 0, Icon: RiSparklingLine },
+  { key: 'hashrate', labelKey: 'home.faircoinNetwork', decimals: 0, Icon: RiPlugLine },
+  { key: 'peers', labelKey: 'home.faircoinPeers', decimals: 0, Icon: RiShapesLine },
+  { key: 'difficulty', labelKey: 'home.faircoinDifficulty', decimals: 4, Icon: RiCpuLine },
 ]
 
 function toDisplayValues(stats: FairCoinStats | null): Record<FairCoinStatKey, number> {
@@ -213,7 +217,9 @@ export default function FairCoinSection() {
                 className="flex cursor-pointer select-none items-center gap-3 rounded-full bg-surface px-4 py-4 text-left transition-colors hover:bg-foreground/5 lg:px-5 lg:py-5"
                 onClick={() => setRuns((r) => r.map((v, j) => (j === i ? v + 1 : v)))}
               >
-                <stat.Icon size={20} className="shrink-0 text-primary" weight="bold" />
+                <span className="inline-flex shrink-0 text-primary" aria-hidden="true">
+                  <stat.Icon width={20} height={20} fill="currentColor" />
+                </span>
                 <span className="min-w-0">
                   <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                     {t(stat.labelKey)}

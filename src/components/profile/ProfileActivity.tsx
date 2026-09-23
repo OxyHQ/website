@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Link } from '../../lib/navigation'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { MessageCircle, FileText, Lock } from 'lucide-react'
+import { RiChat3Line } from '@oxy.so/bloom/icons/RiChat3Line'
+import { RiFileTextLine } from '@oxy.so/bloom/icons/RiFileTextLine'
+import { RiLockLine } from '@oxy.so/bloom/icons/RiLockLine'
 import { useUserActivity, useUserProfile, useNewsroomPosts } from '../../api/hooks'
 
 interface ProfileActivityProps {
@@ -51,7 +53,7 @@ function CommentItem({ data, createdAt }: { data: ActivityItemData; createdAt: s
   const content = (
     <div className="border-b border-border px-1 py-4 transition-colors hover:bg-surface/50">
       <div className="flex items-start gap-3">
-        <MessageCircle size={16} className="mt-0.5 shrink-0 text-muted-foreground" />
+        <span className="inline-flex mt-0.5 shrink-0 text-muted-foreground" aria-hidden="true"><RiChat3Line width={16} height={16} fill="currentColor" /></span>
         <div className="min-w-0 flex-1">
           <p className="text-body-md leading-relaxed text-foreground">{preview || 'No content'}</p>
           <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
@@ -71,7 +73,7 @@ function PostItem({ post }: { post: { slug: string; title: string; resume?: stri
   return (
     <Link to={`/newsroom/${post.slug}`} className="block border-b border-border px-1 py-4 transition-colors hover:bg-surface/50">
       <div className="flex items-start gap-3">
-        <FileText size={16} className="mt-0.5 shrink-0 text-muted-foreground" />
+        <span className="inline-flex mt-0.5 shrink-0 text-muted-foreground" aria-hidden="true"><RiFileTextLine width={16} height={16} fill="currentColor" /></span>
         <div className="min-w-0 flex-1">
           <p className="text-body-md font-medium text-foreground">{post.title}</p>
           {post.resume && (
@@ -96,7 +98,7 @@ export default function ProfileActivity({ username, userId }: ProfileActivityPro
   if (profile && profile.stats === null) {
     return (
       <div className="flex flex-col items-center gap-3 py-12 text-center">
-        <Lock size={32} className="text-muted-foreground" />
+        <span className="inline-flex text-muted-foreground" aria-hidden="true"><RiLockLine width={32} height={32} fill="currentColor" /></span>
         <p className="text-sm text-muted-foreground">This user&apos;s activity is private</p>
       </div>
     )

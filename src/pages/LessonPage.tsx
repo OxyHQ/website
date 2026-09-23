@@ -2,7 +2,11 @@ import { Suspense, createElement, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { Link } from '../lib/navigation'
 import { MDXProvider } from '@mdx-js/react'
-import { ArrowLeft, ArrowRight, BookOpen, Check, Clock } from 'lucide-react'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { RiBookOpenLine } from '@oxy.so/bloom/icons/RiBookOpenLine'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
+import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -66,7 +70,7 @@ function LessonSidebar({
           to={`/academy/${courseSlug}`}
           className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
         >
-          <ArrowLeft className="size-3.5" aria-hidden="true" />
+          <RiArrowLeftLine width={14} height={14} fill="currentColor" aria-hidden />
           Course overview
         </Link>
         <h3 className="text-base font-semibold tracking-tight text-foreground">{courseTitle}</h3>
@@ -114,13 +118,13 @@ function LessonSidebar({
                       }`}
                       aria-hidden="true"
                     >
-                      {isCompleted ? <Check className="size-3" /> : String(index + 1).padStart(2, '0')}
+                      {isCompleted ? <RiCheckLine width={12} height={12} fill="currentColor" aria-hidden /> : String(index + 1).padStart(2, '0')}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-sm font-medium leading-snug">{item.title}</span>
                       {item.duration ? (
                         <span className="mt-0.5 inline-flex items-center gap-1 text-[11px] text-muted-foreground">
-                          <Clock className="size-3" aria-hidden="true" />
+                          <RiTimeLine width={12} height={12} fill="currentColor" aria-hidden />
                           {item.duration}
                         </span>
                       ) : null}
@@ -158,7 +162,7 @@ function LessonProgressStrip({
       >
         <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
-            <BookOpen className="size-3.5" aria-hidden="true" />
+            <RiBookOpenLine width={14} height={14} fill="currentColor" aria-hidden />
             <span className="font-medium uppercase tracking-wider">{courseTitle}</span>
           </span>
           <span>
@@ -307,13 +311,13 @@ export default function LessonPage() {
 
             <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em]">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-muted-foreground">
-                <BookOpen className="size-3.5 text-primary" aria-hidden="true" />
+                <span className="inline-flex text-primary" aria-hidden="true"><RiBookOpenLine width={14} height={14} fill="currentColor" /></span>
                 Lesson {position + 1}
                 {totalLessons > 0 ? ` of ${totalLessons}` : ''}
               </span>
               {lesson.frontmatter.duration ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-muted-foreground">
-                  <Clock className="size-3.5" aria-hidden="true" />
+                  <RiTimeLine width={14} height={14} fill="currentColor" aria-hidden />
                   {lesson.frontmatter.duration}
                 </span>
               ) : null}
@@ -368,7 +372,7 @@ export default function LessonPage() {
                     }`}
                     aria-hidden="true"
                   >
-                    <Check className="size-4" />
+                    <RiCheckLine width={16} height={16} fill="currentColor" aria-hidden />
                   </span>
                   <div>
                     <p className="text-sm font-medium text-foreground">
@@ -423,10 +427,7 @@ export default function LessonPage() {
                   className="group inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
                   rel="prev"
                 >
-                  <ArrowLeft
-                    className="size-4 shrink-0 transition-transform group-hover:-translate-x-0.5"
-                    aria-hidden="true"
-                  />
+                  <span className="inline-flex shrink-0 transition-transform group-hover:-translate-x-0.5" aria-hidden="true"><RiArrowLeftLine width={16} height={16} fill="currentColor" /></span>
                   <span className="min-w-0">
                     <span className="block text-xs font-medium uppercase tracking-wider">
                       Previous
@@ -453,10 +454,7 @@ export default function LessonPage() {
                       {next.title}
                     </span>
                   </span>
-                  <ArrowRight
-                    className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
+                  <span className="inline-flex shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden="true"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
                 </Link>
               ) : (
                 <span aria-hidden="true" />
@@ -480,7 +478,7 @@ export default function LessonPage() {
           <PageSection spacing="md" width="narrow">
             <div className="flex flex-col items-center gap-4 rounded-3xl border border-border bg-surface p-8 text-center md:p-10">
               <span className="grid size-12 place-items-center rounded-full border border-border bg-background text-foreground">
-                <Check className="size-5" aria-hidden="true" />
+                <RiCheckLine width={20} height={20} fill="currentColor" aria-hidden />
               </span>
               <AnimatedTitle as="h2" className="text-heading-responsive-md text-foreground">
                 You finished the course.

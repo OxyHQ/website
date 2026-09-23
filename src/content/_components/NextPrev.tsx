@@ -1,5 +1,6 @@
 import { Link } from '../../lib/navigation'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 
 /* ──────────────────────────────────────────────
  * <NextPrev prev={…} next={…} />
@@ -37,7 +38,7 @@ export default function NextPrev({ prev, next }: NextPrevProps) {
           className="group flex flex-col gap-1 rounded-2xl border border-border bg-background p-5 transition-colors hover:border-input hover:bg-surface"
         >
           <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            <ArrowLeft className="size-3.5" aria-hidden="true" />
+            <RiArrowLeftLine width={14} height={14} fill="currentColor" aria-hidden />
             Previous
           </span>
           <span className="text-base font-semibold text-foreground">{prev.title}</span>
@@ -52,7 +53,7 @@ export default function NextPrev({ prev, next }: NextPrevProps) {
         >
           <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Next
-            <ArrowRight className="size-3.5" aria-hidden="true" />
+            <RiArrowRightLine width={14} height={14} fill="currentColor" aria-hidden />
           </span>
           <span className="text-base font-semibold text-foreground">{next.title}</span>
         </Link>

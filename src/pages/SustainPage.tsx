@@ -1,4 +1,6 @@
-import { Sparkles, CircleDollarSign, Megaphone } from 'lucide-react'
+import { RiMegaphoneLine } from '@oxy.so/bloom/icons/RiMegaphoneLine'
+import { RiMoneyDollarCircleLine } from '@oxy.so/bloom/icons/RiMoneyDollarCircleLine'
+import { RiSparklingLine } from '@oxy.so/bloom/icons/RiSparklingLine'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
@@ -430,7 +432,7 @@ export default function SustainPage() {
                 <div className="mt-12 grid grid-cols-1 gap-px bg-border p-px sm:grid-cols-3">
                   <div className="flex flex-col bg-background p-8 lg:p-10">
                     <span className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                      <Sparkles className="size-6" aria-hidden="true" />
+                      <RiSparklingLine width={24} height={24} fill="currentColor" aria-hidden />
                     </span>
                     <h3 className="mt-6 text-lg font-medium text-foreground">Subscribe</h3>
                     <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">Choose a plan that fits. Every subscriber directly funds development and infrastructure.</p>
@@ -440,7 +442,7 @@ export default function SustainPage() {
                   </div>
                   <div className="flex flex-col bg-background p-8 lg:p-10">
                     <span className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                      <CircleDollarSign className="size-6" aria-hidden="true" />
+                      <RiMoneyDollarCircleLine width={24} height={24} fill="currentColor" aria-hidden />
                     </span>
                     <h3 className="mt-6 text-lg font-medium text-foreground">Donate</h3>
                     <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">One-time or recurring. Every donation moves the bar and keeps Oxy independent.</p>
@@ -450,7 +452,7 @@ export default function SustainPage() {
                   </div>
                   <div className="flex flex-col bg-background p-8 lg:p-10">
                     <span className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                      <Megaphone className="size-6" aria-hidden="true" />
+                      <RiMegaphoneLine width={24} height={24} fill="currentColor" aria-hidden />
                     </span>
                     <h3 className="mt-6 text-lg font-medium text-foreground">Spread the word</h3>
                     <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">Tell a friend, write about us, or just keep using Oxy. Growth without ads means growth through people.</p>

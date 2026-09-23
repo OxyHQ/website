@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Dialog, type DialogControlProps } from '@oxy.so/bloom/dialog'
-import { X } from 'lucide-react'
+import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
 import OptionSelect from '../ui/OptionSelect'
 
 interface StartupProgramDialogProps {
@@ -264,7 +264,7 @@ export default function StartupProgramDialog({ control }: StartupProgramDialogPr
           type="button"
           onClick={() => control.close()}
         >
-          <X aria-hidden="true" className="size-4" />
+          <RiCloseLine width={16} height={16} fill="currentColor" aria-hidden />
           <span className="sr-only">Close</span>
         </button>
       </div>

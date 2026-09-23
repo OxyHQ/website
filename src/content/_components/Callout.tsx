@@ -1,11 +1,15 @@
 import type { ReactNode } from 'react'
-import { Info, AlertTriangle, Lightbulb, OctagonX } from 'lucide-react'
+import type { BloomIconComponent } from '@oxy.so/bloom/icons'
+import { RiAlertLine } from '@oxy.so/bloom/icons/RiAlertLine'
+import { RiForbidLine } from '@oxy.so/bloom/icons/RiForbidLine'
+import { RiInformationLine } from '@oxy.so/bloom/icons/RiInformationLine'
+import { RiLightbulbLine } from '@oxy.so/bloom/icons/RiLightbulbLine'
 import { cn } from '../../lib/utils'
 
 /* ──────────────────────────────────────────────
  * <Callout type="info|warning|tip|danger" title="…">
  *
- * Inline information block for MDX content. Uses Lucide icons for the type
+ * Inline information block for MDX content. Uses Bloom's Remix icons for the type
  * indicator and color-coded borders/backgrounds that respect dark mode.
  *
  *   <Callout type="warning" title="Heads up">
@@ -40,11 +44,11 @@ const STYLES: Record<CalloutType, { container: string; icon: string }> = {
   },
 }
 
-const ICONS: Record<CalloutType, typeof Info> = {
-  info: Info,
-  warning: AlertTriangle,
-  tip: Lightbulb,
-  danger: OctagonX,
+const ICONS: Record<CalloutType, BloomIconComponent> = {
+  info: RiInformationLine,
+  warning: RiAlertLine,
+  tip: RiLightbulbLine,
+  danger: RiForbidLine,
 }
 
 export default function Callout({ type = 'info', title, children }: CalloutProps) {
@@ -58,7 +62,9 @@ export default function Callout({ type = 'info', title, children }: CalloutProps
       )}
       role="note"
     >
-      <Icon className={cn('size-5 shrink-0', styles.icon)} aria-hidden="true" />
+      <span className={cn('inline-flex shrink-0', styles.icon)} aria-hidden="true">
+        <Icon width={20} height={20} fill="currentColor" />
+      </span>
       <div className="flex-1">
         {title ? <div className="mb-1 font-semibold">{title}</div> : null}
         <div className="opacity-90 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0">

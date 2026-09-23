@@ -1,20 +1,18 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { Link } from '../lib/navigation'
 import { Search as BloomSearch } from '@oxy.so/bloom/search'
-import {
-  ArrowRight,
-  BookOpen,
-  Check,
-  Clock,
-  Code2,
-  PlayCircle,
-  Radio,
-  Rocket,
-  ShieldCheck,
-  Sparkles,
-  Zap,
-  type LucideIcon,
-} from 'lucide-react'
+import type { BloomIconComponent } from '@oxy.so/bloom/icons'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { RiBookOpenLine } from '@oxy.so/bloom/icons/RiBookOpenLine'
+import { RiBroadcastLine } from '@oxy.so/bloom/icons/RiBroadcastLine'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
+import { RiCodeSSlashLine } from '@oxy.so/bloom/icons/RiCodeSSlashLine'
+import { RiFlashlightLine } from '@oxy.so/bloom/icons/RiFlashlightLine'
+import { RiPlayCircleLine } from '@oxy.so/bloom/icons/RiPlayCircleLine'
+import { RiRocket2Line } from '@oxy.so/bloom/icons/RiRocket2Line'
+import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine'
+import { RiSparklingLine } from '@oxy.so/bloom/icons/RiSparklingLine'
+import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -42,7 +40,7 @@ interface TrackDef {
   label: string
   blurb: string
   tags: string[]
-  Icon: LucideIcon
+  Icon: BloomIconComponent
   accent: string
 }
 
@@ -52,7 +50,7 @@ const TRACKS: TrackDef[] = [
     label: 'Foundations',
     blurb: 'Set up your account and ship your first project on Oxy.',
     tags: ['intro', 'onboarding'],
-    Icon: Rocket,
+    Icon: RiRocket2Line,
     accent: 'from-chart-5-active to-chart-1-active',
   },
   {
@@ -60,7 +58,7 @@ const TRACKS: TrackDef[] = [
     label: 'Identity & security',
     blurb: 'Own your Oxy ID — keys, sessions and account recovery.',
     tags: ['identity', 'security'],
-    Icon: ShieldCheck,
+    Icon: RiShieldCheckLine,
     accent: 'from-chart-5 to-chart-9-active',
   },
   {
@@ -68,7 +66,7 @@ const TRACKS: TrackDef[] = [
     label: 'Social & publishing',
     blurb: 'Grow your audience with Mention and the fediverse.',
     tags: ['mention', 'publishing', 'fediverse'],
-    Icon: Radio,
+    Icon: RiBroadcastLine,
     accent: 'from-chart-6 to-chart-2',
   },
   {
@@ -76,7 +74,7 @@ const TRACKS: TrackDef[] = [
     label: 'Build on Oxy',
     blurb: 'APIs, SDKs and the developer platform — coming soon.',
     tags: ['developer', 'api', 'sdk'],
-    Icon: Code2,
+    Icon: RiCodeSSlashLine,
     accent: 'from-chart-4 to-chart-9-active',
   },
 ]
@@ -147,13 +145,13 @@ function CourseMeta({ course }: { course: CourseWithLessons }) {
       </span>
       {course.duration ? (
         <span className="inline-flex items-center gap-1.5">
-          <Clock className="size-3.5" aria-hidden="true" />
+          <RiTimeLine width={14} height={14} fill="currentColor" aria-hidden />
           {course.duration}
         </span>
       ) : null}
       {course.lessons.length > 0 ? (
         <span className="inline-flex items-center gap-1.5">
-          <BookOpen className="size-3.5" aria-hidden="true" />
+          <RiBookOpenLine width={14} height={14} fill="currentColor" aria-hidden />
           {course.lessons.length} {course.lessons.length === 1 ? 'lesson' : 'lessons'}
         </span>
       ) : null}
@@ -177,13 +175,13 @@ function CourseCard({ course, progress }: { course: CourseWithLessons; progress:
         <CourseCover course={course} className="aspect-[16/9] w-full" />
         {course.featured ? (
           <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-foreground shadow-sm backdrop-blur">
-            <Sparkles className="size-2.5 text-primary" aria-hidden="true" />
+            <span className="inline-flex text-primary" aria-hidden="true"><RiSparklingLine width={10} height={10} fill="currentColor" /></span>
             Featured
           </span>
         ) : null}
         {s.status === 'completed' ? (
           <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-success px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-success-foreground shadow-sm">
-            <Check className="size-2.5" aria-hidden="true" />
+            <RiCheckLine width={10} height={10} fill="currentColor" aria-hidden />
             Done
           </span>
         ) : null}
@@ -206,7 +204,7 @@ function CourseCard({ course, progress }: { course: CourseWithLessons; progress:
           </span>
           <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground">
             {cta}
-            <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+            <span className="inline-flex transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
           </span>
         </div>
       </div>
@@ -243,7 +241,7 @@ function TrackCard({
       }`}
     >
       <span className={`grid size-10 place-items-center rounded-xl bg-gradient-to-br ${track.accent} force-light text-background shadow-sm`}>
-        <track.Icon className="size-5" aria-hidden="true" />
+        <track.Icon width={20} height={20} fill="currentColor" aria-hidden />
       </span>
       <div>
         <h3 className="text-sm font-semibold text-foreground">{track.label}</h3>
@@ -252,7 +250,7 @@ function TrackCard({
       <span className="mt-auto inline-flex items-center gap-1.5 pt-0.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         {empty ? 'Coming soon' : `${count} ${count === 1 ? 'course' : 'courses'}`}
         {empty ? null : (
-          <ArrowRight className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
+          <span className="inline-flex transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
         )}
       </span>
     </button>
@@ -261,10 +259,10 @@ function TrackCard({
 
 /* ── Page ─────────────────────────────────────────────────── */
 
-const VALUE_PROPS: { Icon: LucideIcon; title: string; description: string }[] = [
-  { Icon: Zap, title: 'Practical, not academic', description: 'Every lesson ends with code you can paste and run. No theory dumps.' },
-  { Icon: Sparkles, title: 'Always current', description: 'Courses are versioned next to the platform. When Oxy ships, the lesson updates.' },
-  { Icon: Code2, title: 'Open-source friendly', description: 'Examples link to public repos so you can clone, fork, and remix.' },
+const VALUE_PROPS: { Icon: BloomIconComponent; title: string; description: string }[] = [
+  { Icon: RiFlashlightLine, title: 'Practical, not academic', description: 'Every lesson ends with code you can paste and run. No theory dumps.' },
+  { Icon: RiSparklingLine, title: 'Always current', description: 'Courses are versioned next to the platform. When Oxy ships, the lesson updates.' },
+  { Icon: RiCodeSSlashLine, title: 'Open-source friendly', description: 'Examples link to public repos so you can clone, fork, and remix.' },
 ]
 
 export default function AcademyPage() {
@@ -361,7 +359,7 @@ export default function AcademyPage() {
                       <div className="relative isolate aspect-square w-full overflow-hidden rounded-xl bg-background/20">
                         <CourseCover course={course} className="absolute inset-0 size-full" />
                         <span className="absolute right-3 bottom-3 z-10 flex size-12 items-center justify-center rounded-full bg-foreground/40 text-background backdrop-blur-xs transition-colors duration-300 group-hover:bg-foreground/70">
-                          <ArrowRight className="size-5" aria-hidden="true" />
+                          <RiArrowRightLine width={20} height={20} fill="currentColor" aria-hidden />
                         </span>
                       </div>
                       <div className="pb-10">
@@ -388,7 +386,7 @@ export default function AcademyPage() {
               <CourseCover course={resume.course} className="aspect-[16/9] w-full sm:aspect-auto sm:h-full" />
               <div className="flex flex-col gap-2.5 p-5 lg:p-6">
                 <span className="inline-flex w-fit items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
-                  <PlayCircle className="size-4" aria-hidden="true" />
+                  <RiPlayCircleLine width={16} height={16} fill="currentColor" aria-hidden />
                   Continue learning
                 </span>
                 <h2 className="text-balance text-lg font-semibold text-foreground md:text-xl">{resume.course.title}</h2>
@@ -402,7 +400,7 @@ export default function AcademyPage() {
                 </div>
                 <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground">
                   Resume next lesson
-                  <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+                  <span className="inline-flex transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
                 </span>
               </div>
             </Link>
@@ -507,7 +505,7 @@ export default function AcademyPage() {
             {VALUE_PROPS.map((prop) => (
               <div key={prop.title} className="flex flex-col gap-3 rounded-2xl border border-border bg-background p-6">
                 <span className="grid size-10 place-items-center rounded-xl bg-surface text-primary ring-1 ring-border">
-                  <prop.Icon className="size-5" aria-hidden="true" />
+                  <prop.Icon width={20} height={20} fill="currentColor" aria-hidden />
                 </span>
                 <h3 className="text-base font-semibold tracking-tight text-foreground">{prop.title}</h3>
                 <p className="text-pretty text-sm leading-relaxed text-muted-foreground">{prop.description}</p>

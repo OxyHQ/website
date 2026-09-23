@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '@oxy.so/services/ui/client'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
-import { Plus } from 'lucide-react'
+import { RiAddLine } from '@oxy.so/bloom/icons/RiAddLine'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -92,7 +92,7 @@ export default function FeatureBoardPage() {
       onClick={handleProposeClick}
       className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-body-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
     >
-      <Plus className="h-3.5 w-3.5" />
+      <RiAddLine width={14} height={14} fill="currentColor" aria-hidden />
       Propose
     </button>
   ) : undefined

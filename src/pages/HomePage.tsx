@@ -1,6 +1,15 @@
 import { useState, useCallback, useLayoutEffect, useRef } from 'react'
 import { motion, useScroll, useSpring, useTransform, useReducedMotion } from 'framer-motion'
-import { ArrowUpRight, BookOpenText, Bug, Code, HandHeart, MagnifyingGlass, Megaphone, Newspaper, Translate, UsersThree } from '@phosphor-icons/react'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
+import { RiBookReadLine } from '@oxy.so/bloom/icons/RiBookReadLine'
+import { RiBugLine } from '@oxy.so/bloom/icons/RiBugLine'
+import { RiCodeLine } from '@oxy.so/bloom/icons/RiCodeLine'
+import { RiHandHeartLine } from '@oxy.so/bloom/icons/RiHandHeartLine'
+import { RiMegaphoneLine } from '@oxy.so/bloom/icons/RiMegaphoneLine'
+import { RiNewspaperLine } from '@oxy.so/bloom/icons/RiNewspaperLine'
+import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
+import { RiTeamLine } from '@oxy.so/bloom/icons/RiTeamLine'
+import { RiTranslate2 } from '@oxy.so/bloom/icons/RiTranslate2'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -201,11 +210,12 @@ function BuildForEveryoneSection() {
                 {BUILD_FOR_EVERYONE_LINKS.map((link, index) => {
                   const rowClass = `group flex items-center justify-between gap-4 rounded-full px-5 py-3 font-display text-xl font-[450] transition-[filter,transform] duration-200 hover:-translate-y-0.5 hover:brightness-110 ${BUILD_FOR_EVERYONE_LINK_CLASSES[index]}`
                   const arrow = (
-                    <ArrowUpRight
-                      weight="regular"
-                      className="shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                      aria-hidden
-                    />
+                    <span
+                      className="inline-flex shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      aria-hidden="true"
+                    >
+                      <RiArrowRightUpLine width={20} height={20} fill="currentColor" />
+                    </span>
                   )
                   return (
                     <li key={link.key}>
@@ -491,15 +501,15 @@ const TESTIMONIALS = [
 /*  Enterprise Partnership Services                                    */
 /* ------------------------------------------------------------------ */
 const PARTNERSHIP_ITEMS = [
-  { key: 'home.partnershipContribute', Icon: Code },
-  { key: 'home.partnershipCommunity', Icon: UsersThree },
-  { key: 'home.partnershipBugs', Icon: Bug },
-  { key: 'home.partnershipTranslate', Icon: Translate },
-  { key: 'home.partnershipDocs', Icon: BookOpenText },
-  { key: 'home.partnershipVolunteer', Icon: HandHeart },
-  { key: 'home.partnershipSpread', Icon: Megaphone },
-  { key: 'home.buildLinkNewsroom', Icon: Newspaper },
-  { key: 'home.buildLinkDocs', Icon: MagnifyingGlass },
+  { key: 'home.partnershipContribute', Icon: RiCodeLine },
+  { key: 'home.partnershipCommunity', Icon: RiTeamLine },
+  { key: 'home.partnershipBugs', Icon: RiBugLine },
+  { key: 'home.partnershipTranslate', Icon: RiTranslate2 },
+  { key: 'home.partnershipDocs', Icon: RiBookReadLine },
+  { key: 'home.partnershipVolunteer', Icon: RiHandHeartLine },
+  { key: 'home.partnershipSpread', Icon: RiMegaphoneLine },
+  { key: 'home.buildLinkNewsroom', Icon: RiNewspaperLine },
+  { key: 'home.buildLinkDocs', Icon: RiSearchLine },
 ]
 
 function PartnershipSection() {
@@ -565,7 +575,7 @@ function PartnershipSection() {
                   key={key}
                   className="flex min-h-7 items-center gap-2 px-1 py-0.5 text-sm font-medium leading-snug text-foreground/90"
                 >
-                  <Icon size={18} weight="regular" className="text-current" aria-hidden="true" />
+                  <Icon width={18} height={18} fill="currentColor" aria-hidden />
                   <span>{t(key)}</span>
                 </div>
               ))}
@@ -574,7 +584,7 @@ function PartnershipSection() {
                 className="flex min-h-8 items-center gap-2 px-1 py-0.5 text-base font-semibold text-tertiary transition-colors duration-200 hover:text-tertiary/80 md:text-lg"
               >
                 {t('home.partnershipCta')}
-                <ArrowUpRight size={18} weight="regular" aria-hidden="true" />
+                <RiArrowRightUpLine width={18} height={18} fill="currentColor" aria-hidden />
               </a>
             </div>
           </div>
