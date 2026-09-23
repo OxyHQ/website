@@ -1,22 +1,5 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { X } from 'lucide-react'
-import { Badge } from '@oxy.so/bloom/badge'
-import { Button } from '@oxy.so/bloom/button'
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@oxy.so/bloom/dropdown-menu'
-import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
-import { RiArrowUpDownLine } from '@oxy.so/bloom/icons/RiArrowUpDownLine'
-import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
-import { RiEqualizerLine } from '@oxy.so/bloom/icons/RiEqualizerLine'
 import { RiLayoutGridLine } from '@oxy.so/bloom/icons/RiLayoutGridLine'
 import { RiListUnordered } from '@oxy.so/bloom/icons/RiListUnordered'
 import { SegmentedControl, SegmentedControlItem } from '@oxy.so/bloom/segmented-control'
@@ -25,7 +8,9 @@ import { useNewsroomPosts, usePage, type PageSection } from '../../api/hooks'
 import { newsCategories, type NewsCategory, type NewsroomPostSummary } from '../../data/newsroom'
 import { useTranslation } from '../../lib/i18n'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
+import { BloomSelectionKeys } from '../ui/BloomSelectionKeys'
 import { NewsCardFeatured, NewsCardGrid, NewsCardListRow } from './NewsCard'
+import { NewsroomActiveFilters, NewsroomFilterMenu, NewsroomSortMenu } from './NewsroomListControls'
 
 interface NewsroomUI {
   filter: string
@@ -230,132 +215,61 @@ export default function NewsroomIndex() {
 
               <div className="flex min-h-10 items-center justify-between gap-4 @lg:justify-end">
                 <div className="flex items-center gap-2">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild label={ui.filter} className="inline-flex">
-                      <Button
-                        size="sm"
-                        appearance="plain"
-                        tone="neutral"
-                        leadingIcon={RiEqualizerLine}
-                        trailing={activeFilters.length > 0
-                          ? <Badge content={activeFilters.length} color="primary" variant="subtle" />
-                          : undefined}
-                        trailingIcon={RiArrowDownSLine}
-                      >
-                        {ui.filter}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" label={ui.filter}>
-                      {filterCategories.map((category) => (
-                        <DropdownMenuCheckboxItem
-                          key={category}
-                          checked={activeFilters.includes(category)}
-                          onCheckedChange={() => toggleFilter(category)}
-                          indicator={<RiCheckLine size="sm" fill={colors.textSecondary} />}
-                          indicatorPosition="trailing"
-                          keepOpen
-                        >
-                          {category}
-                        </DropdownMenuCheckboxItem>
-                      ))}
-                      {activeFilters.length > 0 && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onPress={clearFilters}>{ui.clearAll}</DropdownMenuItem>
-                        </>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  <DropdownMenu>
-                    <DropdownMenuTrigger
-                      asChild
-                      label={t('newsroom.sortLabel', { option: sortLabels[sortBy] })}
-                      className="inline-flex"
-                    >
-                      <Button
-                        size="sm"
-                        appearance="plain"
-                        tone="neutral"
-                        accessibilityLabel={t('newsroom.sortLabel', { option: sortLabels[sortBy] })}
-                        leadingIcon={RiArrowUpDownLine}
-                        trailingIcon={RiArrowDownSLine}
-                      >
-                        {ui.sort}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" label={ui.sort}>
-                      <DropdownMenuRadioGroup
-                        value={sortBy}
-                        onValueChange={(option) => selectSort(option as SortOption)}
-                      >
-                        {(Object.keys(sortLabels) as SortOption[]).map((option) => (
-                          <DropdownMenuRadioItem
-                            key={option}
-                            value={option}
-                            indicator={<RiCheckLine size="sm" fill={colors.textSecondary} />}
-                            indicatorPosition="trailing"
-                          >
-                            {sortLabels[option]}
-                          </DropdownMenuRadioItem>
-                        ))}
-                      </DropdownMenuRadioGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <NewsroomFilterMenu
+                    label={ui.filter}
+                    clearAllLabel={ui.clearAll}
+                    categories={filterCategories}
+                    active={activeFilters}
+                    onToggle={toggleFilter}
+                    onClear={clearFilters}
+                  />
+                  <NewsroomSortMenu
+                    label={ui.sort}
+                    options={sortLabels}
+                    value={sortBy}
+                    onChange={selectSort}
+                  />
                 </div>
 
-                <SegmentedControl
-                  type="radio"
-                  size="sm"
-                  label={t('newsroom.viewLabel')}
-                  value={view}
-                  onValueChange={selectView}
-                >
-                  {([
-                    { value: 'grid', label: t('newsroom.gridView'), icon: RiLayoutGridLine },
-                    { value: 'list', label: t('newsroom.listView'), icon: RiListUnordered },
-                  ] as const).map((option) => {
-                    const Icon = option.icon
-                    return (
-                      <SegmentedControlItem
-                        key={option.value}
-                        value={option.value}
-                        accessibilityLabel={option.label}
-                      >
-                        <Icon
-                          aria-hidden
-                          size="sm"
-                          fill={view === option.value ? colors.text : colors.textSecondary}
-                        />
-                      </SegmentedControlItem>
-                    )
-                  })}
-                </SegmentedControl>
+                <BloomSelectionKeys item="radio">
+                  <SegmentedControl
+                    type="radio"
+                    size="sm"
+                    label={t('newsroom.viewLabel')}
+                    value={view}
+                    onValueChange={selectView}
+                  >
+                    {([
+                      { value: 'grid', label: t('newsroom.gridView'), icon: RiLayoutGridLine },
+                      { value: 'list', label: t('newsroom.listView'), icon: RiListUnordered },
+                    ] as const).map((option) => {
+                      const Icon = option.icon
+                      return (
+                        <SegmentedControlItem
+                          key={option.value}
+                          value={option.value}
+                          accessibilityLabel={option.label}
+                        >
+                          <Icon
+                            aria-hidden
+                            size="sm"
+                            fill={view === option.value ? colors.text : colors.textSecondary}
+                          />
+                        </SegmentedControlItem>
+                      )
+                    })}
+                  </SegmentedControl>
+                </BloomSelectionKeys>
               </div>
             </div>
 
-            {activeFilters.length > 0 && (
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                {activeFilters.map((category) => (
-                  <button
-                    key={category}
-                    type="button"
-                    onClick={() => toggleFilter(category)}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
-                  >
-                    {category}
-                    <X aria-hidden className="size-3" />
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={clearFilters}
-                  className="cursor-pointer px-1 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  {ui.clearAll}
-                </button>
-              </div>
-            )}
+            <NewsroomActiveFilters
+              className="mt-4"
+              active={activeFilters}
+              clearAllLabel={ui.clearAll}
+              onRemove={toggleFilter}
+              onClear={clearFilters}
+            />
 
             {isPending ? (
               <div className="mt-12 grid w-full grid-cols-1 gap-6 @lg:grid-cols-4">

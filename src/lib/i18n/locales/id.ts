@@ -91,6 +91,7 @@ const id: Translations = {
     viewLabel: 'Tampilan artikel',
     gridView: 'Tampilan kisi',
     listView: 'Tampilan daftar',
+    removeFilter: 'Hapus filter {category}',
   },
   dashboard: { ...en.dashboard, mapView: 'Tampilan peta', mapFlat: 'Peta datar', mapGlobe: 'Bola dunia',
     traffic: {"identity": "Identitas", "ai": "AI", "communication": "Pesan", "media": "Media", "platform": "Platform", "internal": "Internal", "external": "Eksternal", "inbound": "Masuk", "outbound": "Keluar"}, totalUsers: 'Total pengguna', infrastructureActivity: 'Aktivitas infrastruktur langsung', waitingActivity: 'Menunggu aktivitas anonim…', activeRegions: 'Wilayah aktif', networkOrigins: 'Asal jaringan langsung', contentPerUser: 'Konten / pengguna', itemsPerUser: 'Item / pengguna', activeSessions: 'Sesi aktif', developerApps: 'Aplikasi pengembang', storedFiles: 'File tersimpan', files: 'File', messages: 'Pesan', notifications: 'Notifikasi', transactions: 'Transaksi', noneYet: 'Belum ada', aiModels: 'Model AI', connections: 'Koneksi', platformActivity: 'Aktivitas platform', metricDetail: '{metric} dihitung dari data nyata dan diperbarui secara otomatis.' },

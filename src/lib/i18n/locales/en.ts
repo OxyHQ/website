@@ -420,6 +420,7 @@ const en = {
     viewLabel: 'Article view',
     gridView: 'Grid view',
     listView: 'List view',
+    removeFilter: 'Remove {category} filter',
   },
   changelog: {
     seoTitle: 'Changelog',

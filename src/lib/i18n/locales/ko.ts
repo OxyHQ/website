@@ -247,6 +247,7 @@ const ko: Translations = {
     viewLabel: '기사 보기',
     gridView: '그리드 보기',
     listView: '목록 보기',
+    removeFilter: '{category} 필터 제거',
   },
   changelog: {
     seoTitle: '변경 로그',
