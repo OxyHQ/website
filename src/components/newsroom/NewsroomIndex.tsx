@@ -8,7 +8,6 @@ import { useNewsroomPosts, usePage, type PageSection } from '../../api/hooks'
 import { newsCategories, type NewsCategory, type NewsroomPostSummary } from '../../data/newsroom'
 import { useTranslation } from '../../lib/i18n'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
-import { BloomSelectionKeys } from '../ui/BloomSelectionKeys'
 import { NewsCardFeatured, NewsCardGrid, NewsCardListRow } from './NewsCard'
 import { NewsroomActiveFilters, NewsroomFilterMenu, NewsroomSortMenu } from './NewsroomListControls'
 
@@ -231,35 +230,33 @@ export default function NewsroomIndex() {
                   />
                 </div>
 
-                <BloomSelectionKeys item="radio">
-                  <SegmentedControl
-                    type="radio"
-                    size="sm"
-                    label={t('newsroom.viewLabel')}
-                    value={view}
-                    onValueChange={selectView}
-                  >
-                    {([
-                      { value: 'grid', label: t('newsroom.gridView'), icon: RiLayoutGridLine },
-                      { value: 'list', label: t('newsroom.listView'), icon: RiListUnordered },
-                    ] as const).map((option) => {
-                      const Icon = option.icon
-                      return (
-                        <SegmentedControlItem
-                          key={option.value}
-                          value={option.value}
-                          accessibilityLabel={option.label}
-                        >
-                          <Icon
-                            aria-hidden
-                            size="sm"
-                            fill={view === option.value ? colors.text : colors.textSecondary}
-                          />
-                        </SegmentedControlItem>
-                      )
-                    })}
-                  </SegmentedControl>
-                </BloomSelectionKeys>
+                <SegmentedControl
+                  type="radio"
+                  size="sm"
+                  label={t('newsroom.viewLabel')}
+                  value={view}
+                  onValueChange={selectView}
+                >
+                  {([
+                    { value: 'grid', label: t('newsroom.gridView'), icon: RiLayoutGridLine },
+                    { value: 'list', label: t('newsroom.listView'), icon: RiListUnordered },
+                  ] as const).map((option) => {
+                    const Icon = option.icon
+                    return (
+                      <SegmentedControlItem
+                        key={option.value}
+                        value={option.value}
+                        accessibilityLabel={option.label}
+                      >
+                        <Icon
+                          aria-hidden
+                          size="sm"
+                          fill={view === option.value ? colors.text : colors.textSecondary}
+                        />
+                      </SegmentedControlItem>
+                    )
+                  })}
+                </SegmentedControl>
               </div>
             </div>
 
