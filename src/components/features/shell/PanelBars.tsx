@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react'
+import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs'
+import { TabListSemantics } from '../../ui/TabListSemantics'
 import { PANEL_HEADER_HEIGHT, PANEL_TABBAR_HEIGHT } from './boardChrome'
 
 /**
@@ -33,41 +35,26 @@ export interface PanelTab {
 }
 
 /**
- * The tab bar, stacked directly under the header. Tabs share a row and split it
- * evenly, with the active one carrying a short underline rather than a filled
- * pill: the row is chrome, not content, and a filled tab competes with the feed
- * underneath it.
+ * The tab bar, stacked directly under the header: Bloom's underline `Tabs`,
+ * spread edge to edge so the tabs split the row evenly. An underline rather
+ * than a filled pill because the row is chrome, not content, and a filled tab
+ * competes with the feed underneath it. Bloom draws the baseline that used to
+ * be this row's bottom border.
  */
-export function PanelTabs({ tabs, active, onSelect }: {
+export function PanelTabs({ label, tabs, active, onSelect }: {
+  /** The tab list's accessible name. */
+  label: string
   tabs: readonly PanelTab[]
   active: string
   onSelect: (key: string) => void
 }) {
   return (
-    <div
-      className="flex border-b border-border"
-      style={{ height: PANEL_TABBAR_HEIGHT }}
-      role="tablist"
-    >
-      {tabs.map((tab) => {
-        const selected = tab.key === active
-        return (
-          <button
-            key={tab.key}
-            role="tab"
-            aria-selected={selected}
-            onClick={() => onSelect(tab.key)}
-            className={`relative flex flex-1 cursor-pointer items-center justify-center text-body-md font-medium transition-colors ${
-              selected ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {tab.label}
-            {selected && (
-              <span className="absolute bottom-0 h-[3px] w-14 rounded-full bg-primary" aria-hidden />
-            )}
-          </button>
-        )
-      })}
-    </div>
+    <TabListSemantics label={label} className="flex flex-col justify-end" style={{ height: PANEL_TABBAR_HEIGHT }}>
+      <Tabs value={active} onValueChange={onSelect} fullWidth>
+        {tabs.map((tab) => (
+          <TabsTrigger key={tab.key} value={tab.key} label={tab.label} />
+        ))}
+      </Tabs>
+    </TabListSemantics>
   )
 }
