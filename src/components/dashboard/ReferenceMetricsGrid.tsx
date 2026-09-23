@@ -1,4 +1,6 @@
-import { useState, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
+import { RiArrowRightSLine } from "@oxy.so/bloom/icons/RiArrowRightSLine";
+import { RiArrowRightUpLine } from "@oxy.so/bloom/icons/RiArrowRightUpLine";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
@@ -7,25 +9,28 @@ import { useTranslation } from "../../lib/i18n";
 import type { PlatformStats } from "../../api/hooks";
 import "../../styles/dashboard-metrics.css";
 
-function Chevron({ circle = false, open, onClick, label, action }: { circle?: boolean; open: boolean; onClick: () => void; label: string; action: string }) {
+function Chevron({ circle = false, open, onClick, label, action, controls }: { circle?: boolean; open: boolean; onClick: () => void; label: string; action: string; controls: string }) {
   return (
-    <button type="button" aria-label={`${action} ${label}`} aria-expanded={open} onClick={onClick} className={`dashboard-chevron absolute z-20 flex cursor-pointer items-center justify-center border-0 p-0 transition-colors ${circle ? "rounded-full bg-muted text-foreground hover:bg-accent" : "bg-transparent text-muted-foreground hover:text-foreground"}`}>
-      <svg className={`transition-transform duration-300 ${open ? "rotate-90" : ""}`} width="100%" height="100%" viewBox="0 0 60 60" fill="none">
-        <path d="m25 18 12 12-12 12" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+    <button type="button" aria-label={`${action} ${label}`} aria-expanded={open} aria-controls={controls} onClick={onClick} className={`dashboard-chevron absolute z-20 flex cursor-pointer items-center justify-center border-0 p-0 transition-colors ${circle ? "rounded-full bg-muted text-foreground hover:bg-accent" : "bg-transparent text-muted-foreground hover:text-foreground"}`}>
+      <span aria-hidden="true" className={`flex size-full transition-transform duration-300 [&_svg]:size-full ${open ? "rotate-90" : ""}`}>
+        <RiArrowRightSLine width={24} height={24} fill="currentColor" />
+      </span>
     </button>
   );
 }
 
 function Card({ title, children, circle, className = "" }: { title: string; children: ReactNode; circle?: boolean; className?: string }) {
   const [open, setOpen] = useState(false);
+  const detailId = useId();
   const { t } = useTranslation();
   return (
     <section aria-label={title} className={`dashboard-metric relative isolate overflow-hidden bg-background ${className}`}>
       <h2 className="dashboard-card-title absolute font-medium tracking-[-0.035em] text-muted-foreground">{title}</h2>
-      <Chevron circle={circle} open={open} onClick={() => setOpen((current) => !current)} label={title} action={open ? t('dashboard.hideDetails') : t('dashboard.showDetails')} />
-      <div className={`dashboard-card-body transition-opacity duration-300 ${open ? "pointer-events-none opacity-0" : "opacity-100"}`}>{children}</div>
-      <div className={`dashboard-card-detail absolute transition duration-300 ${open ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"}`}>
+      <Chevron circle={circle} open={open} onClick={() => setOpen((current) => !current)} label={title} action={open ? t('dashboard.hideDetails') : t('dashboard.showDetails')} controls={detailId} />
+      {/* The two faces cross-fade in place, so the hidden one is still laid out:
+          `inert` is what takes it out of the accessibility tree meanwhile. */}
+      <div inert={open} className={`dashboard-card-body transition-opacity duration-300 ${open ? "pointer-events-none opacity-0" : "opacity-100"}`}>{children}</div>
+      <div id={detailId} inert={!open} className={`dashboard-card-detail absolute transition duration-300 ${open ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"}`}>
         <p>{t('dashboard.metricDetail', { metric: title })}</p>
       </div>
     </section>
@@ -76,7 +81,7 @@ export default function ReferenceMetricsGrid({ stats, compact = false }: { stats
         {!compact && (
           <Card title={t('dashboard.contentPerUser')} circle className="bg-surface">
             <LiveValue version={stats.timestamp}>{contentPerUser.toFixed(1)}</LiveValue>
-            <p className="dashboard-market-change absolute flex items-center gap-[.6cqw] font-medium tracking-[-0.035em]"><span className="text-success">{t('dashboard.itemsPerUser')}</span><svg aria-hidden="true" className="w-[2.55cqw] text-success" viewBox="0 0 38 26" fill="none"><path d="m2 20 10-9 8 7L35 4M24 4h11v11" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg></p>
+            <p className="dashboard-market-change absolute flex items-center gap-[.6cqw] font-medium tracking-[-0.035em]"><span className="text-success">{t('dashboard.itemsPerUser')}</span><span aria-hidden="true" className="flex aspect-square w-[2.2cqw] text-success [&_svg]:size-full"><RiArrowRightUpLine width={24} height={24} fill="currentColor" /></span></p>
             <LineChart market />
           </Card>
         )}

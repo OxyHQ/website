@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { ChevronDown, ChevronRight, ExternalLink } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@oxy.so/bloom/accordion'
 import FeatureRow from './FeatureRow'
 import { ORG_ROADMAP_PROJECT_URL, ROADMAP_GROUPS } from './roadmapGroups'
 import type { FeatureRequestData } from '../../api/hooks'
@@ -15,6 +16,9 @@ interface RoadmapViewProps {
   truncated: boolean
 }
 
+/** The group headers keep the board's 16px gutter; the rows bring their own. */
+const TRIGGER_STYLE = { paddingHorizontal: 16 }
+
 /**
  * The roadmap: the same proposals the board lists, grouped by the status the
  * backend already derives from each issue's labels.
@@ -24,6 +28,8 @@ interface RoadmapViewProps {
  * delivered is missing its best news.
  */
 export default function RoadmapView({ items, statusCounts, isPending, truncated }: RoadmapViewProps) {
+  // Only the groups the reader has folded or opened; every other group follows
+  // its `foldedByDefault`, including one that only appears once data arrives.
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
   const groups = ROADMAP_GROUPS.map((group) => ({
@@ -34,6 +40,14 @@ export default function RoadmapView({ items, statusCounts, isPending, truncated 
     count: statusCounts[group.status] ?? 0,
     rows: items.filter((item) => item.status === group.status),
   })).filter((group) => group.count > 0)
+
+  const openGroups = groups
+    .filter((group) => expanded[group.status] ?? !group.foldedByDefault)
+    .map((group) => group.status)
+  const setOpen = (next: string | string[] | undefined) => {
+    const open = new Set(Array.isArray(next) ? next : next ? [next] : [])
+    setExpanded(Object.fromEntries(groups.map((group) => [group.status, open.has(group.status)])))
+  }
 
   if (isPending) {
     return <p className="px-4 py-10 text-sm text-muted-foreground">Loading the roadmap...</p>
@@ -52,40 +66,42 @@ export default function RoadmapView({ items, statusCounts, isPending, truncated 
 
   return (
     <div>
-      {groups.map((group) => {
-        const open = expanded[group.status] ?? !group.foldedByDefault
-        return (
-          <section key={group.status}>
-            <button
-              onClick={() => setExpanded({ ...expanded, [group.status]: !open })}
-              aria-expanded={open}
-              className="flex w-full cursor-pointer items-center gap-2 border-b border-border bg-surface/40 px-4 py-2.5 text-left transition-colors hover:bg-surface"
-            >
-              {open
-                ? <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
-                : <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />}
-              <span className={`h-2 w-2 shrink-0 rounded-full ${group.dotClass}`} aria-hidden />
-              <span className="text-sm font-semibold text-foreground">{group.label}</span>
-              <span className="rounded-full bg-surface px-2 py-0.5 text-xs font-medium text-muted-foreground">
-                {group.count}
-              </span>
-              <span className="ml-1 hidden truncate text-xs text-muted-foreground sm:block">
-                {group.description}
-              </span>
-            </button>
+      <Accordion type="multiple" value={openGroups} onValueChange={setOpen}>
+        {groups.map((group) => {
+          const open = openGroups.includes(group.status)
+          return (
+            <AccordionItem key={group.status} value={group.status}>
+              <AccordionTrigger style={TRIGGER_STYLE}>
+                <span className="flex min-w-0 items-center gap-2 text-left">
+                  <span className={`h-2 w-2 shrink-0 rounded-full ${group.dotClass}`} aria-hidden />
+                  <span className="text-sm font-semibold text-foreground">{group.label}</span>
+                  <span className="rounded-full bg-surface px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                    {group.count}
+                  </span>
+                  <span className="ml-1 hidden truncate text-xs text-muted-foreground sm:block">
+                    {group.description}
+                  </span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                {/* Bloom keeps a folded group mounted at zero height; `inert`
+                    keeps its vote buttons out of the tab order meanwhile. */}
+                <div inert={!open}>
+                  {group.rows.map((feature) => (
+                    <FeatureRow key={feature.id} feature={feature} />
+                  ))}
 
-            {open && group.rows.map((feature) => (
-              <FeatureRow key={feature.id} feature={feature} />
-            ))}
-
-            {open && group.rows.length === 0 && (
-              <p className="border-b border-border px-4 py-4 text-sm text-muted-foreground">
-                {group.count} in this group, beyond what this page loaded.
-              </p>
-            )}
-          </section>
-        )
-      })}
+                  {group.rows.length === 0 && (
+                    <p className="px-4 py-4 text-sm text-muted-foreground">
+                      {group.count} in this group, beyond what this page loaded.
+                    </p>
+                  )}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          )
+        })}
+      </Accordion>
 
       <div className="px-4 py-6">
         {truncated && (
