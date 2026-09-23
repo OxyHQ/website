@@ -17,7 +17,6 @@ import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
 import { RiEqualizerLine } from '@oxy.so/bloom/icons/RiEqualizerLine'
 import { useTheme } from '@oxy.so/bloom/theme'
 import { useTranslation } from '../../lib/i18n'
-import { useBloomMenuKeys } from '../ui/useBloomMenuKeys'
 
 /*
  * The article-list toolbar pieces shared by /newsroom (NewsroomIndex) and the
@@ -41,46 +40,43 @@ export function NewsroomFilterMenu<T extends string>({
   onClear: () => void
 }) {
   const { colors } = useTheme()
-  const { panelClass, wrapperProps } = useBloomMenuKeys()
   return (
-    <div {...wrapperProps} className="contents">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild label={label} className="inline-flex">
-          <Button
-            size="sm"
-            appearance="plain"
-            tone="neutral"
-            leadingIcon={RiEqualizerLine}
-            trailing={active.length > 0
-              ? <Badge content={active.length} color="primary" variant="subtle" />
-              : undefined}
-            trailingIcon={RiArrowDownSLine}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild label={label} className="inline-flex">
+        <Button
+          size="sm"
+          appearance="plain"
+          tone="neutral"
+          leadingIcon={RiEqualizerLine}
+          trailing={active.length > 0
+            ? <Badge content={active.length} color="primary" variant="subtle" />
+            : undefined}
+          trailingIcon={RiArrowDownSLine}
+        >
+          {label}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" label={label}>
+        {categories.map((category) => (
+          <DropdownMenuCheckboxItem
+            key={category}
+            checked={active.includes(category)}
+            onCheckedChange={() => onToggle(category)}
+            indicator={<RiCheckLine size="sm" fill={colors.textSecondary} />}
+            indicatorPosition="trailing"
+            keepOpen
           >
-            {label}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" label={label} className={panelClass}>
-          {categories.map((category) => (
-            <DropdownMenuCheckboxItem
-              key={category}
-              checked={active.includes(category)}
-              onCheckedChange={() => onToggle(category)}
-              indicator={<RiCheckLine size="sm" fill={colors.textSecondary} />}
-              indicatorPosition="trailing"
-              keepOpen
-            >
-              {category}
-            </DropdownMenuCheckboxItem>
-          ))}
-          {active.length > 0 && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onPress={onClear}>{clearAllLabel}</DropdownMenuItem>
-            </>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+            {category}
+          </DropdownMenuCheckboxItem>
+        ))}
+        {active.length > 0 && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onPress={onClear}>{clearAllLabel}</DropdownMenuItem>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
@@ -99,38 +95,35 @@ export function NewsroomSortMenu<T extends string>({
   const { t } = useTranslation()
   const { colors } = useTheme()
   const accessibleLabel = t('newsroom.sortLabel', { option: options[value] })
-  const { panelClass, wrapperProps } = useBloomMenuKeys()
   return (
-    <div {...wrapperProps} className="contents">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild label={accessibleLabel} className="inline-flex">
-          <Button
-            size="sm"
-            appearance="plain"
-            tone="neutral"
-            accessibilityLabel={accessibleLabel}
-            leadingIcon={RiArrowUpDownLine}
-            trailingIcon={RiArrowDownSLine}
-          >
-            {label}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" label={label} className={panelClass}>
-          <DropdownMenuRadioGroup value={value} onValueChange={(next) => onChange(next as T)}>
-            {(Object.keys(options) as T[]).map((option) => (
-              <DropdownMenuRadioItem
-                key={option}
-                value={option}
-                indicator={<RiCheckLine size="sm" fill={colors.textSecondary} />}
-                indicatorPosition="trailing"
-              >
-                {options[option]}
-              </DropdownMenuRadioItem>
-            ))}
-          </DropdownMenuRadioGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild label={accessibleLabel} className="inline-flex">
+        <Button
+          size="sm"
+          appearance="plain"
+          tone="neutral"
+          accessibilityLabel={accessibleLabel}
+          leadingIcon={RiArrowUpDownLine}
+          trailingIcon={RiArrowDownSLine}
+        >
+          {label}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" label={label}>
+        <DropdownMenuRadioGroup value={value} onValueChange={(next) => onChange(next as T)}>
+          {(Object.keys(options) as T[]).map((option) => (
+            <DropdownMenuRadioItem
+              key={option}
+              value={option}
+              indicator={<RiCheckLine size="sm" fill={colors.textSecondary} />}
+              indicatorPosition="trailing"
+            >
+              {options[option]}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
