@@ -34,9 +34,9 @@ function CourseArtwork({ slug, title, cover, className }: { slug: string; title:
   }
   const g = courseGradient(slug)
   return (
-    <div className={`${className} relative overflow-hidden bg-gradient-to-br ${g.from} ${g.via} ${g.to}`} aria-hidden="true">
-      <span className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,255,255,0.22),transparent_55%)]" />
-      <span className="absolute -right-5 -bottom-8 select-none text-[9rem] font-bold leading-none tracking-tighter text-white/15">
+    <div className={`${className} force-light relative overflow-hidden bg-gradient-to-br ${g.from} ${g.via} ${g.to}`} aria-hidden="true">
+      <span className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,color-mix(in_srgb,var(--background)_22%,transparent),transparent_55%)]" />
+      <span className="absolute -right-5 -bottom-8 select-none text-[9rem] font-bold leading-none tracking-tighter text-background/15">
         {courseInitials(title)}
       </span>
     </div>

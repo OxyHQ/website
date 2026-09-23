@@ -9,10 +9,11 @@ import type { CourseLevel } from '../../content/academy-courses'
  * course always gets the same palette, but different courses are visually
  * distinct.
  *
- * Each palette mixes three Tailwind colour stops (from → via → to). The
- * palettes are tuned to feel "branded": warm sunset, deep ocean, fresh
- * mint, etc. They all sit on darker backgrounds with white-glass overlays
- * so light text remains readable.
+ * Each palette mixes three stops (from → via → to) from Bloom's chart family,
+ * whose hues are built to stay apart from one another: violet, ocean, sunset,
+ * mint and so on. The cover carries `.force-light`, so the stops are the
+ * palette's mid-tones in either theme and its `background` is the light glass
+ * the overlays are drawn in.
  * ──────────────────────────────────────────── */
 
 export interface CourseGradient {
@@ -23,14 +24,14 @@ export interface CourseGradient {
 
 /* Fixed palette ordered for visual contrast between adjacent courses. */
 const GRADIENTS: CourseGradient[] = [
-  { from: 'from-indigo-600', via: 'via-violet-600', to: 'to-fuchsia-600' },
-  { from: 'from-sky-600', via: 'via-cyan-600', to: 'to-teal-500' },
-  { from: 'from-rose-500', via: 'via-orange-500', to: 'to-amber-500' },
-  { from: 'from-emerald-600', via: 'via-teal-600', to: 'to-cyan-700' },
-  { from: 'from-slate-800', via: 'via-zinc-700', to: 'to-stone-600' },
-  { from: 'from-blue-700', via: 'via-indigo-700', to: 'to-purple-800' },
-  { from: 'from-pink-600', via: 'via-rose-500', to: 'to-red-500' },
-  { from: 'from-lime-600', via: 'via-green-600', to: 'to-emerald-700' },
+  { from: 'from-chart-5-active', via: 'via-chart-1-active', to: 'to-chart-1' },
+  { from: 'from-chart-5', via: 'via-chart-9', to: 'to-chart-4' },
+  { from: 'from-chart-6', via: 'via-chart-2', to: 'to-chart-7' },
+  { from: 'from-chart-4-active', via: 'via-chart-9-active', to: 'to-chart-9' },
+  { from: 'from-foreground', via: 'via-muted-foreground', to: 'to-chart-1-active' },
+  { from: 'from-chart-5-active', via: 'via-primary', to: 'to-chart-1-active' },
+  { from: 'from-chart-6-active', via: 'via-chart-6', to: 'to-chart-2' },
+  { from: 'from-chart-8', via: 'via-chart-8-active', to: 'to-chart-4-active' },
 ]
 
 function hashSlug(slug: string): number {
@@ -63,7 +64,7 @@ export function courseInitials(title: string): string {
 
 /** Shared level label + status-dot colour, reused across the academy pages. */
 export const COURSE_LEVELS: Record<CourseLevel, { label: string; dot: string }> = {
-  beginner: { label: 'Beginner', dot: 'bg-emerald-500' },
-  intermediate: { label: 'Intermediate', dot: 'bg-amber-500' },
-  advanced: { label: 'Advanced', dot: 'bg-rose-500' },
+  beginner: { label: 'Beginner', dot: 'bg-success' },
+  intermediate: { label: 'Intermediate', dot: 'bg-warning' },
+  advanced: { label: 'Advanced', dot: 'bg-error' },
 }
