@@ -64,7 +64,8 @@ export default function AcademyShell({
       className="bg-[color-mix(in_srgb,var(--primary)_3%,var(--background))]"
       mainClassName="flex-1"
     >
-      <div className={`mx-auto flex w-full ${aside ? 'max-w-[94rem]' : 'max-w-[80rem]'}`}>
+      {/* One container for every route — the header's content width — so the rail never moves between pages. */}
+      <div className="mx-auto flex w-full max-w-[80rem]">
         <aside className="hidden w-[19.5rem] shrink-0 lg:block">
           <div
             className="sticky overflow-y-auto overscroll-contain px-4 pt-6 pb-10"
@@ -89,7 +90,7 @@ export default function AcademyShell({
           </div>
 
           <div className="flex w-full gap-8">
-            <div className="min-w-0 flex-1 xl:max-w-[57rem]">
+            <div className="min-w-0 flex-1">
               <ContentPanel
                 framedFrom={1024}
                 overlaySizing="panel"
@@ -101,7 +102,7 @@ export default function AcademyShell({
               </ContentPanel>
             </div>
             {aside ? (
-              <aside className="hidden w-[13.5rem] shrink-0 xl:block">
+              <aside className="hidden w-[13rem] shrink-0 xl:block">
                 <div className="sticky pt-6" style={{ top: headerBottom + 16 }}>
                   {aside}
                 </div>
