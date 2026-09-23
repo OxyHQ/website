@@ -15,19 +15,19 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useCopyToClipboard } from '../../../lib/useCopyToClipboard'
 import { QRCodeSVG } from 'qrcode.react'
-import {
-  ArrowDown,
-  ArrowLeft,
-  ArrowRight,
-  CheckCircle2,
-  Clock,
-  Copy,
-  ExternalLink,
-  Loader2,
-  RotateCcw,
-  ShieldAlert,
-  Wallet,
-} from 'lucide-react'
+import { RiArrowDownLine } from '@oxy.so/bloom/icons/RiArrowDownLine'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { RiCheckboxCircleLine } from '@oxy.so/bloom/icons/RiCheckboxCircleLine'
+import { RiCheckboxCircleFill } from '@oxy.so/bloom/icons/RiCheckboxCircleFill'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
+import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine'
+import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
+import { RiLoader4Line } from '@oxy.so/bloom/icons/RiLoader4Line'
+import { RiResetLeftLine } from '@oxy.so/bloom/icons/RiResetLeftLine'
+import { RiErrorWarningLine } from '@oxy.so/bloom/icons/RiErrorWarningLine'
+import { RiWallet3Line } from '@oxy.so/bloom/icons/RiWallet3Line'
 import AppShell from '../app/AppShell'
 import StepTransition from '../app/StepTransition'
 import {
@@ -344,7 +344,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
       {/* Direction indicator */}
       <div className="relative -my-2.5 flex justify-center" aria-hidden>
         <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-popover text-muted-foreground shadow-sm">
-          <ArrowDown className="h-3.5 w-3.5" />
+          <RiArrowDownLine width={14} height={14} fill="currentColor" />
         </div>
       </div>
 
@@ -389,7 +389,7 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
           Send FAIR to
         </label>
         <div className="mt-2.5 flex items-center gap-2 rounded-xl border border-border bg-popover/60 px-3 py-2.5 transition-colors focus-within:border-primary">
-          <Wallet aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground"><RiWallet3Line width={16} height={16} fill="currentColor" /></span>
           <input
             id="buy-address"
             type="text"
@@ -428,20 +428,20 @@ function AmountStep({ mutation, onQuoteIssued }: AmountStepProps) {
       >
         {mutation.isPending ? (
           <>
-            <Loader2 aria-hidden className="h-4 w-4 animate-spin" />
+            <span aria-hidden="true" className="inline-flex animate-spin"><RiLoader4Line width={16} height={16} fill="currentColor" /></span>
             Generating quote…
           </>
         ) : (
           <>
             Continue
-            <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            <span aria-hidden="true" className="inline-flex transition-transform group-hover:translate-x-0.5"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
           </>
         )}
       </button>
 
       {submissionError ? (
         <div className="flex items-start gap-2 rounded-xl border border-error/40 bg-error-subtle px-3 py-2.5 text-xs text-error-text">
-          <ShieldAlert aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiErrorWarningLine width={14} height={14} fill="currentColor" /></span>
           <span>{submissionError}</span>
         </div>
       ) : null}
@@ -534,7 +534,7 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
 
       {/* Network warning */}
       <div className="flex items-start gap-2 rounded-2xl border border-warning/30 bg-warning-subtle px-3.5 py-2.5 text-xs leading-relaxed text-warning-text">
-        <ShieldAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
+        <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiErrorWarningLine width={16} height={16} fill="currentColor" /></span>
         <span>
           Send <strong>{quote.paymentSymbol}</strong> on{' '}
           <strong>{quote.paymentNetworkLabel}</strong> only. The bridge cannot recover
@@ -571,14 +571,14 @@ function PaymentStep({ quote, onAdvance, onFail, onStartOver }: PaymentStepProps
           onClick={onStartOver}
           className="flex h-10 items-center justify-center gap-2 rounded-full border border-border bg-popover/40 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
         >
-          <ArrowLeft aria-hidden className="h-4 w-4" />
+          <RiArrowLeftLine aria-hidden width={16} height={16} fill="currentColor" />
           {quoteExpired ? 'Generate new quote' : 'Start over'}
         </button>
       </div>
 
       {statusQuery.isError && statusQuery.failureCount > 2 ? (
         <p className="text-center text-xs text-muted-foreground">
-          <Loader2 aria-hidden className="mr-1 inline h-3 w-3 animate-spin" />
+          <span aria-hidden="true" className="inline-flex mr-1 animate-spin"><RiLoader4Line width={12} height={12} fill="currentColor" /></span>
           Reconnecting to bridge…
         </p>
       ) : null}
@@ -636,7 +636,7 @@ function SuccessStep({
               <span className="text-foreground">FairCoin transaction</span>
               <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 Explorer
-                <ExternalLink aria-hidden className="h-3 w-3" />
+                <RiExternalLinkLine aria-hidden width={12} height={12} fill="currentColor" />
               </span>
             </a>
           ) : null}
@@ -650,7 +650,7 @@ function SuccessStep({
               <span className="text-foreground">Base swap</span>
               <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 Basescan
-                <ExternalLink aria-hidden className="h-3 w-3" />
+                <RiExternalLinkLine aria-hidden width={12} height={12} fill="currentColor" />
               </span>
             </a>
           ) : null}
@@ -680,7 +680,7 @@ function FailedStep({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-start gap-2.5 rounded-2xl border border-error/40 bg-error-subtle p-3.5 text-sm text-error-text">
-        <ShieldAlert aria-hidden className="mt-0.5 h-5 w-5 shrink-0" />
+        <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiErrorWarningLine width={20} height={20} fill="currentColor" /></span>
         <span>{message ?? 'No further detail was provided. Try a fresh quote.'}</span>
       </div>
       <button
@@ -688,7 +688,7 @@ function FailedStep({
         onClick={onStartOver}
         className="flex h-12 items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
       >
-        <RotateCcw aria-hidden className="h-4 w-4" />
+        <RiResetLeftLine aria-hidden width={16} height={16} fill="currentColor" />
         Start a new order
       </button>
     </div>
@@ -710,7 +710,7 @@ function Countdown({ secondsRemaining }: { secondsRemaining: number }) {
           : 'bg-muted text-muted-foreground',
       ].join(' ')}
     >
-      <Clock aria-hidden className="h-3 w-3" />
+      <RiTimeLine aria-hidden width={12} height={12} fill="currentColor" />
       {minutes}:{String(seconds).padStart(2, '0')}
     </span>
   )
@@ -764,9 +764,9 @@ function CopyableValue({ label, value, monospace }: CopyableValueProps) {
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors hover:bg-primary/20"
         >
           {copied ? (
-            <CheckCircle2 aria-hidden className="h-3.5 w-3.5" />
+            <RiCheckboxCircleLine aria-hidden width={14} height={14} fill="currentColor" />
           ) : (
-            <Copy aria-hidden className="h-3.5 w-3.5" />
+            <RiFileCopyLine aria-hidden width={14} height={14} fill="currentColor" />
           )}
         </button>
       </div>
@@ -830,7 +830,7 @@ function StatusTimeline({
               ].join(' ')}
             >
               {done ? (
-                <CheckCircle2 className="h-2.5 w-2.5 text-primary-foreground" />
+                <span aria-hidden="true" className="inline-flex text-primary-foreground"><RiCheckLine width={10} height={10} fill="currentColor" /></span>
               ) : active ? (
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
               ) : null}
@@ -867,7 +867,7 @@ function TxHashLink({ hash, chain }: { hash: string; chain: 'base' | 'fair' }) {
       className="mt-1 inline-flex items-center gap-1 font-mono text-body-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
     >
       {shortHash(hash)}
-      <ExternalLink aria-hidden className="h-2.5 w-2.5" />
+      <RiExternalLinkLine aria-hidden width={10} height={10} fill="currentColor" />
     </a>
   )
 }
@@ -877,7 +877,9 @@ function SuccessCheckmark() {
     <div className="relative flex h-16 w-16 items-center justify-center sm:h-20 sm:w-20">
       <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
       <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 sm:h-20 sm:w-20">
-        <CheckCircle2 className="h-8 w-8 text-primary sm:h-10 sm:w-10" strokeWidth={2.5} />
+        <span aria-hidden="true" className="inline-flex h-8 w-8 text-primary sm:h-10 sm:w-10 [&_svg]:size-full">
+          <RiCheckboxCircleFill width={32} height={32} fill="currentColor" />
+        </span>
       </span>
     </div>
   )

@@ -1,33 +1,22 @@
-import type { ComponentType, SVGProps } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowUpRight, Apple, MonitorPlay, Server, Terminal } from 'lucide-react'
-
-type IconComponent = ComponentType<SVGProps<SVGSVGElement> & { className?: string }>
+import type { BloomIconComponent } from '@oxy.so/bloom/icons'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
+import { RiAndroidFill } from '@oxy.so/bloom/icons/RiAndroidFill'
+import { RiAppleFill } from '@oxy.so/bloom/icons/RiAppleFill'
+import { RiComputerLine } from '@oxy.so/bloom/icons/RiComputerLine'
+import { RiServerLine } from '@oxy.so/bloom/icons/RiServerLine'
+import { RiTerminalBoxLine } from '@oxy.so/bloom/icons/RiTerminalBoxLine'
 
 interface DownloadOption {
   platform: string
   description: string
   primaryHref: string
   primaryLabel: string
-  icon: IconComponent
+  icon: BloomIconComponent
 }
 
 const RELEASES_URL =
   'https://github.com/FairCoinOfficial/FAIRWallet/releases/latest'
-
-const AndroidIcon: IconComponent = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" className={className}>
-    <path
-      d="M6 12a6 6 0 0 1 12 0v8H6v-8z"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinejoin="round"
-    />
-    <path d="M6 18h12M9 8L7 5M15 8l2-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    <circle cx="9.5" cy="13" r="1" fill="currentColor" />
-    <circle cx="14.5" cy="13" r="1" fill="currentColor" />
-  </svg>
-)
 
 const DOWNLOADS: readonly DownloadOption[] = [
   {
@@ -35,42 +24,42 @@ const DOWNLOADS: readonly DownloadOption[] = [
     description: 'APK from GitHub releases. Play Store listing coming soon.',
     primaryHref: RELEASES_URL,
     primaryLabel: 'Download APK',
-    icon: AndroidIcon,
+    icon: RiAndroidFill,
   },
   {
     platform: 'iOS',
     description: 'TestFlight beta from GitHub releases. App Store listing in review.',
     primaryHref: RELEASES_URL,
     primaryLabel: 'TestFlight invite',
-    icon: Apple,
+    icon: RiAppleFill,
   },
   {
     platform: 'Windows',
     description: 'Native installer + portable build. Signed releases on every tag.',
     primaryHref: RELEASES_URL,
     primaryLabel: 'Download for Windows',
-    icon: MonitorPlay,
+    icon: RiComputerLine,
   },
   {
     platform: 'macOS',
     description: 'Universal binary, notarized for Apple Silicon and Intel Macs.',
     primaryHref: RELEASES_URL,
     primaryLabel: 'Download for macOS',
-    icon: Apple,
+    icon: RiAppleFill,
   },
   {
     platform: 'Linux',
     description: 'AppImage + DEB packages. Builds for x86_64 and arm64.',
     primaryHref: RELEASES_URL,
     primaryLabel: 'Download for Linux',
-    icon: Terminal,
+    icon: RiTerminalBoxLine,
   },
   {
     platform: 'Run a node',
     description: 'Want to power the network? FAIRNode runs a full daemon with one click.',
     primaryHref: 'https://github.com/FairCoinOfficial/FAIRNode/releases',
     primaryLabel: 'Get FAIRNode',
-    icon: Server,
+    icon: RiServerLine,
   },
 ]
 
@@ -124,9 +113,11 @@ export default function WalletDownloadsSection() {
             >
               <div className="flex items-start justify-between">
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                  <download.icon className="h-6 w-6" />
+                  <download.icon width={24} height={24} fill="currentColor" />
                 </span>
-                <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
+                <span aria-hidden="true" className="inline-flex text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground">
+                  <RiArrowRightUpLine width={16} height={16} fill="currentColor" />
+                </span>
               </div>
               <div className="flex flex-col gap-2">
                 <h3 className="text-xl font-semibold text-foreground">{download.platform}</h3>

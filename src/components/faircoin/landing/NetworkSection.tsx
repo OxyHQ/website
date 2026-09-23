@@ -1,8 +1,12 @@
 import { motion } from 'framer-motion'
-import { ArrowUpRight, Compass, Network, Server } from 'lucide-react'
+import type { BloomIconComponent } from '@oxy.so/bloom/icons'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
+import { RiCompass3Line } from '@oxy.so/bloom/icons/RiCompass3Line'
+import { RiNodeTree } from '@oxy.so/bloom/icons/RiNodeTree'
+import { RiServerLine } from '@oxy.so/bloom/icons/RiServerLine'
 
 interface Piece {
-  icon: typeof Compass
+  icon: BloomIconComponent
   title: string
   description: string
   href: string
@@ -15,7 +19,7 @@ const EXPLORER_URL = 'https://explorer.fairco.in'
 
 const PIECES: readonly Piece[] = [
   {
-    icon: Compass,
+    icon: RiCompass3Line,
     title: 'Block explorer',
     description:
       'Browse blocks, transactions, addresses and the rich list. Built on the FairCoin Explorer (Next.js + JSON-RPC).',
@@ -23,7 +27,7 @@ const PIECES: readonly Piece[] = [
     cta: 'Open the explorer',
   },
   {
-    icon: Network,
+    icon: RiNodeTree,
     title: 'DNS seeders',
     description:
       'seed1.fairco.in and seed2.fairco.in keep the peer list healthy so any wallet can find the network on first launch.',
@@ -31,7 +35,7 @@ const PIECES: readonly Piece[] = [
     cta: 'Seeder source',
   },
   {
-    icon: Server,
+    icon: RiServerLine,
     title: 'Masternodes',
     description:
       'Lock 5,000 FAIR as collateral to run a masternode. Earns a share of block rewards and powers FastSend instant confirmations.',
@@ -90,9 +94,11 @@ export default function NetworkSection() {
             >
               <div className="flex items-start justify-between">
                 <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                  <piece.icon className="h-5 w-5" />
+                  <piece.icon width={20} height={20} fill="currentColor" />
                 </span>
-                <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
+                <span aria-hidden="true" className="inline-flex text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground">
+                  <RiArrowRightUpLine width={16} height={16} fill="currentColor" />
+                </span>
               </div>
               <div className="flex flex-col gap-2">
                 <h3 className="text-lg font-semibold text-foreground">{piece.title}</h3>

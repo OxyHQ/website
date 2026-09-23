@@ -2,7 +2,11 @@ import { useMemo } from 'react'
 import { Link } from '../../../lib/navigation'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { motion } from 'framer-motion'
-import { ArrowRight, Activity, ShieldCheck, Coins } from 'lucide-react'
+import type { BloomIconComponent } from '@oxy.so/bloom/icons'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { RiPulseLine } from '@oxy.so/bloom/icons/RiPulseLine'
+import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine'
+import { RiCoinsLine } from '@oxy.so/bloom/icons/RiCoinsLine'
 import { formatUnits } from 'viem'
 import { useReadContract } from 'wagmi'
 import { base } from 'wagmi/chains'
@@ -114,7 +118,9 @@ export default function LiveBridgeSection() {
                 className="group inline-flex h-11 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-[0_8px_20px_-8px] shadow-primary/40 transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
               >
                 Trade WFAIR
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                <span aria-hidden="true" className="inline-flex transition-transform group-hover:translate-x-0.5">
+                  <RiArrowRightLine width={16} height={16} fill="currentColor" />
+                </span>
               </a>
               <Link
                 to={fc('/unwrap')}
@@ -136,7 +142,7 @@ export default function LiveBridgeSection() {
             <BridgeFlowVisual />
             <div className="grid gap-3">
               <StatTile
-                icon={Coins}
+                icon={RiCoinsLine}
                 label="WFAIR supply on Base"
                 value={wfairSupply}
                 suffix="WFAIR"
@@ -144,7 +150,7 @@ export default function LiveBridgeSection() {
                 href={WFAIR_BASESCAN_URL}
               />
               <StatTile
-                icon={ShieldCheck}
+                icon={RiShieldCheckLine}
                 label="FAIR in bridge custody"
                 value={fairCustody}
                 suffix="FAIR"
@@ -160,7 +166,7 @@ export default function LiveBridgeSection() {
 }
 
 interface StatTileProps {
-  icon: typeof Coins
+  icon: BloomIconComponent
   label: string
   value: string
   suffix: string
@@ -173,7 +179,7 @@ function StatTile({ icon: Icon, label, value, suffix, isLoading, href }: StatTil
     <div className="group relative flex items-center justify-between gap-4 rounded-2xl border border-border bg-background/60 p-5 backdrop-blur-sm transition-all duration-200 hover:border-primary/40 hover:bg-background">
       <div className="flex items-center gap-4">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <Icon className="h-5 w-5" />
+          <Icon width={20} height={20} fill="currentColor" />
         </span>
         <div className="flex flex-col gap-0.5">
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
@@ -188,10 +194,12 @@ function StatTile({ icon: Icon, label, value, suffix, isLoading, href }: StatTil
         </div>
       </div>
       {href ? (
-        <ArrowRight
-          aria-hidden
-          className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground"
-        />
+        <span
+          aria-hidden="true"
+          className="inline-flex shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground"
+        >
+          <RiArrowRightLine width={16} height={16} fill="currentColor" />
+        </span>
       ) : null}
     </div>
   )
@@ -230,7 +238,7 @@ function PegHealthTile({
     <div className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-background/60 p-5 backdrop-blur-sm">
       <div className="flex items-center gap-4">
         <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <Activity className="h-5 w-5" />
+          <RiPulseLine width={20} height={20} fill="currentColor" />
         </span>
         <div className="flex flex-col gap-0.5">
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">

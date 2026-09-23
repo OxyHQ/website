@@ -25,19 +25,19 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from 'wagmi'
-import {
-  AlertTriangle,
-  ArrowDown,
-  ArrowRight,
-  CheckCircle2,
-  Copy,
-  ExternalLink,
-  LogOut,
-  Loader2,
-  RotateCcw,
-  ShieldAlert,
-  Wallet,
-} from 'lucide-react'
+import { RiAlertLine } from '@oxy.so/bloom/icons/RiAlertLine'
+import { RiArrowDownLine } from '@oxy.so/bloom/icons/RiArrowDownLine'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { RiCheckboxCircleLine } from '@oxy.so/bloom/icons/RiCheckboxCircleLine'
+import { RiCheckboxCircleFill } from '@oxy.so/bloom/icons/RiCheckboxCircleFill'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
+import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
+import { RiLogoutBoxRLine } from '@oxy.so/bloom/icons/RiLogoutBoxRLine'
+import { RiLoader4Line } from '@oxy.so/bloom/icons/RiLoader4Line'
+import { RiResetLeftLine } from '@oxy.so/bloom/icons/RiResetLeftLine'
+import { RiErrorWarningLine } from '@oxy.so/bloom/icons/RiErrorWarningLine'
+import { RiWallet3Line } from '@oxy.so/bloom/icons/RiWallet3Line'
 import AppShell from '../app/AppShell'
 import StepTransition from '../app/StepTransition'
 import { isValidFairAddress } from '../buy/validate'
@@ -204,7 +204,7 @@ function ConnectStep() {
           >
             <span className="flex items-center gap-3">
               <span aria-hidden className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Wallet className="h-4 w-4" />
+                <RiWallet3Line width={16} height={16} fill="currentColor" />
               </span>
               <span className="flex flex-col">
                 <span className="text-sm font-semibold text-foreground">
@@ -216,9 +216,9 @@ function ConnectStep() {
               </span>
             </span>
             {isThisPending ? (
-              <Loader2 aria-hidden className="h-4 w-4 animate-spin text-muted-foreground" />
+              <span aria-hidden="true" className="inline-flex animate-spin text-muted-foreground"><RiLoader4Line width={16} height={16} fill="currentColor" /></span>
             ) : (
-              <ArrowRight aria-hidden className="h-4 w-4 text-muted-foreground" />
+              <span aria-hidden="true" className="inline-flex text-muted-foreground"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
             )}
           </button>
         )
@@ -226,7 +226,7 @@ function ConnectStep() {
 
       {connectError ? (
         <div className="flex items-start gap-2 rounded-xl border border-error/40 bg-error-subtle px-3 py-2.5 text-xs text-error-text">
-          <AlertTriangle aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiAlertLine width={14} height={14} fill="currentColor" /></span>
           <span>
             {connectError.message.length > 0
               ? connectError.message
@@ -394,7 +394,7 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
       {onWrongChain ? (
         <div className="flex flex-col gap-2.5 rounded-2xl border border-warning/40 bg-warning-subtle p-3.5 text-warning-text">
           <div className="flex items-start gap-2 text-sm">
-            <ShieldAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
+            <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiErrorWarningLine width={16} height={16} fill="currentColor" /></span>
             <span>
               Your wallet is on the wrong network. WFAIR lives on{' '}
               <strong>Base mainnet</strong>.
@@ -472,7 +472,7 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
       {/* Direction indicator */}
       <div className="relative -my-2.5 flex justify-center" aria-hidden>
         <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-popover text-muted-foreground shadow-sm">
-          <ArrowDown className="h-3.5 w-3.5" />
+          <RiArrowDownLine width={14} height={14} fill="currentColor" />
         </div>
       </div>
 
@@ -506,7 +506,7 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
           Send FAIR to
         </label>
         <div className="mt-2.5 flex items-center gap-2 rounded-xl border border-border bg-popover/60 px-3 py-2.5 transition-colors focus-within:border-primary">
-          <Wallet aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground"><RiWallet3Line width={16} height={16} fill="currentColor" /></span>
           <input
             id="unwrap-destination"
             type="text"
@@ -539,7 +539,7 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
 
       {isPaused ? (
         <div className="flex items-start gap-2 rounded-2xl border border-error/40 bg-error-subtle p-3.5 text-sm text-error-text">
-          <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
+          <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiAlertLine width={16} height={16} fill="currentColor" /></span>
           <span>The WFAIR contract is currently paused. Redemptions are disabled.</span>
         </div>
       ) : null}
@@ -552,18 +552,18 @@ function RedeemStep({ address, onBurnConfirmed }: RedeemStepProps) {
       >
         {writeContract.isPending ? (
           <>
-            <Loader2 aria-hidden className="h-4 w-4 animate-spin" />
+            <span aria-hidden="true" className="inline-flex animate-spin"><RiLoader4Line width={16} height={16} fill="currentColor" /></span>
             Confirm in your wallet…
           </>
         ) : burnReceipt.isLoading ? (
           <>
-            <Loader2 aria-hidden className="h-4 w-4 animate-spin" />
+            <span aria-hidden="true" className="inline-flex animate-spin"><RiLoader4Line width={16} height={16} fill="currentColor" /></span>
             Waiting for confirmation…
           </>
         ) : (
           <>
             Redeem WFAIR
-            <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            <span aria-hidden="true" className="inline-flex transition-transform group-hover:translate-x-0.5"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
           </>
         )}
       </button>
@@ -644,13 +644,13 @@ function StatusStep({ burn, onReset }: StatusStepProps) {
           className="mt-1 inline-flex items-center gap-1.5 break-all font-mono text-xs text-foreground underline-offset-4 hover:underline"
         >
           {burn.txHash}
-          <ExternalLink aria-hidden className="h-3 w-3 shrink-0" />
+          <span aria-hidden="true" className="inline-flex shrink-0"><RiExternalLinkLine width={12} height={12} fill="currentColor" /></span>
         </a>
       </div>
 
       {withdrawal.isError && withdrawal.failureCount > 2 ? (
         <p className="text-center text-xs text-muted-foreground">
-          <Loader2 aria-hidden className="mr-1 inline h-3 w-3 animate-spin" />
+          <span aria-hidden="true" className="inline-flex mr-1 animate-spin"><RiLoader4Line width={12} height={12} fill="currentColor" /></span>
           Reconnecting to bridge…
         </p>
       ) : null}
@@ -681,7 +681,7 @@ function UnwrapFailed({
         onClick={onReset}
         className="flex h-12 items-center justify-center gap-2 rounded-full border border-border bg-popover/40 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
       >
-        <RotateCcw aria-hidden className="h-4 w-4" />
+        <RiResetLeftLine aria-hidden width={16} height={16} fill="currentColor" />
         Start a new redemption
       </button>
     </div>
@@ -734,7 +734,7 @@ function UnwrapSuccess({
             <span className="text-foreground">FairCoin transaction</span>
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
               Explorer
-              <ExternalLink aria-hidden className="h-3 w-3" />
+              <RiExternalLinkLine aria-hidden width={12} height={12} fill="currentColor" />
             </span>
           </a>
         ) : null}
@@ -747,7 +747,7 @@ function UnwrapSuccess({
           <span className="text-foreground">Base burn</span>
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             Basescan
-            <ExternalLink aria-hidden className="h-3 w-3" />
+            <RiExternalLinkLine aria-hidden width={12} height={12} fill="currentColor" />
           </span>
         </a>
       </div>
@@ -832,7 +832,7 @@ function UnwrapTimeline({ status }: { status: WithdrawalStatusResponse | null | 
               ].join(' ')}
             >
               {done ? (
-                <CheckCircle2 className="h-2.5 w-2.5 text-primary-foreground" />
+                <span aria-hidden="true" className="inline-flex text-primary-foreground"><RiCheckLine width={10} height={10} fill="currentColor" /></span>
               ) : active ? (
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
               ) : null}
@@ -855,7 +855,7 @@ function UnwrapTimeline({ status }: { status: WithdrawalStatusResponse | null | 
                   className="mt-1 inline-flex items-center gap-1 font-mono text-body-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
                 >
                   {shortHash(status.fairTxid)}
-                  <ExternalLink aria-hidden className="h-2.5 w-2.5" />
+                  <RiExternalLinkLine aria-hidden width={10} height={10} fill="currentColor" />
                 </a>
               ) : null}
             </div>
@@ -884,7 +884,11 @@ function ConnectedPill({
         aria-label="Copy address"
         className="flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
       >
-        {copied ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+        {copied ? (
+          <RiCheckboxCircleLine width={14} height={14} fill="currentColor" />
+        ) : (
+          <RiFileCopyLine width={14} height={14} fill="currentColor" />
+        )}
       </button>
       <button
         type="button"
@@ -892,7 +896,7 @@ function ConnectedPill({
         aria-label="Disconnect wallet"
         className="flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
       >
-        <LogOut className="h-3.5 w-3.5" />
+        <RiLogoutBoxRLine width={14} height={14} fill="currentColor" />
       </button>
     </div>
   )
@@ -920,7 +924,7 @@ function LiveDot({ active }: { active: boolean }) {
 function ErrorBanner({ message }: { message: string }) {
   return (
     <div className="flex items-start gap-2 rounded-xl border border-error/40 bg-error-subtle px-3 py-2.5 text-xs text-error-text">
-      <ShieldAlert aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+      <span aria-hidden="true" className="inline-flex mt-0.5 shrink-0"><RiErrorWarningLine width={14} height={14} fill="currentColor" /></span>
       <span className="break-words">{message}</span>
     </div>
   )
@@ -931,7 +935,9 @@ function SuccessCheckmark() {
     <div className="relative flex h-16 w-16 items-center justify-center sm:h-20 sm:w-20">
       <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
       <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 sm:h-20 sm:w-20">
-        <CheckCircle2 className="h-8 w-8 text-primary sm:h-10 sm:w-10" strokeWidth={2.5} />
+        <span aria-hidden="true" className="inline-flex h-8 w-8 text-primary sm:h-10 sm:w-10 [&_svg]:size-full">
+          <RiCheckboxCircleFill width={32} height={32} fill="currentColor" />
+        </span>
       </span>
     </div>
   )
