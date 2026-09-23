@@ -1,8 +1,16 @@
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+  SegmentedControlItemText,
+} from '@oxy.so/bloom/segmented-control'
 import OptionSelect from '../ui/OptionSelect'
 import type { FeatureAppOption } from '../../api/hooks'
 
+/** A segmented control reads '' as "nothing selected", so "All" has a value of its own here. */
+const ALL_STATUSES = 'all'
+
 const STATUS_OPTIONS = [
-  { value: '', label: 'All' },
+  { value: ALL_STATUSES, label: 'All' },
   { value: 'open', label: 'Open' },
   { value: 'planned', label: 'Planned' },
   { value: 'in_progress', label: 'In Progress' },
@@ -39,21 +47,20 @@ export default function FeatureFilters({
 }: FeatureFiltersProps) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-      {/* Status tabs */}
-      <div className="flex flex-wrap gap-1.5">
-        {STATUS_OPTIONS.map((opt) => (
-          <button
-            key={opt.value}
-            onClick={() => onChangeStatus(opt.value)}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-              status === opt.value
-                ? 'bg-primary-foreground text-background'
-                : 'text-muted-foreground hover:text-foreground border border-border'
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
+      {/* Six statuses outgrow a phone; the track scrolls rather than clipping. */}
+      <div className="max-w-full overflow-x-auto">
+        <SegmentedControl
+          label="Status"
+          type="radio"
+          value={status || ALL_STATUSES}
+          onValueChange={(next) => onChangeStatus(next === ALL_STATUSES ? '' : next)}
+        >
+          {STATUS_OPTIONS.map((opt) => (
+            <SegmentedControlItem key={opt.value} value={opt.value}>
+              <SegmentedControlItemText>{opt.label}</SegmentedControlItemText>
+            </SegmentedControlItem>
+          ))}
+        </SegmentedControl>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
