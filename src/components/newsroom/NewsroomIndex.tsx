@@ -1,14 +1,26 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { X } from 'lucide-react'
+import { Badge } from '@oxy.so/bloom/badge'
+import { Button } from '@oxy.so/bloom/button'
 import {
-  ArrowDownUp,
-  Check,
-  ChevronDown,
-  LayoutGrid,
-  List,
-  SlidersHorizontal,
-  X,
-} from 'lucide-react'
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@oxy.so/bloom/dropdown-menu'
+import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
+import { RiArrowUpDownLine } from '@oxy.so/bloom/icons/RiArrowUpDownLine'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
+import { RiEqualizerLine } from '@oxy.so/bloom/icons/RiEqualizerLine'
+import { RiLayoutGridLine } from '@oxy.so/bloom/icons/RiLayoutGridLine'
+import { RiListUnordered } from '@oxy.so/bloom/icons/RiListUnordered'
+import { SegmentedControl, SegmentedControlItem } from '@oxy.so/bloom/segmented-control'
+import { useTheme } from '@oxy.so/bloom/theme'
 import { useNewsroomPosts, usePage, type PageSection } from '../../api/hooks'
 import { newsCategories, type NewsCategory, type NewsroomPostSummary } from '../../data/newsroom'
 import { useTranslation } from '../../lib/i18n'
@@ -42,7 +54,6 @@ const ARTICLE_COUNT_INCREMENT = 6
 
 type SortOption = 'newest' | 'oldest'
 type ViewOption = 'grid' | 'list'
-type OpenMenu = 'filter' | 'sort' | null
 
 function parseUI(sections: PageSection[]): NewsroomUI {
   const items = sections.find((section) => section.type === 'ui')?.items
@@ -74,8 +85,7 @@ export default function NewsroomIndex() {
   const { data: pageData } = usePage('newsroom')
   const { data, isPending } = useNewsroomPosts({ limit: 50 })
   const [searchParams, setSearchParams] = useSearchParams()
-  const [openMenu, setOpenMenu] = useState<OpenMenu>(null)
-  const toolbarRef = useRef<HTMLDivElement>(null)
+  const { colors } = useTheme()
 
   const categoryParam = searchParams.get('category')
   const activeCategory: NewsCategory = isNewsCategory(categoryParam) ? categoryParam : 'All'
@@ -93,22 +103,6 @@ export default function NewsroomIndex() {
   const visibleCount = pagination.key === paginationKey
     ? pagination.count
     : INITIAL_ARTICLE_COUNT
-
-  useEffect(() => {
-    const closeOnOutsideClick = (event: MouseEvent) => {
-      if (!toolbarRef.current?.contains(event.target as Node)) setOpenMenu(null)
-    }
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpenMenu(null)
-    }
-
-    document.addEventListener('mousedown', closeOnOutsideClick)
-    document.addEventListener('keydown', closeOnEscape)
-    return () => {
-      document.removeEventListener('mousedown', closeOnOutsideClick)
-      document.removeEventListener('keydown', closeOnEscape)
-    }
-  }, [])
 
   const posts = data?.posts ?? []
   const ui = parseUI(pageData?.sections ?? [])
@@ -184,7 +178,6 @@ export default function NewsroomIndex() {
     if (option === 'newest') next.delete('sort')
     else next.set('sort', option)
     setSearchParams(next)
-    setOpenMenu(null)
   }
 
   function selectView(option: ViewOption) {
@@ -231,140 +224,113 @@ export default function NewsroomIndex() {
 
         <div className="mt-16 flex flex-col gap-20 @md:gap-30">
           <section className="@container -mt-20 @lg:-mt-[calc(6rem+0.5ex)]">
-            <div
-              ref={toolbarRef}
-              className="relative flex flex-col @lg:flex-row @lg:items-center @lg:justify-between"
-            >
+            <div className="relative flex flex-col @lg:flex-row @lg:items-center @lg:justify-between">
               <div />
               <hr className="mb-1 mt-4 border-t border-border @lg:hidden" />
 
               <div className="flex min-h-10 items-center justify-between gap-4 @lg:justify-end">
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <button
-                      type="button"
-                      aria-controls="newsroom-filter-menu"
-                      aria-expanded={openMenu === 'filter'}
-                      aria-haspopup="menu"
-                      onClick={() => setOpenMenu((current) => current === 'filter' ? null : 'filter')}
-                      className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full px-1 text-sm font-medium text-foreground transition-colors hover:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    >
-                      <SlidersHorizontal aria-hidden className="size-4" />
-                      <span>{ui.filter}</span>
-                      {activeFilters.length > 0 && (
-                        <span className="inline-flex size-5 items-center justify-center rounded-full bg-surface text-xs font-semibold">
-                          {activeFilters.length}
-                        </span>
-                      )}
-                      <ChevronDown
-                        aria-hidden
-                        className={`size-3.5 transition-transform ${openMenu === 'filter' ? 'rotate-180' : ''}`}
-                      />
-                    </button>
-
-                    {openMenu === 'filter' && (
-                      <div
-                        id="newsroom-filter-menu"
-                        role="menu"
-                        aria-label={ui.filter}
-                        className="absolute left-0 top-full z-50 mt-2 w-56 rounded-xl border border-border bg-background p-2 shadow-lg"
+                <div className="flex items-center gap-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild label={ui.filter} className="inline-flex">
+                      <Button
+                        size="sm"
+                        appearance="plain"
+                        tone="neutral"
+                        leadingIcon={RiEqualizerLine}
+                        trailing={activeFilters.length > 0
+                          ? <Badge content={activeFilters.length} color="primary" variant="subtle" />
+                          : undefined}
+                        trailingIcon={RiArrowDownSLine}
                       >
-                        {filterCategories.map((category) => {
-                          const checked = activeFilters.includes(category)
-                          return (
-                            <button
-                              type="button"
-                              role="menuitemcheckbox"
-                              aria-checked={checked}
-                              key={category}
-                              onClick={() => toggleFilter(category)}
-                              className="flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-left text-body-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary"
-                            >
-                              <span>{category}</span>
-                              {checked && <Check aria-hidden className="size-4 text-foreground" />}
-                            </button>
-                          )
-                        })}
-                        {activeFilters.length > 0 && (
-                          <button
-                            type="button"
-                            onClick={clearFilters}
-                            className="mt-1 w-full cursor-pointer rounded-lg px-3 py-2 text-left text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground"
-                          >
-                            {ui.clearAll}
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                        {ui.filter}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" label={ui.filter}>
+                      {filterCategories.map((category) => (
+                        <DropdownMenuCheckboxItem
+                          key={category}
+                          checked={activeFilters.includes(category)}
+                          onCheckedChange={() => toggleFilter(category)}
+                          indicator={<RiCheckLine size="sm" fill={colors.textSecondary} />}
+                          indicatorPosition="trailing"
+                          keepOpen
+                        >
+                          {category}
+                        </DropdownMenuCheckboxItem>
+                      ))}
+                      {activeFilters.length > 0 && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onPress={clearFilters}>{ui.clearAll}</DropdownMenuItem>
+                        </>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
 
-                  <div className="relative">
-                    <button
-                      type="button"
-                      aria-controls="newsroom-sort-menu"
-                      aria-expanded={openMenu === 'sort'}
-                      aria-label={`Sort articles: ${sortLabels[sortBy]}`}
-                      aria-haspopup="menu"
-                      onClick={() => setOpenMenu((current) => current === 'sort' ? null : 'sort')}
-                      className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full px-1 text-sm font-medium text-foreground transition-colors hover:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      asChild
+                      label={t('newsroom.sortLabel', { option: sortLabels[sortBy] })}
+                      className="inline-flex"
                     >
-                      <ArrowDownUp aria-hidden className="size-4" />
-                      <span>{ui.sort}</span>
-                      <ChevronDown
-                        aria-hidden
-                        className={`size-3.5 transition-transform ${openMenu === 'sort' ? 'rotate-180' : ''}`}
-                      />
-                    </button>
-
-                    {openMenu === 'sort' && (
-                      <div
-                        id="newsroom-sort-menu"
-                        role="menu"
-                        aria-label={ui.sort}
-                        className="absolute right-0 top-full z-50 mt-2 w-44 rounded-xl border border-border bg-background p-2 shadow-lg"
+                      <Button
+                        size="sm"
+                        appearance="plain"
+                        tone="neutral"
+                        accessibilityLabel={t('newsroom.sortLabel', { option: sortLabels[sortBy] })}
+                        leadingIcon={RiArrowUpDownLine}
+                        trailingIcon={RiArrowDownSLine}
+                      >
+                        {ui.sort}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" label={ui.sort}>
+                      <DropdownMenuRadioGroup
+                        value={sortBy}
+                        onValueChange={(option) => selectSort(option as SortOption)}
                       >
                         {(Object.keys(sortLabels) as SortOption[]).map((option) => (
-                          <button
-                            type="button"
-                            role="menuitemradio"
-                            aria-checked={sortBy === option}
+                          <DropdownMenuRadioItem
                             key={option}
-                            onClick={() => selectSort(option)}
-                            className="flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-left text-body-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary"
+                            value={option}
+                            indicator={<RiCheckLine size="sm" fill={colors.textSecondary} />}
+                            indicatorPosition="trailing"
                           >
-                            <span>{sortLabels[option]}</span>
-                            {sortBy === option && <Check aria-hidden className="size-4 text-foreground" />}
-                          </button>
+                            {sortLabels[option]}
+                          </DropdownMenuRadioItem>
                         ))}
-                      </div>
-                    )}
-                  </div>
+                      </DropdownMenuRadioGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
 
-                <div role="group" aria-label="Article view" className="flex items-center gap-1">
+                <SegmentedControl
+                  type="radio"
+                  size="sm"
+                  label={t('newsroom.viewLabel')}
+                  value={view}
+                  onValueChange={selectView}
+                >
                   {([
-                    { value: 'grid', label: 'Grid view', icon: LayoutGrid },
-                    { value: 'list', label: 'List view', icon: List },
+                    { value: 'grid', label: t('newsroom.gridView'), icon: RiLayoutGridLine },
+                    { value: 'list', label: t('newsroom.listView'), icon: RiListUnordered },
                   ] as const).map((option) => {
                     const Icon = option.icon
                     return (
-                      <button
-                        type="button"
-                        aria-label={option.label}
-                        aria-pressed={view === option.value}
+                      <SegmentedControlItem
                         key={option.value}
-                        onClick={() => selectView(option.value)}
-                        className={`flex size-8 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                          view === option.value
-                            ? 'text-foreground'
-                            : 'text-muted-foreground hover:text-foreground'
-                        }`}
+                        value={option.value}
+                        accessibilityLabel={option.label}
                       >
-                        <Icon aria-hidden className="size-4" />
-                      </button>
+                        <Icon
+                          aria-hidden
+                          size="sm"
+                          fill={view === option.value ? colors.text : colors.textSecondary}
+                        />
+                      </SegmentedControlItem>
                     )
                   })}
-                </div>
+                </SegmentedControl>
               </div>
             </div>
 

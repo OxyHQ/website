@@ -375,6 +375,10 @@ const es: Translations = {
     minRead: '{count} min de lectura',
     relatedPosts: 'Publicaciones relacionadas',
     sharePost: 'Compartir',
+    sortLabel: 'Ordenar artículos: {option}',
+    viewLabel: 'Vista de artículos',
+    gridView: 'Vista de cuadrícula',
+    listView: 'Vista de lista',
   },
   changelog: {
     seoTitle: 'Registro de cambios',

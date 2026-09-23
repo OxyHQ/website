@@ -238,6 +238,10 @@ const ko: Translations = {
     minRead: '{count}분 소요',
     relatedPosts: '관련 게시물',
     sharePost: '공유',
+    sortLabel: '기사 정렬: {option}',
+    viewLabel: '기사 보기',
+    gridView: '그리드 보기',
+    listView: '목록 보기',
   },
   changelog: {
     seoTitle: '변경 로그',

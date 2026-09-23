@@ -238,6 +238,10 @@ const zh: Translations = {
     minRead: '阅读时间 {count} 分钟',
     relatedPosts: '相关文章',
     sharePost: '分享',
+    sortLabel: '文章排序：{option}',
+    viewLabel: '文章视图',
+    gridView: '网格视图',
+    listView: '列表视图',
   },
   changelog: {
     seoTitle: '更新日志',
