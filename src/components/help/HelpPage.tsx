@@ -1,6 +1,8 @@
 import { createElement, useMemo } from 'react'
 import { Link } from '../../lib/navigation'
 import * as LucideIcons from 'lucide-react'
+import { RiArrowRightSLine } from '@oxy.so/bloom/icons/RiArrowRightSLine'
+import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
 import { useCurrentLocale } from '../../lib/i18n'
 import {
   loadHelpArticles,
@@ -56,38 +58,21 @@ function lucideIcon(name: string | undefined): LucideComponent | null {
 
 /* ─── SVG Icons (kept for the sidebar + hero search visuals) ─── */
 
+// Bloom glyphs fill with `currentColor` from the span around them (their
+// default is the theme's primary) and render no className onto the <svg>.
 function SearchIcon({ className = '' }: { className?: string }) {
   return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className={className}>
-      <path
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.2"
-        d="m15.8 15.8-3.62-3.62M1.8 7.833a6.034 6.034 0 1 1 12.069 0 6.034 6.034 0 0 1-12.07 0Z"
-      />
-    </svg>
+    <span className={`inline-flex shrink-0 ${className}`}>
+      <RiSearchLine width={18} height={18} fill="currentColor" />
+    </span>
   )
 }
 
 function ChevronRight() {
   return (
-    <svg
-      className="transition-transform group-data-[open]:rotate-90"
-      width="12"
-      height="12"
-      viewBox="0 0 12 12"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M4.5 3L7.5 6L4.5 9"
-        stroke="var(--color-muted-foreground)"
-        strokeWidth="1.1"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <span className="flex text-muted-foreground transition-transform group-data-[open]:rotate-90">
+      <RiArrowRightSLine width={12} height={12} fill="currentColor" />
+    </span>
   )
 }
 
