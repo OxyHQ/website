@@ -1,4 +1,6 @@
-import { ArrowUpRight } from '@phosphor-icons/react'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
 import { motion } from 'framer-motion'
 import { useRef } from 'react'
 import type { ReactNode } from 'react'
@@ -50,7 +52,7 @@ export default function PhotoCardCarousel({ title, description, cards, variant =
                 onClick={() => swiperRef.current?.slidePrev()}
                 className="values-nav-btn"
               >
-                <ArrowUpRight weight="regular" className="-rotate-[135deg]" aria-hidden />
+                <RiArrowLeftLine width={16} height={16} fill="currentColor" aria-hidden />
               </button>
               <button
                 type="button"
@@ -58,7 +60,7 @@ export default function PhotoCardCarousel({ title, description, cards, variant =
                 onClick={() => swiperRef.current?.slideNext()}
                 className="values-nav-btn"
               >
-                <ArrowUpRight weight="regular" className="rotate-45" aria-hidden />
+                <RiArrowRightLine width={16} height={16} fill="currentColor" aria-hidden />
               </button>
             </div>
           </div>
@@ -108,7 +110,7 @@ export default function PhotoCardCarousel({ title, description, cards, variant =
                           className="inline-flex items-center gap-1 text-sm text-primary transition-opacity hover:opacity-70"
                         >
                           {card.link.label}
-                          <ArrowUpRight size={15} weight="regular" aria-hidden />
+                          <RiArrowRightUpLine width={15} height={15} fill="currentColor" aria-hidden />
                         </a>
                       ) : (
                         <Link
@@ -116,7 +118,7 @@ export default function PhotoCardCarousel({ title, description, cards, variant =
                           className="inline-flex items-center gap-1 text-sm text-primary transition-opacity hover:opacity-70"
                         >
                           {card.link.label}
-                          <ArrowUpRight size={15} weight="regular" aria-hidden />
+                          <RiArrowRightUpLine width={15} height={15} fill="currentColor" aria-hidden />
                         </Link>
                       )}
                     </div>

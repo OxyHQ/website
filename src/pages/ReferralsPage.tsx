@@ -1,6 +1,8 @@
 import { useCallback, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { DollarSign, HeartHandshake, Share2 } from 'lucide-react'
+import { RiHandHeartLine } from '@oxy.so/bloom/icons/RiHandHeartLine'
+import { RiMoneyDollarCircleLine } from '@oxy.so/bloom/icons/RiMoneyDollarCircleLine'
+import { RiShareLine } from '@oxy.so/bloom/icons/RiShareLine'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -45,7 +47,7 @@ interface ProgramCard {
 const DEFAULT_PROGRAMS: ProgramCard[] = [
   {
     key: 'paid',
-    icon: <DollarSign className="size-6" aria-hidden="true" />,
+    icon: <RiMoneyDollarCircleLine width={24} height={24} fill="currentColor" aria-hidden />,
     title: 'Paid affiliates',
     description: 'Commission-based partners who earn a percentage of every signup and renewal they bring in. Built for creators, agencies, and professional reviewers.',
     cta: 'Apply for the program',
@@ -53,7 +55,7 @@ const DEFAULT_PROGRAMS: ProgramCard[] = [
   },
   {
     key: 'ambassador',
-    icon: <HeartHandshake className="size-6" aria-hidden="true" />,
+    icon: <RiHandHeartLine width={24} height={24} fill="currentColor" aria-hidden />,
     title: 'Ambassadors',
     description: 'Unpaid-but-tracked advocates who get perks, early access, and community recognition. For the people who would recommend Oxy anyway.',
     cta: 'Become an ambassador',
@@ -61,7 +63,7 @@ const DEFAULT_PROGRAMS: ProgramCard[] = [
   },
   {
     key: 'user',
-    icon: <Share2 className="size-6" aria-hidden="true" />,
+    icon: <RiShareLine width={24} height={24} fill="currentColor" aria-hidden />,
     title: 'Just share',
     description: 'Grab a personal share link in seconds. No application, no paperwork — just a way to send Oxy to a friend and get credit for the assist.',
     cta: 'Get a share link',

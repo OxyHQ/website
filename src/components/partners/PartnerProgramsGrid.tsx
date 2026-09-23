@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useDialogControl } from '@oxy.so/bloom/dialog'
-import { RocketLaunch } from '@phosphor-icons/react'
+import { RiRocket2Line } from '@oxy.so/bloom/icons/RiRocket2Line'
 import PhotoCardCarousel, { type PhotoCard } from '../sections/PhotoCardCarousel'
 import StartupProgramDialog from './StartupProgramDialog'
 
@@ -26,7 +26,7 @@ const PROGRAM_CARDS: readonly PhotoCard[] = [
   {
     visual: (
       <div className="flex size-full items-center justify-center bg-[color-mix(in_srgb,var(--tertiary)_24%,var(--background))] text-primary-text">
-        <RocketLaunch size={96} weight="duotone" aria-hidden="true" />
+        <RiRocket2Line width={96} height={96} fill="currentColor" aria-hidden />
       </div>
     ),
     title: 'Startup Program',

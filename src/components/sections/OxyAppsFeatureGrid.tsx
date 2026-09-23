@@ -1,4 +1,5 @@
-import { ArrowUpRight } from '@phosphor-icons/react'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { motion } from 'framer-motion'
 import { useRef } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -112,7 +113,7 @@ export default function OxyAppsFeatureGrid({ title, description, unifiedTheme = 
                 onClick={() => swiperRef.current?.slidePrev()}
                 className="values-nav-btn"
               >
-                <ArrowUpRight weight="regular" className="-rotate-[135deg]" aria-hidden />
+                <RiArrowLeftLine width={16} height={16} fill="currentColor" aria-hidden />
               </button>
               <button
                 type="button"
@@ -120,7 +121,7 @@ export default function OxyAppsFeatureGrid({ title, description, unifiedTheme = 
                 onClick={() => swiperRef.current?.slideNext()}
                 className="values-nav-btn"
               >
-                <ArrowUpRight weight="regular" className="rotate-45" aria-hidden />
+                <RiArrowRightLine width={16} height={16} fill="currentColor" aria-hidden />
               </button>
             </div>
           </div>
