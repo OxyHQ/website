@@ -215,6 +215,9 @@ const hi: Translations = {
     copyMarkdown: 'Markdown के रूप में कॉपी करें',
     markdownCopied: 'Markdown कॉपी हो गया',
     copyFailed: 'क्लिपबोर्ड पर कॉपी नहीं हो सका',
+    switchVersion: 'संस्करण बदलें (वर्तमान: {version})',
+    versionLatest: 'नवीनतम',
+    versionDeprecated: 'अप्रचलित',
   },
 }
 

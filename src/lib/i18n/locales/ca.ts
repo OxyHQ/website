@@ -638,6 +638,9 @@ const ca: Translations = {
     copyMarkdown: 'Copia com a Markdown',
     markdownCopied: 'Markdown copiat',
     copyFailed: 'No s’ha pogut copiar al porta-retalls',
+    switchVersion: 'Canvia de versió (actual: {version})',
+    versionLatest: 'darrera',
+    versionDeprecated: 'obsoleta',
   },
 }
 

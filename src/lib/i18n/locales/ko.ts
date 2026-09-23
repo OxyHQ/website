@@ -638,6 +638,9 @@ const ko: Translations = {
     copyMarkdown: 'Markdown으로 복사',
     markdownCopied: 'Markdown을 복사했습니다',
     copyFailed: '클립보드에 복사하지 못했습니다',
+    switchVersion: '버전 전환 (현재: {version})',
+    versionLatest: '최신',
+    versionDeprecated: '지원 중단',
   },
 }
 

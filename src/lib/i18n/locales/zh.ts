@@ -638,6 +638,9 @@ const zh: Translations = {
     copyMarkdown: '复制为 Markdown',
     markdownCopied: '已复制 Markdown',
     copyFailed: '无法复制到剪贴板',
+    switchVersion: '切换版本（当前：{version}）',
+    versionLatest: '最新',
+    versionDeprecated: '已弃用',
   },
 }
 

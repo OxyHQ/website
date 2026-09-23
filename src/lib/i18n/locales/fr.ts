@@ -638,6 +638,9 @@ const fr: Translations = {
     copyMarkdown: 'Copier en Markdown',
     markdownCopied: 'Markdown copié',
     copyFailed: 'Impossible de copier dans le presse-papiers',
+    switchVersion: 'Changer de version (actuelle : {version})',
+    versionLatest: 'dernière',
+    versionDeprecated: 'obsolète',
   },
 }
 

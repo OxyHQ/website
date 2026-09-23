@@ -1,8 +1,17 @@
-import { useState } from 'react'
+import { Badge } from '@oxy.so/bloom/badge'
+import { Button } from '@oxy.so/bloom/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from '@oxy.so/bloom/dropdown-menu'
+import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
 import { useNavigate } from '../../lib/navigation'
+import { useTranslation } from '../../lib/i18n'
 import type { SyncedPackage } from '../../../scripts/types'
 import { buildDocsHref } from '../../content/docs-loader'
-import { cn } from '../../lib/utils'
 
 interface VersionSelectorProps {
   pkg: SyncedPackage
@@ -20,70 +29,50 @@ interface VersionSelectorProps {
  */
 export default function VersionSelector({ pkg, currentVersion, slug }: VersionSelectorProps) {
   const navigate = useNavigate()
-  const [open, setOpen] = useState(false)
+  const { t } = useTranslation()
 
   if (!pkg.versioned || pkg.versions.length <= 1) return null
 
+  const latestBadge = <Badge content={t('docs.versionLatest')} color="primary" variant="subtle" />
+  const label = t('docs.switchVersion', { version: currentVersion })
+
   return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((p) => !p)}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-label={`Switch version (current: ${currentVersion})`}
-        className="inline-flex items-center gap-1 rounded-full bg-surface px-3 py-1 text-xs font-medium text-foreground hover:bg-muted"
-      >
-        v{currentVersion}
-        {currentVersion === pkg.latestVersion ? (
-          <span className="ml-1 rounded-full bg-primary/15 px-1.5 py-px text-label-sm font-semibold text-primary">
-            latest
-          </span>
-        ) : null}
-        <svg width={10} height={10} viewBox="0 0 12 12" aria-hidden>
-          <path d="M3 4.5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        </svg>
-      </button>
-      {open ? (
-        <div
-          role="listbox"
-          className="absolute right-0 z-50 mt-1 w-44 overflow-hidden rounded-xl border border-border bg-background shadow-lg"
-          onMouseLeave={() => setOpen(false)}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild label={label} className="inline-flex">
+        <Button
+          size="xs"
+          appearance="subtle"
+          tone="neutral"
+          accessibilityLabel={label}
+          trailing={currentVersion === pkg.latestVersion ? latestBadge : undefined}
+          trailingIcon={RiArrowDownSLine}
         >
-          {pkg.versions.map((v) => {
-            const active = v.version === currentVersion
-            const isLatest = v.version === pkg.latestVersion
-            const isDeprecated = pkg.deprecatedVersions.includes(v.version)
-            return (
-              <button
-                key={v.version}
-                type="button"
-                role="option"
-                aria-selected={active}
-                className={cn(
-                  'flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-xs',
-                  active ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-surface',
-                )}
-                onClick={() => {
-                  setOpen(false)
-                  navigate(buildDocsHref(pkg, v.version, slug))
-                }}
-              >
-                <span>v{v.version}</span>
-                {isLatest ? (
-                  <span className="rounded-full bg-primary/15 px-1.5 py-px text-label-sm font-semibold text-primary">
-                    latest
-                  </span>
-                ) : isDeprecated ? (
-                  <span className="rounded-full bg-error-subtle px-1.5 py-px text-label-sm font-semibold text-error-text">
-                    deprecated
-                  </span>
-                ) : null}
-              </button>
-            )
-          })}
-        </div>
-      ) : null}
-    </div>
+          {`v${currentVersion}`}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        <DropdownMenuRadioGroup
+          value={currentVersion}
+          onValueChange={(version) => navigate(buildDocsHref(pkg, version, slug))}
+        >
+          {pkg.versions.map((v) => (
+            <DropdownMenuRadioItem
+              key={v.version}
+              value={v.version}
+              accessibilityLabel={`v${v.version}`}
+              trailing={
+                v.version === pkg.latestVersion ? (
+                  latestBadge
+                ) : pkg.deprecatedVersions.includes(v.version) ? (
+                  <Badge content={t('docs.versionDeprecated')} color="error" variant="subtle" />
+                ) : undefined
+              }
+            >
+              {`v${v.version}`}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

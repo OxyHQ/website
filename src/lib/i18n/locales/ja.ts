@@ -638,6 +638,9 @@ const ja: Translations = {
     copyMarkdown: 'Markdown としてコピー',
     markdownCopied: 'Markdown をコピーしました',
     copyFailed: 'クリップボードにコピーできませんでした',
+    switchVersion: 'バージョンを切り替え（現在: {version}）',
+    versionLatest: '最新',
+    versionDeprecated: '非推奨',
   },
 }
 

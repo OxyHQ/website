@@ -215,6 +215,9 @@ const id: Translations = {
     copyMarkdown: 'Salin sebagai Markdown',
     markdownCopied: 'Markdown disalin',
     copyFailed: 'Tidak dapat menyalin ke papan klip',
+    switchVersion: 'Ganti versi (saat ini: {version})',
+    versionLatest: 'terbaru',
+    versionDeprecated: 'usang',
   },
 }
 
