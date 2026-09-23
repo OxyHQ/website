@@ -625,6 +625,20 @@ const ar: Translations = {
     notFoundDescription: 'نأسف، لم نتمكّن من العثور على هذه الصفحة. ربما تم نقلها أو حذفها.',
     notFoundCta: 'العودة إلى الصفحة الرئيسية',
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: 'إجراءات الصفحة',
+    copyPage: 'نسخ الصفحة',
+    copied: 'تم النسخ',
+    pageCopied: 'تم نسخ الصفحة',
+    moreActions: 'إجراءات أخرى',
+    copyLink: 'نسخ الرابط',
+    linkCopied: 'تم نسخ الرابط',
+    copyMarkdown: 'نسخ بتنسيق Markdown',
+    markdownCopied: 'تم نسخ Markdown',
+    copyFailed: 'تعذّر النسخ إلى الحافظة',
+  },
 }
 
 export default ar

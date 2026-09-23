@@ -1,7 +1,7 @@
 import path from 'node:path'
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
@@ -74,6 +74,23 @@ function oxySoReanimatedWorklets() {
   }
 }
 
+/**
+ * `@mdx-js/rollup` drops the query before matching, so a `?raw` import of a
+ * doc (the docs "Copy as Markdown" source) would be compiled to JavaScript
+ * too. Leave those to Vite, which serves them as the file's text.
+ */
+function mdxExceptRaw(options: Parameters<typeof mdx>[0]): Plugin {
+  const plugin = mdx(options)
+  return {
+    ...plugin,
+    enforce: 'pre',
+    transform(code, id) {
+      if (/[?&]raw\b/.test(id)) return null
+      return plugin.transform.call(this, code, id)
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
@@ -89,14 +106,11 @@ export default defineConfig(({ mode }) => ({
     // Adds `export const headings` to every MDX module, before the compiler
     // turns the document into JavaScript.
     mdxHeadings(),
-    {
-      enforce: 'pre',
-      ...mdx({
-        remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm],
-        rehypePlugins: [rehypeSlug],
-        providerImportSource: '@mdx-js/react',
-      }),
-    },
+    mdxExceptRaw({
+      remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm],
+      rehypePlugins: [rehypeSlug],
+      providerImportSource: '@mdx-js/react',
+    }),
     // `react-native-reanimated` ships `lib/module/*.js` files that contain
     // untransformed JSX (e.g. `component/LayoutAnimationConfig.js`). Vite 8 /
     // rolldown defaults to treating `.js` files as plain JavaScript — JSX

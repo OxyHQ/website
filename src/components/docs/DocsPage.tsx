@@ -98,6 +98,7 @@ export default function DocsPage() {
       currentVersion={version.version}
       slug={slug}
       activePkg={pkg}
+      sourceFile={page.file}
     >
       <DocsMdxBody file={page.file} />
       {pkg.shortName === 'bloom' && slug === '' ? <BloomOverviewLinks /> : null}

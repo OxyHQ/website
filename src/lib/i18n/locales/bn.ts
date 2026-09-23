@@ -202,6 +202,20 @@ const bn: Translations = {
     notFoundDescription: 'দুঃখিত, আমরা পৃষ্ঠাটি খুঁজে পাইনি। এটি সরানো বা মুছে ফেলা হয়ে থাকতে পারে।',
     notFoundCta: 'হোমপেজে ফিরুন',
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: 'পেজের কাজ',
+    copyPage: 'পেজ কপি করুন',
+    copied: 'কপি হয়েছে',
+    pageCopied: 'পেজ কপি হয়েছে',
+    moreActions: 'আরও কাজ',
+    copyLink: 'লিংক কপি করুন',
+    linkCopied: 'লিংক কপি হয়েছে',
+    copyMarkdown: 'Markdown হিসেবে কপি করুন',
+    markdownCopied: 'Markdown কপি হয়েছে',
+    copyFailed: 'ক্লিপবোর্ডে কপি করা যায়নি',
+  },
 }
 
 export default bn

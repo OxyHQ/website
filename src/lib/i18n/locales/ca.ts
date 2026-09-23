@@ -625,6 +625,20 @@ const ca: Translations = {
     notFoundDescription: 'Ho sentim, no hem pogut trobar aquesta pàgina. Pot haver estat moguda o eliminada.',
     notFoundCta: "Torna a l'inici",
   },
+
+  // ── Docs page actions ─────────────────────────────────────
+  docs: {
+    pageActions: 'Accions de la pàgina',
+    copyPage: 'Copia la pàgina',
+    copied: 'Copiat',
+    pageCopied: 'Pàgina copiada',
+    moreActions: 'Més accions',
+    copyLink: 'Copia l’enllaç',
+    linkCopied: 'Enllaç copiat',
+    copyMarkdown: 'Copia com a Markdown',
+    markdownCopied: 'Markdown copiat',
+    copyFailed: 'No s’ha pogut copiar al porta-retalls',
+  },
 }
 
 export default ca

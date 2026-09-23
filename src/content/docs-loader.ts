@@ -24,6 +24,22 @@ for (const key of Object.keys(lazyMdx)) {
   lazyComponents.set(file, lazy(loader))
 }
 
+// The same files as raw text, for "Copy as Markdown". Lazy, so each source is
+// its own chunk and is only fetched when someone asks for it.
+const rawMdx = import.meta.glob<string>('./_synced/**/*.{mdx,md}', {
+  query: '?raw',
+  import: 'default',
+})
+const rawSources = new Map<string, () => Promise<string>>()
+for (const [key, loader] of Object.entries(rawMdx)) {
+  rawSources.set(key.replace(/^\.\/_synced\//, ''), loader)
+}
+
+/** The page's source text, keyed like `SyncedPage.file`; undefined when there is none. */
+export function loadDocSource(file: string): Promise<string> | undefined {
+  return rawSources.get(file)?.()
+}
+
 export function getIndex(): SyncedIndex {
   return index
 }
