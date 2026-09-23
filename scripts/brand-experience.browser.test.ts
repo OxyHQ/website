@@ -6,7 +6,14 @@ import { chromium } from 'playwright'
 const root = resolve(import.meta.dir, '..', 'dist')
 const headers = await Bun.file(join(root, '_headers')).text()
 const policies = [...headers.matchAll(/^ {2}Content-Security-Policy: (.+)$/gm)].map((m) => m[1])
-if (policies.length !== 2 || policies[0].includes("'unsafe-eval'"))
+// The main policy, then the canvas's — declared twice, for `/bloom-preview.html`
+// and for the extensionless path Cloudflare Pages redirects it to. Both
+// canvas declarations must stay identical.
+if (
+  policies.length !== 3 ||
+  policies[0].includes("'unsafe-eval'") ||
+  policies[1] !== policies[2]
+)
   throw new Error('Unexpected main/canvas CSP policies')
 const mime: Record<string, string> = {
   '.html': 'text/html',

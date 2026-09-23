@@ -72,3 +72,13 @@
   ! X-Frame-Options
   X-Robots-Tag: noindex, nofollow
   Content-Security-Policy: default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src data: blob:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'; sandbox allow-scripts
+
+# Cloudflare Pages 308s `/bloom-preview.html` to `/bloom-preview`, and the
+# document the iframe finally loads is served under THAT path — which only the
+# `/*` block matched, so it arrived with `frame-ancestors 'none'` and
+# `X-Frame-Options: DENY` and the playground's preview never rendered.
+/bloom-preview
+  ! Content-Security-Policy
+  ! X-Frame-Options
+  X-Robots-Tag: noindex, nofollow
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src data: blob:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'; sandbox allow-scripts
