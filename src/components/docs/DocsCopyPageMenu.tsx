@@ -1,5 +1,3 @@
-import { useEffect, useRef, useState } from 'react'
-import { toast } from '@oxy.so/bloom'
 import { ButtonGroup, ButtonGroupItem } from '@oxy.so/bloom/button-group'
 import {
   DropdownMenu,
@@ -14,6 +12,7 @@ import { RiLinkM } from '@oxy.so/bloom/icons/RiLinkM'
 import { useTheme } from '@oxy.so/bloom/theme'
 import { loadDocSource } from '../../content/docs-loader'
 import { useTranslation } from '../../lib/i18n'
+import { useCopyToClipboard } from '../../lib/useCopyToClipboard'
 
 const FRONTMATTER = /^---\r?\n[\s\S]*?\r?\n---\r?\n*/
 
@@ -26,31 +25,14 @@ interface DocsCopyPageMenuProps {
 export function DocsCopyPageMenu({ title, sourceFile }: DocsCopyPageMenuProps) {
   const { t } = useTranslation()
   const { colors } = useTheme()
-  const [copied, setCopied] = useState(false)
-  const resetTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  // Two flows so only "Copy page" flips its own label to "Copied"; the menu
+  // rows confirm through the toast alone.
+  const page = useCopyToClipboard()
+  const { copy } = useCopyToClipboard()
 
-  useEffect(() => () => clearTimeout(resetTimer.current), [])
-
-  async function copy(text: string | undefined | Promise<string | undefined>, done: string) {
-    try {
-      const value = await text
-      if (!value) throw new Error('nothing to copy')
-      await navigator.clipboard.writeText(value)
-      toast.success(done)
-      return true
-    } catch {
-      toast.error(t('docs.copyFailed'))
-      return false
-    }
-  }
-
-  async function copyPage() {
+  function copyPage() {
     const text = document.querySelector('[data-docs-content]')?.textContent?.trim()
-    if (await copy(text, t('docs.pageCopied'))) {
-      setCopied(true)
-      clearTimeout(resetTimer.current)
-      resetTimer.current = setTimeout(() => setCopied(false), 2000)
-    }
+    void page.copy(text, t('docs.pageCopied'))
   }
 
   function copyMarkdown() {
@@ -68,8 +50,8 @@ export function DocsCopyPageMenu({ title, sourceFile }: DocsCopyPageMenuProps) {
   return (
     <div className="ml-auto hidden shrink-0 sm:flex">
       <ButtonGroup size="sm" accessibilityLabel={t('docs.pageActions')}>
-        <ButtonGroupItem leadingIcon={RiFileCopyLine} onPress={() => void copyPage()}>
-          {copied ? t('docs.copied') : t('docs.copyPage')}
+        <ButtonGroupItem leadingIcon={RiFileCopyLine} onPress={copyPage}>
+          {page.copied ? t('docs.copied') : t('docs.copyPage')}
         </ButtonGroupItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild label={t('docs.moreActions')}>

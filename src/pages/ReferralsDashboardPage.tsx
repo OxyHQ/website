@@ -9,6 +9,8 @@ import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useReferralDashboard, type ReferralDashboard } from '../api/hooks'
 import { brandConfig } from '../lib/seo'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import { useTranslation } from '../lib/i18n'
+import { useCopyToClipboard } from '../lib/useCopyToClipboard'
 
 /* ──────────────────────────────────────────────
  * /referrals/dashboard
@@ -76,19 +78,12 @@ function buildShareUrl(code: string, customLandingUrl: string | null | undefined
 }
 
 function DashboardContent({ referral }: { referral: ReferralDashboard }) {
-  const [copied, setCopied] = useState(false)
+  const { t } = useTranslation()
+  const { copied, copy } = useCopyToClipboard(1800)
   const shareUrl = useMemo(
     () => buildShareUrl(referral.code, referral.customLandingUrl),
     [referral.code, referral.customLandingUrl],
   )
-
-  const handleCopy = useCallback(() => {
-    if (typeof navigator === 'undefined' || !navigator.clipboard) return
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 1800)
-    }).catch(() => undefined)
-  }, [shareUrl])
 
   return (
     <div className="flex flex-col gap-10">
@@ -119,7 +114,7 @@ function DashboardContent({ referral }: { referral: ReferralDashboard }) {
             </div>
             <button
               type="button"
-              onClick={handleCopy}
+              onClick={() => void copy(shareUrl, t('common.linkCopied'))}
               className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-surface"
             >
               <CopyIcon copied={copied} />

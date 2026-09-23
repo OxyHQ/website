@@ -74,6 +74,11 @@ const en = {
     closeMenu: 'Close menu',
     changeLanguage: 'Change language',
     dismissBanner: 'Dismiss banner',
+    copiedToClipboard: 'Copied to clipboard',
+    linkCopied: 'Link copied',
+    copyCode: 'Copy code',
+    codeCopied: 'Code copied',
+    copyFailed: 'Could not copy to the clipboard',
   },
 
   // ── Navbar ────────────────────────────────────────────────
@@ -898,7 +903,6 @@ const en = {
     linkCopied: 'Link copied',
     copyMarkdown: 'Copy as Markdown',
     markdownCopied: 'Markdown copied',
-    copyFailed: 'Could not copy to the clipboard',
     switchVersion: 'Switch version (current: {version})',
     versionLatest: 'latest',
     versionDeprecated: 'deprecated',

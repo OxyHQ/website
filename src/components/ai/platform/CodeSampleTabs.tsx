@@ -1,5 +1,13 @@
-import { useId, useState } from 'react'
-import { Check, Copy } from 'lucide-react'
+import { useState } from 'react'
+import { Button } from '@oxy.so/bloom/button'
+import { CodeLines } from '@oxy.so/bloom/code'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
+import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+  SegmentedControlItemText,
+} from '@oxy.so/bloom/segmented-control'
 import { useCopyToClipboard } from '../../../lib/useCopyToClipboard'
 import { useTranslation } from '../../../lib/i18n'
 import type { CodeSample } from '../../../data/ai/quickstart'
@@ -14,17 +22,17 @@ interface CodeSampleTabsProps {
 /**
  * Tabbed code samples with a copy button.
  *
- * Implemented as a real tab list rather than a styled radio group so a keyboard
- * user gets arrow-key movement and a screen reader is told which panel is
- * showing. Every panel is in the DOM and the inactive ones are `hidden` rather
- * than unmounted, so switching language is instant and a browser's find-in-page
- * can reach a snippet the reader has not selected.
+ * The switcher is a `SegmentedControl` of `type="tabs"`: picking a language
+ * shows the same example a different way rather than setting anything, so it
+ * announces as a tab list. Every panel is in the DOM and the inactive ones are
+ * `hidden` rather than unmounted, so switching language is instant and a
+ * browser's find-in-page can reach a snippet the reader has not selected. A
+ * single sample gets no switcher at all.
  */
 export default function CodeSampleTabs({ samples, caption, className = '' }: CodeSampleTabsProps) {
   const { t } = useTranslation()
   const [active, setActive] = useState(samples[0]?.key ?? '')
   const { copied, copy } = useCopyToClipboard()
-  const baseId = useId()
 
   if (samples.length === 0) return null
   const activeSample = samples.find((sample) => sample.key === active) ?? samples[0]
@@ -32,50 +40,50 @@ export default function CodeSampleTabs({ samples, caption, className = '' }: Cod
   return (
     <figure className={`overflow-hidden rounded-2xl border border-border bg-card ${className}`}>
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-3 py-2">
-        <div role="tablist" aria-label={caption ?? t('ai.quickstart.tabsLabel')} className="flex flex-wrap gap-1">
-          {samples.map((sample) => {
-            const selected = sample.key === activeSample.key
-            return (
-              <button
-                key={sample.key}
-                type="button"
-                role="tab"
-                id={`${baseId}-tab-${sample.key}`}
-                aria-selected={selected}
-                aria-controls={`${baseId}-panel-${sample.key}`}
-                onClick={() => setActive(sample.key)}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm transition-colors ${
-                  selected
-                    ? 'bg-foreground text-background'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {sample.label}
-              </button>
-            )
-          })}
-        </div>
-        <button
-          type="button"
-          onClick={() => copy(activeSample.code)}
-          className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border px-3 py-1 text-sm text-muted-foreground hover:text-foreground"
+        {samples.length > 1 ? (
+          <SegmentedControl
+            type="tabs"
+            size="sm"
+            label={caption ?? t('ai.quickstart.tabsLabel')}
+            value={activeSample.key}
+            onValueChange={setActive}
+          >
+            {samples.map((sample) => (
+              <SegmentedControlItem key={sample.key} value={sample.key}>
+                <SegmentedControlItemText>{sample.label}</SegmentedControlItemText>
+              </SegmentedControlItem>
+            ))}
+          </SegmentedControl>
+        ) : (
+          <span className="px-1 text-sm text-muted-foreground">{activeSample.label}</span>
+        )}
+        <Button
+          size="sm"
+          tone="neutral"
+          appearance="outline"
+          leadingIcon={copied ? RiCheckLine : RiFileCopyLine}
+          accessibilityLabel={
+            copied ? t('ai.quickstart.copied') : `${t('ai.quickstart.copy')} ${activeSample.label}`
+          }
+          onPress={() => void copy(activeSample.code, t('common.codeCopied'))}
         >
-          {copied ? <Check className="size-3.5" aria-hidden="true" /> : <Copy className="size-3.5" aria-hidden="true" />}
           {copied ? t('ai.quickstart.copied') : t('ai.quickstart.copy')}
-          <span className="sr-only"> {activeSample.label}</span>
-        </button>
+        </Button>
       </div>
       {samples.map((sample) => (
         <div
           key={sample.key}
-          role="tabpanel"
-          id={`${baseId}-panel-${sample.key}`}
-          aria-labelledby={`${baseId}-tab-${sample.key}`}
+          role={samples.length > 1 ? 'tabpanel' : undefined}
+          aria-label={sample.label}
           hidden={sample.key !== activeSample.key}
         >
-          <pre className="overflow-x-auto p-4 text-sm leading-relaxed text-foreground">
-            <code>{sample.code}</code>
-          </pre>
+          <CodeLines
+            code={sample.code}
+            language={sample.language}
+            lineNumbers={false}
+            size="md"
+            style={{ padding: 16 }}
+          />
         </div>
       ))}
       {caption && (

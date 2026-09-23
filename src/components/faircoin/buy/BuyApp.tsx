@@ -13,6 +13,7 @@
  * right; back navigation reverses the direction).
  */
 import { useCallback, useMemo, useState } from 'react'
+import { useCopyToClipboard } from '../../../lib/useCopyToClipboard'
 import { QRCodeSVG } from 'qrcode.react'
 import {
   ArrowDown,
@@ -741,17 +742,7 @@ interface CopyableValueProps {
 }
 
 function CopyableValue({ label, value, monospace }: CopyableValueProps) {
-  const [flash, setFlash] = useState(false)
-  const handleCopy = useCallback(async () => {
-    if (typeof navigator === 'undefined' || !navigator.clipboard) return
-    try {
-      await navigator.clipboard.writeText(value)
-      setFlash(true)
-      window.setTimeout(() => setFlash(false), COPY_FLASH_MS)
-    } catch {
-      setFlash(false)
-    }
-  }, [value])
+  const { copied, copy } = useCopyToClipboard(COPY_FLASH_MS)
   return (
     <div className="w-full rounded-xl border border-border bg-popover/60 p-3">
       <div className="text-label-sm font-medium uppercase tracking-wider text-muted-foreground">
@@ -768,11 +759,11 @@ function CopyableValue({ label, value, monospace }: CopyableValueProps) {
         </span>
         <button
           type="button"
-          onClick={handleCopy}
+          onClick={() => void copy(value)}
           aria-label={`Copy ${label}`}
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors hover:bg-primary/20"
         >
-          {flash ? (
+          {copied ? (
             <CheckCircle2 aria-hidden className="h-3.5 w-3.5" />
           ) : (
             <Copy aria-hidden className="h-3.5 w-3.5" />
