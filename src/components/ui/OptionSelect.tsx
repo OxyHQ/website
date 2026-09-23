@@ -31,12 +31,18 @@ interface OptionSelectProps {
   className?: string
   /** A fixed width for the dropdown list instead of Bloom's trigger-width floor. */
   listWidth?: number
+  /**
+   * The '' option means "nothing chosen" ("Select", "—") rather than a real
+   * choice like "All apps": the trigger shows it in the placeholder colour.
+   * It stays choosable, so an optional field can be cleared again.
+   */
+  emptyIsPlaceholder?: boolean
 }
 
 /**
  * Bloom stands for "nothing chosen" with a falsy value — its trigger paints an
  * empty string in the placeholder colour. An option whose value is '' ("All
- * apps", "Any provider") is a real choice here, so it travels through Bloom
+ * apps", "Any provider") is usually a real choice, so it travels through Bloom
  * under this key instead and comes back out as ''.
  */
 const EMPTY = '\u0000empty'
@@ -81,6 +87,7 @@ export default function OptionSelect({
   disabled,
   className,
   listWidth,
+  emptyIsPlaceholder = false,
 }: OptionSelectProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const panelClass = `option-select-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
@@ -88,8 +95,9 @@ export default function OptionSelect({
   // An empty value with no empty option is "nothing chosen", which Bloom
   // spells `undefined` — that is what brings its placeholder back.
   const hasEmptyOption = options.some((option) => option.value === '')
-  const resolved = value === '' && !hasEmptyOption ? undefined : toBloom(value)
-  const items = hasEmptyOption
+  const wrapEmpty = hasEmptyOption && !emptyIsPlaceholder
+  const resolved = value === '' && !hasEmptyOption ? undefined : wrapEmpty ? toBloom(value) : value
+  const items = wrapEmpty
     ? options.map((option) => ({ ...option, value: toBloom(option.value) }))
     : options
 
@@ -133,8 +141,14 @@ export default function OptionSelect({
           trigger()?.focus({ preventScroll: true })
           return
         case 'Escape':
-          // Bloom closes the list; focus would otherwise fall to <body>.
-          requestAnimationFrame(() => trigger()?.focus({ preventScroll: true }))
+          // Closes the list and nothing else. Bloom's own Escape listener sits
+          // beside a Dialog's, so inside one it closed the dialog too — a
+          // native select swallows this key. Focus returns to the trigger
+          // instead of falling to <body>.
+          event.preventDefault()
+          event.stopPropagation()
+          trigger()?.click()
+          trigger()?.focus({ preventScroll: true })
           return
       }
     }
