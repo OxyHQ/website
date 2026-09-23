@@ -62,13 +62,6 @@
   outline: 2px solid var(--primary);
   outline-offset: 5px;
 }
-.oxy-recipe-swatch {
-  display: flex;
-  min-height: 10rem;
-  align-items: flex-end;
-  padding: 1.5rem;
-  border-radius: 1rem;
-}
 .oxy-motion-sample {
   animation: oxy-arrive var(--oxy-motion-scene) var(--oxy-ease-out) both;
 }
