@@ -305,7 +305,10 @@ export default function Navbar({
   const { data: navProducts } = useProducts({ surface: 'nav' })
   const { data: siteSettings } = useSiteSettings()
   const productItems = useMemo(() => {
-    if (!navProducts || navProducts.length === 0) return technologiesNavFallbackItems
+    // The navbar is on every page: an API that answers with something other
+    // than a list (an HTML error page behind a proxy) must fall back to the
+    // code-owned menu, not take the whole document down with it.
+    if (!Array.isArray(navProducts) || navProducts.length === 0) return technologiesNavFallbackItems
     const items: Array<NavDropdownItemData & { section: string }> = navProducts.map((product) => {
       const productKey = product.productId.toLowerCase()
       return {
