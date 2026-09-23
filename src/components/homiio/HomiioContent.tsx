@@ -5,11 +5,14 @@ import HomiioFAQ from './HomiioFAQ'
 export default function HomiioContent() {
   return (
     <>
-      <HomiioWheelHero />
-      <HomiioSpiral />
-      <div className="bg-[#FFF7D8]">
-        <HomiioFAQ />
+      {/* The illustrated scenes are one fixed daytime picture, light whatever
+          the site's toggle says (`.homiio-landing-theme` in src/theme/brands.ts).
+          The FAQ below is ordinary page content and follows the toggle. */}
+      <div className="homiio-landing-theme">
+        <HomiioWheelHero />
+        <HomiioSpiral />
       </div>
+      <HomiioFAQ />
     </>
   )
 }

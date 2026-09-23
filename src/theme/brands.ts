@@ -36,6 +36,8 @@ export type BrandMode =
   | 'auto'
   /** Stays dark whatever the toggle says — a product page designed dark. */
   | 'dark'
+  /** Stays light whatever the toggle says — a fixed light illustration. */
+  | 'light'
 
 export interface BrandSurface {
   /** The class the page's root element carries. */
@@ -61,7 +63,26 @@ export interface BrandSurface {
  * that uses `.cursor-theme` alone.
  */
 export const BRAND_SURFACES: readonly BrandSurface[] = [
-  { selector: '.homiio-landing-theme', seed: APP_COLOR_PRESETS.cobalt.hex, secondarySeed: APP_COLOR_PRESETS.yellow.hex, mode: 'auto', label: 'Homiio landing scenes' },
+  {
+    // The Homiio landing is one fixed daytime illustration — a blue sky over a
+    // cream ground — so it stays light whatever the toggle says. The yellow seed
+    // is what puts that cream in reach: its `--content-area` is the ground.
+    // Cobalt is pinned as the secondary so the sky is `--secondary`.
+    selector: '.homiio-landing-theme',
+    seed: APP_COLOR_PRESETS.yellow.hex,
+    secondarySeed: APP_COLOR_PRESETS.cobalt.hex,
+    mode: 'light',
+    label: 'Homiio landing scenes',
+  },
+  {
+    // The same seeds, dark: the vivid inks the light ramp has no room for — the
+    // yellow "Homiio." on the sky, the feature tiles, the trust marks over photos.
+    selector: '.homiio-landing-accent-theme',
+    seed: APP_COLOR_PRESETS.yellow.hex,
+    secondarySeed: APP_COLOR_PRESETS.cobalt.hex,
+    mode: 'dark',
+    label: 'Homiio landing accents',
+  },
   { selector: '.cursor-theme', seed: '#7c5aed', mode: 'dark', label: 'Codea' },
   { selector: '.oxyos-theme', seed: '#8b6fc0', mode: 'dark', label: 'OxyOS' },
   {

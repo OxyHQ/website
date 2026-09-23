@@ -85,7 +85,7 @@ export default function HomiioSpiral() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
   if (reduce)
     return (
-      <section className="bg-[#FFF7D8] px-6 py-16">
+      <section className="bg-content-area px-6 py-16">
         <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-6">
           {deck.slice(0, 6).map((listing, index) => (
             <HomiioPropertyCard key={index} listing={listing} />
@@ -94,7 +94,7 @@ export default function HomiioSpiral() {
       </section>
     )
   return (
-    <section ref={ref} className="relative overflow-hidden bg-[#FFF7D8] py-[7vh]">
+    <section ref={ref} className="relative overflow-hidden bg-content-area py-[7vh]">
       <div className="relative mx-auto flex h-[clamp(440px,62vh,720px)] items-center justify-center">
         <div className="relative h-0 w-0 scale-[0.5] sm:scale-75 lg:scale-100">
           {Array.from({ length: COUNT }, (_, i) => (

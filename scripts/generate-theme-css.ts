@@ -107,9 +107,10 @@ function brandBlocks(surface: BrandSurface): string[] {
     secondarySeed: surface.secondarySeed,
     tertiarySeed: surface.tertiarySeed,
   }
-  if (surface.mode === 'dark') {
+  if (surface.mode !== 'auto') {
+    // A fixed surface: one block in its own mode, and no `.dark` counterpart.
     return [
-      `${heading}\n${scopeBlock(surface.selector, surface.seed, 'dark', 'color-scheme: dark;', accents)}`,
+      `${heading}\n${scopeBlock(surface.selector, surface.seed, surface.mode, `color-scheme: ${surface.mode};`, accents)}`,
     ]
   }
   return [
