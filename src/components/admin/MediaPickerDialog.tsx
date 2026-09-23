@@ -1,6 +1,11 @@
 import { useState, useRef, useCallback } from 'react'
 import { useMedia, type MediaItem } from '../../api/hooks'
-import { SecondaryButton } from '@oxy.so/bloom/button'
+import { Button, SecondaryButton } from '@oxy.so/bloom/button'
+import { Dialog } from '@oxy.so/bloom/dialog'
+import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
+import { RiFileTextLine } from '@oxy.so/bloom/icons/RiFileTextLine'
+import { RiUploadCloud2Line } from '@oxy.so/bloom/icons/RiUploadCloud2Line'
+import { useTheme } from '@oxy.so/bloom/theme'
 import { LabeledTextField } from './LabeledTextField'
 import { API_BASE, getAuthHeaders } from '../../api/client'
 import { useQueryClient } from '@tanstack/react-query'
@@ -20,6 +25,7 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
   const [dragOver, setDragOver] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const queryClient = useQueryClient()
+  const { colors } = useTheme()
 
   const { data } = useMedia({ search: search || undefined, type: typeFilter || undefined, limit: 40 })
   const items = data?.items ?? []
@@ -61,18 +67,23 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
   }, [uploadFile])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-
-      {/* Dialog */}
-      <div className="relative z-10 flex max-h-[80vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-xl">
+    // The parent mounts this only while it is open, so the dialog is always
+    // open here; `scrollable={false}` keeps the header and tabs fixed while the
+    // content pane below scrolls on its own.
+    <Dialog open onClose={onClose} maxWidth={768} maxHeightRatio={0.8} contentPadding={0} scrollable={false} label="Media Library">
+      <div className="flex max-h-[80vh] w-full flex-col text-start">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <h2 className="text-lg font-semibold text-foreground">Media Library</h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground" aria-label="Close">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="size-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
-          </button>
+          <Button
+            iconOnly
+            size="sm"
+            appearance="plain"
+            tone="neutral"
+            leadingIcon={RiCloseLine}
+            accessibilityLabel="Close"
+            onPress={onClose}
+          />
         </div>
 
         {/* Tabs */}
@@ -92,7 +103,7 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="min-h-0 flex-1 overflow-y-auto p-6">
           {tab === 'upload' ? (
             <div
               className={`flex h-64 flex-col items-center justify-center rounded-xl border-2 border-dashed transition-colors ${dragOver ? 'border-foreground bg-surface' : 'border-border'}`}
@@ -107,9 +118,7 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
                 </div>
               ) : (
                 <>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="mb-3 size-10 text-muted-foreground">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                  </svg>
+                  <RiUploadCloud2Line aria-hidden size="3xl" fill={colors.textSecondary} style={{ marginBottom: 12 }} />
                   <p className="text-sm text-muted-foreground">Drag and drop a file here</p>
                   <p className="mt-1 text-xs text-muted-foreground">or</p>
                   <SecondaryButton onPress={() => fileRef.current?.click()} style={{ marginTop: 8 }}>
@@ -169,7 +178,7 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
                           <img src={thumb} alt={item.alt || item.filename} className="size-full object-cover" loading="lazy" />
                         ) : (
                           <div className="flex size-full flex-col items-center justify-center gap-1 p-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="size-6 text-muted-foreground"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                            <RiFileTextLine aria-hidden size="lg" fill={colors.textSecondary} />
                             <span className="text-label-sm text-muted-foreground truncate w-full text-center">{item.filename}</span>
                           </div>
                         )}
@@ -182,6 +191,6 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
           )}
         </div>
       </div>
-    </div>
+    </Dialog>
   )
 }

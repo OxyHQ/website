@@ -411,6 +411,10 @@ const en = {
     minRead: '{count} min read',
     relatedPosts: 'Related posts',
     sharePost: 'Share',
+    sortLabel: 'Sort articles: {option}',
+    viewLabel: 'Article view',
+    gridView: 'Grid view',
+    listView: 'List view',
   },
   changelog: {
     seoTitle: 'Changelog',

@@ -82,6 +82,10 @@ const ru: Translations = {
   newsroom: {
     ...en.newsroom,
     recentNewsHeading: 'Последние новости',
+    sortLabel: 'Сортировка статей: {option}',
+    viewLabel: 'Вид статей',
+    gridView: 'Сетка',
+    listView: 'Список',
   },
   dashboard: { ...en.dashboard,
     traffic: {"identity": "Идентификация", "ai": "ИИ", "communication": "Сообщения", "media": "Медиа", "platform": "Платформа", "internal": "Внутренний", "external": "Внешний", "inbound": "Входящий", "outbound": "Исходящий"}, totalUsers: 'Всего пользователей', infrastructureActivity: 'Активность инфраструктуры', waitingActivity: 'Ожидание анонимной активности…', activeRegions: 'Активные регионы', networkOrigins: 'Источники сети', contentPerUser: 'Контент / пользователь', itemsPerUser: 'Объекты / пользователь', activeSessions: 'Активные сеансы', developerApps: 'Приложения разработчиков', storedFiles: 'Файлы', files: 'Файлы', messages: 'Сообщения', notifications: 'Уведомления', transactions: 'Транзакции', noneYet: 'Пока нет', aiModels: 'Модели ИИ', connections: 'Связи', platformActivity: 'Активность платформы', metricDetail: '{metric} рассчитывается по реальным данным и обновляется автоматически.' },

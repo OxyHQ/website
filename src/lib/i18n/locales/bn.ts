@@ -82,6 +82,10 @@ const bn: Translations = {
   newsroom: {
     ...en.newsroom,
     recentNewsHeading: 'সাম্প্রতিক খবর',
+    sortLabel: 'নিবন্ধ সাজান: {option}',
+    viewLabel: 'নিবন্ধের ভিউ',
+    gridView: 'গ্রিড ভিউ',
+    listView: 'তালিকা ভিউ',
   },
   dashboard: { ...en.dashboard,
     traffic: {"identity": "পরিচয়", "ai": "এআই", "communication": "বার্তা", "media": "মিডিয়া", "platform": "প্ল্যাটফর্ম", "internal": "অভ্যন্তরীণ", "external": "বাহ্যিক", "inbound": "আগত", "outbound": "বহির্গামী"}, totalUsers: 'মোট ব্যবহারকারী', infrastructureActivity: 'লাইভ অবকাঠামো কার্যকলাপ', waitingActivity: 'বেনামী কার্যকলাপের অপেক্ষায়…', activeRegions: 'সক্রিয় অঞ্চল', networkOrigins: 'লাইভ নেটওয়ার্ক উৎস', contentPerUser: 'কনটেন্ট / ব্যবহারকারী', itemsPerUser: 'আইটেম / ব্যবহারকারী', activeSessions: 'সক্রিয় সেশন', developerApps: 'ডেভেলপার অ্যাপ', storedFiles: 'সংরক্ষিত ফাইল', files: 'ফাইল', messages: 'বার্তা', notifications: 'বিজ্ঞপ্তি', transactions: 'লেনদেন', noneYet: 'এখনও নেই', aiModels: 'AI মডেল', connections: 'সংযোগ', platformActivity: 'প্ল্যাটফর্ম কার্যকলাপ', metricDetail: '{metric} বাস্তব ডেটা থেকে গণনা করা হয় এবং স্বয়ংক্রিয়ভাবে আপডেট হয়।' },

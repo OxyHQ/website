@@ -238,6 +238,10 @@ const ca: Translations = {
     minRead: '{count} min de lectura',
     relatedPosts: 'Publicacions relacionades',
     sharePost: 'Comparteix',
+    sortLabel: 'Ordena els articles: {option}',
+    viewLabel: 'Vista dels articles',
+    gridView: 'Vista de quadrícula',
+    listView: 'Vista de llista',
   },
   changelog: {
     seoTitle: 'Registre de canvis',

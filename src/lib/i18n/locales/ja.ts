@@ -238,6 +238,10 @@ const ja: Translations = {
     minRead: '読了{count}分',
     relatedPosts: '関連する投稿',
     sharePost: '共有',
+    sortLabel: '記事の並べ替え: {option}',
+    viewLabel: '記事の表示',
+    gridView: 'グリッド表示',
+    listView: 'リスト表示',
   },
   changelog: {
     seoTitle: '変更ログ',

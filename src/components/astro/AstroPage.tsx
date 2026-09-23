@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Button } from '@oxy.so/bloom/button'
+import { Dialog } from '@oxy.so/bloom/dialog'
+import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
 import '../../styles/astro-template.css'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
 import { APP_CARD_IMAGES } from '../../data/appCardImages'
@@ -31,27 +34,61 @@ function PlatformIcon({ platform, className }: { platform: Platform; className?:
 }
 
 function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [closing, setClosing] = useState(false)
-  const close = useCallback(() => {
-    setClosing(true)
-    setTimeout(() => { setClosing(false); onClose() }, 250)
-  }, [onClose])
-  if (!open && !closing) return null
+  const current = PLATFORM_META[CURRENT_PLATFORM]
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" onClick={close}>
-      <div className="absolute inset-0 bg-black/60" />
-      <div className={`relative w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl dark:bg-neutral-900 ${closing ? 'astro-dialog-out' : 'astro-dialog-in'}`} onClick={(event) => event.stopPropagation()}>
-        <button type="button" aria-label="Close download dialog" onClick={close} className="absolute right-4 top-4 rounded-full p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">×</button>
-        <div className="flex flex-col items-center">
-          <div className="mb-4 h-16 w-16 overflow-hidden rounded-[24%]"><img alt="Astro" src={`${IMAGES}/icon.png`} width={512} height={512} /></div>
-          <h2 className="text-xl font-medium text-neutral-900 dark:text-white">Download Astro for {PLATFORM_META[CURRENT_PLATFORM].label}</h2>
-          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{PLATFORM_META[CURRENT_PLATFORM].fileHint} · Free</p>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth={448}
+      contentPadding={0}
+      label={`Download Astro for ${current.label}`}
+    >
+      <div className="relative w-full p-8">
+        <div className="absolute right-3 top-3">
+          <Button
+            iconOnly
+            size="sm"
+            appearance="plain"
+            tone="neutral"
+            leadingIcon={RiCloseLine}
+            accessibilityLabel="Close download dialog"
+            onPress={onClose}
+          />
         </div>
-        <a href={DOWNLOAD_LINKS[CURRENT_PLATFORM]} className="mt-6 flex w-full items-center justify-center gap-2.5 rounded-full bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-600"><PlatformIcon platform={CURRENT_PLATFORM} className="h-5 w-5" />Download for {PLATFORM_META[CURRENT_PLATFORM].label}</a>
-        <div className="mt-6 border-t border-neutral-200 pt-5 dark:border-neutral-700"><p className="mb-3 text-center text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Other platforms</p><div className="flex justify-center gap-3">{OTHER_PLATFORMS.map((platform) => <a key={platform} href={DOWNLOAD_LINKS[platform]} className="flex items-center gap-2 rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"><PlatformIcon platform={platform} className="h-4 w-4" />{PLATFORM_META[platform].label}</a>)}</div></div>
-        <p className="mt-5 text-center text-[11px] leading-relaxed text-neutral-400 dark:text-neutral-500">By downloading, you agree to the Astro <a href="/legal/terms/" className="underline">Terms of Service</a> and <a href="/legal/privacy/" className="underline">Privacy Policy</a>.</p>
+        <div className="flex flex-col items-center text-center">
+          <div className="mb-4 h-16 w-16 overflow-hidden rounded-[24%]"><img alt="Astro" src={`${IMAGES}/icon.png`} width={512} height={512} /></div>
+          <h2 className="text-xl font-medium text-foreground">Download Astro for {current.label}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">{current.fileHint} · Free</p>
+        </div>
+        <div className="mt-6 flex flex-col">
+          <Button
+            href={DOWNLOAD_LINKS[CURRENT_PLATFORM]}
+            size="lg"
+            leading={<PlatformIcon platform={CURRENT_PLATFORM} className="size-5" />}
+          >
+            {`Download for ${current.label}`}
+          </Button>
+        </div>
+        <div className="mt-6 border-t border-border pt-5">
+          <p className="mb-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">Other platforms</p>
+          <div className="flex justify-center gap-3">
+            {OTHER_PLATFORMS.map((platform) => (
+              <Button
+                key={platform}
+                href={DOWNLOAD_LINKS[platform]}
+                size="sm"
+                appearance="outline"
+                tone="neutral"
+                leading={<PlatformIcon platform={platform} className="size-4" />}
+              >
+                {PLATFORM_META[platform].label}
+              </Button>
+            ))}
+          </div>
+        </div>
+        <p className="mt-5 text-center text-[11px] leading-relaxed text-muted-foreground">By downloading, you agree to the Astro <a href="/legal/terms/" className="underline hover:text-foreground">Terms of Service</a> and <a href="/legal/privacy/" className="underline hover:text-foreground">Privacy Policy</a>.</p>
       </div>
-    </div>
+    </Dialog>
   )
 }
 
@@ -83,7 +120,7 @@ const extras = [
 ]
 
 const primaryButton = 'reset interactable-alt select-none [-webkit-user-drag:none] outline-none font-medium transition-[background-color,border-color,color,opacity] duration-300 ease-out font-sans text-center items-center justify-center leading-loose whitespace-nowrap disabled:cursor-default disabled:opacity-50 data-[state=open]:opacity-80 text-inverse border border-transparent h-10 text-base cursor-pointer inline-flex rounded-full bg-button-bg hover:opacity-80 px-4 marketing-cta-shimmer text-box-edge-cap-alphabetic text-box-trim-both'
-const secondaryButton = 'reset interactable-alt select-none [-webkit-user-drag:none] outline-none font-medium transition-[background-color,border-color,color,opacity] duration-300 ease-out font-sans text-center items-center justify-center leading-loose whitespace-nowrap disabled:cursor-default disabled:opacity-50 data-[state=open]:bg-subtle data-[state=open]:border-subtle border border-solid h-10 text-base cursor-pointer inline-flex rounded-full text-primary border-subtle hover:border-subtle hover:bg-subtle px-4 border-white bg-white/[0.04] text-light text-box-edge-cap-alphabetic text-box-trim-both hover:border-white hover:bg-white/10'
+const secondaryButton = 'reset interactable-alt select-none [-webkit-user-drag:none] outline-none font-medium transition-[background-color,border-color,color,opacity] duration-300 ease-out font-sans text-center items-center justify-center leading-loose whitespace-nowrap disabled:cursor-default disabled:opacity-50 data-[state=open]:bg-subtle data-[state=open]:border-subtle border border-solid h-10 text-base cursor-pointer inline-flex rounded-full text-primary border-subtle hover:border-subtle hover:bg-subtle px-4 text-light text-box-edge-cap-alphabetic text-box-trim-both'
 
 function useAstroMotion() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -301,7 +338,7 @@ export default function AstroPageContent({
         ) : (
           <img src={APP_CARD_IMAGES['/astro']} alt="" aria-hidden="true" data-astro-parallax="hero" className="astro-hero-background pointer-events-none absolute inset-x-0 bottom-0 h-[1100px] w-full object-cover object-bottom" />
         )}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[140px] bg-gradient-to-t from-black/45 via-black/15 to-transparent" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[140px] bg-gradient-to-t from-background/45 via-background/15 to-transparent" />
         <div className={`relative mx-auto flex h-full w-full max-w-[1440px] flex-col items-center px-4 text-center md:px-10 lg:px-16${centerHeroContent ? ' justify-center' : ' pt-28 md:pt-32 lg:pt-36'}`}>
           <div data-astro-reveal className="relative z-10 flex flex-col items-center">
             <div className="mb-8 h-auto group w-20 md:w-24"><img alt={heroIconAlt} src={heroIconSrc} className="h-auto w-full rounded-[24%]" width={1024} height={1024} /></div>
@@ -335,7 +372,7 @@ export default function AstroPageContent({
         <div className="mx-auto w-full max-w-[1440px] px-4 md:px-10 lg:px-16">
           <div data-astro-reveal className="mx-auto max-w-[936px] text-center"><h2 className="nimbus-headline-m mx-auto max-w-[850px] text-balance text-primary text-box-trim-both text-box-edge-cap-alphabetic">A calmer way to move from question to action.</h2><div className="mx-auto mt-6 max-w-[648px]"><p className="nimbus-body text-box-trim-both text-box-edge-cap-alphabetic text-pretty text-secondary">Astro brings assistance into the browser you already use, so research, context, and next steps stay close together.</p></div></div>
           <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {featureCards.map(([label, title, description, image, eyebrow, alt], index) => <article key={title} data-astro-reveal data-astro-delay={index + 1} className="group flex min-w-0 flex-col gap-6 lg:gap-10"><div className="aspect-square w-full overflow-hidden rounded-2xl bg-white/[0.04]"><img src={image} alt={alt} className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025]" loading="lazy" /></div><div className="flex w-full flex-col gap-4 pb-1 pl-1 pr-1 lg:gap-6"><div className="flex items-center justify-between"><p className="nimbus-label-s text-box-edge-cap-alphabetic text-box-trim-both text-light uppercase">{label}</p><img src={eyebrow} alt="" aria-hidden="true" className="size-7 object-contain transition-transform duration-500 ease-out group-hover:rotate-6 group-hover:scale-110" /></div><h3 className="nimbus-body text-box-edge-cap-alphabetic text-box-trim-both text-light">{title}</h3><p className="nimbus-body-s text-box-edge-cap-alphabetic text-box-trim-both text-pretty text-secondary">{description}</p></div></article>)}
+            {featureCards.map(([label, title, description, image, eyebrow, alt], index) => <article key={title} data-astro-reveal data-astro-delay={index + 1} className="group flex min-w-0 flex-col gap-6 lg:gap-10"><div className="aspect-square w-full overflow-hidden rounded-2xl bg-muted"><img src={image} alt={alt} className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025]" loading="lazy" /></div><div className="flex w-full flex-col gap-4 pb-1 pl-1 pr-1 lg:gap-6"><div className="flex items-center justify-between"><p className="nimbus-label-s text-box-edge-cap-alphabetic text-box-trim-both text-light uppercase">{label}</p><img src={eyebrow} alt="" aria-hidden="true" className="size-7 object-contain transition-transform duration-500 ease-out group-hover:rotate-6 group-hover:scale-110" /></div><h3 className="nimbus-body text-box-edge-cap-alphabetic text-box-trim-both text-light">{title}</h3><p className="nimbus-body-s text-box-edge-cap-alphabetic text-box-trim-both text-pretty text-secondary">{description}</p></div></article>)}
           </div>
         </div>
       </section>
@@ -352,7 +389,7 @@ export default function AstroPageContent({
 
       <section data-color-scheme="dark" data-header-color-mode="dark" className="relative flex min-h-[560px] w-full items-center justify-center overflow-hidden bg-inverse px-4 py-20 text-center md:min-h-[760px] md:px-10"><div data-astro-parallax="cta" aria-hidden="true" className="astro-cta-background absolute inset-0 z-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${IMAGES}/hero-bg.jpg)` }} /><div data-astro-reveal className="relative z-10 flex max-w-[523px] flex-col items-center"><div className="mb-7 size-16 overflow-hidden rounded-[24%]"><img alt="Astro icon" src={`${IMAGES}/icon.png`} width={1024} height={1024} /></div><h2 className="text-balance nimbus-headline-m text-box-edge-cap-alphabetic text-box-trim-both text-light">Make the web work better for you.</h2><div className="marketing-cta-shimmer mt-8 inline-flex"><button type="button" onClick={openDownload} className={primaryButton}>Download Astro</button></div></div></section>
 
-      <section className="w-full bg-base py-16 md:py-20 lg:py-[120px]" data-color-scheme="dark" data-header-color-mode="dark"><div className="mx-auto w-full max-w-[1440px] px-4 md:px-10 lg:px-16"><div data-astro-reveal className="mx-auto max-w-[936px] text-center"><h2 className="nimbus-headline-m mx-auto max-w-[850px] text-balance text-primary text-box-trim-both text-box-edge-cap-alphabetic">More features</h2></div><div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">{extras.map(([title, description, image], index) => <article key={title} data-astro-reveal data-astro-delay={index + 1} className="group flex min-w-0 flex-col gap-6 lg:gap-10"><div className="aspect-square w-full overflow-hidden rounded-2xl bg-white/[0.04]"><img src={image} alt={title} className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025]" loading="lazy" /></div><div className="flex w-full flex-col gap-4 pb-1 pl-1 pr-1 lg:gap-6"><h3 className="nimbus-body text-box-edge-cap-alphabetic text-box-trim-both text-light">{title}</h3><p className="nimbus-body-s text-box-edge-cap-alphabetic text-box-trim-both text-pretty text-secondary">{description}</p></div></article>)}</div></div></section>
+      <section className="w-full bg-base py-16 md:py-20 lg:py-[120px]" data-color-scheme="dark" data-header-color-mode="dark"><div className="mx-auto w-full max-w-[1440px] px-4 md:px-10 lg:px-16"><div data-astro-reveal className="mx-auto max-w-[936px] text-center"><h2 className="nimbus-headline-m mx-auto max-w-[850px] text-balance text-primary text-box-trim-both text-box-edge-cap-alphabetic">More features</h2></div><div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">{extras.map(([title, description, image], index) => <article key={title} data-astro-reveal data-astro-delay={index + 1} className="group flex min-w-0 flex-col gap-6 lg:gap-10"><div className="aspect-square w-full overflow-hidden rounded-2xl bg-muted"><img src={image} alt={title} className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025]" loading="lazy" /></div><div className="flex w-full flex-col gap-4 pb-1 pl-1 pr-1 lg:gap-6"><h3 className="nimbus-body text-box-edge-cap-alphabetic text-box-trim-both text-light">{title}</h3><p className="nimbus-body-s text-box-edge-cap-alphabetic text-box-trim-both text-pretty text-secondary">{description}</p></div></article>)}</div></div></section>
         </>
       )}
     </div>

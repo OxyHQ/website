@@ -238,6 +238,10 @@ const ar: Translations = {
     minRead: 'قراءة {count} دقيقة',
     relatedPosts: 'منشورات ذات صلة',
     sharePost: 'مشاركة',
+    sortLabel: 'ترتيب المقالات: {option}',
+    viewLabel: 'عرض المقالات',
+    gridView: 'عرض شبكي',
+    listView: 'عرض قائمة',
   },
   changelog: {
     seoTitle: 'سجل التغييرات',

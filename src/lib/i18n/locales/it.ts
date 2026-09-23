@@ -238,6 +238,10 @@ const it: Translations = {
     minRead: '{count} min di lettura',
     relatedPosts: 'Post correlati',
     sharePost: 'Condividi',
+    sortLabel: 'Ordina articoli: {option}',
+    viewLabel: 'Vista articoli',
+    gridView: 'Vista a griglia',
+    listView: 'Vista a elenco',
   },
   changelog: {
     seoTitle: 'Changelog',
