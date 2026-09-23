@@ -1,5 +1,5 @@
-import { useId, useState, type ReactNode } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { useState, type ReactNode } from 'react'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@oxy.so/bloom/accordion'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 /**
@@ -8,10 +8,9 @@ import { AnimatedTitle } from '../ui/AnimatedTitle'
  * structure instead of cards. Reusable — it takes its questions, so any page
  * can put its own set in it.
  *
- * Not `slices/FaqAccordion`, which is the same idea in a different type system:
- * that one reads the `slice-theme` ramp, which only exists on pages that opt in
- * by putting the class on their root. This one reads the site's own tokens, so
- * it works anywhere.
+ * `slices/FaqAccordion` is the same list in the `slice-theme` type system (the
+ * ramp that only exists on pages opting in with the class on their root). Both
+ * render through `FaqList` below, so the site has one FAQ accordion.
  */
 
 export interface FaqEntry {
@@ -23,6 +22,8 @@ export interface FaqGroup {
   title?: string
   items: readonly FaqEntry[]
 }
+
+export type FaqOpenValue = string | string[] | undefined
 
 interface FaqSectionProps {
   /** The heading over the set. */
@@ -36,60 +37,66 @@ interface FaqSectionProps {
   className?: string
 }
 
-function FaqRow({
-  item,
-  rowId,
-  openId,
-  onToggle,
+/**
+ * The question list, on Bloom's `Accordion` — Bloom paints the rows, the rule
+ * between them and the chevron; the caller sets only the type.
+ *
+ * A closed answer stays MOUNTED: Bloom collapses it to zero height rather than
+ * unmounting it, so every answer is in the prerendered HTML for search engines
+ * and find-in-page. The collapse alone would leave a closed answer's links in
+ * the tab order and its text in the accessibility tree, which is what `inert`
+ * on it is for.
+ *
+ * Controlled when `onValueChange` is passed (so several lists can share one
+ * open row), otherwise it keeps its own.
+ */
+export function FaqList({
+  items,
+  idPrefix,
+  type = 'single',
+  value: controlledValue,
+  onValueChange,
+  questionClassName = 'text-lg font-medium leading-snug text-primary-text md:text-xl',
+  answerClassName = 'max-w-2xl pb-3 pr-10 text-base leading-7 text-foreground/75 md:pb-4 md:text-lg',
+  itemStyle,
 }: {
-  item: FaqEntry
-  rowId: string
-  openId: string | null
-  onToggle: (rowId: string) => void
+  items: readonly FaqEntry[]
+  /** Makes the row values unique when several lists share one `value`. */
+  idPrefix: string
+  type?: 'single' | 'multiple'
+  value?: FaqOpenValue
+  onValueChange?: (next: FaqOpenValue) => void
+  questionClassName?: string
+  answerClassName?: string
+  /** Layout only (padding): Bloom paints the rows. */
+  itemStyle?: { paddingLeft?: number; paddingRight?: number }
 }) {
-  const open = openId === rowId
-  const buttonId = useId()
-  const panelId = useId()
+  const [ownValue, setOwnValue] = useState<FaqOpenValue>(type === 'multiple' ? [] : undefined)
+  const value = onValueChange ? controlledValue : ownValue
+  const setValue = onValueChange ?? setOwnValue
+  const isOpen = (rowId: string) => (Array.isArray(value) ? value.includes(rowId) : value === rowId)
 
   return (
-    <div className="w-full border-t border-primary/20 first:border-t-0">
-      <button
-        type="button"
-        className="flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-3.5 text-left transition-[background-color,color] duration-300 hover:bg-primary/10 md:py-4"
-        aria-expanded={open}
-        aria-controls={panelId}
-        id={buttonId}
-        onClick={() => onToggle(rowId)}
-      >
-        <span className="text-lg font-medium leading-snug text-primary-text md:text-xl">{item.question}</span>
-        <ChevronDown
-          aria-hidden="true"
-          className={`size-4 shrink-0 text-tertiary transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
-        />
-      </button>
-
-      {/*
-        Two grid rows rather than a measured height: `0fr` to `1fr` animates
-        without anyone reading the content's height first, so it stays right
-        when the answer reflows.
-      */}
-      <div
-        id={panelId}
-        role="region"
-        aria-labelledby={buttonId}
-        aria-hidden={!open}
-        inert={!open}
-        className={`grid overflow-hidden transition-[grid-template-rows] duration-300 ease-out ${
-          open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-        }`}
-      >
-        <div className="min-h-0">
-          <div className="max-w-2xl px-5 pb-3 pr-10 text-base leading-7 text-foreground/75 md:pb-4 md:text-lg">{item.answer}</div>
-        </div>
-      </div>
-    </div>
+    <Accordion type={type} value={value} onValueChange={setValue}>
+      {items.map((item, index) => {
+        const rowId = `${idPrefix}-${index}`
+        return (
+          <AccordionItem key={rowId} value={rowId} style={itemStyle}>
+            <AccordionTrigger>
+              <span className={`block text-start ${questionClassName}`}>{item.question}</span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div inert={!isOpen(rowId)} className={answerClassName}>{item.answer}</div>
+            </AccordionContent>
+          </AccordionItem>
+        )
+      })}
+    </Accordion>
   )
 }
+
+/** The rows keep the gutter the band's rounded corners need. */
+const FAQ_ROW_STYLE = { paddingLeft: 16, paddingRight: 16 }
 
 export default function FaqSection({
   title,
@@ -100,11 +107,9 @@ export default function FaqSection({
   className = '',
 }: FaqSectionProps) {
   const groups = groupsProp ?? [{ items: items ?? [] }]
-  const [openId, setOpenId] = useState<string | null>(null)
-
-  const toggleRow = (rowId: string) => {
-    setOpenId((current) => current === rowId ? null : rowId)
-  }
+  // One open answer across every group, as before: each group's list is handed
+  // the same value, and a list naming none of its own rows shows none open.
+  const [openId, setOpenId] = useState<FaqOpenValue>(undefined)
 
   return (
     <section className={`w-full ${className}`}>
@@ -124,20 +129,15 @@ export default function FaqSection({
           <div className="min-w-0 space-y-8">
             {groups.map((group, groupIndex) => (
               <div key={group.title ?? `faq-group-${groupIndex}`}>
-                {group.title && <h3 className="mb-3 px-1 text-base font-medium leading-6 tracking-normal text-black dark:text-white">{group.title}</h3>}
+                {group.title && <h3 className="mb-3 px-1 text-base font-medium leading-6 tracking-normal text-foreground">{group.title}</h3>}
                 <div className="overflow-hidden rounded-[2rem] bg-[color-mix(in_srgb,var(--background)_84%,var(--primary))]">
-                  {group.items.map((item, itemIndex) => {
-                    const rowId = `${groupIndex}-${itemIndex}`
-                    return (
-                    <FaqRow
-                      key={rowId}
-                      item={item}
-                      rowId={rowId}
-                      openId={openId}
-                      onToggle={toggleRow}
-                    />
-                    )
-                  })}
+                  <FaqList
+                    items={group.items}
+                    idPrefix={`faq-${groupIndex}`}
+                    value={openId}
+                    onValueChange={setOpenId}
+                    itemStyle={FAQ_ROW_STYLE}
+                  />
                 </div>
               </div>
             ))}
