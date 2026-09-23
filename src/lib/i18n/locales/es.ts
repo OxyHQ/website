@@ -384,6 +384,7 @@ const es: Translations = {
     viewLabel: 'Vista de artículos',
     gridView: 'Vista de cuadrícula',
     listView: 'Vista de lista',
+    removeFilter: 'Quitar el filtro {category}',
   },
   changelog: {
     seoTitle: 'Registro de cambios',

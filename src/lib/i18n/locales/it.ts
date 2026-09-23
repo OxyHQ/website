@@ -247,6 +247,7 @@ const it: Translations = {
     viewLabel: 'Vista articoli',
     gridView: 'Vista a griglia',
     listView: 'Vista a elenco',
+    removeFilter: 'Rimuovi il filtro {category}',
   },
   changelog: {
     seoTitle: 'Changelog',

@@ -247,6 +247,7 @@ const ar: Translations = {
     viewLabel: 'عرض المقالات',
     gridView: 'عرض شبكي',
     listView: 'عرض قائمة',
+    removeFilter: 'إزالة عامل التصفية {category}',
   },
   changelog: {
     seoTitle: 'سجل التغييرات',

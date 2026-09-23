@@ -91,6 +91,7 @@ const ru: Translations = {
     viewLabel: 'Вид статей',
     gridView: 'Сетка',
     listView: 'Список',
+    removeFilter: 'Убрать фильтр «{category}»',
   },
   dashboard: { ...en.dashboard, mapView: 'Вид карты', mapFlat: 'Плоская карта', mapGlobe: 'Глобус',
     traffic: {"identity": "Идентификация", "ai": "ИИ", "communication": "Сообщения", "media": "Медиа", "platform": "Платформа", "internal": "Внутренний", "external": "Внешний", "inbound": "Входящий", "outbound": "Исходящий"}, totalUsers: 'Всего пользователей', infrastructureActivity: 'Активность инфраструктуры', waitingActivity: 'Ожидание анонимной активности…', activeRegions: 'Активные регионы', networkOrigins: 'Источники сети', contentPerUser: 'Контент / пользователь', itemsPerUser: 'Объекты / пользователь', activeSessions: 'Активные сеансы', developerApps: 'Приложения разработчиков', storedFiles: 'Файлы', files: 'Файлы', messages: 'Сообщения', notifications: 'Уведомления', transactions: 'Транзакции', noneYet: 'Пока нет', aiModels: 'Модели ИИ', connections: 'Связи', platformActivity: 'Активность платформы', metricDetail: '{metric} рассчитывается по реальным данным и обновляется автоматически.' },

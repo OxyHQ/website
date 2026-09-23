@@ -247,6 +247,7 @@ const zh: Translations = {
     viewLabel: '文章视图',
     gridView: '网格视图',
     listView: '列表视图',
+    removeFilter: '移除筛选条件 {category}',
   },
   changelog: {
     seoTitle: '更新日志',

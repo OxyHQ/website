@@ -247,6 +247,7 @@ const ja: Translations = {
     viewLabel: '記事の表示',
     gridView: 'グリッド表示',
     listView: 'リスト表示',
+    removeFilter: 'フィルター「{category}」を解除',
   },
   changelog: {
     seoTitle: '変更ログ',

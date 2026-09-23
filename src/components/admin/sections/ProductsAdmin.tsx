@@ -51,9 +51,11 @@ function ProductMark({ product, size = 'md' }: { product: ProductRecord; size?: 
   return (
     <span
       className={`relative flex shrink-0 items-center justify-center overflow-hidden font-semibold tracking-tight ${sizeClass} ${
-        hasLogo ? 'bg-surface border border-border/60' : ''
+        hasLogo ? 'bg-surface border border-border/60' : 'force-dark'
       }`}
-      style={hasLogo ? undefined : { backgroundColor: product.brand, color: product.brandForeground || '#ffffff' }}
+      // The mark sits on the product's own brand colour, not on the page, so
+      // it takes `.force-dark`: `--foreground` is light ink in either theme.
+      style={hasLogo ? undefined : { backgroundColor: product.brand, color: product.brandForeground || 'var(--foreground)' }}
       aria-hidden="true"
     >
       {hasLogo ? (

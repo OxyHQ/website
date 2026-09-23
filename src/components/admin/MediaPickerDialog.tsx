@@ -5,10 +5,29 @@ import { Dialog } from '@oxy.so/bloom/dialog'
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
 import { RiFileTextLine } from '@oxy.so/bloom/icons/RiFileTextLine'
 import { RiUploadCloud2Line } from '@oxy.so/bloom/icons/RiUploadCloud2Line'
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+  SegmentedControlItemText,
+} from '@oxy.so/bloom/segmented-control'
+import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs'
 import { useTheme } from '@oxy.so/bloom/theme'
 import { LabeledTextField } from './LabeledTextField'
+import { BloomSelectionKeys } from '../ui/BloomSelectionKeys'
 import { API_BASE, getAuthHeaders } from '../../api/client'
 import { useQueryClient } from '@tanstack/react-query'
+
+type MediaTab = 'library' | 'upload'
+
+// 'all' rather than '' — a segmented control reads an empty value as "nothing
+// selected", and "All" is a real choice here.
+const TYPE_FILTERS = [
+  { value: 'all', label: 'All' },
+  { value: 'image', label: 'Images' },
+  { value: 'video', label: 'Videos' },
+  { value: 'document', label: 'Documents' },
+] as const
+type TypeFilter = (typeof TYPE_FILTERS)[number]['value']
 
 interface MediaPickerDialogProps {
   onSelect: (media: MediaItem) => void
@@ -18,16 +37,16 @@ interface MediaPickerDialogProps {
 }
 
 export default function MediaPickerDialog({ onSelect, onClose, folder = 'images', accept }: MediaPickerDialogProps) {
-  const [tab, setTab] = useState<'library' | 'upload'>('library')
+  const [tab, setTab] = useState<MediaTab>('library')
   const [search, setSearch] = useState('')
-  const [typeFilter, setTypeFilter] = useState('')
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
   const [uploading, setUploading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const queryClient = useQueryClient()
   const { colors } = useTheme()
 
-  const { data } = useMedia({ search: search || undefined, type: typeFilter || undefined, limit: 40 })
+  const { data } = useMedia({ search: search || undefined, type: typeFilter === 'all' ? undefined : typeFilter, limit: 40 })
   const items = data?.items ?? []
 
   const uploadFile = useCallback(async (file: File) => {
@@ -87,20 +106,12 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-border">
-          <button
-            onClick={() => setTab('library')}
-            className={`px-6 py-3 text-sm font-medium transition-colors ${tab === 'library' ? 'border-b-2 border-foreground text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-          >
-            Library
-          </button>
-          <button
-            onClick={() => setTab('upload')}
-            className={`px-6 py-3 text-sm font-medium transition-colors ${tab === 'upload' ? 'border-b-2 border-foreground text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-          >
-            Upload
-          </button>
-        </div>
+        <BloomSelectionKeys item="tab" label="Media source" className="border-b border-border px-4">
+          <Tabs value={tab} onValueChange={(next) => setTab(next as MediaTab)}>
+            <TabsTrigger value="library" label="Library" />
+            <TabsTrigger value="upload" label="Upload" />
+          </Tabs>
+        </BloomSelectionKeys>
 
         {/* Content */}
         <div className="min-h-0 flex-1 overflow-y-auto p-6">
@@ -137,25 +148,29 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
           ) : (
             <>
               {/* Search + filters */}
-              <div className="mb-4 flex gap-3">
+              <div className="mb-4 flex flex-wrap items-end gap-3">
                 <LabeledTextField
                   label="Search media"
                   placeholder="Search media..."
                   value={search}
                   onValueChange={setSearch}
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, minWidth: 200 }}
                 />
-                <div className="flex gap-1">
-                  {['', 'image', 'video', 'document'].map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setTypeFilter(t)}
-                      className={`rounded-lg px-3 py-1.5 text-xs transition-colors ${typeFilter === t ? 'bg-foreground text-background' : 'bg-surface text-muted-foreground hover:text-foreground'}`}
-                    >
-                      {t || 'All'}
-                    </button>
-                  ))}
-                </div>
+                <BloomSelectionKeys item="radio">
+                  <SegmentedControl
+                    type="radio"
+                    size="sm"
+                    label="Media type"
+                    value={typeFilter}
+                    onValueChange={setTypeFilter}
+                  >
+                    {TYPE_FILTERS.map((filter) => (
+                      <SegmentedControlItem key={filter.value} value={filter.value}>
+                        <SegmentedControlItemText>{filter.label}</SegmentedControlItemText>
+                      </SegmentedControlItem>
+                    ))}
+                  </SegmentedControl>
+                </BloomSelectionKeys>
               </div>
 
               {/* Grid */}

@@ -5,7 +5,13 @@ import { ArrowUpRight, ArrowDown, Plus, Minus } from '@phosphor-icons/react'
 import { LogoIcon, LogoText } from '@oxy.so/services/ui/client'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@oxy.so/bloom/accordion'
 import { APP_COLOR_PRESETS, type AppColorName } from '@oxy.so/bloom/color-presets'
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+  SegmentedControlItemText,
+} from '@oxy.so/bloom/segmented-control'
 import PageShell from '../components/layout/PageShell'
+import { BloomSelectionKeys } from '../components/ui/BloomSelectionKeys'
 import { recipeStyle } from '../components/brand/recipe-style'
 import { useSiteHeaderBottom } from '../hooks/useSiteHeaderBottom'
 import { BRAND_MARKS } from '../data/brand-assets'
@@ -102,17 +108,24 @@ function ColourStudio() {
             </button>
           ))}
         </div>
-        <label className="brand-select-label">
-          Appearance
-          <select
-            aria-label="Colour studio appearance"
-            value={mode}
-            onChange={(e) => setMode(e.target.value as 'light' | 'dark')}
-          >
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </label>
+        <div className="brand-select-label">
+          <span aria-hidden="true">Appearance</span>
+          <BloomSelectionKeys item="radio">
+            <SegmentedControl
+              type="radio"
+              label="Colour studio appearance"
+              value={mode}
+              onValueChange={setMode}
+            >
+              <SegmentedControlItem value="light">
+                <SegmentedControlItemText>Light</SegmentedControlItemText>
+              </SegmentedControlItem>
+              <SegmentedControlItem value="dark">
+                <SegmentedControlItemText>Dark</SegmentedControlItemText>
+              </SegmentedControlItem>
+            </SegmentedControl>
+          </BloomSelectionKeys>
+        </div>
       </div>
       <div
         className="brand-colour-composition"
