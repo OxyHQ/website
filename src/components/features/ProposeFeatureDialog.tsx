@@ -4,6 +4,7 @@ import { Dialog } from '@oxy.so/bloom/dialog'
 import { useAuth } from '@oxy.so/services/ui/client'
 import { ChevronUp, ExternalLink } from 'lucide-react'
 import Button from '../ui/Button'
+import OptionSelect from '../ui/OptionSelect'
 import FeatureStatusBadge from './FeatureStatusBadge'
 import { featureRequestPath } from '../../lib/featureRequest'
 import {
@@ -130,18 +131,15 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
               </p>
             ) : (
               <div className="mt-5 flex flex-col gap-4">
-                <label className="flex flex-col gap-1.5">
-                  <span className="text-sm font-medium text-foreground">App</span>
-                  <select
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-sm font-medium text-foreground" aria-hidden="true">App</span>
+                  <OptionSelect
+                    label="App"
                     value={app}
-                    onChange={(event) => setChosenApp(event.target.value)}
-                    className={fieldClasses}
-                  >
-                    {targets.map((option) => (
-                      <option key={option.key} value={option.key}>{option.displayName}</option>
-                    ))}
-                  </select>
-                </label>
+                    onValueChange={setChosenApp}
+                    options={targets.map((option) => ({ value: option.key, label: option.displayName }))}
+                  />
+                </div>
 
                 <label className="flex flex-col gap-1.5">
                   <span className="flex items-baseline justify-between text-sm font-medium text-foreground">
