@@ -1,13 +1,11 @@
 import { useRef, useState } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
-import {
-  MagnifyingGlass,
-  ArrowLeft,
-  ArrowRight,
-  EnvelopeSimple,
-  Tag,
-  ChatCircleText,
-} from '@phosphor-icons/react'
+import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { RiMailLine } from '@oxy.so/bloom/icons/RiMailLine'
+import { RiPriceTag3Line } from '@oxy.so/bloom/icons/RiPriceTag3Line'
+import { RiChat1Line } from '@oxy.so/bloom/icons/RiChat1Line'
 import { PrimaryButton, TextButton } from '@oxy.so/bloom/button'
 import { Link } from '../../lib/navigation'
 import PageSection from '../layout/PageSection'
@@ -44,17 +42,17 @@ const scenes = [
   {
     title: 'A clearer view.',
     text: 'Bring your email into focus. Open a conversation and keep its messages together.',
-    icon: EnvelopeSimple,
+    icon: RiMailLine,
   },
   {
     title: 'Find your own order.',
     text: 'Use search and labels to make room for what you need next.',
-    icon: Tag,
+    icon: RiPriceTag3Line,
   },
   {
     title: 'Keep the conversation going.',
     text: 'Read the context, take your time and write a reply.',
-    icon: ChatCircleText,
+    icon: RiChat1Line,
   },
 ]
 
@@ -89,7 +87,7 @@ function InboxExample() {
                 setReply('')
               }}
             >
-              <ArrowLeft size={18} /> Back to messages
+              <RiArrowLeftLine width={18} height={18} fill="currentColor" /> Back to messages
             </TextButton>
             <p className="mt-8 text-sm text-muted-foreground">{item.name} · Example conversation</p>
             <h3 className="mt-3 font-display text-3xl leading-tight">{item.subject}</h3>
@@ -132,7 +130,7 @@ function InboxExample() {
           <div>
             <h3 className="font-display text-3xl">A little more space.</h3>
             <label className="mt-6 flex items-center gap-3 rounded-full border border-border bg-background px-4 py-3">
-              <MagnifyingGlass size={20} />
+              <RiSearchLine width={20} height={20} fill="currentColor" />
               <input
                 aria-label="Search example messages"
                 className="min-w-0 flex-1 bg-transparent text-base outline-none"
@@ -210,7 +208,7 @@ export default function InboxPageContent() {
                 href="https://inbox.oxy.so"
                 className="inline-flex min-h-12 items-center gap-3 rounded-full bg-primary px-7 py-3 text-primary-foreground"
               >
-                Open Inbox <ArrowRight size={20} />
+                Open Inbox <RiArrowRightLine width={20} height={20} fill="currentColor" />
               </a>
               <a className="oxy-link" href="#inbox-story">
                 Take a closer look
@@ -246,7 +244,9 @@ export default function InboxPageContent() {
                 >
                   <div className="mb-8 flex items-center justify-between">
                     <span className="font-mono text-sm">0{index + 1}</span>
-                    <scene.icon size={40} weight="regular" className="text-primary" />
+                    <span aria-hidden="true" className="inline-flex text-primary">
+                      <scene.icon width={40} height={40} fill="currentColor" />
+                    </span>
                   </div>
                   <h3 className="font-display text-[clamp(2rem,4vw,4rem)] leading-tight tracking-tight">
                     {scene.title}
@@ -329,7 +329,7 @@ export default function InboxPageContent() {
           your next conversation.
         </h2>
         <a href="https://inbox.oxy.so" className="oxy-link mt-8 text-xl">
-          Open Inbox <ArrowRight size={24} />
+          Open Inbox <RiArrowRightLine width={24} height={24} fill="currentColor" />
         </a>
       </PageSection>
     </>
