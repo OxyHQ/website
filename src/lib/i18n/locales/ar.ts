@@ -638,6 +638,9 @@ const ar: Translations = {
     copyMarkdown: 'نسخ بتنسيق Markdown',
     markdownCopied: 'تم نسخ Markdown',
     copyFailed: 'تعذّر النسخ إلى الحافظة',
+    switchVersion: 'تبديل الإصدار (الحالي: {version})',
+    versionLatest: 'الأحدث',
+    versionDeprecated: 'مهمل',
   },
 }
 

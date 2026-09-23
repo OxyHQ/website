@@ -215,6 +215,9 @@ const ru: Translations = {
     copyMarkdown: 'Копировать как Markdown',
     markdownCopied: 'Markdown скопирован',
     copyFailed: 'Не удалось скопировать в буфер обмена',
+    switchVersion: 'Сменить версию (текущая: {version})',
+    versionLatest: 'последняя',
+    versionDeprecated: 'устарела',
   },
 }
 

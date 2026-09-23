@@ -12,7 +12,7 @@
 import type { CatalogEntry, PriceUnit, UnitPrice } from './catalog'
 
 /** 1 USD in the integer unit every computation here uses. */
-export const NANO_PER_USD = 1_000_000_000n
+const NANO_PER_USD = 1_000_000_000n
 
 /** Units quoted per 1,000,000; everything else is quoted per single unit. */
 const PER_MILLION_UNITS: readonly PriceUnit[] = [

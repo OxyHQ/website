@@ -6,7 +6,7 @@ export function isSafeArticleUrl(value: string): boolean {
   return value.startsWith('/') || /^https?:\/\//i.test(value)
 }
 
-export function isSafeExternalUrl(value: string): boolean {
+function isSafeExternalUrl(value: string): boolean {
   return /^https?:\/\//i.test(value)
 }
 
@@ -113,7 +113,7 @@ const footnotesSchema = z.object({
   width: blockWidth.default('prose'),
 })
 
-export const ARTICLE_FENCE_SCHEMAS = {
+const ARTICLE_FENCE_SCHEMAS = {
   'article-media': mediaSchema,
   'article-callout': calloutSchema,
   'article-stats': statsSchema,
@@ -142,7 +142,7 @@ export type ArticleFenceParseResult =
   | { ok: true; block: ParsedArticleFence }
   | { ok: false; message: string }
 
-export function isArticleFenceName(value: string): value is ArticleFenceName {
+function isArticleFenceName(value: string): value is ArticleFenceName {
   return value in ARTICLE_FENCE_SCHEMAS
 }
 

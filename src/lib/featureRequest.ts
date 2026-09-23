@@ -8,7 +8,7 @@
  */
 
 /** Longest meta description emitted for a feature request, in characters. */
-export const FEATURE_DESCRIPTION_MAX_LENGTH = 155
+const FEATURE_DESCRIPTION_MAX_LENGTH = 155
 
 /** In-site path for one request. Mirrors the route registered in `App.tsx`. */
 export function featureRequestPath(owner: string, repo: string, issueNumber: number | string): string {

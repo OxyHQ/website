@@ -215,6 +215,9 @@ const bn: Translations = {
     copyMarkdown: 'Markdown হিসেবে কপি করুন',
     markdownCopied: 'Markdown কপি হয়েছে',
     copyFailed: 'ক্লিপবোর্ডে কপি করা যায়নি',
+    switchVersion: 'সংস্করণ বদলান (বর্তমান: {version})',
+    versionLatest: 'সর্বশেষ',
+    versionDeprecated: 'অপ্রচলিত',
   },
 }
 

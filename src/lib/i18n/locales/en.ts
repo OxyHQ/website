@@ -895,6 +895,9 @@ const en = {
     copyMarkdown: 'Copy as Markdown',
     markdownCopied: 'Markdown copied',
     copyFailed: 'Could not copy to the clipboard',
+    switchVersion: 'Switch version (current: {version})',
+    versionLatest: 'latest',
+    versionDeprecated: 'deprecated',
   },
 }
 

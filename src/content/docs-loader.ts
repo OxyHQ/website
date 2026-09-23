@@ -113,14 +113,6 @@ export function isVersionOutdated(pkg: SyncedPackage, version: string): boolean 
   return version !== pkg.latestVersion
 }
 
-export function loadMdx(file: string): (() => Promise<{ default: ComponentType<Record<string, unknown>> }>) | null {
-  // The glob keys are prefixed with `./_synced/`. The `file` we store is
-  // already relative to `_synced/`, so we prepend.
-  const key = `./_synced/${file}`
-  const loader = lazyMdx[key]
-  return loader ?? null
-}
-
 /**
  * Pre-bound `React.lazy` components keyed by MDX file path. Component
  * identities are stable for the lifetime of the module so consumers can read

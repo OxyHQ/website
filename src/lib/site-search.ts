@@ -32,7 +32,7 @@ export interface SearchResult {
 
 // Dedicated product landings win over the generic app detail route. Products
 // without a local landing intentionally fall back to `/apps/:productId`.
-export const APP_SEARCH_DESTINATIONS: Readonly<Record<string, string>> = {
+const APP_SEARCH_DESTINATIONS: Readonly<Record<string, string>> = {
   mention: '/mention',
   homiio: '/homiio',
   inbox: '/inbox',
@@ -45,7 +45,7 @@ export const APP_SEARCH_DESTINATIONS: Readonly<Record<string, string>> = {
   faircoin: '/faircoin',
 }
 
-export function appSearchDestination(productId: string): string {
+function appSearchDestination(productId: string): string {
   return APP_SEARCH_DESTINATIONS[productId] ?? `/apps/${productId}`
 }
 

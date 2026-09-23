@@ -11,8 +11,7 @@ import { resolveProductLogoUrl, type ProductRecord } from '../../api/hooks'
  * counted.
  * ──────────────────────────────────────────── */
 
-// eslint-disable-next-line react-refresh/only-export-components
-export function appPath(product: ProductRecord): string {
+function appPath(product: ProductRecord): string {
   return `/apps/${product.productId}`
 }
 

@@ -20,7 +20,7 @@ export function HorizontalLine({
   );
 }
 
-export function VerticalLine({
+function VerticalLine({
   className = '',
   dashed = false,
 }: {
@@ -40,10 +40,6 @@ export function VerticalLine({
       />
     </svg>
   );
-}
-
-export function CornerDot({ className = '' }: { className?: string }) {
-  return <div className={`size-1 bg-input ${className}`} />;
 }
 
 /**

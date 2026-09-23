@@ -38,7 +38,7 @@ export const RAIL_WIDTH = 350
 export const FEED_FLEX = 2.2
 
 /** Below this width the panel goes full bleed and loses its rounded frame. */
-export const FRAME_BREAKPOINT = 500
+const FRAME_BREAKPOINT = 500
 
 /** Below this width the right rail is not rendered at all. */
 export const RAIL_BREAKPOINT = 990

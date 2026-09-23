@@ -20,7 +20,7 @@
  *     `src/lib/ai/estimator.ts` does the arithmetic in integers.
  */
 import { z } from 'zod'
-import { AVAILABILITY_STATES, isPubliclyListable, type Availability } from './availability'
+import { AVAILABILITY_STATES, isPubliclyListable } from './availability'
 
 /**
  * The schema version this build understands. Bumped only alongside a change to
@@ -321,16 +321,4 @@ export function deploymentsForEntry(catalog: PublicCatalog, entry: CatalogEntry)
 
 export function regionsForEntry(catalog: PublicCatalog, entry: CatalogEntry): string[] {
   return [...new Set(deploymentsForEntry(catalog, entry).map((deployment) => deployment.region))]
-}
-
-/** True when any deployment serving the entry is contractually zero-retention. */
-export function hasZeroRetentionRoute(catalog: PublicCatalog, entry: CatalogEntry): boolean {
-  return deploymentsForEntry(catalog, entry).some(
-    (deployment) => deployment.dataPolicy.zeroRetentionAvailable,
-  )
-}
-
-/** The availability a card should render for an entry, as a typed value. */
-export function entryAvailability(entry: CatalogEntry): Availability {
-  return entry.availability
 }

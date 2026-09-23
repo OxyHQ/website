@@ -116,7 +116,7 @@ demos.sort((a, b) => a.name.localeCompare(b.name))
 export const bloomDemos: readonly BloomDemo[] = demos
 
 /** Map demo name → demo. Useful for `<BloomDemo name="Button" />`. */
-export const bloomDemosByName: ReadonlyMap<string, BloomDemo> = new Map(
+const bloomDemosByName: ReadonlyMap<string, BloomDemo> = new Map(
   demos.map((d) => [d.name, d]),
 )
 
