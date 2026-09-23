@@ -1,4 +1,4 @@
-import { ExternalLink } from 'lucide-react'
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
 import FeatureMarkdown from './FeatureMarkdown'
 import { useFeatureComments } from '../../api/hooks'
 
@@ -41,7 +41,7 @@ export default function FeatureComments({ owner, repo, number, commentCount, thr
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           Reply on GitHub
-          <ExternalLink className="h-3.5 w-3.5" />
+          <RiExternalLinkLine width={14} height={14} fill="currentColor" />
         </a>
       </div>
 
@@ -106,7 +106,7 @@ export default function FeatureComments({ owner, repo, number, commentCount, thr
           className="mt-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           This thread is longer than what is shown here. Read the rest on GitHub
-          <ExternalLink className="h-3.5 w-3.5" />
+          <RiExternalLinkLine width={14} height={14} fill="currentColor" />
         </a>
       )}
     </section>

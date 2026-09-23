@@ -1,4 +1,9 @@
-import { ChatCircle, Repeat, Heart, BookmarkSimple, Export, DotsThree } from '@phosphor-icons/react'
+import { RiChat1Line } from '@oxy.so/bloom/icons/RiChat1Line'
+import { RiRepeatLine } from '@oxy.so/bloom/icons/RiRepeatLine'
+import { RiHeartLine } from '@oxy.so/bloom/icons/RiHeartLine'
+import { RiBookmarkLine } from '@oxy.so/bloom/icons/RiBookmarkLine'
+import { RiShareBoxLine } from '@oxy.so/bloom/icons/RiShareBoxLine'
+import { RiMoreFill } from '@oxy.so/bloom/icons/RiMoreFill'
 import type { MentionPost } from './data'
 
 interface MentionPostCardProps {
@@ -31,7 +36,7 @@ export default function MentionPostCard({ post, className = '', flat = false }: 
         <p className="min-w-0 flex-1 truncate text-[9px] leading-tight text-muted-foreground">
           <span className="font-bold text-foreground">{post.name}</span> <span>@{post.handle}</span> · {post.time}
         </p>
-        <DotsThree weight="bold" className="size-3.5 shrink-0 text-muted-foreground" />
+        <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground"><RiMoreFill width={14} height={14} fill="currentColor" /></span>
       </header>
 
       {post.text && <p className="mt-0.5 text-[9px] leading-snug text-foreground">{post.text}</p>}
@@ -41,11 +46,11 @@ export default function MentionPostCard({ post, className = '', flat = false }: 
       )}
 
       <div className="mt-1.5 flex items-center justify-between px-1 text-muted-foreground">
-        <ChatCircle className="size-3" />
-        <Repeat className="size-3" />
-        <Heart className="size-3" />
-        <BookmarkSimple className="size-3" />
-        <Export className="size-3" />
+        <RiChat1Line width={12} height={12} fill="currentColor" />
+        <RiRepeatLine width={12} height={12} fill="currentColor" />
+        <RiHeartLine width={12} height={12} fill="currentColor" />
+        <RiBookmarkLine width={12} height={12} fill="currentColor" />
+        <RiShareBoxLine width={12} height={12} fill="currentColor" />
       </div>
     </article>
   )

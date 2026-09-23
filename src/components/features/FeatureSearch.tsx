@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
-import { Search, X } from 'lucide-react'
+import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
+import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
 
 /** How long typing settles before the query reaches the URL, in ms. */
 const DEBOUNCE_MS = 250
@@ -41,7 +42,7 @@ export default function FeatureSearch({ value, onChange, placeholder = 'Search p
 
   return (
     <div className="relative">
-      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <span aria-hidden="true" className="inline-flex pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"><RiSearchLine width={16} height={16} fill="currentColor" /></span>
       <input
         type="search"
         value={text}
@@ -59,7 +60,7 @@ export default function FeatureSearch({ value, onChange, placeholder = 'Search p
           aria-label="Clear search"
           className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground"
         >
-          <X className="h-4 w-4" />
+          <RiCloseLine width={16} height={16} fill="currentColor" />
         </button>
       )}
     </div>

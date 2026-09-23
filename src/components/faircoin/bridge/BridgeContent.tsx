@@ -1,15 +1,13 @@
 import { useMemo } from 'react'
 import { Link } from '../../../lib/navigation'
 import { motion } from 'framer-motion'
-import {
-  Activity,
-  ArrowRight,
-  ArrowUpRight,
-  CheckCircle2,
-  Copy,
-  ExternalLink,
-  ShieldCheck,
-} from 'lucide-react'
+import { RiPulseLine } from '@oxy.so/bloom/icons/RiPulseLine'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
+import { RiCheckboxCircleLine } from '@oxy.so/bloom/icons/RiCheckboxCircleLine'
+import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
+import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine'
 import { useCopyToClipboard } from '../../../lib/useCopyToClipboard'
 import { fc } from '../../../lib/faircoin-links'
 import BridgeFlowVisual from '../landing/BridgeFlowVisual'
@@ -160,7 +158,9 @@ function BridgeHero() {
               className="group inline-flex h-12 items-center gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-[0_8px_24px_-8px] shadow-primary/40 transition-all duration-200 hover:brightness-110 active:scale-[0.99]"
             >
               Trade WFAIR
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              <span aria-hidden="true" className="inline-flex transition-transform group-hover:translate-x-0.5">
+                <RiArrowRightLine width={16} height={16} fill="currentColor" />
+              </span>
             </a>
             <Link
               to={fc('/unwrap')}
@@ -174,7 +174,7 @@ function BridgeHero() {
               rel="noopener noreferrer"
               className="inline-flex h-12 items-center gap-2 rounded-full px-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              <ShieldCheck className="h-4 w-4" />
+              <RiShieldCheckLine width={16} height={16} fill="currentColor" />
               Contract on Basescan
             </a>
           </motion.div>
@@ -218,7 +218,9 @@ function BridgeFlowSection() {
                   key={i}
                   className="flex items-start gap-3 rounded-2xl border border-border bg-popover/50 p-4 backdrop-blur-sm"
                 >
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <span aria-hidden="true" className="mt-0.5 inline-flex shrink-0 text-primary">
+                    <RiCheckboxCircleLine width={16} height={16} fill="currentColor" />
+                  </span>
                   <span className="text-sm leading-relaxed">{line}</span>
                 </li>
               ))}
@@ -300,7 +302,9 @@ function ApiCard({ endpoint, idx }: { endpoint: ApiEndpoint; idx: number }) {
               className="inline-flex items-center gap-1 font-mono text-sm font-medium text-foreground underline-offset-4 hover:underline"
             >
               {endpoint.path}
-              <ExternalLink aria-hidden className="h-3 w-3 text-muted-foreground" />
+              <span aria-hidden="true" className="inline-flex text-muted-foreground">
+                <RiExternalLinkLine width={12} height={12} fill="currentColor" />
+              </span>
             </a>
           ) : (
             <span className="font-mono text-sm font-medium text-foreground">{endpoint.path}</span>
@@ -344,7 +348,11 @@ function CurlBlock({ value }: { value: string }) {
         aria-label="Copy curl command"
         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors hover:bg-primary/20"
       >
-        {copied ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+        {copied ? (
+          <RiCheckboxCircleLine width={14} height={14} fill="currentColor" />
+        ) : (
+          <RiFileCopyLine width={14} height={14} fill="currentColor" />
+        )}
       </button>
     </div>
   )
@@ -363,19 +371,19 @@ function ReferenceLinks() {
         title: 'WFAIR contract',
         description: 'Verified on Base mainnet.',
         href: BASESCAN_URL,
-        icon: Activity,
+        icon: RiPulseLine,
       },
       {
         title: 'Explorer bridge view',
         description: 'Live peg, supply and paused state on the FairCoin Explorer.',
         href: EXPLORER_BRIDGE_URL,
-        icon: Activity,
+        icon: RiPulseLine,
       },
       {
         title: 'Token list',
         description: 'Import WFAIR into wallets via the standard token list.',
         href: '/tokenlist.json',
-        icon: Activity,
+        icon: RiPulseLine,
       },
     ],
     [],
@@ -393,13 +401,15 @@ function ReferenceLinks() {
               className="group flex items-center gap-4 overflow-hidden rounded-2xl border border-border bg-popover/60 p-5 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40"
             >
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <item.icon className="h-5 w-5" />
+                <item.icon width={20} height={20} fill="currentColor" />
               </span>
               <div className="flex-1">
                 <p className="text-sm font-semibold text-foreground">{item.title}</p>
                 <p className="text-xs text-muted-foreground">{item.description}</p>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
+              <span aria-hidden="true" className="inline-flex text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground">
+                <RiArrowRightUpLine width={16} height={16} fill="currentColor" />
+              </span>
             </a>
           ))}
         </div>
@@ -416,14 +426,11 @@ function ReferenceLinks() {
   )
 }
 
-function GithubMark({ className = '' }: { className?: string }) {
+// Bloom ships no GitHub glyph, so this one keeps its own path and takes the
+// same width / fill props as the Remix icons beside it.
+function GithubMark({ width = 20, fill = 'currentColor' }: { width?: number; height?: number; fill?: string }) {
   return (
-    <svg
-      aria-hidden
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-    >
+    <svg aria-hidden width={width} height={width} viewBox="0 0 24 24" fill={fill}>
       <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
     </svg>
   )

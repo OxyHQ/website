@@ -1,5 +1,9 @@
 import { motion } from 'framer-motion'
-import { Apple, Globe, ArrowUpRight, Cpu, Server } from 'lucide-react'
+import type { BloomIconComponent } from '@oxy.so/bloom/icons'
+import { RiGlobalLine } from '@oxy.so/bloom/icons/RiGlobalLine'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
+import { RiCpuLine } from '@oxy.so/bloom/icons/RiCpuLine'
+import { RiServerLine } from '@oxy.so/bloom/icons/RiServerLine'
 import { fc } from '../../../lib/faircoin-links'
 
 interface WalletOption {
@@ -7,7 +11,7 @@ interface WalletOption {
   description: string
   badges: readonly string[]
   href: string
-  icon: typeof Apple
+  icon: BloomIconComponent
 }
 
 const FAIRCOIN_REPO_URL = 'https://github.com/FairCoinOfficial/FairCoin'
@@ -21,7 +25,7 @@ const WALLETS: readonly WalletOption[] = [
       'Lightweight SPV wallet for everyday use. Connects directly to the FairCoin P2P network, with no server in the middle.',
     badges: ['iOS', 'Android', 'macOS', 'Windows', 'Linux'],
     href: FAIRWALLET_RELEASES_URL,
-    icon: Globe,
+    icon: RiGlobalLine,
   },
   {
     name: 'FAIRNode',
@@ -29,7 +33,7 @@ const WALLETS: readonly WalletOption[] = [
       'Desktop runner for a full FairCoin Core node. Run a masternode, stake FAIR, and help secure the chain.',
     badges: ['macOS', 'Windows', 'Linux'],
     href: FAIRNODE_RELEASES_URL,
-    icon: Cpu,
+    icon: RiCpuLine,
   },
   {
     name: 'FairCoin Core',
@@ -37,7 +41,7 @@ const WALLETS: readonly WalletOption[] = [
       'The reference daemon. Build from source for servers, mining rigs, or to participate in protocol development.',
     badges: ['Source', 'CLI'],
     href: FAIRCOIN_REPO_URL,
-    icon: Server,
+    icon: RiServerLine,
   },
 ]
 
@@ -100,9 +104,11 @@ export default function WalletsSection() {
               />
               <div className="flex items-start justify-between">
                 <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                  <wallet.icon className="h-5 w-5" />
+                  <wallet.icon width={20} height={20} fill="currentColor" />
                 </span>
-                <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
+                <span aria-hidden="true" className="inline-flex text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground">
+                  <RiArrowRightUpLine width={16} height={16} fill="currentColor" />
+                </span>
               </div>
               <div className="flex flex-col gap-2">
                 <h3 className="text-lg font-semibold text-foreground">{wallet.name}</h3>

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Plus } from 'lucide-react'
+import { RiAddLine } from '@oxy.so/bloom/icons/RiAddLine'
 
 interface FaqItem {
   question: string
@@ -75,7 +75,7 @@ export default function FaqSection() {
               <summary className="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-base font-medium text-foreground transition-colors hover:bg-background/40">
                 <span>{faq.question}</span>
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-all group-open:rotate-45 group-open:border-primary group-open:text-primary">
-                  <Plus className="h-3.5 w-3.5" />
+                  <RiAddLine width={14} height={14} fill="currentColor" />
                 </span>
               </summary>
               <div className="px-6 pb-6 text-base leading-relaxed text-muted-foreground">

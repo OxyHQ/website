@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion'
-import { ArrowDown, ArrowRight } from 'lucide-react'
+import { RiArrowDownLine } from '@oxy.so/bloom/icons/RiArrowDownLine'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
 
 /**
  * Visual flow diagram for the FAIR ↔ WFAIR bridge.
@@ -107,7 +109,7 @@ function ArrowGroup({
           transition={{ duration: 0.4, delay: 0.2 }}
           className="flex h-8 w-8 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-primary"
         >
-          <ArrowDown className="h-4 w-4" />
+          <RiArrowDownLine width={16} height={16} fill="currentColor" />
         </motion.span>
         <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
           Bridge
@@ -124,7 +126,7 @@ function ArrowGroup({
         transition={{ duration: 0.4, delay: 0.2 }}
         className="flex h-8 w-8 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-primary"
       >
-        <ArrowRight className="h-4 w-4" />
+        <RiArrowRightLine width={16} height={16} fill="currentColor" />
       </motion.span>
       <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
         wrap
@@ -136,7 +138,7 @@ function ArrowGroup({
         transition={{ duration: 0.4, delay: 0.3 }}
         className="flex h-8 w-8 items-center justify-center rounded-full border border-blue-500/40 bg-blue-500/10 text-blue-500"
       >
-        <ArrowRight className="h-4 w-4 -scale-x-100" />
+        <RiArrowLeftLine width={16} height={16} fill="currentColor" />
       </motion.span>
       <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
         unwrap

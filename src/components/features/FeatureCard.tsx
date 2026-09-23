@@ -1,5 +1,7 @@
 import { Link } from '../../lib/navigation'
-import { ChevronUp, MessageSquare, ExternalLink } from 'lucide-react'
+import { RiArrowUpSLine } from '@oxy.so/bloom/icons/RiArrowUpSLine'
+import { RiMessage2Line } from '@oxy.so/bloom/icons/RiMessage2Line'
+import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
 import FeatureStatusBadge from './FeatureStatusBadge'
 import FeaturePriorityBadge from './FeaturePriorityBadge'
 import type { FeatureRequestData } from '../../api/hooks'
@@ -43,7 +45,7 @@ export default function FeatureCard({ feature, onVote, hideApp = false }: Featur
           aria-label={feature.userVoted ? 'Remove vote' : 'Upvote'}
           aria-pressed={feature.userVoted}
         >
-          <ChevronUp className="h-5 w-5" />
+          <RiArrowUpSLine width={20} height={20} fill="currentColor" />
         </button>
         <span className={`text-body-sm font-semibold ${feature.userVoted ? 'text-primary' : 'text-muted-foreground'}`}>
           {feature.totalVotes}
@@ -75,7 +77,7 @@ export default function FeatureCard({ feature, onVote, hideApp = false }: Featur
             </span>
           )}
           <Link to={detailPath} className="inline-flex items-center gap-1 transition-colors hover:text-foreground">
-            <MessageSquare className="h-3.5 w-3.5" />
+            <RiMessage2Line width={14} height={14} fill="currentColor" />
             {feature.commentCount}
           </Link>
           <span className="inline-flex items-center gap-1">
@@ -90,7 +92,7 @@ export default function FeatureCard({ feature, onVote, hideApp = false }: Featur
             className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
           >
             GitHub
-            <ExternalLink className="h-3 w-3" />
+            <RiExternalLinkLine width={12} height={12} fill="currentColor" />
           </a>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { SealCheck } from '@phosphor-icons/react'
+import { RiVerifiedBadgeFill } from '@oxy.so/bloom/icons/RiVerifiedBadgeFill'
 import type { MentionProfile } from './data'
 
 interface MentionProfileCardProps {
@@ -19,7 +19,7 @@ export default function MentionProfileCard({ profile, className = '' }: MentionP
       <img src={profile.avatar} alt={profile.name} draggable={false} className="size-12 rounded-full object-cover" />
       <div className="mt-2 flex items-center gap-1">
         <h4 className="text-body-md font-bold text-foreground">{profile.name}</h4>
-        <SealCheck weight="fill" className="size-4 text-sky-500" />
+        <span aria-hidden="true" className="inline-flex text-sky-500"><RiVerifiedBadgeFill width={16} height={16} fill="currentColor" /></span>
       </div>
       <p className="text-body-sm text-muted-foreground">@{profile.handle}</p>
       <p className="mt-1.5 text-body-xs leading-snug text-muted-foreground">{profile.bio}</p>

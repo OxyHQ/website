@@ -1,22 +1,20 @@
 import { useCallback, useRef, useState } from 'react'
-import {
-  ChatCircleDots,
-  Coins,
-  EnvelopeSimple,
-  Fingerprint,
-  Flask,
-  GitFork,
-  GlobeHemisphereWest,
-  Handshake,
-  House,
-  Key,
-  Leaf,
-  Prohibit,
-  ShieldCheck,
-  Sparkle,
-  UsersThree,
-  type Icon,
-} from '@phosphor-icons/react'
+import type { BloomIconComponent } from '@oxy.so/bloom/icons'
+import { RiChat1Line } from '@oxy.so/bloom/icons/RiChat1Line'
+import { RiCoinsLine } from '@oxy.so/bloom/icons/RiCoinsLine'
+import { RiMailLine } from '@oxy.so/bloom/icons/RiMailLine'
+import { RiAccountCircleLine } from '@oxy.so/bloom/icons/RiAccountCircleLine'
+import { RiFlaskLine } from '@oxy.so/bloom/icons/RiFlaskLine'
+import { RiGitMergeLine } from '@oxy.so/bloom/icons/RiGitMergeLine'
+import { RiEarthLine } from '@oxy.so/bloom/icons/RiEarthLine'
+import { RiShakeHandsLine } from '@oxy.so/bloom/icons/RiShakeHandsLine'
+import { RiHomeLine } from '@oxy.so/bloom/icons/RiHomeLine'
+import { RiKey2Line } from '@oxy.so/bloom/icons/RiKey2Line'
+import { RiLeafLine } from '@oxy.so/bloom/icons/RiLeafLine'
+import { RiForbidLine } from '@oxy.so/bloom/icons/RiForbidLine'
+import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine'
+import { RiSparklingLine } from '@oxy.so/bloom/icons/RiSparklingLine'
+import { RiTeamLine } from '@oxy.so/bloom/icons/RiTeamLine'
 import { useTranslation } from '../../lib/i18n'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
 
@@ -61,25 +59,25 @@ interface PhysicsTag {
   /** Key into the `home.*` locale block. Brand names carry the brand itself as their translation in every locale. */
   labelKey: string
   fill: string
-  Glyph: Icon
+  Glyph: BloomIconComponent
 }
 
 const TAGS: readonly PhysicsTag[] = [
-  { id: 'privacy', labelKey: 'home.tagPrivacy', fill: pastel(5, 18), Glyph: ShieldCheck },
-  { id: 'open-source', labelKey: 'home.tagOpenSource', fill: pastel(8, 18), Glyph: GitFork },
-  { id: 'identity', labelKey: 'home.tagIdentity', fill: pastel(1, 20), Glyph: Fingerprint },
-  { id: 'ai', labelKey: 'home.tagAi', fill: pastel(3, 22), Glyph: Sparkle },
-  { id: 'faircoin', labelKey: 'home.tagFairCoin', fill: pastel(2, 18), Glyph: Coins },
-  { id: 'community', labelKey: 'home.tagCommunity', fill: pastel(6, 16), Glyph: UsersThree },
-  { id: 'research', labelKey: 'home.tagResearch', fill: pastel(5, 10), Glyph: Flask },
-  { id: 'mention', labelKey: 'home.tagMention', fill: pastel(4, 20), Glyph: ChatCircleDots },
-  { id: 'inbox', labelKey: 'home.tagInbox', fill: pastel(1, 11), Glyph: EnvelopeSimple },
-  { id: 'homiio', labelKey: 'home.tagHomiio', fill: pastel(3, 38), Glyph: House },
-  { id: 'no-ads', labelKey: 'home.tagNoAds', fill: pastel(6, 30), Glyph: Prohibit },
-  { id: 'sustainability', labelKey: 'home.tagSustainability', fill: pastel(8, 30), Glyph: Leaf },
-  { id: 'collaboration', labelKey: 'home.tagCollaboration', fill: pastel(7, 32), Glyph: Handshake },
-  { id: 'self-custody', labelKey: 'home.tagSelfCustody', fill: pastel(9, 18), Glyph: Key },
-  { id: 'open-web', labelKey: 'home.tagOpenWeb', fill: pastel(5, 30), Glyph: GlobeHemisphereWest },
+  { id: 'privacy', labelKey: 'home.tagPrivacy', fill: pastel(5, 18), Glyph: RiShieldCheckLine },
+  { id: 'open-source', labelKey: 'home.tagOpenSource', fill: pastel(8, 18), Glyph: RiGitMergeLine },
+  { id: 'identity', labelKey: 'home.tagIdentity', fill: pastel(1, 20), Glyph: RiAccountCircleLine },
+  { id: 'ai', labelKey: 'home.tagAi', fill: pastel(3, 22), Glyph: RiSparklingLine },
+  { id: 'faircoin', labelKey: 'home.tagFairCoin', fill: pastel(2, 18), Glyph: RiCoinsLine },
+  { id: 'community', labelKey: 'home.tagCommunity', fill: pastel(6, 16), Glyph: RiTeamLine },
+  { id: 'research', labelKey: 'home.tagResearch', fill: pastel(5, 10), Glyph: RiFlaskLine },
+  { id: 'mention', labelKey: 'home.tagMention', fill: pastel(4, 20), Glyph: RiChat1Line },
+  { id: 'inbox', labelKey: 'home.tagInbox', fill: pastel(1, 11), Glyph: RiMailLine },
+  { id: 'homiio', labelKey: 'home.tagHomiio', fill: pastel(3, 38), Glyph: RiHomeLine },
+  { id: 'no-ads', labelKey: 'home.tagNoAds', fill: pastel(6, 30), Glyph: RiForbidLine },
+  { id: 'sustainability', labelKey: 'home.tagSustainability', fill: pastel(8, 30), Glyph: RiLeafLine },
+  { id: 'collaboration', labelKey: 'home.tagCollaboration', fill: pastel(7, 32), Glyph: RiShakeHandsLine },
+  { id: 'self-custody', labelKey: 'home.tagSelfCustody', fill: pastel(9, 18), Glyph: RiKey2Line },
+  { id: 'open-web', labelKey: 'home.tagOpenWeb', fill: pastel(5, 30), Glyph: RiEarthLine },
 ]
 
 /* ── Simulation constants ─────────────────────────────────────────── */
@@ -459,7 +457,7 @@ export default function HomeTagPhysics() {
                     boxShadow: isSelected ? `inset 0 0 0 2px ${TAG_INK}` : undefined,
                   }}
                 >
-                  <Glyph size={18} weight="regular" aria-hidden />
+                  <Glyph width={18} height={18} fill="currentColor" aria-hidden />
                   {t(tag.labelKey)}
                 </button>
               )

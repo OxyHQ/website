@@ -5,7 +5,8 @@ import { useLocales, type Locale } from '../../../api/hooks'
 import { PrimaryButton } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
 import { Switch } from '@oxy.so/bloom/switch'
-import { Trash2, Plus } from 'lucide-react'
+import { RiDeleteBinLine } from '@oxy.so/bloom/icons/RiDeleteBinLine'
+import { RiAddLine } from '@oxy.so/bloom/icons/RiAddLine'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
 
@@ -85,7 +86,7 @@ export default function LocalesAdmin() {
               </button>
               {!locale.isDefault && (
                 <button onClick={() => deleteAction.request(locale)} className="rounded-md p-1.5 text-muted-foreground hover:text-error-text">
-                  <Trash2 className="size-4" />
+                  <RiDeleteBinLine width={16} height={16} fill="currentColor" />
                 </button>
               )}
             </div>
@@ -97,7 +98,7 @@ export default function LocalesAdmin() {
             onClick={() => { setAdding(true); setEditingCode(null); setForm(emptyForm) }}
             className="flex items-center gap-2 rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground hover:border-foreground/30 hover:text-foreground"
           >
-            <Plus className="size-4" /> Add locale
+            <RiAddLine width={16} height={16} fill="currentColor" /> Add locale
           </button>
         )}
 

@@ -1,6 +1,8 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion'
-import { Lightning, PencilSimple, Cloud } from '@phosphor-icons/react'
+import { RiFlashlightLine } from '@oxy.so/bloom/icons/RiFlashlightLine'
+import { RiPencilLine } from '@oxy.so/bloom/icons/RiPencilLine'
+import { RiCloudLine } from '@oxy.so/bloom/icons/RiCloudLine'
 import { Link } from '../../lib/navigation'
 import mBrushSvg from '../../assets/mention/m-brush.svg?raw'
 import sky from '../../assets/mention/sky.jpg'
@@ -338,16 +340,16 @@ function JoinSection() {
   return (
     <section className="relative flex min-h-[60vh] flex-col items-center justify-center gap-6 px-6 pb-[12vh] pt-[6vh]">
       <div className="flex items-center gap-4 text-foreground/80 sm:gap-6">
-        <Lightning weight="fill" className="hidden size-7 sm:block" />
-        <PencilSimple weight="bold" className="hidden size-7 sm:block" />
+        <span aria-hidden="true" className="hidden sm:flex"><RiFlashlightLine width={28} height={28} fill="currentColor" /></span>
+        <span aria-hidden="true" className="hidden sm:flex"><RiPencilLine width={28} height={28} fill="currentColor" /></span>
         <Link
           to="/inbox"
           className="rounded-full bg-card px-7 py-3 font-display text-base font-semibold uppercase tracking-tight text-foreground shadow-xl transition-transform hover:scale-105"
         >
           Join Mention
         </Link>
-        <PencilSimple weight="bold" className="hidden size-7 -scale-x-100 sm:block" />
-        <Cloud weight="fill" className="hidden size-7 sm:block" />
+        <span aria-hidden="true" className="hidden -scale-x-100 sm:flex"><RiPencilLine width={28} height={28} fill="currentColor" /></span>
+        <span aria-hidden="true" className="hidden sm:flex"><RiCloudLine width={28} height={28} fill="currentColor" /></span>
       </div>
       <Reveal className="bottom-0 left-[14%]" delay={0.1}>
         <MentionPostCard post={post('nate-1')} className="w-[240px] rotate-[-5deg]" />

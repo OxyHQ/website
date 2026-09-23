@@ -1,5 +1,5 @@
 import { Link } from '../../lib/navigation'
-import { ArrowRight } from 'lucide-react'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import type { FeatureAppOption } from '../../api/hooks'
 
 /** Cards in the band. Enough to suggest breadth, few enough to stay a band. */
@@ -47,7 +47,7 @@ export default function FeatureInterstitial({ apps, activeApp }: FeatureIntersti
               <span className="block truncate text-sm font-medium text-foreground">{app.displayName}</span>
               <span className="block truncate text-xs text-muted-foreground">{app.owner}/{app.repo}</span>
             </span>
-            <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground"><RiArrowRightLine width={16} height={16} fill="currentColor" /></span>
           </Link>
         ))}
       </div>

@@ -1,5 +1,9 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { ChatCircle, Repeat, Heart, BookmarkSimple, Export } from '@phosphor-icons/react'
+import { RiChat1Line } from '@oxy.so/bloom/icons/RiChat1Line'
+import { RiRepeatLine } from '@oxy.so/bloom/icons/RiRepeatLine'
+import { RiHeartLine } from '@oxy.so/bloom/icons/RiHeartLine'
+import { RiBookmarkLine } from '@oxy.so/bloom/icons/RiBookmarkLine'
+import { RiShareBoxLine } from '@oxy.so/bloom/icons/RiShareBoxLine'
 import phoneFrame from '../../assets/mention/phone.png'
 import { MENTION_POSTS, type MentionPost } from './data'
 
@@ -17,11 +21,11 @@ function FeedRow({ post }: { post: MentionPost }) {
         {post.text && <p className="mt-0.5 text-[10px] leading-snug text-foreground">{post.text}</p>}
         {post.image && <img src={post.image} alt="" draggable={false} className="mt-1.5 aspect-[16/10] w-full rounded-lg object-cover" />}
         <div className="mt-1.5 flex items-center justify-between pr-2 text-neutral-400">
-          <ChatCircle className="size-3" />
-          <Repeat className="size-3" />
-          <Heart className="size-3" />
-          <BookmarkSimple className="size-3" />
-          <Export className="size-3" />
+          <RiChat1Line width={12} height={12} fill="currentColor" />
+          <RiRepeatLine width={12} height={12} fill="currentColor" />
+          <RiHeartLine width={12} height={12} fill="currentColor" />
+          <RiBookmarkLine width={12} height={12} fill="currentColor" />
+          <RiShareBoxLine width={12} height={12} fill="currentColor" />
         </div>
       </div>
     </div>

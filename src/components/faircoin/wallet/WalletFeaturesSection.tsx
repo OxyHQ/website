@@ -1,66 +1,65 @@
 import { motion } from 'framer-motion'
-import {
-  KeyRound,
-  Wifi,
-  Smartphone,
-  CreditCard,
-  ArrowLeftRight,
-  BookUser,
-  Zap,
-  MapPin,
-} from 'lucide-react'
+import type { BloomIconComponent } from '@oxy.so/bloom/icons'
+import { RiKey2Line } from '@oxy.so/bloom/icons/RiKey2Line'
+import { RiWifiLine } from '@oxy.so/bloom/icons/RiWifiLine'
+import { RiSmartphoneLine } from '@oxy.so/bloom/icons/RiSmartphoneLine'
+import { RiBankCardLine } from '@oxy.so/bloom/icons/RiBankCardLine'
+import { RiArrowLeftRightLine } from '@oxy.so/bloom/icons/RiArrowLeftRightLine'
+import { RiContactsBookLine } from '@oxy.so/bloom/icons/RiContactsBookLine'
+import { RiFlashlightLine } from '@oxy.so/bloom/icons/RiFlashlightLine'
+import { RiMapPinLine } from '@oxy.so/bloom/icons/RiMapPinLine'
 
 interface Feature {
-  icon: typeof KeyRound
+  icon: BloomIconComponent
   title: string
   description: string
 }
 
 const FEATURES: readonly Feature[] = [
   {
-    icon: KeyRound,
+    icon: RiKey2Line,
     title: 'Self-custody',
     description:
       'You own your seed. The wallet generates and stores keys on-device. No accounts, no recovery emails, no server can lock you out.',
   },
   {
-    icon: Wifi,
+    icon: RiWifiLine,
     title: 'SPV, no servers',
     description:
       'Talks straight to the FairCoin P2P network. No middlemen, no APIs, no tracking. Your phone is the wallet.',
   },
   {
-    icon: Smartphone,
+    icon: RiSmartphoneLine,
     title: 'Every platform',
     description:
       'Android, iOS, Windows, macOS and Linux. Same wallet, same seed, same balance everywhere you sign in.',
   },
   {
-    icon: CreditCard,
+    icon: RiBankCardLine,
     title: 'Buy in-app',
     description:
       'Pay with USDC on Base from the buy screen. The bridge converts and delivers FAIR straight to your address.',
   },
   {
-    icon: ArrowLeftRight,
+    icon: RiArrowLeftRightLine,
     title: 'Send & receive',
     description:
       'QR codes, paste an address, scan a payment request. Receive FAIR with one tap and a deep-link.',
   },
   {
-    icon: BookUser,
+    icon: RiContactsBookLine,
     title: 'Address book',
     description:
       'Save your regulars as contacts. Pay them by name, not by hex string. Synced encrypted via your seed.',
   },
   {
-    icon: Zap,
+    icon: RiFlashlightLine,
     title: 'FastSend',
     description:
       'Masternode-powered instant confirmations. Coffee-shop friendly: confirmations in seconds, not minutes.',
   },
   {
-    icon: MapPin,
+    icon: RiMapPinLine,
     title: 'Places',
     description:
       'Discover merchants accepting FAIR near you. Community-curated map, pinned to your location.',
@@ -113,7 +112,7 @@ export default function WalletFeaturesSection() {
               className="group relative flex flex-col gap-4 overflow-hidden rounded-3xl border border-border bg-popover/60 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40"
             >
               <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <feature.icon className="h-5 w-5" />
+                <feature.icon width={20} height={20} fill="currentColor" />
               </span>
               <div className="flex flex-col gap-2">
                 <h3 className="text-lg font-semibold text-foreground">{feature.title}</h3>

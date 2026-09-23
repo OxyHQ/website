@@ -1,6 +1,11 @@
-import { createElement, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link } from '../../lib/navigation'
-import * as LucideIcons from 'lucide-react'
+import type { BloomIconComponent } from '@oxy.so/bloom/icons'
+import { RiSparklingLine } from '@oxy.so/bloom/icons/RiSparklingLine'
+import { RiAccountCircleLine } from '@oxy.so/bloom/icons/RiAccountCircleLine'
+import { RiInbox2Line } from '@oxy.so/bloom/icons/RiInbox2Line'
+import { RiDashboardLine } from '@oxy.so/bloom/icons/RiDashboardLine'
+import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine'
 import { RiArrowRightSLine } from '@oxy.so/bloom/icons/RiArrowRightSLine'
 import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
 import { useCurrentLocale } from '../../lib/i18n'
@@ -41,19 +46,18 @@ const GETTING_STARTED_SUB_POST = 'Oxy 101.'
 const GETTING_STARTED_LEAD = 'Everything you need to master the basics of Oxy.'
 const POPULAR_SEARCHES = ['recovery email', 'encryption', 'sign in']
 
-/* ─── Lucide icon lookup ─── */
+/* ─── Category icon lookup ─── */
 
-type LucideComponent = LucideIcons.LucideIcon
-const LUCIDE_INDEX = LucideIcons as unknown as Record<string, LucideComponent>
-
-function fromKebab(input: string): string {
-  return input.replace(/(^|-)([a-z])/g, (_, __, c: string) => c.toUpperCase())
-}
-
-function lucideIcon(name: string | undefined): LucideComponent | null {
-  if (!name) return null
-  const Icon = LUCIDE_INDEX[fromKebab(name)]
-  return typeof Icon === 'function' ? Icon : null
+// `HELP_CATEGORIES` names its icons by slug (they began as lucide names). An
+// explicit table rather than a lookup into the whole icon set, so the page
+// ships only the glyphs a category actually uses; a slug missing here falls
+// back to the dot below.
+const CATEGORY_ICONS: Record<string, BloomIconComponent> = {
+  sparkles: RiSparklingLine,
+  'user-circle': RiAccountCircleLine,
+  inbox: RiInbox2Line,
+  'layout-dashboard': RiDashboardLine,
+  'shield-check': RiShieldCheckLine,
 }
 
 /* ─── SVG Icons (kept for the sidebar + hero search visuals) ─── */
@@ -107,11 +111,14 @@ function CategoryCardIcon({
       </div>
     )
   }
-  const Icon = lucideIcon(name)
+  const Icon = name ? CATEGORY_ICONS[name] : undefined
   if (Icon) {
     return (
-      <div className={`flex items-center justify-center rounded-[10px] border border-border bg-surface ${className}`}>
-        {createElement(Icon, { className: 'size-5 text-muted-foreground', 'aria-hidden': 'true' })}
+      <div
+        className={`flex items-center justify-center rounded-[10px] border border-border bg-surface text-muted-foreground ${className}`}
+        aria-hidden="true"
+      >
+        <Icon width={20} height={20} fill="currentColor" />
       </div>
     )
   }

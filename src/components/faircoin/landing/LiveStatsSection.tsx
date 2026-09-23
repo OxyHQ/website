@@ -4,20 +4,19 @@ import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { formatUnits } from 'viem'
 import { useReadContract } from 'wagmi'
 import { base } from 'wagmi/chains'
-import {
-  Activity,
-  ArrowUpRight,
-  Boxes,
-  Clock,
-  Cpu,
-  Database,
-  DollarSign,
-  Droplets,
-  Hash,
-  Layers,
-  ShieldCheck,
-  Server,
-} from 'lucide-react'
+import type { BloomIconComponent } from '@oxy.so/bloom/icons'
+import { RiPulseLine } from '@oxy.so/bloom/icons/RiPulseLine'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
+import { RiBox3Line } from '@oxy.so/bloom/icons/RiBox3Line'
+import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine'
+import { RiCpuLine } from '@oxy.so/bloom/icons/RiCpuLine'
+import { RiDatabase2Line } from '@oxy.so/bloom/icons/RiDatabase2Line'
+import { RiMoneyDollarCircleLine } from '@oxy.so/bloom/icons/RiMoneyDollarCircleLine'
+import { RiDropLine } from '@oxy.so/bloom/icons/RiDropLine'
+import { RiHashtag } from '@oxy.so/bloom/icons/RiHashtag'
+import { RiStackLine } from '@oxy.so/bloom/icons/RiStackLine'
+import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine'
+import { RiServerLine } from '@oxy.so/bloom/icons/RiServerLine'
 import AnimatedNumber from './AnimatedNumber'
 import { useFaircoinNetworkStats, useUniswapPoolStats } from '../../../hooks/use-faircoin-network-stats'
 import { useBridgeReserves } from '../../../hooks/use-faircoin-bridge-stats'
@@ -145,7 +144,7 @@ export default function LiveStatsSection() {
         />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <StatTile
-            icon={Layers}
+            icon={RiStackLine}
             eyebrow="Latest block"
             value={stats?.blockHeight ?? null}
             decimals={0}
@@ -153,20 +152,20 @@ export default function LiveStatsSection() {
             isLoading={networkQuery.isLoading}
           />
           <StatTile
-            icon={Clock}
+            icon={RiTimeLine}
             eyebrow="Last block age"
             valueLabel={lastBlockAgoLabel}
             isLoading={networkQuery.isLoading}
           />
           <StatTile
-            icon={Server}
+            icon={RiServerLine}
             eyebrow="Active masternodes"
             value={stats?.masternodeCount ?? null}
             decimals={0}
             isLoading={networkQuery.isLoading}
           />
           <StatTile
-            icon={Cpu}
+            icon={RiCpuLine}
             eyebrow={`Network hashrate (${stats?.phase ?? 'PoW'})`}
             value={stats?.hashrate ?? null}
             decimals={0}
@@ -174,7 +173,7 @@ export default function LiveStatsSection() {
             isLoading={networkQuery.isLoading}
           />
           <StatTile
-            icon={Boxes}
+            icon={RiBox3Line}
             eyebrow="Circulating supply"
             value={stats?.circulatingSupply ?? null}
             decimals={0}
@@ -182,7 +181,7 @@ export default function LiveStatsSection() {
             isLoading={networkQuery.isLoading}
           />
           <StatTile
-            icon={Hash}
+            icon={RiHashtag}
             eyebrow="Total transactions"
             value={stats?.totalTransactions ?? null}
             decimals={0}
@@ -198,7 +197,7 @@ export default function LiveStatsSection() {
         />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <StatTile
-            icon={Database}
+            icon={RiDatabase2Line}
             eyebrow="WFAIR supply on Base"
             value={wfairSupplyOnBase}
             decimals={2}
@@ -207,7 +206,7 @@ export default function LiveStatsSection() {
             isLoading={supplyQuery.isLoading && reservesQuery.isLoading}
           />
           <StatTile
-            icon={DollarSign}
+            icon={RiMoneyDollarCircleLine}
             eyebrow="WFAIR price"
             value={poolQuery.data?.wfairPriceUsdc ?? null}
             decimals={4}
@@ -216,7 +215,7 @@ export default function LiveStatsSection() {
             isLoading={poolQuery.isLoading}
           />
           <StatTile
-            icon={Droplets}
+            icon={RiDropLine}
             eyebrow="Uniswap pool TVL"
             value={poolQuery.data?.tvlUsdc ?? null}
             decimals={2}
@@ -234,7 +233,7 @@ export default function LiveStatsSection() {
         />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <StatTile
-            icon={ShieldCheck}
+            icon={RiShieldCheckLine}
             eyebrow="FAIR in bridge custody"
             value={fairCustody}
             decimals={2}
@@ -242,7 +241,7 @@ export default function LiveStatsSection() {
             isLoading={reservesQuery.isLoading}
           />
           <StatTile
-            icon={Database}
+            icon={RiDatabase2Line}
             eyebrow="WFAIR supply (snapshot)"
             value={wfairSupplyOnBase}
             decimals={2}
@@ -287,7 +286,7 @@ function RailHeader({
 }
 
 interface StatTileProps {
-  icon: typeof Layers
+  icon: BloomIconComponent
   eyebrow: string
   /** Numeric value rendered via AnimatedNumber. */
   value?: number | null
@@ -345,7 +344,7 @@ function StatTile({
       />
       <div className="flex flex-1 items-start gap-4">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <Icon className="h-[18px] w-[18px]" strokeWidth={2.25} />
+          <Icon width={18} height={18} fill="currentColor" />
         </span>
         <div className="flex flex-1 flex-col gap-1">
           <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
@@ -377,10 +376,12 @@ function StatTile({
         </div>
       </div>
       {href ? (
-        <ArrowUpRight
-          aria-hidden
-          className="h-4 w-4 shrink-0 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
-        />
+        <span
+          aria-hidden="true"
+          className="inline-flex shrink-0 text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
+        >
+          <RiArrowRightUpLine width={16} height={16} fill="currentColor" />
+        </span>
       ) : null}
     </div>
   )
@@ -432,7 +433,7 @@ function PegHealthTile({ healthy, snapshotAt, isLoading }: PegHealthTileProps) {
     <div className="group relative flex items-center justify-between gap-4 overflow-hidden rounded-2xl border border-border bg-popover/60 p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-popover">
       <div className="flex flex-1 items-start gap-4">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <Activity className="h-[18px] w-[18px]" strokeWidth={2.25} />
+          <RiPulseLine width={18} height={18} fill="currentColor" />
         </span>
         <div className="flex flex-1 flex-col gap-1">
           <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
