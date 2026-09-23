@@ -163,7 +163,7 @@ export const props: BloomSurfaceProps = {
     'SettingsStoragePageProps': {
       props: [
         { name: 'files', type: 'SettingsStoredFile[]', optional: false },
-        { name: 'upload', type: "Omit<FileUploadProps, 'style' | 'testID'>", optional: true, description: "The dropzone's props — Bloom's `FileUpload`. Omitted, it runs a self-simulating demo; pass `file`/`progress`/`onFileSelected` for a real upload, and add the finished file to `files` from `onUploadComplete`." },
+        { name: 'upload', type: "Omit<FileUploadProps, 'style' | 'testID'> | false", optional: true, description: "The dropzone's props — Bloom's `FileUpload`. Omitted, it runs a self-simulating demo; pass `file`/`progress`/`onFileSelected` for a real upload, and add the finished file to `files` from `onUploadComplete`. `false` drops the dropzone: a read-only store of what already exists." },
         { name: 'kinds', type: 'SettingsFileKind[]', optional: true },
         { name: 'selectedIds', type: 'string[]', optional: true },
         { name: 'defaultSelectedIds', type: 'string[]', optional: true },

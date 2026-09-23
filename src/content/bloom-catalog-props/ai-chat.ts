@@ -96,6 +96,7 @@ export const props: BloomSurfaceProps = {
         { name: 'workingLabel', type: 'string', optional: true, description: "`AgentThinking`'s label. Default `'Thinking'`." },
         { name: 'background', type: 'ReactNode', optional: true, description: "A layer filling the container, drawn ABOVE its own surface and BELOW every turn, header and composer — a host's wallpaper, gradient or animated field. It is clipped to the container's radius and never interactive (`pointerEvents: 'none'`), so an opaque node needs nothing else." },
         { name: 'surface', type: 'boolean', optional: true, description: "Paint the container's own background-secondary surface. Default `true`; `false` leaves the root transparent." },
+        { name: 'floatingChrome', type: 'boolean', optional: true, description: 'Float the header and the composer OVER the transcript instead of stacking them around it. Default `false`: header row, thread, footer, as siblings.' },
         { name: 'labels', type: 'AiChatContainerLabels', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { OutlineNav } from '@oxy.so/bloom/outline-nav'
 import type { MdxHeading } from '../../../scripts/vite-mdx-headings'
 import { useTranslation } from '../../lib/i18n'
@@ -44,10 +44,13 @@ export function LessonOutline({ headings }: { headings: MdxHeading[] }) {
   const { t } = useTranslation()
   const activeId = useActiveHeading(headings)
   const headerBottom = useSiteHeaderBottom()
+  // An href makes each row a real link (new tab, copy link); a plain press
+  // still comes to onSelect below, which scrolls clear of the header.
+  const linked = useMemo(() => headings.map((heading) => ({ ...heading, href: `#${heading.id}` })), [headings])
   if (headings.length === 0) return null
   return (
     <OutlineNav
-      headings={headings}
+      headings={linked}
       activeId={activeId}
       title={t('academy.onThisPage')}
       labels={{
