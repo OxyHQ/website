@@ -1,4 +1,13 @@
-import { useMemo, useState } from 'react'
+import { useId, useMemo, useState, type AriaAttributes, type MouseEvent, type ReactNode } from 'react'
+import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectItemIndicator,
+  SelectItemText,
+  SelectTrigger,
+} from '@oxy.so/bloom/select'
 import { Link } from '../../lib/navigation'
 import SliceIcon from './SliceIcon'
 
@@ -18,6 +27,63 @@ interface JobBoardProps {
 
 const ALL = 'all'
 
+/**
+ * What `SelectTrigger asChild` hands its child: Bloom's trigger contract, in
+ * React Native's spelling (`onPress`, `accessibilityLabel`, `nativeID`).
+ */
+interface CellTriggerProps {
+  children: ReactNode
+  valueId: string
+  onPress?: (event: MouseEvent<HTMLButtonElement>) => void
+  disabled?: boolean
+  accessibilityLabel?: string
+  nativeID?: string
+  'aria-expanded'?: boolean
+  'aria-haspopup'?: AriaAttributes['aria-haspopup']
+  'aria-describedby'?: string
+  'aria-invalid'?: boolean
+}
+
+/**
+ * The band cell as a real `<button>`: the filter reads as a cell of the
+ * coloured band, not as Bloom's pill field, so the trigger is ours and Bloom
+ * owns the rest — the list, its keyboard and focus return (it finds this
+ * button again by its `aria-haspopup`).
+ *
+ * The accessible name is the filter's label, as it was on the native select;
+ * the chosen value is its description, so "All Teams, collapsed, Engineering"
+ * is what a screen reader hears.
+ */
+function CellTrigger({
+  children,
+  valueId,
+  onPress,
+  disabled,
+  accessibilityLabel,
+  nativeID,
+  'aria-expanded': expanded,
+  'aria-haspopup': hasPopup,
+  'aria-invalid': invalid,
+  'aria-describedby': describedBy,
+}: CellTriggerProps) {
+  return (
+    <button
+      type="button"
+      aria-expanded={expanded}
+      aria-haspopup={hasPopup}
+      aria-invalid={invalid}
+      id={nativeID}
+      disabled={disabled}
+      aria-label={accessibilityLabel}
+      aria-describedby={[valueId, describedBy].filter(Boolean).join(' ')}
+      onClick={onPress}
+      className="group relative flex h-full w-full items-center py-3 pe-10 ps-[var(--filter-ps,1.5rem)] text-start outline-none hover:cursor-pointer focus-visible:outline-solid focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gray-a1"
+    >
+      {children}
+    </button>
+  )
+}
+
 function Filter({
   label,
   value,
@@ -31,22 +97,40 @@ function Filter({
   onChange: (value: string) => void
   className: string
 }) {
+  const valueId = useId()
+  const items = useMemo(
+    () => [
+      { value: ALL, label: `${label} (${options.length})` },
+      ...options.map((option) => ({ value: option, label: option })),
+    ],
+    [label, options],
+  )
+  const display = items.find((item) => item.value === value)?.label ?? items[0].label
+
   return (
-    <div className={`relative flex items-center text-b1 text-gray-a1 ${className}`}>
-      <select
-        className="w-full appearance-none truncate bg-transparent py-3 pe-10 ps-[var(--filter-ps,1.5rem)] text-start outline-none hover:cursor-pointer focus:outline-none"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        aria-label={label}
-      >
-        <option value={ALL}>{`${label} (${options.length})`}</option>
-        {options.map((option) => (
-          <option key={option} value={option} className="truncate">
-            {option}
-          </option>
-        ))}
-      </select>
-      <SliceIcon name="chevron-down" className="absolute end-5 size-6 text-gray-a1" />
+    <div className={`flex text-b1 text-gray-a1 ${className}`}>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger asChild label={label} style={{ flexGrow: 1, flexBasis: 0, minWidth: 0 }}>
+          <CellTrigger valueId={valueId}>
+            <span id={valueId} className="truncate">
+              {display}
+            </span>
+            <span className="pointer-events-none absolute end-5 flex transition-transform duration-150 group-aria-expanded:rotate-180 motion-reduce:transition-none">
+              <RiArrowDownSLine size="lg" fill="currentColor" />
+            </span>
+          </CellTrigger>
+        </SelectTrigger>
+        <SelectContent
+          label={label}
+          items={items}
+          renderItem={(item) => (
+            <SelectItem value={item.value} label={item.label}>
+              <SelectItemText>{item.label}</SelectItemText>
+              <SelectItemIndicator />
+            </SelectItem>
+          )}
+        />
+      </Select>
     </div>
   )
 }
