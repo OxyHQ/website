@@ -57,7 +57,10 @@ try {
   await capture('.brand-colour-composition', 'brand-colour.png')
   await capture('#applications', 'brand-applications.png')
   await page.getByRole('button', { name: 'Orange recipe', exact: true }).click()
-  await page.getByLabel('Colour studio appearance', { exact: true }).selectOption('dark')
+  await page
+    .getByRole('radiogroup', { name: 'Colour studio appearance', exact: true })
+    .getByRole('radio', { name: 'Dark', exact: true })
+    .click()
   invariant(
     (await page.getByTestId('brand-colour-composition').getAttribute('data-recipe')) === 'orange',
     'Recipe did not change',
