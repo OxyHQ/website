@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -9,7 +9,8 @@ import { useJob } from '../../api/hooks'
 import { errorStatus } from '../../api/client'
 import SEO from '../SEO'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
-import { useLocaleContext } from '../../lib/i18n'
+import { useLocaleContext, useTranslation } from '../../lib/i18n'
+import { useCopyToClipboard } from '../../lib/useCopyToClipboard'
 import {
   careerEmploymentLabel,
   careerJobMarkdown,
@@ -87,13 +88,8 @@ function Fact({ label, value }: { label: string; value: string }) {
 
 /** Apply where the role is published, plus the copy-link button and its confirmation. */
 function ApplyActions({ href }: { href: string }) {
-  const [copied, setCopied] = useState(false)
-
-  const copyLink = async () => {
-    await navigator.clipboard.writeText(window.location.href)
-    setCopied(true)
-    window.setTimeout(() => setCopied(false), 2000)
-  }
+  const { t } = useTranslation()
+  const { copied, copy } = useCopyToClipboard()
 
   return (
     <div className="flex gap-2">
@@ -103,7 +99,7 @@ function ApplyActions({ href }: { href: string }) {
       <div className="relative">
         <button
           type="button"
-          onClick={copyLink}
+          onClick={() => void copy(window.location.href, t('common.linkCopied'))}
           aria-label="Copy link to this role"
           className="inline-flex size-12 items-center justify-center rounded-sm bg-surface text-foreground transition-colors duration-200 hover:bg-border"
         >

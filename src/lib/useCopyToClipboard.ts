@@ -1,4 +1,6 @@
-import { useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { toast } from '@oxy.so/bloom'
+import { useTranslation } from './i18n'
 
 /** Flatten a React node tree to its plain text — used to copy code blocks. */
 export function reactNodeToText(node: ReactNode): string {
@@ -12,22 +14,50 @@ export function reactNodeToText(node: ReactNode): string {
   return ''
 }
 
+/** What `copy` accepts: the text, or a promise of it (a lazily loaded source). */
+export type CopySource = string | null | undefined | Promise<string | null | undefined>
+
 /**
- * Copy-to-clipboard with a transient "copied" flag. Shared by the docs code
- * surfaces (`MdxPre`, `CodeBlock`) so the copy UX can't drift between them.
+ * The site's one clipboard flow. `copy(text, message?)` writes the text and
+ * says so in a toast — `message`, or "Copied to clipboard" — and a failure
+ * (a refused permission, an insecure context, nothing to copy) says so too,
+ * rather than leaving a button that silently did nothing. `copied` is true for
+ * `resetMs` after a success, for callers that also swap a label or an icon;
+ * the timer restarts on every copy and is cleared on unmount.
+ *
+ * `copy` resolves to whether the write succeeded.
  */
-export function useCopyToClipboard(resetMs = 1500): { copied: boolean; copy: (text: string) => void } {
+export function useCopyToClipboard(resetMs = 2000): {
+  copied: boolean
+  copy: (text: CopySource, message?: string) => Promise<boolean>
+} {
+  const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
-  const copy = (text: string) => {
-    if (!text) return
-    navigator.clipboard.writeText(text).then(
-      () => {
-        setCopied(true)
-        window.setTimeout(() => setCopied(false), resetMs)
-      },
-      // Surface real failures — clipboard rejections matter, no silent catch.
-      (err: unknown) => console.error('[useCopyToClipboard] clipboard write failed:', err),
-    )
-  }
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  useEffect(() => () => clearTimeout(timer.current), [])
+
+  const copy = useCallback(
+    async (text: CopySource, message?: string) => {
+      try {
+        const value = await text
+        if (!value) throw new Error('nothing to copy')
+        // `navigator.clipboard` is undefined outside a secure context; the
+        // TypeError lands in the same catch as a refused permission.
+        await navigator.clipboard.writeText(value)
+      } catch (error) {
+        console.warn('[useCopyToClipboard] clipboard write failed:', error)
+        toast.error(t('common.copyFailed'))
+        return false
+      }
+      toast.success(message ?? t('common.copiedToClipboard'))
+      setCopied(true)
+      clearTimeout(timer.current)
+      timer.current = setTimeout(() => setCopied(false), resetMs)
+      return true
+    },
+    [t, resetMs],
+  )
+
   return { copied, copy }
 }

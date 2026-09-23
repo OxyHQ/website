@@ -10,7 +10,7 @@ import {
   ExternalLink,
   ShieldCheck,
 } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { useCopyToClipboard } from '../../../lib/useCopyToClipboard'
 import { fc } from '../../../lib/faircoin-links'
 import BridgeFlowVisual from '../landing/BridgeFlowVisual'
 import LiveBridgeSection from '../landing/LiveBridgeSection'
@@ -332,17 +332,7 @@ function MethodChip({ method }: { method: Method }) {
 }
 
 function CurlBlock({ value }: { value: string }) {
-  const [copied, setCopied] = useState(false)
-  const handleCopy = useCallback(async () => {
-    if (typeof navigator === 'undefined' || !navigator.clipboard) return
-    try {
-      await navigator.clipboard.writeText(value)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 1500)
-    } catch {
-      setCopied(false)
-    }
-  }, [value])
+  const { copied, copy } = useCopyToClipboard()
   return (
     <div className="flex items-start justify-between gap-3 px-5 py-3">
       <pre className="flex-1 overflow-x-auto font-mono text-body-xs leading-relaxed text-foreground/80">
@@ -350,7 +340,7 @@ function CurlBlock({ value }: { value: string }) {
       </pre>
       <button
         type="button"
-        onClick={handleCopy}
+        onClick={() => void copy(value)}
         aria-label="Copy curl command"
         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors hover:bg-primary/20"
       >

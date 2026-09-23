@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import Button from '../ui/Button'
+import { useCopyToClipboard } from '../../lib/useCopyToClipboard'
 
 const TNP_DOWNLOADS_URL = 'https://tnp.network/downloads'
 
@@ -65,17 +65,12 @@ const features = [
 ]
 
 function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+  const { copied, copy } = useCopyToClipboard()
 
   return (
     <button
-      onClick={handleCopy}
+      type="button"
+      onClick={() => void copy(text)}
       className="ml-3 shrink-0 cursor-pointer rounded-full border border-transparent px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-primary-text/10 hover:text-foreground"
     >
       {copied ? 'Copied' : 'Copy'}

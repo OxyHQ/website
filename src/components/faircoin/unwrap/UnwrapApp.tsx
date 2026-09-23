@@ -12,6 +12,7 @@
  * avoided — transitions derive from wagmi/react-query state shape.
  */
 import { useCallback, useMemo, useState } from 'react'
+import { useCopyToClipboard } from '../../../lib/useCopyToClipboard'
 import { stringToBytes, formatUnits, parseUnits, toHex } from 'viem'
 import { base } from 'wagmi/chains'
 import {
@@ -872,28 +873,18 @@ function ConnectedPill({
   address: `0x${string}`
   onDisconnect: () => void
 }) {
-  const [flash, setFlash] = useState(false)
-  const handleCopy = useCallback(async () => {
-    if (typeof navigator === 'undefined' || !navigator.clipboard) return
-    try {
-      await navigator.clipboard.writeText(address)
-      setFlash(true)
-      window.setTimeout(() => setFlash(false), COPY_FLASH_MS)
-    } catch {
-      setFlash(false)
-    }
-  }, [address])
+  const { copied, copy } = useCopyToClipboard(COPY_FLASH_MS)
   return (
     <div className="inline-flex items-center gap-1 rounded-full border border-border bg-popover/80 p-0.5 pl-3">
       <span aria-hidden className="flex h-2 w-2 rounded-full bg-success" />
       <span className="font-mono text-xs text-foreground">{shortAddress(address)}</span>
       <button
         type="button"
-        onClick={handleCopy}
+        onClick={() => void copy(address)}
         aria-label="Copy address"
         className="flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
       >
-        {flash ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+        {copied ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
       </button>
       <button
         type="button"
