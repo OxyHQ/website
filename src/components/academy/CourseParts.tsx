@@ -3,6 +3,7 @@ import { Card } from '@oxy.so/bloom/card'
 import { Meter } from '@oxy.so/bloom/stat-bar'
 import { RiBookOpenLine } from '@oxy.so/bloom/icons/RiBookOpenLine'
 import { RiTimeLine } from '@oxy.so/bloom/icons/RiTimeLine'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { Link } from '../../lib/navigation'
 import { useTranslation } from '../../lib/i18n'
 import type { CourseLevel } from '../../content/academy-courses'
@@ -85,8 +86,20 @@ export function CourseProgressBar({
   )
 }
 
-/** The catalog card. The whole card is the link; a course without lessons yet is shown, muted, without one. */
-export function CourseCard({ course, progress }: { course: CourseWithLessons; progress: CourseProgress | undefined }) {
+/**
+ * The catalog card. The whole card is the link; a course without lessons yet is
+ * shown, muted, without one. `startHere` marks the course a new learner begins
+ * with — the catalog says so on the card rather than listing it twice.
+ */
+export function CourseCard({
+  course,
+  progress,
+  startHere = false,
+}: {
+  course: CourseWithLessons
+  progress: CourseProgress | undefined
+  startHere?: boolean
+}) {
   const { t } = useTranslation()
   const available = isCourseAvailable(course)
   const summary = summarizeCourse(course, progress)
@@ -100,6 +113,10 @@ export function CourseCard({ course, progress }: { course: CourseWithLessons; pr
             <Badge content={t('academy.comingSoon')} variant="subtle" color="default" size="label-small" />
           ) : summary.status === 'completed' ? (
             <Badge content={t('academy.statusCompleted')} variant="subtle" color="success" size="label-small" />
+          ) : summary.status === 'in-progress' ? (
+            <Badge content={t('academy.statusInProgress')} variant="subtle" color="primary" size="label-small" />
+          ) : startHere ? (
+            <Badge content={t('academy.startHere')} variant="solid" color="primary" size="label-small" />
           ) : null}
         </div>
         <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">{course.summary}</p>
@@ -107,6 +124,14 @@ export function CourseCard({ course, progress }: { course: CourseWithLessons; pr
           <CourseMeta course={course} />
           {available && summary.status === 'in-progress' ? (
             <CourseProgressBar completed={summary.completed} total={summary.total} decorative />
+          ) : null}
+          {available && startHere && summary.status === 'not-started' ? (
+            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary" aria-hidden="true">
+              {t('academy.startCourse')}
+              <span className="inline-flex transition-transform duration-200 group-hover:translate-x-0.5">
+                <RiArrowRightLine width={16} height={16} fill="currentColor" />
+              </span>
+            </span>
           ) : null}
         </div>
       </div>

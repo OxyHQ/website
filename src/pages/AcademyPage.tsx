@@ -11,10 +11,10 @@ import { Link } from '../lib/navigation'
 import Button from '../components/ui/Button'
 import AcademyShell from '../components/academy/AcademyShell'
 import { useStatusLabel, useTrackLabels } from '../components/academy/academyLabels'
-import { CourseCard, CourseMeta, CourseProgressBar } from '../components/academy/CourseParts'
+import { CourseCard, CourseProgressBar } from '../components/academy/CourseParts'
 import { LessonStatusMark } from '../components/academy/ProgressMarks'
 import {
-  coursePath,
+  academyTotals,
   groupByTrack,
   lessonPath,
   lessonStatus,
@@ -36,38 +36,23 @@ import type { CourseProgress } from '../components/academy/progressStorage'
  * matching courses and lessons.
  * ──────────────────────────────────────────── */
 
-function NextStepCard({ courses, progress }: { courses: CourseWithLessons[]; progress: Record<string, CourseProgress> }) {
+/** Where a returning learner left off. A new learner gets no card: the catalog marks where to start. */
+function ContinueCard({ courses, progress }: { courses: CourseWithLessons[]; progress: Record<string, CourseProgress> }) {
   const { t } = useTranslation()
   const resume = pickResume(courses, progress)
-  const starter = resume ? null : pickStarterCourse(courses)
-  if (!resume && !starter) return null
-
-  const course = resume?.course ?? starter!
-  const eyebrow = resume ? t('academy.continueLearning') : t('academy.startHere')
-  const href = resume ? lessonPath(course.slug, resume.lesson.lessonSlug) : coursePath(course.slug)
-
+  if (!resume) return null
+  const { course, lesson, summary } = resume
   return (
     <Card appearance="solid" radius="radius-20">
       <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:p-6">
         <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-          <span className="text-xs font-semibold text-primary">{eyebrow}</span>
+          <span className="text-xs font-semibold text-primary">{t('academy.continueLearning')}</span>
           <h2 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">{course.title}</h2>
-          {resume ? (
-            <>
-              <p className="text-sm text-muted-foreground">{t('academy.nextUp', { lesson: resume.lesson.frontmatter.title })}</p>
-              <CourseProgressBar completed={resume.summary.completed} total={resume.summary.total} className="mt-2 max-w-sm" />
-            </>
-          ) : (
-            <>
-              <p className="text-sm text-muted-foreground">{course.summary}</p>
-              <div className="mt-2">
-                <CourseMeta course={course} />
-              </div>
-            </>
-          )}
+          <p className="text-sm text-muted-foreground">{t('academy.nextUp', { lesson: lesson.frontmatter.title })}</p>
+          <CourseProgressBar completed={summary.completed} total={summary.total} className="mt-2 max-w-sm" />
         </div>
-        <Button href={href} variant="primary" size="md" className="shrink-0 self-start sm:self-center">
-          {resume ? t('academy.continue') : t('academy.startCourse')}
+        <Button href={lessonPath(course.slug, lesson.lessonSlug)} variant="primary" size="md" className="shrink-0 self-start sm:self-center">
+          {t('academy.continue')}
         </Button>
       </div>
     </Card>
@@ -76,6 +61,8 @@ function NextStepCard({ courses, progress }: { courses: CourseWithLessons[]; pro
 
 function Catalog({ courses, progress }: { courses: CourseWithLessons[]; progress: Record<string, CourseProgress> }) {
   const { t } = useTranslation()
+  // Only a learner with nothing started is pointed at a first course.
+  const starter = academyTotals(courses, progress).coursesStarted === 0 ? pickStarterCourse(courses) : null
   const trackLabels = useTrackLabels()
   return (
     <div className="flex flex-col gap-12">
@@ -100,7 +87,7 @@ function Catalog({ courses, progress }: { courses: CourseWithLessons[]; progress
               <ul className="grid gap-3">
                 {trackCourses.map((course) => (
                   <li key={course.slug}>
-                    <CourseCard course={course} progress={progress[course.slug]} />
+                    <CourseCard course={course} progress={progress[course.slug]} startHere={course.slug === starter?.slug} />
                   </li>
                 ))}
               </ul>
@@ -237,7 +224,7 @@ export default function AcademyPage() {
           <SearchResults courses={courses} progress={progress} query={query} onClear={() => setQuery('')} />
         ) : (
           <div className="flex flex-col gap-12">
-            <NextStepCard courses={courses} progress={progress} />
+            <ContinueCard courses={courses} progress={progress} />
             <Catalog courses={courses} progress={progress} />
           </div>
         )}
