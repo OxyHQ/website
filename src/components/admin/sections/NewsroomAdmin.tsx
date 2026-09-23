@@ -14,6 +14,7 @@ import LocaleSwitcher from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
 import MediaPicker from '../MediaPicker'
 import { NEWSROOM_THEME_PRESETS } from '../../../lib/newsroom-theme'
+import OptionSelect from '../../ui/OptionSelect'
 
 function productIdOf(ref: string | NewsroomProductRef): string {
   if (typeof ref === 'string') return ref
@@ -116,13 +117,12 @@ export default function NewsroomAdmin() {
 
           <div className="flex flex-col gap-1.5">
             <Label>Bloom recipe</Label>
-            <select
+            <OptionSelect
+              label="Bloom recipe"
               value={editing.themePreset ?? 'oxy'}
-              onChange={(event) => setEditing({ ...editing, themePreset: event.target.value })}
-              className="h-10 rounded-md border border-border bg-background px-3 text-sm text-foreground"
-            >
-              {NEWSROOM_THEME_PRESETS.map((preset) => <option key={preset} value={preset}>{preset}</option>)}
-            </select>
+              onValueChange={(value) => setEditing({ ...editing, themePreset: value })}
+              options={NEWSROOM_THEME_PRESETS.map((preset) => ({ value: preset, label: preset }))}
+            />
             <p className="text-xs text-muted-foreground">Each post keeps its own Bloom recipe across cards and article pages.</p>
           </div>
 

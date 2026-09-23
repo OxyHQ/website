@@ -7,6 +7,7 @@ import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '@oxy.so/bloom/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
+import OptionSelect from '../../ui/OptionSelect'
 
 function slugify(input: string): string {
   return input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
@@ -113,15 +114,15 @@ export default function CategoriesAdmin() {
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label>Scope</Label>
-              <select
+              <OptionSelect
+                label="Scope"
                 value={editing.scope}
-                onChange={(e) => setEditing({ ...editing, scope: e.target.value as CategoryScope })}
-                className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-              >
-                {(['apps', 'nav', 'generic'] as CategoryScope[]).map((scope) => (
-                  <option key={scope} value={scope}>{SCOPE_LABEL[scope]}</option>
-                ))}
-              </select>
+                onValueChange={(value) => setEditing({ ...editing, scope: value as CategoryScope })}
+                options={(['apps', 'nav', 'generic'] as CategoryScope[]).map((scope) => ({
+                  value: scope,
+                  label: SCOPE_LABEL[scope],
+                }))}
+              />
             </div>
             <LabeledTextField
               label="Order"

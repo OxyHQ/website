@@ -13,6 +13,7 @@ import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '@oxy.so/bloom/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
+import OptionSelect from '../../ui/OptionSelect'
 
 const SEVERITIES: IncidentSeverity[] = ['minor', 'major', 'critical']
 const UPDATE_STATUSES: IncidentUpdateStatus[] = ['investigating', 'identified', 'monitoring', 'resolved']
@@ -148,13 +149,12 @@ export default function IncidentsAdmin() {
             />
             <div className="flex flex-col gap-1.5">
               <Label>Severity</Label>
-              <select
+              <OptionSelect
+                label="Severity"
                 value={editing.severity}
-                onChange={(e) => setEditing({ ...editing, severity: e.target.value as IncidentSeverity })}
-                className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-              >
-                {SEVERITIES.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
+                onValueChange={(value) => setEditing({ ...editing, severity: value as IncidentSeverity })}
+                options={SEVERITIES.map((s) => ({ value: s, label: s }))}
+              />
             </div>
           </div>
 
@@ -201,13 +201,12 @@ export default function IncidentsAdmin() {
             <div className="mt-3 flex flex-col gap-3">
               <div className="flex flex-col gap-1.5">
                 <Label>Status</Label>
-                <select
+                <OptionSelect
+                  label="Status"
                   value={newUpdateStatus}
-                  onChange={(e) => setNewUpdateStatus(e.target.value as IncidentUpdateStatus)}
-                  className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-                >
-                  {UPDATE_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
+                  onValueChange={(value) => setNewUpdateStatus(value as IncidentUpdateStatus)}
+                  options={UPDATE_STATUSES.map((s) => ({ value: s, label: s }))}
+                />
               </div>
               <Textarea
                 label="Message (markdown)"

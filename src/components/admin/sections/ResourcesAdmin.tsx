@@ -20,6 +20,7 @@ import { TranslationFields } from '../TranslationEditor'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
 import MediaPicker from '../MediaPicker'
+import OptionSelect from '../../ui/OptionSelect'
 
 const RESOURCE_TYPES: ResourceType[] = ['guide', 'paper', 'video', 'tool', 'template', 'link']
 
@@ -183,28 +184,25 @@ export default function ResourcesAdmin() {
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label>Type</Label>
-              <select
+              <OptionSelect
+                label="Type"
                 value={editing.type}
-                onChange={(e) => setEditing({ ...editing, type: e.target.value as ResourceType })}
-                className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-              >
-                {RESOURCE_TYPES.map((t) => (
-                  <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
-                ))}
-              </select>
+                onValueChange={(value) => setEditing({ ...editing, type: value as ResourceType })}
+                options={RESOURCE_TYPES.map((t) => ({ value: t, label: t.charAt(0).toUpperCase() + t.slice(1) }))}
+              />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>Category</Label>
-              <select
+              <OptionSelect
+                label="Category"
                 value={typeof editing.category === 'string' ? editing.category : ''}
-                onChange={(e) => setEditing({ ...editing, category: e.target.value || null })}
-                className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-              >
-                <option value="">Select a category</option>
-                {categories.map((c) => (
-                  <option key={c._id ?? c.slug} value={c._id ?? ''}>{c.label}</option>
-                ))}
-              </select>
+                onValueChange={(value) => setEditing({ ...editing, category: value || null })}
+                options={[
+                  { value: '', label: 'Select a category' },
+                  ...categories.map((c) => ({ value: c._id ?? '', label: c.label })),
+                ]}
+                emptyIsPlaceholder
+              />
             </div>
           </div>
 

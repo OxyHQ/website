@@ -14,6 +14,7 @@ import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '@oxy.so/bloom/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
+import OptionSelect from '../../ui/OptionSelect'
 
 // Each row in the list view groups referrals by program type, so admins can
 // scan affiliates vs. ambassadors vs. casual share codes at a glance.
@@ -161,28 +162,30 @@ export default function ReferralsAdmin() {
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label>Program type</Label>
-              <select
+              <OptionSelect
+                label="Program type"
                 value={editing.type}
-                onChange={(e) => setEditing({ ...editing, type: e.target.value as ReferralType })}
-                className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-              >
-                <option value="user">Just share (casual user)</option>
-                <option value="ambassador">Ambassador (unpaid, tracked)</option>
-                <option value="paid">Paid affiliate (commission)</option>
-              </select>
+                onValueChange={(value) => setEditing({ ...editing, type: value as ReferralType })}
+                options={[
+                  { value: 'user', label: 'Just share (casual user)' },
+                  { value: 'ambassador', label: 'Ambassador (unpaid, tracked)' },
+                  { value: 'paid', label: 'Paid affiliate (commission)' },
+                ]}
+              />
               <p className="text-xs text-muted-foreground">{TYPE_DESCRIPTIONS[editing.type]}</p>
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>Status</Label>
-              <select
+              <OptionSelect
+                label="Status"
                 value={editing.status}
-                onChange={(e) => setEditing({ ...editing, status: e.target.value as ReferralStatus })}
-                className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-              >
-                <option value="active">Active</option>
-                <option value="paused">Paused</option>
-                <option value="revoked">Revoked</option>
-              </select>
+                onValueChange={(value) => setEditing({ ...editing, status: value as ReferralStatus })}
+                options={[
+                  { value: 'active', label: 'Active' },
+                  { value: 'paused', label: 'Paused' },
+                  { value: 'revoked', label: 'Revoked' },
+                ]}
+              />
               <p className="text-xs text-muted-foreground">Only active codes resolve on the public endpoint.</p>
             </div>
           </div>
