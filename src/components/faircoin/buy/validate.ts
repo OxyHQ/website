@@ -17,7 +17,7 @@ export function isValidFairAddress(value: string): boolean {
   return FAIR_ADDRESS_PATTERN.test(value)
 }
 
-export function isWellFormedFairAmount(value: string): boolean {
+function isWellFormedFairAmount(value: string): boolean {
   return FAIR_AMOUNT_PATTERN.test(value)
 }
 

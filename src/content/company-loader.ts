@@ -109,13 +109,3 @@ export function loadCompanyPage(slug: string, locale = DEFAULT_LOCALE): CompanyE
   if (!localeMap) return null
   return localeMap.get(locale) ?? localeMap.get(DEFAULT_LOCALE) ?? null
 }
-
-/** All known company pages, default locale. Used by the build-search-index script. */
-export function loadCompanyPages(locale = DEFAULT_LOCALE): CompanyEntry[] {
-  const out: CompanyEntry[] = []
-  for (const slug of index.bySlug.keys()) {
-    const entry = loadCompanyPage(slug, locale)
-    if (entry) out.push(entry)
-  }
-  return out.sort((a, b) => a.slug.localeCompare(b.slug))
-}

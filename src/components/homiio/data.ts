@@ -32,7 +32,7 @@ function fallback(id: string, title: string, monthlyAmount: number, imageUrl: st
 }
 
 /** The deck the hero falls back to before the live listings arrive. */
-export const HOMIIO_LISTINGS: readonly HomiioListing[] = [
+const HOMIIO_LISTINGS: readonly HomiioListing[] = [
   fallback('teresa-pamies', 'Apartment in Barcelona', 482, teresaPamies),
   fallback('torrent-olla', 'Apartment in Barcelona', 1385, torrentOlla),
   fallback('sant-antoni', 'Apartment in Sant Antoni', 440, santAntoni),

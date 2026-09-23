@@ -158,60 +158,6 @@ export function TranslationFields<O extends object>({
   )
 }
 
-// ── Generic translation editor using raw JSON fields ──
-
-export function TranslationJsonEditor<T = TranslationFieldMap>({
-  collection,
-  documentId,
-  locale,
-  children,
-}: {
-  collection: string
-  documentId: string
-  locale: string
-  children: (props: {
-    fields: DeepPartial<T>
-    setFields: (fields: DeepPartial<T>) => void
-    save: () => Promise<void>
-    saving: boolean
-  }) => ReactNode
-}) {
-  const qc = useQueryClient()
-  const { data: existing } = useQuery({
-    queryKey: ['translation', collection, documentId, locale],
-    queryFn: () => apiFetch<{ fields: TranslationFieldMap }>(`/translations/${collection}/${documentId}?locale=${locale}`).catch(() => null),
-    enabled: !!documentId && !!locale,
-  })
-
-  const [fields, setFields] = useState<TranslationFieldMap>(() => existing?.fields ?? {})
-  const [lastSyncedExisting, setLastSyncedExisting] = useState(existing)
-  const [saving, setSaving] = useState(false)
-
-  if (existing !== lastSyncedExisting) {
-    setLastSyncedExisting(existing)
-    setFields(existing?.fields ?? {})
-  }
-
-  const save = async () => {
-    setSaving(true)
-    try {
-      await apiFetch(`/translations/${collection}/${documentId}?locale=${locale}`, {
-        method: 'PUT',
-        body: JSON.stringify({ fields }),
-      })
-      qc.invalidateQueries({ queryKey: ['translation', collection, documentId, locale] })
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  // Storage is the raw JSON map; the callback works against `DeepPartial<T>`
-  // (a partial override of the document shape). Bridge the two at the boundary.
-  const setTypedFields = (next: DeepPartial<T>) => setFields(next as TranslationFieldMap)
-
-  return <>{children({ fields: fields as DeepPartial<T>, setFields: setTypedFields, save, saving })}</>
-}
-
 // ── Batch translation editor for array collections (navigation, pricing, testimonials) ──
 
 function useBatchTranslations(collection: string, locale: string) {

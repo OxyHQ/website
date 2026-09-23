@@ -38,7 +38,7 @@ const STATIC_FILE_EXTENSIONS: readonly string[] = [
  * Cloudflare answers at `<path>/`. False for a file in `public/`
  * (`/llms.txt`, `/og-default.png`), which is served exactly as named.
  */
-export function isDocumentPath(pathname: string): boolean {
+function isDocumentPath(pathname: string): boolean {
   const last = pathname.split('/').filter(Boolean).pop()
   if (last === undefined) return true
   const lower = last.toLowerCase()

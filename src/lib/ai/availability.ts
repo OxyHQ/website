@@ -22,10 +22,6 @@ export const AVAILABILITY_STATES = [
 
 export type Availability = (typeof AVAILABILITY_STATES)[number]
 
-export function isAvailability(value: unknown): value is Availability {
-  return typeof value === 'string' && (AVAILABILITY_STATES as readonly string[]).includes(value)
-}
-
 /**
  * What a visitor is allowed to be asked to do next, given a state.
  *
@@ -70,16 +66,6 @@ export function isPurchasable(availability: Availability): boolean {
   return availability === 'available' || availability === 'beta'
 }
 
-/** i18n key under `ai.availability.*` for the state's short label. */
-export function availabilityLabelKey(availability: Availability): string {
-  return `ai.availability.${camelCase(availability)}`
-}
-
-/** i18n key under `ai.cta.*` for the state's call-to-action label. */
-export function ctaLabelKey(availability: Availability): string {
-  return `ai.cta.${camelCase(ctaIntentFor(availability))}`
-}
-
 /**
  * Colour role for the state's badge, expressed as Bloom token roles rather than
  * raw colour. Never the only carrier of the state — the badge always renders
@@ -98,8 +84,4 @@ const TONE_BY_STATE: Record<Availability, AvailabilityTone> = {
 
 export function availabilityTone(availability: Availability): AvailabilityTone {
   return TONE_BY_STATE[availability]
-}
-
-function camelCase(value: string): string {
-  return value.replace(/_([a-z])/g, (_, char: string) => char.toUpperCase())
 }

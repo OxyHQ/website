@@ -17,7 +17,7 @@ export interface NewsroomPost {
  * Slugs become file paths *and* URLs, so only accept safe characters — defends
  * against a malformed or hostile slug (path traversal, stray HTML in a URL).
  */
-export const SAFE_NEWSROOM_SLUG = /^[a-z0-9-]+$/i
+const SAFE_NEWSROOM_SLUG = /^[a-z0-9-]+$/i
 
 /** A post is worth indexing when it's published and has a safe slug. */
 export function isIndexablePost(post: NewsroomPost): boolean {

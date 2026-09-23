@@ -11,7 +11,7 @@ import {
 import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
-import { Label } from '../../ui/shadcn/label'
+import { Label } from '@oxy.so/bloom/label'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
 

@@ -48,7 +48,7 @@ export function isCatalogUnpublished(catalog: PublicCatalog): boolean {
 }
 
 /** Where the browser asks for fresher data. Unset in a build with no endpoint yet. */
-export function publicCatalogEndpoint(): string | undefined {
+function publicCatalogEndpoint(): string | undefined {
   const configured = import.meta.env.VITE_OXY_PUBLIC_CATALOG_URL as string | undefined
   return configured && configured.length > 0 ? configured : undefined
 }
