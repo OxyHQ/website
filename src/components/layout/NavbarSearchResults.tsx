@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react'
+import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
 import { GROUP_LABELS, type SearchResult } from '../../lib/site-search'
 import { DocsIcon, ModelingIcon } from '../icons'
 
@@ -49,10 +49,10 @@ function SearchResultLeading({ result, compact = false }: { result: SearchResult
     )
   }
 
-  const Icon = kind === 'page' ? Search : result.group === 'ui-library' ? ModelingIcon : DocsIcon
+  const Icon = kind === 'page' ? RiSearchLine : result.group === 'ui-library' ? ModelingIcon : DocsIcon
   return (
     <span className={`grid ${sizeClass} shrink-0 place-items-center rounded-full bg-[color-mix(in_srgb,var(--background)_68%,var(--primary))] text-primary-text`}>
-      <Icon className={compact ? 'size-5' : 'size-4'} aria-hidden="true" />
+      <Icon width={compact ? 20 : 16} height={compact ? 20 : 16} fill="currentColor" aria-hidden />
     </span>
   )
 }

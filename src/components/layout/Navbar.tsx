@@ -27,7 +27,10 @@ import { searchSite, groupResults, searchContextGroups, type SearchResult } from
 import NavDropdownItem from '../ui/NavDropdownItem'
 import { SettingsPanel } from '../ui/SettingsPanel'
 import NavbarSearchResults from './NavbarSearchResults'
-import { LogIn, Search, Settings, X } from 'lucide-react'
+import { RiLoginBoxLine } from '@oxy.so/bloom/icons/RiLoginBoxLine'
+import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
+import { RiSettings3Line } from '@oxy.so/bloom/icons/RiSettings3Line'
+import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
 import { ArrowRightIcon } from '../icons'
 import { useAdminAccess } from '../../hooks/useAdminAccess'
 
@@ -682,7 +685,7 @@ export default function Navbar({
           disabled={!isAuthResolved}
           onClick={() => { void signIn() }}
         >
-          <LogIn className="size-[18px]" aria-hidden="true" />
+          <RiLoginBoxLine aria-hidden width={18} height={18} fill="currentColor" />
         </button>
       )
     }
@@ -836,7 +839,7 @@ export default function Navbar({
 
             {searchOpen && (
               <div className="relative mx-auto w-full max-w-[42rem]">
-                <Search className="pointer-events-none absolute start-5 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+                <span aria-hidden="true" className="inline-flex pointer-events-none absolute start-5 top-1/2 -translate-y-1/2 text-muted-foreground"><RiSearchLine width={20} height={20} fill="currentColor" /></span>
                 <input
                   autoFocus
                   type="text"
@@ -873,7 +876,7 @@ export default function Navbar({
                   aria-label={t('common.closeSearch')}
                   className="absolute end-0 top-0 inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
                 >
-                  <X className="size-4" />
+                  <RiCloseLine width={16} height={16} fill="currentColor" />
                 </button>
 
                 {searchQuery.trim() ? (
@@ -937,7 +940,7 @@ export default function Navbar({
                 aria-label={t('common.search')}
                 aria-expanded={searchOpen}
               >
-                <Search className="size-[18px]" />
+                <RiSearchLine width={18} height={18} fill="currentColor" />
               </button>
               <button
                 ref={(el) => { triggerRefs.current[SETTINGS_DROPDOWN_KEY] = el }}
@@ -949,7 +952,7 @@ export default function Navbar({
                 aria-expanded={activeDropdown === SETTINGS_DROPDOWN_KEY}
                 aria-label={t('footer.settings')}
               >
-                <Settings className="size-[18px] transition-transform duration-300 group-hover:rotate-45" />
+                <span aria-hidden="true" className="inline-flex transition-transform duration-300 group-hover:rotate-45"><RiSettings3Line width={18} height={18} fill="currentColor" /></span>
               </button>
               {rightActions}
               {ctaButtons}
