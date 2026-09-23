@@ -11,7 +11,6 @@ import {
   SegmentedControlItemText,
 } from '@oxy.so/bloom/segmented-control'
 import PageShell from '../components/layout/PageShell'
-import { BloomSelectionKeys } from '../components/ui/BloomSelectionKeys'
 import { recipeStyle } from '../components/brand/recipe-style'
 import { useSiteHeaderBottom } from '../hooks/useSiteHeaderBottom'
 import { BRAND_MARKS } from '../data/brand-assets'
@@ -110,21 +109,19 @@ function ColourStudio() {
         </div>
         <div className="brand-select-label">
           <span aria-hidden="true">Appearance</span>
-          <BloomSelectionKeys item="radio">
-            <SegmentedControl
-              type="radio"
-              label="Colour studio appearance"
-              value={mode}
-              onValueChange={setMode}
-            >
-              <SegmentedControlItem value="light">
-                <SegmentedControlItemText>Light</SegmentedControlItemText>
-              </SegmentedControlItem>
-              <SegmentedControlItem value="dark">
-                <SegmentedControlItemText>Dark</SegmentedControlItemText>
-              </SegmentedControlItem>
-            </SegmentedControl>
-          </BloomSelectionKeys>
+          <SegmentedControl
+            type="radio"
+            label="Colour studio appearance"
+            value={mode}
+            onValueChange={setMode}
+          >
+            <SegmentedControlItem value="light">
+              <SegmentedControlItemText>Light</SegmentedControlItemText>
+            </SegmentedControlItem>
+            <SegmentedControlItem value="dark">
+              <SegmentedControlItemText>Dark</SegmentedControlItemText>
+            </SegmentedControlItem>
+          </SegmentedControl>
         </div>
       </div>
       <div

@@ -21,7 +21,6 @@ import {
   SegmentedControlItem,
   SegmentedControlItemText,
 } from '@oxy.so/bloom/segmented-control';
-import { BloomSelectionKeys } from '../ui/BloomSelectionKeys';
 import {
   resolveLabPalette,
   type ColorMode,
@@ -737,22 +736,20 @@ export default function ColorSystemPlayground() {
 
       <View style={styles.viewerModeRow}>
         <Text style={styles.viewerModeLabel}>Mention state</Text>
-        <BloomSelectionKeys item="radio">
-          <SegmentedControl
-            label="Mention state"
-            type="radio"
-            size="sm"
-            value={authenticated ? 'signed-in' : 'public'}
-            onValueChange={(next) => setAuthenticated(next === 'signed-in')}
-          >
-            <SegmentedControlItem value="signed-in">
-              <SegmentedControlItemText>Signed in</SegmentedControlItemText>
-            </SegmentedControlItem>
-            <SegmentedControlItem value="public">
-              <SegmentedControlItemText>Public view</SegmentedControlItemText>
-            </SegmentedControlItem>
-          </SegmentedControl>
-        </BloomSelectionKeys>
+        <SegmentedControl
+          label="Mention state"
+          type="radio"
+          size="sm"
+          value={authenticated ? 'signed-in' : 'public'}
+          onValueChange={(next) => setAuthenticated(next === 'signed-in')}
+        >
+          <SegmentedControlItem value="signed-in">
+            <SegmentedControlItemText>Signed in</SegmentedControlItemText>
+          </SegmentedControlItem>
+          <SegmentedControlItem value="public">
+            <SegmentedControlItemText>Public view</SegmentedControlItemText>
+          </SegmentedControlItem>
+        </SegmentedControl>
       </View>
 
       <View style={styles.previewRow}>

@@ -9,7 +9,6 @@ import { type ColorPresetRecipe } from '@oxy.so/bloom/color-presets'
 import { type AppColorName } from '../../theme'
 import { PUBLIC_COLOR_PRESET_GROUPS } from '../../theme/preset-catalog'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
-import { BloomSelectionKeys } from '../ui/BloomSelectionKeys'
 
 export default function SettingsAppearance() {
   const { colorPreset: currentPreset, setMode, setColorPreset } = useBloomTheme()
@@ -36,7 +35,7 @@ export default function SettingsAppearance() {
               thumbnails under it show the current accent in each mode. */}
           <div className="mt-8">
             <h3 className="text-sm font-medium text-foreground">Theme</h3>
-            <BloomSelectionKeys item="radio" className="mt-3 flex">
+            <div className="mt-3 flex">
               <SegmentedControl label="Theme" type="radio" value={previewMode} onValueChange={setMode}>
                 <SegmentedControlItem value="light">
                   <SegmentedControlItemText>Light</SegmentedControlItemText>
@@ -45,7 +44,7 @@ export default function SettingsAppearance() {
                   <SegmentedControlItemText>Dark</SegmentedControlItemText>
                 </SegmentedControlItem>
               </SegmentedControl>
-            </BloomSelectionKeys>
+            </div>
             <div className="mt-4 flex gap-3" aria-hidden="true">
               {(['light', 'dark'] as const).map((mode) => (
                 <div

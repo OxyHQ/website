@@ -8,7 +8,6 @@ import {
 } from '@oxy.so/bloom/segmented-control'
 import { useLocaleContext, useTranslation } from '../../lib/i18n'
 import LanguageDialog from './LanguageDialog'
-import { BloomSelectionKeys } from './BloomSelectionKeys'
 
 /** The control spans the panel, and its two segments share the width. */
 const STRETCH = { alignSelf: 'stretch' } as const
@@ -45,22 +44,20 @@ export function SettingsPanel({
       <p className="mb-1 px-2 pt-1 text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
         {t('common.theme')}
       </p>
-      <BloomSelectionKeys item="radio">
-        <SegmentedControl
-          label={t('common.theme')}
-          type="radio"
-          value={shown}
-          onValueChange={setMode}
-          style={STRETCH}
-        >
-          <SegmentedControlItem value="light">
-            <SegmentedControlItemText>{t('common.light')}</SegmentedControlItemText>
-          </SegmentedControlItem>
-          <SegmentedControlItem value="dark">
-            <SegmentedControlItemText>{t('common.dark')}</SegmentedControlItemText>
-          </SegmentedControlItem>
-        </SegmentedControl>
-      </BloomSelectionKeys>
+      <SegmentedControl
+        label={t('common.theme')}
+        type="radio"
+        value={shown}
+        onValueChange={setMode}
+        style={STRETCH}
+      >
+        <SegmentedControlItem value="light">
+          <SegmentedControlItemText>{t('common.light')}</SegmentedControlItemText>
+        </SegmentedControlItem>
+        <SegmentedControlItem value="dark">
+          <SegmentedControlItemText>{t('common.dark')}</SegmentedControlItemText>
+        </SegmentedControlItem>
+      </SegmentedControl>
 
       {showLanguage && (
         <>

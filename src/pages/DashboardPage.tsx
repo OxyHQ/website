@@ -7,7 +7,6 @@ import {
   SegmentedControlItem,
   SegmentedControlItemText,
 } from "@oxy.so/bloom/segmented-control";
-import { BloomSelectionKeys } from "../components/ui/BloomSelectionKeys";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import SEO from "../components/SEO";
@@ -131,22 +130,20 @@ export default function DashboardPage() {
               </div>
             )}
             {!hideControls && <div className="flex items-center gap-2">
-              <BloomSelectionKeys item="radio">
-                <SegmentedControl
-                  label={t('dashboard.mapView')}
-                  type="radio"
-                  size="sm"
-                  value={isGlobe ? "globe" : "flat"}
-                  onValueChange={(next) => setIsGlobe(next === "globe")}
-                >
-                  <SegmentedControlItem value="flat" accessibilityLabel={t('dashboard.mapFlat')}>
-                    <SegmentedControlItemText>2D</SegmentedControlItemText>
-                  </SegmentedControlItem>
-                  <SegmentedControlItem value="globe" accessibilityLabel={t('dashboard.mapGlobe')}>
-                    <SegmentedControlItemText>3D</SegmentedControlItemText>
-                  </SegmentedControlItem>
-                </SegmentedControl>
-              </BloomSelectionKeys>
+              <SegmentedControl
+                label={t('dashboard.mapView')}
+                type="radio"
+                size="sm"
+                value={isGlobe ? "globe" : "flat"}
+                onValueChange={(next) => setIsGlobe(next === "globe")}
+              >
+                <SegmentedControlItem value="flat" accessibilityLabel={t('dashboard.mapFlat')}>
+                  <SegmentedControlItemText>2D</SegmentedControlItemText>
+                </SegmentedControlItem>
+                <SegmentedControlItem value="globe" accessibilityLabel={t('dashboard.mapGlobe')}>
+                  <SegmentedControlItemText>3D</SegmentedControlItemText>
+                </SegmentedControlItem>
+              </SegmentedControl>
               <button
                 type="button"
                 onClick={toggleFullscreen}

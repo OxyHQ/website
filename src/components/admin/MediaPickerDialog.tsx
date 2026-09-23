@@ -13,7 +13,6 @@ import {
 import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs'
 import { useTheme } from '@oxy.so/bloom/theme'
 import { LabeledTextField } from './LabeledTextField'
-import { BloomSelectionKeys } from '../ui/BloomSelectionKeys'
 import { API_BASE, getAuthHeaders } from '../../api/client'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -106,12 +105,12 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
         </div>
 
         {/* Tabs */}
-        <BloomSelectionKeys item="tab" label="Media source" className="border-b border-border px-4">
-          <Tabs value={tab} onValueChange={(next) => setTab(next as MediaTab)}>
+        <div className="border-b border-border px-4">
+          <Tabs label="Media source" value={tab} onValueChange={(next) => setTab(next as MediaTab)}>
             <TabsTrigger value="library" label="Library" />
             <TabsTrigger value="upload" label="Upload" />
           </Tabs>
-        </BloomSelectionKeys>
+        </div>
 
         {/* Content */}
         <div className="min-h-0 flex-1 overflow-y-auto p-6">
@@ -156,21 +155,19 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
                   onValueChange={setSearch}
                   style={{ flex: 1, minWidth: 200 }}
                 />
-                <BloomSelectionKeys item="radio">
-                  <SegmentedControl
-                    type="radio"
-                    size="sm"
-                    label="Media type"
-                    value={typeFilter}
-                    onValueChange={setTypeFilter}
-                  >
-                    {TYPE_FILTERS.map((filter) => (
-                      <SegmentedControlItem key={filter.value} value={filter.value}>
-                        <SegmentedControlItemText>{filter.label}</SegmentedControlItemText>
-                      </SegmentedControlItem>
-                    ))}
-                  </SegmentedControl>
-                </BloomSelectionKeys>
+                <SegmentedControl
+                  type="radio"
+                  size="sm"
+                  label="Media type"
+                  value={typeFilter}
+                  onValueChange={setTypeFilter}
+                >
+                  {TYPE_FILTERS.map((filter) => (
+                    <SegmentedControlItem key={filter.value} value={filter.value}>
+                      <SegmentedControlItemText>{filter.label}</SegmentedControlItemText>
+                    </SegmentedControlItem>
+                  ))}
+                </SegmentedControl>
               </div>
 
               {/* Grid */}

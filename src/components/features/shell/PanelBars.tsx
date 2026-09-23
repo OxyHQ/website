@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { Tabs, TabsTrigger } from '@oxy.so/bloom/tabs'
-import { BloomSelectionKeys } from '../../ui/BloomSelectionKeys'
 import { PANEL_HEADER_HEIGHT, PANEL_TABBAR_HEIGHT } from './boardChrome'
 
 /**
@@ -49,12 +48,12 @@ export function PanelTabs({ label, tabs, active, onSelect }: {
   onSelect: (key: string) => void
 }) {
   return (
-    <BloomSelectionKeys item="tab" label={label} className="flex flex-col justify-end" style={{ height: PANEL_TABBAR_HEIGHT }}>
-      <Tabs value={active} onValueChange={onSelect} fullWidth>
+    <div className="flex flex-col justify-end" style={{ height: PANEL_TABBAR_HEIGHT }}>
+      <Tabs label={label} value={active} onValueChange={onSelect} fullWidth>
         {tabs.map((tab) => (
           <TabsTrigger key={tab.key} value={tab.key} label={tab.label} />
         ))}
       </Tabs>
-    </BloomSelectionKeys>
+    </div>
   )
 }
