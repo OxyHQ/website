@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
-import { Check, Copy } from 'lucide-react'
 import { cn } from '../../lib/utils'
-import { reactNodeToText, useCopyToClipboard } from '../../lib/useCopyToClipboard'
+import CodeBlock from '../../content/_components/CodeBlock'
 
 /* -------------------------------- Code -------------------------------- */
 
@@ -113,46 +112,21 @@ export function LiveExample({ title, children, source }: LiveExampleProps) {
 /* -------------------------------- MdxPre ------------------------------ */
 
 /**
- * Fenced code blocks (```lang). Renders the code in a compact card with a
- * language pill and a hover copy button. Inline `code` keeps its own pill via
+ * Fenced code blocks (```lang). The fence's language comes through as the
+ * inner `<code className="language-x">`; the block itself is the site's
+ * `CodeBlock` (Bloom's code card), so a fenced block and an explicit
+ * `<CodeBlock>` look and copy the same. Inline `code` keeps its own pill via
  * the tag map, so this only owns block code.
  */
 export function MdxPre({ children }: { children?: ReactNode }) {
-  const { copied, copy } = useCopyToClipboard()
-  const text = reactNodeToText(children)
   let language: string | undefined
   if (children && typeof children === 'object' && 'props' in children) {
     const className = (children as { props?: { className?: string } }).props?.className ?? ''
     language = /language-([\w-]+)/.exec(className)?.[1]
   }
   return (
-    <figure className="not-prose group relative my-5 overflow-hidden rounded-xl border border-border bg-surface">
-      <div className="absolute right-2 top-2 z-10 flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-        {language ? (
-          <span className="rounded bg-background/80 px-1.5 py-0.5 text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
-            {language}
-          </span>
-        ) : null}
-        <button
-          type="button"
-          onClick={() => copy(text)}
-          aria-label="Copy code to clipboard"
-          className="inline-flex items-center gap-1 rounded-md border border-border bg-background/80 px-2 py-1 text-body-xs text-muted-foreground transition-colors hover:text-foreground"
-        >
-          {copied ? (
-            <>
-              <Check className="size-3" aria-hidden /> Copied
-            </>
-          ) : (
-            <>
-              <Copy className="size-3" aria-hidden /> Copy
-            </>
-          )}
-        </button>
-      </div>
-      <pre className="overflow-x-auto p-4 text-[13px] leading-relaxed text-foreground">
-        <code className="font-mono">{text}</code>
-      </pre>
-    </figure>
+    <CodeBlock language={language} className="my-5">
+      {children}
+    </CodeBlock>
   )
 }
