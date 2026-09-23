@@ -531,22 +531,14 @@
   color: var(--foreground);
 }
 .brand-disclosure {
-  display: flex;
-  justify-content: space-between;
-  gap: 2rem;
+  display: block;
   text-align: left;
   font-size: 1.75rem;
   line-height: 1.2;
-  border-bottom: 1px solid var(--border);
-  padding: 3rem 0 1.5rem;
-  width: 100%;
   letter-spacing: -0.025em;
 }
-.brand-disclosure svg {
-  flex-shrink: 0;
-}
 .brand-disclosure-answer {
-  padding: 1.5rem 0;
+  padding: 0.5rem 0 0.5rem;
   font-size: 1rem;
   line-height: 1.5;
 }

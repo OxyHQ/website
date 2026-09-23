@@ -1,4 +1,4 @@
-import { FaqQuestion, type FaqItem } from './FaqAccordion'
+import { FaqQuestions, type FaqItem } from './FaqAccordion'
 
 export interface FaqGroup {
   title: string
@@ -44,9 +44,7 @@ export default function FaqDirectory({ groups }: FaqDirectoryProps) {
             <h2 id={groupId(index)} className="scroll-mt-[calc(var(--header-height)+6rem)] pb-10 text-h4 text-gray-a1">
               {group.title}
             </h2>
-            {group.items.map((item) => (
-              <FaqQuestion key={item.question} item={item} />
-            ))}
+            <FaqQuestions items={group.items} idPrefix={groupId(index)} />
           </div>
         ))}
       </div>

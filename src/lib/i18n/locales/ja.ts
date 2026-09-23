@@ -627,7 +627,7 @@ const ja: Translations = {
   seo: {
     siteName: 'Oxy',
   },
-  dashboard: { ...en.dashboard,
+  dashboard: { ...en.dashboard, mapView: '地図の表示', mapFlat: '平面地図', mapGlobe: '地球儀',
     traffic: {"identity": "認証", "ai": "AI", "communication": "メッセージ", "media": "メディア", "platform": "プラットフォーム", "internal": "内部", "external": "外部", "inbound": "受信", "outbound": "送信"}, totalUsers: '総ユーザー数', infrastructureActivity: 'ライブインフラ活動', waitingActivity: '匿名アクティビティを待機中…', activeRegions: '稼働中のリージョン', networkOrigins: 'ライブネットワーク発信元', contentPerUser: 'コンテンツ / ユーザー', itemsPerUser: '項目 / ユーザー', activeSessions: 'アクティブセッション', developerApps: '開発者アプリ', storedFiles: '保存ファイル', files: 'ファイル', messages: 'メッセージ', notifications: '通知', transactions: '取引', noneYet: 'まだありません', aiModels: 'AIモデル', connections: 'つながり', platformActivity: 'プラットフォーム活動', metricDetail: '{metric} は実際のデータから計算され、自動更新されます。' },
   errors: {
     notFoundTitle: '404 — ページが見つかりません',

@@ -79,7 +79,7 @@
   .dashboard-line-stroke { animation: none; stroke-dashoffset: 0; }
   .dashboard-card-body,
   .dashboard-card-detail,
-  .dashboard-chevron svg,
+  .dashboard-chevron > span,
   .dashboard-subnet-bars > span,
   .dashboard-trading-bars > span { transition: none; }
 }

@@ -3,6 +3,7 @@ import { Link } from '../lib/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowUpRight, ArrowDown, Plus, Minus } from '@phosphor-icons/react'
 import { LogoIcon, LogoText } from '@oxy.so/services/ui/client'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@oxy.so/bloom/accordion'
 import { APP_COLOR_PRESETS, type AppColorName } from '@oxy.so/bloom/color-presets'
 import PageShell from '../components/layout/PageShell'
 import { recipeStyle } from '../components/brand/recipe-style'
@@ -219,9 +220,12 @@ function TypeStudio() {
     </div>
   )
 }
+/** The specimen's rhythm: room above the question, the rule close under it. */
+const DISCLOSURE_TRIGGER_STYLE = { paddingTop: 48, paddingBottom: 24, paddingHorizontal: 0 }
+
 function MotionStudio() {
   const [replay, setReplay] = useState(0)
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState<string | string[] | undefined>(undefined)
   const reduce = useReducedMotion()
   return (
     <div className="brand-motion-studio" style={recipeStyle('grove', 'light')}>
@@ -241,18 +245,19 @@ function MotionStudio() {
       </div>
       <div className="brand-motion-example">
         <span className="brand-meta">Motion that answers you.</span>
-        <button
-          className="brand-disclosure"
-          aria-expanded={open}
-          aria-controls="brand-motion-answer"
-          onClick={() => setOpen((v) => !v)}
-        >
-          What changes when I open this? {open ? <Minus size={28} /> : <Plus size={28} />}
-        </button>
-        <div id="brand-motion-answer" hidden={!open} className="brand-disclosure-answer">
-          The answer stays connected to the question. The control changes state. Nothing else on the
-          page needs to move.
-        </div>
+        <Accordion type="single" value={open} onValueChange={setOpen}>
+          <AccordionItem value="answer">
+            <AccordionTrigger style={DISCLOSURE_TRIGGER_STYLE}>
+              <span className="brand-disclosure">What changes when I open this?</span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div inert={open !== 'answer'} className="brand-disclosure-answer">
+                The answer stays connected to the question. The control changes state. Nothing else
+                on the page needs to move.
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
         <p>
           Use movement to reveal, connect and respond. Give large scenes time to settle; keep
           everyday controls immediate.

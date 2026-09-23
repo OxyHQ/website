@@ -115,7 +115,7 @@ export default function FeatureBoardPage() {
               action={proposeButton}
             />
           }
-          tabs={<PanelTabs tabs={TABS} active={view} onSelect={(key) => setParam('view', key === 'board' ? '' : key)} />}
+          tabs={<PanelTabs label="Feature board" tabs={TABS} active={view} onSelect={(key) => setParam('view', key === 'board' ? '' : key)} />}
           rail={
             <BoardRail
               query={query}

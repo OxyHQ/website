@@ -17,6 +17,12 @@ import {
   type ColorPresetRecipe,
 } from '@oxy.so/bloom/color-presets';
 import {
+  SegmentedControl,
+  SegmentedControlItem,
+  SegmentedControlItemText,
+} from '@oxy.so/bloom/segmented-control';
+import { BloomSelectionKeys } from '../ui/BloomSelectionKeys';
+import {
   resolveLabPalette,
   type ColorMode,
   type LabPalette,
@@ -731,30 +737,22 @@ export default function ColorSystemPlayground() {
 
       <View style={styles.viewerModeRow}>
         <Text style={styles.viewerModeLabel}>Mention state</Text>
-        <View style={styles.viewerModeControl}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityState={{ selected: authenticated }}
-            aria-pressed={authenticated}
-            onPress={() => setAuthenticated(true)}
-            style={[styles.viewerModeButton, authenticated && styles.viewerModeButtonSelected]}
+        <BloomSelectionKeys item="radio">
+          <SegmentedControl
+            label="Mention state"
+            type="radio"
+            size="sm"
+            value={authenticated ? 'signed-in' : 'public'}
+            onValueChange={(next) => setAuthenticated(next === 'signed-in')}
           >
-            <Text style={[styles.viewerModeButtonText, authenticated && styles.viewerModeButtonTextSelected]}>
-              Signed in
-            </Text>
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityState={{ selected: !authenticated }}
-            aria-pressed={!authenticated}
-            onPress={() => setAuthenticated(false)}
-            style={[styles.viewerModeButton, !authenticated && styles.viewerModeButtonSelected]}
-          >
-            <Text style={[styles.viewerModeButtonText, !authenticated && styles.viewerModeButtonTextSelected]}>
-              Public view
-            </Text>
-          </Pressable>
-        </View>
+            <SegmentedControlItem value="signed-in">
+              <SegmentedControlItemText>Signed in</SegmentedControlItemText>
+            </SegmentedControlItem>
+            <SegmentedControlItem value="public">
+              <SegmentedControlItemText>Public view</SegmentedControlItemText>
+            </SegmentedControlItem>
+          </SegmentedControl>
+        </BloomSelectionKeys>
       </View>
 
       <View style={styles.previewRow}>
@@ -1016,30 +1014,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     fontWeight: '800',
-  },
-  viewerModeControl: {
-    padding: 4,
-    borderRadius: 999,
-    backgroundColor: 'var(--muted)',
-    flexDirection: 'row',
-    gap: 4,
-  },
-  viewerModeButton: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
-  },
-  viewerModeButtonSelected: {
-    backgroundColor: 'var(--card)',
-  },
-  viewerModeButtonText: {
-    color: 'var(--muted-foreground)',
-    fontSize: 11,
-    lineHeight: 15,
-    fontWeight: '700',
-  },
-  viewerModeButtonTextSelected: {
-    color: 'var(--foreground)',
   },
   previewRow: {
     gap: 32,

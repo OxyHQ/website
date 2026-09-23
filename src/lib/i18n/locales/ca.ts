@@ -627,7 +627,7 @@ const ca: Translations = {
   seo: {
     siteName: 'Oxy',
   },
-  dashboard: { ...en.dashboard,
+  dashboard: { ...en.dashboard, mapView: 'Vista del mapa', mapFlat: 'Mapa pla', mapGlobe: 'Globus',
     traffic: {"identity": "Identitat", "ai": "IA", "communication": "Missatges", "media": "Multimèdia", "platform": "Plataforma", "internal": "Intern", "external": "Extern", "inbound": "Entrant", "outbound": "Sortint"}, totalUsers: 'Usuaris totals', infrastructureActivity: 'Activitat d’infraestructura en directe', waitingActivity: 'Esperant activitat anònima…', activeRegions: 'Regions actives', networkOrigins: 'Orígens de xarxa en directe', contentPerUser: 'Contingut / usuari', itemsPerUser: 'Elements / usuari', activeSessions: 'Sessions actives', developerApps: 'Apps de desenvolupador', storedFiles: 'Fitxers desats', files: 'Fitxers', messages: 'Missatges', notifications: 'Notificacions', transactions: 'Transaccions', noneYet: 'Encara cap', aiModels: 'Models d’IA', connections: 'Connexions', platformActivity: 'Activitat de plataforma', metricDetail: '{metric} es calcula amb dades reals i s’actualitza automàticament.' },
   errors: {
     notFoundTitle: '404 — Pàgina no trobada',
