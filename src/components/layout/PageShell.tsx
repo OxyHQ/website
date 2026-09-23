@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import SEO, { type SEOProps } from '../SEO'
+import { BrandScope } from '../../theme/BrandScope'
 
 interface PageShellProps {
   /**
@@ -50,15 +51,17 @@ export default function PageShell({
   children,
 }: PageShellProps) {
   return (
-    <div className={`flex min-h-screen max-w-screen flex-col overflow-x-clip ${className}`}>
-      <SEO {...seo} />
-      {navbar ?? <Navbar />}
-      {mainAsDiv ? (
-        <div className={mainClassName}>{children}</div>
-      ) : (
-        <main className={mainClassName}>{children}</main>
-      )}
-      <Footer hideTopDivider={hideFooterDivider} />
-    </div>
+    <BrandScope className={className}>
+      <div className={`flex min-h-screen max-w-screen flex-col overflow-x-clip ${className}`}>
+        <SEO {...seo} />
+        {navbar ?? <Navbar />}
+        {mainAsDiv ? (
+          <div className={mainClassName}>{children}</div>
+        ) : (
+          <main className={mainClassName}>{children}</main>
+        )}
+        <Footer hideTopDivider={hideFooterDivider} />
+      </div>
+    </BrandScope>
   )
 }

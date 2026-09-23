@@ -8,6 +8,7 @@ import { useSiteHeaderBottom } from '../../hooks/useSiteHeaderBottom'
 import DocsSubNav from './DocsSubNav'
 import { DocsCopyPageMenu } from './DocsCopyPageMenu'
 import { DocsPackageSidebar } from './DocsPackageSidebar'
+import { BrandScope } from '../../theme/BrandScope'
 import type { SidebarSection } from './docsTypes'
 
 export interface DocsShellProps {
@@ -94,6 +95,7 @@ export function DocsShell({
     pkg.versioned &&
     pkg.versions.length > 1
   return (
+    <BrandScope className="docs-theme">
     <div className="docs-theme relative antialiased bg-[color-mix(in_srgb,var(--primary)_4%,var(--background))]">
       <DocsSubNav />
 
@@ -213,5 +215,6 @@ export function DocsShell({
         </main>
       </div>
     </div>
+    </BrandScope>
   )
 }

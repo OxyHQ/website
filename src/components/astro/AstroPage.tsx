@@ -43,7 +43,9 @@ function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void 
       contentPadding={0}
       label={`Download Astro for ${current.label}`}
     >
-      <div className="relative w-full p-8">
+      {/* The dialog portals out of the page root, so the class carrying the
+       * Astro palette has to come along for the token utilities inside. */}
+      <div className="astro-theme relative w-full p-8">
         <div className="absolute right-3 top-3">
           <Button
             iconOnly
