@@ -471,7 +471,7 @@ export default function BrandPage() {
             ],
             [
               'Icons with a job',
-              'Use the shared Phosphor family consistently. Match weight and optical size. Label unfamiliar actions and reserve product marks for identity.',
+              'Use the shared Remix Icon family from Bloom consistently. Match Line or Fill and optical size. Label unfamiliar actions and reserve product marks for identity.',
             ],
           ]}
         />

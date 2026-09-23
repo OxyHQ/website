@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useSearchParams } from "react-router-dom";
 import { dashboardPresentation } from "../lib/dashboardPresentation";
-import { Maximize2, Minimize2 } from "lucide-react";
+import { Button } from "@oxy.so/bloom/button";
+import { RiCollapseDiagonalLine } from "@oxy.so/bloom/icons/RiCollapseDiagonalLine";
+import { RiFullscreenLine } from "@oxy.so/bloom/icons/RiFullscreenLine";
 import {
   SegmentedControl,
   SegmentedControlItem,
@@ -144,14 +146,15 @@ export default function DashboardPage() {
                   <SegmentedControlItemText>3D</SegmentedControlItemText>
                 </SegmentedControlItem>
               </SegmentedControl>
-              <button
-                type="button"
-                onClick={toggleFullscreen}
-                aria-label={isFullscreen ? t('dashboard.exitFullscreen') : t('dashboard.enterFullscreen')}
-                className="p-2 m-0 bg-transparent text-muted-foreground border border-solid border-border hover:text-foreground hover:bg-accent transition-colors duration-150 flex items-center justify-center outline-none focus-visible:ring cursor-pointer rounded-full"
-              >
-                {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-              </button>
+              <Button
+                iconOnly
+                size="sm"
+                appearance="outline"
+                tone="neutral"
+                leadingIcon={isFullscreen ? RiCollapseDiagonalLine : RiFullscreenLine}
+                accessibilityLabel={isFullscreen ? t('dashboard.exitFullscreen') : t('dashboard.enterFullscreen')}
+                onPress={toggleFullscreen}
+              />
             </div>}
           </header>
 

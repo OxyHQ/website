@@ -56,7 +56,7 @@ export interface HelpCategoryMeta {
   id: HelpCategoryId
   label: string
   description: string
-  /** Lucide icon slug used by `CategoryCardIcon`. */
+  /** Icon slug `CategoryCardIcon` maps to a Bloom Remix glyph (`CATEGORY_ICONS` in HelpPage). */
   icon: string
   order: number
 }
