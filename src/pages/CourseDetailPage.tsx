@@ -41,8 +41,8 @@ function CourseNotFound({ slug }: { slug: string }) {
   return (
     <AcademyShell
       seo={{
-        title: 'Course not found',
-        description: 'The course you are looking for does not exist.',
+        title: t('academy.notFoundCourse'),
+        description: t('academy.notFoundCourseBody'),
         canonicalPath: `/academy/${slug}`,
         noIndex: true,
       }}
@@ -89,7 +89,9 @@ export default function CourseDetailPage() {
     <AcademyShell
       seo={{
         title: course.title,
-        description: course.summary || `Learn ${course.title} on Oxy Academy.`,
+        // Course titles and summaries are content, not chrome; only the
+        // fallback sentence is a dictionary string (prerender uses it too).
+        description: course.summary || t('academy.seoCourseDescription', { course: course.title }),
         canonicalPath: `/academy/${course.slug}`,
         ogImage: course.coverImage || undefined,
         ogType: 'article',

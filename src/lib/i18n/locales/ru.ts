@@ -297,6 +297,9 @@ const ru: Translations = {
     notFoundLesson: 'Урок не найден',
     notFoundLessonBody: 'Такого урока нет, или он был перемещён.',
     backToAcademy: 'Вернуться в Академию',
+    seoDescription: 'Короткие курсы об Oxy ID, разработке на платформе и её самостоятельном развёртывании — от первых шагов до практик для продакшена.',
+    seoCourseDescription: '{course} — курс Академии Oxy.',
+    seoLessonTitle: '{lesson} — {course}',
   },
 }
 

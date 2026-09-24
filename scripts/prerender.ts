@@ -51,7 +51,8 @@ import { hasLocalizedVariants } from '../src/lib/localizedRoute'
 import { buildRedirectsFile } from './redirects.ts'
 import type { SeoData } from '../src/lib/seo'
 import type { SEOLocaleSeed } from '../src/entry-server'
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES, isRtlLocale, type Locale } from '../src/lib/i18n/types'
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, interpolate, isRtlLocale, type Locale } from '../src/lib/i18n/types'
+import en from '../src/lib/i18n/locales/en'
 import { featureRequestDescription, featureRequestPath } from '../src/lib/featureRequest'
 import { ACADEMY_COURSES } from '../src/content/academy-courses'
 import { bloomComponentRoutes } from './bloom-component-routes.ts'
@@ -92,6 +93,14 @@ process.env.NODE_ENV = 'production'
 /** Course metadata by slug, so academy titles match what the SPA renders. */
 const COURSE_BY_SLUG = new Map(ACADEMY_COURSES.map((course) => [course.slug, course]))
 const courseTitle = (slug: string): string => COURSE_BY_SLUG.get(slug)?.title ?? prettifySlug(slug)
+
+/**
+ * The Academy's chrome strings, read from the English dictionary the SPA's
+ * `t()` resolves for the default locale — so a prerendered academy `<title>`
+ * is the one the SPA renders, and a copy edit to the dictionary cannot leave
+ * the prerendered head behind.
+ */
+const ACADEMY_EN = en.academy
 
 const WEBSITE_ROOT = path.resolve(import.meta.dir, '..')
 const DIST_DIR = path.join(WEBSITE_ROOT, 'dist')
@@ -489,9 +498,8 @@ const STATIC_ROUTE_SEO: Record<string, SEOProps> = {
     canonicalPath: '/newsroom',
   },
   '/academy': {
-    title: 'Academy',
-    description:
-      'Short courses on Oxy ID, building on the platform and running it yourself, from first steps to production patterns.',
+    title: ACADEMY_EN.title,
+    description: ACADEMY_EN.seoDescription,
     canonicalPath: '/academy',
   },
   '/help': {
@@ -1018,7 +1026,7 @@ async function enumerateAcademyRoutes(): Promise<Array<{ url: string; seo: SEOPr
       seo: {
         // Mirrors `LessonPage`'s `<SEO title>`; the course title comes from the
         // same `ACADEMY_COURSES` catalog the SPA reads.
-        title: `${title}, ${courseTitle(course)}`,
+        title: interpolate(ACADEMY_EN.seoLessonTitle, { lesson: title, course: courseTitle(course) }),
         description,
         canonicalPath: `/academy/${slug}`,
       },
@@ -1031,7 +1039,9 @@ async function enumerateAcademyRoutes(): Promise<Array<{ url: string; seo: SEOPr
       seo: {
         // `CourseDetailPage` renders the bare `course.title`; match it exactly.
         title: meta?.title ?? prettifySlug(course),
-        description: meta?.summary ?? `Course: ${prettifySlug(course)} on Oxy Academy.`,
+        // `CourseDetailPage`'s fallback sentence, from the same dictionary key.
+        description:
+          meta?.summary || interpolate(ACADEMY_EN.seoCourseDescription, { course: meta?.title ?? prettifySlug(course) }),
         canonicalPath: `/academy/${course}`,
       },
     }

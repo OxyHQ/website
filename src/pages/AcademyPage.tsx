@@ -204,9 +204,10 @@ export default function AcademyPage() {
   return (
     <AcademyShell
       seo={{
-        title: 'Academy',
-        description:
-          'Short courses on Oxy ID, building on the platform and running it yourself, from first steps to production patterns.',
+        // `scripts/prerender.ts` reads the same two keys from the English
+        // dictionary, so the prerendered head matches this one byte for byte.
+        title: t('academy.title'),
+        description: t('academy.seoDescription'),
         canonicalPath: '/academy',
       }}
       query={query}

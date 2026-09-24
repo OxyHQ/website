@@ -48,8 +48,8 @@ function LessonNotFound({ courseSlug, lessonSlug }: { courseSlug: string; lesson
   return (
     <AcademyShell
       seo={{
-        title: 'Lesson not found',
-        description: 'The lesson you are looking for does not exist.',
+        title: t('academy.notFoundLesson'),
+        description: t('academy.notFoundLessonBody'),
         canonicalPath: `/academy/${courseSlug}/${lessonSlug}`,
         noIndex: true,
       }}
@@ -135,7 +135,7 @@ export default function LessonPage() {
   return (
     <AcademyShell
       seo={{
-        title: `${lesson.frontmatter.title}, ${courseMeta.title}`,
+        title: t('academy.seoLessonTitle', { lesson: lesson.frontmatter.title, course: courseMeta.title }),
         description: lesson.frontmatter.description,
         canonicalPath: `/academy/${courseMeta.slug}/${lesson.lessonSlug}`,
         ogType: 'article',

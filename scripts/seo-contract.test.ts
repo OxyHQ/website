@@ -4,7 +4,8 @@ import { hasLocalizedVariants } from '../src/lib/localizedRoute'
 import { buildRedirectsFile } from './redirects'
 import { isSpaFallbackPath } from '../src/lib/spaFallback'
 import { buildSitemapXml } from './sitemap'
-import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '../src/lib/i18n/types'
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, interpolate } from '../src/lib/i18n/types'
+import en from '../src/lib/i18n/locales/en'
 import {
   rewriteCrossPackageDocRootLinks,
   rewriteSiblingDocLinks,
@@ -343,5 +344,23 @@ describe('cross-package documentation roots', () => {
     const nested = '[Bloom label](/developers/docs/bloom/main/label)'
     expect(rewriteCrossPackageDocRootLinks(absent, roots)).toBe(absent)
     expect(rewriteCrossPackageDocRootLinks(nested, roots)).toBe(nested)
+  })
+})
+
+describe('academy titles come from the dictionary the SPA reads', () => {
+  test('the default-locale strings are the ones prerender has always emitted', () => {
+    expect(en.academy.title).toBe('Academy')
+    expect(interpolate(en.academy.seoLessonTitle, { lesson: 'What is Oxy?', course: 'Getting started with Oxy' })).toBe(
+      'What is Oxy?, Getting started with Oxy',
+    )
+  })
+
+  test('every locale keeps the placeholders its template is filled with', async () => {
+    for (const code of SUPPORTED_LOCALES) {
+      const { default: dict } = await import(`../src/lib/i18n/locales/${code}.ts`)
+      expect(dict.academy.seoLessonTitle).toContain('{lesson}')
+      expect(dict.academy.seoLessonTitle).toContain('{course}')
+      expect(dict.academy.seoCourseDescription).toContain('{course}')
+    }
   })
 })

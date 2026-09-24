@@ -297,6 +297,9 @@ const hi: Translations = {
     notFoundLesson: 'पाठ नहीं मिला',
     notFoundLessonBody: 'यह पाठ मौजूद नहीं है या हटा दिया गया है।',
     backToAcademy: 'अकादमी पर वापस जाएँ',
+    seoDescription: 'Oxy ID, प्लेटफ़ॉर्म पर निर्माण और उसे स्वयं चलाने पर छोटे कोर्स — पहले कदम से लेकर प्रोडक्शन पैटर्न तक।',
+    seoCourseDescription: '{course} — Oxy अकादमी का एक कोर्स।',
+    seoLessonTitle: '{lesson} — {course}',
   },
 }
 

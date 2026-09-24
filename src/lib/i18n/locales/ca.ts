@@ -250,6 +250,9 @@ const ca: Translations = {
     notFoundLesson: 'No s\'ha trobat la lliçó',
     notFoundLessonBody: 'Aquesta lliçó no existeix o s\'ha mogut.',
     backToAcademy: 'Torna a l\'Acadèmia',
+    seoDescription: 'Cursos breus sobre Oxy ID, com construir sobre la plataforma i com executar-la pel teu compte, des dels primers passos fins als patrons de producció.',
+    seoCourseDescription: '{course}, un curs de l’Acadèmia d’Oxy.',
+    seoLessonTitle: '{lesson}, {course}',
   },
   company: {
     seoTitle: 'Empresa',

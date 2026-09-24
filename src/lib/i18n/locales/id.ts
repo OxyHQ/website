@@ -297,6 +297,9 @@ const id: Translations = {
     notFoundLesson: 'Pelajaran tidak ditemukan',
     notFoundLessonBody: 'Pelajaran ini tidak ada atau telah dipindahkan.',
     backToAcademy: 'Kembali ke Akademi',
+    seoDescription: 'Kursus singkat tentang Oxy ID, membangun di atas platform, dan menjalankannya sendiri, dari langkah pertama hingga pola produksi.',
+    seoCourseDescription: '{course}, kursus di Akademi Oxy.',
+    seoLessonTitle: '{lesson}, {course}',
   },
 }
 

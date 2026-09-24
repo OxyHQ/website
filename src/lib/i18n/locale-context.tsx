@@ -18,7 +18,7 @@ import {
   type LocaleDict,
   type LocaleNode,
   type TranslateFn,
-  type TranslationVars,
+  interpolate,
 } from './types'
 import { LocaleContext, type LocaleContextValue } from './context'
 import en from './locales/en'
@@ -139,16 +139,6 @@ function lookup(dict: LocaleDict | undefined, key: string): string | undefined {
     }
   }
   return typeof node === 'string' ? node : undefined
-}
-
-/** Replace `{var}` tokens with values from `vars`. Single-brace tokens. */
-function interpolate(template: string, vars?: TranslationVars): string {
-  if (!vars) return template
-  let out = template
-  for (const k of Object.keys(vars)) {
-    out = out.replaceAll(`{${k}}`, String(vars[k]))
-  }
-  return out
 }
 
 interface ApiLocale {
