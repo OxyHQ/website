@@ -20,11 +20,14 @@
  * mirrors, hreflang annotations and sitemap alternates all come back together,
  * because all three read this function.
  */
-const UNTRANSLATED_PREFIXES: readonly string[] = [
+export const UNTRANSLATED_PREFIXES: readonly string[] = [
   '/developers/docs',
   // The declaration currently has English copy only. Add locale siblings before
   // advertising translated routes or reciprocal hreflang alternatives.
   '/company/influence',
+  // Courses and lessons are English MDX with no `.es.mdx`/`.ca.mdx` siblings;
+  // the chrome is translated, the teaching is not. Drop this once lessons are.
+  '/academy',
 ]
 
 /**

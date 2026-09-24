@@ -32,6 +32,8 @@
  * locales this build actually mirrored — a fact only the prerender knows.
  */
 
+import { UNTRANSLATED_PREFIXES } from '../src/lib/localizedRoute'
+
 /** Retired URLs that are still linked from outside. */
 const LEGACY_REDIRECTS: ReadonlyArray<readonly [from: string, to: string]> = [
   ['/technologies', '/apps/'],
@@ -159,13 +161,16 @@ export function buildRedirectsFile(opts: RedirectsOptions): string {
   const mirrored = opts.localeReadinessKnown ? opts.mirroredLocales : []
   if (mirrored.length > 0) {
     push(
-      '# Mirrored locales do not mirror the synced developer documentation — it has',
-      '# no translated source, so `/es/developers/docs/…` only ever served the',
-      '# English page under a second URL. See src/lib/localizedRoute.ts.',
+      '# Mirrored locales do not mirror what has no translated source — the synced',
+      '# developer documentation, the Academy lessons, English-only declarations —',
+      '# so `/es/developers/docs/…` only ever served the English page under a',
+      '# second URL. The list is UNTRANSLATED_PREFIXES in src/lib/localizedRoute.ts.',
     )
     for (const code of mirrored) {
-      push(...rule(`/${code}/developers/docs`, '/developers/docs/', 301))
-      push(...rule(`/${code}/developers/docs/*`, '/developers/docs/:splat', 301))
+      for (const prefix of UNTRANSLATED_PREFIXES) {
+        push(...rule(`/${code}${prefix}`, `${prefix}/`, 301))
+        push(...rule(`/${code}${prefix}/*`, `${prefix}/:splat`, 301))
+      }
     }
     push('')
   }
