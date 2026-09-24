@@ -1,3 +1,5 @@
+import { Item } from '@oxy.so/bloom/item'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
 import { Link } from '../../lib/navigation'
 import type { NavDropdownItem as NavDropdownItemType } from '../../data/content'
 import type { CSSProperties } from 'react'
@@ -85,27 +87,45 @@ interface NavDropdownItemProps {
 }
 
 /*
- * `px-space-sm` is the inset the section heading above carries, so the heading's
- * text and the item's mark start on one line. `h-fit`, not `h-full`: an item is
- * as tall as what it holds, and a two-line description next door no longer
- * stretches its neighbours to match.
+ * The link is the row's hit area and its hover wash; `Item` draws the row
+ * inside it (the pattern the Academy rail uses). `Item` becomes a pressable
+ * BUTTON when it is given `onPress`, and a panel row is a link — it opens in a
+ * new tab, it is crawlable, it prefetches — so the anchor stays the interactive
+ * element and `Item` stays static.
+ *
+ * `h-fit`, not `h-full`: an item is as tall as what it holds, and a two-line
+ * description next door does not stretch its neighbours to match. The focus
+ * ring is Bloom's outline recipe on its `ring` role; the row had none.
  */
-const linkClass = "group relative flex h-fit w-full items-start gap-space-sm rounded-full px-space-sm py-space-xs transition-colors duration-150 hover:bg-foreground/5 active:bg-foreground/10"
+const linkClass = "group block h-fit w-full rounded-full outline-offset-2 transition-colors duration-150 hover:bg-foreground/5 focus-visible:bg-foreground/5 focus-visible:outline-2 focus-visible:outline-ring active:bg-foreground/10"
+
+/*
+ * `Item`'s own geometry is a settings row's (16px inset, 44px floor, centred).
+ * The panel's rows keep theirs: the 8px inset the section heading above
+ * carries, so the heading's text and the item's mark start on one line; the
+ * mark pinned to the title's line rather than centred on a two-line
+ * description; and no floor.
+ */
+const itemStyle = {
+  alignItems: 'flex-start',
+  gap: 8,
+  paddingLeft: 8,
+  paddingRight: 8,
+  paddingTop: 4,
+  paddingBottom: 4,
+  minHeight: 0,
+} as const
 
 function isExternalItem(item: NavDropdownItemType): boolean {
   return item.external ?? !item.href.startsWith('/')
 }
 
+/** The "opens elsewhere" mark, in the row's trailing slot. */
 function ExternalLinkMark() {
   return (
-    <svg
-      aria-hidden="true"
-      className="pointer-events-none absolute end-2 top-2 size-3.5 text-muted-foreground"
-      viewBox="0 -960 960 960"
-      fill="currentColor"
-    >
-      <path d="M640-624 284-268q-11 11-28 11t-28-11q-11-11-11-28t11-28l356-356H280q-17 0-28.5-11.5T240-720q0-17 11.5-28.5T280-760h400q17 0 28.5 11.5T720-720v400q0 17-11.5 28.5T680-280q-17 0-28.5-11.5T640-320v-304Z" />
-    </svg>
+    <span aria-hidden="true" className="inline-flex pt-1 text-muted-foreground">
+      <RiArrowRightUpLine width={14} height={14} fill="currentColor" />
+    </span>
   )
 }
 
@@ -159,37 +179,34 @@ function ItemIcon({ item, loadImage }: { item: NavDropdownItemType; loadImage: b
   )
 }
 
-function ItemContent({ item, loadImage }: { item: NavDropdownItemType; loadImage: boolean }) {
+function ItemRow({ item, loadImage }: { item: NavDropdownItemType; loadImage: boolean }) {
   return (
-    <>
-      <ItemIcon item={item} loadImage={loadImage} />
-
-      <span className="flex min-w-0 flex-col gap-space-3xs">
-        <span className="text-body-md font-medium text-foreground">{item.title}</span>
-        <span className="text-body-xs text-muted-foreground transition-colors duration-150 group-hover:text-foreground/80">
+    <Item
+      style={itemStyle}
+      leading={<ItemIcon item={item} loadImage={loadImage} />}
+      title={<span className="text-body-md font-medium text-foreground">{item.title}</span>}
+      subtitle={
+        <span className="mt-space-3xs text-body-xs text-muted-foreground transition-colors duration-150 group-hover:text-foreground/80">
           {item.description}
         </span>
-      </span>
-      {isExternalItem(item) ? <ExternalLinkMark /> : null}
-    </>
+      }
+      trailing={isExternalItem(item) ? <ExternalLinkMark /> : undefined}
+    />
   )
 }
 
 export default function NavDropdownItem({ item, loadImage = true }: NavDropdownItemProps) {
-  const external = isExternalItem(item)
-  const className = `${linkClass}${external ? ' pr-7' : ''}`
-
-  if (!external) {
+  if (!isExternalItem(item)) {
     return (
-      <Link to={item.href} className={className}>
-        <ItemContent item={item} loadImage={loadImage} />
+      <Link to={item.href} className={linkClass}>
+        <ItemRow item={item} loadImage={loadImage} />
       </Link>
     )
   }
 
   return (
-    <a href={item.href} target="_blank" rel="noopener noreferrer" className={className}>
-      <ItemContent item={item} loadImage={loadImage} />
+    <a href={item.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <ItemRow item={item} loadImage={loadImage} />
     </a>
   )
 }
