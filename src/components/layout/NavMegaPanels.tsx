@@ -38,7 +38,7 @@ export function NavCard({
       </span>
     </>
   )
-  const cardClass = `group flex h-fit flex-col gap-space-sm rounded-md p-space-sm transition-colors duration-150 hover:bg-foreground/5 active:bg-foreground/10 ${className}`
+  const cardClass = `group flex h-fit flex-col gap-space-sm rounded-md p-space-sm outline-offset-2 transition-colors duration-150 hover:bg-foreground/5 focus-visible:bg-foreground/5 focus-visible:outline-2 focus-visible:outline-ring active:bg-foreground/10 ${className}`
 
   if (card.href.startsWith('/')) {
     return (

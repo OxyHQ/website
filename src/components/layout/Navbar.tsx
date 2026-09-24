@@ -1,4 +1,5 @@
-import { lazy, Suspense, useState, useRef, useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
+import { lazy, Suspense, useState, useRef, useCallback, useId, useLayoutEffect, useMemo, useSyncExternalStore, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, type FocusEvent as ReactFocusEvent } from 'react'
+import { Button } from '@oxy.so/bloom/button'
 import { useLocation } from 'react-router-dom'
 import { Link, useNavigate } from '../../lib/navigation'
 import { LogoIcon, useAuth, useOxy } from '@oxy.so/services/ui/client'
@@ -31,7 +32,11 @@ import { RiLoginBoxLine } from '@oxy.so/bloom/icons/RiLoginBoxLine'
 import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
 import { RiSettings3Line } from '@oxy.so/bloom/icons/RiSettings3Line'
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
+import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
+import { RiArrowLeftSLine } from '@oxy.so/bloom/icons/RiArrowLeftSLine'
+import { RiArrowRightSLine } from '@oxy.so/bloom/icons/RiArrowRightSLine'
 import { ArrowRightIcon } from '../icons'
+import { NavBarButton, type NavBarInk } from './NavBarButton'
 import { useAdminAccess } from '../../hooks/useAdminAccess'
 
 /** Pseudo-dropdown key for the settings panel (theme + language), routed through
@@ -68,12 +73,53 @@ function translatedNavLabel(label: string, t: (key: string) => string): string {
   return key ? t(key) : label
 }
 
-/* ─── SVG Icons ─── */
-function ChevronDown({ className = '' }: { className?: string }) {
+/* ─── Keyboard ─── */
+
+/** What Tab can reach inside a panel or the bar, in document order. */
+const TABBABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]'
+
+function tabbables(root: Element | null | undefined): HTMLElement[] {
+  if (!root) return []
+  return Array.from(root.querySelectorAll<HTMLElement>(TABBABLE)).filter(
+    (el) => el.tabIndex >= 0 && el.getAttribute('aria-hidden') !== 'true' && getComputedStyle(el).visibility !== 'hidden' && el.getClientRects().length > 0,
+  )
+}
+
+/**
+ * The next element a list move lands on, wrapping at both ends. Bloom's own
+ * roving-focus helpers (`hooks/roving-focus`) are internal to the package, so
+ * the arrow keys are the few lines here.
+ */
+function rovingTarget(items: HTMLElement[], current: Element | null, key: string): HTMLElement | null {
+  if (items.length === 0) return null
+  if (key === 'Home') return items[0]
+  if (key === 'End') return items[items.length - 1]
+  const index = current ? items.indexOf(current as HTMLElement) : -1
+  const step = key === 'ArrowDown' || key === 'ArrowRight' ? 1 : -1
+  if (index < 0) return step > 0 ? items[0] : items[items.length - 1]
+  return items[(index + step + items.length) % items.length]
+}
+
+/**
+ * The mobile menu's two-bar mark and the hairline cross it turns into. The one
+ * glyph pair that stays drawn here: Bloom's Remix set has only the three-bar
+ * `RiMenuLine`, at twice the weight, and swapping it in changed the bar on
+ * every phone-width page.
+ */
+function MenuGlyph({ open }: { open: boolean }) {
   return (
-    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
-      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="M5.25 7.125 9 10.875l3.75-3.75" />
+    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="24" height="24" fill="none">
+      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d={open ? 'm12.5 5.5-7 7m7 0-7-7' : 'M15 6H3M15 12H3'} />
     </svg>
+  )
+}
+
+/** The trigger's chevron, in the 18px box the design's own glyph had. */
+function TriggerChevron({ open }: { open: boolean }) {
+  return (
+    <span aria-hidden="true" className={`inline-flex size-[18px] items-center justify-center transition-transform duration-300 ${open ? 'translate-y-px' : ''}`}>
+      <RiArrowDownSLine width={16} height={16} fill="currentColor" />
+    </span>
   )
 }
 
@@ -202,14 +248,14 @@ function DropdownContent({ dropdown, loadImages = true }: { dropdown: NavDropdow
               {link.href.startsWith('/') ? (
                 <Link
                   to={link.href}
-                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-md px-space-sm text-body-md text-foreground transition-colors duration-150 hover:bg-foreground/5"
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-md px-space-sm text-body-md text-foreground outline-offset-2 transition-colors duration-150 hover:bg-foreground/5 focus-visible:bg-foreground/5 focus-visible:outline-2 focus-visible:outline-ring"
                 >
                   {link.label}
                 </Link>
               ) : (
                 <a
                   href={link.href}
-                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-md px-space-sm text-body-md text-foreground transition-colors duration-150 hover:bg-foreground/5"
+                  className="inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-md px-space-sm text-body-md text-foreground outline-offset-2 transition-colors duration-150 hover:bg-foreground/5 focus-visible:bg-foreground/5 focus-visible:outline-2 focus-visible:outline-ring"
                 >
                   {link.label}
                 </a>
@@ -433,6 +479,22 @@ export default function Navbar({
   const measureRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({})
   const prevDropdownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  /** The on-screen panels (not the measurement copies), by dropdown key. */
+  const panelRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const bandRef = useRef<HTMLDivElement | null>(null)
+  const mobileToggleRef = useRef<HTMLButtonElement | null>(null)
+  /**
+   * Where focus goes once a panel opened from the keyboard is on screen. It is
+   * hidden (`visibility`) until the render that opens it commits, so the move
+   * waits for the layout effect below.
+   */
+  const pendingFocusRef = useRef<{ key: string; edge: 'first' | 'last' } | null>(null)
+  const idBase = useId()
+  const panelId = (key: string) => `${idBase}-panel-${key === SETTINGS_DROPDOWN_KEY ? 'settings' : dropdownLabels.indexOf(key)}`
+  const mobilePanelId = `${idBase}-mobile`
+  const mobileRowRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+  const mobileBackRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+  const lastMobile = useRef<{ open: boolean; panel: string | null }>({ open: false, panel: null })
 
   // Scheduled imperatively from openDropdown when we swap prevDropdown, so no
   // effect is needed to watch state transitions.
@@ -509,6 +571,148 @@ export default function Navbar({
       closeTimeoutRef.current = null
     }
   }, [])
+
+  /*
+   * ─── Keyboard: the WAI-ARIA disclosure-navigation pattern ───
+   *
+   * The triggers only ever answered the pointer: Enter did nothing, so no panel
+   * could be opened without a mouse. Now Enter, Space and ArrowDown open the
+   * panel and move focus to its first link (ArrowUp to its last); the arrows,
+   * Home and End walk its links; Escape closes it and hands focus back to the
+   * trigger; Tab leaving it closes it. ArrowLeft/Right walk the bar itself.
+   *
+   * The band is rendered after the whole bar, so the DOM's tab order would run
+   * from a trigger to the NEXT trigger and reach the panel only after the
+   * sign-in button. Tab is therefore routed by hand at the three seams: trigger
+   * → first link, first link ⇧Tab → trigger, last link Tab → whatever follows
+   * the trigger in the bar.
+   */
+  useLayoutEffect(() => {
+    const pending = pendingFocusRef.current
+    if (!pending || pending.key !== activeDropdown) return
+    pendingFocusRef.current = null
+    const items = tabbables(panelRefs.current[pending.key])
+    // The band is `overflow: hidden` and still growing: a scrolling focus()
+    // would scroll the band itself and shift the panel out from under the bar.
+    ;(pending.edge === 'first' ? items[0] : items[items.length - 1])?.focus({ preventScroll: true })
+  }, [activeDropdown])
+
+  // The mobile menu's levels: an opened subpanel takes focus on its back row,
+  // so the keyboard lands where the eye does, and going back returns focus to
+  // the row that opened it. Only while the menu stays open — opening the menu
+  // leaves focus on its toggle.
+  useLayoutEffect(() => {
+    const last = lastMobile.current
+    lastMobile.current = { open: mobileOpen, panel: mobilePanel }
+    if (!mobileOpen || !last.open || last.panel === mobilePanel) return
+    if (mobilePanel) mobileBackRefs.current[mobilePanel]?.focus({ preventScroll: true })
+    else if (last.panel) mobileRowRefs.current[last.panel]?.focus({ preventScroll: true })
+  }, [mobileOpen, mobilePanel])
+
+  const openFromKeyboard = useCallback((key: string, edge: 'first' | 'last') => {
+    if (key === activeDropdown) {
+      const items = tabbables(panelRefs.current[key])
+      ;(edge === 'first' ? items[0] : items[items.length - 1])?.focus({ preventScroll: true })
+      return
+    }
+    pendingFocusRef.current = { key, edge }
+    openDropdown(key)
+  }, [activeDropdown, openDropdown])
+
+  const closeToTrigger = useCallback((key: string) => {
+    closeAll()
+    triggerRefs.current[key]?.focus()
+  }, [closeAll])
+
+  const onTriggerKeyDown = useCallback((event: ReactKeyboardEvent<HTMLButtonElement>, key: string) => {
+    switch (event.key) {
+      case 'Enter':
+      case ' ':
+        event.preventDefault()
+        if (key === activeDropdown) closeAll()
+        else openFromKeyboard(key, 'first')
+        return
+      case 'ArrowDown':
+        event.preventDefault()
+        openFromKeyboard(key, 'first')
+        return
+      case 'ArrowUp':
+        event.preventDefault()
+        openFromKeyboard(key, 'last')
+        return
+      case 'Tab':
+        if (!event.shiftKey && key === activeDropdown) {
+          const first = tabbables(panelRefs.current[key])[0]
+          if (first) {
+            event.preventDefault()
+            first.focus({ preventScroll: true })
+          }
+        }
+        return
+      case 'ArrowLeft':
+      case 'ArrowRight':
+      case 'Home':
+      case 'End': {
+        if (key === SETTINGS_DROPDOWN_KEY) return
+        const bar = Array.from(navLinksRef.current?.querySelectorAll<HTMLElement>(':scope > li > button, :scope > li > a') ?? [])
+        const target = rovingTarget(bar, event.currentTarget, event.key)
+        if (target) {
+          event.preventDefault()
+          target.focus()
+        }
+        return
+      }
+    }
+  }, [activeDropdown, closeAll, openFromKeyboard])
+
+  const onBandKeyDown = useCallback((event: ReactKeyboardEvent<HTMLDivElement>) => {
+    const key = activeDropdown
+    if (!key) return
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      closeToTrigger(key)
+      return
+    }
+    const items = tabbables(panelRefs.current[key])
+    const index = items.indexOf(document.activeElement as HTMLElement)
+    if (event.key === 'Tab') {
+      if (event.shiftKey && index === 0) {
+        event.preventDefault()
+        triggerRefs.current[key]?.focus()
+      } else if (!event.shiftKey && index === items.length - 1) {
+        const bar = tabbables(navRowRef.current)
+        const after = bar[bar.indexOf(triggerRefs.current[key] as HTMLElement) + 1]
+        closeAll()
+        if (after) {
+          event.preventDefault()
+          after.focus()
+        }
+      }
+      return
+    }
+    // The settings panel's segmented control owns its own arrow keys.
+    if (key === SETTINGS_DROPDOWN_KEY) return
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Home' || event.key === 'End') {
+      const target = rovingTarget(items, document.activeElement, event.key)
+      if (target) {
+        event.preventDefault()
+        target.focus({ preventScroll: true })
+      }
+    }
+  }, [activeDropdown, closeAll, closeToTrigger])
+
+  /**
+   * Focus that leaves both the open panel and its trigger closes the panel. Only
+   * a move to ANOTHER element counts: a click on a panel's empty padding blurs
+   * to nothing, and the pointer resting on the panel still wants it open.
+   */
+  const onDisclosureBlur = useCallback((event: ReactFocusEvent<HTMLElement>) => {
+    const key = activeDropdown
+    const next = event.relatedTarget as Node | null
+    if (!key || !next) return
+    if (bandRef.current?.contains(next) || triggerRefs.current[key] === next) return
+    closeAll()
+  }, [activeDropdown, closeAll])
 
   // React 19 callback ref — owns the global Escape handler lifecycle. Attaches when
   // the nav area mounts, detaches on unmount. Also clears every pending timer: the
@@ -686,39 +890,40 @@ export default function Navbar({
   )
   const flatResults = useMemo(() => groupedResults.flatMap((g) => g.items), [groupedResults])
 
-  // The ink the transparent bar writes in, and the wash its hovers use. Over a
-  // dark hero each control takes the `.force-dark` palette, so `foreground` is
-  // light ink whatever the toggle says; a light hero follows the page's own
-  // palette (Astro's backdrop darkens with the theme). The scope sits on the
-  // controls rather than the header so the logo keeps the page's brand colour.
-  const onLight = transparentOn === 'light'
-  const transparentInk = onLight ? 'text-foreground/70 hover:bg-foreground/5 hover:text-foreground' : 'force-dark text-foreground/80 hover:bg-foreground/10 hover:text-foreground'
-  const transparentHover = onLight ? 'hover:bg-foreground/5 hover:text-foreground' : 'force-dark hover:bg-foreground/10 hover:text-foreground'
-  const transparentColor = 'var(--color-foreground)'
-
-  const linkClassName = (isTp: boolean) =>
-      `inline-flex h-10 items-center justify-center rounded-full px-3 text-link-md transition-colors duration-300 ${
-      isTp ? transparentInk : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
-    }`
-
-  // Shared styling for the round icon buttons (search + settings).
-  const iconButtonClass = `group inline-flex size-10 cursor-pointer select-none items-center justify-center rounded-full transition-colors duration-300 ${isTransparent ? transparentInk : 'hover:bg-foreground/5 hover:text-foreground'}`
-  const iconButtonStyle = (active: boolean) => ({
-    background: active ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
-    color: active ? 'var(--color-foreground)' : isTransparent ? transparentColor : 'var(--color-muted-foreground)',
-  })
+  // The ink the bar writes in. Over a dark hero each control takes the
+  // `.force-dark` palette, so `foreground` is light ink whatever the toggle
+  // says; a light hero follows the page's own palette (Astro's backdrop darkens
+  // with the theme). The scope sits on the controls rather than the header so
+  // the logo keeps the page's brand colour. `NavBarButton` paints each state.
+  const barInk: NavBarInk = !isTransparent ? 'page' : transparentOn === 'light' ? 'onLight' : 'onDark'
+  const flatLinkClass = 'inline-flex items-center justify-center text-link-md'
+  const iconButtonClass = 'group inline-flex select-none items-center justify-center'
+  /** ArrowLeft/Right, Home/End walk the bar's triggers and links. */
+  const onBarLinkKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
+    const bar = Array.from(navLinksRef.current?.querySelectorAll<HTMLElement>(':scope > li > button, :scope > li > a') ?? [])
+    const target = rovingTarget(bar, event.currentTarget, event.key)
+    if (target) {
+      event.preventDefault()
+      target.focus()
+    }
+  }
   const authControl = (avatarSize: number) => {
     if (!isAuthResolved || !isAuthenticated) {
       return (
-        <button
-          type="button"
-          className={iconButtonClass}
-          aria-label={t('common.signIn')}
-          disabled={!isAuthResolved}
-          onClick={() => { void signIn() }}
-        >
-          <RiLoginBoxLine aria-hidden width={18} height={18} fill="currentColor" />
-        </button>
+        // `soft`: over a hero, sign-in has always sat a step quieter than the
+        // search and settings buttons beside it.
+        <NavBarButton ink={barInk} rest="soft" square>
+          <button
+            type="button"
+            className={iconButtonClass}
+            aria-label={t('common.signIn')}
+            disabled={!isAuthResolved}
+            onClick={() => { void signIn() }}
+          >
+            <RiLoginBoxLine aria-hidden width={18} height={18} fill="currentColor" />
+          </button>
+        </NavBarButton>
       )
     }
     return (
@@ -754,15 +959,37 @@ export default function Navbar({
                 </span>
                 <ArrowRightIcon className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50" />
               </Link>
-              <button
-                className="absolute top-1/2 right-0 inline-flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full text-base text-primary-foreground/70 transition-colors duration-300 hover:bg-primary-foreground/10 disabled:pointer-events-none"
-                aria-label={t('common.dismissBanner')}
-                onClick={() => setBannerDismissed(true)}
+              {/* Bloom's close control on the banner's own ground: primary
+                  ink at 70%, a primary-foreground wash on hover. */}
+              <Button
+                asChild
+                appearance="plain"
+                tone="neutral"
               >
-                  <svg className="text-primary-foreground/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" fill="none">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="m12.5 5.5-7 7m7 0-7-7" />
-                </svg>
-              </button>
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center"
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    right: 0,
+                    transform: 'translateY(-50%)',
+                    width: 32,
+                    height: 32,
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                    '--bloom-btn-fg': 'color-mix(in srgb, var(--color-primary-foreground) 70%, transparent)',
+                    '--bloom-btn-fg-hover': 'color-mix(in srgb, var(--color-primary-foreground) 70%, transparent)',
+                    '--bloom-btn-fg-active': 'var(--color-primary-foreground)',
+                    '--bloom-btn-bg-hover': 'color-mix(in srgb, var(--color-primary-foreground) 10%, transparent)',
+                    '--bloom-btn-bg-active': 'color-mix(in srgb, var(--color-primary-foreground) 15%, transparent)',
+                  } as CSSProperties}
+                  aria-label={t('common.dismissBanner')}
+                  onClick={() => setBannerDismissed(true)}
+                >
+                  <RiCloseLine aria-hidden width={16} height={16} fill="currentColor" />
+                </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -833,41 +1060,50 @@ export default function Navbar({
                 <ul ref={navLinksRef} className={`hidden items-stretch gap-1 transition-[opacity,transform] duration-200 ease-out lg:flex ${searchOpen ? 'lg:pointer-events-none lg:invisible lg:absolute lg:start-0 lg:top-0 lg:-translate-x-2 lg:opacity-0' : 'lg:translate-x-0 lg:opacity-100'}`}>
                   {dropdowns.map((dd) => (
                     <li key={dd.label}>
-                      <button
-                        ref={(el) => { triggerRefs.current[dd.label] = el }}
-                        className={`group inline-flex h-10 cursor-pointer select-none items-center justify-center gap-x-1.5 rounded-full px-3 text-link-md transition-colors duration-300 ${isTransparent ? transparentHover : 'hover:bg-foreground/5 hover:text-foreground'}`}
-                        style={{
-                          background: activeDropdown === dd.label ? 'color-mix(in srgb, var(--color-foreground) 5%, transparent)' : undefined,
-                          color: activeDropdown === dd.label ? 'var(--color-foreground)' : isTransparent ? transparentColor : 'var(--color-muted-foreground)',
-                        }}
-                        onMouseEnter={() => openDropdown(dd.label)}
-                        aria-expanded={activeDropdown === dd.label}
-                      >
-                        <span>{translatedNavLabel(dd.label, t)}</span>
-                        <ChevronDown className={`transition-transform duration-300 ${activeDropdown === dd.label ? 'translate-y-px' : ''}`} />
-                      </button>
+                      <NavBarButton ink={barInk} open={activeDropdown === dd.label}>
+                        <button
+                          type="button"
+                          ref={(el) => { triggerRefs.current[dd.label] = el }}
+                          className="inline-flex select-none items-center justify-center text-link-md"
+                          onMouseEnter={() => openDropdown(dd.label)}
+                          // A tap (or a click once the pointer is already on it)
+                          // opens; it never closes what the hover just opened.
+                          onClick={() => openDropdown(dd.label)}
+                          onKeyDown={(event) => onTriggerKeyDown(event, dd.label)}
+                          onBlur={onDisclosureBlur}
+                          aria-expanded={activeDropdown === dd.label}
+                          aria-controls={panelId(dd.label)}
+                        >
+                          <span>{translatedNavLabel(dd.label, t)}</span>
+                          <TriggerChevron open={activeDropdown === dd.label} />
+                        </button>
+                      </NavBarButton>
                     </li>
                   ))}
                   {flatLinks.map((link) => (
                     <li key={link.label}>
-                      {link.href.startsWith('/') && !link.external ? (
-                        <Link
-                          to={link.href}
-                          className={linkClassName(isTransparent ?? false)}
-                          onMouseEnter={scheduleClose}
-                        >
-                          {translatedNavLabel(link.label, t)}
-                        </Link>
-                      ) : (
-                        <a
-                          href={link.href}
-                          {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                          className={linkClassName(isTransparent ?? false)}
-                          onMouseEnter={scheduleClose}
-                        >
-                          {translatedNavLabel(link.label, t)}
-                        </a>
-                      )}
+                      <NavBarButton ink={barInk} rest="soft">
+                        {link.href.startsWith('/') && !link.external ? (
+                          <Link
+                            to={link.href}
+                            className={flatLinkClass}
+                            onMouseEnter={scheduleClose}
+                            onKeyDown={onBarLinkKeyDown}
+                          >
+                            {translatedNavLabel(link.label, t)}
+                          </Link>
+                        ) : (
+                          <a
+                            href={link.href}
+                            {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                            className={flatLinkClass}
+                            onMouseEnter={scheduleClose}
+                            onKeyDown={onBarLinkKeyDown}
+                          >
+                            {translatedNavLabel(link.label, t)}
+                          </a>
+                        )}
+                      </NavBarButton>
                     </li>
                   ))}
                 </ul>
@@ -907,14 +1143,19 @@ export default function Navbar({
                   aria-label={t('common.search')}
                   className={`h-11 w-full ps-12 pe-12 text-body-md text-foreground outline-none placeholder:text-muted-foreground ${searchQuery.trim() ? 'rounded-t-[2rem] border border-foreground/10 border-b-0 bg-background/60 shadow-none backdrop-blur-md' : 'rounded-full border border-foreground/10 bg-background/60 shadow-sm backdrop-blur-md'}`}
                 />
-                <button
-                  type="button"
-                  onClick={closeSearch}
-                  aria-label={t('common.closeSearch')}
-                  className="absolute end-0 top-0 inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
-                >
-                  <RiCloseLine width={16} height={16} fill="currentColor" />
-                </button>
+                <NavBarButton ink="page" square size={44}>
+                  <button
+                    type="button"
+                    onClick={closeSearch}
+                    aria-label={t('common.closeSearch')}
+                    // Inline, because `.bloom-btn` sets `position: relative`
+                    // from an unlayered sheet that outranks a utility class.
+                    style={{ position: 'absolute', insetInlineEnd: 0, top: 0 }}
+                    className="inline-flex items-center justify-center"
+                  >
+                    <RiCloseLine aria-hidden width={16} height={16} fill="currentColor" />
+                  </button>
+                </NavBarButton>
 
                 {searchQuery.trim() ? (
                   <NavbarSearchResults
@@ -943,54 +1184,57 @@ export default function Navbar({
               {!hideAuth && (
                 authControl(28)
               )}
-              <button
-                className={`inline-flex size-10 items-center justify-center rounded-full transition-colors hover:bg-foreground/5 ${isTransparent ? (onLight ? 'text-foreground' : 'force-dark text-foreground') : 'text-muted-foreground'}`}
-                aria-label={mobileOpen ? t('common.closeMenu') : t('common.openMenu')}
-                aria-expanded={mobileOpen}
-                onClick={() => {
-                  setMobileOpen((open) => !open)
-                  setMobilePanel(null)
-                }}
-              >
-                {mobileOpen ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="24" height="24" fill="none">
-                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="m12.5 5.5-7 7m7 0-7-7" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="24" height="24" fill="none">
-                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="M15 6H3M15 12H3" />
-                  </svg>
-                )}
-              </button>
+              <NavBarButton ink={barInk} square>
+                <button
+                  type="button"
+                  ref={mobileToggleRef}
+                  className="inline-flex items-center justify-center"
+                  aria-label={mobileOpen ? t('common.closeMenu') : t('common.openMenu')}
+                  aria-expanded={mobileOpen}
+                  aria-controls={mobilePanelId}
+                  onClick={() => {
+                    setMobileOpen((open) => !open)
+                    setMobilePanel(null)
+                  }}
+                >
+                  <MenuGlyph open={mobileOpen} />
+                </button>
+              </NavBarButton>
             </div>
 
             {/* Desktop buttons */}
             <div className="hidden items-stretch gap-3 lg:flex">
-              <button
-                type="button"
-                className={iconButtonClass}
-                style={iconButtonStyle(searchOpen)}
-                onClick={() => {
-                  closeAll()
-                  setSearchOpen((open) => !open)
-                }}
-                aria-label={t('common.search')}
-                aria-expanded={searchOpen}
-              >
-                <RiSearchLine width={18} height={18} fill="currentColor" />
-              </button>
-              <button
-                ref={(el) => { triggerRefs.current[SETTINGS_DROPDOWN_KEY] = el }}
-                className={iconButtonClass}
-                style={iconButtonStyle(activeDropdown === SETTINGS_DROPDOWN_KEY)}
-                onMouseEnter={() => openDropdown(SETTINGS_DROPDOWN_KEY)}
-                onMouseLeave={scheduleClose}
-                onClick={() => (activeDropdown === SETTINGS_DROPDOWN_KEY ? closeAll() : openDropdown(SETTINGS_DROPDOWN_KEY))}
-                aria-expanded={activeDropdown === SETTINGS_DROPDOWN_KEY}
-                aria-label={t('footer.settings')}
-              >
-                <span aria-hidden="true" className="inline-flex transition-transform duration-300 group-hover:rotate-45"><RiSettings3Line width={18} height={18} fill="currentColor" /></span>
-              </button>
+              <NavBarButton ink={barInk} square open={searchOpen}>
+                <button
+                  type="button"
+                  className={iconButtonClass}
+                  onClick={() => {
+                    closeAll()
+                    setSearchOpen((open) => !open)
+                  }}
+                  aria-label={t('common.search')}
+                  aria-expanded={searchOpen}
+                >
+                  <RiSearchLine aria-hidden width={18} height={18} fill="currentColor" />
+                </button>
+              </NavBarButton>
+              <NavBarButton ink={barInk} square open={activeDropdown === SETTINGS_DROPDOWN_KEY}>
+                <button
+                  type="button"
+                  ref={(el) => { triggerRefs.current[SETTINGS_DROPDOWN_KEY] = el }}
+                  className={iconButtonClass}
+                  onMouseEnter={() => openDropdown(SETTINGS_DROPDOWN_KEY)}
+                  onMouseLeave={scheduleClose}
+                  onClick={() => (activeDropdown === SETTINGS_DROPDOWN_KEY ? closeAll() : openDropdown(SETTINGS_DROPDOWN_KEY))}
+                  onKeyDown={(event) => onTriggerKeyDown(event, SETTINGS_DROPDOWN_KEY)}
+                  onBlur={onDisclosureBlur}
+                  aria-expanded={activeDropdown === SETTINGS_DROPDOWN_KEY}
+                  aria-controls={panelId(SETTINGS_DROPDOWN_KEY)}
+                  aria-label={t('footer.settings')}
+                >
+                  <span aria-hidden="true" className="inline-flex transition-transform duration-300 group-hover:rotate-45"><RiSettings3Line width={18} height={18} fill="currentColor" /></span>
+                </button>
+              </NavBarButton>
               {rightActions}
               {ctaButtons}
               {!hideAuth && (
@@ -1022,8 +1266,11 @@ export default function Navbar({
             overflow: 'hidden',
             transition: `opacity ${isOpen ? '0.15s' : '0.12s'} ease-out, max-height 0.2s ${easing}`,
           }}
+          ref={bandRef}
           onMouseEnter={cancelClose}
           onMouseLeave={scheduleClose}
+          onKeyDown={onBandKeyDown}
+          onBlur={onDisclosureBlur}
         >
           <div ref={measureBandWidth} className="container max-lg:!max-w-full max-lg:!px-4">
             <div className="relative">
@@ -1035,6 +1282,8 @@ export default function Navbar({
                 return (
                   <div
                     key={dd.label}
+                    id={panelId(dd.label)}
+                    ref={(el) => { panelRefs.current[dd.label] = el }}
                     className={getAnimClass(dd.label)}
                     style={{
                       position: isActive ? 'relative' : 'absolute',
@@ -1058,6 +1307,8 @@ export default function Navbar({
                 // control that opened it.
                 return (
                   <div
+                    id={panelId(SETTINGS_DROPDOWN_KEY)}
+                    ref={(el) => { panelRefs.current[SETTINGS_DROPDOWN_KEY] = el }}
                     className={`flex justify-end ${isActive ? 'animate-nav-fade-in' : ''}`}
                     style={{
                       position: isActive ? 'relative' : 'absolute',
@@ -1092,20 +1343,30 @@ export default function Navbar({
           top: `calc(${bannerOffset}px + var(--site-header-height))`,
           height: `calc(100dvh - ${bannerOffset}px - var(--site-header-height))`,
         }}
+        id={mobilePanelId}
         aria-hidden={!mobileOpen}
         inert={!mobileOpen}
+        onKeyDown={(event) => {
+          // Escape closes the menu (the window handler); focus would otherwise
+          // be left on an element that just went inert.
+          if (event.key === 'Escape') mobileToggleRef.current?.focus()
+        }}
       >
-        <div className="absolute inset-0 flex flex-col">
+        {/* Covered by an open subpanel, so out of the tab order until it closes. */}
+        <div className="absolute inset-0 flex flex-col" inert={mobilePanel !== null}>
           <div className="flex-1 overflow-y-auto overscroll-contain">
             {dropdowns.map((dd) => (
               <button
                 key={dd.label}
                 type="button"
+                ref={(el) => { mobileRowRefs.current[dd.label] = el }}
                 className="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-foreground/5"
+                aria-expanded={mobilePanel === dd.label}
+                aria-controls={`${mobilePanelId}-${dropdownLabels.indexOf(dd.label)}`}
                 onClick={() => setMobilePanel(dd.label)}
               >
                 <span className="text-title-sm text-foreground">{translatedNavLabel(dd.label, t)}</span>
-                <ChevronDown className="size-5 shrink-0 -rotate-90 text-muted-foreground" />
+                <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground"><RiArrowRightSLine width={20} height={20} fill="currentColor" /></span>
               </button>
             ))}
             {flatLinks.map((link) =>
@@ -1140,16 +1401,21 @@ export default function Navbar({
         {dropdowns.map((dd) => (
           <div
             key={dd.label}
+            id={`${mobilePanelId}-${dropdownLabels.indexOf(dd.label)}`}
             className={`absolute inset-0 overflow-y-auto overscroll-contain bg-background transition-transform duration-300 ease-out ${
               mobilePanel === dd.label ? 'translate-x-0' : 'translate-x-full'
             }`}
+            // Off-screen subpanels were still in the tab order: Tab walked
+            // through every link of every closed one.
+            inert={mobilePanel !== dd.label}
           >
             <button
               type="button"
+              ref={(el) => { mobileBackRefs.current[dd.label] = el }}
               className="flex w-full items-center gap-2 p-4 text-left transition-colors hover:bg-foreground/5"
               onClick={() => setMobilePanel(null)}
             >
-              <ChevronDown className="size-5 shrink-0 rotate-90 text-muted-foreground" />
+              <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground"><RiArrowLeftSLine width={20} height={20} fill="currentColor" /></span>
               <span className="text-title-sm text-foreground">{translatedNavLabel(dd.label, t)}</span>
             </button>
 
