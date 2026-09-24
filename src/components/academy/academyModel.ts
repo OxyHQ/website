@@ -66,7 +66,6 @@ export interface CourseSummary {
 export function summarizeCourse(course: CourseWithLessons, progress: CourseProgress | undefined): CourseSummary {
   const total = course.lessons.length
   let completed = 0
-  let started = false
   let lastActivity = 0
   let nextLesson: LessonEntry | null = null
   for (const lesson of course.lessons) {
@@ -75,13 +74,17 @@ export function summarizeCourse(course: CourseWithLessons, progress: CourseProgr
       completed += 1
       const at = entry.completedAt ? Date.parse(entry.completedAt) : 0
       if (Number.isFinite(at) && at > lastActivity) lastActivity = at
-    } else {
-      if (entry?.status === 'in-progress') started = true
-      if (!nextLesson) nextLesson = lesson
+    } else if (!nextLesson) {
+      nextLesson = lesson
     }
   }
+  // A course is started once a lesson in it is COMPLETED. A lesson's own
+  // `in-progress` entry does not count: until the reader marked it only on
+  // reading into the article, it was written the moment a lesson was opened,
+  // and saved progress cannot tell those page views from real reading — so a
+  // visitor who glanced at one lesson would be told a course was under way.
   const status: LessonStatus =
-    total > 0 && completed === total ? 'completed' : completed > 0 || started ? 'in-progress' : 'not-started'
+    total > 0 && completed === total ? 'completed' : completed > 0 ? 'in-progress' : 'not-started'
   return { completed, total, status, nextLesson, lastActivity }
 }
 

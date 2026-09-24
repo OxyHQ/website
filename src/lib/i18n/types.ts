@@ -75,3 +75,17 @@ export type TranslationVars = Record<string, string | number>
 
 /** The signature exposed by `useTranslation()`. */
 export type TranslateFn = (key: string, vars?: TranslationVars) => string
+
+/**
+ * Replace `{var}` tokens with values from `vars`. Single-brace tokens. Lives
+ * here, beside the types, so `scripts/prerender.ts` fills a dictionary string
+ * exactly as the SPA's `t()` does without importing the React provider.
+ */
+export function interpolate(template: string, vars?: TranslationVars): string {
+  if (!vars) return template
+  let out = template
+  for (const k of Object.keys(vars)) {
+    out = out.replaceAll(`{${k}}`, String(vars[k]))
+  }
+  return out
+}

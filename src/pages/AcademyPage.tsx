@@ -42,8 +42,12 @@ function ContinueCard({ courses, progress }: { courses: CourseWithLessons[]; pro
   const resume = pickResume(courses, progress)
   if (!resume) return null
   const { course, lesson, summary } = resume
+  // `subtle`, not `solid`: the card sits on the page's content panel, which
+  // is already the `card` colour, so a solid card was the same fill with only
+  // `shadow-s` for an edge — a dark smudge in dark mode. `subtle` is Bloom's
+  // surface for sitting ON a card, set apart by its fill with no shadow.
   return (
-    <Card appearance="solid" radius="radius-20">
+    <Card appearance="subtle" radius="radius-20">
       <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:p-6">
         <div className="flex min-w-0 flex-1 flex-col gap-1.5">
           <span className="text-xs font-semibold text-primary">{t('academy.continueLearning')}</span>
@@ -200,9 +204,10 @@ export default function AcademyPage() {
   return (
     <AcademyShell
       seo={{
-        title: 'Academy',
-        description:
-          'Short courses on Oxy ID, building on the platform and running it yourself, from first steps to production patterns.',
+        // `scripts/prerender.ts` reads the same two keys from the English
+        // dictionary, so the prerendered head matches this one byte for byte.
+        title: t('academy.title'),
+        description: t('academy.seoDescription'),
         canonicalPath: '/academy',
       }}
       query={query}

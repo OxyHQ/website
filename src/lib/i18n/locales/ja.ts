@@ -250,6 +250,9 @@ const ja: Translations = {
     notFoundLesson: 'レッスンが見つかりません',
     notFoundLessonBody: 'このレッスンは存在しないか、移動されました。',
     backToAcademy: 'アカデミーに戻る',
+    seoDescription: 'Oxy ID、プラットフォーム上での開発、そしてセルフホストでの運用について学べる短いコース。最初の一歩から本番運用のパターンまで。',
+    seoCourseDescription: '{course}：Oxy アカデミーのコース。',
+    seoLessonTitle: '{course}：{lesson}',
   },
   company: {
     seoTitle: '会社情報',

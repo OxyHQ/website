@@ -250,6 +250,9 @@ const zh: Translations = {
     notFoundLesson: '找不到课时',
     notFoundLessonBody: '这个课时不存在或已被移动。',
     backToAcademy: '返回学院',
+    seoDescription: '关于 Oxy ID、基于平台进行开发以及自行运行平台的简短课程，从入门到生产环境实践。',
+    seoCourseDescription: '{course}，Oxy 学院的一门课程。',
+    seoLessonTitle: '{course}：{lesson}',
   },
   company: {
     seoTitle: '公司',

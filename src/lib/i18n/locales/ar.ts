@@ -250,6 +250,9 @@ const ar: Translations = {
     notFoundLesson: 'الدرس غير موجود',
     notFoundLessonBody: 'هذا الدرس غير موجود أو نُقل.',
     backToAcademy: 'العودة إلى الأكاديمية',
+    seoDescription: 'دورات قصيرة عن Oxy ID، والبناء على المنصة وتشغيلها بنفسك، من الخطوات الأولى إلى أنماط بيئة الإنتاج.',
+    seoCourseDescription: '{course}، دورة في أكاديمية Oxy.',
+    seoLessonTitle: '{lesson}، {course}',
   },
   company: {
     seoTitle: 'الشركة',

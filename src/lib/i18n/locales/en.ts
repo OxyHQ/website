@@ -417,6 +417,9 @@ const en = {
     notFoundLesson: 'Lesson not found',
     notFoundLessonBody: 'This lesson does not exist, or it has moved.',
     backToAcademy: 'Back to Academy',
+    seoDescription: 'Short courses on Oxy ID, building on the platform and running it yourself, from first steps to production patterns.',
+    seoCourseDescription: '{course}, a course on Oxy Academy.',
+    seoLessonTitle: '{lesson}, {course}',
   },
 
   // ── Company ───────────────────────────────────────────────

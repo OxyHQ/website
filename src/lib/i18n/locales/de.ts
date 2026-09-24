@@ -250,6 +250,9 @@ const de: Translations = {
     notFoundLesson: 'Lektion nicht gefunden',
     notFoundLessonBody: 'Diese Lektion gibt es nicht, oder sie wurde verschoben.',
     backToAcademy: 'Zurück zur Academy',
+    seoDescription: 'Kurze Kurse zu Oxy ID, zur Entwicklung auf der Plattform und zu ihrem Selbstbetrieb – von den ersten Schritten bis zu Mustern für den Produktivbetrieb.',
+    seoCourseDescription: '{course}, ein Kurs der Oxy Academy.',
+    seoLessonTitle: '{lesson}, {course}',
   },
   company: {
     seoTitle: 'Unternehmen',

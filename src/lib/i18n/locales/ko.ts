@@ -250,6 +250,9 @@ const ko: Translations = {
     notFoundLesson: '레슨을 찾을 수 없습니다',
     notFoundLessonBody: '이 레슨은 존재하지 않거나 이동되었습니다.',
     backToAcademy: '아카데미로 돌아가기',
+    seoDescription: 'Oxy ID, 플랫폼 기반 개발, 직접 운영하는 방법까지 다루는 짧은 강좌. 첫걸음부터 프로덕션 패턴까지.',
+    seoCourseDescription: '{course} — Oxy 아카데미 강좌.',
+    seoLessonTitle: '{lesson} — {course}',
   },
   company: {
     seoTitle: '회사',
