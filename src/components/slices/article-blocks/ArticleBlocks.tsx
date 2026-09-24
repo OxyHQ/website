@@ -1,9 +1,10 @@
 import {
-  type KeyboardEvent,
   type ReactNode,
+  Suspense,
+  lazy,
   useId,
-  useRef,
   useState,
+  useSyncExternalStore,
 } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -188,19 +189,63 @@ export function ArticleStats({ eyebrow, title, items, width = 'wide' }: Optional
   )
 }
 
-export function ArticleTabs({ label = 'Article tabs', tabs, width = 'wide' }: OptionalWidth<ArticleTabsProps>) {
-  const [activeId, setActiveId] = useState(tabs[0]?.id ?? '')
-  const baseId = useId()
-  const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
-  const activeIndex = Math.max(0, tabs.findIndex((tab) => tab.id === activeId))
-  const activeTab = tabs[activeIndex]
+/*
+ * Bloom's tab strip, loaded only in the browser: its module imports react-native,
+ * which the prerender's Node SSR bundle cannot load. The dynamic import keeps it
+ * a separate chunk, and `ArticleTabs` only renders it once `onClient` is true —
+ * which it never is on the server — so Node never executes that chunk.
+ */
+const ArticleTabsBloom = lazy(() => import('./ArticleTabsBloom'))
 
-  const moveFocus = (event: KeyboardEvent<HTMLButtonElement>, nextIndex: number) => {
-    event.preventDefault()
-    const index = (nextIndex + tabs.length) % tabs.length
-    setActiveId(tabs[index].id)
-    tabRefs.current[index]?.focus()
-  }
+const subscribeNever = () => () => {}
+const renderRichText = (content: string) => <RichText>{content}</RichText>
+
+/**
+ * The tab block as static markup: the prerendered document's view (and the
+ * browser's until the Bloom strip loads). Every panel is emitted — the inactive
+ * ones `hidden` — so the article's prose is complete in the HTML a crawler or a
+ * no-JS reader gets, not just the first tab's.
+ */
+function StaticArticleTabs({ label, tabs }: { label: string; tabs: ArticleTabsProps['tabs'] }) {
+  const baseId = useId()
+  return (
+    <>
+      <div role="tablist" aria-label={label} className="flex gap-1 overflow-x-auto p-2 [scrollbar-width:none]">
+        {tabs.map((tab, index) => (
+          <button
+            key={tab.id}
+            id={`${baseId}-tab-${tab.id}`}
+            type="button"
+            role="tab"
+            aria-selected={index === 0}
+            aria-controls={`${baseId}-panel-${tab.id}`}
+            tabIndex={index === 0 ? 0 : -1}
+            className={`shrink-0 rounded-full px-4 py-2 text-body-sm ${index === 0 ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'}`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      {tabs.map((tab, index) => (
+        <div
+          key={tab.id}
+          id={`${baseId}-panel-${tab.id}`}
+          role="tabpanel"
+          aria-labelledby={`${baseId}-tab-${tab.id}`}
+          hidden={index !== 0}
+          tabIndex={0}
+          className="p-6 pt-4 text-foreground sm:p-8 sm:pt-6"
+        >
+          <RichText>{tab.content}</RichText>
+        </div>
+      ))}
+    </>
+  )
+}
+
+export function ArticleTabs({ label = 'Article tabs', tabs, width = 'wide' }: OptionalWidth<ArticleTabsProps>) {
+  const onClient = useSyncExternalStore(subscribeNever, () => true, () => false)
+  const fallback = <StaticArticleTabs label={label} tabs={tabs} />
 
   return (
     <section
@@ -209,44 +254,11 @@ export function ArticleTabs({ label = 'Article tabs', tabs, width = 'wide' }: Op
       {...collisionProps(width)}
       className={`${placement(width)} my-10 w-full overflow-hidden rounded-radius-12 bg-surface`}
     >
-      <div role="tablist" aria-label={label} className="flex gap-1 overflow-x-auto p-2 [scrollbar-width:none]">
-        {tabs.map((tab, index) => {
-          const selected = tab.id === activeTab?.id
-          return (
-            <button
-              key={tab.id}
-              ref={(node) => { tabRefs.current[index] = node }}
-              id={`${baseId}-tab-${tab.id}`}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              aria-controls={`${baseId}-panel-${tab.id}`}
-              tabIndex={selected ? 0 : -1}
-              onClick={() => setActiveId(tab.id)}
-              onKeyDown={(event) => {
-                if (event.key === 'ArrowRight') moveFocus(event, index + 1)
-                if (event.key === 'ArrowLeft') moveFocus(event, index - 1)
-                if (event.key === 'Home') moveFocus(event, 0)
-                if (event.key === 'End') moveFocus(event, tabs.length - 1)
-              }}
-              className={`shrink-0 rounded-full px-4 py-2 text-body-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-primary'}`}
-            >
-              {tab.label}
-            </button>
-          )
-        })}
-      </div>
-      {activeTab && (
-        <div
-          id={`${baseId}-panel-${activeTab.id}`}
-          role="tabpanel"
-          aria-labelledby={`${baseId}-tab-${activeTab.id}`}
-          tabIndex={0}
-          className="p-6 pt-4 text-foreground sm:p-8 sm:pt-6"
-        >
-          <RichText>{activeTab.content}</RichText>
-        </div>
-      )}
+      {onClient ? (
+        <Suspense fallback={fallback}>
+          <ArticleTabsBloom label={label} tabs={tabs} renderContent={renderRichText} />
+        </Suspense>
+      ) : fallback}
     </section>
   )
 }
