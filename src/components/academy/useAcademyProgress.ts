@@ -51,7 +51,11 @@ export interface UseAcademyProgressResult {
   isLoading: boolean
   /** True iff the current device is signed in to an Oxy account. */
   isAuthenticated: boolean
-  /** Mark a lesson as started — no-op if it's already completed or started. */
+  /**
+   * Mark a lesson in progress — the reader has read into it (the lesson page
+   * calls it at a quarter of the article, never on arrival). No-op if it's
+   * already completed or in progress.
+   */
   markLessonStarted: (lessonSlug: string) => void
   /** Mark a lesson as completed (sets `completedAt: now`). */
   markLessonCompleted: (lessonSlug: string) => void

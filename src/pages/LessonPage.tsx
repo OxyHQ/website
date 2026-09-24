@@ -81,16 +81,17 @@ export default function LessonPage() {
   const isLessonCompleted = progress[lessonSlug]?.status === 'completed'
   const { headings, contentRef } = useContentHeadings()
 
-  // Mark the lesson started on arrival. The helper never downgrades a
-  // completed lesson, and its identity changes every render, so it stays out
-  // of the deps.
+  // The scroll listener outlives the render that installed it, so it calls the
+  // latest progress actions through a ref — a closure over the first render's
+  // actions would write over progress saved since.
+  const actionsRef = useRef({ markLessonStarted, markLessonCompleted })
   useEffect(() => {
-    if (!data || typeof window === 'undefined') return
-    markLessonStarted(lessonSlug)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, lessonSlug])
+    actionsRef.current = { markLessonStarted, markLessonCompleted }
+  })
 
-  // Reading past 90% of the article completes the lesson.
+  // Reading a quarter of the article marks the lesson in progress; reading
+  // past 90% completes it. Opening a lesson marks nothing: a page view is not
+  // reading, and the Academy's "started" must not count one.
   const articleRef = useRef<HTMLElement | null>(null)
   const setArticle = useCallback(
     (node: HTMLElement | null) => {
@@ -103,17 +104,21 @@ export default function LessonPage() {
     if (!data || isLessonCompleted || typeof window === 'undefined') return
     const article = articleRef.current
     if (!article) return
+    let markedStarted = false
     const onScroll = () => {
       const height = article.offsetHeight
       if (height <= 0) return
-      if (-article.getBoundingClientRect().top / height >= 0.9) {
-        markLessonCompleted(lessonSlug)
+      const read = -article.getBoundingClientRect().top / height
+      if (read >= 0.9) {
+        actionsRef.current.markLessonCompleted(lessonSlug)
         window.removeEventListener('scroll', onScroll)
+      } else if (read >= 0.25 && !markedStarted) {
+        markedStarted = true
+        actionsRef.current.markLessonStarted(lessonSlug)
       }
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isLessonCompleted, lessonSlug])
 
   if (!data) return <LessonNotFound courseSlug={courseSlug} lessonSlug={lessonSlug} />
