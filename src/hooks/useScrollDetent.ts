@@ -1,11 +1,12 @@
 import { useEffect, type RefObject } from 'react'
+import { animate, type AnimationPlaybackControls } from 'framer-motion'
 
 /** Distance from the stop, in px, within which a resting page is drawn onto it. */
 const PULL_ZONE = 220
 /** How long scrolling must be still before the pull kicks in. */
 const SETTLE_MS = 140
-/** Duration of the pull onto the stop. */
-const PULL_MS = 420
+/** Duration of the pull onto the stop, in seconds. */
+const PULL_S = 0.42
 /** Wheel travel, in px, the visitor must push against the stop to break through. */
 const RELEASE_THRESHOLD = 360
 /** Furthest the page gives under that push, approached but never reached. */
@@ -14,8 +15,6 @@ const MAX_STRETCH = 90
 const LEAK_PER_MS = 0.3
 /** After landing, inertia that carried the visitor here cannot count as pushing. */
 const LANDING_GRACE_MS = 350
-
-const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3)
 
 /**
  * A magnet on the element's bottom edge. Scrolling that comes to rest near the
@@ -30,14 +29,14 @@ const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3)
 export function useScrollDetent(ref: RefObject<HTMLElement | null>) {
   useEffect(() => {
     let armed = true
+    // While holding, `pushed` is the travel pushed against the stop; it is 0 otherwise.
     let holding = false
     let pushed = 0
     let lastPushAt = 0
     let landedAt = 0
     let touching = false
     let settleTimer = 0
-    let animFrame = 0
-    let animating = false
+    let glide: AnimationPlaybackControls | null = null
 
     const stopAt = () => {
       const el = ref.current
@@ -49,25 +48,27 @@ export function useScrollDetent(ref: RefObject<HTMLElement | null>) {
 
     const jump = (top: number) => window.scrollTo({ top, behavior: 'instant' })
 
-    const cancelAnim = () => {
-      if (animFrame) cancelAnimationFrame(animFrame)
-      animFrame = 0
-      animating = false
+    const letGo = () => {
+      holding = false
+      pushed = 0
+    }
+
+    const stopGlide = () => {
+      glide?.stop()
+      glide = null
     }
 
     const glideTo = (to: number) => {
-      cancelAnim()
-      const from = window.scrollY
-      if (Math.abs(to - from) < 1) return
-      const start = performance.now()
-      animating = true
-      const step = (now: number) => {
-        const t = Math.min((now - start) / PULL_MS, 1)
-        jump(from + (to - from) * easeOutCubic(t))
-        if (t < 1) animFrame = requestAnimationFrame(step)
-        else cancelAnim()
-      }
-      animFrame = requestAnimationFrame(step)
+      stopGlide()
+      if (Math.abs(to - window.scrollY) < 1) return
+      glide = animate(window.scrollY, to, {
+        duration: PULL_S,
+        ease: 'easeOut',
+        onUpdate: jump,
+        onComplete: () => {
+          glide = null
+        },
+      })
     }
 
     const settle = () => {
@@ -76,8 +77,7 @@ export function useScrollDetent(ref: RefObject<HTMLElement | null>) {
       if (target === null) return
       if (holding) {
         // The push was let go before it broke through: spring back.
-        holding = false
-        pushed = 0
+        letGo()
         glideTo(target)
         return
       }
@@ -90,21 +90,19 @@ export function useScrollDetent(ref: RefObject<HTMLElement | null>) {
     }
 
     const onWheel = (event: WheelEvent) => {
-      cancelAnim()
+      stopGlide()
       scheduleSettle()
       if (!armed || event.deltaY <= 0 || event.ctrlKey) return
       const target = stopAt()
       if (target === null) return
-      const y = window.scrollY
       const now = performance.now()
 
       if (!holding) {
+        const y = window.scrollY
         if (y > target + 1 || y + event.deltaY <= target) return
         // This step would cross the stop: land on it instead.
         event.preventDefault()
         holding = true
-        pushed = 0
-        lastPushAt = now
         landedAt = now
         jump(target)
         return
@@ -115,9 +113,8 @@ export function useScrollDetent(ref: RefObject<HTMLElement | null>) {
       pushed = Math.max(0, pushed - (now - lastPushAt) * LEAK_PER_MS) + event.deltaY
       lastPushAt = now
       if (pushed >= RELEASE_THRESHOLD) {
-        holding = false
+        letGo()
         armed = false
-        pushed = 0
         return
       }
       // The page gives under the push, less the harder it is pushed.
@@ -127,12 +124,12 @@ export function useScrollDetent(ref: RefObject<HTMLElement | null>) {
     const onScroll = () => {
       const target = stopAt()
       if (target !== null && window.scrollY < target - 1) armed = true
-      if (!animating) scheduleSettle()
+      if (!glide) scheduleSettle()
     }
 
     const onTouchStart = () => {
       touching = true
-      cancelAnim()
+      stopGlide()
       window.clearTimeout(settleTimer)
     }
     const onTouchEnd = () => {
@@ -141,28 +138,23 @@ export function useScrollDetent(ref: RefObject<HTMLElement | null>) {
     }
     // A key or a scrollbar drag outranks the magnet.
     const onUserInput = () => {
-      cancelAnim()
-      holding = false
-      pushed = 0
+      stopGlide()
+      letGo()
     }
 
-    window.addEventListener('wheel', onWheel, { passive: false })
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('touchstart', onTouchStart, { passive: true })
-    window.addEventListener('touchend', onTouchEnd, { passive: true })
-    window.addEventListener('touchcancel', onTouchEnd, { passive: true })
-    window.addEventListener('keydown', onUserInput)
-    window.addEventListener('pointerdown', onUserInput)
+    const listeners = new AbortController()
+    const { signal } = listeners
+    window.addEventListener('wheel', onWheel, { passive: false, signal })
+    window.addEventListener('scroll', onScroll, { passive: true, signal })
+    window.addEventListener('touchstart', onTouchStart, { passive: true, signal })
+    window.addEventListener('touchend', onTouchEnd, { passive: true, signal })
+    window.addEventListener('touchcancel', onTouchEnd, { passive: true, signal })
+    window.addEventListener('keydown', onUserInput, { signal })
+    window.addEventListener('pointerdown', onUserInput, { signal })
     return () => {
-      cancelAnim()
+      listeners.abort()
+      stopGlide()
       window.clearTimeout(settleTimer)
-      window.removeEventListener('wheel', onWheel)
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('touchstart', onTouchStart)
-      window.removeEventListener('touchend', onTouchEnd)
-      window.removeEventListener('touchcancel', onTouchEnd)
-      window.removeEventListener('keydown', onUserInput)
-      window.removeEventListener('pointerdown', onUserInput)
     }
   }, [ref])
 }
