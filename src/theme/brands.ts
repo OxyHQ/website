@@ -180,6 +180,13 @@ export const BRAND_SURFACES: readonly BrandSurface[] = [
     label: 'Build for everyone section',
   },
   {
+    selector: '.tags-theme',
+    seed: APP_COLOR_PRESETS['midnight-citrus'].hex,
+    tertiarySeed: APP_COLOR_PRESETS['midnight-citrus'].tertiaryHex,
+    mode: 'auto',
+    label: 'Everything here is yours to pick up section',
+  },
+  {
     selector: '.faq-theme',
     seed: APP_COLOR_PRESETS.grove.hex,
     tertiarySeed: APP_COLOR_PRESETS.grove.tertiaryHex,
