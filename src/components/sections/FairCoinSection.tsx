@@ -135,7 +135,7 @@ export default function FairCoinSection() {
         <img
           src={newsImage}
           srcSet={newsImageSrcSet}
-          sizes={newsImageSrcSet ? '(min-width: 1024px) 25vw, 100vw' : undefined}
+          sizes={newsImageSrcSet ? '(min-width: 1024px) 50vw, 100vw' : undefined}
           alt=""
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           width={600}
@@ -159,7 +159,7 @@ export default function FairCoinSection() {
       <section className="faircoin-theme bg-background text-foreground">
         <div className="container flex flex-col gap-4 pb-4 lg:pb-6">
           <div className="grid gap-4 lg:grid-cols-4">
-            <div className="flex flex-col justify-center gap-4 bg-background py-8 lg:col-span-3 lg:py-10">
+            <div className="flex flex-col justify-center gap-4 bg-background py-8 lg:col-span-2 lg:py-10">
               <img
                 src="/images/apps/faircoin.svg"
                 alt="FairCoin"
@@ -198,12 +198,12 @@ export default function FairCoinSection() {
             {newsHref ? (
               <Link
                 to={newsHref}
-                className={`${newsCellClass} lg:col-span-1`}
+                className={`${newsCellClass} lg:col-span-2`}
               >
                 {newsCell}
               </Link>
             ) : (
-              <div className={`${newsCellClass} lg:col-span-1`}>
+              <div className={`${newsCellClass} lg:col-span-2`}>
                 {newsCell}
               </div>
             )}

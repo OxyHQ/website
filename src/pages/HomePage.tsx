@@ -35,6 +35,7 @@ import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 import { APP_CARD_IMAGES } from '../data/appCardImages'
 import { useTranslation } from '../lib/i18n'
 import { BrandScope } from '../theme/BrandScope'
+import { useScrollDetent } from '../hooks/useScrollDetent'
 
 /**
  * Pulls a heading, subheading or content string out of a Page document's
@@ -179,10 +180,13 @@ function BuildForEveryoneSection() {
   const body = locale === 'en'
     ? pageContent(sections, 'all-in-one', t('home.allInOneBody'))
     : t('home.allInOneBody')
+  const sectionRef = useRef<HTMLElement>(null)
+  useScrollDetent(sectionRef)
 
   return (
     <BrandScope className="build-theme">
       <section
+        ref={sectionRef}
         id="build-for-everyone"
         className="build-theme scroll-mt-[var(--site-header-height)] bg-[color-mix(in_srgb,var(--primary)_10%,var(--background))]"
       >
