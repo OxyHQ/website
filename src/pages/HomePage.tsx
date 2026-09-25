@@ -208,7 +208,7 @@ function BuildForEveryoneSection() {
               {/* Right — resource links */}
               <ul className="flex flex-col gap-2">
                 {BUILD_FOR_EVERYONE_LINKS.map((link, index) => {
-                  const rowClass = `group flex items-center justify-between gap-4 rounded-full px-5 py-3 font-display text-xl font-[450] transition-[filter,transform] duration-200 hover:-translate-y-0.5 hover:brightness-110 ${BUILD_FOR_EVERYONE_LINK_CLASSES[index]}`
+                  const rowClass = `group flex items-center justify-between gap-4 rounded-full px-5 py-3 font-display text-xl font-[450] transition-[filter] duration-200 hover:brightness-110 ${BUILD_FOR_EVERYONE_LINK_CLASSES[index]}`
                   const arrow = (
                     <span
                       className="inline-flex shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
