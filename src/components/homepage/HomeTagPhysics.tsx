@@ -1,4 +1,5 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState, type ReactNode } from 'react'
+import { flushSync } from 'react-dom'
 import type { BloomIconComponent } from '@oxy.so/bloom/icons'
 import { RiAccountCircleLine } from '@oxy.so/bloom/icons/RiAccountCircleLine'
 import { RiBankCardLine } from '@oxy.so/bloom/icons/RiBankCardLine'
@@ -39,7 +40,8 @@ import { Chip, resolveChipHueColors, type ChipHue } from '@oxy.so/bloom/chip'
  * rendering and each pill stays focusable,
  * keyboard-operable and readable to a screen
  * reader. React state never holds a per-frame
- * position, so a settled pile costs no renders.
+ * position, and the frame loop stops once every
+ * pill is asleep, so a settled pile costs nothing.
  *
  * Three states, in order of preference:
  *   1. `prefers-reduced-motion: reduce` → a plain
@@ -161,11 +163,11 @@ const OBSTACLE_PADDING_PX = 6
 const OBSTACLE_BOUNCE_MS = 140
 /** Collision categories: the copy is its own, so a pill can stop meeting it without leaving the rest of the world. */
 const OBSTACLE_CATEGORY = 0x0002
-const PILL_CATEGORY = 0x0001
+/** matter's default mask: a pill meets everything, the copy included. */
 const PILL_MASK_ALL = 0xffffffff
 const PILL_MASK_THROUGH_COPY = PILL_MASK_ALL & ~OBSTACLE_CATEGORY
-/** Upward force per unit of body mass when a pill is picked up — mass-scaled so every pill jumps alike. */
-const SELECT_IMPULSE_PER_MASS = 0.01
+/** Upward force per unit of body mass when a pill is nudged — mass-scaled so every pill jumps alike. */
+const NUDGE_IMPULSE_PER_MASS = 0.01
 /** Below these deltas a pill has not visibly moved, so the frame skips its style write. */
 const POSITION_EPSILON_PX = 0.05
 const ANGLE_EPSILON_RAD = 0.0005
@@ -184,7 +186,7 @@ interface TagPose {
   x: number
   y: number
   angle: number
-  /** Carried too, or a pill still in its throw when the world is rebuilt would drop straight down. */
+  /** Carried too, or a pill still falling when the window is resized would stop dead mid-air. */
   vx: number
   vy: number
 }
@@ -280,11 +282,9 @@ function startTagWorld(
   const obstacleBottom = obstacles.reduce((bottom, body) => Math.max(bottom, body.bounds.max.y), -Infinity)
 
   const entries = new Map<string, TagEntry>()
-  /** Pills carried over from a previous world, in play at once. */
-  const live: string[] = []
-  /** Pills yet to be dropped, in drop order. */
-  const pending: string[] = []
-  let releasedCount = 0
+  /** Pills yet to be dropped, in drop order; `nextRelease` indexes the next one. */
+  const pending: TagEntry[] = []
+  let nextRelease = 0
   // Rotates the whole sequence, so the arrangement differs between loads while
   // staying evenly spread within one.
   const spawnPhase = Math.random()
@@ -314,14 +314,13 @@ function startTagWorld(
         restitution: TAG_RESTITUTION,
         friction: TAG_FRICTION,
         frictionAir: TAG_FRICTION_AIR,
-        collisionFilter: { category: PILL_CATEGORY, mask: PILL_MASK_ALL },
         angle: pose ? pose.angle : (Math.random() - 0.5) * SPAWN_TILT_RAD,
       },
     )
 
     if (pose) Matter.Body.setVelocity(body, { x: pose.vx, y: pose.vy })
 
-    entries.set(id, {
+    const entry: TagEntry = {
       el,
       body,
       halfWidth,
@@ -330,22 +329,20 @@ function startTagWorld(
       paintedY: Number.NaN,
       paintedAngle: Number.NaN,
       live: false,
-    })
-    if (pose) live.push(id)
-    else pending.push(id)
+    }
+    entries.set(id, entry)
+    // A pill carried over from a previous world is in play at once.
+    if (pose) release(entry)
+    else pending.push(entry)
   })
 
-  const release = (id: string) => {
-    const entry = entries.get(id)
-    if (!entry) return
+  function release(entry: TagEntry) {
     entry.live = true
     Matter.Composite.add(engine.world, entry.body)
   }
-  live.forEach(release)
   const releasePending = () => {
-    while (pending.length > 0 && engine.timing.timestamp >= releasedCount * RELEASE_EVERY_MS) {
-      release(pending.shift()!)
-      releasedCount += 1
+    while (nextRelease < pending.length && engine.timing.timestamp >= nextRelease * RELEASE_EVERY_MS) {
+      release(pending[nextRelease++])
     }
   }
 
@@ -422,7 +419,15 @@ function startTagWorld(
     updatePassThrough()
     recoverFallouts()
     paint()
-    frameHandle = requestAnimationFrame(step)
+    // A settled pile stops the loop; a nudge starts it again.
+    if (settled()) running = false
+    else frameHandle = requestAnimationFrame(step)
+  }
+
+  const settled = () => {
+    if (nextRelease < pending.length || passingAt.size > 0) return false
+    for (const entry of entries.values()) if (entry.live && !entry.body.isSleeping) return false
+    return true
   }
 
   const startLoop = () => {
@@ -442,8 +447,10 @@ function startTagWorld(
   // The pills wait above the section until it is actually on screen, so the drop
   // plays for whoever scrolls to it rather than finishing unseen — and an
   // off-screen section costs nothing.
+  let visible = false
   const visibility = new IntersectionObserver((records) => {
-    if (records.some((record) => record.isIntersecting)) startLoop()
+    visible = records.some((record) => record.isIntersecting)
+    if (visible) startLoop()
     else stopLoop()
   })
   visibility.observe(container)
@@ -455,8 +462,9 @@ function startTagWorld(
       Matter.Sleeping.set(entry.body, false)
       Matter.Body.applyForce(entry.body, entry.body.position, {
         x: 0,
-        y: -SELECT_IMPULSE_PER_MASS * entry.body.mass,
+        y: -NUDGE_IMPULSE_PER_MASS * entry.body.mass,
       })
+      if (visible) startLoop()
     },
     poses: () => {
       const snapshot = new Map<string, TagPose>()
@@ -493,7 +501,6 @@ export default function HomeTagPhysics() {
   const [physicsOn, setPhysicsOn] = useState(false)
   // The prerendered row carries every tag; the live section keeps as many as its width holds.
   const [tagCount, setTagCount] = useState(TAGS.length)
-  const theme = useTheme()
   const worldRef = useRef<TagWorld | null>(null)
 
   // React 19 callback ref: it owns the engine, the frame loop and both
@@ -502,7 +509,6 @@ export default function HomeTagPhysics() {
   const containerRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (!node || reducedMotion) return
-      setTagCount(tagCountFor(node.clientWidth))
       let cancelled = false
       let matterApi: MatterApi | null = null
       let rebuildTimer = 0
@@ -513,8 +519,10 @@ export default function HomeTagPhysics() {
       void Promise.all([import('matter-js'), document.fonts.ready]).then(([matter]) => {
         if (cancelled) return
         matterApi = matter.default
+        // Commit the simulating layout first, so the one world is measured in
+        // the walls and heading positions it will actually run in.
+        flushSync(() => setPhysicsOn(true))
         worldRef.current = startTagWorld(matterApi, node)
-        setPhysicsOn(true)
       })
 
       const resize = new ResizeObserver(() => {
@@ -584,39 +592,58 @@ export default function HomeTagPhysics() {
             aria-label={t('home.tagsRegionLabel')}
             className={simulating ? undefined : 'container flex flex-wrap content-start justify-center gap-2'}
           >
-            {(simulating ? TAGS.slice(0, tagCount) : TAGS).map((tag) => {
-              const Glyph = tag.Glyph
-              const ink = resolveChipHueColors(theme, tag.hue).foreground
-              const leading = Glyph ? (
-                <Glyph width={TAG_ICON_PX} height={TAG_ICON_PX} fill={ink} aria-hidden />
-              ) : tag.mono ? (
-                <span
-                  aria-hidden
-                  className="block size-[18px]"
-                  style={{
-                    backgroundColor: ink,
-                    mask: `url(${tag.logo}) center / contain no-repeat`,
-                    WebkitMask: `url(${tag.logo}) center / contain no-repeat`,
-                  }}
-                />
-              ) : (
-                <img src={tag.logo} alt="" width={TAG_ICON_PX} height={TAG_ICON_PX} className="size-[18px] rounded-[5px] object-contain" />
-              )
-              return (
-                <div
-                  key={tag.id}
-                  data-tag-id={tag.id}
-                  className={simulating ? 'absolute left-0 top-0 z-10 opacity-0 will-change-transform' : undefined}
-                >
-                  <Chip hue={tag.hue} size="2xl" leading={leading} onPress={() => nudge(tag.id)}>
-                    {t(tag.labelKey)}
-                  </Chip>
-                </div>
-              )
-            })}
+            {(simulating ? TAGS.slice(0, tagCount) : TAGS).map((tag) => (
+              <div
+                key={tag.id}
+                data-tag-id={tag.id}
+                className={simulating ? 'absolute left-0 top-0 z-10 opacity-0 will-change-transform' : undefined}
+              >
+                <TagChip tag={tag} label={t(tag.labelKey)} onNudge={nudge} />
+              </div>
+            ))}
           </div>
         </div>
       </section>
     </BrandScope>
+  )
+}
+
+/**
+ * One pill. Rendered inside the section's `BrandScope`, so `useTheme` reads
+ * the scoped theme the Chip paints its label from — the icon's ink is that
+ * label colour, which the Chip does not pass on to a custom `leading` node.
+ */
+function TagChip({ tag, label, onNudge }: { tag: PhysicsTag; label: string; onNudge: (id: string) => void }) {
+  const theme = useTheme()
+  const ink = resolveChipHueColors(theme, tag.hue).foreground
+  const { Glyph } = tag
+  let leading: ReactNode
+  if (Glyph) {
+    leading = <Glyph width={TAG_ICON_PX} height={TAG_ICON_PX} fill={ink} aria-hidden />
+  } else if (tag.mono) {
+    const mask = `url(${tag.logo}) center / contain no-repeat`
+    leading = (
+      <span
+        aria-hidden
+        className="block"
+        style={{ width: TAG_ICON_PX, height: TAG_ICON_PX, backgroundColor: ink, mask, WebkitMask: mask }}
+      />
+    )
+  } else {
+    leading = (
+      <img
+        src={tag.logo}
+        alt=""
+        width={TAG_ICON_PX}
+        height={TAG_ICON_PX}
+        className="rounded-[5px] object-contain"
+        style={{ width: TAG_ICON_PX, height: TAG_ICON_PX }}
+      />
+    )
+  }
+  return (
+    <Chip hue={tag.hue} size="2xl" leading={leading} onPress={() => onNudge(tag.id)}>
+      {label}
+    </Chip>
   )
 }
