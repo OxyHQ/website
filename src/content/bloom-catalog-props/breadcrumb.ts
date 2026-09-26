@@ -8,6 +8,7 @@ export const props: BloomSurfaceProps = {
     'BreadcrumbProps': {
       props: [
         { name: 'children', type: 'ReactNode', optional: false, description: '`BreadcrumbItem` children. Chevron separators are inserted between them.' },
+        { name: 'separator', type: 'ReactNode', optional: true, description: 'Replaces the chevron between items — e.g. `"/"` as a `Text`, or an icon. Hidden from assistive technology. The default chevron points the reading direction (it mirrors in a right-to-left layout); a custom separator is rendered as given.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the navigation landmark. Default `"Breadcrumb"`.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },

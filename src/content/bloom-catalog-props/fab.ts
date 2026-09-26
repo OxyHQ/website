@@ -37,6 +37,8 @@ export const props: BloomSurfaceProps = {
         { name: 'href', type: 'string', optional: true, description: 'Makes the button a link. On web it renders a real `<a href>` (dropped while disabled); on native a press opens the URL unless `onPress` is set.' },
         { name: 'target', type: 'string', optional: true, description: 'Anchor `target` (web only, with `href`).' },
         { name: 'rel', type: 'string', optional: true, description: 'Anchor `rel` (web only, with `href`).' },
+        { name: 'renderLeadingIcon', type: 'BloomIconRenderer', optional: true, description: "Draw the leading glyph yourself, handed the button's icon size and the foreground for the CURRENT state — for an app's own icon set, whose props Bloom's icon slot cannot name. Wins over `leadingIcon`, and is used for the glyph when `iconOnly`. See `icons/render-icon.tsx`." },
+        { name: 'renderTrailingIcon', type: 'BloomIconRenderer', optional: true, description: 'Same as ButtonProps.renderLeadingIcon, after the label. Ignored when `iconOnly`.' },
         { name: 'iconOnly', type: 'boolean', optional: true, description: 'Render a square icon-only button (24 / 32 / 36 / 44) from `leadingIcon` or `icon`. Name it with `accessibilityLabel` — there is no text to read.' },
         { name: 'loading', type: 'boolean', optional: true, description: 'When true, displays a centered loading spinner overlay and prevents presses. Children remain in the layout (but visually hidden) so the button preserves its width. Use this for async actions like submit.' },
         { name: 'loadingColor', type: 'string', optional: true, description: 'Optional color override for the loading spinner. Defaults to the resolved button text color.' },

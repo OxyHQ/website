@@ -92,8 +92,12 @@ try {
     .getByRole('heading', { name: 'Your message has not been sent.', exact: true })
     .waitFor()
   await page.getByRole('button', { name: 'What changes when I open this?' }).click()
+  // Bloom's AccordionContent owns the panel's id, so the answer is found by its own class.
   invariant(
-    await page.locator('#brand-motion-answer').isVisible(),
+    await page
+      .locator('.brand-disclosure-answer')
+      .waitFor({ state: 'visible', timeout: 5000 })
+      .then(() => true, () => false),
     'Motion disclosure did not open',
   )
   await capture('#voice', 'brand-voice.png')

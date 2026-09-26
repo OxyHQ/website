@@ -5,6 +5,13 @@ import type { BloomSurfaceProps } from '../bloom-catalog'
 export const props: BloomSurfaceProps = {
   subpath: 'overlay',
   propTypes: {
+    'OverlayInertBoundaryProps': {
+      props: [
+        { name: 'children', type: 'ReactNode', optional: true, description: "The app's own content — everything EXCEPT the `PortalOutlet`." },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: "Native only (web renders no box). Defaults to `flex: 1`; override when the boundary's parent is not a column that the content should fill." },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
     'OverlayRootProps': {
       props: [
         { name: 'children', type: 'ReactNode', optional: true },
@@ -12,6 +19,8 @@ export const props: BloomSurfaceProps = {
         { name: 'testID', type: 'string', optional: true },
         { name: 'className', type: 'string', optional: true, description: "NativeWind / DOM class for the surface's outermost node." },
         { name: 'zIndex', type: 'number', optional: true, description: 'Opt OUT of the open-order stack and pin to a fixed depth. Only the toast layer does this — a notification has to stay visible over whatever is open, including a surface opened after it. Everything else must leave this unset so it stacks by open order; a hand-picked number here is precisely the bug `./stack.ts` exists to remove.' },
+        { name: 'onRequestClose', type: '() => void', optional: true, description: 'Android hardware back while this surface is open. A portaled surface is not an RN `Modal`, so nothing else consumes the press: without this the app\'s own back handling runs and, at the root of a stack, finishes the activity — the surface "closes" by closing the whole app. Called and consumed while the root is mounted; later-opened surfaces register later, and `BackHandler` runs the newest listener first, so the top surface closes first. A blocking surface still passes a handler (a no-op) so the press is swallowed rather than falling through to the screen underneath.' },
+        { name: 'modal', type: 'boolean', optional: true, description: 'The surface is modal: a screen reader must not wander into the app behind it. Two effects:' },
       ],
     },
     'BackdropProps': {
@@ -32,6 +41,7 @@ export const props: BloomSurfaceProps = {
     },
   },
   components: [
+    { name: 'OverlayInertBoundary', propsType: 'OverlayInertBoundaryProps' },
     { name: 'OverlayRoot', propsType: 'OverlayRootProps' },
     { name: 'Backdrop', propsType: 'BackdropProps' },
   ],

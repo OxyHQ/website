@@ -15,6 +15,7 @@ export const props: BloomSurfaceProps = {
         { name: 'className', type: 'string', optional: true, description: 'NativeWind className for spinner color (e.g. "text-primary"). Overrides color prop.' },
         { name: 'style', type: 'ViewStyle', optional: true, description: 'Custom container style' },
         { name: 'showLoading', type: 'boolean', optional: true, description: 'Whether loading is active (for animated variants)' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the indicator and makes it an indeterminate `progressbar` to assistive technology (`role="progressbar"` with `aria-label` and `aria-busy` on web; the same role, label and busy state natively). A spinner draws no words, so nothing else can say what is loading.' },
         { name: 'testID', type: 'string', optional: true },
       ],
     },

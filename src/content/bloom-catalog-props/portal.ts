@@ -9,10 +9,18 @@ export const props: BloomSurfaceProps = {
       props: [],
       inheritsFrom: ['React.PropsWithChildren<object>'],
     },
+    'OverlayInertBoundaryProps': {
+      props: [
+        { name: 'children', type: 'ReactNode', optional: true, description: "The app's own content — everything EXCEPT the `PortalOutlet`." },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true, description: "Native only (web renders no box). Defaults to `flex: 1`; override when the boundary's parent is not a column that the content should fill." },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
   },
   components: [
     { name: 'PortalProvider', propsType: 'PropsWithChildren<object>' },
     { name: 'PortalOutlet' },
     { name: 'Portal', propsType: 'PropsWithChildren<object>' },
+    { name: 'OverlayInertBoundary', propsType: 'OverlayInertBoundaryProps' },
   ],
 }

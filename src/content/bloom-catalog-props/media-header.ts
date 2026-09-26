@@ -49,6 +49,8 @@ export const props: BloomSurfaceProps = {
         { name: 'onFollowChange', type: '(following: boolean) => void', optional: false },
         { name: 'label', type: 'string', optional: true, description: 'Default `"Follow"`. The name in both states.' },
         { name: 'followingLabel', type: 'string', optional: true, description: 'Default `"Following"`.' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Accessible name, instead of `label`. Pass one that follows the state when the caller knows more than the visible text does — "Following' },
+        { name: 'accessibilityHint', type: 'string', optional: true, description: 'What pressing does, read after the name ("Unfollows' },
         { name: 'color', type: 'string', optional: true, description: "Draw on a band: the pill takes the band's text colour." },
         { name: 'size', type: "'small' | 'medium' | 'large'", options: ['small', 'medium', 'large'], optional: true, description: 'Shared Button sizes; small by default.' },
         { name: 'loading', type: 'boolean', optional: true, description: 'Reserves label geometry while showing the shared Button spinner.' },
