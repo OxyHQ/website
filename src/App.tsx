@@ -177,7 +177,7 @@ function AppSetup({ children }: { children: React.ReactNode }) {
     (fileId: string, variant?: string): string | undefined => {
       if (!fileId) return undefined
       if (fileId.startsWith('http')) return fileId
-      return oxyServices.getFileDownloadUrl(fileId, variant)
+      return oxyServices.assets.publicUrl(fileId, variant)
     },
     [oxyServices],
   )

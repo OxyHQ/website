@@ -76,10 +76,10 @@ export default function UserFollowersPage() {
     queryFn: async () => {
       if (!userId || !canViewFollowList) return { users: [] as User[], total: 0 }
       if (activeTab === 'followers') {
-        const res = await oxyServices.getUserFollowers(userId, { limit: 50 })
+        const res = await oxyServices.follows.followers(userId, { limit: 50 })
         return { users: res.followers, total: res.total }
       }
-      const res = await oxyServices.getUserFollowing(userId, { limit: 50 })
+      const res = await oxyServices.follows.following(userId, { limit: 50 })
       return { users: res.following, total: res.total }
     },
     enabled: canViewFollowList,

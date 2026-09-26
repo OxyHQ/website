@@ -51,7 +51,7 @@ type Listener = () => void
 
 let state: PlatformStatsState = INITIAL_STATE
 const listeners = new Set<Listener>()
-let client: ReturnType<OxyServices['getClient']> | null = null
+let client: OxyServices['http'] | null = null
 let pollTimer: ReturnType<typeof setInterval> | null = null
 
 function emit() {
@@ -107,7 +107,7 @@ async function fetchStats() {
 }
 
 export function setPlatformStatsOxyServices(oxyServices: OxyServices): void {
-  client = oxyServices.getClient()
+  client = oxyServices.http
   if (listeners.size > 0) void fetchStats()
 }
 

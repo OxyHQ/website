@@ -32,7 +32,7 @@ function harness(steps: Step[], options: { random?: () => number } = {}) {
   let invalidations = 0
   let token = SERVICE_TOKEN
   const oxy = {
-    getServiceToken: async () => token,
+    serviceToken: async () => token,
     invalidateServiceToken: () => {
       invalidations += 1
       token = `${SERVICE_TOKEN}-rotated`
@@ -90,7 +90,7 @@ describe('mcp catalog registration', () => {
     let release: () => void = () => {}
     const registration = createMcpCatalogRegistration({
       catalog,
-      oxy: { getServiceToken: async () => SERVICE_TOKEN, invalidateServiceToken: () => {} } as never,
+      oxy: { serviceToken: async () => SERVICE_TOKEN, invalidateServiceToken: () => {} } as never,
       oxyApiBase: 'https://api.oxy.test',
       deps: {
         fetch: async () => new Response('unavailable', { status: 500 }),
@@ -203,7 +203,7 @@ describe('mcp catalog registration', () => {
     const newerRequests: string[] = []
     const newer = createMcpCatalogRegistration({
       catalog: newerCatalog,
-      oxy: { getServiceToken: async () => SERVICE_TOKEN, invalidateServiceToken: () => {} } as never,
+      oxy: { serviceToken: async () => SERVICE_TOKEN, invalidateServiceToken: () => {} } as never,
       oxyApiBase: 'https://api.oxy.test',
       deps: {
         fetch: async (url) => { newerRequests.push(url); return new Response('', { status: 201 }) },
@@ -225,7 +225,7 @@ describe('mcp catalog registration', () => {
     let clock = 0
     const registration = createMcpCatalogRegistration({
       catalog,
-      oxy: { getServiceToken: async () => { throw new Error('credentials unavailable') }, invalidateServiceToken: () => {} } as never,
+      oxy: { serviceToken: async () => { throw new Error('credentials unavailable') }, invalidateServiceToken: () => {} } as never,
       oxyApiBase: 'https://api.oxy.test',
       deps: {
         now: () => clock,

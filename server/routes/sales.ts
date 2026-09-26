@@ -54,7 +54,7 @@ const submitLimiter = rateLimit({
  * against the Oxy control plane — the only system that knows the answer.
  *
  * A fresh `OxyServices` per request rather than the shared instance: the shared
- * one is unauthenticated and `setTokens` on it would leak one caller's token
+ * one is unauthenticated and `session.setAccessToken` on it would leak one caller's token
  * into another caller's request.
  */
 async function verifiedAccountRefs(
@@ -65,11 +65,11 @@ async function verifiedAccountRefs(
   if (!bearerToken || !accountId) return {}
   try {
     const asCaller = new OxyServices({ baseURL: config.oxyApiBase })
-    asCaller.setTokens(bearerToken)
-    const accounts = await asCaller.listAccounts()
+    asCaller.session.setAccessToken(bearerToken)
+    const accounts = await asCaller.accounts.list()
     if (!accounts.some((node) => node.accountId === accountId)) return {}
     if (!applicationId) return { accountId }
-    const apps = await asCaller.listAccountApps(accountId)
+    const apps = await asCaller.apps.list(accountId)
     return apps.some((app) => app._id === applicationId)
       ? { accountId, applicationId }
       : { accountId }

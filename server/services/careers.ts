@@ -45,7 +45,7 @@ let inflight: Promise<CareerJob[]> | undefined
 function clarity(): ClarityClient {
   client ??= new ClarityClient({
     baseUrl: config.clarity.apiUrl,
-    getAccessToken: () => oxyService.getServiceToken(),
+    getAccessToken: () => oxyService.serviceToken(),
   })
   return client
 }
