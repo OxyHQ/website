@@ -31,6 +31,8 @@ export const props: BloomSurfaceProps = {
         { name: 'iconOnly', type: 'boolean', optional: true, description: 'Square item showing only `leadingIcon` — name it with `accessibilityLabel`.' },
         { name: 'leadingIcon', type: 'ButtonIconComponent', optional: true, description: 'Icon component before the label, sized and coloured by the item.' },
         { name: 'trailingIcon', type: 'ButtonIconComponent', optional: true, description: 'Icon component after the label.' },
+        { name: 'renderLeadingIcon', type: 'BloomIconRenderer', optional: true, description: "Draw the leading glyph yourself, handed the item's size and the foreground for the CURRENT state — for an app's own icon set, whose props Bloom's icon slot cannot name. Wins over `leadingIcon`. See `icons/render-icon.tsx`." },
+        { name: 'renderTrailingIcon', type: 'BloomIconRenderer', optional: true, description: 'Same as ButtonGroupItemProps.renderLeadingIcon, after the label.' },
         { name: 'accessibilityLabel', type: 'string', optional: true },
         { name: 'onLongPress', type: '(event: GestureResponderEvent) => void', optional: true, description: 'Long-press handler, composed by a `ContextMenu` trigger.' },
         { name: 'aria-expanded', type: 'boolean', optional: true, description: 'Set by an anchored family: whether the surface this opens is showing.' },

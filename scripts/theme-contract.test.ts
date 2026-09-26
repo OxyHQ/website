@@ -57,8 +57,8 @@ const hasProvisionedCloudflareBrowserGate = (
 describe('Bloom theme contract', () => {
   test('publishes every preset name exactly once', () => {
     expect(COLOR_PRESET_REGISTRY).toHaveLength(64)
-    expect(COLOR_PRESET_REGISTRY.filter((recipe) => recipe.pairing === 'curated')).toHaveLength(46)
-    expect(COLOR_PRESET_REGISTRY.filter((recipe) => recipe.pairing === 'derived')).toHaveLength(18)
+    expect(COLOR_PRESET_REGISTRY.filter((recipe) => recipe.pairing === 'curated')).toHaveLength(47)
+    expect(COLOR_PRESET_REGISTRY.filter((recipe) => recipe.pairing === 'derived')).toHaveLength(17)
     expect(new Set(APP_COLOR_NAMES).size).toBe(APP_COLOR_NAMES.length)
     for (const name of APP_COLOR_NAMES) expect(APP_COLOR_PRESETS[name]?.name).toBe(name)
   })

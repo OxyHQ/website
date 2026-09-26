@@ -34,6 +34,7 @@ export const props: BloomSurfaceProps = {
         { name: 'state', type: 'PriceLineState', options: ['final', 'estimated', 'pending'], optional: true, description: 'Default `final`.' },
         { name: 'sublabel', type: 'string', optional: true, description: 'A quieter second line under the label — "3 items", "4.2 km".' },
         { name: 'amount', type: 'string', optional: true, description: 'PRE-FORMATTED, sign and currency included: `"€12.40"`, `"−€3.00"`, `"$0.00"`. Nothing in this family parses, adds or formats a number — the app owns currency, locale and the minus sign. Omit it for a `pending` line.' },
+        { name: 'secondaryAmount', type: 'string', optional: true, description: 'A second, PRE-FORMATTED rendering of the same amount, drawn de-emphasised under it — the buyer\'s currency beside the shop\'s: `"≈ 12,00 €"`. Like `ListingPriceLine.secondary`, it is drawn as given; nothing converts.' },
         { name: 'infoAccessibilityLabel', type: 'string', optional: true, description: 'Names the info affordance — it draws a glyph and no text. Defaults to `"About <label>"`.' },
       ],
     },

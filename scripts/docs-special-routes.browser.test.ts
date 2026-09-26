@@ -143,8 +143,8 @@ try {
   await familyFilters.getByRole('button', { name: 'All', exact: true, pressed: true }).waitFor()
   await pairingFilters.getByRole('button', { name: 'Curated combinations', exact: true, pressed: true }).waitFor()
   invariant(
-    await page.locator('[data-testid^="color-recipe-"]').count() === 46,
-    'curated filter did not render exactly 46 recipes',
+    await page.locator('[data-testid^="color-recipe-"]').count() === 47,
+    'curated filter did not render exactly 47 recipes',
   )
   await pairingFilters.getByRole('button', { name: 'All', exact: true }).click()
   await pairingFilters.getByRole('button', { name: 'All', exact: true, pressed: true }).waitFor()
@@ -155,8 +155,8 @@ try {
   await page.getByRole('button', { name: 'Derived', exact: true }).click()
   await pairingFilters.getByRole('button', { name: 'Derived', exact: true, pressed: true }).waitFor()
   invariant(
-    await page.locator('[data-testid^="color-recipe-"]').count() === 18,
-    'derived filter did not render exactly 18 recipes',
+    await page.locator('[data-testid^="color-recipe-"]').count() === 17,
+    'derived filter did not render exactly 17 recipes',
   )
   await page.getByRole('radio', { name: 'Public view', exact: true }).click()
   await page.getByText("Don't miss what's happening", { exact: true }).first().waitFor()
@@ -226,7 +226,7 @@ try {
   await assertComponentWorkbench(page)
 
   invariant(pageErrors.length === 0, `browser page errors: ${pageErrors.join('; ')}`)
-  console.info('[docs-special-routes] global chrome, both playgrounds, 64/46/18 filters and responsive overflow passed')
+  console.info('[docs-special-routes] global chrome, both playgrounds, 64/47/17 filters and responsive overflow passed')
 } finally {
   await context.close()
   await browser.close()

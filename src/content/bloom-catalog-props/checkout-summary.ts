@@ -9,6 +9,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'label', type: 'string', optional: true, description: 'Default `"Place order"`.' },
         { name: 'amount', type: 'string', optional: true, description: 'The amount the press commits to, PRE-FORMATTED, drawn on the button after the label. It is on the BUTTON rather than beside it because the number a press commits to and the press are one decision.' },
+        { name: 'secondaryAmount', type: 'string', optional: true, description: 'A second, PRE-FORMATTED rendering of `amount` — the buyer\'s currency beside the shop\'s, `"≈ 12,00 €"` — drawn de-emphasised, centred under the button. Named like `PriceLine.secondaryAmount`; drawn as given, nothing converts.' },
         { name: 'terms', type: 'ReactNode', optional: true, description: 'The terms line under the button — a string, or a node with links in it. `null` draws none.' },
         { name: 'onConfirm', type: '() => void', optional: true, description: 'Called at most once per busy cycle.' },
         { name: 'disabled', type: 'boolean', optional: true },
