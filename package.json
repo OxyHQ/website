@@ -60,10 +60,10 @@
     "@mdx-js/react": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
     "@oxy.so/bloom": "^4.28.0",
-    "@oxy.so/contracts": "^2.1.0",
-    "@oxy.so/core": "^1.16.0",
+    "@oxy.so/contracts": "^2.2.0",
+    "@oxy.so/core": "^1.18.0",
     "@oxy.so/mcp": "^1.0.0",
-    "@oxy.so/services": "^6.0.0",
+    "@oxy.so/services": "^6.2.0",
     "@oxy.so/telemetry": "^1.1.1",
     "@react-native-async-storage/async-storage": "^3.1.1",
     "@scalar/api-reference-react": "^0.9.55",
@@ -157,6 +157,7 @@
     "vite-plugin-svgr": "^5.2.0"
   },
   "overrides": {
-    "d3-color": ">=3.1.0"
+    "d3-color": ">=3.1.0",
+    "@oxy.so/contracts": "^2.2.0"
   }
 }
