@@ -38,7 +38,7 @@ const start = new Date('2026-09-17T10:00:00Z')
 
 beforeAll(() => {
   setSystemTime(start)
-  spyOn(oxyService, 'getServiceToken').mockResolvedValue('service-token')
+  spyOn(oxyService, 'serviceToken').mockResolvedValue('service-token')
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = new URL(String(input))
     const body = init?.body ? JSON.parse(String(init.body)) as Record<string, unknown> : undefined

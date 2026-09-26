@@ -120,7 +120,7 @@ function FollowButton({ userId }: { userId: string }) {
 
   const { data: followStatus } = useQuery({
     queryKey: ['follow-status', userId],
-    queryFn: () => oxyServices.getFollowStatus(userId),
+    queryFn: () => oxyServices.follows.status(userId),
     enabled: isAuthenticated && !!userId,
   })
 
@@ -129,9 +129,9 @@ function FollowButton({ userId }: { userId: string }) {
   const toggleFollow = useMutation({
     mutationFn: async () => {
       if (isFollowing) {
-        return oxyServices.unfollowUser(userId)
+        return oxyServices.follows.unfollow(userId)
       }
-      return oxyServices.followUser(userId)
+      return oxyServices.follows.follow(userId)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['follow-status', userId] })

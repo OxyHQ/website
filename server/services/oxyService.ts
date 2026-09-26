@@ -1,4 +1,4 @@
-import { OxyServices } from '@oxy.so/core'
+import { OxyServer } from '@oxy.so/core/server'
 import { config } from '../config.js'
 
 /**
@@ -6,7 +6,9 @@ import { config } from '../config.js'
  * for the application that registered the resource, so this one credential
  * registers the catalog, introspects MCP tokens and calls Clarity.
  */
-export const oxyService = new OxyServices({ baseURL: config.oxyApiBase })
-if (config.oxyServiceApiKey && config.oxyServiceApiSecret) {
-  oxyService.configureServiceAuth(config.oxyServiceApiKey, config.oxyServiceApiSecret)
-}
+export const oxyService = new OxyServer({
+  baseURL: config.oxyApiBase,
+  ...(config.oxyServiceApiKey && config.oxyServiceApiSecret
+    ? { serviceAuth: { apiKey: config.oxyServiceApiKey, apiSecret: config.oxyServiceApiSecret } }
+    : {}),
+})

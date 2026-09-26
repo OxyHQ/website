@@ -154,7 +154,7 @@ router.get('/connectors/account-context', async (req, res) => {
   if (!claims) return
 
   try {
-    const user = await oxy.getUserById(claims.user_id)
+    const user = await oxy.users.get(claims.user_id)
     const displayName = typeof user.name?.displayName === 'string' ? user.name.displayName : user.username
     res.set('Cache-Control', 'no-store').json({
       user: {

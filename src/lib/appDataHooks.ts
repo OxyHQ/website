@@ -53,7 +53,7 @@ export const useAppData = <T = unknown>(
     queryFn: async () => {
       try {
         return await authenticatedApiCall(oxyServices, activeSessionId, () =>
-          oxyServices.getAppData<T>(namespace, key),
+          oxyServices.appData.get<T>(namespace, key),
         )
       } catch (error) {
         if (isMissingAppDataEndpointError(error)) {
@@ -79,7 +79,7 @@ export const useAppDataNamespace = <T = unknown>(
     queryFn: async () => {
       try {
         return await authenticatedApiCall(oxyServices, activeSessionId, () =>
-          oxyServices.listAppData<T>(namespace),
+          oxyServices.appData.list<T>(namespace),
         )
       } catch (error) {
         if (isMissingAppDataEndpointError(error)) {
@@ -113,7 +113,7 @@ export const useSetAppData = <T = unknown>() => {
     mutationKey: ['appData', 'set'],
     mutationFn: async ({ namespace, key, value }) => {
       return authenticatedApiCall(oxyServices, activeSessionId, () =>
-        oxyServices.setAppData<T>(namespace, key, value),
+        oxyServices.appData.set<T>(namespace, key, value),
       )
     },
     onMutate: async ({ namespace, key, value }) => {
