@@ -32,7 +32,7 @@ export function setOxyServices(oxy: OxyServices) {
  */
 export async function getAuthHeaders(): Promise<Record<string, string>> {
   const telemetry = await getBrowserTelemetryHeaders()
-  const token = oxyServices ? oxyServices.getAccessToken() : null
+  const token = oxyServices ? oxyServices.session.accessToken : null
   return token ? { ...telemetry, Authorization: `Bearer ${token}` } : telemetry
 }
 

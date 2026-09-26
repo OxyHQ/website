@@ -31,15 +31,14 @@ Open your app in Console → **Credentials**. The API key is shown in full. The 
 ## Use a key in code
 
 ```ts
-import { OxyServices } from '@oxy.so/core'
+import { OxyServer } from '@oxy.so/core/server'
 
-const oxy = new OxyServices({ baseURL: 'https://api.oxy.so' })
-oxy.configureServiceAuth(
-  process.env.OXY_API_KEY!,
-  process.env.OXY_API_SECRET!,
-)
+const oxy = new OxyServer({
+  baseURL: 'https://api.oxy.so',
+  serviceAuth: { apiKey: process.env.OXY_API_KEY!, apiSecret: process.env.OXY_API_SECRET! },
+})
 
-const token = await oxy.getServiceToken()
+const token = await oxy.serviceToken()
 ```
 
 See [Service tokens](/developers/docs/core) in the developer docs for the full pattern.

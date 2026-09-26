@@ -216,7 +216,7 @@ export default function ContactSalesPage() {
     if (!isAuthenticated || !oxyServices) return
     let cancelled = false
     oxyServices
-      .listAccounts()
+      .accounts.list()
       .then((nodes) => {
         if (cancelled) return
         setAccounts(
@@ -243,7 +243,7 @@ export default function ContactSalesPage() {
     if (!oxyServices || !form.accountId) return
     let cancelled = false
     oxyServices
-      .listAccountApps(form.accountId)
+      .apps.list(form.accountId)
       .then((apps) => {
         if (cancelled) return
         setApplications(apps.map((app) => ({ id: app._id, label: app.name })))

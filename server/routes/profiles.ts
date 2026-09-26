@@ -35,7 +35,7 @@ const activityQuerySchema = z.object({
 router.get('/id/:userId', async (req, res) => {
   const { userId } = validate(userIdParamsSchema, req.params)
   try {
-    const oxyUser = await oxy.getUserById(userId)
+    const oxyUser = await oxy.users.get(userId)
     res.json({
       _id: oxyUser.id,
       username: oxyUser.username,
@@ -79,9 +79,9 @@ router.get('/:username', optionalAuth, async (req, res) => {
   const { username } = validate(usernameParamsSchema, req.params)
 
   try {
-    let oxyUser: Awaited<ReturnType<typeof oxy.getProfileByUsername>>
+    let oxyUser: Awaited<ReturnType<typeof oxy.users.byUsername>>
     try {
-      oxyUser = await oxy.getProfileByUsername(username)
+      oxyUser = await oxy.users.byUsername(username)
     } catch {
       return res.status(404).json({ error: 'User not found' })
     }
@@ -111,8 +111,8 @@ router.get('/:username', optionalAuth, async (req, res) => {
             .from(newsroomPosts)
             .where(and(eq(newsroomPosts.oxyUserId, userId), eq(newsroomPosts.status, 'published'))),
         ),
-        oxy.getUserFollowers(userId).then(r => r.total).catch(() => 0),
-        oxy.getUserFollowing(userId).then(r => r.total).catch(() => 0),
+        oxy.follows.followers(userId).then(r => r.total).catch(() => 0),
+        oxy.follows.following(userId).then(r => r.total).catch(() => 0),
       ])
       stats = { comments: commentCount, likes: likeCount, votes: voteCount, articles: articleCount, followers, following }
     }

@@ -69,7 +69,7 @@ beforeAll(async () => {
   })
   await new Promise<void>((resolve) => fakeOxy.listen(Number(process.env.TEST_FAKE_OXY_PORT), 'localhost', resolve))
 
-  oxyService.getServiceToken = async () => 'service-token'
+  oxyService.serviceToken = async () => 'service-token'
   oxyService.invalidateServiceToken = () => undefined
 
   // All interfaces, as in production: the public-read bridge calls 127.0.0.1,

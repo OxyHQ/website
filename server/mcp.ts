@@ -29,7 +29,7 @@ const service = createCatalogMcpHttpService({
   handlers,
   authorize,
   authorizationServer: config.oxyApiBase,
-  getServiceToken: () => oxyService.getServiceToken(),
+  getServiceToken: () => oxyService.serviceToken(),
   invalidateServiceToken: () => oxyService.invalidateServiceToken(),
   allowedOrigins: [...CLAUDE_ORIGINS, ...config.mcp.allowedOrigins],
   serverName: 'oxy-website',

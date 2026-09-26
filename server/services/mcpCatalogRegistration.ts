@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 import type { AppCapabilityCatalog } from '@oxy.so/contracts'
-import type { OxyServices } from '@oxy.so/core'
+import type { OxyServer } from '@oxy.so/core/server'
 
 /**
  * Register the MCP catalog with Oxy, which is what makes Oxy recognise
@@ -80,7 +80,7 @@ export interface McpCatalogRegistration {
   status(): McpCatalogRegistrationStatus
 }
 
-type OxyTokenSource = Pick<OxyServices, 'getServiceToken' | 'invalidateServiceToken'>
+type OxyTokenSource = Pick<OxyServer, 'serviceToken' | 'invalidateServiceToken'>
 
 function unrefSleep(ms: number, signal: AbortSignal): Promise<void> {
   return new Promise((resolve) => {
@@ -199,7 +199,7 @@ export function createMcpCatalogRegistration(input: {
     current.lastAttemptAt = iso(deps.now())
     current.nextAttemptAt = null
     try {
-      const token = await input.oxy.getServiceToken()
+      const token = await input.oxy.serviceToken()
       if (token) knownTokens.add(token)
       const response = await deps.fetch(`${input.oxyApiBase}/capabilities/catalogs/register`, {
         method: 'POST',

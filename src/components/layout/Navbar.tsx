@@ -855,7 +855,7 @@ export default function Navbar({
       const looksLikeFederatedHandle = /^@?[^@\s]+@[^@\s]+$/.test(q.trim())
       const profileSearch = looksLikeFederatedHandle
         ? Promise.resolve([])
-        : oxyServices.searchProfiles(q, { limit: 8 }).then((response) => response.data).catch(() => [])
+        : oxyServices.users.search(q, { limit: 8 }).then((response) => response.data).catch(() => [])
       void Promise.all([
         searchSite(q).catch(() => [] as SearchResult[]),
         profileSearch,
@@ -875,7 +875,7 @@ export default function Navbar({
           avatar: user.avatar
             ? user.avatar.startsWith('http')
               ? user.avatar
-              : oxyServices.getFileDownloadUrl(user.avatar, 'thumb')
+              : oxyServices.assets.publicUrl(user.avatar, 'thumb')
             : undefined,
         }))
         setSearchResults([...siteResults, ...userResults])

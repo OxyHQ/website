@@ -146,7 +146,7 @@ export function useAcademyProgress(courseSlug: string): UseAcademyProgressResult
           // back to a read-then-merge per course.
           let merged = progress
           try {
-            const current = await oxyServices.getAppData<CourseProgress>(
+            const current = await oxyServices.appData.get<CourseProgress>(
               ACADEMY_NAMESPACE,
               localCourseSlug,
             )
