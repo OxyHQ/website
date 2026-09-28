@@ -1,5 +1,4 @@
 import { Avatar } from '@oxy.so/bloom/avatar'
-import type { AvatarShape } from '@oxy.so/bloom/avatar'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {
@@ -26,7 +25,7 @@ export default function AvatarDemo() {
 export function Playground({ values }: { values: PlaygroundValues }) {
   const name = typeof values.name === 'string' ? values.name : 'Ada Lovelace'
   const size = typeof values.size === 'number' ? values.size : 56
-  const shape = values.shape === 'squircle' ? 'squircle' : ('circle' satisfies AvatarShape)
+  const shape = values.shape === 'squircle' ? 'squircle' : 'circle'
   const verified = values.verified === true
   const source = typeof values.source === 'string' && values.source ? values.source : undefined
   return <Avatar name={name} size={size} shape={shape} verified={verified} source={source} />
