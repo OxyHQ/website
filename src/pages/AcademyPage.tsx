@@ -221,7 +221,7 @@ export default function AcademyPage() {
 
       {/* The rail — and its search — is a sheet below lg; the catalog's own filter stays on the page. */}
       <div className="mt-6 lg:hidden">
-        <Search value={query} onChangeText={setQuery} onClearText={() => setQuery('')} label={t('academy.searchLabel')} />
+        <Search value={query} onValueChange={setQuery} onClearText={() => setQuery('')} label={t('academy.searchLabel')} />
       </div>
 
       <div className="mt-8">

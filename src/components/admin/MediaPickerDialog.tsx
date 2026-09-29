@@ -94,10 +94,9 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <h2 className="text-lg font-semibold text-foreground">Media Library</h2>
           <Button
-            iconOnly
             appearance="plain"
             tone="neutral"
-            leadingIcon={RiCloseLine}
+            icon={RiCloseLine}
             accessibilityLabel="Close"
             onPress={onClose}
           />
