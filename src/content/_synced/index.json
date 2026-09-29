@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-25T09:56:32.147Z",
+  "generatedAt": "2026-09-29T17:07:22.036Z",
   "packages": [
     {
       "package": "@oxy.so/bloom",
@@ -13177,6 +13177,13 @@
               "section": "api"
             },
             {
+              "slug": "api/classes/OxyAccountEventError",
+              "title": "OxyAccountEventError",
+              "file": "core/main/api/classes/OxyAccountEventError.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/classes/OxyAppDataIdentifierError",
               "title": "OxyAppDataIdentifierError",
               "file": "core/main/api/classes/OxyAppDataIdentifierError.md",
@@ -15480,6 +15487,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/IdentityDeviceBackupStore",
+              "title": "IdentityDeviceBackupStore",
+              "file": "core/main/api/interfaces/IdentityDeviceBackupStore.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/IdentityMarker",
               "title": "IdentityMarker",
               "file": "core/main/api/interfaces/IdentityMarker.md",
@@ -15651,6 +15665,27 @@
               "slug": "api/interfaces/OpenedRawKeyIdentity",
               "title": "OpenedRawKeyIdentity",
               "file": "core/main/api/interfaces/OpenedRawKeyIdentity.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OxyAccountEvent",
+              "title": "OxyAccountEvent",
+              "file": "core/main/api/interfaces/OxyAccountEvent.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OxyAccountEventFeedItem",
+              "title": "OxyAccountEventFeedItem",
+              "file": "core/main/api/interfaces/OxyAccountEventFeedItem.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OxyAccountEventFeedPage",
+              "title": "OxyAccountEventFeedPage",
+              "file": "core/main/api/interfaces/OxyAccountEventFeedPage.md",
               "order": 10000,
               "section": "api"
             },
@@ -16341,6 +16376,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/VerifyAccountEventOptions",
+              "title": "VerifyAccountEventOptions",
+              "file": "core/main/api/interfaces/VerifyAccountEventOptions.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/VerifyDomainResult",
               "title": "VerifyDomainResult",
               "file": "core/main/api/interfaces/VerifyDomainResult.md",
@@ -16582,6 +16624,13 @@
               "slug": "api/types/CommonsSignInPurpose",
               "title": "CommonsSignInPurpose",
               "file": "core/main/api/types/CommonsSignInPurpose.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/types/ContextChoiceOutcome",
+              "title": "ContextChoiceOutcome",
+              "file": "core/main/api/types/ContextChoiceOutcome.md",
               "order": 10000,
               "section": "api"
             },
@@ -16915,6 +16964,13 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/AUTH_WEB_ORIGIN",
+              "title": "AUTH\\_WEB\\_ORIGIN",
+              "file": "core/main/api/variables/AUTH_WEB_ORIGIN.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/CENTRAL_IDP_APEX",
               "title": "CENTRAL\\_IDP\\_APEX",
               "file": "core/main/api/variables/CENTRAL_IDP_APEX.md",
@@ -17013,13 +17069,6 @@
               "section": "api"
             },
             {
-              "slug": "api/variables/IDENTITY_WEB_ORIGIN",
-              "title": "IDENTITY\\_WEB\\_ORIGIN",
-              "file": "core/main/api/variables/IDENTITY_WEB_ORIGIN.md",
-              "order": 10000,
-              "section": "api"
-            },
-            {
               "slug": "api/variables/isAllowedDeviceJoinOrigin",
               "title": "~~Variable: isAllowedDeviceJoinOrigin~~",
               "file": "core/main/api/variables/isAllowedDeviceJoinOrigin.md",
@@ -17044,6 +17093,13 @@
               "slug": "api/variables/MAX_DISPLAY_NAME_LENGTH",
               "title": "MAX\\_DISPLAY\\_NAME\\_LENGTH",
               "file": "core/main/api/variables/MAX_DISPLAY_NAME_LENGTH.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/OXY_ACCOUNT_DELETED_EVENT_URI",
+              "title": "OXY\\_ACCOUNT\\_DELETED\\_EVENT\\_URI",
+              "file": "core/main/api/variables/OXY_ACCOUNT_DELETED_EVENT_URI.md",
               "order": 10000,
               "section": "api"
             },
@@ -18092,9 +18148,9 @@
               "section": "api"
             },
             {
-              "slug": "api/interfaces/OxyAuthChooserProps",
-              "title": "OxyAuthChooserProps",
-              "file": "services/main/api/interfaces/OxyAuthChooserProps.md",
+              "slug": "api/interfaces/OxyAccountPickerProps",
+              "title": "OxyAccountPickerProps",
+              "file": "services/main/api/interfaces/OxyAccountPickerProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -18102,6 +18158,13 @@
               "slug": "api/interfaces/OxyAuthPromptProps",
               "title": "OxyAuthPromptProps",
               "file": "services/main/api/interfaces/OxyAuthPromptProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OxyAuthScreenHeaderProps",
+              "title": "OxyAuthScreenHeaderProps",
+              "file": "services/main/api/interfaces/OxyAuthScreenHeaderProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -18183,6 +18246,13 @@
               "section": "api"
             },
             {
+              "slug": "api/interfaces/OxySignInPanelProps",
+              "title": "OxySignInPanelProps",
+              "file": "services/main/api/interfaces/OxySignInPanelProps.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/interfaces/OxySignInRequestSurfaceProps",
               "title": "OxySignInRequestSurfaceProps",
               "file": "services/main/api/interfaces/OxySignInRequestSurfaceProps.md",
@@ -18193,6 +18263,13 @@
               "slug": "api/interfaces/OxySignInSurfaceAction",
               "title": "OxySignInSurfaceAction",
               "file": "services/main/api/interfaces/OxySignInSurfaceAction.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/interfaces/OxySignUpPanelProps",
+              "title": "OxySignUpPanelProps",
+              "file": "services/main/api/interfaces/OxySignUpPanelProps.md",
               "order": 10000,
               "section": "api"
             },
@@ -18596,9 +18673,16 @@
               "section": "api"
             },
             {
-              "slug": "api/variables/OxyAuthChooser",
-              "title": "OxyAuthChooser",
-              "file": "services/main/api/variables/OxyAuthChooser.md",
+              "slug": "api/variables/OxyAccountPicker",
+              "title": "OxyAccountPicker",
+              "file": "services/main/api/variables/OxyAccountPicker.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/OxyAuthLoading",
+              "title": "OxyAuthLoading",
+              "file": "services/main/api/variables/OxyAuthLoading.md",
               "order": 10000,
               "section": "api"
             },
@@ -18606,6 +18690,27 @@
               "slug": "api/variables/OxyAuthPrompt",
               "title": "OxyAuthPrompt",
               "file": "services/main/api/variables/OxyAuthPrompt.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/OxyAuthScreen",
+              "title": "OxyAuthScreen",
+              "file": "services/main/api/variables/OxyAuthScreen.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/OxyAuthScreenHeader",
+              "title": "OxyAuthScreenHeader",
+              "file": "services/main/api/variables/OxyAuthScreenHeader.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/OxyAuthTerms",
+              "title": "OxyAuthTerms",
+              "file": "services/main/api/variables/OxyAuthTerms.md",
               "order": 10000,
               "section": "api"
             },
@@ -18624,9 +18729,23 @@
               "section": "api"
             },
             {
+              "slug": "api/variables/OxySignInPanel",
+              "title": "OxySignInPanel",
+              "file": "services/main/api/variables/OxySignInPanel.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
               "slug": "api/variables/OxySignInRequestSurface",
               "title": "OxySignInRequestSurface",
               "file": "services/main/api/variables/OxySignInRequestSurface.md",
+              "order": 10000,
+              "section": "api"
+            },
+            {
+              "slug": "api/variables/OxySignUpPanel",
+              "title": "OxySignUpPanel",
+              "file": "services/main/api/variables/OxySignUpPanel.md",
               "order": 10000,
               "section": "api"
             },
