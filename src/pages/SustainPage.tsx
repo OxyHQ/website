@@ -101,7 +101,7 @@ function parseCommitments(sections: PageSection[], fallback: Commitment[]): Comm
   return parsed.length > 0 ? parsed : fallback
 }
 
-/* ── Layout primitives (copied from CompanyPage) ── */
+/* ── Layout primitives ── */
 
 function DashedHLine() {
   return (
