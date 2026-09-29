@@ -10,6 +10,7 @@ import {
 } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button } from '@oxy.so/bloom/button'
+import { Checkbox } from '@oxy.so/bloom/checkbox'
 import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '@oxy.so/bloom/label'
@@ -243,15 +244,12 @@ export default function ProductsAdmin() {
               onValueChange={(cta) => setEditing({ ...editing, cta })}
               placeholder="Explore Alia"
             />
-            <div className="flex items-center gap-2 pt-6">
-              <input
-                id="product-external"
-                type="checkbox"
+            <div className="flex items-center pt-6">
+              <Checkbox
+                label="External link (opens in a new tab)"
                 checked={editing.external}
-                onChange={(e) => setEditing({ ...editing, external: e.target.checked })}
-                className="size-4 rounded border border-border"
+                onCheckedChange={(external) => setEditing({ ...editing, external })}
               />
-              <Label htmlFor="product-external">External link (opens in a new tab)</Label>
             </div>
           </div>
 
@@ -343,49 +341,29 @@ export default function ProductsAdmin() {
             <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Surfaces</div>
             <p className="mt-1 text-xs text-muted-foreground">Which public surfaces should this product appear on?</p>
             <div className="mt-3 grid grid-cols-3 gap-3">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={editing.showOnProducts}
-                  onChange={(e) => setEditing({ ...editing, showOnProducts: e.target.checked })}
-                  className="size-4 rounded border border-border"
-                />
-                <span className="text-sm">/apps</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={editing.showOnStatus}
-                  onChange={(e) => setEditing({ ...editing, showOnStatus: e.target.checked })}
-                  className="size-4 rounded border border-border"
-                />
-                <span className="text-sm">/status</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={editing.showInNav}
-                  onChange={(e) => setEditing({ ...editing, showInNav: e.target.checked })}
-                  className="size-4 rounded border border-border"
-                />
-                <span className="text-sm">Navbar</span>
-              </label>
+              <Checkbox
+                label="/apps"
+                checked={editing.showOnProducts}
+                onCheckedChange={(showOnProducts) => setEditing({ ...editing, showOnProducts })}
+              />
+              <Checkbox
+                label="/status"
+                checked={editing.showOnStatus}
+                onCheckedChange={(showOnStatus) => setEditing({ ...editing, showOnStatus })}
+              />
+              <Checkbox
+                label="Navbar"
+                checked={editing.showInNav}
+                onCheckedChange={(showInNav) => setEditing({ ...editing, showInNav })}
+              />
             </div>
             <div className="mt-4 border-t border-border pt-4">
-              <label className="flex items-start gap-2">
-                <input
-                  type="checkbox"
-                  checked={editing.navOpensApp}
-                  onChange={(e) => setEditing({ ...editing, navOpensApp: e.target.checked })}
-                  className="mt-0.5 size-4 rounded border border-border"
-                />
-                <span className="text-sm">
-                  Navbar links straight to the app
-                  <span className="block text-xs text-muted-foreground">
-                    Off by default: the dropdown opens the local landing page (when set) so visitors stay on oxy.so first. Turn this on to skip the landing page and jump directly to the running app URL.
-                  </span>
-                </span>
-              </label>
+              <Checkbox
+                label="Navbar links straight to the app"
+                description="Off by default: the dropdown opens the local landing page (when set) so visitors stay on oxy.so first. Turn this on to skip the landing page and jump directly to the running app URL."
+                checked={editing.navOpensApp}
+                onCheckedChange={(navOpensApp) => setEditing({ ...editing, navOpensApp })}
+              />
             </div>
           </div>
 

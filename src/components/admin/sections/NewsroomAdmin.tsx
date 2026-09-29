@@ -4,6 +4,7 @@ import { type NewsroomPost, type NewsroomProductRef } from '../../../data/newsro
 import { apiFetch } from '../../../api/client'
 import { Button } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
+import { Checkbox } from '@oxy.so/bloom/checkbox'
 import { Badge } from '@oxy.so/bloom/badge'
 import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
@@ -138,16 +139,14 @@ export default function NewsroomAdmin() {
                     if (!product._id) return null
                     const checked = selectedProductIds.has(product._id)
                     return (
-                      <label key={product._id} className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
-                        <input
-                          type="checkbox"
+                      <div key={product._id} className="flex items-center gap-2">
+                        <Checkbox
+                          label={product.name}
                           checked={checked}
-                          onChange={() => toggleProduct(product)}
-                          className="size-4 rounded border border-border"
+                          onCheckedChange={() => toggleProduct(product)}
                         />
-                        <span className="font-medium">{product.name}</span>
                         <span className="font-mono text-xs text-muted-foreground">{product.productId}</span>
-                      </label>
+                      </div>
                     )
                   })}
                 </div>

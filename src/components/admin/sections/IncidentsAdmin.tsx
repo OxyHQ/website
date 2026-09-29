@@ -8,6 +8,7 @@ import {
 } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { Button } from '@oxy.so/bloom/button'
+import { Checkbox } from '@oxy.so/bloom/checkbox'
 import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '@oxy.so/bloom/label'
@@ -163,15 +164,12 @@ export default function IncidentsAdmin() {
             <p className="mt-1 text-xs text-muted-foreground">Leave all unchecked for a site-wide notice.</p>
             <div className="mt-3 grid grid-cols-3 gap-2">
               {products.map((product) => (
-                <label key={product._id} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={product._id ? editing.products.includes(product._id) : false}
-                    onChange={() => product._id && toggleProduct(product._id)}
-                    className="size-4 rounded border border-border"
-                  />
-                  <span className="text-sm">{product.name}</span>
-                </label>
+                <Checkbox
+                  key={product._id}
+                  label={product.name}
+                  checked={product._id ? editing.products.includes(product._id) : false}
+                  onCheckedChange={() => product._id && toggleProduct(product._id)}
+                />
               ))}
             </div>
           </div>
