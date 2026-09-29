@@ -7,41 +7,6 @@
  */
 
 /**
- * Canonical company identity. Use these everywhere instead of hardcoding
- * names, taglines, or descriptions in copy. Oxy is an open-source ethical
- * tech ecosystem building AI agents and apps — NOT a CRM (though Oxy CRM
- * is one of the products in the ecosystem).
- */
-export const OXY_FOUNDER = 'Nate Isern'
-export const OXY_HQ = 'Barcelona, ES'
-export const OXY_GITHUB_ORG = 'OxyHQ'
-export const OXY_GITHUB_URL = `https://github.com/${OXY_GITHUB_ORG}`
-
-export const OXY_PRODUCTS = [
-  'Mention',
-  'Allo',
-  'Inbox',
-  'Codea Studio',
-  'Codea AI',
-  'Codea VS Code Extension',
-  'Oxy AI (Alia)',
-  'Oxy CRM',
-  'OxyOS',
-  'Bloom UI',
-  'TNP',
-  'FairCoin',
-  'Homiio',
-] as const
-
-export const OXY_POSITIONING = {
-  tagline: 'An independent, open-source ecosystem of ethical technology.',
-  short:
-    'Oxy is an independent, open-source ecosystem of ethical technology built to empower people, not exploit them.',
-  long:
-    'Oxy is an independent, open-source ecosystem of ethical technology built to empower people, not exploit them. Apps, AI, an operating system, a browser, identity and more. Mention, Allo, Inbox, Codea, Oxy AI, OxyOS, Astro, TNP, FairCoin and Homiio.',
-} as const
-
-/**
  * Feature flags. Default to `false` for any surface that still relies on
  * placeholder/cloned content. Flip to `true` once real data is in place.
  */

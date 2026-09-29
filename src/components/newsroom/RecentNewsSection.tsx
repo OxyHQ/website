@@ -5,7 +5,6 @@ import { useNewsroomPosts } from '../../api/hooks'
 
 /* ──────────────────────────────────────────────────
  * "Recent news" section — 2-col grid with row cards
- * Original: max-w-container grid w-full grid-cols-1 gap-sm @lg:grid-cols-2
  * ────────────────────────────────────────────── */
 interface RecentNewsSectionProps {
   title?: string

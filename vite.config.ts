@@ -291,7 +291,7 @@ export default defineConfig(({ mode }) => ({
             return 'vendor-oxy'
           }
           if (inPkg('framer-motion', 'motion-dom', 'motion-utils')) return 'vendor-motion'
-          if (inPkg('swiper', 'keen-slider')) return 'vendor-carousel'
+          if (inPkg('swiper')) return 'vendor-carousel'
           if (inPkg('@scalar')) return 'vendor-scalar'
           if (inPkg('react', 'react-dom', 'react-router', 'react-router-dom', 'scheduler')) {
             return 'vendor-react'
