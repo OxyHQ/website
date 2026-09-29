@@ -11,8 +11,7 @@
  * follow the seed.
  */
 .tnp-theme .button-primary,
-.tnp-theme .button-outline,
-.tnp-theme .button-ghost {
+.tnp-theme .button-outline {
   border-radius: 9999px;
 }
 
@@ -39,49 +38,6 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-/* Corner dot hover effect for product cards */
-.tnp-theme .card-corner-dots {
-  position: relative;
-}
-.tnp-theme .card-corner-dots::before,
-.tnp-theme .card-corner-dots::after,
-.tnp-theme .card-corner-dots > .corner-bl::before,
-.tnp-theme .card-corner-dots > .corner-br::before {
-  content: '';
-  position: absolute;
-  width: 0.5rem;
-  height: 0.5rem;
-  background: var(--color-primary);
-  opacity: 0;
-  transition: opacity 0.15s;
-  z-index: 10;
-}
-.tnp-theme .card-corner-dots::before {
-  top: -0.25rem;
-  left: -0.25rem;
-}
-.tnp-theme .card-corner-dots::after {
-  top: -0.25rem;
-  right: -0.25rem;
-}
-.tnp-theme .card-corner-dots > .corner-bl::before {
-  bottom: -0.25rem;
-  left: -0.25rem;
-  top: auto;
-}
-.tnp-theme .card-corner-dots > .corner-br::before {
-  bottom: -0.25rem;
-  right: -0.25rem;
-  top: auto;
-  left: auto;
-}
-.tnp-theme .group:hover .card-corner-dots::before,
-.tnp-theme .group:hover .card-corner-dots::after,
-.tnp-theme .group:hover .card-corner-dots > .corner-bl::before,
-.tnp-theme .group:hover .card-corner-dots > .corner-br::before {
-  opacity: 1;
 }
 
 /* Code block styling */

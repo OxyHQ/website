@@ -9,8 +9,7 @@
  * and mixes its own hover — and a copy that names a hex cannot follow the seed.
  */
 .oxyos-theme .button-primary,
-.oxyos-theme .button-outline,
-.oxyos-theme .button-ghost {
+.oxyos-theme .button-outline {
   border-radius: 9999px;
 }
 

@@ -101,7 +101,6 @@
 .cursor-theme .card--text {
   padding: clamp(1rem, 0.75rem + 0.5vw, 1.5rem);
 }
-.cursor-theme .card--sub { padding: var(--g1); }
 
 /* ── Buttons ── */
 .cursor-theme .btn {
@@ -156,7 +155,6 @@
 .cursor-theme .mb-v1 { margin-bottom: var(--v1); }
 .cursor-theme .mb-v2 { margin-bottom: var(--v2); }
 .cursor-theme .mb-v2\.5 { margin-bottom: var(--v2-5); }
-.cursor-theme .mb-v3 { margin-bottom: var(--v3); }
 .cursor-theme .mb-v4 { margin-bottom: var(--v4); }
 .cursor-theme .mb-v4\.5 { margin-bottom: var(--v4-5); }
 .cursor-theme .mb-g1 { margin-bottom: var(--g1); }
@@ -175,11 +173,8 @@
 .cursor-theme .pt-g1\.75 { padding-top: var(--g1-75); }
 
 .cursor-theme .pb-v1\.5 { padding-bottom: var(--v1-5); }
-.cursor-theme .pb-v3 { padding-bottom: var(--v3); }
 .cursor-theme .pb-g2 { padding-bottom: var(--g2); }
 .cursor-theme .pb-v2\.5\/12 { padding-bottom: var(--v2-5-12); }
-
-.cursor-theme .py-v2\.5\/12 { padding-top: var(--v2-5-12); padding-bottom: var(--v2-5-12); }
 
 .cursor-theme .px-g2 { padding-left: var(--g2); padding-right: var(--g2); }
 .cursor-theme .px-g0\.75 { padding-left: var(--g0-75); padding-right: var(--g0-75); }
@@ -208,8 +203,6 @@
 /* ── Gap utilities ── */
 .cursor-theme .gap-g1 { gap: var(--g1); }
 .cursor-theme .gap-x-g1 { column-gap: var(--g1); }
-.cursor-theme .gap-y-v1 { row-gap: var(--v1); }
-.cursor-theme .gap-y-v2 { row-gap: var(--v2); }
 .cursor-theme .gap-g1\.5 { gap: var(--g1-5); }
 
 /* ── Flex utilities ── */
@@ -217,16 +210,6 @@
 
 /* ── Stack ── */
 .cursor-theme .stack > * + * { margin-top: var(--stack-gap, 0.75rem); }
-
-/* ── Footer link ── */
-.cursor-theme .footer-link {
-  color: var(--color-muted-foreground);
-  text-decoration: none;
-  transition: color 0.15s;
-}
-.cursor-theme .footer-link:hover {
-  color: var(--color-foreground);
-}
 
 /* ── Logo garden ── */
 .cursor-theme .logo-garden-responsive-8 {

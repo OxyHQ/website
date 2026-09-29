@@ -36,11 +36,6 @@
 .oxy-anchor {
   scroll-margin-top: 10rem;
 }
-.oxy-guide-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
-  gap: 1.5rem;
-}
 .oxy-guide-panel {
   border: 1px solid var(--border);
   border-radius: 1.5rem;
@@ -57,31 +52,9 @@
   text-underline-offset: 0.3em;
 }
 .oxy-link:focus-visible,
-.oxy-story a:focus-visible,
 .oxy-guide button:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 5px;
-}
-.oxy-motion-sample {
-  animation: oxy-arrive var(--oxy-motion-scene) var(--oxy-ease-out) both;
-}
-@keyframes oxy-arrive {
-  from {
-    opacity: 0.2;
-    transform: translateY(2rem) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes oxy-page-arrive {
-  from {
-    opacity: 0.4;
-  }
-  to {
-    opacity: 1;
-  }
 }
 @keyframes oxy-scroll-arrive {
   from {
@@ -94,13 +67,8 @@
   }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .oxy-story {
-    animation: oxy-page-arrive var(--oxy-motion-enter) var(--oxy-ease-out);
-  }
   @supports (animation-timeline: view()) {
-    .oxy-reveal,
-    .oxy-story > section > h2,
-    .oxy-story > section > header {
+    .oxy-reveal {
       animation: oxy-scroll-arrive linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 85%;
@@ -108,14 +76,10 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .oxy-motion-sample,
-  .oxy-story,
   .oxy-reveal {
     animation: none;
   }
-  .oxy-guide *,
-  .oxy-story a,
-  .oxy-story button {
+  .oxy-guide * {
     scroll-behavior: auto;
   }
 }
@@ -131,14 +95,6 @@
 .bloom-workbench-rail {
   padding: 1rem;
   background: var(--surface);
-}
-.bloom-workbench-canvas {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  overflow: auto;
 }
 .bloom-workbench input,
 .bloom-toolbar input {
@@ -169,9 +125,5 @@
 @media (max-width: 640px) {
   .bloom-workbench {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .bloom-workbench-canvas {
-    min-height: 24rem;
-    padding: 1rem;
   }
 }
