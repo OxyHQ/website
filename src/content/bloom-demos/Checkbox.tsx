@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Checkbox } from '@oxy.so/bloom/checkbox'
 import type { CheckboxSize } from '@oxy.so/bloom/checkbox'
+import type { BloomTone } from '@oxy.so/bloom/appearance'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {
@@ -22,6 +23,7 @@ export default function CheckboxDemo() {
         checked={marketing}
         onCheckedChange={setMarketing}
         label="Receive product updates"
+        tone="success"
       />
       <Checkbox
         checked={false}
@@ -44,6 +46,7 @@ export function Playground({ values }: { values: PlaygroundValues }) {
   const label = typeof values.label === 'string' ? values.label : ''
   const description = typeof values.description === 'string' ? values.description : ''
   const size = values.size as CheckboxSize
+  const tone = values.tone as BloomTone
   const disabled = values.disabled === true
   const indeterminate = values.indeterminate === true
   const [checked, setChecked] = useState(initial)
@@ -59,6 +62,7 @@ export function Playground({ values }: { values: PlaygroundValues }) {
       label={label || undefined}
       description={description || undefined}
       size={size}
+      tone={tone}
       disabled={disabled}
       indeterminate={indeterminate}
     />
