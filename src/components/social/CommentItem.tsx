@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Link } from '../../lib/navigation'
+import { Button } from '@oxy.so/bloom/button'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
 import { RiDeleteBinLine } from '@oxy.so/bloom/icons/RiDeleteBinLine'
@@ -130,32 +132,33 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
         {/* Body or Edit Mode */}
         {editing ? (
           <div className="mt-2 flex flex-col gap-2">
-            <textarea
+            <Textarea
+              accessibilityLabel="Edit comment"
               value={editBody}
-              onChange={(e) => setEditBody(e.target.value)}
+              onValueChange={setEditBody}
               rows={2}
               maxLength={2000}
-              className="w-full resize-none rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+              resize="none"
               autoFocus
             />
             <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleSaveEdit}
+              <Button
+                appearance="solid"
+                tone="accent"
+                leadingIcon={RiCheckLine}
+                onPress={handleSaveEdit}
                 disabled={editComment.isPending}
-                className="inline-flex cursor-pointer items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
               >
-                <RiCheckLine width={12} height={12} fill="currentColor" aria-hidden />
                 Save
-              </button>
-              <button
-                type="button"
-                onClick={() => { setEditing(false); setEditBody(comment.body) }}
-                className="inline-flex cursor-pointer items-center gap-1 rounded-md px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground"
+              </Button>
+              <Button
+                appearance="plain"
+                tone="neutral"
+                leadingIcon={RiCloseLine}
+                onPress={() => { setEditing(false); setEditBody(comment.body) }}
               >
-                <RiCloseLine width={12} height={12} fill="currentColor" aria-hidden />
                 Cancel
-              </button>
+              </Button>
             </div>
           </div>
         ) : (
@@ -168,76 +171,57 @@ export default function CommentItem({ comment, onReply, targetType, targetId }: 
         {!editing && (
           <div className="mt-2 flex flex-wrap items-center gap-3">
             {onReply && (
-              <button
-                type="button"
-                onClick={onReply}
-                className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <RiMessage2Line width={14} height={14} fill="currentColor" aria-hidden />
+              <Button appearance="plain" tone="neutral" leadingIcon={RiMessage2Line} onPress={onReply}>
                 Reply
-              </button>
+              </Button>
             )}
             {canEdit && (
-              <button
-                type="button"
-                onClick={() => { setEditing(true); setEditBody(comment.body) }}
-                className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+              <Button
+                appearance="plain"
+                tone="neutral"
+                leadingIcon={RiPencilLine}
+                onPress={() => { setEditing(true); setEditBody(comment.body) }}
               >
-                <RiPencilLine width={14} height={14} fill="currentColor" aria-hidden />
                 Edit
-              </button>
+              </Button>
             )}
             {canDelete && !confirmDelete && (
-              <button
-                type="button"
-                onClick={() => setConfirmDelete(true)}
-                className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-error-text"
-              >
-                <RiDeleteBinLine width={14} height={14} fill="currentColor" aria-hidden />
+              <Button appearance="plain" tone="neutral" leadingIcon={RiDeleteBinLine} onPress={() => setConfirmDelete(true)}>
                 Delete
-              </button>
+              </Button>
             )}
             {confirmDelete && (
               <span className="inline-flex items-center gap-2 text-xs">
                 <span className="text-error-text">Delete this comment?</span>
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  disabled={deleteComment.isPending}
-                  className="cursor-pointer font-medium text-error-text hover:opacity-80 disabled:opacity-50"
-                >
+                <Button appearance="plain" tone="danger" onPress={handleDelete} disabled={deleteComment.isPending}>
                   Yes
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setConfirmDelete(false)}
-                  className="cursor-pointer text-muted-foreground hover:text-foreground"
-                >
+                </Button>
+                <Button appearance="plain" tone="neutral" onPress={() => setConfirmDelete(false)}>
                   No
-                </button>
+                </Button>
               </span>
             )}
             {isAdmin && !isHidden && (
-              <button
-                type="button"
-                onClick={() => handleModerate('hidden')}
+              <Button
+                appearance="plain"
+                tone="neutral"
+                leadingIcon={RiEyeOffLine}
+                onPress={() => handleModerate('hidden')}
                 disabled={moderateComment.isPending}
-                className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-warning-text disabled:opacity-50"
               >
-                <RiEyeOffLine width={14} height={14} fill="currentColor" aria-hidden />
                 Hide
-              </button>
+              </Button>
             )}
             {isAdmin && isHidden && (
-              <button
-                type="button"
-                onClick={() => handleModerate('visible')}
+              <Button
+                appearance="plain"
+                tone="warning"
+                leadingIcon={RiEyeLine}
+                onPress={() => handleModerate('visible')}
                 disabled={moderateComment.isPending}
-                className="inline-flex cursor-pointer items-center gap-1 text-xs text-warning-text transition-colors hover:text-foreground disabled:opacity-50"
               >
-                <RiEyeLine width={14} height={14} fill="currentColor" aria-hidden />
                 Unhide
-              </button>
+              </Button>
             )}
           </div>
         )}

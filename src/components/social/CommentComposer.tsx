@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import type { NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native'
+import { Button } from '@oxy.so/bloom/button'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
 import { RiSendPlaneLine } from '@oxy.so/bloom/icons/RiSendPlaneLine'
 import { useCreateComment } from '../../api/hooks'
@@ -42,8 +45,10 @@ export default function CommentComposer({
     )
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+  // On web the native event is the DOM KeyboardEvent, which carries the modifiers.
+  function handleKeyPress(e: NativeSyntheticEvent<TextInputKeyPressEventData>) {
+    const { key, metaKey, ctrlKey } = e.nativeEvent as TextInputKeyPressEventData & Partial<Pick<KeyboardEvent, 'metaKey' | 'ctrlKey'>>
+    if (key === 'Enter' && (metaKey || ctrlKey)) {
       e.preventDefault()
       handleSubmit()
     }
@@ -51,15 +56,15 @@ export default function CommentComposer({
 
   return (
     <div className="flex flex-col gap-2">
-      <textarea
+      <Textarea
         value={body}
-        onChange={(e) => setBody(e.target.value)}
-        onKeyDown={handleKeyDown}
+        onValueChange={setBody}
+        onKeyPress={handleKeyPress}
         placeholder={parentId ? 'Write a reply...' : 'Join the discussion...'}
         autoFocus={autoFocus}
         rows={parentId ? 2 : 3}
         maxLength={MAX_LENGTH}
-        className="w-full resize-none rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+        resize="none"
       />
       <div className="flex items-center justify-between">
         <span
@@ -69,24 +74,13 @@ export default function CommentComposer({
         </span>
         <div className="flex items-center gap-2">
           {onCancel && (
-            <button
-              type="button"
-              onClick={onCancel}
-              className="inline-flex cursor-pointer items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <RiCloseLine width={14} height={14} fill="currentColor" aria-hidden />
+            <Button appearance="plain" tone="neutral" leadingIcon={RiCloseLine} onPress={onCancel}>
               Cancel
-            </button>
+            </Button>
           )}
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={!canSubmit}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <RiSendPlaneLine width={14} height={14} fill="currentColor" aria-hidden />
+          <Button appearance="solid" tone="accent" leadingIcon={RiSendPlaneLine} onPress={handleSubmit} disabled={!canSubmit}>
             {createComment.isPending ? 'Posting...' : 'Post'}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
