@@ -672,12 +672,12 @@ for (const testCase of cases) {
 
   const button = built?.modules.get('button.ts') ?? ''
   failed += report(
-    'the real catalog carries ButtonVariant in the order Bloom declares it',
+    'the real catalog carries BloomTone in the order Bloom declares it',
     button.includes(
-      "options: ['primary', 'secondary', 'inverse', 'icon', 'ghost', 'text', 'outline', 'link', 'destructive']",
+      "options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info']",
     )
       ? null
-      : "ButtonVariant came back in the checker's internal order, not Bloom's",
+      : "BloomTone came back in the checker's internal order, not Bloom's",
   )
   failed += report(
     'the real catalog attributes every prop it leaves out',
