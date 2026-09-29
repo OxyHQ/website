@@ -5,6 +5,7 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
 import { usePage, type PageSection } from '../api/hooks'
 import { sanitizeCmsHtml } from '../lib/sanitizeCmsHtml'
 import NotFoundPage from './NotFoundPage'
@@ -33,9 +34,7 @@ function SectionContent({ slug }: { slug: string }) {
   return (
     <div className="container max-w-3xl py-16">
       <Link to="/legal" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.1" d="M11.75 7H2.25m0 0 3.393 3.5M2.25 7l3.393-3.5" />
-        </svg>
+        <RiArrowLeftLine width={14} height={14} fill="currentColor" aria-hidden />
         All legal documents
       </Link>
       <AnimatedTitle as="h1" className="mb-8 text-heading-responsive-lg text-foreground">{title}</AnimatedTitle>

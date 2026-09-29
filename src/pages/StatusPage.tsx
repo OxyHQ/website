@@ -1,5 +1,6 @@
 import { Link } from '../lib/navigation'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
@@ -135,9 +136,7 @@ function ServiceRow({ service, uptimeDays }: { service: ServiceStatusEntry; upti
           className="hidden shrink-0 rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-background md:inline-flex md:items-center md:gap-1"
         >
           Open
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="size-3" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
-          </svg>
+          <RiArrowRightUpLine width={12} height={12} fill="currentColor" aria-hidden />
         </a>
       </div>
       {uptimeDays && uptimeDays.length > 0 && (

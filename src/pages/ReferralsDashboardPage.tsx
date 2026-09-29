@@ -5,6 +5,8 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
+import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useReferralDashboard, type ReferralDashboard } from '../api/hooks'
 import { brandConfig } from '../lib/seo'
@@ -33,17 +35,9 @@ function DashedHLine() {
 
 function CopyIcon({ copied }: { copied: boolean }) {
   if (copied) {
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} className="size-4">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75 10.5 18.75 19.5 5.25" />
-      </svg>
-    )
+    return <RiCheckLine width={16} height={16} fill="currentColor" aria-hidden />
   }
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} className="size-4">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125V9.625m7.5 5.625a2.625 2.625 0 0 1-2.625-2.625V6.75m-3.375 3v6m0-6h.008v.008h-.008Z" />
-    </svg>
-  )
+  return <RiFileCopyLine width={16} height={16} fill="currentColor" aria-hidden />
 }
 
 const PROGRAM_LABEL: Record<ReferralDashboard['type'], string> = {
