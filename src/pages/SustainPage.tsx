@@ -91,8 +91,6 @@ function parseCommitments(sections: PageSection[], fallback: Commitment[]): Comm
   return parsed.length > 0 ? parsed : fallback
 }
 
-/* ── Layout primitives ── */
-
 /* ── Funding bar ── */
 
 function FundingBar({ raised, target }: { raised: number; target: number }) {

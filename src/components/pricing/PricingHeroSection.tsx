@@ -1,6 +1,5 @@
 import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
 import { usePricing } from '../../api/hooks'
-import { FEATURES } from '../../constants'
 import Button from '../ui/Button'
 import BillingToggle from './BillingToggle'
 import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
@@ -135,23 +134,6 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
           ))}
         </div>
       </div>
-
-      {/* Logo bar */}
-      {FEATURES.SHOW_PRICING_LOGOS && (
-        <div className="mt-16">
-          <div className="container">
-            <div>
-              <div className="grid grid-cols-12 justify-items-center py-25">
-                <div className="col-span-full">
-                  <div className="grid max-w-7xl grid-cols-6 gap-x-8 gap-y-4.5 max-xl:grid-cols-4 max-xl:gap-y-5 max-lg:gap-x-5 max-lg:gap-y-3 max-md:grid-cols-3 max-md:gap-x-4 max-md:gap-y-2 max-md:[&>*:nth-child(1n+10)]:hidden">
-                    {/* Placeholder logo strip — kept behind FEATURES.SHOW_PRICING_LOGOS until real customer/community logos are available. */}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
