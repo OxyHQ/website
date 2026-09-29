@@ -33,7 +33,7 @@ export default function VersionSelector({ pkg, currentVersion, slug }: VersionSe
 
   if (!pkg.versioned || pkg.versions.length <= 1) return null
 
-  const latestBadge = <Badge content={t('docs.versionLatest')} color="primary" variant="subtle" />
+  const latestBadge = <Badge content={t('docs.versionLatest')} tone="accent" appearance="subtle" />
   const label = t('docs.switchVersion', { version: currentVersion })
 
   return (
@@ -63,7 +63,7 @@ export default function VersionSelector({ pkg, currentVersion, slug }: VersionSe
                 v.version === pkg.latestVersion ? (
                   latestBadge
                 ) : pkg.deprecatedVersions.includes(v.version) ? (
-                  <Badge content={t('docs.versionDeprecated')} color="error" variant="subtle" />
+                  <Badge content={t('docs.versionDeprecated')} tone="danger" appearance="subtle" />
                 ) : undefined
               }
             >

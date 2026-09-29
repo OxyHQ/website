@@ -12,13 +12,13 @@ export default function TextFieldDemo() {
   return (
     <div className="flex w-full max-w-sm flex-col gap-4">
       <TextField>
-        <TextFieldInput label="Full name" value={name} onChangeText={setName} placeholder="Ada Lovelace" />
+        <TextFieldInput label="Full name" value={name} onValueChange={setName} placeholder="Ada Lovelace" />
       </TextField>
       <TextField>
-        <TextFieldInput label="Email" value={email} onChangeText={setEmail} />
+        <TextFieldInput label="Email" value={email} onValueChange={setEmail} />
       </TextField>
-      <TextField isInvalid>
-        <TextFieldInput label="Username" value="taken" onChangeText={() => undefined} isInvalid />
+      <TextField invalid>
+        <TextFieldInput label="Username" value="taken" onValueChange={() => undefined} invalid />
       </TextField>
     </div>
   )
@@ -28,7 +28,7 @@ export function Playground({ values }: { values: PlaygroundValues }) {
   const label = typeof values.label === 'string' ? values.label : 'Label'
   const value = typeof values.value === 'string' ? values.value : ''
   const placeholder = typeof values.placeholder === 'string' ? values.placeholder : undefined
-  const isInvalid = values.isInvalid === true
+  const invalid = values.invalid === true
   const [text, setText] = useState(value)
   // Reset internal state when the knob's "value" changes via derived state.
   const [lastValue, setLastValue] = useState(value)
@@ -38,13 +38,13 @@ export function Playground({ values }: { values: PlaygroundValues }) {
   }
   return (
     <div style={{ width: 280 }}>
-      <TextField isInvalid={isInvalid}>
+      <TextField invalid={invalid}>
         <TextFieldInput
           label={label}
           value={text}
-          onChangeText={setText}
+          onValueChange={setText}
           placeholder={placeholder}
-          isInvalid={isInvalid}
+          invalid={invalid}
         />
       </TextField>
     </div>

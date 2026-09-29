@@ -490,7 +490,7 @@ function PropControl({
           value={value === undefined ? '' : String(value)}
           inputMode={numeric ? 'numeric' : 'text'}
           placeholder="unset"
-          onChangeText={(text) => {
+          onValueChange={(text) => {
             if (text === '') {
               onChange(prop.name, undefined)
               return

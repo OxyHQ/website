@@ -48,7 +48,7 @@ export function NewsroomFilterMenu<T extends string>({
           tone="neutral"
           leadingIcon={RiEqualizerLine}
           trailing={active.length > 0
-            ? <Badge content={active.length} color="primary" variant="subtle" />
+            ? <Badge content={active.length} tone="accent" appearance="subtle" />
             : undefined}
           trailingIcon={RiArrowDownSLine}
         >

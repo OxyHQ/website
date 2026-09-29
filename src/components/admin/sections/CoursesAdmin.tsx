@@ -457,8 +457,8 @@ export default function CoursesAdmin() {
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="truncate text-sm font-medium text-foreground">{course.title}</span>
-                  {course.featured && <Badge color="primary">Featured</Badge>}
-                  {course.status === 'draft' && <Badge color="warning">Draft</Badge>}
+                  {course.featured && <Badge tone="accent" content="Featured" />}
+                  {course.status === 'draft' && <Badge tone="warning" content="Draft" />}
                 </div>
                 <div className="mt-0.5 text-xs text-muted-foreground">
                   {categoryLabel && <span>{categoryLabel} &middot; </span>}

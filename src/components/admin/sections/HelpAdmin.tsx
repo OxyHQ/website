@@ -338,8 +338,8 @@ export default function HelpAdmin() {
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="truncate text-sm font-medium text-foreground">{article.title}</span>
-                  {article.featured && <Badge color="primary">Featured</Badge>}
-                  {article.status === 'draft' && <Badge color="warning">Draft</Badge>}
+                  {article.featured && <Badge tone="accent" content="Featured" />}
+                  {article.status === 'draft' && <Badge tone="warning" content="Draft" />}
                 </div>
                 <div className="mt-0.5 text-xs text-muted-foreground">
                   {categoryLabel && <span>{categoryLabel} &middot; </span>}

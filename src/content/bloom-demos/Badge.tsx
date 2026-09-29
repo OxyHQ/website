@@ -1,6 +1,6 @@
 import { Badge } from '@oxy.so/bloom/badge'
 import type { BadgeSize } from '@oxy.so/bloom/badge'
-import type { AccentFill, AccentTone } from '@oxy.so/bloom/theme'
+import type { BloomAppearance, BloomTone } from '@oxy.so/bloom/appearance'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {
@@ -10,20 +10,21 @@ export const meta = {
 export default function BadgeDemo() {
   return (
     <div className="flex flex-wrap items-center gap-6">
-      <Badge content="New" color="primary" />
-      <Badge content={3} color="error" />
-      <Badge content="Beta" variant="outlined" color="info" />
-      <Badge content="Success" variant="subtle" color="success" />
-      <Badge dot color="warning" />
+      <Badge content="New" appearance="solid" tone="accent" />
+      <Badge content={3} tone="danger" />
+      <Badge content="Beta" appearance="outline" tone="info" />
+      <Badge content="Shipped" appearance="subtle" tone="success" />
+      <Badge content="Draft" appearance="plain" tone="neutral" />
+      <Badge dot tone="warning" />
     </div>
   )
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const variant = values.variant as AccentFill
-  const color = values.color as AccentTone
+  const appearance = values.appearance as BloomAppearance
+  const tone = values.tone as BloomTone
   const size = values.size as BadgeSize
   const content = typeof values.content === 'string' ? values.content : ''
   const dot = values.dot === true
-  return <Badge content={dot ? undefined : content} variant={variant} color={color} size={size} dot={dot} />
+  return <Badge content={dot ? undefined : content} appearance={appearance} tone={tone} size={size} dot={dot} />
 }

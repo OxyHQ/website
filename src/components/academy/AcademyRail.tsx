@@ -156,17 +156,16 @@ export function AcademyRail({
         </Link>
         {onClose ? (
           <Button
-            iconOnly
             appearance="plain"
             tone="neutral"
-            leadingIcon={RiCloseLine}
+            icon={RiCloseLine}
             accessibilityLabel={t('common.close')}
             onPress={onClose}
           />
         ) : null}
       </div>
 
-      <Search value={query} onChangeText={onQueryChange} onClearText={() => onQueryChange('')} label={t('academy.searchLabel')} />
+      <Search value={query} onValueChange={onQueryChange} onClearText={() => onQueryChange('')} label={t('academy.searchLabel')} />
 
       <ProgressSummary courses={courses} progress={progress} />
 

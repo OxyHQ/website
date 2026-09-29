@@ -48,10 +48,9 @@ function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void 
       <div className="astro-theme relative w-full p-8">
         <div className="absolute right-3 top-3">
           <Button
-            iconOnly
             appearance="plain"
             tone="neutral"
-            leadingIcon={RiCloseLine}
+            icon={RiCloseLine}
             accessibilityLabel="Close download dialog"
             onPress={onClose}
           />

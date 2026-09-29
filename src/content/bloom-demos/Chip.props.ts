@@ -3,23 +3,23 @@ import type { PlaygroundProp } from './_playground'
 export const props: PlaygroundProp[] = [
   { name: 'children', kind: 'text', default: 'Chip' },
   {
-    name: 'variant',
+    name: 'appearance',
     kind: 'select',
-    options: ['solid', 'subtle', 'outlined'],
-    default: 'solid',
+    options: ['solid', 'subtle', 'outline', 'plain'],
+    default: 'subtle',
   },
   {
-    name: 'color',
+    name: 'tone',
     kind: 'select',
-    options: ['default', 'primary', 'success', 'warning', 'error'],
-    default: 'default',
+    options: ['neutral', 'accent', 'success', 'warning', 'danger', 'info'],
+    default: 'neutral',
   },
   {
     name: 'size',
     kind: 'select',
-    options: ['small', 'medium', 'large'],
-    default: 'medium',
+    options: ['xs', 'sm', 'md', 'lg'],
+    default: 'md',
   },
-  { name: 'selected', kind: 'boolean', default: false },
+  { name: 'checked', kind: 'boolean', default: false },
   { name: 'disabled', kind: 'boolean', default: false },
 ]
