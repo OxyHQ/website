@@ -1,48 +1,78 @@
 import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
-import { usePricing } from '../../api/hooks'
+import { useBillingPlans } from '../../api/hooks'
+import { FREE_PLAN_CREDITS, type BillingPlan } from '../../data/pricing'
 import Button from '../ui/Button'
-import BillingToggle from './BillingToggle'
-import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
 
-interface Props {
-  isAnnual: boolean
-  onToggle: (isAnnual: boolean) => void
+const ACCOUNT_SIGNUP_URL = 'https://accounts.oxy.so/'
+const ACCOUNT_BILLING_URL = 'https://console.oxy.so/billing/plans'
+
+interface PlanCard {
+  name: string
+  price: string
+  description: string
+  features: string[]
+  cta: string
+  /** Absent while the plan cannot be bought yet. */
+  href?: string
 }
 
-export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
-  const { data: pricingPlans = [] } = usePricing()
+const credits = (n: number) => n.toLocaleString('en-US')
+
+function formatPrice(minorUnits: number, currency: string) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency.toUpperCase() }).format(minorUnits / 100)
+}
+
+const FREE_PLAN: PlanCard = {
+  name: 'Free',
+  price: '$0',
+  description: `${credits(FREE_PLAN_CREDITS)} free credits`,
+  features: ['Every Oxy app, free and open source', 'Top up any time with credit packs'],
+  cta: 'Create an account',
+  href: ACCOUNT_SIGNUP_URL,
+}
+
+function toCard(plan: BillingPlan): PlanCard {
+  const purchasable = plan.stripePriceId !== ''
+  return {
+    name: plan.name,
+    price: formatPrice(plan.price, plan.currency),
+    description: `${credits(plan.creditsPerMonth)} credits per month`,
+    features: ['Everything in Free', 'Top up any time with credit packs'],
+    cta: purchasable ? `Choose ${plan.name}` : 'Coming soon',
+    href: purchasable ? ACCOUNT_BILLING_URL : undefined,
+  }
+}
+
+export default function PricingHeroSection() {
+  const { data: billingPlans = [] } = useBillingPlans()
+  const plans = [FREE_PLAN, ...billingPlans.map(toCard)]
 
   return (
     <div className="container">
       <div className="flex flex-col items-center pt-[116px]">
         <AnimatedTitle as="h1" className="text-center text-heading-responsive-lg">Pricing for the Oxy ecosystem.</AnimatedTitle>
         <p className="mt-4 max-w-md text-balance text-center text-muted-foreground text-xl">
-          Most Oxy apps are free and open source. Paid plans add hosting, support, and team features. Start today, no credit card required.
+          The Oxy apps are free and open source. Plans add monthly credits for API usage on your Oxy account.
         </p>
       </div>
 
-      {/* Monthly/Annual toggle */}
-      <div className="mt-8 flex flex-col items-center">
-        <BillingToggle isAnnual={isAnnual} onChange={onToggle} style={{ alignSelf: 'center' }} />
-      </div>
-
       {/* Pricing cards grid */}
-      <div className="relative grid grid-cols-12 gap-x-6 mt-10 lg:mt-20">
+      <div id="pricing-plans" className="relative grid grid-cols-12 gap-x-6 mt-10 scroll-mt-(--site-header-height) lg:mt-20">
         {/* Decorative horizontal gradient lines */}
         <div className="pricing-cards-grid-line bg-[linear-gradient(to_left,_transparent_0%,_var(--color-border)_6.52%,_var(--color-border)_93.22%,_transparent_100%)] absolute -top-3 left-0 hidden h-px w-full -translate-y-1/2 lg:block" />
         <div className="pricing-cards-grid-line bg-[linear-gradient(to_left,_transparent_0%,_var(--color-border)_6.52%,_var(--color-border)_93.22%,_transparent_100%)] absolute -bottom-3 left-0 hidden h-px w-full translate-y-1/2 [animation-delay:450ms]! lg:block" />
 
-        <div className="relative isolate col-span-12 grid grid-cols-1 gap-6 lg:grid-cols-4 xl:col-span-10 xl:col-start-2">
+        <div className="relative isolate col-span-12 grid grid-cols-1 gap-6 lg:grid-cols-3 xl:col-span-10 xl:col-start-2">
           {/* Decorative vertical gradient lines */}
-          {[1, 2, 3, 4].map((col, idx) => (
+          {[1, 2, 3].map((col, idx) => (
             <div
               key={`vline-${col}`}
               className={`pricing-cards-grid-line-vertical bg-[linear-gradient(to_bottom,_transparent_0%,_var(--color-border)_10.87%,_var(--color-border)_89.55%,_transparent_100%)] absolute top-[-50px] -left-3 col-start-${col} hidden h-[calc(100%+100px)] w-px -translate-x-1/2 ${idx > 0 ? `[animation-delay:${idx * 150}ms]!` : ''} lg:block`}
             />
           ))}
           {/* Right edge line */}
-          <div className="pricing-cards-grid-line-vertical bg-[linear-gradient(to_bottom,_transparent_0%,_var(--color-border)_10.87%,_var(--color-border)_89.55%,_transparent_100%)] absolute top-[-50px] -right-3 col-start-5 hidden h-[calc(100%+100px)] w-px translate-x-1/2 [animation-delay:600ms]! lg:block" />
+          <div className="pricing-cards-grid-line-vertical bg-[linear-gradient(to_bottom,_transparent_0%,_var(--color-border)_10.87%,_var(--color-border)_89.55%,_transparent_100%)] absolute top-[-50px] -right-3 col-start-4 hidden h-[calc(100%+100px)] w-px translate-x-1/2 [animation-delay:600ms]! lg:block" />
 
           {/* Corner crosshairs (4 corners) */}
           {[
@@ -59,47 +89,20 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
             </div>
           ))}
 
-          {/* 4 Pricing cards */}
-          {pricingPlans.map((plan) => (
+          {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`flex flex-col justify-between rounded-3xl border border-solid px-[23px] pt-[21px] pb-[23px] ${
-                plan.highlighted
-                  ? 'border-primary ring-4 ring-primary-subtle shadow-s'
-                  : 'border-border shadow-s'
-              }`}
+              className="flex flex-col justify-between rounded-3xl border border-solid border-border px-[23px] pt-[21px] pb-[23px] shadow-s"
             >
               <div className="flex flex-col">
                 <header className="text-muted-foreground text-xl">{plan.name}</header>
                 <div className="mt-4 lg:mt-8">
-                  <div className="flex items-start gap-2">
-                    <div className="inline-block overflow-y-hidden text-title-md">
-                      {plan.price ? (
-                        <>
-                          <span>$</span>
-                          <span>{isAnnual ? plan.price.annual : plan.price.monthly}</span>
-                        </>
-                      ) : (
-                        <span>Custom</span>
-                      )}
-                    </div>
-                    {plan.price && plan.price.annual < plan.price.monthly && isAnnual && (
-                      <div className="mt-[6px] rounded-lg border border-success/30 bg-success-subtle px-[7px] py-[3px] text-center text-success-text text-xs">
-                        Save 20%
-                      </div>
-                    )}
-                  </div>
-                  <div className="mt-0.5 text-accent-foreground text-xs">
-                    {plan.price ? (
-                      <span>Per user/month, billed {isAnnual ? 'annually' : 'monthly'}</span>
-                    ) : (
-                      <span>Billed annually</span>
-                    )}
-                  </div>
+                  <div className="inline-block overflow-y-hidden text-title-md">{plan.price}</div>
+                  <div className="mt-0.5 text-accent-foreground text-xs">per month</div>
                 </div>
                 <div className="mt-5 font-semibold text-muted-foreground text-sm lg:mt-8">{plan.description}</div>
                 <ul className="mt-2.5 flex flex-col gap-y-2.5">
-                  {(plan.features ?? []).map((feature: string) => (
+                  {plan.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2">
                       <div className="mt-px h-[18px] w-[18px] shrink-0 rounded-md bg-muted p-0.5 text-accent-foreground">
                         <RiCheckLine width={14} height={14} fill="currentColor" />
@@ -110,22 +113,12 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
                 </ul>
               </div>
               <div className="mt-5 flex flex-col items-stretch lg:mt-8">
-                {plan.price === null ? (
-                  <>
-                    <Button variant="outline" responsive className="max-md:hidden">
-                      {plan.cta}
-                    </Button>
-                    <Button variant="ghost" responsive className="group self-center md:hidden">
-                      <span>{plan.cta}</span>
-                      <span aria-hidden="true" className="inline-flex relative transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
-                    </Button>
-                  </>
+                {plan.href ? (
+                  <Button variant="outline" responsive href={plan.href}>
+                    {plan.cta}
+                  </Button>
                 ) : (
-                  <Button
-                    variant={plan.highlighted ? 'primary' : 'outline'}
-                    responsive
-                    href={plan.ctaHref}
-                  >
+                  <Button variant="outline" responsive disabled>
                     {plan.cta}
                   </Button>
                 )}

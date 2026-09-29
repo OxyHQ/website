@@ -306,7 +306,7 @@ const en = {
   pricing: {
     seoTitle: 'Pricing',
     seoDescription:
-      'Pricing for the Oxy ecosystem. Most Oxy apps are free and open source; paid plans add hosting, support, and team features. Start free, scale as you grow.',
+      "Pricing for Oxy. The Oxy apps are free and open source. Plans add monthly credits for API usage on your Oxy account: start with 1,000 free credits.",
     heading: 'Pricing that grows with you.',
     subheading: 'Most of Oxy is free and open source. Paid plans add hosting, support, and team features.',
     annual: 'Annual',
@@ -748,7 +748,7 @@ const en = {
       pathAlia: 'Alia product plans',
       pathAliaBody: 'Sold by Alia, on Alia.',
       pathEcosystem: 'Oxy ecosystem plans',
-      pathEcosystemBody: 'Per-seat plans for the Oxy apps.',
+      pathEcosystemBody: "Monthly credit plans for your Oxy account.",
     },
 
     inference: {

@@ -146,7 +146,7 @@ const zh: Translations = {
   pricing: {
     seoTitle: '定价',
     seoDescription:
-      'Oxy 生态系统的定价。大多数 Oxy 应用免费且开源;付费计划增加托管、支持和团队功能。免费开始,按需扩展。',
+      "Oxy 定价。Oxy 应用免费且开源。套餐为你的 Oxy 账户增加每月可用于 API 调用的积分:从 1,000 个免费积分开始。",
     heading: '与你共同成长的定价方案。',
     subheading: 'Oxy 的大部分内容是免费且开源的。付费计划增加托管、支持和团队功能。',
     annual: '年度',
@@ -539,7 +539,7 @@ const zh: Translations = {
       pathAlia: 'Alia 产品套餐',
       pathAliaBody: '由 Alia 在 Alia 上销售。',
       pathEcosystem: 'Oxy 生态套餐',
-      pathEcosystemBody: 'Oxy 应用的按席位套餐。',
+      pathEcosystemBody: "适用于你的 Oxy 账户的月度积分套餐。",
     },
     inference: {
       seoTitle: 'Oxy Inference',

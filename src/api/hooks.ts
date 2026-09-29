@@ -22,7 +22,8 @@ import {
 } from './platformActivityStore'
 
 import { type Testimonial } from '../data/content'
-import { type PricingPlan } from '../data/pricing'
+import { type BillingPlan, type PricingPlan } from '../data/pricing'
+import { OXY_API } from '../lib/oxyApi'
 import { type NewsroomPost, type NewsroomPostSummary } from '../data/newsroom'
 import type { CareerJob } from '../lib/careers'
 import {
@@ -706,6 +707,23 @@ export function usePricing() {
     queryFn: () => apiFetch<PricingPlan[]>('/pricing', { locale }),
     staleTime: 2 * 60_000,
     placeholderData: keepPreviousData,
+  })
+}
+
+/**
+ * The subscription plans Oxy actually sells, from the platform's billing API.
+ * Public: the account console lists the same endpoint before sign-in.
+ */
+export function useBillingPlans() {
+  return useQuery({
+    queryKey: ['billingPlans'],
+    queryFn: async () => {
+      const res = await fetch(`${OXY_API}/billing/plans`)
+      if (!res.ok) throw new Error(`billing/plans ${res.status}`)
+      const body = (await res.json()) as { plans?: BillingPlan[] }
+      return body.plans ?? []
+    },
+    staleTime: 10 * 60_000,
   })
 }
 

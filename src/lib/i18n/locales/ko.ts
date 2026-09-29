@@ -146,7 +146,7 @@ const ko: Translations = {
   pricing: {
     seoTitle: '요금제',
     seoDescription:
-      'Oxy 생태계의 요금. 대부분의 Oxy 앱은 무료이며 오픈소스입니다. 유료 플랜은 호스팅, 지원, 팀 기능을 추가합니다. 무료로 시작해 필요에 따라 확장하세요.',
+      "Oxy 요금. Oxy 앱은 무료이며 오픈소스입니다. 플랜은 Oxy 계정의 API 사용에 쓰는 월간 크레딧을 추가합니다. 무료 크레딧 1,000개로 시작하세요.",
     heading: '여러분과 함께 성장하는 요금제.',
     subheading: 'Oxy의 대부분은 무료이며 오픈소스입니다. 유료 플랜은 호스팅, 지원, 팀 기능을 추가합니다.',
     annual: '연간',
@@ -539,7 +539,7 @@ const ko: Translations = {
       pathAlia: 'Alia 제품 요금제',
       pathAliaBody: 'Alia에서, Alia가 판매합니다.',
       pathEcosystem: 'Oxy 에코시스템 요금제',
-      pathEcosystemBody: 'Oxy 앱의 좌석 단위 요금제.',
+      pathEcosystemBody: "Oxy 계정용 월간 크레딧 요금제.",
     },
     inference: {
       seoTitle: 'Oxy Inference',

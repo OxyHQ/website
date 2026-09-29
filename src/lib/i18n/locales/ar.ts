@@ -146,7 +146,7 @@ const ar: Translations = {
   pricing: {
     seoTitle: 'الأسعار',
     seoDescription:
-      'أسعار منظومة Oxy. معظم تطبيقات Oxy مجانية ومفتوحة المصدر؛ الخطط المدفوعة تضيف الاستضافة والدعم وميزات الفِرق. ابدأ مجانًا وتوسّع كما تنمو.',
+      "أسعار Oxy. تطبيقات Oxy مجانية ومفتوحة المصدر. تضيف الباقات أرصدة شهرية لاستخدام واجهة البرمجة في حساب Oxy الخاص بك: ابدأ بـ 1,000 رصيد مجاني.",
     heading: 'أسعار تنمو معك.',
     subheading: 'معظم Oxy مجانية ومفتوحة المصدر. الخطط المدفوعة تضيف الاستضافة والدعم وميزات الفِرق.',
     annual: 'سنوي',
@@ -539,7 +539,7 @@ const ar: Translations = {
       pathAlia: 'باقات منتج Alia',
       pathAliaBody: 'تبيعها Alia، على Alia.',
       pathEcosystem: 'باقات منظومة Oxy',
-      pathEcosystemBody: 'باقات لكل مستخدم لتطبيقات Oxy.',
+      pathEcosystemBody: "باقات أرصدة شهرية لحساب Oxy الخاص بك.",
     },
     inference: {
       seoTitle: 'Oxy Inference',

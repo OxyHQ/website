@@ -1,17 +1,13 @@
-import { useState } from 'react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import StructuredData from '../components/StructuredData'
 import PricingHeroSection from '../components/pricing/PricingHeroSection'
-import PricingStickyTable from '../components/pricing/PricingStickyTable'
-import PricingCompareSection from '../components/pricing/PricingCompareSection'
 import PricingFaqSection from '../components/pricing/PricingFaqSection'
 import PricingPathsSection from '../components/pricing/PricingPathsSection'
 import { useTranslation } from '../lib/i18n'
 
 export default function PricingPage() {
-  const [isAnnual, setIsAnnual] = useState(true)
   const { t } = useTranslation()
 
   return (
@@ -22,13 +18,9 @@ export default function PricingPage() {
         canonicalPath="/pricing"
       />
       {/*
-        Only the free tier carries an `Offer`.
-
-        Plus, Pro and Enterprise used to be emitted as `price: '0'` with a
-        description telling the reader to look at the page. Search engines do not
-        read the description: they read the price, and `0` on a paid plan says
-        the plan is free. A paid tier whose price this component does not know is
-        better described by no offer node at all than by a wrong one.
+        Only the free tier carries an `Offer`. The paid plans come from the
+        billing API at runtime, so the prerendered document does not know their
+        prices — and a paid tier with no offer node beats one with a wrong price.
       */}
       <StructuredData data={{
         '@context': 'https://schema.org',
@@ -40,9 +32,7 @@ export default function PricingPage() {
       }} />
       <Navbar />
       <main>
-        <PricingHeroSection isAnnual={isAnnual} onToggle={setIsAnnual} />
-        <PricingStickyTable isAnnual={isAnnual} onToggle={setIsAnnual} />
-        <PricingCompareSection />
+        <PricingHeroSection />
         <PricingFaqSection />
         <PricingPathsSection />
       </main>

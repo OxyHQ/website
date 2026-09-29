@@ -146,7 +146,7 @@ const fr: Translations = {
   pricing: {
     seoTitle: 'Tarifs',
     seoDescription:
-      "Tarifs de l'écosystème Oxy. La plupart des applications Oxy sont gratuites et open source ; les forfaits payants ajoutent l'hébergement, le support et des fonctionnalités d'équipe. Commencez gratuitement et évoluez à votre rythme.",
+      "Tarifs d'Oxy. Les applications Oxy sont gratuites et open source. Les forfaits ajoutent des crédits mensuels pour l'utilisation de l'API sur votre compte Oxy : commencez avec 1 000 crédits gratuits.",
     heading: 'Des tarifs qui grandissent avec vous.',
     subheading: "La majeure partie d'Oxy est gratuite et open source. Les forfaits payants ajoutent l'hébergement, le support et des fonctionnalités d'équipe.",
     annual: 'Annuel',
@@ -539,7 +539,7 @@ const fr: Translations = {
       pathAlia: 'Forfaits produit Alia',
       pathAliaBody: 'Vendus par Alia, sur Alia.',
       pathEcosystem: 'Forfaits de l\'écosystème Oxy',
-      pathEcosystemBody: 'Forfaits par utilisateur pour les applis Oxy.',
+      pathEcosystemBody: "Forfaits mensuels de crédits pour votre compte Oxy.",
     },
     inference: {
       seoTitle: 'Oxy Inference',

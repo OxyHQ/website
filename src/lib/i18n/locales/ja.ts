@@ -146,7 +146,7 @@ const ja: Translations = {
   pricing: {
     seoTitle: '料金',
     seoDescription:
-      'Oxyエコシステムの料金。ほとんどのOxyアプリは無料でオープンソースです。有料プランはホスティング、サポート、チーム機能を追加します。無料で始めて、必要に応じて拡張できます。',
+      "Oxyの料金。Oxyアプリは無料でオープンソースです。プランではOxyアカウントのAPI利用に使える月間クレジットが追加されます。まずは無料の1,000クレジットから始められます。",
     heading: 'あなたとともに成長する料金プラン。',
     subheading: 'Oxyのほとんどは無料でオープンソースです。有料プランはホスティング、サポート、チーム機能を追加します。',
     annual: '年額',
@@ -539,7 +539,7 @@ const ja: Translations = {
       pathAlia: 'Alia の製品プラン',
       pathAliaBody: 'Alia が Alia 上で販売しています。',
       pathEcosystem: 'Oxy エコシステムのプラン',
-      pathEcosystemBody: 'Oxy アプリのシート単位プラン。',
+      pathEcosystemBody: "Oxyアカウント向けの月額クレジットプラン。",
     },
     inference: {
       seoTitle: 'Oxy Inference',

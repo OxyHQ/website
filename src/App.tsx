@@ -8,6 +8,7 @@ import type { User } from '@oxy.so/core'
 import { BloomThemeProvider, type ThemeMode as BloomThemeMode } from '@oxy.so/bloom/theme'
 import { ImageResolverProvider } from '@oxy.so/bloom/image-resolver'
 import { BloomScope } from '@oxy.so/bloom/appearance'
+import { OXY_API } from './lib/oxyApi'
 import {
   getSavedMode,
   getSavedPreset,
@@ -109,12 +110,6 @@ const StatusHistoryPage = lazy(() => import('./pages/StatusHistoryPage'))
 const ReferralsPage = lazy(() => import('./pages/ReferralsPage'))
 const ReferralsDashboardPage = lazy(() => import('./pages/ReferralsDashboardPage'))
 const SustainPage = lazy(() => import('./pages/SustainPage'))
-
-// Oxy platform API base URL. Sourced from the website's standard `VITE_*` env
-// convention so deploys can override it, with the production URL as the
-// committed default.
-const OXY_API =
-  (import.meta.env.VITE_OXY_API as string | undefined) || 'https://api.oxy.so'
 
 // Registered Oxy OAuth client id for the public website, read from the site's
 // standard `VITE_*` env convention. The deploy workflow injects the PRODUCTION

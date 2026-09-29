@@ -146,7 +146,7 @@ const pt: Translations = {
   pricing: {
     seoTitle: 'Preços',
     seoDescription:
-      'Preços do ecossistema Oxy. A maioria das apps Oxy é gratuita e de código aberto; os planos pagos adicionam alojamento, suporte e funcionalidades de equipa. Comece grátis e cresça connosco.',
+      "Preços da Oxy. As apps Oxy são gratuitas e de código aberto. Os planos adicionam créditos mensais para a utilização da API na sua conta Oxy: comece com 1000 créditos gratuitos.",
     heading: 'Preços que crescem consigo.',
     subheading: 'A maior parte da Oxy é gratuita e de código aberto. Os planos pagos adicionam alojamento, suporte e funcionalidades de equipa.',
     annual: 'Anual',
@@ -539,7 +539,7 @@ const pt: Translations = {
       pathAlia: 'Planos de produto do Alia',
       pathAliaBody: 'Vendidos pelo Alia, no Alia.',
       pathEcosystem: 'Planos do ecossistema Oxy',
-      pathEcosystemBody: 'Planos por utilizador para as apps Oxy.',
+      pathEcosystemBody: "Planos mensais de créditos para a sua conta Oxy.",
     },
     inference: {
       seoTitle: 'Oxy Inference',
