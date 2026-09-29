@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { RiAddLine } from '@oxy.so/bloom/icons/RiAddLine'
+import { FaqList } from '../../sections/FaqSection'
 
 interface FaqItem {
   question: string
@@ -34,6 +34,8 @@ const FAQS: readonly FaqItem[] = [
   },
 ]
 
+const FAQ_ROW_STYLE = { paddingLeft: 24, paddingRight: 24 }
+
 export default function FaqSection() {
   return (
     <section className="relative isolate">
@@ -59,31 +61,21 @@ export default function FaqSection() {
           </motion.h2>
         </div>
 
-        <div className="mt-12 overflow-hidden rounded-3xl border border-border bg-popover/60 backdrop-blur-sm">
-          {FAQS.map((faq, idx) => (
-            <motion.details
-              key={faq.question}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.4, ease: 'easeOut', delay: idx * 0.03 }}
-              className={[
-                'group',
-                idx < FAQS.length - 1 ? 'border-b border-border/60' : '',
-              ].join(' ')}
-            >
-              <summary className="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-base font-medium text-foreground transition-colors hover:bg-background/40">
-                <span>{faq.question}</span>
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-all group-open:rotate-45 group-open:border-primary group-open:text-primary">
-                  <RiAddLine width={14} height={14} fill="currentColor" />
-                </span>
-              </summary>
-              <div className="px-6 pb-6 text-base leading-relaxed text-muted-foreground">
-                {faq.answer}
-              </div>
-            </motion.details>
-          ))}
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+          className="mt-12 overflow-hidden rounded-3xl border border-border bg-popover/60 backdrop-blur-sm"
+        >
+          <FaqList
+            items={FAQS}
+            idPrefix="faircoin-faq"
+            questionClassName="text-base font-medium text-foreground"
+            answerClassName="pb-6 text-base leading-relaxed text-muted-foreground"
+            itemStyle={FAQ_ROW_STYLE}
+          />
+        </motion.div>
       </div>
     </section>
   )

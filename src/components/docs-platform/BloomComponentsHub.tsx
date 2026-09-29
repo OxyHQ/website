@@ -1,6 +1,7 @@
 import { Suspense, createElement, useState } from 'react'
 import { Link } from '../../lib/navigation'
 import { ErrorBoundary } from '@oxy.so/bloom/error-boundary'
+import { Search } from '@oxy.so/bloom/search'
 import { bloomCategories, bloomIndex, bloomVersion } from '../../content/bloom-catalog.generated'
 import { getBloomDemo } from '../../content/bloom-demos/registry'
 import { defaultValues } from '../../content/bloom-demos/_playground'
@@ -48,16 +49,17 @@ export function BloomComponentsHub() {
         versionAgnostic
       >
         <div className="not-prose space-y-10">
-          <div className="bloom-toolbar flex flex-wrap items-end gap-4">
-            <label className="grid flex-1 gap-2 text-sm">
-              Find a component
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="grid flex-1 gap-2 text-sm">
+              <span aria-hidden="true">Find a component</span>
+              <Search
+                label="Find a component"
                 placeholder="Search buttons, navigation, forms…"
+                value={query}
+                onChangeText={setQuery}
+                onClearText={() => setQuery('')}
               />
-            </label>
+            </div>
             <div className="grid gap-2 text-sm">
               <span aria-hidden="true">Category</span>
               <OptionSelect
