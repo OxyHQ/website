@@ -184,7 +184,7 @@ export default function Footer({
       {footerColumns.length > 0 && (
         <div className="container flex-1">
           <div className="px-px pt-10 pb-4">
-            <div className="grid grid-cols-5 gap-x-8 gap-y-10 max-xl:grid-cols-3 max-md:grid-cols-2 max-[480px]:grid-cols-1">
+            <div className="grid grid-cols-6 gap-x-8 gap-y-10 max-xl:grid-cols-3 max-md:grid-cols-2 max-[480px]:grid-cols-1">
               {footerColumns.map((column) => (
                 <div key={column.title} className="min-w-0">
                   <h2 className="py-1 text-sm font-medium text-primary-text">{column.title}</h2>

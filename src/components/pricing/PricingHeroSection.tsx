@@ -24,7 +24,7 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
 
       {/* Monthly/Annual toggle */}
       <div className="mt-8 flex flex-col items-center">
-        <BillingToggle isAnnual={isAnnual} onChange={onToggle} />
+        <BillingToggle isAnnual={isAnnual} onChange={onToggle} style={{ alignSelf: 'center' }} />
       </div>
 
       {/* Pricing cards grid */}
