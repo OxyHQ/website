@@ -322,7 +322,7 @@ body {
  * utilities in `styles/slice-theme.css`.
  */
 :root {
-  --layout-max-width: 74.375rem; /* 1190px */
+  --layout-max-width: 90rem; /* 1440px */
   --layout-gutter: 1.25rem;
   --site-header-occlusion-bottom: calc(var(--site-header-banner-visible-height) + var(--site-header-height));
 
