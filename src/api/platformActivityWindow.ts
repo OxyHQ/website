@@ -1,6 +1,6 @@
 import type { PlatformActivityEvent } from './platformActivityStore'
 
-export const ACTIVITY_WINDOW_MS = 60_000
+const ACTIVITY_WINDOW_MS = 60_000
 const MAX_ACTIVITY_FLOWS = 512
 
 // Keep each flow's latest aggregate. A busy service must not evict a quieter

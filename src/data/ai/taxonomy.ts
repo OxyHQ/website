@@ -154,9 +154,5 @@ export const aiServices: AiService[] = [
   },
 ]
 
-export function serviceByKey(key: string): AiService | undefined {
-  return aiServices.find((service) => service.key === key)
-}
-
 /** Retired model aliases the site must never present as Alia-owned models. */
 export const RETIRED_MODEL_ALIASES: readonly string[] = ['alia-v1', 'alia-v1-pro', 'alia-lite']

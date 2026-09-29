@@ -36,8 +36,8 @@ const STORAGE_KEY_MODE = 'theme'
 const STORAGE_KEY_PRESET = 'colorPreset'
 const PUBLIC_PRESET_NAMES = new Set<AppColorName>(FREE_COLOR_NAMES)
 
-export const DEFAULT_PRESET: AppColorName = SITE_PRESET
-export const DEFAULT_MODE: ThemeMode = 'dark'
+const DEFAULT_PRESET: AppColorName = SITE_PRESET
+const DEFAULT_MODE: ThemeMode = 'dark'
 
 /* ── Getters ── */
 
@@ -69,7 +69,7 @@ export function saveColorPresetPreference(preset: AppColorName) {
 
 /* ── Core: inject Bloom CSS variables onto :root ── */
 
-export function applyPreset(preset: AppColorName, mode: ThemeMode) {
+function applyPreset(preset: AppColorName, mode: ThemeMode) {
   if (!APP_COLOR_PRESETS[preset]) return
 
   document.documentElement.setAttribute('data-color-preset', preset)

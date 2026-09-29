@@ -22,7 +22,7 @@ export interface TrackDef {
   Icon: BloomIconComponent
 }
 
-export const TRACKS: readonly TrackDef[] = [
+const TRACKS: readonly TrackDef[] = [
   { key: 'foundations', tags: ['intro', 'onboarding'], Icon: RiRocket2Line },
   { key: 'identity', tags: ['identity', 'security'], Icon: RiShieldCheckLine },
   { key: 'social', tags: ['mention', 'publishing', 'fediverse'], Icon: RiBroadcastLine },

@@ -17,7 +17,7 @@ import { lessonCountLabel } from './academyLabels'
  * the labelled progress bar and the catalog card.
  * ──────────────────────────────────────────── */
 
-export function LevelBadge({ level }: { level: CourseLevel }) {
+function LevelBadge({ level }: { level: CourseLevel }) {
   const { t } = useTranslation()
   const label =
     level === 'beginner'
