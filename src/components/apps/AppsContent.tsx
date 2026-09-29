@@ -142,7 +142,7 @@ function AdvantageSection() {
             Every app here is built on the same identity, the same design system and the same promises.
           </p>
           <div className="mt-8 hidden md:block">
-            <Button variant="primary" size="lg" href="/company/charter">
+            <Button variant="primary" href="/company/charter">
               Read the charter
             </Button>
           </div>
@@ -156,7 +156,7 @@ function AdvantageSection() {
           ))}
         </ul>
         <div className="block md:hidden">
-          <Button variant="primary" size="lg" responsive href="/company/charter" className="w-full">
+          <Button variant="primary" responsive href="/company/charter" className="w-full">
             Read the charter
           </Button>
         </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipTextBubble } from '@oxy.so/bloom/tooltip'
-import { PrimaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {
@@ -19,7 +19,7 @@ export default function TooltipDemo() {
             onFocus={() => setVisible(true)}
             onBlur={() => setVisible(false)}
           >
-            <PrimaryButton onPress={() => setVisible((v) => !v)}>Hover me</PrimaryButton>
+            <Button appearance="solid" tone="accent" onPress={() => setVisible((v) => !v)}>Hover me</Button>
           </span>
         </TooltipTrigger>
         <TooltipContent label="Helpful tooltip">
@@ -49,7 +49,7 @@ export function Playground({ values }: { values: PlaygroundValues }) {
           onFocus={() => setVisible(true)}
           onBlur={() => setVisible(false)}
         >
-          <PrimaryButton onPress={() => setVisible((v) => !v)}>Hover target</PrimaryButton>
+          <Button appearance="solid" tone="accent" onPress={() => setVisible((v) => !v)}>Hover target</Button>
         </span>
       </TooltipTrigger>
       <TooltipContent label={label}>

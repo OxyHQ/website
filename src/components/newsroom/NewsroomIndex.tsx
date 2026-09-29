@@ -232,7 +232,6 @@ export default function NewsroomIndex() {
 
                 <SegmentedControl
                   type="radio"
-                  size="sm"
                   label={t('newsroom.viewLabel')}
                   value={view}
                   onValueChange={selectView}

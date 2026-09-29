@@ -8,7 +8,7 @@ export const props: BloomSurfaceProps = {
     'RecentHiresCardProps': {
       props: [
         { name: 'hires', type: 'readonly RecentHire[]', optional: false, description: 'The people cards, in order. The card has room for four (2 × 2).' },
-        { name: 'title', type: 'string', optional: true, description: 'Muted label over the count. Default `"Recent hires"`.' },
+        { name: 'title', type: 'string', optional: true, description: 'Muted label over the count (`"Recent hires"` in English).' },
         { name: 'count', type: 'string | number', optional: false, description: 'The headline number, pre-formatted or raw (`56`).' },
         { name: 'teamLabel', type: 'string', optional: true, description: 'The team switcher\'s label, top right (`"Design team"`). Omit for no switcher.' },
         { name: 'onTeamPress', type: '() => void', optional: true },

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { usePricing, useLocales } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
 import { type PricingPlan } from '../../../data/pricing'
-import { PrimaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
 import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
@@ -91,7 +91,7 @@ export default function PricingAdmin() {
             <div key={i} className="rounded-xl border border-border p-4">
               <div className="flex items-center gap-3">
                 <LabeledTextField label="Plan name" value={plan.name} onValueChange={(name) => update(i, 'name', name)} />
-                <div className="flex items-center gap-2"><Switch value={plan.highlighted ?? false} onValueChange={(val) => update(i, 'highlighted', val)} /><Label>Highlighted</Label></div>
+                <div className="flex items-center gap-2"><Switch checked={plan.highlighted ?? false} onCheckedChange={(val) => update(i, 'highlighted', val)} /><Label>Highlighted</Label></div>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-3">
                 <LabeledTextField label="Monthly ($)" inputMode="numeric" value={String(plan.price?.monthly ?? 0)} onValueChange={(value) => update(i, 'price.monthly', +value)} />
@@ -106,9 +106,9 @@ export default function PricingAdmin() {
             </div>
           ))}
           <div className="self-start">
-            <PrimaryButton onPress={save} disabled={saving}>
+            <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving...' : 'Save changes'}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       )}

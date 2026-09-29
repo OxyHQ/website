@@ -9,9 +9,9 @@ export const meta = {
 export default function LoadingDemo() {
   return (
     <div className="flex flex-wrap items-center gap-8">
-      <Loading variant="spinner" size="small" />
-      <Loading variant="spinner" size="medium" />
-      <Loading variant="spinner" size="large" />
+      <Loading variant="spinner" size="sm" />
+      <Loading variant="spinner" size="md" />
+      <Loading variant="spinner" size="lg" />
       <Loading variant="inline" text="Loading…" />
     </div>
   )

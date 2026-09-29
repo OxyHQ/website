@@ -14,7 +14,7 @@ export const props: BloomSurfaceProps = {
         { name: 'background', type: 'string', optional: true, description: "The fill the travelling row is painted on. Defaults to the theme's page colour." },
         { name: 'radius', type: 'number', optional: true, description: 'The radius the panes are clipped to. Default SWIPE_ROW_RADIUS .' },
         { name: 'actionWidth', type: 'number', optional: true, description: 'How wide one action is. Default SWIPE_ACTION_WIDTH .' },
-        { name: 'closeLabel', type: 'string', optional: true, description: "Names the tap target that closes an open pane. Default `'Close actions'`." },
+        { name: 'closeLabel', type: 'string', optional: true, description: "Names the tap target that closes an open pane; `'Close actions'` in English." },
         { name: 'onOpenChange', type: "(side: 'left' | 'right' | null) => void", optional: true, description: 'Fires whenever a pane settles open or closed.' },
         { name: 'children', type: 'ReactNode', optional: false },
         { name: 'testID', type: 'string', optional: true },

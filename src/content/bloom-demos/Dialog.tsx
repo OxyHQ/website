@@ -1,5 +1,5 @@
 import { Dialog, useDialogControl } from '@oxy.so/bloom/dialog'
-import { PrimaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {
@@ -10,7 +10,7 @@ export default function DialogDemo() {
   const control = useDialogControl()
   return (
     <div className="flex flex-col gap-3">
-      <PrimaryButton onPress={() => control.open()}>Open dialog</PrimaryButton>
+      <Button appearance="solid" tone="accent" onPress={() => control.open()}>Open dialog</Button>
       <Dialog
         control={control}
         title="Confirm action"
@@ -32,7 +32,7 @@ export function Playground({ values }: { values: PlaygroundValues }) {
   const control = useDialogControl()
   return (
     <div className="flex flex-col gap-3">
-      <PrimaryButton onPress={() => control.open()}>Open dialog</PrimaryButton>
+      <Button appearance="solid" tone="accent" onPress={() => control.open()}>Open dialog</Button>
       <Dialog
         control={control}
         title={title}

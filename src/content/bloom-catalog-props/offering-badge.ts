@@ -8,7 +8,7 @@ export const props: BloomSurfaceProps = {
     'OfferingBadgeProps': {
       props: [
         { name: 'offering', type: 'Offering', options: ['long_term_rent', 'short_term_rent', 'sale', 'exchange'], optional: false, description: 'What the listing is offered as. Picks the default label, icon and tint.' },
-        { name: 'label', type: 'string', optional: true, description: 'Replaces the default label ("For rent", "For sale", "Vacation rental", "Swap").' },
+        { name: 'label', type: 'string', optional: true, description: 'Replaces the localised label ("For rent", "For sale", "Vacation rental", "Swap" in English).' },
         { name: 'icon', type: 'boolean | OfferingBadgeIcon', optional: true, description: "`true` (default) draws the offering's own icon, `false` none, a component replaces it." },
         { name: 'size', type: 'OfferingBadgeSize', options: ['small', 'medium'], optional: true, description: 'Default `medium`.' },
         { name: 'variant', type: 'OfferingBadgeVariant', options: ['tinted', 'onMedia'], optional: true, description: 'Default `tinted`.' },

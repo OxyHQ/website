@@ -93,7 +93,7 @@ function ApplyActions({ href }: { href: string }) {
 
   return (
     <div className="flex gap-2">
-      <Button variant="primary" size="md" href={href} target="_blank" rel="noopener noreferrer">
+      <Button variant="primary" href={href} target="_blank" rel="noopener noreferrer">
         Apply now
       </Button>
       <div className="relative">

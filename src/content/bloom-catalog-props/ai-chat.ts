@@ -159,20 +159,20 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'ReactNode', optional: false },
       ],
     },
-    'AiChatMobileHeaderProps': {
-      props: [
-        { name: 'title', type: 'string', optional: false, description: 'The chat\'s name beside the menu button ("Agentic chat").' },
-        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
-        { name: 'testID', type: 'string', optional: true },
-      ],
-    },
     'AiChatResizeHandleProps': {
       props: [
         { name: 'onResizeStart', type: '() => void', optional: true, description: 'Pointer went down on the grip.' },
         { name: 'onResize', type: '(dx: number) => void', optional: false, description: 'Horizontal distance from where the drag started, px.' },
         { name: 'onResizeEnd', type: '() => void', optional: true },
-        { name: 'label', type: 'string', optional: true, description: "Names the separator. Default `'Resize panels'`." },
+        { name: 'label', type: 'string', optional: true, description: "Names the separator. `'Resize panels'` in English." },
         { name: 'onNudge', type: '(dx: number) => void', optional: true, description: 'Keyboard nudge (web: ←/→ move by 16).' },
+        { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
+        { name: 'testID', type: 'string', optional: true },
+      ],
+    },
+    'AiChatMobileHeaderProps': {
+      props: [
+        { name: 'title', type: 'string', optional: false, description: 'The chat\'s name beside the menu button ("Agentic chat").' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
@@ -186,7 +186,7 @@ export const props: BloomSurfaceProps = {
         { name: 'mobileSidebar', type: 'ReactNode', optional: true, description: 'The flat sidebar revealed under the workspace below `lg`. Default: none (no nav drawer).' },
         { name: 'children', type: 'ReactNode', optional: false, description: 'The chat container.' },
         { name: 'panel', type: "(width: number | '100%') => ReactNode", optional: true, description: "The right panel. Receives its current width (`'100%'` in the phone drawer)." },
-        { name: 'panelLabel', type: 'string', optional: true, description: 'The panel\'s name in the drawer header and its buttons ("Code", "Gallery").' },
+        { name: 'panelLabel', type: 'string', optional: true, description: 'The panel\'s name in the drawer header and its buttons ("Gallery"). `\'Code\'` in English.' },
         { name: 'panelIcon', type: 'BloomIconComponent', optional: true, description: 'Glyph of the header button that opens the panel drawer. Default `RiCodeSLine`.' },
         { name: 'defaultPanelWidth', type: 'number', optional: true, description: 'Initial panel width. Default `410`; dragging clamps it to 320–560.' },
         { name: 'minPanelWidth', type: 'number', optional: true },
@@ -198,6 +198,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onPanelOpenChange', type: '(open: boolean) => void', optional: true },
         { name: 'background', type: 'ReactNode', optional: true, description: "A layer filling the shell, drawn ABOVE its own background-full and BELOW the sidebar, workspace and drawers. Not interactive (`pointerEvents: 'none'`)." },
         { name: 'surface', type: 'boolean', optional: true, description: "Paint the shell's own background-full, on its root and on the workspace. Default `true`; `false` leaves both transparent." },
+        { name: 'safeArea', type: 'boolean', optional: true, description: 'Own all four native device safe-area edges in the shell frame and drawers. Default false; web is unchanged. Use PageHeader safeArea={false} inside this shell. BottomBar automatically excludes the bottom inset supplied here; modal descendants retain the original device inset context.' },
         { name: 'scroll', type: "'container' | 'document'", options: ['container', 'document'], optional: true, description: "What scrolls the page — `AppShell`'s contract." },
         { name: 'labels', type: 'AiChatShellLabels', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
@@ -219,8 +220,8 @@ export const props: BloomSurfaceProps = {
     { name: 'AiChatLinkChip', propsType: 'AiChatLinkChipProps' },
     { name: 'AiChatMessageLine', propsType: 'AiChatMessageLineProps' },
     { name: 'AiChatStrong', propsType: 'AiChatStrongProps' },
-    { name: 'AiChatMobileHeader', propsType: 'AiChatMobileHeaderProps' },
     { name: 'AiChatResizeHandle', propsType: 'AiChatResizeHandleProps' },
+    { name: 'AiChatMobileHeader', propsType: 'AiChatMobileHeaderProps' },
     { name: 'AiChatShell', propsType: 'AiChatShellProps' },
   ],
 }

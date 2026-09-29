@@ -31,7 +31,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onPress', type: '() => void', optional: true, description: 'Pressing it puts the map back at north.' },
         { name: 'hideAtNorth', type: 'boolean', optional: true, description: 'Hide the compass while the map is already within MAP_CONTROLS_GEOMETRY `.northTolerance` of north. Default `true` — a control that does nothing is a control a reader has to rule out.' },
         { name: 'disabled', type: 'boolean', optional: true },
-        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'The announced name. Default `` `Facing ${Math.round(heading)} degrees. Reset to north` `` — pass a translated sentence, since a needle announces nothing at all.' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'The announced name. `` `Facing ${Math.round(heading)} degrees. Reset to north` `` in English, localised via `BloomProvider locale` — a needle announces nothing at all.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

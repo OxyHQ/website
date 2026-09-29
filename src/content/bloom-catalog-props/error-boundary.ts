@@ -9,9 +9,9 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'children', type: 'ReactNode', optional: false },
         { name: 'fallback', type: 'ErrorBoundaryFallback', optional: true, description: 'Custom fallback UI to render on error. Accepts either: - a ReactNode (static — same UI on every error), or - a render-prop `(ctx) => ReactNode` receiving `{ error, errorInfo, retry, retryCount }`.' },
-        { name: 'title', type: 'string', optional: true, description: 'Error title (defaults to "Something went wrong")' },
-        { name: 'message', type: 'string', optional: true, description: 'Error message (defaults to "An unexpected error occurred")' },
-        { name: 'retryLabel', type: 'string', optional: true, description: 'Retry button label (defaults to "Try Again")' },
+        { name: 'title', type: 'string', optional: true, description: "Error title (`'Something went wrong'` in English, localised via `BloomProvider locale`)" },
+        { name: 'message', type: 'string', optional: true, description: "Error message (`'An unexpected error occurred'` in English)" },
+        { name: 'retryLabel', type: 'string', optional: true, description: "Retry button label (`'Try Again'` in English)" },
         { name: 'onError', type: '(error: Error, errorInfo: ErrorInfo) => void', optional: true, description: 'Callback when an error is caught' },
         { name: 'testID', type: 'string', optional: true },
       ],

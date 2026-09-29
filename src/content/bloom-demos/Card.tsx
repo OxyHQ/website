@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardBody, CardFooter, CardTitle, CardDescription } from '@oxy.so/bloom/card'
-import { PrimaryButton } from '@oxy.so/bloom/button'
-import type { CardVariant } from '@oxy.so/bloom/card'
+import { Button } from '@oxy.so/bloom/button'
+import type { BloomAppearance } from '@oxy.so/bloom/appearance'
 import type { PlaygroundValues } from './_playground'
 
 export const meta = {
@@ -10,21 +10,21 @@ export const meta = {
 export default function CardDemo() {
   return (
     <div className="grid w-full max-w-xl gap-4 sm:grid-cols-2">
-      <Card variant="elevated">
+      <Card appearance="solid">
         <CardHeader>
-          <CardTitle>Elevated</CardTitle>
+          <CardTitle>Solid</CardTitle>
           <CardDescription>Soft drop shadow on a flat surface.</CardDescription>
         </CardHeader>
         <CardBody>
           <p>Cards group related information into a single tap target.</p>
         </CardBody>
         <CardFooter>
-          <PrimaryButton size="small">Action</PrimaryButton>
+          <Button appearance="solid" tone="accent" size="sm">Action</Button>
         </CardFooter>
       </Card>
-      <Card variant="outlined">
+      <Card appearance="outline">
         <CardHeader>
-          <CardTitle>Outlined</CardTitle>
+          <CardTitle>Outline</CardTitle>
           <CardDescription>Border-only chrome for low emphasis.</CardDescription>
         </CardHeader>
         <CardBody>
@@ -36,12 +36,12 @@ export default function CardDemo() {
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const variant = values.variant as CardVariant
+  const appearance = values.appearance as BloomAppearance
   const title = typeof values.title === 'string' ? values.title : 'Card title'
   const description = typeof values.description === 'string' ? values.description : ''
   const body = typeof values.body === 'string' ? values.body : ''
   return (
-    <Card variant={variant} style={{ width: 320 }}>
+    <Card appearance={appearance} style={{ width: 320 }}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         {description ? <CardDescription>{description}</CardDescription> : null}

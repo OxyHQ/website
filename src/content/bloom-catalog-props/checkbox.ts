@@ -7,11 +7,12 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'CheckboxProps': {
       props: [
-        { name: 'checked', type: 'boolean', optional: false, description: 'Whether the checkbox is checked.' },
-        { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: false, description: 'Called when the checked state changes.' },
+        { name: 'checked', type: 'boolean', optional: true, description: 'Whether the checkbox is checked.' },
+        { name: 'defaultChecked', type: 'boolean', optional: true },
+        { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: true, description: 'Called when the checked state changes.' },
         { name: 'label', type: 'string', optional: true, description: 'Optional label text.' },
         { name: 'description', type: 'string', optional: true, description: 'Optional description shown below the label.' },
-        { name: 'size', type: 'CheckboxSize', options: ['medium', 'sm', 'md', 'lg', 'xs', 'small', 'large'], optional: true, description: 'Size preset.' },
+        { name: 'size', type: 'CheckboxSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Size preset.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Whether the checkbox is disabled.' },
         { name: 'indeterminate', type: 'boolean', optional: true, description: 'Whether the checkbox is in an indeterminate state.' },
         { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true, description: 'Semantic color when checked. Uses theme primary by default.' },
@@ -24,8 +25,9 @@ export const props: BloomSurfaceProps = {
     },
     'CheckboxCardProps': {
       props: [
-        { name: 'checked', type: 'boolean', optional: false, description: "Whether the card's checkbox is checked." },
-        { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: false, description: 'Called when the checked state changes. A press anywhere on the card toggles it.' },
+        { name: 'checked', type: 'boolean', optional: true, description: "Whether the card's checkbox is checked." },
+        { name: 'defaultChecked', type: 'boolean', optional: true },
+        { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: true, description: 'Called when the checked state changes. A press anywhere on the card toggles it.' },
         { name: 'title', type: 'string', optional: false, description: "The card's title (one line); also its accessible name." },
         { name: 'description', type: 'string', optional: true, description: 'Optional one-line description under the title.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Dims the whole card and stops it toggling.' },

@@ -180,8 +180,8 @@ export default function FairCoinSection() {
                   <BloomButton
                     key={link.labelKey}
                     asChild
-                    variant={link.solid ? 'primary' : 'outline'}
-                    size="md"
+                    appearance={link.solid ? 'solid' : 'outline'}
+                    tone={link.solid ? 'accent' : 'neutral'}
                     style={link.solid ? FAIRCOIN_PRIMARY_BUTTON_STYLE : FAIRCOIN_OUTLINE_BUTTON_STYLE}
                   >
                     <a href={link.href} target="_blank" rel="noopener noreferrer">

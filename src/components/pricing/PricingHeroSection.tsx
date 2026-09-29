@@ -113,10 +113,10 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
               <div className="mt-5 flex flex-col items-stretch lg:mt-8">
                 {plan.price === null ? (
                   <>
-                    <Button variant="outline" size="md" responsive className="max-md:hidden">
+                    <Button variant="outline" responsive className="max-md:hidden">
                       {plan.cta}
                     </Button>
-                    <Button variant="ghost" size="md" responsive className="group self-center md:hidden">
+                    <Button variant="ghost" responsive className="group self-center md:hidden">
                       <span>{plan.cta}</span>
                       <ArrowRightIcon className="relative transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50" />
                     </Button>
@@ -124,7 +124,6 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
                 ) : (
                   <Button
                     variant={plan.highlighted ? 'primary' : 'outline'}
-                    size="md"
                     responsive
                     href={plan.ctaHref}
                   >

@@ -72,7 +72,6 @@ export default function WalletHeroSection() {
             >
               <Button
                 variant="primary"
-                size="lg"
                 href={ANDROID_RELEASES_URL}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -81,7 +80,6 @@ export default function WalletHeroSection() {
               </Button>
               <Button
                 variant="outline"
-                size="lg"
                 href={IOS_TESTFLIGHT_URL}
                 target="_blank"
                 rel="noopener noreferrer"

@@ -59,11 +59,11 @@
     "@gsap/react": "^2.1.2",
     "@mdx-js/react": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
-    "@oxy.so/bloom": "^4.28.0",
-    "@oxy.so/contracts": "^3.0.0",
-    "@oxy.so/core": "^3.0.0",
+    "@oxy.so/bloom": "^6.2.0",
+    "@oxy.so/contracts": "^4.3.0",
+    "@oxy.so/core": "^3.2.0",
     "@oxy.so/mcp": "^1.0.0",
-    "@oxy.so/services": "^8.0.0",
+    "@oxy.so/services": "^10.0.0",
     "@oxy.so/telemetry": "^1.2.0",
     "@react-native-async-storage/async-storage": "^3.1.1",
     "@scalar/api-reference-react": "^0.9.55",
@@ -158,6 +158,6 @@
   },
   "overrides": {
     "d3-color": ">=3.1.0",
-    "@oxy.so/contracts": "^3.0.0"
+    "@oxy.so/contracts": "^4.3.0"
   }
 }

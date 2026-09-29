@@ -190,7 +190,7 @@ function CodePrompt({ initialCode, onSubmit, error }: { initialCode: string; onS
           autoCapitalize="characters"
           spellCheck={false}
         />
-        <Button variant="primary" size="md" responsive>
+        <Button variant="primary" responsive>
           Open dashboard
         </Button>
       </form>

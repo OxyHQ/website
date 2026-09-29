@@ -11,7 +11,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onValueChange', type: '(value: [number, number]) => void', optional: false, description: 'Fired continuously as either thumb is dragged or stepped.' },
         { name: 'onSlidingComplete', type: '(value: [number, number]) => void', optional: true, description: 'Fired once when a drag gesture ends.' },
         { name: 'formatValue', type: '(value: number, index: number) => string', optional: true, description: "Formats the value in each thumb's bubble; `index` is 0 (lower) or 1 (upper)." },
-        { name: 'thumbLabels', type: '[string, string]', optional: true, description: "Accessible names for the lower and upper thumbs. Default `['Minimum', 'Maximum']`." },
+        { name: 'thumbLabels', type: '[string, string]', optional: true, description: "Accessible names for the lower and upper thumbs (`['Minimum', 'Maximum']` in English)." },
         { name: 'size', type: 'BloomSize', options: ['xs', 'sm', 'md', 'lg'], optional: true },
         { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
         { name: 'disabled', type: 'boolean', optional: true },

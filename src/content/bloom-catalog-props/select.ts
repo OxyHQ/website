@@ -10,6 +10,7 @@ export const props: BloomSurfaceProps = {
         { name: 'children', type: 'React.ReactNode', optional: true },
         { name: 'size', type: 'SelectSize', options: ['sm', 'md'], optional: true, description: "`md` (default) or `sm` for compact contexts — the trigger's padding, type and chevron, and the option rows' padding and type." },
         { name: 'value', type: 'string', optional: true },
+        { name: 'defaultValue', type: 'string', optional: true, description: 'Initial selection when value is uncontrolled.' },
         { name: 'onValueChange', type: '(value: string) => void', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
       ],

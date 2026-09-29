@@ -18,7 +18,7 @@ export const props: BloomSurfaceProps = {
         { name: 'renderFileIcon', type: '(file: FileUploadFile) => ReactNode', optional: true, description: 'Overrides the icon shown while a file uploads (24px).' },
         { name: 'labels', type: 'Partial<FileUploadLabels>', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
-        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Accessible name of the drop zone. Default "Upload a file".' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Accessible name of the drop zone ("Upload a file" in English).' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

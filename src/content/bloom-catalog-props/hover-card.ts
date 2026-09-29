@@ -28,7 +28,7 @@ export const props: BloomSurfaceProps = {
     'HoverCardContentProps': {
       props: [
         { name: 'children', type: 'React.ReactNode', optional: true },
-        { name: 'label', type: 'string', optional: true, description: "Accessible name of the card. Defaults to `'Hover card'`." },
+        { name: 'label', type: 'string', optional: true, description: "Accessible name of the card; `'Hover card'` in English." },
         { name: 'padded', type: 'boolean', optional: true, description: "Draw Bloom's floating surface around the content (radius 16, 1px border, dropdown shadow, 15px inset). Defaults to `true`. A child that paints its own surface — `UserHoverCard` does, and detects this panel by itself — does not need `false`." },
         { name: 'className', type: 'string', optional: true, description: "Appended to the panel's own classes." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

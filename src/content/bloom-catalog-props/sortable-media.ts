@@ -18,7 +18,7 @@ export const props: BloomSurfaceProps = {
         { name: 'photoVariant', type: 'string', optional: true, description: 'The `ImageResolver` rendition for an id `uri`.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Stops reordering, removing and adding.' },
         { name: 'labels', type: 'Partial<SortablePhotoGridLabels>', optional: true },
-        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the grid. Default `"Photos"`.' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the grid (`"Photos"` in English).' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

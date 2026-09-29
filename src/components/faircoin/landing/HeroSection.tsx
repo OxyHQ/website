@@ -86,10 +86,10 @@ export default function HeroSection() {
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.15 }}
               className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:gap-3 lg:items-start lg:justify-start"
             >
-              <Button variant="primary" size="lg" href={fc('/buy')}>
+              <Button variant="primary" href={fc('/buy')}>
                 Buy FairCoin
               </Button>
-              <Button variant="outline" size="lg" href={fc('/wallet')}>
+              <Button variant="outline" href={fc('/wallet')}>
                 Get FAIRWallet
               </Button>
             </motion.div>

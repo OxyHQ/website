@@ -116,7 +116,7 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
                 View it on GitHub
                 <RiExternalLinkLine width={14} height={14} fill="currentColor" />
               </a>
-              <Button variant="outline" size="sm" onClick={handleClose}>Done</Button>
+              <Button variant="outline" onClick={handleClose}>Done</Button>
             </div>
           </div>
         ) : (
@@ -189,8 +189,8 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
                 )}
 
                 <div className="flex items-center justify-end gap-3">
-                  <Button variant="ghost" size="md" onClick={handleClose}>Cancel</Button>
-                  <Button variant="primary" size="md" onClick={handleSubmit} disabled={!canSubmit}>
+                  <Button variant="ghost" onClick={handleClose}>Cancel</Button>
+                  <Button variant="primary" onClick={handleSubmit} disabled={!canSubmit}>
                     {propose.isPending ? 'Submitting…' : 'Submit proposal'}
                   </Button>
                 </div>

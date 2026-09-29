@@ -9,7 +9,7 @@ import {
   type ProductLifecycle,
 } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
-import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '@oxy.so/bloom/label'
@@ -161,7 +161,7 @@ export default function ProductsAdmin() {
     return (
       <div>
         <div className="mb-4">
-          <Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back to list</Button>
+          <Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">
           {isNew ? 'New product' : `Edit: ${editing.name}`}
@@ -404,10 +404,10 @@ export default function ProductsAdmin() {
           {error && <p className="text-sm text-error-text">{error}</p>}
 
           <div className="flex items-center gap-2">
-            <PrimaryButton onPress={save} disabled={saving}>
+            <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving…' : 'Save changes'}
-            </PrimaryButton>
-            <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>
+            </Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
           </div>
         </div>
       </div>
@@ -421,7 +421,7 @@ export default function ProductsAdmin() {
           <h2 className="text-xl font-semibold text-foreground">Products</h2>
           <p className="mt-1 text-sm text-muted-foreground">Single source of truth for every Oxy app. Powers /apps, /status, and the ecosystem navbar dropdown.</p>
         </div>
-        <PrimaryButton onPress={() => setEditing(emptyProduct())}>Add product</PrimaryButton>
+        <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyProduct())}>Add product</Button>
       </div>
 
       {[
@@ -451,8 +451,8 @@ export default function ProductsAdmin() {
                     {product.showInNav && <span>· nav</span>}
                   </div>
                   <div className="shrink-0">
-                    <Button variant="ghost" size="small" onPress={() => setEditing(stripRefsForEditing(product))}>Edit</Button>
-                    <Button variant="ghost" size="small" onPress={() => deleteAction.request(product)}>Delete</Button>
+                    <Button appearance="subtle" onPress={() => setEditing(stripRefsForEditing(product))}>Edit</Button>
+                    <Button appearance="subtle" onPress={() => deleteAction.request(product)}>Delete</Button>
                   </div>
                 </div>
                 )

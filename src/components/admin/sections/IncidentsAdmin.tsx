@@ -7,7 +7,7 @@ import {
   type IncidentUpdateStatus,
 } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
-import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '@oxy.so/bloom/label'
@@ -135,7 +135,7 @@ export default function IncidentsAdmin() {
     return (
       <div>
         <div className="mb-4">
-          <Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back to list</Button>
+          <Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">{isNew ? 'New incident' : `Edit: ${editing.title}`}</h2>
 
@@ -216,9 +216,9 @@ export default function IncidentsAdmin() {
               />
               {!isNew && (
                 <div>
-                  <SecondaryButton onPress={postUpdate} disabled={postingUpdate || !newUpdateBody.trim()}>
+                  <Button appearance="outline" tone="neutral" onPress={postUpdate} disabled={postingUpdate || !newUpdateBody.trim()}>
                     {postingUpdate ? 'Posting…' : 'Post update'}
-                  </SecondaryButton>
+                  </Button>
                 </div>
               )}
             </div>
@@ -227,10 +227,10 @@ export default function IncidentsAdmin() {
           {error && <p className="text-sm text-error-text">{error}</p>}
 
           <div className="flex items-center gap-2">
-            <PrimaryButton onPress={save} disabled={saving}>
+            <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving…' : isNew ? 'Create incident' : 'Save changes'}
-            </PrimaryButton>
-            <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>
+            </Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
           </div>
         </div>
       </div>
@@ -244,13 +244,13 @@ export default function IncidentsAdmin() {
           <h2 className="text-xl font-semibold text-foreground">Incidents</h2>
           <p className="mt-1 text-sm text-muted-foreground">Powers the /status page banner and the /history timeline.</p>
         </div>
-        <PrimaryButton onPress={openForCreate}>New incident</PrimaryButton>
+        <Button appearance="solid" tone="accent" onPress={openForCreate}>New incident</Button>
       </div>
 
       <div className="mt-6 flex items-center justify-between">
-        <Button variant="ghost" size="small" onPress={() => setPage((p) => p + 1)}>&larr; Older</Button>
+        <Button appearance="subtle" onPress={() => setPage((p) => p + 1)}>&larr; Older</Button>
         <span className="text-sm font-medium text-foreground">{data?.label ?? '…'}</span>
-        <Button variant="ghost" size="small" disabled={page <= 1} onPress={() => setPage((p) => Math.max(1, p - 1))}>Newer &rarr;</Button>
+        <Button appearance="subtle" disabled={page <= 1} onPress={() => setPage((p) => Math.max(1, p - 1))}>Newer &rarr;</Button>
       </div>
 
       {data && data.incidents.length === 0 ? (
@@ -268,8 +268,8 @@ export default function IncidentsAdmin() {
                 </div>
               </div>
               <div className="shrink-0">
-                <Button variant="ghost" size="small" onPress={() => openForEdit(incident)}>Edit</Button>
-                <Button variant="ghost" size="small" onPress={() => deleteAction.request(incident)}>Delete</Button>
+                <Button appearance="subtle" onPress={() => openForEdit(incident)}>Edit</Button>
+                <Button appearance="subtle" onPress={() => deleteAction.request(incident)}>Delete</Button>
               </div>
             </div>
           ))}

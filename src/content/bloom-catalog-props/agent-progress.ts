@@ -7,7 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'AgentProgressProps': {
       props: [
-        { name: 'steps', type: 'readonly string[]', optional: true, description: 'Ordered task labels. Defaults to a coding workflow (`DEFAULT_AGENT_PROGRESS_STEPS`).' },
+        { name: 'steps', type: 'readonly string[]', optional: true, description: "Ordered task labels. Defaults to a coding workflow (`DEFAULT_AGENT_PROGRESS_STEPS`, in the locale's language)." },
         { name: 'stepDuration', type: 'number', optional: true, description: 'Time spent on each step, in ms. Drives the rings; when `completedCount` is uncontrolled it also advances the steps. Default `3000`.' },
         { name: 'completionDelay', type: 'number', optional: true, description: 'Time to keep the completed state visible before calling `onFinished`, ms. Default `1000`.' },
         { name: 'onFinished', type: '() => void', optional: true, description: 'Called `completionDelay` ms after the last step completes.' },

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNewsroomPosts, useCreateNewsroomPost, useLocales, useProducts, type ProductRecord } from '../../../api/hooks'
 import { type NewsroomPost, type NewsroomProductRef } from '../../../data/newsroom'
 import { apiFetch } from '../../../api/client'
-import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
 import { Badge } from '@oxy.so/bloom/badge'
 import { LabeledTextField } from '../LabeledTextField'
@@ -97,7 +97,7 @@ export default function NewsroomAdmin() {
     const selectedProductIds = new Set((editing.products ?? []).map(productIdOf))
     return (
       <div>
-        <div className="mb-4"><Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back to list</Button></div>
+        <div className="mb-4"><Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button></div>
         <h2 className="text-xl font-semibold text-foreground">{editing._id ? 'Edit Post' : 'New Post'}</h2>
 
         <div className="mt-6 flex flex-col gap-4">
@@ -156,8 +156,8 @@ export default function NewsroomAdmin() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2"><Switch value={editing.featured} onValueChange={(val) => setEditing({ ...editing, featured: val })} /><Label>Featured</Label></div>
-            <div className="flex items-center gap-2"><Switch value={editing.status === 'published'} onValueChange={(val) => setEditing({ ...editing, status: val ? 'published' : 'draft' })} /><Label>{editing.status === 'published' ? 'Published' : 'Draft'}</Label></div>
+            <div className="flex items-center gap-2"><Switch checked={editing.featured} onCheckedChange={(val) => setEditing({ ...editing, featured: val })} /><Label>Featured</Label></div>
+            <div className="flex items-center gap-2"><Switch checked={editing.status === 'published'} onCheckedChange={(val) => setEditing({ ...editing, status: val ? 'published' : 'draft' })} /><Label>{editing.status === 'published' ? 'Published' : 'Draft'}</Label></div>
           </div>
 
           <div className="mt-4 border-t border-border pt-4">
@@ -176,10 +176,10 @@ export default function NewsroomAdmin() {
           </div>
 
           <div className="mt-2 flex gap-3">
-            <PrimaryButton onPress={save} disabled={saving}>
+            <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving...' : editing._id ? 'Update' : 'Publish'}
-            </PrimaryButton>
-            <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>
+            </Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
           </div>
         </div>
       </div>
@@ -189,7 +189,7 @@ export default function NewsroomAdmin() {
   if (translatingPost && !isDefault) {
     return (
       <div>
-        <div className="mb-4"><Button variant="ghost" size="small" onPress={() => setTranslatingPost(null)}>&larr; Back</Button></div>
+        <div className="mb-4"><Button appearance="subtle" onPress={() => setTranslatingPost(null)}>&larr; Back</Button></div>
         <h2 className="text-xl font-semibold text-foreground">Translate: {translatingPost.title}</h2>
         <div className="mt-4">
           <LocaleSwitcher activeLocale={activeLocale} onLocaleChange={setActiveLocale} />
@@ -221,9 +221,9 @@ export default function NewsroomAdmin() {
           <p className="mt-1 text-sm text-muted-foreground">{posts.length} posts</p>
         </div>
         {isDefault && (
-          <PrimaryButton onPress={() => setEditing(emptyPost())}>
+          <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyPost())}>
             New post
-          </PrimaryButton>
+          </Button>
         )}
       </div>
 
@@ -256,11 +256,11 @@ export default function NewsroomAdmin() {
             <div className="flex items-center gap-2">
               {isDefault ? (
                 <>
-                  <Button variant="ghost" size="small" onPress={() => setEditing(stripProductsForEditing(post))}>Edit</Button>
-                  <Button variant="ghost" size="small" onPress={() => deleteAction.request(post)}>Delete</Button>
+                  <Button appearance="subtle" onPress={() => setEditing(stripProductsForEditing(post))}>Edit</Button>
+                  <Button appearance="subtle" onPress={() => deleteAction.request(post)}>Delete</Button>
                 </>
               ) : (
-                <Button variant="ghost" size="small" onPress={() => setTranslatingPost(post)}>Translate</Button>
+                <Button appearance="subtle" onPress={() => setTranslatingPost(post)}>Translate</Button>
               )}
             </div>
           </div>

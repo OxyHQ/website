@@ -72,7 +72,7 @@ export const props: BloomSurfaceProps = {
         { name: 'showAvatars', type: 'boolean', optional: true, description: 'Hides every run avatar — a 1:1 chat.' },
         { name: 'showSenderNames', type: 'boolean', optional: true, description: 'Hides the sender line above each run — a 1:1 chat.' },
         { name: 'avatarSize', type: 'number', optional: true },
-        { name: 'unreadLabel', type: 'string', optional: true, description: 'Default `"Unread messages"`.' },
+        { name: 'unreadLabel', type: 'string', optional: true, description: '`"Unread messages"` in English; localised via `BloomProvider locale`.' },
         { name: 'labels', type: 'Partial<MessageBubbleLabels>', optional: true },
         { name: 'contentStyle', type: 'StyleProp<ViewStyle>', optional: true, description: 'Padding around the stack. Default `{ paddingHorizontal: 12, paddingVertical: 8 }`.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
@@ -88,7 +88,7 @@ export const props: BloomSurfaceProps = {
     },
     'UnreadSeparatorProps': {
       props: [
-        { name: 'label', type: 'string', optional: true, description: 'Default `"Unread messages"`.' },
+        { name: 'label', type: 'string', optional: true, description: '`"Unread messages"` in English; localised via `BloomProvider locale`.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
@@ -125,7 +125,7 @@ export const props: BloomSurfaceProps = {
         { name: 'avatarSource', type: 'string | { uri: string; }', optional: true },
         { name: 'showAvatar', type: 'boolean', optional: true },
         { name: 'avatarSize', type: 'number', optional: true },
-        { name: 'label', type: 'string', optional: true, description: 'Default `"Typing…"` — the bubble draws dots and no text, so it needs one.' },
+        { name: 'label', type: 'string', optional: true, description: '`"Typing…"` in English (localised) — the bubble draws dots and no text, so it needs one.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

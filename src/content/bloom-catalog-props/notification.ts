@@ -15,7 +15,7 @@ export const props: BloomSurfaceProps = {
         { name: 'avatar', type: 'NotificationAvatar', optional: true, description: 'Avatar leading visual. Takes precedence over `icon`.' },
         { name: 'actions', type: 'NotificationAction[]', optional: true, description: 'Small action buttons below the message.' },
         { name: 'dismissible', type: 'boolean', optional: true, description: 'Show the close button. Defaults to `true`.' },
-        { name: 'closeLabel', type: 'string', optional: true, description: 'Accessible name of the close button. Defaults to `Dismiss notification`.' },
+        { name: 'closeLabel', type: 'string', optional: true, description: 'Accessible name of the close button (`Dismiss notification` in English).' },
         { name: 'onDismiss', type: '() => void', optional: true, description: 'Called after the dismiss exit animation completes.' },
         { name: 'autoDismissDuration', type: 'number', optional: true, description: 'Dismiss automatically after this many milliseconds, drawing a 3px accent countdown bar along the bottom edge for the same duration.' },
         { name: 'introDelay', type: 'number', optional: true, description: 'Opt into the entrance animation, after this many SECONDS.' },

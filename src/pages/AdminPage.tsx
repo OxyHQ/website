@@ -75,7 +75,7 @@ export default function AdminPage() {
           The website API didn't answer. Your session is fine — this is a connection problem.
         </p>
         <div className="mt-6 flex justify-center">
-          <Button variant="primary" size="md" onClick={() => void refetch()}>Try again</Button>
+          <Button variant="primary" onClick={() => void refetch()}>Try again</Button>
         </div>
       </AdminGateScreen>
     )
@@ -88,7 +88,7 @@ export default function AdminPage() {
           Administration requires an Oxy account with admin access.
         </p>
         <div className="mt-6 flex justify-center">
-          <Button variant="primary" size="md" onClick={() => signIn()}>Sign in</Button>
+          <Button variant="primary" onClick={() => signIn()}>Sign in</Button>
         </div>
       </AdminGateScreen>
     )
@@ -109,7 +109,7 @@ export default function AdminPage() {
           </p>
         )}
         <div className="mt-6 flex justify-center">
-          <Button variant="outline" size="md" href="/">Go to homepage</Button>
+          <Button variant="outline" href="/">Go to homepage</Button>
         </div>
       </AdminGateScreen>
     )

@@ -16,13 +16,13 @@ export default function SwitchDemo() {
     <div className="flex flex-col gap-4">
       <label className="flex items-center justify-between gap-6 text-sm text-foreground">
         Wi-Fi
-        <Switch value={wifi} onValueChange={setWifi} accessibilityLabel="Wi-Fi" />
+        <Switch checked={wifi} onCheckedChange={setWifi} accessibilityLabel="Wi-Fi" />
       </label>
       <label className="flex items-center justify-between gap-6 text-sm text-foreground">
         Bluetooth (sm)
         <Switch
-          value={bluetooth}
-          onValueChange={setBluetooth}
+          checked={bluetooth}
+          onCheckedChange={setBluetooth}
           size="sm"
           accessibilityLabel="Bluetooth"
         />
@@ -30,8 +30,8 @@ export default function SwitchDemo() {
       <label className="flex items-center justify-between gap-6 text-sm text-muted-foreground">
         Airplane mode
         <Switch
-          value={false}
-          onValueChange={() => undefined}
+          checked={false}
+          onCheckedChange={() => undefined}
           disabled
           accessibilityLabel="Airplane mode"
         />
@@ -41,8 +41,8 @@ export default function SwitchDemo() {
 }
 
 export function Playground({ values }: { values: PlaygroundValues }) {
-  const initial = values.value === true
-  const size = values.size === 'sm' ? 'sm' : 'default'
+  const initial = values.checked === true
+  const size = values.size === 'sm' ? 'sm' : 'md'
   const disabled = values.disabled === true
   const [on, setOn] = useState(initial)
   const [lastInitial, setLastInitial] = useState(initial)
@@ -52,8 +52,8 @@ export function Playground({ values }: { values: PlaygroundValues }) {
   }
   return (
     <Switch
-      value={on}
-      onValueChange={setOn}
+      checked={on}
+      onCheckedChange={setOn}
       size={size}
       disabled={disabled}
       accessibilityLabel="Example switch"

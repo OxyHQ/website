@@ -292,7 +292,7 @@ export default function AIModelDetailPage() {
               Retention and training are properties of the route that serves a request, listed per
               deployment above.
             </p>
-            <Button href="/ai/trust" variant="ghost" size="sm" className="mt-3">
+            <Button href="/ai/trust" variant="ghost" className="mt-3">
               {t('ai.trust.seoTitle')}
             </Button>
           </div>

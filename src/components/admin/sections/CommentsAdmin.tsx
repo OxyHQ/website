@@ -96,8 +96,7 @@ export default function CommentsAdmin() {
               <div className="flex shrink-0 gap-1">
                 {comment.status === 'visible' && (
                   <Button
-                    variant="ghost"
-                    size="small"
+                    appearance="subtle"
                     onPress={() => moderate.mutate({ id: comment._id, status: 'hidden' })}
                   >
                     Hide
@@ -105,8 +104,7 @@ export default function CommentsAdmin() {
                 )}
                 {comment.status === 'hidden' && (
                   <Button
-                    variant="ghost"
-                    size="small"
+                    appearance="subtle"
                     onPress={() => moderate.mutate({ id: comment._id, status: 'visible' })}
                   >
                     Unhide
@@ -114,8 +112,7 @@ export default function CommentsAdmin() {
                 )}
                 {comment.status !== 'deleted' && (
                   <Button
-                    variant="ghost"
-                    size="small"
+                    appearance="subtle"
                     onPress={() => moderate.mutate({ id: comment._id, status: 'deleted' })}
                   >
                     Delete

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useHero, useUpdateHero, type HeroContent } from '../../../api/hooks'
-import { PrimaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { Textarea } from '@oxy.so/bloom/textarea'
 import MediaPicker from '../MediaPicker'
 
@@ -112,9 +112,9 @@ export default function HeroAdmin() {
         </div>
 
         <div className="flex items-center gap-3 self-start">
-          <PrimaryButton onPress={save} disabled={saving}>
+          <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
             {saving ? 'Saving...' : 'Save changes'}
-          </PrimaryButton>
+          </Button>
           {statusMessage && (
             <span className="text-xs text-muted-foreground">{statusMessage}</span>
           )}

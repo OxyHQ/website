@@ -11,6 +11,7 @@ export const props: BloomSurfaceProps = {
         { name: 'nativeID', type: 'string', optional: true, description: 'Native ID of the control this label describes. On web, also wires up `htmlFor` so clicking the label focuses the associated input.' },
         { name: 'htmlFor', type: 'string | null', optional: true, description: 'Web-only convenience: the `id` of the form control this label is for. Defaults to `nativeID` when omitted. Ignored on native.' },
         { name: 'required', type: 'boolean', optional: true, description: "Render a required marker (an asterisk in the theme's negative color) after the label text. Defaults to `false`." },
+        { name: 'requiredLabel', type: 'string', optional: true, description: 'Accessible name of the required marker; defaults to the current locale.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Visually subdued label (e.g. for optional fields). Defaults to `false`.' },
         { name: 'size', type: "'xs' | 'sm' | 'md'", options: ['xs', 'sm', 'md'], optional: true, description: 'Type-ramp step: `xs` body-2-medium, `sm` body-medium (the default), `md` headline-medium.' },
         { name: 'style', type: 'StyleProp<TextStyle>', optional: true },

@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useMediaItem } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
-import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
 import { Textarea } from '@oxy.so/bloom/textarea'
 import { LabeledTextField } from '../LabeledTextField'
@@ -216,7 +216,7 @@ export default function TeamAdmin() {
     return (
       <div>
         <div className="mb-4">
-          <Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back to list</Button>
+          <Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">
           {isNew ? 'New team member' : `Edit: ${editing.name}`}
@@ -332,7 +332,7 @@ export default function TeamAdmin() {
             <div className="flex flex-col gap-1.5">
               <span className="text-sm font-medium text-foreground">Visibility</span>
               <div className="flex h-9 items-center gap-2">
-                <Switch value={editing.active} onValueChange={(val) => setEditing({ ...editing, active: val })} />
+                <Switch checked={editing.active} onCheckedChange={(val) => setEditing({ ...editing, active: val })} />
                 <span className="text-sm text-muted-foreground">{editing.active ? 'Shown on /company/team' : 'Hidden'}</span>
               </div>
             </div>
@@ -353,10 +353,10 @@ export default function TeamAdmin() {
           {error && <p className="text-sm text-error-text">{error}</p>}
 
           <div className="flex items-center gap-2">
-            <PrimaryButton onPress={save} disabled={saving || !editing.name || !editing.role}>
+            <Button appearance="solid" tone="accent" onPress={save} disabled={saving || !editing.name || !editing.role}>
               {saving ? 'Saving…' : 'Save changes'}
-            </PrimaryButton>
-            <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>
+            </Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
           </div>
         </div>
       </div>
@@ -372,7 +372,7 @@ export default function TeamAdmin() {
             {members.length} {members.length === 1 ? 'member' : 'members'} · powers the public /company/team page.
           </p>
         </div>
-        <PrimaryButton onPress={() => setEditing(emptyMember())}>Add member</PrimaryButton>
+        <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyMember())}>Add member</Button>
       </div>
 
       {error && <p className="mt-4 text-sm text-error-text">{error}</p>}
@@ -400,8 +400,8 @@ export default function TeamAdmin() {
                   </div>
                   <SocialIcons socials={member.socials} />
                   <div className="shrink-0">
-                    <Button variant="ghost" size="small" onPress={() => setEditing(stripRefsForEditing(member))}>Edit</Button>
-                    <Button variant="ghost" size="small" onPress={() => requestDelete(member)}>Delete</Button>
+                    <Button appearance="subtle" onPress={() => setEditing(stripRefsForEditing(member))}>Edit</Button>
+                    <Button appearance="subtle" onPress={() => requestDelete(member)}>Delete</Button>
                   </div>
                 </div>
               ))}

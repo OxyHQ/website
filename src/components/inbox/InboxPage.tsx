@@ -6,7 +6,7 @@ import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { RiMailLine } from '@oxy.so/bloom/icons/RiMailLine'
 import { RiPriceTag3Line } from '@oxy.so/bloom/icons/RiPriceTag3Line'
 import { RiChat1Line } from '@oxy.so/bloom/icons/RiChat1Line'
-import { PrimaryButton, TextButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { Link } from '../../lib/navigation'
 import PageSection from '../layout/PageSection'
 import FaqSection from '../sections/FaqSection'
@@ -80,7 +80,7 @@ function InboxExample() {
       <div className="min-h-[400px] p-5 sm:p-8">
         {item ? (
           <div>
-            <TextButton
+            <Button appearance="plain"
               onPress={() => {
                 setSelected(null)
                 setSent(false)
@@ -88,7 +88,7 @@ function InboxExample() {
               }}
             >
               <RiArrowLeftLine width={18} height={18} fill="currentColor" /> Back to messages
-            </TextButton>
+            </Button>
             <p className="mt-8 text-sm text-muted-foreground">{item.name} · Example conversation</p>
             <h3 className="mt-3 font-display text-3xl leading-tight">{item.subject}</h3>
             <p className="mt-6 text-base leading-relaxed">{item.body}</p>
@@ -111,14 +111,14 @@ function InboxExample() {
                   placeholder="Write an example reply…"
                 />
               </label>
-              <PrimaryButton
+              <Button appearance="solid" tone="accent"
                 onPress={() => {
                   if (reply.trim()) setSent(true)
                 }}
                 disabled={!reply.trim()}
               >
                 Preview reply
-              </PrimaryButton>
+              </Button>
               <p className="text-sm text-muted-foreground" role="status">
                 {sent
                   ? 'Example reply added. No message was sent.'

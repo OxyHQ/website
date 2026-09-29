@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { API_BASE, getAuthHeaders } from '../../../api/client'
 import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
@@ -130,9 +130,9 @@ export default function BackupAdmin() {
             Download a complete backup of all CMS collections (navigation, footer, pages, posts, pricing, settings, and more).
           </p>
           <div className="mt-4">
-            <PrimaryButton onPress={handleExport} disabled={exporting || importing}>
+            <Button appearance="solid" tone="accent" onPress={handleExport} disabled={exporting || importing}>
               {exporting ? 'Exporting...' : 'Export Backup'}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
 
@@ -149,9 +149,9 @@ export default function BackupAdmin() {
               onChange={handleFileSelected}
               className="hidden"
             />
-            <SecondaryButton onPress={handleImport} disabled={exporting || importing}>
+            <Button appearance="outline" tone="neutral" onPress={handleImport} disabled={exporting || importing}>
               {importing ? 'Importing...' : 'Import Backup'}
-            </SecondaryButton>
+            </Button>
           </div>
         </div>
       </div>

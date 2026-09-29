@@ -49,7 +49,7 @@ export function DocsCopyPageMenu({ title, sourceFile }: DocsCopyPageMenuProps) {
 
   return (
     <div className="ml-auto hidden shrink-0 sm:flex">
-      <ButtonGroup size="sm" accessibilityLabel={t('docs.pageActions')}>
+      <ButtonGroup accessibilityLabel={t('docs.pageActions')}>
         <ButtonGroupItem leadingIcon={RiFileCopyLine} onPress={copyPage}>
           {page.copied ? t('docs.copied') : t('docs.copyPage')}
         </ButtonGroupItem>

@@ -50,7 +50,7 @@ export default function TeamPage() {
                   A global, remote-first team building ethical technology and open-source tools.
                 </p>
                 <div className="mt-7">
-                  <Button variant="outline" size="md" responsive href="/company/careers">
+                  <Button variant="outline" responsive href="/company/careers">
                     Join us
                   </Button>
                 </div>

@@ -9,7 +9,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'lines', type: 'readonly PriceLine[]', optional: false, description: 'The kinds, in the order they should be read.' },
         { name: 'total', type: 'PriceTotal', optional: true, description: 'The answer. Left out — which is what `EarningsSummary` does — the breakdown draws the kinds and no rule, because the figure above it is already the total and two totals on one panel is one too many.' },
-        { name: 'title', type: 'string', optional: true, description: 'A heading over the list. Default `"What it came from"`.' },
+        { name: 'title', type: 'string', optional: true, description: 'A heading over the list (`"What it came from"` in English).' },
         { name: 'collapsible', type: 'boolean', optional: true, description: 'Hide the kinds behind a disclosure. Default `false`.' },
         { name: 'defaultExpanded', type: 'boolean', optional: true, description: 'Starts the disclosure open. Default `false`.' },
         { name: 'labels', type: 'EarningsLabels', optional: true },
@@ -21,7 +21,7 @@ export const props: BloomSurfaceProps = {
     'EarningsPayoutRowProps': {
       props: [
         { name: 'payout', type: 'EarningsPayout', optional: false, description: 'The payout.' },
-        { name: 'title', type: 'string', optional: true, description: 'The line over the date. Default `"Next payout"`.' },
+        { name: 'title', type: 'string', optional: true, description: 'The line over the date (`"Next payout"` in English).' },
         { name: 'onPress', type: '() => void', optional: true, description: "Makes the row pressable — an app opens the payout's detail from here." },
         { name: 'action', type: 'ReactNode', optional: true, description: 'A control after the row — "Change the account", "Try again".' },
         { name: 'labels', type: 'EarningsLabels', optional: true },
@@ -44,7 +44,7 @@ export const props: BloomSurfaceProps = {
         { name: 'breakdown', type: 'boolean', optional: true, description: 'Draws the breakdown. Default `true` when the period carries `lines`.' },
         { name: 'stats', type: 'boolean', optional: true, description: 'Draws the tiles. Default `true` when the period carries `stats`.' },
         { name: 'labels', type: 'EarningsLabels', optional: true },
-        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the panel. Default `"Earnings"`.' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the panel (`"Earnings"` in English).' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true, description: 'Derives `-chart`, `-stats`, `-breakdown`, `-payout`.' },
       ],

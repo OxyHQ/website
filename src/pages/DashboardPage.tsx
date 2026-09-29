@@ -135,7 +135,6 @@ export default function DashboardPage() {
               <SegmentedControl
                 label={t('dashboard.mapView')}
                 type="radio"
-                size="sm"
                 value={isGlobe ? "globe" : "flat"}
                 onValueChange={(next) => setIsGlobe(next === "globe")}
               >
@@ -148,7 +147,6 @@ export default function DashboardPage() {
               </SegmentedControl>
               <Button
                 iconOnly
-                size="sm"
                 appearance="outline"
                 tone="neutral"
                 leadingIcon={isFullscreen ? RiCollapseDiagonalLine : RiFullscreenLine}

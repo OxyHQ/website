@@ -8,7 +8,7 @@ import {
   type HelpArticleStatus,
 } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
-import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
 import { Badge } from '@oxy.so/bloom/badge'
 import { LabeledTextField } from '../LabeledTextField'
@@ -151,7 +151,7 @@ export default function HelpAdmin() {
     return (
       <div>
         <div className="mb-4">
-          <Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back to list</Button>
+          <Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">
           {isNew ? 'New help article' : `Edit: ${editing.title}`}
@@ -257,13 +257,13 @@ export default function HelpAdmin() {
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Switch value={editing.featured} onValueChange={(val) => setEditing({ ...editing, featured: val })} />
+              <Switch checked={editing.featured} onCheckedChange={(val) => setEditing({ ...editing, featured: val })} />
               <Label>Featured</Label>
             </div>
             <div className="flex items-center gap-2">
               <Switch
-                value={editing.status === 'published'}
-                onValueChange={(val) => setEditing({ ...editing, status: val ? 'published' : 'draft' })}
+                checked={editing.status === 'published'}
+                onCheckedChange={(val) => setEditing({ ...editing, status: val ? 'published' : 'draft' })}
               />
               <Label>{editing.status === 'published' ? 'Published' : 'Draft'}</Label>
             </div>
@@ -272,10 +272,10 @@ export default function HelpAdmin() {
           {error && <p className="text-sm text-error-text">{error}</p>}
 
           <div className="mt-2 flex gap-3">
-            <PrimaryButton onPress={save} disabled={saving}>
+            <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving…' : isNew ? 'Publish' : 'Update'}
-            </PrimaryButton>
-            <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>
+            </Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
           </div>
         </div>
       </div>
@@ -286,7 +286,7 @@ export default function HelpAdmin() {
     return (
       <div>
         <div className="mb-4">
-          <Button variant="ghost" size="small" onPress={() => setTranslating(null)}>&larr; Back</Button>
+          <Button appearance="subtle" onPress={() => setTranslating(null)}>&larr; Back</Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">Translate: {translating.title}</h2>
         <div className="mt-4">
@@ -317,7 +317,7 @@ export default function HelpAdmin() {
           <p className="mt-1 text-sm text-muted-foreground">{articles.length} articles</p>
         </div>
         {isDefault && (
-          <PrimaryButton onPress={() => setEditing(emptyArticle())}>New article</PrimaryButton>
+          <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyArticle())}>New article</Button>
         )}
       </div>
 
@@ -349,11 +349,11 @@ export default function HelpAdmin() {
               <div className="flex items-center gap-2">
                 {isDefault ? (
                   <>
-                    <Button variant="ghost" size="small" onPress={() => setEditing(stripRefsForEditing(article))}>Edit</Button>
-                    <Button variant="ghost" size="small" onPress={() => deleteAction.request(article)}>Delete</Button>
+                    <Button appearance="subtle" onPress={() => setEditing(stripRefsForEditing(article))}>Edit</Button>
+                    <Button appearance="subtle" onPress={() => deleteAction.request(article)}>Delete</Button>
                   </>
                 ) : (
-                  <Button variant="ghost" size="small" onPress={() => setTranslating(article)}>Translate</Button>
+                  <Button appearance="subtle" onPress={() => setTranslating(article)}>Translate</Button>
                 )}
               </div>
             </div>

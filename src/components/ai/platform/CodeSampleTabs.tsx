@@ -43,7 +43,6 @@ export default function CodeSampleTabs({ samples, caption, className = '' }: Cod
         {samples.length > 1 ? (
           <SegmentedControl
             type="tabs"
-            size="sm"
             label={caption ?? t('ai.quickstart.tabsLabel')}
             value={activeSample.key}
             onValueChange={setActive}
@@ -58,7 +57,6 @@ export default function CodeSampleTabs({ samples, caption, className = '' }: Cod
           <span className="px-1 text-sm text-muted-foreground">{activeSample.label}</span>
         )}
         <Button
-          size="sm"
           tone="neutral"
           appearance="outline"
           leadingIcon={copied ? RiCheckLine : RiFileCopyLine}

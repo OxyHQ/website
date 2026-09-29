@@ -15,7 +15,7 @@ export const props: BloomSurfaceProps = {
         { name: 'accuracyRadius', type: 'number', optional: true, description: "The accuracy halo's radius in PIXELS. The app computes it from its own map projection (metres at this latitude and zoom → pixels) and re-renders on zoom, exactly as it does for `MapAreaCircle` — which is the circle this draws." },
         { name: 'coneLength', type: 'number', optional: true, description: 'How far the cone reaches, in pixels. Default LOCATION_PUCK_GEOMETRY `.cone`.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: "The puck's announced name. Defaults to the sentence describeLocationPuck builds from the state, the mode and the heading — a coloured dot says nothing aloud." },
-        { name: 'stateLabels', type: 'Partial<Record<LocationPuckState, string>>', optional: true, description: 'Replaces the English state words.' },
+        { name: 'stateLabels', type: 'Partial<Record<LocationPuckState, string>>', optional: true, description: "Replaces the state words (Bloom's, in the app's locale), one state at a time." },
         { name: 'reducedMotion', type: 'boolean', optional: true, description: "Force the pulse off regardless of the OS preference. Omitted, the puck reads the platform's reduced-motion setting and stands still when it is on." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true, description: 'Parts get `<testID>-halo`, `-cone`, `-dot`, `-chevron`.' },

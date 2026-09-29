@@ -74,7 +74,7 @@ function HeroSection() {
         </div>
 
         <div className="shrink-0">
-          <Button variant="primary" size="md" href="/company/careers">
+          <Button variant="primary" href="/company/careers">
             Explore careers
           </Button>
         </div>
@@ -629,7 +629,6 @@ function CareersCtaSection() {
             <div className="flex w-full flex-col gap-3 md:flex-row">
               <Button
                 variant="primary"
-                size="lg"
                 responsive
                 href="/company/careers"
                 className="border-transparent bg-primary-foreground text-primary hover:bg-primary-foreground/90"
@@ -638,7 +637,6 @@ function CareersCtaSection() {
               </Button>
               <Button
                 variant="ghost"
-                size="lg"
                 responsive
                 href="/company/charter"
                 className="text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground"

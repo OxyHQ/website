@@ -739,7 +739,6 @@ export default function ColorSystemPlayground() {
         <SegmentedControl
           label="Mention state"
           type="radio"
-          size="sm"
           value={authenticated ? 'signed-in' : 'public'}
           onValueChange={(next) => setAuthenticated(next === 'signed-in')}
         >

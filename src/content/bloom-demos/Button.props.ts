@@ -2,16 +2,22 @@ import type { PlaygroundProp } from './_playground'
 
 export const props: PlaygroundProp[] = [
   {
-    name: 'variant',
+    name: 'appearance',
     kind: 'select',
-    options: ['primary', 'secondary', 'inverse', 'icon', 'ghost', 'text'],
-    default: 'primary',
+    options: ['solid', 'subtle', 'outline', 'plain'],
+    default: 'solid',
+  },
+  {
+    name: 'tone',
+    kind: 'select',
+    options: ['accent', 'neutral', 'danger', 'success', 'warning', 'info'],
+    default: 'accent',
   },
   {
     name: 'size',
     kind: 'select',
-    options: ['small', 'medium', 'large'],
-    default: 'medium',
+    options: ['xs', 'sm', 'md', 'lg'],
+    default: 'md',
   },
   { name: 'disabled', kind: 'boolean', default: false },
   { name: 'children', kind: 'text', default: 'Click me' },

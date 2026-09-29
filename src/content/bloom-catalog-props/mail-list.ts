@@ -9,7 +9,8 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'sections', type: 'readonly MailListSection[]', optional: true, description: 'Day sections. groupMailByDay builds them from a flat list.' },
         { name: 'mails', type: 'readonly MailSummary[]', optional: true, description: 'One unlabelled run, for a list that is not bucketed.' },
-        { name: 'density', type: 'MailDensity', options: ['comfortable', 'compact'], optional: true },
+        { name: 'showAvatar', type: 'boolean', optional: true, description: 'Show sender avatars. Selection checkboxes remain visible when enabled.' },
+        { name: 'density', type: 'MailDensity', options: ['comfortable', 'cozy', 'compact'], optional: true },
         { name: 'selectedId', type: 'string', optional: true, description: 'The row the reading pane is showing.' },
         { name: 'checkedIds', type: 'readonly string[]', optional: true, description: 'The multi-selection. Passing `onCheckedIdsChange` turns the checkboxes on AND makes the selection bar appear — it is not a component the app places.' },
         { name: 'onCheckedIdsChange', type: '(ids: string[]) => void', optional: true },
@@ -37,7 +38,7 @@ export const props: BloomSurfaceProps = {
     'MailListSkeletonProps': {
       props: [
         { name: 'count', type: 'number', optional: true },
-        { name: 'density', type: 'MailDensity', options: ['comfortable', 'compact'], optional: true },
+        { name: 'density', type: 'MailDensity', options: ['comfortable', 'cozy', 'compact'], optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
@@ -59,7 +60,8 @@ export const props: BloomSurfaceProps = {
         { name: 'selected', type: 'boolean', optional: true, description: 'The row the reading pane is showing.' },
         { name: 'checked', type: 'boolean', optional: true, description: "The row's multi-selection state. Passing `onCheckedChange` is what makes the checkbox appear at all — a list with no bulk actions draws avatars." },
         { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: true },
-        { name: 'density', type: 'MailDensity', options: ['comfortable', 'compact'], optional: true },
+        { name: 'showAvatar', type: 'boolean', optional: true, description: 'Show sender avatars. Selection checkboxes remain visible when enabled.' },
+        { name: 'density', type: 'MailDensity', options: ['comfortable', 'cozy', 'compact'], optional: true },
         { name: 'onPress', type: '() => void', optional: true },
         { name: 'onLongPress', type: '() => void', optional: true },
         { name: 'href', type: 'string', optional: true, description: 'A real href on web, so the row is a link and opens in a new tab.' },
@@ -82,7 +84,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onClear', type: '() => void', optional: true },
         { name: 'actions', type: 'readonly MailAction[]', optional: true },
         { name: 'onAction', type: '(key: string) => void', optional: true },
-        { name: 'density', type: 'MailDensity', options: ['comfortable', 'compact'], optional: true },
+        { name: 'density', type: 'MailDensity', options: ['comfortable', 'cozy', 'compact'], optional: true },
         { name: 'strings', type: 'Partial<MailStrings>', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },

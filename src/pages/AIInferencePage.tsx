@@ -114,7 +114,7 @@ export default function AIInferencePage() {
           ))}
         </ol>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Button href={consoleLinks.createApplication} variant="outline" size="sm">
+          <Button href={consoleLinks.createApplication} variant="outline">
             {t('ai.cta.openConsole')}
           </Button>
         </div>

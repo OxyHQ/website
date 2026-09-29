@@ -27,8 +27,8 @@ export default function BecomeAPartnerSection() {
             <AnimatedTitle static as="h2" className="mb-4 text-heading-responsive-lg text-primary-text">Bring your next idea into the open.</AnimatedTitle>
             <p className="max-w-[500px] text-base leading-relaxed text-foreground/75 md:text-lg">Tell us what you want to build, and we will help you find the people, tools, and path to ship it.</p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Button variant="primary" size="md" responsive href={mailto}>Email partners@oxy.so <RiArrowRightUpLine width={17} height={17} fill="currentColor" aria-hidden /></Button>
-              <Button variant="outline" size="md" responsive href="/apps">Explore the ecosystem</Button>
+              <Button variant="primary" responsive href={mailto}>Email partners@oxy.so <RiArrowRightUpLine width={17} height={17} fill="currentColor" aria-hidden /></Button>
+              <Button variant="outline" responsive href="/apps">Explore the ecosystem</Button>
             </div>
           </div>
 

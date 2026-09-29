@@ -55,7 +55,7 @@ function ContinueCard({ courses, progress }: { courses: CourseWithLessons[]; pro
           <p className="text-sm text-muted-foreground">{t('academy.nextUp', { lesson: lesson.frontmatter.title })}</p>
           <CourseProgressBar completed={summary.completed} total={summary.total} className="mt-2 max-w-sm" />
         </div>
-        <Button href={lessonPath(course.slug, lesson.lessonSlug)} variant="primary" size="md" className="shrink-0 self-start sm:self-center">
+        <Button href={lessonPath(course.slug, lesson.lessonSlug)} variant="primary" className="shrink-0 self-start sm:self-center">
           {t('academy.continue')}
         </Button>
       </div>

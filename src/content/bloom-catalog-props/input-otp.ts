@@ -7,8 +7,9 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'InputOtpProps': {
       props: [
-        { name: 'length', type: 'number', optional: true, description: 'Number of digit boxes, default `6`.' },
-        { name: 'value', type: 'string', optional: true, description: 'Controlled value. Non-digits are dropped and longer strings truncated to `length`.' },
+        { name: 'length', type: 'number', optional: true, description: 'Number of boxes, default `6`.' },
+        { name: 'type', type: 'InputOtpType', options: ['numeric', 'alphanumeric'], optional: true, description: '`numeric` (default): digits only, number pad. `alphanumeric`: letters and digits, upper-cased, on a letters keyboard with auto-capitalisation. Anything else — a dash, a space — is dropped either way, so a pasted `ABCDE-12345` fills ten boxes.' },
+        { name: 'value', type: 'string', optional: true, description: 'Controlled value. Characters the `type` does not accept are dropped and longer strings truncated to `length`.' },
         { name: 'defaultValue', type: 'string', optional: true, description: 'Initial value when uncontrolled.' },
         { name: 'onChange', type: '(value: string) => void', optional: true, description: 'Every change, with the cleaned code.' },
         { name: 'onComplete', type: '(value: string) => void', optional: true, description: 'Fires once the last box is filled.' },

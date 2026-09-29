@@ -79,6 +79,7 @@ export const props: BloomSurfaceProps = {
     },
     'ComposerIconButtonProps': {
       props: [
+        { name: 'onLayout', type: "import('react-native').ViewProps['onLayout']", optional: true, description: 'Keeps anchored menus positioned when the control lays out.' },
         { name: 'icon', type: 'ChatComposerIcon', optional: false },
         { name: 'accessibilityLabel', type: 'string', optional: false },
         { name: 'onPress', type: '(event?: unknown) => void', optional: true },
@@ -95,6 +96,7 @@ export const props: BloomSurfaceProps = {
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
+      inheritsFrom: ['RefAttributes<View>'],
     },
     'SuggestionListProps': {
       props: [
@@ -106,6 +108,9 @@ export const props: BloomSurfaceProps = {
         { name: 'header', type: 'string', optional: true, description: 'A muted caption above the rows ("People", "Commands").' },
         { name: 'maxHeight', type: 'number', optional: true, description: 'Scroll past this height. Default `232` (about five rows).' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Accessible name of the listbox. Defaults to a name derived from `kind`.' },
+        { name: 'loading', type: 'boolean', optional: true, description: 'The caller is still searching. Draws a named, busy "Searching…" line in place of the rows, so a list that has nothing YET is not mistaken for one that found nothing. Default `false`.' },
+        { name: 'showEmpty', type: 'boolean', optional: true, description: 'Draws a "No people found" line when a finished search is empty. Off by default, and an empty list draws nothing — right for a composer that shows the list only while it has rows; a picker the user opened on purpose wants the answer.' },
+        { name: 'emptyLabel', type: 'string', optional: true, description: 'Replaces the localized empty line.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
@@ -135,7 +140,7 @@ export const props: BloomSurfaceProps = {
         { name: 'open', type: 'boolean', optional: true },
         { name: 'defaultOpen', type: 'boolean', optional: true },
         { name: 'onOpenChange', type: '(open: boolean) => void', optional: true },
-        { name: 'items', type: 'ReadonlyArray<AttachmentMenuItem>', optional: true, description: 'Defaults to ATTACHMENT_MENU_ITEMS .' },
+        { name: 'items', type: 'ReadonlyArray<AttachmentMenuItem>', optional: true, description: "Defaults to ATTACHMENT_MENU_ITEMS , named in the app's locale." },
         { name: 'layout', type: "'grid' | 'list'", options: ['grid', 'list'], optional: true, description: "`'grid'` (default) draws icon discs in `columns`; `'list'` draws rows." },
         { name: 'columns', type: 'number', optional: true, description: 'Grid columns. Default `4`.' },
         { name: 'onSelect', type: '(id: string, item: AttachmentMenuItem) => void', optional: true },
@@ -178,7 +183,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onSelectEmoji', type: '(emoji: string) => void', optional: true },
         { name: 'onMorePress', type: '() => void', optional: true, description: 'The "+" that opens the full picker. Omit to hide it.' },
         { name: 'moreLabel', type: 'string', optional: true },
-        { name: 'size', type: "'small' | 'medium'", options: ['small', 'medium'], optional: true, description: 'Glyph box: `small` 30, `medium` 36. Default `medium`.' },
+        { name: 'size', type: "'sm' | 'md'", options: ['sm', 'md'], optional: true, description: 'Glyph box: `sm` 30, `md` 36. Default `md`.' },
         { name: 'surface', type: 'boolean', optional: true, description: "`false` drops the bar's own surface — for use inside a menu panel." },
         { name: 'accessibilityLabel', type: 'string', optional: true },
         { name: 'emojiLabel', type: '(emoji: string) => string', optional: true, description: 'Names each emoji. Defaults to the glyph itself.' },
