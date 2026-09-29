@@ -356,6 +356,13 @@ export default defineConfig(({ mode }) => ({
       // name above does not cover this one: served unbundled, its named
       // exports fail at runtime with "does not provide an export named".
       'react-native-css/components',
+      // `@oxy.so/core`'s crypto polyfill default-imports `buffer`, which is CJS.
+      'buffer',
+      // Depends on zod 3 while the site uses zod 4. Served unbundled, its bare
+      // `zod` import resolves to the one prebundled copy — the site's zod 4 —
+      // and `.innerType()` (zod 3 only) throws at module load. Prebundled, it
+      // carries its own zod.
+      '@oxy.so/contracts',
       'react-native-svg',
       'react-native-reanimated',
       'react-native-gesture-handler',
