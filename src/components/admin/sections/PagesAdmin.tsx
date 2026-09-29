@@ -1,4 +1,10 @@
 import { useState } from 'react'
+import { Button } from '@oxy.so/bloom/button'
+import { RiAddLine } from '@oxy.so/bloom/icons/RiAddLine'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
+import { TextFieldInput } from '@oxy.so/bloom/text-field'
+import { Textarea } from '@oxy.so/bloom/textarea'
+import { LabeledTextField } from '../LabeledTextField'
 import { usePage, useUpdatePage, type PageData, type PageSection } from '../../../api/hooks'
 
 const PAGE_SLUGS = ['home', 'pricing', 'partners', 'help', 'ai', 'codea', 'os', 'newsroom']
@@ -9,7 +15,15 @@ export default function PagesAdmin() {
   if (activeSlug) {
     return (
       <div>
-        <button onClick={() => setActiveSlug(null)} className="mb-4 text-sm text-muted-foreground hover:text-foreground">&larr; Back to pages</button>
+        <Button
+          appearance="plain"
+          tone="neutral"
+          leadingIcon={RiArrowLeftLine}
+          onPress={() => setActiveSlug(null)}
+          style={{ marginBottom: 16 }}
+        >
+          Back to pages
+        </Button>
         <PageEditor slug={activeSlug} />
       </div>
     )
@@ -57,8 +71,8 @@ function PageEditor({ slug }: { slug: string }) {
     <div>
       <h2 className="text-xl font-semibold text-foreground capitalize">{slug} page</h2>
       <div className="mt-6 flex flex-col gap-4">
-        <label className="flex flex-col gap-1.5"><span className="text-sm font-medium text-foreground">Title</span><input value={form.title ?? ''} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" /></label>
-        <label className="flex flex-col gap-1.5"><span className="text-sm font-medium text-foreground">Description</span><textarea value={form.description ?? ''} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" /></label>
+        <LabeledTextField label="Title" value={form.title ?? ''} onValueChange={(title) => setForm({ ...form, title })} />
+        <Textarea label="Description" value={form.description ?? ''} onValueChange={(description) => setForm({ ...form, description })} rows={2} />
 
         <h3 className="mt-4 text-sm font-semibold text-foreground">Prompt Phrases</h3>
         <p className="text-xs text-muted-foreground">Rotating placeholder text shown in the prompt input on this page.</p>
@@ -69,26 +83,32 @@ function PageEditor({ slug }: { slug: string }) {
             <div className="flex flex-col gap-2">
               {phrases.map((phrase: string, i: number) => (
                 <div key={i} className="flex items-center gap-2">
-                  <input
-                    value={phrase}
-                    onChange={(e) => { const next = [...phrases]; next[i] = e.target.value; setPhrases(next) }}
-                    className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
-                    placeholder="Enter a prompt phrase…"
-                  />
-                  <button
-                    onClick={() => { const next = [...phrases]; next.splice(i, 1); setPhrases(next) }}
-                    className="text-xs text-muted-foreground hover:text-error-text"
+                  <div className="flex-1">
+                    <TextFieldInput
+                      label={`Prompt phrase ${i + 1}`}
+                      value={phrase}
+                      onValueChange={(value) => { const next = [...phrases]; next[i] = value; setPhrases(next) }}
+                      placeholder="Enter a prompt phrase…"
+                    />
+                  </div>
+                  <Button
+                    appearance="plain"
+                    tone="neutral"
+                    onPress={() => { const next = [...phrases]; next.splice(i, 1); setPhrases(next) }}
                   >
                     Remove
-                  </button>
+                  </Button>
                 </div>
               ))}
-              <button
-                onClick={() => setPhrases([...phrases, ''])}
-                className="self-start text-xs text-primary hover:underline"
+              <Button
+                appearance="plain"
+                tone="accent"
+                leadingIcon={RiAddLine}
+                onPress={() => setPhrases([...phrases, ''])}
+                style={{ alignSelf: 'flex-start' }}
               >
-                + Add phrase
-              </button>
+                Add phrase
+              </Button>
             </div>
           )
         })()}
@@ -100,15 +120,17 @@ function PageEditor({ slug }: { slug: string }) {
               <span className="text-xs font-mono text-muted-foreground">{section.type}</span>
               <span className="text-xs text-muted-foreground">order: {section.order}</span>
             </div>
-            <input value={section.heading ?? ''} onChange={(e) => updateSection(i, 'heading', e.target.value)} placeholder="Heading" className="mt-2 w-full bg-transparent border-none text-sm font-medium text-foreground outline-none" />
-            <input value={section.subheading ?? ''} onChange={(e) => updateSection(i, 'subheading', e.target.value)} placeholder="Subheading" className="mt-1 w-full bg-transparent border-none text-sm text-muted-foreground outline-none" />
-            <textarea value={section.content ?? ''} onChange={(e) => updateSection(i, 'content', e.target.value)} placeholder="Content" rows={3} className="mt-2 w-full rounded border border-border bg-background px-2 py-1 text-sm outline-none" />
+            <div className="mt-2 flex flex-col gap-2">
+              <TextFieldInput label="Heading" value={section.heading ?? ''} onValueChange={(v) => updateSection(i, 'heading', v)} placeholder="Heading" />
+              <TextFieldInput label="Subheading" value={section.subheading ?? ''} onValueChange={(v) => updateSection(i, 'subheading', v)} placeholder="Subheading" />
+              <Textarea accessibilityLabel="Content" value={section.content ?? ''} onValueChange={(v) => updateSection(i, 'content', v)} placeholder="Content" rows={3} />
+            </div>
           </div>
         ))}
 
-        <button onClick={save} disabled={saving} className="self-start rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">
+        <Button appearance="solid" tone="accent" onPress={save} disabled={saving} style={{ alignSelf: 'flex-start' }}>
           {saving ? 'Saving...' : 'Save changes'}
-        </button>
+        </Button>
       </div>
     </div>
   )
