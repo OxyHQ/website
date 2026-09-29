@@ -1,5 +1,6 @@
 import { RiCheckboxCircleFill } from '@oxy.so/bloom/icons/RiCheckboxCircleFill'
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
+import { Divider } from '@oxy.so/bloom/divider'
 import { usePricing } from '../../api/hooks'
 import Button from '../ui/Button'
 import BillingToggle from './BillingToggle'
@@ -102,10 +103,7 @@ export default function PricingStickyTable({ isAnnual, onToggle }: Props) {
                   </div>
                 ))}
 
-                {/* Divider line */}
-                <svg width="100%" height="1" className="text-border col-span-full mt-8">
-                  <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-                </svg>
+                <div className="col-span-full mt-8"><Divider color="var(--border)" /></div>
               </div>
 
               {/* Category sections with sticky headers */}

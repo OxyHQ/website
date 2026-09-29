@@ -1,19 +1,12 @@
 import { Link } from '../../lib/navigation'
 import { useTranslation } from '../../lib/i18n'
 import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { Divider } from '@oxy.so/bloom/divider'
 import { defaultFooterColumns, type FooterLink } from '../../data/content'
 import { LogoText } from '@oxy.so/services/ui/client'
 import MentionIcon from '../social/MentionIcon'
 
 /* ─── Shared small components ─── */
-
-function Divider() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-    </svg>
-  )
-}
 
 function NewBadge() {
   return (
@@ -185,7 +178,7 @@ export default function Footer({
     <footer
       className="relative flex w-full flex-col justify-between bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))] text-foreground"
     >
-      {!hideTopDivider && <Divider />}
+      {!hideTopDivider && <Divider color="var(--border)" />}
 
       {/* Columns */}
       {footerColumns.length > 0 && (
@@ -212,7 +205,7 @@ export default function Footer({
       {/* Bottom bar */}
       <div className="w-full">
         <div className="container">
-          {footerColumns.length > 0 && <Divider />}
+          {footerColumns.length > 0 && <Divider color="var(--border)" />}
 
           {/* Logo + Social row */}
           <div className="flex flex-wrap items-center justify-between gap-6 px-px pt-4 pb-4">

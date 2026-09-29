@@ -8,6 +8,7 @@ import { RiDashboardLine } from '@oxy.so/bloom/icons/RiDashboardLine'
 import { RiShieldCheckLine } from '@oxy.so/bloom/icons/RiShieldCheckLine'
 import { RiArrowRightSLine } from '@oxy.so/bloom/icons/RiArrowRightSLine'
 import { RiSearchLine } from '@oxy.so/bloom/icons/RiSearchLine'
+import { Divider } from '@oxy.so/bloom/divider'
 import { useCurrentLocale } from '../../lib/i18n'
 import {
   loadHelpArticles,
@@ -364,10 +365,7 @@ function HelpContent({
             </div>
           )}
 
-          {/* Divider */}
-          <svg width="100%" height="1" className="text-border my-15 md:my-25">
-            <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-          </svg>
+          <div className="w-full my-15 md:my-25"><Divider color="var(--border)" /></div>
 
           {/* Get started section */}
           <div className="flex flex-col justify-between gap-x-[clamp(24px,calc(33.8%-215.304px),105px)] gap-y-10 xl:flex-row self-stretch">
