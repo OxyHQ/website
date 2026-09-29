@@ -3,8 +3,17 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../../api/client'
 import type { CommentData } from '../../../api/hooks'
 import { Button } from '@oxy.so/bloom/button'
+import { Pagination } from '@oxy.so/bloom/pagination'
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+  SegmentedControlItemText,
+} from '@oxy.so/bloom/segmented-control'
 
 type StatusFilter = '' | 'visible' | 'hidden' | 'deleted'
+
+/** A segmented control reads '' as "nothing selected", so "All" has a value of its own here. */
+const ALL_STATUSES = 'all'
 
 interface CommentQueueResponse {
   comments: CommentData[]
@@ -50,21 +59,22 @@ export default function CommentsAdmin() {
       </p>
 
       {/* Status tabs */}
-      <div className="mt-4 flex gap-2">
+      <SegmentedControl
+        label="Status"
+        type="radio"
+        value={statusFilter || ALL_STATUSES}
+        onValueChange={(next) => {
+          setStatusFilter(next === ALL_STATUSES ? '' : next as StatusFilter)
+          setCurrentPage(1)
+        }}
+        style={{ marginTop: 16, alignSelf: 'flex-start' }}
+      >
         {tabs.map(tab => (
-          <button
-            key={tab.value}
-            onClick={() => { setStatusFilter(tab.value); setCurrentPage(1) }}
-            className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
-              statusFilter === tab.value
-                ? 'bg-primary text-primary-foreground'
-                : 'text-muted-foreground hover:text-foreground border border-border'
-            }`}
-          >
-            {tab.label}
-          </button>
+          <SegmentedControlItem key={tab.value} value={tab.value || ALL_STATUSES}>
+            <SegmentedControlItemText>{tab.label}</SegmentedControlItemText>
+          </SegmentedControlItem>
         ))}
-      </div>
+      </SegmentedControl>
 
       {/* Comment list */}
       <div className="mt-6 flex flex-col gap-3">
@@ -130,25 +140,12 @@ export default function CommentsAdmin() {
 
       {/* Pagination */}
       {data && data.pages > 1 && (
-        <div className="mt-6 flex items-center justify-center gap-2">
-          <button
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage <= 1}
-            className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground disabled:opacity-40"
-          >
-            Previous
-          </button>
-          <span className="text-sm text-muted-foreground">
-            Page {currentPage} of {data.pages}
-          </span>
-          <button
-            onClick={() => setCurrentPage(p => Math.min(data.pages, p + 1))}
-            disabled={currentPage >= data.pages}
-            className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground disabled:opacity-40"
-          >
-            Next
-          </button>
-        </div>
+        <Pagination
+          page={currentPage}
+          totalPages={data.pages}
+          onChange={setCurrentPage}
+          style={{ marginTop: 24 }}
+        />
       )}
     </div>
   )
