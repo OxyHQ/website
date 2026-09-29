@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Chip } from '@oxy.so/bloom/chip'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { NewsCardFeatured, NewsCardGrid } from './NewsCard'
 import { useNewsroomPosts } from '../../api/hooks'
@@ -21,23 +22,18 @@ function CategoryNav() {
   return (
     <div className="pointer-events-none z-10 mt-4 grid grid-cols-1 lg:grid-cols-4">
       <nav className="pointer-events-auto col-span-full overflow-x-auto py-0.5 lg:col-span-3">
-        <div className="relative min-w-fit">
-          <ul className="flex items-center gap-5">
-            {newsCategories.map((cat) => (
-              <li key={cat} className="text-base font-semibold leading-snug">
-                <button
-                  onClick={() => setActiveCategory(cat)}
-                  className={`cursor-pointer whitespace-nowrap rounded-sm transition-colors duration-200 ${
-                    activeCategory === cat
-                      ? 'text-foreground'
-                      : 'text-muted-foreground hover:text-muted-foreground'
-                  }`}
-                >
-                  {cat}
-                </button>
-              </li>
-            ))}
-          </ul>
+        <div role="radiogroup" aria-label="News category" className="flex min-w-fit items-center gap-2">
+          {newsCategories.map((cat) => (
+            <Chip
+              key={cat}
+              variant="inverted"
+              role="radio"
+              selected={activeCategory === cat}
+              onPress={() => setActiveCategory(cat)}
+            >
+              {cat}
+            </Chip>
+          ))}
         </div>
       </nav>
     </div>

@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from 'react'
 import { useMedia, type MediaItem } from '../../api/hooks'
 import { Button } from '@oxy.so/bloom/button'
 import { Dialog } from '@oxy.so/bloom/dialog'
+import { Loading } from '@oxy.so/bloom/loading'
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
 import { RiFileTextLine } from '@oxy.so/bloom/icons/RiFileTextLine'
 import { RiUploadCloud2Line } from '@oxy.so/bloom/icons/RiUploadCloud2Line'
@@ -94,10 +95,9 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <h2 className="text-lg font-semibold text-foreground">Media Library</h2>
           <Button
-            iconOnly
             appearance="plain"
             tone="neutral"
-            leadingIcon={RiCloseLine}
+            icon={RiCloseLine}
             accessibilityLabel="Close"
             onPress={onClose}
           />
@@ -122,7 +122,7 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
             >
               {uploading ? (
                 <div className="flex flex-col items-center gap-3">
-                  <div className="size-8 animate-spin rounded-full border-2 border-border border-t-foreground" />
+                  <Loading variant="spinner" />
                   <p className="text-sm text-muted-foreground">Uploading...</p>
                 </div>
               ) : (

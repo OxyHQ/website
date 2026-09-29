@@ -8,7 +8,7 @@ import DocsSubNav from './DocsSubNav'
 import { DocsPackageSidebar, buildSidebar } from './DocsPackageSidebar'
 import { getPackageLogo } from './getPackageLogo'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
-import { ArrowRightIcon } from '../icons'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 
 interface CategoryConfig {
   category: SyncedPackage['category']
@@ -170,7 +170,7 @@ export default function DocsIntroPage() {
                             className="grid size-6 place-items-center rounded-full bg-background/70 text-muted-foreground transition-colors duration-200 group-hover:bg-primary group-hover:text-primary-foreground"
                             data-docs-package-affordance
                           >
-                            <ArrowRightIcon />
+                            <RiArrowRightLine width={14} height={14} fill="currentColor" aria-hidden />
                           </span>
                         </Link>
                       )

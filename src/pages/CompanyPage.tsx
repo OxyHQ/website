@@ -4,6 +4,8 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
+import { RiArrowLeftLine } from '@oxy.so/bloom/icons/RiArrowLeftLine'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import RollingNumber from '../components/ui/RollingNumber'
 import { useJobs, useProducts } from '../api/hooks'
 import { getStaticChangelog } from '../content/changelog-loader'
@@ -478,9 +480,7 @@ function HistorySection() {
                     disabled={active === 0}
                     className="flex size-12 items-center justify-center rounded-full bg-foreground/10 transition-[opacity,background-color] duration-200 hover:bg-foreground/20 disabled:opacity-40"
                   >
-                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" className="size-5">
-                      <path d="m8 4-6 6 6 6M18 10H2" />
-                    </svg>
+                    <RiArrowLeftLine width={20} height={20} fill="currentColor" aria-hidden />
                   </button>
                   <button
                     type="button"
@@ -489,9 +489,7 @@ function HistorySection() {
                     disabled={active === last}
                     className="flex size-12 items-center justify-center rounded-full bg-foreground/10 transition-[opacity,background-color] duration-200 hover:bg-foreground/20 disabled:opacity-40"
                   >
-                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" className="size-5">
-                      <path d="m12 4 6 6-6 6M2 10h16" />
-                    </svg>
+                    <RiArrowRightLine width={20} height={20} fill="currentColor" aria-hidden />
                   </button>
                   </div>
                 </div>

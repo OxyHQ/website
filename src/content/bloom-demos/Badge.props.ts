@@ -3,22 +3,22 @@ import type { PlaygroundProp } from './_playground'
 export const props: PlaygroundProp[] = [
   { name: 'content', kind: 'text', default: 'New' },
   {
-    name: 'variant',
+    name: 'appearance',
     kind: 'select',
-    options: ['solid', 'subtle', 'outlined'],
+    options: ['solid', 'subtle', 'outline', 'plain'],
     default: 'solid',
   },
   {
-    name: 'color',
+    name: 'tone',
     kind: 'select',
-    options: ['default', 'primary', 'success', 'warning', 'error', 'info'],
-    default: 'primary',
+    options: ['neutral', 'accent', 'success', 'warning', 'danger', 'info'],
+    default: 'accent',
   },
   {
     name: 'size',
     kind: 'select',
-    options: ['small', 'medium', 'large'],
-    default: 'medium',
+    options: ['xs', 'sm', 'md', 'lg'],
+    default: 'md',
   },
   { name: 'dot', kind: 'boolean', default: false },
 ]

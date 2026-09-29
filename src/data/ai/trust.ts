@@ -147,12 +147,6 @@ export const trustIntro = {
     'Two different things get called "our privacy policy" on an inference platform: what Oxy does with what you send, and what the provider serving a particular request does with it. They are separate, and mixing them produces a promise nobody can keep. Each statement below says which of the two it is.',
 }
 
-export const trustScopeLabels: Record<TrustScope, string> = {
-  oxy: "Oxy's own handling",
-  route: 'Depends on the route',
-  contract: 'Agreed per contract',
-}
-
 /** Legal documents linked from the page, with only the ones that exist. */
 export const trustDocumentLinks: ReadonlyArray<{ label: string; href: string }> = [
   { label: 'Privacy policy', href: '/legal/privacy' },

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../../api/client'
 import { BADGE_DEFINITIONS } from '../../../data/badges'
+import { Avatar } from '@oxy.so/bloom/avatar'
 import { Button } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
 import OptionSelect from '../../ui/OptionSelect'
@@ -53,12 +54,7 @@ export default function BadgesAdmin() {
             return (
               <div key={id} className="rounded-xl border border-border p-3">
                 <div className="flex items-center gap-2">
-                  <div
-                    className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white"
-                    style={{ backgroundColor: badge.color }}
-                  >
-                    {badge.name.charAt(0)}
-                  </div>
+                  <Avatar initials={badge.name.charAt(0)} placeholderColor={badge.color} size="md" />
                   <div>
                     <p className="text-sm font-medium text-foreground">{badge.name}</p>
                     <p className="text-xs capitalize text-muted-foreground">{badge.rarity}</p>
@@ -134,12 +130,7 @@ export default function BadgesAdmin() {
               return (
                 <div key={b.badgeId} className="flex items-center justify-between rounded-xl border border-border p-3">
                   <div className="flex items-center gap-3">
-                    <div
-                      className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white"
-                      style={{ backgroundColor: def?.color ?? '#666' }}
-                    >
-                      {def?.name.charAt(0) ?? '?'}
-                    </div>
+                    <Avatar initials={def?.name.charAt(0) ?? '?'} placeholderColor={def?.color} size="md" />
                     <div>
                       <p className="text-sm font-medium text-foreground">{def?.name ?? b.badgeId}</p>
                       <p className="text-xs text-muted-foreground">

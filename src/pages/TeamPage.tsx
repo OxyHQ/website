@@ -6,14 +6,7 @@ import Button from '../components/ui/Button'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useTeamMembers } from '../api/hooks'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
-
-function DashedHLine() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-    </svg>
-  )
-}
+import { DashedHLine } from '../components/ui/GridDecoration'
 
 export default function TeamPage() {
   const { data: members = [], isPending } = useTeamMembers()

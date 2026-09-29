@@ -1,16 +1,9 @@
-import { FEATURES } from '../../constants'
+import Button from '../ui/Button'
 import IDEDemoMockup from './IDEDemoMockup'
 import MissionControlMockup from './MissionControlMockup'
-// SlackDemoMockup available at './SlackDemoMockup' for future use
 import CodeEditorMockup from './CodeEditorMockup'
 import BackgroundTasksMockup from './BackgroundTasksMockup'
 import TeamDashboardMockup from './TeamDashboardMockup'
-
-// NOTE: `logos` previously listed real third-party companies (Cisco/Scale/
-// Notion/Cognition/Anduril) cloned from OpenAI Codex's marketing page —
-// none of them are real Codea customers. The list is empty and the logo
-// section is rendered only behind FEATURES.SHOW_TRUSTED_LOGOS.
-const logos: string[] = []
 
 const features = [
   { title: 'Built to drive real engineering work', description: 'From routine pull requests to your hardest problems, Codea reliably completes tasks end to end, like building features, complex refactors, migrations, and more.' },
@@ -25,11 +18,6 @@ const platforms = [
   { title: 'Launch from CLI', description: 'Run Codea directly from your terminal. Kick off tasks, check progress, and merge results without leaving your workflow.' },
   { title: 'Build with the API', description: 'Integrate Codea into your CI/CD pipeline, custom tooling, or internal platforms with our developer-friendly API.' },
 ]
-
-// NOTE: `testimonials` previously contained fake quotes attributed to real
-// people at Vercel/Replay/Linear/Stripe/Basedash/Notion. Cleared until
-// real Codea testimonials exist. Rendered only behind FEATURES.SHOW_TESTIMONIALS.
-const testimonials: { name: string; role: string; quote: string }[] = []
 
 export default function CodexExtensionContent() {
   return (
@@ -56,9 +44,9 @@ export default function CodexExtensionContent() {
           <div className="flex flex-wrap items-center justify-center gap-4 pt-9">
             <div className="flex flex-col gap-3">
               <div className="relative z-10 flex gap-3 flex-row flex-wrap items-center justify-center">
-                <button className="relative inline-flex items-center justify-center text-nowrap transition-colors h-11 rounded-full px-6 text-[15px] font-medium button-outline" type="button">
+                <Button variant="outline" type="button" className="rounded-full">
                   Download for Windows
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -72,26 +60,7 @@ export default function CodexExtensionContent() {
         </div>
       </section>
 
-      {/* ── 2. Logo Garden ── */}
-      {FEATURES.SHOW_TRUSTED_LOGOS && logos.length > 0 && (
-        <section className="container flex flex-col items-center pt-6 pb-10 text-center md:pt-12 md:pb-12">
-          <div className="mt-6 w-full max-w-[1040px] md:mt-8">
-            <div className="relative h-[76px] w-full overflow-hidden">
-              <div className="absolute inset-0 grid grid-cols-5 grid-rows-1 place-items-center gap-x-10 gap-y-8">
-                {logos.map((name) => (
-                  <div key={name} className="relative mx-auto flex h-full w-full max-w-[220px] items-center justify-center">
-                    <span className="flex h-14 w-full items-center justify-center md:h-16">
-                      <span className="text-muted-foreground text-sm opacity-60 [filter:grayscale(1)]">{name}</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── 3. Features ── */}
+      {/* ── 2. Features ── */}
       <section className="mx-auto flex w-full flex-col items-center px-6 pt-20 pb-36 text-center md:px-16 md:pt-24 md:pb-40">
         <div className="text-foreground text-[clamp(1.75rem,1.5rem+1.5vw,2.5rem)] font-semibold leading-tight tracking-[-0.02em]">
           The best way to build with agents
@@ -117,7 +86,7 @@ export default function CodexExtensionContent() {
         </div>
       </section>
 
-      {/* ── 4. The Same Agent Everywhere ── */}
+      {/* ── 3. The Same Agent Everywhere ── */}
       <section className="container flex flex-col items-center pb-24 text-center">
         <div className="text-foreground text-[clamp(1.75rem,1.5rem+1.5vw,2.5rem)] font-semibold leading-tight tracking-[-0.02em] md:text-[40px]">
           The same agent everywhere you code
@@ -144,30 +113,7 @@ export default function CodexExtensionContent() {
         </div>
       </section>
 
-      {/* ── 5. Testimonials ── */}
-      {FEATURES.SHOW_TESTIMONIALS && testimonials.length > 0 && (
-        <section className="container flex flex-col items-center text-center">
-          <h2 className="text-foreground text-[clamp(1.75rem,1.5rem+1.5vw,2.5rem)] font-semibold leading-tight tracking-[-0.02em] text-balance">
-            What builders are saying
-          </h2>
-          <div className="mt-12 grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {testimonials.map((t) => (
-              <div key={t.name} className="bg-muted flex flex-col justify-between rounded-lg p-6">
-                <p className="text-foreground text-sm leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
-                <div className="mt-4 flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-full bg-background" />
-                  <div>
-                    <div className="text-foreground text-sm font-medium">{t.name}</div>
-                    <div className="text-muted-foreground text-xs">{t.role}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── 6. Final CTA ── */}
+      {/* ── 4. Final CTA ── */}
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 z-0">
           <div className="h-full w-full overflow-hidden" style={{ maskImage: 'linear-gradient(to bottom, transparent 0px, black 144px, black 256px)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0px, black 144px, black 256px)' }}>
@@ -184,9 +130,9 @@ export default function CodexExtensionContent() {
           <div className="w-56">
             <div className="flex flex-col gap-3">
               <div className="relative z-10 flex gap-3 flex-row flex-wrap items-center justify-center">
-                <button className="relative inline-flex items-center justify-center text-nowrap transition-colors h-11 rounded-full px-6 text-base font-medium button-outline w-fit" type="button">
+                <Button variant="outline" type="button" className="w-fit rounded-full">
                   Download for Windows
-                </button>
+                </Button>
               </div>
             </div>
           </div>

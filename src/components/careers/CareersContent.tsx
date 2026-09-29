@@ -5,6 +5,7 @@ import { useJobs, useProducts } from '../../api/hooks'
 import { getStaticChangelog } from '../../content/changelog-loader'
 import RollingNumber from '../ui/RollingNumber'
 import Button from '../ui/Button'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import JobBoard, { type JobListing } from '../slices/JobBoard'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
 import { careerJobPath, careerLocationLabel, careerTeam } from '../../lib/careers'
@@ -347,9 +348,7 @@ function HowWeWorkSection() {
               </div>
               <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2">
                 <span className="flex size-12 items-center justify-center rounded-full bg-background/30 text-background transition-colors duration-300 group-hover:bg-background/50">
-                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" className="size-5">
-                    <path d="m12 4 6 6-6 6M2 10h16" />
-                  </svg>
+                  <RiArrowRightLine width={20} height={20} fill="currentColor" aria-hidden />
                 </span>
               </div>
             </Link>

@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Link } from '../../lib/navigation'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
 import Button from '../ui/Button'
 import { useJob } from '../../api/hooks'
 import { errorStatus } from '../../api/client'
@@ -119,9 +120,7 @@ function ApplyActions({ href }: { href: string }) {
           }`}
         >
           <div className="flex items-center gap-1 whitespace-nowrap rounded-sm bg-foreground px-2 py-1 text-background text-sm">
-            <svg viewBox="0 0 20 20" fill="none" className="size-4 shrink-0">
-              <path d="M18 4 7 16l-5-5" stroke="currentColor" />
-            </svg>
+            <RiCheckLine width={16} height={16} fill="currentColor" aria-hidden />
             Copied link
           </div>
         </div>

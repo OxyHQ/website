@@ -13,7 +13,6 @@ import { Button } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
 import { Badge } from '@oxy.so/bloom/badge'
 import { LabeledTextField } from '../LabeledTextField'
-import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '@oxy.so/bloom/label'
 import LocaleSwitcher from '../LocaleSwitcher'
 import { TranslationFields } from '../TranslationEditor'
@@ -21,6 +20,7 @@ import ConfirmDialog from '../ConfirmDialog'
 import { useConfirmAction } from '../useConfirmAction'
 import MediaPicker from '../MediaPicker'
 import OptionSelect from '../../ui/OptionSelect'
+import { AdminField } from '../AdminField'
 
 const RESOURCE_TYPES: ResourceType[] = ['guide', 'paper', 'video', 'tool', 'template', 'link']
 
@@ -158,7 +158,7 @@ export default function ResourcesAdmin() {
 
         <div className="mt-6 flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
-            <Field
+            <AdminField
               label="Title"
               value={editing.title}
               onChange={(v) => setEditing({
@@ -167,14 +167,14 @@ export default function ResourcesAdmin() {
                 ...(isNew && !editing.slug ? { slug: slugify(v) } : {}),
               })}
             />
-            <Field
+            <AdminField
               label="Slug"
               value={editing.slug}
               onChange={(v) => setEditing({ ...editing, slug: slugify(v) })}
             />
           </div>
 
-          <Field
+          <AdminField
             label="Summary"
             value={editing.summary}
             onChange={(v) => setEditing({ ...editing, summary: v })}
@@ -226,7 +226,7 @@ export default function ResourcesAdmin() {
           />
 
           <div className="grid grid-cols-2 gap-3">
-            <Field
+            <AdminField
               label="Tags (comma-separated)"
               value={editing.tags.join(', ')}
               onChange={(v) => setEditing({ ...editing, tags: v.split(',').map((t) => t.trim()).filter(Boolean) })}
@@ -325,8 +325,8 @@ export default function ResourcesAdmin() {
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="truncate text-sm font-medium text-foreground">{resource.title}</span>
-                  {resource.featured && <Badge color="primary">Featured</Badge>}
-                  {resource.status === 'draft' && <Badge color="warning">Draft</Badge>}
+                  {resource.featured && <Badge tone="accent" content="Featured" />}
+                  {resource.status === 'draft' && <Badge tone="warning" content="Draft" />}
                 </div>
                 <div className="mt-0.5 text-xs text-muted-foreground">
                   <span className="capitalize">{resource.type}</span>
@@ -364,17 +364,4 @@ export default function ResourcesAdmin() {
       />
     </div>
   )
-}
-
-function Field({ label, value, onChange, textarea, rows }: {
-  label: string
-  value: string
-  onChange: (v: string) => void
-  textarea?: boolean
-  rows?: number
-}) {
-  if (textarea) {
-    return <Textarea label={label} value={value} onValueChange={onChange} rows={rows ?? 3} />
-  }
-  return <LabeledTextField label={label} value={value} onValueChange={onChange} />
 }

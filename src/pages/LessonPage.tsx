@@ -176,7 +176,7 @@ export default function LessonPage() {
             </span>
           ) : null}
           {isLessonCompleted ? (
-            <Badge content={t('academy.statusCompleted')} variant="subtle" color="success" size="label-small" icon={RiCheckLine} />
+            <Badge content={t('academy.statusCompleted')} appearance="subtle" tone="success" size="label-small" icon={RiCheckLine} />
           ) : null}
         </div>
       </header>

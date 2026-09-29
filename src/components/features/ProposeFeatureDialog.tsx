@@ -1,6 +1,9 @@
 import { useRef, useState } from 'react'
 import { Link } from '../../lib/navigation'
 import { Dialog } from '@oxy.so/bloom/dialog'
+import { Field } from '@oxy.so/bloom/field'
+import { TextField, TextFieldInput, TextFieldSuffix } from '@oxy.so/bloom/text-field'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { useAuth } from '@oxy.so/services/ui/client'
 import { RiArrowUpSLine } from '@oxy.so/bloom/icons/RiArrowUpSLine'
 import { RiExternalLinkLine } from '@oxy.so/bloom/icons/RiExternalLinkLine'
@@ -26,9 +29,6 @@ interface ProposeFeatureDialogProps {
   apps: FeatureAppOption[]
   limits: FeatureAppsResponse['limits']
 }
-
-const fieldClasses =
-  'w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-muted-foreground'
 
 /**
  * The proposal form.
@@ -132,31 +132,29 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
               </p>
             ) : (
               <div className="mt-5 flex flex-col gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <span className="text-sm font-medium text-foreground" aria-hidden="true">App</span>
+                <Field label="App">
                   <OptionSelect
                     label="App"
                     value={app}
                     onValueChange={setChosenApp}
                     options={targets.map((option) => ({ value: option.key, label: option.displayName }))}
                   />
-                </div>
+                </Field>
 
-                <label className="flex flex-col gap-1.5">
-                  <span className="flex items-baseline justify-between text-sm font-medium text-foreground">
-                    Title
-                    <span className="text-xs font-normal text-muted-foreground">
+                <Field label="Title">
+                  <TextField>
+                    <TextFieldInput
+                      label="Title"
+                      value={title}
+                      onValueChange={handleTitleChange}
+                      maxLength={limits.titleMax}
+                      placeholder="What should we build?"
+                    />
+                    <TextFieldSuffix label="Characters">
                       {trimmedTitle.length}/{limits.titleMax}
-                    </span>
-                  </span>
-                  <input
-                    value={title}
-                    onChange={(event) => handleTitleChange(event.target.value)}
-                    maxLength={limits.titleMax}
-                    placeholder="What should we build?"
-                    className={fieldClasses}
-                  />
-                </label>
+                    </TextFieldSuffix>
+                  </TextField>
+                </Field>
 
                 <SimilarPanel
                   matches={matches}
@@ -167,22 +165,16 @@ export default function ProposeFeatureDialog({ open, onClose, apps, limits }: Pr
                   onAcknowledge={() => setAcknowledged(true)}
                 />
 
-                <label className="flex flex-col gap-1.5">
-                  <span className="flex items-baseline justify-between text-sm font-medium text-foreground">
-                    Description
-                    <span className="text-xs font-normal text-muted-foreground">
-                      {trimmedBody.length}/{limits.bodyMax}
-                    </span>
-                  </span>
-                  <textarea
+                <Field label="Description">
+                  <Textarea
                     value={body}
-                    onChange={(event) => setBody(event.target.value)}
+                    onValueChange={setBody}
                     maxLength={limits.bodyMax}
+                    showCount
                     rows={7}
                     placeholder="What problem does it solve, and who has it? Markdown works."
-                    className={`${fieldClasses} resize-y`}
                   />
-                </label>
+                </Field>
 
                 {propose.isError && (
                   <p className="text-sm text-error-text">{propose.error.message}</p>

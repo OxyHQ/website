@@ -35,7 +35,7 @@ import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
 import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
 import { RiArrowLeftSLine } from '@oxy.so/bloom/icons/RiArrowLeftSLine'
 import { RiArrowRightSLine } from '@oxy.so/bloom/icons/RiArrowRightSLine'
-import { ArrowRightIcon } from '../icons'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { NavBarButton, type NavBarInk } from './NavBarButton'
 import { useAdminAccess } from '../../hooks/useAdminAccess'
 
@@ -954,10 +954,10 @@ export default function Navbar({
                 className="group relative flex size-full items-center justify-center gap-1.5 text-primary-foreground max-md:justify-start"
                 to={banner?.href ?? '/ai'}
               >
-                <span className="attio-group-hover-underline relative truncate text-body-sm">
+                <span className="group-hover-underline relative truncate text-body-sm">
                   {banner?.text ?? t('navbar.bannerDefault')}
                 </span>
-                <ArrowRightIcon className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50" />
+                <span aria-hidden="true" className="inline-flex transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
               </Link>
               {/* Bloom's close control on the banner's own ground: primary
                   ink at 70%, a primary-foreground wash on hover. */}

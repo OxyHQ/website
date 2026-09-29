@@ -80,7 +80,7 @@ export default function ChangelogAdmin() {
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span className="truncate text-sm font-medium text-foreground">{e.title}</span>
-                {e.tagName && <Badge color="default">{e.tagName}</Badge>}
+                {e.tagName && <Badge tone="neutral" content={e.tagName} />}
                 {e.repoDisplayName && <span className="text-xs text-muted-foreground">{e.repoDisplayName}</span>}
               </div>
               <div className="mt-0.5 text-xs text-muted-foreground">

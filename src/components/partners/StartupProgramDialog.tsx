@@ -1,6 +1,11 @@
 import { useState, type FormEvent } from 'react'
+import { Checkbox } from '@oxy.so/bloom/checkbox'
+import { Field } from '@oxy.so/bloom/field'
+import { TextFieldInput } from '@oxy.so/bloom/text-field'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { Dialog, type DialogControlProps } from '@oxy.so/bloom/dialog'
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
+import Button from '../ui/Button'
 import OptionSelect from '../ui/OptionSelect'
 
 interface StartupProgramDialogProps {
@@ -31,9 +36,6 @@ const INITIAL_APPLICATION: StartupApplication = {
   caseStudy: false,
 }
 
-const inputClasses =
-  'flex h-12 w-full rounded-full border border-input bg-background px-4 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-
 function StartupSelect({
   label,
   value,
@@ -45,13 +47,8 @@ function StartupSelect({
   onChange: (value: string) => void
   options: readonly { value: string; label: string }[]
 }) {
-  // A span, not a <label>: the Bloom trigger is not a labelable element, so it
-  // carries the same words as its accessible name.
   return (
-    <div className="space-y-2">
-      <span className="block text-sm font-medium leading-none text-foreground" aria-hidden="true">
-        {label}
-      </span>
+    <Field label={label}>
       <OptionSelect
         label={label}
         value={value}
@@ -59,7 +56,7 @@ function StartupSelect({
         options={[{ value: '', label: 'Select' }, ...options]}
         emptyIsPlaceholder
       />
-    </div>
+    </Field>
   )
 }
 
@@ -130,74 +127,56 @@ export default function StartupProgramDialog({ control }: StartupProgramDialogPr
 
         <form autoComplete="off" className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="space-y-2">
-              <span className="text-sm font-medium leading-none text-foreground">Full name *</span>
-              <input
+            <Field label="Full name" required>
+              <TextFieldInput
+                label="Full name"
                 autoComplete="name"
-                className={inputClasses}
-                name="full_name"
                 placeholder="Jane Doe"
-                required
-                type="text"
                 value={application.fullName}
-                onChange={(event) => updateField('fullName', event.target.value)}
+                onValueChange={(value) => updateField('fullName', value)}
               />
-            </label>
+            </Field>
 
-            <label className="space-y-2">
-              <span className="text-sm font-medium leading-none text-foreground">Work email *</span>
-              <input
+            <Field label="Work email" required>
+              <TextFieldInput
+                label="Work email"
                 autoComplete="email"
-                className={inputClasses}
-                name="email"
+                keyboardType="email-address"
                 placeholder="jane@startup.com"
-                required
-                type="email"
                 value={application.email}
-                onChange={(event) => updateField('email', event.target.value)}
+                onValueChange={(value) => updateField('email', value)}
               />
-            </label>
+            </Field>
 
-            <label className="space-y-2">
-              <span className="text-sm font-medium leading-none text-foreground">Company name *</span>
-              <input
+            <Field label="Company name" required>
+              <TextFieldInput
+                label="Company name"
                 autoComplete="organization"
-                className={inputClasses}
-                name="company_name"
                 placeholder="Acme Inc."
-                required
-                type="text"
                 value={application.companyName}
-                onChange={(event) => updateField('companyName', event.target.value)}
+                onValueChange={(value) => updateField('companyName', value)}
               />
-            </label>
+            </Field>
 
-            <label className="space-y-2">
-              <span className="text-sm font-medium leading-none text-foreground">Company website *</span>
-              <input
+            <Field label="Company website" required>
+              <TextFieldInput
+                label="Company website"
                 autoComplete="url"
-                className={inputClasses}
-                name="company_website"
                 placeholder="acme.com"
-                required
-                type="text"
                 value={application.companyWebsite}
-                onChange={(event) => updateField('companyWebsite', event.target.value)}
+                onValueChange={(value) => updateField('companyWebsite', value)}
               />
-            </label>
+            </Field>
 
-            <label className="space-y-2">
-              <span className="text-sm font-medium leading-none text-foreground">Your role</span>
-              <input
+            <Field label="Your role">
+              <TextFieldInput
+                label="Your role"
                 autoComplete="organization-title"
-                className={inputClasses}
-                name="role"
                 placeholder="Founder / CTO"
-                type="text"
                 value={application.role}
-                onChange={(event) => updateField('role', event.target.value)}
+                onValueChange={(value) => updateField('role', value)}
               />
-            </label>
+            </Field>
 
             <StartupSelect
               label="Team size"
@@ -226,36 +205,24 @@ export default function StartupProgramDialog({ control }: StartupProgramDialogPr
             ]}
           />
 
-          <label className="space-y-2">
-            <span className="text-sm font-medium leading-none text-foreground">What are you building? *</span>
-            <textarea
-              className="min-h-[110px] w-full resize-y rounded-3xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:outline-none"
-              name="use_case"
+          <Field label="What are you building?" required>
+            <Textarea
               placeholder="Tell us about your product, who it serves and how you plan to use Oxy."
-              required
+              rows={4}
               value={application.useCase}
-              onChange={(event) => updateField('useCase', event.target.value)}
+              onValueChange={(value) => updateField('useCase', value)}
             />
-          </label>
+          </Field>
 
-          <label className="flex cursor-pointer flex-row items-start gap-3 text-sm leading-snug text-foreground">
-            <input
-              checked={application.caseStudy}
-              className="mt-0.5 size-5 shrink-0 accent-primary"
-              name="case_study"
-              type="checkbox"
-              onChange={(event) => updateField('caseStudy', event.target.checked)}
-            />
-            <span>I&rsquo;m open to being featured in an Oxy case study after onboarding.</span>
-          </label>
+          <Checkbox
+            checked={application.caseStudy}
+            onCheckedChange={(checked) => updateField('caseStudy', checked)}
+            label="I’m open to being featured in an Oxy case study after onboarding."
+          />
 
-          <button
-            className="inline-flex h-10 w-full items-center justify-center rounded-full bg-primary px-4 text-sm font-medium leading-5 text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
-            disabled={!requiredFieldsReady}
-            type="submit"
-          >
+          <Button className="w-full" disabled={!requiredFieldsReady} type="submit">
             Submit application
-          </button>
+          </Button>
         </form>
 
         <button

@@ -10,8 +10,14 @@ export const props: PlaygroundProp[] = [
   {
     name: 'size',
     kind: 'select',
-    options: ['small', 'medium', 'large'],
-    default: 'medium',
+    options: ['xs', 'sm', 'md', 'lg'],
+    default: 'md',
+  },
+  {
+    name: 'tone',
+    kind: 'select',
+    options: ['accent', 'neutral', 'success', 'warning', 'danger', 'info'],
+    default: 'accent',
   },
   { name: 'text', kind: 'text', default: 'Loading…' },
 ]

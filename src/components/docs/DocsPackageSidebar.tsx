@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { Link } from '../../lib/navigation'
 import { buildDocsHref, getPackages } from '../../content/docs-loader'
 import type { SyncedPackage, SyncedPage, SyncedVersion } from '../../../scripts/types'
-import { ChevronDownIcon } from '../icons/ChevronDownIcon'
+import { RiArrowDownSLine } from '@oxy.so/bloom/icons/RiArrowDownSLine'
 import { getPackageLogo } from './getPackageLogo'
 import {
   categoryLabels,
@@ -448,13 +448,16 @@ function SidebarTreeNode({
               aria-label={`Toggle ${node.label} pages`}
               className="shrink-0 flex items-center justify-center pr-3 pl-2 py-1.5 rounded-xl cursor-pointer"
             >
-              <ChevronDownIcon
+              <span
+                aria-hidden="true"
                 className={
                   isOpen
-                    ? 'rotate-0 transition-transform text-muted-foreground group-hover/row:text-foreground'
-                    : '-rotate-90 transition-transform text-muted-foreground group-hover/row:text-foreground'
+                    ? 'inline-flex rotate-0 transition-transform text-muted-foreground group-hover/row:text-foreground'
+                    : 'inline-flex -rotate-90 transition-transform text-muted-foreground group-hover/row:text-foreground'
                 }
-              />
+              >
+                <RiArrowDownSLine width={16} height={16} fill="currentColor" />
+              </span>
             </button>
           ) : null}
         </div>
@@ -488,13 +491,16 @@ function SidebarTreeNode({
         <span className="break-words [word-break:break-word]">{node.label}</span>
         <span className="flex items-center gap-2 shrink-0">
           <span className="text-xs text-muted-foreground/70 tabular-nums">({node.leafCount})</span>
-          <ChevronDownIcon
+          <span
+            aria-hidden="true"
             className={
               isOpen
-                ? 'rotate-0 transition-transform text-muted-foreground group-hover:text-foreground'
-                : '-rotate-90 transition-transform text-muted-foreground group-hover:text-foreground'
+                ? 'inline-flex rotate-0 transition-transform text-muted-foreground group-hover:text-foreground'
+                : 'inline-flex -rotate-90 transition-transform text-muted-foreground group-hover:text-foreground'
             }
-          />
+          >
+            <RiArrowDownSLine width={16} height={16} fill="currentColor" />
+          </span>
         </span>
       </button>
       {isOpen ? (
@@ -618,13 +624,16 @@ export function DocsPackageSidebar({
                 className="group mb-2.5 flex w-full items-center justify-between rounded-lg py-1 pl-4 pr-3 hover:bg-primary/8"
               >
                 <span className="text-left font-semibold text-primary">{section.title}</span>
-                <ChevronDownIcon
+                <span
+                  aria-hidden="true"
                   className={
                     isOpen
-                      ? 'rotate-0 transition-transform text-muted-foreground group-hover:text-foreground'
-                      : '-rotate-90 transition-transform text-muted-foreground group-hover:text-foreground'
+                      ? 'inline-flex rotate-0 transition-transform text-muted-foreground group-hover:text-foreground'
+                      : 'inline-flex -rotate-90 transition-transform text-muted-foreground group-hover:text-foreground'
                   }
-                />
+                >
+                  <RiArrowDownSLine width={16} height={16} fill="currentColor" />
+                </span>
               </button>
               {isOpen ? (
                 <ul className="space-y-px">

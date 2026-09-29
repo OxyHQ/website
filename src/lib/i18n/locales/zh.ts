@@ -104,16 +104,6 @@ const zh: Translations = {
     allInOneHeadingLine2: '不仅仅是为你自己。',
     allInOneBody:
       'Oxy 之所以存在,是因为我们相信技术应服务于人类,而不是剥削人类。通过社区驱动的项目和开源工具,我们证明了帮助人们和建立可持续系统并非互相竞争的目标。',
-    statsOpenSource: '开源',
-    statsOpenSourceDesc: '的代码是公开的',
-    statsCommunity: '社区',
-    statsCommunityDesc: '开发者和贡献者',
-    statsProducts: '产品',
-    statsProductsDesc: '服务真实需求的平台',
-    statsDataSold: '出售的数据',
-    statsDataSoldDesc: '我们从不出售用户数据',
-    statsCountries: '国家',
-    statsCountriesDesc: '全球各地的社区',
 
     // ── The falling-tag card (HomeTagPhysics) ──────────────
     tagsHeading: '这里的一切，都属于你。',

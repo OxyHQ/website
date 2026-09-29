@@ -13,6 +13,7 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import PageSection from '../components/layout/PageSection'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
+import Button from '../components/ui/Button'
 import { useCurrentLocale } from '../lib/i18n'
 import { brandConfig } from '../lib/seo'
 import {
@@ -114,24 +115,24 @@ function FeedbackButtons({ articleSlug }: FeedbackButtonsProps) {
     <div className="flex flex-col items-center gap-4 rounded-2xl border border-border bg-surface px-6 py-6 text-center">
       <p className="text-sm font-medium text-foreground">Was this article helpful?</p>
       <div className="flex items-center gap-3">
-        <button
+        <Button
+          variant="outline"
           type="button"
           onClick={() => setVote('up')}
-          className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-background px-4 text-sm font-medium text-muted-foreground transition-colors hover:border-input hover:text-foreground"
           aria-label="Mark this article as helpful"
         >
           <RiThumbUpLine width={16} height={16} fill="currentColor" aria-hidden />
           Yes
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="outline"
           type="button"
           onClick={() => setVote('down')}
-          className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-background px-4 text-sm font-medium text-muted-foreground transition-colors hover:border-input hover:text-foreground"
           aria-label="Mark this article as not helpful"
         >
           <RiThumbDownLine width={16} height={16} fill="currentColor" aria-hidden />
           No
-        </button>
+        </Button>
       </div>
     </div>
   )

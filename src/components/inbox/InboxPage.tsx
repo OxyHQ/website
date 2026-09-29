@@ -7,6 +7,8 @@ import { RiMailLine } from '@oxy.so/bloom/icons/RiMailLine'
 import { RiPriceTag3Line } from '@oxy.so/bloom/icons/RiPriceTag3Line'
 import { RiChat1Line } from '@oxy.so/bloom/icons/RiChat1Line'
 import { Button } from '@oxy.so/bloom/button'
+import { TextField, TextFieldIcon, TextFieldInput } from '@oxy.so/bloom/text-field'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import { Link } from '../../lib/navigation'
 import PageSection from '../layout/PageSection'
 import FaqSection from '../sections/FaqSection'
@@ -99,18 +101,16 @@ function InboxExample() {
                 if (reply.trim()) setSent(true)
               }}
             >
-              <label className="grid gap-2 text-sm">
-                Try a reply
-                <textarea
-                  className="min-h-24 rounded-xl border border-border bg-background p-4 text-foreground"
-                  value={reply}
-                  onChange={(e) => {
-                    setReply(e.target.value)
-                    setSent(false)
-                  }}
-                  placeholder="Write an example reply…"
-                />
-              </label>
+              <Textarea
+                label="Try a reply"
+                value={reply}
+                onValueChange={(next) => {
+                  setReply(next)
+                  setSent(false)
+                }}
+                placeholder="Write an example reply…"
+                rows={4}
+              />
               <Button appearance="solid" tone="accent"
                 onPress={() => {
                   if (reply.trim()) setSent(true)
@@ -129,16 +129,15 @@ function InboxExample() {
         ) : (
           <div>
             <h3 className="font-display text-3xl">A little more space.</h3>
-            <label className="mt-6 flex items-center gap-3 rounded-full border border-border bg-background px-4 py-3">
-              <RiSearchLine width={20} height={20} fill="currentColor" />
-              <input
-                aria-label="Search example messages"
-                className="min-w-0 flex-1 bg-transparent text-base outline-none"
+            <TextField style={{ marginTop: 24 }}>
+              <TextFieldIcon icon={RiSearchLine} />
+              <TextFieldInput
+                label="Search example messages"
                 placeholder="Find a conversation"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onValueChange={setQuery}
               />
-            </label>
+            </TextField>
             <div className="my-5 flex gap-2" role="group" aria-label="Filter sample messages">
               {['All', 'Personal', 'Work'].map((name) => (
                 <button

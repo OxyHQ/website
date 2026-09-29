@@ -5,10 +5,14 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
+import { TextFieldInput } from '@oxy.so/bloom/text-field'
+import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
+import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { useReferralDashboard, type ReferralDashboard } from '../api/hooks'
 import { brandConfig } from '../lib/seo'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import { DashedHLine } from '../components/ui/GridDecoration'
 import { useTranslation } from '../lib/i18n'
 import { useCopyToClipboard } from '../lib/useCopyToClipboard'
 
@@ -23,27 +27,11 @@ import { useCopyToClipboard } from '../lib/useCopyToClipboard'
  * and ambassadors have one focused surface.
  * ──────────────────────────────────────────── */
 
-function DashedHLine() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-    </svg>
-  )
-}
-
 function CopyIcon({ copied }: { copied: boolean }) {
   if (copied) {
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} className="size-4">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75 10.5 18.75 19.5 5.25" />
-      </svg>
-    )
+    return <RiCheckLine width={16} height={16} fill="currentColor" aria-hidden />
   }
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} className="size-4">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125V9.625m7.5 5.625a2.625 2.625 0 0 1-2.625-2.625V6.75m-3.375 3v6m0-6h.008v.008h-.008Z" />
-    </svg>
-  )
+  return <RiFileCopyLine width={16} height={16} fill="currentColor" aria-hidden />
 }
 
 const PROGRAM_LABEL: Record<ReferralDashboard['type'], string> = {
@@ -112,14 +100,14 @@ function DashboardContent({ referral }: { referral: ReferralDashboard }) {
             <div className="flex-1 truncate rounded-xl border border-border bg-background px-4 py-3 font-mono text-sm text-foreground">
               {shareUrl}
             </div>
-            <button
+            <Button
+              variant="outline"
               type="button"
               onClick={() => void copy(shareUrl, t('common.linkCopied'))}
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-surface"
             >
               <CopyIcon copied={copied} />
               {copied ? 'Copied!' : 'Copy link'}
-            </button>
+            </Button>
           </div>
         </div>
       </section>
@@ -179,17 +167,20 @@ function CodePrompt({ initialCode, onSubmit, error }: { initialCode: string; onS
           if (value.trim().length > 0) onSubmit(value.trim())
         }}
       >
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => setValue(e.target.value.toUpperCase())}
-          placeholder="ALEX-2026"
-          className="h-12 flex-1 rounded-xl border border-border bg-background px-4 font-mono text-base uppercase tracking-wider text-foreground placeholder:text-muted-foreground/60"
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="characters"
-          spellCheck={false}
-        />
+        <div className="flex-1">
+          <TextFieldInput
+            label="Referral code"
+            size="lg"
+            value={value}
+            onChangeText={(next) => setValue(next.toUpperCase())}
+            placeholder="ALEX-2026"
+            autoComplete="off"
+            autoCorrect={false}
+            autoCapitalize="characters"
+            spellCheck={false}
+            style={{ fontFamily: 'var(--font-mono)', letterSpacing: 0.8 }}
+          />
+        </div>
         <Button variant="primary" responsive>
           Open dashboard
         </Button>

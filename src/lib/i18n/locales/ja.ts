@@ -104,16 +104,6 @@ const ja: Translations = {
     allInOneHeadingLine2: 'みんなのために作る。',
     allInOneBody:
       'Oxyは、テクノロジーが人間を搾取するのではなく、人間に奉仕するべきだと信じているからこそ存在します。コミュニティ主導のプロジェクトとオープンソースのツールを通じて、人々を助けることと持続可能なシステムを築くことは、決して相反する目標ではないと証明します。',
-    statsOpenSource: 'オープンソース',
-    statsOpenSourceDesc: 'のコードを公開',
-    statsCommunity: 'コミュニティ',
-    statsCommunityDesc: '開発者と貢献者',
-    statsProducts: '製品',
-    statsProductsDesc: '現実のニーズに応えるプラットフォーム',
-    statsDataSold: '販売したデータ',
-    statsDataSoldDesc: 'ユーザーデータを販売することはありません',
-    statsCountries: '国・地域',
-    statsCountriesDesc: '世界中のコミュニティ',
 
     // ── The falling-tag card (HomeTagPhysics) ──────────────
     tagsHeading: 'ここにあるすべてが、あなたのものです。',

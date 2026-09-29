@@ -1,7 +1,7 @@
 import { RiFileList2Line } from '@oxy.so/bloom/icons/RiFileList2Line'
 import { RiNewspaperLine } from '@oxy.so/bloom/icons/RiNewspaperLine'
 import { keepUpToDateCards } from '../../data/content'
-import { ArrowRightIcon } from '../icons'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 function CardIcon({ type }: { type: string }) {
@@ -59,7 +59,7 @@ export default function KeepUpToDateSection({ compact = false }: KeepUpToDateSec
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {keepUpToDateCards.map((card, index) => (
             <a key={card.title} href={card.href} className={`group flex min-h-[150px] flex-col justify-between gap-6 rounded-3xl p-6 text-primary-text transition-[filter,transform] duration-300 hover:-translate-y-0.5 hover:brightness-105 ${tones[index % tones.length]}`}>
-              <div className="flex items-center justify-between"><CardIcon type={card.iconType} /><ArrowRightIcon className="-rotate-45 shrink-0 text-primary-text/70 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></div>
+              <div className="flex items-center justify-between"><CardIcon type={card.iconType} /><span aria-hidden="true" className="inline-flex -rotate-45 shrink-0 text-primary-text/70 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span></div>
               <div><h3 className="font-semibold text-primary-text">{card.title}</h3><p className="mt-1 text-balance text-sm text-primary-text/70">{card.description}</p></div>
             </a>
           ))}
@@ -98,7 +98,7 @@ export default function KeepUpToDateSection({ compact = false }: KeepUpToDateSec
                 {/* Icon + arrow */}
                 <div className="relative flex items-center justify-between">
                   <CardIcon type={card.iconType} />
-                  <ArrowRightIcon className="relative -translate-x-0.5 -rotate-45 shrink-0 text-foreground opacity-0 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150" />
+                  <span aria-hidden="true" className="inline-flex relative -translate-x-0.5 -rotate-45 shrink-0 text-foreground opacity-0 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
                 </div>
 
                 {/* Text */}

@@ -1,7 +1,11 @@
-import { useEffect, useId, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useOxy } from '@oxy.so/services/ui/client'
 import { getNormalizedUserHandle } from '@oxy.so/core'
+import { Checkbox } from '@oxy.so/bloom/checkbox'
+import { Field } from '@oxy.so/bloom/field'
+import { TextFieldInput } from '@oxy.so/bloom/text-field'
+import { Textarea } from '@oxy.so/bloom/textarea'
 import Navbar from '../components/layout/Navbar'
 import PageShell from '../components/layout/PageShell'
 import Button from '../components/ui/Button'
@@ -347,6 +351,13 @@ export default function ContactSalesPage() {
   }
 
   const errorEntries = Object.entries(errors)
+  const optionalName = (label: string) => `${label} (${t('contactSales.optional')})`
+  const optionalCaption = (label: string) => (
+    <>
+      {label}
+      <span className="ms-1 text-muted-foreground">({t('contactSales.optional')})</span>
+    </>
+  )
 
   return (
     <PageShell seo={seo} navbar={<Navbar />} mainClassName="flex-1">
@@ -396,10 +407,9 @@ export default function ContactSalesPage() {
           <fieldset className="flex flex-col gap-4">
             <legend className="text-xl text-foreground">{t('contactSales.sectionAbout')}</legend>
             <Field
-              id={`${formId}-interest`}
+              nativeID={`${formId}-interest`}
               label={t('contactSales.interest')}
               error={errors.interest}
-              control="select"
             >
               <OptionSelect
                 label={t('contactSales.interest')}
@@ -420,57 +430,59 @@ export default function ContactSalesPage() {
               <p className="text-sm text-muted-foreground">{t('contactSales.accountHelp')}</p>
             )}
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field id={`${formId}-name`} label={t('contactSales.name')} error={errors.name}>
-                <input
-                  id={`${formId}-name`}
+              <Field nativeID={`${formId}-name`} label={t('contactSales.name')} error={errors.name}>
+                <TextFieldInput
+                  label={t('contactSales.name')}
+                  placeholder={null}
                   value={nameValue}
-                  onChange={(event) => update('name', event.target.value)}
+                  onValueChange={(next) => update('name', next)}
                   autoComplete="name"
-                  className={inputClass}
                 />
               </Field>
-              <Field id={`${formId}-email`} label={t('contactSales.email')} error={errors.email}>
-                <input
-                  id={`${formId}-email`}
-                  type="email"
+              <Field nativeID={`${formId}-email`} label={t('contactSales.email')} error={errors.email}>
+                <TextFieldInput
+                  label={t('contactSales.email')}
+                  placeholder={null}
+                  keyboardType="email-address"
                   value={emailValue}
-                  onChange={(event) => update('email', event.target.value)}
+                  onValueChange={(next) => update('email', next)}
                   autoComplete="email"
-                  className={inputClass}
-                />
-              </Field>
-              <Field id={`${formId}-company`} label={t('contactSales.company')} error={errors.company}>
-                <input
-                  id={`${formId}-company`}
-                  value={form.company}
-                  onChange={(event) => update('company', event.target.value)}
-                  autoComplete="organization"
-                  className={inputClass}
-                />
-              </Field>
-              <Field id={`${formId}-role`} label={t('contactSales.role')} optional>
-                <input
-                  id={`${formId}-role`}
-                  value={form.role}
-                  onChange={(event) => update('role', event.target.value)}
-                  autoComplete="organization-title"
-                  className={inputClass}
-                />
-              </Field>
-              <Field id={`${formId}-country`} label={t('contactSales.country')} optional>
-                <input
-                  id={`${formId}-country`}
-                  value={form.country}
-                  onChange={(event) => update('country', event.target.value)}
-                  autoComplete="country-name"
-                  className={inputClass}
                 />
               </Field>
               <Field
-                id={`${formId}-companySize`}
-                label={t('contactSales.companySize')}
-                optional
-                control="select"
+                nativeID={`${formId}-company`}
+                label={t('contactSales.company')}
+                error={errors.company}
+              >
+                <TextFieldInput
+                  label={t('contactSales.company')}
+                  placeholder={null}
+                  value={form.company}
+                  onValueChange={(next) => update('company', next)}
+                  autoComplete="organization"
+                />
+              </Field>
+              <Field nativeID={`${formId}-role`} label={optionalCaption(t('contactSales.role'))}>
+                <TextFieldInput
+                  label={optionalName(t('contactSales.role'))}
+                  placeholder={null}
+                  value={form.role}
+                  onValueChange={(next) => update('role', next)}
+                  autoComplete="organization-title"
+                />
+              </Field>
+              <Field nativeID={`${formId}-country`} label={optionalCaption(t('contactSales.country'))}>
+                <TextFieldInput
+                  label={optionalName(t('contactSales.country'))}
+                  placeholder={null}
+                  value={form.country}
+                  onValueChange={(next) => update('country', next)}
+                  autoComplete="country"
+                />
+              </Field>
+              <Field
+                nativeID={`${formId}-companySize`}
+                label={optionalCaption(t('contactSales.companySize'))}
               >
                 <OptionSelect
                   label={t('contactSales.companySize')}
@@ -481,19 +493,17 @@ export default function ContactSalesPage() {
                 />
               </Field>
               <Field
-                id={`${formId}-website`}
-                label={t('contactSales.website')}
-                optional
+                nativeID={`${formId}-website`}
+                label={optionalCaption(t('contactSales.website'))}
                 error={errors.website}
               >
-                <input
-                  id={`${formId}-website`}
-                  type="url"
+                <TextFieldInput
+                  label={optionalName(t('contactSales.website'))}
+                  keyboardType="url"
                   inputMode="url"
                   placeholder="https://"
                   value={form.website}
-                  onChange={(event) => update('website', event.target.value)}
-                  className={inputClass}
+                  onValueChange={(next) => update('website', next)}
                 />
               </Field>
             </div>
@@ -501,10 +511,8 @@ export default function ContactSalesPage() {
             {isAuthenticated && accounts.length > 0 && (
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field
-                  id={`${formId}-accountId`}
-                  label={t('contactSales.accountSection')}
-                  optional
-                  control="select"
+                  nativeID={`${formId}-accountId`}
+                  label={optionalCaption(t('contactSales.accountSection'))}
                 >
                   <OptionSelect
                     label={t('contactSales.accountSection')}
@@ -527,12 +535,7 @@ export default function ContactSalesPage() {
                   />
                 </Field>
                 {form.accountId && applications.length > 0 && (
-                  <Field
-                    id={`${formId}-applicationId`}
-                    label="Application"
-                    optional
-                    control="select"
-                  >
+                  <Field nativeID={`${formId}-applicationId`} label={optionalCaption('Application')}>
                     <OptionSelect
                       label="Application"
                       value={form.applicationId}
@@ -555,26 +558,22 @@ export default function ContactSalesPage() {
           <fieldset className="flex flex-col gap-4">
             <legend className="text-xl text-foreground">{t('contactSales.sectionWorkload')}</legend>
             <Field
-              id={`${formId}-useCase`}
+              nativeID={`${formId}-useCase`}
               label={t('contactSales.useCase')}
-              hint={t('contactSales.useCaseHelp')}
+              description={t('contactSales.useCaseHelp')}
               error={errors.useCase}
             >
-              <textarea
-                id={`${formId}-useCase`}
+              <Textarea
                 value={form.useCase}
-                onChange={(event) => update('useCase', event.target.value)}
+                onValueChange={(next) => update('useCase', next)}
                 rows={4}
-                className={`${inputClass} h-auto rounded-2xl py-3`}
               />
             </Field>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <Field
-                id={`${formId}-monthlyVolume`}
-                label={t('contactSales.monthlyVolume')}
-                optional
-                control="select"
+                nativeID={`${formId}-monthlyVolume`}
+                label={optionalCaption(t('contactSales.monthlyVolume'))}
               >
                 <OptionSelect
                   label={t('contactSales.monthlyVolume')}
@@ -587,10 +586,8 @@ export default function ContactSalesPage() {
                 />
               </Field>
               <Field
-                id={`${formId}-budget`}
-                label={t('contactSales.budget')}
-                optional
-                control="select"
+                nativeID={`${formId}-budget`}
+                label={optionalCaption(t('contactSales.budget'))}
               >
                 <OptionSelect
                   label={t('contactSales.budget')}
@@ -603,10 +600,8 @@ export default function ContactSalesPage() {
                 />
               </Field>
               <Field
-                id={`${formId}-deploymentPreference`}
-                label={t('contactSales.deploymentPreference')}
-                optional
-                control="select"
+                nativeID={`${formId}-deploymentPreference`}
+                label={optionalCaption(t('contactSales.deploymentPreference'))}
               >
                 <OptionSelect
                   label={t('contactSales.deploymentPreference')}
@@ -619,10 +614,8 @@ export default function ContactSalesPage() {
                 />
               </Field>
               <Field
-                id={`${formId}-launchTimeline`}
-                label={t('contactSales.launchTimeline')}
-                optional
-                control="select"
+                nativeID={`${formId}-launchTimeline`}
+                label={optionalCaption(t('contactSales.launchTimeline'))}
               >
                 <OptionSelect
                   label={t('contactSales.launchTimeline')}
@@ -635,15 +628,14 @@ export default function ContactSalesPage() {
                 />
               </Field>
               <Field
-                id={`${formId}-preferredRegion`}
-                label={t('contactSales.preferredRegion')}
-                optional
+                nativeID={`${formId}-preferredRegion`}
+                label={optionalCaption(t('contactSales.preferredRegion'))}
               >
-                <input
-                  id={`${formId}-preferredRegion`}
+                <TextFieldInput
+                  label={optionalName(t('contactSales.preferredRegion'))}
+                  placeholder={null}
                   value={form.preferredRegion}
-                  onChange={(event) => update('preferredRegion', event.target.value)}
-                  className={inputClass}
+                  onValueChange={(next) => update('preferredRegion', next)}
                 />
               </Field>
             </div>
@@ -669,27 +661,23 @@ export default function ContactSalesPage() {
           {/* ── Anything else ──────────────────────────────────────── */}
           <fieldset className="flex flex-col gap-4">
             <legend className="text-xl text-foreground">{t('contactSales.sectionMessage')}</legend>
-            <Field id={`${formId}-message`} label={t('contactSales.message')} optional>
-              <textarea
-                id={`${formId}-message`}
+            <Field nativeID={`${formId}-message`} label={optionalCaption(t('contactSales.message'))}>
+              <Textarea
+                accessibilityLabel={optionalName(t('contactSales.message'))}
                 value={form.message}
-                onChange={(event) => update('message', event.target.value)}
+                onValueChange={(next) => update('message', next)}
                 maxLength={MESSAGE_MAX_LENGTH}
                 rows={5}
-                className={`${inputClass} h-auto rounded-2xl py-3`}
               />
             </Field>
 
-            <label className="flex items-start gap-2 text-sm text-foreground">
-              <input
-                type="checkbox"
-                checked={form.marketingConsent}
-                onChange={(event) => update('marketingConsent', event.target.checked)}
-                className="mt-0.5 size-4 rounded border-border"
-              />
-              {t('contactSales.marketingConsent')}
-            </label>
+            <Checkbox
+              checked={form.marketingConsent}
+              onCheckedChange={(next) => update('marketingConsent', next)}
+              label={t('contactSales.marketingConsent')}
+            />
           </fieldset>
+
 
           {/*
             The honeypot. `aria-hidden` plus `tabIndex={-1}` keeps it away from
@@ -716,13 +704,9 @@ export default function ContactSalesPage() {
               </Link>
             </p>
             <div>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="inline-flex h-11 cursor-pointer items-center justify-center rounded-full bg-foreground px-6 text-sm font-medium text-background hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60"
-              >
+              <Button type="submit" variant="inverse" disabled={submitting}>
                 {submitting ? t('contactSales.submitting') : t('contactSales.submit')}
-              </button>
+              </Button>
             </div>
           </div>
         </form>
@@ -731,57 +715,9 @@ export default function ContactSalesPage() {
   )
 }
 
-const inputClass =
-  'h-10 w-full rounded-full border border-border bg-background px-4 text-sm text-foreground'
-
 /** The "—" row that leaves an optional select unanswered. */
 function withNone(options: SelectOption[]): SelectOption[] {
   return [{ value: '', label: '—' }, ...options]
-}
-
-function Field({
-  id,
-  label,
-  hint,
-  error,
-  optional = false,
-  control = 'input',
-  children,
-}: {
-  id: string
-  label: string
-  hint?: string
-  error?: string
-  optional?: boolean
-  /**
-   * `select` for a Bloom select. Its trigger is not a labelable element, so
-   * the caption is a span (the trigger carries the same words as its name)
-   * and `id` goes on a wrapper, where the error summary's link still lands.
-   */
-  control?: 'input' | 'select'
-  children: ReactNode
-}) {
-  const { t } = useTranslation()
-  const caption = (
-    <>
-      {label}
-      {optional && <span className="ms-1 text-muted-foreground">({t('contactSales.optional')})</span>}
-    </>
-  )
-  return (
-    <div className="flex flex-col gap-1">
-      {control === 'select' ? (
-        <span className="text-sm text-foreground">{caption}</span>
-      ) : (
-        <label htmlFor={id} className="text-sm text-foreground">
-          {caption}
-        </label>
-      )}
-      {control === 'select' ? <div id={id}>{children}</div> : children}
-      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
-      {error && <p className="text-xs text-error-text">{error}</p>}
-    </div>
-  )
 }
 
 function CheckboxGroup({
@@ -796,22 +732,17 @@ function CheckboxGroup({
   onToggle: (value: string) => void
 }) {
   return (
-    <fieldset className="flex flex-col gap-2">
-      <legend className="text-sm text-foreground">{legend}</legend>
+    <Field label={legend} multiple>
       <div className="flex flex-wrap gap-x-6 gap-y-2">
         {options.map((option) => (
-          <label key={option.value} className="flex items-center gap-2 text-sm text-muted-foreground">
-            <input
-              type="checkbox"
-              checked={selected.includes(option.value)}
-              onChange={() => onToggle(option.value)}
-              className="size-4 rounded border-border"
-            />
-            {option.label}
-          </label>
+          <Checkbox
+            key={option.value}
+            checked={selected.includes(option.value)}
+            onCheckedChange={() => onToggle(option.value)}
+            label={option.label}
+          />
         ))}
       </div>
-    </fieldset>
+    </Field>
   )
 }
-

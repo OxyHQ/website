@@ -1,3 +1,8 @@
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+  SegmentedControlItemText,
+} from '@oxy.so/bloom/segmented-control'
 import { useLocales } from '../../api/hooks'
 
 export default function LocaleSwitcher({
@@ -12,21 +17,16 @@ export default function LocaleSwitcher({
   if (!locales || locales.length <= 1) return null
 
   return (
-    <div className="mb-6 flex gap-1 rounded-lg border border-border bg-muted/50 p-1">
-      {locales.map((locale) => (
-        <button
-          key={locale.code}
-          onClick={() => onLocaleChange(locale.code)}
-          className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-            activeLocale === locale.code
-              ? 'bg-background text-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          {locale.nativeName}
-          {locale.isDefault && <span className="ml-1 text-xs text-muted-foreground">(default)</span>}
-        </button>
-      ))}
+    <div className="mb-6 max-w-full overflow-x-auto">
+      <SegmentedControl label="Locale" type="tabs" value={activeLocale} onValueChange={onLocaleChange}>
+        {locales.map((locale) => (
+          <SegmentedControlItem key={locale.code} value={locale.code}>
+            <SegmentedControlItemText>
+              {locale.isDefault ? `${locale.nativeName} (default)` : locale.nativeName}
+            </SegmentedControlItemText>
+          </SegmentedControlItem>
+        ))}
+      </SegmentedControl>
     </div>
   )
 }

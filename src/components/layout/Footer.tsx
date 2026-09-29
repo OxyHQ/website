@@ -1,19 +1,12 @@
 import { Link } from '../../lib/navigation'
 import { useTranslation } from '../../lib/i18n'
-import { ArrowRightIcon } from '../icons'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
+import { Divider } from '@oxy.so/bloom/divider'
 import { defaultFooterColumns, type FooterLink } from '../../data/content'
 import { LogoText } from '@oxy.so/services/ui/client'
 import MentionIcon from '../social/MentionIcon'
 
 /* ─── Shared small components ─── */
-
-function Divider() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeLinecap="round" />
-    </svg>
-  )
-}
 
 function NewBadge() {
   return (
@@ -93,7 +86,7 @@ function FooterLinkItem({ link }: { link: FooterLink }) {
       <span className="footer-hover-underline group-hover:duration-150">{link.label}</span>
       {link.isNewBadge && <NewBadge />}
       {link.isExternal && (
-        <ArrowRightIcon className="ml-0.5 -rotate-45 text-muted-foreground transition-colors duration-200 ease-in-out-cubic group-hover:text-foreground group-hover:delay-50 group-focus:text-foreground group-focus:delay-50 group-active:text-foreground group-active:duration-50" />
+        <span aria-hidden="true" className="inline-flex ml-0.5 -rotate-45 text-muted-foreground transition-colors duration-200 ease-in-out-cubic group-hover:text-foreground group-hover:delay-50 group-focus:text-foreground group-focus:delay-50 group-active:text-foreground group-active:duration-50"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
       )}
     </>
   )
@@ -185,13 +178,13 @@ export default function Footer({
     <footer
       className="relative flex w-full flex-col justify-between bg-[color-mix(in_srgb,var(--primary)_8%,var(--background))] text-foreground"
     >
-      {!hideTopDivider && <Divider />}
+      {!hideTopDivider && <Divider color="var(--border)" />}
 
       {/* Columns */}
       {footerColumns.length > 0 && (
         <div className="container flex-1">
           <div className="px-px pt-10 pb-4">
-            <div className="grid grid-cols-5 gap-x-8 gap-y-10 max-xl:grid-cols-3 max-md:grid-cols-2 max-[480px]:grid-cols-1">
+            <div className="grid grid-cols-6 gap-x-8 gap-y-10 max-xl:grid-cols-3 max-md:grid-cols-2 max-[480px]:grid-cols-1">
               {footerColumns.map((column) => (
                 <div key={column.title} className="min-w-0">
                   <h2 className="py-1 text-sm font-medium text-primary-text">{column.title}</h2>
@@ -212,7 +205,7 @@ export default function Footer({
       {/* Bottom bar */}
       <div className="w-full">
         <div className="container">
-          {footerColumns.length > 0 && <Divider />}
+          {footerColumns.length > 0 && <Divider color="var(--border)" />}
 
           {/* Logo + Social row */}
           <div className="flex flex-wrap items-center justify-between gap-6 px-px pt-4 pb-4">

@@ -1,4 +1,4 @@
-import { useState, useCallback, useLayoutEffect, useRef } from 'react'
+import { useState, useLayoutEffect, useRef } from 'react'
 import { motion, useScroll, useSpring, useTransform, useReducedMotion } from 'framer-motion'
 import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
 import { RiBookReadLine } from '@oxy.so/bloom/icons/RiBookReadLine'
@@ -18,10 +18,6 @@ import HomeTagPhysics from '../components/homepage/HomeTagPhysics'
 import FairCoinSection from '../components/sections/FairCoinSection'
 import FaqSection from '../components/sections/FaqSection'
 import { usePage, type PageSection } from '../api/hooks'
-import { FEATURES } from '../constants'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Autoplay } from 'swiper/modules'
-import type SwiperType from 'swiper'
 import 'swiper/css'
 import '../styles/landing.css'
 import AIResearchSection from '../components/ai/AIResearchSection'
@@ -63,81 +59,6 @@ const REVEAL = {
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.2 },
   transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
-}
-
-/* ------------------------------------------------------------------ */
-/*  Partner Logos                                                       */
-/* ------------------------------------------------------------------ */
-// NOTE: The original list contained real third-party companies (Strava,
-// Robinhood, Merck, etc.) cloned from another marketing site. Until real
-// Oxy partner logos are available, the list is empty and the section is
-// gated by FEATURES.SHOW_TRUSTED_LOGOS at the render site below.
-const ALL_LOGOS: string[] = []
-
-// The number of logo slots shown at once — constant for the lifetime of the page.
-const LOGO_VISIBLE_COUNT = 7
-
-function PartnerLogos() {
-  const [visibleLogos, setVisibleLogos] = useState<string[]>(ALL_LOGOS.slice(0, LOGO_VISIBLE_COUNT))
-  const [hiddenSlot, setHiddenSlot] = useState<number | null>(null)
-  const availablePoolRef = useRef<string[]>([...ALL_LOGOS.slice(LOGO_VISIBLE_COUNT)])
-
-  const swapLogo = useCallback(() => {
-    // Choose the slot before the fade-out so the index is stable across the timeout.
-    const slotIndex = Math.floor(Math.random() * LOGO_VISIBLE_COUNT)
-    setHiddenSlot(slotIndex)
-    setTimeout(() => {
-      setVisibleLogos((prev) => {
-        const next = [...prev]
-        const currentLogo = next[slotIndex]
-        if (availablePoolRef.current.length === 0) {
-          availablePoolRef.current = [...ALL_LOGOS.slice(LOGO_VISIBLE_COUNT)]
-        }
-        const poolIndex = Math.floor(Math.random() * availablePoolRef.current.length)
-        const newLogo = availablePoolRef.current[poolIndex]
-        availablePoolRef.current.splice(poolIndex, 1)
-        availablePoolRef.current.push(currentLogo)
-        next[slotIndex] = newLogo
-        return next
-      })
-      setHiddenSlot(null)
-    }, 400)
-  }, [])
-
-  // React 19 callback ref — owns the logo-swap interval while the section is mounted.
-  const sectionRef = useCallback((node: HTMLElement | null) => {
-    if (!node) return
-    const interval = setInterval(swapLogo, 2000)
-    return () => clearInterval(interval)
-  }, [swapLogo])
-
-  return (
-    <section ref={sectionRef} className="container">
-      <div>
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-full py-5">
-            <div className="grid grid-cols-7 gap-x-5 max-[950px]:grid-cols-3" id="partner-grid">
-              {visibleLogos.map((logo, index) => (
-                <div className={`flex items-center justify-center h-[100px] transition-opacity duration-1000 max-[950px]:h-[60px] max-[950px]:[&:nth-child(n+4)]:hidden${hiddenSlot === index ? ' opacity-0' : ''}`} key={index}>
-                  <div className="flex items-center justify-center w-full h-full" data-logo={logo}>
-                    <img
-                      className="w-full h-auto object-contain max-w-full max-h-full [max-height:66px] dark:invert"
-                      src={`${IMG}/${logo}.svg`}
-                      alt={logo.charAt(0).toUpperCase() + logo.slice(1)}
-                      width={224}
-                      height={90}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
 }
 
 /* ------------------------------------------------------------------ */
@@ -277,229 +198,6 @@ function ValuesSection() {
   ]
   return <PhotoCardCarousel title={t('home.valuesHeading')} cards={cards} />
 }
-
-/* ------------------------------------------------------------------ */
-/*  Features Tabs                                                      */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/*  ROI Stats                                                          */
-/* ------------------------------------------------------------------ */
-const STATS = [
-  { labelKey: 'home.statsOpenSource', value: '100%', descKey: 'home.statsOpenSourceDesc' },
-  { labelKey: 'home.statsCommunity', value: '50K+', descKey: 'home.statsCommunityDesc' },
-  { labelKey: 'home.statsProducts', value: '6', descKey: 'home.statsProductsDesc' },
-  { labelKey: 'home.statsDataSold', value: '$0', descKey: 'home.statsDataSoldDesc' },
-  { labelKey: 'home.statsCountries', value: '120+', descKey: 'home.statsCountriesDesc' },
-]
-
-function StatsAndTestimonialsSection() {
-  const { t } = useTranslation()
-  const swiperRef = useRef<SwiperType>(null)
-  const [playing, setPlaying] = useState(true)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [progress, setProgress] = useState(0)
-  // Tracks the responsive `slidesPerView` so the dot pager can be derived
-  // without reading swiperRef.current during render. Updated from Swiper's
-  // event callbacks (init + breakpoint), never in the render body.
-  const [perView, setPerView] = useState(4)
-  const progressRef = useRef<ReturnType<typeof setInterval>>(null)
-  const AUTO_DELAY = 5000
-
-  const syncPerView = useCallback((swiper: SwiperType) => {
-    const value = swiper.params.slidesPerView
-    if (typeof value === 'number') setPerView(value)
-  }, [])
-
-  const startProgress = useCallback(() => {
-    if (progressRef.current) clearInterval(progressRef.current)
-    const start = Date.now()
-    setProgress(0)
-    progressRef.current = setInterval(() => {
-      const elapsed = Date.now() - start
-      setProgress(Math.min((elapsed / AUTO_DELAY) * 100, 100))
-    }, 200)
-  }, [])
-
-  const stopProgress = useCallback(() => {
-    if (progressRef.current) clearInterval(progressRef.current)
-    setProgress(0)
-  }, [])
-
-  // React 19 callback ref — clears the progress interval on unmount.
-  const sectionRef = useCallback((node: HTMLElement | null) => {
-    if (!node) return
-    return () => {
-      if (progressRef.current) clearInterval(progressRef.current)
-    }
-  }, [])
-
-  const toggleAutoplay = () => {
-    const swiper = swiperRef.current
-    if (!swiper) return
-    if (playing) {
-      swiper.autoplay.stop()
-      stopProgress()
-    } else {
-      swiper.autoplay.start()
-      startProgress()
-    }
-    setPlaying(p => !p)
-  }
-
-  // Total number of "pages" (groups), derived from the tracked slidesPerView.
-  const totalPages = Math.ceil(TESTIMONIALS.length / perView)
-  const selectedPage = Math.floor(activeIndex / perView)
-
-  return (
-    <section ref={sectionRef} className="container">
-      <div>
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-full py-10 max-[950px]:py-6">
-            {FEATURES.SHOW_HOMEPAGE_STATS && (
-            <div className="mb-5">
-              <Swiper
-                modules={[Autoplay]}
-                slidesPerView="auto"
-                spaceBetween={16}
-                grabCursor
-                className="roi-stats-swiper my-6"
-                breakpoints={{
-                  1460: { slidesPerView: STATS.length, spaceBetween: 24 },
-                }}
-              >
-                {STATS.map((s) => (
-                  <SwiperSlide key={s.labelKey} className="!w-auto">
-                    <div className="min-w-[230px] px-6 max-[1460px]:min-w-[250px] max-[950px]:min-w-[150px]">
-                      <div>
-                    <p className="text-sm leading-4 tracking-wide font-[450] opacity-80 mb-[34px]">{t(s.labelKey)}</p>
-                      </div>
-                      <div>
-                        <p className="text-heading-responsive-lg mb-[9px]">{s.value}</p>
-                        <p className="max-w-[210px]">{t(s.descKey)}</p>
-                      </div>
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </div>
-            )}
-            {FEATURES.SHOW_TESTIMONIALS && (
-            <div>
-              <Swiper
-                modules={[Autoplay]}
-                onSwiper={(s) => { swiperRef.current = s; syncPerView(s) }}
-                slidesPerView={4}
-                spaceBetween={24}
-                autoplay={{
-                  delay: AUTO_DELAY,
-                  disableOnInteraction: false,
-                }}
-                onSlideChange={(s) => {
-                  setActiveIndex(s.realIndex)
-                  startProgress()
-                }}
-                onBreakpoint={(s) => syncPerView(s)}
-                onAutoplayStart={() => startProgress()}
-                breakpoints={{
-                  0: { slidesPerView: 1.15, spaceBetween: 12 },
-                  640: { slidesPerView: 2, spaceBetween: 16 },
-                  950: { slidesPerView: 3, spaceBetween: 20 },
-                  1400: { slidesPerView: 4, spaceBetween: 24 },
-                }}
-                className="image-card-slider"
-              >
-                {TESTIMONIALS.map((testimonial, i) => (
-                  <SwiperSlide key={i} style={{ height: 'auto' }}>
-                    <div
-                      className={`relative overflow-hidden rounded-3xl aspect-[4/5] max-[950px]:aspect-[4/6] ${testimonial.light ? 'force-dark text-foreground' : 'text-foreground/80'}`}
-                    >
-                      {/* Below the fold, inside a carousel — `eager` made every
-                          slide's background a blocking request on first paint. */}
-                      <img src={testimonial.bg} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" width={800} height={1000} loading="lazy" decoding="async" />
-                      <div className="absolute inset-0 bg-background/10" />
-                      <div className="relative z-10 flex flex-col justify-between gap-12 px-7 py-8 max-[950px]:p-8 h-full">
-                        <div>
-                            <p className="text-base leading-relaxed tracking-tight">&ldquo;{t(testimonial.quoteKey)}&rdquo;</p>
-                        </div>
-                        <div>
-                          <p className="text-sm leading-relaxed">
-                            <span className="opacity-60">{t(testimonial.roleKey)}</span><br />
-                            {t('home.valuesHeading')}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-              <div className="image-card-slider-ui-wrapper">
-                <ol className="image-card-slider-dots">
-                  {Array.from({ length: totalPages }).map((_, i) => (
-                    <li
-                      key={i}
-                      className={`dot${selectedPage === i ? ' is-selected' : ''}`}
-                      onClick={() => swiperRef.current?.slideTo(i * perView)}
-                    >
-                      <div
-                        className="timer"
-                        style={{
-                          width: selectedPage === i && playing ? `${progress}%` : '0%',
-                        }}
-                      />
-                    </li>
-                  ))}
-                </ol>
-                <button
-                  className={`toggle-autoplay${playing ? '' : ' paused'}`}
-                  onClick={toggleAutoplay}
-                  aria-label={playing ? t('home.statsPause') : t('home.statsPlay')}
-                >
-                  <svg width="8" height="12" className="pause" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0.895 12C0.595 12 0.369 11.916 0.219 11.747C0.073 11.579 0 11.326 0 10.988V1.005C0 0.672 0.075 0.422 0.225 0.253C0.376 0.084 0.599 0 0.895 0H2.366C2.658 0 2.88 0.082 3.03 0.246C3.184 0.41 3.261 0.663 3.261 1.005V10.988C3.261 11.326 3.184 11.579 3.03 11.747C2.88 11.916 2.658 12 2.366 12H0.895ZM5.64 12C5.34 12 5.114 11.916 4.964 11.747C4.814 11.579 4.739 11.326 4.739 10.988V1.005C4.739 0.672 4.814 0.422 4.964 0.253C5.114 0.084 5.34 0 5.64 0H7.099C7.399 0 7.624 0.082 7.775 0.246C7.925 0.41 8 0.663 8 1.005V10.988C8 11.326 7.925 11.579 7.775 11.747C7.624 11.916 7.399 12 7.099 12H5.64Z" fill="currentColor"/>
-                  </svg>
-                  <svg width="10" height="11" className="play" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 9.968V1.032C0 0.681 0.09 0.422 0.271 0.253C0.452 0.084 0.668 0 0.917 0C1.141 0 1.365 0.061 1.589 0.184L9.218 4.551C9.494 4.707 9.692 4.854 9.813 4.994C9.938 5.133 10 5.302 10 5.5C10 5.694 9.938 5.863 9.813 6.006C9.692 6.146 9.494 6.293 9.218 6.449L1.589 10.817C1.365 10.939 1.141 11 0.917 11C0.668 11 0.452 10.914 0.271 10.741C0.09 10.572 0 10.314 0 9.968Z" fill="currentColor"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-/*  Testimonials Data                                                  */
-/* ------------------------------------------------------------------ */
-const TESTIMONIALS = [
-  {
-    quoteKey: 'home.valueHumanDescription',
-    roleKey: 'home.valueHumanTitle',
-    bg: `${IMG}/agents-quote-bg-01.webp`,
-    light: true,
-  },
-  {
-    quoteKey: 'home.valueDataDescription',
-    roleKey: 'home.valueDataTitle',
-    bg: `${IMG}/agents-quote-bg-02.webp`,
-    light: false,
-  },
-  {
-    quoteKey: 'home.valuePurposeDescription',
-    roleKey: 'home.valuePurposeTitle',
-    bg: `${IMG}/agents-quote-bg-03.webp`,
-    light: true,
-  },
-  {
-    quoteKey: 'home.valueOpenDescription',
-    roleKey: 'home.valueOpenTitle',
-    bg: `${IMG}/agents-quote-bg-04.webp`,
-    light: true,
-  },
-]
 
 /* ------------------------------------------------------------------ */
 /*  Enterprise Partnership Services                                    */
@@ -706,41 +404,6 @@ function CommonsAppSection() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Trusted By                                                         */
-/* ------------------------------------------------------------------ */
-// Previously rendered real third-party logos (Strava, Polestar, Merck, ...)
-// cloned from another marketing site. Replaced with an empty list and
-// gated behind FEATURES.SHOW_TRUSTED_LOGOS until real Oxy partner / user
-// logos are available.
-const TRUSTED_LOGOS: string[] = []
-
-function TrustedBySection() {
-  const { t } = useTranslation()
-  return (
-    <div className="bg-surface text-foreground">
-      <section className="container">
-        <div>
-          <div className="grid grid-cols-12 gap-6">
-            <div className="col-span-full py-10 pb-[50px]">
-              <h3 className="text-[22px] leading-[1.2] font-[450] mb-10 max-w-[720px]">
-                {t('home.trustedHeading')}
-              </h3>
-              <div className="grid grid-cols-8 max-[950px]:grid-cols-2 gap-x-5 items-center">
-                {TRUSTED_LOGOS.map((logo) => (
-                  <div key={logo} className="flex justify-center items-center">
-                    <img src={`${IMG}/${logo}.svg`} alt={logo} className="max-h-[66px] w-auto dark:invert" width={224} height={66} loading="lazy" decoding="async" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  )
-}
-
-/* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 export default function HomePage() {
@@ -771,18 +434,15 @@ export default function HomePage() {
       <Navbar transparent transparentOn="light" />
       <main className="oxy-landing">
         <HomeHero />
-        {FEATURES.SHOW_TRUSTED_LOGOS && <PartnerLogos />}
         <BuildForEveryoneSection />
         <OxyAppsFeatureGrid />
         <HomeTagPhysics />
         <OxyUseCasesRolo />
         <ValuesSection />
-        {(FEATURES.SHOW_HOMEPAGE_STATS || FEATURES.SHOW_TESTIMONIALS) && <StatsAndTestimonialsSection />}
         <FairCoinSection />
         <HomeAiSection />
         <AIResearchSection />
         <PartnershipSection />
-        {FEATURES.SHOW_TRUSTED_LOGOS && <TrustedBySection />}
         <FaqSection
           title={t('home.faqHeading')}
           groups={[

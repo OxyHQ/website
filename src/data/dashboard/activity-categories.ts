@@ -22,8 +22,3 @@ const CATEGORY_BY_SERVICE: Record<string, ActivityCategory> = {
 export function activityCategory(service?: string): ActivityCategory {
   return CATEGORY_BY_SERVICE[service?.toLowerCase() ?? ''] ?? 'platform'
 }
-
-export function activityCategoryColor(service?: string): string {
-  const category = activityCategory(service)
-  return ACTIVITY_CATEGORIES.find((item) => item.id === category)?.color ?? 'var(--chart-1)'
-}

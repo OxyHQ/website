@@ -2,6 +2,7 @@ import { Suspense, createElement, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Link } from '../../lib/navigation'
 import { Button } from '@oxy.so/bloom/button'
+import { Checkbox } from '@oxy.so/bloom/checkbox'
 import { bloomDemos, getBloomDemo } from '../../content/bloom-demos/registry'
 import { defaultValues, type PlaygroundValues } from '../../content/bloom-demos/_playground'
 import { bloomVersion } from '../../content/bloom-catalog.generated'
@@ -182,33 +183,32 @@ export default function BloomPlayground() {
                           options={prop.options.map((o) => ({ value: o, label: o }))}
                         />
                       </div>
+                    ) : prop.kind === 'boolean' ? (
+                      <div key={prop.name} className="grid gap-2 text-sm">
+                        <span aria-hidden="true">{prop.name}</span>
+                        <Checkbox
+                          accessibilityLabel={prop.name}
+                          checked={values[prop.name] === true}
+                          onCheckedChange={(next) => setValues((v) => ({ ...v, [prop.name]: next }))}
+                        />
+                      </div>
                     ) : (
                       <label key={prop.name} className="grid gap-2 text-sm">
                         <span>{prop.name}</span>
-                        {prop.kind === 'boolean' ? (
-                          <input
-                            type="checkbox"
-                            checked={values[prop.name] === true}
-                            onChange={(e) =>
-                              setValues((v) => ({ ...v, [prop.name]: e.target.checked }))
-                            }
-                          />
-                        ) : (
-                          <input
-                            type={prop.kind === 'number' ? 'number' : 'text'}
-                            value={String(values[prop.name] ?? '')}
-                            {...(prop.kind === 'number'
-                              ? { min: prop.min, max: prop.max, step: prop.step }
-                              : {})}
-                            onChange={(e) =>
-                              setValues((v) => ({
-                                ...v,
-                                [prop.name]:
-                                  prop.kind === 'number' ? Number(e.target.value) : e.target.value,
-                              }))
-                            }
-                          />
-                        )}
+                        <input
+                          type={prop.kind === 'number' ? 'number' : 'text'}
+                          value={String(values[prop.name] ?? '')}
+                          {...(prop.kind === 'number'
+                            ? { min: prop.min, max: prop.max, step: prop.step }
+                            : {})}
+                          onChange={(e) =>
+                            setValues((v) => ({
+                              ...v,
+                              [prop.name]:
+                                prop.kind === 'number' ? Number(e.target.value) : e.target.value,
+                            }))
+                          }
+                        />
                       </label>
                     ),
                   )}

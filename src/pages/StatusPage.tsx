@@ -1,10 +1,12 @@
 import { Link } from '../lib/navigation'
 import * as Skeleton from '@oxy.so/bloom/skeleton'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import { useServiceStatus, useServiceUptime, useIncidentHistory, type ServiceStatusEntry, type ServiceStatusValue, type UptimeDay } from '../api/hooks'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import { DashedHLine } from '../components/ui/GridDecoration'
 import { STATUS_DOT, STATUS_LABEL, STATUS_SURFACE } from '../lib/statusTheme'
 import UptimeBar from '../components/status/UptimeBar'
 import IncidentCard from '../components/status/IncidentCard'
@@ -21,14 +23,6 @@ const OVERALL_KICKER: Record<ServiceStatusValue, string> = {
   degraded: 'At least one service is responding slower than usual.',
   down: 'At least one service is unreachable. Our team is on it.',
   unknown: 'Running the first probe batch now.',
-}
-
-function DashedHLine() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-    </svg>
-  )
 }
 
 function StatusDot({ status, pulse = false, size = 'md' }: { status: ServiceStatusValue; pulse?: boolean; size?: 'sm' | 'md' | 'lg' }) {
@@ -135,9 +129,7 @@ function ServiceRow({ service, uptimeDays }: { service: ServiceStatusEntry; upti
           className="hidden shrink-0 rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-background md:inline-flex md:items-center md:gap-1"
         >
           Open
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="size-3" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
-          </svg>
+          <RiArrowRightUpLine width={12} height={12} fill="currentColor" aria-hidden />
         </a>
       </div>
       {uptimeDays && uptimeDays.length > 0 && (

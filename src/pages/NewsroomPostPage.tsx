@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { Link } from '../lib/navigation'
 import { BloomColorScope } from '@oxy.so/bloom/theme'
+import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { useNewsroomPost } from '../api/hooks'
 import { errorStatus } from '../api/client'
 import PageShell from '../components/layout/PageShell'
@@ -138,7 +139,7 @@ export default function NewsroomPostPage() {
                 )}
 
                 <DeferredMount
-                  fallback={<div className="mt-6 h-24 animate-pulse rounded-radius-12 bg-surface motion-reduce:animate-none" />}
+                  fallback={<div className="mt-6 h-24"><Skeleton.Box width="100%" height="100%" borderRadius={12} /></div>}
                 >
                   <Suspense fallback={<div className="mt-6 h-24 rounded-radius-12 bg-surface" />}>
                     <ArticleCommunity post={post} url={url} />

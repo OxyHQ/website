@@ -1,5 +1,5 @@
 import { Link } from '../../lib/navigation'
-import { ArrowRightIcon } from '../icons'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 
 interface SectionHeaderWithLinkProps {
   title: string
@@ -28,7 +28,7 @@ export default function SectionHeaderWithLink({
           className="group flex min-h-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
         >
           {linkText}
-          <ArrowRightIcon className="ml-0.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+          <span aria-hidden="true" className="inline-flex ml-0.5 transition-transform duration-200 group-hover:translate-x-0.5"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
         </Link>
       ) : (
         <a
@@ -36,7 +36,7 @@ export default function SectionHeaderWithLink({
           className="group flex min-h-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
         >
           {linkText}
-          <ArrowRightIcon className="ml-0.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+          <span aria-hidden="true" className="inline-flex ml-0.5 transition-transform duration-200 group-hover:translate-x-0.5"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
         </a>
       )}
     </div>

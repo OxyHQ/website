@@ -197,7 +197,3 @@ export const claims: readonly Claim[] = [
 export function approvedClaims(): Claim[] {
   return claims.filter((claim) => claim.status === 'approved')
 }
-
-export function claimById(id: string): Claim | undefined {
-  return claims.find((claim) => claim.id === id)
-}

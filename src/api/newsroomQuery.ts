@@ -3,7 +3,7 @@ import type { NewsroomPost } from '../data/newsroom'
 import type { Locale } from '../lib/i18n'
 import { apiFetch, errorStatus } from './client'
 
-export const NEWSROOM_REQUEST_TIMEOUT_MS = 8_000
+const NEWSROOM_REQUEST_TIMEOUT_MS = 8_000
 
 export interface NewsroomListParams {
   category?: string

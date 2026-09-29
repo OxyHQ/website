@@ -122,16 +122,6 @@ const en = {
     allInOneHeadingLine2: 'not just yourself.',
     allInOneBody:
       'Oxy exists because we believe technology should serve humanity, not exploit it. Through community-driven projects and open-source tools, we prove that helping people and building sustainable systems aren’t competing goals.',
-    statsOpenSource: 'Open Source',
-    statsOpenSourceDesc: 'of our code is public',
-    statsCommunity: 'Community',
-    statsCommunityDesc: 'developers and contributors',
-    statsProducts: 'Products',
-    statsProductsDesc: 'platforms serving real needs',
-    statsDataSold: 'Data Sold',
-    statsDataSoldDesc: 'we never sell user data',
-    statsCountries: 'Countries',
-    statsCountriesDesc: 'communities worldwide',
 
     // ── Current homepage sections ──────────────────────────
     heroPanelSentence1: 'Practical alternatives to',
@@ -157,8 +147,6 @@ const en = {
     valueOpenDescription: 'Every Oxy tool is open source. We believe transparency isn’t optional, it’s how you earn trust. Inspect the code, fork it, improve it.',
     valuePeopleTitle: 'People make the difference.',
     valuePeopleDescription: 'Technology matters most when it gives people more agency, connection, and room to grow together.',
-    statsPause: 'Pause autoplay',
-    statsPlay: 'Play autoplay',
     useCasesHeading: 'People use Oxy for',
     useCase1: 'Research and discovery',
     useCase2: 'Private conversations',
@@ -245,7 +233,6 @@ const en = {
     commonsIosSoonTitle: 'Coming soon on iOS',
     commonsIosSoonBody: 'Commons is not on the App Store yet. It is live on Google Play today, and the iOS release is on the way.',
     commonsImageAlt: 'Oxy self-custody identity on iOS',
-    trustedHeading: 'Built by the community, for the community.',
     faqHeading: 'Frequently asked questions.',
     faq1Question: 'What is Oxy?',
     faq1Answer: 'An open-source ecosystem: one identity you hold on your own device, and a family of apps built on it. Social, messaging, housing, payments, AI and an operating system, run by one independent company rather than assembled from other people’s platforms.',

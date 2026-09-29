@@ -691,22 +691,6 @@
   width: 1.5rem;
   flex-shrink: 0;
 }
-.brand-resources details {
-  margin-top: 3rem;
-  border-top: 1px solid currentColor;
-}
-.brand-resources summary {
-  list-style: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  padding: 1.5rem 0;
-  font-size: 1.25rem;
-}
-.brand-resources details[open] summary svg {
-  transform: rotate(45deg);
-}
 .brand-download-list {
   display: grid;
   grid-template-columns: 1fr 1fr;

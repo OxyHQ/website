@@ -43,7 +43,6 @@
 .astro-template .nimbus-headline-2xs,
 .astro-template .nimbus-body,
 .astro-template .nimbus-body-s,
-.astro-template .nimbus-label-l,
 .astro-template .nimbus-label-s {
   font-family: var(--font-sans);
 }
@@ -86,7 +85,6 @@
   line-height: 1.5;
 }
 
-.astro-template .nimbus-label-l,
 .astro-template .nimbus-label-s {
   font-size: 0.75rem;
   font-weight: 500;

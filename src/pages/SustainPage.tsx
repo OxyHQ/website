@@ -9,7 +9,9 @@ import Button from '../components/ui/Button'
 import DotPattern from '../components/ui/DotPattern'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { usePage, useFundingProgress, type PageSection, type FundingProgress } from '../api/hooks'
+import { sectionContent, sectionHeading, sectionSubheading } from '../lib/cmsSections'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
+import { DashedHLine, DashedVLines } from '../components/ui/GridDecoration'
 
 /* ──────────────────────────────────────────────
  * /sustain
@@ -70,18 +72,6 @@ const DONATE_URL = 'https://opencollective.com/oxy'
 
 /* ── CMS helpers (mirrors CompanyArticlePage) ── */
 
-function sectionHeading(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find((s) => s.type === type)?.heading || fallback
-}
-
-function sectionSubheading(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find((s) => s.type === type)?.subheading || fallback
-}
-
-function sectionContent(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find((s) => s.type === type)?.content || fallback
-}
-
 /**
  * Parse a "commitment" section's items into strongly-typed Commitment objects.
  * Falls back to the provided defaults if the section is missing or its items
@@ -99,34 +89,6 @@ function parseCommitments(sections: PageSection[], fallback: Commitment[]): Comm
     if (title.length > 0) parsed.push({ title, description })
   }
   return parsed.length > 0 ? parsed : fallback
-}
-
-/* ── Layout primitives (copied from CompanyPage) ── */
-
-function DashedHLine() {
-  return (
-    <svg width="100%" height="1" className="text-border">
-      <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function DashedVLines({ height = 'h-5' }: { height?: string }) {
-  return (
-    <div className={`grid w-full grid-cols-12 overflow-hidden ${height}`}>
-      <div className="col-span-full flex justify-between">
-        <svg width="1" height="100%" className="text-border">
-          <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-        </svg>
-        <svg width="1" height="100%" className="text-border">
-          <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-        </svg>
-        <svg width="1" height="100%" className="text-border">
-          <line x1="0.5" y1="0" x2="0.5" y2="100%" stroke="currentColor" strokeDasharray="4 6" strokeLinecap="round" />
-        </svg>
-      </div>
-    </div>
-  )
 }
 
 /* ── Funding bar ── */

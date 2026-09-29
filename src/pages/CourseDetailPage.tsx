@@ -156,7 +156,7 @@ export default function CourseDetailPage() {
                         leading={<LessonStatusMark status={status} size={20} />}
                         trailing={
                           <span className="flex items-center gap-3">
-                            {isNext ? <Badge content={t('academy.upNext')} variant="subtle" color="primary" size="label-small" /> : null}
+                            {isNext ? <Badge content={t('academy.upNext')} appearance="subtle" tone="accent" size="label-small" /> : null}
                             {lesson.frontmatter.duration ? (
                               <span className="hidden text-xs tabular-nums text-muted-foreground sm:inline">{lesson.frontmatter.duration}</span>
                             ) : null}

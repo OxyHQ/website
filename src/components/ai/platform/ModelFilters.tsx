@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Checkbox } from '@oxy.so/bloom/checkbox'
 import { useTranslation } from '../../../lib/i18n'
 import OptionSelect from '../../ui/OptionSelect'
 import { AVAILABILITY_STATES } from '../../../lib/ai/availability'
@@ -136,15 +137,13 @@ export default function ModelFilters({ catalog, value, onChange, resultCount }: 
             allLabel={t('ai.models.all')}
           />
         )}
-        <label className="flex h-10 items-center gap-2 text-sm text-foreground">
-          <input
-            type="checkbox"
+        <div className="flex h-10 items-center">
+          <Checkbox
+            label={t('ai.models.filterZeroRetention')}
             checked={value.zeroRetentionOnly}
-            onChange={(event) => update({ zeroRetentionOnly: event.target.checked })}
-            className="size-4 rounded border-border"
+            onCheckedChange={(zeroRetentionOnly) => update({ zeroRetentionOnly })}
           />
-          {t('ai.models.filterZeroRetention')}
-        </label>
+        </div>
       </fieldset>
 
       <div className="flex flex-wrap items-center justify-between gap-3">

@@ -146,10 +146,9 @@ export default function DashboardPage() {
                 </SegmentedControlItem>
               </SegmentedControl>
               <Button
-                iconOnly
                 appearance="outline"
                 tone="neutral"
-                leadingIcon={isFullscreen ? RiCollapseDiagonalLine : RiFullscreenLine}
+                icon={isFullscreen ? RiCollapseDiagonalLine : RiFullscreenLine}
                 accessibilityLabel={isFullscreen ? t('dashboard.exitFullscreen') : t('dashboard.enterFullscreen')}
                 onPress={toggleFullscreen}
               />

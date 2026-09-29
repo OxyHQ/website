@@ -1,4 +1,4 @@
-import { useCallback, useState, type ReactNode } from 'react'
+import { useCallback, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { RiHandHeartLine } from '@oxy.so/bloom/icons/RiHandHeartLine'
 import { RiMoneyDollarCircleLine } from '@oxy.so/bloom/icons/RiMoneyDollarCircleLine'
@@ -8,9 +8,11 @@ import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
+import { FaqList } from '../components/sections/FaqSection'
 import { HorizontalLine, DashedVLines } from '../components/ui/GridDecoration'
 import { API_BASE } from '../api/client'
 import { useReferral, usePage, type PageSection } from '../api/hooks'
+import { sectionContent, sectionHeading, sectionSubheading } from '../lib/cmsSections'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -112,18 +114,6 @@ const DEFAULT_FAQ: Array<{ question: string; answer: string }> = [
 
 // ── CMS helpers ─────────────────────────────────────────────────────────────
 
-function sectionHeading(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find((s) => s.type === type)?.heading || fallback
-}
-
-function sectionSubheading(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find((s) => s.type === type)?.subheading || fallback
-}
-
-function sectionContent(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find((s) => s.type === type)?.content || fallback
-}
-
 /**
  * Merge the default program cards with any CMS overrides. The CMS `programs`
  * section supports items[] with prefixed keys like `paid.title`, `paid.desc`,
@@ -148,33 +138,6 @@ function resolvePrograms(sections: PageSection[]): ProgramCard[] {
 
 const DashedHLine = () => <HorizontalLine className="w-full text-border" dashed />
 
-// ── FAQ item — same pattern as CompanyPage::FAQItem ────────────────────────
-
-function FAQItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
-  return (
-    <div className="border-b border-border">
-      <button
-        type="button"
-        onClick={onToggle}
-        className="flex w-full items-center justify-between py-5 text-left"
-      >
-        <span className="font-medium text-foreground">{question}</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.5}
-          className={`size-5 shrink-0 text-muted-foreground transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-        </svg>
-      </button>
-      {isOpen && <p className="pb-5 leading-relaxed text-muted-foreground">{answer}</p>}
-    </div>
-  )
-}
-
 // ── Click-tracking sentinel ────────────────────────────────────────────────
 //
 // Fire-and-forget ping to POST /api/referrals/:code/click. A React 19 callback
@@ -198,7 +161,6 @@ export default function ReferralsPage() {
   const refCode = searchParams.get('ref') ?? ''
   const { data: referral } = useReferral(refCode)
   const { data: pageData } = usePage('referrals')
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null)
 
   const sections = pageData?.sections ?? []
   const heroBadge = sectionContent(sections, 'hero', DEFAULT_HERO_BADGE)
@@ -367,15 +329,12 @@ export default function ReferralsPage() {
               <div className="col-span-full py-20 max-lg:py-16">
                 <h2 className="mb-10 text-heading-responsive-sm">{faqHeading}</h2>
                 <div className="mx-auto max-w-3xl">
-                  {DEFAULT_FAQ.map((item, i) => (
-                    <FAQItem
-                      key={item.question}
-                      question={item.question}
-                      answer={item.answer}
-                      isOpen={openFaqIndex === i}
-                      onToggle={() => setOpenFaqIndex(openFaqIndex === i ? null : i)}
-                    />
-                  ))}
+                  <FaqList
+                    items={DEFAULT_FAQ}
+                    idPrefix="referrals-faq"
+                    questionClassName="font-medium text-foreground"
+                    answerClassName="pb-5 leading-relaxed text-muted-foreground"
+                  />
                 </div>
               </div>
             </div>

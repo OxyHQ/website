@@ -4,6 +4,7 @@ import { RiLayoutGridLine } from '@oxy.so/bloom/icons/RiLayoutGridLine'
 import { RiListUnordered } from '@oxy.so/bloom/icons/RiListUnordered'
 import { SegmentedControl, SegmentedControlItem } from '@oxy.so/bloom/segmented-control'
 import { useTheme } from '@oxy.so/bloom/theme'
+import * as Skeleton from '@oxy.so/bloom/skeleton'
 import { useNewsroomPosts, usePage, type PageSection } from '../../api/hooks'
 import { newsCategories, type NewsCategory, type NewsroomPostSummary } from '../../data/newsroom'
 import { useTranslation } from '../../lib/i18n'
@@ -269,10 +270,10 @@ export default function NewsroomIndex() {
 
             {isPending ? (
               <div className="mt-12 grid w-full grid-cols-1 gap-6 @lg:grid-cols-4">
-                <div className="aspect-[4/5] animate-pulse rounded-md bg-surface motion-reduce:animate-none @lg:col-span-3 @lg:aspect-video" />
+                <div className="aspect-[4/5] @lg:col-span-3 @lg:aspect-video"><Skeleton.Box width="100%" height="100%" borderRadius={6} /></div>
                 <div className="grid grid-cols-2 gap-6 @sm:grid-cols-3 @lg:grid-cols-1">
                   {[0, 1, 2].map((item) => (
-                    <div key={item} className="aspect-square animate-pulse rounded-md bg-surface motion-reduce:animate-none" />
+                    <div key={item} className="aspect-square"><Skeleton.Box width="100%" height="100%" borderRadius={6} /></div>
                   ))}
                 </div>
               </div>
