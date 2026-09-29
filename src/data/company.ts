@@ -4,87 +4,10 @@
    Content sourced from https://oxy.so/company
    ───────────────────────────────────────────── */
 
-export interface CulturePerk {
-  title: string
-  href: string
-}
-
-export interface CompanyValue {
-  title: string
-  description: string
-}
-
-export interface TeamMember {
-  name: string
-  role: string
-  description: string
-  slug: string
-}
-
 export interface FAQItem {
   question: string
   answer: string
 }
-
-/* ── Hero ── */
-
-export const companyHero = {
-  badge: 'The Oxy Collective, Inc.',
-  title: 'We build ethical technology that solves real problems, giving people the tools to shape their own futures, not just consume someone else\'s vision.',
-  subtitle: 'Our north star: a world where technology creates opportunity for everyone, not just those who can afford it.',
-}
-
-/* ── Stats ──
-   Note: any numeric stat that needs to stay accurate (team size, etc.)
-   should be derived from CMS data at render-time, not hardcoded here. */
-
-export const companyStats = [
-  { value: 'Global', label: 'Impact', description: 'Serving communities worldwide' },
-  { value: 'AI', label: 'Workflows', description: 'Automating what slows you down' },
-  { value: 'Barcelona', label: 'ES', description: 'HQ + remote team worldwide' },
-  { value: 'Open', label: 'Source', description: 'Built in the open with our community' },
-]
-
-/* ── Culture ── */
-
-export const companyCulture = {
-  heading: 'Culture',
-  description: 'We believe great work happens when people feel trusted, supported, and free to challenge the status quo.',
-}
-
-export const culturePerks: CulturePerk[] = [
-  // NOTE: each perk used to link to `/company/culture/<slug>` but those
-  // sub-pages don't exist. Until they do, every perk points to the main
-  // company page (the perks are rendered as descriptive labels anyway).
-  { title: 'Pet-Friendly Community', href: '/company' },
-  { title: 'Financial Awareness Together', href: '/company' },
-  { title: 'Support for Family Time', href: '/company' },
-  { title: 'Continuous Learning Culture', href: '/company' },
-  { title: 'Access to Network Benefits', href: '/company' },
-  { title: 'Unlimited Time Off', href: '/company' },
-  { title: 'Remote-First Mindset', href: '/company' },
-  { title: 'Active Lifestyle Encouragement', href: '/company' },
-  { title: 'Team Bonding Activities', href: '/company' },
-  { title: 'Focus on Wellbeing', href: '/company' },
-  { title: 'Community and Connection', href: '/company' },
-  { title: 'Flexible Work Environment', href: '/company' },
-]
-
-/* ── Values ── */
-
-export const companyValues: CompanyValue[] = [
-  { title: 'Empathy', description: 'We put ourselves in the shoes of our customers to understand their needs.' },
-  { title: 'Customer obsession', description: 'We are passionate about helping our customers succeed.' },
-  { title: 'Innovative', description: 'We constantly seek out new and better ways to solve problems.' },
-  { title: 'Collaboration', description: 'We work as a team to achieve our goals and celebrate our successes.' },
-  { title: 'Transparency', description: 'We believe in communicating openly and honestly with everyone.' },
-  { title: 'Diversity and inclusion', description: 'We believe in building a diverse and inclusive team.' },
-]
-
-/* ── Team ──
-   Team data is sourced exclusively from the CMS via `useTeamMembers()`.
-   Do NOT hardcode team members here — that creates drift the moment a
-   real team member is added or leaves. The founder is Nate Isern. */
 
 /* ── FAQ ── */
 
@@ -96,15 +19,4 @@ export const companyFAQ: FAQItem[] = [
   { question: 'How do I apply for a role at Oxy?', answer: 'Visit our careers page to see open roles. You can apply directly or reach out to us if you don\'t see a perfect fit but want to connect.' },
   { question: 'Any tips for preparing for an Oxy interview?', answer: 'Be yourself. Familiarize yourself with our products and values. We care about how you think and communicate, not just technical skills.' },
   { question: 'Does Oxy offer internships?', answer: 'Yes, we offer internships for students and early-career professionals. Check our careers page for current openings.' },
-]
-
-/* ── Quick Links ── */
-
-export const companyLinks = [
-  { label: 'Careers', href: '/company/careers', description: 'Join our global team of builders' },
-  { label: 'Newsroom', href: '/newsroom', description: 'Latest announcements and press' },
-  { label: 'Engineering Blog', href: '/company/news', description: 'Technical deep dives from our team' },
-  { label: 'Initiative', href: '/initiative', description: 'Our mission and community programs' },
-  { label: 'Open Source', href: 'https://github.com/OxyHQ', description: 'Browse our public repositories' },
-  { label: 'Partner Programs', href: '/partners', description: 'Collaborate and grow with Oxy' },
 ]
