@@ -5,6 +5,7 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
 import Button from '../components/ui/Button'
+import { TextFieldInput } from '@oxy.so/bloom/text-field'
 import { RiCheckLine } from '@oxy.so/bloom/icons/RiCheckLine'
 import { RiFileCopyLine } from '@oxy.so/bloom/icons/RiFileCopyLine'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
@@ -99,14 +100,14 @@ function DashboardContent({ referral }: { referral: ReferralDashboard }) {
             <div className="flex-1 truncate rounded-xl border border-border bg-background px-4 py-3 font-mono text-sm text-foreground">
               {shareUrl}
             </div>
-            <button
+            <Button
+              variant="outline"
               type="button"
               onClick={() => void copy(shareUrl, t('common.linkCopied'))}
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-surface"
             >
               <CopyIcon copied={copied} />
               {copied ? 'Copied!' : 'Copy link'}
-            </button>
+            </Button>
           </div>
         </div>
       </section>
@@ -166,17 +167,20 @@ function CodePrompt({ initialCode, onSubmit, error }: { initialCode: string; onS
           if (value.trim().length > 0) onSubmit(value.trim())
         }}
       >
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => setValue(e.target.value.toUpperCase())}
-          placeholder="ALEX-2026"
-          className="h-12 flex-1 rounded-xl border border-border bg-background px-4 font-mono text-base uppercase tracking-wider text-foreground placeholder:text-muted-foreground/60"
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="characters"
-          spellCheck={false}
-        />
+        <div className="flex-1">
+          <TextFieldInput
+            label="Referral code"
+            size="lg"
+            value={value}
+            onChangeText={(next) => setValue(next.toUpperCase())}
+            placeholder="ALEX-2026"
+            autoComplete="off"
+            autoCorrect={false}
+            autoCapitalize="characters"
+            spellCheck={false}
+            style={{ fontFamily: 'var(--font-mono)', letterSpacing: 0.8 }}
+          />
+        </div>
         <Button variant="primary" responsive>
           Open dashboard
         </Button>
