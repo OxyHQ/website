@@ -33,7 +33,6 @@ export default function WalletCtaSection() {
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
             <Button
               variant="primary"
-              size="lg"
               href={RELEASES_URL}
               target="_blank"
               rel="noopener noreferrer"
@@ -42,7 +41,6 @@ export default function WalletCtaSection() {
             </Button>
             <Button
               variant="outline"
-              size="lg"
               href={REPO_URL}
               target="_blank"
               rel="noopener noreferrer"

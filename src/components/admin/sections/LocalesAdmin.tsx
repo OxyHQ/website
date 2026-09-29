@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../../api/client'
 import { useLocales, type Locale } from '../../../api/hooks'
-import { PrimaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
 import { Switch } from '@oxy.so/bloom/switch'
 import { RiDeleteBinLine } from '@oxy.so/bloom/icons/RiDeleteBinLine'
@@ -124,13 +124,13 @@ export default function LocalesAdmin() {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2"><Switch value={form.enabled} onValueChange={(v) => setForm({ ...form, enabled: v })} /><span className="text-sm font-medium text-foreground">Enabled</span></div>
-                <div className="flex items-center gap-2"><Switch value={form.isDefault} onValueChange={(v) => setForm({ ...form, isDefault: v })} /><span className="text-sm font-medium text-foreground">Default</span></div>
+                <div className="flex items-center gap-2"><Switch checked={form.enabled} onCheckedChange={(v) => setForm({ ...form, enabled: v })} /><span className="text-sm font-medium text-foreground">Enabled</span></div>
+                <div className="flex items-center gap-2"><Switch checked={form.isDefault} onCheckedChange={(v) => setForm({ ...form, isDefault: v })} /><span className="text-sm font-medium text-foreground">Default</span></div>
               </div>
               <div className="flex gap-2">
-                <PrimaryButton onPress={save} disabled={saving || !form.code || !form.name}>
+                <Button appearance="solid" tone="accent" onPress={save} disabled={saving || !form.code || !form.name}>
                   {saving ? 'Saving...' : editingCode ? 'Update' : 'Add'}
-                </PrimaryButton>
+                </Button>
                 <button onClick={() => { setAdding(false); setEditingCode(null); setForm(emptyForm) }} className="rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground">
                   Cancel
                 </button>

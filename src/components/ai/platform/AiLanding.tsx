@@ -107,10 +107,10 @@ export default function AiLanding() {
       >
         <CodeSampleTabs samples={quickstartSamples} caption={t('ai.quickstart.modelPlaceholderNote')} />
         <div className="mt-6 flex flex-wrap gap-3">
-          <Button href="/ai/inference#quickstart" variant="outline" size="sm">
+          <Button href="/ai/inference#quickstart" variant="outline">
             {t('ai.cta.readQuickstart')}
           </Button>
-          <Button href={consoleLinks.root} variant="ghost" size="sm">
+          <Button href={consoleLinks.root} variant="ghost">
             {t('ai.cta.openConsole')}
           </Button>
         </div>
@@ -133,7 +133,7 @@ export default function AiLanding() {
               ))}
             </div>
             <div className="mt-6">
-              <Button href="/ai/models" variant="outline" size="sm">
+              <Button href="/ai/models" variant="outline">
                 {t('ai.cta.viewAllModels')}
               </Button>
             </div>
@@ -175,10 +175,10 @@ export default function AiLanding() {
           ))}
         </div>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Button href="/ai/enterprise" variant="outline" size="sm">
+          <Button href="/ai/enterprise" variant="outline">
             {t('ai.enterprise.seoTitle')}
           </Button>
-          <Button href="/contact/sales?interest=dedicated_inference" variant="ghost" size="sm">
+          <Button href="/contact/sales?interest=dedicated_inference" variant="ghost">
             {t('ai.cta.requestEvaluation')}
           </Button>
         </div>
@@ -199,10 +199,10 @@ export default function AiLanding() {
           ))}
         </ul>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Button href="/ai/enterprise" variant="outline" size="sm">
+          <Button href="/ai/enterprise" variant="outline">
             {t('common.learnMore')}
           </Button>
-          <Button href="/contact/sales" size="sm">
+          <Button href="/contact/sales">
             {t('ai.cta.talkToSales')}
           </Button>
         </div>
@@ -223,7 +223,7 @@ export default function AiLanding() {
           )}
         </div>
         <div className="mt-6">
-          <Button href="/ai/trust" variant="outline" size="sm">
+          <Button href="/ai/trust" variant="outline">
             {t('common.readMore')}
           </Button>
         </div>
@@ -236,7 +236,7 @@ export default function AiLanding() {
           {pricingSummary.aliaNote}
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Button href="/ai/pricing" variant="outline" size="sm">
+          <Button href="/ai/pricing" variant="outline">
             {t('ai.cta.viewPricing')}
           </Button>
           <a

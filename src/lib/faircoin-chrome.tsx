@@ -297,10 +297,10 @@ export function useFairCoinNavCtaButtons(): React.ReactNode {
     () =>
       onFairCoinHost ? (
         <>
-          <Button variant="outline" size="sm" href={walletHref}>
+          <Button variant="outline" href={walletHref}>
             Get a wallet
           </Button>
-          <Button variant="primary" size="sm" href={buyHref}>
+          <Button variant="primary" href={buyHref}>
             Buy FairCoin
           </Button>
         </>

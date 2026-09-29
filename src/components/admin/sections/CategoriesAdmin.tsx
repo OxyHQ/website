@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useCategories, type CategoryRecord, type CategoryScope } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
-import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '@oxy.so/bloom/label'
@@ -69,7 +69,7 @@ export default function CategoriesAdmin() {
     return (
       <div>
         <div className="mb-4">
-          <Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back to list</Button>
+          <Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">
           {isNew ? 'New category' : `Edit: ${editing.label}`}
@@ -135,10 +135,10 @@ export default function CategoriesAdmin() {
           {error && <p className="text-sm text-error-text">{error}</p>}
 
           <div className="flex items-center gap-2">
-            <PrimaryButton onPress={save} disabled={saving}>
+            <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving…' : 'Save changes'}
-            </PrimaryButton>
-            <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>
+            </Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
           </div>
         </div>
       </div>
@@ -155,7 +155,7 @@ export default function CategoriesAdmin() {
             Identified by slug, rendered as <span className="font-mono">label</span>.
           </p>
         </div>
-        <PrimaryButton onPress={() => setEditing(emptyCategory())}>Add category</PrimaryButton>
+        <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyCategory())}>Add category</Button>
       </div>
 
       {grouped.map(({ scope, items }) => (
@@ -176,8 +176,8 @@ export default function CategoriesAdmin() {
                   </div>
                   <div className="shrink-0 text-xs text-muted-foreground">#{category.order}</div>
                   <div className="shrink-0">
-                    <Button variant="ghost" size="small" onPress={() => setEditing(category)}>Edit</Button>
-                    <Button variant="ghost" size="small" onPress={() => deleteAction.request(category)}>Delete</Button>
+                    <Button appearance="subtle" onPress={() => setEditing(category)}>Edit</Button>
+                    <Button appearance="subtle" onPress={() => deleteAction.request(category)}>Delete</Button>
                   </div>
                 </div>
               ))}

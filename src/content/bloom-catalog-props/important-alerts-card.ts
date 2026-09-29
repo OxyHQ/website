@@ -9,8 +9,8 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'alerts', type: 'readonly ImportantAlertsCardAlert[]', optional: false, description: 'The feed, newest first. It scrolls inside the card.' },
         { name: 'count', type: 'number | string', optional: false, description: 'The headline number — the total for the period, which can be higher than `alerts.length` when the feed lists only the most recent ones.' },
-        { name: 'title', type: 'string', optional: true, description: 'Card title. Defaults to `"Important alerts"`.' },
-        { name: 'countCaption', type: 'string', optional: true, description: 'Caption after the count. Defaults to `"this week"`.' },
+        { name: 'title', type: 'string', optional: true, description: 'Card title (`"Important alerts"` in English).' },
+        { name: 'countCaption', type: 'string', optional: true, description: 'Caption after the count (`"this week"` in English).' },
         { name: 'rangeLabel', type: 'string', optional: true, description: 'Label of the range pill in the corner (`"29 Jun - 5 Jul"`). Omit to hide the pill.' },
         { name: 'height', type: 'number', optional: true, description: 'Card height. Defaults to `330`.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },

@@ -44,7 +44,6 @@ export function NewsroomFilterMenu<T extends string>({
     <DropdownMenu>
       <DropdownMenuTrigger asChild label={label} className="inline-flex">
         <Button
-          size="sm"
           appearance="plain"
           tone="neutral"
           leadingIcon={RiEqualizerLine}
@@ -99,7 +98,6 @@ export function NewsroomSortMenu<T extends string>({
     <DropdownMenu>
       <DropdownMenuTrigger asChild label={accessibleLabel} className="inline-flex">
         <Button
-          size="sm"
           appearance="plain"
           tone="neutral"
           accessibilityLabel={accessibleLabel}
@@ -148,14 +146,13 @@ export function NewsroomActiveFilters<T extends string>({
       {active.map((category) => (
         <Chip
           key={category}
-          size="large"
           onClose={() => onRemove(category)}
           closeLabel={t('newsroom.removeFilter', { category })}
         >
           {category}
         </Chip>
       ))}
-      <Button size="sm" appearance="plain" tone="neutral" onPress={onClear}>
+      <Button appearance="plain" tone="neutral" onPress={onClear}>
         {clearAllLabel}
       </Button>
     </div>

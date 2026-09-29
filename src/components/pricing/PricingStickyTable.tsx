@@ -92,9 +92,9 @@ export default function PricingStickyTable({ isAnnual, onToggle }: Props) {
                     </div>
                     <div className="mt-4 flex flex-col items-stretch">
                       {plan.price === null ? (
-                        <Button variant="outline" size="md">{plan.cta}</Button>
+                        <Button variant="outline">{plan.cta}</Button>
                       ) : (
-                        <Button variant={plan.highlighted ? 'primary' : 'outline'} size="md" href={plan.ctaHref}>
+                        <Button variant={plan.highlighted ? 'primary' : 'outline'} href={plan.ctaHref}>
                           {plan.cta}
                         </Button>
                       )}

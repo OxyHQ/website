@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMedia, type MediaItem } from '../../../api/hooks'
-import { PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
 import { apiFetch } from '../../../api/client'
 import ConfirmDialog from '../ConfirmDialog'
@@ -59,9 +59,9 @@ export default function MediaAdmin() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Edit Media</h2>
-          <SecondaryButton onPress={() => setEditing(null)}>
+          <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>
             <span>Back</span>
-          </SecondaryButton>
+          </Button>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
@@ -98,12 +98,12 @@ export default function MediaAdmin() {
             />
 
             <div className="flex gap-2 pt-2">
-              <PrimaryButton onPress={handleSave} disabled={saving}>
+              <Button appearance="solid" tone="accent" onPress={handleSave} disabled={saving}>
                 <span>{saving ? 'Saving...' : 'Save'}</span>
-              </PrimaryButton>
-              <SecondaryButton onPress={() => deleteAction.request(editing)}>
+              </Button>
+              <Button appearance="outline" tone="neutral" onPress={() => deleteAction.request(editing)}>
                 <span style={{ color: 'var(--color-destructive)' }}>Delete</span>
-              </SecondaryButton>
+              </Button>
             </div>
           </div>
         </div>
@@ -126,9 +126,9 @@ export default function MediaAdmin() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Media Library</h2>
-        <PrimaryButton onPress={() => setShowUpload(true)}>
+        <Button appearance="solid" tone="accent" onPress={() => setShowUpload(true)}>
           <span>Upload</span>
-        </PrimaryButton>
+        </Button>
       </div>
 
       {/* Search + filters */}
@@ -189,13 +189,13 @@ export default function MediaAdmin() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 pt-4">
-          <SecondaryButton onPress={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}>
+          <Button appearance="outline" tone="neutral" onPress={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}>
             <span>Previous</span>
-          </SecondaryButton>
+          </Button>
           <span className="text-sm text-muted-foreground">Page {page} of {totalPages}</span>
-          <SecondaryButton onPress={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>
+          <Button appearance="outline" tone="neutral" onPress={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>
             <span>Next</span>
-          </SecondaryButton>
+          </Button>
         </div>
       )}
 

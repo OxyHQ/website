@@ -114,18 +114,6 @@ export function useUpdatePage(slug: string) {
   })
 }
 
-export function usePromptPhrases(slug: string, enabled = true) {
-  const locale = useCurrentLocale()
-  return useQuery({
-    queryKey: ['promptPhrases', slug, locale],
-    queryFn: () => apiFetch<string[]>(`/pages/${slug}/prompt-phrases`, { locale }),
-    placeholderData: [],
-    enabled,
-    retry: false,
-    staleTime: Infinity,
-  })
-}
-
 // ── Hero ──
 
 /** Populated Media ref from the server, or a plain URL string, or null. */

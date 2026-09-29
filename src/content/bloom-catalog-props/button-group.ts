@@ -7,9 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'ButtonGroupProps': {
       props: [
-        { name: 'material', type: 'ControlMaterial', options: ['solid', 'glass'], optional: true, description: "The material the group paints: `solid` (an opaque bordered pill, Bloom's default chrome) or `glass` (one translucent island the items sit flush on)." },
-        { name: 'variant', type: 'ControlMaterial', options: ['solid', 'glass'], optional: true },
-        { name: 'size', type: 'ButtonGroupSize', options: ['md', 'sm', 'medium', 'small'], optional: true, description: 'Size for every item that does not set its own. Inherited from the nearest `ControlSurface` when omitted, then `md`.' },
+        { name: 'size', type: 'ButtonGroupSize', options: ['md', 'sm'], optional: true, description: 'Size for every item that does not set its own. Inherited from the nearest `BloomScope` when omitted, then `md`.' },
         { name: 'dividers', type: 'boolean', optional: true, description: 'Whether to draw the 1px hairlines BETWEEN items.' },
         { name: 'children', type: 'React.ReactNode', optional: false, description: '`ButtonGroupItem` children.' },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the group.' },
@@ -21,9 +19,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'onPress', type: '(event: GestureResponderEvent) => void', optional: true, description: "Press handler. Receives the event, so a handler composed onto this item by an anchored family's `asChild` trigger can `preventDefault()` it — see `floating/TriggerSlot.tsx`." },
         { name: 'children', type: 'React.ReactNode', optional: true, description: 'Label. Ignored when `iconOnly`.' },
-        { name: 'size', type: 'ButtonGroupSize', options: ['md', 'sm', 'medium', 'small'], optional: true, description: "Overrides the group's size." },
-        { name: 'material', type: 'ControlMaterial', options: ['solid', 'glass'], optional: true, description: "Overrides the group's material. Rarely needed; the group owns it." },
-        { name: 'variant', type: 'ControlMaterial', options: ['solid', 'glass'], optional: true },
+        { name: 'size', type: 'ButtonGroupSize', options: ['md', 'sm'], optional: true, description: "Overrides the group's size." },
         { name: 'checked', type: 'boolean', optional: true, description: 'Highlights the item like its hover state and announces it as pressed.' },
         { name: 'selected', type: 'boolean', optional: true },
         { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: true },

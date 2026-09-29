@@ -83,11 +83,12 @@ export default function ConfirmDialog({
           )}
           {error && <p className="text-sm text-error-text">{error}</p>}
           <div className="mt-4 flex items-center justify-end gap-2">
-            <Button variant="ghost" size="small" onPress={() => control.close()} disabled={busy}>
+            <Button appearance="subtle" onPress={() => control.close()} disabled={busy}>
               {cancelLabel}
             </Button>
             <Button
-              variant={tone === 'danger' ? 'destructive' : 'primary'}
+              appearance="solid"
+              tone={tone === 'danger' ? 'danger' : 'accent'}
               onPress={() => { void onConfirm() }}
               disabled={busy}
             >

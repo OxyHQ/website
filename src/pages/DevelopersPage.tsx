@@ -77,10 +77,10 @@ function DevelopersHero() {
           {heroDescription}
         </p>
         <div className="mt-2 flex flex-wrap items-center gap-3">
-          <Button variant="primary" size="lg" href={heroPrimaryCta.href}>
+          <Button variant="primary" href={heroPrimaryCta.href}>
             {heroPrimaryCta.label}
           </Button>
-          <Button variant="outline" size="lg" href={heroSecondaryCta.href}>
+          <Button variant="outline" href={heroSecondaryCta.href}>
             {heroSecondaryCta.label}
           </Button>
         </div>
@@ -202,7 +202,7 @@ function BuildWithAI() {
         ))}
       </div>
       <div className="mt-8 flex flex-wrap gap-3">
-        <Button href="/ai/inference" variant="outline" size="sm">
+        <Button href="/ai/inference" variant="outline">
           Oxy Inference
         </Button>
         {/*
@@ -210,10 +210,10 @@ function BuildWithAI() {
           Oxy Console operations. This page links to them; it never implements
           one, and it never claims one happened.
         */}
-        <Button href={consoleLinks.createApplication} variant="ghost" size="sm">
+        <Button href={consoleLinks.createApplication} variant="ghost">
           Create an application in Oxy Console
         </Button>
-        <Button href={consoleLinks.playground} variant="ghost" size="sm">
+        <Button href={consoleLinks.playground} variant="ghost">
           Open the playground
         </Button>
       </div>
@@ -237,7 +237,7 @@ function APIPromo() {
   -H "Authorization: Bearer $OXY_TOKEN"`}</code>
             </pre>
           </div>
-          <Button variant="primary" size="md" href={apiCta.href}>
+          <Button variant="primary" href={apiCta.href}>
             {apiCta.label} <ArrowRightIcon className="size-3.5" />
           </Button>
         </div>
@@ -286,10 +286,10 @@ function FinalCTA() {
         </AnimatedTitle>
         <p className="max-w-xl text-pretty text-lg text-muted-foreground">{ctaDescription}</p>
         <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
-          <Button variant="primary" size="lg" href={heroPrimaryCta.href}>
+          <Button variant="primary" href={heroPrimaryCta.href}>
             {heroPrimaryCta.label}
           </Button>
-          <Button variant="outline" size="lg" href={heroSecondaryCta.href}>
+          <Button variant="outline" href={heroSecondaryCta.href}>
             {heroSecondaryCta.label}
           </Button>
         </div>

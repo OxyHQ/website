@@ -1,7 +1,7 @@
 import { Suspense, createElement, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Link } from '../../lib/navigation'
-import { TextButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { bloomDemos, getBloomDemo } from '../../content/bloom-demos/registry'
 import { defaultValues, type PlaygroundValues } from '../../content/bloom-demos/_playground'
 import { bloomVersion } from '../../content/bloom-catalog.generated'
@@ -109,7 +109,7 @@ export default function BloomPlayground() {
                 ]}
               />
             </div>
-            <TextButton onPress={reset}>Reset example</TextButton>
+            <Button appearance="plain" onPress={reset}>Reset example</Button>
           </div>
           <div className="bloom-workbench">
             <aside

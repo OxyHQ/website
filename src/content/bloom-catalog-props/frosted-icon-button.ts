@@ -10,7 +10,7 @@ export const props: BloomSurfaceProps = {
         { name: 'onPress', type: '() => void', optional: true, description: 'Press handler.' },
         { name: 'icon', type: 'ButtonIconComponent', optional: true, description: 'Icon component; Bloom supplies its size and resolved foreground.' },
         { name: 'tone', type: 'BloomTone', options: ['neutral', 'accent', 'support', 'action', 'success', 'warning', 'danger', 'info'], optional: true },
-        { name: 'checked', type: 'boolean', optional: true, description: 'Solid "on" state for toggles. When true the button drops its translucency and backdrop blur and fills with the brand `primary` token (icon tinted `primaryForeground`), so an enabled toggle reads unmistakably as active. Exposed to assistive tech as `aria-pressed` (web) / the selected a11y state.' },
+        { name: 'checked', type: 'boolean', optional: true, description: 'Solid "on" state for toggles. When true the button uses the chosen semantic tone and its paired foreground, so an enabled toggle reads unmistakably as active. Exposed to assistive tech as `aria-pressed` (web) / the selected a11y state.' },
         { name: 'onCheckedChange', type: '(checked: boolean) => void', optional: true },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'size', type: 'FrostedIconButtonSize | number', optional: true, description: "A preset (`'sm' | 'md'`) or a raw pixel diameter (`number`). Defaults to `'md'` (36px). See FrostedIconButtonSize." },

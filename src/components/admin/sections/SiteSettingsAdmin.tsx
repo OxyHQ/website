@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useSiteSettings, useLocales, type SiteSettings } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
-import { PrimaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
 import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
@@ -68,14 +68,14 @@ export default function SiteSettingsAdmin() {
             <div className="mt-3 flex flex-col gap-3">
               <Field label="Text" value={form.banner?.text ?? ''} onChange={(v) => setForm({ ...form, banner: { ...form.banner, text: v } })} />
               <Field label="Link" value={form.banner?.href ?? ''} onChange={(v) => setForm({ ...form, banner: { ...form.banner, href: v } })} />
-              <div className="flex items-center gap-2"><Switch value={form.banner?.visible ?? false} onValueChange={(val) => setForm({ ...form, banner: { ...form.banner, visible: val } })} /><Label>Visible</Label></div>
+              <div className="flex items-center gap-2"><Switch checked={form.banner?.visible ?? false} onCheckedChange={(val) => setForm({ ...form, banner: { ...form.banner, visible: val } })} /><Label>Visible</Label></div>
             </div>
           </div>
 
           <div className="mt-4 self-start">
-            <PrimaryButton onPress={save} disabled={saving}>
+            <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving...' : 'Save changes'}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       ) : (

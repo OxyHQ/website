@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react'
 import { useMedia, type MediaItem } from '../../api/hooks'
-import { Button, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { Dialog } from '@oxy.so/bloom/dialog'
 import { RiCloseLine } from '@oxy.so/bloom/icons/RiCloseLine'
 import { RiFileTextLine } from '@oxy.so/bloom/icons/RiFileTextLine'
@@ -95,7 +95,6 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
           <h2 className="text-lg font-semibold text-foreground">Media Library</h2>
           <Button
             iconOnly
-            size="sm"
             appearance="plain"
             tone="neutral"
             leadingIcon={RiCloseLine}
@@ -131,9 +130,9 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
                   <RiUploadCloud2Line aria-hidden size="3xl" fill={colors.textSecondary} style={{ marginBottom: 12 }} />
                   <p className="text-sm text-muted-foreground">Drag and drop a file here</p>
                   <p className="mt-1 text-xs text-muted-foreground">or</p>
-                  <SecondaryButton onPress={() => fileRef.current?.click()} style={{ marginTop: 8 }}>
+                  <Button appearance="outline" tone="neutral" onPress={() => fileRef.current?.click()} style={{ marginTop: 8 }}>
                     <span style={{ fontSize: 13 }}>Browse files</span>
-                  </SecondaryButton>
+                  </Button>
                   <input
                     ref={fileRef}
                     type="file"
@@ -157,7 +156,6 @@ export default function MediaPickerDialog({ onSelect, onClose, folder = 'images'
                 />
                 <SegmentedControl
                   type="radio"
-                  size="sm"
                   label="Media type"
                   value={typeFilter}
                   onValueChange={setTypeFilter}

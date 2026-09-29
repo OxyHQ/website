@@ -7,6 +7,7 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'ZoomableMediaGalleryProps': {
       props: [
+        { name: 'labels', type: 'Partial<ZoomableMediaGalleryLabels>', optional: true, description: "Overrides any of the viewer's names." },
         { name: 'measureThumb', type: 'MeasureThumb', optional: true, description: 'Measures any thumbnail by its media subset index, used on dismiss.' },
         { name: 'cornerRadius', type: "number | 'circle'", optional: true, description: "Corner radius applied to the zoomed media. `'circle'` rounds each item to a full circle at whatever size it is fitted to — what an avatar needs, and the reason avatars don't need their own viewer." },
         { name: 'indicatorVariant', type: "'dots' | 'thumbnails'", options: ['dots', 'thumbnails'], optional: true, description: "Bottom page indicator for multi-item galleries. `'dots'` (default) renders the compact dot row; `'thumbnails'` renders a horizontal strip of tappable media tiles. The counter pill shows in both. Ignored for single-item galleries." },

@@ -179,7 +179,6 @@ export default function AppDetailContent() {
             <div className="shrink-0">
               <Button
                 variant="primary"
-                size="lg"
                 responsive
                 href={openHref}
                 className="w-full"

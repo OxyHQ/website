@@ -116,7 +116,7 @@ export default function CourseDetailPage() {
         ) : null}
         <div className="flex flex-wrap items-center gap-3">
           {cta ? (
-            <Button href={cta.to} variant="primary" size="md" className="max-w-full">
+            <Button href={cta.to} variant="primary" className="max-w-full">
               <span className="truncate">{cta.label}</span>
             </Button>
           ) : null}

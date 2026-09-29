@@ -16,7 +16,7 @@ export default function CodexExtensionPage() {
       navbar={
         <Navbar
           rightActions={
-            <Button variant="primary" size="sm" href="/codea">
+            <Button variant="primary" href="/codea">
               Codea Studio
             </Button>
           }

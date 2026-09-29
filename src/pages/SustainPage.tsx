@@ -278,10 +278,10 @@ export default function SustainPage() {
                   {heroSubtitle}
                 </p>
                 <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-                  <Button variant="primary" size="md" responsive href="/pricing">
+                  <Button variant="primary" responsive href="/pricing">
                     Subscribe to a plan
                   </Button>
-                  <Button variant="outline" size="md" responsive href={DONATE_URL} target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline" responsive href={DONATE_URL} target="_blank" rel="noopener noreferrer">
                     Make a donation
                   </Button>
                 </div>
@@ -393,10 +393,10 @@ export default function SustainPage() {
                           Live funding numbers are temporarily unavailable. Subscribe or donate to help us reach sustainability.
                         </p>
                         <div className="flex flex-wrap items-center justify-center gap-3">
-                          <Button variant="primary" size="md" responsive href="/pricing">
+                          <Button variant="primary" responsive href="/pricing">
                             Subscribe
                           </Button>
-                          <Button variant="outline" size="md" responsive href={DONATE_URL} target="_blank" rel="noopener noreferrer">
+                          <Button variant="outline" responsive href={DONATE_URL} target="_blank" rel="noopener noreferrer">
                             Donate
                           </Button>
                         </div>
@@ -437,7 +437,7 @@ export default function SustainPage() {
                     <h3 className="mt-6 text-lg font-medium text-foreground">Subscribe</h3>
                     <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">Choose a plan that fits. Every subscriber directly funds development and infrastructure.</p>
                     <span className="mt-6 inline-flex">
-                      <Button variant="outline" size="sm" href="/pricing">View plans</Button>
+                      <Button variant="outline" href="/pricing">View plans</Button>
                     </span>
                   </div>
                   <div className="flex flex-col bg-background p-8 lg:p-10">
@@ -447,7 +447,7 @@ export default function SustainPage() {
                     <h3 className="mt-6 text-lg font-medium text-foreground">Donate</h3>
                     <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">One-time or recurring. Every donation moves the bar and keeps Oxy independent.</p>
                     <span className="mt-6 inline-flex">
-                      <Button variant="outline" size="sm" href={DONATE_URL} target="_blank" rel="noopener noreferrer">Donate now</Button>
+                      <Button variant="outline" href={DONATE_URL} target="_blank" rel="noopener noreferrer">Donate now</Button>
                     </span>
                   </div>
                   <div className="flex flex-col bg-background p-8 lg:p-10">
@@ -457,7 +457,7 @@ export default function SustainPage() {
                     <h3 className="mt-6 text-lg font-medium text-foreground">Spread the word</h3>
                     <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">Tell a friend, write about us, or just keep using Oxy. Growth without ads means growth through people.</p>
                     <span className="mt-6 inline-flex">
-                      <Button variant="outline" size="sm" href="/referrals">Referral program</Button>
+                      <Button variant="outline" href="/referrals">Referral program</Button>
                     </span>
                   </div>
                 </div>
@@ -479,10 +479,10 @@ export default function SustainPage() {
                     {ctaSubheading}
                   </p>
                   <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
-                    <Button variant="primary" size="md" responsive href="/pricing">
+                    <Button variant="primary" responsive href="/pricing">
                       Subscribe
                     </Button>
-                    <Button variant="outline" size="md" responsive href={DONATE_URL} target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" responsive href={DONATE_URL} target="_blank" rel="noopener noreferrer">
                       Donate
                     </Button>
                   </div>

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../../api/client'
 import { BADGE_DEFINITIONS } from '../../../data/badges'
-import { Button, PrimaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
 import OptionSelect from '../../ui/OptionSelect'
 
@@ -98,7 +98,7 @@ export default function BadgesAdmin() {
               emptyIsPlaceholder
             />
           </div>
-          <PrimaryButton
+          <Button appearance="solid" tone="accent"
             onPress={() => {
               if (username && selectedBadge) {
                 awardBadge.mutate({ userId: username, username, badgeId: selectedBadge })
@@ -107,7 +107,7 @@ export default function BadgesAdmin() {
             disabled={!username || !selectedBadge || awardBadge.isPending}
           >
             {awardBadge.isPending ? 'Awarding...' : 'Award'}
-          </PrimaryButton>
+          </Button>
         </div>
       </div>
 
@@ -148,8 +148,7 @@ export default function BadgesAdmin() {
                     </div>
                   </div>
                   <Button
-                    variant="ghost"
-                    size="small"
+                    appearance="subtle"
                     onPress={() => revokeBadge.mutate({ userId: searchUser, badgeId: b.badgeId })}
                   >
                     Revoke

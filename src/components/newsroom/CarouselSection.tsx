@@ -11,12 +11,6 @@ interface CarouselSectionProps {
 
 /* ──────────────────────────────────────────────────
  * Horizontal scroll carousel section
- * Original outer: @lg:max-w-container flex w-auto
- * Original scroll: w-full no-scrollbar snap-x snap-mandatory overflow-x-auto overflow-y-hidden
- * Original inner: @md:gap-sm px-sm @md:px-md pe-sm flex min-w-[56rem]
- *   @md:min-w-[unset] @lg:px-0 grid flex-none grid-cols-3
- * Item: mb-md relative @md:mb-0 ps-sm snap-start @md:ps-0
- *   min-w-[calc(100%_/_3)] ps-0 last:me-0
  * ────────────────────────────────────────────── */
 export default function CarouselSection({
   title,

@@ -9,14 +9,14 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'title', type: 'string', optional: false, description: "The document's title. Controlled — the app owns the text." },
         { name: 'onTitleChange', type: '(title: string) => void', optional: true, description: 'Called with every keystroke of the title.' },
-        { name: 'placeholder', type: 'string', optional: true, description: 'Drawn in the title\'s place while it is empty. Default `"Untitled"`.' },
+        { name: 'placeholder', type: 'string', optional: true, description: 'Drawn in the title\'s place while it is empty (`"Untitled"` in English).' },
         { name: 'saveState', type: 'NoteSaveState', options: ['saved', 'saving', 'offline', 'error'], optional: true, description: 'Where the document stands with its store. Omitted, the header draws no state word at all — which is right for a document that is not backed by one.' },
         { name: 'edited', type: 'string', optional: true, description: 'When the document was last written to, PRE-FORMATTED ("Edited 2 min ago").' },
         { name: 'wordCount', type: 'number', optional: true, description: "The body's length in words. The header formats it; the app counts it." },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Stops the title being edited and dims it.' },
         { name: 'readOnly', type: 'boolean', optional: true, description: 'A read-only document: the title is not editable and NOT dimmed, because nothing is broken — it is a published note, a shared one, a revision.' },
         { name: 'actions', type: 'ReactNode', optional: true, description: 'The trailing slot on the title line — a share button, a menu, a `ButtonGroup`.' },
-        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the header region. Default `"Note"`.' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the header region (`"Note"` in English).' },
         { name: 'labels', type: 'NoteEditorHeaderLabels', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'titleStyle', type: 'StyleProp<TextStyle>', optional: true, description: "Overrides the title's own type. The header owns its size; this is for a display face." },
@@ -26,7 +26,7 @@ export const props: BloomSurfaceProps = {
     'NoteEditorToolbarProps': {
       props: [
         { name: 'actions', type: 'ReadonlyArray<NoteEditorAction>', optional: false, description: 'The actions, in the order they are drawn.' },
-        { name: 'size', type: "'medium' | 'small'", options: ['medium', 'small'], optional: true, description: 'The `ButtonGroup` rung. Default `medium` (34px items); `small` is 30.' },
+        { name: 'size', type: "'md' | 'sm'", options: ['md', 'sm'], optional: true, description: 'The `ButtonGroup` rung. Default `md` (34px items); `sm` is 30.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Disables every action and the overflow, without each caller writing it per action.' },
         { name: 'accessibilityLabel', type: 'string', optional: false, description: 'Names the toolbar. Required in substance — a row of glyphs has no name of its own.' },
         { name: 'labels', type: 'NoteEditorToolbarLabels', optional: true },

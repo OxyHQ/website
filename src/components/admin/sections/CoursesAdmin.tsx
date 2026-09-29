@@ -10,7 +10,7 @@ import {
   type CourseStatus,
 } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
-import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { Switch } from '@oxy.so/bloom/switch'
 import { Badge } from '@oxy.so/bloom/badge'
 import { LabeledTextField } from '../LabeledTextField'
@@ -202,7 +202,7 @@ export default function CoursesAdmin() {
     return (
       <div>
         <div className="mb-4">
-          <Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back to list</Button>
+          <Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">
           {isNew ? 'New course' : `Edit: ${editing.title}`}
@@ -302,13 +302,13 @@ export default function CoursesAdmin() {
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Switch value={editing.featured} onValueChange={(val) => setEditing({ ...editing, featured: val })} />
+              <Switch checked={editing.featured} onCheckedChange={(val) => setEditing({ ...editing, featured: val })} />
               <Label>Featured</Label>
             </div>
             <div className="flex items-center gap-2">
               <Switch
-                value={editing.status === 'published'}
-                onValueChange={(val) => setEditing({ ...editing, status: val ? 'published' : 'draft' })}
+                checked={editing.status === 'published'}
+                onCheckedChange={(val) => setEditing({ ...editing, status: val ? 'published' : 'draft' })}
               />
               <Label>{editing.status === 'published' ? 'Published' : 'Draft'}</Label>
             </div>
@@ -323,9 +323,9 @@ export default function CoursesAdmin() {
                   Embedded course lessons. Reorder with the arrows.
                 </p>
               </div>
-              <SecondaryButton onPress={addLesson} style={{ paddingBlock: 6, paddingInline: 12 }}>
+              <Button appearance="outline" tone="neutral" onPress={addLesson} style={{ paddingBlock: 6, paddingInline: 12 }}>
                 <span style={{ fontSize: 13 }}>Add lesson</span>
-              </SecondaryButton>
+              </Button>
             </div>
 
             <div className="mt-4 flex flex-col gap-3">
@@ -339,9 +339,9 @@ export default function CoursesAdmin() {
                       Lesson {index + 1}
                     </span>
                     <div className="flex gap-1">
-                      <Button variant="ghost" size="small" onPress={() => moveLesson(index, -1)}>&uarr;</Button>
-                      <Button variant="ghost" size="small" onPress={() => moveLesson(index, 1)}>&darr;</Button>
-                      <Button variant="ghost" size="small" onPress={() => removeLesson(index)}>Remove</Button>
+                      <Button appearance="subtle" onPress={() => moveLesson(index, -1)}>&uarr;</Button>
+                      <Button appearance="subtle" onPress={() => moveLesson(index, 1)}>&darr;</Button>
+                      <Button appearance="subtle" onPress={() => removeLesson(index)}>Remove</Button>
                     </div>
                   </div>
 
@@ -391,10 +391,10 @@ export default function CoursesAdmin() {
           {error && <p className="text-sm text-error-text">{error}</p>}
 
           <div className="mt-2 flex gap-3">
-            <PrimaryButton onPress={save} disabled={saving}>
+            <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving…' : isNew ? 'Publish' : 'Update'}
-            </PrimaryButton>
-            <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>
+            </Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
           </div>
         </div>
       </div>
@@ -405,7 +405,7 @@ export default function CoursesAdmin() {
     return (
       <div>
         <div className="mb-4">
-          <Button variant="ghost" size="small" onPress={() => setTranslating(null)}>&larr; Back</Button>
+          <Button appearance="subtle" onPress={() => setTranslating(null)}>&larr; Back</Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">Translate: {translating.title}</h2>
         <div className="mt-4">
@@ -436,7 +436,7 @@ export default function CoursesAdmin() {
           <p className="mt-1 text-sm text-muted-foreground">{courses.length} courses</p>
         </div>
         {isDefault && (
-          <PrimaryButton onPress={() => setEditing(emptyCourse())}>New course</PrimaryButton>
+          <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyCourse())}>New course</Button>
         )}
       </div>
 
@@ -469,11 +469,11 @@ export default function CoursesAdmin() {
               <div className="flex items-center gap-2">
                 {isDefault ? (
                   <>
-                    <Button variant="ghost" size="small" onPress={() => setEditing(stripRefsForEditing(course))}>Edit</Button>
-                    <Button variant="ghost" size="small" onPress={() => deleteAction.request(course)}>Delete</Button>
+                    <Button appearance="subtle" onPress={() => setEditing(stripRefsForEditing(course))}>Edit</Button>
+                    <Button appearance="subtle" onPress={() => deleteAction.request(course)}>Delete</Button>
                   </>
                 ) : (
-                  <Button variant="ghost" size="small" onPress={() => setTranslating(course)}>Translate</Button>
+                  <Button appearance="subtle" onPress={() => setTranslating(course)}>Translate</Button>
                 )}
               </div>
             </div>

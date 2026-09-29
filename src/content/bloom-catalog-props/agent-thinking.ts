@@ -8,7 +8,7 @@ export const props: BloomSurfaceProps = {
     'AgentThinkingProps': {
       props: [
         { name: 'variant', type: 'AgentThinkingVariant', options: ['wave', 'spin', 'stars', 'infinity'], optional: true, description: "Default `'wave'`." },
-        { name: 'label', type: 'string', optional: true, description: 'Status label, e.g. "Thinking" or "Searching the docs". Default `\'Thinking\'`.' },
+        { name: 'label', type: 'string', optional: true, description: 'Status label, e.g. "Thinking" or "Searching the docs". `\'Thinking\'` in English.' },
         { name: 'tone', type: 'AgentThinkingTone', options: ['subtle', 'default', 'primary', 'accent'], optional: true, description: 'Tone of the indicator + label. Defaults per variant (`stars` is `subtle`, the rest `default`).' },
         { name: 'shimmer', type: 'boolean', optional: true, description: 'Highlight travelling across the label (web; static tone on native). Default `true`.' },
         { name: 'showTimer', type: 'boolean', optional: true, description: 'Elapsed seconds since mount (`12.3s`), rendered after the label. Default `true`.' },

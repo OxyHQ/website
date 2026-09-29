@@ -83,7 +83,7 @@ export const props: BloomSurfaceProps = {
         { name: 'label', type: 'string', optional: false },
         { name: 'value', type: 'Date', optional: false },
         { name: 'onChange', type: '(date: Date) => void', optional: false },
-        { name: 'formatDate', type: '(date: Date) => string', optional: true, description: 'Default `28 July 1997` style (`day month year`).' },
+        { name: 'formatDate', type: '(date: Date) => string', optional: true, description: "Defaults to the locale's long date (`28 July 1997` in en-GB, `July 28, 1997` in en-US)." },
         { name: 'minDate', type: 'Date', optional: true },
         { name: 'maxDate', type: 'Date', optional: true },
         { name: 'showSavedToast', type: 'boolean', optional: true },
@@ -92,7 +92,7 @@ export const props: BloomSurfaceProps = {
     },
     'SettingsPlanCardProps': {
       props: [
-        { name: 'badge', type: 'string', optional: true, description: 'Chip over the title. Default `Current plan`.' },
+        { name: 'badge', type: 'string', optional: true, description: 'Chip over the title (`Current plan` in English).' },
         { name: 'title', type: 'string', optional: false },
         { name: 'description', type: 'string', optional: true },
         { name: 'action', type: 'ReactNode', optional: true, description: 'Usually a secondary small `Button` ("Upgrade to Max").' },

@@ -16,7 +16,7 @@ export const props: BloomSurfaceProps = {
         { name: 'density', type: 'AddressDensity', options: ['comfortable', 'compact'], optional: true, description: 'Default `comfortable`.' },
         { name: 'labels', type: 'RouteStopsLabels', optional: true },
         { name: 'addIcon', type: 'BloomIconComponent', optional: true, description: 'The glyph on the add button. Default a plus.' },
-        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the list. Default `"Route stops"`.' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Names the list. `"Route stops"` in English.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],

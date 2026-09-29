@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { apiFetch } from '../../../api/client'
 import { LabeledTextField } from '../LabeledTextField'
 import ConfirmDialog from '../ConfirmDialog'
@@ -110,7 +110,7 @@ export default function ReposAdmin() {
             from the site.
           </p>
         </div>
-        {!draft && <PrimaryButton onPress={() => setDraft(emptyDraft())}>Add repository</PrimaryButton>}
+        {!draft && <Button appearance="solid" tone="accent" onPress={() => setDraft(emptyDraft())}>Add repository</Button>}
       </div>
 
       {error && <p className="mt-4 text-sm text-error-text">{error}</p>}
@@ -173,8 +173,8 @@ export default function ReposAdmin() {
           </div>
 
           <div className="mt-4 flex items-center gap-2">
-            <PrimaryButton onPress={create} disabled={!draft.owner || !draft.repo}>Add</PrimaryButton>
-            <SecondaryButton onPress={() => { setDraft(null); setError(null) }}>Cancel</SecondaryButton>
+            <Button appearance="solid" tone="accent" onPress={create} disabled={!draft.owner || !draft.repo}>Add</Button>
+            <Button appearance="outline" tone="neutral" onPress={() => { setDraft(null); setError(null) }}>Cancel</Button>
           </div>
         </div>
       )}
@@ -231,7 +231,7 @@ export default function ReposAdmin() {
               </label>
 
               <div className="shrink-0">
-                <Button variant="ghost" size="small" onPress={() => deleteAction.request(repo)}>Remove</Button>
+                <Button appearance="subtle" onPress={() => deleteAction.request(repo)}>Remove</Button>
               </div>
             </div>
           ))}

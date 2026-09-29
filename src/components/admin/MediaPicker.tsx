@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMediaItem, type MediaItem } from '../../api/hooks'
-import { SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import MediaPickerDialog from './MediaPickerDialog'
 
 interface MediaPickerProps {
@@ -36,12 +36,12 @@ export default function MediaPicker({ value, onChange, folder = 'images', accept
           <div className="flex flex-col gap-2">
             <p className="text-sm text-muted-foreground truncate max-w-[200px]">{media.filename}</p>
             <div className="flex gap-2">
-              <SecondaryButton onPress={() => setOpen(true)} style={{ paddingBlock: 6, paddingInline: 12 }}>
+              <Button appearance="outline" tone="neutral" onPress={() => setOpen(true)} style={{ paddingBlock: 6, paddingInline: 12 }}>
                 <span style={{ fontSize: 13 }}>Change</span>
-              </SecondaryButton>
-              <SecondaryButton onPress={() => onChange(undefined)} style={{ paddingBlock: 6, paddingInline: 12 }}>
+              </Button>
+              <Button appearance="outline" tone="neutral" onPress={() => onChange(undefined)} style={{ paddingBlock: 6, paddingInline: 12 }}>
                 <span style={{ fontSize: 13 }}>Remove</span>
-              </SecondaryButton>
+              </Button>
             </div>
           </div>
         </div>

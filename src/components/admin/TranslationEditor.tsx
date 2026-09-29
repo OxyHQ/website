@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../api/client'
-import { PrimaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { LabeledTextField } from './LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
 
@@ -150,9 +150,9 @@ export function TranslationFields<O extends object>({
       })}
 
       <div className="mt-2 self-start">
-        <PrimaryButton onPress={save} disabled={saving}>
+        <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
           {saving ? 'Saving...' : 'Save translation'}
-        </PrimaryButton>
+        </Button>
       </div>
     </div>
   )
@@ -251,9 +251,9 @@ export function BatchTranslationEditor<D extends { _id: string }>({
       ))}
 
       <div className="mt-2 self-start">
-        <PrimaryButton onPress={save} disabled={saving}>
+        <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
           {saving ? 'Saving...' : 'Save all translations'}
-        </PrimaryButton>
+        </Button>
       </div>
     </div>
   )

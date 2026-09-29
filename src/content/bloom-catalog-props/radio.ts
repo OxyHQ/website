@@ -9,9 +9,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'value', type: 'Value', optional: false, description: 'The value this option stands for.' },
         { name: 'checked', type: 'boolean', optional: true, description: 'Whether this option is the checked one.' },
-        { name: 'selected', type: 'boolean', optional: true },
         { name: 'onValueChange', type: '(value: Value) => void', optional: true, description: 'Called with `value` when the option is chosen. Selecting the already-checked option is a no-op — a radio, unlike a checkbox, cannot be un-chosen.' },
-        { name: 'onSelect', type: '(value: Value) => void', optional: true },
         { name: 'label', type: 'string', optional: true, description: 'Optional label text.' },
         { name: 'description', type: 'string', optional: true, description: 'Optional description shown below the label.' },
         { name: 'size', type: 'RadioSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Size preset.' },
@@ -27,9 +25,9 @@ export const props: BloomSurfaceProps = {
     'RadioGroupProps<Value>': {
       props: [
         { name: 'label', type: 'string', optional: true, description: "The group's accessible name." },
-        { name: 'value', type: 'Value | undefined', optional: false, description: 'The selected value, or `undefined` for a group with nothing chosen yet.' },
+        { name: 'value', type: 'Value', optional: true, description: 'The selected value, or `undefined` for a group with nothing chosen yet.' },
+        { name: 'defaultValue', type: 'Value', optional: true, description: 'Initial selection when uncontrolled.' },
         { name: 'onValueChange', type: '(value: Value) => void', optional: true, description: 'Called with the newly chosen value.' },
-        { name: 'onSelect', type: '(value: Value) => void', optional: true },
         { name: 'options', type: 'ReadonlyArray<RadioOption<Value>>', optional: false, description: 'The options, in order.' },
         { name: 'size', type: 'RadioSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Size preset, applied to every option.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Disables every option. An option may also disable itself.' },
@@ -44,9 +42,7 @@ export const props: BloomSurfaceProps = {
       props: [
         { name: 'value', type: 'Value', optional: false, description: 'The value this card stands for.' },
         { name: 'checked', type: 'boolean', optional: true, description: 'Whether this card is the checked one.' },
-        { name: 'selected', type: 'boolean', optional: true },
         { name: 'onValueChange', type: '(value: Value) => void', optional: true, description: 'Called with `value` when the card is chosen. Re-choosing it is a no-op.' },
-        { name: 'onSelect', type: '(value: Value) => void', optional: true },
         { name: 'title', type: 'string', optional: false, description: "The card's title (one line); also its accessible name." },
         { name: 'description', type: 'string', optional: true, description: 'Optional one-line description under the title.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Dims the whole card and stops it selecting.' },

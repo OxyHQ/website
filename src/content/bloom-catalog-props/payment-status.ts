@@ -27,7 +27,7 @@ export const props: BloomSurfaceProps = {
         { name: 'amount', type: 'string', optional: true, description: 'PRE-FORMATTED, like every other amount in this library.' },
         { name: 'detail', type: 'string', optional: true, description: 'A line under the amount — "Aurora •••• 4417", "Charged on 4 June".' },
         { name: 'reference', type: 'string', optional: true, description: 'The reference a reader quotes when something goes wrong. Drawn in tabular figures so it can be read out a character at a time.' },
-        { name: 'referenceLabel', type: 'string', optional: true, description: 'The word before it. Default `"Reference"`.' },
+        { name: 'referenceLabel', type: 'string', optional: true, description: 'The word before it (`"Reference"` in English).' },
         { name: 'reason', type: 'string', optional: true, description: "WHY it failed, in the processor's own words, drawn in an `Admonition`." },
         { name: 'actions', type: 'ReactNode', optional: true, description: 'The retry, the receipt, the "try another method" — as `Button`s.' },
         { name: 'icon', type: 'BloomIconComponent', optional: true, description: "The glyph, overriding the state's own." },

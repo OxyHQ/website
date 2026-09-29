@@ -7,9 +7,10 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'Search': {
       props: [
-        { name: 'size', type: 'TextFieldSize', options: ['medium', 'sm', 'md', 'lg', 'xs', 'small'], optional: true, description: 'Size of the self-wrapped field when rendered without a `TextField`.' },
+        { name: 'size', type: 'TextFieldSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Size of the self-wrapped field when rendered without a `TextField`.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Disable the input; the field around it paints disabled.' },
         { name: 'value', type: 'string', optional: true },
+        { name: 'locale', type: 'string', optional: true, description: "Locale for the reveal button's names; defaults to the nearest `LocaleProvider`." },
         { name: 'placeholder', type: 'string | null', optional: true },
         { name: 'onValueChange', type: '(value: string) => void', optional: true },
         { name: 'invalid', type: 'boolean', optional: true },
@@ -17,6 +18,8 @@ export const props: BloomSurfaceProps = {
         { name: 'onChangeText', type: '(value: string) => void', optional: true },
         { name: 'isInvalid', type: 'boolean', optional: true },
         { name: 'floatingLabel', type: 'boolean', optional: true, description: 'Render the field with a Material-style floating label. When `true`, the label sits inside the field as the placeholder while the input is empty AND unfocused; on focus OR when a value is present it animates up to a small caption pinned to the top of the field and the typed value shows below it. Opt-in — the default (`false`) keeps the existing chrome where the label lives above the field (`TextFieldLabel`) and the placeholder is plain.' },
+        { name: 'revealable', type: 'boolean', optional: true, description: 'With `secureTextEntry`, draw an eye / eye-off button after the input that shows and hides what was typed. It is named "Show password" / "Hide password" in the locale (`docs/locale.mdx`); `revealLabels` overrides either. Pressing it leaves focus in the input. Ignored without `secureTextEntry`.' },
+        { name: 'revealLabels', type: 'TextFieldRevealLabels', optional: true, description: "Override the reveal button's names, one key at a time." },
         { name: 'label', type: 'TextFieldInputProps["label"]', optional: true },
         { name: 'onClearText', type: '() => void', optional: true, description: 'Called when the user presses the clear (X) button.' },
       ],

@@ -107,10 +107,10 @@ export default function AIModelsPage() {
         )}
 
         <div className="mt-12 flex flex-wrap gap-3">
-          <Button href="/ai/pricing" variant="outline" size="sm">
+          <Button href="/ai/pricing" variant="outline">
             {t('ai.cta.viewPricing')}
           </Button>
-          <Button href="/ai/inference" variant="ghost" size="sm">
+          <Button href="/ai/inference" variant="ghost">
             {t('ai.cta.readQuickstart')}
           </Button>
         </div>

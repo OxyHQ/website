@@ -157,7 +157,6 @@ export function AcademyRail({
         {onClose ? (
           <Button
             iconOnly
-            size="sm"
             appearance="plain"
             tone="neutral"
             leadingIcon={RiCloseLine}

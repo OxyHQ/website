@@ -7,10 +7,10 @@ export const props: BloomSurfaceProps = {
   propTypes: {
     'RouterTabsProps': {
       props: [
-        { name: 'variant', type: 'TabsVariant', options: ['underline', 'pill', 'filled'], optional: true, description: 'Visual variant for the tab bar.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
         { name: 'fullWidth', type: 'boolean', optional: true, description: 'When true, the tab bar spans the full container width and each trigger takes an equal share of it (edge to edge), instead of the default content-sized, horizontally scrollable layout. Best for a small, fixed set of tabs (e.g. 2–3). Defaults to `false`.' },
+        { name: 'variant', type: 'TabsVariant', options: ['underline', 'pill', 'filled'], optional: true, description: 'Visual variant for the tab bar.' },
         { name: 'label', type: 'string', optional: true, description: 'The strip\'s accessible name — the `tablist`\'s `aria-label` on web ("Account sections"). The tab labels name the TABS, not the set of them. Ignored on native, where naming the container would fold its tabs into one element.' },
         { name: 'items', type: 'RouterTabItem[]', optional: false },
         { name: 'onReselect', type: '(value: string) => void', optional: true, description: 'Called instead of navigating when the ALREADY-active tab is pressed.' },

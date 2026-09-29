@@ -8,7 +8,7 @@ import {
   type ReferralType,
   type ReferralStatus,
 } from '../../../api/hooks'
-import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
 import { Label } from '@oxy.so/bloom/label'
@@ -112,7 +112,7 @@ export default function ReferralsAdmin() {
     return (
       <div>
         <div className="mb-4">
-          <Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back to list</Button>
+          <Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back to list</Button>
         </div>
         <h2 className="text-xl font-semibold text-foreground">
           {isNew ? 'New referral' : `Edit: ${editing.name}`}
@@ -260,10 +260,10 @@ export default function ReferralsAdmin() {
           {error && <p className="text-sm text-error-text">{error}</p>}
 
           <div className="flex items-center gap-2">
-            <PrimaryButton onPress={save} disabled={saving}>
+            <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving…' : 'Save changes'}
-            </PrimaryButton>
-            <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>
+            </Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
           </div>
         </div>
       </div>
@@ -279,7 +279,7 @@ export default function ReferralsAdmin() {
             Track every referral code across paid affiliates, ambassadors, and casual user shares.
           </p>
         </div>
-        <PrimaryButton onPress={() => setEditing(emptyReferral())}>Add referral</PrimaryButton>
+        <Button appearance="solid" tone="accent" onPress={() => setEditing(emptyReferral())}>Add referral</Button>
       </div>
 
       {TYPE_ORDER.map((type) => {
@@ -321,8 +321,8 @@ export default function ReferralsAdmin() {
                       <div><span className="text-foreground">{referral.signups}</span> signups</div>
                     </div>
                     <div className="shrink-0">
-                      <Button variant="ghost" size="small" onPress={() => setEditing({ ...referral })}>Edit</Button>
-                      <Button variant="ghost" size="small" onPress={() => deleteAction.request(referral)}>Delete</Button>
+                      <Button appearance="subtle" onPress={() => setEditing({ ...referral })}>Edit</Button>
+                      <Button appearance="subtle" onPress={() => deleteAction.request(referral)}>Delete</Button>
                     </div>
                   </div>
                 ))}

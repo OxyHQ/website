@@ -63,7 +63,6 @@ function BadgePill({ badgeId, definition, Icon }: { badgeId: string; definition:
           className="inline-flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <Chip
-            size="large"
             hue={hue}
             startIcon={<Icon width={14} height={14} fill={resolveChipHueColors(theme, hue).foreground} />}
           >

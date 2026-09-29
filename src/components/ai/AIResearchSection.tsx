@@ -40,7 +40,7 @@ export default function AIResearchSection({ framed = true }: { framed?: boolean 
               {researchParagraph.split('{highlight}')[1]}
             </p>
 
-            <Button variant="inverse" size="md" href={researchCtaHref} className="!bg-primary !text-primary-foreground">
+            <Button variant="inverse" href={researchCtaHref} className="!bg-primary !text-primary-foreground">
               {t('home.researchCta')}
               <span className="sr-only">: {t('home.researchTitle')}</span>
             </Button>

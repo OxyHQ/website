@@ -34,12 +34,11 @@ export default function CtaSection() {
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
-            <Button variant="primary" size="lg" href={fc('/buy')}>
+            <Button variant="primary" href={fc('/buy')}>
               Buy FairCoin
             </Button>
             <Button
               variant="outline"
-              size="lg"
               href={`${FAIRCOIN_REPO_URL}#masternode-setup`}
               target="_blank"
               rel="noopener noreferrer"
@@ -48,7 +47,6 @@ export default function CtaSection() {
             </Button>
             <Button
               variant="ghost"
-              size="lg"
               href={TELEGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"

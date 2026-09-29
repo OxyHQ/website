@@ -12,7 +12,7 @@ export const props: BloomSurfaceProps = {
         { name: 'stepInterval', type: 'number', optional: true, description: 'Milliseconds between reveals. Default 850.' },
         { name: 'startDelay', type: 'number', optional: true, description: 'Milliseconds before the first reveal. Default 320.' },
         { name: 'revealed', type: 'number', optional: true, description: 'Drive the reveal from real events; disables the internal timer. Counts UNITS: every step is one, and a (non-heading) step with sources is two — the sources land as their own unit.' },
-        { name: 'working', type: 'string | false', optional: true, description: "The indicator at the tail of the trail while the search is still running, so the log always ends on the thing being worked on. Pass a label to change it, or `false` to drop it. Default `'Working'`." },
+        { name: 'working', type: 'string | false', optional: true, description: "The indicator at the tail of the trail while the search is still running, so the log always ends on the thing being worked on. Pass a label to change it, or `false` to drop it. `'Working'` in English." },
         { name: 'onComplete', type: '() => void', optional: true, description: 'Fires once, after the last step lands.' },
         { name: 'reduce', type: 'boolean', optional: true, description: 'Skip every reveal and flight. Defaults to the system reduced-motion setting.' },
         { name: 'labels', type: 'WebSearchLabels', optional: true },

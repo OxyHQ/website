@@ -15,7 +15,7 @@ export const props: BloomSurfaceProps = {
         { name: 'defaultValue', type: 'string', optional: true },
         { name: 'onValueChange', type: '(value: string) => void', optional: true },
         { name: 'onChangeText', type: '(value: string) => void', optional: true },
-        { name: 'size', type: 'TextFieldSize', options: ['medium', 'sm', 'md', 'lg', 'xs', 'small'], optional: true, description: 'Two insets: `md` (default) or `sm`.' },
+        { name: 'size', type: 'TextFieldSize', options: ['xs', 'sm', 'md', 'lg'], optional: true, description: 'Two insets: `md` (default) or `sm`.' },
         { name: 'rows', type: 'number', optional: true, description: 'Resting height in lines, default `3`. Also the floor when `autoResize` is on.' },
         { name: 'autoResize', type: 'boolean', optional: true, description: 'Grow with the content instead of scrolling at `rows`.' },
         { name: 'maxRows', type: 'number', optional: true, description: 'Ceiling for `autoResize`, in lines. Past it the field scrolls.' },

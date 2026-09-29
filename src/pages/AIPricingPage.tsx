@@ -271,7 +271,7 @@ function Handoff({
     <div className="rounded-2xl border border-border bg-card p-5">
       <h2 className="text-lg text-foreground">{title}</h2>
       <p className="mt-2 text-sm text-muted-foreground">{body}</p>
-      <Button href={href} variant="outline" size="sm" className="mt-4">
+      <Button href={href} variant="outline" className="mt-4">
         {cta}
         {external && <span className="sr-only"> (external)</span>}
       </Button>
@@ -296,7 +296,7 @@ function PathCard({
     <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-5">
       <h3 className="text-base text-foreground">{title}</h3>
       <p className="mt-2 flex-1 text-sm text-muted-foreground">{body}</p>
-      <Button href={href} variant="ghost" size="sm" className="mt-4 w-fit">
+      <Button href={href} variant="ghost" className="mt-4 w-fit">
         {cta}
         {external && <span className="sr-only"> (external)</span>}
       </Button>

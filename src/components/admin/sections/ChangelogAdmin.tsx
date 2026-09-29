@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useChangelog, type ChangelogEntry } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
-import { Button, PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { Badge } from '@oxy.so/bloom/badge'
 import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
@@ -39,7 +39,7 @@ export default function ChangelogAdmin() {
   if (editing) {
     return (
       <div>
-        <div className="mb-4"><Button variant="ghost" size="small" onPress={() => setEditing(null)}>&larr; Back</Button></div>
+        <div className="mb-4"><Button appearance="subtle" onPress={() => setEditing(null)}>&larr; Back</Button></div>
         <h2 className="text-xl font-semibold text-foreground">{editing._id ? 'Edit Entry' : 'New Entry'}</h2>
         {editing.repoDisplayName && (
           <p className="mt-1 text-xs text-muted-foreground">
@@ -60,8 +60,8 @@ export default function ChangelogAdmin() {
             accept="image/*,video/*"
           />
           <div className="flex gap-3">
-            <PrimaryButton onPress={save} disabled={saving}>{saving ? 'Saving...' : 'Save'}</PrimaryButton>
-            <SecondaryButton onPress={() => setEditing(null)}>Cancel</SecondaryButton>
+            <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
+            <Button appearance="outline" tone="neutral" onPress={() => setEditing(null)}>Cancel</Button>
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@ export default function ChangelogAdmin() {
     <div>
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-foreground">Changelog</h2>
-        <PrimaryButton onPress={() => setEditing({ title: '', content: '', tags: [], date: new Date().toISOString(), items: [], media: '' })}>New entry</PrimaryButton>
+        <Button appearance="solid" tone="accent" onPress={() => setEditing({ title: '', content: '', tags: [], date: new Date().toISOString(), items: [], media: '' })}>New entry</Button>
       </div>
       <div className="mt-6 flex flex-col gap-2">
         {entries.map((e) => (
@@ -89,8 +89,8 @@ export default function ChangelogAdmin() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="small" onPress={() => setEditing({ ...e })}>Edit</Button>
-              <Button variant="ghost" size="small" onPress={() => e._id && deleteAction.request(e)}>Delete</Button>
+              <Button appearance="subtle" onPress={() => setEditing({ ...e })}>Edit</Button>
+              <Button appearance="subtle" onPress={() => e._id && deleteAction.request(e)}>Delete</Button>
             </div>
           </div>
         ))}

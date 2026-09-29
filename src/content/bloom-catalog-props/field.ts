@@ -12,6 +12,7 @@ export const props: BloomSurfaceProps = {
         { name: 'description', type: 'React.ReactNode', optional: true, description: 'Helper/description text rendered below the control.' },
         { name: 'error', type: 'string | null', optional: true, description: 'Error message. When a non-empty string is provided the field renders in its invalid state (error-colored message, replaces the description).' },
         { name: 'required', type: 'boolean', optional: true, description: "Mark the field's label with a required asterisk." },
+        { name: 'requiredLabel', type: 'string', optional: true, description: 'Accessible name of the required marker; defaults to the current locale.' },
         { name: 'disabled', type: 'boolean', optional: true, description: 'Disables the label/description styling AND, for a control that reads the field context, the control itself.' },
         { name: 'multiple', type: 'boolean', optional: true, description: "The field holds SEVERAL controls — a radio set, a date's three boxes." },
         { name: 'nativeID', type: 'string', optional: true, description: "The control's id, wired to the label's `htmlFor` on web so a label click focuses it." },

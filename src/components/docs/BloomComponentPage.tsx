@@ -315,7 +315,7 @@ function SurfaceBody({ entry }: { entry: BloomSurfaceEntry }) {
                   <code className="font-mono">{principal.name}</code> props
                 </h3>
                 {Object.keys(values).length > 0 ? (
-                  <Button variant="text" size="small" onPress={() => setValues({})}>
+                  <Button appearance="plain" onPress={() => setValues({})}>
                     Reset
                   </Button>
                 ) : null}
@@ -445,10 +445,9 @@ function PropControl({
       <div className="flex items-center justify-between gap-3">
         <PropControlLabel prop={prop} />
         <Switch
-          value={value === true}
-          onValueChange={(next) => onChange(prop.name, next ? true : undefined)}
+          checked={value === true}
+          onCheckedChange={(next) => onChange(prop.name, next ? true : undefined)}
           accessibilityLabel={prop.name}
-          size="sm"
         />
       </div>
     )

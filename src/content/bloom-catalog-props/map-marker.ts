@@ -19,7 +19,7 @@ export const props: BloomSurfaceProps = {
         { name: 'count', type: 'number | string', optional: false, description: 'How many listings the bubble stands for; a string is drawn as given ("99+").' },
         { name: 'state', type: 'MapMarkerState', options: ['default', 'active', 'visited'], optional: true, description: '`visited` draws as `default`. Default `default`.' },
         { name: 'onPress', type: '() => void', optional: true },
-        { name: 'accessibilityLabel', type: 'string', optional: true, description: 'Defaults to `"<count> stays"` — pass a translated sentence.' },
+        { name: 'accessibilityLabel', type: 'string', optional: true, description: '`"<count> stays"` in English; localised via `BloomProvider locale`.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },
       ],
@@ -67,7 +67,7 @@ export const props: BloomSurfaceProps = {
     'MapSearchAreaButtonProps': {
       props: [
         { name: 'variant', type: "'toggle'", options: ['button', 'toggle'], optional: true, description: 'A checkbox pill, "Search as I move the map". A button pill, "Search this area". Default.' },
-        { name: 'label', type: 'string', optional: true, description: "Defaults to the variant's own sentence." },
+        { name: 'label', type: 'string', optional: true, description: "Defaults to the variant's own sentence, in the app's locale." },
         { name: 'disabled', type: 'boolean', optional: true },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'testID', type: 'string', optional: true },

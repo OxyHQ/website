@@ -9,9 +9,6 @@ interface SectionHeaderWithLinkProps {
 
 /* ──────────────────────────────────────────────────
  * Section header — title + "View all" link
- * Original: max-w-container mb-md flex items-baseline justify-between
- * Title: text-h4 text-primary-100
- * Link: text-button variant
  * ────────────────────────────────────────────── */
 export default function SectionHeaderWithLink({
   title,

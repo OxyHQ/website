@@ -49,7 +49,6 @@ function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void 
         <div className="absolute right-3 top-3">
           <Button
             iconOnly
-            size="sm"
             appearance="plain"
             tone="neutral"
             leadingIcon={RiCloseLine}
@@ -65,7 +64,6 @@ function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void 
         <div className="mt-6 flex flex-col">
           <Button
             href={DOWNLOAD_LINKS[CURRENT_PLATFORM]}
-            size="lg"
             leading={<PlatformIcon platform={CURRENT_PLATFORM} className="size-5" />}
           >
             {`Download for ${current.label}`}
@@ -78,7 +76,6 @@ function DownloadDialog({ open, onClose }: { open: boolean; onClose: () => void 
               <Button
                 key={platform}
                 href={DOWNLOAD_LINKS[platform]}
-                size="sm"
                 appearance="outline"
                 tone="neutral"
                 leading={<PlatformIcon platform={platform} className="size-4" />}

@@ -7,6 +7,7 @@ import { OxyProvider, useOxy } from '@oxy.so/services/ui/client'
 import type { User } from '@oxy.so/core'
 import { BloomThemeProvider, type ThemeMode as BloomThemeMode } from '@oxy.so/bloom/theme'
 import { ImageResolverProvider } from '@oxy.so/bloom/image-resolver'
+import { BloomScope } from '@oxy.so/bloom/appearance'
 import {
   getSavedMode,
   getSavedPreset,
@@ -501,60 +502,64 @@ function AppProviders() {
         onModeChange={handleModeChange}
         onColorPresetChange={handlePresetChange}
       >
-        <OxyProvider
-          baseURL={OXY_API}
-          clientId={OXY_CLIENT_ID}
-          queryClient={queryClient}
-          onAuthStateChange={handleAuthChange}
-        >
-          <AppSetup>
-            <ScrollToTop />
-            <IntercomMessenger />
-            <Suspense fallback={<div className="min-h-screen" />}>
-                <Routes>
-                    {/* Guarded: /admin/* is a top-level route with no shared
-                        layout, so an unhandled render error here would blank the
-                        whole document instead of a section of a page. */}
-                    <Route
-                      path="/admin/*"
-                      element={
-                        <ErrorBoundary>
-                          <AdminPage />
-                        </ErrorBoundary>
-                      }
-                    />
-                    <Route path="/" element={<LocaleLayout />}>
-                      {PublicRoutes()}
-                      <Route path="*" element={<NotFoundPage />} />
-                    </Route>
-                    {/*
-                      The same route table mounted again under each locale, so
-                      `/es/pricing` resolves without maintaining a parallel list.
-
-                      One STATIC branch per locale, not a single `:locale` param.
-                      A dynamic segment outranks a splat in React Router, so
-                      `/:locale/settings` beat `/admin/*` and `/admin/settings`
-                      matched the locale branch with `locale = "admin"` — which
-                      is not a locale, so it rendered "Page not found". It hit
-                      exactly the admin sub-routes whose name is also a public
-                      route (settings, pricing, products, newsroom, help), and
-                      `/admin` redirects to `settings` on entry, so the whole
-                      admin area was unreachable. Static segments cannot collide
-                      with `/admin/*` this way, and they make the locale valid by
-                      construction — an unknown prefix like `/xx/pricing` now
-                      falls through to the catch-all above.
-                    */}
-                    {LOCALE_PREFIXES.map((code) => (
-                      <Route key={code} path={code} element={<LocaleLayout />}>
+        {/* The one control size for the whole site. A component does not pick
+            its own; change it here and every Bloom control moves together. */}
+        <BloomScope size="md">
+          <OxyProvider
+            baseURL={OXY_API}
+            clientId={OXY_CLIENT_ID}
+            queryClient={queryClient}
+            onAuthStateChange={handleAuthChange}
+          >
+            <AppSetup>
+              <ScrollToTop />
+              <IntercomMessenger />
+              <Suspense fallback={<div className="min-h-screen" />}>
+                  <Routes>
+                      {/* Guarded: /admin/* is a top-level route with no shared
+                          layout, so an unhandled render error here would blank the
+                          whole document instead of a section of a page. */}
+                      <Route
+                        path="/admin/*"
+                        element={
+                          <ErrorBoundary>
+                            <AdminPage />
+                          </ErrorBoundary>
+                        }
+                      />
+                      <Route path="/" element={<LocaleLayout />}>
                         {PublicRoutes()}
                         <Route path="*" element={<NotFoundPage />} />
                       </Route>
-                    ))}
-                    <Route path={`${DEFAULT_LOCALE}/*`} element={<CollapseDefaultLocalePrefix />} />
-                </Routes>
-            </Suspense>
-          </AppSetup>
-        </OxyProvider>
+                      {/*
+                        The same route table mounted again under each locale, so
+                        `/es/pricing` resolves without maintaining a parallel list.
+
+                        One STATIC branch per locale, not a single `:locale` param.
+                        A dynamic segment outranks a splat in React Router, so
+                        `/:locale/settings` beat `/admin/*` and `/admin/settings`
+                        matched the locale branch with `locale = "admin"` — which
+                        is not a locale, so it rendered "Page not found". It hit
+                        exactly the admin sub-routes whose name is also a public
+                        route (settings, pricing, products, newsroom, help), and
+                        `/admin` redirects to `settings` on entry, so the whole
+                        admin area was unreachable. Static segments cannot collide
+                        with `/admin/*` this way, and they make the locale valid by
+                        construction — an unknown prefix like `/xx/pricing` now
+                        falls through to the catch-all above.
+                      */}
+                      {LOCALE_PREFIXES.map((code) => (
+                        <Route key={code} path={code} element={<LocaleLayout />}>
+                          {PublicRoutes()}
+                          <Route path="*" element={<NotFoundPage />} />
+                        </Route>
+                      ))}
+                      <Route path={`${DEFAULT_LOCALE}/*`} element={<CollapseDefaultLocalePrefix />} />
+                  </Routes>
+              </Suspense>
+            </AppSetup>
+          </OxyProvider>
+        </BloomScope>
       </BloomThemeProvider>
     </QueryClientProvider>
   )

@@ -483,7 +483,7 @@ function SpotlightSection() {
                   <h3>{item.title}</h3>
                   <p className="text-muted-foreground">{item.body}</p>
                 </div>
-                <Button variant="outline" size="md">
+                <Button variant="outline">
                   Learn more
                 </Button>
               </div>
@@ -532,7 +532,7 @@ export default function CareersContent() {
               <h1 className="mb-10 font-display font-medium tracking-[-0.02em] text-[2.75rem]/[3rem] md:text-[3.75rem]/[3.9rem] lg:text-[4.5rem]/[4.6rem] sm:pr-10">
                 Help prove that useful systems can grow without treating people as inventory
               </h1>
-              <Button variant="primary" size="md" href="#open-positions">
+              <Button variant="primary" href="#open-positions">
                 See open roles
               </Button>
             </div>

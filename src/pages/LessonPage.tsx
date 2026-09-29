@@ -211,7 +211,7 @@ export default function LessonPage() {
                 </div>
               </div>
               {isLessonCompleted ? null : (
-                <BloomButton variant="primary" size="md" leadingIcon={RiCheckLine} onPress={() => markLessonCompleted(lessonSlug)}>
+                <BloomButton appearance="solid" tone="accent" leadingIcon={RiCheckLine} onPress={() => markLessonCompleted(lessonSlug)}>
                   {t('academy.markComplete')}
                 </BloomButton>
               )}
@@ -247,7 +247,6 @@ export default function LessonPage() {
             <Button
               href={prev ? lessonPath(prev.course, prev.lessonSlug) : coursePath(courseMeta.slug)}
               variant="outline"
-              size="md"
               rel={prev ? 'prev' : undefined}
             >
               <span aria-hidden="true" className="inline-flex">
@@ -264,7 +263,6 @@ export default function LessonPage() {
             <Button
               href={next ? lessonPath(next.course.slug, next.lesson.lessonSlug) : coursePath(courseMeta.slug)}
               variant={isLessonCompleted ? 'primary' : 'outline'}
-              size="md"
               rel={next && !nextIsNewCourse ? 'next' : undefined}
             >
               {next ? (nextIsNewCourse ? t('academy.nextCourse') : t('academy.next')) : t('academy.courseOverview')}

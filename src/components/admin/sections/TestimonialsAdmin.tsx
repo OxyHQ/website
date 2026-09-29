@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTestimonials, useLocales } from '../../../api/hooks'
 import { apiFetch } from '../../../api/client'
-import { Button, PrimaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
 import LocaleSwitcher from '../LocaleSwitcher'
@@ -60,7 +60,7 @@ export default function TestimonialsAdmin() {
           <h2 className="text-xl font-semibold text-foreground">Testimonials</h2>
           <p className="mt-1 text-sm text-muted-foreground">{items.length} testimonials</p>
         </div>
-        {isDefault && <PrimaryButton onPress={add}>Add</PrimaryButton>}
+        {isDefault && <Button appearance="solid" tone="accent" onPress={add}>Add</Button>}
       </div>
 
       <div className="mt-4">
@@ -97,13 +97,13 @@ export default function TestimonialsAdmin() {
                 <LabeledTextField label="Role" value={t.role} onValueChange={(value) => update(i, 'role', value)} placeholder="Role" />
                 <LabeledTextField label="Company" value={t.company} onValueChange={(value) => update(i, 'company', value)} placeholder="Company" />
               </div>
-              <div className="mt-2"><Button variant="ghost" size="small" onPress={() => remove(i)}>Remove</Button></div>
+              <div className="mt-2"><Button appearance="subtle" onPress={() => remove(i)}>Remove</Button></div>
             </div>
           ))}
           <div className="self-start">
-            <PrimaryButton onPress={save} disabled={saving}>
+            <Button appearance="solid" tone="accent" onPress={save} disabled={saving}>
               {saving ? 'Saving...' : 'Save changes'}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       )}

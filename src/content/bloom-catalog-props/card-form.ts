@@ -28,7 +28,7 @@ export const props: BloomSurfaceProps = {
     'CardFormCountryProps': {
       props: [
         { name: 'countries', type: 'readonly CardFormCountryOption[]', optional: false, description: 'The countries to choose from, in the order they should be read.' },
-        { name: 'placeholder', type: 'string', optional: true, description: 'Drawn in the trigger while nothing is chosen. Default `"Select a country"`.' },
+        { name: 'placeholder', type: 'string', optional: true, description: 'Drawn in the trigger while nothing is chosen (`"Select a country"` in English).' },
         { name: 'disabled', type: 'boolean', optional: true, description: "Combined with an enclosing `Field`'s, never replaced." },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
         { name: 'accessibilityLabel', type: 'string', optional: true, description: "Replaces the label as the ANNOUNCED name, and outranks a `Field`'s." },

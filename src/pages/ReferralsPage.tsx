@@ -250,10 +250,10 @@ export default function ReferralsPage() {
                   {heroSubtitle}
                 </p>
                 <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-                  <Button variant="primary" size="md" responsive href="#programs">
+                  <Button variant="primary" responsive href="#programs">
                     See the programs
                   </Button>
-                  <Button variant="outline" size="md" responsive href="/partners">
+                  <Button variant="outline" responsive href="/partners">
                     Partner program
                   </Button>
                 </div>
@@ -300,7 +300,7 @@ export default function ReferralsPage() {
                       {program.description}
                     </p>
                     <span className="mt-8 inline-flex">
-                      <Button variant="outline" size="sm" href={program.ctaHref}>
+                      <Button variant="outline" href={program.ctaHref}>
                         {program.cta}
                       </Button>
                     </span>
@@ -406,10 +406,10 @@ export default function ReferralsPage() {
                   Bigger audience, a specific niche, or an idea we haven&rsquo;t thought of yet? Reach out and we&rsquo;ll set up the program that fits.
                 </p>
                 <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-                  <Button variant="primary" size="md" responsive href="/partners">
+                  <Button variant="primary" responsive href="/partners">
                     Visit the partners page
                   </Button>
-                  <Button variant="outline" size="md" responsive href="/referrals/dashboard">
+                  <Button variant="outline" responsive href="/referrals/dashboard">
                     Get a share link
                   </Button>
                 </div>

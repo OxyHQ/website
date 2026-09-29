@@ -40,7 +40,6 @@ export default function VersionSelector({ pkg, currentVersion, slug }: VersionSe
     <DropdownMenu>
       <DropdownMenuTrigger asChild label={label} className="inline-flex">
         <Button
-          size="xs"
           appearance="subtle"
           tone="neutral"
           accessibilityLabel={label}

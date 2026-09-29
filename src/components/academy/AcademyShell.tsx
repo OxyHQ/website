@@ -78,8 +78,7 @@ export default function AcademyShell({
         <div className="min-w-0 flex-1 pb-10 lg:py-4 lg:pr-6">
           <div className="flex items-center gap-3 border-b border-border px-4 py-3 sm:px-6 lg:hidden">
             <Button
-              variant="secondary"
-              size="sm"
+              appearance="outline" tone="neutral"
               leadingIcon={RiMenuLine}
               onPress={() => setMenuOpen(true)}
               accessibilityLabel={t('academy.openMenuLabel')}

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAdminSeo, useUpsertSeo, useDeleteSeo, type SeoBrand, type SeoMeta, type SeoData } from '../../../api/hooks'
-import { PrimaryButton, SecondaryButton } from '@oxy.so/bloom/button'
+import { Button } from '@oxy.so/bloom/button'
 import { LabeledTextField } from '../LabeledTextField'
 import { Textarea } from '@oxy.so/bloom/textarea'
 import ConfirmDialog from '../ConfirmDialog'
@@ -163,16 +163,16 @@ export default function SeoAdmin() {
             mono
           />
           <div className="self-start">
-            <PrimaryButton onPress={saveDefault} disabled={savingDefault}>
+            <Button appearance="solid" tone="accent" onPress={saveDefault} disabled={savingDefault}>
               {savingDefault ? 'Saving…' : 'Save default'}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </div>
 
       <div className="mt-8 flex items-center justify-between">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Routes</h3>
-        <PrimaryButton onPress={addRow}>Add route</PrimaryButton>
+        <Button appearance="solid" tone="accent" onPress={addRow}>Add route</Button>
       </div>
 
       <div className="mt-4 flex flex-col gap-4">
@@ -198,10 +198,10 @@ export default function SeoAdmin() {
                   mono
                 />
                 <div className="flex items-center gap-2">
-                  <PrimaryButton onPress={() => saveRow(idx)} disabled={savingPath === row.path || !dirty}>
+                  <Button appearance="solid" tone="accent" onPress={() => saveRow(idx)} disabled={savingPath === row.path || !dirty}>
                     {savingPath === row.path ? 'Saving…' : 'Save'}
-                  </PrimaryButton>
-                  <SecondaryButton onPress={() => deleteAction.request(row)}>Delete</SecondaryButton>
+                  </Button>
+                  <Button appearance="outline" tone="neutral" onPress={() => deleteAction.request(row)}>Delete</Button>
                 </div>
               </div>
             </div>

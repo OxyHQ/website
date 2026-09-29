@@ -8,11 +8,11 @@ export const props: BloomSurfaceProps = {
     'PatientInfoCardProps': {
       props: [
         { name: 'name', type: 'string', optional: false, description: 'Patient name under the photo.' },
-        { name: 'avatarSource', type: 'string | ImageSourcePropType | null', optional: true, description: 'Photo. Without one the avatar shows `initials` on the neutral disc.' },
+        { name: 'avatarSource', type: 'string | ImageSource | null', optional: true, description: 'Photo. Without one the avatar shows `initials` on the neutral disc.' },
         { name: 'initials', type: 'string', optional: true, description: 'Initials for the photo-less disc. Defaults to the first letter of `name`.' },
         { name: 'details', type: 'readonly PatientInfoCardDetail[]', optional: false, description: 'Label / value rows under the name.' },
         { name: 'onAddPhoto', type: '() => void', optional: true, description: 'Press handler of the `+` button pinned to the avatar.' },
-        { name: 'addPhotoLabel', type: 'string', optional: true, description: 'Accessible name of the `+` button. Defaults to `"Add profile photo"`.' },
+        { name: 'addPhotoLabel', type: 'string', optional: true, description: 'Accessible name of the `+` button (`"Add profile photo"` in English).' },
         { name: 'hideAddPhoto', type: 'boolean', optional: true, description: 'Hide the `+` button.' },
         { name: 'height', type: 'number', optional: true, description: 'Card height. Defaults to `330`.' },
         { name: 'style', type: 'StyleProp<ViewStyle>', optional: true },
