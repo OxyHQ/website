@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import Button from './ui/Button'
 
 interface ErrorBoundaryProps {
   /** Subtree to guard. Errors thrown anywhere inside render to fallback UI. */
@@ -74,19 +75,12 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
             problem persists, our team has already been notified.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <button
-              type="button"
-              onClick={this.reset}
-              className="inline-flex h-10 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background hover:bg-foreground/90 cursor-pointer"
-            >
+            <Button variant="inverse" type="button" onClick={this.reset}>
               Try again
-            </button>
-            <a
-              className="inline-flex h-10 items-center justify-center rounded-full border border-border px-5 text-sm font-medium text-foreground hover:bg-accent"
-              href="/"
-            >
+            </Button>
+            <Button variant="outline" href="/">
               Back home
-            </a>
+            </Button>
           </div>
         </div>
       </main>

@@ -4,6 +4,7 @@ import ArticleGridSection from './ArticleGridSection'
 import RecentNewsSection from './RecentNewsSection'
 import CarouselSection from './CarouselSection'
 import { useNewsroomPosts, usePage, type PageSection } from '../../api/hooks'
+import { sectionHeading, sectionSubheading } from '../../lib/cmsSections'
 
 /* ── Helpers to extract translated strings from the page CMS entry ── */
 
@@ -27,14 +28,6 @@ const DEFAULT_UI: NewsroomUI = {
   clearAll: 'Clear all',
   noResults: 'No articles match your filters',
   clearFilters: 'Clear filters',
-}
-
-function sectionHeading(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find(s => s.type === type)?.heading || fallback
-}
-
-function sectionSubheading(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find(s => s.type === type)?.subheading || fallback
 }
 
 function parseUI(sections: PageSection[]): NewsroomUI {

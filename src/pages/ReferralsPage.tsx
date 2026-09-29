@@ -12,6 +12,7 @@ import { FaqList } from '../components/sections/FaqSection'
 import { HorizontalLine, DashedVLines } from '../components/ui/GridDecoration'
 import { API_BASE } from '../api/client'
 import { useReferral, usePage, type PageSection } from '../api/hooks'
+import { sectionContent, sectionHeading, sectionSubheading } from '../lib/cmsSections'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -112,18 +113,6 @@ const DEFAULT_FAQ: Array<{ question: string; answer: string }> = [
 ]
 
 // ── CMS helpers ─────────────────────────────────────────────────────────────
-
-function sectionHeading(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find((s) => s.type === type)?.heading || fallback
-}
-
-function sectionSubheading(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find((s) => s.type === type)?.subheading || fallback
-}
-
-function sectionContent(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find((s) => s.type === type)?.content || fallback
-}
 
 /**
  * Merge the default program cards with any CMS overrides. The CMS `programs`

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { NewsCardGrid } from './NewsCard'
+import Button from '../ui/Button'
 import { NewsroomActiveFilters, NewsroomFilterMenu, NewsroomSortMenu } from './NewsroomListControls'
 import { useNewsroomPosts } from '../../api/hooks'
 import { newsCategories } from '../../data/newsroom'
@@ -133,12 +134,13 @@ export default function ArticleGridSection({ ui = {}, category }: ArticleGridSec
       {/* ── Load more ── */}
       {hasMore && (
         <div className="mt-12 flex justify-center">
-          <button
+          <Button
+            variant="ghost"
+            type="button"
             onClick={() => setVisibleCount((c) => c + 3)}
-            className="flex h-10 cursor-pointer items-center justify-center gap-[0.3em] whitespace-nowrap rounded-[2.5rem] bg-surface px-5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-surface"
           >
             {ui.loadMore ?? 'Load more'}
-          </button>
+          </Button>
         </div>
       )}
     </section>
