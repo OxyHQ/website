@@ -4,6 +4,7 @@ import { RiCalendarLine } from '@oxy.so/bloom/icons/RiCalendarLine'
 import { useAuth, useOxy } from '@oxy.so/services/ui/client'
 import { getNormalizedUserHandle } from '@oxy.so/core'
 import { Avatar } from '@oxy.so/bloom/avatar'
+import { Button } from '@oxy.so/bloom/button'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { UserProfileData } from '../../api/hooks'
 import ProfileBadges from './ProfileBadges'
@@ -37,13 +38,9 @@ export default function ProfileHeader({ profile, isOwnProfile, onEditBio }: Prof
         <div className="flex gap-2">
           {isOwnProfile ? (
             onEditBio && (
-              <button
-                type="button"
-                onClick={onEditBio}
-                className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-surface"
-              >
+              <Button appearance="outline" tone="neutral" onPress={onEditBio}>
                 Edit profile
-              </button>
+              </Button>
             )
           ) : (
             <FollowButton userId={user._id} />
@@ -148,29 +145,29 @@ function FollowButton({ userId }: { userId: string }) {
 
   if (isFollowing) {
     return (
-      <button
-        onClick={handleClick}
-        onMouseEnter={() => setHovering(true)}
-        onMouseLeave={() => setHovering(false)}
-        disabled={toggleFollow.isPending}
-        className={`min-w-[100px] rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors ${
-          hovering
-            ? 'border-error/50 bg-error-subtle text-error-text'
-            : 'border-border text-foreground'
-        }`}
-      >
-        {hovering ? 'Unfollow' : 'Following'}
-      </button>
+      <span className="inline-flex" onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
+        <Button
+          appearance={hovering ? 'subtle' : 'outline'}
+          tone={hovering ? 'danger' : 'neutral'}
+          onPress={handleClick}
+          disabled={toggleFollow.isPending}
+          style={{ minWidth: 100 }}
+        >
+          {hovering ? 'Unfollow' : 'Following'}
+        </Button>
+      </span>
     )
   }
 
   return (
-    <button
-      onClick={handleClick}
+    <Button
+      appearance="solid"
+      tone="action"
+      onPress={handleClick}
       disabled={toggleFollow.isPending}
-      className="min-w-[100px] rounded-full bg-foreground px-4 py-1.5 text-sm font-semibold text-background transition-opacity hover:opacity-90 disabled:opacity-50"
+      style={{ minWidth: 100 }}
     >
       Follow
-    </button>
+    </Button>
   )
 }
