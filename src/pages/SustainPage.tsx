@@ -9,6 +9,7 @@ import Button from '../components/ui/Button'
 import DotPattern from '../components/ui/DotPattern'
 import KeepUpToDateSection from '../components/sections/KeepUpToDateSection'
 import { usePage, useFundingProgress, type PageSection, type FundingProgress } from '../api/hooks'
+import { sectionContent, sectionHeading, sectionSubheading } from '../lib/cmsSections'
 import { AnimatedTitle } from '../components/ui/AnimatedTitle'
 import { DashedHLine, DashedVLines } from '../components/ui/GridDecoration'
 
@@ -70,18 +71,6 @@ const DEFAULT_CTA_SUBHEADING =
 const DONATE_URL = 'https://opencollective.com/oxy'
 
 /* ── CMS helpers (mirrors CompanyArticlePage) ── */
-
-function sectionHeading(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find((s) => s.type === type)?.heading || fallback
-}
-
-function sectionSubheading(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find((s) => s.type === type)?.subheading || fallback
-}
-
-function sectionContent(sections: PageSection[], type: string, fallback: string): string {
-  return sections.find((s) => s.type === type)?.content || fallback
-}
 
 /**
  * Parse a "commitment" section's items into strongly-typed Commitment objects.
