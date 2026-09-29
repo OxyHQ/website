@@ -954,7 +954,7 @@ export default function Navbar({
                 className="group relative flex size-full items-center justify-center gap-1.5 text-primary-foreground max-md:justify-start"
                 to={banner?.href ?? '/ai'}
               >
-                <span className="attio-group-hover-underline relative truncate text-body-sm">
+                <span className="group-hover-underline relative truncate text-body-sm">
                   {banner?.text ?? t('navbar.bannerDefault')}
                 </span>
                 <ArrowRightIcon className="transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50" />

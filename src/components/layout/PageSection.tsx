@@ -38,8 +38,8 @@ const TONE: Record<Tone, string> = {
 
 /*
  * `wide` is the default: it delegates width + horizontal padding to the
- * site-global `.container` class (Attio-style responsive breakpoints, caps
- * at 1760px on >=1920px viewports). The narrower `prose` and `narrow`
+ * site-global `.container` class (`--layout-max-width` frame with a
+ * breakpoint-driven `--layout-gutter`). The narrower `prose` and `narrow`
  * variants keep their explicit max-widths so callers can still constrain
  * legibility-critical content (article bodies, sub-headings) below the
  * container width.

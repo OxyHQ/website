@@ -16,20 +16,6 @@
   --build-tag: '2026-04-16T11-cachebust-2';
 }
 
-@keyframes theme-icon-in {
-  from {
-    transform: rotate(-90deg) scale(0.4);
-    opacity: 0;
-  }
-  to {
-    transform: rotate(0deg) scale(1);
-    opacity: 1;
-  }
-}
-.animate-theme-icon-in {
-  animation: theme-icon-in 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* The resolved values behind Bloom's alias layer — site palette, the FairCoin
@@ -449,17 +435,6 @@ body {
     border-color: transparent;
     color: var(--color-foreground);
   }
-
-  .button-ghost {
-    background: transparent;
-    border-color: transparent;
-    color: var(--color-muted-foreground);
-    transition: all 0.3s ease-in-out;
-  }
-  .button-ghost:hover {
-    background: var(--color-surface);
-    color: var(--color-foreground);
-  }
 }
 
 /* Nav icon theming — set --icon-fill so SVGs use page background for shape fills */
@@ -468,38 +443,6 @@ body {
 }
 
 /* ─── Animations ─── */
-
-/* Hero fade-in from bottom (matches Attio's enter keyframe) */
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in-up {
-  animation: fade-in-up 1s ease-in-out both;
-}
-
-/* Search bar entrance — matches Attio's scale+translate+opacity */
-@keyframes search-bar-enter {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-.animate-search-bar-enter {
-  transform-origin: bottom;
-  animation: search-bar-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
 
 /* The hero's three scroll arrows, each one a beat behind the last. */
 @keyframes hero-scroll-arrow {
@@ -537,20 +480,7 @@ body {
   }
 }
 
-/* Typing cursor blink */
-@keyframes cursor-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-.animate-cursor-blink {
-  animation: cursor-blink 0.8s step-end infinite;
-}
-
-/* Attio-style enter animations */
-.fade-in-from-bottom-1 {
-  --tw-enter-translate-y: 4px;
-  --tw-enter-opacity: 0;
-}
+/* Enter animation for `animate-in`, tuned by the `--tw-enter-*` variables */
 .animate-in {
   animation: enter 0.15s ease both;
 }
@@ -628,37 +558,6 @@ body {
   animation: dropdown-fade-in 0.15s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
-/* Scroll reveal — elements start hidden, revealed by JS */
-.scroll-reveal {
-  opacity: 0;
-  transform: translateY(10px);
-  filter: blur(1px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out, filter 0.6s ease-out;
-}
-
-.scroll-reveal.revealed {
-  opacity: 1;
-  transform: none;
-  filter: blur(0px);
-}
-
-/* Staggered children — apply to parent, children get delays */
-.scroll-reveal-stagger > .scroll-reveal:nth-child(1) { transition-delay: 0ms; }
-.scroll-reveal-stagger > .scroll-reveal:nth-child(2) { transition-delay: 80ms; }
-.scroll-reveal-stagger > .scroll-reveal:nth-child(3) { transition-delay: 160ms; }
-.scroll-reveal-stagger > .scroll-reveal:nth-child(4) { transition-delay: 240ms; }
-.scroll-reveal-stagger > .scroll-reveal:nth-child(5) { transition-delay: 320ms; }
-.scroll-reveal-stagger > .scroll-reveal:nth-child(6) { transition-delay: 400ms; }
-
-/* Hide scrollbar but keep scroll functionality */
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
 /* Dimension-style typography */
 .body-lg { font-size: 1rem; line-height: 1.5; }
 .body-md { font-size: 0.9375rem; line-height: 1.5; }
@@ -673,11 +572,6 @@ body {
   letter-spacing: 0.1em;
 }
 
-/* Attio product shadows */
-.shadow-attio-product-e1 {
-  box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.03), 0px 2px 4px -1px rgba(0,0,0,0.04), 0px 4px 8px -2px rgba(0,0,0,0.06);
-}
-
 /* Text overline utility */
 .text-overline {
   font-size: 10px;
@@ -686,31 +580,15 @@ body {
   letter-spacing: 0.05em;
 }
 
-/* Quote typography */
-.text-quote {
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  line-height: 2.25rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-.text-quote-sm {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
 /* Footer link hover underline */
-.attio-group-hover-underline {
+.group-hover-underline {
   background-image: linear-gradient(currentColor, currentColor);
   background-size: 0% 1px;
   background-position: 0 100%;
   background-repeat: no-repeat;
   transition: background-size 0.2s ease-out;
 }
-.group:hover .attio-group-hover-underline {
+.group:hover .group-hover-underline {
   background-size: 100% 1px;
 }
 
@@ -724,7 +602,7 @@ body {
  * file only patches the cases where directional
  * SVG arrows / decorative rotations need to flip.
  * ──────────────────────────────────────────── */
-[dir='rtl'] .attio-group-hover-underline {
+[dir='rtl'] .group-hover-underline {
   background-position: 100% 100%;
 }
 /* External-link arrow uses a -45deg rotation — flip across the y-axis when
