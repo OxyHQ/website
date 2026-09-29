@@ -1,6 +1,6 @@
 import { Link } from '../../lib/navigation'
 import { useTranslation } from '../../lib/i18n'
-import { ArrowRightIcon } from '../icons'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { defaultFooterColumns, type FooterLink } from '../../data/content'
 import { LogoText } from '@oxy.so/services/ui/client'
 import MentionIcon from '../social/MentionIcon'
@@ -93,7 +93,7 @@ function FooterLinkItem({ link }: { link: FooterLink }) {
       <span className="footer-hover-underline group-hover:duration-150">{link.label}</span>
       {link.isNewBadge && <NewBadge />}
       {link.isExternal && (
-        <ArrowRightIcon className="ml-0.5 -rotate-45 text-muted-foreground transition-colors duration-200 ease-in-out-cubic group-hover:text-foreground group-hover:delay-50 group-focus:text-foreground group-focus:delay-50 group-active:text-foreground group-active:duration-50" />
+        <span aria-hidden="true" className="inline-flex ml-0.5 -rotate-45 text-muted-foreground transition-colors duration-200 ease-in-out-cubic group-hover:text-foreground group-hover:delay-50 group-focus:text-foreground group-focus:delay-50 group-active:text-foreground group-active:duration-50"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
       )}
     </>
   )

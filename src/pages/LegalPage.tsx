@@ -4,7 +4,7 @@ import { Link } from '../lib/navigation'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SEO from '../components/SEO'
-import { ArrowRightIcon } from '../components/icons'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { usePage, type PageSection } from '../api/hooks'
 import { sanitizeCmsHtml } from '../lib/sanitizeCmsHtml'
 import NotFoundPage from './NotFoundPage'
@@ -81,7 +81,7 @@ function LegalIndex() {
               <h2 className="text-base font-medium text-foreground">{section.title}</h2>
               <p className="mt-0.5 text-sm text-muted-foreground">{section.description}</p>
             </div>
-            <ArrowRightIcon className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
+            <span aria-hidden="true" className="inline-flex shrink-0 text-muted-foreground transition-colors group-hover:text-foreground"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
           </Link>
         ))}
       </div>

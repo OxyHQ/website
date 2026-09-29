@@ -6,6 +6,7 @@ import PageSection from '../components/layout/PageSection'
 import SectionHeading from '../components/layout/SectionHeading'
 import Card from '../components/layout/Card'
 import Button from '../components/ui/Button'
+import { RiArrowRightUpLine } from '@oxy.so/bloom/icons/RiArrowRightUpLine'
 import { buildDocsHref, getPackages } from '../content/docs-loader'
 import type { SyncedPackage } from '../../scripts/types'
 import {
@@ -44,22 +45,6 @@ import { consoleLinks } from '../data/ai/taxonomy'
  */
 function pageHref(pkg: SyncedPackage): string {
   return buildDocsHref(pkg, pkg.latestVersion, '')
-}
-
-function ArrowRightIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      aria-hidden="true"
-      className={className}
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
-    </svg>
-  )
 }
 
 /* ─── Hero ─── */
@@ -130,7 +115,7 @@ function SDKGrid({ packages }: { packages: SyncedPackage[] }) {
                     <p className="text-sm text-muted-foreground">{pkg.description}</p>
                   ) : null}
                   <div className="mt-auto flex items-center gap-1.5 pt-2 text-sm text-primary opacity-0 transition-opacity group-hover:opacity-100">
-                    Read docs <ArrowRightIcon className="size-3.5" />
+                    Read docs <RiArrowRightUpLine width={14} height={14} fill="currentColor" aria-hidden />
                   </div>
                 </Link>
               ))}
@@ -195,7 +180,7 @@ function BuildWithAI() {
           >
             <h3 className="flex items-center gap-1.5 text-base text-foreground">
               {entry.title}
-              <ArrowRightIcon className="size-3.5 opacity-0 transition-opacity group-hover:opacity-100" />
+              <span aria-hidden="true" className="inline-flex opacity-0 transition-opacity group-hover:opacity-100"><RiArrowRightUpLine width={14} height={14} fill="currentColor" /></span>
             </h3>
             <p className="mt-2 text-sm text-muted-foreground">{entry.description}</p>
           </Link>
@@ -238,7 +223,7 @@ function APIPromo() {
             </pre>
           </div>
           <Button variant="primary" href={apiCta.href}>
-            {apiCta.label} <ArrowRightIcon className="size-3.5" />
+            {apiCta.label} <RiArrowRightUpLine width={14} height={14} fill="currentColor" aria-hidden />
           </Button>
         </div>
       </div>
@@ -265,7 +250,7 @@ function Resources() {
             >
               <div className="flex items-center justify-between">
                 <span className="text-base font-semibold text-foreground">{item.title}</span>
-                <ArrowRightIcon className="size-3.5 text-muted-foreground" />
+                <span aria-hidden="true" className="inline-flex text-muted-foreground"><RiArrowRightUpLine width={14} height={14} fill="currentColor" /></span>
               </div>
               <p className="text-sm text-muted-foreground">{item.description}</p>
             </Card>

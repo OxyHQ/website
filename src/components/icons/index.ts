@@ -15,7 +15,5 @@
  *   3. Re-export it from this file.
  */
 
-export { ArrowRightIcon } from './ArrowRightIcon'
-export { ChevronDownIcon } from './ChevronDownIcon'
 export { DocsIcon } from './DocsIcon'
 export { ModelingIcon } from './ModelingIcon'

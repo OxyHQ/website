@@ -19,7 +19,7 @@ import {
   type HelpCategoryId,
 } from '../../content/help-loader'
 import HelpProductBadge from './HelpProductBadge'
-import { ArrowRightIcon } from '../icons'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { getHelpProductLogo } from './getHelpProductLogo'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
 
@@ -83,7 +83,7 @@ function ChevronRight() {
 /** The shared arrow with this page's slide-in-on-hover treatment. */
 function ArrowRight() {
   return (
-    <ArrowRightIcon className="relative shrink-0 text-foreground opacity-0 -translate-x-0.25 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150 group-active:translate-0 group-active:opacity-100 group-active:duration-50" />
+    <span aria-hidden="true" className="inline-flex relative shrink-0 text-foreground opacity-0 -translate-x-0.25 transition-[opacity,translate] duration-400 ease-in-out group-hover:translate-0 group-hover:opacity-100 group-hover:duration-150 group-active:translate-0 group-active:opacity-100 group-active:duration-50"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
   )
 }
 

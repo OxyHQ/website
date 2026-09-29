@@ -3,7 +3,7 @@ import { usePricing } from '../../api/hooks'
 import { FEATURES } from '../../constants'
 import Button from '../ui/Button'
 import BillingToggle from './BillingToggle'
-import { ArrowRightIcon } from '../icons'
+import { RiArrowRightLine } from '@oxy.so/bloom/icons/RiArrowRightLine'
 import { AnimatedTitle } from '../ui/AnimatedTitle'
 
 interface Props {
@@ -118,7 +118,7 @@ export default function PricingHeroSection({ isAnnual, onToggle }: Props) {
                     </Button>
                     <Button variant="ghost" responsive className="group self-center md:hidden">
                       <span>{plan.cta}</span>
-                      <ArrowRightIcon className="relative transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50" />
+                      <span aria-hidden="true" className="inline-flex relative transition-[translate] duration-400 ease-in-out group-hover:translate-x-0.25 group-hover:duration-150 group-active:translate-x-0.25 group-active:duration-50"><RiArrowRightLine width={14} height={14} fill="currentColor" /></span>
                     </Button>
                   </>
                 ) : (
